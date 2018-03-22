@@ -1,0 +1,190 @@
+page-rewards-progress {
+
+    .progress_dashboard_div_header {
+        background-color: #005CB9;
+        padding-bottom: 20%;
+    }
+
+    .progress_h1 {
+        font-weight: 700;
+        font-size: 1.75rem;
+        color: white;
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        text-align: center;
+        @media screen and (min-width: map-get($grid-breakpoints, sm)) {
+            font-size: 2.25rem;
+        }
+    }
+
+    .progress_h2 {
+        font-weight: 200;
+        font-size: 1.75rem;
+        color: white;
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        text-align: center;
+        @media screen and (min-width: map-get($grid-breakpoints, sm)) {
+            font-size: 2.0rem;
+        }
+    }
+
+    .progress_h3 {
+        font-weight: 300;
+        font-size: 1.25rem;
+        color: white;
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        text-align: center;
+        @media screen and (min-width: map-get($grid-breakpoints, sm)) {
+            font-size: 1.5rem;
+        }
+    }
+
+    .progress_col {
+        @media screen and (min-width: map-get($grid-breakpoints, sm)) {
+        
+        }
+        
+    }
+
+    .progress_div {
+        @media screen and (min-width: map-get($grid-breakpoints, sm)) {
+            
+        }
+        margin: auto;
+        align-self: auto;
+    }
+
+    .progress_chart {
+        position: relative;
+        height:160px;
+        width: 256px;
+    }
+
+    .progress_label_level {       
+        position: absolute;
+        font-weight: 200;
+         top: 0px;
+         left: 128px;
+         transform: translate(-50%, -50%);
+         font-size: 1.75rem;        
+         @media screen and (min-width: map-get($grid-breakpoints, sm)) {
+             font-size: 2rem;
+         }
+     }
+
+    .progress_label_percent_progress {       
+       position: absolute;
+       font-weight: 700;
+       color: #fff;
+        top: 60px;
+        left: 128px;
+        transform: translate(-50%, -50%);
+        font-size: 1.75rem;        
+        @media screen and (min-width: map-get($grid-breakpoints, sm)) {
+            font-size: 2rem;
+        }
+    }
+
+    .progress_label_level_progress {
+        position: absolute;
+        font-weight: 300;        
+       color: #fff;
+         top: 80px;
+         left: 128px;
+         transform: translate(-50%, -50%);
+         font-size: 1.25rem;        
+         @media screen and (min-width: map-get($grid-breakpoints, sm)) {
+             font-size: 1.5rem;
+         }
+    }
+
+    .progress_label_current_level {        
+        position: absolute;
+        font-weight: 600;
+        top: 140px;
+        left:60px;                
+        color: #fff;
+        transform: translate(-50%, -50%);
+        font-size: 2rem;        
+         @media screen and (min-width: map-get($grid-breakpoints, sm)) {
+             font-size: 2rem;
+         }
+    }
+
+    .progress_label_next_level {        
+        position: absolute;
+        transform: translate(-50%, -50%);
+        top: 140px;
+        left: 195px;   
+        font-weight: 600;                         
+        color: #fff;
+        font-size: 2rem;        
+        @media screen and (min-width: map-get($grid-breakpoints, sm)) {
+            font-size: 2rem;
+        }
+  
+    }
+
+    .progress_reward_header {
+        // position: relative;
+        background-color: #efefef !important;
+        padding-left: 10px;
+        height: 50px;       
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.19); 
+    }
+
+    .progress_reward {
+        // position: relative;
+        height:128px;
+        width: 256px;
+    }
+
+    .progress_reward_label {
+        // display: inline-block;   //toggle this and text-align: center to adjust horiz alignment
+        // text-align: center;      //toggle this and display: inline-block to adjust horiz alignment
+        font-size: 1.5rem;
+        // text-decoration: underline;
+        @media screen and (min-width: map-get($grid-breakpoints, sm)) {
+            font-size: 1.75rem;
+        }
+    }
+
+    .progress_reward_h1 {        
+        font-weight: 500;
+        font-size: 2rem;
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        // text-align: center;
+
+        @media screen and (min-width: map-get($grid-breakpoints, sm)) {
+            font-size: 2.25rem;
+        }
+    }
+
+    .progress_reward_h2 {
+        font-weight: 200;
+        font-size: 1.75rem;
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        // text-align: center;
+        @media screen and (min-width: map-get($grid-breakpoints, sm)) {
+            font-size: 2.0rem;
+        }
+    }
+
+    .progress_reward_h3 {
+        font-weight: 200;
+        font-size: 1.5rem;
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        // text-align: center;
+        @media screen and (min-width: map-get($grid-breakpoints, sm)) {
+            font-size: 1.75rem;
+        }
+    }
+
+
+
+}

@@ -1,0 +1,26 @@
+<ion-header>
+    <ion-navbar color="primary">
+        <button ion-button menuToggle>
+            <ion-icon name="menu"></ion-icon>
+        </button>
+        <ion-title>Rewards History</ion-title>
+    </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+    <ion-list>
+        <ion-item *ngFor="let reward of userFulfillmentActivityInfo">
+            <ion-grid>
+                <ion-row (click)="showRewardDetails(reward)">
+                    <ion-col col-8>
+                        <span class="rewardName">{{reward.itemName}}</span>
+                    </ion-col>
+                    <ion-col>
+                        <span *ngIf="reward.rewardLevel == 0" class="pointCost">{{reward.pointsSpent}} points</span>
+                        <span *ngIf="reward.rewardLevel > 0" class="pointCost">Level {{reward.rewardLevel}}</span>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
+        </ion-item>
+    </ion-list>
+</ion-content>

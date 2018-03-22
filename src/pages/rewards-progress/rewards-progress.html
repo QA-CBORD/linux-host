@@ -1,0 +1,74 @@
+<ion-header>
+    <ion-navbar color="primary">
+        <ion-title>GET Rewards</ion-title>
+    </ion-navbar>
+</ion-header>
+<ion-content>
+    <div class="progress_dashboard_div_header">
+        <ion-grid *ngIf='userRewardTrackInfo'>
+            <ion-row padding>
+                <ion-col col-100>
+                    <div class="progress_chart progress_col">
+                        <canvas #progressChartCanvas></canvas>
+                        <span class="progress_label_percent_progress">{{currentProgressPercentage}}%</span>
+                        <span class="progress_label_level_progress">{{xpGained}} / {{xpForLevel}}</span>
+                        <span class="progress_label_current_level">
+                            {{userRewardTrackInfo.userLevel}}
+                        </span>
+                        <span class="progress_label_next_level">
+                            {{userRewardTrackInfo.userLevel + 1}}
+                        </span>
+                    </div>
+                </ion-col>
+                <ion-col>
+                    <div class="div_center_vertical">
+                        <div class="progress_h1">{{userRewardTrackInfo.userExperiencePoints}} XP</div>
+                        <div class="progress_h3">Total</div>
+                    </div>
+                </ion-col>
+                <ion-col>
+                    <div class="div_center_vertical">
+                        <div class="progress_h1">{{userRewardTrackInfo.trackLevels[userRewardTrackInfo.userLevel].name}}</div>
+                        <div class="progress_h3">Level {{userRewardTrackInfo.userLevel}}</div>
+                    </div>
+                </ion-col>
+                <ion-col>
+                    <div class="div_center_vertical">
+                        <div class="progress_h1">{{userRewardTrackInfo.trackName}}</div>
+                        <div class="progress_h3">Ends {{userRewardTrackInfo.trackEndDate | date: 'MMMM d, yyyy'}}</div>
+                        <div class="progress_h3">{{userRewardTrackInfo.trackDescription}}</div>
+                    </div>
+                </ion-col>
+                <ion-col>
+                    <div class="div_center_vertical">
+                        <div class="progress_h1">{{userRewardTrackInfo.userCurrentPoints}} Points</div>
+                        <div class="progress_h3">Usable</div>
+                    </div>
+                </ion-col>
+            </ion-row>
+        </ion-grid>
+    </div>
+    <div style="margin-top: -20%; margin-right: 5%; margin-left: 5%;">
+        <div style="margin-right: 10%; margin-left: 10%;">
+            <ion-segment [(ngModel)]="rewardType">
+                <ion-segment-button value="experience">
+                    Levels
+                </ion-segment-button>
+                <ion-segment-button value="points">
+                    Points
+                </ion-segment-button>
+                <ion-segment-button value="history">
+                    History
+                </ion-segment-button>
+            </ion-segment>
+        </div>
+        <div [ngSwitch]="rewardType">
+            <ion-card>
+                <ion-card-content>
+                    <accordionlist-content *ngSwitchCase="'experience'" [settings]="accordionListSettings" [options]="options" (selectOption)="selectOption($event)"></accordionlist-content>
+                    <accordionlist-content *ngSwitchCase="'points'" [settings]="accordionListSettings" [options]="pointsOptions" (selectOption)="selectOption($event)"></accordionlist-content>
+                </ion-card-content>
+            </ion-card>
+        </div>
+    </div>
+</ion-content>

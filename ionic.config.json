@@ -1,0 +1,8 @@
+{
+  "name": "get_rewards_patron",
+  "app_id": "",
+  "type": "ionic-angular",
+  "integrations": {
+    "cordova": {}
+  }
+}
