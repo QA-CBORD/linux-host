@@ -6,6 +6,9 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { StatusBar } from '@ionic-native/status-bar';
 import { Http } from '@angular/http';
 import { HttpModule } from '@angular/http';
+import { TranslateLoader, TranslateModule } from "@ngx-translate/core";
+import { TranslateHttpLoader } from "@ngx-translate/http-loader";
+import { HttpClient, HttpClientModule } from "@angular/common/http";
 
 import { MyApp } from './app.component';
 import { Storage, IonicStorageModule } from '@ionic/storage';
@@ -23,6 +26,9 @@ import { RewardsDataManager } from '../providers/rewards-data-manager/rewards-da
 import { ContentServiceProvider } from '../providers/content-service/content-service';
 import { SideMenuContentComponent } from '../shared/side-menu-content/side-menu-content.component';
 import { ExceptionManager } from '../providers/exception-manager/exception-manager';
+export function createTranslateLoader(http: HttpClient) {
+  return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
+}
 
 
 @NgModule({
@@ -34,9 +40,17 @@ import { ExceptionManager } from '../providers/exception-manager/exception-manag
     BrowserModule,
     IonicModule.forRoot(MyApp),
     HttpModule,
+    HttpClientModule,
     QRCodeModule,
-    IonicStorageModule.forRoot()
-  ],
+    IonicStorageModule.forRoot(),
+    TranslateModule.forRoot({
+      loader: {
+          provide: TranslateLoader,
+          useFactory: createTranslateLoader,
+          deps: [HttpClient]
+      }
+  }),
+],
   bootstrap: [
     IonicApp
   ],

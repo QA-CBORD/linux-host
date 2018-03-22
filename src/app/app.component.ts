@@ -3,6 +3,7 @@ import { Platform, Nav, AlertController, MenuController, Events, SplitPane, Load
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { ArrayObservable } from 'rxjs/observable/ArrayObservable';
+import { TranslateService } from "@ngx-translate/core";
 
 import * as Globals from './app.global';
 import { ExceptionPayload } from './../models/exception/exception-interface';
@@ -49,8 +50,10 @@ export class MyApp {
 		private alertCtrl: AlertController,
 		private menuCtrl: MenuController,
 		private events: Events,
-		private loadCtrl: LoadingController
+		private loadCtrl: LoadingController,
+		private translate: TranslateService
 	) {
+		translate.setDefaultLang('en');
 		this.initializeApp();
 	}
 
