@@ -4,6 +4,8 @@ import { AlertController } from 'ionic-angular';
 import { PopoverController } from 'ionic-angular';
 import { Chart } from 'chart.js';
 
+import * as Globals from '../../app/app.global';
+
 import { RewardsDataManager } from '../../providers/rewards-data-manager/rewards-data-manager';
 import { MessageResponse } from '../../models/service/message-response.interface';
 import { RewardService } from '../../providers/reward-service/reward-service';
@@ -258,8 +260,6 @@ export class RewardsProgressPage {
       });
       index++;
     }
-
-
 
   }
 

@@ -17,42 +17,65 @@ export class InstService extends GETService {
     super();
   }
 
-  public getInstitutionList(): Observable<MessageResponse<InstitutionInfoList>> {
+  public getInstitutionList(): Observable<InstitutionInfoList> {
 
-    let postParams = {
-      method: 'retrieveLookupList',
-      params: {
-        sessionId: GETService.getSessionId()
-      }
-    };
+    return Observable.create((observer: any) => {
+      let postParams = {
+        method: 'retrieveLookupList',
+        params: {
+          sessionId: GETService.getSessionId()
+        }
+      };
 
-    console.log(JSON.stringify(postParams));
+      console.log(JSON.stringify(postParams));
 
-    return this.http.post(this.baseUrl.concat(this.serviceUrl), JSON.stringify(postParams), this.getOptions())
-      .map(this.extractData)
-      .do(this.logData)
-      .catch(this.handleError);
+      this.http.post(this.baseUrl.concat(this.serviceUrl), JSON.stringify(postParams), this.getOptions())
+        .map(this.extractData)
+        .do(this.logData)
+        .subscribe(
+          data => {
+            observer.next(data.response);
+            observer.complete();
+          },
+          error => {
+
+            observer.error(error);
+          }
+        )
+    });
+
+
 
   }
 
-  public getInstitution(institutionId): Observable<MessageResponse<InstitutionInfo>> {
-    
-        let postParams = {
-          method: 'retrieve',
-          params: {
-            sessionId: GETService.getSessionId(),
-            institutionId: institutionId
+  public getInstitution(institutionId): Observable<InstitutionInfo> {
+
+    return Observable.create((observer: any) => {
+
+      let postParams = {
+        method: 'retrieve',
+        params: {
+          sessionId: GETService.getSessionId(),
+          institutionId: institutionId
+        }
+      };
+
+      console.log(JSON.stringify(postParams));
+
+      this.http.post(this.baseUrl.concat(this.serviceUrl), JSON.stringify(postParams), this.getOptions())
+        .map(this.extractData)
+        .do(this.logData)
+        .subscribe(
+          data => {
+            observer.next(data.response);
+            observer.complete();
+          },
+          error => {
+
+            observer.error(error);
           }
-        };
-    
-        console.log(JSON.stringify(postParams));
-    
-        return this.http.post(this.baseUrl.concat(this.serviceUrl), JSON.stringify(postParams), this.getOptions())
-          .map(this.extractData)
-          .do(this.logData)
-          .catch(this.handleError);
-    
-      }
-    
-  
+        )
+    });
+
+  }
 }

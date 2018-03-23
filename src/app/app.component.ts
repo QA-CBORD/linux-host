@@ -1,12 +1,12 @@
 import { Component, ViewChild } from '@angular/core';
-import { Platform, Nav, AlertController, MenuController, Events, SplitPane, Loading, LoadingController } from 'ionic-angular';
+import { Platform, Nav, AlertController, MenuController, Events, SplitPane, Loading, LoadingController, ToastController } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { ArrayObservable } from 'rxjs/observable/ArrayObservable';
 import { TranslateService } from "@ngx-translate/core";
 
 import * as Globals from './app.global';
-import { ExceptionPayload } from './../models/exception/exception-interface';
+import { PopupPayload, ToastPayload } from './../models/exception/exception-interface';
 
 import { SideMenuContentComponent } from './../shared/side-menu-content/side-menu-content.component';
 import { MenuOptionModel } from '../shared/side-menu-content/models/menu-option-model';
@@ -51,7 +51,8 @@ export class MyApp {
 		private menuCtrl: MenuController,
 		private events: Events,
 		private loadCtrl: LoadingController,
-		private translate: TranslateService
+		private translate: TranslateService,
+		private toast: ToastController
 	) {
 		translate.setDefaultLang('en');
 		this.initializeApp();
@@ -81,7 +82,8 @@ export class MyApp {
 		this.events.subscribe(Globals.Events.SIDEMENU_UPDATE, newOptions => this.updateMenuOptions(newOptions));
 		this.events.subscribe(Globals.Events.LOADER_SHOW, loaderInfo => this.showLoader(loaderInfo));
 
-		this.events.subscribe(Globals.Events.EXCEPTION_SHOW, exceptionPayload => this.presentException(exceptionPayload));
+		this.events.subscribe(Globals.Events.TOAST_SHOW, toastPayload => this.presentToast(toastPayload));
+		this.events.subscribe(Globals.Events.EXCEPTION_POPUP_SHOW, exceptionPayload => this.presentException(exceptionPayload));
 
 	}
 
@@ -137,15 +139,38 @@ export class MyApp {
 		this.sideMenu.collapseAllOptions();
 	}
 
-	presentException(exceptionPayload: ExceptionPayload) {
+	presentToast(toastPayload: ToastPayload) {
+
+		var displayedTime = new Date().getTime();
+
+		let toast = this.toast.create({
+			message: toastPayload.message,
+			duration: toastPayload.duration,
+			showCloseButton: toastPayload.buttonTitle != null || toastPayload.duration == null,
+			closeButtonText: toastPayload.buttonTitle,
+			position: toastPayload.position ? toastPayload.position : 'top'
+		});
+
+		toast.onDidDismiss(() => {
+			let dismissedTime = new Date().getTime();
+			if (toastPayload.buttonCallback && (!toastPayload.duration || (displayedTime + toastPayload.duration) > dismissedTime)) {
+				toastPayload.buttonCallback();
+			}
+		});
+
+		toast.present();
+
+	}
+
+	presentException(exceptionPayload: PopupPayload) {
 		switch (exceptionPayload.displayOptions) {
-			case Globals.Exception.DisplayOptions.ONE_BUTTON:
+			case Globals.Popup.DisplayOptions.ONE_BUTTON:
 				this.presentOneButtonAlert(exceptionPayload.messageInfo);
 				break;
-			case Globals.Exception.DisplayOptions.TWO_BUTTON:
+			case Globals.Popup.DisplayOptions.TWO_BUTTON:
 				this.presentTwoButtonAlert(exceptionPayload.messageInfo);
 				break;
-			case Globals.Exception.DisplayOptions.THREE_BUTTON:
+			case Globals.Popup.DisplayOptions.THREE_BUTTON:
 				this.presentThreeButtonAlert(exceptionPayload.messageInfo);
 				break;
 		}

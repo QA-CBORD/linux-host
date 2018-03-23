@@ -8,9 +8,6 @@ import * as Globals from '../../app/app.global';
 import { GETService } from './../../providers/get-service/get-service';
 import { AuthService } from './../../providers/auth-service/auth-service';
 
-import { RewardsProgressPage } from '../rewards-progress/rewards-progress';
-import { RewardsPointsPage } from '../rewards-points/rewards-points';
-import { RewardsHistoryPage } from '../rewards-history/rewards-history';
 import { SessionService } from '../../providers/session-service/session-service';
 import { RewardsDataManager } from '../../providers/rewards-data-manager/rewards-data-manager';
 import { MessageResponse } from '../../models/service/message-response.interface';
@@ -34,9 +31,6 @@ export class HomePage {
   tabInfoArray: Array<any>;
 
   sessionToken: string = null;
-  rewardsProgressTab: any = RewardsProgressPage;
-  rewardsPointsTab: any = RewardsPointsPage;
-  rewardsHistoryTab: any = RewardsHistoryPage;
   userRewardTrackInfo: UserRewardTrackInfo;
 
   constructor(
@@ -90,7 +84,7 @@ export class HomePage {
         error => {
           // use proper method to parse the message and determine proper message
           ExceptionManager.showException(this.events, {
-            displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
+            displayOptions: Globals.Popup.DisplayOptions.TWO_BUTTON,
             messageInfo: {
               title: "No Session",
               message: error,

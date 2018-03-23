@@ -55,103 +55,151 @@ export class RewardService extends GETService {
     });
   }
 
-  public claimReward(rewardId: string): Observable<MessageResponse<boolean>> {
-    if (GETService.getSessionId() == null) {
-      // Need a session to make the call so return error
-      let error = new Error("Invalid session");
-      return Observable.throw(error);
-    }
-
-    let postParams = {
-      method: 'claimReward',
-      params: {
-        sessionId: GETService.getSessionId(),
-        rewardId: rewardId
+  public claimReward(rewardId: string): Observable<boolean> {
+    return Observable.create((observer: any) => {
+      if (GETService.getSessionId() == null) {
+        // Need a session to make the call so return error
+        let error = new Error("Invalid session");
+        return Observable.throw(error);
       }
-    };
 
-    console.log(JSON.stringify(postParams));
+      let postParams = {
+        method: 'claimReward',
+        params: {
+          sessionId: GETService.getSessionId(),
+          rewardId: rewardId
+        }
+      };
 
-    return this.http.post(this.baseUrl.concat(this.serviceURL), JSON.stringify(postParams), this.getOptions())
-      .map(this.extractData)
-      .do(this.logData)
-      .catch(this.handleError);
+      console.log(JSON.stringify(postParams));
+
+      this.http.post(this.baseUrl.concat(this.serviceURL), JSON.stringify(postParams), this.getOptions())
+        .map(this.extractData)
+        .do(this.logData)
+        .subscribe(response => {
+          observer.next(response.response);
+          // data validation
+          // throw errors
+          observer.complete();
+        },
+          error => {
+            // do error things
+            observer.error(error);
+          }
+        )
+    });
+  }
+
+  public retrieveRedeemableRewards(trackId: string): Observable<RedeemableRewardInfo[]> {
+    return Observable.create((observer: any) => {
+      if (GETService.getSessionId() == null) {
+        // Need a session to make the call so return error
+        let error = new Error("Invalid session");
+        return Observable.throw(error);
+      }
+
+      let postParams = {
+        method: 'retrieveRedeemableRewards',
+        params: {
+          sessionId: GETService.getSessionId(),
+          trackId: trackId
+        }
+      };
+
+      console.log(JSON.stringify(postParams));
+
+      this.http.post(this.baseUrl.concat(this.serviceURL), JSON.stringify(postParams), this.getOptions())
+        .map(this.extractData)
+        .do(this.logData)
+        .subscribe(response => {
+          observer.next(response.response);
+          // data validation
+          // throw errors
+          observer.complete();
+        },
+          error => {
+            // do error things
+            observer.error(error);
+          }
+        )
+    });
+  }
+
+  public retrieveUserTrackLevel(trackId: string, level: number): Observable<UserTrackLevelInfo[]> {
+    return Observable.create((observer: any) => {
+      if (GETService.getSessionId() == null) {
+        // Need a session to make the call so return error
+        let error = new Error("Invalid session");
+        return Observable.throw(error);
+      }
+
+      let postParams = {
+        method: 'retrieveUserTrackLevel',
+        params: {
+          sessionId: GETService.getSessionId(),
+          trackId: trackId,
+          level: level
+        }
+      };
+
+      console.log(JSON.stringify(postParams));
+
+      this.http.post(this.baseUrl.concat(this.serviceURL), JSON.stringify(postParams), this.getOptions())
+        .map(this.extractData)
+        .do(this.logData)
+        .subscribe(response => {
+          observer.next(response.response);
+          // data validation
+          // throw errors
+          observer.complete();
+        },
+          error => {
+            // do error things
+            observer.error(error);
+          }
+        )
+    });
+
+
 
   }
 
-  public retrieveRedeemableRewards(trackId: string): Observable<MessageResponse<RedeemableRewardInfo[]>> {
-    if (GETService.getSessionId() == null) {
-      // Need a session to make the call so return error
-      let error = new Error("Invalid session");
-      return Observable.throw(error);
-    }
-
-    let postParams = {
-      method: 'retrieveRedeemableRewards',
-      params: {
-        sessionId: GETService.getSessionId(),
-        trackId: trackId
+  public retrieveUserRewardHistory(startDate: Date, endDate: Date, trackId: string, filters: any[]): Observable<UserFulfillmentActivityInfo[]> {
+    return Observable.create((observer: any) => {
+      if (GETService.getSessionId() == null) {
+        // Need a session to make the call so return error
+        let error = new Error("Invalid session");
+        return Observable.throw(error);
       }
-    };
 
-    console.log(JSON.stringify(postParams));
+      let postParams = {
+        method: 'retrieveUserRewardHistory',
+        params: {
+          sessionId: GETService.getSessionId(),
+          startDate: startDate,
+          endDate: endDate,
+          trackId: trackId,
+          filters: filters
+        }
+      };
 
-    return this.http.post(this.baseUrl.concat(this.serviceURL), JSON.stringify(postParams), this.getOptions())
-      .map(this.extractData)
-      .do(this.logData)
-      .catch(this.handleError);
+      console.log(JSON.stringify(postParams));
 
-  }
-
-  public retrieveUserTrackLevel(trackId: string, level: number): Observable<MessageResponse<UserTrackLevelInfo[]>> {
-    if (GETService.getSessionId() == null) {
-      // Need a session to make the call so return error
-      let error = new Error("Invalid session");
-      return Observable.throw(error);
-    }
-
-    let postParams = {
-      method: 'retrieveUserTrackLevel',
-      params: {
-        sessionId: GETService.getSessionId(),
-        trackId: trackId,
-        level: level
-      }
-    };
-
-    console.log(JSON.stringify(postParams));
-
-    return this.http.post(this.baseUrl.concat(this.serviceURL), JSON.stringify(postParams), this.getOptions())
-      .map(this.extractData)
-      .do(this.logData)
-      .catch(this.handleError);
-
-  }
-
-  public retrieveUserRewardHistory(startDate: Date, endDate: Date, trackId: string, filters: any[]): Observable<MessageResponse<UserFulfillmentActivityInfo[]>> {
-    if (GETService.getSessionId() == null) {
-      // Need a session to make the call so return error
-      let error = new Error("Invalid session");
-      return Observable.throw(error);
-    }
-
-    let postParams = {
-      method: 'retrieveUserRewardHistory',
-      params: {
-        sessionId: GETService.getSessionId(),
-        startDate: startDate,
-        endDate: endDate,
-        trackId: trackId,
-        filters: filters
-      }
-    };
-
-    console.log(JSON.stringify(postParams));
-
-    return this.http.post(this.baseUrl.concat(this.serviceURL), JSON.stringify(postParams), this.getOptions())
-      .map(this.extractData)
-      .do(this.logData)
-      .catch(this.handleError);
+      this.http.post(this.baseUrl.concat(this.serviceURL), JSON.stringify(postParams), this.getOptions())
+        .map(this.extractData)
+        .do(this.logData)
+        .subscribe(response => {
+          observer.next(response.response);
+          // data validation
+          // throw errors
+          observer.complete();
+        },
+          error => {
+            // do error things
+            observer.error(error);
+          }
+        )
+    });
 
   }
 }

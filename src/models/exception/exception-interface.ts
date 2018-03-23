@@ -1,9 +1,16 @@
 import * as Globals from './../../app/app.global';
 
 
+export interface ToastPayload {
+    message: string,
+    position: string,       // top, middle, bottom
+    duration?: number,      // (millis) if null, toast will dismiss on close button click only
+    buttonTitle?: string    // if null, no button will be shown.  Button will dismiss toast and call callback
+    buttonCallback?: () => any
+}
 
-export interface ExceptionPayload {
-    displayOptions: Globals.Exception.DisplayOptions,
+export interface PopupPayload {
+    displayOptions: Globals.Popup.DisplayOptions,
     messageInfo: {
         title: string,
         message: string,
@@ -16,7 +23,7 @@ export interface ExceptionPayload {
     }
 }
 
-export interface ExceptionCallback {
+export interface PopupCallback {
     positiveButtonHandler: () => any,
     negativeButtonHandler?: () => any,
     indifferentButtonHandler?: () => any
