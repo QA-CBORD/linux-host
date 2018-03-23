@@ -3,6 +3,7 @@ import { IonicPage, NavController, NavParams, Events, Platform } from 'ionic-ang
 import { AlertController } from 'ionic-angular';
 import { PopoverController } from 'ionic-angular';
 import { Chart } from 'chart.js';
+import {TranslateService} from "@ngx-translate/core";
 
 import { RewardsDataManager } from '../../providers/rewards-data-manager/rewards-data-manager';
 import { MessageResponse } from '../../models/service/message-response.interface';
@@ -64,7 +65,8 @@ export class RewardsProgressPage {
     public rewardService: RewardService,
     public alertCtrl: AlertController,
     public rewardsDataManager: RewardsDataManager,
-    public popoverCtrl: PopoverController
+    public popoverCtrl: PopoverController,
+    private translate: TranslateService
   ) {
     events.subscribe(RewardsDataManager.DATA_USERREWARDTRACKINFO_UPDATED, (userRewardTrackInfo) => {
       if (userRewardTrackInfo) {

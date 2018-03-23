@@ -53,7 +53,11 @@ export class MyApp {
 		private loadCtrl: LoadingController,
 		private translate: TranslateService
 	) {
+		translate.addLangs(['en']);
 		translate.setDefaultLang('en');
+        let browserLang = translate.getBrowserLang();
+		translate.use(browserLang.match(/en/) ? browserLang : 'en');
+		
 		this.initializeApp();
 	}
 

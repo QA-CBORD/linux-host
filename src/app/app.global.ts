@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-
+import { Environment } from "../app/environment";
 
 export namespace Exception {
     export enum DisplayOptions {

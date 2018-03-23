@@ -3,13 +3,13 @@
         <button ion-button menuToggle>
             <ion-icon name="menu"></ion-icon>
         </button>
-        <ion-title>Rewards Points</ion-title>
+        <ion-title>{{'REWARD_POINTS.TITLE' | translate}}</ion-title>
     </ion-navbar>
 </ion-header>
 
 
 <ion-content padding>
-    <span class="currentPointsLabel">Current Points: </span>
+    <span class="currentPointsLabel">{{'REWARD_POINTS.CURRENT_POINTS' | translate}}: </span>
     <span class="currentPointsValue">{{userRewardTrackInfo?.userCurrentPoints}}</span>
     <ion-list>
         <ion-item *ngFor="let reward of userRewardTrackInfo?.redeemableRewards">

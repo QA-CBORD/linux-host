@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Response, Headers, RequestOptions } from '@angular/http';
+import { Environment } from '../../app/environment';
 
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
@@ -19,7 +20,7 @@ export class GETService {
   static sessionId: string;
   static session: any;
 
-  protected baseUrl: string = 'http://services.get-dev.rd.cbord.com/GETServices/services';
+  protected baseUrl: string = Environment.servicesBaseURL;
 
   constructor() {
   }
