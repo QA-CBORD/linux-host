@@ -1,0 +1,25 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - npm install -g cordova ionic
+  pre_build:
+    commands:
+  build:
+    commands:
+      - echo Performing build
+      - npm install
+      - ionic build --prod
+      - mkdir -p deploy
+      - cp -r ./www/* ./deploy
+      - cp terms.html ./deploy
+      - cp robots.txt ./deploy 
+      - ls deploy
+  post_build:
+    commands:
+      - echo Build complete
+artifacts:
+  files:
+    - './**/*'
+  base-directory: 'deploy'
