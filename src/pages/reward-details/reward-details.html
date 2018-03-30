@@ -2,7 +2,7 @@
     <h3>{{reward.name}}</h3>
     <ion-card *ngIf="reward">
         <ion-card-content>
-            <qr-code value="reward.id" size="150" level="Q" background="white" forground="black" mime="image/png"></qr-code>
+            <qr-code [value]="reward.id" size="150" level="Q" background="white" forground="black" mime="image/png"></qr-code>
             <p>Value: {{reward?.id}}</p>
         </ion-card-content>
     </ion-card>

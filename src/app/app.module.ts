@@ -14,7 +14,6 @@ import { MyApp } from './app.component';
 import { Storage, IonicStorageModule } from '@ionic/storage';
 
 import { QRCodeModule } from 'angular2-qrcode';
-import { QRCodeComponent } from 'angular2-qrcode';
 
 import { GETService } from '../providers/get-service/get-service';
 import { AuthService } from '../providers/auth-service/auth-service';
@@ -43,7 +42,6 @@ export function createTranslateLoader(http: HttpClient) {
     HttpModule,
     HttpClientModule,
     QRCodeModule,
-    QRCodeComponent,
     IonicStorageModule.forRoot(),
     TranslateModule.forRoot({
       loader: {
