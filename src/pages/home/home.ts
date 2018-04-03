@@ -49,7 +49,7 @@ export class HomePage {
     private platform: Platform
   ) {
     // commented for debugging... uncomment for final build
-    // this.sessionToken = navParams.get('sessionToken');
+    this.sessionToken = navParams.get('sessionToken');
 
     events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Getting Datas..." });
 
