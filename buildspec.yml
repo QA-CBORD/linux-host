@@ -3,8 +3,8 @@ version: 0.2
 phases:
   install:
     commands:
-      - npm install -g npm
       - npm install -g cordova ionic
+      - npm install -g angular2-qrcode
   pre_build:
     commands:
   build:

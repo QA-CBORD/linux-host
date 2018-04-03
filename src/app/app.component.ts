@@ -13,8 +13,6 @@ import { MenuOptionModel } from '../shared/side-menu-content/models/menu-option-
 import { SideMenuSettings } from './../shared/side-menu-content/models/side-menu-settings';
 
 
-
-
 @Component({
 	templateUrl: 'app.html'
 })
