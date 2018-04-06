@@ -2,12 +2,15 @@
     <h3>{{reward.name}}</h3>
     <ion-card *ngIf="reward">
         <ion-card-content>
-            <qr-code value="reward.id" size="150" level="Q" background="white" forground="black" mime="image/png"></qr-code>
-            <p>Value: {{reward?.id}}</p>
+            <!-- <div>
+                <qr-code [value]="'All QR Code data goes here!'" [size]="150"></qr-code>
+            </div> -->
+            <!-- <qr-code value="reward.id" size="150" level="Q" background="white" forground="black" mime="image/png"></qr-code>
+            <p>Value: {{reward?.id}}</p> -->
         </ion-card-content>
     </ion-card>
-    <div *ngIf="reward?.pointCost > 0">Point Cost: {{reward?.pointCost}}</div>
-    <div *ngIf="reward?.claimLevel > 0">Level: {{reward?.claimLevel}}</div>
+    <!-- <div *ngIf="reward?.pointCost > 0">Point Cost: {{reward?.pointCost}}</div>
+    <div *ngIf="reward?.claimLevel > 0">Level: {{reward?.claimLevel}}</div> -->
     <p>{{reward.description}}</p>
     <button *ngIf="reward.claimStatus == 0 && userRewardTrackInfo" ion-button (click)="levelRewardClicked()">Claim</button>
     <button ion-button outline (click)="closeDetails()">Close</button>

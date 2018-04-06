@@ -1,9 +1,8 @@
 import { Component, ViewChild } from '@angular/core';
-import { IonicPage, NavController, NavParams, Events, Platform } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Events, Platform, PopoverController, ModalController } from 'ionic-angular';
 import { AlertController } from 'ionic-angular';
-import { PopoverController } from 'ionic-angular';
 import { Chart } from 'chart.js';
-import {TranslateService} from "@ngx-translate/core";
+import { TranslateService } from "@ngx-translate/core";
 
 import { RewardsDataManager } from '../../providers/rewards-data-manager/rewards-data-manager';
 import { MessageResponse } from '../../models/service/message-response.interface';
@@ -34,6 +33,11 @@ export class RewardsProgressPage {
     accordionMode: true,
     showSelectedOption: true,
     selectedOptionClass: 'active-side-menu-option',
+    headerHeight: {
+      md: 64,
+      ios: 64,
+      wp: 64
+    },
     itemHeight: {
       md: 64,
       ios: 64,
@@ -65,8 +69,9 @@ export class RewardsProgressPage {
     public rewardService: RewardService,
     public alertCtrl: AlertController,
     public rewardsDataManager: RewardsDataManager,
-    public popoverCtrl: PopoverController,
-    private translate: TranslateService
+    private popoverCtrl: PopoverController,
+    private translate: TranslateService,
+    private modalCtrl: ModalController
   ) {
     events.subscribe(RewardsDataManager.DATA_USERREWARDTRACKINFO_UPDATED, (userRewardTrackInfo) => {
       if (userRewardTrackInfo) {
@@ -82,19 +87,6 @@ export class RewardsProgressPage {
     });
   }
 
-  public selectOption(option: AccordionListOptionModel): void {
-
-  }
-
-  openHistory() {
-    console.log("Open History Click");
-
-  }
-
-  ionViewCanEnter() {
-    // Validate that the user is loggedin, if not redirect
-  }
-
   ionViewDidLoad() {
     if (GETService.getSessionId() != null) {
       this.rewardsDataManager.getUserRewardsData();
@@ -102,36 +94,9 @@ export class RewardsProgressPage {
 
   }
 
-  toggleLevelDetails(trackLevel: UserTrackLevelInfo) {
-    if (trackLevel != null) {
-      if (this.detailsActiveList.get(String(trackLevel.level))) {
-        this.detailsActiveList.delete(String(trackLevel.level));
-      } else {
-        this.detailsActiveList.set(String(trackLevel.level), trackLevel);
-      }
-    }
-  }
-
-  showLevelDetails(trackLevel: UserTrackLevelInfo) {
-    if (trackLevel == null) {
-      return false;
-    } else {
-      if (this.detailsActiveList.get(String(trackLevel.level))) {
-        return true;
-      } else {
-        return false;
-      }
-    }
-  }
-
-  levelRewardClicked(userClaimableReward: ClaimableRewardInfo) {
-    let popover = this.popoverCtrl.create(RewardDetailsPage, userClaimableReward);
-    popover.present();
-  }
+  //#region UI SETUP
 
   createProgressChart() {
-    console.log(`createPChard - xpGained: ${this.xpGained}, xpForLevel: ${this.xpForLevel}, xpGained: ${this.xpGained}`);
-
     this.progressChart = new Chart(this.progressChartCanvas.nativeElement, {
       type: 'doughnut',
       data: {
@@ -153,11 +118,6 @@ export class RewardsProgressPage {
         events: []
       }
     });
-  }
-
-  showError(message: any) {
-    console.error("Show Error:");
-    console.error(message);
   }
 
   calculatePercentageToNextLevel() {
@@ -215,13 +175,19 @@ export class RewardsProgressPage {
           displayName: this.userRewardTrackInfo.trackLevels[index].userClaimableRewards[iIndex].name,
           displayDescription: this.userRewardTrackInfo.trackLevels[index].userClaimableRewards[iIndex].shortDescription,
           component: this.userRewardTrackInfo.trackLevels[index].userClaimableRewards[iIndex].id,
-          badge: this.userRewardTrackInfo.trackLevels[index].userClaimableRewards[iIndex].claimStatus == 3 ? ArrayObservable.of('CLAIMED') : null
+          badge: this.userRewardTrackInfo.trackLevels[index].userClaimableRewards[iIndex].claimStatus == 3 ? ArrayObservable.of('CLAIMED') : null,
+          custom: {
+            levelIndex: index,
+            itemIndex: iIndex
+          }
         });
         iIndex++;
       }
       this.options.push({
-        displayName: `Level ${this.userRewardTrackInfo.trackLevels[index].level} (${this.userRewardTrackInfo.trackLevels[index].requiredPoints} XP): ${this.userRewardTrackInfo.trackLevels[index].name}`,
-        subItems: newSubOptions
+        displayName: `Level ${this.userRewardTrackInfo.trackLevels[index].level}`,
+        displayDescription: `${this.userRewardTrackInfo.trackLevels[index].name}`,
+        subItems: newSubOptions,
+        badge: this.userRewardTrackInfo.trackLevels[index].redeemed ? ArrayObservable.of('CLAIMED') : null
       });
       index++;
     }
@@ -263,6 +229,57 @@ export class RewardsProgressPage {
 
 
 
+  }
+
+  //#endregion
+
+  //#region OPTION SELECTION
+
+  public selectOption(option: AccordionListOptionModel): void {
+    console.log(`Option Selected: ${option.displayName}`);
+    if (option.custom) {
+      let currentLevelInfo: UserTrackLevelInfo = this.userRewardTrackInfo.trackLevels[option.custom.levelIndex];
+      let currentOption: ClaimableRewardInfo = currentLevelInfo.userClaimableRewards[option.custom.itemIndex];
+      this.openItemInfo(currentOption, currentLevelInfo.redeemed);
+    }
+  }
+
+  openItemInfo(claimableItem: ClaimableRewardInfo, redeemed: boolean) {
+    let rdModal = this.modalCtrl.create(RewardDetailsPage, {rewardInfo: claimableItem, bIsRedeemed: redeemed});
+    rdModal.present();
+    // let rdPopover = this.popoverCtrl.create(RewardDetailsPage, {rewardInfo: claimableItem, bIsRedeemed: redeemed});
+    // rdPopover.present();
+    
+  }
+
+  //#endregion
+
+  openHistory() {
+    console.log("Open History Click");
+
+  }
+
+
+  toggleLevelDetails(trackLevel: UserTrackLevelInfo) {
+    if (trackLevel != null) {
+      if (this.detailsActiveList.get(String(trackLevel.level))) {
+        this.detailsActiveList.delete(String(trackLevel.level));
+      } else {
+        this.detailsActiveList.set(String(trackLevel.level), trackLevel);
+      }
+    }
+  }
+
+  showLevelDetails(trackLevel: UserTrackLevelInfo) {
+    if (trackLevel == null) {
+      return false;
+    } else {
+      if (this.detailsActiveList.get(String(trackLevel.level))) {
+        return true;
+      } else {
+        return false;
+      }
+    }
   }
 
 }

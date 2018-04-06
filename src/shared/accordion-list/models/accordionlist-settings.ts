@@ -3,6 +3,12 @@ export interface AccordionListSettings {
     accordionMode?: boolean;
     arrowIcon?: string;
 
+    headerHeight?: {
+        ios?: number,
+        md?: number,
+        wp?: number
+    };
+
     itemHeight?: {
         ios?: number,
         md?: number,

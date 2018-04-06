@@ -7,12 +7,14 @@ import { TranslateModule } from '@ngx-translate/core';
 @NgModule({
   declarations: [
     RewardsProgressPage,
-    AccordionListContentComponent
+    AccordionListContentComponent,
   ],
   imports: [
     IonicPageModule.forChild(RewardsProgressPage),
     TranslateModule.forChild(),
-    
+
+
   ],
+  
 })
-export class RewardsProgressPageModule {}
+export class RewardsProgressPageModule { }

@@ -29,14 +29,7 @@ import { ExceptionManager } from '../../providers/exception-manager/exception-ma
 })
 export class HomePage {
 
-
-  bShowTabs: boolean = false;
-  tabInfoArray: Array<any>;
-
   sessionToken: string = null;
-  rewardsProgressTab: any = RewardsProgressPage;
-  rewardsPointsTab: any = RewardsPointsPage;
-  rewardsHistoryTab: any = RewardsHistoryPage;
   userRewardTrackInfo: UserRewardTrackInfo;
 
   constructor(
@@ -132,23 +125,6 @@ export class HomePage {
       // show opt in with option to exit
       // on opt in accepted, call rewardsDataManager.getUserRewardData() to update the data app wide (event)
     }
-
-    this.tabInfoArray = new Array<any>();
-
-    if (this.userRewardTrackInfo.hasLevels) {
-      // show progress page in tabs
-      this.tabInfoArray.push({ title: "Progress", root: "RewardsProgressPage" });
-    }
-
-    if (this.userRewardTrackInfo.hasRedeemableRewards) {
-      // show points page in tabs
-      this.tabInfoArray.push({ title: "Points", root: "RewardsPointsPage" });
-    }
-
-    // add history page to tabs    
-    this.tabInfoArray.push({ title: "History", root: "RewardsHistoryPage" });
-
-    this.bShowTabs = true;
 
     console.log("Update rewards data");
 

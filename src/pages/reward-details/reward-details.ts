@@ -1,7 +1,5 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, Events } from 'ionic-angular';
-import { QRCodeComponent } from 'angular2-qrcode';
-
 import { AlertController } from 'ionic-angular';
 
 import { RewardsDataManager } from '../../providers/rewards-data-manager/rewards-data-manager';
@@ -14,15 +12,18 @@ import { UserRewardTrackInfoInfoList, UserRewardTrackInfo, UserTrackLevelInfo, C
   selector: 'page-reward-details',
   templateUrl: 'reward-details.html',
 })
+
 export class RewardDetailsPage {
   qrCode = null;
   userRewardTrackInfo: UserRewardTrackInfo = null;
   reward: ClaimableRewardInfo = null;
+  bIsRedeemed: boolean = false;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public events: Events, public rewardService: RewardService, 
     public alertCtrl: AlertController, public rewardsDataManager: RewardsDataManager) {
 
-    this.reward = this.navParams.data;
+    this.reward = this.navParams.data.rewardInfo;
+    this.bIsRedeemed = this.navParams.data.bIsRedeemed;
 
     events.subscribe(RewardsDataManager.DATA_USERREWARDTRACKINFO_UPDATED, (userRewardTrackInfo) => {
       if (userRewardTrackInfo) {

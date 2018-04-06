@@ -90,7 +90,7 @@ export class AccordionListContentComponent {
             // sent to this component
             this.listOptions = value;
             this.collapsableItems = new Array<InnerAccordionListOptionModel>();
-            
+
             // Map the options to our internal models
             this.listOptions.forEach(option => {
                 let innerListOption = InnerAccordionListOptionModel.fromMenuOptionModel(option);
@@ -199,6 +199,13 @@ export class AccordionListContentComponent {
         return this.listSettings.subOptionIndentation.md;
     }
 
+    // Get the proper height of each header
+    public get headerHeight(): number {
+        if (this.platform.is('ios')) return this.listSettings.headerHeight.ios;
+        if (this.platform.is('windows')) return this.listSettings.headerHeight.wp;
+        return this.listSettings.headerHeight.md;
+    }
+
     // Get the proper height of each option
     public get itemHeight(): number {
         if (this.platform.is('ios')) return this.listSettings.itemHeight.ios;
@@ -209,7 +216,7 @@ export class AccordionListContentComponent {
     // ---------------------------------------------------
     // PRIVATE methods
     // ---------------------------------------------------
-    
+
     // Method that set the selected option and its parent
     private setSelectedOption(option: InnerAccordionListOptionModel) {
         if (!option.targetOption.component) return;
@@ -274,6 +281,11 @@ export class AccordionListContentComponent {
     private mergeSettings(): void {
         const defaultSettings: AccordionListSettings = {
             accordionMode: false,
+            headerHeight: {
+                ios: 50,
+                md: 50,
+                wp: 50
+            },
             itemHeight: {
                 ios: 50,
                 md: 50,
@@ -294,6 +306,14 @@ export class AccordionListContentComponent {
             // Use the default values
             this.listSettings = defaultSettings;
             return;
+        }
+
+        if (!this.listSettings.headerHeight) {
+            this.listSettings.headerHeight = defaultSettings.headerHeight;
+        } else {
+            this.listSettings.headerHeight.ios = this.isDefinedAndPositive(this.listSettings.headerHeight.ios) ? this.listSettings.headerHeight.ios : defaultSettings.headerHeight.ios;
+            this.listSettings.headerHeight.md = this.isDefinedAndPositive(this.listSettings.headerHeight.md) ? this.listSettings.headerHeight.md : defaultSettings.headerHeight.md;
+            this.listSettings.headerHeight.wp = this.isDefinedAndPositive(this.listSettings.headerHeight.wp) ? this.listSettings.headerHeight.wp : defaultSettings.headerHeight.wp;
         }
 
         if (!this.listSettings.itemHeight) {

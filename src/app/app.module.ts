@@ -13,8 +13,6 @@ import { HttpClient, HttpClientModule } from "@angular/common/http";
 import { MyApp } from './app.component';
 import { Storage, IonicStorageModule } from '@ionic/storage';
 
-import { QRCodeModule } from 'angular2-qrcode';
-
 import { GETService } from '../providers/get-service/get-service';
 import { AuthService } from '../providers/auth-service/auth-service';
 import { InstService } from '../providers/inst-service/inst-service';
@@ -26,6 +24,8 @@ import { RewardsDataManager } from '../providers/rewards-data-manager/rewards-da
 import { ContentServiceProvider } from '../providers/content-service/content-service';
 import { SideMenuContentComponent } from '../shared/side-menu-content/side-menu-content.component';
 import { ExceptionManager } from '../providers/exception-manager/exception-manager';
+import { RewardDetailsPage } from '../pages/reward-details/reward-details';
+
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
 }
@@ -35,13 +35,13 @@ export function createTranslateLoader(http: HttpClient) {
   declarations: [
     MyApp,
     SideMenuContentComponent,
+    RewardDetailsPage
   ],
   imports: [
     BrowserModule,
     IonicModule.forRoot(MyApp),
     HttpModule,
     HttpClientModule,
-    QRCodeModule,
     IonicStorageModule.forRoot(),
     TranslateModule.forRoot({
       loader: {
@@ -55,7 +55,9 @@ export function createTranslateLoader(http: HttpClient) {
     IonicApp
   ],
   entryComponents: [
-    MyApp
+    MyApp,
+    RewardDetailsPage
+ 
   ],
   providers: [
     StatusBar,
