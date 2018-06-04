@@ -4,9 +4,9 @@ phases:
   install:
     commands:
       - echo **** Installing required packages ****
+      - yum install npm -y
       - yum install rpm-build -y
       - npm install -g cordova ionic
-      - npm install -g angular2-qrcode
   pre_build:
     commands:
       - echo **** Running pre-build, creating rpm directories ****
