@@ -1,7 +1,7 @@
 # %VERSION% is the package version
 
-Summary: CBORD GET Student Package
-Name: cbord-get-student
+Summary: CBORD Student Package
+Name: cbord-student
 Version: %{_version}
 Release: %{_release}
 License: None
@@ -12,7 +12,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildArch: noarch
 
 %description
-GET CBORD Student Package
+CBORD Student Package
 
 %prep
 %setup -q -n %{name}
