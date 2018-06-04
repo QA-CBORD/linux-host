@@ -34,8 +34,7 @@ export function createTranslateLoader(http: HttpClient) {
 @NgModule({
   declarations: [
     MyApp,
-    SideMenuContentComponent,
-    RewardDetailsPage
+    SideMenuContentComponent
   ],
   imports: [
     BrowserModule,
