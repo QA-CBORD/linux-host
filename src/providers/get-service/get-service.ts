@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Response, Headers, RequestOptions } from '@angular/http';
+import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import { Environment } from '../../app/environment';
 
 import { Observable } from 'rxjs/Observable';
@@ -8,6 +8,7 @@ import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/throw';
+import 'rxjs/add/operator/timeout';
 
 import { MessageResponse } from '../../models/service/message-response.interface';
 import { SystemAuthentication } from '../../models/authentication/system-authentication.interface';
@@ -20,9 +21,22 @@ export class GETService {
   static sessionId: string;
   static session: any;
 
+  private TIMEOUT_MS = 15000;
+
   protected baseUrl: string = Environment.servicesBaseURL;
 
-  constructor() {
+  constructor(
+    private http: Http
+  ) {
+  }
+
+
+  protected httpPost(serviceUrl: string, postParams: any): Observable<any> {
+    return this.http.post(this.baseUrl.concat(serviceUrl), JSON.stringify(postParams), this.getOptions())
+    .timeout(this.TIMEOUT_MS)
+      .map(this.extractData)
+      .do(this.logData)
+      .catch(this.handleError);
   }
 
   protected handleError(error: Response | any) {
@@ -47,8 +61,10 @@ export class GETService {
         let parts = response.exception.split("|");
         this.handleErrorCode(parts[0]);
       } else {
-        throw new Error("Unexpected system exception occured.");
+        throw new Error("Unexpected error occured.");
       }
+    } else {
+      throw new Error("The response was empty or malformed.");
     }
   }
 

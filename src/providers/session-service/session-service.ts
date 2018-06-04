@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
 import { Observable } from "rxjs/Observable";
 
 import { GETService } from "../get-service/get-service";
@@ -9,13 +8,9 @@ import { MessageResponse } from "../../models/service/message-response.interface
 @Injectable()
 export class SessionService extends GETService {
 
-  private serviceURL: string = '/json/session';
+  private serviceUrl: string = '/json/session';
   static sessionId: string;
   static session: any;
-
-  constructor(public http: Http) {
-    super();
-  }
 
   static setSessionId(sessionId: string) {
     if (sessionId) {
@@ -27,24 +22,39 @@ export class SessionService extends GETService {
     return this.sessionId;
   }
 
-  public getSession(sessionId): Observable<MessageResponse<string>> {
+  public getSession(sessionId): Observable<string> {
+
     if (SessionService.session) {
+
       return Observable.of(SessionService.session);
+
     } else {
-      let postParams = {
-        method: 'getSession',
-        params: {
-          sessionId: sessionId
-        }
-      };
 
-      console.log(JSON.stringify(postParams));
+      return Observable.create((observer: any) => {
 
-      return this.http.post(this.baseUrl.concat(this.serviceURL), JSON.stringify(postParams), this.getOptions())
-        .map(this.extractData)
-        .do(this.logData)
-        .do(this.setSession)
-        .catch(this.handleError);
+        let postParams = {
+          method: 'getSession',
+          params: {
+            sessionId: sessionId
+          }
+        };
+
+        console.log(JSON.stringify(postParams));
+
+        this.httpPost(this.serviceUrl, postParams)
+          .do(this.setSession)
+          .subscribe(
+            data => {
+              // validate data then throw error or send
+              observer.next(data.response);
+              observer.complete();
+            },
+            error => {
+              // do error stuff then push it to observer
+              observer.error(error);
+            }
+          );
+      });
     }
   }
 

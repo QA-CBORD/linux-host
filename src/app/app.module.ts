@@ -20,7 +20,7 @@ import { SessionService } from '../providers/session-service/session-service';
 import { RewardService } from '../providers/reward-service/reward-service';
 import { DataCache } from '../providers/data-cache/data-cache';
 
-import { RewardsDataManager } from '../providers/rewards-data-manager/rewards-data-manager';
+import { RewardsDataManager } from '../providers/reward-data-manager/reward-data-manager';
 import { ContentServiceProvider } from '../providers/content-service/content-service';
 import { SideMenuContentComponent } from '../shared/side-menu-content/side-menu-content.component';
 import { ExceptionManager } from '../providers/exception-manager/exception-manager';

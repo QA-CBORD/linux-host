@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
 
 import { Observable } from "rxjs/Observable";
 import 'rxjs/add/operator/map';
@@ -14,9 +13,6 @@ export class AuthService extends GETService {
 
   private serviceUrl: string = '/json/authentication';
 
-  constructor(public http: Http) {
-    super();
-  }
 
   authenticateSystem(): Observable<string> {
 
@@ -34,9 +30,7 @@ export class AuthService extends GETService {
 
       console.log(JSON.stringify(postParams));
 
-      this.http.post(this.baseUrl.concat(this.serviceUrl), JSON.stringify(postParams), this.getOptions())
-        .map(this.extractData)
-        // .do(this.logData)
+      this.httpPost(this.serviceUrl, postParams)        
         .subscribe(
           data => {
             // validate data then throw error or send
@@ -47,9 +41,8 @@ export class AuthService extends GETService {
             // do error stuff then push it to observer
             observer.error(error);
           }
-        )
+        );
     });
-
 
   }
 
@@ -75,9 +68,7 @@ export class AuthService extends GETService {
 
       console.log(JSON.stringify(postParams));
 
-      this.http.post(this.baseUrl.concat(this.serviceUrl), JSON.stringify(postParams), this.getOptions())
-        .map(this.extractData)
-        .do(this.logData)
+      this.httpPost(this.serviceUrl, postParams)
         .subscribe(
           data => {
             // validate data then throw error or send
@@ -88,7 +79,7 @@ export class AuthService extends GETService {
             // do error stuff then push it to observer
             observer.error(error);
           }
-        )
+        );
     });
   }
 
@@ -109,9 +100,7 @@ export class AuthService extends GETService {
 
       console.log(JSON.stringify(postParams));
 
-      return this.http.post(this.baseUrl.concat(this.serviceUrl), JSON.stringify(postParams), this.getOptions())
-        .map(this.extractData)
-        .do(this.logData)
+      return this.httpPost(this.serviceUrl, postParams)
         .subscribe(
           data => {
             // validate data and send to observer

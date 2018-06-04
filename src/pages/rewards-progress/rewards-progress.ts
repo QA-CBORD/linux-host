@@ -4,7 +4,7 @@ import { AlertController } from 'ionic-angular';
 import { Chart } from 'chart.js';
 import { TranslateService } from "@ngx-translate/core";
 
-import { RewardsDataManager } from '../../providers/rewards-data-manager/rewards-data-manager';
+import { RewardsDataManager } from '../../providers/reward-data-manager/reward-data-manager';
 import { MessageResponse } from '../../models/service/message-response.interface';
 import { RewardService } from '../../providers/reward-service/reward-service';
 import { UserRewardTrackInfoInfoList, UserRewardTrackInfo, UserTrackLevelInfo, ClaimableRewardInfo } from '../../models/rewards/rewards.interface'
@@ -113,7 +113,7 @@ export class RewardsProgressPage {
         cutoutPercentage: 80,
         animation: {
           animateScale: false,
-          animateRotate: true
+          animateRotate: false
         },
         events: []
       }
@@ -245,10 +245,10 @@ export class RewardsProgressPage {
   }
 
   openItemInfo(claimableItem: ClaimableRewardInfo, redeemed: boolean) {
-    let rdModal = this.modalCtrl.create(RewardDetailsPage, {rewardInfo: claimableItem, bIsRedeemed: redeemed});
-    rdModal.present();
-    // let rdPopover = this.popoverCtrl.create(RewardDetailsPage, {rewardInfo: claimableItem, bIsRedeemed: redeemed});
-    // rdPopover.present();
+    // let rdModal = this.modalCtrl.create(RewardDetailsPage, {rewardInfo: claimableItem, bIsRedeemed: redeemed});
+    // rdModal.present();
+    let rdPopover = this.popoverCtrl.create(RewardDetailsPage, {rewardInfo: claimableItem, bIsRedeemed: redeemed});    
+    rdPopover.present();//{animate: false});
     
   }
 

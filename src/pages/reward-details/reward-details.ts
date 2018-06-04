@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, Events } from 'ionic-angular';
 import { AlertController } from 'ionic-angular';
 
-import { RewardsDataManager } from '../../providers/rewards-data-manager/rewards-data-manager';
+import { RewardsDataManager } from '../../providers/reward-data-manager/reward-data-manager';
 import { MessageResponse } from '../../models/service/message-response.interface';
 import { RewardService } from '../../providers/reward-service/reward-service';
 import { UserRewardTrackInfoInfoList, UserRewardTrackInfo, UserTrackLevelInfo, ClaimableRewardInfo } from '../../models/rewards/rewards.interface'
@@ -23,6 +23,7 @@ export class RewardDetailsPage {
     public alertCtrl: AlertController, public rewardsDataManager: RewardsDataManager) {
 
     this.reward = this.navParams.data.rewardInfo;
+    
     this.bIsRedeemed = this.navParams.data.bIsRedeemed;
 
     events.subscribe(RewardsDataManager.DATA_USERREWARDTRACKINFO_UPDATED, (userRewardTrackInfo) => {

@@ -3,24 +3,38 @@ version: 0.2
 phases:
   install:
     commands:
+      - echo **** Installing required packages ****
+      - yum install rpm-build -y
       - npm install -g cordova ionic
       - npm install -g angular2-qrcode
   pre_build:
     commands:
-  build:
-    commands:
-      - echo Performing build
+      - echo **** Running pre-build, creating rpm directories ****
+      - mkdir BUILD RPMS SOURCES SPECS SRPMS
+      - mv ./cbord-student.spec SPECS
+
+      - echo **** Performing Ionic build ****
+
       - npm install
       - ionic build --prod
+
       - mkdir -p deploy
       - cp -r ./www/* ./deploy
       - cp terms.html ./deploy
       - cp robots.txt ./deploy 
-      - ls deploy
+
+      - echo **** Perform tar ****
+      - tar -zcvf ./SOURCES/cbord-student.tar.gz deploy
+  build:
+    commands:
+      - echo **** Triggering RPM build ****
+      - rpmbuild --define "_topdir `pwd`" --define '_version 0.0.1' --define '_release 1' -bb ./SPECS/cbord-student.spec
   post_build:
     commands:
-      - echo Build complete
+      - echo **** Entered the post_build phase... ****
+      - echo **** Build completed on `date` ****
 artifacts:
   files:
-    - './**/*'
-  base-directory: 'deploy'
+      - RPMS/noarch/cbord-student*.rpm
+      # - SPECS/appspec.yml
+  discard-paths: yes

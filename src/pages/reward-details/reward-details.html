@@ -12,6 +12,6 @@
     <!-- <div *ngIf="reward?.pointCost > 0">Point Cost: {{reward?.pointCost}}</div>
     <div *ngIf="reward?.claimLevel > 0">Level: {{reward?.claimLevel}}</div> -->
     <p>{{reward.description}}</p>
-    <button *ngIf="reward.claimStatus == 0 && userRewardTrackInfo" ion-button (click)="levelRewardClicked()">Claim</button>
-    <button ion-button outline (click)="closeDetails()">Close</button>
+    <button ion-button outline item-right (click)="closeDetails()">Close</button>
+    <button *ngIf="reward.claimStatus == 0 && userRewardTrackInfo" ion-button item-right (click)="levelRewardClicked()">Claim</button>    
 </ion-content>

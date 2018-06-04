@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
 import 'rxjs/add/operator/map';
 
 import { Observable } from "rxjs/Observable";
@@ -12,36 +11,45 @@ import { UserInfo } from "../../models/user/user-info.interface"
 @Injectable()
 export class ContentServiceProvider extends GETService {
 
-  private serviceURL: string = '/json/user';
-  
-    constructor(public http: Http) {
-      super();
-    }
+  private serviceUrl: string = '/json/user';
 
-    public retrieveString(sessionId: string, institutionId: string, locale: string, domain: string, category: string, name: string): Observable<MessageResponse<UserInfo>> {
-      
-          let postParams = {
-            method: 'retrieveString',
-            params: {
-              sessionId: sessionId,
-              institutionId: institutionId,
-              locale: locale,
-              domain: domain,
-              category: category,
-              name: name
-            }
-          };
-      
-          console.log(JSON.stringify(postParams));
-      
-          return this.http.post(this.baseUrl.concat(this.serviceURL), JSON.stringify(postParams), this.getOptions())
-            .map(this.extractData)
-            .do(this.logData)
-            .catch(this.handleError);
-    }
+  public retrieveString(sessionId: string, institutionId: string, locale: string, domain: string, category: string, name: string): Observable<UserInfo> {
 
-    public retrieveStringList(sessionId: string, institutionId: string, locale: string, domain: string, category: string): Observable<MessageResponse<UserInfo>> {
-      
+    return Observable.create((observer: any) => {
+
+      let postParams = {
+        method: 'retrieveString',
+        params: {
+          sessionId: sessionId,
+          institutionId: institutionId,
+          locale: locale,
+          domain: domain,
+          category: category,
+          name: name
+        }
+      };
+
+      console.log(JSON.stringify(postParams));
+
+      this.httpPost(this.serviceUrl, postParams)
+        .subscribe(
+          data => {
+            // validate data then throw error or send
+            observer.next(data.response);
+            observer.complete();
+          },
+          error => {
+            // do error stuff then push it to observer
+            observer.error(error);
+          }
+        );
+    });
+  }
+
+  public retrieveStringList(sessionId: string, institutionId: string, locale: string, domain: string, category: string): Observable<UserInfo> {
+
+    return Observable.create((observer: any) => {
+
       let postParams = {
         method: 'retrieveStringList',
         params: {
@@ -52,33 +60,53 @@ export class ContentServiceProvider extends GETService {
           category: category
         }
       };
-  
+
       console.log(JSON.stringify(postParams));
-  
-      return this.http.post(this.baseUrl.concat(this.serviceURL), JSON.stringify(postParams), this.getOptions())
-        .map(this.extractData)
-        .do(this.logData)
-        .catch(this.handleError);
+
+      this.httpPost(this.serviceUrl, postParams)
+        .subscribe(
+          data => {
+            // validate data then throw error or send
+            observer.next(data.response);
+            observer.complete();
+          },
+          error => {
+            // do error stuff then push it to observer
+            observer.error(error);
+          }
+        );
+    });
   }
-  
-  public retrieveStringListByInstitutionDomainCategories(sessionId: string, institutionId: string, locale: string, domain_categories: string[]): Observable<MessageResponse<UserInfo>> {
-      
-    let postParams = {
-      method: 'retrieveStringListByInstitutionDomainCategories',
-      params: {
-        sessionId: sessionId,
-        institutionId: institutionId,
-        locale: locale,
-        domain_categories: domain_categories,
-      }
-    };
 
-    console.log(JSON.stringify(postParams));
+  public retrieveStringListByInstitutionDomainCategories(sessionId: string, institutionId: string, locale: string, domain_categories: string[]): Observable<UserInfo> {
 
-    return this.http.post(this.baseUrl.concat(this.serviceURL), JSON.stringify(postParams), this.getOptions())
-      .map(this.extractData)
-      .do(this.logData)
-      .catch(this.handleError);
+    return Observable.create((observer: any) => {
+
+      let postParams = {
+        method: 'retrieveStringListByInstitutionDomainCategories',
+        params: {
+          sessionId: sessionId,
+          institutionId: institutionId,
+          locale: locale,
+          domain_categories: domain_categories,
+        }
+      };
+
+      console.log(JSON.stringify(postParams));
+
+      this.httpPost(this.serviceUrl, postParams)
+        .subscribe(
+          data => {
+            // validate data then throw error or send
+            observer.next(data.response);
+            observer.complete();
+          },
+          error => {
+            // do error stuff then push it to observer
+            observer.error(error);
+          }
+        );
+    });
   }
 
 

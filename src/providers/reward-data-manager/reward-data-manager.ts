@@ -1,6 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
-import 'rxjs/add/operator/map';
 import { Observable } from "rxjs/Observable";
 import { Events } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
@@ -21,7 +19,7 @@ export class RewardsDataManager {
   public userRewardTrackInfo: UserRewardTrackInfo = null;
   public userFulfillmentActivityInfo: UserFulfillmentActivityInfo[] = null;
 
-  constructor(public http: Http, public events: Events, public sessionService: SessionService, public rewardService: RewardService, public dataCache: DataCache) {
+  constructor(public events: Events, public sessionService: SessionService, public rewardService: RewardService, public dataCache: DataCache) {
 
   }
 
@@ -66,11 +64,14 @@ export class RewardsDataManager {
 
   getUserRewardTrackInfoResponse(userRewardTrackInfo: any) {
     if (userRewardTrackInfo && userRewardTrackInfo.length > 0) {
+      // set datas and do more things with it
       this.userRewardTrackInfo = userRewardTrackInfo[0];
       this.dataCache.set("userRewardTrackInfo", userRewardTrackInfo[0]);
-
       this.events.publish(RewardsDataManager.DATA_USERREWARDTRACKINFO_UPDATED, this.userRewardTrackInfo);
       this.getUserRewardHistory();
+    } else {
+      // publish the bad data to be handled by subscribers
+      this.events.publish(RewardsDataManager.DATA_USERREWARDTRACKINFO_UPDATED, this.userRewardTrackInfo);
     }
   }
 
@@ -80,7 +81,7 @@ export class RewardsDataManager {
     var trackId: string = this.userRewardTrackInfo.trackID;
     var filters = null;
     this.rewardService.retrieveUserRewardHistory(startDate, endDate, trackId, filters).subscribe(
-      ((data: MessageResponse<UserFulfillmentActivityInfo[]>) => this.getUserRewardHistoryResponse(data.response)),
+      ((data: UserFulfillmentActivityInfo[]) => this.getUserRewardHistoryResponse(data)),
       ((error) => this.logError(error))
     )
   }
