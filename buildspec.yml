@@ -4,8 +4,8 @@ phases:
   install:
     commands:
       - echo **** Installing required packages ****
-      - yum install epel-release
-      - yum install nodejs
+      - yum install epel-release -y
+      - yum install nodejs -y
       - yum install npm -y
       - yum install rpm-build -y
       - npm install -g cordova ionic
