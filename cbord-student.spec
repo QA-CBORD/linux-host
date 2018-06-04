@@ -37,6 +37,7 @@ install -c -m 664 deploy/assets/fonts/*.* $RPM_BUILD_ROOT/home/httpd/cbord-stude
 install -c -m 664 deploy/assets/i18n/*.* $RPM_BUILD_ROOT/home/httpd/cbord-student/assets/i18n
 install -c -m 664 deploy/assets/icon/*.* $RPM_BUILD_ROOT/home/httpd/cbord-student/assets/icon
 install -c -m 664 deploy/assets/img/*.* $RPM_BUILD_ROOT/home/httpd/cbord-student/assets/img
+install -c -m 664 deploy/build/*.* $RPM_BUILD_ROOT/home/httpd/cbord-student/build
 
 
 %clean
