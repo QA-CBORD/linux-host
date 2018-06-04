@@ -26,6 +26,7 @@ phases:
       - cp robots.txt ./cbord-student 
 
       - echo **** Perform tar ****
+      - ls
       - tar -zcvf ./SOURCES/cbord-student.tar.gz cbord-student
   build:
     commands:
