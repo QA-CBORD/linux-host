@@ -27,17 +27,15 @@ install -c -d -m 775 $RPM_BUILD_ROOT/home/httpd/cbord-student/assets/fonts
 install -c -d -m 775 $RPM_BUILD_ROOT/home/httpd/cbord-student/assets/i18n
 install -c -d -m 775 $RPM_BUILD_ROOT/home/httpd/cbord-student/assets/icon
 install -c -d -m 775 $RPM_BUILD_ROOT/home/httpd/cbord-student/assets/img
-install -c -d -m 775 $RPM_BUILD_ROOT/home/httpd/cbord-student/assets
 install -c -d -m 775 $RPM_BUILD_ROOT/home/httpd/cbord-student/build
 
-
-install -c -m 664 ./cbord-student/*.* $RPM_BUILD_ROOT/home/httpd/cbord-student
-install -c -m 664 ./cbord-student/assets/*.* $RPM_BUILD_ROOT/home/httpd/cbord-student/assets
-install -c -m 664 ./cbord-student/assets/fonts/*.* $RPM_BUILD_ROOT/home/httpd/cbord-student/assets/fonts
-install -c -m 664 ./cbord-student/assets/i18n/*.* $RPM_BUILD_ROOT/home/httpd/cbord-student/assets/i18n
-install -c -m 664 ./cbord-student/assets/icon/*.* $RPM_BUILD_ROOT/home/httpd/cbord-student/assets/icon
-install -c -m 664 ./cbord-student/assets/img/*.* $RPM_BUILD_ROOT/home/httpd/cbord-student/assets/img
-install -c -m 664 ./cbord-student/build/*.* $RPM_BUILD_ROOT/home/httpd/cbord-student/build
+install -c -m 664 *.* $RPM_BUILD_ROOT/home/httpd/cbord-student
+install -c -m 664 assets/*.* $RPM_BUILD_ROOT/home/httpd/cbord-student/assets
+install -c -m 664 assets/fonts/*.* $RPM_BUILD_ROOT/home/httpd/cbord-student/assets/fonts
+install -c -m 664 assets/i18n/*.* $RPM_BUILD_ROOT/home/httpd/cbord-student/assets/i18n
+install -c -m 664 assets/icon/*.* $RPM_BUILD_ROOT/home/httpd/cbord-student/assets/icon
+install -c -m 664 assets/img/*.* $RPM_BUILD_ROOT/home/httpd/cbord-student/assets/img
+install -c -m 664 build/*.* $RPM_BUILD_ROOT/home/httpd/cbord-student/build
 
 
 %clean

@@ -20,11 +20,11 @@ phases:
       - npm install
       - ionic build --prod
 
-      - mkdir -p cbord-student
+      - mkdir cbord-student
       - cp -r ./www/* ./cbord-student
       - cp terms.html ./cbord-student
       - cp robots.txt ./cbord-student 
-
+      - ls
       - echo **** Perform tar ****
       - tar -zcvf ./SOURCES/cbord-student.tar.gz cbord-student
   build:
