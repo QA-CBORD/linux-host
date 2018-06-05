@@ -26,8 +26,11 @@ phases:
       - cp robots.txt ./cbord-student 
 
       - echo **** Perform tar ****
+      - pwd
       - ls
       - tar -zcvf ./SOURCES/cbord-student.tar.gz cbord-student
+      - cd ./SOURCES
+      - ls
   build:
     commands:
       - echo **** Triggering RPM build ****
