@@ -13,7 +13,7 @@ phases:
     commands:
       - echo **** Running pre-build, creating rpm directories ****
       - mkdir BUILD RPMS SOURCES SPECS SRPMS
-      - mv ./cbord-student.spec ./SPECS
+      - mv ./cbord-student.spec SPECS
 
       - echo **** Performing Ionic build ****
 
@@ -34,7 +34,7 @@ phases:
   build:
     commands:
       - echo **** Triggering RPM build ****
-      - rpmbuild --define "_topdir `pwd`" --define '_version 0.0.1' --define '_release 1' -bb ./SPECS/cbord-student.spec
+      - rpmbuild --define "_topdir `pwd`" --define '_version 0.0.1' --define '_release 1' -bb SPECS/cbord-student.spec
   post_build:
     commands:
       - echo **** Entered the post_build phase... ****
