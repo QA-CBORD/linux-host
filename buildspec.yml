@@ -29,8 +29,6 @@ phases:
       - pwd
       - ls
       - tar -zcvf ./SOURCES/cbord-student.tar.gz cbord-student
-      - cd ./SPECS
-      - ls
   build:
     commands:
       - echo **** Triggering RPM build ****
