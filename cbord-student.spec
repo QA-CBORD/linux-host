@@ -21,20 +21,20 @@ CBORD Student Package
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -c -d -m 775 $RPM_BUILD_ROOT/home/httpd/cbord-student
-install -c -d -m 775 $RPM_BUILD_ROOT/home/httpd/cbord-student/assets
-install -c -d -m 775 $RPM_BUILD_ROOT/home/httpd/cbord-student/assets/fonts
-install -c -d -m 775 $RPM_BUILD_ROOT/home/httpd/cbord-student/assets/i18n
-install -c -d -m 775 $RPM_BUILD_ROOT/home/httpd/cbord-student/assets/icon
-install -c -d -m 775 $RPM_BUILD_ROOT/home/httpd/cbord-student/assets/img
-install -c -d -m 775 $RPM_BUILD_ROOT/home/httpd/cbord-student/build
+install -c -d -m 775 $RPM_BUILD_ROOT/home/httpd/student
+install -c -d -m 775 $RPM_BUILD_ROOT/home/httpd/student/assets
+install -c -d -m 775 $RPM_BUILD_ROOT/home/httpd/student/assets/fonts
+install -c -d -m 775 $RPM_BUILD_ROOT/home/httpd/student/assets/i18n
+install -c -d -m 775 $RPM_BUILD_ROOT/home/httpd/student/assets/icon
+install -c -d -m 775 $RPM_BUILD_ROOT/home/httpd/student/assets/img
+install -c -d -m 775 $RPM_BUILD_ROOT/home/httpd/student/build
 
-install -c -m 664 *.* $RPM_BUILD_ROOT/home/httpd/cbord-student
-install -c -m 664 assets/fonts/*.* $RPM_BUILD_ROOT/home/httpd/cbord-student/assets/fonts
-install -c -m 664 assets/i18n/*.* $RPM_BUILD_ROOT/home/httpd/cbord-student/assets/i18n
-install -c -m 664 assets/icon/*.* $RPM_BUILD_ROOT/home/httpd/cbord-student/assets/icon
-install -c -m 664 assets/img/*.* $RPM_BUILD_ROOT/home/httpd/cbord-student/assets/img
-install -c -m 664 build/*.* $RPM_BUILD_ROOT/home/httpd/cbord-student/build
+install -c -m 664 *.* $RPM_BUILD_ROOT/home/httpd/student
+install -c -m 664 assets/fonts/*.* $RPM_BUILD_ROOT/home/httpd/student/assets/fonts
+install -c -m 664 assets/i18n/*.* $RPM_BUILD_ROOT/home/httpd/student/assets/i18n
+install -c -m 664 assets/icon/*.* $RPM_BUILD_ROOT/home/httpd/student/assets/icon
+install -c -m 664 assets/img/*.* $RPM_BUILD_ROOT/home/httpd/student/assets/img
+install -c -m 664 build/*.* $RPM_BUILD_ROOT/home/httpd/student/build
 
 
 %clean
@@ -49,7 +49,7 @@ rm -rf $RPM_BUILD_ROOT
 %files
 
 
-/home/httpd/cbord-student
+/home/httpd/student
 
 
 %doc
