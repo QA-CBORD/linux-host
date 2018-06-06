@@ -25,17 +25,17 @@ phases:
       - cp terms.html ./student
       - cp robots.txt ./student 
       - echo **** Perform tar ****
-      - tar -zcvf ./SOURCES/cbord-student.tar.gz student
+      - tar -zcvf ./SOURCES/student.tar.gz student
   build:
     commands:
       - echo **** Triggering RPM build ****
-      - rpmbuild --define "_topdir `pwd`" --define '_version 2.43.1' --define '_release 1' -bb SPECS/cbord-student.spec
+      - rpmbuild --define "_topdir `pwd`" --define '_version 2.43.1' --define '_release 1' -bb SPECS/student.spec
   post_build:
     commands:
       - echo **** Entered the post_build phase... ****
       - echo **** Build completed on `date` ****
 artifacts:
   files:
-      - RPMS/noarch/cbord-student*.rpm
+      - RPMS/noarch/student*.rpm
       # - SPECS/appspec.yml
   discard-paths: yes
