@@ -1,7 +1,7 @@
 # %VERSION% is the package version
 
 Summary: CBORD Student Package
-Name: cbord-student
+Name: student
 Version: %{_version}
 Release: %{_release}
 License: None
