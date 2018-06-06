@@ -1,13 +1,13 @@
-<ion-header>
+<!-- <ion-header>
     <ion-navbar color="primary">
         <ion-title>GET Rewards</ion-title>
     </ion-navbar>
-</ion-header>
+</ion-header> -->
 <ion-content>
     <div class="progress_dashboard_div_header">
         <ion-grid *ngIf='userRewardTrackInfo'>
             <ion-row padding>
-                <ion-col col-100>
+                <ion-col col-100 *ngIf='userRewardTrackInfo.hasLevels'>
                     <div class="progress_chart progress_col">
                         <canvas #progressChartCanvas></canvas>
                         <span class="progress_label_percent_progress">{{currentProgressPercentage}}%</span>
@@ -26,7 +26,7 @@
                         <div class="progress_h3">{{'REWARD_PROGRESS.TOTAL' | translate}}</div>
                     </div>
                 </ion-col>
-                <ion-col>
+                <ion-col *ngIf='userRewardTrackInfo.hasLevels'>
                     <div class="div_center_vertical">
                         <div class="progress_h1">{{userRewardTrackInfo.trackLevels[userRewardTrackInfo.userLevel].name}}</div>
                         <div class="progress_h3">{{'REWARD_PROGRESS.LEVEL' | translate}} {{userRewardTrackInfo.userLevel}}</div>
@@ -50,11 +50,11 @@
     </div>
     <div style="margin-top: -20%; margin-right: 5%; margin-left: 5%;">
         <div style="margin-right: 10%; margin-left: 10%;">
-            <ion-segment [(ngModel)]="rewardType">
-                <ion-segment-button value="experience">
+            <ion-segment  *ngIf='userRewardTrackInfo' [(ngModel)]="rewardType">
+                <ion-segment-button *ngIf='bShowLevels' value="experience">
                         {{'REWARD_PROGRESS.LEVELS' | translate}}
                 </ion-segment-button>
-                <ion-segment-button value="points">
+                <ion-segment-button  *ngIf='bShowPoints' value="points">
                         {{'REWARD_PROGRESS.POINTS' | translate}}
                 </ion-segment-button>
                 <ion-segment-button value="history">

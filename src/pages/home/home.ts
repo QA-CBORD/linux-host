@@ -8,9 +8,7 @@ import * as Globals from '../../app/app.global';
 import { GETService } from './../../providers/get-service/get-service';
 import { AuthService } from './../../providers/auth-service/auth-service';
 
-import { RewardsProgressPage } from '../rewards-progress/rewards-progress';
-import { RewardsPointsPage } from '../rewards-points/rewards-points';
-import { RewardsHistoryPage } from '../rewards-history/rewards-history';
+import { RewardsPage } from '../rewards/rewards';
 import { SessionService } from '../../providers/session-service/session-service';
 import { RewardsDataManager } from '../../providers/reward-data-manager/reward-data-manager';
 import { MessageResponse } from '../../models/service/message-response.interface';
@@ -21,7 +19,7 @@ import { ExceptionManager } from '../../providers/exception-manager/exception-ma
 
 @IonicPage({
   name: 'home',
-  segment: 'home/:sessionToken'
+  segment: 'home/:sessionToken/:destinationPage'
 })
 @Component({
   selector: 'page-home',
@@ -30,6 +28,7 @@ import { ExceptionManager } from '../../providers/exception-manager/exception-ma
 export class HomePage {
 
   sessionToken: string = null;
+  destinationPage: string = null;
   userRewardTrackInfo: UserRewardTrackInfo;
 
   constructor(
@@ -41,34 +40,31 @@ export class HomePage {
     private authService: AuthService,
     private platform: Platform
   ) {
-    // commented for debugging... uncomment for final build
-    this.sessionToken = navParams.get('sessionToken');
-
-    events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Getting Datas..." });
 
     // hide the split pane here becuase we don't need the navigation menu
     events.publish(Globals.Events.SIDEPANE_ENABLE, false);
 
-    this.onFirstLoad();
+    // commented for debugging... uncomment for final build
+    this.sessionToken = navParams.get('sessionToken');
+    this.destinationPage = navParams.get('destinationPage');
 
-    events.subscribe(RewardsDataManager.DATA_USERREWARDTRACKINFO_UPDATED, (userRewardTrackInfo: UserRewardTrackInfo) => {
-      this.userRewardTrackInfo = userRewardTrackInfo;
-      console.log("Reward Data Response");
+    events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Getting Datas..." });
 
-      this.onRewardsData();
-    });
+    
+
+    this.determinNewSession();
   }
 
-  private onFirstLoad() {
+  private determinNewSession() {
     // use session Sharing key passed in URL to get new session
     if (this.sessionToken != null) {
       this.sessionService.getSession(this.sessionToken).subscribe(
         ((data: string) => {
           GETService.setSessionId(data);
-          this.getSessionResponse(data)
+          this.handleSessionResponse(data)
         }),
         ((error) => {
-
+          // error getting session with session sharing functionality
         })
       );
     } else {
@@ -78,7 +74,7 @@ export class HomePage {
       this.authService.authenticateUser(null).subscribe(
         sessionId => {
           GETService.setSessionId(sessionId);
-          this.getSessionResponse(sessionId);
+          this.handleSessionResponse(sessionId);
         },
         error => {
           // use proper method to parse the message and determine proper message
@@ -89,7 +85,7 @@ export class HomePage {
               message: error,
               positiveButtonTitle: "RETRY",
               positiveButtonHandler: () => {
-                this.onFirstLoad();
+                this.determinNewSession();
               },
               negativeButtonTitle: "CLOSE",
               negativeButtonHandler: () => {
@@ -104,11 +100,26 @@ export class HomePage {
 
   }
 
-  private getSessionResponse(session: any) {
+  private handleSessionResponse(session: any) {
     // on new session, retrieve data
     if (session) {
-      // this.
-      this.rewardsDataManager.getUserRewardsData();
+
+    // debug
+      if(this.destinationPage == null){
+        this.destinationPage = 'Rewards';
+      }
+
+      switch(this.destinationPage){
+        case 'Rewards':
+          this.navCtrl.push("RewardsPage");
+        break;
+        case 'OpenMyDoor':
+
+        break;
+      }
+    } else {
+      // handle no session error
+      // show no session error or redirect back natively or something
     }
   }
 
@@ -124,6 +135,14 @@ export class HomePage {
     let dataStatus = 0;
 
 console.log(this.userRewardTrackInfo);
+
+    let debugString = 
+    "Levels = " + this.userRewardTrackInfo.hasLevels + "\n" +
+    "Levels Size = " + this.userRewardTrackInfo.trackLevels.length + "\n" +
+    "Points = " + this.userRewardTrackInfo.hasRedeemableRewards + "\n" +
+    "Points Size = " + this.userRewardTrackInfo.redeemableRewards.length + "\n";
+
+    console.log(debugString);
 
     if (this.userRewardTrackInfo == null) {
       dataStatus = 1;
@@ -158,45 +177,45 @@ console.log(this.userRewardTrackInfo);
       // on opt in accepted, call rewardsDataManager.getUserRewardData() to update the data app wide (event)
     }
 
-    switch (dataStatus) {
-      case 0: // normal
-      // do nothing
-        break;
-      case 1: // null data
-      this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
-      ExceptionManager.showException(this.events, {
-        displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
-        messageInfo: {
-          title: "That's odd...",
-          message: "There was a problem with your Rewards information and we're having trouble reading it.",
-          positiveButtonTitle: "RETRY",
-          positiveButtonHandler: () => {
-            this.rewardsDataManager.getUserRewardsData();
-          },
-          negativeButtonTitle: "CLOSE",
-          negativeButtonHandler: () => {
-            this.platform.exitApp();
-          }
-        }
-      });
-      return;
-      case 2: // levels only, no levels
-      case 3: // level and points, no levels or points
-      case 4: // points only, no points
-      this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
-      ExceptionManager.showException(this.events, {
-        displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
-        messageInfo: {
-          title: "That's odd...",
-          message: "It appears that Rewards has been misconfigured by your Institution.",
-          positiveButtonTitle: "CLOSE",
-          positiveButtonHandler: () => {
-            this.platform.exitApp();
-          }
-        }
-      });
-      return;
-    }
+    // switch (dataStatus) {
+    //   case 0: // normal
+    //   // do nothing
+    //     break;
+    //   case 1: // null data
+    //   this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
+    //   ExceptionManager.showException(this.events, {
+    //     displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
+    //     messageInfo: {
+    //       title: "That's odd...",
+    //       message: "There was a problem with your Rewards information and we're having trouble reading it.",
+    //       positiveButtonTitle: "RETRY",
+    //       positiveButtonHandler: () => {
+    //         this.rewardsDataManager.getUserRewardsData();
+    //       },
+    //       negativeButtonTitle: "CLOSE",
+    //       negativeButtonHandler: () => {
+    //         this.platform.exitApp();
+    //       }
+    //     }
+    //   });
+    //   return;
+    //   case 2: // levels only, no levels
+    //   case 3: // level and points, no levels or points
+    //   case 4: // points only, no points
+    //   this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
+    //   ExceptionManager.showException(this.events, {
+    //     displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
+    //     messageInfo: {
+    //       title: "That's odd...",
+    //       message: "It appears that Rewards has been misconfigured by your Institution.",
+    //       positiveButtonTitle: "CLOSE",
+    //       positiveButtonHandler: () => {
+    //         this.platform.exitApp();
+    //       }
+    //     }
+    //   });
+    //   return;
+    // }
 
     // unsubscribe from event because we have the data and no longer need it in the Home tabs page
     this.events.unsubscribe(RewardsDataManager.DATA_USERREWARDTRACKINFO_UPDATED);

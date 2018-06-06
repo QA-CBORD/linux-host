@@ -54,9 +54,7 @@ export function createTranslateLoader(http: HttpClient) {
     IonicApp
   ],
   entryComponents: [
-    MyApp,
-    RewardDetailsPage
- 
+    MyApp, 
   ],
   providers: [
     StatusBar,

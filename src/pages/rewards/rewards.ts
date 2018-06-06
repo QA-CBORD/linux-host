@@ -4,25 +4,29 @@ import { AlertController } from 'ionic-angular';
 import { Chart } from 'chart.js';
 import { TranslateService } from "@ngx-translate/core";
 
+import { ArrayObservable } from 'rxjs/observable/ArrayObservable';
+
+import * as Globals from '../../app/app.global';
+
+import { GETService } from '../../providers/get-service/get-service';
 import { RewardsDataManager } from '../../providers/reward-data-manager/reward-data-manager';
 import { MessageResponse } from '../../models/service/message-response.interface';
 import { RewardService } from '../../providers/reward-service/reward-service';
 import { UserRewardTrackInfoInfoList, UserRewardTrackInfo, UserTrackLevelInfo, ClaimableRewardInfo } from '../../models/rewards/rewards.interface'
 import { RewardDetailsPage } from '../reward-details/reward-details';
-import { GETService } from '../../providers/get-service/get-service';
 import { AccordionListOptionModel } from '../../shared/accordion-list/models/accordionlist-option-model';
 import { AccordionListSettings } from '../../shared/accordion-list/models/accordionlist-settings';
-import { ArrayObservable } from 'rxjs/observable/ArrayObservable';
+import { ExceptionManager } from '../../providers/exception-manager/exception-manager';
 
 
 
 @IonicPage({
 })
 @Component({
-  selector: 'page-rewards-progress',
-  templateUrl: 'rewards-progress.html',
+  selector: 'page-rewards',
+  templateUrl: 'rewards.html',
 })
-export class RewardsProgressPage {
+export class RewardsPage {
 
   // Options to show in the SideMenuComponent
   public options: Array<AccordionListOptionModel>;
@@ -58,7 +62,12 @@ export class RewardsProgressPage {
   atMaxLevel: boolean = false;
   nextLevel: number = 0;
   currentProgressPercentage: number = 0;
+
   userRewardTrackInfo: UserRewardTrackInfo;
+
+  bShowLevels: boolean = false;
+  bShowPoints: boolean = false;
+
   detailsActiveList: Map<string, UserTrackLevelInfo> = new Map();
   levelClaimedList: Map<string, number> = new Map();
 
@@ -71,16 +80,41 @@ export class RewardsProgressPage {
     public rewardsDataManager: RewardsDataManager,
     private popoverCtrl: PopoverController,
     private translate: TranslateService,
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
+    private platform: Platform
   ) {
     events.subscribe(RewardsDataManager.DATA_USERREWARDTRACKINFO_UPDATED, (userRewardTrackInfo) => {
       if (userRewardTrackInfo) {
         this.userRewardTrackInfo = userRewardTrackInfo;
-        this.calculatePercentageToNextLevel();
-        this.createProgressChart();
-        this.populateLevelList();
-        this.populatePointsList();
-        this.rewardType = 'experience';
+
+        if (this.userRewardTrackInfo.userOptInStatus == 0) {
+          // show opt in with option to exit
+          ExceptionManager.showException(this.events, {
+            displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
+            messageInfo: {
+              title: "Rewards Opt-In",
+              message: "Would you like to use GET Rewards?",
+              positiveButtonTitle: "YES",
+              positiveButtonHandler: () => {
+                // MAKE OPT_IN Call
+                this.rewardsDataManager.getUserRewardsData();
+              },
+              negativeButtonTitle: "CLOSE",
+              negativeButtonHandler: () => {
+                this.platform.exitApp();
+              }
+            }
+          });
+          return;
+          // on opt in accepted, call rewardsDataManager.getUserRewardData() to update the data app wide (event)
+        }
+
+        console.log(userRewardTrackInfo);
+
+
+
+        this.handleRewardTrackInfo();
+
       } else {
         // there is no data for some reason
       }
@@ -91,12 +125,92 @@ export class RewardsProgressPage {
     if (GETService.getSessionId() != null) {
       this.rewardsDataManager.getUserRewardsData();
     }
+  }
+
+
+  private handleRewardTrackInfo() {
+
+    // check data for erroneous configurations
+
+    this.bShowLevels = (this.userRewardTrackInfo.hasLevels && this.userRewardTrackInfo.trackLevels.length > 0);
+    this.bShowPoints = (this.userRewardTrackInfo.hasRedeemableRewards && this.userRewardTrackInfo.redeemableRewards.length > 0);
+
+    // 0 = normal
+    // 1 = null data
+    // 2 = levels only, no levels
+    // 3 = levels and points, no levels or points
+    // 4 = points only, no points
+    let dataStatus = 0;
+
+
+
+    switch (dataStatus) {
+      case 0: // normal
+        // do nothing
+        break;
+      case 1: // null data
+        this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
+        ExceptionManager.showException(this.events, {
+          displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
+          messageInfo: {
+            title: "That's odd...",
+            message: "There was a problem with your Rewards information and we're having trouble reading it.",
+            positiveButtonTitle: "RETRY",
+            positiveButtonHandler: () => {
+              this.rewardsDataManager.getUserRewardsData();
+            },
+            negativeButtonTitle: "CLOSE",
+            negativeButtonHandler: () => {
+              this.platform.exitApp();
+            }
+          }
+        });
+        return;
+      case 2: // levels only, no levels
+      case 3: // level and points, no levels or points
+      case 4: // points only, no points
+        this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
+        ExceptionManager.showException(this.events, {
+          displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
+          messageInfo: {
+            title: "That's odd...",
+            message: "It appears that Rewards has been misconfigured by your Institution.",
+            positiveButtonTitle: "CLOSE",
+            positiveButtonHandler: () => {
+              this.platform.exitApp();
+            }
+          }
+        });
+        return;
+    }
+
+    this.calculatePercentageToNextLevel();
+    this.createProgressChart();
+    this.populateLevelList();
+    this.populatePointsList();
+
+
+    // set activated tab
+    if (this.bShowLevels) {
+      this.rewardType = 'experience';
+    } else if (this.bShowPoints) {
+      this.rewardType = 'points';
+    } else {
+      this.rewardType = 'history';
+    }
+
+    this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
 
   }
 
   //#region UI SETUP
 
   createProgressChart() {
+
+    if (!this.bShowLevels) {
+      return;
+    }
+
     this.progressChart = new Chart(this.progressChartCanvas.nativeElement, {
       type: 'doughnut',
       data: {
@@ -121,53 +235,60 @@ export class RewardsProgressPage {
   }
 
   calculatePercentageToNextLevel() {
-    if (this.userRewardTrackInfo) {
-      // check to see if the user is already at max level
-      if (this.userRewardTrackInfo.userLevel == this.userRewardTrackInfo.trackLevels[this.userRewardTrackInfo.trackLevels.length - 1].level) {
-        // at max level
-        this.atMaxLevel = true;
-        this.currentProgressPercentage = 100;
-        this.xpForLevel = 10;
-        this.xpGained = 10;
-        this.nextLevel = this.userRewardTrackInfo.userLevel;
-      } else {
-        // get the required xp of the current level
-        let curLevelXP = 0;
-        if (this.userRewardTrackInfo.trackLevels.length >= this.userRewardTrackInfo.userLevel - 1) {
-          curLevelXP = this.userRewardTrackInfo.trackLevels[this.userRewardTrackInfo.userLevel - 1].requiredPoints;
-        }
-        // Total XP required for the next level
-        let levelRequiredXP = 0;
-        levelRequiredXP = this.userRewardTrackInfo.trackLevels[this.userRewardTrackInfo.userLevel].requiredPoints - curLevelXP;
-        this.nextLevel = this.userRewardTrackInfo.trackLevels[this.userRewardTrackInfo.userLevel].level;
-        this.xpForLevel = levelRequiredXP;
-        this.atMaxLevel = false;
 
-
-        // user progress in next level
-        let userProgressXP = this.userRewardTrackInfo.userExperiencePoints - curLevelXP;
-        this.xpGained = userProgressXP;
-
-        if (levelRequiredXP != 0) { // let's not divid by zero
-          this.currentProgressPercentage = Math.round((userProgressXP / levelRequiredXP) * 100);
-        } else {
-          this.currentProgressPercentage = 0;
-        }
-      }
-
+    if (!this.bShowLevels) {
+      return;
     }
+
+    // check to see if the user is already at max level
+    if (this.userRewardTrackInfo.userLevel == this.userRewardTrackInfo.trackLevels[this.userRewardTrackInfo.trackLevels.length - 1].level) {
+      // at max level
+      this.atMaxLevel = true;
+      this.currentProgressPercentage = 100;
+      this.xpForLevel = 10;
+      this.xpGained = 10;
+      this.nextLevel = this.userRewardTrackInfo.userLevel;
+    } else {
+      // get the required xp of the current level
+      let curLevelXP = 0;
+      if (this.userRewardTrackInfo.trackLevels.length >= this.userRewardTrackInfo.userLevel - 1) {
+        curLevelXP = this.userRewardTrackInfo.trackLevels[this.userRewardTrackInfo.userLevel - 1].requiredPoints;
+      }
+      // Total XP required for the next level
+      let levelRequiredXP = 0;
+      levelRequiredXP = this.userRewardTrackInfo.trackLevels[this.userRewardTrackInfo.userLevel].requiredPoints - curLevelXP;
+      this.nextLevel = this.userRewardTrackInfo.trackLevels[this.userRewardTrackInfo.userLevel].level;
+      this.xpForLevel = levelRequiredXP;
+      this.atMaxLevel = false;
+
+
+      // user progress in next level
+      let userProgressXP = this.userRewardTrackInfo.userExperiencePoints - curLevelXP;
+      this.xpGained = userProgressXP;
+
+      if (levelRequiredXP != 0) { // let's not divid by zero
+        this.currentProgressPercentage = Math.round((userProgressXP / levelRequiredXP) * 100);
+      } else {
+        this.currentProgressPercentage = 0;
+      }
+    }
+
+
 
   }
 
   private populateLevelList() {
-    if (!this.userRewardTrackInfo) {
+
+    if (!this.bShowLevels) {
       return;
     }
+
     this.options = new Array<AccordionListOptionModel>();
 
     let index = 0;
 
     while (index < this.userRewardTrackInfo.trackLevels.length) {
+      console.log("Add Level Item");
       let iIndex = 0;
       let newSubOptions = new Array<AccordionListOptionModel>();
       while (iIndex < this.userRewardTrackInfo.trackLevels[index].userClaimableRewards.length) {
@@ -197,7 +318,8 @@ export class RewardsProgressPage {
   }
 
   private populatePointsList() {
-    if (!this.userRewardTrackInfo) {
+
+    if (!this.bShowPoints) {
       return;
     }
 
@@ -216,6 +338,7 @@ export class RewardsProgressPage {
       // });
       // iIndex++;
       // }
+      console.log("Add Points Item");
       this.pointsOptions.push({
         displayName: `${this.userRewardTrackInfo.redeemableRewards[index].name}      ${this.userRewardTrackInfo.redeemableRewards[index].pointCost} Points`,
         subItems: [{
@@ -247,9 +370,9 @@ export class RewardsProgressPage {
   openItemInfo(claimableItem: ClaimableRewardInfo, redeemed: boolean) {
     // let rdModal = this.modalCtrl.create(RewardDetailsPage, {rewardInfo: claimableItem, bIsRedeemed: redeemed});
     // rdModal.present();
-    let rdPopover = this.popoverCtrl.create(RewardDetailsPage, {rewardInfo: claimableItem, bIsRedeemed: redeemed});    
+    let rdPopover = this.popoverCtrl.create(RewardDetailsPage, { rewardInfo: claimableItem, bIsRedeemed: redeemed });
     rdPopover.present();//{animate: false});
-    
+
   }
 
   //#endregion

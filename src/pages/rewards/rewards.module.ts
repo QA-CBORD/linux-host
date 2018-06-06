@@ -1,16 +1,16 @@
 import { NgModule } from '@angular/core';
 import { IonicPageModule } from 'ionic-angular';
-import { RewardsProgressPage } from './rewards-progress';
+import { RewardsPage } from './rewards';
 import { AccordionListContentComponent } from '../../shared/accordion-list/accordionlist-content.component';
 import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
   declarations: [
-    RewardsProgressPage,
+    RewardsPage,
     AccordionListContentComponent,
   ],
   imports: [
-    IonicPageModule.forChild(RewardsProgressPage),
+    IonicPageModule.forChild(RewardsPage),
     TranslateModule.forChild(),
 
 
