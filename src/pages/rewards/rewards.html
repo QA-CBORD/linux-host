@@ -1,12 +1,7 @@
-<!-- <ion-header>
-    <ion-navbar color="primary">
-        <ion-title>GET Rewards</ion-title>
-    </ion-navbar>
-</ion-header> -->
 <ion-content>
     <div class="progress_dashboard_div_header">
         <ion-grid *ngIf='userRewardTrackInfo'>
-            <ion-row padding>
+            <ion-row padding align-items-center>
                 <ion-col col-100 *ngIf='userRewardTrackInfo.hasLevels'>
                     <div class="progress_chart progress_col">
                         <canvas #progressChartCanvas></canvas>
@@ -21,44 +16,36 @@
                     </div>
                 </ion-col>
                 <ion-col>
-                    <div class="div_center_vertical">
-                        <div class="progress_h1">{{userRewardTrackInfo.userExperiencePoints}} {{'REWARD_PROGRESS.XP' | translate}}</div>
-                        <div class="progress_h3">{{'REWARD_PROGRESS.TOTAL' | translate}}</div>
-                    </div>
+                    <h2 class="progress_h1">{{userRewardTrackInfo.userExperiencePoints}} {{'REWARD_PROGRESS.XP' | translate}}</h2>
+                    <h3 class="progress_h3">{{'REWARD_PROGRESS.TOTAL' | translate}}</h3>
                 </ion-col>
                 <ion-col *ngIf='userRewardTrackInfo.hasLevels'>
-                    <div class="div_center_vertical">
-                        <div class="progress_h1">{{userRewardTrackInfo.trackLevels[userRewardTrackInfo.userLevel].name}}</div>
-                        <div class="progress_h3">{{'REWARD_PROGRESS.LEVEL' | translate}} {{userRewardTrackInfo.userLevel}}</div>
-                    </div>
+                    <h2 class="progress_h1">{{userRewardTrackInfo.trackLevels[userRewardTrackInfo.userLevel].name}}</h2>
+                    <h3 class="progress_h3">{{'REWARD_PROGRESS.LEVEL' | translate}} {{userRewardTrackInfo.userLevel}}</h3>
                 </ion-col>
                 <ion-col>
-                    <div class="div_center_vertical">
-                        <div class="progress_h1">{{userRewardTrackInfo.trackName}}</div>
-                        <div class="progress_h3">{{'REWARD_PROGRESS.ENDS' | translate}} {{userRewardTrackInfo.trackEndDate | date: 'MMMM d, yyyy'}}</div>
-                        <div class="progress_h3">{{userRewardTrackInfo.trackDescription}}</div>
-                    </div>
+                    <h2 class="progress_h1">{{userRewardTrackInfo.trackName}}</h2>
+                    <h3 class="progress_h3">{{'REWARD_PROGRESS.ENDS' | translate}} {{userRewardTrackInfo.trackEndDate | date: 'MMMM d, yyyy'}}</h3>
+                    <h3 class="progress_h3">{{userRewardTrackInfo.trackDescription}}</h3>
                 </ion-col>
                 <ion-col>
-                    <div class="div_center_vertical">
-                        <div class="progress_h1">{{userRewardTrackInfo.userCurrentPoints}} {{'REWARD_PROGRESS.POINTS' | translate}}</div>
-                        <div class="progress_h3">{{'REWARD_PROGRESS.USABLE' | translate}}</div>
-                    </div>
+                    <h2 class="progress_h1">{{userRewardTrackInfo.userCurrentPoints}} {{'REWARD_PROGRESS.POINTS' | translate}}</h2>
+                    <h3 class="progress_h3">{{'REWARD_PROGRESS.USABLE' | translate}}</h3>
                 </ion-col>
             </ion-row>
         </ion-grid>
     </div>
     <div style="margin-top: -20%; margin-right: 5%; margin-left: 5%;">
         <div style="margin-right: 10%; margin-left: 10%;">
-            <ion-segment  *ngIf='userRewardTrackInfo' [(ngModel)]="rewardType">
+            <ion-segment *ngIf='userRewardTrackInfo' [(ngModel)]="rewardType">
                 <ion-segment-button *ngIf='bShowLevels' value="experience">
-                        {{'REWARD_PROGRESS.LEVELS' | translate}}
+                    {{'REWARD_PROGRESS.LEVELS' | translate}}
                 </ion-segment-button>
-                <ion-segment-button  *ngIf='bShowPoints' value="points">
-                        {{'REWARD_PROGRESS.POINTS' | translate}}
+                <ion-segment-button *ngIf='bShowPoints' value="points">
+                    {{'REWARD_PROGRESS.POINTS' | translate}}
                 </ion-segment-button>
                 <ion-segment-button value="history">
-                        {{'REWARD_PROGRESS.HISTORY' | translate}}
+                    {{'REWARD_PROGRESS.HISTORY' | translate}}
                 </ion-segment-button>
             </ion-segment>
         </div>
