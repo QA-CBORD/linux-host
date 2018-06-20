@@ -1,20 +1,14 @@
-import { MyApp } from './../../app/app.component';
-import { Component, ViewChild } from '@angular/core';
-import { IonicPage, NavController, NavParams, Tabs, Tab, Events, Platform } from 'ionic-angular';
-import { Storage } from '@ionic/storage';
+import { Component } from '@angular/core';
+import { IonicPage, NavController, NavParams, Events, Platform } from 'ionic-angular';
 
 import * as Globals from '../../app/app.global';
 
 import { GETService } from './../../providers/get-service/get-service';
 import { AuthService } from './../../providers/auth-service/auth-service';
 
-import { RewardsPage } from '../rewards/rewards';
 import { SessionService } from '../../providers/session-service/session-service';
 import { RewardsDataManager } from '../../providers/reward-data-manager/reward-data-manager';
-import { MessageResponse } from '../../models/service/message-response.interface';
-import { UserRewardTrackInfoInfoList, UserRewardTrackInfo, UserTrackLevelInfo, UserFulfillmentActivityInfo } from '../../models/rewards/rewards.interface'
-import { MenuOptionModel } from '../../shared/side-menu-content/models/menu-option-model';
-import { ArrayObservable } from 'rxjs/observable/ArrayObservable';
+import { UserRewardTrackInfo } from '../../models/rewards/rewards.interface'
 import { ExceptionManager } from '../../providers/exception-manager/exception-manager';
 
 @IonicPage({
@@ -48,7 +42,7 @@ export class HomePage {
     this.sessionToken = navParams.get('sessionToken');
     this.destinationPage = navParams.get('destinationPage');
 
-    events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Getting Datas..." });
+    events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Loading content" });
 
     
 
@@ -65,6 +59,22 @@ export class HomePage {
         }),
         ((error) => {
           // error getting session with session sharing functionality
+          // use proper method to parse the message and determine proper message
+          ExceptionManager.showException(this.events, {
+            displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
+            messageInfo: {
+              title: "No Session",
+              message: error,
+              positiveButtonTitle: "RETRY",
+              positiveButtonHandler: () => {
+                this.determinNewSession();
+              },
+              negativeButtonTitle: "CLOSE",
+              negativeButtonHandler: () => {
+                this.platform.exitApp();
+              }
+            }
+          });
         })
       );
     } else {
@@ -106,20 +116,36 @@ export class HomePage {
 
     // debug
       if(this.destinationPage == null){
-        this.destinationPage = 'Rewards';
+        this.destinationPage = 'openmydoor';
       }
 
       switch(this.destinationPage){
-        case 'Rewards':
+        case 'rewards':
           this.navCtrl.push("RewardsPage");
         break;
-        case 'OpenMyDoor':
-
+        case 'openmydoor':
+        this.navCtrl.push("OpenMyDoorPage");
         break;
       }
     } else {
       // handle no session error
       // show no session error or redirect back natively or something
+      // use proper method to parse the message and determine proper message
+      ExceptionManager.showException(this.events, {
+        displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
+        messageInfo: {
+          title: "No Session",
+          message: "Handling session response and the session data is null",
+          positiveButtonTitle: "RETRY",
+          positiveButtonHandler: () => {
+            this.determinNewSession();
+          },
+          negativeButtonTitle: "CLOSE",
+          negativeButtonHandler: () => {
+            this.platform.exitApp();
+          }
+        }
+      });
     }
   }
 
@@ -177,53 +203,8 @@ console.log(this.userRewardTrackInfo);
       // on opt in accepted, call rewardsDataManager.getUserRewardData() to update the data app wide (event)
     }
 
-    // switch (dataStatus) {
-    //   case 0: // normal
-    //   // do nothing
-    //     break;
-    //   case 1: // null data
-    //   this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
-    //   ExceptionManager.showException(this.events, {
-    //     displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
-    //     messageInfo: {
-    //       title: "That's odd...",
-    //       message: "There was a problem with your Rewards information and we're having trouble reading it.",
-    //       positiveButtonTitle: "RETRY",
-    //       positiveButtonHandler: () => {
-    //         this.rewardsDataManager.getUserRewardsData();
-    //       },
-    //       negativeButtonTitle: "CLOSE",
-    //       negativeButtonHandler: () => {
-    //         this.platform.exitApp();
-    //       }
-    //     }
-    //   });
-    //   return;
-    //   case 2: // levels only, no levels
-    //   case 3: // level and points, no levels or points
-    //   case 4: // points only, no points
-    //   this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
-    //   ExceptionManager.showException(this.events, {
-    //     displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
-    //     messageInfo: {
-    //       title: "That's odd...",
-    //       message: "It appears that Rewards has been misconfigured by your Institution.",
-    //       positiveButtonTitle: "CLOSE",
-    //       positiveButtonHandler: () => {
-    //         this.platform.exitApp();
-    //       }
-    //     }
-    //   });
-    //   return;
-    // }
-
     // unsubscribe from event because we have the data and no longer need it in the Home tabs page
     this.events.unsubscribe(RewardsDataManager.DATA_USERREWARDTRACKINFO_UPDATED);
-
-    if (this.userRewardTrackInfo.userOptInStatus == 0) {
-      // show opt in with option to exit
-      // on opt in accepted, call rewardsDataManager.getUserRewardData() to update the data app wide (event)
-    }
 
     console.log("Update rewards data");
 

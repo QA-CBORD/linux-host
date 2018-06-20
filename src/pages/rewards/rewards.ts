@@ -10,9 +10,8 @@ import * as Globals from '../../app/app.global';
 
 import { GETService } from '../../providers/get-service/get-service';
 import { RewardsDataManager } from '../../providers/reward-data-manager/reward-data-manager';
-import { MessageResponse } from '../../models/service/message-response.interface';
 import { RewardService } from '../../providers/reward-service/reward-service';
-import { UserRewardTrackInfoInfoList, UserRewardTrackInfo, UserTrackLevelInfo, ClaimableRewardInfo } from '../../models/rewards/rewards.interface'
+import { UserRewardTrackInfo, UserTrackLevelInfo, ClaimableRewardInfo } from '../../models/rewards/rewards.interface'
 import { RewardDetailsPage } from '../reward-details/reward-details';
 import { AccordionListOptionModel } from '../../shared/accordion-list/models/accordionlist-option-model';
 import { AccordionListSettings } from '../../shared/accordion-list/models/accordionlist-settings';

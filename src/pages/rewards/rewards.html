@@ -1,5 +1,5 @@
 <ion-content>
-    <div class="progress_dashboard_div_header">
+    <div class="dashboard_div_header">
         <ion-grid *ngIf='userRewardTrackInfo'>
             <ion-row padding align-items-center>
                 <ion-col col-100 *ngIf='userRewardTrackInfo.hasLevels'>
@@ -16,20 +16,20 @@
                     </div>
                 </ion-col>
                 <ion-col>
-                    <h2 class="progress_h1">{{userRewardTrackInfo.userExperiencePoints}} {{'REWARD_PROGRESS.XP' | translate}}</h2>
+                    <h2 class="rewards_h1">{{userRewardTrackInfo.userExperiencePoints}} {{'REWARD_PROGRESS.XP' | translate}}</h2>
                     <h3 class="progress_h3">{{'REWARD_PROGRESS.TOTAL' | translate}}</h3>
                 </ion-col>
                 <ion-col *ngIf='userRewardTrackInfo.hasLevels'>
-                    <h2 class="progress_h1">{{userRewardTrackInfo.trackLevels[userRewardTrackInfo.userLevel].name}}</h2>
+                    <h2 class="rewards_h1">{{userRewardTrackInfo.trackLevels[userRewardTrackInfo.userLevel].name}}</h2>
                     <h3 class="progress_h3">{{'REWARD_PROGRESS.LEVEL' | translate}} {{userRewardTrackInfo.userLevel}}</h3>
                 </ion-col>
                 <ion-col>
-                    <h2 class="progress_h1">{{userRewardTrackInfo.trackName}}</h2>
+                    <h2 class="rewards_h1">{{userRewardTrackInfo.trackName}}</h2>
                     <h3 class="progress_h3">{{'REWARD_PROGRESS.ENDS' | translate}} {{userRewardTrackInfo.trackEndDate | date: 'MMMM d, yyyy'}}</h3>
                     <h3 class="progress_h3">{{userRewardTrackInfo.trackDescription}}</h3>
                 </ion-col>
                 <ion-col>
-                    <h2 class="progress_h1">{{userRewardTrackInfo.userCurrentPoints}} {{'REWARD_PROGRESS.POINTS' | translate}}</h2>
+                    <h2 class="rewards_h1">{{userRewardTrackInfo.userCurrentPoints}} {{'REWARD_PROGRESS.POINTS' | translate}}</h2>
                     <h3 class="progress_h3">{{'REWARD_PROGRESS.USABLE' | translate}}</h3>
                 </ion-col>
             </ion-row>

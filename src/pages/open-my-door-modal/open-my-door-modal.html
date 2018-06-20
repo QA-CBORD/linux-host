@@ -1,0 +1,27 @@
+<ion-header no-border>
+    <ion-buttons start>
+        <button class="button-noshadow" ion-button icon-only large (click)="closeModal()">
+            <ion-icon name="close">
+            </ion-icon>
+        </button>
+    </ion-buttons>
+</ion-header>
+<ion-content class="modal_background" padding>
+    <ion-card *ngIf="currentSelectedLocation">
+        <ion-card-content>
+            <h2>{{currentSelectedLocation.name}}</h2>
+            <h3>{{currentSelectedLocation.description}}</h3>
+            <h3>{{currentSelectedLocation.distance}}</h3>
+            <button ion-button round (click)="activateSelected()">
+                Activate
+            </button>
+        </ion-card-content>
+    </ion-card>
+
+</ion-content>
+
+<!-- <ion-footer>
+    <ion-buttons end>
+        <button ion-button (click)="closeModal()">Close</button>
+    </ion-buttons>
+</ion-footer> -->

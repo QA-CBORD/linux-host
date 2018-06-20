@@ -1,13 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Observable } from "rxjs/Observable";
 import { Events } from 'ionic-angular';
-import { Storage } from '@ionic/storage';
 
-import { AuthService } from '../../providers/auth-service/auth-service';
 import { SessionService } from '../../providers/session-service/session-service';
-import { MessageResponse } from '../../models/service/message-response.interface';
 import { RewardService } from '../../providers/reward-service/reward-service';
-import { UserRewardTrackInfoInfoList, UserRewardTrackInfo, UserTrackLevelInfo, UserFulfillmentActivityInfo } from '../../models/rewards/rewards.interface'
+import { UserRewardTrackInfo, UserFulfillmentActivityInfo } from '../../models/rewards/rewards.interface'
 import { DataCache } from '../data-cache/data-cache';
 
 @Injectable()
@@ -19,7 +15,12 @@ export class RewardsDataManager {
   public userRewardTrackInfo: UserRewardTrackInfo = null;
   public userFulfillmentActivityInfo: UserFulfillmentActivityInfo[] = null;
 
-  constructor(public events: Events, public sessionService: SessionService, public rewardService: RewardService, public dataCache: DataCache) {
+  constructor(
+    public events: Events,
+    public sessionService: SessionService, 
+    public rewardService: RewardService,
+    public dataCache: DataCache
+  ) {
 
   }
 

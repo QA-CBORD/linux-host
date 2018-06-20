@@ -1,0 +1,30 @@
+page-open-my-door-modal {
+
+    h1, h2, h3, h4, h5, h6, p {        
+        padding: 0px;
+        margin: 0px;
+    }
+
+    .modal_background {
+        background-color: #005CB9;
+    }
+
+    .circular_raised_div {
+        height: 10vw; 
+        width: 10vw; 
+        background: #fff;
+       border: 2px solid #fff;
+       border-radius: 50%;
+       box-shadow: 0 0 5px gray;
+       display: inline-block;
+       margin-left: auto;
+       margin-right: auto;
+   }
+
+   .button-noshadow {
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+	box-shadow: none;
+	}
+
+}

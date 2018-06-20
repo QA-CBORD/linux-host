@@ -1,17 +1,18 @@
+import { OpenMyDoorModalPage } from './../pages/open-my-door-modal/open-my-door-modal';
 
 import { BrowserModule } from '@angular/platform-browser';
 import { ErrorHandler, NgModule } from '@angular/core';
 import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { StatusBar } from '@ionic-native/status-bar';
-import { Http } from '@angular/http';
+import {HttpClientModule, HttpClient} from '@angular/common/http';
+import {TranslateModule, TranslateLoader} from '@ngx-translate/core';
+import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 import { HttpModule } from '@angular/http';
-import { TranslateLoader, TranslateModule } from "@ngx-translate/core";
-import { TranslateHttpLoader } from "@ngx-translate/http-loader";
-import { HttpClient, HttpClientModule } from "@angular/common/http";
+import { Geolocation } from '@ionic-native/geolocation';
 
 import { MyApp } from './app.component';
-import { Storage, IonicStorageModule } from '@ionic/storage';
+import { IonicStorageModule } from '@ionic/storage';
 
 import { GETService } from '../providers/get-service/get-service';
 import { AuthService } from '../providers/auth-service/auth-service';
@@ -24,7 +25,8 @@ import { RewardsDataManager } from '../providers/reward-data-manager/reward-data
 import { ContentServiceProvider } from '../providers/content-service/content-service';
 import { SideMenuContentComponent } from '../shared/side-menu-content/side-menu-content.component';
 import { ExceptionManager } from '../providers/exception-manager/exception-manager';
-import { RewardDetailsPage } from '../pages/reward-details/reward-details';
+import { OpenMyDoorService } from '../providers/open-my-door/open-my-door-service';
+import { OpenMyDoorDataManager } from '../providers/open-my-door-data-manager/open-my-door-data-manager';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
@@ -34,12 +36,13 @@ export function createTranslateLoader(http: HttpClient) {
 @NgModule({
   declarations: [
     MyApp,
-    SideMenuContentComponent
+    SideMenuContentComponent,
+    OpenMyDoorModalPage
   ],
   imports: [
+    HttpModule,
     BrowserModule,
     IonicModule.forRoot(MyApp),
-    HttpModule,
     HttpClientModule,
     IonicStorageModule.forRoot(),
     TranslateModule.forRoot({
@@ -54,7 +57,8 @@ export function createTranslateLoader(http: HttpClient) {
     IonicApp
   ],
   entryComponents: [
-    MyApp, 
+    MyApp,
+    OpenMyDoorModalPage
   ],
   providers: [
     StatusBar,
@@ -67,9 +71,12 @@ export function createTranslateLoader(http: HttpClient) {
     InstService,
     RewardService,
     RewardsDataManager,
+    OpenMyDoorService,
+    OpenMyDoorDataManager,
     ContentServiceProvider,
     DataCache,
-    ExceptionManager
+    ExceptionManager,
+    Geolocation
   ]
 })
 export class AppModule {}
