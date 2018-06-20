@@ -8,6 +8,6 @@ import { OpenMyDoorModalPage } from './open-my-door-modal';
   ],
   imports: [
     IonicPageModule.forChild(OpenMyDoorModalPage),
-  ],
+  ]
 })
 export class OpenMyDoorModalPageModule {}
