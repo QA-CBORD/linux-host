@@ -3,8 +3,6 @@ version: 0.2
 env:
   variables:
     RPM_VERSION: "2.43.3"
-  parameter-store: 
-    BUILD_NUMBER: "build-config-cbord-student-build-number"
 
 phases:
   install:
