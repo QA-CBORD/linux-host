@@ -27,6 +27,7 @@ import { SideMenuContentComponent } from '../shared/side-menu-content/side-menu-
 import { ExceptionManager } from '../providers/exception-manager/exception-manager';
 import { OpenMyDoorService } from '../providers/open-my-door/open-my-door-service';
 import { OpenMyDoorDataManager } from '../providers/open-my-door-data-manager/open-my-door-data-manager';
+import { OpenMyDoorModalPageModule } from '../pages/open-my-door-modal/open-my-door-modal.module';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
@@ -36,8 +37,7 @@ export function createTranslateLoader(http: HttpClient) {
 @NgModule({
   declarations: [
     MyApp,
-    SideMenuContentComponent,
-    OpenMyDoorModalPage
+    SideMenuContentComponent
   ],
   imports: [
     HttpModule,
@@ -52,6 +52,7 @@ export function createTranslateLoader(http: HttpClient) {
           deps: [HttpClient]
       }
   }),
+  OpenMyDoorModalPageModule
 ],
   bootstrap: [
     IonicApp
