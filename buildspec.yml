@@ -2,7 +2,7 @@ version: 0.2
 
 env:
   variables:
-    RPM_VERSION: "2.44.9"
+    RPM_VERSION: "2.44.10"
 
 phases:
   install:
@@ -12,6 +12,8 @@ phases:
       - yum install nodejs -y
       - yum install npm -y
       - yum install rpm-build -y
+      - npm cache clean
+      - npm config set registry "http://registry.npmjs.org/"
       - npm install -g cordova ionic
   pre_build:
     commands:
@@ -22,7 +24,7 @@ phases:
       - echo **** Performing Ionic build ****
       
       - npm install
-      - ionic build --prod
+      - ionic build #--prod
 
       - mkdir student
       - cp -r ./www/* ./student
