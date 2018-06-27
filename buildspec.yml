@@ -2,7 +2,7 @@ version: 0.2
 
 env:
   variables:
-    RPM_VERSION: "2.44.8"
+    RPM_VERSION: "2.44.9"
 
 phases:
   install:
@@ -12,7 +12,6 @@ phases:
       - yum install nodejs -y
       - yum install npm -y
       - yum install rpm-build -y
-      - npm i -g npm@latest
       - npm install -g cordova ionic
   pre_build:
     commands:
