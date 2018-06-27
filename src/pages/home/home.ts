@@ -35,86 +35,86 @@ export class HomePage {
     private platform: Platform
   ) {
 
-    this.platform.ready().then(()=>{
+    this.platform.ready().then(() => {
       console.log("Platform ready home");
       // hide the split pane here becuase we don't need the navigation menu
-    events.publish(Globals.Events.SIDEPANE_ENABLE, false);
+      events.publish(Globals.Events.SIDEPANE_ENABLE, false);
 
-    // commented for debugging... uncomment for final build
-    this.sessionToken = navParams.get('sessionToken');
-    this.destinationPage = navParams.get('destinationPage');
+      // commented for debugging... uncomment for final build
+      this.sessionToken = navParams.get('sessionToken');
+      this.destinationPage = navParams.get('destinationPage');
 
-    events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Loading content" });
-    this.determinNewSession();
+      events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Loading content" });
+      this.determinNewSession();
     })
-    .catch((error)=>{
-      console.log(error);
-      
-    });
-    
+      .catch((error) => {
+        console.log(error);
 
-    
+      });
 
-    
+
+
+
+
   }
 
   private determinNewSession() {
     // use session Sharing key passed in URL to get new session
-    if (this.sessionToken != null) {
-      this.sessionService.getSession(this.sessionToken).subscribe(
-        ((data: string) => {
-          GETService.setSessionId(data);
-          this.handleSessionResponse(data)
-        }),
-        ((error) => {
-          // error getting session with session sharing functionality
-          // use proper method to parse the message and determine proper message
-          ExceptionManager.showException(this.events, {
-            displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
-            messageInfo: {
-              title: "No Session",
-              message: error,
-              positiveButtonTitle: "RETRY",
-              positiveButtonHandler: () => {
-                this.determinNewSession();
-              },
-              negativeButtonTitle: "CLOSE",
-              negativeButtonHandler: () => {
-                this.platform.exitApp();
-              }
+    // if (this.sessionToken != null) {
+    //   this.sessionService.getSession(this.sessionToken).subscribe(
+    //     ((data: string) => {
+    //       GETService.setSessionId(data);
+    //       this.handleSessionResponse(data)
+    //     }),
+    //     ((error) => {
+    //       // error getting session with session sharing functionality
+    //       // use proper method to parse the message and determine proper message
+    //       ExceptionManager.showException(this.events, {
+    //         displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
+    //         messageInfo: {
+    //           title: "No Session",
+    //           message: error,
+    //           positiveButtonTitle: "RETRY",
+    //           positiveButtonHandler: () => {
+    //             this.determinNewSession();
+    //           },
+    //           negativeButtonTitle: "CLOSE",
+    //           negativeButtonHandler: () => {
+    //             this.platform.exitApp();
+    //           }
+    //         }
+    //       });
+    //     })
+    //   );
+    // } else {
+    // added else statement for debugging... remove for final build
+    // used to get session id from hardcoded login for testing
+    console.log("Debug, getting session");
+    this.authService.authenticateUser(null).subscribe(
+      sessionId => {
+        GETService.setSessionId(sessionId);
+        this.handleSessionResponse(sessionId);
+      },
+      error => {
+        // use proper method to parse the message and determine proper message
+        ExceptionManager.showException(this.events, {
+          displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
+          messageInfo: {
+            title: "No Session",
+            message: error,
+            positiveButtonTitle: "RETRY",
+            positiveButtonHandler: () => {
+              this.determinNewSession();
+            },
+            negativeButtonTitle: "CLOSE",
+            negativeButtonHandler: () => {
+              this.platform.exitApp();
             }
-          });
-        })
-      );
-    } else {
-      // added else statement for debugging... remove for final build
-      // used to get session id from hardcoded login for testing
-      console.log("Debug, getting session");
-      this.authService.authenticateUser(null).subscribe(
-        sessionId => {
-          GETService.setSessionId(sessionId);
-          this.handleSessionResponse(sessionId);
-        },
-        error => {
-          // use proper method to parse the message and determine proper message
-          ExceptionManager.showException(this.events, {
-            displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
-            messageInfo: {
-              title: "No Session",
-              message: error,
-              positiveButtonTitle: "RETRY",
-              positiveButtonHandler: () => {
-                this.determinNewSession();
-              },
-              negativeButtonTitle: "CLOSE",
-              negativeButtonHandler: () => {
-                this.platform.exitApp();
-              }
-            }
-          });
-        }
-      )
-    }
+          }
+        });
+      }
+    )
+    // }
 
 
   }
@@ -123,18 +123,18 @@ export class HomePage {
     // on new session, retrieve data
     if (session) {
 
-    // debug
-      if(this.destinationPage == null){
+      // debug
+      if (this.destinationPage == null) {
         this.destinationPage = 'openmydoor';
       }
 
-      switch(this.destinationPage){
+      switch (this.destinationPage) {
         case 'rewards':
           this.navCtrl.push("RewardsPage");
-        break;
+          break;
         case 'openmydoor':
-        this.navCtrl.push("OpenMyDoorPage");
-        break;
+          this.navCtrl.push("OpenMyDoorPage");
+          break;
       }
     } else {
       // handle no session error
@@ -169,13 +169,13 @@ export class HomePage {
     // 4 = points only, no points
     let dataStatus = 0;
 
-console.log(this.userRewardTrackInfo);
+    console.log(this.userRewardTrackInfo);
 
-    let debugString = 
-    "Levels = " + this.userRewardTrackInfo.hasLevels + "\n" +
-    "Levels Size = " + this.userRewardTrackInfo.trackLevels.length + "\n" +
-    "Points = " + this.userRewardTrackInfo.hasRedeemableRewards + "\n" +
-    "Points Size = " + this.userRewardTrackInfo.redeemableRewards.length + "\n";
+    let debugString =
+      "Levels = " + this.userRewardTrackInfo.hasLevels + "\n" +
+      "Levels Size = " + this.userRewardTrackInfo.trackLevels.length + "\n" +
+      "Points = " + this.userRewardTrackInfo.hasRedeemableRewards + "\n" +
+      "Points Size = " + this.userRewardTrackInfo.redeemableRewards.length + "\n";
 
     console.log(debugString);
 
