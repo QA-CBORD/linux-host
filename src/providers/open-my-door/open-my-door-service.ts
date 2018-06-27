@@ -49,7 +49,7 @@ export class OpenMyDoorService extends GETService {
 
   }
 
-  public activateMobileLocation(locationId: string, tranDate: Date, latitude: number, longitude: number, accuracy: number, altitude: number, altAccuracy: number, speed: number, heading: number, sourceInfo: string): Observable<ActivateMobileLocationResult> {
+  public activateMobileLocation(locationId: string, geoData: any, sourceInfo: string): Observable<ActivateMobileLocationResult> {
 
     return Observable.create((observer: any) => {
 
@@ -59,17 +59,26 @@ export class OpenMyDoorService extends GETService {
         return Observable.throw(error);
       }
 
+      let latitude = geoData == null || geoData.coords == null || geoData.coords.latitude == null ? null : geoData.coords.latitude;
+      let longitude = geoData == null || geoData.coords == null || geoData.coords.longitude == null ? null : geoData.coords.longitude;
+      let accuracy = geoData == null || geoData.coords == null || geoData.coords.accuracy == null ? null : geoData.coords.accuracy;
+      let altitude = geoData == null || geoData.coords == null || geoData.coords.altitude == null ? null : geoData.coords.altitude;
+      let altitudeAccuracy = geoData == null || geoData.coords == null || geoData.coords.altitudeAccuracy == null ? null : geoData.coords.altitudeAccuracy;
+      let heading = geoData == null || geoData.coords == null || geoData.coords.heading == null ? null : geoData.coords.heading;
+      let speed = geoData == null || geoData.coords == null || geoData.coords.speed == null ? null : geoData.coords.speed;
+      
+
       let postParams = {
         method: 'activateMobileLocation',
         params: {
           sessionId: GETService.getSessionId(),
           locationId: locationId,
-          tranDate: tranDate,
+          tranDate: new Date().toISOString(),
           latitude: latitude,
           longitude: longitude,
           accuracy: accuracy,
           altitude: altitude,
-          altAccuracy: altAccuracy,
+          altAccuracy: altitudeAccuracy,
           speed: speed,
           heading: heading,
           sourceInfo: sourceInfo

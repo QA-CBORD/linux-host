@@ -1,60 +1,41 @@
 <ion-content>
   <div class="dashboard_div_header">
     <ion-grid padding>
-        <h3 style="margin-top: 10px"class="omd_h3">Select your location</h3>
-      <!-- <ion-row>
-        <h2 class="omd_h3">Current Location:</h2>
-      </ion-row>
-      <ion-row>
-        <h3 class="omd_h4">Room 214</h3>
-      </ion-row>
-      <ion-row>
-        <h4 class="omd_h4">This is a test description</h4>
-      </ion-row> -->
+      <h3 style="margin-top: 10px" class="omd_h3">Select your location</h3>
     </ion-grid>
-
-    
-
   </div>
-  
   <div style="margin-top: -20%; margin-right: 5%; margin-left: 5%;">
-    <div style="margin-right: 10%; margin-left: 10%;">
-        
-    </div>
     <div>
       <ion-card>
-        <ion-card-content>
-          <ion-scroll style="height: 80vh; min-height: 10vh;">
+        <ion-refresher (ionRefresh)="onSwipeRefresh($event)">
+          <ion-refresher-content pullingIcon="arrow-dropdown" pullingText="Pull to update" refreshingSpinner="circles" refreshingText="Updating...">
+          </ion-refresher-content>
+        </ion-refresher>
+
+        <ion-card-content *ngIf="mobileLocationInfo">
+          <ion-scroll style="height: 80vh; min-height: 10vh; white-space: nowrap;" scrollY="true">
             <ion-list>
-              <button ion-item *ngFor='let item of sortedTestData' (click)="locationSelected(item)">
-                <ion-grid>
-                  <ion-row>
-                    <h2 item-start>{{item.name}}</h2>
-                  </ion-row>
-                  <ion-row>
-                    <h6 item-start>{{item.description}}</h6>
-                  </ion-row>
-                </ion-grid>
-                <h4 item-end>{{item.distance}}</h4>
+              <button ion-item *ngFor="let item of mobileLocationInfo" (click)="locationSelected(item)" style="border-bottom: 1px solid #c9c9c9;">
+                <div text-wrap>
+                  <h3>{{item.name}}</h3>
+                </div>
+                <div>
+                  <h4>{{item.locationId}}</h4>
+                </div>
+                <h5 item-end>{{item.distance}}ft</h5>
               </button>
             </ion-list>
           </ion-scroll>
+          <!-- <ion-list [virtualScroll]="mobileLocationInfo" [approxItemHeight]="'500px'" style="height: 80vh; min-height: 10vh;">
+              <ion-item *virtualItem="let item" (click)="locationSelected(item)">
+                <div text-wrap><h3>{{item.name}}</h3></div>
+                <div><h4>{{item.locationId}}</h4></div>
+                <h5 item-end>{{item.distance}}ft</h5>
+              </ion-item>
+            </ion-list> -->
+
         </ion-card-content>
       </ion-card>
     </div>
   </div>
-
-  <ion-fab margin right bottom #fab>
-    <button ion-fab color="primary">
-      <ion-icon name="unlock"></ion-icon>
-    </button>
-    <ion-fab-list side="top">
-      <button ion-fab (click)="unlockDoorClick(fab)">
-        <ion-icon name="key">
-          <div class="label">Unlock</div>
-        </ion-icon>
-      </button>
-    </ion-fab-list>
-  </ion-fab>
-
 </ion-content>
