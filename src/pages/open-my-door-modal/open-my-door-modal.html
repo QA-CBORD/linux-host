@@ -9,19 +9,21 @@
 <ion-content class="modal_background" padding>
     <ion-card *ngIf="currentSelectedLocation">
         <ion-card-content>
-            <h2>{{currentSelectedLocation.name}}</h2>
-            <h3>{{currentSelectedLocation.description}}</h3>
-            <h3>{{currentSelectedLocation.distance}}</h3>
-            <button ion-button round (click)="activateSelected()">
-                Activate
-            </button>
+            <ion-item>
+                <div text-wrap>
+                    <h2>{{currentSelectedLocation.name}}</h2>
+                </div>
+                <div>
+                    <h3>{{currentSelectedLocation.locationId}}</h3>
+                </div>
+                <h3 item-end>{{currentSelectedLocation.distance}}</h3>
+            </ion-item>
+            <ion-item>
+                <button ion-button round item-end (click)="activateSelected()">
+                    Activate
+                </button>
+            </ion-item>
         </ion-card-content>
     </ion-card>
 
 </ion-content>
-
-<!-- <ion-footer>
-    <ion-buttons end>
-        <button ion-button (click)="closeModal()">Close</button>
-    </ion-buttons>
-</ion-footer> -->

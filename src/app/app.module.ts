@@ -10,6 +10,8 @@ import {TranslateModule, TranslateLoader} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 import { HttpModule } from '@angular/http';
 import { Geolocation } from '@ionic-native/geolocation';
+import { Diagnostic } from '@ionic-native/diagnostic';
+import { AndroidPermissions } from '@ionic-native/android-permissions';
 
 import { MyApp } from './app.component';
 import { IonicStorageModule } from '@ionic/storage';
@@ -27,6 +29,8 @@ import { SideMenuContentComponent } from '../shared/side-menu-content/side-menu-
 import { ExceptionManager } from '../providers/exception-manager/exception-manager';
 import { OpenMyDoorService } from '../providers/open-my-door/open-my-door-service';
 import { OpenMyDoorDataManager } from '../providers/open-my-door-data-manager/open-my-door-data-manager';
+
+
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
@@ -76,7 +80,9 @@ export function createTranslateLoader(http: HttpClient) {
     ContentServiceProvider,
     DataCache,
     ExceptionManager,
-    Geolocation
+    Geolocation,
+    Diagnostic,
+    AndroidPermissions
   ]
 })
 export class AppModule {}

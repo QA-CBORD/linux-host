@@ -22,6 +22,9 @@ export class MyApp {
 	@ViewChild(SplitPane) splitPane: SplitPane;
 	@ViewChild(SideMenuContentComponent) sideMenu: SideMenuContentComponent;
 
+	public static readonly EVENT_APP_PAUSE = "event.apppause";
+	public static readonly EVENT_APP_RESUME = "event.appresume";
+
 	private loader: Loading;
 	bShowSplitPane: boolean = true;
 
@@ -62,9 +65,10 @@ export class MyApp {
 
 	initializeApp() {
 		this.platform.ready().then(() => {
-			this.statusBar.styleLightContent();
+			this.statusBar.styleDefault();
 			this.splashScreen.hide();
 
+			this.setupAppStateEvent();
 			this.subscribeToEvents();
 			// Initialize some options
 			//this.initializeOptions();
@@ -78,6 +82,15 @@ export class MyApp {
 
 	}
 
+	private setupAppStateEvent(){
+		this.platform.pause.subscribe(()=>{
+			this.events.publish(MyApp.EVENT_APP_PAUSE, null);
+		});
+		this.platform.resume.subscribe(()=>{
+			this.events.publish(MyApp.EVENT_APP_RESUME, null);
+		});
+	}
+
 	private subscribeToEvents() {
 		this.events.subscribe(Globals.Events.SIDEPANE_ENABLE, bEnable => this.enabelSplitPane(bEnable));
 		this.events.subscribe(Globals.Events.SIDEMENU_UPDATE, newOptions => this.updateMenuOptions(newOptions));
@@ -87,7 +100,7 @@ export class MyApp {
 
 	}
 
-	// not used but left here as an example for creating the side menue
+	// not used but left here as an example for creating the side menu
 	private initializeOptions(): void {
 		this.options = new Array<MenuOptionModel>();
 		this.options.push({
@@ -112,6 +125,9 @@ export class MyApp {
 	}
 
 	private enabelSplitPane(bEnable: boolean) {
+		console.log("Split pane enabled called:");
+		console.log(bEnable);
+		
 		this.splitPane.enabled = bEnable;
 	}
 

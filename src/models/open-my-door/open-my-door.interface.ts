@@ -16,5 +16,5 @@ export interface ActivateMobileLocationResult {
     message: string;
     issuedCode: string;
     issuedDate: Date;
-
+    responseCode: string;
 }

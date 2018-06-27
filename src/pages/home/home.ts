@@ -35,7 +35,9 @@ export class HomePage {
     private platform: Platform
   ) {
 
-    // hide the split pane here becuase we don't need the navigation menu
+    this.platform.ready().then(()=>{
+      console.log("Platform ready home");
+      // hide the split pane here becuase we don't need the navigation menu
     events.publish(Globals.Events.SIDEPANE_ENABLE, false);
 
     // commented for debugging... uncomment for final build
@@ -43,10 +45,17 @@ export class HomePage {
     this.destinationPage = navParams.get('destinationPage');
 
     events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Loading content" });
+    this.determinNewSession();
+    })
+    .catch((error)=>{
+      console.log(error);
+      
+    });
+    
 
     
 
-    this.determinNewSession();
+    
   }
 
   private determinNewSession() {
