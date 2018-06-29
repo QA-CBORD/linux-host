@@ -41,9 +41,9 @@ export class OpenMyDoorPage {
     // get open my door data
 
     try {
-      this.latitude = parseInt(navParams.get('latitude'));
-      this.longitude = parseInt(navParams.get('longitude'));
-      this.accuracy = parseInt(navParams.get('accuracy'));
+      this.latitude = parseFloat(navParams.get('latitude'));
+      this.longitude = parseFloat(navParams.get('longitude'));
+      this.accuracy = parseFloat(navParams.get('accuracy'));
       console.log(`Latitude: ${this.latitude}, Longitude: ${this.longitude}, Accuracy: ${this.accuracy}`);
     } catch (error) {
       console.log(error);

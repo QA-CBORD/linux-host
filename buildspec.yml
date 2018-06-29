@@ -2,7 +2,7 @@ version: 0.2
 
 env:
   variables:
-    RPM_VERSION: "2.44.19"
+    RPM_VERSION: "2.44.20"
 
 phases:
   install:
