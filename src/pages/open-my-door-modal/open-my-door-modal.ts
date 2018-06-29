@@ -119,6 +119,13 @@ export class OpenMyDoorModalPage {
   private handleActivateMobileLocationResponse(response: ActivateMobileLocationResult) {
     this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
     console.log(response);
+    if(response.showTempCode == 1){
+      if(response.showBarCode == 1){
+        // show response code as barcode?
+      } else {
+        // show temp code as text
+      }
+    }
     // XXXXX  show success or failure
     
   }

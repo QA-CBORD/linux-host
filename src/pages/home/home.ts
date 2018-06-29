@@ -34,7 +34,8 @@ export class HomePage {
     private authService: AuthService,
     private platform: Platform
   ) {
-
+    console.log("Home - Pre-Platform Ready");
+    
     this.platform.ready().then(() => {
       console.log("Platform ready home");
       // hide the split pane here becuase we don't need the navigation menu
@@ -53,7 +54,7 @@ export class HomePage {
       });
 
 
-
+      console.log("Home - Post-Platform Ready");
 
 
   }

@@ -22,7 +22,7 @@
                 <div>
                   <h4>{{item.locationId}}</h4>
                 </div>
-                <h5 item-end>{{item.distance}}ft</h5>
+                <h5 *ngIf="item.distance" item-end>{{item.distance}}ft</h5>
               </button>
             </ion-list>
           </ion-scroll>
