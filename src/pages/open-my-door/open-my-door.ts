@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, Events, ModalController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Events, ModalController, Platform } from 'ionic-angular';
 import { Diagnostic } from '@ionic-native/diagnostic';
 import { AndroidPermissions } from '@ionic-native/android-permissions';
 
@@ -22,9 +22,12 @@ export class OpenMyDoorPage {
   currentSelectedLocation: any;
   refresher: any;
 
-  bShowUnlockButton: boolean = true;
+  latitude: string = null;
+  longitude: string = null;
+  accuracy: string = null;
 
   constructor(
+    private platform: Platform,
     public navCtrl: NavController,
     public navParams: NavParams,
     public events: Events,
@@ -37,13 +40,22 @@ export class OpenMyDoorPage {
 
     // get open my door data
 
-    this.events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Retrieving locations..." });
-    this.events.subscribe(OpenMyDoorDataManager.DATA_MOBILELOCATIONINFO_UPDATED, (updatedMobileLocaitonInfo) => {
-      this.mobileLocationInfo = updatedMobileLocaitonInfo;
-      this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
-      this.onCompleteRefresh();
+    this.platform.ready().then(() => {
+      this.latitude = navParams.get('latitude');
+      this.longitude = navParams.get('longitude');
+      this.accuracy = navParams.get('accuracy');
+
+      this.events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Retrieving locations..." });
+      this.events.subscribe(OpenMyDoorDataManager.DATA_MOBILELOCATIONINFO_UPDATED, (updatedMobileLocaitonInfo) => {
+        this.mobileLocationInfo = updatedMobileLocaitonInfo;
+        this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
+        this.onCompleteRefresh();
+      });
+      this.getLocationData();
+    }).catch((error) => {
+      console.log(error);
+
     });
-    this.getLocationData();
   }
 
   ionViewWillUnload() {
@@ -54,8 +66,19 @@ export class OpenMyDoorPage {
   private getLocationData() {
     console.log("Get Location Data");
 
-    this.checkPermissions();
-
+    // check if data was passed from native app via url, otherwise do normal checking
+    if(this.latitude != null && this.longitude != null && this.accuracy != null){
+      let geoData = {
+        coords: {
+          latitude: this.latitude,
+          longitude: this.longitude,
+          accuracy: this.accuracy
+        }
+      }
+      this.omdDataManager.getMobileLocationData(geoData);
+    } else {
+      this.checkPermissions();
+    }
   }
 
   private checkPermissions() {
@@ -102,8 +125,8 @@ export class OpenMyDoorPage {
     } catch (error) {
       console.log("Permissions Error");
       console.log(error);
-      
-      
+
+
       this.omdDataManager.getMobileLocations(false);
     }
   }
@@ -144,9 +167,9 @@ export class OpenMyDoorPage {
         });
     } catch (error) {
       console.log("Location error");
-      
+
       console.log(error);
-      
+
       this.omdDataManager.getMobileLocations(false);
     }
   }

@@ -43,7 +43,7 @@ export class OpenMyDoorDataManager {
 
 
 
-    private getMobileLocationData(geoData: any) {
+    getMobileLocationData(geoData: any) {
         console.log(geoData);
 
         let latitude = geoData == null || geoData.coords == null || geoData.coords.latitude == null ? null : geoData.coords.latitude;

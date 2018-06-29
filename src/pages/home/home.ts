@@ -13,7 +13,7 @@ import { ExceptionManager } from '../../providers/exception-manager/exception-ma
 
 @IonicPage({
   name: 'home',
-  segment: 'home/:sessionToken/:destinationPage'
+  segment: 'home/:sessionToken/:destinationPage/:latitude/:longitude/:accuracy'
 })
 @Component({
   selector: 'page-home',
@@ -23,6 +23,11 @@ export class HomePage {
 
   sessionToken: string = null;
   destinationPage: string = null;
+  latitude: string = null;
+  longitude: string = null;
+  accuracy: string = null;
+
+
   userRewardTrackInfo: UserRewardTrackInfo;
 
   constructor(
@@ -44,6 +49,9 @@ export class HomePage {
       // commented for debugging... uncomment for final build
       this.sessionToken = navParams.get('sessionToken');
       this.destinationPage = navParams.get('destinationPage');
+      this.latitude = navParams.get('latitude');
+      this.longitude = navParams.get('longitude');
+      this.accuracy = navParams.get('accuracy');
 
       events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Loading content" });
       this.determinNewSession();
@@ -134,7 +142,13 @@ export class HomePage {
           this.navCtrl.push("RewardsPage");
           break;
         case 'openmydoor':
-          this.navCtrl.push("OpenMyDoorPage");
+          this.navCtrl.push("OpenMyDoorPage", {
+            data: {
+              latitude: this.latitude,
+              longitude: this.longitude,
+              accuracy: this.accuracy
+            }
+          });
           break;
       }
     } else {
