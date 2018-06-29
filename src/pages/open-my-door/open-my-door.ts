@@ -100,6 +100,10 @@ export class OpenMyDoorPage {
         this.omdDataManager.getMobileLocations(false);
       });
     } catch (error) {
+      console.log("Permissions Error");
+      console.log(error);
+      
+      
       this.omdDataManager.getMobileLocations(false);
     }
   }
@@ -139,6 +143,10 @@ export class OpenMyDoorPage {
           this.omdDataManager.getMobileLocations(false);
         });
     } catch (error) {
+      console.log("Location error");
+      
+      console.log(error);
+      
       this.omdDataManager.getMobileLocations(false);
     }
   }
