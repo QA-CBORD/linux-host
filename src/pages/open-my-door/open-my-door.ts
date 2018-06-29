@@ -44,6 +44,7 @@ export class OpenMyDoorPage {
       this.latitude = navParams.get('latitude');
       this.longitude = navParams.get('longitude');
       this.accuracy = navParams.get('accuracy');
+      console.log(`Latitude: ${this.latitude}, Longitude: ${this.longitude}, Accuracy: ${this.accuracy}`);
     } catch (error) {
       console.log(error);
 

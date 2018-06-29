@@ -53,6 +53,9 @@ export class HomePage {
       this.longitude = navParams.get('longitude');
       this.accuracy = navParams.get('accuracy');
 
+      console.log(`SessionToken: ${this.sessionToken}, DestinationPage: ${this.destinationPage}, Latitude: ${this.latitude}, Longitude: ${this.longitude}, Accuracy: ${this.accuracy}`);
+      
+
       events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Loading content" });
       this.determinNewSession();
     })
