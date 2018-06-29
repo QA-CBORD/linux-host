@@ -41,13 +41,12 @@ export class OpenMyDoorPage {
     // get open my door data
 
     try {
-      this.latitude = navParams.get('latitude');
-      this.longitude = navParams.get('longitude');
-      this.accuracy = navParams.get('accuracy');
+      this.latitude = navParams.get('data.latitude');
+      this.longitude = navParams.get('data.longitude');
+      this.accuracy = navParams.get('data.accuracy');
       console.log(`Latitude: ${this.latitude}, Longitude: ${this.longitude}, Accuracy: ${this.accuracy}`);
     } catch (error) {
       console.log(error);
-
     }
 
     this.events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Retrieving locations..." });

@@ -40,21 +40,26 @@ export class HomePage {
     private platform: Platform
   ) {
     console.log("Home - Pre-Platform Ready");
-    
+
     this.platform.ready().then(() => {
       console.log("Platform ready home");
       // hide the split pane here becuase we don't need the navigation menu
       events.publish(Globals.Events.SIDEPANE_ENABLE, false);
 
-      // commented for debugging... uncomment for final build
+
       this.sessionToken = navParams.get('sessionToken');
       this.destinationPage = navParams.get('destinationPage');
-      this.latitude = navParams.get('latitude');
-      this.longitude = navParams.get('longitude');
-      this.accuracy = navParams.get('accuracy');
+
+      try {
+        this.latitude = navParams.get('latitude');
+        this.longitude = navParams.get('longitude');
+        this.accuracy = navParams.get('accuracy');
+      } catch (error) {
+        // will only fail when no geolocation data from native device or url
+      }
 
       console.log(`SessionToken: ${this.sessionToken}, DestinationPage: ${this.destinationPage}, Latitude: ${this.latitude}, Longitude: ${this.longitude}, Accuracy: ${this.accuracy}`);
-      
+
 
       events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Loading content" });
       this.determinNewSession();
@@ -65,41 +70,13 @@ export class HomePage {
       });
 
 
-      console.log("Home - Post-Platform Ready");
+    console.log("Home - Post-Platform Ready");
 
 
   }
 
   private determinNewSession() {
-    // use session Sharing key passed in URL to get new session
-    // if (this.sessionToken != null) {
-    //   this.sessionService.getSession(this.sessionToken).subscribe(
-    //     ((data: string) => {
-    //       GETService.setSessionId(data);
-    //       this.handleSessionResponse(data)
-    //     }),
-    //     ((error) => {
-    //       // error getting session with session sharing functionality
-    //       // use proper method to parse the message and determine proper message
-    //       ExceptionManager.showException(this.events, {
-    //         displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
-    //         messageInfo: {
-    //           title: "No Session",
-    //           message: error,
-    //           positiveButtonTitle: "RETRY",
-    //           positiveButtonHandler: () => {
-    //             this.determinNewSession();
-    //           },
-    //           negativeButtonTitle: "CLOSE",
-    //           negativeButtonHandler: () => {
-    //             this.platform.exitApp();
-    //           }
-    //         }
-    //       });
-    //     })
-    //   );
-    // } else {
-    // added else statement for debugging... remove for final build
+
     // used to get session id from hardcoded login for testing
     console.log("Debug, getting session");
     this.authService.authenticateUser(null).subscribe(
@@ -126,8 +103,6 @@ export class HomePage {
         });
       }
     )
-    // }
-
 
   }
 
