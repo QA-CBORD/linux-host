@@ -48,7 +48,7 @@ export class OpenMyDoorPage {
 
   ionViewWillUnload() {
     console.log("Ion View Will Unload Called");
-    
+
   }
 
   private getLocationData() {
@@ -62,77 +62,85 @@ export class OpenMyDoorPage {
     // android API 6.0+ permissions check
     console.log("Android Permission check");
 
-    this.androidPermissions.requestPermissions(
-      [
-        this.androidPermissions.PERMISSION.ACCESS_COARSE_LOCATION,
-        this.androidPermissions.PERMISSION.ACCESS_FINE_LOCATION
-      ]
-    ).then(result => {
-      console.log(`Android permission check result: `);
-      console.log(result);
+    try {
+      this.androidPermissions.requestPermissions(
+        [
+          this.androidPermissions.PERMISSION.ACCESS_COARSE_LOCATION,
+          this.androidPermissions.PERMISSION.ACCESS_FINE_LOCATION
+        ]
+      ).then(result => {
+        console.log(`Android permission check result: `);
+        console.log(result);
 
-      if (result.hasPermission) {
-        this.checkLocationServices();
-      } else {
-        ExceptionManager.showException(this.events,
-          {
-            displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
-            messageInfo: {
-              title: "Location Permission",
-              message: "Please give us Location Permissions to determine nearby locations. Accuracy will suffer greatly if Location is not enabled.",
-              positiveButtonTitle: "Settings",
-              positiveButtonHandler: () => {
-                this.diagnostic.switchToSettings();
-                this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
-                this.onCompleteRefresh();
-              },
-              negativeButtonTitle: "No Thanks",
-              negativeButtonHandler: () => {
-                this.omdDataManager.getMobileLocations(false);
+        if (result.hasPermission) {
+          this.checkLocationServices();
+        } else {
+          ExceptionManager.showException(this.events,
+            {
+              displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
+              messageInfo: {
+                title: "Location Permission",
+                message: "Please give us Location Permissions to determine nearby locations. Accuracy will suffer greatly if Location is not enabled.",
+                positiveButtonTitle: "Settings",
+                positiveButtonHandler: () => {
+                  this.diagnostic.switchToSettings();
+                  this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
+                  this.onCompleteRefresh();
+                },
+                negativeButtonTitle: "No Thanks",
+                negativeButtonHandler: () => {
+                  this.omdDataManager.getMobileLocations(false);
+                }
               }
-            }
-          });
-      }
-    }).catch(error => {
-      console.log(`Android Permission Error: `);
-      console.log(error);      
+            });
+        }
+      }).catch(error => {
+        console.log(`Android Permission Error: `);
+        console.log(error);
+        this.omdDataManager.getMobileLocations(false);
+      });
+    } catch (error) {
       this.omdDataManager.getMobileLocations(false);
-    });
+    }
   }
 
   private checkLocationServices() {
     // check GPS enabled on device
     console.log("Check Location Service");
-
-    this.diagnostic.isLocationEnabled()
-      .then(enabled => {
-        if (enabled) {
-          console.log("GPS enabled");
-          this.omdDataManager.getMobileLocations(true);
-        } else {
-          console.log("GPS disabled");
-          ExceptionManager.showException(this.events,
-            {
-              displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
-              messageInfo: {
-                title: "GPS Disabled",
-                message: "Please turn on your device GPS so we can accurately determine nearby access locations. Accuracy will suffer greatly if GPS is not enabled.",
-                positiveButtonTitle: "Settings",
-                positiveButtonHandler: () => { this.diagnostic.switchToSettings();
-                  this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
-                  this.onCompleteRefresh();
-                },
-                negativeButtonTitle: "No Thanks",
-                negativeButtonHandler: () => { this.omdDataManager.getMobileLocations(false); }
-              }
-            });
-        }
-      })
-      .catch(error => {
-        console.log(`GPS Enabled check error:`);
-        console.log(error);
-        this.omdDataManager.getMobileLocations(false);
-      });
+    try {
+      this.diagnostic.isLocationEnabled()
+        .then(enabled => {
+          if (enabled) {
+            console.log("GPS enabled");
+            this.omdDataManager.getMobileLocations(true);
+          } else {
+            console.log("GPS disabled");
+            ExceptionManager.showException(this.events,
+              {
+                displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
+                messageInfo: {
+                  title: "GPS Disabled",
+                  message: "Please turn on your device GPS so we can accurately determine nearby access locations. Accuracy will suffer greatly if GPS is not enabled.",
+                  positiveButtonTitle: "Settings",
+                  positiveButtonHandler: () => {
+                    this.diagnostic.switchToSettings();
+                    this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
+                    this.onCompleteRefresh();
+                  },
+                  negativeButtonTitle: "No Thanks",
+                  negativeButtonHandler: () => { this.omdDataManager.getMobileLocations(false); }
+                }
+              });
+          }
+        })
+        .catch(error => {
+          console.log(`GPS Enabled check error:`);
+          console.log(error);
+          this.omdDataManager.getMobileLocations(false);
+        });
+    } catch (error) {
+      this.omdDataManager.getMobileLocations(false);
+    }
   }
 
   locationSelected(item: any) {
@@ -160,13 +168,13 @@ export class OpenMyDoorPage {
 
   }
 
-  onSwipeRefresh(refresher: any){
+  onSwipeRefresh(refresher: any) {
     this.refresher = refresher;
     this.getLocationData();
   }
 
-  onCompleteRefresh(){
-    if(this.refresher){
+  onCompleteRefresh() {
+    if (this.refresher) {
       this.refresher.complete();
     }
   }
