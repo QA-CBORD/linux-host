@@ -121,11 +121,9 @@ export class HomePage {
           break;
         case 'openmydoor':
           this.navCtrl.push("OpenMyDoorPage", {
-            data: {
-              latitude: this.latitude,
-              longitude: this.longitude,
-              accuracy: this.accuracy
-            }
+            latitude: this.latitude,
+            longitude: this.longitude,
+            accuracy: this.accuracy
           });
           break;
       }
