@@ -22,9 +22,9 @@ export class OpenMyDoorPage {
   currentSelectedLocation: any;
   refresher: any;
 
-  latitude: string = null;
-  longitude: string = null;
-  accuracy: string = null;
+  latitude: number = null;
+  longitude: number = null;
+  accuracy: number = null;
 
   constructor(
     private platform: Platform,
@@ -41,9 +41,9 @@ export class OpenMyDoorPage {
     // get open my door data
 
     try {
-      this.latitude = navParams.get('latitude');
-      this.longitude = navParams.get('longitude');
-      this.accuracy = navParams.get('accuracy');
+      this.latitude = parseInt(navParams.get('latitude'));
+      this.longitude = parseInt(navParams.get('longitude'));
+      this.accuracy = parseInt(navParams.get('accuracy'));
       console.log(`Latitude: ${this.latitude}, Longitude: ${this.longitude}, Accuracy: ${this.accuracy}`);
     } catch (error) {
       console.log(error);
