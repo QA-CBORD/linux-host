@@ -40,22 +40,22 @@ export class OpenMyDoorPage {
 
     // get open my door data
 
-    this.platform.ready().then(() => {
+    try {
       this.latitude = navParams.get('latitude');
       this.longitude = navParams.get('longitude');
       this.accuracy = navParams.get('accuracy');
-
-      this.events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Retrieving locations..." });
-      this.events.subscribe(OpenMyDoorDataManager.DATA_MOBILELOCATIONINFO_UPDATED, (updatedMobileLocaitonInfo) => {
-        this.mobileLocationInfo = updatedMobileLocaitonInfo;
-        this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
-        this.onCompleteRefresh();
-      });
-      this.getLocationData();
-    }).catch((error) => {
+    } catch (error) {
       console.log(error);
 
+    }
+
+    this.events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Retrieving locations..." });
+    this.events.subscribe(OpenMyDoorDataManager.DATA_MOBILELOCATIONINFO_UPDATED, (updatedMobileLocaitonInfo) => {
+      this.mobileLocationInfo = updatedMobileLocaitonInfo;
+      this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
+      this.onCompleteRefresh();
     });
+    this.getLocationData();
   }
 
   ionViewWillUnload() {
@@ -67,7 +67,7 @@ export class OpenMyDoorPage {
     console.log("Get Location Data");
 
     // check if data was passed from native app via url, otherwise do normal checking
-    if(this.latitude != null && this.longitude != null && this.accuracy != null){
+    if (this.latitude != null && this.longitude != null && this.accuracy != null) {
       let geoData = {
         coords: {
           latitude: this.latitude,
