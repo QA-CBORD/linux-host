@@ -2,7 +2,9 @@ version: 0.2
 
 env:
   variables:
-    RPM_VERSION: "2.44.20"
+    RPM_VERSION: "2.44"
+  parameter-store: 
+    BUILD_NUMBER: "build-config-cbord-student-build-number"
 
 phases:
   install:
@@ -34,8 +36,10 @@ phases:
       - tar -zcvf ./SOURCES/student.tar.gz student
   build:
     commands:
-      - echo **** Triggering RPM build ****
-      - rpmbuild --define "_topdir `pwd`" --define "_version $RPM_VERSION" --define "_release 1" -bb SPECS/student.spec
+      - echo "**** Running shell script ****"
+      - echo "Sending RPM_VERSION=$RPM_VERSION"
+      - sh buildcommands.sh $RPM_VERSION build-config-cbord-student-build-number
+      - echo "Finished shell script"
   post_build:
     commands:
       - echo **** Entered the post_build phase... ****
