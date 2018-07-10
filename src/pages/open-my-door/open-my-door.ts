@@ -63,10 +63,11 @@ export class OpenMyDoorPage {
     this.events.subscribe(OpenMyDoorDataManager.DATA_MOBILELOCATIONINFO_UPDATED, (updatedMobileLocaitonInfo) => {
       // this.mobileLocationInfo = updatedMobileLocaitonInfo;
       this.tempLcAr = updatedMobileLocaitonInfo;
-      // for (let i = 0; i < this.tempLcAr.length; i++) {
-      //   // this.tempLcAr[i].distance = Number(this.randomIntFromInterval(0.05, 5).toFixed(2));
-      //   this.tempLcAr[i].distance > 30 ? this.tempLcAr[i].distance = NaN : this.tempLcAr[i].distance = this.tempLcAr[i].distance;
-      // }
+      for (let i = 0; i < this.tempLcAr.length; i++) {
+        // this.tempLcAr[i].distance = Number(this.randomIntFromInterval(0.05, 5).toFixed(2));
+        this.tempLcAr[i].distance > 99 ? this.tempLcAr[i].distance = NaN : 
+        this.tempLcAr[i].distance > 5 ? this.tempLcAr[i].distance = Number(this.tempLcAr[i].distance.toFixed(2)) : this.tempLcAr[i].distance = this.tempLcAr[i].distance;
+      }
       this.mobileLocationInfo = this.tempLcAr;
       // this.mobileLocationInfo = this.tempLcAr.sort((n1, n2) => {
       //   if(n1.distance < n2.distance){
