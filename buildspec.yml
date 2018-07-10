@@ -42,7 +42,6 @@ phases:
       - echo "Finished shell script"
   post_build:
     commands:
-      - ls ~/.local/bin
       - echo **** Entered the post_build phase... ****
       - echo **** Build completed on `date` ****
 artifacts:
