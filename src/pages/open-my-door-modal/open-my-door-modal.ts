@@ -40,7 +40,7 @@ export class OpenMyDoorModalPage {
     console.log("Activate Selected");
     this.events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Activating..." });
     this.checkPermissions();
-    
+
   }
 
   private checkPermissions() {
@@ -132,15 +132,27 @@ export class OpenMyDoorModalPage {
           // show temp code as text
         }
       } else {
-        this.bShowSuccess = true;
-        Observable.of(true).delay(3000).subscribe(
-          data => { },
-          error => { },
-          () => {
-            this.bShowSuccess = false;
-            this.closeModal();
-          }
-        )
+        ExceptionManager.showException(this.events,
+          {
+            displayOptions: Globals.Exception.DisplayOptions.ONE_BUTTON,
+            messageInfo: {
+              title: "Success!",
+              message: "",
+              positiveButtonTitle: "OK",
+              positiveButtonHandler: () => {
+                this.closeModal();
+              }              
+            }
+          });
+        // this.bShowSuccess = true;
+        // Observable.of(true).delay(3000).subscribe(
+        //   data => { },
+        //   error => { },
+        //   () => {
+        //     this.bShowSuccess = false;
+        //     this.closeModal();
+        //   }
+        // )
       }
     } else {
       // falure
