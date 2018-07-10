@@ -40,6 +40,7 @@ export class OpenMyDoorModalPage {
     console.log("Activate Selected");
     this.events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Activating..." });
     this.checkPermissions();
+    
   }
 
   private checkPermissions() {
