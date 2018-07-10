@@ -1,5 +1,5 @@
 <ion-header no-border>
-    <ion-buttons start>
+    <ion-buttons end>
         <button class="button-noshadow" ion-button icon-only large (click)="closeModal()">
             <ion-icon name="close">
             </ion-icon>
@@ -7,6 +7,7 @@
     </ion-buttons>
 </ion-header>
 <ion-content class="modal_background" padding>
+    <ion-icon  class="ion-success" name="checkmark-circle-outline"></ion-icon>
     <ion-card *ngIf="currentSelectedLocation">
         <ion-card-content>
             <ion-item>

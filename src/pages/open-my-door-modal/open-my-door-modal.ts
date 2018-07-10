@@ -4,6 +4,9 @@ import { Diagnostic } from '@ionic-native/diagnostic';
 import { AndroidPermissions } from '@ionic-native/android-permissions';
 import { Geolocation } from '@ionic-native/geolocation';
 
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/operator/delay';
+
 import * as Globals from '../../app/app.global';
 import { OpenMyDoorDataManager } from '../../providers/open-my-door-data-manager/open-my-door-data-manager';
 import { ActivateMobileLocationResult } from '../../models/open-my-door/open-my-door.interface';
@@ -17,6 +20,7 @@ import { ExceptionManager } from '../../providers/exception-manager/exception-ma
 })
 export class OpenMyDoorModalPage {
 
+  bShowSuccess: boolean = false;
   currentSelectedLocation: any;
 
   constructor(
@@ -119,18 +123,47 @@ export class OpenMyDoorModalPage {
   private handleActivateMobileLocationResponse(response: ActivateMobileLocationResult) {
     this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
     console.log(response);
-    if(response.showTempCode == 1){
-      if(response.showBarCode == 1){
-        // show response code as barcode?
+    if (response.responseCode == "00") {
+      if (response.showTempCode == 1) {
+        if (response.showBarCode == 1) {
+          // show response code as barcode?
+        } else {
+          // show temp code as text
+        }
       } else {
-        // show temp code as text
+        this.bShowSuccess = true;
+        Observable.of(true).delay(3000).subscribe(
+          data => { },
+          error => { },
+          () => {
+            this.bShowSuccess = false;
+            this.closeModal();
+          }
+        )
       }
+    } else {
+      // falure
+      ExceptionManager.showException(this.events, {
+        displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
+        messageInfo: {
+          title: "There was an issue processing your request",
+          message: "",
+          positiveButtonTitle: "RETRY",
+          positiveButtonHandler: () => {
+            this.activateSelected();
+          },
+          negativeButtonTitle: "CLOSE",
+          negativeButtonHandler: () => {
+            this.closeModal();
+          }
+        }
+      });
     }
     // XXXXX  show success or failure
-    
+
   }
 
-  private onActivateMobileLocationFailure(bUseLocation: boolean, errorMessage: string){
+  private onActivateMobileLocationFailure(bUseLocation: boolean, errorMessage: string) {
     ExceptionManager.showException(this.events,
       {
         displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,

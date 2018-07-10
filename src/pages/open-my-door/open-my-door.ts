@@ -53,7 +53,6 @@ export class OpenMyDoorPage {
     this.events.subscribe(OpenMyDoorDataManager.DATA_MOBILELOCATIONINFO_UPDATED, (updatedMobileLocaitonInfo) => {
       this.mobileLocationInfo = updatedMobileLocaitonInfo;
       this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
-      this.onCompleteRefresh();
     });
     this.getLocationData();
   }
@@ -108,7 +107,6 @@ export class OpenMyDoorPage {
                 positiveButtonHandler: () => {
                   this.diagnostic.switchToSettings();
                   this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
-                  this.onCompleteRefresh();
                 },
                 negativeButtonTitle: "No Thanks",
                 negativeButtonHandler: () => {
@@ -152,7 +150,6 @@ export class OpenMyDoorPage {
                   positiveButtonHandler: () => {
                     this.diagnostic.switchToSettings();
                     this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
-                    this.onCompleteRefresh();
                   },
                   negativeButtonTitle: "No Thanks",
                   negativeButtonHandler: () => { this.omdDataManager.getMobileLocations(false); }
@@ -181,7 +178,6 @@ export class OpenMyDoorPage {
   }
 
   presentUnlockModal() {
-    this.onCompleteRefresh();
     if (this.currentSelectedLocation == null) {
       return;
     }
@@ -197,17 +193,6 @@ export class OpenMyDoorPage {
 
     unlockModal.present();
 
-  }
-
-  onSwipeRefresh(refresher: any) {
-    this.refresher = refresher;
-    this.getLocationData();
-  }
-
-  onCompleteRefresh() {
-    if (this.refresher) {
-      this.refresher.complete();
-    }
   }
 
 }
