@@ -25,6 +25,10 @@ aws ssm put-parameter --name "${SSM_PARAMETER_NAME}" --type "String" --value "${
 # Concatinate the RPM_VERSION and NEW_BUILD_NUMBER
 RPM_VERSION="${RPM_VERSION}.${NEW_BUILD_NUMBER}"
 
+# Updage the spec file with the proper version
+sed -i "s/%VERSION%/$RPM_VERSION/g" ./SPECS/student.spec
+sed -i "s/%RELEASE%/1/g" ./SPECS/student.spec
+
 echo "**** Entered the build phase... ****"
 echo "**** Triggering RPM build ****"
 echo $BUILD_NUMBER

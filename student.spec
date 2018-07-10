@@ -2,8 +2,8 @@
 
 Summary: CBORD Student Package
 Name: student
-Version: %{_version}
-Release: %{_release}
+Version: %VERSION%
+Release: %RELEASE%
 License: None
 Group: None
 URL: http://www.cbord.com
