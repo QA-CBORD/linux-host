@@ -25,6 +25,24 @@ page-open-my-door-modal {
 	-webkit-box-shadow: none;
 	-moz-box-shadow: none;
 	box-shadow: none;
-	}
+    }
+    
+    .icon-success {
+        font-size: 5em;
+        opacity: 0;
+        color: #42f44b;
+        transform: rotate3d(1, 1, 0, 50deg);
+        animation: 0.25s 0.8s ease fadeInAndSpin;
+        animation-fill-mode: forwards;
+    }
+
+    @keyframes fadeInAndSpin {
+ 
+        100% {
+            opacity: 1;
+            transform: rotate3d(1, 1, 0, 0deg);
+        }
+     
+    }
 
 }
