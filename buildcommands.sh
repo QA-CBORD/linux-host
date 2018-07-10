@@ -12,7 +12,8 @@ SSM_PARAMETER_NAME=$2
 # Note: The following command is in double quotes, this is to remove
 #       the line feeds and extra spaces, so that the next command is able to 
 #       use the json.load() call inline.
-JSON_PARAM="$(aws ssm get-parameter --name ${SSM_PARAMETER_NAME})"
+echo "Param name: ${SSM_PARAMETER_NAME}"
+JSON_PARAM=$(aws ssm get-parameter --name ${SSM_PARAMETER_NAME})
 
 echo "JSON Parameter: $JSON_PARAM"
 
