@@ -38,13 +38,11 @@ phases:
     commands:
       - echo "**** Running shell script ****"
       - echo "Sending RPM_VERSION=$RPM_VERSION"
-      - sh buildcommands.sh $RPM_VERSION $BUILD_NUMBER
+      - sh buildcommands.sh $RPM_VERSION "build-config-cbord-student-build-number"
       - echo "Finished shell script"
   post_build:
     commands:
       - ls ~/.local/bin
-      - ~/.local/bin/aws --version
-      - aws ssm put-parameter --name "${SSM_PARAMETER_NAME}" --type "String" --value "$(($BUILD_NUMBER + 1))" --overwrite
       - echo **** Entered the post_build phase... ****
       - echo **** Build completed on `date` ****
 artifacts:
