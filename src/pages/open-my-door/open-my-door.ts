@@ -17,6 +17,7 @@ import { MobileLocationInfo } from '../../models/open-my-door/open-my-door.inter
 })
 export class OpenMyDoorPage {
 
+  tempLcAr: MobileLocationInfo[];
   mobileLocationInfo: MobileLocationInfo[];
 
   currentSelectedLocation: any;
@@ -49,12 +50,40 @@ export class OpenMyDoorPage {
       console.log(error);
     }
 
+    // try {
+    //   this.latitude = 31.563978;
+    //   this.longitude = -97.1946477;
+    //   this.accuracy = 20;
+    //   console.log(`Latitude: ${this.latitude}, Longitude: ${this.longitude}, Accuracy: ${this.accuracy}`);
+    // } catch (error) {
+    //   console.log(error);
+    // }
+
     this.events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Retrieving locations..." });
     this.events.subscribe(OpenMyDoorDataManager.DATA_MOBILELOCATIONINFO_UPDATED, (updatedMobileLocaitonInfo) => {
-      this.mobileLocationInfo = updatedMobileLocaitonInfo;
+      // this.mobileLocationInfo = updatedMobileLocaitonInfo;
+      this.tempLcAr = updatedMobileLocaitonInfo;
+      // for (let i = 0; i < this.tempLcAr.length; i++) {
+      //   // this.tempLcAr[i].distance = Number(this.randomIntFromInterval(0.05, 5).toFixed(2));
+      //   this.tempLcAr[i].distance > 30 ? this.tempLcAr[i].distance = NaN : this.tempLcAr[i].distance = this.tempLcAr[i].distance;
+      // }
+      this.mobileLocationInfo = this.tempLcAr;
+      // this.mobileLocationInfo = this.tempLcAr.sort((n1, n2) => {
+      //   if(n1.distance < n2.distance){
+      //     return -1;
+      //   } else if(n1.distance > n2.distance){
+      //     return 1;
+      //   } else {
+      //     return 0;
+      //   }
+      // });
       this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
     });
     this.getLocationData();
+  }
+
+  randomIntFromInterval(min, max) {
+    return Math.random() * ((max - min + 1) + min);
   }
 
   ionViewWillUnload() {
