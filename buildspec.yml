@@ -42,6 +42,8 @@ phases:
       - echo "Finished shell script"
   post_build:
     commands:
+      - ls ~/.local/bin
+      - ~/.local/bin/aws --version
       - aws ssm put-parameter --name "${SSM_PARAMETER_NAME}" --type "String" --value "$(($BUILD_NUMBER + 1))" --overwrite
       - echo **** Entered the post_build phase... ****
       - echo **** Build completed on `date` ****
