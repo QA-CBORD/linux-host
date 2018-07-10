@@ -6,25 +6,25 @@
 
 # Get the given VERSION
 RPM_VERSION=$1
-SSM_PARAMETER_NAME=$2
+#SSM_PARAMETER_NAME=$2
+BUILD_NUMBER=$2
 
 # Pull the current build number from the AWS Systems Manager Parameter store
 # Note: The following command is in double quotes, this is to remove
 #       the line feeds and extra spaces, so that the next command is able to 
 #       use the json.load() call inline.
-echo "Param name: ${SSM_PARAMETER_NAME}"
-JSON_PARAM=$(aws ssm get-parameter --name ${SSM_PARAMETER_NAME})
+#JSON_PARAM=$(aws ssm get-parameter --name ${SSM_PARAMETER_NAME})
 
-echo "JSON Parameter: $JSON_PARAM"
+#echo "JSON Parameter: $JSON_PARAM"
 
-BUILD_NUMBER=$(python -c "import json; print(json.loads('''${JSON_PARAM}''')['Parameter']['Value'])")
+#BUILD_NUMBER=$(python -c "import json; print(json.loads('''${JSON_PARAM}''')['Parameter']['Value'])")
 
-# Increment the build number by 1, then store the new value in the parameter store
-NEW_BUILD_NUMBER=$(($BUILD_NUMBER + 1))
-aws ssm put-parameter --name "${SSM_PARAMETER_NAME}" --type "String" --value "${NEW_BUILD_NUMBER}" --overwrite
+#Increment the build number by 1, then store the new value in the parameter store
+#NEW_BUILD_NUMBER=$(($BUILD_NUMBER + 1))
+#aws ssm put-parameter --name "${SSM_PARAMETER_NAME}" --type "String" --value "${NEW_BUILD_NUMBER}" --overwrite
 
 # Concatinate the RPM_VERSION and NEW_BUILD_NUMBER
-RPM_VERSION="${RPM_VERSION}.${NEW_BUILD_NUMBER}"
+RPM_VERSION="${RPM_VERSION}.${BUILD_NUMBER}"
 
 # Updage the spec file with the proper version
 sed -i "s/%VERSION%/$RPM_VERSION/g" ./SPECS/student.spec
