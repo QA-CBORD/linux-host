@@ -38,7 +38,7 @@ phases:
     commands:
       - echo "**** Running shell script ****"
       - echo "Sending RPM_VERSION=$RPM_VERSION"
-      - sh buildcommands.sh $RPM_VERSION "build-config-cbord-student-build-number"
+      - sh buildcommands.sh $RPM_VERSION $BUILD_NUMBER
       - echo "Finished shell script"
   post_build:
     commands:

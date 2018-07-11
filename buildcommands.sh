@@ -6,7 +6,8 @@
 
 # Get the given VERSION
 RPM_VERSION=$1
-SSM_PARAMETER_NAME=$2
+#SSM_PARAMETER_NAME=$2
+BUILD_NUMBER=$2
 
 # Pull the current build number from the AWS Systems Manager Parameter store
 # Note: The following command is in double quotes, this is to remove
@@ -23,8 +24,7 @@ SSM_PARAMETER_NAME=$2
 #aws ssm put-parameter --name "${SSM_PARAMETER_NAME}" --type "String" --value "${NEW_BUILD_NUMBER}" --overwrite
 
 # Concatinate the RPM_VERSION and NEW_BUILD_NUMBER
-#RPM_VERSION="${RPM_VERSION}.${BUILD_NUMBER}"
-RPM_VERSION="2.44.26"
+RPM_VERSION="${RPM_VERSION}.${BUILD_NUMBER}"
 
 # Updage the spec file with the proper version
 sed -i "s/%VERSION%/$RPM_VERSION/g" ./SPECS/student.spec
