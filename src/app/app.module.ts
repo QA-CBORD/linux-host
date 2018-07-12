@@ -12,7 +12,6 @@ import { HttpModule } from '@angular/http';
 import { Geolocation } from '@ionic-native/geolocation';
 import { Diagnostic } from '@ionic-native/diagnostic';
 import { AndroidPermissions } from '@ionic-native/android-permissions';
-import { BarcodeScanner } from '@ionic-native/barcode-scanner';
 
 import { MyApp } from './app.component';
 import { IonicStorageModule } from '@ionic/storage';
@@ -84,8 +83,7 @@ export function createTranslateLoader(http: HttpClient) {
     ExceptionManager,
     Geolocation,
     Diagnostic,
-    AndroidPermissions,
-    BarcodeScanner
+    AndroidPermissions
   ]
 })
 export class AppModule { }

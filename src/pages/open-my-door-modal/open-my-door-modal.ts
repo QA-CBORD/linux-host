@@ -20,7 +20,6 @@ import { ExceptionManager } from '../../providers/exception-manager/exception-ma
 })
 export class OpenMyDoorModalPage {
 
-  bShowSuccess: boolean = false;
   currentSelectedLocation: any;
 
   constructor(
@@ -124,32 +123,53 @@ export class OpenMyDoorModalPage {
   private handleActivateMobileLocationResponse(response: ActivateMobileLocationResult) {
     this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
     console.log(response);
-    if (response.responseCode == "00") {
+    if (!response.responseCode || response.responseCode == "00") {
+      // need fucntional PDF_417 generator
+
       if (response.showTempCode == 1) {
-        if (response.showBarCode == 1) {
-          // show response code as barcode?
-        } else {
-          // show temp code as text
-        }
+      //   if (response.showBarCode == 1) {
+      //     // show response code as barcode?
+      //   } else {
+      //     // show temp code as text
+      //   }
+
+      let tCodeMessage = `Temporary Number: ${response.issuedCode}`;
+      if(response.message && response.issuedCode && response.message.includes(response.issuedCode)){
+          tCodeMessage = response.message;
+      }
+
+      ExceptionManager.showException(this.events,
+        {
+          displayOptions: Globals.Exception.DisplayOptions.ONE_BUTTON,
+          messageInfo: {
+            title: "Success!",
+            message: tCodeMessage,
+            positiveButtonTitle: "OK",
+            positiveButtonHandler: () => {
+              this.closeModal();
+            }              
+          }
+        });
+
       } else {
+
         ExceptionManager.showException(this.events,
           {
             displayOptions: Globals.Exception.DisplayOptions.ONE_BUTTON,
             messageInfo: {
               title: "Success!",
-              message: "",
+              message: response.message,
               positiveButtonTitle: "OK",
               positiveButtonHandler: () => {
                 this.closeModal();
               }              
             }
           });
-        // this.bShowSuccess = true;
+        
         // Observable.of(true).delay(3000).subscribe(
         //   data => { },
         //   error => { },
         //   () => {
-        //     this.bShowSuccess = false;
         //     this.closeModal();
         //   }
         // )
@@ -159,8 +179,8 @@ export class OpenMyDoorModalPage {
       ExceptionManager.showException(this.events, {
         displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
         messageInfo: {
-          title: "There was an issue processing your request",
-          message: "",
+          title: "Failed",
+          message: response.message,
           positiveButtonTitle: "RETRY",
           positiveButtonHandler: () => {
             this.activateSelected();
