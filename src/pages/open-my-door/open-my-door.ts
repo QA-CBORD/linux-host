@@ -50,15 +50,6 @@ export class OpenMyDoorPage {
       console.log(error);
     }
 
-    try {
-      this.latitude = 31.563978;
-      this.longitude = -97.1946477;
-      this.accuracy = 20;
-      console.log(`Latitude: ${this.latitude}, Longitude: ${this.longitude}, Accuracy: ${this.accuracy}`);
-    } catch (error) {
-      console.log(error);
-    }
-
     this.events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Retrieving locations..." });
     this.events.subscribe(OpenMyDoorDataManager.DATA_MOBILELOCATIONINFO_UPDATED, (updatedMobileLocaitonInfo) => {
       // this.mobileLocationInfo = updatedMobileLocaitonInfo;
