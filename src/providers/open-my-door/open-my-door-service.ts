@@ -27,7 +27,7 @@ export class OpenMyDoorService extends GETService {
           latitude: latitude,
           longitude: longitude,
           accuracy: accuracy,
-          filters: ["Normal", "TempCode"]
+          filters: ["Normal", "TempCode", "Attendance"]
         }
       };
 
