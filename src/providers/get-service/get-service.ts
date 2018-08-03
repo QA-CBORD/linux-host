@@ -48,9 +48,9 @@ export class GETService {
     if (!tResponse.response || tResponse.exception) {
       console.log(tResponse);
       try {
-      this.parseExceptionResponse(response);
-      } catch (error){
-        this.handleError('An unknown error occurred.');
+        this.parseExceptionResponse(response);
+      } catch (error) {
+        Observable.throw('An unknown error occurred.');
       }
     } else {
       return tResponse;
@@ -63,9 +63,9 @@ export class GETService {
       let regEx = new RegExp('^[0-9]*|.*$');
       if (regEx.test(response.exception)) {
         try {
-        let parts = response.exception.split("|");
-        this.handleErrorCode(parts[0]);
-        } catch (error){
+          let parts = response.exception.split("|");
+          this.handleErrorCode(parts[0]);
+        } catch (error) {
           this.handleError("An unknown error occurred.");
         }
       } else {
