@@ -33,6 +33,7 @@
     "angular-local-storage": "^0.7.1",
     "angular2-qrcode": "^2.0.1",
     "chart.js": "^2.7.2",
+    "cordova": "^8.0.0",
     "cordova-android": "^6.3.0",
     "cordova-plugin-android-permissions": "^1.0.0",
     "cordova-plugin-device": "1.1.4",
@@ -52,7 +53,6 @@
   },
   "devDependencies": {
     "@ionic/app-scripts": "^3.0.0-201710070411",
-    "ionic": "3.7.0",
     "typescript": "2.3.4"
   },
   "config": {
