@@ -33,7 +33,7 @@ export class GETService {
 
   protected httpPost(serviceUrl: string, postParams: any): Observable<any> {
     return this.http.post(this.baseUrl.concat(serviceUrl), JSON.stringify(postParams), this.getOptions())
-    .timeout(this.TIMEOUT_MS)
+      .timeout(this.TIMEOUT_MS)
       .map(this.extractData)
       .do(this.logData)
       .catch(this.handleError);
@@ -47,21 +47,29 @@ export class GETService {
     let tResponse = response.json();
     if (!tResponse.response || tResponse.exception) {
       console.log(tResponse);
+      try {
       this.parseExceptionResponse(response);
+      } catch (error){
+        this.handleError('An unknown error occurred.');
+      }
     } else {
       return tResponse;
     }
   }
 
   protected parseExceptionResponse(response) {
-    if (response != null && response.exception) {
+    if (response != null && response.exception != null) {
       // check the exception string for a number|description string format
       let regEx = new RegExp('^[0-9]*|.*$');
       if (regEx.test(response.exception)) {
+        try {
         let parts = response.exception.split("|");
         this.handleErrorCode(parts[0]);
+        } catch (error){
+          this.handleError("An unknown error occurred.");
+        }
       } else {
-        throw new Error("Unexpected error occured.");
+        throw new Error("Unexpected error occurred.");
       }
     } else {
       throw new Error("The response was empty or malformed.");
