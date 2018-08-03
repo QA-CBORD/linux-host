@@ -18,7 +18,6 @@ phases:
       - npm config set registry "http://registry.npmjs.org"
       - npm install -g ionic
       - npm install -g cordova
-      - ionic info
   pre_build:
     commands:
       - echo **** Running pre-build, creating rpm directories ****
