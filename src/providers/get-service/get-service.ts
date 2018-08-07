@@ -44,16 +44,16 @@ export class GETService {
   }
 
   protected extractData(response: Response) {
-    let tResponse = response.json();
-    if (!tResponse.response || tResponse.exception) {
-      console.log(tResponse);
-      try {
+    try {
+      let tResponse = response.json();
+      if (!tResponse.response || tResponse.exception) {
+        console.log(tResponse);
         this.parseExceptionResponse(response);
-      } catch (error) {
-        Observable.throw('An unknown error occurred.');
+      } else {
+        return tResponse;
       }
-    } else {
-      return tResponse;
+    } catch (error) {
+      Observable.throw({response: null, exception: 'An unknown error occurred.'});
     }
   }
 
