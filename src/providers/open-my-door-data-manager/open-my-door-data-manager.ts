@@ -44,8 +44,6 @@ export class OpenMyDoorDataManager {
 
 
     getMobileLocationData(geoData: any) {
-        console.log("Get Mobile Location Data");
-        console.log(geoData);
 
         let latitude = geoData == null || geoData.coords == null || geoData.coords.latitude == null ? null : geoData.coords.latitude;
         let longitude = geoData == null || geoData.coords == null || geoData.coords.longitude == null ? null : geoData.coords.longitude;
@@ -62,13 +60,11 @@ export class OpenMyDoorDataManager {
                 },
                 () => {
                     // complete
-                    console.log("getMobileLocationData Complete");
                 }
             )
     }
 
     activateMobileLocation(geoData: any, locationId: string, sourceInfo: string): Observable<ActivateMobileLocationResult>{
-        console.log(geoData);
         
         return this.omdService.activateMobileLocation(locationId, geoData, sourceInfo);
         

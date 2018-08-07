@@ -91,8 +91,18 @@ export class OpenMyDoorService extends GETService {
         .subscribe(
           data => {
             // validate data then throw error or send
-            observer.next(data.response);
-            observer.complete();
+            if(data != null && data.response != null){
+              observer.next(data.response);
+              observer.complete();
+            } else {
+              if(data != null && data.exception != null){
+                observer.error(data.exception);
+              } else {
+                observer.error("An unexpected error occurred");
+              }
+              
+            }
+            
           },
           error => {
             // do error stuff then push it to observer

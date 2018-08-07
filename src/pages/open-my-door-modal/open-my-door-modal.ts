@@ -122,6 +122,8 @@ export class OpenMyDoorModalPage {
 
   private handleActivateMobileLocationResponse(response: ActivateMobileLocationResult) {
     this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
+    console.log('Handle MLR 0');
+    
     console.log(response);
     if (!response.responseCode || response.responseCode == "00") {
       // need fucntional PDF_417 generator
@@ -176,6 +178,8 @@ export class OpenMyDoorModalPage {
       }
     } else {
       // falure
+      console.log("Activation Failure");
+      
       ExceptionManager.showException(this.events, {
         displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
         messageInfo: {

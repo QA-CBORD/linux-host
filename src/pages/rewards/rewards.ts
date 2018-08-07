@@ -108,10 +108,6 @@ export class RewardsPage {
           // on opt in accepted, call rewardsDataManager.getUserRewardData() to update the data app wide (event)
         }
 
-        console.log(userRewardTrackInfo);
-
-
-
         this.handleRewardTrackInfo();
 
       } else {
@@ -287,7 +283,6 @@ export class RewardsPage {
     let index = 0;
 
     while (index < this.userRewardTrackInfo.trackLevels.length) {
-      console.log("Add Level Item");
       let iIndex = 0;
       let newSubOptions = new Array<AccordionListOptionModel>();
       while (iIndex < this.userRewardTrackInfo.trackLevels[index].userClaimableRewards.length) {
@@ -337,7 +332,6 @@ export class RewardsPage {
       // });
       // iIndex++;
       // }
-      console.log("Add Points Item");
       this.pointsOptions.push({
         displayName: `${this.userRewardTrackInfo.redeemableRewards[index].name}      ${this.userRewardTrackInfo.redeemableRewards[index].pointCost} Points`,
         subItems: [{

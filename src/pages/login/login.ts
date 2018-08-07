@@ -17,11 +17,9 @@ export class LoginPage {
   constructor(public navCtrl: NavController, public navParams: NavParams,) {
     this.sessionToken = navParams.get('sessionToken');
 
-    console.log(this.sessionToken);
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad LoginPage');
 
   }    
 }

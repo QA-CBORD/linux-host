@@ -40,20 +40,32 @@ export class GETService {
   }
 
   protected handleError(error: Response | any) {
+    
+    console.log('Handle Error 0');
+    console.log(error);
     return Observable.throw(error);
   }
 
   protected extractData(response: Response) {
+    console.log('Extract Data 0');
     try {
       let tResponse = response.json();
+      
+    console.log('Extract Data 1');
       if (!tResponse.response || tResponse.exception) {
+        
+    console.log('Extract Data 2');
         console.log(tResponse);
         this.parseExceptionResponse(response);
       } else {
+        
+    console.log('Extract Data 3');
         return tResponse;
       }
     } catch (error) {
-      Observable.throw({response: null, exception: 'An unknown error occurred.'});
+      
+    console.log('Extract Data 4');
+      return {response: null, exception: 'An unknown error occurred.'};
     }
   }
 

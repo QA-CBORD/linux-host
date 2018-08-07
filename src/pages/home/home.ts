@@ -39,10 +39,8 @@ export class HomePage {
     private authService: AuthService,
     private platform: Platform
   ) {
-    console.log("Home - Pre-Platform Ready");
 
     this.platform.ready().then(() => {
-      console.log("Platform ready home");
       // hide the split pane here becuase we don't need the navigation menu
       events.publish(Globals.Events.SIDEPANE_ENABLE, false);
 
@@ -55,22 +53,15 @@ export class HomePage {
         this.longitude = navParams.get('longitude');
         this.accuracy = navParams.get('accuracy');
       } catch (error) {
-        // will only fail when no geolocation data from native device or url
+        // will only fail when no geolocation data from native device or url        
       }
-
-      console.log(`SessionToken: ${this.sessionToken}, DestinationPage: ${this.destinationPage}, Latitude: ${this.latitude}, Longitude: ${this.longitude}, Accuracy: ${this.accuracy}`);
-
 
       events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Loading content" });
       this.determinNewSession();
     })
       .catch((error) => {
-        console.log(error);
 
       });
-
-
-    console.log("Home - Post-Platform Ready");
 
 
   }
@@ -78,7 +69,6 @@ export class HomePage {
   private determinNewSession() {
 
     // used to get session id from hardcoded login for testing
-    console.log("Debug, getting session");
     this.authService.authenticateUser(null).subscribe(
       sessionId => {
         GETService.setSessionId(sessionId);
@@ -160,15 +150,11 @@ export class HomePage {
     // 4 = points only, no points
     let dataStatus = 0;
 
-    console.log(this.userRewardTrackInfo);
-
     let debugString =
       "Levels = " + this.userRewardTrackInfo.hasLevels + "\n" +
       "Levels Size = " + this.userRewardTrackInfo.trackLevels.length + "\n" +
       "Points = " + this.userRewardTrackInfo.hasRedeemableRewards + "\n" +
       "Points Size = " + this.userRewardTrackInfo.redeemableRewards.length + "\n";
-
-    console.log(debugString);
 
     if (this.userRewardTrackInfo == null) {
       dataStatus = 1;
@@ -206,7 +192,6 @@ export class HomePage {
     // unsubscribe from event because we have the data and no longer need it in the Home tabs page
     this.events.unsubscribe(RewardsDataManager.DATA_USERREWARDTRACKINFO_UPDATED);
 
-    console.log("Update rewards data");
 
     this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
 
@@ -215,7 +200,6 @@ export class HomePage {
   }
 
   openHistory() {
-    console.log("Open History button click");
 
   }
 

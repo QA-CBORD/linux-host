@@ -125,9 +125,6 @@ export class MyApp {
 	}
 
 	private enabelSplitPane(bEnable: boolean) {
-		console.log("Split pane enabled called:");
-		console.log(bEnable);
-		
 		this.splitPane.enabled = bEnable;
 	}
 
