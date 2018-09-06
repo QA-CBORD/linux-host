@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Storage } from '@ionic/storage';
+// import { Storage } from '@ionic/storage';
 import moment from 'moment';
 import 'rxjs/add/operator/map';
 
@@ -7,7 +7,9 @@ import 'rxjs/add/operator/map';
 @Injectable()
 export class DataCache {
 
-  constructor(private storage: Storage) {
+  constructor(
+    // private storage: Storage
+  ) {
   }
 
 
@@ -17,23 +19,23 @@ export class DataCache {
     }
 
     let newItem = new DataCacheItem(key, value, expireTime);
-    this.storage.set(key, newItem);
+    // this.storage.set(key, newItem);
   }
 
   public get(key: string) {
-    return new Promise((resolve, reject) => {
-      this.storage.get(key).then((res: DataCacheItem) => {
-        // check expiration
-        if (moment().isAfter(res.expireTime)) {
-          this.storage.remove(key);
-          reject(undefined);
-        } else {
-          resolve(res.data);
-        }
-      }).catch((err) => {
-        reject(undefined);
-      })
-    });
+    // return new Promise((resolve, reject) => {
+    //   this.storage.get(key).then((res: DataCacheItem) => {
+    //     // check expiration
+    //     if (moment().isAfter(res.expireTime)) {
+    //       this.storage.remove(key);
+    //       reject(undefined);
+    //     } else {
+    //       resolve(res.data);
+    //     }
+    //   }).catch((err) => {
+    //     reject(undefined);
+    //   })
+    // });
   }
 
 }

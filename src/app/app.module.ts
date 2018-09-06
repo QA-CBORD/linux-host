@@ -14,7 +14,7 @@ import { Diagnostic } from '@ionic-native/diagnostic';
 import { AndroidPermissions } from '@ionic-native/android-permissions';
 
 import { MyApp } from './app.component';
-import { IonicStorageModule } from '@ionic/storage';
+// import { IonicStorageModule } from '@ionic/storage';
 
 import { GETService } from '../providers/get-service/get-service';
 import { AuthService } from '../providers/auth-service/auth-service';
@@ -48,7 +48,7 @@ export function createTranslateLoader(http: HttpClient) {
     BrowserModule,
     IonicModule.forRoot(MyApp),
     HttpClientModule,
-    IonicStorageModule.forRoot(),
+    // IonicStorageModule.forRoot(),
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,

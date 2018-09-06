@@ -28,22 +28,22 @@ export class RewardsDataManager {
    * This will retrieve the sessions current user's RewardTrackInfo and RewardHistory
    */
   getUserRewardsData(refresh: boolean = false) {
-    if (refresh) {
+    // if (refresh) {
       this.getUserRewardTrackInfo();
-    } else {
-      this.dataCache.get("userRewardTrackInfo").then((res: UserRewardTrackInfo) => {
-        console.log("Reward Track Info: Cache");
-        this.userRewardTrackInfo = res;
-        return this.dataCache.get("userFulfillmentActivityInfo");
-      }).then((res: UserFulfillmentActivityInfo[]) => {
-        this.userFulfillmentActivityInfo = res;
-        this.events.publish(RewardsDataManager.DATA_USERREWARDTRACKINFO_UPDATED, this.userRewardTrackInfo);
-        this.events.publish(RewardsDataManager.DATA_USERFULFILLMENTACTIVITYINFO_UPDATED, this.userFulfillmentActivityInfo);
-      }).catch((err) => {
-        console.log("Reward Track Info: Service Call");
-        this.getUserRewardTrackInfo();
-      });
-    }
+    // } else {
+    //   this.dataCache.get("userRewardTrackInfo").then((res: UserRewardTrackInfo) => {
+    //     console.log("Reward Track Info: Cache");
+    //     this.userRewardTrackInfo = res;
+    //     return this.dataCache.get("userFulfillmentActivityInfo");
+    //   }).then((res: UserFulfillmentActivityInfo[]) => {
+    //     this.userFulfillmentActivityInfo = res;
+    //     this.events.publish(RewardsDataManager.DATA_USERREWARDTRACKINFO_UPDATED, this.userRewardTrackInfo);
+    //     this.events.publish(RewardsDataManager.DATA_USERFULFILLMENTACTIVITYINFO_UPDATED, this.userFulfillmentActivityInfo);
+    //   }).catch((err) => {
+    //     console.log("Reward Track Info: Service Call");
+    //     this.getUserRewardTrackInfo();
+    //   });
+    // }
   }
 
   getUserRewardTrackInfo() {
