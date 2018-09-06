@@ -82,4 +82,8 @@ side-menu-content {
             font-weight: 700;            
         }
     }
+
+    // remove bounce for ios scrolling
+    .content-ios:not([no-bounce])>.scroll-content::before { bottom: 0; }
+
 }
