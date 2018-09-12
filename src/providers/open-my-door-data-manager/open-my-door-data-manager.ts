@@ -53,9 +53,10 @@ export class OpenMyDoorDataManager {
         this.omdService.getMobileLocations(latitude, longitude, accuracy)
             .subscribe(
                 mobileLocationArray => {
-                    this.events.publish(OpenMyDoorDataManager.DATA_MOBILELOCATIONINFO_UPDATED, mobileLocationArray);
+                    this.events.publish(OpenMyDoorDataManager.DATA_MOBILELOCATIONINFO_UPDATED, {data: mobileLocationArray, error: null});
                 },
                 error => {
+                    this.events.publish(OpenMyDoorDataManager.DATA_MOBILELOCATIONINFO_UPDATED, {data: null, error: error.message});
                     this.logError(error);
                 },
                 () => {

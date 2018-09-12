@@ -52,26 +52,43 @@ export class OpenMyDoorPage {
 
     this.events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Retrieving locations..." });
     this.events.subscribe(OpenMyDoorDataManager.DATA_MOBILELOCATIONINFO_UPDATED, (updatedMobileLocaitonInfo) => {
-      // this.mobileLocationInfo = updatedMobileLocaitonInfo;
-      this.tempLcAr = updatedMobileLocaitonInfo;
-      for (let i = 0; i < this.tempLcAr.length; i++) {
-        // this.tempLcAr[i].distance = Number(this.randomIntFromInterval(0.05, 5).toFixed(2));
-        this.tempLcAr[i].distance > 99 ? this.tempLcAr[i].distance = NaN : 
-        this.tempLcAr[i].distance > 5 ? this.tempLcAr[i].distance = Number(this.tempLcAr[i].distance.toFixed(2)) : this.tempLcAr[i].distance = this.tempLcAr[i].distance;
+
+      if (updatedMobileLocaitonInfo.data == null) {
+        let errorMessage = "An error occurred while trying to retrieve your information.";
+        if (updatedMobileLocaitonInfo.error != null) {
+          errorMessage = updatedMobileLocaitonInfo.error;
+        }
+
+        ExceptionManager.showException(this.events, {
+          displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
+          messageInfo: {
+            title: "Something went wrong",
+            message: errorMessage,
+            positiveButtonTitle: "RETRY",
+            positiveButtonHandler: () => {
+              this.getLocationData();
+            },
+            negativeButtonTitle: "CLOSE",
+            negativeButtonHandler: () => {
+              this.platform.exitApp();
+            }
+          }
+        });
+
+      } else {
+        this.tempLcAr = updatedMobileLocaitonInfo.data;
+        for (let i = 0; i < this.tempLcAr.length; i++) {
+          // this.tempLcAr[i].distance = Number(this.randomIntFromInterval(0.05, 5).toFixed(2));
+          this.tempLcAr[i].distance > 99 ? this.tempLcAr[i].distance = NaN :
+            this.tempLcAr[i].distance > 5 ? this.tempLcAr[i].distance = Number(this.tempLcAr[i].distance.toFixed(2)) : this.tempLcAr[i].distance = this.tempLcAr[i].distance;
+        }
+        this.mobileLocationInfo = this.tempLcAr;
+        this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
       }
-      this.mobileLocationInfo = this.tempLcAr;
-      // this.mobileLocationInfo = this.tempLcAr.sort((n1, n2) => {
-      //   if(n1.distance < n2.distance){
-      //     return -1;
-      //   } else if(n1.distance > n2.distance){
-      //     return 1;
-      //   } else {
-      //     return 0;
-      //   }
-      // });
-      this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
     });
+
     this.getLocationData();
+
   }
 
   randomIntFromInterval(min, max) {
