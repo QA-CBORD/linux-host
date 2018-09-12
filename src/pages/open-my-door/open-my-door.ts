@@ -58,7 +58,7 @@ export class OpenMyDoorPage {
         if (updatedMobileLocaitonInfo.error != null) {
           errorMessage = updatedMobileLocaitonInfo.error;
         }
-
+        this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
         ExceptionManager.showException(this.events, {
           displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
           messageInfo: {
