@@ -57,8 +57,8 @@ export class HomePage {
       }
 
       events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Loading content" });
-      GETService.setSessionId(this.sessionToken);
-      this.handlePageNavigation(this.sessionToken);
+
+      this.handleSessionToken(this.sessionToken);
     })
       .catch((error) => {
 
@@ -68,27 +68,31 @@ export class HomePage {
   }
 
 
-  private handlePageNavigation(session: any) {
-    // on new session, retrieve data
+  private handleSessionToken(session: any) {
     if (session) {
-
-      // debug
-      if (this.destinationPage == null) {
-        this.destinationPage = 'openmydoor';
-      }
-
-      switch (this.destinationPage) {
-        case 'rewards':
-          this.navCtrl.push("RewardsPage");
-          break;
-        case 'openmydoor':
-          this.navCtrl.push("OpenMyDoorPage", {
-            latitude: this.latitude,
-            longitude: this.longitude,
-            accuracy: this.accuracy
+      this.authService.authenticateSessionToken(session).subscribe(
+        newSessionId => {
+          GETService.setSessionId(newSessionId);
+          this.handlePageNavigation();
+        },
+        error => {
+          ExceptionManager.showException(this.events, {
+            displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
+            messageInfo: {
+              title: "No Session",
+              message: "Handling session response and the session data is null",
+              positiveButtonTitle: "RETRY",
+              positiveButtonHandler: () => {
+                this.handleSessionToken(session);
+              },
+              negativeButtonTitle: "CLOSE",
+              negativeButtonHandler: () => {
+                this.platform.exitApp();
+              }
+            }
           });
-          break;
-      }
+        }
+      );
     } else {
       // handle no session error
       // show no session error or redirect back natively or something
@@ -104,6 +108,27 @@ export class HomePage {
           }
         }
       });
+    }
+  }
+
+  private handlePageNavigation() {
+    // on new session, retrieve data
+    // debug
+    if (this.destinationPage == null) {
+      this.destinationPage = 'openmydoor';
+    }
+
+    switch (this.destinationPage) {
+      case 'rewards':
+        this.navCtrl.push("RewardsPage");
+        break;
+      case 'openmydoor':
+        this.navCtrl.push("OpenMyDoorPage", {
+          latitude: this.latitude,
+          longitude: this.longitude,
+          accuracy: this.accuracy
+        });
+        break;
     }
   }
 

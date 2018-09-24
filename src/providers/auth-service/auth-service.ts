@@ -83,7 +83,7 @@ export class AuthService extends GETService {
     });
   }
 
-  authenticateSessionToken(sessionToken: string): Observable<String> {
+  authenticateSessionToken(sessionToken: string): Observable<string> {
 
     return Observable.create((observer: any) => {
       let postParams = {
