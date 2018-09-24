@@ -57,7 +57,8 @@ export class HomePage {
       }
 
       events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Loading content" });
-      this.determinNewSession();
+      GETService.setSessionId(this.sessionToken);
+      this.handlePageNavigation(this.sessionToken);
     })
       .catch((error) => {
 
@@ -66,37 +67,8 @@ export class HomePage {
 
   }
 
-  private determinNewSession() {
 
-    // used to get session id from hardcoded login for testing
-    this.authService.authenticateUser(null).subscribe(
-      sessionId => {
-        GETService.setSessionId(sessionId);
-        this.handleSessionResponse(sessionId);
-      },
-      error => {
-        // use proper method to parse the message and determine proper message
-        ExceptionManager.showException(this.events, {
-          displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
-          messageInfo: {
-            title: "No Session",
-            message: error,
-            positiveButtonTitle: "RETRY",
-            positiveButtonHandler: () => {
-              this.determinNewSession();
-            },
-            negativeButtonTitle: "CLOSE",
-            negativeButtonHandler: () => {
-              this.platform.exitApp();
-            }
-          }
-        });
-      }
-    )
-
-  }
-
-  private handleSessionResponse(session: any) {
+  private handlePageNavigation(session: any) {
     // on new session, retrieve data
     if (session) {
 
@@ -126,12 +98,8 @@ export class HomePage {
         messageInfo: {
           title: "No Session",
           message: "Handling session response and the session data is null",
-          positiveButtonTitle: "RETRY",
+          positiveButtonTitle: "CLOSE",
           positiveButtonHandler: () => {
-            this.determinNewSession();
-          },
-          negativeButtonTitle: "CLOSE",
-          negativeButtonHandler: () => {
             this.platform.exitApp();
           }
         }
