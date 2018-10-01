@@ -49,6 +49,59 @@ export class OpenMyDoorService extends GETService {
 
   }
 
+  /// example 1 cleaner method
+  public getMobileLocationskk(params: Map<string, any>): Observable<MobileLocationInfo[]> {
+
+    return Observable.create((observer: any) => {
+
+      console.log(JSON.stringify(params));
+
+      this.httpPostNew(this.serviceUrl, 'getMobileLocations', true, params)
+        .subscribe(
+          data => {
+            // validate data then throw error or send
+            observer.next(data.response);
+            observer.complete();
+          },
+          error => {
+            // do error stuff then push it to observer
+            observer.error(error);
+          }
+        );
+    });
+
+  }
+
+  /// example 2 cleaner method
+  public getMobileLocationskk2(latitude: number, longitude: number, accuracy: number): Observable<MobileLocationInfo[]> {
+
+    let params: any = {
+      latitude: latitude,
+      longitude: longitude,
+      accuracy: accuracy,
+      filters: ["Normal", "TempCode", "Attendance"]
+    }
+
+    return Observable.create((observer: any) => {
+
+      console.log(JSON.stringify(params));
+
+      this.httpPostNew(this.serviceUrl, 'getMobileLocations', true, params)
+        .subscribe(
+          data => {
+            // validate data then throw error or send
+            observer.next(data.response);
+            observer.complete();
+          },
+          error => {
+            // do error stuff then push it to observer
+            observer.error(error);
+          }
+        );
+    });
+
+  }
+
   public activateMobileLocation(locationId: string, geoData: any, sourceInfo: string): Observable<ActivateMobileLocationResult> {
 
     return Observable.create((observer: any) => {
@@ -66,7 +119,7 @@ export class OpenMyDoorService extends GETService {
       let altitudeAccuracy = geoData == null || geoData.coords == null || geoData.coords.altitudeAccuracy == null ? null : geoData.coords.altitudeAccuracy;
       let heading = geoData == null || geoData.coords == null || geoData.coords.heading == null ? null : geoData.coords.heading;
       let speed = geoData == null || geoData.coords == null || geoData.coords.speed == null ? null : geoData.coords.speed;
-      
+
 
       let postParams = {
         method: 'activateMobileLocation',
@@ -91,18 +144,18 @@ export class OpenMyDoorService extends GETService {
         .subscribe(
           data => {
             // validate data then throw error or send
-            if(data != null && data.response != null){
+            if (data != null && data.response != null) {
               observer.next(data.response);
               observer.complete();
             } else {
-              if(data != null && data.exception != null){
+              if (data != null && data.exception != null) {
                 observer.error(data.exception);
               } else {
                 observer.error("An unexpected error occurred");
               }
-              
+
             }
-            
+
           },
           error => {
             // do error stuff then push it to observer

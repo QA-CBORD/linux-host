@@ -65,6 +65,28 @@ export class OpenMyDoorDataManager {
             )
     }
 
+    getMobileLocationDatakk(geoData: any) {
+
+        let latitude = geoData == null || geoData.coords == null || geoData.coords.latitude == null ? null : geoData.coords.latitude;
+        let longitude = geoData == null || geoData.coords == null || geoData.coords.longitude == null ? null : geoData.coords.longitude;
+        let accuracy = geoData == null || geoData.coords == null || geoData.coords.accuracy == null ? null : geoData.coords.accuracy;
+        
+
+        this.omdService.getMobileLocationskk2(latitude, longitude, accuracy)
+            .subscribe(
+                mobileLocationArray => {
+                    this.events.publish(OpenMyDoorDataManager.DATA_MOBILELOCATIONINFO_UPDATED, {data: mobileLocationArray, error: null});
+                },
+                error => {
+                    this.events.publish(OpenMyDoorDataManager.DATA_MOBILELOCATIONINFO_UPDATED, {data: null, error: error.message});
+                    this.logError(error);
+                },
+                () => {
+                    // complete
+                }
+            )
+    }
+
     activateMobileLocation(geoData: any, locationId: string, sourceInfo: string): Observable<ActivateMobileLocationResult>{
         
         return this.omdService.activateMobileLocation(locationId, geoData, sourceInfo);

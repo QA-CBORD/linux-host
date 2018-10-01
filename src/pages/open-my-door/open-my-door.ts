@@ -51,8 +51,10 @@ export class OpenMyDoorPage {
     }
 
     this.events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Retrieving locations..." });
-    this.events.subscribe(OpenMyDoorDataManager.DATA_MOBILELOCATIONINFO_UPDATED, (updatedMobileLocaitonInfo) => {
 
+    
+    this.events.subscribe(OpenMyDoorDataManager.DATA_MOBILELOCATIONINFO_UPDATED, (updatedMobileLocaitonInfo) => {
+    
       if (updatedMobileLocaitonInfo.data == null) {
         let errorMessage = "An error occurred while trying to retrieve your information.";
         if (updatedMobileLocaitonInfo.error != null) {

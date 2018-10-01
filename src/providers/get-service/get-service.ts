@@ -10,11 +10,6 @@ import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/throw';
 import 'rxjs/add/operator/timeout';
 
-import { MessageResponse } from '../../models/service/message-response.interface';
-import { SystemAuthentication } from '../../models/authentication/system-authentication.interface';
-import { InstitutionInfoList } from '../../models/institution/institution-info-list.interface';
-import { DataCache } from "../data-cache/data-cache";
-
 @Injectable()
 export class GETService {
 
@@ -39,8 +34,26 @@ export class GETService {
       .catch(this.handleError);
   }
 
+  protected httpPostNew(serviceUrl: string, functionName: string, bUseSessionId: boolean, parameterMap: any): Observable<any> {
+
+    if (bUseSessionId) {
+      parameterMap.set('sessionId', GETService.getSessionId());
+    }
+
+    let finalParams = {
+      method: functionName,
+      params: parameterMap
+    }
+
+    return this.http.post(this.baseUrl.concat(serviceUrl), JSON.stringify(finalParams), this.getOptions())
+      .timeout(this.TIMEOUT_MS)
+      .map(this.extractData)
+      .do(this.logData)
+      .catch(this.handleError);
+  }
+
   protected handleError(error: Response | any) {
-    
+
     console.log('Handle Error 0');
     console.log(error);
     return Observable.throw(error);
@@ -50,22 +63,22 @@ export class GETService {
     console.log('Extract Data 0');
     try {
       let tResponse = response.json();
-      
-    console.log('Extract Data 1');
+
+      console.log('Extract Data 1');
       if (!tResponse.response || tResponse.exception) {
-        
-    console.log('Extract Data 2');
+
+        console.log('Extract Data 2');
         console.log(tResponse);
         this.parseExceptionResponse(response);
       } else {
-        
-    console.log('Extract Data 3');
+
+        console.log('Extract Data 3');
         return tResponse;
       }
     } catch (error) {
-      
-    console.log('Extract Data 4');
-      return {response: null, exception: 'An unknown error occurred.'};
+
+      console.log('Extract Data 4');
+      return { response: null, exception: 'An unknown error occurred.' };
     }
   }
 
