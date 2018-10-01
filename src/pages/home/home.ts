@@ -57,7 +57,8 @@ export class HomePage {
       }
 
       events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Loading content" });
-      this.determinNewSession();
+
+      this.handleSessionToken(this.sessionToken);
     })
       .catch((error) => {
 
@@ -66,57 +67,32 @@ export class HomePage {
 
   }
 
-  private determinNewSession() {
 
-    // used to get session id from hardcoded login for testing
-    this.authService.authenticateUser(null).subscribe(
-      sessionId => {
-        GETService.setSessionId(sessionId);
-        this.handleSessionResponse(sessionId);
-      },
-      error => {
-        // use proper method to parse the message and determine proper message
-        ExceptionManager.showException(this.events, {
-          displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
-          messageInfo: {
-            title: "No Session",
-            message: error,
-            positiveButtonTitle: "RETRY",
-            positiveButtonHandler: () => {
-              this.determinNewSession();
-            },
-            negativeButtonTitle: "CLOSE",
-            negativeButtonHandler: () => {
-              this.platform.exitApp();
-            }
-          }
-        });
-      }
-    )
-
-  }
-
-  private handleSessionResponse(session: any) {
-    // on new session, retrieve data
+  private handleSessionToken(session: any) {
     if (session) {
-
-      // debug
-      if (this.destinationPage == null) {
-        this.destinationPage = 'openmydoor';
-      }
-
-      switch (this.destinationPage) {
-        case 'rewards':
-          this.navCtrl.push("RewardsPage");
-          break;
-        case 'openmydoor':
-          this.navCtrl.push("OpenMyDoorPage", {
-            latitude: this.latitude,
-            longitude: this.longitude,
-            accuracy: this.accuracy
+      this.authService.authenticateSessionToken(session).subscribe(
+        newSessionId => {
+          GETService.setSessionId(newSessionId);
+          this.handlePageNavigation();
+        },
+        error => {
+          ExceptionManager.showException(this.events, {
+            displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
+            messageInfo: {
+              title: "No Session",
+              message: "Handling session response and the session data is null",
+              positiveButtonTitle: "RETRY",
+              positiveButtonHandler: () => {
+                this.handleSessionToken(session);
+              },
+              negativeButtonTitle: "CLOSE",
+              negativeButtonHandler: () => {
+                this.platform.exitApp();
+              }
+            }
           });
-          break;
-      }
+        }
+      );
     } else {
       // handle no session error
       // show no session error or redirect back natively or something
@@ -126,16 +102,33 @@ export class HomePage {
         messageInfo: {
           title: "No Session",
           message: "Handling session response and the session data is null",
-          positiveButtonTitle: "RETRY",
+          positiveButtonTitle: "CLOSE",
           positiveButtonHandler: () => {
-            this.determinNewSession();
-          },
-          negativeButtonTitle: "CLOSE",
-          negativeButtonHandler: () => {
             this.platform.exitApp();
           }
         }
       });
+    }
+  }
+
+  private handlePageNavigation() {
+    // on new session, retrieve data
+    // debug
+    if (this.destinationPage == null) {
+      this.destinationPage = 'openmydoor';
+    }
+
+    switch (this.destinationPage) {
+      case 'rewards':
+        this.navCtrl.push("RewardsPage");
+        break;
+      case 'openmydoor':
+        this.navCtrl.push("OpenMyDoorPage", {
+          latitude: this.latitude,
+          longitude: this.longitude,
+          accuracy: this.accuracy
+        });
+        break;
     }
   }
 

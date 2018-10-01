@@ -104,7 +104,7 @@ export class OpenMyDoorPage {
 
   private getLocationData() {
     console.log("Get Location Data");
-
+    this.events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Retrieving locations..." });
     // check if data was passed from native app via url, otherwise do normal checking
     if (this.latitude != null && this.longitude != null && this.accuracy != null) {
       let geoData = {
