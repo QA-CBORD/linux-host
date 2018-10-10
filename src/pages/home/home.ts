@@ -3,15 +3,16 @@ import { IonicPage, NavController, NavParams, Events, Platform } from 'ionic-ang
 
 import * as Globals from '../../app/app.global';
 
-import { GETService } from './../../providers/get-service/get-service';
-import { AuthService } from './../../providers/auth-service/auth-service';
+import { GETService } from './../../services/get-service/get-service';
+import { AuthService } from './../../services/auth-service/auth-service';
 
-import { SessionService } from '../../providers/session-service/session-service';
-import { RewardsDataManager } from '../../providers/reward-data-manager/reward-data-manager';
+import { SessionService } from '../../services/session-service/session-service';
+import { MobileAccessProvider } from '../../providers/mobile-access-provider/mobile-access-provider';
 import { UserRewardTrackInfo } from '../../models/rewards/rewards.interface'
-import { ExceptionManager } from '../../providers/exception-manager/exception-manager';
+import { ExceptionProvider } from '../../providers/exception-provider/exception-provider';
 import { Environment } from '../../app/environment';
 import { GeoCoordinates } from './../../models/geolocation/geocoordinates.interface';
+import { SecureMessagingService } from '../../services/secure-messaging-service/secure-messaging-service';
 
 
 @IonicPage({
@@ -34,13 +35,17 @@ export class HomePage {
     public navCtrl: NavController,
     public navParams: NavParams,
     public events: Events,
-    public rewardsDataManager: RewardsDataManager,
+    public mobileAccessProvider: MobileAccessProvider,
     public sessionService: SessionService,
     private authService: AuthService,
-    private platform: Platform
+    private platform: Platform,
+    private smService: SecureMessagingService /// SM TESTING, ERASE WHEN DONE
   ) {
 
     this.platform.ready().then(() => {
+
+      /// SM TESTING, ERASE WHEN DONE
+      this.smService.testSecureMessaging();
 
       /// hide the split pane here becuase we don't need the navigation menu
       events.publish(Globals.Events.SIDEPANE_ENABLE, false);
@@ -92,7 +97,7 @@ export class HomePage {
           this.handlePageNavigation();
         },
         error => {
-          ExceptionManager.showException(this.events, {
+          ExceptionProvider.showException(this.events, {
             displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
             messageInfo: {
               title: "No Session",
@@ -113,7 +118,7 @@ export class HomePage {
       /// no session sharing token sent via URL
       /// show no session error or redirect back natively or something
       /// use proper method to parse the message and determine proper message
-      ExceptionManager.showException(this.events, {
+      ExceptionProvider.showException(this.events, {
         displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
         messageInfo: {
           title: "No Session",
@@ -179,7 +184,7 @@ export class HomePage {
 
     if (this.userRewardTrackInfo.userOptInStatus == 0) {
       // show opt in with option to exit
-      ExceptionManager.showException(this.events, {
+      ExceptionProvider.showException(this.events, {
         displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
         messageInfo: {
           title: "Rewards Opt-In",
@@ -187,7 +192,7 @@ export class HomePage {
           positiveButtonTitle: "YES",
           positiveButtonHandler: () => {
             // this.rewardsDataManager.
-            this.rewardsDataManager.getUserRewardsData();
+            //this.mobileAccessProvider.getUserRewardsData();
           },
           negativeButtonTitle: "CLOSE",
           negativeButtonHandler: () => {
@@ -200,7 +205,6 @@ export class HomePage {
     }
 
     // unsubscribe from event because we have the data and no longer need it in the Home tabs page
-    this.events.unsubscribe(RewardsDataManager.DATA_USERREWARDTRACKINFO_UPDATED);
 
 
     this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });

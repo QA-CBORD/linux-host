@@ -4,12 +4,11 @@ import 'rxjs/add/operator/map';
 import { Observable } from "rxjs/Observable";
 
 import { GETService } from "../get-service/get-service";
-import { MessageResponse } from "../../models/service/message-response.interface";
 import { UserInfo } from "../../models/user/user-info.interface"
 
 
 @Injectable()
-export class ContentServiceProvider extends GETService {
+export class ContentService extends GETService {
 
   private serviceUrl: string = '/json/user';
 

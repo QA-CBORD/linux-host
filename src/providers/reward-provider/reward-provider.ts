@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Events } from 'ionic-angular';
 
-import { SessionService } from '../../providers/session-service/session-service';
-import { RewardService } from '../../providers/reward-service/reward-service';
+import { SessionService } from '../../services/session-service/session-service';
+import { RewardService } from '../../services/reward-service/reward-service';
 import { UserRewardTrackInfo, UserFulfillmentActivityInfo } from '../../models/rewards/rewards.interface'
-import { DataCache } from '../data-cache/data-cache';
+import { DataCache } from '../../utility/data-cache/data-cache';
 
 @Injectable()
-export class RewardsDataManager {
+export class RewardsProvider {
 
   public static readonly DATA_USERREWARDTRACKINFO_UPDATED = "data:userRewardTrackInfo:updated";
   public static readonly DATA_USERFULFILLMENTACTIVITYINFO_UPDATED = "data:userFulfillmentActivityInfo:updated";
@@ -68,11 +68,11 @@ export class RewardsDataManager {
       // set datas and do more things with it
       this.userRewardTrackInfo = userRewardTrackInfo[0];
       this.dataCache.set("userRewardTrackInfo", userRewardTrackInfo[0]);
-      this.events.publish(RewardsDataManager.DATA_USERREWARDTRACKINFO_UPDATED, this.userRewardTrackInfo);
+      this.events.publish(RewardsProvider.DATA_USERREWARDTRACKINFO_UPDATED, this.userRewardTrackInfo);
       this.getUserRewardHistory();
     } else {
       // publish the bad data to be handled by subscribers
-      this.events.publish(RewardsDataManager.DATA_USERREWARDTRACKINFO_UPDATED, this.userRewardTrackInfo);
+      this.events.publish(RewardsProvider.DATA_USERREWARDTRACKINFO_UPDATED, this.userRewardTrackInfo);
     }
   }
 
@@ -91,7 +91,7 @@ export class RewardsDataManager {
     this.userFulfillmentActivityInfo = userFulfillmentActivityInfo;
     this.dataCache.set("userFulfillmentActivityInfo", userFulfillmentActivityInfo);
 
-    this.events.publish(RewardsDataManager.DATA_USERFULFILLMENTACTIVITYINFO_UPDATED, this.userFulfillmentActivityInfo);
+    this.events.publish(RewardsProvider.DATA_USERFULFILLMENTACTIVITYINFO_UPDATED, this.userFulfillmentActivityInfo);
   }
 
   logError(message: any) {

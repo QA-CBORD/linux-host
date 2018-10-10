@@ -5,19 +5,19 @@ import { AndroidPermissions } from '@ionic-native/android-permissions';
 import { Geolocation } from '@ionic-native/geolocation';
 
 import * as Globals from '../../app/app.global';
-import { OpenMyDoorModalPage } from '../open-my-door-modal/open-my-door-modal';
-import { OpenMyDoorDataManager } from './../../providers/open-my-door-data-manager/open-my-door-data-manager';
-import { ExceptionManager } from '../../providers/exception-manager/exception-manager';
+import { MobileAccessModalPage } from '../mobile-access-modal/mobile-access-modal';
+import { MobileAccessProvider } from '../../providers/mobile-access-provider/mobile-access-provider';
+import { ExceptionProvider } from '../../providers/exception-provider/exception-provider';
 import { MobileLocationInfo } from '../../models/open-my-door/open-my-door.interface';
 import { GeoCoordinates } from '../../models/geolocation/geocoordinates.interface';
 
 
 @IonicPage()
 @Component({
-  selector: 'page-open-my-door',
-  templateUrl: 'open-my-door.html',
+  selector: 'page-mobile-access',
+  templateUrl: 'mobile-access.html',
 })
-export class OpenMyDoorPage {
+export class MobileAccessPage {
 
   mobileLocationInfo: MobileLocationInfo[];
 
@@ -32,7 +32,7 @@ export class OpenMyDoorPage {
     public navParams: NavParams,
     public events: Events,
     private modCtrl: ModalController,
-    private omdDataManager: OpenMyDoorDataManager,
+    private mobileAccessProvider: MobileAccessProvider,
     private diagnostic: Diagnostic,
     private androidPermissions: AndroidPermissions,
     private geolocation: Geolocation
@@ -77,7 +77,7 @@ export class OpenMyDoorPage {
 
     this.events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Retrieving locations..." });
 
-    this.omdDataManager.getMobileLocationData(this.geoData).subscribe(
+    this.mobileAccessProvider.getMobileLocationData(this.geoData).subscribe(
       mobileLocationData => {
         for (let i = 0; i < mobileLocationData.length; i++) {
           mobileLocationData[i].distance > 99 ? mobileLocationData[i].distance = NaN :
@@ -93,7 +93,7 @@ export class OpenMyDoorPage {
           errorMessage = error;
         }
         this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
-        ExceptionManager.showException(this.events, {
+        ExceptionProvider.showException(this.events, {
           displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
           messageInfo: {
             title: "Something went wrong",
@@ -132,7 +132,7 @@ export class OpenMyDoorPage {
         if (result.hasPermission) {
           this.checkLocationServices();
         } else {
-          ExceptionManager.showException(this.events,
+          ExceptionProvider.showException(this.events,
             {
               displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
               messageInfo: {
@@ -177,7 +177,7 @@ export class OpenMyDoorPage {
             this.getMobileLocations(enabled);
           } else {
             console.log("GPS disabled");
-            ExceptionManager.showException(this.events,
+            ExceptionProvider.showException(this.events,
               {
                 displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
                 messageInfo: {
@@ -246,7 +246,7 @@ export class OpenMyDoorPage {
       return;
     }
 
-    let unlockModal = this.modCtrl.create(OpenMyDoorModalPage, { selectedLocation: this.currentSelectedLocation });
+    let unlockModal = this.modCtrl.create(MobileAccessModalPage, { selectedLocation: this.currentSelectedLocation });
     unlockModal.onDidDismiss(data => {
 
       console.log(data);

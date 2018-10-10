@@ -7,12 +7,11 @@ import { GeoCoordinates } from '../../models/geolocation/geocoordinates.interfac
 
 
 @Injectable()
-export class OpenMyDoorService extends GETService {
+export class MobileAccessService extends GETService {
 
   private serviceUrl: string = '/json/commerce';
 
-
-  /**
+ /**
    * Retrieve Mobile Access locations for user
    * 
    * @param geoData   Geolocation data for user. null if none exists

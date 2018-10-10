@@ -1,24 +1,29 @@
 import { Injectable } from "@angular/core";
 import { Events } from 'ionic-angular';
 
-import { SessionService } from '../session-service/session-service';
-import { OpenMyDoorService } from '../open-my-door/open-my-door-service';
+import { SessionService } from '../../services/session-service/session-service';
+import { MobileAccessService } from '../../services/mobile-access-service/mobile-access-service';
 import { ActivateMobileLocationResult, MobileLocationInfo } from './../../models/open-my-door/open-my-door.interface';
 import { Observable } from "rxjs/Observable";
 import { GeoCoordinates } from "../../models/geolocation/geocoordinates.interface";
 
 
 
+
+
+
 @Injectable()
-export class OpenMyDoorDataManager {
+export class MobileAccessProvider {
+
+    public static readonly DATA_MOBILELOCATIONINFO_UPDATED = "data:getMobileLocations:updated";
 
     constructor(
         public events: Events,
         public sessionService: SessionService,
-        public omdService: OpenMyDoorService
+        public mobileAccessService: MobileAccessService,
     ) {
 
-    }    
+    }  
 
     /**
      * Retrieve mobile location data for Mobile Access
@@ -31,7 +36,7 @@ export class OpenMyDoorDataManager {
         geoData.coords.longitude = geoData == null || geoData.coords == null || geoData.coords.longitude == null ? null : geoData.coords.longitude;
         geoData.coords.accuracy = geoData == null || geoData.coords == null || geoData.coords.accuracy == null ? null : geoData.coords.accuracy;
 
-        return this.omdService.getMobileLocations(geoData);
+        return this.mobileAccessService.getMobileLocations(geoData);
     }
 
 
@@ -44,7 +49,7 @@ export class OpenMyDoorDataManager {
      */
     activateMobileLocation(geoData: any, locationId: string, sourceInfo: string): Observable<ActivateMobileLocationResult> {
 
-        return this.omdService.activateMobileLocation(locationId, geoData, sourceInfo);
+        return this.mobileAccessService.activateMobileLocation(locationId, geoData, sourceInfo);
     }
 
 }

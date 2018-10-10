@@ -8,17 +8,17 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/delay';
 
 import * as Globals from '../../app/app.global';
-import { OpenMyDoorDataManager } from '../../providers/open-my-door-data-manager/open-my-door-data-manager';
+import { MobileAccessProvider } from '../../providers/mobile-access-provider/mobile-access-provider';
 import { ActivateMobileLocationResult } from '../../models/open-my-door/open-my-door.interface';
-import { ExceptionManager } from '../../providers/exception-manager/exception-manager';
+import { ExceptionProvider } from '../../providers/exception-provider/exception-provider';
 
 
 @IonicPage()
 @Component({
-  selector: 'page-open-my-door-modal',
-  templateUrl: 'open-my-door-modal.html',
+  selector: 'page-mobile-access-modal',
+  templateUrl: 'mobile-access-modal.html',
 })
-export class OpenMyDoorModalPage {
+export class MobileAccessModalPage {
 
   currentSelectedLocation: any;
 
@@ -27,7 +27,7 @@ export class OpenMyDoorModalPage {
     public events: Events,
     public navParams: NavParams,
     private viewCtrl: ViewController,
-    private omdDataManager: OpenMyDoorDataManager,
+    private mobileAccessProvider: MobileAccessProvider,
     private androidPermissions: AndroidPermissions,
     private diagnostic: Diagnostic,
     private geolocation: Geolocation
@@ -95,7 +95,7 @@ export class OpenMyDoorModalPage {
     if (bUseLocation) {
       this.geolocation.getCurrentPosition({ maximumAge: 3000, timeout: 5000, enableHighAccuracy: true })
         .then(geoData => {
-          this.omdDataManager.activateMobileLocation(geoData, this.currentSelectedLocation.locationId, null)
+          this.mobileAccessProvider.activateMobileLocation(geoData, this.currentSelectedLocation.locationId, null)
             .subscribe(
               data => {
                 this.handleActivateMobileLocationResponse(data);
@@ -109,7 +109,7 @@ export class OpenMyDoorModalPage {
         .catch(error => {
           console.log(error);
 
-          this.omdDataManager.activateMobileLocation(null, this.currentSelectedLocation.locationId, null)
+          this.mobileAccessProvider.activateMobileLocation(null, this.currentSelectedLocation.locationId, null)
             .subscribe(
               data => {
                 this.handleActivateMobileLocationResponse(data);
@@ -121,7 +121,7 @@ export class OpenMyDoorModalPage {
             );
         });
     } else {
-      this.omdDataManager.activateMobileLocation(null, this.currentSelectedLocation.locationId, null)
+      this.mobileAccessProvider.activateMobileLocation(null, this.currentSelectedLocation.locationId, null)
         .subscribe(
           data => {
             this.handleActivateMobileLocationResponse(data);
@@ -159,7 +159,7 @@ export class OpenMyDoorModalPage {
           tCodeMessage = response.message;
       }
 
-      ExceptionManager.showException(this.events,
+      ExceptionProvider.showException(this.events,
         {
           displayOptions: Globals.Exception.DisplayOptions.ONE_BUTTON,
           messageInfo: {
@@ -174,7 +174,7 @@ export class OpenMyDoorModalPage {
 
       } else {
 
-        ExceptionManager.showException(this.events,
+        ExceptionProvider.showException(this.events,
           {
             displayOptions: Globals.Exception.DisplayOptions.ONE_BUTTON,
             messageInfo: {
@@ -199,7 +199,7 @@ export class OpenMyDoorModalPage {
       // falure
       console.log("Activation Failure");
       
-      ExceptionManager.showException(this.events, {
+      ExceptionProvider.showException(this.events, {
         displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
         messageInfo: {
           title: "Failed",
@@ -226,7 +226,7 @@ export class OpenMyDoorModalPage {
    * @param errorMessage    Error message returned from failure
    */
   private onActivateMobileLocationFailure(bUseLocation: boolean, errorMessage: string) {
-    ExceptionManager.showException(this.events,
+    ExceptionProvider.showException(this.events,
       {
         displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
         messageInfo: {

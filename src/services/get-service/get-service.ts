@@ -10,11 +10,6 @@ import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/throw';
 import 'rxjs/add/operator/timeout';
 
-import { MessageResponse } from '../../models/service/message-response.interface';
-import { SystemAuthentication } from '../../models/authentication/system-authentication.interface';
-import { InstitutionInfoList } from '../../models/institution/institution-info-list.interface';
-import { DataCache } from "../data-cache/data-cache";
-
 @Injectable()
 export class GETService {
 
@@ -42,7 +37,7 @@ export class GETService {
    * @param postParams    Parameters for request
    */
   protected httpRequest(serviceUrl: string, methodName: string, bUseSessionId: boolean, postParams: any): Observable<any> {
-    this.baseUrl = Environment.getServicesBaseURL();
+    this.baseUrl = Environment.getGETServicesBaseURL();
 
     if(bUseSessionId){
       postParams.set('sessionId', GETService.getSessionId());
@@ -67,7 +62,7 @@ export class GETService {
    * @param postParams    Parameters for request
    */
   protected httpPost(serviceUrl: string, postParams: any): Observable<any> {
-    this.baseUrl = Environment.getServicesBaseURL();
+    this.baseUrl = Environment.getGETServicesBaseURL();
     return this.http.post(this.baseUrl.concat(serviceUrl), JSON.stringify(postParams), this.getOptions())
       .timeout(this.TIMEOUT_MS)
       .map(this.extractData)
