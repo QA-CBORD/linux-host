@@ -10,10 +10,13 @@ import { SessionService } from '../../providers/session-service/session-service'
 import { RewardsDataManager } from '../../providers/reward-data-manager/reward-data-manager';
 import { UserRewardTrackInfo } from '../../models/rewards/rewards.interface'
 import { ExceptionManager } from '../../providers/exception-manager/exception-manager';
+import { Environment } from '../../app/environment';
+import { GeoCoordinates } from './../../models/geolocation/geocoordinates.interface';
+
 
 @IonicPage({
   name: 'home',
-  segment: 'home/:sessionToken/:destinationPage/:latitude/:longitude/:accuracy'
+  segment: 'home/:sessionToken/:currentEnvironment/:destinationPage/:latitude/:longitude/:accuracy'
 })
 @Component({
   selector: 'page-home',
@@ -23,10 +26,7 @@ export class HomePage {
 
   sessionToken: string = null;
   destinationPage: string = null;
-  latitude: string = null;
-  longitude: string = null;
-  accuracy: string = null;
-
+  geoData: GeoCoordinates = null;
 
   userRewardTrackInfo: UserRewardTrackInfo;
 
@@ -41,24 +41,28 @@ export class HomePage {
   ) {
 
     this.platform.ready().then(() => {
-      // hide the split pane here becuase we don't need the navigation menu
+
+      /// hide the split pane here becuase we don't need the navigation menu
       events.publish(Globals.Events.SIDEPANE_ENABLE, false);
 
 
-      this.sessionToken = navParams.get('sessionToken');
+      /// get required params from the URL
       this.destinationPage = navParams.get('destinationPage');
 
+
+      /// get optional location params from the URL
       try {
-        this.latitude = navParams.get('latitude');
-        this.longitude = navParams.get('longitude');
-        this.accuracy = navParams.get('accuracy');
+        this.geoData.coords.latitude = parseFloat(navParams.get('latitude'));
+        this.geoData.coords.longitude = parseFloat(navParams.get('longitude'));
+        this.geoData.coords.accuracy = parseFloat(navParams.get('accuracy'));
       } catch (error) {
-        // will only fail when no geolocation data from native device or url        
+        /// will only fail when no geolocation data from native device or url        
       }
 
       events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Loading content" });
 
-      this.handleSessionToken(this.sessionToken);
+      this.checkEnvironment(navParams.get('currentEnvironment'));
+      this.handleSessionToken(navParams.get('sessionToken'));
     })
       .catch((error) => {
 
@@ -67,10 +71,22 @@ export class HomePage {
 
   }
 
+  /**
+   *  Set the current environment using the URL paramater
+   * @param currentEnvironment 
+   */
+  private checkEnvironment(currentEnvironment: string) {
+    Environment.setEnvironment(currentEnvironment);
+  }
 
-  private handleSessionToken(session: any) {
-    if (session) {
-      this.authService.authenticateSessionToken(session).subscribe(
+  /**
+   *  Handle the 'Session Sharing' session token provided from the native applications to acquire a new session id
+   * @param sessionToken 
+   */
+  private handleSessionToken(sessionToken: any) {
+    if (sessionToken) {
+      /// acquire the new session id with the session token
+      this.authService.authenticateSessionToken(sessionToken).subscribe(
         newSessionId => {
           GETService.setSessionId(newSessionId);
           this.handlePageNavigation();
@@ -80,10 +96,10 @@ export class HomePage {
             displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
             messageInfo: {
               title: "No Session",
-              message: "Handling session response and the session data is null",
+              message: "Unable to verify your session.",
               positiveButtonTitle: "RETRY",
               positiveButtonHandler: () => {
-                this.handleSessionToken(session);
+                this.handleSessionToken(sessionToken);
               },
               negativeButtonTitle: "CLOSE",
               negativeButtonHandler: () => {
@@ -94,9 +110,9 @@ export class HomePage {
         }
       );
     } else {
-      // handle no session error
-      // show no session error or redirect back natively or something
-      // use proper method to parse the message and determine proper message
+      /// no session sharing token sent via URL
+      /// show no session error or redirect back natively or something
+      /// use proper method to parse the message and determine proper message
       ExceptionManager.showException(this.events, {
         displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
         messageInfo: {
@@ -111,9 +127,14 @@ export class HomePage {
     }
   }
 
+  /**
+   *  Navigate user to the destination page after session id has been retrieved
+   */
   private handlePageNavigation() {
-    // on new session, retrieve data
-    // debug
+
+    /// default to "Mobile Access" page if no destination page value exists
+    /// this should never happen
+    /// should be handled better
     if (this.destinationPage == null) {
       this.destinationPage = 'openmydoor';
     }
@@ -123,17 +144,13 @@ export class HomePage {
         this.navCtrl.push("RewardsPage");
         break;
       case 'openmydoor':
-        this.navCtrl.push("OpenMyDoorPage", {
-          latitude: this.latitude,
-          longitude: this.longitude,
-          accuracy: this.accuracy
-        });
+        this.navCtrl.push("OpenMyDoorPage", this.geoData);
         break;
     }
   }
 
 
-  // perform UI filling and logic based on reward data
+  /// NOT USED perform UI filling and logic based on reward data
   private onRewardsData() {
 
     // 0 = normal

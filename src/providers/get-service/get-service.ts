@@ -10,40 +10,48 @@ import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/throw';
 import 'rxjs/add/operator/timeout';
 
+import { MessageResponse } from '../../models/service/message-response.interface';
+import { SystemAuthentication } from '../../models/authentication/system-authentication.interface';
+import { InstitutionInfoList } from '../../models/institution/institution-info-list.interface';
+import { DataCache } from "../data-cache/data-cache";
+
 @Injectable()
 export class GETService {
 
+  /// Local session data
   static sessionId: string;
   static session: any;
 
+  /// HTTP call timeout in milliseconds
   private TIMEOUT_MS = 15000;
 
-  protected baseUrl: string = Environment.servicesBaseURL;
+  /// Local base url for HTTP calls
+  protected baseUrl: string = null;
 
   constructor(
     private http: Http
   ) {
+
   }
 
+  /**
+   * HTTP request
+   * 
+   * @param serviceUrl    URL for source of request
+   * @param methodName    Name of method for request
+   * @param postParams    Parameters for request
+   */
+  protected httpRequest(serviceUrl: string, methodName: string, bUseSessionId: boolean, postParams: any): Observable<any> {
+    this.baseUrl = Environment.getServicesBaseURL();
 
-  protected httpPost(serviceUrl: string, postParams: any): Observable<any> {
-    return this.http.post(this.baseUrl.concat(serviceUrl), JSON.stringify(postParams), this.getOptions())
-      .timeout(this.TIMEOUT_MS)
-      .map(this.extractData)
-      .do(this.logData)
-      .catch(this.handleError);
-  }
-
-  protected httpPostNew(serviceUrl: string, functionName: string, bUseSessionId: boolean, parameterMap: any): Observable<any> {
-
-    if (bUseSessionId) {
-      parameterMap.set('sessionId', GETService.getSessionId());
+    if(bUseSessionId){
+      postParams.set('sessionId', GETService.getSessionId());
     }
 
     let finalParams = {
-      method: functionName,
-      params: parameterMap
-    }
+      method: methodName,
+      params: postParams
+    };
 
     return this.http.post(this.baseUrl.concat(serviceUrl), JSON.stringify(finalParams), this.getOptions())
       .timeout(this.TIMEOUT_MS)
@@ -52,36 +60,55 @@ export class GETService {
       .catch(this.handleError);
   }
 
-  protected handleError(error: Response | any) {
+  /**
+   * Old HTTP request
+   * 
+   * @param serviceUrl    URL for source of request
+   * @param postParams    Parameters for request
+   */
+  protected httpPost(serviceUrl: string, postParams: any): Observable<any> {
+    this.baseUrl = Environment.getServicesBaseURL();
+    return this.http.post(this.baseUrl.concat(serviceUrl), JSON.stringify(postParams), this.getOptions())
+      .timeout(this.TIMEOUT_MS)
+      .map(this.extractData)
+      .do(this.logData)
+      .catch(this.handleError);
+  }
 
-    console.log('Handle Error 0');
+  /**
+   * Handle the error response from HTTP calls
+   * 
+   * @param error     Error returned from call
+   */
+  protected handleError(error: Response | any) {
     console.log(error);
     return Observable.throw(error);
   }
 
+  /**
+   * Format the data returned from HTTP calls
+   * 
+   * @param response    Response returned from call
+   */
   protected extractData(response: Response) {
-    console.log('Extract Data 0');
     try {
       let tResponse = response.json();
-
-      console.log('Extract Data 1');
       if (!tResponse.response || tResponse.exception) {
-
-        console.log('Extract Data 2');
         console.log(tResponse);
         this.parseExceptionResponse(response);
       } else {
-
-        console.log('Extract Data 3');
         return tResponse;
       }
     } catch (error) {
-
-      console.log('Extract Data 4');
       return { response: null, exception: 'An unknown error occurred.' };
     }
   }
 
+  /**
+   * Parses the exception message returned with an HTTP call error
+   * 
+   * @param response    Response returned from call
+   */
   protected parseExceptionResponse(response) {
     if (response != null && response.exception != null) {
       // check the exception string for a number|description string format
@@ -105,6 +132,9 @@ export class GETService {
     console.log(response);
   }
 
+  /**
+   * Get HTTP request header options
+   */
   protected getOptions(): RequestOptions {
     let headers = new Headers();
     headers.append('Accept', 'application/json');
@@ -112,30 +142,59 @@ export class GETService {
     return new RequestOptions({ headers: headers })
   }
 
+  /**
+   * Get local static session id
+   */
   public getSessionId(): string {
     return GETService.sessionId;
   }
 
+  /**
+   * Set local static session id
+   * 
+   * @param sessionId     New session id
+   */
   public setSessionId(sessionId: string) {
     GETService.sessionId = sessionId;
   }
 
+  /**
+   * Static method to set local static session id 
+   * 
+   * @param newSessionId    New session id
+   */
   static setSessionId(newSessionId: string) {
     GETService.sessionId = newSessionId;
   }
 
+  /**
+   * Retrieve local static session id
+   */
   static getSessionId(): string {
     return GETService.sessionId;
   }
 
+  /**
+   * Static method to set local static session data
+   * 
+   * @param newSession    New session data
+   */
   static setSession(newSession: any) {
     GETService.session = newSession;
   }
 
+  /**
+   * Retrieve local static session data
+   */
   static getSession(): any {
     return GETService.session;
   }
 
+  /**
+   * Handle error codes returned from HTTP calls
+   * 
+   * @param code    Exception code
+   */
   protected handleErrorCode(code) {
     if (code == '4001') {
       throw new Error("Invalid session");

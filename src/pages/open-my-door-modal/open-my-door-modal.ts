@@ -35,6 +35,9 @@ export class OpenMyDoorModalPage {
     this.currentSelectedLocation = navParams.get('selectedLocation');
   }
 
+  /**
+   * Activate the selected Mobile Location
+   */
   activateSelected() {
     console.log("Activate Selected");
     this.events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Activating..." });
@@ -42,6 +45,9 @@ export class OpenMyDoorModalPage {
 
   }
 
+  /**
+   * Check Location Permissions
+   */
   private checkPermissions() {
     // android API 6.0+ permissions check
     console.log("Android Permission check");
@@ -62,6 +68,9 @@ export class OpenMyDoorModalPage {
     });
   }
 
+  /**
+   * Check if location services are enabled on the device
+   */
   private checkLocationServices() {
     // check GPS enabled on device
     console.log("Check Location Service");
@@ -77,6 +86,11 @@ export class OpenMyDoorModalPage {
       });
   }
 
+  /**
+   * Activate mobile location
+   * 
+   * @param bUseLocation    Whether or not to use location data
+   */
   private activateMobileLocation(bUseLocation: boolean) {
     if (bUseLocation) {
       this.geolocation.getCurrentPosition({ maximumAge: 3000, timeout: 5000, enableHighAccuracy: true })
@@ -120,6 +134,11 @@ export class OpenMyDoorModalPage {
     }
   }
 
+  /**
+   * Manage the success response returned when activating a mobile location
+   * 
+   * @param response Response returned from service call
+   */
   private handleActivateMobileLocationResponse(response: ActivateMobileLocationResult) {
     this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
     console.log('Handle MLR 0');
@@ -200,6 +219,12 @@ export class OpenMyDoorModalPage {
 
   }
 
+  /**
+   * Manage the failure response when activating a mobile location
+   * 
+   * @param bUseLocation    Whether location data should be used
+   * @param errorMessage    Error message returned from failure
+   */
   private onActivateMobileLocationFailure(bUseLocation: boolean, errorMessage: string) {
     ExceptionManager.showException(this.events,
       {
@@ -219,6 +244,9 @@ export class OpenMyDoorModalPage {
       });
   }
 
+  /**
+   * Close the Activate Mobile Location Modal
+   */
   closeModal() {
     const data = {
       result: 'Success'

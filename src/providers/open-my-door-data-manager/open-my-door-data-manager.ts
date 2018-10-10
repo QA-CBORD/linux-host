@@ -1,102 +1,50 @@
 import { Injectable } from "@angular/core";
 import { Events } from 'ionic-angular';
-import { Geolocation } from '@ionic-native/geolocation';
 
 import { SessionService } from '../session-service/session-service';
 import { OpenMyDoorService } from '../open-my-door/open-my-door-service';
-import { ActivateMobileLocationResult } from './../../models/open-my-door/open-my-door.interface';
+import { ActivateMobileLocationResult, MobileLocationInfo } from './../../models/open-my-door/open-my-door.interface';
 import { Observable } from "rxjs/Observable";
-
-
-
+import { GeoCoordinates } from "../../models/geolocation/geocoordinates.interface";
 
 
 
 @Injectable()
 export class OpenMyDoorDataManager {
 
-    public static readonly DATA_MOBILELOCATIONINFO_UPDATED = "data:getMobileLocations:updated";
-
     constructor(
         public events: Events,
         public sessionService: SessionService,
-        public omdService: OpenMyDoorService,
-        private geolocation: Geolocation
+        public omdService: OpenMyDoorService
     ) {
 
+    }    
+
+    /**
+     * Retrieve mobile location data for Mobile Access
+     * 
+     * @param geoData   Geolocation data for device
+     */
+    getMobileLocationData(geoData: GeoCoordinates): Observable<MobileLocationInfo[]> {
+
+        geoData.coords.latitude = geoData == null || geoData.coords == null || geoData.coords.latitude == null ? null : geoData.coords.latitude;
+        geoData.coords.longitude = geoData == null || geoData.coords == null || geoData.coords.longitude == null ? null : geoData.coords.longitude;
+        geoData.coords.accuracy = geoData == null || geoData.coords == null || geoData.coords.accuracy == null ? null : geoData.coords.accuracy;
+
+        return this.omdService.getMobileLocations(geoData);
     }
 
 
-    getMobileLocations(useLocation: boolean) {
-        if (useLocation) {
-            this.geolocation.getCurrentPosition({ maximumAge: 3000, timeout: 5000, enableHighAccuracy: true })
-                .then(geoData => {
-                    this.getMobileLocationData(geoData);
-                })
-                .catch(error => {
-                    this.logError(error);
-                });
-        } else {
-            this.getMobileLocationData(null);
-        }
-    }
+    /**
+     * Activate a mobile location in Mobile Access
+     * 
+     * @param geoData       Geolocation data for user
+     * @param locationId    Id of Mobile Location to activate
+     * @param sourceInfo    I don't remember what this is for and it's always null... sry :/
+     */
+    activateMobileLocation(geoData: any, locationId: string, sourceInfo: string): Observable<ActivateMobileLocationResult> {
 
-
-
-    getMobileLocationData(geoData: any) {
-
-        let latitude = geoData == null || geoData.coords == null || geoData.coords.latitude == null ? null : geoData.coords.latitude;
-        let longitude = geoData == null || geoData.coords == null || geoData.coords.longitude == null ? null : geoData.coords.longitude;
-        let accuracy = geoData == null || geoData.coords == null || geoData.coords.accuracy == null ? null : geoData.coords.accuracy;
-        
-
-        this.omdService.getMobileLocations(latitude, longitude, accuracy)
-            .subscribe(
-                mobileLocationArray => {
-                    this.events.publish(OpenMyDoorDataManager.DATA_MOBILELOCATIONINFO_UPDATED, {data: mobileLocationArray, error: null});
-                },
-                error => {
-                    this.events.publish(OpenMyDoorDataManager.DATA_MOBILELOCATIONINFO_UPDATED, {data: null, error: error.message});
-                    this.logError(error);
-                },
-                () => {
-                    // complete
-                }
-            )
-    }
-
-    getMobileLocationDatakk(geoData: any) {
-
-        let latitude = geoData == null || geoData.coords == null || geoData.coords.latitude == null ? null : geoData.coords.latitude;
-        let longitude = geoData == null || geoData.coords == null || geoData.coords.longitude == null ? null : geoData.coords.longitude;
-        let accuracy = geoData == null || geoData.coords == null || geoData.coords.accuracy == null ? null : geoData.coords.accuracy;
-        
-
-        this.omdService.getMobileLocationskk2(latitude, longitude, accuracy)
-            .subscribe(
-                mobileLocationArray => {
-                    this.events.publish(OpenMyDoorDataManager.DATA_MOBILELOCATIONINFO_UPDATED, {data: mobileLocationArray, error: null});
-                },
-                error => {
-                    this.events.publish(OpenMyDoorDataManager.DATA_MOBILELOCATIONINFO_UPDATED, {data: null, error: error.message});
-                    this.logError(error);
-                },
-                () => {
-                    // complete
-                }
-            )
-    }
-
-    activateMobileLocation(geoData: any, locationId: string, sourceInfo: string): Observable<ActivateMobileLocationResult>{
-        
         return this.omdService.activateMobileLocation(locationId, geoData, sourceInfo);
-        
-    }
-     
-
-    private logError(message: any) {
-        console.error("Show Error:");
-        console.error(message);
     }
 
 }
