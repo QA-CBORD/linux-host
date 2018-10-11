@@ -12,7 +12,6 @@ import { UserRewardTrackInfo } from '../../models/rewards/rewards.interface'
 import { ExceptionProvider } from '../../providers/exception-provider/exception-provider';
 import { Environment } from '../../app/environment';
 import { GeoCoordinates } from './../../models/geolocation/geocoordinates.interface';
-import { SecureMessagingService } from '../../services/secure-messaging-service/secure-messaging-service';
 
 
 @IonicPage({
@@ -38,22 +37,18 @@ export class HomePage {
     public mobileAccessProvider: MobileAccessProvider,
     public sessionService: SessionService,
     private authService: AuthService,
-    private platform: Platform,
-    private smService: SecureMessagingService /// SM TESTING, ERASE WHEN DONE
+    private platform: Platform
   ) {
 
     this.platform.ready().then(() => {
 
-      /// SM TESTING, ERASE WHEN DONE
-      this.smService.testSecureMessaging();
-
+      Environment.setEnvironmentViaURL(platform.doc().baseURI);
+      
       /// hide the split pane here becuase we don't need the navigation menu
       events.publish(Globals.Events.SIDEPANE_ENABLE, false);
 
-
       /// get required params from the URL
       this.destinationPage = navParams.get('destinationPage');
-
 
       /// get optional location params from the URL
       try {
@@ -66,22 +61,12 @@ export class HomePage {
 
       events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Loading content" });
 
-      this.checkEnvironment(navParams.get('currentEnvironment'));
       this.handleSessionToken(navParams.get('sessionToken'));
     })
-      .catch((error) => {
-
+      .catch(() => {
+        /// do nothing
       });
 
-
-  }
-
-  /**
-   *  Set the current environment using the URL paramater
-   * @param currentEnvironment 
-   */
-  private checkEnvironment(currentEnvironment: string) {
-    Environment.setEnvironment(currentEnvironment);
   }
 
   /**

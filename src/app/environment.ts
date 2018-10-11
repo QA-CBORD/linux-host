@@ -1,9 +1,12 @@
 
-export class Environment {
 
-    private static readonly ENV_DEVELOPMENT = "development";
-    private static readonly ENV_VENDORVALIDATION = "vendorvalidation";
-    private static readonly ENV_PRODUCTION = "production";
+export enum EnvType {
+    development,
+    vendorvalidation,
+    production
+}
+
+export class Environment {
 
     /// GET Development
     public static readonly BASE_SERVICES_URL_DEVTEST = "https://services.get.dev.cbord.com/GETServices/services";
@@ -29,10 +32,10 @@ export class Environment {
 
 
     /// AWS API Gateway Development
-    public static readonly BASE_AWS_API_URL_DEVTEST = "https://gwaywbf6gl.execute-api.us-east-1.amazonaws.com/dev";
+    public static readonly BASE_AWS_API_URL_DEVTEST = "https://7s43ckrduh.execute-api.us-east-1.amazonaws.com/dev";
 
 
-    public static currentEnvironment: string = Environment.ENV_PRODUCTION;
+    public static currentEnvironment: EnvType = EnvType.development;
 
     public static servicesBaseURL: string = Environment.BASE_SERVICES_URL_DEVTEST;
     public static fullSiteBaseURL: string = Environment.BASE_GET_PATRON_URL_DEVTEST;
@@ -60,23 +63,60 @@ export class Environment {
     /**
      * Set the current environment
      * 
-     * @param newEnvironment    New environment
+     * @param newEnvironment    New environment enum value
      */
-    static setEnvironment(newEnvironment: string) {
+    static setEnvironment(newEnvironment: EnvType) {
         Environment.currentEnvironment = newEnvironment;
-        if (newEnvironment == Environment.ENV_DEVELOPMENT) {
+        if (newEnvironment == EnvType.development) {
             console.log('Env Set Dev');
             Environment.servicesBaseURL = Environment.BASE_SERVICES_URL_DEVTEST;
             Environment.fullSiteBaseURL = Environment.BASE_CBORD_STUDENT_URL_DEVTEST;
-        } else if (newEnvironment == Environment.ENV_VENDORVALIDATION) {
+        } else if (newEnvironment == EnvType.vendorvalidation) {
             console.log('Env Set VV');
             Environment.servicesBaseURL = Environment.BASE_SERVICES_URL_VENDORVAL;
             Environment.fullSiteBaseURL = Environment.BASE_CBORD_STUDENT_URL_VENDORVAL;
-        } else {
+        } else if (newEnvironment == EnvType.production) {
             console.log('Env Set Prod');
             Environment.servicesBaseURL = Environment.BASE_SERVICES_URL_PRODUCTION;
             Environment.fullSiteBaseURL = Environment.BASE_CBORD_STUDENT_URL_PRODUCTION;
+        } else {
+            /// will never happen due to enum restrictions
+            console.log('Env Set Dev due to error');
+            Environment.servicesBaseURL = Environment.BASE_SERVICES_URL_DEVTEST;
+            Environment.fullSiteBaseURL = Environment.BASE_CBORD_STUDENT_URL_DEVTEST;
         }
     }
+
+    
+    /**
+     * Set the current environment using the app/page URL
+     * 
+     * @param appBaseURL    App / Page URL
+     */
+    static setEnvironmentViaURL(appBaseURL: string) {
+        if (appBaseURL.includes("dev")) {
+            console.log('Env Set Dev');
+            Environment.currentEnvironment = EnvType.development;
+            Environment.servicesBaseURL = Environment.BASE_SERVICES_URL_DEVTEST;
+            Environment.fullSiteBaseURL = Environment.BASE_CBORD_STUDENT_URL_DEVTEST;
+        } else if (appBaseURL.includes("demo")) {
+            console.log('Env Set VV');
+            Environment.currentEnvironment = EnvType.vendorvalidation;
+            Environment.servicesBaseURL = Environment.BASE_SERVICES_URL_VENDORVAL;
+            Environment.fullSiteBaseURL = Environment.BASE_CBORD_STUDENT_URL_VENDORVAL;
+        } else if (appBaseURL.includes("student.cbord")){
+            console.log('Env Set Prod');
+            Environment.currentEnvironment = EnvType.production;
+            Environment.servicesBaseURL = Environment.BASE_SERVICES_URL_PRODUCTION;
+            Environment.fullSiteBaseURL = Environment.BASE_CBORD_STUDENT_URL_PRODUCTION;
+        } else {
+            Environment.currentEnvironment = EnvType.development;
+            console.error('Env Set Dev due to local testing or invalid url');
+            Environment.servicesBaseURL = Environment.BASE_SERVICES_URL_DEVTEST;
+            Environment.fullSiteBaseURL = Environment.BASE_CBORD_STUDENT_URL_DEVTEST;
+        }
+    }
+
+
 
 }
