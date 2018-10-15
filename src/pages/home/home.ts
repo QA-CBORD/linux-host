@@ -50,6 +50,7 @@ export class HomePage {
       events.publish(Globals.Events.SIDEPANE_ENABLE, false);
 
       /// get required params from the URL
+      this.sessionToken = navParams.get('sessionToken');
       this.destinationPage = navParams.get('destinationPage');
 
       /// get optional location params from the URL
@@ -63,7 +64,7 @@ export class HomePage {
 
       events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Loading content" });
 
-      this.handleSessionToken(navParams.get('sessionToken'));
+      this.handleSessionToken();
     })
       .catch(() => {
         /// do nothing, won't happen
@@ -75,10 +76,10 @@ export class HomePage {
    *  Handle the 'Session Sharing' session token provided from the native applications to acquire a new session id
    * @param sessionToken 
    */
-  private handleSessionToken(sessionToken: any) {
-    if (sessionToken) {
+  private handleSessionToken() {
+    if (this.sessionToken) {
       /// acquire the new session id with the session token
-      this.authService.authenticateSessionToken(sessionToken).subscribe(
+      this.authService.authenticateSessionToken(this.sessionToken).subscribe(
         newSessionId => {
           GETService.setSessionId(newSessionId);
           this.handlePageNavigation();
@@ -91,7 +92,7 @@ export class HomePage {
               message: "Unable to verify your session.",
               positiveButtonTitle: "RETRY",
               positiveButtonHandler: () => {
-                this.handleSessionToken(sessionToken);
+                this.handleSessionToken();
               },
               negativeButtonTitle: "CLOSE",
               negativeButtonHandler: () => {
