@@ -1,5 +1,3 @@
-import { OpenMyDoorModalPage } from './../pages/open-my-door-modal/open-my-door-modal';
-
 import { BrowserModule } from '@angular/platform-browser';
 import { ErrorHandler, NgModule } from '@angular/core';
 import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
@@ -16,20 +14,31 @@ import { AndroidPermissions } from '@ionic-native/android-permissions';
 import { MyApp } from './app.component';
 // import { IonicStorageModule } from '@ionic/storage';
 
-import { GETService } from '../providers/get-service/get-service';
-import { AuthService } from '../providers/auth-service/auth-service';
-import { InstService } from '../providers/inst-service/inst-service';
-import { SessionService } from '../providers/session-service/session-service';
-import { RewardService } from '../providers/reward-service/reward-service';
-import { DataCache } from '../providers/data-cache/data-cache';
+/// SERVICES
+import { APIService } from '../services/api-service/api-service'
+import { GETService } from '../services/get-service/get-service';
+import { AuthService } from '../services/auth-service/auth-service';
+import { InstService } from '../services/inst-service/inst-service';
+import { SessionService } from '../services/session-service/session-service';
+import { RewardService } from '../services/reward-service/reward-service';
+import { ContentService } from '../services/content-service/content-service';
+import { MobileAccessService } from '../services/mobile-access-service/mobile-access-service';
+import { SecureMessagingService } from './../services/secure-messaging-service/secure-messaging-service';
 
-import { RewardsDataManager } from '../providers/reward-data-manager/reward-data-manager';
-import { ContentServiceProvider } from '../providers/content-service/content-service';
+/// PROVIDERS
+import { MobileAccessProvider } from './../providers/mobile-access-provider/mobile-access-provider';
+import { RewardsProvider } from '../providers/reward-provider/reward-provider';
+import { ExceptionProvider } from '../providers/exception-provider/exception-provider';
+
+/// UTILITY
+import { DataCache } from '../utility/data-cache/data-cache';
+
+/// PAGES
+import { MobileAccessModalPage } from './../pages/mobile-access-modal/mobile-access-modal';
+import { MobileAccessModalPageModule } from './../pages/mobile-access-modal/mobile-access-modal.module';
+
+/// COMPONENTS
 import { SideMenuContentComponent } from '../shared/side-menu-content/side-menu-content.component';
-import { ExceptionManager } from '../providers/exception-manager/exception-manager';
-import { OpenMyDoorService } from '../providers/open-my-door/open-my-door-service';
-import { OpenMyDoorDataManager } from '../providers/open-my-door-data-manager/open-my-door-data-manager';
-import { OpenMyDoorModalPageModule } from '../pages/open-my-door-modal/open-my-door-modal.module';
 
 
 
@@ -56,31 +65,33 @@ export function createTranslateLoader(http: HttpClient) {
         deps: [HttpClient]
       }
     }),
-    OpenMyDoorModalPageModule
+    MobileAccessModalPageModule
   ],
   bootstrap: [
     IonicApp
   ],
   entryComponents: [
     MyApp,
-    OpenMyDoorModalPage
+    MobileAccessModalPage
   ],
   providers: [
     StatusBar,
     SplashScreen,
     { provide: ErrorHandler, useClass: IonicErrorHandler },
-    ExceptionManager,
+    ExceptionProvider,
     SessionService,
+    APIService,
     GETService,
     AuthService,
     InstService,
     RewardService,
-    RewardsDataManager,
-    OpenMyDoorService,
-    OpenMyDoorDataManager,
-    ContentServiceProvider,
+    SecureMessagingService,
+    RewardsProvider,
+    MobileAccessService,
+    MobileAccessProvider,
+    ContentService,
     DataCache,
-    ExceptionManager,
+    ExceptionProvider,
     Geolocation,
     Diagnostic,
     AndroidPermissions

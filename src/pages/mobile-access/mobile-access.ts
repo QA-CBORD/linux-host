@@ -2,30 +2,29 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, Events, ModalController, Platform } from 'ionic-angular';
 import { Diagnostic } from '@ionic-native/diagnostic';
 import { AndroidPermissions } from '@ionic-native/android-permissions';
+import { Geolocation } from '@ionic-native/geolocation';
 
 import * as Globals from '../../app/app.global';
-import { OpenMyDoorModalPage } from '../open-my-door-modal/open-my-door-modal';
-import { OpenMyDoorDataManager } from './../../providers/open-my-door-data-manager/open-my-door-data-manager';
-import { ExceptionManager } from '../../providers/exception-manager/exception-manager';
+import { MobileAccessModalPage } from '../mobile-access-modal/mobile-access-modal';
+import { MobileAccessProvider } from '../../providers/mobile-access-provider/mobile-access-provider';
+import { ExceptionProvider } from '../../providers/exception-provider/exception-provider';
 import { MobileLocationInfo } from '../../models/open-my-door/open-my-door.interface';
+import { GeoCoordinates } from '../../models/geolocation/geocoordinates.interface';
 
 
 @IonicPage()
 @Component({
-  selector: 'page-open-my-door',
-  templateUrl: 'open-my-door.html',
+  selector: 'page-mobile-access',
+  templateUrl: 'mobile-access.html',
 })
-export class OpenMyDoorPage {
+export class MobileAccessPage {
 
-  tempLcAr: MobileLocationInfo[];
   mobileLocationInfo: MobileLocationInfo[];
 
   currentSelectedLocation: any;
   refresher: any;
 
-  latitude: number = null;
-  longitude: number = null;
-  accuracy: number = null;
+  geoData: GeoCoordinates = null;
 
   constructor(
     private platform: Platform,
@@ -33,33 +32,68 @@ export class OpenMyDoorPage {
     public navParams: NavParams,
     public events: Events,
     private modCtrl: ModalController,
-    private omdDataManager: OpenMyDoorDataManager,
+    private mobileAccessProvider: MobileAccessProvider,
     private diagnostic: Diagnostic,
-    private androidPermissions: AndroidPermissions
+    private androidPermissions: AndroidPermissions,
+    private geolocation: Geolocation
   ) {
 
 
-    // get open my door data
-
+    /// GET GeoCoordinates from URL
     try {
-      this.latitude = parseFloat(navParams.get('latitude'));
-      this.longitude = parseFloat(navParams.get('longitude'));
-      this.accuracy = parseFloat(navParams.get('accuracy'));
-      console.log(`Latitude: ${this.latitude}, Longitude: ${this.longitude}, Accuracy: ${this.accuracy}`);
+      this.geoData = navParams.get('geoData');
+      console.log(`Latitude: ${this.geoData.coords.latitude}, Longitude: ${this.geoData.coords.longitude}, Accuracy: ${this.geoData.coords.accuracy}`);
     } catch (error) {
       console.log(error);
     }
 
     this.events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Retrieving locations..." });
-    this.events.subscribe(OpenMyDoorDataManager.DATA_MOBILELOCATIONINFO_UPDATED, (updatedMobileLocaitonInfo) => {
 
-      if (updatedMobileLocaitonInfo.data == null) {
+    this.getLocationData();
+
+  }
+
+  /**
+   * Make request for location data if none was passed via URL parameters 
+   */
+  private getLocationData() {
+
+    console.log("Get Location Data");
+
+    this.events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Retrieving locations..." });
+    // check if data was passed from native app via url, otherwise do normal checking
+    if (this.geoData == null || this.geoData.coords == null || this.geoData.coords.latitude == null || this.geoData.coords.longitude) {
+      this.retrieveMobileLocationData();
+    } else {
+      this.checkPermissions();
+    }
+  }
+
+
+  /**
+   * Make request to retrieve Mobile Location information and handle response
+   */
+  private retrieveMobileLocationData() {
+
+    this.events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Retrieving locations..." });
+
+    this.mobileAccessProvider.getMobileLocationData(this.geoData).subscribe(
+      mobileLocationData => {
+        for (let i = 0; i < mobileLocationData.length; i++) {
+          mobileLocationData[i].distance > 99 ? mobileLocationData[i].distance = NaN :
+            mobileLocationData[i].distance > 5 ? mobileLocationData[i].distance = Number(mobileLocationData[i].distance.toFixed(2)) : mobileLocationData[i].distance = mobileLocationData[i].distance;
+        }
+        this.mobileLocationInfo = mobileLocationData;
+        this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
+
+      },
+      error => {
         let errorMessage = "An error occurred while trying to retrieve your information.";
-        if (updatedMobileLocaitonInfo.error != null) {
-          errorMessage = updatedMobileLocaitonInfo.error;
+        if (error != null) {
+          errorMessage = error;
         }
         this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
-        ExceptionManager.showException(this.events, {
+        ExceptionProvider.showException(this.events, {
           displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
           messageInfo: {
             title: "Something went wrong",
@@ -74,50 +108,13 @@ export class OpenMyDoorPage {
             }
           }
         });
-
-      } else {
-        this.tempLcAr = updatedMobileLocaitonInfo.data;
-        for (let i = 0; i < this.tempLcAr.length; i++) {
-          // this.tempLcAr[i].distance = Number(this.randomIntFromInterval(0.05, 5).toFixed(2));
-          this.tempLcAr[i].distance > 99 ? this.tempLcAr[i].distance = NaN :
-            this.tempLcAr[i].distance > 5 ? this.tempLcAr[i].distance = Number(this.tempLcAr[i].distance.toFixed(2)) : this.tempLcAr[i].distance = this.tempLcAr[i].distance;
-        }
-        this.mobileLocationInfo = this.tempLcAr;
-        this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
       }
-    });
-
-    this.getLocationData();
-
+    );
   }
 
-  randomIntFromInterval(min, max) {
-    return Math.random() * ((max - min + 1) + min);
-  }
-
-  ionViewWillUnload() {
-    console.log("Ion View Will Unload Called");
-
-  }
-
-  private getLocationData() {
-    console.log("Get Location Data");
-    this.events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Retrieving locations..." });
-    // check if data was passed from native app via url, otherwise do normal checking
-    if (this.latitude != null && this.longitude != null && this.accuracy != null) {
-      let geoData = {
-        coords: {
-          latitude: this.latitude,
-          longitude: this.longitude,
-          accuracy: this.accuracy
-        }
-      }
-      this.omdDataManager.getMobileLocationData(geoData);
-    } else {
-      this.checkPermissions();
-    }
-  }
-
+  /**
+   * Request location permissions for Geolocation requests
+   */
   private checkPermissions() {
     // android API 6.0+ permissions check
     console.log("Android Permission check");
@@ -135,7 +132,7 @@ export class OpenMyDoorPage {
         if (result.hasPermission) {
           this.checkLocationServices();
         } else {
-          ExceptionManager.showException(this.events,
+          ExceptionProvider.showException(this.events,
             {
               displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
               messageInfo: {
@@ -148,7 +145,7 @@ export class OpenMyDoorPage {
                 },
                 negativeButtonTitle: "No Thanks",
                 negativeButtonHandler: () => {
-                  this.omdDataManager.getMobileLocations(false);
+                  this.retrieveMobileLocationData();
                 }
               }
             });
@@ -156,17 +153,19 @@ export class OpenMyDoorPage {
       }).catch(error => {
         console.log(`Android Permission Error: `);
         console.log(error);
-        this.omdDataManager.getMobileLocations(false);
+        this.retrieveMobileLocationData();
       });
     } catch (error) {
       console.log("Permissions Error");
       console.log(error);
 
-
-      this.omdDataManager.getMobileLocations(false);
+      this.retrieveMobileLocationData();
     }
   }
 
+  /**
+   * Check if location services are enabled on the device 
+   */
   private checkLocationServices() {
     // check GPS enabled on device
     console.log("Check Location Service");
@@ -175,10 +174,10 @@ export class OpenMyDoorPage {
         .then(enabled => {
           if (enabled) {
             console.log("GPS enabled");
-            this.omdDataManager.getMobileLocations(true);
+            this.getMobileLocations(enabled);
           } else {
             console.log("GPS disabled");
-            ExceptionManager.showException(this.events,
+            ExceptionProvider.showException(this.events,
               {
                 displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
                 messageInfo: {
@@ -190,7 +189,7 @@ export class OpenMyDoorPage {
                     this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
                   },
                   negativeButtonTitle: "No Thanks",
-                  negativeButtonHandler: () => { this.omdDataManager.getMobileLocations(false); }
+                  negativeButtonHandler: () => { this.getMobileLocations(false); }
                 }
               });
           }
@@ -198,29 +197,56 @@ export class OpenMyDoorPage {
         .catch(error => {
           console.log(`GPS Enabled check error:`);
           console.log(error);
-          this.omdDataManager.getMobileLocations(false);
+          this.getMobileLocations(false);
         });
     } catch (error) {
       console.log("Location error");
 
       console.log(error);
 
-      this.omdDataManager.getMobileLocations(false);
+      this.getMobileLocations(false);
     }
   }
 
+  /**
+  *  Get location info if requested using Ionic Geolocation Service
+  * 
+  * @param useLocation   Should we use Ionic Geolocation Service to get the location info
+  */
+  private getMobileLocations(useLocation: boolean) {
+    if (useLocation) {
+      this.geolocation.getCurrentPosition({ maximumAge: 3000, timeout: 5000, enableHighAccuracy: true })
+        .then(geoData => {
+          this.geoData = geoData;
+          this.retrieveMobileLocationData();
+        })
+        .catch(error => {
+          this.retrieveMobileLocationData();
+        });
+    } else {
+      this.retrieveMobileLocationData();
+    }
+  }
+
+  /**
+   * Handle the selection of a Mobile Location
+   * @param item    MobileLocationInfo object of selection
+   */
   locationSelected(item: any) {
     console.log(item.name);
     this.currentSelectedLocation = item;
     this.presentUnlockModal();
   }
 
+  /**
+   * Display modal to allow user to activate the Mobile Location
+   */
   presentUnlockModal() {
     if (this.currentSelectedLocation == null) {
       return;
     }
 
-    let unlockModal = this.modCtrl.create(OpenMyDoorModalPage, { selectedLocation: this.currentSelectedLocation });
+    let unlockModal = this.modCtrl.create(MobileAccessModalPage, { selectedLocation: this.currentSelectedLocation });
     unlockModal.onDidDismiss(data => {
 
       console.log(data);

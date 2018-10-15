@@ -8,14 +8,14 @@ import { ArrayObservable } from 'rxjs/observable/ArrayObservable';
 
 import * as Globals from '../../app/app.global';
 
-import { GETService } from '../../providers/get-service/get-service';
-import { RewardsDataManager } from '../../providers/reward-data-manager/reward-data-manager';
-import { RewardService } from '../../providers/reward-service/reward-service';
+import { GETService } from '../../services/get-service/get-service';
+import { RewardsProvider } from '../../providers/reward-provider/reward-provider'
+import { RewardService } from '../../services/reward-service/reward-service';
 import { UserRewardTrackInfo, UserTrackLevelInfo, ClaimableRewardInfo } from '../../models/rewards/rewards.interface'
 import { RewardDetailsPage } from '../reward-details/reward-details';
 import { AccordionListOptionModel } from '../../shared/accordion-list/models/accordionlist-option-model';
 import { AccordionListSettings } from '../../shared/accordion-list/models/accordionlist-settings';
-import { ExceptionManager } from '../../providers/exception-manager/exception-manager';
+import { ExceptionProvider } from '../../providers/exception-provider/exception-provider';
 
 
 
@@ -76,19 +76,19 @@ export class RewardsPage {
     public events: Events,
     public rewardService: RewardService,
     public alertCtrl: AlertController,
-    public rewardsDataManager: RewardsDataManager,
+    public rewardsDataManager: RewardsProvider,
     private popoverCtrl: PopoverController,
     private translate: TranslateService,
     private modalCtrl: ModalController,
     private platform: Platform
   ) {
-    events.subscribe(RewardsDataManager.DATA_USERREWARDTRACKINFO_UPDATED, (userRewardTrackInfo) => {
+    events.subscribe(RewardsProvider.DATA_USERREWARDTRACKINFO_UPDATED, (userRewardTrackInfo) => {
       if (userRewardTrackInfo) {
         this.userRewardTrackInfo = userRewardTrackInfo;
 
         if (this.userRewardTrackInfo.userOptInStatus == 0) {
           // show opt in with option to exit
-          ExceptionManager.showException(this.events, {
+          ExceptionProvider.showException(this.events, {
             displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
             messageInfo: {
               title: "Rewards Opt-In",
@@ -145,7 +145,7 @@ export class RewardsPage {
         break;
       case 1: // null data
         this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
-        ExceptionManager.showException(this.events, {
+        ExceptionProvider.showException(this.events, {
           displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
           messageInfo: {
             title: "That's odd...",
@@ -165,7 +165,7 @@ export class RewardsPage {
       case 3: // level and points, no levels or points
       case 4: // points only, no points
         this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
-        ExceptionManager.showException(this.events, {
+        ExceptionProvider.showException(this.events, {
           displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
           messageInfo: {
             title: "That's odd...",

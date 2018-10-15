@@ -8,17 +8,17 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/delay';
 
 import * as Globals from '../../app/app.global';
-import { OpenMyDoorDataManager } from '../../providers/open-my-door-data-manager/open-my-door-data-manager';
+import { MobileAccessProvider } from '../../providers/mobile-access-provider/mobile-access-provider';
 import { ActivateMobileLocationResult } from '../../models/open-my-door/open-my-door.interface';
-import { ExceptionManager } from '../../providers/exception-manager/exception-manager';
+import { ExceptionProvider } from '../../providers/exception-provider/exception-provider';
 
 
 @IonicPage()
 @Component({
-  selector: 'page-open-my-door-modal',
-  templateUrl: 'open-my-door-modal.html',
+  selector: 'page-mobile-access-modal',
+  templateUrl: 'mobile-access-modal.html',
 })
-export class OpenMyDoorModalPage {
+export class MobileAccessModalPage {
 
   currentSelectedLocation: any;
 
@@ -27,7 +27,7 @@ export class OpenMyDoorModalPage {
     public events: Events,
     public navParams: NavParams,
     private viewCtrl: ViewController,
-    private omdDataManager: OpenMyDoorDataManager,
+    private mobileAccessProvider: MobileAccessProvider,
     private androidPermissions: AndroidPermissions,
     private diagnostic: Diagnostic,
     private geolocation: Geolocation
@@ -35,6 +35,9 @@ export class OpenMyDoorModalPage {
     this.currentSelectedLocation = navParams.get('selectedLocation');
   }
 
+  /**
+   * Activate the selected Mobile Location
+   */
   activateSelected() {
     console.log("Activate Selected");
     this.events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Activating..." });
@@ -42,6 +45,9 @@ export class OpenMyDoorModalPage {
 
   }
 
+  /**
+   * Check Location Permissions
+   */
   private checkPermissions() {
     // android API 6.0+ permissions check
     console.log("Android Permission check");
@@ -62,6 +68,9 @@ export class OpenMyDoorModalPage {
     });
   }
 
+  /**
+   * Check if location services are enabled on the device
+   */
   private checkLocationServices() {
     // check GPS enabled on device
     console.log("Check Location Service");
@@ -77,11 +86,16 @@ export class OpenMyDoorModalPage {
       });
   }
 
+  /**
+   * Activate mobile location
+   * 
+   * @param bUseLocation    Whether or not to use location data
+   */
   private activateMobileLocation(bUseLocation: boolean) {
     if (bUseLocation) {
       this.geolocation.getCurrentPosition({ maximumAge: 3000, timeout: 5000, enableHighAccuracy: true })
         .then(geoData => {
-          this.omdDataManager.activateMobileLocation(geoData, this.currentSelectedLocation.locationId, null)
+          this.mobileAccessProvider.activateMobileLocation(geoData, this.currentSelectedLocation.locationId, null)
             .subscribe(
               data => {
                 this.handleActivateMobileLocationResponse(data);
@@ -95,7 +109,7 @@ export class OpenMyDoorModalPage {
         .catch(error => {
           console.log(error);
 
-          this.omdDataManager.activateMobileLocation(null, this.currentSelectedLocation.locationId, null)
+          this.mobileAccessProvider.activateMobileLocation(null, this.currentSelectedLocation.locationId, null)
             .subscribe(
               data => {
                 this.handleActivateMobileLocationResponse(data);
@@ -107,7 +121,7 @@ export class OpenMyDoorModalPage {
             );
         });
     } else {
-      this.omdDataManager.activateMobileLocation(null, this.currentSelectedLocation.locationId, null)
+      this.mobileAccessProvider.activateMobileLocation(null, this.currentSelectedLocation.locationId, null)
         .subscribe(
           data => {
             this.handleActivateMobileLocationResponse(data);
@@ -120,6 +134,11 @@ export class OpenMyDoorModalPage {
     }
   }
 
+  /**
+   * Manage the success response returned when activating a mobile location
+   * 
+   * @param response Response returned from service call
+   */
   private handleActivateMobileLocationResponse(response: ActivateMobileLocationResult) {
     this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
     console.log('Handle MLR 0');
@@ -140,7 +159,7 @@ export class OpenMyDoorModalPage {
           tCodeMessage = response.message;
       }
 
-      ExceptionManager.showException(this.events,
+      ExceptionProvider.showException(this.events,
         {
           displayOptions: Globals.Exception.DisplayOptions.ONE_BUTTON,
           messageInfo: {
@@ -155,7 +174,7 @@ export class OpenMyDoorModalPage {
 
       } else {
 
-        ExceptionManager.showException(this.events,
+        ExceptionProvider.showException(this.events,
           {
             displayOptions: Globals.Exception.DisplayOptions.ONE_BUTTON,
             messageInfo: {
@@ -180,7 +199,7 @@ export class OpenMyDoorModalPage {
       // falure
       console.log("Activation Failure");
       
-      ExceptionManager.showException(this.events, {
+      ExceptionProvider.showException(this.events, {
         displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
         messageInfo: {
           title: "Failed",
@@ -200,8 +219,14 @@ export class OpenMyDoorModalPage {
 
   }
 
+  /**
+   * Manage the failure response when activating a mobile location
+   * 
+   * @param bUseLocation    Whether location data should be used
+   * @param errorMessage    Error message returned from failure
+   */
   private onActivateMobileLocationFailure(bUseLocation: boolean, errorMessage: string) {
-    ExceptionManager.showException(this.events,
+    ExceptionProvider.showException(this.events,
       {
         displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
         messageInfo: {
@@ -219,6 +244,9 @@ export class OpenMyDoorModalPage {
       });
   }
 
+  /**
+   * Close the Activate Mobile Location Modal
+   */
   closeModal() {
     const data = {
       result: 'Success'

@@ -6,7 +6,7 @@ import * as Globals from '../../app/app.global';
 
 
 @Injectable()
-export class ExceptionManager {
+export class ExceptionProvider {
 
   constructor() {
 
