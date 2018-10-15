@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from "rxjs/Observable";
 
-import { GETService } from "../get-service/get-service";
+import { GETService, ServiceParameters } from "../get-service/get-service";
 import { MobileLocationInfo, ActivateMobileLocationResult } from '../../models/open-my-door/open-my-door.interface';
 import { GeoCoordinates } from '../../models/geolocation/geocoordinates.interface';
 
@@ -11,23 +11,21 @@ export class MobileAccessService extends GETService {
 
   private serviceUrl: string = '/json/commerce';
 
- /**
-   * Retrieve Mobile Access locations for user
-   * 
-   * @param geoData   Geolocation data for user. null if none exists
-   */
+  /**
+    * Retrieve Mobile Access locations for user
+    * 
+    * @param geoData   Geolocation data for user. null if none exists
+    */
   public getMobileLocations(geoData: GeoCoordinates): Observable<MobileLocationInfo[]> {
 
     return Observable.create((observer: any) => {
 
-      let postParams = {
-        latitude: geoData.coords.latitude,
-        longitude: geoData.coords.longitude,
-        accuracy: geoData.coords.accuracy,
-        filters: ["Normal", "TempCode", "Attendance"]
+      let postParams: ServiceParameters = {
+        "lattitude": geoData.coords.latitude,
+        "longitude": geoData.coords.longitude,
+        "accuracy": geoData.coords.accuracy,
+        "filters": ["Normal", "TempCode", "Attendance"]
       };
-
-      console.log(JSON.stringify(postParams));
 
       this.httpRequest(this.serviceUrl, 'getMobileLocations', true, postParams)
         .subscribe(

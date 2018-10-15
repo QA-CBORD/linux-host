@@ -31,10 +31,27 @@ export class MobileAccessProvider {
      * @param geoData   Geolocation data for device
      */
     getMobileLocationData(geoData: GeoCoordinates): Observable<MobileLocationInfo[]> {
+        let pGeoData: GeoCoordinates = {
+            coords: {
+                latitude: null,
+                longitude: null,
+                accuracy: null
+            }
+        };
 
-        geoData.coords.latitude = geoData == null || geoData.coords == null || geoData.coords.latitude == null ? null : geoData.coords.latitude;
-        geoData.coords.longitude = geoData == null || geoData.coords == null || geoData.coords.longitude == null ? null : geoData.coords.longitude;
-        geoData.coords.accuracy = geoData == null || geoData.coords == null || geoData.coords.accuracy == null ? null : geoData.coords.accuracy;
+        if(geoData){
+            if(geoData.coords){
+                if(geoData.coords.latitude){
+                    pGeoData.coords.latitude = geoData.coords.latitude;
+                }
+                if(geoData.coords.longitude){
+                    pGeoData.coords.longitude = geoData.coords.longitude;
+                }
+                if(geoData.coords.accuracy){
+                    pGeoData.coords.accuracy = geoData.coords.accuracy;
+                }
+            }
+        } 
 
         return this.mobileAccessService.getMobileLocations(geoData);
     }

@@ -24,7 +24,13 @@ export class MobileAccessPage {
   currentSelectedLocation: any;
   refresher: any;
 
-  geoData: GeoCoordinates = null;
+  geoData: GeoCoordinates = {
+    coords: {
+      latitude: null,
+      longitude: null,
+      accuracy: null
+    }
+  };
 
   constructor(
     private platform: Platform,
@@ -41,8 +47,10 @@ export class MobileAccessPage {
 
     /// GET GeoCoordinates from URL
     try {
-      this.geoData = navParams.get('geoData');
-      console.log(`Latitude: ${this.geoData.coords.latitude}, Longitude: ${this.geoData.coords.longitude}, Accuracy: ${this.geoData.coords.accuracy}`);
+      let pGeoData = navParams.get('geoData');
+      if (pGeoData) {
+        this.geoData = pGeoData;
+      }
     } catch (error) {
       console.log(error);
     }
@@ -62,7 +70,7 @@ export class MobileAccessPage {
 
     this.events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Retrieving locations..." });
     // check if data was passed from native app via url, otherwise do normal checking
-    if (this.geoData == null || this.geoData.coords == null || this.geoData.coords.latitude == null || this.geoData.coords.longitude) {
+    if (!this.geoData || !this.geoData.coords || !this.geoData.coords.latitude || !this.geoData.coords.longitude) {
       this.retrieveMobileLocationData();
     } else {
       this.checkPermissions();
@@ -79,11 +87,29 @@ export class MobileAccessPage {
 
     this.mobileAccessProvider.getMobileLocationData(this.geoData).subscribe(
       mobileLocationData => {
-        for (let i = 0; i < mobileLocationData.length; i++) {
-          mobileLocationData[i].distance > 99 ? mobileLocationData[i].distance = NaN :
-            mobileLocationData[i].distance > 5 ? mobileLocationData[i].distance = Number(mobileLocationData[i].distance.toFixed(2)) : mobileLocationData[i].distance = mobileLocationData[i].distance;
+        if (mobileLocationData) {
+          for (let i = 0; i < mobileLocationData.length; i++) {
+            mobileLocationData[i].distance > 99 ? mobileLocationData[i].distance = NaN :
+              mobileLocationData[i].distance > 5 ? mobileLocationData[i].distance = Number(mobileLocationData[i].distance.toFixed(2)) : mobileLocationData[i].distance = mobileLocationData[i].distance;
+          }
+          this.mobileLocationInfo = mobileLocationData;
+        } else {
+          ExceptionProvider.showException(this.events, {
+            displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
+            messageInfo: {
+              title: "Something went wrong",
+              message: "There were no locations to display",
+              positiveButtonTitle: "RETRY",
+              positiveButtonHandler: () => {
+                this.getLocationData();
+              },
+              negativeButtonTitle: "CLOSE",
+              negativeButtonHandler: () => {
+                this.platform.exitApp();
+              }
+            }
+          });
         }
-        this.mobileLocationInfo = mobileLocationData;
         this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
 
       },

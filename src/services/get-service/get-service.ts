@@ -10,6 +10,11 @@ import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/throw';
 import 'rxjs/add/operator/timeout';
 
+
+export interface ServiceParameters {
+  [key: string]: any
+}
+
 @Injectable()
 export class GETService {
 
@@ -36,17 +41,18 @@ export class GETService {
    * @param methodName    Name of method for request
    * @param postParams    Parameters for request
    */
-  protected httpRequest(serviceUrl: string, methodName: string, bUseSessionId: boolean, postParams: any): Observable<any> {
+  protected httpRequest(serviceUrl: string, methodName: string, bUseSessionId: boolean, postParams: ServiceParameters): Observable<any> {
     this.baseUrl = Environment.getGETServicesBaseURL();
 
-    if(bUseSessionId){
-      postParams.set('sessionId', GETService.getSessionId());
+    if (bUseSessionId) {
+      postParams.sessionId = GETService.getSessionId();
     }
 
-    let finalParams = {
-      method: methodName,
-      params: postParams
-    };
+    let finalParams: ServiceParameters = {};
+    finalParams.method = methodName;
+    finalParams.params = postParams;
+
+    console.log(finalParams);
 
     return this.http.post(this.baseUrl.concat(serviceUrl), JSON.stringify(finalParams), this.getOptions())
       .timeout(this.TIMEOUT_MS)
@@ -86,6 +92,8 @@ export class GETService {
    * @param response    Response returned from call
    */
   protected extractData(response: Response) {
+
+    console.log(response);
     try {
       let tResponse = response.json();
       if (!tResponse.response || tResponse.exception) {
@@ -199,4 +207,18 @@ export class GETService {
       throw new Error("Unexpected system exception occured.");
     }
   }
+
+
+  protected mapToJSONString(map: Map<any, any>): string {
+    return JSON.stringify(
+      Array.from(
+        map.entries()
+      )
+        .reduce((o, [key, value]) => {
+          o[key] = value;
+
+          return o;
+        }, {}));
+  }
+
 }

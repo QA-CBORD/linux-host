@@ -6,7 +6,6 @@ import * as Globals from '../../app/app.global';
 import { GETService } from './../../services/get-service/get-service';
 import { AuthService } from './../../services/auth-service/auth-service';
 import { SessionService } from '../../services/session-service/session-service';
-import { SecureMessagingService } from '../../services/secure-messaging-service/secure-messaging-service';
 
 import { MobileAccessProvider } from '../../providers/mobile-access-provider/mobile-access-provider';
 import { ExceptionProvider } from '../../providers/exception-provider/exception-provider';
@@ -28,7 +27,13 @@ export class HomePage {
 
   sessionToken: string = null;
   destinationPage: string = null;
-  geoData: GeoCoordinates = null;
+  geoData: GeoCoordinates = {
+    coords: {
+      latitude: null,
+      longitude: null,
+      accuracy: null
+    }
+  };
 
   userRewardTrackInfo: UserRewardTrackInfo;
 
@@ -39,16 +44,13 @@ export class HomePage {
     public mobileAccessProvider: MobileAccessProvider,
     public sessionService: SessionService,
     private authService: AuthService,
-    private platform: Platform,
-    private smService: SecureMessagingService
+    private platform: Platform
   ) {
 
     this.platform.ready().then(() => {
 
       /// use page url to determine current environment
       Environment.setEnvironmentViaURL(platform.doc().baseURI);
-
-      smService.testSecureMessaging();
 
       /// hide the split pane here becuase we don't need the navigation menu
       events.publish(Globals.Events.SIDEPANE_ENABLE, false);
