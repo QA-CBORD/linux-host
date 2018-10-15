@@ -141,7 +141,7 @@ export class HomePage {
         this.navCtrl.push("RewardsPage");
         break;
       case 'openmydoor':
-        this.navCtrl.push("OpenMyDoorPage", this.geoData);
+        this.navCtrl.push("MobileAccessPage", this.geoData);
         break;
     }
   }
