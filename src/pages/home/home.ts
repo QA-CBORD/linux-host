@@ -5,12 +5,13 @@ import * as Globals from '../../app/app.global';
 
 import { GETService } from './../../services/get-service/get-service';
 import { AuthService } from './../../services/auth-service/auth-service';
-
 import { SessionService } from '../../services/session-service/session-service';
+
 import { MobileAccessProvider } from '../../providers/mobile-access-provider/mobile-access-provider';
-import { UserRewardTrackInfo } from '../../models/rewards/rewards.interface'
 import { ExceptionProvider } from '../../providers/exception-provider/exception-provider';
+
 import { Environment } from '../../app/environment';
+import { UserRewardTrackInfo } from '../../models/rewards/rewards.interface'
 import { GeoCoordinates } from './../../models/geolocation/geocoordinates.interface';
 
 
@@ -42,8 +43,9 @@ export class HomePage {
 
     this.platform.ready().then(() => {
 
+      /// use page url to determine current environment
       Environment.setEnvironmentViaURL(platform.doc().baseURI);
-      
+
       /// hide the split pane here becuase we don't need the navigation menu
       events.publish(Globals.Events.SIDEPANE_ENABLE, false);
 
@@ -64,7 +66,7 @@ export class HomePage {
       this.handleSessionToken(navParams.get('sessionToken'));
     })
       .catch(() => {
-        /// do nothing
+        /// do nothing, won't happen
       });
 
   }
@@ -137,69 +139,6 @@ export class HomePage {
         this.navCtrl.push("OpenMyDoorPage", this.geoData);
         break;
     }
-  }
-
-
-  /// NOT USED perform UI filling and logic based on reward data
-  private onRewardsData() {
-
-    // 0 = normal
-    // 1 = null data
-    // 2 = levels only, no levels
-    // 3 = levels and points, no levels or points
-    // 4 = points only, no points
-    let dataStatus = 0;
-
-    let debugString =
-      "Levels = " + this.userRewardTrackInfo.hasLevels + "\n" +
-      "Levels Size = " + this.userRewardTrackInfo.trackLevels.length + "\n" +
-      "Points = " + this.userRewardTrackInfo.hasRedeemableRewards + "\n" +
-      "Points Size = " + this.userRewardTrackInfo.redeemableRewards.length + "\n";
-
-    if (this.userRewardTrackInfo == null) {
-      dataStatus = 1;
-    } else if (this.userRewardTrackInfo.hasLevels && this.userRewardTrackInfo.trackLevels.length <= 0) {
-      dataStatus = 2;
-      if (this.userRewardTrackInfo.hasRedeemableRewards && this.userRewardTrackInfo.redeemableRewards.length >= 0) {
-        dataStatus = 3;
-      }
-    } else if (this.userRewardTrackInfo.hasRedeemableRewards && this.userRewardTrackInfo.redeemableRewards.length >= 0) {
-      dataStatus = 4;
-    }
-
-    if (this.userRewardTrackInfo.userOptInStatus == 0) {
-      // show opt in with option to exit
-      ExceptionProvider.showException(this.events, {
-        displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
-        messageInfo: {
-          title: "Rewards Opt-In",
-          message: "Would you like to use GET Rewards?",
-          positiveButtonTitle: "YES",
-          positiveButtonHandler: () => {
-            // this.rewardsDataManager.
-            //this.mobileAccessProvider.getUserRewardsData();
-          },
-          negativeButtonTitle: "CLOSE",
-          negativeButtonHandler: () => {
-            this.platform.exitApp();
-          }
-        }
-      });
-      return;
-      // on opt in accepted, call rewardsDataManager.getUserRewardData() to update the data app wide (event)
-    }
-
-    // unsubscribe from event because we have the data and no longer need it in the Home tabs page
-
-
-    this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
-
-    this.navCtrl.push("RewardsProgressPage");
-
-  }
-
-  openHistory() {
-
   }
 
 }
