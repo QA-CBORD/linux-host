@@ -21,8 +21,7 @@ export class SecureMessagingService {
         });
     }
 
-    public testSecureMessaging() {
-
+    public testGetSecureMessage() {
 
         this.apiService.authenticatedHTTPCall(RestCallType.get, this.serviceUrl, HttpResponseType.json,
             undefined,
@@ -39,35 +38,38 @@ export class SecureMessagingService {
                 }
             );
 
+    }
 
-        // let tempBody = {
-        //     'id': this.newGuid(),
-        //     'originalMessageId': null,
-        //     'recipient': "1234",
-        //     'sender': "9999",
-        //     'sentDate': "2018-10-09T11:47:00",
-        //     'ttl': null,
-        //     'messageDescription': "Test Message",
-        //     'messageBody': "A wonderful test message body",
-        //     'state': null,
-        //     'importance': null,
-        //     'readDate': null
-        // };
+    public testPostSecureMessage() {
 
-        // this.apiService.authenticatedHTTPCall(RestCallType.post, this.serviceUrl, HttpResponseType.json,
-        //     tempBody,
-        //     undefined,
-        //     new HttpHeaders())
-        //     .subscribe(
-        //         response => {
-        //             console.log("SecureMessaging - SUCCESS:");
-        //             console.log(response);
-        //         },
-        //         error => {
-        //             console.log("SecureMessaging - ERROR");
-        //             console.log(error);
-        //         }
-        //     );
+        let tempBody = {
+            'id': this.newGuid(),
+            'originalMessageId': null,
+            'recipient': "1234",
+            'sender': "9999",
+            'sentDate': "2018-10-09T11:47:00",
+            'ttl': null,
+            'messageDescription': "Test Message",
+            'messageBody': "A wonderful test message body",
+            'state': null,
+            'importance': null,
+            'readDate': null
+        };
+
+        this.apiService.authenticatedHTTPCall(RestCallType.post, this.serviceUrl, HttpResponseType.json,
+            tempBody,
+            undefined,
+            new HttpHeaders())
+            .subscribe(
+                response => {
+                    console.log("SecureMessaging - SUCCESS:");
+                    console.log(response);
+                },
+                error => {
+                    console.log("SecureMessaging - ERROR:");
+                    console.log(error);
+                }
+            );
 
     }
 
