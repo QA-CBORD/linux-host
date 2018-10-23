@@ -3,9 +3,8 @@ import { Injectable } from '@angular/core';
 import { Observable } from "rxjs/Observable";
 import 'rxjs/add/operator/map';
 
-import { GETService } from "../get-service/get-service";
+import { GETService, ServiceParameters } from "../get-service/get-service";
 
-import { MessageResponse } from "../../models/service/message-response.interface";
 import { UserLogin } from "../../models/user/user-login.interface";
 
 @Injectable()
@@ -14,23 +13,23 @@ export class AuthService extends GETService {
   private serviceUrl: string = '/json/authentication';
 
 
+  /**
+   *  Authenticate the device/system to get a device session
+   */
   authenticateSystem(): Observable<string> {
 
     return Observable.create((observer: any) => {
-      let postParams = {
-        method: 'authenticateSystem',
-        params: {
-          systemCredentials: {
-            domain: '',
-            userName: 'get_mobile',
-            password: 'NOTUSED'
-          }
+      let postParams: ServiceParameters = {
+        systemCredentials: {
+          domain: '',
+          userName: 'get_mobile',
+          password: 'NOTUSED'
         }
       }
 
       console.log(JSON.stringify(postParams));
 
-      this.httpPost(this.serviceUrl, postParams)        
+      this.httpRequest(this.serviceUrl, 'authenticateSystem', false, postParams)
         .subscribe(
           data => {
             // validate data then throw error or send
@@ -46,29 +45,31 @@ export class AuthService extends GETService {
 
   }
 
+  /**
+   * Authenticate a User to get a User Session
+   * 
+   * @param userCredentials User Login credentials
+   */
   authenticateUser(userCredentials: UserLogin): Observable<string> {
 
     return Observable.create((observer: any) => {
       let postParams = {
-        method: 'authenticateUser',
-        params: {
-          systemCredentials: {
-            domain: '',
-            userName: 'get_mobile',
-            password: 'NOTUSED'
-          },
-          userCredentials: {
-            userName: 'GSaas@tpsmail.dev',
-            password: 'password1',
-            domain: null,
-            institutionId: '46054f40-71fc-4d32-a8de-64b525d3ce56'
-          }
+        systemCredentials: {
+          domain: '',
+          userName: 'get_mobile',
+          password: 'NOTUSED'
+        },
+        userCredentials: {
+          userName: userCredentials.userName,
+          password: userCredentials.password,
+          domain: userCredentials.domain,
+          institutionId: userCredentials.institutionId
         }
       }
 
       console.log(JSON.stringify(postParams));
 
-      this.httpPost(this.serviceUrl, postParams)
+      this.httpRequest(this.serviceUrl, 'authenticateUser', false, postParams)
         .subscribe(
           data => {
             // validate data then throw error or send
@@ -83,24 +84,26 @@ export class AuthService extends GETService {
     });
   }
 
+  /**
+   * Authenticate a Session Token (session sharing) to get a new User Session
+   * 
+   * @param sessionToken Session Token passed to device/system
+   */
   authenticateSessionToken(sessionToken: string): Observable<string> {
 
     return Observable.create((observer: any) => {
       let postParams = {
-        method: 'authenticateSessionToken',
-        params: {
-          systemCredentials: {
-            domain: '',
-            userName: 'get_mobile',
-            password: 'NOTUSED'
-          },
-          sessionToken: sessionToken
-        }
+        systemCredentials: {
+          domain: '',
+          userName: 'get_mobile',
+          password: 'NOTUSED'
+        },
+        sessionToken: sessionToken
       }
 
       console.log(JSON.stringify(postParams));
 
-      return this.httpPost(this.serviceUrl, postParams)
+      return this.httpRequest(this.serviceUrl, 'authenticateSessionToken', false, postParams)
         .subscribe(
           data => {
             // validate data and send to observer

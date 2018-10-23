@@ -39,6 +39,7 @@ import { MobileAccessModalPageModule } from './../pages/mobile-access-modal/mobi
 
 /// COMPONENTS
 import { SideMenuContentComponent } from '../shared/side-menu-content/side-menu-content.component';
+import { AccountsProvider } from '../providers/accounts-provider/accounts-provider';
 
 
 
@@ -94,7 +95,8 @@ export function createTranslateLoader(http: HttpClient) {
     ExceptionProvider,
     Geolocation,
     Diagnostic,
-    AndroidPermissions
+    AndroidPermissions,
+    AccountsProvider
   ]
 })
 export class AppModule { }

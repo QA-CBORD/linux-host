@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Observable } from "rxjs/Observable";
 
 import { GETService } from "../get-service/get-service";
-import { MessageResponse } from "../../models/service/message-response.interface";
 
 
 @Injectable()
@@ -12,17 +11,32 @@ export class SessionService extends GETService {
   static sessionId: string;
   static session: any;
 
+  /**
+   * Set the current Session Id
+   * 
+   * @param sessionId New Session Id
+   */
   static setSessionId(sessionId: string) {
     if (sessionId) {
       this.sessionId = sessionId;
     }
   }
 
+  /**
+   * Get the current Session Id
+   */
   static getSessionId(): string {
     return this.sessionId;
   }
 
-  public getSession(sessionId): Observable<string> {
+
+  /**
+   * Get the Session Object with a Session ID
+   * First attempt to get current session if it exists, then try to create and return a new session
+   * 
+   * @param sessionId Current Session Id
+   */
+  public getSession(sessionId: string): Observable<string> {
 
     if (SessionService.session) {
 
@@ -33,15 +47,12 @@ export class SessionService extends GETService {
       return Observable.create((observer: any) => {
 
         let postParams = {
-          method: 'getSession',
-          params: {
-            sessionId: sessionId
-          }
+          sessionId: sessionId
         };
 
         console.log(JSON.stringify(postParams));
 
-        this.httpPost(this.serviceUrl, postParams)
+        this.httpRequest(this.serviceUrl, 'getSession', true, postParams)
           .do(this.setSession)
           .subscribe(
             data => {
@@ -58,6 +69,11 @@ export class SessionService extends GETService {
     }
   }
 
+  /**
+   * Set current Session Id and Session object from http request
+   * 
+   * @param sessionResponse Response from http request for Session Info
+   */
   private setSession(sessionResponse: any) {
     if (sessionResponse.response) {
       console.log('Setting session ID: ' + sessionResponse.response.id);

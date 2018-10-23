@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable } from "rxjs/Observable";
 
-import { GETService } from "../get-service/get-service";
-import { MessageResponse } from "../../models/service/message-response.interface";
+import { GETService, ServiceParameters } from "../get-service/get-service";
+
 import { InstitutionInfoList } from "../../models/institution/institution-info-list.interface";
 import { InstitutionInfo } from "../../models/institution/institution-info.interface";
 
@@ -12,20 +12,19 @@ export class InstService extends GETService {
 
   private serviceUrl: string = '/json/institution';
 
+
+  /**
+   * Get the list of Institutions
+   */
   public getInstitutionList(): Observable<InstitutionInfoList> {
 
     return Observable.create((observer: any) => {
 
-      let postParams = {
-        method: 'retrieveLookupList',
-        params: {
-          sessionId: GETService.getSessionId()
-        }
-      };
+      let postParams: ServiceParameters = {};
 
       console.log(JSON.stringify(postParams));
 
-      this.httpPost(this.serviceUrl, postParams)
+      this.httpRequest(this.serviceUrl, 'retrieveLookupList', true, postParams)
         .subscribe(
           data => {
             // validate data then throw error or send
@@ -40,21 +39,22 @@ export class InstService extends GETService {
     });
   }
 
-  public getInstitution(institutionId): Observable<InstitutionInfo> {
+  /**
+   * Get Institution information
+   * 
+   * @param institutionId Institution Id of desired Institution Information 
+   */
+  public getInstitutionInfo(institutionId): Observable<InstitutionInfo> {
 
     return Observable.create((observer: any) => {
 
-      let postParams = {
-        method: 'retrieve',
-        params: {
-          sessionId: GETService.getSessionId(),
-          institutionId: institutionId
-        }
+      let postParams: ServiceParameters = {
+        institutionId: institutionId
       };
 
       console.log(JSON.stringify(postParams));
 
-      this.httpPost(this.serviceUrl, postParams)
+      this.httpRequest(this.serviceUrl, 'retrieve', true, postParams)
         .subscribe(
           data => {
             // validate data then throw error or send

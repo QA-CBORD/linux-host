@@ -49,10 +49,10 @@ export class RewardDetailsPage {
   levelRewardClicked() {
     // only claim a reward if none have been claimed for this level already
     if (!this.userRewardTrackInfo.trackLevels[this.reward.claimLevel-1].redeemed) {
-      this.rewardService.claimReward(this.reward.id).subscribe(
-        ((data: MessageResponse<boolean>) => this.ClaimRewardResponse(data.response)),
-        ((error) => this.showError(error))
-      )    
+      // this.rewardService.claimReward(this.reward.id).subscribe(
+      //   ((data: MessageResponse<boolean>) => this.ClaimRewardResponse(data.response)),
+      //   ((error) => this.showError(error))
+      // )    
     }
   }
 
