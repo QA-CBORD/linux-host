@@ -8,7 +8,7 @@ import { HttpHeaders } from "@angular/common/http";
 @Injectable()
 export class SecureMessagingService {
 
-    private serviceUrl: string = '/secureMessaging';
+    private serviceUrl: string = '/secureMessages';
 
     constructor(
         private apiService: APIService) {
