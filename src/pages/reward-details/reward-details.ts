@@ -26,14 +26,14 @@ export class RewardDetailsPage {
     
     this.bIsRedeemed = this.navParams.data.bIsRedeemed;
 
-    events.subscribe(RewardsProvider.DATA_USERREWARDTRACKINFO_UPDATED, (userRewardTrackInfo) => {
-      if (userRewardTrackInfo) {
-        this.userRewardTrackInfo = userRewardTrackInfo;
-      }
-    });
+    // events.subscribe(RewardsProvider.DATA_USERREWARDTRACKINFO_UPDATED, (userRewardTrackInfo) => {
+    //   if (userRewardTrackInfo) {
+    //     this.userRewardTrackInfo = userRewardTrackInfo;
+    //   }
+    // });
 
     // Do an initial pull of userRewardTrackInfo from cache if available.
-    rewardsDataManager.getUserRewardsData(false);
+    // rewardsDataManager.getUserRewardsData(false);
   }
 
   ionViewDidLoad() {
@@ -74,7 +74,7 @@ export class RewardDetailsPage {
     alert.present();
 
     // update UI to show the results
-    this.rewardsDataManager.getUserRewardsData(true);
+    // this.rewardsDataManager.getUserRewardsData(true);
   }
 
   showError(message: any) {
