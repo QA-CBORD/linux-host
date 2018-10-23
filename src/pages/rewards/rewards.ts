@@ -6,16 +6,17 @@ import { TranslateService } from "@ngx-translate/core";
 
 import { ArrayObservable } from 'rxjs/observable/ArrayObservable';
 
-import * as Globals from '../../app/app.global';
-
-import { GETService } from '../../services/get-service/get-service';
-import { RewardsProvider } from '../../providers/reward-provider/reward-provider'
 import { RewardService } from '../../services/reward-service/reward-service';
-import { UserRewardTrackInfo, UserTrackLevelInfo, ClaimableRewardInfo } from '../../models/rewards/rewards.interface'
-import { RewardDetailsPage } from '../reward-details/reward-details';
+
+import { RewardsProvider } from '../../providers/reward-provider/reward-provider'
+import { ExceptionProvider } from '../../providers/exception-provider/exception-provider';
+
 import { AccordionListOptionModel } from '../../shared/accordion-list/models/accordionlist-option-model';
 import { AccordionListSettings } from '../../shared/accordion-list/models/accordionlist-settings';
-import { ExceptionProvider } from '../../providers/exception-provider/exception-provider';
+import { UserRewardTrackInfo, UserTrackLevelInfo, ClaimableRewardInfo } from '../../models/rewards/rewards.interface'
+import { RewardDetailsPage } from '../reward-details/reward-details';
+
+import * as Globals from '../../app/app.global';
 
 
 
@@ -76,52 +77,82 @@ export class RewardsPage {
     public events: Events,
     public rewardService: RewardService,
     public alertCtrl: AlertController,
-    public rewardsDataManager: RewardsProvider,
+    public rewardsProvider: RewardsProvider,
     private popoverCtrl: PopoverController,
     private translate: TranslateService,
     private modalCtrl: ModalController,
     private platform: Platform
   ) {
-    events.subscribe(RewardsProvider.DATA_USERREWARDTRACKINFO_UPDATED, (userRewardTrackInfo) => {
-      if (userRewardTrackInfo) {
-        this.userRewardTrackInfo = userRewardTrackInfo;
-
-        if (this.userRewardTrackInfo.userOptInStatus == 0) {
-          // show opt in with option to exit
-          ExceptionProvider.showException(this.events, {
-            displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
-            messageInfo: {
-              title: "Rewards Opt-In",
-              message: "Would you like to use GET Rewards?",
-              positiveButtonTitle: "YES",
-              positiveButtonHandler: () => {
-                // MAKE OPT_IN Call
-                this.rewardsDataManager.getUserRewardsData();
-              },
-              negativeButtonTitle: "CLOSE",
-              negativeButtonHandler: () => {
-                this.platform.exitApp();
-              }
-            }
-          });
-          return;
-          // on opt in accepted, call rewardsDataManager.getUserRewardData() to update the data app wide (event)
-        }
-
-        this.handleRewardTrackInfo();
-
-      } else {
-        // there is no data for some reason
-      }
-    });
+    
   }
 
   ionViewDidLoad() {
-    if (GETService.getSessionId() != null) {
-      this.rewardsDataManager.getUserRewardsData();
-    }
+    this.getRewardTrackInfo();
   }
 
+  private getRewardTrackInfo() {
+    this.rewardsProvider.getUserRewardsData().subscribe(
+      trackInfoArray => {
+        /// check if response is valid and contains a reward track
+        if (trackInfoArray && trackInfoArray.length > 0) {
+          // this.userRewardTrackInfo = trackInfoArray[0];
+          if (trackInfoArray[0].userOptInStatus == 0) {
+            // show opt in with option to exit
+            ExceptionProvider.showException(this.events, {
+              displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
+              messageInfo: {
+                title: "Rewards Opt-In",
+                message: "Would you like to use GET Rewards?",
+                positiveButtonTitle: "YES",
+                positiveButtonHandler: () => {
+                  // MAKE OPT_IN Call
+                  this.rewardsProvider.optInUser(this.userRewardTrackInfo.trackID);
+                },
+                negativeButtonTitle: "CLOSE",
+                negativeButtonHandler: () => {
+                  this.platform.exitApp();
+                }
+              }
+            });
+          } else {
+            this.getRewardHistory(trackInfoArray[0])
+            // this.handleRewardTrackInfo();
+          }
+        } else {
+          // there is no data for some reason
+        }
+      },
+      error => {
+        ExceptionProvider.showException(this.events, {
+          displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
+          messageInfo: {
+            title: "Reward Information",
+            message: "Something went wrong while retrieving your Rewards information",
+            positiveButtonTitle: "RETRY",
+            positiveButtonHandler: () => {
+              // MAKE OPT_IN Call
+              this.getRewardTrackInfo();
+            },
+            negativeButtonTitle: "CLOSE",
+            negativeButtonHandler: () => {
+              this.platform.exitApp();
+            }
+          }
+        });
+      }
+    )
+  }
+
+  private getRewardHistory(userRewardTI: UserRewardTrackInfo) {
+    this.rewardsProvider.getUserRewardHistory(userRewardTI.trackID, userRewardTI.trackStartDate, userRewardTI.trackEndDate).subscribe(
+      response => {
+
+      },
+      error => {
+
+      }
+    );
+  }
 
   private handleRewardTrackInfo() {
 
@@ -152,7 +183,7 @@ export class RewardsPage {
             message: "There was a problem with your Rewards information and we're having trouble reading it.",
             positiveButtonTitle: "RETRY",
             positiveButtonHandler: () => {
-              this.rewardsDataManager.getUserRewardsData();
+              this.rewardsProvider.getUserRewardsData();
             },
             negativeButtonTitle: "CLOSE",
             negativeButtonHandler: () => {
