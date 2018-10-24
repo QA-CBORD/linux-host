@@ -85,8 +85,10 @@ export class APIService {
 
         let finalURL = Environment.getAPIGatewayServicesBaseURL().concat(resourceURL);
 
-        console.log("API Call: |" + callType + "| - " + finalURL);
+        console.log("API Call: | Call Type: " + callType + " | URL: " + finalURL);
+        console.log("Headers:");
         console.log(headers);
+        console.log("Body:")
         console.log(body);
 
         return Observable.create((observer: any) => {
@@ -94,13 +96,12 @@ export class APIService {
             switch (callType) {
                 case RestCallType.get:
                     this.get<any>(finalURL, responseType, params, headers).subscribe(response => {
-
                         observer.next(response);
                     },
                         (error: any) => {
-
                             if (error.status === 401) {
                                 /// AUTHENTICATION ERROR, HANDLE WHEN WE KNOW HOW
+                                this.handleAuthenticationError(error);
                             } else {
                                 observer.error(error);
                             }
@@ -113,6 +114,7 @@ export class APIService {
                         (error: any) => {
                             if (error.status === 401) {
                                 /// AUTHENTICATION ERROR, HANDLE WHEN WE KNOW HOW
+                                this.handleAuthenticationError(error);
                             } else {
                                 observer.error(error);
                             }
@@ -120,11 +122,11 @@ export class APIService {
                     break;
                 case RestCallType.put:
                     this.put(finalURL, body, responseType, params, headers).subscribe(response => {
-                        observer.next(response);
-                    },
+                        observer.next(response);                    },
                         (error: any) => {
                             if (error.status === 401) {
                                 /// AUTHENTICATION ERROR, HANDLE WHEN WE KNOW HOW
+                                this.handleAuthenticationError(error);
                             } else {
                                 observer.error(error);
                             }
@@ -155,6 +157,11 @@ export class APIService {
             Object.assign(options, { headers: headers });
         }
         return options;
+    }
+
+    private handleAuthenticationError(error: Error){
+        console.error("API 401 (Authentication) error | Error detail:")
+        console.error(error);
     }
 
 }
