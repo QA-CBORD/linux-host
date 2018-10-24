@@ -92,8 +92,6 @@ export class GETService {
    * @param response    Response returned from call
    */
   protected extractData(response: Response) {
-
-    console.log(response);
     try {
       let tResponse = response.json();
       if (!tResponse.response || tResponse.exception) {

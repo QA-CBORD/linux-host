@@ -2,8 +2,6 @@ import { Injectable } from '@angular/core';
 import { Observable } from "rxjs/Observable";
 
 import { GETService } from "../get-service/get-service";
-import { MessageResponse } from "../../models/service/message-response.interface";
-
 
 @Injectable()
 export class SessionService extends GETService {

@@ -55,7 +55,6 @@ export class RewardService extends GETService {
         "headerOnly": headerOnly
       };
 
-      console.log(JSON.stringify(postParams));
 
       this.httpRequest(this.serviceUrl, 'retrieveUserRewardTrackInfo', true, postParams)
         .subscribe(

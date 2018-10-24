@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from "rxjs/Observable";
 import 'rxjs/add/operator/map';
 
-import { GETService } from "../get-service/get-service";
+import { GETService, ServiceParameters } from "../get-service/get-service";
 
 import { MessageResponse } from "../../models/service/message-response.interface";
 import { UserLogin } from "../../models/user/user-login.interface";
@@ -30,7 +30,7 @@ export class AuthService extends GETService {
 
       console.log(JSON.stringify(postParams));
 
-      this.httpPost(this.serviceUrl, postParams)        
+      this.httpPost(this.serviceUrl, postParams)
         .subscribe(
           data => {
             // validate data then throw error or send
@@ -49,26 +49,21 @@ export class AuthService extends GETService {
   authenticateUser(userCredentials: UserLogin): Observable<string> {
 
     return Observable.create((observer: any) => {
-      let postParams = {
-        method: 'authenticateUser',
-        params: {
-          systemCredentials: {
-            domain: '',
-            userName: 'get_mobile',
-            password: 'NOTUSED'
-          },
-          userCredentials: {
-            userName: 'GSaas@tpsmail.dev',
-            password: 'password1',
-            domain: null,
-            institutionId: '46054f40-71fc-4d32-a8de-64b525d3ce56'
-          }
+      let postParams: ServiceParameters = {
+        systemCredentials: {
+          domain: '',
+          userName: 'get_mobile',
+          password: 'NOTUSED'
+        },
+        userCredentials: {
+          userName: 'GSaas@tpsmail.dev',
+          password: 'password1',
+          domain: null,
+          institutionId: '46054f40-71fc-4d32-a8de-64b525d3ce56'
         }
       }
 
-      console.log(JSON.stringify(postParams));
-
-      this.httpPost(this.serviceUrl, postParams)
+      this.httpRequest(this.serviceUrl, 'authenticateUser', false, postParams)
         .subscribe(
           data => {
             // validate data then throw error or send

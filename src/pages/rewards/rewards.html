@@ -4,7 +4,7 @@
             <ion-row padding align-items-center>
                 <ion-col col-100 *ngIf='userRewardTrackInfo.hasLevels'>
                     <div class="progress_chart progress_col">
-                        <canvas #progressChartCanvas></canvas>
+                        <canvas #pCC ></canvas>
                         <span class="progress_label_percent_progress">{{currentProgressPercentage}}%</span>
                         <span class="progress_label_level_progress">{{xpGained}} / {{xpForLevel}}</span>
                         <span class="progress_label_current_level">
@@ -20,7 +20,7 @@
                     <h3 class="progress_h3">{{'REWARD_PROGRESS.TOTAL' | translate}}</h3>
                 </ion-col>
                 <ion-col *ngIf='userRewardTrackInfo.hasLevels'>
-                    <h2 class="rewards_h1">{{userRewardTrackInfo.trackLevels[userRewardTrackInfo.userLevel].name}}</h2>
+                    <h2 class="rewards_h1">{{userRewardTrackInfo.trackLevels[userRewardTrackInfo.userLevel - 1].name}}</h2>
                     <h3 class="progress_h3">{{'REWARD_PROGRESS.LEVEL' | translate}} {{userRewardTrackInfo.userLevel}}</h3>
                 </ion-col>
                 <ion-col>

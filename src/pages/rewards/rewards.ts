@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, ElementRef } from '@angular/core';
 import { IonicPage, NavController, NavParams, Events, Platform, PopoverController, ModalController } from 'ionic-angular';
 import { AlertController } from 'ionic-angular';
 import { Chart } from 'chart.js';
@@ -14,14 +14,20 @@ import { ExceptionProvider } from '../../providers/exception-provider/exception-
 import { AccordionListOptionModel } from '../../shared/accordion-list/models/accordionlist-option-model';
 import { AccordionListSettings } from '../../shared/accordion-list/models/accordionlist-settings';
 import { UserRewardTrackInfo, UserTrackLevelInfo, ClaimableRewardInfo } from '../../models/rewards/rewards.interface'
-import { RewardDetailsPage } from '../reward-details/reward-details';
+import { RewardDetailsModalPage } from '../reward-details-modal/reward-details-modal';
 
 import * as Globals from '../../app/app.global';
+import { UserLogin } from '../../models/user/user-login.interface';
+import { GETService } from '../../services/get-service/get-service';
+import { AuthService } from '../../services/auth-service/auth-service';
+
 
 
 
 @IonicPage({
+  name: 'rewards'
 })
+
 @Component({
   selector: 'page-rewards',
   templateUrl: 'rewards.html',
@@ -54,7 +60,8 @@ export class RewardsPage {
     }
   };
 
-  @ViewChild('progressChartCanvas') progressChartCanvas;
+  @ViewChild('pCC') progressChartCanvas: ElementRef;
+
   rewardType;
   progressChart: Chart;
   xpGained: number = 0;
@@ -81,13 +88,59 @@ export class RewardsPage {
     private popoverCtrl: PopoverController,
     private translate: TranslateService,
     private modalCtrl: ModalController,
-    private platform: Platform
+    private platform: Platform,
+    private authService: AuthService
   ) {
-    
+    this.platform.ready().then(() => {
+      events.publish(Globals.Events.SIDEPANE_ENABLE, false);
+      
+    });
   }
 
   ionViewDidLoad() {
-    this.getRewardTrackInfo();
+  
+  }
+
+  ngAfterViewInit() {
+    this.debugGetSession();
+
+  }
+
+  private debugGetSession() {
+
+    let userInfo: UserLogin = {
+      userName: 'gsaas@tpsmail.dev',
+      password: 'password1',
+      institutionId: '',
+      domain: null
+    }
+
+    this.authService.authenticateUser(userInfo).subscribe(
+      newSessionId => {
+        GETService.setSessionId(newSessionId);
+        this.getRewardTrackInfo();
+      },
+      error => {
+
+        ExceptionProvider.showException(this.events, {
+          displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
+          messageInfo: {
+            title: "No session created",
+            message: error,
+            positiveButtonTitle: "RETRY",
+            positiveButtonHandler: () => {
+              this.debugGetSession();
+            },
+            negativeButtonTitle: "CLOSE",
+            negativeButtonHandler: () => {
+              this.platform.exitApp();
+            }
+          }
+        });
+      }
+    );
+
+
   }
 
   private getRewardTrackInfo() {
@@ -95,7 +148,7 @@ export class RewardsPage {
       trackInfoArray => {
         /// check if response is valid and contains a reward track
         if (trackInfoArray && trackInfoArray.length > 0) {
-          // this.userRewardTrackInfo = trackInfoArray[0];
+          this.userRewardTrackInfo = trackInfoArray[0];
           if (trackInfoArray[0].userOptInStatus == 0) {
             // show opt in with option to exit
             ExceptionProvider.showException(this.events, {
@@ -115,8 +168,7 @@ export class RewardsPage {
               }
             });
           } else {
-            this.getRewardHistory(trackInfoArray[0])
-            // this.handleRewardTrackInfo();
+            this.handleRewardTrackInfo();
           }
         } else {
           // there is no data for some reason
@@ -211,9 +263,13 @@ export class RewardsPage {
     }
 
     this.calculatePercentageToNextLevel();
-    this.createProgressChart();
+    
     this.populateLevelList();
     this.populatePointsList();
+
+    setTimeout(() => {
+      this.createProgressChart();
+    }, 1000);
 
 
     // set activated tab
@@ -317,11 +373,12 @@ export class RewardsPage {
       let iIndex = 0;
       let newSubOptions = new Array<AccordionListOptionModel>();
       while (iIndex < this.userRewardTrackInfo.trackLevels[index].userClaimableRewards.length) {
+        let cReward = this.userRewardTrackInfo.trackLevels[index].userClaimableRewards[iIndex];
         newSubOptions.push({
-          displayName: this.userRewardTrackInfo.trackLevels[index].userClaimableRewards[iIndex].name,
-          displayDescription: this.userRewardTrackInfo.trackLevels[index].userClaimableRewards[iIndex].shortDescription,
-          component: this.userRewardTrackInfo.trackLevels[index].userClaimableRewards[iIndex].id,
-          badge: this.userRewardTrackInfo.trackLevels[index].userClaimableRewards[iIndex].claimStatus == 3 ? ArrayObservable.of('CLAIMED') : null,
+          displayName: cReward.name,
+          displayDescription: cReward.shortDescription,
+          component: cReward.id,
+          badge: cReward.claimStatus == 3 ? ArrayObservable.of('CLAIMED') : null,
           custom: {
             levelIndex: index,
             itemIndex: iIndex
@@ -392,11 +449,8 @@ export class RewardsPage {
   }
 
   openItemInfo(claimableItem: ClaimableRewardInfo, redeemed: boolean) {
-    // let rdModal = this.modalCtrl.create(RewardDetailsPage, {rewardInfo: claimableItem, bIsRedeemed: redeemed});
-    // rdModal.present();
-    let rdPopover = this.popoverCtrl.create(RewardDetailsPage, { rewardInfo: claimableItem, bIsRedeemed: redeemed });
-    rdPopover.present();//{animate: false});
-
+    let rdModal = this.modalCtrl.create(RewardDetailsModalPage, {rewardInfo: claimableItem, bIsRedeemed: redeemed});
+    rdModal.present();
   }
 
   //#endregion

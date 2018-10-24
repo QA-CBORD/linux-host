@@ -9,18 +9,23 @@ import { UserRewardTrackInfoInfoList, UserRewardTrackInfo, UserTrackLevelInfo, C
 
 @IonicPage()
 @Component({
-  selector: 'page-reward-details',
-  templateUrl: 'reward-details.html',
+  selector: 'page-reward-details-modal',
+  templateUrl: 'reward-details-modal.html',
 })
 
-export class RewardDetailsPage {
+export class RewardDetailsModalPage {
   qrCode = null;
   userRewardTrackInfo: UserRewardTrackInfo = null;
   reward: ClaimableRewardInfo = null;
   bIsRedeemed: boolean = false;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public events: Events, public rewardService: RewardService, 
-    public alertCtrl: AlertController, public rewardsDataManager: RewardsProvider) {
+  constructor(
+    public navCtrl: NavController, 
+    public navParams: NavParams, 
+    public events: Events, 
+    public rewardService: RewardService, 
+    public alertCtrl: AlertController, 
+    public rewardsDataManager: RewardsProvider) {
 
     this.reward = this.navParams.data.rewardInfo;
     
@@ -32,7 +37,7 @@ export class RewardDetailsPage {
     //   }
     // });
 
-    // // Do an initial pull of userRewardTrackInfo from cache if available.
+    // Do an initial pull of userRewardTrackInfo from cache if available.
     // rewardsDataManager.getUserRewardsData(false);
   }
 
@@ -48,12 +53,12 @@ export class RewardDetailsPage {
 
   levelRewardClicked() {
     // only claim a reward if none have been claimed for this level already
-    // if (!this.userRewardTrackInfo.trackLevels[this.reward.claimLevel-1].redeemed) {
-    //   this.rewardService.claimReward(this.reward.id).subscribe(
-    //     ((data: MessageResponse<boolean>) => this.ClaimRewardResponse(data.response)),
-    //     ((error) => this.showError(error))
-    //   )    
-    // }
+    if (!this.userRewardTrackInfo.trackLevels[this.reward.claimLevel-1].redeemed) {
+      // this.rewardService.claimReward(this.reward.id).subscribe(
+      //   ((data: MessageResponse<boolean>) => this.ClaimRewardResponse(data.response)),
+      //   ((error) => this.showError(error))
+      // )    
+    }
   }
 
   ClaimRewardResponse(result: any) {

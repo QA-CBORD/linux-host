@@ -1,15 +1,15 @@
 import { NgModule } from '@angular/core';
 import { IonicPageModule } from 'ionic-angular';
-import { RewardDetailsPage } from './reward-details';
+import { RewardDetailsModalPage } from './reward-details-modal';
 import { TranslateModule } from '@ngx-translate/core';
 import { QRCodeModule } from 'angular2-qrcode';
 
 @NgModule({
   declarations: [
-    RewardDetailsPage,
+    RewardDetailsModalPage,
   ],
   imports: [
-    IonicPageModule.forChild(RewardDetailsPage),
+    IonicPageModule.forChild(RewardDetailsModalPage),
     TranslateModule.forChild(),
     QRCodeModule
   ],
