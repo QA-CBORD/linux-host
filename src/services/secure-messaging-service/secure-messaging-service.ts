@@ -2,6 +2,8 @@ import { Injectable } from "@angular/core";
 
 import { APIService, HttpResponseType, RestCallType } from './../api-service/api-service';
 import { HttpHeaders } from "@angular/common/http";
+import { SecureMessageInfo } from "../../models/secure-messaging/secure-message-info";
+import { Observable } from "rxjs/Observable";
 
 
 
@@ -11,65 +13,32 @@ export class SecureMessagingService {
     private serviceUrl: string = '/secureMessages';
 
     constructor(
-        private apiService: APIService) {
+        private apiService: APIService
+    ) {
     }
 
-    private newGuid() {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-            const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
-        });
-    }
 
-    public testGetSecureMessage() {
+    public getSecureMessages(): Observable<any> {
 
-        this.apiService.authenticatedHTTPCall(RestCallType.get, this.serviceUrl, HttpResponseType.json,
+        return this.apiService.authenticatedHTTPCall(
+            RestCallType.get,
+            this.serviceUrl,
+            HttpResponseType.json,
             undefined,
             undefined,
-            new HttpHeaders())
-            .subscribe(
-                response => {
-                    console.log("SecureMessaging - SUCCESS:");
-                    console.log(response);
-                },
-                error => {
-                    console.log("SecureMessaging - ERROR");
-                    console.log(error);
-                }
-            );
+            new HttpHeaders());
 
     }
 
-    public testPostSecureMessage() {
+    public postSecureMessage(messageInfo: SecureMessageInfo): Observable<any> {
 
-        let tempBody = {
-            'id': this.newGuid(),
-            'originalMessageId': null,
-            'recipient': "1234",
-            'sender': "9999",
-            'sentDate': "2018-10-09T11:47:00",
-            'ttl': null,
-            'messageDescription': "Test Message",
-            'messageBody': "A wonderful test message body",
-            'state': null,
-            'importance': null,
-            'readDate': null
-        };
-
-        this.apiService.authenticatedHTTPCall(RestCallType.post, this.serviceUrl, HttpResponseType.json,
-            tempBody,
+        return this.apiService.authenticatedHTTPCall(
+            RestCallType.post,
+            this.serviceUrl,
+            HttpResponseType.json,
+            messageInfo,
             undefined,
-            new HttpHeaders())
-            .subscribe(
-                response => {
-                    console.log("SecureMessaging - SUCCESS:");
-                    console.log(response);
-                },
-                error => {
-                    console.log("SecureMessaging - ERROR:");
-                    console.log(error);
-                }
-            );
+            new HttpHeaders());
 
     }
 
