@@ -16,7 +16,7 @@ export class SecureMessagingPage {
     public navCtrl: NavController,
     public navParams: NavParams,
     private platform: Platform,
-    public events: Events
+    private events: Events
   ) {
 
     platform.ready().then(() => {
