@@ -42,4 +42,28 @@ export class SecureMessagingService {
 
     }
 
+    public replyToSecureMessage(messageInfo: SecureMessageInfo): Observable<any> {
+
+        return this.apiService.authenticatedHTTPCall(
+            RestCallType.post,
+            this.serviceUrl, /// does this need a msgId in the URL???
+            HttpResponseType.json,
+            messageInfo,
+            undefined,
+            new HttpHeaders());
+
+    }
+
+    public deleteSecureMessage(messageID: string): Observable<any> {
+
+        return this.apiService.authenticatedHTTPCall(
+            RestCallType.post,
+            this.serviceUrl + "/" + messageID,
+            HttpResponseType.json,
+            undefined,
+            undefined,
+            new HttpHeaders());
+
+    }
+
 }
