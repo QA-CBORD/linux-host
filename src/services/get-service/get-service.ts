@@ -61,6 +61,7 @@ export class GETService {
       .catch(this.handleError);
   }
 
+
   /**
    * Old HTTP request
    * 
@@ -82,7 +83,6 @@ export class GETService {
    * @param error     Error returned from call
    */
   protected handleError(error: Response | any) {
-    console.log(error);
     return Observable.throw(error);
   }
 
@@ -92,19 +92,26 @@ export class GETService {
    * @param response    Response returned from call
    */
   protected extractData(response: Response) {
-
+    console.log("ExtractData");
     console.log(response);
-    try {
-      let tResponse = response.json();
-      if (!tResponse.response || tResponse.exception) {
-        console.log(tResponse);
-        this.parseExceptionResponse(response);
-      } else {
-        return tResponse;
-      }
-    } catch (error) {
-      return { response: null, exception: 'An unknown error occurred.' };
+
+    let tResponse = response.json();
+    console.log("ExtractData - Body");
+    console.log(tResponse);
+    if(tResponse.exception){
+      this.stupidErrorFunction(tResponse.exception);
+    
+    // if (tResponse.exception) {
+    //   console.log("ExDat: ParseExcep");
+    //   console.log("ExDat: ParseExcep2");
+
+
+    //   this.logData("TEstText LOG BS");
+    //   console.log("ExDat: ParseExcep3");
+    } else {
+      return tResponse;
     }
+
   }
 
   /**
@@ -112,23 +119,46 @@ export class GETService {
    * 
    * @param response    Response returned from call
    */
-  protected parseExceptionResponse(response) {
-    if (response != null && response.exception != null) {
-      // check the exception string for a number|description string format
-      let regEx = new RegExp('^[0-9]*|.*$');
-      if (regEx.test(response.exception)) {
-        try {
-          let parts = response.exception.split("|");
-          this.handleErrorCode(parts[0]);
-        } catch (error) {
-          this.handleError("An unknown error occurred.");
-        }
-      } else {
-        throw new Error("Unexpected error occurred.");
-      }
+  protected stupidErrorFunction(exceptionString: string) {
+
+    console.log("ParseExcep: start");
+    // check the exception string for a number|description string format
+    let regEx = new RegExp('^[0-9]*|.*$');
+    if (regEx.test(exceptionString)) {
+      let parts = exceptionString.split("|");
+      // this.determineErrorByCodeAndThrow(parts[0], parts.length > 1 ? parts[1] : null);
     } else {
-      throw new Error("The response was empty or malformed.");
+      throw new Error("Unexpected error occurred.");
     }
+  
+  }
+
+  /**
+   * Handle error codes returned from HTTP calls
+   * 
+   * @param code    Exception code
+   */
+  protected determineErrorByCodeAndThrow(code: string, message: string) {
+    let newError = new Error("Unexpected exception occured.");
+    switch (code) {
+      case '4001':
+        newError.name = "NoSuchSessionException";
+        newError.message = "Invalid session";
+        break;
+      case '9801': /// InvalidServiceArgumentException
+        newError.name = "InvalidServiceArgumentException"
+        newError.message = "InvalidServiceArgumentException";
+        break;
+      case '6100':
+        newError.name = "PaymentSystemGatewayException";
+        newError.message = message;
+        break;
+      case '6113':
+        newError.name = "PaymentSystemBusinessLogicException";
+        newError.message = message;
+        break;
+    }
+    throw newError;
   }
 
   protected logData(response: any) {
@@ -191,34 +221,6 @@ export class GETService {
    */
   static getSession(): any {
     return GETService.session;
-  }
-
-  /**
-   * Handle error codes returned from HTTP calls
-   * 
-   * @param code    Exception code
-   */
-  protected handleErrorCode(code) {
-    if (code == '4001') {
-      throw new Error("Invalid session");
-    } else if (code = '9801') {
-      throw new Error("InvalidServiceArgumentException");
-    } else {
-      throw new Error("Unexpected system exception occured.");
-    }
-  }
-
-
-  protected mapToJSONString(map: Map<any, any>): string {
-    return JSON.stringify(
-      Array.from(
-        map.entries()
-      )
-        .reduce((o, [key, value]) => {
-          o[key] = value;
-
-          return o;
-        }, {}));
   }
 
 }
