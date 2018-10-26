@@ -19,7 +19,7 @@ import { GeoCoordinates } from '../../models/geolocation/geocoordinates.interfac
 })
 export class MobileAccessPage {
 
-  mobileLocationInfo: MobileLocationInfo[];
+  mobileLocationInfo: MobileLocationInfo[] = new Array();
 
   currentSelectedLocation: any;
   refresher: any;
