@@ -9,6 +9,10 @@ import 'rxjs/add/operator/do';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/throw';
 import 'rxjs/add/operator/timeout';
+import 'rxjs/add/operator/subscribeOn';
+import 'rxjs/add/operator/observeOn';
+import { async } from 'rxjs/scheduler/async';
+import { queue } from 'rxjs/scheduler/queue';
 
 
 export interface ServiceParameters {
@@ -55,9 +59,10 @@ export class GETService {
     console.log(finalParams);
 
     return this.http.post(this.baseUrl.concat(serviceUrl), JSON.stringify(finalParams), this.getOptions())
+      .subscribeOn(async)
+      .observeOn(queue)
       .timeout(this.TIMEOUT_MS)
-      .map(this.extractData)
-      .do(this.logData)
+      .map((response) => this.extractData(response))
       .catch(this.handleError);
   }
 
@@ -72,8 +77,7 @@ export class GETService {
     this.baseUrl = Environment.getGETServicesBaseURL();
     return this.http.post(this.baseUrl.concat(serviceUrl), JSON.stringify(postParams), this.getOptions())
       .timeout(this.TIMEOUT_MS)
-      .map(this.extractData)
-      .do(this.logData)
+      .map((response) => this.extractData(response))
       .catch(this.handleError);
   }
 
@@ -82,7 +86,7 @@ export class GETService {
    * 
    * @param error     Error returned from call
    */
-  protected handleError(error: Response | any) {
+  protected handleError(error: Response | any) {    
     return Observable.throw(error);
   }
 
@@ -92,26 +96,13 @@ export class GETService {
    * @param response    Response returned from call
    */
   protected extractData(response: Response) {
-    console.log("ExtractData");
-    console.log(response);
-
     let tResponse = response.json();
-    console.log("ExtractData - Body");
     console.log(tResponse);
-    if(tResponse.exception){
-      this.stupidErrorFunction(tResponse.exception);
-    
-    // if (tResponse.exception) {
-    //   console.log("ExDat: ParseExcep");
-    //   console.log("ExDat: ParseExcep2");
-
-
-    //   this.logData("TEstText LOG BS");
-    //   console.log("ExDat: ParseExcep3");
+    if (tResponse.exception) {
+      this.parseExceptionResponse(tResponse.exception);
     } else {
       return tResponse;
     }
-
   }
 
   /**
@@ -119,18 +110,15 @@ export class GETService {
    * 
    * @param response    Response returned from call
    */
-  protected stupidErrorFunction(exceptionString: string) {
-
-    console.log("ParseExcep: start");
+  protected parseExceptionResponse(exceptionString: string) {
     // check the exception string for a number|description string format
     let regEx = new RegExp('^[0-9]*|.*$');
     if (regEx.test(exceptionString)) {
       let parts = exceptionString.split("|");
-      // this.determineErrorByCodeAndThrow(parts[0], parts.length > 1 ? parts[1] : null);
+      this.determineErrorByCodeAndThrow(parts[0], parts.length > 1 ? parts[1] : null);
     } else {
       throw new Error("Unexpected error occurred.");
     }
-  
   }
 
   /**
@@ -139,13 +127,13 @@ export class GETService {
    * @param code    Exception code
    */
   protected determineErrorByCodeAndThrow(code: string, message: string) {
-    let newError = new Error("Unexpected exception occured.");
+    let newError = new Error("Unexpected error occured.");
     switch (code) {
       case '4001':
         newError.name = "NoSuchSessionException";
         newError.message = "Invalid session";
         break;
-      case '9801': /// InvalidServiceArgumentException
+      case '9801':
         newError.name = "InvalidServiceArgumentException"
         newError.message = "InvalidServiceArgumentException";
         break;
@@ -159,10 +147,6 @@ export class GETService {
         break;
     }
     throw newError;
-  }
-
-  protected logData(response: any) {
-    console.log(response);
   }
 
   /**

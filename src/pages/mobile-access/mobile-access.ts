@@ -121,7 +121,7 @@ export class MobileAccessPage {
         ExceptionProvider.showException(this.events, {
           displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
           messageInfo: {
-            title: "Something went wrong",
+            title: "Oops!",
             message: errorMessage,
             positiveButtonTitle: "RETRY",
             positiveButtonHandler: () => {
