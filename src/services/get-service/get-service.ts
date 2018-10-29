@@ -23,8 +23,8 @@ export interface ServiceParameters {
 export class GETService {
 
   /// Local session data
-  static sessionId: string;
-  static session: any;
+  static sessionId: string = null;
+  static session: any = null;
 
   /// HTTP call timeout in milliseconds
   private TIMEOUT_MS = 15000;
@@ -63,7 +63,7 @@ export class GETService {
       .observeOn(queue)
       .timeout(this.TIMEOUT_MS)
       .map((response) => this.extractData(response))
-      .catch(this.handleError);
+      .catch((error) => this.handleError(error));
   }
 
 
@@ -76,9 +76,11 @@ export class GETService {
   protected httpPost(serviceUrl: string, postParams: any): Observable<any> {
     this.baseUrl = Environment.getGETServicesBaseURL();
     return this.http.post(this.baseUrl.concat(serviceUrl), JSON.stringify(postParams), this.getOptions())
+      .subscribeOn(async)
+      .observeOn(queue)
       .timeout(this.TIMEOUT_MS)
       .map((response) => this.extractData(response))
-      .catch(this.handleError);
+      .catch((error) => this.handleError(error));
   }
 
   /**
@@ -86,7 +88,7 @@ export class GETService {
    * 
    * @param error     Error returned from call
    */
-  protected handleError(error: Response | any) {    
+  protected handleError(error: Response | any) {
     return Observable.throw(error);
   }
 
