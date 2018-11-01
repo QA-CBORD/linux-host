@@ -59,12 +59,7 @@ export class AuthService extends GETService {
           userName: 'get_mobile',
           password: 'NOTUSED'
         },
-        userCredentials: {
-          userName: userCredentials.userName,
-          password: userCredentials.password,
-          domain: userCredentials.domain,
-          institutionId: userCredentials.institutionId
-        }
+        userCredentials: userCredentials
       }
 
       console.log(JSON.stringify(postParams));
