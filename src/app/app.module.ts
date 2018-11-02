@@ -40,7 +40,7 @@ import { MobileAccessModalPageModule } from './../pages/mobile-access-modal/mobi
 /// COMPONENTS
 import { SideMenuContentComponent } from '../shared/side-menu-content/side-menu-content.component';
 import { AccountsProvider } from '../providers/accounts-provider/accounts-provider';
-import { TestUserProvider } from '../providers/test-user/test-user';
+import { TestUserProvider } from '../providers/test-user-provider/test-user-provider';
 
 
 

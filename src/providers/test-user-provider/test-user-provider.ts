@@ -6,10 +6,10 @@ import { Observable } from 'rxjs/Observable';
 import { GETService } from '../../services/get-service/get-service';
 import { AuthService } from '../../services/auth-service/auth-service';
 
-import { ExceptionProvider } from '../../providers/exception-provider/exception-provider';
+import { ExceptionProvider } from '../exception-provider/exception-provider';
 
 import * as Globals from '../../app/app.global';
-import { UserLogin } from './../../models/user/user-login.interface';
+import { UserLogin } from '../../models/user/user-login.interface';
 
 
 import 'rxjs/add/operator/map';
