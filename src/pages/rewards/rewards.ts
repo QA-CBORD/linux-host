@@ -1,10 +1,8 @@
-import { TestUserProvider } from './../../providers/test-user/test-user';
 import { Component, ViewChild, ElementRef } from '@angular/core';
 import { IonicPage, NavController, NavParams, Events, Platform, PopoverController, ModalController } from 'ionic-angular';
 import { AlertController } from 'ionic-angular';
 import { Chart } from 'chart.js';
 import { TranslateService } from "@ngx-translate/core";
-import { AuthService } from '../../services/auth-service/auth-service';
 import { ArrayObservable } from 'rxjs/observable/ArrayObservable';
 
 import { RewardService } from '../../services/reward-service/reward-service';
@@ -84,25 +82,12 @@ export class RewardsPage {
     private translate: TranslateService,
     private modalCtrl: ModalController,
     private platform: Platform,
-    private authService: AuthService,
-    private testUserProvider: TestUserProvider
   ) {
     
   }
 
   ionViewDidLoad() {
-  }
-
-  ngAfterViewInit() {
-    this.debugGetSession();
-
-  }
-
-  private debugGetSession() {
-    this.testUserProvider.getTestUser().subscribe(
-      newSessionId => {
-        this.getRewardTrackInfo();
-      });
+   this.getRewardTrackInfo();
   }
 
   private getRewardTrackInfo() {

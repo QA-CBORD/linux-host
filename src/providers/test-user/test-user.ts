@@ -1,31 +1,34 @@
-import { UserLogin } from './../../models/user/user-login.interface';
-import { Observable } from 'rxjs/Observable';
+import { Events, Platform} from 'ionic-angular';
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
+
+import { Observable } from 'rxjs/Observable';
+
 import { GETService } from '../../services/get-service/get-service';
 import { AuthService } from '../../services/auth-service/auth-service';
+
 import { ExceptionProvider } from '../../providers/exception-provider/exception-provider';
+
 import * as Globals from '../../app/app.global';
-import { IonicPage, NavController, NavParams, Events, Platform, PopoverController, ModalController } from 'ionic-angular';
+import { UserLogin } from './../../models/user/user-login.interface';
+
+
 import 'rxjs/add/operator/map';
 
-/*
-  Generated class for the TestUserProvider provider.
 
-  See https://angular.io/docs/ts/latest/guide/dependency-injection.html
-  for more info on providers and Angular DI.
-*/
 @Injectable()
 export class TestUserProvider {
 
   constructor(
-    public http: Http, 
     private authService: AuthService,
     public events: Events, 
     private platform: Platform) {
-    console.log('Hello TestUserProvider Provider');
-  }
+  }  
 
+
+  /**
+   *  Get Session Info using testing user credentials in Develpment
+   *  Environment Institutions
+   */
   public getTestUser(): Observable<string> {
 
   let gold7: UserLogin = {
