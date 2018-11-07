@@ -12,9 +12,7 @@ import { MobileLocationInfo } from '../../models/open-my-door/open-my-door.inter
 import { GeoCoordinates } from '../../models/geolocation/geocoordinates.interface';
 
 
-@IonicPage({
-  name: 'mobile-access'
-})
+
 @Component({
   selector: 'page-mobile-access',
   templateUrl: 'mobile-access.html',
