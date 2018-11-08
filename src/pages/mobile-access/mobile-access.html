@@ -6,7 +6,7 @@
   </div>
   <div style="margin-top: -20%; margin-right: 5%; margin-left: 5%;">
     <div>
-      <ion-card *ngIf="mobileLocationInfo.length > 0; else noLocationInfo">
+      <ion-card *ngIf="mobileLocationInfo.length > 0">
         <ion-card-content>
           <ion-scroll style="height: 80vh; min-height: 10vh; white-space: nowrap;" scrollY="true">
             <ion-list>
@@ -22,9 +22,9 @@
           </ion-scroll>
         </ion-card-content>
       </ion-card>
-      <ng-template #noLocationInfo>
+      <div *ngIf="bShowNoLocationsAvailable">
         <h4 text-center style="margin-top: 50%; font-weight: 300;">There are no locations available to display</h4>
-      </ng-template>
+      </div>
     </div>
   </div>
 </ion-content>

@@ -22,6 +22,7 @@ import { GeoCoordinates } from '../../models/geolocation/geocoordinates.interfac
 export class MobileAccessPage {
 
   mobileLocationInfo: MobileLocationInfo[] = new Array();
+  bShowNoLocationsAvailable = false;
 
   currentSelectedLocation: any;
   refresher: any;
@@ -90,11 +91,13 @@ export class MobileAccessPage {
     this.mobileAccessProvider.getMobileLocationData(this.geoData).subscribe(
       mobileLocationData => {
         if (mobileLocationData && mobileLocationData.length > 0) {
+          this.bShowNoLocationsAvailable = false;
           for (let i = 0; i < mobileLocationData.length; i++) {
             mobileLocationData[i].distance > 99 ? mobileLocationData[i].distance = NaN : mobileLocationData[i].distance > 5 ? mobileLocationData[i].distance = Number(mobileLocationData[i].distance.toFixed(2)) : mobileLocationData[i].distance = mobileLocationData[i].distance;
           }
           this.mobileLocationInfo = mobileLocationData;
         } else {
+          this.bShowNoLocationsAvailable = true;
           ExceptionProvider.showException(this.events, {
             displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
             messageInfo: {
