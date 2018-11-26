@@ -12,14 +12,17 @@ import { MobileLocationInfo } from '../../models/open-my-door/open-my-door.inter
 import { GeoCoordinates } from '../../models/geolocation/geocoordinates.interface';
 
 
-@IonicPage()
+@IonicPage({
+  name: 'mobile-access'
+})
 @Component({
   selector: 'page-mobile-access',
   templateUrl: 'mobile-access.html',
 })
 export class MobileAccessPage {
 
-  mobileLocationInfo: MobileLocationInfo[];
+  mobileLocationInfo: MobileLocationInfo[] = new Array();
+  bShowNoLocationsAvailable = false;
 
   currentSelectedLocation: any;
   refresher: any;
@@ -87,18 +90,19 @@ export class MobileAccessPage {
 
     this.mobileAccessProvider.getMobileLocationData(this.geoData).subscribe(
       mobileLocationData => {
-        if (mobileLocationData) {
+        if (mobileLocationData && mobileLocationData.length > 0) {
+          this.bShowNoLocationsAvailable = false;
           for (let i = 0; i < mobileLocationData.length; i++) {
-            mobileLocationData[i].distance > 99 ? mobileLocationData[i].distance = NaN :
-              mobileLocationData[i].distance > 5 ? mobileLocationData[i].distance = Number(mobileLocationData[i].distance.toFixed(2)) : mobileLocationData[i].distance = mobileLocationData[i].distance;
+            mobileLocationData[i].distance > 99 ? mobileLocationData[i].distance = NaN : mobileLocationData[i].distance > 5 ? mobileLocationData[i].distance = Number(mobileLocationData[i].distance.toFixed(2)) : mobileLocationData[i].distance = mobileLocationData[i].distance;
           }
           this.mobileLocationInfo = mobileLocationData;
         } else {
+          this.bShowNoLocationsAvailable = true;
           ExceptionProvider.showException(this.events, {
             displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
             messageInfo: {
-              title: "Something went wrong",
-              message: "There were no locations to display",
+              title: "No locations available",
+              message: "There are no locations to display",
               positiveButtonTitle: "RETRY",
               positiveButtonHandler: () => {
                 this.getLocationData();
@@ -113,16 +117,16 @@ export class MobileAccessPage {
         this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
 
       },
-      error => {
+      ((error: Error) => {
         let errorMessage = "An error occurred while trying to retrieve your information.";
-        if (error != null) {
-          errorMessage = error;
+        if (error != null && error.message) {
+          errorMessage = error.message;
         }
         this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
         ExceptionProvider.showException(this.events, {
           displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
           messageInfo: {
-            title: "Something went wrong",
+            title: "Oops!",
             message: errorMessage,
             positiveButtonTitle: "RETRY",
             positiveButtonHandler: () => {
@@ -134,7 +138,7 @@ export class MobileAccessPage {
             }
           }
         });
-      }
+      })
     );
   }
 

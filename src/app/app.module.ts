@@ -39,8 +39,8 @@ import { MobileAccessModalPageModule } from './../pages/mobile-access-modal/mobi
 
 /// COMPONENTS
 import { SideMenuContentComponent } from '../shared/side-menu-content/side-menu-content.component';
-import { RewardDetailsModalPage } from '../pages/reward-details-modal/reward-details-modal';
-import { RewardDetailsPageModule } from '../pages/reward-details-modal/reward-details-modal.module';
+import { AccountsProvider } from '../providers/accounts-provider/accounts-provider';
+import { TestUserProvider } from '../providers/test-user-provider/test-user-provider';
 
 
 
@@ -67,16 +67,14 @@ export function createTranslateLoader(http: HttpClient) {
         deps: [HttpClient]
       }
     }),
-    MobileAccessModalPageModule,
-    RewardDetailsPageModule
+    MobileAccessModalPageModule
   ],
   bootstrap: [
     IonicApp
   ],
   entryComponents: [
     MyApp,
-    MobileAccessModalPage,
-    RewardDetailsModalPage
+    MobileAccessModalPage
   ],
   providers: [
     StatusBar,
@@ -98,7 +96,9 @@ export function createTranslateLoader(http: HttpClient) {
     ExceptionProvider,
     Geolocation,
     Diagnostic,
-    AndroidPermissions
+    AndroidPermissions,
+    AccountsProvider,
+    TestUserProvider
   ]
 })
 export class AppModule { }

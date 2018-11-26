@@ -6,8 +6,8 @@
   </div>
   <div style="margin-top: -20%; margin-right: 5%; margin-left: 5%;">
     <div>
-      <ion-card>
-        <ion-card-content *ngIf="mobileLocationInfo">
+      <ion-card *ngIf="mobileLocationInfo.length > 0">
+        <ion-card-content>
           <ion-scroll style="height: 80vh; min-height: 10vh; white-space: nowrap;" scrollY="true">
             <ion-list>
               <button ion-item *ngFor="let item of mobileLocationInfo" (click)="locationSelected(item)" style="border-bottom: 1px solid #c9c9c9;">
@@ -17,20 +17,14 @@
                 <div>
                   <h4>{{item.locationId}}</h4>
                 </div>
-                <!-- <h5 *ngIf="item.distance" item-end>{{item.distance}}</h5> -->
               </button>
             </ion-list>
           </ion-scroll>
-          <!-- <ion-list [virtualScroll]="mobileLocationInfo" [approxItemHeight]="'500px'" style="height: 80vh; min-height: 10vh;">
-              <ion-item *virtualItem="let item" (click)="locationSelected(item)">
-                <div text-wrap><h3>{{item.name}}</h3></div>
-                <div><h4>{{item.locationId}}</h4></div>
-                <h5 item-end>{{item.distance}}ft</h5>
-              </ion-item>
-            </ion-list> -->
-
         </ion-card-content>
       </ion-card>
+      <div *ngIf="bShowNoLocationsAvailable">
+        <h4 text-center style="margin-top: 50%; font-weight: 300;">There are no locations available to display</h4>
+      </div>
     </div>
   </div>
 </ion-content>

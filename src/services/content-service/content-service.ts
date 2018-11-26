@@ -3,7 +3,8 @@ import 'rxjs/add/operator/map';
 
 import { Observable } from "rxjs/Observable";
 
-import { GETService } from "../get-service/get-service";
+import { GETService, ServiceParameters } from "../get-service/get-service";
+
 import { UserInfo } from "../../models/user/user-info.interface"
 
 
@@ -12,25 +13,21 @@ export class ContentService extends GETService {
 
   private serviceUrl: string = '/json/user';
 
-  public retrieveString(sessionId: string, institutionId: string, locale: string, domain: string, category: string, name: string): Observable<UserInfo> {
+  public retrieveString(institutionId: string, locale: string, domain: string, category: string, name: string): Observable<UserInfo> {
 
     return Observable.create((observer: any) => {
 
-      let postParams = {
-        method: 'retrieveString',
-        params: {
-          sessionId: sessionId,
-          institutionId: institutionId,
-          locale: locale,
-          domain: domain,
-          category: category,
-          name: name
-        }
+      let postParams: ServiceParameters = {
+        institutionId: institutionId,
+        locale: locale,
+        domain: domain,
+        category: category,
+        name: name
       };
 
       console.log(JSON.stringify(postParams));
 
-      this.httpPost(this.serviceUrl, postParams)
+      this.httpRequest(this.serviceUrl, 'retrieveString', true, postParams)
         .subscribe(
           data => {
             // validate data then throw error or send
@@ -45,24 +42,20 @@ export class ContentService extends GETService {
     });
   }
 
-  public retrieveStringList(sessionId: string, institutionId: string, locale: string, domain: string, category: string): Observable<UserInfo> {
+  public retrieveStringList(institutionId: string, locale: string, domain: string, category: string): Observable<UserInfo> {
 
     return Observable.create((observer: any) => {
 
-      let postParams = {
-        method: 'retrieveStringList',
-        params: {
-          sessionId: sessionId,
-          institutionId: institutionId,
-          locale: locale,
-          domain: domain,
-          category: category
-        }
+      let postParams: ServiceParameters = {
+        institutionId: institutionId,
+        locale: locale,
+        domain: domain,
+        category: category
       };
 
       console.log(JSON.stringify(postParams));
 
-      this.httpPost(this.serviceUrl, postParams)
+      this.httpRequest(this.serviceUrl, 'retrieveStringList', true, postParams)
         .subscribe(
           data => {
             // validate data then throw error or send
@@ -77,23 +70,19 @@ export class ContentService extends GETService {
     });
   }
 
-  public retrieveStringListByInstitutionDomainCategories(sessionId: string, institutionId: string, locale: string, domain_categories: string[]): Observable<UserInfo> {
+  public retrieveStringListByInstitutionDomainCategories(institutionId: string, locale: string, domain_categories: string[]): Observable<UserInfo> {
 
     return Observable.create((observer: any) => {
 
       let postParams = {
-        method: 'retrieveStringListByInstitutionDomainCategories',
-        params: {
-          sessionId: sessionId,
-          institutionId: institutionId,
-          locale: locale,
-          domain_categories: domain_categories,
-        }
+        institutionId: institutionId,
+        locale: locale,
+        domain_categories: domain_categories,
       };
 
       console.log(JSON.stringify(postParams));
 
-      this.httpPost(this.serviceUrl, postParams)
+      this.httpRequest(this.serviceUrl, 'retrieveStringListByInstitutionDomainCategories', true, postParams)
         .subscribe(
           data => {
             // validate data then throw error or send
