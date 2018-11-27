@@ -80,15 +80,15 @@ export class Environment {
             Environment.servicesBaseURL = Environment.BASE_SERVICES_URL_PRODUCTION;
             Environment.fullSiteBaseURL = Environment.BASE_CBORD_STUDENT_URL_PRODUCTION;
         } else {
-            /// will never happen due to enum restrictions
-            // console.log('Env Set Dev due to error');
+            // will never happen due to enum restrictions
+            console.log('Env Set Dev due to error');
 
-            // Environment.servicesBaseURL = Environment.BASE_SERVICES_URL_DEVTEST;
-            // Environment.fullSiteBaseURL = Environment.BASE_CBORD_STUDENT_URL_DEVTEST;
-            console.log('Env Set Prod');
-        Environment.currentEnvironment = EnvType.production;
-            Environment.servicesBaseURL = Environment.BASE_SERVICES_URL_PRODUCTION;
-            Environment.fullSiteBaseURL = Environment.BASE_CBORD_STUDENT_URL_PRODUCTION;
+            Environment.servicesBaseURL = Environment.BASE_SERVICES_URL_DEVTEST;
+            Environment.fullSiteBaseURL = Environment.BASE_CBORD_STUDENT_URL_DEVTEST;
+        //     console.log('Env Set Prod');
+        // Environment.currentEnvironment = EnvType.production;
+        //     Environment.servicesBaseURL = Environment.BASE_SERVICES_URL_PRODUCTION;
+        //     Environment.fullSiteBaseURL = Environment.BASE_CBORD_STUDENT_URL_PRODUCTION;
         }
     }
 
@@ -115,15 +115,15 @@ export class Environment {
             Environment.servicesBaseURL = Environment.BASE_SERVICES_URL_PRODUCTION;
             Environment.fullSiteBaseURL = Environment.BASE_CBORD_STUDENT_URL_PRODUCTION;
         } else {
-            // Environment.currentEnvironment = EnvType.development;
-            // console.error('Env Set Dev due to local testing or invalid url');
-            // Environment.servicesBaseURL = Environment.BASE_SERVICES_URL_DEVTEST;
-            // Environment.fullSiteBaseURL = Environment.BASE_CBORD_STUDENT_URL_DEVTEST;
+            Environment.currentEnvironment = EnvType.development;
+            console.error('Env Set Dev due to local testing or invalid url');
+            Environment.servicesBaseURL = Environment.BASE_SERVICES_URL_DEVTEST;
+            Environment.fullSiteBaseURL = Environment.BASE_CBORD_STUDENT_URL_DEVTEST;
 
-            console.log('Env Set Prod');
-        Environment.currentEnvironment = EnvType.production;
-            Environment.servicesBaseURL = Environment.BASE_SERVICES_URL_PRODUCTION;
-            Environment.fullSiteBaseURL = Environment.BASE_CBORD_STUDENT_URL_PRODUCTION;
+        //     console.log('Env Set Prod');
+        // Environment.currentEnvironment = EnvType.production;
+        //     Environment.servicesBaseURL = Environment.BASE_SERVICES_URL_PRODUCTION;
+        //     Environment.fullSiteBaseURL = Environment.BASE_CBORD_STUDENT_URL_PRODUCTION;
         }
     }
 

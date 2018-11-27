@@ -23,7 +23,7 @@
                     <ion-icon [class.rotate]="option.expanded" class="header-icon" [name]="option.iconName || listSettings.arrowIcon" item-left></ion-icon>
                     <h2 style="font-weight: bold;">{{ option.displayName }}</h2>
                     <h3>{{ option.displayDescription }}</h3>
-                    <ion-badge item-right *ngIf="option.badge | async as badgeNo">{{ badgeNo }}</ion-badge>
+                    <ion-badge item-right color="option.badgeColor" *ngIf="option.badge | async as badgeNo">{{ badgeNo }}</ion-badge>
                 </ion-item>
 
                 <!-- Sub items -->

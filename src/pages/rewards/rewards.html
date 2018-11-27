@@ -4,19 +4,20 @@
             <ion-row padding align-items-center>
                 <ion-col col-100 *ngIf='userRewardTrackInfo.hasLevels'>
                     <div class="progress_chart progress_col">
-                        <canvas #pCC ></canvas>
+                        <canvas #chartCanvas ></canvas>
                         <span class="progress_label_percent_progress">{{currentProgressPercentage}}%</span>
-                        <span class="progress_label_level_progress">{{xpGained}} / {{xpForLevel}}</span>
+                        <span class="progress_label_level_progress">{{labelPointSpread}}</span>
                         <span class="progress_label_current_level">
-                            {{userRewardTrackInfo.userLevel}}
+                            {{labelCurrentLevel}}
                         </span>
                         <span class="progress_label_next_level">
-                            {{userRewardTrackInfo.userLevel + 1}}
+                            {{labelNextLevel}}
                         </span>
                     </div>
                 </ion-col>
                 <ion-col>
-                    <h2 class="rewards_h1">{{userRewardTrackInfo.userExperiencePoints}} {{'REWARD_PROGRESS.XP' | translate}}</h2>
+                    <h2 class="rewards_h1">{{userRewardTrackInfo.userExperiencePoints}} {{'REWARD_PROGRESS.XP' |
+                        translate}}</h2>
                     <h3 class="progress_h3">{{'REWARD_PROGRESS.TOTAL' | translate}}</h3>
                 </ion-col>
                 <ion-col *ngIf='userRewardTrackInfo.hasLevels'>
@@ -25,11 +26,13 @@
                 </ion-col>
                 <ion-col>
                     <h2 class="rewards_h1">{{userRewardTrackInfo.trackName}}</h2>
-                    <h3 class="progress_h3">{{'REWARD_PROGRESS.ENDS' | translate}} {{userRewardTrackInfo.trackEndDate | date: 'MMMM d, yyyy'}}</h3>
+                    <h3 class="progress_h3">{{'REWARD_PROGRESS.ENDS' | translate}} {{userRewardTrackInfo.trackEndDate |
+                        date: 'MMMM d, yyyy'}}</h3>
                     <h3 class="progress_h3">{{userRewardTrackInfo.trackDescription}}</h3>
                 </ion-col>
                 <ion-col>
-                    <h2 class="rewards_h1">{{userRewardTrackInfo.userCurrentPoints}} {{'REWARD_PROGRESS.POINTS' | translate}}</h2>
+                    <h2 class="rewards_h1">{{userRewardTrackInfo.userCurrentPoints}} {{'REWARD_PROGRESS.POINTS' |
+                        translate}}</h2>
                     <h3 class="progress_h3">{{'REWARD_PROGRESS.USABLE' | translate}}</h3>
                 </ion-col>
             </ion-row>
@@ -52,8 +55,22 @@
         <div [ngSwitch]="rewardType">
             <ion-card>
                 <ion-card-content>
-                    <accordionlist-content *ngSwitchCase="'experience'" [settings]="accordionListSettings" [options]="options" (selectOption)="selectOption($event)"></accordionlist-content>
-                    <accordionlist-content *ngSwitchCase="'points'" [settings]="accordionListSettings" [options]="pointsOptions" (selectOption)="selectOption($event)"></accordionlist-content>
+                    <accordionlist-content *ngSwitchCase="'experience'" [settings]="accordionListSettings" [options]="options"
+                        (selectOption)="selectLevelOption($event)"></accordionlist-content>
+                    <ion-list *ngSwitchCase="'points'">
+                        <ion-item *ngFor="let pItem of userPointsItemsList" (click)="pointsItemSelected(pItem)">
+                            {{pItem.name}}
+                            <p>{{pItem.shortDescription}}</p>
+                            <ion-badge item-right color="primary">{{ pItem.pointCost }}</ion-badge>
+                        </ion-item>
+                    </ion-list>
+                    <ion-list *ngSwitchCase="'history'">
+                        <ion-item *ngFor="let hItem of userHistoryItemList" (click)="hitoryItemSelected(hItem)">
+                            {{hItem.itemName}}
+                            <ion-badge *ngIf="hItem.status == 2" item-right color="secondary">PICKUP</ion-badge>
+                            <ion-badge *ngIf="hItem.status == 3" item-right color="primary">RECEIVED</ion-badge>
+                        </ion-item>
+                    </ion-list>
                 </ion-card-content>
             </ion-card>
         </div>

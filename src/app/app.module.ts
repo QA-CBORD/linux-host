@@ -13,6 +13,7 @@ import { AndroidPermissions } from '@ionic-native/android-permissions';
 
 import { MyApp } from './app.component';
 // import { IonicStorageModule } from '@ionic/storage';
+import { QRCodeModule } from 'angular2-qrcode';
 
 /// SERVICES
 import { APIService } from '../services/api-service/api-service'
@@ -36,6 +37,9 @@ import { DataCache } from '../utility/data-cache/data-cache';
 /// PAGES
 import { MobileAccessModalPage } from './../pages/mobile-access-modal/mobile-access-modal';
 import { MobileAccessModalPageModule } from './../pages/mobile-access-modal/mobile-access-modal.module';
+import { RewardDetailsModalPage } from './../pages/reward-details-modal/reward-details-modal';
+import { RewardDetailsModalPageModule } from '../pages/reward-details-modal/reward-details-modal.module';
+
 
 /// COMPONENTS
 import { SideMenuContentComponent } from '../shared/side-menu-content/side-menu-content.component';
@@ -67,14 +71,17 @@ export function createTranslateLoader(http: HttpClient) {
         deps: [HttpClient]
       }
     }),
-    MobileAccessModalPageModule
+    QRCodeModule,
+    MobileAccessModalPageModule,
+    RewardDetailsModalPageModule
   ],
   bootstrap: [
     IonicApp
   ],
   entryComponents: [
     MyApp,
-    MobileAccessModalPage
+    MobileAccessModalPage,
+    RewardDetailsModalPage
   ],
   providers: [
     StatusBar,

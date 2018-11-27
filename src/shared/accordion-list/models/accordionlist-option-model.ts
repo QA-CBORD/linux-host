@@ -12,6 +12,7 @@ export interface AccordionListOptionModel {
     displayDescription?: string;
 
     badge?: Observable<any>;
+    badgeColor?: string;
 
     // Target component (or null if it's a "special option" like login/logout)
     component?: any;

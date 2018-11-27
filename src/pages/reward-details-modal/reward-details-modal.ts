@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, Events } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Events, ViewController } from 'ionic-angular';
 import { AlertController } from 'ionic-angular';
 
-import { RewardsProvider } from '../../providers/reward-provider/reward-provider';
-import { MessageResponse } from '../../models/service/message-response.interface';
 import { RewardService } from '../../services/reward-service/reward-service';
-import { UserRewardTrackInfoInfoList, UserRewardTrackInfo, UserTrackLevelInfo, ClaimableRewardInfo } from '../../models/rewards/rewards.interface'
+
+
 
 @IonicPage()
 @Component({
@@ -14,56 +13,37 @@ import { UserRewardTrackInfoInfoList, UserRewardTrackInfo, UserTrackLevelInfo, C
 })
 
 export class RewardDetailsModalPage {
-  qrCode = null;
-  userRewardTrackInfo: UserRewardTrackInfo = null;
-  reward: ClaimableRewardInfo = null;
-  bIsRedeemed: boolean = false;
+
+  reward: any = null;
+  bIsClaimable: boolean = false;
 
   constructor(
-    public navCtrl: NavController, 
-    public navParams: NavParams, 
-    public events: Events, 
-    public rewardService: RewardService, 
-    public alertCtrl: AlertController, 
-    public rewardsDataManager: RewardsProvider) {
+    public navCtrl: NavController,
+    public navParams: NavParams,
+    private viewCtrl: ViewController,
+    public rewardService: RewardService,
+    public alertCtrl: AlertController) {
 
     this.reward = this.navParams.data.rewardInfo;
-    
-    this.bIsRedeemed = this.navParams.data.bIsRedeemed;
 
-    // events.subscribe(RewardsProvider.DATA_USERREWARDTRACKINFO_UPDATED, (userRewardTrackInfo) => {
-    //   if (userRewardTrackInfo) {
-    //     this.userRewardTrackInfo = userRewardTrackInfo;
-    //   }
-    // });
+    this.bIsClaimable = this.navParams.data.bIsClaimable;
 
-    // Do an initial pull of userRewardTrackInfo from cache if available.
-    // rewardsDataManager.getUserRewardsData(false);
   }
 
-  ionViewDidLoad() {
-  }
 
-  createQRCode() {
-  }
 
-  closeDetails() {
-    this.navCtrl.pop();
-  }
-
-  levelRewardClicked() {
+  rewardClaimedClick() {
     // only claim a reward if none have been claimed for this level already
-    if (!this.userRewardTrackInfo.trackLevels[this.reward.claimLevel-1].redeemed) {
-      // this.rewardService.claimReward(this.reward.id).subscribe(
-      //   ((data: MessageResponse<boolean>) => this.ClaimRewardResponse(data.response)),
-      //   ((error) => this.showError(error))
-      // )    
-    }
+    this.rewardService.claimReward(this.reward.id).subscribe(
+      ((response: boolean) => this.claimRewardResponse(response)),
+      ((error) => this.showError(error))
+    )
+
   }
 
-  ClaimRewardResponse(result: any) {
+  claimRewardResponse(result: boolean) {
     // Close the claim dialog 
-    this.closeDetails();
+    this.viewCtrl.dismiss({ 'bRefresh': 'result' });
 
     // Inform user of success or failure
     let message = "Your reward has been claimed.";
@@ -77,13 +57,10 @@ export class RewardDetailsModalPage {
     });
     // Show alert with results
     alert.present();
-
-    // update UI to show the results
-    // this.rewardsDataManager.getUserRewardsData(true);
   }
 
-  showError(message: any) {
-    console.error(message);
+  closeModalClicked(){
+    this.viewCtrl.dismiss({ 'bRefresh': 'false' });
   }
 
 }

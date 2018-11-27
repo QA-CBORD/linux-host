@@ -14,4 +14,5 @@ import { QRCodeModule } from 'angular2-qrcode';
     QRCodeModule
   ],
 })
-export class RewardDetailsPageModule {}
+export class RewardDetailsModalPageModule
+ {}

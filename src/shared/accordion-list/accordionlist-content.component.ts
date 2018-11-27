@@ -17,6 +17,7 @@ class InnerAccordionListOptionModel {
     displayName: string;
     displayDescription?: string;
     badge?: Observable<any>;
+    badgeColor?: string;
 
     targetOption: AccordionListOptionModel;
 
@@ -38,6 +39,7 @@ class InnerAccordionListOptionModel {
         accordionListOptionModel.displayName = option.displayName;
         accordionListOptionModel.displayDescription = option.displayDescription;
         accordionListOptionModel.badge = option.badge;
+        accordionListOptionModel.badgeColor = option.badgeColor;
         accordionListOptionModel.targetOption = option;
         accordionListOptionModel.parent = parent || null;
 

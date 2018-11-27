@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { IonicPage, NavController, NavParams, Events, Platform, PopoverController, ModalController } from 'ionic-angular';
 import { AlertController } from 'ionic-angular';
 import { Chart } from 'chart.js';
@@ -12,8 +12,8 @@ import { ExceptionProvider } from '../../providers/exception-provider/exception-
 
 import { AccordionListOptionModel } from '../../shared/accordion-list/models/accordionlist-option-model';
 import { AccordionListSettings } from '../../shared/accordion-list/models/accordionlist-settings';
-import { UserRewardTrackInfo, UserTrackLevelInfo, ClaimableRewardInfo } from '../../models/rewards/rewards.interface'
-import { RewardDetailsPage } from '../reward-details/reward-details';
+import { UserRewardTrackInfo, UserTrackLevelInfo, ClaimableRewardInfo, UserFulfillmentActivityInfo, RedeemableRewardInfo } from '../../models/rewards/rewards.interface'
+import { RewardDetailsModalPage } from '../reward-details-modal/reward-details-modal';
 
 import * as Globals from '../../app/app.global';
 
@@ -54,16 +54,22 @@ export class RewardsPage {
     }
   };
 
-  @ViewChild('progressChartCanvas') progressChartCanvas;
-  rewardType;
-  progressChart: Chart;
+  @ViewChild('chartCanvas') progressChartCanvas;
+  progressChart: any;
+
+  rewardType; 
   xpGained: number = 0;
   xpForLevel: number = 0;
-  atMaxLevel: boolean = false;
   nextLevel: number = 0;
   currentProgressPercentage: number = 0;
 
+  labelPointSpread: any;
+  labelCurrentLevel: any;
+  labelNextLevel: any;
+
   userRewardTrackInfo: UserRewardTrackInfo;
+  userPointsItemsList: Array<RedeemableRewardInfo>;
+  userHistoryItemList: Array<UserFulfillmentActivityInfo>;
 
   bShowLevels: boolean = false;
   bShowPoints: boolean = false;
@@ -83,11 +89,15 @@ export class RewardsPage {
     private modalCtrl: ModalController,
     private platform: Platform,
   ) {
-    
+
   }
 
   ionViewDidLoad() {
-   this.getRewardTrackInfo();
+  }
+
+  ngAfterViewInit() {
+    this.getRewardTrackInfo();
+    
   }
 
   private getRewardTrackInfo() {
@@ -95,7 +105,7 @@ export class RewardsPage {
       trackInfoArray => {
         /// check if response is valid and contains a reward track
         if (trackInfoArray && trackInfoArray.length > 0) {
-          // this.userRewardTrackInfo = trackInfoArray[0];
+          this.userRewardTrackInfo = trackInfoArray[0];
           if (trackInfoArray[0].userOptInStatus == 0) {
             // show opt in with option to exit
             ExceptionProvider.showException(this.events, {
@@ -116,7 +126,7 @@ export class RewardsPage {
             });
           } else {
             this.getRewardHistory(trackInfoArray[0])
-            // this.handleRewardTrackInfo();
+            this.handleRewardTrackInfo();
           }
         } else {
           // there is no data for some reason
@@ -146,7 +156,7 @@ export class RewardsPage {
   private getRewardHistory(userRewardTI: UserRewardTrackInfo) {
     this.rewardsProvider.getUserRewardHistory(userRewardTI.trackID, userRewardTI.trackStartDate, userRewardTI.trackEndDate).subscribe(
       response => {
-
+        this.userHistoryItemList = response;
       },
       error => {
 
@@ -211,7 +221,10 @@ export class RewardsPage {
     }
 
     this.calculatePercentageToNextLevel();
-    this.createProgressChart();
+    setTimeout(() => {
+      this.createProgressChart();
+    }, 250);
+    
     this.populateLevelList();
     this.populatePointsList();
 
@@ -243,7 +256,6 @@ export class RewardsPage {
         datasets: [{
           backgroundColor: ['#61dd7a', '#c4c4c4'],
           data: [this.xpGained, this.xpForLevel - this.xpGained]
-          // data: [50, 0 - 25]
         }]
       },
       options: {
@@ -267,13 +279,17 @@ export class RewardsPage {
     }
 
     // check to see if the user is already at max level
-    if (this.userRewardTrackInfo.userLevel == this.userRewardTrackInfo.trackLevels[this.userRewardTrackInfo.trackLevels.length - 1].level) {
+    if (this.userRewardTrackInfo.userLevel >= this.userRewardTrackInfo.trackLevels.length) {
       // at max level
-      this.atMaxLevel = true;
       this.currentProgressPercentage = 100;
-      this.xpForLevel = 10;
-      this.xpGained = 10;
       this.nextLevel = this.userRewardTrackInfo.userLevel;
+
+      this.xpGained = 10;
+      this.xpForLevel = 10;
+
+      this.labelCurrentLevel = this.nextLevel - 1;
+      this.labelNextLevel = this.nextLevel;
+      this.labelPointSpread = 'Max Level';
     } else {
       // get the required xp of the current level
       let curLevelXP = 0;
@@ -285,8 +301,10 @@ export class RewardsPage {
       levelRequiredXP = this.userRewardTrackInfo.trackLevels[this.userRewardTrackInfo.userLevel].requiredPoints - curLevelXP;
       this.nextLevel = this.userRewardTrackInfo.trackLevels[this.userRewardTrackInfo.userLevel].level;
       this.xpForLevel = levelRequiredXP;
-      this.atMaxLevel = false;
 
+      this.labelCurrentLevel = this.nextLevel - 1;
+      this.labelNextLevel = this.nextLevel;
+      this.labelPointSpread = curLevelXP + ' / ' + this.xpForLevel;
 
       // user progress in next level
       let userProgressXP = this.userRewardTrackInfo.userExperiencePoints - curLevelXP;
@@ -316,12 +334,29 @@ export class RewardsPage {
     while (index < this.userRewardTrackInfo.trackLevels.length) {
       let iIndex = 0;
       let newSubOptions = new Array<AccordionListOptionModel>();
+
+      let bIsLevelItemClaimedForHeader: boolean = false;
+
+
+      /// if there are no rewards availabel for this level, just create a subitem to show that
+      if (this.userRewardTrackInfo.trackLevels[index].userClaimableRewards.length <= 0) {
+        newSubOptions.push({
+          displayName: "There are no rewards available at this time",
+          component: null,
+          badge: null
+        });
+      }
+
       while (iIndex < this.userRewardTrackInfo.trackLevels[index].userClaimableRewards.length) {
+        if (!bIsLevelItemClaimedForHeader) {
+          bIsLevelItemClaimedForHeader = this.userRewardTrackInfo.trackLevels[index].userClaimableRewards[iIndex].claimStatus == 3 || this.userRewardTrackInfo.trackLevels[index].userClaimableRewards[iIndex].claimStatus == 2;
+        }
         newSubOptions.push({
           displayName: this.userRewardTrackInfo.trackLevels[index].userClaimableRewards[iIndex].name,
           displayDescription: this.userRewardTrackInfo.trackLevels[index].userClaimableRewards[iIndex].shortDescription,
           component: this.userRewardTrackInfo.trackLevels[index].userClaimableRewards[iIndex].id,
-          badge: this.userRewardTrackInfo.trackLevels[index].userClaimableRewards[iIndex].claimStatus == 3 ? ArrayObservable.of('CLAIMED') : null,
+          badge: this.userRewardTrackInfo.trackLevels[index].userClaimableRewards[iIndex].claimStatus == 3  || this.userRewardTrackInfo.trackLevels[index].userClaimableRewards[iIndex].claimStatus == 2 ? ArrayObservable.of('CLAIMED') : null,
+          badgeColor: 'secondary',
           custom: {
             levelIndex: index,
             itemIndex: iIndex
@@ -329,11 +364,27 @@ export class RewardsPage {
         });
         iIndex++;
       }
+
+      let badgeText: string = null;
+      let badgeColor: string = null;
+
+      if (bIsLevelItemClaimedForHeader) {
+        badgeText = "CLAIMED";
+        badgeColor = 'secondary'
+      } else if (index < this.userRewardTrackInfo.userLevel) {
+        badgeText = "UNLOCKED";
+        badgeColor = 'primary'
+      } else {
+        badgeText = "LOCKED";
+        badgeColor = 'dark'
+      }
+
       this.options.push({
         displayName: `Level ${this.userRewardTrackInfo.trackLevels[index].level}`,
         displayDescription: `${this.userRewardTrackInfo.trackLevels[index].name}`,
         subItems: newSubOptions,
-        badge: this.userRewardTrackInfo.trackLevels[index].redeemed ? ArrayObservable.of('CLAIMED') : null
+        badge: ArrayObservable.of(badgeText),
+        badgeColor: badgeColor
       });
       index++;
     }
@@ -347,22 +398,24 @@ export class RewardsPage {
     if (!this.bShowPoints) {
       return;
     }
+    this.userPointsItemsList = this.userRewardTrackInfo.redeemableRewards;
+
 
     this.pointsOptions = new Array<AccordionListOptionModel>();
 
     let index = 0;
 
     while (index < this.userRewardTrackInfo.redeemableRewards.length) {
-      // let iIndex = 0;
-      // let newSubOptions = new Array<AccordionListOptionModel>();
-      // while (iIndex < this.userRewardTrackInfo.redeemableRewards.length) {        
-      // newSubOptions.push({
-      //   displayName: this.userRewardTrackInfo.redeemableRewards[index].description,
-      //   component: this.userRewardTrackInfo.redeemableRewards[index].id,
-      //   badge: null
-      // });
-      // iIndex++;
-      // }
+      let iIndex = 0;
+      let newSubOptions = new Array<AccordionListOptionModel>();
+      while (iIndex < this.userRewardTrackInfo.redeemableRewards.length) {
+        newSubOptions.push({
+          displayName: this.userRewardTrackInfo.redeemableRewards[index].description,
+          component: this.userRewardTrackInfo.redeemableRewards[index].id,
+          badge: null
+        });
+        iIndex++;
+      }
       this.pointsOptions.push({
         displayName: `${this.userRewardTrackInfo.redeemableRewards[index].name}      ${this.userRewardTrackInfo.redeemableRewards[index].pointCost} Points`,
         subItems: [{
@@ -382,30 +435,40 @@ export class RewardsPage {
 
   //#region OPTION SELECTION
 
-  public selectOption(option: AccordionListOptionModel): void {
+  public selectLevelOption(option: AccordionListOptionModel): void {
     console.log(`Option Selected: ${option.displayName}`);
     if (option.custom) {
       let currentLevelInfo: UserTrackLevelInfo = this.userRewardTrackInfo.trackLevels[option.custom.levelIndex];
       let currentOption: ClaimableRewardInfo = currentLevelInfo.userClaimableRewards[option.custom.itemIndex];
-      this.openItemInfo(currentOption, currentLevelInfo.redeemed);
+      this.openItemDetailPopover(currentOption, !currentLevelInfo.redeemed);
     }
   }
 
-  openItemInfo(claimableItem: ClaimableRewardInfo, redeemed: boolean) {
-    // let rdModal = this.modalCtrl.create(RewardDetailsPage, {rewardInfo: claimableItem, bIsRedeemed: redeemed});
-    // rdModal.present();
-    let rdPopover = this.popoverCtrl.create(RewardDetailsPage, { rewardInfo: claimableItem, bIsRedeemed: redeemed });
+
+
+  public pointsItemSelected(claimableItem: RedeemableRewardInfo) {
+    this.openItemDetailPopover(claimableItem, claimableItem.pointCost <= this.userRewardTrackInfo.userCurrentPoints);
+  }
+
+  public hitoryItemSelected(item: UserFulfillmentActivityInfo) {
+    this.openItemDetailPopover(item, false);
+  }
+
+  openItemDetailPopover(claimableItem: any, isClaimable: boolean) {
+
+    let rdPopover = this.popoverCtrl.create(RewardDetailsModalPage, { rewardInfo: claimableItem, bIsClaimable: isClaimable });
+    rdPopover.onDidDismiss((data) => {
+      // Call the method to do whatever in your home.ts
+         console.log('Modal closed');
+         if(data.bRefresh == "true"){
+           this.getRewardTrackInfo();
+         }
+  });
     rdPopover.present();//{animate: false});
 
   }
 
   //#endregion
-
-  openHistory() {
-    console.log("Open History Click");
-
-  }
-
 
   toggleLevelDetails(trackLevel: UserTrackLevelInfo) {
     if (trackLevel != null) {

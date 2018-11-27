@@ -13,6 +13,7 @@ import { ExceptionProvider } from '../../providers/exception-provider/exception-
 import { Environment } from '../../app/environment';
 import { UserRewardTrackInfo } from '../../models/rewards/rewards.interface'
 import { GeoCoordinates } from './../../models/geolocation/geocoordinates.interface';
+import { TestUserProvider } from '../../providers/test-user-provider/test-user-provider';
 
 
 @IonicPage({
@@ -44,7 +45,8 @@ export class HomePage {
     public mobileAccessProvider: MobileAccessProvider,
     public sessionService: SessionService,
     private authService: AuthService,
-    private platform: Platform
+    private platform: Platform,
+    private tuP: TestUserProvider
   ) {
 
     this.platform.ready().then(() => {
@@ -56,21 +58,33 @@ export class HomePage {
       events.publish(Globals.Events.SIDEPANE_ENABLE, false);
 
       /// get required params from the URL
-      this.sessionToken = navParams.get('sessionToken');
-      this.destinationPage = navParams.get('destinationPage');
+      // this.sessionToken = navParams.get('sessionToken');
+      // this.destinationPage = navParams.get('destinationPage');
 
-      /// get optional location params from the URL
-      try {
-        this.geoData.coords.latitude = parseFloat(navParams.get('latitude'));
-        this.geoData.coords.longitude = parseFloat(navParams.get('longitude'));
-        this.geoData.coords.accuracy = parseFloat(navParams.get('accuracy'));
-      } catch (error) {
-        /// will only fail when no geolocation data from native device or url        
-      }
+      // /// get optional location params from the URL
+      // try {
+      //   this.geoData.coords.latitude = parseFloat(navParams.get('latitude'));
+      //   this.geoData.coords.longitude = parseFloat(navParams.get('longitude'));
+      //   this.geoData.coords.accuracy = parseFloat(navParams.get('accuracy'));
+      // } catch (error) {
+      //   /// will only fail when no geolocation data from native device or url        
+      // }
 
-      events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Loading content" });
+      // events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Loading content" });
 
-      this.handleSessionToken();
+      // this.handleSessionToken();
+
+      this.tuP.getTestUser()
+        .subscribe(data => {
+          this.handlePageNavigation();
+        },
+          error => {
+
+          },
+          () => {
+
+          });
+
     })
       .catch(() => {
         /// do nothing, won't happen
@@ -135,7 +149,7 @@ export class HomePage {
     /// this should never happen
     /// should be handled better
     if (this.destinationPage == null) {
-      this.destinationPage = 'openmydoor';
+      this.destinationPage = 'rewards';
     }
 
     switch (this.destinationPage) {
