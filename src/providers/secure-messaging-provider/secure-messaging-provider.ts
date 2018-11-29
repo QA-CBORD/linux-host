@@ -7,7 +7,7 @@ import { SecureMessageInfo } from "../../models/secure-messaging/secure-message-
 
 
 @Injectable()
-export class MobileAccessProvider {
+export class SecureMessagingProvider {
 
     constructor(
         private secureMessageService: SecureMessagingService
@@ -25,6 +25,10 @@ export class MobileAccessProvider {
 
         return this.secureMessageService.getSecureMessages();
 
+    }
+
+    public getSecureMessagesGroup(): Observable<any> {
+        return this.secureMessageService.getSecureMessagesGroup();
     }
 
     public testPostSecureMessage(): Observable<any> {

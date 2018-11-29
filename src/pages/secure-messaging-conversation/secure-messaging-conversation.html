@@ -1,0 +1,33 @@
+<ion-header>
+
+
+  <ion-navbar>
+    <!-- XXX NEED A BADGE OR CIRCULAR ICON WITH FIRST LETTER OF pageTitle IN IT-->
+    <ion-title>{{pageTitle}}</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content style="background-color: #eeeeee;" padding>
+  <div *ngIf="bShowStartConversationMessage" text-center>
+    <!-- XXX WANT TO CENTER ON PAGE -->
+    <h6>Start the conversation</h6>
+    <ion-icon style="zoom:1.75;" name="create"></ion-icon>
+  </div>
+
+  <div *ngIf="bShowLoadingContent" text-center>
+    <!-- XXX WANT TO CENTER ON PAGE -->
+    <h6>MESSAGE LOADING SCREEN</h6>
+    <p>REPLACE WITH SKELETON MESSAGES lul</p>
+  </div>
+
+  <div *ngIf="bShowUnableToLoadMessages" text-center>
+    <!-- XXX WANT TO CENTER ON PAGE -->
+    <h6>Could not load messages</h6>
+    <ion-icon style="zoom:1.75;" name="sync"></ion-icon>
+  </div>
+
+  
+
+</ion-content>

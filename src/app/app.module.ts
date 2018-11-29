@@ -29,6 +29,7 @@ import { SecureMessagingService } from './../services/secure-messaging-service/s
 import { MobileAccessProvider } from './../providers/mobile-access-provider/mobile-access-provider';
 import { RewardsProvider } from '../providers/reward-provider/reward-provider';
 import { ExceptionProvider } from '../providers/exception-provider/exception-provider';
+import { SecureMessagingProvider } from '../providers/secure-messaging-provider/secure-messaging-provider';
 
 /// UTILITY
 import { DataCache } from '../utility/data-cache/data-cache';
@@ -90,6 +91,7 @@ export function createTranslateLoader(http: HttpClient) {
     RewardsProvider,
     MobileAccessService,
     MobileAccessProvider,
+    SecureMessagingProvider,
     ContentService,
     DataCache,
     ExceptionProvider,

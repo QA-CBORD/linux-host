@@ -1,12 +1,76 @@
 <ion-header>
-
-  <ion-navbar>
-    <ion-title>SecureMessagingPage</ion-title>
+  <ion-navbar color='primary'>
+    <ion-title>{{pageTitle}}</ion-title>
   </ion-navbar>
 
 </ion-header>
+<ion-content style="background-color: #eeeeee;" padding>
 
+  <div *ngIf="bShowStartConversation" text-center>
+    <!-- XXX WANT TO CENTER ON PAGE -->
+    <h6>No conversations found</h6>
+    <button ion-button round (click)="onStartConversationButtonClick()">Start Conversation</button>
+  </div>
 
-<ion-content padding>
+  <div *ngIf="bShowLoadingContent" text-center>
+    <!-- XXX WANT TO CENTER ON PAGE -->
+    <h6>CONVERSATION LOADING SCREEN</h6>
+    <p>REPLACE WITH SKELETON CONVERSTAIONS lul</p>
+  </div>
 
+  <div *ngIf="bShowErrorConnecting" text-center>
+    <!-- XXX WANT TO CENTER ON PAGE -->
+    <h6>Error connecting</h6>
+    <ion-icon style="zoom:1.75;" name="sync"></ion-icon>
+  </div>
+  <div *ngIf="bShowOffline" text-center>
+    <!-- XXX WANT TO CENTER ON PAGE -->
+    <h6>Offline</h6>
+    <ion-icon style="zoom:1.75;" name="sync"></ion-icon>
+  </div>
+
+  <ion-list *ngIf="bShowConversationList">
+    <ion-item no-lines style="background-color: #ffffff; border-radius: 100px; margin-top: 1em; margin-bottom: 1em"
+      *ngFor="let message of messages">
+      <ion-avatar text-center item-start style="background-color: #334455; border-radius: 100px; width:4em; height:4em;">
+      <h3 style="color:white">P</h3>
+      </ion-avatar>
+      {{ message.senderName }}
+    </ion-item>
+  </ion-list>
+
+  <ion-fab *ngIf="bShowFAB" right bottom margin>
+    <button ion-fab color="primary" (click)=onAddConversationFABClick()>
+      <ion-icon name="add"></ion-icon>
+    </button>
+  </ion-fab>
+
+  <!-- <ion-grid>
+    <ion-row align-items-start justify-content-start>
+      <ion-col col-4>
+        <h4>Messages</h4>
+        <ion-list>
+          <button ion-item *ngFor="let message of messages" (click)="messageSelected(message)">
+            {{ message.senderName }}
+          </button>
+        </ion-list>
+      </ion-col>
+      <ion-col col-auto>
+        <div style='height: 500px; width: 1px; margin: 2px; background: #CCC;'></div>
+      </ion-col>
+      <ion-col>
+        <h4>Current Message</h4>
+        <div *ngIf='selectedMessage'>
+          <h5>From:</h5>
+          <h6>&nbsp;&nbsp;&nbsp;{{selectedMessage.senderName}}</h6>
+          <h5>Date:</h5>
+          <h6>&nbsp;&nbsp;&nbsp;{{selectedMessage.sentDate.toLocaleString()}}</h6>
+          <h5>Description:</h5>
+          <h6>&nbsp;&nbsp;&nbsp;{{selectedMessage.description}}</h6>
+          <h5>Body:</h5>
+          <h6>&nbsp;&nbsp;&nbsp;{{selectedMessage.body}}</h6>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid> -->
 </ion-content>

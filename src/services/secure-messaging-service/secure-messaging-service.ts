@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 
 import { APIService, HttpResponseType, RestCallType } from './../api-service/api-service';
-import { HttpHeaders } from "@angular/common/http";
+import { HttpHeaders, HttpParams } from "@angular/common/http";
 import { SecureMessageInfo } from "../../models/secure-messaging/secure-message-info";
 import { Observable } from "rxjs/Observable";
 
@@ -10,7 +10,8 @@ import { Observable } from "rxjs/Observable";
 @Injectable()
 export class SecureMessagingService {
 
-    private serviceUrl: string = '/secureMessages';
+    private serviceUrlSecureMessage: string = '/secureMessages';
+    private serviceUrlSecureMessageGroup: string = '/messageGroups';
 
     constructor(
         private apiService: APIService
@@ -22,7 +23,22 @@ export class SecureMessagingService {
 
         return this.apiService.authenticatedHTTPCall(
             RestCallType.get,
-            this.serviceUrl,
+            this.serviceUrlSecureMessage,
+            HttpResponseType.json,
+            undefined,
+            undefined,
+            new HttpHeaders());
+
+    }
+
+/// https://dwptofebk7.execute-api.us-east-1.amazonaws.com/dev/messageGroups?inst_id=29db894b-aecd-4cef-b515-15b0405614d7&with_members=1
+
+    public getSecureMessagesGroup(): Observable<any> {
+
+
+        return this.apiService.authenticatedHTTPCall(
+            RestCallType.get,
+            this.serviceUrlSecureMessageGroup + "?inst_id=29db894b-aecd-4cef-b515-15b0405614d7&with_members=1",
             HttpResponseType.json,
             undefined,
             undefined,
@@ -34,7 +50,7 @@ export class SecureMessagingService {
 
         return this.apiService.authenticatedHTTPCall(
             RestCallType.post,
-            this.serviceUrl,
+            this.serviceUrlSecureMessage,
             HttpResponseType.json,
             messageInfo,
             undefined,
@@ -46,7 +62,7 @@ export class SecureMessagingService {
 
         return this.apiService.authenticatedHTTPCall(
             RestCallType.post,
-            this.serviceUrl, /// does this need a msgId in the URL???
+            this.serviceUrlSecureMessage, /// does this need a msgId in the URL???
             HttpResponseType.json,
             messageInfo,
             undefined,
@@ -58,7 +74,7 @@ export class SecureMessagingService {
 
         return this.apiService.authenticatedHTTPCall(
             RestCallType.post,
-            this.serviceUrl + "/" + messageID,
+            this.serviceUrlSecureMessage + "/" + messageID,
             HttpResponseType.json,
             undefined,
             undefined,
