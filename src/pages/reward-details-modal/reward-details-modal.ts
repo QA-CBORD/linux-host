@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, Events, ViewController } from 'ionic-angular';
 import { AlertController } from 'ionic-angular';
-
+import { Observable } from 'rxjs/Observable';
 import { RewardService } from '../../services/reward-service/reward-service';
 
 
@@ -39,6 +39,15 @@ export class RewardDetailsModalPage {
       ((error) => this.showError(error))
     )
 
+  }
+
+    /**
+   * Handle the error response from HTTP calls
+   * 
+   * @param error     Error returned from call
+   */
+  protected showError(error: Response | any) {
+    return Observable.throw(error);
   }
 
   claimRewardResponse(result: boolean) {
