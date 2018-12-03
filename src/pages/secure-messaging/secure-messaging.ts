@@ -19,7 +19,7 @@ export class SecureMessagingPage {
   pageTitle: string = "Conversations";
 
   bShowStartConversation: boolean = false;
-  bShowLoadingContent: boolean = false;
+  bShowLoadingContent: boolean = true;
   bShowConversationList: boolean = true;
   bShowFAB: boolean = true;
   bShowErrorConnecting: boolean = false;
@@ -46,34 +46,34 @@ export class SecureMessagingPage {
   }
 
   ionViewDidLoad() {
-this.secureMessageProvider.getSecureMessagesGroup()
-.subscribe(
-  data => {
-    console.log("GET SM GROUP DATA:")
-    console.log(data);
-    
-  },
-  error => {
-    console.log("GET SM GROUP ERROR:")
-    console.log(error);
-  }
-);
+    // this.secureMessageProvider.getSecureMessagesGroup()
+    // .subscribe(
+    //   data => {
+    //     console.log("GET SM GROUP DATA:")
+    //     console.log(data);
 
-    this.setTestData();
+    //   },
+    //   error => {
+    //     console.log("GET SM GROUP ERROR:")
+    //     console.log(error);
+    //   }
+    // );
+
+    // this.setTestData();
 
 
     // this.secureMessageProvider.getSecureMessages()
     // .subscribe(
     //   data => {
     //     console.log("Data:");
-        
+
     //     console.log(data);
-        
+
     //   },
     //   error => {
     //     console.log("Error:");
 
-        
+
     //     console.log(error);
     //   },
     //   () => {
@@ -83,11 +83,11 @@ this.secureMessageProvider.getSecureMessagesGroup()
     // );
   }
 
-  messageSelected(message: SecureMessageInfo){
+  messageSelected(message: SecureMessageInfo) {
     this.selectedMessage = message;
   }
 
-  private setTestData(){
+  private setTestData() {
     let tMessage: SecureMessageInfo = {
       id: '32-43214324-4321432',
       originalMessageId: '1',
@@ -105,23 +105,23 @@ this.secureMessageProvider.getSecureMessagesGroup()
       requiresReadReceipt: false,
       importance: "No clue what this will be",
       readDate: null
-    } ;
-    for (let i = 0; i < 10; i++){
+    };
+    for (let i = 0; i < 10; i++) {
       this.messages.push(tMessage);
     }
   }
 
-  onAddConversationFABClick(){
+  onAddConversationFABClick() {
     console.log("onAddConversationFABClick")
     this.openChooseContactModal();
   }
 
-  onStartConversationButtonClick(){
+  onStartConversationButtonClick() {
     console.log("onConversationButtonClick");
-    
-  }  
 
-  openChooseContactModal(){
+  }
+
+  openChooseContactModal() {
 
     const modalOptions: ModalOptions = {
       enableBackdropDismiss: false
@@ -131,17 +131,17 @@ this.secureMessageProvider.getSecureMessagesGroup()
       someData: 'someValue'
     };
 
-    const chooseContactModal: Modal = this.modalCtrl.create('SecureMessagingGroupModalPage', {data: modalData}, modalOptions);
+    const chooseContactModal: Modal = this.modalCtrl.create('SecureMessagingGroupModalPage', { data: modalData }, modalOptions);
 
     chooseContactModal.present();
 
-    chooseContactModal.onWillDismiss((data)=>{
+    chooseContactModal.onWillDismiss((data) => {
       console.log("Choose Contact Modal WILL DISMISS");
       console.log(data);
-      
+
     });
 
-    chooseContactModal.onDidDismiss((data)=>{
+    chooseContactModal.onDidDismiss((data) => {
       console.log("Choose Contact Modal DID DISMISS");
       console.log(data);
     });

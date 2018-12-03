@@ -13,9 +13,33 @@
   </div>
 
   <div *ngIf="bShowLoadingContent" text-center>
-    <!-- XXX WANT TO CENTER ON PAGE -->
-    <h6>CONVERSATION LOADING SCREEN</h6>
-    <p>REPLACE WITH SKELETON CONVERSTAIONS lul</p>
+    <ion-list>
+      <ion-item no-lines style="background-color: #ffffff; border-radius: 100px; margin-bottom: 1em">
+        <ion-avatar text-center item-start style="background-color: #cccccc; border-radius: 100px; width:4em; height:4em; margin-top: 0.75em; margin-bottom: 0.75em;">
+        </ion-avatar>
+        <div style="position: absolute; width: 25%; height: 15%; top: 30%; background-color: #cccccc; border-radius: 100px;">
+        </div>
+        <div style="position: absolute; width: 60%; height: 15%; top: 60%; background-color: #cccccc; border-radius: 100px;">
+        </div>
+      </ion-item>
+      <ion-item no-lines style="background-color: #ffffff; border-radius: 100px; margin-bottom: 1em">
+        <ion-avatar text-center item-start style="background-color: #cccccc; border-radius: 100px; width:4em; height:4em; margin-top: 0.75em; margin-bottom: 0.75em;">
+        </ion-avatar>
+        <div style="position: absolute; width: 25%; height: 15%; top: 30%; background-color: #cccccc; border-radius: 100px;">
+        </div>
+        <div style="position: absolute; width: 60%; height: 15%; top: 60%; background-color: #cccccc; border-radius: 100px;">
+        </div>
+      </ion-item>
+      <ion-item no-lines style="background-color: #ffffff; border-radius: 100px; margin-bottom: 1em">
+        <ion-avatar text-center item-start style="background-color: #cccccc; border-radius: 100px; width:4em; height:4em; margin-top: 0.75em; margin-bottom: 0.75em;">
+        </ion-avatar>
+        <div style="position: absolute; width: 25%; height: 15%; top: 30%; background-color: #cccccc; border-radius: 100px;">
+        </div>
+        <div style="position: absolute; width: 60%; height: 15%; top: 60%; background-color: #cccccc; border-radius: 100px;">
+        </div>
+      </ion-item>
+    </ion-list>
+
   </div>
 
   <div *ngIf="bShowErrorConnecting" text-center>
@@ -32,8 +56,8 @@
   <ion-list *ngIf="bShowConversationList">
     <ion-item no-lines style="background-color: #ffffff; border-radius: 100px; margin-top: 1em; margin-bottom: 1em"
       *ngFor="let message of messages">
-      <ion-avatar text-center item-start style="background-color: #334455; border-radius: 100px; width:4em; height:4em;">
-      <h3 style="color:white">P</h3>
+      <ion-avatar text-center item-start style="background-color: #aaccdd; border-radius: 100px; width:4em; height:4em; margin-top: 0.75em; margin-bottom: 0.75em;">
+        <h3 style="color:white">P</h3>
       </ion-avatar>
       {{ message.senderName }}
     </ion-item>
