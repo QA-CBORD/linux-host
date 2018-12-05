@@ -4,7 +4,7 @@ import "rxjs/add/observable/zip";
 
 import { SecureMessagingService } from "../../services/secure-messaging-service/secure-messaging-service";
 
-import { SecureMessageInfo, SecureMessageGroupInfo } from "../../models/secure-messaging/secure-message-info";
+import { SecureMessageInfo, SecureMessageGroupInfo, SecureMessageSendBody } from "../../models/secure-messaging/secure-message-info";
 
 
 @Injectable()
@@ -39,7 +39,7 @@ export class SecureMessagingProvider {
     }
 
 
-    public sendSecureMessage(messageInfo: SecureMessageInfo): Observable<any> {
+    public sendSecureMessage(messageInfo: SecureMessageSendBody): Observable<any> {
 
         return this.secureMessageService.postSecureMessage(messageInfo);
 

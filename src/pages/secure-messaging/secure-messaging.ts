@@ -3,7 +3,7 @@ import { IonicPage, NavController, NavParams, Platform, Events, Modal, ModalCont
 
 import * as Globals from '../../app/app.global'
 
-import { SecureMessageInfo, SecureMessageGroupInfo } from '../../models/secure-messaging/secure-message-info';
+import { SecureMessageInfo, SecureMessageGroupInfo, SecureMessageConversation } from '../../models/secure-messaging/secure-message-info';
 import { SecureMessagingProvider } from '../../providers/secure-messaging-provider/secure-messaging-provider';
 
 
@@ -16,6 +16,10 @@ import { SecureMessagingProvider } from '../../providers/secure-messaging-provid
 })
 export class SecureMessagingPage {
 
+  public static readonly TEST_INST_ID = "29db894b-aecd-4cef-b515-15b0405614d7";
+  public static readonly TEST_PATRON_ID_VALUE = "Patron01";
+
+
   pageTitle: string = "Conversations";
 
   readonly LOADING: number = 0;
@@ -25,6 +29,8 @@ export class SecureMessagingPage {
   readonly OFFLINE: number = 4;
 
   pageState: number = this.LOADING;
+
+  conversations: SecureMessageConversation[] = new Array();
 
   groups: SecureMessageGroupInfo[] = new Array();
   messages: SecureMessageInfo[] = new Array();
@@ -46,7 +52,21 @@ export class SecureMessagingPage {
   }
 
   ionViewDidLoad() {
+
     this.loadInitialData();
+  }
+
+  ionViewWillEnter() {
+    let updatedConversation: SecureMessageConversation = this.navParams.get('updatedConversation') || null;
+
+    if (updatedConversation) {
+      for (let i = 0; i < this.conversations.length; i++) {
+        if (updatedConversation.groupIdValue == this.conversations[i].groupIdValue) {
+          this.conversations[i] = updatedConversation;
+          break;
+        }
+      }
+    }
   }
 
 
@@ -64,19 +84,15 @@ export class SecureMessagingPage {
   private loadInitialData() {
     this.pageState = this.LOADING;
 
-    /// for testing only
-    // setTimeout(() => {
-    //   this.setTestData();
-
-    // }, 1000)
-
-    /// 
-
     this.secureMessageProvider.getInitialData("patron", "IDNumber", "Patron01")
       .subscribe(
         ([smGroupArray, smMessageArray]) => {
+          console.log("GetInitialData Response:");
+          console.log(smGroupArray);
+          console.log(smMessageArray);
           this.groups = smGroupArray;
           this.messages = smMessageArray;
+          this.handleInitialDataResponse();
         },
         error => {
           console.log("GetInitialData Error");
@@ -91,11 +107,80 @@ export class SecureMessagingPage {
   }
 
 
-  onConversationClick(message: SecureMessageInfo) {
-    console.log("onConversationClick")
-    console.log(message);
 
-    this.navCtrl.push('SecureMessagingConversationPage');
+  private handleInitialDataResponse() {
+
+    /// sort messages by date
+    this.messages.sort((a, b) => a.created_date < b.created_date ? 1 : b.created_date > a.created_date ? -1 : 0);
+
+    for (let message of this.messages) {
+      message.sent_date = new Date(message.sent_date).toLocaleString();
+
+      let bNewConversation = true;
+
+      for (let convo of this.conversations) {
+        if (convo.groupIdValue && convo.groupIdValue.length > 0 && (convo.groupIdValue == message.sender.id_value || convo.groupIdValue == message.recipient.id_value)) {
+          convo.messages.push(message);
+          bNewConversation = false;
+        }
+
+        if (!bNewConversation) {
+          break;
+        }
+
+      }
+
+      if (bNewConversation) {
+        let newGroupName: string = "";
+        let newGroupId: string = "";
+        let newGroupDescription: string = "";
+
+
+        if (message.sender.type == "group") {
+          newGroupName = message.sender.name;
+          newGroupId = message.sender.id_value;
+        } else {
+          newGroupName = message.recipient.name;
+          newGroupId = message.recipient.id_value;
+        }
+
+        newGroupDescription = message.description;
+
+        let conversation: SecureMessageConversation = {
+          institutionId: SecureMessagingPage.TEST_INST_ID,
+          groupName: newGroupName,
+          groupIdValue: newGroupId,
+          groupDescription: newGroupDescription,
+          myIdValue: SecureMessagingPage.TEST_PATRON_ID_VALUE,
+          messages: new Array()
+        };
+
+        conversation.messages.push(message);
+
+        this.conversations.push(conversation);
+      }
+
+    }
+
+    console.log("CONVOS:");
+
+    console.log(this.conversations);
+
+    if (this.conversations.length > 0) {
+      this.pageState = this.SHOW_CONVOS;
+    } else {
+      this.pageState = this.START_CONVO;
+    }
+
+
+
+  }
+
+
+  onConversationClick(conversation: SecureMessageConversation) {
+    console.log("onConversationClick")
+
+    this.openConversationPage(conversation);
 
   }
 
@@ -106,7 +191,7 @@ export class SecureMessagingPage {
 
   onStartConversationButtonClick() {
     console.log("onConversationButtonClick");
-
+    this.openChooseContactModal();
   }
 
 
@@ -117,7 +202,7 @@ export class SecureMessagingPage {
     };
 
     const modalData = {
-      someData: 'someValue'
+      groups: this.groups
     };
 
     const chooseContactModal: Modal = this.modalCtrl.create('SecureMessagingGroupModalPage', { data: modalData }, modalOptions);
@@ -126,15 +211,30 @@ export class SecureMessagingPage {
 
     chooseContactModal.onWillDismiss((data) => {
       console.log("Choose Contact Modal WILL DISMISS");
-      console.log(data);
 
     });
 
     chooseContactModal.onDidDismiss((data) => {
       console.log("Choose Contact Modal DID DISMISS");
-      console.log(data);
+console.log(data);
+
+      let newConversation: SecureMessageConversation = {
+        institutionId: SecureMessagingPage.TEST_INST_ID,
+        groupName: data.selectedGroup.name,
+        groupIdValue: data.selectedGroup.id,
+        groupDescription: data.selectedGroup.description,
+        myIdValue: SecureMessagingPage.TEST_PATRON_ID_VALUE,
+        messages: new Array()
+      };
+
+      this.openConversationPage(newConversation);
+
     });
 
+  }
+
+  openConversationPage(conversation: SecureMessageConversation){
+    this.navCtrl.push('SecureMessagingConversationPage', { data: conversation });
   }
 
 

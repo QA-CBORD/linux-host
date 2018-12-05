@@ -26,6 +26,12 @@
     </ion-list>
   </div>
 
+  <div *ngIf="pageState == NO_GROUPS" text-center (click)=onNoGroupsFoundClick() class="content-full-screen-centered">
+    <!-- XXX WANT TO CENTER ON PAGE -->
+    <h6>No contacts found</h6>
+    <ion-icon style="zoom:1.75;" name="sync"></ion-icon>
+  </div>
+
   <div *ngIf="pageState == ERROR_CONNECTING" text-center (click)=onConnectionErrorClick() class="content-full-screen-centered">
     <!-- XXX WANT TO CENTER ON PAGE -->
     <h6>Error connecting</h6>
@@ -39,13 +45,13 @@
   </div>
 
 
-  <ion-list *ngIf="pageState == SHOW_CONVOS">
-    <ion-item no-lines class="item-group" *ngFor="let group of groups" (click)=onGroupClick(message)>
+  <ion-list *ngIf="pageState == SHOW_GROUPS">
+    <ion-item no-lines class="item-group" *ngFor="let group of groups" (click)=onGroupClick(group)>
       <ion-avatar text-center item-start class="item-group-avatar">
-        <h3 style="color:white">P</h3>
+        <h1 style="color:white; position: relative; top:33%;"><b>{{group.name[0]}}</b></h1>
       </ion-avatar>
       {{ group.name }}
-      <p>{{group.description}} ? </p>
+      <p>{{group.description}}</p>
     </ion-item>
   </ion-list>
 

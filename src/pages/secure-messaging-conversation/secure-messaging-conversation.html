@@ -10,38 +10,41 @@
 
 
 <ion-content style="background-color: #eeeeee;">
-  <div *ngIf="bShowStartConversationMessage" text-center>
+  <div *ngIf="conversation && conversation.messages.length == 0" text-center>
     <!-- XXX WANT TO CENTER ON PAGE -->
     <h6>Start the conversation</h6>
     <ion-icon style="zoom:1.75;" name="create"></ion-icon>
   </div>
 
-  <div *ngIf="bShowLoadingContent" text-center>
-    <!-- XXX WANT TO CENTER ON PAGE -->
-    <h6>MESSAGE LOADING SCREEN</h6>
-    <p>REPLACE WITH SKELETON MESSAGES lul</p>
-  </div>
+  <div *ngIf="conversation">
+    <div *ngFor="let message of conversation.messages">
 
-  <div *ngIf="bShowUnableToLoadMessages" text-center>
-    <!-- XXX WANT TO CENTER ON PAGE -->
-    <h6>Could not load messages</h6>
-    <ion-icon style="zoom:1.75;" name="sync"></ion-icon>
-  </div>
+      <div text-center>
+        <p style="margin: 0em; color:dimgray;">{{message.sent_date}}</p>
+      </div>
 
-  <div margin>
-      <ion-row align-items-end>
-          <ion-col col-auto>
-              <ion-avatar text-center item-start style="background-color: #cccccc; border-radius: 100px; width:3em; height:3em; margin-right: 0.75em;">
-                </ion-avatar>
+      <ion-grid *ngIf="message.sender.type == 'group'" margin style="margin-top: 0em; padding:0em;">
+        <ion-row align-items-end  style="margin-right: 15%;">
+          <ion-col no-margin no-padding col-auto>
+            <ion-avatar text-center item-start style="background-color: #bebdbd; border-radius: 100px; width:3.25em; height:3.25em; margin-right: 0.75em;">
+              <h3 style="color:white; position: relative; top:21%;">{{conversation.groupName[0]}}</h3>
+            </ion-avatar>
           </ion-col>
-          <ion-col padding style="background-color: #ffffff;border-radius: 20px; margin-right: 3em;">
-            <div>Original Message <br>#<br>#<br>#</div>
+          <ion-col style="padding:0em; background-color: #ffffff; border-radius: 10px; margin-right: 3em;">
+            <div>
+              <p style="padding:1em; margin: 0em;">{{message.body}}</p>
+            </div>
           </ion-col>
         </ion-row>
-  </div>
+      </ion-grid>
 
-  <div margin padding style="background-color: #949494;border-radius: 20px; margin-left: 10em;">
-      <div>My Response<br>#</div>
+      <div *ngIf="message.sender.type == 'patron'" margin style="padding:0em; background-color: #696969; border-radius: 10px; margin-left: 33%;">
+        <div>
+          <p style="color:white; padding:1em; margin: 0em;">{{message.body}}</p>
+        </div>
+      </div>
+
+    </div>
   </div>
 
 
@@ -51,10 +54,10 @@
   <ion-grid>
     <ion-row align-items-center>
       <ion-col>
-        <ion-input placeholder="Type something..." style="background-color: #ffffff;border-radius: 100px; "></ion-input>
+        <ion-input placeholder="Type something..." [(ngModel)]="newMessageText" style="background-color: #ffffff;border-radius: 10px; "></ion-input>
       </ion-col>
       <ion-col col-auto>
-        <button ion-button icon-only clear>
+        <button ion-button icon-only clear (click)=onSendMessageClick()>
           <ion-icon style="zoom:1.5;" name="send"></ion-icon>
         </button>
       </ion-col>

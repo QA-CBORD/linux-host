@@ -38,12 +38,12 @@
   </div>
 
   <ion-list *ngIf="pageState == SHOW_CONVOS">
-    <ion-item no-lines class="item-conversation" *ngFor="let message of messages" (click)=onConversationClick(message)>
+    <ion-item no-lines class="item-conversation" *ngFor="let convo of conversations" (click)=onConversationClick(convo)>
       <ion-avatar text-center item-start class="item-conversation-avatar">
-        <h3 style="color:white">P</h3>
+        <h1 style="color:white; position: relative; top:33%;"><b>{{convo.groupName[0]}}</b></h1>
       </ion-avatar>
-      Group Name
-      <p>{{ message.description }} ? </p>
+      {{convo.groupName}}
+      <p>{{ convo.groupDescription }}</p>
     </ion-item>
   </ion-list>
 

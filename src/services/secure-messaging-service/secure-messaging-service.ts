@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 
 import { APIService, HttpResponseType, RestCallType } from './../api-service/api-service';
 import { HttpHeaders, HttpParams } from "@angular/common/http";
-import { SecureMessageInfo, SecureMessageGroupInfo } from "../../models/secure-messaging/secure-message-info";
+import { SecureMessageInfo, SecureMessageGroupInfo, SecureMessageSendBody } from "../../models/secure-messaging/secure-message-info";
 import { Observable } from "rxjs/Observable";
 
 
@@ -74,7 +74,7 @@ export class SecureMessagingService {
         });
     }
 
-    public postSecureMessage(messageInfo: SecureMessageInfo): Observable<any> {
+    public postSecureMessage(messageInfo: SecureMessageSendBody): Observable<any> {
 
         return this.apiService.authenticatedHTTPCall(
             RestCallType.post,

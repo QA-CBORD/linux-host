@@ -15,7 +15,7 @@ export interface SecureMessageInfo {
     requires_read_receipt: boolean;
     importance: number;
     created_date: string;
-    version: number;
+    version?: number;
 }
 
 export interface SecureMessageGroupInfo {
@@ -23,28 +23,55 @@ export interface SecureMessageGroupInfo {
     name: string;
     inter_name: string;
     description: string;
-    created_date: string;
-    version: number;
+    created_date?: string;
+    version?: number;
 }
 
 export interface SecureMessageGroupMemeberInfo {
-    id: string;
+    id?: string;
     message_group_id: string;
     member_id: string;
-    aux_id: string;
+    aux_id?: string;
     name: string;
-    created_date: string;
-    version: number;
+    created_date?: string;
+    version?: number;
 }
 
 
 export interface SecureMessageAddressInfo {
-    id: string;
+    id?: string;
     type: string; /// 'patron' or 'group'
     id_field: string;
     id_value: string;
-    aux_user_id: string;
+    aux_user_id?: string;
     name: string;
-    created_date: string;
-    version: number;
+    created_date?: string;
+    version?: number;
+}
+
+export interface SecureMessageConversation {
+    institutionId: string;
+    groupIdValue: string;
+    groupName: string;
+    groupDescription: string;
+    myIdValue: string;
+    messages: SecureMessageInfo[];
+}
+
+export interface SecureMessageSendBody {
+    institution_id: string;
+    sender : {
+        type: string; /// patron or group
+        id_field: string;
+        id_value: string;
+        name: string;
+    };
+    recipient: {
+        type: string; /// patron or group
+        id_value: string;
+        name: string;
+    };
+    description: string;
+    body: string;
+    importance: string;
 }

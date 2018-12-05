@@ -3,6 +3,12 @@ import { Injectable } from "@angular/core";
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 
 import { Observable } from "rxjs/Observable";
+import 'rxjs/add/operator/timeout';
+import 'rxjs/add/operator/subscribeOn';
+import 'rxjs/add/operator/observeOn';
+import { async } from 'rxjs/scheduler/async';
+import { queue } from 'rxjs/scheduler/queue';
+
 import { Environment } from "../../app/environment";
 
 
@@ -20,6 +26,8 @@ export enum HttpResponseType {
 
 @Injectable()
 export class APIService {
+
+    private TIMEOUT_MS = 10000;
 
     constructor(
         private http: HttpClient
@@ -39,7 +47,10 @@ export class APIService {
 
         const options: Object = this.getOptions(responseType, params, headers);
 
-        return (this.http.get(url, options)) as Observable<T>;
+        return (this.http.get(url, options)
+            .subscribeOn(async)
+            .observeOn(queue)
+            .timeout(this.TIMEOUT_MS)) as Observable<T>;
     }
 
     /**
@@ -53,7 +64,10 @@ export class APIService {
     public put(url: string, body: any, responseType: HttpResponseType = HttpResponseType.json, params?: HttpParams,
         headers?: HttpHeaders): Observable<any> {
         const options = this.getOptions(responseType, params, headers);
-        return this.http.put(url, body, options);
+        return this.http.put(url, body, options)
+            .subscribeOn(async)
+            .observeOn(queue)
+            .timeout(this.TIMEOUT_MS);
     }
 
     /**
@@ -67,7 +81,10 @@ export class APIService {
     public post(url: string, body: any, responseType: HttpResponseType = HttpResponseType.json, params?: HttpParams,
         headers?: HttpHeaders): Observable<any> {
         const options = this.getOptions(responseType, params, headers);
-        return this.http.post(url, body, options);
+        return this.http.post(url, body, options)
+            .subscribeOn(async)
+            .observeOn(queue)
+            .timeout(this.TIMEOUT_MS);
     }
 
     /**
@@ -122,7 +139,8 @@ export class APIService {
                     break;
                 case RestCallType.put:
                     this.put(finalURL, body, responseType, params, headers).subscribe(response => {
-                        observer.next(response);                    },
+                        observer.next(response);
+                    },
                         (error: any) => {
                             if (error.status === 401) {
                                 /// AUTHENTICATION ERROR, HANDLE WHEN WE KNOW HOW
@@ -159,7 +177,7 @@ export class APIService {
         return options;
     }
 
-    private handleAuthenticationError(error: Error){
+    private handleAuthenticationError(error: Error) {
         console.error("API 401 (Authentication) error | Error detail:")
         console.error(error);
     }
