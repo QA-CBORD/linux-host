@@ -1,7 +1,7 @@
 <ion-header>
 
 
-  <ion-navbar>
+  <ion-navbar color='primary'>
     <!-- XXX NEED A BADGE OR CIRCULAR ICON WITH FIRST LETTER OF pageTitle IN IT-->
     <ion-title>{{pageTitle}}</ion-title>
   </ion-navbar>
@@ -9,7 +9,7 @@
 </ion-header>
 
 
-<ion-content style="background-color: #eeeeee;" padding>
+<ion-content style="background-color: #eeeeee;">
   <div *ngIf="bShowStartConversationMessage" text-center>
     <!-- XXX WANT TO CENTER ON PAGE -->
     <h6>Start the conversation</h6>
@@ -28,6 +28,40 @@
     <ion-icon style="zoom:1.75;" name="sync"></ion-icon>
   </div>
 
-  
+  <div margin>
+      <ion-row align-items-end>
+          <ion-col col-auto>
+              <ion-avatar text-center item-start style="background-color: #cccccc; border-radius: 100px; width:3em; height:3em; margin-right: 0.75em;">
+                </ion-avatar>
+          </ion-col>
+          <ion-col padding style="background-color: #ffffff;border-radius: 20px; margin-right: 3em;">
+            <div>Original Message <br>#<br>#<br>#</div>
+          </ion-col>
+        </ion-row>
+  </div>
+
+  <div margin padding style="background-color: #949494;border-radius: 20px; margin-left: 10em;">
+      <div>My Response<br>#</div>
+  </div>
+
 
 </ion-content>
+
+<ion-footer>
+  <ion-grid>
+    <ion-row align-items-center>
+      <ion-col>
+        <ion-input placeholder="Type something..." style="background-color: #ffffff;border-radius: 100px; "></ion-input>
+      </ion-col>
+      <ion-col col-auto>
+        <button ion-button icon-only clear>
+          <ion-icon style="zoom:1.5;" name="send"></ion-icon>
+        </button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <!-- <ion-item no-lines style="background-color: #ffffff;border-radius: 100px; margin: 1em;">
+    
+    
+  </ion-item> -->
+</ion-footer>

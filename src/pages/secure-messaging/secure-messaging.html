@@ -4,97 +4,52 @@
   </ion-navbar>
 
 </ion-header>
-<ion-content style="background-color: #eeeeee;" padding>
+<ion-content class="content-background" padding>
 
-  <div *ngIf="bShowStartConversation" text-center>
+  <div *ngIf="pageState == LOADING" text-center>
+    <ion-list *ngFor="let i of [0,1,2]">
+      <ion-item no-lines class="item-conversation-loading">
+        <ion-avatar text-center item-start class="item-conversation-loading-avatar">
+        </ion-avatar>
+        <div class="item-conversation-loading-content top">
+        </div>
+        <div class="item-conversation-loading-content bottom">
+        </div>
+      </ion-item>
+    </ion-list>
+  </div>
+
+  <div *ngIf="pageState == START_CONVO" text-center class="content-full-screen-centered">
     <!-- XXX WANT TO CENTER ON PAGE -->
     <h6>No conversations found</h6>
     <button ion-button round (click)="onStartConversationButtonClick()">Start Conversation</button>
   </div>
 
-  <div *ngIf="bShowLoadingContent" text-center>
-    <ion-list>
-      <ion-item no-lines style="background-color: #ffffff; border-radius: 100px; margin-bottom: 1em">
-        <ion-avatar text-center item-start style="background-color: #cccccc; border-radius: 100px; width:4em; height:4em; margin-top: 0.75em; margin-bottom: 0.75em;">
-        </ion-avatar>
-        <div style="position: absolute; width: 25%; height: 15%; top: 30%; background-color: #cccccc; border-radius: 100px;">
-        </div>
-        <div style="position: absolute; width: 60%; height: 15%; top: 60%; background-color: #cccccc; border-radius: 100px;">
-        </div>
-      </ion-item>
-      <ion-item no-lines style="background-color: #ffffff; border-radius: 100px; margin-bottom: 1em">
-        <ion-avatar text-center item-start style="background-color: #cccccc; border-radius: 100px; width:4em; height:4em; margin-top: 0.75em; margin-bottom: 0.75em;">
-        </ion-avatar>
-        <div style="position: absolute; width: 25%; height: 15%; top: 30%; background-color: #cccccc; border-radius: 100px;">
-        </div>
-        <div style="position: absolute; width: 60%; height: 15%; top: 60%; background-color: #cccccc; border-radius: 100px;">
-        </div>
-      </ion-item>
-      <ion-item no-lines style="background-color: #ffffff; border-radius: 100px; margin-bottom: 1em">
-        <ion-avatar text-center item-start style="background-color: #cccccc; border-radius: 100px; width:4em; height:4em; margin-top: 0.75em; margin-bottom: 0.75em;">
-        </ion-avatar>
-        <div style="position: absolute; width: 25%; height: 15%; top: 30%; background-color: #cccccc; border-radius: 100px;">
-        </div>
-        <div style="position: absolute; width: 60%; height: 15%; top: 60%; background-color: #cccccc; border-radius: 100px;">
-        </div>
-      </ion-item>
-    </ion-list>
-
-  </div>
-
-  <div *ngIf="bShowErrorConnecting" text-center>
+  <div *ngIf="pageState == ERROR_CONNECTING" text-center (click)=onConnectionErrorClick() class="content-full-screen-centered">
     <!-- XXX WANT TO CENTER ON PAGE -->
     <h6>Error connecting</h6>
     <ion-icon style="zoom:1.75;" name="sync"></ion-icon>
   </div>
-  <div *ngIf="bShowOffline" text-center>
+
+  <div *ngIf="pageState == OFFLINE" text-center (click)=onOfflineClick() class="content-full-screen-centered">
     <!-- XXX WANT TO CENTER ON PAGE -->
     <h6>Offline</h6>
     <ion-icon style="zoom:1.75;" name="sync"></ion-icon>
   </div>
 
-  <ion-list *ngIf="bShowConversationList">
-    <ion-item no-lines style="background-color: #ffffff; border-radius: 100px; margin-top: 1em; margin-bottom: 1em"
-      *ngFor="let message of messages">
-      <ion-avatar text-center item-start style="background-color: #aaccdd; border-radius: 100px; width:4em; height:4em; margin-top: 0.75em; margin-bottom: 0.75em;">
+  <ion-list *ngIf="pageState == SHOW_CONVOS">
+    <ion-item no-lines class="item-conversation" *ngFor="let message of messages" (click)=onConversationClick(message)>
+      <ion-avatar text-center item-start class="item-conversation-avatar">
         <h3 style="color:white">P</h3>
       </ion-avatar>
-      {{ message.senderName }}
+      Group Name
+      <p>{{ message.description }} ? </p>
     </ion-item>
   </ion-list>
 
-  <ion-fab *ngIf="bShowFAB" right bottom margin>
+  <ion-fab *ngIf="pageState == SHOW_CONVOS" right bottom margin>
     <button ion-fab color="primary" (click)=onAddConversationFABClick()>
       <ion-icon name="add"></ion-icon>
     </button>
   </ion-fab>
-
-  <!-- <ion-grid>
-    <ion-row align-items-start justify-content-start>
-      <ion-col col-4>
-        <h4>Messages</h4>
-        <ion-list>
-          <button ion-item *ngFor="let message of messages" (click)="messageSelected(message)">
-            {{ message.senderName }}
-          </button>
-        </ion-list>
-      </ion-col>
-      <ion-col col-auto>
-        <div style='height: 500px; width: 1px; margin: 2px; background: #CCC;'></div>
-      </ion-col>
-      <ion-col>
-        <h4>Current Message</h4>
-        <div *ngIf='selectedMessage'>
-          <h5>From:</h5>
-          <h6>&nbsp;&nbsp;&nbsp;{{selectedMessage.senderName}}</h6>
-          <h5>Date:</h5>
-          <h6>&nbsp;&nbsp;&nbsp;{{selectedMessage.sentDate.toLocaleString()}}</h6>
-          <h5>Description:</h5>
-          <h6>&nbsp;&nbsp;&nbsp;{{selectedMessage.description}}</h6>
-          <h5>Body:</h5>
-          <h6>&nbsp;&nbsp;&nbsp;{{selectedMessage.body}}</h6>
-        </div>
-      </ion-col>
-    </ion-row>
-  </ion-grid> -->
 </ion-content>

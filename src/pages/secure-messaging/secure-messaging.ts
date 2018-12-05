@@ -3,7 +3,7 @@ import { IonicPage, NavController, NavParams, Platform, Events, Modal, ModalCont
 
 import * as Globals from '../../app/app.global'
 
-import { SecureMessageInfo } from '../../models/secure-messaging/secure-message-info';
+import { SecureMessageInfo, SecureMessageGroupInfo } from '../../models/secure-messaging/secure-message-info';
 import { SecureMessagingProvider } from '../../providers/secure-messaging-provider/secure-messaging-provider';
 
 
@@ -18,16 +18,16 @@ export class SecureMessagingPage {
 
   pageTitle: string = "Conversations";
 
-  bShowStartConversation: boolean = false;
-  bShowLoadingContent: boolean = true;
-  bShowConversationList: boolean = true;
-  bShowFAB: boolean = true;
-  bShowErrorConnecting: boolean = false;
-  bShowOffline: boolean = false;
+  readonly LOADING: number = 0;
+  readonly START_CONVO: number = 1;
+  readonly SHOW_CONVOS: number = 2;
+  readonly ERROR_CONNECTING: number = 3;
+  readonly OFFLINE: number = 4;
 
+  pageState: number = this.LOADING;
 
+  groups: SecureMessageGroupInfo[] = new Array();
   messages: SecureMessageInfo[] = new Array();
-  selectedMessage: SecureMessageInfo = null;
 
   constructor(
     public navCtrl: NavController,
@@ -46,69 +46,57 @@ export class SecureMessagingPage {
   }
 
   ionViewDidLoad() {
-    // this.secureMessageProvider.getSecureMessagesGroup()
-    // .subscribe(
-    //   data => {
-    //     console.log("GET SM GROUP DATA:")
-    //     console.log(data);
-
-    //   },
-    //   error => {
-    //     console.log("GET SM GROUP ERROR:")
-    //     console.log(error);
-    //   }
-    // );
-
-    // this.setTestData();
-
-
-    // this.secureMessageProvider.getSecureMessages()
-    // .subscribe(
-    //   data => {
-    //     console.log("Data:");
-
-    //     console.log(data);
-
-    //   },
-    //   error => {
-    //     console.log("Error:");
-
-
-    //     console.log(error);
-    //   },
-    //   () => {
-
-
-    //   }
-    // );
+    this.loadInitialData();
   }
 
-  messageSelected(message: SecureMessageInfo) {
-    this.selectedMessage = message;
+
+  /// USE THIS AS MY PATRON
+  // id: "045b5348-64c8-40a0-a7f4-c08501217418",
+  // type: "patron",
+  // id_field: "IDNumber",
+  // id_value: "Patron01",
+  // aux_user_id: null,
+  // name: "test user",
+  // created_date: null,
+  // version: 1
+
+
+  private loadInitialData() {
+    this.pageState = this.LOADING;
+
+    /// for testing only
+    // setTimeout(() => {
+    //   this.setTestData();
+
+    // }, 1000)
+
+    /// 
+
+    this.secureMessageProvider.getInitialData("patron", "IDNumber", "Patron01")
+      .subscribe(
+        ([smGroupArray, smMessageArray]) => {
+          this.groups = smGroupArray;
+          this.messages = smMessageArray;
+        },
+        error => {
+          console.log("GetInitialData Error");
+          console.log(error);
+        },
+        () => {
+
+        }
+      );
+
+
   }
 
-  private setTestData() {
-    let tMessage: SecureMessageInfo = {
-      id: '32-43214324-4321432',
-      originalMessageId: '1',
-      repliedMessagId: null,
-      recipient: 'No clue what this object will be',
-      recipientName: 'Recipient Name',
-      institutionId: '34kj32-432kj423-k32l4k',
-      sender: 'No clue what this object will be',
-      senderName: 'Sender Name',
-      sentDate: new Date(),
-      ttl: 10000,
-      description: 'Description testing',
-      body: 'Body testing with some text here to be a placeholder and take up more space and what not.  Swoosh.',
-      state: 'No clue what this will be',
-      requiresReadReceipt: false,
-      importance: "No clue what this will be",
-      readDate: null
-    };
-    for (let i = 0; i < 10; i++) {
-      this.messages.push(tMessage);
-    }
+
+  onConversationClick(message: SecureMessageInfo) {
+    console.log("onConversationClick")
+    console.log(message);
+
+    this.navCtrl.push('SecureMessagingConversationPage');
+
   }
 
   onAddConversationFABClick() {
@@ -120,6 +108,7 @@ export class SecureMessagingPage {
     console.log("onConversationButtonClick");
 
   }
+
 
   openChooseContactModal() {
 
@@ -146,6 +135,15 @@ export class SecureMessagingPage {
       console.log(data);
     });
 
+  }
+
+
+  onConnectionErrorClick() {
+    console.log("onConnectionErrorClick");
+  }
+
+  onOfflineClick() {
+    console.log("onOfflineClick");
   }
 
 

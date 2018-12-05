@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Platform, Events } from 'ionic-angular';
 
+import * as Globals from '../../app/app.global';
 
 @IonicPage()
 @Component({
@@ -9,7 +10,7 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 })
 export class SecureMessagingConversationPage {
 
-  pageTitle: string = "Entity";
+  pageTitle: string = "Entity Name";
 
   bShowStartConversationMessage: boolean = false;
   bShowLoadingContent: boolean = false;
@@ -17,8 +18,14 @@ export class SecureMessagingConversationPage {
 
   constructor(
     public navCtrl: NavController,
-    public navParams: NavParams
+    public navParams: NavParams,
+    private platform: Platform,
+    private events: Events
   ) {
+    platform.ready().then(() => {
+      /// hide the split pane here becuase we don't need the navigation menu
+      events.publish(Globals.Events.SIDEPANE_ENABLE, false);
+    });
   }
 
   ionViewDidLoad() {

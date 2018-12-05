@@ -1,9 +1,10 @@
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs/Observable";
+import "rxjs/add/observable/zip";
 
 import { SecureMessagingService } from "../../services/secure-messaging-service/secure-messaging-service";
 
-import { SecureMessageInfo } from "../../models/secure-messaging/secure-message-info";
+import { SecureMessageInfo, SecureMessageGroupInfo } from "../../models/secure-messaging/secure-message-info";
 
 
 @Injectable()
@@ -15,45 +16,45 @@ export class SecureMessagingProvider {
     }
 
 
+    public getInitialData(ma_type: string, ma_id_field: string, ma_id_value: string): Observable<[SecureMessageGroupInfo[], SecureMessageInfo[]]> {
+        return Observable.zip(
+            this.getSecureMessagesGroups(null),
+            this.getSecureMessages(ma_type, ma_id_field, ma_id_value)
+        );
+    }
+
+    public getInitialData0(ma_type: string, ma_id_field: string, ma_id_value: string, success: (groups: SecureMessageGroupInfo[], messages: SecureMessageInfo[]) => void, error: (error: any) => void) {
+        Observable.zip(
+            this.getSecureMessagesGroups(null),
+            this.getSecureMessages(ma_type, ma_id_field, ma_id_value)
+        ).subscribe(([smGroupArray, smMessageArray]) => {
+            success(smGroupArray, smMessageArray);
+        },
+            error => {
+                error(error);
+            },
+            () => {
+
+            });
+    }
+
+
     public sendSecureMessage(messageInfo: SecureMessageInfo): Observable<any> {
 
         return this.secureMessageService.postSecureMessage(messageInfo);
 
     }
 
-    public getSecureMessages(): Observable<any> {
+    public getSecureMessages(ma_type: string, ma_id_field: string, ma_id_value: string): Observable<SecureMessageInfo[]> {
 
-        return this.secureMessageService.getSecureMessages();
+        return this.secureMessageService.getSecureMessages(ma_type, ma_id_field, ma_id_value);
 
     }
 
-    public getSecureMessagesGroup(): Observable<any> {
-        return this.secureMessageService.getSecureMessagesGroup();
+    public getSecureMessagesGroups(inst_id: string): Observable<SecureMessageGroupInfo[]> {
+        return this.secureMessageService.getSecureMessagesGroups(inst_id);
     }
 
-    public testPostSecureMessage(): Observable<any> {
-
-        let messageInfo: SecureMessageInfo = {
-            id: this.newGuid(),
-            originalMessageId: null,
-            recipient: "1234",
-            sender: "9999",
-            sentDate: new Date(),
-            ttl: null,
-            description: "Test Message",
-            body: "A wonderful test message body",
-            state: null,
-            importance: null,
-            readDate: null,
-            institutionId: null,
-            recipientName: null,
-            repliedMessagId: null,
-            requiresReadReceipt: null,
-            senderName: null
-        };
-
-        return this.secureMessageService.postSecureMessage(messageInfo);
-    }
 
     private newGuid() {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {

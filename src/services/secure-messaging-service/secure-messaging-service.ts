@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 
 import { APIService, HttpResponseType, RestCallType } from './../api-service/api-service';
 import { HttpHeaders, HttpParams } from "@angular/common/http";
-import { SecureMessageInfo } from "../../models/secure-messaging/secure-message-info";
+import { SecureMessageInfo, SecureMessageGroupInfo } from "../../models/secure-messaging/secure-message-info";
 import { Observable } from "rxjs/Observable";
 
 
@@ -19,31 +19,59 @@ export class SecureMessagingService {
     }
 
 
-    public getSecureMessages(): Observable<any> {
+    public getSecureMessages(ma_type: string, ma_id_field: string, ma_id_value: string): Observable<SecureMessageInfo[]> {
 
-        return this.apiService.authenticatedHTTPCall(
-            RestCallType.get,
-            this.serviceUrlSecureMessage,
-            HttpResponseType.json,
-            undefined,
-            undefined,
-            new HttpHeaders());
+        return Observable.create((observer: any) => {
+
+            this.apiService.authenticatedHTTPCall(
+                RestCallType.get,
+                this.serviceUrlSecureMessage + "?ma_type=" + ma_type + "&ma_id_field=" + ma_id_field + "&ma_id_value=" + ma_id_value,
+                HttpResponseType.json,
+                undefined,
+                undefined,
+                new HttpHeaders())
+                .subscribe(
+                    data => {
+                        observer.next(data);
+                        observer.complete();
+                    },
+                    error => {
+                        observer.error(error);
+                    },
+                    () => {
+                        /// complete
+                    }
+                );
+
+        });
 
     }
 
-/// https://dwptofebk7.execute-api.us-east-1.amazonaws.com/dev/messageGroups?inst_id=29db894b-aecd-4cef-b515-15b0405614d7&with_members=1
+    /// https://dwptofebk7.execute-api.us-east-1.amazonaws.com/dev/messageGroups?inst_id=29db894b-aecd-4cef-b515-15b0405614d7&with_members=1
 
-    public getSecureMessagesGroup(): Observable<any> {
+    public getSecureMessagesGroups(inst_id: string): Observable<SecureMessageGroupInfo[]> {
 
+        return Observable.create((observer: any) => {
+            this.apiService.authenticatedHTTPCall(
+                RestCallType.get,
+                this.serviceUrlSecureMessageGroup + "?inst_id=29db894b-aecd-4cef-b515-15b0405614d7&with_members=0",
+                HttpResponseType.json,
+                undefined,
+                undefined,
+                new HttpHeaders())
+                .subscribe(
+                    data => {
+                        observer.next(data);
+                        observer.complete();
+                    },
+                    error => {
+                        observer.error(error);
+                    },
+                    () => {
 
-        return this.apiService.authenticatedHTTPCall(
-            RestCallType.get,
-            this.serviceUrlSecureMessageGroup + "?inst_id=29db894b-aecd-4cef-b515-15b0405614d7&with_members=1",
-            HttpResponseType.json,
-            undefined,
-            undefined,
-            new HttpHeaders());
-
+                    }
+                );
+        });
     }
 
     public postSecureMessage(messageInfo: SecureMessageInfo): Observable<any> {
