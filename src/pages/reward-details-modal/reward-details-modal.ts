@@ -34,21 +34,35 @@ export class RewardDetailsModalPage {
 
   rewardClaimedClick() {
     // only claim a reward if none have been claimed for this level already
-    this.rewardService.claimReward(this.reward.id).subscribe(
-      ((response: boolean) => this.claimRewardResponse(response)),
-      ((error) => this.showError(error))
-    )
+    // this.rewardService.claimReward(this.reward.id)
+    // .subscribe(
+    //   response: boolean => {this.claimRewardResponse(response);},
+    //   (error => {
+    //     this.showError(error);
+    //   })
+    // )
+    this.rewardService.claimReward(this.reward.id)
+      .subscribe(
+        data => {
+          this.claimRewardResponse(data);
+        },
+        error => {
+          let alert = this.alertCtrl.create({
+            title: 'Claim Reward',
+            subTitle: "There has been an error and your reward was not claimed.",
+            buttons: ['OK']
+          });
+          // Show alert with results
+          alert.present();
+        },
+        () => {
+
+        }
+      );
 
   }
 
-    /**
-   * Handle the error response from HTTP calls
-   * 
-   * @param error     Error returned from call
-   */
-  protected showError(error: Response | any) {
-    return Observable.throw(error);
-  }
+
 
   claimRewardResponse(result: boolean) {
     // Close the claim dialog 
@@ -68,7 +82,7 @@ export class RewardDetailsModalPage {
     alert.present();
   }
 
-  closeModalClicked(){
+  closeModalClicked() {
     this.viewCtrl.dismiss({ 'bRefresh': 'false' });
   }
 

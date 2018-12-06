@@ -96,8 +96,7 @@ export class RewardsPage {
   }
 
   ngAfterViewInit() {
-    this.getRewardTrackInfo();
-    
+    this.getRewardTrackInfo();    
   }
 
   private getRewardTrackInfo() {
@@ -159,7 +158,22 @@ export class RewardsPage {
         this.userHistoryItemList = response;
       },
       error => {
-
+        ExceptionProvider.showException(this.events, {
+          displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
+          messageInfo: {
+            title: "Reward History",
+            message: "Something went wrong while retrieving your Rewards History",
+            positiveButtonTitle: "RETRY",
+            positiveButtonHandler: () => {
+              // MAKE OPT_IN Call
+              this.getRewardHistory(this.userRewardTrackInfo);
+            },
+            negativeButtonTitle: "CLOSE",
+            negativeButtonHandler: () => {
+              this.platform.exitApp();
+            }
+          }
+        });
       }
     );
   }
