@@ -57,33 +57,33 @@ export class HomePage {
       /// hide the split pane here becuase we don't need the navigation menu
       events.publish(Globals.Events.SIDEPANE_ENABLE, false);
 
-      /// get required params from the URL
-      // this.sessionToken = navParams.get('sessionToken');
-      // this.destinationPage = navParams.get('destinationPage');
+      // get required params from the URL
+      this.sessionToken = navParams.get('sessionToken');
+      this.destinationPage = navParams.get('destinationPage');
 
-      // /// get optional location params from the URL
-      // try {
-      //   this.geoData.coords.latitude = parseFloat(navParams.get('latitude'));
-      //   this.geoData.coords.longitude = parseFloat(navParams.get('longitude'));
-      //   this.geoData.coords.accuracy = parseFloat(navParams.get('accuracy'));
-      // } catch (error) {
-      //   /// will only fail when no geolocation data from native device or url        
-      // }
+      /// get optional location params from the URL
+      try {
+        this.geoData.coords.latitude = parseFloat(navParams.get('latitude'));
+        this.geoData.coords.longitude = parseFloat(navParams.get('longitude'));
+        this.geoData.coords.accuracy = parseFloat(navParams.get('accuracy'));
+      } catch (error) {
+        /// will only fail when no geolocation data from native device or url        
+      }
 
-      // events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Loading content" });
+      events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Loading content" });
 
-      // this.handleSessionToken();
+      this.handleSessionToken();
 
-      this.tuP.getTestUser()
-        .subscribe(data => {
-          this.handlePageNavigation();
-        },
-          error => {
+      // this.tuP.getTestUser()
+      //   .subscribe(data => {
+      //     this.handlePageNavigation();
+      //   },
+      //     error => {
 
-          },
-          () => {
+      //     },
+      //     () => {
 
-          });
+      //     });
 
     })
       .catch(() => {

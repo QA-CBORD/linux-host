@@ -28,7 +28,7 @@ export class MyApp {
 	private loader: Loading;
 	bShowSplitPane: boolean = true;
 
-	rootPage: string = 'rewards';
+	rootPage: string = 'home';
 
 	// Options to show in the SideMenuComponent
 	public options: Array<MenuOptionModel>;
