@@ -48,7 +48,7 @@
   <ion-list *ngIf="pageState == SHOW_GROUPS">
     <ion-item no-lines class="item-group" *ngFor="let group of groups" (click)=onGroupClick(group)>
       <ion-avatar text-center item-start class="item-group-avatar">
-        <h1 style="color:white; position: relative; top:33%;"><b>{{group.name[0]}}</b></h1>
+        <h1 style="color:white; position: relative; top:33%;">{{group.name[0]}}</h1>
       </ion-avatar>
       {{ group.name }}
       <p>{{group.description}}</p>

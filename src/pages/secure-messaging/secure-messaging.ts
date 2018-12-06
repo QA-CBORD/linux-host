@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, Platform, Events, Modal, ModalController, ModalOptions } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Platform, Events, Modal, ModalController, ModalOptions, ToastController } from 'ionic-angular';
 
 import * as Globals from '../../app/app.global'
 
@@ -41,6 +41,7 @@ export class SecureMessagingPage {
     private modalCtrl: ModalController,
     private platform: Platform,
     private events: Events,
+    private toast: ToastController,
     private secureMessageProvider: SecureMessagingProvider
   ) {
 
@@ -97,6 +98,11 @@ export class SecureMessagingPage {
         error => {
           console.log("GetInitialData Error");
           console.log(error);
+          this.toast.create({
+            message: error,
+            duration: 3000,
+            position: 'bottom'
+          }).present();
         },
         () => {
 
@@ -211,29 +217,35 @@ export class SecureMessagingPage {
 
     chooseContactModal.onWillDismiss((data) => {
       console.log("Choose Contact Modal WILL DISMISS");
+      if (data.selectedGroup) {
 
-    });
+        let newConversation: SecureMessageConversation;
 
-    chooseContactModal.onDidDismiss((data) => {
-      console.log("Choose Contact Modal DID DISMISS");
-console.log(data);
+        for (let convo of this.conversations) {
+          if (data.selectedGroup.id == convo.groupIdValue) {
+            newConversation = convo;
+            break;
+          }
+        }
 
-      let newConversation: SecureMessageConversation = {
-        institutionId: SecureMessagingPage.TEST_INST_ID,
-        groupName: data.selectedGroup.name,
-        groupIdValue: data.selectedGroup.id,
-        groupDescription: data.selectedGroup.description,
-        myIdValue: SecureMessagingPage.TEST_PATRON_ID_VALUE,
-        messages: new Array()
-      };
+        if (!newConversation) {
+          newConversation = {
+            institutionId: SecureMessagingPage.TEST_INST_ID,
+            groupName: data.selectedGroup.name,
+            groupIdValue: data.selectedGroup.id,
+            groupDescription: data.selectedGroup.description,
+            myIdValue: SecureMessagingPage.TEST_PATRON_ID_VALUE,
+            messages: new Array()
+          };
+        }
 
-      this.openConversationPage(newConversation);
-
+        this.openConversationPage(newConversation);
+      }
     });
 
   }
 
-  openConversationPage(conversation: SecureMessageConversation){
+  openConversationPage(conversation: SecureMessageConversation) {
     this.navCtrl.push('SecureMessagingConversationPage', { data: conversation });
   }
 

@@ -1,11 +1,8 @@
 <ion-header>
-
-
   <ion-navbar color='primary'>
     <!-- XXX NEED A BADGE OR CIRCULAR ICON WITH FIRST LETTER OF pageTitle IN IT-->
     <ion-title>{{pageTitle}}</ion-title>
   </ion-navbar>
-
 </ion-header>
 
 
@@ -16,7 +13,7 @@
     <ion-icon style="zoom:1.75;" name="create"></ion-icon>
   </div>
 
-  <div *ngIf="conversation">
+  <div *ngIf="conversation" style="margin-top: 1em;">
     <div *ngFor="let message of conversation.messages">
 
       <div text-center>
@@ -24,10 +21,10 @@
       </div>
 
       <ion-grid *ngIf="message.sender.type == 'group'" margin style="margin-top: 0em; padding:0em;">
-        <ion-row align-items-end  style="margin-right: 15%;">
+        <ion-row align-items-end style="margin-right: 15%;">
           <ion-col no-margin no-padding col-auto>
-            <ion-avatar text-center item-start style="background-color: #bebdbd; border-radius: 100px; width:3.25em; height:3.25em; margin-right: 0.75em;">
-              <h3 style="color:white; position: relative; top:21%;">{{conversation.groupName[0]}}</h3>
+            <ion-avatar text-center item-start style="background-color: #554baa; border-radius: 100px; width:3.25em; height:3.25em; margin-right: 0.75em;">
+              <h6 style="color:white; position: relative; top:29.5%;">{{conversation.groupName[0]}}</h6>
             </ion-avatar>
           </ion-col>
           <ion-col style="padding:0em; background-color: #ffffff; border-radius: 10px; margin-right: 3em;">
