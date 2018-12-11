@@ -11,6 +11,7 @@ import * as Globals from '../../app/app.global';
 import { MobileAccessProvider } from '../../providers/mobile-access-provider/mobile-access-provider';
 import { ActivateMobileLocationResult } from '../../models/open-my-door/open-my-door.interface';
 import { ExceptionProvider } from '../../providers/exception-provider/exception-provider';
+import { GeoCoordinates } from '../../models/geolocation/geocoordinates.interface';
 
 
 @IonicPage()
@@ -21,6 +22,7 @@ import { ExceptionProvider } from '../../providers/exception-provider/exception-
 export class MobileAccessModalPage {
 
   currentSelectedLocation: any;
+  geoData: GeoCoordinates;
 
   constructor(
     public navCtrl: NavController,
@@ -32,7 +34,8 @@ export class MobileAccessModalPage {
     private diagnostic: Diagnostic,
     private geolocation: Geolocation
   ) {
-    this.currentSelectedLocation = navParams.get('selectedLocation');
+    this.currentSelectedLocation = navParams.get('selectedLocation') || null;
+    this.geoData = navParams.get('geoData') || null;
   }
 
   /**
@@ -121,7 +124,7 @@ export class MobileAccessModalPage {
             );
         });
     } else {
-      this.mobileAccessProvider.activateMobileLocation(null, this.currentSelectedLocation.locationId, null)
+      this.mobileAccessProvider.activateMobileLocation(this.geoData, this.currentSelectedLocation.locationId, null)
         .subscribe(
           data => {
             this.handleActivateMobileLocationResponse(data);
@@ -141,10 +144,7 @@ export class MobileAccessModalPage {
    */
   private handleActivateMobileLocationResponse(response: ActivateMobileLocationResult) {
     this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
-    console.log('Handle MLR 0');
-    
-    console.log(response);
-    if (!response.responseCode || response.responseCode == "00") {
+         if (!response.responseCode || response.responseCode == "00") {
       // need fucntional PDF_417 generator
 
       if (response.showTempCode == 1) {
@@ -186,14 +186,6 @@ export class MobileAccessModalPage {
               }              
             }
           });
-        
-        // Observable.of(true).delay(3000).subscribe(
-        //   data => { },
-        //   error => { },
-        //   () => {
-        //     this.closeModal();
-        //   }
-        // )
       }
     } else {
       // falure

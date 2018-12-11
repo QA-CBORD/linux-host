@@ -67,24 +67,12 @@ export class HomePage {
         this.geoData.coords.longitude = parseFloat(navParams.get('longitude'));
         this.geoData.coords.accuracy = parseFloat(navParams.get('accuracy'));
       } catch (error) {
-        /// will only fail when no geolocation data from native device or url        
+        /// will only fail when no geolocation data from native device or url
       }
 
       events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Loading content" });
 
       this.handleSessionToken();
-
-      // this.tuP.getTestUser()
-      //   .subscribe(data => {
-      //     this.handlePageNavigation();
-      //   },
-      //     error => {
-
-      //     },
-      //     () => {
-
-      //     });
-
     })
       .catch(() => {
         /// do nothing, won't happen
@@ -157,7 +145,7 @@ export class HomePage {
         this.navCtrl.push("rewards");
         break;
       case 'openmydoor':
-        this.navCtrl.push("mobile-access", this.geoData);
+        this.navCtrl.push("mobile-access", { data: this.geoData });
         break;
       case 'accounts':
         this.navCtrl.push("accounts");

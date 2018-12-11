@@ -49,14 +49,8 @@ export class MobileAccessPage {
 
 
     /// GET GeoCoordinates from URL
-    try {
-      let pGeoData = navParams.get('geoData');
-      if (pGeoData) {
-        this.geoData = pGeoData;
-      }
-    } catch (error) {
-      console.log(error);
-    }
+
+    this.geoData = navParams.get('data') || null; 
 
     this.events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Retrieving locations..." });
 
@@ -68,8 +62,6 @@ export class MobileAccessPage {
    * Make request for location data if none was passed via URL parameters 
    */
   private getLocationData() {
-
-    console.log("Get Location Data");
 
     this.events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Retrieving locations..." });
     // check if data was passed from native app via url, otherwise do normal checking
@@ -147,7 +139,6 @@ export class MobileAccessPage {
    */
   private checkPermissions() {
     // android API 6.0+ permissions check
-    console.log("Android Permission check");
 
     try {
       this.androidPermissions.requestPermissions(
@@ -276,7 +267,12 @@ export class MobileAccessPage {
       return;
     }
 
-    let unlockModal = this.modCtrl.create(MobileAccessModalPage, { selectedLocation: this.currentSelectedLocation });
+    let unlockModal = this.modCtrl.create(MobileAccessModalPage,
+      {
+        selectedLocation: this.currentSelectedLocation,
+        geoData: this.geoData
+      }
+    );
     unlockModal.onDidDismiss(data => {
 
       console.log(data);
