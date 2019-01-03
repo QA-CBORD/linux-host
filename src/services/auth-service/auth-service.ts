@@ -113,4 +113,40 @@ export class AuthService extends GETService {
     });
 
   }
+
+  /**
+   * Retrieve a JWT from GET to use as an Access token for calling AWS services
+   * 
+   */
+  retrieveExternalAuthenticationToken(): Observable<string> {
+
+    return Observable.create((observer: any) => {
+      let postParams = {
+        systemCredentials: {
+          domain: '',
+          userName: 'get_mobile',
+          password: 'NOTUSED'
+        },
+        tokenType:null,
+        externalSystem:null,
+        claimSet:null
+      }
+
+      console.log(JSON.stringify(postParams));
+
+      return this.httpRequest(this.serviceUrl, 'retrieveExternalAuthenticationToken', true, postParams)
+        .subscribe(
+          data => {
+            // validate data and send to observer
+            observer.next(data.response);
+            observer.complete();
+          },
+          error => {
+            // do error stuff then push it to observer
+            observer.error(error);
+          }
+        )
+    });
+
+  }
 }
