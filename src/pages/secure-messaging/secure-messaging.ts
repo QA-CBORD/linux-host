@@ -53,8 +53,20 @@ export class SecureMessagingPage {
   }
 
   ionViewDidLoad() {
+    this.secureMessageProvider.testJWT()
+      .subscribe(
+        data => {
+          console.log(data);
 
-    this.loadInitialData();
+        },
+        error => {
+          console.log(error);
+
+        },
+        () => {
+
+        });
+    // this.loadInitialData();
   }
 
   ionViewWillEnter() {

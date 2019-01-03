@@ -10,6 +10,10 @@ import { Observable } from "rxjs/Observable";
 @Injectable()
 export class SecureMessagingService {
 
+    //https://dwptofebk7.execute-api.us-east-1.amazonaws.com/dev/testing/
+
+    // response 3 base64 delimited by ".".  
+
     private serviceUrlSecureMessage: string = '/secureMessages';
     private serviceUrlSecureMessageGroup: string = '/messageGroups';
 
@@ -21,7 +25,7 @@ export class SecureMessagingService {
 
     public getSecureMessages(ma_type: string, ma_id_field: string, ma_id_value: string): Observable<SecureMessageInfo[]> {
 
-        return Observable.create((observer: any) => {
+        return Observable.create((observer: any) => {            
 
             this.apiService.authenticatedHTTPCall(
                 RestCallType.get,
@@ -108,6 +112,23 @@ export class SecureMessagingService {
             undefined,
             new HttpHeaders());
 
+    }
+
+    public testJWT(): Observable<any>{
+        let httpHead: HttpHeaders = new HttpHeaders()
+        .set("Authorization", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZF9maWVsZCI6ImlkX251bWJlciIsInJvbGUiOiJwYXRyb24iLCJpc3MiOiJHRVQiLCJqd3RfdmVyc2lvbiI6IjEuMCIsImlkX3ZhbHVlIjoiNjUxNjg3MzU0IiwiaW5zdGl0dXRpb25faWQiOiIyOWRiODk0Yi1hZWNkLTRjZWYtYjUxNS0xNWIwNDA1NjE0ZDcifQ.UFqiIuMYD2DddDXKIHfAr08TmQfvi3D5mUMU-w2Lo4E");
+
+        console.log(httpHead);
+        
+
+
+        return this.apiService.authenticatedHTTPCall(
+            RestCallType.post,
+            "/testing/",
+            HttpResponseType.text,
+            undefined,
+            undefined,
+            httpHead);        
     }
 
 }

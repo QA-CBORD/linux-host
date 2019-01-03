@@ -1,7 +1,9 @@
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs/Observable";
 import "rxjs/add/observable/zip";
+import 'rxjs/add/operator/mergeMap';
 
+import { AuthService } from "../../services/auth-service/auth-service";
 import { SecureMessagingService } from "../../services/secure-messaging-service/secure-messaging-service";
 
 import { SecureMessageInfo, SecureMessageGroupInfo, SecureMessageSendBody } from "../../models/secure-messaging/secure-message-info";
@@ -11,16 +13,28 @@ import { SecureMessageInfo, SecureMessageGroupInfo, SecureMessageSendBody } from
 export class SecureMessagingProvider {
 
     constructor(
+        private authService: AuthService,
         private secureMessageService: SecureMessagingService
     ) {
     }
 
 
+
+    public testJWT() {
+        return this.secureMessageService.testJWT();
+    }
+
+
     public getInitialData(ma_type: string, ma_id_field: string, ma_id_value: string): Observable<[SecureMessageGroupInfo[], SecureMessageInfo[]]> {
+
+
+
         return Observable.zip(
             this.getSecureMessagesGroups(null),
             this.getSecureMessages(ma_type, ma_id_field, ma_id_value)
         );
+
+
     }
 
     public getInitialData0(ma_type: string, ma_id_field: string, ma_id_value: string, success: (groups: SecureMessageGroupInfo[], messages: SecureMessageInfo[]) => void, error: (error: any) => void) {
