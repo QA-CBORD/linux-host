@@ -1,11 +1,13 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, Platform, Events, Modal, ModalController, ModalOptions, ToastController } from 'ionic-angular';
 
+import { fromEvent } from "rxjs/observable/fromEvent";
+import { Subscription } from "rxjs/Subscription";
+
 import * as Globals from '../../app/app.global'
 
 import { SecureMessageInfo, SecureMessageGroupInfo, SecureMessageConversation } from '../../models/secure-messaging/secure-message-info';
 import { SecureMessagingProvider } from '../../providers/secure-messaging-provider/secure-messaging-provider';
-
 
 @IonicPage({
   name: 'secure-messaging',
@@ -35,6 +37,10 @@ export class SecureMessagingPage {
   groups: SecureMessageGroupInfo[] = new Array();
   messages: SecureMessageInfo[] = new Array();
 
+  resizeSubscription: Subscription;
+  bIsLargeScreen: boolean = false;
+  selectedConversation: SecureMessageConversation;
+
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
@@ -48,12 +54,36 @@ export class SecureMessagingPage {
     platform.ready().then(() => {
       /// hide the split pane here becuase we don't need the navigation menu
       events.publish(Globals.Events.SIDEPANE_ENABLE, false);
+      this.bIsLargeScreen = this.platform.width() > 768;
     });
 
   }
 
-  ionViewDidLoad() {
+  ngOnInit() {
+    // this.bIsLargeScreen = this.platform.width() > 768;
+    // if(this.bIsLargeScreen){
+    //   this.scrollToBottom();
+    // }
+    // this.resizeSubscription = fromEvent(window, 'resize')
+    // .subscribe(event => {
+    //   this.bIsLargeScreen = window.innerWidth >= 768;
+    //   if(this.bIsLargeScreen){
+    //     this.scrollToBottom();
+    //   }
+    // });
+  }
 
+  ngOnDestroy() {
+    if (this.resizeSubscription != null) {
+      this.resizeSubscription.unsubscribe();
+    }
+  }
+
+  ionViewDidLoad() {
+    this.resizeSubscription = fromEvent(window, 'resize')
+      .subscribe(event => {
+        this.bIsLargeScreen = window.innerWidth >= 768;
+      });
     this.loadInitialData();
   }
 
@@ -164,6 +194,10 @@ export class SecureMessagingPage {
         conversation.messages.push(message);
 
         this.conversations.push(conversation);
+      }
+
+      if (this.conversations.length > 0) {
+        this.selectedConversation = this.conversations[0];
       }
 
     }
