@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, Platform, Events, Modal, ModalController, ModalOptions, ToastController } from 'ionic-angular';
+import { Component, ViewChild } from '@angular/core';
+import { IonicPage, NavController, NavParams, Platform, Events, Modal, ModalController, ModalOptions, ToastController, Content, Scroll } from 'ionic-angular';
 
 import { fromEvent } from "rxjs/observable/fromEvent";
 import { Subscription } from "rxjs/Subscription";
@@ -37,9 +37,12 @@ export class SecureMessagingPage {
   groups: SecureMessageGroupInfo[] = new Array();
   messages: SecureMessageInfo[] = new Array();
 
+
+  @ViewChild('chatScroll') chatScroll: any;
   resizeSubscription: Subscription;
   bIsLargeScreen: boolean = false;
   selectedConversation: SecureMessageConversation;
+  newMessageText: string;
 
   constructor(
     public navCtrl: NavController,
@@ -60,17 +63,11 @@ export class SecureMessagingPage {
   }
 
   ngOnInit() {
-    // this.bIsLargeScreen = this.platform.width() > 768;
-    // if(this.bIsLargeScreen){
-    //   this.scrollToBottom();
-    // }
     // this.resizeSubscription = fromEvent(window, 'resize')
-    // .subscribe(event => {
-    //   this.bIsLargeScreen = window.innerWidth >= 768;
-    //   if(this.bIsLargeScreen){
-    //     this.scrollToBottom();
-    //   }
-    // });
+    //   .subscribe(event => {
+    //     this.bIsLargeScreen = window.innerWidth >= 768;
+        
+    //   });
   }
 
   ngOnDestroy() {
@@ -82,12 +79,21 @@ export class SecureMessagingPage {
   ionViewDidLoad() {
     this.resizeSubscription = fromEvent(window, 'resize')
       .subscribe(event => {
+        let bWasPreviouslyLargeScreen = this.bIsLargeScreen;
         this.bIsLargeScreen = window.innerWidth >= 768;
+        if (!bWasPreviouslyLargeScreen && this.bIsLargeScreen) {
+          this.scrollToBottom();
+        }
       });
     this.loadInitialData();
   }
 
   ionViewWillEnter() {
+
+    if (this.bIsLargeScreen) {
+      return;
+    }
+
     let updatedConversation: SecureMessageConversation = this.navParams.get('updatedConversation') || null;
 
     if (updatedConversation) {
@@ -206,19 +212,40 @@ export class SecureMessagingPage {
 
     console.log(this.conversations);
 
+
+
+
+
     if (this.conversations.length > 0) {
+      console.log(`hIDR large screen: ${this.bIsLargeScreen}`);
+      
+      if (this.bIsLargeScreen) {        
+        this.scrollToBottom();
+      }
       this.pageState = this.SHOW_CONVOS;
     } else {
       this.pageState = this.START_CONVO;
     }
 
 
-
   }
 
+  public scrollToBottom() {
+    console.log("Scroll to bottom");
+    setTimeout(() => {
+      let scroll = this.chatScroll._scrollContent.nativeElement;
+      scroll.scrollTop = scroll.scrollHeight - scroll.clientHeight;
+    }, 100);
+  }
 
   onConversationClick(conversation: SecureMessageConversation) {
     console.log("onConversationClick")
+
+    if (this.bIsLargeScreen) {
+      this.selectedConversation = conversation;
+      this.scrollToBottom();
+      return;
+    }
 
     this.openConversationPage(conversation);
 
@@ -273,7 +300,12 @@ export class SecureMessagingPage {
           };
         }
 
-        this.openConversationPage(newConversation);
+        if (!this.bIsLargeScreen) {
+          this.openConversationPage(newConversation);
+        } else {
+          this.selectedConversation = newConversation;
+        }
+
       }
     });
 

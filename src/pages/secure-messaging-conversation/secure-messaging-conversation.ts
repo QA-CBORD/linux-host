@@ -22,8 +22,6 @@ export class SecureMessagingConversationPage {
   bShowLoadingContent: boolean = false;
   bShowUnableToLoadMessages: boolean = false;
 
-  bIsSending: boolean = false;
-
   conversation: SecureMessageConversation;
 
   newMessageText: string;
@@ -54,7 +52,6 @@ export class SecureMessagingConversationPage {
 
   onSendMessageClick() {
     if (this.newMessageText && this.newMessageText.length > 0) {
-      this.bIsSending = true;
       this.scrollToBottom();
       this.sendTestMessage();
     }

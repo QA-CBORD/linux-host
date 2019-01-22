@@ -52,25 +52,25 @@
     <ion-grid *ngIf="bIsLargeScreen">
       <ion-row>
         <ion-col col-sm-12 col-md-5 col-lg-4 col-xl-4>
-          
-            <ion-item no-lines class="item-conversation" (click)=onAddConversationFABClick()>
+
+          <ion-item no-lines class="item-conversation" (click)=onAddConversationFABClick()>
+            <ion-avatar text-center item-start class="item-conversation-avatar">
+              <h1 style="color:white; position: relative; top:33%;">+</h1>
+            </ion-avatar>
+            Start a conversation
+          </ion-item>
+          <ion-list>
+            <ion-item no-lines class="item-conversation" *ngFor="let convo of conversations" (click)=onConversationClick(convo)>
               <ion-avatar text-center item-start class="item-conversation-avatar">
-                <h1 style="color:white; position: relative; top:33%;">+</h1>
+                <h1 style="color:white; position: relative; top:33%;">{{convo.groupName[0]}}</h1>
               </ion-avatar>
-              Start a conversation
+              {{convo.groupName}}
+              <p>{{ convo.groupDescription }}</p>
             </ion-item>
-            <ion-list>
-              <ion-item no-lines class="item-conversation" *ngFor="let convo of conversations" (click)=onConversationClick(convo)>
-                <ion-avatar text-center item-start class="item-conversation-avatar">
-                  <h1 style="color:white; position: relative; top:33%;">{{convo.groupName[0]}}</h1>
-                </ion-avatar>
-                {{convo.groupName}}
-                <p>{{ convo.groupDescription }}</p>
-              </ion-item>
-            </ion-list>
+          </ion-list>
         </ion-col>
         <ion-col col-sm-0 col-md-7 col-lg-8 col-xl-8>
-          <ion-scroll #messageScroll scrollY="true" style="height:78vh;">
+          <ion-scroll #chatScroll scrollY="true" style="height:75vh;">
             <div *ngFor="let message of selectedConversation.messages">
 
               <div text-center>
