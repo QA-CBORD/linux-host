@@ -10,12 +10,22 @@ import { Observable } from "rxjs/Observable";
 @Injectable()
 export class SecureMessagingService {
 
+    //https://dwptofebk7.execute-api.us-east-1.amazonaws.com/dev/testing/
+
+    // response 3 base64 delimited by ".".  
+
     private serviceUrlSecureMessage: string = '/secureMessages';
     private serviceUrlSecureMessageGroup: string = '/messageGroups';
+
+    private static jwt: string;
 
     constructor(
         private apiService: APIService
     ) {
+    }
+
+    public setJWT(newJWT: string){
+        SecureMessagingService.jwt = newJWT;
     }
 
 
@@ -29,7 +39,7 @@ export class SecureMessagingService {
                 HttpResponseType.json,
                 undefined,
                 undefined,
-                new HttpHeaders())
+                this.getHttpHeaders())
                 .subscribe(
                     data => {
                         observer.next(data);
@@ -58,7 +68,7 @@ export class SecureMessagingService {
                 HttpResponseType.json,
                 undefined,
                 undefined,
-                new HttpHeaders())
+                this.getHttpHeaders())
                 .subscribe(
                     data => {
                         observer.next(data);
@@ -82,7 +92,7 @@ export class SecureMessagingService {
             HttpResponseType.json,
             messageInfo,
             undefined,
-            new HttpHeaders());
+            this.getHttpHeaders());
 
     }
 
@@ -94,7 +104,7 @@ export class SecureMessagingService {
             HttpResponseType.json,
             messageInfo,
             undefined,
-            new HttpHeaders());
+            this.getHttpHeaders());
 
     }
 
@@ -106,8 +116,12 @@ export class SecureMessagingService {
             HttpResponseType.json,
             undefined,
             undefined,
-            new HttpHeaders());
+            this.getHttpHeaders());
 
+    }
+
+    private getHttpHeaders(): HttpHeaders {
+        return new HttpHeaders().set("Authorization", SecureMessagingService.jwt);
     }
 
 }

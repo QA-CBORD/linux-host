@@ -135,7 +135,7 @@ export class HomePage {
     /// this should never happen
     /// should be handled better
     if (this.destinationPage == null) {
-      this.destinationPage = 'openmydoor';
+      this.destinationPage = 'securemessaging';
     }
 
     switch (this.destinationPage) {
@@ -145,8 +145,13 @@ export class HomePage {
       case 'openmydoor':
         this.navCtrl.push("MobileAccessPage", this.geoData);
         break;
+      case 'accounts':
+        this.navCtrl.push("AccountsPage");
+        break;
       case 'securemessaging':
-        this.navCtrl.push("SecureMessagingPage");
+        this.navCtrl.push("secure-messaging")
+        break;
+
     }
   }
 

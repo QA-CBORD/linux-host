@@ -63,16 +63,16 @@ export class SecureMessagingConversationPage {
       institution_id: this.conversation.institutionId,
       sender: {
         type: "patron",
-        id_field: "IDNumber",
-        id_value: "Patron01",
-        name: "test user"
+        id_field: SecureMessagingProvider.GetSMAuthInfo().id_field,
+        id_value: SecureMessagingProvider.GetSMAuthInfo().id_value,
+        name: ""
       },
       recipient: {
         type: "group",
         id_value: this.conversation.groupIdValue,
         name: this.conversation.groupName
       },
-      description: "GET Patron UI Test",
+      description: "",
       body: this.newMessageText,
       importance: null,
     };
@@ -103,15 +103,15 @@ export class SecureMessagingConversationPage {
     let message: SecureMessageInfo = {
       body: this.newMessageText,
       created_date: new Date().toLocaleString(),
-      description: "GET Patron UI Test",
+      description: "",
       id: null,
       importance: null,
       institution_id: "29db894b-aecd-4cef-b515-15b0405614d7",
       read_date: null,
-      recipient: { created_date: "2018-11-29T14:32:29.475889", id: "4af3cfd3-8efb-4383-ab20-509df4bb4023", type: "group", id_field: null, id_value: "a8676ef6-ab15-4d12-9346-32bf57e0ccd5", name: "TEST_Msg_Group_A", aux_user_id: null, version: 1 },
+      recipient: { created_date: "2018-11-29T14:32:29.475889", id: "4af3cfd3-8efb-4383-ab20-509df4bb4023", type: "group", id_field: null, id_value: this.conversation.groupIdValue, name: this.conversation.groupName, aux_user_id: null, version: 1 },
       replied_message_id: "None",
       requires_read_receipt: null,
-      sender: { created_date: "2018-11-29T14:32:29.475889", id: "045b5348-64c8-40a0-a7f4-c08501217418", type: "patron", id_field: "IDNumber", id_value: "Patron01", name: "test user", aux_user_id: null, version: 1 },
+      sender: { created_date: "2018-11-29T14:32:29.475889", id: "045b5348-64c8-40a0-a7f4-c08501217418", type: "patron", id_field: SecureMessagingProvider.GetSMAuthInfo().id_field, id_value: SecureMessagingProvider.GetSMAuthInfo().id_value, name: "", aux_user_id: null, version: 1 },
       sent_date: new Date().toLocaleString(),
       state: null,
       ttl: null,
