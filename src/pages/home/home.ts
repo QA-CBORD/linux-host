@@ -145,8 +145,8 @@ export class HomePage {
       case 'openmydoor':
         this.navCtrl.push("MobileAccessPage", this.geoData);
         break;
-      case 'accounts':
-        this.navCtrl.push("AccountsPage");
+      case 'securemessaging':
+        this.navCtrl.push("SecureMessagingPage");
     }
   }
 

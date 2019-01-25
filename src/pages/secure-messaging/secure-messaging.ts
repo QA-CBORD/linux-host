@@ -6,7 +6,7 @@ import { Subscription } from "rxjs/Subscription";
 
 import * as Globals from '../../app/app.global'
 
-import { SecureMessageInfo, SecureMessageGroupInfo, SecureMessageConversation } from '../../models/secure-messaging/secure-message-info';
+import { SecureMessageInfo, SecureMessageGroupInfo, SecureMessageConversation, SecureMessageSendBody } from '../../models/secure-messaging/secure-message-info';
 import { SecureMessagingProvider } from '../../providers/secure-messaging-provider/secure-messaging-provider';
 
 @IonicPage({
@@ -63,11 +63,6 @@ export class SecureMessagingPage {
   }
 
   ngOnInit() {
-    // this.resizeSubscription = fromEvent(window, 'resize')
-    //   .subscribe(event => {
-    //     this.bIsLargeScreen = window.innerWidth >= 768;
-        
-    //   });
   }
 
   ngOnDestroy() {
@@ -105,17 +100,6 @@ export class SecureMessagingPage {
       }
     }
   }
-
-
-  /// USE THIS AS MY PATRON
-  // id: "045b5348-64c8-40a0-a7f4-c08501217418",
-  // type: "patron",
-  // id_field: "IDNumber",
-  // id_value: "Patron01",
-  // aux_user_id: null,
-  // name: "test user",
-  // created_date: null,
-  // version: 1
 
 
   private loadInitialData() {
@@ -216,9 +200,7 @@ export class SecureMessagingPage {
 
 
 
-    if (this.conversations.length > 0) {
-      console.log(`hIDR large screen: ${this.bIsLargeScreen}`);
-      
+    if (this.conversations.length > 0) {      
       if (this.bIsLargeScreen) {        
         this.scrollToBottom();
       }
@@ -231,7 +213,6 @@ export class SecureMessagingPage {
   }
 
   public scrollToBottom() {
-    console.log("Scroll to bottom");
     setTimeout(() => {
       let scroll = this.chatScroll._scrollContent.nativeElement;
       scroll.scrollTop = scroll.scrollHeight - scroll.clientHeight;
@@ -239,8 +220,6 @@ export class SecureMessagingPage {
   }
 
   onConversationClick(conversation: SecureMessageConversation) {
-    console.log("onConversationClick")
-
     if (this.bIsLargeScreen) {
       this.selectedConversation = conversation;
       this.scrollToBottom();
@@ -251,13 +230,76 @@ export class SecureMessagingPage {
 
   }
 
+  onSendMessageClick(){
+    let apiMessageBody : SecureMessageSendBody = {
+      institution_id: this.selectedConversation.institutionId,
+      sender: {
+        type: "patron",
+        id_field: "IDNumber",
+        id_value: "Patron01",
+        name: "test user"
+      },
+      recipient: {
+        type: "group",
+        id_value: this.selectedConversation.groupIdValue,
+        name: this.selectedConversation.groupName
+      },
+      description: "GET Patron UI Test",
+      body: this.newMessageText,
+      importance: null,
+    };
+
+    this.secureMessageProvider.sendSecureMessage(apiMessageBody)
+      .subscribe(
+        data => {
+          console.log("Send Message data:");
+          console.log(data);
+          this.addLocalDataToConversation();
+        },
+        error => {
+          console.log("Send Message error:");
+          console.log(error);
+          this.toast.create({
+            message: "Error sending the message",
+            duration: 3000,
+            position: 'bottom'
+          }).present();
+        },
+        () => {
+
+        }
+      );
+  }
+
+  addLocalDataToConversation() {
+    let message: SecureMessageInfo = {
+      body: this.newMessageText,
+      created_date: new Date().toLocaleString(),
+      description: "GET Patron UI Test",
+      id: null,
+      importance: null,
+      institution_id: "29db894b-aecd-4cef-b515-15b0405614d7",
+      read_date: null,
+      recipient: { created_date: "2018-11-29T14:32:29.475889", id: "4af3cfd3-8efb-4383-ab20-509df4bb4023", type: "group", id_field: null, id_value: "a8676ef6-ab15-4d12-9346-32bf57e0ccd5", name: "TEST_Msg_Group_A", aux_user_id: null, version: 1 },
+      replied_message_id: "None",
+      requires_read_receipt: null,
+      sender: { created_date: "2018-11-29T14:32:29.475889", id: "045b5348-64c8-40a0-a7f4-c08501217418", type: "patron", id_field: "IDNumber", id_value: "Patron01", name: "test user", aux_user_id: null, version: 1 },
+      sent_date: new Date().toLocaleString(),
+      state: null,
+      ttl: null,
+      version: 1
+    }
+
+    this.newMessageText = null;
+    this.selectedConversation.messages.push(message);
+    this.scrollToBottom();
+  }
+
   onAddConversationFABClick() {
-    console.log("onAddConversationFABClick")
     this.openChooseContactModal();
   }
 
   onStartConversationButtonClick() {
-    console.log("onConversationButtonClick");
     this.openChooseContactModal();
   }
 
@@ -277,7 +319,6 @@ export class SecureMessagingPage {
     chooseContactModal.present();
 
     chooseContactModal.onWillDismiss((data) => {
-      console.log("Choose Contact Modal WILL DISMISS");
       if (data.selectedGroup) {
 
         let newConversation: SecureMessageConversation;
