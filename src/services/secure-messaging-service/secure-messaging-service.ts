@@ -17,15 +17,21 @@ export class SecureMessagingService {
     private serviceUrlSecureMessage: string = '/secureMessages';
     private serviceUrlSecureMessageGroup: string = '/messageGroups';
 
+    private static jwt: string;
+
     constructor(
         private apiService: APIService
     ) {
     }
 
+    public setJWT(newJWT: string){
+        SecureMessagingService.jwt = newJWT;
+    }
+
 
     public getSecureMessages(ma_type: string, ma_id_field: string, ma_id_value: string): Observable<SecureMessageInfo[]> {
 
-        return Observable.create((observer: any) => {            
+        return Observable.create((observer: any) => {
 
             this.apiService.authenticatedHTTPCall(
                 RestCallType.get,
@@ -33,7 +39,7 @@ export class SecureMessagingService {
                 HttpResponseType.json,
                 undefined,
                 undefined,
-                new HttpHeaders())
+                this.getHttpHeaders())
                 .subscribe(
                     data => {
                         observer.next(data);
@@ -62,7 +68,7 @@ export class SecureMessagingService {
                 HttpResponseType.json,
                 undefined,
                 undefined,
-                new HttpHeaders())
+                this.getHttpHeaders())
                 .subscribe(
                     data => {
                         observer.next(data);
@@ -86,7 +92,7 @@ export class SecureMessagingService {
             HttpResponseType.json,
             messageInfo,
             undefined,
-            new HttpHeaders());
+            this.getHttpHeaders());
 
     }
 
@@ -98,7 +104,7 @@ export class SecureMessagingService {
             HttpResponseType.json,
             messageInfo,
             undefined,
-            new HttpHeaders());
+            this.getHttpHeaders());
 
     }
 
@@ -110,25 +116,12 @@ export class SecureMessagingService {
             HttpResponseType.json,
             undefined,
             undefined,
-            new HttpHeaders());
+            this.getHttpHeaders());
 
     }
 
-    public testJWT(): Observable<any>{
-        let httpHead: HttpHeaders = new HttpHeaders()
-        .set("Authorization", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZF9maWVsZCI6ImlkX251bWJlciIsInJvbGUiOiJwYXRyb24iLCJpc3MiOiJHRVQiLCJqd3RfdmVyc2lvbiI6IjEuMCIsImlkX3ZhbHVlIjoiNjUxNjg3MzU0IiwiaW5zdGl0dXRpb25faWQiOiIyOWRiODk0Yi1hZWNkLTRjZWYtYjUxNS0xNWIwNDA1NjE0ZDcifQ.UFqiIuMYD2DddDXKIHfAr08TmQfvi3D5mUMU-w2Lo4E");
-
-        console.log(httpHead);
-        
-
-
-        return this.apiService.authenticatedHTTPCall(
-            RestCallType.post,
-            "/testing/",
-            HttpResponseType.text,
-            undefined,
-            undefined,
-            httpHead);        
+    private getHttpHeaders(): HttpHeaders {
+        return new HttpHeaders().set("Authorization", SecureMessagingService.jwt);
     }
 
 }

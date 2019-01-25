@@ -123,7 +123,7 @@ export class AuthService extends GETService {
    * Retrieve a JWT from GET using a currently active session to use as an Access token for calling AWS services
    * 
    */
-  retrieveExternalAuthenticationToken(): Observable<string> {
+  getExternalAuthenticationToken(): Observable<string> {
 
     return Observable.create((observer: any) => {
       let postParams = {

@@ -53,20 +53,7 @@ export class SecureMessagingPage {
   }
 
   ionViewDidLoad() {
-    this.secureMessageProvider.testJWT()
-      .subscribe(
-        data => {
-          console.log(data);
-
-        },
-        error => {
-          console.log(error);
-
-        },
-        () => {
-
-        });
-    // this.loadInitialData();
+    this.loadInitialData();
   }
 
   ionViewWillEnter() {
@@ -97,7 +84,7 @@ export class SecureMessagingPage {
   private loadInitialData() {
     this.pageState = this.LOADING;
 
-    this.secureMessageProvider.getInitialData("patron", "IDNumber", "Patron01")
+    this.secureMessageProvider.getInitialData()
       .subscribe(
         ([smGroupArray, smMessageArray]) => {
           console.log("GetInitialData Response:");
