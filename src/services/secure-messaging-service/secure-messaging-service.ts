@@ -10,9 +10,6 @@ import { Observable } from "rxjs/Observable";
 @Injectable()
 export class SecureMessagingService {
 
-    //https://dwptofebk7.execute-api.us-east-1.amazonaws.com/dev/testing/
-
-    // response 3 base64 delimited by ".".  
 
     private serviceUrlSecureMessage: string = '/secureMessages';
     private serviceUrlSecureMessageGroup: string = '/messageGroups';
@@ -57,14 +54,13 @@ export class SecureMessagingService {
 
     }
 
-    /// https://dwptofebk7.execute-api.us-east-1.amazonaws.com/dev/messageGroups?inst_id=29db894b-aecd-4cef-b515-15b0405614d7&with_members=1
 
     public getSecureMessagesGroups(inst_id: string): Observable<SecureMessageGroupInfo[]> {
 
         return Observable.create((observer: any) => {
             this.apiService.authenticatedHTTPCall(
                 RestCallType.get,
-                this.serviceUrlSecureMessageGroup + "?inst_id=29db894b-aecd-4cef-b515-15b0405614d7&with_members=0",
+                this.serviceUrlSecureMessageGroup + "?inst_id=" + inst_id + "&with_members=0",
                 HttpResponseType.json,
                 undefined,
                 undefined,
