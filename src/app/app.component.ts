@@ -28,7 +28,7 @@ export class MyApp {
 	private loader: Loading;
 	bShowSplitPane: boolean = true;
 
-	rootPage: string = 'home';
+	rootPage: string = 'secure-messaging';
 
 	// Options to show in the SideMenuComponent
 	public options: Array<MenuOptionModel>;

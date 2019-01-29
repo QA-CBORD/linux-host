@@ -14,7 +14,7 @@ import { SecureMessagingAuthInfo } from "../../models/authentication/secure-mess
 @Injectable()
 export class SecureMessagingProvider {
 
-    private static smAuthInfo: SecureMessagingAuthInfo;
+    private static smAuthInfo: SecureMessagingAuthInfo = {id_field: "IDNumber", id_value: "Patron01", institution_id: "045b5348-64c8-40a0-a7f4-c08501217418", role:"", iss:"", jwt_version:""};
     private ma_type: string = "patron";
 
     constructor(
@@ -28,15 +28,15 @@ export class SecureMessagingProvider {
     }
 
     public getInitialData(): Observable<[SecureMessageGroupInfo[], SecureMessageInfo[]]> {
-        return this.authService.getExternalAuthenticationToken()
-            .flatMap((response: string) => {
-                this.secureMessageService.setJWT(response);
-                SecureMessagingProvider.smAuthInfo = JSON.parse(atob(response.split(".")[1]));
+        // return this.authService.getExternalAuthenticationToken()
+        //     .flatMap((response: string) => {
+        //         this.secureMessageService.setJWT(response);
+        //         SecureMessagingProvider.smAuthInfo = JSON.parse(atob(response.split(".")[1]));
                 return Observable.zip(
                     this.getSecureMessagesGroups(),
                     this.getSecureMessages()
                 );
-            });
+            // });
     }
 
 

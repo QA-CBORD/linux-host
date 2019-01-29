@@ -205,6 +205,9 @@ export class SecureMessagingPage {
 
   public scrollToBottom() {
     console.log("Scroll to bottom");
+    // if(this.chatScroll == null || this.chatScroll._scrollContent == null || this.chatScroll._scrollContent.nativeElement == null){
+    //   return;
+    // }
     setTimeout(() => {
       let scroll = this.chatScroll._scrollContent.nativeElement;
       scroll.scrollTop = scroll.scrollHeight - scroll.clientHeight;
@@ -361,6 +364,14 @@ export class SecureMessagingPage {
     this.navCtrl.push('SecureMessagingConversationPage', { data: conversation });
   }
 
+  getCurrentConversationName(): string {
+    if(this.selectedConversation != null){
+      return this.selectedConversation.groupName;
+    } else {
+      return "";
+    }
+    
+  }
 
   onConnectionErrorClick() {
     console.log("onConnectionErrorClick");

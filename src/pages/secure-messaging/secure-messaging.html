@@ -1,28 +1,101 @@
-<ion-header>
-  <ion-navbar color='primary'>
-    <ion-title>{{pageTitle}}</ion-title>
-  </ion-navbar>
+<ion-content no-bounce class="content-background" style="margin: -5px">
 
-</ion-header>
-<ion-content class="content-background" padding>
+  <div *ngIf="pageState == LOADING">
+    <div *ngIf="!bIsLargeScreen" style="height: 98vh">
+      <ion-header no-border>
+        <ion-navbar color='secure-messaging-background'>
+          <ion-title text-left>Conversations</ion-title>
+        </ion-navbar>
+      </ion-header>
+      <div style="margin-top: 8vh">
+        <ion-list *ngFor="let i of [0,1,2]" style="margin-top:10px">
+          <ion-item no-lines class="item-conversation-loading">
+            <ion-avatar text-center item-start class="item-conversation-loading-avatar">
+            </ion-avatar>
+            <div class="item-conversation-loading-content top">
+            </div>
+            <div class="item-conversation-loading-content bottom">
+            </div>
+          </ion-item>
+        </ion-list>
+      </div>
+    </div>
 
-  <div *ngIf="pageState == LOADING" text-center>
-    <ion-list *ngFor="let i of [0,1,2]">
-      <ion-item no-lines class="item-conversation-loading">
-        <ion-avatar text-center item-start class="item-conversation-loading-avatar">
-        </ion-avatar>
-        <div class="item-conversation-loading-content top">
-        </div>
-        <div class="item-conversation-loading-content bottom">
-        </div>
-      </ion-item>
-    </ion-list>
+    <div *ngIf="bIsLargeScreen">
+      <ion-grid style="padding:0px">
+        <ion-row style="height: 98vh">
+          <ion-col col-sm-12 col-md-5 col-lg-4 col-xl-4>
+            <ion-header no-border>
+              <ion-navbar color='secure-messaging-background'>
+                <ion-title text-left>Conversations</ion-title>
+              </ion-navbar>
+            </ion-header>
+            <div style="margin-top: 8vh">
+              <ion-list *ngFor="let i of [0,1,2]">
+                <ion-item no-lines class="item-conversation-loading">
+                  <ion-avatar text-center item-start class="item-conversation-loading-avatar">
+                  </ion-avatar>
+                  <div class="item-conversation-loading-content top">
+                  </div>
+                  <div class="item-conversation-loading-content bottom">
+                  </div>
+                </ion-item>
+              </ion-list>
+            </div>
+          </ion-col>
+          <ion-col col-sm-0 col-md-7 col-lg-8 col-xl-8 style="background-color: #ddd;">
+            <ion-header>
+              <ion-navbar color='secure-messaging-background-dark'>
+                <ion-title text-left>Housing</ion-title>
+              </ion-navbar>
+            </ion-header>
+            <ion-content style="background-color: #ddd;">
+
+            </ion-content>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
   </div>
 
   <div *ngIf="pageState == START_CONVO" text-center class="content-full-screen-centered">
     <!-- XXX WANT TO CENTER ON PAGE -->
-    <h6>No conversations found</h6>
-    <button ion-button round (click)="onStartConversationButtonClick()">Start Conversation</button>
+    <div *ngIf="!bIsLargeScreen" style="margin-top: 16vh;">
+      <h6>No conversations found</h6>
+      <button ion-button round (click)="onStartConversationButtonClick()">Start Conversation</button>
+    </div>
+    <div *ngIf="bIsLargeScreen">
+      <ion-grid style="padding:0px">
+        <ion-row style="height: 98vh">
+          <ion-col col-sm-12 col-md-5 col-lg-4 col-xl-4>
+            <ion-header no-border>
+              <ion-navbar color='secure-messaging-background'>
+                <ion-title text-left>Conversations</ion-title>
+              </ion-navbar>
+            </ion-header>
+            <div style="margin-top: 8vh">
+              <ion-item no-lines class="item-conversation" (click)=onAddConversationFABClick()>
+                <ion-avatar text-center item-start class="item-conversation-avatar">
+                  <h1 style="color:white; position: relative; top:25%; font-size: 22pt">+</h1>
+                </ion-avatar>
+                Start a conversation
+              </ion-item>
+            </div>
+          </ion-col>
+          <ion-col col-sm-0 col-md-7 col-lg-8 col-xl-8 style="background-color: #ddd;">
+            <ion-header>
+              <ion-navbar color='secure-messaging-background-dark'>
+                <ion-title text-left></ion-title>
+              </ion-navbar>
+            </ion-header>
+            <div style="background-color: #ddd; margin-top: 16vh;">
+              <h6>No conversations found</h6>
+              <button ion-button round (click)="onStartConversationButtonClick()">Start Conversation</button>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
   </div>
 
   <div *ngIf="pageState == ERROR_CONNECTING" text-center (click)=onConnectionErrorClick() class="content-full-screen-centered">
@@ -37,9 +110,112 @@
     <ion-icon style="zoom:1.75;" name="sync"></ion-icon>
   </div>
 
-  <div *ngIf="pageState == SHOW_CONVOS">
+  <div *ngIf="pageState == SHOW_CONVOS" style="height:100vh;">
 
-    <ion-list *ngIf="!bIsLargeScreen">
+    <div *ngIf="!bIsLargeScreen" style="height: 100vh;">
+      <ion-header no-border>
+        <ion-navbar color='secure-messaging-background'>
+          <ion-title text-left>Conversations</ion-title>
+        </ion-navbar>
+      </ion-header>
+      <div style="margin-top: 8vh">
+        <ion-list *ngFor="let convo of conversations" (click)=onConversationClick(convo) style="margin-top:10px">
+          <ion-item no-lines class="item-conversation">
+            <ion-avatar text-center item-start class="item-conversation-avatar">
+              <h1 style="color:white; position: relative; top:33%;">{{convo.groupName[0]}}</h1>
+            </ion-avatar>
+            {{convo.groupName}}
+            <p>{{ convo.groupDescription }}</p>
+          </ion-item>
+        </ion-list>
+      </div>
+    </div>
+
+    <div *ngIf="bIsLargeScreen">
+      <ion-grid style="padding:0px;">
+        <ion-row style="height: 100vh;">
+          <ion-col col-sm-12 col-md-5 col-lg-4 col-xl-4>
+            <ion-header no-border>
+              <ion-navbar color='secure-messaging-background'>
+                <ion-title text-left>Conversations</ion-title>
+              </ion-navbar>
+            </ion-header>
+            <div style="margin-top: 8vh">
+              <ion-item no-lines class="item-conversation" (click)=onAddConversationFABClick()>
+                <ion-avatar text-center item-start class="item-conversation-avatar">
+                  <h1 style="color:white; position: relative; top:25%; font-size: 22pt">+</h1>
+                </ion-avatar>
+                Start a conversation
+              </ion-item>
+              <ion-list>
+                <ion-item no-lines class="item-conversation" *ngFor="let convo of conversations" (click)=onConversationClick(convo)>
+                  <ion-avatar text-center item-start class="item-conversation-avatar">
+                    <h1 style="color:white; position: relative; top:30%;">{{convo.groupName[0]}}</h1>
+                  </ion-avatar>
+                  {{convo.groupName}}
+                  <p>{{ convo.groupDescription }}</p>
+                </ion-item>
+              </ion-list>
+            </div>
+          </ion-col>
+          <ion-col col-sm-0 col-md-7 col-lg-8 col-xl-8 style="background-color: #ddd;">
+            <ion-header>
+              <ion-navbar color='secure-messaging-background-dark'>
+                <ion-title text-left>{{getCurrentConversationName()}}</ion-title>
+              </ion-navbar>
+            </ion-header>
+            <div style="background-color: #ddd;">
+              <ion-scroll #chatScroll scrollY="true" style="margin-top: 7vh; height:82vh;">
+                <div *ngFor="let message of selectedConversation.messages">
+
+                  <div text-center>
+                    <p style="margin: 0em; color:dimgray;">{{message.sent_date}}</p>
+                  </div>
+
+                  <ion-grid *ngIf="message.sender.type == 'group'" margin style="margin-top: 0em; padding:0em;">
+                    <ion-row align-items-end style="margin-right: 15%;">
+                      <ion-col no-margin no-padding col-auto>
+                        <ion-avatar text-center item-start style="background-color: #554baa; border-radius: 100px; width:3.25em; height:3.25em; margin-right: 0.75em;">
+                          <h6 style="color:white; position: relative; top:29.5%;">{{selectedConversation.groupName[0]}}</h6>
+                        </ion-avatar>
+                      </ion-col>
+                      <ion-col style="padding:0em; background-color: #ffffff; border-radius: 10px; margin-right: 3em;">
+                        <div>
+                          <p style="padding:1em; margin: 0em;">{{message.body}}</p>
+                        </div>
+                      </ion-col>
+                    </ion-row>
+                  </ion-grid>
+
+                  <div *ngIf="message.sender.type == 'patron'" margin style="padding:0em; background-color: #696969; border-radius: 10px; margin-left: 33%;">
+                    <div>
+                      <p style="color:white; padding:1em; margin: 0em;">{{message.body}}</p>
+                    </div>
+                  </div>
+
+                </div>
+              </ion-scroll>
+              <ion-grid>
+                <ion-row align-items-center>
+                  <ion-col col-sm-0 col-md-0 col-lg-2 col-xl-2></ion-col>
+                  <ion-col col-sm-8>
+                    <ion-input placeholder="Type something..." [(ngModel)]="newMessageText" style="background-color: #ffffff;border-radius: 10px; "></ion-input>
+                  </ion-col>
+                  <ion-col col-auto>
+                    <button ion-button icon-only clear (click)=onSendMessageClick()>
+                      <ion-icon style="zoom:1.5;" name="send"></ion-icon>
+                    </button>
+                  </ion-col>
+                  <ion-col col-sm-0 col-md-0 col-lg-2 col-xl-2></ion-col>
+                </ion-row>
+              </ion-grid>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
+
+    <!-- <ion-list *ngIf="!bIsLargeScreen">
       <ion-item no-lines class="item-conversation" *ngFor="let convo of conversations" (click)=onConversationClick(convo)>
         <ion-avatar text-center item-start class="item-conversation-avatar">
           <h1 style="color:white; position: relative; top:33%;">{{convo.groupName[0]}}</h1>
@@ -47,12 +223,11 @@
         {{convo.groupName}}
         <p>{{ convo.groupDescription }}</p>
       </ion-item>
-    </ion-list>
-
+    </ion-list> -->
+    <!-- 
     <ion-grid *ngIf="bIsLargeScreen">
       <ion-row>
         <ion-col col-sm-12 col-md-5 col-lg-4 col-xl-4>
-
           <ion-item no-lines class="item-conversation" (click)=onAddConversationFABClick()>
             <ion-avatar text-center item-start class="item-conversation-avatar">
               <h1 style="color:white; position: relative; top:33%;">+</h1>
@@ -116,7 +291,7 @@
           </ion-grid>
         </ion-col>
       </ion-row>
-    </ion-grid>
+    </ion-grid> -->
   </div>
   <ion-fab *ngIf="pageState == SHOW_CONVOS && !bIsLargeScreen" right bottom margin>
     <button ion-fab color="primary" (click)=onAddConversationFABClick()>
