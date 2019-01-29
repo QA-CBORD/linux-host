@@ -18,10 +18,6 @@ import { SecureMessagingProvider } from '../../providers/secure-messaging-provid
 })
 export class SecureMessagingPage {
 
-  public static readonly TEST_INST_ID = "29db894b-aecd-4cef-b515-15b0405614d7";
-  public static readonly TEST_PATRON_ID_VALUE = "Patron01";
-
-
   pageTitle: string = "Conversations";
 
   readonly LOADING: number = 0;
@@ -167,11 +163,11 @@ export class SecureMessagingPage {
         newGroupDescription = message.description;
 
         let conversation: SecureMessageConversation = {
-          institutionId: SecureMessagingPage.TEST_INST_ID,
+          institutionId: SecureMessagingProvider.GetSMAuthInfo().institution_id,
           groupName: newGroupName,
           groupIdValue: newGroupId,
           groupDescription: newGroupDescription,
-          myIdValue: SecureMessagingPage.TEST_PATRON_ID_VALUE,
+          myIdValue: SecureMessagingProvider.GetSMAuthInfo().id_value,
           messages: new Array()
         };
 
@@ -192,8 +188,8 @@ export class SecureMessagingPage {
 
     if (this.conversations.length > 0) {
       console.log(`hIDR large screen: ${this.bIsLargeScreen}`);
-      
-      if (this.bIsLargeScreen) {        
+
+      if (this.bIsLargeScreen) {
         this.scrollToBottom();
       }
       this.pageState = this.SHOW_CONVOS;
@@ -210,6 +206,9 @@ export class SecureMessagingPage {
     //   return;
     // }
     setTimeout(() => {
+      if (this.chatScroll == null) {
+        return;
+      }
       let scroll = this.chatScroll._scrollContent.nativeElement;
       scroll.scrollTop = scroll.scrollHeight - scroll.clientHeight;
     }, 100);
@@ -238,7 +237,7 @@ export class SecureMessagingPage {
   sendTestMessage() {
 
     let NewMessage = {
-      institution_id: this.selectedConversation.institutionId,
+      institution_id: SecureMessagingProvider.GetSMAuthInfo().institution_id,
       sender: {
         type: "patron",
         id_field: SecureMessagingProvider.GetSMAuthInfo().id_field,
@@ -328,6 +327,7 @@ export class SecureMessagingPage {
 
     chooseContactModal.onWillDismiss((data) => {
       console.log("Choose Contact Modal WILL DISMISS");
+      console.log(data);
       if (data.selectedGroup) {
 
         let newConversation: SecureMessageConversation;
@@ -348,12 +348,15 @@ export class SecureMessagingPage {
             myIdValue: SecureMessagingPage.TEST_PATRON_ID_VALUE,
             messages: new Array()
           };
+          this.conversations.push(newConversation);
         }
 
         if (!this.bIsLargeScreen) {
           this.openConversationPage(newConversation);
         } else {
+
           this.selectedConversation = newConversation;
+          this.pageState = this.SHOW_CONVOS;
         }
 
       }
@@ -362,16 +365,42 @@ export class SecureMessagingPage {
   }
 
   openConversationPage(conversation: SecureMessageConversation) {
-    this.navCtrl.push('SecureMessagingConversationPage', { data: conversation });
+    const modalOptions: ModalOptions = {
+      enableBackdropDismiss: false
+    };
+    const conversationModal: Modal = this.modalCtrl.create('SecureMessagingConversationPage', { data: conversation }, modalOptions);
+
+    conversationModal.present();
+
+    conversationModal.onWillDismiss((data) => {
+
+      if (data.updatedConversation) {
+        let bIsExisitingConversation: boolean = false;
+        for (let convo of this.conversations) {
+          if (data.updatedConversation.groupIdValue == convo.groupIdValue) {
+            convo = data.updatedConversation
+            bIsExisitingConversation = true;
+            break;
+          }
+        }
+
+        if(!bIsExisitingConversation){
+          if(data.updatedConversation.messages.length > 0){
+            this.conversations.push(data.updatedConversation);
+          }
+        }
+
+      }
+    });
   }
 
   getCurrentConversationName(): string {
-    if(this.selectedConversation != null){
+    if (this.selectedConversation != null) {
       return this.selectedConversation.groupName;
     } else {
       return "";
     }
-    
+
   }
 
   onConnectionErrorClick() {
