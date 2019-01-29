@@ -341,11 +341,11 @@ export class SecureMessagingPage {
 
         if (!newConversation) {
           newConversation = {
-            institutionId: SecureMessagingPage.TEST_INST_ID,
+            institutionId: SecureMessagingProvider.GetSMAuthInfo().institution_id,
             groupName: data.selectedGroup.name,
             groupIdValue: data.selectedGroup.id,
             groupDescription: data.selectedGroup.description,
-            myIdValue: SecureMessagingPage.TEST_PATRON_ID_VALUE,
+            myIdValue: SecureMessagingProvider.GetSMAuthInfo().id_value,
             messages: new Array()
           };
           this.conversations.push(newConversation);
