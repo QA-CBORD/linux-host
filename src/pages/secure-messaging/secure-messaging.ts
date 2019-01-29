@@ -57,6 +57,7 @@ export class SecureMessagingPage {
     platform.ready().then(() => {
       /// hide the split pane here becuase we don't need the navigation menu
       events.publish(Globals.Events.SIDEPANE_ENABLE, false);
+      this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
       this.bIsLargeScreen = this.platform.width() > 768;
     });
 
