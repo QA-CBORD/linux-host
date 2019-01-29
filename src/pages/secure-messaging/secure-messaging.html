@@ -1,4 +1,4 @@
-<ion-content no-bounce class="content-background" style="margin: -5px">
+<ion-content no-bounce class="content-background">
 
   <div *ngIf="pageState == LOADING">
     <div *ngIf="!bIsLargeScreen" style="height: 98vh">
@@ -66,7 +66,7 @@
     </div>
     <div *ngIf="bIsLargeScreen">
       <ion-grid style="padding:0px">
-        <ion-row style="height: 98vh">
+        <ion-row style="height: 100vh">
           <ion-col col-sm-12 col-md-5 col-lg-4 col-xl-4>
             <ion-header no-border>
               <ion-navbar hideBackButton color='secure-messaging-background'>
@@ -143,14 +143,14 @@
             <div style="margin-top: 8vh">
               <ion-item no-lines class="item-conversation" (click)=onAddConversationFABClick()>
                 <ion-avatar text-center item-start class="item-conversation-avatar">
-                  <h1 style="color:white; position: relative; top:25%; font-size: 22pt">+</h1>
+                  <h1 style="color:white; position: relative; top:23%; font-size: 22pt">+</h1>
                 </ion-avatar>
                 Start a conversation
               </ion-item>
               <ion-list>
                 <ion-item no-lines class="item-conversation" *ngFor="let convo of conversations" (click)=onConversationClick(convo)>
                   <ion-avatar text-center item-start class="item-conversation-avatar">
-                    <h1 style="color:white; position: relative; top:30%;">{{convo.groupName[0]}}</h1>
+                    <h1 style="color:white; position: relative; top:28%;">{{convo.groupName[0]}}</h1>
                   </ion-avatar>
                   {{convo.groupName}}
                   <p>{{ convo.groupDescription }}</p>

@@ -1,5 +1,8 @@
 import { Component, ViewChild } from '@angular/core';
-import { IonicPage, NavController, NavParams, Platform, Events, Content, ToastController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Platform, Events, Content, ToastController, ViewController } from 'ionic-angular';
+
+import { fromEvent } from "rxjs/observable/fromEvent";
+import { Subscription } from 'rxjs/Subscription';
 
 import { SecureMessagingProvider } from './../../providers/secure-messaging-provider/secure-messaging-provider';
 
@@ -28,8 +31,11 @@ export class SecureMessagingConversationPage {
 
   apiMessageBody: SecureMessageSendBody;
 
+  resizeSubscription: Subscription;
+
   constructor(
     public navCtrl: NavController,
+    public viewCtrl: ViewController,
     public navParams: NavParams,
     private platform: Platform,
     private events: Events,
@@ -44,9 +50,20 @@ export class SecureMessagingConversationPage {
     });
   }
 
-  ionViewDidLoad() {
+  ngOnDestroy() {
+    if (this.resizeSubscription != null) {
+      this.resizeSubscription.unsubscribe();
+    }
+  }
 
-    this.scrollToBottom();
+  ionViewDidLoad() {
+    this.resizeSubscription = fromEvent(window, 'resize')
+      .subscribe(event => {
+        if(window.innerWidth >= 768){
+          this.navCtrl.pop();
+        }        
+      });
+      this.scrollToBottom();
   }
 
 
@@ -60,7 +77,7 @@ export class SecureMessagingConversationPage {
   sendTestMessage() {
 
     this.apiMessageBody = {
-      institution_id: this.conversation.institutionId,
+      institution_id: SecureMessagingProvider.GetSMAuthInfo().institution_id,
       sender: {
         type: "patron",
         id_field: SecureMessagingProvider.GetSMAuthInfo().id_field,
@@ -132,6 +149,13 @@ export class SecureMessagingConversationPage {
     setTimeout(() => {
       this.content.scrollToBottom(500);
     }, 500);
+  }
+
+  closeModal() {
+    const returnData = {
+      updatedConversation: this.conversation
+    };
+    this.viewCtrl.dismiss(returnData);
   }
 
 }
