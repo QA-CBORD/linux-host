@@ -1,0 +1,58 @@
+<ion-header>
+  <ion-navbar color="primary">
+    <ion-title>Choose Contact</ion-title>
+    <ion-buttons end>
+      <button ion-button icon-only (click)="closeModal()">
+        <ion-icon name="close"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content class="content-background" padding>
+
+  <div *ngIf="pageState == LOADING" text-center>
+    <ion-list *ngFor="let i of [0,1,2]">
+      <ion-item no-lines class="item-group-loading">
+        <ion-avatar text-center item-start class="item-group-loading-avatar">
+        </ion-avatar>
+        <div class="item-group-loading-content top">
+        </div>
+        <div class="item-group-loading-content bottom">
+        </div>
+      </ion-item>
+    </ion-list>
+  </div>
+
+  <div *ngIf="pageState == NO_GROUPS" text-center (click)=onNoGroupsFoundClick() class="content-full-screen-centered">
+    <!-- XXX WANT TO CENTER ON PAGE -->
+    <h6>No contacts found</h6>
+    <ion-icon style="zoom:1.75;" name="sync"></ion-icon>
+  </div>
+
+  <div *ngIf="pageState == ERROR_CONNECTING" text-center (click)=onConnectionErrorClick() class="content-full-screen-centered">
+    <!-- XXX WANT TO CENTER ON PAGE -->
+    <h6>Error connecting</h6>
+    <ion-icon style="zoom:1.75;" name="sync"></ion-icon>
+  </div>
+
+  <div *ngIf="pageState == OFFLINE" text-center (click)=onOfflineClick() class="content-full-screen-centered">
+    <!-- XXX WANT TO CENTER ON PAGE -->
+    <h6>Offline</h6>
+    <ion-icon style="zoom:1.75;" name="sync"></ion-icon>
+  </div>
+
+
+  <ion-list *ngIf="pageState == SHOW_GROUPS">
+    <ion-item no-lines class="item-group" *ngFor="let group of groups" (click)=onGroupClick(group)>
+      <ion-avatar text-center item-start class="item-group-avatar">
+        <h1 style="color:white; position: relative; top:33%;">{{group.name[0]}}</h1>
+      </ion-avatar>
+      {{ group.name }}
+      <p>{{group.description}}</p>
+    </ion-item>
+  </ion-list>
+
+</ion-content>

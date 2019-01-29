@@ -59,7 +59,12 @@ export class AuthService extends GETService {
           userName: 'get_mobile',
           password: 'NOTUSED'
         },
-        userCredentials: userCredentials
+        userCredentials: {
+          userName: userCredentials.userName,
+          password: userCredentials.password,
+          domain: userCredentials.domain,
+          institutionId: userCredentials.institutionId
+        }
       }
 
       console.log(JSON.stringify(postParams));
@@ -115,21 +120,16 @@ export class AuthService extends GETService {
   }
 
   /**
-   * Retrieve a JWT from GET to use as an Access token for calling AWS services
+   * Retrieve a JWT from GET using a currently active session to use as an Access token for calling AWS services
    * 
    */
-  retrieveExternalAuthenticationToken(): Observable<string> {
+  getExternalAuthenticationToken(): Observable<string> {
 
     return Observable.create((observer: any) => {
       let postParams = {
-        systemCredentials: {
-          domain: '',
-          userName: 'get_mobile',
-          password: 'NOTUSED'
-        },
-        tokenType:null,
-        externalSystem:null,
-        claimSet:null
+        tokenType: null,
+        externalSystem: null,
+        claimSet: null
       }
 
       console.log(JSON.stringify(postParams));

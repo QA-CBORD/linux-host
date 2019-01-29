@@ -1,76 +1,124 @@
 import { Injectable } from "@angular/core";
 
 import { APIService, HttpResponseType, RestCallType } from './../api-service/api-service';
-import { HttpHeaders } from "@angular/common/http";
+import { HttpHeaders, HttpParams } from "@angular/common/http";
+import { SecureMessageInfo, SecureMessageGroupInfo, SecureMessageSendBody } from "../../models/secure-messaging/secure-message-info";
+import { Observable } from "rxjs/Observable";
 
 
 
 @Injectable()
 export class SecureMessagingService {
 
-    private serviceUrl: string = '/secureMessages';
+
+    private serviceUrlSecureMessage: string = '/secureMessages';
+    private serviceUrlSecureMessageGroup: string = '/messageGroups';
+
+    private static jwt: string;
 
     constructor(
-        private apiService: APIService) {
+        private apiService: APIService
+    ) {
     }
 
-    private newGuid() {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-            const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
+    public setJWT(newJWT: string){
+        SecureMessagingService.jwt = newJWT;
+    }
+
+
+    public getSecureMessages(ma_type: string, ma_id_field: string, ma_id_value: string): Observable<SecureMessageInfo[]> {
+
+        return Observable.create((observer: any) => {
+
+            this.apiService.authenticatedHTTPCall(
+                RestCallType.get,
+                this.serviceUrlSecureMessage + "?ma_type=" + ma_type + "&ma_id_field=" + ma_id_field + "&ma_id_value=" + ma_id_value,
+                HttpResponseType.json,
+                undefined,
+                undefined,
+                this.getHttpHeaders())
+                .subscribe(
+                    data => {
+                        observer.next(data);
+                        observer.complete();
+                    },
+                    error => {
+                        observer.error(error);
+                    },
+                    () => {
+                        /// complete
+                    }
+                );
+
+        });
+
+    }
+
+
+    public getSecureMessagesGroups(inst_id: string): Observable<SecureMessageGroupInfo[]> {
+
+        return Observable.create((observer: any) => {
+            this.apiService.authenticatedHTTPCall(
+                RestCallType.get,
+                this.serviceUrlSecureMessageGroup + "?inst_id=" + inst_id + "&with_members=0",
+                HttpResponseType.json,
+                undefined,
+                undefined,
+                this.getHttpHeaders())
+                .subscribe(
+                    data => {
+                        observer.next(data);
+                        observer.complete();
+                    },
+                    error => {
+                        observer.error(error);
+                    },
+                    () => {
+
+                    }
+                );
         });
     }
 
-    public testGetSecureMessage() {
+    public postSecureMessage(messageInfo: SecureMessageSendBody): Observable<any> {
 
-        this.apiService.authenticatedHTTPCall(RestCallType.get, this.serviceUrl, HttpResponseType.json,
+        return this.apiService.authenticatedHTTPCall(
+            RestCallType.post,
+            this.serviceUrlSecureMessage,
+            HttpResponseType.json,
+            messageInfo,
             undefined,
-            undefined,
-            new HttpHeaders())
-            .subscribe(
-                response => {
-                    console.log("SecureMessaging - SUCCESS:");
-                    console.log(response);
-                },
-                error => {
-                    console.log("SecureMessaging - ERROR");
-                    console.log(error);
-                }
-            );
+            this.getHttpHeaders());
 
     }
 
-    public testPostSecureMessage() {
+    public replyToSecureMessage(messageInfo: SecureMessageInfo): Observable<any> {
 
-        let tempBody = {
-            'id': this.newGuid(),
-            'originalMessageId': null,
-            'recipient': "1234",
-            'sender': "9999",
-            'sentDate': "2018-10-09T11:47:00",
-            'ttl': null,
-            'messageDescription': "Test Message",
-            'messageBody': "A wonderful test message body",
-            'state': null,
-            'importance': null,
-            'readDate': null
-        };
-
-        this.apiService.authenticatedHTTPCall(RestCallType.post, this.serviceUrl, HttpResponseType.json,
-            tempBody,
+        return this.apiService.authenticatedHTTPCall(
+            RestCallType.post,
+            this.serviceUrlSecureMessage, /// does this need a msgId in the URL???
+            HttpResponseType.json,
+            messageInfo,
             undefined,
-            new HttpHeaders())
-            .subscribe(
-                response => {
-                    console.log("SecureMessaging - SUCCESS:");
-                    console.log(response);
-                },
-                error => {
-                    console.log("SecureMessaging - ERROR:");
-                    console.log(error);
-                }
-            );
+            this.getHttpHeaders());
 
+    }
+
+    public deleteSecureMessage(messageID: string): Observable<any> {
+
+        return this.apiService.authenticatedHTTPCall(
+            RestCallType.post,
+            this.serviceUrlSecureMessage + "/" + messageID,
+            HttpResponseType.json,
+            undefined,
+            undefined,
+            this.getHttpHeaders());
+
+    }
+
+    private getHttpHeaders(): HttpHeaders {
+        return new HttpHeaders().set("Authorization", SecureMessagingService.jwt);
+       // return new HttpHeaders().set("Authorization", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZF9maWVsZCI6ImlkX251bWJlciIsInJvbGUiOiJwYXRyb24iLCJpc3MiOiJHRVQiLCJqd3RfdmVyc2lvbiI6IjEuMCIsImlkX3ZhbHVlIjoiR0VUQVdTMDAxIiwiaW5zdGl0dXRpb25faWQiOiIyOWRiODk0Yi1hZWNkLTRjZWYtYjUxNS0xNWIwNDA1NjE0ZDcifQ.LCWa6hGH-txOOUgpHBSGwqd5AZGWGBliBcgtfXTu_q4");
     }
 
 }

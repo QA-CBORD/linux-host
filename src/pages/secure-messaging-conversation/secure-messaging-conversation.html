@@ -1,0 +1,67 @@
+<ion-header>
+  <ion-navbar color='primary'>
+    <!-- XXX NEED A BADGE OR CIRCULAR ICON WITH FIRST LETTER OF pageTitle IN IT-->
+    <ion-title>{{pageTitle}}</ion-title>
+  </ion-navbar>
+</ion-header>
+
+
+<ion-content style="background-color: #eeeeee;">
+  <div *ngIf="conversation && conversation.messages.length == 0" text-center>
+    <!-- XXX WANT TO CENTER ON PAGE -->
+    <h6>Start the conversation</h6>
+    <ion-icon style="zoom:1.75;" name="create"></ion-icon>
+  </div>
+
+  <div *ngIf="conversation" style="margin-top: 1em;">
+    <div *ngFor="let message of conversation.messages">
+
+      <div text-center>
+        <p style="margin: 0em; color:dimgray;">{{message.sent_date}}</p>
+      </div>
+
+      <ion-grid *ngIf="message.sender.type == 'group'" margin style="margin-top: 0em; padding:0em;">
+        <ion-row align-items-end style="margin-right: 15%;">
+          <ion-col no-margin no-padding col-auto>
+            <ion-avatar text-center item-start style="background-color: #554baa; border-radius: 100px; width:3.25em; height:3.25em; margin-right: 0.75em;">
+              <h6 style="color:white; position: relative; top:29.5%;">{{conversation.groupName[0]}}</h6>
+            </ion-avatar>
+          </ion-col>
+          <ion-col style="padding:0em; background-color: #ffffff; border-radius: 10px; margin-right: 3em;">
+            <div>
+              <p style="padding:1em; margin: 0em;">{{message.body}}</p>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+
+      <div *ngIf="message.sender.type == 'patron'" margin style="padding:0em; background-color: #696969; border-radius: 10px; margin-left: 33%;">
+        <div>
+          <p style="color:white; padding:1em; margin: 0em;">{{message.body}}</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+</ion-content>
+
+<ion-footer>
+  <ion-grid>
+    <ion-row align-items-center>
+      <ion-col>
+        <ion-input placeholder="Type something..." [(ngModel)]="newMessageText" style="background-color: #ffffff;border-radius: 10px; "></ion-input>
+      </ion-col>
+      <ion-col col-auto>
+        <button ion-button icon-only clear (click)=onSendMessageClick()>
+          <ion-icon style="zoom:1.5;" name="send"></ion-icon>
+        </button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <!-- <ion-item no-lines style="background-color: #ffffff;border-radius: 100px; margin: 1em;">
+    
+    
+  </ion-item> -->
+</ion-footer>

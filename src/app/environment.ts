@@ -32,7 +32,7 @@ export class Environment {
 
 
     /// AWS API Gateway Development
-    public static readonly BASE_AWS_API_URL_DEVTEST = "https://bn585leezj.execute-api.us-east-1.amazonaws.com/dev";
+    public static readonly BASE_AWS_API_URL_DEVTEST = "https://dwptofebk7.execute-api.us-east-1.amazonaws.com/dev";
 
 
     public static currentEnvironment: EnvType = EnvType.development;

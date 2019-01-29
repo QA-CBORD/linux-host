@@ -13,7 +13,6 @@ import { ExceptionProvider } from '../../providers/exception-provider/exception-
 import { Environment } from '../../app/environment';
 import { UserRewardTrackInfo } from '../../models/rewards/rewards.interface'
 import { GeoCoordinates } from './../../models/geolocation/geocoordinates.interface';
-import { TestUserProvider } from '../../providers/test-user-provider/test-user-provider';
 
 
 @IonicPage({
@@ -45,8 +44,7 @@ export class HomePage {
     public mobileAccessProvider: MobileAccessProvider,
     public sessionService: SessionService,
     private authService: AuthService,
-    private platform: Platform,
-    private tuP: TestUserProvider
+    private platform: Platform
   ) {
 
     this.platform.ready().then(() => {
@@ -57,7 +55,7 @@ export class HomePage {
       /// hide the split pane here becuase we don't need the navigation menu
       events.publish(Globals.Events.SIDEPANE_ENABLE, false);
 
-      // get required params from the URL
+      /// get required params from the URL
       this.sessionToken = navParams.get('sessionToken');
       this.destinationPage = navParams.get('destinationPage');
 
@@ -67,7 +65,7 @@ export class HomePage {
         this.geoData.coords.longitude = parseFloat(navParams.get('longitude'));
         this.geoData.coords.accuracy = parseFloat(navParams.get('accuracy'));
       } catch (error) {
-        /// will only fail when no geolocation data from native device or url
+        /// will only fail when no geolocation data from native device or url        
       }
 
       events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Loading content" });
@@ -137,18 +135,23 @@ export class HomePage {
     /// this should never happen
     /// should be handled better
     if (this.destinationPage == null) {
-      this.destinationPage = 'rewards';
+      this.destinationPage = 'securemessaging';
     }
 
     switch (this.destinationPage) {
       case 'rewards':
-        this.navCtrl.push("rewards");
+        this.navCtrl.push("RewardsPage");
         break;
       case 'openmydoor':
-        this.navCtrl.push("mobile-access", { data: this.geoData });
+        this.navCtrl.push("MobileAccessPage", this.geoData);
         break;
       case 'accounts':
-        this.navCtrl.push("accounts");
+        this.navCtrl.push("AccountsPage");
+        break;
+      case 'securemessaging':
+        this.navCtrl.push("secure-messaging")
+        break;
+
     }
   }
 
