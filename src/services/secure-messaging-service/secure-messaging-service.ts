@@ -117,7 +117,8 @@ export class SecureMessagingService {
     }
 
     private getHttpHeaders(): HttpHeaders {
-        return new HttpHeaders().set("Authorization", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZF9maWVsZCI6ImlkX251bWJlciIsInJvbGUiOiJwYXRyb24iLCJpc3MiOiJHRVQiLCJqd3RfdmVyc2lvbiI6IjEuMCIsImlkX3ZhbHVlIjoiR0VUQVdTMDAxIiwiaW5zdGl0dXRpb25faWQiOiIyOWRiODk0Yi1hZWNkLTRjZWYtYjUxNS0xNWIwNDA1NjE0ZDcifQ.LCWa6hGH-txOOUgpHBSGwqd5AZGWGBliBcgtfXTu_q4");//SecureMessagingService.jwt);
+        return new HttpHeaders().set("Authorization", SecureMessagingService.jwt);
+       // return new HttpHeaders().set("Authorization", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZF9maWVsZCI6ImlkX251bWJlciIsInJvbGUiOiJwYXRyb24iLCJpc3MiOiJHRVQiLCJqd3RfdmVyc2lvbiI6IjEuMCIsImlkX3ZhbHVlIjoiR0VUQVdTMDAxIiwiaW5zdGl0dXRpb25faWQiOiIyOWRiODk0Yi1hZWNkLTRjZWYtYjUxNS0xNWIwNDA1NjE0ZDcifQ.LCWa6hGH-txOOUgpHBSGwqd5AZGWGBliBcgtfXTu_q4");
     }
 
 }

@@ -28,15 +28,15 @@ export class SecureMessagingProvider {
     }
 
     public getInitialData(): Observable<[SecureMessageGroupInfo[], SecureMessageInfo[]]> {
-        // return this.authService.getExternalAuthenticationToken()
-        //     .flatMap((response: string) => {
-        //         this.secureMessageService.setJWT(response);
-        //         SecureMessagingProvider.smAuthInfo = JSON.parse(atob(response.split(".")[1]));
+        return this.authService.getExternalAuthenticationToken()
+            .flatMap((response: string) => {
+                this.secureMessageService.setJWT(response);
+                SecureMessagingProvider.smAuthInfo = JSON.parse(atob(response.split(".")[1]));
                 return Observable.zip(
                     this.getSecureMessagesGroups(),
                     this.getSecureMessages()
                 );
-            // });
+            });
     }
 
 
