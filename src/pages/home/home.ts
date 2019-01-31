@@ -140,13 +140,10 @@ export class HomePage {
 
     switch (this.destinationPage) {
       case 'rewards':
-        this.navCtrl.push("RewardsPage");
+        this.navCtrl.push("rewards");
         break;
       case 'openmydoor':
-        this.navCtrl.push("MobileAccessPage", this.geoData);
-        break;
-      case 'accounts':
-        this.navCtrl.push("AccountsPage");
+        this.navCtrl.push("mobile-access", this.geoData);
         break;
       case 'securemessaging':
         this.navCtrl.push("secure-messaging")
