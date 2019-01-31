@@ -135,7 +135,7 @@ export class HomePage {
     /// this should never happen
     /// should be handled better
     if (this.destinationPage == null) {
-      this.destinationPage = 'securemessaging';
+      this.destinationPage = 'mobile-access';
     }
 
     switch (this.destinationPage) {

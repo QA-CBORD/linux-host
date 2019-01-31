@@ -20,10 +20,22 @@ export class MobileAccessService extends GETService {
 
     return Observable.create((observer: any) => {
 
+      let geoDataParam: GeoCoordinates = {
+        coords: {
+          latitude: null,
+          longitude: null,
+          accuracy: null
+        }
+      }
+
+      if (!(geoData == null || geoData.coords == null || geoData.coords.latitude == null || geoData.coords.longitude == null)) {
+        geoDataParam = geoData;
+      }
+
       let postParams: ServiceParameters = {
-        "lattitude": geoData.coords.latitude,
-        "longitude": geoData.coords.longitude,
-        "accuracy": geoData.coords.accuracy,
+        "lattitude": geoDataParam.coords.latitude,
+        "longitude": geoDataParam.coords.longitude,
+        "accuracy": geoDataParam.coords.accuracy,
         "filters": ["Normal", "TempCode", "Attendance"]
       };
 

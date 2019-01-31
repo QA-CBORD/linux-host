@@ -10,6 +10,7 @@ import { MobileAccessProvider } from '../../providers/mobile-access-provider/mob
 import { ExceptionProvider } from '../../providers/exception-provider/exception-provider';
 import { MobileLocationInfo } from '../../models/open-my-door/open-my-door.interface';
 import { GeoCoordinates } from '../../models/geolocation/geocoordinates.interface';
+import { NonNullAssert } from '@angular/compiler';
 
 
 @IonicPage({
@@ -65,7 +66,7 @@ export class MobileAccessPage {
 
     this.events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Retrieving locations..." });
     // check if data was passed from native app via url, otherwise do normal checking
-    if (!this.geoData || !this.geoData.coords || !this.geoData.coords.latitude || !this.geoData.coords.longitude) {
+    if (this.geoData == null || this.geoData.coords == null || this.geoData.coords.latitude == null || this.geoData.coords.longitude == null) {
       this.retrieveMobileLocationData();
     } else {
       this.checkPermissions();
