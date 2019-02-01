@@ -49,9 +49,11 @@ export class MobileAccessPage {
   ) {
 
 
-    /// GET GeoCoordinates from URL
 
-    this.geoData = navParams.get('data') || null; 
+    this.geoData = navParams.data || null;
+
+    console.log(this.geoData);
+
 
     this.events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Retrieving locations..." });
 
@@ -67,10 +69,10 @@ export class MobileAccessPage {
     this.events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Retrieving locations..." });
     // check if data was passed from native app via url, otherwise do normal checking
     //if (this.geoData == null || this.geoData.coords == null || this.geoData.coords.latitude == null || this.geoData.coords.longitude == null) {
-      this.retrieveMobileLocationData();
-  //  } else {
-  //     this.checkPermissions();
-  //   }
+    this.retrieveMobileLocationData();
+    //  } else {
+    //     this.checkPermissions();
+    //   }
   }
 
 
