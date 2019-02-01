@@ -55,7 +55,7 @@ export class MobileAccessPage {
 
     this.events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Retrieving locations..." });
 
-    this.getLocationData();
+    this.retrieveMobileLocationData();
 
   }
 
@@ -66,11 +66,11 @@ export class MobileAccessPage {
 
     this.events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Retrieving locations..." });
     // check if data was passed from native app via url, otherwise do normal checking
-    if (this.geoData == null || this.geoData.coords == null || this.geoData.coords.latitude == null || this.geoData.coords.longitude == null) {
+    //if (this.geoData == null || this.geoData.coords == null || this.geoData.coords.latitude == null || this.geoData.coords.longitude == null) {
       this.retrieveMobileLocationData();
-    } else {
-      this.checkPermissions();
-    }
+  //  } else {
+  //     this.checkPermissions();
+  //   }
   }
 
 
@@ -98,7 +98,7 @@ export class MobileAccessPage {
               message: "There are no locations to display",
               positiveButtonTitle: "RETRY",
               positiveButtonHandler: () => {
-                this.getLocationData();
+                this.retrieveMobileLocationData();
               },
               negativeButtonTitle: "CLOSE",
               negativeButtonHandler: () => {
@@ -123,7 +123,7 @@ export class MobileAccessPage {
             message: errorMessage,
             positiveButtonTitle: "RETRY",
             positiveButtonHandler: () => {
-              this.getLocationData();
+              this.retrieveMobileLocationData();
             },
             negativeButtonTitle: "CLOSE",
             negativeButtonHandler: () => {
