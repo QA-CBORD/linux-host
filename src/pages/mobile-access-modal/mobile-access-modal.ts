@@ -44,8 +44,8 @@ export class MobileAccessModalPage {
   activateSelected() {
     console.log("Activate Selected");
     this.events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Activating..." });
-    this.checkPermissions();
-
+    //this.checkPermissions();
+    this.activateMobileLocation(false);
   }
 
   /**
