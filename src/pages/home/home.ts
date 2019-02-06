@@ -91,7 +91,7 @@ export class HomePage {
       this.authService.authenticateSessionToken(this.sessionToken).subscribe(
         newSessionId => {
           GETService.setSessionId(newSessionId);
-          this.handlePageNavigation();
+          this.getUserInfo();
         },
         error => {
           ExceptionProvider.showException(this.events, {
@@ -137,7 +137,21 @@ private getUserInfo(){
       this.handlePageNavigation();
     },
     (error)=>{
-      this.handlePageNavigation();
+      ExceptionProvider.showException(this.events, {
+        displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
+        messageInfo: {
+          title: "No User",
+          message: "Unable to verify your user inforation.",
+          positiveButtonTitle: "RETRY",
+          positiveButtonHandler: () => {
+            this.handleSessionToken();
+          },
+          negativeButtonTitle: "CLOSE",
+          negativeButtonHandler: () => {
+            this.platform.exitApp();
+          }
+        }
+      });
     }
   );
 }
