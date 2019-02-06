@@ -4,6 +4,7 @@ import { IonicPage, NavController, NavParams, Platform, Events, Content, ToastCo
 import { fromEvent } from "rxjs/observable/fromEvent";
 import { Subscription } from 'rxjs/Subscription';
 
+import { BaseProvider } from '../../providers/BaseProvider';
 import { SecureMessagingProvider } from './../../providers/secure-messaging-provider/secure-messaging-provider';
 
 import * as Globals from '../../app/app.global';
@@ -82,7 +83,7 @@ export class SecureMessagingConversationPage {
         type: "patron",
         id_field: SecureMessagingProvider.GetSMAuthInfo().id_field,
         id_value: SecureMessagingProvider.GetSMAuthInfo().id_value,
-        name: ""
+        name: BaseProvider.getUserInfo().firstName + " " + BaseProvider.getUserInfo().lastName
       },
       recipient: {
         type: "group",
@@ -128,7 +129,7 @@ export class SecureMessagingConversationPage {
       recipient: { created_date: new Date().toISOString(), id: "", type: "group", id_field: null, id_value: this.conversation.groupIdValue, name: this.conversation.groupName, aux_user_id: null, version: 1 },
       replied_message_id: "None",
       requires_read_receipt: null,
-      sender: { created_date: new Date().toISOString(), id: "", type: "patron", id_field: SecureMessagingProvider.GetSMAuthInfo().id_field, id_value: SecureMessagingProvider.GetSMAuthInfo().id_value, name: "", aux_user_id: null, version: 1 },
+      sender: { created_date: new Date().toISOString(), id: "", type: "patron", id_field: SecureMessagingProvider.GetSMAuthInfo().id_field, id_value: SecureMessagingProvider.GetSMAuthInfo().id_value, name: BaseProvider.getUserInfo().firstName + " " + BaseProvider.getUserInfo().lastName, aux_user_id: null, version: 1 },
       sent_date: new Date().toLocaleString(),
       state: null,
       ttl: null,

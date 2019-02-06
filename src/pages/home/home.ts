@@ -1,3 +1,4 @@
+import { BaseProvider } from './../../providers/BaseProvider';
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, Events, Platform } from 'ionic-angular';
 
@@ -13,6 +14,7 @@ import { ExceptionProvider } from '../../providers/exception-provider/exception-
 import { Environment } from '../../app/environment';
 import { UserRewardTrackInfo } from '../../models/rewards/rewards.interface'
 import { GeoCoordinates } from './../../models/geolocation/geocoordinates.interface';
+import { UserService } from '../../services/user-service/user-service';
 
 
 @IonicPage({
@@ -44,6 +46,7 @@ export class HomePage {
     public mobileAccessProvider: MobileAccessProvider,
     public sessionService: SessionService,
     private authService: AuthService,
+    private userService: UserService,
     private platform: Platform
   ) {
 
@@ -125,6 +128,19 @@ export class HomePage {
       });
     }
   }
+
+
+private getUserInfo(){
+  this.userService.getUser().subscribe(
+    (data) => {
+      BaseProvider.setUserInfo(data);
+      this.handlePageNavigation();
+    },
+    (error)=>{
+      this.handlePageNavigation();
+    }
+  );
+}
 
   /**
    *  Navigate user to the destination page after session id has been retrieved
