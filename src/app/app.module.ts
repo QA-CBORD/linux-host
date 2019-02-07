@@ -25,6 +25,8 @@ import { RewardService } from '../services/reward-service/reward-service';
 import { ContentService } from '../services/content-service/content-service';
 import { MobileAccessService } from '../services/mobile-access-service/mobile-access-service';
 import { SecureMessagingService } from './../services/secure-messaging-service/secure-messaging-service';
+import { UserService } from '../services/user-service/user-service';
+
 
 /// PROVIDERS
 import { MobileAccessProvider } from './../providers/mobile-access-provider/mobile-access-provider';
@@ -95,6 +97,7 @@ export function createTranslateLoader(http: HttpClient) {
     AuthService,
     InstService,
     RewardService,
+    UserService,
     SecureMessagingService,
     RewardsProvider,
     MobileAccessService,
