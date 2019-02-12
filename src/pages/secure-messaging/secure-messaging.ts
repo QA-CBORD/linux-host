@@ -164,6 +164,16 @@ export class SecureMessagingPage {
 
         newGroupDescription = message.description;
 
+        /// try to get proper group info
+        for(let group of this.groups){
+          if(group.id == newGroupId){
+            newGroupName = group.name;
+            newGroupDescription = group.description;
+          }
+        }
+
+        
+
         let conversation: SecureMessageConversation = {
           institutionId: SecureMessagingProvider.GetSMAuthInfo().institution_id,
           groupName: newGroupName,
@@ -232,11 +242,11 @@ export class SecureMessagingPage {
   onSendMessageClick() {
     if (this.newMessageText && this.newMessageText.length > 0) {
       this.scrollToBottom();
-      this.sendTestMessage();
+      this.sendMessage();
     }
   }
 
-  sendTestMessage() {
+  sendMessage() {
 
     let NewMessage = {
       institution_id: SecureMessagingProvider.GetSMAuthInfo().institution_id,
