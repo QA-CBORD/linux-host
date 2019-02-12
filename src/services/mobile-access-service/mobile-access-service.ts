@@ -33,7 +33,7 @@ export class MobileAccessService extends GETService {
       }
 
       let postParams: ServiceParameters = {
-        "lattitude": geoDataParam.coords.latitude,
+        "latitude": geoDataParam.coords.latitude,
         "longitude": geoDataParam.coords.longitude,
         "accuracy": geoDataParam.coords.accuracy,
         "filters": ["Normal", "TempCode", "Attendance"]
