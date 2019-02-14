@@ -61,7 +61,6 @@ export class SecureMessagingConversationPage {
     this.resizeSubscription = fromEvent(window, 'resize')
       .subscribe(event => {
         if(window.innerWidth >= 768){
-          this.navCtrl.pop();
         }        
       });
       this.scrollToBottom();

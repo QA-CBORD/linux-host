@@ -5,25 +5,25 @@ page-secure-messaging {
     }
 
     .item-conversation {
-        // background-color: white; 
-        // border-radius: 100px; 
         background-color: color($colors, secure-messaging-background);
+        margin-bottom: 1em;
+    }
+
+    .item-conversation-selected {
+        background-color: color($colors, secure-messaging-background-dark);
         margin-bottom: 1em;
     }
 
     .item-conversation-avatar {
         background-color: color($colors, primary);;
         border-radius: 100px;
-        width:4em;
-        height:4em;
-        margin-top: 0.75em;
-        margin-bottom: 0.75em;
+        width:3.25em;
+        height:3.25em;
+        margin-right:0.75em;
     }
     
 
     .item-conversation-loading {
-        // background-color: white; 
-        // border-radius: 100px; 
         background-color: color($colors, secure-messaging-background);
         margin-bottom: 1em;
     }

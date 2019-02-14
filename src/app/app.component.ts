@@ -28,7 +28,6 @@ export class MyApp {
 	private loader: Loading;
 	bShowSplitPane: boolean = true;
 
-	// rootPage: string = 'secure-messaging';
 	rootPage: string = 'home';
 
 	// Options to show in the SideMenuComponent
@@ -126,6 +125,9 @@ export class MyApp {
 	}
 
 	private enabelSplitPane(bEnable: boolean) {
+		this.menuCtrl.enable(bEnable);
+		this.menuCtrl.swipeEnable(bEnable);
+		this.bShowSplitPane = bEnable;
 		this.splitPane.enabled = bEnable;
 	}
 

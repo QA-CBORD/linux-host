@@ -56,6 +56,7 @@ export interface SecureMessageConversation {
     groupDescription: string;
     myIdValue: string;
     messages: SecureMessageInfo[];
+    selected: boolean;
 }
 
 export interface SecureMessageSendBody {

@@ -29,9 +29,7 @@ export class SecureMessagingProvider {
 
     public getInitialData(): Observable<[SecureMessageGroupInfo[], SecureMessageInfo[]]> {
 
-        //         this.secureMessageService.setJWT("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZF9maWVsZCI6ImlkX251bWJlciIsInJvbGUiOiJwYXRyb24iLCJpc3MiOiJHRVQiLCJqd3RfdmVyc2lvbiI6IjEuMCIsImlkX3ZhbHVlIjoic21zZzExMDAxIiwiaW5zdGl0dXRpb25faWQiOiJlOGE2YmZmZi05YzEwLTQzNTQtYjVmYS1hZTA5OWEyMjk2ZjAifQ.DZBmCTHcaahXqehTfoYDyUggnRifVwA8gQbF8k23Am0");
-        // SecureMessagingProvider.smAuthInfo = JSON.parse(atob("eyJpZF9maWVsZCI6ImlkX251bWJlciIsInJvbGUiOiJwYXRyb24iLCJpc3MiOiJHRVQiLCJqd3RfdmVyc2lvbiI6IjEuMCIsImlkX3ZhbHVlIjoic21zZzExMDAxIiwiaW5zdGl0dXRpb25faWQiOiJlOGE2YmZmZi05YzEwLTQzNTQtYjVmYS1hZTA5OWEyMjk2ZjAifQ"));
-               
+          
         return this.authService.getExternalAuthenticationToken()
             .flatMap((response: string) => {
                 this.secureMessageService.setJWT(response);

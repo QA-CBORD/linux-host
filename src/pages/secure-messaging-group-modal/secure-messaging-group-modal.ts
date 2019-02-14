@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, ViewController } from 'ionic-angular';
-import { SecureMessageGroupInfo } from '../../models/secure-messaging/secure-message-info';
+import { IonicPage, NavController, NavParams, ViewController, ToastController } from 'ionic-angular';
+
+import { SecureMessagingProvider } from '../../providers/secure-messaging-provider/secure-messaging-provider';
+
+import { SecureMessageAddressInfo, SecureMessageGroupInfo } from './../../models/secure-messaging/secure-message-info';
 
 @IonicPage()
 @Component({
@@ -12,8 +15,6 @@ export class SecureMessagingGroupModalPage {
   readonly LOADING: number = 0;
   readonly NO_GROUPS: number = 1;
   readonly SHOW_GROUPS: number = 2;
-  readonly ERROR_CONNECTING: number = 3;
-  readonly OFFLINE: number = 4;
 
   pageState: number = this.LOADING;
 
@@ -24,7 +25,9 @@ export class SecureMessagingGroupModalPage {
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
-    private viewCtrl: ViewController
+    private viewCtrl: ViewController,
+    private secureMessagingProvider: SecureMessagingProvider,
+    private toast: ToastController
   ) {
   }
 
@@ -33,12 +36,15 @@ export class SecureMessagingGroupModalPage {
     this.loadInitialData();
   }
 
+  /**
+   * Get the group data being passed into the modal
+   */
   private loadInitialData() {
     this.pageState = this.LOADING;
 
     this.groups = this.navParams.get('data').groups || null;
- 
-    if(!this.groups || this.groups.length <= 0){
+
+    if (!this.groups || this.groups.length <= 0) {
       this.pageState = this.NO_GROUPS;
     } else {
       this.pageState = this.SHOW_GROUPS;
@@ -46,28 +52,43 @@ export class SecureMessagingGroupModalPage {
 
   }
 
-  onGroupClick(selectedGroup: SecureMessageGroupInfo){
+  /**
+   * Handle the selected group from the ui
+   */
+  onGroupClick(selectedGroup: SecureMessageGroupInfo) {
     this.selectedGroup = selectedGroup;
-    console.log(selectedGroup);
-    
     this.closeModal();
   }
 
-  onNoGroupsFoundClick(){
-    console.log("onNoGroupsFoundClick");
-    /// refresh?
+  /**
+   * This would mean that the institution has no groups. Let's try to retrieve them again
+   */
+  onNoGroupsFoundClick() {
+    this.pageState = this.LOADING;
+    this.secureMessagingProvider.getSecureMessagesGroups().subscribe(
+      (groupsArray: SecureMessageGroupInfo[]) => {
+        this.groups = groupsArray;
+        if(this.groups.length > 0){
+          if (!this.groups || this.groups.length <= 0) {
+            this.pageState = this.NO_GROUPS;
+          } else {
+            this.pageState = this.SHOW_GROUPS;
+          }
+        }
+      },
+      (error: any) => {
+        this.toast.create({
+          message: error,
+          duration: 5000,
+          position: 'bottom'
+        }).present();
+      }
+    )
   }
 
-  onConnectionErrorClick() {
-    console.log("onConnectionErrorClick");
-    /// refresh
-  }
-
-  onOfflineClick() {
-    console.log("onOfflineClick");
-    /// refresh
-  }
-
+  /**
+   * Close the modal and pass the data back
+   */
   closeModal() {
     const returnData = {
       selectedGroup: this.selectedGroup

@@ -4,11 +4,11 @@ import { IonicPage, NavController, NavParams, Platform, Events, Modal, ModalCont
 import { fromEvent } from "rxjs/observable/fromEvent";
 import { Subscription } from "rxjs/Subscription";
 
-import * as Globals from '../../app/app.global'
 
 import { SecureMessagingProvider } from '../../providers/secure-messaging-provider/secure-messaging-provider';
 import { BaseProvider } from '../../providers/BaseProvider';
 
+import * as Globals from '../../app/app.global'
 import { SecureMessageInfo, SecureMessageGroupInfo, SecureMessageConversation } from '../../models/secure-messaging/secure-message-info';
 
 @IonicPage({
@@ -25,8 +25,6 @@ export class SecureMessagingPage {
   readonly LOADING: number = 0;
   readonly START_CONVO: number = 1;
   readonly SHOW_CONVOS: number = 2;
-  readonly ERROR_CONNECTING: number = 3;
-  readonly OFFLINE: number = 4;
 
   pageState: number = this.LOADING;
 
@@ -34,7 +32,6 @@ export class SecureMessagingPage {
 
   groups: SecureMessageGroupInfo[] = new Array();
   messages: SecureMessageInfo[] = new Array();
-
 
   @ViewChild('chatScroll') chatScroll: any;
   resizeSubscription: Subscription;
@@ -62,12 +59,15 @@ export class SecureMessagingPage {
   }
 
   ngOnDestroy() {
+    /// remove subscription to check screen size
     if (this.resizeSubscription != null) {
       this.resizeSubscription.unsubscribe();
     }
   }
 
   ionViewDidLoad() {
+    /// set subscription to check screen size change
+    /// used to adjust ui layout
     this.resizeSubscription = fromEvent(window, 'resize')
       .subscribe(event => {
         let bWasPreviouslyLargeScreen = this.bIsLargeScreen;
@@ -76,15 +76,20 @@ export class SecureMessagingPage {
           this.scrollToBottom();
         }
       });
+
+      /// get the initial messaging data
     this.loadInitialData();
   }
 
+
   ionViewWillEnter() {
 
+    /// large screen handles all this in real time, no need to update the page below
     if (this.bIsLargeScreen) {
       return;
     }
 
+    /// gets conversation data from conversation modal and updates the convo here if it exiss
     let updatedConversation: SecureMessageConversation = this.navParams.get('updatedConversation') || null;
 
     if (updatedConversation) {
@@ -97,22 +102,20 @@ export class SecureMessagingPage {
     }
   }
 
+  /**
+   * Get the initial data (message list and message groups)   * 
+   */
   private loadInitialData() {
     this.pageState = this.LOADING;
 
     this.secureMessagingProvider.getInitialData()
       .subscribe(
         ([smGroupArray, smMessageArray]) => {
-          console.log("GetInitialData Response:");
-          console.log(smGroupArray);
-          console.log(smMessageArray);
           this.groups = smGroupArray;
           this.messages = smMessageArray;
           this.handleInitialDataResponse();
         },
         error => {
-          console.log("GetInitialData Error");
-          console.log(error);
           this.toast.create({
             message: error,
             duration: 3000,
@@ -126,16 +129,21 @@ export class SecureMessagingPage {
 
   }
 
+  /**
+   * Handle the response from get inital data (message array and groups)
+   */
   private handleInitialDataResponse() {
 
     /// sort messages by date
     this.messages.sort((a, b) => a.created_date < b.created_date ? 1 : b.created_date > a.created_date ? -1 : 0);
 
+    /// create 'conversations' out of message array
     for (let message of this.messages) {
       message.sent_date = new Date(message.sent_date).toLocaleString();
 
       let bNewConversation = true;
 
+      /// add to existing conversation if it exists
       for (let convo of this.conversations) {
         if (convo.groupIdValue && convo.groupIdValue.length > 0 && (convo.groupIdValue == message.sender.id_value || convo.groupIdValue == message.recipient.id_value)) {
           convo.messages.push(message);
@@ -148,6 +156,7 @@ export class SecureMessagingPage {
 
       }
 
+      /// create new conversation
       if (bNewConversation) {
         let newGroupName: string = "";
         let newGroupId: string = "";
@@ -165,14 +174,12 @@ export class SecureMessagingPage {
         newGroupDescription = message.description;
 
         /// try to get proper group info
-        for(let group of this.groups){
-          if(group.id == newGroupId){
+        for (let group of this.groups) {
+          if (group.id == newGroupId) {
             newGroupName = group.name;
             newGroupDescription = group.description;
           }
         }
-
-        
 
         let conversation: SecureMessageConversation = {
           institutionId: SecureMessagingProvider.GetSMAuthInfo().institution_id,
@@ -180,27 +187,24 @@ export class SecureMessagingPage {
           groupIdValue: newGroupId,
           groupDescription: newGroupDescription,
           myIdValue: SecureMessagingProvider.GetSMAuthInfo().id_value,
-          messages: new Array()
+          messages: new Array(),
+          selected: false
         };
 
         conversation.messages.push(message);
-
         this.conversations.push(conversation);
       }
 
+      /// select first conversation by default
       if (this.conversations.length > 0) {
+        this.conversations[0].selected = true;
         this.selectedConversation = this.conversations[0];
       }
 
     }
 
-    console.log("CONVOS:");
-
-    console.log(this.conversations);
-
+    /// show to user when finished loading
     if (this.conversations.length > 0) {
-      console.log(`hIDR large screen: ${this.bIsLargeScreen}`);
-
       if (this.bIsLargeScreen) {
         this.scrollToBottom();
       }
@@ -208,15 +212,19 @@ export class SecureMessagingPage {
     } else {
       this.pageState = this.START_CONVO;
     }
-
-
   }
 
+  /**
+   * On refresh button pressed
+   */
+  refreshMessages() {
+    this.loadInitialData();
+  }
+
+  /**
+   * Scroll to bottom of message conversation pane if possible
+   */
   public scrollToBottom() {
-    console.log("Scroll to bottom");
-    // if(this.chatScroll == null || this.chatScroll._scrollContent == null || this.chatScroll._scrollContent.nativeElement == null){
-    //   return;
-    // }
     setTimeout(() => {
       if (this.chatScroll == null) {
         return;
@@ -226,19 +234,29 @@ export class SecureMessagingPage {
     }, 100);
   }
 
+  /**
+   * Handle ui changes for conversation selection if large screen and then open conversation
+   * 
+   * @param conversation The conversation that was selected from the list
+   */
   onConversationClick(conversation: SecureMessageConversation) {
-    console.log("onConversationClick")
 
     if (this.bIsLargeScreen) {
+      for (let convo of this.conversations) {
+        convo.selected = false;
+      }
       this.selectedConversation = conversation;
+      this.selectedConversation.selected = true;
       this.scrollToBottom();
       return;
     }
 
     this.openConversationPage(conversation);
-
   }
 
+  /**
+   * Send a message
+   */
   onSendMessageClick() {
     if (this.newMessageText && this.newMessageText.length > 0) {
       this.scrollToBottom();
@@ -246,6 +264,9 @@ export class SecureMessagingPage {
     }
   }
 
+  /**
+   * Logic for sending a message
+   */
   sendMessage() {
 
     let NewMessage = {
@@ -269,13 +290,9 @@ export class SecureMessagingPage {
     this.secureMessagingProvider.sendSecureMessage(NewMessage)
       .subscribe(
         data => {
-          console.log("Send Message data:");
-          console.log(data);
           this.addLocalDataToConversation();
         },
         error => {
-          console.log("Send Message error:");
-          console.log(error);
           this.toast.create({
             message: "Error sending the message",
             duration: 3000,
@@ -288,6 +305,9 @@ export class SecureMessagingPage {
       );
   }
 
+  /**
+   * Add sent message to local conversation rather than making a call to get all messages for update
+   */
   addLocalDataToConversation() {
     let message: SecureMessageInfo = {
       body: this.newMessageText,
@@ -312,17 +332,24 @@ export class SecureMessagingPage {
     this.scrollToBottom();
   }
 
+  /**
+   * New Conversation FAB click
+   */
   onAddConversationFABClick() {
-    console.log("onAddConversationFABClick")
     this.openChooseContactModal();
   }
 
+  /**
+   * New conversation 'Start Conversation' button
+   */
   onStartConversationButtonClick() {
-    console.log("onConversationButtonClick");
     this.openChooseContactModal();
   }
 
-
+/**
+ * Logic to open the groups list page
+ * Select a group for new conversation
+ */
   openChooseContactModal() {
 
     const modalOptions: ModalOptions = {
@@ -337,11 +364,11 @@ export class SecureMessagingPage {
 
     chooseContactModal.present();
 
+    /// callback for modal closing
     chooseContactModal.onWillDismiss((data) => {
-      console.log("Choose Contact Modal WILL DISMISS");
-      console.log(data);
-      if (data.selectedGroup) {
 
+      /// check if a conversation with this group already exists, if so, just pull up that conversation
+      if (data.selectedGroup) {
         let newConversation: SecureMessageConversation;
 
         for (let convo of this.conversations) {
@@ -358,16 +385,21 @@ export class SecureMessagingPage {
             groupIdValue: data.selectedGroup.id,
             groupDescription: data.selectedGroup.description,
             myIdValue: SecureMessagingProvider.GetSMAuthInfo().id_value,
-            messages: new Array()
+            messages: new Array(),
+            selected: true
           };
           this.conversations.push(newConversation);
         }
 
+        /// open the conversation page if we're not in large screen mode
         if (!this.bIsLargeScreen) {
           this.openConversationPage(newConversation);
         } else {
-
+          for (let convo of this.conversations) {
+            convo.selected = false;
+          }
           this.selectedConversation = newConversation;
+          this.selectedConversation.selected = true;
           this.pageState = this.SHOW_CONVOS;
         }
 
@@ -376,6 +408,10 @@ export class SecureMessagingPage {
 
   }
 
+  /**
+   * Open the conversation modal if we're not in large screen mode
+   * @param conversation Conversation to display
+   */
   openConversationPage(conversation: SecureMessageConversation) {
     const modalOptions: ModalOptions = {
       enableBackdropDismiss: false
@@ -384,6 +420,7 @@ export class SecureMessagingPage {
 
     conversationModal.present();
 
+    /// conversation modal callback.  Adds new conversation data to the conversation list
     conversationModal.onWillDismiss((data) => {
 
       if (data.updatedConversation) {
@@ -396,8 +433,8 @@ export class SecureMessagingPage {
           }
         }
 
-        if(!bIsExisitingConversation){
-          if(data.updatedConversation.messages.length > 0){
+        if (!bIsExisitingConversation) {
+          if (data.updatedConversation.messages.length > 0) {
             this.conversations.push(data.updatedConversation);
           }
         }
@@ -406,6 +443,9 @@ export class SecureMessagingPage {
     });
   }
 
+  /**
+   * Used in html to get the name
+   */
   getCurrentConversationName(): string {
     if (this.selectedConversation != null) {
       return this.selectedConversation.groupName;
@@ -414,14 +454,5 @@ export class SecureMessagingPage {
     }
 
   }
-
-  onConnectionErrorClick() {
-    console.log("onConnectionErrorClick");
-  }
-
-  onOfflineClick() {
-    console.log("onOfflineClick");
-  }
-
 
 }

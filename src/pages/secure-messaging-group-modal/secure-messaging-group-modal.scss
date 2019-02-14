@@ -5,13 +5,13 @@ page-secure-messaging-group-modal {
     }
 
     .item-group {
-        background-color: white; 
-        border-radius: 100px; 
+        background-color: color($colors, secure-messaging-background); 
+        // border-radius: 100px; 
         margin-bottom: 1em;
     }
 
     .item-group-avatar {
-        background-color: #554baa;
+        background-color: color($colors, primary);
         border-radius: 100px;
         width:4em;
         height:4em;
@@ -21,8 +21,8 @@ page-secure-messaging-group-modal {
     
 
     .item-group-loading {
-        background-color: white; 
-        border-radius: 100px; 
+        // background-color: white; 
+        // border-radius: 100px; 
         margin-bottom: 1em;
     }
 
@@ -37,8 +37,8 @@ page-secure-messaging-group-modal {
 
     .item-group-loading-content {
         position: absolute;        
-        background-color: #cccccc; 
-        border-radius: 100px;
+        // background-color: #cccccc; 
+        // border-radius: 100px;
 
         &.top {         
             width: 25%; 

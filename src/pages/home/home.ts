@@ -7,15 +7,15 @@ import * as Globals from '../../app/app.global';
 import { GETService } from './../../services/get-service/get-service';
 import { AuthService } from './../../services/auth-service/auth-service';
 import { SessionService } from '../../services/session-service/session-service';
+import { UserService } from '../../services/user-service/user-service';
+
 
 import { MobileAccessProvider } from '../../providers/mobile-access-provider/mobile-access-provider';
 import { ExceptionProvider } from '../../providers/exception-provider/exception-provider';
 
 import { Environment } from '../../app/environment';
-import { UserRewardTrackInfo } from '../../models/rewards/rewards.interface'
+import { UserRewardTrackInfo } from '../../models/rewards/rewards.interface';
 import { GeoCoordinates } from './../../models/geolocation/geocoordinates.interface';
-import { UserService } from '../../services/user-service/user-service';
-
 
 @IonicPage({
   name: 'home',
@@ -90,6 +90,7 @@ export class HomePage {
       /// acquire the new session id with the session token
       this.authService.authenticateSessionToken(this.sessionToken).subscribe(
         newSessionId => {
+          /// set session id for services base and get the user info for caching
           GETService.setSessionId(newSessionId);
           this.getUserInfo();
         },
@@ -165,7 +166,7 @@ private getUserInfo(){
     /// this should never happen
     /// should be handled better
     if (this.destinationPage == null) {
-      this.destinationPage = 'mobile-access';
+      this.destinationPage = 'securemessaging';
     }
 
     switch (this.destinationPage) {
