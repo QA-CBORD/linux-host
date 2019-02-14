@@ -107,8 +107,11 @@ export class SecureMessagingPage {
    */
   private loadInitialData() {
     this.pageState = this.LOADING;
-    this.groups = null;
-    this.messages = null;
+    
+    this.groups.length = 0;
+    this.messages.length = 0;
+    this.conversations.length = 0;
+    this.selectedConversation = null;
     this.secureMessagingProvider.getInitialData()
       .subscribe(
         ([smGroupArray, smMessageArray]) => {
