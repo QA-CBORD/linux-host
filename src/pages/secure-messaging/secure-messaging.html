@@ -199,7 +199,7 @@
             <ion-row align-items-center>
               <ion-col col-sm-0 col-md-0 col-lg-2 col-xl-2></ion-col>
               <ion-col col-sm-8>
-                <ion-input placeholder="Message text" [(ngModel)]="newMessageText" (keyup.enter)="onSendMessageClick()" style="box-shadow: 0px 2px 3px 3px #00000011; background-color: #ffffff;border-radius: 10px; "></ion-input>
+                <ion-textarea rows="3" placeholder="Message text" [(ngModel)]="newMessageText" style="padding: 5px; resize:none; box-shadow: 0px 2px 3px 3px #00000011; background-color: #ffffff;border-radius: 10px; "></ion-textarea>
               </ion-col>
               <ion-col col-auto>
                 <button ion-button icon-only clear (click)=onSendMessageClick() style="width:3em; height:3em; box-shadow: 0px 2px 3px 3px #00000011; background-color: #ffffff;border-radius: 100px;">
