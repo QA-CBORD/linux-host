@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, ViewChild } from '@angular/core';
 import { IonicPage, NavController, NavParams, Platform, Events, Content, ToastController, ViewController } from 'ionic-angular';
 
@@ -41,7 +42,8 @@ export class SecureMessagingConversationPage {
     private platform: Platform,
     private events: Events,
     private toast: ToastController,
-    private secureMessagingProvider: SecureMessagingProvider
+    private secureMessagingProvider: SecureMessagingProvider,
+    private datePipe: DatePipe
   ) {
     platform.ready().then(() => {
       /// hide the split pane here becuase we don't need the navigation menu
@@ -60,10 +62,10 @@ export class SecureMessagingConversationPage {
   ionViewDidLoad() {
     this.resizeSubscription = fromEvent(window, 'resize')
       .subscribe(event => {
-        if(window.innerWidth >= 768){
-        }        
+        if (window.innerWidth >= 768) {
+        }
       });
-      this.scrollToBottom();
+    this.scrollToBottom();
   }
 
 
@@ -156,6 +158,33 @@ export class SecureMessagingConversationPage {
       updatedConversation: this.conversation
     };
     this.viewCtrl.dismiss(returnData);
+  }
+
+  /**
+   * Get formatted date string for message display
+   * @param message 
+   */
+  public getMessageDate(message: SecureMessageInfo): string {
+    let today: Date = new Date();
+    let sentDate: Date = new Date(message.sent_date);
+
+    /// if sent date is from previous year, use full date
+    if(today.getFullYear() > sentDate.getFullYear()){
+      return this.datePipe.transform(sentDate, "medium");
+    }
+
+    /// if sent date is from previous month, use full date
+    if(today.getMonth() > sentDate.getMonth()){
+      return this.datePipe.transform(sentDate, "medium");
+    }
+
+    /// if sent date is earlier in the same month, use full date
+    if(today.getDate() > sentDate.getDate()){
+      return this.datePipe.transform(sentDate, "medium");
+    }
+
+    /// date is from the same day
+    return this.datePipe.transform(sentDate, "mediumTime");;
   }
 
 }

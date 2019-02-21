@@ -1,5 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
-import { IonicPage, NavController, NavParams, Platform, Events, Modal, ModalController, ModalOptions, ToastController, Content, Scroll } from 'ionic-angular';
+import { DatePipe } from '@angular/common';
+import { IonicPage, NavController, NavParams, Platform, Events, Modal, ModalController, ModalOptions, ToastController } from 'ionic-angular';
 
 import { fromEvent } from "rxjs/observable/fromEvent";
 import { Subscription } from "rxjs/Subscription";
@@ -46,7 +47,8 @@ export class SecureMessagingPage {
     private platform: Platform,
     private events: Events,
     private toast: ToastController,
-    private secureMessagingProvider: SecureMessagingProvider
+    private secureMessagingProvider: SecureMessagingProvider,
+    private datePipe: DatePipe
   ) {
 
     platform.ready().then(() => {
@@ -457,6 +459,33 @@ export class SecureMessagingPage {
       return "";
     }
 
+  }
+
+  /**
+   * Get formatted date string for message display
+   * @param message 
+   */
+  public getMessageDate(message: SecureMessageInfo): string {
+    let today: Date = new Date();
+    let sentDate: Date = new Date(message.sent_date);
+
+    /// if sent date is from previous year, use full date
+    if(today.getFullYear() > sentDate.getFullYear()){
+      return this.datePipe.transform(sentDate, "medium");
+    }
+
+    /// if sent date is from previous month, use full date
+    if(today.getMonth() > sentDate.getMonth()){
+      return this.datePipe.transform(sentDate, "medium");
+    }
+
+    /// if sent date is earlier in the same month, use full date
+    if(today.getDate() > sentDate.getDate()){
+      return this.datePipe.transform(sentDate, "medium");
+    }
+
+    /// date is from the same day
+    return this.datePipe.transform(sentDate, "mediumTime");;
   }
 
 }

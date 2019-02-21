@@ -56,7 +56,7 @@ export class GETService {
     finalParams.method = methodName;
     finalParams.params = postParams;
 
-    console.log(finalParams);
+    //console.log(finalParams);
 
     return this.http.post(this.baseUrl.concat(serviceUrl), JSON.stringify(finalParams), this.getOptions())
       .subscribeOn(async)
@@ -99,7 +99,7 @@ export class GETService {
    */
   protected extractData(response: Response) {
     let tResponse = response.json();
-    console.log(tResponse);
+    //console.log(tResponse);
     if (tResponse.exception) {
       this.parseExceptionResponse(tResponse.exception);
     } else {

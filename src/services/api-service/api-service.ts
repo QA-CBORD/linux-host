@@ -102,11 +102,11 @@ export class APIService {
 
         let finalURL = Environment.getAPIGatewayServicesBaseURL().concat(resourceURL);
 
-        console.log("API Call: | Call Type: " + callType + " | URL: " + finalURL);
-        console.log("Headers:");
-        console.log(headers);
-        console.log("Body:")
-        console.log(body);
+        // console.log("API Call: | Call Type: " + callType + " | URL: " + finalURL);
+        // console.log("Headers:");
+        // console.log(headers);
+        // console.log("Body:")
+        // console.log(body);
 
         return Observable.create((observer: any) => {
             // sort by call type
