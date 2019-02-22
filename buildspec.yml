@@ -2,7 +2,7 @@ version: 0.2
 
 env:
   variables:
-    RPM_VERSION: "2.51"
+    RPM_VERSION: "2.52"
   parameter-store: 
     BUILD_NUMBER: "build-config-cbord-student-build-number"
 
