@@ -36,7 +36,7 @@
             <ion-col
               style="padding:0em; background-color: #ffffff; border-radius: 10px; margin-right: 3em;">
               <div>
-                <p style="padding:1em; margin: 0em;">{{message.body}}</p>
+                <p style="padding:1em; margin: 0em;  white-space: pre-wrap;">{{message.body}}</p>
               </div>
             </ion-col>
           </ion-row>
@@ -53,7 +53,7 @@
             <ion-col
               style="padding:0em; background-color: #696969; border-radius: 10px; margin-left: 3em;">
               <div>
-                <p style="color:white; padding:1em; margin: 0em;">{{message.body}}</p>
+                <p style="color:white; padding:1em; margin: 0em; white-space: pre-wrap;">{{message.body}}</p>
               </div>
             </ion-col>
           </ion-row>
@@ -61,7 +61,7 @@
 
           <div *ngIf="message.sender.type == 'patron'" margin style=" padding:0em; background-color: #696969; border-radius: 10px; margin-left: 33%;">
             <div>
-              <p style="color:white; padding:1em; margin: 0em;">{{message.body}}</p>
+              <p style="color:white; padding:1em; margin: 0em; white-space: pre-wrap;">{{message.body}}</p>
             </div>
           </div>
 
