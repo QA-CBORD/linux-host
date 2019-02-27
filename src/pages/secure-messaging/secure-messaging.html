@@ -104,6 +104,11 @@
       <ion-header no-border>
         <ion-navbar color='secure-messaging-background'>
           <ion-title text-left>Conversations</ion-title>
+          <ion-buttons end style="margin-right:2.5%">
+            <button (click)="refreshMessages()" style="background-color: transparent">
+              <ion-icon name="refresh" style="zoom:1.5"></ion-icon>
+            </button>
+          </ion-buttons>
         </ion-navbar>
       </ion-header>
       <div style="margin-top: 60px">
