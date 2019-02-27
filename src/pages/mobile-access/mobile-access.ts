@@ -55,8 +55,8 @@ export class MobileAccessPage {
 
       this.geoData = navParams.data || null;
 
-      console.log(this.geoData);
-
+      console.log("Plat ready");
+      
       this.events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Retrieving locations..." });
 
       this.getUpdatedLocationData();
