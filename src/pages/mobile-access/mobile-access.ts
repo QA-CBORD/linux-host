@@ -69,8 +69,10 @@ export class MobileAccessPage {
  * Attempt to get geolocation data from browser, callback called when location value changes
  */
   private getUpdatedLocationData() {
+    console.log("Get Updated Location Data");
+    
     if (navigator.geolocation) {
-
+      console.log("Geolocation Good");
       this.geolocationWatchId = navigator.geolocation.watchPosition((position) => {
         this.geoData.coords.latitude = position.coords.latitude || null;
         this.geoData.coords.longitude = position.coords.longitude || null;
@@ -91,7 +93,7 @@ export class MobileAccessPage {
    */
   ionViewDidLeave() {
     if (navigator.geolocation) {
-      console.log("Geolocation Ready");
+      console.log("Clear Watch");
       navigator.geolocation.clearWatch(this.geolocationWatchId);
     }
   }
