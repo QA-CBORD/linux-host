@@ -74,10 +74,12 @@ export class MobileAccessPage {
     if (navigator.geolocation) {
       console.log("Geolocation Good");
       this.geolocationWatchId = navigator.geolocation.watchPosition((position) => {
+        console.log("Watch position Good 0");
         this.geoData.coords.latitude = position.coords.latitude || null;
         this.geoData.coords.longitude = position.coords.longitude || null;
         this.geoData.coords.accuracy = position.coords.accuracy || null;
         console.log(position);
+        console.log("Watch position Good 1");
         if (this.bIsUpdatingLocations == false) {          
           this.retrieveMobileLocationData();
         }
