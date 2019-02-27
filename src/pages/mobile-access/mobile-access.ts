@@ -83,9 +83,9 @@ export class MobileAccessPage {
         }
 
       });
-    } else {
-      this.retrieveMobileLocationData();
     }
+    
+    this.retrieveMobileLocationData();
   }
 
   /**
