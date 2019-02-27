@@ -19,69 +19,63 @@
   </div>
 
   <div *ngIf="conversation" style="margin-top: 1em;">
-      <div *ngFor="let message of conversation.messages">
+    <div *ngFor="let message of conversation.messages">
 
-        <ion-grid *ngIf="message.sender.type == 'group'" margin style="padding:0em;">
+      <ion-grid *ngIf="message.sender.type == 'group'" margin style="padding:0em;">
 
-          <ion-row align-items-end style="margin-right: 33%;">
-            <p style="margin: 0em; color:dimgray;">{{getMessageDate(message)}}</p>
-          </ion-row>
-          <ion-row align-items-end style="margin-right: 33%;">
-            <ion-col no-margin no-padding col-auto>
-              <ion-avatar text-center item-start class="item-conversation-avatar">
-                <h4 style="color:white; position: relative; top:22%;">
-                  {{conversation.groupName[0]}}</h4>
-              </ion-avatar>
-            </ion-col>
-            <ion-col
-              style="padding:0em; background-color: #ffffff; border-radius: 10px; margin-right: 3em;">
-              <div>
-                <p style="padding:1em; margin: 0em;">{{message.body}}</p>
-              </div>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
+        <ion-row align-items-end style="margin-right: 33%;">
+          <p style="margin: 0em; color:dimgray;">{{getMessageDate(message)}}</p>
+        </ion-row>
+        <ion-row align-items-end style="margin-right: 33%;">
+          <ion-col no-margin no-padding col-auto>
+            <ion-avatar text-center item-start class="item-conversation-avatar">
+              <h4 style="color:white; position: relative; top:22%;">
+                {{conversation.groupName[0]}}</h4>
+            </ion-avatar>
+          </ion-col>
+          <ion-col style="padding:0em; background-color: #ffffff; border-radius: 10px; margin-right: 3em;">
+            <div>
+              <p style="padding:1em; margin: 0em;">{{message.body}}</p>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
 
-        <ion-grid *ngIf="message.sender.type == 'patron'" margin style="padding:0em;">
+      <ion-grid *ngIf="message.sender.type == 'patron'" margin style="padding:0em;">
 
-          <ion-row style="margin-left: 33%;">
-            <ion-col align-items-end>
-              <p style="margin: 0em; color:dimgray; float:right">{{getMessageDate(message)}}</p>
-            </ion-col>
-          </ion-row>
-          <ion-row align-items-end style="margin-left: 33%;">
-            <ion-col
-              style="padding:0em; background-color: #696969; border-radius: 10px; margin-left: 3em;">
-              <div>
-                <p style="color:white; padding:1em; margin: 0em;">{{message.body}}</p>
-              </div>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-
-          <div *ngIf="message.sender.type == 'patron'" margin style=" padding:0em; background-color: #696969; border-radius: 10px; margin-left: 33%;">
+        <ion-row style="margin-left: 33%;">
+          <ion-col align-items-end>
+            <p style="margin: 0em; color:dimgray; float:right">{{getMessageDate(message)}}</p>
+          </ion-col>
+        </ion-row>
+        <ion-row align-items-end style="margin-left: 33%;">
+          <ion-col style="padding:0em; background-color: #696969; border-radius: 10px; margin-left: 3em;">
             <div>
               <p style="color:white; padding:1em; margin: 0em;">{{message.body}}</p>
             </div>
-          </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
 
-        </div>
+    </div>
   </div>
-
 
 </ion-content>
 
 <ion-footer>
   <ion-grid>
-      <ion-row align-items-center>
-          <ion-col col-10>
-            <ion-textarea rows="3"  placeholder="Message text" [(ngModel)]="newMessageText" style="padding: 5px; resize:none; box-shadow: 0px 2px 3px 3px #00000011; background-color: #ffffff;border-radius: 10px; "></ion-textarea>
-          </ion-col>
-          <ion-col col-2>
-            <button ion-button icon-only clear (click)=onSendMessageClick() style="width:3em; height:3em; box-shadow: 0px 2px 3px 3px #00000011; background-color: #ffffff;border-radius: 100px;">
-              <ion-icon style="zoom:0.75;" name="send"></ion-icon>
-            </button>
-          </ion-col>
-        </ion-row>
+    <ion-row align-items-center>
+      <ion-col col-10>
+        <ion-textarea rows="3" placeholder="Message text" [(ngModel)]="newMessageText"
+          style="padding: 5px; resize:none; box-shadow: 0px 2px 3px 3px #00000011; background-color: #ffffff;border-radius: 10px; ">
+        </ion-textarea>
+      </ion-col>
+      <ion-col col-2>
+        <button ion-button icon-only clear (click)=onSendMessageClick()
+          style="width:3em; height:3em; box-shadow: 0px 2px 3px 3px #00000011; background-color: #ffffff;border-radius: 100px;">
+          <ion-icon style="zoom:0.75;" name="send"></ion-icon>
+        </button>
+      </ion-col>
+    </ion-row>
   </ion-grid>
 </ion-footer>

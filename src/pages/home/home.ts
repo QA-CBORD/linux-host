@@ -131,7 +131,7 @@ export class HomePage {
   }
 
 
-private getUserInfo(){
+private getUserInfo(){  
   this.userService.getUser().subscribe(
     (data) => {
       BaseProvider.setUserInfo(data);

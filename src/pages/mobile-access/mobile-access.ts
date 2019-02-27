@@ -27,6 +27,7 @@ export class MobileAccessPage {
 
   currentSelectedLocation: any;
   refresher: any;
+  bIsUpdatingLocations: boolean = false;
 
   geoData: GeoCoordinates = {
     coords: {
@@ -35,6 +36,8 @@ export class MobileAccessPage {
       accuracy: null
     }
   };
+
+  geolocationWatchId: number = 0;
 
   constructor(
     private platform: Platform,
@@ -48,31 +51,49 @@ export class MobileAccessPage {
     private geolocation: Geolocation
   ) {
 
+    this.platform.ready().then(() => {
 
+      this.geoData = navParams.data || null;
 
-    this.geoData = navParams.data || null;
+      console.log(this.geoData);
 
-    console.log(this.geoData);
+      this.events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Retrieving locations..." });
 
+      this.getUpdatedLocationData();
 
-    this.events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Retrieving locations..." });
+    });
+  }
 
-    this.retrieveMobileLocationData();
+  
+/**
+ * Attempt to get geolocation data from browser, callback called when location value changes
+ */
+  private getUpdatedLocationData() {
+    if (navigator.geolocation) {
 
+      this.geolocationWatchId = navigator.geolocation.watchPosition((position) => {
+        this.geoData.coords.latitude = position.coords.latitude || null;
+        this.geoData.coords.longitude = position.coords.longitude || null;
+        this.geoData.coords.accuracy = position.coords.accuracy || null;
+        console.log(position);
+        if (this.bIsUpdatingLocations == false) {          
+          this.retrieveMobileLocationData();
+        }
+
+      });
+    } else {
+      this.retrieveMobileLocationData();
+    }
   }
 
   /**
-   * Make request for location data if none was passed via URL parameters 
+   * Clear Geolocation subscription when leaing the page
    */
-  private getLocationData() {
-
-    this.events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Retrieving locations..." });
-    // check if data was passed from native app via url, otherwise do normal checking
-    //if (this.geoData == null || this.geoData.coords == null || this.geoData.coords.latitude == null || this.geoData.coords.longitude == null) {
-    this.retrieveMobileLocationData();
-    //  } else {
-    //     this.checkPermissions();
-    //   }
+  ionViewDidLeave() {
+    if (navigator.geolocation) {
+      console.log("Geolocation Ready");
+      navigator.geolocation.clearWatch(this.geolocationWatchId);
+    }
   }
 
 
@@ -80,7 +101,8 @@ export class MobileAccessPage {
    * Make request to retrieve Mobile Location information and handle response
    */
   private retrieveMobileLocationData() {
-
+    console.log("Retrieving Location Data");
+    this.bIsUpdatingLocations = true;
     this.events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Retrieving locations..." });
 
     this.mobileAccessProvider.getMobileLocationData(this.geoData).subscribe(
@@ -91,6 +113,7 @@ export class MobileAccessPage {
             mobileLocationData[i].distance > 99 ? mobileLocationData[i].distance = NaN : mobileLocationData[i].distance > 5 ? mobileLocationData[i].distance = Number(mobileLocationData[i].distance.toFixed(2)) : mobileLocationData[i].distance = mobileLocationData[i].distance;
           }
           this.mobileLocationInfo = mobileLocationData;
+          this.bIsUpdatingLocations = false;
         } else {
           this.bShowNoLocationsAvailable = true;
           ExceptionProvider.showException(this.events, {
@@ -104,6 +127,7 @@ export class MobileAccessPage {
               },
               negativeButtonTitle: "CLOSE",
               negativeButtonHandler: () => {
+                this.bIsUpdatingLocations = false;
                 this.platform.exitApp();
               }
             }
@@ -129,6 +153,7 @@ export class MobileAccessPage {
             },
             negativeButtonTitle: "CLOSE",
             negativeButtonHandler: () => {
+              this.bIsUpdatingLocations = false;
               this.platform.exitApp();
             }
           }
