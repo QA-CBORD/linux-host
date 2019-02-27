@@ -56,7 +56,7 @@ export class MobileAccessPage {
       this.geoData = navParams.data || null;
 
       console.log("Plat ready");
-      
+
       this.events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Retrieving locations..." });
 
       this.getUpdatedLocationData();
@@ -64,13 +64,13 @@ export class MobileAccessPage {
     });
   }
 
-  
-/**
- * Attempt to get geolocation data from browser, callback called when location value changes
- */
+
+  /**
+   * Attempt to get geolocation data from browser, callback called when location value changes
+   */
   private getUpdatedLocationData() {
     console.log("Get Updated Location Data");
-    
+
     if (navigator.geolocation) {
       console.log("Geolocation Good");
       this.geolocationWatchId = navigator.geolocation.watchPosition((position) => {
@@ -80,14 +80,14 @@ export class MobileAccessPage {
         this.geoData.coords.accuracy = position.coords.accuracy || null;
         console.log(position);
         console.log("Watch position Good 1");
-        if (this.bIsUpdatingLocations == false) {          
-          this.retrieveMobileLocationData();
+        if (this.bIsUpdatingLocations == false) {
+          this.retrieveMobileLocationData(false);
         }
 
       });
     }
-    
-    this.retrieveMobileLocationData();
+
+    this.retrieveMobileLocationData(false);
   }
 
   /**
@@ -104,11 +104,12 @@ export class MobileAccessPage {
   /**
    * Make request to retrieve Mobile Location information and handle response
    */
-  private retrieveMobileLocationData() {
+  private retrieveMobileLocationData(bShowLoader: boolean) {
     console.log("Retrieving Location Data");
     this.bIsUpdatingLocations = true;
-    this.events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Retrieving locations..." });
-
+    if (bShowLoader) {
+      this.events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Retrieving locations..." });
+    }
     this.mobileAccessProvider.getMobileLocationData(this.geoData).subscribe(
       mobileLocationData => {
         if (mobileLocationData && mobileLocationData.length > 0) {
@@ -127,7 +128,7 @@ export class MobileAccessPage {
               message: "There are no locations to display",
               positiveButtonTitle: "RETRY",
               positiveButtonHandler: () => {
-                this.retrieveMobileLocationData();
+                this.retrieveMobileLocationData(true);
               },
               negativeButtonTitle: "CLOSE",
               negativeButtonHandler: () => {
@@ -153,7 +154,7 @@ export class MobileAccessPage {
             message: errorMessage,
             positiveButtonTitle: "RETRY",
             positiveButtonHandler: () => {
-              this.retrieveMobileLocationData();
+              this.retrieveMobileLocationData(true);
             },
             negativeButtonTitle: "CLOSE",
             negativeButtonHandler: () => {
@@ -198,7 +199,7 @@ export class MobileAccessPage {
                 },
                 negativeButtonTitle: "No Thanks",
                 negativeButtonHandler: () => {
-                  this.retrieveMobileLocationData();
+                  this.retrieveMobileLocationData(true);
                 }
               }
             });
@@ -206,13 +207,13 @@ export class MobileAccessPage {
       }).catch(error => {
         console.log(`Android Permission Error: `);
         console.log(error);
-        this.retrieveMobileLocationData();
+        this.retrieveMobileLocationData(true);
       });
     } catch (error) {
       console.log("Permissions Error");
       console.log(error);
 
-      this.retrieveMobileLocationData();
+      this.retrieveMobileLocationData(true);
     }
   }
 
@@ -271,13 +272,13 @@ export class MobileAccessPage {
       this.geolocation.getCurrentPosition({ maximumAge: 3000, timeout: 5000, enableHighAccuracy: true })
         .then(geoData => {
           this.geoData = geoData;
-          this.retrieveMobileLocationData();
+          this.retrieveMobileLocationData(true);
         })
         .catch(error => {
-          this.retrieveMobileLocationData();
+          this.retrieveMobileLocationData(true);
         });
     } else {
-      this.retrieveMobileLocationData();
+      this.retrieveMobileLocationData(true);
     }
   }
 
