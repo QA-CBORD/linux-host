@@ -1,6 +1,6 @@
 import { BaseProvider } from './../../providers/BaseProvider';
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, Events, Platform, ViewController } from 'ionic-angular';
+import { App, IonicPage, NavController, NavParams, Events, Platform } from 'ionic-angular';
 
 import * as Globals from '../../app/app.global';
 
@@ -41,7 +41,7 @@ export class HomePage {
 
   constructor(
     public navCtrl: NavController,
-    private viewCtrl: ViewController,
+    private appCtrl: App,
     public navParams: NavParams,
     public events: Events,
     public mobileAccessProvider: MobileAccessProvider,
@@ -179,10 +179,7 @@ export class HomePage {
         this.navCtrl.setRoot("mobile-access", this.geoData);
         break;
       case 'securemessaging':
-        let currentIndex = this.navCtrl.getActive().index;
-        this.navCtrl.push("secure-messaging").then(() => {
-          this.navCtrl.remove(currentIndex);
-        });
+        this.appCtrl.getActiveNav().setRoot("secure-messaging");
         break;
 
     }
