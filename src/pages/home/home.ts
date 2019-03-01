@@ -171,13 +171,13 @@ private getUserInfo(){
 
     switch (this.destinationPage) {
       case 'rewards':
-        this.navCtrl.push("rewards");
+        this.navCtrl.setRoot("rewards");
         break;
       case 'openmydoor':
-        this.navCtrl.push("mobile-access", this.geoData);
+        this.navCtrl.setRoot("mobile-access", this.geoData);
         break;
       case 'securemessaging':
-        this.navCtrl.push("secure-messaging")
+        this.navCtrl.setRoot("secure-messaging")
         break;
 
     }
