@@ -1,6 +1,6 @@
 import { BaseProvider } from './../../providers/BaseProvider';
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, Events, Platform } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Events, Platform, ViewController } from 'ionic-angular';
 
 import * as Globals from '../../app/app.global';
 
@@ -41,6 +41,7 @@ export class HomePage {
 
   constructor(
     public navCtrl: NavController,
+    private viewCtrl: ViewController,
     public navParams: NavParams,
     public events: Events,
     public mobileAccessProvider: MobileAccessProvider,
@@ -131,31 +132,31 @@ export class HomePage {
   }
 
 
-private getUserInfo(){  
-  this.userService.getUser().subscribe(
-    (data) => {
-      BaseProvider.setUserInfo(data);
-      this.handlePageNavigation();
-    },
-    (error)=>{
-      ExceptionProvider.showException(this.events, {
-        displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
-        messageInfo: {
-          title: "No User",
-          message: "Unable to verify your user inforation.",
-          positiveButtonTitle: "RETRY",
-          positiveButtonHandler: () => {
-            this.handleSessionToken();
-          },
-          negativeButtonTitle: "CLOSE",
-          negativeButtonHandler: () => {
-            this.platform.exitApp();
+  private getUserInfo() {
+    this.userService.getUser().subscribe(
+      (data) => {
+        BaseProvider.setUserInfo(data);
+        this.handlePageNavigation();
+      },
+      (error) => {
+        ExceptionProvider.showException(this.events, {
+          displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
+          messageInfo: {
+            title: "No User",
+            message: "Unable to verify your user inforation.",
+            positiveButtonTitle: "RETRY",
+            positiveButtonHandler: () => {
+              this.handleSessionToken();
+            },
+            negativeButtonTitle: "CLOSE",
+            negativeButtonHandler: () => {
+              this.platform.exitApp();
+            }
           }
-        }
-      });
-    }
-  );
-}
+        });
+      }
+    );
+  }
 
   /**
    *  Navigate user to the destination page after session id has been retrieved
@@ -169,6 +170,7 @@ private getUserInfo(){
       this.destinationPage = 'securemessaging';
     }
 
+
     switch (this.destinationPage) {
       case 'rewards':
         this.navCtrl.setRoot("rewards");
@@ -177,7 +179,10 @@ private getUserInfo(){
         this.navCtrl.setRoot("mobile-access", this.geoData);
         break;
       case 'securemessaging':
-        this.navCtrl.setRoot("secure-messaging")
+        let currentIndex = this.navCtrl.getActive().index;
+        this.navCtrl.push("secure-messaging").then(() => {
+          this.navCtrl.remove(currentIndex);
+        });
         break;
 
     }
