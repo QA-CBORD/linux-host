@@ -79,7 +79,7 @@ export class SecureMessagingPage {
         }
       });
 
-      /// get the initial messaging data
+    /// get the initial messaging data
     this.loadInitialData();
   }
 
@@ -109,7 +109,7 @@ export class SecureMessagingPage {
    */
   private loadInitialData() {
     this.pageState = this.LOADING;
-    
+
     this.groups.length = 0;
     this.messages.length = 0;
     this.conversations.length = 0;
@@ -352,10 +352,10 @@ export class SecureMessagingPage {
     this.openChooseContactModal();
   }
 
-/**
- * Logic to open the groups list page
- * Select a group for new conversation
- */
+  /**
+   * Logic to open the groups list page
+   * Select a group for new conversation
+   */
   openChooseContactModal() {
 
     const modalOptions: ModalOptions = {
@@ -469,23 +469,41 @@ export class SecureMessagingPage {
     let today: Date = new Date();
     let sentDate: Date = new Date(message.sent_date);
 
-    /// if sent date is from previous year, use full date
-    if(today.getFullYear() > sentDate.getFullYear()){
-      return this.datePipe.transform(sentDate, "medium");
+
+    /// > 1 year (Full timestamp)
+    if (today.getFullYear() > sentDate.getFullYear()) {
+      return this.datePipe.transform(sentDate, "mediumDate");
     }
 
-    /// if sent date is from previous month, use full date
-    if(today.getMonth() > sentDate.getMonth()){
-      return this.datePipe.transform(sentDate, "medium");
+    /// > 1 month (dd/mm at xx:xx AM/PM)
+    if (today.getMonth() > sentDate.getMonth()) {
+      return this.datePipe.transform(sentDate, "MMM d, h:mm a");
     }
 
-    /// if sent date is earlier in the same month, use full date
-    if(today.getDate() > sentDate.getDate()){
-      return this.datePipe.transform(sentDate, "medium");
+    /// > 2 days (<dayAbbv> xx:xx AM/PM)
+    if (today.getDate() - sentDate.getDate() > 2) {
+      return this.datePipe.transform(sentDate, "E h:mm a");
     }
 
-    /// date is from the same day
-    return this.datePipe.transform(sentDate, "mediumTime");;
+    /// > 1 day (Yesterday at xx:xx AM/PM)
+    if (today.getDate() - sentDate.getDate() > 1) {
+      return this.datePipe.transform(sentDate, "Yesterday, h:mm a");
+    }
+
+    /// > 5 minutes (xx:xx AM/PM)
+    if (today.getMilliseconds() - sentDate.getMilliseconds() > 300000) {
+      return this.datePipe.transform(sentDate, "h:mm a");
+    }
+
+    /// > 1 minute (x minutes ago)
+    if (today.getMilliseconds() - sentDate.getMilliseconds() > 60000) {
+      let minutesAgo = (today.getMilliseconds() - sentDate.getMilliseconds()) / 60000;
+      return minutesAgo.toString() + " minutes ago";
+    }
+
+    /// < 1 minute (Now)
+    return "Now";
+    
   }
 
 }
