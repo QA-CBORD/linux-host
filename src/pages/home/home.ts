@@ -178,7 +178,10 @@ export class HomePage {
         this.navCtrl.setRoot("mobile-access", this.geoData);
         break;
       case 'securemessaging':
-      this.navCtrl.setRoot("secure-messaging");
+        this.navCtrl.setRoot("secure-messaging").then(() => {
+          const index = this.navCtrl.getActive().index;
+          this.navCtrl.remove(0, index);
+        });
         break;
 
     }
