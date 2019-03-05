@@ -16,11 +16,9 @@ import { ExceptionProvider } from '../../providers/exception-provider/exception-
 import { Environment } from '../../app/environment';
 import { UserRewardTrackInfo } from '../../models/rewards/rewards.interface';
 import { GeoCoordinates } from './../../models/geolocation/geocoordinates.interface';
+import { SecureMessagingPage } from '../secure-messaging/secure-messaging';
 
-@IonicPage({
-  name: 'home',
-  segment: 'home/:sessionToken/:destinationPage/:latitude/:longitude/:accuracy'
-})
+
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html',
@@ -57,19 +55,14 @@ export class HomePage {
 
       /// hide the split pane here becuase we don't need the navigation menu
       events.publish(Globals.Events.SIDEPANE_ENABLE, false);
+      
+      console.log(location.hash.split("/"));
+
+      let hashParameters: string[] = location.hash.split("/");
 
       /// get required params from the URL
-      this.sessionToken = navParams.get('sessionToken');
-      this.destinationPage = navParams.get('destinationPage');
-
-      /// get optional location params from the URL
-      try {
-        this.geoData.coords.latitude = parseFloat(navParams.get('latitude'));
-        this.geoData.coords.longitude = parseFloat(navParams.get('longitude'));
-        this.geoData.coords.accuracy = parseFloat(navParams.get('accuracy'));
-      } catch (error) {
-        /// will only fail when no geolocation data from native device or url        
-      }
+      this.sessionToken = hashParameters[2] || null;
+      this.destinationPage = hashParameters[3] || null;
 
       events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Loading content" });
 
@@ -178,7 +171,7 @@ export class HomePage {
         this.navCtrl.setRoot("mobile-access", this.geoData);
         break;
       case 'securemessaging':
-      this.navCtrl.setRoot("secure-messaging");
+      this.navCtrl.setRoot(SecureMessagingPage);
         break;
 
     }

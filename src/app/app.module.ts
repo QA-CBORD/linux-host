@@ -1,3 +1,4 @@
+
 import { BrowserModule } from '@angular/platform-browser';
 import { ErrorHandler, NgModule } from '@angular/core';
 import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
@@ -44,6 +45,9 @@ import { MobileAccessModalPageModule } from './../pages/mobile-access-modal/mobi
 import { RewardDetailsModalPage } from './../pages/reward-details-modal/reward-details-modal';
 import { RewardDetailsModalPageModule } from '../pages/reward-details-modal/reward-details-modal.module';
 
+import { HomePage } from './../pages/home/home';
+import { SecureMessagingPage } from './../pages/secure-messaging/secure-messaging';
+
 
 /// COMPONENTS
 import { SideMenuContentComponent } from '../shared/side-menu-content/side-menu-content.component';
@@ -60,7 +64,9 @@ export function createTranslateLoader(http: HttpClient) {
 @NgModule({
   declarations: [
     MyApp,
-    SideMenuContentComponent
+    SideMenuContentComponent,
+    HomePage,
+    SecureMessagingPage
   ],
   imports: [
     HttpModule,
@@ -85,7 +91,9 @@ export function createTranslateLoader(http: HttpClient) {
   entryComponents: [
     MyApp,
     MobileAccessModalPage,
-    RewardDetailsModalPage
+    RewardDetailsModalPage,
+    HomePage,
+    SecureMessagingPage
   ],
   providers: [
     StatusBar,

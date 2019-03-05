@@ -12,9 +12,7 @@ import { BaseProvider } from '../../providers/BaseProvider';
 import * as Globals from '../../app/app.global'
 import { SecureMessageInfo, SecureMessageGroupInfo, SecureMessageConversation } from '../../models/secure-messaging/secure-message-info';
 
-@IonicPage({
-  name: 'secure-messaging',
-})
+
 @Component({
   selector: 'page-secure-messaging',
   templateUrl: 'secure-messaging.html',

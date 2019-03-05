@@ -12,6 +12,8 @@ import { SideMenuContentComponent } from './../shared/side-menu-content/side-men
 import { MenuOptionModel } from '../shared/side-menu-content/models/menu-option-model';
 import { SideMenuSettings } from './../shared/side-menu-content/models/side-menu-settings';
 
+import { HomePage } from './../pages/home/home';
+
 
 @Component({
 	templateUrl: 'app.html'
@@ -28,7 +30,7 @@ export class MyApp {
 	private loader: Loading;
 	bShowSplitPane: boolean = true;
 
-	rootPage: string = 'home';
+	rootPage: any = HomePage;
 
 	// Options to show in the SideMenuComponent
 	public options: Array<MenuOptionModel>;
