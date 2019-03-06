@@ -76,7 +76,7 @@
             <div style="margin-top: 8vh">
               <ion-item no-lines class="item-conversation" (click)=onAddConversationFABClick()>
                 <ion-avatar text-center item-start class="item-conversation-avatar">
-                  <h1 style="color:white; position: relative; top:25%; font-size: 22pt">+</h1>
+                  <ion-icon name="text" style="color:white; zoom:1.25; position: relative; top:28%;"></ion-icon>
                 </ion-avatar>
                 Start a conversation
               </ion-item>
@@ -127,7 +127,7 @@
     <div *ngIf="bIsLargeScreen" style="height:100%">
       <ion-grid style="padding:0px; height:100%">
         <ion-row style="height: 100%;">
-          <ion-col col-sm-12 col-md-5 col-lg-4 col-xl-3 style="padding-right:0px;">
+          <ion-col col-sm-4 col-md-4 col-lg-4 col-xl-3 style="padding-right:0px;">
             <ion-header no-border>
               <ion-navbar hideBackButton color='secure-messaging-background'>
                 <ion-title text-left>Conversations</ion-title>
@@ -153,7 +153,7 @@
               </ion-list>
             </div>
           </ion-col>
-          <ion-col col-sm-0 col-md-7 col-lg-8 col-xl-9 style="background-color: #ddd; height:100%">
+          <ion-col col-sm-8 col-md-8 col-lg-8 col-xl-9 style="background-color: #ddd; height:100%">
             <ion-header>
               <ion-navbar hideBackButton color='secure-messaging-background-dark'>
                 <ion-title text-left>{{getCurrentConversationName()}}</ion-title>
@@ -167,8 +167,8 @@
             <ion-scroll #chatScroll scrollY="true" style="margin-top: 50px; height:75%;">
               <ion-grid style="background-color: #ddd;">
                 <ion-row>
-                  <ion-col col-sm-0 col-md-0 col-lg-1 col-xl-1></ion-col>
-                  <ion-col col-sm-12 col-md-12 col-lg-10 col-xl-10>
+                  <ion-col col-sm-0 col-md-1 col-lg-1 col-xl-1></ion-col>
+                  <ion-col col-sm-12 col-md-10 col-lg-10 col-xl-10>
                     <div *ngFor="let message of selectedConversation.messages">
 
                       <ion-grid *ngIf="message.sender.type == 'group'" margin style="padding:0em;">
@@ -210,7 +210,7 @@
                       </ion-grid>
                     </div>
                   </ion-col>
-                  <ion-col col-sm-0 col-md-0 col-lg-1 col-xl-1></ion-col>
+                  <ion-col col-sm-0 col-md-1 col-lg-1 col-xl-1></ion-col>
                 </ion-row>
               </ion-grid>
             </ion-scroll>

@@ -35,6 +35,7 @@ export class SecureMessagingPage {
   @ViewChild('chatScroll') chatScroll: any;
   resizeSubscription: Subscription;
   bIsLargeScreen: boolean = false;
+  largeScreenPixelMin: number = 540;
   selectedConversation: SecureMessageConversation;
   newMessageText: string;
 
@@ -53,7 +54,7 @@ export class SecureMessagingPage {
       /// hide the split pane here becuase we don't need the navigation menu
       events.publish(Globals.Events.SIDEPANE_ENABLE, false);
       this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
-      this.bIsLargeScreen = this.platform.width() > 768;
+      this.bIsLargeScreen = this.platform.width() > this.largeScreenPixelMin;
     });
 
   }
@@ -71,7 +72,7 @@ export class SecureMessagingPage {
     this.resizeSubscription = fromEvent(window, 'resize')
       .subscribe(event => {
         let bWasPreviouslyLargeScreen = this.bIsLargeScreen;
-        this.bIsLargeScreen = window.innerWidth >= 768;
+        this.bIsLargeScreen = window.innerWidth >= this.largeScreenPixelMin;
         if (!bWasPreviouslyLargeScreen && this.bIsLargeScreen) {
           this.scrollToBottom();
         }

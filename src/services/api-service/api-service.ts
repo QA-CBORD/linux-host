@@ -113,6 +113,7 @@ export class APIService {
             switch (callType) {
                 case RestCallType.get:
                     this.get<any>(finalURL, responseType, params, headers).subscribe(response => {
+                        // console.log(response);
                         observer.next(response);
                     },
                         (error: any) => {
@@ -126,6 +127,7 @@ export class APIService {
                     break;
                 case RestCallType.post:
                     this.post(finalURL, body, responseType, params, headers).subscribe(response => {
+                        // console.log(response);
                         observer.next(response);
                     },
                         (error: any) => {
@@ -139,6 +141,7 @@ export class APIService {
                     break;
                 case RestCallType.put:
                     this.put(finalURL, body, responseType, params, headers).subscribe(response => {
+                        // console.log(response);
                         observer.next(response);
                     },
                         (error: any) => {
