@@ -1,21 +1,21 @@
 import { Injectable } from "@angular/core";
-import { UserInfo } from "../models/user/user-info.interface";
+import { MUserInfo } from "../models/user/user-info.interface";
 
 Injectable()
 export class BaseProvider{
 
 
-    private static userInfo: UserInfo;
+    private static userInfo: MUserInfo;
 
     constructor(
     ) {
     }
 
-    public static getUserInfo(): UserInfo {
+    public static getUserInfo(): MUserInfo {
         return BaseProvider.userInfo;
     }
 
-    public static setUserInfo(userInfo :UserInfo) {
+    public static setUserInfo(userInfo :MUserInfo) {
         BaseProvider.userInfo = userInfo;
     }
 

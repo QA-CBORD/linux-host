@@ -1,4 +1,4 @@
-export interface UserRewardTrackInfo {
+export interface MUserRewardTrackInfo {
     trackID: string;
     trackName: string;
     trackDescription: string;
@@ -12,24 +12,24 @@ export interface UserRewardTrackInfo {
     userExperiencePoints: number;
     hasLevels: boolean;
     hasRedeemableRewards: boolean;
-    trackLevels: UserTrackLevelInfo[];
-    accumulationRules: AccumulationRuleInfo[];
-    redeemableRewards: RedeemableRewardInfo[];
+    trackLevels: MUserTrackLevelInfo[];
+    accumulationRules: MAccumulationRuleInfo[];
+    redeemableRewards: MRedeemableRewardInfo[];
 }
 
-export interface UserRewardTrackInfoInfoList {
-    institutions: Array<UserRewardTrackInfo>;
+export interface MUserRewardTrackInfoInfoList {
+    institutions: Array<MUserRewardTrackInfo>;
 }
 
-export interface UserTrackLevelInfo {
+export interface MUserTrackLevelInfo {
     level: number;
     name: string;
     requiredPoints: number;
     redeemed: boolean;
-    userClaimableRewards: ClaimableRewardInfo[];
+    userClaimableRewards: MClaimableRewardInfo[];
 }
 
-export interface AccumulationRuleInfo {
+export interface MAccumulationRuleInfo {
     startDate: Date;
     endDate: Date;
     activityType: number;
@@ -37,7 +37,7 @@ export interface AccumulationRuleInfo {
     description: string;
 }
 
-export interface ClaimableRewardInfo {
+export interface MClaimableRewardInfo {
     id: string;
     startDate: Date;
     endDate: Date;
@@ -48,7 +48,7 @@ export interface ClaimableRewardInfo {
     claimStatus: number;
 }
 
-export interface RedeemableRewardInfo {
+export interface MRedeemableRewardInfo {
     id: string;
     startDate: Date;
     endDate: Date;
@@ -58,7 +58,7 @@ export interface RedeemableRewardInfo {
     pointCost: number;
 }
 
-export interface UserFulfillmentActivityInfo {
+export interface MUserFulfillmentActivityInfo {
     trackId: string;
     userId: string;
     rewardLevel: number;

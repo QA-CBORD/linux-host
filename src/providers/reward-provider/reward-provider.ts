@@ -4,7 +4,7 @@ import { RewardService } from '../../services/reward-service/reward-service';
 
 import { Observable } from 'rxjs/Observable';
 
-import { UserRewardTrackInfo, UserFulfillmentActivityInfo, UserTrackLevelInfo } from '../../models/rewards/rewards.interface'
+import { MUserRewardTrackInfo, MUserFulfillmentActivityInfo, MUserTrackLevelInfo } from '../../models/rewards/rewards.interface'
 
 
 
@@ -28,7 +28,7 @@ export class RewardsProvider {
   /**
    *  Get list of the Instituions available Reward Tracks
    */
-  getUserRewardsData(): Observable<UserRewardTrackInfo[]> {
+  getUserRewardsData(): Observable<MUserRewardTrackInfo[]> {
     return this.rewardService.retrieveUserRewardTrackInfo(false);
   }
 
@@ -40,7 +40,7 @@ export class RewardsProvider {
    * @param endDate     Date constraint for end of History item list (typically Reward Track end date)
    * @param filters     Not used yet. It's here for future expansion
    */
-  getUserRewardHistory(trackID: string, trackStartDate: Date, trackEndDate: Date): Observable<UserFulfillmentActivityInfo[]> {
+  getUserRewardHistory(trackID: string, trackStartDate: Date, trackEndDate: Date): Observable<MUserFulfillmentActivityInfo[]> {
     var filters = null;
     return this.rewardService.retrieveUserRewardHistory(trackID, trackStartDate, trackEndDate, filters);
   }

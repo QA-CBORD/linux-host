@@ -14,8 +14,8 @@ import { MobileAccessProvider } from '../../providers/mobile-access-provider/mob
 import { ExceptionProvider } from '../../providers/exception-provider/exception-provider';
 
 import { Environment } from '../../app/environment';
-import { UserRewardTrackInfo } from '../../models/rewards/rewards.interface';
-import { GeoCoordinates } from './../../models/geolocation/geocoordinates.interface';
+import { MUserRewardTrackInfo } from '../../models/rewards/rewards.interface';
+import { MGeoCoordinates } from './../../models/geolocation/geocoordinates.interface';
 import { SecureMessagingPage } from '../secure-messaging/secure-messaging';
 
 
@@ -27,7 +27,7 @@ export class HomePage {
 
   sessionToken: string = null;
   destinationPage: string = null;
-  geoData: GeoCoordinates = {
+  geoData: MGeoCoordinates = {
     coords: {
       latitude: null,
       longitude: null,
@@ -35,7 +35,7 @@ export class HomePage {
     }
   };
 
-  userRewardTrackInfo: UserRewardTrackInfo;
+  userRewardTrackInfo: MUserRewardTrackInfo;
 
   constructor(
     public navCtrl: NavController,

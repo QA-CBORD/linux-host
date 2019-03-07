@@ -14,8 +14,9 @@ import { Diagnostic } from '@ionic-native/diagnostic';
 import { AndroidPermissions } from '@ionic-native/android-permissions';
 
 import { MyApp } from './app.component';
-// import { IonicStorageModule } from '@ionic/storage';
+import { IonicStorageModule } from '@ionic/storage';
 import { QRCodeModule } from 'angular2-qrcode';
+import { AppVersion } from '@ionic-native/app-version/ngx';
 
 /// SERVICES
 import { APIService } from '../services/api-service/api-service'
@@ -73,7 +74,7 @@ export function createTranslateLoader(http: HttpClient) {
     BrowserModule,
     IonicModule.forRoot(MyApp),
     HttpClientModule,
-    // IonicStorageModule.forRoot(),
+    IonicStorageModule.forRoot(),
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
@@ -99,6 +100,7 @@ export function createTranslateLoader(http: HttpClient) {
     StatusBar,
     SplashScreen,
     { provide: ErrorHandler, useClass: IonicErrorHandler },
+    AppVersion,
     DatePipe,
     ExceptionProvider,
     SessionService,

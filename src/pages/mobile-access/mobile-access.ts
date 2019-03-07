@@ -8,8 +8,8 @@ import * as Globals from '../../app/app.global';
 import { MobileAccessModalPage } from '../mobile-access-modal/mobile-access-modal';
 import { MobileAccessProvider } from '../../providers/mobile-access-provider/mobile-access-provider';
 import { ExceptionProvider } from '../../providers/exception-provider/exception-provider';
-import { MobileLocationInfo } from '../../models/open-my-door/open-my-door.interface';
-import { GeoCoordinates } from '../../models/geolocation/geocoordinates.interface';
+import { MMobileLocationInfo } from '../../models/open-my-door/open-my-door.interface';
+import { MGeoCoordinates } from '../../models/geolocation/geocoordinates.interface';
 import { NonNullAssert } from '@angular/compiler';
 
 
@@ -22,14 +22,14 @@ import { NonNullAssert } from '@angular/compiler';
 })
 export class MobileAccessPage {
 
-  mobileLocationInfo: MobileLocationInfo[] = new Array();
+  mobileLocationInfo: MMobileLocationInfo[] = new Array();
   bShowNoLocationsAvailable = false;
 
   currentSelectedLocation: any;
   refresher: any;
   bIsUpdatingLocations: boolean = false;
 
-  geoData: GeoCoordinates = {
+  geoData: MGeoCoordinates = {
     coords: {
       latitude: null,
       longitude: null,

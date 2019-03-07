@@ -1,4 +1,4 @@
-export interface GeoCoordinates {
+export interface MGeoCoordinates {
     coords : {
         latitude,
         longitude,

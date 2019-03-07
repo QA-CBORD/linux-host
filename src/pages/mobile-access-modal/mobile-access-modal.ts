@@ -9,9 +9,9 @@ import 'rxjs/add/operator/delay';
 
 import * as Globals from '../../app/app.global';
 import { MobileAccessProvider } from '../../providers/mobile-access-provider/mobile-access-provider';
-import { ActivateMobileLocationResult } from '../../models/open-my-door/open-my-door.interface';
+import { MActivateMobileLocationResult } from '../../models/open-my-door/open-my-door.interface';
 import { ExceptionProvider } from '../../providers/exception-provider/exception-provider';
-import { GeoCoordinates } from '../../models/geolocation/geocoordinates.interface';
+import { MGeoCoordinates } from '../../models/geolocation/geocoordinates.interface';
 
 
 @IonicPage()
@@ -22,7 +22,7 @@ import { GeoCoordinates } from '../../models/geolocation/geocoordinates.interfac
 export class MobileAccessModalPage {
 
   currentSelectedLocation: any;
-  geoData: GeoCoordinates;
+  geoData: MGeoCoordinates;
 
   constructor(
     public navCtrl: NavController,
@@ -142,7 +142,7 @@ export class MobileAccessModalPage {
    * 
    * @param response Response returned from service call
    */
-  private handleActivateMobileLocationResponse(response: ActivateMobileLocationResult) {
+  private handleActivateMobileLocationResponse(response: MActivateMobileLocationResult) {
     this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
          if (!response.responseCode || response.responseCode == "00") {
       // need fucntional PDF_417 generator

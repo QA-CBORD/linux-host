@@ -1,4 +1,4 @@
-export interface MobileLocationInfo {
+export interface MMobileLocationInfo {
     locationId: string;
     name: string;
     type: string;
@@ -9,7 +9,7 @@ export interface MobileLocationInfo {
     score: number;
 }
 
-export interface ActivateMobileLocationResult {
+export interface MActivateMobileLocationResult {
     validityTime: number;
     showBarCode: number;
     showTempCode: number;

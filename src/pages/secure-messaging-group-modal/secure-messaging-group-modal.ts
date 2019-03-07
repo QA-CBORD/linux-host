@@ -1,9 +1,8 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, ViewController, ToastController } from 'ionic-angular';
-
 import { SecureMessagingProvider } from '../../providers/secure-messaging-provider/secure-messaging-provider';
 
-import { SecureMessageAddressInfo, SecureMessageGroupInfo } from './../../models/secure-messaging/secure-message-info';
+import { MSecureMessageAddressInfo, MSecureMessageGroupInfo } from './../../models/secure-messaging/secure-message-info';
 
 @IonicPage()
 @Component({
@@ -17,10 +16,8 @@ export class SecureMessagingGroupModalPage {
   readonly SHOW_GROUPS: number = 2;
 
   pageState: number = this.LOADING;
-
-  groups: SecureMessageGroupInfo[];
-
-  selectedGroup: SecureMessageGroupInfo;
+  groups: MSecureMessageGroupInfo[];
+  selectedGroup: MSecureMessageGroupInfo;
 
   constructor(
     public navCtrl: NavController,
@@ -55,7 +52,7 @@ export class SecureMessagingGroupModalPage {
   /**
    * Handle the selected group from the ui
    */
-  onGroupClick(selectedGroup: SecureMessageGroupInfo) {
+  onGroupClick(selectedGroup: MSecureMessageGroupInfo) {
     this.selectedGroup = selectedGroup;
     this.closeModal();
   }
@@ -66,7 +63,7 @@ export class SecureMessagingGroupModalPage {
   onNoGroupsFoundClick() {
     this.pageState = this.LOADING;
     this.secureMessagingProvider.getSecureMessagesGroups().subscribe(
-      (groupsArray: SecureMessageGroupInfo[]) => {
+      (groupsArray: MSecureMessageGroupInfo[]) => {
         this.groups = groupsArray;
         if(this.groups.length > 0){
           if (!this.groups || this.groups.length <= 0) {

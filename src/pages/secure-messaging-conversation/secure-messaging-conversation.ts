@@ -4,12 +4,11 @@ import { IonicPage, NavController, NavParams, Platform, Events, Content, ToastCo
 
 import { fromEvent } from "rxjs/observable/fromEvent";
 import { Subscription } from 'rxjs/Subscription';
-
 import { BaseProvider } from '../../providers/BaseProvider';
 import { SecureMessagingProvider } from './../../providers/secure-messaging-provider/secure-messaging-provider';
 
 import * as Globals from '../../app/app.global';
-import { SecureMessageConversation, SecureMessageInfo, SecureMessageSendBody } from '../../models/secure-messaging/secure-message-info';
+import { MSecureMessageConversation, MSecureMessageInfo, MSecureMessageSendBody } from '../../models/secure-messaging/secure-message-info';
 
 @IonicPage()
 @Component({
@@ -27,11 +26,11 @@ export class SecureMessagingConversationPage {
   bShowLoadingContent: boolean = false;
   bShowUnableToLoadMessages: boolean = false;
 
-  conversation: SecureMessageConversation;
+  conversation: MSecureMessageConversation;
 
   newMessageText: string;
 
-  apiMessageBody: SecureMessageSendBody;
+  apiMessageBody: MSecureMessageSendBody;
 
   resizeSubscription: Subscription;
 
@@ -119,7 +118,7 @@ export class SecureMessagingConversationPage {
   }
 
   addLocalDataToConversation() {
-    let message: SecureMessageInfo = {
+    let message: MSecureMessageInfo = {
       body: this.newMessageText,
       created_date: new Date().toLocaleString(),
       description: "",
@@ -164,7 +163,7 @@ export class SecureMessagingConversationPage {
    * Get formatted date string for message display
    * @param message 
    */
-  public getMessageDate(message: SecureMessageInfo): string {
+  public getMessageDate(message: MSecureMessageInfo): string {
     let today: Date = new Date();
     let sentDate: Date = new Date(message.sent_date);
 

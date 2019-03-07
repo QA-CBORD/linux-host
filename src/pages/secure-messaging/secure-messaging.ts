@@ -10,7 +10,7 @@ import { SecureMessagingProvider } from '../../providers/secure-messaging-provid
 import { BaseProvider } from '../../providers/BaseProvider';
 
 import * as Globals from '../../app/app.global'
-import { SecureMessageInfo, SecureMessageGroupInfo, SecureMessageConversation } from '../../models/secure-messaging/secure-message-info';
+import { MSecureMessageInfo, MSecureMessageGroupInfo, MSecureMessageConversation } from '../../models/secure-messaging/secure-message-info';
 
 
 @Component({
@@ -27,16 +27,16 @@ export class SecureMessagingPage {
 
   pageState: number = this.LOADING;
 
-  conversations: SecureMessageConversation[] = new Array();
+  conversations: MSecureMessageConversation[] = new Array();
 
-  groups: SecureMessageGroupInfo[] = new Array();
-  messages: SecureMessageInfo[] = new Array();
+  groups: MSecureMessageGroupInfo[] = new Array();
+  messages: MSecureMessageInfo[] = new Array();
 
   @ViewChild('chatScroll') chatScroll: any;
   resizeSubscription: Subscription;
   bIsLargeScreen: boolean = false;
   largeScreenPixelMin: number = 540;
-  selectedConversation: SecureMessageConversation;
+  selectedConversation: MSecureMessageConversation;
   newMessageText: string;
 
   constructor(
@@ -91,7 +91,7 @@ export class SecureMessagingPage {
     }
 
     /// gets conversation data from conversation modal and updates the convo here if it exiss
-    let updatedConversation: SecureMessageConversation = this.navParams.get('updatedConversation') || null;
+    let updatedConversation: MSecureMessageConversation = this.navParams.get('updatedConversation') || null;
 
     if (updatedConversation) {
       for (let i = 0; i < this.conversations.length; i++) {
@@ -186,7 +186,7 @@ export class SecureMessagingPage {
           }
         }
 
-        let conversation: SecureMessageConversation = {
+        let conversation: MSecureMessageConversation = {
           institutionId: SecureMessagingProvider.GetSMAuthInfo().institution_id,
           groupName: newGroupName,
           groupIdValue: newGroupId,
@@ -244,7 +244,7 @@ export class SecureMessagingPage {
    * 
    * @param conversation The conversation that was selected from the list
    */
-  onConversationClick(conversation: SecureMessageConversation) {
+  onConversationClick(conversation: MSecureMessageConversation) {
 
     if (this.bIsLargeScreen) {
       for (let convo of this.conversations) {
@@ -314,7 +314,7 @@ export class SecureMessagingPage {
    * Add sent message to local conversation rather than making a call to get all messages for update
    */
   addLocalDataToConversation() {
-    let message: SecureMessageInfo = {
+    let message: MSecureMessageInfo = {
       body: this.newMessageText,
       created_date: new Date().toLocaleString(),
       description: "",
@@ -374,7 +374,7 @@ export class SecureMessagingPage {
 
       /// check if a conversation with this group already exists, if so, just pull up that conversation
       if (data.selectedGroup) {
-        let newConversation: SecureMessageConversation;
+        let newConversation: MSecureMessageConversation;
 
         for (let convo of this.conversations) {
           if (data.selectedGroup.id == convo.groupIdValue) {
@@ -417,7 +417,7 @@ export class SecureMessagingPage {
    * Open the conversation modal if we're not in large screen mode
    * @param conversation Conversation to display
    */
-  openConversationPage(conversation: SecureMessageConversation) {
+  openConversationPage(conversation: MSecureMessageConversation) {
     const modalOptions: ModalOptions = {
       enableBackdropDismiss: false
     };
@@ -464,7 +464,7 @@ export class SecureMessagingPage {
    * Get formatted date string for message display
    * @param message 
    */
-  public getMessageDate(message: SecureMessageInfo): string {
+  public getMessageDate(message: MSecureMessageInfo): string {
     let today: Date = new Date();
     let sentDate: Date = new Date(message.sent_date);
 

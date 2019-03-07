@@ -12,7 +12,7 @@ import { ExceptionProvider } from '../../providers/exception-provider/exception-
 
 import { AccordionListOptionModel } from '../../shared/accordion-list/models/accordionlist-option-model';
 import { AccordionListSettings } from '../../shared/accordion-list/models/accordionlist-settings';
-import { UserRewardTrackInfo, UserTrackLevelInfo, ClaimableRewardInfo, UserFulfillmentActivityInfo, RedeemableRewardInfo } from '../../models/rewards/rewards.interface'
+import { MUserRewardTrackInfo, MUserTrackLevelInfo, MClaimableRewardInfo, MUserFulfillmentActivityInfo, MRedeemableRewardInfo } from '../../models/rewards/rewards.interface'
 import { RewardDetailsModalPage } from '../reward-details-modal/reward-details-modal';
 
 import * as Globals from '../../app/app.global';
@@ -67,14 +67,14 @@ export class RewardsPage {
   labelCurrentLevel: any;
   labelNextLevel: any;
 
-  userRewardTrackInfo: UserRewardTrackInfo;
-  userPointsItemsList: Array<RedeemableRewardInfo>;
-  userHistoryItemList: Array<UserFulfillmentActivityInfo>;
+  userRewardTrackInfo: MUserRewardTrackInfo;
+  userPointsItemsList: Array<MRedeemableRewardInfo>;
+  userHistoryItemList: Array<MUserFulfillmentActivityInfo>;
 
   bShowLevels: boolean = false;
   bShowPoints: boolean = false;
 
-  detailsActiveList: Map<string, UserTrackLevelInfo> = new Map();
+  detailsActiveList: Map<string, MUserTrackLevelInfo> = new Map();
   levelClaimedList: Map<string, number> = new Map();
 
   constructor(
@@ -152,7 +152,7 @@ export class RewardsPage {
     )
   }
 
-  private getRewardHistory(userRewardTI: UserRewardTrackInfo) {
+  private getRewardHistory(userRewardTI: MUserRewardTrackInfo) {
     this.rewardsProvider.getUserRewardHistory(userRewardTI.trackID, userRewardTI.trackStartDate, userRewardTI.trackEndDate).subscribe(
       response => {
         this.userHistoryItemList = response;
@@ -452,19 +452,19 @@ export class RewardsPage {
   public selectLevelOption(option: AccordionListOptionModel): void {
     console.log(`Option Selected: ${option.displayName}`);
     if (option.custom) {
-      let currentLevelInfo: UserTrackLevelInfo = this.userRewardTrackInfo.trackLevels[option.custom.levelIndex];
-      let currentOption: ClaimableRewardInfo = currentLevelInfo.userClaimableRewards[option.custom.itemIndex];
+      let currentLevelInfo: MUserTrackLevelInfo = this.userRewardTrackInfo.trackLevels[option.custom.levelIndex];
+      let currentOption: MClaimableRewardInfo = currentLevelInfo.userClaimableRewards[option.custom.itemIndex];
       this.openItemDetailPopover(currentOption, !currentLevelInfo.redeemed);
     }
   }
 
 
 
-  public pointsItemSelected(claimableItem: RedeemableRewardInfo) {
+  public pointsItemSelected(claimableItem: MRedeemableRewardInfo) {
     this.openItemDetailPopover(claimableItem, claimableItem.pointCost <= this.userRewardTrackInfo.userCurrentPoints);
   }
 
-  public hitoryItemSelected(item: UserFulfillmentActivityInfo) {
+  public hitoryItemSelected(item: MUserFulfillmentActivityInfo) {
     this.openItemDetailPopover(item, false);
   }
 
@@ -484,7 +484,7 @@ export class RewardsPage {
 
   //#endregion
 
-  toggleLevelDetails(trackLevel: UserTrackLevelInfo) {
+  toggleLevelDetails(trackLevel: MUserTrackLevelInfo) {
     if (trackLevel != null) {
       if (this.detailsActiveList.get(String(trackLevel.level))) {
         this.detailsActiveList.delete(String(trackLevel.level));
@@ -494,7 +494,7 @@ export class RewardsPage {
     }
   }
 
-  showLevelDetails(trackLevel: UserTrackLevelInfo) {
+  showLevelDetails(trackLevel: MUserTrackLevelInfo) {
     if (trackLevel == null) {
       return false;
     } else {

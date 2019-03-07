@@ -1,6 +1,6 @@
-import { InstitutionInfo } from './institution-info.interface';
+import { MInstitutionInfo } from './institution-info.interface';
 
-export interface InstitutionInfoList {
-    institutions: Array<InstitutionInfo>;
+export interface MInstitutionInfoList {
+    institutions: Array<MInstitutionInfo>;
 
 }

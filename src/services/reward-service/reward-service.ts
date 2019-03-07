@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from "rxjs/Observable";
 
 import { GETService, ServiceParameters } from "../get-service/get-service";
-import { UserRewardTrackInfo, RedeemableRewardInfo, UserTrackLevelInfo, UserFulfillmentActivityInfo } from '../../models/rewards/rewards.interface';
+import { MUserRewardTrackInfo, MRedeemableRewardInfo, MUserTrackLevelInfo, MUserFulfillmentActivityInfo } from '../../models/rewards/rewards.interface';
 
 @Injectable()
 export class RewardService extends GETService {
@@ -45,9 +45,9 @@ export class RewardService extends GETService {
   /**
    *  Get Track Information list for this institution
    * 
-   * @param headerOnly Only retrieve top level information about tracks
+   * @param headerOnly Only retrieve top level information about trackMUserRewardTrackInfo
    */
-  public retrieveUserRewardTrackInfo(headerOnly: boolean): Observable<UserRewardTrackInfo[]> {
+  public retrieveUserRewardTrackInfo(headerOnly: boolean): Observable<MUserRewardTrackInfo[]> {
 
     return Observable.create((observer: any) => {
 
@@ -108,7 +108,7 @@ export class RewardService extends GETService {
    * 
    * @param trackId   ID of current Reward Track
    */
-  public retrieveRedeemableRewards(trackId: string): Observable<RedeemableRewardInfo[]> {
+  public retrieveRedeemableRewards(trackId: string): Observable<MRedeemableRewardInfo[]> {
 
     return Observable.create((observer: any) => {
 
@@ -140,7 +140,7 @@ export class RewardService extends GETService {
    * @param trackId   ID of current Reward Track
    * @param level     Desired level for which to retrieve info
    */
-  public retrieveUserTrackLevel(trackId: string, level: number): Observable<UserTrackLevelInfo[]> {
+  public retrieveUserTrackLevel(trackId: string, level: number): Observable<MUserTrackLevelInfo[]> {
 
     return Observable.create((observer: any) => {
 
@@ -175,7 +175,7 @@ export class RewardService extends GETService {
    * @param endDate     Date constraint for end of History item list (typically Reward Track end date)
    * @param filters     Not used yet. It's here for future expansion
    */
-  public retrieveUserRewardHistory(trackId: string, startDate: Date, endDate: Date, filters: any[]): Observable<UserFulfillmentActivityInfo[]> {
+  public retrieveUserRewardHistory(trackId: string, startDate: Date, endDate: Date, filters: any[]): Observable<MUserFulfillmentActivityInfo[]> {
 
     return Observable.create((observer: any) => {
 

@@ -1,3 +1,3 @@
-export interface SystemAuthentication {
+export interface MSystemAuthentication {
     sessionId: string;
 }

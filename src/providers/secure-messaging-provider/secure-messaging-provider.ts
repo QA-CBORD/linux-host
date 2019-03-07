@@ -6,7 +6,7 @@ import 'rxjs/add/operator/mergeMap';
 import { AuthService } from "../../services/auth-service/auth-service";
 import { SecureMessagingService } from "../../services/secure-messaging-service/secure-messaging-service";
 
-import { SecureMessageInfo, SecureMessageGroupInfo, SecureMessageSendBody } from "../../models/secure-messaging/secure-message-info";
+import { MSecureMessageInfo, MSecureMessageGroupInfo, MSecureMessageSendBody } from "../../models/secure-messaging/secure-message-info";
 import { SecureMessagingAuthInfo } from "../../models/authentication/secure-messaging-authinfo";
 
 
@@ -27,7 +27,7 @@ export class SecureMessagingProvider {
         return SecureMessagingProvider.smAuthInfo;
     }
 
-    public getInitialData(): Observable<[SecureMessageGroupInfo[], SecureMessageInfo[]]> {
+    public getInitialData(): Observable<[MSecureMessageGroupInfo[], MSecureMessageInfo[]]> {
 
           
         return this.authService.getExternalAuthenticationToken()
@@ -42,18 +42,18 @@ export class SecureMessagingProvider {
     }
 
 
-    public sendSecureMessage(messageInfo: SecureMessageSendBody): Observable<any> {
+    public sendSecureMessage(messageInfo: MSecureMessageSendBody): Observable<any> {
         return this.secureMessageService.postSecureMessage(messageInfo);
 
     }
 
-    public getSecureMessages(): Observable<SecureMessageInfo[]> {
+    public getSecureMessages(): Observable<MSecureMessageInfo[]> {
 
         return this.secureMessageService.getSecureMessages(this.ma_type, SecureMessagingProvider.smAuthInfo.id_field, SecureMessagingProvider.smAuthInfo.id_value);
 
     }
 
-    public getSecureMessagesGroups(): Observable<SecureMessageGroupInfo[]> {
+    public getSecureMessagesGroups(): Observable<MSecureMessageGroupInfo[]> {
         return this.secureMessageService.getSecureMessagesGroups(SecureMessagingProvider.smAuthInfo.institution_id);
     }
 

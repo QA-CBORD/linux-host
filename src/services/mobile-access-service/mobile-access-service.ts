@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { Observable } from "rxjs/Observable";
 
 import { GETService, ServiceParameters } from "../get-service/get-service";
-import { MobileLocationInfo, ActivateMobileLocationResult } from '../../models/open-my-door/open-my-door.interface';
-import { GeoCoordinates } from '../../models/geolocation/geocoordinates.interface';
+import { MMobileLocationInfo, MActivateMobileLocationResult } from '../../models/open-my-door/open-my-door.interface';
+import { MGeoCoordinates } from '../../models/geolocation/geocoordinates.interface';
 
 
 @Injectable()
@@ -16,11 +16,11 @@ export class MobileAccessService extends GETService {
     * 
     * @param geoData   Geolocation data for user. null if none exists
     */
-  public getMobileLocations(geoData: GeoCoordinates): Observable<MobileLocationInfo[]> {
+  public getMobileLocations(geoData: MGeoCoordinates): Observable<MMobileLocationInfo[]> {
 
     return Observable.create((observer: any) => {
 
-      let geoDataParam: GeoCoordinates = {
+      let geoDataParam: MGeoCoordinates = {
         coords: {
           latitude: null,
           longitude: null,
@@ -67,7 +67,7 @@ export class MobileAccessService extends GETService {
    * @param geoData       Geolocation data of user if avaialable, null otherwise
    * @param sourceInfo    I don't know but we always null this out
    */
-  public activateMobileLocation(locationId: string, geoData: any, sourceInfo: string): Observable<ActivateMobileLocationResult> {
+  public activateMobileLocation(locationId: string, geoData: any, sourceInfo: string): Observable<MActivateMobileLocationResult> {
 
     return Observable.create((observer: any) => {
 

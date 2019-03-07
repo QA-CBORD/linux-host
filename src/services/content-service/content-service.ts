@@ -5,7 +5,7 @@ import { Observable } from "rxjs/Observable";
 
 import { GETService, ServiceParameters } from "../get-service/get-service";
 
-import { UserInfo } from "../../models/user/user-info.interface"
+import { MUserInfo } from "../../models/user/user-info.interface"
 
 
 @Injectable()
@@ -13,7 +13,7 @@ export class ContentService extends GETService {
 
   private serviceUrl: string = '/json/user';
 
-  public retrieveString(institutionId: string, locale: string, domain: string, category: string, name: string): Observable<UserInfo> {
+  public retrieveString(institutionId: string, locale: string, domain: string, category: string, name: string): Observable<MUserInfo> {
 
     return Observable.create((observer: any) => {
 
@@ -42,7 +42,7 @@ export class ContentService extends GETService {
     });
   }
 
-  public retrieveStringList(institutionId: string, locale: string, domain: string, category: string): Observable<UserInfo> {
+  public retrieveStringList(institutionId: string, locale: string, domain: string, category: string): Observable<MUserInfo> {
 
     return Observable.create((observer: any) => {
 
@@ -70,7 +70,7 @@ export class ContentService extends GETService {
     });
   }
 
-  public retrieveStringListByInstitutionDomainCategories(institutionId: string, locale: string, domain_categories: string[]): Observable<UserInfo> {
+  public retrieveStringListByInstitutionDomainCategories(institutionId: string, locale: string, domain_categories: string[]): Observable<MUserInfo> {
 
     return Observable.create((observer: any) => {
 

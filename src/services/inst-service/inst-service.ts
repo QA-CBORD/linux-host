@@ -3,8 +3,8 @@ import { Observable } from "rxjs/Observable";
 
 import { GETService, ServiceParameters } from "../get-service/get-service";
 
-import { InstitutionInfoList } from "../../models/institution/institution-info-list.interface";
-import { InstitutionInfo } from "../../models/institution/institution-info.interface";
+import { MInstitutionInfoList } from "../../models/institution/institution-info-list.interface";
+import { MInstitutionInfo } from "../../models/institution/institution-info.interface";
 
 
 @Injectable()
@@ -16,7 +16,7 @@ export class InstService extends GETService {
   /**
    * Get the list of Institutions
    */
-  public getInstitutionList(): Observable<InstitutionInfoList> {
+  public getInstitutionList(): Observable<MInstitutionInfoList> {
 
     return Observable.create((observer: any) => {
 
@@ -44,7 +44,7 @@ export class InstService extends GETService {
    * 
    * @param institutionId Institution Id of desired Institution Information 
    */
-  public getInstitutionInfo(institutionId): Observable<InstitutionInfo> {
+  public getInstitutionInfo(institutionId): Observable<MInstitutionInfo> {
 
     return Observable.create((observer: any) => {
 

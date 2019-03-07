@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 
 import { APIService, HttpResponseType, RestCallType } from './../api-service/api-service';
 import { HttpHeaders, HttpParams } from "@angular/common/http";
-import { SecureMessageInfo, SecureMessageGroupInfo, SecureMessageSendBody } from "../../models/secure-messaging/secure-message-info";
+import { MSecureMessageInfo, MSecureMessageGroupInfo, MSecureMessageSendBody } from "../../models/secure-messaging/secure-message-info";
 import { Observable } from "rxjs/Observable";
 
 
@@ -26,7 +26,7 @@ export class SecureMessagingService {
     }
 
 
-    public getSecureMessages(ma_type: string, ma_id_field: string, ma_id_value: string): Observable<SecureMessageInfo[]> {
+    public getSecureMessages(ma_type: string, ma_id_field: string, ma_id_value: string): Observable<MSecureMessageInfo[]> {
 
         return Observable.create((observer: any) => {
 
@@ -55,7 +55,7 @@ export class SecureMessagingService {
     }
 
 
-    public getSecureMessagesGroups(inst_id: string): Observable<SecureMessageGroupInfo[]> {
+    public getSecureMessagesGroups(inst_id: string): Observable<MSecureMessageGroupInfo[]> {
 
         return Observable.create((observer: any) => {
             this.apiService.authenticatedHTTPCall(
@@ -80,7 +80,7 @@ export class SecureMessagingService {
         });
     }
 
-    public postSecureMessage(messageInfo: SecureMessageSendBody): Observable<any> {
+    public postSecureMessage(messageInfo: MSecureMessageSendBody): Observable<any> {
 
         return this.apiService.authenticatedHTTPCall(
             RestCallType.post,
@@ -92,7 +92,7 @@ export class SecureMessagingService {
 
     }
 
-    public replyToSecureMessage(messageInfo: SecureMessageInfo): Observable<any> {
+    public replyToSecureMessage(messageInfo: MSecureMessageInfo): Observable<any> {
 
         return this.apiService.authenticatedHTTPCall(
             RestCallType.post,

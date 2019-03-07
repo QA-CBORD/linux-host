@@ -5,7 +5,7 @@ import 'rxjs/add/operator/map';
 
 import { GETService, ServiceParameters } from "../get-service/get-service";
 
-import { UserLogin } from "../../models/user/user-login.interface";
+import { MUserLogin } from "../../models/user/user-login.interface";
 
 @Injectable()
 export class AuthService extends GETService {
@@ -50,7 +50,7 @@ export class AuthService extends GETService {
    * 
    * @param userCredentials User Login credentials
    */
-  authenticateUser(userCredentials: UserLogin): Observable<string> {
+  authenticateUser(userCredentials: MUserLogin): Observable<string> {
 
     return Observable.create((observer: any) => {
       let postParams = {

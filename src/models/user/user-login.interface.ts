@@ -1,4 +1,4 @@
-export interface UserLogin {
+export interface MUserLogin {
     userName: string;
     password: string;
     domain: string;

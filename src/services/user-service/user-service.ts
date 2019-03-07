@@ -3,7 +3,7 @@ import { Observable } from "rxjs/Observable";
 
 import { GETService, ServiceParameters } from "../get-service/get-service";
 
-import { UserInfo } from "../../models/user/user-info.interface"
+import { MUserInfo } from "../../models/user/user-info.interface"
 
 
 @Injectable()
@@ -15,7 +15,7 @@ export class UserService extends GETService {
   /**
    * Get the current User information using the current Session Id
    */
-  public getUser(): Observable<UserInfo> {
+  public getUser(): Observable<MUserInfo> {
 
     return Observable.create((observer: any) => {
 
