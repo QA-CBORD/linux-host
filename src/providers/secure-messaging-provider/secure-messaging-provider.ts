@@ -3,12 +3,12 @@ import { Observable } from "rxjs/Observable";
 import "rxjs/add/observable/zip";
 import 'rxjs/add/operator/mergeMap';
 
+
 import { AuthService } from "../../services/auth-service/auth-service";
 import { SecureMessagingService } from "../../services/secure-messaging-service/secure-messaging-service";
 
 import { MSecureMessageInfo, MSecureMessageGroupInfo, MSecureMessageSendBody } from "../../models/secure-messaging/secure-message-info";
 import { SecureMessagingAuthInfo } from "../../models/authentication/secure-messaging-authinfo";
-
 
 
 @Injectable()

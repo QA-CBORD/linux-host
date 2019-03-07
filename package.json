@@ -1,5 +1,5 @@
 {
-  "name": "get_rewards_patron",
+  "name": "get_cbord_student",
   "version": "0.0.1",
   "author": "CBORD Group Inc.",
   "homepage": "http://www.cbord.com/",
@@ -54,12 +54,12 @@
   },
   "devDependencies": {
     "@ionic/app-scripts": "3.1.11",
-    "typescript": "2.3.4"
+    "typescript": "2.4.2"
   },
   "config": {
     "ionic_source_map": "source-map"
   },
-  "description": "An Ionic project",
+  "description": "",
   "cordova": {
     "plugins": {
       "ionic-plugin-keyboard": {},
