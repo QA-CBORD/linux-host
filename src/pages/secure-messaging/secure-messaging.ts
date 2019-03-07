@@ -481,12 +481,12 @@ export class SecureMessagingPage {
 
     /// > 2 days (<dayAbbv> xx:xx AM/PM)
     if (today.getDate() - sentDate.getDate() > 2) {
-      return this.datePipe.transform(sentDate, "E h:mm a");
+      return this.datePipe.transform(sentDate, "E, h:mm a");
     }
 
     /// > 1 day (Yesterday at xx:xx AM/PM)
     if (today.getDate() - sentDate.getDate() > 1) {
-      return this.datePipe.transform(sentDate, "Yesterday, h:mm a");
+      return this.datePipe.transform(sentDate, "'Yesterday at ' h:mm a");
     }
 
     /// > 5 minutes (xx:xx AM/PM)
