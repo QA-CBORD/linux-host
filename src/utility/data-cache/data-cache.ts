@@ -9,7 +9,7 @@ import { Observer } from 'rxjs/Observer';
 import { async } from 'rxjs/scheduler/async';
 import { queue } from 'rxjs/scheduler/queue';
 
-import { AppVersion } from '@ionic-native/app-version/ngx';
+import { AppVersion } from '@ionic-native/app-version';
 
 import { MCache } from '../../models/cache/MCache';
 import { MInstitutionInfo } from '../../models/institution/institution-info.interface';

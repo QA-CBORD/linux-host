@@ -16,7 +16,7 @@ import { AndroidPermissions } from '@ionic-native/android-permissions';
 import { MyApp } from './app.component';
 import { IonicStorageModule } from '@ionic/storage';
 import { QRCodeModule } from 'angular2-qrcode';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+import { AppVersion } from '@ionic-native/app-version';
 
 /// SERVICES
 import { APIService } from '../services/api-service/api-service'
