@@ -36,6 +36,8 @@ import { MobileAccessProvider } from './../providers/mobile-access-provider/mobi
 import { RewardsProvider } from '../providers/reward-provider/reward-provider';
 import { ExceptionProvider } from '../providers/exception-provider/exception-provider';
 import { SecureMessagingProvider } from '../providers/secure-messaging-provider/secure-messaging-provider';
+import { AccountsProvider } from '../providers/accounts-provider/accounts-provider';
+import { TestUserProvider } from '../providers/test-user-provider/test-user-provider';
 
 /// UTILITY
 import { DataCache } from '../utility/data-cache/data-cache';
@@ -48,12 +50,12 @@ import { RewardDetailsModalPageModule } from '../pages/reward-details-modal/rewa
 
 import { HomePage } from './../pages/home/home';
 import { SecureMessagingPage } from './../pages/secure-messaging/secure-messaging';
+import { RewardsPage } from './../pages/rewards/rewards';
 
 
 /// COMPONENTS
 import { SideMenuContentComponent } from '../shared/side-menu-content/side-menu-content.component';
-import { AccountsProvider } from '../providers/accounts-provider/accounts-provider';
-import { TestUserProvider } from '../providers/test-user-provider/test-user-provider';
+import { AccordionListContentComponent } from '../shared/accordion-list/accordionlist-content.component';
 
 
 
@@ -66,8 +68,10 @@ export function createTranslateLoader(http: HttpClient) {
   declarations: [
     MyApp,
     SideMenuContentComponent,
+    AccordionListContentComponent,
     HomePage,
-    SecureMessagingPage
+    SecureMessagingPage,
+    RewardsPage
   ],
   imports: [
     HttpModule,
@@ -94,7 +98,8 @@ export function createTranslateLoader(http: HttpClient) {
     MobileAccessModalPage,
     RewardDetailsModalPage,
     HomePage,
-    SecureMessagingPage
+    SecureMessagingPage,
+    RewardsPage
   ],
   providers: [
     StatusBar,

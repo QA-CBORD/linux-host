@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { IonicPage, NavController, NavParams, Events, Platform, PopoverController, ModalController } from 'ionic-angular';
+import { NavController, NavParams, Events, Platform, PopoverController, ModalController, ModalOptions, Modal } from 'ionic-angular';
 import { AlertController } from 'ionic-angular';
 import { Chart } from 'chart.js';
 import { TranslateService } from "@ngx-translate/core";
@@ -18,10 +18,6 @@ import { RewardDetailsModalPage } from '../reward-details-modal/reward-details-m
 import * as Globals from '../../app/app.global';
 
 
-
-@IonicPage({
-  name: 'rewards'
-})
 @Component({
   selector: 'page-rewards',
   templateUrl: 'rewards.html',
@@ -479,6 +475,21 @@ export class RewardsPage {
          }
   });
     rdPopover.present();//{animate: false});
+
+    // const modalOptions: ModalOptions = {
+    //   enableBackdropDismiss: false
+    // };
+    // const rewardDetailModal: Modal = this.modalCtrl.create(RewardDetailsModalPage, { rewardInfo: claimableItem, bIsClaimable: isClaimable }, modalOptions);
+
+    // rewardDetailModal.present();
+
+    // /// conversation modal callback.  Adds new conversation data to the conversation list
+    // rewardDetailModal.onWillDismiss((data) => {
+    //   console.log('Modal closed');
+    //   if(data.bRefresh == "true"){
+    //     this.getRewardTrackInfo();
+    //   }
+    // });
 
   }
 

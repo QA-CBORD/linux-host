@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { IonicPage, NavController, NavParams, Platform, Events, Modal, ModalController, ModalOptions, ToastController } from 'ionic-angular';
+import { NavController, NavParams, Platform, Events, Modal, ModalController, ModalOptions, ToastController } from 'ionic-angular';
 
 import { fromEvent } from "rxjs/observable/fromEvent";
 import { Subscription } from "rxjs/Subscription";

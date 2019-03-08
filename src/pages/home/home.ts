@@ -1,6 +1,6 @@
 import { BaseProvider } from './../../providers/BaseProvider';
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, Events, Platform } from 'ionic-angular';
+import { NavController, NavParams, Events, Platform } from 'ionic-angular';
 
 import * as Globals from '../../app/app.global';
 
@@ -16,7 +16,9 @@ import { ExceptionProvider } from '../../providers/exception-provider/exception-
 import { Environment } from '../../app/environment';
 import { MUserRewardTrackInfo } from '../../models/rewards/rewards.interface';
 import { MGeoCoordinates } from './../../models/geolocation/geocoordinates.interface';
+
 import { SecureMessagingPage } from '../secure-messaging/secure-messaging';
+import { RewardsPage } from './../rewards/rewards';
 
 
 @Component({
@@ -165,7 +167,7 @@ export class HomePage {
 
     switch (this.destinationPage) {
       case 'rewards':
-        this.navCtrl.setRoot("rewards");
+        this.navCtrl.setRoot(RewardsPage);
         break;
       case 'openmydoor':
         this.navCtrl.setRoot("mobile-access", this.geoData);

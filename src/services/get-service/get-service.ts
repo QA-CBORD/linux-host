@@ -56,7 +56,7 @@ export class GETService {
     finalParams.method = methodName;
     finalParams.params = postParams;
 
-    //console.log(finalParams);
+    console.log(finalParams);
 
     return this.http.post(this.baseUrl.concat(serviceUrl), JSON.stringify(finalParams), this.getOptions())
       .subscribeOn(async)
