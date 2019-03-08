@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, Events, ModalController, Platform } from 'ionic-angular';
+import { NavController, NavParams, Events, ModalController, Platform } from 'ionic-angular';
 import { Diagnostic } from '@ionic-native/diagnostic';
 import { AndroidPermissions } from '@ionic-native/android-permissions';
 import { Geolocation } from '@ionic-native/geolocation';
@@ -13,9 +13,7 @@ import { MGeoCoordinates } from '../../models/geolocation/geocoordinates.interfa
 import { NonNullAssert } from '@angular/compiler';
 
 
-@IonicPage({
-  name: 'mobile-access'
-})
+
 @Component({
   selector: 'page-mobile-access',
   templateUrl: 'mobile-access.html',
@@ -75,9 +73,9 @@ export class MobileAccessPage {
       console.log("Geolocation Good");
       this.geolocationWatchId = navigator.geolocation.watchPosition((position) => {
         console.log("Watch position Good 0");
-        this.geoData.coords.latitude = position.coords.latitude || null;
-        this.geoData.coords.longitude = position.coords.longitude || null;
-        this.geoData.coords.accuracy = position.coords.accuracy || null;
+        if (position != null && position.coords != null) {
+          this.geoData.coords = position.coords;
+        }
         console.log(position);
         console.log("Watch position Good 1");
         if (this.bIsUpdatingLocations == false) {

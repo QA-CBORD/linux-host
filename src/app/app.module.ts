@@ -51,6 +51,7 @@ import { RewardDetailsModalPageModule } from '../pages/reward-details-modal/rewa
 import { HomePage } from './../pages/home/home';
 import { SecureMessagingPage } from './../pages/secure-messaging/secure-messaging';
 import { RewardsPage } from './../pages/rewards/rewards';
+import { MobileAccessPage } from '../pages/mobile-access/mobile-access';
 
 
 /// COMPONENTS
@@ -71,7 +72,8 @@ export function createTranslateLoader(http: HttpClient) {
     AccordionListContentComponent,
     HomePage,
     SecureMessagingPage,
-    RewardsPage
+    RewardsPage,
+    MobileAccessPage
   ],
   imports: [
     HttpModule,
@@ -99,7 +101,8 @@ export function createTranslateLoader(http: HttpClient) {
     RewardDetailsModalPage,
     HomePage,
     SecureMessagingPage,
-    RewardsPage
+    RewardsPage,
+    MobileAccessPage
   ],
   providers: [
     StatusBar,

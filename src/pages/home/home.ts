@@ -19,6 +19,7 @@ import { MGeoCoordinates } from './../../models/geolocation/geocoordinates.inter
 
 import { SecureMessagingPage } from '../secure-messaging/secure-messaging';
 import { RewardsPage } from './../rewards/rewards';
+import {MobileAccessPage} from './../mobile-access/mobile-access';
 
 
 @Component({
@@ -29,13 +30,6 @@ export class HomePage {
 
   sessionToken: string = null;
   destinationPage: string = null;
-  geoData: MGeoCoordinates = {
-    coords: {
-      latitude: null,
-      longitude: null,
-      accuracy: null
-    }
-  };
 
   userRewardTrackInfo: MUserRewardTrackInfo;
 
@@ -170,7 +164,7 @@ export class HomePage {
         this.navCtrl.setRoot(RewardsPage);
         break;
       case 'openmydoor':
-        this.navCtrl.setRoot("mobile-access", this.geoData);
+        this.navCtrl.setRoot(MobileAccessPage);
         break;
       case 'securemessaging':
       this.navCtrl.setRoot(SecureMessagingPage);
