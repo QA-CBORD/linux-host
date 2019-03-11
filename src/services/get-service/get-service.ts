@@ -1,6 +1,9 @@
+
 import { Injectable } from '@angular/core';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
+
 import { Environment } from '../../app/environment';
+import { Logger } from './../../utility/logger/logger';
 
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
@@ -56,7 +59,7 @@ export class GETService {
     finalParams.method = methodName;
     finalParams.params = postParams;
 
-    console.log(finalParams);
+    Logger.log('i', "TX", finalParams);
 
     return this.http.post(this.baseUrl.concat(serviceUrl), JSON.stringify(finalParams), this.getOptions())
       .subscribeOn(async)
@@ -99,7 +102,7 @@ export class GETService {
    */
   protected extractData(response: Response) {
     let tResponse = response.json();
-    //console.log(tResponse);
+    Logger.log('i', "RX", response);
     if (tResponse.exception) {
       this.parseExceptionResponse(tResponse.exception);
     } else {

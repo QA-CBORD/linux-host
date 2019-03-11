@@ -50,8 +50,6 @@ export class SessionService extends GETService {
           sessionId: sessionId
         };
 
-        console.log(JSON.stringify(postParams));
-
         this.httpRequest(this.serviceUrl, 'getSession', true, postParams)
           .do(this.setSession)
           .subscribe(
@@ -76,7 +74,6 @@ export class SessionService extends GETService {
    */
   private setSession(sessionResponse: any) {
     if (sessionResponse.response) {
-      console.log('Setting session ID: ' + sessionResponse.response.id);
       GETService.session = sessionResponse.response;
       GETService.sessionId = sessionResponse.response.id;
     }

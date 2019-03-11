@@ -53,8 +53,6 @@ export class MobileAccessPage {
 
       this.geoData = navParams.data || null;
 
-      console.log("Plat ready");
-
       this.events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Retrieving locations..." });
 
       this.getUpdatedLocationData();
@@ -67,17 +65,11 @@ export class MobileAccessPage {
    * Attempt to get geolocation data from browser, callback called when location value changes
    */
   private getUpdatedLocationData() {
-    console.log("Get Updated Location Data");
-
     if (navigator.geolocation) {
-      console.log("Geolocation Good");
       this.geolocationWatchId = navigator.geolocation.watchPosition((position) => {
-        console.log("Watch position Good 0");
         if (position != null && position.coords != null) {
           this.geoData.coords = position.coords;
         }
-        console.log(position);
-        console.log("Watch position Good 1");
         if (this.bIsUpdatingLocations == false) {
           this.retrieveMobileLocationData(false);
         }
@@ -93,7 +85,6 @@ export class MobileAccessPage {
    */
   ionViewDidLeave() {
     if (navigator.geolocation) {
-      console.log("Clear Watch");
       navigator.geolocation.clearWatch(this.geolocationWatchId);
     }
   }
@@ -103,7 +94,6 @@ export class MobileAccessPage {
    * Make request to retrieve Mobile Location information and handle response
    */
   private retrieveMobileLocationData(bShowLoader: boolean) {
-    console.log("Retrieving Location Data");
     this.bIsUpdatingLocations = true;
     if (bShowLoader) {
       this.events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Retrieving locations..." });
@@ -178,9 +168,6 @@ export class MobileAccessPage {
           this.androidPermissions.PERMISSION.ACCESS_FINE_LOCATION
         ]
       ).then(result => {
-        console.log(`Android permission check result: `);
-        console.log(result);
-
         if (result.hasPermission) {
           this.checkLocationServices();
         } else {
@@ -203,14 +190,9 @@ export class MobileAccessPage {
             });
         }
       }).catch(error => {
-        console.log(`Android Permission Error: `);
-        console.log(error);
         this.retrieveMobileLocationData(true);
       });
     } catch (error) {
-      console.log("Permissions Error");
-      console.log(error);
-
       this.retrieveMobileLocationData(true);
     }
   }
@@ -220,15 +202,12 @@ export class MobileAccessPage {
    */
   private checkLocationServices() {
     // check GPS enabled on device
-    console.log("Check Location Service");
     try {
       this.diagnostic.isLocationEnabled()
         .then(enabled => {
           if (enabled) {
-            console.log("GPS enabled");
             this.getMobileLocations(enabled);
           } else {
-            console.log("GPS disabled");
             ExceptionProvider.showException(this.events,
               {
                 displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
@@ -247,15 +226,9 @@ export class MobileAccessPage {
           }
         })
         .catch(error => {
-          console.log(`GPS Enabled check error:`);
-          console.log(error);
           this.getMobileLocations(false);
         });
     } catch (error) {
-      console.log("Location error");
-
-      console.log(error);
-
       this.getMobileLocations(false);
     }
   }
@@ -285,7 +258,6 @@ export class MobileAccessPage {
    * @param item    MobileLocationInfo object of selection
    */
   locationSelected(item: any) {
-    console.log(item.name);
     this.currentSelectedLocation = item;
     this.presentUnlockModal();
   }
@@ -305,8 +277,6 @@ export class MobileAccessPage {
       }
     );
     unlockModal.onDidDismiss(data => {
-
-      console.log(data);
 
       this.currentSelectedLocation = null;
 

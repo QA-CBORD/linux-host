@@ -15,7 +15,7 @@ export class AccountsPage {
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad AccountsPage');
+    
   }
 
 }

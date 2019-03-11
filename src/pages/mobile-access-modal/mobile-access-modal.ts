@@ -42,7 +42,6 @@ export class MobileAccessModalPage {
    * Activate the selected Mobile Location
    */
   activateSelected() {
-    console.log("Activate Selected");
     this.events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: "Activating..." });
     //this.checkPermissions();
     this.activateMobileLocation(false);
@@ -53,7 +52,6 @@ export class MobileAccessModalPage {
    */
   private checkPermissions() {
     // android API 6.0+ permissions check
-    console.log("Android Permission check");
 
     this.androidPermissions.requestPermissions(
       [
@@ -76,15 +74,11 @@ export class MobileAccessModalPage {
    */
   private checkLocationServices() {
     // check GPS enabled on device
-    console.log("Check Location Service");
-
     this.diagnostic.isLocationEnabled()
       .then(enabled => {
         this.activateMobileLocation(enabled);
       })
       .catch(error => {
-        console.log("Check Location Service Error");
-        console.log(error);
         this.activateMobileLocation(false);
       });
   }
@@ -104,21 +98,17 @@ export class MobileAccessModalPage {
                 this.handleActivateMobileLocationResponse(data);
               },
               error => {
-                console.log(error);
                 this.onActivateMobileLocationFailure(bUseLocation, error);
               }
             );
         })
         .catch(error => {
-          console.log(error);
-
           this.mobileAccessProvider.activateMobileLocation(null, this.currentSelectedLocation.locationId, null)
             .subscribe(
               data => {
                 this.handleActivateMobileLocationResponse(data);
               },
               error => {
-                console.log(error);
                 this.onActivateMobileLocationFailure(bUseLocation, error);
               }
             );
@@ -130,7 +120,6 @@ export class MobileAccessModalPage {
             this.handleActivateMobileLocationResponse(data);
           },
           error => {
-            console.log(error);
             this.onActivateMobileLocationFailure(bUseLocation, error);
           }
         );
@@ -188,9 +177,7 @@ export class MobileAccessModalPage {
           });
       }
     } else {
-      // falure
-      console.log("Activation Failure");
-      
+      // falure      
       ExceptionProvider.showException(this.events, {
         displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
         messageInfo: {

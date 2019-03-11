@@ -93,8 +93,6 @@ export class MobileAccessService extends GETService {
         sourceInfo: sourceInfo
       };
 
-      console.log(JSON.stringify(postParams));
-
       this.httpRequest(this.serviceUrl, 'activateMobileLocation', true, postParams)
         .subscribe(
           data => {
