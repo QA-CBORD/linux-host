@@ -21,8 +21,6 @@ export class UserService extends GETService {
 
       let postParams: ServiceParameters = {};
 
-      console.log(JSON.stringify(postParams));
-
       this.httpRequest(this.serviceUrl, 'retrieve', true, postParams)
         .subscribe(
           data => {

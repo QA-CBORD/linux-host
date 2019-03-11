@@ -211,12 +211,10 @@ export class DataCache {
               observer.complete();
             })
             .catch((error) => {
-              console.log(`GET ERROR ${key} - ${error}`);
               observer.error(error);
             });
         })
         .catch((error) => {
-          console.log(`GET STORAGE ERROR ${key} - ${error}`);
           observer.error(error);
         });
 
@@ -238,11 +236,9 @@ export class DataCache {
           .then((resp) => {
           })
           .catch((error) => {
-            console.log(`SET ERROR ${key} - ${error}`);
           });
       })
       .catch((error) => {
-        console.log(`SET STORAGE ERROR ${key} - ${error}`);
       });
   }
 

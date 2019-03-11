@@ -10,6 +10,7 @@ import { async } from 'rxjs/scheduler/async';
 import { queue } from 'rxjs/scheduler/queue';
 
 import { Environment } from "../../app/environment";
+import { Logger } from "../../utility/logger/logger";
 
 
 
@@ -101,22 +102,19 @@ export class APIService {
         body?: any, params?: HttpParams, headers?: HttpHeaders): Observable<any> {
 
         let finalURL = Environment.getAPIGatewayServicesBaseURL().concat(resourceURL);
-
-        // console.log("API Call: | Call Type: " + callType + " | URL: " + finalURL);
-        // console.log("Headers:");
-        // console.log(headers);
-        // console.log("Body:")
-        // console.log(body);
+        Logger.log('i', "TX | " + finalURL);
+        
 
         return Observable.create((observer: any) => {
             // sort by call type
             switch (callType) {
                 case RestCallType.get:
                     this.get<any>(finalURL, responseType, params, headers).subscribe(response => {
-                        // console.log(response);
+                        Logger.log('i', "RX", response);
                         observer.next(response);
                     },
                         (error: any) => {
+                            Logger.log('i', "RX", error);
                             if (error.status === 401) {
                                 /// AUTHENTICATION ERROR, HANDLE WHEN WE KNOW HOW
                                 this.handleAuthenticationError(error);
@@ -127,10 +125,11 @@ export class APIService {
                     break;
                 case RestCallType.post:
                     this.post(finalURL, body, responseType, params, headers).subscribe(response => {
-                        // console.log(response);
+                        Logger.log('i', "RX", response);
                         observer.next(response);
                     },
                         (error: any) => {
+                            Logger.log('i', "RX", error);
                             if (error.status === 401) {
                                 /// AUTHENTICATION ERROR, HANDLE WHEN WE KNOW HOW
                                 this.handleAuthenticationError(error);
@@ -141,11 +140,12 @@ export class APIService {
                     break;
                 case RestCallType.put:
                     this.put(finalURL, body, responseType, params, headers).subscribe(response => {
-                        // console.log(response);
+                        Logger.log('i', "RX", response);
                         observer.next(response);
                     },
                         (error: any) => {
                             if (error.status === 401) {
+                                Logger.log('i', "RX", error);
                                 /// AUTHENTICATION ERROR, HANDLE WHEN WE KNOW HOW
                                 this.handleAuthenticationError(error);
                             } else {
@@ -181,8 +181,6 @@ export class APIService {
     }
 
     private handleAuthenticationError(error: Error) {
-        console.error("API 401 (Authentication) error | Error detail:")
-        console.error(error);
     }
 
 }

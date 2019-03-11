@@ -72,7 +72,6 @@ export class MCache {
 
     public addSetting(newSetting: MSettingInfo) {
         if (newSetting == null || newSetting.name == null) {
-            console.log("MCache - Setting was null.  Cannot set");
             return;
         }
         let eI: number = this.institutionSettings.indexOf(newSetting);
@@ -86,12 +85,10 @@ export class MCache {
 
     public addSettingList(newSettingList: MSettingInfoList) {
         if (newSettingList == null || newSettingList.list == null || newSettingList.list.length <= 0) {
-            console.log("MCache - SettingList was null or empty.  Cannot set");
             return;
         }
         for (let setting of newSettingList.list) {
             if (setting == null || setting.name == null) {
-                console.log("MCache - Setting was null.  Cannot set");
                 return;
             }
             let eI: number = this.institutionSettings.indexOf(setting);
@@ -115,7 +112,6 @@ export class MCache {
 
     public addContentString(newString: MContentStringInfo) {
         if (newString == null || newString.name == null) {
-            console.log("MCache - Setting was null.  Cannot set");
             return;
         }
         let eI: number = this.institutionStrings.indexOf(newString);
@@ -138,7 +134,6 @@ export class MCache {
 
     public addUserSetting(newSetting: MUserSettingInfo) {
         if (newSetting == null || newSetting.name == null) {
-            console.log("MCache - User Setting was null.  Cannot set");
             return;
         }
         let eI: number = this.userSettings.indexOf(newSetting);

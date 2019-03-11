@@ -27,8 +27,6 @@ export class AuthService extends GETService {
         }
       }
 
-      console.log(JSON.stringify(postParams));
-
       this.httpRequest(this.serviceUrl, 'authenticateSystem', false, postParams)
         .subscribe(
           data => {
@@ -67,8 +65,6 @@ export class AuthService extends GETService {
         }
       }
 
-      console.log(JSON.stringify(postParams));
-
       this.httpRequest(this.serviceUrl, 'authenticateUser', false, postParams)
         .subscribe(
           data => {
@@ -101,8 +97,6 @@ export class AuthService extends GETService {
         sessionToken: sessionToken
       }
 
-      console.log(JSON.stringify(postParams));
-
       return this.httpRequest(this.serviceUrl, 'authenticateSessionToken', false, postParams)
         .subscribe(
           data => {
@@ -131,8 +125,6 @@ export class AuthService extends GETService {
         externalSystem: null,
         claimSet: null
       }
-
-      console.log(JSON.stringify(postParams));
 
       return this.httpRequest(this.serviceUrl, 'retrieveExternalAuthenticationToken', true, postParams)
         .subscribe(

@@ -68,27 +68,18 @@ export class Environment {
     static setEnvironment(newEnvironment: EnvType) {
         Environment.currentEnvironment = newEnvironment;
         if (newEnvironment == EnvType.development) {
-            console.log('Env Set Dev');
             Environment.servicesBaseURL = Environment.BASE_SERVICES_URL_DEVTEST;
             Environment.fullSiteBaseURL = Environment.BASE_CBORD_STUDENT_URL_DEVTEST;
         } else if (newEnvironment == EnvType.vendorvalidation) {
-            console.log('Env Set VV');
             Environment.servicesBaseURL = Environment.BASE_SERVICES_URL_VENDORVAL;
             Environment.fullSiteBaseURL = Environment.BASE_CBORD_STUDENT_URL_VENDORVAL;
         } else if (newEnvironment == EnvType.production) {
-            console.log('Env Set Prod');
             Environment.servicesBaseURL = Environment.BASE_SERVICES_URL_PRODUCTION;
             Environment.fullSiteBaseURL = Environment.BASE_CBORD_STUDENT_URL_PRODUCTION;
         } else {
             // will never happen due to enum restrictions
-            console.log('Env Set Dev due to error');
-
             Environment.servicesBaseURL = Environment.BASE_SERVICES_URL_DEVTEST;
             Environment.fullSiteBaseURL = Environment.BASE_CBORD_STUDENT_URL_DEVTEST;
-        //     console.log('Env Set Prod');
-        // Environment.currentEnvironment = EnvType.production;
-        //     Environment.servicesBaseURL = Environment.BASE_SERVICES_URL_PRODUCTION;
-        //     Environment.fullSiteBaseURL = Environment.BASE_CBORD_STUDENT_URL_PRODUCTION;
         }
     }
 
@@ -100,33 +91,29 @@ export class Environment {
      */
     static setEnvironmentViaURL(appBaseURL: string) {
         if (appBaseURL.includes("dev")) {
-            console.log('Env Set Dev');
             Environment.currentEnvironment = EnvType.development;
             Environment.servicesBaseURL = Environment.BASE_SERVICES_URL_DEVTEST;
             Environment.fullSiteBaseURL = Environment.BASE_CBORD_STUDENT_URL_DEVTEST;
         } else if (appBaseURL.includes("demo")) {
-            console.log('Env Set VV');
             Environment.currentEnvironment = EnvType.vendorvalidation;
             Environment.servicesBaseURL = Environment.BASE_SERVICES_URL_VENDORVAL;
             Environment.fullSiteBaseURL = Environment.BASE_CBORD_STUDENT_URL_VENDORVAL;
         } else if (appBaseURL.includes("student.cbord")){
-            console.log('Env Set Prod');
             Environment.currentEnvironment = EnvType.production;
             Environment.servicesBaseURL = Environment.BASE_SERVICES_URL_PRODUCTION;
             Environment.fullSiteBaseURL = Environment.BASE_CBORD_STUDENT_URL_PRODUCTION;
         } else {
             Environment.currentEnvironment = EnvType.development;
-            console.error('Env Set Dev due to local testing or invalid url');
             Environment.servicesBaseURL = Environment.BASE_SERVICES_URL_DEVTEST;
             Environment.fullSiteBaseURL = Environment.BASE_CBORD_STUDENT_URL_DEVTEST;
-
-        //     console.log('Env Set Prod');
-        // Environment.currentEnvironment = EnvType.production;
-        //     Environment.servicesBaseURL = Environment.BASE_SERVICES_URL_PRODUCTION;
-        //     Environment.fullSiteBaseURL = Environment.BASE_CBORD_STUDENT_URL_PRODUCTION;
         }
     }
 
-
+    static isDevelopmentEnvironment(appBaseURL: string): boolean {
+        if (appBaseURL.includes("dev")) {
+            return true;
+        }
+        return false;
+    }
 
 }

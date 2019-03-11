@@ -20,6 +20,7 @@ import { MGeoCoordinates } from './../../models/geolocation/geocoordinates.inter
 import { SecureMessagingPage } from '../secure-messaging/secure-messaging';
 import { RewardsPage } from './../rewards/rewards';
 import {MobileAccessPage} from './../mobile-access/mobile-access';
+import { Logger } from '../../utility/logger/logger';
 
 
 @Component({
@@ -46,13 +47,14 @@ export class HomePage {
 
     this.platform.ready().then(() => {
 
+      /// Set logger enabled based on env
+			Logger.setLoggingEnabled(Environment.isDevelopmentEnvironment(platform.doc().baseURI));
+
       /// use page url to determine current environment
       Environment.setEnvironmentViaURL(platform.doc().baseURI);
 
       /// hide the split pane here becuase we don't need the navigation menu
       events.publish(Globals.Events.SIDEPANE_ENABLE, false);
-      
-      console.log(location.hash.split("/"));
 
       let hashParameters: string[] = location.hash.split("/");
 

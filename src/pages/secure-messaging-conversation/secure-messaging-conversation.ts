@@ -98,13 +98,9 @@ export class SecureMessagingConversationPage {
     this.secureMessagingProvider.sendSecureMessage(this.apiMessageBody)
       .subscribe(
         data => {
-          console.log("Send Message data:");
-          console.log(data);
           this.addLocalDataToConversation();
         },
         error => {
-          console.log("Send Message error:");
-          console.log(error);
           this.toast.create({
             message: "Error sending the message",
             duration: 3000,

@@ -25,8 +25,6 @@ export class ContentService extends GETService {
         name: name
       };
 
-      console.log(JSON.stringify(postParams));
-
       this.httpRequest(this.serviceUrl, 'retrieveString', true, postParams)
         .subscribe(
           data => {
@@ -53,8 +51,6 @@ export class ContentService extends GETService {
         category: category
       };
 
-      console.log(JSON.stringify(postParams));
-
       this.httpRequest(this.serviceUrl, 'retrieveStringList', true, postParams)
         .subscribe(
           data => {
@@ -79,8 +75,6 @@ export class ContentService extends GETService {
         locale: locale,
         domain_categories: domain_categories,
       };
-
-      console.log(JSON.stringify(postParams));
 
       this.httpRequest(this.serviceUrl, 'retrieveStringListByInstitutionDomainCategories', true, postParams)
         .subscribe(

@@ -22,8 +22,6 @@ export class InstService extends GETService {
 
       let postParams: ServiceParameters = {};
 
-      console.log(JSON.stringify(postParams));
-
       this.httpRequest(this.serviceUrl, 'retrieveLookupList', true, postParams)
         .subscribe(
           data => {
@@ -51,8 +49,6 @@ export class InstService extends GETService {
       let postParams: ServiceParameters = {
         institutionId: institutionId
       };
-
-      console.log(JSON.stringify(postParams));
 
       this.httpRequest(this.serviceUrl, 'retrieve', true, postParams)
         .subscribe(
