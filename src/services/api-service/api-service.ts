@@ -114,7 +114,7 @@ export class APIService {
                         observer.next(response);
                     },
                         (error: any) => {
-                            Logger.log('i', "RX", error);
+                            Logger.log('e', "RX Error", error);
                             if (error.status === 401) {
                                 /// AUTHENTICATION ERROR, HANDLE WHEN WE KNOW HOW
                                 this.handleAuthenticationError(error);
@@ -129,7 +129,7 @@ export class APIService {
                         observer.next(response);
                     },
                         (error: any) => {
-                            Logger.log('i', "RX", error);
+                            Logger.log('e', "RX Error", error);
                             if (error.status === 401) {
                                 /// AUTHENTICATION ERROR, HANDLE WHEN WE KNOW HOW
                                 this.handleAuthenticationError(error);
@@ -144,8 +144,8 @@ export class APIService {
                         observer.next(response);
                     },
                         (error: any) => {
+                            Logger.log('e', "RX Error", error);
                             if (error.status === 401) {
-                                Logger.log('i', "RX", error);
                                 /// AUTHENTICATION ERROR, HANDLE WHEN WE KNOW HOW
                                 this.handleAuthenticationError(error);
                             } else {
@@ -154,6 +154,7 @@ export class APIService {
                         });
                     break;
                 default:
+                Logger.log('e', "RX Error | Incorrect call type");
                     observer.error('Incorrect call type');
             }
 

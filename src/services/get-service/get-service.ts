@@ -102,10 +102,11 @@ export class GETService {
    */
   protected extractData(response: Response) {
     let tResponse = response.json();
-    Logger.log('i', "RX", response);
     if (tResponse.exception) {
+      Logger.log('i', "RX Error", response);
       this.parseExceptionResponse(tResponse.exception);
     } else {
+      Logger.log('e', "RX", response);
       return tResponse;
     }
   }

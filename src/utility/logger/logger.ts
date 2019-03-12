@@ -15,7 +15,7 @@ export class Logger {
 
         let finalLogMessage = logMessage;
         if (logObject != null) {
-            logMessage = logMessage + " | " + JSON.stringify(logObject);
+            finalLogMessage = logMessage + " | " + JSON.stringify(logObject);
         }
 
         switch (logLevel) {
