@@ -133,7 +133,7 @@ export class HomePage {
           displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
           messageInfo: {
             title: "No User",
-            message: "Unable to verify your user inforation.",
+            message: "Unable to verify your user information.",
             positiveButtonTitle: "RETRY",
             positiveButtonHandler: () => {
               this.handleSessionToken();
