@@ -469,34 +469,10 @@ export class SecureMessagingPage {
     let today: Date = new Date();
     let sentDate: Date = new Date(message.sent_date);
 
-    Logger.log('i', "Today", today);
-    Logger.log('i', "Sent", sentDate);
-
-    Logger.log('i', "Today (getDate)", today.getDate());
-    Logger.log('i', "Sent (getDate)", sentDate.getDate());
-
-    Logger.log('i', "Today (getMillis)", today.getMilliseconds());
-    Logger.log('i', "Sent (getMillis)", sentDate.getMilliseconds());
-
-    Logger.log('i', "Today (getTime)", today.getTime());
-    Logger.log('i', "Sent (getTime)", sentDate.getTime());
-    
-    Logger.log('i', "Date (today - sent)", (today.getDate() - sentDate.getDate()));
-    
-    Logger.log('i', "Millis (today - sent)", (today.getMilliseconds() - sentDate.getMilliseconds()));
-    
-    Logger.log('i', "Millis (getTime) (today - sent)", (today.getTime() - sentDate.getTime()));
-
-
     /// > 1 year (Full timestamp)
     if (today.getFullYear() > sentDate.getFullYear()) {
       return this.datePipe.transform(sentDate, "mediumDate");
     }
-
-    /// > 1 month (dd/mm at xx:xx AM/PM)
-    // if (today.getMonth() > sentDate.getMonth()) {
-    //   return this.datePipe.transform(sentDate, "MMM d, h:mm a");
-    // }
 
     /// > 6 days (<dayAbbv> xx:xx AM/PM)
     if (today.getDate() - sentDate.getDate() > 6) {
