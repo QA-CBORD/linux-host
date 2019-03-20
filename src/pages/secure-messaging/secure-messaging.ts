@@ -496,7 +496,7 @@ export class SecureMessagingPage {
 
     /// > 1 minute (x minutes ago)
     if (today.getTime() - sentDate.getTime() > 60000) {
-      let minutesAgo = (today.getTime() - sentDate.getTime()) / 60000;
+      let minutesAgo = Math.round((today.getTime() - sentDate.getTime()) / 60000);
       return minutesAgo.toString() + " minutes ago";
     }
 
