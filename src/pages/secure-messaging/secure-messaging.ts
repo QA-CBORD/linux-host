@@ -11,6 +11,7 @@ import { BaseProvider } from '../../providers/BaseProvider';
 
 import * as Globals from '../../app/app.global'
 import { MSecureMessageInfo, MSecureMessageGroupInfo, MSecureMessageConversation } from '../../models/secure-messaging/secure-message-info';
+import { Logger } from '../../utility/logger/logger';
 
 
 @Component({
@@ -468,6 +469,8 @@ export class SecureMessagingPage {
     let today: Date = new Date();
     let sentDate: Date = new Date(message.sent_date);
 
+    Logger.log('i', "Today", today);
+    Logger.log('i', "Sent", sentDate);
 
     /// > 1 year (Full timestamp)
     if (today.getFullYear() > sentDate.getFullYear()) {
@@ -475,7 +478,12 @@ export class SecureMessagingPage {
     }
 
     /// > 1 month (dd/mm at xx:xx AM/PM)
-    if (today.getMonth() > sentDate.getMonth()) {
+    // if (today.getMonth() > sentDate.getMonth()) {
+    //   return this.datePipe.transform(sentDate, "MMM d, h:mm a");
+    // }
+
+    /// > 6 days (<dayAbbv> xx:xx AM/PM)
+    if (today.getDate() - sentDate.getDate() > 6) {
       return this.datePipe.transform(sentDate, "MMM d, h:mm a");
     }
 
