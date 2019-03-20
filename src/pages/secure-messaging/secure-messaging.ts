@@ -472,6 +472,17 @@ export class SecureMessagingPage {
     Logger.log('i', "Today", today);
     Logger.log('i', "Sent", sentDate);
 
+    Logger.log('i', "Today (getDate)", today.getDate());
+    Logger.log('i', "Sent (getDate)", sentDate.getDate());
+
+    Logger.log('i', "Today (getMillis)", today.getMilliseconds());
+    Logger.log('i', "Sent (getMillis)", sentDate.getMilliseconds());
+    
+    Logger.log('i', "Date (today - sent)", (today.getDate() - sentDate.getDate()));
+    
+    Logger.log('i', "Millis (today - sent)", (today.getMilliseconds() - sentDate.getMilliseconds()));
+
+
     /// > 1 year (Full timestamp)
     if (today.getFullYear() > sentDate.getFullYear()) {
       return this.datePipe.transform(sentDate, "mediumDate");
