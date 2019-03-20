@@ -155,7 +155,7 @@ export class SecureMessagingConversationPage {
     this.viewCtrl.dismiss(returnData);
   }
 
-  /**
+ /**
    * Get formatted date string for message display
    * @param message 
    */
@@ -163,36 +163,35 @@ export class SecureMessagingConversationPage {
     let today: Date = new Date();
     let sentDate: Date = new Date(message.sent_date);
 
-
     /// > 1 year (Full timestamp)
     if (today.getFullYear() > sentDate.getFullYear()) {
       return this.datePipe.transform(sentDate, "mediumDate");
     }
 
-    /// > 1 month (dd/mm at xx:xx AM/PM)
-    if (today.getMonth() > sentDate.getMonth()) {
+    /// > 6 days (<dayAbbv> xx:xx AM/PM)
+    if (today.getDate() - sentDate.getDate() > 6) {
       return this.datePipe.transform(sentDate, "MMM d, h:mm a");
     }
 
     /// > 2 days (<dayAbbv> xx:xx AM/PM)
-    if (today.getDate() - sentDate.getDate() > 2) {
-      return this.datePipe.transform(sentDate, "E h:mm a");
+    if (today.getDate() - sentDate.getDate() >= 2) {
+      return this.datePipe.transform(sentDate, "E, h:mm a");
     }
 
     /// > 1 day (Yesterday at xx:xx AM/PM)
-    if (today.getDate() - sentDate.getDate() > 1) {
-      return this.datePipe.transform(sentDate, "Yesterday, h:mm a");
+    if (today.getDate() - sentDate.getDate() >= 1) {
+      return this.datePipe.transform(sentDate, "'Yesterday at ' h:mm a");
     }
 
     /// > 5 minutes (xx:xx AM/PM)
-    if (today.getMilliseconds() - sentDate.getMilliseconds() > 300000) {
+    if (today.getTime() - sentDate.getTime() > 300000) {
       return this.datePipe.transform(sentDate, "h:mm a");
     }
 
     /// > 1 minute (x minutes ago)
-    if (today.getMilliseconds() - sentDate.getMilliseconds() > 60000) {
-      let minutesAgo = (today.getMilliseconds() - sentDate.getMilliseconds()) / 60000;
-      return minutesAgo.toString() + " minutes ago";
+    if (today.getTime() - sentDate.getTime() > 60000) {
+      let minutesAgo = Math.round((today.getTime() - sentDate.getTime()) / 60000);
+      return minutesAgo.toString() + (minutesAgo === 1 ? " minute ago" : " minutes ago");
     }
 
     /// < 1 minute (Now)
