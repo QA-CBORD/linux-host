@@ -477,10 +477,15 @@ export class SecureMessagingPage {
 
     Logger.log('i', "Today (getMillis)", today.getMilliseconds());
     Logger.log('i', "Sent (getMillis)", sentDate.getMilliseconds());
+
+    Logger.log('i', "Today (getTime)", today.getTime());
+    Logger.log('i', "Sent (getTime)", sentDate.getTime());
     
     Logger.log('i', "Date (today - sent)", (today.getDate() - sentDate.getDate()));
     
     Logger.log('i', "Millis (today - sent)", (today.getMilliseconds() - sentDate.getMilliseconds()));
+    
+    Logger.log('i', "Millis (getTime) (today - sent)", (today.getTime() - sentDate.getTime()));
 
 
     /// > 1 year (Full timestamp)
@@ -499,23 +504,23 @@ export class SecureMessagingPage {
     }
 
     /// > 2 days (<dayAbbv> xx:xx AM/PM)
-    if (today.getDate() - sentDate.getDate() > 2) {
+    if (today.getDate() - sentDate.getDate() >= 2) {
       return this.datePipe.transform(sentDate, "E, h:mm a");
     }
 
     /// > 1 day (Yesterday at xx:xx AM/PM)
-    if (today.getDate() - sentDate.getDate() > 1) {
+    if (today.getDate() - sentDate.getDate() >= 1) {
       return this.datePipe.transform(sentDate, "'Yesterday at ' h:mm a");
     }
 
     /// > 5 minutes (xx:xx AM/PM)
-    if (today.getMilliseconds() - sentDate.getMilliseconds() > 300000) {
+    if (today.getTime() - sentDate.getTime() > 300000) {
       return this.datePipe.transform(sentDate, "h:mm a");
     }
 
     /// > 1 minute (x minutes ago)
-    if (today.getMilliseconds() - sentDate.getMilliseconds() > 60000) {
-      let minutesAgo = (today.getMilliseconds() - sentDate.getMilliseconds()) / 60000;
+    if (today.getTime() - sentDate.getTime() > 60000) {
+      let minutesAgo = (today.getTime() - sentDate.getTime()) / 60000;
       return minutesAgo.toString() + " minutes ago";
     }
 
