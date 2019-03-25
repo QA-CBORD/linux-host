@@ -1,8 +1,7 @@
 {
-  "name": "get_rewards_patron",
+  "name": "cbord-student-v4",
   "integrations": {
     "cordova": {}
   },
-  "type": "ionic-angular",
-  "app_id": ""
+  "type": "angular"
 }

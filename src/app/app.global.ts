@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable } from '@angular/core';
 
 export let DEBUG_ON = true;
 
@@ -10,19 +10,27 @@ export namespace Environment {
     }
 
     export enum BaseUrl {
-        DEVELOPMENT = "https://student.dev.cbord.com",
-        DEMO = "https://student.demo.cbord.com",
-        PRODUCTION = "https://student.cbord.com"
+        DEVELOPMENT = 'https://student.dev.cbord.com',
+        DEMO = 'https://student.demo.cbord.com',
+        PRODUCTION = 'https://student.cbord.com'
     }
 
     export enum ServiceUrl {
-        DEVELOPMENT = "https://services.get.dev.cbord.com/GETServices/services",
-        DEMO = "http://getdemo.cbord.com/GETServices/services",
-        PRODUCTION = "https://services.get.cbord.com/GETServices/services"
+        DEVELOPMENT = 'https://services.get.dev.cbord.com/GETServices/services',
+        DEMO = 'http://getdemo.cbord.com/GETServices/services',
+        PRODUCTION = 'https://services.get.cbord.com/GETServices/services'
+    }
+
+    export enum AWSAPIUrl {
+        DEVELOPMENT = 'https://dwptofebk7.execute-api.us-east-1.amazonaws.com/dev'
     }
 }
 
+
 export namespace Exception {
+    export enum Strings {
+        TITLE = 'Oh no!'
+    }
     export enum DisplayOptions {
         ONE_BUTTON,
         TWO_BUTTON,
@@ -33,49 +41,49 @@ export namespace Exception {
 @Injectable()
 export class Events {
 
-    public static readonly SIDEMENU_UPDATE = "data:navigationMenu:updated";
-	public static readonly SIDEPANE_ENABLE = "state:navigationMenu:visibility";
-	
-	public static readonly EXCEPTION_SHOW = "state:exceptionShow:visibility";
+    public static readonly SIDEMENU_UPDATE = 'data:navigationMenu:updated';
+    public static readonly SIDEPANE_ENABLE = 'state:navigationMenu:visibility';
 
-	public static readonly LOADER_SHOW = "state:loader:visibility";
+    public static readonly EXCEPTION_SHOW = 'state:exceptionShow:visibility';
+
+    public static readonly LOADER_SHOW = 'state:loader:visibility';
 
 }
 
 
 export namespace Settings {
     export enum ESetting {
-        PIN_ENABLED = "get.feature.enable_mobile_pin_entry",
-        SOA_KEY = "soa.general.key",
-        PIN_ENTRY_MAX_FAILURES = "get.login.pin_max_failed",
-        FEEDBACK_EMAIL = "soa.email.get_feedback_email",
-        MY_CARD_ENABLED = "get.feature.enable_get_my_card",
-        MOBILE_ACCESS_ENABLED = "get.feature.enable_open_my_door",
-        FUNDS_ENABLED = "",
-        REWARDS_ENABLED = "get.feature.enable_rewards",
-        FOOD_ENABLED = "get.feature.enable_food",
-        PLACES_ENABLED = "get.feature.enable_merchants",
-    };
+        PIN_ENABLED = 'get.feature.enable_mobile_pin_entry',
+        SOA_KEY = 'soa.general.key',
+        PIN_ENTRY_MAX_FAILURES = 'get.login.pin_max_failed',
+        FEEDBACK_EMAIL = 'soa.email.get_feedback_email',
+        MY_CARD_ENABLED = 'get.feature.enable_get_my_card',
+        MOBILE_ACCESS_ENABLED = 'get.feature.enable_open_my_door',
+        FUNDS_ENABLED = '',
+        REWARDS_ENABLED = 'get.feature.enable_rewards',
+        FOOD_ENABLED = 'get.feature.enable_food',
+        PLACES_ENABLED = 'get.feature.enable_merchants',
+    }
 
     export enum ESettingList {
-        FEATURES = "get.feature",
-        DEPOSITS = "get.deposit",
-        MEAL_PLAN = "get.meal_plan"
-    };
+        FEATURES = 'get.feature',
+        DEPOSITS = 'get.deposit',
+        MEAL_PLAN = 'get.meal_plan'
+    }
 
     export enum EStrings {
-        USERNAME_TITLE = "get_web_gui.login_screen.email_username",
-        GET_MY_CARD_BACK = "get_mobile_app.get_my_card.back_instructions",
-        REWARDS_PATRON_DISABLED = "get_common.error.RewardsDisabledForUserException"
-    };
+        USERNAME_TITLE = 'get_web_gui.login_screen.email_username',
+        GET_MY_CARD_BACK = 'get_mobile_app.get_my_card.back_instructions',
+        REWARDS_PATRON_DISABLED = 'get_common.error.RewardsDisabledForUserException'
+    }
 
 }
 
 export namespace User {
     export enum EBounceStatus {
-        NONE = "NONE",
-        TRANSIENT = "TRANSIENT",
-        PERMANENT = "PERMANENT"
+        NONE = 'NONE',
+        TRANSIENT = 'TRANSIENT',
+        PERMANENT = 'PERMANENT'
     }
 
     export enum EBounceStatusInt {
@@ -99,8 +107,8 @@ export namespace User {
         DELETED = 4
     }
 
-    export enum ESetting{
-        CASHLESS_KEY = "CashlessKey"
+    export enum ESetting {
+        CASHLESS_KEY = 'CashlessKey'
     }
 
 }
