@@ -31,6 +31,7 @@ phases:
 
       - mkdir student
       - cp -r ./www/* ./student
+      - cp terms.html ./student
       - cp robots.txt ./student 
       - echo **** Perform tar ****
       - tar -zcvf ./SOURCES/student.tar.gz student
