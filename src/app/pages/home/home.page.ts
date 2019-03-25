@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { Platform, Events } from '@ionic/angular';
+import { Platform, Events, NavController } from '@ionic/angular';
 import { Router } from '@angular/router';
 
 import { Logger } from '../../utils/logger';
@@ -43,11 +43,11 @@ export class HomePage {
       Environment.setEnvironmentViaURL(location.href);
 
       /// get parameters from url
-      // this.getHashParameters();
+      this.getHashParameters();
       /// now perform normal page logic
-      // this.handleSessionToken();
+      this.handleSessionToken();
 
-      this.testGetSession();
+      // this.testGetSession();
 
     });
   }
@@ -83,11 +83,9 @@ export class HomePage {
    */
   private getHashParameters() {
 
-    const hashParameters: string[] = location.hash.split('/');
-
     /// get required params from the URL
-    this.sessionToken = hashParameters[2] || null;
-    this.destinationPage = hashParameters[3] || null;
+    this.sessionToken = DataCache.getUrlSession() || null;
+    this.destinationPage = DataCache.getDestinationPage() || null;
   }
 
   /**
@@ -99,6 +97,24 @@ export class HomePage {
       /// acquire the new session id with the session token
       this.authService.authenticateSessionToken(this.sessionToken).subscribe(
         newSessionId => {
+          if (newSessionId.length <= 0) {
+            ExceptionProvider.showException(this.events, {
+              displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
+              messageInfo: {
+                title: Globals.Exception.Strings.TITLE,
+                message: 'We were unable to verify your credentials',
+                positiveButtonTitle: 'RETRY',
+                positiveButtonHandler: () => {
+                  this.handleSessionToken();
+                },
+                negativeButtonTitle: 'CLOSE',
+                negativeButtonHandler: () => {
+                  // TODO: this.platform.exitApp();
+                }
+              }
+            });
+            return;
+          }
           /// set session id for services base and get the user info for caching
           DataCache.setSessionId(newSessionId);
           this.getUserInfo();
@@ -180,13 +196,13 @@ export class HomePage {
 
     switch (this.destinationPage) {
       case 'rewards':
-      this.router.navigate(['rewards']);
+        this.router.navigate(['rewards']);
         break;
       case 'openmydoor':
-        this.router.navigate(['mobile-access']);
+        this.router.navigate(['mobile-access'], { replaceUrl: true, skipLocationChange: true });
         break;
       case 'securemessaging':
-      this.router.navigate(['secure-message']);
+        this.router.navigate(['secure-message'], { replaceUrl: true, skipLocationChange: true });
         break;
 
     }

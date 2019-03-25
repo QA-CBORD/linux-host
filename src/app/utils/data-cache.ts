@@ -25,10 +25,14 @@ import { MEnvironmentInfo } from '../models/environment/environment-info.interfa
 export class DataCache {
 
     private static localCache: MCache = new MCache();
+    private static destinationPage: string;
+    private static urlSession: string;
 
     private readonly TTL_MINUTES: number = 15;
 
     private readonly CACHE: string = 'cache';
+
+
 
     constructor(
         private platform: Platform,
@@ -44,6 +48,19 @@ export class DataCache {
         });
 
 
+    }
+
+    public static setWebInitiValues(urlSesh: string, dPage: string) {
+        DataCache.destinationPage = dPage;
+        DataCache.urlSession = urlSesh;
+    }
+
+    public static getDestinationPage(): string {
+        return DataCache.destinationPage;
+    }
+
+    public static getUrlSession(): string {
+        return DataCache.urlSession;
     }
 
     public static getApplicationUUID(): string {

@@ -7,6 +7,8 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 
 import * as Globals from './app.global';
 import { ExceptionPayload } from './models/exception/exception-interface';
+import { Router } from '@angular/router';
+import { DataCache } from './utils/data-cache';
 
 
 @Component({
@@ -22,6 +24,7 @@ export class AppComponent {
 
   constructor(
     private platform: Platform,
+    private router: Router,
     private splashScreen: SplashScreen,
     private statusBar: StatusBar,
     private events: Events,
@@ -37,7 +40,20 @@ export class AppComponent {
       this.splashScreen.hide();
       this.setupAppStateEvent();
       this.subscribeToEvents();
+      this.getHashParameters();
+      this.router.navigate(['home'], { skipLocationChange: true });
     });
+  }
+
+  /**
+  * Get hash parameters from url
+  */
+  private getHashParameters() {
+
+    const hashParameters: string[] = location.hash.split('/');
+
+    /// get required params from the URL
+    DataCache.setWebInitiValues(hashParameters[2] || null, hashParameters[3] || null);
   }
 
   private setupAppStateEvent() {
