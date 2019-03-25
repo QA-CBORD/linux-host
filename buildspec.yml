@@ -16,8 +16,6 @@ phases:
       - node --version
       - npm --version
       - yum install rpm-build -y
-      - npm cache clean
-      - npm config set registry "http://registry.npmjs.org"
       - npm install -g ionic
       - npm install -g cordova
   pre_build:
