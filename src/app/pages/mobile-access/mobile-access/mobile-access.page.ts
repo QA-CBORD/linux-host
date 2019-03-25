@@ -154,18 +154,22 @@ export class MobileAccessPage implements OnInit {
     );
   }
 
+  /**
+   * Handle user input event from search bar
+   * @param event serch input event object
+   */
   onSearchInput(event: any) {
     this.locationFilterText = event.detail.value;
     this.filterLocations();
   }
 
+  /**
+   * Filter the list of locations based on user input in search bar
+   */
   private filterLocations() {
     if (this.locationFilterText.length <= 0) {
-      console.log('Full list');
-
       this.mobileLocationInfoFiltered = Object.assign([], this.mobileLocationInfo);
     } else {
-      console.log(`Filter by ${this.locationFilterText.toLocaleLowerCase()}`);
       this.mobileLocationInfoFiltered = this.mobileLocationInfoFiltered.sort((o1, o2) => {
         if (o1.locationId.includes(this.locationFilterText)) {
           return -1;
@@ -181,11 +185,6 @@ export class MobileAccessPage implements OnInit {
 
         return 0;
       });
-      // for (const item of this.mobileLocationInfo) {
-      //   if (!item.name.toLowerCase().includes(this.locationFilterText.toLowerCase())) {
-      //     this.mobileLocationInfoFiltered.indexOf(item);
-      //   }
-      // }
     }
   }
 

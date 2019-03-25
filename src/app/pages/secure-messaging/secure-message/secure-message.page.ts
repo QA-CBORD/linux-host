@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { Platform, Events } from '@ionic/angular';
 
@@ -21,6 +21,7 @@ export class SecureMessagePage implements OnInit {
 
   private largeScreenPixelMin = 576;
   private resizeSubscription: Subscription;
+  @ViewChild('chatScroll') el: any;
   bIsLargeScreen = false;
 
   private pollSubscription: Subscription;
@@ -46,10 +47,8 @@ export class SecureMessagePage implements OnInit {
         .subscribe(event => {
           const bWasPreviouslyLargeScreen = this.bIsLargeScreen;
           this.bIsLargeScreen = window.innerWidth >= this.largeScreenPixelMin;
-          console.log(`Large Screen: ${this.bIsLargeScreen}, Width: ${window.innerWidth}`);
-
           if (!bWasPreviouslyLargeScreen && this.bIsLargeScreen) {
-
+            /// do nothing for now
           }
         });
       this.initializePage();
@@ -72,8 +71,14 @@ export class SecureMessagePage implements OnInit {
     }
   }
 
+  private scrollToBottom() {
+    this.el.scrollToBottom();
+  }
 
 
+  /**
+   * Initial data gathering for messages and groups
+   */
   private initializePage() {
     this.events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: 'Retrieving conversations...' });
     this.smProvider.getInitialData().subscribe(
@@ -104,6 +109,9 @@ export class SecureMessagePage implements OnInit {
     );
   }
 
+  /**
+   * Poll for updated messages and groups
+   */
   private pollForData() {
     this.pollSubscription = this.smProvider.pollForData().subscribe(
       ([smGroupArray, smMessageArray]) => {
@@ -124,6 +132,10 @@ export class SecureMessagePage implements OnInit {
     );
   }
 
+  /**
+   * Handle messages and groups response and make conversations to display
+   * @param bIsPollingData Is this update from polled data
+   */
   private createConversationsFromResponse(bIsPollingData: boolean) {
 
     /// sort groups alphabetically
@@ -209,9 +221,13 @@ export class SecureMessagePage implements OnInit {
       }
 
       this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
+
     }
   }
 
+  /**
+   * Show grid column with current conversations
+   */
   public showConversationsColumn(): boolean {
     if (this.bIsLargeScreen === true || (this.selectedConversation == null && !this.bCreateNewConversation)) {
       return true;
@@ -219,6 +235,9 @@ export class SecureMessagePage implements OnInit {
     return false;
   }
 
+  /**
+   * Show grid column with messages from current selected conversation
+   */
   public showSelectedConversationContentColumn(): boolean {
     if (this.selectedConversation != null && !this.bCreateNewConversation) {
       return true;
@@ -226,14 +245,23 @@ export class SecureMessagePage implements OnInit {
     return false;
   }
 
+  /**
+   * Show grid column with groups available to start a conversation
+   */
   public showCreateNewConversationColumn(): boolean {
     return this.bCreateNewConversation;
   }
 
+  /**
+   * click listner for Start Conversation
+   */
   public onClickStartConversation() {
     this.bCreateNewConversation = true;
   }
 
+  /**
+   * click listner for group in 'new conversation' column
+   */
   public onClickMakeNewConversation(group: MSecureMessageGroupInfo) {
 
     /// check if a conversation with this group already exists
@@ -261,28 +289,45 @@ export class SecureMessagePage implements OnInit {
     this.bCreateNewConversation = false;
   }
 
+  /**
+   * click listner to selected current conversation to display
+   */
   public onClickConversation(conversation: MSecureMessageConversation) {
     this.bCreateNewConversation = false;
     if (this.selectedConversation != null && this.selectedConversation.groupIdValue === conversation.groupIdValue) {
       return;
     }
     this.setSelectedConversation(conversation);
+    this.scrollToBottom();
   }
 
+  /**
+   * click listner to send message
+   */
   public onClickSendButton() {
     if (this.newMessageText != null && this.newMessageText.length > 0) {
       this.sendMessage(this.createNewMessageSendBody(this.newMessageText));
     }
   }
 
+  /**
+   * click listner for backing out of conversation (small UI only)
+   */
   public onClickBackConversation() {
     this.clearSelectedConversation();
   }
 
+  /**
+   * click listner for backing out of create conversation (small UI only)
+   */
   public onClickBackNewConversation() {
     this.bCreateNewConversation = false;
   }
 
+  /**
+   * Create message body object for sending a new message to a group
+   * @param messageBody body of new message
+   */
   private createNewMessageSendBody(messageBody: string): MSecureMessageSendBody {
     return {
       institution_id: SecureMessagingProvider.GetSMAuthInfo().institution_id,
@@ -303,6 +348,10 @@ export class SecureMessagePage implements OnInit {
     };
   }
 
+  /**
+   * Send message body to group
+   * @param message message body object to send for new message
+   */
   private sendMessage(message: MSecureMessageSendBody) {
     this.smProvider.sendSecureMessage(message).subscribe(
       response => {
@@ -328,6 +377,9 @@ export class SecureMessagePage implements OnInit {
     );
   }
 
+  /**
+   * Add sent message to local conversation
+   */
   private addMessageToLocalConversation() {
     const message: MSecureMessageInfo = {
       body: this.newMessageText,
@@ -355,7 +407,11 @@ export class SecureMessagePage implements OnInit {
     this.sortConversations();
   }
 
+  /**
+   * Sort conversations for display
+   */
   private sortConversations() {
+    /// sort conversations by most current
     this.conversationsArray.sort((a, b) => {
       if (a.messages === null) { return 1; }
       if (b.messages === null) { return -1; }
@@ -370,6 +426,10 @@ export class SecureMessagePage implements OnInit {
     });
   }
 
+  /**
+   * Heler method to set selected conversation
+   * @param conversation conversation to set as selected
+   */
   private setSelectedConversation(conversation: MSecureMessageConversation) {
     this.selectedConversation = conversation;
     for (const convo of this.conversationsArray) {
@@ -378,6 +438,9 @@ export class SecureMessagePage implements OnInit {
     this.selectedConversation.selected = true;
   }
 
+  /**
+   * Helper method to clear selected conversation
+   */
   private clearSelectedConversation() {
     if (this.selectedConversation.messages === null || this.selectedConversation.messages.length === 0) {
       for (const convo of this.conversationsArray) {
@@ -392,27 +455,52 @@ export class SecureMessagePage implements OnInit {
     }
   }
 
+  /**
+   * UI helper method to set group initial
+   * @param conversation conversation to get data for ui
+   */
   public getConversationGroupInitial(conversation: MSecureMessageConversation): string {
     return conversation.groupName[0] || 'C';
   }
 
+  /**
+   * UI helper method to set group name
+   * @param conversation conversation to get data for ui
+   */
   public getConversationGroupName(conversation: MSecureMessageConversation): string {
     return conversation.groupName || 'Conversation';
   }
 
+  /**
+   * UI helper method to set description text for conversation
+   * (this gets the most recently sent message)
+   * @param conversation conversation to get data for ui
+   */
   public getConversationDescription(conversation: MSecureMessageConversation): string {
     const frontText = conversation.messages[conversation.messages.length - 1].sender.type === 'patron' ? 'You: ' : '';
     return frontText + conversation.messages[conversation.messages.length - 1].body;
   }
 
+  /**
+   * UI helper method to set group initial for chat
+   * @param group group to get data for ui
+   */
   public getGroupInitial(group: MSecureMessageGroupInfo): string {
     return group.name == null ? 'U' : group.name[0] || 'U';
   }
 
+  /**
+   * UI helper method to set group name
+   * @param group conversation to get data for ui
+   */
   public getGroupName(group: MSecureMessageGroupInfo): string {
     return group.name == null ? 'Name Unknown' : group.name;
   }
 
+  /**
+   * UI helper method to set group description
+   * @param group group to get data for ui
+   */
   public getGroupDescription(group: MSecureMessageGroupInfo): string {
     return group.description == null ? '' : group.description;
   }
@@ -465,6 +553,12 @@ export class SecureMessagePage implements OnInit {
 
   }
 
+  /**
+   * UI Helper method to determine if the group avatar should be shown
+   * (used to group messages visually)
+   * @param conversation conversation data
+   * @param messageIndex index of current message
+   */
   public messageShowGroupAvatar(conversation: MSecureMessageConversation, messageIndex: number): boolean {
 
     /// first message
@@ -489,6 +583,13 @@ export class SecureMessagePage implements OnInit {
     }
   }
 
+  /**
+   * UI Helper method to determine if the sent date should be shown
+   * (used to group messages visually)
+   * @param conversation conversation data
+   * @param messageIndex index of current message
+   * @param messageType type of message (group or patron)
+   */
   public messageShowDate(conversation: MSecureMessageConversation, messageIndex: number, messageType: string): boolean {
 
     /// first message
