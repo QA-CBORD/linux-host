@@ -11,9 +11,10 @@ phases:
     commands:
       - echo **** Installing required packages ****
       - yum install epel-release -y
-      - curl -sL https://rpm.nodesource.com/setup_8.x | bash -
+      - curl -sL https://rpm.nodesource.com/setup_10.x | bash -
       - yum install nodejs -y
-      - yum install npm -y
+      - node --version
+      - npm --version
       - yum install rpm-build -y
       - npm cache clean
       - npm config set registry "http://registry.npmjs.org"
