@@ -27,14 +27,14 @@ install -c -d -m 775 $RPM_BUILD_ROOT/home/httpd/student/assets
 # install -c -d -m 775 $RPM_BUILD_ROOT/home/httpd/student/assets/i18n
 install -c -d -m 775 $RPM_BUILD_ROOT/home/httpd/student/assets/icon
 # install -c -d -m 775 $RPM_BUILD_ROOT/home/httpd/student/assets/img
-install -c -d -m 775 $RPM_BUILD_ROOT/home/httpd/student/build
+# install -c -d -m 775 $RPM_BUILD_ROOT/home/httpd/student/build
 
 install -c -m 664 *.* $RPM_BUILD_ROOT/home/httpd/student
 # install -c -m 664 assets/fonts/*.* $RPM_BUILD_ROOT/home/httpd/student/assets/fonts
 # install -c -m 664 assets/i18n/*.* $RPM_BUILD_ROOT/home/httpd/student/assets/i18n
 install -c -m 664 assets/icon/*.* $RPM_BUILD_ROOT/home/httpd/student/assets/icon
 # install -c -m 664 assets/img/*.* $RPM_BUILD_ROOT/home/httpd/student/assets/img
-install -c -m 664 build/*.* $RPM_BUILD_ROOT/home/httpd/student/build
+# install -c -m 664 build/*.* $RPM_BUILD_ROOT/home/httpd/student/build
 
 
 %clean

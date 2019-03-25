@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { Platform } from '@ionic/angular';
+import { Storage } from '@ionic/storage';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 
 import { Observable, Observer } from 'rxjs';
