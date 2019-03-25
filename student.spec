@@ -27,9 +27,9 @@ install -c -d -m 775 $RPM_BUILD_ROOT/home/httpd/student/assets/icon
 install -c -d -m 775 $RPM_BUILD_ROOT/home/httpd/student/svg
 
 install -c -m 664 *.* $RPM_BUILD_ROOT/home/httpd/student
-install -c -m 664 assets/icon/*.* $RPM_BUILD_ROOT/home/httpd/student/assets
+install -c -m 664 assets/*.* $RPM_BUILD_ROOT/home/httpd/student/assets
 install -c -m 664 assets/icon/*.* $RPM_BUILD_ROOT/home/httpd/student/assets/icon
-install -c -m 664 assets/icon/*.* $RPM_BUILD_ROOT/home/httpd/student/svg
+install -c -m 664 svg/*.* $RPM_BUILD_ROOT/home/httpd/student/svg
 
 
 %clean
