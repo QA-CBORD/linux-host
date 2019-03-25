@@ -21,7 +21,7 @@ export class SecureMessagePage implements OnInit {
 
   private largeScreenPixelMin = 576;
   private resizeSubscription: Subscription;
-  @ViewChild('chatScroll') el: any;
+  @ViewChild('chatScroll') chatScroll: any;
   bIsLargeScreen = false;
 
   private pollSubscription: Subscription;
@@ -70,11 +70,6 @@ export class SecureMessagePage implements OnInit {
       this.pollSubscription.unsubscribe();
     }
   }
-
-  private scrollToBottom() {
-    this.el.scrollToBottom();
-  }
-
 
   /**
    * Initial data gathering for messages and groups
@@ -223,6 +218,23 @@ export class SecureMessagePage implements OnInit {
       this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
 
     }
+  }
+
+  /**
+   * Helper method to scroll to bottom of chat
+   */
+  private scrollToBottom() {
+    setTimeout(() => {
+      if (this.chatScroll == null) {
+        return;
+      }
+      try {
+        const scroll = this.chatScroll._scrollContent.nativeElement;
+        scroll.scrollTop = scroll.scrollHeight - scroll.clientHeight;
+      } catch (error) {
+        /// do nothing
+      }
+    }, 100);
   }
 
   /**
