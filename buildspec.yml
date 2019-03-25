@@ -11,6 +11,7 @@ phases:
     commands:
       - echo **** Installing required packages ****
       - yum install epel-release -y
+      - curl -sL https://rpm.nodesource.com/setup_8.x | bash -
       - yum install nodejs -y
       - yum install npm -y
       - yum install rpm-build -y
