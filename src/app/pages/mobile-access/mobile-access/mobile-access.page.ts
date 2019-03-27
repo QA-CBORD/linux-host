@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Platform, Events, PopoverController } from '@ionic/angular';
 
+import { Keyboard } from '@ionic-native/keyboard/ngx';
+
 import * as Globals from '../../../app.global';
 
 import { ExceptionProvider } from '../../../provider/exception-provider/exception.provider';
@@ -38,17 +40,10 @@ export class MobileAccessPage implements OnInit {
   constructor(
     private platform: Platform,
     private events: Events,
+    private keyboard: Keyboard,
     private popoverCtrl: PopoverController,
     private mobileAccessProvider: MobileAccessProvider
   ) {
-
-    this.platform.ready().then(() => {
-
-      this.events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: 'Retrieving locations...' });
-      this.getUpdatedLocationData();
-
-    });
-
   }
 
   /**
@@ -56,11 +51,14 @@ export class MobileAccessPage implements OnInit {
    */
   ngOnInit() { }
 
-  /**
-     * Clear Geolocation subscription when leaing the page
-     */
-  // tslint:disable-next-line:use-life-cycle-interface
-  ngOnDestroy() {
+  ionViewWillEnter() {
+    this.platform.ready().then(() => {
+      this.events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: 'Retrieving locations...' });
+      this.getUpdatedLocationData();
+    });
+  }
+
+  ionViewWillLeave() {
     if (navigator.geolocation) {
       navigator.geolocation.clearWatch(this.geolocationWatchId);
     }
@@ -80,9 +78,9 @@ export class MobileAccessPage implements OnInit {
         }
 
       });
-    } else {
-      this.retrieveMobileLocationData(false);
     }
+    this.retrieveMobileLocationData(false);
+
 
   }
 
@@ -96,37 +94,7 @@ export class MobileAccessPage implements OnInit {
     }
     this.mobileAccessProvider.getMobileLocationData(this.geoData).subscribe(
       mobileLocationData => {
-        if (mobileLocationData && mobileLocationData.length > 0) {
-          this.bShowNoLocationsAvailable = false;
-          for (let i = 0; i < mobileLocationData.length; i++) {
-            mobileLocationData[i].distance > 99 ? mobileLocationData[i].distance = NaN :
-              mobileLocationData[i].distance > 5 ? mobileLocationData[i].distance =
-                Number(mobileLocationData[i].distance.toFixed(2)) : mobileLocationData[i].distance = mobileLocationData[i].distance;
-          }
-          this.mobileLocationInfo = mobileLocationData;
-          this.filterLocations();
-          this.bIsUpdatingLocations = false;
-        } else {
-          this.bShowNoLocationsAvailable = true;
-          ExceptionProvider.showException(this.events, {
-            displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
-            messageInfo: {
-              title: Globals.Exception.Strings.TITLE,
-              message: 'There are no locations to display',
-              positiveButtonTitle: 'RETRY',
-              positiveButtonHandler: () => {
-                this.retrieveMobileLocationData(true);
-              },
-              negativeButtonTitle: 'CLOSE',
-              negativeButtonHandler: () => {
-                this.bIsUpdatingLocations = false;
-                // this.platform.exitApp();
-              }
-            }
-          });
-        }
-        this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
-
+        this.handleMobileLocationResult(mobileLocationData);
       },
       ((error: Error) => {
         let errorMessage = 'An error occurred while trying to retrieve your information.';
@@ -154,6 +122,51 @@ export class MobileAccessPage implements OnInit {
     );
   }
 
+  private handleMobileLocationResult(newMobileLocations: MMobileLocationInfo[]) {
+
+    /// check for incoming data
+    if (newMobileLocations && newMobileLocations.length > 0) {
+      this.bShowNoLocationsAvailable = false;
+      /// correct any distance value issues for display (make UI friendly)
+      for (let i = 0; i < newMobileLocations.length; i++) {
+        newMobileLocations[i].distance > 99 ? newMobileLocations[i].distance = NaN :
+          newMobileLocations[i].distance > 5 ? newMobileLocations[i].distance =
+            Number(newMobileLocations[i].distance.toFixed(2)) : newMobileLocations[i].distance = newMobileLocations[i].distance;
+      }
+
+      if (!(this.mobileLocationInfo !== null && JSON.stringify(this.mobileLocationInfo) === JSON.stringify(newMobileLocations))) {
+
+      }
+
+      this.mobileLocationInfo = newMobileLocations;
+      this.filterLocations();
+      this.bIsUpdatingLocations = false;
+    } else {
+      this.bShowNoLocationsAvailable = true;
+      ExceptionProvider.showException(this.events, {
+        displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
+        messageInfo: {
+          title: Globals.Exception.Strings.TITLE,
+          message: 'There are no locations to display',
+          positiveButtonTitle: 'RETRY',
+          positiveButtonHandler: () => {
+            this.retrieveMobileLocationData(true);
+          },
+          negativeButtonTitle: 'CLOSE',
+          negativeButtonHandler: () => {
+            this.bIsUpdatingLocations = false;
+            // this.platform.exitApp();
+          }
+        }
+      });
+    }
+    this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
+  }
+
+  trackByFn(index: number, item: MMobileLocationInfo) {
+    return item.locationId; // or item.id
+  }
+
   /**
    * Handle user input event from search bar
    * @param event serch input event object
@@ -164,6 +177,16 @@ export class MobileAccessPage implements OnInit {
   }
 
   /**
+   * Handle user enter key on search bar
+   */
+  onSearchEnterKey() {
+    try {
+      this.keyboard.hide();
+    } catch (e) {
+    }
+  }
+
+  /**
    * Filter the list of locations based on user input in search bar
    */
   private filterLocations() {
@@ -171,12 +194,26 @@ export class MobileAccessPage implements OnInit {
       this.mobileLocationInfoFiltered = Object.assign([], this.mobileLocationInfo);
     } else {
       this.mobileLocationInfoFiltered = this.mobileLocationInfoFiltered.sort((o1, o2) => {
+        /// do both locations have the substring,?if so, sort by distance
+        if ((o1.locationId.includes(this.locationFilterText) || o1.locationId.includes(this.locationFilterText)) &&
+          (o2.locationId.includes(this.locationFilterText) || o2.locationId.includes(this.locationFilterText))) {
+          if (o1.distance < o2.distance) {
+            return -1;
+          } else if (o2.distance < o1.distance) {
+            return 1;
+          } else {
+            return 0;
+          }
+        }
+
+        /// first sort by locationID
         if (o1.locationId.includes(this.locationFilterText)) {
           return -1;
-        } else if (o1.locationId.includes(this.locationFilterText)) {
+        } else if (o2.locationId.includes(this.locationFilterText)) {
           return 1;
         }
 
+        /// second sort by locationName
         if (o1.name.toLocaleLowerCase().includes(this.locationFilterText.toLowerCase())) {
           return -1;
         } else if (o2.name.toLocaleLowerCase().includes(this.locationFilterText.toLowerCase())) {

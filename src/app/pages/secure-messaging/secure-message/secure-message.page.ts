@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewChildren } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { Platform, Events } from '@ionic/angular';
 
@@ -12,6 +12,7 @@ import { DataCache } from './../../../utils/data-cache';
 
 import { MSecureMessageConversation, MSecureMessageGroupInfo, MSecureMessageInfo, MSecureMessageSendBody } from 'src/app/models/secure-messaging/secure-message-info';
 
+
 @Component({
   selector: 'app-secure-message',
   templateUrl: './secure-message.page.html',
@@ -22,6 +23,7 @@ export class SecureMessagePage implements OnInit {
   private largeScreenPixelMin = 576;
   private resizeSubscription: Subscription;
   @ViewChild('chatScroll') chatScroll: any;
+  @ViewChild('chatInput') chatInput: any;
   bIsLargeScreen = false;
 
   private pollSubscription: Subscription;
@@ -220,6 +222,14 @@ export class SecureMessagePage implements OnInit {
     }
   }
 
+  trackConversationsByFn(index: number, item: MSecureMessageConversation) {
+    return item.groupIdValue;
+  }
+
+  trackMessagesByFn(index: number, item: MSecureMessageInfo) {
+    return item.id;
+  }
+
   /**
    * Helper method to scroll to bottom of chat
    */
@@ -368,6 +378,9 @@ export class SecureMessagePage implements OnInit {
     this.smProvider.sendSecureMessage(message).subscribe(
       response => {
         this.addMessageToLocalConversation();
+        try {
+          this.chatInput.blur();
+        } catch (e) { }
       },
       error => {
         ExceptionProvider.showException(this.events, {
@@ -448,6 +461,11 @@ export class SecureMessagePage implements OnInit {
       convo.selected = false;
     }
     this.selectedConversation.selected = true;
+
+    for (const m of conversation.messages) {
+      console.log(`${this.getMessageDateShortString(m)} - ${new Date(m.sent_date).getTime()}`);
+
+    }
   }
 
   /**
@@ -539,8 +557,8 @@ export class SecureMessagePage implements OnInit {
       return this.datePipe.transform(sentDate, 'y');
     }
 
-    /// > 6 days (<dayAbbv> xx:xx AM/PM)
-    if (today.getDate() - sentDate.getDate() > 6) {
+    /// > 5 days (<monthAbbv> <date>, xx:xx AM/PM)
+    if (today.getDate() - sentDate.getDate() > 5) {
       return this.datePipe.transform(sentDate, 'MMM d');
     }
 
@@ -611,7 +629,7 @@ export class SecureMessagePage implements OnInit {
         /// next message from group as well
         if (conversation.messages[messageIndex + 1].sender.type === messageType) {
           /// was this message sent within 1 min of the next message
-          if (new Date(conversation.messages[messageIndex + 1].sent_date).getTime() - new Date(conversation.messages[messageIndex + 1].sent_date).getTime() < 60000) {
+          if (new Date(conversation.messages[messageIndex + 1].sent_date).getTime() - new Date(conversation.messages[messageIndex].sent_date).getTime() < 60000) {
             return false;
           }
         }
@@ -623,7 +641,7 @@ export class SecureMessagePage implements OnInit {
         /// next message from group as well
         if (conversation.messages[messageIndex + 1].sender.type === messageType) {
           /// was this message sent within 1 min of the next message
-          if (new Date(conversation.messages[messageIndex + 1].sent_date).getTime() - new Date(conversation.messages[messageIndex + 1].sent_date).getTime() < 60000) {
+          if (new Date(conversation.messages[messageIndex + 1].sent_date).getTime() - new Date(conversation.messages[messageIndex].sent_date).getTime() < 60000) {
             return false;
           }
         }
@@ -645,8 +663,8 @@ export class SecureMessagePage implements OnInit {
       return this.datePipe.transform(sentDate, 'mediumDate');
     }
 
-    /// > 6 days (<dayAbbv> xx:xx AM/PM)
-    if (today.getDate() - sentDate.getDate() > 6) {
+    /// > 5 days (<monthAbbv> <date>, xx:xx AM/PM)
+    if (today.getDate() - sentDate.getDate() > 5) {
       return this.datePipe.transform(sentDate, 'MMM d, h:mm a');
     }
 

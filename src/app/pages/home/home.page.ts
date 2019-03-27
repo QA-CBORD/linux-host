@@ -55,7 +55,9 @@ export class HomePage {
   private testGetSession() {
     this.testProvider.getTestUser().subscribe(
       ((success) => {
-        this.destinationPage = 'securemessaging';
+        // this.destinationPage = 'securemessaging';
+        this.destinationPage = 'openmydoor';
+
         this.getUserInfo();
       }),
       ((error) => {
