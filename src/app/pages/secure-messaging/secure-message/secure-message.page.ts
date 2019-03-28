@@ -490,7 +490,7 @@ export class SecureMessagePage implements OnInit {
    * @param conversation conversation to get data for ui
    */
   public getConversationGroupInitial(conversation: MSecureMessageConversation): string {
-    return conversation.groupName[0] || 'C';
+    return (conversation.groupName == null || conversation.groupName.length < 1) ? 'U' : conversation.groupName[0];
   }
 
   /**
@@ -498,7 +498,7 @@ export class SecureMessagePage implements OnInit {
    * @param conversation conversation to get data for ui
    */
   public getConversationGroupName(conversation: MSecureMessageConversation): string {
-    return conversation.groupName || 'Conversation';
+    return conversation.groupName == null ? 'Conversation' : conversation.groupDescription;
   }
 
   /**
@@ -516,7 +516,7 @@ export class SecureMessagePage implements OnInit {
    * @param group group to get data for ui
    */
   public getGroupInitial(group: MSecureMessageGroupInfo): string {
-    return group.name == null ? 'U' : group.name[0] || 'U';
+    return (group.name == null || group.name.length < 1) ? 'U' : group.name[0];
   }
 
   /**
