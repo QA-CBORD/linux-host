@@ -22,14 +22,14 @@
             <div style="height: 75vh; width: 100%; overflow: auto;" scrollY="true">
               <ion-item button *ngFor="let item of mobileLocationInfoFiltered; trackBy: trackByFn" (click)="locationSelected(item)">
                 <div *ngIf='item.color' [ngStyle]="{'background-color': item.color}"
-                  style="height: 35px; width: 3px; margin-right: 10px;">
+                  style="height: 80%; width: 3px; margin-right: 10px;">
                 </div>
-                <div class='ion-text-start'>
-                  <h4 style="font-weight: bold; display: inline;">{{item.locationId}} - </h4>
-                  <h4 style="white-space: pre-wrap; display: inline;">{{item.name}}</h4>
+                <div class='ion-text-start' style="margin-top: 0.5em; margin-bottom: 0.5em;">
+                  <h4 class="omd_h4" style="font-weight: bold; display: inline;">{{item.locationId}} - </h4>
+                  <h4 class="omd_h4" style="white-space: pre-wrap; display: inline;">{{item.name}}</h4>
                 </div>
                 <div *ngIf='item.color' slot='end' [ngStyle]="{'background-color': item.color}"
-                  style="height: 35px; width: 3px; margin-left: 10px;">
+                  style="height: 80%; width: 3px; margin-left: 10px;">
                 </div>
               </ion-item>
             </div>

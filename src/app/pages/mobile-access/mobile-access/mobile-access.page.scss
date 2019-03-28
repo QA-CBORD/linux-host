@@ -15,34 +15,19 @@ h1, h2, h3, h4, h5, h6, p {
     overflow-wrap: break-word;
     word-wrap: break-word;
     text-align: center;
-    // @media screen and (min-width: map-get($grid-breakpoints, sm)) {
-    //     font-size: 2.25rem;
-    // }
+    @media screen and (max-width: 576px) {
+        font-size: 1.5rem;
+    }
 }
 
 .omd_h4 {
-    font-weight: 200;
-    font-size: 1.75rem;
-    color: white;
-    overflow-wrap: break-word;
-    word-wrap: break-word;
-    text-align: center;
-    // @media screen and (min-width: map-get($grid-breakpoints, sm)) {
-    //     font-size: 2.0rem;
-    // }
+    font-size: 1.0rem;
+    @media screen and (max-width: 576px) {
+        font-size: 0.9rem;
+    }
 }
 
-.omd_h5 {
-    font-weight: 300;
-    font-size: 1.25rem;
-    color: white;
-    overflow-wrap: break-word;
-    word-wrap: break-word;
-    text-align: center;
-    // @media screen and (min-width: map-get($grid-breakpoints, sm)) {
-    //     font-size: 1.5rem;
-    // }
-}
+
 
 ion-fab {
 
