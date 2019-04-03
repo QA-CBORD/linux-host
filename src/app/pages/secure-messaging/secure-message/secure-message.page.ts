@@ -4,13 +4,13 @@ import { Platform, Events } from '@ionic/angular';
 
 import { Subscription, fromEvent } from 'rxjs';
 
-import { SecureMessagingProvider } from 'src/app/provider/secure-messaging/secure-messaging.provider';
-import { ExceptionProvider } from 'src/app/provider/exception-provider/exception.provider';
+import { SecureMessagingProvider } from 'src/app/pages/secure-messaging/provider/secure-messaging.provider';
+import { ExceptionProvider } from 'src/app/core/provider/exception-provider/exception.provider';
 
 import * as Globals from '../../../app.global';
-import { DataCache } from './../../../utils/data-cache';
+import { DataCache } from 'src/app/core/utils/data-cache';
 
-import { MSecureMessageConversation, MSecureMessageGroupInfo, MSecureMessageInfo, MSecureMessageSendBody } from 'src/app/models/secure-messaging/secure-message-info';
+import { MSecureMessageConversation, MSecureMessageGroupInfo, MSecureMessageInfo, MSecureMessageSendBody } from 'src/app/pages/secure-messaging/model/secure-message-info';
 
 
 @Component({
@@ -250,7 +250,7 @@ export class SecureMessagePage implements OnInit {
   /**
    * Show grid column with current conversations
    */
-  public showConversationsColumn(): boolean {
+  showConversationsColumn(): boolean {
     if (this.bIsLargeScreen === true || (this.selectedConversation == null && !this.bCreateNewConversation)) {
       return true;
     }
@@ -260,7 +260,7 @@ export class SecureMessagePage implements OnInit {
   /**
    * Show grid column with messages from current selected conversation
    */
-  public showSelectedConversationContentColumn(): boolean {
+  showSelectedConversationContentColumn(): boolean {
     if (this.selectedConversation != null && !this.bCreateNewConversation) {
       return true;
     }
@@ -270,21 +270,21 @@ export class SecureMessagePage implements OnInit {
   /**
    * Show grid column with groups available to start a conversation
    */
-  public showCreateNewConversationColumn(): boolean {
+  showCreateNewConversationColumn(): boolean {
     return this.bCreateNewConversation;
   }
 
   /**
    * click listner for Start Conversation
    */
-  public onClickStartConversation() {
+  onClickStartConversation() {
     this.bCreateNewConversation = true;
   }
 
   /**
    * click listner for group in 'new conversation' column
    */
-  public onClickMakeNewConversation(group: MSecureMessageGroupInfo) {
+  onClickMakeNewConversation(group: MSecureMessageGroupInfo) {
 
     /// check if a conversation with this group already exists
     let newConversation: MSecureMessageConversation = null;
@@ -314,7 +314,7 @@ export class SecureMessagePage implements OnInit {
   /**
    * click listner to selected current conversation to display
    */
-  public onClickConversation(conversation: MSecureMessageConversation) {
+  onClickConversation(conversation: MSecureMessageConversation) {
     this.bCreateNewConversation = false;
     if (this.selectedConversation != null && this.selectedConversation.groupIdValue === conversation.groupIdValue) {
       return;
@@ -326,7 +326,7 @@ export class SecureMessagePage implements OnInit {
   /**
    * click listner to send message
    */
-  public onClickSendButton() {
+  onClickSendButton() {
     if (this.newMessageText != null && this.newMessageText.length > 0) {
       this.sendMessage(this.createNewMessageSendBody(this.newMessageText));
     }
@@ -335,14 +335,14 @@ export class SecureMessagePage implements OnInit {
   /**
    * click listner for backing out of conversation (small UI only)
    */
-  public onClickBackConversation() {
+  onClickBackConversation() {
     this.clearSelectedConversation();
   }
 
   /**
    * click listner for backing out of create conversation (small UI only)
    */
-  public onClickBackNewConversation() {
+  onClickBackNewConversation() {
     this.bCreateNewConversation = false;
   }
 
@@ -489,7 +489,7 @@ export class SecureMessagePage implements OnInit {
    * UI helper method to set group initial
    * @param conversation conversation to get data for ui
    */
-  public getConversationGroupInitial(conversation: MSecureMessageConversation): string {
+  getConversationGroupInitial(conversation: MSecureMessageConversation): string {
     return (conversation.groupName == null || conversation.groupName.length < 1) ? 'U' : conversation.groupName[0];
   }
 
@@ -497,7 +497,7 @@ export class SecureMessagePage implements OnInit {
    * UI helper method to set group name
    * @param conversation conversation to get data for ui
    */
-  public getConversationGroupName(conversation: MSecureMessageConversation): string {
+  getConversationGroupName(conversation: MSecureMessageConversation): string {
     return conversation.groupName == null ? 'Conversation' : conversation.groupDescription;
   }
 
@@ -506,7 +506,7 @@ export class SecureMessagePage implements OnInit {
    * (this gets the most recently sent message)
    * @param conversation conversation to get data for ui
    */
-  public getConversationDescription(conversation: MSecureMessageConversation): string {
+  getConversationDescription(conversation: MSecureMessageConversation): string {
     const frontText = conversation.messages[conversation.messages.length - 1].sender.type === 'patron' ? 'You: ' : '';
     return frontText + conversation.messages[conversation.messages.length - 1].body;
   }
@@ -515,7 +515,7 @@ export class SecureMessagePage implements OnInit {
    * UI helper method to set group initial for chat
    * @param group group to get data for ui
    */
-  public getGroupInitial(group: MSecureMessageGroupInfo): string {
+  getGroupInitial(group: MSecureMessageGroupInfo): string {
     return (group.name == null || group.name.length < 1) ? 'U' : group.name[0];
   }
 
@@ -523,7 +523,7 @@ export class SecureMessagePage implements OnInit {
    * UI helper method to set group name
    * @param group conversation to get data for ui
    */
-  public getGroupName(group: MSecureMessageGroupInfo): string {
+  getGroupName(group: MSecureMessageGroupInfo): string {
     return group.name == null ? 'Name Unknown' : group.name;
   }
 
@@ -531,7 +531,7 @@ export class SecureMessagePage implements OnInit {
    * UI helper method to set group description
    * @param group group to get data for ui
    */
-  public getGroupDescription(group: MSecureMessageGroupInfo): string {
+  getGroupDescription(group: MSecureMessageGroupInfo): string {
     return group.description == null ? '' : group.description;
   }
 
@@ -539,7 +539,7 @@ export class SecureMessagePage implements OnInit {
    * Get date to place in conversation list item for most recent message in conversation
    * @param conversation Conversation from list
    */
-  public getConversationDate(conversation: MSecureMessageConversation): string {
+  getConversationDate(conversation: MSecureMessageConversation): string {
     /// get latest message and get the date string for it
     return this.getMessageDateShortString(conversation.messages[conversation.messages.length - 1]);
   }
@@ -548,7 +548,7 @@ export class SecureMessagePage implements OnInit {
    * Get short formatted date string for display
    * @param message Message from conversation
    */
-  public getMessageDateShortString(message: MSecureMessageInfo): string {
+  getMessageDateShortString(message: MSecureMessageInfo): string {
     const today: Date = new Date();
     const sentDate: Date = new Date(message.sent_date);
 
@@ -589,7 +589,7 @@ export class SecureMessagePage implements OnInit {
    * @param conversation conversation data
    * @param messageIndex index of current message
    */
-  public messageShowGroupAvatar(conversation: MSecureMessageConversation, messageIndex: number): boolean {
+  messageShowGroupAvatar(conversation: MSecureMessageConversation, messageIndex: number): boolean {
 
     /// first message
     if (messageIndex === 0) {
@@ -620,7 +620,7 @@ export class SecureMessagePage implements OnInit {
    * @param messageIndex index of current message
    * @param messageType type of message (group or patron)
    */
-  public messageShowDate(conversation: MSecureMessageConversation, messageIndex: number, messageType: string): boolean {
+  messageShowDate(conversation: MSecureMessageConversation, messageIndex: number, messageType: string): boolean {
 
     /// first message
     if (messageIndex === 0) {
@@ -654,7 +654,7 @@ export class SecureMessagePage implements OnInit {
    * Get formatted date string for display in conversation message list items
    * @param message Message from conversation
    */
-  public getMessageDate(message: MSecureMessageInfo): string {
+  getMessageDate(message: MSecureMessageInfo): string {
     const today: Date = new Date();
     const sentDate: Date = new Date(message.sent_date);
 

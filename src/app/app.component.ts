@@ -6,9 +6,10 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 
 
 import * as Globals from './app.global';
-import { ExceptionPayload } from './models/exception/exception-interface';
+import { ExceptionPayload } from './core/model/exception/exception-interface';
 import { Router } from '@angular/router';
-import { DataCache } from './utils/data-cache';
+import { DataCache } from './core/utils/data-cache';
+import { EDestination } from './pages/home/home.page';
 
 
 @Component({
@@ -17,8 +18,8 @@ import { DataCache } from './utils/data-cache';
 })
 export class AppComponent {
 
-  public static readonly EVENT_APP_PAUSE = 'event.apppause';
-  public static readonly EVENT_APP_RESUME = 'event.appresume';
+  static readonly EVENT_APP_PAUSE = 'event.apppause';
+  static readonly EVENT_APP_RESUME = 'event.appresume';
 
   private loader;
 
@@ -52,8 +53,19 @@ export class AppComponent {
 
     const hashParameters: string[] = location.hash.split('/');
 
+    const destinationPageString = hashParameters[3];
+    let destinationPage = EDestination.NONE;
+
+    if (destinationPageString === EDestination.MOBILE_ACCESS) {
+      destinationPage = EDestination.MOBILE_ACCESS;
+    } else if (destinationPageString === EDestination.REWARDS) {
+      destinationPage = EDestination.REWARDS;
+    } else if (destinationPageString === EDestination.SECURE_MESSAGING) {
+      destinationPage = EDestination.SECURE_MESSAGING;
+    }
+
     /// get required params from the URL
-    DataCache.setWebInitiValues(hashParameters[2] || null, hashParameters[3] || null);
+    DataCache.setWebInitiValues(hashParameters[2] || null, destinationPage);
   }
 
   private setupAppStateEvent() {
@@ -87,7 +99,7 @@ export class AppComponent {
     }
   }
 
-  public async presentOneButtonAlert(alertOneButtonInfo) {
+  async presentOneButtonAlert(alertOneButtonInfo) {
 
     const alert = await this.alertCtrl.create({
       header: alertOneButtonInfo.title,
@@ -103,7 +115,7 @@ export class AppComponent {
     alert.present();
   }
 
-  public async presentTwoButtonAlert(alertTwoButtonInfo) {
+  async presentTwoButtonAlert(alertTwoButtonInfo) {
 
     const alert = await this.alertCtrl.create({
       header: alertTwoButtonInfo.title,
@@ -126,7 +138,7 @@ export class AppComponent {
     alert.present();
   }
 
-  public async presentThreeButtonAlert(alertThreeButtonInfo) {
+  async presentThreeButtonAlert(alertThreeButtonInfo) {
 
     const alert = await this.alertCtrl.create({
       header: alertThreeButtonInfo.title,

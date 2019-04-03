@@ -9,38 +9,38 @@ export enum EnvType {
 export class Environment {
 
     /// GET Development
-    public static readonly BASE_SERVICES_URL_DEVTEST = 'https://services.get.dev.cbord.com/GETServices/services';
-    public static readonly BASE_GET_PATRON_URL_DEVTEST = 'http://get.dev.cbord.com';
+    static readonly BASE_SERVICES_URL_DEVTEST = 'https://services.get.dev.cbord.com/GETServices/services';
+    static readonly BASE_GET_PATRON_URL_DEVTEST = 'http://get.dev.cbord.com';
 
     /// GET Vendor Validation
-    public static readonly BASE_SERVICES_URL_VENDORVAL = 'http://getdemo.cbord.com/GETServices/services';           // Vendor validation
-    public static readonly BASE_GET_PATRON_URL_VENDORVAL = 'http://get.demo.cbord.com';
+    static readonly BASE_SERVICES_URL_VENDORVAL = 'http://getdemo.cbord.com/GETServices/services';           // Vendor validation
+    static readonly BASE_GET_PATRON_URL_VENDORVAL = 'http://get.demo.cbord.com';
 
     // GET Production
-    public static readonly BASE_SERVICES_URL_PRODUCTION = 'https://services.get.cbord.com/GETServices/services';    // PRODUCTION
-    public static readonly BASE_GET_PATRON_URL_PRODUCTION = 'https://get.cbord.com';
+    static readonly BASE_SERVICES_URL_PRODUCTION = 'https://services.get.cbord.com/GETServices/services';    // PRODUCTION
+    static readonly BASE_GET_PATRON_URL_PRODUCTION = 'https://get.cbord.com';
 
 
     /// CBORD Student Development
-    public static readonly BASE_CBORD_STUDENT_URL_DEVTEST = 'https://student.dev.cbord.com';
+    static readonly BASE_CBORD_STUDENT_URL_DEVTEST = 'https://student.dev.cbord.com';
 
     /// CBORD Student Vendor Validation
-    public static readonly BASE_CBORD_STUDENT_URL_VENDORVAL = 'https://student.demo.cbord.com';
+    static readonly BASE_CBORD_STUDENT_URL_VENDORVAL = 'https://student.demo.cbord.com';
 
     /// CBORD Student Production
-    public static readonly BASE_CBORD_STUDENT_URL_PRODUCTION = 'https://student.cbord.com';
+    static readonly BASE_CBORD_STUDENT_URL_PRODUCTION = 'https://student.cbord.com';
 
 
     /// AWS API Gateway Development
-    public static readonly BASE_AWS_API_URL_DEVTEST = 'https://dwptofebk7.execute-api.us-east-1.amazonaws.com/dev';
+    static readonly BASE_AWS_API_URL_DEVTEST = 'https://dwptofebk7.execute-api.us-east-1.amazonaws.com/dev';
 
 
-    public static currentEnvironment: EnvType = EnvType.development;
+    static currentEnvironment: EnvType = EnvType.development;
 
-    public static servicesBaseURL: string = Environment.BASE_SERVICES_URL_DEVTEST;
-    public static fullSiteBaseURL: string = Environment.BASE_GET_PATRON_URL_DEVTEST;
+    static servicesBaseURL: string = Environment.BASE_SERVICES_URL_DEVTEST;
+    static fullSiteBaseURL: string = Environment.BASE_GET_PATRON_URL_DEVTEST;
 
-    public static apiGatewayServiceBaseURL: string = Environment.BASE_AWS_API_URL_DEVTEST;
+    static apiGatewayServiceBaseURL: string = Environment.BASE_AWS_API_URL_DEVTEST;
 
 
     constructor() {
@@ -49,14 +49,14 @@ export class Environment {
     /**
      *  Get the GET current services URL
      */
-    public static getGETServicesBaseURL(): string {
+    static getGETServicesBaseURL(): string {
         return Environment.servicesBaseURL;
     }
 
     /**
      *  Get the AWS API Gateway current services URL
      */
-    public static getAPIGatewayServicesBaseURL(): string {
+    static getAPIGatewayServicesBaseURL(): string {
         return Environment.apiGatewayServiceBaseURL;
     }
 

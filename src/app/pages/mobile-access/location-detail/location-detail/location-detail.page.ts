@@ -4,11 +4,11 @@ import { Events, ModalController, PopoverController } from '@ionic/angular';
 
 import * as Globals from 'src/app/app.global';
 
-import { MobileAccessProvider } from 'src/app/provider/mobile-access/mobile-access.provider';
-import { ExceptionProvider } from 'src/app/provider/exception-provider/exception.provider';
+import { MobileAccessProvider } from 'src/app/pages/mobile-access/provider/mobile-access.provider';
+import { ExceptionProvider } from 'src/app/core/provider/exception-provider/exception.provider';
 
-import { MGeoCoordinates } from 'src/app/models/geolocation/geocoordinates.interface';
-import { MActivateMobileLocationResult } from 'src/app/models/open-my-door/open-my-door.interface';
+import { MGeoCoordinates } from 'src/app/core/model/geolocation/geocoordinates.interface';
+import { MActivateMobileLocationResult } from '../../model/mobile-access.interface';
 
 
 @Component({

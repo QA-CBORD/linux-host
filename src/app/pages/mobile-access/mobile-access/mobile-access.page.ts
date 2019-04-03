@@ -5,11 +5,11 @@ import { Keyboard } from '@ionic-native/keyboard/ngx';
 
 import * as Globals from '../../../app.global';
 
-import { ExceptionProvider } from '../../../provider/exception-provider/exception.provider';
-import { MobileAccessProvider } from 'src/app/provider/mobile-access/mobile-access.provider';
+import { ExceptionProvider } from 'src/app/core/provider/exception-provider/exception.provider';
+import { MobileAccessProvider } from 'src/app/pages/mobile-access/provider/mobile-access.provider';
 
-import { MGeoCoordinates } from 'src/app/models/geolocation/geocoordinates.interface';
-import { MMobileLocationInfo } from 'src/app/models/open-my-door/open-my-door.interface';
+import { MGeoCoordinates } from 'src/app/core/model/geolocation/geocoordinates.interface';
+import { MMobileLocationInfo } from '../model/mobile-access.interface';
 import { LocationDetailPage } from '../location-detail/location-detail/location-detail.page';
 
 

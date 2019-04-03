@@ -3,18 +3,25 @@ import { Component } from '@angular/core';
 import { Platform, Events, NavController } from '@ionic/angular';
 import { Router } from '@angular/router';
 
-import { Logger } from '../../utils/logger';
+import { Logger } from 'src/app/core/utils/logger';
 import { Environment } from '../../environment';
-import { DataCache } from '../../utils/data-cache';
+import { DataCache } from 'src/app/core/utils/data-cache';
 
-import { AuthService } from '.././../services/auth-service/auth.service';
-import { UserService } from '../../services/user-service/user.service';
+import { AuthService } from 'src/app/core/service/auth-service/auth.service';
+import { UserService } from 'src/app/core/service/user-service/user.service';
 
-import { ExceptionProvider } from '../../provider/exception-provider/exception.provider';
+import { ExceptionProvider } from 'src/app/core/provider/exception-provider/exception.provider';
 
 import * as Globals from '../../app.global';
-import { TestProvider } from 'src/app/provider/test-provider/test.provider';
+import { TestProvider } from 'src/app/core/provider/test-provider/test.provider';
 
+
+export enum EDestination {
+  NONE = 'none',
+  MOBILE_ACCESS = 'openmydoor',
+  SECURE_MESSAGING = 'securemessaging',
+  REWARDS = 'rewards'
+}
 
 
 @Component({
@@ -25,7 +32,7 @@ import { TestProvider } from 'src/app/provider/test-provider/test.provider';
 export class HomePage {
 
   sessionToken: string = null;
-  destinationPage: string = null;
+  destinationPage: EDestination = EDestination.NONE;
 
   constructor(
     private platform: Platform,
@@ -55,9 +62,7 @@ export class HomePage {
   private testGetSession() {
     this.testProvider.getTestUser().subscribe(
       ((success) => {
-        // this.destinationPage = 'securemessaging';
-        this.destinationPage = 'openmydoor';
-
+        this.destinationPage = EDestination.MOBILE_ACCESS;
         this.getUserInfo();
       }),
       ((error) => {
@@ -188,22 +193,15 @@ export class HomePage {
    */
   private handlePageNavigation() {
 
-    /// default to "Mobile Access" page if no destination page value exists
-    /// this should never happen
-    /// should be handled better
-    if (this.destinationPage == null) {
-      this.destinationPage = 'securemessaging';
-    }
-
 
     switch (this.destinationPage) {
-      case 'rewards':
+      case EDestination.REWARDS:
         this.router.navigate(['rewards']);
         break;
-      case 'openmydoor':
+      case EDestination.MOBILE_ACCESS:
         this.router.navigate(['mobile-access'], { replaceUrl: true, skipLocationChange: true });
         break;
-      case 'securemessaging':
+      case EDestination.SECURE_MESSAGING:
         this.router.navigate(['secure-message'], { replaceUrl: true, skipLocationChange: true });
         break;
 
