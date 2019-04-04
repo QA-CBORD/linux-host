@@ -6,7 +6,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { MobileAccessPage } from './mobile-access.page';
-import { LocationDetailPageModule } from '../location-detail/location-detail/location-detail.module';
+import { LocationDetailPageModule } from './location-detail/location-detail.module';
 
 const routes: Routes = [
   {

@@ -8,7 +8,7 @@ import { MobileAccessProvider } from 'src/app/pages/mobile-access/provider/mobil
 import { ExceptionProvider } from 'src/app/core/provider/exception-provider/exception.provider';
 
 import { MGeoCoordinates } from 'src/app/core/model/geolocation/geocoordinates.interface';
-import { MActivateMobileLocationResult } from '../../model/mobile-access.interface';
+import { MActivateMobileLocationResult } from '../model/mobile-access.interface';
 
 
 @Component({

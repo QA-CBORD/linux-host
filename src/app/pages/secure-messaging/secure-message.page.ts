@@ -7,7 +7,7 @@ import { Subscription, fromEvent } from 'rxjs';
 import { SecureMessagingProvider } from 'src/app/pages/secure-messaging/provider/secure-messaging.provider';
 import { ExceptionProvider } from 'src/app/core/provider/exception-provider/exception.provider';
 
-import * as Globals from '../../../app.global';
+import * as Globals from '../../app.global';
 import { DataCache } from 'src/app/core/utils/data-cache';
 
 import { MSecureMessageConversation, MSecureMessageGroupInfo, MSecureMessageInfo, MSecureMessageSendBody } from 'src/app/pages/secure-messaging/model/secure-message-info';

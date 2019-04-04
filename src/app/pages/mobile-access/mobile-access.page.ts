@@ -3,14 +3,14 @@ import { Platform, Events, PopoverController } from '@ionic/angular';
 
 import { Keyboard } from '@ionic-native/keyboard/ngx';
 
-import * as Globals from '../../../app.global';
+import * as Globals from '../../app.global';
 
 import { ExceptionProvider } from 'src/app/core/provider/exception-provider/exception.provider';
 import { MobileAccessProvider } from 'src/app/pages/mobile-access/provider/mobile-access.provider';
 
 import { MGeoCoordinates } from 'src/app/core/model/geolocation/geocoordinates.interface';
-import { MMobileLocationInfo } from '../model/mobile-access.interface';
-import { LocationDetailPage } from '../location-detail/location-detail/location-detail.page';
+import { MMobileLocationInfo } from './model/mobile-access.interface';
+import { LocationDetailPage } from './location-detail/location-detail.page';
 
 
 @Component({
