@@ -50,11 +50,11 @@ export class HomePage {
       Environment.setEnvironmentViaURL(location.href);
 
       /// get parameters from url
-      // this.getHashParameters();
+      this.getHashParameters();
       /// now perform normal page logic
-      // this.handleSessionToken();
+      this.handleSessionToken();
 
-      this.testGetSession();
+      // this.testGetSession();
 
     });
   }
