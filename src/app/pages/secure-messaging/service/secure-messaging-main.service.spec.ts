@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 
-import { SecureMessagingProvider } from './secure-messaging.provider';
+import { SecureMessagingMainService } from './secure-messaging-main.service';
 
 describe('SecureMessagingProvider', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   it('should be created', () => {
-    const service: SecureMessagingProvider = TestBed.get(SecureMessagingProvider);
+    const service: SecureMessagingMainService = TestBed.get(SecureMessagingMainService);
     expect(service).toBeTruthy();
   });
 });

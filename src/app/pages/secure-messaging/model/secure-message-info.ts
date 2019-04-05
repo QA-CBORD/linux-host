@@ -1,5 +1,3 @@
-
-
 export interface MSecureMessageInfo {
     id: string;                             /// uuid
     replied_message_id: string;             /// uuid
@@ -36,7 +34,6 @@ export interface MSecureMessageGroupMemeberInfo {
     created_date?: string;
     version?: number;
 }
-
 
 export interface MSecureMessageAddressInfo {
     id?: string;
