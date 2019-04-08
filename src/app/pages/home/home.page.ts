@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { Platform, Events, NavController } from '@ionic/angular';
+import { Platform, Events } from '@ionic/angular';
 import { Router } from '@angular/router';
 
 import { Logger } from 'src/app/core/utils/logger';

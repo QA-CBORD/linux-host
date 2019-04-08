@@ -57,7 +57,11 @@ export class SecureMessagePage implements OnDestroy {
     }
 
     private onWindowResizeHandler(event: Event) {
+        const bWasPreviouslyLargeScreen = this.bIsLargeScreen;
         this.bIsLargeScreen = window.innerWidth >= this.largeScreenPixelMin;
+        if (!bWasPreviouslyLargeScreen && this.bIsLargeScreen) {
+            /// do nothing for now
+        }
     }
 
     ngOnDestroy() {
@@ -105,7 +109,9 @@ export class SecureMessagePage implements OnDestroy {
         this.sourceSubscription.add(this.secureMessagingProvider.pollForData().subscribe(
             ([smGroupArray, smMessageArray]) => {
                 /// if there are new groups, update the list
-                this.groupsArray = this.groupsArray.length !== smGroupArray.length ? smGroupArray : this.groupsArray;
+                if (this.messagesArray.length !== smGroupArray.length) {
+                    this.messagesArray = smMessageArray;
+                }
                 /// if there are new messages, update the conversations
                 if (this.messagesArray.length !== smMessageArray.length) {
                     this.messagesArray = smMessageArray;
@@ -143,9 +149,9 @@ export class SecureMessagePage implements OnDestroy {
      * @param bIsPollingData Is this update from polled data
      */
     private createConversationsFromResponse(bIsPollingData: boolean) {
-        this.sortGroups();
-
         const tempConversations: MSecureMessageConversation[] = [];
+
+        this.sortGroups();
 
         /// create 'conversations' out of message array
         for (const message of this.messagesArray) {
@@ -720,4 +726,5 @@ export class SecureMessagePage implements OnDestroy {
         return 'Now';
 
     }
+
 }

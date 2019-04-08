@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { Observable, zip, timer } from 'rxjs';
-import { flatMap, switchMap } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 
 import { AuthService } from 'src/app/core/service/auth-service/auth.service';
 import { SecureMessagingService } from './secure-messaging.service';
@@ -33,7 +33,7 @@ export class SecureMessagingMainService {
     getInitialData(): Observable<[MSecureMessageGroupInfo[], MSecureMessageInfo[]]> {
         return this.authService.getExternalAuthenticationToken()
             .pipe(
-                flatMap((response: string) => {
+                switchMap((response: string) => {
                     SecureMessagingService.setJWT(response);
                     SecureMessagingMainService.smAuthInfo = JSON.parse(atob(response.split('.')[1]));
                     return zip(
@@ -49,8 +49,11 @@ export class SecureMessagingMainService {
     }
 
     getSecureMessages(): Observable<MSecureMessageInfo[]> {
-        return this.secureMessagingService.getSecureMessages(this.ma_type, SecureMessagingMainService.smAuthInfo.id_field,
-            SecureMessagingMainService.smAuthInfo.id_value);
+        return this.secureMessagingService.getSecureMessages(
+            this.ma_type,
+            SecureMessagingMainService.smAuthInfo.id_field,
+            SecureMessagingMainService.smAuthInfo.id_value
+        );
     }
 
     pollForData(): Observable<[MSecureMessageGroupInfo[], MSecureMessageInfo[]]> {
