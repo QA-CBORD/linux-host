@@ -4,5 +4,4 @@ export interface MGeoCoordinates {
         longitude,
         accuracy
     };
-
 }

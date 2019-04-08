@@ -34,8 +34,6 @@ export class DataCache {
 
     private readonly CACHE: string = 'cache';
 
-
-
     constructor(
         private platform: Platform,
         private appV: AppVersion,
@@ -48,8 +46,6 @@ export class DataCache {
                 this.appV.getVersionNumber().then(vNum => DataCache.setAppVersion(vNum));
             }
         });
-
-
     }
 
     static setWebInitiValues(urlSesh: string, dPage: EDestination) {

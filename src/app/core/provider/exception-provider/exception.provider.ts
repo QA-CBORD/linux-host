@@ -20,5 +20,4 @@ export class ExceptionProvider {
   static showException(events: Events, exceptionPayload: ExceptionPayload) {
     events.publish(Globals.Events.EXCEPTION_SHOW, exceptionPayload);
   }
-
 }

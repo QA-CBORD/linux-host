@@ -1,26 +1,30 @@
-import { NgModule } from '@angular/core';
+import { NgModule, Provider } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Routes, RouterModule } from '@angular/router';
 
 import { IonicModule } from '@ionic/angular';
 
 import { SecureMessagePage } from './secure-message.page';
+import { SecureMessagingMainService } from './service';
+import { SecureMessagingService } from './service';
+import { SecureMessageRoutingModule } from './secure-message-routing.module';
 
-const routes: Routes = [
-  {
-    path: '',
-    component: SecureMessagePage
-  }
+const declarations = [
+    SecureMessagePage
 ];
 
-@NgModule({
-  imports: [
+const providers: Provider[] = [
+    SecureMessagingMainService,
+    SecureMessagingService
+];
+
+const imports = [
     CommonModule,
     FormsModule,
     IonicModule,
-    RouterModule.forChild(routes)
-  ],
-  declarations: [SecureMessagePage]
-})
-export class SecureMessagePageModule {}
+    SecureMessageRoutingModule
+];
+
+@NgModule({ imports, providers, declarations })
+export class SecureMessagePageModule {
+}

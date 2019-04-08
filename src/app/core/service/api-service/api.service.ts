@@ -107,19 +107,15 @@ export class APIService {
     body?: any, params?: HttpParams, headers?: HttpHeaders): Observable<any> {
 
     const finalURL = Environment.getAPIGatewayServicesBaseURL().concat(resourceURL);
-    Logger.log('i', 'TX | ' + finalURL);
-
 
     return Observable.create((observer: any) => {
       // sort by call type
       switch (callType) {
         case RestCallType.get:
           this.get<any>(finalURL, responseType, params, headers).subscribe(response => {
-            Logger.log('i', 'RX', response);
             observer.next(response);
           },
             (error: any) => {
-              Logger.log('e', 'RX Error', error);
               if (error.status === 401) {
                 /// AUTHENTICATION ERROR, HANDLE WHEN WE KNOW HOW
                 this.handleAuthenticationError(error);
@@ -130,7 +126,6 @@ export class APIService {
           break;
         case RestCallType.post:
           this.post(finalURL, body, responseType, params, headers).subscribe(response => {
-            Logger.log('i', 'RX', response);
             observer.next(response);
           },
             (error: any) => {
@@ -145,11 +140,9 @@ export class APIService {
           break;
         case RestCallType.put:
           this.put(finalURL, body, responseType, params, headers).subscribe(response => {
-            Logger.log('i', 'RX', response);
             observer.next(response);
           },
             (error: any) => {
-              Logger.log('e', 'RX Error', error);
               if (error.status === 401) {
                 /// AUTHENTICATION ERROR, HANDLE WHEN WE KNOW HOW
                 this.handleAuthenticationError(error);
@@ -159,7 +152,6 @@ export class APIService {
             });
           break;
         default:
-          Logger.log('e', 'RX Error | Incorrect call type');
           observer.error('Incorrect call type');
       }
 

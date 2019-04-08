@@ -26,5 +26,4 @@ export class Logger {
                 console.log(finalLogMessage);
         }
     }
-
 }
