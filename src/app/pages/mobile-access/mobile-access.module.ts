@@ -1,28 +1,25 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Routes, RouterModule } from '@angular/router';
 
 import { IonicModule } from '@ionic/angular';
 
 import { MobileAccessPage } from './mobile-access.page';
 import { LocationDetailPageModule } from './location-detail/location-detail.module';
+import { MobileAccessRoutingModule } from './mobile-access-routing.module';
 
-const routes: Routes = [
-  {
-    path: '',
-    component: MobileAccessPage
-  }
+const imports = [
+  CommonModule,
+  FormsModule,
+  IonicModule,
+  MobileAccessRoutingModule,
+  LocationDetailPageModule,
 ];
 
+const declarations = [MobileAccessPage];
+
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    IonicModule,
-    RouterModule.forChild(routes),
-    LocationDetailPageModule
-  ],
-  declarations: [MobileAccessPage]
+  imports,
+  declarations,
 })
 export class MobileAccessPageModule {}

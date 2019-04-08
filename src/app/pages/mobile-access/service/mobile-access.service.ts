@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { Observable } from 'rxjs';
-
+import { map } from 'rxjs/operators';
 import { BaseService, ServiceParameters } from 'src/app/core/service/base-service/base.service';
 
 import { MGeoCoordinates } from 'src/app/core/model/geolocation/geocoordinates.interface';
@@ -21,9 +21,6 @@ export class MobileAccessService extends BaseService {
     * @param geoData   Geolocation data for user. null if none exists
     */
   getMobileLocations(geoData: MGeoCoordinates): Observable<MMobileLocationInfo[]> {
-
-    return Observable.create((observer: any) => {
-
       let geoDataParam: MGeoCoordinates = {
         coords: {
           latitude: null,
@@ -43,24 +40,16 @@ export class MobileAccessService extends BaseService {
         'filters': ['Normal', 'TempCode', 'Attendance']
       };
 
-      this.httpRequest(this.serviceUrl, 'getMobileLocations', true, postParams)
-        .subscribe(
-          data => {
-            // validate data then throw error or send
-            if (data == null) {
-              observer.error('No location information available.');
-            } else {
-              observer.next(data.response);
-              observer.complete();
-            }
-          },
-          error => {
-            // do error stuff then push it to observer
-            observer.error(error);
-          }
-        );
-    });
 
+    return this.httpRequest(this.serviceUrl, 'getMobileLocations', true, postParams)
+        .pipe(
+            map(res => {
+              if (res === null) {
+                throw new Error('No location information available.');
+              }
+              return res.response;
+            })
+        );
   }
 
 
@@ -72,56 +61,52 @@ export class MobileAccessService extends BaseService {
    * @param sourceInfo    I don't know but we always null this out
    */
   activateMobileLocation(locationId: string, geoData: any, sourceInfo: string): Observable<MActivateMobileLocationResult> {
+      const postParams = this.createMobileLocationParams(locationId, geoData, sourceInfo);
 
-    return Observable.create((observer: any) => {
+      return this.httpRequest(this.serviceUrl, 'activateMobileLocation', true, postParams)
+          .pipe(
+              map(data => {
+                  if (data != null && data.response != null) {
+                      return data.response;
+                  }
 
-      const latitude = geoData == null || geoData.coords == null || geoData.coords.latitude == null ? null : geoData.coords.latitude;
-      const longitude = geoData == null || geoData.coords == null || geoData.coords.longitude == null ? null : geoData.coords.longitude;
-      const accuracy = geoData == null || geoData.coords == null || geoData.coords.accuracy == null ? null : geoData.coords.accuracy;
-      const altitude = geoData == null || geoData.coords == null || geoData.coords.altitude == null ? null : geoData.coords.altitude;
-      const altitudeAccuracy = geoData == null || geoData.coords == null ||
-      geoData.coords.altitudeAccuracy == null ? null : geoData.coords.altitudeAccuracy;
-      const heading = geoData == null || geoData.coords == null || geoData.coords.heading == null ? null : geoData.coords.heading;
-      const speed = geoData == null || geoData.coords == null || geoData.coords.speed == null ? null : geoData.coords.speed;
-
-
-      const postParams = {
-        locationId: locationId,
-        tranDate: new Date().toISOString(),
-        latitude: latitude,
-        longitude: longitude,
-        accuracy: accuracy,
-        altitude: altitude,
-        altAccuracy: altitudeAccuracy,
-        speed: speed,
-        heading: heading,
-        sourceInfo: sourceInfo
-      };
-
-      this.httpRequest(this.serviceUrl, 'activateMobileLocation', true, postParams)
-        .subscribe(
-          data => {
-            // validate data then throw error or send
-            if (data != null && data.response != null) {
-              observer.next(data.response);
-              observer.complete();
-            } else {
-              if (data != null && data.exception != null) {
-                observer.error(data.exception);
-              } else {
-                observer.error('An unexpected error occurred');
-              }
-
-            }
-
-          },
-          error => {
-            // do error stuff then push it to observer
-            observer.error(error);
-          }
-        );
-    });
-
+                  if (data != null && data.exception != null) {
+                      return data.exception;
+                  }
+                  throw new Error('An unexpected error occurred.');
+              })
+          );
   }
 
+    /**
+     * configure Mobile Location Params
+     *
+     * @param locationId
+     * @param geoData
+     * @param sourceInfo
+     */
+    private createMobileLocationParams(locationId: string, geoData: any, sourceInfo: string) {
+        const isGeoDataNull = geoData == null || geoData.coords == null;
+        const latitude = isGeoDataNull || geoData.coords.latitude == null ? null : geoData.coords.latitude;
+        const longitude = isGeoDataNull || geoData.coords.longitude == null ? null : geoData.coords.longitude;
+        const accuracy = isGeoDataNull || geoData.coords.accuracy == null ? null : geoData.coords.accuracy;
+        const altitude = isGeoDataNull || geoData.coords.altitude == null ? null : geoData.coords.altitude;
+        const altitudeAccuracy = isGeoDataNull ||
+        geoData.coords.altitudeAccuracy == null ? null : geoData.coords.altitudeAccuracy;
+        const heading = isGeoDataNull || geoData.coords.heading == null ? null : geoData.coords.heading;
+        const speed = isGeoDataNull || geoData.coords.speed == null ? null : geoData.coords.speed;
+
+        return {
+            locationId: locationId,
+            tranDate: new Date().toISOString(),
+            latitude: latitude,
+            longitude: longitude,
+            accuracy: accuracy,
+            altitude: altitude,
+            altAccuracy: altitudeAccuracy,
+            speed: speed,
+            heading: heading,
+            sourceInfo: sourceInfo
+        }
+    }
 }

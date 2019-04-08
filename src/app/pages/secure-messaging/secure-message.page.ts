@@ -10,8 +10,12 @@ import { ExceptionProvider } from 'src/app/core/provider/exception-provider/exce
 import * as Globals from '../../app.global';
 import { DataCache } from 'src/app/core/utils/data-cache';
 
-import { MSecureMessageConversation, MSecureMessageGroupInfo, MSecureMessageInfo, MSecureMessageSendBody } from 'src/app/pages/secure-messaging/model/secure-message-info';
-
+import {
+  MSecureMessageConversation,
+  MSecureMessageGroupInfo,
+  MSecureMessageInfo,
+  MSecureMessageSendBody,
+} from 'src/app/pages/secure-messaging/model/secure-message-info';
 
 @Component({
   selector: 'app-secure-message',
@@ -19,7 +23,6 @@ import { MSecureMessageConversation, MSecureMessageGroupInfo, MSecureMessageInfo
   styleUrls: ['./secure-message.page.scss'],
 })
 export class SecureMessagePage implements OnInit {
-
   private largeScreenPixelMin = 576;
   private resizeSubscription: Subscription;
   @ViewChild('chatScroll') chatScroll: any;
@@ -45,21 +48,18 @@ export class SecureMessagePage implements OnInit {
       /// set subscription to check screen size change
       /// used to adjust ui layout
       this.bIsLargeScreen = this.platform.width() > this.largeScreenPixelMin;
-      this.resizeSubscription = fromEvent(window, 'resize')
-        .subscribe(event => {
-          const bWasPreviouslyLargeScreen = this.bIsLargeScreen;
-          this.bIsLargeScreen = window.innerWidth >= this.largeScreenPixelMin;
-          if (!bWasPreviouslyLargeScreen && this.bIsLargeScreen) {
-            /// do nothing for now
-          }
-        });
+      this.resizeSubscription = fromEvent(window, 'resize').subscribe(event => {
+        const bWasPreviouslyLargeScreen = this.bIsLargeScreen;
+        this.bIsLargeScreen = window.innerWidth >= this.largeScreenPixelMin;
+        if (!bWasPreviouslyLargeScreen && this.bIsLargeScreen) {
+          /// do nothing for now
+        }
+      });
       this.initializePage();
     });
   }
 
-  ngOnInit() {
-
-  }
+  ngOnInit() {}
 
   // tslint:disable-next-line:use-life-cycle-interface
   ngOnDestroy() {
@@ -77,7 +77,10 @@ export class SecureMessagePage implements OnInit {
    * Initial data gathering for messages and groups
    */
   private initializePage() {
-    this.events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: 'Retrieving conversations...' });
+    this.events.publish(Globals.Events.LOADER_SHOW, {
+      bShow: true,
+      message: 'Retrieving conversations...',
+    });
     this.smProvider.getInitialData().subscribe(
       ([smGroupArray, smMessageArray]) => {
         this.groupsArray = smGroupArray;
@@ -99,8 +102,8 @@ export class SecureMessagePage implements OnInit {
             negativeButtonTitle: 'CLOSE',
             negativeButtonHandler: () => {
               // TODO: this.platform.exitApp();
-            }
-          }
+            },
+          },
         });
       }
     );
@@ -124,7 +127,6 @@ export class SecureMessagePage implements OnInit {
       },
       error => {
         /// only deal with connection error ?
-
       }
     );
   }
@@ -134,13 +136,20 @@ export class SecureMessagePage implements OnInit {
    * @param bIsPollingData Is this update from polled data
    */
   private createConversationsFromResponse(bIsPollingData: boolean) {
-
     /// sort groups alphabetically
     this.groupsArray.sort((a, b) => {
-      if (a.name == null) { return -1; }
-      if (b.name == null) { return 1; }
-      if (a.name.toLowerCase() < b.name.toLowerCase()) { return -1; }
-      if (a.name.toLowerCase() > b.name.toLowerCase()) { return 1; }
+      if (a.name == null) {
+        return -1;
+      }
+      if (b.name == null) {
+        return 1;
+      }
+      if (a.name.toLowerCase() < b.name.toLowerCase()) {
+        return -1;
+      }
+      if (a.name.toLowerCase() > b.name.toLowerCase()) {
+        return 1;
+      }
       return 0;
     });
 
@@ -154,7 +163,12 @@ export class SecureMessagePage implements OnInit {
 
       /// add to existing conversation if it exists
       for (const convo of tempConversations) {
-        if (convo.groupIdValue && convo.groupIdValue.length > 0 && (convo.groupIdValue === message.sender.id_value || convo.groupIdValue === message.recipient.id_value)) {
+        if (
+          convo.groupIdValue &&
+          convo.groupIdValue.length > 0 &&
+          (convo.groupIdValue === message.sender.id_value ||
+            convo.groupIdValue === message.recipient.id_value)
+        ) {
           convo.messages.push(message);
           bNewConversation = false;
         }
@@ -162,7 +176,6 @@ export class SecureMessagePage implements OnInit {
         if (!bNewConversation) {
           break;
         }
-
       }
 
       /// create new conversation
@@ -170,7 +183,6 @@ export class SecureMessagePage implements OnInit {
         let newGroupName = '';
         let newGroupId = '';
         let newGroupDescription = '';
-
 
         if (message.sender.type === 'group') {
           newGroupName = message.sender.name;
@@ -197,13 +209,12 @@ export class SecureMessagePage implements OnInit {
           groupDescription: newGroupDescription,
           myIdValue: SecureMessagingProvider.GetSMAuthInfo().id_value,
           messages: new Array(),
-          selected: false
+          selected: false,
         };
 
         conversation.messages.push(message);
         tempConversations.push(conversation);
       }
-
     }
 
     this.conversationsArray = tempConversations;
@@ -218,7 +229,6 @@ export class SecureMessagePage implements OnInit {
       }
 
       this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
-
     }
   }
 
@@ -251,7 +261,10 @@ export class SecureMessagePage implements OnInit {
    * Show grid column with current conversations
    */
   showConversationsColumn(): boolean {
-    if (this.bIsLargeScreen === true || (this.selectedConversation == null && !this.bCreateNewConversation)) {
+    if (
+      this.bIsLargeScreen === true ||
+      (this.selectedConversation == null && !this.bCreateNewConversation)
+    ) {
       return true;
     }
     return false;
@@ -285,7 +298,6 @@ export class SecureMessagePage implements OnInit {
    * click listner for group in 'new conversation' column
    */
   onClickMakeNewConversation(group: MSecureMessageGroupInfo) {
-
     /// check if a conversation with this group already exists
     let newConversation: MSecureMessageConversation = null;
     for (const convo of this.conversationsArray) {
@@ -303,7 +315,7 @@ export class SecureMessagePage implements OnInit {
         groupDescription: group.description,
         myIdValue: SecureMessagingProvider.GetSMAuthInfo().id_value,
         messages: new Array(),
-        selected: true
+        selected: true,
       };
     }
 
@@ -316,7 +328,10 @@ export class SecureMessagePage implements OnInit {
    */
   onClickConversation(conversation: MSecureMessageConversation) {
     this.bCreateNewConversation = false;
-    if (this.selectedConversation != null && this.selectedConversation.groupIdValue === conversation.groupIdValue) {
+    if (
+      this.selectedConversation != null &&
+      this.selectedConversation.groupIdValue === conversation.groupIdValue
+    ) {
       return;
     }
     this.setSelectedConversation(conversation);
@@ -350,19 +365,24 @@ export class SecureMessagePage implements OnInit {
    * Create message body object for sending a new message to a group
    * @param messageBody body of new message
    */
-  private createNewMessageSendBody(messageBody: string): MSecureMessageSendBody {
+  private createNewMessageSendBody(
+    messageBody: string
+  ): MSecureMessageSendBody {
     return {
       institution_id: SecureMessagingProvider.GetSMAuthInfo().institution_id,
       sender: {
         type: 'patron',
         id_field: SecureMessagingProvider.GetSMAuthInfo().id_field,
         id_value: SecureMessagingProvider.GetSMAuthInfo().id_value,
-        name: DataCache.getUserInfo().firstName + ' ' + DataCache.getUserInfo().lastName
+        name:
+          DataCache.getUserInfo().firstName +
+          ' ' +
+          DataCache.getUserInfo().lastName,
       },
       recipient: {
         type: 'group',
         id_value: this.selectedConversation.groupIdValue,
-        name: this.selectedConversation.groupName
+        name: this.selectedConversation.groupName,
       },
       description: '',
       body: messageBody,
@@ -380,7 +400,7 @@ export class SecureMessagePage implements OnInit {
         this.addMessageToLocalConversation();
         try {
           this.chatInput.blur();
-        } catch (e) { }
+        } catch (e) {}
       },
       error => {
         ExceptionProvider.showException(this.events, {
@@ -395,8 +415,8 @@ export class SecureMessagePage implements OnInit {
             negativeButtonTitle: 'CLOSE',
             negativeButtonHandler: () => {
               // TODO: this.platform.exitApp();
-            }
-          }
+            },
+          },
         });
       }
     );
@@ -414,14 +434,35 @@ export class SecureMessagePage implements OnInit {
       importance: null,
       institution_id: SecureMessagingProvider.GetSMAuthInfo().institution_id,
       read_date: null,
-      recipient: { created_date: new Date().toISOString(), id: '', type: 'group', id_field: null, id_value: this.selectedConversation.groupIdValue, name: this.selectedConversation.groupName, aux_user_id: null, version: 1 },
+      recipient: {
+        created_date: new Date().toISOString(),
+        id: '',
+        type: 'group',
+        id_field: null,
+        id_value: this.selectedConversation.groupIdValue,
+        name: this.selectedConversation.groupName,
+        aux_user_id: null,
+        version: 1,
+      },
       replied_message_id: 'None',
       requires_read_receipt: null,
-      sender: { created_date: new Date().toISOString(), id: '', type: 'patron', id_field: SecureMessagingProvider.GetSMAuthInfo().id_field, id_value: SecureMessagingProvider.GetSMAuthInfo().id_value, name: DataCache.getUserInfo().firstName + ' ' + DataCache.getUserInfo().lastName, aux_user_id: null, version: 1 },
+      sender: {
+        created_date: new Date().toISOString(),
+        id: '',
+        type: 'patron',
+        id_field: SecureMessagingProvider.GetSMAuthInfo().id_field,
+        id_value: SecureMessagingProvider.GetSMAuthInfo().id_value,
+        name:
+          DataCache.getUserInfo().firstName +
+          ' ' +
+          DataCache.getUserInfo().lastName,
+        aux_user_id: null,
+        version: 1,
+      },
       sent_date: new Date().toLocaleString(),
       state: null,
       ttl: null,
-      version: 1
+      version: 1,
     };
 
     this.newMessageText = null;
@@ -438,14 +479,32 @@ export class SecureMessagePage implements OnInit {
   private sortConversations() {
     /// sort conversations by most current
     this.conversationsArray.sort((a, b) => {
-      if (a.messages === null) { return 1; }
-      if (b.messages === null) { return -1; }
-      if (a.messages.length === 0) { return 1; }
-      if (b.messages.length === 0) { return -1; }
+      if (a.messages === null) {
+        return 1;
+      }
+      if (b.messages === null) {
+        return -1;
+      }
+      if (a.messages.length === 0) {
+        return 1;
+      }
+      if (b.messages.length === 0) {
+        return -1;
+      }
 
-      if (new Date(a.messages[a.messages.length - 1].sent_date).getTime() < new Date(b.messages[b.messages.length - 1].sent_date).getTime()) { return 1; }
+      if (
+        new Date(a.messages[a.messages.length - 1].sent_date).getTime() <
+        new Date(b.messages[b.messages.length - 1].sent_date).getTime()
+      ) {
+        return 1;
+      }
 
-      if (new Date(a.messages[a.messages.length - 1].sent_date).getTime() > new Date(b.messages[b.messages.length - 1].sent_date).getTime()) { return -1; }
+      if (
+        new Date(a.messages[a.messages.length - 1].sent_date).getTime() >
+        new Date(b.messages[b.messages.length - 1].sent_date).getTime()
+      ) {
+        return -1;
+      }
 
       return 0;
     });
@@ -463,8 +522,11 @@ export class SecureMessagePage implements OnInit {
     this.selectedConversation.selected = true;
 
     for (const m of conversation.messages) {
-      console.log(`${this.getMessageDateShortString(m)} - ${new Date(m.sent_date).getTime()}`);
-
+      console.log(
+        `${this.getMessageDateShortString(m)} - ${new Date(
+          m.sent_date
+        ).getTime()}`
+      );
     }
   }
 
@@ -472,10 +534,16 @@ export class SecureMessagePage implements OnInit {
    * Helper method to clear selected conversation
    */
   private clearSelectedConversation() {
-    if (this.selectedConversation.messages === null || this.selectedConversation.messages.length === 0) {
+    if (
+      this.selectedConversation.messages === null ||
+      this.selectedConversation.messages.length === 0
+    ) {
       for (const convo of this.conversationsArray) {
         if (convo.groupIdValue === this.selectedConversation.groupIdValue) {
-          this.conversationsArray.splice(this.conversationsArray.indexOf(convo), 1);
+          this.conversationsArray.splice(
+            this.conversationsArray.indexOf(convo),
+            1
+          );
         }
       }
     }
@@ -489,8 +557,12 @@ export class SecureMessagePage implements OnInit {
    * UI helper method to set group initial
    * @param conversation conversation to get data for ui
    */
-  getConversationGroupInitial(conversation: MSecureMessageConversation): string {
-    return (conversation.groupName == null || conversation.groupName.length < 1) ? 'U' : conversation.groupName[0];
+  getConversationGroupInitial(
+    conversation: MSecureMessageConversation
+  ): string {
+    return conversation.groupName == null || conversation.groupName.length < 1
+      ? 'U'
+      : conversation.groupName[0];
   }
 
   /**
@@ -498,7 +570,9 @@ export class SecureMessagePage implements OnInit {
    * @param conversation conversation to get data for ui
    */
   getConversationGroupName(conversation: MSecureMessageConversation): string {
-    return conversation.groupName == null ? 'Conversation' : conversation.groupDescription;
+    return conversation.groupName == null
+      ? 'Conversation'
+      : conversation.groupDescription;
   }
 
   /**
@@ -507,8 +581,14 @@ export class SecureMessagePage implements OnInit {
    * @param conversation conversation to get data for ui
    */
   getConversationDescription(conversation: MSecureMessageConversation): string {
-    const frontText = conversation.messages[conversation.messages.length - 1].sender.type === 'patron' ? 'You: ' : '';
-    return frontText + conversation.messages[conversation.messages.length - 1].body;
+    const frontText =
+      conversation.messages[conversation.messages.length - 1].sender.type ===
+      'patron'
+        ? 'You: '
+        : '';
+    return (
+      frontText + conversation.messages[conversation.messages.length - 1].body
+    );
   }
 
   /**
@@ -516,7 +596,7 @@ export class SecureMessagePage implements OnInit {
    * @param group group to get data for ui
    */
   getGroupInitial(group: MSecureMessageGroupInfo): string {
-    return (group.name == null || group.name.length < 1) ? 'U' : group.name[0];
+    return group.name == null || group.name.length < 1 ? 'U' : group.name[0];
   }
 
   /**
@@ -541,7 +621,9 @@ export class SecureMessagePage implements OnInit {
    */
   getConversationDate(conversation: MSecureMessageConversation): string {
     /// get latest message and get the date string for it
-    return this.getMessageDateShortString(conversation.messages[conversation.messages.length - 1]);
+    return this.getMessageDateShortString(
+      conversation.messages[conversation.messages.length - 1]
+    );
   }
 
   /**
@@ -574,13 +656,14 @@ export class SecureMessagePage implements OnInit {
 
     /// > 1 minute (x minutes ago)
     if (today.getTime() - sentDate.getTime() > 60000) {
-      const minutesAgo = Math.round((today.getTime() - sentDate.getTime()) / 60000);
+      const minutesAgo = Math.round(
+        (today.getTime() - sentDate.getTime()) / 60000
+      );
       return minutesAgo.toString() + ' min';
     }
 
     /// < 1 minute (Now)
     return 'Now';
-
   }
 
   /**
@@ -589,8 +672,10 @@ export class SecureMessagePage implements OnInit {
    * @param conversation conversation data
    * @param messageIndex index of current message
    */
-  messageShowGroupAvatar(conversation: MSecureMessageConversation, messageIndex: number): boolean {
-
+  messageShowGroupAvatar(
+    conversation: MSecureMessageConversation,
+    messageIndex: number
+  ): boolean {
     /// first message
     if (messageIndex === 0) {
       /// more than one message
@@ -601,7 +686,8 @@ export class SecureMessagePage implements OnInit {
         }
       }
       return true;
-    } else { /// not first message
+    } else {
+      /// not first message
       /// more messages
       if (conversation.messages.length - 1 > messageIndex + 1) {
         /// next message from group as well
@@ -620,28 +706,52 @@ export class SecureMessagePage implements OnInit {
    * @param messageIndex index of current message
    * @param messageType type of message (group or patron)
    */
-  messageShowDate(conversation: MSecureMessageConversation, messageIndex: number, messageType: string): boolean {
-
+  messageShowDate(
+    conversation: MSecureMessageConversation,
+    messageIndex: number,
+    messageType: string
+  ): boolean {
     /// first message
     if (messageIndex === 0) {
       /// more than one message
       if (conversation.messages.length > 1) {
         /// next message from group as well
-        if (conversation.messages[messageIndex + 1].sender.type === messageType) {
+        if (
+          conversation.messages[messageIndex + 1].sender.type === messageType
+        ) {
           /// was this message sent within 1 min of the next message
-          if (new Date(conversation.messages[messageIndex + 1].sent_date).getTime() - new Date(conversation.messages[messageIndex].sent_date).getTime() < 60000) {
+          if (
+            new Date(
+              conversation.messages[messageIndex + 1].sent_date
+            ).getTime() -
+              new Date(
+                conversation.messages[messageIndex].sent_date
+              ).getTime() <
+            60000
+          ) {
             return false;
           }
         }
       }
       return true;
-    } else { /// not first message
+    } else {
+      /// not first message
       /// more messages
       if (conversation.messages.length - 1 > messageIndex + 1) {
         /// next message from group as well
-        if (conversation.messages[messageIndex + 1].sender.type === messageType) {
+        if (
+          conversation.messages[messageIndex + 1].sender.type === messageType
+        ) {
           /// was this message sent within 1 min of the next message
-          if (new Date(conversation.messages[messageIndex + 1].sent_date).getTime() - new Date(conversation.messages[messageIndex].sent_date).getTime() < 60000) {
+          if (
+            new Date(
+              conversation.messages[messageIndex + 1].sent_date
+            ).getTime() -
+              new Date(
+                conversation.messages[messageIndex].sent_date
+              ).getTime() <
+            60000
+          ) {
             return false;
           }
         }
@@ -686,14 +796,16 @@ export class SecureMessagePage implements OnInit {
 
     /// > 1 minute (x minutes ago)
     if (today.getTime() - sentDate.getTime() > 60000) {
-      const minutesAgo = Math.round((today.getTime() - sentDate.getTime()) / 60000);
-      return minutesAgo.toString() + (minutesAgo === 1 ? ' minute ago' : ' minutes ago');
+      const minutesAgo = Math.round(
+        (today.getTime() - sentDate.getTime()) / 60000
+      );
+      return (
+        minutesAgo.toString() +
+        (minutesAgo === 1 ? ' minute ago' : ' minutes ago')
+      );
     }
 
     /// < 1 minute (Now)
     return 'Now';
-
   }
-
-
 }
