@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import { Platform, Events, PopoverController } from '@ionic/angular';
 
 import { Keyboard } from '@ionic-native/keyboard/ngx';
@@ -6,22 +6,22 @@ import { Keyboard } from '@ionic-native/keyboard/ngx';
 import * as Globals from '../../app.global';
 
 import { ExceptionProvider } from 'src/app/core/provider/exception-provider/exception.provider';
-import { MobileAccessProvider } from 'src/app/pages/mobile-access/provider/mobile-access.provider';
+import { MobileAccessProvider } from 'src/app/pages/mobile-access/service/mobile-access.provider';
 
 import { MGeoCoordinates } from 'src/app/core/model/geolocation/geocoordinates.interface';
 import { MMobileLocationInfo } from './model/mobile-access.interface';
 import { LocationDetailPage } from './location-detail/location-detail.page';
-
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-mobile-access',
   templateUrl: './mobile-access.page.html',
   styleUrls: ['./mobile-access.page.scss'],
 })
-export class MobileAccessPage implements OnInit {
-
-  mobileLocationInfoFiltered: MMobileLocationInfo[] = new Array();
-  mobileLocationInfo: MMobileLocationInfo[] = new Array();
+export class MobileAccessPage implements OnInit, OnDestroy {
+  private readonly sourceSubscription: Subscription = new Subscription();
+  mobileLocationInfoFiltered: MMobileLocationInfo[] = [];
+  mobileLocationInfo: MMobileLocationInfo[] = [];
   bShowNoLocationsAvailable = false;
   private selectedLocation: any;
   private locationFilterText = '';
@@ -33,8 +33,8 @@ export class MobileAccessPage implements OnInit {
     coords: {
       latitude: null,
       longitude: null,
-      accuracy: null
-    }
+      accuracy: null,
+    },
   };
 
   constructor(
@@ -43,17 +43,19 @@ export class MobileAccessPage implements OnInit {
     private keyboard: Keyboard,
     private popoverCtrl: PopoverController,
     private mobileAccessProvider: MobileAccessProvider
-  ) {
-  }
+  ) {}
 
   /**
    * Required by component, even if empty
    */
-  ngOnInit() { }
+  ngOnInit() {}
 
   ionViewWillEnter() {
     this.platform.ready().then(() => {
-      this.events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: 'Retrieving locations...' });
+      this.events.publish(Globals.Events.LOADER_SHOW, {
+        bShow: true,
+        message: 'Retrieving locations...',
+      });
       this.getUpdatedLocationData();
     });
   }
@@ -69,19 +71,18 @@ export class MobileAccessPage implements OnInit {
    */
   private getUpdatedLocationData() {
     if (navigator.geolocation) {
-      this.geolocationWatchId = navigator.geolocation.watchPosition((position) => {
-        if (position != null && position.coords != null) {
-          this.geoData.coords = position.coords;
+      this.geolocationWatchId = navigator.geolocation.watchPosition(
+        position => {
+          if (position != null && position.coords != null) {
+            this.geoData.coords = position.coords;
+          }
+          if (this.bIsUpdatingLocations === false) {
+            this.retrieveMobileLocationData(false);
+          }
         }
-        if (this.bIsUpdatingLocations === false) {
-          this.retrieveMobileLocationData(false);
-        }
-
-      });
+      );
     }
     this.retrieveMobileLocationData(false);
-
-
   }
 
   /**
@@ -90,52 +91,68 @@ export class MobileAccessPage implements OnInit {
   private retrieveMobileLocationData(bShowLoader: boolean) {
     this.bIsUpdatingLocations = true;
     if (bShowLoader) {
-      this.events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: 'Retrieving locations...' });
+      this.events.publish(Globals.Events.LOADER_SHOW, {
+        bShow: true,
+        message: 'Retrieving locations...',
+      });
     }
-    this.mobileAccessProvider.getMobileLocationData(this.geoData).subscribe(
-      mobileLocationData => {
-        this.handleMobileLocationResult(mobileLocationData);
-      },
-      ((error: Error) => {
-        let errorMessage = 'An error occurred while trying to retrieve your information.';
-        if (error != null && error.message) {
-          errorMessage = error.message;
-        }
-        this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
-        ExceptionProvider.showException(this.events, {
-          displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
-          messageInfo: {
-            title: Globals.Exception.Strings.TITLE,
-            message: errorMessage,
-            positiveButtonTitle: 'RETRY',
-            positiveButtonHandler: () => {
-              this.retrieveMobileLocationData(true);
-            },
-            negativeButtonTitle: 'CLOSE',
-            negativeButtonHandler: () => {
-              this.bIsUpdatingLocations = false;
-              // this.platform.exitApp();
-            }
+    this.sourceSubscription.add(
+      this.mobileAccessProvider.getMobileLocationData(this.geoData).subscribe(
+        mobileLocationData => {
+          this.handleMobileLocationResult(mobileLocationData);
+        },
+        (error: Error) => {
+          let errorMessage =
+            'An error occurred while trying to retrieve your information.';
+          if (error != null && error.message) {
+            errorMessage = error.message;
           }
-        });
-      })
+          this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
+          ExceptionProvider.showException(this.events, {
+            displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
+            messageInfo: {
+              title: Globals.Exception.Strings.TITLE,
+              message: errorMessage,
+              positiveButtonTitle: 'RETRY',
+              positiveButtonHandler: () => {
+                this.retrieveMobileLocationData(true);
+              },
+              negativeButtonTitle: 'CLOSE',
+              negativeButtonHandler: () => {
+                this.bIsUpdatingLocations = false;
+                // this.platform.exitApp();
+              },
+            },
+          });
+        }
+      )
     );
   }
 
-  private handleMobileLocationResult(newMobileLocations: MMobileLocationInfo[]) {
-
+  private handleMobileLocationResult(
+    newMobileLocations: MMobileLocationInfo[]
+  ) {
     /// check for incoming data
     if (newMobileLocations && newMobileLocations.length > 0) {
       this.bShowNoLocationsAvailable = false;
       /// correct any distance value issues for display (make UI friendly)
       for (let i = 0; i < newMobileLocations.length; i++) {
-        newMobileLocations[i].distance > 99 ? newMobileLocations[i].distance = NaN :
-          newMobileLocations[i].distance > 5 ? newMobileLocations[i].distance =
-            Number(newMobileLocations[i].distance.toFixed(2)) : newMobileLocations[i].distance = newMobileLocations[i].distance;
+        newMobileLocations[i].distance > 99
+          ? (newMobileLocations[i].distance = NaN)
+          : newMobileLocations[i].distance > 5
+          ? (newMobileLocations[i].distance = Number(
+              newMobileLocations[i].distance.toFixed(2)
+            ))
+          : (newMobileLocations[i].distance = newMobileLocations[i].distance);
       }
 
-      if (!(this.mobileLocationInfo !== null && JSON.stringify(this.mobileLocationInfo) === JSON.stringify(newMobileLocations))) {
-
+      if (
+        !(
+          this.mobileLocationInfo !== null &&
+          JSON.stringify(this.mobileLocationInfo) ===
+            JSON.stringify(newMobileLocations)
+        )
+      ) {
       }
 
       this.mobileLocationInfo = newMobileLocations;
@@ -156,8 +173,8 @@ export class MobileAccessPage implements OnInit {
           negativeButtonHandler: () => {
             this.bIsUpdatingLocations = false;
             // this.platform.exitApp();
-          }
-        }
+          },
+        },
       });
     }
     this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
@@ -182,8 +199,7 @@ export class MobileAccessPage implements OnInit {
   onSearchEnterKey() {
     try {
       this.keyboard.hide();
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 
   /**
@@ -191,44 +207,72 @@ export class MobileAccessPage implements OnInit {
    */
   private filterLocations() {
     if (this.locationFilterText.length <= 0) {
-      this.mobileLocationInfoFiltered = Object.assign([], this.mobileLocationInfo);
-    } else {
-      this.mobileLocationInfoFiltered = this.mobileLocationInfoFiltered.sort((o1, o2) => {
-        /// do both locations have the substring,?if so, sort by distance
-        if ((o1.locationId.includes(this.locationFilterText) || o1.locationId.includes(this.locationFilterText)) &&
-          (o2.locationId.includes(this.locationFilterText) || o2.locationId.includes(this.locationFilterText))) {
-          if (o1.distance < o2.distance) {
-            return -1;
-          } else if (o2.distance < o1.distance) {
-            return 1;
-          } else {
-            return 0;
-          }
-        }
+      this.mobileLocationInfoFiltered = Object.assign(
+        [],
+        this.mobileLocationInfo
+      );
 
-        /// first sort by locationID
-        if (o1.locationId.includes(this.locationFilterText)) {
-          return -1;
-        } else if (o2.locationId.includes(this.locationFilterText)) {
-          return 1;
-        }
-
-        /// second sort by locationName
-        if (o1.name.toLocaleLowerCase().includes(this.locationFilterText.toLowerCase())) {
-          return -1;
-        } else if (o2.name.toLocaleLowerCase().includes(this.locationFilterText.toLowerCase())) {
-          return 1;
-        }
-
-        return 0;
-      });
+      return;
     }
+
+    this.mobileLocationInfoFiltered = this.mobileLocationInfoFiltered.sort(
+      this.sortFilteredLocationInfo
+    );
   }
 
   /**
-     * Handle the selection of a Mobile Location
-     * @param item    MobileLocationInfo object of selection
-     */
+   * Sort filtered location info
+   * @param o1
+   * @param o2
+   */
+  private sortFilteredLocationInfo(o1, o2) {
+    const isLocation1HasSubstring = o1.locationId.includes(
+      this.locationFilterText
+    );
+    const isLocation2HasSubstring = o2.locationId.includes(
+      this.locationFilterText
+    );
+
+    /// do both locations have the substring,?if so, sort by distance
+    if (isLocation1HasSubstring && isLocation2HasSubstring) {
+      if (o1.distance < o2.distance) {
+        return -1;
+      } else if (o2.distance < o1.distance) {
+        return 1;
+      } else {
+        return 0;
+      }
+    }
+
+    /// first sort by locationID
+    if (isLocation1HasSubstring) {
+      return -1;
+    } else if (isLocation2HasSubstring) {
+      return 1;
+    }
+
+    /// second sort by locationName
+    if (
+      o1.name
+        .toLocaleLowerCase()
+        .includes(this.locationFilterText.toLowerCase())
+    ) {
+      return -1;
+    } else if (
+      o2.name
+        .toLocaleLowerCase()
+        .includes(this.locationFilterText.toLowerCase())
+    ) {
+      return 1;
+    }
+
+    return 0;
+  }
+
+  /**
+   * Handle the selection of a Mobile Location
+   * @param item    MobileLocationInfo object of selection
+   */
   locationSelected(item: any) {
     this.selectedLocation = item;
     this.presentUnlockModal();
@@ -242,24 +286,24 @@ export class MobileAccessPage implements OnInit {
       return;
     }
 
-    const detailPopover: HTMLIonPopoverElement = await this.popoverCtrl.create(
-      {
-        component: LocationDetailPage,
-        componentProps: {
-          selectedLocation: this.selectedLocation,
-          geoData: this.geoData
-        },
-        animated: true,
-        backdropDismiss: false
-      }
-    );
+    const detailPopover: HTMLIonPopoverElement = await this.popoverCtrl.create({
+      component: LocationDetailPage,
+      componentProps: {
+        selectedLocation: this.selectedLocation,
+        geoData: this.geoData,
+      },
+      animated: true,
+      backdropDismiss: false,
+    });
 
-    detailPopover.onDidDismiss().then(data => {
+    detailPopover.onDidDismiss().then(() => {
       this.selectedLocation = null;
     });
 
     return await detailPopover.present();
-
   }
 
+  ngOnDestroy() {
+    this.sourceSubscription.unsubscribe();
+  }
 }

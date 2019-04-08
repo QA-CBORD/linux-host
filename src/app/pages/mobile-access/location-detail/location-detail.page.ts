@@ -1,42 +1,42 @@
-import { Component, OnInit, Input } from '@angular/core';
+import {Component, OnInit, Input, OnDestroy} from '@angular/core';
 
-import { Events, ModalController, PopoverController } from '@ionic/angular';
+import { Events, PopoverController } from '@ionic/angular';
 
 import * as Globals from 'src/app/app.global';
 
-import { MobileAccessProvider } from 'src/app/pages/mobile-access/provider/mobile-access.provider';
+import { MobileAccessProvider } from 'src/app/pages/mobile-access/service/mobile-access.provider';
 import { ExceptionProvider } from 'src/app/core/provider/exception-provider/exception.provider';
 
 import { MGeoCoordinates } from 'src/app/core/model/geolocation/geocoordinates.interface';
 import { MActivateMobileLocationResult } from '../model/mobile-access.interface';
-
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-location-detail',
   templateUrl: './location-detail.page.html',
   styleUrls: ['./location-detail.page.scss'],
 })
-export class LocationDetailPage implements OnInit {
-
+export class LocationDetailPage implements OnInit, OnDestroy {
+  private readonly sourceSubscription: Subscription = new Subscription();
   @Input() selectedLocation: any;
   @Input() geoData: MGeoCoordinates;
 
   constructor(
     private events: Events,
     private popoverCtrl: PopoverController,
-    private modalCtrl: ModalController,
-    private mobileAccessProvider: MobileAccessProvider,
-  ) {
-  }
+    private mobileAccessProvider: MobileAccessProvider
+  ) {}
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   /**
    * Activate the selected Mobile Location
    */
   activateSelected() {
-    this.events.publish(Globals.Events.LOADER_SHOW, { bShow: true, message: 'Activating...' });
+    this.events.publish(Globals.Events.LOADER_SHOW, {
+      bShow: true,
+      message: 'Activating...',
+    });
     this.activateMobileLocation(false);
   }
 
@@ -46,17 +46,22 @@ export class LocationDetailPage implements OnInit {
    * @param bUseLocation    Whether or not to use location data
    */
   private activateMobileLocation(bUseLocation: boolean) {
-
-    this.mobileAccessProvider.activateMobileLocation(this.geoData, this.selectedLocation.locationId, null)
-      .subscribe(
-        data => {
-          this.handleActivateMobileLocationResponse(data);
-        },
-        error => {
-          this.onActivateMobileLocationFailure(bUseLocation, error);
-        }
-      );
-
+    this.sourceSubscription.add(
+      this.mobileAccessProvider
+        .activateMobileLocation(
+          this.geoData,
+          this.selectedLocation.locationId,
+          null
+        )
+        .subscribe(
+          data => {
+            this.handleActivateMobileLocationResponse(data);
+          },
+          error => {
+            this.onActivateMobileLocationFailure(bUseLocation, error);
+          }
+        )
+    );
   }
 
   /**
@@ -64,7 +69,9 @@ export class LocationDetailPage implements OnInit {
    *
    * @param response Response returned from service call
    */
-  private handleActivateMobileLocationResponse(response: MActivateMobileLocationResult) {
+  private handleActivateMobileLocationResponse(
+    response: MActivateMobileLocationResult
+  ) {
     this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
     if (!response.responseCode || response.responseCode === '00') {
       // need fucntional PDF_417 generator
@@ -77,37 +84,37 @@ export class LocationDetailPage implements OnInit {
         //   }
 
         let tCodeMessage = `Temporary Number: ${response.issuedCode}`;
-        if (response.message && response.issuedCode && response.message.includes(response.issuedCode)) {
+        if (
+          response.message &&
+          response.issuedCode &&
+          response.message.includes(response.issuedCode)
+        ) {
           tCodeMessage = response.message;
         }
 
-        ExceptionProvider.showException(this.events,
-          {
-            displayOptions: Globals.Exception.DisplayOptions.ONE_BUTTON,
-            messageInfo: {
-              title: 'Success!',
-              message: tCodeMessage,
-              positiveButtonTitle: 'OK',
-              positiveButtonHandler: () => {
-                this.closeModal();
-              }
-            }
-          });
-
+        ExceptionProvider.showException(this.events, {
+          displayOptions: Globals.Exception.DisplayOptions.ONE_BUTTON,
+          messageInfo: {
+            title: 'Success!',
+            message: tCodeMessage,
+            positiveButtonTitle: 'OK',
+            positiveButtonHandler: () => {
+              this.closeModal();
+            },
+          },
+        });
       } else {
-
-        ExceptionProvider.showException(this.events,
-          {
-            displayOptions: Globals.Exception.DisplayOptions.ONE_BUTTON,
-            messageInfo: {
-              title: 'Success!',
-              message: response.message,
-              positiveButtonTitle: 'OK',
-              positiveButtonHandler: () => {
-                this.closeModal();
-              }
-            }
-          });
+        ExceptionProvider.showException(this.events, {
+          displayOptions: Globals.Exception.DisplayOptions.ONE_BUTTON,
+          messageInfo: {
+            title: 'Success!',
+            message: response.message,
+            positiveButtonTitle: 'OK',
+            positiveButtonHandler: () => {
+              this.closeModal();
+            },
+          },
+        });
       }
     } else {
       // falure
@@ -123,8 +130,8 @@ export class LocationDetailPage implements OnInit {
           negativeButtonTitle: 'CLOSE',
           negativeButtonHandler: () => {
             this.closeModal();
-          }
-        }
+          },
+        },
       });
     }
   }
@@ -135,23 +142,25 @@ export class LocationDetailPage implements OnInit {
    * @param bUseLocation    Whether location data should be used
    * @param errorMessage    Error message returned from failure
    */
-  private onActivateMobileLocationFailure(bUseLocation: boolean, errorMessage: string) {
-    ExceptionProvider.showException(this.events,
-      {
-        displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
-        messageInfo: {
-          title: 'Error activating location',
-          message: errorMessage,
-          positiveButtonTitle: 'Retry',
-          positiveButtonHandler: () => {
-            this.activateMobileLocation(bUseLocation);
-          },
-          negativeButtonTitle: 'Close',
-          negativeButtonHandler: () => {
-            this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
-          }
-        }
-      });
+  private onActivateMobileLocationFailure(
+    bUseLocation: boolean,
+    errorMessage: string
+  ) {
+    ExceptionProvider.showException(this.events, {
+      displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
+      messageInfo: {
+        title: 'Error activating location',
+        message: errorMessage,
+        positiveButtonTitle: 'Retry',
+        positiveButtonHandler: () => {
+          this.activateMobileLocation(bUseLocation);
+        },
+        negativeButtonTitle: 'Close',
+        negativeButtonHandler: () => {
+          this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
+        },
+      },
+    });
   }
 
   /**
@@ -159,7 +168,9 @@ export class LocationDetailPage implements OnInit {
    */
   async closeModal() {
     await this.popoverCtrl.dismiss();
-    // await this.modalCtrl.dismiss();
   }
 
+  ngOnDestroy() {
+    this.sourceSubscription.unsubscribe();
+  }
 }
