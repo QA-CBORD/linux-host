@@ -1,23 +1,25 @@
 import { Component } from '@angular/core';
 
-import { Platform, Events, LoadingController, AlertController } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
+import {
+  AlertController,
+  Events,
+  LoadingController,
+  Platform,
+} from '@ionic/angular';
 
-
+import { Router } from '@angular/router';
 import * as Globals from './app.global';
 import { ExceptionPayload } from './core/model/exception/exception-interface';
-import { Router } from '@angular/router';
 import { DataCache } from './core/utils/data-cache';
 import { EDestination } from './pages/home/home.page';
 
-
 @Component({
   selector: 'app-root',
-  templateUrl: 'app.component.html'
+  templateUrl: 'app.component.html',
 })
 export class AppComponent {
-
   static readonly EVENT_APP_PAUSE = 'event.apppause';
   static readonly EVENT_APP_RESUME = 'event.appresume';
 
@@ -47,10 +49,9 @@ export class AppComponent {
   }
 
   /**
-  * Get hash parameters from url
-  */
+   * Get hash parameters from url
+   */
   private getHashParameters() {
-
     const hashParameters: string[] = location.hash.split('/');
 
     const destinationPageString = hashParameters[3];
@@ -78,11 +79,13 @@ export class AppComponent {
   }
 
   private subscribeToEvents() {
+    this.events.subscribe(Globals.Events.LOADER_SHOW, loaderInfo =>
+      this.showLoader(loaderInfo)
+    );
 
-    this.events.subscribe(Globals.Events.LOADER_SHOW, loaderInfo => this.showLoader(loaderInfo));
-
-    this.events.subscribe(Globals.Events.EXCEPTION_SHOW, exceptionPayload => this.presentException(exceptionPayload));
-
+    this.events.subscribe(Globals.Events.EXCEPTION_SHOW, exceptionPayload =>
+      this.presentException(exceptionPayload)
+    );
   }
 
   presentException(exceptionPayload: ExceptionPayload) {
@@ -100,7 +103,6 @@ export class AppComponent {
   }
 
   async presentOneButtonAlert(alertOneButtonInfo) {
-
     const alert = await this.alertCtrl.create({
       header: alertOneButtonInfo.title,
       message: alertOneButtonInfo.message,
@@ -108,15 +110,14 @@ export class AppComponent {
       buttons: [
         {
           text: alertOneButtonInfo.positiveButtonTitle,
-          handler: alertOneButtonInfo.positiveButtonHandler
-        }
-      ]
+          handler: alertOneButtonInfo.positiveButtonHandler,
+        },
+      ],
     });
     alert.present();
   }
 
   async presentTwoButtonAlert(alertTwoButtonInfo) {
-
     const alert = await this.alertCtrl.create({
       header: alertTwoButtonInfo.title,
       message: alertTwoButtonInfo.message,
@@ -125,21 +126,18 @@ export class AppComponent {
         {
           text: alertTwoButtonInfo.negativeButtonTitle,
           role: 'cancel',
-          handler: alertTwoButtonInfo.negativeButtonHandler
+          handler: alertTwoButtonInfo.negativeButtonHandler,
         },
         {
-
           text: alertTwoButtonInfo.positiveButtonTitle,
-          handler: alertTwoButtonInfo.positiveButtonHandler
-
-        }
-      ]
+          handler: alertTwoButtonInfo.positiveButtonHandler,
+        },
+      ],
     });
     alert.present();
   }
 
   async presentThreeButtonAlert(alertThreeButtonInfo) {
-
     const alert = await this.alertCtrl.create({
       header: alertThreeButtonInfo.title,
       message: alertThreeButtonInfo.message,
@@ -148,17 +146,17 @@ export class AppComponent {
         {
           text: alertThreeButtonInfo.negativeButtonTitle,
           role: 'cancel',
-          handler: alertThreeButtonInfo.negativeButtonHandler
+          handler: alertThreeButtonInfo.negativeButtonHandler,
         },
         {
           text: alertThreeButtonInfo.indifferentButtonTitle,
-          handler: alertThreeButtonInfo.indifferentButtonHandler
+          handler: alertThreeButtonInfo.indifferentButtonHandler,
         },
         {
           text: alertThreeButtonInfo.positiveButtonTitle,
-          handler: alertThreeButtonInfo.positiveButtonHandler
-        }
-      ]
+          handler: alertThreeButtonInfo.positiveButtonHandler,
+        },
+      ],
     });
     alert.present();
   }
@@ -166,10 +164,9 @@ export class AppComponent {
   private async showLoader(loaderInfo: any) {
     if (loaderInfo.bShow) {
       if (!this.loader) {
-        this.loader = await this.loadCtrl.create(
-          {
-            message: loaderInfo.message
-          });
+        this.loader = await this.loadCtrl.create({
+          message: loaderInfo.message,
+        });
         this.loader.present();
       }
     } else {
@@ -179,5 +176,4 @@ export class AppComponent {
       }
     }
   }
-
 }
