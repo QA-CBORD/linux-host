@@ -10,8 +10,6 @@ import { SecureMessagingMainService } from './service';
 import * as Globals from '../../app.global';
 import { DataCache } from '../../core/utils/data-cache';
 
-import { distinctUntilChanged } from 'rxjs/internal/operators/distinctUntilChanged';
-import { debounceTime, share } from 'rxjs/operators';
 import {
   MSecureMessageConversation,
   MSecureMessageGroupInfo,
@@ -31,7 +29,6 @@ export class SecureMessagePage implements OnDestroy {
   private readonly largeScreenPixelMin = 576;
   private messagesArray: MSecureMessageInfo[] = [];
   private readonly sourceSubscription: Subscription = new Subscription();
-  private isMessageInSending = false;
 
   bIsLargeScreen = false;
   bCreateNewConversation = false;
@@ -61,7 +58,7 @@ export class SecureMessagePage implements OnDestroy {
     this.initializePage();
   }
 
-  private onWindowResizeHandler(event: Event) {
+  private onWindowResizeHandler() {
     const bWasPreviouslyLargeScreen = this.bIsLargeScreen;
     this.bIsLargeScreen = window.innerWidth >= this.largeScreenPixelMin;
     if (!bWasPreviouslyLargeScreen && this.bIsLargeScreen) {
@@ -331,7 +328,7 @@ export class SecureMessagePage implements OnDestroy {
   }
 
   /**
-   * click listner to selected current conversation to display
+   * click listener to selected current conversation to display
    */
   onClickConversation(conversation: MSecureMessageConversation) {
     this.bCreateNewConversation = false;
@@ -409,10 +406,10 @@ export class SecureMessagePage implements OnDestroy {
 
     this.sourceSubscription.add(
       this.secureMessagingProvider.sendSecureMessage(message).subscribe(
-        response => {
+        () => {
           this.addMessageToLocalConversation(message);
         },
-        error => {
+        () => {
           ExceptionProvider.showException(this.events, {
             displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
             messageInfo: {
@@ -431,7 +428,6 @@ export class SecureMessagePage implements OnDestroy {
         }
       )
     );
-    console.log(this.sourceSubscription);
   }
 
   /**
