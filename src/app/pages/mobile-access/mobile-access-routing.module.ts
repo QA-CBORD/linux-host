@@ -6,6 +6,7 @@ const routes: Routes = [
   {
     path: '',
     component: MobileAccessPage,
+    // resolve: { coords: }
   },
 ];
 

@@ -18,7 +18,7 @@ export class MobileAccessProvider {
   /**
    * Retrieve mobile location data for Mobile Access
    *
-   * @param geoData   Geolocation data for device
+   * @param geoData Geolocation data for device
    */
   getMobileLocationData(
     geoData: MGeoCoordinates
