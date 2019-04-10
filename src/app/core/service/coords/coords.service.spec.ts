@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 
-import { MobileAccessProvider } from './mobile-access.provider';
+import { CoordsService } from './coords.service';
 
-describe('MobileAccessService', () => {
+describe('CoordsService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   it('should be created', () => {
-    const service: MobileAccessProvider = TestBed.get(MobileAccessProvider);
+    const service: CoordsService = TestBed.get(CoordsService);
     expect(service).toBeTruthy();
   });
 });

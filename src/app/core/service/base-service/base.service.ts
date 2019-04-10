@@ -7,7 +7,7 @@ import {
   observeOn,
   timeout,
   map,
-  catchError,
+  catchError, share,
 } from 'rxjs/operators';
 import { async } from 'rxjs/internal/scheduler/async';
 import { queue } from 'rxjs/internal/scheduler/queue';

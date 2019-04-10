@@ -5,21 +5,29 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 
 import { MobileAccessPage } from './mobile-access.page';
-import { LocationDetailPageModule } from './location-detail/location-detail.module';
 import { MobileAccessRoutingModule } from './mobile-access-routing.module';
+import { LocationsResolverGuard } from './locations.resolver.guard';
+import { LocationListComponent } from './location-list/location-list.component';
+import { LocationItemComponent } from './location-list/location-item/location-item.component';
+import { MobileAccessService } from './service/mobile-access.service';
 
 const imports = [
-  CommonModule,
-  FormsModule,
-  IonicModule,
-  MobileAccessRoutingModule,
-  LocationDetailPageModule,
+    CommonModule,
+    FormsModule,
+    IonicModule,
+    MobileAccessRoutingModule,
 ];
 
-const declarations = [MobileAccessPage];
+const declarations = [MobileAccessPage, LocationListComponent];
+const providers = [LocationsResolverGuard, MobileAccessService];
 
 @NgModule({
-  imports,
-  declarations,
+    imports,
+    declarations: [
+        declarations,
+        LocationItemComponent
+    ],
+    providers
 })
-export class MobileAccessPageModule {}
+export class MobileAccessPageModule {
+}

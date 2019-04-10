@@ -7,6 +7,7 @@ import { Keyboard } from "@ionic-native/keyboard/ngx";
 import { HttpClientModule } from "@angular/common/http";
 import { IonicRouteStrategy } from '@ionic/angular';
 import { BrowserModule } from '@angular/platform-browser';
+import { Geolocation } from '@ionic-native/geolocation/ngx';
 
 const imports = [
     CommonModule,
@@ -19,7 +20,8 @@ const providers = [
     SplashScreen,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     DatePipe,
-    Keyboard
+    Keyboard,
+    Geolocation
 ];
 
 @NgModule({
