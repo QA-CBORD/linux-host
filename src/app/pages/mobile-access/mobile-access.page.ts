@@ -51,6 +51,7 @@ export class MobileAccessPage implements OnInit, OnDestroy {
   ngOnInit() {}
 
   ionViewWillEnter() {
+    // --------------------------WE NEED IT:
     this.platform.ready().then(() => {
       this.events.publish(Globals.Events.LOADER_SHOW, {
         bShow: true,
@@ -61,6 +62,7 @@ export class MobileAccessPage implements OnInit, OnDestroy {
   }
 
   ionViewWillLeave() {
+    // --------------------------WE NEED IT:
     if (navigator.geolocation) {
       navigator.geolocation.clearWatch(this.geolocationWatchId);
     }
@@ -69,6 +71,7 @@ export class MobileAccessPage implements OnInit, OnDestroy {
   /**
    * Attempt to get geolocation data from browser, callback called when location value changes
    */
+  // --------------------------WE NEED IT:
   private getUpdatedLocationData() {
     if (navigator.geolocation) {
       this.geolocationWatchId = navigator.geolocation.watchPosition(
@@ -273,37 +276,44 @@ export class MobileAccessPage implements OnInit, OnDestroy {
    * Handle the selection of a Mobile Location
    * @param item    MobileLocationInfo object of selection
    */
-  locationSelected(item: any) {
-    this.selectedLocation = item;
-    this.presentUnlockModal();
-  }
+  // locationSelected(item: any) {
+  //   this.selectedLocation = item;
+  //   this.presentUnlockModal();
+  // }
 
   /**
    * Display modal to allow user to activate the Mobile Location
    */
-  private async presentUnlockModal() {
-    if (this.selectedLocation == null) {
-      return;
-    }
-
-    const detailPopover: HTMLIonPopoverElement = await this.popoverCtrl.create({
-      component: LocationDetailPage,
-      componentProps: {
-        selectedLocation: this.selectedLocation,
-        geoData: this.geoData,
-      },
-      animated: true,
-      backdropDismiss: false,
-    });
-
-    detailPopover.onDidDismiss().then(() => {
-      this.selectedLocation = null;
-    });
-
-    return await detailPopover.present();
-  }
+  // private async presentUnlockModal() {
+  //   if (this.selectedLocation == null) {
+  //     return;
+  //   }
+  //
+  //   const detailPopover: HTMLIonPopoverElement = await this.popoverCtrl.create({
+  //     component: LocationDetailPage,
+  //     componentProps: {
+  //       selectedLocation: this.selectedLocation,
+  //       geoData: this.geoData,
+  //     },
+  //     animated: true,
+  //     backdropDismiss: false,
+  //   });
+  //
+  //   detailPopover.onDidDismiss().then(() => {
+  //     this.selectedLocation = null;
+  //   });
+  //
+  //   return await detailPopover.present();
+  // }
 
   ngOnDestroy() {
     this.sourceSubscription.unsubscribe();
   }
+
+
+
+
+  // START REDESIGN:
+
+
 }
