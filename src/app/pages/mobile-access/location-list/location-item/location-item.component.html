@@ -11,12 +11,14 @@
 <!--    {{location.name}}-->
 <!--  </ion-label>-->
 <!--</ion-item>-->
-<ion-item detail>
+<!--<a [routerLink]="link">-->
+<ion-item detail (click)="nav()">
   <ion-label>
     <h3>{{location.name}}</h3>
-    <p>Icon on right</p>
+    <p>{{location.distance}}</p>
   </ion-label>
 <!--  <ion-icon name="close-circle" slot="end"></ion-icon>-->
   <ion-icon [name]=starClass slot="end" (click)="triggerFavourite()"></ion-icon>
 <!--  <ion-icon ios="ios-arrow-forward" name="arrow-forward-outline" slot="end"></ion-icon>-->
 </ion-item>
+<!--</a>-->

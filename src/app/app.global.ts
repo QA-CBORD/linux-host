@@ -30,6 +30,7 @@ export namespace Exception {
   export enum Strings {
     TITLE = 'Oh no!',
   }
+
   export enum DisplayOptions {
     ONE_BUTTON,
     TWO_BUTTON,
@@ -105,4 +106,11 @@ export namespace User {
   export enum ESetting {
     CASHLESS_KEY = 'CashlessKey',
   }
+}
+
+export enum NAVIGATE {
+  home = 'home',
+  rewards = 'rewards',
+  mobileAccess = 'mobile-access',
+  secureMessage = 'secure-message',
 }

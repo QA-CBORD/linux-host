@@ -10,24 +10,16 @@ import { LocationsResolverGuard } from './locations.resolver.guard';
 import { LocationListComponent } from './location-list/location-list.component';
 import { LocationItemComponent } from './location-list/location-item/location-item.component';
 import { MobileAccessService } from './service/mobile-access.service';
+import { ActivateLocationComponent } from './activate-location/activate-location.component';
 
-const imports = [
-    CommonModule,
-    FormsModule,
-    IonicModule,
-    MobileAccessRoutingModule,
-];
+const imports = [CommonModule, FormsModule, IonicModule, MobileAccessRoutingModule];
 
-const declarations = [MobileAccessPage, LocationListComponent];
+const declarations = [MobileAccessPage, LocationListComponent, ActivateLocationComponent, LocationItemComponent];
 const providers = [LocationsResolverGuard, MobileAccessService];
 
 @NgModule({
-    imports,
-    declarations: [
-        declarations,
-        LocationItemComponent
-    ],
-    providers
+  imports,
+  declarations,
+  providers,
 })
-export class MobileAccessPageModule {
-}
+export class MobileAccessPageModule {}

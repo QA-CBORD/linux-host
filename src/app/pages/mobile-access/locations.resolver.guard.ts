@@ -4,7 +4,7 @@ import { Events } from '@ionic/angular';
 import { Resolve } from '@angular/router/src/interfaces';
 
 import { switchMap, tap } from 'rxjs/operators';
-import { from, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 
 import { CoordsService } from '../../core/service/coords/coords.service';
 import { MGeoCoordinates } from '../../core/model/geolocation/geocoordinates.interface';
@@ -13,32 +13,32 @@ import * as Globals from '../../app.global';
 
 @Injectable()
 export class LocationsResolverGuard implements Resolve<Observable<any>> {
-    private readonly spinnerMessage = 'Retrieving locations...';
+  private readonly spinnerMessage = 'Retrieving locations...';
 
-    constructor(private readonly coords: CoordsService,
-                private readonly mobileAccessService: MobileAccessService,
-                private readonly events: Events) {
-    }
+  constructor(
+    private readonly coords: CoordsService,
+    private readonly mobileAccessService: MobileAccessService,
+    private readonly events: Events
+  ) {}
 
-    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any> {
-        this.downloadHandler(true);
+  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any> {
+    this.downloadHandler(true);
 
-        return this.coords.initCoords()
-            .pipe(
-                switchMap((coords: MGeoCoordinates) => this.mobileAccessService.getMobileLocations(coords)),
-                tap(() => this.downloadHandler())
-            );
-    }
+    return this.coords.initCoords().pipe(
+      switchMap((coords: MGeoCoordinates) => this.mobileAccessService.getMobileLocations(coords)),
+      tap(() => this.downloadHandler())
+    );
+  }
 
-    private downloadHandler(started: boolean = false) {
-        const start = {
-            bShow: true,
-            message: this.spinnerMessage,
-        };
-        const stop = {bShow: false};
+  private downloadHandler(started: boolean = false) {
+    const start = {
+      bShow: true,
+      message: this.spinnerMessage,
+    };
+    const stop = { bShow: false };
 
-        const loaderArgs = started ? start : stop;
+    const loaderArgs = started ? start : stop;
 
-        this.events.publish(Globals.Events.LOADER_SHOW, loaderArgs);
-    }
+    this.events.publish(Globals.Events.LOADER_SHOW, loaderArgs);
+  }
 }

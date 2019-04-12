@@ -1,0 +1,26 @@
+<ion-header>
+  <ion-buttons>
+    <ion-back-button></ion-back-button>
+  </ion-buttons>
+</ion-header>
+<ion-content padding>
+  <ion-card class="user-data">
+    <ion-card-header>
+      <ion-card-title class="user-data__university">CBORD University</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <ion-card class="user-data__data-card">
+        <img class="user-data__photo" [src]="photoUrl | async" alt="photo">
+        <div class="user-data__info">
+          <p class="user-data__name">Marlene Jypalene</p>
+          <p class="user-data__id">ID: 9379992</p>
+        </div>
+      </ion-card>
+      <p class="user-data__location">9999 - Washmachine</p>
+    </ion-card-content>
+    <div class="user-data__activate-btn">
+      <ion-button shape="round" size="large" color="light" expand="full">activate</ion-button>
+    </div>
+  </ion-card>
+</ion-content>

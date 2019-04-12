@@ -2,13 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { Observable, throwError } from 'rxjs';
-import {
-  subscribeOn,
-  observeOn,
-  timeout,
-  map,
-  catchError, share,
-} from 'rxjs/operators';
+import { subscribeOn, observeOn, timeout, map, catchError, share } from 'rxjs/operators';
 import { async } from 'rxjs/internal/scheduler/async';
 import { queue } from 'rxjs/internal/scheduler/queue';
 
@@ -39,12 +33,12 @@ export class BaseService {
    * @param bUseSessionId Boolean flag for using or not session id in request
    * @param postParams    Parameters for request
    */
-  protected httpRequest(
+  protected httpRequest<T>(
     serviceUrl: string,
     methodName: string,
     bUseSessionId: boolean,
-    postParams: ServiceParameters
-  ): Observable<any> {
+    postParams: ServiceParameters = {}
+  ): Observable<T> {
     this.baseUrl = Environment.getGETServicesBaseURL();
 
     if (bUseSessionId) {
@@ -56,19 +50,13 @@ export class BaseService {
       params: postParams,
     };
 
-    return this.http
-      .post(
-        this.baseUrl.concat(serviceUrl),
-        JSON.stringify(finalParams),
-        this.getOptions()
-      )
-      .pipe(
-        subscribeOn(async),
-        observeOn(queue),
-        timeout(this.TIMEOUT_MS),
-        map(response => this.extractData(response)),
-        catchError(error => this.handleError(error))
-      );
+    return this.http.post(this.baseUrl.concat(serviceUrl), JSON.stringify(finalParams), this.getOptions()).pipe(
+      subscribeOn(async),
+      observeOn(queue),
+      timeout(this.TIMEOUT_MS),
+      map(response => this.extractData(response)),
+      catchError(error => this.handleError(error))
+    );
   }
 
   /**
@@ -103,10 +91,7 @@ export class BaseService {
     const regEx = new RegExp('^[0-9]*|.*$');
     if (regEx.test(exceptionString)) {
       const parts = exceptionString.split('|');
-      this.determineErrorByCodeAndThrow(
-        parts[0],
-        parts.length > 1 ? parts[1] : null
-      );
+      this.determineErrorByCodeAndThrow(parts[0], parts.length > 1 ? parts[1] : null);
     } else {
       throw new Error('Unexpected error occurred.');
     }

@@ -1,0 +1,74 @@
+.user-data {
+  min-height: 400px;
+  max-width: 400px;
+  margin: 0 auto;
+  background: #0056e6;
+  border-radius: 15px;
+  box-sizing: border-box;
+  font-size: 14px;
+  --ion-padding: 1.5em;
+  border: none;
+
+
+  @media screen and (min-width: 450px) {
+    font-size: 16px;
+  }
+
+
+  &__university {
+    color: #FFF;
+    font-size: 1.5em;
+    font-weight: 500;
+    max-height: 27px;
+    letter-spacing: 0;
+  }
+
+  &__photo {
+    min-height: 400px;
+    background: #ccc;
+  }
+
+  &__data-card {
+    border-radius: 15px;
+    margin-top: 0;
+  }
+
+  &__info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, .3);
+    padding: 1em 1.5em;
+  }
+
+  &__name {
+    font-size: 18px;
+    font-weight: 500;
+    max-height: 33px;
+    letter-spacing: 0;
+    color: #fff;
+  }
+
+  &__id {
+    font-size: 16px;
+    font-weight: 900;
+    max-height: 19px;
+    letter-spacing: 0;
+    color: #fff;
+  }
+
+  &__location {
+    color: #fff;
+    max-height: 26px;
+    text-align: center;
+
+    font-size: 18px;
+  }
+
+  &__activate-btn {
+    max-width: 330px;
+    width: 80%;
+    margin: 10px auto;
+  }
+}

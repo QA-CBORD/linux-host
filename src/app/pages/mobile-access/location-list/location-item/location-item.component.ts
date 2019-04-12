@@ -1,31 +1,38 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MMobileLocationInfo } from '../../model/mobile-access.interface';
+import { Router } from '@angular/router';
+import { NavController } from '@ionic/angular';
 
 @Component({
-    selector: 'app-location-item',
-    templateUrl: './location-item.component.html',
-    styleUrls: ['./location-item.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'app-location-item',
+  templateUrl: './location-item.component.html',
+  styleUrls: ['./location-item.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LocationItemComponent implements OnInit {
-    @Input('location') location: MMobileLocationInfo;
-    @Output('addToFav') addToFav: EventEmitter<string> = new EventEmitter<string>();
+  @Input('location') location: MMobileLocationInfo;
+  @Output('addToFav') addToFav: EventEmitter<string> = new EventEmitter<string>();
 
-    constructor() {
-    }
+  constructor(private router: Router, private nav2: NavController) {}
 
-    get starClass(): string {
-        const empty = 'star-outline';
-        const filled = 'star';
-        return this.location.name.includes('153') ? filled : empty;
-    }
+  get starClass(): string {
+    const empty = 'star-outline';
+    const filled = 'star';
+    return this.location.name.includes('153') ? filled : empty;
+  }
 
-    triggerFavourite() {
-        this.addToFav.emit(this.location.locationId);
-    }
+  get link(): string {
+    return `activate/${this.location.locationId}`;
+  }
 
-    ngOnInit() {
+  nav() {
+    // this.router.navigate([`/mobile-access/activate/${this.location.locationId}`]);
+    this.nav2.navigateForward(`/mobile-access/activate/${this.location.locationId}`);
+  }
 
-    }
+  triggerFavourite() {
+    this.addToFav.emit(this.location.locationId);
+  }
 
+  ngOnInit() {}
 }

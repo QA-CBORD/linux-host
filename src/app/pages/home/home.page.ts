@@ -41,9 +41,7 @@ export class HomePage {
   ) {
     this.platform.ready().then(() => {
       /// Set logger enabled based on env
-      Logger.setLoggingEnabled(
-        Environment.isDevelopmentEnvironment(location.href)
-      );
+      Logger.setLoggingEnabled(Environment.isDevelopmentEnvironment(location.href));
       /// use page url to determine current environment
       Environment.setEnvironmentViaURL(location.href);
 
