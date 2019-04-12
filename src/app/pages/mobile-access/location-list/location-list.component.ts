@@ -12,10 +12,7 @@ export class LocationListComponent implements OnInit {
 
   constructor() {}
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
-  favTrigger($event: string) {
-    
-  }
+  favTrigger($event: string) {}
 }

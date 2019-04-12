@@ -9,12 +9,7 @@ import { IonicStorageModule } from '@ionic/storage';
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
-  imports: [
-    CoreModule,
-    IonicModule.forRoot(),
-    IonicStorageModule.forRoot(),
-    AppRoutingModule,
-  ],
+  imports: [CoreModule, IonicModule.forRoot(), IonicStorageModule.forRoot(), AppRoutingModule],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
