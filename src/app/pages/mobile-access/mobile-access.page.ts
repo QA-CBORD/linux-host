@@ -37,6 +37,9 @@ export class MobileAccessPage implements OnInit, OnDestroy {
     },
   };
 
+  //-------------
+  private tempTitle: string = 'Mobile Access';
+
   constructor(
     private platform: Platform,
     private events: Events,
@@ -315,5 +318,7 @@ export class MobileAccessPage implements OnInit, OnDestroy {
 
   // START REDESIGN:
 
-
+  onSearchedValue(event) {
+    console.log(event)
+  }
 }

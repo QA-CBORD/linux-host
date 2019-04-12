@@ -39,18 +39,13 @@
     <!--</ion-col>-->
   <!--</ion-row>-->
 <!--</ion-grid>-->
-<ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button></ion-back-button>
-    </ion-buttons>
-    <ion-title>My Navigation Bar</ion-title>
-  </ion-toolbar>
 
-  <ion-toolbar>
-    <ng-content></ng-content>
-  </ion-toolbar>
-</ion-header>
+
+
+
+<st-header [title]="tempTitle"
+           (onSearchedValue)="onSearchedValue($event)">
+</st-header>
 
 <ion-content>
   jhkhkkjkjk

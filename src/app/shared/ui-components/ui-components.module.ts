@@ -1,14 +1,13 @@
-import {NgModule} from '@angular/core';
-import {CommonModule} from '@angular/common';
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { IonicModule } from '@ionic/angular';
+import { StHeaderComponent } from './st-header/st-header.component';
 
-const components = [];
+const components = [StHeaderComponent];
 
 @NgModule({
-    imports: [
-        CommonModule
-    ],
-    declarations: [...components],
-    exports: [...components]
+  imports: [CommonModule, IonicModule],
+  declarations: [...components],
+  exports: [...components],
 })
-export class UiComponentsModule {
-}
+export class UiComponentsModule {}
