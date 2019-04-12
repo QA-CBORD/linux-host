@@ -27,7 +27,7 @@ export class AuthService extends BaseService {
         }
       };
 
-      this.httpRequest(this.serviceUrl, 'authenticateSystem', false, postParams)
+      this.httpRequest<any>(this.serviceUrl, 'authenticateSystem', false, postParams)
         .subscribe(
           data => {
             // validate data then throw error or send
@@ -65,7 +65,7 @@ export class AuthService extends BaseService {
         }
       };
 
-      this.httpRequest(this.serviceUrl, 'authenticateUser', false, postParams)
+      this.httpRequest<any>(this.serviceUrl, 'authenticateUser', false, postParams)
         .subscribe(
           data => {
             // validate data then throw error or send
@@ -97,7 +97,7 @@ export class AuthService extends BaseService {
         sessionToken: sessionToken
       };
 
-      return this.httpRequest(this.serviceUrl, 'authenticateSessionToken', false, postParams)
+      return this.httpRequest<any>(this.serviceUrl, 'authenticateSessionToken', false, postParams)
         .subscribe(
           data => {
             // validate data and send to observer
@@ -126,7 +126,7 @@ export class AuthService extends BaseService {
         claimSet: null
       };
 
-      return this.httpRequest(this.serviceUrl, 'retrieveExternalAuthenticationToken', true, postParams)
+      return this.httpRequest<any>(this.serviceUrl, 'retrieveExternalAuthenticationToken', true, postParams)
         .subscribe(
           data => {
             // validate data and send to observer

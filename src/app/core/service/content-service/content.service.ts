@@ -28,7 +28,7 @@ export class ContentService extends BaseService {
       name: stringNameParts[2]
     };
 
-    return this.httpRequestFull(this.serviceUrl, 'retrieveString', true, true, postParams);
+    return this.httpRequestFull<any>(this.serviceUrl, 'retrieveString', true, true, postParams);
   }
 
   /**
@@ -44,7 +44,7 @@ export class ContentService extends BaseService {
       category: stringNameParts[1]
     };
 
-    return this.httpRequestFull(this.serviceUrl, 'retrieveStringList', true, true, postParams);
+    return this.httpRequestFull<any>(this.serviceUrl, 'retrieveStringList', true, true, postParams);
   }
 
 
