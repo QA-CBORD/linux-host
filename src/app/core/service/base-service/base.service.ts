@@ -40,6 +40,17 @@ export class BaseService {
      * @param postParams    Parameters for request
      */
     protected httpRequest(serviceUrl: string, methodName: string, bUseSessionId: boolean, postParams: ServiceParameters): Observable<any> {
+        return this.httpRequestFull(serviceUrl, methodName, bUseSessionId, false, postParams);
+    }
+
+    /**
+     * HTTP request
+     *
+     * @param serviceUrl    URL for source of request
+     * @param methodName    Name of method for request
+     * @param postParams    Parameters for request
+     */
+    protected httpRequestFull(serviceUrl: string, methodName: string, bUseSessionId: boolean, bUseInstitutionId: boolean, postParams: ServiceParameters): Observable<any> {
 
         this.baseUrl = Environment.getGETServicesBaseURL();
 

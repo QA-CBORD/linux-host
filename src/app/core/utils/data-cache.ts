@@ -97,7 +97,9 @@ export class DataCache {
         return DataCache.localCache.institutionInfo.id || null;
     }
 
-
+    static setInstitutionId(institutionId: string) {
+        DataCache.localCache.institutionInfo.id = institutionId;
+    }
 
     refreshCacheFromStorage(onSuccess: () => void, onFailure: () => void) {
         this.getData(this.CACHE).subscribe(
@@ -124,8 +126,6 @@ export class DataCache {
         this.set(this.CACHE, JSON.stringify(DataCache.localCache));
     }
 
-
-
     setEnvironmentInfo(envInfo: MEnvironmentInfo) {
         DataCache.localCache.environmentInfo = envInfo;
     }
@@ -140,14 +140,6 @@ export class DataCache {
 
     getSessionId(): string {
         return DataCache.localCache.sessionId || null;
-    }
-
-    getInstitutionId(): string {
-        return DataCache.localCache.institutionInfo.id || null;
-    }
-
-    setInstitutionId(institutionId: string) {
-        DataCache.localCache.institutionInfo.id = institutionId;
     }
 
     getInstitutionInfo(): MInstitutionInfo {
