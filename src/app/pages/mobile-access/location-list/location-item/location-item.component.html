@@ -1,24 +1,8 @@
-<!--<div class="location">-->
-<!--  <div class="location__info">-->
-<!--    <div class="location__name">{{location.name}}</div>-->
-<!--    <div class="location__distance">{{location.distance}}</div>-->
-<!--  </div>-->
-<!--  <div class="location__favourite"></div>-->
-<!--</div>-->
-<!--<hr>-->
-<!--<ion-item detail text-wrap>-->
-<!--  <ion-label>-->
-<!--    {{location.name}}-->
-<!--  </ion-label>-->
-<!--</ion-item>-->
-<!--<a [routerLink]="link">-->
+
 <ion-item detail (click)="nav()">
   <ion-label>
     <h3>{{location.name}}</h3>
     <p>{{location.distance}}</p>
   </ion-label>
-<!--  <ion-icon name="close-circle" slot="end"></ion-icon>-->
   <ion-icon [name]=starClass slot="end" (click)="triggerFavourite()"></ion-icon>
-<!--  <ion-icon ios="ios-arrow-forward" name="arrow-forward-outline" slot="end"></ion-icon>-->
 </ion-item>
-<!--</a>-->

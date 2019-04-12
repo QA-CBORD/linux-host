@@ -21,12 +21,7 @@ export class LocationItemComponent implements OnInit {
     return this.location.name.includes('153') ? filled : empty;
   }
 
-  get link(): string {
-    return `activate/${this.location.locationId}`;
-  }
-
   nav() {
-    // this.router.navigate([`/mobile-access/activate/${this.location.locationId}`]);
     this.nav2.navigateForward(`/mobile-access/activate/${this.location.locationId}`);
   }
 
