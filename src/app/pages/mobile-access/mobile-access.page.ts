@@ -20,6 +20,8 @@ export class MobileAccessPage implements OnDestroy, OnInit {
     locations$: Observable<MMobileLocationInfo[]>;
     currentCoords: MGeoCoordinates;
 
+    private tempTitle: string = 'Mobile Access';
+
     constructor(
         private readonly platform: Platform,
         private readonly events: Events,
@@ -285,5 +287,9 @@ export class MobileAccessPage implements OnDestroy, OnInit {
         this.sourceSubscription.add(this.coordsService.coordinates
             .subscribe((coords: MGeoCoordinates) => this.currentCoords = coords)
         );
+    }
+
+    onSearchedValue(event) {
+        console.log(event)
     }
 }

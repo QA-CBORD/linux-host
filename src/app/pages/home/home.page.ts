@@ -160,6 +160,7 @@ export class HomePage {
     this.userService.getUser().subscribe(
       data => {
         DataCache.setUserInfo(data);
+        DataCache.setInstitutionId(data.institutionId);
         this.handlePageNavigation();
       },
       error => {

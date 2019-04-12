@@ -1,0 +1,21 @@
+@import 'vendor';
+@import 'tools';
+@import 'fonts';
+
+:root {
+  .st-header {
+    ion-searchbar {
+      .searchbar-input-container.sc-ion-searchbar-ios {
+        height: 40px;
+      }
+
+      .searchbar-input.sc-ion-searchbar-ios {
+        border-radius: 20px 20px 20px 20px;
+        border: 1px solid rgb(212, 214, 216);
+        &::placeholder {
+          @include font-family($font-nunito-regular);
+        }
+      }
+    }
+  }
+}

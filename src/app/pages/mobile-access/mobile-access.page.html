@@ -39,11 +39,9 @@
 <!--</ion-col>-->
 <!--</ion-row>-->
 <!--</ion-grid>-->
-<ion-header>
-    <ion-toolbar>
-        <ion-title>My Navigation Bar</ion-title>
-    </ion-toolbar>
-</ion-header>
+<st-header [title]="tempTitle"
+           (onSearchedValue)="onSearchedValue($event)">
+</st-header>
 
 <ion-content>
     <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
