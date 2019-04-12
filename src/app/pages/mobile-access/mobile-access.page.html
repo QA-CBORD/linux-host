@@ -1,41 +1,52 @@
-<ion-grid no-padding style="height: 100vh; width: 100vw;">
-  <ion-row class="dashboard_div_header">
-    <ion-col>
-      <h3 *ngIf="mobileLocationInfo" style="margin-top: 10px" class="omd_h3">Select a location</h3>
-    </ion-col>
-  </ion-row>
-  <ion-row style="margin-top: -12.5vh;">
-    <ion-col>
-      <ion-card *ngIf="mobileLocationInfo.length > 0" style="background-color: white; height: 87vh;">
-        <ion-grid>
-          <ion-row *ngIf="!bShowNoLocationsAvailable && mobileLocationInfo.length > 10" style="height: 10vh;">
-            <ion-col>
-              <ion-searchbar animated debounce="500" showCancelButton (ionChange)="onSearchInput($event)">
-              </ion-searchbar>
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <div *ngIf="bShowNoLocationsAvailable">
-              <h4 text-center style="margin-top: 50%; font-weight: 300;">There are no locations available to display
-              </h4>
-            </div>
-            <div style="height: 75vh; width: 100%; overflow: auto;" scrollY="true">
-              <ion-item button *ngFor="let item of mobileLocationInfoFiltered; trackBy: trackByFn" (click)="locationSelected(item)">
-                <div *ngIf='item.color' [ngStyle]="{'background-color': item.color}"
-                  style="height: 80%; width: 3px; margin-right: 10px;">
-                </div>
-                <div class='ion-text-start' style="margin-top: 0.5em; margin-bottom: 0.5em;">
-                  <h4 class="omd_h4" style="font-weight: bold; display: inline;">{{item.locationId}} - </h4>
-                  <h4 class="omd_h4" style="white-space: pre-wrap; display: inline;">{{item.name}}</h4>
-                </div>
-                <div *ngIf='item.color' slot='end' [ngStyle]="{'background-color': item.color}"
-                  style="height: 80%; width: 3px; margin-left: 10px;">
-                </div>
-              </ion-item>
-            </div>
-          </ion-row>
-        </ion-grid>
-      </ion-card>
-    </ion-col>
-  </ion-row>
-</ion-grid>
+<!--<ion-grid no-padding style="height: 100vh; width: 100vw;">-->
+  <!--<ion-row class="dashboard_div_header">-->
+    <!--<ion-col>-->
+      <!--<h3 *ngIf="mobileLocationInfo" style="margin-top: 10px" class="omd_h3">Select a location</h3>-->
+    <!--</ion-col>-->
+  <!--</ion-row>-->
+  <!--<ion-row style="margin-top: -12.5vh;">-->
+    <!--<ion-col>-->
+      <!--<ion-card *ngIf="mobileLocationInfo.length > 0" style="background-color: white; height: 87vh;">-->
+        <!--<ion-grid>-->
+          <!--<ion-row *ngIf="!bShowNoLocationsAvailable && mobileLocationInfo.length > 10" style="height: 10vh;">-->
+            <!--<ion-col>-->
+              <!--<ion-searchbar animated debounce="500" showCancelButton (ionChange)="onSearchInput($event)">-->
+              <!--</ion-searchbar>-->
+            <!--</ion-col>-->
+          <!--</ion-row>-->
+          <!--<ion-row>-->
+            <!--<div *ngIf="bShowNoLocationsAvailable">-->
+              <!--<h4 text-center style="margin-top: 50%; font-weight: 300;">There are no locations available to display-->
+              <!--</h4>-->
+            <!--</div>-->
+            <!--<div style="height: 75vh; width: 100%; overflow: auto;" scrollY="true">-->
+              <!--<ion-item button *ngFor="let item of mobileLocationInfoFiltered; trackBy: trackByFn" (click)="locationSelected(item)">-->
+                <!--<div *ngIf='item.color' [ngStyle]="{'background-color': item.color}"-->
+                  <!--style="height: 80%; width: 3px; margin-right: 10px;">-->
+                <!--</div>-->
+                <!--<div class='ion-text-start' style="margin-top: 0.5em; margin-bottom: 0.5em;">-->
+                  <!--<h4 class="omd_h4" style="font-weight: bold; display: inline;">{{item.locationId}} - </h4>-->
+                  <!--<h4 class="omd_h4" style="white-space: pre-wrap; display: inline;">{{item.name}}</h4>-->
+                <!--</div>-->
+                <!--<div *ngIf='item.color' slot='end' [ngStyle]="{'background-color': item.color}"-->
+                  <!--style="height: 80%; width: 3px; margin-left: 10px;">-->
+                <!--</div>-->
+              <!--</ion-item>-->
+            <!--</div>-->
+          <!--</ion-row>-->
+        <!--</ion-grid>-->
+      <!--</ion-card>-->
+    <!--</ion-col>-->
+  <!--</ion-row>-->
+<!--</ion-grid>-->
+
+
+
+
+<st-header [title]="tempTitle"
+           (onSearchedValue)="onSearchedValue($event)">
+</st-header>
+
+<ion-content>
+  jhkhkkjkjk
+</ion-content>

@@ -33,12 +33,14 @@
             ],
             "styles": [
               {
-                "input": "src/theme/variables.scss"
-              },
-              {
-                "input": "src/global.scss"
+                "input": "src/styles.scss"
               }
             ],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "src/styles"
+              ]
+            },
             "scripts": [],
             "es5BrowserSupport": true
           },
@@ -99,7 +101,16 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.spec.json",
             "karmaConfig": "src/karma.conf.js",
-            "styles": [],
+            "styles": [
+              {
+                "input": "src/styles.scss"
+              }
+            ],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "src/styles"
+              ]
+            },
             "scripts": [],
             "assets": [
               {

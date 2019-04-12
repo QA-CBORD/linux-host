@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { MobileAccessPage } from './mobile-access.page';
 import { LocationDetailPageModule } from './location-detail/location-detail.module';
 import { MobileAccessRoutingModule } from './mobile-access-routing.module';
+import { SharedModule } from '../../shared/shared.module';
 
 const imports = [
   CommonModule,
@@ -14,6 +15,7 @@ const imports = [
   IonicModule,
   MobileAccessRoutingModule,
   LocationDetailPageModule,
+  SharedModule
 ];
 
 const declarations = [MobileAccessPage];
