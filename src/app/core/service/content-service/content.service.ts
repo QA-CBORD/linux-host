@@ -46,6 +46,4 @@ export class ContentService extends BaseService {
 
     return this.httpRequestFull<any>(this.serviceUrl, 'retrieveStringList', true, true, postParams);
   }
-
-
 }

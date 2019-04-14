@@ -1,8 +1,9 @@
-
 <ion-item detail (click)="nav()">
   <ion-label>
     <h3>{{location.name}}</h3>
     <p>{{location.distance}}</p>
   </ion-label>
-  <ion-icon [name]=starClass slot="end" (click)="triggerFavourite()"></ion-icon>
+  <ion-icon [name]=starClass
+            slot="end" (click)="triggerFavourite()"></ion-icon>
 </ion-item>
+<!--src="assets/icon/star-filled.svg"-->

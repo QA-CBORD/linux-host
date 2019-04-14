@@ -18,6 +18,7 @@ export class LocationItemComponent implements OnInit {
   get starClass(): string {
     const empty = 'star-outline';
     const filled = 'star';
+
     return this.location.name.includes('153') ? filled : empty;
   }
 

@@ -39,6 +39,19 @@ export class BaseService {
     bUseSessionId: boolean,
     postParams: ServiceParameters = {}
   ): Observable<T> {
+
+    return this.httpRequestFull(serviceUrl, methodName, bUseSessionId, false, postParams);
+  }
+
+  /**
+   * HTTP request
+   *
+   * @param serviceUrl    URL for source of request
+   * @param methodName    Name of method for request
+   * @param postParams    Parameters for request
+   */
+  protected httpRequestFull<T>(serviceUrl: string, methodName: string, bUseSessionId: boolean, bUseInstitutionId: boolean, postParams: ServiceParameters): Observable<T> {
+
     this.baseUrl = Environment.getGETServicesBaseURL();
 
     if (bUseSessionId) {
@@ -47,16 +60,17 @@ export class BaseService {
 
     const finalParams: ServiceParameters = {
       method: methodName,
-      params: postParams,
+      params: postParams
     };
 
-    return this.http.post(this.baseUrl.concat(serviceUrl), JSON.stringify(finalParams), this.getOptions()).pipe(
-      subscribeOn(async),
-      observeOn(queue),
-      timeout(this.TIMEOUT_MS),
-      map(response => this.extractData(response)),
-      catchError(error => this.handleError(error))
-    );
+
+    return this.http.post(this.baseUrl.concat(serviceUrl), JSON.stringify(finalParams), this.getOptions())
+        .pipe(
+            subscribeOn(async),
+            observeOn(queue),
+            timeout(this.TIMEOUT_MS),
+            map((response) => this.extractData(response)),
+            catchError((error) => this.handleError(error)));
   }
 
   /**
