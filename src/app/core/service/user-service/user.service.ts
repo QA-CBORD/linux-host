@@ -19,7 +19,7 @@ export class UserService extends BaseService {
 
     return this.httpRequest(this.serviceUrl, 'retrieve', true, postParams)
       .pipe(
-        map((data) => data.response),
+        map((data) => data['response']),
       );
   }
 

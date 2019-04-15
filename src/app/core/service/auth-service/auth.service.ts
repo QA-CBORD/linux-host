@@ -28,7 +28,7 @@ export class AuthService extends BaseService {
 
     return this.httpRequest(this.serviceUrl, 'authenticateSystem', false, postParams)
       .pipe(
-        map((data) => data.response),
+        map((data) => data['response']),
       );
 
   }
@@ -55,7 +55,7 @@ export class AuthService extends BaseService {
 
     return this.httpRequest(this.serviceUrl, 'authenticateUser', false, postParams)
       .pipe(
-        map((data) => data.response),
+        map((data) => data['response']),
       );
   }
 
@@ -76,7 +76,7 @@ export class AuthService extends BaseService {
 
     return this.httpRequest(this.serviceUrl, 'authenticateSessionToken', false, postParams)
       .pipe(
-        map((data) => data.response),
+        map((data) => data['response']),
       );
   }
 
@@ -93,7 +93,7 @@ export class AuthService extends BaseService {
 
     return this.httpRequest(this.serviceUrl, 'retrieveExternalAuthenticationToken', true, postParams)
       .pipe(
-        map((data) => data.response),
+        map((data) => data['response']),
       );
 
   }
