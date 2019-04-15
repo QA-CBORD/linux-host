@@ -1,51 +1,26 @@
 import { Injectable } from '@angular/core';
-
-import { Observable, throwError } from 'rxjs';
-
 import { BaseService, ServiceParameters } from '../base-service/base.service';
-
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { MUserInfo } from 'src/app/core/model/user/user-info.interface';
-import { map, switchMap } from 'rxjs/operators';
-import { MUserPhotoInfo } from '../../model/user/user-photo-info.interface';
-import { tap } from 'rxjs/internal/operators/tap';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService extends BaseService {
-  private serviceUrl = '/json/user';
 
+  private serviceUrl = '/json/user';
+  
   /**
    * Get the current User information using the current Session Id
    */
   getUser(): Observable<MUserInfo> {
-    return this.httpRequest(this.serviceUrl, 'retrieve', true).pipe(map(({ response }) => response));
+    const postParams: ServiceParameters = {};
+
+    return this.httpRequest(this.serviceUrl, 'retrieve', true, postParams)
+      .pipe(
+        map((data) => data.response),
+      );
   }
 
-  getAcceptedPhoto(): Observable<MUserPhotoInfo> {
-    return this.getUser().pipe(
-      switchMap(({ id }: MUserInfo) => this.getPhotoListByUserId(id)),
-      map(({ response: { list } }) =>
-        this.getPhotoIdByStatus(list, 1) ? this.getPhotoIdByStatus(list) : throwError('dasdsa')
-      ),
-      switchMap(({ id }: MUserPhotoInfo) => this.getPhotoById(id)),
-      map(({ response }) => response)
-    );
-  }
-
-  getPhotoListByUserId(userId: string): Observable<any> {
-    const params = { userId };
-
-    return this.httpRequest(this.serviceUrl, 'retrieveUserPhotoList', true, params);
-  }
-
-  getPhotoById(photoId: string): Observable<any> {
-    const params = { photoId };
-
-    return this.httpRequest(this.serviceUrl, 'retrieveUserPhoto', true, params);
-  }
-
-  private getPhotoIdByStatus(photoList: MUserPhotoInfo[], status: number = 1): MUserPhotoInfo | undefined {
-    return photoList.find((photo: MUserPhotoInfo) => photo.status === status);
-  }
 }
