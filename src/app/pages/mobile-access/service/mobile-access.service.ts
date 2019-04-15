@@ -1,18 +1,17 @@
 import { Injectable } from '@angular/core';
 
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { tap } from 'rxjs/internal/operators/tap';
 import { map } from 'rxjs/operators';
 
 import { BaseService, ServiceParameters } from 'src/app/core/service/base-service/base.service';
 import { MGeoCoordinates } from 'src/app/core/model/geolocation/geocoordinates.interface';
 import { MMobileLocationInfo, MActivateMobileLocationResult } from '../model/mobile-access.interface';
-import { tap } from 'rxjs/internal/operators/tap';
 import { MessageResponse } from '../../../core/model/service/message-response.interface';
 
 @Injectable()
 export class MobileAccessService extends BaseService {
   private readonly serviceUrl = '/json/commerce';
-
   private readonly locations$: BehaviorSubject<MMobileLocationInfo[]> = new BehaviorSubject<MMobileLocationInfo[]>([]);
   private coords: MGeoCoordinates = {
     latitude: null,
@@ -60,22 +59,16 @@ export class MobileAccessService extends BaseService {
   activateMobileLocation(
     locationId: string,
     geoData: any,
-    sourceInfo: string
+    sourceInfo: string | null = null
   ): Observable<MActivateMobileLocationResult> {
     const postParams = this.createMobileLocationParams(locationId, geoData, sourceInfo);
 
-    return this.httpRequest<any>(this.serviceUrl, 'activateMobileLocation', true, postParams).pipe(
-      map(data => {
-        if (data != null && data.response != null) {
-          return data.response;
-        }
-
-        if (data != null && data.exception != null) {
-          return data.exception;
-        }
-        throw new Error('An unexpected error occurred.');
-      })
-    );
+    return this.httpRequest<MessageResponse<MActivateMobileLocationResult> | Observable<never>>(
+      this.serviceUrl,
+      'activateMobileLocation',
+      true,
+      postParams
+    ).pipe(map(({ response }: any) => response));
   }
 
   /**
@@ -86,27 +79,25 @@ export class MobileAccessService extends BaseService {
    * @param sourceInfo
    */
   private createMobileLocationParams(locationId: string, geoData: any, sourceInfo: string) {
-    const isGeoDataNull = geoData == null || geoData.coords == null;
-    const latitude = isGeoDataNull || geoData.coords.latitude == null ? null : geoData.coords.latitude;
-    const longitude = isGeoDataNull || geoData.coords.longitude == null ? null : geoData.coords.longitude;
-    const accuracy = isGeoDataNull || geoData.coords.accuracy == null ? null : geoData.coords.accuracy;
-    const altitude = isGeoDataNull || geoData.coords.altitude == null ? null : geoData.coords.altitude;
-    const altitudeAccuracy =
-      isGeoDataNull || geoData.coords.altitudeAccuracy == null ? null : geoData.coords.altitudeAccuracy;
-    const heading = isGeoDataNull || geoData.coords.heading == null ? null : geoData.coords.heading;
-    const speed = isGeoDataNull || geoData.coords.speed == null ? null : geoData.coords.speed;
+    const latitude = !geoData.latitude ? null : geoData.latitude;
+    const longitude = !geoData.longitude ? null : geoData.longitude;
+    const accuracy = !geoData.accuracy ? null : geoData.accuracy;
+    const altitude = !geoData.altitude ? null : geoData.altitude;
+    const altAccuracy = !geoData.altitudeAccuracy ? null : geoData.altitudeAccuracy;
+    const heading = !geoData.heading ? null : geoData.heading;
+    const speed = !geoData.speed ? null : geoData.speed;
 
     return {
-      locationId: locationId,
+      locationId,
       tranDate: new Date().toISOString(),
-      latitude: latitude,
-      longitude: longitude,
-      accuracy: accuracy,
-      altitude: altitude,
-      altAccuracy: altitudeAccuracy,
-      speed: speed,
-      heading: heading,
-      sourceInfo: sourceInfo,
+      latitude,
+      longitude,
+      accuracy,
+      altitude,
+      altAccuracy,
+      speed,
+      heading,
+      sourceInfo,
     };
   }
 }

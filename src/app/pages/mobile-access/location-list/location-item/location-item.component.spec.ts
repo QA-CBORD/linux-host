@@ -1,22 +1,21 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { LocationItemPage } from './location-item.page';
+import { LocationItemComponent } from './location-item.component';
 
 describe('LocationItemPage', () => {
-  let component: LocationItemPage;
-  let fixture: ComponentFixture<LocationItemPage>;
+  let component: LocationItemComponent;
+  let fixture: ComponentFixture<LocationItemComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ LocationItemPage ],
+      declarations: [LocationItemComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(LocationItemPage);
+    fixture = TestBed.createComponent(LocationItemComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

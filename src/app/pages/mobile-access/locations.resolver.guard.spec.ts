@@ -5,7 +5,7 @@ import { LocationsResolverGuard } from './locations.resolver.guard';
 describe('Locations.ResolverGuard', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [LocationsResolverGuard]
+      providers: [LocationsResolverGuard],
     });
   });
 
