@@ -1,7 +1,7 @@
 
 import { Injectable } from '@angular/core';
 
-import { Observable, throwError } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 import { BaseService } from '../base-service/base.service';
 
@@ -14,6 +14,15 @@ import { MUserPhotoInfo } from '../../model/user/user-photo-info.interface';
 })
 export class UserService extends BaseService {
   private serviceUrl = '/json/user';
+  private userData$: BehaviorSubject<MUserInfo> = new BehaviorSubject<MUserInfo>(null);
+
+  set _userData(userInfo: MUserInfo) {
+    this.userData$.next({ ...userInfo });
+  }
+
+  get userData(): Observable<MUserInfo> {
+    return this.userData$.asObservable();
+  }
 
   /**
    * Get the current User information using the current Session Id
@@ -25,9 +34,7 @@ export class UserService extends BaseService {
   getAcceptedPhoto(): Observable<MUserPhotoInfo> {
     return this.getUser().pipe(
       switchMap(({ id }: MUserInfo) => this.getPhotoListByUserId(id)),
-      map(({ response: { list } }) =>
-        this.getPhotoIdByStatus(list, 1) ? this.getPhotoIdByStatus(list) : throwError('dasdsa')
-      ),
+      map(({ response: { list } }) => this.getPhotoIdByStatus(list)),
       switchMap(({ id }: MUserPhotoInfo) => this.getPhotoById(id)),
       map(({ response }) => response)
     );

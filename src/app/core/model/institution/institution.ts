@@ -1,14 +1,17 @@
 import { MAuthenticationInfo } from '../authentication/authentication-info.interface';
 
-export class MInstitutionInfo {
+export interface Institution {
   id: string;
+  objectRevision: number;
   name: string;
   shortName: string;
   timeZone: string;
   locale: string;
-  authenticationSystemType: number; /// 0=INSTITUTION, 1=HOSTED
+  authenticationSystemType: number; // See AuthenticationSystemType for valid values
   authenticationInfo: MAuthenticationInfo;
-  lastChangedTerms: string;
+  lastChangedTerms: Date;
   cashlessPaymentSystemType: number;
-  type: number; /// 0=CNU (old icon), 1=Hosipitals (new icon)
+  active: boolean;
+  payWithGETOnly: boolean;
+  type: number;
 }

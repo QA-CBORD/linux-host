@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Events } from '@ionic/angular';
 
 import { Observable } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+
 import { AuthService } from '../../service/auth-service/auth.service';
 
 import * as Globals from '../../../app.global';
@@ -10,18 +10,14 @@ import * as Globals from '../../../app.global';
 import { MUserLogin } from '../../model/user/user-login.interface';
 import { ExceptionProvider } from '../exception-provider/exception.provider';
 import { DataCache } from '../../utils/data-cache';
+import { catchError, tap } from 'rxjs/operators';
 
 
 @Injectable({
   providedIn: 'root',
 })
 export class TestProvider {
-
-  constructor(
-    private events: Events,
-    private authService: AuthService,
-  ) {
-  }
+  constructor(private events: Events, private authService: AuthService) {}
 
   /**
    *  Get Session Info using testing user credentials in Develpment

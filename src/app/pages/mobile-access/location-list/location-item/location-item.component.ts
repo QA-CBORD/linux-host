@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { MMobileLocationInfo } from '../../model/mobile-access.interface';
 import { Router } from '@angular/router';
 import { NavController } from '@ionic/angular';
+
+import { MMobileLocationInfo } from '../../model/mobile-access.interface';
 
 @Component({
   selector: 'app-location-item',
