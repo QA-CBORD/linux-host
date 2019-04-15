@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+
 import { MMobileLocationInfo } from '../model/mobile-access.interface';
 
 @Component({
@@ -15,4 +16,8 @@ export class LocationListComponent implements OnInit {
   ngOnInit() {}
 
   favTrigger($event: string) {}
+
+  locationId(location) {
+    console.log(location);
+  }
 }

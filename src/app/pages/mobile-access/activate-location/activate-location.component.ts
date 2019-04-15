@@ -1,16 +1,19 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { UserService } from '../../../core/service/user-service/user.service';
-
-import { Observable } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Location } from '@angular/common';
+import { Events, PopoverController } from '@ionic/angular';
+
+import { map, tap } from 'rxjs/operators';
+import { Observable, Subscription } from 'rxjs';
+
+import { UserService } from '../../../core/service/user-service/user.service';
 import { MobileAccessService } from '../service/mobile-access.service';
 import { CoordsService } from '../../../core/service/coords/coords.service';
 import * as Globals from '../../../app.global';
-import { Events, PopoverController } from '@ionic/angular';
 import { ExceptionProvider } from '../../../core/provider/exception-provider/exception.provider';
-import { Location } from '@angular/common';
-import { of } from 'rxjs/internal/observable/of';
+import { MUserPhotoInfo } from '../../../core/model/user/user-photo-info.interface';
+import { MUserInfo } from '../../../core/model/user/user-info.interface';
+import { MGeoCoordinates } from '../../../core/model/geolocation/geocoordinates.interface';
 
 @Component({
   selector: 'app-activate-location',
@@ -18,9 +21,11 @@ import { of } from 'rxjs/internal/observable/of';
   styleUrls: ['./activate-location.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ActivateLocationComponent implements OnInit {
+export class ActivateLocationComponent implements OnInit, OnDestroy {
   private readonly spinnerMessage = 'Activating locations...';
-  photoUrl: Observable<string>;
+  private readonly sourceSubscription: Subscription = new Subscription();
+  userInfo$: Observable<MUserInfo>;
+  photoUrl$: Observable<string>;
   locationId: string;
   coords: any;
 
@@ -35,39 +40,68 @@ export class ActivateLocationComponent implements OnInit {
     private readonly location: Location
   ) {}
 
+  get userFullName(): Observable<string> {
+    return this.userInfo$.pipe(
+      map((user: MUserInfo) => {
+        const fn = user.firstName ? user.firstName : '';
+        const ln = user.lastName ? user.lastName : '';
+        const mn = user.middleName ? user.middleName : '';
+
+        return `${fn} ${mn} ${ln}`;
+      })
+    );
+  }
+
+  ngOnDestroy() {
+    this.sourceSubscription.unsubscribe();
+  }
+
   ngOnInit() {
-    this.photoUrl = this.userService
-      .getAcceptedPhoto()
-      .pipe(map(({ data, mimeType }) => `data:${mimeType};base64,${data}`));
     this.locationId = this.routerLink.snapshot.params.id;
-    this.geoDataService.initCoords().subscribe(data => (this.coords = data));
+    this.userInfo$ = this.userService.getUser();
+    this.setUserPhoto();
+    this.setCoords();
   }
 
   activateLocation() {
-    this.activatingHandler(true);
+    this.spinnerHandler(true);
 
-    this.mobileAccessService
+    const subscription = this.mobileAccessService
       .activateMobileLocation(this.locationId, this.coords)
-      .pipe(tap(() => this.activatingHandler()))
-      .subscribe(({ responseCode: s, message }) => this.activatingModal(message, s !== '00'));
+      .pipe(tap(() => this.spinnerHandler()))
+      .subscribe(({ responseCode: s, message }) => this.modalHandler(message, s !== '00'));
+
+    this.sourceSubscription.add(subscription);
   }
 
-  private activatingHandler(started: boolean = false) {
+  private setUserPhoto() {
+    this.photoUrl$ = this.userService
+      .getAcceptedPhoto()
+      .pipe(map(({ data, mimeType }) => `data:${mimeType};base64,${data}`));
+  }
+
+  private setCoords() {
+    const subscription = this.geoDataService
+      .initCoords()
+      .subscribe((coords: MGeoCoordinates) => (this.coords = coords));
+
+    this.sourceSubscription.add(subscription);
+  }
+
+  private spinnerHandler(started: boolean = false) {
     const start = {
       bShow: true,
       message: this.spinnerMessage,
     };
     const stop = { bShow: false };
-
     const loaderArgs = started ? start : stop;
 
     this.events.publish(Globals.Events.LOADER_SHOW, loaderArgs);
   }
 
-  private activatingModal(message: string, error: boolean = false) {
+  private modalHandler(message: string, error: boolean = false) {
     const successTittle = 'Success!';
     const errorTittle = 'Fail!';
-
     const title = error ? errorTittle : successTittle;
 
     ExceptionProvider.showException(this.events, {
@@ -77,13 +111,13 @@ export class ActivateLocationComponent implements OnInit {
         message,
         positiveButtonTitle: 'OK',
         positiveButtonHandler: () => {
-          this.closeModal();
+          this.closeModalHandler();
         },
       },
     });
   }
 
-  closeModal() {
+  private closeModalHandler() {
     this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
     this.location.back();
   }

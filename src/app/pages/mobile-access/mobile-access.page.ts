@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { Events, Platform } from '@ionic/angular';
-
 import { Keyboard } from '@ionic-native/keyboard/ngx';
-import { MMobileLocationInfo } from './model/mobile-access.interface';
+
 import { Observable, Subscription } from 'rxjs';
+
+import { MMobileLocationInfo } from './model/mobile-access.interface';
 import { MobileAccessService } from './service/mobile-access.service';
 import { CoordsService } from '../../core/service/coords/coords.service';
 import { MGeoCoordinates } from '../../core/model/geolocation/geocoordinates.interface';
-import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-mobile-access',
@@ -17,8 +17,8 @@ import { take } from 'rxjs/operators';
 })
 export class MobileAccessPage implements OnDestroy, OnInit {
   private readonly sourceSubscription: Subscription = new Subscription();
+  private currentCoords: MGeoCoordinates;
   locations$: Observable<MMobileLocationInfo[]>;
-  currentCoords: MGeoCoordinates;
 
   constructor(
     private readonly platform: Platform,
@@ -268,23 +268,30 @@ export class MobileAccessPage implements OnDestroy, OnInit {
     this.sourceSubscription.unsubscribe();
   }
 
+  ngOnInit() {
+    this.setCoords();
+  }
+
+  refreshLocationList($event) {
+    const subscription = this.mobileAccessService
+      .getMobileLocations(this.currentCoords)
+      .subscribe(() => $event.target.complete());
+
+    this.sourceSubscription.add(subscription);
+  }
+
+  private setCoords() {
+    const subscription = this.coordsService.coordinates.subscribe(
+      (coords: MGeoCoordinates) => (this.currentCoords = coords)
+    );
+
+    this.sourceSubscription.add(subscription);
+  }
+
   // START REDESIGN:
   private initComponent() {
     this.platform.ready().then(() => {
       this.locations$ = this.mobileAccessService.locations;
     });
-  }
-
-  doRefresh($event) {
-    this.mobileAccessService
-      .getMobileLocations(this.currentCoords)
-      .pipe(take(1))
-      .subscribe(() => $event.target.complete());
-  }
-
-  ngOnInit(): void {
-    this.sourceSubscription.add(
-      this.coordsService.coordinates.subscribe((coords: MGeoCoordinates) => (this.currentCoords = coords))
-    );
   }
 }

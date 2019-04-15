@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { tap } from 'rxjs/internal/operators/tap';
 import { map } from 'rxjs/operators';
 
@@ -13,11 +13,6 @@ import { MessageResponse } from '../../../core/model/service/message-response.in
 export class MobileAccessService extends BaseService {
   private readonly serviceUrl = '/json/commerce';
   private readonly locations$: BehaviorSubject<MMobileLocationInfo[]> = new BehaviorSubject<MMobileLocationInfo[]>([]);
-  private coords: MGeoCoordinates = {
-    latitude: null,
-    longitude: null,
-    accuracy: null,
-  };
 
   get locations(): Observable<MMobileLocationInfo[]> {
     return this.locations$.asObservable();
