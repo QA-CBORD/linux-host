@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { Events, PopoverController } from '@ionic/angular';
 
-import { map, switchMap, tap } from 'rxjs/operators';
+import { map, tap, switchMap } from 'rxjs/operators';
 import { Observable, Subscription } from 'rxjs';
 
 import { UserService } from '../../../core/service/user-service/user.service';

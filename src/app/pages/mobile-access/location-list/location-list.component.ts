@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
 import { MMobileLocationInfo } from '../model/mobile-access.interface';
 
 @Component({
-  selector: 'app-location-list',
+  selector: 'st-location-list',
   templateUrl: './location-list.component.html',
   styleUrls: ['./location-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
