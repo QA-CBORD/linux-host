@@ -297,6 +297,10 @@ export class MobileAccessPage implements OnDestroy, OnInit {
     });
   }
 
+  favouriteHandler(id: string) {
+    // this.mobileAccessService.addToFavourite(id);
+  }
+
   onSearchedValue(event) {
     console.log(event)
   }

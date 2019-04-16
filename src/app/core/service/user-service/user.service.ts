@@ -13,8 +13,8 @@ import { MUserPhotoInfo } from '../../model/user/user-photo-info.interface';
   providedIn: 'root',
 })
 export class UserService extends BaseService {
-  private serviceUrl = '/json/user';
-  private userData$: BehaviorSubject<MUserInfo> = new BehaviorSubject<MUserInfo>(null);
+  private readonly serviceUrl = '/json/user';
+  private readonly userData$: BehaviorSubject<MUserInfo> = new BehaviorSubject<MUserInfo>(null);
 
   set _userData(userInfo: MUserInfo) {
     this.userData$.next({ ...userInfo });
@@ -28,8 +28,22 @@ export class UserService extends BaseService {
    * Get the current User information using the current Session Id
    */
   getUser(): Observable<MUserInfo> {
-    return this.httpRequest(this.serviceUrl, 'retrieve', true).pipe(map(({ response }) => response));
+    return this.httpRequest(this.serviceUrl, 'retrieve', true).pipe(
+      map(({ response }) => {
+        this._userData = response;
+        return response;
+      })
+    );
   }
+
+  getUserSettingsBySettingName(settingName: string): Observable<any> {
+    return this.httpRequest<any>(this.serviceUrl, 'retrieveSetting', true, { settingName });
+  }
+
+  saveUserSettingsBySettingName<T>(settingName: string, settingValue: T): Observable<any> {
+    return this.httpRequest<any>(this.serviceUrl, 'saveSetting', true, { settingName, settingValue });
+  }
+
 
   getAcceptedPhoto(): Observable<MUserPhotoInfo> {
     return this.getUser().pipe(

@@ -8,11 +8,18 @@ import { BaseService, ServiceParameters } from 'src/app/core/service/base-servic
 import { MGeoCoordinates } from 'src/app/core/model/geolocation/geocoordinates.interface';
 import { MMobileLocationInfo, MActivateMobileLocationResult } from '../model/mobile-access.interface';
 import { MessageResponse } from '../../../core/model/service/message-response.interface';
+import { UserService } from '../../../core/service/user-service/user.service';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable()
 export class MobileAccessService extends BaseService {
   private readonly serviceUrl = '/json/commerce';
+  private readonly favouritesLocationSettingsName = 'mobileaccess_favorites';
   private readonly locations$: BehaviorSubject<MMobileLocationInfo[]> = new BehaviorSubject<MMobileLocationInfo[]>([]);
+
+  constructor(protected http: HttpClient, private userService: UserService) {
+    super(http);
+  }
 
   get locations(): Observable<MMobileLocationInfo[]> {
     return this.locations$.asObservable();
@@ -31,10 +38,16 @@ export class MobileAccessService extends BaseService {
     const filters = ['Normal', 'TempCode', 'Attendance'];
 
     const postParams: ServiceParameters = { ...incomeGeoData, filters };
-
+    // this.getFavouritesLocations();
     return this.httpRequest(this.serviceUrl, 'getMobileLocations', true, postParams).pipe(
       map(({ response }) => response.sort(this.sortByClosestDistance)),
       tap((locations: MMobileLocationInfo[]) => (this._locations = locations))
+    );
+  }
+
+  getLocationById(locationId: string): Observable<MMobileLocationInfo> {
+    return this.locations.pipe(
+      map((locations: MMobileLocationInfo[]) => locations.filter(location => location.locationId === locationId)[0])
     );
   }
 
@@ -42,7 +55,17 @@ export class MobileAccessService extends BaseService {
     return a && b ? a - b : 0;
   }
 
-  addToFavourite(id: string) {}
+  // addToFavourite(locationId: string) {
+  //   this.userService
+  //     .saveUserSettingsBySettingName(this.favouritesLocationSettingsName, JSON.stringify('TEST'))
+  //     .subscribe(data => console.log(data));
+  // }
+  //
+  // getFavouritesLocations() {
+  //   this.userService
+  //     .getUserSettingsBySettingName(this.favouritesLocationSettingsName)
+  //     .subscribe(data => console.log(data));
+  // }
 
   /**
    * Activate 'Mobile Location' location for user

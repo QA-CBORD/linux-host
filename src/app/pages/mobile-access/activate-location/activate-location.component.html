@@ -6,7 +6,7 @@
 <ion-content padding>
   <ion-card class="user-data">
     <ion-card-header>
-      <ion-card-title class="user-data__university">CBORD University</ion-card-title>
+      <ion-card-title class="user-data__university">{{(institution$ | async).name}}</ion-card-title>
     </ion-card-header>
 
     <ion-card-content>
@@ -14,10 +14,10 @@
         <img class="user-data__photo" [src]="photoUrl$ | async" alt="photo">
         <div class="user-data__info">
           <p class="user-data__name">{{userFullName$ | async}}</p>
-          <p class="user-data__id">ID: {{(userInfo$ | async).id}}</p>
+<!--          <p class="user-data__id">ID: {{(userInfo$ | async)['id']}}</p>-->
         </div>
       </ion-card>
-      <p class="user-data__location">9999 - Washmachine</p>
+      <p class="user-data__location">{{(location$ | async).locationId}} - {{(location$ | async).name}}</p>
     </ion-card-content>
     <div class="user-data__activate-btn">
       <ion-button shape="round" size="large" color="light" expand="full" (click)="activateLocation()">activate</ion-button>
