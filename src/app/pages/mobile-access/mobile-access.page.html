@@ -45,12 +45,14 @@
 
 <ion-content>
     <ion-refresher slot="fixed" (ionRefresh)="refreshLocationList($event)">
-        <ion-refresher-content
-                pullingIcon="arrow-dropdown"
-                pullingText="Pull to refresh"
-                refreshingSpinner="crescent"
-                refreshingText="Refreshing Locations...">
-        </ion-refresher-content>
+        <!--<ion-refresher-content-->
+                <!--pullingIcon="arrow-dropdown"-->
+                <!--pullingText="Pull to refresh"-->
+                <!--refreshingSpinner="crescent"-->
+                <!--refreshingText="Refreshing Locations...">-->
+        <!--</ion-refresher-content>-->
+
+        <st-spinner></st-spinner>
     </ion-refresher>
     <app-location-list [locations]="locations$ | async"></app-location-list>
 </ion-content>

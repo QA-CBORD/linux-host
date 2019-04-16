@@ -11,6 +11,11 @@
   @include font-family($font-nunito-regular);
 }
 
+@mixin font-nunito-semibold($font-size) {
+  @include font-size($font-size);
+  @include font-family($font-nunito-semibold);
+}
+
 @mixin font-nunito-heavy($font-size) {
   @include font-size($font-size);
   @include font-family($font-nunito-heavy);
