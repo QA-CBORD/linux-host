@@ -1,4 +1,4 @@
-<app-location-item *ngFor="let location of locations; trackBy:locationId"
+<st-location-item *ngFor="let location of locations; trackBy:locationId"
                    [location]="location"
                    (addToFav)="favTrigger($event)">
-</app-location-item>
+</st-location-item>

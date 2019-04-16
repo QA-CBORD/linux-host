@@ -1,9 +1,7 @@
 <ion-item detail (click)="nav()">
-  <ion-label>
-    <h3>{{location.name}}</h3>
-    <p>{{location.distance}}</p>
+  <ion-label class="st-label">
+    <h3 class="title">{{ location.locationId }} - {{ location.name }}</h3>
+    <p class="sub-title">{{ location.distance }}</p>
   </ion-label>
-  <ion-icon [name]=starClass
-            slot="end" (click)="triggerFavourite()"></ion-icon>
+  <img src="{{ starClass }}" width="24px" alt="favorites" (click)="triggerFavourite()" />
 </ion-item>
-<!--src="assets/icon/star-filled.svg"-->

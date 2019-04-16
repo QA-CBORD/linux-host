@@ -1,5 +1,16 @@
-app-location-item{
-  ion-icon[aria-label='']{
+@import 'tools';
 
+:host {
+  .st-label {
+    margin: 0;
+
+    .title {
+      @include font-family($font-nunito-semibold);
+    }
+
+    .sub-title {
+      margin-top: -5px;
+      @include font-nunito-regular(10px);
+    }
   }
 }

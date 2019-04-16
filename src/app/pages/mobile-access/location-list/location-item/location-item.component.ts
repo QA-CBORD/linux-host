@@ -5,7 +5,7 @@ import { NavController } from '@ionic/angular';
 import { MMobileLocationInfo } from '../../model/mobile-access.interface';
 
 @Component({
-  selector: 'app-location-item',
+  selector: 'st-location-item',
   templateUrl: './location-item.component.html',
   styleUrls: ['./location-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -18,9 +18,10 @@ export class LocationItemComponent implements OnInit {
 
   get starClass(): string {
     const empty = 'star-outline';
-    const filled = 'star';
+    const filled = 'star-filled';
+    const star = this.location.name.includes('153') ? filled : empty;
 
-    return this.location.name.includes('153') ? filled : empty;
+    return `./assets/icon/${star}.svg`;
   }
 
   nav() {
@@ -31,5 +32,6 @@ export class LocationItemComponent implements OnInit {
     this.addToFav.emit(this.location.locationId);
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+  }
 }
