@@ -12,8 +12,8 @@ import { MUserPhotoInfo } from '../../model/user/user-photo-info.interface';
   providedIn: 'root',
 })
 export class UserService extends BaseService {
-  private serviceUrl = '/json/user';
-  private userData$: BehaviorSubject<MUserInfo> = new BehaviorSubject<MUserInfo>(null);
+  private readonly serviceUrl = '/json/user';
+  private readonly userData$: BehaviorSubject<MUserInfo> = new BehaviorSubject<MUserInfo>(null);
 
   set _userData(userInfo: MUserInfo) {
     this.userData$.next({ ...userInfo });

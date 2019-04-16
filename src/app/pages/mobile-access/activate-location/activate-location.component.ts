@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { Events, PopoverController } from '@ionic/angular';
 
-import { map, tap } from 'rxjs/operators';
+import { map, switchMap, tap } from 'rxjs/operators';
 import { Observable, Subscription } from 'rxjs';
 
 import { UserService } from '../../../core/service/user-service/user.service';
@@ -13,6 +13,9 @@ import * as Globals from '../../../app.global';
 import { ExceptionProvider } from '../../../core/provider/exception-provider/exception.provider';
 import { MUserInfo } from '../../../core/model/user/user-info.interface';
 import { MGeoCoordinates } from '../../../core/model/geolocation/geocoordinates.interface';
+import { InstitutionService } from '../../../core/service/institution/institution.service';
+import { MMobileLocationInfo } from '../model/mobile-access.interface';
+import { Institution } from '../../../core/model/institution/institution';
 
 @Component({
   selector: 'app-activate-location',
@@ -25,6 +28,8 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
   private readonly sourceSubscription: Subscription = new Subscription();
   userInfo$: Observable<MUserInfo>;
   photoUrl$: Observable<string>;
+  location$: Observable<MMobileLocationInfo>;
+  institution$: Observable<Institution>;
   locationId: string;
   coords: any;
 
@@ -36,7 +41,8 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
     private readonly events: Events,
     private readonly popoverCtrl: PopoverController,
     private readonly router: Router,
-    private readonly location: Location
+    private readonly location: Location,
+    private readonly institutionService: InstitutionService
   ) {}
 
   get userFullName$(): Observable<string> {
@@ -54,6 +60,8 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.locationId = this.routerLink.snapshot.params.id;
     this.userInfo$ = this.userService.userData;
+    this.location$ = this.mobileAccessService.getLocationById(this.locationId);
+    this.setInstitution();
     this.setUserPhoto();
     this.setCoords();
   }
@@ -67,6 +75,12 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
       .subscribe(({ responseCode: s, message }) => this.modalHandler(message, s !== '00'));
 
     this.sourceSubscription.add(subscription);
+  }
+
+  private setInstitution() {
+    this.institution$ = this.userService.userData.pipe(
+      switchMap((user: MUserInfo) => this.institutionService.getInstitutionDataById(user.institutionId))
+    );
   }
 
   private setUserPhoto() {

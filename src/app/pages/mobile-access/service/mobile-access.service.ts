@@ -45,13 +45,19 @@ export class MobileAccessService extends BaseService {
     );
   }
 
+  getLocationById(locationId: string): Observable<MMobileLocationInfo> {
+    return this.locations.pipe(
+      map((locations: MMobileLocationInfo[]) => locations.filter(location => location.locationId === locationId)[0])
+    );
+  }
+
   private sortByClosestDistance({ distance: a }: MMobileLocationInfo, { distance: b }: MMobileLocationInfo) {
     return a && b ? a - b : 0;
   }
 
   // addToFavourite(locationId: string) {
   //   this.userService
-  //     .saveUserSettingsBySettingName(this.favouritesLocationSettingsName, JSON.stringify([{locationId}]))
+  //     .saveUserSettingsBySettingName(this.favouritesLocationSettingsName, JSON.stringify('TEST'))
   //     .subscribe(data => console.log(data));
   // }
   //
