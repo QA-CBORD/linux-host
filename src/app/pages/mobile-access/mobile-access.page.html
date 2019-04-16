@@ -39,11 +39,11 @@
 <!--</ion-col>-->
 <!--</ion-row>-->
 <!--</ion-grid>-->
-<ion-header>
-    <ion-toolbar>
-        <ion-title>My Navigation Bar</ion-title>
-    </ion-toolbar>
-</ion-header>
+<!--<ion-header>-->
+<!--    <ion-toolbar>-->
+<!--        <ion-title>My Navigation Bar</ion-title>-->
+<!--    </ion-toolbar>-->
+<!--</ion-header>-->
 
 <ion-content>
     <ion-refresher slot="fixed" (ionRefresh)="refreshLocationList($event)">
@@ -54,5 +54,5 @@
                 refreshingText="Refreshing Locations...">
         </ion-refresher-content>
     </ion-refresher>
-    <app-location-list [locations]="locations$ | async"></app-location-list>
+    <app-location-list [locations]="locations$ | async" (favouriteTrigger)="favouriteHandler($event)"></app-location-list>
 </ion-content>

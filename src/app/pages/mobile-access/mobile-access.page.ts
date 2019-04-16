@@ -294,4 +294,8 @@ export class MobileAccessPage implements OnDestroy, OnInit {
       this.locations$ = this.mobileAccessService.locations;
     });
   }
+
+  favouriteHandler(id: string) {
+    // this.mobileAccessService.addToFavourite(id);
+  }
 }

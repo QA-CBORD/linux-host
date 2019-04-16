@@ -11,7 +11,6 @@ import { MobileAccessService } from '../service/mobile-access.service';
 import { CoordsService } from '../../../core/service/coords/coords.service';
 import * as Globals from '../../../app.global';
 import { ExceptionProvider } from '../../../core/provider/exception-provider/exception.provider';
-import { MUserPhotoInfo } from '../../../core/model/user/user-photo-info.interface';
 import { MUserInfo } from '../../../core/model/user/user-info.interface';
 import { MGeoCoordinates } from '../../../core/model/geolocation/geocoordinates.interface';
 
@@ -22,7 +21,7 @@ import { MGeoCoordinates } from '../../../core/model/geolocation/geocoordinates.
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ActivateLocationComponent implements OnInit, OnDestroy {
-  private readonly spinnerMessage = 'Activating locations...';
+  private readonly spinnerMessage = 'Activating location...';
   private readonly sourceSubscription: Subscription = new Subscription();
   userInfo$: Observable<MUserInfo>;
   photoUrl$: Observable<string>;
@@ -40,14 +39,10 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
     private readonly location: Location
   ) {}
 
-  get userFullName(): Observable<string> {
+  get userFullName$(): Observable<string> {
     return this.userInfo$.pipe(
-      map((user: MUserInfo) => {
-        const fn = user.firstName ? user.firstName : '';
-        const ln = user.lastName ? user.lastName : '';
-        const mn = user.middleName ? user.middleName : '';
-
-        return `${fn} ${mn} ${ln}`;
+      map(({ firstName: fn, middleName: mn, lastName: ln }: MUserInfo) => {
+        return `${fn || ''} ${mn || ''} ${ln || ''}`;
       })
     );
   }
@@ -58,7 +53,7 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.locationId = this.routerLink.snapshot.params.id;
-    this.userInfo$ = this.userService.getUser();
+    this.userInfo$ = this.userService.userData;
     this.setUserPhoto();
     this.setCoords();
   }

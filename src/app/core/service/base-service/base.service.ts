@@ -23,7 +23,7 @@ export class BaseService {
   /// Local base url for HTTP calls
   protected baseUrl: string = null;
 
-  constructor(private http: HttpClient) {}
+  constructor(protected http: HttpClient) {}
 
   /**
    * HTTP request

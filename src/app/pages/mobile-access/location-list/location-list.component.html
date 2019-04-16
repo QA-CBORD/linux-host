@@ -1,4 +1,3 @@
 <app-location-item *ngFor="let location of locations; trackBy:locationId"
-                   [location]="location"
-                   (addToFav)="favTrigger($event)">
+                   [location]="location" (addToFav)="favouriteHandler($event)">
 </app-location-item>

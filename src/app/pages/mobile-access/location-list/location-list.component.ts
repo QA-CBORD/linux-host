@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 
 import { MMobileLocationInfo } from '../model/mobile-access.interface';
 
@@ -8,16 +8,15 @@ import { MMobileLocationInfo } from '../model/mobile-access.interface';
   styleUrls: ['./location-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LocationListComponent implements OnInit {
+export class LocationListComponent {
   @Input('locations') locations: MMobileLocationInfo[];
+  @Output('favouriteTrigger') favouriteTrigger: EventEmitter<string> = new EventEmitter<string>();
 
-  constructor() {}
+  locationId(index: number, { locationId }: MMobileLocationInfo): string {
+    return locationId;
+  }
 
-  ngOnInit() {}
-
-  favTrigger($event: string) {}
-
-  locationId(location) {
-    console.log(location);
+  favouriteHandler(event: string) {
+    this.favouriteTrigger.emit(event);
   }
 }

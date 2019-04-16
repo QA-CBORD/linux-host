@@ -10,7 +10,7 @@ import { MMobileLocationInfo } from '../../model/mobile-access.interface';
   styleUrls: ['./location-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LocationItemComponent implements OnInit {
+export class LocationItemComponent {
   @Input('location') location: MMobileLocationInfo;
   @Output('addToFav') addToFav: EventEmitter<string> = new EventEmitter<string>();
 
@@ -22,13 +22,11 @@ export class LocationItemComponent implements OnInit {
     return this.location.name.includes('153') ? filled : empty;
   }
 
-  nav() {
+  openLocation() {
     this.nav2.navigateForward(`/mobile-access/activate/${this.location.locationId}`);
   }
 
   triggerFavourite() {
     this.addToFav.emit(this.location.locationId);
   }
-
-  ngOnInit() {}
 }

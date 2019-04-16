@@ -13,8 +13,8 @@
       <ion-card class="user-data__data-card">
         <img class="user-data__photo" [src]="photoUrl$ | async" alt="photo">
         <div class="user-data__info">
-          <p class="user-data__name">{{userFullName | async}}</p>
-          <p class="user-data__id">ID: {{(userInfo$ | async).id}}</p>
+          <p class="user-data__name">{{userFullName$ | async}}</p>
+          <p class="user-data__id">ID: {{(userInfo$ | async)['id']}}</p>
         </div>
       </ion-card>
       <p class="user-data__location">9999 - Washmachine</p>

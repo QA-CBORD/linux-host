@@ -1,8 +1,7 @@
-
-<ion-item detail (click)="nav()">
+<ion-item detail (click)="openLocation()">
   <ion-label>
     <h3>{{location.name}}</h3>
-    <p>{{location.distance}}</p>
+    <p>{{ location.distance | metersToMiles }}</p>
   </ion-label>
-  <ion-icon [name]=starClass slot="end" (click)="triggerFavourite()"></ion-icon>
+  <ion-icon [name]=starClass slot="end" appClickStopPropagation (click)="triggerFavourite()"></ion-icon>
 </ion-item>
