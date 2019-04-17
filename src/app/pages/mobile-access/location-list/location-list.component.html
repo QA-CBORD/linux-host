@@ -1,3 +1,5 @@
 <st-location-item *ngFor="let location of locations; trackBy:locationId"
                    [location]="location" (addToFav)="favouriteHandler($event)">
 </st-location-item>
+
+<p class="no-data-message" *ngIf="locations.length === 0"> no data </p>

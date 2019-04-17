@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 
-
 import * as Globals from '../../../app.global';
 
 import { BaseService, ServiceParameters } from '../base-service/base.service';
@@ -8,10 +7,9 @@ import { MContentStringInfo } from '../../model/content/content-string-info.inte
 import { Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ContentService extends BaseService {
-
   private serviceUrl = '/json/authentication';
 
   /**
@@ -25,7 +23,7 @@ export class ContentService extends BaseService {
       locale: null,
       domain: stringNameParts[0],
       category: stringNameParts[1],
-      name: stringNameParts[2]
+      name: stringNameParts[2],
     };
 
     return this.httpRequestFull<any>(this.serviceUrl, 'retrieveString', true, true, postParams);
@@ -41,7 +39,7 @@ export class ContentService extends BaseService {
     const postParams: ServiceParameters = {
       locale: null,
       domain: stringNameParts[0],
-      category: stringNameParts[1]
+      category: stringNameParts[1],
     };
 
     return this.httpRequestFull<any>(this.serviceUrl, 'retrieveStringList', true, true, postParams);

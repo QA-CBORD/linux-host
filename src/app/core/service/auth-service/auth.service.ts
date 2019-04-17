@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { BaseService, ServiceParameters } from '../base-service/base.service';
 
 import { MUserLogin } from '../../model/user/user-login.interface';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',

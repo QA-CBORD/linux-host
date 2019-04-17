@@ -76,15 +76,9 @@ export namespace Settings {
 }
 
 export namespace ContentString {
-    export enum EList {
+  export enum EList {}
 
-    }
-
-    export enum EString {
-
-    }
-
-
+  export enum EString {}
 }
 
 export namespace User {

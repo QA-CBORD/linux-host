@@ -21,246 +21,236 @@ import { MInstitutionInfo } from '../model/institution/institution-info.interfac
 import { MEnvironmentInfo } from '../model/environment/environment-info.interface';
 import { EDestination } from 'src/app/pages/home/home.page';
 
-
-
 @Injectable()
 export class DataCache {
+  private static localCache: MCache = new MCache();
+  private static destinationPage: EDestination;
+  private static urlSession: string;
 
-    private static localCache: MCache = new MCache();
-    private static destinationPage: EDestination;
-    private static urlSession: string;
+  private readonly TTL_MINUTES: number = 15;
 
-    private readonly TTL_MINUTES: number = 15;
+  private readonly CACHE: string = 'cache';
 
-    private readonly CACHE: string = 'cache';
+  constructor(private platform: Platform, private appV: AppVersion, private storage: Storage) {
+    /// is on mobile? cordova not available on website
+    this.platform.ready().then(_ => {
+      if (this.platform.is('cordova')) {
+        this.appV.getVersionNumber().then(vNum => DataCache.setAppVersion(vNum));
+      }
+    });
+  }
 
-    constructor(
-        private platform: Platform,
-        private appV: AppVersion,
-        private storage: Storage
-    ) {
+  static setWebInitiValues(urlSesh: string, dPage: EDestination) {
+    DataCache.destinationPage = dPage;
+    DataCache.urlSession = urlSesh;
+  }
 
-        /// is on mobile? cordova not available on website
-        this.platform.ready().then(_ => {
-            if (this.platform.is('cordova')) {
-                this.appV.getVersionNumber().then(vNum => DataCache.setAppVersion(vNum));
-            }
-        });
-    }
+  static getDestinationPage(): EDestination {
+    return DataCache.destinationPage;
+  }
 
-    static setWebInitiValues(urlSesh: string, dPage: EDestination) {
-        DataCache.destinationPage = dPage;
-        DataCache.urlSession = urlSesh;
-    }
+  static getUrlSession(): string {
+    return DataCache.urlSession;
+  }
 
-    static getDestinationPage(): EDestination {
-        return DataCache.destinationPage;
-    }
+  static getApplicationUUID(): string {
+    return DataCache.localCache.getApplicationUUID();
+  }
 
-    static getUrlSession(): string {
-        return DataCache.urlSession;
-    }
+  static getEnvironmentInfo(): MEnvironmentInfo {
+    return DataCache.localCache.environmentInfo || null;
+  }
 
-    static getApplicationUUID(): string {
-        return DataCache.localCache.getApplicationUUID();
-    }
+  static setAppVersion(appVersion: string) {
+    DataCache.localCache.appVersion = appVersion;
+  }
 
-    static getEnvironmentInfo(): MEnvironmentInfo {
-        return DataCache.localCache.environmentInfo || null;
-    }
+  static getAppVersion(): string {
+    return DataCache.localCache.appVersion || null;
+  }
 
-    static setAppVersion(appVersion: string) {
-        DataCache.localCache.appVersion = appVersion;
-    }
+  static setSessionId(newSessionId: string) {
+    DataCache.localCache.sessionId = newSessionId;
+  }
 
-    static getAppVersion(): string {
-        return DataCache.localCache.appVersion || null;
-    }
+  static getSessionId(): string {
+    return DataCache.localCache.sessionId || null;
+  }
 
-    static setSessionId(newSessionId: string) {
-        DataCache.localCache.sessionId = newSessionId;
-    }
+  static setUserInfo(newUserInfo: MUserInfo) {
+    DataCache.localCache.userInfo = newUserInfo;
+  }
 
-    static getSessionId(): string {
-        return DataCache.localCache.sessionId || null;
-    }
+  static getUserInfo(): MUserInfo {
+    return DataCache.localCache.userInfo || null;
+  }
 
-    static setUserInfo(newUserInfo: MUserInfo) {
-        DataCache.localCache.userInfo = newUserInfo;
-    }
+  static getInstitutionId(): string {
+    return DataCache.localCache.institutionInfo.id || null;
+  }
 
-    static getUserInfo(): MUserInfo {
-        return DataCache.localCache.userInfo || null;
-    }
+  static setInstitutionId(institutionId: string) {
+    DataCache.localCache.institutionInfo.id = institutionId;
+  }
 
-    static getInstitutionId(): string {
-        return DataCache.localCache.institutionInfo.id || null;
-    }
+  refreshCacheFromStorage(onSuccess: () => void, onFailure: () => void) {
+    this.getData(this.CACHE).subscribe(
+      (data: string) => {
+        if (data != null) {
+          DataCache.localCache = MCache.fromT(JSON.parse(data));
+          onSuccess();
+        } else {
+          onFailure();
+        }
+      },
+      error => {
+        onFailure();
+      }
+    );
+  }
 
-    static setInstitutionId(institutionId: string) {
-        DataCache.localCache.institutionInfo.id = institutionId;
-    }
+  clearLocalCache() {
+    this.storage.clear();
+    DataCache.localCache = new MCache();
+  }
 
-    refreshCacheFromStorage(onSuccess: () => void, onFailure: () => void) {
-        this.getData(this.CACHE).subscribe(
-            (data: string) => {
-                if (data != null) {
-                    DataCache.localCache = MCache.fromT(JSON.parse(data));
-                    onSuccess();
-                } else {
-                    onFailure();
-                }
-            },
-            (error) => {
-                onFailure();
-            }
-        );
-    }
+  storeCache() {
+    this.set(this.CACHE, JSON.stringify(DataCache.localCache));
+  }
 
-    clearLocalCache() {
-        this.storage.clear();
-        DataCache.localCache = new MCache();
-    }
+  setEnvironmentInfo(envInfo: MEnvironmentInfo) {
+    DataCache.localCache.environmentInfo = envInfo;
+  }
 
-    storeCache() {
-        this.set(this.CACHE, JSON.stringify(DataCache.localCache));
-    }
+  getEnvironmentInfo(): MEnvironmentInfo {
+    return DataCache.localCache.environmentInfo || null;
+  }
 
-    setEnvironmentInfo(envInfo: MEnvironmentInfo) {
-        DataCache.localCache.environmentInfo = envInfo;
-    }
+  setSessionId(sessionId: string) {
+    DataCache.localCache.sessionId = sessionId;
+  }
 
-    getEnvironmentInfo(): MEnvironmentInfo {
-        return DataCache.localCache.environmentInfo || null;
-    }
+  getSessionId(): string {
+    return DataCache.localCache.sessionId || null;
+  }
 
-    setSessionId(sessionId: string) {
-        DataCache.localCache.sessionId = sessionId;
-    }
+  getInstitutionInfo(): MInstitutionInfo {
+    return DataCache.localCache.institutionInfo || null;
+  }
 
-    getSessionId(): string {
-        return DataCache.localCache.sessionId || null;
-    }
+  setInstitutionInfo(institutionInfo: MInstitutionInfo) {
+    DataCache.localCache.institutionInfo = institutionInfo;
+  }
 
-    getInstitutionInfo(): MInstitutionInfo {
-        return DataCache.localCache.institutionInfo || null;
-    }
+  setStartupInfo(startupInfo: MStartupInfo) {
+    DataCache.localCache.startupInfo = startupInfo;
+  }
 
-    setInstitutionInfo(institutionInfo: MInstitutionInfo) {
-        DataCache.localCache.institutionInfo = institutionInfo;
-    }
+  getStartupInfo(): MStartupInfo {
+    return DataCache.localCache.startupInfo || null;
+  }
 
-    setStartupInfo(startupInfo: MStartupInfo) {
-        DataCache.localCache.startupInfo = startupInfo;
-    }
+  setInstitutionSetting(settingInfo: MSettingInfo) {
+    DataCache.localCache.addSetting(settingInfo);
+  }
 
-    getStartupInfo(): MStartupInfo {
-        return DataCache.localCache.startupInfo || null;
-    }
+  getInstitutionSetting<T>(setting: Globals.Settings.ESetting): T {
+    return DataCache.localCache.getSetting(setting).value;
+  }
 
-    setInstitutionSetting(settingInfo: MSettingInfo) {
-        DataCache.localCache.addSetting(settingInfo);
-    }
+  setInstitutionSettingList(settingList: MSettingInfoList) {
+    DataCache.localCache.addSettingList(settingList);
+  }
 
-    getInstitutionSetting<T>(setting: Globals.Settings.ESetting): T {
-        return DataCache.localCache.getSetting(setting).value;
-    }
+  setInstitutionContentString(contentStringInfo: MContentStringInfo) {
+    DataCache.localCache.addContentString(contentStringInfo);
+  }
 
-    setInstitutionSettingList(settingList: MSettingInfoList) {
-        DataCache.localCache.addSettingList(settingList);
-    }
+  getInstitutionContentString(string: Globals.Settings.EStrings): string {
+    return DataCache.localCache.getContentString(string).value;
+  }
 
-    setInstitutionContentString(contentStringInfo: MContentStringInfo) {
-        DataCache.localCache.addContentString(contentStringInfo);
-    }
+  getPINSet(): boolean {
+    return DataCache.localCache.bIsPINSet;
+  }
 
-    getInstitutionContentString(string: Globals.Settings.EStrings): string {
-        return DataCache.localCache.getContentString(string).value;
-    }
+  setPINSet(pinSet: boolean) {
+    DataCache.localCache.bIsPINSet = pinSet;
+  }
 
-    getPINSet(): boolean {
-        return DataCache.localCache.bIsPINSet;
-    }
+  getUserInfo(): MUserInfo {
+    return DataCache.localCache.userInfo;
+  }
 
-    setPINSet(pinSet: boolean) {
-        DataCache.localCache.bIsPINSet = pinSet;
-    }
+  setUserInfo(userInfo: MUserInfo) {
+    DataCache.localCache.userInfo = userInfo;
+  }
 
-    getUserInfo(): MUserInfo {
-        return DataCache.localCache.userInfo;
-    }
+  getUserPhotoInfo(): MUserPhotoInfo {
+    return DataCache.localCache.userPhotoInfo;
+  }
 
-    setUserInfo(userInfo: MUserInfo) {
-        DataCache.localCache.userInfo = userInfo;
-    }
+  setUserPhotoInfo(userPhotoInfo: MUserPhotoInfo) {
+    DataCache.localCache.userPhotoInfo = userPhotoInfo;
+  }
 
-    getUserPhotoInfo(): MUserPhotoInfo {
-        return DataCache.localCache.userPhotoInfo;
-    }
+  getUserMediaValue(): string {
+    return DataCache.localCache.userMediaValue;
+  }
 
-    setUserPhotoInfo(userPhotoInfo: MUserPhotoInfo) {
-        DataCache.localCache.userPhotoInfo = userPhotoInfo;
-    }
+  setUserMediaValue(userMediaValue: string) {
+    DataCache.localCache.userMediaValue = userMediaValue;
+  }
 
-    getUserMediaValue(): string {
-        return DataCache.localCache.userMediaValue;
-    }
+  getUserUserSetting<T>(userSetting: Globals.User.ESetting): T {
+    return DataCache.localCache.getUserSetting(userSetting).value || null;
+  }
 
-    setUserMediaValue(userMediaValue: string) {
-        DataCache.localCache.userMediaValue = userMediaValue;
-    }
+  setUserSetting(userSetting: MUserSettingInfo) {
+    DataCache.localCache.addUserSetting(userSetting);
+  }
 
-    getUserUserSetting<T>(userSetting: Globals.User.ESetting): T {
-        return DataCache.localCache.getUserSetting(userSetting).value || null;
-    }
-
-    setUserSetting(userSetting: MUserSettingInfo) {
-        DataCache.localCache.addUserSetting(userSetting);
-    }
-
-    /**
-     *  Retrieve data from the local data cache
-     */
-    private getData<T>(key: string): Observable<T> {
-        return (Observable.create((observer: Observer<T>) => {
-            this.storage.ready()
-                .then((value) => {
-                    this.storage.get(key)
-                        .then((data) => {
-                            observer.next(data);
-                            observer.complete();
-                        })
-                        .catch((error) => {
-                            observer.error(error);
-                        });
-                })
-                .catch((error) => {
-                    observer.error(error);
-                });
-
-        })
-            .subscribeOn(async)
-            .observeOn(queue)) as Observable<T>;
-    }
-
-    /**
-     * Set data in the data cache
-     *
-     * @param key Key for key/value data pair
-     * @param data data to be stored
-     */
-    private set(key: string, data: any) {
-        this.storage.ready()
-            .then(val => {
-                this.storage.set(key, data)
-                    .then((resp) => {
-                    })
-                    .catch((error) => {
-                    });
+  /**
+   *  Retrieve data from the local data cache
+   */
+  private getData<T>(key: string): Observable<T> {
+    return Observable.create((observer: Observer<T>) => {
+      this.storage
+        .ready()
+        .then(value => {
+          this.storage
+            .get(key)
+            .then(data => {
+              observer.next(data);
+              observer.complete();
             })
-            .catch((error) => {
+            .catch(error => {
+              observer.error(error);
             });
-    }
+        })
+        .catch(error => {
+          observer.error(error);
+        });
+    })
+      .subscribeOn(async)
+      .observeOn(queue) as Observable<T>;
+  }
 
-
+  /**
+   * Set data in the data cache
+   *
+   * @param key Key for key/value data pair
+   * @param data data to be stored
+   */
+  private set(key: string, data: any) {
+    this.storage
+      .ready()
+      .then(val => {
+        this.storage
+          .set(key, data)
+          .then(resp => {})
+          .catch(error => {});
+      })
+      .catch(error => {});
+  }
 }

@@ -1,0 +1,9 @@
+@import "tools";
+
+:host {
+  .no-data-message {
+    text-align: center;
+    margin-top: 20px;
+    color: $color-light-gray;
+  }
+}

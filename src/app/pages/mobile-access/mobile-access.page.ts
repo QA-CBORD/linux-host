@@ -2,12 +2,14 @@ import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/
 import { Events, Platform } from '@ionic/angular';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
 
-import { Observable, Subscription } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { MMobileLocationInfo } from './model/mobile-access.interface';
 import { MobileAccessService } from './service/mobile-access.service';
 import { CoordsService } from '../../core/service/coords/coords.service';
 import { MGeoCoordinates } from '../../core/model/geolocation/geocoordinates.interface';
+import * as Globals from '../../app.global';
 
 @Component({
   selector: 'app-mobile-access',
@@ -17,20 +19,19 @@ import { MGeoCoordinates } from '../../core/model/geolocation/geocoordinates.int
 })
 export class MobileAccessPage implements OnDestroy, OnInit {
   private readonly sourceSubscription: Subscription = new Subscription();
+  private readonly searchString$: BehaviorSubject<string> = new BehaviorSubject<string>('');
   private currentCoords: MGeoCoordinates;
   locations$: Observable<MMobileLocationInfo[]>;
 
-    private tempTitle: string = 'Mobile Access';
-
-    constructor(
-        private readonly platform: Platform,
-        private readonly events: Events,
-        private readonly keyboard: Keyboard,
-        private readonly mobileAccessService: MobileAccessService,
-        private readonly coordsService: CoordsService
-    ) {
-        this.initComponent();
-    }
+  constructor(
+    private readonly platform: Platform,
+    private readonly events: Events,
+    private readonly keyboard: Keyboard,
+    private readonly mobileAccessService: MobileAccessService,
+    private readonly coordsService: CoordsService
+  ) {
+    this.initComponent();
+  }
   // /**
   //  * Make request to retrieve Mobile Location information and handle response
   //  */
@@ -74,11 +75,6 @@ export class MobileAccessPage implements OnDestroy, OnInit {
   //     )
   //   );
   // }
-
-
-
-
-
 
   // private handleMobileLocationResult(
   //   newMobileLocations: MMobileLocationInfo[]
@@ -150,7 +146,7 @@ export class MobileAccessPage implements OnDestroy, OnInit {
 
   refreshLocationList($event) {
     const subscription = this.mobileAccessService
-      .getMobileLocations(this.currentCoords)
+      .getLocations(this.currentCoords)
       .subscribe(() => $event.target.complete());
 
     this.sourceSubscription.add(subscription);
@@ -167,15 +163,44 @@ export class MobileAccessPage implements OnDestroy, OnInit {
   // START REDESIGN:
   private initComponent() {
     this.platform.ready().then(() => {
-      this.locations$ = this.mobileAccessService.locations;
+      this.locations$ = combineLatest(this.mobileAccessService.locations, this.searchString$).pipe(
+        map(([locations, str]: [MMobileLocationInfo[], string]) => this.filterLocationsBySearchString(str, locations))
+      );
     });
   }
 
   favouriteHandler(id: string) {
-    // this.mobileAccessService.addToFavourite(id);
+    this.downloadHandler(true);
+
+    const subscription = this.mobileAccessService.updateFavouritesList(id).subscribe(() => this.downloadHandler());
+
+    this.sourceSubscription.add(subscription);
   }
 
-  onSearchedValue(event) {
-    console.log(event)
+  onSearchedValue(searchString: string) {
+    this.searchString$.next(searchString);
+  }
+
+  private filterLocationsBySearchString(searchString: string, locations: MMobileLocationInfo[]): MMobileLocationInfo[] {
+    return locations.filter(
+      ({ name, locationId: id }: MMobileLocationInfo) =>
+        this.isIncludeInString(searchString, name) || this.isIncludeInString(searchString, id)
+    );
+  }
+
+  private isIncludeInString(searchString: string, sourseString: string): boolean {
+    return sourseString.toUpperCase().includes(searchString.toUpperCase());
+  }
+
+  private downloadHandler(started: boolean = false) {
+    const start = {
+      bShow: true,
+      message: 'Saving...',
+    };
+    const stop = { bShow: false };
+
+    const loaderArgs = started ? start : stop;
+
+    this.events.publish(Globals.Events.LOADER_SHOW, loaderArgs);
   }
 }

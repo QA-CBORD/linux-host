@@ -28,9 +28,9 @@ export class InstitutionService extends BaseService {
     );
   }
 
-  getInstitutionPhotoInfoById(institutionId: string): Observable<MessageResponse<InstitutionPhotoInfo>> {
+  getInstitutionPhotoInfoById(institutionId: string): Observable<InstitutionPhotoInfo> {
     return this.httpRequest<MessageResponse<InstitutionPhotoInfo>>(this.serviceUrl, 'retrieveInstitutionPhoto', true, {
       institutionId,
-    });
+    }).pipe(map(({ response }) => response));
   }
 }

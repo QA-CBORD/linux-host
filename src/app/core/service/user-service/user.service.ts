@@ -1,4 +1,3 @@
-
 import { Injectable } from '@angular/core';
 
 import { BehaviorSubject, Observable } from 'rxjs';
@@ -43,7 +42,6 @@ export class UserService extends BaseService {
   saveUserSettingsBySettingName<T>(settingName: string, settingValue: T): Observable<any> {
     return this.httpRequest<any>(this.serviceUrl, 'saveSetting', true, { settingName, settingValue });
   }
-
 
   getAcceptedPhoto(): Observable<MUserPhotoInfo> {
     return this.getUser().pipe(

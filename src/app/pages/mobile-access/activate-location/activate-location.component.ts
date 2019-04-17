@@ -26,12 +26,12 @@ import { Institution } from '../../../core/model/institution/institution';
 export class ActivateLocationComponent implements OnInit, OnDestroy {
   private readonly spinnerMessage = 'Activating location...';
   private readonly sourceSubscription: Subscription = new Subscription();
+  private locationId: string;
+  private coords: any;
   userInfo$: Observable<MUserInfo>;
   photoUrl$: Observable<string>;
   location$: Observable<MMobileLocationInfo>;
-  institution$: Observable<Institution>;
-  locationId: string;
-  coords: any;
+  institution: Institution;
 
   constructor(
     private readonly userService: UserService,
@@ -61,9 +61,9 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
     this.locationId = this.routerLink.snapshot.params.id;
     this.userInfo$ = this.userService.userData;
     this.location$ = this.mobileAccessService.getLocationById(this.locationId);
-    this.setInstitution();
     this.setUserPhoto();
     this.setCoords();
+    this.setInstitution();
   }
 
   activateLocation() {
@@ -78,9 +78,11 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
   }
 
   private setInstitution() {
-    this.institution$ = this.userService.userData.pipe(
-      switchMap((user: MUserInfo) => this.institutionService.getInstitutionDataById(user.institutionId))
-    );
+    const subscription = this.userService.userData
+      .pipe(switchMap((user: MUserInfo) => this.institutionService.getInstitutionDataById(user.institutionId)))
+      .subscribe((data: Institution) => (this.institution = data));
+
+    this.sourceSubscription.add(subscription);
   }
 
   private setUserPhoto() {

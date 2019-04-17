@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { NavController } from '@ionic/angular';
 
@@ -19,7 +19,7 @@ export class LocationItemComponent {
   get starClass(): string {
     const empty = 'star-outline';
     const filled = 'star-filled';
-    const star = this.location.name.includes('153') ? filled : empty;
+    const star = this.location.isFavourite ? filled : empty;
 
     return `./assets/icon/${star}.svg`;
   }

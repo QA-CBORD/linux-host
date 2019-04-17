@@ -1,23 +1,25 @@
 import { Injectable } from '@angular/core';
 
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { tap } from 'rxjs/internal/operators/tap';
-import { map } from 'rxjs/operators';
+import { map, switchMap, take } from 'rxjs/operators';
 
 import { BaseService, ServiceParameters } from 'src/app/core/service/base-service/base.service';
 import { MGeoCoordinates } from 'src/app/core/model/geolocation/geocoordinates.interface';
-import { MMobileLocationInfo, MActivateMobileLocationResult } from '../model/mobile-access.interface';
+import { MActivateMobileLocationResult, MMobileLocationInfo } from '../model/mobile-access.interface';
 import { MessageResponse } from '../../../core/model/service/message-response.interface';
 import { UserService } from '../../../core/service/user-service/user.service';
 import { HttpClient } from '@angular/common/http';
+import { CoordsService } from '../../../core/service/coords/coords.service';
 
 @Injectable()
 export class MobileAccessService extends BaseService {
   private readonly serviceUrl = '/json/commerce';
   private readonly favouritesLocationSettingsName = 'mobileaccess_favorites';
   private readonly locations$: BehaviorSubject<MMobileLocationInfo[]> = new BehaviorSubject<MMobileLocationInfo[]>([]);
+  private locationsInfo: MMobileLocationInfo[] = [];
 
-  constructor(protected http: HttpClient, private userService: UserService) {
+  constructor(protected http: HttpClient, private userService: UserService, private readonly coords: CoordsService) {
     super(http);
   }
 
@@ -26,22 +28,16 @@ export class MobileAccessService extends BaseService {
   }
 
   private set _locations(locations: MMobileLocationInfo[]) {
-    this.locations$.next([...locations]);
+    this.locationsInfo = [...locations];
+    this.locations$.next([...this.locationsInfo]);
   }
 
-  /**
-   * Retrieve Mobile Access locations for user
-   *
-   * @param incomeGeoData  Geolocation data for user. null if none exists
-   */
   getMobileLocations(incomeGeoData: MGeoCoordinates): Observable<MMobileLocationInfo[]> {
     const filters = ['Normal', 'TempCode', 'Attendance'];
 
     const postParams: ServiceParameters = { ...incomeGeoData, filters };
-    // this.getFavouritesLocations();
     return this.httpRequest(this.serviceUrl, 'getMobileLocations', true, postParams).pipe(
-      map(({ response }) => response.sort(this.sortByClosestDistance)),
-      tap((locations: MMobileLocationInfo[]) => (this._locations = locations))
+      map(({ response }) => response)
     );
   }
 
@@ -51,29 +47,33 @@ export class MobileAccessService extends BaseService {
     );
   }
 
-  private sortByClosestDistance({ distance: a }: MMobileLocationInfo, { distance: b }: MMobileLocationInfo) {
-    return a && b ? a - b : 0;
+  updateFavouritesList(locationId: string): Observable<string[]> {
+    return this.getFavouritesLocations().pipe(
+      map((fav: string[]) => JSON.stringify(this.handleFavouriteById(locationId, fav))),
+      switchMap((favouritesAsString: string) =>
+        this.userService.saveUserSettingsBySettingName(this.favouritesLocationSettingsName, favouritesAsString)
+      ),
+      switchMap(() => this.getFavouritesLocations()),
+      tap((fav: string[]) => (this._locations = this.getLocationsSorted(this.locationsInfo, fav))),
+      take(1)
+    );
   }
 
-  // addToFavourite(locationId: string) {
-  //   this.userService
-  //     .saveUserSettingsBySettingName(this.favouritesLocationSettingsName, JSON.stringify('TEST'))
-  //     .subscribe(data => console.log(data));
-  // }
-  //
-  // getFavouritesLocations() {
-  //   this.userService
-  //     .getUserSettingsBySettingName(this.favouritesLocationSettingsName)
-  //     .subscribe(data => console.log(data));
-  // }
+  getLocations(incomeGeoData: MGeoCoordinates): Observable<MMobileLocationInfo[]> {
+    return combineLatest(this.getMobileLocations(incomeGeoData), this.getFavouritesLocations()).pipe(
+      map(([locations, favourites]: [MMobileLocationInfo[], string[]]) =>
+        this.getLocationsSorted(locations, favourites)
+      ),
+      tap((locations: MMobileLocationInfo[]) => (this._locations = locations))
+    );
+  }
 
-  /**
-   * Activate 'Mobile Location' location for user
-   *
-   * @param locationId    Id of location to activate
-   * @param geoData       Geolocation data of user if available, null otherwise
-   * @param sourceInfo    I don't know but we always null this out
-   */
+  getFavouritesLocations(): Observable<string[]> {
+    return this.userService
+      .getUserSettingsBySettingName(this.favouritesLocationSettingsName)
+      .pipe(map(({ response: { value } }) => this.parseArrayFromString(value)));
+  }
+
   activateMobileLocation(
     locationId: string,
     geoData: any,
@@ -89,13 +89,53 @@ export class MobileAccessService extends BaseService {
     ).pipe(map(({ response }: any) => response));
   }
 
-  /**
-   * configure Mobile Location Params
-   *
-   * @param locationId
-   * @param geoData
-   * @param sourceInfo
-   */
+  private handleFavouriteById(locationId: string, favourites: string[]): string[] | [] {
+    const wasFavorite = this.isFavouriteLocation(locationId, favourites);
+    let favList = favourites;
+
+    if (wasFavorite) {
+      favList = favList.filter(id => id !== locationId);
+    } else {
+      favList.push(locationId);
+    }
+
+    return favList;
+  }
+
+  private addFavouriteFieldToLocations(locations: MMobileLocationInfo[], favourites: string[]): MMobileLocationInfo[] {
+    return locations.map(location => ({
+      ...location,
+      isFavourite: this.isFavouriteLocation(location.locationId, favourites),
+    }));
+  }
+
+  private getLocationsSorted(locations: MMobileLocationInfo[], favourites: string[]): MMobileLocationInfo[] {
+    const locationListWithFavourites = this.addFavouriteFieldToLocations(locations, favourites);
+    const locationsSortedByScores = [...locationListWithFavourites].sort(this.sortByHighestScore);
+
+    return locationsSortedByScores.sort(this.sortByFavourites);
+  }
+
+  private isFavouriteLocation(locationId: string, favourites: string[]): boolean {
+    return favourites.indexOf(locationId) !== -1;
+  }
+
+  private sortByHighestScore({ score: a }: MMobileLocationInfo, { score: b }: MMobileLocationInfo) {
+    return a && b ? b - a : 0;
+  }
+
+  private sortByFavourites({ isFavourite: a }: MMobileLocationInfo, { isFavourite: b }: MMobileLocationInfo) {
+    if (a && b) return 0;
+    if (a) return -1;
+    return 1;
+  }
+
+  private parseArrayFromString(str: string): string[] | [] {
+    const array = JSON.parse(str);
+
+    return Array.isArray(array) ? array : [];
+  }
+
   private createMobileLocationParams(locationId: string, geoData: any, sourceInfo: string) {
     const latitude = !geoData.latitude ? null : geoData.latitude;
     const longitude = !geoData.longitude ? null : geoData.longitude;
