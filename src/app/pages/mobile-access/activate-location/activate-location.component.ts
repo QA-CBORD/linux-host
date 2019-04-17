@@ -32,6 +32,7 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
   institution$: Observable<Institution>;
   locationId: string;
   coords: any;
+  private tempTitle: string = 'Mobile Access';
 
   constructor(
     private readonly userService: UserService,

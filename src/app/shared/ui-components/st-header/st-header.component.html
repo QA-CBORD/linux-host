@@ -1,22 +1,17 @@
 <ion-header class="st-header">
-    <ion-toolbar mode="ios" class="st-header__nav-toolbar">
-        <ion-buttons slot="start">
-            <ion-back-button
-                    class="st-header__back-btn"
-                    color="dark"
-                    [text]="backButtonTitle"
-                    mode="ios"
-            ></ion-back-button>
-        </ion-buttons>
-        <ion-title class="st-header__title">{{ title }}</ion-title>
-    </ion-toolbar>
+  <ion-toolbar mode="ios" class="st-header__nav-toolbar">
+    <ion-buttons slot="start">
+      <ion-back-button class="st-header__back-btn" color="dark" [text]="backButtonTitle" mode="ios"></ion-back-button>
+    </ion-buttons>
+    <ion-title class="st-header__title" *ngIf="isTitleShow">{{ title }}</ion-title>
+  </ion-toolbar>
 
-    <ion-toolbar class="st-header__toolbar">
-        <ion-searchbar
-                (ionChange)="onInputChanged($event)"
-                placeholder="Filter Locations..."
-                mode="ios"
-                class="st-header__searchbar"
-        ></ion-searchbar>
-    </ion-toolbar>
+  <ion-toolbar class="st-header__toolbar" *ngIf="isToolbarShow">
+    <ion-searchbar
+      (ionChange)="onInputChanged($event)"
+      placeholder="Filter Locations..."
+      mode="ios"
+      class="st-header__searchbar"
+    ></ion-searchbar>
+  </ion-toolbar>
 </ion-header>
