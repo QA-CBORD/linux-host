@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { Events, PopoverController } from '@ionic/angular';
+import {Events, ModalController, PopoverController} from '@ionic/angular';
 
 import { map, tap, switchMap } from 'rxjs/operators';
 import { Observable, Subscription } from 'rxjs';
@@ -16,6 +16,7 @@ import { MGeoCoordinates } from '../../../core/model/geolocation/geocoordinates.
 import { InstitutionService } from '../../../core/service/institution/institution.service';
 import { MMobileLocationInfo } from '../model/mobile-access.interface';
 import { Institution } from '../../../core/model/institution/institution';
+import {LocationDetailPage} from "../location-detail/location-detail.page";
 
 @Component({
   selector: 'st-activate-location',
@@ -67,15 +68,38 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
     this.setCoords();
   }
 
-  activateLocation() {
-    this.spinnerHandler(true);
+  // activateLocation() {
+    // this.spinnerHandler(true);
+    //
+    // const subscription = this.mobileAccessService
+    //   .activateMobileLocation(this.locationId, this.coords)
+    //   .pipe(tap(() => this.spinnerHandler()))
+    //   .subscribe(({ responseCode: s, message }) => this.modalHandler(message, s !== '00'));
+    //
+    // this.sourceSubscription.add(subscription);
+  // }
 
-    const subscription = this.mobileAccessService
-      .activateMobileLocation(this.locationId, this.coords)
-      .pipe(tap(() => this.spinnerHandler()))
-      .subscribe(({ responseCode: s, message }) => this.modalHandler(message, s !== '00'));
+  async activateLocation(ev: any) {
+    const popoverData = {
+      title: 'Success!',
+      message: 'Lorem ipsum blue bottle adipisicing, mlkshk pinterest 3 wolf moon tacos la croix knausgaard.'
+    }
 
-    this.sourceSubscription.add(subscription);
+    const popover = await this.popoverCtrl.create({
+      component: LocationDetailPage,
+      componentProps: {
+        data: popoverData
+      },
+      animated: true,
+      backdropDismiss: false
+    });
+
+
+    popover.onDidDismiss().then(() => {
+      console.log('close')
+    });
+
+    return await popover.present();
   }
 
   private setInstitution() {

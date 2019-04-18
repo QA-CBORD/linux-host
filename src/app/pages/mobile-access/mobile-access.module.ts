@@ -12,8 +12,16 @@ import { LocationItemComponent } from './location-list/location-item/location-it
 import { MobileAccessService } from './service/mobile-access.service';
 import { ActivateLocationComponent } from './activate-location/activate-location.component';
 import { SharedModule } from '../../shared/shared.module';
+import { LocationDetailPageModule } from './location-detail/location-detail.module';
 
-const imports = [CommonModule, FormsModule, IonicModule, MobileAccessRoutingModule, SharedModule];
+const imports = [
+  CommonModule,
+  FormsModule,
+  IonicModule,
+  MobileAccessRoutingModule,
+  SharedModule,
+  LocationDetailPageModule
+];
 
 const declarations = [MobileAccessPage, LocationListComponent, ActivateLocationComponent, LocationItemComponent];
 const providers = [LocationsResolverGuard, MobileAccessService];
