@@ -1,13 +1,14 @@
-
 import { Injectable } from '@angular/core';
 
+import { map, switchMap } from 'rxjs/operators';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 import { BaseService } from '../base-service/base.service';
-
 import { MUserInfo } from 'src/app/core/model/user/user-info.interface';
-import { map, switchMap } from 'rxjs/operators';
 import { MUserPhotoInfo } from '../../model/user/user-photo-info.interface';
+import { MessageResponse } from '../../model/service/message-response.interface';
+import { UserSettings } from '../../model/user/user-settings';
+import { UserPhotoList } from '../../model/user/user-photo-list';
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +17,7 @@ export class UserService extends BaseService {
   private readonly serviceUrl = '/json/user';
   private readonly userData$: BehaviorSubject<MUserInfo> = new BehaviorSubject<MUserInfo>(null);
 
-  set _userData(userInfo: MUserInfo) {
+  private set _userData(userInfo: MUserInfo) {
     this.userData$.next({ ...userInfo });
   }
 
@@ -24,26 +25,20 @@ export class UserService extends BaseService {
     return this.userData$.asObservable();
   }
 
-  /**
-   * Get the current User information using the current Session Id
-   */
   getUser(): Observable<MUserInfo> {
-    return this.httpRequest(this.serviceUrl, 'retrieve', true).pipe(
-      map(({ response }) => {
-        this._userData = response;
-        return response;
-      })
-    );
+    return this.httpRequest(this.serviceUrl, 'retrieve', true).pipe(map(({ response }) => (this._userData = response)));
   }
 
-  getUserSettingsBySettingName(settingName: string): Observable<any> {
-    return this.httpRequest<any>(this.serviceUrl, 'retrieveSetting', true, { settingName });
+  getUserSettingsBySettingName(settingName: string): Observable<MessageResponse<UserSettings>> {
+    return this.httpRequest<MessageResponse<UserSettings>>(this.serviceUrl, 'retrieveSetting', true, { settingName });
   }
 
-  saveUserSettingsBySettingName<T>(settingName: string, settingValue: T): Observable<any> {
-    return this.httpRequest<any>(this.serviceUrl, 'saveSetting', true, { settingName, settingValue });
+  saveUserSettingsBySettingName(settingName: string, settingValue: string): Observable<MessageResponse<boolean>> {
+    return this.httpRequest<MessageResponse<boolean>>(this.serviceUrl, 'saveSetting', true, {
+      settingName,
+      settingValue,
+    });
   }
-
 
   getAcceptedPhoto(): Observable<MUserPhotoInfo> {
     return this.getUser().pipe(
@@ -54,16 +49,16 @@ export class UserService extends BaseService {
     );
   }
 
-  getPhotoListByUserId(userId: string): Observable<any> {
+  getPhotoListByUserId(userId: string): Observable<MessageResponse<UserPhotoList>> {
     const params = { userId };
 
-    return this.httpRequest(this.serviceUrl, 'retrieveUserPhotoList', true, params);
+    return this.httpRequest<MessageResponse<UserPhotoList>>(this.serviceUrl, 'retrieveUserPhotoList', true, params);
   }
 
-  getPhotoById(photoId: string): Observable<any> {
+  getPhotoById(photoId: string): Observable<MessageResponse<MUserPhotoInfo>> {
     const params = { photoId };
 
-    return this.httpRequest(this.serviceUrl, 'retrieveUserPhoto', true, params);
+    return this.httpRequest<MessageResponse<MUserPhotoInfo>>(this.serviceUrl, 'retrieveUserPhoto', true, params);
   }
 
   private getPhotoIdByStatus(photoList: MUserPhotoInfo[], status: number = 1): MUserPhotoInfo | undefined {

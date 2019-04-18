@@ -1,6 +1,6 @@
 export interface MUserLogin {
-    userName: string;
-    password: string;
-    domain: string;
-    institutionId: string;
+  readonly userName: string;
+  readonly password: string;
+  readonly domain: string;
+  readonly institutionId: string;
 }

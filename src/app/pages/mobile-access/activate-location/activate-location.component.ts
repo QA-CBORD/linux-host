@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
-import {Events, ModalController, PopoverController} from '@ionic/angular';
+import { Events, PopoverController } from '@ionic/angular';
 
 import { map, tap, switchMap } from 'rxjs/operators';
 import { Observable, Subscription } from 'rxjs';
@@ -27,13 +27,14 @@ import {LocationDetailPage} from "../location-detail/location-detail.page";
 export class ActivateLocationComponent implements OnInit, OnDestroy {
   private readonly spinnerMessage = 'Activating location...';
   private readonly sourceSubscription: Subscription = new Subscription();
+  private locationId: string;
+  private coords: any;
   userInfo$: Observable<MUserInfo>;
   photoUrl$: Observable<string>;
   location$: Observable<MMobileLocationInfo>;
   institution$: Observable<Institution>;
-  locationId: string;
-  coords: any;
   private tempTitle: string = 'Mobile Access';
+  institution: Institution;
 
   constructor(
     private readonly userService: UserService,
@@ -63,49 +64,51 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
     this.locationId = this.routerLink.snapshot.params.id;
     this.userInfo$ = this.userService.userData;
     this.location$ = this.mobileAccessService.getLocationById(this.locationId);
-    this.setInstitution();
     this.setUserPhoto();
     this.setCoords();
+    this.setInstitution();
   }
 
-  // activateLocation() {
-    // this.spinnerHandler(true);
-    //
-    // const subscription = this.mobileAccessService
-    //   .activateMobileLocation(this.locationId, this.coords)
-    //   .pipe(tap(() => this.spinnerHandler()))
-    //   .subscribe(({ responseCode: s, message }) => this.modalHandler(message, s !== '00'));
-    //
-    // this.sourceSubscription.add(subscription);
+  activateLocation() {
+    this.spinnerHandler(true);
+
+    const subscription = this.mobileAccessService
+      .activateMobileLocation(this.locationId, this.coords)
+      .pipe(tap(() => this.spinnerHandler()))
+      .subscribe(({ responseCode: s, message }) => this.modalHandler(message, s !== '00'));
+
+    this.sourceSubscription.add(subscription);
+  }
+
+  // async activateLocation(ev: any) {
+  //   const popoverData = {
+  //     title: 'Success!',
+  //     message: 'Lorem ipsum blue bottle adipisicing, mlkshk pinterest 3 wolf moon tacos la croix knausgaard.'
+  //   }
+  //
+  //   const popover = await this.popoverCtrl.create({
+  //     component: LocationDetailPage,
+  //     componentProps: {
+  //       data: popoverData
+  //     },
+  //     animated: true,
+  //     backdropDismiss: false
+  //   });
+  //
+  //
+  //   popover.onDidDismiss().then(() => {
+  //     console.log('close')
+  //   });
+  //
+  //   return await popover.present();
   // }
 
-  async activateLocation(ev: any) {
-    const popoverData = {
-      title: 'Success!',
-      message: 'Lorem ipsum blue bottle adipisicing, mlkshk pinterest 3 wolf moon tacos la croix knausgaard.'
-    }
-
-    const popover = await this.popoverCtrl.create({
-      component: LocationDetailPage,
-      componentProps: {
-        data: popoverData
-      },
-      animated: true,
-      backdropDismiss: false
-    });
-
-
-    popover.onDidDismiss().then(() => {
-      console.log('close')
-    });
-
-    return await popover.present();
-  }
-
   private setInstitution() {
-    this.institution$ = this.userService.userData.pipe(
-      switchMap((user: MUserInfo) => this.institutionService.getInstitutionDataById(user.institutionId))
-    );
+    const subscription = this.userService.userData
+      .pipe(switchMap((user: MUserInfo) => this.institutionService.getInstitutionDataById(user.institutionId)))
+      .subscribe((data: Institution) => (this.institution = data));
+
+    this.sourceSubscription.add(subscription);
   }
 
   private setUserPhoto() {
@@ -137,17 +140,18 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
     const successTittle = 'Success!';
     const errorTittle = 'Fail!';
     const title = error ? errorTittle : successTittle;
+    const messageInfo = {
+      title,
+      message,
+      positiveButtonTitle: 'OK',
+      positiveButtonHandler: () => {
+        this.closeModalHandler();
+      },
+    };
 
     ExceptionProvider.showException(this.events, {
       displayOptions: Globals.Exception.DisplayOptions.ONE_BUTTON,
-      messageInfo: {
-        title,
-        message,
-        positiveButtonTitle: 'OK',
-        positiveButtonHandler: () => {
-          this.closeModalHandler();
-        },
-      },
+      messageInfo,
     });
   }
 

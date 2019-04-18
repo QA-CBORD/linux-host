@@ -25,7 +25,7 @@ export class LocationsResolverGuard implements Resolve<Observable<any>> {
     this.downloadHandler(true);
 
     return this.coords.initCoords().pipe(
-      switchMap((coords: MGeoCoordinates) => this.mobileAccessService.getMobileLocations(coords)),
+      switchMap((coords: MGeoCoordinates) => this.mobileAccessService.getLocations(coords)),
       tap(() => this.downloadHandler())
     );
   }

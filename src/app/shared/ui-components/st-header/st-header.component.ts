@@ -9,6 +9,7 @@ export class StHeaderComponent implements OnInit {
   @Input() title: string;
   @Input() backButtonTitle: string = 'Back';
   @Input() isToolbarShow: boolean = false;
+  @Input() isSubToolbarShow: boolean = false;
   @Input() isTitleShow: boolean = false;
   @Output() onSearchedValue = new EventEmitter<string>();
 
