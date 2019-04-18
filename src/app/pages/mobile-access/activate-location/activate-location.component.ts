@@ -114,17 +114,18 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
     const successTittle = 'Success!';
     const errorTittle = 'Fail!';
     const title = error ? errorTittle : successTittle;
+    const messageInfo = {
+      title,
+      message,
+      positiveButtonTitle: 'OK',
+      positiveButtonHandler: () => {
+        this.closeModalHandler();
+      },
+    };
 
     ExceptionProvider.showException(this.events, {
       displayOptions: Globals.Exception.DisplayOptions.ONE_BUTTON,
-      messageInfo: {
-        title,
-        message,
-        positiveButtonTitle: 'OK',
-        positiveButtonHandler: () => {
-          this.closeModalHandler();
-        },
-      },
+      messageInfo,
     });
   }
 
