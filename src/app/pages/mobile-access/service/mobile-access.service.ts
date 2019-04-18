@@ -10,7 +10,6 @@ import { MGeoCoordinates } from 'src/app/core/model/geolocation/geocoordinates.i
 import { MActivateMobileLocationResult, MMobileLocationInfo } from '../model/mobile-access.interface';
 import { MessageResponse } from '../../../core/model/service/message-response.interface';
 import { UserService } from '../../../core/service/user-service/user.service';
-import { CoordsService } from '../../../core/service/coords/coords.service';
 import { GeoLocationInfo } from '../../../core/model/geolocation/geoLocationInfo';
 
 @Injectable()
@@ -20,11 +19,7 @@ export class MobileAccessService extends BaseService {
   private readonly locations$: BehaviorSubject<MMobileLocationInfo[]> = new BehaviorSubject<MMobileLocationInfo[]>([]);
   private locationsInfo: MMobileLocationInfo[] = [];
 
-  constructor(
-    protected readonly http: HttpClient,
-    private readonly userService: UserService,
-    private readonly coords: CoordsService
-  ) {
+  constructor(protected readonly http: HttpClient, private readonly userService: UserService) {
     super(http);
   }
 
@@ -100,15 +95,13 @@ export class MobileAccessService extends BaseService {
 
   private handleFavouriteById(locationId: string, favourites: string[]): string[] | [] {
     const wasFavorite = this.isFavouriteLocation(locationId, favourites);
-    let favList = favourites;
 
     if (wasFavorite) {
-      favList = favList.filter(id => id !== locationId);
-    } else {
-      favList.push(locationId);
+      return favourites.filter(id => id !== locationId);
     }
 
-    return favList;
+    favourites.push(locationId);
+    return favourites;
   }
 
   private addFavouriteFieldToLocations(locations: MMobileLocationInfo[], favourites: string[]): MMobileLocationInfo[] {
@@ -118,15 +111,15 @@ export class MobileAccessService extends BaseService {
     }));
   }
 
+  private isFavouriteLocation(locationId: string, favourites: string[]): boolean {
+    return favourites.indexOf(locationId) !== -1;
+  }
+
   private getLocationsMultiSorted(locations: MMobileLocationInfo[], favourites: string[]): MMobileLocationInfo[] {
     const locationListWithFavourites = this.addFavouriteFieldToLocations(locations, favourites);
     const locationsSortedByScores = [...locationListWithFavourites].sort(this.sortByHighestScore);
 
     return locationsSortedByScores.sort(this.sortByFavourites);
-  }
-
-  private isFavouriteLocation(locationId: string, favourites: string[]): boolean {
-    return favourites.indexOf(locationId) !== -1;
   }
 
   private sortByHighestScore({ score: a }: MMobileLocationInfo, { score: b }: MMobileLocationInfo) {

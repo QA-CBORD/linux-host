@@ -77,66 +77,6 @@ export class MobileAccessPage implements OnDestroy, OnInit {
   //   );
   // }
 
-  // private handleMobileLocationResult(
-  //   newMobileLocations: MMobileLocationInfo[]
-  // ) {
-  //   /// check for incoming data
-  //   if (newMobileLocations && newMobileLocations.length > 0) {
-  //     this.bShowNoLocationsAvailable = false;
-  //     /// correct any distance value issues for display (make UI friendly)
-  //     for (let i = 0; i < newMobileLocations.length; i++) {
-  //       newMobileLocations[i].distance > 99
-  //         ? (newMobileLocations[i].distance = NaN)
-  //         : newMobileLocations[i].distance > 5
-  //         ? (newMobileLocations[i].distance = Number(
-  //             newMobileLocations[i].distance.toFixed(2)
-  //           ))
-  //         : (newMobileLocations[i].distance = newMobileLocations[i].distance);
-  //     }
-  //
-  //     if (
-  //       !(
-  //         this.mobileLocationInfo !== null &&
-  //         JSON.stringify(this.mobileLocationInfo) ===
-  //           JSON.stringify(newMobileLocations)
-  //       )
-  //     ) {
-  //     }
-  //
-  //     this.mobileLocationInfo = newMobileLocations;
-  //     this.filterLocations();
-  //     this.bIsUpdatingLocations = false;
-  //   } else {
-  //     this.bShowNoLocationsAvailable = true;
-  //     ExceptionProvider.showException(this.events, {
-  //       displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
-  //       messageInfo: {
-  //         title: Globals.Exception.Strings.TITLE,
-  //         message: 'There are no locations to display',
-  //         positiveButtonTitle: 'RETRY',
-  //         positiveButtonHandler: () => {
-  //           this.retrieveMobileLocationData(true);
-  //         },
-  //         negativeButtonTitle: 'CLOSE',
-  //         negativeButtonHandler: () => {
-  //           this.bIsUpdatingLocations = false;
-  //           // this.platform.exitApp();
-  //         },
-  //       },
-  //     });
-  //   }
-  //   this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
-  // }
-
-  // /**
-  //  * Handle user enter key on search bar
-  //  */
-  // onSearchEnterKey() {
-  //   try {
-  //     this.keyboard.hide();
-  //   } catch (e) {}
-  // }
-
   ngOnDestroy() {
     this.sourceSubscription.unsubscribe();
   }
@@ -171,9 +111,9 @@ export class MobileAccessPage implements OnDestroy, OnInit {
   }
 
   favouriteHandler(id: string) {
-    this.downloadHandler(true);
+    this.spinnerHandler(true);
 
-    const subscription = this.mobileAccessService.updateFavouritesList(id).subscribe(() => this.downloadHandler());
+    const subscription = this.mobileAccessService.updateFavouritesList(id).subscribe(() => this.spinnerHandler());
 
     this.sourceSubscription.add(subscription);
   }
@@ -193,7 +133,7 @@ export class MobileAccessPage implements OnDestroy, OnInit {
     return sourseString.toUpperCase().includes(searchString.toUpperCase());
   }
 
-  private downloadHandler(started: boolean = false) {
+  private spinnerHandler(started: boolean = false) {
     const start = {
       bShow: true,
       message: 'Saving...',

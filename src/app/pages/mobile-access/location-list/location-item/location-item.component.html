@@ -3,6 +3,5 @@
     <h3 class="title">{{ location.locationId }} - {{ location.name }} {{ location.score }}</h3>
     <p class="sub-title">{{ location.distance | metersToMiles }}</p>
   </ion-label>
-  <img [src]="starClass" width="24px" alt="favorites"
-       appClickStopPropagation (click)="triggerFavourite()"/>
+  <img [src]="starClass" width="24px" alt="favorites" appClickStopPropagation (click)="triggerFavourite()" />
 </ion-item>

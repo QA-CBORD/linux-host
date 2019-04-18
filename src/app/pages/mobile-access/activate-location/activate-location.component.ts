@@ -16,7 +16,7 @@ import { MGeoCoordinates } from '../../../core/model/geolocation/geocoordinates.
 import { InstitutionService } from '../../../core/service/institution/institution.service';
 import { MMobileLocationInfo } from '../model/mobile-access.interface';
 import { Institution } from '../../../core/model/institution/institution';
-import {LocationDetailPage} from "../location-detail/location-detail.page";
+import { LocationDetailPage } from '../location-detail/location-detail.page';
 
 @Component({
   selector: 'st-activate-location',
@@ -50,9 +50,7 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
 
   get userFullName$(): Observable<string> {
     return this.userInfo$.pipe(
-      map(({ firstName: fn, middleName: mn, lastName: ln }: MUserInfo) => {
-        return `${fn || ''} ${mn || ''} ${ln || ''}`;
-      })
+      map(({ firstName: fn, middleName: mn, lastName: ln }: MUserInfo) => `${fn || ''} ${mn || ''} ${ln || ''}`)
     );
   }
 
@@ -69,39 +67,40 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
     this.setInstitution();
   }
 
-  activateLocation() {
-    this.spinnerHandler(true);
-
-    const subscription = this.mobileAccessService
-      .activateMobileLocation(this.locationId, this.coords)
-      .pipe(tap(() => this.spinnerHandler()))
-      .subscribe(({ responseCode: s, message }) => this.modalHandler(message, s !== '00'));
-
-    this.sourceSubscription.add(subscription);
-  }
-
-  // async activateLocation(ev: any) {
-  //   const popoverData = {
-  //     title: 'Success!',
-  //     message: 'Lorem ipsum blue bottle adipisicing, mlkshk pinterest 3 wolf moon tacos la croix knausgaard.'
-  //   }
+  // activateLocation() {
+  //   // TODO: create Spinner in some special service:
+  //   this.spinnerHandler(true);
   //
-  //   const popover = await this.popoverCtrl.create({
-  //     component: LocationDetailPage,
-  //     componentProps: {
-  //       data: popoverData
-  //     },
-  //     animated: true,
-  //     backdropDismiss: false
-  //   });
+  //   const subscription = this.mobileAccessService
+  //     .activateMobileLocation(this.locationId, this.coords)
+  //     .pipe(tap(() => this.spinnerHandler()))
+  //     .subscribe(({ responseCode: s, message }) => this.modalHandler(message, s !== '00'));
   //
-  //
-  //   popover.onDidDismiss().then(() => {
-  //     console.log('close')
-  //   });
-  //
-  //   return await popover.present();
+  //   this.sourceSubscription.add(subscription);
   // }
+
+  async activateLocation(ev: any) {
+    const popoverData = {
+      title: 'Success!',
+      message: 'Lorem ipsum blue bottle adipisicing, mlkshk pinterest 3 wolf moon tacos la croix knausgaard.'
+    }
+
+    const popover = await this.popoverCtrl.create({
+      component: LocationDetailPage,
+      componentProps: {
+        data: popoverData
+      },
+      animated: true,
+      backdropDismiss: false
+    });
+
+
+    popover.onDidDismiss().then(() => {
+      console.log('close')
+    });
+
+    return await popover.present();
+  }
 
   private setInstitution() {
     const subscription = this.userService.userData

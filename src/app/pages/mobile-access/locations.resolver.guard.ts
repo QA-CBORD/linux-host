@@ -22,15 +22,15 @@ export class LocationsResolverGuard implements Resolve<Observable<any>> {
   ) {}
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any> {
-    this.downloadHandler(true);
+    this.spinnerHandler(true);
 
     return this.coords.initCoords().pipe(
       switchMap((coords: MGeoCoordinates) => this.mobileAccessService.getLocations(coords)),
-      tap(() => this.downloadHandler())
+      tap(() => this.spinnerHandler())
     );
   }
 
-  private downloadHandler(started: boolean = false) {
+  private spinnerHandler(started: boolean = false) {
     const start = {
       bShow: true,
       message: this.spinnerMessage,

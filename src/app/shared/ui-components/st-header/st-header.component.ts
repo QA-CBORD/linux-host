@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Keyboard } from '@ionic-native/keyboard/ngx';
 
 @Component({
   selector: 'st-header',
@@ -13,11 +14,17 @@ export class StHeaderComponent implements OnInit {
   @Input() isTitleShow: boolean = false;
   @Output() onSearchedValue = new EventEmitter<string>();
 
-  constructor() {}
+  constructor(private keyboard: Keyboard) {}
 
   ngOnInit() {}
 
   onInputChanged(event) {
     this.onSearchedValue.emit(event.target.value);
+  }
+
+  onEnterKeyClicked() {
+    if (this.keyboard) {
+      this.keyboard.hide();
+    }
   }
 }

@@ -9,6 +9,7 @@
   <ion-toolbar class="st-header__toolbar" *ngIf="isSubToolbarShow">
     <ion-searchbar
       (ionChange)="onInputChanged($event)"
+      (keyup.enter)="onEnterKeyClicked()"
       placeholder="Filter Locations..."
       mode="ios"
       class="st-header__searchbar"
