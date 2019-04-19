@@ -1,23 +1,26 @@
 <st-header [title]="tempTitle" [isTitleShow]="true" [isToolbarShow]="true"></st-header>
 <ion-content padding>
-  <ion-card class="user-data">
-    <ion-card-header>
-      <ion-card-title class="user-data__university">{{institution && institution.name}}</ion-card-title>
-    </ion-card-header>
+    <ion-card class="user-data">
+        <ion-card-header>
+            <img class="user-data__university-photo" [src]="(institutionPhoto$ | async) | safeUrl" alt="Institution logo"/>
+            <ion-card-title class="user-data__university">{{(institution$ | async).name}}</ion-card-title>
+        </ion-card-header>
 
-    <ion-card-content>
-      <ion-card class="user-data__data-card">
-        <img class="user-data__photo" [src]="photoUrl$ | async" alt="photo">
-        <div class="user-data__info">
-          <p class="user-data__name">{{userFullName$ | async}}</p>
+        <ion-card-content>
+            <img class="user-data__university-bg"
+                 src="/assets/images/card_background_illustration.svg"
+                 alt="nature">
+            <ion-card class="user-data__data-card">
+                <img class="user-data__photo" [src]="userPhoto$ | async">
+                <div class="user-data__info">
+                    <p class="user-data__name">{{userFullName$ | async}}</p>
+                </div>
+            </ion-card>
+            <p class="user-data__location">{{(location$ | async).locationId}} - {{(location$ | async).name}}</p>
+        </ion-card-content>
+        <div class="user-data__activate-btn">
+            <ion-button shape="round" size="large" color="light" expand="full" (click)="activateLocation()">activate
+            </ion-button>
         </div>
-      </ion-card>
-      <p class="user-data__location">{{ (location$ | async).locationId }} - {{ (location$ | async).name }}</p>
-    </ion-card-content>
-    <div class="user-data__activate-btn">
-      <ion-button shape="round" size="large" color="light" expand="full" (click)="activateLocation()">
-          activate
-      </ion-button>
-    </div>
-  </ion-card>
+    </ion-card>
 </ion-content>

@@ -1,31 +1,61 @@
-.user-data {
-  --ion-padding: 1.5em;
-  min-height: 400px;
-  max-width: 400px;
-  margin: 0 auto;
-  background: #0056e6;
-  border-radius: 15px;
-  box-sizing: border-box;
-  font-size: 14px;
-  border: none;
+@import "tools";
 
-
-  @media screen and (min-width: 450px) {
-    font-size: 16px;
+:host {
+  ion-card-header {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
   }
 
+  --ion-color-primary: $color-black;
+}
+.user-data {
+  max-width: 400px;
+  margin: 0 auto;
+  background: $color-blue;
+  border-radius: 15px;
+  box-sizing: border-box;
+  font-size: 1rem;
+  box-shadow: 0 0 10px 3px $color-hard-gray;
+  border: none;
+
+  ion-card-content {
+    padding: 0 15px 10px;
+  }
+
+  &__university-photo {
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    background: $color-light-gray;
+    margin-right: 10px;
+    border: 1px solid $color-white;
+  }
 
   &__university {
-    color: #FFF;
-    font-size: 1.5em;
+    color: $color-white;
+    font-size: 1.5rem;
     font-weight: 500;
     max-height: 27px;
-    letter-spacing: 0;
+    margin: 0;
+    @include font-family($font-nunito-semibold);
+  }
+
+  &__university-bg {
+    height: 100px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    border-top: 2px solid $color-white;
+    border-bottom: 2px solid $color-white;
   }
 
   &__photo {
-    min-height: 400px;
-    background: #ccc;
+    display: block;
+    height: 450px;
+    background: $color-light-gray;
+    margin: 15px 0 0;
+    border-radius: 15px;
   }
 
   &__data-card {
@@ -39,36 +69,39 @@
     left: 0;
     right: 0;
     background: rgba(0, 0, 0, .3);
-    padding: 1em 1.5em;
+    padding: 10px 15px;
   }
 
   &__name {
-    font-size: 18px;
-    font-weight: 500;
-    max-height: 33px;
+    font-size: 1.2rem;
+    max-height: 35px;
     letter-spacing: 0;
-    color: #fff;
+    color: $color-white;
+    @include font-family($font-nunito-semibold);
+    @include ellipsis;
   }
 
   &__id {
-    font-size: 16px;
+    font-size: 1rem;
     font-weight: 900;
-    max-height: 19px;
+    max-height: 20px;
     letter-spacing: 0;
-    color: #fff;
+    color: $color-white;
   }
 
   &__location {
-    color: #fff;
-    max-height: 26px;
+    color: $color-white;
+    max-height: 25px;
     text-align: center;
-
-    font-size: 18px;
+    font-size: 1.2rem;
+    @include font-family($font-nunito-semibold);
   }
 
   &__activate-btn {
     max-width: 330px;
     width: 80%;
     margin: 10px auto;
+    @include font-family($font-nunito-semibold);
+    text-transform: uppercase;
   }
 }

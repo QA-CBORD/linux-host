@@ -1,11 +1,11 @@
 export interface MAuthenticationInfo {
-    authenticationType: string; // inst url if = 'CAS', 'SSO_GENERIC', 'OKTA_EXT'
-    cookieName: string;
-    fieldCashlessID: string;
-    fieldEmail: string;
-    showPreloginPage: boolean;
-    casValidateURL: string;
-    casLoginURL: string;
-    casLogoutURL: string;
-    logoutURL: string;
+  readonly authenticationType: string; // inst url if = 'CAS', 'SSO_GENERIC', 'OKTA_EXT'
+  readonly cookieName: string;
+  readonly fieldCashlessID: string;
+  readonly fieldEmail: string;
+  readonly showPreloginPage: boolean;
+  readonly casValidateURL: string;
+  readonly casLoginURL: string;
+  readonly casLogoutURL: string;
+  readonly logoutURL: string;
 }

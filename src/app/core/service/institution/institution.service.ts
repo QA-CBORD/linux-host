@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
+
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
+
 import { BaseService } from '../base-service/base.service';
-import { BehaviorSubject, Observable } from 'rxjs';
 import { Institution } from '../../model/institution/institution';
 import { MessageResponse } from '../../model/service/message-response.interface';
 import { InstitutionPhotoInfo } from '../../model/institution/institution-photo-info';
-import { map, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -12,9 +14,13 @@ import { map, tap } from 'rxjs/operators';
 export class InstitutionService extends BaseService {
   private readonly serviceUrl = '/json/institution';
   private readonly institutionInfo$: BehaviorSubject<Institution> = new BehaviorSubject<Institution>(null);
+  private institution: Institution = null;
+  private institutionPhoto: InstitutionPhotoInfo = null;
 
-  set _institutionData(institutionInfo: Institution) {
-    this.institutionInfo$.next({ ...institutionInfo });
+  private set _institutionData(institutionInfo: Institution) {
+    if (this.institution === institutionInfo) return;
+    this.institution = { ...institutionInfo };
+    this.institutionInfo$.next({ ...this.institution });
   }
 
   get institutionData(): Observable<Institution> {
@@ -22,15 +28,20 @@ export class InstitutionService extends BaseService {
   }
 
   getInstitutionDataById(institutionId: string): Observable<Institution> {
+    if (this.institution !== null) {
+      return this.institutionData;
+    }
+
     return this.httpRequest<MessageResponse<Institution>>(this.serviceUrl, 'retrieve', true, { institutionId }).pipe(
-      tap(({ response }) => (this._institutionData = response)),
-      map(({ response }) => response)
+      map(({ response }) => (this._institutionData = response))
     );
   }
 
-  getInstitutionPhotoInfoById(institutionId: string): Observable<InstitutionPhotoInfo> {
+  getInstitutionPhotoById(institutionId: string): Observable<InstitutionPhotoInfo> {
+    if (this.institutionPhoto) return of({ ...this.institutionPhoto });
+
     return this.httpRequest<MessageResponse<InstitutionPhotoInfo>>(this.serviceUrl, 'retrieveInstitutionPhoto', true, {
       institutionId,
-    }).pipe(map(({ response }) => response));
+    }).pipe(map(({ response: photoInfo }) => (this.institutionPhoto = photoInfo)));
   }
 }

@@ -10,6 +10,7 @@ import { MGeoCoordinates } from 'src/app/core/model/geolocation/geocoordinates.i
 import { MActivateMobileLocationResult, MMobileLocationInfo } from '../model/mobile-access.interface';
 import { MessageResponse } from '../../../core/model/service/message-response.interface';
 import { UserService } from '../../../core/service/user-service/user.service';
+import { CoordsService } from '../../../core/service/coords/coords.service';
 import { GeoLocationInfo } from '../../../core/model/geolocation/geoLocationInfo';
 
 @Injectable()
@@ -18,8 +19,13 @@ export class MobileAccessService extends BaseService {
   private readonly favouritesLocationSettingsName = 'mobileaccess_favorites';
   private readonly locations$: BehaviorSubject<MMobileLocationInfo[]> = new BehaviorSubject<MMobileLocationInfo[]>([]);
   private locationsInfo: MMobileLocationInfo[] = [];
+  private favourites: string[];
 
-  constructor(protected readonly http: HttpClient, private readonly userService: UserService) {
+  constructor(
+    protected readonly http: HttpClient,
+    private readonly userService: UserService,
+    private readonly coords: CoordsService
+  ) {
     super(http);
   }
 
@@ -46,7 +52,15 @@ export class MobileAccessService extends BaseService {
     );
   }
 
-  updateFavouritesList(locationId: string): Observable<string[]> {
+  updateFavouritesList(locationId: string): Observable<MessageResponse<boolean>> {
+    this.favourites = this.handleFavouriteById(locationId, this.favourites);
+    this._locations = this.getLocationsMultiSorted(this.locationsInfo, this.favourites);
+
+    return this.saveFavourites(this.favourites);
+  }
+
+  // previous case with safe saving
+  updateFavouritesListSafe(locationId: string): Observable<string[]> {
     return this.getFavouritesLocations().pipe(
       map((fav: string[]) => this.handleFavouriteById(locationId, fav)),
       switchMap((favourites: string[]) => this.saveFavourites(favourites)),
@@ -68,7 +82,7 @@ export class MobileAccessService extends BaseService {
   getFavouritesLocations(): Observable<string[] | []> {
     return this.userService
       .getUserSettingsBySettingName(this.favouritesLocationSettingsName)
-      .pipe(map(({ response: { value } }) => this.parseArrayFromString(value)));
+      .pipe(map(({ response: { value } }) => (this.favourites = this.parseArrayFromString(value))));
   }
 
   activateMobileLocation(
@@ -87,7 +101,7 @@ export class MobileAccessService extends BaseService {
     ).pipe(map(({ response }: MessageResponse<MActivateMobileLocationResult>) => response));
   }
 
-  private saveFavourites(favourites: string[]): Observable<any> {
+  private saveFavourites(favourites: string[]): Observable<MessageResponse<boolean>> {
     const favouritesAsString = JSON.stringify(favourites);
 
     return this.userService.saveUserSettingsBySettingName(this.favouritesLocationSettingsName, favouritesAsString);
@@ -97,10 +111,10 @@ export class MobileAccessService extends BaseService {
     const wasFavorite = this.isFavouriteLocation(locationId, favourites);
 
     if (wasFavorite) {
-      return favourites.filter(id => id !== locationId);
+      return (favourites = favourites.filter(id => id !== locationId));
     }
-
     favourites.push(locationId);
+
     return favourites;
   }
 
@@ -111,15 +125,15 @@ export class MobileAccessService extends BaseService {
     }));
   }
 
-  private isFavouriteLocation(locationId: string, favourites: string[]): boolean {
-    return favourites.indexOf(locationId) !== -1;
-  }
-
   private getLocationsMultiSorted(locations: MMobileLocationInfo[], favourites: string[]): MMobileLocationInfo[] {
     const locationListWithFavourites = this.addFavouriteFieldToLocations(locations, favourites);
     const locationsSortedByScores = [...locationListWithFavourites].sort(this.sortByHighestScore);
 
     return locationsSortedByScores.sort(this.sortByFavourites);
+  }
+
+  private isFavouriteLocation(locationId: string, favourites: string[]): boolean {
+    return favourites.indexOf(locationId) !== -1;
   }
 
   private sortByHighestScore({ score: a }: MMobileLocationInfo, { score: b }: MMobileLocationInfo) {

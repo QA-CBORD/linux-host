@@ -14,6 +14,7 @@ import { ExceptionProvider } from '../../core/provider/exception-provider/except
 
 import * as Globals from '../../app.global';
 import { TestProvider } from '../../core/provider/test-provider/test.provider';
+import { take } from 'rxjs/operators';
 
 export enum EDestination {
   NONE = 'none',
@@ -157,30 +158,33 @@ export class HomePage {
   }
 
   private getUserInfo() {
-    this.userService.getUser().subscribe(
-      data => {
-        DataCache.setUserInfo(data);
-        DataCache.setInstitutionId(data.institutionId);
-        this.handlePageNavigation();
-      },
-      error => {
-        ExceptionProvider.showException(this.events, {
-          displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
-          messageInfo: {
-            title: Globals.Exception.Strings.TITLE,
-            message: 'Unable to verify your user information',
-            positiveButtonTitle: 'RETRY',
-            positiveButtonHandler: () => {
-              this.handleSessionToken();
+    this.userService
+      .getUser()
+      .pipe(take(1))
+      .subscribe(
+        data => {
+          DataCache.setUserInfo(data);
+          DataCache.setInstitutionId(data.institutionId);
+          this.handlePageNavigation();
+        },
+        error => {
+          ExceptionProvider.showException(this.events, {
+            displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
+            messageInfo: {
+              title: Globals.Exception.Strings.TITLE,
+              message: 'Unable to verify your user information',
+              positiveButtonTitle: 'RETRY',
+              positiveButtonHandler: () => {
+                this.handleSessionToken();
+              },
+              negativeButtonTitle: 'CLOSE',
+              negativeButtonHandler: () => {
+                // TODO: this.platform.exitApp();
+              },
             },
-            negativeButtonTitle: 'CLOSE',
-            negativeButtonHandler: () => {
-              // TODO: this.platform.exitApp();
-            },
-          },
-        });
-      }
-    );
+          });
+        }
+      );
   }
 
   /**
