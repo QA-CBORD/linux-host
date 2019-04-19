@@ -12,7 +12,7 @@ import { LocationItemComponent } from './location-list/location-item/location-it
 import { MobileAccessService } from './service/mobile-access.service';
 import { ActivateLocationComponent } from './activate-location/activate-location.component';
 import { SharedModule } from '../../shared/shared.module';
-import { LocationDetailPageModule } from './location-detail/location-detail.module';
+import { StPopoverModule } from './st-popover/st-popover.module';
 
 const imports = [
   CommonModule,
@@ -20,7 +20,7 @@ const imports = [
   IonicModule,
   MobileAccessRoutingModule,
   SharedModule,
-  LocationDetailPageModule
+  StPopoverModule
 ];
 
 const declarations = [MobileAccessPage, LocationListComponent, ActivateLocationComponent, LocationItemComponent];

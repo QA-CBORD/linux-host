@@ -16,7 +16,7 @@ import { MGeoCoordinates } from '../../../core/model/geolocation/geocoordinates.
 import { InstitutionService } from '../../../core/service/institution/institution.service';
 import { MMobileLocationInfo } from '../model/mobile-access.interface';
 import { Institution } from '../../../core/model/institution/institution';
-import { LocationDetailPage } from '../location-detail/location-detail.page';
+import { StPopoverComponent } from '../st-popover/st-popover.component';
 
 @Component({
   selector: 'st-activate-location',
@@ -86,12 +86,12 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
     }
 
     const popover = await this.popoverCtrl.create({
-      component: LocationDetailPage,
+      component: StPopoverComponent,
       componentProps: {
         data: popoverData
       },
       animated: true,
-      backdropDismiss: false
+      backdropDismiss: true
     });
 
 

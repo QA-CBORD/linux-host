@@ -3,14 +3,14 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 
-import { LocationDetailPage } from './location-detail.page';
+import { StPopoverComponent } from './st-popover.component';
 
 const imports = [CommonModule, FormsModule, IonicModule];
-const declarations = [LocationDetailPage];
-const entryComponents = [LocationDetailPage];
+const declarations = [StPopoverComponent];
+const entryComponents = [StPopoverComponent];
 @NgModule({
   imports,
   declarations,
   entryComponents,
 })
-export class LocationDetailPageModule {}
+export class StPopoverModule {}

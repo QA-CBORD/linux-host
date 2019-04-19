@@ -1,0 +1,53 @@
+@import 'tools';
+
+:host {
+  .st-popover {
+    &__header {
+      &.header-md {
+        &:after {
+          background-image: none;
+        }
+
+        .st-popover__toolbar-icon {
+          font-size: 20px;
+        }
+      }
+    }
+
+    &__toolbar {
+      --background: #f7f7f7 !important;
+    }
+
+    &__title {
+      @include font-nunito-semibold(20px);
+    }
+
+    &__content {
+      --padding-bottom: 15px;
+      --padding-top: 15px;
+      --padding-start: 25px;
+      --padding-end: 25px;
+
+      @include font-nunito-regular(16px);
+    }
+
+    &__footer {
+      display: flex;
+      padding: 0 20px 10px;
+    }
+
+    &__footer-btn {
+      width: 100%;
+      @include font-nunito-heavy(16px);
+
+      &--clear {
+        --color: #000;
+      }
+
+      &--filled {
+        --background: linear-gradient(-135deg, #166dff 0%, #0043b3 100%);
+        --border-radius: 40px 40px 40px 40px;
+      }
+    }
+  }
+}

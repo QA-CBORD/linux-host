@@ -5,11 +5,11 @@ import { Events, PopoverController } from '@ionic/angular';
 import * as Globals from 'src/app/app.global';
 
 @Component({
-  selector: 'app-location-detail',
-  templateUrl: './location-detail.page.html',
-  styleUrls: ['./location-detail.page.scss'],
+  selector: 'st-popover',
+  templateUrl: './st-popover.component.html',
+  styleUrls: ['./st-popover.component.scss'],
 })
-export class LocationDetailPage implements OnInit, OnDestroy {
+export class StPopoverComponent implements OnInit, OnDestroy {
   // private readonly sourceSubscription: Subscription = new Subscription();
   @Input() data: any;
   // @Input() geoData: MGeoCoordinates;

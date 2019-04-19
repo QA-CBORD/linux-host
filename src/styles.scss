@@ -20,8 +20,16 @@
   }
 
   //Temp styles for popover:
-  .sc-ion-popover-md-h {
-    --width: 90% !important;
+  .sc-ion-popover-md-h,
+  .sc-ion-popover-ios-h {
+    --min-width: 300px !important;
     --min-height: 190px;
+
+    .popover-content {
+      &.sc-ion-popover-md,
+      &.sc-ion-popover-ios {
+        border-radius: 15px;
+      }
+    }
   }
 }

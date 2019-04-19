@@ -1,0 +1,29 @@
+<ion-header class="st-popover__header" no-border>
+  <ion-toolbar mode="md" class="st-popover__toolbar">
+    <ion-title class="st-popover__title">{{ data.title }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button color="dark" (click)="closeModal()">
+        <ion-icon slot="icon-only" name="close" class="st-popover__toolbar-icon"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="st-popover__content">
+  <div>
+    {{ data.message }}
+  </div>
+</ion-content>
+<ion-footer no-border class="st-popover__footer">
+  <ion-button
+    fill="clear"
+    shape="round"
+    strong="true"
+    class="st-popover__footer-btn st-popover__footer-btn--clear"
+    (click)="closeModal()"
+  >
+    CANCEL
+  </ion-button>
+  <ion-button expand="block" shape="round" class="st-popover__footer-btn st-popover__footer-btn--filled">
+    RETRY
+  </ion-button>
+</ion-footer>
