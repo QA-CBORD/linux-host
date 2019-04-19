@@ -25,6 +25,10 @@
     --min-width: 300px !important;
     --min-height: 190px;
 
+    ion-backdrop {
+      opacity: 0.5 !important;
+    }
+
     .popover-content {
       &.sc-ion-popover-md,
       &.sc-ion-popover-ios {

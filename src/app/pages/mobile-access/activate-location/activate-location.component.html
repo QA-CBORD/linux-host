@@ -1,9 +1,9 @@
-<st-header [title]="tempTitle" [isTitleShow]="true" [isToolbarShow]="true"></st-header>
+<st-header [title]="tempTitle" [isToolbarShow]="true"></st-header>
 <ion-content padding>
     <ion-card class="user-data">
         <ion-card-header>
             <img class="user-data__university-photo" [src]="(institutionPhoto$ | async) | safeUrl" alt="Institution logo"/>
-            <ion-card-title class="user-data__university">{{(institution$ | async).name}}</ion-card-title>
+            <ion-card-title class="user-data__university">{{(institution$ | async)?.name}}</ion-card-title>
         </ion-card-header>
 
         <ion-card-content>

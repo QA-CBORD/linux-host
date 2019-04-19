@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { Events, PopoverController } from '@ionic/angular';
+import {Events, PopoverController} from '@ionic/angular';
 
 import { map, tap, switchMap } from 'rxjs/operators';
 import { Observable, Subscription } from 'rxjs';
@@ -10,7 +10,6 @@ import { UserService } from '../../../core/service/user-service/user.service';
 import { MobileAccessService } from '../service/mobile-access.service';
 import { CoordsService } from '../../../core/service/coords/coords.service';
 import * as Globals from '../../../app.global';
-import { ExceptionProvider } from '../../../core/provider/exception-provider/exception.provider';
 import { MUserInfo } from '../../../core/model/user';
 import { MGeoCoordinates } from '../../../core/model/geolocation/geocoordinates.interface';
 import { InstitutionService } from '../../../core/service/institution/institution.service';
@@ -35,7 +34,7 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
   institutionPhoto$: Observable<string>;
   location$: Observable<MMobileLocationInfo>;
   institution$: Observable<Institution>;
-    private tempTitle: string = 'Mobile Access';
+  private tempTitle: string = 'Mobile Access';
 
   constructor(
     private readonly userService: UserService,
@@ -46,7 +45,7 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
     private readonly popoverCtrl: PopoverController,
     private readonly router: Router,
     private readonly location: Location,
-    private readonly institutionService: InstitutionService
+    private readonly institutionService: InstitutionService,
   ) {}
 
   get userFullName$(): Observable<string> {
@@ -69,36 +68,67 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
     this.setInstitutionPhoto();
   }
 
-  // activateLocation() {
-  //   // TODO: create Spinner in some special service:
-  //   this.spinnerHandler(true);
-  //
-  //   const subscription = this.mobileAccessService
-  //     .activateMobileLocation(this.locationId, this.coords)
-  //     .pipe(tap(() => this.spinnerHandler()))
-  //     .subscribe(({ responseCode: s, message }) => this.modalHandler(message, s !== '00'));
-  //
-  //   this.sourceSubscription.add(subscription);
-  // }
+  activateLocation() {
+    // TODO: create Spinner in some special service:
+    this.spinnerHandler(true);
 
-  async activateLocation(ev: any) {
+    const subscription = this.mobileAccessService
+      .activateMobileLocation(this.locationId, this.coords)
+      .pipe(tap(() => this.spinnerHandler()))
+      .subscribe(({ message, responseCode }) => this.modalHandler(message, responseCode !== '00'));
+
+    this.sourceSubscription.add(subscription);
+  }
+
+  async modalHandler(message: string, error: boolean = false) {
+    const successTittle = 'Success!';
+    const errorTittle = 'Error';
+    const title = error ? errorTittle : successTittle;
+    const successBtns = [
+      {
+        label: 'OKAY',
+        class: 'filled',
+        shape: 'round',
+        strong: false,
+        fill: 'default',
+      },
+    ];
+    const errorBtns = [
+      {
+        label: 'CANCEL',
+        class: 'clear',
+        shape: 'round',
+        strong: true,
+        fill: 'clear',
+      },
+      {
+        label: 'RETRY',
+        class: 'filled',
+        shape: 'round',
+        strong: false,
+        fill: 'default',
+      },
+    ];
+
     const popoverData = {
-      title: 'Success!',
-      message: 'Lorem ipsum blue bottle adipisicing, mlkshk pinterest 3 wolf moon tacos la croix knausgaard.'
-    }
+      title,
+      message,
+      buttons: error ? errorBtns : successBtns,
+    };
 
     const popover = await this.popoverCtrl.create({
       component: StPopoverComponent,
       componentProps: {
-        data: popoverData
+        data: popoverData,
       },
-      animated: true,
-      backdropDismiss: true
+      animated: false,
+      backdropDismiss: true,
     });
 
-
-    popover.onDidDismiss().then(() => {
-      console.log('close')
+    popover.onDidDismiss().then(({data}) => {
+      if (data === 'OKAY') {
+        this.location.back();
+      }
     });
 
     return await popover.present();
@@ -140,29 +170,5 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
     const loaderArgs = started ? start : stop;
 
     this.events.publish(Globals.Events.LOADER_SHOW, loaderArgs);
-  }
-
-  private modalHandler(message: string, error: boolean = false) {
-    const successTittle = 'Success!';
-    const errorTittle = 'Fail!';
-    const title = error ? errorTittle : successTittle;
-    const messageInfo = {
-      title,
-      message,
-      positiveButtonTitle: 'OK',
-      positiveButtonHandler: () => {
-        this.closeModalHandler();
-      },
-    };
-
-    ExceptionProvider.showException(this.events, {
-      displayOptions: Globals.Exception.DisplayOptions.ONE_BUTTON,
-      messageInfo,
-    });
-  }
-
-  private closeModalHandler() {
-    this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
-    this.location.back();
   }
 }

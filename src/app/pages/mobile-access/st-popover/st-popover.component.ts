@@ -20,14 +20,13 @@ export class StPopoverComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    console.log(this.data);
   }
 
   // /**
   //  * Close the Activate Mobile Location Modal
   //  */
-  async closeModal() {
-    await this.popoverCtrl.dismiss();
+  async closeModal(closeModal) {
+    await this.popoverCtrl.dismiss(closeModal);
   }
 
   ngOnDestroy() {

@@ -15,15 +15,13 @@
 </ion-content>
 <ion-footer no-border class="st-popover__footer">
   <ion-button
-    fill="clear"
-    shape="round"
-    strong="true"
-    class="st-popover__footer-btn st-popover__footer-btn--clear"
-    (click)="closeModal()"
+    fill="{{ button.fill }}"
+    shape="{{ button.shape }}"
+    strong="{{ button.strong }}"
+    class="st-popover__footer-btn st-popover__footer-btn--{{ button.class }}"
+    *ngFor="let button of data.buttons"
+    (click)="closeModal(button.label)"
   >
-    CANCEL
-  </ion-button>
-  <ion-button expand="block" shape="round" class="st-popover__footer-btn st-popover__footer-btn--filled">
-    RETRY
+    {{ button.label }}
   </ion-button>
 </ion-footer>
