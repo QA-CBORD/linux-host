@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
 import { Events, Platform } from '@ionic/angular';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
 
@@ -10,9 +10,8 @@ import { MobileAccessService } from './service/mobile-access.service';
 import { CoordsService } from '../../core/service/coords/coords.service';
 import { MGeoCoordinates } from '../../core/model/geolocation/geocoordinates.interface';
 import { InstitutionService } from '../../core/service/institution/institution.service';
-import { UserService } from '../../core/service/user-service/user.service';
 import { MUserInfo } from '../../core/model/user';
-import { Institution } from '../../core/model/institution/institution';
+import {UserService} from "../../core/service/user-service/user.service";
 
 @Component({
   selector: 'app-mobile-access',
