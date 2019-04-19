@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 
 import { map, switchMap } from 'rxjs/operators';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 
 import { BaseService } from '../base-service/base.service';
 import { MUserInfo } from 'src/app/core/model/user/user-info.interface';
-import { MUserPhotoInfo } from '../../model/user/user-photo-info.interface';
+import { MUserPhotoInfo } from '../../model/user';
 import { MessageResponse } from '../../model/service/message-response.interface';
-import { UserSettings } from '../../model/user/user-settings';
-import { UserPhotoList } from '../../model/user/user-photo-list';
+import { UserSettings } from '../../model/user';
+import { UserPhotoList } from '../../model/user';
 
 @Injectable({
   providedIn: 'root',
@@ -16,6 +16,7 @@ import { UserPhotoList } from '../../model/user/user-photo-list';
 export class UserService extends BaseService {
   private readonly serviceUrl = '/json/user';
   private readonly userData$: BehaviorSubject<MUserInfo> = new BehaviorSubject<MUserInfo>(null);
+  private userPhoto: MUserPhotoInfo = null;
 
   private set _userData(userInfo: MUserInfo) {
     this.userData$.next({ ...userInfo });
@@ -41,11 +42,13 @@ export class UserService extends BaseService {
   }
 
   getAcceptedPhoto(): Observable<MUserPhotoInfo> {
+    if (this.userPhoto) return of(this.userPhoto);
+
     return this.getUser().pipe(
       switchMap(({ id }: MUserInfo) => this.getPhotoListByUserId(id)),
       map(({ response: { list } }) => this.getPhotoIdByStatus(list)),
       switchMap(({ id }: MUserPhotoInfo) => this.getPhotoById(id)),
-      map(({ response }) => response)
+      map(({ response }) => (this.userPhoto = response))
     );
   }
 

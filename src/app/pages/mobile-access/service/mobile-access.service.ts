@@ -19,6 +19,7 @@ export class MobileAccessService extends BaseService {
   private readonly favouritesLocationSettingsName = 'mobileaccess_favorites';
   private readonly locations$: BehaviorSubject<MMobileLocationInfo[]> = new BehaviorSubject<MMobileLocationInfo[]>([]);
   private locationsInfo: MMobileLocationInfo[] = [];
+  private favourites: string[];
 
   constructor(
     protected readonly http: HttpClient,
@@ -51,7 +52,15 @@ export class MobileAccessService extends BaseService {
     );
   }
 
-  updateFavouritesList(locationId: string): Observable<string[]> {
+  updateFavouritesList(locationId: string): Observable<MessageResponse<boolean>> {
+    this.favourites = this.handleFavouriteById(locationId, this.favourites);
+    this._locations = this.getLocationsMultiSorted(this.locationsInfo, this.favourites);
+
+    return this.saveFavourites(this.favourites);
+  }
+
+  // previous case with safe saving
+  updateFavouritesListSafe(locationId: string): Observable<string[]> {
     return this.getFavouritesLocations().pipe(
       map((fav: string[]) => this.handleFavouriteById(locationId, fav)),
       switchMap((favourites: string[]) => this.saveFavourites(favourites)),
@@ -73,7 +82,7 @@ export class MobileAccessService extends BaseService {
   getFavouritesLocations(): Observable<string[] | []> {
     return this.userService
       .getUserSettingsBySettingName(this.favouritesLocationSettingsName)
-      .pipe(map(({ response: { value } }) => this.parseArrayFromString(value)));
+      .pipe(map(({ response: { value } }) => (this.favourites = this.parseArrayFromString(value))));
   }
 
   activateMobileLocation(
@@ -92,7 +101,7 @@ export class MobileAccessService extends BaseService {
     ).pipe(map(({ response }: MessageResponse<MActivateMobileLocationResult>) => response));
   }
 
-  private saveFavourites(favourites: string[]): Observable<any> {
+  private saveFavourites(favourites: string[]): Observable<MessageResponse<boolean>> {
     const favouritesAsString = JSON.stringify(favourites);
 
     return this.userService.saveUserSettingsBySettingName(this.favouritesLocationSettingsName, favouritesAsString);
@@ -100,15 +109,13 @@ export class MobileAccessService extends BaseService {
 
   private handleFavouriteById(locationId: string, favourites: string[]): string[] | [] {
     const wasFavorite = this.isFavouriteLocation(locationId, favourites);
-    let favList = favourites;
 
     if (wasFavorite) {
-      favList = favList.filter(id => id !== locationId);
-    } else {
-      favList.push(locationId);
+      return (favourites = favourites.filter(id => id !== locationId));
     }
+    favourites.push(locationId);
 
-    return favList;
+    return favourites;
   }
 
   private addFavouriteFieldToLocations(locations: MMobileLocationInfo[], favourites: string[]): MMobileLocationInfo[] {

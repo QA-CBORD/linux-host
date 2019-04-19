@@ -1,15 +1,26 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  AfterContentInit,
+  AfterViewChecked,
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { Events, Platform } from '@ionic/angular';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
 
 import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 
 import { MMobileLocationInfo } from './model/mobile-access.interface';
 import { MobileAccessService } from './service/mobile-access.service';
 import { CoordsService } from '../../core/service/coords/coords.service';
 import { MGeoCoordinates } from '../../core/model/geolocation/geocoordinates.interface';
-import * as Globals from '../../app.global';
+import { InstitutionService } from '../../core/service/institution/institution.service';
+import { UserService } from '../../core/service/user-service/user.service';
+import { MUserInfo } from '../../core/model/user';
+import { Institution } from '../../core/model/institution/institution';
 
 @Component({
   selector: 'app-mobile-access',
@@ -17,18 +28,21 @@ import * as Globals from '../../app.global';
   styleUrls: ['./mobile-access.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MobileAccessPage implements OnDestroy, OnInit {
+export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
   private readonly sourceSubscription: Subscription = new Subscription();
   private readonly searchString$: BehaviorSubject<string> = new BehaviorSubject<string>('');
   private currentCoords: MGeoCoordinates;
   locations$: Observable<MMobileLocationInfo[]>;
+  userInfo$: Observable<MUserInfo>;
 
   constructor(
     private readonly platform: Platform,
+    private readonly userService: UserService,
     private readonly events: Events,
     private readonly keyboard: Keyboard,
     private readonly mobileAccessService: MobileAccessService,
-    private readonly coordsService: CoordsService
+    private readonly coordsService: CoordsService,
+    private readonly institutionService: InstitutionService
   ) {
     this.initComponent();
   }
@@ -141,7 +155,34 @@ export class MobileAccessPage implements OnDestroy, OnInit {
   }
 
   ngOnInit() {
+    this.userInfo$ = this.userService.userData;
     this.setCoords();
+  }
+
+  ngAfterViewInit() {
+    this.setInstitutionInfo();
+    this.setUserInfo();
+  }
+
+  private setInstitutionInfo() {
+    let institutionId;
+    const subscription = this.userInfo$
+      .pipe(
+        switchMap(({ institutionId: id }: MUserInfo) => {
+          institutionId = id;
+          return this.institutionService.getInstitutionPhotoById(institutionId);
+        }),
+        switchMap(() => this.institutionService.getInstitutionDataById(institutionId))
+      )
+      .subscribe();
+
+    this.sourceSubscription.add(subscription);
+  }
+
+  private setUserInfo() {
+    const subscription = this.userService.getAcceptedPhoto().subscribe();
+
+    this.sourceSubscription.add(subscription);
   }
 
   refreshLocationList($event) {
@@ -170,9 +211,7 @@ export class MobileAccessPage implements OnDestroy, OnInit {
   }
 
   favouriteHandler(id: string) {
-    this.downloadHandler(true);
-
-    const subscription = this.mobileAccessService.updateFavouritesList(id).subscribe(() => this.downloadHandler());
+    const subscription = this.mobileAccessService.updateFavouritesList(id).subscribe();
 
     this.sourceSubscription.add(subscription);
   }
@@ -190,17 +229,5 @@ export class MobileAccessPage implements OnDestroy, OnInit {
 
   private isIncludeInString(searchString: string, sourseString: string): boolean {
     return sourseString.toUpperCase().includes(searchString.toUpperCase());
-  }
-
-  private downloadHandler(started: boolean = false) {
-    const start = {
-      bShow: true,
-      message: 'Saving...',
-    };
-    const stop = { bShow: false };
-
-    const loaderArgs = started ? start : stop;
-
-    this.events.publish(Globals.Events.LOADER_SHOW, loaderArgs);
   }
 }

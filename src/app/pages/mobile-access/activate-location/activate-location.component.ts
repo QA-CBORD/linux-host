@@ -11,11 +11,12 @@ import { MobileAccessService } from '../service/mobile-access.service';
 import { CoordsService } from '../../../core/service/coords/coords.service';
 import * as Globals from '../../../app.global';
 import { ExceptionProvider } from '../../../core/provider/exception-provider/exception.provider';
-import { MUserInfo } from '../../../core/model/user/user-info.interface';
+import { MUserInfo } from '../../../core/model/user';
 import { MGeoCoordinates } from '../../../core/model/geolocation/geocoordinates.interface';
 import { InstitutionService } from '../../../core/service/institution/institution.service';
 import { MMobileLocationInfo } from '../model/mobile-access.interface';
 import { Institution } from '../../../core/model/institution/institution';
+import { InstitutionPhotoInfo } from '../../../core/model/institution/institution-photo-info';
 
 @Component({
   selector: 'st-activate-location',
@@ -29,9 +30,10 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
   private locationId: string;
   private coords: any;
   userInfo$: Observable<MUserInfo>;
-  photoUrl$: Observable<string>;
+  userPhoto$: Observable<string>;
+  institutionPhoto$: Observable<string>;
   location$: Observable<MMobileLocationInfo>;
-  institution: Institution;
+  institution$: Observable<Institution>;
 
   constructor(
     private readonly userService: UserService,
@@ -64,6 +66,7 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
     this.setUserPhoto();
     this.setCoords();
     this.setInstitution();
+    this.setInstitutionPhoto();
   }
 
   activateLocation() {
@@ -78,15 +81,20 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
   }
 
   private setInstitution() {
-    const subscription = this.userService.userData
-      .pipe(switchMap((user: MUserInfo) => this.institutionService.getInstitutionDataById(user.institutionId)))
-      .subscribe((data: Institution) => (this.institution = data));
+    this.institution$ = this.institutionService.institutionData;
+  }
 
-    this.sourceSubscription.add(subscription);
+  private setInstitutionPhoto() {
+    this.institutionPhoto$ = this.userInfo$.pipe(
+      switchMap(({ institutionId }: MUserInfo) => this.institutionService.getInstitutionPhotoById(institutionId)),
+      map(({ data, mimeType }: InstitutionPhotoInfo) => {
+        return `data:${mimeType};base64,${data}`;
+      })
+    );
   }
 
   private setUserPhoto() {
-    this.photoUrl$ = this.userService
+    this.userPhoto$ = this.userService
       .getAcceptedPhoto()
       .pipe(map(({ data, mimeType }) => `data:${mimeType};base64,${data}`));
   }

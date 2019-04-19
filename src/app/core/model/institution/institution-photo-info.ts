@@ -1,12 +1,12 @@
 export interface InstitutionPhotoInfo {
-  id: string;
-  externalId: string;
-  institutionId: string;
-  mimeType: string;
-  status: number;
-  statusReason: string;
-  data: string;
-  version: number;
-  insertTime: Date;
-  lastUpdated: Date;
+  readonly id: string;
+  readonly externalId: string;
+  readonly institutionId: string;
+  readonly mimeType: string;
+  readonly status: number;
+  readonly statusReason: string;
+  readonly data: string;
+  readonly version: number;
+  readonly insertTime: Date;
+  readonly lastUpdated: Date;
 }
