@@ -14,13 +14,9 @@ export class StPopoverComponent implements OnInit, OnDestroy {
   @Input() data: any;
   // @Input() geoData: MGeoCoordinates;
   //
-  constructor(
-    private events: Events,
-    private popoverCtrl: PopoverController
-  ) {}
+  constructor(private events: Events, private popoverCtrl: PopoverController) {}
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   // /**
   //  * Close the Activate Mobile Location Modal

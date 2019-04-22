@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
-import {Events, PopoverController} from '@ionic/angular';
+import { Events, PopoverController } from '@ionic/angular';
 
 import { map, tap, switchMap } from 'rxjs/operators';
 import { Observable, Subscription } from 'rxjs';
@@ -27,6 +27,7 @@ import { InstitutionPhotoInfo } from '../../../core/model/institution/institutio
 export class ActivateLocationComponent implements OnInit, OnDestroy {
   private readonly spinnerMessage = 'Activating location...';
   private readonly sourceSubscription: Subscription = new Subscription();
+  private readonly staticBgImage: string = '/assets/images/card_background_illustration.svg';
   private locationId: string;
   private coords: any;
   userInfo$: Observable<MUserInfo>;
@@ -45,7 +46,7 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
     private readonly popoverCtrl: PopoverController,
     private readonly router: Router,
     private readonly location: Location,
-    private readonly institutionService: InstitutionService,
+    private readonly institutionService: InstitutionService
   ) {}
 
   get userFullName$(): Observable<string> {
@@ -125,7 +126,7 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
       backdropDismiss: true,
     });
 
-    popover.onDidDismiss().then(({data}) => {
+    popover.onDidDismiss().then(({ data }) => {
       if (data === 'OKAY') {
         this.location.back();
       }

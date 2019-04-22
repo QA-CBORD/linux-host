@@ -14,14 +14,7 @@ import { ActivateLocationComponent } from './activate-location/activate-location
 import { SharedModule } from '../../shared/shared.module';
 import { StPopoverModule } from './st-popover/st-popover.module';
 
-const imports = [
-  CommonModule,
-  FormsModule,
-  IonicModule,
-  MobileAccessRoutingModule,
-  SharedModule,
-  StPopoverModule
-];
+const imports = [CommonModule, FormsModule, IonicModule, MobileAccessRoutingModule, SharedModule, StPopoverModule];
 
 const declarations = [MobileAccessPage, LocationListComponent, ActivateLocationComponent, LocationItemComponent];
 const providers = [LocationsResolverGuard, MobileAccessService];

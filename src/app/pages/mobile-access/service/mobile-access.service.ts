@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { tap } from 'rxjs/internal/operators/tap';
-import { map, switchMap, take } from 'rxjs/operators';
+import { map, retry, switchMap, take } from 'rxjs/operators';
 
 import { BaseService, ServiceParameters } from 'src/app/core/service/base-service/base.service';
 import { MGeoCoordinates } from 'src/app/core/model/geolocation/geocoordinates.interface';
@@ -104,7 +104,9 @@ export class MobileAccessService extends BaseService {
   private saveFavourites(favourites: string[]): Observable<MessageResponse<boolean>> {
     const favouritesAsString = JSON.stringify(favourites);
 
-    return this.userService.saveUserSettingsBySettingName(this.favouritesLocationSettingsName, favouritesAsString);
+    return this.userService
+      .saveUserSettingsBySettingName(this.favouritesLocationSettingsName, favouritesAsString)
+      .pipe(retry(1));
   }
 
   private handleFavouriteById(locationId: string, favourites: string[]): string[] | [] {
