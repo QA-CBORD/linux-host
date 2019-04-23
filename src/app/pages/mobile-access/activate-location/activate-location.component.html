@@ -2,16 +2,14 @@
 <ion-content padding>
     <ion-card class="user-data">
         <ion-card-header>
-            <img class="user-data__university-photo" [src]="(institutionPhoto$ | async) | safeUrl" alt="Institution logo"/>
+            <img class="user-data__university-photo" *ngIf="(institutionPhoto$ | async)" [src]="(institutionPhoto$ | async) | safeUrl" alt="Institution logo"/>
             <ion-card-title class="user-data__university">{{(institution$ | async)?.name}}</ion-card-title>
         </ion-card-header>
-
+l
         <ion-card-content>
-            <img class="user-data__university-bg"
-                 src="/assets/images/card_background_illustration.svg"
-                 alt="nature">
+            <img class="user-data__university-bg" [src]="staticBgImage" alt="nature">
             <ion-card class="user-data__data-card">
-                <img class="user-data__photo" [src]="userPhoto$ | async">
+                <img class="user-data__photo" [src]="userPhoto$ | async" alt="user photo">
                 <div class="user-data__info">
                     <p class="user-data__name">{{userFullName$ | async}}</p>
                 </div>

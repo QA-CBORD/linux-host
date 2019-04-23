@@ -1,9 +1,9 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
-import { Events, Platform } from '@ionic/angular';
+import { AfterViewInit, ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import { Events, Platform, ToastController } from '@ionic/angular';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
 
 import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { map, switchMap, take } from 'rxjs/operators';
 
 import { MMobileLocationInfo } from './model/mobile-access.interface';
 import { MobileAccessService } from './service/mobile-access.service';
@@ -11,7 +11,7 @@ import { CoordsService } from '../../core/service/coords/coords.service';
 import { MGeoCoordinates } from '../../core/model/geolocation/geocoordinates.interface';
 import { InstitutionService } from '../../core/service/institution/institution.service';
 import { MUserInfo } from '../../core/model/user';
-import {UserService} from "../../core/service/user-service/user.service";
+import { UserService } from '../../core/service/user-service/user.service';
 
 @Component({
   selector: 'app-mobile-access',
@@ -22,9 +22,10 @@ import {UserService} from "../../core/service/user-service/user.service";
 export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
   private readonly sourceSubscription: Subscription = new Subscription();
   private readonly searchString$: BehaviorSubject<string> = new BehaviorSubject<string>('');
+  private readonly toastDuration: number = 1000;
   private currentCoords: MGeoCoordinates;
-  locations$: Observable<MMobileLocationInfo[]>;
   private tempTitle: string = 'Mobile Access';
+  locations$: Observable<MMobileLocationInfo[]>;
   userInfo$: Observable<MUserInfo>;
 
   constructor(
@@ -34,7 +35,8 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
     private readonly keyboard: Keyboard,
     private readonly mobileAccessService: MobileAccessService,
     private readonly coordsService: CoordsService,
-    private readonly institutionService: InstitutionService
+    private readonly institutionService: InstitutionService,
+    private readonly toastController: ToastController
   ) {
     this.initComponent();
   }
@@ -96,6 +98,40 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
     this.setUserInfo();
   }
 
+  refreshLocationList($event) {
+    const subscription = this.mobileAccessService
+      .getLocations(this.currentCoords)
+      .subscribe(() => $event.target.complete());
+
+    this.sourceSubscription.add(subscription);
+  }
+
+  favouriteHandler(id: string) {
+    this.mobileAccessService
+      .updateFavouritesList(id)
+      .pipe(
+        switchMap(() => this.mobileAccessService.getLocationById(id)),
+        take(1)
+      )
+      .subscribe(this.presentToast.bind(this));
+  }
+
+  onSearchedValue(searchString: string) {
+    this.searchString$.next(searchString);
+  }
+
+  async presentToast({ name, isFavourite }: MMobileLocationInfo) {
+    const addLocationMessage = 'was added to your favourite list';
+    const removeLocationMessage = 'was removed from your favourite list';
+
+    const message = `${name} ${isFavourite ? addLocationMessage : removeLocationMessage}`;
+    const toast = await this.toastController.create({
+      message,
+      duration: this.toastDuration,
+    });
+    toast.present();
+  }
+
   private setInstitutionInfo() {
     let institutionId;
     const subscription = this.userInfo$
@@ -117,12 +153,13 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
     this.sourceSubscription.add(subscription);
   }
 
-  refreshLocationList($event) {
-    const subscription = this.mobileAccessService
-      .getLocations(this.currentCoords)
-      .subscribe(() => $event.target.complete());
-
-    this.sourceSubscription.add(subscription);
+  // START REDESIGN:
+  private initComponent() {
+    this.platform.ready().then(() => {
+      this.locations$ = combineLatest(this.mobileAccessService.locations, this.searchString$).pipe(
+        map(([locations, str]: [MMobileLocationInfo[], string]) => this.filterLocationsBySearchString(str, locations))
+      );
+    });
   }
 
   private setCoords() {
@@ -133,25 +170,6 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
     this.sourceSubscription.add(subscription);
   }
 
-  // START REDESIGN:
-  private initComponent() {
-    this.platform.ready().then(() => {
-      this.locations$ = combineLatest(this.mobileAccessService.locations, this.searchString$).pipe(
-        map(([locations, str]: [MMobileLocationInfo[], string]) => this.filterLocationsBySearchString(str, locations))
-      );
-    });
-  }
-
-  favouriteHandler(id: string) {
-    const subscription = this.mobileAccessService.updateFavouritesList(id).subscribe();
-
-    this.sourceSubscription.add(subscription);
-  }
-
-  onSearchedValue(searchString: string) {
-    this.searchString$.next(searchString);
-  }
-
   private filterLocationsBySearchString(searchString: string, locations: MMobileLocationInfo[]): MMobileLocationInfo[] {
     return locations.filter(
       ({ name, locationId: id }: MMobileLocationInfo) =>
@@ -159,7 +177,7 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
     );
   }
 
-  private isIncludeInString(searchString: string, sourseString: string): boolean {
-    return sourseString.toUpperCase().includes(searchString.toUpperCase());
+  private isIncludeInString(searchString: string, sourceString: string): boolean {
+    return sourceString.toUpperCase().includes(searchString.toUpperCase());
   }
 }

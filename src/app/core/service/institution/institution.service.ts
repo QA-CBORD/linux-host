@@ -28,7 +28,7 @@ export class InstitutionService extends BaseService {
   }
 
   getInstitutionDataById(institutionId: string): Observable<Institution> {
-    if (this.institution !== null) {
+    if (this.institution) {
       return this.institutionData;
     }
 

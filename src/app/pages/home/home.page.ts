@@ -198,7 +198,7 @@ export class HomePage {
       case EDestination.MOBILE_ACCESS:
         this.router.navigate(['mobile-access'], {
           replaceUrl: true,
-          skipLocationChange: true
+          skipLocationChange: true,
         });
         break;
       case EDestination.SECURE_MESSAGING:

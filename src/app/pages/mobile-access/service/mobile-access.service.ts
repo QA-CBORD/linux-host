@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { tap } from 'rxjs/internal/operators/tap';
-import { map, switchMap, take } from 'rxjs/operators';
+import { map, retry, switchMap, take } from 'rxjs/operators';
 
 import { BaseService, ServiceParameters } from 'src/app/core/service/base-service/base.service';
 import { MGeoCoordinates } from 'src/app/core/model/geolocation/geocoordinates.interface';
@@ -43,7 +43,14 @@ export class MobileAccessService extends BaseService {
     const methodName = 'getMobileLocations';
 
     const postParams: ServiceParameters = { ...incomeGeoData, filters };
-    return this.httpRequest(this.serviceUrl, methodName, true, postParams).pipe(map(({ response }) => response));
+    return this.httpRequest<MessageResponse<MMobileLocationInfo[]>>(this.serviceUrl, methodName, true, postParams).pipe(
+      map(({ response, exception }) => {
+        if (exception !== null) {
+          throw new Error(exception);
+        }
+        return response;
+      })
+    );
   }
 
   getLocationById(locationId: string): Observable<MMobileLocationInfo | undefined> {
@@ -57,17 +64,6 @@ export class MobileAccessService extends BaseService {
     this._locations = this.getLocationsMultiSorted(this.locationsInfo, this.favourites);
 
     return this.saveFavourites(this.favourites);
-  }
-
-  // previous case with safe saving
-  updateFavouritesListSafe(locationId: string): Observable<string[]> {
-    return this.getFavouritesLocations().pipe(
-      map((fav: string[]) => this.handleFavouriteById(locationId, fav)),
-      switchMap((favourites: string[]) => this.saveFavourites(favourites)),
-      switchMap(() => this.getFavouritesLocations()),
-      tap((fav: string[]) => (this._locations = this.getLocationsMultiSorted(this.locationsInfo, fav))),
-      take(1)
-    );
   }
 
   getLocations(incomeGeoData: MGeoCoordinates): Observable<MMobileLocationInfo[]> {
@@ -98,13 +94,22 @@ export class MobileAccessService extends BaseService {
       methodName,
       true,
       postParams
-    ).pipe(map(({ response }: MessageResponse<MActivateMobileLocationResult>) => response));
+    ).pipe(
+      map(({ response, exception }: MessageResponse<MActivateMobileLocationResult>) => {
+        if (exception !== null) {
+          throw new Error(exception);
+        }
+        return response;
+      })
+    );
   }
 
   private saveFavourites(favourites: string[]): Observable<MessageResponse<boolean>> {
     const favouritesAsString = JSON.stringify(favourites);
 
-    return this.userService.saveUserSettingsBySettingName(this.favouritesLocationSettingsName, favouritesAsString);
+    return this.userService
+      .saveUserSettingsBySettingName(this.favouritesLocationSettingsName, favouritesAsString)
+      .pipe(retry(1));
   }
 
   private handleFavouriteById(locationId: string, favourites: string[]): string[] | [] {

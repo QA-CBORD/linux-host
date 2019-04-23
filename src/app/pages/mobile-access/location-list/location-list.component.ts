@@ -12,7 +12,7 @@ export class LocationListComponent {
   @Input('locations') locations: MMobileLocationInfo[];
   @Output('favouriteTrigger') favouriteTrigger: EventEmitter<string> = new EventEmitter<string>();
 
-  trackBylocationId(index: number, { locationId }: MMobileLocationInfo): string {
+  trackByLocationId(index: number, { locationId }: MMobileLocationInfo): string {
     return locationId;
   }
 

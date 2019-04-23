@@ -27,6 +27,7 @@ import { InstitutionPhotoInfo } from '../../../core/model/institution/institutio
 export class ActivateLocationComponent implements OnInit, OnDestroy {
   private readonly spinnerMessage = 'Activating location...';
   private readonly sourceSubscription: Subscription = new Subscription();
+  private readonly staticBgImage: string = '/assets/images/card_background_illustration.svg';
   private locationId: string;
   private coords: any;
   userInfo$: Observable<MUserInfo>;
@@ -75,7 +76,11 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
     const subscription = this.mobileAccessService
       .activateMobileLocation(this.locationId, this.coords)
       .pipe(tap(() => this.spinnerHandler()))
-      .subscribe(res => this.modalHandler(res));
+      .subscribe(res => this.modalHandler(res),
+          () => {
+            this.spinnerHandler();
+            //TODO: paste here logic with retry and cancel button
+          });
 
     this.sourceSubscription.add(subscription);
   }

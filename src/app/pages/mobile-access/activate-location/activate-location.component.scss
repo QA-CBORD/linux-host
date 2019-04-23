@@ -7,8 +7,14 @@
     padding: 10px 20px;
   }
 
+  ion-content {
+    background: $color-light-gray;
+  }
+
+  --ion-background-color: $color-light-gray;
   --ion-color-primary: $color-black;
 }
+
 .user-data {
   max-width: 400px;
   margin: 0 auto;
@@ -27,9 +33,7 @@
     border-radius: 50%;
     width: 30px;
     height: 30px;
-    background: $color-light-gray;
     margin-right: 10px;
-    border: 1px solid $color-white;
   }
 
   &__university {
@@ -38,7 +42,7 @@
     font-weight: 500;
     max-height: 27px;
     margin: 0;
-    @include font-family($font-nunito-semibold);
+    font-family:$font-nunito-semibold;
   }
 
   &__university-bg {
@@ -46,14 +50,11 @@
     position: absolute;
     left: 0;
     right: 0;
-    border-top: 2px solid $color-white;
-    border-bottom: 2px solid $color-white;
   }
 
   &__photo {
     display: block;
     height: 450px;
-    background: $color-light-gray;
     margin: 15px 0 0;
     border-radius: 15px;
   }
@@ -70,15 +71,16 @@
     right: 0;
     background: rgba(0, 0, 0, .3);
     padding: 10px 15px;
+    max-height: 150px;
   }
 
   &__name {
     font-size: 1.2rem;
-    max-height: 35px;
     letter-spacing: 0;
     color: $color-white;
-    @include font-family($font-nunito-semibold);
-    @include ellipsis;
+    font-family: $font-nunito-semibold;
+    word-wrap: break-word;
+    word-break: break-all;
   }
 
   &__id {
@@ -91,7 +93,6 @@
 
   &__location {
     color: $color-white;
-    max-height: 25px;
     text-align: center;
     font-size: 1.2rem;
     @include font-family($font-nunito-semibold);

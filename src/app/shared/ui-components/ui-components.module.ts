@@ -3,8 +3,9 @@ import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { StHeaderComponent } from './st-header/st-header.component';
 import { StSpinnerComponent } from './st-spinner/st-spinner.component';
+import { CountdownComponent } from './st-countdown/st-countdown.component';
 
-const components = [StHeaderComponent, StSpinnerComponent];
+const components = [StHeaderComponent, StSpinnerComponent, CountdownComponent];
 
 @NgModule({
   imports: [CommonModule, IonicModule],
