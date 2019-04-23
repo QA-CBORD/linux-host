@@ -8,6 +8,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { IonicRouteStrategy } from '@ionic/angular';
 import { BrowserModule } from '@angular/platform-browser';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
+import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 
 const imports = [CommonModule, BrowserModule, HttpClientModule];
 
@@ -17,6 +18,7 @@ const providers = [
   { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
   DatePipe,
   Keyboard,
+  BarcodeScanner,
   Geolocation,
 ];
 

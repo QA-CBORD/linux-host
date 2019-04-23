@@ -1,6 +1,6 @@
 <ion-header class="st-popover__header" no-border>
   <ion-toolbar mode="md" class="st-popover__toolbar">
-    <ion-title class="st-popover__title">{{ data.title }}</ion-title>
+    <ion-title class="st-popover__title">{{ popoverConfig.title }}</ion-title>
     <ion-buttons slot="end">
       <ion-button color="dark" (click)="closeModal()">
         <ion-icon slot="icon-only" name="close" class="st-popover__toolbar-icon"></ion-icon>
@@ -10,8 +10,16 @@
 </ion-header>
 <ion-content class="st-popover__content">
   <div>
-    {{ data.message }}
+    {{ popoverConfig.message }}
   </div>
+  <div class="st-popover__temp-code" *ngIf="popoverConfig.type === 'CODE'">
+    {{ popoverConfig.code }}
+  </div>
+  <pdf417barcode
+    [text]="popoverConfig.code"
+    [opts]="{ pxw: 2, pxh: 2 }"
+    *ngIf="popoverConfig.type === 'BARCODE'"
+  ></pdf417barcode>
 </ion-content>
 <ion-footer no-border class="st-popover__footer">
   <ion-button
@@ -19,7 +27,7 @@
     shape="{{ button.shape }}"
     strong="{{ button.strong }}"
     class="st-popover__footer-btn st-popover__footer-btn--{{ button.class }}"
-    *ngFor="let button of data.buttons"
+    *ngFor="let button of popoverConfig.buttons"
     (click)="closeModal(button.label)"
   >
     {{ button.label }}

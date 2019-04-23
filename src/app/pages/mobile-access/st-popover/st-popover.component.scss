@@ -27,8 +27,15 @@
       --padding-top: 15px;
       --padding-start: 25px;
       --padding-end: 25px;
+      text-align: center;
 
       @include font-nunito-regular(16px);
+    }
+
+    &__temp-code {
+      text-align: center;
+
+      @include font-nunito-heavy(36px);
     }
 
     &__footer {

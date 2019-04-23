@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
-import {Events, PopoverController} from '@ionic/angular';
+import { Events, PopoverController } from '@ionic/angular';
 
 import { map, tap, switchMap } from 'rxjs/operators';
 import { Observable, Subscription } from 'rxjs';
@@ -45,7 +45,7 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
     private readonly popoverCtrl: PopoverController,
     private readonly router: Router,
     private readonly location: Location,
-    private readonly institutionService: InstitutionService,
+    private readonly institutionService: InstitutionService
   ) {}
 
   get userFullName$(): Observable<string> {
@@ -75,57 +75,22 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
     const subscription = this.mobileAccessService
       .activateMobileLocation(this.locationId, this.coords)
       .pipe(tap(() => this.spinnerHandler()))
-      .subscribe(({ message, responseCode }) => this.modalHandler(message, responseCode !== '00'));
+      .subscribe(res => this.modalHandler(res));
 
     this.sourceSubscription.add(subscription);
   }
 
-  async modalHandler(message: string, error: boolean = false) {
-    const successTittle = 'Success!';
-    const errorTittle = 'Error';
-    const title = error ? errorTittle : successTittle;
-    const successBtns = [
-      {
-        label: 'OKAY',
-        class: 'filled',
-        shape: 'round',
-        strong: false,
-        fill: 'default',
-      },
-    ];
-    const errorBtns = [
-      {
-        label: 'CANCEL',
-        class: 'clear',
-        shape: 'round',
-        strong: true,
-        fill: 'clear',
-      },
-      {
-        label: 'RETRY',
-        class: 'filled',
-        shape: 'round',
-        strong: false,
-        fill: 'default',
-      },
-    ];
-
-    const popoverData = {
-      title,
-      message,
-      buttons: error ? errorBtns : successBtns,
-    };
-
+  async modalHandler(res) {
     const popover = await this.popoverCtrl.create({
       component: StPopoverComponent,
       componentProps: {
-        data: popoverData,
+        data: res,
       },
       animated: false,
       backdropDismiss: true,
     });
 
-    popover.onDidDismiss().then(({data}) => {
+    popover.onDidDismiss().then(({ data }) => {
       if (data === 'OKAY') {
         this.location.back();
       }
