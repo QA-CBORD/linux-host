@@ -34,6 +34,7 @@ export class LocationsResolverGuard implements Resolve<Observable<MMobileLocatio
     return this.coords.initCoords().pipe(
       switchMap((coords: MGeoCoordinates) => this.mobileAccessService.getLocations(coords)),
       catchError(e => {
+        // TODO: paste here logic with retry button
         this.spinnerHandler();
         return throwError(e);
       }),

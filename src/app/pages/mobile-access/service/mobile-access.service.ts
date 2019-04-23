@@ -94,7 +94,14 @@ export class MobileAccessService extends BaseService {
       methodName,
       true,
       postParams
-    ).pipe(map(({ response }: MessageResponse<MActivateMobileLocationResult>) => response));
+    ).pipe(
+      map(({ response, exception }: MessageResponse<MActivateMobileLocationResult>) => {
+        if (exception !== null) {
+          throw new Error(exception);
+        }
+        return response;
+      })
+    );
   }
 
   private saveFavourites(favourites: string[]): Observable<MessageResponse<boolean>> {

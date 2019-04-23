@@ -7,8 +7,14 @@
     padding: 10px 20px;
   }
 
+  ion-content {
+    background: $color-light-gray;
+  }
+
+  --ion-background-color: $color-light-gray;
   --ion-color-primary: $color-black;
 }
+
 .user-data {
   max-width: 400px;
   margin: 0 auto;

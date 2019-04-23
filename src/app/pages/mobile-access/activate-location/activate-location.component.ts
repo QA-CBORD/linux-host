@@ -76,7 +76,13 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
     const subscription = this.mobileAccessService
       .activateMobileLocation(this.locationId, this.coords)
       .pipe(tap(() => this.spinnerHandler()))
-      .subscribe(({ message, responseCode }) => this.modalHandler(message, responseCode !== '00'));
+      .subscribe(
+        ({ message, responseCode }) => this.modalHandler(message, responseCode !== '00'),
+        () => {
+          this.spinnerHandler();
+          //TODO: paste here logic with retry and cancel button
+        }
+      );
 
     this.sourceSubscription.add(subscription);
   }
