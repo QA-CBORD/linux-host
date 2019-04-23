@@ -76,11 +76,13 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
     const subscription = this.mobileAccessService
       .activateMobileLocation(this.locationId, this.coords)
       .pipe(tap(() => this.spinnerHandler()))
-      .subscribe(res => this.modalHandler(res),
-          () => {
-            this.spinnerHandler();
-            //TODO: paste here logic with retry and cancel button
-          });
+      .subscribe(
+        res => this.modalHandler(res),
+        () => {
+          this.spinnerHandler();
+          //TODO: paste here logic with retry and cancel button
+        }
+      );
 
     this.sourceSubscription.add(subscription);
   }
@@ -89,7 +91,7 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
     const popover = await this.popoverCtrl.create({
       component: StPopoverComponent,
       componentProps: {
-        data: res,
+        data: res
       },
       animated: false,
       backdropDismiss: true,

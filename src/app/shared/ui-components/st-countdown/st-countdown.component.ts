@@ -7,7 +7,7 @@ import { map, takeWhile, tap } from 'rxjs/operators';
   templateUrl: './st-countdown.component.html',
   styleUrls: ['./st-countdown.component.scss'],
 })
-export class CountdownComponent implements OnInit {
+export class StCountdownComponent implements OnInit {
   @Input('seconds') seconds: number = 3;
   @Output('onTimeout') onTimeout: EventEmitter<boolean> = new EventEmitter<boolean>();
   private countdown$: Observable<number>;

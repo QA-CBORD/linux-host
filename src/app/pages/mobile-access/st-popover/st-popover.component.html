@@ -11,6 +11,8 @@
 <ion-content class="st-popover__content">
   <div>
     {{ popoverConfig.message }}
+    <st-countdown [seconds]="popoverConfig.validityTime"
+    (onTimeout)="onFinishTimeout()"></st-countdown>
   </div>
   <div class="st-popover__temp-code" *ngIf="popoverConfig.type === 'CODE'">
     {{ popoverConfig.code }}

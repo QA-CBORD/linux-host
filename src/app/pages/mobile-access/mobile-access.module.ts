@@ -13,15 +13,29 @@ import { MobileAccessService } from './service/mobile-access.service';
 import { ActivateLocationComponent } from './activate-location/activate-location.component';
 import { SharedModule } from '../../shared/shared.module';
 import { StPopoverModule } from './st-popover/st-popover.module';
+import { Pdf417BarcodeModule } from 'pdf417-barcode';
 
-const imports = [CommonModule, FormsModule, IonicModule, MobileAccessRoutingModule, SharedModule, StPopoverModule];
+const imports = [
+  CommonModule,
+  FormsModule,
+  IonicModule,
+  MobileAccessRoutingModule,
+  SharedModule,
+  StPopoverModule,
+  Pdf417BarcodeModule,
+];
 
-const declarations = [MobileAccessPage, LocationListComponent, ActivateLocationComponent, LocationItemComponent];
+const declarations = [
+  MobileAccessPage,
+  LocationListComponent,
+  ActivateLocationComponent,
+  LocationItemComponent
+];
 const providers = [LocationsResolverGuard, MobileAccessService];
 
 @NgModule({
   imports,
   declarations,
-  providers,
+  providers
 })
 export class MobileAccessPageModule {}

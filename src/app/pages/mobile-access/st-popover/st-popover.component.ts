@@ -18,7 +18,7 @@ export class StPopoverComponent implements OnInit {
     this.initPopover();
   }
 
-  async closeModal(closeModal) {
+  async closeModal(closeModal = 'CANCEL') {
     await this.popoverCtrl.dismiss(closeModal);
   }
 
@@ -27,6 +27,39 @@ export class StPopoverComponent implements OnInit {
     const error: boolean = responseCode !== '00' || false;
     const barcodeCondition = showBarCode === 1 && showTempCode === 1;
 
+    if (responseCode !== null) {
+      this.popoverConfig = {
+        ...this.popoverConfig,
+        title: error ? popoverTitles.errorTittle : popoverTitles.successTittle,
+        type: error ? PopupTypes.ERROR : PopupTypes.SUCCESS,
+        buttons: this.configureButtons(!error),
+      };
+    } else {
+      this.popoverConfig = {
+        ...this.popoverConfig,
+        title: barcodeCondition ? popoverTitles.barcodeTitle : popoverTitles.codeTittle,
+        type: error ? PopupTypes.BARCODE : PopupTypes.CODE,
+        buttons: this.configureButtons(!error),
+      };
+    }
+
+    // FOR NATIVE CODE (ANDROID, IOS ), for future:
+    // const generatedBarcode =
+    // this.barcodeScanner
+    //   .encode(this.barcodeScanner.Encode.TEXT_TYPE, 'testText')
+    //   .then(success => console.log(success), error => console.log(error));
+
+    this.popoverConfig = {
+      ...this.popoverConfig,
+      message,
+      code: issuedCode,
+      validityTime,
+    };
+  }
+
+  onFinishTimeout() {}
+
+  configureButtons(condition) {
     const successBtns = [
       {
         label: 'OKAY',
@@ -53,34 +86,7 @@ export class StPopoverComponent implements OnInit {
       },
     ];
 
-    if (responseCode !== null) {
-      this.popoverConfig = {
-        ...this.popoverConfig,
-        title: error ? popoverTitles.errorTittle : popoverTitles.successTittle,
-        type: error ? PopupTypes.ERROR : PopupTypes.SUCCESS,
-        buttons: error ? errorBtns : successBtns,
-      };
-    } else {
-      this.popoverConfig = {
-        ...this.popoverConfig,
-        title: barcodeCondition ? popoverTitles.barcodeTitle : popoverTitles.codeTittle,
-        type: error ? PopupTypes.BARCODE : PopupTypes.CODE,
-        buttons: successBtns,
-      };
-    }
-
-    // FOR NATIVE CODE (ANDROID, IOS ), for future:
-    // const generatedBarcode =
-    // this.barcodeScanner
-    //   .encode(this.barcodeScanner.Encode.TEXT_TYPE, 'testText')
-    //   .then(success => console.log(success), error => console.log(error));
-
-    this.popoverConfig = {
-      ...this.popoverConfig,
-      message,
-      code: issuedCode,
-      validityTime,
-    };
+    return condition ? successBtns : errorBtns;
   }
 }
 
