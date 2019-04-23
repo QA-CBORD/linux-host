@@ -43,7 +43,14 @@ export class MobileAccessService extends BaseService {
     const methodName = 'getMobileLocations';
 
     const postParams: ServiceParameters = { ...incomeGeoData, filters };
-    return this.httpRequest(this.serviceUrl, methodName, true, postParams).pipe(map(({ response }) => response));
+    return this.httpRequest<MessageResponse<MMobileLocationInfo[]>>(this.serviceUrl, methodName, true, postParams).pipe(
+      map(({ response, exception }) => {
+        if (exception !== null) {
+          throw new Error(exception);
+        }
+        return response;
+      })
+    );
   }
 
   getLocationById(locationId: string): Observable<MMobileLocationInfo | undefined> {
@@ -57,17 +64,6 @@ export class MobileAccessService extends BaseService {
     this._locations = this.getLocationsMultiSorted(this.locationsInfo, this.favourites);
 
     return this.saveFavourites(this.favourites);
-  }
-
-  // previous case with safe saving
-  updateFavouritesListSafe(locationId: string): Observable<string[]> {
-    return this.getFavouritesLocations().pipe(
-      map((fav: string[]) => this.handleFavouriteById(locationId, fav)),
-      switchMap((favourites: string[]) => this.saveFavourites(favourites)),
-      switchMap(() => this.getFavouritesLocations()),
-      tap((fav: string[]) => (this._locations = this.getLocationsMultiSorted(this.locationsInfo, fav))),
-      take(1)
-    );
   }
 
   getLocations(incomeGeoData: MGeoCoordinates): Observable<MMobileLocationInfo[]> {

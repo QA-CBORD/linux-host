@@ -6,12 +6,18 @@
 
     .title {
       @include ellipsis;
-      @include font-family($font-nunito-semibold);
+      font-family: $font-nunito-semibold;
     }
 
     .sub-title {
       margin-top: -5px;
       @include font-nunito-regular(10px);
     }
+  }
+}
+
+.location {
+  &__fav {
+    margin-right: 10px;
   }
 }
