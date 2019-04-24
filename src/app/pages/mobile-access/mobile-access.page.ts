@@ -99,11 +99,10 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
   }
 
   refreshLocationList($event) {
-    const subscription = this.mobileAccessService
+    this.mobileAccessService
       .getLocations(this.currentCoords)
+      .pipe(take(1))
       .subscribe(() => $event.target.complete());
-
-    this.sourceSubscription.add(subscription);
   }
 
   favouriteHandler(id: string) {
@@ -113,7 +112,7 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
         switchMap(() => this.mobileAccessService.getLocationById(id)),
         take(1)
       )
-      .subscribe(this.presentToast.bind(this));
+      .subscribe(this.presentToast.bind(this), this.errorSavingFavourites.bind(this));
   }
 
   onSearchedValue(searchString: string) {
@@ -121,8 +120,8 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
   }
 
   async presentToast({ name, isFavourite }: MMobileLocationInfo) {
-    const addLocationMessage = 'was added to your favourite list';
-    const removeLocationMessage = 'was removed from your favourite list';
+    const addLocationMessage = 'was added to your favorite list';
+    const removeLocationMessage = 'was removed from your favorite list';
 
     const message = `${name} ${isFavourite ? addLocationMessage : removeLocationMessage}`;
     const toast = await this.toastController.create({
@@ -132,15 +131,24 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
     toast.present();
   }
 
+  async errorSavingFavourites() {
+    const message = 'Something went wrong with synchronizing your favorite list';
+    const toast = await this.toastController.create({
+      message,
+      duration: this.toastDuration,
+    });
+    toast.present();
+  }
+
   private setInstitutionInfo() {
-    let institutionId;
     const subscription = this.userInfo$
       .pipe(
-        switchMap(({ institutionId: id }: MUserInfo) => {
-          institutionId = id;
-          return this.institutionService.getInstitutionPhotoById(institutionId);
-        }),
-        switchMap(() => this.institutionService.getInstitutionDataById(institutionId))
+        //TODO: add pre download institution photo after back-end will provide this functionality
+        // switchMap(({ institutionId: id }: MUserInfo) => {
+        //   institutionId = id;
+        //   return this.institutionService.getInstitutionPhotoById(institutionId);
+        // }),
+        switchMap(({ institutionId: id }: MUserInfo) => this.institutionService.getInstitutionDataById(id))
       )
       .subscribe();
 

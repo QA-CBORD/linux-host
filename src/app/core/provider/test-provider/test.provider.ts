@@ -7,7 +7,7 @@ import { AuthService } from '../../service/auth-service/auth.service';
 
 import * as Globals from '../../../app.global';
 
-import { MUserLogin } from '../../model/user/user-login.interface';
+import { MUserLogin } from '../../model/user';
 import { ExceptionProvider } from '../exception-provider/exception.provider';
 import { DataCache } from '../../utils/data-cache';
 import { catchError, tap } from 'rxjs/operators';

@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { Events, PopoverController } from '@ionic/angular';
 
-import { map, tap, switchMap } from 'rxjs/operators';
+import { map, take, tap } from 'rxjs/operators';
 import { Observable, Subscription } from 'rxjs';
 
 import { UserService } from '../../../core/service/user-service/user.service';
@@ -16,7 +16,6 @@ import { InstitutionService } from '../../../core/service/institution/institutio
 import { MMobileLocationInfo } from '../model/mobile-access.interface';
 import { Institution } from '../../../core/model/institution/institution';
 import { StPopoverComponent } from '../st-popover/st-popover.component';
-import { InstitutionPhotoInfo } from '../../../core/model/institution/institution-photo-info';
 
 @Component({
   selector: 'st-activate-location',
@@ -31,11 +30,10 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
   private locationId: string;
   private coords: any;
   userInfo$: Observable<MUserInfo>;
-  userPhoto$: Observable<string>;
-  institutionPhoto$: Observable<string>;
   location$: Observable<MMobileLocationInfo>;
   institution$: Observable<Institution>;
   private tempTitle: string = 'Mobile Access';
+  photo;
 
   constructor(
     private readonly userService: UserService,
@@ -46,7 +44,8 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
     private readonly popoverCtrl: PopoverController,
     private readonly router: Router,
     private readonly location: Location,
-    private readonly institutionService: InstitutionService
+    private readonly institutionService: InstitutionService,
+    private readonly cdRef: ChangeDetectorRef
   ) {}
 
   get userFullName$(): Observable<string> {
@@ -66,7 +65,6 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
     this.setUserPhoto();
     this.setCoords();
     this.setInstitution();
-    this.setInstitutionPhoto();
   }
 
   activateLocation() {
@@ -85,6 +83,12 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
       );
 
     this.sourceSubscription.add(subscription);
+  }
+
+  get starClass(): Observable<string> {
+    const cl = 'user-data__location';
+    const favourite = 'user-data__location--favourite';
+    return this.location$.pipe(map(({ isFavourite }: MMobileLocationInfo) => `${cl} ${isFavourite ? favourite : ''}`));
   }
 
   async modalHandler(message: string, error: boolean = false) {
@@ -142,22 +146,30 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
   }
 
   private setInstitution() {
-    this.institution$ = this.institutionService.institutionData;
+    this.institution$ = this.institutionService.institutionData.pipe(tap(data => console.log(data)));
+    this.cdRef.detectChanges();
   }
-
-  private setInstitutionPhoto() {
-    this.institutionPhoto$ = this.userInfo$.pipe(
-      switchMap(({ institutionId }: MUserInfo) => this.institutionService.getInstitutionPhotoById(institutionId)),
-      map(({ data, mimeType }: InstitutionPhotoInfo) => {
-        return `data:${mimeType};base64,${data}`;
-      })
-    );
-  }
+  //TODO: add this function to ngOnInit after back-end will be ready
+  // private setInstitutionPhoto() {
+  //   this.institutionPhoto$ = this.userInfo$.pipe(
+  //     switchMap(({ institutionId }: MUserInfo) => this.institutionService.getInstitutionPhotoById(institutionId)),
+  //     map(({ data, mimeType }: InstitutionPhotoInfo) => {
+  //       return `data:${mimeType};base64,${data}`;
+  //     })
+  //   );
+  // }
 
   private setUserPhoto() {
-    this.userPhoto$ = this.userService
+    this.userService
       .getAcceptedPhoto()
-      .pipe(map(({ data, mimeType }) => `data:${mimeType};base64,${data}`));
+      .pipe(
+        map(({ data, mimeType }) => `data:${mimeType};base64,${data}`),
+        take(1)
+      )
+      .subscribe((url: string) => {
+        this.photo = url;
+        this.cdRef.detectChanges();
+      });
   }
 
   private setCoords() {
