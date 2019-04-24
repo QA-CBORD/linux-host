@@ -25,7 +25,7 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
   private readonly toastDuration: number = 1000;
   private currentCoords: MGeoCoordinates;
   private tempTitle: string = 'Mobile Access';
-  locations$: Observable<MMobileLocationInfo[]>;
+  locations: MMobileLocationInfo[];
   userInfo$: Observable<MUserInfo>;
 
   constructor(
@@ -156,9 +156,13 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
   // START REDESIGN:
   private initComponent() {
     this.platform.ready().then(() => {
-      this.locations$ = combineLatest(this.mobileAccessService.locations, this.searchString$).pipe(
-        map(([locations, str]: [MMobileLocationInfo[], string]) => this.filterLocationsBySearchString(str, locations))
-      );
+      combineLatest(this.mobileAccessService.locations, this.searchString$)
+        .pipe(
+          map(([locations, str]: [MMobileLocationInfo[], string]) => this.filterLocationsBySearchString(str, locations))
+        )
+        .subscribe(locations => {
+          this.locations = locations;
+        });
     });
   }
 
