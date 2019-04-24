@@ -1,0 +1,44 @@
+<ion-header class="st-popover__header" no-border>
+  <ion-toolbar mode="md" class="st-popover__toolbar">
+    <ion-title class="st-popover__title">{{ popoverConfig.title }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button color="dark" (click)="closeModal()">
+        <ion-icon slot="icon-only" name="close" class="st-popover__toolbar-icon"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="st-popover__content">
+  <div class="st-popover__message">
+    <div>
+      {{ popoverConfig.message }}
+    </div>
+    <st-countdown
+      [seconds]="popoverConfig.validityTime"
+      (onTimeout)="onFinishTimeout()"
+      *ngIf="popoverConfig.type === 'BARCODE' || popoverConfig.type === 'CODE'"
+    ></st-countdown>
+  </div>
+  <div class="st-popover__temp-code" *ngIf="popoverConfig.type === 'CODE'">
+    {{ popoverConfig.code }}
+  </div>
+  <div class="st-popover__barcode">
+    <pdf417barcode
+      [text]="popoverConfig.code"
+      [opts]="{ pxw: 2.3, pxh: 1.4 }"
+      *ngIf="popoverConfig.type === 'BARCODE'"
+    ></pdf417barcode>
+  </div>
+</ion-content>
+<ion-footer no-border class="st-popover__footer">
+  <ion-button
+    fill="{{ button.fill }}"
+    shape="{{ button.shape }}"
+    strong="{{ button.strong }}"
+    class="st-popover__footer-btn st-popover__footer-btn--{{ button.class }}"
+    *ngFor="let button of popoverConfig.buttons"
+    (click)="closeModal(button.label)"
+  >
+    {{ button.label }}
+  </ion-button>
+</ion-footer>

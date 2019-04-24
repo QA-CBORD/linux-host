@@ -1,22 +1,21 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { LocationDetailPage } from './location-detail.page';
+import { StSpinnerComponent } from './st-spinner.component';
 
-describe('LocationDetailPage', () => {
-  let component: LocationDetailPage;
-  let fixture: ComponentFixture<LocationDetailPage>;
+describe('StSpinnerPage', () => {
+  let component: StSpinnerComponent;
+  let fixture: ComponentFixture<StSpinnerComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ LocationDetailPage ],
+      declarations: [StSpinnerComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(LocationDetailPage);
+    fixture = TestBed.createComponent(StSpinnerComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

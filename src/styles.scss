@@ -1,0 +1,38 @@
+@import 'vendor';
+@import 'tools';
+@import 'fonts';
+
+:root {
+  .st-header {
+    ion-searchbar {
+      .searchbar-input-container.sc-ion-searchbar-ios {
+        height: 40px;
+      }
+
+      .searchbar-input.sc-ion-searchbar-ios {
+        border-radius: 20px 20px 20px 20px;
+        border: 1px solid rgb(212, 214, 216);
+        &::placeholder {
+          @include font-family($font-nunito-regular);
+        }
+      }
+    }
+  }
+
+  //Temp styles for popover:
+  .sc-ion-popover-md-h,
+  .sc-ion-popover-ios-h {
+    --min-width: 300px !important;
+
+    ion-backdrop {
+      opacity: 0.5 !important;
+    }
+
+    .popover-content {
+      &.sc-ion-popover-md,
+      &.sc-ion-popover-ios {
+        border-radius: 15px;
+      }
+    }
+  }
+}

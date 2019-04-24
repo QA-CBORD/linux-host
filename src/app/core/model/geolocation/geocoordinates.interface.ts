@@ -1,7 +1,5 @@
 export interface MGeoCoordinates {
-    coords: {
-        latitude,
-        longitude,
-        accuracy
-    };
+  latitude: number;
+  longitude: number;
+  accuracy: number;
 }

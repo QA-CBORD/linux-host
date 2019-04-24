@@ -1,7 +1,7 @@
 export interface MUserNotificationInfo {
-    type: number;
-    value: string;
-    provider: string;
-    status: number;
-    bounceStatus: number;
+  readonly type: number;
+  readonly value: string;
+  readonly provider: string;
+  readonly status: number;
+  readonly bounceStatus: number;
 }

@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 
-import { MobileAccessProvider } from './mobile-access.provider';
+import { StPopoverService } from './st-popover.service';
 
-describe('MobileAccessService', () => {
+describe('StPopoverService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   it('should be created', () => {
-    const service: MobileAccessProvider = TestBed.get(MobileAccessProvider);
+    const service: StPopoverService = TestBed.get(StPopoverService);
     expect(service).toBeTruthy();
   });
 });

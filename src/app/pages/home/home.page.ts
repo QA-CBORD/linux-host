@@ -1,28 +1,27 @@
 import { Component } from '@angular/core';
 
-import { Platform, Events } from '@ionic/angular';
 import { Router } from '@angular/router';
+import { Events, Platform } from '@ionic/angular';
 
-import { Logger } from 'src/app/core/utils/logger';
+import { DataCache } from '../../core/utils/data-cache';
+import { Logger } from '../../core/utils/logger';
 import { Environment } from '../../environment';
-import { DataCache } from 'src/app/core/utils/data-cache';
 
-import { AuthService } from 'src/app/core/service/auth-service/auth.service';
-import { UserService } from 'src/app/core/service/user-service/user.service';
+import { AuthService } from '../../core/service/auth-service/auth.service';
+import { UserService } from '../../core/service/user-service/user.service';
 
-import { ExceptionProvider } from 'src/app/core/provider/exception-provider/exception.provider';
+import { ExceptionProvider } from '../../core/provider/exception-provider/exception.provider';
 
 import * as Globals from '../../app.global';
-import { TestProvider } from 'src/app/core/provider/test-provider/test.provider';
-
+import { TestProvider } from '../../core/provider/test-provider/test.provider';
+import { take } from 'rxjs/operators';
 
 export enum EDestination {
   NONE = 'none',
   MOBILE_ACCESS = 'openmydoor',
   SECURE_MESSAGING = 'securemessaging',
-  REWARDS = 'rewards'
+  REWARDS = 'rewards',
 }
-
 
 @Component({
   selector: 'app-home',
@@ -30,7 +29,6 @@ export enum EDestination {
   styleUrls: ['home.page.scss'],
 })
 export class HomePage {
-
   sessionToken: string = null;
   destinationPage: EDestination = EDestination.NONE;
 
@@ -43,7 +41,6 @@ export class HomePage {
     private testProvider: TestProvider
   ) {
     this.platform.ready().then(() => {
-
       /// Set logger enabled based on env
       Logger.setLoggingEnabled(Environment.isDevelopmentEnvironment(location.href));
       /// use page url to determine current environment
@@ -55,17 +52,16 @@ export class HomePage {
       this.handleSessionToken();
 
       // this.testGetSession();
-
     });
   }
 
   private testGetSession() {
     this.testProvider.getTestUser().subscribe(
-      ((success) => {
+      success => {
         this.destinationPage = EDestination.MOBILE_ACCESS;
         this.getUserInfo();
-      }),
-      ((error) => {
+      },
+      error => {
         ExceptionProvider.showException(this.events, {
           displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
           messageInfo: {
@@ -78,10 +74,10 @@ export class HomePage {
             negativeButtonTitle: 'CLOSE',
             negativeButtonHandler: () => {
               // TODO: this.platform.exitApp();
-            }
-          }
+            },
+          },
         });
-      })
+      }
     );
   }
 
@@ -89,7 +85,6 @@ export class HomePage {
    * Get hash parameters from url
    */
   private getHashParameters() {
-
     /// get required params from the URL
     this.sessionToken = DataCache.getUrlSession() || null;
     this.destinationPage = DataCache.getDestinationPage() || null;
@@ -117,8 +112,8 @@ export class HomePage {
                 negativeButtonTitle: 'CLOSE',
                 negativeButtonHandler: () => {
                   // TODO: this.platform.exitApp();
-                }
-              }
+                },
+              },
             });
             return;
           }
@@ -139,8 +134,8 @@ export class HomePage {
               negativeButtonTitle: 'CLOSE',
               negativeButtonHandler: () => {
                 // TODO: this.platform.exitApp();
-              }
-            }
+              },
+            },
           });
         }
       );
@@ -156,57 +151,62 @@ export class HomePage {
           positiveButtonTitle: 'CLOSE',
           positiveButtonHandler: () => {
             // TODO: this.platform.exitApp();
-          }
-        }
+          },
+        },
       });
     }
   }
 
   private getUserInfo() {
-    this.userService.getUser().subscribe(
-      (data) => {
-        DataCache.setUserInfo(data);
-        DataCache.setInstitutionId(data.institutionId);
-        this.handlePageNavigation();
-      },
-      (error) => {
-        ExceptionProvider.showException(this.events, {
-          displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
-          messageInfo: {
-            title: Globals.Exception.Strings.TITLE,
-            message: 'Unable to verify your user information',
-            positiveButtonTitle: 'RETRY',
-            positiveButtonHandler: () => {
-              this.handleSessionToken();
+    this.userService
+      .getUser()
+      .pipe(take(1))
+      .subscribe(
+        data => {
+          DataCache.setUserInfo(data);
+          DataCache.setInstitutionId(data.institutionId);
+          this.handlePageNavigation();
+        },
+        error => {
+          ExceptionProvider.showException(this.events, {
+            displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
+            messageInfo: {
+              title: Globals.Exception.Strings.TITLE,
+              message: 'Unable to verify your user information',
+              positiveButtonTitle: 'RETRY',
+              positiveButtonHandler: () => {
+                this.handleSessionToken();
+              },
+              negativeButtonTitle: 'CLOSE',
+              negativeButtonHandler: () => {
+                // TODO: this.platform.exitApp();
+              },
             },
-            negativeButtonTitle: 'CLOSE',
-            negativeButtonHandler: () => {
-              // TODO: this.platform.exitApp();
-            }
-          }
-        });
-      }
-    );
+          });
+        }
+      );
   }
 
   /**
    *  Navigate user to the destination page after session id has been retrieved
    */
   private handlePageNavigation() {
-
-
     switch (this.destinationPage) {
       case EDestination.REWARDS:
         this.router.navigate(['rewards']);
         break;
       case EDestination.MOBILE_ACCESS:
-        this.router.navigate(['mobile-access'], { replaceUrl: true, skipLocationChange: true });
+        this.router.navigate(['mobile-access'], {
+          replaceUrl: true,
+          skipLocationChange: true,
+        });
         break;
       case EDestination.SECURE_MESSAGING:
-        this.router.navigate(['secure-message'], { replaceUrl: true, skipLocationChange: true });
+        this.router.navigate(['secure-message'], {
+          replaceUrl: true,
+          skipLocationChange: true,
+        });
         break;
-
     }
   }
-
 }

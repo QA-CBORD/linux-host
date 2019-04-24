@@ -1,112 +1,182 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
+import { catchError, map, retry } from 'rxjs/operators';
+
 import { BaseService, ServiceParameters } from 'src/app/core/service/base-service/base.service';
-
 import { MGeoCoordinates } from 'src/app/core/model/geolocation/geocoordinates.interface';
-import { MMobileLocationInfo, MActivateMobileLocationResult } from '../model/mobile-access.interface';
+import { MActivateMobileLocationResult, MMobileLocationInfo } from '../model/mobile-access.interface';
+import { MessageResponse } from '../../../core/model/service/message-response.interface';
+import { UserService } from '../../../core/service/user-service/user.service';
+import { CoordsService } from '../../../core/service/coords/coords.service';
+import { GeoLocationInfo } from '../../../core/model/geolocation/geoLocationInfo';
 
-
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class MobileAccessService extends BaseService {
+  private readonly serviceUrl = '/json/commerce';
+  private readonly favouritesLocationSettingsName = 'mobileaccess_favorites';
+  private readonly locations$: BehaviorSubject<MMobileLocationInfo[]> = new BehaviorSubject<MMobileLocationInfo[]>([]);
+  private locationsInfo: MMobileLocationInfo[] = [];
+  private favourites: string[];
 
-  private serviceUrl = '/json/commerce';
-
-  /**
-    * Retrieve Mobile Access locations for user
-    *
-    * @param geoData   Geolocation data for user. null if none exists
-    */
-  getMobileLocations(geoData: MGeoCoordinates): Observable<MMobileLocationInfo[]> {
-      let geoDataParam: MGeoCoordinates = {
-        coords: {
-          latitude: null,
-          longitude: null,
-          accuracy: null
-        }
-      };
-
-      if (!(geoData == null || geoData.coords == null || geoData.coords.latitude == null || geoData.coords.longitude == null)) {
-        geoDataParam = geoData;
-      }
-
-      const postParams: ServiceParameters = {
-        'latitude': geoDataParam.coords.latitude,
-        'longitude': geoDataParam.coords.longitude,
-        'accuracy': geoDataParam.coords.accuracy,
-        'filters': ['Normal', 'TempCode', 'Attendance']
-      };
-
-
-    return this.httpRequest(this.serviceUrl, 'getMobileLocations', true, postParams)
-        .pipe(
-            map(res => {
-              if (res === null) {
-                throw new Error('No location information available.');
-              }
-              return res.response;
-            })
-        );
+  constructor(
+    protected readonly http: HttpClient,
+    private readonly userService: UserService,
+    private readonly coords: CoordsService
+  ) {
+    super(http);
   }
 
-
-  /**
-   * Activate 'Mobile Location' location for user
-   *
-   * @param locationId    Id of location to activate
-   * @param geoData       Geolocation data of user if avaialable, null otherwise
-   * @param sourceInfo    I don't know but we always null this out
-   */
-  activateMobileLocation(locationId: string, geoData: any, sourceInfo: string): Observable<MActivateMobileLocationResult> {
-      const postParams = this.createMobileLocationParams(locationId, geoData, sourceInfo);
-
-      return this.httpRequest(this.serviceUrl, 'activateMobileLocation', true, postParams)
-          .pipe(
-              map(data => {
-                  if (data != null && data.response != null) {
-                      return data.response;
-                  }
-
-                  if (data != null && data.exception != null) {
-                      return data.exception;
-                  }
-                  throw new Error('An unexpected error occurred.');
-              })
-          );
+  get locations(): Observable<MMobileLocationInfo[]> {
+    return this.locations$.asObservable();
   }
 
-    /**
-     * configure Mobile Location Params
-     *
-     * @param locationId
-     * @param geoData
-     * @param sourceInfo
-     */
-    private createMobileLocationParams(locationId: string, geoData: any, sourceInfo: string) {
-        const isGeoDataNull = geoData == null || geoData.coords == null;
-        const latitude = isGeoDataNull || geoData.coords.latitude == null ? null : geoData.coords.latitude;
-        const longitude = isGeoDataNull || geoData.coords.longitude == null ? null : geoData.coords.longitude;
-        const accuracy = isGeoDataNull || geoData.coords.accuracy == null ? null : geoData.coords.accuracy;
-        const altitude = isGeoDataNull || geoData.coords.altitude == null ? null : geoData.coords.altitude;
-        const altitudeAccuracy = isGeoDataNull ||
-        geoData.coords.altitudeAccuracy == null ? null : geoData.coords.altitudeAccuracy;
-        const heading = isGeoDataNull || geoData.coords.heading == null ? null : geoData.coords.heading;
-        const speed = isGeoDataNull || geoData.coords.speed == null ? null : geoData.coords.speed;
+  private set _locations(locations: MMobileLocationInfo[]) {
+    this.locationsInfo = [...locations];
+    this.locations$.next([...this.locationsInfo]);
+  }
 
-        return {
-            locationId: locationId,
-            tranDate: new Date().toISOString(),
-            latitude: latitude,
-            longitude: longitude,
-            accuracy: accuracy,
-            altitude: altitude,
-            altAccuracy: altitudeAccuracy,
-            speed: speed,
-            heading: heading,
-            sourceInfo: sourceInfo
+  getMobileLocations(incomeGeoData: MGeoCoordinates): Observable<MMobileLocationInfo[]> {
+    const filters = ['Normal', 'TempCode', 'Attendance'];
+    const methodName = 'getMobileLocations';
+
+    const postParams: ServiceParameters = { ...incomeGeoData, filters };
+    return this.httpRequest<MessageResponse<MMobileLocationInfo[]>>(this.serviceUrl, methodName, true, postParams).pipe(
+      map(({ response, exception }) => {
+        if (exception !== null) {
+          throw new Error(exception);
         }
+        return response;
+      })
+    );
+  }
+
+  getLocationById(locationId: string): Observable<MMobileLocationInfo | undefined> {
+    return this.locations.pipe(
+      map((locations: MMobileLocationInfo[]) => locations.filter(location => location.locationId === locationId)[0])
+    );
+  }
+
+  updateFavouritesList(locationId: string): Observable<MessageResponse<boolean>> {
+    this.favourites = this.handleFavouriteById(locationId, this.favourites);
+    this._locations = this.getLocationsMultiSorted(this.locationsInfo, this.favourites);
+
+    return this.saveFavourites(this.favourites);
+  }
+
+  getLocations(incomeGeoData: MGeoCoordinates): Observable<MMobileLocationInfo[]> {
+    return combineLatest(this.getMobileLocations(incomeGeoData), this.getFavouritesLocations()).pipe(
+      map(
+        ([locations, favourites]: [MMobileLocationInfo[], string[]]) =>
+          (this._locations = this.getLocationsMultiSorted(locations, favourites))
+      )
+    );
+  }
+
+  getFavouritesLocations(): Observable<string[] | []> {
+    return this.userService.getUserSettingsBySettingName(this.favouritesLocationSettingsName).pipe(
+      map(({ response: { value } }) => (this.favourites = this.parseArrayFromString(value))),
+      catchError(() => {
+        return of([]);
+      })
+    );
+  }
+
+  activateMobileLocation(
+    locationId: string,
+    geoData: Coordinates,
+    sourceInfo: string | null = null
+  ): Observable<MActivateMobileLocationResult> {
+    const postParams = this.createMobileLocationParams(locationId, geoData, sourceInfo);
+    const methodName = 'activateMobileLocation';
+
+    return this.httpRequest<MessageResponse<MActivateMobileLocationResult>>(
+      this.serviceUrl,
+      methodName,
+      true,
+      postParams
+    ).pipe(
+      map(({ response, exception }: MessageResponse<MActivateMobileLocationResult>) => {
+        if (exception !== null) {
+          throw new Error(exception);
+        }
+        return response;
+      })
+    );
+  }
+
+  private saveFavourites(favourites: string[]): Observable<MessageResponse<boolean>> {
+    const favouritesAsString = JSON.stringify(favourites);
+
+    return this.userService
+      .saveUserSettingsBySettingName(this.favouritesLocationSettingsName, favouritesAsString)
+      .pipe(retry(1));
+  }
+
+  private handleFavouriteById(locationId: string, favourites: string[]): string[] | [] {
+    const wasFavorite = this.isFavouriteLocation(locationId, favourites);
+
+    if (wasFavorite) {
+      return (favourites = favourites.filter(id => id !== locationId));
     }
+    favourites.push(locationId);
+
+    return favourites;
+  }
+
+  private addFavouriteFieldToLocations(locations: MMobileLocationInfo[], favourites: string[]): MMobileLocationInfo[] {
+    return locations.map(location => ({
+      ...location,
+      isFavourite: this.isFavouriteLocation(location.locationId, favourites),
+    }));
+  }
+
+  private getLocationsMultiSorted(locations: MMobileLocationInfo[], favourites: string[]): MMobileLocationInfo[] {
+    const locationListWithFavourites = this.addFavouriteFieldToLocations(locations, favourites);
+    const locationsSortedByScores = [...locationListWithFavourites].sort(this.sortByHighestScore);
+
+    return locationsSortedByScores.sort(this.sortByFavourites);
+  }
+
+  private isFavouriteLocation(locationId: string, favourites: string[]): boolean {
+    return favourites.indexOf(locationId) !== -1;
+  }
+
+  private sortByHighestScore({ score: a }: MMobileLocationInfo, { score: b }: MMobileLocationInfo) {
+    return a && b ? b - a : 0;
+  }
+
+  private sortByFavourites({ isFavourite: a }: MMobileLocationInfo, { isFavourite: b }: MMobileLocationInfo) {
+    return Number(b) - Number(a);
+  }
+
+  private parseArrayFromString(str: string): string[] | [] {
+    const array = JSON.parse(str);
+
+    return Array.isArray(array) ? array : [];
+  }
+
+  private createMobileLocationParams(locationId: string, geoData: Coordinates, sourceInfo: string): GeoLocationInfo {
+    const latitude = !geoData.latitude ? null : geoData.latitude;
+    const longitude = !geoData.longitude ? null : geoData.longitude;
+    const accuracy = !geoData.accuracy ? null : geoData.accuracy;
+    const altitude = !geoData.altitude ? null : geoData.altitude;
+    const altitudeAccuracy = !geoData.altitudeAccuracy ? null : geoData.altitudeAccuracy;
+    const heading = !geoData.heading ? null : geoData.heading;
+    const speed = !geoData.speed ? null : geoData.speed;
+
+    return {
+      locationId,
+      tranDate: new Date().toISOString(),
+      latitude,
+      longitude,
+      accuracy,
+      altitude,
+      altitudeAccuracy,
+      speed,
+      heading,
+      sourceInfo,
+    };
+  }
 }

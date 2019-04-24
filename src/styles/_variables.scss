@@ -1,5 +1,3 @@
-// Ionic Variables and Theming. For more info, please see:
-// http://ionicframework.com/docs/theming/
 
 /** Ionic CSS Variables **/
 :root {
@@ -78,3 +76,19 @@
   // --ion-grid-width-sm: 0px;
 
 }
+
+// FONTS
+// -------------------------------
+$font-nunito-regular: 'Nunito Regular', arial, sans-serif;
+$font-nunito-semibold: 'Nunito SemiBold', arial, sans-serif;
+$font-nunito-heavy: 'Nunito Bold', arial, sans-serif;
+
+
+// COLORS
+
+$color-light-gray: #ccc;
+$color-medium-gray: #aaa;
+$color-hard-gray: #333;
+$color-blue: #0056e6;
+$color-white: #fff;
+$color-black: #000;
