@@ -24,10 +24,10 @@ export class StPopoverComponent implements OnInit {
 
   initPopover() {
     const { message, responseCode, showBarCode, showTempCode, validityTime, issuedCode } = this.data;
-    const error: boolean = responseCode !== '00' || false;
-    const barcodeCondition = showBarCode === 1 && showTempCode === 1;
 
     if (responseCode !== null) {
+      const error: boolean = responseCode !== '00' || false;
+
       this.popoverConfig = {
         ...this.popoverConfig,
         title: error ? popoverTitles.errorTittle : popoverTitles.successTittle,
@@ -35,11 +35,13 @@ export class StPopoverComponent implements OnInit {
         buttons: this.configureButtons(!error),
       };
     } else {
+      const barcodeCondition = showBarCode === 1 && showTempCode === 1;
+
       this.popoverConfig = {
         ...this.popoverConfig,
         title: barcodeCondition ? popoverTitles.barcodeTitle : popoverTitles.codeTittle,
-        type: error ? PopupTypes.BARCODE : PopupTypes.CODE,
-        buttons: this.configureButtons(!error),
+        type: barcodeCondition ? PopupTypes.BARCODE : PopupTypes.CODE,
+        buttons: this.configureButtons(true),
       };
     }
 
@@ -57,7 +59,9 @@ export class StPopoverComponent implements OnInit {
     };
   }
 
-  onFinishTimeout() {}
+  onFinishTimeout() {
+    this.closeModal();
+  }
 
   configureButtons(condition) {
     const successBtns = [
