@@ -1,5 +1,5 @@
 <ion-item detail (click)="openLocation()">
-  <img class="location__fav" [src]="starClass" width="25px" alt="favorites"
+  <img class="location__fav" [src]="starClass" width="25px" alt="star"
        appClickStopPropagation (click)="triggerFavourite()"/>
   <ion-label class="st-label">
     <h3 class="title">{{ location.locationId }} - {{ location.name }}</h3>

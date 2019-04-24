@@ -1,9 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
-import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
-import { tap } from 'rxjs/internal/operators/tap';
-import { map, retry, switchMap, take } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
+import { catchError, map, retry } from 'rxjs/operators';
 
 import { BaseService, ServiceParameters } from 'src/app/core/service/base-service/base.service';
 import { MGeoCoordinates } from 'src/app/core/model/geolocation/geocoordinates.interface';
@@ -76,9 +75,12 @@ export class MobileAccessService extends BaseService {
   }
 
   getFavouritesLocations(): Observable<string[] | []> {
-    return this.userService
-      .getUserSettingsBySettingName(this.favouritesLocationSettingsName)
-      .pipe(map(({ response: { value } }) => (this.favourites = this.parseArrayFromString(value))));
+    return this.userService.getUserSettingsBySettingName(this.favouritesLocationSettingsName).pipe(
+      map(({ response: { value } }) => (this.favourites = this.parseArrayFromString(value))),
+      catchError(() => {
+        return of([]);
+      })
+    );
   }
 
   activateMobileLocation(
