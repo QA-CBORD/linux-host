@@ -58,6 +58,12 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
     this.sourceSubscription.unsubscribe();
   }
 
+  get starClass(): Observable<string> {
+    const cl = 'user-data__location';
+    const favourite = 'user-data__location--favourite';
+    return this.location$.pipe(map(({ isFavourite }: MMobileLocationInfo) => `${cl} ${isFavourite ? favourite : ''}`));
+  }
+
   ngOnInit() {
     this.locationId = this.routerLink.snapshot.params.id;
     this.userInfo$ = this.userService.userData;
@@ -103,7 +109,7 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
   }
 
   private setInstitution() {
-    this.institution$ = this.institutionService.institutionData.pipe(tap(data => console.log(data)));
+    this.institution$ = this.institutionService.institutionData;
     this.cdRef.detectChanges();
   }
   //TODO: add this function to ngOnInit after back-end will be ready
