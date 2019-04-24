@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { Events } from '@ionic/angular';
 import { Resolve } from '@angular/router/src/interfaces';
 
-import { catchError, delayWhen, switchMap, tap, retryWhen, delay } from 'rxjs/operators';
+import { catchError, switchMap, tap, retryWhen, delay } from 'rxjs/operators';
 import { Observable, of, throwError } from 'rxjs';
 
 import { CoordsService } from '../../core/service/coords/coords.service';
