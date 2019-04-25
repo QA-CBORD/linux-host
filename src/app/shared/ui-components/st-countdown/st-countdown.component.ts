@@ -10,7 +10,7 @@ import { map, takeWhile, tap } from 'rxjs/operators';
 export class StCountdownComponent implements OnInit {
   @Input('seconds') seconds: number = 3;
   @Output('onTimeout') onTimeout: EventEmitter<boolean> = new EventEmitter<boolean>();
-  private countdown$: Observable<number>;
+  countdown$: Observable<number>;
 
   get animation(): { [key: string]: string } {
     return { 'animation-duration': `${this.seconds}s` };

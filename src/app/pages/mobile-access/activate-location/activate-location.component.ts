@@ -26,13 +26,13 @@ import { LoadingService } from '../../../core/service/loading/loading.service';
 export class ActivateLocationComponent implements OnInit, OnDestroy {
   private readonly spinnerMessage = 'Activating location...';
   private readonly sourceSubscription: Subscription = new Subscription();
-  private readonly staticBgImage: string = '/assets/images/card_background_illustration.svg';
+  readonly staticBgImage: string = '/assets/images/card_background_illustration.svg';
   private locationId: string;
   private coords: any;
   userInfo$: Observable<MUserInfo>;
   location$: Observable<MMobileLocationInfo>;
   institution$: Observable<Institution>;
-  private tempTitle: string = 'Mobile Access';
+  tempTitle: string = 'Mobile Access';
   photo: string;
 
   constructor(

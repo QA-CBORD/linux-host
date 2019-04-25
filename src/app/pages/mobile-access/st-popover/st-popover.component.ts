@@ -10,7 +10,7 @@ import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 export class StPopoverComponent implements OnInit {
   @Input() data: any;
 
-  private popoverConfig: popoverConfig;
+  popoverConfig: popoverConfig;
 
   constructor(private events: Events, private popoverCtrl: PopoverController, barcodeScanner: BarcodeScanner) {}
 
