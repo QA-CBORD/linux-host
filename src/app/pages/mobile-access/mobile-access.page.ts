@@ -24,7 +24,7 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
   private readonly searchString$: BehaviorSubject<string> = new BehaviorSubject<string>('');
   private readonly toastDuration: number = 1000;
   private currentCoords: MGeoCoordinates;
-  private tempTitle: string = 'Mobile Access';
+  tempTitle: string = 'Mobile Access';
   locations: MMobileLocationInfo[];
   userInfo$: Observable<MUserInfo>;
 
