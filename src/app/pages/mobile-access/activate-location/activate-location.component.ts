@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { Events, PopoverController } from '@ionic/angular';
+import { PopoverController } from '@ionic/angular';
 
 import { map, take, tap } from 'rxjs/operators';
 import { Observable, Subscription } from 'rxjs';
@@ -9,13 +9,13 @@ import { Observable, Subscription } from 'rxjs';
 import { UserService } from '../../../core/service/user-service/user.service';
 import { MobileAccessService } from '../service/mobile-access.service';
 import { CoordsService } from '../../../core/service/coords/coords.service';
-import * as Globals from '../../../app.global';
 import { MUserInfo } from '../../../core/model/user';
 import { MGeoCoordinates } from '../../../core/model/geolocation/geocoordinates.interface';
 import { InstitutionService } from '../../../core/service/institution/institution.service';
 import { MMobileLocationInfo } from '../model/mobile-access.interface';
 import { Institution } from '../../../core/model/institution/institution';
 import { StPopoverComponent } from '../st-popover/st-popover.component';
+import { LoadingService } from '../../../core/service/loading/loading.service';
 
 @Component({
   selector: 'st-activate-location',
@@ -40,12 +40,12 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
     private readonly routerLink: ActivatedRoute,
     private readonly mobileAccessService: MobileAccessService,
     private readonly geoDataService: CoordsService,
-    private readonly events: Events,
     private readonly popoverCtrl: PopoverController,
     private readonly router: Router,
     private readonly location: Location,
     private readonly institutionService: InstitutionService,
-    private readonly cdRef: ChangeDetectorRef
+    private readonly cdRef: ChangeDetectorRef,
+    private readonly loading: LoadingService
   ) {}
 
   get userFullName$(): Observable<string> {
@@ -75,12 +75,12 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
 
   activateLocation() {
     // TODO: create Spinner in some special service:
-    this.spinnerHandler(true);
+    this.loading.showSpinner(this.spinnerMessage);
 
     const subscription = this.mobileAccessService
       .activateMobileLocation(this.locationId, this.coords)
-      .pipe(tap(() => this.spinnerHandler()))
-      .subscribe(res => this.modalHandler(res), () => this.spinnerHandler());
+      .pipe(tap(() => this.loading.closeSpinner()))
+      .subscribe(res => this.modalHandler(res), () => this.loading.closeSpinner());
 
     this.sourceSubscription.add(subscription);
   }
@@ -141,16 +141,5 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
       .subscribe((coords: MGeoCoordinates) => (this.coords = coords));
 
     this.sourceSubscription.add(subscription);
-  }
-
-  private spinnerHandler(started: boolean = false) {
-    const start = {
-      bShow: true,
-      message: this.spinnerMessage,
-    };
-    const stop = { bShow: false };
-    const loaderArgs = started ? start : stop;
-
-    this.events.publish(Globals.Events.LOADER_SHOW, loaderArgs);
   }
 }

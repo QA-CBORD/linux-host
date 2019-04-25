@@ -9,5 +9,5 @@
   <ion-refresher slot="fixed" (ionRefresh)="refreshLocationList($event)">
     <st-spinner></st-spinner>
   </ion-refresher>
-  <st-location-list [locations]="locations" (favouriteTrigger)="favouriteHandler($event)"></st-location-list>
+  <st-location-list [locations]="locations$ | async" (favouriteTrigger)="favouriteHandler($event)"></st-location-list>
 </ion-content>

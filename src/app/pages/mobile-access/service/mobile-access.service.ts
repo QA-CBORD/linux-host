@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
-import { catchError, map, retry } from 'rxjs/operators';
+import { catchError, map, retry, switchMap } from 'rxjs/operators';
 
 import { BaseService, ServiceParameters } from 'src/app/core/service/base-service/base.service';
 import { MGeoCoordinates } from 'src/app/core/model/geolocation/geocoordinates.interface';
@@ -37,12 +37,18 @@ export class MobileAccessService extends BaseService {
     this.locations$.next([...this.locationsInfo]);
   }
 
-  getMobileLocations(incomeGeoData: MGeoCoordinates): Observable<MMobileLocationInfo[]> {
+  getMobileLocations(): Observable<MMobileLocationInfo[]> {
     const filters = ['Normal', 'TempCode', 'Attendance'];
     const methodName = 'getMobileLocations';
 
-    const postParams: ServiceParameters = { ...incomeGeoData, filters };
-    return this.httpRequest<MessageResponse<MMobileLocationInfo[]>>(this.serviceUrl, methodName, true, postParams).pipe(
+    const postParams: ServiceParameters = { filters };
+    return this.coords.initCoords().pipe(
+      switchMap((incomeGeoData: MGeoCoordinates) =>
+        this.httpRequest<MessageResponse<MMobileLocationInfo[]>>(this.serviceUrl, methodName, true, {
+          ...postParams,
+          ...incomeGeoData,
+        })
+      ),
       map(({ response, exception }) => {
         if (exception !== null) {
           throw new Error(exception);
@@ -65,8 +71,8 @@ export class MobileAccessService extends BaseService {
     return this.saveFavourites(this.favourites);
   }
 
-  getLocations(incomeGeoData: MGeoCoordinates): Observable<MMobileLocationInfo[]> {
-    return combineLatest(this.getMobileLocations(incomeGeoData), this.getFavouritesLocations()).pipe(
+  getLocations(): Observable<MMobileLocationInfo[]> {
+    return combineLatest(this.getMobileLocations(), this.getFavouritesLocations()).pipe(
       map(
         ([locations, favourites]: [MMobileLocationInfo[], string[]]) =>
           (this._locations = this.getLocationsMultiSorted(locations, favourites))
