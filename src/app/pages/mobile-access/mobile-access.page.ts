@@ -22,7 +22,7 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
   private readonly searchString$: BehaviorSubject<string> = new BehaviorSubject<string>('');
   private readonly toastDuration: number = 1000;
   tempTitle: string = 'Mobile Access';
-  locations: MMobileLocationInfo[];
+  locations$: Observable<MMobileLocationInfo[]>;
   userInfo$: Observable<MUserInfo>;
 
   constructor(
