@@ -7,8 +7,6 @@ import { map, switchMap, take } from 'rxjs/operators';
 
 import { MMobileLocationInfo } from './model/mobile-access.interface';
 import { MobileAccessService } from './service/mobile-access.service';
-import { CoordsService } from '../../core/service/coords/coords.service';
-import { MGeoCoordinates } from '../../core/model/geolocation/geocoordinates.interface';
 import { InstitutionService } from '../../core/service/institution/institution.service';
 import { MUserInfo } from '../../core/model/user';
 import { UserService } from '../../core/service/user-service/user.service';
@@ -23,9 +21,8 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
   private readonly sourceSubscription: Subscription = new Subscription();
   private readonly searchString$: BehaviorSubject<string> = new BehaviorSubject<string>('');
   private readonly toastDuration: number = 1000;
-  private currentCoords: MGeoCoordinates;
   private tempTitle: string = 'Mobile Access';
-  locations: MMobileLocationInfo[];
+  locations$: Observable<MMobileLocationInfo[]>;
   userInfo$: Observable<MUserInfo>;
 
   constructor(
@@ -34,7 +31,6 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
     private readonly events: Events,
     private readonly keyboard: Keyboard,
     private readonly mobileAccessService: MobileAccessService,
-    private readonly coordsService: CoordsService,
     private readonly institutionService: InstitutionService,
     private readonly toastController: ToastController
   ) {
@@ -90,7 +86,6 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
 
   ngOnInit() {
     this.userInfo$ = this.userService.userData;
-    this.setCoords();
   }
 
   ngAfterViewInit() {
@@ -100,7 +95,7 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
 
   refreshLocationList($event) {
     this.mobileAccessService
-      .getLocations(this.currentCoords)
+      .getLocations()
       .pipe(take(1))
       .subscribe(() => $event.target.complete());
   }
@@ -164,22 +159,10 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
   // START REDESIGN:
   private initComponent() {
     this.platform.ready().then(() => {
-      combineLatest(this.mobileAccessService.locations, this.searchString$)
-        .pipe(
-          map(([locations, str]: [MMobileLocationInfo[], string]) => this.filterLocationsBySearchString(str, locations))
-        )
-        .subscribe(locations => {
-          this.locations = locations;
-        });
+      this.locations$ = combineLatest(this.mobileAccessService.locations, this.searchString$).pipe(
+        map(([locations, str]: [MMobileLocationInfo[], string]) => this.filterLocationsBySearchString(str, locations))
+      );
     });
-  }
-
-  private setCoords() {
-    const subscription = this.coordsService.coordinates.subscribe(
-      (coords: MGeoCoordinates) => (this.currentCoords = coords)
-    );
-
-    this.sourceSubscription.add(subscription);
   }
 
   private filterLocationsBySearchString(searchString: string, locations: MMobileLocationInfo[]): MMobileLocationInfo[] {

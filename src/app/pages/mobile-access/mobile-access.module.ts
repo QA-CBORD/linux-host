@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
 import { IonicModule } from '@ionic/angular';
 
 import { MobileAccessPage } from './mobile-access.page';
@@ -25,17 +24,12 @@ const imports = [
   Pdf417BarcodeModule,
 ];
 
-const declarations = [
-  MobileAccessPage,
-  LocationListComponent,
-  ActivateLocationComponent,
-  LocationItemComponent
-];
+const declarations = [MobileAccessPage, LocationListComponent, ActivateLocationComponent, LocationItemComponent];
 const providers = [LocationsResolverGuard, MobileAccessService];
 
 @NgModule({
   imports,
   declarations,
-  providers
+  providers,
 })
 export class MobileAccessPageModule {}

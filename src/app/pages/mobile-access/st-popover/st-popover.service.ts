@@ -7,7 +7,7 @@ export class StPopoverService {
   constructor(
     private resolver: ComponentFactoryResolver,
     private injector: Injector,
-    @Inject(DOCUMENT) private document: Document,
+    @Inject(DOCUMENT) private document: Document
   ) {}
 
   open<T>(content: Type<T>) {
