@@ -26,7 +26,6 @@ import { LoadingService } from '../../../core/service/loading/loading.service';
 export class ActivateLocationComponent implements OnInit, OnDestroy {
   private readonly spinnerMessage = 'Activating location...';
   private readonly sourceSubscription: Subscription = new Subscription();
-  readonly staticBgImage: string = '/assets/images/card_background_illustration.svg';
   private locationId: string;
   private coords: any;
   userInfo$: Observable<MUserInfo>;
