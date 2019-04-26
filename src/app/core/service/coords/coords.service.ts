@@ -31,9 +31,14 @@ export class CoordsService {
       return from<MGeoCoordinates>(
         new Promise(function(resolve, reject) {
           if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function(position) {
-              resolve(position);
-            });
+            navigator.geolocation.getCurrentPosition(
+              position => {
+                resolve(position);
+              },
+              () => {
+                resolve({ coords: { accuracy: NaN, latitude: NaN, longitude: NaN } });
+              }
+            );
           } else {
             resolve({ coords: { accuracy: NaN, latitude: NaN, longitude: NaN } });
           }
