@@ -1,22 +1,44 @@
 import { Injectable } from '@angular/core';
+import { Platform } from '@ionic/angular';
+
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 
-import { from, Observable } from 'rxjs';
+import { from, Observable, of } from 'rxjs';
+import { take } from 'rxjs/operators';
 
 import { MGeoCoordinates } from '../../model/geolocation/geocoordinates.interface';
-import { take } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CoordsService {
-  constructor(private readonly geolocation: Geolocation) {}
+  private cordovaAvailable: boolean = false;
+
+  constructor(private readonly platform: Platform, private readonly geolocation: Geolocation) {
+    this.platform.ready().then(() => {
+      this.cordovaAvailable = this.platform.is('cordova') || false;
+    });
+  }
 
   initCoords(): Observable<MGeoCoordinates> {
-    return from<MGeoCoordinates>(
-      this.geolocation
-        .getCurrentPosition()
-        .then(({ coords: { accuracy, latitude, longitude } }: Position) => ({ accuracy, latitude, longitude }))
-    ).pipe(take(1));
+    if (this.cordovaAvailable) {
+      return from<MGeoCoordinates>(
+        this.geolocation
+          .getCurrentPosition()
+          .then(({ coords: { accuracy, latitude, longitude } }: Position) => ({ accuracy, latitude, longitude }))
+      ).pipe(take(1));
+    } else {
+      return from<MGeoCoordinates>(
+        new Promise(function(resolve, reject) {
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+              resolve(position);
+            });
+          } else {
+            resolve({ coords: { accuracy: NaN, latitude: NaN, longitude: NaN } });
+          }
+        }).then(({ coords: { accuracy, latitude, longitude } }: Position) => ({ accuracy, latitude, longitude }))
+      ).pipe(take(1));
+    }
   }
 }
