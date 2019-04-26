@@ -4,7 +4,7 @@ import { Platform } from '@ionic/angular';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 
 import { from, Observable, of } from 'rxjs';
-import { take, catchError, timeout } from 'rxjs/operators';
+import { take } from 'rxjs/operators';
 
 import { MGeoCoordinates } from '../../model/geolocation/geocoordinates.interface';
 
@@ -33,10 +33,7 @@ export class CoordsService {
       this.geolocation
         .getCurrentPosition()
         .then(({ coords: { accuracy, latitude, longitude } }: Position) => ({ accuracy, latitude, longitude }))
-    ).pipe(
-      take(1),
-      catchError(() => of({ accuracy: null, latitude: null, longitude: null }))
-    );
+    ).pipe(take(1));
   }
 
   private getLocationFromBrowser(): Observable<MGeoCoordinates> {
@@ -49,16 +46,15 @@ export class CoordsService {
             },
             () => {
               resolve({ coords: { accuracy: null, latitude: null, longitude: null } });
-            }
+            },
+            { timeout: 5000 }
           );
         } else {
           resolve({ coords: { accuracy: null, latitude: null, longitude: null } });
         }
-      }).then(({ coords: { accuracy, latitude, longitude } }: Position) => ({ accuracy, latitude, longitude }))
-    ).pipe(
-      timeout(10000),
-      take(1),
-      catchError(() => of({ accuracy: null, latitude: null, longitude: null }))
-    );
+      })
+        .then(({ coords: { accuracy, latitude, longitude } }: Position) => ({ accuracy, latitude, longitude }))
+        .catch((reson: any) => ({ accuracy: null, latitude: null, longitude: null }))
+    ).pipe(take(1));
   }
 }
