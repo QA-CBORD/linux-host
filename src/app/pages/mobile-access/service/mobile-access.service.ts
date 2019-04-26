@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
-import { catchError, map, retry, switchMap } from 'rxjs/operators';
+import { catchError, map, retry, switchMap, tap } from 'rxjs/operators';
 
 import { BaseService, ServiceParameters } from 'src/app/core/service/base-service/base.service';
 import { MGeoCoordinates } from 'src/app/core/model/geolocation/geocoordinates.interface';
@@ -43,7 +43,9 @@ export class MobileAccessService extends BaseService {
 
     const postParams: ServiceParameters = { filters };
     return this.coords.initCoords().pipe(
+      tap((incomeGeoData)=> {console.log(JSON.stringify(incomeGeoData))}),
       switchMap((incomeGeoData: MGeoCoordinates) =>
+      
         this.httpRequest<MessageResponse<MMobileLocationInfo[]>>(this.serviceUrl, methodName, true, {
           ...postParams,
           ...incomeGeoData,

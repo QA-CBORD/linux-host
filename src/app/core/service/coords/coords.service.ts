@@ -3,8 +3,8 @@ import { Platform } from '@ionic/angular';
 
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 
-import { from, Observable } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { from, Observable, of } from 'rxjs';
+import { take, catchError, timeout } from 'rxjs/operators';
 
 import { MGeoCoordinates } from '../../model/geolocation/geocoordinates.interface';
 
@@ -33,7 +33,10 @@ export class CoordsService {
       this.geolocation
         .getCurrentPosition()
         .then(({ coords: { accuracy, latitude, longitude } }: Position) => ({ accuracy, latitude, longitude }))
-    ).pipe(take(1));
+    ).pipe(
+      take(1),
+      catchError(() => of({ accuracy: null, latitude: null, longitude: null }))
+    );
   }
 
   private getLocationFromBrowser(): Observable<MGeoCoordinates> {
@@ -52,6 +55,10 @@ export class CoordsService {
           resolve({ coords: { accuracy: null, latitude: null, longitude: null } });
         }
       }).then(({ coords: { accuracy, latitude, longitude } }: Position) => ({ accuracy, latitude, longitude }))
-    ).pipe(take(1));
+    ).pipe(
+      timeout(10000),
+      take(1),
+      catchError(() => of({ accuracy: null, latitude: null, longitude: null }))
+    );
   }
 }
