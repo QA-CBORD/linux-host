@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Resolve } from '@angular/router/src/interfaces';
 
-import { catchError, tap, retryWhen, delay } from 'rxjs/operators';
+import { catchError, tap, retryWhen, take } from 'rxjs/operators';
 import { Observable, of, throwError } from 'rxjs';
 
 import { MobileAccessService } from './service/mobile-access.service';
@@ -21,7 +21,9 @@ export class LocationsResolverGuard implements Resolve<Observable<MMobileLocatio
 
   resolve(): Observable<MMobileLocationInfo[] | boolean> {
     const snapshot = this.router.routerState.snapshot;
-    if (!snapshot.url.includes('activate')) return this.downloadData();
+    if (!snapshot.url.includes('activate')) {
+      return this.downloadData();
+    }
     return of(true);
   }
 
@@ -32,7 +34,7 @@ export class LocationsResolverGuard implements Resolve<Observable<MMobileLocatio
         errors.pipe(
           //log error message
           tap(() => console.log('An error occurred while trying to retrieve your information.')),
-          delay(1000)
+          take(1)
         )
       ),
       catchError(e => {
