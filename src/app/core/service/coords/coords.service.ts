@@ -3,7 +3,7 @@ import { Platform } from '@ionic/angular';
 
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 
-import { from, Observable, of } from 'rxjs';
+import { from, Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
 
 import { MGeoCoordinates } from '../../model/geolocation/geocoordinates.interface';
@@ -22,28 +22,36 @@ export class CoordsService {
 
   initCoords(): Observable<MGeoCoordinates> {
     if (this.cordovaAvailable) {
-      return from<MGeoCoordinates>(
-        this.geolocation
-          .getCurrentPosition()
-          .then(({ coords: { accuracy, latitude, longitude } }: Position) => ({ accuracy, latitude, longitude }))
-      ).pipe(take(1));
+      return this.getLocationFromCordova();
     } else {
-      return from<MGeoCoordinates>(
-        new Promise(function(resolve, reject) {
-          if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-              position => {
-                resolve(position);
-              },
-              () => {
-                resolve({ coords: { accuracy: NaN, latitude: NaN, longitude: NaN } });
-              }
-            );
-          } else {
-            resolve({ coords: { accuracy: NaN, latitude: NaN, longitude: NaN } });
-          }
-        }).then(({ coords: { accuracy, latitude, longitude } }: Position) => ({ accuracy, latitude, longitude }))
-      ).pipe(take(1));
+      return this.getLocationFromBrowser();
     }
+  }
+
+  private getLocationFromCordova(): Observable<MGeoCoordinates> {
+    return from<MGeoCoordinates>(
+      this.geolocation
+        .getCurrentPosition()
+        .then(({ coords: { accuracy, latitude, longitude } }: Position) => ({ accuracy, latitude, longitude }))
+    ).pipe(take(1));
+  }
+
+  private getLocationFromBrowser(): Observable<MGeoCoordinates> {
+    return from<MGeoCoordinates>(
+      new Promise(function(resolve) {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            position => {
+              resolve(position);
+            },
+            () => {
+              resolve({ coords: { accuracy: null, latitude: null, longitude: null } });
+            }
+          );
+        } else {
+          resolve({ coords: { accuracy: null, latitude: null, longitude: null } });
+        }
+      }).then(({ coords: { accuracy, latitude, longitude } }: Position) => ({ accuracy, latitude, longitude }))
+    ).pipe(take(1));
   }
 }
