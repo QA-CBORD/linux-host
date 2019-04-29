@@ -47,7 +47,7 @@ export class CoordsService {
             () => {
               resolve({ coords: { accuracy: null, latitude: null, longitude: null } });
             },
-            { timeout: 5000 }
+            { timeout: 3000 }
           );
         } else {
           resolve({ coords: { accuracy: null, latitude: null, longitude: null } });
