@@ -44,6 +44,7 @@ export class MobileAccessService extends BaseService {
     const postParams: ServiceParameters = { filters };
     return this.coords.initCoords().pipe(
       switchMap((incomeGeoData: MGeoCoordinates) =>
+      
         this.httpRequest<MessageResponse<MMobileLocationInfo[]>>(this.serviceUrl, methodName, true, {
           ...postParams,
           ...incomeGeoData,
