@@ -136,7 +136,7 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
 
   private setCoords() {
     const subscription = this.geoDataService
-      .initCoords()
+      .coordinates
       .subscribe((coords: MGeoCoordinates) => (this.coords = coords));
 
     this.sourceSubscription.add(subscription);

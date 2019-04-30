@@ -42,9 +42,8 @@ export class MobileAccessService extends BaseService {
     const methodName = 'getMobileLocations';
 
     const postParams: ServiceParameters = { filters };
-    return this.coords.initCoords().pipe(
+    return this.coords.coordinates.pipe(
       switchMap((incomeGeoData: MGeoCoordinates) =>
-      
         this.httpRequest<MessageResponse<MMobileLocationInfo[]>>(this.serviceUrl, methodName, true, {
           ...postParams,
           ...incomeGeoData,
@@ -70,6 +69,10 @@ export class MobileAccessService extends BaseService {
     this._locations = this.getLocationsMultiSorted(this.locationsInfo, this.favourites);
 
     return this.saveFavourites(this.favourites);
+  }
+
+  watchLocation() {
+    this.coords.startWatchCoords();
   }
 
   getLocations(): Observable<MMobileLocationInfo[]> {
