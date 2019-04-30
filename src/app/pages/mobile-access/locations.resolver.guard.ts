@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Resolve } from '@angular/router/src/interfaces';
 
-import { catchError, tap, retryWhen, delay } from 'rxjs/operators';
-import { Observable, of, throwError } from 'rxjs';
+import { catchError, tap, retryWhen, delay, switchMap } from 'rxjs/operators';
+import { Observable, of, throwError, timer } from 'rxjs';
 
 import { MobileAccessService } from './service/mobile-access.service';
 import { MMobileLocationInfo } from './model/mobile-access.interface';
@@ -26,22 +26,26 @@ export class LocationsResolverGuard implements Resolve<Observable<MMobileLocatio
   }
 
   private downloadData(): Observable<MMobileLocationInfo[]> {
+    this.mobileAccessService.watchLocation();
     this.loader.showSpinner(this.spinnerMessage);
-    
-    return this.mobileAccessService.getLocations().pipe(
-      retryWhen(errors =>
-        errors.pipe(
-          //log error message
-          tap(() => console.log('An error occurred while trying to retrieve your information.')),
-          delay(1000)
+    return timer(1500).pipe(
+      switchMap(() =>
+        this.mobileAccessService.getLocations().pipe(
+          retryWhen(errors =>
+            errors.pipe(
+              //log error message
+              tap(() => console.log('An error occurred while trying to retrieve your information.')),
+              delay(1000)
+            )
+          ),
+          catchError(e => {
+            // TODO: paste here logic with retry button
+            this.loader.closeSpinner();
+            return throwError(e);
+          }),
+          tap(() => this.loader.closeSpinner())
         )
-      ),
-      catchError(e => {
-        // TODO: paste here logic with retry button
-        this.loader.closeSpinner();
-        return throwError(e);
-      }),
-      tap(() => this.loader.closeSpinner())
+      )
     );
   }
 }
