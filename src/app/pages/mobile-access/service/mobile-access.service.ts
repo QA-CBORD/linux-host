@@ -88,6 +88,7 @@ export class MobileAccessService extends BaseService {
     return this.userService.getUserSettingsBySettingName(this.favouritesLocationSettingsName).pipe(
       map(({ response: { value } }) => (this.favourites = this.parseArrayFromString(value))),
       catchError(() => {
+        this.favourites = [];
         return of([]);
       })
     );
@@ -162,8 +163,7 @@ export class MobileAccessService extends BaseService {
   }
 
   private parseArrayFromString(str: string): string[] | [] {
-    const array = JSON.parse(str);
-
+    const array = JSON.parse(str);    
     return Array.isArray(array) ? array : [];
   }
 
