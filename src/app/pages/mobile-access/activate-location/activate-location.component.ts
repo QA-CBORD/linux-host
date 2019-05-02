@@ -7,15 +7,14 @@ import { map, take, tap } from 'rxjs/operators';
 import { Observable, Subscription } from 'rxjs';
 
 import { UserService } from '../../../core/service/user-service/user.service';
-import { MobileAccessService } from '../service/mobile-access.service';
-import { CoordsService } from '../../../core/service/coords/coords.service';
+import { MobileAccessService } from '../service';
 import { MUserInfo } from '../../../core/model/user';
-import { MGeoCoordinates } from '../../../core/model/geolocation/geocoordinates.interface';
 import { InstitutionService } from '../../../core/service/institution/institution.service';
-import { MMobileLocationInfo } from '../model/mobile-access.interface';
+import { MMobileLocationInfo } from '../model';
 import { Institution } from '../../../core/model/institution/institution';
-import { StPopoverComponent } from '../st-popover/st-popover.component';
+import { StPopoverComponent } from '../st-popover';
 import { LoadingService } from '../../../core/service/loading/loading.service';
+import { SPINNER_MESSAGES } from '../mobile-acces.config';
 
 @Component({
   selector: 'st-activate-location',
@@ -24,21 +23,18 @@ import { LoadingService } from '../../../core/service/loading/loading.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ActivateLocationComponent implements OnInit, OnDestroy {
-  private readonly spinnerMessage = 'Activating location...';
   private readonly sourceSubscription: Subscription = new Subscription();
   private locationId: string;
-  private coords: any;
   userInfo$: Observable<MUserInfo>;
   location$: Observable<MMobileLocationInfo>;
   institution$: Observable<Institution>;
   tempTitle: string = 'Mobile Access';
-  photo: string;
+  photo: string = null;
 
   constructor(
     private readonly userService: UserService,
     private readonly routerLink: ActivatedRoute,
     private readonly mobileAccessService: MobileAccessService,
-    private readonly geoDataService: CoordsService,
     private readonly popoverCtrl: PopoverController,
     private readonly router: Router,
     private readonly location: Location,
@@ -68,18 +64,22 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
     this.userInfo$ = this.userService.userData;
     this.location$ = this.mobileAccessService.getLocationById(this.locationId);
     this.setUserPhoto();
-    this.setCoords();
     this.setInstitution();
   }
 
   activateLocation() {
     // TODO: create Spinner in some special service:
-    this.loading.showSpinner(this.spinnerMessage);
+    this.loading.showSpinner(SPINNER_MESSAGES.activating);
 
     const subscription = this.mobileAccessService
-      .activateMobileLocation(this.locationId, this.coords)
+      .activateMobileLocation(this.locationId)
       .pipe(tap(() => this.loading.closeSpinner()))
-      .subscribe(res => this.modalHandler(res), () => this.loading.closeSpinner());
+      .subscribe(
+        res => this.modalHandler(res),
+        () => {
+          this.loading.closeSpinner().then(() => this.modalHandler(SPINNER_MESSAGES.errorActivating));
+        }
+      );
 
     this.sourceSubscription.add(subscription);
   }
@@ -132,13 +132,5 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
         this.photo = url;
         this.cdRef.detectChanges();
       });
-  }
-
-  private setCoords() {
-    const subscription = this.geoDataService
-      .coordinates
-      .subscribe((coords: MGeoCoordinates) => (this.coords = coords));
-
-    this.sourceSubscription.add(subscription);
   }
 }

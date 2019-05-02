@@ -5,11 +5,11 @@ import { IonicModule } from '@ionic/angular';
 
 import { MobileAccessPage } from './mobile-access.page';
 import { MobileAccessRoutingModule } from './mobile-access-routing.module';
-import { LocationsResolverGuard } from './locations.resolver.guard';
-import { LocationListComponent } from './location-list/location-list.component';
-import { LocationItemComponent } from './location-list/location-item/location-item.component';
-import { MobileAccessService } from './service/mobile-access.service';
-import { ActivateLocationComponent } from './activate-location/activate-location.component';
+import { LocationsResolverGuard } from './resolvers';
+import { LocationListComponent } from './location-list';
+import { LocationItemComponent } from './location-list/location-item';
+import { MobileAccessService } from './service';
+import { ActivateLocationComponent } from './activate-location';
 import { SharedModule } from '../../shared/shared.module';
 import { StPopoverModule } from './st-popover/st-popover.module';
 import { Pdf417BarcodeModule } from 'pdf417-barcode';

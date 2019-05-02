@@ -1,128 +1,86 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
 
-import { Geolocation } from '@ionic-native/geolocation/ngx';
+import { Geolocation, GeolocationOptions, Geoposition } from '@ionic-native/geolocation/ngx';
 
-import { from, Observable, BehaviorSubject, Subscription } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { from, Observable, of, throwError } from 'rxjs';
+import { map, take } from 'rxjs/operators';
 
 import { MGeoCoordinates } from '../../model/geolocation/geocoordinates.interface';
 
 @Injectable({
   providedIn: 'root',
 })
-export class CoordsService implements OnDestroy {
+export class CoordsService {
   private cordovaAvailable: boolean = false;
-  private watchLocationId: number = null;
-  private watchLocationSubscription: Subscription;
-
-  private readonly coordinates$: BehaviorSubject<MGeoCoordinates> = new BehaviorSubject<MGeoCoordinates>({
-    accuracy: null,
-    latitude: null,
-    longitude: null,
-  });
-  private coordinatesInfo: MGeoCoordinates = { accuracy: null, latitude: null, longitude: null };
+  private readonly timeoutOfGettingPosition: number = 5000;
 
   constructor(private readonly platform: Platform, private readonly geolocation: Geolocation) {
     this.platform.ready().then(() => {
-      this.cordovaAvailable = this.platform.is('cordova') || false;
+      this.cordovaAvailable = this.platform.is('cordova');
     });
   }
 
-  ngOnDestroy() {
-    this.endWatchLocation();
-  }
-
-  get coordinates(): Observable<MGeoCoordinates> {
-    return this.coordinates$.asObservable().pipe(take(1));
-  }
-
-  private set _coordinates(coordinates: MGeoCoordinates) {
-    this.coordinatesInfo = coordinates;
-    this.coordinates$.next(this.coordinatesInfo);
-  }
-
   getCoords(): Observable<MGeoCoordinates> {
-    if (this.cordovaAvailable) {
-      return this.getLocationFromCordova();
-    } else {
-      return this.getLocationFromBrowser();
-    }
+    return this.cordovaAvailable ? this.getLocationFromCordova() : this.getLocationFromBrowser();
+  }
+
+  startWatchCoords(options?: GeolocationOptions): Observable<MGeoCoordinates> {
+    return this.cordovaAvailable
+      ? this.startWatchLocationFromCordova(options)
+      : this.startWatchLocationFromBrowser(options);
   }
 
   private getLocationFromCordova(): Observable<MGeoCoordinates> {
     return from<MGeoCoordinates>(
-      this.geolocation.getCurrentPosition().then(({ coords: { accuracy, latitude, longitude } }: Position) => {
-        this._coordinates = { accuracy, latitude, longitude };
-        return { accuracy, latitude, longitude };
-      })
+      this.geolocation
+        .getCurrentPosition()
+        .then(({ coords: { accuracy, latitude, longitude } }: Position) => ({ accuracy, latitude, longitude }))
     ).pipe(take(1));
   }
 
-  private getLocationFromBrowser(): Observable<MGeoCoordinates> {
-    return from<MGeoCoordinates>(
-      new Promise(resolve => {
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(
-            position => {
-              resolve(position);
-            },
-            () => {
-              resolve({ coords: { accuracy: null, latitude: null, longitude: null } });
-            },
-            { timeout: 5000 }
-          );
-        } else {
-          resolve({ coords: { accuracy: null, latitude: null, longitude: null } });
-        }
-      })
-        .then(({ coords: { accuracy, latitude, longitude } }: Position) => {
-          this._coordinates = { accuracy, latitude, longitude };
-          return { accuracy, latitude, longitude };
-        })
-        .catch((reason: any) => ({ accuracy: null, latitude: null, longitude: null }))
-    ).pipe(take(1));
+  private getLocationFromBrowser(options?: GeolocationOptions): Observable<MGeoCoordinates> {
+    const emptyPosition = { accuracy: null, latitude: null, longitude: null };
+    options = options && options.timeout ? options : { timeout: this.timeoutOfGettingPosition };
+
+    if (!navigator.geolocation) return of(emptyPosition).pipe(take(1));
+
+    return Observable.create(observer => {
+      const onSuccess = ({ coords: { latitude, longitude, accuracy } }: Position) => {
+        observer.next({ latitude, longitude, accuracy });
+        observer.complete();
+      };
+
+      const onError = () => {
+        observer.next(emptyPosition);
+        observer.complete();
+      };
+
+      navigator.geolocation.getCurrentPosition(onSuccess, onError, options);
+    });
   }
 
-  startWatchCoords() {
-    if (this.cordovaAvailable) {
-      this.startWatchLocationFromCordova();
-    } else {
-      this.startWatchLocationFromBrowser();
-    }
+  private startWatchLocationFromCordova(options?: GeolocationOptions): Observable<MGeoCoordinates> {
+    return this.geolocation
+      .watchPosition(options)
+      .pipe(map(({ coords: { longitude, accuracy, latitude } }: Geoposition) => ({ longitude, accuracy, latitude })));
   }
 
-  private startWatchLocationFromCordova() {
-    this.watchLocationSubscription = this.geolocation
-      .watchPosition()
-      .subscribe(
-        ({ coords: { accuracy, latitude, longitude } }: Position) =>
-          (this._coordinates = { accuracy, latitude, longitude }),
-        () => {}
-      );
-  }
+  private startWatchLocationFromBrowser(options?: GeolocationOptions): Observable<MGeoCoordinates> {
+    if (!navigator.geolocation) return throwError('Unavailable option');
 
-  private startWatchLocationFromBrowser() {
-    if (navigator.geolocation) {
-      this.watchLocationId = navigator.geolocation.watchPosition(
-        ({ coords: { accuracy, latitude, longitude } }: Position) =>
-          (this._coordinates = { accuracy, latitude, longitude }),
-        () => {}
-      );
-    }
-  }
+    return Observable.create(observer => {
+      const onSuccess = ({ coords: { latitude, longitude, accuracy } }: Position) => {
+        observer.next({ latitude, longitude, accuracy });
+      };
+      const onError = error => {
+        observer.error(error);
+      };
+      const watcher: number = navigator.geolocation.watchPosition(onSuccess, onError, options);
 
-  private endWatchLocation() {
-    console.log('EndWatch');
-    if (this.cordovaAvailable) {
-      if (this.watchLocationSubscription !== null) {
-        this.watchLocationSubscription.unsubscribe();
-      }
-    } else {
-      if (navigator.geolocation && this.watchLocationId !== null) {
-        navigator.geolocation.clearWatch(this.watchLocationId);
-        this.watchLocationId = null;
-      }
-    }
+      return () => {
+        navigator.geolocation.clearWatch(watcher);
+      };
+    });
   }
 }

@@ -5,8 +5,8 @@ import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';
 import { map, switchMap, take } from 'rxjs/operators';
 
-import { MMobileLocationInfo } from './model/mobile-access.interface';
-import { MobileAccessService } from './service/mobile-access.service';
+import { MMobileLocationInfo } from './model';
+import { MobileAccessService } from './service';
 import { InstitutionService } from '../../core/service/institution/institution.service';
 import { MUserInfo } from '../../core/model/user';
 import { UserService } from '../../core/service/user-service/user.service';

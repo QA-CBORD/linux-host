@@ -1,5 +1,6 @@
 import { Injectable, ComponentFactoryResolver, Injector, Inject, Type } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
+
 import { StPopoverComponent } from './st-popover.component';
 
 @Injectable()

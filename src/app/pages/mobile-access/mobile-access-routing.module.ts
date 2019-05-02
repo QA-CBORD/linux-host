@@ -1,18 +1,19 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+
 import { MobileAccessPage } from './mobile-access.page';
-import { LocationsResolverGuard } from './locations.resolver.guard';
-import { ActivateLocationComponent } from './activate-location/activate-location.component';
+import { LocationsResolverGuard } from './resolvers';
+import { ActivateLocationComponent } from './activate-location';
+import { LOCAL_ROUTING } from './mobile-acces.config';
 
 const routes: Routes = [
   {
     path: '',
-    // redirectTo: 'activate/15831',
     component: MobileAccessPage,
     resolve: { coords: LocationsResolverGuard },
   },
   {
-    path: 'activate/:id',
+    path: `${LOCAL_ROUTING.activate}/:id`,
     component: ActivateLocationComponent,
   },
 ];
