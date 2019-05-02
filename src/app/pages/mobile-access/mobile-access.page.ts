@@ -20,7 +20,7 @@ import { UserService } from '../../core/service/user-service/user.service';
 export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
   private readonly sourceSubscription: Subscription = new Subscription();
   private readonly searchString$: BehaviorSubject<string> = new BehaviorSubject<string>('');
-  private readonly toastDuration: number = 1000;
+  private readonly toastDuration: number = 5000;
   tempTitle: string = 'Mobile Access';
   locations$: Observable<MMobileLocationInfo[]>;
   userInfo$: Observable<MUserInfo>;
