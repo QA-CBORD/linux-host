@@ -55,11 +55,11 @@
   &__photo {
     width: 100%;
     height: 100%;
+    object-fit: contain;
   }
 
   &__photo-container {
     display: block;
-    height: 450px;
     margin: 15px 0 0;
     border-radius: 15px;
     overflow: hidden;
@@ -88,6 +88,8 @@
     font-family: $font-nunito-semibold;
     word-wrap: break-word;
     word-break: break-all;
+    max-height: 3.4rem;
+    overflow: hidden;
   }
 
   &__id {
@@ -103,7 +105,11 @@
     text-align: center;
     font-size: 1.2rem;
     position: relative;
+    max-height: 3.4rem;
     @include font-family($font-nunito-semibold);
+    overflow: hidden;
+    word-wrap: break-word;
+    word-break: break-all;
 
     &:before {
       content: '';
