@@ -5,9 +5,9 @@ import { Resolve } from '@angular/router/src/interfaces';
 import { catchError, tap, retryWhen, take } from 'rxjs/operators';
 import { Observable, of, throwError } from 'rxjs';
 
-import { MobileAccessService } from './service/mobile-access.service';
-import { MMobileLocationInfo } from './model/mobile-access.interface';
-import { LoadingService } from '../../core/service/loading/loading.service';
+import { MobileAccessService } from '../service';
+import { MMobileLocationInfo } from '../model';
+import { LoadingService } from '../../../core/service/loading/loading.service';
 
 @Injectable()
 export class LocationsResolverGuard implements Resolve<Observable<MMobileLocationInfo[] | boolean>> {

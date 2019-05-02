@@ -2,12 +2,7 @@ import { Component } from '@angular/core';
 
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
-import {
-  AlertController,
-  Events,
-  LoadingController,
-  Platform,
-} from '@ionic/angular';
+import { AlertController, Events, LoadingController, Platform } from '@ionic/angular';
 
 import { Router } from '@angular/router';
 import * as Globals from './app.global';
@@ -79,13 +74,9 @@ export class AppComponent {
   }
 
   private subscribeToEvents() {
-    this.events.subscribe(Globals.Events.LOADER_SHOW, loaderInfo =>
-      this.showLoader(loaderInfo)
-    );
+    this.events.subscribe(Globals.Events.LOADER_SHOW, loaderInfo => this.showLoader(loaderInfo));
 
-    this.events.subscribe(Globals.Events.EXCEPTION_SHOW, exceptionPayload =>
-      this.presentException(exceptionPayload)
-    );
+    this.events.subscribe(Globals.Events.EXCEPTION_SHOW, exceptionPayload => this.presentException(exceptionPayload));
   }
 
   presentException(exceptionPayload: ExceptionPayload) {
@@ -161,6 +152,7 @@ export class AppComponent {
     alert.present();
   }
 
+  // XXX - remove after rewrite all the places where it was used to. Current version of this functionality LoadingService
   private async showLoader(loaderInfo: any) {
     if (loaderInfo.bShow) {
       if (!this.loader) {

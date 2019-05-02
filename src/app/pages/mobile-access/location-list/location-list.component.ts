@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 
-import { MMobileLocationInfo } from '../model/mobile-access.interface';
+import { MMobileLocationInfo } from '../model';
 
 @Component({
   selector: 'st-location-list',

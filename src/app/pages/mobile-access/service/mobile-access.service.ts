@@ -6,7 +6,7 @@ import { catchError, map, retry, switchMap } from 'rxjs/operators';
 
 import { BaseService, ServiceParameters } from 'src/app/core/service/base-service/base.service';
 import { MGeoCoordinates } from 'src/app/core/model/geolocation/geocoordinates.interface';
-import { MActivateMobileLocationResult, MMobileLocationInfo } from '../model/mobile-access.interface';
+import { MActivateMobileLocationResult, MMobileLocationInfo } from '../model';
 import { MessageResponse } from '../../../core/model/service/message-response.interface';
 import { UserService } from '../../../core/service/user-service/user.service';
 import { CoordsService } from '../../../core/service/coords/coords.service';
@@ -42,7 +42,7 @@ export class MobileAccessService extends BaseService {
     const methodName = 'getMobileLocations';
 
     const postParams: ServiceParameters = { filters };
-    return this.coords.initCoords().pipe(
+    return this.coords.getCoords().pipe(
       switchMap((incomeGeoData: MGeoCoordinates) =>
         this.httpRequest<MessageResponse<MMobileLocationInfo[]>>(this.serviceUrl, methodName, true, {
           ...postParams,
@@ -71,6 +71,10 @@ export class MobileAccessService extends BaseService {
     return this.saveFavourites(this.favourites);
   }
 
+  trackCurrentPosition(): Observable<MGeoCoordinates> {
+    return this.coords.startWatchCoords();
+  }
+
   getLocations(): Observable<MMobileLocationInfo[]> {
     return combineLatest(this.getMobileLocations(), this.getFavouritesLocations()).pipe(
       map(
@@ -84,6 +88,7 @@ export class MobileAccessService extends BaseService {
     return this.userService.getUserSettingsBySettingName(this.favouritesLocationSettingsName).pipe(
       map(({ response: { value } }) => (this.favourites = this.parseArrayFromString(value))),
       catchError(() => {
+        this.favourites = [];
         return of([]);
       })
     );
@@ -91,18 +96,15 @@ export class MobileAccessService extends BaseService {
 
   activateMobileLocation(
     locationId: string,
-    geoData: Coordinates,
     sourceInfo: string | null = null
   ): Observable<MActivateMobileLocationResult> {
-    const postParams = this.createMobileLocationParams(locationId, geoData, sourceInfo);
     const methodName = 'activateMobileLocation';
 
-    return this.httpRequest<MessageResponse<MActivateMobileLocationResult>>(
-      this.serviceUrl,
-      methodName,
-      true,
-      postParams
-    ).pipe(
+    return this.coords.getCoords().pipe(
+      map((coords: Coordinates) => this.createMobileLocationParams(locationId, coords, sourceInfo)),
+      switchMap(postParams =>
+        this.httpRequest<MessageResponse<MActivateMobileLocationResult>>(this.serviceUrl, methodName, true, postParams)
+      ),
       map(({ response, exception }: MessageResponse<MActivateMobileLocationResult>) => {
         if (exception !== null) {
           throw new Error(exception);
@@ -159,7 +161,6 @@ export class MobileAccessService extends BaseService {
 
   private parseArrayFromString(str: string): string[] | [] {
     const array = JSON.parse(str);
-
     return Array.isArray(array) ? array : [];
   }
 

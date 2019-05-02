@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
 import { Router } from '@angular/router';
 import { NavController } from '@ionic/angular';
 
-import { MMobileLocationInfo } from '../../model/mobile-access.interface';
+import { MMobileLocationInfo } from '../../model';
 
 @Component({
   selector: 'st-location-item',
