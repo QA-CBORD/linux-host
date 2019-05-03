@@ -25,7 +25,8 @@ phases:
       - mv ./student.spec SPECS
 
       - echo **** Set Android SDK Environment Variables ****
-      - export ANDROID_SDK_ROOT=$HOME/android-sdk
+      - export ANDROID_HOME=$(pwd)/android-sdk
+      - export ANDROID_SDK_ROOT=$(pwd)/android-sdk
       - export PATH=$PATH:$ANDROID_SDK_ROOT/tools/bin
       - export PATH=$PATH:$ANDROID_SDK_ROOT/platform-tools
       - export PATH=$PATH:$ANDROID_SDK_ROOT/emulator
