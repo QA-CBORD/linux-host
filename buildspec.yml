@@ -32,6 +32,7 @@ phases:
       - export PATH=$PATH:$ANDROID_SDK_ROOT/emulator
 
       - echo **** Performing Ionic build ****
+      - npm install -g jdk
       - npm install
       - ionic build --prod
       - ionic cordova build android
