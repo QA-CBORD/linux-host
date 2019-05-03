@@ -28,6 +28,7 @@ phases:
       
       - npm install
       - ionic build --prod
+      - ionic cordova build android
 
       - mkdir student
       - cp -r ./www/* ./student
