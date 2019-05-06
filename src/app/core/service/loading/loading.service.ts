@@ -7,7 +7,7 @@ import { LoadingOptions } from '@ionic/core';
   providedIn: 'root',
 })
 export class LoadingService {
-  private readonly maxDuration: number = 10000;
+  private readonly maxDuration: number = 15000;
   private loader: HTMLIonLoadingElement = null;
 
   constructor(private loadingController: LoadingController) {}

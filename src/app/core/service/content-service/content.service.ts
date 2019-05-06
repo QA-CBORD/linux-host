@@ -10,7 +10,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class ContentService extends BaseService {
-  private serviceUrl = '/json/authentication';
+  private serviceUrl = '/json/content';
 
   /**
    * Retrive single content string by name

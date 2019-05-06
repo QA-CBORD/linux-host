@@ -76,9 +76,14 @@ export namespace Settings {
 }
 
 export namespace ContentString {
-  export enum EList {}
+  export enum EList {
+    CORE_UI = 'patron-ui.core-ui',
+    MOBILE_ACCESS = 'patron-ui.mobile-access',
+  }
 
-  export enum EString {}
+  export enum EString {
+    test = 'patron-ui.mobile-access.button_ok',
+  }
 }
 
 export namespace User {
