@@ -23,11 +23,8 @@
     {{ popoverConfig.code }}
   </div>
   <div class="st-popover__barcode">
-    <pdf417barcode
-      [text]="popoverConfig.code"
-      [opts]="{ pxw: 2.3, pxh: 1.4 }"
-      *ngIf="popoverConfig.type === 'BARCODE'"
-    ></pdf417barcode>
+    <canvas id="barcodeCanvas" *ngIf="popoverConfig.type === 'BARCODE'"
+    ></canvas>
   </div>
 </ion-content>
 <ion-footer no-border class="st-popover__footer">
