@@ -97,7 +97,6 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
 
     popover.onDidDismiss().then(({ data }) => {
       if (data === 'OKAY') {
-        this.nav2.back();
         this.nav2.navigateBack('/mobile-access');
       }
 
