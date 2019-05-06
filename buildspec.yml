@@ -24,18 +24,8 @@ phases:
       - mkdir BUILD RPMS SOURCES SPECS SRPMS
       - mv ./student.spec SPECS
 
-      - echo **** Set Android SDK Environment Variables ****
-      - export ANDROID_HOME=$(pwd)/android-sdk
-      - export ANDROID_SDK_ROOT=$(pwd)/android-sdk
-      - export PATH=$PATH:$ANDROID_SDK_ROOT/tools/bin
-      - export PATH=$PATH:$ANDROID_SDK_ROOT/platform-tools
-      - export PATH=$PATH:$ANDROID_SDK_ROOT/emulator
-
       - echo **** Performing Ionic build ****
-      - npm install -g jdk
       - npm install
-      - ionic build --prod
-      - ionic cordova build android
 
       - mkdir student
       - cp -r ./www/* ./student
