@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Events, PopoverController } from '@ionic/angular';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
+import bwipjs from 'bwip-angular2';
 
 @Component({
   selector: 'st-popover',
@@ -57,6 +58,22 @@ export class StPopoverComponent implements OnInit {
       code: issuedCode,
       validityTime,
     };
+
+    setTimeout(() => {
+      bwipjs(
+        'barcodeCanvas',
+        {
+          bcid: 'pdf417', // Barcode type
+          text: this.popoverConfig.code, // Text to encode
+          includetext: false, // Show human-readable text
+        },
+        (err, cvs) => {
+          if (err) {
+          } else {
+          }
+        }
+      );
+    }, 50);
   }
 
   onFinishTimeout() {
