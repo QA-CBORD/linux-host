@@ -18,48 +18,36 @@ export interface ServiceParameters {
 })
 export class BaseService {
   /// HTTP call timeout in milliseconds
-  private TIMEOUT_MS = 15000;
+  private TIMEOUT_MS = 30000;
 
   /// Local base url for HTTP calls
   protected baseUrl: string = null;
 
   constructor(protected http: HttpClient) {}
 
-  /**
-   * HTTP request
-   *
-   * @param serviceUrl    URL for source of request
-   * @param methodName    Name of method for request
-   * @param bUseSessionId Boolean flag for using or not session id in request
-   * @param postParams    Parameters for request
-   */
   protected httpRequest<T>(
     serviceUrl: string,
     methodName: string,
     bUseSessionId: boolean,
     postParams: ServiceParameters = {}
   ): Observable<T> {
-    return this.httpRequestFull(serviceUrl, methodName, bUseSessionId, false, postParams);
+    return this.httpRequestFull(serviceUrl, methodName, bUseSessionId, null, postParams);
   }
 
-  /**
-   * HTTP request
-   *
-   * @param serviceUrl    URL for source of request
-   * @param methodName    Name of method for request
-   * @param postParams    Parameters for request
-   */
   protected httpRequestFull<T>(
     serviceUrl: string,
     methodName: string,
     bUseSessionId: boolean,
-    bUseInstitutionId: boolean,
+    institutionId: string,
     postParams: ServiceParameters
   ): Observable<T> {
     this.baseUrl = Environment.getGETServicesBaseURL();
 
     if (bUseSessionId) {
       postParams.sessionId = DataCache.getSessionId();
+    }
+    if (institutionId) {
+      postParams.institutionId = institutionId;
     }
 
     const finalParams: ServiceParameters = {
@@ -76,20 +64,10 @@ export class BaseService {
     );
   }
 
-  /**
-   * Handle the error response from HTTP calls
-   *
-   * @param error     Error returned from call
-   */
   protected handleError(error: any) {
     return throwError(error);
   }
 
-  /**
-   * Format the data returned from HTTP calls
-   *
-   * @param response    Response returned from call
-   */
   protected extractData(response: any) {
     if (response.exception) {
       this.parseExceptionResponse(response.exception);
@@ -98,11 +76,6 @@ export class BaseService {
     }
   }
 
-  /**
-   * Parses the exception message returned with an HTTP call error
-   *
-   * @param response    Response returned from call
-   */
   protected parseExceptionResponse(exceptionString: string) {
     // check the exception string for a number|description string format
     const regEx = new RegExp('^[0-9]*|.*$');
@@ -114,11 +87,6 @@ export class BaseService {
     }
   }
 
-  /**
-   * Handle error codes returned from HTTP calls
-   *
-   * @param code    Exception code
-   */
   protected determineErrorByCodeAndThrow(code: string, message: string) {
     const newError = new Error('Unexpected error occured.');
     switch (code) {
@@ -146,9 +114,6 @@ export class BaseService {
     throw newError;
   }
 
-  /**
-   * Get HTTP request header options
-   */
   protected getOptions(): any {
     return {
       headers: new HttpHeaders({

@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
-import {NavController, PopoverController} from '@ionic/angular';
+import { NavController, PopoverController } from '@ionic/angular';
 
-import { map, take, tap } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { Observable, Subscription } from 'rxjs';
 
 import { UserService } from '../../../core/service/user-service/user.service';
@@ -14,7 +14,7 @@ import { MMobileLocationInfo } from '../model';
 import { Institution } from '../../../core/model/institution/institution';
 import { StPopoverComponent } from '../st-popover';
 import { LoadingService } from '../../../core/service/loading/loading.service';
-import { SPINNER_MESSAGES } from '../mobile-acces.config';
+import { CONTENT_STRINGS, SPINNER_MESSAGES } from '../mobile-acces.config';
 
 @Component({
   selector: 'st-activate-location',
@@ -28,7 +28,7 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
   userInfo$: Observable<MUserInfo>;
   location$: Observable<MMobileLocationInfo>;
   institution$: Observable<Institution>;
-  tempTitle: string = 'Mobile Access';
+  contentString;
   photo: string = null;
 
   constructor(
@@ -61,6 +61,7 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.setContentStrings();
     this.locationId = this.routerLink.snapshot.params.id;
     this.userInfo$ = this.userService.userData;
     this.location$ = this.mobileAccessService.getLocationById(this.locationId);
@@ -69,18 +70,14 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
   }
 
   activateLocation() {
-    // TODO: create Spinner in some special service:
     this.loading.showSpinner(SPINNER_MESSAGES.activating);
 
-    const subscription = this.mobileAccessService
-      .activateMobileLocation(this.locationId)
-      .pipe(tap(() => this.loading.closeSpinner()))
-      .subscribe(
-        res => this.modalHandler(res),
-        () => {
-          this.loading.closeSpinner().then(() => this.modalHandler(SPINNER_MESSAGES.errorActivating));
-        }
-      );
+    const subscription = this.mobileAccessService.activateMobileLocation(this.locationId).subscribe(
+      res => this.loading.closeSpinner().then(() => this.modalHandler(res)),
+      () => {
+        this.loading.closeSpinner().then(() => this.modalHandler(SPINNER_MESSAGES.errorActivating));
+      }
+    );
 
     this.sourceSubscription.add(subscription);
   }
@@ -121,6 +118,16 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
   //     })
   //   );
   // }
+
+  private setContentStrings() {
+    let activate = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.activateBtn);
+    let header = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.headerTitle);
+
+    activate = activate ? activate : '';
+    header = header ? header : '';
+
+    this.contentString = { activate, header };
+  }
 
   private setUserPhoto() {
     this.userService

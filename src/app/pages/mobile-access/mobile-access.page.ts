@@ -10,6 +10,7 @@ import { MobileAccessService } from './service';
 import { InstitutionService } from '../../core/service/institution/institution.service';
 import { MUserInfo } from '../../core/model/user';
 import { UserService } from '../../core/service/user-service/user.service';
+import { CONTENT_STRINGS, TOAST_MESSAGE } from './mobile-acces.config';
 
 @Component({
   selector: 'app-mobile-access',
@@ -21,8 +22,8 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
   private readonly sourceSubscription: Subscription = new Subscription();
   private readonly searchString$: BehaviorSubject<string> = new BehaviorSubject<string>('');
   private readonly toastDuration: number = 5000;
-  tempTitle: string = 'Mobile Access';
   locations$: Observable<MMobileLocationInfo[]>;
+  contentString: { [key: string]: string };
   userInfo$: Observable<MUserInfo>;
 
   constructor(
@@ -36,55 +37,13 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
   ) {
     this.initComponent();
   }
-  // /**
-  //  * Make request to retrieve Mobile Location information and handle response
-  //  */
-  // private retrieveMobileLocationData(bShowLoader: boolean) {
-  //   this.bIsUpdatingLocations = true;
-  //   if (bShowLoader) {
-  //     this.events.publish(Globals.Events.LOADER_SHOW, {
-  //       bShow: true,
-  //       message: 'Retrieving locations...',
-  //     });
-  //   }
-  //   this.sourceSubscription.add(
-  //     this.mobileAccessProvider.getMobileLocationData(this.geoData).subscribe(
-  //       mobileLocationData => {
-  //         this.handleMobileLocationResult(mobileLocationData);
-  //       },
-  //       (error: Error) => {
-  //         let errorMessage =
-  //           'An error occurred while trying to retrieve your information.';
-  //         if (error != null && error.message) {
-  //           errorMessage = error.message;
-  //         }
-  //         this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
-  //         ExceptionProvider.showException(this.events, {
-  //           displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
-  //           messageInfo: {
-  //             title: Globals.Exception.Strings.TITLE,
-  //             message: errorMessage,
-  //             positiveButtonTitle: 'RETRY',
-  //             positiveButtonHandler: () => {
-  //               this.retrieveMobileLocationData(true);
-  //             },
-  //             negativeButtonTitle: 'CLOSE',
-  //             negativeButtonHandler: () => {
-  //               this.bIsUpdatingLocations = false;
-  //               // this.platform.exitApp();
-  //             },
-  //           },
-  //         });
-  //       }
-  //     )
-  //   );
-  // }
 
   ngOnDestroy() {
     this.sourceSubscription.unsubscribe();
   }
 
   ngOnInit() {
+    this.setContentStrings();
     this.userInfo$ = this.userService.userData;
   }
 
@@ -115,10 +74,7 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
   }
 
   async presentToast({ name, isFavourite }: MMobileLocationInfo) {
-    const addLocationMessage = 'was added to your favorite list';
-    const removeLocationMessage = 'was removed from your favorite list';
-
-    const message = `${name} ${isFavourite ? addLocationMessage : removeLocationMessage}`;
+    const message = `${name} ${isFavourite ? TOAST_MESSAGE.addedFav : TOAST_MESSAGE.removedFav}`;
     const toast = await this.toastController.create({
       message,
       duration: this.toastDuration,
@@ -127,9 +83,8 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
   }
 
   async errorSavingFavourites() {
-    const message = 'Something went wrong with synchronizing your favorite list';
     const toast = await this.toastController.create({
-      message,
+      message: TOAST_MESSAGE.errorSavingFav,
       duration: this.toastDuration,
     });
     toast.present();
@@ -150,13 +105,22 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
     this.sourceSubscription.add(subscription);
   }
 
+  private setContentStrings() {
+    let header = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.headerTitle);
+    let search = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.searchbarPlaceholder);
+
+    header = header ? header : '';
+    search = search ? search : '';
+
+    this.contentString = { header, search };
+  }
+
   private setUserInfo() {
     const subscription = this.userService.getAcceptedPhoto().subscribe();
 
     this.sourceSubscription.add(subscription);
   }
 
-  // START REDESIGN:
   private initComponent() {
     this.platform.ready().then(() => {
       this.locations$ = combineLatest(this.mobileAccessService.locations, this.searchString$).pipe(
@@ -168,11 +132,11 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
   private filterLocationsBySearchString(searchString: string, locations: MMobileLocationInfo[]): MMobileLocationInfo[] {
     return locations.filter(
       ({ name, locationId: id }: MMobileLocationInfo) =>
-        this.isIncludeInString(searchString, name) || this.isIncludeInString(searchString, id)
+        this.isIncludedInString(searchString, name) || this.isIncludedInString(searchString, id)
     );
   }
 
-  private isIncludeInString(searchString: string, sourceString: string): boolean {
+  private isIncludedInString(searchString: string, sourceString: string): boolean {
     return sourceString.toUpperCase().includes(searchString.toUpperCase());
   }
 }

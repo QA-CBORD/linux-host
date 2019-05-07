@@ -1,5 +1,6 @@
 <st-header
-  [title]="tempTitle"
+  [title]="contentString.header"
+  [placeholder]="contentString.search"
   [isTitleShow]="true"
   [isSubToolbarShow]="true"
   (onSearchedValue)="onSearchedValue($event)">

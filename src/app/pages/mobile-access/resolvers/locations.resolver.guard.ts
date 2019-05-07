@@ -8,6 +8,7 @@ import { Observable, of, throwError } from 'rxjs';
 import { MobileAccessService } from '../service';
 import { MMobileLocationInfo } from '../model';
 import { LoadingService } from '../../../core/service/loading/loading.service';
+import { LOCAL_ROUTING } from '../mobile-acces.config';
 
 @Injectable()
 export class LocationsResolverGuard implements Resolve<Observable<MMobileLocationInfo[] | boolean>> {
@@ -21,7 +22,7 @@ export class LocationsResolverGuard implements Resolve<Observable<MMobileLocatio
 
   resolve(): Observable<MMobileLocationInfo[] | boolean> {
     const snapshot = this.router.routerState.snapshot;
-    if (!snapshot.url.includes('activate')) {
+    if (!snapshot.url.includes(LOCAL_ROUTING.activate)) {
       return this.downloadData();
     }
     return of(true);
@@ -29,6 +30,11 @@ export class LocationsResolverGuard implements Resolve<Observable<MMobileLocatio
 
   private downloadData(): Observable<MMobileLocationInfo[]> {
     this.loader.showSpinner(this.spinnerMessage);
+    this.mobileAccessService
+      .initContentStringsList()
+      .pipe(take(1))
+      .subscribe();
+
     return this.mobileAccessService.getLocations().pipe(
       retryWhen(errors =>
         errors.pipe(

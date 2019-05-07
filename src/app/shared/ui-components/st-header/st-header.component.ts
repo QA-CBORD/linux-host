@@ -8,6 +8,7 @@ import { Keyboard } from '@ionic-native/keyboard/ngx';
 })
 export class StHeaderComponent implements OnInit {
   @Input() title: string;
+  @Input() placeholder: string;
   @Input() backButtonTitle: string = 'Back';
   @Input() isToolbarShow: boolean = false;
   @Input() isSubToolbarShow: boolean = false;

@@ -76,9 +76,20 @@ export namespace Settings {
 }
 
 export namespace ContentString {
-  export enum EList {}
+  export enum DOMAINS {
+    patron = 'patron-ui',
+  }
 
-  export enum EString {}
+  export enum CATEGORIES {
+    core = 'core-ui',
+    mobileAccess = 'mobile-access',
+  }
+
+  export enum MODAL {
+    cancel = 'button_cancel',
+    retry = 'button_retry',
+    ok = 'button_ok',
+  }
 }
 
 export namespace User {
