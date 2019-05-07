@@ -19,21 +19,21 @@ export class ContentService extends BaseService {
   }
 
   retrieveContentString(config: ContentStringRequest): Observable<MContentStringInfo> {
+    const methodName = 'retrieveString';
     config = config.locale ? config : { ...config, locale: null };
 
     return this.userService.userData.pipe(
-      switchMap(({ institutionId }) =>
-        this.httpRequestFull(this.serviceUrl, 'retrieveString', true, institutionId, config)
-      )
+      switchMap(({ institutionId }) => this.httpRequestFull(this.serviceUrl, methodName, true, institutionId, config))
     );
   }
 
   retrieveContentStringList(config: ContentStringRequest): Observable<MContentStringInfo[] | []> {
+    const methodName = 'retrieveStringList';
     config = config.locale ? config : { ...config, locale: null };
 
     return this.userService.userData.pipe(
       switchMap(({ institutionId }) =>
-        this.httpRequestFull<any>(this.serviceUrl, 'retrieveStringList', true, institutionId, config)
+        this.httpRequestFull<any>(this.serviceUrl, methodName, true, institutionId, config)
       ),
       map(({ exception, response }) => (!exception && !response.empty ? response.list : []))
     );

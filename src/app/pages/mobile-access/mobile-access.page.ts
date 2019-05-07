@@ -52,13 +52,6 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
     this.setUserInfo();
   }
 
-  private setContentStrings() {
-    const header = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.headerTitle);
-    const search = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.searchbarPlaceholder);
-
-    this.contentString = { header, search };
-  }
-
   refreshLocationList($event) {
     this.mobileAccessService
       .getLocations()
@@ -112,13 +105,22 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
     this.sourceSubscription.add(subscription);
   }
 
+  private setContentStrings() {
+    let header = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.headerTitle);
+    let search = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.searchbarPlaceholder);
+
+    header = header ? header : '';
+    search = search ? search : '';
+
+    this.contentString = { header, search };
+  }
+
   private setUserInfo() {
     const subscription = this.userService.getAcceptedPhoto().subscribe();
 
     this.sourceSubscription.add(subscription);
   }
 
-  // START REDESIGN:
   private initComponent() {
     this.platform.ready().then(() => {
       this.locations$ = combineLatest(this.mobileAccessService.locations, this.searchString$).pipe(
@@ -130,11 +132,11 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
   private filterLocationsBySearchString(searchString: string, locations: MMobileLocationInfo[]): MMobileLocationInfo[] {
     return locations.filter(
       ({ name, locationId: id }: MMobileLocationInfo) =>
-        this.isIncludeInString(searchString, name) || this.isIncludeInString(searchString, id)
+        this.isIncludedInString(searchString, name) || this.isIncludedInString(searchString, id)
     );
   }
 
-  private isIncludeInString(searchString: string, sourceString: string): boolean {
+  private isIncludedInString(searchString: string, sourceString: string): boolean {
     return sourceString.toUpperCase().includes(searchString.toUpperCase());
   }
 }

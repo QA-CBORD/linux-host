@@ -12,17 +12,8 @@ import { MobileAccessService } from './service';
 import { ActivateLocationComponent } from './activate-location';
 import { SharedModule } from '../../shared/shared.module';
 import { StPopoverModule } from './st-popover/st-popover.module';
-import { Pdf417BarcodeModule } from 'pdf417-barcode';
 
-const imports = [
-  CommonModule,
-  FormsModule,
-  IonicModule,
-  MobileAccessRoutingModule,
-  SharedModule,
-  StPopoverModule,
-  Pdf417BarcodeModule,
-];
+const imports = [CommonModule, FormsModule, IonicModule, MobileAccessRoutingModule, SharedModule, StPopoverModule];
 
 const declarations = [MobileAccessPage, LocationListComponent, ActivateLocationComponent, LocationItemComponent];
 const providers = [LocationsResolverGuard, MobileAccessService];

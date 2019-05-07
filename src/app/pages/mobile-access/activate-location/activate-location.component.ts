@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { PopoverController } from '@ionic/angular';
+import { NavController, PopoverController } from '@ionic/angular';
 
-import { map, take, tap } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { Observable, Subscription } from 'rxjs';
 
 import { UserService } from '../../../core/service/user-service/user.service';
@@ -38,6 +38,7 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
     private readonly popoverCtrl: PopoverController,
     private readonly router: Router,
     private readonly location: Location,
+    private readonly nav2: NavController,
     private readonly institutionService: InstitutionService,
     private readonly cdRef: ChangeDetectorRef,
     private readonly loading: LoadingService
@@ -92,7 +93,7 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
 
     popover.onDidDismiss().then(({ data }) => {
       if (data === 'OKAY') {
-        this.location.back();
+        this.nav2.navigateBack('/mobile-access');
       }
 
       if (data === 'RETRY') {
