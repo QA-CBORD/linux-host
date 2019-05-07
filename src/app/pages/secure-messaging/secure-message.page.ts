@@ -583,7 +583,7 @@ export class SecureMessagePage implements OnDestroy {
   getConversationGroupName(conversation: MSecureMessageConversation): string {
     return conversation.groupName == null
       ? 'Conversation'
-      : conversation.groupDescription;
+      : conversation.groupName;
   }
 
   /**
