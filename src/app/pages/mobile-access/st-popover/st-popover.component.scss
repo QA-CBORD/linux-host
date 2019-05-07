@@ -46,6 +46,10 @@
       @include font-nunito-heavy(36px);
     }
 
+    &__barcode {
+      text-align: center;
+    }
+
     &__footer {
       display: flex;
       padding: 0 20px 10px;

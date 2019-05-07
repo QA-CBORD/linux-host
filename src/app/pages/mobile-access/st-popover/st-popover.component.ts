@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, AfterViewInit } from '@angular/core';
 import { Events, PopoverController } from '@ionic/angular';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 import bwipjs from 'bwip-angular2';
@@ -8,7 +8,7 @@ import bwipjs from 'bwip-angular2';
   templateUrl: './st-popover.component.html',
   styleUrls: ['./st-popover.component.scss'],
 })
-export class StPopoverComponent implements OnInit {
+export class StPopoverComponent implements OnInit, AfterViewInit {
   @Input() data: any;
 
   popoverConfig: popoverConfig;
@@ -19,8 +19,8 @@ export class StPopoverComponent implements OnInit {
     this.initPopover();
   }
 
-  async closeModal(closeModal = 'CANCEL') {
-    await this.popoverCtrl.dismiss(closeModal);
+  ngAfterViewInit() {
+    this.initBarcode();
   }
 
   initPopover() {
@@ -58,22 +58,26 @@ export class StPopoverComponent implements OnInit {
       code: issuedCode,
       validityTime,
     };
+  }
 
-    setTimeout(() => {
-      bwipjs(
-        'barcodeCanvas',
-        {
-          bcid: 'pdf417', // Barcode type
-          text: this.popoverConfig.code, // Text to encode
-          includetext: false, // Show human-readable text
-        },
-        (err, cvs) => {
-          if (err) {
-          } else {
-          }
+  async closeModal(closeModal = 'CANCEL') {
+    await this.popoverCtrl.dismiss(closeModal);
+  }
+
+  private initBarcode() {
+    bwipjs(
+      'barcodeCanvas',
+      {
+        bcid: 'pdf417', // Barcode type
+        text: this.popoverConfig.code, // Text to encode
+        includetext: false, // Show human-readable text
+      },
+      (err, cvs) => {
+        if (err) {
+        } else {
         }
-      );
-    }, 50);
+      }
+    );
   }
 
   onFinishTimeout() {
