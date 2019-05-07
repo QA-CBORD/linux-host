@@ -1,4 +1,4 @@
-<st-header [title]="tempTitle" [isToolbarShow]="true"></st-header>
+<st-header [title]="contentString.activate" [isToolbarShow]="true"></st-header>
 <ion-content padding>
     <ion-card class="user-data">
         <ion-card-header>
@@ -17,7 +17,7 @@
             <p [ngClass]="starClass | async"> {{(location$ | async).locationId}} - {{(location$ | async).name}}</p>
         </ion-card-content>
         <div class="user-data__activate-btn">
-            <ion-button shape="round" size="large" color="light" expand="full" (click)="activateLocation()">activate
+            <ion-button shape="round" size="large" color="light" expand="full" (click)="activateLocation()">{{contentString.activate}}
             </ion-button>
         </div>
     </ion-card>
