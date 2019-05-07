@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
 
-import * as Globals from '../../../app.global';
-
-import { BaseService, ServiceParameters } from '../base-service/base.service';
+import { BaseService } from '../base-service/base.service';
 import { MContentStringInfo } from '../../model/content/content-string-info.interface';
 import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { map, switchMap } from 'rxjs/operators';
+import { ContentStringRequest } from '../../model/content/content-string-request';
+import { UserService } from '../user-service/user.service';
 
 @Injectable({
   providedIn: 'root',
@@ -12,36 +14,28 @@ import { Observable } from 'rxjs';
 export class ContentService extends BaseService {
   private serviceUrl = '/json/content';
 
-  /**
-   * Retrive single content string by name
-   * @param stringName string enum name of content string
-   */
-  retrieveContentString(stringName: Globals.ContentString.EString): Observable<MContentStringInfo> {
-    /// split string into domain, category, name
-    const stringNameParts: string[] = stringName.toString().split('.');
-    const postParams: ServiceParameters = {
-      locale: null,
-      domain: stringNameParts[0],
-      category: stringNameParts[1],
-      name: stringNameParts[2],
-    };
-
-    return this.httpRequestFull<any>(this.serviceUrl, 'retrieveString', true, true, postParams);
+  constructor(protected readonly http: HttpClient, private readonly userService: UserService) {
+    super(http);
   }
 
-  /**
-   * Retreive a list of strings using the 'domain.category' for that list
-   * @param stringListName 'domain.category' name of the list of strings to return
-   */
-  retrieveContentStringList(stringListName: Globals.ContentString.EList): Observable<MContentStringInfo[]> {
-    /// split string into domain, category, name
-    const stringNameParts: string[] = stringListName.toString().split('.');
-    const postParams: ServiceParameters = {
-      locale: null,
-      domain: stringNameParts[0],
-      category: stringNameParts[1],
-    };
+  retrieveContentString(config: ContentStringRequest): Observable<MContentStringInfo> {
+    config = config.locale ? config : { ...config, locale: null };
 
-    return this.httpRequestFull<any>(this.serviceUrl, 'retrieveStringList', true, true, postParams);
+    return this.userService.userData.pipe(
+      switchMap(({ institutionId }) =>
+        this.httpRequestFull(this.serviceUrl, 'retrieveString', true, institutionId, config)
+      )
+    );
+  }
+
+  retrieveContentStringList(config: ContentStringRequest): Observable<MContentStringInfo[] | []> {
+    config = config.locale ? config : { ...config, locale: null };
+
+    return this.userService.userData.pipe(
+      switchMap(({ institutionId }) =>
+        this.httpRequestFull<any>(this.serviceUrl, 'retrieveStringList', true, institutionId, config)
+      ),
+      map(({ exception, response }) => (!exception && !response.empty ? response.list : []))
+    );
   }
 }

@@ -3,6 +3,6 @@
        appClickStopPropagation (click)="triggerFavourite()"/>
   <ion-label class="st-label">
     <h3 class="title">{{ location.locationId }} - {{ location.name }}</h3>
-    <p class="sub-title">{{ location.distance | metersToMiles }}</p>
+    <p class="sub-title" *ngIf="location.distance">{{ location.distance | metersToMiles }}</p>
   </ion-label>
 </ion-item>

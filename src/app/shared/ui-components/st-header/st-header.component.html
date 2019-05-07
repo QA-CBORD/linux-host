@@ -10,7 +10,7 @@
     <ion-searchbar
       (ionChange)="onInputChanged($event)"
       (keyup.enter)="onEnterKeyClicked()"
-      placeholder="Filter Locations..."
+      [placeholder]="placeholder"
       mode="ios"
       class="st-header__searchbar"
     ></ion-searchbar>

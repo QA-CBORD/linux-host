@@ -76,13 +76,19 @@ export namespace Settings {
 }
 
 export namespace ContentString {
-  export enum EList {
-    CORE_UI = 'patron-ui.core-ui',
-    MOBILE_ACCESS = 'patron-ui.mobile-access',
+  export enum DOMAINS {
+    patron = 'patron-ui',
   }
 
-  export enum EString {
-    test = 'patron-ui.mobile-access.button_ok',
+  export enum CATEGORIES {
+    core = 'core-ui',
+    mobileAccess = 'mobile-access',
+  }
+
+  export enum MODAL {
+    cancel = 'button_cancel',
+    retry = 'button_retry',
+    ok = 'button_ok',
   }
 }
 

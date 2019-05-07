@@ -68,18 +68,14 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
   }
 
   activateLocation() {
-    // TODO: create Spinner in some special service:
     this.loading.showSpinner(SPINNER_MESSAGES.activating);
 
-    const subscription = this.mobileAccessService
-      .activateMobileLocation(this.locationId)
-      .pipe(tap(() => this.loading.closeSpinner()))
-      .subscribe(
-        res => this.modalHandler(res),
-        () => {
-          this.loading.closeSpinner().then(() => this.modalHandler(SPINNER_MESSAGES.errorActivating));
-        }
-      );
+    const subscription = this.mobileAccessService.activateMobileLocation(this.locationId).subscribe(
+      res => this.loading.closeSpinner().then(() => this.modalHandler(res)),
+      () => {
+        this.loading.closeSpinner().then(() => this.modalHandler(SPINNER_MESSAGES.errorActivating));
+      }
+    );
 
     this.sourceSubscription.add(subscription);
   }

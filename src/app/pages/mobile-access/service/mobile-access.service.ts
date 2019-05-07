@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
-import { catchError, map, retry, switchMap } from 'rxjs/operators';
+import { catchError, map, retry, switchMap, tap } from 'rxjs/operators';
 
 import { BaseService, ServiceParameters } from 'src/app/core/service/base-service/base.service';
 import { MGeoCoordinates } from 'src/app/core/model/geolocation/geocoordinates.interface';
@@ -11,6 +11,9 @@ import { MessageResponse } from '../../../core/model/service/message-response.in
 import { UserService } from '../../../core/service/user-service/user.service';
 import { CoordsService } from '../../../core/service/coords/coords.service';
 import { GeoLocationInfo } from '../../../core/model/geolocation/geoLocationInfo';
+import { MContentStringInfo } from '../../../core/model/content/content-string-info.interface';
+import { ContentService } from '../../../core/service/content-service/content.service';
+import { ContentStringsParams } from '../mobile-acces.config';
 
 @Injectable()
 export class MobileAccessService extends BaseService {
@@ -19,11 +22,13 @@ export class MobileAccessService extends BaseService {
   private readonly locations$: BehaviorSubject<MMobileLocationInfo[]> = new BehaviorSubject<MMobileLocationInfo[]>([]);
   private locationsInfo: MMobileLocationInfo[] = [];
   private favourites: string[];
+  private content;
 
   constructor(
     protected readonly http: HttpClient,
     private readonly userService: UserService,
-    private readonly coords: CoordsService
+    private readonly coords: CoordsService,
+    private readonly contentService: ContentService
   ) {
     super(http);
   }
@@ -35,6 +40,18 @@ export class MobileAccessService extends BaseService {
   private set _locations(locations: MMobileLocationInfo[]) {
     this.locationsInfo = [...locations];
     this.locations$.next([...this.locationsInfo]);
+  }
+
+  initContentStringsList(): Observable<MContentStringInfo[]> {
+    return this.contentService.retrieveContentStringList(ContentStringsParams).pipe(
+      tap(res => {
+        this.content = res.reduce((init, elem) => ({ ...init, [elem.name]: elem.value }), {});
+      })
+    );
+  }
+
+  getContentValueByName(name: string): string | undefined {
+    return this.content[name];
   }
 
   getMobileLocations(): Observable<MMobileLocationInfo[]> {
@@ -99,7 +116,6 @@ export class MobileAccessService extends BaseService {
     sourceInfo: string | null = null
   ): Observable<MActivateMobileLocationResult> {
     const methodName = 'activateMobileLocation';
-
     return this.coords.getCoords().pipe(
       map((coords: Coordinates) => this.createMobileLocationParams(locationId, coords, sourceInfo)),
       switchMap(postParams =>
