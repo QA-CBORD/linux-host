@@ -18,7 +18,7 @@ export interface ServiceParameters {
 })
 export class BaseService {
   /// HTTP call timeout in milliseconds
-  private TIMEOUT_MS = 20000;
+  private TIMEOUT_MS = 30000;
 
   /// Local base url for HTTP calls
   protected baseUrl: string = null;
