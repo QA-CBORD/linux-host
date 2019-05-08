@@ -83,6 +83,7 @@ export namespace ContentString {
   export enum CATEGORIES {
     core = 'core-ui',
     mobileAccess = 'mobile-access',
+    rewards = 'rewards',
   }
 
   export enum MODAL {
