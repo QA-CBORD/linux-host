@@ -11,16 +11,30 @@ import { LocationItemComponent } from './location-list/location-item';
 import { MobileAccessService } from './service';
 import { ActivateLocationComponent } from './activate-location';
 import { SharedModule } from '../../shared/shared.module';
-import { StPopoverModule } from './st-popover/st-popover.module';
+import { MobileAccessPopoverComponent } from './mobile-access-popover';
 
-const imports = [CommonModule, FormsModule, IonicModule, MobileAccessRoutingModule, SharedModule, StPopoverModule];
+const imports = [
+  CommonModule,
+  FormsModule,
+  IonicModule,
+  MobileAccessRoutingModule,
+  SharedModule
+];
 
-const declarations = [MobileAccessPage, LocationListComponent, ActivateLocationComponent, LocationItemComponent];
+const declarations = [
+  MobileAccessPage,
+  LocationListComponent,
+  ActivateLocationComponent,
+  LocationItemComponent,
+  MobileAccessPopoverComponent,
+];
 const providers = [LocationsResolverGuard, MobileAccessService];
+const entryComponents = [MobileAccessPopoverComponent];
 
 @NgModule({
   imports,
   declarations,
   providers,
+  entryComponents,
 })
 export class MobileAccessPageModule {}

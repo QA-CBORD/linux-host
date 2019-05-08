@@ -12,7 +12,7 @@ import { MUserInfo } from '../../../core/model/user';
 import { InstitutionService } from '../../../core/service/institution/institution.service';
 import { MMobileLocationInfo } from '../model';
 import { Institution } from '../../../core/model/institution/institution';
-import { StPopoverComponent } from '../st-popover';
+import { MobileAccessPopoverComponent } from '../mobile-access-popover';
 import { LoadingService } from '../../../core/service/loading/loading.service';
 import { CONTENT_STRINGS, SPINNER_MESSAGES } from '../mobile-acces.config';
 
@@ -84,7 +84,7 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
 
   async modalHandler(res) {
     const popover = await this.popoverCtrl.create({
-      component: StPopoverComponent,
+      component: MobileAccessPopoverComponent,
       componentProps: {
         data: res,
       },

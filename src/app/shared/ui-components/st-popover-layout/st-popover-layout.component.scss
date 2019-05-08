@@ -31,25 +31,6 @@
       @include font-nunito-regular(16px);
     }
 
-    &__message {
-      display: flex;
-      margin-bottom: 10px;
-
-      div {
-        flex-basis: 80%;
-      }
-    }
-
-    &__temp-code {
-      text-align: center;
-
-      @include font-nunito-heavy(36px);
-    }
-
-    &__barcode {
-      text-align: center;
-    }
-
     &__footer {
       display: flex;
       padding: 0 20px 10px;

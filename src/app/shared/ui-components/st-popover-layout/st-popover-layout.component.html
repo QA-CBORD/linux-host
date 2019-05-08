@@ -9,23 +9,7 @@
   </ion-toolbar>
 </ion-header>
 <ion-content class="st-popover__content">
-  <div class="st-popover__message">
-    <div>
-      {{ popoverConfig.message }}
-    </div>
-    <st-countdown
-      [seconds]="popoverConfig.validityTime"
-      (onTimeout)="onFinishTimeout()"
-      *ngIf="popoverConfig.type === 'BARCODE' || popoverConfig.type === 'CODE'"
-    ></st-countdown>
-  </div>
-  <div class="st-popover__temp-code" *ngIf="popoverConfig.type === 'CODE'">
-    {{ popoverConfig.code }}
-  </div>
-  <div class="st-popover__barcode">
-    <canvas id="barcodeCanvas" *ngIf="popoverConfig.type === 'BARCODE'"
-    ></canvas>
-  </div>
+  <ng-content></ng-content>
 </ion-content>
 <ion-footer no-border class="st-popover__footer">
   <ion-button

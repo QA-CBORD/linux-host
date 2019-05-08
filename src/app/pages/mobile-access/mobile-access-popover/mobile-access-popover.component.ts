@@ -1,19 +1,21 @@
 import { Component, OnInit, Input, AfterViewInit } from '@angular/core';
-import { Events, PopoverController } from '@ionic/angular';
+import { PopoverController } from '@ionic/angular';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
+import { popoverConfig } from 'src/app/core/model/popover/popover.model';
+import { buttons } from 'src/app/core/utils/buttons.config';
 import bwipjs from 'bwip-angular2';
 
 @Component({
-  selector: 'st-popover',
-  templateUrl: './st-popover.component.html',
-  styleUrls: ['./st-popover.component.scss'],
+  selector: 'mobile-access-popover',
+  templateUrl: './mobile-access-popover.component.html',
+  styleUrls: ['./mobile-access-popover.component.scss'],
 })
-export class StPopoverComponent implements OnInit, AfterViewInit {
+export class MobileAccessPopoverComponent implements OnInit, AfterViewInit {
   @Input() data: any;
 
   popoverConfig: popoverConfig;
 
-  constructor(private events: Events, private popoverCtrl: PopoverController, barcodeScanner: BarcodeScanner) {}
+  constructor(private popoverCtrl: PopoverController, barcodeScanner: BarcodeScanner) {}
 
   ngOnInit() {
     this.initPopover();
@@ -60,7 +62,7 @@ export class StPopoverComponent implements OnInit, AfterViewInit {
     };
   }
 
-  async closeModal(closeModal = 'CANCEL') {
+  async onFinishTimeout(closeModal = 'CANCEL') {
     await this.popoverCtrl.dismiss(closeModal);
   }
 
@@ -68,48 +70,17 @@ export class StPopoverComponent implements OnInit, AfterViewInit {
     bwipjs(
       'barcodeCanvas',
       {
-        bcid: 'pdf417', // Barcode type
-        text: this.popoverConfig.code, // Text to encode
-        includetext: false, // Show human-readable text
+        bcid: 'pdf417',
+        text: this.popoverConfig.code,
+        includetext: false,
       },
-      (err, cvs) => {
-        if (err) {
-        } else {
-        }
-      }
+      (err, cvs) => {}
     );
   }
 
-  onFinishTimeout() {
-    this.closeModal();
-  }
-
   configureButtons(condition) {
-    const successBtns = [
-      {
-        label: 'OKAY',
-        class: 'filled',
-        shape: 'round',
-        strong: false,
-        fill: 'default',
-      },
-    ];
-    const errorBtns = [
-      {
-        label: 'CANCEL',
-        class: 'clear',
-        shape: 'round',
-        strong: true,
-        fill: 'clear',
-      },
-      {
-        label: 'RETRY',
-        class: 'filled',
-        shape: 'round',
-        strong: false,
-        fill: 'default',
-      },
-    ];
+    const successBtns = [buttons.OKAY];
+    const errorBtns = [buttons.CANCEL, buttons.RETRY];
 
     return condition ? successBtns : errorBtns;
   }
@@ -127,13 +98,4 @@ enum popoverTitles {
   successTittle = 'Success!',
   errorTittle = 'Error',
   barcodeTitle = 'Scan Barcode',
-}
-
-interface popoverConfig {
-  type: string;
-  title: string;
-  message: string;
-  code: string;
-  validityTime: number;
-  buttons: any[];
 }

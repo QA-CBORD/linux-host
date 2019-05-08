@@ -1,0 +1,24 @@
+@import 'tools';
+
+:host {
+  .ma-popover {
+    &__content {
+      display: flex;
+      margin-bottom: 10px;
+
+      .ma-popover__message {
+        flex-basis: 80%;
+      }
+    }
+
+    &__temp-code {
+      text-align: center;
+
+      @include font-nunito-heavy(36px);
+    }
+
+    &__barcode {
+      text-align: center;
+    }
+  }
+}
