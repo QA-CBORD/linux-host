@@ -1,0 +1,33 @@
+@import 'tools';
+
+:host {
+  width: 100%;
+
+  .list-item {
+    display: flex;
+    flex-basis: 100%;
+
+    &__content {
+      width: 100%;
+    }
+
+    &__title {
+      color: #515151;
+
+      @include font-nunito-semibold(20px);
+    }
+
+    &__description {
+      color: #6e6e6e;
+
+      @include font-nunito-regular(12px);
+    }
+
+    &__time,
+    &__score {
+      color: #7e7e7e;
+
+      @include font-nunito-regular(10px);
+    }
+  }
+}

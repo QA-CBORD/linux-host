@@ -1,0 +1,10 @@
+:host {
+  .history__list {
+    .list-container {
+      &__item {
+        --padding-start: 0 !important;
+        --border-color: #F3F3F3 !important;
+      }
+    }
+  }
+}
