@@ -5,5 +5,17 @@
 </ion-header>
 
 <ion-content padding>
+  <nav>
+    <ul>
+      <li><a routerLink="/rewards/store" routerLinkActive="active" aria-roledescription="navigation tab element to store page">store</a></li>
+      <li><a routerLink="/rewards/levels" routerLinkActive="active" aria-roledescription="navigation tab element to levels levels">levels</a></li>
+      <li><a routerLink="/rewards/history" routerLinkActive="active" aria-roledescription="navigation tab element to levels history">history</a></li>
+    </ul>
+  </nav>
+
+  <div class="rewards-container">
+    <router-outlet></router-outlet>
+  </div>
 
 </ion-content>
+

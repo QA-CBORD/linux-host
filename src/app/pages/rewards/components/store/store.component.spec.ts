@@ -1,21 +1,21 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { StPopoverLayoutComponent } from './st-popover-layout.component';
+import { StorePage } from './store.page';
 
-describe('StPopoverLayoutComponent', () => {
-  let component: StPopoverLayoutComponent;
-  let fixture: ComponentFixture<StPopoverLayoutComponent>;
+describe('StorePage', () => {
+  let component: StorePage;
+  let fixture: ComponentFixture<StorePage>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [StPopoverLayoutComponent],
+      declarations: [StorePage],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(StPopoverLayoutComponent);
+    fixture = TestBed.createComponent(StorePage);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
