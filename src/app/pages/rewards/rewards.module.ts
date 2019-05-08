@@ -10,8 +10,9 @@ import { StoreComponent } from './components/store/store.component';
 import { LevelsComponent } from './components/levels/levels.component';
 import { RewardsApiService } from './services/rewards-api.service';
 import { RewardsService } from './services/rewards.service';
+import { SharedModule } from '../../shared/shared.module';
 
-const imports = [CommonModule, FormsModule, IonicModule, RewardsRoutingModule];
+const imports = [CommonModule, FormsModule, IonicModule, RewardsRoutingModule, SharedModule];
 const declarations = [RewardsPage, HistoryComponent, StoreComponent, LevelsComponent];
 const providers = [RewardsApiService, RewardsService];
 
