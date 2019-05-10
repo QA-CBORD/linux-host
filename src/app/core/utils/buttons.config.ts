@@ -22,8 +22,17 @@ const OKAY = {
   fill: 'default',
 };
 
+const REDEEM = {
+  label: 'REDEEM',
+  class: 'filled',
+  shape: 'round',
+  strong: false,
+  fill: 'default',
+};
+
 export const buttons = {
   CANCEL,
   RETRY,
   OKAY,
+  REDEEM,
 };

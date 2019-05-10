@@ -8,7 +8,23 @@
     flex-basis: 100%;
 
     &__content {
-      width: 100%;
+      flex-basis: 80%;
+    }
+
+    &__store-content {
+      flex-basis: 70%;
+    }
+
+    &__actions {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      flex-basis: 20%;
+      align-items: flex-end;
+    }
+
+    &__store-actions {
+      flex-basis: 30%;
     }
 
     &__title {
@@ -19,6 +35,7 @@
 
     &__description {
       color: #6e6e6e;
+      margin-bottom: 5px;
 
       @include font-nunito-regular(12px);
     }
@@ -28,6 +45,29 @@
       color: #7e7e7e;
 
       @include font-nunito-regular(10px);
+    }
+
+    &__button {
+      --border-color: #166dff !important;
+      --color: #166dff !important;
+      --border-radius: 4px 4px 4px 4px !important;
+      --border-width: 1px !important;
+      --padding-end: 6px !important;
+      --padding-start: 6px !important;
+      --padding-bottom: 2px !important;
+      --padding-top: 2px !important;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 2px 0;
+      margin: 10px 0 0;
+
+      @include font-nunito-semibold(12px);
+    }
+
+    &__score--semibold {
+      color: #000;
+
+      @include font-nunito-semibold(16px);
     }
   }
 }

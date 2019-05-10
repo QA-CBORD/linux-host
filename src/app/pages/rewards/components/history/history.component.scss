@@ -3,7 +3,11 @@
     .list-container {
       &__item {
         --padding-start: 0 !important;
-        --border-color: #F3F3F3 !important;
+        --border-color: #f3f3f3 !important;
+
+        &-content {
+          margin: 10px 0 10px 15px;
+        }
       }
     }
   }

@@ -1,0 +1,15 @@
+@import 'tools';
+
+:host {
+  .rewards-popover {
+    &__title {
+      @include font-nunito-semibold(20px);
+    }
+
+    &__description {
+      color: #6e6e6e;
+
+      @include font-nunito-regular(12px);
+    }
+  }
+}
