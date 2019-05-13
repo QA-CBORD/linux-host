@@ -1,4 +1,4 @@
-import * as Globals from "../../app.global";
+import * as Globals from '../../app.global';
 
 export enum LOCAL_ROUTING {
   levels = 'levels',
