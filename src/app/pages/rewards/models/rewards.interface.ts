@@ -1,3 +1,5 @@
+import {LEVEL_STATUS} from "../rewards.config";
+
 export interface MUserRewardTrackInfo {
     trackID: string;
     trackName: string;
@@ -69,4 +71,12 @@ export interface MUserFulfillmentActivityInfo {
     pointsSpent: number;
     itemName: string;
     rewardId: string;
+}
+
+export interface LevelInfo {
+    level: number,
+    name: string,
+    requiredPoints: number,
+    status: LEVEL_STATUS,
+    rewards: MClaimableRewardInfo[]
 }

@@ -6,14 +6,13 @@ import { LOCAL_ROUTING } from './rewards.config';
 import { HistoryComponent } from './components/history';
 import { StoreComponent } from './components/store';
 import { LevelsComponent } from './components/levels';
-import {RewardsResolverGuard} from "./resolvers";
+import { RewardsResolverGuard } from './resolvers';
 
 const subRoutes: Routes = [
-  // { path: '', redirectTo: LOCAL_ROUTING.levels, pathMatch: 'full' },
   {
     path: '',
     component: RewardsPage,
-    resolve: { coords: RewardsResolverGuard },
+    resolve: { rewardTrackInfo: RewardsResolverGuard },
   },
   {
     path: LOCAL_ROUTING.history,

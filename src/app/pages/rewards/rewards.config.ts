@@ -23,3 +23,17 @@ export enum OPT_IN_STATUS {
   yes = 1,
   no = 0
 }
+
+export enum LEVEL_STATUS {
+  locked = 0,
+  unlocked = 1,
+  claimed = 2,
+  received = 3,
+}
+
+export enum CLAIM_STATUS {
+  unearned = 0,
+  earned = 1,
+  claimed = 2,
+  received = 3,
+}

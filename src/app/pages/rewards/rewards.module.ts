@@ -7,12 +7,12 @@ import { RewardsPage } from './rewards.page';
 import { HistoryComponent } from './components/history';
 import { StoreComponent } from './components/store';
 import { LevelsComponent } from './components/levels';
-import { OptInComponent } from "./components/opt-in";
+import { OptInComponent } from './components/opt-in';
 import { RewardsRoutingModule } from './rewards-routing.module';
 import { RewardsApiService } from './services';
 import { RewardsService } from './services';
 import { SharedModule } from '../../shared/shared.module';
-import {RewardsResolverGuard} from "./resolvers";
+import { RewardsResolverGuard } from './resolvers';
 
 const imports = [CommonModule, FormsModule, IonicModule, RewardsRoutingModule, RewardsRoutingModule, SharedModule];
 const declarations = [RewardsPage, HistoryComponent, StoreComponent, LevelsComponent, OptInComponent];

@@ -1,31 +1,5 @@
 @import 'tools';
 
 :host {
-  .rewards__tabs {
-    .tabs-wrapper {
-      &__bar {
-        box-shadow: 0px 20px 30px -18px #00000040;
-      }
 
-      &__tab {
-        --color-selected: #3c3c3c !important;
-
-        &.tab-selected {
-          border-bottom: 2px solid #166dff;
-
-          .tabs-wrapper__label {
-            @include font-nunito-heavy(14px);
-          }
-        }
-      }
-
-      &__label {
-        text-transform: uppercase;
-        line-height: 18px;
-        color: #6e6e6e;
-
-        @include font-nunito-semibold(14px);
-      }
-    }
-  }
 }

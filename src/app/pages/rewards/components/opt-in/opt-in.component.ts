@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { UserService } from '../../../../core/service/user-service/user.service';
-import { RewardsApiService } from '../../services';
+import {RewardsService} from '../../services';
 
 import { CONTENT_STRINGS } from '../../rewards.config';
 import { MUserRewardTrackInfo } from '../../models';
@@ -25,7 +25,7 @@ export class OptInComponent implements OnInit, OnDestroy {
 
   constructor(
     private readonly userService: UserService,
-    private rewardsApiService: RewardsApiService,
+    private rewardsService: RewardsService,
     private toastController: ToastController
   ) {}
 
@@ -39,25 +39,25 @@ export class OptInComponent implements OnInit, OnDestroy {
 
   optIn() {
     console.log("OptIn Press");
-    const subscription = this.userService.userData
-      .pipe(
-        switchMap(({ id: userId }: MUserInfo) => {
-          return this.rewardsApiService.optUserIntoRewardTrack(this.rewardTrack.trackID, userId);
-        })
-      )
-      .subscribe(
-        (success: boolean) => {
-          if (success) {
-            this.optInSuccess.emit();
-          } else {
-            this.presentOptInFailureToast();
-          }
-        },
-        () => {
-          this.presentOptInFailureToast();
-        }
-      );
-    this.sourceSubscription.add(subscription);
+    // const subscription = this.userService.userData
+    //   .pipe(
+    //     switchMap(({ id: userId }: MUserInfo) => {
+    //       return this.rewardsService.optUserIntoRewardTrack(this.rewardTrack.trackID, userId);
+    //     })
+    //   )
+    //   .subscribe(
+    //     (success: boolean) => {
+    //       if (success) {
+    //         this.optInSuccess.emit();
+    //       } else {
+    //         this.presentOptInFailureToast();
+    //       }
+    //     },
+    //     () => {
+    //       this.presentOptInFailureToast();
+    //     }
+    //   );
+    // this.sourceSubscription.add(subscription);
   }
 
   async presentOptInFailureToast() {
@@ -79,9 +79,9 @@ export class OptInComponent implements OnInit, OnDestroy {
   }
 
   private setContentStrings() {
-    let buttonOptIn = this.rewardsApiService.getContentValueByName(CONTENT_STRINGS.optInBtn);
-    let labelOptInFailed = this.rewardsApiService.getContentValueByName(CONTENT_STRINGS.optInFailLabel);
-    let buttonRetry = this.rewardsApiService.getContentValueByName(CONTENT_STRINGS.retryBtn);
+    let buttonOptIn = this.rewardsService.getContentValueByName(CONTENT_STRINGS.optInBtn);
+    let labelOptInFailed = this.rewardsService.getContentValueByName(CONTENT_STRINGS.optInFailLabel);
+    let buttonRetry = this.rewardsService.getContentValueByName(CONTENT_STRINGS.retryBtn);
     buttonOptIn = buttonOptIn ? buttonOptIn : 'OPT IN ncs';
     labelOptInFailed = labelOptInFailed ? labelOptInFailed : 'We were unable to opt you into the Reward Track ncs';
     buttonRetry = buttonRetry ? buttonRetry : 'RETRY ncs';
