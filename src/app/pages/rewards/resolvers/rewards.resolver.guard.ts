@@ -8,7 +8,7 @@ import { combineLatest, Observable, throwError } from 'rxjs';
 import { LoadingService } from '../../../core/service/loading/loading.service';
 import { RewardsService } from '../services';
 
-import { MRedeemableRewardInfo, MUserFulfillmentActivityInfo, MUserRewardTrackInfo } from '../models';
+import { MUserFulfillmentActivityInfo, MUserRewardTrackInfo } from '../models';
 
 @Injectable()
 export class RewardsResolverGuard

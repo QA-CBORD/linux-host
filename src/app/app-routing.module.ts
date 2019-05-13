@@ -4,7 +4,7 @@ import { NAVIGATE } from './app.global';
 
 const routes: Routes = [
   /// initial route handled in app.component.ts
-  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  // { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: NAVIGATE.home, loadChildren: './pages/home/home.module#HomePageModule' },
   { path: NAVIGATE.mobileAccess, loadChildren: './pages/mobile-access/mobile-access.module#MobileAccessPageModule' },
   { path: NAVIGATE.rewards, loadChildren: './pages/rewards/rewards.module#RewardsPageModule' },
