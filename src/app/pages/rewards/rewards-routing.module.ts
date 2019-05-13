@@ -3,12 +3,18 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { RewardsPage } from './rewards.page';
 import { LOCAL_ROUTING } from './rewards.config';
-import { HistoryComponent } from './components/history/history.component';
-import { StoreComponent } from './components/store/store.component';
-import { LevelsComponent } from './components/levels/levels.component';
+import { HistoryComponent } from './components/history';
+import { StoreComponent } from './components/store';
+import { LevelsComponent } from './components/levels';
+import {RewardsResolverGuard} from "./resolvers";
 
 const subRoutes: Routes = [
-  { path: '', redirectTo: LOCAL_ROUTING.levels, pathMatch: 'full' },
+  // { path: '', redirectTo: LOCAL_ROUTING.levels, pathMatch: 'full' },
+  {
+    path: '',
+    component: RewardsPage,
+    resolve: { coords: RewardsResolverGuard },
+  },
   {
     path: LOCAL_ROUTING.history,
     component: HistoryComponent,
