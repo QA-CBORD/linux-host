@@ -14,7 +14,7 @@ import { MMobileLocationInfo } from '../model';
 import { Institution } from '../../../core/model/institution/institution';
 import { MobileAccessPopoverComponent } from '../mobile-access-popover';
 import { LoadingService } from '../../../core/service/loading/loading.service';
-import { CONTENT_STRINGS, SPINNER_MESSAGES } from '../mobile-acces.config';
+import { CONTENT_STRINGS } from '../mobile-acces.config';
 
 @Component({
   selector: 'st-activate-location',
@@ -70,12 +70,12 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
   }
 
   activateLocation() {
-    this.loading.showSpinner(SPINNER_MESSAGES.activating);
+    this.loading.showSpinner(this.contentString.activateLocationLoader);
 
     const subscription = this.mobileAccessService.activateMobileLocation(this.locationId).subscribe(
       res => this.loading.closeSpinner().then(() => this.modalHandler(res)),
       () => {
-        this.loading.closeSpinner().then(() => this.modalHandler(SPINNER_MESSAGES.errorActivating));
+        this.loading.closeSpinner().then(() => this.modalHandler(this.contentString.errorResponseDialogMessage));
       }
     );
 
@@ -122,11 +122,28 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
   private setContentStrings() {
     let activate = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.activateBtn);
     let header = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.headerTitle);
+    let activateLocationLoader = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.activateLocationLoader);
+    let errorResponseDialogMessage = this.mobileAccessService.getContentValueByName(
+      CONTENT_STRINGS.errorResponseDialogMessage
+    );
+    let headerTitleActivate = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.headerTitleActivate);
+    let backBtnHeader = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.backBtnHeader);
 
     activate = activate ? activate : '';
     header = header ? header : '';
+    activateLocationLoader = activateLocationLoader ? activateLocationLoader : '';
+    errorResponseDialogMessage = errorResponseDialogMessage ? errorResponseDialogMessage : '';
+    headerTitleActivate = headerTitleActivate ? headerTitleActivate : '';
+    backBtnHeader = backBtnHeader ? backBtnHeader : '';
 
-    this.contentString = { activate, header };
+    this.contentString = {
+      activate,
+      header,
+      activateLocationLoader,
+      errorResponseDialogMessage,
+      headerTitleActivate,
+      backBtnHeader,
+    };
   }
 
   private setUserPhoto() {

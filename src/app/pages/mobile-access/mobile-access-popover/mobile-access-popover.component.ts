@@ -2,8 +2,9 @@ import { Component, OnInit, Input, AfterViewInit } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 import { popoverConfig } from 'src/app/core/model/popover/popover.model';
-import { buttons } from 'src/app/core/utils/buttons.config';
 import bwipjs from 'bwip-angular2';
+import { CONTENT_STRINGS } from '../mobile-acces.config';
+import { MobileAccessService } from '../service';
 
 @Component({
   selector: 'mobile-access-popover',
@@ -14,10 +15,16 @@ export class MobileAccessPopoverComponent implements OnInit, AfterViewInit {
   @Input() data: any;
 
   popoverConfig: popoverConfig;
+  contentString: { [key: string]: string };
 
-  constructor(private popoverCtrl: PopoverController, barcodeScanner: BarcodeScanner) {}
+  constructor(
+    private popoverCtrl: PopoverController,
+    barcodeScanner: BarcodeScanner,
+    private mobileAccessService: MobileAccessService
+  ) {}
 
   ngOnInit() {
+    this.setContentStrings();
     this.initPopover();
   }
 
@@ -33,7 +40,7 @@ export class MobileAccessPopoverComponent implements OnInit, AfterViewInit {
 
       this.popoverConfig = {
         ...this.popoverConfig,
-        title: error ? popoverTitles.errorTittle : popoverTitles.successTittle,
+        title: error ? this.contentString.errorResponseDialogHeader : this.contentString.successResponseDialogHeader,
         type: error ? PopupTypes.ERROR : PopupTypes.SUCCESS,
         buttons: this.configureButtons(!error),
       };
@@ -42,7 +49,7 @@ export class MobileAccessPopoverComponent implements OnInit, AfterViewInit {
 
       this.popoverConfig = {
         ...this.popoverConfig,
-        title: barcodeCondition ? popoverTitles.barcodeTitle : popoverTitles.codeTittle,
+        title: barcodeCondition ? this.contentString.scanBarcodeDialogHeader : this.contentString.enterCodeDialogHeader,
         type: barcodeCondition ? PopupTypes.BARCODE : PopupTypes.CODE,
         buttons: this.configureButtons(true),
       };
@@ -79,10 +86,67 @@ export class MobileAccessPopoverComponent implements OnInit, AfterViewInit {
   }
 
   configureButtons(condition) {
-    const successBtns = [buttons.OKAY];
-    const errorBtns = [buttons.CANCEL, buttons.RETRY];
+    const successBtns = [
+      {
+        label: this.contentString.closeBtn,
+        class: 'filled',
+        shape: 'round',
+        strong: false,
+        fill: 'default',
+      },
+    ];
+    const errorBtns = [
+      {
+        label: this.contentString.cancelBtn,
+        class: 'clear',
+        shape: 'round',
+        strong: true,
+        fill: 'clear',
+      },
+      {
+        label: this.contentString.retryBtn,
+        class: 'filled',
+        shape: 'round',
+        strong: false,
+        fill: 'default',
+      },
+    ];
 
     return condition ? successBtns : errorBtns;
+  }
+
+  private setContentStrings() {
+    let errorResponseDialogHeader = this.mobileAccessService.getContentValueByName(
+      CONTENT_STRINGS.errorResponseDialogHeader
+    );
+    let successResponseDialogHeader = this.mobileAccessService.getContentValueByName(
+      CONTENT_STRINGS.successResponseDialogHeader
+    );
+    let scanBarcodeDialogHeader = this.mobileAccessService.getContentValueByName(
+      CONTENT_STRINGS.scanBarcodeDialogHeader
+    );
+    let enterCodeDialogHeader = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.enterCodeDialogHeader);
+    let closeBtn = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.closeBtn);
+    let retryBtn = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.retryBtn);
+    let cancelBtn = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.cancelBtn);
+
+    errorResponseDialogHeader = errorResponseDialogHeader ? errorResponseDialogHeader : '';
+    successResponseDialogHeader = successResponseDialogHeader ? successResponseDialogHeader : '';
+    scanBarcodeDialogHeader = scanBarcodeDialogHeader ? scanBarcodeDialogHeader : '';
+    enterCodeDialogHeader = enterCodeDialogHeader ? enterCodeDialogHeader : '';
+    closeBtn = closeBtn ? closeBtn : '';
+    retryBtn = retryBtn ? retryBtn : '';
+    cancelBtn = cancelBtn ? cancelBtn : '';
+
+    this.contentString = {
+      errorResponseDialogHeader,
+      successResponseDialogHeader,
+      scanBarcodeDialogHeader,
+      enterCodeDialogHeader,
+      closeBtn,
+      retryBtn,
+      cancelBtn,
+    };
   }
 }
 
@@ -91,11 +155,4 @@ enum PopupTypes {
   CODE = 'CODE',
   SUCCESS = 'SUCCESS',
   ERROR = 'ERROR',
-}
-
-enum popoverTitles {
-  codeTittle = 'Enter Code',
-  successTittle = 'Success!',
-  errorTittle = 'Error',
-  barcodeTitle = 'Scan Barcode',
 }

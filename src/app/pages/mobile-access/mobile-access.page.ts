@@ -10,7 +10,7 @@ import { MobileAccessService } from './service';
 import { InstitutionService } from '../../core/service/institution/institution.service';
 import { MUserInfo } from '../../core/model/user';
 import { UserService } from '../../core/service/user-service/user.service';
-import { CONTENT_STRINGS, TOAST_MESSAGE } from './mobile-acces.config';
+import { CONTENT_STRINGS } from './mobile-acces.config';
 
 @Component({
   selector: 'app-mobile-access',
@@ -74,7 +74,7 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
   }
 
   async presentToast({ name, isFavourite }: MMobileLocationInfo) {
-    const message = `${name} ${isFavourite ? TOAST_MESSAGE.addedFav : TOAST_MESSAGE.removedFav}`;
+    const message = `${name} ${isFavourite ? this.contentString.addFavToast : this.contentString.removeFavToast}`;
     const toast = await this.toastController.create({
       message,
       duration: this.toastDuration,
@@ -84,7 +84,7 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
 
   async errorSavingFavourites() {
     const toast = await this.toastController.create({
-      message: TOAST_MESSAGE.errorSavingFav,
+      message: this.contentString.addFavErrorToast,
       duration: this.toastDuration,
     });
     toast.present();
@@ -108,11 +108,17 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
   private setContentStrings() {
     let header = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.headerTitle);
     let search = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.searchbarPlaceholder);
+    let addFavToast = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.addFavToast);
+    let removeFavToast = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.removeFavToast);
+    let addFavErrorToast = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.addFavErrorToast);
 
     header = header ? header : '';
     search = search ? search : '';
+    addFavToast = addFavToast ? addFavToast : '';
+    removeFavToast = removeFavToast ? removeFavToast : '';
+    addFavErrorToast = addFavErrorToast ? addFavErrorToast : '';
 
-    this.contentString = { header, search };
+    this.contentString = { header, search, addFavToast, removeFavToast, addFavErrorToast };
   }
 
   private setUserInfo() {
