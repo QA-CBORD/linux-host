@@ -34,13 +34,13 @@
     }
 
     &__title {
-      color: $color-matterhorn;
+      color: #515151;
 
       @include font-nunito-semibold(20px);
     }
 
     &__description {
-      color: $color-dim-gray;
+      color: #6e6e6e;
       margin-bottom: 5px;
 
       @include font-nunito-regular(12px);
@@ -54,8 +54,8 @@
     }
 
     &__button {
-      --border-color: $color-dark-blue !important;
-      --color: $color-dark-blue !important;
+      --border-color: #166dff !important;
+      --color: #166dff !important;
       --border-radius: 4px 4px 4px 4px !important;
       --border-width: 1px !important;
       --padding-end: 6px !important;

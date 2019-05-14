@@ -19,7 +19,7 @@
     }
 
     &__active-wrapper {
-      border-bottom: 1px solid $color-white-smoke;
+      border-bottom: 1px solid #f3f3f3;
     }
 
     &__active-list {
@@ -27,14 +27,14 @@
     }
 
     &__active-title {
-      color: $color-matterhorn;
+      color: #515151;
       margin-bottom: 0;
 
       @include font-nunito-regular(20px);
     }
 
     &__active-description {
-      color: $color-dim-gray;
+      color: #6e6e6e;
 
       @include font-nunito-regular(12px);
     }

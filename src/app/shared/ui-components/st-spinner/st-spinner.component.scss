@@ -16,19 +16,19 @@ $width-height: 2rem;
       stroke-dashoffset: 0;
       stroke-linecap: round;
       &1 {
-        stroke: $color-light-sky-blue;
+        stroke: #88c8ff;
         animation: primary-lighten-2 2.4s linear infinite;
       }
       &2 {
-        stroke: $color-deep-sky-blue;
+        stroke: #00a0ff;
         animation: primary-lighten-1 2.4s linear infinite;
       }
       &3 {
-        stroke: $color-dark-blue;
+        stroke: #166dff;
         animation: primary 2.4s linear infinite;
       }
       &4 {
-        stroke: $color-dark-blue;
+        stroke: #166dff;
         animation: primary-2 2.4s linear infinite;
       }
     }
