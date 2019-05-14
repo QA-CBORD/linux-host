@@ -9,8 +9,8 @@ import { MMobileLocationInfo } from '../model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LocationListComponent {
-  @Input('locations') locations: MMobileLocationInfo[];
-  @Output('favouriteTrigger') favouriteTrigger: EventEmitter<string> = new EventEmitter<string>();
+  @Input() locations: MMobileLocationInfo[];
+  @Output() favouriteTrigger: EventEmitter<string> = new EventEmitter<string>();
 
   trackByLocationId(index: number, { locationId }: MMobileLocationInfo): string {
     return locationId;

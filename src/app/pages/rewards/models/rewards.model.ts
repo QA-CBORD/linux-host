@@ -1,6 +1,6 @@
 import {LEVEL_STATUS} from "../rewards.config";
 
-export interface MUserRewardTrackInfo {
+export interface UserRewardTrackInfo {
     trackID: string;
     trackName: string;
     trackDescription: string;
@@ -14,24 +14,24 @@ export interface MUserRewardTrackInfo {
     userExperiencePoints: number;
     hasLevels: boolean;
     hasRedeemableRewards: boolean;
-    trackLevels: MUserTrackLevelInfo[];
-    accumulationRules: MAccumulationRuleInfo[];
-    redeemableRewards: MRedeemableRewardInfo[];
+    trackLevels: UserTrackLevelInfo[];
+    accumulationRules: AccumulationRuleInfo[];
+    redeemableRewards: RedeemableRewardInfo[];
 }
 
-export interface MUserRewardTrackInfoInfoList {
-    institutions: Array<MUserRewardTrackInfo>;
+export interface UserRewardTrackInfoInfoList {
+    institutions: Array<UserRewardTrackInfo>;
 }
 
-export interface MUserTrackLevelInfo {
+export interface UserTrackLevelInfo {
     level: number;
     name: string;
     requiredPoints: number;
     redeemed: boolean;
-    userClaimableRewards: MClaimableRewardInfo[];
+    userClaimableRewards: ClaimableRewardInfo[];
 }
 
-export interface MAccumulationRuleInfo {
+export interface AccumulationRuleInfo {
     startDate: Date;
     endDate: Date;
     activityType: number;
@@ -39,7 +39,7 @@ export interface MAccumulationRuleInfo {
     description: string;
 }
 
-export interface MClaimableRewardInfo {
+export interface ClaimableRewardInfo {
     id: string;
     startDate: Date;
     endDate: Date;
@@ -50,7 +50,7 @@ export interface MClaimableRewardInfo {
     claimStatus: number;
 }
 
-export interface MRedeemableRewardInfo {
+export interface RedeemableRewardInfo {
     id: string;
     startDate: Date;
     endDate: Date;
@@ -60,7 +60,7 @@ export interface MRedeemableRewardInfo {
     pointCost: number;
 }
 
-export interface MUserFulfillmentActivityInfo {
+export interface UserFulfillmentActivityInfo {
     trackId: string;
     userId: string;
     rewardLevel: number;
@@ -78,5 +78,5 @@ export interface LevelInfo {
     name: string,
     requiredPoints: number,
     status: LEVEL_STATUS,
-    rewards: MClaimableRewardInfo[]
+    rewards: ClaimableRewardInfo[]
 }

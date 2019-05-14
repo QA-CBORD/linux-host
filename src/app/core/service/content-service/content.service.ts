@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 
 import { BaseService } from '../base-service/base.service';
-import { MContentStringInfo } from '../../model/content/content-string-info.interface';
+import { ContentStringInfo } from '../../model/content/content-string-info.model';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { map, switchMap } from 'rxjs/operators';
-import { ContentStringRequest } from '../../model/content/content-string-request';
+import { ContentStringRequest } from '../../model/content/content-string-request.model';
 import { UserService } from '../user-service/user.service';
 
 @Injectable({
@@ -18,7 +18,7 @@ export class ContentService extends BaseService {
     super(http);
   }
 
-  retrieveContentString(config: ContentStringRequest): Observable<MContentStringInfo> {
+  retrieveContentString(config: ContentStringRequest): Observable<ContentStringInfo> {
     const methodName = 'retrieveString';
     config = config.locale ? config : { ...config, locale: null };
 
@@ -27,7 +27,7 @@ export class ContentService extends BaseService {
     );
   }
 
-  retrieveContentStringList(config: ContentStringRequest): Observable<MContentStringInfo[] | []> {
+  retrieveContentStringList(config: ContentStringRequest): Observable<ContentStringInfo[] | []> {
     const methodName = 'retrieveStringList';
     config = config.locale ? config : { ...config, locale: null };
 

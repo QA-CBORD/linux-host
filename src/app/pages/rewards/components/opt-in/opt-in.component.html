@@ -1,7 +1,7 @@
 <ion-content>
   <div class="st-opt-in__content">
-    <h1>{{ rewardTrack.trackName }}</h1>
-    <p *ngIf="rewardTrack.trackDescription !== null && rewardTrack.trackDescription.length > 0">
+    <h1 class="st-opt-in__title">{{ rewardTrack.trackName }}</h1>
+    <p class="st-opt-in__description" *ngIf="rewardTrack.trackDescription !== null && rewardTrack.trackDescription.length > 0">
       {{ rewardTrack.trackDescription }}
     </p>
     <ion-button class="st-opt-in__btn" (click)="optIn()">

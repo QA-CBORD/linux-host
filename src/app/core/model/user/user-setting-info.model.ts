@@ -1,4 +1,4 @@
-export interface MUserSettingInfo {
+export interface UserSettingInfo {
     userId: string;
     name: string;
     value: any;

@@ -7,48 +7,48 @@ import { RewardsApiService } from './rewards-api.service';
 import { ContentService } from '../../../core/service/content-service/content.service';
 
 import { CLAIM_STATUS, ContentStringsParams, LEVEL_STATUS, LOCAL_ROUTING, OPT_IN_STATUS } from '../rewards.config';
-import { MContentStringInfo } from '../../../core/model/content/content-string-info.interface';
-import { LevelInfo, MRedeemableRewardInfo, MUserFulfillmentActivityInfo, MUserRewardTrackInfo } from '../models';
+import { ContentStringInfo } from '../../../core/model/content/content-string-info.model';
+import { LevelInfo, RedeemableRewardInfo, UserFulfillmentActivityInfo, UserRewardTrackInfo } from '../models';
 import { tabsConfig } from '../../../core/model/tabs/tabs.model';
 
 @Injectable()
 export class RewardsService {
-  private readonly rewardTrack$: BehaviorSubject<MUserRewardTrackInfo> = new BehaviorSubject<MUserRewardTrackInfo>(
+  private readonly rewardTrack$: BehaviorSubject<UserRewardTrackInfo> = new BehaviorSubject<UserRewardTrackInfo>(
     null
   );
-  private readonly rewardHistory$: BehaviorSubject<MUserFulfillmentActivityInfo[]> = new BehaviorSubject<
-    MUserFulfillmentActivityInfo[]
+  private readonly rewardHistory$: BehaviorSubject<UserFulfillmentActivityInfo[]> = new BehaviorSubject<
+    UserFulfillmentActivityInfo[]
   >([]);
-  private rewardTrackInfo: MUserRewardTrackInfo;
-  private rewardHistoryList: MUserFulfillmentActivityInfo[];
+  private rewardTrackInfo: UserRewardTrackInfo;
+  private rewardHistoryList: UserFulfillmentActivityInfo[];
 
   private content;
 
   constructor(private rewardsApi: RewardsApiService, private contentService: ContentService) {}
 
-  get rewardTrack(): Observable<MUserRewardTrackInfo> {
+  get rewardTrack(): Observable<UserRewardTrackInfo> {
     return this.rewardTrack$.asObservable();
   }
 
-  private set _rewardTrack(rewardTrackInfo: MUserRewardTrackInfo) {
+  private set _rewardTrack(rewardTrackInfo: UserRewardTrackInfo) {
     this.rewardTrackInfo = { ...rewardTrackInfo };
     this.rewardTrack$.next({ ...this.rewardTrackInfo });
   }
 
-  get rewardHistory(): Observable<MUserFulfillmentActivityInfo[]> {
+  get rewardHistory(): Observable<UserFulfillmentActivityInfo[]> {
     return this.rewardHistory$.asObservable();
   }
 
-  private set _rewardHistory(rewardHistory: MUserFulfillmentActivityInfo[]) {
+  private set _rewardHistory(rewardHistory: UserFulfillmentActivityInfo[]) {
     this.rewardHistoryList = { ...rewardHistory };
     this.rewardHistory$.next({ ...this.rewardHistoryList });
   }
 
-  getUserRewardTrackInfo(): Observable<MUserRewardTrackInfo> {
+  getUserRewardTrackInfo(): Observable<UserRewardTrackInfo> {
     return this.rewardsApi.getUserRewardTrackInfo().pipe(tap(trackInfo => (this._rewardTrack = trackInfo)));
   }
 
-  getUserRewardHistoryInfo(): Observable<MUserFulfillmentActivityInfo[]> {
+  getUserRewardHistoryInfo(): Observable<UserFulfillmentActivityInfo[]> {
     return this.rewardsApi.getUserRewardHistoryInfo().pipe(tap(historyArray => (this._rewardHistory = historyArray)));
   }
 
@@ -115,7 +115,7 @@ export class RewardsService {
     );
   }
 
-  getStoreRewards(): Observable<MRedeemableRewardInfo[]> {
+  getStoreRewards(): Observable<RedeemableRewardInfo[]> {
     return this.rewardTrack.pipe(
       switchMap(trackInfo => {
         return of(trackInfo.redeemableRewards);
@@ -123,14 +123,14 @@ export class RewardsService {
     );
   }
 
-  getStoreActiveRewards(): Observable<MRedeemableRewardInfo[]> {
+  getStoreActiveRewards(): Observable<RedeemableRewardInfo[]> {
     return combineLatest(this.rewardTrack, this.rewardHistory).pipe(
       take(1),
       switchMap(([rewardTrack, historyArray]) => {
         if (historyArray.length <= 0) {
           return of([]);
         }
-        let activeStoreRewards: MRedeemableRewardInfo[] = [];
+        let activeStoreRewards: RedeemableRewardInfo[] = [];
         historyArray.forEach(item => {
           const reward = this.getStoreItemById(item.rewardId, rewardTrack.redeemableRewards);
           if (reward !== null) {
@@ -142,7 +142,7 @@ export class RewardsService {
     );
   }
 
-  private getStoreItemById(rewardId: string, storeRewardsArray: MRedeemableRewardInfo[]): MRedeemableRewardInfo {
+  private getStoreItemById(rewardId: string, storeRewardsArray: RedeemableRewardInfo[]): RedeemableRewardInfo {
     storeRewardsArray.forEach(reward => {
       if (reward.id === rewardId) {
         return { ...reward };
@@ -151,7 +151,7 @@ export class RewardsService {
     return null;
   }
 
-  initContentStringsList(): Observable<MContentStringInfo[]> {
+  initContentStringsList(): Observable<ContentStringInfo[]> {
     return this.contentService.retrieveContentStringList(ContentStringsParams).pipe(
       tap(res => {
         this.content = res.reduce((init, elem) => ({ ...init, [elem.name]: elem.value }), {});

@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { tabInfo, tabsConfig } from '../../../core/model/tabs/tabs.model';
+import { tabsConfig } from '../../../core/model/tabs/tabs.model';
 import { IonTabs } from '@ionic/angular';
 
 @Component({

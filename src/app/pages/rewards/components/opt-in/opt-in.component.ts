@@ -8,8 +8,8 @@ import { UserService } from '../../../../core/service/user-service/user.service'
 import {RewardsService} from '../../services';
 
 import { CONTENT_STRINGS } from '../../rewards.config';
-import { MUserRewardTrackInfo } from '../../models';
-import { MUserInfo } from '../../../../core/model/user';
+import { UserRewardTrackInfo } from '../../models';
+import { UserInfo } from '../../../../core/model/user';
 
 @Component({
   selector: 'st-opt-in',
@@ -17,7 +17,7 @@ import { MUserInfo } from '../../../../core/model/user';
   styleUrls: ['./opt-in.component.scss'],
 })
 export class OptInComponent implements OnInit, OnDestroy {
-  @Input('rewardTrack') rewardTrack: MUserRewardTrackInfo;
+  @Input() rewardTrack: UserRewardTrackInfo;
   @Output('optInSuccess') optInSuccess: EventEmitter<void> = new EventEmitter<void>();
   private toastDuration: number = 8000;
   private readonly sourceSubscription: Subscription = new Subscription();

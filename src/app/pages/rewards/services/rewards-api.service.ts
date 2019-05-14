@@ -6,8 +6,8 @@ import { map } from 'rxjs/operators';
 
 import { BaseService, ServiceParameters } from '../../../core/service/base-service/base.service';
 
-import { MUserFulfillmentActivityInfo, MUserRewardTrackInfo } from '../models';
-import { MessageResponse } from '../../../core/model/service/message-response.interface';
+import { UserFulfillmentActivityInfo, UserRewardTrackInfo } from '../models';
+import { MessageResponse } from '../../../core/model/service/message-response.model';
 
 @Injectable()
 export class RewardsApiService extends BaseService {
@@ -17,10 +17,10 @@ export class RewardsApiService extends BaseService {
     super(http);
   }
 
-  getUserRewardTrackInfo(headerOnly: boolean = false): Observable<MUserRewardTrackInfo> {
+  getUserRewardTrackInfo(headerOnly: boolean = false): Observable<UserRewardTrackInfo> {
     const methodName = 'retrieveUserRewardTrackInfo';
     const postParams: ServiceParameters = { headerOnly };
-    return this.httpRequest<MessageResponse<MUserRewardTrackInfo[]>>(this.serviceUrl, methodName, true, {
+    return this.httpRequest<MessageResponse<UserRewardTrackInfo[]>>(this.serviceUrl, methodName, true, {
       ...postParams,
     }).pipe(
       map(({ response, exception }) => {
@@ -37,7 +37,7 @@ export class RewardsApiService extends BaseService {
     startDate: Date = null,
     endDate: Date = null,
     filters: any = null
-  ): Observable<MUserFulfillmentActivityInfo[]> {
+  ): Observable<UserFulfillmentActivityInfo[]> {
     const methodName = 'retrieveUserRewardHistory';
     const postParams: ServiceParameters = {
       rewardTrackId,
@@ -45,7 +45,7 @@ export class RewardsApiService extends BaseService {
       endDate,
       filters,
     };
-    return this.httpRequest<MessageResponse<MUserFulfillmentActivityInfo[]>>(this.serviceUrl, methodName, true, {
+    return this.httpRequest<MessageResponse<UserFulfillmentActivityInfo[]>>(this.serviceUrl, methodName, true, {
       ...postParams,
     }).pipe(
       map(({ response, exception }) => {

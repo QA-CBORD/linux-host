@@ -1,4 +1,4 @@
-export interface MUserNotificationInfo {
+export interface UserNotificationInfo {
   readonly type: number;
   readonly value: string;
   readonly provider: string;

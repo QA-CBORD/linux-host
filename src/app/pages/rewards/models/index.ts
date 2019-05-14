@@ -1,1 +1,1 @@
-export * from "./rewards.interface";
+export * from "./rewards.model";

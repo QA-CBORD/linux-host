@@ -8,8 +8,8 @@ import { map, takeWhile, tap } from 'rxjs/operators';
   styleUrls: ['./st-countdown.component.scss'],
 })
 export class StCountdownComponent implements OnInit {
-  @Input('seconds') seconds: number = 3;
-  @Output('onTimeout') onTimeout: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Input() seconds: number = 3;
+  @Output() onTimeout: EventEmitter<boolean> = new EventEmitter<boolean>();
   countdown$: Observable<number>;
 
   get animation(): { [key: string]: string } {

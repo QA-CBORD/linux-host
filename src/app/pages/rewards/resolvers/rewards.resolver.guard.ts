@@ -8,22 +8,22 @@ import { combineLatest, Observable, throwError } from 'rxjs';
 import { LoadingService } from '../../../core/service/loading/loading.service';
 import { RewardsService } from '../services';
 
-import { MUserFulfillmentActivityInfo, MUserRewardTrackInfo } from '../models';
+import { UserFulfillmentActivityInfo, UserRewardTrackInfo } from '../models';
 
 @Injectable()
 export class RewardsResolverGuard
-  implements Resolve<Observable<[MUserRewardTrackInfo, MUserFulfillmentActivityInfo[]]>> {
+  implements Resolve<Observable<[UserRewardTrackInfo, UserFulfillmentActivityInfo[]]>> {
   constructor(
     private readonly rewardsService: RewardsService,
     private readonly router: Router,
     private readonly loader: LoadingService
   ) {}
 
-  resolve(): Observable<[MUserRewardTrackInfo, MUserFulfillmentActivityInfo[]]> {
+  resolve(): Observable<[UserRewardTrackInfo, UserFulfillmentActivityInfo[]]> {
     return this.downloadData();
   }
 
-  private downloadData(): Observable<[MUserRewardTrackInfo, MUserFulfillmentActivityInfo[]]> {
+  private downloadData(): Observable<[UserRewardTrackInfo, UserFulfillmentActivityInfo[]]> {
     this.loader.showSpinner();
     return this.rewardsService.initContentStringsList().pipe(
       take(1),
