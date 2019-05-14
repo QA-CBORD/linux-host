@@ -1,0 +1,12 @@
+:host {
+  .progress {
+    background: url('/assets/images/background-shapes.svg') no-repeat center;
+    background-size: contain;
+
+    st-progress-bar {
+      display: block;
+      width: 80%;
+      margin: 20px auto 0;
+    }
+  }
+}

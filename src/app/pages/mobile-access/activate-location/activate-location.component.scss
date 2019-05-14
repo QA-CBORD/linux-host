@@ -8,21 +8,21 @@
   }
 
   ion-content {
-    background: $color-light-gray;
+    background: $color-very-light-gray;
   }
 
-  --ion-background-color: $color-light-gray;
+  --ion-background-color: $color-very-light-gray;
   --ion-color-primary: $color-black;
 }
 
 .user-data {
   max-width: 400px;
   margin: 0 auto;
-  background: $color-blue;
+  background: $color-navy-blue;
   border-radius: 15px;
   box-sizing: border-box;
   font-size: 1rem;
-  box-shadow: 0 0 10px 3px $color-hard-gray;
+  box-shadow: 0 0 10px 3px $color-night-rider;
   border: none;
 
   ion-card-content {
@@ -62,7 +62,7 @@
     margin: 15px 0 0;
     border-radius: 15px;
     overflow: hidden;
-    background:$color-light-gray url('/assets/images/no_photo.svg') no-repeat center;
+    background:$color-very-light-gray url('/assets/images/no_photo.svg') no-repeat center;
     height: 45vh;
 
     @media (min-height: 550px) {
