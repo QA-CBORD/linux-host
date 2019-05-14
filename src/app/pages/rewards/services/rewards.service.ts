@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
-import { switchMap, take, tap } from 'rxjs/operators';
+import { switchMap, take, tap, map } from 'rxjs/operators';
 
 import { RewardsApiService } from './rewards-api.service';
 import { ContentService } from '../../../core/service/content-service/content.service';
@@ -9,13 +9,11 @@ import { ContentService } from '../../../core/service/content-service/content.se
 import { CLAIM_STATUS, ContentStringsParams, LEVEL_STATUS, LOCAL_ROUTING, OPT_IN_STATUS } from '../rewards.config';
 import { ContentStringInfo } from '../../../core/model/content/content-string-info.model';
 import { LevelInfo, RedeemableRewardInfo, UserFulfillmentActivityInfo, UserRewardTrackInfo } from '../models';
-import { tabsConfig } from '../../../core/model/tabs/tabs.model';
+import { TabsConfig } from '../../../core/model/tabs/tabs.model';
 
 @Injectable()
 export class RewardsService {
-  private readonly rewardTrack$: BehaviorSubject<UserRewardTrackInfo> = new BehaviorSubject<UserRewardTrackInfo>(
-    null
-  );
+  private readonly rewardTrack$: BehaviorSubject<UserRewardTrackInfo> = new BehaviorSubject<UserRewardTrackInfo>(null);
   private readonly rewardHistory$: BehaviorSubject<UserFulfillmentActivityInfo[]> = new BehaviorSubject<
     UserFulfillmentActivityInfo[]
   >([]);
@@ -53,34 +51,36 @@ export class RewardsService {
   }
 
   getUserOptInStatus(): Observable<OPT_IN_STATUS> {
-    return this.rewardTrack.pipe(
-      switchMap(trackInfo => {
-        return of(trackInfo.userOptInStatus);
-      })
-    );
+    return this.rewardTrack.pipe(map(({ userOptInStatus }) => userOptInStatus));
   }
 
-  getRewardsTabsConfig(): Observable<tabsConfig> {
+  getRewardsTabsConfig(): Observable<TabsConfig> {
     return this.rewardTrack.pipe(
-      switchMap(trackInfo => {
-        let tabConfig: tabsConfig = { tabs: [] };
-        if (trackInfo.hasLevels) {
+      map(({ hasLevels, hasRedeemableRewards }) => {
+        const tabConfig: TabsConfig = { tabs: [] };
+
+        if (hasLevels) {
           tabConfig.tabs.push({ name: 'Levels', route: LOCAL_ROUTING.levels });
         }
-        if (trackInfo.hasRedeemableRewards) {
+        if (hasRedeemableRewards) {
           tabConfig.tabs.push({ name: 'Store', route: LOCAL_ROUTING.store });
         }
+
         tabConfig.tabs.push({ name: 'History', route: LOCAL_ROUTING.history });
-        return of(tabConfig);
+
+        return tabConfig;
       })
     );
   }
 
   getTrackLevels(): Observable<LevelInfo[]> {
     return this.rewardTrack.pipe(
-      switchMap(trackInfo => {
+      map(trackInfo => {
         let levelInfoArray: LevelInfo[] = [];
         trackInfo.trackLevels.forEach((level, i) => {
+          const levelLocked: boolean = trackInfo.userLevel <= level.level;
+          let levelClaimed: boolean = false;
+          let levelReceived: boolean = false;
           let levelInfo: LevelInfo = {
             level: level.level,
             name: level.name,
@@ -88,15 +88,15 @@ export class RewardsService {
             status: LEVEL_STATUS.unlocked,
             rewards: [],
           };
-          const levelLocked: boolean = trackInfo.userLevel <= level.level;
-          let levelClaimed: boolean = false;
-          let levelReceived: boolean = false;
+
           trackInfo.trackLevels[i].userClaimableRewards.forEach(reward => {
-            levelInfo.rewards.push(reward);
             const claimStatus = reward.claimStatus;
+
+            levelInfo.rewards.push(reward);
             levelClaimed = claimStatus === CLAIM_STATUS.claimed;
             levelReceived = claimStatus === CLAIM_STATUS.received;
           });
+
           levelInfo.status = levelLocked
             ? LEVEL_STATUS.locked
             : levelClaimed
@@ -104,51 +104,44 @@ export class RewardsService {
             : levelReceived
             ? LEVEL_STATUS.received
             : LEVEL_STATUS.unlocked;
+
           levelInfoArray.push(levelInfo);
         });
-        return of(
-          levelInfoArray.sort((a, b) => {
-            return a.level > b.level ? 1 : a.level < b.level ? -1 : 0;
-          })
-        );
+        return this.sortlevelInfoArr(levelInfoArray);
       })
     );
   }
 
+  private sortlevelInfoArr(levelInfoArray) {
+    return levelInfoArray.sort((a, b) => {
+      return a.level > b.level ? 1 : a.level < b.level ? -1 : 0;
+    });
+  }
+
   getStoreRewards(): Observable<RedeemableRewardInfo[]> {
-    return this.rewardTrack.pipe(
-      switchMap(trackInfo => {
-        return of(trackInfo.redeemableRewards);
-      })
-    );
+    return this.rewardTrack.pipe(map(({ redeemableRewards }) => redeemableRewards));
   }
 
   getStoreActiveRewards(): Observable<RedeemableRewardInfo[]> {
     return combineLatest(this.rewardTrack, this.rewardHistory).pipe(
-      take(1),
-      switchMap(([rewardTrack, historyArray]) => {
-        if (historyArray.length <= 0) {
-          return of([]);
+      map(([{ redeemableRewards }, historyArray]) => {
+        const activeStoreRewards: RedeemableRewardInfo[] = [];
+
+        if (historyArray.length === 0) {
+          return activeStoreRewards;
         }
-        let activeStoreRewards: RedeemableRewardInfo[] = [];
-        historyArray.forEach(item => {
-          const reward = this.getStoreItemById(item.rewardId, rewardTrack.redeemableRewards);
-          if (reward !== null) {
+        historyArray.forEach(({ rewardId }) => {
+          const reward = redeemableRewards.find(reward => reward.id === rewardId);
+
+          if (reward) {
             activeStoreRewards.push(reward);
           }
         });
-        return of(activeStoreRewards);
-      })
-    );
-  }
 
-  private getStoreItemById(rewardId: string, storeRewardsArray: RedeemableRewardInfo[]): RedeemableRewardInfo {
-    storeRewardsArray.forEach(reward => {
-      if (reward.id === rewardId) {
-        return { ...reward };
-      }
-    });
-    return null;
+        return activeStoreRewards;
+      }),
+      take(1)
+    );
   }
 
   initContentStringsList(): Observable<ContentStringInfo[]> {

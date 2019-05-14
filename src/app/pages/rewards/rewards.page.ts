@@ -7,7 +7,7 @@ import { take } from 'rxjs/operators';
 import { RewardsService } from './services';
 
 import { CONTENT_STRINGS, OPT_IN_STATUS } from './rewards.config';
-import { tabsConfig } from '../../core/model/tabs/tabs.model';
+import { TabsConfig } from '../../core/model/tabs/tabs.model';
 
 @Component({
   selector: 'st-rewards',
@@ -16,7 +16,7 @@ import { tabsConfig } from '../../core/model/tabs/tabs.model';
 })
 export class RewardsPage implements OnInit, OnDestroy {
   optInStatus: OPT_IN_STATUS;
-  tabsConfig: tabsConfig = { tabs: [] };
+  tabsConfig: TabsConfig = { tabs: [] };
   private readonly sourceSubscription: Subscription = new Subscription();
   contentString: { [key: string]: string };
 

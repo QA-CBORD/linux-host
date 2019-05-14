@@ -1,8 +1,8 @@
-export interface tabsConfig {
-  tabs: tabInfo[];
+export interface TabsConfig {
+  tabs: TabInfo[];
 }
 
-export interface tabInfo {
+export interface TabInfo {
   name: string;
   route: string;
 }

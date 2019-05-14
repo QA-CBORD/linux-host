@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { tabsConfig } from '../../../core/model/tabs/tabs.model';
+import { TabsConfig } from '../../../core/model/tabs/tabs.model';
 import { IonTabs } from '@ionic/angular';
 
 @Component({
@@ -9,13 +9,14 @@ import { IonTabs } from '@ionic/angular';
 })
 export class StNavTabsComponent implements OnInit {
   @ViewChild('tabs') tabs: IonTabs;
-  private _tabsConfig: tabsConfig = { tabs: [] };
+  private _tabsConfig: TabsConfig = { tabs: [] };
   @Input()
-  set tabsConfig(value: tabsConfig) {
+  set tabsConfig(value: TabsConfig) {
     this._tabsConfig = value;
     this.handleTabsConfigChange();
   }
-  get tabsConfig(): tabsConfig {
+
+  get tabsConfig(): TabsConfig {
     return this._tabsConfig;
   }
   constructor() {}

@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import { Resolve } from '@angular/router/src/interfaces';
 
-import { catchError, tap, retryWhen, take, switchMap } from 'rxjs/operators';
+import { catchError, tap, retryWhen, switchMap, take } from 'rxjs/operators';
 import { combineLatest, Observable, throwError } from 'rxjs';
 
 import { LoadingService } from '../../../core/service/loading/loading.service';
@@ -11,13 +10,8 @@ import { RewardsService } from '../services';
 import { UserFulfillmentActivityInfo, UserRewardTrackInfo } from '../models';
 
 @Injectable()
-export class RewardsResolverGuard
-  implements Resolve<Observable<[UserRewardTrackInfo, UserFulfillmentActivityInfo[]]>> {
-  constructor(
-    private readonly rewardsService: RewardsService,
-    private readonly router: Router,
-    private readonly loader: LoadingService
-  ) {}
+export class RewardsResolverGuard implements Resolve<Observable<[UserRewardTrackInfo, UserFulfillmentActivityInfo[]]>> {
+  constructor(private readonly rewardsService: RewardsService, private readonly loader: LoadingService) {}
 
   resolve(): Observable<[UserRewardTrackInfo, UserFulfillmentActivityInfo[]]> {
     return this.downloadData();
@@ -26,13 +20,10 @@ export class RewardsResolverGuard
   private downloadData(): Observable<[UserRewardTrackInfo, UserFulfillmentActivityInfo[]]> {
     this.loader.showSpinner();
     return this.rewardsService.initContentStringsList().pipe(
+      switchMap(() =>
+        combineLatest(this.rewardsService.getUserRewardTrackInfo(), this.rewardsService.getUserRewardHistoryInfo())
+      ),
       take(1),
-      switchMap(() => {
-        return combineLatest(
-          this.rewardsService.getUserRewardTrackInfo(),
-          this.rewardsService.getUserRewardHistoryInfo()
-        ).pipe(take(1));
-      }),
       retryWhen(errors =>
         errors.pipe(
           //log error message
