@@ -30,9 +30,18 @@ const REDEEM = {
   fill: 'default',
 };
 
+const CLOSE = {
+  label: 'CLOSE',
+  class: 'clear-with-shadow',
+  shape: 'round',
+  strong: true,
+  fill: 'clear',
+};
+
 export const buttons = {
   CANCEL,
   RETRY,
   OKAY,
   REDEEM,
+  CLOSE,
 };

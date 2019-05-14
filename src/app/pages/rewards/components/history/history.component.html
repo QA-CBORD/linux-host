@@ -1,19 +1,7 @@
 <div class="history__content">
   <ion-list class="history__list list-container">
-    <ion-item class="list-container__item">
-      <st-list-item class="list-container__item-content" environment="history"></st-list-item>
-    </ion-item>
-    <ion-item class="list-container__item">
-      <st-list-item class="list-container__item-content" environment="history"></st-list-item>
-    </ion-item>
-    <ion-item class="list-container__item">
-      <st-list-item class="list-container__item-content" environment="history"></st-list-item>
-    </ion-item>
-    <ion-item class="list-container__item">
-      <st-list-item class="list-container__item-content" environment="history"></st-list-item>
-    </ion-item>
-    <ion-item class="list-container__item">
-      <st-list-item class="list-container__item-content" environment="history"></st-list-item>
+    <ion-item class="list-container__item" *ngFor="let item of tempArr">
+      <st-list-item class="list-container__item-content" environment="history" [item]="item"></st-list-item>
     </ion-item>
   </ion-list>
 </div>

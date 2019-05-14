@@ -1,9 +1,11 @@
+@import 'tools';
+
 :host {
   .history__list {
     .list-container {
       &__item {
         --padding-start: 0 !important;
-        --border-color: #f3f3f3 !important;
+        --border-color: $color-white-smoke !important;
 
         &-content {
           margin: 10px 0 10px 15px;

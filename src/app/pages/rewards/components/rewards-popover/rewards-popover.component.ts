@@ -14,22 +14,21 @@ export class RewardsPopoverComponent implements OnInit, AfterViewInit {
   constructor() {}
 
   ngOnInit() {
-    const condition = true;
-
     this.popoverConfig = {
-      title: condition ? popoverTitles.redeemTittle : popoverTitles.scanTittle,
-      type: condition ? PopupTypes.REDEEM : PopupTypes.SCAN,
-      buttons: this.configureButtons(condition),
+      title: this.data.scan ? popoverTitles.scanTittle : popoverTitles.redeemTittle,
+      type: this.data.scan ? PopupTypes.SCAN : PopupTypes.REDEEM,
+      buttons: this.configureButtons(!this.data.scan),
       message: this.data,
+      code: this.data.code,
     };
   }
 
   ngAfterViewInit() {
-    // this.initBarcode();
+    this.initBarcode();
   }
 
   configureButtons(condition) {
-    const scanBtns = [buttons.OKAY];
+    const scanBtns = [buttons.CLOSE];
     const redeemBtns = [buttons.CANCEL, buttons.REDEEM];
 
     return condition ? redeemBtns : scanBtns;

@@ -29,9 +29,9 @@
   }
 
   &__searchbar {
-    --background: #f0f3f5 !important;
-    --placeholder-color: #000;
-    --icon-color: #c4c4c4 !important;
+    --background: $color-alice-blue !important;
+    --placeholder-color: $color-black;
+    --icon-color: $color-silver !important;
 
     padding-top: 0;
     padding-bottom: 0;

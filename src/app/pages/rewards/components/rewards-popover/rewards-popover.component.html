@@ -3,8 +3,8 @@
   <div class="rewards-popover__description">{{ popoverConfig.message['description'] }}</div>
   <div class="rewards-popover__qrcode" *ngIf="popoverConfig.type === 'SCAN'">
     <canvas id="barcodeCanvas"></canvas>
-    <span>
+    <div class="rewards-popover__qrcode-text">
       This code will be available until scanned
-    </span>
+    </div>
   </div>
 </st-popover-layout>

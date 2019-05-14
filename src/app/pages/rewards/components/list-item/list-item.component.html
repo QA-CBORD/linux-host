@@ -1,25 +1,22 @@
-<div class="list-item" (click)="!isHistoryEnv() ? openPopover() : false">
+<div class="list-item" (click)="!isHistoryEnv() ? openPopover(item) : false">
   <div class="list-item__content" [ngClass]="{ 'list-item__store-content': !isHistoryEnv() }">
     <div class="list-item__title">
-      Kano
+      {{ item.title }}
     </div>
     <div class="list-item__description">
-      Level and Points based rewards will show up here
+      {{ item.description }}
     </div>
     <div class="list-item__time" *ngIf="isHistoryEnv()">
       2/15/19, 1:53pm
     </div>
   </div>
   <div class="list-item__actions" [ngClass]="{ 'list-item__store-actions': !isHistoryEnv() }">
-    <div class="list-item__score" [ngClass]="{ 'list-item__score--semibold': !isHistoryEnv() }">
-      10 Points
+    <div class="list-item__actions-wrapper">
+<!--      <div class="list-item__score" [ngClass]="{ 'list-item__score&#45;&#45;semibold': !isHistoryEnv() }">-->
+<!--        10 Points-->
+<!--      </div>-->
+      <img src="./assets/icon/qr-code.svg" alt="qrcode" class="list-item__qrcode" />
+      <ion-button class="list-item__button" size="small" fill="outline" *ngIf="!isHistoryEnv()">Redeem</ion-button>
     </div>
-    <ion-button
-      class="list-item__button"
-      size="small"
-      fill="outline"
-      *ngIf="!isHistoryEnv()"
-      >Redeem</ion-button
-    >
   </div>
 </div>

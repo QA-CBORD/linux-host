@@ -13,7 +13,7 @@
 
     &__title {
       text-transform: uppercase;
-      color: #6e6e6e;
+      color: $color-dim-gray;
 
       @include font-nunito-regular(12px);
     }
@@ -25,7 +25,7 @@
     }
 
     &__unit {
-      color: #515151;
+      color: $color-matterhorn;
 
       @include font-nunito-semibold(24px);
     }

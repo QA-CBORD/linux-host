@@ -1,11 +1,10 @@
-
 /** Ionic CSS Variables **/
 :root {
   /** primary **/
-  --ion-color-primary: #005CB9;
-  --ion-color-primary-rgb: 0,92,185;
+  --ion-color-primary: #005cb9;
+  --ion-color-primary-rgb: 0, 92, 185;
   --ion-color-primary-contrast: #ffffff;
-  --ion-color-primary-contrast-rgb: 255,255,255;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
   --ion-color-primary-shade: #0051a3;
   --ion-color-primary-tint: #1a6cc0;
 
@@ -74,7 +73,6 @@
   --ion-color-light-tint: #f5f6f9;
 
   // --ion-grid-width-sm: 0px;
-
 }
 
 // FONTS
@@ -82,7 +80,6 @@
 $font-nunito-regular: 'Nunito Regular', arial, sans-serif;
 $font-nunito-semibold: 'Nunito SemiBold', arial, sans-serif;
 $font-nunito-heavy: 'Nunito Bold', arial, sans-serif;
-
 
 // COLORS
 
@@ -92,3 +89,12 @@ $color-hard-gray: #333;
 $color-blue: #0056e6;
 $color-white: #fff;
 $color-black: #000;
+$color-white-smoke: #f3f3f3;
+$color-dark-blue: #166dff;
+$color-deep-sky-blue: #00a0ff;
+$color-light-sky-blue: #88c8ff;
+$color-strong-blue: #0043b3;
+$color-dim-gray: #6e6e6e;
+$color-alice-blue: #f0f3f5;
+$color-silver: #c4c4c4;
+$color-matterhorn: #515151;

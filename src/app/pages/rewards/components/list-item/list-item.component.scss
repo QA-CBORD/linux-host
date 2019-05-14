@@ -23,18 +23,24 @@
       align-items: flex-end;
     }
 
+    &__actions-wrapper {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
     &__store-actions {
       flex-basis: 30%;
     }
 
     &__title {
-      color: #515151;
+      color: $color-matterhorn;
 
       @include font-nunito-semibold(20px);
     }
 
     &__description {
-      color: #6e6e6e;
+      color: $color-dim-gray;
       margin-bottom: 5px;
 
       @include font-nunito-regular(12px);
@@ -48,8 +54,8 @@
     }
 
     &__button {
-      --border-color: #166dff !important;
-      --color: #166dff !important;
+      --border-color: $color-dark-blue !important;
+      --color: $color-dark-blue !important;
       --border-radius: 4px 4px 4px 4px !important;
       --border-width: 1px !important;
       --padding-end: 6px !important;
@@ -65,7 +71,7 @@
     }
 
     &__score--semibold {
-      color: #000;
+      color: $color-black;
 
       @include font-nunito-semibold(16px);
     }

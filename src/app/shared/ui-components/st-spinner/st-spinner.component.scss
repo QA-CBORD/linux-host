@@ -1,8 +1,5 @@
 @import 'tools';
 
-$blue: #166dff;
-$blue-lighten-1: #00a0ff;
-$blue-lighten-2: #88c8ff;
 $stroke-offset: -124;
 $width-height: 2rem;
 
@@ -19,19 +16,19 @@ $width-height: 2rem;
       stroke-dashoffset: 0;
       stroke-linecap: round;
       &1 {
-        stroke: $blue-lighten-2;
+        stroke: $color-light-sky-blue;
         animation: primary-lighten-2 2.4s linear infinite;
       }
       &2 {
-        stroke: $blue-lighten-1;
+        stroke: $color-deep-sky-blue;
         animation: primary-lighten-1 2.4s linear infinite;
       }
       &3 {
-        stroke: $blue;
+        stroke: $color-dark-blue;
         animation: primary 2.4s linear infinite;
       }
       &4 {
-        stroke: $blue;
+        stroke: $color-dark-blue;
         animation: primary-2 2.4s linear infinite;
       }
     }

@@ -9,6 +9,7 @@ import { RewardsPopoverComponent } from '../rewards-popover/rewards-popover.comp
 })
 export class ListItemComponent implements OnInit {
   @Input() environment: string;
+  @Input() item;
 
   constructor(private readonly popoverCtrl: PopoverController) {}
 
@@ -18,24 +19,24 @@ export class ListItemComponent implements OnInit {
     return this.environment === 'history';
   }
 
-  async openPopover() {
-    const data = {
-      title: 'Carrot Cake',
-      description: 'A mediocre cake that you might enjoy this description is longer than the other one wee wooo',
-    };
+  async openPopover(data) {
     const popover = await this.popoverCtrl.create({
       component: RewardsPopoverComponent,
       componentProps: {
-        data,
+        data: { ...data },
       },
       animated: false,
       backdropDismiss: true,
     });
 
     popover.onDidDismiss().then(({ data }) => {
-      console.log(data);
       if (data === 'REDEEM') {
-        this.openPopover();
+        const scanItem = {
+          ...this.item,
+          scan: true,
+          code: '12321asd',
+        };
+        this.openPopover(scanItem);
       }
     });
 

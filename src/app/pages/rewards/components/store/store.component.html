@@ -1,20 +1,23 @@
 <div class="store__content">
   <st-balance></st-balance>
+  <div class="store__active-wrapper">
+    <div class="store__active-list">
+      <h4 class="store__active-title">Active Rewards</h4>
+      <div class="store__active-description">
+        Present a reward's QR code to finish claiming the reward
+      </div>
+    </div>
+
+    <ion-list class="store__list list-container">
+      <ion-item class="list-container__item" button="true" *ngFor="let item of tempActiveArr">
+        <st-list-item class="list-container__item-content" environment="store" [item]="item"></st-list-item>
+      </ion-item>
+    </ion-list>
+  </div>
+
   <ion-list class="store__list list-container">
-    <ion-item class="list-container__item" button="true">
-      <st-list-item class="list-container__item-content" environment="store"></st-list-item>
-    </ion-item>
-    <ion-item class="list-container__item" button="true">
-      <st-list-item class="list-container__item-content" environment="store"></st-list-item>
-    </ion-item>
-    <ion-item class="list-container__item" button="true">
-      <st-list-item class="list-container__item-content" environment="store"></st-list-item>
-    </ion-item>
-    <ion-item class="list-container__item" button="true">
-      <st-list-item class="list-container__item-content" environment="store"></st-list-item>
-    </ion-item>
-    <ion-item class="list-container__item" button="true">
-      <st-list-item class="list-container__item-content" environment="store"></st-list-item>
+    <ion-item class="list-container__item" button="true" *ngFor="let item of tempArr">
+      <st-list-item class="list-container__item-content" environment="store" [item]="item"></st-list-item>
     </ion-item>
   </ion-list>
 </div>

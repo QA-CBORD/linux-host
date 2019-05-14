@@ -11,7 +11,7 @@
         --color-selected: #3c3c3c !important;
 
         &.tab-selected {
-          border-bottom: 2px solid #166dff;
+          border-bottom: 2px solid $color-dark-blue;
 
           .tabs-wrapper__label {
             @include font-nunito-heavy(14px);
@@ -22,7 +22,7 @@
       &__label {
         text-transform: uppercase;
         line-height: 18px;
-        color: #6e6e6e;
+        color: $color-dim-gray;
 
         @include font-nunito-semibold(14px);
       }
