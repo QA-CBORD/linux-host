@@ -11,9 +11,11 @@ import { LevelsComponent } from './components/levels/levels.component';
 import { RewardsApiService } from './services/rewards-api.service';
 import { RewardsService } from './services/rewards.service';
 import { SharedModule } from '../../shared/shared.module';
+import { ExpandListComponent } from './components/levels/expand-list/expand-list.component';
+import { ExpandItemComponent } from './components/levels/expand-list/expand-item/expand-item.component';
 
 const imports = [CommonModule, FormsModule, IonicModule, RewardsRoutingModule, SharedModule];
-const declarations = [RewardsPage, HistoryComponent, StoreComponent, LevelsComponent];
+const declarations = [RewardsPage, HistoryComponent, StoreComponent, LevelsComponent, ExpandListComponent,ExpandItemComponent];
 const providers = [RewardsApiService, RewardsService];
 
 @NgModule({

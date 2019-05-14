@@ -1,0 +1,45 @@
+@import "tools";
+
+.level {
+  &__info {
+    position: relative;
+  }
+
+  &__header {
+    @include font-nunito-heavy(20px);
+    color: #6e6e6e;
+    font-weight: bold;
+    letter-spacing: 0;
+    line-height: 24px;
+    //text-decoration: line-through;
+  }
+
+  &__indicator {
+    @include font-nunito-regular(14px);
+    font-weight: normal;
+    letter-spacing: 0;
+    line-height: 18px;
+    color: $color-black;
+  }
+}
+
+.progress__level--passed {
+  .level__header  {
+    text-decoration: line-through;
+  }
+}
+
+.progress__level--active {
+  .level__header {
+    color: $color-black;
+  }
+  .level__indicator {
+    color: blue;
+  }
+}
+
+:host-context(.last) {
+  .progress__level {
+    border-left: none;
+  }
+}
