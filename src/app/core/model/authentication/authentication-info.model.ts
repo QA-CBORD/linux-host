@@ -1,4 +1,4 @@
-export interface MAuthenticationInfo {
+export interface AuthenticationInfo {
   readonly authenticationType: string; // inst url if = 'CAS', 'SSO_GENERIC', 'OKTA_EXT'
   readonly cookieName: string;
   readonly fieldCashlessID: string;

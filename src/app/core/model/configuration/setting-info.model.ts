@@ -1,4 +1,4 @@
-export class MSettingInfo {
+export class SettingInfo {
     name: string;
     domain: string;
     category: string;

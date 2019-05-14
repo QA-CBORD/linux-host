@@ -1,19 +1,11 @@
 <st-header [title]="contentString.header" [isTitleShow]="true" [isToolbarShow]="true" *ngIf="false"></st-header>
 
 <ion-content>
-  <ion-tabs class="rewards__tabs tabs-wrapper">
-    <ion-tab-bar slot="top" class="tabs-wrapper__bar">
-      <ion-tab-button tab="levels" class="tabs-wrapper__tab">
-        <ion-label class="tabs-wrapper__label">Levels</ion-label>
-      </ion-tab-button>
+  <st-nav-tabs [tabsConfig]="tabsConfig"></st-nav-tabs>
 
-      <ion-tab-button tab="store" class="tabs-wrapper__tab">
-        <ion-label class="tabs-wrapper__label">Store</ion-label>
-      </ion-tab-button>
-
-      <ion-tab-button tab="history" class="tabs-wrapper__tab">
-        <ion-label class="tabs-wrapper__label">History</ion-label>
-      </ion-tab-button>
-    </ion-tab-bar>
-  </ion-tabs>
+  <!--  <st-opt-in-->
+  <!--    *ngIf="rewardTrack !== null && !userOptInStatus"-->
+  <!--    [rewardTrack]="rewardTrack"-->
+  <!--    (optInSuccess)="handleOptInSuccess()"-->
+  <!--  ></st-opt-in>-->
 </ion-content>

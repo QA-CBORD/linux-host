@@ -1,0 +1,40 @@
+@import 'tools';
+
+:host {
+  .st-opt-in {
+    &__content {
+      margin-top: 20px;
+      height: 212px;
+      width: 334px;
+      text-align: center;
+    }
+
+    &__title {
+      color: rgb(0, 0, 0);
+      font-weight: 600;
+      text-align: center;
+      letter-spacing: 0px;
+      line-height: 24px;
+
+      @include font-nunito-semibold(20px);
+    }
+
+    &__description {
+      color: $color-hard-gray;
+      font-weight: normal;
+      letter-spacing: 0px;
+      line-height: 16px;
+
+      @include font-nunito-regular(12px);
+    }
+
+    &__btn {
+      width: 80%;
+      --background: linear-gradient(-135deg, #166dff 0%, #0043b3 100%);
+      --border-radius: 40px 40px 40px 40px;
+      --color: #fff;
+
+      @include font-nunito-heavy(16px);
+    }
+  }
+}

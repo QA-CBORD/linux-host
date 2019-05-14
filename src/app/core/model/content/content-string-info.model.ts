@@ -1,4 +1,4 @@
-export interface MContentStringInfo {
+export interface ContentStringInfo {
   id: string;
   name: string;
   domain: string;
@@ -9,7 +9,7 @@ export interface MContentStringInfo {
   description: string;
 }
 
-export interface MContentImageInfo {
+export interface ContentImageInfo {
   id: string;
   name: string;
   domain: string;

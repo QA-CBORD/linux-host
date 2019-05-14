@@ -1,28 +1,74 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
-import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { Observable} from 'rxjs';
+import { map } from 'rxjs/operators';
 
-import { ContentService } from '../../../core/service/content-service/content.service';
+import { BaseService, ServiceParameters } from '../../../core/service/base-service/base.service';
 
-import { MContentStringInfo } from '../../../core/model/content/content-string-info.interface';
-import { ContentStringsParams } from '../../mobile-access/mobile-acces.config';
+import { UserFulfillmentActivityInfo, UserRewardTrackInfo } from '../models';
+import { MessageResponse } from '../../../core/model/service/message-response.model';
 
 @Injectable()
-export class RewardsApiService {
-  private content;
+export class RewardsApiService extends BaseService {
+  private readonly serviceUrl = '/json/rewards';
 
-  constructor(private readonly contentService: ContentService) {}
+  constructor(protected readonly http: HttpClient) {
+    super(http);
+  }
 
-  initContentStringsList(): Observable<MContentStringInfo[]> {
-    return this.contentService.retrieveContentStringList(ContentStringsParams).pipe(
-      tap(res => {
-        this.content = res.reduce((init, elem) => ({ ...init, [elem.name]: elem.value }), {});
+  getUserRewardTrackInfo(headerOnly: boolean = false): Observable<UserRewardTrackInfo> {
+    const methodName = 'retrieveUserRewardTrackInfo';
+    const postParams: ServiceParameters = { headerOnly };
+    return this.httpRequest<MessageResponse<UserRewardTrackInfo[]>>(this.serviceUrl, methodName, true, {
+      ...postParams,
+    }).pipe(
+      map(({ response, exception }) => {
+        if (exception !== null) {
+          throw new Error(exception);
+        }
+        return response !== null && response.length > 0 ? response[0] : null;
       })
     );
   }
 
-  getContentValueByName(name: string): string | undefined {
-    return this.content[name];
+  getUserRewardHistoryInfo(
+    rewardTrackId: string = null,
+    startDate: Date = null,
+    endDate: Date = null,
+    filters: any = null
+  ): Observable<UserFulfillmentActivityInfo[]> {
+    const methodName = 'retrieveUserRewardHistory';
+    const postParams: ServiceParameters = {
+      rewardTrackId,
+      startDate,
+      endDate,
+      filters,
+    };
+    return this.httpRequest<MessageResponse<UserFulfillmentActivityInfo[]>>(this.serviceUrl, methodName, true, {
+      ...postParams,
+    }).pipe(
+      map(({ response, exception }) => {
+        if (exception !== null) {
+          throw new Error(exception);
+        }
+        return response;
+      })
+    );
+  }
+
+  optUserIntoRewardTrack(trackId: string, userId: string) {
+    const methodName = 'optUserIntoRewardTrack';
+    const postParams: ServiceParameters = { trackId, userId };
+    return this.httpRequest<MessageResponse<boolean>>(this.serviceUrl, methodName, true, {
+      ...postParams,
+    }).pipe(
+      map(({ response, exception }) => {
+        if (exception !== null) {
+          throw new Error(exception);
+        }
+        return response;
+      })
+    );
   }
 }

@@ -8,7 +8,7 @@ import { map, switchMap, take } from 'rxjs/operators';
 import { MMobileLocationInfo } from './model';
 import { MobileAccessService } from './service';
 import { InstitutionService } from '../../core/service/institution/institution.service';
-import { MUserInfo } from '../../core/model/user';
+import { UserInfo } from '../../core/model/user';
 import { UserService } from '../../core/service/user-service/user.service';
 import { CONTENT_STRINGS, TOAST_MESSAGE } from './mobile-acces.config';
 
@@ -24,7 +24,7 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
   private readonly toastDuration: number = 5000;
   locations$: Observable<MMobileLocationInfo[]>;
   contentString: { [key: string]: string };
-  userInfo$: Observable<MUserInfo>;
+  userInfo$: Observable<UserInfo>;
 
   constructor(
     private readonly platform: Platform,
@@ -94,11 +94,11 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
     const subscription = this.userInfo$
       .pipe(
         //TODO: add pre download institution photo after back-end will provide this functionality
-        // switchMap(({ institutionId: id }: MUserInfo) => {
+        // switchMap(({ institutionId: id }: UserInfo) => {
         //   institutionId = id;
         //   return this.institutionService.getInstitutionPhotoById(institutionId);
         // }),
-        switchMap(({ institutionId: id }: MUserInfo) => this.institutionService.getInstitutionDataById(id))
+        switchMap(({ institutionId: id }: UserInfo) => this.institutionService.getInstitutionDataById(id))
       )
       .subscribe();
 
