@@ -1,4 +1,4 @@
-export interface MStartupInfo {
+export interface StartupInfo {
   readonly showMessage: number;
   readonly minSupportedVersionFailure: number;
   readonly message: string;

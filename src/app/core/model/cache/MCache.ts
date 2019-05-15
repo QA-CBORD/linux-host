@@ -1,13 +1,13 @@
 import * as Globals from '../../../app.global';
-import { MInstitutionInfo } from './../institution/institution-info.interface';
-import { MSettingInfo } from '../configuration/setting-info.interface';
-import { MSettingInfoList } from '../configuration/setting-info-list.interface';
-import { MContentStringInfo } from '../content/content-string-info.interface';
-import { MStartupInfo } from '../institution/native-startup-info.interface';
-import { MEnvironmentInfo } from '../environment/environment-info.interface';
-import { MUserInfo } from '../user/user-info.interface';
-import { MUserPhotoInfo } from '../user/user-photo-info.interface';
-import { MUserSettingInfo } from '../user/user-setting-info.interface';
+import { InstitutionInfo } from '../institution/institution-info.model';
+import { SettingInfo } from '../configuration/setting-info.model';
+import { SettingInfoList } from '../configuration/setting-info-list.model';
+import { ContentStringInfo } from '../content/content-string-info.model';
+import { StartupInfo } from '../institution/native-startup-info.model';
+import { EnvironmentInfo } from '../environment/environment-info.model';
+import { UserInfo } from '../user/user-info.model';
+import { UserPhotoInfo } from '../user/user-photo-info.model';
+import { UserSettingInfo } from '../user/user-setting-info.model';
 
 
 
@@ -15,21 +15,21 @@ export class MCache {
 
     applicationUUID: string;
     localSessionTimestamp: Date;
-    environmentInfo: MEnvironmentInfo;
+    environmentInfo: EnvironmentInfo;
     appVersion: string;
 
     sessionId: string;
-    startupInfo: MStartupInfo;
-    institutionInfo: MInstitutionInfo = new MInstitutionInfo();
-    institutionSettings: MSettingInfo[] = new Array<MSettingInfo>();
-    institutionStrings: MContentStringInfo[] = new Array<MContentStringInfo>();
+    startupInfo: StartupInfo;
+    institutionInfo: InstitutionInfo = new InstitutionInfo();
+    institutionSettings: SettingInfo[] = new Array<SettingInfo>();
+    institutionStrings: ContentStringInfo[] = new Array<ContentStringInfo>();
 
     bIsPINSet = false;
 
-    userInfo: MUserInfo;
+    userInfo: UserInfo;
     userMediaValue: string;
-    userPhotoInfo: MUserPhotoInfo;
-    userSettings: MUserSettingInfo[] = new Array<MUserSettingInfo>();
+    userPhotoInfo: UserPhotoInfo;
+    userSettings: UserSettingInfo[] = new Array<UserSettingInfo>();
 
     constructor(
     ) {
@@ -71,7 +71,7 @@ export class MCache {
     }
 
 
-    addSetting(newSetting: MSettingInfo) {
+    addSetting(newSetting: SettingInfo) {
         if (newSetting == null || newSetting.name == null) {
             return;
         }
@@ -84,7 +84,7 @@ export class MCache {
 
     }
 
-    addSettingList(newSettingList: MSettingInfoList) {
+    addSettingList(newSettingList: SettingInfoList) {
         if (newSettingList == null || newSettingList.list == null || newSettingList.list.length <= 0) {
             return;
         }
@@ -101,7 +101,7 @@ export class MCache {
         }
     }
 
-    getSetting(settingName: Globals.Settings.ESetting): MSettingInfo {
+    getSetting(settingName: Globals.Settings.ESetting): SettingInfo {
         for (const setting of this.institutionSettings) {
 
             if (this.getSettingName(setting) === settingName.toString()) {
@@ -111,7 +111,7 @@ export class MCache {
         return null;
     }
 
-    addContentString(newString: MContentStringInfo) {
+    addContentString(newString: ContentStringInfo) {
         if (newString == null || newString.name == null) {
             return;
         }
@@ -123,7 +123,7 @@ export class MCache {
         }
     }
 
-    getContentString(stringName: Globals.Settings.EStrings): MContentStringInfo {
+    getContentString(stringName: Globals.Settings.EStrings): ContentStringInfo {
         for (const string of this.institutionStrings) {
 
             if (this.getStringName(string) === stringName.toString()) {
@@ -133,7 +133,7 @@ export class MCache {
         return null;
     }
 
-    addUserSetting(newSetting: MUserSettingInfo) {
+    addUserSetting(newSetting: UserSettingInfo) {
         if (newSetting == null || newSetting.name == null) {
             return;
         }
@@ -146,7 +146,7 @@ export class MCache {
 
     }
 
-    getUserSetting(settingName: Globals.User.ESetting): MUserSettingInfo {
+    getUserSetting(settingName: Globals.User.ESetting): UserSettingInfo {
         for (const setting of this.userSettings) {
 
             if (setting.name === settingName.toString()) {
@@ -156,11 +156,11 @@ export class MCache {
         return null;
     }
 
-    private getSettingName(setting: MSettingInfo): string {
+    private getSettingName(setting: SettingInfo): string {
         return setting.domain + '.' + setting.category + '.' + setting.name;
     }
 
-    private getStringName(string: MContentStringInfo): string {
+    private getStringName(string: ContentStringInfo): string {
         return string.domain + '.' + string.category + '.' + string.name;
     }
 

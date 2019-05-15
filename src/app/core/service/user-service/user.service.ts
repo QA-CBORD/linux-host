@@ -4,9 +4,9 @@ import { map, switchMap } from 'rxjs/operators';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 
 import { BaseService } from '../base-service/base.service';
-import { MUserInfo } from 'src/app/core/model/user/user-info.interface';
-import { MUserPhotoInfo } from '../../model/user';
-import { MessageResponse } from '../../model/service/message-response.interface';
+import { UserInfo } from 'src/app/core/model/user/user-info.model';
+import { UserPhotoInfo } from '../../model/user';
+import { MessageResponse } from '../../model/service/message-response.model';
 import { UserSettings } from '../../model/user';
 import { UserPhotoList } from '../../model/user';
 
@@ -15,18 +15,18 @@ import { UserPhotoList } from '../../model/user';
 })
 export class UserService extends BaseService {
   private readonly serviceUrl = '/json/user';
-  private readonly userData$: BehaviorSubject<MUserInfo> = new BehaviorSubject<MUserInfo>(null);
-  private userPhoto: MUserPhotoInfo = null;
+  private readonly userData$: BehaviorSubject<UserInfo> = new BehaviorSubject<UserInfo>(null);
+  private userPhoto: UserPhotoInfo = null;
 
-  private set _userData(userInfo: MUserInfo) {
+  private set _userData(userInfo: UserInfo) {
     this.userData$.next({ ...userInfo });
   }
 
-  get userData(): Observable<MUserInfo> {
+  get userData(): Observable<UserInfo> {
     return this.userData$.asObservable();
   }
 
-  getUser(): Observable<MUserInfo> {
+  getUser(): Observable<UserInfo> {
     return this.httpRequest(this.serviceUrl, 'retrieve', true).pipe(map(({ response }) => (this._userData = response)));
   }
 
@@ -41,13 +41,13 @@ export class UserService extends BaseService {
     });
   }
 
-  getAcceptedPhoto(): Observable<MUserPhotoInfo> {
+  getAcceptedPhoto(): Observable<UserPhotoInfo> {
     if (this.userPhoto) return of(this.userPhoto);
 
     return this.getUser().pipe(
-      switchMap(({ id }: MUserInfo) => this.getPhotoListByUserId(id)),
+      switchMap(({ id }: UserInfo) => this.getPhotoListByUserId(id)),
       map(({ response: { list } }) => this.getPhotoIdByStatus(list)),
-      switchMap(({ id }: MUserPhotoInfo) => this.getPhotoById(id)),
+      switchMap(({ id }: UserPhotoInfo) => this.getPhotoById(id)),
       map(({ response }) => (this.userPhoto = response))
     );
   }
@@ -58,13 +58,13 @@ export class UserService extends BaseService {
     return this.httpRequest<MessageResponse<UserPhotoList>>(this.serviceUrl, 'retrieveUserPhotoList', true, params);
   }
 
-  getPhotoById(photoId: string): Observable<MessageResponse<MUserPhotoInfo>> {
+  getPhotoById(photoId: string): Observable<MessageResponse<UserPhotoInfo>> {
     const params = { photoId };
 
-    return this.httpRequest<MessageResponse<MUserPhotoInfo>>(this.serviceUrl, 'retrieveUserPhoto', true, params);
+    return this.httpRequest<MessageResponse<UserPhotoInfo>>(this.serviceUrl, 'retrieveUserPhoto', true, params);
   }
 
-  private getPhotoIdByStatus(photoList: MUserPhotoInfo[], status: number = 1): MUserPhotoInfo | undefined {
-    return photoList.find((photo: MUserPhotoInfo) => photo.status === status);
+  private getPhotoIdByStatus(photoList: UserPhotoInfo[], status: number = 1): UserPhotoInfo | undefined {
+    return photoList.find((photo: UserPhotoInfo) => photo.status === status);
   }
 }

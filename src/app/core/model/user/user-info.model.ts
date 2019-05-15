@@ -1,4 +1,4 @@
-export interface MUserInfo {
+export interface UserInfo {
   readonly id: string;
   readonly userName: string;
   readonly firstName: string;

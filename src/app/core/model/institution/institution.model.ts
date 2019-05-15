@@ -1,4 +1,4 @@
-import { MAuthenticationInfo } from '../authentication/authentication-info.interface';
+import { AuthenticationInfo } from '../authentication/authentication-info.model';
 
 export interface Institution {
   id: string;
@@ -8,7 +8,7 @@ export interface Institution {
   timeZone: string;
   locale: string;
   authenticationSystemType: number; // See AuthenticationSystemType for valid values
-  authenticationInfo: MAuthenticationInfo;
+  authenticationInfo: AuthenticationInfo;
   lastChangedTerms: Date;
   cashlessPaymentSystemType: number;
   active: boolean;

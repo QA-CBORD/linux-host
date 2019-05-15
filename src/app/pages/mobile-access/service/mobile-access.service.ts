@@ -5,13 +5,13 @@ import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import { catchError, map, retry, switchMap, tap } from 'rxjs/operators';
 
 import { BaseService, ServiceParameters } from 'src/app/core/service/base-service/base.service';
-import { MGeoCoordinates } from 'src/app/core/model/geolocation/geocoordinates.interface';
+import { GeoCoordinates } from 'src/app/core/model/geolocation/geocoordinates.model';
 import { MActivateMobileLocationResult, MMobileLocationInfo } from '../model';
-import { MessageResponse } from '../../../core/model/service/message-response.interface';
+import { MessageResponse } from '../../../core/model/service/message-response.model';
 import { UserService } from '../../../core/service/user-service/user.service';
 import { CoordsService } from '../../../core/service/coords/coords.service';
-import { GeoLocationInfo } from '../../../core/model/geolocation/geoLocationInfo';
-import { MContentStringInfo } from '../../../core/model/content/content-string-info.interface';
+import { GeoLocationInfo } from '../../../core/model/geolocation/geoLocationInfo.model';
+import { ContentStringInfo } from '../../../core/model/content/content-string-info.model';
 import { ContentService } from '../../../core/service/content-service/content.service';
 import { ContentStringsParams } from '../mobile-acces.config';
 
@@ -42,7 +42,7 @@ export class MobileAccessService extends BaseService {
     this.locations$.next([...this.locationsInfo]);
   }
 
-  initContentStringsList(): Observable<MContentStringInfo[]> {
+  initContentStringsList(): Observable<ContentStringInfo[]> {
     return this.contentService.retrieveContentStringList(ContentStringsParams).pipe(
       tap(res => {
         this.content = res.reduce((init, elem) => ({ ...init, [elem.name]: elem.value }), {});
@@ -60,7 +60,7 @@ export class MobileAccessService extends BaseService {
 
     const postParams: ServiceParameters = { filters };
     return this.coords.getCoords().pipe(
-      switchMap((incomeGeoData: MGeoCoordinates) =>
+      switchMap((incomeGeoData: GeoCoordinates) =>
         this.httpRequest<MessageResponse<MMobileLocationInfo[]>>(this.serviceUrl, methodName, true, {
           ...postParams,
           ...incomeGeoData,
@@ -88,7 +88,7 @@ export class MobileAccessService extends BaseService {
     return this.saveFavourites(this.favourites);
   }
 
-  trackCurrentPosition(): Observable<MGeoCoordinates> {
+  trackCurrentPosition(): Observable<GeoCoordinates> {
     return this.coords.startWatchCoords();
   }
 

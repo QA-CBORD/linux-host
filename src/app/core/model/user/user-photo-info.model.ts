@@ -1,4 +1,4 @@
-export interface MUserPhotoInfo {
+export interface UserPhotoInfo {
   readonly externalId: string;
   readonly userId: string;
   readonly mimeType: string;
