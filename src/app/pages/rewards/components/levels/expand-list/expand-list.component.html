@@ -1,16 +1,4 @@
 <ul class="progress">
-<!--    <li class="progress__level progress__level&#45;&#45;passed">-->
-<!--        <div class="progress__indicator">1</div>-->
-<!--    </li>-->
-<!--    <li class="progress__level progress__level&#45;&#45;active">-->
-<!--        <div class="progress__indicator">2</div>-->
-<!--    </li>-->
-<!--    <li class="progress__level">-->
-<!--        <div class="progress__indicator">3</div>-->
-<!--    </li>-->
-<!--    <li class="progress__level">-->
-<!--        <div class="progress__indicator">4</div>-->
-<!--    </li>-->
-
-    <st-expand-item *ngFor="let data of mockData;let last = last" [levelInfo]="data" [class.last]="last"></st-expand-item>
+    <st-expand-item *ngFor="let data of mockData;let last = last" [levelInfo]="data" [class.last]="last"
+                    (onClickExpand)="onExpandHandler($event)"></st-expand-item>
 </ul>

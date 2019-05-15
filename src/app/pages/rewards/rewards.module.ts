@@ -15,7 +15,14 @@ import { ExpandListComponent } from './components/levels/expand-list/expand-list
 import { ExpandItemComponent } from './components/levels/expand-list/expand-item/expand-item.component';
 
 const imports = [CommonModule, FormsModule, IonicModule, RewardsRoutingModule, SharedModule];
-const declarations = [RewardsPage, HistoryComponent, StoreComponent, LevelsComponent, ExpandListComponent,ExpandItemComponent];
+const declarations = [
+  RewardsPage,
+  HistoryComponent,
+  StoreComponent,
+  LevelsComponent,
+  ExpandListComponent,
+  ExpandItemComponent,
+];
 const providers = [RewardsApiService, RewardsService];
 
 @NgModule({

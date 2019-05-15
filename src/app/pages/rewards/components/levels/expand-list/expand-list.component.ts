@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { ExpandItemComponent } from './expand-item/expand-item.component';
 
 @Component({
   selector: 'st-expand-list',
@@ -6,13 +7,21 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./expand-list.component.scss'],
 })
 export class ExpandListComponent implements OnInit {
+  @ViewChildren(ExpandItemComponent) children: QueryList<ExpandItemComponent>;
   mockData = mock;
-  constructor() {
+  activeId: number = null;
+  constructor() {}
+
+  ngOnInit() {}
+
+  onExpandHandler(id) {
+    if (this.activeId && id !== null) this.closeExpand();
+    this.activeId = id;
   }
 
-  ngOnInit() {
+  private closeExpand() {
+    this.children.find(({ levelInfo: { level } }) => level === this.activeId).closeExpand();
   }
-
 }
 
 const mock = [
@@ -20,16 +29,20 @@ const mock = [
     level: 1,
     levelName: 'YoungLine',
     status: 'climed',
-  }, {
+  },
+  {
     level: 2,
     levelName: 'Padawan',
     status: 'active',
-  }, {
+  },
+  {
     level: 3,
     levelName: 'Knight',
     status: 'pending',
-  }, {
+  },
+  {
     level: 4,
     levelName: 'Master',
     status: 'pending',
-  }];
+  },
+];

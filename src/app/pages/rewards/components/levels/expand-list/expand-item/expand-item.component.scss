@@ -1,21 +1,43 @@
 @import "tools";
 
 .level {
+  position: relative;
+
+  &:after {
+    content: '\\/';
+    text-align: center;
+    display: block;
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: 10px;
+    right: 25px;
+    transition: all .05s ease-in-out;
+  }
+
+  &--active {
+    &:after {
+      transform: rotate(180deg);
+    }
+  }
+
   &__info {
     position: relative;
+    cursor: pointer;
   }
 
   &__header {
     @include font-nunito-heavy(20px);
-    color: #6e6e6e;
+    @include ellipsis();
+    color: $color-dim-gray;
     font-weight: bold;
     letter-spacing: 0;
     line-height: 24px;
-    //text-decoration: line-through;
   }
 
   &__indicator {
     @include font-nunito-regular(14px);
+    @include ellipsis();
     font-weight: normal;
     letter-spacing: 0;
     line-height: 18px;
@@ -34,7 +56,7 @@
     color: $color-black;
   }
   .level__indicator {
-    color: blue;
+    color: $color-dodger-blue;
   }
 }
 

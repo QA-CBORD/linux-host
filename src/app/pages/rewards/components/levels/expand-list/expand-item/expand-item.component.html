@@ -1,23 +1,21 @@
 <li [class]="levelClass">
-    <div class="progress__indicator">{{levelInfo.level}}</div>
-    <div class="level">
-        <div class="level__info" (click)="onExpandeHandle()">
+    <div class="progress__indicator">
+        <ng-container *ngIf="levelInfo.status === 'active'; then ico; else number"></ng-container>
+        <ng-template #number>{{levelInfo.level}}</ng-template>
+        <ng-template #ico><ion-icon class="progress__gift-icon" src="/assets/icon/gift-white.svg"></ion-icon></ng-template>
+    </div>
+    <div class="level" [ngClass]="{'level--active': show}">
+        <div class="level__info" (click)="onExpandHandle()">
             <div class="level__header">{{levelInfo.levelName}}</div>
             <div class="level__indicator">dasssssssssssssdasdasd</div>
         </div>
         <div class="level__climes" *ngIf="show">
-            <ul>
-                <li>0000000001</li>
-                <li>0000000002</li>
-                <li>0000000003</li>
-                <li>0000000003</li>
-                <li>0000000003</li>
-                <li>0000000003</li>
-                <li>0000000003</li>
-                <li>0000000003</li>
-                <li>0000000003</li>
-                <li>0000000004</li>
-            </ul>
+            <h5>Lorem ipsum dolor sit amet.</h5>
+            <h5>Lorem ipsum dolor sit amet.</h5>
+            <h5>Lorem ipsum dolor sit amet.</h5>
+            <h5>Lorem ipsum dolor sit amet.</h5>
+            <h5>Lorem ipsum dolor sit amet.</h5>
+            <h5>Lorem ipsum dolor sit amet.</h5>
         </div>
     </div>
 </li>
