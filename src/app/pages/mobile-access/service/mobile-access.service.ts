@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
-import { catchError, map, retry, switchMap, tap } from 'rxjs/operators';
+import { catchError, map, retry, switchMap, take, tap } from 'rxjs/operators';
 
 import { BaseService, ServiceParameters } from 'src/app/core/service/base-service/base.service';
 import { MGeoCoordinates } from 'src/app/core/model/geolocation/geocoordinates.interface';
@@ -13,7 +13,7 @@ import { CoordsService } from '../../../core/service/coords/coords.service';
 import { GeoLocationInfo } from '../../../core/model/geolocation/geoLocationInfo';
 import { MContentStringInfo } from '../../../core/model/content/content-string-info.interface';
 import { ContentService } from '../../../core/service/content-service/content.service';
-import { ContentStringsParams } from '../mobile-acces.config';
+import { GenericContentStringsParams, MobileAccessContentStringsParams } from '../mobile-acces.config';
 
 @Injectable()
 export class MobileAccessService extends BaseService {
@@ -43,10 +43,16 @@ export class MobileAccessService extends BaseService {
   }
 
   initContentStringsList(): Observable<MContentStringInfo[]> {
-    return this.contentService.retrieveContentStringList(ContentStringsParams).pipe(
-      tap(res => {
+    return combineLatest(
+      this.contentService.retrieveContentStringList(MobileAccessContentStringsParams),
+      this.contentService.retrieveContentStringList(GenericContentStringsParams)
+    ).pipe(
+      map(([res, res0]) => {
+        Array.prototype.push.apply(res, res0);
         this.content = res.reduce((init, elem) => ({ ...init, [elem.name]: elem.value }), {});
-      })
+        return res;
+      }),
+      take(1)
     );
   }
 
