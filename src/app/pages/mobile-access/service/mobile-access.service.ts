@@ -48,11 +48,22 @@ export class MobileAccessService extends BaseService {
       this.contentService.retrieveContentStringList(GenericContentStringsParams)
     ).pipe(
       map(([res, res0]) => {
-        Array.prototype.push.apply(res, res0);
-        this.content = res.reduce((init, elem) => ({ ...init, [elem.name]: elem.value }), {});
-        return res;
+        const arr0 = [...res];
+        const arr1 = [...res0];
+        const finalArray = arr0.concat(arr1);
+        this.content = finalArray.reduce((init, elem) => ({ ...init, [elem.name]: elem.value }), {});
+        return finalArray;
       }),
       take(1)
+    );
+  }
+
+  initContentStringsListgfas(): Observable<MContentStringInfo[]> {
+        return this.contentService.retrieveContentStringList(GenericContentStringsParams)
+    .pipe(
+        tap(res =>
+          this.content = res.reduce((init, elem) => ({ ...init, [elem.name]: elem.value }), {})
+        )
     );
   }
 
