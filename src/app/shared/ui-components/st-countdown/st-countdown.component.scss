@@ -13,14 +13,14 @@ svg circle {
   stroke-dashoffset: 0;
   stroke-linecap: round;
   stroke-width: 4px;
-  stroke: $color-blue;
+  stroke: $color-navy-blue;
   fill: none;
   animation: countdown linear forwards;
 }
 
 svg circle.countdown__static-circle {
   animation: none;
-  stroke: $color-light-gray;
+  stroke: $color-very-light-gray;
 }
 
 .countdown {
