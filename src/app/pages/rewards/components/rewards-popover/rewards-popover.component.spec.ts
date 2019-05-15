@@ -9,10 +9,9 @@ describe('RewardsPopoverPage', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ RewardsPopoverPage ],
+      declarations: [RewardsPopoverPage],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {

@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { UserService } from '../../../../core/service/user-service/user.service';
-import {RewardsService} from '../../services';
+import { RewardsService } from '../../services';
 
 import { CONTENT_STRINGS } from '../../rewards.config';
 import { UserRewardTrackInfo } from '../../models';
@@ -38,7 +38,7 @@ export class OptInComponent implements OnInit, OnDestroy {
   }
 
   optIn() {
-    console.log("OptIn Press");
+    console.log('OptIn Press');
     // const subscription = this.userService.userData
     //   .pipe(
     //     switchMap(({ id: userId }: MUserInfo) => {

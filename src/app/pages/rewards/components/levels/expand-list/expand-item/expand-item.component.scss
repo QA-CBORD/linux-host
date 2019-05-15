@@ -4,7 +4,7 @@
   position: relative;
 
   &:after {
-    content: '\\/';
+    content: '';
     text-align: center;
     display: block;
     position: absolute;
@@ -12,6 +12,8 @@
     height: 20px;
     top: 10px;
     right: 25px;
+    background: url("/assets/icon/angle-down.svg") no-repeat center;
+    background-size: contain;
     transition: all .05s ease-in-out;
   }
 

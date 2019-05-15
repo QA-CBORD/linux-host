@@ -1,4 +1,4 @@
 export interface MessageResponse<T> {
-    response?: T;
-    exception?: any;
+  response?: T;
+  exception?: any;
 }

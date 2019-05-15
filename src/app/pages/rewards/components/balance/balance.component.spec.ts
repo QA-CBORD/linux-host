@@ -9,10 +9,9 @@ describe('BalancePage', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ BalancePage ],
+      declarations: [BalancePage],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {

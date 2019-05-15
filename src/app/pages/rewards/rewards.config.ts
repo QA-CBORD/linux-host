@@ -1,4 +1,4 @@
-import * as Globals from "../../app.global";
+import * as Globals from '../../app.global';
 
 export enum LOCAL_ROUTING {
   levels = 'levels',
@@ -9,10 +9,10 @@ export enum LOCAL_ROUTING {
 export enum CONTENT_STRINGS {
   activateBtn = 'button_activate',
   closeBtn = 'button_close',
-  retryBtn = "button_retry",
+  retryBtn = 'button_retry',
   headerTitle = 'header_title',
   optInBtn = 'button_opt-in',
-  optInFailLabel = 'label_opt-in-failed'
+  optInFailLabel = 'label_opt-in-failed',
 }
 export const ContentStringsParams = {
   category: Globals.ContentString.CATEGORIES.rewards,
@@ -21,7 +21,7 @@ export const ContentStringsParams = {
 
 export enum OPT_IN_STATUS {
   yes = 1,
-  no = 0
+  no = 0,
 }
 
 export enum LEVEL_STATUS {

@@ -9,10 +9,9 @@ describe('ListItemPage', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ListItemPage ],
+      declarations: [ListItemPage],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {

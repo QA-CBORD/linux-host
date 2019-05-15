@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 
 @Component({
   selector: 'st-levels',
@@ -8,11 +8,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 export class LevelsComponent implements OnInit, OnDestroy {
   constructor() {}
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
-  ngOnDestroy(): void {
-  }
-
-
+  ngOnDestroy(): void {}
 }

@@ -8,8 +8,8 @@ import { ContentService } from '../../../core/service/content-service/content.se
 
 import { CLAIM_STATUS, ContentStringsParams, LEVEL_STATUS, LOCAL_ROUTING, OPT_IN_STATUS } from '../rewards.config';
 import { LevelInfo, RedeemableRewardInfo, UserFulfillmentActivityInfo, UserRewardTrackInfo } from '../models';
-import {TabsConfig} from "../../../core/model/tabs/tabs.model";
-import {ContentStringInfo} from "../../../core/model/content/content-string-info.model";
+import { TabsConfig } from '../../../core/model/tabs/tabs.model';
+import { ContentStringInfo } from '../../../core/model/content/content-string-info.model';
 
 @Injectable()
 export class RewardsService {

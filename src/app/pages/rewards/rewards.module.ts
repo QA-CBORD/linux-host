@@ -29,8 +29,8 @@ const declarations = [
   ListItemComponent,
   BalanceComponent,
   RewardsPopoverComponent,
-    ExpandListComponent,
-    ExpandItemComponent,
+  ExpandListComponent,
+  ExpandItemComponent,
 ];
 const providers = [RewardsApiService, RewardsService, RewardsResolverGuard];
 const entryComponents = [RewardsPopoverComponent];

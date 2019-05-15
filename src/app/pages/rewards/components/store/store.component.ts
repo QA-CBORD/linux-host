@@ -25,7 +25,7 @@ export class StoreComponent implements OnInit {
     {
       title: 'Carrot Cake2',
       description: 'A mediocre cake that you might enjoy this description is longer than the other one wee wooo',
-    }
+    },
   ];
   constructor() {}
 

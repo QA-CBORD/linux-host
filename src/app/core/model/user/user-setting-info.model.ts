@@ -1,5 +1,5 @@
 export interface UserSettingInfo {
-    userId: string;
-    name: string;
-    value: any;
+  userId: string;
+  name: string;
+  value: any;
 }
