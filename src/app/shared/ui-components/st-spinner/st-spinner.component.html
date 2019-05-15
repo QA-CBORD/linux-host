@@ -5,6 +5,6 @@
     <circle class="path path3" cx="50" cy="50" r="20" fill="none" stroke-width="8" stroke-miterlimit="10"></circle>
   </svg>
 </div>
-<div class="st-refreshing-text">
-  Refreshing Locations...
+<div *ngIf="refreshText !== ''" class="st-refreshing-text">
+  {{ refreshText }}
 </div>
