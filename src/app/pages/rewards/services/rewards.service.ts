@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core';
 
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
-import { switchMap, take, tap, map } from 'rxjs/operators';
+import { take, tap, map } from 'rxjs/operators';
 
 import { RewardsApiService } from './rewards-api.service';
 import { ContentService } from '../../../core/service/content-service/content.service';
 
 import { CLAIM_STATUS, ContentStringsParams, LEVEL_STATUS, LOCAL_ROUTING, OPT_IN_STATUS } from '../rewards.config';
-import { ContentStringInfo } from '../../../core/model/content/content-string-info.model';
 import { LevelInfo, RedeemableRewardInfo, UserFulfillmentActivityInfo, UserRewardTrackInfo } from '../models';
-import { TabsConfig } from '../../../core/model/tabs/tabs.model';
+import {TabsConfig} from "../../../core/model/tabs/tabs.model";
+import {ContentStringInfo} from "../../../core/model/content/content-string-info.model";
 
 @Injectable()
 export class RewardsService {
