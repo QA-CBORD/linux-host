@@ -19,7 +19,7 @@ export enum CONTENT_STRINGS {
   headerTitle = 'header_title',
   headerTitleActivate = 'header_title_activate',
   retrieveLocationsLoader = 'loader_retrieve-locations',
-  activateLocationLoader = 'loader_activate-locations',
+  activateLocationLoader = 'loader_activate-location',
   searchbarPlaceholder = 'searchbar_placeholder_filter-locations',
   addFavToast = 'toast_add-favorite',
   removeFavToast = 'toast_remove-favorite',
