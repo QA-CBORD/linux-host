@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core';
 
-import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
-import { take, tap, map } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
+import { map, take, tap } from 'rxjs/operators';
 
 import { RewardsApiService } from './rewards-api.service';
 import { ContentService } from '../../../core/service/content-service/content.service';
 
 import { CLAIM_STATUS, ContentStringsParams, LEVEL_STATUS, LOCAL_ROUTING, OPT_IN_STATUS } from '../rewards.config';
 import { LevelInfo, RedeemableRewardInfo, UserFulfillmentActivityInfo, UserRewardTrackInfo } from '../models';
-import {TabsConfig} from "../../../core/model/tabs/tabs.model";
-import {ContentStringInfo} from "../../../core/model/content/content-string-info.model";
+import { TabsConfig } from '../../../core/model/tabs/tabs.model';
+import { ContentStringInfo } from '../../../core/model/content/content-string-info.model';
 
 @Injectable()
 export class RewardsService {
@@ -77,21 +77,21 @@ export class RewardsService {
     return this.rewardTrack.pipe(
       map(trackInfo => {
         let levelInfoArray: LevelInfo[] = [];
-        trackInfo.trackLevels.forEach((level, i) => {
-          const levelLocked: boolean = trackInfo.userLevel <= level.level;
+        trackInfo.trackLevels.forEach(level => {
+          const levelLocked: boolean = trackInfo.userLevel < level.level;
           let levelClaimed: boolean = false;
           let levelReceived: boolean = false;
           let levelInfo: LevelInfo = {
             level: level.level,
             name: level.name,
-            requiredPoints: level.requiredPoints,
+            description: '',
             status: LEVEL_STATUS.unlocked,
             rewards: [],
           };
 
-          trackInfo.trackLevels[i].userClaimableRewards.forEach(reward => {
+          /// add rewards to LevelInfo and use status of rewards to determine level status
+          level.userClaimableRewards.forEach(reward => {
             const claimStatus = reward.claimStatus;
-
             levelInfo.rewards.push(reward);
             levelClaimed = claimStatus === CLAIM_STATUS.claimed;
             levelReceived = claimStatus === CLAIM_STATUS.received;
@@ -105,11 +105,32 @@ export class RewardsService {
             ? LEVEL_STATUS.received
             : LEVEL_STATUS.unlocked;
 
+          levelInfo.description = this.getLevelDescription(levelInfo, trackInfo);
+
           levelInfoArray.push(levelInfo);
         });
         return this.sortlevelInfoArr(levelInfoArray);
       })
     );
+  }
+
+  private getLevelDescription(
+    { level, status, rewards }: LevelInfo,
+    { userExperiencePoints, trackLevels }: UserRewardTrackInfo
+  ): string {
+    switch (status) {
+      case LEVEL_STATUS.locked:
+        const requiredXP = trackLevels[level].requiredPoints - userExperiencePoints;
+        return `${requiredXP} XP away from reward`;
+      case LEVEL_STATUS.claimed:
+        return '1 Active Reward';
+      case LEVEL_STATUS.received:
+        return 'Reward Claimed';
+      case LEVEL_STATUS.unlocked:
+        return rewards.length > 0 ? 'Claim 1 Reward' : 'No offers currently available';
+      default:
+        return '';
+    }
   }
 
   private sortlevelInfoArr(levelInfoArray) {

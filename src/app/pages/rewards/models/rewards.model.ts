@@ -76,7 +76,7 @@ export interface UserFulfillmentActivityInfo {
 export interface LevelInfo {
     level: number,
     name: string,
-    requiredPoints: number,
+    description: string,
     status: LEVEL_STATUS,
     rewards: ClaimableRewardInfo[]
 }
