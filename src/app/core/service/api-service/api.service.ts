@@ -106,7 +106,7 @@ export class APIService {
   authenticatedHTTPCall(callType: RestCallType, resourceURL: string, responseType: HttpResponseType = HttpResponseType.json,
     body?: any, params?: HttpParams, headers?: HttpHeaders): Observable<any> {
 
-    const finalURL = Environment.getAPIGatewayServicesBaseURL().concat(resourceURL);
+    const finalURL = Environment.getSecureMessagingAPIURL().concat(resourceURL);
 
     return Observable.create((observer: any) => {
       // sort by call type
