@@ -51,5 +51,15 @@ $circle-width: 40px;
   &__gift-icon {
     width: 25px;
     height: 25px;
+    animation-name: pulse;
+    animation-timing-function: cubic-bezier(1, 0.38, 0.63, 0.79);
+    animation-iteration-count: infinite;
+    animation-duration: 2.5s;
   }
+}
+
+@keyframes pulse {
+  from {opacity: 0;}
+  50% {opacity: 1;}
+  to {opacity: 0;}
 }
