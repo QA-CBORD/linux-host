@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { NavController, PopoverController } from '@ionic/angular';
+import {NavController, PopoverController, ToastController} from '@ionic/angular';
 
 import { map, take } from 'rxjs/operators';
 import { Observable, Subscription } from 'rxjs';
@@ -23,6 +23,7 @@ import { CONTENT_STRINGS } from '../mobile-acces.config';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ActivateLocationComponent implements OnInit, OnDestroy {
+  private readonly toastDuration: number = 6000;
   private readonly sourceSubscription: Subscription = new Subscription();
   private locationId: string;
   userInfo$: Observable<MUserInfo>;
@@ -36,6 +37,7 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
     private readonly routerLink: ActivatedRoute,
     private readonly mobileAccessService: MobileAccessService,
     private readonly popoverCtrl: PopoverController,
+    private readonly toastController: ToastController,
     private readonly router: Router,
     private readonly location: Location,
     private readonly nav2: NavController,
@@ -75,7 +77,7 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
     const subscription = this.mobileAccessService.activateMobileLocation(this.locationId).subscribe(
       res => this.loading.closeSpinner().then(() => this.modalHandler(res)),
       () => {
-        this.loading.closeSpinner().then(() => this.modalHandler(this.contentString.errorResponseDialogMessage));
+        this.loading.closeSpinner().then(() => this.presentToast(this.contentString.errorResponseActivateLocation));
       }
     );
 
@@ -105,6 +107,14 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
     return await popover.present();
   }
 
+  async presentToast(message: string) {
+    const toast = await this.toastController.create({
+      message,
+      duration: this.toastDuration,
+    });
+    toast.present();
+  }
+
   private setInstitution() {
     this.institution$ = this.institutionService.institutionData;
     this.cdRef.detectChanges();
@@ -123,8 +133,8 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
     let activate = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.activateBtn);
     let header = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.headerTitle);
     let activateLocationLoader = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.activateLocationLoader);
-    let errorResponseDialogMessage = this.mobileAccessService.getContentValueByName(
-      CONTENT_STRINGS.errorResponseDialogMessage
+    let errorResponseActivateLocation = this.mobileAccessService.getContentValueByName(
+      CONTENT_STRINGS.errorResponseActivateLocation
     );
     let headerTitleActivate = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.headerTitleActivate);
     let backBtnHeader = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.backBtnHeader);
@@ -132,7 +142,7 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
     activate = activate ? activate : '';
     header = header ? header : '';
     activateLocationLoader = activateLocationLoader ? activateLocationLoader : '';
-    errorResponseDialogMessage = errorResponseDialogMessage ? errorResponseDialogMessage : '';
+    errorResponseActivateLocation = errorResponseActivateLocation ? errorResponseActivateLocation : '';
     headerTitleActivate = headerTitleActivate ? headerTitleActivate : '';
     backBtnHeader = backBtnHeader ? backBtnHeader : '';
 
@@ -140,7 +150,7 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
       activate,
       header,
       activateLocationLoader,
-      errorResponseDialogMessage,
+      errorResponseActivateLocation,
       headerTitleActivate,
       backBtnHeader,
     };

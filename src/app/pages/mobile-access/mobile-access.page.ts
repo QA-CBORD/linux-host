@@ -108,17 +108,19 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
   private setContentStrings() {
     let header = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.headerTitle);
     let search = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.searchbarPlaceholder);
+    let pullRefreshLabel = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.labelPullToRefresh);
     let addFavToast = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.addFavToast);
     let removeFavToast = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.removeFavToast);
     let addFavErrorToast = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.addFavErrorToast);
 
     header = header ? header : '';
     search = search ? search : '';
+    pullRefreshLabel = pullRefreshLabel ? pullRefreshLabel : '';
     addFavToast = addFavToast ? addFavToast : '';
     removeFavToast = removeFavToast ? removeFavToast : '';
     addFavErrorToast = addFavErrorToast ? addFavErrorToast : '';
 
-    this.contentString = { header, search, addFavToast, removeFavToast, addFavErrorToast };
+    this.contentString = { header, search, pullRefreshLabel, addFavToast, removeFavToast, addFavErrorToast };
   }
 
   private setUserInfo() {

@@ -12,7 +12,6 @@ import { LOCAL_ROUTING } from '../mobile-acces.config';
 
 @Injectable()
 export class LocationsResolverGuard implements Resolve<Observable<MMobileLocationInfo[] | boolean>> {
-  private readonly spinnerMessage = 'Retrieving locations...';
 
   constructor(
     private readonly mobileAccessService: MobileAccessService,
@@ -29,7 +28,7 @@ export class LocationsResolverGuard implements Resolve<Observable<MMobileLocatio
   }
 
   private downloadData(): Observable<MMobileLocationInfo[]> {
-    this.loader.showSpinner(this.spinnerMessage);
+    this.loader.showSpinner();
     this.mobileAccessService
       .initContentStringsList()
       .pipe(take(1))
