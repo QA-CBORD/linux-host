@@ -1,7 +1,9 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { RewardsService } from '../../services';
+
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+
+import { RewardsService } from '../../services';
 import { UserRewardTrackInfo, UserTrackLevelInfo } from '../../models';
 
 @Component({

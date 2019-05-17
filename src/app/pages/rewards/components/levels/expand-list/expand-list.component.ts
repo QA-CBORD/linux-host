@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input, QueryList, ViewChildren } from '@angular/core';
-import { ExpandItemComponent } from './expand-item/expand-item.component';
+
+import { ExpandItemComponent } from './expand-item';
 import { UserTrackLevelInfo } from '../../../models';
 
 @Component({
@@ -17,6 +18,10 @@ export class ExpandListComponent {
   onExpandHandler(level: number) {
     if (this.level && level !== null) this.closeExpand();
     this.level = level;
+  }
+
+  trackFn(index, {level}: UserTrackLevelInfo): number {
+    return level;
   }
 
   private closeExpand() {

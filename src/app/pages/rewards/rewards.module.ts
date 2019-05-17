@@ -38,6 +38,6 @@ const entryComponents = [RewardsPopoverComponent];
   imports,
   declarations,
   providers,
-  entryComponents,
+  entryComponents
 })
 export class RewardsPageModule {}
