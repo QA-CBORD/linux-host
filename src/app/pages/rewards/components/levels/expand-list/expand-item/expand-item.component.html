@@ -7,7 +7,7 @@
     <div class="level" [ngClass]="{'level--active': show}">
         <div class="level__info" (click)="onExpandHandle()">
             <div class="level__header">{{levelInfo.name}}</div>
-            <div class="level__indicator">dasssssssssssssdasdasd</div>
+            <div class="level__indicator">{{levelInfo.description}}</div>
         </div>
         <div class="level__climes" *ngIf="show">
             <h5>Lorem ipsum dolor sit amet.</h5>

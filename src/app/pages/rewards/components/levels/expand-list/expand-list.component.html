@@ -2,7 +2,7 @@
     <st-expand-item *ngFor="let level of levels;let last = last"
                     [levelInfo]="level"
                     [class.last]="last"
-                    [currentLevel]="5"
+                    [currentLevel]="currentLevel"
                     (onClickExpand)="onExpandHandler($event)">
     </st-expand-item>
 </ul>

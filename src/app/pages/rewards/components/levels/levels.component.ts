@@ -13,6 +13,7 @@ import { UserRewardTrackInfo, UserTrackLevelInfo } from '../../models';
 export class LevelsComponent implements OnInit {
   trackInfo$: Observable<UserRewardTrackInfo>;
   currentLevelInfo$: Observable<UserTrackLevelInfo>;
+  levels$: Observable<UserTrackLevelInfo[]>;
 
   constructor(private readonly rewardsService: RewardsService) {
   }
@@ -20,7 +21,8 @@ export class LevelsComponent implements OnInit {
   ngOnInit() {
     this.trackInfo$ = this.rewardsService.rewardTrack;
     this.currentLevelInfo$ = this.rewardsService.rewardTrack.pipe(map(({ userLevel, trackLevels }) =>
-      trackLevels.find(({ level }) => level === 5),
+      trackLevels.find(({ level }) => level === userLevel),
     ));
+    this.levels$ = this.rewardsService.getTrackLevels();
   }
 }
