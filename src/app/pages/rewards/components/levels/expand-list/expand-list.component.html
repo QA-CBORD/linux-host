@@ -1,4 +1,8 @@
 <ul class="progress">
-    <st-expand-item *ngFor="let data of mockData;let last = last" [levelInfo]="data" [class.last]="last"
-                    (onClickExpand)="onExpandHandler($event)"></st-expand-item>
+    <st-expand-item *ngFor="let level of levels;let last = last"
+                    [levelInfo]="level"
+                    [class.last]="last"
+                    [currentLevel]="5"
+                    (onClickExpand)="onExpandHandler($event)">
+    </st-expand-item>
 </ul>

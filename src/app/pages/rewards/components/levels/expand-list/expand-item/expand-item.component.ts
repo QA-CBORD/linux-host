@@ -4,9 +4,9 @@ import {
   Component,
   EventEmitter,
   Input,
-  OnInit,
   Output,
 } from '@angular/core';
+import { UserTrackLevelInfo } from '../../../../models';
 
 @Component({
   selector: 'st-expand-item',
@@ -14,20 +14,21 @@ import {
   styleUrls: ['./expand-item.component.scss', '../expand-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ExpandItemComponent implements OnInit {
+export class ExpandItemComponent {
+  @Input() levelInfo: UserTrackLevelInfo;
+  @Input() currentLevel: number;
+  @Output() onClickExpand: EventEmitter<number> = new EventEmitter<number>();
   show: boolean = false;
-  @Input() levelInfo;
-  @Output() onClickExpand: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-  constructor(private readonly cdRef: ChangeDetectorRef) {}
-
-  ngOnInit() {}
+  constructor(private readonly cdRef: ChangeDetectorRef) {
+  }
 
   get levelClass(): string {
     const baseClass = 'progress__level';
     const passed = 'progress__level--passed';
     const active = 'progress__level--active';
-    const modifier = this.levelInfo.status !== 'pending' && (this.levelInfo.status === 'active' ? active : passed);
+    const modifier = this.levelInfo.level <= this.currentLevel
+      && (this.levelInfo.level === this.currentLevel ? active : passed);
 
     return `${baseClass} ${modifier || ''}`;
   }
@@ -39,6 +40,5 @@ export class ExpandItemComponent implements OnInit {
   closeExpand() {
     this.show = false;
     this.cdRef.detectChanges();
-    console.log(1);
   }
 }

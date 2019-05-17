@@ -18,8 +18,10 @@ $circle-width: 40px;
       border-left-style: solid;
 
       .progress__indicator {
+        @include font-nunito-heavy(16px);
         border-color: $color-dodger-blue;
         color: $color-dodger-blue;
+        font-weight: bold;
         box-shadow: 0 0 3px $color-light-sky-blue;
       }
     }

@@ -38,8 +38,8 @@ export class RewardsService {
   }
 
   private set _rewardHistory(rewardHistory: UserFulfillmentActivityInfo[]) {
-    this.rewardHistoryList = { ...rewardHistory };
-    this.rewardHistory$.next({ ...this.rewardHistoryList });
+    this.rewardHistoryList = [ ...rewardHistory ];
+    this.rewardHistory$.next([ ...this.rewardHistoryList ]);
   }
 
   getUserRewardTrackInfo(): Observable<UserRewardTrackInfo> {
@@ -77,8 +77,8 @@ export class RewardsService {
     return this.rewardTrack.pipe(
       map(trackInfo => {
         let levelInfoArray: LevelInfo[] = [];
-        trackInfo.trackLevels.forEach((level, i) => {
-          const levelLocked: boolean = trackInfo.userLevel <= level.level;
+        trackInfo.trackLevels.forEach((level) => {
+          const levelLocked: boolean = trackInfo.userLevel < level.level;
           let levelClaimed: boolean = false;
           let levelReceived: boolean = false;
           let levelInfo: LevelInfo = {
@@ -89,7 +89,7 @@ export class RewardsService {
             rewards: [],
           };
 
-          trackInfo.trackLevels[i].userClaimableRewards.forEach(reward => {
+          level.userClaimableRewards.forEach(reward => {
             const claimStatus = reward.claimStatus;
 
             levelInfo.rewards.push(reward);
@@ -114,7 +114,7 @@ export class RewardsService {
 
   private sortlevelInfoArr(levelInfoArray) {
     return levelInfoArray.sort((a, b) => {
-      return a.level > b.level ? 1 : a.level < b.level ? -1 : 0;
+      return a.levelInfo > b.levelInfo ? 1 : a.levelInfo < b.levelInfo ? -1 : 0;
     });
   }
 

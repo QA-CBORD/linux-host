@@ -1,48 +1,25 @@
-import { Component, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, QueryList, ViewChildren } from '@angular/core';
 import { ExpandItemComponent } from './expand-item/expand-item.component';
+import { UserTrackLevelInfo } from '../../../models';
 
 @Component({
   selector: 'st-expand-list',
   templateUrl: './expand-list.component.html',
   styleUrls: ['./expand-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ExpandListComponent implements OnInit {
+export class ExpandListComponent {
   @ViewChildren(ExpandItemComponent) children: QueryList<ExpandItemComponent>;
-  mockData = mock;
-  activeId: number = null;
-  constructor() {}
+  @Input() levels: UserTrackLevelInfo[];
+  @Input() currentLevel: number;
+  level: number = null;
 
-  ngOnInit() {}
-
-  onExpandHandler(id) {
-    if (this.activeId && id !== null) this.closeExpand();
-    this.activeId = id;
+  onExpandHandler(level: number) {
+    if (this.level && level !== null) this.closeExpand();
+    this.level = level;
   }
 
   private closeExpand() {
-    this.children.find(({ levelInfo: { level } }) => level === this.activeId).closeExpand();
+    this.children.find(({ levelInfo: { level } }) => level === this.level).closeExpand();
   }
 }
-
-const mock = [
-  {
-    level: 1,
-    levelName: 'YoungLine',
-    status: 'climed',
-  },
-  {
-    level: 2,
-    levelName: 'Padawan',
-    status: 'active',
-  },
-  {
-    level: 3,
-    levelName: 'Knight',
-    status: 'pending',
-  },
-  {
-    level: 4,
-    levelName: 'Master',
-    status: 'pending',
-  },
-];
