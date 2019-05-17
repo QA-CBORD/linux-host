@@ -16,6 +16,8 @@ import { RewardsResolverGuard } from './resolvers';
 import { BalanceComponent } from './components/balance';
 import { ListItemComponent } from './components/list-item';
 import { RewardsPopoverComponent } from './components/rewards-popover';
+import { ExpandListComponent } from './components/levels/expand-list/expand-list.component';
+import { ExpandItemComponent } from './components/levels/expand-list/expand-item/expand-item.component';
 
 const imports = [CommonModule, FormsModule, IonicModule, RewardsRoutingModule, RewardsRoutingModule, SharedModule];
 const declarations = [
@@ -27,6 +29,8 @@ const declarations = [
   ListItemComponent,
   BalanceComponent,
   RewardsPopoverComponent,
+  ExpandListComponent,
+  ExpandItemComponent,
 ];
 const providers = [RewardsApiService, RewardsService, RewardsResolverGuard];
 const entryComponents = [RewardsPopoverComponent];

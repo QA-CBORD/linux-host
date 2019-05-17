@@ -9,159 +9,145 @@ import { UserInfo } from '../user/user-info.model';
 import { UserPhotoInfo } from '../user/user-photo-info.model';
 import { UserSettingInfo } from '../user/user-setting-info.model';
 
-
-
 export class MCache {
+  applicationUUID: string;
+  localSessionTimestamp: Date;
+  environmentInfo: EnvironmentInfo;
+  appVersion: string;
 
-    applicationUUID: string;
-    localSessionTimestamp: Date;
-    environmentInfo: EnvironmentInfo;
-    appVersion: string;
+  sessionId: string;
+  startupInfo: StartupInfo;
+  institutionInfo: InstitutionInfo = new InstitutionInfo();
+  institutionSettings: SettingInfo[] = new Array<SettingInfo>();
+  institutionStrings: ContentStringInfo[] = new Array<ContentStringInfo>();
 
-    sessionId: string;
-    startupInfo: StartupInfo;
-    institutionInfo: InstitutionInfo = new InstitutionInfo();
-    institutionSettings: SettingInfo[] = new Array<SettingInfo>();
-    institutionStrings: ContentStringInfo[] = new Array<ContentStringInfo>();
+  bIsPINSet = false;
 
-    bIsPINSet = false;
+  userInfo: UserInfo;
+  userMediaValue: string;
+  userPhotoInfo: UserPhotoInfo;
+  userSettings: UserSettingInfo[] = new Array<UserSettingInfo>();
 
-    userInfo: UserInfo;
-    userMediaValue: string;
-    userPhotoInfo: UserPhotoInfo;
-    userSettings: UserSettingInfo[] = new Array<UserSettingInfo>();
+  constructor() {}
 
-    constructor(
-    ) {
+  static fromT(o: MCache) {
+    const t: MCache = new MCache();
+    t.applicationUUID = o.applicationUUID;
+    t.localSessionTimestamp = o.localSessionTimestamp;
+    t.environmentInfo = o.environmentInfo;
+    t.appVersion = o.appVersion;
+    t.sessionId = o.sessionId;
+    t.startupInfo = o.startupInfo;
+    t.institutionInfo = o.institutionInfo;
+    t.institutionSettings = o.institutionSettings;
+    t.institutionStrings = o.institutionStrings;
+    t.bIsPINSet = o.bIsPINSet;
+    return t;
+  }
 
+  getApplicationUUID(): string {
+    if (this.applicationUUID != null) {
+      return this.applicationUUID;
+    } else {
+      this.generateUUID();
+      return this.applicationUUID;
     }
+  }
 
-    static fromT(o: MCache) {
-        const t: MCache = new MCache();
-        t.applicationUUID = o.applicationUUID;
-        t.localSessionTimestamp = o.localSessionTimestamp;
-        t.environmentInfo = o.environmentInfo;
-        t.appVersion = o.appVersion;
-        t.sessionId = o.sessionId;
-        t.startupInfo = o.startupInfo;
-        t.institutionInfo = o.institutionInfo;
-        t.institutionSettings = o.institutionSettings;
-        t.institutionStrings = o.institutionStrings;
-        t.bIsPINSet = o.bIsPINSet;
-        return t;
+  private generateUUID() {
+    this.applicationUUID = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      // tslint:disable-next-line:no-bitwise
+      const r = (Math.random() * 16) | 0,
+        v = c === 'x' ? r : (r & 0x3) | 0x8;
+      return v.toString(16);
+    });
+  }
+
+  addSetting(newSetting: SettingInfo) {
+    if (newSetting == null || newSetting.name == null) {
+      return;
     }
-
-
-
-    getApplicationUUID(): string {
-        if (this.applicationUUID != null) {
-            return this.applicationUUID;
-        } else {
-            this.generateUUID();
-            return this.applicationUUID;
-        }
+    const eI: number = this.institutionSettings.indexOf(newSetting);
+    if (eI > -1) {
+      this.institutionSettings[eI] = newSetting;
+    } else {
+      this.institutionSettings.push(newSetting);
     }
+  }
 
-    private generateUUID() {
-        this.applicationUUID = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-            // tslint:disable-next-line:no-bitwise
-            const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
-        });
+  addSettingList(newSettingList: SettingInfoList) {
+    if (newSettingList == null || newSettingList.list == null || newSettingList.list.length <= 0) {
+      return;
     }
-
-
-    addSetting(newSetting: SettingInfo) {
-        if (newSetting == null || newSetting.name == null) {
-            return;
-        }
-        const eI: number = this.institutionSettings.indexOf(newSetting);
-        if (eI > -1) {
-            this.institutionSettings[eI] = newSetting;
-        } else {
-            this.institutionSettings.push(newSetting);
-        }
-
+    for (const setting of newSettingList.list) {
+      if (setting == null || setting.name == null) {
+        return;
+      }
+      const eI: number = this.institutionSettings.indexOf(setting);
+      if (eI > -1) {
+        this.institutionSettings[eI] = setting;
+      } else {
+        this.institutionSettings.push(setting);
+      }
     }
+  }
 
-    addSettingList(newSettingList: SettingInfoList) {
-        if (newSettingList == null || newSettingList.list == null || newSettingList.list.length <= 0) {
-            return;
-        }
-        for (const setting of newSettingList.list) {
-            if (setting == null || setting.name == null) {
-                return;
-            }
-            const eI: number = this.institutionSettings.indexOf(setting);
-            if (eI > -1) {
-                this.institutionSettings[eI] = setting;
-            } else {
-                this.institutionSettings.push(setting);
-            }
-        }
+  getSetting(settingName: Globals.Settings.ESetting): SettingInfo {
+    for (const setting of this.institutionSettings) {
+      if (this.getSettingName(setting) === settingName.toString()) {
+        return setting;
+      }
     }
+    return null;
+  }
 
-    getSetting(settingName: Globals.Settings.ESetting): SettingInfo {
-        for (const setting of this.institutionSettings) {
-
-            if (this.getSettingName(setting) === settingName.toString()) {
-                return setting;
-            }
-        }
-        return null;
+  addContentString(newString: ContentStringInfo) {
+    if (newString == null || newString.name == null) {
+      return;
     }
-
-    addContentString(newString: ContentStringInfo) {
-        if (newString == null || newString.name == null) {
-            return;
-        }
-        const eI: number = this.institutionStrings.indexOf(newString);
-        if (eI > -1) {
-            this.institutionStrings[eI] = newString;
-        } else {
-            this.institutionStrings.push(newString);
-        }
+    const eI: number = this.institutionStrings.indexOf(newString);
+    if (eI > -1) {
+      this.institutionStrings[eI] = newString;
+    } else {
+      this.institutionStrings.push(newString);
     }
+  }
 
-    getContentString(stringName: Globals.Settings.EStrings): ContentStringInfo {
-        for (const string of this.institutionStrings) {
-
-            if (this.getStringName(string) === stringName.toString()) {
-                return string;
-            }
-        }
-        return null;
+  getContentString(stringName: Globals.Settings.EStrings): ContentStringInfo {
+    for (const string of this.institutionStrings) {
+      if (this.getStringName(string) === stringName.toString()) {
+        return string;
+      }
     }
+    return null;
+  }
 
-    addUserSetting(newSetting: UserSettingInfo) {
-        if (newSetting == null || newSetting.name == null) {
-            return;
-        }
-        const eI: number = this.userSettings.indexOf(newSetting);
-        if (eI > -1) {
-            this.userSettings[eI] = newSetting;
-        } else {
-            this.userSettings.push(newSetting);
-        }
-
+  addUserSetting(newSetting: UserSettingInfo) {
+    if (newSetting == null || newSetting.name == null) {
+      return;
     }
-
-    getUserSetting(settingName: Globals.User.ESetting): UserSettingInfo {
-        for (const setting of this.userSettings) {
-
-            if (setting.name === settingName.toString()) {
-                return setting;
-            }
-        }
-        return null;
+    const eI: number = this.userSettings.indexOf(newSetting);
+    if (eI > -1) {
+      this.userSettings[eI] = newSetting;
+    } else {
+      this.userSettings.push(newSetting);
     }
+  }
 
-    private getSettingName(setting: SettingInfo): string {
-        return setting.domain + '.' + setting.category + '.' + setting.name;
+  getUserSetting(settingName: Globals.User.ESetting): UserSettingInfo {
+    for (const setting of this.userSettings) {
+      if (setting.name === settingName.toString()) {
+        return setting;
+      }
     }
+    return null;
+  }
 
-    private getStringName(string: ContentStringInfo): string {
-        return string.domain + '.' + string.category + '.' + string.name;
-    }
+  private getSettingName(setting: SettingInfo): string {
+    return setting.domain + '.' + setting.category + '.' + setting.name;
+  }
 
+  private getStringName(string: ContentStringInfo): string {
+    return string.domain + '.' + string.category + '.' + string.name;
+  }
 }

@@ -1,0 +1,21 @@
+<li [class]="levelClass">
+    <div class="progress__indicator">
+        <ng-container *ngIf="levelInfo.level === currentLevel; then ico; else number"></ng-container>
+        <ng-template #number>{{levelInfo.level}}</ng-template>
+        <ng-template #ico><ion-icon class="progress__gift-icon" src="/assets/icon/gift-white.svg"></ion-icon></ng-template>
+    </div>
+    <div class="level" [ngClass]="{'level--active': show}">
+        <div class="level__info" (click)="onExpandHandle()">
+            <div class="level__header">{{levelInfo.name}}</div>
+            <div class="level__indicator">{{levelInfo.description}}</div>
+        </div>
+        <div class="level__climes" *ngIf="show">
+            <h5>Lorem ipsum dolor sit amet.</h5>
+            <h5>Lorem ipsum dolor sit amet.</h5>
+            <h5>Lorem ipsum dolor sit amet.</h5>
+            <h5>Lorem ipsum dolor sit amet.</h5>
+            <h5>Lorem ipsum dolor sit amet.</h5>
+            <h5>Lorem ipsum dolor sit amet.</h5>
+        </div>
+    </div>
+</li>

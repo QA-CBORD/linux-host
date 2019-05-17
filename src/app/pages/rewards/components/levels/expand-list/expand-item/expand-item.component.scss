@@ -1,0 +1,69 @@
+@import "tools";
+
+.level {
+  position: relative;
+
+  &:after {
+    content: '';
+    text-align: center;
+    display: block;
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: 10px;
+    right: 25px;
+    background: url("/assets/icon/angle-down.svg") no-repeat center;
+    background-size: contain;
+    transition: all .1s ease-in-out;
+  }
+
+  &--active {
+    &:after {
+      transform: rotate(180deg);
+    }
+  }
+
+  &__info {
+    position: relative;
+    cursor: pointer;
+  }
+
+  &__header {
+    @include font-nunito-heavy(20px);
+    @include ellipsis();
+    color: $color-dim-gray;
+    font-weight: bold;
+    letter-spacing: 0;
+    line-height: 24px;
+  }
+
+  &__indicator {
+    @include font-nunito-regular(14px);
+    @include ellipsis();
+    font-weight: normal;
+    letter-spacing: 0;
+    line-height: 18px;
+    color: $color-black;
+  }
+}
+
+.progress__level--passed {
+  .level__header  {
+    text-decoration: line-through;
+  }
+}
+
+.progress__level--active {
+  .level__header {
+    color: $color-black;
+  }
+  .level__indicator {
+    color: $color-dodger-blue;
+  }
+}
+
+:host-context(.last) {
+  .progress__level {
+    border-left: none;
+  }
+}

@@ -1,0 +1,8 @@
+<ul class="progress">
+    <st-expand-item *ngFor="let level of levels;let last = last"
+                    [levelInfo]="level"
+                    [class.last]="last"
+                    [currentLevel]="currentLevel"
+                    (onClickExpand)="onExpandHandler($event)">
+    </st-expand-item>
+</ul>

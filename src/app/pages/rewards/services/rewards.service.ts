@@ -7,22 +7,26 @@ import { RewardsApiService } from './rewards-api.service';
 import { ContentService } from '../../../core/service/content-service/content.service';
 
 import { CLAIM_STATUS, ContentStringsParams, LEVEL_STATUS, LOCAL_ROUTING, OPT_IN_STATUS } from '../rewards.config';
-import { LevelInfo, RedeemableRewardInfo, UserFulfillmentActivityInfo, UserRewardTrackInfo } from '../models';
+import {
+  RedeemableRewardInfo,
+  UserFulfillmentActivityInfo,
+  UserRewardTrackInfo,
+  UserTrackLevelInfo,
+} from '../models';
 import { TabsConfig } from '../../../core/model/tabs/tabs.model';
 import { ContentStringInfo } from '../../../core/model/content/content-string-info.model';
 
 @Injectable()
 export class RewardsService {
   private readonly rewardTrack$: BehaviorSubject<UserRewardTrackInfo> = new BehaviorSubject<UserRewardTrackInfo>(null);
-  private readonly rewardHistory$: BehaviorSubject<UserFulfillmentActivityInfo[]> = new BehaviorSubject<
-    UserFulfillmentActivityInfo[]
-  >([]);
+  private readonly rewardHistory$: BehaviorSubject<UserFulfillmentActivityInfo[]> = new BehaviorSubject<UserFulfillmentActivityInfo[]>([]);
   private rewardTrackInfo: UserRewardTrackInfo;
   private rewardHistoryList: UserFulfillmentActivityInfo[];
 
   private content;
 
-  constructor(private rewardsApi: RewardsApiService, private contentService: ContentService) {}
+  constructor(private rewardsApi: RewardsApiService, private contentService: ContentService) {
+  }
 
   get rewardTrack(): Observable<UserRewardTrackInfo> {
     return this.rewardTrack$.asObservable();
@@ -90,51 +94,104 @@ export class RewardsService {
         tabConfig.tabs.push({ name: 'History', route: LOCAL_ROUTING.history });
 
         return tabConfig;
-      })
+      }),
     );
   }
 
-  getTrackLevels(): Observable<LevelInfo[]> {
+  // getTrackLevels(): Observable<LevelInfo[]> {
+  //   return this.rewardTrack.pipe(
+  //     map(trackInfo => {
+  //
+  //       let levelInfoArray: LevelInfo[] = [];
+  //       trackInfo.trackLevels.forEach(level => {
+  //         const levelLocked: boolean = trackInfo.userLevel < level.level;
+  //         let levelClaimed: boolean = false;
+  //         let levelReceived: boolean = false;
+  //         let levelInfo: LevelInfo = {
+  //           level: level.level,
+  //           name: level.name,
+  //           description: '',
+  //           status: LEVEL_STATUS.unlocked,
+  //           rewards: [],
+  //         };
+  //
+  //         /// add rewards to LevelInfo and use status of rewards to determine level status
+  //         level.userClaimableRewards.forEach(reward => {
+  //           const claimStatus = reward.claimStatus;
+  //           levelInfo.rewards.push(reward);
+  //           levelClaimed = claimStatus === CLAIM_STATUS.claimed;
+  //           levelReceived = claimStatus === CLAIM_STATUS.received;
+  //         });
+  //
+  //         levelInfo.status = levelLocked
+  //           ? LEVEL_STATUS.locked
+  //           : levelClaimed
+  //           ? LEVEL_STATUS.claimed
+  //           : levelReceived
+  //           ? LEVEL_STATUS.received
+  //           : LEVEL_STATUS.unlocked;
+  //
+  //         levelInfo.description = this.getLevelDescription(levelInfo, trackInfo);
+  //
+  //         levelInfoArray.push(levelInfo);
+  //       });
+  //       return this.sortBylevels(levelInfoArray);
+  //     })
+  //   );
+  // }
+
+  getTrackLevels(): Observable<UserTrackLevelInfo[]> {
     return this.rewardTrack.pipe(
-      map(trackInfo => {
-        let levelInfoArray: LevelInfo[] = [];
-        trackInfo.trackLevels.forEach((level, i) => {
-          const levelLocked: boolean = trackInfo.userLevel <= level.level;
-          let levelClaimed: boolean = false;
-          let levelReceived: boolean = false;
-          let levelInfo: LevelInfo = {
-            level: level.level,
-            name: level.name,
-            requiredPoints: level.requiredPoints,
-            status: LEVEL_STATUS.unlocked,
-            rewards: [],
-          };
+      map((userInfo) => {
+        const levels = this.expandLevelInfoArray(userInfo);
 
-          trackInfo.trackLevels[i].userClaimableRewards.forEach(reward => {
-            const claimStatus = reward.claimStatus;
-
-            levelInfo.rewards.push(reward);
-            levelClaimed = claimStatus === CLAIM_STATUS.claimed;
-            levelReceived = claimStatus === CLAIM_STATUS.received;
-          });
-
-          levelInfo.status = levelLocked
-            ? LEVEL_STATUS.locked
-            : levelClaimed
-            ? LEVEL_STATUS.claimed
-            : levelReceived
-            ? LEVEL_STATUS.received
-            : LEVEL_STATUS.unlocked;
-
-          levelInfoArray.push(levelInfo);
-        });
-        return this.sortlevelInfoArr(levelInfoArray);
-      })
+        return this.sortByLevel(levels);
+      }),
     );
   }
 
-  private sortlevelInfoArr(arr): LevelInfo[] {
-    return arr.sort((a, b) => (a.level > b.level ? 1 : a.level < b.level ? -1 : 0));
+  private expandLevelInfoArray(userInfo: UserRewardTrackInfo): UserTrackLevelInfo[] {
+    return userInfo.trackLevels.map((levelInfo) => {
+      levelInfo = { ...levelInfo, status: this.getLevelStatus(levelInfo, userInfo.userLevel) };
+      return { ...levelInfo, description: this.getLevelDescription(levelInfo, userInfo) };
+    });
+  }
+
+  private getLevelStatus({ level, userClaimableRewards: rewards }: UserTrackLevelInfo, userLevel: number): number {
+    if (userLevel < level) return LEVEL_STATUS.locked;
+    for (let i = 0; i < rewards.length; i++) {
+      if (rewards[i].claimStatus === CLAIM_STATUS.claimed) return CLAIM_STATUS.claimed;
+      if (rewards[i].claimStatus === CLAIM_STATUS.received) return CLAIM_STATUS.received;
+    }
+    return LEVEL_STATUS.unlocked;
+  }
+
+  private sortByLevel(levelInfoArray: UserTrackLevelInfo[]): UserTrackLevelInfo[] {
+    return levelInfoArray.sort(({ level: a }, { level: b }) => a - b);
+  }
+
+  private getExpToNextLevel(levels: UserTrackLevelInfo[], currentLevel: number, currentPoints: number): number | null {
+    const nextLevel = levels.find(({ level }) => level === currentLevel);
+    return nextLevel.requiredPoints - currentPoints;
+  }
+
+  private getLevelDescription(
+    { level, status, userClaimableRewards: rewards }: UserTrackLevelInfo,
+    { userExperiencePoints: points, trackLevels }: UserRewardTrackInfo,
+  ): string {
+    switch (status) {
+      case LEVEL_STATUS.locked:
+        const requiredXP = this.getExpToNextLevel(trackLevels, level, points);
+        return `${requiredXP} XP away from reward`;
+      case LEVEL_STATUS.claimed:
+        return '1 Active Reward';
+      case LEVEL_STATUS.received:
+        return 'Reward Claimed';
+      case LEVEL_STATUS.unlocked:
+        return rewards.length > 0 ? 'Claim 1 Reward' : 'No offers currently available';
+      default:
+        return '';
+    }
   }
 
   getStoreRewards(): Observable<RedeemableRewardInfo[]> {
@@ -159,7 +216,7 @@ export class RewardsService {
 
         return activeStoreRewards;
       }),
-      take(1)
+      take(1),
     );
   }
 
@@ -167,7 +224,7 @@ export class RewardsService {
     return this.contentService.retrieveContentStringList(ContentStringsParams).pipe(
       tap(res => {
         this.content = res.reduce((init, elem) => ({ ...init, [elem.name]: elem.value }), {});
-      })
+      }),
     );
   }
 

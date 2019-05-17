@@ -1,21 +1,21 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { LevelsComponent } from './levels.component';
 
+import { ExpandItemPage } from './expand-item.page';
 
-describe('LevelsPage', () => {
-  let component: LevelsComponent;
-  let fixture: ComponentFixture<LevelsComponent>;
+describe('ExpandItemPage', () => {
+  let component: ExpandItemPage;
+  let fixture: ComponentFixture<ExpandItemPage>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [LevelsComponent],
+      declarations: [ExpandItemPage],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(LevelsComponent);
+    fixture = TestBed.createComponent(ExpandItemPage);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

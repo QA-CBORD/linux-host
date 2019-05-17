@@ -1,1 +1,1 @@
-export * from "./opt-in.component";
+export * from './opt-in.component';

@@ -1,3 +1,10 @@
-<div class="progress">
-    <st-progress-bar [current]="75" [max]="150" [level]="2" [levelName]="'Padawan'"></st-progress-bar>
+<div class="content">
+    <div class="progress">
+        <st-progress-bar [levelInfo]="currentLevelInfo$ | async"
+                         [currentPointsSpent]="(trackInfo$ | async).userExperiencePoints">
+        </st-progress-bar>
+    </div>
+    <st-expand-list [currentLevel]="(trackInfo$ | async).userLevel"
+                    [levels]="levels$ | async">
+    </st-expand-list>
 </div>

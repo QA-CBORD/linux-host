@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { UserTrackLevelInfo } from '../../../pages/rewards/models';
 
 @Component({
   selector: 'st-progress-bar',
@@ -6,20 +7,16 @@ import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core
   styleUrls: ['./st-progress-bar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class StProgressBarComponent implements OnInit {
-  @Input('level') level: number;
-  @Input('levelName') levelName: string;
-  @Input('max') max: number;
-  @Input('current') current: number;
+export class StProgressBarComponent {
+  @Input() currentPointsSpent: number;
+  @Input() levelInfo: UserTrackLevelInfo;
 
   constructor() {}
 
-  get width(): WidthObject {
-    const percent = `${(this.current / this.max) * 100}%`;
-    return { width: percent };
+  get width(): number {
+    const percent = (this.currentPointsSpent / this.levelInfo.requiredPoints) * 100;
+    return percent > 100 ? 100 : percent;
   }
 
-  ngOnInit() {}
 }
 
-type WidthObject = { width: string };
