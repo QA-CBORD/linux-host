@@ -6,6 +6,7 @@ import {
   Input,
   Output,
 } from '@angular/core';
+
 import { UserTrackLevelInfo } from '../../../../models';
 
 @Component({
@@ -25,10 +26,10 @@ export class ExpandItemComponent {
 
   get levelClass(): string {
     const baseClass = 'progress__level';
-    const passed = 'progress__level--passed';
-    const active = 'progress__level--active';
-    const modifier = this.levelInfo.level <= this.currentLevel
-      && (this.levelInfo.level === this.currentLevel ? active : passed);
+    const passed = `${baseClass}--passed`;
+    const active = `${baseClass}--active`;
+    const { level } = this.levelInfo;
+    const modifier = level <= this.currentLevel && (level === this.currentLevel ? active : passed);
 
     return `${baseClass} ${modifier || ''}`;
   }

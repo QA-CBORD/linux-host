@@ -29,21 +29,23 @@
   }
 
   &__header {
-    @include font-nunito-heavy(20px);
-    @include ellipsis();
     color: $color-dim-gray;
     font-weight: bold;
     letter-spacing: 0;
     line-height: 24px;
+
+    @include ellipsis();
+    @include font-nunito-heavy(20px);
   }
 
   &__indicator {
-    @include font-nunito-regular(14px);
-    @include ellipsis();
     font-weight: normal;
     letter-spacing: 0;
     line-height: 18px;
     color: $color-black;
+
+    @include font-nunito-regular(14px);
+    @include ellipsis();
   }
 }
 

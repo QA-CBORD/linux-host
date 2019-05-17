@@ -1,5 +1,5 @@
 <ul class="progress">
-    <st-expand-item *ngFor="let level of levels;let last = last"
+    <st-expand-item *ngFor="let level of levels; let last = last; trackBy: trackFn"
                     [levelInfo]="level"
                     [class.last]="last"
                     [currentLevel]="currentLevel"
