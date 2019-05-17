@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { RewardsService } from '../../services';
+import { zip } from 'rxjs';
+import {RedeemableRewardInfo, UserRewardTrackInfo} from '../../models';
 
 @Component({
   selector: 'st-store',
@@ -6,28 +9,24 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./store.component.scss'],
 })
 export class StoreComponent implements OnInit {
-  tempArr = [
-    {
-      title: 'Carrot Cake2',
-      description: 'A mediocre cake that you might enjoy this description is longer than the other one wee wooo',
-    },
-    {
-      title: 'Carrot Cake3',
-      description: 'A mediocre cake that you might enjoy this description is longer than the other one wee wooo',
-    },
-    {
-      title: 'Carrot Cake4',
-      description: 'A mediocre cake that you might enjoy this description is longer than the other one wee wooo',
-    },
-  ];
+  rewards: RedeemableRewardInfo[];
+  activeRewards: RedeemableRewardInfo[];
+  track: UserRewardTrackInfo;
 
-  tempActiveArr = [
-    {
-      title: 'Carrot Cake2',
-      description: 'A mediocre cake that you might enjoy this description is longer than the other one wee wooo',
-    }
-  ];
-  constructor() {}
+  constructor(private readonly rewardsService: RewardsService) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    zip(
+      this.rewardsService.getStoreRewards(),
+      this.rewardsService.getStoreActiveRewards(),
+      this.rewardsService.rewardTrack
+    ).subscribe(([rewards, activeRewards, track]) => {
+      console.log(rewards);
+      console.log(activeRewards);
+      console.log(track);
+      this.track = track;
+      this.rewards = rewards;
+      this.activeRewards = activeRewards;
+    });
+  }
 }

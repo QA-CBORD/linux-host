@@ -1,6 +1,6 @@
 <div class="store__content">
-  <st-balance></st-balance>
-  <div class="store__active-wrapper">
+  <st-balance [points]="track.userCurrentPoints"></st-balance>
+  <div class="store__active-wrapper" *ngIf="activeRewards.length">
     <div class="store__active-list">
       <h4 class="store__active-title">Active Rewards</h4>
       <div class="store__active-description">
@@ -9,15 +9,26 @@
     </div>
 
     <ion-list class="store__list list-container">
-      <ion-item class="list-container__item" button="true" *ngFor="let item of tempActiveArr">
-        <st-list-item class="list-container__item-content" environment="store" [item]="item"></st-list-item>
+      <ion-item class="list-container__item" button="true" *ngFor="let item of activeRewards">
+        <st-list-item
+          class="list-container__item-content"
+          environment="store"
+          [item]="item"
+          [active]="true"
+        ></st-list-item>
       </ion-item>
     </ion-list>
   </div>
 
   <ion-list class="store__list list-container">
-    <ion-item class="list-container__item" button="true" *ngFor="let item of tempArr">
-      <st-list-item class="list-container__item-content" environment="store" [item]="item"></st-list-item>
+    <ion-item class="list-container__item" button="true" *ngFor="let item of rewards">
+      <st-list-item
+        class="list-container__item-content"
+        environment="store"
+        [currentPoints]="track.userCurrentPoints"
+        [item]="item"
+        [active]="false"
+      ></st-list-item>
     </ion-item>
   </ion-list>
 </div>

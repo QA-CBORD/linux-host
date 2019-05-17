@@ -10,16 +10,17 @@ import { buttons } from '../../../../core/utils/buttons.config';
 })
 export class RewardsPopoverComponent implements OnInit, AfterViewInit {
   @Input() data: any;
+  @Input() scan: boolean;
   popoverConfig: popoverConfig;
   constructor() {}
 
   ngOnInit() {
     this.popoverConfig = {
-      title: this.data.scan ? popoverTitles.scanTittle : popoverTitles.redeemTittle,
-      type: this.data.scan ? PopupTypes.SCAN : PopupTypes.REDEEM,
-      buttons: this.configureButtons(!this.data.scan),
+      title: this.scan ? popoverTitles.scanTittle : popoverTitles.redeemTittle,
+      type: this.scan ? PopupTypes.SCAN : PopupTypes.REDEEM,
+      buttons: this.configureButtons(!this.scan),
       message: this.data,
-      code: this.data.code,
+      code: this.data.id,
     };
   }
 

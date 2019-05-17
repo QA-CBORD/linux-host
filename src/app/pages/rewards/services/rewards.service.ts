@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, zip } from 'rxjs';
 import { take, tap, map } from 'rxjs/operators';
 
 import { RewardsApiService } from './rewards-api.service';
@@ -8,8 +8,8 @@ import { ContentService } from '../../../core/service/content-service/content.se
 
 import { CLAIM_STATUS, ContentStringsParams, LEVEL_STATUS, LOCAL_ROUTING, OPT_IN_STATUS } from '../rewards.config';
 import { LevelInfo, RedeemableRewardInfo, UserFulfillmentActivityInfo, UserRewardTrackInfo } from '../models';
-import {TabsConfig} from "../../../core/model/tabs/tabs.model";
-import {ContentStringInfo} from "../../../core/model/content/content-string-info.model";
+import { TabsConfig } from '../../../core/model/tabs/tabs.model';
+import { ContentStringInfo } from '../../../core/model/content/content-string-info.model';
 
 @Injectable()
 export class RewardsService {
@@ -34,12 +34,33 @@ export class RewardsService {
   }
 
   get rewardHistory(): Observable<UserFulfillmentActivityInfo[]> {
-    return this.rewardHistory$.asObservable();
+    return zip(this.rewardTrack, this.rewardHistory$.asObservable()).pipe(
+      map(([{ trackLevels, redeemableRewards }, rewardHistory]) => {
+        const arr = [];
+        const levelArr = trackLevels.reduce(
+          (total, currentValue) => [...total, ...currentValue.userClaimableRewards],
+          []
+        );
+        const rewardsArr = [...redeemableRewards, ...levelArr];
+
+        rewardsArr.forEach(({ id, description, shortDescription }) => {
+          const findRewards = rewardHistory.find(
+            reward => reward.rewardId === id && reward.status === CLAIM_STATUS.received
+          );
+
+          if (findRewards) {
+            arr.push({ ...findRewards, description, shortDescription });
+          }
+        });
+
+        return arr;
+      })
+    );
   }
 
   private set _rewardHistory(rewardHistory: UserFulfillmentActivityInfo[]) {
-    this.rewardHistoryList = { ...rewardHistory };
-    this.rewardHistory$.next({ ...this.rewardHistoryList });
+    this.rewardHistoryList = [...rewardHistory];
+    this.rewardHistory$.next([...this.rewardHistoryList]);
   }
 
   getUserRewardTrackInfo(): Observable<UserRewardTrackInfo> {
@@ -112,10 +133,8 @@ export class RewardsService {
     );
   }
 
-  private sortlevelInfoArr(levelInfoArray) {
-    return levelInfoArray.sort((a, b) => {
-      return a.level > b.level ? 1 : a.level < b.level ? -1 : 0;
-    });
+  private sortlevelInfoArr(arr): LevelInfo[] {
+    return arr.sort((a, b) => (a.level > b.level ? 1 : a.level < b.level ? -1 : 0));
   }
 
   getStoreRewards(): Observable<RedeemableRewardInfo[]> {
@@ -123,18 +142,18 @@ export class RewardsService {
   }
 
   getStoreActiveRewards(): Observable<RedeemableRewardInfo[]> {
-    return combineLatest(this.rewardTrack, this.rewardHistory).pipe(
+    return zip(this.rewardTrack, this.rewardHistory).pipe(
       map(([{ redeemableRewards }, historyArray]) => {
         const activeStoreRewards: RedeemableRewardInfo[] = [];
 
         if (historyArray.length === 0) {
           return activeStoreRewards;
         }
-        historyArray.forEach(({ rewardId }) => {
+        historyArray.forEach(({ rewardId, id }) => {
           const reward = redeemableRewards.find(reward => reward.id === rewardId);
 
           if (reward) {
-            activeStoreRewards.push(reward);
+            activeStoreRewards.push({ ...reward, id });
           }
         });
 

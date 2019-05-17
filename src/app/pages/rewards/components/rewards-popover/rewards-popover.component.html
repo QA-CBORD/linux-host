@@ -1,5 +1,5 @@
 <st-popover-layout [popoverConfig]="popoverConfig">
-  <div class="rewards-popover__title">{{ popoverConfig.message['title'] }}</div>
+  <div class="rewards-popover__title">{{ popoverConfig.message['name'] }}</div>
   <div class="rewards-popover__description">{{ popoverConfig.message['description'] }}</div>
   <div class="rewards-popover__qrcode" *ngIf="popoverConfig.type === 'SCAN'">
     <canvas id="barcodeCanvas"></canvas>
