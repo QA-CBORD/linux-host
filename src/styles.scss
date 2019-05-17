@@ -36,12 +36,19 @@
     }
   }
 
-  // Support full site view for Rewards Tabs page:
   .st-nav-tabs {
-    &.tabs-wrapper .tabs-inner {
-      @include bp-grid-tablet {
-        max-width: 768px;
-        margin: 0 20%;
+    &.tabs-wrapper {
+      // Support full site view for Rewards Tabs page:
+      .tabs-inner {
+        @include bp-grid-tablet {
+          max-width: 768px;
+          margin: 0 20%;
+        }
+      }
+
+      //  Remove ionic bug for ion-router-outlet for Rewards Tabs page:
+      .ion-page {
+        overflow-y: auto;
       }
     }
   }
