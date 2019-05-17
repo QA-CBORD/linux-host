@@ -98,48 +98,6 @@ export class RewardsService {
     );
   }
 
-  // getTrackLevels(): Observable<LevelInfo[]> {
-  //   return this.rewardTrack.pipe(
-  //     map(trackInfo => {
-  //
-  //       let levelInfoArray: LevelInfo[] = [];
-  //       trackInfo.trackLevels.forEach(level => {
-  //         const levelLocked: boolean = trackInfo.userLevel < level.level;
-  //         let levelClaimed: boolean = false;
-  //         let levelReceived: boolean = false;
-  //         let levelInfo: LevelInfo = {
-  //           level: level.level,
-  //           name: level.name,
-  //           description: '',
-  //           status: LEVEL_STATUS.unlocked,
-  //           rewards: [],
-  //         };
-  //
-  //         /// add rewards to LevelInfo and use status of rewards to determine level status
-  //         level.userClaimableRewards.forEach(reward => {
-  //           const claimStatus = reward.claimStatus;
-  //           levelInfo.rewards.push(reward);
-  //           levelClaimed = claimStatus === CLAIM_STATUS.claimed;
-  //           levelReceived = claimStatus === CLAIM_STATUS.received;
-  //         });
-  //
-  //         levelInfo.status = levelLocked
-  //           ? LEVEL_STATUS.locked
-  //           : levelClaimed
-  //           ? LEVEL_STATUS.claimed
-  //           : levelReceived
-  //           ? LEVEL_STATUS.received
-  //           : LEVEL_STATUS.unlocked;
-  //
-  //         levelInfo.description = this.getLevelDescription(levelInfo, trackInfo);
-  //
-  //         levelInfoArray.push(levelInfo);
-  //       });
-  //       return this.sortBylevels(levelInfoArray);
-  //     })
-  //   );
-  // }
-
   getTrackLevels(): Observable<UserTrackLevelInfo[]> {
     return this.rewardTrack.pipe(
       map((userInfo) => {
@@ -160,8 +118,8 @@ export class RewardsService {
   private getLevelStatus({ level, userClaimableRewards: rewards }: UserTrackLevelInfo, userLevel: number): number {
     if (userLevel < level) return LEVEL_STATUS.locked;
     for (let i = 0; i < rewards.length; i++) {
-      if (rewards[i].claimStatus === CLAIM_STATUS.claimed) return CLAIM_STATUS.claimed;
-      if (rewards[i].claimStatus === CLAIM_STATUS.received) return CLAIM_STATUS.received;
+      if (rewards[i].claimStatus === CLAIM_STATUS.claimed) return LEVEL_STATUS.claimed;
+      if (rewards[i].claimStatus === CLAIM_STATUS.received) return LEVEL_STATUS.received;
     }
     return LEVEL_STATUS.unlocked;
   }
