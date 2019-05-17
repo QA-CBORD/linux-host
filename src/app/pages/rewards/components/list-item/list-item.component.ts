@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 import { RedeemableRewardInfo, UserFulfillmentActivityInfo } from '../../models';
 import { RewardsPopoverComponent } from '../rewards-popover';
@@ -9,7 +9,7 @@ import { RewardsPopoverComponent } from '../rewards-popover';
   styleUrls: ['./list-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ListItemComponent implements OnInit {
+export class ListItemComponent {
   @Input() environment: string;
   @Input() item: RedeemableRewardInfo | UserFulfillmentActivityInfo;
   @Input() active: boolean;
@@ -17,10 +17,8 @@ export class ListItemComponent implements OnInit {
 
   constructor(private readonly popoverCtrl: PopoverController) {}
 
-  ngOnInit() {}
-
-  get disabledStoreReward() {
-    return !this.isHistoryEnv() && this.currentPoints <= this.item['pointCost'];
+  get disabledStoreReward(): boolean {
+    return !this.isHistoryEnv() && this.currentPoints < this.item['pointCost'];
   }
 
   isHistoryEnv(): boolean {
