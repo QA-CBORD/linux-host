@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 import { RedeemableRewardInfo, UserFulfillmentActivityInfo } from '../../models';
 import { RewardsPopoverComponent } from '../rewards-popover';
+import { RewardsApiService } from '../../services';
 
 @Component({
   selector: 'st-list-item',
@@ -15,7 +16,7 @@ export class ListItemComponent {
   @Input() active: boolean;
   @Input() currentPoints: number;
 
-  constructor(private readonly popoverCtrl: PopoverController) {}
+  constructor(private readonly popoverCtrl: PopoverController, private readonly rewardsApi: RewardsApiService) {}
 
   get disabledStoreReward(): boolean {
     return !this.isHistoryEnv() && this.currentPoints < this.item['pointCost'];
@@ -42,7 +43,12 @@ export class ListItemComponent {
 
     popover.onDidDismiss().then(({ data }) => {
       if (data === 'REDEEM') {
-        this.openPopover(this.item, true);
+        this.rewardsApi.claimReward(this.item.id).subscribe((res: boolean) => {
+          if (res) {
+            this.openPopover(this.item, true);
+          }
+        });
+        // this.openPopover(this.item, true);
       }
     });
 

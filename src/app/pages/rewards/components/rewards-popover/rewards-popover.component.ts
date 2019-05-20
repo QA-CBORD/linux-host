@@ -20,7 +20,7 @@ export class RewardsPopoverComponent implements OnInit, AfterViewInit {
       type: this.scan ? PopupTypes.SCAN : PopupTypes.REDEEM,
       buttons: this.configureButtons(!this.scan),
       message: this.data,
-      code: this.data.id,
+      code: this.scan ? this.data.id : false,
     };
   }
 

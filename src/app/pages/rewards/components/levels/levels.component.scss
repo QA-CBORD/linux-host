@@ -1,4 +1,15 @@
+@import 'tools';
+
 :host {
+  .content {
+    @include bp-grid-tablet {
+      margin: 0 20%;
+    }
+
+    @include bp-grid-desktop {
+      margin: 0 25%;
+    }
+  }
   .progress {
     background: url('/assets/images/background-shapes.svg') no-repeat center;
     background-size: contain;
