@@ -49,7 +49,7 @@ export class RewardsPopoverComponent implements OnInit, AfterViewInit {
     this.type === PopupTypes.SCAN && this.initBarcode();
   }
 
-  // jestkii kostil
+  // TODO fix after pre-demo (string affect align!)
 
   private getCode(): string {
     if (this.type === PopupTypes.SCAN) {
