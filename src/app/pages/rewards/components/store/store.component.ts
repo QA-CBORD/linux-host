@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { RewardsService } from '../../services';
 import { zip } from 'rxjs';
-import {RedeemableRewardInfo, UserRewardTrackInfo} from '../../models';
+import { RedeemableRewardInfo, UserRewardTrackInfo } from '../../models';
 
 @Component({
   selector: 'st-store',

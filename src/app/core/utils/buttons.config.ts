@@ -30,6 +30,14 @@ const REDEEM = {
   fill: 'default',
 };
 
+const CLAIM = {
+  label: 'REDEEM',
+  class: 'filled',
+  shape: 'round',
+  strong: false,
+  fill: 'default',
+};
+
 const CLOSE = {
   label: 'CLOSE',
   class: 'clear-with-shadow',
@@ -44,4 +52,5 @@ export const buttons = {
   OKAY,
   REDEEM,
   CLOSE,
+  CLAIM,
 };

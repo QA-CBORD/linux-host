@@ -1,4 +1,4 @@
-<div class="list-item" (click)="openPopover(item, active)">
+<div class="list-item" (click)="openPopover(item, type)">
   <div class="list-item__content" [ngClass]="{ 'list-item__store-content': !isHistoryEnv() }">
     <div class="list-item__title">
       {{ item.itemName || item.name }}

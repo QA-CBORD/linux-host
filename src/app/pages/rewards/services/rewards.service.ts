@@ -7,26 +7,22 @@ import { RewardsApiService } from './rewards-api.service';
 import { ContentService } from '../../../core/service/content-service/content.service';
 
 import { CLAIM_STATUS, ContentStringsParams, LEVEL_STATUS, LOCAL_ROUTING, OPT_IN_STATUS } from '../rewards.config';
-import {
-  RedeemableRewardInfo,
-  UserFulfillmentActivityInfo,
-  UserRewardTrackInfo,
-  UserTrackLevelInfo,
-} from '../models';
+import { RedeemableRewardInfo, UserFulfillmentActivityInfo, UserRewardTrackInfo, UserTrackLevelInfo } from '../models';
 import { TabsConfig } from '../../../core/model/tabs/tabs.model';
 import { ContentStringInfo } from '../../../core/model/content/content-string-info.model';
 
 @Injectable()
 export class RewardsService {
   private readonly rewardTrack$: BehaviorSubject<UserRewardTrackInfo> = new BehaviorSubject<UserRewardTrackInfo>(null);
-  private readonly rewardHistory$: BehaviorSubject<UserFulfillmentActivityInfo[]> = new BehaviorSubject<UserFulfillmentActivityInfo[]>([]);
+  private readonly rewardHistory$: BehaviorSubject<UserFulfillmentActivityInfo[]> = new BehaviorSubject<
+    UserFulfillmentActivityInfo[]
+  >([]);
   private rewardTrackInfo: UserRewardTrackInfo;
   private rewardHistoryList: UserFulfillmentActivityInfo[];
 
   private content;
 
-  constructor(private rewardsApi: RewardsApiService, private contentService: ContentService) {
-  }
+  constructor(private rewardsApi: RewardsApiService, private contentService: ContentService) {}
 
   get rewardTrack(): Observable<UserRewardTrackInfo> {
     return this.rewardTrack$.asObservable();
@@ -94,22 +90,22 @@ export class RewardsService {
         tabConfig.tabs.push({ name: 'History', route: LOCAL_ROUTING.history });
 
         return tabConfig;
-      }),
+      })
     );
   }
 
   getTrackLevels(): Observable<UserTrackLevelInfo[]> {
     return this.rewardTrack.pipe(
-      map((userInfo) => {
+      map(userInfo => {
         const levels = this.expandLevelInfoArray(userInfo);
 
         return this.sortByLevel(levels);
-      }),
+      })
     );
   }
 
   private expandLevelInfoArray(userInfo: UserRewardTrackInfo): UserTrackLevelInfo[] {
-    return userInfo.trackLevels.map((levelInfo) => {
+    return userInfo.trackLevels.map(levelInfo => {
       levelInfo = { ...levelInfo, status: this.getLevelStatus(levelInfo, userInfo.userLevel) };
       return { ...levelInfo, description: this.getLevelDescription(levelInfo, userInfo) };
     });
@@ -135,7 +131,7 @@ export class RewardsService {
 
   private getLevelDescription(
     { level, status, userClaimableRewards: rewards }: UserTrackLevelInfo,
-    { userExperiencePoints: points, trackLevels }: UserRewardTrackInfo,
+    { userExperiencePoints: points, trackLevels }: UserRewardTrackInfo
   ): string {
     switch (status) {
       case LEVEL_STATUS.locked:
@@ -174,7 +170,7 @@ export class RewardsService {
 
         return activeStoreRewards;
       }),
-      take(1),
+      take(1)
     );
   }
 
@@ -182,7 +178,7 @@ export class RewardsService {
     return this.contentService.retrieveContentStringList(ContentStringsParams).pipe(
       tap(res => {
         this.content = res.reduce((init, elem) => ({ ...init, [elem.name]: elem.value }), {});
-      }),
+      })
     );
   }
 
