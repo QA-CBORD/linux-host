@@ -5,6 +5,7 @@ import { popoverConfig } from 'src/app/core/model/popover/popover.model';
 import bwipjs from 'bwip-angular2';
 import { CONTENT_STRINGS } from '../mobile-acces.config';
 import { MobileAccessService } from '../service';
+import { buttons } from '../../../core/utils/buttons.config';
 
 @Component({
   selector: 'mobile-access-popover',
@@ -86,32 +87,11 @@ export class MobileAccessPopoverComponent implements OnInit, AfterViewInit {
   }
 
   configureButtons(condition) {
-    const successBtns = [
-      {
-        label: this.contentString.closeBtn,
-        class: 'filled',
-        shape: 'round',
-        strong: false,
-        fill: 'default',
-      },
-    ];
+    const successBtns = [{ ...buttons.OKAY, label: this.contentString.closeBtn }];
     const errorBtns = [
-      {
-        label: this.contentString.cancelBtn,
-        class: 'clear',
-        shape: 'round',
-        strong: true,
-        fill: 'clear',
-      },
-      {
-        label: this.contentString.retryBtn,
-        class: 'filled',
-        shape: 'round',
-        strong: false,
-        fill: 'default',
-      },
+      { ...buttons.CANCEL, label: this.contentString.cancelBtn },
+      { ...buttons.RETRY, label: this.contentString.retryBtn },
     ];
-
     return condition ? successBtns : errorBtns;
   }
 
