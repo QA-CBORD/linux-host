@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
-import { RedeemableRewardInfo, UserFulfillmentActivityInfo } from '../../models';
+import { ClaimableRewardInfo, RedeemableRewardInfo, UserFulfillmentActivityInfo } from '../../models';
 import { RewardsPopoverComponent } from '../rewards-popover';
 import { RewardsApiService } from '../../services';
+import { LEVEL_STATUS } from '../../rewards.config';
 
 @Component({
   selector: 'st-list-item',
@@ -10,24 +11,40 @@ import { RewardsApiService } from '../../services';
   styleUrls: ['./list-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ListItemComponent {
+export class ListItemComponent implements OnInit {
+  [x: string]: any;
   @Input() environment: string;
-  @Input() item: RedeemableRewardInfo | UserFulfillmentActivityInfo;
+  @Input() item: RedeemableRewardInfo | UserFulfillmentActivityInfo | ClaimableRewardInfo;
   @Input() active: boolean;
   @Input() currentPoints: number;
+  @Input() userLevel: number;
+  @Input() statusLevel: number;
 
   constructor(private readonly popoverCtrl: PopoverController, private readonly rewardsApi: RewardsApiService) {}
 
+  ngOnInit() {}
   get disabledStoreReward(): boolean {
-    return !this.isHistoryEnv() && this.currentPoints < this.item['pointCost'];
+    return !this.isHistoryEnv && this.currentPoints < this.item['pointCost'];
   }
 
-  isHistoryEnv(): boolean {
+  get isHistoryEnv(): boolean {
     return this.environment === 'history';
   }
 
+  get isStoreEnv(): boolean {
+    return this.environment === 'store';
+  }
+
+  get isLevelsEnv(): boolean {
+    return this.environment === 'levels';
+  }
+
   async openPopover(data, scan = false) {
-    if (!(!this.isHistoryEnv() && (this.active || this.currentPoints >= this.item['pointCost']))) {
+    if (
+      this.isHistoryEnv ||
+      !(this.isStoreEnv && (this.active || this.currentPoints >= this.item['pointCost'])) ||
+      (this.isLevelsEnv && this.statusLevel === LEVEL_STATUS.received)
+    ) {
       return;
     }
 
@@ -48,10 +65,13 @@ export class ListItemComponent {
             this.openPopover(this.item, true);
           }
         });
-        // this.openPopover(this.item, true);
       }
     });
 
     return await popover.present();
+  }
+
+  isLowerThenCurrentLevel(item) {
+    return item.claimLevel <= this.userLevel;
   }
 }

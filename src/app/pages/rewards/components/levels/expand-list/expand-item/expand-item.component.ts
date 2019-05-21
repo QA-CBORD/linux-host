@@ -1,13 +1,7 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  EventEmitter,
-  Input,
-  Output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
 
 import { UserTrackLevelInfo } from '../../../../models';
+import { CLAIM_STATUS, LEVEL_STATUS } from '../../../../rewards.config';
 
 @Component({
   selector: 'st-expand-item',
@@ -21,8 +15,7 @@ export class ExpandItemComponent {
   @Output() onClickExpand: EventEmitter<number> = new EventEmitter<number>();
   show: boolean = false;
 
-  constructor(private readonly cdRef: ChangeDetectorRef) {
-  }
+  constructor(private readonly cdRef: ChangeDetectorRef) {}
 
   get levelClass(): string {
     const baseClass = 'progress__level';
@@ -41,5 +34,17 @@ export class ExpandItemComponent {
   closeExpand() {
     this.show = false;
     this.cdRef.detectChanges();
+  }
+
+  isLockedItem(reward) {
+    return reward.claimLevel > this.currentLevel;
+  }
+
+  isUnearnedItem(reward) {
+    return (
+      reward.claimStatus === CLAIM_STATUS.unearned &&
+      (reward.claimLevel < this.currentLevel ||
+        (reward.claimStatus === CLAIM_STATUS.unearned && reward.status !== LEVEL_STATUS.received))
+    );
   }
 }

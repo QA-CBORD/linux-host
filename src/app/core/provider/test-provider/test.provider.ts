@@ -37,6 +37,13 @@ export class TestProvider {
       institutionId: '1e418ca8-7148-4956-b7c4-1f35db6d8a11',
     };
 
+    const odysseyPreviewTest: UserLogin = {
+      userName: 'yxp@test.cbord.com',
+      password: 'Dn210778pms#',
+      domain: null,
+      institutionId: '1e418ca8-7148-4956-b7c4-1f35db6d8a11',
+    };
+
     const sethsInstitution: UserLogin = {
       userName: 'sac2@tpsmail.dev',
       password: 'password1',
@@ -44,7 +51,7 @@ export class TestProvider {
       institutionId: 'ec1307c4-d59e-4981-b5f9-860e23229a0d',
     };
 
-    return this.authService.authenticateUser(gold7).pipe(
+    return this.authService.authenticateUser(odysseyPreview).pipe(
       tap(newSessionId => DataCache.setSessionId(newSessionId)),
       catchError(error => {
         /// error show exception
