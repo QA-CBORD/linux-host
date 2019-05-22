@@ -17,6 +17,4 @@ export class StProgressBarComponent {
     const percent = (this.currentPointsSpent / this.levelInfo.requiredPoints) * 100;
     return percent > 100 ? 100 : percent;
   }
-
 }
-

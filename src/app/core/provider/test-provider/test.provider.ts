@@ -44,7 +44,7 @@ export class TestProvider {
       institutionId: 'ec1307c4-d59e-4981-b5f9-860e23229a0d',
     };
 
-    return this.authService.authenticateUser(gold7).pipe(
+    return this.authService.authenticateUser(odysseyPreview).pipe(
       tap(newSessionId => DataCache.setSessionId(newSessionId)),
       catchError(error => {
         /// error show exception

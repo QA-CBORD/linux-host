@@ -31,7 +31,7 @@ const REDEEM = {
 };
 
 const CLAIM = {
-  label: 'REDEEM',
+  label: 'CLAIM',
   class: 'filled',
   shape: 'round',
   strong: false,

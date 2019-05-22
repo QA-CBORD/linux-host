@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
-import { BehaviorSubject, Observable, zip } from 'rxjs';
-import { take, tap, map } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of, zip } from 'rxjs';
+import { map, take, tap } from 'rxjs/operators';
 
 import { RewardsApiService } from './rewards-api.service';
 import { ContentService } from '../../../core/service/content-service/content.service';
@@ -28,39 +28,29 @@ export class RewardsService {
     return this.rewardTrack$.asObservable();
   }
 
+  get rewardHistory(): Observable<UserFulfillmentActivityInfo[]> {
+    return this.rewardHistory$.asObservable();
+  }
+
   private set _rewardTrack(rewardTrackInfo: UserRewardTrackInfo) {
     this.rewardTrackInfo = { ...rewardTrackInfo };
     this.rewardTrack$.next({ ...this.rewardTrackInfo });
   }
 
-  get rewardHistory(): Observable<UserFulfillmentActivityInfo[]> {
-    return zip(this.rewardTrack, this.rewardHistory$.asObservable()).pipe(
-      map(([{ trackLevels, redeemableRewards }, rewardHistory]) => {
-        const arr = [];
-        const levelArr = trackLevels.reduce(
-          (total, currentValue) => [...total, ...currentValue.userClaimableRewards],
-          []
-        );
-        const rewardsArr = [...redeemableRewards, ...levelArr];
-
-        rewardsArr.forEach(({ id, description, shortDescription }) => {
-          const findRewards = rewardHistory.find(
-            reward => reward.rewardId === id && reward.status === CLAIM_STATUS.received
-          );
-
-          if (findRewards) {
-            arr.push({ ...findRewards, description, shortDescription });
-          }
-        });
-
-        return arr;
-      })
-    );
-  }
-
   private set _rewardHistory(rewardHistory: UserFulfillmentActivityInfo[]) {
     this.rewardHistoryList = [...rewardHistory];
     this.rewardHistory$.next([...this.rewardHistoryList]);
+  }
+
+  filterHistoryByStatus(status: CLAIM_STATUS): Observable<UserFulfillmentActivityInfo[]> {
+    return zip(this.rewardTrack, this.rewardHistory).pipe(
+      map(([{ trackLevels, redeemableRewards }, rewardHistory]) => {
+        let rewards = trackLevels.reduce((total, { userClaimableRewards }) => [...total, ...userClaimableRewards], []);
+        rewards = [...redeemableRewards, ...rewards];
+
+        return this.extractFromHistoryByStatus(rewardHistory, rewards, status);
+      })
+    );
   }
 
   getUserRewardTrackInfo(): Observable<UserRewardTrackInfo> {
@@ -104,6 +94,54 @@ export class RewardsService {
     );
   }
 
+  getStoreRewards(): Observable<RedeemableRewardInfo[]> {
+    return this.rewardTrack.pipe(map(({ redeemableRewards }) => redeemableRewards));
+  }
+
+  getStoreActiveRewards(): Observable<UserFulfillmentActivityInfo[]> {
+    return this.filterHistoryByStatus(CLAIM_STATUS.claimed);
+  }
+
+  initContentStringsList(): Observable<ContentStringInfo[]> {
+    return this.contentService.retrieveContentStringList(ContentStringsParams).pipe(
+      tap(res => {
+        this.content = res.reduce((init, elem) => ({ ...init, [elem.name]: elem.value }), {});
+      })
+    );
+  }
+
+  getContentValueByName(name: string): string | undefined {
+    return this.content[name];
+  }
+
+  private extractFromHistoryByStatus(
+    history: UserFulfillmentActivityInfo[],
+    rewards: RedeemableRewardInfo[],
+    status: CLAIM_STATUS
+  ): UserFulfillmentActivityInfo[] {
+    const cash = {};
+    const res = [];
+
+    for (let i = 0; i < history.length; i++) {
+      if (history[i].status !== status) {
+        continue;
+      }
+      let reward;
+      if (!cash[history[i].rewardId]) {
+        reward = rewards.find(reward => reward.id === history[i].rewardId);
+      } else {
+        reward = cash[history[i].rewardId];
+      }
+
+      if (reward) {
+        cash[reward.id] = reward;
+        res.push({ ...history[i], shortDescription: reward.shortDescription, description: reward.description });
+      }
+    }
+
+    return res;
+  }
+
   private expandLevelInfoArray(userInfo: UserRewardTrackInfo): UserTrackLevelInfo[] {
     return userInfo.trackLevels.map(levelInfo => {
       levelInfo = { ...levelInfo, status: this.getLevelStatus(levelInfo, userInfo.userLevel) };
@@ -112,10 +150,16 @@ export class RewardsService {
   }
 
   private getLevelStatus({ level, userClaimableRewards: rewards }: UserTrackLevelInfo, userLevel: number): number {
-    if (userLevel < level) return LEVEL_STATUS.locked;
+    if (userLevel < level) {
+      return LEVEL_STATUS.locked;
+    }
     for (let i = 0; i < rewards.length; i++) {
-      if (rewards[i].claimStatus === CLAIM_STATUS.claimed) return LEVEL_STATUS.claimed;
-      if (rewards[i].claimStatus === CLAIM_STATUS.received) return LEVEL_STATUS.received;
+      if (rewards[i].claimStatus === CLAIM_STATUS.claimed) {
+        return LEVEL_STATUS.claimed;
+      }
+      if (rewards[i].claimStatus === CLAIM_STATUS.received) {
+        return LEVEL_STATUS.received;
+      }
     }
     return LEVEL_STATUS.unlocked;
   }
@@ -146,43 +190,5 @@ export class RewardsService {
       default:
         return '';
     }
-  }
-
-  getStoreRewards(): Observable<RedeemableRewardInfo[]> {
-    return this.rewardTrack.pipe(map(({ redeemableRewards }) => redeemableRewards));
-  }
-
-  getStoreActiveRewards(): Observable<RedeemableRewardInfo[]> {
-    return zip(this.rewardTrack, this.rewardHistory).pipe(
-      map(([{ redeemableRewards }, historyArray]) => {
-        const activeStoreRewards: RedeemableRewardInfo[] = [];
-
-        if (historyArray.length === 0) {
-          return activeStoreRewards;
-        }
-        historyArray.forEach(({ rewardId, id }) => {
-          const reward = redeemableRewards.find(reward => reward.id === rewardId);
-
-          if (reward) {
-            activeStoreRewards.push({ ...reward, id });
-          }
-        });
-
-        return activeStoreRewards;
-      }),
-      take(1)
-    );
-  }
-
-  initContentStringsList(): Observable<ContentStringInfo[]> {
-    return this.contentService.retrieveContentStringList(ContentStringsParams).pipe(
-      tap(res => {
-        this.content = res.reduce((init, elem) => ({ ...init, [elem.name]: elem.value }), {});
-      })
-    );
-  }
-
-  getContentValueByName(name: string): string | undefined {
-    return this.content[name];
   }
 }
