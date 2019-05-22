@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { RewardsService } from '../../services';
-import { zip } from 'rxjs';
+import { Observable } from 'rxjs';
 import { RedeemableRewardInfo, UserFulfillmentActivityInfo, UserRewardTrackInfo } from '../../models';
 
 @Component({
@@ -9,21 +9,23 @@ import { RedeemableRewardInfo, UserFulfillmentActivityInfo, UserRewardTrackInfo 
   styleUrls: ['./store.component.scss'],
 })
 export class StoreComponent implements OnInit {
-  rewards: RedeemableRewardInfo[];
-  activeRewards: UserFulfillmentActivityInfo[];
-  track: UserRewardTrackInfo;
+  rewards: Observable<RedeemableRewardInfo[]>;
+  activeRewards: Observable<UserFulfillmentActivityInfo[]>;
+  track: Observable<UserRewardTrackInfo>;
 
   constructor(private readonly rewardsService: RewardsService) {}
 
   ngOnInit() {
-    zip(
-      this.rewardsService.getStoreRewards(),
-      this.rewardsService.getStoreActiveRewards(),
-      this.rewardsService.rewardTrack
-    ).subscribe(([rewards, activeRewards, track]) => {
-      this.track = track;
-      this.rewards = rewards;
-      this.activeRewards = activeRewards;
-    });
+    this.rewards = this.rewardsService.getStoreRewards();
+    this.track = this.rewardsService.rewardTrack;
+    this.activeRewards = this.rewardsService.getStoreActiveRewards();
+
+    // zip(
+    //   this.rewardsService.getStoreRewards(),
+    //   this.rewardsService.getStoreActiveRewards(),
+    //   this.rewardsService.rewardTrack
+    // ).subscribe(([rewards, activeRewards, track]) => {
+    //   console.log(rewards, activeRewards);
+    // });
   }
 }
