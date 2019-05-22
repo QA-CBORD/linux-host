@@ -41,10 +41,6 @@ export class ExpandItemComponent {
   }
 
   isUnearnedItem(reward) {
-    return (
-      reward.claimStatus === CLAIM_STATUS.unearned &&
-      (reward.claimLevel < this.currentLevel ||
-        (reward.claimStatus === CLAIM_STATUS.unearned && reward.status !== LEVEL_STATUS.received))
-    );
+    return reward.claimStatus === CLAIM_STATUS.unearned && this.levelInfo.status !== 1;
   }
 }

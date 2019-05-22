@@ -3,7 +3,7 @@ import { PopoverController } from '@ionic/angular';
 import { RedeemableRewardInfo, UserFulfillmentActivityInfo } from '../../models';
 import { RewardsPopoverComponent } from '../rewards-popover';
 import { RewardsApiService } from '../../services';
-import { LEVEL_STATUS } from '../../rewards.config';
+import {CLAIM_STATUS, LEVEL_STATUS} from '../../rewards.config';
 import { PopupTypes } from '../../rewards.config';
 import { take } from 'rxjs/operators';
 
@@ -43,7 +43,7 @@ export class ListItemComponent {
     return this.environment === 'levels';
   }
 
-  async openPopover(data, type: string = PopupTypes.REDEEM) {
+  async openPopover(data, type: string = this.defaultPopoverAction(data.claimStatus)) {
     if (
       this.isHistoryEnv ||
       !(this.isStoreEnv && (this.active || this.currentPoints >= this.item['pointCost'])) ||
@@ -78,7 +78,11 @@ export class ListItemComponent {
     return await popover.present();
   }
 
-  isLowerThenCurrentLevel(item) {
+  isLowerThenCurrentLevel(item): boolean {
     return item.claimLevel <= this.userLevel;
+  }
+
+  private defaultPopoverAction(claimStatus): string {
+    return this.active || claimStatus === CLAIM_STATUS.claimed ? PopupTypes.SCAN : PopupTypes.REDEEM;
   }
 }
