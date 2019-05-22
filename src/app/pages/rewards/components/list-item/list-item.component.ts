@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
-import { RedeemableRewardInfo, UserFulfillmentActivityInfo } from '../../models';
+import { ClaimableRewardInfo, RedeemableRewardInfo, UserFulfillmentActivityInfo } from '../../models';
 import { RewardsPopoverComponent } from '../rewards-popover';
 import { RewardsApiService } from '../../services';
-import {CLAIM_STATUS, LEVEL_STATUS} from '../../rewards.config';
+import { CLAIM_STATUS, LEVEL_STATUS } from '../../rewards.config';
 import { PopupTypes } from '../../rewards.config';
 import { take } from 'rxjs/operators';
 
@@ -15,7 +15,7 @@ import { take } from 'rxjs/operators';
 })
 export class ListItemComponent {
   @Input() environment: string;
-  @Input() item: RedeemableRewardInfo | UserFulfillmentActivityInfo;
+  @Input() item: RedeemableRewardInfo | UserFulfillmentActivityInfo | ClaimableRewardInfo;
   @Input() active: boolean;
   @Input() currentPoints: number;
   @Input() userLevel: number;
@@ -44,11 +44,7 @@ export class ListItemComponent {
   }
 
   async openPopover(data, type: string = this.defaultPopoverAction(data.claimStatus)) {
-    if (
-      this.isHistoryEnv ||
-      !(this.isStoreEnv && (this.active || this.currentPoints >= this.item['pointCost'])) ||
-      (this.isLevelsEnv && this.statusLevel === LEVEL_STATUS.received)
-    ) {
+    if (this.preventOpenPopover()) {
       return;
     }
 
@@ -84,5 +80,13 @@ export class ListItemComponent {
 
   private defaultPopoverAction(claimStatus): string {
     return this.active || claimStatus === CLAIM_STATUS.claimed ? PopupTypes.SCAN : PopupTypes.REDEEM;
+  }
+
+  private preventOpenPopover(): boolean {
+    return (
+      this.isHistoryEnv ||
+      (this.isStoreEnv && !(this.active || this.currentPoints >= this.item['pointCost'])) ||
+      (this.isLevelsEnv && this.statusLevel === LEVEL_STATUS.received)
+    );
   }
 }
