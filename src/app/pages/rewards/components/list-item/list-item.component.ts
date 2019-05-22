@@ -4,6 +4,7 @@ import { ClaimableRewardInfo, RedeemableRewardInfo, UserFulfillmentActivityInfo 
 import { RewardsPopoverComponent } from '../rewards-popover';
 import { RewardsApiService } from '../../services';
 import { LEVEL_STATUS } from '../../rewards.config';
+import { PopupTypes } from '../../rewards.config';
 
 @Component({
   selector: 'st-list-item',
@@ -11,10 +12,9 @@ import { LEVEL_STATUS } from '../../rewards.config';
   styleUrls: ['./list-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ListItemComponent implements OnInit {
-  [x: string]: any;
+export class ListItemComponent {
   @Input() environment: string;
-  @Input() item: RedeemableRewardInfo | UserFulfillmentActivityInfo | ClaimableRewardInfo;
+  @Input() item: RedeemableRewardInfo | UserFulfillmentActivityInfo;
   @Input() active: boolean;
   @Input() currentPoints: number;
   @Input() userLevel: number;
@@ -22,9 +22,12 @@ export class ListItemComponent implements OnInit {
 
   constructor(private readonly popoverCtrl: PopoverController, private readonly rewardsApi: RewardsApiService) {}
 
-  ngOnInit() {}
   get disabledStoreReward(): boolean {
     return !this.isHistoryEnv && this.currentPoints < this.item['pointCost'];
+  }
+
+  get type(): string {
+    return this.active ? PopupTypes.SCAN : PopupTypes.REDEEM;
   }
 
   get isHistoryEnv(): boolean {
@@ -45,6 +48,8 @@ export class ListItemComponent implements OnInit {
       !(this.isStoreEnv && (this.active || this.currentPoints >= this.item['pointCost'])) ||
       (this.isLevelsEnv && this.statusLevel === LEVEL_STATUS.received)
     ) {
+  async openPopover(data, type: string = PopupTypes.REDEEM) {
+    if (!(!this.isHistoryEnv() && (this.active || this.currentPoints >= this.item['pointCost']))) {
       return;
     }
 
@@ -52,19 +57,22 @@ export class ListItemComponent implements OnInit {
       component: RewardsPopoverComponent,
       componentProps: {
         data: { ...data },
-        scan,
+        type,
       },
       animated: false,
       backdropDismiss: true,
     });
 
     popover.onDidDismiss().then(({ data }) => {
-      if (data === 'REDEEM') {
-        this.rewardsApi.claimReward(this.item.id).subscribe((res: boolean) => {
-          if (res) {
-            this.openPopover(this.item, true);
-          }
-        });
+      if (data === PopupTypes.REDEEM) {
+        this.rewardsApi
+          .claimReward(this.item.id)
+          .pipe(take(1))
+          .subscribe((res: boolean) => {
+            if (res) {
+              this.openPopover(this.item, PopupTypes.SCAN);
+            }
+          });
       }
     });
 

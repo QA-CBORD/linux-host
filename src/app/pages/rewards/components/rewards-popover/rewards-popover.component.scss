@@ -19,5 +19,9 @@
         @include font-nunito-regular(14px);
       }
     }
+
+    &__success {
+      object-fit: none;
+    }
   }
 }

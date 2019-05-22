@@ -7,7 +7,7 @@ import { UserTrackLevelInfo } from '../../../models';
   selector: 'st-expand-list',
   templateUrl: './expand-list.component.html',
   styleUrls: ['./expand-list.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ExpandListComponent {
   @ViewChildren(ExpandItemComponent) children: QueryList<ExpandItemComponent>;
@@ -20,7 +20,7 @@ export class ExpandListComponent {
     this.level = level;
   }
 
-  trackFn(index, {level}: UserTrackLevelInfo): number {
+  trackFn(index, { level }: UserTrackLevelInfo): number {
     return level;
   }
 

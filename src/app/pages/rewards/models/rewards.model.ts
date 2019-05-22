@@ -24,21 +24,21 @@ export interface UserRewardTrackInfoInfoList {
 }
 
 export interface UserTrackLevelInfo {
-    level: number;
-    name: string;
-    requiredPoints: number;
-    redeemed: boolean;
-    userClaimableRewards: ClaimableRewardInfo[];
-    description?: string;
-    status?: LEVEL_STATUS;
+  level: number;
+  name: string;
+  requiredPoints: number;
+  redeemed: boolean;
+  userClaimableRewards: ClaimableRewardInfo[];
+  description?: string;
+  status?: LEVEL_STATUS;
 }
 
 export interface LevelInfo {
-    level: number;
-    name: string;
-    description?: string;
-    status: LEVEL_STATUS;
-    rewards: ClaimableRewardInfo[];
+  level: number;
+  name: string;
+  description?: string;
+  status: LEVEL_STATUS;
+  rewards: ClaimableRewardInfo[];
 }
 
 export interface AccumulationRuleInfo {

@@ -24,6 +24,13 @@ export enum OPT_IN_STATUS {
   no = 0,
 }
 
+export enum PopupTypes {
+  REDEEM = 'REDEEM',
+  SCAN = 'SCAN',
+  SUCCESS = 'SUCCESS',
+  CLAIM = 'CLAIM',
+}
+
 export enum LEVEL_STATUS {
   locked = 0,
   unlocked = 1,

@@ -73,8 +73,8 @@ export class RewardsApiService extends BaseService {
   }
 
   claimReward(rewardId: string) {
-      debugger
     const methodName = 'claimReward';
+
     return this.httpRequest<MessageResponse<boolean>>(this.serviceUrl, methodName, true, { rewardId }).pipe(
       map(({ response, exception }) => {
         if (exception !== null) {
