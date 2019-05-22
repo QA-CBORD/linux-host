@@ -82,4 +82,5 @@ export interface UserFulfillmentActivityInfo {
   itemName: string;
   rewardId: string;
   id: string;
+  shortDescription?: string;
 }

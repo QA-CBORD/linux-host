@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { RewardsService } from '../../services';
 import { zip } from 'rxjs';
-import { RedeemableRewardInfo, UserRewardTrackInfo } from '../../models';
+import { RedeemableRewardInfo, UserFulfillmentActivityInfo, UserRewardTrackInfo } from '../../models';
 
 @Component({
   selector: 'st-store',
@@ -10,7 +10,7 @@ import { RedeemableRewardInfo, UserRewardTrackInfo } from '../../models';
 })
 export class StoreComponent implements OnInit {
   rewards: RedeemableRewardInfo[];
-  activeRewards: RedeemableRewardInfo[];
+  activeRewards: UserFulfillmentActivityInfo[];
   track: UserRewardTrackInfo;
 
   constructor(private readonly rewardsService: RewardsService) {}
@@ -21,9 +21,6 @@ export class StoreComponent implements OnInit {
       this.rewardsService.getStoreActiveRewards(),
       this.rewardsService.rewardTrack
     ).subscribe(([rewards, activeRewards, track]) => {
-      console.log(rewards);
-      console.log(activeRewards);
-      console.log(track);
       this.track = track;
       this.rewards = rewards;
       this.activeRewards = activeRewards;
