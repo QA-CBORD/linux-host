@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
-import { RedeemableRewardInfo, UserFulfillmentActivityInfo } from '../../models';
+import { ClaimableRewardInfo, RedeemableRewardInfo, UserFulfillmentActivityInfo } from '../../models';
 import { RewardsPopoverComponent } from '../rewards-popover';
 import { RewardsApiService, RewardsService } from '../../services';
 import { CLAIM_STATUS, LEVEL_STATUS } from '../../rewards.config';
@@ -66,7 +66,7 @@ export class ListItemComponent {
     });
 
     popover.onDidDismiss().then(({ data }) => {
-      if (data === PopupTypes.REDEEM) {
+      if (data === PopupTypes.REDEEM || data === PopupTypes.CLAIM) {
         this.rewardsApi
           .claimReward(this.item.id)
           .pipe(
@@ -100,7 +100,10 @@ export class ListItemComponent {
   }
 
   private defaultPopoverAction(claimStatus): string {
-    return this.active || claimStatus === CLAIM_STATUS.claimed ? PopupTypes.SCAN : PopupTypes.REDEEM;
+    const isUnearnedStatus = claimStatus === CLAIM_STATUS.unearned;
+    const isClaimedStatus = claimStatus === CLAIM_STATUS.claimed;
+
+    return this.active || isClaimedStatus ? PopupTypes.SCAN : isUnearnedStatus ? PopupTypes.CLAIM : PopupTypes.REDEEM;
   }
 
   private preventOpenPopover(): boolean {
