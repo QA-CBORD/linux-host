@@ -20,9 +20,7 @@ export class RewardsResolverGuard implements Resolve<Observable<[UserRewardTrack
   private downloadData(): Observable<[UserRewardTrackInfo, UserFulfillmentActivityInfo[]]> {
     this.loader.showSpinner();
     return this.rewardsService.initContentStringsList().pipe(
-      switchMap(() =>
-        combineLatest(this.rewardsService.getUserRewardTrackInfo(), this.rewardsService.getUserRewardHistoryInfo())
-      ),
+      switchMap(() => this.rewardsService.getAllData()),
       take(1),
       retryWhen(errors =>
         errors.pipe(

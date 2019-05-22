@@ -1,6 +1,6 @@
 <div class="store__content">
-  <st-balance [points]="track.userCurrentPoints"></st-balance>
-  <div class="store__active-wrapper" *ngIf="activeRewards.length">
+  <st-balance [points]="(track | async).userCurrentPoints"></st-balance>
+  <div class="store__active-wrapper" *ngIf="(activeRewards | async).length">
     <div class="store__active-list">
       <h4 class="store__active-title">Active Rewards</h4>
       <div class="store__active-description">
@@ -9,7 +9,7 @@
     </div>
 
     <ion-list class="store__list list-container">
-      <ion-item class="list-container__item" button="true" *ngFor="let item of activeRewards">
+      <ion-item class="list-container__item" button="true" *ngFor="let item of activeRewards | async">
         <st-list-item
           class="list-container__item-content"
           environment="store"
@@ -21,11 +21,11 @@
   </div>
 
   <ion-list class="store__list list-container">
-    <ion-item class="list-container__item" button="true" *ngFor="let item of rewards">
+    <ion-item class="list-container__item" button="true" *ngFor="let item of rewards | async">
       <st-list-item
         class="list-container__item-content"
         environment="store"
-        [currentPoints]="track.userCurrentPoints"
+        [currentPoints]="(track | async).userCurrentPoints"
         [item]="item"
         [active]="false"
       ></st-list-item>

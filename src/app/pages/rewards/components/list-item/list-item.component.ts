@@ -1,11 +1,13 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
-import { ClaimableRewardInfo, RedeemableRewardInfo, UserFulfillmentActivityInfo } from '../../models';
+import { RedeemableRewardInfo, UserFulfillmentActivityInfo } from '../../models';
 import { RewardsPopoverComponent } from '../rewards-popover';
-import { RewardsApiService } from '../../services';
+import { RewardsApiService, RewardsService } from '../../services';
 import { CLAIM_STATUS, LEVEL_STATUS } from '../../rewards.config';
 import { PopupTypes } from '../../rewards.config';
-import { take } from 'rxjs/operators';
+import { catchError, map, switchMap, take, tap } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
+import { LoadingService } from '../../../../core/service/loading/loading.service';
 
 @Component({
   selector: 'st-list-item',
@@ -21,7 +23,12 @@ export class ListItemComponent {
   @Input() userLevel: number;
   @Input() statusLevel: number;
 
-  constructor(private readonly popoverCtrl: PopoverController, private readonly rewardsApi: RewardsApiService) {}
+  constructor(
+    private readonly popoverCtrl: PopoverController,
+    private readonly rewardsApi: RewardsApiService,
+    private readonly rewardsService: RewardsService,
+    private readonly loadingService: LoadingService
+  ) {}
 
   get disabledStoreReward(): boolean {
     return !this.isHistoryEnv && this.currentPoints < this.item['pointCost'];
@@ -62,7 +69,10 @@ export class ListItemComponent {
       if (data === PopupTypes.REDEEM) {
         this.rewardsApi
           .claimReward(this.item.id)
-          .pipe(take(1))
+          .pipe(
+            switchMap((res: boolean) => this.refreshData().pipe(map(() => res))),
+            take(1)
+          )
           .subscribe((res: boolean) => {
             if (res) {
               this.openPopover(this.item, PopupTypes.SCAN);
@@ -76,6 +86,17 @@ export class ListItemComponent {
 
   isLowerThenCurrentLevel(item): boolean {
     return item.claimLevel <= this.userLevel;
+  }
+
+  private refreshData(): Observable<any> {
+    this.loadingService.showSpinner();
+    return this.rewardsService.getAllData().pipe(
+      tap(() => this.loadingService.closeSpinner()),
+      catchError(e => {
+        this.loadingService.closeSpinner();
+        return throwError(e);
+      })
+    );
   }
 
   private defaultPopoverAction(claimStatus): string {

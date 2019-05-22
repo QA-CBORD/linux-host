@@ -22,7 +22,7 @@ export class RewardsService {
 
   private content;
 
-  constructor(private rewardsApi: RewardsApiService, private contentService: ContentService) {}
+  constructor(private readonly rewardsApi: RewardsApiService, private readonly contentService: ContentService) {}
 
   get rewardTrack(): Observable<UserRewardTrackInfo> {
     return this.rewardTrack$.asObservable();
@@ -51,6 +51,10 @@ export class RewardsService {
         return this.extractFromHistoryByStatus(rewardHistory, rewards, status);
       })
     );
+  }
+
+  getAllData(): Observable<any> {
+    return zip(this.getUserRewardTrackInfo(), this.getUserRewardHistoryInfo());
   }
 
   getUserRewardTrackInfo(): Observable<UserRewardTrackInfo> {
@@ -89,7 +93,6 @@ export class RewardsService {
       map(userInfo => {
         const levels = this.expandLevelInfoArray(userInfo);
 
-        console.log(levels);
         return this.sortByLevel(levels);
       })
     );
