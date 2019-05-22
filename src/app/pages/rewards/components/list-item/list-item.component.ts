@@ -1,10 +1,11 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
-import { ClaimableRewardInfo, RedeemableRewardInfo, UserFulfillmentActivityInfo } from '../../models';
+import { RedeemableRewardInfo, UserFulfillmentActivityInfo } from '../../models';
 import { RewardsPopoverComponent } from '../rewards-popover';
 import { RewardsApiService } from '../../services';
 import { LEVEL_STATUS } from '../../rewards.config';
 import { PopupTypes } from '../../rewards.config';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'st-list-item',
@@ -42,14 +43,12 @@ export class ListItemComponent {
     return this.environment === 'levels';
   }
 
-  async openPopover(data, scan = false) {
+  async openPopover(data, type: string = PopupTypes.REDEEM) {
     if (
       this.isHistoryEnv ||
       !(this.isStoreEnv && (this.active || this.currentPoints >= this.item['pointCost'])) ||
       (this.isLevelsEnv && this.statusLevel === LEVEL_STATUS.received)
     ) {
-  async openPopover(data, type: string = PopupTypes.REDEEM) {
-    if (!(!this.isHistoryEnv() && (this.active || this.currentPoints >= this.item['pointCost']))) {
       return;
     }
 
