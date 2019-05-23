@@ -10,11 +10,17 @@ import { UserTrackLevelInfo } from '../../../pages/rewards/models';
 export class StProgressBarComponent {
   @Input() currentPointsSpent: number;
   @Input() levelInfo: UserTrackLevelInfo;
+  @Input() nextLevelPoints: number = null;
 
   constructor() {}
 
   get width(): number {
-    const percent = (this.currentPointsSpent / this.levelInfo.requiredPoints) * 100;
-    return percent > 100 ? 100 : percent;
+    const percent = (this.currentPointsSpent / this.nextLevelPoints) * 100;
+    return percent > 100 || !this.nextLevelPoints ? 100 : percent;
+  }
+
+  get expToNextLvl(): string {
+    if (!this.nextLevelPoints) return 'Max level';
+    return `${this.currentPointsSpent}/${this.nextLevelPoints}XP`;
   }
 }

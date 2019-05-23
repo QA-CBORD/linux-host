@@ -16,6 +16,7 @@ export class LevelsComponent implements OnInit {
   trackInfo$: Observable<UserRewardTrackInfo>;
   currentLevelInfo$: Observable<UserTrackLevelInfo>;
   levels$: Observable<UserTrackLevelInfo[]>;
+  nextLevelPoints$: Observable<number>;
 
   constructor(private readonly rewardsService: RewardsService) {}
 
@@ -25,5 +26,13 @@ export class LevelsComponent implements OnInit {
       map(({ userLevel, trackLevels }) => trackLevels.find(({ level }) => level === userLevel))
     );
     this.levels$ = this.rewardsService.getTrackLevels();
+    this.nextLevelPoints$ = this.rewardsService.rewardTrack.pipe(
+      map(({ userLevel, trackLevels }) => {
+        const nextLevel = trackLevels.find(({ level }) => {
+          return level === userLevel + 1;
+        });
+        return nextLevel ? nextLevel.requiredPoints : null;
+      })
+    );
   }
 }

@@ -23,6 +23,12 @@
     }
   }
 
+  &--none {
+    &:after {
+     display: none;
+    }
+  }
+
   &__info {
     position: relative;
     cursor: pointer;
@@ -33,16 +39,18 @@
     font-weight: bold;
     letter-spacing: 0;
     line-height: 24px;
+    max-width: 75%;
 
     @include ellipsis();
     @include font-nunito-heavy(20px);
   }
 
-  &__indicator {
+  &__status {
     font-weight: normal;
     letter-spacing: 0;
     line-height: 18px;
     color: $color-black;
+    max-width: 75%;
 
     @include font-nunito-regular(14px);
     @include ellipsis();
@@ -81,7 +89,16 @@
     .level__header {
       color: $color-black;
     }
-    .level__indicator {
+    .level__status {
+      color: $color-dodger-blue;
+    }
+  }
+
+  &--claimed {
+    .level__header {
+      color: $color-black;
+    }
+    .level__status {
       color: $color-dodger-blue;
     }
   }

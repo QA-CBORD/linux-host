@@ -42,13 +42,13 @@ export class RewardsService {
     this.rewardHistory$.next([...this.rewardHistoryList]);
   }
 
-  filterHistoryByStatus(status: CLAIM_STATUS): Observable<UserFulfillmentActivityInfo[]> {
+  getHistoryListRewards(): Observable<UserFulfillmentActivityInfo[]> {
     return zip(this.rewardTrack, this.rewardHistory).pipe(
       map(([{ trackLevels, redeemableRewards }, rewardHistory]) => {
         let rewards = trackLevels.reduce((total, { userClaimableRewards }) => [...total, ...userClaimableRewards], []);
         rewards = [...redeemableRewards, ...rewards];
 
-        return this.extractFromHistoryByStatus(rewardHistory, rewards, status);
+        return this.extractFromHistoryByStatus(rewardHistory, rewards, CLAIM_STATUS.received);
       })
     );
   }
@@ -103,7 +103,11 @@ export class RewardsService {
   }
 
   getStoreActiveRewards(): Observable<UserFulfillmentActivityInfo[]> {
-    return this.filterHistoryByStatus(CLAIM_STATUS.claimed);
+    return zip(this.rewardTrack, this.rewardHistory).pipe(
+      map(([{ redeemableRewards }, rewardHistory]) =>
+        this.extractFromHistoryByStatus(rewardHistory, redeemableRewards, CLAIM_STATUS.claimed)
+      )
+    );
   }
 
   initContentStringsList(): Observable<ContentStringInfo[]> {

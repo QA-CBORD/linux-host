@@ -15,7 +15,7 @@ export class HistoryComponent implements OnInit {
   constructor(private readonly rewardsService: RewardsService) {}
 
   ngOnInit() {
-    this.historyArr$ = this.rewardsService.filterHistoryByStatus(CLAIM_STATUS.received);
+    this.historyArr$ = this.rewardsService.getHistoryListRewards();
   }
 
   trackByFn(index, item) {

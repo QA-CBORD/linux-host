@@ -13,7 +13,8 @@ $circle-width: 40px;
     border-left: 2px dashed $color-dim-gray;
     min-height: 90px;
 
-    &--passed {
+    &--passed,
+    &--claimed {
       border-color: $color-dodger-blue;
       border-left-style: solid;
 
@@ -28,6 +29,9 @@ $circle-width: 40px;
     }
 
     &--active {
+      border-color: $color-dodger-blue;
+      border-left-style: solid;
+
       .progress__indicator {
         background: $color-dodger-blue;
         color: $color-white;
@@ -37,6 +41,10 @@ $circle-width: 40px;
         animation-iteration-count: infinite;
         animation-duration: 2.5s;
       }
+    }
+
+    &--current {
+      border-left: 2px dashed $color-dim-gray;
     }
   }
 

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
 
-import { UserTrackLevelInfo } from '../../../../models';
+import { ClaimableRewardInfo, UserTrackLevelInfo } from '../../../../models';
 import { CLAIM_STATUS, LEVEL_STATUS } from '../../../../rewards.config';
 
 @Component({
@@ -19,12 +19,34 @@ export class ExpandItemComponent {
 
   get levelClass(): string {
     const baseClass = 'progress__level';
-    const passed = `${baseClass}--passed`;
-    const active = `${baseClass}--active`;
+    const giftGotten = `${baseClass}--passed`;
+    const activeGift = `${baseClass}--active`;
+    const claimed = `${baseClass}--claimed`;
+    const current = `${baseClass}--current`;
     const { level } = this.levelInfo;
-    const modifier = level <= this.currentLevel && (level === this.currentLevel ? active : passed);
+    const modifier =
+      level <= this.currentLevel
+        ? this.hasLevelRewardToClaim
+          ? activeGift
+          : this.hasLevelReceivedReward
+          ? giftGotten
+          : claimed
+        : '';
+    const currentLvl = this.isCurrentLvl ? current : '';
 
-    return `${baseClass} ${modifier || ''}`;
+    return `${baseClass} ${modifier} ${currentLvl}`;
+  }
+
+  get hasLevelRewardToClaim(): boolean {
+    return this.levelInfo.status === LEVEL_STATUS.unlocked;
+  }
+
+  private get isCurrentLvl(): boolean {
+    return this.levelInfo.level === this.currentLevel;
+  }
+
+  private get hasLevelReceivedReward(): boolean {
+    return this.levelInfo.status === LEVEL_STATUS.received;
   }
 
   onExpandHandle() {
@@ -36,11 +58,15 @@ export class ExpandItemComponent {
     this.cdRef.detectChanges();
   }
 
-  isLockedItem(reward) {
+  isLockedItem(reward): boolean {
     return reward.claimLevel > this.currentLevel;
   }
 
-  isUnearnedItem(reward) {
-    return reward.claimStatus === CLAIM_STATUS.unearned && this.levelInfo.status !== 1;
+  isUnearnedItem(reward): boolean {
+    return reward.claimStatus === CLAIM_STATUS.unearned && this.levelInfo.status !== LEVEL_STATUS.unlocked;
+  }
+
+  trackFn(rewardInfo: ClaimableRewardInfo): string {
+    return rewardInfo.id;
   }
 }

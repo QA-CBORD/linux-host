@@ -1,7 +1,8 @@
 <div class="content">
     <div class="progress">
         <st-progress-bar [levelInfo]="currentLevelInfo$ | async"
-                         [currentPointsSpent]="(trackInfo$ | async).userExperiencePoints">
+                         [currentPointsSpent]="(trackInfo$ | async).userExperiencePoints"
+                         [nextLevelPoints]="nextLevelPoints$ | async">
         </st-progress-bar>
     </div>
     <st-expand-list [currentLevel]="(trackInfo$ | async).userLevel"

@@ -1,14 +1,14 @@
 <li [class]="levelClass">
   <div class="progress__indicator">
-    <ng-container *ngIf="levelInfo.level === currentLevel; else number">
+    <ng-container *ngIf="hasLevelRewardToClaim; else number">
       <ion-icon class="progress__gift-icon" src="/assets/icon/gift-white.svg"></ion-icon>
     </ng-container>
     <ng-template #number>{{ levelInfo.level }}</ng-template>
   </div>
-  <div class="level" [ngClass]="{ 'level--active': show }">
+  <div class="level" [ngClass]="{ 'level--active': show, 'level--none': !levelInfo.userClaimableRewards.length}">
     <div class="level__info" (click)="onExpandHandle()">
       <div class="level__header">{{ levelInfo.name }}</div>
-      <div class="level__indicator">{{ levelInfo.description }}</div>
+      <div class="level__status">{{ levelInfo.description }}</div>
     </div>
     <div class="level__climes" *ngIf="show">
       <ion-list class="list-container">
@@ -16,7 +16,7 @@
           class="list-container__item"
           button="true"
           [ngClass]="{ 'list-container__item--disabled': isUnearnedItem(reward) || isLockedItem(reward) }"
-          *ngFor="let reward of levelInfo.userClaimableRewards"
+          *ngFor="let reward of levelInfo.userClaimableRewards; trackBy: trackFn"
         >
           <st-list-item
             class="list-container__item-content"
