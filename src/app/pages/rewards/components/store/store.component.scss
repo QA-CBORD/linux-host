@@ -4,11 +4,11 @@
   .store {
     &__content {
       @include bp-grid-tablet {
-        margin: 0 20%;
+        margin: 0 25%;
       }
 
       @include bp-grid-desktop {
-        margin: 0 25%;
+        margin: 0 30%;
       }
     }
 
@@ -29,7 +29,8 @@
     }
 
     &__active-wrapper {
-      border-bottom: 1px solid #f3f3f3;
+      border-bottom: 1px solid $color-dim-gray;
+      border-radius: 25px;
     }
 
     &__active-list {
@@ -37,14 +38,14 @@
     }
 
     &__active-title {
-      color: #515151;
+      color: $color-matterhorn;
       margin-bottom: 0;
 
       @include font-nunito-regular(20px);
     }
 
     &__active-description {
-      color: #6e6e6e;
+      color: $color-dim-gray;
 
       @include font-nunito-regular(12px);
     }

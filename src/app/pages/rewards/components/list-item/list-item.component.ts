@@ -50,6 +50,12 @@ export class ListItemComponent {
     return this.environment === 'levels';
   }
 
+  get listItemScoreValue() {
+    return this.item['rewardLevel']
+      ? `${this.item['rewardLevel']} level`
+      : `${this.item['pointsSpent'] || this.item['pointCost'] || 0} Points`;
+  }
+
   async openPopover(data, type: string = this.defaultPopoverAction(data.claimStatus)) {
     if (this.preventOpenPopover()) {
       return;

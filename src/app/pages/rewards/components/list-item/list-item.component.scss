@@ -38,7 +38,7 @@
     }
 
     &__checkmark {
-      color: #166dff;
+      color: $color-dodger-blue;
       align-self: center;
     }
 
@@ -47,7 +47,7 @@
     }
 
     &__title {
-      color: #515151;
+      color: $color-matterhorn;
 
       //@include ellipsis;
       @include font-nunito-semibold(20px);
@@ -58,7 +58,7 @@
     }
 
     &__description {
-      color: #6e6e6e;
+      color: $color-dim-gray;
       margin-bottom: 5px;
 
       @include font-nunito-regular(12px);
@@ -91,9 +91,9 @@
     }
 
     &__button {
-      border: 1px solid #166dff;
+      border: 1px solid $color-dodger-blue;
       border-radius: 4px 4px 4px 4px;
-      color: #166dff;
+      color: $color-dodger-blue;
       text-align: center;
       max-width: 80px;
       text-transform: uppercase;
