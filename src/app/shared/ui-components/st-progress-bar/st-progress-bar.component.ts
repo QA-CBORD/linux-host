@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+
 import { UserTrackLevelInfo } from '../../../pages/rewards/models';
 
 @Component({
@@ -16,11 +17,13 @@ export class StProgressBarComponent {
 
   get width(): number {
     const percent = (this.currentPointsSpent / this.nextLevelPoints) * 100;
+
     return percent > 100 || !this.nextLevelPoints ? 100 : percent;
   }
 
   get expToNextLvl(): string {
-    if (!this.nextLevelPoints) return 'Max level';
+    if (!this.nextLevelPoints) return 'Max Level';
+
     return `${this.currentPointsSpent}/${this.nextLevelPoints}XP`;
   }
 }

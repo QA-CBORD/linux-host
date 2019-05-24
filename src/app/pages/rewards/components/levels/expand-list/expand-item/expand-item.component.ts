@@ -19,18 +19,8 @@ export class ExpandItemComponent {
 
   get levelClass(): string {
     const baseClass = 'progress__level';
-    const giftGotten = `${baseClass}--passed`;
-    const activeGift = `${baseClass}--active`;
-    const claimed = `${baseClass}--claimed`;
     const current = `${baseClass}--current`;
-    const modifier =
-      this.levelInfo.level <= this.currentLevel
-        ? this.hasLevelRewardToClaim && !this.hasNoRewards
-          ? activeGift
-          : this.hasLevelReceivedReward
-          ? giftGotten
-          : claimed
-        : '';
+    const modifier = this.getModifier(baseClass);
     const currentLvl = this.isCurrentLvl ? current : '';
 
     return `${baseClass} ${modifier} ${currentLvl}`;
@@ -50,6 +40,19 @@ export class ExpandItemComponent {
 
   private get hasLevelReceivedReward(): boolean {
     return this.levelInfo.status === LEVEL_STATUS.received;
+  }
+
+  private getModifier(baseClass: string): string {
+    if (this.levelInfo.level > this.currentLevel) return '';
+    const giftGotten = `${baseClass}--passed`;
+    const activeGift = `${baseClass}--active`;
+    const claimed = `${baseClass}--claimed`;
+
+    return this.hasLevelRewardToClaim && !this.hasNoRewards
+      ? activeGift
+      : this.hasLevelReceivedReward
+      ? giftGotten
+      : claimed;
   }
 
   onExpandHandle() {

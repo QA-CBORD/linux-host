@@ -28,10 +28,9 @@ export class LevelsComponent implements OnInit {
     this.levels$ = this.rewardsService.getTrackLevels();
     this.nextLevelPoints$ = this.rewardsService.rewardTrack.pipe(
       map(({ userLevel, trackLevels }) => {
-        const nextLevel = trackLevels.find(({ level }) => {
-          return level === userLevel + 1;
-        });
-        return nextLevel ? nextLevel.requiredPoints : null;
+        const nextLevel = trackLevels.find(({ level }) => level === userLevel + 1);
+
+        return trackLevels.find(({ level }) => level === userLevel + 1) ? nextLevel.requiredPoints : null;
       })
     );
   }

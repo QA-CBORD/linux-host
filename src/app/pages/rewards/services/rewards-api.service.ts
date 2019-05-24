@@ -30,7 +30,7 @@ export class RewardsApiService extends BaseService {
         }
         return Array.isArray(response) && response.length ? response[0] : null;
       }),
-      this.onErrorHandler(showToast)
+      this.onErrorHandler(true)
     );
   }
 
@@ -52,7 +52,7 @@ export class RewardsApiService extends BaseService {
       ...postParams,
     }).pipe(
       this.parseResponse(),
-      this.onErrorHandler(showToast)
+      this.onErrorHandler(true)
     );
   }
 
@@ -72,7 +72,7 @@ export class RewardsApiService extends BaseService {
 
     return this.httpRequest<MessageResponse<boolean>>(this.serviceUrl, methodName, true, { rewardId }).pipe(
       this.parseResponse(),
-      this.onErrorHandler(showToast)
+      this.onErrorHandler(true)
     );
   }
 

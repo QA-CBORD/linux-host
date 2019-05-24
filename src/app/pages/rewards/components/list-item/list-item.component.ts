@@ -76,13 +76,12 @@ export class ListItemComponent {
       if (data === PopupTypes.REDEEM || data === PopupTypes.CLAIM) {
         // let cacheItem: UserFulfillmentActivityInfo;
 
-        this.rewardsApi.claimReward(this.item.id)
-          .subscribe((re) => {
-            console.log(re);
-            // if (res) {
-            //   this.openPopover(this.item, PopupTypes.SCAN);
-            // }
-          });
+        this.rewardsApi.claimReward(this.item.id).subscribe(re => {
+          console.log(re);
+          // if (res) {
+          //   this.openPopover(this.item, PopupTypes.SCAN);
+          // }
+        });
       }
     });
 

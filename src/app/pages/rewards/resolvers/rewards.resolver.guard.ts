@@ -2,13 +2,12 @@ import { Injectable } from '@angular/core';
 import { Resolve } from '@angular/router/src/interfaces';
 
 import { tap, retryWhen, switchMap, take } from 'rxjs/operators';
+import { PopoverController } from '@ionic/angular';
 import { Observable, Subject } from 'rxjs';
 
 import { LoadingService } from '../../../core/service/loading/loading.service';
 import { RewardsService } from '../services';
-
 import { UserFulfillmentActivityInfo, UserRewardTrackInfo } from '../models';
-import { PopoverController } from '@ionic/angular';
 import { RewardsPopoverComponent } from '../components/rewards-popover';
 import { PopupTypes } from '../rewards.config';
 
@@ -37,9 +36,10 @@ export class RewardsResolverGuard implements Resolve<Observable<[UserRewardTrack
   private errorHandler(errors: Observable<any>): Observable<any> {
     return errors.pipe(
       switchMap(err => {
+        const subject = new Subject<any>();
         this.loader.closeSpinner();
-        let subject = new Subject<any>();
         this.modalHandler(subject, err);
+
         return subject;
       })
     );
