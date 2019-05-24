@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { RewardsService } from '../../services';
 import { UserFulfillmentActivityInfo } from '../../models';
 import { Observable } from 'rxjs';
-import { CLAIM_STATUS } from '../../rewards.config';
 
 @Component({
   selector: 'st-history',

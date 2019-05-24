@@ -42,7 +42,7 @@ export class RewardsService {
     this.rewardHistory$.next([...this.rewardHistoryList]);
   }
 
-  filterHistoryByStatus(): Observable<UserFulfillmentActivityInfo[]> {
+  getHistoryListRewards(): Observable<UserFulfillmentActivityInfo[]> {
     return zip(this.combineAllRewards(), this.rewardHistory).pipe(
       map(([rewards, rewardHistory]) => this.extractFromHistoryByStatus(rewardHistory, rewards, CLAIM_STATUS.received))
     );
