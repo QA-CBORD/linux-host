@@ -73,9 +73,9 @@ export class RewardsApiService extends BaseService {
   }
 
   claimReward(rewardId: string) {
-    const methodName = 'claimReward';
+    const methodName = 'claimRewardV2';
 
-    return this.httpRequest<MessageResponse<boolean>>(this.serviceUrl, methodName, true, { rewardId }).pipe(
+    return this.httpRequest<MessageResponse<any>>(this.serviceUrl, methodName, true, { rewardId }).pipe(
       map(({ response, exception }) => {
         if (exception !== null) {
           throw new Error(exception);

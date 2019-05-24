@@ -43,12 +43,17 @@ export class RewardsService {
   }
 
   filterHistoryByStatus(status: CLAIM_STATUS): Observable<UserFulfillmentActivityInfo[]> {
-    return zip(this.rewardTrack, this.rewardHistory).pipe(
-      map(([{ trackLevels, redeemableRewards }, rewardHistory]) => {
-        let rewards = trackLevels.reduce((total, { userClaimableRewards }) => [...total, ...userClaimableRewards], []);
-        rewards = [...redeemableRewards, ...rewards];
+    return zip(this.combineAllRewards(), this.rewardHistory).pipe(
+      map(([rewards, rewardHistory]) => this.extractFromHistoryByStatus(rewardHistory, rewards, status))
+    );
+  }
 
-        return this.extractFromHistoryByStatus(rewardHistory, rewards, status);
+  combineAllRewards(): Observable<RedeemableRewardInfo[]> {
+    return this.rewardTrack.pipe(
+      map(({ trackLevels, redeemableRewards }) => {
+        let rewards = trackLevels.reduce((total, { userClaimableRewards }) => [...total, ...userClaimableRewards], []);
+
+        return [...redeemableRewards, ...rewards];
       })
     );
   }

@@ -28,7 +28,7 @@ export class LocationsResolverGuard implements Resolve<Observable<MMobileLocatio
     return of(true);
   }
 
-  private downloadData(): Observable<MMobileLocationInfo[]> {
+  private downloadData(): Observable<MMobileLocationInfo[]>  {
     this.loader.showSpinner(this.spinnerMessage);
     this.mobileAccessService
       .initContentStringsList()
