@@ -23,10 +23,9 @@ export class ExpandItemComponent {
     const activeGift = `${baseClass}--active`;
     const claimed = `${baseClass}--claimed`;
     const current = `${baseClass}--current`;
-    const { level } = this.levelInfo;
     const modifier =
-      level <= this.currentLevel
-        ? this.hasLevelRewardToClaim
+      this.levelInfo.level <= this.currentLevel
+        ? this.hasLevelRewardToClaim && !this.hasNoRewards
           ? activeGift
           : this.hasLevelReceivedReward
           ? giftGotten
@@ -39,6 +38,10 @@ export class ExpandItemComponent {
 
   get hasLevelRewardToClaim(): boolean {
     return this.levelInfo.status === LEVEL_STATUS.unlocked;
+  }
+
+  get hasNoRewards(): boolean {
+    return !this.levelInfo.userClaimableRewards.length;
   }
 
   private get isCurrentLvl(): boolean {

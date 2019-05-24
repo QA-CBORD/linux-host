@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
-import { BehaviorSubject, Observable, of, zip } from 'rxjs';
-import { map, take, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, zip } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 
 import { RewardsApiService } from './rewards-api.service';
 import { ContentService } from '../../../core/service/content-service/content.service';
@@ -57,12 +57,14 @@ export class RewardsService {
     return zip(this.getUserRewardTrackInfo(), this.getUserRewardHistoryInfo());
   }
 
-  getUserRewardTrackInfo(): Observable<UserRewardTrackInfo> {
-    return this.rewardsApi.getUserRewardTrackInfo().pipe(tap(trackInfo => (this._rewardTrack = trackInfo)));
+  getUserRewardTrackInfo(showToast: boolean = false): Observable<UserRewardTrackInfo> {
+    return this.rewardsApi.getUserRewardTrackInfo(showToast).pipe(tap(trackInfo => (this._rewardTrack = trackInfo)));
   }
 
-  getUserRewardHistoryInfo(): Observable<UserFulfillmentActivityInfo[]> {
-    return this.rewardsApi.getUserRewardHistoryInfo().pipe(tap(historyArray => (this._rewardHistory = historyArray)));
+  getUserRewardHistoryInfo(showToast: boolean = false): Observable<UserFulfillmentActivityInfo[]> {
+    return this.rewardsApi
+      .getUserRewardHistoryInfo(showToast)
+      .pipe(tap(historyArray => (this._rewardHistory = historyArray)));
   }
 
   getUserOptInStatus(): Observable<OPT_IN_STATUS> {

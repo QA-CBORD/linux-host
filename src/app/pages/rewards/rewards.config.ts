@@ -29,6 +29,7 @@ export enum PopupTypes {
   SCAN = 'SCAN',
   SUCCESS = 'SUCCESS',
   CLAIM = 'CLAIM',
+  RETRY = 'RETRY',
 }
 
 export enum LEVEL_STATUS {

@@ -64,6 +64,7 @@ export class RewardsPopoverComponent implements OnInit, AfterViewInit {
 
   private configureButtons(): PopupButton[] {
     const close = [buttons.CLOSE];
+    const retry = [buttons.RETRY];
     const redeem = [buttons.CANCEL, buttons.REDEEM];
     const claim = [buttons.CANCEL, buttons.CLAIM];
 
@@ -72,6 +73,8 @@ export class RewardsPopoverComponent implements OnInit, AfterViewInit {
         return claim;
       case PopupTypes.REDEEM:
         return redeem;
+      case PopupTypes.RETRY:
+        return [...close, ...retry];
       default:
         return close;
     }

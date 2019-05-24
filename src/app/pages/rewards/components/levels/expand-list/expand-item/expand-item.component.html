@@ -1,11 +1,11 @@
 <li [class]="levelClass">
   <div class="progress__indicator">
-    <ng-container *ngIf="hasLevelRewardToClaim; else number">
+    <ng-container *ngIf="hasLevelRewardToClaim && !hasNoRewards; else number">
       <ion-icon class="progress__gift-icon" src="/assets/icon/gift-white.svg"></ion-icon>
     </ng-container>
     <ng-template #number>{{ levelInfo.level }}</ng-template>
   </div>
-  <div class="level" [ngClass]="{ 'level--active': show, 'level--none': !levelInfo.userClaimableRewards.length}">
+  <div class="level" [ngClass]="{ 'level--active': show, 'level--none': hasNoRewards}">
     <div class="level__info" (click)="onExpandHandle()">
       <div class="level__header">{{ levelInfo.name }}</div>
       <div class="level__status">{{ levelInfo.description }}</div>
