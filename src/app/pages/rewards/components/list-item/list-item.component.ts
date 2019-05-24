@@ -8,6 +8,7 @@ import { PopupTypes } from '../../rewards.config';
 import { catchError, map, switchMap, take, tap } from 'rxjs/operators';
 import { Observable, throwError } from 'rxjs';
 import { LoadingService } from '../../../../core/service/loading/loading.service';
+import { UserPhotoInfo } from '../../../../core/model/user';
 
 @Component({
   selector: 'st-list-item',
@@ -52,7 +53,7 @@ export class ListItemComponent {
 
   get listItemScoreValue() {
     return this.item['rewardLevel']
-      ? `${this.item['rewardLevel']} level`
+      ? `level ${this.item['rewardLevel']}`
       : `${this.item['pointsSpent'] || this.item['pointCost'] || 0} Points`;
   }
 
@@ -73,16 +74,14 @@ export class ListItemComponent {
 
     popover.onDidDismiss().then(({ data }) => {
       if (data === PopupTypes.REDEEM || data === PopupTypes.CLAIM) {
-        this.rewardsApi
-          .claimReward(this.item.id)
-          .pipe(
-            switchMap((res: boolean) => this.refreshData().pipe(map(() => res))),
-            take(1)
-          )
-          .subscribe((res: boolean) => {
-            if (res) {
-              this.openPopover(this.item, PopupTypes.SCAN);
-            }
+        // let cacheItem: UserFulfillmentActivityInfo;
+
+        this.rewardsApi.claimReward(this.item.id)
+          .subscribe((re) => {
+            console.log(re);
+            // if (res) {
+            //   this.openPopover(this.item, PopupTypes.SCAN);
+            // }
           });
       }
     });
