@@ -4,11 +4,11 @@
   .history {
     &__content {
       @include bp-grid-tablet {
-        margin: 0 20%;
+        margin: 0 25%;
       }
 
       @include bp-grid-desktop {
-        margin: 0 25%;
+        margin: 0 30%;
       }
     }
 

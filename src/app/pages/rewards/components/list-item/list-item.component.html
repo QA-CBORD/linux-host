@@ -29,7 +29,7 @@
       </ng-template>
       <ng-template #points>
         <div class="list-item__score" [ngClass]="{ 'list-item__score--semibold': !isHistoryEnv }">
-          {{ item.pointsSpent || item.pointCost || 0 }} Points
+          {{ listItemScoreValue }}
         </div>
       </ng-template>
       <ng-template #reward>
@@ -57,14 +57,19 @@
       </ng-template>
 
       <ng-container
-        *ngIf="(active && isStoreEnv) || (isLevelsEnv && item.claimStatus === 2 && isLowerThenCurrentLevel(item)); then activeReward"
+        *ngIf="
+          (active && isStoreEnv) || (isLevelsEnv && item.claimStatus === 2 && isLowerThenCurrentLevel(item));
+          then activeReward
+        "
       ></ng-container>
       <ng-container *ngIf="!active && isStoreEnv; then reward"></ng-container>
       <ng-container *ngIf="isHistoryEnv; then points"></ng-container>
       <ng-container
         *ngIf="isLevelsEnv && item.claimStatus === 0 && statusLevel === 1; then defaultLevelReward"
       ></ng-container>
-      <ng-container *ngIf="isLevelsEnv && item.claimStatus === 3 && isLowerThenCurrentLevel(item); then claimedLevelReward"></ng-container>
+      <ng-container
+        *ngIf="isLevelsEnv && item.claimStatus === 3 && isLowerThenCurrentLevel(item); then claimedLevelReward"
+      ></ng-container>
       <ng-container *ngIf="item.claimLevel > userLevel; then lockedLevelReward"></ng-container>
     </div>
   </div>

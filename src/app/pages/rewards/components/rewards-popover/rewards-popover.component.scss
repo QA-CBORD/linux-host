@@ -7,14 +7,14 @@
     }
 
     &__description {
-      color: #6e6e6e;
+      color: $color-dim-gray;
 
       @include font-nunito-regular(12px);
     }
 
     &__qrcode {
       &-text {
-        color: #6e6e6e;
+        color: $color-dim-gray;
 
         @include font-nunito-regular(14px);
       }
