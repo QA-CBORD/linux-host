@@ -11,8 +11,8 @@ import { MMobileLocationInfo } from '../../model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LocationItemComponent {
-  @Input('location') location: MMobileLocationInfo;
-  @Output('addToFav') addToFav: EventEmitter<string> = new EventEmitter<string>();
+  @Input() location: MMobileLocationInfo;
+  @Output() addToFav: EventEmitter<string> = new EventEmitter<string>();
 
   constructor(private router: Router, private nav2: NavController) {}
 

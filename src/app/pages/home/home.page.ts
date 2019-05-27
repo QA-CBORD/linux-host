@@ -47,18 +47,18 @@ export class HomePage {
       Environment.setEnvironmentViaURL(location.href);
 
       /// get parameters from url
-      this.getHashParameters();
+      // this.getHashParameters();
       /// now perform normal page logic
-      this.handleSessionToken();
+      // this.handleSessionToken();
 
-      // this.testGetSession();
+      this.testGetSession();
     });
   }
 
   private testGetSession() {
     this.testProvider.getTestUser().subscribe(
       success => {
-        this.destinationPage = EDestination.MOBILE_ACCESS;
+        this.destinationPage = EDestination.REWARDS;
         this.getUserInfo();
       },
       error => {

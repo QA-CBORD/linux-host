@@ -1,0 +1,37 @@
+<li [class]="levelClass">
+  <div class="progress__indicator">
+    <ng-container *ngIf="!isLevelLocked && hasRewards && !hasRewardReceived; else number">
+      <img
+        class="progress__gift-icon"
+        [ngClass]="{ 'progress__gift-icon--small': hasRewardClaimed }"
+        [src]="icon"
+        alt="qr_code"
+      />
+    </ng-container>
+    <ng-template #number>{{ levelInfo.level }}</ng-template>
+  </div>
+  <div class="level" [ngClass]="{ 'level--active': show, 'level--none': !hasRewards }">
+    <div class="level__info" (click)="onExpandHandle()">
+      <div class="level__header">{{ levelInfo.name }}</div>
+      <div class="level__status">{{ levelInfo.description }}</div>
+    </div>
+    <div class="level__climes" *ngIf="show">
+      <ion-list class="list-container">
+        <ion-item
+          class="list-container__item"
+          button="true"
+          [ngClass]="{ 'list-container__item--disabled': isUnearnedItem(reward) || isLockedItem(reward) }"
+          *ngFor="let reward of levelInfo.userClaimableRewards; trackBy: trackFn"
+        >
+          <st-list-item
+            class="list-container__item-content"
+            environment="levels"
+            [item]="reward"
+            [userLevel]="currentLevel"
+            [statusLevel]="levelInfo.status"
+          ></st-list-item>
+        </ion-item>
+      </ion-list>
+    </div>
+  </div>
+</li>

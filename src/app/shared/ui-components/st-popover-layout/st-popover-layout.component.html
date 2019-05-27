@@ -1,14 +1,14 @@
 <ion-header class="st-popover__header" no-border>
   <ion-toolbar mode="md" class="st-popover__toolbar">
     <ion-title class="st-popover__title">{{ popoverConfig.title }}</ion-title>
-    <ion-buttons slot="end">
+    <ion-buttons slot="end" *ngIf="popoverConfig.closeBtn">
       <ion-button color="dark" (click)="closeModal()">
         <ion-icon slot="icon-only" name="close" class="st-popover__toolbar-icon"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
-<ion-content class="st-popover__content">
+<ion-content class="st-popover__content" [style.textAlign]="popoverConfig.code ? 'center' : 'left'">
   <ng-content></ng-content>
 </ion-content>
 <ion-footer no-border class="st-popover__footer">

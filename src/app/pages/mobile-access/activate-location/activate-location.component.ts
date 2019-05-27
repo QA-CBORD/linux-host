@@ -8,10 +8,10 @@ import { Observable, Subscription } from 'rxjs';
 
 import { UserService } from '../../../core/service/user-service/user.service';
 import { MobileAccessService } from '../service';
-import { MUserInfo } from '../../../core/model/user';
+import { UserInfo } from '../../../core/model/user';
 import { InstitutionService } from '../../../core/service/institution/institution.service';
 import { MMobileLocationInfo } from '../model';
-import { Institution } from '../../../core/model/institution/institution';
+import { Institution } from '../../../core/model/institution/institution.model';
 import { MobileAccessPopoverComponent } from '../mobile-access-popover';
 import { LoadingService } from '../../../core/service/loading/loading.service';
 import { CONTENT_STRINGS } from '../mobile-acces.config';
@@ -26,7 +26,7 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
   private readonly toastDuration: number = 6000;
   private readonly sourceSubscription: Subscription = new Subscription();
   private locationId: string;
-  userInfo$: Observable<MUserInfo>;
+  userInfo$: Observable<UserInfo>;
   location$: Observable<MMobileLocationInfo>;
   institution$: Observable<Institution>;
   contentString;
@@ -48,7 +48,7 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
 
   get userFullName$(): Observable<string> {
     return this.userInfo$.pipe(
-      map(({ firstName: fn, middleName: mn, lastName: ln }: MUserInfo) => `${fn || ''} ${mn || ''} ${ln || ''}`)
+      map(({ firstName: fn, middleName: mn, lastName: ln }: UserInfo) => `${fn || ''} ${mn || ''} ${ln || ''}`)
     );
   }
 
@@ -122,7 +122,7 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
   //TODO: add this function to ngOnInit after back-end will be ready
   // private setInstitutionPhoto() {
   //   this.institutionPhoto$ = this.userInfo$.pipe(
-  //     switchMap(({ institutionId }: MUserInfo) => this.institutionService.getInstitutionPhotoById(institutionId)),
+  //     switchMap(({ institutionId }: UserInfo) => this.institutionService.getInstitutionPhotoById(institutionId)),
   //     map(({ data, mimeType }: InstitutionPhotoInfo) => {
   //       return `data:${mimeType};base64,${data}`;
   //     })

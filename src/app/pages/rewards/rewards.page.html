@@ -1,9 +1,11 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>Rewards</ion-title>
-  </ion-toolbar>
-</ion-header>
+<st-header [title]="contentString.header" [isTitleShow]="true" [isToolbarShow]="true" *ngIf="false"></st-header>
 
-<ion-content padding>
+<ion-content>
+  <st-nav-tabs [tabsConfig]="tabsConfig"></st-nav-tabs>
 
+  <!--  <st-opt-in-->
+  <!--    *ngIf="rewardTrack !== null && !userOptInStatus"-->
+  <!--    [rewardTrack]="rewardTrack"-->
+  <!--    (optInSuccess)="handleOptInSuccess()"-->
+  <!--  ></st-opt-in>-->
 </ion-content>

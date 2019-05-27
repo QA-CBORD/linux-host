@@ -10,15 +10,15 @@ import { queue } from 'rxjs/internal/scheduler/queue';
 
 import * as Globals from '../../../app/app.global';
 import { MCache } from '../model/cache/MCache';
-import { MUserSettingInfo } from '../model/user/user-setting-info.interface';
-import { MUserPhotoInfo } from '../model/user/user-photo-info.interface';
-import { MUserInfo } from '../model/user/user-info.interface';
-import { MContentStringInfo } from '../model/content/content-string-info.interface';
-import { MSettingInfoList } from '../model/configuration/setting-info-list.interface';
-import { MSettingInfo } from '../model/configuration/setting-info.interface';
-import { MStartupInfo } from '../model/institution/native-startup-info.interface';
-import { MInstitutionInfo } from '../model/institution/institution-info.interface';
-import { MEnvironmentInfo } from '../model/environment/environment-info.interface';
+import { UserSettingInfo } from '../model/user/user-setting-info.model';
+import { UserPhotoInfo } from '../model/user/user-photo-info.model';
+import { UserInfo } from '../model/user/user-info.model';
+import { ContentStringInfo } from '../model/content/content-string-info.model';
+import { SettingInfoList } from '../model/configuration/setting-info-list.model';
+import { SettingInfo } from '../model/configuration/setting-info.model';
+import { StartupInfo } from '../model/institution/native-startup-info.model';
+import { InstitutionInfo } from '../model/institution/institution-info.model';
+import { EnvironmentInfo } from '../model/environment/environment-info.model';
 import { EDestination } from 'src/app/pages/home/home.page';
 
 @Injectable()
@@ -57,7 +57,7 @@ export class DataCache {
     return DataCache.localCache.getApplicationUUID();
   }
 
-  static getEnvironmentInfo(): MEnvironmentInfo {
+  static getEnvironmentInfo(): EnvironmentInfo {
     return DataCache.localCache.environmentInfo || null;
   }
 
@@ -77,11 +77,11 @@ export class DataCache {
     return DataCache.localCache.sessionId || null;
   }
 
-  static setUserInfo(newUserInfo: MUserInfo) {
+  static setUserInfo(newUserInfo: UserInfo) {
     DataCache.localCache.userInfo = newUserInfo;
   }
 
-  static getUserInfo(): MUserInfo {
+  static getUserInfo(): UserInfo {
     return DataCache.localCache.userInfo || null;
   }
 
@@ -118,11 +118,11 @@ export class DataCache {
     this.set(this.CACHE, JSON.stringify(DataCache.localCache));
   }
 
-  setEnvironmentInfo(envInfo: MEnvironmentInfo) {
+  setEnvironmentInfo(envInfo: EnvironmentInfo) {
     DataCache.localCache.environmentInfo = envInfo;
   }
 
-  getEnvironmentInfo(): MEnvironmentInfo {
+  getEnvironmentInfo(): EnvironmentInfo {
     return DataCache.localCache.environmentInfo || null;
   }
 
@@ -134,23 +134,23 @@ export class DataCache {
     return DataCache.localCache.sessionId || null;
   }
 
-  getInstitutionInfo(): MInstitutionInfo {
+  getInstitutionInfo(): InstitutionInfo {
     return DataCache.localCache.institutionInfo || null;
   }
 
-  setInstitutionInfo(institutionInfo: MInstitutionInfo) {
+  setInstitutionInfo(institutionInfo: InstitutionInfo) {
     DataCache.localCache.institutionInfo = institutionInfo;
   }
 
-  setStartupInfo(startupInfo: MStartupInfo) {
+  setStartupInfo(startupInfo: StartupInfo) {
     DataCache.localCache.startupInfo = startupInfo;
   }
 
-  getStartupInfo(): MStartupInfo {
+  getStartupInfo(): StartupInfo {
     return DataCache.localCache.startupInfo || null;
   }
 
-  setInstitutionSetting(settingInfo: MSettingInfo) {
+  setInstitutionSetting(settingInfo: SettingInfo) {
     DataCache.localCache.addSetting(settingInfo);
   }
 
@@ -158,11 +158,11 @@ export class DataCache {
     return DataCache.localCache.getSetting(setting).value;
   }
 
-  setInstitutionSettingList(settingList: MSettingInfoList) {
+  setInstitutionSettingList(settingList: SettingInfoList) {
     DataCache.localCache.addSettingList(settingList);
   }
 
-  setInstitutionContentString(contentStringInfo: MContentStringInfo) {
+  setInstitutionContentString(contentStringInfo: ContentStringInfo) {
     DataCache.localCache.addContentString(contentStringInfo);
   }
 
@@ -178,19 +178,19 @@ export class DataCache {
     DataCache.localCache.bIsPINSet = pinSet;
   }
 
-  getUserInfo(): MUserInfo {
+  getUserInfo(): UserInfo {
     return DataCache.localCache.userInfo;
   }
 
-  setUserInfo(userInfo: MUserInfo) {
+  setUserInfo(userInfo: UserInfo) {
     DataCache.localCache.userInfo = userInfo;
   }
 
-  getUserPhotoInfo(): MUserPhotoInfo {
+  getUserPhotoInfo(): UserPhotoInfo {
     return DataCache.localCache.userPhotoInfo;
   }
 
-  setUserPhotoInfo(userPhotoInfo: MUserPhotoInfo) {
+  setUserPhotoInfo(userPhotoInfo: UserPhotoInfo) {
     DataCache.localCache.userPhotoInfo = userPhotoInfo;
   }
 
@@ -206,7 +206,7 @@ export class DataCache {
     return DataCache.localCache.getUserSetting(userSetting).value || null;
   }
 
-  setUserSetting(userSetting: MUserSettingInfo) {
+  setUserSetting(userSetting: UserSettingInfo) {
     DataCache.localCache.addUserSetting(userSetting);
   }
 

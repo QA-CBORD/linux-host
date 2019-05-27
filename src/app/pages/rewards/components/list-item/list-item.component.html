@@ -1,0 +1,76 @@
+<div class="list-item" (click)="openPopover(item)">
+  <div class="list-item__content" [ngClass]="{ 'list-item__store-content': !isHistoryEnv }">
+    <div
+      class="list-item__title"
+      [ngClass]="{
+        'list-item__title--levels': isLevelsEnv
+      }"
+    >
+      {{ item.itemName || item.name }}
+    </div>
+    <div class="list-item__description">
+      {{ item.shortDescription }}
+    </div>
+    <div class="list-item__time" *ngIf="isHistoryEnv">
+      {{ item.claimedTime | date: "M/d/yy, h:mmaaaaa'm'" }}
+    </div>
+  </div>
+  <div
+    class="list-item__actions"
+    [ngClass]="{
+      'list-item__actions--store': !isHistoryEnv,
+      'list-item__actions--levels': isLevelsEnv
+    }"
+  >
+    <div class="list-item__actions-wrapper">
+      <ng-template #activeReward>
+        <img src="./assets/icon/qr-code.svg" alt="qrcode" class="list-item__qrcode" />
+        <div class="list-item__button" *ngIf="!isHistoryEnv">Scan</div>
+      </ng-template>
+      <ng-template #points>
+        <div class="list-item__score" [ngClass]="{ 'list-item__score--semibold': !isHistoryEnv }">
+          {{ listItemScoreValue }}
+        </div>
+      </ng-template>
+      <ng-template #reward>
+        <div
+          class="list-item__score-container"
+          [ngClass]="{ 'list-item__score-container--disabled': disabledStoreReward }"
+        >
+          <ng-container [ngTemplateOutlet]="points"></ng-container>
+          <div class="list-item__button" *ngIf="!isHistoryEnv">
+            Redeem
+          </div>
+        </div>
+      </ng-template>
+      <ng-template #defaultLevelReward>
+        <div class="list-item__button">
+          Claim
+        </div>
+      </ng-template>
+      <ng-template #claimedLevelReward>
+        <ion-icon class="list-item__checkmark" name="checkmark"></ion-icon>
+        <div class="list-item__button list-item__button--without-border">CLAIMED</div>
+      </ng-template>
+      <ng-template #lockedLevelReward>
+        <img src="./assets/icon/lock-gray.svg" alt="lock item" class="list-item__locked" />
+      </ng-template>
+
+      <ng-container
+        *ngIf="
+          (active && isStoreEnv) || (isLevelsEnv && item.claimStatus === 2 && isLowerThenCurrentLevel(item));
+          then activeReward
+        "
+      ></ng-container>
+      <ng-container *ngIf="!active && isStoreEnv; then reward"></ng-container>
+      <ng-container *ngIf="isHistoryEnv; then points"></ng-container>
+      <ng-container
+        *ngIf="isLevelsEnv && item.claimStatus === 0 && statusLevel === 1; then defaultLevelReward"
+      ></ng-container>
+      <ng-container
+        *ngIf="isLevelsEnv && item.claimStatus === 3 && isLowerThenCurrentLevel(item); then claimedLevelReward"
+      ></ng-container>
+      <ng-container *ngIf="item.claimLevel > userLevel; then lockedLevelReward"></ng-container>
+    </div>
+  </div>
+</div>

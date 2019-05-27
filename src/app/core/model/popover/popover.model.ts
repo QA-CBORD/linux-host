@@ -1,8 +1,11 @@
+import { PopupTypes } from '../../../pages/rewards/rewards.config';
+
 export interface popoverConfig {
-  type: string;
+  type: string | keyof PopupTypes;
   title: string;
-  message: string;
-  code: string;
-  validityTime: number;
+  message: string | {};
   buttons: any[];
+  code?: string;
+  validityTime?: number;
+  closeBtn?: boolean;
 }

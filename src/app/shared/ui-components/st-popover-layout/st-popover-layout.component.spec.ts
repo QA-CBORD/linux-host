@@ -9,10 +9,9 @@ describe('StPopoverLayoutComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ StPopoverLayoutComponent ],
+      declarations: [StPopoverLayoutComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {

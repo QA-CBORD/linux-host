@@ -6,7 +6,7 @@ import { Geolocation, GeolocationOptions, Geoposition } from '@ionic-native/geol
 import { from, Observable, of, throwError } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 
-import { MGeoCoordinates } from '../../model/geolocation/geocoordinates.interface';
+import { GeoCoordinates } from '../../model/geolocation/geocoordinates.model';
 
 @Injectable({
   providedIn: 'root',
@@ -22,20 +22,20 @@ export class CoordsService {
     });
   }
 
-  getCoords(options?: GeolocationOptions): Observable<MGeoCoordinates> {
+  getCoords(options?: GeolocationOptions): Observable<GeoCoordinates> {
     return this.cordovaAvailable ? this.getLocationFromCordova(options) : this.getLocationFromBrowser(options);
   }
 
-  startWatchCoords(options?: GeolocationOptions): Observable<MGeoCoordinates> {
+  startWatchCoords(options?: GeolocationOptions): Observable<GeoCoordinates> {
     return this.cordovaAvailable
       ? this.startWatchLocationFromCordova(options)
       : this.startWatchLocationFromBrowser(options);
   }
 
-  private getLocationFromCordova(options?: GeolocationOptions): Observable<MGeoCoordinates> {
+  private getLocationFromCordova(options?: GeolocationOptions): Observable<GeoCoordinates> {
     options = options && options.timeout ? options : { timeout: this.timeoutOfGettingPosition };
 
-    return from<MGeoCoordinates>(
+    return from<GeoCoordinates>(
       this.geolocation
         .getCurrentPosition(options)
         .then(
@@ -45,7 +45,7 @@ export class CoordsService {
     ).pipe(take(1));
   }
 
-  private getLocationFromBrowser(options?: GeolocationOptions): Observable<MGeoCoordinates> {
+  private getLocationFromBrowser(options?: GeolocationOptions): Observable<GeoCoordinates> {
     options = options && options.timeout ? options : { timeout: this.timeoutOfGettingPosition };
 
     if (!navigator.geolocation) return of(this.emptyPosition).pipe(take(1));
@@ -65,13 +65,13 @@ export class CoordsService {
     });
   }
 
-  private startWatchLocationFromCordova(options?: GeolocationOptions): Observable<MGeoCoordinates> {
+  private startWatchLocationFromCordova(options?: GeolocationOptions): Observable<GeoCoordinates> {
     return this.geolocation
       .watchPosition(options)
       .pipe(map(({ coords: { longitude, accuracy, latitude } }: Geoposition) => ({ longitude, accuracy, latitude })));
   }
 
-  private startWatchLocationFromBrowser(options?: GeolocationOptions): Observable<MGeoCoordinates> {
+  private startWatchLocationFromBrowser(options?: GeolocationOptions): Observable<GeoCoordinates> {
     if (!navigator.geolocation) return throwError('Unavailable option');
 
     return Observable.create(observer => {

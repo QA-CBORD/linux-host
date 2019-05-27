@@ -4,9 +4,9 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { BaseService } from '../base-service/base.service';
-import { Institution } from '../../model/institution/institution';
-import { MessageResponse } from '../../model/service/message-response.interface';
-import { InstitutionPhotoInfo } from '../../model/institution/institution-photo-info';
+import { Institution } from '../../model/institution/institution.model';
+import { MessageResponse } from '../../model/service/message-response.model';
+import { InstitutionPhotoInfo } from '../../model/institution/institution-photo-info.model';
 
 @Injectable({
   providedIn: 'root',

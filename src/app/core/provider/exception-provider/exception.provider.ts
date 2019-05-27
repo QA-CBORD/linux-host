@@ -2,15 +2,13 @@ import { Injectable } from '@angular/core';
 import { Events } from '@ionic/angular';
 
 import * as Globals from '../../../app.global';
-import { ExceptionPayload } from '../../model/exception/exception-interface';
-
+import { ExceptionPayload } from '../../model/exception/exception.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ExceptionProvider {
-
-  constructor() { }
+  constructor() {}
 
   /**
    * Create exception popup

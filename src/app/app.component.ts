@@ -6,7 +6,7 @@ import { AlertController, Events, LoadingController, Platform } from '@ionic/ang
 
 import { Router } from '@angular/router';
 import * as Globals from './app.global';
-import { ExceptionPayload } from './core/model/exception/exception-interface';
+import { ExceptionPayload } from './core/model/exception/exception.model';
 import { DataCache } from './core/utils/data-cache';
 import { EDestination } from './pages/home/home.page';
 

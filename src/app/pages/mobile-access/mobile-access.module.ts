@@ -13,13 +13,7 @@ import { ActivateLocationComponent } from './activate-location';
 import { SharedModule } from '../../shared/shared.module';
 import { MobileAccessPopoverComponent } from './mobile-access-popover';
 
-const imports = [
-  CommonModule,
-  FormsModule,
-  IonicModule,
-  MobileAccessRoutingModule,
-  SharedModule
-];
+const imports = [CommonModule, FormsModule, IonicModule, MobileAccessRoutingModule, SharedModule];
 
 const declarations = [
   MobileAccessPage,

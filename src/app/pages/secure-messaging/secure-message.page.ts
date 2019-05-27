@@ -50,11 +50,7 @@ export class SecureMessagePage implements OnDestroy {
     /// set subscription to check screen size change
     /// used to adjust ui layout
     this.bIsLargeScreen = this.platform.width() > this.largeScreenPixelMin;
-    this.sourceSubscription.add(
-      fromEvent(window, 'resize').subscribe(
-        this.onWindowResizeHandler.bind(this)
-      )
-    );
+    this.sourceSubscription.add(fromEvent(window, 'resize').subscribe(this.onWindowResizeHandler.bind(this)));
     this.initializePage();
   }
 
@@ -172,8 +168,7 @@ export class SecureMessagePage implements OnDestroy {
         if (
           convo.groupIdValue &&
           convo.groupIdValue.length > 0 &&
-          (convo.groupIdValue === message.sender.id_value ||
-            convo.groupIdValue === message.recipient.id_value)
+          (convo.groupIdValue === message.sender.id_value || convo.groupIdValue === message.recipient.id_value)
         ) {
           convo.messages.push(message);
           bNewConversation = false;
@@ -209,13 +204,11 @@ export class SecureMessagePage implements OnDestroy {
         }
 
         const conversation: MSecureMessageConversation = {
-          institutionId: SecureMessagingMainService.GetSecureMessagesAuthInfo()
-            .institution_id,
+          institutionId: SecureMessagingMainService.GetSecureMessagesAuthInfo().institution_id,
           groupName: newGroupName,
           groupIdValue: newGroupId,
           groupDescription: newGroupDescription,
-          myIdValue: SecureMessagingMainService.GetSecureMessagesAuthInfo()
-            .id_value,
+          myIdValue: SecureMessagingMainService.GetSecureMessagesAuthInfo().id_value,
           messages: [],
           selected: false,
         };
@@ -269,10 +262,7 @@ export class SecureMessagePage implements OnDestroy {
    * Show grid column with current conversations
    */
   showConversationsColumn(): boolean {
-    return (
-      this.bIsLargeScreen === true ||
-      (this.selectedConversation == null && !this.bCreateNewConversation)
-    );
+    return this.bIsLargeScreen === true || (this.selectedConversation == null && !this.bCreateNewConversation);
   }
 
   /**
@@ -311,13 +301,11 @@ export class SecureMessagePage implements OnDestroy {
 
     if (newConversation === null) {
       newConversation = {
-        institutionId: SecureMessagingMainService.GetSecureMessagesAuthInfo()
-          .institution_id,
+        institutionId: SecureMessagingMainService.GetSecureMessagesAuthInfo().institution_id,
         groupName: group.name,
         groupIdValue: group.id,
         groupDescription: group.description,
-        myIdValue: SecureMessagingMainService.GetSecureMessagesAuthInfo()
-          .id_value,
+        myIdValue: SecureMessagingMainService.GetSecureMessagesAuthInfo().id_value,
         messages: [],
         selected: true,
       };
@@ -332,10 +320,7 @@ export class SecureMessagePage implements OnDestroy {
    */
   onClickConversation(conversation: MSecureMessageConversation) {
     this.bCreateNewConversation = false;
-    if (
-      this.selectedConversation != null &&
-      this.selectedConversation.groupIdValue === conversation.groupIdValue
-    ) {
+    if (this.selectedConversation != null && this.selectedConversation.groupIdValue === conversation.groupIdValue) {
       return;
     }
     this.setSelectedConversation(conversation);
@@ -369,22 +354,14 @@ export class SecureMessagePage implements OnDestroy {
    * Create message body object for sending a new message to a group
    * @param messageBody body of new message
    */
-  private createNewMessageSendBody(
-    messageBody: string
-  ): MSecureMessageSendBody {
+  private createNewMessageSendBody(messageBody: string): MSecureMessageSendBody {
     return {
-      institution_id: SecureMessagingMainService.GetSecureMessagesAuthInfo()
-        .institution_id,
+      institution_id: SecureMessagingMainService.GetSecureMessagesAuthInfo().institution_id,
       sender: {
         type: 'patron',
-        id_field: SecureMessagingMainService.GetSecureMessagesAuthInfo()
-          .id_field,
-        id_value: SecureMessagingMainService.GetSecureMessagesAuthInfo()
-          .id_value,
-        name:
-          DataCache.getUserInfo().firstName +
-          ' ' +
-          DataCache.getUserInfo().lastName,
+        id_field: SecureMessagingMainService.GetSecureMessagesAuthInfo().id_field,
+        id_value: SecureMessagingMainService.GetSecureMessagesAuthInfo().id_value,
+        name: DataCache.getUserInfo().firstName + ' ' + DataCache.getUserInfo().lastName,
       },
       recipient: {
         type: 'group',
@@ -440,8 +417,7 @@ export class SecureMessagePage implements OnDestroy {
       description: '',
       id: null,
       importance: null,
-      institution_id: SecureMessagingMainService.GetSecureMessagesAuthInfo()
-        .institution_id,
+      institution_id: SecureMessagingMainService.GetSecureMessagesAuthInfo().institution_id,
       read_date: null,
       recipient: {
         created_date: new Date().toISOString(),
@@ -459,14 +435,9 @@ export class SecureMessagePage implements OnDestroy {
         created_date: new Date().toISOString(),
         id: '',
         type: 'patron',
-        id_field: SecureMessagingMainService.GetSecureMessagesAuthInfo()
-          .id_field,
-        id_value: SecureMessagingMainService.GetSecureMessagesAuthInfo()
-          .id_value,
-        name:
-          DataCache.getUserInfo().firstName +
-          ' ' +
-          DataCache.getUserInfo().lastName,
+        id_field: SecureMessagingMainService.GetSecureMessagesAuthInfo().id_field,
+        id_value: SecureMessagingMainService.GetSecureMessagesAuthInfo().id_value,
+        name: DataCache.getUserInfo().firstName + ' ' + DataCache.getUserInfo().lastName,
         aux_user_id: null,
         version: 1,
       },
@@ -533,11 +504,7 @@ export class SecureMessagePage implements OnDestroy {
     this.selectedConversation.selected = true;
 
     for (const m of conversation.messages) {
-      console.log(
-        `${this.getMessageDateShortString(m)} - ${new Date(
-          m.sent_date
-        ).getTime()}`
-      );
+      console.log(`${this.getMessageDateShortString(m)} - ${new Date(m.sent_date).getTime()}`);
     }
   }
 
@@ -545,16 +512,10 @@ export class SecureMessagePage implements OnDestroy {
    * Helper method to clear selected conversation
    */
   private clearSelectedConversation() {
-    if (
-      this.selectedConversation.messages === null ||
-      this.selectedConversation.messages.length === 0
-    ) {
+    if (this.selectedConversation.messages === null || this.selectedConversation.messages.length === 0) {
       for (const convo of this.conversationsArray) {
         if (convo.groupIdValue === this.selectedConversation.groupIdValue) {
-          this.conversationsArray.splice(
-            this.conversationsArray.indexOf(convo),
-            1
-          );
+          this.conversationsArray.splice(this.conversationsArray.indexOf(convo), 1);
         }
       }
     }
@@ -568,12 +529,8 @@ export class SecureMessagePage implements OnDestroy {
    * UI helper method to set group initial
    * @param conversation conversation to get data for ui
    */
-  getConversationGroupInitial(
-    conversation: MSecureMessageConversation
-  ): string {
-    return conversation.groupName == null || conversation.groupName.length < 1
-      ? 'U'
-      : conversation.groupName[0];
+  getConversationGroupInitial(conversation: MSecureMessageConversation): string {
+    return conversation.groupName == null || conversation.groupName.length < 1 ? 'U' : conversation.groupName[0];
   }
 
   /**
@@ -581,9 +538,7 @@ export class SecureMessagePage implements OnDestroy {
    * @param conversation conversation to get data for ui
    */
   getConversationGroupName(conversation: MSecureMessageConversation): string {
-    return conversation.groupName == null
-      ? 'Conversation'
-      : conversation.groupName;
+    return conversation.groupName == null ? 'Conversation' : conversation.groupName;
   }
 
   /**
@@ -592,14 +547,8 @@ export class SecureMessagePage implements OnDestroy {
    * @param conversation conversation to get data for ui
    */
   getConversationDescription(conversation: MSecureMessageConversation): string {
-    const frontText =
-      conversation.messages[conversation.messages.length - 1].sender.type ===
-      'patron'
-        ? 'You: '
-        : '';
-    return (
-      frontText + conversation.messages[conversation.messages.length - 1].body
-    );
+    const frontText = conversation.messages[conversation.messages.length - 1].sender.type === 'patron' ? 'You: ' : '';
+    return frontText + conversation.messages[conversation.messages.length - 1].body;
   }
 
   /**
@@ -632,9 +581,7 @@ export class SecureMessagePage implements OnDestroy {
    */
   getConversationDate(conversation: MSecureMessageConversation): string {
     /// get latest message and get the date string for it
-    return this.getMessageDateShortString(
-      conversation.messages[conversation.messages.length - 1]
-    );
+    return this.getMessageDateShortString(conversation.messages[conversation.messages.length - 1]);
   }
 
   /**
@@ -667,9 +614,7 @@ export class SecureMessagePage implements OnDestroy {
 
     /// > 1 minute (x minutes ago)
     if (today.getTime() - sentDate.getTime() > 60000) {
-      const minutesAgo = Math.round(
-        (today.getTime() - sentDate.getTime()) / 60000
-      );
+      const minutesAgo = Math.round((today.getTime() - sentDate.getTime()) / 60000);
       return minutesAgo.toString() + ' min';
     }
 
@@ -683,10 +628,7 @@ export class SecureMessagePage implements OnDestroy {
    * @param conversation conversation data
    * @param messageIndex index of current message
    */
-  messageShowGroupAvatar(
-    conversation: MSecureMessageConversation,
-    messageIndex: number
-  ): boolean {
+  messageShowGroupAvatar(conversation: MSecureMessageConversation, messageIndex: number): boolean {
     /// first message
     if (messageIndex === 0) {
       /// more than one message
@@ -717,27 +659,17 @@ export class SecureMessagePage implements OnDestroy {
    * @param messageIndex index of current message
    * @param messageType type of message (group or patron)
    */
-  messageShowDate(
-    conversation: MSecureMessageConversation,
-    messageIndex: number,
-    messageType: string
-  ): boolean {
+  messageShowDate(conversation: MSecureMessageConversation, messageIndex: number, messageType: string): boolean {
     /// first message
     if (messageIndex === 0) {
       /// more than one message
       if (conversation.messages.length > 1) {
         /// next message from group as well
-        if (
-          conversation.messages[messageIndex + 1].sender.type === messageType
-        ) {
+        if (conversation.messages[messageIndex + 1].sender.type === messageType) {
           /// was this message sent within 1 min of the next message
           if (
-            new Date(
-              conversation.messages[messageIndex + 1].sent_date
-            ).getTime() -
-              new Date(
-                conversation.messages[messageIndex].sent_date
-              ).getTime() <
+            new Date(conversation.messages[messageIndex + 1].sent_date).getTime() -
+              new Date(conversation.messages[messageIndex].sent_date).getTime() <
             60000
           ) {
             return false;
@@ -750,17 +682,11 @@ export class SecureMessagePage implements OnDestroy {
       /// more messages
       if (conversation.messages.length - 1 > messageIndex + 1) {
         /// next message from group as well
-        if (
-          conversation.messages[messageIndex + 1].sender.type === messageType
-        ) {
+        if (conversation.messages[messageIndex + 1].sender.type === messageType) {
           /// was this message sent within 1 min of the next message
           if (
-            new Date(
-              conversation.messages[messageIndex + 1].sent_date
-            ).getTime() -
-              new Date(
-                conversation.messages[messageIndex].sent_date
-              ).getTime() <
+            new Date(conversation.messages[messageIndex + 1].sent_date).getTime() -
+              new Date(conversation.messages[messageIndex].sent_date).getTime() <
             60000
           ) {
             return false;
@@ -807,13 +733,8 @@ export class SecureMessagePage implements OnDestroy {
 
     /// > 1 minute (x minutes ago)
     if (today.getTime() - sentDate.getTime() > 60000) {
-      const minutesAgo = Math.round(
-        (today.getTime() - sentDate.getTime()) / 60000
-      );
-      return (
-        minutesAgo.toString() +
-        (minutesAgo === 1 ? ' minute ago' : ' minutes ago')
-      );
+      const minutesAgo = Math.round((today.getTime() - sentDate.getTime()) / 60000);
+      return minutesAgo.toString() + (minutesAgo === 1 ? ' minute ago' : ' minutes ago');
     }
 
     /// < 1 minute (Now)

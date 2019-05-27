@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 
 import { BaseService, ServiceParameters } from '../base-service/base.service';
 
-import { MUserLogin } from '../../model/user';
+import { UserLogin } from '../../model/user';
 
 @Injectable({
   providedIn: 'root',
@@ -44,7 +44,7 @@ export class AuthService extends BaseService {
    *
    * @param userCredentials User Login credentials
    */
-  authenticateUser(userCredentials: MUserLogin): Observable<string> {
+  authenticateUser(userCredentials: UserLogin): Observable<string> {
     return Observable.create((observer: any) => {
       const postParams = {
         systemCredentials: {
