@@ -1,14 +1,16 @@
 <li [class]="levelClass">
   <div class="progress__indicator">
     <ng-container *ngIf="!isLevelLocked && hasRewards && !hasRewardReceived; else number">
-      <ion-icon class="progress__gift-icon"
-                [ngClass]="{'progress__gift-icon--small': hasRewardClaimed}"
-                [src]="icon">
-      </ion-icon>
+      <img
+        class="progress__gift-icon"
+        [ngClass]="{ 'progress__gift-icon--small': hasRewardClaimed }"
+        [src]="icon"
+        alt="qr_code"
+      />
     </ng-container>
     <ng-template #number>{{ levelInfo.level }}</ng-template>
   </div>
-  <div class="level" [ngClass]="{ 'level--active': show, 'level--none': !hasRewards}">
+  <div class="level" [ngClass]="{ 'level--active': show, 'level--none': !hasRewards }">
     <div class="level__info" (click)="onExpandHandle()">
       <div class="level__header">{{ levelInfo.name }}</div>
       <div class="level__status">{{ levelInfo.description }}</div>

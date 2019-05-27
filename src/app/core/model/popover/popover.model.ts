@@ -7,4 +7,5 @@ export interface popoverConfig {
   buttons: any[];
   code?: string;
   validityTime?: number;
+  closeBtn?: boolean;
 }

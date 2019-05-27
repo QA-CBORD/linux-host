@@ -6,7 +6,7 @@ import { CLAIM_STATUS, LEVEL_STATUS } from '../../../../rewards.config';
 @Component({
   selector: 'st-expand-item',
   templateUrl: './expand-item.component.html',
-  styleUrls: ['./expand-item.component.scss', '../expand-list.component.scss'],
+  styleUrls: ['./expand-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ExpandItemComponent {
@@ -48,7 +48,7 @@ export class ExpandItemComponent {
 
   get icon(): string {
     const gift = '/assets/icon/gift-white.svg';
-    const qr = '/assets/icon/qr-code.svg';
+    const qr = '/assets/icon/qr-code-blue.svg';
 
     return this.hasRewardClaimed ? qr : gift;
   }
