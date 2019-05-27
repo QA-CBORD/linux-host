@@ -58,15 +58,15 @@ export class RewardsService {
     );
   }
 
-  getAllData(): Observable<any> {
-    return zip(this.getUserRewardTrackInfo(), this.getUserRewardHistoryInfo());
+  getAllData(showToastOnError: boolean = true): Observable<[UserRewardTrackInfo, UserFulfillmentActivityInfo[]]> {
+    return zip(this.getUserRewardTrackInfo(showToastOnError), this.getUserRewardHistoryInfo(showToastOnError));
   }
 
-  getUserRewardTrackInfo(showToast: boolean = false): Observable<UserRewardTrackInfo> {
+  getUserRewardTrackInfo(showToast: boolean): Observable<UserRewardTrackInfo> {
     return this.rewardsApi.getUserRewardTrackInfo(showToast).pipe(tap(trackInfo => (this._rewardTrack = trackInfo)));
   }
 
-  getUserRewardHistoryInfo(showToast: boolean = false): Observable<UserFulfillmentActivityInfo[]> {
+  getUserRewardHistoryInfo(showToast: boolean): Observable<UserFulfillmentActivityInfo[]> {
     return this.rewardsApi
       .getUserRewardHistoryInfo(showToast)
       .pipe(tap(historyArray => (this._rewardHistory = historyArray)));

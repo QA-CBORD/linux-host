@@ -26,12 +26,31 @@ export class ExpandItemComponent {
     return `${baseClass} ${modifier} ${currentLvl}`;
   }
 
-  get hasLevelRewardToClaim(): boolean {
+  get isUnlocked(): boolean {
     return this.levelInfo.status === LEVEL_STATUS.unlocked;
   }
 
-  get hasNoRewards(): boolean {
-    return !this.levelInfo.userClaimableRewards.length;
+  get hasRewardClaimed(): boolean {
+    return this.levelInfo.status === LEVEL_STATUS.claimed;
+  }
+
+  get isLevelLocked(): boolean {
+    return this.levelInfo.status === LEVEL_STATUS.locked;
+  }
+
+  get hasRewardReceived(): boolean {
+    return this.levelInfo.status === LEVEL_STATUS.received;
+  }
+
+  get hasRewards(): boolean {
+    return !!this.levelInfo.userClaimableRewards.length;
+  }
+
+  get icon(): string {
+    const gift = '/assets/icon/gift-white.svg';
+    const qr = '/assets/icon/qr-code.svg';
+
+    return this.hasRewardClaimed ? qr : gift;
   }
 
   private get isCurrentLvl(): boolean {
@@ -48,11 +67,7 @@ export class ExpandItemComponent {
     const activeGift = `${baseClass}--active`;
     const claimed = `${baseClass}--claimed`;
 
-    return this.hasLevelRewardToClaim && !this.hasNoRewards
-      ? activeGift
-      : this.hasLevelReceivedReward
-      ? giftGotten
-      : claimed;
+    return this.isUnlocked && this.hasRewards ? activeGift : this.hasLevelReceivedReward ? giftGotten : claimed;
   }
 
   onExpandHandle() {

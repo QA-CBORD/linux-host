@@ -14,7 +14,8 @@ $circle-width: 40px;
     min-height: 90px;
 
     &--passed,
-    &--claimed {
+    &--claimed,
+    &--active {
       border-color: $color-dodger-blue;
       border-left-style: solid;
 
@@ -28,18 +29,20 @@ $circle-width: 40px;
       }
     }
 
+    &--claimed,
     &--active {
-      border-color: $color-dodger-blue;
-      border-left-style: solid;
-
       .progress__indicator {
-        background: $color-dodger-blue;
-        color: $color-white;
-        border-color: $color-dodger-blue;
         animation-name: pulse;
         animation-timing-function: cubic-bezier(1, 0.38, 0.63, 0.79);
         animation-iteration-count: infinite;
         animation-duration: 2.5s;
+      }
+    }
+
+    &--active {
+       .progress__indicator {
+        background: $color-dodger-blue;
+        color: $color-white;
       }
     }
 
@@ -65,6 +68,11 @@ $circle-width: 40px;
   &__gift-icon {
     width: 25px;
     height: 25px;
+
+    &--small {
+      width: 20px;
+      height: 20px;
+    }
   }
 }
 

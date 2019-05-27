@@ -39,9 +39,9 @@ export class RewardsPopoverComponent implements OnInit, AfterViewInit {
     this.popoverConfig = {
       title: this.getTitle(this.type),
       type: this.type,
-      buttons: this.configureButtons(),
+      buttons: this.configureButtons(this.type),
       message: this.data,
-      code: this.getCode(),
+      code: this.getCode(this.type, this.data),
     };
   }
 
@@ -51,32 +51,27 @@ export class RewardsPopoverComponent implements OnInit, AfterViewInit {
 
   // TODO fix after pre-demo (string affect align!)
 
-  private getCode(): string {
-    if (this.type === PopupTypes.SCAN) {
-      return this.data.id;
+  private getCode(type: string, data: RedeemableRewardInfo | UserFulfillmentActivityInfo): string {
+    if (type === PopupTypes.SCAN) {
+      return data.id;
     }
-    if (this.type === PopupTypes.SUCCESS) {
+    if (type === PopupTypes.SUCCESS) {
       return ' ';
     }
 
     return '';
   }
 
-  private configureButtons(): PopupButton[] {
-    const close = [buttons.CLOSE];
-    const retry = [buttons.RETRY];
-    const redeem = [buttons.CANCEL, buttons.REDEEM];
-    const claim = [buttons.CANCEL, buttons.CLAIM];
-
-    switch (this.type) {
+  private configureButtons(type: string): PopupButton[] {
+    switch (type) {
       case PopupTypes.CLAIM:
-        return claim;
+        return [buttons.CANCEL, buttons.CLAIM];
       case PopupTypes.REDEEM:
-        return redeem;
+        return [buttons.CANCEL, buttons.REDEEM];
       case PopupTypes.RETRY:
-        return [...close, ...retry];
+        return [buttons.RETRY];
       default:
-        return close;
+        return [buttons.CLOSE];
     }
   }
 
@@ -90,6 +85,8 @@ export class RewardsPopoverComponent implements OnInit, AfterViewInit {
         return popoverTitles.success;
       case PopupTypes.CLAIM:
         return popoverTitles.claim;
+      case PopupTypes.RETRY:
+        return popoverTitles.retry;
       default:
         return '';
     }
@@ -113,4 +110,5 @@ enum popoverTitles {
   scan = 'Scan Code',
   success = 'Success',
   claim = 'Claim Reward',
+  retry = 'Retry get it',
 }

@@ -18,7 +18,7 @@ export class RewardsApiService extends BaseService {
     super(http);
   }
 
-  getUserRewardTrackInfo(headerOnly: boolean = false, showToast: boolean = false): Observable<UserRewardTrackInfo> {
+  getUserRewardTrackInfo(headerOnly: boolean = false, showToast: boolean = true): Observable<UserRewardTrackInfo> {
     const methodName = 'retrieveUserRewardTrackInfo';
     const postParams: ServiceParameters = { headerOnly };
     return this.httpRequest<MessageResponse<UserRewardTrackInfo[]>>(this.serviceUrl, methodName, true, {
@@ -30,12 +30,12 @@ export class RewardsApiService extends BaseService {
         }
         return Array.isArray(response) && response.length ? response[0] : null;
       }),
-      this.onErrorHandler(true)
+      this.onErrorHandler(showToast)
     );
   }
 
   getUserRewardHistoryInfo(
-    showToast: boolean = false,
+    showToast: boolean = true,
     rewardTrackId: string = null,
     startDate: Date = null,
     endDate: Date = null,
@@ -52,7 +52,7 @@ export class RewardsApiService extends BaseService {
       ...postParams,
     }).pipe(
       this.parseResponse(),
-      this.onErrorHandler(true)
+      this.onErrorHandler(showToast)
     );
   }
 
@@ -67,16 +67,16 @@ export class RewardsApiService extends BaseService {
     );
   }
 
-  claimReward(rewardId: string, showToast: boolean = false) {
+  claimReward(rewardId: string, showToast: boolean = true) {
     const methodName = 'claimRewardV2';
 
     return this.httpRequest<MessageResponse<boolean>>(this.serviceUrl, methodName, true, { rewardId }).pipe(
       this.parseResponse(),
-      this.onErrorHandler(true)
+      this.onErrorHandler(showToast)
     );
   }
 
-  private onErrorHandler(showToast: boolean = false) {
+  private onErrorHandler(showToast: boolean = true) {
     return (source: Observable<any>) =>
       source.pipe(
         catchError(err => {
@@ -102,7 +102,7 @@ export class RewardsApiService extends BaseService {
     const message = `something went wrong, try again later`;
     const toast = await this.toastController.create({
       message,
-      duration: 5000,
+      duration: 3000,
     });
     toast.present();
   }
