@@ -74,14 +74,14 @@ export class ListItemComponent {
 
     popover.onDidDismiss().then(({ data }) => {
       if (data === PopupTypes.REDEEM || data === PopupTypes.CLAIM) {
-        // let cacheItem: UserFulfillmentActivityInfo;
+        this.rewardsApi
+          .claimReward(this.item.id)
+          .pipe(switchMap(res => this.refreshData().pipe(map(() => res))))
+          .subscribe(res => {
+            const type = res.status === 2 ? PopupTypes.SCAN : PopupTypes.SUCCESS;
 
-        this.rewardsApi.claimReward(this.item.id).subscribe(re => {
-          console.log(re);
-          // if (res) {
-          //   this.openPopover(this.item, PopupTypes.SCAN);
-          // }
-        });
+            this.openPopover(this.item, type);
+          });
       }
     });
 

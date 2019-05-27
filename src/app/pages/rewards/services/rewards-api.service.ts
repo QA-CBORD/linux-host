@@ -67,10 +67,10 @@ export class RewardsApiService extends BaseService {
     );
   }
 
-  claimReward(rewardId: string, showToast: boolean = false) {
+  claimReward(rewardId: string, showToast: boolean = false): Observable<UserFulfillmentActivityInfo>{
     const methodName = 'claimRewardV2';
 
-    return this.httpRequest<MessageResponse<boolean>>(this.serviceUrl, methodName, true, { rewardId }).pipe(
+    return this.httpRequest<MessageResponse<UserFulfillmentActivityInfo>>(this.serviceUrl, methodName, true, { rewardId }).pipe(
       this.parseResponse(),
       this.onErrorHandler(true)
     );
