@@ -60,7 +60,7 @@ export interface ClaimableRewardInfo {
   claimStatus: number;
 }
 
-export interface RedeemableRewardInfo extends UserFulfillmentActivityInfo {
+export interface RedeemableRewardInfo extends UserFulfillmentActivityInfo, ClaimableRewardInfo {
   id: string;
   startDate: Date;
   endDate: Date;

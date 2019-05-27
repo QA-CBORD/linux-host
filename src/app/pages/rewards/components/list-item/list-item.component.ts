@@ -18,7 +18,7 @@ import { UserPhotoInfo } from '../../../../core/model/user';
 })
 export class ListItemComponent {
   @Input() environment: string;
-  @Input() item: RedeemableRewardInfo | UserFulfillmentActivityInfo | ClaimableRewardInfo;
+  @Input() item: RedeemableRewardInfo;
   @Input() active: boolean;
   @Input() currentPoints: number;
   @Input() userLevel: number;
