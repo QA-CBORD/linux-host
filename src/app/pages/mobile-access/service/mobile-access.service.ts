@@ -13,7 +13,7 @@ import { CoordsService } from '../../../core/service/coords/coords.service';
 import { GeoLocationInfo } from '../../../core/model/geolocation/geoLocationInfo.model';
 import { ContentStringInfo } from '../../../core/model/content/content-string-info.model';
 import { ContentService } from '../../../core/service/content-service/content.service';
-import {GenericContentStringsParams, MobileAccessContentStringsParams} from "../mobile-acces.config";
+import { GenericContentStringsParams, MobileAccessContentStringsParams } from '../mobile-acces.config';
 
 @Injectable()
 export class MobileAccessService extends BaseService {
@@ -59,12 +59,9 @@ export class MobileAccessService extends BaseService {
   }
 
   initContentStringsListgfas(): Observable<ContentStringInfo[]> {
-        return this.contentService.retrieveContentStringList(GenericContentStringsParams)
-    .pipe(
-        tap(res =>
-          this.content = res.reduce((init, elem) => ({ ...init, [elem.name]: elem.value }), {})
-        )
-    );
+    return this.contentService
+      .retrieveContentStringList(GenericContentStringsParams)
+      .pipe(tap(res => (this.content = res.reduce((init, elem) => ({ ...init, [elem.name]: elem.value }), {}))));
   }
 
   getContentValueByName(name: string): string | undefined {
