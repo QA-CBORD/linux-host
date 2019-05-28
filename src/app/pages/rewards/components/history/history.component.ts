@@ -17,7 +17,7 @@ export class HistoryComponent implements OnInit {
     this.historyArr$ = this.rewardsService.getHistoryListRewards();
   }
 
-  trackByFn(index, item) {
-    return item.id;
+  trackByFn(index, { id }): number {
+    return id;
   }
 }
