@@ -2,9 +2,9 @@
   <st-balance [points]="(track | async).userCurrentPoints"></st-balance>
   <div class="store__active-wrapper" *ngIf="(activeRewards | async).length">
     <div class="store__active-list">
-      <h4 class="store__active-title">Active Rewards</h4>
+      <h4 class="store__active-title">{{contentString.activeRewardsLabel}}</h4>
       <div class="store__active-description">
-        Present a reward's QR code to finish claiming the reward
+        {{contentString.claimInstructionsLabel}}
       </div>
     </div>
 

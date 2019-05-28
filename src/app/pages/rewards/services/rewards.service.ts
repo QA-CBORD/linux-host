@@ -1,12 +1,20 @@
 import { Injectable } from '@angular/core';
 
-import { BehaviorSubject, Observable, zip } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, Observable, zip } from 'rxjs';
+import { map, take, tap } from 'rxjs/operators';
 
 import { RewardsApiService } from './rewards-api.service';
 import { ContentService } from '../../../core/service/content-service/content.service';
 
-import { CLAIM_STATUS, ContentStringsParams, LEVEL_STATUS, LOCAL_ROUTING, OPT_IN_STATUS } from '../rewards.config';
+import {
+  CLAIM_STATUS,
+  CONTENT_STRINGS,
+  ContentStringsParams,
+  GenericContentStringsParams,
+  LEVEL_STATUS,
+  LOCAL_ROUTING,
+  OPT_IN_STATUS,
+} from '../rewards.config';
 import { RedeemableRewardInfo, UserFulfillmentActivityInfo, UserRewardTrackInfo, UserTrackLevelInfo } from '../models';
 import { TabsConfig } from '../../../core/model/tabs/tabs.model';
 import { ContentStringInfo } from '../../../core/model/content/content-string-info.model';
@@ -82,13 +90,22 @@ export class RewardsService {
         const tabConfig: TabsConfig = { tabs: [] };
 
         if (hasLevels) {
-          tabConfig.tabs.push({ name: 'Levels', route: LOCAL_ROUTING.levels });
+          tabConfig.tabs.push({
+            name: this.getContentValueByName(CONTENT_STRINGS.levelTabTitle) || 'Levels',
+            route: LOCAL_ROUTING.levels,
+          });
         }
         if (hasRedeemableRewards) {
-          tabConfig.tabs.push({ name: 'Store', route: LOCAL_ROUTING.store });
+          tabConfig.tabs.push({
+            name: this.getContentValueByName(CONTENT_STRINGS.storeTabTitle) || 'Store',
+            route: LOCAL_ROUTING.store,
+          });
         }
 
-        tabConfig.tabs.push({ name: 'History', route: LOCAL_ROUTING.history });
+        tabConfig.tabs.push({
+          name: this.getContentValueByName(CONTENT_STRINGS.historyTabTitle) || 'History',
+          route: LOCAL_ROUTING.history,
+        });
 
         return tabConfig;
       })
@@ -118,10 +135,18 @@ export class RewardsService {
   }
 
   initContentStringsList(): Observable<ContentStringInfo[]> {
-    return this.contentService.retrieveContentStringList(ContentStringsParams).pipe(
-      tap(res => {
-        this.content = res.reduce((init, elem) => ({ ...init, [elem.name]: elem.value }), {});
-      })
+    return combineLatest(
+      this.contentService.retrieveContentStringList(ContentStringsParams),
+      this.contentService.retrieveContentStringList(GenericContentStringsParams)
+    ).pipe(
+      map(([res, res0]) => {
+        const arr0 = [...res];
+        const arr1 = [...res0];
+        const finalArray = arr0.concat(arr1);
+        this.content = finalArray.reduce((init, elem) => ({ ...init, [elem.name]: elem.value }), {});
+        return finalArray;
+      }),
+      take(1)
     );
   }
 
@@ -195,13 +220,15 @@ export class RewardsService {
     switch (status) {
       case LEVEL_STATUS.locked:
         const requiredXP = this.getExpToNextLevel(trackLevels, level, points);
-        return `${requiredXP} XP away from reward`;
+        return `${requiredXP} ${this.getContentValueByName(CONTENT_STRINGS.xpAwayFromRewardLabel)}`;
       case LEVEL_STATUS.claimed:
-        return '1 Active Reward';
+        return `1 ${this.getContentValueByName(CONTENT_STRINGS.activeRewardLabel)}`;
       case LEVEL_STATUS.received:
-        return 'Reward Claimed';
+        return this.getContentValueByName(CONTENT_STRINGS.rewardClaimedLabel);
       case LEVEL_STATUS.unlocked:
-        return rewards.length > 0 ? 'Claim 1 Reward' : 'No offers currently available';
+        return rewards.length > 0
+          ? this.getContentValueByName(CONTENT_STRINGS.claimRewardLabel)
+          : this.getContentValueByName(CONTENT_STRINGS.noOffersLabel);
       default:
         return '';
     }
