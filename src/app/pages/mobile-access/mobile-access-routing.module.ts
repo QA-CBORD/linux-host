@@ -11,10 +11,12 @@ const routes: Routes = [
     path: '',
     component: MobileAccessPage,
     resolve: { coords: LocationsResolverGuard },
+    data: { preload: true },
   },
   {
     path: `${LOCAL_ROUTING.activate}/:id`,
     component: ActivateLocationComponent,
+    data: { preload: true },
   },
 ];
 

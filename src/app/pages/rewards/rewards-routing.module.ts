@@ -13,18 +13,22 @@ const subRoutes: Routes = [
     path: '',
     component: RewardsPage,
     resolve: { rewardTrackInfo: RewardsResolverGuard },
+    data: { preload: true },
   },
   {
     path: LOCAL_ROUTING.history,
     component: HistoryComponent,
+    data: { preload: true },
   },
   {
     path: LOCAL_ROUTING.store,
     component: StoreComponent,
+    data: { preload: true },
   },
   {
     path: LOCAL_ROUTING.levels,
     component: LevelsComponent,
+    data: { preload: true },
   },
 ];
 
@@ -34,6 +38,7 @@ const routes: Routes = [
     component: RewardsPage,
     children: subRoutes,
     resolve: {},
+    data: { preload: true },
   },
 ];
 
