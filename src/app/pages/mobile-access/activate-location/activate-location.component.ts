@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
-import {NavController, PopoverController, ToastController} from '@ionic/angular';
+import { NavController, PopoverController, ToastController } from '@ionic/angular';
 
 import { map, take } from 'rxjs/operators';
 import { Observable, Subscription } from 'rxjs';

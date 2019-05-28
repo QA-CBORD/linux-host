@@ -12,7 +12,6 @@ import { LOCAL_ROUTING } from '../mobile-acces.config';
 
 @Injectable()
 export class LocationsResolverGuard implements Resolve<Observable<MMobileLocationInfo[] | boolean>> {
-
   constructor(
     private readonly mobileAccessService: MobileAccessService,
     private readonly router: Router,
