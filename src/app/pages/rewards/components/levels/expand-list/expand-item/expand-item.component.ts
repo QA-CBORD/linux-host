@@ -66,8 +66,15 @@ export class ExpandItemComponent {
     const giftGotten = `${baseClass}--passed`;
     const activeGift = `${baseClass}--active`;
     const claimed = `${baseClass}--claimed`;
+    const scan = `${baseClass}--scan`;
 
-    return this.isUnlocked && this.hasRewards ? activeGift : this.hasLevelReceivedReward ? giftGotten : claimed;
+    return this.isUnlocked && this.hasRewards
+      ? activeGift
+      : this.hasLevelReceivedReward
+      ? giftGotten
+      : this.hasRewardClaimed
+      ? `${claimed} ${scan}`
+      : claimed;
   }
 
   onExpandHandle() {
