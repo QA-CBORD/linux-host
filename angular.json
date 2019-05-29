@@ -29,8 +29,7 @@
                 "glob": "**/*.svg",
                 "input": "node_modules/ionicons/dist/ionicons/svg",
                 "output": "./svg"
-              },
-              "src/manifest.json"
+              }
             ],
             "styles": [
               {
@@ -155,8 +154,7 @@
                 "glob": "**/*",
                 "input": "src/assets",
                 "output": "/assets"
-              },
-              "src/manifest.json"
+              }
             ]
           },
           "configurations": {
