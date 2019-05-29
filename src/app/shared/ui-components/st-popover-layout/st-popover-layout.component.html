@@ -1,4 +1,4 @@
-<ion-header class="st-popover__header" no-border>
+<ion-header class="st-popover__header" no-border *ngIf="popoverConfig.title">
   <ion-toolbar mode="md" class="st-popover__toolbar">
     <ion-title class="st-popover__title">{{ popoverConfig.title }}</ion-title>
     <ion-buttons slot="end" *ngIf="popoverConfig.closeBtn">

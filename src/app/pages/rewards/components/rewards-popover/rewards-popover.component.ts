@@ -110,8 +110,6 @@ export class RewardsPopoverComponent implements OnInit, AfterViewInit {
         return this.contentString.claimTitle;
       case PopupTypes.RETRY:
         return this.contentString.retryTitle;
-      case PopupTypes.OPT_IN:
-        return popoverTitles.optIn;
       default:
         return '';
     }
@@ -186,12 +184,4 @@ export class RewardsPopoverComponent implements OnInit, AfterViewInit {
       scanCodeDescription,
     };
   }
-}
-enum popoverTitles {
-  redeem = 'Redeem Reward',
-  scan = 'Scan Code',
-  success = 'Success',
-  claim = 'Claim Reward',
-  retry = 'Retry get it',
-  optIn = 'Opt in modal',
 }

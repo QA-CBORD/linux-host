@@ -22,7 +22,8 @@ export class OptInGuard implements CanActivate {
   ) {}
 
   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
-    return this.rewardsService.getUserRewardTrackInfo().pipe(
+    return this.rewardsService.initContentStringsList().pipe(
+      switchMap(() => this.rewardsService.getUserRewardTrackInfo()),
       map((rewardTrackInfo: UserRewardTrackInfo) => {
         if (rewardTrackInfo.userOptInStatus === OPT_IN_STATUS.yes) {
           return true;
@@ -59,9 +60,7 @@ export class OptInGuard implements CanActivate {
         type: PopupTypes.OPT_IN,
         userTrackInfo,
         data: {
-          shortDescription:
-            userTrackInfo.trackDescription ||
-            'my modal body my modal body my modal body my modal body my modal body my modal body my modal body',
+          shortDescription: userTrackInfo.trackDescription,
           name: userTrackInfo.trackName,
         },
       },
