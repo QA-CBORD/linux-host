@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { RewardsService } from '../../services';
 import { Observable } from 'rxjs';
 import { RedeemableRewardInfo, UserFulfillmentActivityInfo, UserRewardTrackInfo } from '../../models';
-import {CONTENT_STRINGS} from "../../rewards.config";
+import { CONTENT_STRINGS } from '../../rewards.config';
 
 @Component({
   selector: 'st-store',
@@ -41,5 +41,4 @@ export class StoreComponent implements OnInit {
       claimInstructionsLabel,
     };
   }
-
 }

@@ -26,7 +26,7 @@ const subRoutes: Routes = [
   },
   {
     path: LOCAL_ROUTING.levels,
-    component: LevelsComponent
+    component: LevelsComponent,
   },
 ];
 

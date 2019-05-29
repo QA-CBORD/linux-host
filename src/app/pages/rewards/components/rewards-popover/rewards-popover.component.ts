@@ -93,7 +93,6 @@ export class RewardsPopoverComponent implements OnInit, AfterViewInit {
         return [buttons.RETRY];
       case PopupTypes.OPT_IN:
         return [buttons.OPT_IN];
-        return [{ ...buttons.RETRY, label: this.contentString.retryButton }];
       default:
         return [{ ...buttons.CLOSE, label: this.contentString.closeButton }];
     }
@@ -111,7 +110,6 @@ export class RewardsPopoverComponent implements OnInit, AfterViewInit {
         return this.contentString.claimTitle;
       case PopupTypes.RETRY:
         return this.contentString.retryTitle;
-        return popoverTitles.retry;
       case PopupTypes.OPT_IN:
         return popoverTitles.optIn;
       default:
@@ -185,9 +183,10 @@ export class RewardsPopoverComponent implements OnInit, AfterViewInit {
       redeemTitle,
       scanCodeTitle,
       retryTitle,
-      scanCodeDescription
+      scanCodeDescription,
     };
   }
+}
 enum popoverTitles {
   redeem = 'Redeem Reward',
   scan = 'Scan Code',

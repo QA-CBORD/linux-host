@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 
-import { Observable, of, Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { map, retryWhen, switchMap } from 'rxjs/operators';
 
 import { RewardsApiService, RewardsService } from '../services';

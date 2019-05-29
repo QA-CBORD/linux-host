@@ -7,6 +7,7 @@ export enum LOCAL_ROUTING {
 }
 
 export enum CONTENT_STRINGS {
+  activateBtn = 'button_activate',
   cancelBtn = 'button_cancel',
   closeBtn = 'button_close',
   retryBtn = 'button_retry',
@@ -39,7 +40,6 @@ export enum CONTENT_STRINGS {
   scanCodeDescription = 'dialog_description_scan-code',
   activeRewardsLabel = 'label_active-reward-plural',
   claimInstructionsLabel = 'label_claim-instructions',
-
 }
 export const ContentStringsParams = {
   category: Globals.ContentString.CATEGORIES.rewards,
