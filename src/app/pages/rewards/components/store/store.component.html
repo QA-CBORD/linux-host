@@ -9,7 +9,11 @@
     </div>
 
     <ion-list class="store__list list-container">
-      <ion-item class="list-container__item" button="true" *ngFor="let item of activeRewards | async">
+      <ion-item
+        class="list-container__item"
+        button="true"
+        *ngFor="let item of (activeRewards | async); trackBy: trackByFn"
+      >
         <st-list-item
           class="list-container__item-content"
           environment="store"
@@ -21,7 +25,7 @@
   </div>
 
   <ion-list class="store__list list-container">
-    <ion-item class="list-container__item" button="true" *ngFor="let item of rewards | async">
+    <ion-item class="list-container__item" button="true" *ngFor="let item of (rewards | async); trackBy: trackByFn">
       <st-list-item
         class="list-container__item-content"
         environment="store"

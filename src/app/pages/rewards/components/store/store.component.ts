@@ -23,14 +23,10 @@ export class StoreComponent implements OnInit {
     this.rewards = this.rewardsService.getStoreRewards();
     this.track = this.rewardsService.rewardTrack;
     this.activeRewards = this.rewardsService.getStoreActiveRewards();
+  }
 
-    // zip(
-    //   this.rewardsService.getStoreRewards(),
-    //   this.rewardsService.getStoreActiveRewards(),
-    //   this.rewardsService.rewardTrack
-    // ).subscribe(([rewards, activeRewards, track]) => {
-    //   console.log(rewards, activeRewards);
-    // });
+  trackByFn(index, { id }): string {
+    return id;
   }
 
   private initContentStrings() {
