@@ -21,7 +21,7 @@ export class StoreComponent implements OnInit {
     this.activeRewards = this.rewardsService.getStoreActiveRewards();
   }
 
-  trackByFn(index, { id }) {
+  trackByFn(index, { id }): string {
     return id;
   }
 }
