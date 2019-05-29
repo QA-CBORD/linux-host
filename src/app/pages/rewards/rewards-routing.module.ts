@@ -26,7 +26,7 @@ const subRoutes: Routes = [
   },
   {
     path: LOCAL_ROUTING.levels,
-    component: LevelsComponent,
+    component: LevelsComponent
   },
 ];
 
@@ -35,7 +35,7 @@ const routes: Routes = [
     path: '',
     component: RewardsPage,
     children: subRoutes,
-    resolve: {},
+    resolve: { rewardTrackInfo: RewardsResolverGuard },
   },
 ];
 

@@ -25,7 +25,7 @@
     <div class="list-item__actions-wrapper">
       <ng-template #activeReward>
         <img src="./assets/icon/qr-code.svg" alt="qrcode" class="list-item__qrcode" />
-        <div class="list-item__button" *ngIf="!isHistoryEnv">Scan</div>
+        <div class="list-item__button" *ngIf="!isHistoryEnv">{{ contentString.scanLabel }}</div>
       </ng-template>
       <ng-template #points>
         <div class="list-item__score" [ngClass]="{ 'list-item__score--semibold': !isHistoryEnv }">
@@ -39,18 +39,18 @@
         >
           <ng-container [ngTemplateOutlet]="points"></ng-container>
           <div class="list-item__button" *ngIf="!isHistoryEnv">
-            Redeem
+            {{ contentString.redeemLabel }}
           </div>
         </div>
       </ng-template>
       <ng-template #defaultLevelReward>
         <div class="list-item__button">
-          Claim
+          {{ contentString.claimLabel }}
         </div>
       </ng-template>
       <ng-template #claimedLevelReward>
         <ion-icon class="list-item__checkmark" name="checkmark"></ion-icon>
-        <div class="list-item__button list-item__button--without-border">CLAIMED</div>
+        <div class="list-item__button list-item__button--without-border">{{contentString.claimedLabel}}</div>
       </ng-template>
       <ng-template #lockedLevelReward>
         <img src="./assets/icon/lock-gray.svg" alt="lock item" class="list-item__locked" />

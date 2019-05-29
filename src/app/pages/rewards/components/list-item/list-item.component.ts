@@ -3,7 +3,7 @@ import { PopoverController } from '@ionic/angular';
 import { ClaimableRewardInfo, RedeemableRewardInfo, UserFulfillmentActivityInfo } from '../../models';
 import { RewardsPopoverComponent } from '../rewards-popover';
 import { RewardsApiService, RewardsService } from '../../services';
-import { CLAIM_STATUS, LEVEL_STATUS } from '../../rewards.config';
+import { CLAIM_STATUS, CONTENT_STRINGS, LEVEL_STATUS } from '../../rewards.config';
 import { PopupTypes } from '../../rewards.config';
 import { catchError, map, switchMap, take, tap } from 'rxjs/operators';
 import { Observable, throwError } from 'rxjs';
@@ -23,13 +23,16 @@ export class ListItemComponent {
   @Input() currentPoints: number;
   @Input() userLevel: number;
   @Input() statusLevel: number;
+  contentString: { [key: string]: string };
 
   constructor(
     private readonly popoverCtrl: PopoverController,
     private readonly rewardsApi: RewardsApiService,
     private readonly rewardsService: RewardsService,
     private readonly loadingService: LoadingService
-  ) {}
+  ) {
+    this.initContentStrings();
+  }
 
   get disabledStoreReward(): boolean {
     return !this.isHistoryEnv && this.currentPoints < this.item['pointCost'];
@@ -53,8 +56,8 @@ export class ListItemComponent {
 
   get listItemScoreValue() {
     return this.item['rewardLevel']
-      ? `level ${this.item['rewardLevel']}`
-      : `${this.item['pointsSpent'] || this.item['pointCost'] || 0} Points`;
+      ? `${this.contentString.levelLabel} ${this.item['rewardLevel']}`
+      : `${this.item['pointsSpent'] || this.item['pointCost'] || 0} ${this.contentString.pointsCostLabel}`;
   }
 
   async openPopover(data, type: string = this.defaultPopoverAction(data.claimStatus)) {
@@ -116,5 +119,23 @@ export class ListItemComponent {
       (this.isStoreEnv && !(this.active || this.currentPoints >= this.item['pointCost'])) ||
       (this.isLevelsEnv && this.statusLevel === LEVEL_STATUS.received)
     );
+  }
+
+  private initContentStrings() {
+    let levelLabel = this.rewardsService.getContentValueByName(CONTENT_STRINGS.levelLabel);
+    let pointsCostLabel = this.rewardsService.getContentValueByName(CONTENT_STRINGS.pointsCostLabel);
+    let scanLabel = this.rewardsService.getContentValueByName(CONTENT_STRINGS.scanLabel);
+    let claimLabel = this.rewardsService.getContentValueByName(CONTENT_STRINGS.claimLabel);
+    let redeemLabel = this.rewardsService.getContentValueByName(CONTENT_STRINGS.redeemLabel);
+    let claimedLabel = this.rewardsService.getContentValueByName(CONTENT_STRINGS.claimedLabel);
+
+    levelLabel = levelLabel ? levelLabel : '';
+    pointsCostLabel = pointsCostLabel ? pointsCostLabel : '';
+    scanLabel = scanLabel ? scanLabel : '';
+    claimLabel = claimLabel ? claimLabel : '';
+    redeemLabel = redeemLabel ? redeemLabel : '';
+    claimedLabel = claimedLabel ? claimedLabel : '';
+
+    this.contentString = { levelLabel, pointsCostLabel, scanLabel, claimLabel, redeemLabel, claimedLabel };
   }
 }

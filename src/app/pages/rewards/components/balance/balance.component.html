@@ -1,6 +1,8 @@
 <div class="balance">
   <div class="balance__title">
-    Your balance
+    {{ contentString.balanceTitle }}
   </div>
-  <div class="balance__content">{{ points }} <span class="balance__unit">points</span></div>
+  <div class="balance__content">
+    {{ points }} <span class="balance__unit">{{ contentString.pointsLabel }}</span>
+  </div>
 </div>

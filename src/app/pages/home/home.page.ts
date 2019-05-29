@@ -193,7 +193,10 @@ export class HomePage {
   private handlePageNavigation() {
     switch (this.destinationPage) {
       case EDestination.REWARDS:
-        this.router.navigate(['rewards']);
+        this.router.navigate(['rewards'], {
+          replaceUrl: true,
+          skipLocationChange: true,
+        });
         break;
       case EDestination.MOBILE_ACCESS:
         this.router.navigate(['mobile-access'], {

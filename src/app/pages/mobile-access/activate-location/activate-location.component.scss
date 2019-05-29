@@ -24,6 +24,8 @@
   font-size: 1rem;
   box-shadow: 0 0 10px 3px $color-night-rider;
   border: none;
+  height: calc(100vh - 65px);
+  min-height: 420px;
 
   ion-card-content {
     padding: 0 15px 10px;
@@ -70,6 +72,10 @@
     }
 
     @media (min-height: 650px) {
+    height: 55vh;
+    }
+
+    @media (min-height: 720px) {
     height: 60vh;
     }
   }
