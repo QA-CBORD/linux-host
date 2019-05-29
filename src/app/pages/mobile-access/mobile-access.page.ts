@@ -56,7 +56,14 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
     this.mobileAccessService
       .getLocations()
       .pipe(take(1))
-      .subscribe(() => $event.target.complete());
+      .subscribe(
+        () => {
+          $event.target.complete();
+        },
+        () => {
+          $event.target.complete();
+        }
+      );
   }
 
   favouriteHandler(id: string) {
