@@ -31,9 +31,7 @@ const subRoutes: Routes = [
 const routes: Routes = [
   {
     path: '',
-    component: RewardsPage,
-    children: subRoutes,
-    resolve: {},
+    component: RewardsPage
   },
 ];
 
