@@ -71,17 +71,17 @@ export class RewardsPopoverComponent implements OnInit, AfterViewInit {
       case PopupTypes.CLAIM:
         return [
           { ...buttons.CANCEL, label: this.contentString.cancelButton },
-          { ...buttons.CLAIM, label: this.contentString.buttonClaim },
+          { ...buttons.CLAIM, label: this.contentString.claimButton },
         ];
       case PopupTypes.REDEEM:
         return [
           { ...buttons.CANCEL, label: this.contentString.cancelButton },
-          { ...buttons.REDEEM, label: this.contentString.buttonRedeem },
+          { ...buttons.REDEEM, label: this.contentString.redeemButton },
         ];
       case PopupTypes.RETRY:
-        return [{ ...buttons.RETRY, label: this.contentString.buttonRetry }];
+        return [{ ...buttons.RETRY, label: this.contentString.retryButton }];
       default:
-        return [{ ...buttons.CLOSE, label: this.contentString.buttonClose }];
+        return [{ ...buttons.CLOSE, label: this.contentString.closeButton }];
     }
   }
 
