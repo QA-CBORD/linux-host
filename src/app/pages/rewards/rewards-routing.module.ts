@@ -10,28 +10,25 @@ import { RewardsResolverGuard } from './resolvers';
 
 const subRoutes: Routes = [
   {
-    path: '',
-    component: RewardsPage,
-    resolve: { rewardTrackInfo: RewardsResolverGuard },
-  },
-  {
     path: LOCAL_ROUTING.history,
-    component: HistoryComponent,
+    component: HistoryComponent
   },
   {
     path: LOCAL_ROUTING.store,
-    component: StoreComponent,
+    component: StoreComponent
   },
   {
     path: LOCAL_ROUTING.levels,
-    component: LevelsComponent,
+    component: LevelsComponent
   },
 ];
 
 const routes: Routes = [
   {
     path: '',
-    component: RewardsPage
+    component: RewardsPage,
+    resolve: { rewardTrackInfo: RewardsResolverGuard },
+    children: subRoutes,
   },
 ];
 
