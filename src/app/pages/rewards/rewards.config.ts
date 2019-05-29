@@ -30,6 +30,7 @@ export enum PopupTypes {
   SUCCESS = 'SUCCESS',
   CLAIM = 'CLAIM',
   RETRY = 'RETRY',
+  OPT_IN = 'OPT_IN',
 }
 
 export enum LEVEL_STATUS {

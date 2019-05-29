@@ -1,6 +1,6 @@
 <ng-template #infoBlock>
-  <div class="rewards-popover__title">{{ popoverConfig.message['name'] || popoverConfig.message['itemName'] }}</div>
-  <div class="rewards-popover__description">{{ popoverConfig.message['shortDescription'] }}</div>
+  <div class="rewards-popover__title">{{ popoverConfig.message['title'] }}</div>
+  <div class="rewards-popover__description">{{ popoverConfig.message['description'] }}</div>
 </ng-template>
 
 <ng-template #qrCodeBlock>
@@ -21,5 +21,5 @@
 <st-popover-layout [popoverConfig]="popoverConfig">
   <ng-container *ngIf="success; then successBlock"></ng-container>
   <ng-container *ngIf="scan; then qrCodeBlock"></ng-container>
-  <ng-container *ngIf="redeem || claim; then infoBlock"></ng-container>
+  <ng-container *ngIf="redeem || claim || optIn; then infoBlock"></ng-container>
 </st-popover-layout>

@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, AfterViewInit } from '@angular/core';
 import bwipjs from 'bwip-angular2';
 
-import { popoverConfig } from '../../../../core/model/popover/popover.model';
+import { Message, popoverConfig } from '../../../../core/model/popover/popover.model';
 import { buttons } from '../../../../core/utils/buttons.config';
 import { PopupTypes } from '../../rewards.config';
 import { RedeemableRewardInfo, UserFulfillmentActivityInfo } from '../../models';
@@ -13,7 +13,7 @@ import { PopupButton } from '../../../../core/model/button';
   styleUrls: ['./rewards-popover.component.scss'],
 })
 export class RewardsPopoverComponent implements OnInit, AfterViewInit {
-  @Input() data: RedeemableRewardInfo | UserFulfillmentActivityInfo;
+  @Input() data: RedeemableRewardInfo;
   @Input() type: string;
   popoverConfig: popoverConfig;
 
@@ -35,12 +35,16 @@ export class RewardsPopoverComponent implements OnInit, AfterViewInit {
     return this.type === PopupTypes.CLAIM;
   }
 
+  get optIn(): boolean {
+    return this.type === PopupTypes.OPT_IN;
+  }
+
   ngOnInit() {
     this.popoverConfig = {
       title: this.getTitle(this.type),
       type: this.type,
       buttons: this.configureButtons(this.type),
-      message: this.data,
+      message: this.getMessage(this.data),
       code: this.getCode(this.type, this.data),
     };
   }
@@ -49,7 +53,7 @@ export class RewardsPopoverComponent implements OnInit, AfterViewInit {
     this.type === PopupTypes.SCAN && this.initBarcode();
   }
 
-  // TODO fix after pre-demo (string affect align!)
+  // TODO fix after pre-demo (string affects align!)
 
   private getCode(type: string, data: RedeemableRewardInfo | UserFulfillmentActivityInfo): string {
     if (type === PopupTypes.SCAN) {
@@ -62,6 +66,13 @@ export class RewardsPopoverComponent implements OnInit, AfterViewInit {
     return '';
   }
 
+  private getMessage({ name = null, itemName = null, shortDescription }: RedeemableRewardInfo): Message {
+    return {
+      title: name || itemName,
+      description: shortDescription,
+    };
+  }
+
   private configureButtons(type: string): PopupButton[] {
     switch (type) {
       case PopupTypes.CLAIM:
@@ -70,6 +81,8 @@ export class RewardsPopoverComponent implements OnInit, AfterViewInit {
         return [buttons.CANCEL, buttons.REDEEM];
       case PopupTypes.RETRY:
         return [buttons.RETRY];
+      case PopupTypes.OPT_IN:
+        return [buttons.OPT_IN];
       default:
         return [buttons.CLOSE];
     }
@@ -87,6 +100,8 @@ export class RewardsPopoverComponent implements OnInit, AfterViewInit {
         return popoverTitles.claim;
       case PopupTypes.RETRY:
         return popoverTitles.retry;
+      case PopupTypes.OPT_IN:
+        return popoverTitles.optIn;
       default:
         return '';
     }
@@ -111,4 +126,5 @@ enum popoverTitles {
   success = 'Success',
   claim = 'Claim Reward',
   retry = 'Retry get it',
+  optIn = 'Opt in modal',
 }
