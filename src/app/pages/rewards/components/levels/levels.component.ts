@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -12,7 +12,7 @@ import { UserRewardTrackInfo, UserTrackLevelInfo } from '../../models';
   styleUrls: ['./levels.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LevelsComponent implements OnInit {
+export class LevelsComponent implements OnInit, AfterViewInit, OnDestroy {
   trackInfo$: Observable<UserRewardTrackInfo>;
   currentLevelInfo$: Observable<UserTrackLevelInfo>;
   levels$: Observable<UserTrackLevelInfo[]>;
@@ -20,8 +20,18 @@ export class LevelsComponent implements OnInit {
 
   constructor(private readonly rewardsService: RewardsService) {}
 
+
+  ngAfterViewInit() {
+    // location.replace(`${location.origin}`);
+  }
+
+  ngOnDestroy(): void {
+
+    // console.log(location)
+    // location.replace(`${location.origin}`)
+  }
+
   ngOnInit() {
-    location.replace(`${location.origin}`)
     this.trackInfo$ = this.rewardsService.rewardTrack;
     this.currentLevelInfo$ = this.rewardsService.rewardTrack.pipe(
       map(({ userLevel, trackLevels }) => trackLevels.find(({ level }) => level === userLevel))

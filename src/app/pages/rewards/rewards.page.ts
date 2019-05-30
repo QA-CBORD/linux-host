@@ -50,8 +50,9 @@ export class RewardsPage implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.sourceSubscription.unsubscribe();
 
-    console.log(location)
-    // location.replace(`${location.origin}`)
+    // console.log(location);
+    location.replace(`${location.origin}`);
+    history.back()
   }
 
   private initComponent() {
