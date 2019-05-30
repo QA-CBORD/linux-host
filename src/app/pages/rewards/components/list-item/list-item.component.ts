@@ -8,7 +8,7 @@ import { PopupTypes } from '../../rewards.config';
 import { catchError, map, switchMap, take, tap } from 'rxjs/operators';
 import { Observable, throwError } from 'rxjs';
 import { LoadingService } from '../../../../core/service/loading/loading.service';
-import { UserPhotoInfo } from '../../../../core/model/user';
+import { BUTTON_TYPE } from '../../../../core/utils/buttons.config';
 
 @Component({
   selector: 'st-list-item',
@@ -75,13 +75,16 @@ export class ListItemComponent {
       backdropDismiss: true,
     });
 
-    popover.onDidDismiss().then(({ data }) => {
-      if (data === PopupTypes.REDEEM || data === PopupTypes.CLAIM) {
+    popover.onDidDismiss().then(({ role }) => {
+      if (role === BUTTON_TYPE.REDEEM || role === BUTTON_TYPE.CLAIM) {
         this.rewardsApi
           .claimReward(this.item.id)
-          .pipe(switchMap(res => this.refreshData().pipe(map(() => res))))
+          .pipe(
+            switchMap(res => this.refreshData().pipe(map(() => res))),
+            take(1)
+          )
           .subscribe(res => {
-            const type = res.status === 2 ? PopupTypes.SCAN : PopupTypes.SUCCESS;
+            const type = res.status === CLAIM_STATUS.claimed ? PopupTypes.SCAN : PopupTypes.SUCCESS;
 
             this.openPopover(this.item, type);
           });

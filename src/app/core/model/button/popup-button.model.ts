@@ -4,4 +4,5 @@ export interface PopupButton {
   shape: string;
   strong: boolean;
   fill: string;
+  type: string;
 }

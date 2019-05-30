@@ -30,11 +30,9 @@ export class StoreComponent implements OnInit {
   }
 
   private initContentStrings() {
-    let activeRewardsLabel = this.rewardsService.getContentValueByName(CONTENT_STRINGS.activeRewardsLabel);
-    let claimInstructionsLabel = this.rewardsService.getContentValueByName(CONTENT_STRINGS.claimInstructionsLabel);
-
-    activeRewardsLabel = activeRewardsLabel ? activeRewardsLabel : '';
-    claimInstructionsLabel = claimInstructionsLabel ? claimInstructionsLabel : '';
+    const activeRewardsLabel = this.rewardsService.getContentValueByName(CONTENT_STRINGS.activeRewardsLabel) || '';
+    const claimInstructionsLabel =
+      this.rewardsService.getContentValueByName(CONTENT_STRINGS.claimInstructionsLabel) || '';
 
     this.contentString = {
       activeRewardsLabel,

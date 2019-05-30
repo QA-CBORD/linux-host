@@ -32,6 +32,11 @@ export class RewardsPage implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.setContentStrings();
+
+    this.location.subscribe(() => {
+      this.location.replaceState(location.origin);
+      // location.replace(`${location.origin}`);
+    });
     // this.location.subscribe(data => {
     //   console.log(history);
     // data = {
@@ -50,8 +55,11 @@ export class RewardsPage implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.sourceSubscription.unsubscribe();
 
-    console.log(location);
-    location.replace(`${location.origin}/rewards`);
+    // console.log(location);
+    // location.replace(`${location.origin}`);
+    // history.back();
+    // this.location.back();
+    // location.href = location.origin;
   }
 
   private initComponent() {
@@ -73,7 +81,7 @@ export class RewardsPage implements OnInit, OnDestroy {
   }
   private setContentStrings() {
     let header = this.rewardsService.getContentValueByName(CONTENT_STRINGS.headerTitle);
-    header = header ? header : 'Rewards ncs';
+    header = header ? header : '';
 
     this.contentString = { header };
   }
