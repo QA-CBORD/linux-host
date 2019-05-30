@@ -10,12 +10,6 @@ import { RewardsResolverGuard } from './resolvers';
 
 const subRoutes: Routes = [
   {
-    path: '',
-    component: RewardsPage,
-    resolve: { rewardTrackInfo: RewardsResolverGuard },
-    data: { preload: true },
-  },
-  {
     path: LOCAL_ROUTING.history,
     component: HistoryComponent,
     data: { preload: true },
@@ -37,7 +31,7 @@ const routes: Routes = [
     path: '',
     component: RewardsPage,
     children: subRoutes,
-    resolve: {},
+    resolve: { rewardTrackInfo: RewardsResolverGuard },
     data: { preload: true },
   },
 ];
