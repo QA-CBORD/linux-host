@@ -33,7 +33,7 @@ const routes: Routes = [
     component: RewardsPage,
     children: subRoutes,
     resolve: { rewardTrackInfo: RewardsResolverGuard },
-      canActivate: [OptInGuard],
+    canActivate: [OptInGuard],
     data: { preload: true },
   },
 ];
