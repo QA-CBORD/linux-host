@@ -9,17 +9,17 @@
   </ion-toolbar>
 </ion-header>
 <ion-content class="st-popover__content" [style.textAlign]="popoverConfig.code ? 'center' : 'left'">
-  <ng-content></ng-content>
+    <ng-content></ng-content>
 </ion-content>
 <ion-footer no-border class="st-popover__footer">
-  <ion-button
-    fill="{{ button.fill }}"
-    shape="{{ button.shape }}"
-    strong="{{ button.strong }}"
-    class="st-popover__footer-btn st-popover__footer-btn--{{ button.class }}"
-    *ngFor="let button of popoverConfig.buttons"
-    (click)="closeModal(button.label)"
-  >
-    {{ button.label }}
-  </ion-button>
+    <ion-button
+            *ngFor="let button of popoverConfig.buttons"
+            fill="{{ button.fill }}"
+            shape="{{ button.shape }}"
+            strong="{{ button.strong }}"
+            class="st-popover__footer-btn st-popover__footer-btn--{{ button.class }}"
+            (click)="closeModal(button.label, button.type)"
+    >
+        {{ button.label }}
+    </ion-button>
 </ion-footer>

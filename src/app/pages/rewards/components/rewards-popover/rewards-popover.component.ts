@@ -128,43 +128,24 @@ export class RewardsPopoverComponent implements OnInit, AfterViewInit {
   }
 
   private initContentStrings() {
-    let levelLabel = this.rewardsService.getContentValueByName(CONTENT_STRINGS.levelLabel);
-    let pointsCostLabel = this.rewardsService.getContentValueByName(CONTENT_STRINGS.pointsCostLabel);
-    let scanLabel = this.rewardsService.getContentValueByName(CONTENT_STRINGS.scanLabel);
-    let claimLabel = this.rewardsService.getContentValueByName(CONTENT_STRINGS.claimLabel);
-    let redeemLabel = this.rewardsService.getContentValueByName(CONTENT_STRINGS.redeemLabel);
-    let claimedLabel = this.rewardsService.getContentValueByName(CONTENT_STRINGS.claimedLabel);
-    let claimButton = this.rewardsService.getContentValueByName(CONTENT_STRINGS.claimButton);
-    let redeemButton = this.rewardsService.getContentValueByName(CONTENT_STRINGS.redeemButton);
-    let retryButton = this.rewardsService.getContentValueByName(CONTENT_STRINGS.retryBtn);
-    let closeButton = this.rewardsService.getContentValueByName(CONTENT_STRINGS.closeBtn);
-    let cancelButton = this.rewardsService.getContentValueByName(CONTENT_STRINGS.cancelBtn);
-    let successTitle = this.rewardsService.getContentValueByName(CONTENT_STRINGS.successTitle);
-    let claimTitle = this.rewardsService.getContentValueByName(CONTENT_STRINGS.claimTitle);
-    let redeemTitle = this.rewardsService.getContentValueByName(CONTENT_STRINGS.redeemTitle);
-    let scanCodeTitle = this.rewardsService.getContentValueByName(CONTENT_STRINGS.scanCodeTitle);
-    let retryTitle = this.rewardsService.getContentValueByName(CONTENT_STRINGS.retryTitle);
-    let scanCodeDescription = this.rewardsService.getContentValueByName(CONTENT_STRINGS.scanCodeDescription);
-    let optInBtn = this.rewardsService.getContentValueByName(CONTENT_STRINGS.optInBtn);
-
-    levelLabel = levelLabel || '';
-    pointsCostLabel = pointsCostLabel || '';
-    scanLabel = scanLabel || '';
-    claimLabel = claimLabel || '';
-    redeemLabel = redeemLabel || '';
-    claimedLabel = claimedLabel || '';
-    claimButton = claimButton || '';
-    redeemButton = redeemButton || '';
-    retryButton = retryButton || '';
-    closeButton = closeButton || '';
-    cancelButton = cancelButton || '';
-    successTitle = successTitle || '';
-    claimTitle = claimTitle || '';
-    redeemTitle = redeemTitle || '';
-    scanCodeTitle = scanCodeTitle || '';
-    retryTitle = retryTitle || '';
-    scanCodeDescription = scanCodeDescription || '';
-    optInBtn = optInBtn || '';
+    const levelLabel = this.rewardsService.getContentValueByName(CONTENT_STRINGS.levelLabel) || '';
+    const pointsCostLabel = this.rewardsService.getContentValueByName(CONTENT_STRINGS.pointsCostLabel) || '';
+    const scanLabel = this.rewardsService.getContentValueByName(CONTENT_STRINGS.scanLabel) || '';
+    const claimLabel = this.rewardsService.getContentValueByName(CONTENT_STRINGS.claimLabel) || '';
+    const redeemLabel = this.rewardsService.getContentValueByName(CONTENT_STRINGS.redeemLabel) || '';
+    const claimedLabel = this.rewardsService.getContentValueByName(CONTENT_STRINGS.claimedLabel) || '';
+    const claimButton = this.rewardsService.getContentValueByName(CONTENT_STRINGS.claimButton) || '';
+    const redeemButton = this.rewardsService.getContentValueByName(CONTENT_STRINGS.redeemButton) || '';
+    const retryButton = this.rewardsService.getContentValueByName(CONTENT_STRINGS.retryBtn) || '';
+    const closeButton = this.rewardsService.getContentValueByName(CONTENT_STRINGS.closeBtn) || '';
+    const cancelButton = this.rewardsService.getContentValueByName(CONTENT_STRINGS.cancelBtn) || '';
+    const successTitle = this.rewardsService.getContentValueByName(CONTENT_STRINGS.successTitle) || '';
+    const claimTitle = this.rewardsService.getContentValueByName(CONTENT_STRINGS.claimTitle) || '';
+    const redeemTitle = this.rewardsService.getContentValueByName(CONTENT_STRINGS.redeemTitle) || '';
+    const scanCodeTitle = this.rewardsService.getContentValueByName(CONTENT_STRINGS.scanCodeTitle) || '';
+    const retryTitle = this.rewardsService.getContentValueByName(CONTENT_STRINGS.retryTitle) || '';
+    const scanCodeDescription = this.rewardsService.getContentValueByName(CONTENT_STRINGS.scanCodeDescription) || '';
+    const optInBtn = this.rewardsService.getContentValueByName(CONTENT_STRINGS.optInBtn) || '';
 
     this.contentString = {
       optInBtn,

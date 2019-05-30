@@ -1,57 +1,67 @@
+export enum BUTTON_TYPE {
+  REDEEM = 'REDEEM',
+  OKAY = 'OKAY',
+  CLAIM = 'CLAIM',
+  RETRY = 'RETRY',
+  OPT_IN = 'OPT_IN',
+  CANCEL = 'CANCEL',
+  CLOSE = 'CLOSE',
+}
+
 const CANCEL = {
-  label: 'CANCEL',
   class: 'clear',
   shape: 'round',
   strong: true,
   fill: 'clear',
+  type: BUTTON_TYPE.CANCEL,
 };
 
 const RETRY = {
-  label: 'RETRY',
   class: 'filled',
   shape: 'round',
   strong: false,
   fill: 'default',
+  type: BUTTON_TYPE.RETRY,
 };
 
 const OKAY = {
-  label: 'OKAY',
   class: 'filled',
   shape: 'round',
   strong: false,
   fill: 'default',
+  type: BUTTON_TYPE.OKAY,
 };
 
 const REDEEM = {
-  label: 'REDEEM',
   class: 'filled',
   shape: 'round',
   strong: false,
   fill: 'default',
+  type: BUTTON_TYPE.REDEEM,
 };
 
 const CLAIM = {
-  label: 'CLAIM',
   class: 'filled',
   shape: 'round',
   strong: false,
   fill: 'default',
+  type: BUTTON_TYPE.CLAIM,
 };
 
 const CLOSE = {
-  label: 'CLOSE',
   class: 'clear-with-shadow',
   shape: 'round',
   strong: true,
   fill: 'clear',
+  type: BUTTON_TYPE.CLOSE,
 };
 
 const OPT_IN = {
-  label: 'OPT IN',
   class: 'filled',
   shape: 'round',
   strong: false,
   fill: 'default',
+  type: BUTTON_TYPE.OPT_IN,
 };
 
 export const buttons = {
