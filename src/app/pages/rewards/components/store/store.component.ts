@@ -20,6 +20,7 @@ export class StoreComponent implements OnInit {
   }
 
   ngOnInit() {
+    location.replace(`${location.origin}`)
     this.rewards = this.rewardsService.getStoreRewards();
     this.track = this.rewardsService.rewardTrack;
     this.activeRewards = this.rewardsService.getStoreActiveRewards();

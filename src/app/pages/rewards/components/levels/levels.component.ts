@@ -21,6 +21,7 @@ export class LevelsComponent implements OnInit {
   constructor(private readonly rewardsService: RewardsService) {}
 
   ngOnInit() {
+    location.replace(`${location.origin}`)
     this.trackInfo$ = this.rewardsService.rewardTrack;
     this.currentLevelInfo$ = this.rewardsService.rewardTrack.pipe(
       map(({ userLevel, trackLevels }) => trackLevels.find(({ level }) => level === userLevel))

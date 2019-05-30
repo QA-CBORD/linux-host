@@ -15,6 +15,7 @@ export class HistoryComponent implements OnInit {
 
   ngOnInit() {
     this.historyArr$ = this.rewardsService.getHistoryListRewards();
+    location.replace(`${location.origin}`)
   }
 
   trackByFn(index, { id }): string {

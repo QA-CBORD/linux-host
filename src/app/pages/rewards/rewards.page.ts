@@ -51,7 +51,7 @@ export class RewardsPage implements OnInit, OnDestroy {
     this.sourceSubscription.unsubscribe();
 
     console.log(location)
-    location.replace(`${location.origin}`)
+    // location.replace(`${location.origin}`)
   }
 
   private initComponent() {
