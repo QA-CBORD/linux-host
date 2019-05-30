@@ -5,4 +5,5 @@ export interface TabsConfig {
 export interface TabInfo {
   name: string;
   route: string;
+  active?: boolean;
 }

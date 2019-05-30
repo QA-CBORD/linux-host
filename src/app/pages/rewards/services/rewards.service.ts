@@ -95,18 +95,21 @@ export class RewardsService {
           tabConfig.tabs.push({
             name: this.getContentValueByName(CONTENT_STRINGS.levelTabTitle) || 'Levels',
             route: LOCAL_ROUTING.levels,
+            active: true,
           });
         }
         if (hasRedeemableRewards) {
           tabConfig.tabs.push({
             name: this.getContentValueByName(CONTENT_STRINGS.storeTabTitle) || 'Store',
             route: LOCAL_ROUTING.store,
+            active: !hasLevels,
           });
         }
 
         tabConfig.tabs.push({
           name: this.getContentValueByName(CONTENT_STRINGS.historyTabTitle) || 'History',
           route: LOCAL_ROUTING.history,
+          active: false,
         });
 
         return tabConfig;

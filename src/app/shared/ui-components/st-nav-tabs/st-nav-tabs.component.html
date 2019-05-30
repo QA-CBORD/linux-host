@@ -1,9 +1,12 @@
 <ion-tabs #tabs class="st-nav-tabs tabs-wrapper">
   <ion-tab-bar slot="top" class="tabs-wrapper__bar">
-    <ion-tab-button *ngFor="let tab of tabsConfig.tabs" (click)="onRoute(tab.route)" class="tabs-wrapper__tab">
+    <ion-tab-button
+      *ngFor="let tab of tabsConfig.tabs"
+      (click)="onRouteChanged(tab.route)"
+      class="tabs-wrapper__tab"
+      [ngClass]="{ 'tabs-wrapper__tab--active': tab.active }"
+    >
       <ion-label class="tabs-wrapper__label">{{ tab.name }}</ion-label>
     </ion-tab-button>
   </ion-tab-bar>
 </ion-tabs>
-
-

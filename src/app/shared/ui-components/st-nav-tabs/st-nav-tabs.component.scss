@@ -9,7 +9,7 @@
     &__tab {
       --color-selected: #3c3c3c !important;
 
-      &.tab-selected {
+      &--active {
         border-bottom: 2px solid $color-dodger-blue;
 
         .tabs-wrapper__label {

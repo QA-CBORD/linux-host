@@ -25,10 +25,6 @@ export class StoreComponent implements OnInit {
     this.activeRewards = this.rewardsService.getStoreActiveRewards();
   }
 
-  ionViewWillLeave(){
-    // location.replace(location.origin);
-  }
-
   trackByFn(index, { id }): string {
     return id;
   }

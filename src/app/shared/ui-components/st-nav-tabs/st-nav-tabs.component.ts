@@ -30,10 +30,16 @@ export class StNavTabsComponent implements OnInit {
     }
   }
 
-  onRoute(route) {
+  onRouteChanged(route) {
+    this.setActiveState(route);
+
     this.router.navigate([`/rewards/${route}`], {
       replaceUrl: true,
       skipLocationChange: true,
     });
+  }
+
+  setActiveState(route) {
+    this.tabsConfig.tabs.map(item => (item.active = item.route === route));
   }
 }
