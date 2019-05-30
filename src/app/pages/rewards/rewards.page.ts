@@ -54,10 +54,7 @@ export class RewardsPage implements OnInit, OnDestroy {
     // location.replace(`${location.origin}`);
     // history.back();
     // this.location.back();
-    this.location.subscribe(() => {
-      location.replace(`${location.origin}`);
-      this.location.back();
-    })
+    location.href = location.origin;
   }
 
   private initComponent() {
