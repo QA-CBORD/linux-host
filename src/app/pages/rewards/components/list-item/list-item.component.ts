@@ -75,13 +75,16 @@ export class ListItemComponent {
       backdropDismiss: true,
     });
 
-    popover.onDidDismiss().then(({ data }) => {
-      if (data === PopupTypes.REDEEM || data === PopupTypes.CLAIM) {
+    popover.onDidDismiss().then(({ role }) => {
+      if (role === PopupTypes.REDEEM || role === PopupTypes.CLAIM) {
         this.rewardsApi
           .claimReward(this.item.id)
-          .pipe(switchMap(res => this.refreshData().pipe(map(() => res))))
+          .pipe(
+            switchMap(res => this.refreshData().pipe(map(() => res))),
+            take(1)
+          )
           .subscribe(res => {
-            const type = res.status === 2 ? PopupTypes.SCAN : PopupTypes.SUCCESS;
+            const type = res.status === CLAIM_STATUS.claimed ? PopupTypes.SCAN : PopupTypes.SUCCESS;
 
             this.openPopover(this.item, type);
           });
