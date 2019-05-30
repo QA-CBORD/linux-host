@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NavController, Platform } from '@ionic/angular';
 
 import { combineLatest, Subscription } from 'rxjs';
-import { take } from 'rxjs/operators';
+import {take, tap} from 'rxjs/operators';
 
 import { RewardsService } from './services';
 
@@ -33,8 +33,11 @@ export class RewardsPage implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.setContentStrings();
 
-    this.location.subscribe(() => {
-      this.location.replaceState(location.origin)
+    this.location
+        .subscribe(() => {
+      this.location.replaceState(location.origin);
+
+      this.location.back()
       // location.replace(`${location.origin}`);
     });
     // this.location.subscribe(data => {
