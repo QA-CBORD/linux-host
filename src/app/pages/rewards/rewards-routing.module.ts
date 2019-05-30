@@ -11,22 +11,19 @@ import { OptInGuard } from './guards';
 
 const subRoutes: Routes = [
   {
-    path: '',
-    component: RewardsPage,
-    resolve: { rewardTrackInfo: RewardsResolverGuard },
-    canActivate: [OptInGuard],
-  },
-  {
     path: LOCAL_ROUTING.history,
     component: HistoryComponent,
+    data: { preload: true },
   },
   {
     path: LOCAL_ROUTING.store,
     component: StoreComponent,
+    data: { preload: true },
   },
   {
     path: LOCAL_ROUTING.levels,
     component: LevelsComponent,
+    data: { preload: true },
   },
 ];
 
@@ -36,6 +33,8 @@ const routes: Routes = [
     component: RewardsPage,
     children: subRoutes,
     resolve: { rewardTrackInfo: RewardsResolverGuard },
+      canActivate: [OptInGuard],
+    data: { preload: true },
   },
 ];
 

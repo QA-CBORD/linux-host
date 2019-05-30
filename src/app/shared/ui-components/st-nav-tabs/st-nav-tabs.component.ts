@@ -1,7 +1,6 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { TabsConfig } from '../../../core/model/tabs/tabs.model';
 import { IonTabs } from '@ionic/angular';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'st-nav-tabs',
@@ -20,16 +19,9 @@ export class StNavTabsComponent implements OnInit {
   get tabsConfig(): TabsConfig {
     return this._tabsConfig;
   }
-  constructor(private router: Router) {}
+  constructor() {}
 
   ngOnInit() {}
-
-  goToRoute(route) {
-    this.router.navigate([`/rewards/${route}`], {
-      replaceUrl: true,
-      skipLocationChange: true,
-    });
-  }
 
   private handleTabsConfigChange() {
     if (this.tabsConfig.tabs.length > 0) {
