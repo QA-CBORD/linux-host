@@ -80,7 +80,7 @@ export class RewardsPage implements OnInit, OnDestroy {
   }
   private setContentStrings() {
     let header = this.rewardsService.getContentValueByName(CONTENT_STRINGS.headerTitle);
-    header = header ? header : 'Rewards ncs';
+    header = header ? header : '';
 
     this.contentString = { header };
   }
