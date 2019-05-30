@@ -168,7 +168,7 @@ export class RewardsPopoverComponent implements OnInit, AfterViewInit {
       redeemTitle,
       scanCodeTitle,
       retryTitle,
-      scanCodeDescription
+      scanCodeDescription,
     };
   }
 }
