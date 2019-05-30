@@ -32,6 +32,10 @@ export class RewardsPage implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.setContentStrings();
+
+    this.location.subscribe(() => {
+      location.replace(`${location.origin}`);
+    });
     // this.location.subscribe(data => {
     //   console.log(history);
     // data = {
@@ -54,7 +58,7 @@ export class RewardsPage implements OnInit, OnDestroy {
     // location.replace(`${location.origin}`);
     // history.back();
     // this.location.back();
-    location.href = location.origin;
+    // location.href = location.origin;
   }
 
   private initComponent() {
