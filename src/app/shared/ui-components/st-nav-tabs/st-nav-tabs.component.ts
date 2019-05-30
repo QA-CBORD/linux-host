@@ -26,7 +26,8 @@ export class StNavTabsComponent implements OnInit {
 
   private handleTabsConfigChange() {
     if (this.tabsConfig.tabs.length > 0) {
-      this.tabs.select(this.tabsConfig.tabs[0].route);
+      this.tabsConfig.tabs[0].active = true;
+      this.onRouteChanged(this.tabsConfig.tabs[0].route);
     }
   }
 
