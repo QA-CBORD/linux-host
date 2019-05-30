@@ -2,13 +2,13 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NavController, Platform } from '@ionic/angular';
 
 import { combineLatest, Subscription } from 'rxjs';
-import {take, tap} from 'rxjs/operators';
+import { take } from 'rxjs/operators';
 
 import { RewardsService } from './services';
 
 import { CONTENT_STRINGS, OPT_IN_STATUS } from './rewards.config';
 import { TabsConfig } from '../../core/model/tabs/tabs.model';
-import { LocationStrategy, Location, PathLocationStrategy } from '@angular/common';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'st-rewards',
@@ -33,36 +33,15 @@ export class RewardsPage implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.setContentStrings();
 
-    this.location
-        .subscribe(() => {
+    this.location.subscribe(() => {
       this.location.replaceState(location.origin);
 
-      this.location.back()
-      // location.replace(`${location.origin}`);
+      this.location.back();
     });
-    // this.location.subscribe(data => {
-    //   console.log(history);
-    // data = {
-    //   ...data,
-    //   state: null,
-    //   url: '',
-    // };
-    //
-    // console.log(location);
-    // history.go(-(history.length - 1));
-    // console.log(history);
-
-    // });
   }
 
   ngOnDestroy(): void {
     this.sourceSubscription.unsubscribe();
-
-    // console.log(location);
-    // location.replace(`${location.origin}`);
-    // history.back();
-    // this.location.back();
-    // location.href = location.origin;
   }
 
   private initComponent() {

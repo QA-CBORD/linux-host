@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RewardsService } from '../../services';
 import { Observable } from 'rxjs';
 import { RedeemableRewardInfo, UserFulfillmentActivityInfo, UserRewardTrackInfo } from '../../models';
@@ -9,7 +9,7 @@ import { CONTENT_STRINGS } from '../../rewards.config';
   templateUrl: './store.component.html',
   styleUrls: ['./store.component.scss'],
 })
-export class StoreComponent implements OnInit, AfterViewInit {
+export class StoreComponent implements OnInit {
   rewards: Observable<RedeemableRewardInfo[]>;
   activeRewards: Observable<UserFulfillmentActivityInfo[]>;
   track: Observable<UserRewardTrackInfo>;
@@ -23,10 +23,6 @@ export class StoreComponent implements OnInit, AfterViewInit {
     this.rewards = this.rewardsService.getStoreRewards();
     this.track = this.rewardsService.rewardTrack;
     this.activeRewards = this.rewardsService.getStoreActiveRewards();
-  }
-
-  ngAfterViewInit() {
-    // location.replace(`${location.origin}`);
   }
 
   trackByFn(index, { id }): string {
