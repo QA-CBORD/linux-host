@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Resolve } from '@angular/router/src/interfaces';
 
-import { tap, retryWhen, switchMap, take } from 'rxjs/operators';
+import { tap, retryWhen, switchMap } from 'rxjs/operators';
 import { PopoverController } from '@ionic/angular';
 import { Observable, Subject } from 'rxjs';
 
@@ -25,9 +25,7 @@ export class RewardsResolverGuard implements Resolve<Observable<[UserRewardTrack
 
   private downloadData(): Observable<[UserRewardTrackInfo, UserFulfillmentActivityInfo[]]> {
     this.loader.showSpinner();
-    return this.rewardsService.initContentStringsList().pipe(
-      switchMap(() => this.rewardsService.getAllData(false)),
-      take(1),
+    return this.rewardsService.getAllData(false).pipe(
       retryWhen(errors => this.errorHandler(errors)),
       tap(() => this.loader.closeSpinner())
     );
@@ -35,17 +33,17 @@ export class RewardsResolverGuard implements Resolve<Observable<[UserRewardTrack
 
   private errorHandler(errors: Observable<any>): Observable<any> {
     return errors.pipe(
-      switchMap(err => {
+      switchMap(() => {
         const subject = new Subject<any>();
         this.loader.closeSpinner();
-        this.modalHandler(subject, err);
+        this.modalHandler(subject);
 
         return subject;
       })
     );
   }
 
-  async modalHandler(subject: Subject<any>, err: string): Promise<void> {
+  async modalHandler(subject: Subject<any>): Promise<void> {
     const popover = await this.popoverCtrl.create({
       component: RewardsPopoverComponent,
       componentProps: {
@@ -55,14 +53,9 @@ export class RewardsResolverGuard implements Resolve<Observable<[UserRewardTrack
       backdropDismiss: true,
     });
 
-    popover.onDidDismiss().then(({ data }) => {
-      if (data === PopupTypes.RETRY) {
-        this.loader.showSpinner();
-        subject.next(true);
-      } else {
-        subject.error(err);
-        subject.complete();
-      }
+    popover.onDidDismiss().then(() => {
+      this.loader.showSpinner();
+      subject.next();
     });
 
     return await popover.present();

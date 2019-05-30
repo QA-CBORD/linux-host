@@ -46,6 +46,14 @@ const CLOSE = {
   fill: 'clear',
 };
 
+const OPT_IN = {
+  label: 'OPT IN',
+  class: 'filled',
+  shape: 'round',
+  strong: false,
+  fill: 'default',
+};
+
 export const buttons = {
   CANCEL,
   RETRY,
@@ -53,4 +61,5 @@ export const buttons = {
   REDEEM,
   CLOSE,
   CLAIM,
+  OPT_IN,
 };

@@ -7,7 +7,6 @@ import { RewardsPage } from './rewards.page';
 import { HistoryComponent } from './components/history';
 import { StoreComponent } from './components/store';
 import { LevelsComponent } from './components/levels';
-import { OptInComponent } from './components/opt-in';
 import { RewardsRoutingModule } from './rewards-routing.module';
 import { RewardsApiService } from './services';
 import { RewardsService } from './services';
@@ -18,6 +17,7 @@ import { ListItemComponent } from './components/list-item';
 import { RewardsPopoverComponent } from './components/rewards-popover';
 import { ExpandListComponent } from './components/levels/expand-list';
 import { ExpandItemComponent } from './components/levels/expand-list/expand-item';
+import { OptInGuard } from './guards';
 
 const imports = [CommonModule, FormsModule, IonicModule, RewardsRoutingModule, RewardsRoutingModule, SharedModule];
 const declarations = [
@@ -25,14 +25,13 @@ const declarations = [
   HistoryComponent,
   StoreComponent,
   LevelsComponent,
-  OptInComponent,
   ListItemComponent,
   BalanceComponent,
   RewardsPopoverComponent,
   ExpandListComponent,
   ExpandItemComponent,
 ];
-const providers = [RewardsApiService, RewardsService, RewardsResolverGuard];
+const providers = [RewardsApiService, RewardsService, RewardsResolverGuard, OptInGuard];
 const entryComponents = [RewardsPopoverComponent];
 @NgModule({
   imports,

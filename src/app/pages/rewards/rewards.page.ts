@@ -34,15 +34,15 @@ export class RewardsPage implements OnInit, OnDestroy {
     this.setContentStrings();
     // this.location.subscribe(data => {
     //   console.log(history);
-      // data = {
-      //   ...data,
-      //   state: null,
-      //   url: '',
-      // };
-      //
-      // console.log(location);
-      // history.go(-(history.length - 1));
-      // console.log(history);
+    // data = {
+    //   ...data,
+    //   state: null,
+    //   url: '',
+    // };
+    //
+    // console.log(location);
+    // history.go(-(history.length - 1));
+    // console.log(history);
 
     // });
   }

@@ -18,7 +18,10 @@ export class RewardsApiService extends BaseService {
     super(http);
   }
 
-  getUserRewardTrackInfo(headerOnly: boolean = false, showToast: boolean = true): Observable<UserRewardTrackInfo> {
+  getUserRewardTrackInfo(
+    headerOnly: boolean = false,
+    showToastOnError: boolean = true
+  ): Observable<UserRewardTrackInfo> {
     const methodName = 'retrieveUserRewardTrackInfo';
     const postParams: ServiceParameters = { headerOnly };
     return this.httpRequest<MessageResponse<UserRewardTrackInfo[]>>(this.serviceUrl, methodName, true, {
@@ -30,7 +33,7 @@ export class RewardsApiService extends BaseService {
         }
         return Array.isArray(response) && response.length ? response[0] : null;
       }),
-      this.onErrorHandler(showToast)
+      this.onErrorHandler(showToastOnError)
     );
   }
 
@@ -56,14 +59,14 @@ export class RewardsApiService extends BaseService {
     );
   }
 
-  optUserIntoRewardTrack(trackId: string, userId: string, showToast: boolean = false) {
+  optUserIntoRewardTrack(trackId: string, userId: string, showToastOnError: boolean = true): Observable<boolean> {
     const methodName = 'optUserIntoRewardTrack';
     const postParams: ServiceParameters = { trackId, userId };
     return this.httpRequest<MessageResponse<boolean>>(this.serviceUrl, methodName, true, {
       ...postParams,
     }).pipe(
       this.parseResponse(),
-      this.onErrorHandler(showToast)
+      this.onErrorHandler(showToastOnError)
     );
   }
 
@@ -76,11 +79,11 @@ export class RewardsApiService extends BaseService {
     );
   }
 
-  private onErrorHandler(showToast: boolean = true) {
+  private onErrorHandler(showToastOnError: boolean = true) {
     return (source: Observable<any>) =>
       source.pipe(
         catchError(err => {
-          showToast && this.presentToast();
+          showToastOnError && this.presentToast();
           return throwError(err);
         })
       );

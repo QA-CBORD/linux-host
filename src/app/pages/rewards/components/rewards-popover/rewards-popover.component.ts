@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, AfterViewInit } from '@angular/core';
 import bwipjs from 'bwip-angular2';
 
-import { popoverConfig } from '../../../../core/model/popover/popover.model';
+import { Message, popoverConfig } from '../../../../core/model/popover/popover.model';
 import { buttons } from '../../../../core/utils/buttons.config';
 import { CONTENT_STRINGS, PopupTypes } from '../../rewards.config';
 import { RedeemableRewardInfo, UserFulfillmentActivityInfo } from '../../models';
@@ -14,7 +14,7 @@ import { RewardsService } from '../../services';
   styleUrls: ['./rewards-popover.component.scss'],
 })
 export class RewardsPopoverComponent implements OnInit, AfterViewInit {
-  @Input() data: RedeemableRewardInfo | UserFulfillmentActivityInfo;
+  @Input() data: RedeemableRewardInfo;
   @Input() type: string;
   popoverConfig: popoverConfig;
   contentString: { [key: string]: string };
@@ -39,12 +39,16 @@ export class RewardsPopoverComponent implements OnInit, AfterViewInit {
     return this.type === PopupTypes.CLAIM;
   }
 
+  get optIn(): boolean {
+    return this.type === PopupTypes.OPT_IN;
+  }
+
   ngOnInit() {
     this.popoverConfig = {
       title: this.getTitle(this.type),
       type: this.type,
       buttons: this.configureButtons(this.type),
-      message: this.data,
+      message: this.getMessage(this.data),
       code: this.getCode(this.type, this.data),
     };
   }
@@ -53,7 +57,7 @@ export class RewardsPopoverComponent implements OnInit, AfterViewInit {
     this.type === PopupTypes.SCAN && this.initBarcode();
   }
 
-  // TODO fix after pre-demo (string affect align!)
+  // TODO fix after pre-demo (string affects align!)
 
   private getCode(type: string, data: RedeemableRewardInfo | UserFulfillmentActivityInfo): string {
     if (type === PopupTypes.SCAN) {
@@ -64,6 +68,13 @@ export class RewardsPopoverComponent implements OnInit, AfterViewInit {
     }
 
     return '';
+  }
+
+  private getMessage({ name = null, itemName = null, shortDescription }: RedeemableRewardInfo): Message {
+    return {
+      title: name || itemName,
+      description: shortDescription,
+    };
   }
 
   private configureButtons(type: string): PopupButton[] {
@@ -80,6 +91,8 @@ export class RewardsPopoverComponent implements OnInit, AfterViewInit {
         ];
       case PopupTypes.RETRY:
         return [{ ...buttons.RETRY, label: this.contentString.retryButton }];
+      case PopupTypes.OPT_IN:
+        return [{ ...buttons.OPT_IN, label: this.contentString.optInBtn }];
       default:
         return [{ ...buttons.CLOSE, label: this.contentString.closeButton }];
     }
@@ -132,26 +145,29 @@ export class RewardsPopoverComponent implements OnInit, AfterViewInit {
     let scanCodeTitle = this.rewardsService.getContentValueByName(CONTENT_STRINGS.scanCodeTitle);
     let retryTitle = this.rewardsService.getContentValueByName(CONTENT_STRINGS.retryTitle);
     let scanCodeDescription = this.rewardsService.getContentValueByName(CONTENT_STRINGS.scanCodeDescription);
+    let optInBtn = this.rewardsService.getContentValueByName(CONTENT_STRINGS.optInBtn);
 
-    levelLabel = levelLabel ? levelLabel : '';
-    pointsCostLabel = pointsCostLabel ? pointsCostLabel : '';
-    scanLabel = scanLabel ? scanLabel : '';
-    claimLabel = claimLabel ? claimLabel : '';
-    redeemLabel = redeemLabel ? redeemLabel : '';
-    claimedLabel = claimedLabel ? claimedLabel : '';
-    claimButton = claimButton ? claimButton : '';
-    redeemButton = redeemButton ? redeemButton : '';
-    retryButton = retryButton ? retryButton : '';
-    closeButton = closeButton ? closeButton : '';
-    cancelButton = cancelButton ? cancelButton : '';
-    successTitle = successTitle ? successTitle : '';
-    claimTitle = claimTitle ? claimTitle : '';
-    redeemTitle = redeemTitle ? redeemTitle : '';
-    scanCodeTitle = scanCodeTitle ? scanCodeTitle : '';
-    retryTitle = retryTitle ? retryTitle : '';
-    scanCodeDescription = scanCodeDescription ? scanCodeDescription : '';
+    levelLabel = levelLabel || '';
+    pointsCostLabel = pointsCostLabel || '';
+    scanLabel = scanLabel || '';
+    claimLabel = claimLabel || '';
+    redeemLabel = redeemLabel || '';
+    claimedLabel = claimedLabel || '';
+    claimButton = claimButton || '';
+    redeemButton = redeemButton || '';
+    retryButton = retryButton || '';
+    closeButton = closeButton || '';
+    cancelButton = cancelButton || '';
+    successTitle = successTitle || '';
+    claimTitle = claimTitle || '';
+    redeemTitle = redeemTitle || '';
+    scanCodeTitle = scanCodeTitle || '';
+    retryTitle = retryTitle || '';
+    scanCodeDescription = scanCodeDescription || '';
+    optInBtn = optInBtn || '';
 
     this.contentString = {
+      optInBtn,
       levelLabel,
       pointsCostLabel,
       scanLabel,
@@ -168,7 +184,7 @@ export class RewardsPopoverComponent implements OnInit, AfterViewInit {
       redeemTitle,
       scanCodeTitle,
       retryTitle,
-      scanCodeDescription
+      scanCodeDescription,
     };
   }
 }

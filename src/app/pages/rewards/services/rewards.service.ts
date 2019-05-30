@@ -66,17 +66,19 @@ export class RewardsService {
     );
   }
 
-  getAllData(showToastOnError: boolean = true): Observable<[UserRewardTrackInfo, UserFulfillmentActivityInfo[]]> {
+  getAllData(showToastOnError?: boolean): Observable<[UserRewardTrackInfo, UserFulfillmentActivityInfo[]]> {
     return zip(this.getUserRewardTrackInfo(showToastOnError), this.getUserRewardHistoryInfo(showToastOnError));
   }
 
-  getUserRewardTrackInfo(showToast: boolean): Observable<UserRewardTrackInfo> {
-    return this.rewardsApi.getUserRewardTrackInfo(showToast).pipe(tap(trackInfo => (this._rewardTrack = trackInfo)));
+  getUserRewardTrackInfo(showToastOnError?: boolean): Observable<UserRewardTrackInfo> {
+    return this.rewardsApi
+      .getUserRewardTrackInfo(showToastOnError)
+      .pipe(tap(trackInfo => (this._rewardTrack = trackInfo)));
   }
 
-  getUserRewardHistoryInfo(showToast: boolean): Observable<UserFulfillmentActivityInfo[]> {
+  getUserRewardHistoryInfo(showToastOnError?: boolean): Observable<UserFulfillmentActivityInfo[]> {
     return this.rewardsApi
-      .getUserRewardHistoryInfo(showToast)
+      .getUserRewardHistoryInfo(showToastOnError)
       .pipe(tap(historyArray => (this._rewardHistory = historyArray)));
   }
 
@@ -140,9 +142,7 @@ export class RewardsService {
       this.contentService.retrieveContentStringList(GenericContentStringsParams)
     ).pipe(
       map(([res, res0]) => {
-        const arr0 = [...res];
-        const arr1 = [...res0];
-        const finalArray = arr0.concat(arr1);
+        const finalArray = [...res, ...res0];
         this.content = finalArray.reduce((init, elem) => ({ ...init, [elem.name]: elem.value }), {});
         return finalArray;
       }),

@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { NAVIGATE } from './app.global';
-import {SelectivePreloadingStrategy} from "./shared/preload-strategy/SelectivePreloadingStrategy";
+import { SelectivePreloadingStrategy } from './shared/preload-strategy/SelectivePreloadingStrategy';
 
 const routes: Routes = [
   /// initial route handled in app.component.ts
@@ -16,7 +16,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, {preloadingStrategy: SelectivePreloadingStrategy})],
+  imports: [RouterModule.forRoot(routes, { preloadingStrategy: SelectivePreloadingStrategy })],
   exports: [RouterModule],
 })
 export class AppRoutingModule {}

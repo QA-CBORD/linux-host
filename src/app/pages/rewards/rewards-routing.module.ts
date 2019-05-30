@@ -7,6 +7,7 @@ import { HistoryComponent } from './components/history';
 import { StoreComponent } from './components/store';
 import { LevelsComponent } from './components/levels';
 import { RewardsResolverGuard } from './resolvers';
+import { OptInGuard } from './guards';
 
 const subRoutes: Routes = [
   {
@@ -32,6 +33,7 @@ const routes: Routes = [
     component: RewardsPage,
     children: subRoutes,
     resolve: { rewardTrackInfo: RewardsResolverGuard },
+    canActivate: [OptInGuard],
     data: { preload: true },
   },
 ];
