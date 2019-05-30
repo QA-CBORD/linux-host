@@ -8,6 +8,7 @@ import { RewardsService } from './services';
 
 import { CONTENT_STRINGS, OPT_IN_STATUS } from './rewards.config';
 import { TabsConfig } from '../../core/model/tabs/tabs.model';
+import { LocationStrategy, Location, PathLocationStrategy } from '@angular/common';
 
 @Component({
   selector: 'st-rewards',
@@ -20,16 +21,37 @@ export class RewardsPage implements OnInit, OnDestroy {
   private readonly sourceSubscription: Subscription = new Subscription();
   contentString: { [key: string]: string };
 
-  constructor(private platform: Platform, private nav: NavController, private rewardsService: RewardsService) {
+  constructor(
+    private platform: Platform,
+    private nav: NavController,
+    private rewardsService: RewardsService,
+    private location: Location
+  ) {
     this.initComponent();
   }
 
   ngOnInit(): void {
     this.setContentStrings();
+    // this.location.subscribe(data => {
+    //   console.log(history);
+      // data = {
+      //   ...data,
+      //   state: null,
+      //   url: '',
+      // };
+      //
+      // console.log(location);
+      // history.go(-(history.length - 1));
+      // console.log(history);
+
+    // });
   }
 
   ngOnDestroy(): void {
     this.sourceSubscription.unsubscribe();
+
+    console.log(location)
+    location.replace(`${location.origin}/rewards`)
   }
 
   private initComponent() {
