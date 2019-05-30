@@ -34,4 +34,8 @@ export class LevelsComponent implements OnInit {
       })
     );
   }
+
+  ionViewWillLeave(){
+    // location.replace(location.origin);
+  }
 }

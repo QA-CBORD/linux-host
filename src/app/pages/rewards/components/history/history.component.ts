@@ -17,6 +17,10 @@ export class HistoryComponent implements OnInit {
     this.historyArr$ = this.rewardsService.getHistoryListRewards();
   }
 
+  ionViewWillLeave(){
+    // location.replace(location.origin);
+  }
+
   trackByFn(index, { id }): string {
     return id;
   }
