@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
-import { PopoverController } from '@ionic/angular';
+import { PopoverController, ToastController } from '@ionic/angular';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 
 import { Observable, Subject } from 'rxjs';
-import { map, retryWhen, switchMap } from 'rxjs/operators';
+import { map, retryWhen, switchMap, tap } from 'rxjs/operators';
 
 import { RewardsApiService, RewardsService } from '../services';
 import { RewardsPopoverComponent } from '../components/rewards-popover';
-import { OPT_IN_STATUS, PopupTypes } from '../rewards.config';
+import { CONTENT_STRINGS, OPT_IN_STATUS, PopupTypes } from '../rewards.config';
 import { UserRewardTrackInfo } from '../models';
 import { UserService } from '../../../core/service/user-service/user.service';
 import { UserInfo } from '../../../core/model/user';
@@ -18,7 +18,8 @@ export class OptInGuard implements CanActivate {
     private readonly rewardsService: RewardsService,
     private readonly popoverCtrl: PopoverController,
     private readonly apiService: RewardsApiService,
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private readonly toastController: ToastController
   ) {}
 
   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
@@ -49,7 +50,8 @@ export class OptInGuard implements CanActivate {
     return (source: Observable<unknown>) =>
       source.pipe(
         switchMap(() => this.userService.userData),
-        switchMap(({ id }: UserInfo) => this.apiService.optUserIntoRewardTrack(trackID, id))
+        switchMap(({ id }: UserInfo) => this.apiService.optUserIntoRewardTrack(trackID, id)),
+        tap(() => this.presentToast())
       );
   }
 
@@ -68,11 +70,17 @@ export class OptInGuard implements CanActivate {
       backdropDismiss: true,
     });
 
-    popover.onDidDismiss().then(() => {
-      subject.next();
-      subject.complete();
-    });
+    popover.onDidDismiss().then(() => subject.next());
 
     return await popover.present();
+  }
+
+  private async presentToast() {
+    const message = this.rewardsService.getContentValueByName(CONTENT_STRINGS.optInToast);
+    const toast = await this.toastController.create({
+      message,
+      duration: 3000,
+    });
+    toast.present();
   }
 }

@@ -8,6 +8,7 @@ export enum LOCAL_ROUTING {
 
 export enum CONTENT_STRINGS {
   activateBtn = 'button_activate',
+  optInToast = 'toast_opt-in-success',
   cancelBtn = 'button_cancel',
   closeBtn = 'button_close',
   retryBtn = 'button_retry',

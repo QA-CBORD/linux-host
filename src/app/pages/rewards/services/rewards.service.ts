@@ -142,9 +142,7 @@ export class RewardsService {
       this.contentService.retrieveContentStringList(GenericContentStringsParams)
     ).pipe(
       map(([res, res0]) => {
-        const arr0 = [...res];
-        const arr1 = [...res0];
-        const finalArray = arr0.concat(arr1);
+        const finalArray = [...res, ...res0];
         this.content = finalArray.reduce((init, elem) => ({ ...init, [elem.name]: elem.value }), {});
         return finalArray;
       }),

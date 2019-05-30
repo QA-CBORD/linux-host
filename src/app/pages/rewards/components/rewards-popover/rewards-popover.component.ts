@@ -90,9 +90,9 @@ export class RewardsPopoverComponent implements OnInit, AfterViewInit {
           { ...buttons.REDEEM, label: this.contentString.redeemButton },
         ];
       case PopupTypes.RETRY:
-        return [buttons.RETRY];
+        return [{ ...buttons.RETRY, label: this.contentString.retryButton }];
       case PopupTypes.OPT_IN:
-        return [buttons.OPT_IN];
+        return [{ ...buttons.OPT_IN, label: this.contentString.optInBtn }];
       default:
         return [{ ...buttons.CLOSE, label: this.contentString.closeButton }];
     }
@@ -145,26 +145,29 @@ export class RewardsPopoverComponent implements OnInit, AfterViewInit {
     let scanCodeTitle = this.rewardsService.getContentValueByName(CONTENT_STRINGS.scanCodeTitle);
     let retryTitle = this.rewardsService.getContentValueByName(CONTENT_STRINGS.retryTitle);
     let scanCodeDescription = this.rewardsService.getContentValueByName(CONTENT_STRINGS.scanCodeDescription);
+    let optInBtn = this.rewardsService.getContentValueByName(CONTENT_STRINGS.optInBtn);
 
-    levelLabel = levelLabel ? levelLabel : '';
-    pointsCostLabel = pointsCostLabel ? pointsCostLabel : '';
-    scanLabel = scanLabel ? scanLabel : '';
-    claimLabel = claimLabel ? claimLabel : '';
-    redeemLabel = redeemLabel ? redeemLabel : '';
-    claimedLabel = claimedLabel ? claimedLabel : '';
-    claimButton = claimButton ? claimButton : '';
-    redeemButton = redeemButton ? redeemButton : '';
-    retryButton = retryButton ? retryButton : '';
-    closeButton = closeButton ? closeButton : '';
-    cancelButton = cancelButton ? cancelButton : '';
-    successTitle = successTitle ? successTitle : '';
-    claimTitle = claimTitle ? claimTitle : '';
-    redeemTitle = redeemTitle ? redeemTitle : '';
-    scanCodeTitle = scanCodeTitle ? scanCodeTitle : '';
-    retryTitle = retryTitle ? retryTitle : '';
-    scanCodeDescription = scanCodeDescription ? scanCodeDescription : '';
+    levelLabel = levelLabel || '';
+    pointsCostLabel = pointsCostLabel || '';
+    scanLabel = scanLabel || '';
+    claimLabel = claimLabel || '';
+    redeemLabel = redeemLabel || '';
+    claimedLabel = claimedLabel || '';
+    claimButton = claimButton || '';
+    redeemButton = redeemButton || '';
+    retryButton = retryButton || '';
+    closeButton = closeButton || '';
+    cancelButton = cancelButton || '';
+    successTitle = successTitle || '';
+    claimTitle = claimTitle || '';
+    redeemTitle = redeemTitle || '';
+    scanCodeTitle = scanCodeTitle || '';
+    retryTitle = retryTitle || '';
+    scanCodeDescription = scanCodeDescription || '';
+    optInBtn = optInBtn || '';
 
     this.contentString = {
+      optInBtn,
       levelLabel,
       pointsCostLabel,
       scanLabel,
