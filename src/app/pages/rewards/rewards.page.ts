@@ -52,7 +52,7 @@ export class RewardsPage implements OnInit, OnDestroy {
 
     // console.log(location);
     location.replace(`${location.origin}`);
-    history.back()
+    history.back();
   }
 
   private initComponent() {

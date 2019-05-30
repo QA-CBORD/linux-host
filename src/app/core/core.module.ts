@@ -9,10 +9,12 @@ import { IonicRouteStrategy } from '@ionic/angular';
 import { BrowserModule } from '@angular/platform-browser';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
+import { SelectivePreloadingStrategy } from '../shared/preload-strategy/SelectivePreloadingStrategy';
 
 const imports = [CommonModule, BrowserModule, HttpClientModule];
 
 const providers = [
+  SelectivePreloadingStrategy,
   StatusBar,
   SplashScreen,
   { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
