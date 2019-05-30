@@ -32,19 +32,19 @@ export class RewardsPage implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.setContentStrings();
-    this.location.subscribe(data => {
-      console.log(history);
+    // this.location.subscribe(data => {
+    //   console.log(history);
       // data = {
       //   ...data,
       //   state: null,
       //   url: '',
       // };
       //
-      console.log(location);
-      history.go(-(history.length - 1));
-      console.log(history);
+      // console.log(location);
+      // history.go(-(history.length - 1));
+      // console.log(history);
 
-    });
+    // });
   }
 
   ngOnDestroy(): void {
