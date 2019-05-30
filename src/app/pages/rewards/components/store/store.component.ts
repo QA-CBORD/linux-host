@@ -9,7 +9,7 @@ import { CONTENT_STRINGS } from '../../rewards.config';
   templateUrl: './store.component.html',
   styleUrls: ['./store.component.scss'],
 })
-export class StoreComponent implements OnInit, AfterViewInit, OnDestroy {
+export class StoreComponent implements OnInit, AfterViewInit {
   rewards: Observable<RedeemableRewardInfo[]>;
   activeRewards: Observable<UserFulfillmentActivityInfo[]>;
   track: Observable<UserRewardTrackInfo>;
@@ -27,12 +27,6 @@ export class StoreComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
     // location.replace(`${location.origin}`);
-  }
-
-  ngOnDestroy(): void {
-
-    // console.log(location)
-    // location.replace(`${location.origin}`)
   }
 
   trackByFn(index, { id }): string {

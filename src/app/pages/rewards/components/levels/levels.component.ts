@@ -12,7 +12,7 @@ import { UserRewardTrackInfo, UserTrackLevelInfo } from '../../models';
   styleUrls: ['./levels.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LevelsComponent implements OnInit, AfterViewInit, OnDestroy {
+export class LevelsComponent implements OnInit, AfterViewInit {
   trackInfo$: Observable<UserRewardTrackInfo>;
   currentLevelInfo$: Observable<UserTrackLevelInfo>;
   levels$: Observable<UserTrackLevelInfo[]>;
@@ -23,12 +23,6 @@ export class LevelsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
     // location.replace(`${location.origin}`);
-  }
-
-  ngOnDestroy(): void {
-
-    // console.log(location)
-    // location.replace(`${location.origin}`)
   }
 
   ngOnInit() {
