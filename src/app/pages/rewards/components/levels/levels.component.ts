@@ -20,7 +20,6 @@ export class LevelsComponent implements OnInit, AfterViewInit {
 
   constructor(private readonly rewardsService: RewardsService) {}
 
-
   ngAfterViewInit() {
     // location.replace(`${location.origin}`);
   }
