@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
   templateUrl: './history.component.html',
   styleUrls: ['./history.component.scss'],
 })
-export class HistoryComponent implements OnInit, AfterViewInit, OnDestroy {
+export class HistoryComponent implements OnInit, AfterViewInit {
   historyArr$: Observable<UserFulfillmentActivityInfo[]>;
 
   constructor(private readonly rewardsService: RewardsService) {}
@@ -19,12 +19,6 @@ export class HistoryComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
     // location.replace(`${location.origin}`);
-  }
-
-  ngOnDestroy(): void {
-
-    // console.log(location)
-    // location.replace(`${location.origin}`)
   }
 
   trackByFn(index, { id }): string {
