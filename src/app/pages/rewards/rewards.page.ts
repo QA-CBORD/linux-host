@@ -34,15 +34,15 @@ export class RewardsPage implements OnInit, OnDestroy {
     this.setContentStrings();
     // this.location.subscribe(data => {
     //   console.log(history);
-      // data = {
-      //   ...data,
-      //   state: null,
-      //   url: '',
-      // };
-      //
-      // console.log(location);
-      // history.go(-(history.length - 1));
-      // console.log(history);
+    // data = {
+    //   ...data,
+    //   state: null,
+    //   url: '',
+    // };
+    //
+    // console.log(location);
+    // history.go(-(history.length - 1));
+    // console.log(history);
 
     // });
   }
@@ -50,8 +50,8 @@ export class RewardsPage implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.sourceSubscription.unsubscribe();
 
-    console.log(location)
-    location.replace(`${location.origin}/rewards`)
+    console.log(location);
+    location.replace(`${location.origin}/rewards`);
   }
 
   private initComponent() {
