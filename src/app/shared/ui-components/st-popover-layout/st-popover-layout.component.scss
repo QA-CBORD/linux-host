@@ -27,6 +27,7 @@
       --padding-top: 15px;
       --padding-start: 25px;
       --padding-end: 25px;
+      height: auto;
 
       @include font-nunito-regular(16px);
     }
