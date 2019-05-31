@@ -153,8 +153,8 @@ export class RewardsService {
     );
   }
 
-  getContentValueByName(name: string): string | undefined {
-    return this.content[name];
+  getContentValueByName(name: string): string {
+    return this.content[name] || '';
   }
 
   private extractFromHistoryByStatus(
