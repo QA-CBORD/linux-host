@@ -15,6 +15,7 @@ import { Institution } from '../../../core/model/institution/institution.model';
 import { MobileAccessPopoverComponent } from '../mobile-access-popover';
 import { LoadingService } from '../../../core/service/loading/loading.service';
 import { CONTENT_STRINGS } from '../mobile-acces.config';
+import { BUTTON_TYPE } from '../../../core/utils/buttons.config';
 
 @Component({
   selector: 'st-activate-location',
@@ -94,12 +95,12 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
       backdropDismiss: true,
     });
 
-    popover.onDidDismiss().then(({ data }) => {
-      if (data === 'OKAY') {
+    popover.onDidDismiss().then(({ role }) => {
+      if (role === BUTTON_TYPE.OKAY) {
         this.nav2.navigateBack('/mobile-access');
       }
 
-      if (data === 'RETRY') {
+      if (role === BUTTON_TYPE.RETRY) {
         this.activateLocation();
       }
     });
