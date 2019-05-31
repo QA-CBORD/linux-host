@@ -20,6 +20,6 @@
             class="st-popover__footer-btn st-popover__footer-btn--{{ button.class }}"
             (click)="closeModal(button.label, button.type)"
     >
-        {{ button.label }}
+        <span class="st-popover__footer-content">{{ button.label }}</span>
     </ion-button>
 </ion-footer>

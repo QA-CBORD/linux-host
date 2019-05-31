@@ -8,13 +8,17 @@ import { BaseService, ServiceParameters } from '../../../core/service/base-servi
 
 import { UserFulfillmentActivityInfo, UserRewardTrackInfo } from '../models';
 import { MessageResponse } from '../../../core/model/service/message-response.model';
-import { ToastController } from '@ionic/angular';
+import { ToastController, Platform } from '@ionic/angular';
 
 @Injectable()
 export class RewardsApiService extends BaseService {
   private readonly serviceUrl = '/json/rewards';
 
-  constructor(protected readonly http: HttpClient, private readonly toastController: ToastController) {
+  constructor(
+    protected readonly http: HttpClient,
+    private readonly toastController: ToastController,
+    private platform: Platform
+  ) {
     super(http);
   }
 
@@ -79,6 +83,10 @@ export class RewardsApiService extends BaseService {
     );
   }
 
+  detectPlatform(name) {
+    return this.platform.is(name);
+  }
+
   private onErrorHandler(showToastOnError: boolean = true) {
     return (source: Observable<any>) =>
       source.pipe(
@@ -103,9 +111,12 @@ export class RewardsApiService extends BaseService {
 
   private async presentToast() {
     const message = `something went wrong, try again later`;
+    const isCordovaEnv = this.detectPlatform('cordova');
     const toast = await this.toastController.create({
       message,
       duration: 3000,
+      position: isCordovaEnv ? 'bottom' : 'top',
+      // showCloseButton: true,
     });
     toast.present();
   }
