@@ -38,8 +38,7 @@ export class AppComponent {
       this.splashScreen.hide();
       this.setupAppStateEvent();
       this.subscribeToEvents();
-      // this.getHashParameters();
-      console.log('app called');
+      this.getHashParameters();
       this.router.navigate(['home'], { skipLocationChange: true });
     });
   }
@@ -48,6 +47,8 @@ export class AppComponent {
    * Get hash parameters from url
    */
   private getHashParameters() {
+    debugger;
+
     const hashParameters: string[] = location.hash.split('/');
 
     const destinationPageString = hashParameters[3];
