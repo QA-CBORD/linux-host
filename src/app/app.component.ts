@@ -47,8 +47,6 @@ export class AppComponent {
    * Get hash parameters from url
    */
   private getHashParameters() {
-    debugger;
-
     const hashParameters: string[] = location.hash.split('/');
 
     const destinationPageString = hashParameters[3];

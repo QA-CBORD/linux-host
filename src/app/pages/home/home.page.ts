@@ -87,25 +87,6 @@ export class HomePage {
    */
   private getHashParameters() {
     /// get required params from the URL
-    const getHashParameters = () => {
-      const hashParameters: string[] = location.hash.split('/');
-
-      const destinationPageString = hashParameters[3];
-      let destinationPage = EDestination.NONE;
-
-      if (destinationPageString === EDestination.MOBILE_ACCESS) {
-        destinationPage = EDestination.MOBILE_ACCESS;
-      } else if (destinationPageString === EDestination.REWARDS) {
-        destinationPage = EDestination.REWARDS;
-      } else if (destinationPageString === EDestination.SECURE_MESSAGING) {
-        destinationPage = EDestination.SECURE_MESSAGING;
-      }
-
-      /// get required params from the URL
-      DataCache.setWebInitiValues(hashParameters[2] || null, destinationPage);
-    };
-
-    getHashParameters();
     this.sessionToken = DataCache.getUrlSession() || null;
     this.destinationPage = DataCache.getDestinationPage() || null;
   }
