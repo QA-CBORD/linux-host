@@ -96,27 +96,19 @@ export class MobileAccessPopoverComponent implements OnInit, AfterViewInit {
   }
 
   private setContentStrings() {
-    let errorResponseDialogHeader = this.mobileAccessService.getContentValueByName(
+    const errorResponseDialogHeader = this.mobileAccessService.getContentValueByName(
       CONTENT_STRINGS.errorResponseDialogHeader
     );
-    let successResponseDialogHeader = this.mobileAccessService.getContentValueByName(
+    const successResponseDialogHeader = this.mobileAccessService.getContentValueByName(
       CONTENT_STRINGS.successResponseDialogHeader
     );
-    let scanBarcodeDialogHeader = this.mobileAccessService.getContentValueByName(
+    const scanBarcodeDialogHeader = this.mobileAccessService.getContentValueByName(
       CONTENT_STRINGS.scanBarcodeDialogHeader
     );
-    let enterCodeDialogHeader = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.enterCodeDialogHeader);
-    let closeBtn = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.closeBtn);
-    let retryBtn = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.retryBtn);
-    let cancelBtn = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.cancelBtn);
-
-    errorResponseDialogHeader = errorResponseDialogHeader ? errorResponseDialogHeader : '';
-    successResponseDialogHeader = successResponseDialogHeader ? successResponseDialogHeader : '';
-    scanBarcodeDialogHeader = scanBarcodeDialogHeader ? scanBarcodeDialogHeader : '';
-    enterCodeDialogHeader = enterCodeDialogHeader ? enterCodeDialogHeader : '';
-    closeBtn = closeBtn ? closeBtn : '';
-    retryBtn = retryBtn ? retryBtn : '';
-    cancelBtn = cancelBtn ? cancelBtn : '';
+    const enterCodeDialogHeader = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.enterCodeDialogHeader);
+    const closeBtn = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.closeBtn);
+    const retryBtn = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.retryBtn);
+    const cancelBtn = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.cancelBtn);
 
     this.contentString = {
       errorResponseDialogHeader,

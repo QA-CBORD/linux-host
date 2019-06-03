@@ -64,8 +64,7 @@ export class RewardsPage implements OnInit, OnDestroy {
     });
   }
   private setContentStrings() {
-    let header = this.rewardsService.getContentValueByName(CONTENT_STRINGS.headerTitle);
-    header = header ? header : '';
+    const header = this.rewardsService.getContentValueByName(CONTENT_STRINGS.headerTitle);
 
     this.contentString = { header };
   }

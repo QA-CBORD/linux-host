@@ -30,8 +30,8 @@ export class LocationListComponent implements OnInit {
   }
 
   private setContentStrings() {
-    let noLocationsFound = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.noLocationsFound);
-    noLocationsFound = noLocationsFound ? noLocationsFound : '';
+    const noLocationsFound = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.noLocationsFound);
+
     this.contentString = { noLocationsFound };
   }
 }

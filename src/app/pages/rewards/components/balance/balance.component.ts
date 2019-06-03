@@ -16,11 +16,8 @@ export class BalanceComponent {
   }
 
   private initContentStrings() {
-    let balanceTitle = this.rewardsService.getContentValueByName(CONTENT_STRINGS.balanceLabel);
-    let pointsLabel = this.rewardsService.getContentValueByName(CONTENT_STRINGS.pointsLabel);
-
-    balanceTitle = balanceTitle ? balanceTitle : '';
-    pointsLabel = pointsLabel ? pointsLabel : '';
+    const balanceTitle = this.rewardsService.getContentValueByName(CONTENT_STRINGS.balanceLabel);
+    const pointsLabel = this.rewardsService.getContentValueByName(CONTENT_STRINGS.pointsLabel);
 
     this.contentString = { balanceTitle, pointsLabel };
   }

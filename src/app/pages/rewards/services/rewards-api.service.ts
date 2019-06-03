@@ -111,11 +111,11 @@ export class RewardsApiService extends BaseService {
 
   private async presentToast() {
     const message = `something went wrong, try again later`;
-    const isCordovaEnv = this.detectPlatform('cordova');
+    const isPWAEnv = this.detectPlatform('pwa');
     const toast = await this.toastController.create({
       message,
       duration: 3000,
-      position: isCordovaEnv ? 'bottom' : 'top',
+      position: isPWAEnv ? 'top' : 'bottom',
       // showCloseButton: true,
     });
     toast.present();

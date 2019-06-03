@@ -113,19 +113,12 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
   }
 
   private setContentStrings() {
-    let header = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.headerTitle);
-    let search = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.searchbarPlaceholder);
-    let pullRefreshLabel = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.labelPullToRefresh);
-    let addFavToast = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.addFavToast);
-    let removeFavToast = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.removeFavToast);
-    let addFavErrorToast = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.addFavErrorToast);
-
-    header = header ? header : '';
-    search = search ? search : '';
-    pullRefreshLabel = pullRefreshLabel ? pullRefreshLabel : '';
-    addFavToast = addFavToast ? addFavToast : '';
-    removeFavToast = removeFavToast ? removeFavToast : '';
-    addFavErrorToast = addFavErrorToast ? addFavErrorToast : '';
+    const header = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.headerTitle);
+    const search = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.searchbarPlaceholder);
+    const pullRefreshLabel = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.labelPullToRefresh);
+    const addFavToast = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.addFavToast);
+    const removeFavToast = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.removeFavToast);
+    const addFavErrorToast = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.addFavErrorToast);
 
     this.contentString = { header, search, pullRefreshLabel, addFavToast, removeFavToast, addFavErrorToast };
   }

@@ -64,8 +64,8 @@ export class MobileAccessService extends BaseService {
       .pipe(tap(res => (this.content = res.reduce((init, elem) => ({ ...init, [elem.name]: elem.value }), {}))));
   }
 
-  getContentValueByName(name: string): string | undefined {
-    return this.content[name];
+  getContentValueByName(name: string): string {
+    return this.content[name] || '';
   }
 
   getMobileLocations(): Observable<MMobileLocationInfo[]> {

@@ -131,21 +131,14 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
   // }
 
   private setContentStrings() {
-    let activate = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.activateBtn);
-    let header = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.headerTitle);
-    let activateLocationLoader = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.activateLocationLoader);
-    let errorResponseActivateLocation = this.mobileAccessService.getContentValueByName(
+    const activate = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.activateBtn);
+    const header = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.headerTitle);
+    const activateLocationLoader = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.activateLocationLoader);
+    const errorResponseActivateLocation = this.mobileAccessService.getContentValueByName(
       CONTENT_STRINGS.errorResponseActivateLocation
     );
-    let headerTitleActivate = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.headerTitleActivate);
-    let backBtnHeader = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.backBtnHeader);
-
-    activate = activate ? activate : '';
-    header = header ? header : '';
-    activateLocationLoader = activateLocationLoader ? activateLocationLoader : '';
-    errorResponseActivateLocation = errorResponseActivateLocation ? errorResponseActivateLocation : '';
-    headerTitleActivate = headerTitleActivate ? headerTitleActivate : '';
-    backBtnHeader = backBtnHeader ? backBtnHeader : '';
+    const headerTitleActivate = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.headerTitleActivate);
+    const backBtnHeader = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.backBtnHeader);
 
     this.contentString = {
       activate,

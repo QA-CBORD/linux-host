@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
-import { ClaimableRewardInfo, RedeemableRewardInfo, UserFulfillmentActivityInfo } from '../../models';
+import { RedeemableRewardInfo } from '../../models';
 import { RewardsPopoverComponent } from '../rewards-popover';
 import { RewardsApiService, RewardsService } from '../../services';
 import { CLAIM_STATUS, CONTENT_STRINGS, LEVEL_STATUS } from '../../rewards.config';
@@ -125,19 +125,12 @@ export class ListItemComponent {
   }
 
   private initContentStrings() {
-    let levelLabel = this.rewardsService.getContentValueByName(CONTENT_STRINGS.levelLabel);
-    let pointsCostLabel = this.rewardsService.getContentValueByName(CONTENT_STRINGS.pointsCostLabel);
-    let scanLabel = this.rewardsService.getContentValueByName(CONTENT_STRINGS.scanLabel);
-    let claimLabel = this.rewardsService.getContentValueByName(CONTENT_STRINGS.claimLabel);
-    let redeemLabel = this.rewardsService.getContentValueByName(CONTENT_STRINGS.redeemLabel);
-    let claimedLabel = this.rewardsService.getContentValueByName(CONTENT_STRINGS.claimedLabel);
-
-    levelLabel = levelLabel ? levelLabel : '';
-    pointsCostLabel = pointsCostLabel ? pointsCostLabel : '';
-    scanLabel = scanLabel ? scanLabel : '';
-    claimLabel = claimLabel ? claimLabel : '';
-    redeemLabel = redeemLabel ? redeemLabel : '';
-    claimedLabel = claimedLabel ? claimedLabel : '';
+    const levelLabel = this.rewardsService.getContentValueByName(CONTENT_STRINGS.levelLabel);
+    const pointsCostLabel = this.rewardsService.getContentValueByName(CONTENT_STRINGS.pointsCostLabel);
+    const scanLabel = this.rewardsService.getContentValueByName(CONTENT_STRINGS.scanLabel);
+    const claimLabel = this.rewardsService.getContentValueByName(CONTENT_STRINGS.claimLabel);
+    const redeemLabel = this.rewardsService.getContentValueByName(CONTENT_STRINGS.redeemLabel);
+    const claimedLabel = this.rewardsService.getContentValueByName(CONTENT_STRINGS.claimedLabel);
 
     this.contentString = { levelLabel, pointsCostLabel, scanLabel, claimLabel, redeemLabel, claimedLabel };
   }
