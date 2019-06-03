@@ -38,7 +38,8 @@ export class AppComponent {
       this.splashScreen.hide();
       this.setupAppStateEvent();
       this.subscribeToEvents();
-      this.getHashParameters();
+      // this.getHashParameters();
+      console.log('app called');
       this.router.navigate(['home'], { skipLocationChange: true });
     });
   }
