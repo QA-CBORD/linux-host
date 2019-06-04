@@ -48,9 +48,11 @@ export class AppComponent {
    */
   private getHashParameters() {
     const hashParameters: string[] = location.hash.split('/');
-
+    console.log('location line_51', location);
+    console.log('hashParameters line_52', hashParameters);
     const destinationPageString = hashParameters[3];
     let destinationPage = EDestination.NONE;
+    console.log('destinationPage line_55', destinationPage);
 
     if (destinationPageString === EDestination.MOBILE_ACCESS) {
       destinationPage = EDestination.MOBILE_ACCESS;
