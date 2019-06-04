@@ -62,7 +62,10 @@ export class AppComponent {
       destinationPage = EDestination.SECURE_MESSAGING;
     }
 
-    if (!location.hash) location.reload();
+    if (!hashParameters[2])  {
+        window.location.reload();
+        return;
+    };
 
     /// get required params from the URL
     DataCache.setWebInitiValues(hashParameters[2] || null, destinationPage);
