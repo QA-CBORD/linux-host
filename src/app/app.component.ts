@@ -48,7 +48,7 @@ export class AppComponent {
    */
   private getHashParameters() {
     const hashParameters: string[] = location.hash.split('/');
-    console.log('location line_51', location);
+    console.log('location line_51', JSON.parse(JSON.stringify(location)));
     console.log('hashParameters line_52', hashParameters);
     const destinationPageString = hashParameters[3];
     let destinationPage = EDestination.NONE;

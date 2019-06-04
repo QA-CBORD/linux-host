@@ -194,10 +194,7 @@ export class HomePage {
   private handlePageNavigation() {
     switch (this.destinationPage) {
       case EDestination.REWARDS:
-        this.router.navigate(['rewards'], {
-          replaceUrl: true,
-          skipLocationChange: true,
-        });
+        this.router.navigate(['rewards']);
         break;
       case EDestination.MOBILE_ACCESS:
         this.router.navigate(['mobile-access'], {
@@ -206,10 +203,7 @@ export class HomePage {
         });
         break;
       case EDestination.SECURE_MESSAGING:
-        this.router.navigate(['secure-message'], {
-          replaceUrl: true,
-          skipLocationChange: true,
-        });
+        this.router.navigate(['secure-message']);
         break;
     }
   }
