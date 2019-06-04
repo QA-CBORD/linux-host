@@ -34,7 +34,7 @@ export class RewardsPage implements OnInit, OnDestroy {
     this.setContentStrings();
 
     const subscription = this.location.subscribe(() => {
-      this.location.replaceState(location.origin);
+      this.location.replaceState(location.href);
 
       this.location.back();
     });

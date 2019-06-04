@@ -45,7 +45,6 @@ export class HomePage {
       Logger.setLoggingEnabled(Environment.isDevelopmentEnvironment(location.href));
       /// use page url to determine current environment
       Environment.setEnvironmentViaURL(location.href);
-      console.log('home called');
 
       /// get parameters from url
       this.getHashParameters();
@@ -195,7 +194,7 @@ export class HomePage {
     switch (this.destinationPage) {
       case EDestination.REWARDS:
         this.router.navigate(['rewards'], {
-          replaceUrl: true,
+          // replaceUrl: true,
           skipLocationChange: true,
         });
         break;
