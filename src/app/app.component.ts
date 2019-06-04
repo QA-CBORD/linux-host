@@ -49,7 +49,7 @@ export class AppComponent {
   private getHashParameters() {
     const hashParameters: string[] = location.hash.split('/');
     console.log('location line_51', JSON.parse(JSON.stringify(location)));
-    console.log('location line_52', hashParameters);
+    console.log('location line_52', location);
     console.log('hashParameters line_53', hashParameters);
     const destinationPageString = hashParameters[3];
     let destinationPage = EDestination.NONE;
@@ -60,11 +60,6 @@ export class AppComponent {
       destinationPage = EDestination.REWARDS;
     } else if (destinationPageString === EDestination.SECURE_MESSAGING) {
       destinationPage = EDestination.SECURE_MESSAGING;
-    }
-
-    if (!hashParameters[2]) {
-      window.location.reload();
-      return;
     }
 
     /// get required params from the URL
