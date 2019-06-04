@@ -50,7 +50,7 @@ export class AppComponent {
     const hashParameters: string[] = location.hash.split('/');
     console.log('location line_51', JSON.parse(JSON.stringify(location)));
     console.log('location line_52', location);
-    console.log('document_iframe', parent.document.querySelector('iframe'));
+    console.log('document_iframe', document.querySelector('iframe'));
     console.log('hashParameters line_53', hashParameters);
     const destinationPageString = hashParameters[3];
     let destinationPage = EDestination.NONE;
