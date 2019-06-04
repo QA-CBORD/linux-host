@@ -62,6 +62,7 @@ export class AppComponent {
 
     /// get required params from the URL
     DataCache.setWebInitiValues(hashParameters[2] || null, destinationPage);
+    debugger
   }
 
   private setupAppStateEvent() {
