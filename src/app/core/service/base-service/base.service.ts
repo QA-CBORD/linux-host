@@ -41,7 +41,7 @@ export class BaseService {
     institutionId: string,
     postParams: ServiceParameters
   ): Observable<T> {
-    this.baseUrl = Environment.getGETServicesBaseURL();
+    this.baseUrl = Environment.getServicesURL();
 
     if (bUseSessionId) {
       postParams.sessionId = DataCache.getSessionId();

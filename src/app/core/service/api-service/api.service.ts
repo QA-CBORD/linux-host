@@ -115,9 +115,9 @@ export class APIService {
     params?: HttpParams,
     headers?: HttpHeaders
   ): Observable<any> {
-    const finalURL = Environment.getAPIGatewayServicesBaseURL().concat(resourceURL);
+      const finalURL = Environment.getSecureMessagingAPIURL().concat(resourceURL);
 
-    return Observable.create((observer: any) => {
+      return Observable.create((observer: any) => {
       // sort by call type
       switch (callType) {
         case RestCallType.get:
