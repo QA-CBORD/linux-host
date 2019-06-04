@@ -49,10 +49,10 @@ export class AppComponent {
   private getHashParameters() {
     const hashParameters: string[] = location.hash.split('/');
     console.log('location line_51', JSON.parse(JSON.stringify(location)));
-    console.log('hashParameters line_52', hashParameters);
+    console.log('location line_52', hashParameters);
+    console.log('hashParameters line_53', hashParameters);
     const destinationPageString = hashParameters[3];
     let destinationPage = EDestination.NONE;
-    console.log('destinationPage line_55', destinationPage);
 
     if (destinationPageString === EDestination.MOBILE_ACCESS) {
       destinationPage = EDestination.MOBILE_ACCESS;
@@ -62,10 +62,10 @@ export class AppComponent {
       destinationPage = EDestination.SECURE_MESSAGING;
     }
 
-    if (!hashParameters[2])  {
-        window.location.reload();
-        return;
-    };
+    if (!hashParameters[2]) {
+      window.location.reload();
+      return;
+    }
 
     /// get required params from the URL
     DataCache.setWebInitiValues(hashParameters[2] || null, destinationPage);
