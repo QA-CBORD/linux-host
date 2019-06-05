@@ -40,8 +40,7 @@ export class AppComponent {
       this.setupAppStateEvent();
       this.subscribeToEvents();
       this.getHashParameters();
-      this.router.navigate(['home']);
-      console.log('start')
+      this.router.navigate(['home'], { skipLocationChange: true });
     });
   }
 
