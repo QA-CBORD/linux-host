@@ -15,8 +15,8 @@ import { EDestination } from './pages/home/home.page';
   templateUrl: 'app.component.html',
 })
 export class AppComponent {
-  static readonly EVENT_APP_PAUSE = 'event.apppause';
-  static readonly EVENT_APP_RESUME = 'event.appresume';
+  private readonly EVENT_APP_PAUSE = 'event.apppause';
+  private readonly EVENT_APP_RESUME = 'event.appresume';
 
   private loader;
 
@@ -36,10 +36,12 @@ export class AppComponent {
     this.platform.ready().then(() => {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
+
       this.setupAppStateEvent();
       this.subscribeToEvents();
       this.getHashParameters();
-      this.router.navigate(['home'], { skipLocationChange: true });
+      this.router.navigate(['home']);
+      console.log('start')
     });
   }
 
@@ -69,10 +71,10 @@ export class AppComponent {
 
   private setupAppStateEvent() {
     this.platform.pause.subscribe(() => {
-      this.events.publish(AppComponent.EVENT_APP_PAUSE, null);
+      this.events.publish(this.EVENT_APP_PAUSE, null);
     });
     this.platform.resume.subscribe(() => {
-      this.events.publish(AppComponent.EVENT_APP_RESUME, null);
+      this.events.publish(this.EVENT_APP_RESUME, null);
     });
   }
 
