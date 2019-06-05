@@ -53,6 +53,7 @@ export class AppComponent {
     console.log('location line_52', location);
     console.log('document_iframe', document.querySelector('iframe'));
     console.log('hashParameters line_53', hashParameters);
+    console.log('iframe', window.parent.document.getElementById('ionic_content'));
     const destinationPageString = hashParameters[3];
     let destinationPage = EDestination.NONE;
 
