@@ -41,7 +41,21 @@ export class AppComponent {
       this.subscribeToEvents();
       this.getHashParameters();
       this.router.navigate(['home'], { skipLocationChange: true });
+
+      if (window.addEventListener) {
+        // For standards-compliant web browsers
+        console.log("Add message event listener")
+        window.addEventListener('message', this.displayMessage, false);
+      }
     });
+  }
+
+  displayMessage(evt) {
+    var message;
+
+    message = 'I got ' + evt.data + ' from ' + evt.origin;
+
+    console.log(message);
   }
 
   /**
