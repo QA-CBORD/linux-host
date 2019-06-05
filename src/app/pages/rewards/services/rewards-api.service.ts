@@ -115,8 +115,10 @@ export class RewardsApiService extends BaseService {
     const toast = await this.toastController.create({
       message,
       duration: 3000,
+      cssClass: 'exception-toast',
       position: isNativeDevicesEnv ? 'bottom' : 'top',
-      // showCloseButton: true,
+      closeButtonText: 'DISMISS',
+      showCloseButton: true,
     });
     toast.present();
   }
