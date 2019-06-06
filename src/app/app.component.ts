@@ -45,8 +45,12 @@ export class AppComponent implements AfterViewInit{
   }
 
   ngAfterViewInit() {
-    console.log('test')
-    console.log(localStorage.getItem('ion_nav'));
+    function receiveMessage(event) {
+      event.source.postMessage("hi there yourself!  the secret response ",
+          '*');
+    }
+
+    window.addEventListener("message", receiveMessage, false);
   }
 
   /**
