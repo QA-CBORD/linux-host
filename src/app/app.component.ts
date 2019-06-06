@@ -41,21 +41,7 @@ export class AppComponent {
       this.subscribeToEvents();
       this.getHashParameters();
       this.router.navigate(['home'], { skipLocationChange: true });
-
-      if (window.addEventListener) {
-        // For standards-compliant web browsers
-        console.log("Add message event listener")
-        window.addEventListener('message', this.displayMessage, false);
-      }
     });
-  }
-
-  displayMessage(evt) {
-    var message;
-
-    message = 'I got ' + evt.data + ' from ' + evt.origin;
-
-    console.log(message);
   }
 
   /**
@@ -63,10 +49,6 @@ export class AppComponent {
    */
   private getHashParameters() {
     const hashParameters: string[] = location.hash.split('/');
-    console.log('location line_51', JSON.parse(JSON.stringify(location)));
-    console.log('location line_52', location);
-    console.log('hashParameters line_53', hashParameters);
-    // console.log('iframe', window.parent.document.getElementById('ionic_content'));
     const destinationPageString = hashParameters[3];
     let destinationPage = EDestination.NONE;
 
@@ -78,6 +60,9 @@ export class AppComponent {
       destinationPage = EDestination.SECURE_MESSAGING;
     }
 
+    if (sessionStorage.getItem('ion_nav')) {
+      console.log(JSON.parse(sessionStorage.getItem('ion_nav')));
+    }
     /// get required params from the URL
     DataCache.setWebInitiValues(hashParameters[2] || null, destinationPage);
   }
