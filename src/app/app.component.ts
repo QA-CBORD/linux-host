@@ -61,7 +61,7 @@ export class AppComponent {
     }
 
     console.log('app init');
-    console.log(sessionStorage.getItem('ion_nav'));
+    console.log(localStorage.getItem('ion_nav'));
     // if (sessionStorage.getItem('ion_nav')) {
     //   console.log(JSON.parse(sessionStorage.getItem('ion_nav')));
     // }
