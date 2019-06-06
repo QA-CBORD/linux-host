@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {AfterViewInit, Component} from '@angular/core';
 
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
@@ -14,7 +14,7 @@ import { EDestination } from './pages/home/home.page';
   selector: 'app-root',
   templateUrl: 'app.component.html',
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements AfterViewInit{
   private readonly EVENT_APP_PAUSE = 'event.apppause';
   private readonly EVENT_APP_RESUME = 'event.appresume';
 
@@ -36,14 +36,17 @@ export class AppComponent implements OnInit {
     this.platform.ready().then(() => {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
+
+      this.setupAppStateEvent();
+      this.subscribeToEvents();
+      this.getHashParameters();
+      this.router.navigate(['home'], { skipLocationChange: true });
     });
   }
 
-  ngOnInit() {
-    this.setupAppStateEvent();
-    this.subscribeToEvents();
-    this.getHashParameters();
-    this.router.navigate(['home'], { skipLocationChange: true });
+  ngAfterViewInit() {
+    console.log('test')
+    console.log(localStorage.getItem('ion_nav'));
   }
 
   /**
