@@ -60,9 +60,11 @@ export class AppComponent {
       destinationPage = EDestination.SECURE_MESSAGING;
     }
 
-    if (sessionStorage.getItem('ion_nav')) {
-      console.log(JSON.parse(sessionStorage.getItem('ion_nav')));
-    }
+    console.log('app init');
+    console.log(sessionStorage.getItem('ion_nav'));
+    // if (sessionStorage.getItem('ion_nav')) {
+    //   console.log(JSON.parse(sessionStorage.getItem('ion_nav')));
+    // }
     /// get required params from the URL
     DataCache.setWebInitiValues(hashParameters[2] || null, destinationPage);
   }
