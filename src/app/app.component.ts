@@ -48,6 +48,7 @@ export class AppComponent implements AfterViewInit{
     function receiveMessage(event) {
       event.source.postMessage("hi there yourself!  the secret response ",
           event.origin);
+      console.log(event);
     }
 
     window.addEventListener("message", receiveMessage, false);
@@ -69,11 +70,6 @@ l
       destinationPage = EDestination.SECURE_MESSAGING;
     }
 
-    console.log('app init');
-    console.log(localStorage.getItem('ion_nav'));
-    // if (sessionStorage.getItem('ion_nav')) {
-    //   console.log(JSON.parse(sessionStorage.getItem('ion_nav')));
-    // }
     /// get required params from the URL
     DataCache.setWebInitiValues(hashParameters[2] || null, destinationPage);
   }
