@@ -47,12 +47,12 @@ export class AppComponent implements AfterViewInit{
   ngAfterViewInit() {
     function receiveMessage(event) {
       event.source.postMessage("hi there yourself!  the secret response ",
-          '*');
+          event.origin);
     }
 
     window.addEventListener("message", receiveMessage, false);
   }
-
+l
   /**
    * Get hash parameters from url
    */
