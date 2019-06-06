@@ -95,6 +95,22 @@
     max-height: 150px;
   }
 
+  &__location-star {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    position: relative;
+    top: 5px;
+    background-image: url('/assets/icon/star-outline-white.svg');
+    background-position: center;
+    background-size: contain;
+
+    &--active {
+      background-image: url('/assets/icon/star-white.svg');
+    }
+
+  }
+
   &__name {
     font-size: 1.2rem;
     letter-spacing: 0;
@@ -124,24 +140,6 @@
     overflow: hidden;
     word-wrap: break-word;
     word-break: break-word;
-
-    &:before {
-      content: '';
-      display: inline-block;
-      width: 25px;
-      height: 25px;
-      position: relative;
-      top: 5px;
-      background: url('/assets/icon/star-outline-white.svg') center;
-      background-size: contain;
-    }
-
-    &--favourite {
-      &:before {
-        background: url('/assets/icon/star-white.svg') center;
-        background-size: contain;
-      }
-    }
   }
 
   &__activate-btn {

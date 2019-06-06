@@ -21,7 +21,6 @@ import { CONTENT_STRINGS } from './mobile-acces.config';
 export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
   private readonly sourceSubscription: Subscription = new Subscription();
   private readonly searchString$: BehaviorSubject<string> = new BehaviorSubject<string>('');
-  private readonly toastDuration: number = 5000;
   locations$: Observable<MMobileLocationInfo[]>;
   contentString: { [key: string]: string };
   userInfo$: Observable<UserInfo>;
@@ -32,8 +31,7 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
     private readonly events: Events,
     private readonly keyboard: Keyboard,
     private readonly mobileAccessService: MobileAccessService,
-    private readonly institutionService: InstitutionService,
-    private readonly toastController: ToastController
+    private readonly institutionService: InstitutionService
   ) {
     this.initComponent();
   }
@@ -69,32 +67,12 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
   favouriteHandler(id: string) {
     this.mobileAccessService
       .updateFavouritesList(id)
-      .pipe(
-        switchMap(() => this.mobileAccessService.getLocationById(id)),
-        take(1)
-      )
-      .subscribe(this.presentToast.bind(this), this.errorSavingFavourites.bind(this));
+      .pipe(take(1))
+      .subscribe();
   }
 
   onSearchedValue(searchString: string) {
     this.searchString$.next(searchString);
-  }
-
-  async presentToast({ name, isFavourite }: MMobileLocationInfo) {
-    const message = `${name} ${isFavourite ? this.contentString.addFavToast : this.contentString.removeFavToast}`;
-    const toast = await this.toastController.create({
-      message,
-      duration: this.toastDuration,
-    });
-    toast.present();
-  }
-
-  async errorSavingFavourites() {
-    const toast = await this.toastController.create({
-      message: this.contentString.addFavErrorToast,
-      duration: this.toastDuration,
-    });
-    toast.present();
   }
 
   private setInstitutionInfo() {
@@ -116,11 +94,8 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
     const header = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.headerTitle);
     const search = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.searchbarPlaceholder);
     const pullRefreshLabel = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.labelPullToRefresh);
-    const addFavToast = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.addFavToast);
-    const removeFavToast = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.removeFavToast);
-    const addFavErrorToast = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.addFavErrorToast);
 
-    this.contentString = { header, search, pullRefreshLabel, addFavToast, removeFavToast, addFavErrorToast };
+    this.contentString = { header, search, pullRefreshLabel };
   }
 
   private setUserInfo() {
