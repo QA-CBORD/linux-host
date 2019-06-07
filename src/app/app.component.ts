@@ -42,26 +42,26 @@ export class AppComponent implements AfterViewInit{
 
       this.setupAppStateEvent();
       this.subscribeToEvents();
-      // this.getHashParameters(location.hash);
+      this.getHashParameters(location.hash);
     });
   }
 
   ngAfterViewInit() {
-    function receiveMessage(event) {
-     const iframeUrl = event.data;
-     if(iframeUrl != null && (DataCache.getUrlSession() === null || DataCache.getDestinationPage() === null)){
-       const hash: string[] = iframeUrl.split('#');
-       AppComponent.getHashParameters(hash[1]);
-     }
-    }
+    // function receiveMessage(event) {
+    //  const iframeUrl = event.data;
+    //  if(iframeUrl != null && (DataCache.getUrlSession() === null || DataCache.getDestinationPage() === null)){
+    //    const hash: string[] = iframeUrl.split('#');
+    //    AppComponent.getHashParameters(hash[1]);
+    //  }
+    // }
 
-    window.addEventListener("message", receiveMessage, false);
+    // window.addEventListener("message", receiveMessage, false);
   }
 
   /**
    * Get hash parameters from url
    */
-  static getHashParameters(urlString: string) {
+  private getHashParameters(urlString: string) {
     const hashParameters: string[] = urlString.split('/');
     const destinationPageString = hashParameters[3];
     let destinationPage = EDestination.NONE;
@@ -74,7 +74,7 @@ export class AppComponent implements AfterViewInit{
       destinationPage = EDestination.SECURE_MESSAGING;
     }
 
-    console.log(`Hash Params ${hashParameters.toString()}`);
+    // console.log(`Hash Params ${hashParameters.toString()}`);
 
     /// get required params from the URL
     DataCache.setWebInitiValues(hashParameters[2] || null, destinationPage);
