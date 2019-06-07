@@ -39,7 +39,7 @@ export class AppComponent implements AfterViewInit{
 
       this.setupAppStateEvent();
       this.subscribeToEvents();
-      this.getHashParameters(location.hash);
+      // this.getHashParameters(location.hash);
       this.router.navigate(['home'], { skipLocationChange: true });
     });
   }
