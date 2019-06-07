@@ -172,6 +172,9 @@ export class RewardsService {
       let reward;
       if (!cash[history[i].rewardId]) {
         reward = rewards.find(reward => reward.id === history[i].rewardId);
+        if (!reward) {
+          reward = history[i];
+        }
       } else {
         reward = cash[history[i].rewardId];
       }
