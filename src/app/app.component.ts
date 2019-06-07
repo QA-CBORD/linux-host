@@ -39,26 +39,28 @@ export class AppComponent implements AfterViewInit{
 
       this.setupAppStateEvent();
       this.subscribeToEvents();
-      this.getHashParameters();
+      this.getHashParameters(location.hash);
       this.router.navigate(['home'], { skipLocationChange: true });
     });
   }
 
   ngAfterViewInit() {
     function receiveMessage(event) {
-      event.source.postMessage("hi there yourself!  the secret response ",
-          event.origin);
-      console.log(event);
+     const iframeUrl = event.data;
+     if(iframeUrl != null && (DataCache.getUrlSession() === null || DataCache.getDestinationPage() === null)){
+       const hash: string[] = iframeUrl.split('#');
+       this.getHashParameters(hash);
+     }
     }
 
     window.addEventListener("message", receiveMessage, false);
   }
-l
+
   /**
    * Get hash parameters from url
    */
-  private getHashParameters() {
-    const hashParameters: string[] = location.hash.split('/');
+  private getHashParameters(urlString: string) {
+    const hashParameters: string[] = urlString.split('/');
     const destinationPageString = hashParameters[3];
     let destinationPage = EDestination.NONE;
 
