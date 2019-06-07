@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {AfterViewInit, Component} from '@angular/core';
 
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
@@ -14,7 +14,7 @@ import { EDestination } from './pages/home/home.page';
   selector: 'app-root',
   templateUrl: 'app.component.html',
 })
-export class AppComponent {
+export class AppComponent implements AfterViewInit{
   private readonly EVENT_APP_PAUSE = 'event.apppause';
   private readonly EVENT_APP_RESUME = 'event.appresume';
 
@@ -44,6 +44,16 @@ export class AppComponent {
     });
   }
 
+  ngAfterViewInit() {
+    function receiveMessage(event) {
+      event.source.postMessage("hi there yourself!  the secret response ",
+          event.origin);
+      console.log(event);
+    }
+
+    window.addEventListener("message", receiveMessage, false);
+  }
+l
   /**
    * Get hash parameters from url
    */
@@ -60,9 +70,6 @@ export class AppComponent {
       destinationPage = EDestination.SECURE_MESSAGING;
     }
 
-    if (sessionStorage.getItem('ion_nav')) {
-      console.log(JSON.parse(sessionStorage.getItem('ion_nav')));
-    }
     /// get required params from the URL
     DataCache.setWebInitiValues(hashParameters[2] || null, destinationPage);
   }
