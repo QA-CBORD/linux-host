@@ -39,20 +39,20 @@ export class AppComponent implements AfterViewInit{
 
       this.setupAppStateEvent();
       this.subscribeToEvents();
-      this.getHashParameters(location.hash);
+      // this.getHashParameters(location.hash);
     });
   }
 
   ngAfterViewInit() {
-    // function receiveMessage(event) {
-    //  const iframeUrl = event.data;
-    //  if(iframeUrl != null && (DataCache.getUrlSession() === null || DataCache.getDestinationPage() === null)){
-    //    const hash: string[] = iframeUrl.split('#');
-    //    this.getHashParameters(hash);
-    //  }
-    // }
+    function receiveMessage(event) {
+     const iframeUrl = event.data;
+     if(iframeUrl != null && (DataCache.getUrlSession() === null || DataCache.getDestinationPage() === null)){
+       const hash: string[] = iframeUrl.split('#');
+       this.getHashParameters(hash);
+     }
+    }
 
-    // window.addEventListener("message", receiveMessage, false);
+    window.addEventListener("message", receiveMessage, false);
   }
 
   /**
