@@ -40,7 +40,6 @@ export class AppComponent implements AfterViewInit{
       this.setupAppStateEvent();
       this.subscribeToEvents();
       // this.getHashParameters(location.hash);
-      this.router.navigate(['home'], { skipLocationChange: true });
     });
   }
 
@@ -74,7 +73,9 @@ export class AppComponent implements AfterViewInit{
 
     /// get required params from the URL
     DataCache.setWebInitiValues(hashParameters[2] || null, destinationPage);
+    this.router.navigate(['home'], { skipLocationChange: true });
   }
+
 
   private setupAppStateEvent() {
     this.platform.pause.subscribe(() => {
