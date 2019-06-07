@@ -41,6 +41,7 @@ export class DataCache {
   }
 
   static setWebInitiValues(urlSesh: string, dPage: EDestination) {
+    debugger;
     DataCache.destinationPage = dPage;
     DataCache.urlSession = urlSesh;
   }

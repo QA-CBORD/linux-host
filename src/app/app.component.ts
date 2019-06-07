@@ -21,6 +21,8 @@ export class AppComponent implements AfterViewInit{
 
   private loader;
 
+  private static hash: string;
+
   constructor(
     private platform: Platform,
     private router: Router,
@@ -49,7 +51,7 @@ export class AppComponent implements AfterViewInit{
      const iframeUrl = event.data;
      if(iframeUrl != null && (DataCache.getUrlSession() === null || DataCache.getDestinationPage() === null)){
        const hash: string[] = iframeUrl.split('#');
-       this.getHashParameters(hash);
+       AppComponent.getHashParameters(hash[1]);
      }
     }
 
@@ -59,7 +61,7 @@ export class AppComponent implements AfterViewInit{
   /**
    * Get hash parameters from url
    */
-  private getHashParameters(urlString: string) {
+  static getHashParameters(urlString: string) {
     const hashParameters: string[] = urlString.split('/');
     const destinationPageString = hashParameters[3];
     let destinationPage = EDestination.NONE;
