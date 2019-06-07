@@ -58,7 +58,7 @@ export class RewardsService {
 
   combineAllRewards(): Observable<RedeemableRewardInfo[]> {
     return this.rewardTrack.pipe(
-      map(({ trackLevels, redeemableRewards }) => {
+      map(({ trackLevels = [], redeemableRewards = [] }) => {
         let rewards = trackLevels.reduce((total, { userClaimableRewards }) => [...total, ...userClaimableRewards], []);
 
         return [...redeemableRewards, ...rewards];
