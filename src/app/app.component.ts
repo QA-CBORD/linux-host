@@ -9,6 +9,7 @@ import * as Globals from './app.global';
 import { ExceptionPayload } from './core/model/exception/exception.model';
 import { DataCache } from './core/utils/data-cache';
 import { EDestination } from './pages/home/home.page';
+import { connectableObservableDescriptor } from 'rxjs/internal/observable/ConnectableObservable';
 
 @Component({
   selector: 'app-root',
@@ -70,6 +71,8 @@ export class AppComponent implements AfterViewInit{
     } else if (destinationPageString === EDestination.SECURE_MESSAGING) {
       destinationPage = EDestination.SECURE_MESSAGING;
     }
+
+    console.log(`Hash Params ${hashParameters.toString()}`);
 
     /// get required params from the URL
     DataCache.setWebInitiValues(hashParameters[2] || null, destinationPage);
