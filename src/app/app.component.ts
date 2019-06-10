@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
@@ -9,21 +9,19 @@ import * as Globals from './app.global';
 import { ExceptionPayload } from './core/model/exception/exception.model';
 import { DataCache } from './core/utils/data-cache';
 import { EDestination } from './pages/home/home.page';
-import { connectableObservableDescriptor } from 'rxjs/internal/observable/ConnectableObservable';
-import { from, of, fromEvent } from 'rxjs';
+import { from, of, fromEvent, Subscription } from 'rxjs';
 import { switchMap, tap, take, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
 })
-export class AppComponent implements AfterViewInit, OnInit {
+export class AppComponent implements OnDestroy {
   private readonly EVENT_APP_PAUSE = 'event.apppause';
   private readonly EVENT_APP_RESUME = 'event.appresume';
+  private readonly sourceSubscription: Subscription = new Subscription();
 
   private loader;
-
-  private static hash: string;
 
   constructor(
     private platform: Platform,
@@ -37,8 +35,12 @@ export class AppComponent implements AfterViewInit, OnInit {
     this.initializeApp();
   }
 
+  ngOnDestroy() {
+    this.sourceSubscription.unsubscribe();
+  }
+
   initializeApp() {
-    from(this.platform.ready())
+    const subscription = from(this.platform.ready())
       .pipe(
         tap(() => {
           this.statusBar.styleDefault();
@@ -48,71 +50,24 @@ export class AppComponent implements AfterViewInit, OnInit {
           this.subscribeToEvents();
         }),
         switchMap(() => {
-          console.log(JSON.parse(JSON.stringify(location)));
-
           if (location.hash.length) {
             return of(location.hash);
           } else {
             return fromEvent(window, 'message').pipe(
               take(1),
               map((event: any) => {
-                console.log(event);
                 const iframeUrl = event.data;
+                const isString = typeof iframeUrl === 'string';
 
-                // For Local purpose:
-                // if (!iframeUrl.data) {
-                //   return '';
-                // }
-                // const hash: string[] = iframeUrl.split('#');
-                // this.getHashParameters(hash[1]);
-                return !iframeUrl ? '' : iframeUrl.split('#')[1];
+                return !isString ? '' : iframeUrl.split('#')[1];
               })
             );
           }
         })
       )
-      .subscribe((hash: string) => {
-        console.log(hash);
-        this.getHashParameters(hash);
-      });
-    // this.platform
-    //   .ready()
+      .subscribe((hash: string) => this.getHashParameters(hash));
 
-    // .then(() => {
-    // this.statusBar.styleDefault();
-    // this.splashScreen.hide();
-    //
-    // this.setupAppStateEvent();
-    // this.subscribeToEvents();
-    // this.getHashParameters(location.hash );
-    // });
-  }
-
-  ngOnInit() {
-    // const receiveMessage = event => {
-    //   console.log(event);
-    //   const iframeUrl = event.data;
-    //   // debugger
-    //   if (iframeUrl && (DataCache.getUrlSession() === null || DataCache.getDestinationPage() === null)) {
-    //     const hash: string[] = iframeUrl.split('#');
-    //     this.getHashParameters(hash[1]);
-    //   }
-    // };
-    //
-    // window.addEventListener('message', receiveMessage, false);
-  }
-  ngAfterViewInit() {
-    // const receiveMessage = event => {
-    //     console.log(event);
-    //   const iframeUrl = event.data;
-    //   // debugger
-    //   if (iframeUrl && (DataCache.getUrlSession() === null || DataCache.getDestinationPage() === null)) {
-    //     const hash: string[] = iframeUrl.split('#');
-    //     this.getHashParameters(hash[1]);
-    //   }
-    // };
-    //
-    // window.addEventListener('message', receiveMessage, false);
+    this.sourceSubscription.add(subscription);
   }
 
   /**
