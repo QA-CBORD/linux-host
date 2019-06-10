@@ -1,4 +1,4 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
@@ -10,12 +10,14 @@ import { ExceptionPayload } from './core/model/exception/exception.model';
 import { DataCache } from './core/utils/data-cache';
 import { EDestination } from './pages/home/home.page';
 import { connectableObservableDescriptor } from 'rxjs/internal/observable/ConnectableObservable';
+import { from, of, fromEvent } from 'rxjs';
+import { switchMap, tap, take, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
 })
-export class AppComponent implements AfterViewInit {
+export class AppComponent implements AfterViewInit, OnInit {
   private readonly EVENT_APP_PAUSE = 'event.apppause';
   private readonly EVENT_APP_RESUME = 'event.appresume';
 
@@ -36,28 +38,79 @@ export class AppComponent implements AfterViewInit {
   }
 
   initializeApp() {
-    this.platform.ready().then(() => {
-      this.statusBar.styleDefault();
-      this.splashScreen.hide();
+    from(this.platform.ready())
+      .pipe(
+        tap(() => {
+          this.statusBar.styleDefault();
+          this.splashScreen.hide();
 
-      this.setupAppStateEvent();
-      this.subscribeToEvents();
-      this.getHashParameters(location.hash);
-    });
+          this.setupAppStateEvent();
+          this.subscribeToEvents();
+        }),
+        switchMap(() => {
+          if (location.hash.length) {
+            return of(location.hash);
+          } else {
+            return fromEvent(window, 'message').pipe(
+              take(1),
+              map((event: any) => {
+                console.log(event);
+                const iframeUrl = event.data;
+
+                // For Local purpose:
+                if (!iframeUrl.data) {
+                  return '';
+                }
+                // const hash: string[] = iframeUrl.split('#');
+                // this.getHashParameters(hash[1]);
+                return !iframeUrl ? '' : iframeUrl.split('#')[1];
+              })
+            );
+          }
+        })
+      )
+      .subscribe((hash: string) => {
+        console.log(hash);
+        this.getHashParameters(hash);
+      });
+    // this.platform
+    //   .ready()
+
+    // .then(() => {
+    // this.statusBar.styleDefault();
+    // this.splashScreen.hide();
+    //
+    // this.setupAppStateEvent();
+    // this.subscribeToEvents();
+    // this.getHashParameters(location.hash );
+    // });
   }
 
+  ngOnInit() {
+    // const receiveMessage = event => {
+    //   console.log(event);
+    //   const iframeUrl = event.data;
+    //   // debugger
+    //   if (iframeUrl && (DataCache.getUrlSession() === null || DataCache.getDestinationPage() === null)) {
+    //     const hash: string[] = iframeUrl.split('#');
+    //     this.getHashParameters(hash[1]);
+    //   }
+    // };
+    //
+    // window.addEventListener('message', receiveMessage, false);
+  }
   ngAfterViewInit() {
-    const receiveMessage = event => {
-        console.log(event);
-      const iframeUrl = event.data;
-      // debugger
-      if (iframeUrl && (DataCache.getUrlSession() === null || DataCache.getDestinationPage() === null)) {
-        const hash: string[] = iframeUrl.split('#');
-        this.getHashParameters(hash[1]);
-      }
-    };
-
-    window.addEventListener('message', receiveMessage, false);
+    // const receiveMessage = event => {
+    //     console.log(event);
+    //   const iframeUrl = event.data;
+    //   // debugger
+    //   if (iframeUrl && (DataCache.getUrlSession() === null || DataCache.getDestinationPage() === null)) {
+    //     const hash: string[] = iframeUrl.split('#');
+    //     this.getHashParameters(hash[1]);
+    //   }
+    // };
+    //
+    // window.addEventListener('message', receiveMessage, false);
   }
 
   /**
