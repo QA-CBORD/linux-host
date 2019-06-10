@@ -127,7 +127,6 @@ export namespace User {
 }
 
 export enum NAVIGATE {
-  home = 'home',
   rewards = 'rewards',
   mobileAccess = 'mobile-access',
   secureMessage = 'secure-message',

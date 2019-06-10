@@ -10,21 +10,21 @@ import { queue } from 'rxjs/internal/scheduler/queue';
 
 import * as Globals from '../../../app/app.global';
 import { MCache } from '../model/cache/MCache';
-import { UserSettingInfo } from '../model/user/user-setting-info.model';
-import { UserPhotoInfo } from '../model/user/user-photo-info.model';
-import { UserInfo } from '../model/user/user-info.model';
+import { UserSettingInfo } from '../model/user';
+import { UserPhotoInfo } from '../model/user';
+import { UserInfo } from '../model/user';
 import { ContentStringInfo } from '../model/content/content-string-info.model';
 import { SettingInfoList } from '../model/configuration/setting-info-list.model';
 import { SettingInfo } from '../model/configuration/setting-info.model';
 import { StartupInfo } from '../model/institution/native-startup-info.model';
 import { InstitutionInfo } from '../model/institution/institution-info.model';
 import { EnvironmentInfo } from '../model/environment/environment-info.model';
-import { EDestination } from 'src/app/pages/home/home.page';
+import { NAVIGATE } from '../../app.global';
 
 @Injectable()
 export class DataCache {
   private static localCache: MCache = new MCache();
-  private static destinationPage: EDestination;
+  private static destinationPage: NAVIGATE;
   private static urlSession: string;
 
   private readonly TTL_MINUTES: number = 15;
@@ -40,12 +40,12 @@ export class DataCache {
     });
   }
 
-  static setWebInitiValues(urlSesh: string, dPage: EDestination) {
+  static setWebInitiValues(urlSesh: string = null, dPage: NAVIGATE) {
     DataCache.destinationPage = dPage;
     DataCache.urlSession = urlSesh;
   }
 
-  static getDestinationPage(): EDestination {
+  static getDestinationPage(): NAVIGATE {
     return DataCache.destinationPage || null;
   }
 

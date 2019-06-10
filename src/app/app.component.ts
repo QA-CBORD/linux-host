@@ -8,9 +8,15 @@ import { Router } from '@angular/router';
 import * as Globals from './app.global';
 import { ExceptionPayload } from './core/model/exception/exception.model';
 import { DataCache } from './core/utils/data-cache';
-import { EDestination } from './pages/home/home.page';
 import { from, of, fromEvent, Subscription } from 'rxjs';
 import { switchMap, tap, take, map } from 'rxjs/operators';
+import { Logger } from './core/utils/logger';
+import { Environment } from './environment';
+import { ExceptionProvider } from './core/provider/exception-provider/exception.provider';
+import { NAVIGATE } from './app.global';
+import { TestProvider } from './core/provider/test-provider/test.provider';
+import { AuthService } from './core/service/auth-service/auth.service';
+import { UserService } from './core/service/user-service/user.service';
 
 @Component({
   selector: 'app-root',
@@ -19,18 +25,23 @@ import { switchMap, tap, take, map } from 'rxjs/operators';
 export class AppComponent implements OnDestroy {
   private readonly EVENT_APP_PAUSE = 'event.apppause';
   private readonly EVENT_APP_RESUME = 'event.appresume';
+  private sessionToken: string = null;
   private readonly sourceSubscription: Subscription = new Subscription();
 
   private loader;
+  private destinationPage: NAVIGATE;
 
   constructor(
-    private platform: Platform,
-    private router: Router,
-    private splashScreen: SplashScreen,
-    private statusBar: StatusBar,
-    private events: Events,
-    private loadCtrl: LoadingController,
-    private alertCtrl: AlertController
+    private readonly platform: Platform,
+    private readonly router: Router,
+    private readonly splashScreen: SplashScreen,
+    private readonly statusBar: StatusBar,
+    private readonly events: Events,
+    private readonly loadCtrl: LoadingController,
+    private readonly alertCtrl: AlertController,
+    private readonly testProvider: TestProvider,
+    private readonly authService: AuthService,
+    private readonly userService: UserService
   ) {
     this.initializeApp();
   }
@@ -45,7 +56,6 @@ export class AppComponent implements OnDestroy {
         tap(() => {
           this.statusBar.styleDefault();
           this.splashScreen.hide();
-
           this.setupAppStateEvent();
           this.subscribeToEvents();
         }),
@@ -65,34 +75,166 @@ export class AppComponent implements OnDestroy {
           }
         })
       )
-      .subscribe((hash: string) => this.getHashParameters(hash));
+      .subscribe((hash: string) => {
+        Logger.setLoggingEnabled(Environment.isDevelopmentEnvironment(location.href));
+        Environment.setEnvironmentViaURL(location.href);
+        this.parseHashParameters(hash);
+        /// get parameters from url
+        this.getHashParameters();
+        /// now perform normal page logic
+        this.handleSessionToken();
 
+        // this.testGetSession();
+      });
     this.sourceSubscription.add(subscription);
+  }
+
+  private testGetSession() {
+    this.testProvider.getTestUser().subscribe(
+      success => {
+        this.destinationPage = NAVIGATE.mobileAccess;
+        this.getUserInfo();
+      },
+      error => {
+        ExceptionProvider.showException(this.events, {
+          displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
+          messageInfo: {
+            title: 'Error getting test user',
+            message: error,
+            positiveButtonTitle: 'RETRY',
+            positiveButtonHandler: () => {
+              this.testGetSession();
+            },
+            negativeButtonTitle: 'CLOSE',
+            negativeButtonHandler: () => {
+              // TODO: this.platform.exitApp();
+            },
+          },
+        });
+      }
+    );
+  }
+
+  private getHashParameters() {
+    /// get required params from the URL
+    this.sessionToken = DataCache.getUrlSession();
+    this.destinationPage = DataCache.getDestinationPage();
   }
 
   /**
    * Get hash parameters from url
    */
-  private getHashParameters(urlString: string) {
+  private parseHashParameters(urlString: string) {
     const hashParameters: string[] = urlString.split('/');
-    const destinationPageString = hashParameters[3];
-    let destinationPage = EDestination.NONE;
+    const destinationPage = hashParameters[3];
+    const existsInNavigate = Object.values(NAVIGATE).some(route => route === destinationPage);
 
-    if (destinationPageString === EDestination.MOBILE_ACCESS) {
-      destinationPage = EDestination.MOBILE_ACCESS;
-    } else if (destinationPageString === EDestination.REWARDS) {
-      destinationPage = EDestination.REWARDS;
-    } else if (destinationPageString === EDestination.SECURE_MESSAGING) {
-      destinationPage = EDestination.SECURE_MESSAGING;
+    if (existsInNavigate) {
+      DataCache.setWebInitiValues(hashParameters[2] || null, destinationPage as NAVIGATE);
     }
-
-    // console.log(`Hash Params ${hashParameters.toString()}`);
-
-    /// get required params from the URL
-    DataCache.setWebInitiValues(hashParameters[2] || null, destinationPage);
-    this.router.navigate(['home'], { skipLocationChange: true });
   }
 
+  private handleSessionToken() {
+    if (this.sessionToken) {
+      /// acquire the new session id with the session token
+      this.authService
+        .authenticateSessionToken(this.sessionToken)
+        .pipe(take(1))
+        .subscribe(
+          newSessionId => {
+            if (newSessionId.length <= 0) {
+              ExceptionProvider.showException(this.events, {
+                displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
+                messageInfo: {
+                  title: Globals.Exception.Strings.TITLE,
+                  message: 'We were unable to verify your credentials',
+                  positiveButtonTitle: 'RETRY',
+                  positiveButtonHandler: () => {
+                    this.handleSessionToken();
+                  },
+                  negativeButtonTitle: 'CLOSE',
+                  negativeButtonHandler: () => {
+                    // TODO: this.platform.exitApp();
+                  },
+                },
+              });
+              return;
+            }
+            /// set session id for services base and get the user info for caching
+            DataCache.setSessionId(newSessionId);
+            this.getUserInfo();
+          },
+          error => {
+            ExceptionProvider.showException(this.events, {
+              displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
+              messageInfo: {
+                title: Globals.Exception.Strings.TITLE,
+                message: 'We were unable to verify your credentials',
+                positiveButtonTitle: 'RETRY',
+                positiveButtonHandler: () => {
+                  this.handleSessionToken();
+                },
+                negativeButtonTitle: 'CLOSE',
+                negativeButtonHandler: () => {
+                  // TODO: this.platform.exitApp();
+                },
+              },
+            });
+          }
+        );
+    } else {
+      /// no session sharing token sent via URL
+      /// show no session error or redirect back natively or something
+      /// use proper method to parse the message and determine proper message
+      ExceptionProvider.showException(this.events, {
+        displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
+        messageInfo: {
+          title: Globals.Exception.Strings.TITLE,
+          message: 'Handling session response and the session data is null',
+          positiveButtonTitle: 'CLOSE',
+          positiveButtonHandler: () => {
+            // TODO: this.platform.exitApp();
+          },
+        },
+      });
+    }
+  }
+
+  private getUserInfo() {
+    this.userService
+      .getUser()
+      .pipe(take(1))
+      .subscribe(
+        data => {
+          DataCache.setUserInfo(data);
+          DataCache.setInstitutionId(data.institutionId);
+          this.handlePageNavigation();
+        },
+        error => {
+          ExceptionProvider.showException(this.events, {
+            displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
+            messageInfo: {
+              title: Globals.Exception.Strings.TITLE,
+              message: 'Unable to verify your user information',
+              positiveButtonTitle: 'RETRY',
+              positiveButtonHandler: () => {
+                this.handleSessionToken();
+              },
+              negativeButtonTitle: 'CLOSE',
+              negativeButtonHandler: () => {
+                // TODO: this.platform.exitApp();
+              },
+            },
+          });
+        }
+      );
+  }
+
+  private handlePageNavigation() {
+    this.router.navigate([this.destinationPage], { skipLocationChange: true });
+  }
+
+  // Ionic gloabal configurate stuff
   private setupAppStateEvent() {
     this.platform.pause.subscribe(() => {
       this.events.publish(this.EVENT_APP_PAUSE, null);
@@ -107,6 +249,8 @@ export class AppComponent implements OnDestroy {
 
     this.events.subscribe(Globals.Events.EXCEPTION_SHOW, exceptionPayload => this.presentException(exceptionPayload));
   }
+
+  //XXX - EXEPTIONS HANDLERS
 
   presentException(exceptionPayload: ExceptionPayload) {
     switch (exceptionPayload.displayOptions) {
