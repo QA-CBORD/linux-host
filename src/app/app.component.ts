@@ -48,6 +48,8 @@ export class AppComponent implements AfterViewInit, OnInit {
           this.subscribeToEvents();
         }),
         switchMap(() => {
+          console.log(JSON.parse(JSON.stringify(location)));
+
           if (location.hash.length) {
             return of(location.hash);
           } else {
@@ -58,9 +60,9 @@ export class AppComponent implements AfterViewInit, OnInit {
                 const iframeUrl = event.data;
 
                 // For Local purpose:
-                if (!iframeUrl.data) {
-                  return '';
-                }
+                // if (!iframeUrl.data) {
+                //   return '';
+                // }
                 // const hash: string[] = iframeUrl.split('#');
                 // this.getHashParameters(hash[1]);
                 return !iframeUrl ? '' : iframeUrl.split('#')[1];
