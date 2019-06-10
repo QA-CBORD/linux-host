@@ -48,6 +48,7 @@ export class AppComponent implements AfterViewInit {
 
   ngAfterViewInit() {
     const receiveMessage = event => {
+        console.log(event);
       const iframeUrl = event.data;
       // debugger
       if (iframeUrl && (DataCache.getUrlSession() === null || DataCache.getDestinationPage() === null)) {
