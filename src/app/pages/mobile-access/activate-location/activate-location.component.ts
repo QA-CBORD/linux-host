@@ -58,9 +58,9 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
   }
 
   get starClass(): Observable<string> {
-    const cl = 'user-data__location';
-    const favourite = 'user-data__location--favourite';
-    return this.location$.pipe(map(({ isFavourite }: MMobileLocationInfo) => `${cl} ${isFavourite ? favourite : ''}`));
+    const baseClass = 'user-data__location-star';
+    const active = `${baseClass} ${baseClass}--active`;
+    return this.location$.pipe(map(({ isFavourite }: MMobileLocationInfo) => `${isFavourite ? active : baseClass}`));
   }
 
   ngOnInit() {
@@ -83,6 +83,13 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
     );
 
     this.sourceSubscription.add(subscription);
+  }
+
+  favouriteHandler() {
+    this.mobileAccessService
+      .updateFavouritesList(this.locationId)
+      .pipe(take(1))
+      .subscribe();
   }
 
   async modalHandler(res) {

@@ -26,7 +26,7 @@ export class OptInGuard implements CanActivate {
     return this.rewardsService.initContentStringsList().pipe(
       switchMap(() => this.rewardsService.getUserRewardTrackInfo()),
       map((rewardTrackInfo: UserRewardTrackInfo) => {
-        if (rewardTrackInfo.userOptInStatus === OPT_IN_STATUS.yes) {
+        if (rewardTrackInfo === null || rewardTrackInfo.userOptInStatus === OPT_IN_STATUS.yes) {
           return true;
         }
         throw rewardTrackInfo;

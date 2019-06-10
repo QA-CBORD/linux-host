@@ -1,71 +1,71 @@
 enum Development {
-    services_url = 'https://services.get.dev.cbord.com/GETServices/services',
-    site_url = 'http://get.dev.cbord.com',
-    cbordstudent_url = 'https://student.dev.cbord.com',
-    secmsg_api = 'https://secmsg.api.dev.cbord.com',
+  services_url = 'https://services.get.dev.cbord.com/GETServices/services',
+  site_url = 'http://get.dev.cbord.com',
+  cbordstudent_url = 'https://student.dev.cbord.com',
+  secmsg_api = 'https://secmsg.api.dev.cbord.com',
 }
 
 enum Qa {
-    services_url = 'https://services.get.qa.cbord.com/GETServices/services',
-    site_url = 'http://get.qa.cbord.com',
-    cbordstudent_url = 'https://student.qa.cbord.com',
-    secmsg_api = 'https://secmsg.api.qa.cbord.com',
+  services_url = 'https://services.get.qa.cbord.com/GETServices/services',
+  site_url = 'http://get.qa.cbord.com',
+  cbordstudent_url = 'https://student.qa.cbord.com',
+  secmsg_api = 'https://secmsg.api.qa.cbord.com',
 }
 
 enum Pat {
-    services_url = 'https://services.get.pat.cbord.com/GETServices/services',
-    site_url = 'http://get.pat.cbord.com',
-    cbordstudent_url = 'https://student.pat.cbord.com',
-    secmsg_api = 'https://secmsg.api.pat.cbord.com',
+  services_url = 'https://services.get.pat.cbord.com/GETServices/services',
+  site_url = 'http://get.pat.cbord.com',
+  cbordstudent_url = 'https://student.pat.cbord.com',
+  secmsg_api = 'https://secmsg.api.pat.cbord.com',
 }
 
 enum Demo {
-    services_url = 'https://services.get.demo.cbord.com/GETServices/services',
-    site_url = 'http://get.demo.cbord.com',
-    cbordstudent_url = 'https://student.demo.cbord.com',
-    secmsg_api = 'https://secmsg.api.demo.cbord.com',
+  services_url = 'https://services.get.demo.cbord.com/GETServices/services',
+  site_url = 'http://get.demo.cbord.com',
+  cbordstudent_url = 'https://student.demo.cbord.com',
+  secmsg_api = 'https://secmsg.api.demo.cbord.com',
 }
 
 enum Production {
-    services_url = 'https://services.get.cbord.com/GETServices/services',
-    site_url = 'http://get.cbord.com',
-    cbordstudent_url = 'https://student.cbord.com',
-    secmsg_api = 'https://secmsg.api.cbord.com',
+  services_url = 'https://services.get.cbord.com/GETServices/services',
+  site_url = 'http://get.cbord.com',
+  cbordstudent_url = 'https://student.cbord.com',
+  secmsg_api = 'https://secmsg.api.cbord.com',
 }
 
 export class Environment {
-    static currentEnvironment = Development;
-    constructor() {}
+  static currentEnvironment = Development;
+  constructor() {}
 
-    static getServicesURL(): string {
-        return Environment.currentEnvironment.services_url;
-    }
+  static getServicesURL(): string {
+    return Environment.currentEnvironment.services_url;
+  }
 
-    static getSecureMessagingAPIURL(): string {
-        return Environment.currentEnvironment.secmsg_api;
-    }
+  static getSecureMessagingAPIURL(): string {
+    return Environment.currentEnvironment.secmsg_api;
+  }
 
-    static setEnvironment(newEnvironment) {
-        Environment.currentEnvironment = newEnvironment;
-    }
+  static setEnvironment(newEnvironment) {
+    Environment.currentEnvironment = newEnvironment;
+  }
 
-    static setEnvironmentViaURL(appBaseURL: string) {
-        if (appBaseURL.includes('dev')) {
-            this.setEnvironment(Development);
-        } else if (appBaseURL.includes('qa')) {
-            this.setEnvironment(Qa);
-        } else if (appBaseURL.includes('pat')) {
-            this.setEnvironment(Pat);
-        } else if (appBaseURL.includes('demo')) {
-            this.setEnvironment(Demo);
-        } else if (appBaseURL.includes('student.cbord')) {
-            this.setEnvironment(Production);
-        } else {
-            this.setEnvironment(Development);
-        }
+  static setEnvironmentViaURL(appBaseURL: string) {
+    if (appBaseURL.includes('dev')) {
+      this.setEnvironment(Development);
+    } else if (appBaseURL.includes('qa')) {
+      this.setEnvironment(Qa);
+    } else if (appBaseURL.includes('pat')) {
+      this.setEnvironment(Pat);
+    } else if (appBaseURL.includes('demo')) {
+      this.setEnvironment(Demo);
+    } else if (appBaseURL.includes('student.cbord')) {
+      this.setEnvironment(Production);
+    } else {
+      this.setEnvironment(Development);
     }
+  }
 
-    static isDevelopmentEnvironment(appBaseURL: string): boolean {
-        return appBaseURL.includes('dev') || appBaseURL.includes('localhost');
-    }
+  static isDevelopmentEnvironment(appBaseURL: string): boolean {
+    return appBaseURL.includes('dev') || appBaseURL.includes('localhost');
+  }
 }

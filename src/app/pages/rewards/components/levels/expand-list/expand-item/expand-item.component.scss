@@ -17,6 +17,7 @@ $circle-width: 40px;
     background: url('/assets/icon/angle-down.svg') no-repeat center;
     background-size: contain;
     transition: all 0.1s ease-in-out;
+    pointer-events: none;
   }
 
   &--active {

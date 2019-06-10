@@ -46,11 +46,11 @@ export class DataCache {
   }
 
   static getDestinationPage(): EDestination {
-    return DataCache.destinationPage;
+    return DataCache.destinationPage || null;
   }
 
   static getUrlSession(): string {
-    return DataCache.urlSession;
+    return DataCache.urlSession || null;
   }
 
   static getApplicationUUID(): string {

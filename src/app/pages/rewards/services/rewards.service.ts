@@ -58,7 +58,7 @@ export class RewardsService {
 
   combineAllRewards(): Observable<RedeemableRewardInfo[]> {
     return this.rewardTrack.pipe(
-      map(({ trackLevels, redeemableRewards }) => {
+      map(({ trackLevels = [], redeemableRewards = [] }) => {
         let rewards = trackLevels.reduce((total, { userClaimableRewards }) => [...total, ...userClaimableRewards], []);
 
         return [...redeemableRewards, ...rewards];
@@ -171,7 +171,7 @@ export class RewardsService {
       }
       let reward;
       if (!cash[history[i].rewardId]) {
-        reward = rewards.find(reward => reward.id === history[i].rewardId);
+        reward = rewards.find(reward => reward.id === history[i].rewardId) || history[i];
       } else {
         reward = cash[history[i].rewardId];
       }

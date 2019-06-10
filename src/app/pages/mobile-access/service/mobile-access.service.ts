@@ -13,7 +13,8 @@ import { CoordsService } from '../../../core/service/coords/coords.service';
 import { GeoLocationInfo } from '../../../core/model/geolocation/geoLocationInfo.model';
 import { ContentStringInfo } from '../../../core/model/content/content-string-info.model';
 import { ContentService } from '../../../core/service/content-service/content.service';
-import { GenericContentStringsParams, MobileAccessContentStringsParams } from '../mobile-acces.config';
+import { CONTENT_STRINGS, GenericContentStringsParams, MobileAccessContentStringsParams } from '../mobile-acces.config';
+import { ToastController } from '@ionic/angular';
 
 @Injectable()
 export class MobileAccessService extends BaseService {
@@ -23,12 +24,14 @@ export class MobileAccessService extends BaseService {
   private locationsInfo: MMobileLocationInfo[] = [];
   private favourites: string[];
   private content;
+  private toastDuration = 6000;
 
   constructor(
     protected readonly http: HttpClient,
     private readonly userService: UserService,
     private readonly coords: CoordsService,
-    private readonly contentService: ContentService
+    private readonly contentService: ContentService,
+    private readonly toastController: ToastController
   ) {
     super(http);
   }
@@ -47,10 +50,8 @@ export class MobileAccessService extends BaseService {
       this.contentService.retrieveContentStringList(MobileAccessContentStringsParams),
       this.contentService.retrieveContentStringList(GenericContentStringsParams)
     ).pipe(
-      map(([res, res0]) => {
-        const arr0 = [...res];
-        const arr1 = [...res0];
-        const finalArray = arr0.concat(arr1);
+      map(([mobileCS, genericCS]) => {
+        const finalArray = [...mobileCS, ...genericCS];
         this.content = finalArray.reduce((init, elem) => ({ ...init, [elem.name]: elem.value }), {});
         return finalArray;
       }),
@@ -95,11 +96,33 @@ export class MobileAccessService extends BaseService {
     );
   }
 
-  updateFavouritesList(locationId: string): Observable<MessageResponse<boolean>> {
+  updateFavouritesList(locationId: string): Observable<MMobileLocationInfo> {
     this.favourites = this.handleFavouriteById(locationId, this.favourites);
     this._locations = this.getLocationsMultiSorted(this.locationsInfo, this.favourites);
 
-    return this.saveFavourites(this.favourites);
+    return this.saveFavourites(this.favourites).pipe(
+      map(({ response }) => {
+        if (response) {
+          return response;
+        } else {
+          throw new Error('');
+        }
+      }),
+      retry(1),
+      switchMap(() => this.getLocationById(locationId)),
+      tap(
+        ({ name, isFavourite }: MMobileLocationInfo) => {
+          const onAddMessage = this.getContentValueByName(CONTENT_STRINGS.addFavToast);
+          const onRemoveMessage = this.getContentValueByName(CONTENT_STRINGS.removeFavToast);
+          const message = `${name} ${isFavourite ? onAddMessage : onRemoveMessage}`;
+          this.presentToast(message);
+        },
+        () => {
+          const onErrorMessage = this.getContentValueByName(CONTENT_STRINGS.addFavErrorToast);
+          this.errorSavingFavourites(onErrorMessage);
+        }
+      )
+    );
   }
 
   trackCurrentPosition(): Observable<GeoCoordinates> {
@@ -215,5 +238,21 @@ export class MobileAccessService extends BaseService {
       heading,
       sourceInfo,
     };
+  }
+
+  private async presentToast(message: string) {
+    const toast = await this.toastController.create({
+      message,
+      duration: this.toastDuration,
+    });
+    toast.present();
+  }
+
+  private async errorSavingFavourites(message: string) {
+    const toast = await this.toastController.create({
+      message,
+      duration: this.toastDuration,
+    });
+    toast.present();
   }
 }
