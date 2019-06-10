@@ -1,4 +1,4 @@
-import {AfterViewInit, Component} from '@angular/core';
+import { AfterViewInit, Component } from '@angular/core';
 
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
@@ -15,7 +15,7 @@ import { connectableObservableDescriptor } from 'rxjs/internal/observable/Connec
   selector: 'app-root',
   templateUrl: 'app.component.html',
 })
-export class AppComponent implements AfterViewInit{
+export class AppComponent implements AfterViewInit {
   private readonly EVENT_APP_PAUSE = 'event.apppause';
   private readonly EVENT_APP_RESUME = 'event.appresume';
 
@@ -47,15 +47,16 @@ export class AppComponent implements AfterViewInit{
   }
 
   ngAfterViewInit() {
-    // function receiveMessage(event) {
-    //  const iframeUrl = event.data;
-    //  if(iframeUrl != null && (DataCache.getUrlSession() === null || DataCache.getDestinationPage() === null)){
-    //    const hash: string[] = iframeUrl.split('#');
-    //    AppComponent.getHashParameters(hash[1]);
-    //  }
-    // }
+    const receiveMessage = event => {
+      const iframeUrl = event.data;
+      // debugger
+      if (iframeUrl && (DataCache.getUrlSession() === null || DataCache.getDestinationPage() === null)) {
+        const hash: string[] = iframeUrl.split('#');
+        this.getHashParameters(hash[1]);
+      }
+    };
 
-    // window.addEventListener("message", receiveMessage, false);
+    window.addEventListener('message', receiveMessage, false);
   }
 
   /**
@@ -80,7 +81,6 @@ export class AppComponent implements AfterViewInit{
     DataCache.setWebInitiValues(hashParameters[2] || null, destinationPage);
     this.router.navigate(['home'], { skipLocationChange: true });
   }
-
 
   private setupAppStateEvent() {
     this.platform.pause.subscribe(() => {

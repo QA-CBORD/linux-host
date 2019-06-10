@@ -171,10 +171,7 @@ export class RewardsService {
       }
       let reward;
       if (!cash[history[i].rewardId]) {
-        reward = rewards.find(reward => reward.id === history[i].rewardId);
-        if (!reward) {
-          reward = history[i];
-        }
+        reward = rewards.find(reward => reward.id === history[i].rewardId) || history[i];
       } else {
         reward = cash[history[i].rewardId];
       }
