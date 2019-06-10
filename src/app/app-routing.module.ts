@@ -16,6 +16,10 @@ const routes: Routes = [
     path: NAVIGATE.secureMessage,
     loadChildren: './pages/secure-messaging/secure-message.module#SecureMessagePageModule',
   },
+  {
+    path: NAVIGATE.accounts,
+    loadChildren: './pages/accounts/accounts.module#AccountsModule',
+  },
 ];
 
 @NgModule({

@@ -133,7 +133,9 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
   private setContentStrings() {
     const activate = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.activateBtn);
     const header = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.headerTitle);
-    const activateLocationLoader = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.activateLocationLoader);
+    const activateLocationLoader = this.mobileAccessService.getContentValueByName(
+      CONTENT_STRINGS.activateLocationLoader
+    );
     const errorResponseActivateLocation = this.mobileAccessService.getContentValueByName(
       CONTENT_STRINGS.errorResponseActivateLocation
     );

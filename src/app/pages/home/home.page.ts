@@ -21,6 +21,7 @@ export enum EDestination {
   MOBILE_ACCESS = 'openmydoor',
   SECURE_MESSAGING = 'securemessaging',
   REWARDS = 'rewards',
+  ACCOUNTS = 'accounts',
 }
 
 @Component({
@@ -47,18 +48,18 @@ export class HomePage {
       Environment.setEnvironmentViaURL(location.href);
 
       /// get parameters from url
-      this.getHashParameters();
+      // this.getHashParameters();
       /// now perform normal page logic
-      this.handleSessionToken();
+      // this.handleSessionToken();
 
-      // this.testGetSession();
+      this.testGetSession();
     });
   }
 
   private testGetSession() {
     this.testProvider.getTestUser().subscribe(
       success => {
-        this.destinationPage = EDestination.REWARDS;
+        this.destinationPage = EDestination.ACCOUNTS;
         this.getUserInfo();
       },
       error => {
@@ -206,6 +207,12 @@ export class HomePage {
         break;
       case EDestination.SECURE_MESSAGING:
         this.router.navigate(['secure-message'], {
+          replaceUrl: true,
+          skipLocationChange: true,
+        });
+        break;
+      case EDestination.ACCOUNTS:
+        this.router.navigate(['accounts'], {
           replaceUrl: true,
           skipLocationChange: true,
         });

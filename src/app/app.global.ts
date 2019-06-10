@@ -131,4 +131,5 @@ export enum NAVIGATE {
   rewards = 'rewards',
   mobileAccess = 'mobile-access',
   secureMessage = 'secure-message',
+  accounts = 'accounts',
 }
