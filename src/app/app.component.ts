@@ -25,9 +25,8 @@ import { UserService } from './core/service/user-service/user.service';
 export class AppComponent implements OnDestroy {
   private readonly EVENT_APP_PAUSE = 'event.apppause';
   private readonly EVENT_APP_RESUME = 'event.appresume';
-  private sessionToken: string = null;
   private readonly sourceSubscription: Subscription = new Subscription();
-
+  private sessionToken: string = null;
   private loader;
   private destinationPage: NAVIGATE;
 
@@ -79,8 +78,7 @@ export class AppComponent implements OnDestroy {
         Logger.setLoggingEnabled(Environment.isDevelopmentEnvironment(location.href));
         Environment.setEnvironmentViaURL(location.href);
         this.parseHashParameters(hash);
-        /// get parameters from url
-        this.getHashParameters();
+
         /// now perform normal page logic
         this.handleSessionToken();
 
@@ -115,23 +113,25 @@ export class AppComponent implements OnDestroy {
     );
   }
 
-  private getHashParameters() {
-    /// get required params from the URL
-    this.sessionToken = DataCache.getUrlSession();
-    this.destinationPage = DataCache.getDestinationPage();
-  }
-
   /**
    * Get hash parameters from url
    */
   private parseHashParameters(urlString: string) {
     const hashParameters: string[] = urlString.split('/');
-    const destinationPage = hashParameters[3];
+    const destinationPage = hashParameters[3] as NAVIGATE;
     const existsInNavigate = Object.values(NAVIGATE).some(route => route === destinationPage);
 
     if (existsInNavigate) {
-      DataCache.setWebInitiValues(hashParameters[2] || null, destinationPage as NAVIGATE);
+      DataCache.setWebInitiValues(hashParameters[2] || null, destinationPage);
+      this.sessionToken = hashParameters[2];
+      this.destinationPage = destinationPage;
     }
+
+    console.log(this.router);
+    this.cleanUrlAfterGetInfo();
+  }
+
+  private cleanUrlAfterGetInfo() {
     this.router.navigate([''], { skipLocationChange: true });
   }
 

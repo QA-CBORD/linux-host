@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import { NavController } from '@ionic/angular';
 
 import { MMobileLocationInfo } from '../../model';
+import { NAVIGATE } from '../../../../app.global';
+import { LOCAL_ROUTING } from '../../mobile-acces.config';
 
 @Component({
   selector: 'st-location-item',
@@ -25,7 +27,7 @@ export class LocationItemComponent {
   }
 
   openLocation() {
-    this.nav2.navigateForward(`/mobile-access/activate/${this.location.locationId}`);
+    this.nav2.navigateForward(`/${NAVIGATE.mobileAccess}/${LOCAL_ROUTING.activate}/${this.location.locationId}`);
   }
 
   triggerFavourite() {
