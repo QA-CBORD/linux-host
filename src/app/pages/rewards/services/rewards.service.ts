@@ -52,7 +52,9 @@ export class RewardsService {
 
   getHistoryListRewards(): Observable<UserFulfillmentActivityInfo[]> {
     return zip(this.combineAllRewards(), this.rewardHistory).pipe(
-      map(([rewards, rewardHistory]) => this.extractFromHistoryByStatus(rewardHistory, rewards, CLAIM_STATUS.received))
+      map(([rewards, rewardHistory]) =>
+        this.extractFromHistoryByStatus(rewardHistory, rewards, CLAIM_STATUS.received, true)
+      )
     );
   }
 
@@ -134,7 +136,7 @@ export class RewardsService {
   getStoreActiveRewards(): Observable<UserFulfillmentActivityInfo[]> {
     return zip(this.rewardTrack, this.rewardHistory).pipe(
       map(([{ redeemableRewards }, rewardHistory]) =>
-        this.extractFromHistoryByStatus(rewardHistory, redeemableRewards, CLAIM_STATUS.claimed)
+        this.extractFromHistoryByStatus(rewardHistory, redeemableRewards, CLAIM_STATUS.claimed, false)
       )
     );
   }
@@ -160,7 +162,8 @@ export class RewardsService {
   private extractFromHistoryByStatus(
     history: UserFulfillmentActivityInfo[],
     rewards: RedeemableRewardInfo[],
-    status: CLAIM_STATUS
+    status: CLAIM_STATUS,
+    isHistoryTab: boolean
   ): UserFulfillmentActivityInfo[] {
     const cash = {};
     const res = [];
@@ -171,7 +174,10 @@ export class RewardsService {
       }
       let reward;
       if (!cash[history[i].rewardId]) {
-        reward = rewards.find(reward => reward.id === history[i].rewardId) || history[i];
+        reward = rewards.find(reward => reward.id === history[i].rewardId);
+        if (!reward && isHistoryTab) {
+          reward = history[i];
+        }
       } else {
         reward = cash[history[i].rewardId];
       }
