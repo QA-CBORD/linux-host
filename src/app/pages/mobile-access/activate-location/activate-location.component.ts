@@ -16,6 +16,7 @@ import { MobileAccessPopoverComponent } from '../mobile-access-popover';
 import { LoadingService } from '../../../core/service/loading/loading.service';
 import { CONTENT_STRINGS } from '../mobile-acces.config';
 import { BUTTON_TYPE } from '../../../core/utils/buttons.config';
+import { NAVIGATE } from '../../../app.global';
 
 @Component({
   selector: 'st-activate-location',
@@ -104,7 +105,7 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
 
     popover.onDidDismiss().then(({ role }) => {
       if (role === BUTTON_TYPE.OKAY) {
-        this.nav2.navigateBack('/mobile-access');
+        this.nav2.navigateBack(`/${NAVIGATE.mobileAccess}`);
       }
 
       if (role === BUTTON_TYPE.RETRY) {
