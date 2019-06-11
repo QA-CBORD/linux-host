@@ -132,6 +132,7 @@ export class AppComponent implements OnDestroy {
     if (existsInNavigate) {
       DataCache.setWebInitiValues(hashParameters[2] || null, destinationPage as NAVIGATE);
     }
+    this.router.navigate([''], { skipLocationChange: true });
   }
 
   private handleSessionToken() {
