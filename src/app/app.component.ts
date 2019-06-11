@@ -43,6 +43,9 @@ export class AppComponent implements OnDestroy {
     private readonly userService: UserService
   ) {
     this.initializeApp();
+    this.router.events.subscribe(event => {
+      console.log(event);
+    });
   }
 
   ngOnDestroy() {
@@ -127,7 +130,6 @@ export class AppComponent implements OnDestroy {
       this.destinationPage = destinationPage;
     }
 
-    console.log(this.router);
     this.cleanUrlAfterGetInfo();
   }
 
