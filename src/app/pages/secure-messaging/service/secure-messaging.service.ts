@@ -9,9 +9,9 @@ import {
   RestCallType,
 } from 'src/app/core/service/api-service/api.service';
 import {
-  MSecureMessageGroupInfo,
-  MSecureMessageInfo,
-  MSecureMessageSendBody,
+  SecureMessageGroupInfo,
+  SecureMessageInfo,
+  SecureMessageSendBody,
 } from '../models';
 
 @Injectable()
@@ -31,7 +31,7 @@ export class SecureMessagingService {
     ma_type: string,
     ma_id_field: string,
     ma_id_value: string
-  ): Observable<MSecureMessageInfo[]> {
+  ): Observable<SecureMessageInfo[]> {
     const url = `${
       this.serviceUrlSecureMessage
     }?ma_type=${ma_type}&ma_id_field=${ma_id_field}&ma_id_value=${ma_id_value}`;
@@ -48,7 +48,7 @@ export class SecureMessagingService {
 
   getSecureMessagesGroups(
     inst_id: string
-  ): Observable<MSecureMessageGroupInfo[]> {
+  ): Observable<SecureMessageGroupInfo[]> {
     const url = `${
       this.serviceUrlSecureMessageGroup
     }?inst_id=${inst_id}&with_members=0`;
@@ -63,7 +63,7 @@ export class SecureMessagingService {
     );
   }
 
-  postSecureMessage(messageInfo: MSecureMessageSendBody): Observable<any> {
+  postSecureMessage(messageInfo: SecureMessageSendBody): Observable<any> {
     return this.apiService.authenticatedHTTPCall(
       RestCallType.post,
       this.serviceUrlSecureMessage,
@@ -74,7 +74,7 @@ export class SecureMessagingService {
     );
   }
 
-  replyToSecureMessage(messageInfo: MSecureMessageInfo): Observable<any> {
+  replyToSecureMessage(messageInfo: SecureMessageInfo): Observable<any> {
     return this.apiService.authenticatedHTTPCall(
       RestCallType.post,
       this.serviceUrlSecureMessage, /// does this need a msgId in the URL???

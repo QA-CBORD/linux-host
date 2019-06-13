@@ -1,8 +1,8 @@
-export interface MSecureMessageInfo {
+export interface SecureMessageInfo {
   id: string; /// uuid
   replied_message_id: string; /// uuid
-  recipient: MSecureMessageAddressInfo;
-  sender: MSecureMessageAddressInfo;
+  recipient: SecureMessageAddressInfo;
+  sender: SecureMessageAddressInfo;
   institution_id: string; /// uuid
   sent_date: string;
   read_date: string;
@@ -16,7 +16,7 @@ export interface MSecureMessageInfo {
   version?: number;
 }
 
-export interface MSecureMessageGroupInfo {
+export interface SecureMessageGroupInfo {
   id: string;
   name: string;
   inter_name: string;
@@ -25,7 +25,7 @@ export interface MSecureMessageGroupInfo {
   version?: number;
 }
 
-export interface MSecureMessageGroupMemeberInfo {
+export interface SecureMessageGroupMemeberInfo {
   id?: string;
   message_group_id: string;
   member_id: string;
@@ -35,7 +35,7 @@ export interface MSecureMessageGroupMemeberInfo {
   version?: number;
 }
 
-export interface MSecureMessageAddressInfo {
+export interface SecureMessageAddressInfo {
   id?: string;
   type: string; /// 'patron' or 'group'
   id_field: string;
@@ -46,17 +46,17 @@ export interface MSecureMessageAddressInfo {
   version?: number;
 }
 
-export interface MSecureMessageConversation {
+export interface SecureMessageConversation {
   institutionId: string;
   groupIdValue: string;
   groupName: string;
   groupDescription: string;
   myIdValue: string;
-  messages: MSecureMessageInfo[];
+  messages: SecureMessageInfo[];
   selected: boolean;
 }
 
-export interface MSecureMessageSendBody {
+export interface SecureMessageSendBody {
   institution_id: string;
   sender: {
     type: string; /// patron or group
@@ -74,7 +74,7 @@ export interface MSecureMessageSendBody {
   importance: string;
 }
 
-export interface MSecureMessagingAuthInfo {
+export interface SecureMessagingAuthInfo {
   id_field: string;
   role: string;
   iss: string;
