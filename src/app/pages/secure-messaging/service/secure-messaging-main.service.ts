@@ -11,7 +11,7 @@ import {
   MSecureMessageInfo,
   MSecureMessageSendBody,
   MSecureMessagingAuthInfo,
-} from '../model';
+} from '../models';
 
 @Injectable()
 export class SecureMessagingMainService {

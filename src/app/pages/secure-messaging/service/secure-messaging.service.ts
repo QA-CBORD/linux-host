@@ -12,7 +12,7 @@ import {
   MSecureMessageGroupInfo,
   MSecureMessageInfo,
   MSecureMessageSendBody,
-} from '../model';
+} from '../models';
 
 @Injectable()
 export class SecureMessagingService {

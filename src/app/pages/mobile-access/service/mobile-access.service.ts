@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { ToastController } from '@ionic/angular';
 
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import { catchError, map, retry, switchMap, take, tap } from 'rxjs/operators';
@@ -14,7 +15,6 @@ import { GeoLocationInfo } from '../../../core/model/geolocation/geoLocationInfo
 import { ContentStringInfo } from '../../../core/model/content/content-string-info.model';
 import { ContentService } from '../../../core/service/content-service/content.service';
 import { CONTENT_STRINGS, GenericContentStringsParams, MobileAccessContentStringsParams } from '../mobile-acces.config';
-import { ToastController } from '@ionic/angular';
 
 @Injectable()
 export class MobileAccessService extends BaseService {

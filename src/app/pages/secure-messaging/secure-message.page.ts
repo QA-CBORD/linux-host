@@ -9,13 +9,12 @@ import { SecureMessagingMainService } from './service';
 
 import * as Globals from '../../app.global';
 import { DataCache } from '../../core/utils/data-cache';
-
 import {
+  MSecureMessageInfo,
   MSecureMessageConversation,
   MSecureMessageGroupInfo,
-  MSecureMessageInfo,
   MSecureMessageSendBody,
-} from './model';
+} from './models';
 
 @Component({
   selector: 'app-secure-message',
@@ -46,11 +45,16 @@ export class SecureMessagePage implements OnDestroy {
     this.platform.ready().then(this.initComponent.bind(this));
   }
 
+  ngOnDestroy() {
+    this.sourceSubscription.unsubscribe();
+  }
+
   private initComponent() {
     /// set subscription to check screen size change
     /// used to adjust ui layout
     this.bIsLargeScreen = this.platform.width() > this.largeScreenPixelMin;
-    this.sourceSubscription.add(fromEvent(window, 'resize').subscribe(this.onWindowResizeHandler.bind(this)));
+    const subscription = fromEvent(window, 'resize').subscribe(this.onWindowResizeHandler.bind(this));
+    this.sourceSubscription.add(subscription);
     this.initializePage();
   }
 
@@ -62,11 +66,6 @@ export class SecureMessagePage implements OnDestroy {
     }
   }
 
-  ngOnDestroy() {
-    /// remove subscriptions
-    this.sourceSubscription.unsubscribe();
-  }
-
   /**
    * Initial data gathering for messages and groups
    */
@@ -75,58 +74,58 @@ export class SecureMessagePage implements OnDestroy {
       bShow: true,
       message: 'Retrieving conversations...',
     });
-    this.sourceSubscription.add(
-      this.secureMessagingProvider.getInitialData().subscribe(
-        ([smGroupArray, smMessageArray]) => {
-          this.groupsArray = smGroupArray;
-          this.messagesArray = smMessageArray;
-          this.createConversationsFromResponse(false);
-          this.pollForData();
-        },
-        error => {
-          this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
-          ExceptionProvider.showException(this.events, {
-            displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
-            messageInfo: {
-              title: Globals.Exception.Strings.TITLE,
-              message: error,
-              positiveButtonTitle: 'RETRY',
-              positiveButtonHandler: () => {
-                this.initializePage();
-              },
-              negativeButtonTitle: 'CLOSE',
-              negativeButtonHandler: () => {
-                // TODO: this.platform.exitApp();
-              },
+    const subscription = this.secureMessagingProvider.getInitialData().subscribe(
+      ([smGroupArray, smMessageArray]) => {
+        this.groupsArray = smGroupArray;
+        this.messagesArray = smMessageArray;
+        this.createConversationsFromResponse(false);
+        this.pollForData();
+      },
+      error => {
+        this.events.publish(Globals.Events.LOADER_SHOW, { bShow: false });
+        ExceptionProvider.showException(this.events, {
+          displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
+          messageInfo: {
+            title: Globals.Exception.Strings.TITLE,
+            message: error,
+            positiveButtonTitle: 'RETRY',
+            positiveButtonHandler: () => {
+              this.initializePage();
             },
-          });
-        }
-      )
+            negativeButtonTitle: 'CLOSE',
+            negativeButtonHandler: () => {
+              // TODO: this.platform.exitApp();
+            },
+          },
+        });
+      }
     );
+
+    this.sourceSubscription.add(subscription);
   }
 
   /**
    * Poll for updated messages and groups
    */
   private pollForData() {
-    this.sourceSubscription.add(
-      this.secureMessagingProvider.pollForData().subscribe(
-        ([smGroupArray, smMessageArray]) => {
-          /// if there are new groups, update the list
-          if (this.messagesArray.length !== smGroupArray.length) {
-            this.messagesArray = smMessageArray;
-          }
-          /// if there are new messages, update the conversations
-          if (this.messagesArray.length !== smMessageArray.length) {
-            this.messagesArray = smMessageArray;
-            this.createConversationsFromResponse(true);
-          }
-        },
-        error => {
-          /// only deal with connection error ?
+    const subscription = this.secureMessagingProvider.pollForData().subscribe(
+      ([smGroupArray, smMessageArray]) => {
+        /// if there are new groups, update the list
+        if (this.messagesArray.length !== smGroupArray.length) {
+          this.messagesArray = smMessageArray;
         }
-      )
+        /// if there are new messages, update the conversations
+        if (this.messagesArray.length !== smMessageArray.length) {
+          this.messagesArray = smMessageArray;
+          this.createConversationsFromResponse(true);
+        }
+      },
+      error => {
+        /// only deal with connection error ?
+      }
     );
+
+    this.sourceSubscription.add(subscription);
   }
 
   private sortGroups() {
@@ -233,12 +232,12 @@ export class SecureMessagePage implements OnDestroy {
     }
   }
 
-  trackConversationsByFn(index: number, item: MSecureMessageConversation) {
-    return item.groupIdValue;
+  trackConversationsByFn(index: number, { groupIdValue }: MSecureMessageConversation): string {
+    return groupIdValue;
   }
 
-  trackMessagesByFn(index: number, item: MSecureMessageInfo) {
-    return item.id;
+  trackMessagesByFn(index: number, { id }: MSecureMessageInfo): string {
+    return id;
   }
 
   /**
@@ -289,11 +288,11 @@ export class SecureMessagePage implements OnDestroy {
   /**
    * click listner for group in 'new conversation' column
    */
-  onClickMakeNewConversation(group: MSecureMessageGroupInfo) {
+  onClickMakeNewConversation({ id, name, description }: MSecureMessageGroupInfo) {
     /// check if a conversation with this group already exists
     let newConversation: MSecureMessageConversation = null;
     for (const convo of this.conversationsArray) {
-      if (convo.groupIdValue === group.id) {
+      if (convo.groupIdValue === id) {
         newConversation = convo;
         break;
       }
@@ -302,9 +301,9 @@ export class SecureMessagePage implements OnDestroy {
     if (newConversation === null) {
       newConversation = {
         institutionId: SecureMessagingMainService.GetSecureMessagesAuthInfo().institution_id,
-        groupName: group.name,
-        groupIdValue: group.id,
-        groupDescription: group.description,
+        groupName: name,
+        groupIdValue: id,
+        groupDescription: description,
         myIdValue: SecureMessagingMainService.GetSecureMessagesAuthInfo().id_value,
         messages: [],
         selected: true,
@@ -529,16 +528,16 @@ export class SecureMessagePage implements OnDestroy {
    * UI helper method to set group initial
    * @param conversation conversation to get data for ui
    */
-  getConversationGroupInitial(conversation: MSecureMessageConversation): string {
-    return conversation.groupName == null || conversation.groupName.length < 1 ? 'U' : conversation.groupName[0];
+  getConversationGroupInitial({ groupName }: MSecureMessageConversation): string {
+    return groupName == null || groupName.length < 1 ? 'U' : groupName[0];
   }
 
   /**
    * UI helper method to set group name
    * @param conversation conversation to get data for ui
    */
-  getConversationGroupName(conversation: MSecureMessageConversation): string {
-    return conversation.groupName == null ? 'Conversation' : conversation.groupName;
+  getConversationGroupName({ groupName }: MSecureMessageConversation): string {
+    return groupName == null ? 'Conversation' : groupName;
   }
 
   /**
@@ -546,51 +545,53 @@ export class SecureMessagePage implements OnDestroy {
    * (this gets the most recently sent message)
    * @param conversation conversation to get data for ui
    */
-  getConversationDescription(conversation: MSecureMessageConversation): string {
-    const frontText = conversation.messages[conversation.messages.length - 1].sender.type === 'patron' ? 'You: ' : '';
-    return frontText + conversation.messages[conversation.messages.length - 1].body;
+  getConversationDescription({ messages }: MSecureMessageConversation): string {
+    const lastIMessage: MSecureMessageInfo = messages[messages.length - 1];
+    const frontText: string = lastIMessage.sender.type === 'patron' ? 'You: ' : '';
+
+    return frontText + lastIMessage.body;
   }
 
   /**
    * UI helper method to set group initial for chat
    * @param group group to get data for ui
    */
-  getGroupInitial(group: MSecureMessageGroupInfo): string {
-    return group.name == null || group.name.length < 1 ? 'U' : group.name[0];
+  getGroupInitial({ name }: MSecureMessageGroupInfo): string {
+    return name == null || name.length < 1 ? 'U' : name[0];
   }
 
   /**
    * UI helper method to set group name
    * @param group conversation to get data for ui
    */
-  getGroupName(group: MSecureMessageGroupInfo): string {
-    return group.name == null ? 'Name Unknown' : group.name;
+  getGroupName({ name }: MSecureMessageGroupInfo): string {
+    return name == null ? 'Name Unknown' : name;
   }
 
   /**
    * UI helper method to set group description
    * @param group group to get data for ui
    */
-  getGroupDescription(group: MSecureMessageGroupInfo): string {
-    return group.description == null ? '' : group.description;
+  getGroupDescription({ description }: MSecureMessageGroupInfo): string {
+    return description == null ? '' : description;
   }
 
   /**
    * Get date to place in conversation list item for most recent message in conversation
    * @param conversation Conversation from list
    */
-  getConversationDate(conversation: MSecureMessageConversation): string {
+  getConversationDate({ messages }: MSecureMessageConversation): string {
     /// get latest message and get the date string for it
-    return this.getMessageDateShortString(conversation.messages[conversation.messages.length - 1]);
+    return this.getMessageDateShortString(messages[messages.length - 1]);
   }
 
   /**
    * Get short formatted date string for display
    * @param message Message from conversation
    */
-  getMessageDateShortString(message: MSecureMessageInfo): string {
+  getMessageDateShortString({ sent_date }: MSecureMessageInfo): string {
     const today: Date = new Date();
-    const sentDate: Date = new Date(message.sent_date);
+    const sentDate: Date = new Date(sent_date);
 
     /// > 1 year (Full timestamp)
     if (today.getFullYear() > sentDate.getFullYear()) {
@@ -628,28 +629,16 @@ export class SecureMessagePage implements OnDestroy {
    * @param conversation conversation data
    * @param messageIndex index of current message
    */
-  messageShowGroupAvatar(conversation: MSecureMessageConversation, messageIndex: number): boolean {
+  messageShowGroupAvatar({ messages }: MSecureMessageConversation, messageIndex: number): boolean {
+    const isNextMessageFromGroup: boolean = messages[messageIndex + 1].sender.type === 'group';
     /// first message
     if (messageIndex === 0) {
-      /// more than one message
-      if (conversation.messages.length > 1) {
-        /// next message from group as well
-        if (conversation.messages[messageIndex + 1].sender.type === 'group') {
-          return false;
-        }
-      }
-      return true;
-    } else {
-      /// not first message
-      /// more messages
-      if (conversation.messages.length - 1 > messageIndex + 1) {
-        /// next message from group as well
-        if (conversation.messages[messageIndex + 1].sender.type === 'group') {
-          return false;
-        }
-      }
-      return true;
+      /// more than one message && next message from group as well
+      return !(messages.length > 1 && isNextMessageFromGroup);
     }
+
+    /// not first message && more messages && next message from group as well
+    return !(messages.length - 1 > messageIndex + 1 && isNextMessageFromGroup);
   }
 
   /**
@@ -659,41 +648,25 @@ export class SecureMessagePage implements OnDestroy {
    * @param messageIndex index of current message
    * @param messageType type of message (group or patron)
    */
-  messageShowDate(conversation: MSecureMessageConversation, messageIndex: number, messageType: string): boolean {
+  messageShowDate({ messages }: MSecureMessageConversation, messageIndex: number, messageType: string): boolean {
+    /// next message from group as well:
+    const isNextMessageFromGroup = (): boolean => {
+      //was this message sent within 1 min of the next message:
+      const isMessageSentWithinMin: boolean =
+        new Date(messages[messageIndex + 1].sent_date).getTime() -
+          new Date(messages[messageIndex].sent_date).getTime() <
+        60000;
+
+      return messages[messageIndex + 1].sender.type === messageType && isMessageSentWithinMin;
+    };
     /// first message
     if (messageIndex === 0) {
       /// more than one message
-      if (conversation.messages.length > 1) {
-        /// next message from group as well
-        if (conversation.messages[messageIndex + 1].sender.type === messageType) {
-          /// was this message sent within 1 min of the next message
-          if (
-            new Date(conversation.messages[messageIndex + 1].sent_date).getTime() -
-              new Date(conversation.messages[messageIndex].sent_date).getTime() <
-            60000
-          ) {
-            return false;
-          }
-        }
-      }
-      return true;
+      return !(messages.length > 1 && isNextMessageFromGroup());
     } else {
       /// not first message
       /// more messages
-      if (conversation.messages.length - 1 > messageIndex + 1) {
-        /// next message from group as well
-        if (conversation.messages[messageIndex + 1].sender.type === messageType) {
-          /// was this message sent within 1 min of the next message
-          if (
-            new Date(conversation.messages[messageIndex + 1].sent_date).getTime() -
-              new Date(conversation.messages[messageIndex].sent_date).getTime() <
-            60000
-          ) {
-            return false;
-          }
-        }
-      }
-      return true;
+      return !(messages.length - 1 > messageIndex + 1 && isNextMessageFromGroup());
     }
   }
 
@@ -701,9 +674,9 @@ export class SecureMessagePage implements OnDestroy {
    * Get formatted date string for display in conversation message list items
    * @param message Message from conversation
    */
-  getMessageDate(message: MSecureMessageInfo): string {
+  getMessageDate({ sent_date }: MSecureMessageInfo): string {
     const today: Date = new Date();
-    const sentDate: Date = new Date(message.sent_date);
+    const sentDate: Date = new Date(sent_date);
 
     /// > 1 year (Full timestamp)
     if (today.getFullYear() > sentDate.getFullYear()) {
