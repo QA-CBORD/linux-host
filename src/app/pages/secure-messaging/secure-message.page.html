@@ -58,7 +58,7 @@
               <ion-col no-padding size-xs="2" size-sm="2" size-md="2" size-lg="2" size-xl="2"
                 class="ion-align-self-end">
                 <ion-item no-padding lines="none">
-                  <ion-avatar *ngIf="messageShowGroupAvatar(selectedConversation, i)" slot="end"
+                  <ion-avatar *ngIf="messageShowAvatar(selectedConversation, i, 'group')" slot="end"
                     class="purple-background"
                     style="width: 2.5em; height: 2.5em; margin-bottom: 37px; margin-left: 0px;">
                     <h3 class="avatar-text-label-center">{{getConversationGroupInitial(selectedConversation)}}</h3>

@@ -502,10 +502,6 @@ export class SecureMessagePage implements OnDestroy {
       convo.selected = false;
     }
     this.selectedConversation.selected = true;
-
-    for (const m of conversation.messages) {
-      console.log(`${this.getMessageDateShortString(m)} - ${new Date(m.sent_date).getTime()}`);
-    }
   }
 
   /**
@@ -628,14 +624,21 @@ export class SecureMessagePage implements OnDestroy {
    * @param conversation conversation data
    * @param messageIndex index of current message
    */
-  messageShowGroupAvatar(conversation: MSecureMessageConversation, messageIndex: number): boolean {
+  messageShowAvatar(conversation: MSecureMessageConversation, messageIndex: number, messageType: string): boolean {
     /// first message
     if (messageIndex === 0) {
       /// more than one message
       if (conversation.messages.length > 1) {
         /// next message from group as well
-        if (conversation.messages[messageIndex + 1].sender.type === 'group') {
-          return false;
+        if (conversation.messages[messageIndex + 1].sender.type === messageType) {
+          /// was this message sent within 1 min of the next message
+          if (
+            new Date(conversation.messages[messageIndex + 1].sent_date).getTime() -
+              new Date(conversation.messages[messageIndex].sent_date).getTime() <
+            60000
+          ) {
+            return false;
+          }
         }
       }
       return true;
@@ -644,8 +647,15 @@ export class SecureMessagePage implements OnDestroy {
       /// more messages
       if (conversation.messages.length - 1 > messageIndex + 1) {
         /// next message from group as well
-        if (conversation.messages[messageIndex + 1].sender.type === 'group') {
-          return false;
+        if (conversation.messages[messageIndex + 1].sender.type === messageType) {
+          /// was this message sent within 1 min of the next message
+          if (
+            new Date(conversation.messages[messageIndex + 1].sent_date).getTime() -
+              new Date(conversation.messages[messageIndex].sent_date).getTime() <
+            60000
+          ) {
+            return false;
+          }
         }
       }
       return true;
