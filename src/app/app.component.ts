@@ -88,9 +88,9 @@ export class AppComponent implements OnDestroy {
   }
 
   private testGetSession() {
-    this.testProvider.getTestUser().subscribe(
+    const subscription = this.testProvider.getTestUser().subscribe(
       success => {
-        this.destinationPage = NAVIGATE.mobileAccess;
+        this.destinationPage = NAVIGATE.secureMessage;
         this.getUserInfo();
       },
       error => {
@@ -111,6 +111,8 @@ export class AppComponent implements OnDestroy {
         });
       }
     );
+
+    this.sourceSubscription.add(subscription);
   }
 
   /**
@@ -236,18 +238,23 @@ export class AppComponent implements OnDestroy {
 
   // Ionic gloabal configurate stuff
   private setupAppStateEvent() {
-    this.platform.pause.subscribe(() => {
-      this.events.publish(this.EVENT_APP_PAUSE, null);
-    });
-    this.platform.resume.subscribe(() => {
-      this.events.publish(this.EVENT_APP_RESUME, null);
-    });
+    const pauseSubscription = this.platform.pause.subscribe(() => this.events.publish(this.EVENT_APP_PAUSE, null));
+    const resumeSubscription = this.platform.resume.subscribe(() => this.events.publish(this.EVENT_APP_RESUME, null));
+
+    this.sourceSubscription.add(pauseSubscription);
+    this.sourceSubscription.add(resumeSubscription);
   }
 
   private subscribeToEvents() {
-    this.events.subscribe(Globals.Events.LOADER_SHOW, loaderInfo => this.showLoader(loaderInfo));
+    const loaderSubscription = this.events.subscribe(Globals.Events.LOADER_SHOW, loaderInfo =>
+      this.showLoader(loaderInfo)
+    );
+    const exceptionSubscription = this.events.subscribe(Globals.Events.EXCEPTION_SHOW, exceptionPayload =>
+      this.presentException(exceptionPayload)
+    );
 
-    this.events.subscribe(Globals.Events.EXCEPTION_SHOW, exceptionPayload => this.presentException(exceptionPayload));
+    this.sourceSubscription.add(loaderSubscription);
+    this.sourceSubscription.add(exceptionSubscription);
   }
 
   //XXX - EXEPTIONS HANDLERS

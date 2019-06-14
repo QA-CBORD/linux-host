@@ -1,17 +1,23 @@
-<ion-grid no-padding style="height: 100%; width: 100%;">
+<ion-grid no-padding class="secure-message">
   <!-- row for whole window -->
-  <ion-row style="height: 100%">
+  <ion-row class="secure-message__container">
     <!-- column for groups -->
-    <ion-col *ngIf="showConversationsColumn()" size-sm="5" size-md="5" size-lg="4" size-xl="3"
-      style="padding: 0px; border-right-width: 1px; border-right-style: solid; border-right-color: rgba(0,0,0,0.1);">
+    <ion-col
+      *ngIf="isConversationsColumnAppear"
+      size-sm="5"
+      size-md="5"
+      size-lg="4"
+      size-xl="3"
+      class="secure-message__conversations conversations-container"
+    >
       <!-- header with start convos option -->
       <ion-header no-border>
         <ion-toolbar>
           <ion-title>Conversations</ion-title>
         </ion-toolbar>
         <ion-item button lines="none" (click)="onClickStartConversation()">
-          <ion-avatar slot="start" class="avatar-shadow primary-background">
-            <ion-icon name="chatbubbles" class="avatar-icon-label-center"></ion-icon>
+          <ion-avatar slot="start" class="conversations-container__avatar-shadow primary-background">
+            <ion-icon name="chatbubbles" class="conversations-container__avatar-icon"></ion-icon>
           </ion-avatar>
           <ion-label>
             <h3>Start conversation</h3>
@@ -19,12 +25,17 @@
         </ion-item>
       </ion-header>
       <!-- list with available groups -->
-      <ion-list style="overflow: auto; height: 84%" scrollY="true">
-        <ion-item button lines="none" *ngFor="let conversation of conversationsArray; trackBy: trackConversationsByFn"
+      <ion-list class="conversations-container__groups" scrollY="true">
+        <ion-item
+          button
+          lines="none"
+          *ngFor="let conversation of conversationsArray; trackBy: trackConversationsByFn"
           (click)="onClickConversation(conversation)"
-          [ngClass]="{ 'group-selected-background' : conversation.selected === true }">
+          class="conversations-container__group"
+          [ngClass]="{ 'conversations-container__group--selected' : conversation.selected }"
+        >
           <ion-avatar slot="start" class="purple-background">
-            <h3 class="avatar-text-label-center">{{getConversationGroupInitial(conversation)}}</h3>
+            <h3 class="conversations-container__avatar-text">{{getConversationGroupInitial(conversation)}}</h3>
           </ion-avatar>
           <ion-label>
             <h3>{{getConversationGroupName(conversation)}}</h3>
@@ -37,8 +48,14 @@
       </ion-list>
     </ion-col>
     <!-- col for current conversation chat -->
-    <ion-col *ngIf="showSelectedConversationContentColumn()" size-sm="7" size-md="7" size-lg="8" size-xl="9"
-      style="height: 100%; padding: 0px;">
+    <ion-col
+      *ngIf="showSelectedConversationContentColumn()"
+      size-sm="7"
+      size-md="7"
+      size-lg="8"
+      size-xl="9"
+      class="secure-message__conversation conversation-container"
+    >
       <ion-header>
         <ion-toolbar>
           <ion-buttons *ngIf="!bIsLargeScreen" slot="start">
@@ -50,68 +67,93 @@
         </ion-toolbar>
       </ion-header>
       <!-- grid for chat window -->
-      <div #chatScroll style="top: 56px; height: calc(100% - 140px); overflow: auto;" scrollY="true" [scrollTop]="chatScroll.scrollHeight">
+      <div #chatScroll scrollY="true" [scrollTop]="chatScroll.scrollHeight" class="conversation-container__chat">
         <ion-grid>
           <div *ngFor="let message of selectedConversation.messages; let i = index; trackBy: trackMessagesByFn">
             <!-- row for group -->
             <ion-row *ngIf="message.sender.type === 'group'">
-              <ion-col no-padding size-xs="2" size-sm="2" size-md="2" size-lg="2" size-xl="2"
-                class="ion-align-self-end">
+              <ion-col
+                no-padding
+                size-xs="2"
+                size-sm="2"
+                size-md="2"
+                size-lg="2"
+                size-xl="2"
+                class="ion-align-self-end"
+              >
                 <ion-item no-padding lines="none">
-                  <ion-avatar *ngIf="messageShowAvatar(selectedConversation, i, 'group')" slot="end"
-                    class="purple-background"
-                    style="width: 2.5em; height: 2.5em; margin-bottom: 37px; margin-left: 0px;">
-                    <h3 class="avatar-text-label-center">{{getConversationGroupInitial(selectedConversation)}}</h3>
+                  <ion-avatar
+                    *ngIf="messageShowAvatar(selectedConversation, i, 'group')"
+                    slot="end"
+                    class="purple-background conversation-container__chat-avatar"
+                  >
+                    <h3 class="conversation-container__avatar-text">
+                      {{getConversationGroupInitial(selectedConversation)}}
+                    </h3>
                   </ion-avatar>
                 </ion-item>
               </ion-col>
               <ion-col no-padding size-xs="9" size-sm="9" size-md="6" size-lg="6" size-xl="6">
-                <ion-item no-padding lines="none" style="padding: 0px;">
-                  <p class="message-text-bubble light-grey-background">{{message.body}}</p>
+                <ion-item no-padding lines="none" class="conversation-container__body-wrapper">
+                  <p class="conversation-container__text-bubble light-grey-background">{{message.body}}</p>
                 </ion-item>
-                <div *ngIf="messageShowDate(selectedConversation, i, 'group')"
-                  style="margin-bottom: 16px; margin-top: 5px;">
-                  <p class="message-text-date">{{getMessageDate(message)}}</p>
+                <div
+                  *ngIf="messageShowDate(selectedConversation, i, 'group')"
+                  class="conversation-container__date-wrapper"
+                >
+                  <p class="conversation-container__text-date">{{getMessageDate(message)}}</p>
                 </div>
               </ion-col>
-              <ion-col no-padding size-xs="1" size-sm="1" size-md="4" size-lg="4" size-xl="4">
-              </ion-col>
+              <ion-col no-padding size-xs="1" size-sm="1" size-md="4" size-lg="4" size-xl="4"> </ion-col>
             </ion-row>
             <!-- row for patron -->
             <ion-row class="ion-justify-content-end" *ngIf="message.sender.type === 'patron'">
-              <ion-col no-padding size-xs="1" size-sm="1" size-md="5" size-lg="5" size-xl="5">
-              </ion-col>
+              <ion-col no-padding size-xs="1" size-sm="1" size-md="5" size-lg="5" size-xl="5"> </ion-col>
               <ion-col no-padding size-xs="11" size-sm="11" size-md="6" size-lg="6" size-xl="6" size="6">
-                <ion-item lines="none" style="padding: 0px;">
+                <ion-item lines="none" class="conversation-container__body-wrapper">
                   <div class="ion-text-end" style="width: 100%;">
-                    <p class="message-text-bubble light-blue-background">{{message.body}}</p>
+                    <p class="conversation-container__text-bubble light-blue-background">{{message.body}}</p>
                   </div>
                 </ion-item>
-                <div *ngIf="messageShowDate(selectedConversation, i, 'patron')" class="ion-text-end"
-                  style="margin-bottom: 16px; margin-top: 5px;">
-                  <p class="message-text-date" style="padding-right: 16px;">{{getMessageDate(message)}}</p>
+                <div
+                  *ngIf="messageShowDate(selectedConversation, i, 'patron')"
+                  class="conversation-container__date-wrapper ion-text-end"
+                >
+                  <p class="conversation-container__text-date" style="padding-right: 16px;">
+                    {{getMessageDate(message)}}
+                  </p>
                 </div>
               </ion-col>
-              <ion-col no-padding size-xs="0" size-sm="0" size-md="1" size-lg="1" size-xl="1">
-              </ion-col>
+              <ion-col no-padding size-xs="0" size-sm="0" size-md="1" size-lg="1" size-xl="1"> </ion-col>
             </ion-row>
           </div>
-        </ion-grid>        
+        </ion-grid>
       </div>
       <!-- grid for text area -->
-      <ion-grid style="position: absolute; width: 100%; bottom: 1vh;">
+      <ion-grid class="conversation-container__text-area-wrapper">
         <ion-row>
           <ion-col size="1"></ion-col>
           <!-- col for text area -->
           <ion-col size="9">
-            <ion-textarea #chatInput [(ngModel)]="newMessageText" rows="2" spellcheck="true" placeholder="Text message"
-              class="avatar-shadow" style="background-color: rgba(0, 0, 0, 0.05); border-radius: 10px; padding: 5px;">
+            <ion-textarea
+              #chatInput
+              [(ngModel)]="newMessageText"
+              rows="2"
+              spellcheck="true"
+              placeholder="Text message"
+              class="conversation-container__text-area"
+            >
             </ion-textarea>
           </ion-col>
           <!-- col for send button -->
           <ion-col size="1" class="ion-align-self-center">
-            <ion-button shape="round" size="small" color="primary" (click)="onClickSendButton()"
-              style="width: 3em; height: 3em;">
+            <ion-button
+              shape="round"
+              size="small"
+              color="primary"
+              (click)="onClickSendButton()"
+              class="conversation-container__text-area-btn"
+            >
               <ion-icon slot="icon-only" name="send"></ion-icon>
             </ion-button>
           </ion-col>
@@ -120,8 +162,14 @@
       </ion-grid>
     </ion-col>
     <!-- col for current new conversation creation -->
-    <ion-col *ngIf="showCreateNewConversationColumn()" size-sm="7" size-md="7" size-lg="8" size-xl="9"
-      style="height: 86%; padding: 0px;">
+    <ion-col
+      *ngIf="showCreateNewConversationColumn()"
+      size-sm="7"
+      size-md="7"
+      size-lg="8"
+      size-xl="9"
+      class="secure-message__conversation-creation conversation-creation-container"
+    >
       <ion-header>
         <ion-toolbar>
           <ion-buttons *ngIf="!bIsLargeScreen" slot="start">
@@ -133,22 +181,27 @@
         </ion-toolbar>
       </ion-header>
       <!-- grid for available group list window -->
-        <!-- list with available groups -->
-        <ion-list style="overflow: auto; height: 95%; margin-left: 5%; margin-bottom: 0px;" scrollY="true">
-          <ion-list-header>
-            <ion-label>Contacts</ion-label>
-          </ion-list-header>
-          <ion-item button no-padding lines="none" *ngFor="let group of groupsArray"
-            (click)="onClickMakeNewConversation(group)">
-            <ion-avatar slot="start" class="purple-background">
-              <h3 class="avatar-text-label-center">{{getGroupInitial(group)}}</h3>
-            </ion-avatar>
-            <ion-label>
-              <h3>{{getGroupName(group)}}</h3>
-              <p>{{getGroupDescription(group)}}</p>
-            </ion-label>
-          </ion-item>
-        </ion-list>
+      <!-- list with available groups -->
+      <ion-list class="conversation-creation-container__groups" scrollY="true">
+        <ion-list-header>
+          <ion-label>Contacts</ion-label>
+        </ion-list-header>
+        <ion-item
+          button
+          no-padding
+          lines="none"
+          *ngFor="let group of groupsArray"
+          (click)="onClickMakeNewConversation(group)"
+        >
+          <ion-avatar slot="start" class="purple-background">
+            <h3 class="avatar-text-label-center">{{getGroupInitial(group)}}</h3>
+          </ion-avatar>
+          <ion-label>
+            <h3>{{getGroupName(group)}}</h3>
+            <p>{{getGroupDescription(group)}}</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
     </ion-col>
   </ion-row>
 </ion-grid>

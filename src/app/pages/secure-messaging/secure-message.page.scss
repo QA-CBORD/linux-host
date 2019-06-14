@@ -1,72 +1,157 @@
+.secure-message {
+  height: 100%;
+  width: 100%;
 
-.avatar-shadow {
-    box-shadow: 0 2px 4px 0 rgba(0,0,0,0.14), 0 3px 4px 0 rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.00);
-}
+  &__container {
+    height: 100%;
+  }
 
-.avatar-icon-label-center {
-    position: relative;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: white; 
-    font-size: 1.4em;
-}
+  &__conversations {
+    padding: 0;
+    border-right-width: 1px;
+    border-right-style: solid;
+    border-right-color: rgba(0, 0, 0, 0.1);
 
-.avatar-text-label-center {
-    position: relative;
-    top: 50%;
-    left: 50%;
-    transform: translate(-20%, -50%);
-    color: white; 
-    margin: 0;
-}
+    .conversations-container {
+      &__avatar-shadow {
+        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.14), 0 3px 4px 0 rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0);
+      }
 
+      &__groups {
+        overflow: auto;
+        height: 84%;
+      }
 
-.message-text-bubble {
-    border-radius: 10px;
-    padding: 15px;
-    margin: 0;
-    display: inline-block;
-    word-wrap: break-word;
-    white-space: pre-wrap;
-}
+      &__avatar-icon {
+        position: relative;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        font-size: 1.4em;
+      }
 
-.message-text-date {
-    margin: 0;
-    font-size: 0.9em;
-    color: rgba(0, 0, 0, 0.5);
-    opacity: 0.5;
+      &__avatar-text {
+        position: relative;
+        top: 50%;
+        left: 50%;
+        transform: translate(-20%, -50%);
+        color: white;
+        margin: 0;
+      }
+
+      &__group--selected {
+        background-color: rgba(0, 0, 0, 0.05);
+      }
+    }
+  }
+
+  &__conversation {
+    height: 100%;
+    padding: 0;
+
+    .conversation-container {
+      &__avatar-text {
+        position: relative;
+        top: 50%;
+        left: 50%;
+        transform: translate(-20%, -50%);
+        color: white;
+        margin: 0;
+      }
+
+      &__chat {
+        top: 56px;
+        height: calc(100% - 140px);
+        overflow: auto;
+      }
+
+      &__chat-avatar {
+        width: 2.5em;
+        height: 2.5em;
+        margin-bottom: 37px;
+        margin-left: 0;
+      }
+
+      &__text-area-wraper {
+        position: absolute;
+        width: 100%;
+        bottom: 1vh;
+      }
+
+      &__text-area {
+        background-color: rgba(0, 0, 0, 0.05);
+        border-radius: 10px;
+        padding: 5px;
+        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.14), 0 3px 4px 0 rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0);
+      }
+
+      &__text-area-btn {
+        width: 3em;
+        height: 3em;
+      }
+
+      &__body-wrapper {
+        padding: 0;
+      }
+
+      &__text-bubble {
+        border-radius: 10px;
+        padding: 15px;
+        margin: 0;
+        display: inline-block;
+        word-wrap: break-word;
+        white-space: pre-wrap;
+      }
+
+      &__date-wrapper {
+        margin-bottom: 16px;
+        margin-top: 5px;
+      }
+
+      &__text-date {
+        margin: 0;
+        font-size: 0.9em;
+        color: rgba(0, 0, 0, 0.5);
+        opacity: 0.5;
+      }
+    }
+  }
+
+  &__conversation-creation {
+    height: 86%;
+    padding: 0;
+
+    .conversation-creation-container {
+      &__groups {
+        overflow: auto;
+        height: 95%;
+        margin-left: 5%;
+        margin-bottom: 0;
+      }
+    }
+  }
 }
 
 .light-grey-background {
-    background-color: rgba(0,0,0,0.05);
-}
-
-.white-background {
-    background-color: rgba(1, 1, 1, 1);
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
 .primary-background {
-    background-color: var(--ion-color-primary)
+  background-color: var(--ion-color-primary);
 }
 
 .light-blue-background {
-    background-color: rgba(0, 92, 185, 0.1);
+  background-color: rgba(0, 92, 185, 0.1);
 }
 
 .purple-background {
-    background-color: #af5cf7;
+  background-color: #af5cf7;
 }
 
-.list-margin-left-right {
-    margin-left: 2em;
-    margin-right: 2em;
-}
-
-.group-selected-background {
-    background-color: rgba(0,0,0,0.05);
-}
-
-.item, .list, .item-content, .item-complex {
-    --ion-background-color: transparent !important;
+.item,
+.list,
+.item-content,
+.item-complex {
+  --ion-background-color: transparent !important;
 }
