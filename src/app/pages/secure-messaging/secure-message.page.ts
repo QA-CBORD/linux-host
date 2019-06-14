@@ -6,7 +6,7 @@ import { fromEvent, Subscription } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
 import { ExceptionProvider } from '../../core/provider/exception-provider/exception.provider';
-import { SecureMessagingMainService } from './service';
+import { SecureMessagingService } from './service';
 
 import * as Globals from '../../app.global';
 import { DataCache } from '../../core/utils/data-cache';
@@ -43,8 +43,8 @@ export class SecureMessagePage implements OnDestroy {
     private platform: Platform,
     private events: Events,
     private datePipe: DatePipe,
-    private secureMessagingProvider: SecureMessagingMainService,
-    private readonly loading: LoadingService
+    private secureMessagingService: SecureMessagingService,
+    private readonly loading: LoadingService,
   ) {
     this.platform.ready().then(this.initComponent.bind(this));
   }
@@ -82,7 +82,7 @@ export class SecureMessagePage implements OnDestroy {
    */
   private initializePage() {
     this.loading.showSpinner('Retrieving conversations...');
-    const subscription = this.secureMessagingProvider
+    const subscription = this.secureMessagingService
       .getInitialData()
       .pipe(tap(() => this.loading.closeSpinner()))
       .subscribe(
@@ -109,7 +109,7 @@ export class SecureMessagePage implements OnDestroy {
               },
             },
           });
-        }
+        },
       );
 
     this.sourceSubscription.add(subscription);
@@ -119,7 +119,7 @@ export class SecureMessagePage implements OnDestroy {
    * Poll for updated messages and groups
    */
   private pollForData() {
-    const subscription = this.secureMessagingProvider.pollForData().subscribe(
+    const subscription = this.secureMessagingService.pollForData().subscribe(
       ([smGroupArray, smMessageArray]) => {
         /// if there are new groups, update the list
         if (this.messagesArray.length !== smGroupArray.length) {
@@ -133,7 +133,7 @@ export class SecureMessagePage implements OnDestroy {
       },
       error => {
         /// only deal with connection error ?
-      }
+      },
     );
 
     this.sourceSubscription.add(subscription);
@@ -214,11 +214,11 @@ export class SecureMessagePage implements OnDestroy {
         }
 
         const conversation: SecureMessageConversation = {
-          institutionId: SecureMessagingMainService.GetSecureMessagesAuthInfo().institution_id,
+          institutionId: SecureMessagingService.GetSecureMessagesAuthInfo().institution_id,
           groupName: newGroupName,
           groupIdValue: newGroupId,
           groupDescription: newGroupDescription,
-          myIdValue: SecureMessagingMainService.GetSecureMessagesAuthInfo().id_value,
+          myIdValue: SecureMessagingService.GetSecureMessagesAuthInfo().id_value,
           messages: [],
           selected: false,
         };
@@ -300,11 +300,11 @@ export class SecureMessagePage implements OnDestroy {
 
     if (newConversation === null) {
       newConversation = {
-        institutionId: SecureMessagingMainService.GetSecureMessagesAuthInfo().institution_id,
+        institutionId: SecureMessagingService.GetSecureMessagesAuthInfo().institution_id,
         groupName: name,
         groupIdValue: id,
         groupDescription: description,
-        myIdValue: SecureMessagingMainService.GetSecureMessagesAuthInfo().id_value,
+        myIdValue: SecureMessagingService.GetSecureMessagesAuthInfo().id_value,
         messages: [],
         selected: true,
       };
@@ -355,11 +355,11 @@ export class SecureMessagePage implements OnDestroy {
    */
   private createNewMessageSendBody(messageBody: string): SecureMessageSendBody {
     return {
-      institution_id: SecureMessagingMainService.GetSecureMessagesAuthInfo().institution_id,
+      institution_id: SecureMessagingService.GetSecureMessagesAuthInfo().institution_id,
       sender: {
         type: 'patron',
-        id_field: SecureMessagingMainService.GetSecureMessagesAuthInfo().id_field,
-        id_value: SecureMessagingMainService.GetSecureMessagesAuthInfo().id_value,
+        id_field: SecureMessagingService.GetSecureMessagesAuthInfo().id_field,
+        id_value: SecureMessagingService.GetSecureMessagesAuthInfo().id_value,
         name: DataCache.getUserInfo().firstName + ' ' + DataCache.getUserInfo().lastName,
       },
       recipient: {
@@ -380,30 +380,30 @@ export class SecureMessagePage implements OnDestroy {
   private sendMessage(message: SecureMessageSendBody) {
     this.newMessageText = null;
 
-    this.sourceSubscription.add(
-      this.secureMessagingProvider.sendSecureMessage(message).subscribe(
-        () => {
-          this.addMessageToLocalConversation(message);
-        },
-        () => {
-          ExceptionProvider.showException(this.events, {
-            displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
-            messageInfo: {
-              title: Globals.Exception.Strings.TITLE,
-              message: 'Unable to verify your user information',
-              positiveButtonTitle: 'RETRY',
-              positiveButtonHandler: () => {
-                this.sendMessage(message);
-              },
-              negativeButtonTitle: 'CLOSE',
-              negativeButtonHandler: () => {
-                // TODO: this.platform.exitApp();
-              },
+    const subscription = this.secureMessagingService.sendSecureMessage(message).subscribe(
+      () => {
+        this.addMessageToLocalConversation(message);
+      },
+      () => {
+        ExceptionProvider.showException(this.events, {
+          displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
+          messageInfo: {
+            title: Globals.Exception.Strings.TITLE,
+            message: 'Unable to verify your user information',
+            positiveButtonTitle: 'RETRY',
+            positiveButtonHandler: () => {
+              this.sendMessage(message);
             },
-          });
-        }
-      )
+            negativeButtonTitle: 'CLOSE',
+            negativeButtonHandler: () => {
+              // TODO: this.platform.exitApp();
+            },
+          },
+        });
+      },
     );
+
+    this.sourceSubscription.add(subscription);
   }
 
   /**
@@ -416,7 +416,7 @@ export class SecureMessagePage implements OnDestroy {
       description: '',
       id: null,
       importance: null,
-      institution_id: SecureMessagingMainService.GetSecureMessagesAuthInfo().institution_id,
+      institution_id: SecureMessagingService.GetSecureMessagesAuthInfo().institution_id,
       read_date: null,
       recipient: {
         created_date: toISOString(),
@@ -434,8 +434,8 @@ export class SecureMessagePage implements OnDestroy {
         created_date: toISOString(),
         id: '',
         type: 'patron',
-        id_field: SecureMessagingMainService.GetSecureMessagesAuthInfo().id_field,
-        id_value: SecureMessagingMainService.GetSecureMessagesAuthInfo().id_value,
+        id_field: SecureMessagingService.GetSecureMessagesAuthInfo().id_field,
+        id_value: SecureMessagingService.GetSecureMessagesAuthInfo().id_value,
         name: DataCache.getUserInfo().firstName + ' ' + DataCache.getUserInfo().lastName,
         aux_user_id: null,
         version: 1,
@@ -684,7 +684,7 @@ export class SecureMessagePage implements OnDestroy {
     /// > 1 day (Yesterday at xx:xx AM/PM)
     if (today.getDate() - sentDate.getDate() >= 1) {
       // tslint:disable-next-line:quotemark
-      return this.datePipe.transform(sentDate, "'Yesterday at ' h:mm a'");
+      return this.datePipe.transform(sentDate, '\'Yesterday at \' h:mm a\'');
     }
 
     /// > 5 minutes (xx:xx AM/PM)

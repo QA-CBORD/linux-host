@@ -4,8 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 
 import { SecureMessagePage } from './secure-message.page';
-import { SecureMessagingMainService } from './service';
 import { SecureMessagingService } from './service';
+import { SecureMessagingApiService } from './service';
 import { SecureMessageRoutingModule } from './secure-message-routing.module';
 
 const declarations = [
@@ -13,8 +13,8 @@ const declarations = [
 ];
 
 const providers: Provider[] = [
-    SecureMessagingMainService,
-    SecureMessagingService
+    SecureMessagingService,
+    SecureMessagingApiService
 ];
 
 const imports = [

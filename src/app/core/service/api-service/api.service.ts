@@ -6,7 +6,6 @@ import { subscribeOn, observeOn, timeout } from 'rxjs/operators';
 import { async } from 'rxjs/internal/scheduler/async';
 import { queue } from 'rxjs/internal/scheduler/queue';
 
-import { Logger } from 'src/app/core/utils/logger';
 import { Environment } from 'src/app/environment';
 
 export enum RestCallType {
@@ -141,7 +140,6 @@ export class APIService {
               observer.next(response);
             },
             (error: any) => {
-              Logger.log('e', 'RX Error', error);
               if (error.status === 401) {
                 /// AUTHENTICATION ERROR, HANDLE WHEN WE KNOW HOW
                 this.handleAuthenticationError(error);

@@ -10,7 +10,6 @@ import { ExceptionPayload } from './core/model/exception/exception.model';
 import { DataCache } from './core/utils/data-cache';
 import { from, of, fromEvent, Subscription } from 'rxjs';
 import { switchMap, tap, take, map } from 'rxjs/operators';
-import { Logger } from './core/utils/logger';
 import { Environment } from './environment';
 import { ExceptionProvider } from './core/provider/exception-provider/exception.provider';
 import { NAVIGATE } from './app.global';
@@ -40,7 +39,7 @@ export class AppComponent implements OnDestroy {
     private readonly alertCtrl: AlertController,
     private readonly testProvider: TestProvider,
     private readonly authService: AuthService,
-    private readonly userService: UserService
+    private readonly userService: UserService,
   ) {
     this.initializeApp();
   }
@@ -69,13 +68,12 @@ export class AppComponent implements OnDestroy {
                 const isString = typeof iframeUrl === 'string';
 
                 return !isString ? '' : iframeUrl.split('#')[1];
-              })
+              }),
             );
           }
-        })
+        }),
       )
       .subscribe((hash: string) => {
-        Logger.setLoggingEnabled(Environment.isDevelopmentEnvironment(location.href));
         Environment.setEnvironmentViaURL(location.href);
         this.parseHashParameters(hash);
 
@@ -109,7 +107,7 @@ export class AppComponent implements OnDestroy {
             },
           },
         });
-      }
+      },
     );
 
     this.sourceSubscription.add(subscription);
@@ -182,7 +180,7 @@ export class AppComponent implements OnDestroy {
                 },
               },
             });
-          }
+          },
         );
     } else {
       /// no session sharing token sent via URL
@@ -228,7 +226,7 @@ export class AppComponent implements OnDestroy {
               },
             },
           });
-        }
+        },
       );
   }
 
@@ -247,10 +245,10 @@ export class AppComponent implements OnDestroy {
 
   private subscribeToEvents() {
     const loaderSubscription = this.events.subscribe(Globals.Events.LOADER_SHOW, loaderInfo =>
-      this.showLoader(loaderInfo)
+      this.showLoader(loaderInfo),
     );
     const exceptionSubscription = this.events.subscribe(Globals.Events.EXCEPTION_SHOW, exceptionPayload =>
-      this.presentException(exceptionPayload)
+      this.presentException(exceptionPayload),
     );
 
     this.sourceSubscription.add(loaderSubscription);
