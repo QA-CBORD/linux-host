@@ -7,23 +7,29 @@ import { SecureMessagePage } from './secure-message.page';
 import { SecureMessagingService } from './service';
 import { SecureMessagingApiService } from './service';
 import { SecureMessageRoutingModule } from './secure-message-routing.module';
+import { SecureMessagePopoverComponent } from './secure-message-popover';
+import { SharedModule } from '../../shared/shared.module';
 
 const declarations = [
-    SecureMessagePage
+  SecureMessagePage,
+  SecureMessagePopoverComponent,
 ];
 
 const providers: Provider[] = [
-    SecureMessagingService,
-    SecureMessagingApiService
+  SecureMessagingService,
+  SecureMessagingApiService,
 ];
 
 const imports = [
-    CommonModule,
-    FormsModule,
-    IonicModule,
-    SecureMessageRoutingModule
+  CommonModule,
+  SharedModule,
+  FormsModule,
+  IonicModule,
+  SecureMessageRoutingModule,
 ];
 
-@NgModule({ imports, providers, declarations })
+const entryComponents = [SecureMessagePopoverComponent];
+
+@NgModule({ imports, providers, declarations, entryComponents })
 export class SecureMessagePageModule {
 }

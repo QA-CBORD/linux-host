@@ -1,0 +1,9 @@
+@import 'tools';
+
+:host {
+	.sm-popover {
+		&__content {
+			margin-bottom: 10px;
+		}
+	}
+}

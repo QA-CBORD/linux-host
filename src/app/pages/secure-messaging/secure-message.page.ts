@@ -1,17 +1,16 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnDestroy, ViewChild } from '@angular/core';
-import { Events, Platform } from '@ionic/angular';
+import { Events, Platform, PopoverController } from '@ionic/angular';
 
 import { fromEvent, Subscription } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
-import { ExceptionProvider } from '../../core/provider/exception-provider/exception.provider';
 import { SecureMessagingService } from './service';
-
-import * as Globals from '../../app.global';
 import { DataCache } from '../../core/utils/data-cache';
 import { LoadingService } from '../../core/service/loading/loading.service';
 import { getTime, toISOString, toLocaleString, determineDate } from '../../core/utils/date-helper';
+import { BUTTON_TYPE } from '../../core/utils/buttons.config';
+import { SecureMessagePopoverComponent } from './secure-message-popover';
 import {
   SecureMessageConversation,
   SecureMessageGroupInfo,
@@ -45,6 +44,7 @@ export class SecureMessagePage implements OnDestroy {
     private datePipe: DatePipe,
     private secureMessagingService: SecureMessagingService,
     private readonly loading: LoadingService,
+    private readonly popoverCtrl: PopoverController,
   ) {
     this.platform.ready().then(this.initComponent.bind(this));
   }
@@ -94,21 +94,7 @@ export class SecureMessagePage implements OnDestroy {
         },
         error => {
           this.loading.closeSpinner();
-          ExceptionProvider.showException(this.events, {
-            displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
-            messageInfo: {
-              title: Globals.Exception.Strings.TITLE,
-              message: error,
-              positiveButtonTitle: 'RETRY',
-              positiveButtonHandler: () => {
-                this.initializePage();
-              },
-              negativeButtonTitle: 'CLOSE',
-              negativeButtonHandler: () => {
-                // TODO: this.platform.exitApp();
-              },
-            },
-          });
+          this.modalHandler(error, this.initializePage.bind(this));
         },
       );
 
@@ -330,7 +316,7 @@ export class SecureMessagePage implements OnDestroy {
    * click listener to send message
    */
   onClickSendButton() {
-    if (this.newMessageText && this.newMessageText.trim().length > 0) {
+    if (this.newMessageText && this.newMessageText.trim().length) {
       this.sendMessage(this.createNewMessageSendBody(this.newMessageText));
     }
   }
@@ -381,25 +367,10 @@ export class SecureMessagePage implements OnDestroy {
     this.newMessageText = null;
 
     const subscription = this.secureMessagingService.sendSecureMessage(message).subscribe(
+      () => this.addMessageToLocalConversation(message),
       () => {
-        this.addMessageToLocalConversation(message);
-      },
-      () => {
-        ExceptionProvider.showException(this.events, {
-          displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
-          messageInfo: {
-            title: Globals.Exception.Strings.TITLE,
-            message: 'Unable to verify your user information',
-            positiveButtonTitle: 'RETRY',
-            positiveButtonHandler: () => {
-              this.sendMessage(message);
-            },
-            negativeButtonTitle: 'CLOSE',
-            negativeButtonHandler: () => {
-              // TODO: this.platform.exitApp();
-            },
-          },
-        });
+        const error = { message: 'Unable to verify your user information' };
+        this.modalHandler(error, this.sendMessage.bind(this, message));
       },
     );
 
@@ -700,5 +671,29 @@ export class SecureMessagePage implements OnDestroy {
 
     /// < 1 minute (Now)
     return 'Now';
+  }
+
+  async modalHandler(res, cb) {
+    const popover = await this.popoverCtrl.create({
+      component: SecureMessagePopoverComponent,
+      componentProps: {
+        data: res,
+      },
+      animated: false,
+      backdropDismiss: true,
+    });
+
+    popover.onDidDismiss()
+      .then(({ role }) => {
+        if (role === BUTTON_TYPE.CLOSE) {
+          //TODO: this.platform.exitApp();
+        }
+
+        if (role === BUTTON_TYPE.RETRY) {
+          cb();
+        }
+      });
+
+    return await popover.present();
   }
 }
