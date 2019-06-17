@@ -64,6 +64,11 @@ export class ListItemComponent {
     if (this.preventOpenPopover()) {
       return;
     }
+    
+    if(this.isLevelsEnv && type === PopupTypes.SCAN){
+      const historyItemId = this.rewardsService.extractFromHistoryByRewardId(data.id) || data.id;
+      data = {...data, id: historyItemId}
+    }
 
     const popover = await this.popoverCtrl.create({
       component: RewardsPopoverComponent,
