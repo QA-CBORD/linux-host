@@ -159,8 +159,8 @@ export class RewardsService {
     return this.content[name] || '';
   }
 
-  extractFromHistoryByRewardId(rewardId: string){
-    return this._rewardHistory.find(item => item.rewardId === rewardId);    
+  extractFromHistoryByRewardId(rewardId: string): UserFulfillmentActivityInfo {
+    return this._rewardHistory.find(item => item.rewardId === rewardId);
   }
 
   private extractFromHistoryByStatus(

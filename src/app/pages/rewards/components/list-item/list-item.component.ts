@@ -64,10 +64,10 @@ export class ListItemComponent {
     if (this.preventOpenPopover()) {
       return;
     }
-    
-    if(this.isLevelsEnv && type === PopupTypes.SCAN){
-      const historyItemId = this.rewardsService.extractFromHistoryByRewardId(data.id) || data.id;
-      data = {...data, id: historyItemId}
+
+    if (this.isLevelsEnv && type === PopupTypes.SCAN) {
+      const historyItemId = this.rewardsService.extractFromHistoryByRewardId(data.id).id || data.id;
+      data = { ...data, id: historyItemId };
     }
 
     const popover = await this.popoverCtrl.create({
@@ -91,7 +91,10 @@ export class ListItemComponent {
           .subscribe(res => {
             const type = res.status === CLAIM_STATUS.claimed ? PopupTypes.SCAN : PopupTypes.SUCCESS;
 
-            this.openPopover({ ...res, shortDescription: this.item.shortDescription, description: this.item.description }, type);
+            this.openPopover(
+              { ...res, shortDescription: this.item.shortDescription, description: this.item.description },
+              type
+            );
           });
       }
     });
