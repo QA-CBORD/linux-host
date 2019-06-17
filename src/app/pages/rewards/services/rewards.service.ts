@@ -160,7 +160,7 @@ export class RewardsService {
   }
 
   extractFromHistoryByRewardId(rewardId: string): UserFulfillmentActivityInfo {
-    return this._rewardHistory.find(item => item.rewardId === rewardId);
+    return this.rewardHistoryList.find(item => item.rewardId === rewardId);
   }
 
   private extractFromHistoryByStatus(
