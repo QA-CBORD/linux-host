@@ -86,7 +86,7 @@ export class ListItemComponent {
           .subscribe(res => {
             const type = res.status === CLAIM_STATUS.claimed ? PopupTypes.SCAN : PopupTypes.SUCCESS;
 
-            this.openPopover(this.item, type);
+            this.openPopover({ ...res, shortDescription: this.item.shortDescription, description: this.item.description }, type);
           });
       }
     });
