@@ -11,12 +11,8 @@ import { LoadingService } from '../../core/service/loading/loading.service';
 import { getTime, toISOString, toLocaleString, determineDate } from '../../core/utils/date-helper';
 import { BUTTON_TYPE } from '../../core/utils/buttons.config';
 import { SecureMessagePopoverComponent } from './secure-message-popover';
-import {
-  SecureMessageConversation,
-  SecureMessageGroupInfo,
-  SecureMessageInfo,
-  SecureMessageSendBody,
-} from './models';
+import * as Globals from '../../app.global';
+import { SecureMessageConversation, SecureMessageGroupInfo, SecureMessageInfo, SecureMessageSendBody } from './models';
 
 @Component({
   selector: 'st-secure-message',
@@ -44,7 +40,7 @@ export class SecureMessagePage implements OnDestroy {
     private datePipe: DatePipe,
     private secureMessagingService: SecureMessagingService,
     private readonly loading: LoadingService,
-    private readonly popoverCtrl: PopoverController,
+    private readonly popoverCtrl: PopoverController
   ) {
     this.platform.ready().then(this.initComponent.bind(this));
   }
@@ -94,8 +90,8 @@ export class SecureMessagePage implements OnDestroy {
         },
         error => {
           this.loading.closeSpinner();
-          this.modalHandler(error, this.initializePage.bind(this));
-        },
+          this.modalHandler({ ...error, title: Globals.Exception.Strings.TITLE }, this.initializePage.bind(this));
+        }
       );
 
     this.sourceSubscription.add(subscription);
@@ -119,7 +115,7 @@ export class SecureMessagePage implements OnDestroy {
       },
       error => {
         /// only deal with connection error ?
-      },
+      }
     );
 
     this.sourceSubscription.add(subscription);
@@ -369,9 +365,9 @@ export class SecureMessagePage implements OnDestroy {
     const subscription = this.secureMessagingService.sendSecureMessage(message).subscribe(
       () => this.addMessageToLocalConversation(message),
       () => {
-        const error = { message: 'Unable to verify your user information' };
+        const error = { message: 'Unable to verify your user information', title: Globals.Exception.Strings.TITLE };
         this.modalHandler(error, this.sendMessage.bind(this, message));
-      },
+      }
     );
 
     this.sourceSubscription.add(subscription);
@@ -655,7 +651,7 @@ export class SecureMessagePage implements OnDestroy {
     /// > 1 day (Yesterday at xx:xx AM/PM)
     if (today.getDate() - sentDate.getDate() >= 1) {
       // tslint:disable-next-line:quotemark
-      return this.datePipe.transform(sentDate, '\'Yesterday at \' h:mm a\'');
+      return this.datePipe.transform(sentDate, "'Yesterday at ' h:mm a'");
     }
 
     /// > 5 minutes (xx:xx AM/PM)
@@ -683,16 +679,15 @@ export class SecureMessagePage implements OnDestroy {
       backdropDismiss: true,
     });
 
-    popover.onDidDismiss()
-      .then(({ role }) => {
-        if (role === BUTTON_TYPE.CLOSE) {
-          //TODO: this.platform.exitApp();
-        }
+    popover.onDidDismiss().then(({ role }) => {
+      if (role === BUTTON_TYPE.CLOSE) {
+        //TODO: this.platform.exitApp();
+      }
 
-        if (role === BUTTON_TYPE.RETRY) {
-          cb();
-        }
-      });
+      if (role === BUTTON_TYPE.RETRY) {
+        cb();
+      }
+    });
 
     return await popover.present();
   }

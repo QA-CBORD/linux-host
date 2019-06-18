@@ -2,20 +2,20 @@ import { Component, OnDestroy } from '@angular/core';
 
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
-import { AlertController, Events, LoadingController, Platform } from '@ionic/angular';
+import { AlertController, Events, LoadingController, Platform, PopoverController } from '@ionic/angular';
 
 import { Router } from '@angular/router';
 import * as Globals from './app.global';
-import { ExceptionPayload } from './core/model/exception/exception.model';
 import { DataCache } from './core/utils/data-cache';
 import { from, of, fromEvent, Subscription } from 'rxjs';
 import { switchMap, tap, take, map } from 'rxjs/operators';
 import { Environment } from './environment';
-import { ExceptionProvider } from './core/provider/exception-provider/exception.provider';
 import { NAVIGATE } from './app.global';
 import { TestProvider } from './core/provider/test-provider/test.provider';
 import { AuthService } from './core/service/auth-service/auth.service';
 import { UserService } from './core/service/user-service/user.service';
+import { BUTTON_TYPE } from './core/utils/buttons.config';
+import { StGlobalPopoverComponent } from './shared/ui-components/st-global-popover';
 
 @Component({
   selector: 'app-root',
@@ -40,6 +40,7 @@ export class AppComponent implements OnDestroy {
     private readonly testProvider: TestProvider,
     private readonly authService: AuthService,
     private readonly userService: UserService,
+    private readonly popoverCtrl: PopoverController
   ) {
     this.initializeApp();
   }
@@ -68,46 +69,35 @@ export class AppComponent implements OnDestroy {
                 const isString = typeof iframeUrl === 'string';
 
                 return !isString ? '' : iframeUrl.split('#')[1];
-              }),
+              })
             );
           }
-        }),
+        })
       )
       .subscribe((hash: string) => {
         Environment.setEnvironmentViaURL(location.href);
-        this.parseHashParameters(hash);
+        // this.parseHashParameters(hash);
 
         /// now perform normal page logic
-        this.handleSessionToken();
+        // this.handleSessionToken();
 
-        // this.testGetSession();
+        this.testGetSession();
       });
     this.sourceSubscription.add(subscription);
   }
 
   private testGetSession() {
     const subscription = this.testProvider.getTestUser().subscribe(
-      success => {
+      () => {
         this.destinationPage = NAVIGATE.secureMessage;
         this.getUserInfo();
       },
       error => {
-        ExceptionProvider.showException(this.events, {
-          displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
-          messageInfo: {
-            title: 'Error getting test user',
-            message: error,
-            positiveButtonTitle: 'RETRY',
-            positiveButtonHandler: () => {
-              this.testGetSession();
-            },
-            negativeButtonTitle: 'CLOSE',
-            negativeButtonHandler: () => {
-              // TODO: this.platform.exitApp();
-            },
-          },
-        });
-      },
+        this.modalHandler(
+          { ...error, title: 'Error getting test user', isRetryBtnExist: true },
+          this.testGetSession.bind(this)
+        );
+      }
     );
 
     this.sourceSubscription.add(subscription);
@@ -143,60 +133,37 @@ export class AppComponent implements OnDestroy {
         .subscribe(
           newSessionId => {
             if (newSessionId.length <= 0) {
-              ExceptionProvider.showException(this.events, {
-                displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
-                messageInfo: {
-                  title: Globals.Exception.Strings.TITLE,
-                  message: 'We were unable to verify your credentials',
-                  positiveButtonTitle: 'RETRY',
-                  positiveButtonHandler: () => {
-                    this.handleSessionToken();
-                  },
-                  negativeButtonTitle: 'CLOSE',
-                  negativeButtonHandler: () => {
-                    // TODO: this.platform.exitApp();
-                  },
-                },
-              });
+              const error = {
+                title: Globals.Exception.Strings.TITLE,
+                message: 'We were unable to verify your credentials',
+                isRetryBtnExist: true,
+              };
+              this.modalHandler(error, this.handleSessionToken.bind(this));
               return;
             }
             /// set session id for services base and get the user info for caching
             DataCache.setSessionId(newSessionId);
             this.getUserInfo();
           },
-          error => {
-            ExceptionProvider.showException(this.events, {
-              displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
-              messageInfo: {
-                title: Globals.Exception.Strings.TITLE,
-                message: 'We were unable to verify your credentials',
-                positiveButtonTitle: 'RETRY',
-                positiveButtonHandler: () => {
-                  this.handleSessionToken();
-                },
-                negativeButtonTitle: 'CLOSE',
-                negativeButtonHandler: () => {
-                  // TODO: this.platform.exitApp();
-                },
-              },
-            });
-          },
+          () => {
+            const exceptionObj = {
+              title: Globals.Exception.Strings.TITLE,
+              message: 'We were unable to verify your credentials',
+              isRetryBtnExist: true,
+            };
+            this.modalHandler(exceptionObj, this.handleSessionToken.bind(this));
+          }
         );
     } else {
       /// no session sharing token sent via URL
       /// show no session error or redirect back natively or something
       /// use proper method to parse the message and determine proper message
-      ExceptionProvider.showException(this.events, {
-        displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
-        messageInfo: {
-          title: Globals.Exception.Strings.TITLE,
-          message: 'Handling session response and the session data is null',
-          positiveButtonTitle: 'CLOSE',
-          positiveButtonHandler: () => {
-            // TODO: this.platform.exitApp();
-          },
-        },
-      });
+      const exceptionObj = {
+        title: Globals.Exception.Strings.TITLE,
+        message: 'Handling session response and the session data is null',
+        isRetryBtnExist: false,
+      };
+      this.modalHandler(exceptionObj, this.handleSessionToken.bind(this));
     }
   }
 
@@ -210,23 +177,14 @@ export class AppComponent implements OnDestroy {
           DataCache.setInstitutionId(data.institutionId);
           this.handlePageNavigation();
         },
-        error => {
-          ExceptionProvider.showException(this.events, {
-            displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
-            messageInfo: {
-              title: Globals.Exception.Strings.TITLE,
-              message: 'Unable to verify your user information',
-              positiveButtonTitle: 'RETRY',
-              positiveButtonHandler: () => {
-                this.handleSessionToken();
-              },
-              negativeButtonTitle: 'CLOSE',
-              negativeButtonHandler: () => {
-                // TODO: this.platform.exitApp();
-              },
-            },
-          });
-        },
+        () => {
+          const exceptionObj = {
+            title: Globals.Exception.Strings.TITLE,
+            message: 'Unable to verify your user information',
+            isRetryBtnExist: true,
+          };
+          this.modalHandler(exceptionObj, this.handleSessionToken.bind(this));
+        }
       );
   }
 
@@ -245,89 +203,10 @@ export class AppComponent implements OnDestroy {
 
   private subscribeToEvents() {
     const loaderSubscription = this.events.subscribe(Globals.Events.LOADER_SHOW, loaderInfo =>
-      this.showLoader(loaderInfo),
-    );
-    const exceptionSubscription = this.events.subscribe(Globals.Events.EXCEPTION_SHOW, exceptionPayload =>
-      this.presentException(exceptionPayload),
+      this.showLoader(loaderInfo)
     );
 
     this.sourceSubscription.add(loaderSubscription);
-    this.sourceSubscription.add(exceptionSubscription);
-  }
-
-  //XXX - EXEPTIONS HANDLERS
-
-  presentException(exceptionPayload: ExceptionPayload) {
-    switch (exceptionPayload.displayOptions) {
-      case Globals.Exception.DisplayOptions.ONE_BUTTON:
-        this.presentOneButtonAlert(exceptionPayload.messageInfo);
-        break;
-      case Globals.Exception.DisplayOptions.TWO_BUTTON:
-        this.presentTwoButtonAlert(exceptionPayload.messageInfo);
-        break;
-      case Globals.Exception.DisplayOptions.THREE_BUTTON:
-        this.presentThreeButtonAlert(exceptionPayload.messageInfo);
-        break;
-    }
-  }
-
-  async presentOneButtonAlert(alertOneButtonInfo) {
-    const alert = await this.alertCtrl.create({
-      header: alertOneButtonInfo.title,
-      message: alertOneButtonInfo.message,
-      backdropDismiss: false,
-      buttons: [
-        {
-          text: alertOneButtonInfo.positiveButtonTitle,
-          handler: alertOneButtonInfo.positiveButtonHandler,
-        },
-      ],
-    });
-    alert.present();
-  }
-
-  async presentTwoButtonAlert(alertTwoButtonInfo) {
-    const alert = await this.alertCtrl.create({
-      header: alertTwoButtonInfo.title,
-      message: alertTwoButtonInfo.message,
-      backdropDismiss: false,
-      buttons: [
-        {
-          text: alertTwoButtonInfo.negativeButtonTitle,
-          role: 'cancel',
-          handler: alertTwoButtonInfo.negativeButtonHandler,
-        },
-        {
-          text: alertTwoButtonInfo.positiveButtonTitle,
-          handler: alertTwoButtonInfo.positiveButtonHandler,
-        },
-      ],
-    });
-    alert.present();
-  }
-
-  async presentThreeButtonAlert(alertThreeButtonInfo) {
-    const alert = await this.alertCtrl.create({
-      header: alertThreeButtonInfo.title,
-      message: alertThreeButtonInfo.message,
-      backdropDismiss: false,
-      buttons: [
-        {
-          text: alertThreeButtonInfo.negativeButtonTitle,
-          role: 'cancel',
-          handler: alertThreeButtonInfo.negativeButtonHandler,
-        },
-        {
-          text: alertThreeButtonInfo.indifferentButtonTitle,
-          handler: alertThreeButtonInfo.indifferentButtonHandler,
-        },
-        {
-          text: alertThreeButtonInfo.positiveButtonTitle,
-          handler: alertThreeButtonInfo.positiveButtonHandler,
-        },
-      ],
-    });
-    alert.present();
   }
 
   // XXX - remove after rewrite all the places where it was used to. Current version of this functionality LoadingService
@@ -345,5 +224,28 @@ export class AppComponent implements OnDestroy {
         this.loader = null;
       }
     }
+  }
+
+  private async modalHandler(res, cb) {
+    const popover = await this.popoverCtrl.create({
+      component: StGlobalPopoverComponent,
+      componentProps: {
+        data: res,
+      },
+      animated: false,
+      backdropDismiss: true,
+    });
+
+    popover.onDidDismiss().then(({ role }) => {
+      if (role === BUTTON_TYPE.CLOSE) {
+        //TODO: this.platform.exitApp();
+      }
+
+      if (role === BUTTON_TYPE.RETRY) {
+        cb();
+      }
+    });
+
+    return await popover.present();
   }
 }

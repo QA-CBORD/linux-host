@@ -7,14 +7,15 @@ import { IonicModule } from '@ionic/angular';
 import { IonicStorageModule } from '@ionic/storage';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
+import { SharedModule } from './shared/shared.module';
 
 @NgModule({
   declarations: [AppComponent],
-  entryComponents: [],
   imports: [
     CoreModule,
     IonicModule.forRoot(),
     IonicStorageModule.forRoot(),
+    SharedModule,
     AppRoutingModule,
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
   ],

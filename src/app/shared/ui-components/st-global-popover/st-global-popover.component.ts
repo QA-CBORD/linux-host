@@ -3,19 +3,17 @@ import { popoverConfig } from 'src/app/core/model/popover/popover.model';
 import { buttons } from '../../../core/utils/buttons.config';
 
 @Component({
-  selector: 'secure-message-popover',
-  templateUrl: './secure-message-popover.component.html',
-  styleUrls: ['./secure-message-popover.component.scss'],
+  selector: 'st-global-popover',
+  templateUrl: './st-global-popover.component.html',
+  styleUrls: ['./st-global-popover.component.scss'],
 })
-export class SecureMessagePopoverComponent implements OnInit {
+export class StGlobalPopoverComponent implements OnInit {
   @Input() data: any;
 
   popoverConfig: popoverConfig;
   contentString: { [key: string]: string };
 
-  constructor(
-  ) {
-  }
+  constructor() {}
 
   ngOnInit() {
     // this.setContentStrings();
@@ -23,21 +21,22 @@ export class SecureMessagePopoverComponent implements OnInit {
   }
 
   initPopover() {
-    const { message, title } = this.data;
+    const { message, title, isRetryBtnExist } = this.data;
 
     this.popoverConfig = {
       ...this.popoverConfig,
       title,
       message,
-      buttons: this.configureButtons(),
+      buttons: this.configureButtons(isRetryBtnExist),
     };
   }
 
-  configureButtons() {
-    return [
-      { ...buttons.CLOSE, label: 'CLOSE' },
-      { ...buttons.RETRY, label: 'RETRY' },
-    ];
+  configureButtons(isRetryBtnExist) {
+    if (!isRetryBtnExist) {
+      return [{ ...buttons.CLOSE, label: 'CLOSE' }];
+    }
+
+    return [{ ...buttons.CLOSE, label: 'CLOSE' }, { ...buttons.RETRY, label: 'RETRY' }];
   }
 
   // private setContentStrings() {

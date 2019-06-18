@@ -1,5 +1,5 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
-import { Events, Platform, ToastController } from '@ionic/angular';
+import { Events, Platform } from '@ionic/angular';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
 
 import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';

@@ -1,21 +1,21 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SecureMessagePopoverComponent } from './secure-message-popover.component';
+import { StGlobalPopoverComponent } from './st-global-popover.component';
 
-describe('SecureMessagePopoverComponent', () => {
-  let component: SecureMessagePopoverComponent;
-  let fixture: ComponentFixture<SecureMessagePopoverComponent>;
+describe('StGlobalPopoverComponent', () => {
+  let component: StGlobalPopoverComponent;
+  let fixture: ComponentFixture<StGlobalPopoverComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [SecureMessagePopoverComponent],
+      declarations: [StGlobalPopoverComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SecureMessagePopoverComponent);
+    fixture = TestBed.createComponent(StGlobalPopoverComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

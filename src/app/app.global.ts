@@ -43,8 +43,6 @@ export class Events {
   static readonly SIDEMENU_UPDATE = 'data:navigationMenu:updated';
   static readonly SIDEPANE_ENABLE = 'state:navigationMenu:visibility';
 
-  static readonly EXCEPTION_SHOW = 'state:exceptionShow:visibility';
-
   static readonly LOADER_SHOW = 'state:loader:visibility';
 }
 

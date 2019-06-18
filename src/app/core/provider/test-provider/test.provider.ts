@@ -1,22 +1,17 @@
 import { Injectable } from '@angular/core';
-import { Events } from '@ionic/angular';
-
-import { Observable } from 'rxjs';
 
 import { AuthService } from '../../service/auth-service/auth.service';
-
-import * as Globals from '../../../app.global';
-
-import { UserLogin } from '../../model/user';
-import { ExceptionProvider } from '../exception-provider/exception.provider';
 import { DataCache } from '../../utils/data-cache';
-import { catchError, tap } from 'rxjs/operators';
+import { UserLogin } from '../../model/user';
+
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TestProvider {
-  constructor(private events: Events, private authService: AuthService) {}
+  constructor(private authService: AuthService) {}
 
   /**
    *  Get Session Info using testing user credentials in Develpment
@@ -57,28 +52,6 @@ export class TestProvider {
       institutionId: 'ec1307c4-d59e-4981-b5f9-860e23229a0d',
     };
 
-    return this.authService.authenticateUser(gold7).pipe(
-      tap(newSessionId => DataCache.setSessionId(newSessionId)),
-      catchError(error => {
-        /// error show exception
-        ExceptionProvider.showException(this.events, {
-          displayOptions: Globals.Exception.DisplayOptions.TWO_BUTTON,
-          messageInfo: {
-            title: 'No session created',
-            message: error,
-            positiveButtonTitle: 'RETRY',
-            positiveButtonHandler: () => {
-              this.getTestUser();
-            },
-            negativeButtonTitle: 'CLOSE',
-            negativeButtonHandler: () => {
-              // this.platform.exitApp();
-            },
-          },
-        });
-
-        throw new Error(error);
-      })
-    );
+    return this.authService.authenticateUser(gold7).pipe(tap(newSessionId => DataCache.setSessionId(newSessionId)));
   }
 }

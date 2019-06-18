@@ -8,7 +8,7 @@ import { StCountdownComponent } from './st-countdown/st-countdown.component';
 import { StPopoverLayoutComponent } from './st-popover-layout/st-popover-layout.component';
 import { StNavTabsComponent } from './st-nav-tabs/st-nav-tabs.component';
 import { StProgressBarComponent } from './st-progress-bar/st-progress-bar.component';
-
+import { StGlobalPopoverComponent } from './st-global-popover';
 const components = [
   StHeaderComponent,
   StSpinnerComponent,
@@ -16,11 +16,15 @@ const components = [
   StPopoverLayoutComponent,
   StNavTabsComponent,
   StProgressBarComponent,
+  StGlobalPopoverComponent,
 ];
+
+const entryComponents = [StGlobalPopoverComponent];
 
 @NgModule({
   imports: [CommonModule, IonicModule],
   declarations: [...components],
+  entryComponents,
   exports: [...components],
 })
 export class UiComponentsModule {}
