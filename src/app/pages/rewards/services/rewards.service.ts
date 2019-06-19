@@ -134,7 +134,7 @@ export class RewardsService {
   }
 
   getStoreActiveRewards(): Observable<UserFulfillmentActivityInfo[]> {
-    return zip(this.rewardTrack, this.rewardHistory).pipe(
+    return combineLatest(this.rewardTrack, this.rewardHistory).pipe(
       map(([{ redeemableRewards }, rewardHistory]) =>
         this.extractFromHistoryByStatus(rewardHistory, redeemableRewards, CLAIM_STATUS.claimed, false)
       )

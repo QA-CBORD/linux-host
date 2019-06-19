@@ -54,13 +54,33 @@ export class ListItemComponent {
     return this.environment === 'levels';
   }
 
+  get isClaimed(): boolean {
+    return this.item.claimStatus === CLAIM_STATUS.claimed;
+  }
+
+  get isReceived(): boolean {
+    return this.item.claimStatus === CLAIM_STATUS.received;
+  }
+
+  get isEarned(): boolean {
+    return this.item.claimStatus === CLAIM_STATUS.earned;
+  }
+
+  get isUnearned(): boolean {
+    return this.item.claimStatus === CLAIM_STATUS.earned;
+  }
+
   get listItemScoreValue() {
     return this.item['rewardLevel']
       ? `${this.contentString.levelLabel} ${this.item['rewardLevel']}`
       : `${this.item['pointsSpent'] || this.item['pointCost'] || 0} ${this.contentString.pointsCostLabel}`;
   }
 
-  async openPopover(data, type: string = this.defaultPopoverAction(data.claimStatus)) {
+  get isLowerThenCurrentLevel(): boolean {
+    return this.item.claimLevel <= this.userLevel;
+  }
+
+  async openPopover(data: RedeemableRewardInfo, type: PopupTypes = this.defaultPopoverAction(data.claimStatus)) {
     if (this.preventOpenPopover()) {
       return;
     }
@@ -80,30 +100,31 @@ export class ListItemComponent {
       backdropDismiss: true,
     });
 
-    popover.onDidDismiss().then(({ role }) => {
-      if (role === BUTTON_TYPE.REDEEM || role === BUTTON_TYPE.CLAIM) {
-        this.rewardsApi
-          .claimReward(this.item.id)
-          .pipe(
-            switchMap(res => this.refreshData().pipe(map(() => res))),
-            take(1)
-          )
-          .subscribe(res => {
-            const type = res.status === CLAIM_STATUS.claimed ? PopupTypes.SCAN : PopupTypes.SUCCESS;
-
-            this.openPopover(
-              { ...res, shortDescription: this.item.shortDescription, description: this.item.description },
-              type
-            );
-          });
-      }
-    });
+    popover.onDidDismiss().then(({ role }) => this.onDismissPopoverHandler(role as BUTTON_TYPE, type));
 
     return await popover.present();
   }
 
-  isLowerThenCurrentLevel(item): boolean {
-    return item.claimLevel <= this.userLevel;
+  private onDismissPopoverHandler(role: BUTTON_TYPE, type: PopupTypes) {
+    if (role === BUTTON_TYPE.CLOSE && type === PopupTypes.SCAN) {
+      this.rewardsService.getUserRewardHistoryInfo().subscribe();
+    }
+    if (role === BUTTON_TYPE.REDEEM || role === BUTTON_TYPE.CLAIM) {
+      this.rewardsApi
+        .claimReward(this.item.id)
+        .pipe(
+          switchMap(res => this.refreshData().pipe(map(() => res))),
+          take(1)
+        )
+        .subscribe(res => {
+          const type = res.status === CLAIM_STATUS.claimed ? PopupTypes.SCAN : PopupTypes.SUCCESS;
+
+          this.openPopover(
+            { ...res, shortDescription: this.item.shortDescription, description: this.item.description },
+            type
+          );
+        });
+    }
   }
 
   private refreshData(): Observable<any> {
@@ -117,7 +138,7 @@ export class ListItemComponent {
     );
   }
 
-  private defaultPopoverAction(claimStatus): string {
+  private defaultPopoverAction(claimStatus): PopupTypes {
     const isUnearnedStatus = claimStatus === CLAIM_STATUS.unearned;
     const isClaimedStatus = claimStatus === CLAIM_STATUS.claimed;
 
