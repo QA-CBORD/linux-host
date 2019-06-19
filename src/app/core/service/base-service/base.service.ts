@@ -88,7 +88,7 @@ export class BaseService {
   }
 
   protected determineErrorByCodeAndThrow(code: string, message: string) {
-    const newError = new Error('Unexpected error occured.');
+    const newError = new Error('Unexpected error occurred.');
     switch (code) {
       case '9999':
         newError.name = 'CannotParseResponseException';
