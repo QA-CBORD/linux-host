@@ -6,7 +6,7 @@ import { RewardsApiService, RewardsService } from '../../services';
 import { CLAIM_STATUS, CONTENT_STRINGS, LEVEL_STATUS } from '../../rewards.config';
 import { PopupTypes } from '../../rewards.config';
 import { catchError, map, switchMap, take, tap } from 'rxjs/operators';
-import { Observable, throwError } from 'rxjs';
+import { Observable, pipe, throwError } from 'rxjs';
 import { LoadingService } from '../../../../core/service/loading/loading.service';
 import { BUTTON_TYPE } from '../../../../core/utils/buttons.config';
 
@@ -107,7 +107,10 @@ export class ListItemComponent {
 
   private onDismissPopoverHandler(role: BUTTON_TYPE, type: PopupTypes) {
     if (role === BUTTON_TYPE.CLOSE && type === PopupTypes.SCAN) {
-      this.rewardsService.getUserRewardHistoryInfo().subscribe();
+      this.rewardsService
+        .getUserRewardHistoryInfo()
+        .pipe(take(1))
+        .subscribe();
     }
     if (role === BUTTON_TYPE.REDEEM || role === BUTTON_TYPE.CLAIM) {
       this.rewardsApi
