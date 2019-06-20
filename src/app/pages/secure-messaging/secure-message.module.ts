@@ -9,10 +9,14 @@ import { SecureMessagingApiService } from './service';
 import { SecureMessageRoutingModule } from './secure-message-routing.module';
 import { SecureMessagePopoverComponent } from './secure-message-popover';
 import { SharedModule } from '../../shared/shared.module';
+import { MessageDatePipe } from './pipes/message-date.pipe';
+import { ConversationDatePipe } from './pipes/conversation-date.pipe';
 
 const declarations = [
   SecureMessagePage,
   SecureMessagePopoverComponent,
+  MessageDatePipe,
+  ConversationDatePipe
 ];
 
 const providers: Provider[] = [

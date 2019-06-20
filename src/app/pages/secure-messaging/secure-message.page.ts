@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common';
 import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { Events, Platform, PopoverController } from '@ionic/angular';
 
@@ -37,10 +36,9 @@ export class SecureMessagePage implements OnDestroy {
   constructor(
     private platform: Platform,
     private events: Events,
-    private datePipe: DatePipe,
     private secureMessagingService: SecureMessagingService,
     private readonly loading: LoadingService,
-    private readonly popoverCtrl: PopoverController
+    private readonly popoverCtrl: PopoverController,
   ) {
     this.platform.ready().then(this.initComponent.bind(this));
   }
@@ -91,7 +89,7 @@ export class SecureMessagePage implements OnDestroy {
         error => {
           this.loading.closeSpinner();
           this.modalHandler({ ...error, title: Globals.Exception.Strings.TITLE }, this.initializePage.bind(this));
-        }
+        },
       );
 
     this.sourceSubscription.add(subscription);
@@ -115,7 +113,7 @@ export class SecureMessagePage implements OnDestroy {
       },
       error => {
         /// only deal with connection error ?
-      }
+      },
     );
 
     this.sourceSubscription.add(subscription);
@@ -151,7 +149,7 @@ export class SecureMessagePage implements OnDestroy {
 
     /// create 'conversations' out of message array
     for (const message of this.messagesArray) {
-      message.sent_date = toLocaleString();
+      message.sent_date = toLocaleString(message.sent_date);
 
       let bNewConversation = true;
 
@@ -367,7 +365,7 @@ export class SecureMessagePage implements OnDestroy {
       () => {
         const error = { message: 'Unable to verify your user information', title: Globals.Exception.Strings.TITLE };
         this.modalHandler(error, this.sendMessage.bind(this, message));
-      }
+      },
     );
 
     this.sourceSubscription.add(subscription);
@@ -534,68 +532,21 @@ export class SecureMessagePage implements OnDestroy {
   }
 
   /**
-   * Get date to place in conversation list item for most recent message in conversation
-   * @param conversation Conversation from list
-   */
-  getConversationDate({ messages }: SecureMessageConversation): string {
-    /// get latest message and get the date string for it
-    return this.getMessageDateShortString(messages[messages.length - 1]);
-  }
-
-  /**
-   * Get short formatted date string for display
-   * @param message Message from conversation
-   */
-  getMessageDateShortString({ sent_date }: SecureMessageInfo): string {
-    const today: Date = determineDate();
-    const sentDate: Date = determineDate(sent_date);
-
-    /// > 1 year (Full timestamp)
-    if (today.getFullYear() > sentDate.getFullYear()) {
-      return this.datePipe.transform(sentDate, 'y');
-    }
-
-    /// > 5 days (<monthAbbv> <date>, xx:xx AM/PM)
-    if (today.getDate() - sentDate.getDate() > 5) {
-      return this.datePipe.transform(sentDate, 'MMM d');
-    }
-
-    /// > 2 days (<dayAbbv> xx:xx AM/PM)
-    if (today.getDate() - sentDate.getDate() >= 1) {
-      return this.datePipe.transform(sentDate, 'E');
-    }
-
-    /// > 30 minutes (xx:xx AM/PM)
-    if (today.getTime() - sentDate.getTime() > 1800000) {
-      return this.datePipe.transform(sentDate, 'h:mm a');
-    }
-
-    /// > 1 minute (x minutes ago)
-    if (today.getTime() - sentDate.getTime() > 60000) {
-      const minutesAgo = Math.round((today.getTime() - sentDate.getTime()) / 60000);
-      return minutesAgo.toString() + ' min';
-    }
-
-    /// < 1 minute (Now)
-    return 'Now';
-  }
-
-  /**
-   * UI Helper method to determine if the group avatar should be shown
-   * (used to group messages visually)
-   * @param conversation conversation data
-   * @param messageIndex index of current message
+   *
+   * @param messages
+   * @param messageIndex
+   * @param messageType
    */
   messageShowAvatar({ messages }: SecureMessageConversation, messageIndex: number, messageType: string): boolean {
-    const isNextMessageFromGroup: boolean = messages[messageIndex + 1].sender.type === messageType;
+    const isNextMessageFromGroup = (): boolean => messages[messageIndex + 1].sender.type === messageType;
     /// first message
     if (messageIndex === 0) {
       /// more than one message && next message from group as well
-      return !(messages.length > 1 && isNextMessageFromGroup);
+      return !(messages.length > 1 && isNextMessageFromGroup());
     }
 
     /// not first message && more messages && next message from group as well
-    return !(messages.length - 1 > messageIndex + 1 && isNextMessageFromGroup);
+    return !(messages.length - 1 > messageIndex + 1 && isNextMessageFromGroup());
   }
 
   /**
@@ -623,50 +574,6 @@ export class SecureMessagePage implements OnDestroy {
       /// more messages
       return !(messages.length - 1 > messageIndex + 1 && isNextMessageFromGroup());
     }
-  }
-
-  /**
-   * Get formatted date string for display in conversation message list items
-   * @param message Message from conversation
-   */
-  getMessageDate({ sent_date }: SecureMessageInfo): string {
-    const today: Date = determineDate();
-    const sentDate: Date = determineDate(sent_date);
-
-    /// > 1 year (Full timestamp)
-    if (today.getFullYear() > sentDate.getFullYear()) {
-      return this.datePipe.transform(sentDate, 'mediumDate');
-    }
-
-    /// > 5 days (<monthAbbv> <date>, xx:xx AM/PM)
-    if (today.getDate() - sentDate.getDate() > 5) {
-      return this.datePipe.transform(sentDate, 'MMM d, h:mm a');
-    }
-
-    /// > 2 days (<dayAbbv> xx:xx AM/PM)
-    if (today.getDate() - sentDate.getDate() >= 2) {
-      return this.datePipe.transform(sentDate, 'E, h:mm a');
-    }
-
-    /// > 1 day (Yesterday at xx:xx AM/PM)
-    if (today.getDate() - sentDate.getDate() >= 1) {
-      // tslint:disable-next-line:quotemark
-      return this.datePipe.transform(sentDate, "'Yesterday at ' h:mm a'");
-    }
-
-    /// > 5 minutes (xx:xx AM/PM)
-    if (today.getTime() - sentDate.getTime() > 300000) {
-      return this.datePipe.transform(sentDate, 'h:mm a');
-    }
-
-    /// > 1 minute (x minutes ago)
-    if (today.getTime() - sentDate.getTime() > 60000) {
-      const minutesAgo = Math.round((today.getTime() - sentDate.getTime()) / 60000);
-      return minutesAgo.toString() + (minutesAgo === 1 ? ' minute ago' : ' minutes ago');
-    }
-
-    /// < 1 minute (Now)
-    return 'Now';
   }
 
   async modalHandler(res, cb) {

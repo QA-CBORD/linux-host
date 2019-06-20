@@ -42,7 +42,7 @@
             <p>{{getConversationDescription(conversation)}}</p>
           </ion-label>
           <div class="text-align-end" style="height: 65%;">
-            <p style="display: inline; font-size: 0.75em;" slot="end">{{getConversationDate(conversation)}}</p>
+            <p style="display: inline; font-size: 0.75em;" slot="end">{{ conversation | conversationDate}}</p>
           </div>
         </ion-item>
       </ion-list>
@@ -101,7 +101,7 @@
                   *ngIf="messageShowDate(selectedConversation, i, 'group')"
                   class="conversation-container__date-wrapper"
                 >
-                  <p class="conversation-container__text-date">{{getMessageDate(message)}}</p>
+                  <p class="conversation-container__text-date">{{ message | messageDate }}</p>
                 </div>
               </ion-col>
               <ion-col no-padding size-xs="1" size-sm="1" size-md="4" size-lg="4" size-xl="4"> </ion-col>
@@ -120,7 +120,7 @@
                   class="conversation-container__date-wrapper ion-text-end"
                 >
                   <p class="conversation-container__text-date" style="padding-right: 16px;">
-                    {{getMessageDate(message)}}
+                    {{message | messageDate}}
                   </p>
                 </div>
               </ion-col>

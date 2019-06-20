@@ -1,0 +1,51 @@
+import { Pipe, PipeTransform } from '@angular/core';
+import { determineDate } from '../../../core/utils/date-helper';
+import { DatePipe } from '@angular/common';
+import { SecureMessageConversation } from '../models';
+
+@Pipe({
+  name: 'conversationDate',
+})
+export class ConversationDatePipe implements PipeTransform {
+
+  constructor(
+    private datePipe: DatePipe,
+  ) {
+
+  }
+
+  transform({ messages }: SecureMessageConversation): any {
+    const today: Date = determineDate();
+    const sentDate: Date = determineDate(messages[messages.length - 1].sent_date);
+
+    /// > 1 year (Full timestamp)
+    if (today.getFullYear() > sentDate.getFullYear()) {
+      return this.datePipe.transform(sentDate, 'y');
+    }
+
+    /// > 5 days (<monthAbbv> <date>, xx:xx AM/PM)
+    if (today.getDate() - sentDate.getDate() > 5) {
+      return this.datePipe.transform(sentDate, 'MMM d');
+    }
+
+    /// > 2 days (<dayAbbv> xx:xx AM/PM)
+    if (today.getDate() - sentDate.getDate() >= 1) {
+      return this.datePipe.transform(sentDate, 'E');
+    }
+
+    /// > 30 minutes (xx:xx AM/PM)
+    if (today.getTime() - sentDate.getTime() > 1800000) {
+      return this.datePipe.transform(sentDate, 'h:mm a');
+    }
+
+    /// > 1 minute (x minutes ago)
+    if (today.getTime() - sentDate.getTime() > 60000) {
+      const minutesAgo = Math.round((today.getTime() - sentDate.getTime()) / 60000);
+      return minutesAgo.toString() + ' min';
+    }
+
+    /// < 1 minute (Now)
+    return 'Now';
+  }
+
+}
