@@ -52,9 +52,10 @@ export class RewardsService {
 
   getHistoryListRewards(): Observable<UserFulfillmentActivityInfo[]> {
     return zip(this.combineAllRewards(), this.rewardHistory).pipe(
-      map(([rewards, rewardHistory]) =>
-        this.extractFromHistoryByStatus(rewardHistory, rewards, CLAIM_STATUS.received, true)
-      )
+      map(([rewards, rewardHistory]) => {
+        const history = this.extractFromHistoryByStatus(rewardHistory, rewards, CLAIM_STATUS.received, true);
+        return this.sortByTime(history);
+      })
     );
   }
 
@@ -224,6 +225,12 @@ export class RewardsService {
   private getExpToNextLevel(levels: UserTrackLevelInfo[], currentLevel: number, currentPoints: number): number | null {
     const nextLevel = levels.find(({ level }) => level === currentLevel);
     return nextLevel.requiredPoints - currentPoints;
+  }
+
+  private sortByTime(activityInfos: UserFulfillmentActivityInfo[]): UserFulfillmentActivityInfo[] {
+    return activityInfos.sort(
+      ({ receivedTime: a }, { receivedTime: b }) => Date.parse(b.toString()) - Date.parse(a.toString())
+    );
   }
 
   private getLevelDescription(
