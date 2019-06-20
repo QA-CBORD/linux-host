@@ -129,6 +129,15 @@
         margin-left: 5%;
         margin-bottom: 0;
       }
+
+      &__avatar-text {
+        position: relative;
+        top: 50%;
+        left: 50%;
+        transform: translate(-20%, -50%);
+        color: white;
+        margin: 0;
+      }
     }
   }
 }
