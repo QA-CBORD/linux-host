@@ -4,15 +4,10 @@ import { DatePipe } from '@angular/common';
 
 @Pipe({
   name: 'messageDate',
-  pure: false
+  pure: false,
 })
 export class MessageDatePipe implements PipeTransform {
-
-  constructor(
-    private datePipe: DatePipe,
-  ) {
-
-  }
+  constructor(private datePipe: DatePipe) {}
 
   transform({ sent_date }: SecureMessageInfo, args?: any): any {
     const today: Date = new Date();
@@ -24,19 +19,19 @@ export class MessageDatePipe implements PipeTransform {
     }
 
     /// > 5 days (<monthAbbv> <date>, xx:xx AM/PM)
-    if (today.getDate() - sentDate.getDate() > 5) {
+    if (today.getTime() - sentDate.getTime() > 432000000) {
       return this.datePipe.transform(sentDate, 'MMM d, h:mm a');
     }
 
     /// > 2 days (<dayAbbv> xx:xx AM/PM)
-    if (today.getDate() - sentDate.getDate() >= 2) {
+    if (today.getTime() - sentDate.getTime() >= 172800000) {
       return this.datePipe.transform(sentDate, 'E, h:mm a');
     }
 
     /// > 1 day (Yesterday at xx:xx AM/PM)
-    if (today.getDate() - sentDate.getDate() >= 1) {
+    if (today.getTime() - sentDate.getTime() >= 86400000) {
       // tslint:disable-next-line:quotemark
-      return this.datePipe.transform(sentDate, '\'Yesterday at \' h:mm a\'');
+      return this.datePipe.transform(sentDate, "'Yesterday at ' h:mm a'");
     }
 
     /// > 5 minutes (xx:xx AM/PM)
