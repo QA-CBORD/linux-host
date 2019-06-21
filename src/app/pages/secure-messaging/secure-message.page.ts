@@ -7,7 +7,6 @@ import { tap } from 'rxjs/operators';
 import { SecureMessagingService } from './service';
 import { DataCache } from '../../core/utils/data-cache';
 import { LoadingService } from '../../core/service/loading/loading.service';
-import { getTime, toISOString, toLocaleString } from '../../core/utils/date-helper';
 import { BUTTON_TYPE } from '../../core/utils/buttons.config';
 import { SecureMessagePopoverComponent } from './secure-message-popover';
 import * as Globals from '../../app.global';
@@ -149,7 +148,7 @@ export class SecureMessagePage implements OnDestroy {
 
     /// create 'conversations' out of message array
     for (const message of this.messagesArray) {
-      message.sent_date = toLocaleString(message.sent_date);
+      message.sent_date = new Date(message.sent_date).toLocaleString();
 
       let bNewConversation = true;
 
@@ -212,7 +211,7 @@ export class SecureMessagePage implements OnDestroy {
 
     this.sortConversations();
 
-    if (!bIsPollingData && (this.conversationsArray.length && this.bIsLargeScreen)) {
+    if (bIsPollingData === false && (this.conversationsArray.length && this.bIsLargeScreen)) {
       /// select first conversation by default
       this.conversationsArray[0].selected = true;
       this.selectedConversation = this.conversationsArray[0];
@@ -377,14 +376,14 @@ export class SecureMessagePage implements OnDestroy {
   private addMessageToLocalConversation({ body }: SecureMessageSendBody) {
     const message: SecureMessageInfo = {
       body,
-      created_date: toLocaleString(),
+      created_date: new Date().toLocaleString(),
       description: '',
       id: null,
       importance: null,
       institution_id: SecureMessagingService.GetSecureMessagesAuthInfo().institution_id,
       read_date: null,
       recipient: {
-        created_date: toISOString(),
+        created_date: new Date().toISOString(),
         id: '',
         type: 'group',
         id_field: null,
@@ -396,7 +395,7 @@ export class SecureMessagePage implements OnDestroy {
       replied_message_id: 'None',
       requires_read_receipt: null,
       sender: {
-        created_date: toISOString(),
+        created_date: new Date().toISOString(),
         id: '',
         type: 'patron',
         id_field: SecureMessagingService.GetSecureMessagesAuthInfo().id_field,
@@ -405,7 +404,7 @@ export class SecureMessagePage implements OnDestroy {
         aux_user_id: null,
         version: 1,
       },
-      sent_date: toLocaleString(),
+      sent_date: new Date().toLocaleString(),
       state: null,
       ttl: null,
       version: 1,
@@ -438,11 +437,11 @@ export class SecureMessagePage implements OnDestroy {
         return -1;
       }
 
-      if (getTime(a.messages[a.messages.length - 1].sent_date) < getTime(b.messages[b.messages.length - 1].sent_date)) {
+      if (new Date(a.messages[a.messages.length - 1].sent_date).getTime() < new Date(b.messages[b.messages.length - 1].sent_date).getTime()) {
         return 1;
       }
 
-      if (getTime(a.messages[a.messages.length - 1].sent_date) > getTime(b.messages[b.messages.length - 1].sent_date)) {
+      if (new Date(a.messages[a.messages.length - 1].sent_date).getTime() > new Date(b.messages[b.messages.length - 1].sent_date).getTime()) {
         return -1;
       }
 
@@ -561,7 +560,9 @@ export class SecureMessagePage implements OnDestroy {
     const isNextMessageFromGroup = (): boolean => {
       //was this message sent within 1 min of the next message:
       const isMessageSentWithinMin: boolean =
-        getTime(messages[messageIndex + 1].sent_date) - getTime(messages[messageIndex].sent_date) < 60000;
+        new Date(messages[messageIndex + 1].sent_date).getTime() -
+        new Date(messages[messageIndex].sent_date).getTime() <
+        60000;
 
       return messages[messageIndex + 1].sender.type === messageType && isMessageSentWithinMin;
     };

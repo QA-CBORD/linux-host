@@ -1,10 +1,10 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { determineDate } from '../../../core/utils/date-helper';
 import { DatePipe } from '@angular/common';
 import { SecureMessageConversation } from '../models';
 
 @Pipe({
   name: 'conversationDate',
+  pure: false
 })
 export class ConversationDatePipe implements PipeTransform {
 
@@ -15,8 +15,8 @@ export class ConversationDatePipe implements PipeTransform {
   }
 
   transform({ messages }: SecureMessageConversation): any {
-    const today: Date = determineDate();
-    const sentDate: Date = determineDate(messages[messages.length - 1].sent_date);
+    const today: Date = new Date();
+    const sentDate: Date = new Date(messages[messages.length - 1].sent_date);
 
     /// > 1 year (Full timestamp)
     if (today.getFullYear() > sentDate.getFullYear()) {
