@@ -29,6 +29,7 @@
         <ion-item
           button
           lines="none"
+          detail="false"
           *ngFor="let conversation of conversationsArray; trackBy: trackConversationsByFn"
           (click)="onClickConversation(conversation)"
           class="conversations-container__group"
