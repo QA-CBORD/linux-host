@@ -89,6 +89,8 @@
       &__text-area-btn {
         width: 3em;
         height: 3em;
+        z-index: 2;
+        position: relative;
       }
 
       &__body-wrapper {
