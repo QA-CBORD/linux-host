@@ -137,7 +137,6 @@
     position: relative;
     max-height: 3.4rem;
     @include font-family($font-nunito-semibold);
-    overflow: hidden;
     word-wrap: break-word;
     word-break: break-word;
   }

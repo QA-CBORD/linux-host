@@ -3,14 +3,15 @@ import { CommonModule } from '@angular/common';
 import { MetersToMilesPipe } from './meters-to-miles.pipe';
 import { SafeHtmlPipe } from './safe-html.pipe';
 import { SafeUrlPipe } from './safe-url.pipe';
+import { TruncatePipe } from './truncate.pipe';
 
 const imports = [CommonModule];
-const declarations = [MetersToMilesPipe, SafeHtmlPipe, SafeUrlPipe];
+const declarations = [MetersToMilesPipe, SafeHtmlPipe, SafeUrlPipe, TruncatePipe];
 const exports = [...declarations];
 
 @NgModule({
   imports,
   declarations,
-  exports,
+  exports
 })
 export class PipesModule {}

@@ -20,7 +20,7 @@
       </ion-card>
       <p class="user-data__location">
         <span [ngClass]="starClass | async" aria-label="star" role="img" (click)="favouriteHandler()"></span>
-        {{ (location$ | async).locationId }} - {{ (location$ | async).name }}
+        {{ (location$ | async).locationId }} - {{ (location$ | async).name | truncate : 40 }}
       </p>
     </ion-card-content>
     <div class="user-data__activate-btn">
