@@ -4,15 +4,10 @@ import { SecureMessageConversation } from '../models';
 
 @Pipe({
   name: 'conversationDate',
-  pure: false
+  pure: false,
 })
 export class ConversationDatePipe implements PipeTransform {
-
-  constructor(
-    private datePipe: DatePipe,
-  ) {
-
-  }
+  constructor(private datePipe: DatePipe) {}
 
   transform({ messages }: SecureMessageConversation): any {
     const today: Date = new Date();
@@ -24,12 +19,12 @@ export class ConversationDatePipe implements PipeTransform {
     }
 
     /// > 5 days (<monthAbbv> <date>, xx:xx AM/PM)
-    if (today.getDate() - sentDate.getDate() > 5) {
+    if (today.getTime() - sentDate.getTime() > 432000000) {
       return this.datePipe.transform(sentDate, 'MMM d');
     }
 
     /// > 2 days (<dayAbbv> xx:xx AM/PM)
-    if (today.getDate() - sentDate.getDate() >= 1) {
+    if (today.getTime() - sentDate.getTime() >= 172800000) {
       return this.datePipe.transform(sentDate, 'E');
     }
 
@@ -47,5 +42,4 @@ export class ConversationDatePipe implements PipeTransform {
     /// < 1 minute (Now)
     return 'Now';
   }
-
 }
