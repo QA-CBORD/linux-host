@@ -1,4 +1,4 @@
-import { Component, OnDestroy, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, ViewChild } from '@angular/core';
 import { Events, Platform, PopoverController } from '@ionic/angular';
 
 import { fromEvent, Subscription } from 'rxjs';
@@ -7,7 +7,7 @@ import { tap } from 'rxjs/operators';
 import { SecureMessagingService } from './service';
 import { DataCache } from '../../core/utils/data-cache';
 import { LoadingService } from '../../core/service/loading/loading.service';
-import { getTime, toISOString, toLocaleString, determineDate } from '../../core/utils/date-helper';
+import { getTime, toISOString, toLocaleString } from '../../core/utils/date-helper';
 import { BUTTON_TYPE } from '../../core/utils/buttons.config';
 import { SecureMessagePopoverComponent } from './secure-message-popover';
 import * as Globals from '../../app.global';
@@ -23,22 +23,22 @@ export class SecureMessagePage implements OnDestroy {
   @ViewChild('chatInput') chatInput: any;
 
   private readonly largeScreenPixelMin = 576;
-  private messagesArray: SecureMessageInfo[] = [];
   private readonly sourceSubscription: Subscription = new Subscription();
+  private messagesArray: SecureMessageInfo[] = [];
 
-  bIsLargeScreen = false;
-  bCreateNewConversation = false;
-  conversationsArray: SecureMessageConversation[] = [];
-  groupsArray: SecureMessageGroupInfo[] = [];
-  selectedConversation: SecureMessageConversation = null;
-  newMessageText = '';
+  private bIsLargeScreen: boolean = false;
+  private bCreateNewConversation: boolean = false;
+  private conversationsArray: SecureMessageConversation[] = [];
+  private groupsArray: SecureMessageGroupInfo[] = [];
+  private selectedConversation: SecureMessageConversation = null;
+  private newMessageText: string = '';
 
   constructor(
-    private platform: Platform,
-    private events: Events,
-    private secureMessagingService: SecureMessagingService,
+    private readonly platform: Platform,
+    private readonly events: Events,
+    private readonly secureMessagingService: SecureMessagingService,
     private readonly loading: LoadingService,
-    private readonly popoverCtrl: PopoverController,
+    private readonly popoverCtrl: PopoverController
   ) {
     this.platform.ready().then(this.initComponent.bind(this));
   }
@@ -64,11 +64,11 @@ export class SecureMessagePage implements OnDestroy {
   }
 
   private onWindowResizeHandler() {
-    const bWasPreviouslyLargeScreen = this.bIsLargeScreen;
+    // const bWasPreviouslyLargeScreen = this.bIsLargeScreen;
     this.bIsLargeScreen = window.innerWidth >= this.largeScreenPixelMin;
-    if (!bWasPreviouslyLargeScreen && this.bIsLargeScreen) {
-      /// do nothing for now
-    }
+    // if (!bWasPreviouslyLargeScreen && this.bIsLargeScreen) {
+    //   /// do nothing for now
+    // }
   }
 
   /**
@@ -89,7 +89,7 @@ export class SecureMessagePage implements OnDestroy {
         error => {
           this.loading.closeSpinner();
           this.modalHandler({ ...error, title: Globals.Exception.Strings.TITLE }, this.initializePage.bind(this));
-        },
+        }
       );
 
     this.sourceSubscription.add(subscription);
@@ -113,7 +113,7 @@ export class SecureMessagePage implements OnDestroy {
       },
       error => {
         /// only deal with connection error ?
-      },
+      }
     );
 
     this.sourceSubscription.add(subscription);
@@ -155,17 +155,17 @@ export class SecureMessagePage implements OnDestroy {
 
       /// add to existing conversation if it exists
       for (const convo of tempConversations) {
+        if (!bNewConversation) {
+          break;
+        }
+
         if (
           convo.groupIdValue &&
-          convo.groupIdValue.length > 0 &&
+          convo.groupIdValue.length &&
           (convo.groupIdValue === message.sender.id_value || convo.groupIdValue === message.recipient.id_value)
         ) {
           convo.messages.push(message);
           bNewConversation = false;
-        }
-
-        if (!bNewConversation) {
-          break;
         }
       }
 
@@ -212,7 +212,7 @@ export class SecureMessagePage implements OnDestroy {
 
     this.sortConversations();
 
-    if (!bIsPollingData && (this.conversationsArray.length > 0 && this.bIsLargeScreen)) {
+    if (!bIsPollingData && (this.conversationsArray.length && this.bIsLargeScreen)) {
       /// select first conversation by default
       this.conversationsArray[0].selected = true;
       this.selectedConversation = this.conversationsArray[0];
@@ -248,7 +248,7 @@ export class SecureMessagePage implements OnDestroy {
    * Show grid column with messages from current selected conversation
    */
   showSelectedConversationContentColumn(): boolean {
-    return this.selectedConversation != null && !this.bCreateNewConversation;
+    return this.selectedConversation !== null && !this.bCreateNewConversation;
   }
 
   /**
@@ -365,7 +365,7 @@ export class SecureMessagePage implements OnDestroy {
       () => {
         const error = { message: 'Unable to verify your user information', title: Globals.Exception.Strings.TITLE };
         this.modalHandler(error, this.sendMessage.bind(this, message));
-      },
+      }
     );
 
     this.sourceSubscription.add(subscription);

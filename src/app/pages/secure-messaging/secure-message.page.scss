@@ -48,7 +48,7 @@
 
   &__conversation {
     height: 100%;
-    padding: 0;
+    padding: 0 0 15px;
 
     .conversation-container {
       &__avatar-text {
@@ -100,8 +100,7 @@
         padding: 15px;
         margin: 0;
         display: inline-block;
-        word-wrap: break-word;
-        white-space: pre-wrap;
+        word-break: break-word;
       }
 
       &__date-wrapper {
