@@ -102,7 +102,8 @@
         padding: 15px;
         margin: 0;
         display: inline-block;
-        word-break: break-word;
+        word-wrap: break-word;
+        white-space: pre-wrap;
       }
 
       &__date-wrapper {
