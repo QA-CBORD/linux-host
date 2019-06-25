@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Events, Platform, PopoverController } from '@ionic/angular';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
 
@@ -39,15 +39,19 @@ export class SecureMessagePage implements OnDestroy, OnInit {
     private readonly secureMessagingService: SecureMessagingService,
     private readonly loading: LoadingService,
     private readonly popoverCtrl: PopoverController,
+    private readonly cdRef: ChangeDetectorRef,
     private keyboard: Keyboard,
   ) {
     this.platform.ready().then(this.initComponent.bind(this));
   }
 
   ngOnInit() {
-    this.keyboard.onKeyboardHide().subscribe(() => {
-      window.scrollTo(0, document.documentElement.clientHeight)
+    const subscription = this.keyboard.onKeyboardHide().subscribe(() => {
+      window.scrollTo(0, document.documentElement.clientHeight);
+      this.cdRef.detectChanges();
     });
+
+    this.sourceSubscription.add(subscription);
   }
 
   ngOnDestroy() {
