@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Events, Platform, PopoverController } from '@ionic/angular';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
 
@@ -18,7 +18,7 @@ import { SecureMessageConversation, SecureMessageGroupInfo, SecureMessageInfo, S
   templateUrl: './secure-message.page.html',
   styleUrls: ['./secure-message.page.scss'],
 })
-export class SecureMessagePage implements OnDestroy {
+export class SecureMessagePage implements OnDestroy, OnInit {
   @ViewChild('chatScroll') chatScroll: any;
   @ViewChild('chatInput') chatInput: any;
 
@@ -42,6 +42,12 @@ export class SecureMessagePage implements OnDestroy {
     private keyboard: Keyboard,
   ) {
     this.platform.ready().then(this.initComponent.bind(this));
+  }
+
+  ngOnInit() {
+    this.keyboard.onKeyboardHide().subscribe(() => {
+      window.scrollTo(0, 0);
+    });
   }
 
   ngOnDestroy() {
@@ -313,7 +319,7 @@ export class SecureMessagePage implements OnDestroy {
   onClickSendButton() {
     if (this.newMessageText && this.newMessageText.trim().length) {
       this.sendMessage(this.createNewMessageSendBody(this.newMessageText));
-      if(this.keyboard && this.keyboard.isVisible) {
+      if (this.keyboard && this.keyboard.isVisible) {
         setTimeout(this.keyboard.hide.bind(this), 0);
       }
     }
