@@ -545,7 +545,7 @@ export class SecureMessagePage implements OnDestroy, OnInit {
     return description == null ? '' : description;
   }
 
-  /**
+/**
    *
    * @param messages
    * @param messageIndex
@@ -553,14 +553,17 @@ export class SecureMessagePage implements OnDestroy, OnInit {
    */
   messageShowAvatar({ messages }: SecureMessageConversation, messageIndex: number, messageType: string): boolean {
     const isNextMessageFromGroup = (): boolean => messages[messageIndex + 1].sender.type === messageType;
+    const isMoreThanOneMinuteBetweenMessages = (): boolean => new Date(messages[messageIndex + 1].sent_date).getTime() - new Date(messages[messageIndex].sent_date).getTime() < 60000;
+    
     /// first message
     if (messageIndex === 0) {
       /// more than one message && next message from group as well
-      return !(messages.length > 1 && isNextMessageFromGroup());
+      return !(messages.length > 1 && isNextMessageFromGroup() && isMoreThanOneMinuteBetweenMessages());
     }
 
-    /// not first message && more messages && next message from group as well
-    return !(messages.length - 1 > messageIndex + 1 && isNextMessageFromGroup());
+    /// not last message && more messages && next message from group as well
+    return !(messages.length - 1 > messageIndex + 1 && isNextMessageFromGroup() && isMoreThanOneMinuteBetweenMessages());
+
   }
 
   /**
