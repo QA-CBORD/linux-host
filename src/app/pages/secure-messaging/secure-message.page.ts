@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, OnDestroy, ViewChild } from '@angular/core';
 import { Events, Platform, PopoverController } from '@ionic/angular';
+import { Keyboard } from '@ionic-native/keyboard/ngx';
 
 import { fromEvent, Subscription } from 'rxjs';
 import { tap } from 'rxjs/operators';
@@ -37,7 +38,8 @@ export class SecureMessagePage implements OnDestroy {
     private readonly events: Events,
     private readonly secureMessagingService: SecureMessagingService,
     private readonly loading: LoadingService,
-    private readonly popoverCtrl: PopoverController
+    private readonly popoverCtrl: PopoverController,
+    private keyboard: Keyboard
   ) {
     this.platform.ready().then(this.initComponent.bind(this));
   }
@@ -311,6 +313,8 @@ export class SecureMessagePage implements OnDestroy {
   onClickSendButton() {
     if (this.newMessageText && this.newMessageText.trim().length) {
       this.sendMessage(this.createNewMessageSendBody(this.newMessageText));
+      console.log(this.keyboard.isVisible);
+      this.keyboard.hide();
     }
   }
 
