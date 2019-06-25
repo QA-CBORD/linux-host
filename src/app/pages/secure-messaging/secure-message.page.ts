@@ -39,7 +39,7 @@ export class SecureMessagePage implements OnDestroy {
     private readonly secureMessagingService: SecureMessagingService,
     private readonly loading: LoadingService,
     private readonly popoverCtrl: PopoverController,
-    private keyboard: Keyboard
+    private keyboard: Keyboard,
   ) {
     this.platform.ready().then(this.initComponent.bind(this));
   }
@@ -90,7 +90,7 @@ export class SecureMessagePage implements OnDestroy {
         error => {
           this.loading.closeSpinner();
           this.modalHandler({ ...error, title: Globals.Exception.Strings.TITLE }, this.initializePage.bind(this));
-        }
+        },
       );
 
     this.sourceSubscription.add(subscription);
@@ -114,7 +114,7 @@ export class SecureMessagePage implements OnDestroy {
       },
       error => {
         /// only deal with connection error ?
-      }
+      },
     );
 
     this.sourceSubscription.add(subscription);
@@ -314,7 +314,8 @@ export class SecureMessagePage implements OnDestroy {
     if (this.newMessageText && this.newMessageText.trim().length) {
       this.sendMessage(this.createNewMessageSendBody(this.newMessageText));
       console.log(this.keyboard.isVisible);
-      this.keyboard.hide();
+      // this.keyboard.hide();
+      setTimeout(this.keyboard.hide.bind(this), 0);
     }
   }
 
@@ -368,7 +369,7 @@ export class SecureMessagePage implements OnDestroy {
       () => {
         const error = { message: 'Unable to verify your user information', title: Globals.Exception.Strings.TITLE };
         this.modalHandler(error, this.sendMessage.bind(this, message));
-      }
+      },
     );
 
     this.sourceSubscription.add(subscription);
