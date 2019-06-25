@@ -46,8 +46,10 @@ export class SecureMessagePage implements OnDestroy, OnInit {
   }
 
   ngOnInit() {
+    console.log('hello')
     const subscription = this.keyboard.onKeyboardHide().subscribe(() => {
       window.scrollTo(0, document.documentElement.clientHeight);
+      console.log('close')
       this.cdRef.detectChanges();
     });
 
