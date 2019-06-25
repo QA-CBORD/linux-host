@@ -319,9 +319,6 @@ export class SecureMessagePage implements OnDestroy, OnInit {
   onClickSendButton() {
     if (this.newMessageText && this.newMessageText.trim().length) {
       this.sendMessage(this.createNewMessageSendBody(this.newMessageText));
-      if (this.keyboard && this.keyboard.isVisible) {
-        setTimeout(this.keyboard.hide.bind(this), 0);
-      }
     }
   }
 
