@@ -1,7 +1,6 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Events, Platform, PopoverController } from '@ionic/angular';
-import { Keyboard } from '@ionic-native/keyboard/ngx';
-
+import { Network } from '@ionic-native/network/ngx';
 import { fromEvent, Subscription } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
@@ -39,22 +38,19 @@ export class SecureMessagePage implements OnDestroy, OnInit {
     private readonly secureMessagingService: SecureMessagingService,
     private readonly loading: LoadingService,
     private readonly popoverCtrl: PopoverController,
-    private readonly cdRef: ChangeDetectorRef,
-    private keyboard: Keyboard
+    private readonly network: Network
   ) {
     this.platform.ready().then(this.initComponent.bind(this));
   }
 
   ngOnInit() {
-    console.log('hello');
-    const subscription = this.keyboard.onKeyboardHide().subscribe(() => {
-      // window.scrollTo(0, document.documentElement.clientHeight);
-      setTimeout(window.scrollTo.bind(this, [0, 0]), 0);
-      console.log('close');
-      this.cdRef.detectChanges();
+    this.network.onDisconnect().subscribe(() => {
+      console.log('network was disconnected :-(');
     });
 
-    this.sourceSubscription.add(subscription);
+    this.network.onConnect().subscribe(() => {
+      console.log('network connected!');
+    });
   }
 
   ngOnDestroy() {
