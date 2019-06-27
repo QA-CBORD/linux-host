@@ -62,12 +62,8 @@ export class ListItemComponent {
     return this.item.claimStatus === CLAIM_STATUS.received;
   }
 
-  get isEarned(): boolean {
-    return this.item.claimStatus === CLAIM_STATUS.earned;
-  }
-
   get isUnearned(): boolean {
-    return this.item.claimStatus === CLAIM_STATUS.earned;
+    return this.item.claimStatus === CLAIM_STATUS.unearned;
   }
 
   get listItemScoreValue() {
@@ -86,7 +82,9 @@ export class ListItemComponent {
     }
 
     if (this.isLevelsEnv && type === PopupTypes.SCAN) {
-      const historyItemId = this.rewardsService.extractFromHistoryByRewardId(data.id).id || data.id;
+      const historyItem = this.rewardsService.extractFromHistoryByRewardId(data.id);
+      const historyItemId = (historyItem && historyItem.id) || data.id;
+
       data = { ...data, id: historyItemId };
     }
 
