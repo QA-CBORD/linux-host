@@ -108,7 +108,7 @@ export class ListItemComponent {
   private onDismissPopoverHandler(role: BUTTON_TYPE, type: PopupTypes) {
     if (role === BUTTON_TYPE.CLOSE && type === PopupTypes.SCAN) {
       this.rewardsService
-        .getUserRewardHistoryInfo()
+        .getAllData()
         .pipe(take(1))
         .subscribe();
     }

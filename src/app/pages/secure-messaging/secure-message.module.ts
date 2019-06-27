@@ -12,28 +12,13 @@ import { SharedModule } from '../../shared/shared.module';
 import { MessageDatePipe } from './pipes/message-date.pipe';
 import { ConversationDatePipe } from './pipes/conversation-date.pipe';
 
-const declarations = [
-  SecureMessagePage,
-  SecureMessagePopoverComponent,
-  MessageDatePipe,
-  ConversationDatePipe
-];
+const declarations = [SecureMessagePage, SecureMessagePopoverComponent, MessageDatePipe, ConversationDatePipe];
 
-const providers: Provider[] = [
-  SecureMessagingService,
-  SecureMessagingApiService,
-];
+const providers: Provider[] = [SecureMessagingService, SecureMessagingApiService];
 
-const imports = [
-  CommonModule,
-  SharedModule,
-  FormsModule,
-  IonicModule,
-  SecureMessageRoutingModule,
-];
+const imports = [CommonModule, SharedModule, FormsModule, IonicModule, SecureMessageRoutingModule];
 
 const entryComponents = [SecureMessagePopoverComponent];
 
 @NgModule({ imports, providers, declarations, entryComponents })
-export class SecureMessagePageModule {
-}
+export class SecureMessagePageModule {}
