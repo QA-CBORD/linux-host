@@ -40,7 +40,7 @@ export class SecureMessagePage implements OnDestroy, OnInit {
     private readonly loading: LoadingService,
     private readonly popoverCtrl: PopoverController,
     private readonly cdRef: ChangeDetectorRef,
-    private keyboard: Keyboard,
+    private keyboard: Keyboard
   ) {
     this.platform.ready().then(this.initComponent.bind(this));
   }
@@ -103,7 +103,7 @@ export class SecureMessagePage implements OnDestroy, OnInit {
         error => {
           this.loading.closeSpinner();
           this.modalHandler({ ...error, title: Globals.Exception.Strings.TITLE }, this.initializePage.bind(this));
-        },
+        }
       );
 
     this.sourceSubscription.add(subscription);
@@ -127,7 +127,7 @@ export class SecureMessagePage implements OnDestroy, OnInit {
       },
       error => {
         /// only deal with connection error ?
-      },
+      }
     );
 
     this.sourceSubscription.add(subscription);
@@ -379,7 +379,7 @@ export class SecureMessagePage implements OnDestroy, OnInit {
       () => {
         const error = { message: 'Unable to verify your user information', title: Globals.Exception.Strings.TITLE };
         this.modalHandler(error, this.sendMessage.bind(this, message));
-      },
+      }
     );
 
     this.sourceSubscription.add(subscription);
@@ -452,11 +452,17 @@ export class SecureMessagePage implements OnDestroy, OnInit {
         return -1;
       }
 
-      if (new Date(a.messages[a.messages.length - 1].sent_date).getTime() < new Date(b.messages[b.messages.length - 1].sent_date).getTime()) {
+      if (
+        new Date(a.messages[a.messages.length - 1].sent_date).getTime() <
+        new Date(b.messages[b.messages.length - 1].sent_date).getTime()
+      ) {
         return 1;
       }
 
-      if (new Date(a.messages[a.messages.length - 1].sent_date).getTime() > new Date(b.messages[b.messages.length - 1].sent_date).getTime()) {
+      if (
+        new Date(a.messages[a.messages.length - 1].sent_date).getTime() >
+        new Date(b.messages[b.messages.length - 1].sent_date).getTime()
+      ) {
         return -1;
       }
 
@@ -545,7 +551,7 @@ export class SecureMessagePage implements OnDestroy, OnInit {
     return description == null ? '' : description;
   }
 
-/**
+  /**
    *
    * @param messages
    * @param messageIndex
@@ -553,8 +559,10 @@ export class SecureMessagePage implements OnDestroy, OnInit {
    */
   messageShowAvatar({ messages }: SecureMessageConversation, messageIndex: number, messageType: string): boolean {
     const isNextMessageFromGroup = (): boolean => messages[messageIndex + 1].sender.type === messageType;
-    const isMoreThanOneMinuteBetweenMessages = (): boolean => new Date(messages[messageIndex + 1].sent_date).getTime() - new Date(messages[messageIndex].sent_date).getTime() < 60000;
-    
+    const isMoreThanOneMinuteBetweenMessages = (): boolean =>
+      new Date(messages[messageIndex + 1].sent_date).getTime() - new Date(messages[messageIndex].sent_date).getTime() <
+      60000;
+
     /// first message
     if (messageIndex === 0) {
       /// more than one message && next message from group as well
@@ -562,8 +570,11 @@ export class SecureMessagePage implements OnDestroy, OnInit {
     }
 
     /// not last message && more messages && next message from group as well
-    return !(messages.length - 1 > messageIndex + 1 && isNextMessageFromGroup() && isMoreThanOneMinuteBetweenMessages());
-
+    return !(
+      messages.length - 1 > messageIndex + 1 &&
+      isNextMessageFromGroup() &&
+      isMoreThanOneMinuteBetweenMessages()
+    );
   }
 
   /**
@@ -579,7 +590,7 @@ export class SecureMessagePage implements OnDestroy, OnInit {
       //was this message sent within 1 min of the next message:
       const isMessageSentWithinMin: boolean =
         new Date(messages[messageIndex + 1].sent_date).getTime() -
-        new Date(messages[messageIndex].sent_date).getTime() <
+          new Date(messages[messageIndex].sent_date).getTime() <
         60000;
 
       return messages[messageIndex + 1].sender.type === messageType && isMessageSentWithinMin;
