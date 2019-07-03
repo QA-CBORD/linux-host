@@ -8,7 +8,6 @@ import { RewardsService } from './services';
 
 import { CONTENT_STRINGS, OPT_IN_STATUS } from './rewards.config';
 import { TabsConfig } from '../../core/model/tabs/tabs.model';
-import { Location } from '@angular/common';
 
 @Component({
   selector: 'st-rewards',
@@ -21,25 +20,12 @@ export class RewardsPage implements OnInit, OnDestroy {
   private readonly sourceSubscription: Subscription = new Subscription();
   contentString: { [key: string]: string };
 
-  constructor(
-    private platform: Platform,
-    private nav: NavController,
-    private rewardsService: RewardsService,
-    private location: Location
-  ) {
+  constructor(private platform: Platform, private nav: NavController, private rewardsService: RewardsService) {
     this.initComponent();
   }
 
   ngOnInit(): void {
     this.setContentStrings();
-
-    // const subscription = this.location.subscribe(() => {
-    //   this.location.replaceState(location.origin);
-    //
-    //   this.location.back();
-    // });
-    //
-    // this.sourceSubscription.add(subscription);
   }
 
   ngOnDestroy(): void {
@@ -63,6 +49,7 @@ export class RewardsPage implements OnInit, OnDestroy {
       this.sourceSubscription.add(subscription);
     });
   }
+
   private setContentStrings() {
     const header = this.rewardsService.getContentValueByName(CONTENT_STRINGS.headerTitle);
 
