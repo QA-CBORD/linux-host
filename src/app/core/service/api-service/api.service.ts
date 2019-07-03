@@ -23,7 +23,7 @@ export enum HttpResponseType {
   providedIn: 'root',
 })
 export class APIService {
-  private TIMEOUT_MS = 30000;
+  private TIMEOUT_MS = 45000;
 
   constructor(private http: HttpClient) {}
 
