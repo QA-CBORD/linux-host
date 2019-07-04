@@ -3,16 +3,8 @@ import { Injectable } from '@angular/core';
 
 import { Observable } from 'rxjs';
 
-import {
-  APIService,
-  HttpResponseType,
-  RestCallType,
-} from 'src/app/core/service/api-service/api.service';
-import {
-  SecureMessageGroupInfo,
-  SecureMessageInfo,
-  SecureMessageSendBody,
-} from '../models';
+import { APIService, HttpResponseType, RestCallType } from 'src/app/core/service/api-service/api.service';
+import { SecureMessageGroupInfo, SecureMessageInfo, SecureMessageSendBody } from '../models';
 
 @Injectable()
 export class SecureMessagingApiService {
@@ -27,11 +19,7 @@ export class SecureMessagingApiService {
     SecureMessagingApiService.jwt = newJWT;
   }
 
-  getSecureMessages(
-    ma_type: string,
-    ma_id_field: string,
-    ma_id_value: string
-  ): Observable<SecureMessageInfo[]> {
+  getSecureMessages(ma_type: string, ma_id_field: string, ma_id_value: string): Observable<SecureMessageInfo[]> {
     const url = `${
       this.serviceUrlSecureMessage
     }?ma_type=${ma_type}&ma_id_field=${ma_id_field}&ma_id_value=${ma_id_value}`;
@@ -46,12 +34,8 @@ export class SecureMessagingApiService {
     );
   }
 
-  getSecureMessagesGroups(
-    inst_id: string
-  ): Observable<SecureMessageGroupInfo[]> {
-    const url = `${
-      this.serviceUrlSecureMessageGroup
-    }?inst_id=${inst_id}&with_members=0`;
+  getSecureMessagesGroups(inst_id: string): Observable<SecureMessageGroupInfo[]> {
+    const url = `${this.serviceUrlSecureMessageGroup}?inst_id=${inst_id}&with_members=0`;
 
     return this.apiService.authenticatedHTTPCall(
       RestCallType.get,
