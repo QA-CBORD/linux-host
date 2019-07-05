@@ -1,0 +1,10 @@
+<nav>
+    <ul class="menu">
+        <li class="menu__item" *ngFor="let setting of (settings$ | async)">
+            <figure class="menu__item-figure" *ngIf="setting.isShow" (click)="redirect()">
+                <img class="menu__item-icon" src="https://www.freeiconspng.com/uploads/buy-gain-income-money-pay-payment-icon--19.png" alt="menu icon">
+                <figcaption class="menu__item-text">{{setting.name | pageName}}</figcaption>
+            </figure>
+        </li>
+    </ul>
+</nav>

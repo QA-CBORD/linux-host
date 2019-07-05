@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AccountsService } from './services/accounts.service';
 
 @Component({
   selector: 'st-accounts.page',
@@ -6,7 +7,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./accounts.page.scss'],
 })
 export class AccountsPage implements OnInit {
-  constructor() {}
+  constructor(private readonly accountsService: AccountsService) {}
 
   ngOnInit() {}
 }

@@ -1,8 +1,9 @@
-export class SettingInfo {
+export interface SettingInfo {
+  id: string;
   name: string;
   domain: string;
   category: string;
   contentMediaType: number;
-  value: any;
+  value: string;
   description: string;
 }
