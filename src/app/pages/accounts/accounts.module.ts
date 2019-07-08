@@ -9,9 +9,10 @@ import { AccountsApiService } from './services/accounts.api.service';
 import { AccountsService } from './services/accounts.service';
 import { AccountsPageResolver } from './resolvers/accounts-page.resolver';
 import { PageNamePipe } from './components/menu-receiving-funds/page-name.pipe';
+import { AccountListComponent } from './components/accout-list/account-list.component';
 
 const imports = [CommonModule, AccountsRoutingModule, SharedModule, IonicModule];
-const declarations = [AccountsPage, MenuReceivingFundsComponent, PageNamePipe];
+const declarations = [AccountsPage, MenuReceivingFundsComponent, PageNamePipe, AccountListComponent];
 const providers = [AccountsApiService, AccountsService, AccountsPageResolver];
 
 @NgModule({

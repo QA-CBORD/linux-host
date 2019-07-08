@@ -24,7 +24,7 @@ export class MenuReceivingFundsComponent implements OnInit {
 
   ngOnInit() {
     this.settings$ = zip(this.accountsService.settings$, this.accountsService.accounts$).pipe(
-      map(([settings, accounts]) => this.convertSettingsValueToBoolean(settings, accounts))
+      map(([settings, accounts]) => this.expandSetting(settings, accounts))
     );
   }
 
@@ -32,7 +32,7 @@ export class MenuReceivingFundsComponent implements OnInit {
     this.router.navigate([NAVIGATE.accounts, LOCAL_ROUTING.autoDepostit]);
   }
 
-  private convertSettingsValueToBoolean(settings: SettingInfo[], accounts: UserAccount[]): AccountSettingInfo[] {
+  private expandSetting(settings: SettingInfo[], accounts: UserAccount[]): AccountSettingInfo[] {
     return settings.map(setting => {
       if (setting.name === SYSTEM_SETTINGS_CONFIG.depositTenders.name) {
         return { ...setting, isShow: this.hasTenderInAccounts(setting, accounts) };
