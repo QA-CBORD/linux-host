@@ -1,3 +1,7 @@
-<p>
-  account works!
-</p>
+<ion-item [button]="true"
+          [detail]="true"
+          detailIcon="/assets/icon/angle-down.svg"
+          lines="full"
+          slot="start">
+  <ion-label>{{account.balance}}</ion-label>
+</ion-item>

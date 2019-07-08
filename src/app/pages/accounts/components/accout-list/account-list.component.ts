@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { UserAccount } from '../../../../core/model/account/account.model';
 
 @Component({
   selector: 'st-account-list',
@@ -7,6 +8,8 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccountListComponent implements OnInit {
+  @Input() accounts: UserAccount[];
+
   constructor() {}
 
   ngOnInit() {}
