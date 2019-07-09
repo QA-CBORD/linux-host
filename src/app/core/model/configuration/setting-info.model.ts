@@ -1,9 +1,9 @@
 export interface SettingInfo {
-  id: string;
-  name: string;
-  domain: string;
-  category: string;
-  contentMediaType: number;
-  value: string;
-  description: string;
+  readonly id: string;
+  readonly name: string;
+  readonly domain: string;
+  readonly category: string;
+  readonly contentMediaType: number;
+  readonly value: string;
+  readonly description: string;
 }

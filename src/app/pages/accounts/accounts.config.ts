@@ -16,14 +16,8 @@ export const SYSTEM_SETTINGS_CONFIG = {
   },
 };
 
-export const MENU_LIST_ITEMS = new Map<string, string>([
-  [SYSTEM_SETTINGS_CONFIG.depositTenders.name, 'Request Funds'],
-  [SYSTEM_SETTINGS_CONFIG.enableAutoDeposits.name, 'Auto Deposits'],
-  [SYSTEM_SETTINGS_CONFIG.enableOnetimeDeposits.name, 'Add Funds'],
-]);
-
 export enum LOCAL_ROUTING {
   requestFunds = 'request-funds',
-  autoDepostit = 'auto-deposit',
+  autoDeposit = 'auto-deposit',
   addFunds = 'add-funds',
 }
