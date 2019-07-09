@@ -18,7 +18,7 @@ const routes: Route[] = [
     loadChildren: './pages/deposit-page/deposit.module#DepositModule',
   },
   {
-    path: LOCAL_ROUTING.autoDepostit,
+    path: LOCAL_ROUTING.autoDeposit,
     loadChildren: './pages/automatic-deposit-page/automatic-deposit.module#AutomaticDepositModule',
   },
   {

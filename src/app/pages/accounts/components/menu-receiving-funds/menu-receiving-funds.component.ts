@@ -6,10 +6,11 @@ import { map } from 'rxjs/operators';
 
 import { SettingInfo } from '../../../../core/model/configuration/setting-info.model';
 import { AccountsService } from '../../services/accounts.service';
-import { LOCAL_ROUTING, SYSTEM_SETTINGS_CONFIG } from '../../accounts.config';
 import { UserAccount } from '../../../../core/model/account/account.model';
 import { AccountSettingInfo } from '../../models/account-setting-info.model';
 import { NAVIGATE } from '../../../../app.global';
+import { MENU_LIST_ROUTES } from './local.config';
+import { SYSTEM_SETTINGS_CONFIG } from '../../accounts.config';
 
 @Component({
   selector: 'st-menu-receiving-funds',
@@ -28,8 +29,8 @@ export class MenuReceivingFundsComponent implements OnInit {
     );
   }
 
-  redirect() {
-    this.router.navigate([NAVIGATE.accounts, LOCAL_ROUTING.autoDepostit]);
+  redirect(name: string) {
+    this.router.navigate([NAVIGATE.accounts, MENU_LIST_ROUTES.get(name)]);
   }
 
   private expandSetting(settings: SettingInfo[], accounts: UserAccount[]): AccountSettingInfo[] {
