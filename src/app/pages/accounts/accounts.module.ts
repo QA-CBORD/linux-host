@@ -12,10 +12,18 @@ import { PageNamePipe } from './components/menu-receiving-funds/pipes/page-name.
 import { AccountListComponent } from './components/accout-list/account-list.component';
 import { AccountComponent } from './components/accout-list/account/account.component';
 import { IconPathPipe } from './components/menu-receiving-funds/pipes/icon-path.pipe';
+import { AccountTypePipe } from './components/accout-list/account/account-type.pipe';
 
 const imports = [CommonModule, AccountsRoutingModule, SharedModule, IonicModule];
-const declarations = [AccountsPage, MenuReceivingFundsComponent, PageNamePipe, AccountListComponent, AccountComponent];
-const declarations = [AccountsPage, MenuReceivingFundsComponent, PageNamePipe, AccountListComponent, IconPathPipe];
+const declarations = [
+  AccountsPage,
+  MenuReceivingFundsComponent,
+  PageNamePipe,
+  AccountListComponent,
+  AccountComponent,
+  IconPathPipe,
+  AccountTypePipe,
+];
 const providers = [AccountsApiService, AccountsService, AccountsPageResolver];
 
 @NgModule({

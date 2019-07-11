@@ -1,4 +1,13 @@
 <ion-list>
+    <ion-item [button]="true"
+              [detail]="true"
+              detailIcon="/assets/icon/angle-right.svg"
+              lines="full"
+    (click)="getFullHistory()">
+        <ion-label>
+            <p class="all-accounts">All accounts</p>
+        </ion-label>
+    </ion-item>
     <st-account *ngFor="let account of accounts" [account]="account"></st-account>
 </ion-list>
 

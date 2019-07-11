@@ -24,4 +24,16 @@ export class CommerceApiService extends BaseService {
       map((response: MessageResponse<AccountResponse>) => response.response.accounts)
     );
   }
+
+  getTransactionsHistory() {
+    const method = 'retrieveTransactionHistory';
+    const params = {
+      paymentSystemType: 0,
+      queryCriteria: {
+        maxReturn: 10,
+        startingReturnRow: 0,
+      },
+    };
+    return this.httpRequest(this.serviceUrl, method, true, params);
+  }
 }

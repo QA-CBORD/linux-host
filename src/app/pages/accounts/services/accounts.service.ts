@@ -2,17 +2,22 @@ import { Injectable } from '@angular/core';
 import { AccountsApiService } from './accounts.api.service';
 
 import { BehaviorSubject, Observable, zip } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 
 import { ContentStringRequest } from '../../../core/model/content/content-string-request.model';
 import { CommerceApiService } from '../../../core/service/commerce/commerce-api.service';
 import { UserAccount } from '../../../core/model/account/account.model';
 import { SettingInfo } from '../../../core/model/configuration/setting-info.model';
+import { TransactionHistory } from '../models/transaction-history.model';
+import { PAYMENT_SYSTEM_TYPE } from '../accounts.config';
 
 @Injectable()
 export class AccountsService {
   private readonly _accounts$: BehaviorSubject<UserAccount[]> = new BehaviorSubject<UserAccount[]>(null);
   private readonly _settings$: BehaviorSubject<SettingInfo[]> = new BehaviorSubject<SettingInfo[]>(null);
+  private readonly _transactionHistory$: BehaviorSubject<TransactionHistory[]> = new BehaviorSubject<
+    TransactionHistory[]
+  >(null);
 
   constructor(
     private readonly apiService: AccountsApiService,
@@ -42,6 +47,15 @@ export class AccountsService {
   }
 
   getUserAccounts(): Observable<UserAccount[]> {
-    return this.commerceApiService.getUserAccounts().pipe(tap(accounts => (this._accounts = accounts)));
+    return this.commerceApiService.getUserAccounts().pipe(
+      map(accounts => this.filterAccountsByPaymentSystem(accounts)),
+      tap(accounts => (this._accounts = accounts))
+    );
+  }
+
+  private filterAccountsByPaymentSystem(accounts: UserAccount[]): UserAccount[] {
+    return accounts.filter(
+      ({ paymentSystemType: type }) => type === PAYMENT_SYSTEM_TYPE.OPCS || type === PAYMENT_SYSTEM_TYPE.CSGOLD
+    );
   }
 }

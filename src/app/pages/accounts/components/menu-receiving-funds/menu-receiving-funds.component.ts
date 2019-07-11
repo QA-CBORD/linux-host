@@ -30,7 +30,7 @@ export class MenuReceivingFundsComponent implements OnInit {
   }
 
   redirect(name: string) {
-    this.router.navigate([NAVIGATE.accounts, MENU_LIST_ROUTES.get(name)]);
+    this.router.navigate([NAVIGATE.accounts, MENU_LIST_ROUTES.get(name)], { skipLocationChange: true });
   }
 
   private expandSetting(settings: SettingInfo[], accounts: UserAccount[]): AccountSettingInfo[] {
