@@ -1,0 +1,10 @@
+@import 'tools';
+
+.accounts {
+  &__transactions {
+    text-align: center;
+    text-transform: uppercase;
+
+    @include font-nunito-semibold(12px);
+  }
+}

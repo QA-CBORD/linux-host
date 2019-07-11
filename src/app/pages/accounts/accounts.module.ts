@@ -13,6 +13,8 @@ import { AccountListComponent } from './components/accout-list/account-list.comp
 import { AccountComponent } from './components/accout-list/account/account.component';
 import { IconPathPipe } from './components/menu-receiving-funds/pipes/icon-path.pipe';
 import { AccountTypePipe } from './components/accout-list/account/account-type.pipe';
+import {TransactionsComponent} from "./components/transactions/transactions.component";
+import {TransactionItemComponent} from "./components/transactions/transaction-item/transaction-item.component";
 
 const imports = [CommonModule, AccountsRoutingModule, SharedModule, IonicModule];
 const declarations = [
@@ -23,6 +25,8 @@ const declarations = [
   AccountComponent,
   IconPathPipe,
   AccountTypePipe,
+  TransactionsComponent,
+  TransactionItemComponent
 ];
 const providers = [AccountsApiService, AccountsService, AccountsPageResolver];
 

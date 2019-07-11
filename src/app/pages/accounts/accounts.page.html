@@ -1,11 +1,15 @@
 <st-header
-        [title]="'Accounts'"
-        [isTitleShow]="true"
-        [backButtonTitle]="'Home'"
-        [isToolbarShow]="true"
+  [title]="'Accounts'"
+  [isTitleShow]="false"
+  [backButtonTitle]="'Home'"
+  [isToolbarShow]="false"
+  class="shadow-header"
 ></st-header>
 
 <ion-content>
-    <st-menu-receiving-funds></st-menu-receiving-funds>
-    <st-account-list [accounts]="accounts$ | async"></st-account-list>
+  <st-menu-receiving-funds></st-menu-receiving-funds>
+  <st-account-list [accounts]="accounts$ | async"></st-account-list>
+
+  <h2 class="accounts__transactions">recent transactions</h2>
+  <st-transactions></st-transactions>
 </ion-content>
