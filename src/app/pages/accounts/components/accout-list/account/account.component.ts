@@ -9,6 +9,7 @@ import { UserAccount } from '../../../../../core/model/account/account.model';
 })
 export class AccountComponent implements OnInit {
   @Input() account: UserAccount;
+  @Input() lastItem: boolean;
 
   constructor() {}
 
