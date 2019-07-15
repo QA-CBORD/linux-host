@@ -15,6 +15,7 @@ import { IconPathPipe } from './components/menu-receiving-funds/pipes/icon-path.
 import { AccountTypePipe } from './components/accout-list/account/account-type.pipe';
 import {TransactionsComponent} from "./components/transactions/transactions.component";
 import {TransactionItemComponent} from "./components/transactions/transaction-item/transaction-item.component";
+import {AccountDetailsComponent} from './pages/account-details/account-details.component';
 
 const imports = [CommonModule, AccountsRoutingModule, SharedModule, IonicModule];
 const declarations = [
@@ -26,7 +27,8 @@ const declarations = [
   IconPathPipe,
   AccountTypePipe,
   TransactionsComponent,
-  TransactionItemComponent
+  TransactionItemComponent,
+  AccountDetailsComponent
 ];
 const providers = [AccountsApiService, AccountsService, AccountsPageResolver];
 
