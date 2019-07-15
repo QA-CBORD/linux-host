@@ -4,21 +4,24 @@ import { Observable, zip } from 'rxjs';
 import { AccountsService } from '../services/accounts.service';
 import { SYSTEM_SETTINGS_CONFIG } from '../accounts.config';
 import { UserAccount } from '../../../core/model/account/account.model';
-import { SettingInfo } from '../../../core/model/configuration/setting-info.model';
+import { switchMap } from 'rxjs/operators';
+import { TransactionHistory } from '../models/transaction-history.model';
 
 @Injectable()
-export class AccountsPageResolver implements Resolve<Observable<[UserAccount[], SettingInfo[]]>> {
+export class AccountsPageResolver implements Resolve<Observable<[UserAccount[], TransactionHistory[]]>> {
   constructor(private readonly accountsService: AccountsService) {}
 
-  resolve(): Observable<[UserAccount[], SettingInfo[]]> {
+  resolve(): Observable<[UserAccount[], TransactionHistory[]]> {
     const requireSettings = [
       SYSTEM_SETTINGS_CONFIG.depositTenders,
       SYSTEM_SETTINGS_CONFIG.enableAutoDeposits,
       SYSTEM_SETTINGS_CONFIG.enableOnetimeDeposits,
     ];
     const accountsCall = this.accountsService.getUserAccounts();
-    const settingsCall = this.accountsService.getUserSettings(requireSettings);
+    const historyCall = this.accountsService
+      .getUserSettings(requireSettings)
+      .pipe(switchMap(() => this.accountsService.getRecentTransactions()));
 
-    return zip(accountsCall, settingsCall);
+    return zip(accountsCall, historyCall);
   }
 }

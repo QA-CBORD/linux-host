@@ -2,22 +2,29 @@ import { Injectable } from '@angular/core';
 import { AccountsApiService } from './accounts.api.service';
 
 import { BehaviorSubject, Observable, zip } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { map, switchMap, tap } from 'rxjs/operators';
 
 import { ContentStringRequest } from '../../../core/model/content/content-string-request.model';
 import { CommerceApiService } from '../../../core/service/commerce/commerce-api.service';
 import { UserAccount } from '../../../core/model/account/account.model';
 import { SettingInfo } from '../../../core/model/configuration/setting-info.model';
 import { TransactionHistory } from '../models/transaction-history.model';
-import { PAYMENT_SYSTEM_TYPE } from '../accounts.config';
+import { PAYMENT_SYSTEM_TYPE, SYSTEM_SETTINGS_CONFIG } from '../accounts.config';
+import { QueryTransactionHistoryCriteria } from '../../../core/model/account/transaction-query.model';
+import { TransactionResponse } from '../../../core/model/account/transaction-response.model';
 
 @Injectable()
 export class AccountsService {
   private readonly _accounts$: BehaviorSubject<UserAccount[]> = new BehaviorSubject<UserAccount[]>(null);
   private readonly _settings$: BehaviorSubject<SettingInfo[]> = new BehaviorSubject<SettingInfo[]>(null);
-  private readonly _transactionHistory$: BehaviorSubject<TransactionHistory[]> = new BehaviorSubject<
-    TransactionHistory[]
-  >(null);
+  private readonly _transactions$: BehaviorSubject<TransactionHistory[]> = new BehaviorSubject<TransactionHistory[]>(
+    []
+  );
+  private transactionHistory: TransactionHistory[] = [];
+  private query: QueryTransactionHistoryCriteria;
+  private currentAccountId: string = null;
+  private response: TransactionResponse;
+  private lazyAmount: number = 20;
 
   constructor(
     private readonly apiService: AccountsApiService,
@@ -32,8 +39,18 @@ export class AccountsService {
     return this._settings$.asObservable();
   }
 
+  get transactions$(): Observable<TransactionHistory[]> {
+    return this._transactions$.asObservable();
+  }
+
   private set _accounts(value: UserAccount[]) {
     this._accounts$.next([...value]);
+  }
+
+  private set _transactions(value: TransactionHistory[]) {
+    this.transactionHistory = [...this.transactionHistory, ...value];
+    this.transactionHistory = this.cleanDuplicateTransactions(this.transactionHistory);
+    this._transactions$.next([...this.transactionHistory]);
   }
 
   private set _settings(value: SettingInfo[]) {
@@ -53,9 +70,89 @@ export class AccountsService {
     );
   }
 
+  getTransactionHistoryByQuery(query: QueryTransactionHistoryCriteria): Observable<Array<TransactionHistory>> {
+    return this.settings$.pipe(
+      map(settings => {
+        const setting = this.findSettingByName(settings, SYSTEM_SETTINGS_CONFIG.depositTenders.name);
+        return this.transformStringToArray(setting.value);
+      }),
+      switchMap((tendersId: Array<string>) =>
+        this.commerceApiService.getTransactionsHistory(query).pipe(
+          tap(response => (this.response = response)),
+          map(({ transactions }) => this.filterTransactionHistory(tendersId, transactions))
+        )
+      ),
+      tap(transactions => (this._transactions = transactions))
+    );
+  }
+
+  getNextTransactionsByAccountId(id?: string): Observable<Array<TransactionHistory>> {
+    if (!this.response.totalCount) return this.transactions$;
+    this.setNextQueryObject(id);
+    return this.getTransactionHistoryByQuery(this.query);
+  }
+
+  getRecentTransactions(): Observable<Array<TransactionHistory>> {
+    this.initQueryObject();
+    return this.getTransactionHistoryByQuery(this.query);
+  }
+
+  private setNextQueryObject(id: string = null) {
+    if (this.currentAccountId === id) {
+      const startingReturnRow = this.query.startingReturnRow + this.query.maxReturn;
+      const transactionQuery: QueryTransactionHistoryCriteria = { startingReturnRow, maxReturn: this.lazyAmount };
+      this.query = { ...this.query, ...transactionQuery };
+    }
+    if (this.currentAccountId !== id) {
+      this.initQueryObject(id);
+    }
+  }
+
   private filterAccountsByPaymentSystem(accounts: UserAccount[]): UserAccount[] {
     return accounts.filter(
       ({ paymentSystemType: type }) => type === PAYMENT_SYSTEM_TYPE.OPCS || type === PAYMENT_SYSTEM_TYPE.CSGOLD
     );
+  }
+
+  private initQueryObject(accountId: string = null, start?: string, end?: string) {
+    const defaultAmountDaysBack = 30;
+    const now = new Date();
+    const prevPeriod = new Date(new Date().setDate(now.getDate() - defaultAmountDaysBack));
+    const startDate = start ? start : prevPeriod.toISOString();
+    const endDate = end ? end : now.toISOString();
+
+    this.query = {
+      maxReturn: 0,
+      startingReturnRow: 0,
+      startDate,
+      endDate,
+      accountId,
+    };
+  }
+
+  private findSettingByName(settings: SettingInfo[], name: string): SettingInfo | undefined {
+    return settings.find(({ name: setName }) => setName === name);
+  }
+
+  private filterTransactionHistory(
+    tendersId: Array<string>,
+    transactions: Array<TransactionHistory>
+  ): Array<TransactionHistory> {
+    return transactions.filter(
+      ({ paymentSystemType: type, tenderId: tenId }) =>
+        type === PAYMENT_SYSTEM_TYPE.MONETRA || type === PAYMENT_SYSTEM_TYPE.USAEPAY || tendersId.includes(tenId)
+    );
+  }
+
+  private cleanDuplicateTransactions(arr: TransactionHistory[]): TransactionHistory[] {
+    const map = new Map<string, TransactionHistory>();
+    arr.forEach(transaction => map.set(transaction.transactionId, transaction));
+    return Array.from(map.values());
+  }
+
+  transformStringToArray(value: string): Array<any> {
+    if (!value.length) return [];
+    const result = JSON.parse(value);
+    return Array.isArray(result) ? result : [];
   }
 }

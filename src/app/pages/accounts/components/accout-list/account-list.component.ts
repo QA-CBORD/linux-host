@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { UserAccount } from '../../../../core/model/account/account.model';
-import { AccountsApiService } from '../../services/accounts.api.service';
-import { CommerceApiService } from 'src/app/core/service/commerce/commerce-api.service';
+import { AccountsService } from '../../services/accounts.service';
+import { Observable } from 'rxjs';
+import { TransactionHistory } from '../../models/transaction-history.model';
 
 @Component({
   selector: 'st-account-list',
@@ -11,15 +12,11 @@ import { CommerceApiService } from 'src/app/core/service/commerce/commerce-api.s
 })
 export class AccountListComponent implements OnInit {
   @Input() accounts: UserAccount[];
+  transactions: Observable<TransactionHistory[]>;
 
-  constructor(
-    private readonly accountsService: AccountsApiService,
-    private readonly commerceApiService: CommerceApiService
-  ) {}
+  constructor(private readonly accountsService: AccountsService) {}
 
-  ngOnInit() {}
-
-  getFullHistory() {
-    this.commerceApiService.getTransactionsHistory().subscribe(data => console.log(data));
+  ngOnInit() {
+    this.transactions = this.accountsService.transactions$;
   }
 }
