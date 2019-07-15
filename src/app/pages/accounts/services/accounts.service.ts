@@ -21,9 +21,9 @@ export class AccountsService {
     []
   );
   private transactionHistory: TransactionHistory[] = [];
-  private query: QueryTransactionHistoryCriteria;
+  private queryCriteria: QueryTransactionHistoryCriteria;
   private currentAccountId: string = null;
-  private response: TransactionResponse;
+  private transactionResponse: TransactionResponse;
   private lazyAmount: number = 20;
 
   constructor(
@@ -73,12 +73,12 @@ export class AccountsService {
   getTransactionHistoryByQuery(query: QueryTransactionHistoryCriteria): Observable<Array<TransactionHistory>> {
     return this.settings$.pipe(
       map(settings => {
-        const setting = this.findSettingByName(settings, SYSTEM_SETTINGS_CONFIG.depositTenders.name);
-        return this.transformStringToArray(setting.value);
+        const depositSetting = this.findSettingByName(settings, SYSTEM_SETTINGS_CONFIG.depositTenders.name);
+        return this.transformStringToArray(depositSetting.value);
       }),
       switchMap((tendersId: Array<string>) =>
         this.commerceApiService.getTransactionsHistory(query).pipe(
-          tap(response => (this.response = response)),
+          tap(response => (this.transactionResponse = response)),
           map(({ transactions }) => this.filterTransactionHistory(tendersId, transactions))
         )
       ),
@@ -87,23 +87,22 @@ export class AccountsService {
   }
 
   getNextTransactionsByAccountId(id?: string): Observable<Array<TransactionHistory>> {
-    if (!this.response.totalCount) return this.transactions$;
+    if (this.transactionResponse && !this.transactionResponse.totalCount) return this.transactions$;
     this.setNextQueryObject(id);
-    return this.getTransactionHistoryByQuery(this.query);
+    return this.getTransactionHistoryByQuery(this.queryCriteria);
   }
 
   getRecentTransactions(): Observable<Array<TransactionHistory>> {
     this.initQueryObject();
-    return this.getTransactionHistoryByQuery(this.query);
+    return this.getTransactionHistoryByQuery(this.queryCriteria);
   }
 
   private setNextQueryObject(id: string = null) {
     if (this.currentAccountId === id) {
-      const startingReturnRow = this.query.startingReturnRow + this.query.maxReturn;
+      const startingReturnRow = this.queryCriteria.startingReturnRow + this.queryCriteria.maxReturn;
       const transactionQuery: QueryTransactionHistoryCriteria = { startingReturnRow, maxReturn: this.lazyAmount };
-      this.query = { ...this.query, ...transactionQuery };
-    }
-    if (this.currentAccountId !== id) {
+      this.queryCriteria = { ...this.queryCriteria, ...transactionQuery };
+    } else {
       this.initQueryObject(id);
     }
   }
@@ -121,7 +120,7 @@ export class AccountsService {
     const startDate = start ? start : prevPeriod.toISOString();
     const endDate = end ? end : now.toISOString();
 
-    this.query = {
+    this.queryCriteria = {
       maxReturn: 0,
       startingReturnRow: 0,
       startDate,
@@ -145,9 +144,9 @@ export class AccountsService {
   }
 
   private cleanDuplicateTransactions(arr: TransactionHistory[]): TransactionHistory[] {
-    const map = new Map<string, TransactionHistory>();
-    arr.forEach(transaction => map.set(transaction.transactionId, transaction));
-    return Array.from(map.values());
+    const transactionMap = new Map<string, TransactionHistory>();
+    arr.forEach(transaction => transactionMap.set(transaction.transactionId, transaction));
+    return Array.from(transactionMap.values());
   }
 
   transformStringToArray(value: string): Array<any> {
