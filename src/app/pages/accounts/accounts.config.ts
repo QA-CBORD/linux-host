@@ -26,7 +26,12 @@ export enum LOCAL_ROUTING {
   requestFunds = 'request-funds',
   autoDeposit = 'auto-deposit',
   addFunds = 'add-funds',
-  accountDetails = 'account-details'
+  accountDetails = 'account-details',
+}
+
+export enum TRANSACTION_TYPE {
+  debit = 1,
+  deposit = 3,
 }
 
 export enum PAYMENT_SYSTEM_TYPE {
