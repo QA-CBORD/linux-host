@@ -25,6 +25,7 @@
     }
 
     &__label {
+      text-align: right;
       @include font-nunito-regular(10px);
     }
   }
