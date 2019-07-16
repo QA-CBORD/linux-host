@@ -1,6 +1,6 @@
 <div class="label-container">
   <div class="label__label">{{ transaction.patronFullName }}</div>
-  <div class="label__date">{{ transaction.postedDate }}</div>
+  <div class="label__date">{{ transaction.actualDate | date: 'M/d/yy, h:mmaaaaa\'m\'' }}</div>
 </div>
 <div class="type-container">
   <div class="type__entity">{{ transaction.amount | transactionUnits: transaction.accountType }}</div>
