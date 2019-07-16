@@ -1,9 +1,13 @@
 @import 'tools';
 
-.all-accounts {
-  @include font-nunito-heavy(14px);
+.accounts-list {
+  padding-top: 0;
 
-  color: $color-black;
-  letter-spacing: 0;
-  line-height: 18px;
+  &__all-accounts-label {
+    color: $color-black;
+    letter-spacing: 0;
+    line-height: 18px;
+
+    @include font-nunito-heavy(14px);
+  }
 }

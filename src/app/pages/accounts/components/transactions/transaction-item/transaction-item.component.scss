@@ -1,0 +1,31 @@
+@import 'tools';
+
+:host {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.label-container {
+  .label {
+    &__label {
+      @include font-nunito-semibold(16px);
+    }
+
+    &__date {
+      @include font-nunito-regular(10px);
+    }
+  }
+}
+
+.type-container {
+  .type {
+    &__entity {
+      @include font-nunito-semibold(16px);
+    }
+
+    &__label {
+      @include font-nunito-regular(10px);
+    }
+  }
+}

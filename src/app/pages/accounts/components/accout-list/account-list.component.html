@@ -8,5 +8,18 @@
         </ion-label>
     </ion-item>
     <st-account *ngFor="let account of accounts" [account]="account"></st-account>
+<ion-list class="accounts-list">
+  <ion-item
+    [button]="true"
+    [detail]="true"
+    detailIcon="/assets/icon/angle-right.svg"
+    lines="full"
+    class="accounts-list__all-accounts"
+    (click)="getFullHistory()"
+  >
+    <ion-label>
+      <p class="accounts-list__all-accounts-label">All accounts</p>
+    </ion-label>
+  </ion-item>
+  <st-account *ngFor="let account of accounts; let last = last" [account]="account" [lastItem]="last"></st-account>
 </ion-list>
-

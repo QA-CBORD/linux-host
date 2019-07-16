@@ -1,12 +1,13 @@
-<ion-item [button]="true"
-          [detail]="true"
-          detailIcon="/assets/icon/angle-right.svg"
-          lines="full">
-
+<ion-item
+  [button]="true"
+  [detail]="true"
+  detailIcon="/assets/icon/angle-right.svg"
+  lines="{{ lastItem ? 'none' : 'full' }}"
+>
   <ion-label>
-      <div class="account">
-        <p class="account__name">{{account.accountDisplayName}}</p>
-        <p class="account__balance">{{account.balance | accountType : account.accountType}}</p>
-      </div>
+    <div class="account">
+      <p class="account__name">{{ account.accountDisplayName }}</p>
+      <p class="account__balance">{{ account.balance | accountType: account.accountType }}</p>
+    </div>
   </ion-label>
 </ion-item>
