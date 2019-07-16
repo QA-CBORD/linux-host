@@ -1,10 +1,10 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { ACCOUNT_TYPES } from '../../../accounts.config';
+import { ACCOUNT_TYPES } from '../../accounts.config';
 
 @Pipe({
-  name: 'accountType',
+  name: 'transactionUnits',
 })
-export class AccountTypePipe implements PipeTransform {
+export class TransactionUnitsPipe implements PipeTransform {
   transform(value: number, type: number): string {
     if (value === null) {
       return 'no info';

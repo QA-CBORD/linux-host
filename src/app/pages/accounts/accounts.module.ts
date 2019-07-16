@@ -12,12 +12,12 @@ import { PageNamePipe } from './components/menu-receiving-funds/pipes/page-name.
 import { AccountListComponent } from './components/accout-list/account-list.component';
 import { AccountComponent } from './components/accout-list/account/account.component';
 import { IconPathPipe } from './components/menu-receiving-funds/pipes/icon-path.pipe';
-import { AccountTypePipe } from './components/accout-list/account/account-type.pipe';
-import {TransactionsComponent} from "./components/transactions/transactions.component";
-import {TransactionItemComponent} from "./components/transactions/transaction-item/transaction-item.component";
-import {AccountDetailsComponent} from './pages/account-details/account-details.component';
+import { TransactionsComponent } from './components/transactions/transactions.component';
+import { TransactionItemComponent } from './components/transactions/transaction-item/transaction-item.component';
+import { AccountDetailsComponent } from './pages/account-details/account-details.component';
+import { AccountsSharedModule } from './shared/shared.module';
 
-const imports = [CommonModule, AccountsRoutingModule, SharedModule, IonicModule];
+const imports = [CommonModule, AccountsRoutingModule, SharedModule, IonicModule, AccountsSharedModule];
 const declarations = [
   AccountsPage,
   MenuReceivingFundsComponent,
@@ -25,10 +25,9 @@ const declarations = [
   AccountListComponent,
   AccountComponent,
   IconPathPipe,
-  AccountTypePipe,
   TransactionsComponent,
   TransactionItemComponent,
-  AccountDetailsComponent
+  AccountDetailsComponent,
 ];
 const providers = [AccountsApiService, AccountsService, AccountsPageResolver];
 

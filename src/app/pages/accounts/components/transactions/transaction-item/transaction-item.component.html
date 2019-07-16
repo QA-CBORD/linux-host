@@ -1,8 +1,8 @@
 <div class="label-container">
-  <div class="label__label">Pizza Pandemonium</div>
-  <div class="label__date">2/16/19, 5:01 pm</div>
+  <div class="label__label">{{ transaction.patronFullName }}</div>
+  <div class="label__date">{{ transaction.postedDate }}</div>
 </div>
 <div class="type-container">
-  <div class="type__entity">-1 meal</div>
-  <div class="type__label">Meal Swipes</div>
+  <div class="type__entity">{{ transaction.amount | transactionUnits: transaction.accountType }}</div>
+  <div class="type__label">{{ transaction.accountName }}</div>
 </div>

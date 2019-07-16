@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { TransactionHistory } from '../../../models/transaction-history.model';
 
 @Component({
   selector: 'st-transaction-item',
@@ -6,9 +7,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./transaction-item.component.scss'],
 })
 export class TransactionItemComponent implements OnInit {
-
-  constructor() { }
+  @Input() transaction: TransactionHistory;
+  constructor() {}
 
   ngOnInit() {}
-
 }
