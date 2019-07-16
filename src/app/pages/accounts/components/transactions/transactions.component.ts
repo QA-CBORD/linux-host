@@ -11,8 +11,5 @@ export class TransactionsComponent implements OnInit {
 
   constructor() {}
 
-  ngOnInit() {
-    // Temp code:
-    console.log(this.transactions);
-  }
+  ngOnInit() {}
 }
