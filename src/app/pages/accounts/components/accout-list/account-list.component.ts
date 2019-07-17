@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
-import { UserAccount } from '../../../../core/model/account/account.model';
-import { AccountsService } from '../../services/accounts.service';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { Observable } from 'rxjs';
+
+import { UserAccount } from '../../../../core/model/account/account.model';
 import { TransactionHistory } from '../../models/transaction-history.model';
 
 @Component({
@@ -10,13 +10,26 @@ import { TransactionHistory } from '../../models/transaction-history.model';
   styleUrls: ['./account-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AccountListComponent implements OnInit {
-  @Input() accounts: UserAccount[];
+export class AccountListComponent {
   transactions: Observable<TransactionHistory[]>;
+  private accountsShowed: UserAccount[] = [];
+  private accountsHidden: UserAccount[] = [];
+  private readonly amountToShow: number = 4;
 
-  constructor(private readonly accountsService: AccountsService) {}
+  constructor() {}
 
-  ngOnInit() {
-    this.transactions = this.accountsService.transactions$;
+  @Input()
+  set accounts(value: UserAccount[]) {
+    if (value.length < this.amountToShow) {
+      this.accountsShowed = value;
+    } else {
+      this.accountsShowed = value.slice(0, this.amountToShow);
+      this.accountsHidden = value.slice(this.amountToShow);
+    }
+  }
+
+  showHiddenAccounts() {
+    this.accountsShowed = this.accountsShowed.concat(this.accountsHidden);
+    this.accountsHidden = null;
   }
 }
