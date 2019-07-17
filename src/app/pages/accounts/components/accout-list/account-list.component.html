@@ -12,14 +12,14 @@
     </ion-label>
   </ion-item>
 
-  <st-account *ngFor="let account of accountsShowed; let last = last" [account]="account" [lastItem]="last"></st-account>
+  <st-account *ngFor="let account of accountsShowed; let last = last" [account]="account" [lastItem]="last && !accountsHidden.length"></st-account>
 
-  <ion-item *ngIf="accountsHidden !== null"
+  <ion-item *ngIf="accountsHidden.length"
           [button]="true"
           [detail]="true"
             (click)="showHiddenAccounts()"
           detailIcon="/assets/icon/angle-down.svg"
-          lines="full"
+          lines="none"
           class="accounts-list__all-accounts"
   >
     <ion-label>

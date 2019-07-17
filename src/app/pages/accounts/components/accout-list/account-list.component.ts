@@ -14,13 +14,13 @@ export class AccountListComponent {
   transactions: Observable<TransactionHistory[]>;
   private accountsShowed: UserAccount[] = [];
   private accountsHidden: UserAccount[] = [];
-  private readonly amountToShow: number = 4;
+  private readonly amountToShow: number = 7;
 
   constructor() {}
 
   @Input()
   set accounts(value: UserAccount[]) {
-    if (value.length < this.amountToShow) {
+    if (value.length <= this.amountToShow) {
       this.accountsShowed = value;
     } else {
       this.accountsShowed = value.slice(0, this.amountToShow);
@@ -30,6 +30,6 @@ export class AccountListComponent {
 
   showHiddenAccounts() {
     this.accountsShowed = this.accountsShowed.concat(this.accountsHidden);
-    this.accountsHidden = null;
+    this.accountsHidden = [];
   }
 }
