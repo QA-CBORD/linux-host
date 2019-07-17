@@ -9,6 +9,7 @@
 .label-container {
   .label {
     &__label {
+      margin-right: 40px;
       @include font-nunito-semibold(16px);
     }
 
