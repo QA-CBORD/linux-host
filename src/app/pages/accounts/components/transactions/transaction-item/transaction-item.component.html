@@ -4,8 +4,7 @@
 </div>
 <div class="type-container">
   <div class="type__entity">
-    {{ transaction.transactionType | transactionAction
-    }}{{ transaction.amount | transactionUnits: transaction.accountType }}
+    {{ transaction.transactionType | transactionAction}} {{ transaction.amount | transactionUnits: transaction.accountType }}
   </div>
   <div class="type__label">{{ transaction.accountName }}</div>
 </div>
