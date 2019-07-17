@@ -21,6 +21,7 @@
 .type-container {
   .type {
     &__entity {
+      text-align: right;
       @include font-nunito-semibold(16px);
     }
 
