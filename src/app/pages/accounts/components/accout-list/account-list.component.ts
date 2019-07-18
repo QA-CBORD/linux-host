@@ -12,8 +12,8 @@ import { TransactionHistory } from '../../models/transaction-history.model';
 })
 export class AccountListComponent {
   transactions: Observable<TransactionHistory[]>;
-  private accountsShowed: UserAccount[] = [];
-  private accountsHidden: UserAccount[] = [];
+  accountsShowed: UserAccount[] = [];
+  accountsHidden: UserAccount[] = [];
   private readonly amountToShow: number = 7;
 
   constructor() {}
