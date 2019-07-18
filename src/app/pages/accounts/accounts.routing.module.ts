@@ -8,10 +8,19 @@ const routes: Route[] = [
   {
     path: '',
     component: AccountsPage,
-    pathMatch: 'full',
     resolve: {
       data: AccountsPageResolver,
     },
+    children: [
+      {
+        path: LOCAL_ROUTING.accountDetails,
+        loadChildren: './pages/account-details/account-details.module#AccountDetailsModule',
+      },
+    ],
+  },
+  {
+    path: LOCAL_ROUTING.accountDetailsM,
+    loadChildren: './pages/account-details/account-details.module#AccountDetailsModule',
   },
   {
     path: LOCAL_ROUTING.addFunds,
@@ -31,4 +40,5 @@ const imports = [RouterModule.forChild(routes)];
 const exports = [RouterModule];
 
 @NgModule({ imports, exports })
-export class AccountsRoutingModule {}
+export class AccountsRoutingModule {
+}

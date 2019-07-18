@@ -14,7 +14,6 @@ import { AccountComponent } from './components/accout-list/account/account.compo
 import { IconPathPipe } from './components/menu-receiving-funds/pipes/icon-path.pipe';
 import { TransactionsComponent } from './components/transactions/transactions.component';
 import { TransactionItemComponent } from './components/transactions/transaction-item/transaction-item.component';
-import { AccountDetailsComponent } from './pages/account-details/account-details.component';
 import { AccountsSharedModule } from './shared/shared.module';
 
 const imports = [CommonModule, AccountsRoutingModule, SharedModule, IonicModule, AccountsSharedModule];
@@ -26,8 +25,7 @@ const declarations = [
   AccountComponent,
   IconPathPipe,
   TransactionsComponent,
-  TransactionItemComponent,
-  AccountDetailsComponent,
+  TransactionItemComponent
 ];
 const providers = [AccountsApiService, AccountsService, AccountsPageResolver];
 
@@ -36,4 +34,5 @@ const providers = [AccountsApiService, AccountsService, AccountsPageResolver];
   imports,
   providers,
 })
-export class AccountsModule {}
+export class AccountsModule {
+}
