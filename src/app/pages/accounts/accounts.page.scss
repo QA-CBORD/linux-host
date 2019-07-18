@@ -22,6 +22,12 @@
 }
 
 .accounts {
+  &__router {
+    @include bp-before-tablet {
+      display: none;
+    }
+  }
+
   &__divider {
     margin: 0;
     border-top: 1px solid #ebebeb;
