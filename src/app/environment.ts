@@ -59,7 +59,9 @@ export class Environment {
   static setEnvironmentViaURL(appBaseURL: string) {
     if (appBaseURL.includes('dev')) {
       this.setEnvironment(Development);
-    } else if (appBaseURL.includes('qa')) {
+    } else if (appBaseURL.includes('feature1')) {
+      this.setEnvironment(Feature1);
+    }else if (appBaseURL.includes('qa')) {
       this.setEnvironment(Qa);
     } else if (appBaseURL.includes('pat')) {
       this.setEnvironment(Pat);
