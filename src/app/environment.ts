@@ -8,7 +8,7 @@ enum Development {
 enum Feature1 {
   services_url = 'https://services.get.feature1.cbord.com/GETServices/services',
   site_url = 'http://get.feature1.cbord.com',
-  cbordstudent_url = 'ec2-3-80-152-98.compute-1.amazonaws.com',
+  cbordstudent_url = 'https://student.feature1.cbord.com',
   secmsg_api = 'https://secmsg.api.dev.cbord.com',
 }
 
