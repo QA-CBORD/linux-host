@@ -5,6 +5,13 @@ enum Development {
   secmsg_api = 'https://secmsg.api.dev.cbord.com',
 }
 
+enum Feature1 {
+  services_url = 'https://services.get.feature1.cbord.com/GETServices/services',
+  site_url = 'http://get.feature1.cbord.com',
+  cbordstudent_url = 'ec2-3-80-152-98.compute-1.amazonaws.com',
+  secmsg_api = 'https://secmsg.api.dev.cbord.com',
+}
+
 enum Qa {
   services_url = 'https://services.get.qa.cbord.com/GETServices/services',
   site_url = 'http://get.qa.cbord.com',
