@@ -1,16 +1,14 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { Observable, zip } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { SettingInfo } from '../../../../core/model/configuration/setting-info.model';
 import { AccountsService } from '../../services/accounts.service';
-import { UserAccount } from '../../../../core/model/account/account.model';
-import { AccountSettingInfo } from '../../models/account-setting-info.model';
 import { NAVIGATE } from '../../../../app.global';
-import { MENU_LIST_ROUTES } from './local.config';
-import { SYSTEM_SETTINGS_CONFIG } from '../../accounts.config';
+import { MENU_LIST_ITEMS, MENU_LIST_ROUTES } from './local.config';
+import { MenuReceivingFundsListItem } from '../../models/menu-list-item';
 
 @Component({
   selector: 'st-menu-receiving-funds',
@@ -19,34 +17,28 @@ import { SYSTEM_SETTINGS_CONFIG } from '../../accounts.config';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MenuReceivingFundsComponent implements OnInit {
-  settings$: Observable<AccountSettingInfo[]>;
+  menuItems$: Observable<MenuReceivingFundsListItem[]>;
 
   constructor(private readonly accountsService: AccountsService, private readonly router: Router) {}
 
   ngOnInit() {
-    this.settings$ = zip(this.accountsService.settings$, this.accountsService.accounts$).pipe(
-      map(([settings, accounts]) => this.expandSetting(settings, accounts))
-    );
+    this.menuItems$ = this.accountsService.settings$.pipe(map(settings => this.handleListItems(settings)));
+  }
+
+  get hasShowedItem$(): Observable<boolean> {
+    return this.menuItems$.pipe(map(items => items.some(({ isShow }) => isShow)));
   }
 
   redirect(name: string) {
     this.router.navigate([NAVIGATE.accounts, MENU_LIST_ROUTES.get(name)], { skipLocationChange: true });
   }
 
-  private expandSetting(settings: SettingInfo[], accounts: UserAccount[]): AccountSettingInfo[] {
-    return settings.map(setting => {
-      if (setting.name === SYSTEM_SETTINGS_CONFIG.depositTenders.name) {
-        return { ...setting, isShow: this.hasTenderInAccounts(setting, accounts) };
-      }
-      return { ...setting, isShow: Boolean(Number(setting.value)) };
+  private handleListItems(settings: SettingInfo[]): MenuReceivingFundsListItem[] {
+    const navList = Array.from(MENU_LIST_ITEMS.keys());
+
+    return navList.map(element => {
+      const setting = settings.find(setting => setting.name === element);
+      return setting && { name: setting.name, isShow: Boolean(Number(setting.value)) };
     });
-  }
-
-  private hasTenderInAccounts({ value: funds }: SettingInfo, accounts: UserAccount[]): boolean {
-    if (!funds.length || !accounts.length) return false;
-    const _funds = JSON.parse(funds);
-    if (!Array.isArray(_funds) || !_funds.length) return false;
-
-    return !!accounts.find(({ accountTender }) => _funds.includes(accountTender));
   }
 }

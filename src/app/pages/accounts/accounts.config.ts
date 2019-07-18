@@ -14,6 +14,11 @@ export const SYSTEM_SETTINGS_CONFIG = {
     category: 'feature',
     name: 'deposit_tenders',
   },
+  guestDeposit: {
+    domain: 'get',
+    category: 'deposit',
+    name: 'enable_guest_deposits',
+  },
 };
 
 export enum ACCOUNT_TYPES {
@@ -40,12 +45,3 @@ export enum PAYMENT_SYSTEM_TYPE {
   MONETRA = 3,
   USAEPAY = 4,
 }
-
-// cashless type witch are allow to show
-//paymentSystemType (field of acc)
-// public static final Integer OPCS = 1;
-// public static final Integer CSGOLD = 2;
-//
-// // cashless type witch aren't allow to show
-// public static final Integer MONETRA = 3;
-// public static final Integer USAEPAY = 4;

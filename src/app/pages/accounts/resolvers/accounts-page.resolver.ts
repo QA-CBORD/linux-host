@@ -16,6 +16,7 @@ export class AccountsPageResolver implements Resolve<Observable<[UserAccount[], 
       SYSTEM_SETTINGS_CONFIG.depositTenders,
       SYSTEM_SETTINGS_CONFIG.enableAutoDeposits,
       SYSTEM_SETTINGS_CONFIG.enableOnetimeDeposits,
+      SYSTEM_SETTINGS_CONFIG.guestDeposit,
     ];
     const accountsCall = this.accountsService.getUserAccounts();
     const historyCall = this.accountsService
