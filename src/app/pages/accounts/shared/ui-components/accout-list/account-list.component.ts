@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { UserAccount } from '../../../../core/model/account/account.model';
-import { TransactionHistory } from '../../models/transaction-history.model';
+import { UserAccount } from '../../../../../core/model/account/account.model';
+import { TransactionHistory } from '../../../models/transaction-history.model';
 
 @Component({
   selector: 'st-account-list',

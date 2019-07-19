@@ -7,7 +7,7 @@
 ></st-header>
 
 <ion-split-pane when="md" class="accounts-pane">
-    <ion-content main>
+    <ion-content main class="accounts-content-wrapper">
         <div class="accounts-content">
             <section class="accounts-content__main-page accounts-page">
                 <st-menu-receiving-funds class="accounts-page__menu"></st-menu-receiving-funds>
@@ -19,11 +19,10 @@
                     <st-transactions [transactions]="transactions$ | async"></st-transactions>
                 </section>
             </section>
-            <section class="accounts-content__details-page">
-                <st-menu-receiving-funds></st-menu-receiving-funds>
-            </section>
         </div>
     </ion-content>
 
-    <ion-router-outlet class="accounts__router"></ion-router-outlet>
+    <section class="accounts-details-page">
+        <ion-router-outlet class="accounts__router"></ion-router-outlet>
+    </section>
 </ion-split-pane>

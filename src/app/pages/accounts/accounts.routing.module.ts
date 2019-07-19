@@ -13,13 +13,13 @@ const routes: Route[] = [
     },
     children: [
       {
-        path: LOCAL_ROUTING.accountDetails,
+        path: `${LOCAL_ROUTING.accountDetails}/:id`,
         loadChildren: './pages/account-details/account-details.module#AccountDetailsModule',
       },
     ],
   },
   {
-    path: LOCAL_ROUTING.accountDetailsM,
+    path: `${LOCAL_ROUTING.accountDetailsM}/:id`,
     loadChildren: './pages/account-details/account-details.module#AccountDetailsModule',
   },
   {

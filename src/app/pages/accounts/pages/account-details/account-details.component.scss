@@ -1,0 +1,15 @@
+@import "tools";
+
+.account-details {
+	&__header {
+		@include bp-grid-tablet {
+			display: none;
+		}
+	}
+
+	&__menu {
+		@include bp-before-tablet {
+			display: none;
+		}
+	}
+}

@@ -1,4 +1,4 @@
-import { LOCAL_ROUTING, SYSTEM_SETTINGS_CONFIG } from '../../accounts.config';
+import { LOCAL_ROUTING, SYSTEM_SETTINGS_CONFIG } from '../../../accounts.config';
 
 export const MENU_LIST_ITEMS = new Map<string, string>([
   [SYSTEM_SETTINGS_CONFIG.guestDeposit.name, 'Request Funds'],

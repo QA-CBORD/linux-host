@@ -4,11 +4,11 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { SettingInfo } from '../../../../core/model/configuration/setting-info.model';
-import { AccountsService } from '../../services/accounts.service';
-import { NAVIGATE } from '../../../../app.global';
+import { SettingInfo } from '../../../../../core/model/configuration/setting-info.model';
+import { AccountsService } from '../../../services/accounts.service';
+import { NAVIGATE } from '../../../../../app.global';
 import { MENU_LIST_ITEMS, MENU_LIST_ROUTES } from './local.config';
-import { MenuReceivingFundsListItem } from '../../models/menu-list-item';
+import { MenuReceivingFundsListItem } from '../../../models/menu-list-item';
 
 @Component({
   selector: 'st-menu-receiving-funds',

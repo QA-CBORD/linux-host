@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
-import { TransactionHistory } from '../../../models/transaction-history.model';
+import { TransactionHistory } from '../../../../models/transaction-history.model';
 
 @Component({
   selector: 'st-transaction-item',

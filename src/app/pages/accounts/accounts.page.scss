@@ -1,5 +1,8 @@
 @import 'tools';
 
+.accounts-content-wrapper {
+	flex: 1 1 35%;
+}
 .accounts-pane {
   flex-direction: row-reverse;
 }
@@ -56,13 +59,17 @@
 		  }
 	  }
   }
+}
 
-	&__details-page {
-		flex: 3 1 auto;
+.accounts-details-page {
+	flex: 3 1 auto;
 
-		@include bp-before-tablet {
-			display: none;
-		}
+	&.split-pane-side {
+		max-width: none;
+	}
+
+	@include bp-before-tablet {
+		display: none;
 	}
 }
 

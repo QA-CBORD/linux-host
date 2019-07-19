@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { MENU_LIST_ITEMS } from '../local.config';
+import { MENU_LIST_ITEMS } from '../ui-components/menu-receiving-funds/local.config';
 
 @Pipe({
   name: 'pageName',
