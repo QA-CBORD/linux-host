@@ -1,0 +1,34 @@
+@import 'tools';
+
+:host {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.label-container {
+  .label {
+    &__label {
+      margin-right: 40px;
+      @include font-nunito-semibold(16px);
+    }
+
+    &__date {
+      @include font-nunito-regular(10px);
+    }
+  }
+}
+
+.type-container {
+  .type {
+    &__entity {
+      text-align: right;
+      @include font-nunito-semibold(16px);
+    }
+
+    &__label {
+      text-align: right;
+      @include font-nunito-regular(10px);
+    }
+  }
+}

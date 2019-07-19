@@ -71,7 +71,7 @@
             <ng-container *ngIf="!active && isStoreEnv; then reward"></ng-container>
             <ng-container *ngIf="isHistoryEnv; then points"></ng-container>
             <ng-container
-                    *ngIf="isLevelsEnv && isUnearned && isEarned; then defaultLevelReward"
+                    *ngIf="isLevelsEnv && isUnearned && statusLevel === 1; then defaultLevelReward"
             ></ng-container>
             <ng-container
                     *ngIf="isLevelsEnv && isReceived && isLowerThenCurrentLevel; then claimedLevelReward"

@@ -13,9 +13,7 @@ export class SecureMessagePopoverComponent implements OnInit {
   popoverConfig: popoverConfig;
   contentString: { [key: string]: string };
 
-  constructor(
-  ) {
-  }
+  constructor() {}
 
   ngOnInit() {
     // this.setContentStrings();
@@ -34,10 +32,7 @@ export class SecureMessagePopoverComponent implements OnInit {
   }
 
   configureButtons() {
-    return [
-      { ...buttons.CLOSE, label: 'CLOSE' },
-      { ...buttons.RETRY, label: 'RETRY' },
-    ];
+    return [{ ...buttons.CLOSE, label: 'CLOSE' }, { ...buttons.RETRY, label: 'RETRY' }];
   }
 
   // private setContentStrings() {

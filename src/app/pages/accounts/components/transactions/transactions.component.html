@@ -1,0 +1,8 @@
+<ion-list class="transactions__list">
+  <!--  <ion-list-header class="transactions__header">-->
+  <!--    <div>recent transactions</div>-->
+  <!--  </ion-list-header>-->
+  <ion-item [button]="true" lines="full" class="transactions__item" *ngFor="let transaction of transactions">
+    <st-transaction-item [transaction]="transaction"></st-transaction-item>
+  </ion-item>
+</ion-list>

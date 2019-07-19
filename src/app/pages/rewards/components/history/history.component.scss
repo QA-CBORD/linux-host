@@ -12,6 +12,13 @@
       }
     }
 
+    &__empty-message {
+      margin-top: 30px;
+      text-align: center;
+      color: $color-dim-gray;
+      text-shadow: 0 0 1px $color-dark-gray;
+    }
+
     &__list {
       .list-container {
         &__item {

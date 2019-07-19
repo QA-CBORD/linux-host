@@ -4,6 +4,7 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { RouteReuseStrategy } from '@angular/router';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
+import { Network } from '@ionic-native/network/ngx';
 import { HttpClientModule } from '@angular/common/http';
 import { IonicRouteStrategy } from '@ionic/angular';
 import { BrowserModule } from '@angular/platform-browser';
@@ -18,6 +19,7 @@ const providers = [
   StatusBar,
   SplashScreen,
   { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+  Network,
   DatePipe,
   Keyboard,
   BarcodeScanner,

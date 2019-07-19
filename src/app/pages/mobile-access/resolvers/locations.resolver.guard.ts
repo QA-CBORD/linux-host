@@ -37,7 +37,11 @@ export class LocationsResolverGuard implements Resolve<Observable<MMobileLocatio
       retryWhen(errors =>
         errors.pipe(
           //log error message
-          tap(() => console.log('An error occurred while trying to retrieve your information.')),
+
+          tap(() => {
+            this.loader.closeSpinner();
+            console.log('An error occurred while trying to retrieve your information.');
+          }),
           take(1)
         )
       ),

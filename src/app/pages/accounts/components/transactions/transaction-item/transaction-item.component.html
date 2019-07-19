@@ -1,0 +1,10 @@
+<div class="label-container">
+  <div class="label__label">{{ transaction.locationName }}</div>
+  <div class="label__date">{{ transaction.actualDate | date: "M/d/yy, h:mmaaaaa'm'" }}</div>
+</div>
+<div class="type-container">
+  <div class="type__entity">
+    {{ transaction.transactionType | transactionAction}} {{ transaction.amount | transactionUnits: transaction.accountType }}
+  </div>
+  <div class="type__label">{{ transaction.accountName }}</div>
+</div>

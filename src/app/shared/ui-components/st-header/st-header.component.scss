@@ -50,3 +50,9 @@
     @include font-nunito-heavy(20px);
   }
 }
+
+:host-context(.shadow-header) {
+  .st-header__nav-toolbar {
+    box-shadow: 0px 30px 40px -30px rgba(122, 130, 143, 0.3), 0px 0px 30px 0px rgba(122, 130, 143, 0.15);
+  }
+}

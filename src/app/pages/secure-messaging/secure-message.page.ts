@@ -1,7 +1,6 @@
-import { ChangeDetectorRef, Component, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Events, Platform, PopoverController } from '@ionic/angular';
-import { Keyboard } from '@ionic-native/keyboard/ngx';
-
+import { Network } from '@ionic-native/network/ngx';
 import { fromEvent, Subscription } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
@@ -18,7 +17,7 @@ import { SecureMessageConversation, SecureMessageGroupInfo, SecureMessageInfo, S
   templateUrl: './secure-message.page.html',
   styleUrls: ['./secure-message.page.scss'],
 })
-export class SecureMessagePage implements OnDestroy {
+export class SecureMessagePage implements OnDestroy, OnInit {
   @ViewChild('chatScroll') chatScroll: any;
   @ViewChild('chatInput') chatInput: any;
 
@@ -39,9 +38,19 @@ export class SecureMessagePage implements OnDestroy {
     private readonly secureMessagingService: SecureMessagingService,
     private readonly loading: LoadingService,
     private readonly popoverCtrl: PopoverController,
-    private keyboard: Keyboard,
+    private readonly network: Network
   ) {
     this.platform.ready().then(this.initComponent.bind(this));
+  }
+
+  ngOnInit() {
+    this.network.onDisconnect().subscribe(() => {
+      console.log('network was disconnected :-(');
+    });
+
+    this.network.onConnect().subscribe(() => {
+      console.log('network connected!');
+    });
   }
 
   ngOnDestroy() {
@@ -90,7 +99,7 @@ export class SecureMessagePage implements OnDestroy {
         error => {
           this.loading.closeSpinner();
           this.modalHandler({ ...error, title: Globals.Exception.Strings.TITLE }, this.initializePage.bind(this));
-        },
+        }
       );
 
     this.sourceSubscription.add(subscription);
@@ -114,7 +123,7 @@ export class SecureMessagePage implements OnDestroy {
       },
       error => {
         /// only deal with connection error ?
-      },
+      }
     );
 
     this.sourceSubscription.add(subscription);
@@ -313,9 +322,6 @@ export class SecureMessagePage implements OnDestroy {
   onClickSendButton() {
     if (this.newMessageText && this.newMessageText.trim().length) {
       this.sendMessage(this.createNewMessageSendBody(this.newMessageText));
-      if(this.keyboard && this.keyboard.isVisible) {
-        setTimeout(this.keyboard.hide.bind(this), 0);
-      }
     }
   }
 
@@ -369,7 +375,7 @@ export class SecureMessagePage implements OnDestroy {
       () => {
         const error = { message: 'Unable to verify your user information', title: Globals.Exception.Strings.TITLE };
         this.modalHandler(error, this.sendMessage.bind(this, message));
-      },
+      }
     );
 
     this.sourceSubscription.add(subscription);
@@ -442,11 +448,17 @@ export class SecureMessagePage implements OnDestroy {
         return -1;
       }
 
-      if (new Date(a.messages[a.messages.length - 1].sent_date).getTime() < new Date(b.messages[b.messages.length - 1].sent_date).getTime()) {
+      if (
+        new Date(a.messages[a.messages.length - 1].sent_date).getTime() <
+        new Date(b.messages[b.messages.length - 1].sent_date).getTime()
+      ) {
         return 1;
       }
 
-      if (new Date(a.messages[a.messages.length - 1].sent_date).getTime() > new Date(b.messages[b.messages.length - 1].sent_date).getTime()) {
+      if (
+        new Date(a.messages[a.messages.length - 1].sent_date).getTime() >
+        new Date(b.messages[b.messages.length - 1].sent_date).getTime()
+      ) {
         return -1;
       }
 
@@ -543,14 +555,22 @@ export class SecureMessagePage implements OnDestroy {
    */
   messageShowAvatar({ messages }: SecureMessageConversation, messageIndex: number, messageType: string): boolean {
     const isNextMessageFromGroup = (): boolean => messages[messageIndex + 1].sender.type === messageType;
+    const isMoreThanOneMinuteBetweenMessages = (): boolean =>
+      new Date(messages[messageIndex + 1].sent_date).getTime() - new Date(messages[messageIndex].sent_date).getTime() <
+      60000;
+
     /// first message
     if (messageIndex === 0) {
       /// more than one message && next message from group as well
-      return !(messages.length > 1 && isNextMessageFromGroup());
+      return !(messages.length > 1 && isNextMessageFromGroup() && isMoreThanOneMinuteBetweenMessages());
     }
 
-    /// not first message && more messages && next message from group as well
-    return !(messages.length - 1 > messageIndex + 1 && isNextMessageFromGroup());
+    /// not last message && more messages && next message from group as well
+    return !(
+      messages.length - 1 > messageIndex + 1 &&
+      isNextMessageFromGroup() &&
+      isMoreThanOneMinuteBetweenMessages()
+    );
   }
 
   /**
@@ -566,7 +586,7 @@ export class SecureMessagePage implements OnDestroy {
       //was this message sent within 1 min of the next message:
       const isMessageSentWithinMin: boolean =
         new Date(messages[messageIndex + 1].sent_date).getTime() -
-        new Date(messages[messageIndex].sent_date).getTime() <
+          new Date(messages[messageIndex].sent_date).getTime() <
         60000;
 
       return messages[messageIndex + 1].sender.type === messageType && isMessageSentWithinMin;

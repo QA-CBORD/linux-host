@@ -1,0 +1,30 @@
+<ion-list class="accounts-list">
+
+  <ion-item
+    [button]="true"
+    [detail]="true"
+    detailIcon="/assets/icon/angle-right.svg"
+    lines="full"
+    class="accounts-list__all-accounts"
+  >
+    <ion-label>
+      <p class="accounts-list__all-accounts-label">All accounts</p>
+    </ion-label>
+  </ion-item>
+
+  <st-account *ngFor="let account of accountsShowed; let last = last" [account]="account" [lastItem]="last && !accountsHidden.length"></st-account>
+
+  <ion-item *ngIf="accountsHidden.length"
+          [button]="true"
+          [detail]="true"
+            (click)="showHiddenAccounts()"
+          detailIcon="/assets/icon/angle-down.svg"
+          lines="none"
+          class="accounts-list__all-accounts"
+  >
+    <ion-label>
+      <p class="accounts-list__all-accounts-label">+ {{accountsHidden.length}} More</p>
+    </ion-label>
+  </ion-item>
+
+</ion-list>

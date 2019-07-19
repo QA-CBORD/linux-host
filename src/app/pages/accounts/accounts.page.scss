@@ -1,0 +1,71 @@
+@import 'tools';
+
+.accounts-content {
+  display: flex;
+  flex-direction: column;
+
+  @include bp-grid-tablet {
+    flex-direction: row;
+  }
+
+  .accounts-page {
+    flex: 1 1 auto;
+  }
+
+  .accounts-details-page {
+    flex: 3 1 auto;
+
+    @include bp-before-tablet {
+      display: none;
+    }
+  }
+}
+
+.accounts {
+  &__router {
+    @include bp-before-tablet {
+      display: none;
+    }
+  }
+
+  &__divider {
+    margin: 0;
+    border-top: 1px solid #ebebeb;
+
+    @include bp-grid-tablet {
+      display: none;
+    }
+  }
+
+  &__menu {
+    @include bp-grid-tablet {
+      display: none;
+    }
+  }
+
+  &__main-wrapper {
+    margin: 0 2%;
+  }
+
+  &__transactions {
+    text-align: center;
+    text-transform: uppercase;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    color: $color-very-dark-gray;
+
+    @include font-nunito-semibold(12px);
+
+    &:before,
+    &:after {
+      content: '';
+      height: 1px;
+      background: $color-light-gray;
+      display: inline-block;
+      flex-grow: 1;
+      margin: 0 5%;
+    }
+  }
+}

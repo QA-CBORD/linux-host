@@ -12,6 +12,6 @@ const exports = [...declarations];
 @NgModule({
   imports,
   declarations,
-  exports
+  exports,
 })
 export class PipesModule {}

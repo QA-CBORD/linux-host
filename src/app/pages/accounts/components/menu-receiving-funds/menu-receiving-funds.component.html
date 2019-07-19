@@ -1,0 +1,12 @@
+<nav *ngIf="hasShowedItem$ | async">
+    <ul class="menu">
+        <ng-container *ngFor="let setting of (menuItems$ | async)">
+            <li class="menu__item" *ngIf="setting.isShow">
+                <figure class="menu__item-figure"  (click)="redirect(setting.name)">
+                    <img class="menu__item-icon" [src]="setting.name | iconPath" alt="menu icon">
+                    <figcaption class="menu__item-text">{{setting.name | pageName}}</figcaption>
+                </figure>
+            </li>
+        </ng-container>
+    </ul>
+</nav>

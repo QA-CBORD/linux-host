@@ -41,6 +41,7 @@ export enum CONTENT_STRINGS {
   scanCodeDescription = 'dialog_description_scan-code',
   activeRewardsLabel = 'label_active-reward-plural',
   claimInstructionsLabel = 'label_claim-instructions',
+  emptyHistoryListMessage = '',
 }
 export const ContentStringsParams = {
   category: Globals.ContentString.CATEGORIES.rewards,

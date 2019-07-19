@@ -3,5 +3,6 @@
     <ion-item class="list-container__item" *ngFor="let item of (historyArr$ | async); trackBy: trackByFn">
       <st-list-item class="list-container__item-content" environment="history" [item]="item"></st-list-item>
     </ion-item>
+    <p class="history__empty-message" *ngIf="!(historyArr$ | async).length">There is no information about your history yet</p>
   </ion-list>
 </div>
