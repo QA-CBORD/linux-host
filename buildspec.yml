@@ -16,7 +16,7 @@ phases:
       - node --version
       - npm --version
       - yum install rpm-build -y
-      - npm install -g ionic
+      - npm install -g ionic@4.12.0
       - npm install -g cordova
   pre_build:
     commands:
