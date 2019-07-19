@@ -35,11 +35,7 @@ export class AccountsPage implements OnInit {
         return this.accountsService.transformStringToArray(depositSetting.value);
       }),
       switchMap((tendersId: Array<string>) =>
-        this.accountsService.accounts$.pipe(
-          map(accounts => {
-            return this.filterAccountsByTenders(tendersId, accounts);
-          })
-        )
+        this.accountsService.accounts$.pipe(map(accounts => this.filterAccountsByTenders(tendersId, accounts)))
       )
     );
   }

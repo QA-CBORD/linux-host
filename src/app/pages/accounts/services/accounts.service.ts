@@ -98,7 +98,7 @@ export class AccountsService {
   }
 
   getSettingByName(settings: SettingInfo[], name: string): SettingInfo | undefined {
-    return settings.find(({ name: setName }) => setName === name);
+    return settings.find(({ name: n }) => n === name);
   }
 
   transformStringToArray(value: string): Array<any> {
