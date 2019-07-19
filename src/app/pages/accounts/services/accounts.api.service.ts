@@ -19,7 +19,7 @@ export class AccountsApiService extends BaseService {
   getSettingByConfig(config: ContentStringRequest): Observable<SettingInfo> {
     const methodName = 'retrieveSetting';
 
-    return this.userService.getUser().pipe(
+    return this.userService.userData.pipe(
       switchMap(({ institutionId }) => this.httpRequestFull(this.serviceUrl, methodName, true, institutionId, config)),
       map((response: MessageResponse<SettingInfo>) => response.response)
     );

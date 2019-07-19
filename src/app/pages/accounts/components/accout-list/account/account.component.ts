@@ -17,18 +17,13 @@ export class AccountComponent implements OnInit, OnDestroy {
   @Input() account: UserAccount;
   @Input() lastItem: boolean;
 
-  constructor(
-    private readonly router: Router,
-    private readonly platform: Platform,
-  ) {
-  }
+  constructor(private readonly router: Router, private readonly platform: Platform) {}
 
   ngOnInit() {
     this.defineResolution();
   }
 
-  ngOnDestroy() {
-  }
+  ngOnDestroy() {}
 
   goToDetailsPage() {
     const nextPage = this.tabletResolution ? LOCAL_ROUTING.accountDetails : LOCAL_ROUTING.accountDetailsM;

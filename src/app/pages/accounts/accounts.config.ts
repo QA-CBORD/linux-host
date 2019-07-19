@@ -14,6 +14,11 @@ export const SYSTEM_SETTINGS_CONFIG = {
     category: 'feature',
     name: 'deposit_tenders',
   },
+  displayTenders: {
+    domain: 'get',
+    category: 'feature',
+    name: 'display_tenders',
+  },
   guestDeposit: {
     domain: 'get',
     category: 'deposit',

@@ -25,7 +25,7 @@ const declarations = [
   AccountComponent,
   IconPathPipe,
   TransactionsComponent,
-  TransactionItemComponent
+  TransactionItemComponent,
 ];
 const providers = [AccountsApiService, AccountsService, AccountsPageResolver];
 
@@ -34,5 +34,4 @@ const providers = [AccountsApiService, AccountsService, AccountsPageResolver];
   imports,
   providers,
 })
-export class AccountsModule {
-}
+export class AccountsModule {}

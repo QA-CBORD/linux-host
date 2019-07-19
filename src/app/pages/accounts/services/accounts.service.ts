@@ -15,8 +15,8 @@ import { TransactionResponse } from '../../../core/model/account/transaction-res
 
 @Injectable()
 export class AccountsService {
-  private readonly _accounts$: BehaviorSubject<UserAccount[]> = new BehaviorSubject<UserAccount[]>(null);
-  private readonly _settings$: BehaviorSubject<SettingInfo[]> = new BehaviorSubject<SettingInfo[]>(null);
+  private readonly _accounts$: BehaviorSubject<UserAccount[]> = new BehaviorSubject<UserAccount[]>([]);
+  private readonly _settings$: BehaviorSubject<SettingInfo[]> = new BehaviorSubject<SettingInfo[]>([]);
   private readonly _transactions$: BehaviorSubject<TransactionHistory[]> = new BehaviorSubject<TransactionHistory[]>(
     []
   );
@@ -73,13 +73,13 @@ export class AccountsService {
   getTransactionHistoryByQuery(query: QueryTransactionHistoryCriteria): Observable<Array<TransactionHistory>> {
     return this.settings$.pipe(
       map(settings => {
-        const depositSetting = this.findSettingByName(settings, SYSTEM_SETTINGS_CONFIG.depositTenders.name);
+        const depositSetting = this.getSettingByName(settings, SYSTEM_SETTINGS_CONFIG.displayTenders.name);
         return this.transformStringToArray(depositSetting.value);
       }),
       switchMap((tendersId: Array<string>) =>
         this.commerceApiService.getTransactionsHistory(query).pipe(
           tap(response => (this.transactionResponse = response)),
-          map(({ transactions }) => this.filterTransactionHistory(tendersId, transactions))
+          map(({ transactions }) => this.filterByTenderIds(tendersId, transactions))
         )
       ),
       tap(transactions => (this._transactions = transactions))
@@ -97,6 +97,22 @@ export class AccountsService {
     return this.getTransactionHistoryByQuery(this.queryCriteria);
   }
 
+  getSettingByName(settings: SettingInfo[], name: string): SettingInfo | undefined {
+    return settings.find(({ name: setName }) => setName === name);
+  }
+
+  transformStringToArray(value: string): Array<any> {
+    if (!value.length) return [];
+    const result = JSON.parse(value);
+    return Array.isArray(result) ? result : [];
+  }
+
+  private filterAccountsByPaymentSystem(accounts: UserAccount[]): UserAccount[] {
+    return accounts.filter(
+      ({ paymentSystemType: type }) => type === PAYMENT_SYSTEM_TYPE.OPCS || type === PAYMENT_SYSTEM_TYPE.CSGOLD
+    );
+  }
+
   private setNextQueryObject(id: string = null) {
     if (this.currentAccountId === id) {
       const startingReturnRow = this.queryCriteria.startingReturnRow + this.queryCriteria.maxReturn;
@@ -105,12 +121,6 @@ export class AccountsService {
     } else {
       this.initQueryObject(id);
     }
-  }
-
-  private filterAccountsByPaymentSystem(accounts: UserAccount[]): UserAccount[] {
-    return accounts.filter(
-      ({ paymentSystemType: type }) => type === PAYMENT_SYSTEM_TYPE.OPCS || type === PAYMENT_SYSTEM_TYPE.CSGOLD
-    );
   }
 
   private initQueryObject(accountId: string = null, start?: string, end?: string) {
@@ -129,11 +139,7 @@ export class AccountsService {
     };
   }
 
-  private findSettingByName(settings: SettingInfo[], name: string): SettingInfo | undefined {
-    return settings.find(({ name: setName }) => setName === name);
-  }
-
-  private filterTransactionHistory(
+  private filterByTenderIds(
     tendersId: Array<string>,
     transactions: Array<TransactionHistory>
   ): Array<TransactionHistory> {
@@ -147,11 +153,5 @@ export class AccountsService {
     const transactionMap = new Map<string, TransactionHistory>();
     arr.forEach(transaction => transactionMap.set(transaction.transactionId, transaction));
     return Array.from(transactionMap.values());
-  }
-
-  transformStringToArray(value: string): Array<any> {
-    if (!value.length) return [];
-    const result = JSON.parse(value);
-    return Array.isArray(result) ? result : [];
   }
 }

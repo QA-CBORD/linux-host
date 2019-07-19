@@ -12,5 +12,4 @@ const imports = [CommonModule, SharedModule, AccountDetailsRoutingModule, IonicM
   declarations,
   imports,
 })
-export class AccountDetailsModule {
-}
+export class AccountDetailsModule {}
