@@ -105,11 +105,9 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
   }
 
   private initComponent() {
-    this.platform.ready().then(() => {
-      this.locations$ = combineLatest(this.mobileAccessService.locations, this.searchString$).pipe(
-        map(([locations, str]: [MMobileLocationInfo[], string]) => this.filterLocationsBySearchString(str, locations))
-      );
-    });
+    this.locations$ = combineLatest(this.mobileAccessService.locations, this.searchString$).pipe(
+      map(([locations, str]: [MMobileLocationInfo[], string]) => this.filterLocationsBySearchString(str, locations))
+    );
   }
 
   private filterLocationsBySearchString(searchString: string, locations: MMobileLocationInfo[]): MMobileLocationInfo[] {
