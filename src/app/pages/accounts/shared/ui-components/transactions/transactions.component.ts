@@ -13,4 +13,12 @@ export class TransactionsComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {}
+
+  virtualHeaderFn(transaction, i, transactions) {
+    console.log(transactions);
+    if (i % 2 === 0) {
+      return transaction.actualDate;
+    }
+    return null;
+  }
 }

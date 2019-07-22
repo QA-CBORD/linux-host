@@ -1,25 +1,12 @@
 <st-header
-    title="Transactions"
-    [isTitleShow]="true"
-    backButtonTitle="Accounts"
-    [isToolbarShow]="true"
-    class="account-details__header"
+  title="Transactions"
+  [isTitleShow]="true"
+  backButtonTitle="Accounts"
+  [isToolbarShow]="true"
+  class="account-details__header"
 ></st-header>
 
-
 <h1>Transactions</h1>
-<p>
-    account-details works!
-</p>
-<p>
-    account-details works!
-</p>
-<p>
-    account-details works!
-</p>
-<p>
-    account-details works!
-</p>
-<p>
-    account-details works!
-</p>
+<ion-content>
+  <st-transactions [transactions]="transactions$ | async"></st-transactions>
+</ion-content>

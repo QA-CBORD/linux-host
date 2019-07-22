@@ -11,5 +11,7 @@ export class TransactionItemComponent implements OnInit {
   @Input() transaction: TransactionHistory;
   constructor() {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    console.log(this.transaction);
+  }
 }

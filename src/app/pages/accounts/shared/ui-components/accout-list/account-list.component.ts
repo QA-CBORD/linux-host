@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { UserAccount } from '../../../../../core/model/account/account.model';
 import { TransactionHistory } from '../../../models/transaction-history.model';
+import { Platform } from '@ionic/angular';
 
 @Component({
   selector: 'st-account-list',
@@ -10,13 +11,14 @@ import { TransactionHistory } from '../../../models/transaction-history.model';
   styleUrls: ['./account-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AccountListComponent {
+export class AccountListComponent implements OnInit {
   transactions: Observable<TransactionHistory[]>;
   accountsShowed: UserAccount[] = [];
   accountsHidden: UserAccount[] = [];
   private readonly amountToShow: number = 7;
+  tabletResolution: boolean = false;
 
-  constructor() {}
+  constructor(private readonly platform: Platform) {}
 
   @Input()
   set accounts(value: UserAccount[]) {
@@ -28,8 +30,18 @@ export class AccountListComponent {
     }
   }
 
+  ngOnInit() {
+    this.defineResolution();
+  }
+
   showHiddenAccounts() {
     this.accountsShowed = this.accountsShowed.concat(this.accountsHidden);
     this.accountsHidden = [];
+  }
+
+  private defineResolution() {
+    const tabletResolution: number = 767;
+
+    this.tabletResolution = this.platform.width() > tabletResolution;
   }
 }

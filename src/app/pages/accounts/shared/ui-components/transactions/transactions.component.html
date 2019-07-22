@@ -1,8 +1,16 @@
-<ion-list class="transactions__list">
-  <!--  <ion-list-header class="transactions__header">-->
-  <!--    <div>recent transactions</div>-->
-  <!--  </ion-list-header>-->
-  <ion-item [button]="true" lines="full" class="transactions__item" *ngFor="let transaction of transactions">
+<ion-virtual-scroll
+  class="transactions__list"
+  [items]="transactions"
+  [headerFn]="virtualHeaderFn"
+  approxItemHeight="49px"
+  approxHeaderHeight="30px"
+>
+  <ion-item-divider *virtualHeader="let header" [sticky]="true">
+    <ion-label>
+      {{ header | date: "M/d/yy, h:mmaaaaa'm'" }}
+    </ion-label>
+  </ion-item-divider>
+  <ion-item [button]="true" lines="full" class="transactions__item" *virtualItem="let transaction">
     <st-transaction-item [transaction]="transaction"></st-transaction-item>
   </ion-item>
-</ion-list>
+</ion-virtual-scroll>

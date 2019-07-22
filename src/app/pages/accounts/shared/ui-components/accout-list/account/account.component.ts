@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit, OnDestroy } from '@angular/core';
-import { Platform } from '@ionic/angular';
 import { UserAccount } from '../../../../../../core/model/account/account.model';
 import { Router } from '@angular/router';
 import { NAVIGATE } from '../../../../../../app.global';
@@ -12,16 +11,13 @@ import { LOCAL_ROUTING } from '../../../../accounts.config';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccountComponent implements OnInit, OnDestroy {
-  tabletResolution: boolean = false;
-
+  @Input() tabletResolution: boolean;
   @Input() account: UserAccount;
   @Input() lastItem: boolean;
 
-  constructor(private readonly router: Router, private readonly platform: Platform) {}
+  constructor(private readonly router: Router) {}
 
   ngOnInit() {
-    console.log(this.account);
-    this.defineResolution();
   }
 
   ngOnDestroy() {}
@@ -30,11 +26,5 @@ export class AccountComponent implements OnInit, OnDestroy {
     const nextPage = this.tabletResolution ? LOCAL_ROUTING.accountDetails : LOCAL_ROUTING.accountDetailsM;
     // { skipLocationChange: true }
     this.router.navigate([`${NAVIGATE.accounts}/${nextPage}/${this.account.id}`]);
-  }
-
-  private defineResolution() {
-    const tabletResolution: number = 767;
-
-    this.tabletResolution = this.platform.width() > tabletResolution;
   }
 }

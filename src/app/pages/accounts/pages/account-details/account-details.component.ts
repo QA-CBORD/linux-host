@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
+import { TransactionHistory } from '../../models/transaction-history.model';
+import { AccountsService } from '../../services/accounts.service';
 
 @Component({
   selector: 'st-account-details',
@@ -6,7 +9,10 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./account-details.component.scss'],
 })
 export class AccountDetailsComponent implements OnInit {
-  constructor() {}
+  transactions$: Observable<TransactionHistory[]>;
+  constructor(private readonly accountsService: AccountsService) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.transactions$ = this.accountsService.transactions$;
+  }
 }
