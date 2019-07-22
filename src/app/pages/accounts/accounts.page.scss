@@ -1,82 +1,117 @@
 @import 'tools';
 
-.accounts-content-wrapper {
-	flex: 1 1 35%;
-}
 .accounts-pane {
   flex-direction: row-reverse;
 }
 
-.accounts-content {
-  display: flex;
-  flex-direction: column;
+.accounts-content-wrapper {
+  flex: 1 1 35%;
+  border-right: 1px solid #ebebeb;
 
-  @include bp-grid-tablet {
-    //flex-direction: row;
-  }
+  .accounts-content {
+    display: flex;
+    flex-direction: column;
 
-  .accounts-page {
-    flex: 1 1 auto;
+    .accounts-page {
+      flex: 1 1 auto;
 
-	  &__divider {
-		  margin: 0;
-		  border-top: 1px solid #ebebeb;
+      &__divider {
+        margin: 0;
+        border-top: 1px solid #ebebeb;
 
-		  @include bp-grid-tablet {
-			  display: none;
-		  }
-	  }
+        @include bp-grid-tablet {
+          display: none;
+        }
+      }
 
-	  &__menu {
-		  @include bp-grid-tablet {
-			  display: none;
-		  }
-	  }
+      &__menu {
+        @include bp-grid-tablet {
+          display: none;
+        }
+      }
 
-	  &__main-wrapper {
-		  margin: 0 2%;
-	  }
+      &__main-wrapper {
+        margin: 0 2%;
+      }
 
-	  &__transactions {
-		  text-align: center;
-		  text-transform: uppercase;
-		  margin: 0;
-		  display: flex;
-		  align-items: center;
-		  justify-content: space-evenly;
-		  color: $color-very-dark-gray;
+      &__transactions-title {
+        text-align: center;
+        text-transform: uppercase;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-evenly;
+        color: $color-very-dark-gray;
 
-		  @include font-nunito-semibold(12px);
+        @include font-nunito-semibold(12px);
+        @include bp-grid-tablet {
+          display: none;
+        }
 
-		  &:before,
-		  &:after {
-			  content: '';
-			  height: 1px;
-			  background: $color-light-gray;
-			  display: inline-block;
-			  flex-grow: 1;
-			  margin: 0 5%;
-		  }
-	  }
+        &:before,
+        &:after {
+          content: '';
+          height: 1px;
+          background: $color-light-gray;
+          display: inline-block;
+          flex-grow: 1;
+          margin: 0 5%;
+        }
+      }
+
+      &__transactions {
+        @include bp-grid-tablet {
+          display: none;
+        }
+      }
+    }
   }
 }
 
 .accounts-details-page {
-	flex: 3 1 auto;
+  display: flex;
+  flex-direction: column;
+  flex: 3 1 auto;
 
-	&.split-pane-side {
-		max-width: none;
-	}
+  &.split-pane-side {
+    max-width: none;
+  }
 
-	@include bp-before-tablet {
-		display: none;
-	}
-}
+  @include bp-before-tablet {
+    display: none;
+  }
 
-.accounts {
   &__router {
+    top: 100px;
+
     @include bp-before-tablet {
       display: none;
+    }
+  }
+
+  &__header {
+    height: 100px;
+    display: flex;
+    justify-content: space-between;
+
+    @include bp-before-tablet {
+      display: none;
+    }
+
+    .accounts-details-menu {
+      &__info-wrapper {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      &__title {
+        @include font-nunito-semibold(16px);
+      }
+
+      &__balance {
+        @include font-nunito-heavy(32px);
+      }
     }
   }
 }

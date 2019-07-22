@@ -6,10 +6,4 @@
 			display: none;
 		}
 	}
-
-	&__menu {
-		@include bp-before-tablet {
-			display: none;
-		}
-	}
 }
