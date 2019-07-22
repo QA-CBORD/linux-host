@@ -8,12 +8,12 @@ import { switchMap } from 'rxjs/operators';
 import { TransactionHistory } from '../models/transaction-history.model';
 
 @Injectable()
-export class AccountsPageResolver implements Resolve<Observable<[UserAccount[], TransactionHistory[]]>> {
+export class AccountsPageResolver implements Resolve<Observable<[TransactionHistory[], UserAccount[]]>> {
   constructor(private readonly accountsService: AccountsService) {}
 
-  resolve(): Observable<[UserAccount[], TransactionHistory[]]> {
+  resolve(): Observable<[TransactionHistory[], UserAccount[]]> {
     const requireSettings = [
-      SYSTEM_SETTINGS_CONFIG.depositTenders,
+      SYSTEM_SETTINGS_CONFIG.displayTenders,
       SYSTEM_SETTINGS_CONFIG.enableAutoDeposits,
       SYSTEM_SETTINGS_CONFIG.enableOnetimeDeposits,
       SYSTEM_SETTINGS_CONFIG.guestDeposit,
@@ -23,6 +23,6 @@ export class AccountsPageResolver implements Resolve<Observable<[UserAccount[], 
       .getUserSettings(requireSettings)
       .pipe(switchMap(() => this.accountsService.getRecentTransactions()));
 
-    return zip(accountsCall, historyCall);
+    return zip(historyCall, accountsCall);
   }
 }

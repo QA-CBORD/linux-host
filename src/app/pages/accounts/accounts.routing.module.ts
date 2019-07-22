@@ -40,5 +40,4 @@ const imports = [RouterModule.forChild(routes)];
 const exports = [RouterModule];
 
 @NgModule({ imports, exports })
-export class AccountsRoutingModule {
-}
+export class AccountsRoutingModule {}
