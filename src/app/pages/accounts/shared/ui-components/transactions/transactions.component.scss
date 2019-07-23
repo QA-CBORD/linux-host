@@ -1,4 +1,15 @@
+@import 'tools';
+
 .transactions {
-  &__list {
+  &__divider {
+    background: $color-white-smoke;
+  }
+
+  &__label {
+    width: 100%;
+    text-align: center;
+    color: $color-black;
+
+    @include font-nunito-regular(12px);
   }
 }

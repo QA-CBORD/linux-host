@@ -1,9 +1,18 @@
-@import "tools";
+@import 'tools';
 
 .account-details {
-	&__header {
-		@include bp-grid-tablet {
-			display: none;
-		}
-	}
+  &__header {
+    @include bp-grid-tablet {
+      display: none;
+    }
+  }
+
+  &__header-title {
+    padding: 0 30px;
+  }
+
+  &__content {
+    --padding-end: 30px !important;
+    --padding-start: 30px !important;
+  }
 }

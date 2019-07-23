@@ -7,6 +7,7 @@ import { TransactionsComponent } from './transactions/transactions.component';
 import { TransactionItemComponent } from './transactions/transaction-item/transaction-item.component';
 import { PipesModule } from '../pipes/pipes.module';
 import { IonicModule } from '@ionic/angular';
+import { DirectivesModule } from '../directives/directives.module';
 
 const declarations = [
   MenuReceivingFundsComponent,
@@ -18,11 +19,7 @@ const declarations = [
 
 @NgModule({
   declarations,
-  imports: [
-    CommonModule,
-    PipesModule,
-    IonicModule
-],
+  imports: [CommonModule, PipesModule, DirectivesModule, IonicModule],
   exports: [...declarations, IonicModule],
 })
-export class UiComponentsModule { }
+export class UiComponentsModule {}

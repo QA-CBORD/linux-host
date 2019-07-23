@@ -93,6 +93,7 @@
     height: 100px;
     display: flex;
     justify-content: space-between;
+    padding-left: 30px;
 
     @include bp-before-tablet {
       display: none;

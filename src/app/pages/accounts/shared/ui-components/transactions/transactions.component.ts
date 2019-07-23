@@ -14,11 +14,7 @@ export class TransactionsComponent implements OnInit {
 
   ngOnInit() {}
 
-  virtualHeaderFn(transaction, i, transactions) {
-    console.log(transactions);
-    if (i % 2 === 0) {
-      return transaction.actualDate;
-    }
-    return null;
+  trackTransactionsById(index: number, { transactionId }: TransactionHistory): string {
+    return transactionId;
   }
 }

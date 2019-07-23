@@ -9,5 +9,9 @@
     line-height: 18px;
 
     @include font-nunito-heavy(14px);
+
+    @include bp-grid-tablet {
+      @include font-nunito-semibold(14px);
+    }
   }
 }

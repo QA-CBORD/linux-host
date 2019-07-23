@@ -1,16 +1,19 @@
-<ion-virtual-scroll
-  class="transactions__list"
-  [items]="transactions"
-  [headerFn]="virtualHeaderFn"
-  approxItemHeight="49px"
-  approxHeaderHeight="30px"
->
-  <ion-item-divider *virtualHeader="let header" [sticky]="true">
-    <ion-label>
-      {{ header | date: "M/d/yy, h:mmaaaaa'm'" }}
-    </ion-label>
-  </ion-item-divider>
-  <ion-item [button]="true" lines="full" class="transactions__item" *virtualItem="let transaction">
-    <st-transaction-item [transaction]="transaction"></st-transaction-item>
-  </ion-item>
-</ion-virtual-scroll>
+<ion-list class="transactions__list">
+  <ng-container *ngFor="let transaction of transactions; let i = index; trackBy: trackTransactionsById">
+    <ion-item-divider
+      [sticky]="true"
+      class="transactions__divider"
+      stIsDividerAppear
+      [actualDate]="transaction.actualDate"
+      [index]="i"
+      [transactions]="transactions"
+    >
+      <ion-label position="'fixed'" class="transactions__label">
+        {{ transaction.actualDate | date: 'EEEE, MMMM d' }}
+      </ion-label>
+    </ion-item-divider>
+    <ion-item [button]="true" lines="full" class="transactions__item">
+      <st-transaction-item [transaction]="transaction"></st-transaction-item>
+    </ion-item>
+  </ng-container>
+</ion-list>
