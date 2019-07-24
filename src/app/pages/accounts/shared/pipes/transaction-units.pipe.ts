@@ -9,16 +9,10 @@ export class TransactionUnitsPipe implements PipeTransform {
     if (value === null) {
       return 'no info';
     }
-
-    switch (type) {
-      case ACCOUNT_TYPES.meals:
-        return `${value} Meals`;
-      case ACCOUNT_TYPES.charge:
-        return `$${value}`;
-      case ACCOUNT_TYPES.decliningBalance:
-        return `${value} Points`;
-      default:
-        return value.toString();
-    }
+    return type === ACCOUNT_TYPES.decliningBalance || ACCOUNT_TYPES.charge
+      ? `$${value}`
+      : type === ACCOUNT_TYPES.meals
+      ? `${value} Meals`
+      : value.toString();
   }
 }
