@@ -17,6 +17,8 @@ import { UserService } from './core/service/user-service/user.service';
 import { BUTTON_TYPE } from './core/utils/buttons.config';
 import { StGlobalPopoverComponent } from './shared/ui-components/st-global-popover';
 
+declare var AndroidInterface: any;
+
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -75,15 +77,30 @@ export class AppComponent implements OnDestroy {
         })
       )
       .subscribe((hash: string) => {
-        Environment.setEnvironmentViaURL(location.href);
-        this.parseHashParameters(hash);
-
-        /// now perform normal page logic
-        this.handleSessionToken();
-
-        // this.testGetSession();
+        try {
+          this.useJavaScriptInterface();
+        } catch (e) {
+          console.log("JS interface NOT used");
+          Environment.setEnvironmentViaURL(location.href);
+          this.parseHashParameters(hash);
+  
+          /// now perform normal page logic
+          this.handleSessionToken();
+  
+          // this.testGetSession();
+        }
+        
       });
     this.sourceSubscription.add(subscription);
+  }
+
+  useJavaScriptInterface(){
+    console.log("JS interface used");
+    DataCache.setSessionId(AndroidInterface.getSessionId());
+    DataCache.setUserInfo(AndroidInterface.getUserInfo());
+    DataCache.setInstitutionId(AndroidInterface.getInstitutionId());
+    this.destinationPage = AndroidInterface.getDestinationPage();
+    this.handlePageNavigation();
   }
 
   private testGetSession() {
