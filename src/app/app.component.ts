@@ -17,6 +17,8 @@ import { UserService } from './core/service/user-service/user.service';
 import { BUTTON_TYPE } from './core/utils/buttons.config';
 import { StGlobalPopoverComponent } from './shared/ui-components/st-global-popover';
 
+import { UserInfo } from './core/model/user';
+
 declare var AndroidInterface: any;
 
 @Component({
@@ -80,6 +82,7 @@ export class AppComponent implements OnDestroy {
         try {
           this.useJavaScriptInterface();
         } catch (e) {
+          console.error(e);
           console.log("JS interface NOT used");
           Environment.setEnvironmentViaURL(location.href);
           this.parseHashParameters(hash);
@@ -96,10 +99,18 @@ export class AppComponent implements OnDestroy {
 
   useJavaScriptInterface(){
     console.log("JS interface used");
-    DataCache.setSessionId(AndroidInterface.getSessionId());
-    DataCache.setUserInfo(AndroidInterface.getUserInfo());
-    DataCache.setInstitutionId(AndroidInterface.getInstitutionId());
+    let sessionId: string = AndroidInterface.getSessionId();
+    let userInfo: UserInfo = AndroidInterface.getUserInfo();
+    let institutionId: string = AndroidInterface.getInstitutionId();    
     this.destinationPage = AndroidInterface.getDestinationPage();
+
+    console.log(`${sessionId} ${institutionId} ${this.destinationPage}`)
+    console.log(userInfo);
+
+    DataCache.setSessionId(sessionId);
+    DataCache.setUserInfo(userInfo);
+    DataCache.setInstitutionId(institutionId);
+
     this.handlePageNavigation();
   }
 
