@@ -51,3 +51,10 @@ export enum PAYMENT_SYSTEM_TYPE {
   MONETRA = 3,
   USAEPAY = 4,
 }
+
+export const ALL_ACCOUNTS = 'all_accounts';
+
+export enum TIME_PERIOD {
+  pastMonth = 'past_month',
+  pastSixMonth = 'past_six_month',
+}
