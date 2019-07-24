@@ -101,7 +101,7 @@ export class AppComponent implements OnDestroy {
   useJavaScriptInterface(){
     console.log("JS interface used");
     let sessionId: string = AndroidInterface.getSessionId();
-    let userInfo: UserInfo = AndroidInterface.getUserInfo();
+    let userInfo: UserInfo = JSON.parse(AndroidInterface.getUserInfo());
     let institutionId: string = AndroidInterface.getInstitutionId();    
     this.destinationPage = AndroidInterface.getDestinationPage();
 
