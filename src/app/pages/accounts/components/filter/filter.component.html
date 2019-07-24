@@ -1,5 +1,5 @@
 <p class="filter">
-    <span class="filter__account">{{activeAccountId | accountName}}:</span>
+    <span class="filter__account">{{activeAccountName | accountName | async}}:</span>
     <span class="filter__period">{{activeTimeRange | timeRange}}</span>
     <figure class="filter__icon" (click)="initFilterModal()">
         <img src="assets/icon/slider-v.svg" alt="filter icon">

@@ -12,7 +12,7 @@ import { TransactionHistory } from '../models/transaction-history.model';
 import { ALL_ACCOUNTS, PAYMENT_SYSTEM_TYPE, SYSTEM_SETTINGS_CONFIG, TIME_PERIOD } from '../accounts.config';
 import { QueryTransactionHistoryCriteria } from '../../../core/model/account/transaction-query.model';
 import { TransactionResponse } from '../../../core/model/account/transaction-response.model';
-import { DateUtilObject, getTimeRangeOfDate, getUniquePeriod, TimeRange } from '../components/filter/date-util';
+import { DateUtilObject, getTimeRangeOfDate } from '../components/filter/date-util';
 
 @Injectable()
 export class AccountsService {
@@ -74,6 +74,10 @@ export class AccountsService {
     return zip(...requestArray).pipe(tap(settings => (this._settings = settings)));
   }
 
+  getAccountById(accountId: string): Observable<UserAccount> {
+    return this.accounts$.pipe(map(accounts => accounts.find(({ id }) => accountId === id)));
+  }
+
   getUserAccounts(): Observable<UserAccount[]> {
     return this.commerceApiService.getUserAccounts().pipe(
       map(accounts => this.filterAccountsByPaymentSystem(accounts)),
@@ -118,11 +122,13 @@ export class AccountsService {
     return Array.isArray(result) ? result : [];
   }
 
-  getTransactionsByAccountId(accountId: string, period?: DateUtilObject) {
+  getTransactionsByAccountId(accountId: string, period?: DateUtilObject): Observable<TransactionHistory[]> {
     const { startDate, endDate } = getTimeRangeOfDate(period);
+
     this.initQueryObject(accountId, endDate, startDate);
     this.currentAccountId = accountId;
     this.currentTimeRange = period;
+
     return this.getTransactionHistoryByQuery(this.queryCriteria);
   }
 

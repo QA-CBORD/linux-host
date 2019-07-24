@@ -1,10 +1,11 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { OverlayEventDetail } from '@ionic/core';
+
 import { AccountsService } from '../../services/accounts.service';
 import { DateUtilObject, getAmountOfMonthFromPeriod } from './date-util';
 import { ModalController } from '@ionic/angular';
 import { FilterMenuComponent } from './filter-menu/filter-menu.component';
 import { TIME_PERIOD } from '../../accounts.config';
-import { OverlayEventDetail } from '@ionic/core';
 
 @Component({
   selector: 'st-filter',
@@ -14,9 +15,13 @@ import { OverlayEventDetail } from '@ionic/core';
 })
 export class FilterComponent implements OnInit {
   activeTimeRange: DateUtilObject;
-  activeAccountId: string;
+  activeAccountName: string;
 
-  constructor(private readonly accountsService: AccountsService, private readonly modalController: ModalController) {}
+  constructor(
+    private readonly accountsService: AccountsService,
+    private readonly modalController: ModalController,
+    private readonly cdRef: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
     this.updateActiveState();
@@ -24,13 +29,13 @@ export class FilterComponent implements OnInit {
 
   private updateActiveState() {
     this.activeTimeRange = this.accountsService.activeTimeRange;
-    this.activeAccountId = this.accountsService.activeAccount;
+    this.activeAccountName = this.accountsService.activeAccount;
   }
 
   onFilterDone({ data: { accountId, period } }: OverlayEventDetail) {
-    this.updateActiveState();
-    this.accountsService.getTransactionsByAccountId(accountId, period).subscribe(data => {
-      console.log(data);
+    this.accountsService.getTransactionsByAccountId(accountId, period).subscribe(() => {
+      this.updateActiveState();
+      this.cdRef.detectChanges();
     });
   }
 
