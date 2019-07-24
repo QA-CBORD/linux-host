@@ -22,6 +22,10 @@ export class UserService extends BaseService {
     this.userData$.next({ ...userInfo });
   }
 
+  public setUserData(userInfo: UserInfo){
+    this.userData$.next({ ...userInfo });
+  }
+
   get userData(): Observable<UserInfo> {
     return this.userData$.asObservable();
   }

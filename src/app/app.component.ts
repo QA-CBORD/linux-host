@@ -109,11 +109,8 @@ export class AppComponent implements OnDestroy {
 
     DataCache.setSessionId(sessionId);
     DataCache.setUserInfo(userInfo);
+    this.userService.setUserData(userInfo);
     DataCache.setInstitutionId(institutionId);
-
-    console.log(`${DataCache.getSessionId()} ${DataCache.getInstitutionId()} ${this.destinationPage}`);
-    console.log(DataCache.getUserInfo());
-
     this.handlePageNavigation();
   }
 
