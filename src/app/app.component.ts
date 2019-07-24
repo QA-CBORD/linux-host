@@ -79,7 +79,8 @@ export class AppComponent implements OnDestroy {
         })
       )
       .subscribe((hash: string) => {
-        try {
+        try {          
+          Environment.setEnvironmentViaURL(location.href);
           this.useJavaScriptInterface();
         } catch (e) {
           console.error(e);
@@ -104,12 +105,14 @@ export class AppComponent implements OnDestroy {
     let institutionId: string = AndroidInterface.getInstitutionId();    
     this.destinationPage = AndroidInterface.getDestinationPage();
 
-    console.log(`${sessionId} ${institutionId} ${this.destinationPage}`)
-    console.log(userInfo);
+    
 
     DataCache.setSessionId(sessionId);
     DataCache.setUserInfo(userInfo);
     DataCache.setInstitutionId(institutionId);
+
+    console.log(`${DataCache.getSessionId()} ${DataCache.getInstitutionId()} ${this.destinationPage}`);
+    console.log(DataCache.getUserInfo());
 
     this.handlePageNavigation();
   }
