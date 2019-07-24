@@ -17,17 +17,18 @@ export class AccountListComponent implements OnInit {
   accountsHidden: UserAccount[] = [];
   private readonly amountToShow: number = 7;
   tabletResolution: boolean = false;
+  activeAccount: number | string = 'all accounts';
 
   constructor(private readonly platform: Platform) {}
 
   @Input()
   set accounts(value: UserAccount[]) {
-    if (value.length <= this.amountToShow) {
+    if (value.length <= this.amountToShow || this.tabletResolution) {
       this.accountsShowed = value;
-    } else {
-      this.accountsShowed = value.slice(0, this.amountToShow);
-      this.accountsHidden = value.slice(this.amountToShow);
+      return;
     }
+    this.accountsShowed = value.slice(0, this.amountToShow);
+    this.accountsHidden = value.slice(this.amountToShow);
   }
 
   ngOnInit() {
@@ -37,6 +38,14 @@ export class AccountListComponent implements OnInit {
   showHiddenAccounts() {
     this.accountsShowed = this.accountsShowed.concat(this.accountsHidden);
     this.accountsHidden = [];
+  }
+
+  onAccountClicked(accountId) {
+    if (!this.tabletResolution) {
+      return;
+    }
+
+    this.activeAccount = accountId;
   }
 
   private defineResolution() {

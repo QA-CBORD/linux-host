@@ -1,6 +1,11 @@
 @import 'tools';
 
 .account-details {
+  &__header-wrapper {
+    display: flex;
+    justify-content: space-between;
+  }
+
   &__header {
     @include bp-grid-tablet {
       display: none;

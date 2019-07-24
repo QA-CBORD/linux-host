@@ -31,7 +31,9 @@
       }
 
       &__main-wrapper {
-        margin: 0 2%;
+        @include bp-before-tablet {
+          margin: 0 2%;
+        }
       }
 
       &__transactions-title {

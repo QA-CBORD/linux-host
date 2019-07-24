@@ -1,4 +1,4 @@
-@import "tools";
+@import 'tools';
 
 :host {
   .account {
@@ -22,6 +22,24 @@
       color: $color-black;
       letter-spacing: 0;
       line-height: 20px;
+    }
+  }
+}
+
+:host-context(.accounts-list--active) {
+  @include bp-grid-tablet {
+    .account-item {
+      --background: #166dff;
+
+      .account {
+        &__name {
+          color: #fff;
+        }
+
+        &__balance {
+          color: #fff;
+        }
+      }
     }
   }
 }

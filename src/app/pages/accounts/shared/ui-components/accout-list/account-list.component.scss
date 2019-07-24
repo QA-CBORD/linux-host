@@ -14,4 +14,14 @@
       @include font-nunito-semibold(14px);
     }
   }
+
+  &--active {
+    @include bp-grid-tablet {
+      --background: #166dff;
+
+      .accounts-list__all-accounts-label {
+        color: #fff;
+      }
+    }
+  }
 }

@@ -5,6 +5,12 @@
     background: $color-white-smoke;
   }
 
+  &__item {
+    @include bp-grid-tablet {
+      pointer-events: none;
+    }
+  }
+
   &__label {
     width: 100%;
     text-align: center;
