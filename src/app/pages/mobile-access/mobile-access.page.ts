@@ -12,6 +12,8 @@ import { UserInfo } from '../../core/model/user';
 import { UserService } from '../../core/service/user-service/user.service';
 import { CONTENT_STRINGS } from './mobile-acces.config';
 
+declare var Android: any;
+
 @Component({
   selector: 'app-mobile-access',
   templateUrl: './mobile-access.page.html',
@@ -33,7 +35,13 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
     private readonly mobileAccessService: MobileAccessService,
     private readonly institutionService: InstitutionService
   ) {
+    this.testJavascriptInterface();
     this.initComponent();
+  }
+
+  testJavascriptInterface(){
+    let t = Android.testGetAndSet(999);
+    console.log(`JavascriptInterface Test: ${t}`)
   }
 
   ngOnDestroy() {
