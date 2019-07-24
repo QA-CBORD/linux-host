@@ -9,12 +9,16 @@ import { CommerceApiService } from '../../../core/service/commerce/commerce-api.
 import { UserAccount } from '../../../core/model/account/account.model';
 import { SettingInfo } from '../../../core/model/configuration/setting-info.model';
 import { TransactionHistory } from '../models/transaction-history.model';
-import { PAYMENT_SYSTEM_TYPE, SYSTEM_SETTINGS_CONFIG } from '../accounts.config';
+import { ALL_ACCOUNTS, PAYMENT_SYSTEM_TYPE, SYSTEM_SETTINGS_CONFIG, TIME_PERIOD } from '../accounts.config';
 import { QueryTransactionHistoryCriteria } from '../../../core/model/account/transaction-query.model';
 import { TransactionResponse } from '../../../core/model/account/transaction-response.model';
+import { DateUtilObject, getTimeRangeOfDate, getUniquePeriod, TimeRange } from '../components/filter/date-util';
 
 @Injectable()
 export class AccountsService {
+  private currentAccountId: string = ALL_ACCOUNTS;
+  private currentTimeRange: DateUtilObject = { name: TIME_PERIOD.pastMonth };
+
   private readonly _accounts$: BehaviorSubject<UserAccount[]> = new BehaviorSubject<UserAccount[]>([]);
   private readonly _settings$: BehaviorSubject<SettingInfo[]> = new BehaviorSubject<SettingInfo[]>([]);
   private readonly _transactions$: BehaviorSubject<TransactionHistory[]> = new BehaviorSubject<TransactionHistory[]>(
@@ -22,7 +26,6 @@ export class AccountsService {
   );
   private transactionHistory: TransactionHistory[] = [];
   private queryCriteria: QueryTransactionHistoryCriteria;
-  private currentAccountId: string = null;
   private transactionResponse: TransactionResponse;
   private lazyAmount: number = 20;
 
@@ -41,6 +44,14 @@ export class AccountsService {
 
   get transactions$(): Observable<TransactionHistory[]> {
     return this._transactions$.asObservable();
+  }
+
+  get activeAccount(): string {
+    return this.currentAccountId;
+  }
+
+  get activeTimeRange(): DateUtilObject {
+    return { ...this.currentTimeRange };
   }
 
   private set _accounts(value: UserAccount[]) {
@@ -107,6 +118,14 @@ export class AccountsService {
     return Array.isArray(result) ? result : [];
   }
 
+  getTransactionsByAccountId(accountId: string, period?: DateUtilObject) {
+    const { startDate, endDate } = getTimeRangeOfDate(period);
+    this.initQueryObject(accountId, endDate, startDate);
+    this.currentAccountId = accountId;
+    this.currentTimeRange = period;
+    return this.getTransactionHistoryByQuery(this.queryCriteria);
+  }
+
   private filterAccountsByPaymentSystem(accounts: UserAccount[]): UserAccount[] {
     return accounts.filter(
       ({ paymentSystemType: type }) => type === PAYMENT_SYSTEM_TYPE.OPCS || type === PAYMENT_SYSTEM_TYPE.CSGOLD
@@ -117,6 +136,7 @@ export class AccountsService {
     if (this.currentAccountId === id) {
       const startingReturnRow = this.queryCriteria.startingReturnRow + this.queryCriteria.maxReturn;
       const transactionQuery: QueryTransactionHistoryCriteria = { startingReturnRow, maxReturn: this.lazyAmount };
+
       this.queryCriteria = { ...this.queryCriteria, ...transactionQuery };
     } else {
       this.initQueryObject(id);
@@ -135,7 +155,7 @@ export class AccountsService {
       startingReturnRow: 0,
       startDate,
       endDate,
-      accountId,
+      accountId: accountId === ALL_ACCOUNTS ? null : accountId,
     };
   }
 

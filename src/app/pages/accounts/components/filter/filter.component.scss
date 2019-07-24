@@ -1,0 +1,45 @@
+@import "tools";
+
+.filter {
+  position: relative;
+  text-align: center;
+  padding:10px;
+
+  &__account{
+    @include font-nunito-heavy(14px);
+
+    color: $color-black;
+    letter-spacing: 0;
+    line-height: 18px;
+    max-width: 40%;
+    display: inline-block;
+  }
+
+  &__period{
+    @include font-nunito-semibold(14px);
+
+    color: $color-black;
+    letter-spacing: 0;
+    line-height: 18px;
+    max-width: 30%;
+    display: inline-block;
+  }
+
+  &__icon{
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    right: 35px;
+    top: calc(50% - 14px);
+    margin: 0;
+    cursor: pointer;
+  }
+
+  &__icon-message {
+    @include font-nunito-semibold(12px);
+
+    color: $color-black;
+    letter-spacing: 0;
+    line-height: 0;
+  }
+}

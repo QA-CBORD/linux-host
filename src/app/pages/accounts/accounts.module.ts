@@ -16,24 +16,32 @@ import { TransactionsComponent } from './components/transactions/transactions.co
 import { TransactionItemComponent } from './components/transactions/transaction-item/transaction-item.component';
 import { AccountsSharedModule } from './shared/shared.module';
 import { FilterComponent } from './components/filter/filter.component';
+import { FilterMenuComponent } from './components/filter/filter-menu/filter-menu.component';
+import { AccountNamePipe } from './components/filter/pipes/account-name.pipe';
+import { TimeRangePipe } from './components/filter/pipes/time-range.pipe';
 
 const imports = [CommonModule, AccountsRoutingModule, SharedModule, IonicModule, AccountsSharedModule];
 const declarations = [
   AccountsPage,
   MenuReceivingFundsComponent,
   PageNamePipe,
+  AccountNamePipe,
+  TimeRangePipe,
   AccountListComponent,
   AccountComponent,
   IconPathPipe,
   TransactionsComponent,
   TransactionItemComponent,
   FilterComponent,
+  FilterMenuComponent,
 ];
+const entryComponents = [FilterMenuComponent];
 const providers = [AccountsApiService, AccountsService, AccountsPageResolver];
 
 @NgModule({
   declarations,
   imports,
   providers,
+  entryComponents,
 })
 export class AccountsModule {}
