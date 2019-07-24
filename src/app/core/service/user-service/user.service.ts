@@ -23,7 +23,7 @@ export class UserService extends BaseService {
   }
 
   public setUserData(userInfo: UserInfo){
-    this.userData$.next({ ...userInfo });
+    this._userData = userInfo;
   }
 
   get userData(): Observable<UserInfo> {
