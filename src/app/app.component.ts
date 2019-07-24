@@ -100,31 +100,27 @@ export class AppComponent implements OnDestroy {
 
   useJavaScriptInterface(){
     console.log("JS interface used");
-    let sessionId: string = AndroidInterface.getSessionId();
-    let userInfo: UserInfo = JSON.parse(AndroidInterface.getUserInfo());
-    let institutionId: string = AndroidInterface.getInstitutionId();    
-    this.destinationPage = AndroidInterface.getDestinationPage();
 
+    if(!AndroidInterface){
+      throw new Error("No native interface, retrieve info normally")
+    }
+
+    let sessionId: string = AndroidInterface.getSessionId() || null;
+    let userInfo: UserInfo = JSON.parse(AndroidInterface.getUserInfo()) || null;
+    let institutionId: string = AndroidInterface.getInstitutionId() || null;    
+    this.destinationPage = AndroidInterface.getDestinationPage() || null;
+
+
+    if(!sessionId || !userInfo || !institutionId || !this.destinationPage){
+      throw new Error("Error getting native data, retrieve info normally");
+    }
     
 
     DataCache.setSessionId(sessionId);
     DataCache.setUserInfo(userInfo);
     this.userService.setUserData(userInfo);
     DataCache.setInstitutionId(institutionId);
-
-    console.log(`${DataCache.getSessionId()} ${DataCache.getInstitutionId()} ${this.destinationPage}`);
-
-    this.userService.userData.subscribe(data => {
-
-      console.log(data);
-      this.handlePageNavigation();
-    },
-    error => {
-
-      console.log(error);
-    });
-
-
+    this.handlePageNavigation();
   }
 
   private testGetSession() {
