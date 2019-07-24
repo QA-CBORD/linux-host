@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { OverlayEventDetail } from '@ionic/core';
 
-import { AccountsService } from '../../services/accounts.service';
 import { DateUtilObject, getAmountOfMonthFromPeriod } from './date-util';
 import { ModalController } from '@ionic/angular';
 import { FilterMenuComponent } from './filter-menu/filter-menu.component';
-import { TIME_PERIOD } from '../../accounts.config';
+import { AccountsService } from '../../../services/accounts.service';
+import { TIME_PERIOD } from '../../../accounts.config';
 
 @Component({
   selector: 'st-filter',

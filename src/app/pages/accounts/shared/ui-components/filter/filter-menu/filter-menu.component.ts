@@ -3,9 +3,9 @@ import { ModalController } from '@ionic/angular';
 
 import { Observable } from 'rxjs';
 
-import { UserAccount } from '../../../../../core/model/account/account.model';
 import { DateUtilObject } from '../date-util';
-import { ALL_ACCOUNTS } from '../../../accounts.config';
+import { ALL_ACCOUNTS } from '../../../../accounts.config';
+import { UserAccount } from 'src/app/core/model/account/account.model';
 
 @Component({
   selector: 'st-filter-menu',

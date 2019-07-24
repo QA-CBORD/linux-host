@@ -12,7 +12,7 @@ import { TransactionHistory } from '../models/transaction-history.model';
 import { ALL_ACCOUNTS, PAYMENT_SYSTEM_TYPE, SYSTEM_SETTINGS_CONFIG, TIME_PERIOD } from '../accounts.config';
 import { QueryTransactionHistoryCriteria } from '../../../core/model/account/transaction-query.model';
 import { TransactionResponse } from '../../../core/model/account/transaction-response.model';
-import { DateUtilObject, getTimeRangeOfDate } from '../components/filter/date-util';
+import {DateUtilObject, getTimeRangeOfDate} from "../shared/ui-components/filter/date-util";
 
 @Injectable()
 export class AccountsService {

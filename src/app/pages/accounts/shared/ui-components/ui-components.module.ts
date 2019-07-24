@@ -8,6 +8,10 @@ import { TransactionItemComponent } from './transactions/transaction-item/transa
 import { PipesModule } from '../pipes/pipes.module';
 import { IonicModule } from '@ionic/angular';
 import { DirectivesModule } from '../directives/directives.module';
+import { FilterComponent } from './filter/filter.component';
+import { FilterMenuComponent } from './filter/filter-menu/filter-menu.component';
+import { TimeRangePipe } from './filter/pipes/time-range.pipe';
+import { AccountNamePipe } from './filter/pipes/account-name.pipe';
 
 const declarations = [
   MenuReceivingFundsComponent,
@@ -15,11 +19,16 @@ const declarations = [
   AccountComponent,
   TransactionsComponent,
   TransactionItemComponent,
+  FilterComponent,
+  FilterMenuComponent,
+  TimeRangePipe,
+  AccountNamePipe,
 ];
 
 @NgModule({
   declarations,
   imports: [CommonModule, PipesModule, DirectivesModule, IonicModule],
   exports: [...declarations, IonicModule],
+  entryComponents: [FilterMenuComponent],
 })
 export class UiComponentsModule {}

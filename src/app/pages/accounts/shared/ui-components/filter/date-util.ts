@@ -1,4 +1,4 @@
-import { TIME_PERIOD } from '../../accounts.config';
+import { TIME_PERIOD } from '../../../accounts.config';
 
 const month = [];
 month[0] = 'January';

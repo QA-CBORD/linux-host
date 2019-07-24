@@ -1,8 +1,8 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { ALL_ACCOUNTS } from '../../../accounts.config';
-import { AccountsService } from '../../../services/accounts.service';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { AccountsService } from 'src/app/pages/accounts/services/accounts.service';
+import { ALL_ACCOUNTS } from 'src/app/pages/accounts/accounts.config';
 
 @Pipe({
   name: 'accountName',
