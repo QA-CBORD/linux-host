@@ -1,45 +1,71 @@
 @import "tools";
 
 .filter {
-  position: relative;
-  text-align: center;
-  padding:10px;
+  display: flex;
+  justify-content: center;
+
+  @include bp-before-tablet {
+    padding:10px;
+    position: relative;
+  }
+
+  @include bp-grid-tablet {
+    margin: 20px 50px 0 0;
+  }
 
   &__account{
-    @include font-nunito-heavy(14px);
-
     color: $color-black;
     letter-spacing: 0;
     line-height: 18px;
-    max-width: 40%;
     display: inline-block;
+    margin-right: 5px;
+
+    @include font-nunito-heavy(14px);
+    @include bp-grid-tablet {
+      display: none;
+    }
   }
 
   &__period{
-    @include font-nunito-semibold(14px);
-
     color: $color-black;
     letter-spacing: 0;
     line-height: 18px;
-    max-width: 30%;
     display: inline-block;
+
+    @include font-nunito-semibold(14px);
+    @include bp-grid-tablet {
+      display: none;
+    }
   }
 
   &__icon{
-    position: absolute;
     width: 28px;
     height: 28px;
-    right: 35px;
-    top: calc(50% - 14px);
     margin: 0;
     cursor: pointer;
+
+    @include bp-before-tablet {
+      position: absolute;
+      right: 20px;
+      top: 0px;
+    }
+
+    @include bp-grid-tablet {
+      display: flex;
+      align-self: center;
+    }
   }
 
   &__icon-message {
-    @include font-nunito-semibold(12px);
-
     color: $color-black;
     letter-spacing: 0;
     line-height: 0;
+
+    @include font-nunito-semibold(12px);
+    @include bp-grid-tablet {
+      align-self: center;
+
+      @include font-nunito-heavy(16px);
+    }
   }
 }

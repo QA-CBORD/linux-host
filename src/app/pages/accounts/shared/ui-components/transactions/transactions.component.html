@@ -7,6 +7,7 @@
       [actualDate]="transaction.actualDate"
       [index]="i"
       [transactions]="transactions"
+        *ngIf="dividers"
     >
       <ion-label position="'fixed'" class="transactions__label">
         {{ transaction.actualDate | date: 'EEEE, MMMM d' }}

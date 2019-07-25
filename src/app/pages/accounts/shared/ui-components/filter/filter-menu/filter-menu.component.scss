@@ -1,48 +1,50 @@
 @import "tools";
 
 .filter-menu {
-  position: relative;
+	position: relative;
 
-  &__header {
-    @include font-nunito-heavy(20px);
+	&__header {
+		text-align: center;
 
-    text-align: center;
-  }
+		@include font-nunito-heavy(20px);
+	}
 
-  &__done-btn {
-    @include font-nunito-heavy(16px);
+	&__done-btn {
+		color: $color-dodger-blue;
+		position: absolute;
+		right: 10px;
+		line-height: 1;
+		top: 50%;
+		background: transparent;
+		border: none;
 
-    color: $color-dodger-blue;
-    position: absolute;
-    right: 10px;
-    line-height: 1;
-    top: 50%;
-    background: transparent;
-    border: none;
+		&:active,
+		&:target,
+		&:visited,
+		&:focus {
+			border: none;
+			outline: none;
+		}
 
-    &:active,
-    &:target,
-    &:visited,
-    &:focus {
-      border: none;
-      outline: none;
-    }
-  }
+		@include font-nunito-heavy(16px);
+	}
 
-  &__divider {
-    @include font-nunito-regular(12px);
+	&__divider {
+		margin: 0;
+		padding: 2px 10px;
+		text-transform: uppercase;
+		background-color: $color-white-smoke;
+		color: #5a5a5a;
+		--inner-padding-start: 10px !important;
 
-    margin: 0;
-    background-color: $color-very-light-gray;
-    padding: 2px 10px;
-    text-transform: uppercase;
-    color: $color-matterhorn;
-  }
+		@include font-nunito-regular(12px);
+	}
 
-  &__item-list {
-    padding: 0;
-  }
-  &__radio-btn {
-    margin: 0 10px 0 0;
-  }
+	&__item-list {
+		padding: 0;
+	}
+
+	&__radio-btn {
+		margin: 0 10px 0 0;
+	}
 }

@@ -9,6 +9,7 @@ import { TransactionHistory } from '../../../models/transaction-history.model';
 })
 export class TransactionsComponent implements OnInit {
   @Input() transactions: TransactionHistory[];
+  @Input() dividers: boolean;
 
   constructor() {}
 

@@ -16,7 +16,7 @@
           <st-account-list [accounts]="accounts$ | async"></st-account-list>
 
           <h2 class="accounts-page__transactions-title">recent transactions</h2>
-          <st-transactions class="accounts-page__transactions" [transactions]="transactions$ | async"></st-transactions>
+          <st-transactions class="accounts-page__transactions" [transactions]="transactions$ | async" [dividers]="false"></st-transactions>
         </section>
       </section>
     </div>
