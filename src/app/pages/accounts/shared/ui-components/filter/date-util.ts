@@ -45,8 +45,9 @@ export const getAmountOfMonthFromPeriod = (n: number, date?: Date): DateUtilObje
 
   for (let i = 0; i < n; i++) {
     prevMonth = currentMonth;
-    const prevMonthDate =
-      prevMonth.month === 0 ? new Date(currentMonth.year - 1, 11) : new Date(currentMonth.year, currentMonth.month - 1);
+    const prevMonthDate = prevMonth.month === 0
+        ? new Date(currentMonth.year - 1, 11)
+        : new Date(currentMonth.year, currentMonth.month - 1);
     currentMonth = createMonthObject(prevMonthDate);
     month.push(currentMonth);
   }

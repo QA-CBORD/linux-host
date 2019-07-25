@@ -51,7 +51,7 @@ export class FilterMenuComponent implements OnInit {
   }
 }
 
-interface FilterState {
+export interface FilterState {
   accountId?: string;
   period?: DateUtilObject;
 }
