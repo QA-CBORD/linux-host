@@ -9,7 +9,7 @@ export class TransactionUnitsPipe implements PipeTransform {
     if (value === null) {
       return 'no info';
     }
-    return type === ACCOUNT_TYPES.decliningBalance || ACCOUNT_TYPES.charge
+    return type === ACCOUNT_TYPES.decliningBalance || type === ACCOUNT_TYPES.charge
       ? `$${value}`
       : type === ACCOUNT_TYPES.meals
       ? `${value} Meals`
