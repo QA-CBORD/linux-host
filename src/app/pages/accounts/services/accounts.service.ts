@@ -124,7 +124,9 @@ export class AccountsService {
 
   getTransactionsByAccountId(accountId: string, period?: DateUtilObject): Observable<TransactionHistory[]> {
     const { startDate, endDate } = getTimeRangeOfDate(period);
-
+    if (this.currentAccountId !== accountId || this.currentTimeRange !== period ) {
+      this.transactionHistory = [];
+    }
     this.initQueryObject(accountId, endDate, startDate);
     this.currentAccountId = accountId;
     this.currentTimeRange = period;
@@ -142,7 +144,6 @@ export class AccountsService {
     if (this.currentAccountId === id) {
       const startingReturnRow = this.queryCriteria.startingReturnRow + this.queryCriteria.maxReturn;
       const transactionQuery: QueryTransactionHistoryCriteria = { startingReturnRow, maxReturn: this.lazyAmount };
-
       this.queryCriteria = { ...this.queryCriteria, ...transactionQuery };
     } else {
       this.initQueryObject(id);
