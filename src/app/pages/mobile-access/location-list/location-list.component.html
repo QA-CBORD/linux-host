@@ -5,4 +5,4 @@
 >
 </st-location-item>
 
-<p class="no-data-message" *ngIf="!locations.length">{{ contentString.noLocationsFound }}</p>
+<p class="no-data-message" *ngIf="locations && !locations.length">{{ contentString.noLocationsFound }}</p>
