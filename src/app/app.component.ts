@@ -79,13 +79,12 @@ export class AppComponent implements OnDestroy {
         })
       )
       .subscribe((hash: string) => {
+        Environment.setEnvironmentViaURL(location.href);
         try {          
-          Environment.setEnvironmentViaURL(location.href);
           this.useJavaScriptInterface();
         } catch (e) {
           console.error(e);
           console.log("JS interface NOT used");
-          Environment.setEnvironmentViaURL(location.href);
           this.parseHashParameters(hash);
   
           /// now perform normal page logic
