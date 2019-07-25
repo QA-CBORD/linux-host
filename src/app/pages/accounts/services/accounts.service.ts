@@ -12,17 +12,17 @@ import { TransactionHistory } from '../models/transaction-history.model';
 import { ALL_ACCOUNTS, PAYMENT_SYSTEM_TYPE, SYSTEM_SETTINGS_CONFIG, TIME_PERIOD } from '../accounts.config';
 import { QueryTransactionHistoryCriteria } from '../../../core/model/account/transaction-query.model';
 import { TransactionResponse } from '../../../core/model/account/transaction-response.model';
-import {DateUtilObject, getTimeRangeOfDate} from "../shared/ui-components/filter/date-util";
+import { DateUtilObject, getTimeRangeOfDate, getUniquePeriod } from '../shared/ui-components/filter/date-util';
 
 @Injectable()
 export class AccountsService {
-  private currentAccountId: string = ALL_ACCOUNTS;
-  private currentTimeRange: DateUtilObject = { name: TIME_PERIOD.pastMonth };
+  private currentAccountId: string;
+  private currentTimeRange: DateUtilObject;
 
   private readonly _accounts$: BehaviorSubject<UserAccount[]> = new BehaviorSubject<UserAccount[]>([]);
   private readonly _settings$: BehaviorSubject<SettingInfo[]> = new BehaviorSubject<SettingInfo[]>([]);
   private readonly _transactions$: BehaviorSubject<TransactionHistory[]> = new BehaviorSubject<TransactionHistory[]>(
-    []
+    [],
   );
   private transactionHistory: TransactionHistory[] = [];
   private queryCriteria: QueryTransactionHistoryCriteria;
@@ -31,8 +31,9 @@ export class AccountsService {
 
   constructor(
     private readonly apiService: AccountsApiService,
-    private readonly commerceApiService: CommerceApiService
-  ) {}
+    private readonly commerceApiService: CommerceApiService,
+  ) {
+  }
 
   get accounts$(): Observable<UserAccount[]> {
     return this._accounts$.asObservable();
@@ -81,7 +82,7 @@ export class AccountsService {
   getUserAccounts(): Observable<UserAccount[]> {
     return this.commerceApiService.getUserAccounts().pipe(
       map(accounts => this.filterAccountsByPaymentSystem(accounts)),
-      tap(accounts => (this._accounts = accounts))
+      tap(accounts => (this._accounts = accounts)),
     );
   }
 
@@ -94,10 +95,10 @@ export class AccountsService {
       switchMap((tendersId: Array<string>) =>
         this.commerceApiService.getTransactionsHistory(query).pipe(
           tap(response => (this.transactionResponse = response)),
-          map(({ transactions }) => this.filterByTenderIds(tendersId, transactions))
-        )
+          map(({ transactions }) => this.filterByTenderIds(tendersId, transactions)),
+        ),
       ),
-      tap(transactions => (this._transactions = transactions))
+      tap(transactions => (this._transactions = transactions)),
     );
   }
 
@@ -107,8 +108,13 @@ export class AccountsService {
     return this.getTransactionHistoryByQuery(this.queryCriteria);
   }
 
-  getRecentTransactions(): Observable<Array<TransactionHistory>> {
-    this.initQueryObject();
+  getRecentTransactions(id: string = ALL_ACCOUNTS): Observable<Array<TransactionHistory>> {
+    const defaultPeriod = { name: TIME_PERIOD.pastMonth };
+    const { startDate, endDate } = getTimeRangeOfDate(defaultPeriod);
+    this.setInitialQueryObject(id, endDate, startDate);
+    if (this.currentAccountId !== id) this.transactionHistory = [];
+    this.currentTimeRange = defaultPeriod;
+    this.currentAccountId = id;
     return this.getTransactionHistoryByQuery(this.queryCriteria);
   }
 
@@ -116,47 +122,52 @@ export class AccountsService {
     return settings.find(({ name: n }) => n === name);
   }
 
-  transformStringToArray(value: string): Array<any> {
+  transformStringToArray(value: string): Array<unknown> {
     if (!value.length) return [];
     const result = JSON.parse(value);
     return Array.isArray(result) ? result : [];
   }
 
   getTransactionsByAccountId(accountId: string, period?: DateUtilObject): Observable<TransactionHistory[]> {
+    if (this.isDuplicateCall(accountId, period)) return this.transactions$;
+
+    this.transactionHistory = [];
     const { startDate, endDate } = getTimeRangeOfDate(period);
-    if (this.currentAccountId !== accountId || this.currentTimeRange !== period ) {
-      this.transactionHistory = [];
-    }
-    this.initQueryObject(accountId, endDate, startDate);
+    this.setInitialQueryObject(accountId, endDate, startDate);
     this.currentAccountId = accountId;
     this.currentTimeRange = period;
 
     return this.getTransactionHistoryByQuery(this.queryCriteria);
   }
 
+  private isDuplicateCall(accountId: string, period: DateUtilObject): boolean {
+    const currentPeriod = getUniquePeriod(this.currentTimeRange);
+    const incomePeriod = period ? getUniquePeriod(period) : null;
+    return this.currentAccountId === accountId && currentPeriod === incomePeriod
+  }
+
   private filterAccountsByPaymentSystem(accounts: UserAccount[]): UserAccount[] {
     return accounts.filter(
-      ({ paymentSystemType: type }) => type === PAYMENT_SYSTEM_TYPE.OPCS || type === PAYMENT_SYSTEM_TYPE.CSGOLD
+      ({ paymentSystemType: type }) => type === PAYMENT_SYSTEM_TYPE.OPCS || type === PAYMENT_SYSTEM_TYPE.CSGOLD,
     );
   }
 
   private setNextQueryObject(id: string = null) {
     if (this.currentAccountId === id) {
-      const startingReturnRow = this.queryCriteria.startingReturnRow + this.queryCriteria.maxReturn;
-      const transactionQuery: QueryTransactionHistoryCriteria = { startingReturnRow, maxReturn: this.lazyAmount };
-      this.queryCriteria = { ...this.queryCriteria, ...transactionQuery };
+      this.updateQuery();
     } else {
-      this.initQueryObject(id);
+      this.currentAccountId = id;
+      this.setInitialQueryObject(id);
     }
   }
 
-  private initQueryObject(accountId: string = null, start?: string, end?: string) {
-    const defaultAmountDaysBack = 30;
-    const now = new Date();
-    const prevPeriod = new Date(new Date().setDate(now.getDate() - defaultAmountDaysBack));
-    const startDate = start ? start : prevPeriod.toISOString();
-    const endDate = end ? end : now.toISOString();
+  private updateQuery() {
+    const startingReturnRow = this.queryCriteria.startingReturnRow + this.queryCriteria.maxReturn;
+    const transactionQuery: QueryTransactionHistoryCriteria = { startingReturnRow, maxReturn: this.lazyAmount };
+    this.queryCriteria = { ...this.queryCriteria, ...transactionQuery };
+  }
 
+  private setInitialQueryObject(accountId: string = null, startDate: string = null, endDate: string = null) {
     this.queryCriteria = {
       maxReturn: 0,
       startingReturnRow: 0,
@@ -167,12 +178,12 @@ export class AccountsService {
   }
 
   private filterByTenderIds(
-    tendersId: Array<string>,
-    transactions: Array<TransactionHistory>
-  ): Array<TransactionHistory> {
+    tendersId: string[],
+    transactions: TransactionHistory[],
+  ): TransactionHistory[] {
     return transactions.filter(
       ({ paymentSystemType: type, tenderId: tenId }) =>
-        type === PAYMENT_SYSTEM_TYPE.MONETRA || type === PAYMENT_SYSTEM_TYPE.USAEPAY || tendersId.includes(tenId)
+        type === PAYMENT_SYSTEM_TYPE.MONETRA || type === PAYMENT_SYSTEM_TYPE.USAEPAY || tendersId.includes(tenId),
     );
   }
 

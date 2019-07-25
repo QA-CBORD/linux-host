@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { OverlayEventDetail } from '@ionic/core';
+import { ModalController } from '@ionic/angular';
 
 import { DateUtilObject, getAmountOfMonthFromPeriod } from './date-util';
-import { ModalController } from '@ionic/angular';
 import { FilterMenuComponent } from './filter-menu/filter-menu.component';
 import { AccountsService } from '../../../services/accounts.service';
 import { TIME_PERIOD } from '../../../accounts.config';
+import { take, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'st-filter',
@@ -20,23 +21,24 @@ export class FilterComponent implements OnInit {
   constructor(
     private readonly accountsService: AccountsService,
     private readonly modalController: ModalController,
-    private readonly cdRef: ChangeDetectorRef
-  ) {}
+    private readonly cdRef: ChangeDetectorRef,
+  ) {
+  }
 
   ngOnInit() {
     this.updateActiveState();
   }
 
-  private updateActiveState() {
-    this.activeTimeRange = this.accountsService.activeTimeRange;
-    this.activeAccountName = this.accountsService.activeAccount;
-  }
 
   onFilterDone({ data: { accountId, period } }: OverlayEventDetail) {
-    this.accountsService.getTransactionsByAccountId(accountId, period).subscribe(() => {
-      this.updateActiveState();
-      this.cdRef.detectChanges();
-    });
+    if (!accountId || !period) return;
+
+    this.accountsService.getTransactionsByAccountId(accountId, period).pipe(
+      tap(() => {
+        this.updateActiveState();
+        this.cdRef.detectChanges();
+      }),
+      take(1)).subscribe();
   }
 
   expandTimeRange(arr: DateUtilObject[]): DateUtilObject[] {
@@ -45,9 +47,14 @@ export class FilterComponent implements OnInit {
     return arr;
   }
 
-  initFilterModal() {
+  async initFilterModal(): Promise<void> {
     const { activeAccount: aId, activeTimeRange: tRange } = this.accountsService;
-    this.createFilterModal(aId, tRange);
+    await this.createFilterModal(aId, tRange);
+  }
+
+  private updateActiveState() {
+    this.activeTimeRange = this.accountsService.activeTimeRange;
+    this.activeAccountName = this.accountsService.activeAccount;
   }
 
   private async createFilterModal(accId: string, timeRange: DateUtilObject): Promise<void> {
@@ -63,6 +70,6 @@ export class FilterComponent implements OnInit {
     });
     modal.onDidDismiss().then(this.onFilterDone.bind(this));
 
-    return await modal.present();
+    await modal.present();
   }
 }
