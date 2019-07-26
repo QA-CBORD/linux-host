@@ -10,7 +10,7 @@ export class TransactionUnitsPipe implements PipeTransform {
       return 'no info';
     }
     return type === ACCOUNT_TYPES.decliningBalance || type === ACCOUNT_TYPES.charge
-      ? `$${value}`
+      ? `$${value.toFixed(2)}`
       : type === ACCOUNT_TYPES.meals
       ? `${value} Meals`
       : value.toString();

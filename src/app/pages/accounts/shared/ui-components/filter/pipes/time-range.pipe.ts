@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { DateUtilObject, getUniquePeriod } from '../date-util';
+import { DateUtilObject, getUniquePeriodName } from '../date-util';
 import { TIME_PERIOD } from '../../../../accounts.config';
 
 @Pipe({
@@ -13,7 +13,7 @@ export class TimeRangePipe implements PipeTransform {
       case TIME_PERIOD.pastSixMonth:
         return 'Past 6 months';
       default:
-        return getUniquePeriod(value);
+        return getUniquePeriodName(value);
     }
   }
 }

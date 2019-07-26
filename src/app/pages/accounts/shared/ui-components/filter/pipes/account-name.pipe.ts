@@ -13,6 +13,6 @@ export class AccountNamePipe implements PipeTransform {
   transform(value: string): Observable<string> {
     return value === ALL_ACCOUNTS
       ? of('All Accounts')
-      : this.accountsService.getAccountById(value).pipe(map(({accountDisplayName}) => accountDisplayName));
+      : this.accountsService.getAccountById(value).pipe(map(({ accountDisplayName }) => accountDisplayName));
   }
 }

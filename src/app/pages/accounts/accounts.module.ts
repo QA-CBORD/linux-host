@@ -9,9 +9,7 @@ import { AccountsPageResolver } from './resolvers/accounts-page.resolver';
 import { AccountsSharedModule } from './shared/shared.module';
 
 const imports = [CommonModule, AccountsRoutingModule, SharedModule, AccountsSharedModule];
-const declarations = [
-  AccountsPage,
-];
+const declarations = [AccountsPage];
 const providers = [AccountsApiService, AccountsService, AccountsPageResolver];
 
 @NgModule({
@@ -19,5 +17,4 @@ const providers = [AccountsApiService, AccountsService, AccountsPageResolver];
   imports,
   providers,
 })
-export class AccountsModule {
-}
+export class AccountsModule {}

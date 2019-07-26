@@ -10,14 +10,13 @@ export class IsDividerAppearDirective implements OnInit {
   @Input() index: number;
   @Input() transactions: TransactionHistory[];
 
-  constructor(private elem: ElementRef, private renderer: Renderer2) {
-  }
+  constructor(private elem: ElementRef, private renderer: Renderer2) {}
 
   ngOnInit() {
     this.renderer.setStyle(
       this.elem.nativeElement,
       'display',
-      this.isDividerAppear(this.actualDate, this.index, this.transactions) ? 'block' : 'none',
+      this.isDividerAppear(this.actualDate, this.index, this.transactions) ? 'block' : 'none'
     );
   }
 

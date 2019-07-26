@@ -21,24 +21,26 @@ export class FilterComponent implements OnInit {
   constructor(
     private readonly accountsService: AccountsService,
     private readonly modalController: ModalController,
-    private readonly cdRef: ChangeDetectorRef,
-  ) {
-  }
+    private readonly cdRef: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
     this.updateActiveState();
   }
 
-
   onFilterDone({ data: { accountId, period } }: OverlayEventDetail) {
     if (!accountId || !period) return;
 
-    this.accountsService.getTransactionsByAccountId(accountId, period).pipe(
-      tap(() => {
-        this.updateActiveState();
-        this.cdRef.detectChanges();
-      }),
-      take(1)).subscribe();
+    this.accountsService
+      .getTransactionsByAccountId(accountId, period)
+      .pipe(
+        tap(() => {
+          this.updateActiveState();
+          this.cdRef.detectChanges();
+        }),
+        take(1)
+      )
+      .subscribe();
   }
 
   expandTimeRange(arr: DateUtilObject[]): DateUtilObject[] {

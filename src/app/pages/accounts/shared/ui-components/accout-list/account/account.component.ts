@@ -17,8 +17,7 @@ export class AccountComponent implements OnInit, OnDestroy {
 
   constructor(private readonly router: Router) {}
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   ngOnDestroy() {}
 

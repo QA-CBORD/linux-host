@@ -45,9 +45,8 @@ export const getAmountOfMonthFromPeriod = (n: number, date?: Date): DateUtilObje
 
   for (let i = 0; i < n; i++) {
     prevMonth = currentMonth;
-    const prevMonthDate = prevMonth.month === 0
-        ? new Date(currentMonth.year - 1, 11)
-        : new Date(currentMonth.year, currentMonth.month - 1);
+    const prevMonthDate =
+      prevMonth.month === 0 ? new Date(currentMonth.year - 1, 11) : new Date(currentMonth.year, currentMonth.month - 1);
     currentMonth = createMonthObject(prevMonthDate);
     month.push(currentMonth);
   }
@@ -56,29 +55,34 @@ export const getAmountOfMonthFromPeriod = (n: number, date?: Date): DateUtilObje
 };
 
 export const getTimeRangeOfDate = (date: DateUtilObject): TimeRange => {
-  let endDate;
   let startDate;
+  let endDate;
   const month = 30;
   const halfYear = 180;
 
   if (date.name === TIME_PERIOD.pastMonth || date.name === TIME_PERIOD.pastSixMonth) {
     const daysBack = date.name === TIME_PERIOD.pastMonth ? month : halfYear;
 
-    startDate = new Date();
-    endDate = new Date(new Date().setDate(startDate.getDate() - daysBack));
+    endDate = new Date();
+    startDate = new Date(new Date().setDate(endDate.getDate() - daysBack));
   } else {
     const nextMonth = new Date(date.year, date.month + 1).valueOf();
 
-    endDate = new Date(date.year, date.month);
-    startDate = new Date(nextMonth - 1);
+    startDate = new Date(date.year, date.month);
+    endDate = new Date(nextMonth - 1);
   }
-  endDate = endDate.toISOString();
   startDate = startDate.toISOString();
+  endDate = endDate.toISOString();
 
-  return { endDate, startDate };
+  return { startDate, endDate };
+};
+export const getRangeBetweenDates = (sourceDate: DateUtilObject, targetDate: DateUtilObject): TimeRange => {
+  const { startDate: endDate } = getTimeRangeOfDate(sourceDate);
+  const { startDate } = getTimeRangeOfDate(targetDate);
+  return { startDate, endDate };
 };
 
-export const getUniquePeriod = (date: DateUtilObject): string => {
+export const getUniquePeriodName = (date: DateUtilObject): string => {
   return date.name === TIME_PERIOD.pastSixMonth || date.name === TIME_PERIOD.pastMonth
     ? date.name
     : `${date.name} ${date.year}`;

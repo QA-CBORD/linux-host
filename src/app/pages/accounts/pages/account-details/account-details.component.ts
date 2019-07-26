@@ -14,17 +14,21 @@ export class AccountDetailsComponent implements OnInit {
   transactions$: Observable<TransactionHistory[]>;
   currentAccountId: string;
 
-  constructor(private readonly accountsService: AccountsService,
-              private readonly activatedRoute: ActivatedRoute) {}
+  constructor(private readonly accountsService: AccountsService, private readonly activatedRoute: ActivatedRoute) {}
 
   ngOnInit() {
     this.currentAccountId = this.activatedRoute.snapshot.params.id;
     this.transactions$ = this.accountsService.transactions$;
-    this.accountsService.getRecentTransactions(this.currentAccountId).pipe(take(1)).subscribe();
+    this.accountsService
+      .getRecentTransactions(this.currentAccountId ? this.currentAccountId : null)
+      .pipe(take(1))
+      .subscribe();
   }
 
-  getMore() {
-    this.accountsService.getNextTransactionsByAccountId(this.currentAccountId)
-      .pipe(take(1)).subscribe(data => data);
+  getMore(event) {
+    this.accountsService
+      .getNextTransactionsByAccountId(this.currentAccountId)
+      .pipe(take(1))
+      .subscribe(() => event.target.complete());
   }
 }
