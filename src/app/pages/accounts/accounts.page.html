@@ -34,7 +34,7 @@
           {{accountInfo ? accountInfo.name : 'All Accounts'}}
         </div>
         <div class="accounts-details-menu__balance" *ngIf="accountInfo && accountInfo.balance">
-          {{accountInfo.balance}}
+          {{accountInfo.balance | transactionUnits: accountInfo.accountType}}
         </div>
       </div>
       <st-menu-receiving-funds></st-menu-receiving-funds>

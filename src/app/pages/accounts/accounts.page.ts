@@ -20,13 +20,14 @@ import { Router } from '@angular/router';
 export class AccountsPage implements OnInit {
   accounts$: Observable<UserAccount[]>;
   transactions$: Observable<TransactionHistory[]>;
-  accountInfo: { name: string; balance: number };
+  accountInfo: { name: string; balance: number; accountType: number };
 
   constructor(
     private readonly accountsService: AccountsService,
     private readonly platform: Platform,
-    private readonly router: Router
-  ) {}
+    private readonly router: Router,
+  ) {
+  }
 
   ngOnInit() {
     this.accounts$ = this.getAccounts();
@@ -48,13 +49,13 @@ export class AccountsPage implements OnInit {
       map(settings => {
         const depositSetting = this.accountsService.getSettingByName(
           settings,
-          SYSTEM_SETTINGS_CONFIG.displayTenders.name
+          SYSTEM_SETTINGS_CONFIG.displayTenders.name,
         );
         return this.accountsService.transformStringToArray(depositSetting.value);
       }),
       switchMap((tendersId: Array<string>) =>
-        this.accountsService.accounts$.pipe(map(accounts => this.filterAccountsByTenders(tendersId, accounts)))
-      )
+        this.accountsService.accounts$.pipe(map(accounts => this.filterAccountsByTenders(tendersId, accounts))),
+      ),
     );
   }
 

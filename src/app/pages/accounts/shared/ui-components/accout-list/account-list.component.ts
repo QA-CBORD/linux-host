@@ -23,9 +23,10 @@ export class AccountListComponent implements OnInit {
   allAccounts: string = ALL_ACCOUNTS;
   activeAccount: number | string = ALL_ACCOUNTS;
 
-  @Output() onAccountInfoEmit = new EventEmitter<{ name: string; balance: number }>();
+  @Output() onAccountInfoEmit = new EventEmitter<{ name: string; balance: number; accountType: number }>();
 
-  constructor(private readonly platform: Platform, private readonly router: Router) {}
+  constructor(private readonly platform: Platform, private readonly router: Router) {
+  }
 
   @Input()
   set accounts(value: UserAccount[]) {
@@ -46,14 +47,14 @@ export class AccountListComponent implements OnInit {
     this.accountsHidden = [];
   }
 
-  onAccountClicked(accountId: string, name?: string, balance?: number) {
+  onAccountClicked(accountId: string, name?: string, balance?: number, accountType?: number) {
     const nextPage = this.tabletResolution ? LOCAL_ROUTING.accountDetails : LOCAL_ROUTING.accountDetailsM;
     if (this.tabletResolution) {
       this.activeAccount = accountId;
     }
 
     if (name) {
-      this.onAccountInfoEmit.emit({ name, balance });
+      this.onAccountInfoEmit.emit({ name, balance, accountType });
     }
     this.router.navigate([`${NAVIGATE.accounts}/${nextPage}/${accountId}`], { skipLocationChange: true });
   }
