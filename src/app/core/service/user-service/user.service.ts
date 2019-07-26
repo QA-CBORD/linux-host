@@ -45,6 +45,10 @@ export class UserService extends BaseService {
     });
   }
 
+  setAcceptedPhoto(acceptedPhoto: UserPhotoInfo){
+    this.userPhoto = acceptedPhoto;
+  }
+
   getAcceptedPhoto(): Observable<UserPhotoInfo> {
     if (this.userPhoto) return of(this.userPhoto);
 
