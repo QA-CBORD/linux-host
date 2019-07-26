@@ -21,7 +21,6 @@ export class IsDividerAppearDirective implements OnInit {
   }
 
   private isDividerAppear(actualDate, i, transactions): boolean {
-    if (!transactions[i + 1]) return false;
     return i === 0 || !isSameDay(actualDate, transactions[i - 1].actualDate);
   }
 }
