@@ -9,7 +9,7 @@
     </ion-item-divider>
     <ion-list class="filter-menu__item-list">
         <ion-radio-group>
-            <ion-item lines="none" *ngFor="let period of periods" (click)="onTimeChosen(period)">
+            <ion-item lines="none" *ngFor="let period of periods; trackBy: trackFn" (click)="onTimeChosen(period); ">
                 <ion-label>
                     {{period | timeRange}}
                 </ion-label>

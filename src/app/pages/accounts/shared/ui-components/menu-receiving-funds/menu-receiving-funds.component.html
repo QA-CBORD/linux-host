@@ -1,6 +1,6 @@
 <nav *ngIf="hasShowedItem$ | async">
     <ul class="menu">
-        <ng-container *ngFor="let setting of (menuItems$ | async)">
+        <ng-container *ngFor="let setting of (menuItems$ | async); trackBy: trackFn">
             <li class="menu__item" *ngIf="setting.isShow">
                 <figure class="menu__item-figure"  (click)="redirect(setting.name)">
                     <img class="menu__item-icon" [src]="setting.name | iconPath" alt="menu icon">

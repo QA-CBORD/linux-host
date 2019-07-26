@@ -46,6 +46,10 @@ export class FilterMenuComponent implements OnInit {
     this.filterState = { ...this.filterState, period };
   }
 
+  trackFn(i: number): number {
+    return i;
+  }
+
   private initFilterState() {
     this.filterState = { ...this.filterState, accountId: this.activeAccountId, period: this.activeTimeRange };
   }

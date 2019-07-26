@@ -48,6 +48,10 @@ export class AccountListComponent implements OnInit {
     this.activeAccount = accountId;
   }
 
+  trackFn(i: number, { id }: UserAccount): string {
+    return id;
+  }
+
   private defineResolution() {
     const tabletResolution: number = 767;
 

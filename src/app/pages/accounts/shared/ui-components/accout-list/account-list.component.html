@@ -14,7 +14,7 @@
   </ion-item>
 
   <st-account
-    *ngFor="let account of accountsShowed; let last = last"
+    *ngFor="let account of accountsShowed; let last = last; trackBy: trackFn"
     [account]="account"
     [lastItem]="last && !accountsHidden.length"
     [tabletResolution]="tabletResolution"
