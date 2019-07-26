@@ -79,9 +79,9 @@ export class AppComponent implements OnDestroy {
         this.parseHashParameters(hash);
 
         /// now perform normal page logic
-        // this.handleSessionToken();
+        this.handleSessionToken();
 
-        this.testGetSession();
+        // this.testGetSession();
       });
     this.sourceSubscription.add(subscription);
   }

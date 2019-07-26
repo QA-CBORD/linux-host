@@ -1,39 +1,34 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Observable, Subscription } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
 import { TransactionHistory } from '../../models/transaction-history.model';
 import { AccountsService } from '../../services/accounts.service';
 import { ActivatedRoute } from '@angular/router';
-import { switchMap, take } from 'rxjs/operators';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'st-account-details',
   templateUrl: './account-details.component.html',
   styleUrls: ['./account-details.component.scss'],
 })
-export class AccountDetailsComponent implements OnInit, OnDestroy {
+export class AccountDetailsComponent implements OnInit {
   transactions$: Observable<TransactionHistory[]>;
-  private readonly sourceSubscription: Subscription = new Subscription();
   currentAccountId: string;
 
   constructor(private readonly accountsService: AccountsService, private readonly activatedRoute: ActivatedRoute) {}
 
   ngOnInit() {
-    const subscription = this.activatedRoute.params
-      .pipe(switchMap(params => this.accountsService.getRecentTransactions(params['id'])))
-      .subscribe();
-
-    this.sourceSubscription.add(subscription);
+    this.currentAccountId = this.activatedRoute.snapshot.params.id;
     this.transactions$ = this.accountsService.transactions$;
+    this.accountsService
+      .getRecentTransactions(this.currentAccountId ? this.currentAccountId : null)
+      .pipe(take(1))
+      .subscribe();
   }
 
-  ngOnDestroy() {
-    this.sourceSubscription.unsubscribe();
-  }
-
-  getMore() {
+  getMore(event) {
     this.accountsService
       .getNextTransactionsByAccountId(this.currentAccountId)
       .pipe(take(1))
-      .subscribe(data => data);
+      .subscribe(() => event.target.complete());
   }
 }

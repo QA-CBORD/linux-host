@@ -14,8 +14,7 @@ export class AccountComponent implements OnInit, OnDestroy {
 
   constructor() {}
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   ngOnDestroy() {}
 }

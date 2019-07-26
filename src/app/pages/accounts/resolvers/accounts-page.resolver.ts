@@ -21,7 +21,7 @@ export class AccountsPageResolver implements Resolve<Observable<[TransactionHist
     const accountsCall = this.accountsService.getUserAccounts();
     const historyCall = this.accountsService
       .getUserSettings(requireSettings)
-      .pipe(switchMap(() => this.accountsService.getRecentTransactions()));
+      .pipe(switchMap(() => this.accountsService.getRecentTransactions(null, null, 4)));
 
     return zip(historyCall, accountsCall);
   }

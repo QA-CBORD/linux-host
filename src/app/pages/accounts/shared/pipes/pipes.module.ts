@@ -12,5 +12,4 @@ const declarations = [TransactionUnitsPipe, TransactionActionPipe, PageNamePipe,
   imports: [CommonModule],
   exports: [...declarations],
 })
-export class PipesModule {
-}
+export class PipesModule {}
