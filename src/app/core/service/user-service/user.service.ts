@@ -45,11 +45,14 @@ export class UserService extends BaseService {
     if (this.userPhoto) return of(this.userPhoto);
 
     return this.getUser().pipe(
-      switchMap(({ id }: UserInfo) => this.getPhotoListByUserId(id)),
-      map(({ response: { list } }) => this.getPhotoIdByStatus(list)),
-      switchMap(({ id }: UserPhotoInfo) => this.getPhotoById(id)),
+      switchMap(({ id }: UserInfo) => this.getUserPhoto(id)),
       map(({ response }) => (this.userPhoto = response))
     );
+  }
+
+  getUserPhoto(userId: string): Observable<MessageResponse<UserPhotoInfo>>{
+    const params = { userId };
+    return this.httpRequest<MessageResponse<UserPhotoInfo>>(this.serviceUrl, 'retrieveUserPhoto', true, params);
   }
 
   getPhotoListByUserId(userId: string): Observable<MessageResponse<UserPhotoList>> {
