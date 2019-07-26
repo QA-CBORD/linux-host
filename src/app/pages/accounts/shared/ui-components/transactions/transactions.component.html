@@ -7,13 +7,13 @@
       [actualDate]="transaction.actualDate"
       [index]="i"
       [transactions]="transactions"
-        *ngIf="dividers"
+      *ngIf="dividers"
     >
       <ion-label position="'fixed'" class="transactions__label">
         {{ transaction.actualDate | date: 'EEEE, MMMM d' }}
       </ion-label>
     </ion-item-divider>
-    <ion-item [button]="true" lines="full" class="transactions__item" >
+    <ion-item [button]="true" lines="full" class="transactions__item">
       <st-transaction-item [transaction]="transaction"></st-transaction-item>
     </ion-item>
   </ng-container>

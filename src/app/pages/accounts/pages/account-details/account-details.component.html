@@ -11,5 +11,5 @@
   <st-filter></st-filter>
 </div>
 <ion-content class="account-details__content">
-  <st-transactions [transactions]="transactions$ | async" [dividers]="true"></st-transactions>
+  <st-transactions class="disable-touch" [transactions]="transactions$ | async" [dividers]="true"></st-transactions>
 </ion-content>

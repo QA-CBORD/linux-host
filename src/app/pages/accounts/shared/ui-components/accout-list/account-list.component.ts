@@ -1,9 +1,12 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { UserAccount } from '../../../../../core/model/account/account.model';
 import { TransactionHistory } from '../../../models/transaction-history.model';
 import { Platform } from '@ionic/angular';
+import { ALL_ACCOUNTS, LOCAL_ROUTING } from '../../../accounts.config';
+import { NAVIGATE } from '../../../../../app.global';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'st-account-list',
@@ -17,9 +20,12 @@ export class AccountListComponent implements OnInit {
   accountsHidden: UserAccount[] = [];
   private readonly amountToShow: number = 7;
   tabletResolution: boolean = false;
-  activeAccount: number | string = 'all accounts';
+  allAccounts: string = ALL_ACCOUNTS;
+  activeAccount: number | string = ALL_ACCOUNTS;
 
-  constructor(private readonly platform: Platform) {}
+  @Output() onAccountInfoEmit = new EventEmitter<{ name: string; balance: number }>();
+
+  constructor(private readonly platform: Platform, private readonly router: Router) {}
 
   @Input()
   set accounts(value: UserAccount[]) {
@@ -40,12 +46,16 @@ export class AccountListComponent implements OnInit {
     this.accountsHidden = [];
   }
 
-  onAccountClicked(accountId) {
-    if (!this.tabletResolution) {
-      return;
+  onAccountClicked(accountId: string, name?: string, balance?: number) {
+    const nextPage = this.tabletResolution ? LOCAL_ROUTING.accountDetails : LOCAL_ROUTING.accountDetailsM;
+    if (this.tabletResolution) {
+      this.activeAccount = accountId;
     }
 
-    this.activeAccount = accountId;
+    if (name) {
+      this.onAccountInfoEmit.emit({ name, balance });
+    }
+    this.router.navigate([`${NAVIGATE.accounts}/${nextPage}/${accountId}`], { skipLocationChange: true });
   }
 
   private defineResolution() {

@@ -13,10 +13,15 @@
         <st-menu-receiving-funds class="accounts-page__menu"></st-menu-receiving-funds>
         <hr class="accounts-page__divider" />
         <section class="accounts-page__main-wrapper">
-          <st-account-list [accounts]="accounts$ | async"></st-account-list>
+          <st-account-list [accounts]="accounts$ | async" (onAccountInfoEmit)="onAccountInfo($event)"></st-account-list>
 
           <h2 class="accounts-page__transactions-title">recent transactions</h2>
-          <st-transactions class="accounts-page__transactions" [transactions]="transactions$ | async" [dividers]="false"></st-transactions>
+          <st-transactions
+            class="accounts-page__transactions"
+            [transactions]="transactions$ | async"
+            [dividers]="false"
+            (click)="goToAllAccounts()"
+          ></st-transactions>
         </section>
       </section>
     </div>
@@ -26,10 +31,10 @@
     <article class="accounts-details-page__header accounts-details-menu">
       <div class="accounts-details-menu__info-wrapper">
         <div class="accounts-details-menu__title">
-          Dining Dollars
+          {{accountInfo ? accountInfo.name : 'All Accounts'}}
         </div>
-        <div class="accounts-details-menu__balance">
-          $1952.22
+        <div class="accounts-details-menu__balance" *ngIf="accountInfo && accountInfo.balance">
+          {{accountInfo.balance}}
         </div>
       </div>
       <st-menu-receiving-funds></st-menu-receiving-funds>

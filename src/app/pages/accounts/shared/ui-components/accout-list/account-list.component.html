@@ -5,8 +5,8 @@
     detailIcon="/assets/icon/angle-right.svg"
     lines="{{ tabletResolution ? 'none' : 'full' }}"
     class="accounts-list__all-accounts"
-    [ngClass]="{ 'accounts-list--active': activeAccount === 'all accounts' }"
-    (click)="onAccountClicked('all accounts')"
+    [ngClass]="{ 'accounts-list--active': activeAccount === allAccounts }"
+    (click)="onAccountClicked(allAccounts, 'All Accounts')"
   >
     <ion-label>
       <p class="accounts-list__all-accounts-label">All accounts</p>
@@ -19,7 +19,7 @@
     [lastItem]="last && !accountsHidden.length"
     [tabletResolution]="tabletResolution"
     [ngClass]="{ 'accounts-list--active': activeAccount === account.id }"
-    (click)="onAccountClicked(account.id)"
+    (click)="onAccountClicked(account.id, account.accountDisplayName, account.balance)"
   ></st-account>
 
   <ion-item

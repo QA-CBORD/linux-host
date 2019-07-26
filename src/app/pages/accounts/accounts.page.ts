@@ -6,7 +6,10 @@ import { map, switchMap } from 'rxjs/operators';
 import { AccountsService } from './services/accounts.service';
 import { UserAccount } from '../../core/model/account/account.model';
 import { TransactionHistory } from './models/transaction-history.model';
-import { SYSTEM_SETTINGS_CONFIG } from './accounts.config';
+import { ALL_ACCOUNTS, LOCAL_ROUTING, SYSTEM_SETTINGS_CONFIG } from './accounts.config';
+import { NAVIGATE } from '../../app.global';
+import { Platform } from '@ionic/angular';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'st-accounts.page',
@@ -17,12 +20,27 @@ import { SYSTEM_SETTINGS_CONFIG } from './accounts.config';
 export class AccountsPage implements OnInit {
   accounts$: Observable<UserAccount[]>;
   transactions$: Observable<TransactionHistory[]>;
+  accountInfo: { name: string; balance: number };
 
-  constructor(private readonly accountsService: AccountsService) {}
+  constructor(
+    private readonly accountsService: AccountsService,
+    private readonly platform: Platform,
+    private readonly router: Router
+  ) {}
 
   ngOnInit() {
     this.accounts$ = this.getAccounts();
     this.transactions$ = this.accountsService.transactions$.pipe(map(arr => arr.slice(0, 4)));
+
+    this.defineInitRoute();
+  }
+
+  defineInitRoute() {
+    if (!this.defineResolution()) {
+      return;
+    }
+
+    this.goToAllAccounts();
   }
 
   private getAccounts(): Observable<UserAccount[]> {
@@ -40,7 +58,23 @@ export class AccountsPage implements OnInit {
     );
   }
 
+  goToAllAccounts() {
+    const nextPage = this.defineResolution() ? LOCAL_ROUTING.accountDetails : LOCAL_ROUTING.accountDetailsM;
+
+    this.router.navigate([`${NAVIGATE.accounts}/${nextPage}/${ALL_ACCOUNTS}`], { skipLocationChange: true });
+  }
+
+  onAccountInfo(event) {
+    this.accountInfo = event;
+  }
+
   private filterAccountsByTenders(tendersId: Array<string>, accounts: Array<UserAccount>): Array<UserAccount> {
     return accounts.filter(({ accountTender: tId }) => tendersId.includes(tId));
+  }
+
+  private defineResolution() {
+    const tabletResolution: number = 767;
+
+    return this.platform.width() > tabletResolution;
   }
 }
