@@ -50,7 +50,7 @@ export class UserService extends BaseService {
     );
   }
 
-  getUserPhoto(userId: string): Observable<MessageResponse<UserPhotoInfo>>{
+  getUserPhoto(userId: string): Observable<MessageResponse<UserPhotoInfo>> {
     const params = { userId };
     return this.httpRequest<MessageResponse<UserPhotoInfo>>(this.serviceUrl, 'retrieveUserPhoto', true, params);
   }
