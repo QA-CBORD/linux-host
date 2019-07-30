@@ -7,10 +7,12 @@ import { AccountsApiService } from './services/accounts.api.service';
 import { AccountsService } from './services/accounts.service';
 import { AccountsPageResolver } from './resolvers/accounts-page.resolver';
 import { AccountsSharedModule } from './shared/shared.module';
+import { TransactionService } from './services/transaction.service';
+import { TransactionsResolver } from './resolvers/transactions.resolver';
 
 const imports = [CommonModule, AccountsRoutingModule, SharedModule, AccountsSharedModule];
 const declarations = [AccountsPage];
-const providers = [AccountsApiService, AccountsService, AccountsPageResolver];
+const providers = [AccountsApiService, AccountsService, AccountsPageResolver, TransactionService, TransactionsResolver];
 
 @NgModule({
   declarations,

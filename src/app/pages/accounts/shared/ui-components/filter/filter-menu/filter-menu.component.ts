@@ -30,8 +30,8 @@ export class FilterMenuComponent implements OnInit {
     return this.activeAccountId === ALL_ACCOUNTS;
   }
 
-  onFilterDone() {
-    this.modalController.dismiss(this.filterState);
+  async onFilterDone() {
+    await this.modalController.dismiss(this.filterState);
   }
 
   onAccountChosen(accountId: string) {

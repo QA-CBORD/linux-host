@@ -7,6 +7,7 @@ import { AccountsService } from './services/accounts.service';
 import { UserAccount } from '../../core/model/account/account.model';
 import { TransactionHistory } from './models/transaction-history.model';
 import { SYSTEM_SETTINGS_CONFIG } from './accounts.config';
+import { TransactionService } from './services/transaction.service';
 
 @Component({
   selector: 'st-accounts.page',
@@ -18,11 +19,14 @@ export class AccountsPage implements OnInit {
   accounts$: Observable<UserAccount[]>;
   transactions$: Observable<TransactionHistory[]>;
 
-  constructor(private readonly accountsService: AccountsService) {}
+  constructor(
+    private readonly accountsService: AccountsService,
+    private readonly transactionService: TransactionService
+  ) {}
 
   ngOnInit() {
     this.accounts$ = this.getAccounts();
-    this.transactions$ = this.accountsService.transactions$.pipe(map(arr => arr.slice(0, 4)));
+    this.transactions$ = this.transactionService.transactions$.pipe(map(arr => arr.slice(0, 4)));
   }
 
   private getAccounts(): Observable<UserAccount[]> {

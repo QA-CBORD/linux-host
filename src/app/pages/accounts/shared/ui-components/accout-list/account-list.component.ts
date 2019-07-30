@@ -15,9 +15,9 @@ export class AccountListComponent implements OnInit {
   transactions: Observable<TransactionHistory[]>;
   accountsShowed: UserAccount[] = [];
   accountsHidden: UserAccount[] = [];
-  private readonly amountToShow: number = 7;
   tabletResolution: boolean = false;
   activeAccount: number | string = 'all accounts';
+  private readonly amountToShow: number = 7;
 
   constructor(private readonly platform: Platform) {}
 
@@ -40,11 +40,10 @@ export class AccountListComponent implements OnInit {
     this.accountsHidden = [];
   }
 
-  onAccountClicked(accountId) {
+  onAccountClicked(accountId: string) {
     if (!this.tabletResolution) {
       return;
     }
-
     this.activeAccount = accountId;
   }
 

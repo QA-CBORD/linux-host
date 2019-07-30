@@ -1,12 +1,15 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { OverlayEventDetail } from '@ionic/core';
 import { ModalController } from '@ionic/angular';
+
+import { take, tap } from 'rxjs/operators';
 
 import { DateUtilObject, getAmountOfMonthFromPeriod } from './date-util';
 import { FilterMenuComponent } from './filter-menu/filter-menu.component';
 import { AccountsService } from '../../../services/accounts.service';
 import { TIME_PERIOD } from '../../../accounts.config';
-import { take, tap } from 'rxjs/operators';
+import { LoadingService } from '../../../../../core/service/loading/loading.service';
+import { TransactionService } from '../../../services/transaction.service';
 
 @Component({
   selector: 'st-filter',
@@ -15,29 +18,41 @@ import { take, tap } from 'rxjs/operators';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FilterComponent implements OnInit {
+  @Output() onFilterChanged: EventEmitter<boolean> = new EventEmitter<boolean>();
   activeTimeRange: DateUtilObject;
   activeAccountName: string;
 
   constructor(
     private readonly accountsService: AccountsService,
     private readonly modalController: ModalController,
-    private readonly cdRef: ChangeDetectorRef
+    private readonly cdRef: ChangeDetectorRef,
+    private readonly loadingService: LoadingService,
+    private readonly transactionService: TransactionService
   ) {}
 
   ngOnInit() {
     this.updateActiveState();
   }
 
-  onFilterDone({ data: { accountId, period } }: OverlayEventDetail) {
+  async onFilterDone({ data: { accountId, period } }: OverlayEventDetail): Promise<void> {
     if (!accountId || !period) return;
 
-    this.accountsService
+    await this.loadingService.showSpinner();
+    this.transactionService
       .getTransactionsByAccountId(accountId, period)
       .pipe(
-        tap(() => {
-          this.updateActiveState();
-          this.cdRef.detectChanges();
-        }),
+        tap(
+          async () => {
+            this.updateActiveState();
+            this.cdRef.detectChanges();
+            await this.loadingService.closeSpinner();
+            this.onFilterChanged.emit(true);
+          },
+          async () => {
+            await this.loadingService.closeSpinner();
+            this.onFilterChanged.emit(true);
+          }
+        ),
         take(1)
       )
       .subscribe();
@@ -45,18 +60,17 @@ export class FilterComponent implements OnInit {
 
   expandTimeRange(arr: DateUtilObject[]): DateUtilObject[] {
     arr.unshift({ name: TIME_PERIOD.pastMonth });
-    arr.push({ name: TIME_PERIOD.pastSixMonth });
     return arr;
   }
 
   async initFilterModal(): Promise<void> {
-    const { activeAccount: aId, activeTimeRange: tRange } = this.accountsService;
+    const { activeAccountId: aId, activeTimeRange: tRange } = this.transactionService;
     await this.createFilterModal(aId, tRange);
   }
 
   private updateActiveState() {
-    this.activeTimeRange = this.accountsService.activeTimeRange;
-    this.activeAccountName = this.accountsService.activeAccount;
+    this.activeTimeRange = this.transactionService.activeTimeRange;
+    this.activeAccountName = this.transactionService.activeAccountId;
   }
 
   private async createFilterModal(accId: string, timeRange: DateUtilObject): Promise<void> {
@@ -65,7 +79,7 @@ export class FilterComponent implements OnInit {
       animated: true,
       componentProps: {
         accounts: this.accountsService.accounts$,
-        periods: this.expandTimeRange(getAmountOfMonthFromPeriod(5)),
+        periods: this.expandTimeRange(getAmountOfMonthFromPeriod(6)),
         activeAccountId: accId,
         activeTimeRange: timeRange,
       },

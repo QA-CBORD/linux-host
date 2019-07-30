@@ -7,13 +7,10 @@ import { TIME_PERIOD } from '../../../../accounts.config';
 })
 export class TimeRangePipe implements PipeTransform {
   transform(value: DateUtilObject): string {
-    switch (value.name) {
-      case TIME_PERIOD.pastMonth:
-        return 'Past 30 days';
-      case TIME_PERIOD.pastSixMonth:
-        return 'Past 6 months';
-      default:
-        return getUniquePeriodName(value);
+    if (value.name === TIME_PERIOD.pastSixMonth || value.name === TIME_PERIOD.pastMonth) {
+      return 'Past 6 months';
+    } else {
+      return getUniquePeriodName(value);
     }
   }
 }
