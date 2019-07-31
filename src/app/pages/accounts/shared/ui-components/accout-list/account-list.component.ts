@@ -47,7 +47,7 @@ export class AccountListComponent implements OnInit {
     this.activeAccount = accountId;
   }
 
-  trackFn(i: number, { id }: UserAccount): string {
+  trackByAccountId(i: number, { id }: UserAccount): string {
     return id;
   }
 
