@@ -84,7 +84,7 @@ export class FilterComponent implements OnInit {
         activeTimeRange: timeRange,
       },
     });
-    modal.onDidDismiss().then(this.onFilterDone.bind(this));
+    modal.onDidDismiss().then(({ data }) => data && this.onFilterDone(data));
 
     await modal.present();
   }
