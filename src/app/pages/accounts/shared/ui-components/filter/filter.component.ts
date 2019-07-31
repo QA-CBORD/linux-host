@@ -5,7 +5,7 @@ import { ModalController } from '@ionic/angular';
 import { take, tap } from 'rxjs/operators';
 
 import { DateUtilObject, getAmountOfMonthFromPeriod } from './date-util';
-import { FilterMenuComponent } from './filter-menu/filter-menu.component';
+import { FilterMenuComponent, FilterState } from './filter-menu/filter-menu.component';
 import { AccountsService } from '../../../services/accounts.service';
 import { TIME_PERIOD } from '../../../accounts.config';
 import { LoadingService } from '../../../../../core/service/loading/loading.service';
@@ -34,7 +34,7 @@ export class FilterComponent implements OnInit {
     this.updateActiveState();
   }
 
-  async onFilterDone({ data: { accountId, period } }: OverlayEventDetail): Promise<void> {
+  async onFilterDone({ accountId, period }: FilterState): Promise<void> {
     if (!accountId || !period) return;
 
     await this.loadingService.showSpinner();

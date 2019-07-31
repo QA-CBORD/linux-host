@@ -2,8 +2,14 @@
   [title]="contentString.header"
   [placeholder]="contentString.search"
   [isTitleShow]="true"
-  [isSubToolbarShow]="true"
-  (onSearchedValue)="onSearchedValue($event)">
+  [isSubToolbarShow]="true">
+  <ion-searchbar
+          (ionChange)="onSearchedValue($event)"
+          (keyup.enter)="onEnterKeyClicked()"
+          [placeholder]="contentString.search"
+          mode="ios"
+          class="st-header__searchbar"
+  ></ion-searchbar>
 </st-header>
 
 <ion-content>

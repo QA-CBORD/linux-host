@@ -3,19 +3,27 @@
   [isTitleShow]="true"
   backButtonTitle="Accounts"
   [isToolbarShow]="true"
+  [isSubToolbarShow]="true"
   class="account-details__header"
-></st-header>
-<div class="account-details__header-wrapper">
-  <h1 class="account-details__header-title">Transactions</h1>
-  <st-filter (onFilterChanged)="onFilterChanged()"></st-filter>
+>
+  <div class="account-details__header-wrapper">
+    <ng-container [ngTemplateOutlet]="subHeader"></ng-container>
+  </div>
+</st-header>
+
+<div class="account-details__header-wrapper account-details__header-wrapper--full-site">
+  <ng-container [ngTemplateOutlet]="subHeader"></ng-container>
 </div>
 
 <ion-content class="account-details__content" #content>
   <st-transactions [transactions]="transactions$ | async" [dividers]="true"></st-transactions>
   <ion-infinite-scroll #infiniteScroll threshold="10px" (ionInfinite)="getNextTransactionPackage()">
-    <ion-infinite-scroll-content
-            loadingSpinner="bubbles"
-            loadingText="Loading more data...">
+    <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more data...">
     </ion-infinite-scroll-content>
   </ion-infinite-scroll>
 </ion-content>
+
+<ng-template #subHeader>
+  <h1 class="account-details__header-title">Transactions</h1>
+  <st-filter (onFilterChanged)="onFilterChanged()"></st-filter>
+</ng-template>

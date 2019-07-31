@@ -1,36 +1,42 @@
 @import 'tools';
 :root {
-	--ion-safe-area-top: 20px;
-	--ion-safe-area-bottom: 10px;
+  --ion-safe-area-top: 20px;
+  --ion-safe-area-bottom: 10px;
 }
 
 .account-details {
-	&__header-wrapper {
-		@include bp-grid-tablet {
-			display: flex;
-			justify-content: space-between;
-			padding: 0 30px;
-		}
-	}
+  &__header-wrapper {
+    @include bp-grid-tablet {
+      display: flex;
+      justify-content: space-between;
+      padding: 0 30px;
+    }
 
-	&__header {
-		@include bp-grid-tablet {
-			display: none;
-		}
-	}
+    &--full-site {
+      @include bp-before-tablet {
+        display: none;
+      }
+    }
+  }
 
-	&__header-title {
-		margin: 20px 0 0;
+  &__header {
+    @include bp-grid-tablet {
+      display: none;
+    }
+  }
 
-		@include bp-before-tablet {
-			display: none;
-		}
-	}
+  &__header-title {
+    margin: 20px 0 0;
 
-	&__content {
-		@include bp-grid-tablet {
-			--padding-end: 30px !important;
-			--padding-start: 30px !important;
-		}
-	}
+    @include bp-before-tablet {
+      display: none;
+    }
+  }
+
+  &__content {
+    @include bp-grid-tablet {
+      --padding-end: 30px !important;
+      --padding-start: 30px !important;
+    }
+  }
 }
