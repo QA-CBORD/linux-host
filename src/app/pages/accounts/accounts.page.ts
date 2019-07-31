@@ -10,7 +10,6 @@ import { ALL_ACCOUNTS, LOCAL_ROUTING, SYSTEM_SETTINGS_CONFIG } from './accounts.
 import { NAVIGATE } from '../../app.global';
 import { Platform } from '@ionic/angular';
 import { Router } from '@angular/router';
-import { SYSTEM_SETTINGS_CONFIG } from './accounts.config';
 import { TransactionService } from './services/transaction.service';
 
 @Component({

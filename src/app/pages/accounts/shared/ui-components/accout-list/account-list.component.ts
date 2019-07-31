@@ -21,7 +21,6 @@ export class AccountListComponent implements OnInit {
   tabletResolution: boolean = false;
   allAccounts: string = ALL_ACCOUNTS;
   activeAccount: number | string = ALL_ACCOUNTS;
-  activeAccount: number | string = 'all accounts';
   private readonly amountToShow: number = 7;
 
   @Output() onAccountInfoEmit = new EventEmitter<{ name: string; balance: number; accountType: number }>();

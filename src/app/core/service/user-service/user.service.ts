@@ -15,7 +15,7 @@ import { UserPhotoList } from '../../model/user';
 })
 export class UserService extends BaseService {
   private readonly serviceUrl = '/json/user';
-  private readonly userData$: BehaviorSubject<UserInfo> = new BehaviorSubject<UserInfo>(null);
+  private readonly userData$: BehaviorSubject<UserInfo> = new BehaviorSubject<UserInfo>(<UserInfo>{});
   private userPhoto: UserPhotoInfo = null;
 
   private set _userData(userInfo: UserInfo) {

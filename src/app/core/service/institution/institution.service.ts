@@ -13,7 +13,7 @@ import { InstitutionPhotoInfo } from '../../model/institution/institution-photo-
 })
 export class InstitutionService extends BaseService {
   private readonly serviceUrl = '/json/institution';
-  private readonly institutionInfo$: BehaviorSubject<Institution> = new BehaviorSubject<Institution>(null);
+  private readonly institutionInfo$: BehaviorSubject<Institution> = new BehaviorSubject<Institution>(<Institution>{});
   private institution: Institution = null;
   private institutionPhoto: InstitutionPhotoInfo = null;
 

@@ -33,7 +33,7 @@
         <div class="accounts-details-menu__title">
           {{accountInfo ? accountInfo.name : 'All Accounts'}}
         </div>
-        <div class="accounts-details-menu__balance" *ngIf="accountInfo && accountInfo.balance">
+        <div class="accounts-details-menu__balance" *ngIf="accountInfo && accountInfo.name !== 'All Accounts'">
           {{accountInfo.balance | transactionUnits: accountInfo.accountType}}
         </div>
       </div>
