@@ -33,6 +33,10 @@ export class MenuReceivingFundsComponent implements OnInit {
     this.router.navigate([NAVIGATE.accounts, MENU_LIST_ROUTES.get(name)], { skipLocationChange: true });
   }
 
+  trackByMenuName(i: number, {name}: MenuReceivingFundsListItem): string {
+    return name;
+  }
+
   private handleListItems(settings: SettingInfo[]): MenuReceivingFundsListItem[] {
     const navList = Array.from(MENU_LIST_ITEMS.keys());
 

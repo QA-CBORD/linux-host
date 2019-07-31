@@ -10,6 +10,8 @@ import { ALL_ACCOUNTS, LOCAL_ROUTING, SYSTEM_SETTINGS_CONFIG } from './accounts.
 import { NAVIGATE } from '../../app.global';
 import { Platform } from '@ionic/angular';
 import { Router } from '@angular/router';
+import { SYSTEM_SETTINGS_CONFIG } from './accounts.config';
+import { TransactionService } from './services/transaction.service';
 
 @Component({
   selector: 'st-accounts.page',
@@ -26,12 +28,13 @@ export class AccountsPage implements OnInit {
     private readonly accountsService: AccountsService,
     private readonly platform: Platform,
     private readonly router: Router,
+    private readonly transactionService: TransactionService
   ) {
   }
 
   ngOnInit() {
     this.accounts$ = this.getAccounts();
-    this.transactions$ = this.accountsService.transactions$.pipe(map(arr => arr.slice(0, 4)));
+    this.transactions$ = this.transactionService.transactions$.pipe(map(arr => arr.slice(0, 4)));
 
     this.defineInitRoute();
   }

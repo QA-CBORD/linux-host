@@ -18,10 +18,11 @@ export class AccountListComponent implements OnInit {
   transactions: Observable<TransactionHistory[]>;
   accountsShowed: UserAccount[] = [];
   accountsHidden: UserAccount[] = [];
-  private readonly amountToShow: number = 7;
   tabletResolution: boolean = false;
   allAccounts: string = ALL_ACCOUNTS;
   activeAccount: number | string = ALL_ACCOUNTS;
+  activeAccount: number | string = 'all accounts';
+  private readonly amountToShow: number = 7;
 
   @Output() onAccountInfoEmit = new EventEmitter<{ name: string; balance: number; accountType: number }>();
 
@@ -47,17 +48,21 @@ export class AccountListComponent implements OnInit {
     this.accountsHidden = [];
   }
 
-  onAccountClicked(accountId: string, name?: string, balance?: number, accountType?: number) {
-    const nextPage = this.tabletResolution ? LOCAL_ROUTING.accountDetails : LOCAL_ROUTING.accountDetailsM;
-    if (this.tabletResolution) {
-      this.activeAccount = accountId;
+    onAccountClicked(accountId: string, name?: string, balance?: number, accountType?: number) {
+        const nextPage = this.tabletResolution ? LOCAL_ROUTING.accountDetails : LOCAL_ROUTING.accountDetailsM;
+        if (this.tabletResolution) {
+            this.activeAccount = accountId;
+        }
+
+        if (name) {
+            this.onAccountInfoEmit.emit({ name, balance, accountType });
+        }
+        this.router.navigate([`${NAVIGATE.accounts}/${nextPage}/${accountId}`], { skipLocationChange: true });
     }
 
-    if (name) {
-      this.onAccountInfoEmit.emit({ name, balance, accountType });
+    trackByAccountId(i: number, { id }: UserAccount): string {
+        return id;
     }
-    this.router.navigate([`${NAVIGATE.accounts}/${nextPage}/${accountId}`], { skipLocationChange: true });
-  }
 
   private defineResolution() {
     const tabletResolution: number = 767;

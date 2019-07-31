@@ -3,7 +3,7 @@ import { ModalController } from '@ionic/angular';
 
 import { Observable } from 'rxjs';
 
-import { DateUtilObject } from '../date-util';
+import { DateUtilObject, getUniquePeriodName } from '../date-util';
 import { ALL_ACCOUNTS } from '../../../../accounts.config';
 import { UserAccount } from 'src/app/core/model/account/account.model';
 
@@ -30,8 +30,8 @@ export class FilterMenuComponent implements OnInit {
     return this.activeAccountId === ALL_ACCOUNTS;
   }
 
-  onFilterDone() {
-    this.modalController.dismiss(this.filterState);
+  async onFilterDone() {
+    await this.modalController.dismiss(this.filterState);
   }
 
   onAccountChosen(accountId: string) {
@@ -44,6 +44,10 @@ export class FilterMenuComponent implements OnInit {
 
   onTimeChosen(period: DateUtilObject) {
     this.filterState = { ...this.filterState, period };
+  }
+
+  trackPeriod(i: number, period: DateUtilObject): string {
+    return getUniquePeriodName(period);
   }
 
   private initFilterState() {
