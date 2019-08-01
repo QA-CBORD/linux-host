@@ -1,23 +1,28 @@
 import { Injectable } from '@angular/core';
 import { AccountsApiService } from './accounts.api.service';
 
-import { BehaviorSubject, Observable, zip } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, zip, combineLatest } from 'rxjs';
+import { map, tap, take } from 'rxjs/operators';
 
 import { ContentStringRequest } from '../../../core/model/content/content-string-request.model';
 import { CommerceApiService } from '../../../core/service/commerce/commerce-api.service';
+import { ContentService } from '../../../core/service/content-service/content.service';
 import { UserAccount } from '../../../core/model/account/account.model';
 import { SettingInfo } from '../../../core/model/configuration/setting-info.model';
-import { PAYMENT_SYSTEM_TYPE } from '../accounts.config';
+import { ContentStringInfo } from 'src/app/core/model/content/content-string-info.model';
+import { PAYMENT_SYSTEM_TYPE, ContentStringsParamsAccounts, GenericContentStringsParams } from '../accounts.config';
 
 @Injectable()
 export class AccountsService {
   private readonly _accounts$: BehaviorSubject<UserAccount[]> = new BehaviorSubject<UserAccount[]>([]);
   public readonly _settings$: BehaviorSubject<SettingInfo[]> = new BehaviorSubject<SettingInfo[]>([]);
 
+  private content;
+
   constructor(
     private readonly apiService: AccountsApiService,
-    private readonly commerceApiService: CommerceApiService
+    private readonly commerceApiService: CommerceApiService,
+    private readonly contentService: ContentService
   ) {}
 
   get accounts$(): Observable<UserAccount[]> {
@@ -51,6 +56,24 @@ export class AccountsService {
       map(accounts => this.filterAccountsByPaymentSystem(accounts)),
       tap(accounts => (this._accounts = accounts))
     );
+  }
+
+  initContentStringsList(): Observable<ContentStringInfo[]> {
+    return combineLatest(
+      this.contentService.retrieveContentStringList(ContentStringsParamsAccounts),
+      this.contentService.retrieveContentStringList(GenericContentStringsParams)
+    ).pipe(
+      map(([res, res0]) => {
+        const finalArray = [...res, ...res0];
+        this.content = finalArray.reduce((init, elem) => ({ ...init, [elem.name]: elem.value }), {});
+        return finalArray;
+      }),
+      take(1)
+    );
+  }
+
+  getContentValueByName(name: string): string {
+    return this.content[name] || '';
   }
 
   getSettingByName(settings: SettingInfo[], name: string): SettingInfo | undefined {

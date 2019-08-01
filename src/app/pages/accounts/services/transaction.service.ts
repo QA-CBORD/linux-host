@@ -1,14 +1,17 @@
 import { Injectable } from '@angular/core';
 
-import { BehaviorSubject, Observable } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
+import { map, switchMap, tap, take } from 'rxjs/operators';
+
+import { AccountsService } from './accounts.service';
+import { CommerceApiService } from '../../../core/service/commerce/commerce-api.service';
+import { ContentService } from './../../../core/service/content-service/content.service';
 
 import { TransactionHistory } from '../models/transaction-history.model';
 import { QueryTransactionHistoryCriteria } from '../../../core/model/account/transaction-query.model';
 import { TransactionResponse } from '../../../core/model/account/transaction-response.model';
-import { AccountsService } from './accounts.service';
-import { ALL_ACCOUNTS, PAYMENT_SYSTEM_TYPE, SYSTEM_SETTINGS_CONFIG, TIME_PERIOD } from '../accounts.config';
-import { CommerceApiService } from '../../../core/service/commerce/commerce-api.service';
+import { ContentStringInfo } from 'src/app/core/model/content/content-string-info.model';
+import { ALL_ACCOUNTS, PAYMENT_SYSTEM_TYPE, SYSTEM_SETTINGS_CONFIG, TIME_PERIOD, ContentStringsParamsTransactions, GenericContentStringsParams } from '../accounts.config';
 import {
   DateUtilObject,
   getRangeBetweenDates,
@@ -29,9 +32,12 @@ export class TransactionService {
     this.transactionHistory
   );
 
+  private content;
+
   constructor(
     private readonly accountsService: AccountsService,
-    private readonly commerceApiService: CommerceApiService
+    private readonly commerceApiService: CommerceApiService,
+    private readonly contentService: ContentService
   ) {}
 
   get transactions$(): Observable<TransactionHistory[]> {
@@ -154,4 +160,23 @@ export class TransactionService {
         type === PAYMENT_SYSTEM_TYPE.MONETRA || type === PAYMENT_SYSTEM_TYPE.USAEPAY || tendersId.includes(tenId)
     );
   }
+
+  initContentStringsList(): Observable<ContentStringInfo[]> {
+    return combineLatest(
+      this.contentService.retrieveContentStringList(ContentStringsParamsTransactions),
+      this.contentService.retrieveContentStringList(GenericContentStringsParams)
+    ).pipe(
+      map(([res, res0]) => {
+        const finalArray = [...res, ...res0];
+        this.content = finalArray.reduce((init, elem) => ({ ...init, [elem.name]: elem.value }), {});
+        return finalArray;
+      }),
+      take(1)
+    );
+  }
+
+  getContentValueByName(name: string): string {
+    return this.content[name] || '';
+  }
+
 }
