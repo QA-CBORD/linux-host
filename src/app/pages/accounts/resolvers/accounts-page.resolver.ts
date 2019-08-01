@@ -29,7 +29,7 @@ export class AccountsPageResolver implements Resolve<Observable<[TransactionHist
       .getUserSettings(requireSettings)
       .pipe(
         switchMap(() =>
-          this.transactionService.getRecentTransactions(ALL_ACCOUNTS, { name: TIME_PERIOD.pastSixMonth }, 4)
+          this.transactionService.getRecentTransactions(ALL_ACCOUNTS, { name: TIME_PERIOD.pastSixMonth }, 10)
         )
       );
     this.loadingService.showSpinner();

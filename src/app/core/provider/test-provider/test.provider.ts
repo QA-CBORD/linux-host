@@ -34,7 +34,7 @@ export class TestProvider {
 
     const gold7_Yarik: UserLogin = {
       userName: 'yxp@test.cbord.com',
-      password: 'Dn210778pms',
+      password: 'Dn210778pms#',
       domain: null,
       institutionId: '46054f40-71fc-4d32-a8de-64b525d3ce56',
     };
@@ -66,6 +66,15 @@ export class TestProvider {
       institutionId: 'ec1307c4-d59e-4981-b5f9-860e23229a0d',
     };
 
-    return this.authService.authenticateUser(gold7).pipe(tap(newSessionId => DataCache.setSessionId(newSessionId)));
+    const lowBalance: UserLogin = {
+      userName: 'lowbalance@tpsmail.dev',
+      password: 'password1',
+      domain: null,
+      institutionId: '46054f40-71fc-4d32-a8de-64b525d3ce56',
+    };
+
+    return this.authService
+      .authenticateUser(lowBalance)
+      .pipe(tap(newSessionId => DataCache.setSessionId(newSessionId)));
   }
 }
