@@ -1,0 +1,38 @@
+@import 'tools';
+
+.deposit {
+  &__manual-amount {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 30px 0;
+  }
+
+  &__main-label {
+    @include font-nunito-regular(14px);
+  }
+
+  &__main-input-container {
+    color: $color-dim-gray;
+
+    @include font-nunito-regular(96px);
+  }
+
+  &__main-input {
+    text-align: center;
+    width: 70%;
+    margin: 0 auto;
+    --padding-bottom: 0;
+    --padding-top: 0;
+    --padding-start: 0;
+
+    &::before {
+      content: '$';
+    }
+  }
+
+  &__selection-block {
+    padding: 0 20px;
+  }
+}

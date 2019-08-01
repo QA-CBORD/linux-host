@@ -1,11 +1,35 @@
-<st-header
-        title="Add funds"
-        [isTitleShow]="true"
-        [backButtonTitle]="'Back'"
-        [isToolbarShow]="true"
-></st-header>
+<st-header title="Deposit" [isTitleShow]="true" [backButtonTitle]="'Back'" [isToolbarShow]="true"></st-header>
 <ion-content>
-  <p>
-    automatic-deposit-page works!
-  </p>
+  <div class="deposit__manual-amount">
+    <div class="deposit__main-label">
+      Amount to Deposit
+    </div>
+    <div class="deposit__main-input-container">
+      <ion-input
+        class="deposit__main-input"
+        inputmode="tel"
+        type="number"
+        #inputText
+        [ngStyle]="{ width: inputText.value ? inputText.value.length + 1 + 'ch' : '2ch' }"
+      ></ion-input>
+    </div>
+  </div>
+  <section class="deposit__selection-block">
+    <div>To Account</div>
+    <ion-select value="Dining Dollars ($1952.22)" okText="Okay" cancelText="Dismiss">
+      <ion-select-option value="brown">Dining Dollars ($1952.22)</ion-select-option>
+      <ion-select-option value="blonde">Bonus Bucks</ion-select-option>
+      <ion-select-option value="black">Laundry</ion-select-option>
+    </ion-select>
+    <div>
+      Balance after deposit: $181.00
+    </div>
+
+    <div>Payment Method</div>
+    <ion-select value="Apple Pay" okText="Okay" cancelText="Dismiss" interface="popover">
+      <ion-select-option value="brown">MasterCard ending in 2412</ion-select-option>
+      <ion-select-option value="blonde">Bill Me</ion-select-option>
+      <ion-select-option value="black">Add a Credit Card</ion-select-option>
+    </ion-select>
+  </section>
 </ion-content>

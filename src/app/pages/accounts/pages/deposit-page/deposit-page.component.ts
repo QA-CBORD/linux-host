@@ -9,4 +9,5 @@ export class DepositPageComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {}
+
 }
