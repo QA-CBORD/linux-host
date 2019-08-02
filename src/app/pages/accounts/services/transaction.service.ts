@@ -11,9 +11,9 @@ import { ALL_ACCOUNTS, PAYMENT_SYSTEM_TYPE, SYSTEM_SETTINGS_CONFIG, TIME_PERIOD 
 import { CommerceApiService } from '../../../core/service/commerce/commerce-api.service';
 import {
   DateUtilObject,
-  getRangeBetweenDates,
   getTimeRangeOfDate,
   getUniquePeriodName,
+  TimeRange,
 } from '../shared/ui-components/filter/date-util';
 
 @Injectable()
@@ -78,8 +78,7 @@ export class TransactionService {
     return this.getTransactionHistoryByQuery(this.queryCriteria);
   }
 
-  getRecentTransactions(id?: string, period?: DateUtilObject, maxReturn?: number): Observable<TransactionHistory[]> {
-    id = id ? id : ALL_ACCOUNTS;
+  getRecentTransactions(id: string, period?: DateUtilObject, maxReturn?: number): Observable<TransactionHistory[]> {
     period = period ? period : { name: TIME_PERIOD.pastMonth };
     maxReturn = maxReturn ? maxReturn : 0;
 
@@ -128,8 +127,22 @@ export class TransactionService {
   private updateQuery() {
     const startingReturnRow = this.queryCriteria.startingReturnRow + this.queryCriteria.maxReturn;
     const transactionQuery = { startingReturnRow, maxReturn: this.lazyAmount };
-    const { endDate, startDate } = getRangeBetweenDates(this.currentTimeRange, { name: TIME_PERIOD.pastSixMonth });
+    const { endDate, startDate } = this.getDateRangeLazyByQuery(this.queryCriteria);
     this.queryCriteria = { ...this.queryCriteria, ...transactionQuery, endDate, startDate };
+  }
+
+  private getDateRangeLazyByQuery(query: QueryTransactionHistoryCriteria): TimeRange {
+    let endDate;
+    let startDate;
+    if (query.maxReturn !== 0) {
+      startDate = query.startDate;
+      endDate = query.endDate;
+    } else {
+      startDate = getTimeRangeOfDate({ name: TIME_PERIOD.pastSixMonth }).startDate;
+      endDate = query.startDate === startDate ? query.endDate : query.startDate;
+    }
+
+    return { startDate, endDate };
   }
 
   private setInitialQueryObject(accountId: string = null, startDate: string = null, endDate: string = null) {

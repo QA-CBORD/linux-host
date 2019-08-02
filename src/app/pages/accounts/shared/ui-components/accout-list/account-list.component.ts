@@ -25,8 +25,7 @@ export class AccountListComponent implements OnInit {
 
   @Output() onAccountInfoEmit = new EventEmitter<{ name: string; balance: number; accountType: number }>();
 
-  constructor(private readonly platform: Platform, private readonly router: Router) {
-  }
+  constructor(private readonly platform: Platform, private readonly router: Router) {}
 
   @Input()
   set accounts(value: UserAccount[]) {
@@ -47,21 +46,21 @@ export class AccountListComponent implements OnInit {
     this.accountsHidden = [];
   }
 
-    onAccountClicked(accountId: string, name?: string, balance?: number, accountType?: number) {
-        const nextPage = this.tabletResolution ? LOCAL_ROUTING.accountDetails : LOCAL_ROUTING.accountDetailsM;
-        if (this.tabletResolution) {
-            this.activeAccount = accountId;
-        }
-
-        if (name) {
-            this.onAccountInfoEmit.emit({ name, balance, accountType });
-        }
-        this.router.navigate([`${NAVIGATE.accounts}/${nextPage}/${accountId}`], { skipLocationChange: true });
+  onAccountClicked(accountId: string, name?: string, balance?: number, accountType?: number) {
+    const nextPage = this.tabletResolution ? LOCAL_ROUTING.accountDetails : LOCAL_ROUTING.accountDetailsM;
+    if (this.tabletResolution) {
+      this.activeAccount = accountId;
     }
 
-    trackByAccountId(i: number, { id }: UserAccount): string {
-        return id;
+    if (name) {
+      this.onAccountInfoEmit.emit({ name, balance, accountType });
     }
+    this.router.navigate([`${NAVIGATE.accounts}/${nextPage}/${accountId}`], { skipLocationChange: true });
+  }
+
+  trackByAccountId(i: number, { id }: UserAccount): string {
+    return id;
+  }
 
   private defineResolution() {
     const tabletResolution: number = 767;

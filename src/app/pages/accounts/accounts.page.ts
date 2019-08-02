@@ -28,8 +28,7 @@ export class AccountsPage implements OnInit {
     private readonly platform: Platform,
     private readonly router: Router,
     private readonly transactionService: TransactionService
-  ) {
-  }
+  ) {}
 
   ngOnInit() {
     this.accounts$ = this.getAccounts();
@@ -51,13 +50,13 @@ export class AccountsPage implements OnInit {
       map(settings => {
         const depositSetting = this.accountsService.getSettingByName(
           settings,
-          SYSTEM_SETTINGS_CONFIG.displayTenders.name,
+          SYSTEM_SETTINGS_CONFIG.displayTenders.name
         );
         return this.accountsService.transformStringToArray(depositSetting.value);
       }),
       switchMap((tendersId: Array<string>) =>
-        this.accountsService.accounts$.pipe(map(accounts => this.filterAccountsByTenders(tendersId, accounts))),
-      ),
+        this.accountsService.accounts$.pipe(map(accounts => this.filterAccountsByTenders(tendersId, accounts)))
+      )
     );
   }
 
