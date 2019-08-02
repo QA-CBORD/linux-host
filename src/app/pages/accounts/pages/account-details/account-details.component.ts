@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
 
 import { TransactionHistory } from '../../models/transaction-history.model';
-import { TIME_PERIOD } from '../../accounts.config';
+import { TIME_PERIOD, CONTENT_STRINGS } from '../../accounts.config';
 import { TransactionService } from '../../services/transaction.service';
 
 @Component({
@@ -20,6 +20,7 @@ export class AccountDetailsComponent implements OnInit {
   @ViewChild('content') private readonly content: IonContent;
   private currentAccountId: string;
   transactions$: Observable<TransactionHistory[]>;
+  contentString: { [key: string]: string };
 
   constructor(
     private readonly activatedRoute: ActivatedRoute,
@@ -28,6 +29,7 @@ export class AccountDetailsComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.setContentStrings();
     this.currentAccountId = this.activatedRoute.snapshot.params.id;
     this.transactions$ = this.transactionService.transactions$;
     this.lazy.disabled = !this.isAbleToScrollByActivePeriod();
@@ -68,4 +70,13 @@ export class AccountDetailsComponent implements OnInit {
     });
     toast.present();
   }
+
+  private setContentStrings() {
+    const header = this.transactionService.getContentValueByName(CONTENT_STRINGS.headerTitle);
+    const headerBackBtn = this.transactionService.getContentValueByName(CONTENT_STRINGS.headerBackBtn);
+    const infiniteScrollLoader = this.transactionService.getContentValueByName(CONTENT_STRINGS.infiniteScrollLoader);
+
+    this.contentString = { header, infiniteScrollLoader, headerBackBtn };
+  }
+
 }

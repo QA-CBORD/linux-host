@@ -16,6 +16,7 @@ export class TransactionsResolver implements Resolve<Promise<any>> {
   async resolve(route: ActivatedRouteSnapshot): Promise<any> {
     await this.loadingService.showSpinner();
     return new Promise((resolve, reject) => {
+      this.transactionService.initContentStringsList().subscribe();
       this.transactionService
         .getRecentTransactions(route.params.id)
         .pipe(

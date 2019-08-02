@@ -6,7 +6,7 @@ import { map, switchMap } from 'rxjs/operators';
 import { AccountsService } from './services/accounts.service';
 import { UserAccount } from '../../core/model/account/account.model';
 import { TransactionHistory } from './models/transaction-history.model';
-import { ALL_ACCOUNTS, LOCAL_ROUTING, SYSTEM_SETTINGS_CONFIG } from './accounts.config';
+import { ALL_ACCOUNTS, LOCAL_ROUTING, SYSTEM_SETTINGS_CONFIG, CONTENT_STRINGS } from './accounts.config';
 import { NAVIGATE } from '../../app.global';
 import { Platform } from '@ionic/angular';
 import { Router } from '@angular/router';
@@ -22,6 +22,7 @@ export class AccountsPage implements OnInit {
   accounts$: Observable<UserAccount[]>;
   transactions$: Observable<TransactionHistory[]>;
   accountInfo: { name: string; balance: number; accountType: number };
+  contentString: { [key: string]: string };
 
   constructor(
     private readonly accountsService: AccountsService,
@@ -32,6 +33,7 @@ export class AccountsPage implements OnInit {
   }
 
   ngOnInit() {
+    this.setContentStrings();
     this.accounts$ = this.getAccounts();
     this.transactions$ = this.transactionService.transactions$.pipe(map(arr => arr.slice(0, 4)));
 
@@ -79,5 +81,18 @@ export class AccountsPage implements OnInit {
     const tabletResolution: number = 767;
 
     return this.platform.width() > tabletResolution;
+  }
+
+  private setContentStrings() {
+    const headerTitle = this.accountsService.getContentValueByName(CONTENT_STRINGS.headerTitle);
+    const addFundsBtn = this.accountsService.getContentValueByName(CONTENT_STRINGS.addFundsBtn);
+    const autoDepositsBtn = this.accountsService.getContentValueByName(CONTENT_STRINGS.autoDepositBtn);
+    const requestFundsBtn = this.accountsService.getContentValueByName(CONTENT_STRINGS.requestFundsBtn);
+    const allAccountsLabel = this.accountsService.getContentValueByName(CONTENT_STRINGS.allAccountsLabel);
+    const accountsLabel = this.accountsService.getContentValueByName(CONTENT_STRINGS.accountsLabel);
+    const recentTransactionsLabel = this.accountsService.getContentValueByName(CONTENT_STRINGS.recentTransactionsLabel);
+    const headerBackBtn = this.accountsService.getContentValueByName(CONTENT_STRINGS.headerBackBtn);
+
+    this.contentString = { headerTitle, addFundsBtn, autoDepositsBtn, requestFundsBtn, allAccountsLabel, accountsLabel, recentTransactionsLabel, headerBackBtn };
   }
 }

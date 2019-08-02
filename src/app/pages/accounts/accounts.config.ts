@@ -66,8 +66,19 @@ export enum CONTENT_STRINGS {
   closeBtn = 'button_close',
   retryBtn = 'button_retry',
   retryTitle = 'dialog_header_retry',
-  
-  
+  addFundsBtn = 'button_add-funds',
+  autoDepositBtn = 'button_auto-deposits',
+  requestFundsBtn = 'button_request-funds',
+  headerTitle = 'header_title',
+  headerBackBtn = 'header_button_back',
+  allAccountsLabel = 'label_all-accounts',
+  accountsLabel = 'label_accounts',
+  filterLabel = 'label_filter',
+  filterAccountLabel = 'label_filter_account',
+  filterDateLabel = 'label_filter_date-range',
+  pastSixMonthsLabel = 'label_past-six-months',
+  recentTransactionsLabel = 'label_recent-transactions',
+  infiniteScrollLoader = 'loader_infinite-scroll',  
 }
 
 export const ContentStringsParamsAccounts = {
