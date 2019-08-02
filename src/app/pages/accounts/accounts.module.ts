@@ -10,6 +10,7 @@ import { AccountsSharedModule } from './shared/shared.module';
 import { TransactionService } from './services/transaction.service';
 import { TransactionsResolver } from './resolvers/transactions.resolver';
 import { DepositService } from './services/deposit.service';
+import { DepositResolver } from './resolvers/deposit.resolver';
 
 const imports = [CommonModule, AccountsRoutingModule, SharedModule, AccountsSharedModule];
 const declarations = [AccountsPage];
@@ -20,6 +21,7 @@ const providers = [
   TransactionService,
   TransactionsResolver,
   DepositService,
+  DepositResolver,
 ];
 
 @NgModule({

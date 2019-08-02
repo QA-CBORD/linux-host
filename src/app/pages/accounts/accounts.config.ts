@@ -24,6 +24,31 @@ export const SYSTEM_SETTINGS_CONFIG = {
     category: 'deposit',
     name: 'enable_guest_deposits',
   },
+  billMeMapping: {
+    domain: 'get',
+    category: 'deposit',
+    name: 'billme_mapping',
+  },
+  freeFromDepositEnabled: {
+    domain: 'get',
+    category: 'deposit',
+    name: 'allow_freeform_onetime_amounts',
+  },
+  presetDepositAmountsBillMe: {
+    domain: 'get',
+    category: 'deposit',
+    name: 'billme_amounts',
+  },
+  presetDepositAmountsCreditCard: {
+    domain: 'get',
+    category: 'deposit',
+    name: 'onetime_amounts',
+  },
+  paymentTypes: {
+    domain: 'get',
+    category: 'deposit',
+    name: 'payment_types',
+  },
 };
 
 export enum ACCOUNT_TYPES {
