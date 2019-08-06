@@ -1,35 +1,81 @@
-<st-header title="Deposit" [isTitleShow]="true" [backButtonTitle]="'Back'" [isToolbarShow]="true"></st-header>
+<st-header title="Add Funds" [isTitleShow]="true" [backButtonTitle]="'Back'" [isToolbarShow]="true"></st-header>
 <ion-content>
-  <div class="deposit__manual-amount">
-    <div class="deposit__main-label">
-      Amount to Deposit
+  <form [formGroup]="myForm" (ngSubmit)="onFormSubmit(myForm)">
+    <div class="deposit__manual-amount">
+      <div class="deposit__main-label">
+        Amount to Deposit
+      </div>
+      <div class="deposit__main-select-container" *ngIf="!isFreeFromDepositEnabled; else mainInput">
+        <ion-select
+          class=""
+          value="$10"
+          cancelText="Cancel"
+          mode="md"
+          interface="action-sheet"
+          formControlName="mainSelect"
+        >
+          <ion-select-option value="brown">$15</ion-select-option>
+          <ion-select-option value="blonde">$20</ion-select-option>
+          <ion-select-option value="black">$30</ion-select-option>
+        </ion-select>
+      </div>
+      <ng-template #mainInput>
+        <div class="deposit__main-input-container">
+          <ion-input
+            class="deposit__main-input"
+            inputmode="tel"
+            type="number"
+            #inputText
+            [autofocus]="true"
+            [ngStyle]="{
+              width: inputText.value ? inputText.value.length + 1 + 'ch' : '2ch',
+              borderBottom: focusLine ? '1px solid #166dff' : 'none'
+            }"
+            (ionFocus)="focusLine = true"
+            (ionBlur)="focusLine = false"
+            formControlName="mainInput"
+          ></ion-input>
+        </div>
+      </ng-template>
     </div>
-    <div class="deposit__main-input-container">
-      <ion-input
-        class="deposit__main-input"
-        inputmode="tel"
-        type="number"
-        #inputText
-        [ngStyle]="{ width: inputText.value ? inputText.value.length + 1 + 'ch' : '2ch' }"
-      ></ion-input>
-    </div>
-  </div>
-  <section class="deposit__selection-block">
-    <div>To Account</div>
-    <ion-select value="Dining Dollars ($1952.22)" okText="Okay" cancelText="Dismiss">
-      <ion-select-option value="brown">Dining Dollars ($1952.22)</ion-select-option>
-      <ion-select-option value="blonde">Bonus Bucks</ion-select-option>
-      <ion-select-option value="black">Laundry</ion-select-option>
-    </ion-select>
-    <div>
-      Balance after deposit: $181.00
-    </div>
+    <section class="deposit__selection-block">
+      <div class="deposit__select-wrapper">
+        <ion-label class="deposit__label-select">To Account</ion-label>
+        <ion-select
+          class="deposit__select deposit__select-account"
+          value="Dining Dollars ($1952.22)"
+          cancelText="Cancel"
+          mode="md"
+          interface="action-sheet"
+          [interfaceOptions]="customActionSheetOptions"
+        >
+          <ion-select-option value="brown">Dining Dollars ($1952.22)</ion-select-option>
+          <ion-select-option value="blonde">Bonus Bucks</ion-select-option>
+          <ion-select-option value="black">Laundry</ion-select-option>
+        </ion-select>
+      </div>
+      <div class="deposit__select-wrapper">
+        <ion-label class="deposit__label-select">Payment Method</ion-label>
+        <ion-select
+          class="deposit__select"
+          value="Apple Pay"
+          cancelText="Cancel"
+          mode="md"
+          interface="action-sheet"
+          [interfaceOptions]="customActionSheetOptions"
+          (ionChange)="onPaymentMethodChanged($event)"
+        >
+          <ion-select-option value="MasterCard">MasterCard ending in 2412</ion-select-option>
+          <ion-select-option value="billme" *ngIf="isBillMePaymentTypesEnabled">Bill Me</ion-select-option>
+          <ion-select-option value="newCreditCard" class="select-option-new-card"
+            >Add a Credit Card</ion-select-option
+          >
+        </ion-select>
+      </div>
+    </section>
 
-    <div>Payment Method</div>
-    <ion-select value="Apple Pay" okText="Okay" cancelText="Dismiss" interface="popover">
-      <ion-select-option value="brown">MasterCard ending in 2412</ion-select-option>
-      <ion-select-option value="blonde">Bill Me</ion-select-option>
-      <ion-select-option value="black">Add a Credit Card</ion-select-option>
-    </ion-select>
-  </section>
+    <ion-button expand="block" type="submit" [disabled]="!myForm.valid" class="deposit__deposit-btn"
+      >Deposit $100</ion-button
+    >
+  </form>
 </ion-content>

@@ -47,9 +47,20 @@ export class DepositService {
     return zip(...requestArray).pipe(tap(settings => (this._settings = settings)));
   }
 
+  getSettingByName(settings: SettingInfo[], name: string): SettingInfo | undefined {
+    return settings.find(({ name: n }) => n === name);
+  }
+
+  transformStringToArray(value: string): Array<string> {
+    if (!value.length) return [];
+    const result = JSON.parse(value);
+
+    return Array.isArray(result) ? result : [];
+  }
+
   private filterAccountsByPaymentSystem(accounts: UserAccount[]): UserAccount[] {
     return accounts.filter(
-      ({ paymentSystemType: type }) => type === PAYMENT_SYSTEM_TYPE.OPCS || type === PAYMENT_SYSTEM_TYPE.CSGOLD
+      ({ paymentSystemType: type }) => type === PAYMENT_SYSTEM_TYPE.MONETRA || type === PAYMENT_SYSTEM_TYPE.USAEPAY
     );
   }
 }

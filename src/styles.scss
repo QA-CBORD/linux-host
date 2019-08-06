@@ -48,4 +48,34 @@
   ion-toast.exception-toast {
     --ion-color-primary: #00a0ff;
   }
+
+  .custom-deposit-actionSheet {
+    .action-sheet-group {
+      .action-sheet-button {
+        border-bottom: 1px solid #ebebeb;
+
+        &:last-child {
+          color: #6e6e6e;
+        }
+
+        .action-sheet-button-inner {
+          @include font-nunito-semibold(16px);
+        }
+      }
+    }
+    .action-sheet-group-cancel {
+      .action-sheet-button {
+        &:last-child {
+          color: #166dff;
+          border: none;
+
+          .action-sheet-button-inner {
+            justify-content: center;
+
+            @include font-nunito-heavy(16px);
+          }
+        }
+      }
+    }
+  }
 }

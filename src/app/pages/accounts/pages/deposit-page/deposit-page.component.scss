@@ -23,16 +23,64 @@
     text-align: center;
     width: 70%;
     margin: 0 auto;
+    &:focus {
+      border-bottom: 1px solid $color-dodger-blue !important;
+    }
+
     --padding-bottom: 0;
     --padding-top: 0;
     --padding-start: 0;
 
     &::before {
       content: '$';
+      font-size: 55%;
+      position: relative;
+      left: 10px;
+      bottom: 15px;
     }
   }
 
   &__selection-block {
-    padding: 0 20px;
+    border-top: 1px solid #ebebeb;
+    border-bottom: 1px solid #ebebeb;
+  }
+
+  &__select-wrapper {
+    position: relative;
+    --inner-padding-top: 15px;
+    --inner-padding-bottom: 15px;
+
+    &:first-child {
+      border-bottom: 1px solid #ebebeb;
+    }
+  }
+
+  &__select {
+    // background: url('/assets/icon/img/angle-down.svg') no-repeat 92% center !important;
+    padding: 30px 15px;
+
+    @include font-nunito-heavy(16px);
+  }
+
+  &__select-account {
+  }
+
+  &__label-select {
+    text-transform: uppercase;
+    color: #7e7e7e;
+    position: absolute;
+    left: 16px;
+    top: 10px;
+
+    @include font-nunito-semibold(14px);
+  }
+
+  &__deposit-btn {
+    --background: #166dff;
+    margin: 85% 20px 0;
+
+    &.button-disabled {
+      --background: #cccccc;
+    }
   }
 }

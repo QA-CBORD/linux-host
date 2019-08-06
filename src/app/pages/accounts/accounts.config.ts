@@ -49,6 +49,26 @@ export const SYSTEM_SETTINGS_CONFIG = {
     category: 'deposit',
     name: 'payment_types',
   },
+  minAmountbillme: {
+    domain: 'get',
+    category: 'deposit',
+    name: 'billme_minimum',
+  },
+  minAmountCreditCard: {
+    domain: 'get',
+    category: 'deposit',
+    name: 'onetime_minimum',
+  },
+  maxAmountbillme: {
+    domain: 'get',
+    category: 'deposit',
+    name: '	billme_maximum',
+  },
+  maxAmountCreditCard: {
+    domain: 'get',
+    category: 'deposit',
+    name: 'onetime_maximum',
+  },
 };
 
 export enum ACCOUNT_TYPES {
@@ -75,6 +95,11 @@ export enum PAYMENT_SYSTEM_TYPE {
   CSGOLD = 2,
   MONETRA = 3,
   USAEPAY = 4,
+}
+
+export enum PAYMENT_TYPE {
+  CREDIT,
+  BILLME,
 }
 
 export const ALL_ACCOUNTS = 'all_accounts';

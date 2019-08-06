@@ -17,10 +17,13 @@ export class DepositResolver implements Resolve<Observable<any>> {
       SYSTEM_SETTINGS_CONFIG.freeFromDepositEnabled,
       SYSTEM_SETTINGS_CONFIG.presetDepositAmountsCreditCard,
       SYSTEM_SETTINGS_CONFIG.presetDepositAmountsBillMe,
+      SYSTEM_SETTINGS_CONFIG.minAmountbillme,
+      SYSTEM_SETTINGS_CONFIG.minAmountCreditCard,
+      // SYSTEM_SETTINGS_CONFIG.maxAmountbillme,
+      SYSTEM_SETTINGS_CONFIG.maxAmountCreditCard,
     ];
     const accountsCall = this.depositService.getUserAccounts();
     const settingsCall = this.depositService.getUserSettings(requireSettings)
-    .pipe(tap(res => console.log(res)));
     this.loadingService.showSpinner();
 
     return zip(settingsCall, accountsCall).pipe(
