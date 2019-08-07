@@ -56,10 +56,30 @@
 
         &:last-child {
           color: #6e6e6e;
+
+          // &::before {
+          //   content: '';
+          //   background-image: url('/assets/icon/add-card.svg');
+          // }
         }
 
         .action-sheet-button-inner {
           @include font-nunito-semibold(16px);
+        }
+
+        &.action-sheet-selected {
+          .action-sheet-button-inner {
+            position: relative;
+
+            &::after {
+              content: 'L';
+              font-size: 25px;
+              transform: scaleX(-1) rotate(-35deg);
+              color: #3c3c3c;
+              position: absolute;
+              right: 10px;
+            }
+          }
         }
       }
     }

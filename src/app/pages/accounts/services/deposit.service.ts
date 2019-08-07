@@ -35,10 +35,7 @@ export class DepositService {
   }
 
   getUserAccounts(): Observable<UserAccount[]> {
-    return this.commerceApiService.getUserAccounts().pipe(
-      map(accounts => this.filterAccountsByPaymentSystem(accounts)),
-      tap(accounts => (this._accounts = accounts))
-    );
+    return this.commerceApiService.getUserAccounts().pipe(tap(accounts => (this._accounts = accounts)));
   }
 
   getUserSettings(settings: ContentStringRequest[]): Observable<SettingInfo[]> {
@@ -58,7 +55,7 @@ export class DepositService {
     return Array.isArray(result) ? result : [];
   }
 
-  private filterAccountsByPaymentSystem(accounts: UserAccount[]): UserAccount[] {
+  filterAccountsByPaymentSystem(accounts: UserAccount[]): UserAccount[] {
     return accounts.filter(
       ({ paymentSystemType: type }) => type === PAYMENT_SYSTEM_TYPE.MONETRA || type === PAYMENT_SYSTEM_TYPE.USAEPAY
     );

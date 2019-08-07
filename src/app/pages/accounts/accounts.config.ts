@@ -98,8 +98,8 @@ export enum PAYMENT_SYSTEM_TYPE {
 }
 
 export enum PAYMENT_TYPE {
-  CREDIT,
-  BILLME,
+  CREDIT = 1,
+  BILLME = 2,
 }
 
 export const ALL_ACCOUNTS = 'all_accounts';

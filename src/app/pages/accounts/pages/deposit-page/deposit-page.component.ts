@@ -21,6 +21,9 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   creditCardSourceAccounts: Array<UserAccount>;
   creditCardDestinationAccounts: Array<UserAccount>;
   billmeDestinationAccounts: Array<UserAccount>;
+  sourceAccounts: Array<UserAccount>;
+  destinationAccounts: Array<UserAccount>;
+  presetDepositAmounts: Array<string>;
 
   customActionSheetOptions: any = {
     cssClass: 'custom-deposit-actionSheet',
@@ -29,7 +32,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   constructor(private readonly depositService: DepositService, private fb: FormBuilder) {}
 
   ngOnInit() {
-    // FIXME: rewrite it in future:
+    // TODO: rewrite it in future:
     this.depositService.settings$.subscribe(depositSettings => {
       this.depositSettings = depositSettings;
       console.log(this.depositSettings);
@@ -56,7 +59,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   get isBillMePaymentTypesEnabled() {
     const billMePaymentTypesEnabled = this.getSettingByName(this.depositSettings, SYSTEM_SETTINGS_CONFIG.paymentTypes);
 
-    return billMePaymentTypesEnabled.indexOf(PAYMENT_TYPE[1]) !== -1;
+    return JSON.parse(billMePaymentTypesEnabled).indexOf(PAYMENT_TYPE.BILLME) !== -1;
   }
 
   get presetDepositAmountsCreditCard() {
@@ -85,6 +88,8 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     this.myForm = this.fb.group({
       mainInput: ['', Validators.required],
       mainSelect: ['brown'],
+      selectAccount: [''],
+      selectPaymentMethod: [''],
     });
   }
 
@@ -102,30 +107,53 @@ export class DepositPageComponent implements OnInit, OnDestroy {
         }),
         switchMap(({ depositTenders, billmeMappingArr }) =>
           this.depositService.accounts$.pipe(
-            map(accounts => ({
-              creditCardSourceAccounts: accounts,
-              creditCardDestinationAccounts: this.filterCreditCardDestAccounts(depositTenders, accounts),
-              billmeDestinationAccounts: this.filterBillmeDestAccounts(billmeMappingArr, accounts),
-            }))
+            tap(accounts => {
+              (this.creditCardSourceAccounts = this.depositService.filterAccountsByPaymentSystem(accounts)),
+                (this.creditCardDestinationAccounts = this.filterCreditCardDestAccounts(depositTenders, accounts)),
+                (this.billmeDestinationAccounts = this.filterBillmeDestAccounts(billmeMappingArr, accounts));
+
+              console.log(this.creditCardSourceAccounts);
+              console.log(this.creditCardDestinationAccounts);
+              console.log(this.billmeDestinationAccounts);
+            })
           )
         )
       )
-      .subscribe(val => console.log(val));
+      .subscribe(() => {
+        this.sourceAccounts = this.creditCardSourceAccounts;
+        this.presetDepositAmounts = this.presetDepositAmountsCreditCard;
+        this.destinationAccounts = this.creditCardDestinationAccounts;
+      });
     this.sourceSubscription.add(subscription);
   }
 
   onPaymentMethodChanged({ target }) {
     console.log('changed', target.value);
+    if (target.value === 'billme') {
+      this.presetDepositAmounts = this.presetDepositAmountsBillme;
+      this.destinationAccounts = this.billmeDestinationAccounts;
+    }
+  }
+
+  trackByAccountId(i: number, { id }: UserAccount): string {
+    return id;
   }
 
   private filterCreditCardDestAccounts(tendersId: Array<string>, accounts: Array<UserAccount>): Array<UserAccount> {
-    return accounts.filter(({ depositAccepted, accountTender: tId }) => depositAccepted && tendersId.includes(tId));
+    return accounts.filter(
+      ({ depositAccepted, accountTender }) => depositAccepted && tendersId.includes(accountTender)
+    );
   }
 
   private filterBillmeDestAccounts(billmeMappingArr: Array<string>, accounts: Array<UserAccount>): Array<UserAccount> {
-    // TODO: WHAT IS DEST_ACC and SOURCE_ACC?
-    return [];
-    // return accounts.filter(({ depositAccepted, accountTender: tId }) => depositAccepted && tendersId.includes(tId));
+    console.log(billmeMappingArr);
+    return accounts.filter(
+      ({ depositAccepted, accountTender }) =>
+        depositAccepted &&
+        billmeMappingArr.find(
+          billmeMap => billmeMap['destination'] === accountTender && billmeMap['source'] === accountTender
+        )
+    );
   }
 
   private getSettingByName(settings, property) {
