@@ -19,7 +19,7 @@ import { StGlobalPopoverComponent } from './shared/ui-components/st-global-popov
 
 import { UserInfo } from './core/model/user';
 
-declare var AndroidInterface: any;
+declare var NativeInterface: any;
 
 @Component({
   selector: 'app-root',
@@ -100,14 +100,14 @@ export class AppComponent implements OnDestroy {
   useJavaScriptInterface(){
     console.log("JS interface used");
 
-    if(!AndroidInterface){
+    if(!NativeInterface){
       throw new Error("No native interface, retrieve info normally")
     }
 
-    let sessionId: string = AndroidInterface.getSessionId() || null;
-    let userInfo: UserInfo = JSON.parse(AndroidInterface.getUserInfo()) || null;
-    let institutionId: string = AndroidInterface.getInstitutionId() || null;    
-    this.destinationPage = AndroidInterface.getDestinationPage() || null;
+    let sessionId: string = NativeInterface.getSessionId() || null;
+    let userInfo: UserInfo = JSON.parse(NativeInterface.getUserInfo()) || null;
+    let institutionId: string = NativeInterface.getInstitutionId() || null;    
+    this.destinationPage = NativeInterface.getDestinationPage() || null;
 
 
     if(!sessionId || !userInfo || !institutionId || !this.destinationPage){
