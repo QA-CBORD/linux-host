@@ -108,3 +108,11 @@ export enum TIME_PERIOD {
   pastMonth = 'past_month',
   pastSixMonth = 'past_six_month',
 }
+
+export enum CREDITCARD_TYPE {
+  'AmericanExpress',
+  'Discover',
+  'MasterCard',
+  'Visa',
+  'Dindes',
+}

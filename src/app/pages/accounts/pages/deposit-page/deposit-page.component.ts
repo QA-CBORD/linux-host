@@ -17,16 +17,20 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   private readonly sourceSubscription: Subscription = new Subscription();
   focusLine: boolean = false;
   depositSettings: SettingInfo[];
-  myForm: FormGroup;
+  depositForm: FormGroup;
   creditCardSourceAccounts: Array<UserAccount>;
   creditCardDestinationAccounts: Array<UserAccount>;
   billmeDestinationAccounts: Array<UserAccount>;
-  sourceAccounts: Array<UserAccount>;
   destinationAccounts: Array<UserAccount>;
   presetDepositAmounts: Array<string>;
+  billmeMappingArr: any[];
 
   customActionSheetOptions: any = {
     cssClass: 'custom-deposit-actionSheet',
+  };
+
+  customActionSheetPaymentOptions: any = {
+    cssClass: 'custom-deposit-actionSheet custom-deposit-actionSheet-last-btn',
   };
 
   constructor(private readonly depositService: DepositService, private fb: FormBuilder) {}
@@ -41,6 +45,8 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     this.initForm();
 
     this.getAccounts();
+
+    console.log(this.minMaxOfAmmounts);
   }
 
   ngOnDestroy() {
@@ -80,16 +86,38 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     return JSON.parse(billMePaymentTypesEnabled);
   }
 
+  get minMaxOfAmmounts() {
+    const minAmountbillme = this.getSettingByName(this.depositSettings, SYSTEM_SETTINGS_CONFIG.minAmountbillme);
+    // FIXME: fix it after backend apply his fixes with billme_maximum FIELD
+    const maxAmountbillme = 100000;
+    const minAmountOneTime = this.getSettingByName(this.depositSettings, SYSTEM_SETTINGS_CONFIG.minAmountCreditCard);
+    const maxAmountOneTime = this.getSettingByName(this.depositSettings, SYSTEM_SETTINGS_CONFIG.maxAmountCreditCard);
+
+    return {
+      minAmountbillme,
+      maxAmountbillme,
+      minAmountOneTime,
+      maxAmountOneTime,
+    };
+  }
+
   onFormSubmit() {
-    console.log(this.myForm);
+    const { selectedPaymentMethod, selectedAccount, mainInput } = this.depositForm.value;
+    console.log(this.depositForm);
+    if (selectedPaymentMethod === 'billme') {
+      console.log('billme');
+      console.log(
+        this.sourceAccForBillmeDeposit(this.creditCardSourceAccounts, selectedAccount, this.billmeMappingArr)
+      );
+    }
   }
 
   private initForm() {
-    this.myForm = this.fb.group({
-      mainInput: ['', Validators.required],
-      mainSelect: ['brown'],
-      selectAccount: [''],
-      selectPaymentMethod: [''],
+    this.depositForm = this.fb.group({
+      mainInput: [''],
+      mainSelect: [''],
+      selectedAccount: [''],
+      selectedPaymentMethod: [''],
     });
   }
 
@@ -108,9 +136,10 @@ export class DepositPageComponent implements OnInit, OnDestroy {
         switchMap(({ depositTenders, billmeMappingArr }) =>
           this.depositService.accounts$.pipe(
             tap(accounts => {
-              (this.creditCardSourceAccounts = this.depositService.filterAccountsByPaymentSystem(accounts)),
+              this.billmeMappingArr = billmeMappingArr;
+              (this.creditCardSourceAccounts = this.filterAccountsByPaymentSystem(accounts)),
                 (this.creditCardDestinationAccounts = this.filterCreditCardDestAccounts(depositTenders, accounts)),
-                (this.billmeDestinationAccounts = this.filterBillmeDestAccounts(billmeMappingArr, accounts));
+                (this.billmeDestinationAccounts = this.filterBillmeDestAccounts(this.billmeMappingArr, accounts));
 
               console.log(this.creditCardSourceAccounts);
               console.log(this.creditCardDestinationAccounts);
@@ -120,7 +149,6 @@ export class DepositPageComponent implements OnInit, OnDestroy {
         )
       )
       .subscribe(() => {
-        this.sourceAccounts = this.creditCardSourceAccounts;
         this.presetDepositAmounts = this.presetDepositAmountsCreditCard;
         this.destinationAccounts = this.creditCardDestinationAccounts;
       });
@@ -129,9 +157,10 @@ export class DepositPageComponent implements OnInit, OnDestroy {
 
   onPaymentMethodChanged({ target }) {
     console.log('changed', target.value);
+    console.log(this.billmeDestinationAccounts);
     if (target.value === 'billme') {
       this.presetDepositAmounts = this.presetDepositAmountsBillme;
-      this.destinationAccounts = this.billmeDestinationAccounts;
+      this.destinationAccounts = this.billmeDestinationAccounts.concat();
     }
   }
 
@@ -139,21 +168,35 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     return id;
   }
 
+  private filterAccountsByPaymentSystem(accounts): Array<UserAccount> {
+    return this.depositService.filterAccountsByPaymentSystem(accounts);
+  }
+
   private filterCreditCardDestAccounts(tendersId: Array<string>, accounts: Array<UserAccount>): Array<UserAccount> {
-    return accounts.filter(
-      ({ depositAccepted, accountTender }) => depositAccepted && tendersId.includes(accountTender)
-    );
+    return this.depositService.filterCreditCardDestAccounts(tendersId, accounts);
   }
 
   private filterBillmeDestAccounts(billmeMappingArr: Array<string>, accounts: Array<UserAccount>): Array<UserAccount> {
-    console.log(billmeMappingArr);
-    return accounts.filter(
-      ({ depositAccepted, accountTender }) =>
-        depositAccepted &&
-        billmeMappingArr.find(
-          billmeMap => billmeMap['destination'] === accountTender && billmeMap['source'] === accountTender
-        )
-    );
+    return this.depositService.filterBillmeDestAccounts(billmeMappingArr, accounts);
+  }
+
+  private sourceAccForBillmeDeposit(
+    accounts: Array<UserAccount>,
+    destinationAccount: UserAccount,
+    billmeMappingArr: Array<string>
+  ) {
+    const filterByBillme = (accTender, purpose) => billmeMappingArr.find(billmeMap => billmeMap[purpose] === accTender);
+
+    if (filterByBillme(destinationAccount.accountTender, 'destination')) {
+      console.log('asdasd');
+      console.log(accounts);
+      // return accounts.find(({ accountTender }) => {
+      //   if (filterByBillme(accountTender, 'source')) {
+      //     console.log('asdasdsad');
+      //     return acc;
+      //   }
+      // });
+    }
   }
 
   private getSettingByName(settings, property) {

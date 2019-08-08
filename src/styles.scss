@@ -54,15 +54,6 @@
       .action-sheet-button {
         border-bottom: 1px solid #ebebeb;
 
-        &:last-child {
-          color: #6e6e6e;
-
-          // &::before {
-          //   content: '';
-          //   background-image: url('/assets/icon/add-card.svg');
-          // }
-        }
-
         .action-sheet-button-inner {
           @include font-nunito-semibold(16px);
         }
@@ -96,6 +87,12 @@
           }
         }
       }
+    }
+  }
+
+  .custom-deposit-actionSheet-last-btn {
+    .action-sheet-group .action-sheet-button:last-child {
+      color: #6e6e6e;
     }
   }
 }

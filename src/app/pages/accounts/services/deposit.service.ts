@@ -60,4 +60,25 @@ export class DepositService {
       ({ paymentSystemType: type }) => type === PAYMENT_SYSTEM_TYPE.MONETRA || type === PAYMENT_SYSTEM_TYPE.USAEPAY
     );
   }
+
+  filterCreditCardDestAccounts(tendersId: Array<string>, accounts: Array<UserAccount>): Array<UserAccount> {
+    return accounts.filter(
+      ({ depositAccepted, accountTender }) => depositAccepted && tendersId.includes(accountTender)
+    );
+  }
+
+  filterBillmeDestAccounts(billmeMappingArr: Array<string>, accounts: Array<UserAccount>): Array<UserAccount> {
+    const filterByBillme = (accountTender, purpose) =>
+      billmeMappingArr.find(billmeMap => billmeMap[purpose] === accountTender);
+
+    return accounts.filter(({ accountTender }) => {
+      if (filterByBillme(accountTender, 'destination')) {
+        return accounts.filter(acc => {
+          if (acc.depositAccepted && filterByBillme(acc.accountTender, 'source')) {
+            return acc;
+          }
+        });
+      }
+    });
+  }
 }
