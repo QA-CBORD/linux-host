@@ -29,12 +29,13 @@
           <ion-input
             class="deposit__main-input"
             inputmode="tel"
-            type="number"
+            type="tel"
+            maxlength="6"
             #inputText
             [autofocus]="true"
             placeholder="0"
             [ngStyle]="{ width: inputText.value ? inputText.value.length + 1 + 'ch' : '2ch' }"
-            [ngClass]="{ 'deposit__main-input--focus': focusLine }"
+            [ngClass]="{ 'deposit__main-input--focus': focusLine, shakeit: isMaxCharLength }"
             (ionFocus)="focusLine = true"
             (ionBlur)="focusLine = false"
             formControlName="mainInput"

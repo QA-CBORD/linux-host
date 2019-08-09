@@ -1,10 +1,10 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DepositService } from '../../services/deposit.service';
-import { tap, map, switchMap } from 'rxjs/operators';
+import { tap, map, switchMap, take } from 'rxjs/operators';
 import { SYSTEM_SETTINGS_CONFIG, PAYMENT_TYPE } from '../../accounts.config';
 import { SettingInfo } from 'src/app/core/model/configuration/setting-info.model';
-import { Subscription, Observable } from 'rxjs';
+import { Subscription, Observable, of, fromEvent, from } from 'rxjs';
 import { UserAccount } from '../../../../core/model/account/account.model';
 
 @Component({
@@ -24,6 +24,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   destinationAccounts: Array<UserAccount>;
   presetDepositAmounts: Array<string>;
   billmeMappingArr: any[];
+  isMaxCharLength: boolean = false;
 
   customActionSheetOptions: any = {
     cssClass: 'custom-deposit-actionSheet',
@@ -32,6 +33,8 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   customActionSheetPaymentOptions: any = {
     cssClass: 'custom-deposit-actionSheet custom-deposit-actionSheet-last-btn',
   };
+
+  @ViewChild('inputText') inputText;
 
   constructor(private readonly depositService: DepositService, private fb: FormBuilder) {}
 
@@ -47,11 +50,8 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     this.getAccounts();
 
     console.log(this.minMaxOfAmmounts);
-  }
 
-  ngDoCheck(): void {
-    //Called every time that the input properties of a component or a directive are checked. Use it to extend change detection by performing a custom check.
-    //Add 'implements DoCheck' to the class.
+    // fromEvent(this.inputText.nativeElement, 'keydown').subscribe(val => console.log(val));
   }
 
   ngOnDestroy() {
@@ -111,26 +111,24 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     console.log(this.depositForm);
     if (selectedPaymentMethod === 'billme') {
       console.log('billme');
-      console.log(
-        this.sourceAccForBillmeDeposit(this.creditCardSourceAccounts, selectedAccount, this.billmeMappingArr)
-      );
+      this.sourceAccForBillmeDeposit(selectedAccount, this.billmeMappingArr).subscribe();
     }
   }
 
   setFormValidators() {
     if (this.isFreeFromDepositEnabled) {
-      const minMaxValidators = [];
       const paymentMethod = this.depositForm.get('selectedPaymentMethod').value;
+      let minMaxValidators = [];
 
       if (!paymentMethod || paymentMethod !== 'billme') {
         minMaxValidators = [
-          Validators.max(this.minMaxOfAmmounts.maxAmountOneTime),
-          Validators.min(this.minMaxOfAmmounts.minAmountOneTime),
+          Validators.max(+this.minMaxOfAmmounts.maxAmountOneTime),
+          Validators.min(+this.minMaxOfAmmounts.minAmountOneTime),
         ];
       } else if (paymentMethod.value === 'billme') {
         minMaxValidators = [
-          Validators.max(this.minMaxOfAmmounts.maxAmountbillme),
-          Validators.min(this.minMaxOfAmmounts.minAmountbillme),
+          Validators.max(+this.minMaxOfAmmounts.maxAmountbillme),
+          Validators.min(+this.minMaxOfAmmounts.minAmountbillme),
         ];
       }
 
@@ -138,6 +136,14 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     } else {
       this.depositForm.controls['mainSelect'].setValidators([Validators.required]);
     }
+  }
+
+  onInputKeydown(event) {
+    // if (target.value.length >= 5) {
+    //   console.log(this.depositForm.get('mainInput'));
+    //   this.isMaxCharLength = true;
+    // }
+    // this.isMaxCharLength = false;
   }
 
   private initForm() {
@@ -212,23 +218,17 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     return this.depositService.filterBillmeDestAccounts(billmeMappingArr, accounts);
   }
 
-  private sourceAccForBillmeDeposit(
-    accounts: Array<UserAccount>,
-    destinationAccount: UserAccount,
-    billmeMappingArr: Array<string>
-  ) {
-    const filterByBillme = (accTender, purpose) => billmeMappingArr.find(billmeMap => billmeMap[purpose] === accTender);
+  private sourceAccForBillmeDeposit(selectedAccount: UserAccount, billmeMappingArr: Array<string>) {
+    const filterByBillme = accTender => billmeMappingArr.find(billmeMap => billmeMap['destination'] === accTender);
 
-    if (filterByBillme(destinationAccount.accountTender, 'destination')) {
-      console.log('asdasd');
-      console.log(accounts);
-      // return accounts.find(({ accountTender }) => {
-      //   if (filterByBillme(accountTender, 'source')) {
-      //     console.log('asdasdsad');
-      //     return acc;
-      //   }
-      // });
-    }
+    return of(filterByBillme(selectedAccount.accountTender)).pipe(
+      switchMap(billmeMapObj => {
+        return this.depositService.accounts$.pipe(
+          map(accounts => accounts.find(({ accountTender }) => billmeMapObj['source'] === accountTender)),
+          tap(val => console.log(val))
+        );
+      })
+    );
   }
 
   private getSettingByName(settings, property) {
