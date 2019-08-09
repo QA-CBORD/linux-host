@@ -49,6 +49,11 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     console.log(this.minMaxOfAmmounts);
   }
 
+  ngDoCheck(): void {
+    //Called every time that the input properties of a component or a directive are checked. Use it to extend change detection by performing a custom check.
+    //Add 'implements DoCheck' to the class.
+  }
+
   ngOnDestroy() {
     this.sourceSubscription.unsubscribe();
   }
@@ -112,13 +117,38 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     }
   }
 
+  setFormValidators() {
+    if (this.isFreeFromDepositEnabled) {
+      const minMaxValidators = [];
+      const paymentMethod = this.depositForm.get('selectedPaymentMethod').value;
+
+      if (!paymentMethod || paymentMethod !== 'billme') {
+        minMaxValidators = [
+          Validators.max(this.minMaxOfAmmounts.maxAmountOneTime),
+          Validators.min(this.minMaxOfAmmounts.minAmountOneTime),
+        ];
+      } else if (paymentMethod.value === 'billme') {
+        minMaxValidators = [
+          Validators.max(this.minMaxOfAmmounts.maxAmountbillme),
+          Validators.min(this.minMaxOfAmmounts.minAmountbillme),
+        ];
+      }
+
+      this.depositForm.controls['mainInput'].setValidators([Validators.required, ...minMaxValidators]);
+    } else {
+      this.depositForm.controls['mainSelect'].setValidators([Validators.required]);
+    }
+  }
+
   private initForm() {
     this.depositForm = this.fb.group({
       mainInput: [''],
       mainSelect: [''],
-      selectedAccount: [''],
-      selectedPaymentMethod: [''],
+      selectedAccount: ['', Validators.required],
+      selectedPaymentMethod: ['', Validators.required],
     });
+
+    this.setFormValidators();
   }
 
   private getAccounts() {
@@ -157,15 +187,17 @@ export class DepositPageComponent implements OnInit, OnDestroy {
 
   onPaymentMethodChanged({ target }) {
     console.log('changed', target.value);
-    console.log(this.billmeDestinationAccounts);
     if (target.value === 'billme') {
-      this.presetDepositAmounts = this.presetDepositAmountsBillme;
-      this.destinationAccounts = this.billmeDestinationAccounts.concat();
+      this.destinationAccounts = this.billmeDestinationAccounts;
+    } else {
+      this.destinationAccounts = this.creditCardDestinationAccounts;
     }
+
+    this.setFormValidators();
   }
 
   trackByAccountId(i: number, { id }: UserAccount): string {
-    return id;
+    return `${i}-${id}-${Math.random()}`;
   }
 
   private filterAccountsByPaymentSystem(accounts): Array<UserAccount> {

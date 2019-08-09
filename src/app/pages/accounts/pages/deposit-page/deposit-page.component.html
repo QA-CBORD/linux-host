@@ -55,10 +55,7 @@
           formControlName="selectedAccount"
           (ionChange)="onPaymentMethodChanged($event)"
         >
-          <ion-select-option
-            [value]="account"
-            *ngFor="let account of destinationAccounts; trackBy: trackByAccountId"
-          >
+          <ion-select-option [value]="account" *ngFor="let account of destinationAccounts; trackBy: trackByAccountId">
             {{ account.accountDisplayName }} (${{ account.balance }})
           </ion-select-option>
         </ion-select>
@@ -67,6 +64,7 @@
         <ion-label class="deposit__label-select">Payment Method</ion-label>
         <ion-select
           class="deposit__select"
+          value="Apple Pay"
           cancelText="Cancel"
           mode="md"
           placeholder="Please Choose"
