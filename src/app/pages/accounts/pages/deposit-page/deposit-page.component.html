@@ -15,7 +15,7 @@
             placeholder="Please Choose"
             interface="action-sheet"
             [interfaceOptions]="customActionSheetOptions"
-            formControlName="selectAccount"
+            formControlName="mainSelect"
             (ionChange)="onPaymentMethodChanged($event)"
           >
             <ion-select-option [value]="amount" *ngFor="let amount of presetDepositAmounts">
@@ -40,6 +40,20 @@
             (ionBlur)="focusLine = false"
             formControlName="mainInput"
           ></ion-input>
+          <div *ngIf="mainFormInput.errors && mainFormInput.errors['max']" class="deposit__main-input--error">
+            The maximum amount for a deposit is {{ mainFormInput.errors['max'].max }}.
+          </div>
+          <div *ngIf="mainFormInput.errors && mainFormInput.errors['min']" class="deposit__main-input--error">
+            The minimum amount for a deposit is {{ mainFormInput.errors['min'].min }}.
+          </div>
+          <div
+            *ngIf="
+              mainFormInput.errors && mainFormInput.errors['required'] && (mainFormInput.dirty || mainFormInput.touched)
+            "
+            class="deposit__main-input--error"
+          >
+            Please enter an amount to deposit.
+          </div>
         </div>
       </ng-template>
     </div>
@@ -65,17 +79,16 @@
         <ion-label class="deposit__label-select">Payment Method</ion-label>
         <ion-select
           class="deposit__select"
-          value="Apple Pay"
           cancelText="Cancel"
           mode="md"
           placeholder="Please Choose"
           interface="action-sheet"
           [interfaceOptions]="customActionSheetPaymentOptions"
-          formControlName="selectedPaymentMethod"
+          formControlName="sourceAccount"
           (ionChange)="onPaymentMethodChanged($event)"
         >
           <ion-select-option
-            [value]="account.id"
+            [value]="account"
             *ngFor="let account of creditCardSourceAccounts; trackBy: trackByAccountId"
           >
             {{ account.accountTender | creditCardType }} endin in {{ account.lastFour }}
@@ -89,9 +102,38 @@
         </ion-select>
       </div>
     </section>
+    <section>
+      <div class="deposit__label-cvv" *ngIf="isCVVfieldShow">
+        <ion-label class="deposit__label-select">Card Security Code:</ion-label>
+        <ion-input
+          class="deposit__input-cvv"
+          inputmode="tel"
+          type="tel"
+          maxlength="3"
+          placeholder="CVV"
+          formControlName="fromAccountCvv"
+        ></ion-input>
+        <div
+          class="deposit__input-cvv--error"
+          *ngIf="
+            fromAccountCvv &&
+            fromAccountCvv.errors &&
+            fromAccountCvv.errors['required'] &&
+            (fromAccountCvv.dirty || fromAccountCvv.touched)
+          "
+        >
+          Please enter a valid card security code.
+        </div>
+      </div>
+    </section>
 
-    <ion-button expand="block" type="submit" [disabled]="!depositForm.valid" class="deposit__deposit-btn"
-      >Deposit $100</ion-button
+    <ion-button
+      expand="block"
+      type="submit"
+      class="deposit__deposit-btn"
+      [disabled]="!depositForm.valid"
+      [ngStyle]="{ marginTop: isCVVfieldShow ? '70%' : '85%' }"
+      >Deposit</ion-button
     >
   </form>
 </ion-content>

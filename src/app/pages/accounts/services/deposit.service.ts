@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { CommerceApiService } from 'src/app/core/service/commerce/commerce-api.service';
-import { Observable, BehaviorSubject, zip } from 'rxjs';
+import { Observable, BehaviorSubject, zip, of } from 'rxjs';
 import { UserAccount } from 'src/app/core/model/account/account.model';
 import { PAYMENT_SYSTEM_TYPE } from '../accounts.config';
-import { map, tap } from 'rxjs/operators';
+import { map, tap, switchMap } from 'rxjs/operators';
 import { ContentStringRequest } from 'src/app/core/model/content/content-string-request.model';
 import { SettingInfo } from 'src/app/core/model/configuration/setting-info.model';
 import { AccountsApiService } from './accounts.api.service';
@@ -80,5 +80,26 @@ export class DepositService {
         });
       }
     });
+  }
+
+  sourceAccForBillmeDeposit(selectedAccount: UserAccount, billmeMappingArr: Array<string>) {
+    const filterByBillme = accTender => billmeMappingArr.find(billmeMap => billmeMap['destination'] === accTender);
+
+    return of(filterByBillme(selectedAccount.accountTender)).pipe(
+      switchMap(billmeMapObj => {
+        return this.accounts$.pipe(
+          map(accounts => accounts.find(({ accountTender }) => billmeMapObj['source'] === accountTender)),
+          tap(val => console.log(val))
+        );
+      })
+    );
+  }
+
+  calculateDepositFee(fromAccountId, toAccountId, amount) {
+    return this.commerceApiService.calculateDepositFee(fromAccountId, toAccountId, amount);
+  }
+
+  deposit(fromAccountId, fromAccountCvv, toAccountId, amount) {
+    return this.commerceApiService.deposit(fromAccountId, fromAccountCvv, toAccountId, amount);
   }
 }

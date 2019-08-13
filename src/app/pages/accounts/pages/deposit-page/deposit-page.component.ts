@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ViewChild } from
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DepositService } from '../../services/deposit.service';
 import { tap, map, switchMap, take } from 'rxjs/operators';
-import { SYSTEM_SETTINGS_CONFIG, PAYMENT_TYPE } from '../../accounts.config';
+import { SYSTEM_SETTINGS_CONFIG, PAYMENT_TYPE, PAYMENT_SYSTEM_TYPE, ACCOUNT_TYPES } from '../../accounts.config';
 import { SettingInfo } from 'src/app/core/model/configuration/setting-info.model';
 import { Subscription, Observable, of, fromEvent, from } from 'rxjs';
 import { UserAccount } from '../../../../core/model/account/account.model';
@@ -39,14 +39,9 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   constructor(private readonly depositService: DepositService, private fb: FormBuilder) {}
 
   ngOnInit() {
-    // TODO: rewrite it in future:
-    this.depositService.settings$.subscribe(depositSettings => {
-      this.depositSettings = depositSettings;
-      console.log(this.depositSettings);
-    });
+    this.depositService.settings$.subscribe(depositSettings => (this.depositSettings = depositSettings));
 
     this.initForm();
-
     this.getAccounts();
 
     console.log(this.minMaxOfAmmounts);
@@ -106,30 +101,68 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     };
   }
 
-  onFormSubmit() {
-    const { selectedPaymentMethod, selectedAccount, mainInput } = this.depositForm.value;
-    console.log(this.depositForm);
-    if (selectedPaymentMethod === 'billme') {
-      console.log('billme');
-      this.sourceAccForBillmeDeposit(selectedAccount, this.billmeMappingArr).subscribe();
+  get mainFormInput() {
+    return this.depositForm.get('mainInput');
+  }
+
+  get fromAccountCvv() {
+    return this.depositForm.get('fromAccountCvv');
+  }
+
+  get isCVVfieldShow() {
+    const sourceAcc = this.depositForm.get('sourceAccount').value;
+
+    if (!sourceAcc || sourceAcc !== 'billme' || sourceAcc !== 'newCreditCard') {
+      return (
+        sourceAcc.accountType === ACCOUNT_TYPES.charge && sourceAcc.paymentSystemType !== PAYMENT_SYSTEM_TYPE.USAEPAY
+      );
     }
+  }
+
+  onFormSubmit() {
+    const { sourceAccount, selectedAccount, mainInput } = this.depositForm.value;
+    let fromAccount: Observable<UserAccount>;
+    console.log(this.depositForm);
+
+    if (sourceAccount === 'billme') {
+      console.log('billme');
+      fromAccount = this.sourceAccForBillmeDeposit(selectedAccount, this.billmeMappingArr);
+    } else {
+      const sourceAcc = this.depositForm.get('sourceAccount').value;
+
+      fromAccount = of(sourceAcc);
+    }
+
+    fromAccount
+      .pipe(
+        switchMap(sourceAcc => this.depositService.calculateDepositFee(sourceAcc.id, selectedAccount.id, mainInput))
+      )
+      .subscribe(val => console.log(val));
   }
 
   setFormValidators() {
     if (this.isFreeFromDepositEnabled) {
-      const paymentMethod = this.depositForm.get('selectedPaymentMethod').value;
+      const sourceAcc = this.depositForm.get('sourceAccount').value;
       let minMaxValidators = [];
-
-      if (!paymentMethod || paymentMethod !== 'billme') {
-        minMaxValidators = [
-          Validators.max(+this.minMaxOfAmmounts.maxAmountOneTime),
-          Validators.min(+this.minMaxOfAmmounts.minAmountOneTime),
-        ];
-      } else if (paymentMethod.value === 'billme') {
+      if (sourceAcc === 'billme') {
+        debugger;
         minMaxValidators = [
           Validators.max(+this.minMaxOfAmmounts.maxAmountbillme),
           Validators.min(+this.minMaxOfAmmounts.minAmountbillme),
         ];
+        this.depositForm.controls['fromAccountCvv'].setErrors(null);
+        this.depositForm.controls['fromAccountCvv'].clearValidators();
+
+        console.log(this.depositForm);
+      } else if (sourceAcc === 'newCreditCard') {
+        console.log('new credit card');
+      } else {
+        debugger;
+        minMaxValidators = [
+          Validators.max(+this.minMaxOfAmmounts.maxAmountOneTime),
+          Validators.min(+this.minMaxOfAmmounts.minAmountOneTime),
+        ];
+        this.depositForm.controls['fromAccountCvv'].setValidators([Validators.required]);
       }
 
       this.depositForm.controls['mainInput'].setValidators([Validators.required, ...minMaxValidators]);
@@ -151,7 +184,8 @@ export class DepositPageComponent implements OnInit, OnDestroy {
       mainInput: [''],
       mainSelect: [''],
       selectedAccount: ['', Validators.required],
-      selectedPaymentMethod: ['', Validators.required],
+      sourceAccount: ['', Validators.required],
+      fromAccountCvv: [''],
     });
 
     this.setFormValidators();
@@ -176,10 +210,6 @@ export class DepositPageComponent implements OnInit, OnDestroy {
               (this.creditCardSourceAccounts = this.filterAccountsByPaymentSystem(accounts)),
                 (this.creditCardDestinationAccounts = this.filterCreditCardDestAccounts(depositTenders, accounts)),
                 (this.billmeDestinationAccounts = this.filterBillmeDestAccounts(this.billmeMappingArr, accounts));
-
-              console.log(this.creditCardSourceAccounts);
-              console.log(this.creditCardDestinationAccounts);
-              console.log(this.billmeDestinationAccounts);
             })
           )
         )
@@ -219,16 +249,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   }
 
   private sourceAccForBillmeDeposit(selectedAccount: UserAccount, billmeMappingArr: Array<string>) {
-    const filterByBillme = accTender => billmeMappingArr.find(billmeMap => billmeMap['destination'] === accTender);
-
-    return of(filterByBillme(selectedAccount.accountTender)).pipe(
-      switchMap(billmeMapObj => {
-        return this.depositService.accounts$.pipe(
-          map(accounts => accounts.find(({ accountTender }) => billmeMapObj['source'] === accountTender)),
-          tap(val => console.log(val))
-        );
-      })
-    );
+    return this.depositService.sourceAccForBillmeDeposit(selectedAccount, billmeMappingArr);
   }
 
   private getSettingByName(settings, property) {

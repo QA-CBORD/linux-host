@@ -72,9 +72,9 @@ export const SYSTEM_SETTINGS_CONFIG = {
 };
 
 export enum ACCOUNT_TYPES {
-  meals = 1,
-  charge = 2,
-  decliningBalance = 3,
+  meals = 1, // Meals, Board
+  charge = 2, // Charge, Credit
+  decliningBalance = 3, // declining balance, points
 }
 
 export enum LOCAL_ROUTING {
