@@ -4,9 +4,10 @@ import { SharedModule } from '../../../../shared/shared.module';
 import { IonicModule } from '@ionic/angular';
 import { RequestFundsRoutingModule } from './request-funds.routing.module';
 import { RequestFundsPageComponent } from './request-funds-page.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 const declarations = [RequestFundsPageComponent];
-const imports = [CommonModule, SharedModule, RequestFundsRoutingModule, IonicModule];
+const imports = [CommonModule, SharedModule, RequestFundsRoutingModule, IonicModule, ReactiveFormsModule];
 
 @NgModule({
   declarations,

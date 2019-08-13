@@ -5,7 +5,20 @@
         [isToolbarShow]="true"
 ></st-header>
 <ion-content>
-  <p>
-    automatic-deposit-page works!
-  </p>
+    <form [formGroup]="requestFunds" novalidate (ngSubmit)="submit()">
+
+        <ion-input type="text" formControlName="email"></ion-input>
+        <ion-input type="text" formControlName="name"></ion-input>
+        <ion-input type="text" formControlName="message"></ion-input>
+
+        <ion-select interface="action-sheet" formControlName="accounts">
+            <ion-select-option *ngFor="let account of accounts$ | async"
+                        [value]="account.id">{{account.accountDisplayName}}</ion-select-option>
+        </ion-select>
+<!--        <select  placeholder="select">-->
+<!--            <option *ngFor="let account of accounts$ | async"-->
+<!--                    [value]="account.id">{{account.accountDisplayName}}</option>-->
+<!--        </select>-->
+        <button type="submit">submit</button>
+    </form>
 </ion-content>
