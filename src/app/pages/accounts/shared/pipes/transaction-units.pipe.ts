@@ -1,10 +1,16 @@
+import { CONTENT_STRINGS } from './../../accounts.config';
 import { Pipe, PipeTransform } from '@angular/core';
 import { ACCOUNT_TYPES } from '../../accounts.config';
+import { AccountsService } from '../../services/accounts.service';
 
 @Pipe({
   name: 'transactionUnits',
 })
 export class TransactionUnitsPipe implements PipeTransform {
+
+  constructor(private readonly accountsService: AccountsService){
+  }
+
   transform(value: number, type: number): string {
     if (value === null) {
       return 'no info';
@@ -12,7 +18,7 @@ export class TransactionUnitsPipe implements PipeTransform {
     return type === ACCOUNT_TYPES.decliningBalance || type === ACCOUNT_TYPES.charge
       ? `$${value.toFixed(2)}`
       : type === ACCOUNT_TYPES.meals
-      ? `${value} Meals`
+      ? `${value} ` + (value === 1 ? this.accountsService.getContentValueByName(CONTENT_STRINGS.mealSuffixLabel) : this.accountsService.getContentValueByName(CONTENT_STRINGS.mealSuffixPluralLabel))
       : value.toString();
   }
 }

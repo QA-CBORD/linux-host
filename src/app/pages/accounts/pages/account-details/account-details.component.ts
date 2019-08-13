@@ -25,18 +25,18 @@ export class AccountDetailsComponent implements OnInit {
   constructor(
     private readonly activatedRoute: ActivatedRoute,
     private readonly toastController: ToastController,
-    private readonly transactionService: TransactionService
+    private readonly transactionsService: TransactionService,
   ) {}
 
   ngOnInit() {
     this.setContentStrings();
     this.currentAccountId = this.activatedRoute.snapshot.params.id;
-    this.transactions$ = this.transactionService.transactions$;
+    this.transactions$ = this.transactionsService.transactions$;
     this.lazy.disabled = !this.isAbleToScrollByActivePeriod();
   }
 
   getNextTransactionPackage() {
-    this.transactionService
+    this.transactionsService
       .getNextTransactionsByAccountId(this.currentAccountId)
       .pipe(take(1))
       .subscribe(
@@ -46,21 +46,21 @@ export class AccountDetailsComponent implements OnInit {
         },
         async () => {
           await this.lazy.complete();
-          await this.onErrorRetrieveTransactions('something went wrong, try again...');
+          await this.onErrorRetrieveTransactions('Something went wrong, please try again...');
           await this.content.scrollByPoint(null, -100, 700);
         }
       );
   }
 
   async onFilterChanged(): Promise<void> {
-    if (this.transactionService.activeAccountId !== this.currentAccountId)
-      this.currentAccountId = this.transactionService.activeAccountId;
+    if (this.transactionsService.activeAccountId !== this.currentAccountId)
+      this.currentAccountId = this.transactionsService.activeAccountId;
     this.lazy.disabled = !this.isAbleToScrollByActivePeriod();
     await this.content.scrollToTop(700);
   }
 
   private isAbleToScrollByActivePeriod(): boolean {
-    return this.transactionService.activeTimeRange.name === TIME_PERIOD.pastMonth;
+    return this.transactionsService.activeTimeRange.name === TIME_PERIOD.pastMonth;
   }
 
   private async onErrorRetrieveTransactions(message: string) {
@@ -71,12 +71,21 @@ export class AccountDetailsComponent implements OnInit {
     toast.present();
   }
 
-  private setContentStrings() {
-    const header = this.transactionService.getContentValueByName(CONTENT_STRINGS.headerTitle);
-    const headerBackBtn = this.transactionService.getContentValueByName(CONTENT_STRINGS.headerBackBtn);
-    const infiniteScrollLoader = this.transactionService.getContentValueByName(CONTENT_STRINGS.infiniteScrollLoader);
+  get csNames(){
+    return CONTENT_STRINGS;
+  }
 
-    this.contentString = { header, infiniteScrollLoader, headerBackBtn };
+  setContentStrings() {
+
+    const transactionStringNames: string[] = [
+      CONTENT_STRINGS.headerTitle,
+      CONTENT_STRINGS.headerBackBtn,
+      CONTENT_STRINGS.recentTransactionsLabel,
+      CONTENT_STRINGS.infiniteScrollLoader
+    ];
+    
+    this.contentString = this.transactionsService.getContentStrings(transactionStringNames);
+       
   }
 
 }

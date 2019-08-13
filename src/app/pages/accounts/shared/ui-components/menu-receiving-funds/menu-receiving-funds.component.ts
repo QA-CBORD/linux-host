@@ -1,3 +1,4 @@
+import { SYSTEM_SETTINGS_CONFIG } from './../../../accounts.config';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
@@ -9,6 +10,7 @@ import { AccountsService } from '../../../services/accounts.service';
 import { NAVIGATE } from '../../../../../app.global';
 import { MENU_LIST_ITEMS, MENU_LIST_ROUTES } from './local.config';
 import { MenuReceivingFundsListItem } from '../../../models/menu-list-item';
+import { CONTENT_STRINGS } from '../../../accounts.config';
 
 @Component({
   selector: 'st-menu-receiving-funds',
@@ -18,10 +20,12 @@ import { MenuReceivingFundsListItem } from '../../../models/menu-list-item';
 })
 export class MenuReceivingFundsComponent implements OnInit {
   menuItems$: Observable<MenuReceivingFundsListItem[]>;
+  contentString: { [key: string]: string };
 
   constructor(private readonly accountsService: AccountsService, private readonly router: Router) {}
 
   ngOnInit() {
+    this.setContentStrings();
     this.menuItems$ = this.accountsService.settings$.pipe(map(settings => this.handleListItems(settings)));
   }
 
@@ -42,7 +46,30 @@ export class MenuReceivingFundsComponent implements OnInit {
 
     return navList.map(element => {
       const setting = settings.find(setting => setting.name === element);
-      return setting && { name: setting.name, isShow: Boolean(Number(setting.value)) };
+      if (!setting) return;
+      let displayName = '';
+      switch (setting.name) {
+        case SYSTEM_SETTINGS_CONFIG.enableAutoDeposits.name:
+            displayName = this.contentString[CONTENT_STRINGS.autoDepositBtn];
+          break;
+        case SYSTEM_SETTINGS_CONFIG.enableOnetimeDeposits.name:
+            displayName = this.contentString[CONTENT_STRINGS.autoDepositBtn];
+          break;
+        case SYSTEM_SETTINGS_CONFIG.guestDeposit.name:
+            displayName = this.contentString[CONTENT_STRINGS.autoDepositBtn];
+          break;
+      }
+      return { name: setting.name, displayName: displayName, isShow: Boolean(Number(setting.value)) };
     });
+  }
+
+  setContentStrings() {
+    const accountStringNames: string[] = [
+      CONTENT_STRINGS.autoDepositBtn,
+      CONTENT_STRINGS.requestFundsBtn,
+      CONTENT_STRINGS.addFundsBtn,
+    ];
+
+    this.contentString = this.accountsService.getContentStrings(accountStringNames);
   }
 }

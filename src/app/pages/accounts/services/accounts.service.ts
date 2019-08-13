@@ -10,14 +10,20 @@ import { ContentService } from '../../../core/service/content-service/content.se
 import { UserAccount } from '../../../core/model/account/account.model';
 import { SettingInfo } from '../../../core/model/configuration/setting-info.model';
 import { ContentStringInfo } from 'src/app/core/model/content/content-string-info.model';
-import { PAYMENT_SYSTEM_TYPE, ContentStringsParamsAccounts, GenericContentStringsParams } from '../accounts.config';
+import {
+  PAYMENT_SYSTEM_TYPE,
+  ContentStringsParamsAccounts,
+  GenericContentStringsParams,
+  ContentStringsParamsTransactions,
+} from '../accounts.config';
 
 @Injectable()
 export class AccountsService {
   private readonly _accounts$: BehaviorSubject<UserAccount[]> = new BehaviorSubject<UserAccount[]>([]);
   public readonly _settings$: BehaviorSubject<SettingInfo[]> = new BehaviorSubject<SettingInfo[]>([]);
+  public readonly _contentString$: BehaviorSubject<any> = new BehaviorSubject<any>({});
 
-  private content;
+  private contentString;
 
   constructor(
     private readonly apiService: AccountsApiService,
@@ -33,12 +39,20 @@ export class AccountsService {
     return this._settings$.asObservable();
   }
 
+  get contentString$(): Observable<any> {
+    return this._contentString$.asObservable();
+  }
+
   private set _accounts(value: UserAccount[]) {
     this._accounts$.next([...value]);
   }
 
   private set _settings(value: SettingInfo[]) {
     this._settings$.next([...value]);
+  }
+
+  private set _contentString(value: any) {
+    this._contentString$.next({ ...value });
   }
 
   getUserSettings(settings: ContentStringRequest[]): Observable<SettingInfo[]> {
@@ -65,15 +79,25 @@ export class AccountsService {
     ).pipe(
       map(([res, res0]) => {
         const finalArray = [...res, ...res0];
-        this.content = finalArray.reduce((init, elem) => ({ ...init, [elem.name]: elem.value }), {});
+        this.contentString = finalArray.reduce((init, elem) => ({ ...init, [elem.name]: elem.value }), {});
         return finalArray;
       }),
       take(1)
     );
   }
 
+  getContentStrings(names: string[]): any {
+    let list = {};
+    names.filter(n => {
+      if (this.contentString[n]) {
+        list = { ...list, [n]: this.contentString[n] };
+      }
+    });
+    return list;
+  }
+
   getContentValueByName(name: string): string {
-    return this.content[name] || '';
+    return this.contentString[name] || '';
   }
 
   getSettingByName(settings: SettingInfo[], name: string): SettingInfo | undefined {

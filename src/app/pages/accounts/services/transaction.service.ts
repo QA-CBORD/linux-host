@@ -11,7 +11,14 @@ import { TransactionHistory } from '../models/transaction-history.model';
 import { QueryTransactionHistoryCriteria } from '../../../core/model/account/transaction-query.model';
 import { TransactionResponse } from '../../../core/model/account/transaction-response.model';
 import { ContentStringInfo } from 'src/app/core/model/content/content-string-info.model';
-import { ALL_ACCOUNTS, PAYMENT_SYSTEM_TYPE, SYSTEM_SETTINGS_CONFIG, TIME_PERIOD, ContentStringsParamsTransactions, GenericContentStringsParams } from '../accounts.config';
+import {
+  ALL_ACCOUNTS,
+  PAYMENT_SYSTEM_TYPE,
+  SYSTEM_SETTINGS_CONFIG,
+  TIME_PERIOD,
+  ContentStringsParamsTransactions,
+  GenericContentStringsParams,
+} from '../accounts.config';
 import {
   DateUtilObject,
   getRangeBetweenDates,
@@ -32,7 +39,7 @@ export class TransactionService {
     this.transactionHistory
   );
 
-  private content;
+  private contentString;
 
   constructor(
     private readonly accountsService: AccountsService,
@@ -168,15 +175,24 @@ export class TransactionService {
     ).pipe(
       map(([res, res0]) => {
         const finalArray = [...res, ...res0];
-        this.content = finalArray.reduce((init, elem) => ({ ...init, [elem.name]: elem.value }), {});
+        this.contentString = finalArray.reduce((init, elem) => ({ ...init, [elem.name]: elem.value }), {});
         return finalArray;
       }),
       take(1)
     );
   }
 
-  getContentValueByName(name: string): string {
-    return this.content[name] || '';
+  getContentStrings(names: string[]) {
+    let list = {};
+    names.filter(n => {
+      if (this.contentString[n]) {
+        list = { ...list, [n]: this.contentString[n] };
+      }
+    });
+    return list;
   }
 
+  getContentValueByName(name: string): string {
+    return this.contentString[name] || '';
+  }
 }

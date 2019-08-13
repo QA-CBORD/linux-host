@@ -23,19 +23,20 @@ export class AccountsPage implements OnInit {
   transactions$: Observable<TransactionHistory[]>;
   accountInfo: { name: string; balance: number; accountType: number };
   contentString: { [key: string]: string };
+  
 
   constructor(
     private readonly accountsService: AccountsService,
     private readonly platform: Platform,
     private readonly router: Router,
-    private readonly transactionService: TransactionService
+    private readonly transactionsService: TransactionService
   ) {
   }
 
   ngOnInit() {
     this.setContentStrings();
     this.accounts$ = this.getAccounts();
-    this.transactions$ = this.transactionService.transactions$.pipe(map(arr => arr.slice(0, 4)));
+    this.transactions$ = this.transactionsService.transactions$.pipe(map(arr => arr.slice(0, 4)));
 
     this.defineInitRoute();
   }
@@ -83,16 +84,24 @@ export class AccountsPage implements OnInit {
     return this.platform.width() > tabletResolution;
   }
 
-  private setContentStrings() {
-    const headerTitle = this.accountsService.getContentValueByName(CONTENT_STRINGS.headerTitle);
-    const addFundsBtn = this.accountsService.getContentValueByName(CONTENT_STRINGS.addFundsBtn);
-    const autoDepositsBtn = this.accountsService.getContentValueByName(CONTENT_STRINGS.autoDepositBtn);
-    const requestFundsBtn = this.accountsService.getContentValueByName(CONTENT_STRINGS.requestFundsBtn);
-    const allAccountsLabel = this.accountsService.getContentValueByName(CONTENT_STRINGS.allAccountsLabel);
-    const accountsLabel = this.accountsService.getContentValueByName(CONTENT_STRINGS.accountsLabel);
-    const recentTransactionsLabel = this.accountsService.getContentValueByName(CONTENT_STRINGS.recentTransactionsLabel);
-    const headerBackBtn = this.accountsService.getContentValueByName(CONTENT_STRINGS.headerBackBtn);
+  get csNames(){
+    return CONTENT_STRINGS;
+  }
 
-    this.contentString = { headerTitle, addFundsBtn, autoDepositsBtn, requestFundsBtn, allAccountsLabel, accountsLabel, recentTransactionsLabel, headerBackBtn };
+  setContentStrings() {
+    const accountStringNames: string[] = [
+      CONTENT_STRINGS.headerTitle,
+      CONTENT_STRINGS.headerBackBtn,
+      CONTENT_STRINGS.addFundsBtn,
+      CONTENT_STRINGS.accountsLabel,
+    ];
+
+    const transactionStringNames: string[] = [
+      CONTENT_STRINGS.recentTransactionsLabel,
+      CONTENT_STRINGS.allAccountsLabel
+    ];
+    
+    this.contentString = {...this.accountsService.getContentStrings(accountStringNames), ...this.transactionsService.getContentStrings(transactionStringNames)};
+       
   }
 }
