@@ -10,8 +10,11 @@ import { IonicModule } from '@ionic/angular';
 import { DirectivesModule } from '../directives/directives.module';
 import { FilterComponent } from './filter/filter.component';
 import { FilterMenuComponent } from './filter/filter-menu/filter-menu.component';
+import { ConfirmDepositPopoverComponent } from './confirm-deposit-popover/confirm-deposit-popover.component';
 import { TimeRangePipe } from './filter/pipes/time-range.pipe';
 import { AccountNamePipe } from './filter/pipes/account-name.pipe';
+import { SharedModule } from 'src/app/shared/shared.module';
+import { DepositModalComponent } from './deposit-modal/deposit-modal.component';
 
 const declarations = [
   MenuReceivingFundsComponent,
@@ -23,12 +26,14 @@ const declarations = [
   FilterMenuComponent,
   TimeRangePipe,
   AccountNamePipe,
+  ConfirmDepositPopoverComponent,
+  DepositModalComponent,
 ];
 
 @NgModule({
   declarations,
-  imports: [CommonModule, PipesModule, DirectivesModule, IonicModule],
+  imports: [CommonModule, PipesModule, DirectivesModule, IonicModule, SharedModule],
   exports: [...declarations, IonicModule],
-  entryComponents: [FilterMenuComponent],
+  entryComponents: [FilterMenuComponent, ConfirmDepositPopoverComponent, DepositModalComponent],
 })
 export class UiComponentsModule {}

@@ -1,0 +1,18 @@
+<header class="deposit-modal__header">
+  <ion-toolbar mode="ios">
+    <ion-title class="deposit-modal__title">Deposit</ion-title>
+  </ion-toolbar>
+</header>
+
+<ion-content>
+  <h1 class="deposit-modal__title-label">Success!</h1>
+  <section class="deposit-modal__sub-title">
+    This transaction was successful. You can review it to make sure everything checks out.
+  </section>
+  <section class="deposit-modal__info-container">
+    <div class="deposit-modal__label">Deposit Amount: <span class="deposit-modal__value">$100</span></div>
+    <div class="deposit-modal__label">Account: <span class="deposit-modal__value">Account Name</span></div>
+    <div class="deposit-modal__label">Payment Method: <span class="deposit-modal__value">Payment Method</span></div>
+  </section>
+  <ion-button expand="block" fill="clear" class="deposit-modal__button" (click)="onClickedDone()">DONE</ion-button>
+</ion-content>
