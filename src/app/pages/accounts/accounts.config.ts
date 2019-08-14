@@ -24,12 +24,57 @@ export const SYSTEM_SETTINGS_CONFIG = {
     category: 'deposit',
     name: 'enable_guest_deposits',
   },
+  billMeMapping: {
+    domain: 'get',
+    category: 'deposit',
+    name: 'billme_mapping',
+  },
+  freeFromDepositEnabled: {
+    domain: 'get',
+    category: 'deposit',
+    name: 'allow_freeform_onetime_amounts',
+  },
+  presetDepositAmountsBillMe: {
+    domain: 'get',
+    category: 'deposit',
+    name: 'billme_amounts',
+  },
+  presetDepositAmountsCreditCard: {
+    domain: 'get',
+    category: 'deposit',
+    name: 'onetime_amounts',
+  },
+  paymentTypes: {
+    domain: 'get',
+    category: 'deposit',
+    name: 'payment_types',
+  },
+  minAmountbillme: {
+    domain: 'get',
+    category: 'deposit',
+    name: 'billme_minimum',
+  },
+  minAmountCreditCard: {
+    domain: 'get',
+    category: 'deposit',
+    name: 'onetime_minimum',
+  },
+  maxAmountbillme: {
+    domain: 'get',
+    category: 'deposit',
+    name: '	billme_maximum',
+  },
+  maxAmountCreditCard: {
+    domain: 'get',
+    category: 'deposit',
+    name: 'onetime_maximum',
+  },
 };
 
 export enum ACCOUNT_TYPES {
-  meals = 1,
-  charge = 2,
-  decliningBalance = 3,
+  meals = 1, // Meals, Board
+  charge = 2, // Charge, Credit
+  decliningBalance = 3, // declining balance, points
 }
 
 export enum LOCAL_ROUTING {
@@ -52,9 +97,22 @@ export enum PAYMENT_SYSTEM_TYPE {
   USAEPAY = 4,
 }
 
+export enum PAYMENT_TYPE {
+  CREDIT = 1,
+  BILLME = 2,
+}
+
 export const ALL_ACCOUNTS = 'all_accounts';
 
 export enum TIME_PERIOD {
   pastMonth = 'past_month',
   pastSixMonth = 'past_six_month',
+}
+
+export enum CREDITCARD_TYPE {
+  'AmericanExpress',
+  'Discover',
+  'MasterCard',
+  'Visa',
+  'Dindes',
 }

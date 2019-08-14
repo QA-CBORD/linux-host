@@ -38,4 +38,32 @@ export class CommerceApiService extends BaseService {
       map((response: MessageResponse<TransactionResponse>) => response.response)
     );
   }
+
+  calculateDepositFee(fromAccountId, toAccountId, amount): Observable<number> {
+    const method = 'calculateDepositFee';
+    const params = {
+      fromAccountId,
+      toAccountId,
+      amount,
+    };
+
+    return this.httpRequest(this.serviceUrl, method, true, params).pipe(
+      map((response: MessageResponse<number>) => response.response)
+    );
+  }
+
+  deposit(fromAccountId, fromAccountCvv, toAccountId, amount): Observable<any> {
+    const method = 'deposit';
+    const params = {
+      fromAccountId,
+      toAccountId,
+      fromAccountCvv: '111',
+      amount,
+      cashlessTerminalLocation: null,
+    };
+
+    return this.httpRequest(this.serviceUrl, method, true, params).pipe(
+      map((response: MessageResponse<any>) => response.response)
+    );
+  }
 }
