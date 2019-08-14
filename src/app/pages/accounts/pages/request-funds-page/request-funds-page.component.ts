@@ -12,6 +12,10 @@ import { UserAccount } from '../../../../core/model/account/account.model';
 export class RequestFundsPageComponent implements OnInit {
   accounts$: Observable<UserAccount[]>;
   requestFunds: FormGroup;
+  customActionSheetOptions: any = {
+    cssClass: 'custom-deposit-actionSheet',
+  };
+
   constructor(private readonly fb: FormBuilder, private readonly accountService: AccountsService) {}
 
   ngOnInit() {

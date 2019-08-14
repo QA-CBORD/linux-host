@@ -4,21 +4,45 @@
         [backButtonTitle]="'Back'"
         [isToolbarShow]="true"
 ></st-header>
-<ion-content>
-    <form [formGroup]="requestFunds" novalidate (ngSubmit)="submit()">
+<ion-content padding class="request-funds">
 
-        <ion-input type="text" formControlName="email"></ion-input>
-        <ion-input type="text" formControlName="name"></ion-input>
-        <ion-input type="text" formControlName="message"></ion-input>
+    <p class="request-funds__info-msg">Email a friend or family member to request a deposit to your account.</p>
 
-        <ion-select interface="action-sheet" formControlName="accounts">
-            <ion-select-option *ngFor="let account of accounts$ | async"
-                        [value]="account.id">{{account.accountDisplayName}}</ion-select-option>
-        </ion-select>
-<!--        <select  placeholder="select">-->
-<!--            <option *ngFor="let account of accounts$ | async"-->
-<!--                    [value]="account.id">{{account.accountDisplayName}}</option>-->
-<!--        </select>-->
-        <button type="submit">submit</button>
+    <form class="request-funds__form" [formGroup]="requestFunds" novalidate (ngSubmit)="submit()">
+
+        <ion-label class="request-funds__label">
+            Name
+            <ion-input class="request-funds__control" placeholder="John Snow" formControlName="name"></ion-input>
+        </ion-label>
+        <p *ngIf="false" class="request-funds__control-error-msg"></p>
+
+        <ion-label class="request-funds__label">
+            Email Address
+            <ion-input class="request-funds__control" placeholder="example@email.com" type="email" formControlName="email"></ion-input>
+        </ion-label>
+        <p *ngIf="false" class="request-funds__control-error"></p>
+
+        <ion-label class="request-funds__label">
+            Account
+            <ion-select
+                    class="request-funds__control"
+                    [interfaceOptions]="customActionSheetOptions"
+                    interface="action-sheet"
+                    formControlName="accounts">
+                <ion-select-option *ngFor="let account of accounts$ | async"
+                                   [value]="account.id">
+                    {{account.accountDisplayName}} ({{account.balance | transactionUnits: account.accountType}})
+                </ion-select-option>
+            </ion-select>
+        </ion-label>
+        <p *ngIf="false" class="request-funds__control-error"></p>
+
+        <ion-label class="request-funds__label">
+            Message
+            <ion-textarea class="request-funds__control" placeholder="Type your message here..." formControlName="message"></ion-textarea>
+        </ion-label>
+
+        <ion-button class="request-funds__button">send request</ion-button>
     </form>
+
 </ion-content>
