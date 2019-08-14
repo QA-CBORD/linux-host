@@ -91,7 +91,7 @@
             [value]="account"
             *ngFor="let account of creditCardSourceAccounts; trackBy: trackByAccountId"
           >
-            {{ account.accountTender | creditCardType }} endin in {{ account.lastFour }}
+            {{ account.accountTender | creditCardType }} ending in {{ account.lastFour }}
           </ion-select-option>
           <ion-select-option value="billme" *ngIf="isBillMePaymentTypesEnabled">
             <img src="assets/icon/bill-me.svg" alt="Biil Me icon" /> Bill Me</ion-select-option

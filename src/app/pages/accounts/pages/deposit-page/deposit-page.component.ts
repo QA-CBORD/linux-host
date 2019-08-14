@@ -5,7 +5,7 @@ import { DepositService } from '../../services/deposit.service';
 import { tap, map, switchMap, take } from 'rxjs/operators';
 import { SYSTEM_SETTINGS_CONFIG, PAYMENT_TYPE, PAYMENT_SYSTEM_TYPE, ACCOUNT_TYPES } from '../../accounts.config';
 import { SettingInfo } from 'src/app/core/model/configuration/setting-info.model';
-import { Subscription } from 'rxjs';
+import { Subscription, Observable, of } from 'rxjs';
 import { UserAccount } from '../../../../core/model/account/account.model';
 import { ConfirmDepositPopoverComponent } from '../../shared/ui-components/confirm-deposit-popover/confirm-deposit-popover.component';
 import { DepositModalComponent } from '../../shared/ui-components/deposit-modal/deposit-modal.component';
@@ -128,26 +128,46 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   }
 
   onFormSubmit() {
-    // const { sourceAccount, selectedAccount, mainInput } = this.depositForm.value;
-    // let fromAccount: Observable<UserAccount>;
-    // console.log(this.depositForm);
+    const { sourceAccount, selectedAccount, mainInput } = this.depositForm.value;
+    let fromAccount: Observable<UserAccount>;
+    console.log(this.depositForm);
 
-    // if (sourceAccount === 'billme') {
-    //   console.log('billme');
-    //   fromAccount = this.sourceAccForBillmeDeposit(selectedAccount, this.billmeMappingArr);
-    // } else {
-    //   const sourceAcc = this.depositForm.get('sourceAccount').value;
+    if (sourceAccount === 'billme') {
+      console.log('billme');
+      fromAccount = this.sourceAccForBillmeDeposit(selectedAccount, this.billmeMappingArr);
+    } else {
+      const sourceAcc = this.depositForm.get('sourceAccount').value;
 
-    //   fromAccount = of(sourceAcc);
-    // }
+      fromAccount = of(sourceAcc);
+    }
 
-    // fromAccount
-    //   .pipe(
-    //     switchMap(sourceAcc => this.depositService.calculateDepositFee(sourceAcc.id, selectedAccount.id, mainInput))
-    //   )
-    //   .subscribe(val => console.log(val));
-    // this.modalHandler();
-    this.finalizeDepositModal();
+    fromAccount
+      .pipe(
+        switchMap(
+          (sourceAcc): any => {
+            let fee: Observable<number>;
+
+            console.log(sourceAccount);
+            if (sourceAccount === 'billme') {
+              fee = of(0);
+            } else {
+              fee = this.depositService.calculateDepositFee(sourceAcc.id, selectedAccount.id, mainInput);
+            }
+
+            return fee.pipe(
+              map(valueFee => ({
+                fee: valueFee,
+                sourceAcc,
+                selectedAccount,
+                amount: mainInput,
+              }))
+            );
+          }
+        )
+      )
+      .subscribe(val => console.log(val));
+    // this.confirmationDepositPopover();
+    // this.finalizeDepositModal();
   }
 
   setFormValidators() {
@@ -240,7 +260,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     this.setFormValidators();
   }
 
-  async modalHandler(res?: any) {
+  async confirmationDepositPopover(res?: any) {
     const popover = await this.popoverCtrl.create({
       component: ConfirmDepositPopoverComponent,
       componentProps: {
