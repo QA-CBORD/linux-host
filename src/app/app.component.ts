@@ -123,11 +123,12 @@ export class AppComponent implements OnDestroy {
       this.handlePageNavigation();
     }).catch((error) => {
       console.error(error);
+      throw new Error(error);
     });
 
-    if(!sessionId || !userInfo || !institutionId || !this.destinationPage){
-      throw new Error("Error getting native data, retrieve info normally");
-    }
+    // if(!sessionId || !userInfo || !institutionId || !this.destinationPage){
+    //   throw new Error("Error getting native data, retrieve info normally");
+    // }
     
   }
 
