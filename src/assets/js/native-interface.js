@@ -12,7 +12,28 @@
                     return (c=='x' ? r : (r&0x3|0x8)).toString(16);
                     });
                 return uuid;
-            };
+            }
+            function resolvePromise (promiseId, data, error) {
+                if (error){
+                    promises[promiseId].reject(data);
+                } else{
+                    promises[promiseId].resolve(data);
+                }
+                // remove reference to stored promise
+                delete promises[promiseId];
+            }
+            function postAppMessage(msg) {
+                if (window.webkit != undefined) {
+                    if (window.webkit.messageHandlers.JSListener != undefined) {
+                        window.webkit.messageHandlers.JSListener.postMessage(msg)
+                    }
+                } else if (window.appInterface != undefined) {
+                    // window.appInterface.postMessage(msg)
+                    resolvePromise(msg.promiseId, eval("window.androidInterface." + msg.methodName + "();") )
+                }else{
+                    throw new Error('No native interface available');
+                }
+            }
             function getNativeData(methodName) {
                 var promise = new Promise(function(resolve, reject) {
                     // we generate a unique id to reference the promise later
@@ -21,11 +42,12 @@
                     // save reference to promise in the global variable
                     promises[promiseId] = { resolve, reject};
                     try {
-                        // call native function
-                        window.webkit.messageHandlers.JSListener.postMessage({promiseId: promiseId, methodName: methodName}); 
+                        postAppMessage({promiseId: promiseId, methodName: methodName})
                     }
                     catch(exception) {
-                        alert(exception);
+                        // alert(exception);
+                        // console.error(exception);
+                        reject(exception)
                     }
                 });
                 return promise;
@@ -43,17 +65,12 @@
                 getDestinationPage: function(){
                     return getNativeData('getDestinationPage');
                 },
+                getAcceptedUserPhoto: function(){
+                    return getNativeData('getAcceptedUserPhoto');
+                },
                 
                 // this function is called by native methods
                 // @param promiseId - id of the promise stored in global variable promises
-                resolvePromise: function (promiseId, data, error) {
-                    if (error){
-                        promises[promiseId].reject(data);
-                    } else{
-                        promises[promiseId].resolve(data);
-                    }
-                    // remove reference to stored promise
-                    delete promises[promiseId];
-                }
+                resolvePromise: resolvePromise
             };
         })(window);
