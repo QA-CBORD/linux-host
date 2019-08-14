@@ -4,11 +4,19 @@ import { IonicModule } from '@ionic/angular';
 import { RequestFundsRoutingModule } from './request-funds.routing.module';
 import { RequestFundsPageComponent } from './request-funds-page.component';
 import { ReactiveFormsModule } from '@angular/forms';
-import { AccountsSharedModule } from "../../shared/shared.module";
-import { SharedModule } from "../../../../shared/shared.module";
+import { AccountsSharedModule } from '../../shared/shared.module';
+import { SharedModule } from '../../../../shared/shared.module';
+import { ErrorMessagePipe } from './pipes/error-message.pipe';
 
-const declarations = [RequestFundsPageComponent];
-const imports = [CommonModule, AccountsSharedModule, SharedModule, RequestFundsRoutingModule, IonicModule, ReactiveFormsModule];
+const declarations = [RequestFundsPageComponent, ErrorMessagePipe];
+const imports = [
+  CommonModule,
+  AccountsSharedModule,
+  SharedModule,
+  RequestFundsRoutingModule,
+  IonicModule,
+  ReactiveFormsModule,
+];
 
 @NgModule({
   declarations,

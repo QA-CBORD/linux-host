@@ -30,20 +30,35 @@
     &--error {
       border: 1px solid #e22942;
     }
+
+    &--auto-height {
+      height: auto;
+    }
   }
 
   &__button {
     --ion-color-primary: #166dff;
-    border-radius: 11px;
+    --border-radius: 8px;
+    --box-shadow:0 4px 0 #1651b3;
+
+    height: 45px;
+    margin-top: 50px;
     width: 100%;
     text-transform: uppercase;
-    box-shadow: 0 4px 0 #1651b3;
     line-height: 18px;
 
     @include font-nunito-heavy(14px);
+
+    &--disabled {
+      --ion-color-primary: #c4c4c4;
+      --box-shadow: none;
+
+      color: $color-matterhorn;
+    }
   }
 
   &__control-error-msg {
+    margin: 0;
     color: #881928;
     letter-spacing: 0;
 

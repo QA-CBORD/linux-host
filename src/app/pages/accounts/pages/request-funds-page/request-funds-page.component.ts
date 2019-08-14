@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AccountsService } from '../../services/accounts.service';
 import { Observable } from 'rxjs';
 import { UserAccount } from '../../../../core/model/account/account.model';
+import { REQUEST_FUNDS_CONTROL_NAMES } from './config';
 
 @Component({
   selector: 'st-request-funds-page',
@@ -12,16 +13,34 @@ import { UserAccount } from '../../../../core/model/account/account.model';
 export class RequestFundsPageComponent implements OnInit {
   accounts$: Observable<UserAccount[]>;
   requestFunds: FormGroup;
-  customActionSheetOptions: any = {
+  customActionSheetOptions: { [key: string]: string } = {
     cssClass: 'custom-deposit-actionSheet',
   };
 
   constructor(private readonly fb: FormBuilder, private readonly accountService: AccountsService) {}
 
+  get email(): AbstractControl {
+    return this.requestFunds.controls['email'];
+  }
+
+  get name(): AbstractControl {
+    return this.requestFunds.controls['name'];
+  }
+
+  get accounts(): AbstractControl {
+    return this.requestFunds.controls['accounts'];
+  }
+
+  get controlsNamesEnum(): any {
+    return REQUEST_FUNDS_CONTROL_NAMES;
+  }
+
   ngOnInit() {
     this.initForm();
     this.accounts$ = this.accountService.accounts$;
   }
+
+  // rexp ^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$
 
   private initForm() {
     this.requestFunds = this.fb.group(
@@ -36,6 +55,6 @@ export class RequestFundsPageComponent implements OnInit {
   }
 
   submit() {
-    console.log(this.requestFunds);
+    console.log(this.name);
   }
 }

@@ -12,15 +12,22 @@
 
         <ion-label class="request-funds__label">
             Name
-            <ion-input class="request-funds__control" placeholder="John Snow" formControlName="name"></ion-input>
+            <ion-input class="request-funds__control"
+                       [ngClass]="{'request-funds__control--error': name.invalid && name.touched}"
+                       placeholder="John Snow"
+                       formControlName="name"></ion-input>
         </ion-label>
-        <p *ngIf="false" class="request-funds__control-error-msg"></p>
+        <p *ngIf="name.invalid && name.touched" class="request-funds__control-error-msg">{{name | errorMessage: 'name'}}</p>
 
         <ion-label class="request-funds__label">
             Email Address
-            <ion-input class="request-funds__control" placeholder="example@email.com" type="email" formControlName="email"></ion-input>
+            <ion-input class="request-funds__control"
+                       placeholder="example@email.com"
+                       type="email"
+                       formControlName="email"
+                       [ngClass]="{'request-funds__control--error': email.invalid && email.touched}"></ion-input>
         </ion-label>
-        <p *ngIf="false" class="request-funds__control-error"></p>
+        <p *ngIf="email.invalid && email.touched" class="request-funds__control-error">{{email | errorMessage: 'email'}}</p>
 
         <ion-label class="request-funds__label">
             Account
@@ -28,21 +35,27 @@
                     class="request-funds__control"
                     [interfaceOptions]="customActionSheetOptions"
                     interface="action-sheet"
-                    formControlName="accounts">
+                    formControlName="accounts"
+                    placeholder="Select Your Account"
+                    [ngClass]="{'request-funds__control--error': accounts.invalid && accounts.touched}">
                 <ion-select-option *ngFor="let account of accounts$ | async"
                                    [value]="account.id">
                     {{account.accountDisplayName}} ({{account.balance | transactionUnits: account.accountType}})
                 </ion-select-option>
             </ion-select>
         </ion-label>
-        <p *ngIf="false" class="request-funds__control-error"></p>
+        <p *ngIf="accounts.invalid && accounts.touched" class="request-funds__control-error">{{accounts | errorMessage: 'accounts'}}</p>
 
         <ion-label class="request-funds__label">
             Message
-            <ion-textarea class="request-funds__control" placeholder="Type your message here..." formControlName="message"></ion-textarea>
+            <ion-textarea rows="3"
+                          class="request-funds__control request-funds__control--auto-height"
+                          placeholder="Type your message here..."
+                          formControlName="message"></ion-textarea>
         </ion-label>
 
-        <ion-button class="request-funds__button">send request</ion-button>
+        <ion-button type="submit" class="request-funds__button"
+        [ngClass]="{'request-funds__button--disabled' : requestFunds.invalid}">send request</ion-button>
     </form>
 
 </ion-content>
