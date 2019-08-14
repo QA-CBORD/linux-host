@@ -104,22 +104,31 @@ export class AppComponent implements OnDestroy {
       throw new Error("No native interface, retrieve info normally")
     }
 
-    let sessionId: string = NativeInterface.getSessionId() || null;
-    let userInfo: UserInfo = JSON.parse(NativeInterface.getUserInfo()) || null;
-    let institutionId: string = NativeInterface.getInstitutionId() || null;    
-    this.destinationPage = NativeInterface.getDestinationPage() || null;
+    let sessionId: Promise<string> = NativeInterface.getSessionId().then((result) => {
+      DataCache.setSessionId(result);
+    });
+    let userInfo: Promise<any> = NativeInterface.getUserInfo().then((result) => {
+      DataCache.setUserInfo(result);
+      this.userService.setUserData(result);
+    });
+    let institutionId: Promise<string> = NativeInterface.getInstitutionId().then((result) => {
+      DataCache.setInstitutionId(result);
+    });
 
+    let destinationPage: Promise<string> = NativeInterface.getDestinationPage().then((result) => {
+      this.destinationPage = result;
+    });
+
+    Promise.all([sessionId, userInfo, institutionId, destinationPage]).then(() => {
+      this.handlePageNavigation();
+    }).catch((error) => {
+      console.error(error);
+    });
 
     if(!sessionId || !userInfo || !institutionId || !this.destinationPage){
       throw new Error("Error getting native data, retrieve info normally");
     }
     
-
-    DataCache.setSessionId(sessionId);
-    DataCache.setUserInfo(userInfo);
-    this.userService.setUserData(userInfo);
-    DataCache.setInstitutionId(institutionId);
-    this.handlePageNavigation();
   }
 
   private testGetSession() {
