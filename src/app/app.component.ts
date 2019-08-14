@@ -33,6 +33,8 @@ export class AppComponent implements OnDestroy {
   private loader;
   private destinationPage: NAVIGATE;
 
+  platformValue: string[] = ["Detecting..."];
+
   constructor(
     private readonly platform: Platform,
     private readonly router: Router,
@@ -46,7 +48,10 @@ export class AppComponent implements OnDestroy {
     private readonly userService: UserService,
     private readonly popoverCtrl: PopoverController
   ) {
-    this.initializeApp();
+    this.platform.ready().then(_=>{
+      this.platformValue = this.platform.platforms();
+    })
+    // this.initializeApp();
   }
 
   ngOnDestroy() {
