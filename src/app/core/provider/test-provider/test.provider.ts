@@ -74,7 +74,7 @@ export class TestProvider {
     };
 
     return this.authService
-      .authenticateUser(lowBalance)
+      .authenticateUser(gold7)
       .pipe(tap(newSessionId => DataCache.setSessionId(newSessionId)));
   }
 }

@@ -21,7 +21,6 @@ import {
 export class AccountsService {
   private readonly _accounts$: BehaviorSubject<UserAccount[]> = new BehaviorSubject<UserAccount[]>([]);
   public readonly _settings$: BehaviorSubject<SettingInfo[]> = new BehaviorSubject<SettingInfo[]>([]);
-  public readonly _contentString$: BehaviorSubject<any> = new BehaviorSubject<any>({});
 
   private contentString;
 
@@ -39,20 +38,12 @@ export class AccountsService {
     return this._settings$.asObservable();
   }
 
-  get contentString$(): Observable<any> {
-    return this._contentString$.asObservable();
-  }
-
   private set _accounts(value: UserAccount[]) {
     this._accounts$.next([...value]);
   }
 
   private set _settings(value: SettingInfo[]) {
     this._settings$.next([...value]);
-  }
-
-  private set _contentString(value: any) {
-    this._contentString$.next({ ...value });
   }
 
   getUserSettings(settings: ContentStringRequest[]): Observable<SettingInfo[]> {

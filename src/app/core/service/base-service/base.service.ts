@@ -77,7 +77,7 @@ export class BaseService {
   }
 
   protected parseExceptionResponse(exceptionString: string) {
-    // check the exception string for a number|description string format
+    // check the exception string for a number|description string format    
     const regEx = new RegExp('^[0-9]*|.*$');
     if (regEx.test(exceptionString)) {
       const parts = exceptionString.split('|');
@@ -87,7 +87,7 @@ export class BaseService {
     }
   }
 
-  protected determineErrorByCodeAndThrow(code: string, message: string) {
+  protected determineErrorByCodeAndThrow(code: string, message: string) {    
     const newError = new Error('Unexpected error occurred.');
     switch (code) {
       case '9999':
