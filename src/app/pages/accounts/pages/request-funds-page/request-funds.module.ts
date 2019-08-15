@@ -6,9 +6,8 @@ import { RequestFundsPageComponent } from './request-funds-page.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AccountsSharedModule } from '../../shared/shared.module';
 import { SharedModule } from '../../../../shared/shared.module';
-import { ErrorMessagePipe } from './pipes/error-message.pipe';
 
-const declarations = [RequestFundsPageComponent, ErrorMessagePipe];
+const declarations = [RequestFundsPageComponent];
 const imports = [
   CommonModule,
   AccountsSharedModule,

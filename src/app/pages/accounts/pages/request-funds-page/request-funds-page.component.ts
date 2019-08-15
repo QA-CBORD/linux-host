@@ -1,14 +1,22 @@
-import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
 import { AccountsService } from '../../services/accounts.service';
 import { Observable } from 'rxjs';
 import { UserAccount } from '../../../../core/model/account/account.model';
-import { REQUEST_FUNDS_CONTROL_NAMES } from './config';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'st-request-funds-page',
   templateUrl: './request-funds-page.component.html',
   styleUrls: ['./request-funds-page.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RequestFundsPageComponent implements OnInit {
   accounts$: Observable<UserAccount[]>;
@@ -17,44 +25,105 @@ export class RequestFundsPageComponent implements OnInit {
     cssClass: 'custom-deposit-actionSheet',
   };
 
-  constructor(private readonly fb: FormBuilder, private readonly accountService: AccountsService) {}
+  constructor(private readonly fb: FormBuilder, private readonly accountService: AccountsService) {
+  }
 
   get email(): AbstractControl {
-    return this.requestFunds.controls['email'];
+    return this.requestFunds.controls[this.controlsNames.email];
   }
 
   get name(): AbstractControl {
-    return this.requestFunds.controls['name'];
+    return this.requestFunds.controls[this.controlsNames.name];
+  }
+
+  get message(): AbstractControl {
+    return this.requestFunds.controls[this.controlsNames.message];
   }
 
   get accounts(): AbstractControl {
-    return this.requestFunds.controls['accounts'];
+    return this.requestFunds.controls[this.controlsNames.accounts];
   }
 
-  get controlsNamesEnum(): any {
+  get controlsNames() {
     return REQUEST_FUNDS_CONTROL_NAMES;
   }
 
   ngOnInit() {
+    this.accounts$ = this.accountService.accounts$.pipe(
+      map((accounts: UserAccount[]) => accounts.filter(account => account.depositAccepted) )
+    );
     this.initForm();
-    this.accounts$ = this.accountService.accounts$;
   }
 
-  // rexp ^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$
-
   private initForm() {
+    const nameErrors = [
+      errorDecorator(Validators.required, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.name].required),
+      errorDecorator(Validators.minLength(2), CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.name].minlength),
+      errorDecorator(Validators.maxLength(255), CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.name].maxlength),
+    ];
+
+    const emailErrors = [
+      errorDecorator(Validators.required, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.email].required),
+      errorDecorator(validateEmail, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.email].incorrect),
+      errorDecorator(Validators.maxLength(255), CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.email].maxlength),
+    ];
+
+    const accountErrors = [
+      errorDecorator(Validators.required, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.accounts].required),
+    ];
+
+    const messageErrors = [
+      errorDecorator(Validators.required, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.message].required),
+    ];
+
     this.requestFunds = this.fb.group(
       {
-        email: this.fb.control('', Validators.required),
-        name: this.fb.control('', Validators.required),
-        accounts: this.fb.control('', Validators.required),
-        message: this.fb.control(''),
+        [this.controlsNames.name]: ['', nameErrors],
+        [this.controlsNames.email]: ['', emailErrors],
+        [this.controlsNames.accounts]: ['', accountErrors],
+        [this.controlsNames.message]: ['', messageErrors],
       },
-      { updateOn: 'blur' }
     );
   }
 
   submit() {
-    console.log(this.name);
+    console.log(this.requestFunds);
   }
 }
+
+export enum REQUEST_FUNDS_CONTROL_NAMES {
+  name = 'name',
+  email = 'email',
+  accounts = 'accounts',
+  message = 'message',
+}
+
+export const CONTROL_ERROR = {
+  [REQUEST_FUNDS_CONTROL_NAMES.name]: {
+    required: 'You must enter a name.',
+    minlength: 'Name should be more than 2 symbols.',
+    maxlength: 'Name should be shorten than 255 symbols.',
+  },
+  [REQUEST_FUNDS_CONTROL_NAMES.email]: {
+    required: 'You must enter an email address.',
+    incorrect: 'Please enter valid email.',
+    maxlength: 'Email should be shorten than 255 symbols.',
+  },
+  [REQUEST_FUNDS_CONTROL_NAMES.accounts]: {
+    required: 'You must choose an account.',
+  },
+  [REQUEST_FUNDS_CONTROL_NAMES.message]: {
+    required: 'Please enter a message.',
+  },
+};
+
+const validateEmail = ({ value }: AbstractControl): ValidationErrors | null => {
+  const test = /^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z]+(\.[a-z]+)*\.[a-z]{2,6}$/gi.test(value);
+  return test ? null : { incorrect: true };
+};
+
+const errorDecorator = (fn: ValidatorFn, errorMsg: string): (control: AbstractControl) => ValidationErrors | null => {
+  return (control) => {
+    return (fn(control) === null) ? null : { errorMsg };
+  };
+};

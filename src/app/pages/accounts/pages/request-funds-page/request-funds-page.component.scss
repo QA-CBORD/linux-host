@@ -61,7 +61,14 @@
     margin: 0;
     color: #881928;
     letter-spacing: 0;
+    min-height: 16px;
+    line-height: 16px;
+    visibility: hidden;
 
     @include font-nunito-heavy(12px);
+
+    &--show {
+      visibility: visible;
+    }
   }
 }
