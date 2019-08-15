@@ -14,7 +14,7 @@
     <ion-radio-group>
       <ion-item lines="none" *ngFor="let period of periods; trackBy: trackPeriod" (click)="onTimeChosen(period)">
         <ion-label>
-          {{period | timeRange}}
+          {{period | timeRange: contentString}}
         </ion-label>
         <ion-radio
           class="filter-menu__radio-btn"

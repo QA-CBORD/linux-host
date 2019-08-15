@@ -1,6 +1,6 @@
 <div class="filter">
     <span class="filter__account">{{activeAccountName | accountName | async}}:</span>
-    <span class="filter__period">{{activeTimeRange | timeRange}}</span>
+    <span class="filter__period">{{activeTimeRange | timeRange: contentString}}</span>
     <figure class="filter__icon" (click)="initFilterModal()">
         <img src="assets/icon/slider-v.svg" alt="filter icon">
         <figcaption class="filter__icon-message">{{ contentString[csNames.filterLabel] }}</figcaption>
