@@ -7,10 +7,26 @@
   </section>
 
   <section class="cdp__info-container">
-    <div class="cdp__label">Deposit Amount: <span class="cdp__value">$100</span></div>
-    <div class="cdp__label">Convenience Fee: <span class="cdp__value">$1.5</span></div>
-    <div class="cdp__label">Total Payment: <span class="cdp__value">$101.50</span></div>
-    <div class="cdp__label">Account: <span class="cdp__value">Account Name</span></div>
-    <div class="cdp__label">Payment Method: <span class="cdp__value">Payment Method</span></div>
+    <div class="cdp__label">Deposit Amount: <span class="cdp__value">${{ popoverConfig.message['amount'] }}</span></div>
+    <ng-container *ngIf="popoverConfig.message['fee']">
+      <div class="cdp__label">Convenience Fee: <span class="cdp__value">${{popoverConfig.message['fee']}}</span></div>
+      <div class="cdp__label">Total Payment:
+        <span class="cdp__value">
+          ${{ +popoverConfig.message['amount'] + +popoverConfig.message['fee'] }}
+        </span></div>
+    </ng-container>
+    <div class="cdp__label">Account:
+      <span class="cdp__value">{{popoverConfig.message['selectedAccount'].accountDisplayName}}</span>
+    </div>
+    <div class="cdp__label">Payment Method:
+      <span class="cdp__value"
+            *ngIf="!popoverConfig.message['billme']; else billme">
+        {{ popoverConfig.message['sourceAcc'].accountTender | creditCardType }} ending in
+        {{ popoverConfig.message['sourceAcc'].lastFour }}
+      </span></div>
   </section>
 </st-popover-layout>
+
+<ng-template #billme>
+  <span class="cdp__value">Bill me</span>
+</ng-template>

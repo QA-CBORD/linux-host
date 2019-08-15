@@ -1,5 +1,4 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { PopoverController } from '@ionic/angular';
 import { popoverConfig } from 'src/app/core/model/popover/popover.model';
 import { buttons } from 'src/app/core/utils/buttons.config';
 
@@ -14,20 +13,18 @@ export class ConfirmDepositPopoverComponent implements OnInit {
   popoverConfig: popoverConfig;
   contentString: { [key: string]: string };
 
-  constructor(private popoverCtrl: PopoverController) {}
+  constructor() { }
 
   ngOnInit() {
     this.initPopover();
   }
 
   initPopover() {
-    // const { message, responseCode, showBarCode, showTempCode, validityTime, issuedCode } = this.data;
-
     this.popoverConfig = {
       title: 'Confirm Deposit',
       type: 'SUCCESS',
       buttons: [{ ...buttons.CANCEL, label: 'CANCEL' }, { ...buttons.OKAY, label: 'DEPOSIT' }],
-      message: 'test',
+      message: this.data,
     };
   }
 }

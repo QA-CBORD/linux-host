@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { PopoverController, ModalController } from '@ionic/angular';
+import { PopoverController, ModalController, ToastController } from '@ionic/angular';
 import { DepositService } from '../../services/deposit.service';
 import { tap, map, switchMap, take } from 'rxjs/operators';
 import { SYSTEM_SETTINGS_CONFIG, PAYMENT_TYPE, PAYMENT_SYSTEM_TYPE, ACCOUNT_TYPES } from '../../accounts.config';
@@ -9,6 +9,7 @@ import { Subscription, Observable, of } from 'rxjs';
 import { UserAccount } from '../../../../core/model/account/account.model';
 import { ConfirmDepositPopoverComponent } from '../../shared/ui-components/confirm-deposit-popover/confirm-deposit-popover.component';
 import { DepositModalComponent } from '../../shared/ui-components/deposit-modal/deposit-modal.component';
+import { BUTTON_TYPE } from 'src/app/core/utils/buttons.config';
 
 @Component({
   selector: 'st-deposit-page',
@@ -43,8 +44,9 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     private readonly depositService: DepositService,
     private fb: FormBuilder,
     private readonly popoverCtrl: PopoverController,
-    private readonly modalController: ModalController
-  ) {}
+    private readonly modalController: ModalController,
+    private readonly toastController: ToastController,
+  ) { }
 
   ngOnInit() {
     this.depositService.settings$.subscribe(depositSettings => (this.depositSettings = depositSettings));
@@ -120,7 +122,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   get isCVVfieldShow() {
     const sourceAcc = this.depositForm.get('sourceAccount').value;
 
-    if (!sourceAcc || sourceAcc !== 'billme' || sourceAcc !== 'newCreditCard') {
+    if (sourceAcc && (sourceAcc !== 'billme' || sourceAcc !== 'newCreditCard')) {
       return (
         sourceAcc.accountType === ACCOUNT_TYPES.charge && sourceAcc.paymentSystemType !== PAYMENT_SYSTEM_TYPE.USAEPAY
       );
@@ -129,11 +131,10 @@ export class DepositPageComponent implements OnInit, OnDestroy {
 
   onFormSubmit() {
     const { sourceAccount, selectedAccount, mainInput } = this.depositForm.value;
+    const isBillme: boolean = sourceAccount === 'billme';
     let fromAccount: Observable<UserAccount>;
-    console.log(this.depositForm);
 
-    if (sourceAccount === 'billme') {
-      console.log('billme');
+    if (isBillme) {
       fromAccount = this.sourceAccForBillmeDeposit(selectedAccount, this.billmeMappingArr);
     } else {
       const sourceAcc = this.depositForm.get('sourceAccount').value;
@@ -147,8 +148,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
           (sourceAcc): any => {
             let fee: Observable<number>;
 
-            console.log(sourceAccount);
-            if (sourceAccount === 'billme') {
+            if (isBillme) {
               fee = of(0);
             } else {
               fee = this.depositService.calculateDepositFee(sourceAcc.id, selectedAccount.id, mainInput);
@@ -160,14 +160,13 @@ export class DepositPageComponent implements OnInit, OnDestroy {
                 sourceAcc,
                 selectedAccount,
                 amount: mainInput,
+                billme: isBillme
               }))
             );
           }
         )
       )
-      .subscribe(val => console.log(val));
-    // this.confirmationDepositPopover();
-    // this.finalizeDepositModal();
+      .subscribe(info => this.confirmationDepositPopover(info));
   }
 
   setFormValidators() {
@@ -181,8 +180,6 @@ export class DepositPageComponent implements OnInit, OnDestroy {
         ];
         this.depositForm.controls['fromAccountCvv'].setErrors(null);
         this.depositForm.controls['fromAccountCvv'].clearValidators();
-
-        console.log(this.depositForm);
       } else if (sourceAcc === 'newCreditCard') {
         console.log('new credit card');
       } else {
@@ -250,7 +247,6 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   }
 
   onPaymentMethodChanged({ target }) {
-    console.log('changed', target.value);
     if (target.value === 'billme') {
       this.destinationAccounts = this.billmeDestinationAccounts;
     } else {
@@ -260,41 +256,61 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     this.setFormValidators();
   }
 
-  async confirmationDepositPopover(res?: any) {
+  async confirmationDepositPopover(data: any) {
     const popover = await this.popoverCtrl.create({
       component: ConfirmDepositPopoverComponent,
       componentProps: {
-        data: res,
+        data,
       },
       animated: false,
       backdropDismiss: true,
     });
 
     popover.onDidDismiss().then(({ role }) => {
-      // if (role === BUTTON_TYPE.OKAY) {
-      //   this.nav2.navigateBack(`/${NAVIGATE.mobileAccess}`);
-      // }
-      // if (role === BUTTON_TYPE.RETRY) {
-      //   this.activateLocation();
-      // }
+      if (role === BUTTON_TYPE.OKAY) {
+        this.depositService.deposit(
+          data.sourceAcc.id,
+          data.selectedAccount.id,
+          data.amount,
+          this.fromAccountCvv.value
+        )
+          .pipe(
+            take(1)
+          )
+          .subscribe(
+            () => this.finalizeDepositModal(data),
+            () => this.onErrorRetrieve('Your information could not be verified.')
+          );
+      }
     });
 
     return await popover.present();
   }
 
-  private async finalizeDepositModal(): Promise<void> {
+  private async finalizeDepositModal(data): Promise<void> {
     const modal = await this.modalController.create({
       component: DepositModalComponent,
       animated: true,
-      componentProps: {},
+      componentProps: {
+        data
+      },
     });
-    modal.onDidDismiss().then(({ data }) => console.log(data));
+    modal.onDidDismiss().then(() => this.depositForm.reset());
 
     await modal.present();
   }
 
   trackByAccountId(i: number, { id }: UserAccount): string {
     return `${i}-${id}-${Math.random()}`;
+  }
+
+  private async onErrorRetrieve(message: string) {
+    const toast = await this.toastController.create({
+      message,
+      duration: 5000,
+      position: 'top',
+    });
+    toast.present();
   }
 
   private filterAccountsByPaymentSystem(accounts): Array<UserAccount> {
@@ -309,7 +325,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     return this.depositService.filterBillmeDestAccounts(billmeMappingArr, accounts);
   }
 
-  private sourceAccForBillmeDeposit(selectedAccount: UserAccount, billmeMappingArr: Array<string>) {
+  private sourceAccForBillmeDeposit(selectedAccount: UserAccount, billmeMappingArr: Array<string>): Observable<UserAccount> {
     return this.depositService.sourceAccForBillmeDeposit(selectedAccount, billmeMappingArr);
   }
 

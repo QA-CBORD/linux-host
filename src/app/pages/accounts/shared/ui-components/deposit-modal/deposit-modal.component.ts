@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 
 
@@ -8,16 +8,10 @@ import { ModalController } from '@ionic/angular';
   styleUrls: ['./deposit-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DepositModalComponent implements OnInit {
-  // @Input() accounts: Observable<UserAccount[]>;
-  // @Input() periods: DateUtilObject[];
-  // @Input() activeAccountId: string;
-  // @Input() activeTimeRange: DateUtilObject;
+export class DepositModalComponent {
+  @Input() data;
 
-  constructor(private readonly modalController: ModalController) {}
-
-  ngOnInit() {
-  }
+  constructor(private readonly modalController: ModalController) { }
 
   async onClickedDone() {
     await this.modalController.dismiss();
