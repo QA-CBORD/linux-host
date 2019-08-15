@@ -28,7 +28,7 @@
                         window.webkit.messageHandlers.JSListener.postMessage(msg)
                     }
                 } else if (window.androidInterface != undefined) {
-                    resolvePromise(msg.promiseId, eval("window.androidInterface." + msg.methodName + "();") )
+                    resolvePromise(msg.promiseId, window.androidInterface[msg.methodName]() )
                 }else{
                     throw new Error('No native interface available');
                 }
