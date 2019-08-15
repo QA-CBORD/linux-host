@@ -10,7 +10,9 @@ import {
 import { AccountsService } from '../../services/accounts.service';
 import { Observable } from 'rxjs';
 import { UserAccount } from '../../../../core/model/account/account.model';
-import { map } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
+import { UserService } from '../../../../core/service/user-service/user.service';
+import { LoadingService } from '../../../../core/service/loading/loading.service';
 
 @Component({
   selector: 'st-request-funds-page',
@@ -25,7 +27,10 @@ export class RequestFundsPageComponent implements OnInit {
     cssClass: 'custom-deposit-actionSheet',
   };
 
-  constructor(private readonly fb: FormBuilder, private readonly accountService: AccountsService) {
+  constructor(private readonly fb: FormBuilder,
+              private readonly accountService: AccountsService,
+              private readonly userService: UserService,
+              private readonly loadingService:LoadingService) {
   }
 
   get email(): AbstractControl {
@@ -41,7 +46,7 @@ export class RequestFundsPageComponent implements OnInit {
   }
 
   get accounts(): AbstractControl {
-    return this.requestFunds.controls[this.controlsNames.accounts];
+    return this.requestFunds.controls[this.controlsNames.account];
   }
 
   get controlsNames() {
@@ -69,7 +74,7 @@ export class RequestFundsPageComponent implements OnInit {
     ];
 
     const accountErrors = [
-      errorDecorator(Validators.required, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.accounts].required),
+      errorDecorator(Validators.required, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.account].required),
     ];
 
     const messageErrors = [
@@ -80,21 +85,37 @@ export class RequestFundsPageComponent implements OnInit {
       {
         [this.controlsNames.name]: ['', nameErrors],
         [this.controlsNames.email]: ['', emailErrors],
-        [this.controlsNames.accounts]: ['', accountErrors],
+        [this.controlsNames.account]: ['', accountErrors],
         [this.controlsNames.message]: ['', messageErrors],
       },
     );
+    console.log(this.requestFunds.getRawValue());
   }
 
-  submit() {
-    console.log(this.requestFunds);
+  async submit() {
+    const {
+      [this.controlsNames.name]: n,
+      [this.controlsNames.email]: e,
+      [this.controlsNames.message]: m,
+      [this.controlsNames.account]: a,
+    } = this.requestFunds.getRawValue();
+
+    await this.loadingService.showSpinner();
+
+    this.userService.getUserSettingsBySettingName('quick_amount').pipe(
+      switchMap(({response: {value: v}}) => this.userService.requestDeposit(n,e,m,a,+v))
+    ).subscribe((data) => {
+      console.log(data);
+      this.loadingService.closeSpinner();
+    }, () =>  this.loadingService.closeSpinner());
+
   }
 }
 
 export enum REQUEST_FUNDS_CONTROL_NAMES {
   name = 'name',
   email = 'email',
-  accounts = 'accounts',
+  account = 'account',
   message = 'message',
 }
 
@@ -109,7 +130,7 @@ export const CONTROL_ERROR = {
     incorrect: 'Please enter valid email.',
     maxlength: 'Email should be shorten than 255 symbols.',
   },
-  [REQUEST_FUNDS_CONTROL_NAMES.accounts]: {
+  [REQUEST_FUNDS_CONTROL_NAMES.account]: {
     required: 'You must choose an account.',
   },
   [REQUEST_FUNDS_CONTROL_NAMES.message]: {

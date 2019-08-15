@@ -74,7 +74,7 @@ export class TestProvider {
     };
 
     return this.authService
-      .authenticateUser(lowBalance)
+      .authenticateUser(odysseyPreview)
       .pipe(tap(newSessionId => DataCache.setSessionId(newSessionId)));
   }
 }

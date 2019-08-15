@@ -36,7 +36,7 @@
                     class="request-funds__control"
                     [interfaceOptions]="customActionSheetOptions"
                     interface="action-sheet"
-                    [formControlName]="controlsNames.accounts"
+                    [formControlName]="controlsNames.account"
                     placeholder="Select Your Account"
                     [ngClass]="{'request-funds__control--error': accounts.invalid && accounts.touched}">
                 <ion-select-option *ngFor="let account of accounts$ | async"
