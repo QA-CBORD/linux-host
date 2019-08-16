@@ -56,8 +56,14 @@ export class UserService extends BaseService {
     return this.httpRequest<MessageResponse<UserPhotoInfo>>(this.serviceUrl, 'retrieveUserPhoto', true, params);
   }
 
-  requestDeposit(recipientName: string, recipientEmail: string, message: string, depositToAccountId: string, requestAmount: number) {
-    const params = { recipientName, recipientEmail, message, depositToAccountId, requestAmount};
+  requestDeposit(
+    recipientName: string,
+    recipientEmail: string,
+    message: string,
+    depositToAccountId: string,
+    requestAmount: string
+  ) {
+    const params = { recipientName, recipientEmail, message, depositToAccountId, requestAmount };
 
     return this.httpRequest(this.serviceUrl, 'requestDeposit', true, params);
   }

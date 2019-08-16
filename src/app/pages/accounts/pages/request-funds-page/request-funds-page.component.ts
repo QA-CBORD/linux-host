@@ -1,18 +1,12 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import {
-  AbstractControl,
-  FormBuilder,
-  FormGroup,
-  ValidationErrors,
-  ValidatorFn,
-  Validators,
-} from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { AccountsService } from '../../services/accounts.service';
 import { Observable } from 'rxjs';
 import { UserAccount } from '../../../../core/model/account/account.model';
 import { map, switchMap } from 'rxjs/operators';
 import { UserService } from '../../../../core/service/user-service/user.service';
 import { LoadingService } from '../../../../core/service/loading/loading.service';
+import { ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'st-request-funds-page',
@@ -27,11 +21,13 @@ export class RequestFundsPageComponent implements OnInit {
     cssClass: 'custom-deposit-actionSheet',
   };
 
-  constructor(private readonly fb: FormBuilder,
-              private readonly accountService: AccountsService,
-              private readonly userService: UserService,
-              private readonly loadingService:LoadingService) {
-  }
+  constructor(
+    private readonly fb: FormBuilder,
+    private readonly accountService: AccountsService,
+    private readonly userService: UserService,
+    private readonly loadingService: LoadingService,
+    private readonly toastController: ToastController
+  ) {}
 
   get email(): AbstractControl {
     return this.requestFunds.controls[this.controlsNames.email];
@@ -55,7 +51,7 @@ export class RequestFundsPageComponent implements OnInit {
 
   ngOnInit() {
     this.accounts$ = this.accountService.accounts$.pipe(
-      map((accounts: UserAccount[]) => accounts.filter(account => account.depositAccepted) )
+      map((accounts: UserAccount[]) => accounts.filter(account => account.depositAccepted))
     );
     this.initForm();
   }
@@ -81,15 +77,12 @@ export class RequestFundsPageComponent implements OnInit {
       errorDecorator(Validators.required, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.message].required),
     ];
 
-    this.requestFunds = this.fb.group(
-      {
-        [this.controlsNames.name]: ['', nameErrors],
-        [this.controlsNames.email]: ['', emailErrors],
-        [this.controlsNames.account]: ['', accountErrors],
-        [this.controlsNames.message]: ['', messageErrors],
-      },
-    );
-    console.log(this.requestFunds.getRawValue());
+    this.requestFunds = this.fb.group({
+      [this.controlsNames.name]: ['', nameErrors],
+      [this.controlsNames.email]: ['', emailErrors],
+      [this.controlsNames.account]: ['', accountErrors],
+      [this.controlsNames.message]: ['', messageErrors],
+    });
   }
 
   async submit() {
@@ -102,13 +95,15 @@ export class RequestFundsPageComponent implements OnInit {
 
     await this.loadingService.showSpinner();
 
-    this.userService.getUserSettingsBySettingName('quick_amount').pipe(
-      switchMap(({response: {value: v}}) => this.userService.requestDeposit(n,e,m,a,+v))
-    ).subscribe((data) => {
-      console.log(data);
-      this.loadingService.closeSpinner();
-    }, () =>  this.loadingService.closeSpinner());
-
+    this.userService
+      .getUserSettingsBySettingName('quick_amount')
+      .pipe(switchMap(({ response: { value: v } }) => this.userService.requestDeposit(n, e, m, a, v)))
+      .subscribe(
+        ({ response }) => {
+          this.loadingService.closeSpinner();
+        },
+        () => this.loadingService.closeSpinner()
+      );
   }
 }
 
@@ -143,8 +138,8 @@ const validateEmail = ({ value }: AbstractControl): ValidationErrors | null => {
   return test ? null : { incorrect: true };
 };
 
-const errorDecorator = (fn: ValidatorFn, errorMsg: string): (control: AbstractControl) => ValidationErrors | null => {
-  return (control) => {
-    return (fn(control) === null) ? null : { errorMsg };
+const errorDecorator = (fn: ValidatorFn, errorMsg: string): ((control: AbstractControl) => ValidationErrors | null) => {
+  return control => {
+    return fn(control) === null ? null : { errorMsg };
   };
 };
