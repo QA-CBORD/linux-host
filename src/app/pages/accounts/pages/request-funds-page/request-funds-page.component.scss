@@ -53,11 +53,9 @@
     --border-radius: 25px;
     --box-shadow:0 4px 0 #1651b3;
 
+    margin-top: 40px;
     height: 45px;
-    position: absolute;
     width: 90vw;
-    bottom: 10px;
-    left: 5vw;
     text-transform: uppercase;
     line-height: 18px;
 
@@ -75,6 +73,9 @@
       --ion-color-primary: $color-white;
       --color-activated: #166dff;
 
+      position: absolute;
+      bottom: 10px;
+      left: 5vw;
       color: #166dff;
       border-radius: 25px;
       border: 1px solid $color-dodger-blue;
