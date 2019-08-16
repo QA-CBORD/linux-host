@@ -30,10 +30,10 @@
     }
 
     &--error {
-      color: #d24d33;
+      color: $color-alizarin;
       text-align: center;
 
-      @include font-nunito-semibold(12px);
+      @include font-nunito-heavy(14px);
     }
 
     --padding-bottom: 0;
@@ -50,8 +50,8 @@
   }
 
   &__selection-block {
-    border-top: 1px solid #ebebeb;
-    border-bottom: 1px solid #ebebeb;
+    border-top: 1px solid $color-whisper;
+    border-bottom: 1px solid $color-whisper;
   }
 
   &__main-select-container {
@@ -62,7 +62,7 @@
     position: relative;
 
     &:last-child {
-      border-top: 1px solid #ebebeb;
+      border-top: 1px solid $color-whisper;
     }
   }
 
@@ -90,7 +90,7 @@
     position: relative;
     height: 80px;
     display: flex;
-    border-bottom: 1px solid #ebebeb;
+    border-bottom: 1px solid $color-whisper;
   }
 
   &__input-cvv {
@@ -100,9 +100,9 @@
       position: absolute;
       left: 16px;
       top: 55px;
-      color: #d24d33;
+      color: $color-alizarin;
 
-      @include font-nunito-semibold(12px);
+      @include font-nunito-heavy(14px);
     }
   }
 

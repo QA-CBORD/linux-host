@@ -52,7 +52,7 @@
   .custom-deposit-actionSheet {
     .action-sheet-group {
       .action-sheet-button {
-        border-bottom: 1px solid #ebebeb;
+        border-bottom: 1px solid $color-whisper;
 
         .action-sheet-button-inner {
           @include font-nunito-semibold(16px);
@@ -74,16 +74,19 @@
         }
       }
     }
-    .action-sheet-group-cancel {
-      .action-sheet-button {
-        &:last-child {
-          color: #166dff;
-          border: none;
 
-          .action-sheet-button-inner {
-            justify-content: center;
+    .action-sheet-container {
+      .action-sheet-group-cancel {
+        .action-sheet-button {
+          &:last-child {
+            color: $color-dodger-blue;
+            border: none;
 
-            @include font-nunito-heavy(16px);
+            .action-sheet-button-inner {
+              justify-content: center;
+
+              @include font-nunito-heavy(16px);
+            }
           }
         }
       }

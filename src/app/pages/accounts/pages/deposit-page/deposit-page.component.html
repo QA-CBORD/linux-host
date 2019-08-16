@@ -16,7 +16,6 @@
             interface="action-sheet"
             [interfaceOptions]="customActionSheetOptions"
             formControlName="mainSelect"
-            (ionChange)="onPaymentMethodChanged($event)"
           >
             <ion-select-option [value]="amount" *ngFor="let amount of presetDepositAmounts">
               {{ amount }}
@@ -68,7 +67,6 @@
           interface="action-sheet"
           [interfaceOptions]="customActionSheetOptions"
           formControlName="selectedAccount"
-          (ionChange)="onPaymentMethodChanged($event)"
         >
           <ion-select-option [value]="account" *ngFor="let account of destinationAccounts; trackBy: trackByAccountId">
             {{ account.accountDisplayName }} (${{ account.balance }})
@@ -132,7 +130,7 @@
       type="submit"
       class="deposit__deposit-btn"
       [disabled]="!depositForm.valid"
-      [ngStyle]="{ marginTop: isCVVfieldShow ? '70%' : '85%' }"
+      [ngStyle]="{ marginTop: !isFreeFromDepositEnabled && !isCVVfieldShow ? '100%' : isFreeFromDepositEnabled && isCVVfieldShow ? '70%' : '85%' }"
       >Deposit</ion-button
     >
   </form>

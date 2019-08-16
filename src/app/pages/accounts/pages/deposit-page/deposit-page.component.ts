@@ -45,8 +45,8 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private readonly popoverCtrl: PopoverController,
     private readonly modalController: ModalController,
-    private readonly toastController: ToastController,
-  ) { }
+    private readonly toastController: ToastController
+  ) {}
 
   ngOnInit() {
     this.depositService.settings$.subscribe(depositSettings => (this.depositSettings = depositSettings));
@@ -130,7 +130,8 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   }
 
   onFormSubmit() {
-    const { sourceAccount, selectedAccount, mainInput } = this.depositForm.value;
+    const { sourceAccount, selectedAccount, mainInput, mainSelect } = this.depositForm.value;
+    const amount = mainInput || mainSelect;
     const isBillme: boolean = sourceAccount === 'billme';
     let fromAccount: Observable<UserAccount>;
 
@@ -151,7 +152,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
             if (isBillme) {
               fee = of(0);
             } else {
-              fee = this.depositService.calculateDepositFee(sourceAcc.id, selectedAccount.id, mainInput);
+              fee = this.depositService.calculateDepositFee(sourceAcc.id, selectedAccount.id, amount);
             }
 
             return fee.pipe(
@@ -159,8 +160,8 @@ export class DepositPageComponent implements OnInit, OnDestroy {
                 fee: valueFee,
                 sourceAcc,
                 selectedAccount,
-                amount: mainInput,
-                billme: isBillme
+                amount,
+                billme: isBillme,
               }))
             );
           }
@@ -249,10 +250,13 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   onPaymentMethodChanged({ target }) {
     if (target.value === 'billme') {
       this.destinationAccounts = this.billmeDestinationAccounts;
+      this.presetDepositAmounts = this.presetDepositAmountsBillme;
     } else {
       this.destinationAccounts = this.creditCardDestinationAccounts;
+      this.presetDepositAmounts = this.presetDepositAmountsCreditCard;
     }
 
+    this.depositForm.controls['mainSelect'].reset();
     this.setFormValidators();
   }
 
@@ -268,15 +272,9 @@ export class DepositPageComponent implements OnInit, OnDestroy {
 
     popover.onDidDismiss().then(({ role }) => {
       if (role === BUTTON_TYPE.OKAY) {
-        this.depositService.deposit(
-          data.sourceAcc.id,
-          data.selectedAccount.id,
-          data.amount,
-          this.fromAccountCvv.value
-        )
-          .pipe(
-            take(1)
-          )
+        this.depositService
+          .deposit(data.sourceAcc.id, data.selectedAccount.id, data.amount, this.fromAccountCvv.value)
+          .pipe(take(1))
           .subscribe(
             () => this.finalizeDepositModal(data),
             () => this.onErrorRetrieve('Your information could not be verified.')
@@ -292,7 +290,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
       component: DepositModalComponent,
       animated: true,
       componentProps: {
-        data
+        data,
       },
     });
     modal.onDidDismiss().then(() => this.depositForm.reset());
@@ -325,7 +323,10 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     return this.depositService.filterBillmeDestAccounts(billmeMappingArr, accounts);
   }
 
-  private sourceAccForBillmeDeposit(selectedAccount: UserAccount, billmeMappingArr: Array<string>): Observable<UserAccount> {
+  private sourceAccForBillmeDeposit(
+    selectedAccount: UserAccount,
+    billmeMappingArr: Array<string>
+  ): Observable<UserAccount> {
     return this.depositService.sourceAccForBillmeDeposit(selectedAccount, billmeMappingArr);
   }
 
