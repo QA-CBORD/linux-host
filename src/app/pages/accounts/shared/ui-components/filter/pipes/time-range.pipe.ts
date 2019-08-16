@@ -1,5 +1,4 @@
-import { TransactionService } from './../../../../services/transaction.service';
-import { Pipe, PipeTransform, OnInit } from '@angular/core';
+import { Pipe, PipeTransform } from '@angular/core';
 import { DateUtilObject } from '../date-util';
 import { CONTENT_STRINGS, TIME_PERIOD } from 'src/app/pages/accounts/accounts.config';
 
@@ -8,7 +7,7 @@ import { CONTENT_STRINGS, TIME_PERIOD } from 'src/app/pages/accounts/accounts.co
 })
 export class TimeRangePipe implements PipeTransform {
 
-  constructor(private readonly transactionsService: TransactionService) {
+  constructor() {
   }
 
   transform(value: DateUtilObject, contentString: any): string {

@@ -17,9 +17,9 @@ export class TransactionsResolver implements Resolve<Promise<any>> {
     await this.loadingService.showSpinner();
     return new Promise((resolve, reject) => {
       this.transactionService
-        .getRecentTransactions(route.params.id)
+        .initContentStringsList()
         .pipe(
-          switchMap(() => this.transactionService.initContentStringsList()),
+          switchMap(() => this.transactionService.getRecentTransactions(route.params.id)),
           tap(
             async () => {
               resolve();
