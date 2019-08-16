@@ -6,8 +6,9 @@ import { RequestFundsPageComponent } from './request-funds-page.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AccountsSharedModule } from '../../shared/shared.module';
 import { SharedModule } from '../../../../shared/shared.module';
+import { PopoverComponent } from './popover/popover.component';
 
-const declarations = [RequestFundsPageComponent];
+const declarations = [RequestFundsPageComponent, PopoverComponent];
 const imports = [
   CommonModule,
   AccountsSharedModule,
@@ -16,9 +17,10 @@ const imports = [
   IonicModule,
   ReactiveFormsModule,
 ];
-
+const entryComponents = [PopoverComponent];
 @NgModule({
   declarations,
   imports,
+  entryComponents,
 })
 export class RequestFundsModule {}

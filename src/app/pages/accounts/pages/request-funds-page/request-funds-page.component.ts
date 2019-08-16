@@ -1,12 +1,17 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { AccountsService } from '../../services/accounts.service';
+import { PopoverController, ToastController } from '@ionic/angular';
+import { Router } from '@angular/router';
+
 import { Observable } from 'rxjs';
-import { UserAccount } from '../../../../core/model/account/account.model';
 import { map, switchMap } from 'rxjs/operators';
+
+import { AccountsService } from '../../services/accounts.service';
+import { UserAccount } from '../../../../core/model/account/account.model';
 import { UserService } from '../../../../core/service/user-service/user.service';
 import { LoadingService } from '../../../../core/service/loading/loading.service';
-import { ToastController } from '@ionic/angular';
+import { PopoverComponent } from './popover/popover.component';
+import { NAVIGATE } from '../../../../app.global';
 
 @Component({
   selector: 'st-request-funds-page',
@@ -26,7 +31,9 @@ export class RequestFundsPageComponent implements OnInit {
     private readonly accountService: AccountsService,
     private readonly userService: UserService,
     private readonly loadingService: LoadingService,
-    private readonly toastController: ToastController
+    private readonly toastController: ToastController,
+    private readonly popoverCtrl: PopoverController,
+    private readonly nav: Router
   ) {}
 
   get email(): AbstractControl {
@@ -54,6 +61,36 @@ export class RequestFundsPageComponent implements OnInit {
       map((accounts: UserAccount[]) => accounts.filter(account => account.depositAccepted))
     );
     this.initForm();
+  }
+
+  accountTrack(n: number, { id }: UserAccount): string {
+    return id;
+  }
+
+  async submit() {
+    const {
+      [this.controlsNames.name]: n,
+      [this.controlsNames.email]: e,
+      [this.controlsNames.message]: m,
+      [this.controlsNames.account]: a,
+    } = this.requestFunds.getRawValue();
+
+    await this.loadingService.showSpinner();
+
+    this.userService
+      .getUserSettingsBySettingName('quick_amount')
+      .pipe(switchMap(({ response: { value: v } }) => this.userService.requestDeposit(n, e, m, a, v)))
+      .subscribe(
+        async ({ response }) => {
+          await this.loadingService.closeSpinner();
+          response ? this.showModal() : this.showToast();
+        },
+        async () => await this.loadingService.closeSpinner()
+      );
+  }
+
+  async back(): Promise<void> {
+    await this.nav.navigate([NAVIGATE.accounts]);
   }
 
   private initForm() {
@@ -85,25 +122,26 @@ export class RequestFundsPageComponent implements OnInit {
     });
   }
 
-  async submit() {
-    const {
-      [this.controlsNames.name]: n,
-      [this.controlsNames.email]: e,
-      [this.controlsNames.message]: m,
-      [this.controlsNames.account]: a,
-    } = this.requestFunds.getRawValue();
+  private async showToast(): Promise<void> {
+    const toast = await this.toastController.create({
+      message: 'Something went wrong...',
+      duration: 3000,
+      position: 'top',
+    });
+    await toast.present();
+  }
 
-    await this.loadingService.showSpinner();
-
-    this.userService
-      .getUserSettingsBySettingName('quick_amount')
-      .pipe(switchMap(({ response: { value: v } }) => this.userService.requestDeposit(n, e, m, a, v)))
-      .subscribe(
-        ({ response }) => {
-          this.loadingService.closeSpinner();
-        },
-        () => this.loadingService.closeSpinner()
-      );
+  private async showModal(): Promise<void> {
+    const modal = await this.popoverCtrl.create({
+      component: PopoverComponent,
+      componentProps: {
+        data: { title: 'Request Sent!', message: 'Yor request for funds was sent successfully.' },
+      },
+      animated: false,
+      backdropDismiss: true,
+    });
+    modal.onDidDismiss().then(() => this.requestFunds.reset());
+    modal.present();
   }
 }
 

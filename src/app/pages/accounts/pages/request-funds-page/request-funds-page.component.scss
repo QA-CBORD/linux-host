@@ -20,7 +20,7 @@
     height: 45px;
     background: #f0f3f5;
     border-radius: 8px;
-    border: 1px solid #d4d6d8;
+    border: 1px solid $color-link-water;
     letter-spacing: 0;
 
     @include font-nunito-regular(16px);
@@ -28,7 +28,7 @@
     --padding-start: 5px;
 
     &--error {
-      border: 1px solid #e22942;
+      border: 1px solid $color-alizarin;
     }
 
     &--auto-height {
@@ -36,14 +36,28 @@
     }
   }
 
+  &__empty-image {
+    display: block;
+    margin: 0 auto;
+  }
+
+  &__empty-message {
+    color: $color-matterhorn;
+    text-align: center;
+
+    @include font-nunito-heavy(16px);
+  }
+
   &__button {
     --ion-color-primary: #166dff;
-    --border-radius: 8px;
+    --border-radius: 25px;
     --box-shadow:0 4px 0 #1651b3;
 
     height: 45px;
-    margin-top: 50px;
-    width: 100%;
+    position: absolute;
+    width: 90vw;
+    bottom: 10px;
+    left: 5vw;
     text-transform: uppercase;
     line-height: 18px;
 
@@ -55,11 +69,21 @@
 
       color: $color-matterhorn;
     }
+
+    &--blue {
+      --box-shadow: none;
+      --ion-color-primary: $color-white;
+      --color-activated: #166dff;
+
+      color: #166dff;
+      border-radius: 25px;
+      border: 1px solid $color-dodger-blue;
+    }
   }
 
   &__control-error-msg {
     margin: 0;
-    color: #881928;
+    color: $color-flame-red;
     letter-spacing: 0;
     min-height: 16px;
     line-height: 16px;

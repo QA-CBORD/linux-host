@@ -12,7 +12,7 @@ export class LoadingService {
 
   constructor(private loadingController: LoadingController) {}
 
-  async showSpinner(config: LoadingOptions | string = {}) {
+  async showSpinner(config: LoadingOptions | string = {}): Promise<void> {
     config = typeof config === 'string' ? { message: config } : config;
     config = config.duration ? config : { ...config, duration: this.maxDuration };
 
@@ -20,7 +20,7 @@ export class LoadingService {
     this.loader.present();
   }
 
-  async closeSpinner() {
+  async closeSpinner(): Promise<void> {
     this.loader && this.loader.dismiss();
     this.loader = null;
   }
