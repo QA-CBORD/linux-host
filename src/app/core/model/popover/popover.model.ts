@@ -1,7 +1,7 @@
 import { PopupTypes } from '../../../pages/rewards/rewards.config';
 import { PopupButton } from '../button';
 
-export interface popoverConfig {
+export interface PopoverConfig {
   type: string | keyof PopupTypes;
   title: string;
   message: string | Message;
