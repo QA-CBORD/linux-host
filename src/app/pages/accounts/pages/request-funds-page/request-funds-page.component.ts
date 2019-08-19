@@ -173,7 +173,7 @@ export const CONTROL_ERROR = {
 };
 
 const validateEmail = ({ value }: AbstractControl): ValidationErrors | null => {
-  const test = EMAIL_REGEXP.test(value);
+  const test = /^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z]+(\.[a-z]+)*\.[a-z]{2,6}$/.test(value);
   return test ? null : { incorrect: true };
 };
 
