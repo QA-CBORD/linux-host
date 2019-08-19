@@ -8,7 +8,7 @@
     <ng-container *ngIf="(accounts$ | async).length; else empty">
         <p class="request-funds__info-msg">Email a friend or family member to request a deposit to your account.</p>
 
-        <form class="request-funds__form" [formGroup]="requestFunds" novalidate (ngSubmit)="submit()">
+        <form class="request-funds__form" [formGroup]="requestFundsForm" novalidate (ngSubmit)="onSubmit()">
 
             <ion-label class="request-funds__label">
                 Name
@@ -62,8 +62,8 @@
                class="request-funds__control-error-msg">
                 {{message.errors?.errorMsg}}</p>
 
-            <ion-button [disabled]="requestFunds.invalid" type="submit" class="request-funds__button"
-                        [ngClass]="{'request-funds__button--disabled' : requestFunds.invalid}">send request
+            <ion-button [disabled]="requestFundsForm.invalid" type="submit" class="request-funds__button"
+                        [ngClass]="{'request-funds__button--disabled' : requestFundsForm.invalid}">send request
             </ion-button>
         </form>
     </ng-container>

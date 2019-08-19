@@ -12,6 +12,7 @@ import { UserService } from '../../../../core/service/user-service/user.service'
 import { LoadingService } from '../../../../core/service/loading/loading.service';
 import { PopoverComponent } from './popover/popover.component';
 import { NAVIGATE } from '../../../../app.global';
+import { EMAIL_REGEXP } from '../../../../core/utils/general-helpers';
 
 @Component({
   selector: 'st-request-funds-page',
@@ -21,7 +22,7 @@ import { NAVIGATE } from '../../../../app.global';
 })
 export class RequestFundsPageComponent implements OnInit {
   accounts$: Observable<UserAccount[]>;
-  requestFunds: FormGroup;
+  requestFundsForm: FormGroup;
   customActionSheetOptions: { [key: string]: string } = {
     cssClass: 'custom-deposit-actionSheet',
   };
@@ -37,19 +38,19 @@ export class RequestFundsPageComponent implements OnInit {
   ) {}
 
   get email(): AbstractControl {
-    return this.requestFunds.controls[this.controlsNames.email];
+    return this.requestFundsForm.get(this.controlsNames.email);
   }
 
   get name(): AbstractControl {
-    return this.requestFunds.controls[this.controlsNames.name];
+    return this.requestFundsForm.get(this.controlsNames.name);
   }
 
   get message(): AbstractControl {
-    return this.requestFunds.controls[this.controlsNames.message];
+    return this.requestFundsForm.get(this.controlsNames.message);
   }
 
   get accounts(): AbstractControl {
-    return this.requestFunds.controls[this.controlsNames.account];
+    return this.requestFundsForm.get(this.controlsNames.account);
   }
 
   get controlsNames() {
@@ -67,13 +68,13 @@ export class RequestFundsPageComponent implements OnInit {
     return id;
   }
 
-  async submit() {
+  async onSubmit() {
     const {
       [this.controlsNames.name]: n,
       [this.controlsNames.email]: e,
       [this.controlsNames.message]: m,
       [this.controlsNames.account]: a,
-    } = this.requestFunds.getRawValue();
+    } = this.requestFundsForm.getRawValue();
 
     await this.loadingService.showSpinner();
 
@@ -114,7 +115,7 @@ export class RequestFundsPageComponent implements OnInit {
       errorDecorator(Validators.required, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.message].required),
     ];
 
-    this.requestFunds = this.fb.group({
+    this.requestFundsForm = this.fb.group({
       [this.controlsNames.name]: ['', nameErrors],
       [this.controlsNames.email]: ['', emailErrors],
       [this.controlsNames.account]: ['', accountErrors],
@@ -140,7 +141,7 @@ export class RequestFundsPageComponent implements OnInit {
       animated: false,
       backdropDismiss: true,
     });
-    modal.onDidDismiss().then(() => this.requestFunds.reset());
+    modal.onDidDismiss().then(async () => await this.back());
     modal.present();
   }
 }
@@ -172,7 +173,7 @@ export const CONTROL_ERROR = {
 };
 
 const validateEmail = ({ value }: AbstractControl): ValidationErrors | null => {
-  const test = /^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z]+(\.[a-z]+)*\.[a-z]{2,6}$/gi.test(value);
+  const test = EMAIL_REGEXP.test(value);
   return test ? null : { incorrect: true };
 };
 
