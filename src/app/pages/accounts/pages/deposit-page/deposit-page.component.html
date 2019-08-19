@@ -18,7 +18,7 @@
             formControlName="mainSelect"
           >
             <ion-select-option [value]="amount" *ngFor="let amount of presetDepositAmounts">
-              {{ amount }}
+              {{ amount | transactionUnits: 2 }}
             </ion-select-option>
           </ion-select>
         </div>
@@ -29,8 +29,9 @@
             class="deposit__main-input"
             inputmode="tel"
             type="tel"
-            maxlength="6"
+            maxlength="7"
             #inputText
+            [value]="depositForm.get('mainInput').value | customCurrency"
             [autofocus]="true"
             placeholder="0"
             [ngStyle]="{ width: inputText.value ? inputText.value.length + 1 + 'ch' : '2ch' }"
@@ -69,7 +70,7 @@
           formControlName="selectedAccount"
         >
           <ion-select-option [value]="account" *ngFor="let account of destinationAccounts; trackBy: trackByAccountId">
-            {{ account.accountDisplayName }} (${{ account.balance }})
+            {{ account.accountDisplayName }} ({{ account.balance | transactionUnits: account.accountType }})
           </ion-select-option>
         </ion-select>
       </div>
@@ -88,14 +89,17 @@
           <ion-select-option
             [value]="account"
             *ngFor="let account of creditCardSourceAccounts; trackBy: trackByAccountId"
+            class="test-class"
           >
             {{ account.accountTender | creditCardType }} ending in {{ account.lastFour }}
           </ion-select-option>
           <ion-select-option value="billme" *ngIf="isBillMePaymentTypesEnabled">
-            <img src="assets/icon/bill-me.svg" alt="Biil Me icon" /> Bill Me</ion-select-option
+            <!-- <img src="assets/icon/bill-me.svg" alt="Biil Me icon" />  -->
+            Bill Me</ion-select-option
           >
           <ion-select-option value="newCreditCard">
-            <img src="assets/icon/add-card.svg" alt="Add Card icon" /> Add a Credit Card</ion-select-option
+            <!-- <img src="assets/icon/add-card.svg" alt="Add Card icon" /> -->
+            Add a Credit Card</ion-select-option
           >
         </ion-select>
       </div>
@@ -130,7 +134,14 @@
       type="submit"
       class="deposit__deposit-btn"
       [disabled]="!depositForm.valid"
-      [ngStyle]="{ marginTop: !isFreeFromDepositEnabled && !isCVVfieldShow ? '100%' : isFreeFromDepositEnabled && isCVVfieldShow ? '70%' : '85%' }"
+      [ngStyle]="{
+        marginTop:
+          !isFreeFromDepositEnabled && !isCVVfieldShow
+            ? '100%'
+            : isFreeFromDepositEnabled && isCVVfieldShow
+            ? '70%'
+            : '85%'
+      }"
       >Deposit</ion-button
     >
   </form>

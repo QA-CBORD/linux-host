@@ -55,7 +55,6 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     this.getAccounts();
 
     console.log(this.minMaxOfAmmounts);
-
     // fromEvent(this.inputText.nativeElement, 'keydown').subscribe(val => console.log(val));
   }
 
@@ -216,6 +215,8 @@ export class DepositPageComponent implements OnInit, OnDestroy {
 
     this.setFormValidators();
   }
+
+  private formatMainInput() {}
 
   private getAccounts() {
     const subscription = this.depositService.settings$
