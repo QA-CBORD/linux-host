@@ -108,6 +108,7 @@ export const ALL_ACCOUNTS = 'all_accounts';
 
 export enum TIME_PERIOD {
   pastSixMonth = 'past_six_month',
+  pastMonth = 'past_month',
 }
 
 export enum CONTENT_STRINGS {
