@@ -9,10 +9,10 @@ import { TransactionHistory } from '../models/transaction-history.model';
 import { TransactionService } from '../services/transaction.service';
 import { LoadingService } from '../../../core/service/loading/loading.service';
 import { ContentStringInfo } from 'src/app/core/model/content/content-string-info.model';
-import { SettingInfo } from 'src/app/core/model/configuration/setting-info.model';
 
 @Injectable()
-export class AccountsPageResolver implements Resolve<Observable<[ContentStringInfo[], ContentStringInfo[], TransactionHistory[], UserAccount[]]>> {
+export class AccountsPageResolver
+  implements Resolve<Observable<[ContentStringInfo[], ContentStringInfo[], TransactionHistory[], UserAccount[]]>> {
   constructor(
     private readonly accountsService: AccountsService,
     private readonly transactionService: TransactionService,

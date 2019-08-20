@@ -23,8 +23,11 @@ export class FilterMenuComponent implements OnInit {
   private filterState: FilterState = {};
   contentString: { [key: string]: string };
 
-  constructor(private readonly modalController: ModalController, private readonly accountsService: AccountsService,
-    private readonly transactionsService: TransactionService) {}
+  constructor(
+    private readonly modalController: ModalController,
+    private readonly accountsService: AccountsService,
+    private readonly transactionsService: TransactionService
+  ) {}
 
   ngOnInit() {
     this.setContentStrings();
@@ -59,11 +62,11 @@ export class FilterMenuComponent implements OnInit {
     this.filterState = { ...this.filterState, accountId: this.activeAccountId, period: this.activeTimeRange };
   }
 
-  get timePeriod(){
+  get timePeriod() {
     return TIME_PERIOD;
   }
 
-  get csNames(){
+  get csNames() {
     return CONTENT_STRINGS;
   }
 
@@ -74,14 +77,11 @@ export class FilterMenuComponent implements OnInit {
       CONTENT_STRINGS.filterLabel,
       CONTENT_STRINGS.doneBtn,
       CONTENT_STRINGS.pastSixMonthsLabel,
-      CONTENT_STRINGS.allAccountsLabel
+      CONTENT_STRINGS.allAccountsLabel,
     ];
-    
+
     this.contentString = this.transactionsService.getContentStrings(transactionStringNames);
-       
   }
-
-
 }
 
 export interface FilterState {

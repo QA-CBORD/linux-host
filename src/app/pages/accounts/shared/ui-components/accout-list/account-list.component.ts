@@ -28,8 +28,12 @@ export class AccountListComponent implements OnInit {
 
   @Output() onAccountInfoEmit = new EventEmitter<{ name: string; balance: number; accountType: number }>();
 
-  constructor(private readonly platform: Platform, private readonly router: Router, private readonly accountsService: AccountsService, private readonly transactionsService: TransactionService) {
-  }
+  constructor(
+    private readonly platform: Platform,
+    private readonly router: Router,
+    private readonly accountsService: AccountsService,
+    private readonly transactionsService: TransactionService
+  ) {}
 
   @Input()
   set accounts(value: UserAccount[]) {
@@ -73,7 +77,7 @@ export class AccountListComponent implements OnInit {
     this.tabletResolution = this.platform.width() > tabletResolution;
   }
 
-  get csNames(){
+  get csNames() {
     return CONTENT_STRINGS;
   }
 
@@ -82,13 +86,13 @@ export class AccountListComponent implements OnInit {
       CONTENT_STRINGS.allAccountsLabel,
       CONTENT_STRINGS.headerBackBtn,
       CONTENT_STRINGS.accountsLabel,
-      CONTENT_STRINGS.moreLabel
-    ];  
-    
-    const transactionStringNames: string[] = [
-      CONTENT_STRINGS.allAccountsLabel,
-    ]; 
-    this.contentString = {...this.accountsService.getContentStrings(accountStringNames), ...this.transactionsService.getContentStrings(transactionStringNames)};    
-  }
+      CONTENT_STRINGS.moreLabel,
+    ];
 
+    const transactionStringNames: string[] = [CONTENT_STRINGS.allAccountsLabel];
+    this.contentString = {
+      ...this.accountsService.getContentStrings(accountStringNames),
+      ...this.transactionsService.getContentStrings(transactionStringNames),
+    };
+  }
 }

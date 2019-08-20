@@ -19,6 +19,21 @@
     }
   }
 
+  &__empty-block-img {
+    display: block;
+    margin: 20px auto;
+    width: 250px;
+    height: 200px;
+  }
+
+  &__empty-block-message {
+    margin: 0;
+    text-align: center;
+    color: $color-night-rider;
+
+    @include font-nunito-semibold(16px);
+  }
+
   &__header {
     @include bp-grid-tablet {
       display: none;

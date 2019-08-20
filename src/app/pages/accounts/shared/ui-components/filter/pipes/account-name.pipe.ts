@@ -9,7 +9,10 @@ import { TransactionService } from 'src/app/pages/accounts/services/transaction.
   name: 'accountName',
 })
 export class AccountNamePipe implements PipeTransform {
-  constructor(private readonly accountsService: AccountsService, private readonly transactionsService: TransactionService) {
+  constructor(
+    private readonly accountsService: AccountsService,
+    private readonly transactionsService: TransactionService
+  ) {
     this.setContentStrings();
   }
   contentString: { [key: string]: string };
@@ -21,11 +24,8 @@ export class AccountNamePipe implements PipeTransform {
   }
 
   setContentStrings() {
-    const transactionStringNames: string[] = [
-      CONTENT_STRINGS.allAccountsLabel,
-    ];
+    const transactionStringNames: string[] = [CONTENT_STRINGS.allAccountsLabel];
 
     this.contentString = this.transactionsService.getContentStrings(transactionStringNames);
   }
-
 }

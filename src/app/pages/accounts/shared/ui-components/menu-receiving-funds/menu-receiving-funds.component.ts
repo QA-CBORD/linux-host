@@ -50,13 +50,13 @@ export class MenuReceivingFundsComponent implements OnInit {
       let displayName = '';
       switch (setting.name) {
         case SYSTEM_SETTINGS_CONFIG.enableAutoDeposits.name:
-            displayName = this.contentString[CONTENT_STRINGS.autoDepositBtn];
+          displayName = this.contentString[CONTENT_STRINGS.autoDepositBtn];
           break;
         case SYSTEM_SETTINGS_CONFIG.enableOnetimeDeposits.name:
-            displayName = this.contentString[CONTENT_STRINGS.autoDepositBtn];
+          displayName = this.contentString[CONTENT_STRINGS.autoDepositBtn];
           break;
         case SYSTEM_SETTINGS_CONFIG.guestDeposit.name:
-            displayName = this.contentString[CONTENT_STRINGS.autoDepositBtn];
+          displayName = this.contentString[CONTENT_STRINGS.autoDepositBtn];
           break;
       }
       return { name: setting.name, displayName: displayName, isShow: Boolean(Number(setting.value)) };

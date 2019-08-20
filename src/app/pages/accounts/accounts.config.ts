@@ -131,7 +131,7 @@ export enum CONTENT_STRINGS {
   filterDateLabel = 'label_filter_date-range',
   pastSixMonthsLabel = 'label_past-six-months',
   recentTransactionsLabel = 'label_recent-transactions',
-  infiniteScrollLoader = 'loader_infinite-scroll',  
+  infiniteScrollLoader = 'loader_infinite-scroll',
   moreLabel = 'label_more',
 }
 

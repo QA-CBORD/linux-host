@@ -6,13 +6,11 @@ import { CONTENT_STRINGS, TIME_PERIOD } from 'src/app/pages/accounts/accounts.co
   name: 'timeRange',
 })
 export class TimeRangePipe implements PipeTransform {
-
-  constructor() {
-  }
+  constructor() {}
 
   transform(value: DateUtilObject, contentString: any): string {
     console.log(contentString);
-    
+
     return this.localGetUniquePeriodName(value, contentString);
   }
 

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IonContent, IonInfiniteScroll, ToastController } from '@ionic/angular';
 
@@ -15,7 +15,7 @@ import { TransactionService } from '../../services/transaction.service';
   styleUrls: ['./account-details.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AccountDetailsComponent implements OnInit {
+export class AccountDetailsComponent implements OnInit, AfterViewInit {
   @ViewChild('infiniteScroll') private readonly lazy: IonInfiniteScroll;
   @ViewChild('content') private readonly content: IonContent;
   private currentAccountId: string;
@@ -25,14 +25,17 @@ export class AccountDetailsComponent implements OnInit {
   constructor(
     private readonly activatedRoute: ActivatedRoute,
     private readonly toastController: ToastController,
-    private readonly transactionsService: TransactionService,
+    private readonly transactionsService: TransactionService
   ) {}
 
   ngOnInit() {
     this.setContentStrings();
     this.currentAccountId = this.activatedRoute.snapshot.params.id;
     this.transactions$ = this.transactionsService.transactions$;
-    this.lazy.disabled = !this.isAbleToScrollByActivePeriod();
+  }
+
+  ngAfterViewInit() {
+    this.lazy && (this.lazy.disabled = !this.isAbleToScrollByActivePeriod());
   }
 
   getNextTransactionPackage() {
@@ -55,7 +58,7 @@ export class AccountDetailsComponent implements OnInit {
   async onFilterChanged(): Promise<void> {
     if (this.transactionsService.activeAccountId !== this.currentAccountId)
       this.currentAccountId = this.transactionsService.activeAccountId;
-    this.lazy.disabled = !this.isAbleToScrollByActivePeriod();
+    this.lazy && (this.lazy.disabled = !this.isAbleToScrollByActivePeriod());
     await this.content.scrollToTop(700);
   }
 
@@ -71,21 +74,18 @@ export class AccountDetailsComponent implements OnInit {
     toast.present();
   }
 
-  get csNames(){
+  get csNames() {
     return CONTENT_STRINGS;
   }
 
   setContentStrings() {
-
     const transactionStringNames: string[] = [
       CONTENT_STRINGS.headerTitle,
       CONTENT_STRINGS.headerBackBtn,
       CONTENT_STRINGS.recentTransactionsLabel,
-      CONTENT_STRINGS.infiniteScrollLoader
+      CONTENT_STRINGS.infiniteScrollLoader,
     ];
-    
-    this.contentString = this.transactionsService.getContentStrings(transactionStringNames);
-       
-  }
 
+    this.contentString = this.transactionsService.getContentStrings(transactionStringNames);
+  }
 }

@@ -23,15 +23,13 @@ export class AccountsPage implements OnInit {
   transactions$: Observable<TransactionHistory[]>;
   accountInfo: { name: string; balance: number; accountType: number };
   contentString: { [key: string]: string };
-  
 
   constructor(
     private readonly accountsService: AccountsService,
     private readonly platform: Platform,
     private readonly router: Router,
     private readonly transactionsService: TransactionService
-  ) {
-  }
+  ) {}
 
   ngOnInit() {
     this.setContentStrings();
@@ -84,7 +82,7 @@ export class AccountsPage implements OnInit {
     return this.platform.width() > tabletResolution;
   }
 
-  get csNames(){
+  get csNames() {
     return CONTENT_STRINGS;
   }
 
@@ -98,10 +96,12 @@ export class AccountsPage implements OnInit {
 
     const transactionStringNames: string[] = [
       CONTENT_STRINGS.recentTransactionsLabel,
-      CONTENT_STRINGS.allAccountsLabel
+      CONTENT_STRINGS.allAccountsLabel,
     ];
-    
-    this.contentString = {...this.accountsService.getContentStrings(accountStringNames), ...this.transactionsService.getContentStrings(transactionStringNames)};
-       
+
+    this.contentString = {
+      ...this.accountsService.getContentStrings(accountStringNames),
+      ...this.transactionsService.getContentStrings(transactionStringNames),
+    };
   }
 }
