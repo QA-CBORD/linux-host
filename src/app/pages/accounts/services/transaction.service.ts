@@ -62,10 +62,47 @@ export class TransactionService {
   private set _transactions(value: TransactionHistory[]) {
     this.transactionHistory = [...this.transactionHistory, ...value];
     this.transactionHistory = this.cleanDuplicateTransactions(this.transactionHistory);
+    this.transactionHistory.sort((a, b) => new Date(b.actualDate).getTime() - new Date(a.actualDate).getTime());
     this._transactions$.next([...this.transactionHistory]);
   }
 
-  getTransactionHistoryByQuery(query: QueryTransactionHistoryCriteria): Observable<Array<TransactionHistory>> {
+  getNextTransactionsByAccountId(id?: string): Observable<Array<TransactionHistory>> {
+    if (this.transactionResponse && !this.transactionResponse.totalCount) return this.transactions$;
+    this.setNextQueryObject(id);
+
+    return this.getTransactionHistoryByQuery(this.queryCriteria);
+  }
+
+  getRecentTransactions(id: string, period?: DateUtilObject, maxReturn?: number): Observable<TransactionHistory[]> {
+    period = period ? period : { name: TIME_PERIOD.pastSixMonth };
+    maxReturn = maxReturn ? maxReturn : 0;
+
+    const { startDate, endDate } = getTimeRangeOfDate(period);
+
+    this.setInitialQueryObject(id, startDate, endDate);
+    this.queryCriteria = { ...this.queryCriteria, maxReturn };
+    if (this.currentAccountId !== id) this.transactionHistory = [];
+    this.updateTransactionActiveState(id, period);
+
+    return this.getTransactionHistoryByQuery(this.queryCriteria);
+  }
+
+  getTransactionsByAccountId(accountId: string, period?: DateUtilObject): Observable<TransactionHistory[]> {
+    if (this.isDuplicateCall(accountId, period)) return this.transactions$;
+    this.transactionHistory = [];
+    const { startDate, endDate } = getTimeRangeOfDate(period);
+
+    if (period.name === TIME_PERIOD.pastSixMonth) {
+      this.setInitialQueryObject(accountId, startDate, endDate, this.lazyAmount);
+    } else {
+      this.setInitialQueryObject(accountId, startDate, endDate);
+    }
+    this.updateTransactionActiveState(accountId, period);
+
+    return this.getTransactionHistoryByQuery(this.queryCriteria);
+  }
+
+  private getTransactionHistoryByQuery(query: QueryTransactionHistoryCriteria): Observable<Array<TransactionHistory>> {
     return this.accountsService.settings$.pipe(
       map(settings => {
         const depositSetting = this.accountsService.getSettingByName(
@@ -82,38 +119,6 @@ export class TransactionService {
       ),
       tap(transactions => (this._transactions = transactions))
     );
-  }
-
-  getNextTransactionsByAccountId(id?: string): Observable<Array<TransactionHistory>> {
-    if (this.transactionResponse && !this.transactionResponse.totalCount) return this.transactions$;
-    this.setNextQueryObject(id);
-
-    return this.getTransactionHistoryByQuery(this.queryCriteria);
-  }
-
-  getRecentTransactions(id: string, period?: DateUtilObject, maxReturn?: number): Observable<TransactionHistory[]> {
-    period = period ? period : { name: TIME_PERIOD.pastMonth };
-    maxReturn = maxReturn ? maxReturn : 0;
-
-    const { startDate, endDate } = getTimeRangeOfDate(period);
-
-    this.setInitialQueryObject(id, startDate, endDate);
-    this.queryCriteria = { ...this.queryCriteria, maxReturn };
-    if (this.currentAccountId !== id) this.transactionHistory = [];
-    this.updateTransactionActiveState(id, period);
-
-    return this.getTransactionHistoryByQuery(this.queryCriteria);
-  }
-
-  getTransactionsByAccountId(accountId: string, period?: DateUtilObject): Observable<TransactionHistory[]> {
-    if (this.isDuplicateCall(accountId, period)) return this.transactions$;
-
-    this.transactionHistory = [];
-    const { startDate, endDate } = getTimeRangeOfDate(period);
-    this.setInitialQueryObject(accountId, startDate, endDate);
-    this.updateTransactionActiveState(accountId, period);
-
-    return this.getTransactionHistoryByQuery(this.queryCriteria);
   }
 
   private updateTransactionActiveState(id: string, period: DateUtilObject) {
@@ -158,9 +163,14 @@ export class TransactionService {
     return { startDate, endDate };
   }
 
-  private setInitialQueryObject(accountId: string = null, startDate: string = null, endDate: string = null) {
+  private setInitialQueryObject(
+    accountId: string = null,
+    startDate: string = null,
+    endDate: string = null,
+    maxReturn: number = 0
+  ) {
     this.queryCriteria = {
-      maxReturn: 0,
+      maxReturn,
       startingReturnRow: 0,
       startDate,
       endDate,

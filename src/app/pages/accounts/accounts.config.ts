@@ -107,7 +107,6 @@ export enum PAYMENT_TYPE {
 export const ALL_ACCOUNTS = 'all_accounts';
 
 export enum TIME_PERIOD {
-  pastMonth = 'past_month',
   pastSixMonth = 'past_six_month',
 }
 

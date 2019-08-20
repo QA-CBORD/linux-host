@@ -5,6 +5,7 @@ import { take, tap, switchMap } from 'rxjs/operators';
 
 import { TransactionService } from '../services/transaction.service';
 import { LoadingService } from '../../../core/service/loading/loading.service';
+import { TIME_PERIOD } from '../accounts.config';
 
 @Injectable()
 export class TransactionsResolver implements Resolve<Promise<any>> {
@@ -16,10 +17,9 @@ export class TransactionsResolver implements Resolve<Promise<any>> {
   async resolve(route: ActivatedRouteSnapshot): Promise<any> {
     await this.loadingService.showSpinner();
     return new Promise((resolve, reject) => {
-      this.transactionService
-        .initContentStringsList()
+      this.transactionService.initContentStringsList()
         .pipe(
-          switchMap(() => this.transactionService.getRecentTransactions(route.params.id)),
+            switchMap(() => this.transactionService.getRecentTransactions(route.params.id, { name: TIME_PERIOD.pastSixMonth }, 20)),
           tap(
             async () => {
               resolve();
