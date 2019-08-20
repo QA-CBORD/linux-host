@@ -59,7 +59,7 @@ export class FilterComponent implements OnInit {
   }
 
   expandTimeRange(arr: DateUtilObject[]): DateUtilObject[] {
-    arr.unshift({ name: TIME_PERIOD.pastMonth });
+    arr.unshift({ name: TIME_PERIOD.pastSixMonth });
     return arr;
   }
 

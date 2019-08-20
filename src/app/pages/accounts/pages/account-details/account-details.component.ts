@@ -58,7 +58,7 @@ export class AccountDetailsComponent implements OnInit {
   }
 
   private isAbleToScrollByActivePeriod(): boolean {
-    return this.transactionService.activeTimeRange.name === TIME_PERIOD.pastMonth;
+    return this.transactionService.activeTimeRange.name === TIME_PERIOD.pastSixMonth;
   }
 
   private async onErrorRetrieveTransactions(message: string) {
