@@ -1,5 +1,6 @@
+import { Value } from './../../../../app.global';
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, AbstractControl, ValidatorFn } from '@angular/forms';
 import { PopoverController, ModalController, ToastController } from '@ionic/angular';
 import { DepositService } from '../../services/deposit.service';
 import { tap, map, switchMap, take } from 'rxjs/operators';
@@ -10,6 +11,7 @@ import { UserAccount } from '../../../../core/model/account/account.model';
 import { ConfirmDepositPopoverComponent } from '../../shared/ui-components/confirm-deposit-popover/confirm-deposit-popover.component';
 import { DepositModalComponent } from '../../shared/ui-components/deposit-modal/deposit-modal.component';
 import { BUTTON_TYPE } from 'src/app/core/utils/buttons.config';
+import { amountRangeValidator } from './amount-range.validator';
 
 @Component({
   selector: 'st-deposit-page',
@@ -46,7 +48,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     private readonly popoverCtrl: PopoverController,
     private readonly modalController: ModalController,
     private readonly toastController: ToastController
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.depositService.settings$.subscribe(depositSettings => (this.depositSettings = depositSettings));
@@ -128,11 +130,22 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     }
   }
 
+  formatInput(event) {
+    const { value } = event.target;
+    const index = value.indexOf('.');
+
+    if (index !== -1 && value.slice(index + 1).length > 1) {
+      this.depositForm.get('mainInput').setValue(value.slice(0, index + 2));
+    }
+  }
+
   onFormSubmit() {
     const { sourceAccount, selectedAccount, mainInput, mainSelect } = this.depositForm.value;
-    const amount = mainInput || mainSelect;
+    let amount = mainInput || mainSelect;
     const isBillme: boolean = sourceAccount === 'billme';
     let fromAccount: Observable<UserAccount>;
+    const regex = /[,\s]/g;
+    amount = amount.replace(regex, '');
 
     if (isBillme) {
       fromAccount = this.sourceAccForBillmeDeposit(selectedAccount, this.billmeMappingArr);
@@ -175,8 +188,10 @@ export class DepositPageComponent implements OnInit, OnDestroy {
       let minMaxValidators = [];
       if (sourceAcc === 'billme') {
         minMaxValidators = [
-          Validators.max(+this.minMaxOfAmmounts.maxAmountbillme),
-          Validators.min(+this.minMaxOfAmmounts.minAmountbillme),
+          amountRangeValidator(
+            +this.minMaxOfAmmounts.minAmountbillme,
+            +this.minMaxOfAmmounts.maxAmountbillme
+          )
         ];
         this.depositForm.controls['fromAccountCvv'].setErrors(null);
         this.depositForm.controls['fromAccountCvv'].clearValidators();
@@ -184,8 +199,10 @@ export class DepositPageComponent implements OnInit, OnDestroy {
         console.log('new credit card');
       } else {
         minMaxValidators = [
-          Validators.max(+this.minMaxOfAmmounts.maxAmountOneTime),
-          Validators.min(+this.minMaxOfAmmounts.minAmountOneTime),
+          amountRangeValidator(
+            +this.minMaxOfAmmounts.minAmountOneTime,
+            +this.minMaxOfAmmounts.maxAmountOneTime
+          )
         ];
         this.depositForm.controls['fromAccountCvv'].setValidators([Validators.required]);
       }
@@ -216,7 +233,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     this.setFormValidators();
   }
 
-  private formatMainInput() {}
+  private formatMainInput() { }
 
   private getAccounts() {
     const subscription = this.depositService.settings$

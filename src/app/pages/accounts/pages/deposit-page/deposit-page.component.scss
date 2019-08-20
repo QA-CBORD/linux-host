@@ -17,6 +17,10 @@
     color: $color-dim-gray;
 
     @include font-nunito-regular(80px);
+
+    &--decrease-font{
+    @include font-nunito-regular(60px);
+    }
   }
 
   &__main-input {
