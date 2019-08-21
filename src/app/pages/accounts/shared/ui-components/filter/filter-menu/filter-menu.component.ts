@@ -6,8 +6,8 @@ import { Observable } from 'rxjs';
 import { DateUtilObject, getUniquePeriodName } from '../date-util';
 import { ALL_ACCOUNTS, CONTENT_STRINGS, TIME_PERIOD } from '../../../../accounts.config';
 import { UserAccount } from 'src/app/core/model/account/account.model';
-import { AccountsService } from './../../../../services/accounts.service';
-import { TransactionService } from './../../../../services/transaction.service';
+import { AccountsService } from '../../../../services/accounts.service';
+import { TransactionService } from '../../../../services/transaction.service';
 
 @Component({
   selector: 'st-filter-menu',

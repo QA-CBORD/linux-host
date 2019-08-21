@@ -33,7 +33,7 @@ export class AccountsPage implements OnInit {
 
   ngOnInit() {
     this.setContentStrings();
-    this.accounts$ = this.getAccounts();
+    this.accounts$ = this.accountsService.getAccountsFilteredByTenders();
     this.transactions$ = this.transactionsService.transactions$.pipe(map(arr => arr.slice(0, 4)));
 
     this.defineInitRoute();
@@ -47,21 +47,6 @@ export class AccountsPage implements OnInit {
     this.goToAllAccounts();
   }
 
-  private getAccounts(): Observable<UserAccount[]> {
-    return this.accountsService.settings$.pipe(
-      map(settings => {
-        const depositSetting = this.accountsService.getSettingByName(
-          settings,
-          SYSTEM_SETTINGS_CONFIG.displayTenders.name
-        );
-        return this.accountsService.transformStringToArray(depositSetting.value);
-      }),
-      switchMap((tendersId: Array<string>) =>
-        this.accountsService.accounts$.pipe(map(accounts => this.filterAccountsByTenders(tendersId, accounts)))
-      )
-    );
-  }
-
   goToAllAccounts() {
     const nextPage = this.defineResolution() ? LOCAL_ROUTING.accountDetails : LOCAL_ROUTING.accountDetailsM;
 
@@ -70,10 +55,6 @@ export class AccountsPage implements OnInit {
 
   onAccountInfo(event) {
     this.accountInfo = event;
-  }
-
-  private filterAccountsByTenders(tendersId: Array<string>, accounts: Array<UserAccount>): Array<UserAccount> {
-    return accounts.filter(({ accountTender: tId }) => tendersId.includes(tId));
   }
 
   private defineResolution() {

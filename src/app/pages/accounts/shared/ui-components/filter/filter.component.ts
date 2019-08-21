@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { OverlayEventDetail } from '@ionic/core';
 import { ModalController } from '@ionic/angular';
 
 import { take, tap } from 'rxjs/operators';
@@ -80,7 +79,7 @@ export class FilterComponent implements OnInit {
       component: FilterMenuComponent,
       animated: true,
       componentProps: {
-        accounts: this.accountsService.accounts$,
+        accounts: this.accountsService.getAccountsFilteredByTenders(),
         periods: this.expandTimeRange(getAmountOfMonthFromPeriod(6)),
         activeAccountId: accId,
         activeTimeRange: timeRange,

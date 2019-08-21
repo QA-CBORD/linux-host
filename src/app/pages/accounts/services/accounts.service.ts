@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AccountsApiService } from './accounts.api.service';
 
 import { BehaviorSubject, Observable, zip, combineLatest } from 'rxjs';
-import { map, tap, take } from 'rxjs/operators';
+import { map, tap, take, switchMap } from 'rxjs/operators';
 
 import { ContentStringRequest } from '../../../core/model/content/content-string-request.model';
 import { CommerceApiService } from '../../../core/service/commerce/commerce-api.service';
@@ -14,7 +14,7 @@ import {
   PAYMENT_SYSTEM_TYPE,
   ContentStringsParamsAccounts,
   GenericContentStringsParams,
-  ContentStringsParamsTransactions,
+  SYSTEM_SETTINGS_CONFIG,
 } from '../accounts.config';
 
 @Injectable()
@@ -100,6 +100,22 @@ export class AccountsService {
     const result = JSON.parse(value);
 
     return Array.isArray(result) ? result : [];
+  }
+
+  getAccountsFilteredByTenders(): Observable<UserAccount[]> {
+    return this.settings$.pipe(
+      map(settings => {
+        const depositSetting = this.getSettingByName(settings, SYSTEM_SETTINGS_CONFIG.displayTenders.name);
+        return this.transformStringToArray(depositSetting.value);
+      }),
+      switchMap((tendersId: Array<string>) =>
+        this.accounts$.pipe(map(accounts => this.filterAccountsByTenders(tendersId, accounts)))
+      )
+    );
+  }
+
+  private filterAccountsByTenders(tendersId: Array<string>, accounts: Array<UserAccount>): Array<UserAccount> {
+    return accounts.filter(({ accountTender: tId }) => tendersId.includes(tId));
   }
 
   private filterAccountsByPaymentSystem(accounts: UserAccount[]): UserAccount[] {

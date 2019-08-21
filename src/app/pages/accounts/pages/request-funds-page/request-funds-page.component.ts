@@ -12,7 +12,6 @@ import { UserService } from '../../../../core/service/user-service/user.service'
 import { LoadingService } from '../../../../core/service/loading/loading.service';
 import { PopoverComponent } from './popover/popover.component';
 import { NAVIGATE } from '../../../../app.global';
-import { EMAIL_REGEXP } from '../../../../core/utils/general-helpers';
 
 @Component({
   selector: 'st-request-funds-page',
