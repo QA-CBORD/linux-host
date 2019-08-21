@@ -31,6 +31,8 @@ export class ListItemComponent {
     private readonly rewardsService: RewardsService,
     private readonly loadingService: LoadingService
   ) {
+    console.log('Component LI');
+    
     this.initContentStrings();
   }
 

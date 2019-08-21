@@ -150,6 +150,8 @@ export class RewardsService {
       map(([res, res0]) => {
         const finalArray = [...res, ...res0];
         this.content = finalArray.reduce((init, elem) => ({ ...init, [elem.name]: elem.value }), {});
+        console.log(finalArray);
+        
         return finalArray;
       }),
       take(1)
