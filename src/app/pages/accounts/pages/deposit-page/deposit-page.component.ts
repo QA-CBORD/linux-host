@@ -1,4 +1,3 @@
-import { Value } from './../../../../app.global';
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl, ValidatorFn } from '@angular/forms';
 import { PopoverController, ModalController, ToastController } from '@ionic/angular';
@@ -12,6 +11,8 @@ import { ConfirmDepositPopoverComponent } from '../../shared/ui-components/confi
 import { DepositModalComponent } from '../../shared/ui-components/deposit-modal/deposit-modal.component';
 import { BUTTON_TYPE } from 'src/app/core/utils/buttons.config';
 import { amountRangeValidator } from './amount-range.validator';
+import { Router } from '@angular/router';
+import { NAVIGATE } from 'src/app/app.global';
 
 @Component({
   selector: 'st-deposit-page',
@@ -47,8 +48,9 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private readonly popoverCtrl: PopoverController,
     private readonly modalController: ModalController,
-    private readonly toastController: ToastController
-  ) { }
+    private readonly toastController: ToastController,
+    private readonly router: Router
+  ) {}
 
   ngOnInit() {
     this.depositService.settings$.subscribe(depositSettings => (this.depositSettings = depositSettings));
@@ -56,7 +58,6 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     this.initForm();
     this.getAccounts();
 
-    console.log(this.minMaxOfAmmounts);
     // fromEvent(this.inputText.nativeElement, 'keydown').subscribe(val => console.log(val));
   }
 
@@ -188,10 +189,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
       let minMaxValidators = [];
       if (sourceAcc === 'billme') {
         minMaxValidators = [
-          amountRangeValidator(
-            +this.minMaxOfAmmounts.minAmountbillme,
-            +this.minMaxOfAmmounts.maxAmountbillme
-          )
+          amountRangeValidator(+this.minMaxOfAmmounts.minAmountbillme, +this.minMaxOfAmmounts.maxAmountbillme),
         ];
         this.depositForm.controls['fromAccountCvv'].setErrors(null);
         this.depositForm.controls['fromAccountCvv'].clearValidators();
@@ -199,10 +197,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
         console.log('new credit card');
       } else {
         minMaxValidators = [
-          amountRangeValidator(
-            +this.minMaxOfAmmounts.minAmountOneTime,
-            +this.minMaxOfAmmounts.maxAmountOneTime
-          )
+          amountRangeValidator(+this.minMaxOfAmmounts.minAmountOneTime, +this.minMaxOfAmmounts.maxAmountOneTime),
         ];
         this.depositForm.controls['fromAccountCvv'].setValidators([Validators.required]);
       }
@@ -232,8 +227,6 @@ export class DepositPageComponent implements OnInit, OnDestroy {
 
     this.setFormValidators();
   }
-
-  private formatMainInput() { }
 
   private getAccounts() {
     const subscription = this.depositService.settings$
@@ -311,7 +304,10 @@ export class DepositPageComponent implements OnInit, OnDestroy {
         data,
       },
     });
-    modal.onDidDismiss().then(() => this.depositForm.reset());
+    modal.onDidDismiss().then(() => {
+      this.depositForm.reset();
+      this.router.navigate([NAVIGATE.accounts], { skipLocationChange: true });
+    });
 
     await modal.present();
   }

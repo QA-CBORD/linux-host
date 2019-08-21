@@ -15,9 +15,18 @@ export class TransactionUnitsPipe implements PipeTransform {
     }
 
     return type === ACCOUNT_TYPES.decliningBalance || type === ACCOUNT_TYPES.charge
-      ? `$${value.toFixed(2)}`
+      ? `$${this.formatInputData(value)}`
       : type === ACCOUNT_TYPES.meals
       ? `${value} Meals`
       : value.toString();
+  }
+
+  private formatInputData(value): string {
+    const withDecimal = value.toFixed(2);
+    const firstPartIndex = withDecimal.indexOf('.');
+    const first = withDecimal.slice(0, firstPartIndex);
+    const finalFirst = parseFloat(first).toLocaleString('en-US');
+
+    return finalFirst + withDecimal.slice(firstPartIndex);
   }
 }

@@ -18,8 +18,8 @@
 
     @include font-nunito-regular(80px);
 
-    &--decrease-font{
-    @include font-nunito-regular(60px);
+    &--decrease-font {
+      @include font-nunito-regular(60px);
     }
   }
 
@@ -27,6 +27,7 @@
     text-align: center;
     width: 70%;
     margin: 0 auto;
+    transition: font-size 0.3s ease 0s;
 
     &--focus {
       color: #000;
