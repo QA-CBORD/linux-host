@@ -122,7 +122,6 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   onFormSubmit() {
     const { sourceAccount, selectedAccount, mainInput } = this.depositForm.value;
     let fromAccount: Observable<UserAccount>;
-    console.log(this.depositForm);
 
     if (sourceAccount === 'billme') {
       console.log('billme');
