@@ -120,6 +120,7 @@ export class AppComponent implements OnDestroy {
     });
 
     Promise.all([sessionId, userInfo, institutionId, destinationPage]).then(() => {
+      this.cleanUrlAfterGetInfo();
       this.handlePageNavigation();
     }).catch((error) => {
       console.error(error);
