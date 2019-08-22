@@ -39,3 +39,15 @@
   url('/assets/fonts/nunito-v10-latin-800.ttf') format('truetype'), /* Safari, Android, iOS */
   url('/assets/fonts/nunito-v10-latin-800.svg#Nunito') format('svg'); /* Legacy iOS */
 }
+
+@font-face {
+  font-family: 'fontello';
+  src: url('/assets/font-icons/fontello.eot?62378720');
+  src: url('/assets/font-icons/fontello.eot?62378720#iefix') format('embedded-opentype'),
+       url('/assets/font-icons/fontello.woff2?62378720') format('woff2'),
+       url('/assets/font-icons/fontello.woff?62378720') format('woff'),
+       url('/assets/font-icons/fontello.ttf?62378720') format('truetype'),
+       url('/assets/font-icons/fontello.svg?62378720#fontello') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}

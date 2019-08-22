@@ -7,7 +7,7 @@ import { AbstractControl } from '@angular/forms';
 })
 export class CustomCurrencyPipe implements PipeTransform {
   transform({ value }: AbstractControl): string {
-    if (!value || value === null) {
+    if (!value || value === null || value.length <= 1) {
       return value;
     }
     const regex = /[,\s]/g;

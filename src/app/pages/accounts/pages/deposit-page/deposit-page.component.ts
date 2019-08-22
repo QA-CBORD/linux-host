@@ -1,5 +1,5 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, AbstractControl, ValidatorFn } from '@angular/forms';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PopoverController, ModalController, ToastController } from '@ionic/angular';
 import { DepositService } from '../../services/deposit.service';
 import { tap, map, switchMap, take } from 'rxjs/operators';
@@ -13,6 +13,7 @@ import { BUTTON_TYPE } from 'src/app/core/utils/buttons.config';
 import { amountRangeValidator } from './amount-range.validator';
 import { Router } from '@angular/router';
 import { NAVIGATE } from 'src/app/app.global';
+import { LoadingService } from 'src/app/core/service/loading/loading.service';
 
 @Component({
   selector: 'st-deposit-page',
@@ -41,15 +42,14 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     cssClass: 'custom-deposit-actionSheet custom-deposit-actionSheet-last-btn',
   };
 
-  @ViewChild('inputText') inputText;
-
   constructor(
     private readonly depositService: DepositService,
     private fb: FormBuilder,
     private readonly popoverCtrl: PopoverController,
     private readonly modalController: ModalController,
     private readonly toastController: ToastController,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly loadingService: LoadingService
   ) {}
 
   ngOnInit() {
@@ -57,8 +57,6 @@ export class DepositPageComponent implements OnInit, OnDestroy {
 
     this.initForm();
     this.getAccounts();
-
-    // fromEvent(this.inputText.nativeElement, 'keydown').subscribe(val => console.log(val));
   }
 
   ngOnDestroy() {
@@ -131,9 +129,21 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     }
   }
 
+  get marginButton() {
+    return !this.isFreeFromDepositEnabled && !this.isCVVfieldShow
+      ? '100%'
+      : this.isFreeFromDepositEnabled && this.isCVVfieldShow
+      ? '70%'
+      : '85%';
+  }
+
   formatInput(event) {
     const { value } = event.target;
     const index = value.indexOf('.');
+    const regex = /^[0-9.,]+$/;
+    if (!regex.test(value)) {
+      this.depositForm.get('mainInput').setValue(value.slice(0, value.length - 1));
+    }
 
     if (index !== -1 && value.slice(index + 1).length > 1) {
       this.depositForm.get('mainInput').setValue(value.slice(0, index + 2));
@@ -142,10 +152,10 @@ export class DepositPageComponent implements OnInit, OnDestroy {
 
   onFormSubmit() {
     const { sourceAccount, selectedAccount, mainInput, mainSelect } = this.depositForm.value;
-    let amount = mainInput || mainSelect;
     const isBillme: boolean = sourceAccount === 'billme';
-    let fromAccount: Observable<UserAccount>;
     const regex = /[,\s]/g;
+    let fromAccount: Observable<UserAccount>;
+    let amount = mainInput || mainSelect;
     amount = amount.replace(regex, '');
 
     if (isBillme) {
@@ -168,15 +178,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
               fee = this.depositService.calculateDepositFee(sourceAcc.id, selectedAccount.id, amount);
             }
 
-            return fee.pipe(
-              map(valueFee => ({
-                fee: valueFee,
-                sourceAcc,
-                selectedAccount,
-                amount,
-                billme: isBillme,
-              }))
-            );
+            return fee.pipe(map(valueFee => ({ fee: valueFee, sourceAcc, selectedAccount, amount, billme: isBillme })));
           }
         )
       )
@@ -199,21 +201,21 @@ export class DepositPageComponent implements OnInit, OnDestroy {
         minMaxValidators = [
           amountRangeValidator(+this.minMaxOfAmmounts.minAmountOneTime, +this.minMaxOfAmmounts.maxAmountOneTime),
         ];
-        this.depositForm.controls['fromAccountCvv'].setValidators([Validators.required]);
+        this.depositForm.controls['fromAccountCvv'].setValidators([
+          Validators.required,
+          Validators.minLength(3),
+          Validators.pattern('[0-9.-]*'),
+        ]);
       }
 
-      this.depositForm.controls['mainInput'].setValidators([Validators.required, ...minMaxValidators]);
+      this.depositForm.controls['mainInput'].setValidators([
+        Validators.required,
+        ...minMaxValidators,
+        Validators.pattern('[0-9.,]+'),
+      ]);
     } else {
       this.depositForm.controls['mainSelect'].setValidators([Validators.required]);
     }
-  }
-
-  onInputKeydown(event) {
-    // if (target.value.length >= 5) {
-    //   console.log(this.depositForm.get('mainInput'));
-    //   this.isMaxCharLength = true;
-    // }
-    // this.isMaxCharLength = false;
   }
 
   private initForm() {
@@ -252,19 +254,16 @@ export class DepositPageComponent implements OnInit, OnDestroy {
         )
       )
       .subscribe(() => {
-        this.presetDepositAmounts = this.presetDepositAmountsCreditCard;
-        this.destinationAccounts = this.creditCardDestinationAccounts;
+        this.defineDestAccounts('creditcard');
       });
     this.sourceSubscription.add(subscription);
   }
 
   onPaymentMethodChanged({ target }) {
     if (target.value === 'billme') {
-      this.destinationAccounts = this.billmeDestinationAccounts;
-      this.presetDepositAmounts = this.presetDepositAmountsBillme;
+      this.defineDestAccounts(target.value);
     } else {
-      this.destinationAccounts = this.creditCardDestinationAccounts;
-      this.presetDepositAmounts = this.presetDepositAmountsCreditCard;
+      this.defineDestAccounts(target.value);
     }
 
     this.depositForm.controls['mainSelect'].reset();
@@ -283,17 +282,31 @@ export class DepositPageComponent implements OnInit, OnDestroy {
 
     popover.onDidDismiss().then(({ role }) => {
       if (role === BUTTON_TYPE.OKAY) {
+        this.loadingService.showSpinner();
         this.depositService
           .deposit(data.sourceAcc.id, data.selectedAccount.id, data.amount, this.fromAccountCvv.value)
           .pipe(take(1))
           .subscribe(
-            () => this.finalizeDepositModal(data),
+            () => {
+              this.loadingService.closeSpinner();
+              this.finalizeDepositModal(data);
+            },
             () => this.onErrorRetrieve('Your information could not be verified.')
           );
       }
     });
 
     return await popover.present();
+  }
+
+  private defineDestAccounts(target) {
+    if (target === 'billme') {
+      this.destinationAccounts = this.billmeDestinationAccounts;
+      this.presetDepositAmounts = this.presetDepositAmountsBillme;
+    } else {
+      this.destinationAccounts = this.creditCardDestinationAccounts;
+      this.presetDepositAmounts = this.presetDepositAmountsCreditCard;
+    }
   }
 
   private async finalizeDepositModal(data): Promise<void> {
