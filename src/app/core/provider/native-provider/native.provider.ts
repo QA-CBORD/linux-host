@@ -1,7 +1,5 @@
-import { Platform } from '@ionic/angular';
 import { Injectable } from '@angular/core';
 
-declare var NativeInterface: any;
 declare var androidInterface: any;
 declare var webkit: any;
 
@@ -10,13 +8,17 @@ export enum NativeData {
   DESTINATION_PAGE = 'getDestinationPage',
   INSTITUTION_ID = 'getInstitutionId',
   USER_INFO = 'getUserInfo',
-  USER_PHOTO = 'getAcceptedUserPhoto'
+  USER_PHOTO = 'getAcceptedUserPhoto',
 }
 
 @Injectable({
   providedIn: 'root',
 })
-export class NativeProvider {  
+export class NativeProvider {
+
+  constructor() {
+    window['NativeInterface'] = this;
+  }
 
   // object for storing references to our promise-objects
   private promises = {};
@@ -26,7 +28,7 @@ export class NativeProvider {
   }
 
   private getNativeData(methodName: string): Promise<any> {
-    const promise = new Promise(function(resolve, reject) {
+    const promise = new Promise((resolve, reject) => {
       // we generate a unique id to reference the promise later
       // from native function
       const promiseId = this.generateUUID();
@@ -52,13 +54,13 @@ export class NativeProvider {
     return uuid;
   }
 
-  private resolvePromise(promiseId, data, error?) {
+  resolvePromise(promiseId, data, error?) {
     if (error || !data) {
       this.promises[promiseId].reject(data);
     } else {
       this.promises[promiseId].resolve(data);
     }
-    
+
     // remove reference to stored promise
     delete this.promises[promiseId];
   }

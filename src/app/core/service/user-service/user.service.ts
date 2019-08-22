@@ -1,7 +1,7 @@
 import { NativeProvider, NativeData } from './../../provider/native-provider/native.provider';
 import { Injectable } from '@angular/core';
 
-import { map, switchMap } from 'rxjs/operators';
+import { map, switchMap, catchError } from 'rxjs/operators';
 import { BehaviorSubject, Observable, of, from } from 'rxjs';
 
 import { BaseService } from '../base-service/base.service';
@@ -58,17 +58,22 @@ export class UserService extends BaseService {
   getAcceptedPhoto(): Observable<UserPhotoInfo> {
     if (this.userPhoto) return of(this.userPhoto);
 
+    const userPhotoObservable: Observable<UserPhotoInfo> = this.getUser().pipe(
+      switchMap(({ id }: UserInfo) => this.getPhotoListByUserId(id)),
+      map(({ response: { list } }) => this.getPhotoIdByStatus(list)),
+      switchMap(({ id }: UserPhotoInfo) => this.getPhotoById(id)),
+      map(({ response }) => (this.userPhoto = response))
+    );
+
     return from(this.nativeProvider.getData(NativeData.USER_PHOTO)).pipe(
+      catchError(e => {
+        return userPhotoObservable;
+      }),
       switchMap(photoData => {
         if (photoData) {
           return of(photoData);
         } else {
-          return this.getUser().pipe(
-            switchMap(({ id }: UserInfo) => this.getPhotoListByUserId(id)),
-            map(({ response: { list } }) => this.getPhotoIdByStatus(list)),
-            switchMap(({ id }: UserPhotoInfo) => this.getPhotoById(id)),
-            map(({ response }) => (this.userPhoto = response))
-          );
+          return userPhotoObservable;
         }
       })
     );
