@@ -99,6 +99,8 @@ export class AppComponent implements OnDestroy {
   useJavaScriptInterface() {
     console.log('JS interface used');
 
+    throw new Error('Test Error to make interface fail');
+
     const sessionIdPromise: Promise<string> = this.nativeProvider.getData(NativeData.SESSION_ID);
     const userInfoPromise: Promise<UserInfo> = this.nativeProvider.getData(NativeData.USER_INFO);
     const institutionIdPromise: Promise<string> = this.nativeProvider.getData(NativeData.INSTITUTION_ID);
@@ -110,8 +112,7 @@ export class AppComponent implements OnDestroy {
       this.userService.setUserData(values[1]);
       DataCache.setInstitutionId(values[2]);
       this.destinationPage = <any>values[3];
-      console.log(values);
-      this.tHandlePageNavigation();
+      this.handlePageNavigation();
     });
 
   }
@@ -218,15 +219,7 @@ export class AppComponent implements OnDestroy {
       );
   }
 
-private tHandlePageNavigation(){
-  console.log(location);
-  
-  this.router.navigate([''], { skipLocationChange: true }).then(v => {
-    this.handlePageNavigation();
-  })
-}
-
-  private handlePageNavigation() {    
+  private handlePageNavigation() {
     this.router.navigate([this.destinationPage], { skipLocationChange: true });
   }
 
