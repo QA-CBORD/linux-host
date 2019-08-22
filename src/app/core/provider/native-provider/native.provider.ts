@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 
 declare var androidInterface: any;
-declare var webkit: any;
 
 export enum NativeData {
   SESSION_ID = 'getSessionId',
@@ -66,8 +65,8 @@ export class NativeProvider {
   }
 
   private postAppMessage(msg) {
-    if (webkit && webkit.messageHandlers.JSListener) {
-      webkit.messageHandlers.JSListener.postMessage(msg);
+    if (window['webkit'] && window['webkit'].messageHandlers.JSListener) {
+      window['webkit'].messageHandlers.JSListener.postMessage(msg);
     } else if (androidInterface) {
       this.resolvePromise(msg.promiseId, androidInterface[msg.methodName]());
     } else {
