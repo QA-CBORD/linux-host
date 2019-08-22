@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { popoverConfig } from 'src/app/core/model/popover/popover.model';
+import { PopoverConfig } from 'src/app/core/model/popover/popover.model';
 import { buttons } from 'src/app/core/utils/buttons.config';
 
 @Component({
@@ -10,7 +10,7 @@ import { buttons } from 'src/app/core/utils/buttons.config';
 export class ConfirmDepositPopoverComponent implements OnInit {
   @Input() data: any;
 
-  popoverConfig: popoverConfig;
+  popoverConfig: PopoverConfig;
   contentString: { [key: string]: string };
 
   constructor() { }
