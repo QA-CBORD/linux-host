@@ -74,7 +74,7 @@ export class TestProvider {
     };
 
     return this.authService
-      .authenticateUser(gold7_Yarik)
+      .authenticateUser(gold7)
       .pipe(tap(newSessionId => DataCache.setSessionId(newSessionId)));
   }
 }
