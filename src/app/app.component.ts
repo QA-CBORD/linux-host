@@ -20,6 +20,8 @@ import { StGlobalPopoverComponent } from './shared/ui-components/st-global-popov
 
 import { UserInfo } from './core/model/user';
 
+declare var androidInterface: any;
+
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -99,22 +101,41 @@ export class AppComponent implements OnDestroy {
   useJavaScriptInterface() {
     console.log('JS interface used');
 
-    throw new Error('Test Error to make interface fail');
+    if (this.platform.platforms().includes('android')) {
+      if (!androidInterface) {
+        throw new Error('No native interface, retrieve info normally');
+      }
 
-    const sessionIdPromise: Promise<string> = this.nativeProvider.getData(NativeData.SESSION_ID);
-    const userInfoPromise: Promise<UserInfo> = this.nativeProvider.getData(NativeData.USER_INFO);
-    const institutionIdPromise: Promise<string> = this.nativeProvider.getData(NativeData.INSTITUTION_ID);
-    const destinationPagePromise: Promise<string> = this.nativeProvider.getData(NativeData.DESTINATION_PAGE);
+      const sessionId: string = androidInterface.getSessionId() || null;
+      const userInfo: UserInfo = JSON.parse(androidInterface.getUserInfo()) || null;
+      const institutionId: string = androidInterface.getInstitutionId() || null;
+      this.destinationPage = androidInterface.getDestinationPage() || null;
 
-    Promise.all([sessionIdPromise, userInfoPromise, institutionIdPromise, destinationPagePromise]).then(values => {
-      DataCache.setSessionId(values[0]);
-      DataCache.setUserInfo(values[1]);
-      this.userService.setUserData(values[1]);
-      DataCache.setInstitutionId(values[2]);
-      this.destinationPage = <any>values[3];
+      if (!sessionId || !userInfo || !institutionId || !this.destinationPage) {
+        throw new Error('Error getting native data, retrieve info normally');
+      }
+
+      DataCache.setSessionId(sessionId);
+      DataCache.setUserInfo(userInfo);
+      this.userService.setUserData(userInfo);
+      DataCache.setInstitutionId(institutionId);
+
       this.handlePageNavigation();
-    });
+    } else {
+      const sessionIdPromise: Promise<string> = this.nativeProvider.getData(NativeData.SESSION_ID);
+      const userInfoPromise: Promise<UserInfo> = this.nativeProvider.getData(NativeData.USER_INFO);
+      const institutionIdPromise: Promise<string> = this.nativeProvider.getData(NativeData.INSTITUTION_ID);
+      const destinationPagePromise: Promise<string> = this.nativeProvider.getData(NativeData.DESTINATION_PAGE);
 
+      Promise.all([sessionIdPromise, userInfoPromise, institutionIdPromise, destinationPagePromise]).then(values => {
+        DataCache.setSessionId(values[0]);
+        DataCache.setUserInfo(values[1]);
+        this.userService.setUserData(values[1]);
+        DataCache.setInstitutionId(values[2]);
+        this.destinationPage = <any>values[3];
+        this.handlePageNavigation();
+      });
+    }
   }
 
   private testGetSession() {
