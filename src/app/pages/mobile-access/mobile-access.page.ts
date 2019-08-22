@@ -12,9 +12,6 @@ import { UserInfo } from '../../core/model/user';
 import { UserService } from '../../core/service/user-service/user.service';
 import { CONTENT_STRINGS } from './mobile-acces.config';
 
-
-declare var NativeInterface: any;
-
 @Component({
   selector: 'app-mobile-access',
   templateUrl: './mobile-access.page.html',
@@ -102,17 +99,8 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
   }
 
   private setUserInfo() {
-    try {
-      console.log("JSInt - User Photo");
-      this.userService.setAcceptedPhoto(NativeInterface.getAcceptedUserPhoto());
-    } catch (e){
-      console.error(e);
-      console.log("Service - User Photo");
-      const subscription = this.userService.getAcceptedPhoto().subscribe();
-
-      this.sourceSubscription.add(subscription);
-    }
-
+    const subscription = this.userService.getAcceptedPhoto().subscribe();
+    this.sourceSubscription.add(subscription);
   }
 
   private initComponent() {

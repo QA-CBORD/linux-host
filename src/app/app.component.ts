@@ -14,13 +14,11 @@ import { NAVIGATE } from './app.global';
 import { TestProvider } from './core/provider/test-provider/test.provider';
 import { AuthService } from './core/service/auth-service/auth.service';
 import { UserService } from './core/service/user-service/user.service';
+import { NativeProvider, NativeData } from './core/provider/native-provider/native.provider';
 import { BUTTON_TYPE } from './core/utils/buttons.config';
 import { StGlobalPopoverComponent } from './shared/ui-components/st-global-popover';
 
 import { UserInfo } from './core/model/user';
-
-declare var NativeInterface: any;
-declare var androidInterface: any;
 
 @Component({
   selector: 'app-root',
@@ -45,7 +43,8 @@ export class AppComponent implements OnDestroy {
     private readonly testProvider: TestProvider,
     private readonly authService: AuthService,
     private readonly userService: UserService,
-    private readonly popoverCtrl: PopoverController
+    private readonly popoverCtrl: PopoverController,
+    private readonly nativeProvider: NativeProvider
   ) {
     this.initializeApp();
   }
@@ -100,96 +99,20 @@ export class AppComponent implements OnDestroy {
   useJavaScriptInterface() {
     console.log('JS interface used');
 
-    // if (!NativeInterface) {
-    //   throw new Error('No native interface, retrieve info normally');
-    // }
+    const sessionIdPromise: Promise<string> = this.nativeProvider.getData(NativeData.SESSION_ID);
+    const userInfoPromise: Promise<UserInfo> = this.nativeProvider.getData(NativeData.USER_INFO);
+    const institutionIdPromise: Promise<string> = this.nativeProvider.getData(NativeData.INSTITUTION_ID);
+    const destinationPagePromise: Promise<string> = this.nativeProvider.getData(NativeData.DESTINATION_PAGE);
 
-    // let sessionId: Promise<string> = NativeInterface.getSessionId().then((result) => {
-    //   debugger;
-    //   DataCache.setSessionId(result);
-    // });
-    // let userInfo: Promise<any> = NativeInterface.getUserInfo().then((result) => {
-    //   debugger;
-    //   DataCache.setUserInfo(result);
-    //   this.userService.setUserData(result);
-    // });
-    // let institutionId: Promise<string> = NativeInterface.getInstitutionId().then((result) => {
-    //   debugger;
-    //   DataCache.setInstitutionId(result);
-    // });
-
-    // let destinationPage: Promise<string> = NativeInterface.getDestinationPage().then((result) => {
-    //   debugger;
-    //   this.destinationPage = result;
-    // });
-
-    if (this.platform.platforms().includes('android')) {
-  
-      if(!androidInterface){
-        throw new Error("No native interface, retrieve info normally")
-      }
-  
-      let sessionId: string = androidInterface.getSessionId() || null;
-      let userInfo: UserInfo = JSON.parse(androidInterface.getUserInfo()) || null;
-      let institutionId: string = androidInterface.getInstitutionId() || null;    
-      this.destinationPage = androidInterface.getDestinationPage() || null;
-  
-  
-      if(!sessionId || !userInfo || !institutionId || !this.destinationPage){
-        throw new Error("Error getting native data, retrieve info normally");
-      }
-      
-  
-      DataCache.setSessionId(sessionId);
-      DataCache.setUserInfo(userInfo);
-      this.userService.setUserData(userInfo);
-      DataCache.setInstitutionId(institutionId);
-  
-
-
-
-
-      // let l: any[] = new Array();
-      // l.push(androidInterface.getSessionId());
-      // l.push(JSON.parse(androidInterface.getUserInfo()));
-      // l.push(androidInterface.getInstitutionId());
-      // l.push(androidInterface.getDestinationPage());
-
-      // DataCache.setSessionId(androidInterface.getSessionId());
-      // DataCache.setUserInfo(JSON.parse(androidInterface.getUserInfo()));
-      // this.userService.setUserData(JSON.parse(androidInterface.getUserInfo()));
-      // DataCache.setInstitutionId(androidInterface.getInstitutionId());
-      // this.destinationPage = <any>androidInterface.getDestinationPage();
-          this.cleanUrlAfterGetInfo();
+    Promise.all([sessionIdPromise, userInfoPromise, institutionIdPromise, destinationPagePromise]).then(values => {
+      DataCache.setSessionId(values[0]);
+      DataCache.setUserInfo(values[1]);
+      this.userService.setUserData(values[1]);
+      DataCache.setInstitutionId(values[2]);
+      this.destinationPage = <any>values[3];
       this.handlePageNavigation();
-    } else {
-      let sessionId: Promise<string> = NativeInterface.getSessionId();
-      let userInfo: Promise<any> = NativeInterface.getUserInfo();
-      let institutionId: Promise<string> = NativeInterface.getInstitutionId();
-      let destinationPage: Promise<string> = NativeInterface.getDestinationPage();
+    });
 
-      Promise.all([sessionId, userInfo, institutionId, destinationPage])
-        .then(r => {
-          DataCache.setSessionId(r[0]);
-          DataCache.setUserInfo(r[1]);
-          this.userService.setUserData(r[1]);
-          DataCache.setInstitutionId(r[2]);
-          this.destinationPage = <any>r[3];
-
-          debugger;
-          this.cleanUrlAfterGetInfo();
-          debugger;
-          this.handlePageNavigation();
-        })
-        .catch(error => {
-          debugger;
-          console.error(error);
-          throw new Error(error);
-        });
-    }
-    // if(!sessionId || !userInfo || !institutionId || !this.destinationPage){
-    //   throw new Error("Error getting native data, retrieve info normally");
-    // }
   }
 
   private testGetSession() {

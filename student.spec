@@ -26,7 +26,6 @@ install -c -d -m 775 $RPM_BUILD_ROOT/home/httpd/student/assets
 install -c -d -m 775 $RPM_BUILD_ROOT/home/httpd/student/assets/icon
 install -c -d -m 775 $RPM_BUILD_ROOT/home/httpd/student/assets/images
 install -c -d -m 775 $RPM_BUILD_ROOT/home/httpd/student/assets/fonts
-install -c -d -m 775 $RPM_BUILD_ROOT/home/httpd/student/assets/js
 install -c -d -m 775 $RPM_BUILD_ROOT/home/httpd/student/svg
 
 install -c -m 664 *.* $RPM_BUILD_ROOT/home/httpd/student
@@ -34,7 +33,6 @@ install -c -m 664 assets/*.* $RPM_BUILD_ROOT/home/httpd/student/assets
 install -c -m 664 assets/icon/*.* $RPM_BUILD_ROOT/home/httpd/student/assets/icon
 install -c -m 664 assets/images/*.* $RPM_BUILD_ROOT/home/httpd/student/assets/images
 install -c -m 664 assets/fonts/*.* $RPM_BUILD_ROOT/home/httpd/student/assets/fonts
-install -c -m 664 assets/js/*.* $RPM_BUILD_ROOT/home/httpd/student/assets/js
 install -c -m 664 svg/*.* $RPM_BUILD_ROOT/home/httpd/student/svg
 
 

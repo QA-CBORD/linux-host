@@ -1,7 +1,8 @@
+import { NativeProvider, NativeData } from './../../provider/native-provider/native.provider';
 import { Injectable } from '@angular/core';
 
 import { map, switchMap } from 'rxjs/operators';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of, from } from 'rxjs';
 
 import { BaseService } from '../base-service/base.service';
 import { UserInfo } from 'src/app/core/model/user/user-info.model';
@@ -9,6 +10,7 @@ import { UserPhotoInfo } from '../../model/user';
 import { MessageResponse } from '../../model/service/message-response.model';
 import { UserSettings } from '../../model/user';
 import { UserPhotoList } from '../../model/user';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
@@ -18,11 +20,15 @@ export class UserService extends BaseService {
   private readonly userData$: BehaviorSubject<UserInfo> = new BehaviorSubject<UserInfo>(null);
   private userPhoto: UserPhotoInfo = null;
 
+  constructor(readonly http: HttpClient, private readonly nativeProvider: NativeProvider) {
+    super(http);
+  }
+
   private set _userData(userInfo: UserInfo) {
     this.userData$.next({ ...userInfo });
   }
 
-  public setUserData(userInfo: UserInfo){
+  public setUserData(userInfo: UserInfo) {
     this._userData = userInfo;
   }
 
@@ -45,18 +51,26 @@ export class UserService extends BaseService {
     });
   }
 
-  setAcceptedPhoto(acceptedPhoto: UserPhotoInfo){
+  setAcceptedPhoto(acceptedPhoto: UserPhotoInfo) {
     this.userPhoto = acceptedPhoto;
   }
 
   getAcceptedPhoto(): Observable<UserPhotoInfo> {
     if (this.userPhoto) return of(this.userPhoto);
 
-    return this.getUser().pipe(
-      switchMap(({ id }: UserInfo) => this.getPhotoListByUserId(id)),
-      map(({ response: { list } }) => this.getPhotoIdByStatus(list)),
-      switchMap(({ id }: UserPhotoInfo) => this.getPhotoById(id)),
-      map(({ response }) => (this.userPhoto = response))
+    return from(this.nativeProvider.getData(NativeData.USER_PHOTO)).pipe(
+      switchMap(photoData => {
+        if (photoData) {
+          return of(photoData);
+        } else {
+          return this.getUser().pipe(
+            switchMap(({ id }: UserInfo) => this.getPhotoListByUserId(id)),
+            map(({ response: { list } }) => this.getPhotoIdByStatus(list)),
+            switchMap(({ id }: UserPhotoInfo) => this.getPhotoById(id)),
+            map(({ response }) => (this.userPhoto = response))
+          );
+        }
+      })
     );
   }
 
