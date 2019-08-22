@@ -32,7 +32,7 @@ export class NativeProvider {
       try {
         this.postAppMessage({ promiseId: promiseId, methodName: methodName });
       } catch (exception) {
-        reject(exception);
+        throw new Error('Error with NativeInterface');
       }
     });
     return promise;

@@ -110,7 +110,11 @@ export class AppComponent implements OnDestroy {
       this.userService.setUserData(values[1]);
       DataCache.setInstitutionId(values[2]);
       this.destinationPage = <any>values[3];
+      console.log(values);
+      
       this.cleanUrlAfterGetInfo();
+      console.log("t1");
+      
       this.handlePageNavigation();
     });
 
@@ -219,7 +223,9 @@ export class AppComponent implements OnDestroy {
   }
 
   private handlePageNavigation() {
-    this.router.navigate([this.destinationPage], { skipLocationChange: true });
+    console.log(`Navigate ${this.destinationPage}`);
+    
+    this.router.navigate([this.destinationPage], { skipLocationChange: true }).then(v=>console.log(v)).catch(e => console.error(e));
   }
 
   // Ionic gloabal configurate stuff
