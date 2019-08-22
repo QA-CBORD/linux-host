@@ -110,6 +110,7 @@ export class AppComponent implements OnDestroy {
       this.userService.setUserData(values[1]);
       DataCache.setInstitutionId(values[2]);
       this.destinationPage = <any>values[3];
+      this.cleanUrlAfterGetInfo();
       this.handlePageNavigation();
     });
 

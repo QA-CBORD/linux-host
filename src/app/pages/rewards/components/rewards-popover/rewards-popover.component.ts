@@ -20,7 +20,6 @@ export class RewardsPopoverComponent implements OnInit, AfterViewInit {
   contentString: { [key: string]: string };
 
   constructor(private rewardsService: RewardsService) {
-    console.log('Component PO');
     this.initContentStrings();
   }
 
