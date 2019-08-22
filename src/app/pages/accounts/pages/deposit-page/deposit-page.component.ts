@@ -53,7 +53,9 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.depositService.settings$.subscribe(depositSettings => (this.depositSettings = depositSettings));
+    this.depositService.settings$
+    .pipe(take(1))
+    .subscribe(depositSettings => (this.depositSettings = depositSettings));
 
     this.initForm();
     this.getAccounts();
@@ -180,7 +182,8 @@ export class DepositPageComponent implements OnInit, OnDestroy {
 
             return fee.pipe(map(valueFee => ({ fee: valueFee, sourceAcc, selectedAccount, amount, billme: isBillme })));
           }
-        )
+        ),
+        take(1)
       )
       .subscribe(info => this.confirmationDepositPopover(info));
   }
@@ -260,11 +263,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   }
 
   onPaymentMethodChanged({ target }) {
-    if (target.value === 'billme') {
-      this.defineDestAccounts(target.value);
-    } else {
-      this.defineDestAccounts(target.value);
-    }
+    this.defineDestAccounts(target.value);
 
     this.depositForm.controls['mainSelect'].reset();
     this.setFormValidators();
@@ -289,7 +288,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
           .subscribe(
             () => {
               this.loadingService.closeSpinner();
-              this.finalizeDepositModal(data);
+              return this.finalizeDepositModal(data);
             },
             () => this.onErrorRetrieve('Your information could not be verified.')
           );
