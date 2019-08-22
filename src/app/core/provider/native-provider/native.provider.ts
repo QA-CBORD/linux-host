@@ -22,7 +22,7 @@ export class NativeProvider {
   // object for storing references to our promise-objects
   private promises = {};
 
-  private getData(methodName: NativeData): Promise<any> {
+  getData(methodName: NativeData): Promise<any> {
     const promise = new Promise((resolve, reject) => {
       // we generate a unique id to reference the promise later
       // from native function
