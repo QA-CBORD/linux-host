@@ -1,6 +1,6 @@
 <st-header title="Add Funds" [isTitleShow]="true" [backButtonTitle]="'Back'" [isToolbarShow]="true"></st-header>
 <ion-content>
-  <form [formGroup]="depositForm" (ngSubmit)="onFormSubmit(depositForm)">
+  <form [formGroup]="depositForm" (ngSubmit)="onFormSubmit()">
     <div
       class="deposit__manual-amount"
       [ngClass]="{ 'deposit__manual-amount--preset-amouts': !isFreeFromDepositEnabled }"
