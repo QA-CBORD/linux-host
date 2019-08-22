@@ -82,6 +82,8 @@ export namespace ContentString {
     core = 'core-ui',
     mobileAccess = 'mobile-access',
     rewards = 'rewards',
+    accounts = 'accounts',
+    transactions = 'transactions',
   }
 
   export enum MODAL {

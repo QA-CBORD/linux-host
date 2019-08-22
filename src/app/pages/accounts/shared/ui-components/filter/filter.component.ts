@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { OverlayEventDetail } from '@ionic/core';
 import { ModalController } from '@ionic/angular';
 
 import { take, tap } from 'rxjs/operators';
@@ -7,7 +6,7 @@ import { take, tap } from 'rxjs/operators';
 import { DateUtilObject, getAmountOfMonthFromPeriod } from './date-util';
 import { FilterMenuComponent, FilterState } from './filter-menu/filter-menu.component';
 import { AccountsService } from '../../../services/accounts.service';
-import { TIME_PERIOD } from '../../../accounts.config';
+import { TIME_PERIOD, CONTENT_STRINGS } from '../../../accounts.config';
 import { LoadingService } from '../../../../../core/service/loading/loading.service';
 import { TransactionService } from '../../../services/transaction.service';
 
@@ -21,16 +20,18 @@ export class FilterComponent implements OnInit {
   @Output() onFilterChanged: EventEmitter<boolean> = new EventEmitter<boolean>();
   activeTimeRange: DateUtilObject;
   activeAccountName: string;
+  contentString: { [key: string]: string };
 
   constructor(
     private readonly accountsService: AccountsService,
     private readonly modalController: ModalController,
     private readonly cdRef: ChangeDetectorRef,
     private readonly loadingService: LoadingService,
-    private readonly transactionService: TransactionService
+    private readonly transactionsService: TransactionService
   ) {}
 
   ngOnInit() {
+    this.setContentStrings();
     this.updateActiveState();
   }
 
@@ -38,7 +39,7 @@ export class FilterComponent implements OnInit {
     if (!accountId || !period) return;
 
     await this.loadingService.showSpinner();
-    this.transactionService
+    this.transactionsService
       .getTransactionsByAccountId(accountId, period)
       .pipe(
         tap(
@@ -59,18 +60,18 @@ export class FilterComponent implements OnInit {
   }
 
   expandTimeRange(arr: DateUtilObject[]): DateUtilObject[] {
-    arr.unshift({ name: TIME_PERIOD.pastMonth });
+    arr.unshift({ name: TIME_PERIOD.pastSixMonth });
     return arr;
   }
 
   async initFilterModal(): Promise<void> {
-    const { activeAccountId: aId, activeTimeRange: tRange } = this.transactionService;
+    const { activeAccountId: aId, activeTimeRange: tRange } = this.transactionsService;
     await this.createFilterModal(aId, tRange);
   }
 
   private updateActiveState() {
-    this.activeTimeRange = this.transactionService.activeTimeRange;
-    this.activeAccountName = this.transactionService.activeAccountId;
+    this.activeTimeRange = this.transactionsService.activeTimeRange;
+    this.activeAccountName = this.transactionsService.activeAccountId;
   }
 
   private async createFilterModal(accId: string, timeRange: DateUtilObject): Promise<void> {
@@ -78,7 +79,7 @@ export class FilterComponent implements OnInit {
       component: FilterMenuComponent,
       animated: true,
       componentProps: {
-        accounts: this.accountsService.accounts$,
+        accounts: this.accountsService.getAccountsFilteredByTenders(),
         periods: this.expandTimeRange(getAmountOfMonthFromPeriod(6)),
         activeAccountId: accId,
         activeTimeRange: timeRange,
@@ -87,5 +88,19 @@ export class FilterComponent implements OnInit {
     modal.onDidDismiss().then(({ data }) => data && this.onFilterDone(data));
 
     await modal.present();
+  }
+
+  get csNames() {
+    return CONTENT_STRINGS;
+  }
+
+  setContentStrings() {
+    const transactionStringNames: string[] = [
+      CONTENT_STRINGS.allAccountsLabel,
+      CONTENT_STRINGS.pastSixMonthsLabel,
+      CONTENT_STRINGS.filterLabel,
+    ];
+
+    this.contentString = this.transactionsService.getContentStrings(transactionStringNames);
   }
 }

@@ -1,61 +1,66 @@
 <header class="filter-menu">
-    <h1 class="filter-menu__header">Filter</h1>
-    <button class="filter-menu__done-btn" (click)="onFilterDone()">Done</button>
+  <h1 class="filter-menu__header">
+    {{ contentString[csNames.filterLabel] }}
+  </h1>
+  <button class="filter-menu__done-btn" (click)="onFilterDone()">{{ contentString[csNames.doneBtn] }}</button>
 </header>
 
 <ion-content>
-    <ion-item-divider class="filter-menu__divider">
-        date range:
-    </ion-item-divider>
+  <ion-item-divider class="filter-menu__divider">
+    {{ contentString[csNames.filterDateLabel] }}
+  </ion-item-divider>
 
-    <ion-list class="filter-menu__item-list">
-        <ion-radio-group>
-            <ion-item lines="none"
-                      *ngFor="let period of periods; trackBy: trackPeriod"
-                      (click)="onTimeChosen(period);">
-                <ion-label>
-                    {{period | timeRange}}
-                </ion-label>
-                <ion-radio class="filter-menu__radio-btn"
-                        slot="start"
-                           [checked]="activeTimeRange.name === period.name"
-                           [value]="period.name" mode="md">
-                </ion-radio>
-            </ion-item>
-        </ion-radio-group>
-    </ion-list>
+  <ion-list class="filter-menu__item-list">
+    <ion-radio-group>
+      <ion-item lines="none" *ngFor="let period of periods; trackBy: trackPeriod" (click)="onTimeChosen(period)">
+        <ion-label>
+          {{period | timeRange: contentString}}
+        </ion-label>
+        <ion-radio
+          class="filter-menu__radio-btn"
+          slot="start"
+          [checked]="activeTimeRange.name === period.name"
+          [value]="period.name"
+          mode="md"
+        >
+        </ion-radio>
+      </ion-item>
+    </ion-radio-group>
+  </ion-list>
 
-    <ion-item-divider class="filter-menu__divider">
-        account:
-    </ion-item-divider>
+  <ion-item-divider class="filter-menu__divider">
+    {{ contentString[csNames.filterAccountLabel] }}
+  </ion-item-divider>
 
-    <ion-list class="filter-menu__item-list">
-        <ion-radio-group>
-            <ion-item lines="none">
-                <ion-label>
-                    All Accounts
-                </ion-label>
-                <ion-radio class="filter-menu__radio-btn"
-                        slot="start"
-                           (ionSelect)="onAllAccountChosen()"
-                           value="all" mode="md"
-                           [checked]="isAllAccounts">
-                </ion-radio>
-            </ion-item>
-            <ion-item *ngFor="let account of accounts | async"
-                      lines="none"
-                      (click)="onAccountChosen(account.id)">
-                <ion-label>
-                    {{account.accountDisplayName}}
-                </ion-label>
-                <ion-radio class="filter-menu__radio-btn"
-                        slot="start"
-                           [value]="account.accountDisplayName" mode="md"
-                           [checked]="activeAccountId === account.id">
-                </ion-radio>
-            </ion-item>
-
-        </ion-radio-group>
-    </ion-list>
-
+  <ion-list class="filter-menu__item-list">
+    <ion-radio-group>
+      <ion-item lines="none">
+        <ion-label>
+            {{ contentString[csNames.allAccountsLabel] }}
+        </ion-label>
+        <ion-radio
+          class="filter-menu__radio-btn"
+          slot="start"
+          (ionSelect)="onAllAccountChosen()"
+          value="all"
+          mode="md"
+          [checked]="isAllAccounts"
+        >
+        </ion-radio>
+      </ion-item>
+      <ion-item *ngFor="let account of (accounts | async)" lines="none" (click)="onAccountChosen(account.id)">
+        <ion-label>
+          {{ account.accountDisplayName }}
+        </ion-label>
+        <ion-radio
+          class="filter-menu__radio-btn"
+          slot="start"
+          [value]="account.accountDisplayName"
+          mode="md"
+          [checked]="activeAccountId === account.id"
+        >
+        </ion-radio>
+      </ion-item>
+    </ion-radio-group>
+  </ion-list>
 </ion-content>

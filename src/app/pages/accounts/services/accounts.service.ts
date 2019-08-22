@@ -1,23 +1,33 @@
 import { Injectable } from '@angular/core';
 import { AccountsApiService } from './accounts.api.service';
 
-import { BehaviorSubject, Observable, zip } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, zip, combineLatest } from 'rxjs';
+import { map, tap, take, switchMap } from 'rxjs/operators';
 
 import { ContentStringRequest } from '../../../core/model/content/content-string-request.model';
 import { CommerceApiService } from '../../../core/service/commerce/commerce-api.service';
+import { ContentService } from '../../../core/service/content-service/content.service';
 import { UserAccount } from '../../../core/model/account/account.model';
 import { SettingInfo } from '../../../core/model/configuration/setting-info.model';
-import { PAYMENT_SYSTEM_TYPE } from '../accounts.config';
+import { ContentStringInfo } from 'src/app/core/model/content/content-string-info.model';
+import {
+  PAYMENT_SYSTEM_TYPE,
+  ContentStringsParamsAccounts,
+  GenericContentStringsParams,
+  SYSTEM_SETTINGS_CONFIG,
+} from '../accounts.config';
 
 @Injectable()
 export class AccountsService {
   private readonly _accounts$: BehaviorSubject<UserAccount[]> = new BehaviorSubject<UserAccount[]>([]);
   public readonly _settings$: BehaviorSubject<SettingInfo[]> = new BehaviorSubject<SettingInfo[]>([]);
 
+  private contentString;
+
   constructor(
     private readonly apiService: AccountsApiService,
-    private readonly commerceApiService: CommerceApiService
+    private readonly commerceApiService: CommerceApiService,
+    private readonly contentService: ContentService
   ) {}
 
   get accounts$(): Observable<UserAccount[]> {
@@ -53,6 +63,34 @@ export class AccountsService {
     );
   }
 
+  initContentStringsList(): Observable<ContentStringInfo[]> {
+    return combineLatest(
+      this.contentService.retrieveContentStringList(ContentStringsParamsAccounts),
+      this.contentService.retrieveContentStringList(GenericContentStringsParams)
+    ).pipe(
+      map(([res, res0]) => {
+        const finalArray = [...res, ...res0];
+        this.contentString = finalArray.reduce((init, elem) => ({ ...init, [elem.name]: elem.value }), {});
+        return finalArray;
+      }),
+      take(1)
+    );
+  }
+
+  getContentStrings(names: string[]): any {
+    let list = {};
+    names.filter(n => {
+      if (this.contentString[n]) {
+        list = { ...list, [n]: this.contentString[n] };
+      }
+    });
+    return list;
+  }
+
+  getContentValueByName(name: string): string {
+    return this.contentString[name] || '';
+  }
+
   getSettingByName(settings: SettingInfo[], name: string): SettingInfo | undefined {
     return settings.find(({ name: n }) => n === name);
   }
@@ -62,6 +100,22 @@ export class AccountsService {
     const result = JSON.parse(value);
 
     return Array.isArray(result) ? result : [];
+  }
+
+  getAccountsFilteredByTenders(): Observable<UserAccount[]> {
+    return this.settings$.pipe(
+      map(settings => {
+        const depositSetting = this.getSettingByName(settings, SYSTEM_SETTINGS_CONFIG.displayTenders.name);
+        return this.transformStringToArray(depositSetting.value);
+      }),
+      switchMap((tendersId: Array<string>) =>
+        this.accounts$.pipe(map(accounts => this.filterAccountsByTenders(tendersId, accounts)))
+      )
+    );
+  }
+
+  private filterAccountsByTenders(tendersId: Array<string>, accounts: Array<UserAccount>): Array<UserAccount> {
+    return accounts.filter(({ accountTender: tId }) => tendersId.includes(tId));
   }
 
   private filterAccountsByPaymentSystem(accounts: UserAccount[]): UserAccount[] {

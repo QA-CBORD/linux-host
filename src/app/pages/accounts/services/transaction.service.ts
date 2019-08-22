@@ -1,19 +1,29 @@
 import { Injectable } from '@angular/core';
 
-import { BehaviorSubject, Observable } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
+import { map, switchMap, tap, take } from 'rxjs/operators';
+
+import { AccountsService } from './accounts.service';
+import { CommerceApiService } from '../../../core/service/commerce/commerce-api.service';
+import { ContentService } from './../../../core/service/content-service/content.service';
 
 import { TransactionHistory } from '../models/transaction-history.model';
 import { QueryTransactionHistoryCriteria } from '../../../core/model/account/transaction-query.model';
 import { TransactionResponse } from '../../../core/model/account/transaction-response.model';
-import { AccountsService } from './accounts.service';
-import { ALL_ACCOUNTS, PAYMENT_SYSTEM_TYPE, SYSTEM_SETTINGS_CONFIG, TIME_PERIOD } from '../accounts.config';
-import { CommerceApiService } from '../../../core/service/commerce/commerce-api.service';
+import { ContentStringInfo } from 'src/app/core/model/content/content-string-info.model';
+import {
+  ALL_ACCOUNTS,
+  PAYMENT_SYSTEM_TYPE,
+  SYSTEM_SETTINGS_CONFIG,
+  TIME_PERIOD,
+  ContentStringsParamsTransactions,
+  GenericContentStringsParams,
+} from '../accounts.config';
 import {
   DateUtilObject,
-  getRangeBetweenDates,
   getTimeRangeOfDate,
   getUniquePeriodName,
+  TimeRange,
 } from '../shared/ui-components/filter/date-util';
 
 @Injectable()
@@ -29,9 +39,12 @@ export class TransactionService {
     this.transactionHistory
   );
 
+  private contentString;
+
   constructor(
     private readonly accountsService: AccountsService,
-    private readonly commerceApiService: CommerceApiService
+    private readonly commerceApiService: CommerceApiService,
+    private readonly contentService: ContentService
   ) {}
 
   get transactions$(): Observable<TransactionHistory[]> {
@@ -49,10 +62,47 @@ export class TransactionService {
   private set _transactions(value: TransactionHistory[]) {
     this.transactionHistory = [...this.transactionHistory, ...value];
     this.transactionHistory = this.cleanDuplicateTransactions(this.transactionHistory);
+    this.transactionHistory.sort((a, b) => new Date(b.actualDate).getTime() - new Date(a.actualDate).getTime());
     this._transactions$.next([...this.transactionHistory]);
   }
 
-  getTransactionHistoryByQuery(query: QueryTransactionHistoryCriteria): Observable<Array<TransactionHistory>> {
+  getNextTransactionsByAccountId(id?: string): Observable<Array<TransactionHistory>> {
+    if (this.transactionResponse && !this.transactionResponse.totalCount) return this.transactions$;
+    this.setNextQueryObject(id);
+
+    return this.getTransactionHistoryByQuery(this.queryCriteria);
+  }
+
+  getRecentTransactions(id: string, period?: DateUtilObject, maxReturn?: number): Observable<TransactionHistory[]> {
+    period = period ? period : { name: TIME_PERIOD.pastSixMonth };
+    maxReturn = maxReturn ? maxReturn : 0;
+
+    const { startDate, endDate } = getTimeRangeOfDate(period);
+
+    this.setInitialQueryObject(id, startDate, endDate);
+    this.queryCriteria = { ...this.queryCriteria, maxReturn };
+    if (this.currentAccountId !== id) this.transactionHistory = [];
+    this.updateTransactionActiveState(id, period);
+
+    return this.getTransactionHistoryByQuery(this.queryCriteria);
+  }
+
+  getTransactionsByAccountId(accountId: string, period?: DateUtilObject): Observable<TransactionHistory[]> {
+    if (this.isDuplicateCall(accountId, period)) return this.transactions$;
+    this.transactionHistory = [];
+    const { startDate, endDate } = getTimeRangeOfDate(period);
+
+    if (period.name === TIME_PERIOD.pastSixMonth) {
+      this.setInitialQueryObject(accountId, startDate, endDate, this.lazyAmount);
+    } else {
+      this.setInitialQueryObject(accountId, startDate, endDate);
+    }
+    this.updateTransactionActiveState(accountId, period);
+
+    return this.getTransactionHistoryByQuery(this.queryCriteria);
+  }
+
+  private getTransactionHistoryByQuery(query: QueryTransactionHistoryCriteria): Observable<Array<TransactionHistory>> {
     return this.accountsService.settings$.pipe(
       map(settings => {
         const depositSetting = this.accountsService.getSettingByName(
@@ -69,39 +119,6 @@ export class TransactionService {
       ),
       tap(transactions => (this._transactions = transactions))
     );
-  }
-
-  getNextTransactionsByAccountId(id?: string): Observable<Array<TransactionHistory>> {
-    if (this.transactionResponse && !this.transactionResponse.totalCount) return this.transactions$;
-    this.setNextQueryObject(id);
-
-    return this.getTransactionHistoryByQuery(this.queryCriteria);
-  }
-
-  getRecentTransactions(id?: string, period?: DateUtilObject, maxReturn?: number): Observable<TransactionHistory[]> {
-    id = id ? id : ALL_ACCOUNTS;
-    period = period ? period : { name: TIME_PERIOD.pastMonth };
-    maxReturn = maxReturn ? maxReturn : 0;
-
-    const { startDate, endDate } = getTimeRangeOfDate(period);
-
-    this.setInitialQueryObject(id, startDate, endDate);
-    this.queryCriteria = { ...this.queryCriteria, maxReturn };
-    if (this.currentAccountId !== id) this.transactionHistory = [];
-    this.updateTransactionActiveState(id, period);
-
-    return this.getTransactionHistoryByQuery(this.queryCriteria);
-  }
-
-  getTransactionsByAccountId(accountId: string, period?: DateUtilObject): Observable<TransactionHistory[]> {
-    if (this.isDuplicateCall(accountId, period)) return this.transactions$;
-
-    this.transactionHistory = [];
-    const { startDate, endDate } = getTimeRangeOfDate(period);
-    this.setInitialQueryObject(accountId, startDate, endDate);
-    this.updateTransactionActiveState(accountId, period);
-
-    return this.getTransactionHistoryByQuery(this.queryCriteria);
   }
 
   private updateTransactionActiveState(id: string, period: DateUtilObject) {
@@ -128,13 +145,32 @@ export class TransactionService {
   private updateQuery() {
     const startingReturnRow = this.queryCriteria.startingReturnRow + this.queryCriteria.maxReturn;
     const transactionQuery = { startingReturnRow, maxReturn: this.lazyAmount };
-    const { endDate, startDate } = getRangeBetweenDates(this.currentTimeRange, { name: TIME_PERIOD.pastSixMonth });
+    const { endDate, startDate } = this.getDateRangeLazyByQuery(this.queryCriteria);
     this.queryCriteria = { ...this.queryCriteria, ...transactionQuery, endDate, startDate };
   }
 
-  private setInitialQueryObject(accountId: string = null, startDate: string = null, endDate: string = null) {
+  private getDateRangeLazyByQuery(query: QueryTransactionHistoryCriteria): TimeRange {
+    let endDate;
+    let startDate;
+    if (query.maxReturn !== 0) {
+      startDate = query.startDate;
+      endDate = query.endDate;
+    } else {
+      startDate = getTimeRangeOfDate({ name: TIME_PERIOD.pastSixMonth }).startDate;
+      endDate = query.startDate === startDate ? query.endDate : query.startDate;
+    }
+
+    return { startDate, endDate };
+  }
+
+  private setInitialQueryObject(
+    accountId: string = null,
+    startDate: string = null,
+    endDate: string = null,
+    maxReturn: number = 0
+  ) {
     this.queryCriteria = {
-      maxReturn: 0,
+      maxReturn,
       startingReturnRow: 0,
       startDate,
       endDate,
@@ -153,5 +189,33 @@ export class TransactionService {
       ({ paymentSystemType: type, tenderId: tenId }) =>
         type === PAYMENT_SYSTEM_TYPE.MONETRA || type === PAYMENT_SYSTEM_TYPE.USAEPAY || tendersId.includes(tenId)
     );
+  }
+
+  initContentStringsList(): Observable<ContentStringInfo[]> {
+    return combineLatest(
+      this.contentService.retrieveContentStringList(ContentStringsParamsTransactions),
+      this.contentService.retrieveContentStringList(GenericContentStringsParams)
+    ).pipe(
+      map(([res, res0]) => {
+        const finalArray = [...res, ...res0];
+        this.contentString = finalArray.reduce((init, elem) => ({ ...init, [elem.name]: elem.value }), {});
+        return finalArray;
+      }),
+      take(1)
+    );
+  }
+
+  getContentStrings(names: string[]) {
+    let list = {};
+    names.filter(n => {
+      if (this.contentString[n]) {
+        list = { ...list, [n]: this.contentString[n] };
+      }
+    });
+    return list;
+  }
+
+  getContentValueByName(name: string): string {
+    return this.contentString[name] || '';
   }
 }

@@ -4,8 +4,74 @@
         [backButtonTitle]="'Back'"
         [isToolbarShow]="true"
 ></st-header>
-<ion-content>
-  <p>
-    request funds works!
-  </p>
+<ion-content padding class="request-funds">
+    <ng-container *ngIf="(accounts$ | async).length; else empty">
+        <p class="request-funds__info-msg">Email a friend or family member to request a deposit to your account.</p>
+
+        <form class="request-funds__form" [formGroup]="requestFundsForm" novalidate (ngSubmit)="onSubmit()">
+
+            <ion-label class="request-funds__label">
+                Name
+                <ion-input class="request-funds__control"
+                           [ngClass]="{'request-funds__control--error': name.invalid && name.touched}"
+                           placeholder="John Snow"
+                           [formControlName]="controlsNames.name"></ion-input>
+            </ion-label>
+            <p [ngClass]="{'request-funds__control-error-msg--show': name.invalid && name.touched}"
+               class="request-funds__control-error-msg">
+                {{name.errors?.errorMsg}}</p>
+
+            <ion-label class="request-funds__label">
+                Email Address
+                <ion-input class="request-funds__control"
+                           placeholder="example@email.com"
+                           type="email"
+                           [formControlName]="controlsNames.email"
+                           [ngClass]="{'request-funds__control--error': email.invalid && email.touched}"></ion-input>
+            </ion-label>
+            <p [ngClass]="{'request-funds__control-error-msg--show': email.invalid && email.touched}"
+               class="request-funds__control-error-msg">{{email.errors?.errorMsg}}</p>
+
+            <ion-label class="request-funds__label">
+                Account
+                <ion-select
+                        class="request-funds__control"
+                        [interfaceOptions]="customActionSheetOptions"
+                        interface="action-sheet"
+                        [formControlName]="controlsNames.account"
+                        placeholder="Select Your Account"
+                        [ngClass]="{'request-funds__control--error': accounts.invalid && accounts.touched}">
+                    <ion-select-option *ngFor="let account of accounts$ | async; trackBy: accountTrack"
+                                       [value]="account.id">
+                        {{account.accountDisplayName}} ({{account.balance | transactionUnits: account.accountType}})
+                    </ion-select-option>
+                </ion-select>
+            </ion-label>
+            <p [ngClass]="{'request-funds__control-error-msg--show': accounts.invalid && accounts.touched}"
+               class="request-funds__control-error-msg">{{accounts.errors?.errorMsg}}</p>
+
+            <ion-label class="request-funds__label">
+                Message
+                <ion-textarea rows="3"
+                              [ngClass]="{'request-funds__control--error': message.invalid && message.touched}"
+                              class="request-funds__control request-funds__control--auto-height"
+                              placeholder="Type your message here..."
+                              [formControlName]="controlsNames.message"></ion-textarea>
+            </ion-label>
+            <p [ngClass]="{'request-funds__control-error-msg--show': message.invalid && message.touched}"
+               class="request-funds__control-error-msg">
+                {{message.errors?.errorMsg}}</p>
+
+            <ion-button [disabled]="requestFundsForm.invalid" type="submit" class="request-funds__button"
+                        [ngClass]="{'request-funds__button--disabled' : requestFundsForm.invalid}">send request
+            </ion-button>
+        </form>
+    </ng-container>
+
 </ion-content>
+
+<ng-template #empty>
+    <img class="request-funds__empty-image" src="/assets/images/transfer_illustration.svg" alt="money transfer image">
+    <p class="request-funds__empty-message">No compatible accounts. You can only request funds for deposit accounts.</p>
+    <ion-button class="request-funds__button request-funds__button--blue" (click)="back()">back to accounts</ion-button>
+</ng-template>

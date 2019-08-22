@@ -1,3 +1,5 @@
+import * as Globals from '../../app.global';
+
 export const SYSTEM_SETTINGS_CONFIG = {
   enableOnetimeDeposits: {
     domain: 'get',
@@ -105,9 +107,48 @@ export enum PAYMENT_TYPE {
 export const ALL_ACCOUNTS = 'all_accounts';
 
 export enum TIME_PERIOD {
-  pastMonth = 'past_month',
   pastSixMonth = 'past_six_month',
+  pastMonth = 'past_month',
 }
+
+export enum CONTENT_STRINGS {
+  cancelBtn = 'button_cancel',
+  closeBtn = 'button_close',
+  retryBtn = 'button_retry',
+  doneBtn = 'button_done',
+  retryTitle = 'dialog_header_retry',
+  addFundsBtn = 'button_add-funds',
+  autoDepositBtn = 'button_auto-deposit',
+  requestFundsBtn = 'button_request-funds',
+  headerTitle = 'header_title',
+  headerBackBtn = 'header_button_back',
+  allAccountsLabel = 'label_all-accounts',
+  accountsLabel = 'label_accounts',
+  filterLabel = 'label_filter',
+  mealSuffixLabel = 'meal-plan-suffix',
+  mealSuffixPluralLabel = 'meal-plan-suffix-plural',
+  filterAccountLabel = 'label_filter_account',
+  filterDateLabel = 'label_filter_date-range',
+  pastSixMonthsLabel = 'label_past-six-months',
+  recentTransactionsLabel = 'label_recent-transactions',
+  infiniteScrollLoader = 'loader_infinite-scroll',
+  moreLabel = 'label_more',
+}
+
+export const ContentStringsParamsAccounts = {
+  category: Globals.ContentString.CATEGORIES.accounts,
+  domain: Globals.ContentString.DOMAINS.patron,
+};
+
+export const ContentStringsParamsTransactions = {
+  category: Globals.ContentString.CATEGORIES.transactions,
+  domain: Globals.ContentString.DOMAINS.patron,
+};
+
+export const GenericContentStringsParams = {
+  category: Globals.ContentString.CATEGORIES.core,
+  domain: Globals.ContentString.DOMAINS.patron,
+};
 
 export enum CREDITCARD_TYPE {
   'AmericanExpress',

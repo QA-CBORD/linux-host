@@ -1,7 +1,7 @@
 <st-header
-  [title]="'Accounts'"
+  [title]="contentString[csNames.headerTitle]"
   [isTitleShow]="false"
-  [backButtonTitle]="'Home'"
+  [backButtonTitle]="contentString[csNames.headerBackBtn]"
   [isToolbarShow]="false"
   class="shadow-header"
 ></st-header>
@@ -15,7 +15,7 @@
         <section class="accounts-page__main-wrapper">
           <st-account-list [accounts]="accounts$ | async" (onAccountInfoEmit)="onAccountInfo($event)"></st-account-list>
 
-          <h2 class="accounts-page__transactions-title">recent transactions</h2>
+          <h2 class="accounts-page__transactions-title">{{ contentString[csNames.recentTransactionsLabel] }}</h2>
           <st-transactions
             class="accounts-page__transactions"
             [transactions]="transactions$ | async"
@@ -31,10 +31,10 @@
     <article class="accounts-details-page__header accounts-details-menu">
       <div class="accounts-details-menu__info-wrapper">
         <div class="accounts-details-menu__title">
-          {{accountInfo ? accountInfo.name : 'All Accounts'}}
+          {{ accountInfo ? accountInfo.name : contentString[csNames.allAccountsLabel] }}
         </div>
         <div class="accounts-details-menu__balance" *ngIf="accountInfo && accountInfo.name !== 'All Accounts'">
-          {{accountInfo.balance | transactionUnits: accountInfo.accountType}}
+          {{ accountInfo.balance | transactionUnits: accountInfo.accountType }}
         </div>
       </div>
       <st-menu-receiving-funds></st-menu-receiving-funds>

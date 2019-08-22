@@ -1,38 +1,40 @@
 <ion-list class="accounts-list">
-    <ion-item
-        [button]="true"
-        [detail]="!tabletResolution"
-        detailIcon="/assets/icon/angle-right.svg"
-        lines="{{ tabletResolution ? 'none' : 'full' }}"
-        class="accounts-list__all-accounts"
-        [ngClass]="{ 'accounts-list--active': activeAccount === allAccounts }"
-        (click)="onAccountClicked(allAccounts, 'All Accounts')"
-    >
-        <ion-label>
-            <p class="accounts-list__all-accounts-label">All accounts</p>
-        </ion-label>
-    </ion-item>
+  <ion-item
+    [button]="true"
+    [detail]="!tabletResolution"
+    detailIcon="/assets/icon/angle-right.svg"
+    lines="{{ tabletResolution ? 'none' : 'full' }}"
+    class="accounts-list__all-accounts"
+    [ngClass]="{ 'accounts-list--active': activeAccount === allAccounts }"
+    (click)="onAccountClicked(allAccounts, 'All Accounts')"
+  >
+    <ion-label>
+      <p class="accounts-list__all-accounts-label">{{ contentString[csNames.allAccountsLabel] }}</p>
+    </ion-label>
+  </ion-item>
 
-    <st-account
-        *ngFor="let acc of accountsShowed; let last = last; trackBy: trackByAccountId"
-        [account]="acc"
-        [lastItem]="last && !accountsHidden.length"
-        [tabletResolution]="tabletResolution"
-        [ngClass]="{ 'accounts-list--active': activeAccount === acc.id }"
-        (click)="onAccountClicked(acc.id, acc.accountDisplayName, acc.balance, acc.accountType)"
-    ></st-account>
+  <st-account
+    *ngFor="let acc of accountsShowed; let last = last; trackBy: trackByAccountId"
+    [account]="acc"
+    [lastItem]="last && !accountsHidden.length"
+    [tabletResolution]="tabletResolution"
+    [ngClass]="{ 'accounts-list--active': activeAccount === acc.id }"
+    (click)="onAccountClicked(acc.id, acc.accountDisplayName, acc.balance, acc.accountType)"
+  ></st-account>
 
-    <ion-item
-        *ngIf="accountsHidden.length"
-        [button]="true"
-        [detail]="true"
-        (click)="showHiddenAccounts()"
-        detailIcon="/assets/icon/angle-down.svg"
-        lines="none"
-        class="accounts-list__all-accounts"
-    >
-        <ion-label>
-            <p class="accounts-list__all-accounts-label">+ {{ accountsHidden.length }} More</p>
-        </ion-label>
-    </ion-item>
+  <ion-item
+    *ngIf="accountsHidden.length"
+    [button]="true"
+    [detail]="true"
+    (click)="showHiddenAccounts()"
+    detailIcon="/assets/icon/angle-down.svg"
+    lines="none"
+    class="accounts-list__all-accounts"
+  >
+    <ion-label>
+      <p class="accounts-list__all-accounts-label">
+        + {{ accountsHidden.length }} {{ contentString[csNames.moreLabel] }}
+      </p>
+    </ion-label>
+  </ion-item>
 </ion-list>

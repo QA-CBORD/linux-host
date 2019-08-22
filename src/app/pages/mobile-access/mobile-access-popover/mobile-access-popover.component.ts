@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, AfterViewInit } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
-import { popoverConfig } from 'src/app/core/model/popover/popover.model';
+import { PopoverConfig } from 'src/app/core/model/popover/popover.model';
 import bwipjs from 'bwip-angular2';
 import { CONTENT_STRINGS } from '../mobile-acces.config';
 import { MobileAccessService } from '../service';
@@ -15,7 +15,7 @@ import { buttons } from '../../../core/utils/buttons.config';
 export class MobileAccessPopoverComponent implements OnInit, AfterViewInit {
   @Input() data: any;
 
-  popoverConfig: popoverConfig;
+  popoverConfig: PopoverConfig;
   contentString: { [key: string]: string };
 
   constructor(

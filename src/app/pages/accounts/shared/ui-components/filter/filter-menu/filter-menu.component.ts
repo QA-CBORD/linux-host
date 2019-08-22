@@ -4,8 +4,10 @@ import { ModalController } from '@ionic/angular';
 import { Observable } from 'rxjs';
 
 import { DateUtilObject, getUniquePeriodName } from '../date-util';
-import { ALL_ACCOUNTS } from '../../../../accounts.config';
+import { ALL_ACCOUNTS, CONTENT_STRINGS, TIME_PERIOD } from '../../../../accounts.config';
 import { UserAccount } from 'src/app/core/model/account/account.model';
+import { AccountsService } from '../../../../services/accounts.service';
+import { TransactionService } from '../../../../services/transaction.service';
 
 @Component({
   selector: 'st-filter-menu',
@@ -19,10 +21,16 @@ export class FilterMenuComponent implements OnInit {
   @Input() activeAccountId: string;
   @Input() activeTimeRange: DateUtilObject;
   private filterState: FilterState = {};
+  contentString: { [key: string]: string };
 
-  constructor(private readonly modalController: ModalController) {}
+  constructor(
+    private readonly modalController: ModalController,
+    private readonly accountsService: AccountsService,
+    private readonly transactionsService: TransactionService
+  ) {}
 
   ngOnInit() {
+    this.setContentStrings();
     this.initFilterState();
   }
 
@@ -52,6 +60,27 @@ export class FilterMenuComponent implements OnInit {
 
   private initFilterState() {
     this.filterState = { ...this.filterState, accountId: this.activeAccountId, period: this.activeTimeRange };
+  }
+
+  get timePeriod() {
+    return TIME_PERIOD;
+  }
+
+  get csNames() {
+    return CONTENT_STRINGS;
+  }
+
+  setContentStrings() {
+    const transactionStringNames: string[] = [
+      CONTENT_STRINGS.filterDateLabel,
+      CONTENT_STRINGS.filterAccountLabel,
+      CONTENT_STRINGS.filterLabel,
+      CONTENT_STRINGS.doneBtn,
+      CONTENT_STRINGS.pastSixMonthsLabel,
+      CONTENT_STRINGS.allAccountsLabel,
+    ];
+
+    this.contentString = this.transactionsService.getContentStrings(transactionStringNames);
   }
 }
 
