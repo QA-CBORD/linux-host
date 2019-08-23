@@ -20,8 +20,6 @@ import { StGlobalPopoverComponent } from './shared/ui-components/st-global-popov
 
 import { UserInfo } from './core/model/user';
 
-declare var androidInterface: any;
-
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -85,8 +83,6 @@ export class AppComponent implements OnDestroy {
         try {
           this.useJavaScriptInterface();
         } catch (e) {
-          console.error(e);
-          console.log('JS interface NOT used');
           this.parseHashParameters(hash);
 
           /// now perform normal page logic
@@ -98,16 +94,9 @@ export class AppComponent implements OnDestroy {
     this.sourceSubscription.add(subscription);
   }
 
-  useJavaScriptInterface() {
-    console.log('JS interface used');
-    console.log(this.platform.platforms());
-    
+  useJavaScriptInterface() {    
 
     if (this.nativeProvider.isAndroid()) {
-
-      if (!androidInterface) {
-        throw new Error('No native interface, retrieve info normally');
-      }
 
       const sessionId: string = this.nativeProvider.getAndroidData(NativeData.SESSION_ID);
       const userInfo: UserInfo = JSON.parse(this.nativeProvider.getAndroidData(NativeData.USER_INFO));

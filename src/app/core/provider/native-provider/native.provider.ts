@@ -22,12 +22,12 @@ export class NativeProvider {
   // object for storing references to our promise-objects
   private promises = {};
 
-  isAndroid():boolean{
-    return this.platform.platforms().includes('android');
+  isAndroid(): boolean {
+    return androidInterface;
   }
 
-  isIos():boolean{
-    return this.platform.platforms().includes('ios');
+  isIos(): boolean {
+    return window['webkit'] && window['webkit'].messageHandlers.JSListener;
   }
 
   getAndroidData<T>(methodName: NativeData): T {
@@ -73,7 +73,7 @@ export class NativeProvider {
   }
 
   private postAppMessage(msg) {
-    if (window['webkit'] && window['webkit'].messageHandlers.JSListener) {
+    if (this.isIos()) {
       window['webkit'].messageHandlers.JSListener.postMessage(msg);
     } else {
       throw new Error('No NativeInterface exists. Use service.');

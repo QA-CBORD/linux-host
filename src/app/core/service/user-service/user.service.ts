@@ -62,9 +62,7 @@ export class UserService extends BaseService {
   getAcceptedPhoto(): Observable<UserPhotoInfo> {
     if (this.userPhoto) return of(this.userPhoto);
 
-    const isAndroid: boolean = this.nativeProvider.isAndroid();
-
-    const nativeProviderFunction: Observable<UserPhotoInfo> = isAndroid ? of(this.nativeProvider.getAndroidData(NativeData.USER_PHOTO)) : from(this.nativeProvider.getIosData(NativeData.USER_PHOTO));
+    let nativeProviderFunction: Observable<UserPhotoInfo>;
 
     const userPhotoInfoObservable: Observable<UserPhotoInfo> = this.getUser().pipe(
       switchMap(({ id }: UserInfo) => this.getPhotoListByUserId(id)),
@@ -72,6 +70,14 @@ export class UserService extends BaseService {
       switchMap(({ id }: UserPhotoInfo) => this.getPhotoById(id)),
       map(({ response }) => (this.userPhoto = response))
     );
+
+    if(this.nativeProvider.isAndroid()){
+      nativeProviderFunction = of(this.nativeProvider.getAndroidData(NativeData.USER_PHOTO));
+    } else if (this.nativeProvider.isIos()){
+      nativeProviderFunction = from(this.nativeProvider.getIosData(NativeData.USER_PHOTO));
+    }else {
+      nativeProviderFunction = userPhotoInfoObservable;
+    }
 
     return nativeProviderFunction.pipe(
       catchError(e => {
