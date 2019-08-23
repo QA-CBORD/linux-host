@@ -115,6 +115,7 @@ export enum LOCAL_ROUTING {
   addFunds = 'add-funds',
   accountDetails = 'account-details',
   accountDetailsM = 'account-details-m',
+  addCreditCard = 'add-credit-card'
 }
 
 export enum TRANSACTION_TYPE {

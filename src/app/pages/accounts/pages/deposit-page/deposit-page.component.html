@@ -1,23 +1,25 @@
-<st-header title="Add Funds" [isTitleShow]="true" [backButtonTitle]="'Back'" [isToolbarShow]="true"></st-header>
+<st-header title="Add Funds"
+           [isTitleShow]="true"
+           [backButtonTitle]="'Back'"
+           [isToolbarShow]="true"></st-header>
 <ion-content>
-  <form [formGroup]="depositForm" (ngSubmit)="onFormSubmit()">
-    <div
-      class="deposit__manual-amount"
-      [ngClass]="{ 'deposit__manual-amount--preset-amouts': !isFreeFromDepositEnabled }"
-    >
-      <div class="deposit__main-select-container" *ngIf="!isFreeFromDepositEnabled; else mainInput">
+  <form [formGroup]="depositForm"
+        (ngSubmit)="onFormSubmit()">
+    <div class="deposit__manual-amount"
+         [ngClass]="{ 'deposit__manual-amount--preset-amouts': !isFreeFromDepositEnabled }">
+      <div class="deposit__main-select-container"
+           *ngIf="!isFreeFromDepositEnabled; else mainInput">
         <div class="deposit__select-wrapper">
           <ion-label class="deposit__label-select">Amount to Deposit</ion-label>
-          <ion-select
-            class="deposit__select deposit__select-account"
-            cancelText="Cancel"
-            mode="md"
-            placeholder="Please Choose"
-            interface="action-sheet"
-            [interfaceOptions]="customActionSheetOptions"
-            formControlName="mainSelect"
-          >
-            <ion-select-option [value]="amount" *ngFor="let amount of presetDepositAmounts">
+          <ion-select class="deposit__select deposit__select-account"
+                      cancelText="Cancel"
+                      mode="md"
+                      placeholder="Please Choose"
+                      interface="action-sheet"
+                      [interfaceOptions]="customActionSheetOptions"
+                      formControlName="mainSelect">
+            <ion-select-option [value]="amount"
+                               *ngFor="let amount of presetDepositAmounts">
               {{ amount | transactionUnits: 2 }}
             </ion-select-option>
           </ion-select>
@@ -25,38 +27,36 @@
       </div>
       <ng-template #mainInput>
         <div class="deposit__main-input-container">
-          <ion-input
-            class="deposit__main-input"
-            inputmode="tel"
-            type="tel"
-            maxlength="10"
-            #inputText
-            [value]="depositForm.get('mainInput') | customCurrency"
-            [autofocus]="true"
-            placeholder="0"
-            [ngStyle]="{ width: inputText.value ? inputText.value.length + 1 + 'ch' : '2ch' }"
-            [ngClass]="{
+          <ion-input class="deposit__main-input"
+                     inputmode="tel"
+                     type="tel"
+                     maxlength="10"
+                     #inputText
+                     [value]="depositForm.get('mainInput') | customCurrency"
+                     [autofocus]="true"
+                     placeholder="0"
+                     [ngStyle]="{ width: inputText.value ? inputText.value.length + 1 + 'ch' : '2ch' }"
+                     [ngClass]="{
               'deposit__main-input--focus': focusLine,
               shakeit: isMaxCharLength,
               'deposit__main-input-container--decrease-font': inputText.value && inputText.value.length >= 7
             }"
-            (ionFocus)="focusLine = true"
-            (ionBlur)="focusLine = false"
-            (keydown)="formatInput($event)"
-            formControlName="mainInput"
-          ></ion-input>
-          <div *ngIf="mainFormInput.errors && mainFormInput.errors['maxLength']" class="deposit__main-input--error">
+                     (ionFocus)="focusLine = true"
+                     (ionBlur)="focusLine = false"
+                     (keydown)="formatInput($event)"
+                     formControlName="mainInput"></ion-input>
+          <div *ngIf="mainFormInput.errors && mainFormInput.errors['maxLength']"
+               class="deposit__main-input--error">
             The maximum amount for a deposit is {{ mainFormInput.errors['maxLength'].max | transactionUnits: 2 }}.
           </div>
-          <div *ngIf="mainFormInput.errors && mainFormInput.errors['minLength']" class="deposit__main-input--error">
+          <div *ngIf="mainFormInput.errors && mainFormInput.errors['minLength']"
+               class="deposit__main-input--error">
             The minimum amount for a deposit is {{ mainFormInput.errors['minLength'].min }}.
           </div>
-          <div
-            *ngIf="
+          <div *ngIf="
               mainFormInput.errors && mainFormInput.errors['pattern'] && (mainFormInput.dirty || mainFormInput.touched)
             "
-            class="deposit__main-input--error"
-          >
+               class="deposit__main-input--error">
             Please enter a valid amount.
           </div>
         </div>
@@ -65,78 +65,68 @@
     <section class="deposit__selection-block">
       <div class="deposit__select-wrapper">
         <ion-label class="deposit__label-select">To Account</ion-label>
-        <ion-select
-          class="deposit__select deposit__select-account"
-          cancelText="Cancel"
-          mode="md"
-          placeholder="Please Choose"
-          interface="action-sheet"
-          [interfaceOptions]="customActionSheetOptions"
-          formControlName="selectedAccount"
-        >
-          <ion-select-option [value]="account" *ngFor="let account of destinationAccounts; trackBy: trackByAccountId">
+        <ion-select class="deposit__select deposit__select-account"
+                    cancelText="Cancel"
+                    mode="md"
+                    placeholder="Please Choose"
+                    interface="action-sheet"
+                    [interfaceOptions]="customActionSheetOptions"
+                    formControlName="selectedAccount">
+          <ion-select-option [value]="account"
+                             *ngFor="let account of destinationAccounts; trackBy: trackByAccountId">
             {{ account.accountDisplayName }} ({{ account.balance | transactionUnits: account.accountType }})
           </ion-select-option>
         </ion-select>
       </div>
       <div class="deposit__select-wrapper">
         <ion-label class="deposit__label-select">Payment Method</ion-label>
-        <ion-select
-          class="deposit__select"
-          cancelText="Cancel"
-          mode="md"
-          placeholder="Please Choose"
-          interface="action-sheet"
-          [interfaceOptions]="customActionSheetPaymentOptions"
-          formControlName="sourceAccount"
-          (ionChange)="onPaymentMethodChanged($event)"
-        >
-          <ion-select-option
-            [value]="account"
-            *ngFor="let account of creditCardSourceAccounts; trackBy: trackByAccountId"
-            class="test-class"
-            ><i class="fab fa-cc-mastercard"></i> {{ account.accountTender | creditCardType }} ending in
+        <ion-select class="deposit__select"
+                    cancelText="Cancel"
+                    mode="md"
+                    placeholder="Please Choose"
+                    interface="action-sheet"
+                    [interfaceOptions]="customActionSheetPaymentOptions"
+                    formControlName="sourceAccount"
+                    (ionChange)="onPaymentMethodChanged($event)">
+          <ion-select-option [value]="account"
+                             *ngFor="let account of creditCardSourceAccounts; trackBy: trackByAccountId"
+                             class="test-class">{{ account.accountTender | creditCardType }} ending in
             {{ account.lastFour }}
           </ion-select-option>
-          <ion-select-option value="billme" *ngIf="isBillMePaymentTypesEnabled">Bill Me</ion-select-option>
+          <ion-select-option value="billme"
+                             *ngIf="isBillMePaymentTypesEnabled">Bill Me</ion-select-option>
           <ion-select-option value="newCreditCard"> Add a Credit Card</ion-select-option>
         </ion-select>
       </div>
     </section>
     <section>
-      <div class="deposit__label-cvv" *ngIf="isCVVfieldShow">
+      <div class="deposit__label-cvv"
+           *ngIf="isCVVfieldShow">
         <ion-label class="deposit__label-select">Card Security Code:</ion-label>
-        <ion-input
-          class="deposit__input-cvv"
-          inputmode="tel"
-          type="tel"
-          maxlength="3"
-          placeholder="CVV"
-          formControlName="fromAccountCvv"
-        ></ion-input>
-        <div
-          class="deposit__input-cvv--error"
-          *ngIf="
+        <ion-input class="deposit__input-cvv"
+                   inputmode="tel"
+                   type="tel"
+                   maxlength="3"
+                   placeholder="CVV"
+                   formControlName="fromAccountCvv"></ion-input>
+        <div class="deposit__input-cvv--error"
+             *ngIf="
             fromAccountCvv &&
             fromAccountCvv.errors &&
             (fromAccountCvv.errors['required'] ||
               fromAccountCvv.errors['pattern'] ||
               fromAccountCvv.errors['minlength']) &&
             (fromAccountCvv.dirty || fromAccountCvv.touched)
-          "
-        >
+          ">
           Please enter a valid card security code.
         </div>
       </div>
     </section>
 
-    <ion-button
-      expand="block"
-      type="submit"
-      class="deposit__deposit-btn"
-      [disabled]="!depositForm.valid"
-      [ngStyle]="{ marginTop: marginButton }"
-      >Deposit</ion-button
-    >
+    <ion-button expand="block"
+                type="submit"
+                class="deposit__deposit-btn"
+                [disabled]="!depositForm.valid"
+                [ngStyle]="{ marginTop: marginButton }">Deposit</ion-button>
   </form>
 </ion-content>

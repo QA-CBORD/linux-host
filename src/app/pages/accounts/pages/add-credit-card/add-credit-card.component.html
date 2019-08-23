@@ -1,0 +1,75 @@
+<st-header title="Add a Credit Card"
+           [isTitleShow]="true"
+           [backButtonTitle]="'Back'"
+           [isToolbarShow]="true"
+           class="cc__header"></st-header>
+
+<ion-content class="cc__content">
+  <form [formGroup]="ccForm"
+        (ngSubmit)="onFormSubmit()">
+
+    <ion-item class="cc__input-wrapper"
+              no-lines>
+      <ion-label class="cc__label-select"
+                 position="floating">Card Number</ion-label>
+      <ion-input class="cc__input"
+                 [autofocus]="true"
+                 inputmode="tel"
+                 type="tel"
+                 maxlength="16"
+                 formControlName="cardNumber"></ion-input>
+    </ion-item>
+    <div>
+      <ion-item class="cc__input-wrapper">
+        <ion-label class="cc__label-select"
+                   position="floating">Expiration Date</ion-label>
+        <ion-input class="cc__input"
+                   inputmode="tel"
+                   type="tel"
+                   formControlName="expDate"></ion-input>
+      </ion-item>
+      <ion-item class="cc__input-wrapper">
+        <ion-label class="cc__label-select"
+                   position="floating">Security Code</ion-label>
+        <ion-input class="cc__input"
+                   inputmode="tel"
+                   type="tel"
+                   maxlength="3"
+                   formControlName="securityCode"></ion-input>
+      </ion-item>
+    </div>
+    <ion-item class="cc__input-wrapper">
+      <ion-label class="cc__label-select"
+                 position="floating">Name on Credit Card</ion-label>
+      <ion-input class="cc__input"
+                 inputmode="tel"
+                 type="tel"
+                 maxlength="3"
+                 formControlName="nameOnCC"></ion-input>
+    </ion-item>
+    <ion-item class="cc__input-wrapper">
+      <ion-label class="cc__label-select"
+                 position="floating">Billing Address</ion-label>
+      <ion-input class="cc__input"
+                 inputmode="tel"
+                 type="tel"
+                 maxlength="3"
+                 formControlName="billingAnddress"></ion-input>
+    </ion-item>
+    <ion-item class="cc__input-wrapper">
+      <ion-label class="cc__label-select"
+                 position="floating">ZIP code</ion-label>
+      <ion-input class="cc__input"
+                 inputmode="tel"
+                 type="tel"
+                 maxlength="3"
+                 formControlName="zip"></ion-input>
+    </ion-item>
+    <st-input-floating-label></st-input-floating-label>
+    <ion-button expand="block"
+                type="submit"
+                class="cc__submit-btn"
+                shape="round"
+                [disabled]="!ccForm.valid">add card</ion-button>
+  </form>
+</ion-content>

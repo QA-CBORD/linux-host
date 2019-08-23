@@ -1,0 +1,27 @@
+@import 'tools';
+
+.cc {
+	&__header {
+		border-bottom: 1px solid $color-whisper;
+	}
+	
+	&__content {
+		--padding-start: 20px;
+		--padding-end: 20px;
+	}
+
+	&__input-wrapper {
+		border: 1px solid rgb(216, 216, 216);
+		border-radius: 8px;
+		margin-bottom: 35px;
+		
+		&.item-interactive.ion-touched.ion-invalid, &.item-interactive.item-has-focus {
+			--show-full-highlight: 0 !important;
+		}
+
+	}
+
+	&__submit-btn {
+		height: 50px;
+	}
+}

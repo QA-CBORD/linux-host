@@ -36,6 +36,10 @@ const routes: Route[] = [
     path: LOCAL_ROUTING.requestFunds,
     loadChildren: './pages/request-funds-page/request-funds.module#RequestFundsModule',
   },
+  {
+    path: LOCAL_ROUTING.addCreditCard,
+    loadChildren: './pages/add-credit-card/add-credit-card.module#AddCreditCardModule',
+  },
 ];
 
 const imports = [RouterModule.forChild(routes)];

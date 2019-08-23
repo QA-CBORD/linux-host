@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PopoverController, ModalController, ToastController } from '@ionic/angular';
 import { DepositService } from './services/deposit.service';
 import { tap, map, switchMap, take } from 'rxjs/operators';
-import { SYSTEM_SETTINGS_CONFIG, PAYMENT_TYPE, PAYMENT_SYSTEM_TYPE, ACCOUNT_TYPES } from '../../accounts.config';
+import { SYSTEM_SETTINGS_CONFIG, PAYMENT_TYPE, PAYMENT_SYSTEM_TYPE, ACCOUNT_TYPES, LOCAL_ROUTING } from '../../accounts.config';
 import { SettingInfo } from 'src/app/core/model/configuration/setting-info.model';
 import { Subscription, Observable, of } from 'rxjs';
 import { UserAccount } from '../../../../core/model/account/account.model';
@@ -44,18 +44,18 @@ export class DepositPageComponent implements OnInit, OnDestroy {
 
   constructor(
     private readonly depositService: DepositService,
-    private fb: FormBuilder,
+    private readonly fb: FormBuilder,
     private readonly popoverCtrl: PopoverController,
     private readonly modalController: ModalController,
     private readonly toastController: ToastController,
     private readonly router: Router,
     private readonly loadingService: LoadingService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.depositService.settings$
-    .pipe(take(1))
-    .subscribe(depositSettings => (this.depositSettings = depositSettings));
+      .pipe(take(1))
+      .subscribe(depositSettings => (this.depositSettings = depositSettings));
 
     this.initForm();
     this.getAccounts();
@@ -135,8 +135,8 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     return !this.isFreeFromDepositEnabled && !this.isCVVfieldShow
       ? '100%'
       : this.isFreeFromDepositEnabled && this.isCVVfieldShow
-      ? '70%'
-      : '85%';
+        ? '70%'
+        : '85%';
   }
 
   formatInput(event) {
@@ -192,23 +192,27 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     if (this.isFreeFromDepositEnabled) {
       const sourceAcc = this.depositForm.get('sourceAccount').value;
       let minMaxValidators = [];
-      if (sourceAcc === 'billme') {
-        minMaxValidators = [
-          amountRangeValidator(+this.minMaxOfAmmounts.minAmountbillme, +this.minMaxOfAmmounts.maxAmountbillme),
-        ];
-        this.depositForm.controls['fromAccountCvv'].setErrors(null);
-        this.depositForm.controls['fromAccountCvv'].clearValidators();
-      } else if (sourceAcc === 'newCreditCard') {
-        console.log('new credit card');
-      } else {
-        minMaxValidators = [
-          amountRangeValidator(+this.minMaxOfAmmounts.minAmountOneTime, +this.minMaxOfAmmounts.maxAmountOneTime),
-        ];
-        this.depositForm.controls['fromAccountCvv'].setValidators([
-          Validators.required,
-          Validators.minLength(3),
-          Validators.pattern('[0-9.-]*'),
-        ]);
+      switch (sourceAcc) {
+        case 'billme':
+          minMaxValidators = [
+            amountRangeValidator(+this.minMaxOfAmmounts.minAmountbillme, +this.minMaxOfAmmounts.maxAmountbillme),
+          ];
+          this.depositForm.controls['fromAccountCvv'].setErrors(null);
+          this.depositForm.controls['fromAccountCvv'].clearValidators();
+          break;
+
+        case 'newCreditCard':
+          this.router.navigate([NAVIGATE.accounts, LOCAL_ROUTING.addCreditCard], { skipLocationChange: true });
+          break;
+        default:
+          minMaxValidators = [
+            amountRangeValidator(+this.minMaxOfAmmounts.minAmountOneTime, +this.minMaxOfAmmounts.maxAmountOneTime),
+          ];
+          this.depositForm.controls['fromAccountCvv'].setValidators([
+            Validators.required,
+            Validators.minLength(3),
+            Validators.pattern('[0-9.-]*'),
+          ]);
       }
 
       this.depositForm.controls['mainInput'].setValidators([
