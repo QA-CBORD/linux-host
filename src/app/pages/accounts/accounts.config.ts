@@ -71,7 +71,7 @@ export const SYSTEM_SETTINGS_CONFIG = {
     category: 'deposit',
     name: 'onetime_maximum',
   },
-  depositPaymentTypes: {
+  autoDepositPaymentTypes: {
     domain: 'get',
     category: 'deposit',
     name: 'auto_deposit_payment_types',

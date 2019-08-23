@@ -24,10 +24,10 @@ export class SettingService {
   getUserSettings(settings: ContentStringRequest[]): Observable<SettingInfo[]> {
     const requestArray = settings.map(setting => this.apiService.getSettingByConfig(setting));
 
-    return zip(...requestArray).pipe(tap(settings => this.settings = settings));
+    return zip(...requestArray).pipe(tap(settings => this._settings = settings));
   }
 
   getSettingByName(settings: SettingInfo[], name: string): SettingInfo | undefined {
-    return settings.find(({ name: n }) => n === name);
+    return settings.find((setting) => setting && setting.name === name);
   }
 }
