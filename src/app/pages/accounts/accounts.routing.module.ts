@@ -3,6 +3,7 @@ import { Route, RouterModule } from '@angular/router';
 import { AccountsPage } from './accounts.page';
 import { AccountsPageResolver } from './resolvers/accounts-page.resolver';
 import { LOCAL_ROUTING } from './accounts.config';
+import { AutoDepositPageResolver } from './resolvers/auto-deposit-page.resolver';
 
 const routes: Route[] = [
   {
@@ -29,6 +30,7 @@ const routes: Route[] = [
   {
     path: LOCAL_ROUTING.autoDeposit,
     loadChildren: './pages/automatic-deposit-page/automatic-deposit.module#AutomaticDepositModule',
+    resolve: {data: AutoDepositPageResolver}
   },
   {
     path: LOCAL_ROUTING.requestFunds,

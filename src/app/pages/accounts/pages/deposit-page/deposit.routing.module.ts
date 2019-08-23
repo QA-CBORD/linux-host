@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { DepositPageComponent } from './deposit-page.component';
-import { DepositResolver } from '../../resolvers/deposit.resolver';
+import { DepositResolver } from './resolvers/deposit.resolver';
 
 const routes: Routes = [
   {
