@@ -102,14 +102,15 @@ export class AppComponent implements OnDestroy {
     console.log('JS interface used');
 
     if (this.platform.platforms().includes('android')) {
+      
       if (!androidInterface) {
         throw new Error('No native interface, retrieve info normally');
       }
 
-      const sessionId: string = androidInterface.getSessionId() || null;
-      const userInfo: UserInfo = JSON.parse(androidInterface.getUserInfo()) || null;
-      const institutionId: string = androidInterface.getInstitutionId() || null;
-      this.destinationPage = androidInterface.getDestinationPage() || null;
+      const sessionId: string = this.nativeProvider.getAndroidData(NativeData.SESSION_ID);
+      const userInfo: UserInfo = JSON.parse(this.nativeProvider.getAndroidData(NativeData.USER_INFO));
+      const institutionId: string = this.nativeProvider.getAndroidData(NativeData.INSTITUTION_ID);
+      this.destinationPage = this.nativeProvider.getAndroidData(NativeData.DESTINATION_PAGE);
 
       if (!sessionId || !userInfo || !institutionId || !this.destinationPage) {
         throw new Error('Error getting native data, retrieve info normally');
@@ -122,10 +123,10 @@ export class AppComponent implements OnDestroy {
 
       this.handlePageNavigation();
     } else {
-      const sessionIdPromise: Promise<string> = this.nativeProvider.getData(NativeData.SESSION_ID);
-      const userInfoPromise: Promise<UserInfo> = this.nativeProvider.getData(NativeData.USER_INFO);
-      const institutionIdPromise: Promise<string> = this.nativeProvider.getData(NativeData.INSTITUTION_ID);
-      const destinationPagePromise: Promise<string> = this.nativeProvider.getData(NativeData.DESTINATION_PAGE);
+      const sessionIdPromise: Promise<string> = this.nativeProvider.getIosData(NativeData.SESSION_ID);
+      const userInfoPromise: Promise<UserInfo> = this.nativeProvider.getIosData(NativeData.USER_INFO);
+      const institutionIdPromise: Promise<string> = this.nativeProvider.getIosData(NativeData.INSTITUTION_ID);
+      const destinationPagePromise: Promise<string> = this.nativeProvider.getIosData(NativeData.DESTINATION_PAGE);
 
       Promise.all([sessionIdPromise, userInfoPromise, institutionIdPromise, destinationPagePromise]).then(values => {
         DataCache.setSessionId(values[0]);

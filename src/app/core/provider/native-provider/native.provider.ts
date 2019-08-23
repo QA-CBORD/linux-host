@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Platform } from '@ionic/angular';
 
 declare var androidInterface: any;
 
@@ -14,15 +15,26 @@ export enum NativeData {
   providedIn: 'root',
 })
 export class NativeProvider {
-
-  constructor() {
+  constructor(private readonly platform: Platform) {
     window['NativeInterface'] = this;
   }
 
   // object for storing references to our promise-objects
   private promises = {};
 
-  getData(methodName: NativeData): Promise<any> {
+  isAndroid():boolean{
+    return this.platform.platforms().includes('android');
+  }
+
+  isIos():boolean{
+    return this.platform.platforms().includes('ios');
+  }
+
+  getAndroidData<T>(methodName: NativeData): T {
+    return androidInterface[methodName]() || null;
+  }
+
+  getIosData(methodName: NativeData): Promise<any> {
     const promise = new Promise((resolve, reject) => {
       // we generate a unique id to reference the promise later
       // from native function
@@ -63,8 +75,6 @@ export class NativeProvider {
   private postAppMessage(msg) {
     if (window['webkit'] && window['webkit'].messageHandlers.JSListener) {
       window['webkit'].messageHandlers.JSListener.postMessage(msg);
-    } else if (androidInterface) {
-      this.resolvePromise(msg.promiseId, androidInterface[msg.methodName]());
     } else {
       throw new Error('No NativeInterface exists. Use service.');
     }

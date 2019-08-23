@@ -11,6 +11,7 @@ import { MessageResponse } from '../../model/service/message-response.model';
 import { UserSettings } from '../../model/user';
 import { UserPhotoList } from '../../model/user';
 import { HttpClient } from '@angular/common/http';
+import { Platform } from '@ionic/angular';
 
 @Injectable({
   providedIn: 'root',
@@ -20,7 +21,10 @@ export class UserService extends BaseService {
   private readonly userData$: BehaviorSubject<UserInfo> = new BehaviorSubject<UserInfo>(null);
   private userPhoto: UserPhotoInfo = null;
 
-  constructor(readonly http: HttpClient, private readonly nativeProvider: NativeProvider) {
+  constructor(
+    readonly http: HttpClient,
+    private readonly nativeProvider: NativeProvider
+  ) {
     super(http);
   }
 
@@ -58,22 +62,26 @@ export class UserService extends BaseService {
   getAcceptedPhoto(): Observable<UserPhotoInfo> {
     if (this.userPhoto) return of(this.userPhoto);
 
-    const userPhotoObservable: Observable<UserPhotoInfo> = this.getUser().pipe(
+    const isAndroid: boolean = this.nativeProvider.isAndroid();
+
+    const nativeProviderFunction: Observable<UserPhotoInfo> = isAndroid ? of(this.nativeProvider.getAndroidData(NativeData.USER_PHOTO)) : from(this.nativeProvider.getIosData(NativeData.USER_PHOTO));
+
+    const userPhotoInfoObservable: Observable<UserPhotoInfo> = this.getUser().pipe(
       switchMap(({ id }: UserInfo) => this.getPhotoListByUserId(id)),
       map(({ response: { list } }) => this.getPhotoIdByStatus(list)),
       switchMap(({ id }: UserPhotoInfo) => this.getPhotoById(id)),
       map(({ response }) => (this.userPhoto = response))
     );
 
-    return from(this.nativeProvider.getData(NativeData.USER_PHOTO)).pipe(
+    return nativeProviderFunction.pipe(
       catchError(e => {
-        return userPhotoObservable;
+        return userPhotoInfoObservable;
       }),
-      switchMap(photoData => {
-        if (photoData) {
-          return of(photoData);
+      switchMap(userPhotoInfo => {
+        if (userPhotoInfo) {
+          return of(userPhotoInfo);
         } else {
-          return userPhotoObservable;
+          return userPhotoInfoObservable;
         }
       })
     );
