@@ -100,9 +100,11 @@ export class AppComponent implements OnDestroy {
 
   useJavaScriptInterface() {
     console.log('JS interface used');
+    console.log(this.platform.platforms());
+    
 
-    if (this.platform.platforms().includes('android')) {
-      
+    if (this.nativeProvider.isAndroid()) {
+
       if (!androidInterface) {
         throw new Error('No native interface, retrieve info normally');
       }
@@ -122,7 +124,7 @@ export class AppComponent implements OnDestroy {
       DataCache.setInstitutionId(institutionId);
 
       this.handlePageNavigation();
-    } else {
+    } else if (this.nativeProvider.isIos()){
       const sessionIdPromise: Promise<string> = this.nativeProvider.getIosData(NativeData.SESSION_ID);
       const userInfoPromise: Promise<UserInfo> = this.nativeProvider.getIosData(NativeData.USER_INFO);
       const institutionIdPromise: Promise<string> = this.nativeProvider.getIosData(NativeData.INSTITUTION_ID);
@@ -136,6 +138,8 @@ export class AppComponent implements OnDestroy {
         this.destinationPage = <any>values[3];
         this.handlePageNavigation();
       });
+    } else {
+      throw new Error('No NativeInterface');
     }
   }
 
