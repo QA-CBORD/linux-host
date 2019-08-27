@@ -1,63 +1,84 @@
 @import 'tools';
 
 .cc {
-	&__header {
-		border-bottom: 1px solid $color-whisper;
-	}
-	
-	&__content {
-		--padding-start: 20px;
-		--padding-end: 20px;
-	}
+  &__header {
+    border-bottom: 1px solid $color-whisper;
+  }
 
-	&__input-wrapper {
-		margin-bottom: 35px;
-		display: block;
+  &__content {
+    --padding-start: 20px;
+    --padding-end: 20px;
+  }
 
-		&:first-child {
-			margin-top: 50px;
-		}
-	}
+  &__input-wrapper {
+    margin-bottom: 35px;
+    display: block;
 
-	&__security-info-wrapper {
-		display: flex;
-		justify-content: space-between;
-		margin-bottom: 35px;
-	}
+    &:first-child {
+      margin-top: 50px;
+    }
+  }
 
-	&__exp-date {
-		position: relative;
-		flex-basis: 50%;
-	}
+  &__card-number-container {
+    position: relative;
 
-	&__exp-date-hint {
-		position: absolute;
-		left: 10px;
-    	color: #6e6e6e;
+    .cc__card-visa {
+      position: absolute;
+      width: 30px;
+      z-index: 1;
+      right: 60px;
+      top: 15px;
+    }
 
-		@include font-nunito-semibold(12px);
-	}
+    .cc__card-mastercard {
+      position: absolute;
+      width: 30px;
+      z-index: 1;
+      right: 20px;
+      top: 15px;
+    }
+  }
 
-	&__cvv {
-		position: relative;
-		flex-basis: 50%;
-	}
+  &__security-info-wrapper {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 35px;
+  }
 
-	&__cvv-hint {
-		position: absolute;
-		left: 10px;
-    	color: #6e6e6e;
+  &__exp-date {
+    position: relative;
+    flex-basis: 45%;
+  }
 
-		@include font-nunito-semibold(12px);
-	}
+  &__exp-date-hint {
+    position: absolute;
+    left: 10px;
+    color: #6e6e6e;
 
-	&__submit-btn {
-		height: 50px;
-	}
+    @include font-nunito-semibold(12px);
+  }
 
-	&__input-error {
-		color: $color-alizarin;
+  &__cvv {
+    position: relative;
+    flex-basis: 45%;
+  }
 
-      	@include font-nunito-heavy(14px);
-	}
+  &__cvv-hint {
+    position: absolute;
+    left: 10px;
+    color: #6e6e6e;
+
+    @include font-nunito-semibold(12px);
+  }
+
+  &__submit-btn {
+	height: 50px;
+	--background: #166dff;
+  }
+
+  &__input-error {
+    color: $color-alizarin;
+
+    @include font-nunito-semibold(14px);
+  }
 }
