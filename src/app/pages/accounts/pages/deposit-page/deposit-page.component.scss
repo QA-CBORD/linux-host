@@ -1,6 +1,10 @@
 @import 'tools';
 
 .deposit {
+  &__header {
+		border-bottom: 1px solid $color-whisper;
+  }
+  
   &__manual-amount {
     display: flex;
     flex-direction: column;

@@ -18,17 +18,17 @@ export class AddCreditCardComponent implements OnInit {
   }
 
   onFormSubmit() {
-console.log(this.ccForm)
+    console.log(this.ccForm)
   }
 
   private initForm() {
     this.ccForm = this.fb.group({
-      cardNumber: [''],
-      expDate: [''],
+      cardNumber: ['', Validators.required],
+      expDate: ['', Validators.required],
       securityCode: ['', Validators.required],
       nameOnCC: ['', Validators.required],
-      billingAnddress: [''],
-      zip: ['']
+      billingAnddress: ['', Validators.required],
+      zip: ['', Validators.required]
     });
   }
 }

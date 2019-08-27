@@ -8,68 +8,107 @@
   <form [formGroup]="ccForm"
         (ngSubmit)="onFormSubmit()">
 
-    <ion-item class="cc__input-wrapper"
-              no-lines>
-      <ion-label class="cc__label-select"
-                 position="floating">Card Number</ion-label>
-      <ion-input class="cc__input"
-                 [autofocus]="true"
-                 inputmode="tel"
-                 type="tel"
-                 maxlength="16"
-                 formControlName="cardNumber"></ion-input>
-    </ion-item>
-    <div>
-      <ion-item class="cc__input-wrapper">
-        <ion-label class="cc__label-select"
-                   position="floating">Expiration Date</ion-label>
-        <ion-input class="cc__input"
-                   inputmode="tel"
-                   type="tel"
-                   formControlName="expDate"></ion-input>
-      </ion-item>
-      <ion-item class="cc__input-wrapper">
-        <ion-label class="cc__label-select"
-                   position="floating">Security Code</ion-label>
-        <ion-input class="cc__input"
-                   inputmode="tel"
-                   type="tel"
-                   maxlength="3"
-                   formControlName="securityCode"></ion-input>
-      </ion-item>
+    <st-input-floating-label class="cc__input-wrapper"
+                             [control]="ccForm.get('cardNumber')"
+                             label="Card number"
+                             type="tel"
+                             idd="cardNumber"
+                             formControlName="cardNumber"
+                             [isError]="ccForm.get('cardNumber').errors && ccForm.get('cardNumber').errors['required'] &&
+                             (ccForm.get('cardNumber').dirty || ccForm.get('cardNumber').touched)">
+      <div class="cc__input-error"
+           *ngIf="ccForm.get('cardNumber').errors && ccForm.get('cardNumber').errors['required'] &&
+                                 (ccForm.get('cardNumber').dirty || ccForm.get('cardNumber').touched)">
+        This field is required.
+      </div>
+    </st-input-floating-label>
+    <div class="cc__security-info-wrapper">
+      <div class="cc__exp-date">
+        <st-input-floating-label [control]="ccForm.get('expDate')"
+                                 label="Expiration Date"
+                                 type="tel"
+                                 idd="expDate"
+                                 formControlName="expDate"
+                                 [isError]="ccForm.get('expDate').errors && ccForm.get('expDate').errors['required'] &&
+                                 (ccForm.get('expDate').dirty || ccForm.get('expDate').touched)">
+          <div class="cc__input-error"
+               *ngIf="ccForm.get('expDate').errors && ccForm.get('expDate').errors['required'] &&
+                                 (ccForm.get('expDate').dirty || ccForm.get('expDate').touched)">
+            This field is required.
+          </div>
+        </st-input-floating-label>
+        <span class="cc__exp-date-hint"
+              *ngIf="!(ccForm.get('expDate').errors && ccForm.get('expDate').errors['required'] &&
+        (ccForm.get('expDate').dirty || ccForm.get('expDate').touched))">MM/YY</span>
+      </div>
+
+      <div class="cc__cvv">
+        <st-input-floating-label [control]="ccForm.get('securityCode')"
+                                 label="Security Code"
+                                 type="tel"
+                                 idd="securityCode"
+                                 formControlName="securityCode"
+                                 [isError]="ccForm.get('securityCode').errors && ccForm.get('securityCode').errors['required'] &&
+                                 (ccForm.get('securityCode').dirty || ccForm.get('securityCode').touched)">
+          <div class="cc__input-error"
+               *ngIf="ccForm.get('securityCode').errors && ccForm.get('securityCode').errors['required'] &&
+                                 (ccForm.get('securityCode').dirty || ccForm.get('securityCode').touched)">
+            Please enter a valid card security code.
+          </div>
+        </st-input-floating-label>
+        <span class="cc__cvv-hint"
+              *ngIf="!(ccForm.get('securityCode').errors && ccForm.get('securityCode').errors['required'] &&
+        (ccForm.get('securityCode').dirty || ccForm.get('securityCode').touched))">CVV</span>
+      </div>
     </div>
-    <ion-item class="cc__input-wrapper">
-      <ion-label class="cc__label-select"
-                 position="floating">Name on Credit Card</ion-label>
-      <ion-input class="cc__input"
-                 inputmode="tel"
-                 type="tel"
-                 maxlength="3"
-                 formControlName="nameOnCC"></ion-input>
-    </ion-item>
-    <ion-item class="cc__input-wrapper">
-      <ion-label class="cc__label-select"
-                 position="floating">Billing Address</ion-label>
-      <ion-input class="cc__input"
-                 inputmode="tel"
-                 type="tel"
-                 maxlength="3"
-                 formControlName="billingAnddress"></ion-input>
-    </ion-item>
-    <ion-item class="cc__input-wrapper">
-      <ion-label class="cc__label-select"
-                 position="floating">ZIP code</ion-label>
-      <ion-input class="cc__input"
-                 inputmode="tel"
-                 type="tel"
-                 maxlength="3"
-                 formControlName="zip"></ion-input>
-    </ion-item>
-    <st-input-floating-label></st-input-floating-label>
+    <st-input-floating-label class="cc__input-wrapper"
+                             [control]="ccForm.get('nameOnCC')"
+                             label="Name on Credit Card"
+                             type="tel"
+                             idd="nameOnCC"
+                             formControlName="nameOnCC"
+                             [isError]="ccForm.get('nameOnCC').errors && ccForm.get('nameOnCC').errors['required'] &&
+                                 (ccForm.get('nameOnCC').dirty || ccForm.get('nameOnCC').touched)">
+      <div class="cc__input-error"
+           *ngIf="ccForm.get('nameOnCC').errors && ccForm.get('nameOnCC').errors['required'] &&
+           (ccForm.get('nameOnCC').dirty || ccForm.get('nameOnCC').touched)">
+        Please enter the name as it appears on the credit card.
+      </div>
+    </st-input-floating-label>
+
+    <st-input-floating-label class="cc__input-wrapper"
+                             [control]="ccForm.get('billingAnddress')"
+                             label="Billing Address"
+                             type="tel"
+                             idd="billingAddress"
+                             formControlName="billingAnddress"
+                             [isError]="ccForm.get('billingAnddress').errors && ccForm.get('billingAnddress').errors['required'] &&
+                                 (ccForm.get('billingAnddress').dirty || ccForm.get('billingAnddress').touched)">
+      <div class="cc__input-error"
+           *ngIf="ccForm.get('billingAnddress').errors && ccForm.get('billingAnddress').errors['required'] &&
+           (ccForm.get('billingAnddress').dirty || ccForm.get('billingAnddress').touched)">
+        Please enter your billing address.
+      </div>
+    </st-input-floating-label>
+
+    <st-input-floating-label class="cc__input-wrapper"
+                             [control]="ccForm.get('zip')"
+                             label="ZIP code"
+                             type="tel"
+                             idd="zip"
+                             formControlName="zip"
+                             [isError]="ccForm.get('zip').errors && ccForm.get('zip').errors['required'] &&
+                                 (ccForm.get('zip').dirty || ccForm.get('zip').touched)">
+      <div class="cc__input-error"
+           *ngIf="ccForm.get('zip').errors && ccForm.get('zip').errors['required'] &&
+           (ccForm.get('zip').dirty || ccForm.get('zip').touched)">
+        Please enter a valid postal code.
+      </div>
+    </st-input-floating-label>
     <ion-button expand="block"
                 type="submit"
                 class="cc__submit-btn"
-                shape="round"
-                [disabled]="!ccForm.valid">add card</ion-button>
+                shape="round">add card</ion-button>
+    <!-- [disabled]="!ccForm.valid" -->
   </form>
 </ion-content>
