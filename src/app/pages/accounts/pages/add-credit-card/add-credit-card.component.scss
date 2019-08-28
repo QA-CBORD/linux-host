@@ -72,8 +72,11 @@
   }
 
   &__submit-btn {
-	height: 50px;
-	--background: #166dff;
+    --background: #166dff;
+    height: 50px;
+    position: fixed;
+    width: 90%;
+    bottom: 5%;
   }
 
   &__input-error {

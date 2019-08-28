@@ -9,20 +9,33 @@
 <ion-content class="cc__content">
   <form [formGroup]="ccForm" (ngSubmit)="onFormSubmit()">
     <div class="cc__input-wrapper cc__card-number-container">
-      <img class="cc__card-visa" src="/assets/icon/cc-visa.svg" alt="visa" />
-      <img class="cc__card-mastercard" src="/assets/icon/cc-mastercard.svg" alt="master card" />
+      <img
+        class="cc__card-visa"
+        [ngStyle]="{ right: cardType === 'Visa' ? '20px' : '60px' }"
+        src="/assets/icon/cc-visa.svg"
+        alt="visa"
+        *ngIf="cardType === 'Visa' || cardType === ''"
+      />
+      <img
+        class="cc__card-mastercard"
+        src="/assets/icon/cc-mastercard.svg"
+        alt="master card"
+        *ngIf="cardType === 'Mastercard' || cardType === ''"
+      />
 
       <st-input-floating-label
         [control]="cardNumberControl"
         label="Card number"
         type="tel"
         idd="cardNumber"
+        maxlength="19"
         formControlName="cardNumber"
         [isError]="
           cardNumberControl.errors &&
           cardNumberControl.errors['required'] &&
           (cardNumberControl.dirty || cardNumberControl.touched)
         "
+        (keydown)="onInputFieldClicked($event)"
       >
         <div
           class="cc__input-error"
@@ -34,6 +47,9 @@
         >
           This field is required.
         </div>
+        <div *ngIf="cardNumberControl.errors && cardNumberControl.errors['maxlength']" class="cc__input-error">
+          Please enter a valid credit card number.
+        </div>
       </st-input-floating-label>
     </div>
     <div class="cc__security-info-wrapper">
@@ -43,12 +59,14 @@
           label="Expiration Date"
           type="tel"
           idd="expDate"
+          maxlength="5"
           formControlName="expDate"
           [isError]="
             expDateControl.errors &&
             expDateControl.errors['required'] &&
             (expDateControl.dirty || expDateControl.touched)
           "
+          (keydown)="onInputFieldClicked($event)"
         >
           <div
             class="cc__input-error"
@@ -60,13 +78,23 @@
           >
             This field is required.
           </div>
+          <div
+            class="cc__input-error"
+            *ngIf="
+              expDateControl.errors &&
+              expDateControl.errors['minlength'] &&
+              (expDateControl.dirty || expDateControl.touched)
+            "
+          >
+            Please enter a valid expiration date.
+          </div>
         </st-input-floating-label>
         <span
           class="cc__exp-date-hint"
           *ngIf="
             !(
               expDateControl.errors &&
-              expDateControl.errors['required'] &&
+              (expDateControl.errors['required'] || expDateControl.errors['minlength']) &&
               (expDateControl.dirty || expDateControl.touched)
             )
           "
@@ -80,10 +108,11 @@
           label="Security Code"
           type="tel"
           idd="securityCode"
+          maxlength="4"
           formControlName="securityCode"
           [isError]="
             securityCodeControl.errors &&
-            securityCodeControl.errors['required'] &&
+            (securityCodeControl.errors['required'] || securityCodeControl.errors['minlength']) &&
             (securityCodeControl.dirty || securityCodeControl.touched)
           "
         >
@@ -91,7 +120,7 @@
             class="cc__input-error"
             *ngIf="
               securityCodeControl.errors &&
-              securityCodeControl.errors['required'] &&
+              (securityCodeControl.errors['required'] || securityCodeControl.errors['minlength']) &&
               (securityCodeControl.dirty || securityCodeControl.touched)
             "
           >
@@ -103,7 +132,7 @@
           *ngIf="
             !(
               securityCodeControl.errors &&
-              securityCodeControl.errors['required'] &&
+              (securityCodeControl.errors['required'] || securityCodeControl.errors['minlength']) &&
               (securityCodeControl.dirty || securityCodeControl.touched)
             )
           "
@@ -177,7 +206,8 @@
         Please enter a valid postal code.
       </div>
     </st-input-floating-label>
-    <ion-button expand="block" type="submit" class="cc__submit-btn" shape="round">add card</ion-button>
-    <!-- [disabled]="!ccForm.valid" -->
+    <ion-button expand="block" type="submit" class="cc__submit-btn" shape="round" [disabled]="!ccForm.valid">
+      add card
+    </ion-button>
   </form>
 </ion-content>

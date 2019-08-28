@@ -8,10 +8,27 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 })
 export class AddCreditCardComponent implements OnInit {
   ccForm: FormGroup;
+  cardType: string = '';
+  private inputKeyCode: number;
+
   constructor(private readonly fb: FormBuilder) {}
 
   ngOnInit() {
     this.initForm();
+
+    this.cardNumberControl.valueChanges.subscribe(value => {
+      if (value.length === 16) return;
+      this.cardType = this.getCardType(value.replace(/\s/g, ''));
+      if (this.inputKeyCode !== 8) {
+        this.cardNumberControl.patchValue(value.replace(/(\d{4}(?!\s))/g, '$1 '), { emitEvent: false });
+      }
+    });
+
+    this.expDateControl.valueChanges.subscribe(value => {
+      if (this.inputKeyCode !== 8) {
+        this.expDateControl.patchValue(this.formatString(value), { emitEvent: false });
+      }
+    });
   }
 
   get cardNumberControl() {
@@ -42,18 +59,22 @@ export class AddCreditCardComponent implements OnInit {
     console.log(this.ccForm);
   }
 
+  onInputFieldClicked({ keyCode }) {
+    this.inputKeyCode = keyCode;
+  }
+
   private initForm() {
     this.ccForm = this.fb.group({
-      cardNumber: ['', Validators.required],
-      expDate: ['', Validators.required],
-      securityCode: ['', Validators.required],
+      cardNumber: ['', [Validators.required, Validators.minLength(16)]],
+      expDate: ['', Validators.required, Validators.minLength(5)],
+      securityCode: ['', [Validators.required, Validators.minLength(3)]],
       nameOnCC: ['', Validators.required],
       billingAnddress: ['', Validators.required],
       zip: ['', Validators.required],
     });
   }
 
-  getCardType(number) {
+  private getCardType(number) {
     // visa
     var re = new RegExp('^4');
     if (number.match(re) != null) return 'Visa';
@@ -64,18 +85,18 @@ export class AddCreditCardComponent implements OnInit {
     )
       return 'Mastercard';
 
-    // AMEX
-    re = new RegExp('^3[47]');
-    if (number.match(re) != null) return 'AMEX';
-
-    // Discover
-    re = new RegExp('^(6011|622(12[6-9]|1[3-9][0-9]|[2-8][0-9]{2}|9[0-1][0-9]|92[0-5]|64[4-9])|65)');
-    if (number.match(re) != null) return 'Discover';
-
-    // Visa Electron
-    re = new RegExp('^(4026|417500|4508|4844|491(3|7))');
-    if (number.match(re) != null) return 'Visa Electron';
-
     return '';
+  }
+
+  private formatString(string) {
+    return string
+      .replace(/^([1-9]\/|[2-9])$/g, '0$1/')
+      .replace(/^(0[1-9]{1}|1[0-2]{1})$/g, '$1/')
+      .replace(/^([0-1]{1})([3-9]{1})$/g, '0$1/$2')
+      .replace(/^(\d)\/(\d\d)$/g, '0$1/$2')
+      .replace(/^(0?[1-9]{1}|1[0-2]{1})([0-9]{2})$/g, '$1/$2')
+      .replace(/^([0]{1,})\/|[0]{1,}$/g, '0')
+      .replace(/[^\d\/]|^[\/]{0,}$/g, '')
+      .replace(/\/\//g, '/');
   }
 }

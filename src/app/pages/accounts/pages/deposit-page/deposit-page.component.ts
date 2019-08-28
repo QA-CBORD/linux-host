@@ -131,14 +131,6 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     }
   }
 
-  get marginButton() {
-    return !this.isFreeFromDepositEnabled && !this.isCVVfieldShow
-      ? '100%'
-      : this.isFreeFromDepositEnabled && this.isCVVfieldShow
-        ? '70%'
-        : '85%';
-  }
-
   formatInput(event) {
     const { value } = event.target;
     const index = value.indexOf('.');

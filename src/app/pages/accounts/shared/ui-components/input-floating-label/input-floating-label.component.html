@@ -1,12 +1,14 @@
 <div class="input__wrapper">
-       <input id="{{idd}}"
-              class="input__control"
-              #input
-              (change)="onChange($event, input.value)"
-              (keyup)="onChange($event, input.value)"
-              type="{{type}}"
-              [ngClass]="{'error-indicator': isError}">
-       <label class="input__placeholder"
-              [attr.for]="idd">{{label}}</label>
-       <ng-content></ng-content>
+  <input
+    id="{{ idd }}"
+    class="input__control"
+    #input
+    (change)="onChange($event, input.value)"
+    (keyup)="onChange($event, input.value)"
+    type="{{ type }}"
+    [attr.maxlength]="maxlength"
+    [ngClass]="{ 'error-indicator': isError }"
+  />
+  <label class="input__placeholder" [attr.for]="idd">{{ label }}</label>
+  <ng-content></ng-content>
 </div>
