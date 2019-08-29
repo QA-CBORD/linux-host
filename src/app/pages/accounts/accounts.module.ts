@@ -25,7 +25,7 @@ const providers = [
   DepositService,
   DepositResolver,
   AutoDepositPageResolver,
-  SettingService
+  SettingService,
 ];
 
 @NgModule({

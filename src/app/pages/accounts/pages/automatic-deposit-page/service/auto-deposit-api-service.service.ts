@@ -19,7 +19,7 @@ export class AutoDepositApiServiceService extends BaseService {
     const method = 'retrieveAutoDepositSettings';
 
     return this.userService.userData.pipe(
-      switchMap(({id: userId}) => this.httpRequest(url, method, true, {userId})),
+      switchMap(({ id: userId }) => this.httpRequest(url, method, true, { userId })),
       map(({ response }: MessageResponse<UserAutoDepositSettingInfo>) => response)
     );
   }
@@ -29,8 +29,8 @@ export class AutoDepositApiServiceService extends BaseService {
     const method = 'retrieveAutoDepositAccountList';
 
     return this.userService.userData.pipe(
-      switchMap(({id: userId}) => this.httpRequest(url, method, true, {userId, paymentType})),
-      map(({ response }: MessageResponse<UserAccount[]>, index) => response)
+      switchMap(({ id: userId }) => this.httpRequest(url, method, true, { userId, paymentType })),
+      map(({ response }: MessageResponse<UserAccount[]>) => response)
     );
   }
 

@@ -3,3 +3,7 @@ export enum AUTO_DEPOSIT_PAYMENT_TYPES {
   timeBased = 1,
   lowBalance = 2,
 }
+export enum DEPOSIT_FREQUENCY {
+  week = 'week',
+  month = 'month',
+}

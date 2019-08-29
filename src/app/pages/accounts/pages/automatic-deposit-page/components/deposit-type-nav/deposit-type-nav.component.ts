@@ -6,7 +6,6 @@ import { map } from 'rxjs/operators';
 import { AutoDepositService } from '../../service/auto-deposit.service';
 import { SettingService } from '../../../../services/setting.service';
 import { SYSTEM_SETTINGS_CONFIG } from '../../../../accounts.config';
-import { parseArray } from '../../../../../../core/utils/general-helpers';
 import { AUTO_DEPOSIT_PAYMENT_TYPES } from '../../auto-deposit.config';
 
 @Component({
@@ -17,40 +16,49 @@ import { AUTO_DEPOSIT_PAYMENT_TYPES } from '../../auto-deposit.config';
 })
 export class DepositTypeNavComponent implements OnInit {
   @Output() onTypeChanged: EventEmitter<number> = new EventEmitter<number>();
-  private availableTypes: Observable<{[key: number]: boolean}>;
-  activeType: number = 0;
+  private availableTypes: Observable<{ [key: number]: boolean }>;
+  activeType: number;
 
-  constructor(private readonly autoDepositService: AutoDepositService,
-              private readonly settingService: SettingService) {
-  }
+  constructor(
+    private readonly autoDepositService: AutoDepositService,
+    private readonly settingService: SettingService
+  ) {}
 
   get autoDepositTypes() {
     return AUTO_DEPOSIT_PAYMENT_TYPES;
   }
 
   get isLowBalanceAvailable(): Observable<boolean> {
-    return this.availableTypes.pipe(map((types) => types[AUTO_DEPOSIT_PAYMENT_TYPES.lowBalance]));
+    return this.availableTypes.pipe(map(types => types[AUTO_DEPOSIT_PAYMENT_TYPES.lowBalance]));
   }
 
   get isTimeBasedAvailable(): Observable<boolean> {
-    return this.availableTypes.pipe(map((types) => types[AUTO_DEPOSIT_PAYMENT_TYPES.timeBased]));
+    return this.availableTypes.pipe(map(types => types[AUTO_DEPOSIT_PAYMENT_TYPES.timeBased]));
   }
 
   ngOnInit() {
+    this.activeType = this.autoDepositService.userAutoDepositInfo.autoDepositType;
+
     this.availableTypes = this.settingService.settings$.pipe(
       map(settings => {
-        const timeBased = this.settingService.getSettingByName(settings, SYSTEM_SETTINGS_CONFIG.enableAutoDeposits.name);
-        const low = this.settingService.getSettingByName(settings, SYSTEM_SETTINGS_CONFIG.lowBalanceAutoDepositEnabled.name);
+        const timeBased = this.settingService.getSettingByName(
+          settings,
+          SYSTEM_SETTINGS_CONFIG.enableAutoDeposits.name
+        );
+        const low = this.settingService.getSettingByName(
+          settings,
+          SYSTEM_SETTINGS_CONFIG.lowBalanceAutoDepositEnabled.name
+        );
 
         return {
           [AUTO_DEPOSIT_PAYMENT_TYPES.lowBalance]: low && Boolean(Number(low.value)),
           [AUTO_DEPOSIT_PAYMENT_TYPES.timeBased]: timeBased && Boolean(Number(timeBased.value)),
         };
-      }),
+      })
     );
   }
 
-  onTypeChange({detail: {value}}: CustomEvent) {
+  onTypeChange({ detail: { value } }: CustomEvent) {
     this.activeType = value;
     this.onTypeChanged.emit(value);
   }

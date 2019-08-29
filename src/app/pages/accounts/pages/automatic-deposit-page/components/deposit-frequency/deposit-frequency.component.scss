@@ -1,0 +1,20 @@
+@import 'tools';
+
+.frequency {
+
+  &__header {
+    padding: 0;
+  }
+
+  &__header-title {
+    color: $color-night-rider;
+    line-height: 22px;
+    letter-spacing: 0;
+
+    @include font-nunito-regular(16px)
+  }
+
+  &__radio {
+    max-height: 40px;
+  }
+}

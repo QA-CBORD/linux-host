@@ -8,14 +8,16 @@ import { DepositTypeNavComponent } from './components/deposit-type-nav/deposit-t
 import { AutoDepositService } from './service/auto-deposit.service';
 import { AutoDepositApiServiceService } from './service/auto-deposit-api-service.service';
 import { AutomaticDepositResolver } from './resolver/automatic-deposit.resolver';
+import { DepositFrequencyComponent } from './components/deposit-frequency/deposit-frequency.component';
+import { AccountsSharedModule } from '../../shared/shared.module';
 
-const declarations = [AutomaticDepositPageComponent, DepositTypeNavComponent];
-const imports = [CommonModule, SharedModule, AutomaticDepositRoutingModule, IonicModule];
+const declarations = [AutomaticDepositPageComponent, DepositTypeNavComponent, DepositFrequencyComponent];
+const imports = [CommonModule, SharedModule, AutomaticDepositRoutingModule, IonicModule, AccountsSharedModule];
 const providers = [AutoDepositService, AutoDepositApiServiceService, AutomaticDepositResolver];
 
 @NgModule({
   imports,
   declarations,
-  providers
+  providers,
 })
 export class AutomaticDepositModule {}

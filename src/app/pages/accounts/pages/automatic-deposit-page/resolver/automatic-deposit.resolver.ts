@@ -9,8 +9,10 @@ import { AccountsService } from '../../../services/accounts.service';
 
 @Injectable()
 export class AutomaticDepositResolver implements Resolve<Observable<any>> {
-  constructor(private readonly autoDepositService:AutoDepositService,
-              private readonly accountsService: AccountsService){}
+  constructor(
+    private readonly autoDepositService: AutoDepositService,
+    private readonly accountsService: AccountsService
+  ) {}
 
   resolve(): Observable<any> {
     const accounts = this.accountsService.getUserAccounts();

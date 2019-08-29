@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PopoverController, ToastController } from '@ionic/angular';
 import { Router } from '@angular/router';
 
@@ -12,6 +12,7 @@ import { UserService } from '../../../../core/service/user-service/user.service'
 import { LoadingService } from '../../../../core/service/loading/loading.service';
 import { PopoverComponent } from './popover/popover.component';
 import { NAVIGATE } from '../../../../app.global';
+import { errorDecorator, validateEmail } from '../../../../core/utils/general-helpers';
 
 @Component({
   selector: 'st-request-funds-page',
@@ -169,15 +170,4 @@ export const CONTROL_ERROR = {
   [REQUEST_FUNDS_CONTROL_NAMES.message]: {
     required: 'Please enter a message.',
   },
-};
-
-const validateEmail = ({ value }: AbstractControl): ValidationErrors | null => {
-  const test = /^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z]+(\.[a-z]+)*\.[a-z]{2,6}$/.test(value);
-  return test ? null : { incorrect: true };
-};
-
-const errorDecorator = (fn: ValidatorFn, errorMsg: string): ((control: AbstractControl) => ValidationErrors | null) => {
-  return control => {
-    return fn(control) === null ? null : { errorMsg };
-  };
 };

@@ -1,4 +1,4 @@
-import { CONTENT_STRINGS } from './../../accounts.config';
+import { CONTENT_STRINGS } from '../../accounts.config';
 import { Pipe, PipeTransform } from '@angular/core';
 import { ACCOUNT_TYPES } from '../../accounts.config';
 import { AccountsService } from '../../services/accounts.service';
