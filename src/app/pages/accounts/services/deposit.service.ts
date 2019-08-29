@@ -55,7 +55,7 @@ export class DepositService {
     return Array.isArray(result) ? result : [];
   }
 
-  filterAccountsByPaymentSystem(accounts: UserAccount[]): UserAccount[] {
+  filterAccountsByPaymentSystem(accounts: Array<UserAccount>): Array<UserAccount> {
     return accounts.filter(
       ({ paymentSystemType: type }) => type === PAYMENT_SYSTEM_TYPE.MONETRA || type === PAYMENT_SYSTEM_TYPE.USAEPAY
     );
@@ -82,24 +82,23 @@ export class DepositService {
     });
   }
 
-  sourceAccForBillmeDeposit(selectedAccount: UserAccount, billmeMappingArr: Array<string>) {
+  sourceAccForBillmeDeposit(selectedAccount: UserAccount, billmeMappingArr: Array<string>): Observable<UserAccount> {
     const filterByBillme = accTender => billmeMappingArr.find(billmeMap => billmeMap['destination'] === accTender);
 
     return of(filterByBillme(selectedAccount.accountTender)).pipe(
       switchMap(billmeMapObj => {
         return this.accounts$.pipe(
-          map(accounts => accounts.find(({ accountTender }) => billmeMapObj['source'] === accountTender)),
-          tap(val => console.log(val))
+          map(accounts => accounts.find(({ accountTender }) => billmeMapObj['source'] === accountTender))
         );
       })
     );
   }
 
-  calculateDepositFee(fromAccountId, toAccountId, amount) {
+  calculateDepositFee(fromAccountId, toAccountId, amount): Observable<number> {
     return this.commerceApiService.calculateDepositFee(fromAccountId, toAccountId, amount);
   }
 
-  deposit(fromAccountId, fromAccountCvv, toAccountId, amount) {
-    return this.commerceApiService.deposit(fromAccountId, fromAccountCvv, toAccountId, amount);
+  deposit(fromAccountId, toAccountId, amount, fromAccountCvv): Observable<string> {
+    return this.commerceApiService.deposit(fromAccountId, toAccountId, amount, fromAccountCvv);
   }
 }

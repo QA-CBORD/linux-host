@@ -6,6 +6,6 @@ import { CREDITCARD_TYPE } from '../../accounts.config';
 })
 export class CreditCardTypePipe implements PipeTransform {
   transform(value: string): string {
-    return CREDITCARD_TYPE[value];
+    return CREDITCARD_TYPE[parseInt(value) - 1];
   }
 }

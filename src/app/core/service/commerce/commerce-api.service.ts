@@ -23,7 +23,7 @@ export class CommerceApiService extends BaseService {
     const method = 'retrieveAccounts';
 
     return this.httpRequest(this.serviceUrl, method, true).pipe(
-      map((response: MessageResponse<AccountResponse>) => response.response.accounts)
+      map(({ response }: MessageResponse<AccountResponse>) => response.accounts)
     );
   }
 
@@ -35,7 +35,7 @@ export class CommerceApiService extends BaseService {
     };
 
     return this.httpRequest(this.serviceUrl, method, true, params).pipe(
-      map((response: MessageResponse<TransactionResponse>) => response.response)
+      map(({ response }: MessageResponse<TransactionResponse>) => response)
     );
   }
 
@@ -48,22 +48,22 @@ export class CommerceApiService extends BaseService {
     };
 
     return this.httpRequest(this.serviceUrl, method, true, params).pipe(
-      map((response: MessageResponse<number>) => response.response)
+      map(({ response }: MessageResponse<number>) => response)
     );
   }
 
-  deposit(fromAccountId, fromAccountCvv, toAccountId, amount): Observable<any> {
+  deposit(fromAccountId, toAccountId, amount, fromAccountCvv): Observable<string> {
     const method = 'deposit';
     const params = {
       fromAccountId,
       toAccountId,
-      fromAccountCvv: '111',
+      fromAccountCvv,
       amount,
       cashlessTerminalLocation: null,
     };
 
     return this.httpRequest(this.serviceUrl, method, true, params).pipe(
-      map((response: MessageResponse<any>) => response.response)
+      map(({ response }: MessageResponse<string>) => response)
     );
   }
 }
