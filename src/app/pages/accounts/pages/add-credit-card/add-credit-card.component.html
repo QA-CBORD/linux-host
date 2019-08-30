@@ -20,7 +20,7 @@
         class="cc__card-mastercard"
         src="/assets/icon/cc-mastercard.svg"
         alt="master card"
-        *ngIf="cardType === 'Mastercard' || cardType === ''"
+        *ngIf="cardType === 'MasterCard' || cardType === ''"
       />
 
       <st-input-floating-label
@@ -32,7 +32,7 @@
         formControlName="cardNumber"
         [isError]="
           cardNumberControl.errors &&
-          cardNumberControl.errors['required'] &&
+          (cardNumberControl.errors['required'] || cardNumberControl.errors['pattern']) &&
           (cardNumberControl.dirty || cardNumberControl.touched)
         "
         (keydown)="onInputFieldClicked($event)"
@@ -47,7 +47,7 @@
         >
           This field is required.
         </div>
-        <div *ngIf="cardNumberControl.errors && cardNumberControl.errors['maxlength']" class="cc__input-error">
+        <div *ngIf="cardNumberControl.errors && cardNumberControl.errors['pattern']" class="cc__input-error">
           Please enter a valid credit card number.
         </div>
       </st-input-floating-label>
@@ -59,11 +59,11 @@
           label="Expiration Date"
           type="tel"
           idd="expDate"
-          maxlength="5"
+          maxlength="7"
           formControlName="expDate"
           [isError]="
             expDateControl.errors &&
-            expDateControl.errors['required'] &&
+            (expDateControl.errors['required'] || expDateControl.errors['minlength']) &&
             (expDateControl.dirty || expDateControl.touched)
           "
           (keydown)="onInputFieldClicked($event)"
@@ -98,7 +98,7 @@
               (expDateControl.dirty || expDateControl.touched)
             )
           "
-          >MM/YY</span
+          >MM/YYYY</span
         >
       </div>
 
@@ -112,7 +112,9 @@
           formControlName="securityCode"
           [isError]="
             securityCodeControl.errors &&
-            (securityCodeControl.errors['required'] || securityCodeControl.errors['minlength']) &&
+            (securityCodeControl.errors['required'] ||
+              securityCodeControl.errors['minlength'] ||
+              securityCodeControl.errors['pattern']) &&
             (securityCodeControl.dirty || securityCodeControl.touched)
           "
         >
@@ -120,7 +122,9 @@
             class="cc__input-error"
             *ngIf="
               securityCodeControl.errors &&
-              (securityCodeControl.errors['required'] || securityCodeControl.errors['minlength']) &&
+              (securityCodeControl.errors['required'] ||
+                securityCodeControl.errors['minlength'] ||
+                securityCodeControl.errors['pattern']) &&
               (securityCodeControl.dirty || securityCodeControl.touched)
             "
           >
@@ -132,7 +136,9 @@
           *ngIf="
             !(
               securityCodeControl.errors &&
-              (securityCodeControl.errors['required'] || securityCodeControl.errors['minlength']) &&
+              (securityCodeControl.errors['required'] ||
+                securityCodeControl.errors['minlength'] ||
+                securityCodeControl.errors['pattern']) &&
               (securityCodeControl.dirty || securityCodeControl.touched)
             )
           "
@@ -167,23 +173,23 @@
 
     <st-input-floating-label
       class="cc__input-wrapper"
-      [control]="billingAnddressControl"
+      [control]="billingAddressControl"
       label="Billing Address"
       type="tel"
       idd="billingAddress"
-      formControlName="billingAnddress"
+      formControlName="billingAddress"
       [isError]="
-        billingAnddressControl.errors &&
-        billingAnddressControl.errors['required'] &&
-        (billingAnddressControl.dirty || billingAnddressControl.touched)
+        billingAddressControl.errors &&
+        billingAddressControl.errors['required'] &&
+        (billingAddressControl.dirty || billingAddressControl.touched)
       "
     >
       <div
         class="cc__input-error"
         *ngIf="
-          billingAnddressControl.errors &&
-          billingAnddressControl.errors['required'] &&
-          (billingAnddressControl.dirty || billingAnddressControl.touched)
+          billingAddressControl.errors &&
+          billingAddressControl.errors['required'] &&
+          (billingAddressControl.dirty || billingAddressControl.touched)
         "
       >
         Please enter your billing address.
@@ -197,11 +203,19 @@
       type="tel"
       idd="zip"
       formControlName="zip"
-      [isError]="zipControl.errors && zipControl.errors['required'] && (zipControl.dirty || zipControl.touched)"
+      [isError]="
+        zipControl.errors &&
+        (zipControl.errors['required'] || zipControl.errors['pattern']) &&
+        (zipControl.dirty || zipControl.touched)
+      "
     >
       <div
         class="cc__input-error"
-        *ngIf="zipControl.errors && zipControl.errors['required'] && (zipControl.dirty || zipControl.touched)"
+        *ngIf="
+          zipControl.errors &&
+          (zipControl.errors['required'] || zipControl.errors['pattern']) &&
+          (zipControl.dirty || zipControl.touched)
+        "
       >
         Please enter a valid postal code.
       </div>

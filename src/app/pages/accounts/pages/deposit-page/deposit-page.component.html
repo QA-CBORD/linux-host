@@ -70,25 +70,6 @@
     </div>
     <section class="deposit__selection-block">
       <div class="deposit__select-wrapper">
-        <ion-label class="deposit__label-select">To Account</ion-label>
-        <ion-select
-          class="deposit__select deposit__select-account"
-          cancelText="Cancel"
-          mode="md"
-          placeholder="Please Choose"
-          interface="action-sheet"
-          [interfaceOptions]="customActionSheetOptions"
-          formControlName="selectedAccount"
-        >
-          <ion-select-option
-            [value]="account"
-            *ngFor="let account of destinationAccounts; trackBy: trackByAccountId"
-          >
-            {{ account.accountDisplayName }} ({{ account.balance | transactionUnits: account.accountType }})
-          </ion-select-option>
-        </ion-select>
-      </div>
-      <div class="deposit__select-wrapper">
         <ion-label class="deposit__label-select">Payment Method</ion-label>
         <ion-select
           class="deposit__select"
@@ -109,6 +90,22 @@
           </ion-select-option>
           <ion-select-option value="billme" *ngIf="isBillMePaymentTypesEnabled">Bill Me</ion-select-option>
           <ion-select-option value="newCreditCard"> Add a Credit Card</ion-select-option>
+        </ion-select>
+      </div>
+      <div class="deposit__select-wrapper">
+        <ion-label class="deposit__label-select">To Account</ion-label>
+        <ion-select
+          class="deposit__select deposit__select-account"
+          cancelText="Cancel"
+          mode="md"
+          placeholder="Please Choose"
+          interface="action-sheet"
+          [interfaceOptions]="customActionSheetOptions"
+          formControlName="selectedAccount"
+        >
+          <ion-select-option [value]="account" *ngFor="let account of destinationAccounts; trackBy: trackByAccountId">
+            {{ account.accountDisplayName }} ({{ account.balance | transactionUnits: account.accountType }})
+          </ion-select-option>
         </ion-select>
       </div>
     </section>
@@ -139,11 +136,7 @@
       </div>
     </section>
 
-    <ion-button
-      expand="block"
-      type="submit"
-      class="deposit__deposit-btn"
-      [disabled]="!depositForm.valid"
+    <ion-button expand="block" type="submit" class="deposit__deposit-btn" [disabled]="!depositForm.valid"
       >Deposit</ion-button
     >
   </form>

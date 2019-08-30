@@ -3,7 +3,13 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PopoverController, ModalController, ToastController } from '@ionic/angular';
 import { DepositService } from './services/deposit.service';
 import { tap, map, switchMap, take } from 'rxjs/operators';
-import { SYSTEM_SETTINGS_CONFIG, PAYMENT_TYPE, PAYMENT_SYSTEM_TYPE, ACCOUNT_TYPES, LOCAL_ROUTING } from '../../accounts.config';
+import {
+  SYSTEM_SETTINGS_CONFIG,
+  PAYMENT_TYPE,
+  PAYMENT_SYSTEM_TYPE,
+  ACCOUNT_TYPES,
+  LOCAL_ROUTING,
+} from '../../accounts.config';
 import { SettingInfo } from 'src/app/core/model/configuration/setting-info.model';
 import { Subscription, Observable, of } from 'rxjs';
 import { UserAccount } from '../../../../core/model/account/account.model';
@@ -50,12 +56,10 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     private readonly toastController: ToastController,
     private readonly router: Router,
     private readonly loadingService: LoadingService
-  ) { }
+  ) {}
 
   ngOnInit() {
-    this.depositService.settings$
-      .pipe(take(1))
-      .subscribe(depositSettings => (this.depositSettings = depositSettings));
+    this.depositService.settings$.pipe(take(1)).subscribe(depositSettings => (this.depositSettings = depositSettings));
 
     this.initForm();
     this.getAccounts();
@@ -194,6 +198,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
           break;
 
         case 'newCreditCard':
+          this.depositForm.reset();
           this.router.navigate([NAVIGATE.accounts, LOCAL_ROUTING.addCreditCard], { skipLocationChange: true });
           break;
         default:

@@ -5,14 +5,18 @@ import { IonicModule } from '@ionic/angular';
 import { AccountsSharedModule } from '../../shared/shared.module';
 import { AddCreditCardComponent } from './add-credit-card.component';
 import { AddCreditCardRoutingModule } from './add-credit-card.routing.module';
+import { AddCreditCardService } from './services/add-credit-card.service';
+import { SuccessPopoverComponent } from './components/success-popover/success-popover.component';
 
 const imports = [CommonModule, SharedModule, IonicModule, AddCreditCardRoutingModule, AccountsSharedModule];
-const declarations = [AddCreditCardComponent];
-const providers = []
+const declarations = [AddCreditCardComponent, SuccessPopoverComponent];
+const providers = [AddCreditCardService];
+const entryComponents = [SuccessPopoverComponent];
 
 @NgModule({
   declarations,
   imports,
-  providers
+  providers,
+  entryComponents,
 })
-export class AddCreditCardModule { }
+export class AddCreditCardModule {}

@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, forwardRef, ViewChild, ElementRef } from '@angular/core';
-import { FormControl, NG_VALUE_ACCESSOR, ControlValueAccessor, NG_VALIDATORS, Validator } from '@angular/forms';
+import { FormControl, NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
 
 export const CUSTOM_INPUT_CONTROL_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
@@ -19,9 +19,9 @@ export class InputFloatingLabelComponent implements OnInit, ControlValueAccessor
   @Input() type: string;
   @Input() maxlength: string = "";
   @Input() idd: string;
+  @Input() isError: boolean;
   @ViewChild('input') inputRef: ElementRef;
   private innerValue: any = '';
-  @Input() isError: boolean;
 
   constructor() {}
 
