@@ -12,7 +12,7 @@ import { UserService } from '../../../../core/service/user-service/user.service'
 import { LoadingService } from '../../../../core/service/loading/loading.service';
 import { PopoverComponent } from './popover/popover.component';
 import { NAVIGATE } from '../../../../app.global';
-import { errorDecorator, validateEmail } from '../../../../core/utils/general-helpers';
+import { formControlErrorDecorator, validateEmail } from '../../../../core/utils/general-helpers';
 
 @Component({
   selector: 'st-request-funds-page',
@@ -96,23 +96,23 @@ export class RequestFundsPageComponent implements OnInit {
 
   private initForm() {
     const nameErrors = [
-      errorDecorator(Validators.required, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.name].required),
-      errorDecorator(Validators.minLength(2), CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.name].minlength),
-      errorDecorator(Validators.maxLength(255), CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.name].maxlength),
+      formControlErrorDecorator(Validators.required, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.name].required),
+      formControlErrorDecorator(Validators.minLength(2), CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.name].minlength),
+      formControlErrorDecorator(Validators.maxLength(255), CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.name].maxlength),
     ];
 
     const emailErrors = [
-      errorDecorator(Validators.required, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.email].required),
-      errorDecorator(validateEmail, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.email].incorrect),
-      errorDecorator(Validators.maxLength(255), CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.email].maxlength),
+      formControlErrorDecorator(Validators.required, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.email].required),
+      formControlErrorDecorator(validateEmail, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.email].incorrect),
+      formControlErrorDecorator(Validators.maxLength(255), CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.email].maxlength),
     ];
 
     const accountErrors = [
-      errorDecorator(Validators.required, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.account].required),
+      formControlErrorDecorator(Validators.required, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.account].required),
     ];
 
     const messageErrors = [
-      errorDecorator(Validators.required, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.message].required),
+      formControlErrorDecorator(Validators.required, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.message].required),
     ];
 
     this.requestFundsForm = this.fb.group({

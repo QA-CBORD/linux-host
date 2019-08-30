@@ -1,4 +1,4 @@
-import { WEEK } from "../../../../core/utils/date-helper";
+import { WEEK } from '../../../../core/utils/date-helper';
 
 export enum AUTO_DEPOSIT_PAYMENT_TYPES {
   automaticDepositOff = 0,
@@ -33,7 +33,7 @@ export const getMonthlySuccessBodyMessage = (amount: string, day: number, accNam
     case 2:
       dayAsString = '2nd';
       break;
-      case 3:
+    case 3:
       dayAsString = '3rd';
       break;
     default:

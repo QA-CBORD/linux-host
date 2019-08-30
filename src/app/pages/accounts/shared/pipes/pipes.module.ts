@@ -7,7 +7,13 @@ import { CreditCardTypePipe } from './credit-card-type.pipe';
 import { CustomCurrencyPipe } from './custom-currency.pipe';
 import { CurrencyPipe } from '@angular/common';
 
-const declarations = [TransactionUnitsPipe, TransactionActionPipe, IconPathPipe, CreditCardTypePipe, CustomCurrencyPipe];
+const declarations = [
+  TransactionUnitsPipe,
+  TransactionActionPipe,
+  IconPathPipe,
+  CreditCardTypePipe,
+  CustomCurrencyPipe,
+];
 
 @NgModule({
   declarations: [...declarations],

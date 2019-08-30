@@ -6,7 +6,7 @@ import { map, switchMap, tap } from 'rxjs/operators';
 import { UserAutoDepositSettingInfo } from '../models/auto-deposit-settings';
 import { AutoDepositApiServiceService } from './auto-deposit-api-service.service';
 import { SYSTEM_SETTINGS_CONFIG } from '../../../accounts.config';
-import { parseArray } from '../../../../../core/utils/general-helpers';
+import { parseArrayFromString } from '../../../../../core/utils/general-helpers';
 import { SettingService } from '../../../services/setting.service';
 import { UserService } from '../../../../../core/service/user-service/user.service';
 
@@ -38,7 +38,7 @@ export class AutoDepositService {
           settings,
           SYSTEM_SETTINGS_CONFIG.autoDepositPaymentTypes.name
         );
-        const paymentType = settingInfo ? parseArray(settingInfo.value) : [];
+        const paymentType = settingInfo ? parseArrayFromString(settingInfo.value) : [];
         const calls = paymentType.map((type: number) => this.apiServiceService.retrieveAutoDepositAccountList(type));
         return zip(...calls);
       })

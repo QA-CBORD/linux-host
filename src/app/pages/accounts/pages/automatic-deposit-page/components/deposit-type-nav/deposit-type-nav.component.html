@@ -4,7 +4,8 @@
       <div class="deposits__radio-label-title">Automatic Deposit</div>
       <div class="deposits__radio-label-sub-title">Turn off automatic deposits</div>
     </ion-label>
-    <ion-radio slot="start"
+    <ion-radio class="deposits__radio"
+            slot="start"
                [value]="autoDepositTypes.automaticDepositOff"
                [checked]="activeType === autoDepositTypes.automaticDepositOff"
                mode="md"></ion-radio>
@@ -17,7 +18,8 @@
         Automatically refill your balance when it drops below a threshold value
       </div>
     </ion-label>
-    <ion-radio slot="start"
+    <ion-radio class="deposits__radio"
+            slot="start"
                [value]="autoDepositTypes.lowBalance"
                [checked]="activeType === autoDepositTypes.lowBalance"
                mode="md"></ion-radio>
@@ -28,7 +30,8 @@
       <div class="deposits__radio-label-title">Time-based</div>
       <div class="deposits__radio-label-sub-title">Schedule a deposit on a weekly or monthly basis</div>
     </ion-label>
-    <ion-radio slot="start"
+    <ion-radio class="deposits__radio"
+            slot="start"
                [value]="autoDepositTypes.timeBased"
                [checked]="activeType === autoDepositTypes.timeBased"
                mode="md"></ion-radio>

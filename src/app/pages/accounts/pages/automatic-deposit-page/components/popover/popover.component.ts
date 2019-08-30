@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { PopoverConfig } from "../../../../../../core/model/popover/popover.model";
-import { PopupTypes } from "../../../../../rewards/rewards.config";
-import { buttons } from "../../../../../../core/utils/buttons.config";
+import { PopoverConfig } from '../../../../../../core/model/popover/popover.model';
+import { PopupTypes } from '../../../../../rewards/rewards.config';
+import { buttons } from '../../../../../../core/utils/buttons.config';
 
 @Component({
   selector: 'st-popover',

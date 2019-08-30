@@ -19,11 +19,11 @@
 
         @include font-nunito-heavy(16px);
       }
-
-      ion-radio {
-        --color-checked: #166dff;
-      }
     }
+  }
+
+  &__radio {
+    --color-checked: #166dff;
   }
 
   &__radio-label-wrapper {

@@ -15,7 +15,7 @@ import { AUTO_DEPOSIT_PAYMENT_TYPES } from '../../auto-deposit.config';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DepositTypeNavComponent implements OnInit {
-  @Output() onTypeChanged: EventEmitter<number> = new EventEmitter<number>();
+  @Output() private readonly onTypeChanged: EventEmitter<number> = new EventEmitter<number>();
   private availableTypes: Observable<{ [key: number]: boolean }>;
   activeType: number;
 
@@ -38,7 +38,15 @@ export class DepositTypeNavComponent implements OnInit {
 
   ngOnInit() {
     this.activeType = this.autoDepositService.userAutoDepositInfo.autoDepositType;
+    this.setAvailableTypes();
+  }
 
+  onTypeChange({ detail: { value } }: CustomEvent) {
+    this.activeType = value;
+    this.onTypeChanged.emit(value);
+  }
+
+  private setAvailableTypes() {
     this.availableTypes = this.settingService.settings$.pipe(
       map(settings => {
         const timeBased = this.settingService.getSettingByName(
@@ -56,10 +64,5 @@ export class DepositTypeNavComponent implements OnInit {
         };
       })
     );
-  }
-
-  onTypeChange({ detail: { value } }: CustomEvent) {
-    this.activeType = value;
-    this.onTypeChanged.emit(value);
   }
 }

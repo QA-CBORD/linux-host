@@ -53,9 +53,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.depositService.settings$
-    .pipe(take(1))
-    .subscribe(depositSettings => (this.depositSettings = depositSettings));
+    this.depositService.settings$.pipe(take(1)).subscribe(depositSettings => (this.depositSettings = depositSettings));
 
     this.initForm();
     this.getAccounts();

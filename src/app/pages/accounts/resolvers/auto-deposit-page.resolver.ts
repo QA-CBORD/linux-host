@@ -30,10 +30,7 @@ export class AutoDepositPageResolver implements Resolve<Observable<SettingInfo[]
     this.loadingService.showSpinner();
     return this.settingsService.getUserSettings(requireSettings).pipe(
       take(1),
-      tap(
-        this.loadingService.closeSpinner.bind(this.loadingService),
-        this.loadingService.closeSpinner.bind(this.loadingService)
-      )
+      tap(null, this.loadingService.closeSpinner.bind(this.loadingService))
     );
   }
 }

@@ -10,9 +10,14 @@ import { AutoDepositApiServiceService } from './service/auto-deposit-api-service
 import { AutomaticDepositResolver } from './resolver/automatic-deposit.resolver';
 import { DepositFrequencyComponent } from './components/deposit-frequency/deposit-frequency.component';
 import { AccountsSharedModule } from '../../shared/shared.module';
-import { PopoverComponent } from "./components/popover/popover.component";
+import { PopoverComponent } from './components/popover/popover.component';
 
-const declarations = [AutomaticDepositPageComponent, DepositTypeNavComponent, DepositFrequencyComponent, PopoverComponent];
+const declarations = [
+  AutomaticDepositPageComponent,
+  DepositTypeNavComponent,
+  DepositFrequencyComponent,
+  PopoverComponent,
+];
 const imports = [CommonModule, SharedModule, AutomaticDepositRoutingModule, IonicModule, AccountsSharedModule];
 const providers = [AutoDepositService, AutoDepositApiServiceService, AutomaticDepositResolver];
 const entryComponents = [PopoverComponent];
@@ -21,6 +26,6 @@ const entryComponents = [PopoverComponent];
   imports,
   declarations,
   providers,
-  entryComponents: entryComponents
+  entryComponents: entryComponents,
 })
 export class AutomaticDepositModule {}
