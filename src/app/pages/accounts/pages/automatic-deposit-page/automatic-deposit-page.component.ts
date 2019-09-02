@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit, OnDestroy } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Observable, zip, Subscription, of } from 'rxjs';
+import { Observable, zip, Subscription, of, iif } from 'rxjs';
 import { SettingService } from '../../services/setting.service';
 import {
   AUTO_DEPOSIT_PAYMENT_TYPES,
@@ -298,29 +298,20 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
   onSubmit() {
     const { paymentMethod, account } = this.automaticDepositForm.value;
     const isBillme: boolean = paymentMethod === 'billme';
-    let fromAccount: Observable<UserAccount>;
+    const sourceAccForBillmeDeposit: Observable<UserAccount> = this.billmeMappingArr.pipe(
+      switchMap(billmeMappingArr => this.sourceAccForBillmeDeposit(account, billmeMappingArr))
+    );
     const resultOb =
       this.automaticDepositForm === null
         ? { ...this.autoDepositSettings, active: false }
         : { ...this.autoDepositSettings, ...this.automaticDepositForm.getRawValue(), autoDepositType: this.activeType };
-
-    if (isBillme) {
-      fromAccount = this.billmeMappingArr.pipe(
-        switchMap(billmeMappingArr => this.sourceAccForBillmeDeposit(account, billmeMappingArr))
-      );
-    } else {
-      fromAccount = of(paymentMethod);
-    }
-
-    // console.log(this.automaticDepositForm.getRawValue());
     // this.showModal();
 
-    fromAccount
+    iif(() => isBillme, sourceAccForBillmeDeposit, of(paymentMethod))
       .pipe(
-        switchMap(sourceAcc => {
-          debugger;
-          return this.autoDepositService.updateAutoDepositSettings({ ...resultOb, fromAccountId: sourceAcc.id });
-        }),
+        switchMap(sourceAcc =>
+          this.autoDepositService.updateAutoDepositSettings({ ...resultOb, fromAccountId: sourceAcc.id })
+        ),
         take(1)
       )
       .subscribe(res => console.log(res));
