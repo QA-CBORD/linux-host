@@ -35,7 +35,7 @@
                     >
                         <ion-select-option *ngFor="let amount of (lowBalanceValues | async)"
                                            [value]="parseFloat(amount)">{{
-                            amount
+                            amount | transactionUnits
                             }}</ion-select-option>
                     </ion-select>
                 </ng-template>
@@ -143,7 +143,7 @@
             >
                 <ion-select-option *ngFor="let amount of (amountToDepositValues | async)"
                                    [value]="parseFloat(amount)">{{
-                    amount
+                    amount | transactionUnits
                     }}</ion-select-option>
             </ion-select>
 

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { Observable, of, zip } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 
 import { UserAutoDepositSettingInfo } from '../models/auto-deposit-settings';
 import { AutoDepositApiService } from './auto-deposit-api-service.service';
