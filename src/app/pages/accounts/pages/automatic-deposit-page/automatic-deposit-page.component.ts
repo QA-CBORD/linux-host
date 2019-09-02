@@ -250,6 +250,7 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
   }
 
   parseFloat(val: string): number {
+    
     return parseFloat(val);
   }
 
