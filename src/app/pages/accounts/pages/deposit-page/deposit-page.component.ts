@@ -268,6 +268,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   }
 
   async confirmationDepositPopover(data: any) {
+    
     const popover = await this.popoverCtrl.create({
       component: ConfirmDepositPopoverComponent,
       componentProps: {
