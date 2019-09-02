@@ -30,11 +30,7 @@
         idd="cardNumber"
         maxlength="19"
         formControlName="cardNumber"
-        [isError]="
-          cardNumberControl.errors &&
-          (cardNumberControl.errors['required'] || cardNumberControl.errors['pattern']) &&
-          (cardNumberControl.dirty || cardNumberControl.touched)
-        "
+        [isError]="cardNumberControl.errors && (cardNumberControl.dirty || cardNumberControl.touched)"
         (keydown)="onInputFieldClicked($event)"
       >
         <div
@@ -61,11 +57,7 @@
           idd="expDate"
           maxlength="7"
           formControlName="expDate"
-          [isError]="
-            expDateControl.errors &&
-            (expDateControl.errors['required'] || expDateControl.errors['minlength']) &&
-            (expDateControl.dirty || expDateControl.touched)
-          "
+          [isError]="expDateControl.errors && (expDateControl.dirty || expDateControl.touched)"
           (keydown)="onInputFieldClicked($event)"
         >
           <div
@@ -110,13 +102,7 @@
           idd="securityCode"
           maxlength="4"
           formControlName="securityCode"
-          [isError]="
-            securityCodeControl.errors &&
-            (securityCodeControl.errors['required'] ||
-              securityCodeControl.errors['minlength'] ||
-              securityCodeControl.errors['pattern']) &&
-            (securityCodeControl.dirty || securityCodeControl.touched)
-          "
+          [isError]="securityCodeControl.errors && (securityCodeControl.dirty || securityCodeControl.touched)"
         >
           <div
             class="cc__input-error"
@@ -153,11 +139,7 @@
       type="tel"
       idd="nameOnCC"
       formControlName="nameOnCC"
-      [isError]="
-        nameOnCCControl.errors &&
-        nameOnCCControl.errors['required'] &&
-        (nameOnCCControl.dirty || nameOnCCControl.touched)
-      "
+      [isError]="nameOnCCControl.errors && (nameOnCCControl.dirty || nameOnCCControl.touched)"
     >
       <div
         class="cc__input-error"
@@ -178,11 +160,7 @@
       type="tel"
       idd="billingAddress"
       formControlName="billingAddress"
-      [isError]="
-        billingAddressControl.errors &&
-        billingAddressControl.errors['required'] &&
-        (billingAddressControl.dirty || billingAddressControl.touched)
-      "
+      [isError]="billingAddressControl.errors && (billingAddressControl.dirty || billingAddressControl.touched)"
     >
       <div
         class="cc__input-error"
@@ -203,11 +181,7 @@
       type="tel"
       idd="zip"
       formControlName="zip"
-      [isError]="
-        zipControl.errors &&
-        (zipControl.errors['required'] || zipControl.errors['pattern']) &&
-        (zipControl.dirty || zipControl.touched)
-      "
+      [isError]="zipControl.errors && (zipControl.dirty || zipControl.touched)"
     >
       <div
         class="cc__input-error"
