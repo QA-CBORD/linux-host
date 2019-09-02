@@ -4,7 +4,7 @@ import { Observable, of, zip } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
 
 import { UserAutoDepositSettingInfo } from '../models/auto-deposit-settings';
-import { AutoDepositApiServiceService } from './auto-deposit-api-service.service';
+import { AutoDepositApiService } from './auto-deposit-api-service.service';
 import { SYSTEM_SETTINGS_CONFIG } from '../../../accounts.config';
 import { parseArrayFromString } from '../../../../../core/utils/general-helpers';
 import { SettingService } from '../../../services/setting.service';
@@ -15,7 +15,7 @@ export class AutoDepositService {
   private _userAutoDepositInfo: UserAutoDepositSettingInfo;
 
   constructor(
-    private readonly apiServiceService: AutoDepositApiServiceService,
+    private readonly apiService: AutoDepositApiService,
     private readonly settingsService: SettingService,
     private readonly userService: UserService
   ) {}
@@ -25,7 +25,7 @@ export class AutoDepositService {
   }
 
   getUserAutoDepositInfo(): Observable<UserAutoDepositSettingInfo> {
-    return this.apiServiceService.getUserAutoDepositSettingInfo().pipe(
+    return this.apiService.getUserAutoDepositSettingInfo().pipe(
       switchMap(response => (response ? of(response) : this.getInitialAutoDepositSetting())),
       tap(settings => (this._userAutoDepositInfo = settings))
     );
@@ -39,10 +39,14 @@ export class AutoDepositService {
           SYSTEM_SETTINGS_CONFIG.autoDepositPaymentTypes.name
         );
         const paymentType = settingInfo ? parseArrayFromString(settingInfo.value) : [];
-        const calls = paymentType.map((type: number) => this.apiServiceService.retrieveAutoDepositAccountList(type));
+        const calls = paymentType.map((type: number) => this.apiService.retrieveAutoDepositAccountList(type));
         return zip(...calls);
       })
     );
+  }
+
+  updateAutoDepositSettings(settings: UserAutoDepositSettingInfo): Observable<boolean> {
+    return this.apiService.updateAutoDepositSettings(settings);
   }
 
   private getInitialAutoDepositSetting(): Observable<UserAutoDepositSettingInfo> {

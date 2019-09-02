@@ -1,133 +1,196 @@
 <st-header title="Automatic Deposit" [isTitleShow]="true" [backButtonTitle]="'Back'" [isToolbarShow]="true"></st-header>
 <ion-content class="content">
+  <h1 class="content__header">Automatic Deposit Type</h1>
+  <st-deposit-type-nav
+    [activeType]="autoDepositSettings?.autoDepositType"
+    (onTypeChanged)="onTypeChangedHandler($event)"
+  ></st-deposit-type-nav>
 
-    <h1 class="content__header">Automatic Deposit Type</h1>
-    <st-deposit-type-nav (onTypeChanged)="onTypeChangedHandler($event)"></st-deposit-type-nav>
+  <form class="deposit-form" novalidate *ngIf="automaticDepositForm" [formGroup]="automaticDepositForm">
+    <ng-container *ngIf="activeType === autoDepositTypes.lowBalance" [ngTemplateOutlet]="lowBalance"></ng-container>
+    <ng-container *ngIf="activeType === autoDepositTypes.timeBased" [ngTemplateOutlet]="timeBased"></ng-container>
 
-    <form class="deposit-form" novalidate *ngIf="automaticDepositForm" [formGroup]="automaticDepositForm">
-        <ng-container *ngIf="activeType === autoDepositTypes.lowBalance" [ngTemplateOutlet]="lowBalance"></ng-container>
-        <ng-container *ngIf="activeType === autoDepositTypes.timeBased" [ngTemplateOutlet]="timeBased"></ng-container>
+    <ng-template #lowBalance>
+      <ion-label class="deposit-form__label"
+        >When my balance drops to
+        <ion-input
+          type="number"
+          placeholder="Enter amount"
+          *ngIf="(isLowBalanceFreeInput | async); else selectLowBalanceAmount"
+          [formControlName]="controlNames.lowBalanceAmount"
+          class="deposit-form__control"
+          [ngClass]="{ 'deposit-form__control--error': lowBalanceAmount.invalid && lowBalanceAmount.touched }"
+        >
+        </ion-input>
 
-        <ng-template #lowBalance>
-            <ion-label class="deposit-form__label">When my balance drops to
-                <ion-input type="number"
-                           placeholder="Enter amount"
-                           *ngIf="isLowBalanceFreeInput | async; else selectLowBalanceAmount"
-                           [formControlName]="controlNames.lowBalanceAmount"
-                           class="deposit-form__control"
-                           [ngClass]="{'deposit-form__control--error': lowBalanceAmount.invalid && lowBalanceAmount.touched}">
-                </ion-input>
-
-                <ng-template #selectLowBalanceAmount>
-                    <ion-select [formControlName]="controlNames.lowBalanceAmount"
-                                [value]="autoDepositSettings.lowBalanceAmount"
-                                class="deposit-form__control"
-                                [interfaceOptions]="customActionSheetOptions"
-                                interface="action-sheet"
-                                placeholder="Choose amount"
-                                [ngClass]="{'deposit-form__control--error': lowBalanceAmount.invalid && lowBalanceAmount.touched}">
-                        <ion-select-option
-                                *ngFor="let amount of lowBalanceValues | async"
-                                [value]="parseFloat(amount)">{{amount}}</ion-select-option>
-                    </ion-select>
-                </ng-template>
-            </ion-label>
-            <p [ngClass]="{'deposit-form__control-error-msg--show': lowBalanceAmount.invalid && lowBalanceAmount.touched}"
-               class="deposit-form__control-error-msg">{{lowBalanceAmount.errors?.errorMsg}}</p>
+        <ng-template #selectLowBalanceAmount>
+          <ion-select
+            [formControlName]="controlNames.lowBalanceAmount"
+            [value]="autoDepositSettings.lowBalanceAmount"
+            class="deposit-form__control"
+            [interfaceOptions]="customActionSheetOptions"
+            interface="action-sheet"
+            placeholder="Choose amount"
+            [ngClass]="{ 'deposit-form__control--error': lowBalanceAmount.invalid && lowBalanceAmount.touched }"
+          >
+            <ion-select-option *ngFor="let amount of (lowBalanceValues | async)" [value]="parseFloat(amount)">{{
+              amount
+            }}</ion-select-option>
+          </ion-select>
         </ng-template>
+      </ion-label>
+      <p
+        [ngClass]="{ 'deposit-form__control-error-msg--show': lowBalanceAmount.invalid && lowBalanceAmount.touched }"
+        class="deposit-form__control-error-msg"
+      >
+        {{ lowBalanceAmount.errors?.errorMsg }}
+      </p>
+    </ng-template>
 
-        <ng-template #timeBased>
-            <st-deposit-frequency (onFrequencyChanged)="onFrequencyChanged($event)"></st-deposit-frequency>
+    <ng-template #timeBased>
+      <st-deposit-frequency
+        [autoDepositSettings]="autoDepositSettings"
+        (onFrequencyChanged)="onFrequencyChanged($event)"
+      ></st-deposit-frequency>
 
-            <ng-container *ngIf="activeFrequency === frequency.month; else week">
-                <label class="deposit-form__label"
-                >Day of Month
-                    <ion-input class="deposit-form__control"
-                               type="number"
-                               placeholder="Day of Month"
-                               [formControlName]="controlNames.dayOfMonth"
-                               [ngClass]="{'deposit-form__control--error': dayOfMonth.invalid && dayOfMonth.touched}">
-                    </ion-input>
-                </label>
-                <p [ngClass]="{'deposit-form__control-error-msg--show': dayOfMonth.invalid && dayOfMonth.touched}"
-                   class="deposit-form__control-error-msg">{{dayOfMonth.errors?.errorMsg}}</p>
-            </ng-container>
-
-            <ng-template #week>
-                <label class="deposit-form__label">Day of Week
-                    <ion-select [formControlName]="controlNames.dayOfWeek"
-                                placeholder="Day of Week"
-                                [value]="autoDepositSettings.dayOfWeek"
-                                class="deposit-form__control"
-                                [interfaceOptions]="customActionSheetOptions"
-                                interface="action-sheet"
-                                [ngClass]="{'deposit-form__control--error': dayOfWeek.invalid && dayOfWeek.touched}">
-                        <ion-select-option *ngFor="let day of weekArray; let i = index"
-                                           [value]="i + 1">{{day}}</ion-select-option>
-                    </ion-select>
-                </label>
-                <p [ngClass]="{'deposit-form__control-error-msg--show': dayOfWeek.invalid && dayOfWeek.touched}"
-                   class="deposit-form__control-error-msg">{{dayOfWeek.errors?.errorMsg}}</p>
-            </ng-template>
-
-        </ng-template>
-
-        <label class="deposit-form__label">Account
-            <ion-select class="deposit-form__control"
-                        [formControlName]="controlNames.account"
-                        [interfaceOptions]="customActionSheetOptions"
-                        interface="action-sheet"
-                        placeholder="Choose account"
-                        [ngClass]="{'deposit-form__control--error': account.invalid && account.touched}">
-                <ion-select-option>1</ion-select-option>
-                <ion-select-option>2</ion-select-option>
-            </ion-select>
+      <ng-container *ngIf="activeFrequency === frequency.month; else week">
+        <label class="deposit-form__label"
+          >Day of Month
+          <ion-input
+            class="deposit-form__control"
+            type="number"
+            placeholder="Day of Month"
+            [formControlName]="controlNames.dayOfMonth"
+            [ngClass]="{ 'deposit-form__control--error': dayOfMonth.invalid && dayOfMonth.touched }"
+          >
+          </ion-input>
         </label>
-        <p [ngClass]="{'deposit-form__control-error-msg--show': account.invalid && account.touched}"
-           class="deposit-form__control-error-msg">{{account.errors?.errorMsg}}</p>
+        <p
+          [ngClass]="{ 'deposit-form__control-error-msg--show': dayOfMonth.invalid && dayOfMonth.touched }"
+          class="deposit-form__control-error-msg"
+        >
+          {{ dayOfMonth.errors?.errorMsg }}
+        </p>
+      </ng-container>
 
-        <label class="deposit-form__label">Amount to deposit
-            <ion-select *ngIf="!(isAllowFreeFormBillMe | async)"
-                        [formControlName]="controlNames.amountToDeposit"
-                        [value]="autoDepositSettings.amount"
-                        class="deposit-form__control"
-                        [interfaceOptions]="customActionSheetOptions"
-                        interface="action-sheet"
-                        placeholder="Choose amount to deposit"
-                        [ngClass]="{'deposit-form__control--error': amountToDeposit.invalid && amountToDeposit.touched}">
-                <ion-select-option *ngFor="let amount of amountToDepositValues | async"
-                                   [value]="parseFloat(amount)">{{amount}}</ion-select-option>
-            </ion-select>
-
-            <ion-input [formControlName]="controlNames.amountToDeposit"
-                       *ngIf="isAllowFreeFormBillMe | async"
-                       type="number"
-                       placeholder="Choose amount to deposit"
-                       class="deposit-form__control"
-                       [ngClass]="{'deposit-form__control--error': amountToDeposit.invalid && amountToDeposit.touched}">
-            </ion-input>
+      <ng-template #week>
+        <label class="deposit-form__label"
+          >Day of Week
+          <ion-select
+            [formControlName]="controlNames.dayOfWeek"
+            placeholder="Day of Week"
+            [value]="autoDepositSettings.dayOfWeek"
+            class="deposit-form__control"
+            [interfaceOptions]="customActionSheetOptions"
+            interface="action-sheet"
+            [ngClass]="{ 'deposit-form__control--error': dayOfWeek.invalid && dayOfWeek.touched }"
+          >
+            <ion-select-option *ngFor="let day of weekArray; let i = index" [value]="i + 1">{{
+              day
+            }}</ion-select-option>
+          </ion-select>
         </label>
-        <p [ngClass]="{'deposit-form__control-error-msg--show': amountToDeposit.invalid && amountToDeposit.touched}"
-           class="deposit-form__control-error-msg">{{amountToDeposit.errors?.errorMsg}}</p>
+        <p
+          [ngClass]="{ 'deposit-form__control-error-msg--show': dayOfWeek.invalid && dayOfWeek.touched }"
+          class="deposit-form__control-error-msg"
+        >
+          {{ dayOfWeek.errors?.errorMsg }}
+        </p>
+      </ng-template>
+    </ng-template>
 
-        <label class="deposit-form__label">Payment Method
-            <ion-select class="deposit-form__control"
-                        [formControlName]="controlNames.paymentMethod"
-                        [interfaceOptions]="customActionSheetOptions"
-                        interface="action-sheet"
-                        placeholder="Choose payment method"
-                        [ngClass]="{'deposit-form__control--error': paymentMethod.invalid && paymentMethod.touched}">
-                <ion-select-option>1</ion-select-option>
-                <ion-select-option>2</ion-select-option>
-            </ion-select>
-        </label>
-        <p [ngClass]="{'deposit-form__control-error-msg--show': paymentMethod.invalid && paymentMethod.touched}"
-           class="deposit-form__control-error-msg">{{paymentMethod.errors?.errorMsg}}</p>
-    </form>
-    <ion-button class="deposit-form__button"
-                [ngClass]="{'deposit-form__button--fixed': !automaticDepositForm,
-                'deposit-form__button--disabled': automaticDepositForm && automaticDepositForm.invalid}"
-                (click)="onSubmit()"
+    <label class="deposit-form__label"
+      >Account
+      <ion-select
+        class="deposit-form__control"
+        [formControlName]="controlNames.account"
+        [interfaceOptions]="customActionSheetOptions"
+        interface="action-sheet"
+        placeholder="Choose account"
+        [ngClass]="{ 'deposit-form__control--error': account.invalid && account.touched }"
+      >
+        <ion-select-option [value]="account" *ngFor="let account of destinationAccounts; trackBy: trackByAccountId">
+          {{ account.accountDisplayName }} ({{ account.balance | transactionUnits: account.accountType }})
+        </ion-select-option>
+      </ion-select>
+    </label>
+    <p
+      [ngClass]="{ 'deposit-form__control-error-msg--show': account.invalid && account.touched }"
+      class="deposit-form__control-error-msg"
+    >
+      {{ account.errors?.errorMsg }}
+    </p>
+
+    <label class="deposit-form__label"
+      >Amount to deposit
+      <ion-select
+        *ngIf="!(isAllowFreeFormBillMe | async)"
+        [formControlName]="controlNames.amountToDeposit"
+        [value]="autoDepositSettings.amount"
+        class="deposit-form__control"
+        [interfaceOptions]="customActionSheetOptions"
+        interface="action-sheet"
+        placeholder="Choose amount to deposit"
+        [ngClass]="{ 'deposit-form__control--error': amountToDeposit.invalid && amountToDeposit.touched }"
+      >
+        <ion-select-option *ngFor="let amount of (amountToDepositValues | async)" [value]="parseFloat(amount)">{{
+          amount
+        }}</ion-select-option>
+      </ion-select>
+
+      <ion-input
+        [formControlName]="controlNames.amountToDeposit"
+        *ngIf="(isAllowFreeFormBillMe | async)"
+        type="number"
+        placeholder="Choose amount to deposit"
+        class="deposit-form__control"
+        [ngClass]="{ 'deposit-form__control--error': amountToDeposit.invalid && amountToDeposit.touched }"
+      >
+      </ion-input>
+    </label>
+    <p
+      [ngClass]="{ 'deposit-form__control-error-msg--show': amountToDeposit.invalid && amountToDeposit.touched }"
+      class="deposit-form__control-error-msg"
+    >
+      {{ amountToDeposit.errors?.errorMsg }}
+    </p>
+
+    <label class="deposit-form__label"
+      >Payment Method
+      <ion-select
+        class="deposit-form__control"
+        [formControlName]="controlNames.paymentMethod"
+        [interfaceOptions]="customActionSheetOptions"
+        interface="action-sheet"
+        placeholder="Choose payment method"
+        [ngClass]="{ 'deposit-form__control--error': paymentMethod.invalid && paymentMethod.touched }"
+        (ionChange)="onPaymentMethodChanged($event)"
+      >
+        <ion-select-option
+          [value]="account"
+          *ngFor="let account of creditCardSourceAccounts; trackBy: trackByAccountId"
+          class="test-class"
+        >
+          {{ account.accountTender | creditCardType }} ending in
+          {{ account.lastFour }}
+        </ion-select-option>
+        <ion-select-option value="billme" *ngIf="(isBillMePaymentTypesEnabled | async)">Bill Me</ion-select-option>
+      </ion-select>
+    </label>
+    <p
+      [ngClass]="{ 'deposit-form__control-error-msg--show': paymentMethod.invalid && paymentMethod.touched }"
+      class="deposit-form__control-error-msg"
+    >
+      {{ paymentMethod.errors?.errorMsg }}
+    </p>
+  </form>
+  <ion-button
+    class="deposit-form__button"
+    [ngClass]="{
+      'deposit-form__button--fixed': !automaticDepositForm,
+      'deposit-form__button--disabled': automaticDepositForm && automaticDepositForm.invalid
+    }"
+    (click)="onSubmit()"
     >save settings
-    </ion-button>
+  </ion-button>
 </ion-content>
