@@ -80,8 +80,6 @@ export class TestProvider {
       institutionId: '46054f40-71fc-4d32-a8de-64b525d3ce56',
     };
 
-    return this.authService
-      .authenticateUser(gold7)
-      .pipe(tap(newSessionId => DataCache.setSessionId(newSessionId)));
+    return this.authService.authenticateUser(gold7).pipe(tap(newSessionId => DataCache.setSessionId(newSessionId)));
   }
 }

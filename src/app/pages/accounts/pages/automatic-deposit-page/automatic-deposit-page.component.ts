@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable, zip, Subscription, of, iif } from 'rxjs';
 import { SettingService } from '../../services/setting.service';
@@ -53,7 +53,8 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
     private readonly route: ActivatedRoute,
     private readonly depositService: DepositService,
     private readonly autoDepositService: AutoDepositService,
-    private readonly popoverCtrl: PopoverController
+    private readonly popoverCtrl: PopoverController,
+    private readonly cdRef: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -236,6 +237,7 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe(() => {
+        this.cdRef.detectChanges();
         this.initForm();
         this.defineDestAccounts('creditcard');
       });
@@ -250,7 +252,6 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
   }
 
   parseFloat(val: string): number {
-    
     return parseFloat(val);
   }
 
@@ -297,25 +298,33 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
-    const { paymentMethod, account } = this.automaticDepositForm.value;
-    const isBillme: boolean = paymentMethod === 'billme';
-    const sourceAccForBillmeDeposit: Observable<UserAccount> = this.billmeMappingArr.pipe(
-      switchMap(billmeMappingArr => this.sourceAccForBillmeDeposit(account, billmeMappingArr))
-    );
-    const resultOb =
-      this.automaticDepositForm === null
-        ? { ...this.autoDepositSettings, active: false }
-        : { ...this.autoDepositSettings, ...this.automaticDepositForm.getRawValue(), autoDepositType: this.activeType };
-    // this.showModal();
+    let predefinedUpdateCall;
 
-    iif(() => isBillme, sourceAccForBillmeDeposit, of(paymentMethod))
-      .pipe(
+    if (this.automaticDepositForm === null) {
+      predefinedUpdateCall = this.autoDepositService.updateAutoDepositSettings({
+        ...this.autoDepositSettings,
+        active: false,
+      });
+    } else {
+      const { paymentMethod, account, ...rest } = this.automaticDepositForm.value;
+      const isBillme: boolean = paymentMethod === 'billme';
+      const sourceAccForBillmeDeposit: Observable<UserAccount> = this.billmeMappingArr.pipe(
+        switchMap(billmeMappingArr => this.sourceAccForBillmeDeposit(account, billmeMappingArr))
+      );
+      const resultSettings = {
+        ...this.autoDepositSettings,
+        ...rest,
+        autoDepositType: this.activeType,
+        toAccountId: account.id,
+      };
+      predefinedUpdateCall = iif(() => isBillme, sourceAccForBillmeDeposit, of(paymentMethod)).pipe(
         switchMap(sourceAcc =>
-          this.autoDepositService.updateAutoDepositSettings({ ...resultOb, fromAccountId: sourceAcc.id })
-        ),
-        take(1)
-      )
-      .subscribe(res => console.log(res));
+          this.autoDepositService.updateAutoDepositSettings({ ...resultSettings, fromAccountId: sourceAcc.id })
+        )
+      );
+    }
+
+    predefinedUpdateCall.pipe(take(1)).subscribe(res => console.log(res));
   }
 
   // -------------------- Events handlers block end --------------------------//

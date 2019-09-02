@@ -12,23 +12,16 @@ import { UserService } from '../../../../../core/service/user-service/user.servi
 
 @Injectable()
 export class AutoDepositService {
-  private _userAutoDepositInfo: UserAutoDepositSettingInfo;
-
   constructor(
     private readonly apiService: AutoDepositApiService,
     private readonly settingsService: SettingService,
     private readonly userService: UserService
   ) {}
 
-  get userAutoDepositInfo(): UserAutoDepositSettingInfo {
-    return { ...this._userAutoDepositInfo };
-  }
-
   getUserAutoDepositInfo(): Observable<UserAutoDepositSettingInfo> {
-    return this.apiService.getUserAutoDepositSettingInfo().pipe(
-      switchMap(response => (response ? of(response) : this.getInitialAutoDepositSetting())),
-      tap(settings => (this._userAutoDepositInfo = settings))
-    );
+    return this.apiService
+      .getUserAutoDepositSettingInfo()
+      .pipe(switchMap(response => (response ? of(response) : this.getInitialAutoDepositSetting())));
   }
 
   getAutoDepositAccountList(): Observable<any> {

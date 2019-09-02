@@ -12,7 +12,6 @@ export class DepositFrequencyComponent {
   @Output() onFrequencyChanged: EventEmitter<string> = new EventEmitter<string>();
   @Input() autoDepositSettings: UserAutoDepositSettingInfo;
 
-
   get frequency() {
     return DEPOSIT_FREQUENCY;
   }

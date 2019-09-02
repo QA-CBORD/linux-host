@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  OnInit,
+  Output,
+  Input,
+  OnChanges,
+  SimpleChanges,
+} from '@angular/core';
 
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -13,7 +22,7 @@ import { AUTO_DEPOSIT_PAYMENT_TYPES } from '../../auto-deposit.config';
   styleUrls: ['./deposit-type-nav.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DepositTypeNavComponent implements OnInit {
+export class DepositTypeNavComponent implements OnInit, OnChanges {
   @Output() onTypeChanged: EventEmitter<number> = new EventEmitter<number>();
   @Input() activeType: number;
   private availableTypes: Observable<{ [key: number]: boolean }>;
@@ -59,5 +68,9 @@ export class DepositTypeNavComponent implements OnInit {
         };
       })
     );
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log(changes.activeType);
   }
 }
