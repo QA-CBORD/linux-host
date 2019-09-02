@@ -237,7 +237,7 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe(() => {
-        this.cdRef.detectChanges();
+        // this.cdRef.detectChanges();
         this.initForm();
         this.defineDestAccounts('creditcard');
       });

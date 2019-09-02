@@ -34,11 +34,11 @@ export class AutoDepositApiService extends BaseService {
     );
   }
 
-  updateAutoDepositSettings(settings: UserAutoDepositSettingInfo): Observable<boolean> {
+  updateAutoDepositSettings(userAutoDepositSettingInfo: UserAutoDepositSettingInfo): Observable<boolean> {
     const url = '/json/commerce';
     const method = 'updateAutoDepositSettings';
 
-    return this.httpRequest(url, method, true, settings).pipe(
+    return this.httpRequest(url, method, true, {userAutoDepositSettingInfo}).pipe(
       map(({ response }: MessageResponse<boolean>) => response)
     );
   }
