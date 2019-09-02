@@ -83,13 +83,7 @@
         </st-input-floating-label>
         <span
           class="cc__exp-date-hint"
-          *ngIf="
-            !(
-              expDateControl.errors &&
-              (expDateControl.errors['required'] || expDateControl.errors['minlength']) &&
-              (expDateControl.dirty || expDateControl.touched)
-            )
-          "
+          *ngIf="!(expDateControl.errors && (expDateControl.dirty || expDateControl.touched))"
           >MM/YYYY</span
         >
       </div>
@@ -119,15 +113,7 @@
         </st-input-floating-label>
         <span
           class="cc__cvv-hint"
-          *ngIf="
-            !(
-              securityCodeControl.errors &&
-              (securityCodeControl.errors['required'] ||
-                securityCodeControl.errors['minlength'] ||
-                securityCodeControl.errors['pattern']) &&
-              (securityCodeControl.dirty || securityCodeControl.touched)
-            )
-          "
+          *ngIf="!(securityCodeControl.errors && (securityCodeControl.dirty || securityCodeControl.touched))"
           >CVV</span
         >
       </div>

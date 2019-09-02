@@ -11,7 +11,7 @@ import {
   LOCAL_ROUTING,
 } from '../../accounts.config';
 import { SettingInfo } from 'src/app/core/model/configuration/setting-info.model';
-import { Subscription, Observable, of } from 'rxjs';
+import { Subscription, Observable, of, iif } from 'rxjs';
 import { UserAccount } from '../../../../core/model/account/account.model';
 import { ConfirmDepositPopoverComponent } from '../../shared/ui-components/confirm-deposit-popover/confirm-deposit-popover.component';
 import { DepositModalComponent } from '../../shared/ui-components/deposit-modal/deposit-modal.component';
@@ -152,31 +152,26 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     const { sourceAccount, selectedAccount, mainInput, mainSelect } = this.depositForm.value;
     const isBillme: boolean = sourceAccount === 'billme';
     const regex = /[,\s]/g;
-    let fromAccount: Observable<UserAccount>;
+    const sourceAccForBillmeDeposit: Observable<UserAccount> = this.sourceAccForBillmeDeposit(
+      selectedAccount,
+      this.billmeMappingArr
+    );
     let amount = mainInput || mainSelect;
     amount = amount.replace(regex, '');
 
-    if (isBillme) {
-      fromAccount = this.sourceAccForBillmeDeposit(selectedAccount, this.billmeMappingArr);
-    } else {
-      const sourceAcc = this.depositForm.get('sourceAccount').value;
-
-      fromAccount = of(sourceAcc);
-    }
-
-    fromAccount
+    iif(() => isBillme, sourceAccForBillmeDeposit, of(sourceAccount))
       .pipe(
         switchMap(
           (sourceAcc): any => {
-            let fee: Observable<number>;
+            const calculateDepositFee: Observable<number> = this.depositService.calculateDepositFee(
+              sourceAcc.id,
+              selectedAccount.id,
+              amount
+            );
 
-            if (isBillme) {
-              fee = of(0);
-            } else {
-              fee = this.depositService.calculateDepositFee(sourceAcc.id, selectedAccount.id, amount);
-            }
-
-            return fee.pipe(map(valueFee => ({ fee: valueFee, sourceAcc, selectedAccount, amount, billme: isBillme })));
+            return iif(() => isBillme, of(0), calculateDepositFee).pipe(
+              map(valueFee => ({ fee: valueFee, sourceAcc, selectedAccount, amount, billme: isBillme }))
+            );
           }
         ),
         take(1)
@@ -285,12 +280,12 @@ export class DepositPageComponent implements OnInit, OnDestroy {
         this.loadingService.showSpinner();
         this.depositService
           .deposit(data.sourceAcc.id, data.selectedAccount.id, data.amount, this.fromAccountCvv.value)
-          .pipe(take(1))
+          .pipe(
+            tap(() => this.loadingService.closeSpinner()),
+            take(1)
+          )
           .subscribe(
-            () => {
-              this.loadingService.closeSpinner();
-              return this.finalizeDepositModal(data);
-            },
+            () => this.finalizeDepositModal(data),
             () => this.onErrorRetrieve('Your information could not be verified.')
           );
       }
