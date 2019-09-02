@@ -9,7 +9,7 @@ import { UserAutoDepositSettingInfo } from '../models/auto-deposit-settings';
 import { UserAccount } from '../../../../../core/model/account/account.model';
 
 @Injectable()
-export class AutoDepositApiServiceService extends BaseService {
+export class AutoDepositApiService extends BaseService {
   constructor(protected readonly http: HttpClient, private readonly userService: UserService) {
     super(http);
   }

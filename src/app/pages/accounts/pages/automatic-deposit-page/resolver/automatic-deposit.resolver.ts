@@ -2,22 +2,22 @@ import { Injectable } from '@angular/core';
 import { Resolve } from '@angular/router';
 
 import { Observable, zip } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 import { AutoDepositService } from '../service/auto-deposit.service';
-import { AccountsService } from '../../../services/accounts.service';
+import { DepositService } from '../../../services/deposit.service';
 
 @Injectable()
 export class AutomaticDepositResolver implements Resolve<Observable<any>> {
   constructor(
     private readonly autoDepositService: AutoDepositService,
-    private readonly accountsService: AccountsService
+    private readonly depositService: DepositService
   ) {}
 
   resolve(): Observable<any> {
-    const accounts = this.accountsService.getUserAccounts();
+    const accounts = this.depositService.getUserAccounts();
     const depositSettings = this.autoDepositService.getUserAutoDepositInfo();
 
-    return zip(accounts, depositSettings).pipe(take(1));
+    return zip(accounts, depositSettings).pipe(map(data => ({ accounts: data[0], depositSettings: data[1] })));
   }
 }

@@ -101,6 +101,11 @@ export const SYSTEM_SETTINGS_CONFIG = {
     category: 'deposit',
     name: 'billme_amounts',
   },
+  autoDepositTenders: {
+    domain: 'get',
+    category: 'feature',
+    name: 'auto_deposit_tenders',
+  },
 };
 
 export enum ACCOUNT_TYPES {

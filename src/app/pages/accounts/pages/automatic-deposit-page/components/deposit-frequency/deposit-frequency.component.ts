@@ -1,6 +1,5 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Output, Input } from '@angular/core';
 import { DEPOSIT_FREQUENCY } from '../../auto-deposit.config';
-import { AutoDepositService } from '../../service/auto-deposit.service';
 import { UserAutoDepositSettingInfo } from '../../models/auto-deposit-settings';
 
 @Component({
@@ -9,15 +8,10 @@ import { UserAutoDepositSettingInfo } from '../../models/auto-deposit-settings';
   styleUrls: ['./deposit-frequency.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DepositFrequencyComponent implements OnInit {
+export class DepositFrequencyComponent {
   @Output() onFrequencyChanged: EventEmitter<string> = new EventEmitter<string>();
-  autoDepositSettings: UserAutoDepositSettingInfo;
+  @Input() autoDepositSettings: UserAutoDepositSettingInfo;
 
-  constructor(private readonly autoDepositService: AutoDepositService) {}
-
-  ngOnInit() {
-    this.autoDepositSettings = this.autoDepositService.userAutoDepositInfo;
-  }
 
   get frequency() {
     return DEPOSIT_FREQUENCY;
