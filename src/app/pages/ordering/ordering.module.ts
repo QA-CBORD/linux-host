@@ -9,9 +9,11 @@ import { OrderingPage } from './ordering.page';
 import { OrderingApiService } from './service/ordering.api.service';
 import { MerchantListService } from './service/merchant-list.service';
 
+import { OrderingResolver } from './resolvers/ordering.resolver';
+
 const imports = [CommonModule, SharedModule, OrderingRoutingModule];
 const declarations = [OrderingPage];
-const providers = [OrderingApiService, MerchantListService];
+const providers = [ OrderingResolver, OrderingApiService, MerchantListService];
 
 @NgModule({
   declarations,
