@@ -1,0 +1,24 @@
+@import 'tools';
+
+
+.ordering-content-wrapper {
+    flex: 1 1 35%;
+    border-right: 1px solid $color-whisper;
+  
+    .ordering-content {
+      display: flex;
+      flex-direction: column;
+  
+      .ordering-page {
+        flex: 1 1 auto;
+  
+        &__menu {
+          @include bp-grid-tablet {
+            display: none;
+          }
+        }
+
+  
+      }
+    }
+  }

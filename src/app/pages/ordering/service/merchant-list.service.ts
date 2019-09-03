@@ -1,8 +1,12 @@
-import { MerchantSearchOptions, MerchantSearchOptionName, MerchantSearchOption } from './../models/merchant-search-options';
+import {
+  MerchantSearchOptions,
+  MerchantSearchOptionName,
+  MerchantSearchOption,
+} from './../models/merchant-search-options';
 import { Injectable } from '@angular/core';
 
-import { BehaviorSubject, Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, zip } from 'rxjs';
+import { tap, switchMap, map } from 'rxjs/operators';
 
 import { OrderingApiService } from './ordering.api.service';
 
@@ -12,6 +16,7 @@ import { MerchantInfo } from '../models/merchant-info';
   providedIn: 'root',
 })
 export class MerchantListService {
+
   private readonly _menuMerchants$: BehaviorSubject<MerchantInfo[]> = new BehaviorSubject<MerchantInfo[]>([]);
 
   constructor(private readonly orderingApiService: OrderingApiService) {}
@@ -30,12 +35,12 @@ export class MerchantListService {
       key: MerchantSearchOptionName.INCLUDE_SETTINGS,
       value: 1,
     };
-    
 
     searchOptions.addSearchOption(op);
 
     return this.orderingApiService
       .getMenuMerchants(searchOptions)
       .pipe(tap(merchantList => (this._menuMerchants = merchantList)));
+
   }
 }

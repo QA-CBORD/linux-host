@@ -1,22 +1,22 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MerchantListItemComponent } from './merchant-list-item.component';
+import { MerchantItemComponent } from './merchant-item.component';
 
-describe('MerchantListItemComponent', () => {
-  let component: MerchantListItemComponent;
-  let fixture: ComponentFixture<MerchantListItemComponent>;
+describe('MerchantItemComponent', () => {
+  let component: MerchantItemComponent;
+  let fixture: ComponentFixture<MerchantItemComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ MerchantListItemComponent ],
+      declarations: [ MerchantItemComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(MerchantListItemComponent);
+    fixture = TestBed.createComponent(MerchantItemComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
