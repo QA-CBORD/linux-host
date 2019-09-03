@@ -16,9 +16,11 @@ const routes: Routes = [
   {
     path: NAVIGATE.accounts,
     loadChildren: './pages/accounts/accounts.module#AccountsModule',
-  },  { path: 'merchant-list', loadChildren: './pages/ordering/merchant-list/merchant-list.module#MerchantListPageModule' },
-  { path: 'merchant-list', loadChildren: './pages/ordering/merchant-list/merchant-list.module#MerchantListPageModule' },
-
+  },
+  {
+    path: NAVIGATE.ordering,
+    loadChildren: './pages/ordering/ordering.module#OrderingPageModule',
+  },
 ];
 
 @NgModule({

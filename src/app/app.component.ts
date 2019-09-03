@@ -76,12 +76,12 @@ export class AppComponent implements OnDestroy {
       )
       .subscribe((hash: string) => {
         Environment.setEnvironmentViaURL(location.href);
-        this.parseHashParameters(hash);
+        // this.parseHashParameters(hash);
 
         /// now perform normal page logic
-        this.handleSessionToken();
+        // this.handleSessionToken();
 
-        // this.testGetSession();
+        this.testGetSession();
       });
     this.sourceSubscription.add(subscription);
   }
@@ -89,7 +89,7 @@ export class AppComponent implements OnDestroy {
   private testGetSession() {
     const subscription = this.testProvider.getTestUser().subscribe(
       () => {
-        this.destinationPage = NAVIGATE.accounts;
+        this.destinationPage = NAVIGATE.ordering;
         this.getUserInfo();
       },
       error => {
