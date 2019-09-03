@@ -9,8 +9,6 @@ export class TimeRangePipe implements PipeTransform {
   constructor() {}
 
   transform(value: DateUtilObject, contentString: any): string {
-    console.log(contentString);
-
     return this.localGetUniquePeriodName(value, contentString);
   }
 
