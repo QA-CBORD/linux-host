@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { UiComponentsModule } from './components/ui-components.module';
+import { UiComponentsModule } from './ui-components/ui-components.module';
 
 const sharedModules = [UiComponentsModule];
 

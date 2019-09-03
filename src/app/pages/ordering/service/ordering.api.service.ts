@@ -38,4 +38,17 @@ export class OrderingApiService extends BaseService {
       map(({ response }: MessageResponse<any>) => response.list)
     );
   }
+
+  addFavoriteMerchant(merchantId: string): Observable<string> {
+    const methodName = 'addFavoriteMerchant';
+    const postParams: ServiceParameters = { merchantId: merchantId, notes: '' };
+    return this.httpRequestFull(this.serviceUrl, methodName, true, null, postParams);
+  }
+
+  removeFavoriteMerchant(merchantId: string): Observable<boolean> {
+    const methodName = 'removeFavoriteMerchant';
+    const postParams: ServiceParameters = { merchantId: merchantId};
+    return this.httpRequestFull(this.serviceUrl, methodName, true, null, postParams);
+  }
+
 }
