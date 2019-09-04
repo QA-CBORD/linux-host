@@ -1,3 +1,6 @@
-<p>
-  merchant-list works!
-</p>
+<st-merchant-item *ngFor="let merchant of merchantList; let i = index; trackBy: trackMerchantsById"
+[merchantInfo]='merchant'
+(addToFav)="favouriteHandler($event)">
+
+
+</st-merchant-item>

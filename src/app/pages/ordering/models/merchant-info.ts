@@ -39,4 +39,5 @@ export interface MerchantInfo {
   faxNotificationRequired: boolean;
   emailNotificationActive: boolean;
   onCampus: boolean;
+  isFavorite?: boolean;
 }

@@ -16,7 +16,6 @@ import { MerchantInfo } from '../models/merchant-info';
   providedIn: 'root',
 })
 export class MerchantListService {
-
   private readonly _menuMerchants$: BehaviorSubject<MerchantInfo[]> = new BehaviorSubject<MerchantInfo[]>([]);
 
   constructor(private readonly orderingApiService: OrderingApiService) {}
@@ -41,6 +40,27 @@ export class MerchantListService {
     return this.orderingApiService
       .getMenuMerchants(searchOptions)
       .pipe(tap(merchantList => (this._menuMerchants = merchantList)));
+  }
 
+  getMerchantsWithFavoriteInfo(): Observable<MerchantInfo[]> {
+    const searchOptions: MerchantSearchOptions = new MerchantSearchOptions();
+    searchOptions.addSearchOption({
+      key: MerchantSearchOptionName.INCLUDE_SETTINGS,
+      value: 1,
+    });
+
+    let resultHandler = (favoriteMerchants: string[], merchantList: MerchantInfo[]): MerchantInfo[] => {
+      if(!favoriteMerchants || favoriteMerchants.length <= 0){
+        return merchantList;
+      }
+      merchantList.forEach(merchant => (merchant.isFavorite = favoriteMerchants.includes(merchant.id)));
+      return merchantList;
+    };
+
+    return zip(
+      this.orderingApiService.getFavoriteMerchants(),
+      this.orderingApiService.getMenuMerchants(searchOptions),
+      resultHandler
+    );
   }
 }

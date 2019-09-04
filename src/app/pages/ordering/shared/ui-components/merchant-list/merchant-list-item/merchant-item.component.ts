@@ -1,5 +1,6 @@
+import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 
-import { Component, OnInit, Input } from '@angular/core';
+import { MerchantInfo } from './../../../../models/merchant-info';
 
 
 @Component({
@@ -9,10 +10,23 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class MerchantItemComponent implements OnInit {
 
-  // @Input() merchantInfo: MerchantInfo;
+  @Input() merchantInfo: MerchantInfo;  
+  @Output() addToFav: EventEmitter<string> = new EventEmitter<string>();
 
   constructor() { }
 
   ngOnInit() {}
+
+  get starClass(): string {
+    const empty = 'star-outline';
+    const filled = 'star-filled';
+    const star = this.merchantInfo.isFavorite ? filled : empty;
+
+    return `./assets/icon/${star}.svg`;
+  }
+
+  triggerFavourite() {
+    this.addToFav.emit(this.merchantInfo.id);
+  }
 
 }

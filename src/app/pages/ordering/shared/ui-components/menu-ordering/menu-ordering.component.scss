@@ -1,0 +1,46 @@
+@import "tools";
+
+.menu {
+    list-style: none;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    padding: 30px 0;
+    margin: 0;
+  
+    &__item {
+      width: 85px;
+      min-height: 45px;
+      margin: 0 15px;
+  
+      &:hover {
+        cursor: pointer;
+  
+        .menu__item-text {
+          text-shadow: 0 0 1px $color-dark-gray;
+        }
+      }
+    }
+  
+    &__item-figure {
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+    }
+  
+    &__item-text {
+      margin-top: 5px;
+      font-size: 10px;
+      color: $color-dim-gray;
+  
+    }
+  
+    &__item-icon {
+      width: 30px;
+      height: 30px;
+      object-fit: cover;
+    }
+  }

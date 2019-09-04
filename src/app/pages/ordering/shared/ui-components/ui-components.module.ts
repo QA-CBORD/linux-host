@@ -10,7 +10,7 @@ const declarations = [MenuOrderingComponent, MerchantListComponent, MerchantItem
 
 @NgModule({
   declarations,
-  imports: [CommonModule],
+  imports: [CommonModule, IonicModule],
   exports: [...declarations, IonicModule],
   entryComponents: [],
 })

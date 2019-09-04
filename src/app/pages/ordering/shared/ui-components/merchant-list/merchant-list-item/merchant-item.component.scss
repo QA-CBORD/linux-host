@@ -1,0 +1,81 @@
+@import 'tools';
+
+:host {
+  width: 100%;
+  // display: flex;
+  // justify-content: space-between;
+}
+
+.merchant {
+  padding-top: 26px;
+//   padding-left: 18px;
+//   padding-right: 18px;
+  padding-bottom: 26px;
+  border-bottom: 1px solid #d8d8d8;
+
+  &__merchant-photo {
+    object-fit: cover;
+    border-radius: 15px;
+    height: 172px;
+    width: 100%;
+    left: 0;
+    right: 0;
+  }
+
+  &__merchant-name {
+    @include ellipsis;
+    font-family: $font-nunito-semibold;
+    color: rgb(0, 0, 0);
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0px;
+    line-height: 20px;
+    margin: 0px;
+  }
+
+  &__merchant-buttons {
+    background: transparent;
+    fill: clear;
+    height: 48px;
+    width: 48px;
+  }
+
+  &__merchant-distance {
+    @include ellipsis;
+    font-family: $font-nunito-semibold;
+    color: rgba(0, 0, 0, 0.6);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0px;
+    line-height: 12px;
+    margin: 0px;
+  }
+
+  &__merchant-button {
+    width: 25px;
+    float: right;
+    margin-left: 8px;
+    margin-right: 8px;
+  }
+
+  &__merchant-open-info {
+    color: rgb(20, 125, 99);
+    font-size: 12px;
+    font-family: $font-nunito-semibold;
+    font-weight: 600;
+    letter-spacing: 0px;
+    line-height: 12px;
+    margin: 0px;
+  }
+
+  &__merchant-order-types {
+    color: rgb(22, 109, 255);
+    font-size: 12px;
+    font-family: $font-nunito-semibold;
+    font-weight: 600;
+    text-align: right;
+    letter-spacing: 0.6px;
+    line-height: 12px;
+    margin: 0px;
+  }
+}
