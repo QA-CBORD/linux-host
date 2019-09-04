@@ -176,7 +176,13 @@ export class DepositPageComponent implements OnInit, OnDestroy {
         ),
         take(1)
       )
-      .subscribe(info => this.confirmationDepositPopover(info));
+      .subscribe(
+        info => this.confirmationDepositPopover(info),
+        () => {
+          this.loadingService.closeSpinner();
+          this.onErrorRetrieve('Something went wrong, please try again...');
+        }
+      );
   }
 
   setFormValidators() {
@@ -280,13 +286,16 @@ export class DepositPageComponent implements OnInit, OnDestroy {
         this.loadingService.showSpinner();
         this.depositService
           .deposit(data.sourceAcc.id, data.selectedAccount.id, data.amount, this.fromAccountCvv.value)
-          .pipe(
-            tap(() => this.loadingService.closeSpinner()),
-            take(1)
-          )
+          .pipe(take(1))
           .subscribe(
-            () => this.finalizeDepositModal(data),
-            () => this.onErrorRetrieve('Your information could not be verified.')
+            () => {
+              this.loadingService.closeSpinner();
+              this.finalizeDepositModal(data);
+            },
+            () => {
+              this.loadingService.closeSpinner();
+              this.onErrorRetrieve('Your information could not be verified.');
+            }
           );
       }
     });

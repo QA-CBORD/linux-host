@@ -68,26 +68,25 @@ export class RequestFundsPageComponent implements OnInit {
   }
 
   async onSubmit() {
-    console.log(this.requestFundsForm.getRawValue());
-    // const {
-    //   [this.controlsNames.name]: n,
-    //   [this.controlsNames.email]: e,
-    //   [this.controlsNames.message]: m,
-    //   [this.controlsNames.account]: a,
-    // } = this.requestFundsForm.getRawValue();
+    const {
+      [this.controlsNames.name]: n,
+      [this.controlsNames.email]: e,
+      [this.controlsNames.message]: m,
+      [this.controlsNames.account]: a,
+    } = this.requestFundsForm.getRawValue();
 
-    // await this.loadingService.showSpinner();
+    await this.loadingService.showSpinner();
 
-    // this.userService
-    //   .getUserSettingsBySettingName('quick_amount')
-    //   .pipe(switchMap(({ response: { value: v } }) => this.userService.requestDeposit(n, e, m, a, v)))
-    //   .subscribe(
-    //     async ({ response }) => {
-    //       await this.loadingService.closeSpinner();
-    //       response ? this.showModal() : this.showToast();
-    //     },
-    //     async () => await this.loadingService.closeSpinner()
-    //   );
+    this.userService
+      .getUserSettingsBySettingName('quick_amount')
+      .pipe(switchMap(({ response: { value: v } }) => this.userService.requestDeposit(n, e, m, a, v)))
+      .subscribe(
+        async ({ response }) => {
+          await this.loadingService.closeSpinner();
+          response ? this.showModal() : this.showToast();
+        },
+        async () => await this.loadingService.closeSpinner()
+      );
   }
 
   async back(): Promise<void> {
