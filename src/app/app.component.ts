@@ -16,6 +16,7 @@ import { AuthService } from './core/service/auth-service/auth.service';
 import { UserService } from './core/service/user-service/user.service';
 import { BUTTON_TYPE } from './core/utils/buttons.config';
 import { StGlobalPopoverComponent } from './shared/ui-components/st-global-popover';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -76,12 +77,17 @@ export class AppComponent implements OnDestroy {
       )
       .subscribe((hash: string) => {
         Environment.setEnvironmentViaURL(location.href);
-        this.parseHashParameters(hash);
+        if(environment.production === true){
+          /// if this is a production build, then get the session token
+          this.parseHashParameters(hash);
 
-        /// now perform normal page logic
-        this.handleSessionToken();
-
-        // this.testGetSession();
+          /// now perform normal page logic
+          this.handleSessionToken();
+        }else{
+          /// if this is not production then use test session
+          this.testGetSession();
+        }
+        
       });
     this.sourceSubscription.add(subscription);
   }
