@@ -15,6 +15,9 @@ import { TimeRangePipe } from './filter/pipes/time-range.pipe';
 import { AccountNamePipe } from './filter/pipes/account-name.pipe';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { DepositModalComponent } from './deposit-modal/deposit-modal.component';
+import { InputFloatingLabelComponent } from './input-floating-label/input-floating-label.component';
+import { SelectFloatingLabelComponent } from './select-floating-label/select-floating-label.component';
+
 
 const declarations = [
   MenuReceivingFundsComponent,
@@ -28,6 +31,8 @@ const declarations = [
   AccountNamePipe,
   ConfirmDepositPopoverComponent,
   DepositModalComponent,
+  InputFloatingLabelComponent,
+  SelectFloatingLabelComponent
 ];
 
 @NgModule({
@@ -36,4 +41,4 @@ const declarations = [
   exports: [...declarations, IonicModule],
   entryComponents: [FilterMenuComponent, ConfirmDepositPopoverComponent, DepositModalComponent],
 })
-export class UiComponentsModule {}
+export class UiComponentsModule { }

@@ -1,11 +1,17 @@
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PopoverController, ModalController, ToastController } from '@ionic/angular';
-import { DepositService } from '../../services/deposit.service';
+import { DepositService } from './services/deposit.service';
 import { tap, map, switchMap, take } from 'rxjs/operators';
-import { SYSTEM_SETTINGS_CONFIG, PAYMENT_TYPE, PAYMENT_SYSTEM_TYPE, ACCOUNT_TYPES } from '../../accounts.config';
+import {
+  SYSTEM_SETTINGS_CONFIG,
+  PAYMENT_TYPE,
+  PAYMENT_SYSTEM_TYPE,
+  ACCOUNT_TYPES,
+  LOCAL_ROUTING,
+} from '../../accounts.config';
 import { SettingInfo } from 'src/app/core/model/configuration/setting-info.model';
-import { Subscription, Observable, of } from 'rxjs';
+import { Subscription, Observable, of, iif } from 'rxjs';
 import { UserAccount } from '../../../../core/model/account/account.model';
 import { ConfirmDepositPopoverComponent } from '../../shared/ui-components/confirm-deposit-popover/confirm-deposit-popover.component';
 import { DepositModalComponent } from '../../shared/ui-components/deposit-modal/deposit-modal.component';
@@ -44,7 +50,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
 
   constructor(
     private readonly depositService: DepositService,
-    private fb: FormBuilder,
+    private readonly fb: FormBuilder,
     private readonly popoverCtrl: PopoverController,
     private readonly modalController: ModalController,
     private readonly toastController: ToastController,
@@ -129,14 +135,6 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     }
   }
 
-  get marginButton() {
-    return !this.isFreeFromDepositEnabled && !this.isCVVfieldShow
-      ? '100%'
-      : this.isFreeFromDepositEnabled && this.isCVVfieldShow
-      ? '70%'
-      : '85%';
-  }
-
   formatInput(event) {
     const { value } = event.target;
     const index = value.indexOf('.');
@@ -154,31 +152,26 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     const { sourceAccount, selectedAccount, mainInput, mainSelect } = this.depositForm.value;
     const isBillme: boolean = sourceAccount === 'billme';
     const regex = /[,\s]/g;
-    let fromAccount: Observable<UserAccount>;
+    const sourceAccForBillmeDeposit: Observable<UserAccount> = this.sourceAccForBillmeDeposit(
+      selectedAccount,
+      this.billmeMappingArr
+    );
     let amount = mainInput || mainSelect;
     amount = amount.replace(regex, '');
 
-    if (isBillme) {
-      fromAccount = this.sourceAccForBillmeDeposit(selectedAccount, this.billmeMappingArr);
-    } else {
-      const sourceAcc = this.depositForm.get('sourceAccount').value;
-
-      fromAccount = of(sourceAcc);
-    }
-
-    fromAccount
+    iif(() => isBillme, sourceAccForBillmeDeposit, of(sourceAccount))
       .pipe(
         switchMap(
           (sourceAcc): any => {
-            let fee: Observable<number>;
+            const calculateDepositFee: Observable<number> = this.depositService.calculateDepositFee(
+              sourceAcc.id,
+              selectedAccount.id,
+              amount
+            );
 
-            if (isBillme) {
-              fee = of(0);
-            } else {
-              fee = this.depositService.calculateDepositFee(sourceAcc.id, selectedAccount.id, amount);
-            }
-
-            return fee.pipe(map(valueFee => ({ fee: valueFee, sourceAcc, selectedAccount, amount, billme: isBillme })));
+            return iif(() => isBillme, of(0), calculateDepositFee).pipe(
+              map(valueFee => ({ fee: valueFee, sourceAcc, selectedAccount, amount, billme: isBillme }))
+            );
           }
         ),
         take(1)
@@ -190,23 +183,28 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     if (this.isFreeFromDepositEnabled) {
       const sourceAcc = this.depositForm.get('sourceAccount').value;
       let minMaxValidators = [];
-      if (sourceAcc === 'billme') {
-        minMaxValidators = [
-          amountRangeValidator(+this.minMaxOfAmmounts.minAmountbillme, +this.minMaxOfAmmounts.maxAmountbillme),
-        ];
-        this.depositForm.controls['fromAccountCvv'].setErrors(null);
-        this.depositForm.controls['fromAccountCvv'].clearValidators();
-      } else if (sourceAcc === 'newCreditCard') {
-        console.log('new credit card');
-      } else {
-        minMaxValidators = [
-          amountRangeValidator(+this.minMaxOfAmmounts.minAmountOneTime, +this.minMaxOfAmmounts.maxAmountOneTime),
-        ];
-        this.depositForm.controls['fromAccountCvv'].setValidators([
-          Validators.required,
-          Validators.minLength(3),
-          Validators.pattern('[0-9.-]*'),
-        ]);
+      switch (sourceAcc) {
+        case 'billme':
+          minMaxValidators = [
+            amountRangeValidator(+this.minMaxOfAmmounts.minAmountbillme, +this.minMaxOfAmmounts.maxAmountbillme),
+          ];
+          this.depositForm.controls['fromAccountCvv'].setErrors(null);
+          this.depositForm.controls['fromAccountCvv'].clearValidators();
+          break;
+
+        case 'newCreditCard':
+          this.depositForm.reset();
+          this.router.navigate([NAVIGATE.accounts, LOCAL_ROUTING.addCreditCard], { skipLocationChange: true });
+          break;
+        default:
+          minMaxValidators = [
+            amountRangeValidator(+this.minMaxOfAmmounts.minAmountOneTime, +this.minMaxOfAmmounts.maxAmountOneTime),
+          ];
+          this.depositForm.controls['fromAccountCvv'].setValidators([
+            Validators.required,
+            Validators.minLength(3),
+            Validators.pattern('[0-9.-]*'),
+          ]);
       }
 
       this.depositForm.controls['mainInput'].setValidators([
@@ -282,12 +280,12 @@ export class DepositPageComponent implements OnInit, OnDestroy {
         this.loadingService.showSpinner();
         this.depositService
           .deposit(data.sourceAcc.id, data.selectedAccount.id, data.amount, this.fromAccountCvv.value)
-          .pipe(take(1))
+          .pipe(
+            tap(() => this.loadingService.closeSpinner()),
+            take(1)
+          )
           .subscribe(
-            () => {
-              this.loadingService.closeSpinner();
-              return this.finalizeDepositModal(data);
-            },
+            () => this.finalizeDepositModal(data),
             () => this.onErrorRetrieve('Your information could not be verified.')
           );
       }

@@ -1,4 +1,10 @@
-<st-header title="Add Funds" [isTitleShow]="true" [backButtonTitle]="'Back'" [isToolbarShow]="true"></st-header>
+<st-header
+  title="Add Funds"
+  [isTitleShow]="true"
+  [backButtonTitle]="'Back'"
+  [isToolbarShow]="true"
+  class="deposit__header"
+></st-header>
 <ion-content>
   <form [formGroup]="depositForm" (ngSubmit)="onFormSubmit()">
     <div
@@ -64,22 +70,6 @@
     </div>
     <section class="deposit__selection-block">
       <div class="deposit__select-wrapper">
-        <ion-label class="deposit__label-select">To Account</ion-label>
-        <ion-select
-          class="deposit__select deposit__select-account"
-          cancelText="Cancel"
-          mode="md"
-          placeholder="Please Choose"
-          interface="action-sheet"
-          [interfaceOptions]="customActionSheetOptions"
-          formControlName="selectedAccount"
-        >
-          <ion-select-option [value]="account" *ngFor="let account of destinationAccounts; trackBy: trackByAccountId">
-            {{ account.accountDisplayName }} ({{ account.balance | transactionUnits: account.accountType }})
-          </ion-select-option>
-        </ion-select>
-      </div>
-      <div class="deposit__select-wrapper">
         <ion-label class="deposit__label-select">Payment Method</ion-label>
         <ion-select
           class="deposit__select"
@@ -95,11 +85,27 @@
             [value]="account"
             *ngFor="let account of creditCardSourceAccounts; trackBy: trackByAccountId"
             class="test-class"
-            ><i class="fab fa-cc-mastercard"></i> {{ account.accountTender | creditCardType }} ending in
+            >{{ account.accountTender | creditCardType }} ending in
             {{ account.lastFour }}
           </ion-select-option>
           <ion-select-option value="billme" *ngIf="isBillMePaymentTypesEnabled">Bill Me</ion-select-option>
           <ion-select-option value="newCreditCard"> Add a Credit Card</ion-select-option>
+        </ion-select>
+      </div>
+      <div class="deposit__select-wrapper">
+        <ion-label class="deposit__label-select">To Account</ion-label>
+        <ion-select
+          class="deposit__select deposit__select-account"
+          cancelText="Cancel"
+          mode="md"
+          placeholder="Please Choose"
+          interface="action-sheet"
+          [interfaceOptions]="customActionSheetOptions"
+          formControlName="selectedAccount"
+        >
+          <ion-select-option [value]="account" *ngFor="let account of destinationAccounts; trackBy: trackByAccountId">
+            {{ account.accountDisplayName }} ({{ account.balance | transactionUnits: account.accountType }})
+          </ion-select-option>
         </ion-select>
       </div>
     </section>
@@ -110,7 +116,7 @@
           class="deposit__input-cvv"
           inputmode="tel"
           type="tel"
-          maxlength="3"
+          maxlength="4"
           placeholder="CVV"
           formControlName="fromAccountCvv"
         ></ion-input>
@@ -130,12 +136,7 @@
       </div>
     </section>
 
-    <ion-button
-      expand="block"
-      type="submit"
-      class="deposit__deposit-btn"
-      [disabled]="!depositForm.valid"
-      [ngStyle]="{ marginTop: marginButton }"
+    <ion-button expand="block" type="submit" class="deposit__deposit-btn" [disabled]="!depositForm.valid"
       >Deposit</ion-button
     >
   </form>
