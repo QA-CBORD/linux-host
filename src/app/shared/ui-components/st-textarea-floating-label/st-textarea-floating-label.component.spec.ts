@@ -1,22 +1,22 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SelectFloatingLabelComponent } from './st-select-floating-label.component';
+import { StTextareaFloatingLabelComponent } from './st-textarea-floating-label.component';
 
-describe('SelectFloatingLabelComponent', () => {
-  let component: SelectFloatingLabelComponent;
-  let fixture: ComponentFixture<SelectFloatingLabelComponent>;
+describe('StTextareaFloatingLabelComponent', () => {
+  let component: StTextareaFloatingLabelComponent;
+  let fixture: ComponentFixture<StTextareaFloatingLabelComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SelectFloatingLabelComponent ],
+      declarations: [ StTextareaFloatingLabelComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SelectFloatingLabelComponent);
+    fixture = TestBed.createComponent(StTextareaFloatingLabelComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -11,6 +11,7 @@ import { StProgressBarComponent } from './st-progress-bar/st-progress-bar.compon
 import { StGlobalPopoverComponent } from './st-global-popover';
 import { StSelectFloatingLabelComponent } from './st-select-floating-label/st-select-floating-label.component';
 import { StInputFloatingLabelComponent } from './st-input-floating-label/st-input-floating-label.component';
+import { StTextareaFloatingLabelComponent } from './st-textarea-floating-label/st-textarea-floating-label.component';
 
 const components = [
   StHeaderComponent,
@@ -22,6 +23,7 @@ const components = [
   StGlobalPopoverComponent,
   StSelectFloatingLabelComponent,
   StInputFloatingLabelComponent,
+  StTextareaFloatingLabelComponent
 ];
 
 const entryComponents = [StGlobalPopoverComponent];
