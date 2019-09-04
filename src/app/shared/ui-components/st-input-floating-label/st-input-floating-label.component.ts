@@ -3,21 +3,21 @@ import { FormControl, NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/f
 
 export const CUSTOM_INPUT_CONTROL_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
-  useExisting: forwardRef(() => InputFloatingLabelComponent),
+  useExisting: forwardRef(() => StInputFloatingLabelComponent),
   multi: true,
 };
 
 @Component({
   selector: 'st-input-floating-label',
-  templateUrl: './input-floating-label.component.html',
-  styleUrls: ['./input-floating-label.component.scss'],
+  templateUrl: './st-input-floating-label.component.html',
+  styleUrls: ['./st-input-floating-label.component.scss'],
   providers: [CUSTOM_INPUT_CONTROL_VALUE_ACCESSOR],
 })
-export class InputFloatingLabelComponent implements OnInit, ControlValueAccessor {
+export class StInputFloatingLabelComponent implements OnInit, ControlValueAccessor {
   @Input() control: FormControl = new FormControl();
   @Input() label: string;
   @Input() type: string;
-  @Input() maxlength: string = "";
+  @Input() maxlength: string = '';
   @Input() idd: string;
   @Input() isError: boolean;
   @ViewChild('input') inputRef: ElementRef;

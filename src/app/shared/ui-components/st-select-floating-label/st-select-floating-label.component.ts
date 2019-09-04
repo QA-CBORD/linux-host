@@ -3,17 +3,17 @@ import { NG_VALUE_ACCESSOR, ControlValueAccessor, FormControl } from '@angular/f
 
 export const CUSTOM_SELECT_CONTROL_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
-  useExisting: forwardRef(() => SelectFloatingLabelComponent),
+  useExisting: forwardRef(() => StSelectFloatingLabelComponent),
   multi: true,
 };
 
 @Component({
   selector: 'st-select-floating-label',
-  templateUrl: './select-floating-label.component.html',
-  styleUrls: ['./select-floating-label.component.scss'],
+  templateUrl: './st-select-floating-label.component.html',
+  styleUrls: ['./st-select-floating-label.component.scss'],
   providers: [CUSTOM_SELECT_CONTROL_VALUE_ACCESSOR],
 })
-export class SelectFloatingLabelComponent implements OnInit, ControlValueAccessor {
+export class StSelectFloatingLabelComponent implements OnInit, ControlValueAccessor {
   @Input() control: FormControl = new FormControl();
   @Input() interface: string;
   @Input() interfaceOptions;
@@ -21,9 +21,9 @@ export class SelectFloatingLabelComponent implements OnInit, ControlValueAccesso
   @Input() idd: string;
   private innerValue: any = '';
 
-  constructor() { }
+  constructor() {}
 
-  ngOnInit() { }
+  ngOnInit() {}
 
   // event fired when input value is changed . later propagated up to the form control using the custom value accessor interface
   onChange(e: Event, value: any) {
@@ -46,7 +46,7 @@ export class SelectFloatingLabelComponent implements OnInit, ControlValueAccesso
   }
 
   //propagate changes into the custom form control
-  propagateChange = (_: any) => { };
+  propagateChange = (_: any) => {};
 
   //From ControlValueAccessor interface
   writeValue(value: any) {
@@ -60,5 +60,5 @@ export class SelectFloatingLabelComponent implements OnInit, ControlValueAccesso
   }
 
   //From ControlValueAccessor interface
-  registerOnTouched(fn: any) { }
+  registerOnTouched(fn: any) {}
 }
