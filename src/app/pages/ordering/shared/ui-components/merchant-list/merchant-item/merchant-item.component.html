@@ -3,11 +3,7 @@
     <ion-row>
       <ion-col no-padding align-self-center>
         <!-- IMAGE -->
-        <img
-          class="merchant__merchant-photo"
-          src="/assets/images/temp-merchant-photo.jpg"
-          alt="nature background"
-        />
+        <img class="merchant__merchant-photo" src="/assets/images/temp-merchant-photo.jpg" alt="nature background" />
       </ion-col>
     </ion-row>
 
@@ -36,12 +32,23 @@
     <ion-row>
       <!-- Distance Info -->
       <ion-col align-self-start>
-        <p class="merchant__merchant-distance">0.02 mi</p>
+        <p class="merchant__merchant-distance">{{merchantInfo.distanceFromUser | merchantDistance}}</p>
       </ion-col>
     </ion-row>
     <ion-row>
+
       <!-- Times and order options -->
-      <ion-col align-self-start> <p class="merchant__merchant-open-info">Open</p></ion-col>
+      <ion-col align-self-start>
+        <p
+          class="merchant__merchant-hours"
+          [ngClass]="{
+            'merchant__merchant-hours--open': merchantInfo.openNow == true,
+            'merchant__merchant-hours--closed': merchantInfo.openNow == false
+          }"
+        >
+          {{ merchantInfo.openNow ? 'Open' : 'Closed' }}
+        </p>
+      </ion-col>
       <ion-col align-self-end> <p class="merchant__merchant-order-types">PICKUP & DELIVERY</p> </ion-col>
     </ion-row>
   </ion-grid>

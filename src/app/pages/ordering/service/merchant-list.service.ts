@@ -12,9 +12,7 @@ import { OrderingApiService } from './ordering.api.service';
 
 import { MerchantInfo } from '../models/merchant-info';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class MerchantListService {
   private readonly _menuMerchants$: BehaviorSubject<MerchantInfo[]> = new BehaviorSubject<MerchantInfo[]>([]);
 

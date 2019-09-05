@@ -1,4 +1,4 @@
-import { MerchantSearchOptions } from './../models/merchant-search-options';
+import { MerchantSearchOptions, MerchantSearchOptionName } from './../models/merchant-search-options';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
@@ -7,27 +7,39 @@ import { switchMap, map } from 'rxjs/operators';
 
 import { BaseService, ServiceParameters } from 'src/app/core/service/base-service/base.service';
 import { UserService } from 'src/app/core/service/user-service/user.service';
+import { CoordsService } from 'src/app/core/service/coords/coords.service';
 
 import { MessageResponse } from 'src/app/core/model/service/message-response.model';
 import { MerchantInfo } from '../models/merchant-info';
+import { GeoCoordinates } from 'src/app/core/model/geolocation/geocoordinates.model';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class OrderingApiService extends BaseService {
   private readonly serviceUrl: string = '/json/merchant';
 
-  constructor(protected readonly http: HttpClient, private readonly userService: UserService) {
+  constructor(
+    protected readonly http: HttpClient,
+    private readonly userService: UserService,
+    private readonly coords: CoordsService
+  ) {
     super(http);
   }
 
   getMenuMerchants(searchOptions: MerchantSearchOptions): Observable<MerchantInfo[]> {
     const methodName = 'getMenuMerchants';
-    return this.userService.userData.pipe(
-      switchMap(({ institutionId }) =>
-        this.httpRequestFull(this.serviceUrl, methodName, true, institutionId, { searchOptions })
-      ),
-      map(({ response }: MessageResponse<any>) => response.list)
+    return this.coords.getCoords().pipe(
+      switchMap((geoData: GeoCoordinates) => {
+        if(geoData){
+          searchOptions.addSearchOption({key: MerchantSearchOptionName.LATITUDE, value: geoData.latitude});
+          searchOptions.addSearchOption({key: MerchantSearchOptionName.LONGITUDE, value: geoData.longitude});
+        }
+        return this.userService.userData.pipe(
+          switchMap(({ institutionId }) =>
+            this.httpRequestFull(this.serviceUrl, methodName, true, institutionId, { searchOptions })
+          ),
+          map(({ response }: MessageResponse<any>) => response.list)
+        );
+      })
     );
   }
 
@@ -47,8 +59,7 @@ export class OrderingApiService extends BaseService {
 
   removeFavoriteMerchant(merchantId: string): Observable<boolean> {
     const methodName = 'removeFavoriteMerchant';
-    const postParams: ServiceParameters = { merchantId: merchantId};
+    const postParams: ServiceParameters = { merchantId: merchantId };
     return this.httpRequestFull(this.serviceUrl, methodName, true, null, postParams);
   }
-
 }
