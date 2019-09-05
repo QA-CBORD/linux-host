@@ -13,6 +13,10 @@
     border: 1px solid #d8d8d8;
     border-radius: 8px;
     padding-left: 10px;
+
+    & .select-text {
+      line-height: 24px;
+    }
   }
 
   &__placeholder {
@@ -26,7 +30,8 @@
 }
 
 .select__control:focus,
-:host-context(.ng-valid.ng-dirty) .select__control {
+.select__control:focus-within,
+:host-context(.ng-valid) .select__control {
   border: 2px solid #166dff;
 
   & + .select__placeholder {
@@ -51,6 +56,7 @@
     background: #fff;
     padding: 0 3px;
     margin: 0;
+    z-index: 2;
     color: $color-alizarin;
   }
 }

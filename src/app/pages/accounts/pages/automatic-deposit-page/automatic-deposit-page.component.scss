@@ -36,17 +36,14 @@
     letter-spacing: 0;
     min-height: 16px;
     line-height: 16px;
-    visibility: hidden;
 
     @include font-nunito-heavy(12px);
-
-    &--show {
-      visibility: visible;
-    }
   }
 
   &__label {
-    margin-top: 10px;
+    margin-top: 20px;
+    display: block;
+
     @include font-nunito-regular(14px)
   }
 

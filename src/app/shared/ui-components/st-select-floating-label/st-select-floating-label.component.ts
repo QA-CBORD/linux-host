@@ -18,15 +18,18 @@ export class StSelectFloatingLabelComponent implements OnInit, ControlValueAcces
   @Input() interface: string;
   @Input() interfaceOptions;
   @Input() label: string;
+  @Input() isError: boolean;
   @Input() idd: string;
   private innerValue: any = '';
 
   constructor() {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.value = this.control.value;
+  }
 
   // event fired when input value is changed . later propagated up to the form control using the custom value accessor interface
-  onChange(e: Event, value: any) {
+  onChange(e: CustomEvent, value: any) {
     //set changed value
     this.innerValue = value;
     // propagate value into form control using control value accessor interface
@@ -39,14 +42,16 @@ export class StSelectFloatingLabelComponent implements OnInit, ControlValueAcces
   }
 
   //set accessor including call the onchange callback
+  @Input()
   set value(v: any) {
     if (v !== this.innerValue) {
-      this.innerValue = v;
+      this.writeValue(v);
     }
   }
 
   //propagate changes into the custom form control
   propagateChange = (_: any) => {};
+  onTouched = () => {};
 
   //From ControlValueAccessor interface
   writeValue(value: any) {
@@ -60,5 +65,11 @@ export class StSelectFloatingLabelComponent implements OnInit, ControlValueAcces
   }
 
   //From ControlValueAccessor interface
-  registerOnTouched(fn: any) {}
+  registerOnTouched(fn: any) {
+    this.onTouched = fn;
+  }
+
+  onBlur() {
+    this.onTouched()
+  }
 }

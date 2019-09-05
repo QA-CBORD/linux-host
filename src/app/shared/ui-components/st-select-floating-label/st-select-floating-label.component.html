@@ -3,11 +3,16 @@
               #select
               [interfaceOptions]="interfaceOptions"
               interface="{{ interface }}"
+              [value]="control.value"
               id="{{ idd }}"
-              (ionChange)="onChange($event, select.value)">
-    <ng-content></ng-content>
+              (ionChange)="onChange($event, select.value)"
+              [ngClass]="{ 'error-indicator': isError }"
+              (ionBlur)="onBlur()"
+  >
+    <ng-content select="[role=options]"></ng-content>
   </ion-select>
 
   <label class="select__placeholder"
          [attr.for]="idd">{{ label }}</label>
+  <ng-content select="[role=error]" *ngIf="isError"></ng-content>
 </div>

@@ -25,7 +25,12 @@ export class StInputFloatingLabelComponent implements OnInit, ControlValueAccess
 
   constructor() {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    if (this.control.value !== '') {
+      this.control.markAsDirty();
+      this.value = this.control.value;
+    }
+  }
 
   ngAfterViewInit() {
     // RESET the custom input form control UI when the form control is RESET
@@ -74,4 +79,8 @@ export class StInputFloatingLabelComponent implements OnInit, ControlValueAccess
 
   //From ControlValueAccessor interface
   registerOnTouched(fn: any) {}
+
+  onBlur() {
+    !this.control.touched && this.control.markAsTouched();
+  }
 }

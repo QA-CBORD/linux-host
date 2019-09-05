@@ -6,9 +6,10 @@
     (change)="onChange($event, input.value)"
     (keyup)="onChange($event, input.value)"
     type="{{ type }}"
+    (blur)="onBlur()"
     [attr.maxlength]="maxlength"
     [ngClass]="{ 'error-indicator': isError }"
   />
   <label class="input__placeholder" [attr.for]="idd">{{ label }}</label>
-  <ng-content></ng-content>
+  <ng-content *ngIf="isError"></ng-content>
 </div>
