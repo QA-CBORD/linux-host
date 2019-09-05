@@ -180,8 +180,12 @@
         Please enter a valid postal code.
       </div>
     </st-input-floating-label>
+    <div class="cc__disclaimer">
+      By saving this card, you consent for this card to be stored and used for purchases. You may remove this card at
+      any time within Settings.
+    </div>
     <ion-button expand="block" type="submit" class="cc__submit-btn" shape="round" [disabled]="!ccForm.valid">
-      add card
+      save card
     </ion-button>
   </form>
 </ion-content>
