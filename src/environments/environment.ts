@@ -21,34 +21,42 @@ export const testCredentials:Dictionary<UserLogin> = {
     institutionId: '46054f40-71fc-4d32-a8de-64b525d3ce56',
   },
 
-  gold7_1:  {
+  gold7_1: {
     userName: 'BSaas@tpsmail.dev',
     password: 'password1',
     domain: null,
     institutionId: '46054f40-71fc-4d32-a8de-64b525d3ce56',
   },
 
-  gold7_Yarik: {
+  gold7_Yarik_G7:  {
     userName: 'yxp@test.cbord.com',
     password: 'Dn210778pms#',
     domain: null,
     institutionId: '46054f40-71fc-4d32-a8de-64b525d3ce56',
   },
 
-  odysseyPreview: {
+  gold7_Yarik_odyssey:  {
+    userName: 'yxp@test.cbord.com',
+    password: 'Dn210778pms#',
+    domain: null,
+    institutionId: '72ae1e24-2e31-4927-82a5-4379081e4334',
+  },
+
+  odysseyPreview:  {
     userName: 'getaws1@tpsmail.dev',
     password: 'password1',
     domain: null,
     institutionId: '1e418ca8-7148-4956-b7c4-1f35db6d8a11',
   },
-  odysseyPreview2: {
+
+  odysseyPreview2:  {
     userName: 'getaws2@tpsmail.dev',
     password: 'password1',
     domain: null,
     institutionId: '1e418ca8-7148-4956-b7c4-1f35db6d8a11',
   },
 
-  odysseyPreviewTest: {
+  odysseyPreviewTest:  {
     userName: 'yxp@test.cbord.com',
     password: 'Dn210778pms#',
     domain: null,
@@ -62,7 +70,7 @@ export const testCredentials:Dictionary<UserLogin> = {
     institutionId: 'ec1307c4-d59e-4981-b5f9-860e23229a0d',
   },
 
-  lowBalance:  {
+  lowBalance: {
     userName: 'lowbalance@tpsmail.dev',
     password: 'password1',
     domain: null,

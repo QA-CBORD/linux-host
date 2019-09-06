@@ -16,6 +16,7 @@ import { AccountNamePipe } from './filter/pipes/account-name.pipe';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { DepositModalComponent } from './deposit-modal/deposit-modal.component';
 
+
 const declarations = [
   MenuReceivingFundsComponent,
   AccountListComponent,
@@ -36,4 +37,4 @@ const declarations = [
   exports: [...declarations, IonicModule],
   entryComponents: [FilterMenuComponent, ConfirmDepositPopoverComponent, DepositModalComponent],
 })
-export class UiComponentsModule {}
+export class UiComponentsModule { }

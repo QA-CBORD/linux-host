@@ -1,21 +1,22 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { LocationListPage } from './location-list.page';
+import { StInputFloatingLabelComponent } from './st-input-floating-label.component';
 
-describe('LocationListPage', () => {
-  let component: LocationListPage;
-  let fixture: ComponentFixture<LocationListPage>;
+describe('StInputFloatingLabelComponent', () => {
+  let component: StInputFloatingLabelComponent;
+  let fixture: ComponentFixture<StInputFloatingLabelComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [LocationListPage],
+      declarations: [ StInputFloatingLabelComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    }).compileComponents();
+    })
+    .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(LocationListPage);
+    fixture = TestBed.createComponent(StInputFloatingLabelComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

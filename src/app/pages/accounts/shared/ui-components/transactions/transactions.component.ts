@@ -7,15 +7,9 @@ import { TransactionHistory } from '../../../models/transaction-history.model';
   styleUrls: ['./transactions.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TransactionsComponent implements OnInit {
+export class TransactionsComponent {
   @Input() transactions: TransactionHistory[];
   @Input() dividers: boolean;
 
   constructor() {}
-
-  ngOnInit() {}
-
-  trackTransactionsById(index: number, { transactionId }: TransactionHistory): string {
-    return transactionId;
-  }
 }

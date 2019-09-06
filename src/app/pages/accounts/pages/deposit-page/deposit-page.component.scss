@@ -1,6 +1,10 @@
 @import 'tools';
 
 .deposit {
+  &__header {
+    border-bottom: 1px solid $color-whisper;
+  }
+
   &__manual-amount {
     display: flex;
     flex-direction: column;
@@ -117,7 +121,10 @@
 
   &__deposit-btn {
     --background: #166dff;
-    margin: 85% 20px 0;
+    position: fixed;
+    bottom: 5%;
+    left: 2.5%;
+    width: 95%;
 
     &.button-disabled {
       --background: #cccccc;

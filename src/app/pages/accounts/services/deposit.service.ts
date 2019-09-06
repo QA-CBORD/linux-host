@@ -16,7 +16,7 @@ export class DepositService {
   constructor(
     private readonly commerceApiService: CommerceApiService,
     private readonly accountsApiService: AccountsApiService
-  ) { }
+  ) {}
 
   get accounts$(): Observable<UserAccount[]> {
     return this._accounts$.asObservable();
