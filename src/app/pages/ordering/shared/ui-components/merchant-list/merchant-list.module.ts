@@ -11,6 +11,6 @@ const declarations = [MerchantListComponent, MerchantItemComponent];
 @NgModule({
   declarations,
   exports: [MerchantListComponent],
-  imports: [CommonModule, IonicModule, SharedModule, PipesModule],
+  imports: [CommonModule, IonicModule,  SharedModule, PipesModule],
 })
 export class MerchantListModule {}
