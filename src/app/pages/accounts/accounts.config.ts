@@ -71,7 +71,7 @@ export const SYSTEM_SETTINGS_CONFIG = {
     category: 'deposit',
     name: 'onetime_maximum',
   },
-  depositPaymentTypes: {
+  autoDepositPaymentTypes: {
     domain: 'get',
     category: 'deposit',
     name: 'auto_deposit_payment_types',
@@ -79,14 +79,14 @@ export const SYSTEM_SETTINGS_CONFIG = {
   lowBalanceAutoDepositEnabled: {
     domain: 'get',
     category: 'feature',
-    name: 'enable_low_balance_auto_deposits',
+    name: 'enable_low_balance_auto_deposit',
   },
   lowBalanceFreeFormEnabled: {
     domain: 'get',
     category: 'deposit',
     name: 'allow_freeform_low_balance_amounts',
   },
-  lowBalanceFreeFormAmounts: {
+  lowBalanceAmounts: {
     domain: 'get',
     category: 'deposit',
     name: 'low_balance_amounts',
@@ -94,12 +94,17 @@ export const SYSTEM_SETTINGS_CONFIG = {
   billMeFreeFormEnabled: {
     domain: 'get',
     category: 'deposit',
-    name: '.allow_freeform_billme_amounts',
+    name: 'allow_freeform_billme_amounts',
   },
   billMeFreeFormAmounts: {
     domain: 'get',
     category: 'deposit',
-    name: '.billme_amounts',
+    name: 'billme_amounts',
+  },
+  autoDepositTenders: {
+    domain: 'get',
+    category: 'feature',
+    name: 'auto_deposit_tenders',
   },
 };
 

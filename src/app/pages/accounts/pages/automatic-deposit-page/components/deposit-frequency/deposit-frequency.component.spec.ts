@@ -1,21 +1,21 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DepositTypeNavComponent } from './deposit-type-nav.component';
+import { DepositFrequencyComponent } from './deposit-frequency.component';
 
-describe('DepositTypeNavComponent', () => {
-  let component: DepositTypeNavComponent;
-  let fixture: ComponentFixture<DepositTypeNavComponent>;
+describe('DepositFrequencyComponent', () => {
+  let component: DepositFrequencyComponent;
+  let fixture: ComponentFixture<DepositFrequencyComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [DepositTypeNavComponent],
+      declarations: [DepositFrequencyComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(DepositTypeNavComponent);
+    fixture = TestBed.createComponent(DepositFrequencyComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

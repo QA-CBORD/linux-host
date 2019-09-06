@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PopoverController, ModalController, ToastController } from '@ionic/angular';
-import { DepositService } from './services/deposit.service';
+import { DepositService } from '../../services/deposit.service';
 import { tap, map, switchMap, take } from 'rxjs/operators';
 import {
   SYSTEM_SETTINGS_CONFIG,

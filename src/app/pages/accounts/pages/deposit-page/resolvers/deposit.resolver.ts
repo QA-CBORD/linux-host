@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Resolve } from '@angular/router';
 import { Observable, zip } from 'rxjs';
-import { DepositService } from '../services/deposit.service';
+import { DepositService } from '../../../services/deposit.service';
 import { SYSTEM_SETTINGS_CONFIG } from '../../../accounts.config';
 import { LoadingService } from 'src/app/core/service/loading/loading.service';
 import { tap } from 'rxjs/operators';

@@ -32,11 +32,18 @@ export class TestProvider {
       institutionId: '46054f40-71fc-4d32-a8de-64b525d3ce56',
     };
 
-    const gold7_Yarik: UserLogin = {
+    const gold7_Yarik_G7: UserLogin = {
       userName: 'yxp@test.cbord.com',
       password: 'Dn210778pms#',
       domain: null,
       institutionId: '46054f40-71fc-4d32-a8de-64b525d3ce56',
+    };
+
+    const gold7_Yarik_odyssey: UserLogin = {
+      userName: 'yxp@test.cbord.com',
+      password: 'Dn210778pms#',
+      domain: null,
+      institutionId: '72ae1e24-2e31-4927-82a5-4379081e4334',
     };
 
     const odysseyPreview: UserLogin = {
@@ -73,8 +80,6 @@ export class TestProvider {
       institutionId: '46054f40-71fc-4d32-a8de-64b525d3ce56',
     };
 
-    return this.authService
-      .authenticateUser(gold7)
-      .pipe(tap(newSessionId => DataCache.setSessionId(newSessionId)));
+    return this.authService.authenticateUser(gold7).pipe(tap(newSessionId => DataCache.setSessionId(newSessionId)));
   }
 }

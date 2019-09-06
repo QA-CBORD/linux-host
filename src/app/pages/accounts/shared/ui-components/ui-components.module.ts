@@ -15,8 +15,6 @@ import { TimeRangePipe } from './filter/pipes/time-range.pipe';
 import { AccountNamePipe } from './filter/pipes/account-name.pipe';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { DepositModalComponent } from './deposit-modal/deposit-modal.component';
-import { InputFloatingLabelComponent } from './input-floating-label/input-floating-label.component';
-import { SelectFloatingLabelComponent } from './select-floating-label/select-floating-label.component';
 
 
 const declarations = [
@@ -31,8 +29,6 @@ const declarations = [
   AccountNamePipe,
   ConfirmDepositPopoverComponent,
   DepositModalComponent,
-  InputFloatingLabelComponent,
-  SelectFloatingLabelComponent
 ];
 
 @NgModule({
