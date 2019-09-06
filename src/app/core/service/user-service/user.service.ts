@@ -18,7 +18,7 @@ import { Platform } from '@ionic/angular';
 })
 export class UserService extends BaseService {
   private readonly serviceUrl = '/json/user';
-  private readonly userData$: BehaviorSubject<UserInfo> = new BehaviorSubject<UserInfo>(null);
+  private readonly userData$: BehaviorSubject<UserInfo> = new BehaviorSubject<UserInfo>(<UserInfo>{});
   private userPhoto: UserPhotoInfo = null;
 
   constructor(
@@ -91,6 +91,24 @@ export class UserService extends BaseService {
         }
       })
     );
+  }
+
+  getUserPhoto(userId: string): Observable<MessageResponse<UserPhotoInfo>> {
+    const params = { userId };
+
+    return this.httpRequest<MessageResponse<UserPhotoInfo>>(this.serviceUrl, 'retrieveUserPhoto', true, params);
+  }
+
+  requestDeposit(
+    recipientName: string,
+    recipientEmail: string,
+    message: string,
+    depositToAccountId: string,
+    requestAmount: string
+  ) {
+    const params = { recipientName, recipientEmail, message, depositToAccountId, requestAmount };
+
+    return this.httpRequest(this.serviceUrl, 'requestDeposit', true, params);
   }
 
   getPhotoListByUserId(userId: string): Observable<MessageResponse<UserPhotoList>> {

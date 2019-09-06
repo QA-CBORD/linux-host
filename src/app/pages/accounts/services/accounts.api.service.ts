@@ -21,7 +21,7 @@ export class AccountsApiService extends BaseService {
 
     return this.userService.userData.pipe(
       switchMap(({ institutionId }) => this.httpRequestFull(this.serviceUrl, methodName, true, institutionId, config)),
-      map((response: MessageResponse<SettingInfo>) => response.response)
+      map(({ response }: MessageResponse<SettingInfo>) => response)
     );
   }
 }

@@ -23,7 +23,7 @@ export class CommerceApiService extends BaseService {
     const method = 'retrieveAccounts';
 
     return this.httpRequest(this.serviceUrl, method, true).pipe(
-      map((response: MessageResponse<AccountResponse>) => response.response.accounts)
+      map(({ response }: MessageResponse<AccountResponse>) => response.accounts)
     );
   }
 
@@ -35,7 +35,44 @@ export class CommerceApiService extends BaseService {
     };
 
     return this.httpRequest(this.serviceUrl, method, true, params).pipe(
-      map((response: MessageResponse<TransactionResponse>) => response.response)
+      map(({ response }: MessageResponse<TransactionResponse>) => response)
+    );
+  }
+
+  calculateDepositFee(fromAccountId, toAccountId, amount): Observable<number> {
+    const method = 'calculateDepositFee';
+    const params = {
+      fromAccountId,
+      toAccountId,
+      amount,
+    };
+
+    return this.httpRequest(this.serviceUrl, method, true, params).pipe(
+      map(({ response }: MessageResponse<number>) => response)
+    );
+  }
+
+  deposit(fromAccountId, toAccountId, amount, fromAccountCvv): Observable<string> {
+    const method = 'deposit';
+    const params = {
+      fromAccountId,
+      toAccountId,
+      fromAccountCvv,
+      amount,
+      cashlessTerminalLocation: null,
+    };
+
+    return this.httpRequest(this.serviceUrl, method, true, params).pipe(
+      map(({ response }: MessageResponse<string>) => response)
+    );
+  }
+
+  createAccount(accountInfo): Observable<string> {
+    const method = 'createAccount';
+    const params = { accountInfo };
+
+    return this.httpRequest(this.serviceUrl, method, true, params).pipe(
+      map(({ response }: MessageResponse<string>) => response)
     );
   }
 }

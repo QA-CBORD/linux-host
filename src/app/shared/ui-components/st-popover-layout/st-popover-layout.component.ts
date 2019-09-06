@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
-import { popoverConfig } from '../../../core/model/popover/popover.model';
+import { PopoverConfig } from '../../../core/model/popover/popover.model';
 import { BUTTON_TYPE } from '../../../core/utils/buttons.config';
 
 @Component({
@@ -9,13 +9,13 @@ import { BUTTON_TYPE } from '../../../core/utils/buttons.config';
   styleUrls: ['./st-popover-layout.component.scss'],
 })
 export class StPopoverLayoutComponent implements OnInit {
-  @Input() popoverConfig: popoverConfig;
+  @Input() popoverConfig: PopoverConfig;
 
   constructor(private popoverCtrl: PopoverController) {}
 
   ngOnInit() {}
 
-  async closeModal(closeModal = 'CANCEL', btnType: BUTTON_TYPE = BUTTON_TYPE.CANCEL) {
+  async closeModal(closeModal = 'CANCEL', btnType: string = BUTTON_TYPE.CANCEL) {
     await this.popoverCtrl.dismiss(closeModal, btnType);
   }
 }

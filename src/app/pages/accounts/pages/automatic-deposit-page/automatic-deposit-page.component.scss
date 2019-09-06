@@ -1,0 +1,76 @@
+@import "tools";
+
+.content {
+  --padding-end: 20px;
+  --padding-start: 20px;
+
+  &__header {
+    line-height: 20px;
+    letter-spacing: 0;
+
+    @include font-nunito-regular(16px);
+  }
+}
+
+
+.deposit-form {
+  &__control {
+    height: 45px;
+    background: $color-white;
+    border-radius: 8px;
+    border: 1px solid $color-link-water;
+    letter-spacing: 0;
+
+    @include font-nunito-regular(16px);
+    --placeholder-color: #626262;
+    --padding-start: 5px;
+
+    &--error {
+      border: 1px solid $color-alizarin;
+    }
+  }
+
+  &__control-error-msg {
+    margin: 0;
+    color: $color-flame-red;
+    letter-spacing: 0;
+    min-height: 16px;
+    line-height: 16px;
+
+    @include font-nunito-heavy(12px);
+  }
+
+  &__label {
+    margin-top: 25px;
+    display: block;
+
+    @include font-nunito-regular(14px)
+  }
+
+  &__button {
+    --ion-color-primary: #166dff;
+    --border-radius: 25px;
+    --box-shadow: none;
+
+    margin-top: 40px;
+    height: 45px;
+    width: 90vw;
+    text-transform: uppercase;
+    line-height: 18px;
+
+    @include font-nunito-regular(14px);
+
+    &--fixed {
+      position: fixed;
+      bottom: 20px;
+      left: 5vw;
+    }
+
+    &--disabled {
+      --ion-color-primary: #c4c4c4;
+      --box-shadow: none;
+
+      color: $color-matterhorn;
+    }
+  }
+}

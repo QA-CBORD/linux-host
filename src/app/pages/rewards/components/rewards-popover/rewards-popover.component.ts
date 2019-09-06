@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, AfterViewInit } from '@angular/core';
 import bwipjs from 'bwip-angular2';
 
-import { Message, popoverConfig } from '../../../../core/model/popover/popover.model';
+import { Message, PopoverConfig } from '../../../../core/model/popover/popover.model';
 import { buttons } from '../../../../core/utils/buttons.config';
 import { CONTENT_STRINGS, PopupTypes } from '../../rewards.config';
 import { RedeemableRewardInfo, UserFulfillmentActivityInfo } from '../../models';
@@ -16,7 +16,7 @@ import { RewardsService } from '../../services';
 export class RewardsPopoverComponent implements OnInit, AfterViewInit {
   @Input() data: RedeemableRewardInfo;
   @Input() type: string;
-  popoverConfig: popoverConfig;
+  popoverConfig: PopoverConfig;
   contentString: { [key: string]: string };
 
   constructor(private rewardsService: RewardsService) {

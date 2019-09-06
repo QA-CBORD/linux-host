@@ -1,18 +1,18 @@
 export interface UserAccount {
-  accountDisplayName: string;
-  accountTender: string;
-  accountType: number;
-  balance: number;
-  billingAddressId: string | null;
-  depositAccepted: boolean;
-  expirationMonth: string | null;
-  expirationYear: string | null;
-  id: string;
-  institutionId: string;
-  isActive: boolean;
-  lastFour: any;
-  nameOnMedia: any;
-  paymentSystemId: string;
-  paymentSystemType: number;
-  userId: string;
+  readonly accountDisplayName: string;
+  readonly accountTender: string;
+  readonly accountType: number;
+  readonly balance: number;
+  readonly billingAddressId: string | null;
+  readonly depositAccepted: boolean;
+  readonly expirationMonth: string | null;
+  readonly expirationYear: string | null;
+  readonly id: string;
+  readonly institutionId: string;
+  readonly isActive: boolean;
+  readonly lastFour: any;
+  readonly nameOnMedia: any;
+  readonly paymentSystemId: string;
+  readonly paymentSystemType: number;
+  readonly userId: string;
 }

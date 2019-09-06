@@ -3,6 +3,7 @@ import { Route, RouterModule } from '@angular/router';
 import { AccountsPage } from './accounts.page';
 import { AccountsPageResolver } from './resolvers/accounts-page.resolver';
 import { LOCAL_ROUTING } from './accounts.config';
+import { AutoDepositPageResolver } from './resolvers/auto-deposit-page.resolver';
 
 const routes: Route[] = [
   {
@@ -13,13 +14,13 @@ const routes: Route[] = [
     },
     children: [
       {
-        path: LOCAL_ROUTING.accountDetails,
+        path: `${LOCAL_ROUTING.accountDetails}/:id`,
         loadChildren: './pages/account-details/account-details.module#AccountDetailsModule',
       },
     ],
   },
   {
-    path: LOCAL_ROUTING.accountDetailsM,
+    path: `${LOCAL_ROUTING.accountDetailsM}/:id`,
     loadChildren: './pages/account-details/account-details.module#AccountDetailsModule',
   },
   {
@@ -29,10 +30,15 @@ const routes: Route[] = [
   {
     path: LOCAL_ROUTING.autoDeposit,
     loadChildren: './pages/automatic-deposit-page/automatic-deposit.module#AutomaticDepositModule',
+    resolve: { data: AutoDepositPageResolver },
   },
   {
     path: LOCAL_ROUTING.requestFunds,
     loadChildren: './pages/request-funds-page/request-funds.module#RequestFundsModule',
+  },
+  {
+    path: LOCAL_ROUTING.addCreditCard,
+    loadChildren: './pages/add-credit-card/add-credit-card.module#AddCreditCardModule',
   },
 ];
 

@@ -7,12 +7,6 @@
   </ion-toolbar>
 
   <ion-toolbar class="st-header__toolbar" *ngIf="isSubToolbarShow">
-    <ion-searchbar
-      (ionChange)="onInputChanged($event)"
-      (keyup.enter)="onEnterKeyClicked()"
-      [placeholder]="placeholder"
-      mode="ios"
-      class="st-header__searchbar"
-    ></ion-searchbar>
+    <ng-content></ng-content>
   </ion-toolbar>
 </ion-header>

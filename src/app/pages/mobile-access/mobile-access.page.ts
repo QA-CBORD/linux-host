@@ -50,6 +50,12 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
     this.setUserInfo();
   }
 
+  onEnterKeyClicked() {
+    if (this.keyboard) {
+      this.keyboard.hide();
+    }
+  }
+
   refreshLocationList($event) {
     this.mobileAccessService
       .getLocations()
@@ -71,8 +77,8 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
       .subscribe();
   }
 
-  onSearchedValue(searchString: string) {
-    this.searchString$.next(searchString);
+  onSearchedValue({ target: { value } }: any) {
+    this.searchString$.next(value);
   }
 
   private setInstitutionInfo() {

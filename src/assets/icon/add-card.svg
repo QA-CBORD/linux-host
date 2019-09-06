@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="50px" height="32px" viewBox="0 0 50 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 56.2 (81672) - https://sketch.com -->
+    <title>Dropdown/Icons/Add Card</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Dropdown/Icons/Add-Card" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="💧Icon/16" transform="translate(17.000000, 8.000000)">
+            <g id="🔩-Parts/Icon/Type/16/Icon">
+                <g id="🔩-Parts/Icon/Font-Awesome/plus" fill="#FFFFFF" fill-rule="evenodd" stroke-width="1">
+                    <g id="plus" transform="translate(1.600000, 1.600000)">
+                        <path d="M12.5333333,5.6 L7.2,5.6 L7.2,0.266666667 C7.2,0.119333333 7.08066667,0 6.93333333,0 L5.86666667,0 C5.71933333,0 5.6,0.119333333 5.6,0.266666667 L5.6,5.6 L0.266666667,5.6 C0.119333333,5.6 0,5.71933333 0,5.86666667 L0,6.93333333 C0,7.08066667 0.119333333,7.2 0.266666667,7.2 L5.6,7.2 L5.6,12.5333333 C5.6,12.6806667 5.71933333,12.8 5.86666667,12.8 L6.93333333,12.8 C7.08066667,12.8 7.2,12.6806667 7.2,12.5333333 L7.2,7.2 L12.5333333,7.2 C12.6806667,7.2 12.8,7.08066667 12.8,6.93333333 L12.8,5.86666667 C12.8,5.71933333 12.6806667,5.6 12.5333333,5.6 Z" id="Path" fill-rule="nonzero"></path>
+                    </g>
+                </g>
+                <g id="🎨-Color/Gray/08" fill="#979797" fill-rule="nonzero">
+                    <rect id="Color" x="0" y="0" width="16" height="16"></rect>
+                </g>
+            </g>
+        </g>
+        <circle id="Oval" stroke="#979797" stroke-width="1.5" cx="25" cy="16" r="15.25"></circle>
+    </g>
+</svg>
