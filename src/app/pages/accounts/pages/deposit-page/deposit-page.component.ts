@@ -84,6 +84,12 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     return JSON.parse(billMePaymentTypesEnabled).indexOf(PAYMENT_TYPE.BILLME) !== -1;
   }
 
+  get isCreditCardPaymentTypesEnabled() {
+    const billMePaymentTypesEnabled = this.getSettingByName(this.depositSettings, SYSTEM_SETTINGS_CONFIG.paymentTypes);
+
+    return JSON.parse(billMePaymentTypesEnabled).indexOf(PAYMENT_TYPE.CREDIT) !== -1;
+  }
+
   get presetDepositAmountsCreditCard() {
     const billMePaymentTypesEnabled = this.getSettingByName(
       this.depositSettings,

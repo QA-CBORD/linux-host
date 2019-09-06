@@ -89,7 +89,7 @@
             {{ account.lastFour }}
           </ion-select-option>
           <ion-select-option value="billme" *ngIf="isBillMePaymentTypesEnabled">Bill Me</ion-select-option>
-          <ion-select-option value="newCreditCard"> Add a Credit Card</ion-select-option>
+          <ion-select-option value="newCreditCard" *ngIf="isCreditCardPaymentTypesEnabled"> Add a Credit Card</ion-select-option>
         </ion-select>
       </div>
       <div class="deposit__select-wrapper">
