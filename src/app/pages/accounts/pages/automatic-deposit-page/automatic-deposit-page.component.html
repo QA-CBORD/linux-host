@@ -67,11 +67,11 @@
                         [isError]="dayOfMonth.errors && (dayOfMonth.dirty || dayOfMonth.touched)"
                         [control]="dayOfMonth"
                         [formControlName]="controlNames.dayOfMonth"
-                        title="Day of Month"
+                        label="Day of Month"
                         class="deposit-form__label"
                         type="number"
                         idd="dayOfMonth"
-                        label="write day of month"
+                        title="write day of month"
                 >
                     <p  class="deposit-form__control-error-msg">
                         {{ dayOfMonth.errors?.errorMsg }}

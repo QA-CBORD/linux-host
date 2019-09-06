@@ -4,7 +4,7 @@ import { PopoverController, ToastController } from '@ionic/angular';
 import { Router } from '@angular/router';
 
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 
 import { AccountsService } from '../../services/accounts.service';
 import { UserAccount } from '../../../../core/model/account/account.model';

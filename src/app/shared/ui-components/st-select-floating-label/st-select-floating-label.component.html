@@ -1,17 +1,18 @@
 <div class="select__wrapper">
-  <ion-select class="select__control"
-              [interfaceOptions]="interfaceOptions"
-              [value]="control.value"
-              [ngClass]="{ 'select__control--error': isError }"
-              (ionChange)="onChangeHandler($event)"
-              (ionBlur)="onBlur()"
-              interface="{{ interface }}"
-              id="{{ idd }}"
-  >
-    <ng-content select="[role=options]"></ng-content>
-  </ion-select>
+    <ion-select mode="md"
+                class="select__control"
+                [interfaceOptions]="interfaceOptions"
+                [value]="control.value"
+                [ngClass]="{ 'select__control--error': isError }"
+                (ionChange)="onChangeHandler($event)"
+                (ionBlur)="onBlur()"
+                interface="{{ interface }}"
+                id="{{ idd }}"
+    >
+        <ng-content select="[role=options]"></ng-content>
+    </ion-select>
 
-  <label class="select__placeholder"
-         [attr.for]="idd">{{ label }}</label>
-  <ng-content select="[role=error]" *ngIf="isError"></ng-content>
+    <label class="select__placeholder"
+           [attr.for]="idd">{{ label }}</label>
+    <ng-content select="[role=error]" *ngIf="isError"></ng-content>
 </div>

@@ -42,7 +42,7 @@
   &__security-info-wrapper {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 35px;
+    margin-bottom: 45px;
   }
 
   &__exp-date {
@@ -79,13 +79,14 @@
 
   &__submit-btn {
     --background: #166dff;
+
+    text-transform: uppercase;
     height: 50px;
-    position: fixed;
-    width: 90%;
-    bottom: 5%;
+    margin: 20px 0 10px;
 
     &.button-disabled {
       --background: #e1e1e1;
+
       color: #8e8e8e;
 
       @include font-nunito-heavy(14px);
