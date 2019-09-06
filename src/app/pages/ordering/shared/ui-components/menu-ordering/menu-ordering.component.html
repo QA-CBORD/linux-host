@@ -1,3 +1,15 @@
-<p>
-  menu-ordering works!
-</p>
+<div class="menu__sub-navigation">
+  <div class="menu__nav-item-wrapper" (click)="openModalPage()">
+    <img src="./assets/icon/recents.svg" alt="recent orders" />
+    <div class="menu__nav-item-content">Recent Orders</div>
+  </div>
+  <div class="menu__nav-item-wrapper" (click)="openModalPage()">
+    <img src="./assets/icon/address-marker.svg" alt="saved addresses" />
+
+    <div class="menu__nav-item-content">Saved Addresses</div>
+  </div>
+  <div class="menu__nav-item-wrapper" (click)="openModalPage()">
+    <img src="./assets/icon/favorite.svg" alt="favorites" />
+    <div class="menu__nav-item-content">Favorites</div>
+  </div>
+</div>

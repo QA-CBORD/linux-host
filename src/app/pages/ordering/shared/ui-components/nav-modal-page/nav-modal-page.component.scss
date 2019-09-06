@@ -1,0 +1,12 @@
+@import 'tools';
+
+.modal-page {
+  &__header {
+    border-bottom: 1px solid $color-whisper;
+  }
+
+  &__title {
+    line-height: 24px;
+    @include font-nunito-heavy(20px);
+  }
+}

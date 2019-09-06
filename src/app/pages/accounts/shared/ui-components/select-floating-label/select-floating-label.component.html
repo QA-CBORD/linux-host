@@ -1,0 +1,13 @@
+<div class="select__wrapper">
+  <ion-select class="select__control"
+              #select
+              [interfaceOptions]="interfaceOptions"
+              interface="{{ interface }}"
+              id="{{ idd }}"
+              (ionChange)="onChange($event, select.value)">
+    <ng-content></ng-content>
+  </ion-select>
+
+  <label class="select__placeholder"
+         [attr.for]="idd">{{ label }}</label>
+</div>

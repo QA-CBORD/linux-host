@@ -71,6 +71,36 @@ export const SYSTEM_SETTINGS_CONFIG = {
     category: 'deposit',
     name: 'onetime_maximum',
   },
+  depositPaymentTypes: {
+    domain: 'get',
+    category: 'deposit',
+    name: 'auto_deposit_payment_types',
+  },
+  lowBalanceAutoDepositEnabled: {
+    domain: 'get',
+    category: 'feature',
+    name: 'enable_low_balance_auto_deposits',
+  },
+  lowBalanceFreeFormEnabled: {
+    domain: 'get',
+    category: 'deposit',
+    name: 'allow_freeform_low_balance_amounts',
+  },
+  lowBalanceFreeFormAmounts: {
+    domain: 'get',
+    category: 'deposit',
+    name: 'low_balance_amounts',
+  },
+  billMeFreeFormEnabled: {
+    domain: 'get',
+    category: 'deposit',
+    name: '.allow_freeform_billme_amounts',
+  },
+  billMeFreeFormAmounts: {
+    domain: 'get',
+    category: 'deposit',
+    name: '.billme_amounts',
+  },
 };
 
 export enum ACCOUNT_TYPES {
@@ -85,6 +115,7 @@ export enum LOCAL_ROUTING {
   addFunds = 'add-funds',
   accountDetails = 'account-details',
   accountDetailsM = 'account-details-m',
+  addCreditCard = 'add-credit-card'
 }
 
 export enum TRANSACTION_TYPE {

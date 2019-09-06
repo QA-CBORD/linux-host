@@ -5,13 +5,14 @@ import { IonicModule } from '@ionic/angular';
 import { MerchantItemComponent } from './merchant-list/merchant-list-item/merchant-item.component';
 import { MerchantListComponent } from './merchant-list/merchant-list.component';
 import { MenuOrderingComponent } from './menu-ordering/menu-ordering.component';
+import { NavModalPage } from './nav-modal-page/nav-modal-page.component';
 
-const declarations = [MenuOrderingComponent, MerchantListComponent, MerchantItemComponent];
+const declarations = [MenuOrderingComponent, MerchantListComponent, MerchantItemComponent, NavModalPage];
 
 @NgModule({
   declarations,
   imports: [CommonModule, IonicModule],
   exports: [...declarations, IonicModule],
-  entryComponents: [],
+  entryComponents: [NavModalPage],
 })
 export class UiComponentsModule {}

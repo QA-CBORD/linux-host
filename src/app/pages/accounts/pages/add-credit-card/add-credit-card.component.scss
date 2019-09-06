@@ -1,0 +1,87 @@
+@import 'tools';
+
+.cc {
+  &__header {
+    border-bottom: 1px solid $color-whisper;
+  }
+
+  &__content {
+    --padding-start: 20px;
+    --padding-end: 20px;
+  }
+
+  &__input-wrapper {
+    margin-bottom: 35px;
+    display: block;
+
+    &:first-child {
+      margin-top: 50px;
+    }
+  }
+
+  &__card-number-container {
+    position: relative;
+
+    .cc__card-visa {
+      position: absolute;
+      width: 30px;
+      z-index: 1;
+      right: 60px;
+      top: 15px;
+    }
+
+    .cc__card-mastercard {
+      position: absolute;
+      width: 30px;
+      z-index: 1;
+      right: 20px;
+      top: 15px;
+    }
+  }
+
+  &__security-info-wrapper {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 35px;
+  }
+
+  &__exp-date {
+    position: relative;
+    flex-basis: 45%;
+  }
+
+  &__exp-date-hint {
+    position: absolute;
+    left: 10px;
+    color: #6e6e6e;
+
+    @include font-nunito-semibold(12px);
+  }
+
+  &__cvv {
+    position: relative;
+    flex-basis: 45%;
+  }
+
+  &__cvv-hint {
+    position: absolute;
+    left: 10px;
+    color: #6e6e6e;
+
+    @include font-nunito-semibold(12px);
+  }
+
+  &__submit-btn {
+    --background: #166dff;
+    height: 50px;
+    position: fixed;
+    width: 90%;
+    bottom: 5%;
+  }
+
+  &__input-error {
+    color: $color-alizarin;
+
+    @include font-nunito-semibold(14px);
+  }
+}
