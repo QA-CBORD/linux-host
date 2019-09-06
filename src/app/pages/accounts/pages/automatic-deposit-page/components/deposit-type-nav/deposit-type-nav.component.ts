@@ -5,8 +5,6 @@ import {
   OnInit,
   Output,
   Input,
-  OnChanges,
-  SimpleChanges,
 } from '@angular/core';
 
 import { Observable } from 'rxjs';
@@ -22,7 +20,7 @@ import { AUTO_DEPOSIT_PAYMENT_TYPES } from '../../auto-deposit.config';
   styleUrls: ['./deposit-type-nav.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DepositTypeNavComponent implements OnInit, OnChanges {
+export class DepositTypeNavComponent implements OnInit{
   @Output() onTypeChanged: EventEmitter<number> = new EventEmitter<number>();
   @Input() activeType: number;
   private availableTypes: Observable<{ [key: number]: boolean }>;
@@ -68,9 +66,5 @@ export class DepositTypeNavComponent implements OnInit, OnChanges {
         };
       })
     );
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes.activeType);
   }
 }
