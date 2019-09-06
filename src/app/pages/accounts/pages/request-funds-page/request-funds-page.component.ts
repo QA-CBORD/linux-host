@@ -4,7 +4,7 @@ import { PopoverController, ToastController } from '@ionic/angular';
 import { Router } from '@angular/router';
 
 import { Observable } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 import { AccountsService } from '../../services/accounts.service';
 import { UserAccount } from '../../../../core/model/account/account.model';
@@ -144,6 +144,10 @@ export class RequestFundsPageComponent implements OnInit {
     });
     modal.onDidDismiss().then(async () => await this.back());
     modal.present();
+  }
+
+  change(event: any) {
+    console.log(event)
   }
 }
 

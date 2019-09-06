@@ -139,88 +139,72 @@
             </ng-container>
         </st-select-floating-label>
 
-
-<!--        <label class="deposit-form__label"-->
-<!--        >Payment Method-->
-<!--            <ion-select-->
-<!--                    class="deposit-form__control"-->
-<!--                    [formControlName]="controlNames.paymentMethod"-->
-<!--                    [interfaceOptions]="customActionSheetOptions"-->
-<!--                    interface="action-sheet"-->
-<!--                    placeholder="Choose payment method"-->
-<!--                    [ngClass]="{ 'deposit-form__control&#45;&#45;error': paymentMethod.invalid && paymentMethod.touched }"-->
-<!--                    (ionChange)="onPaymentMethodChanged($event)"-->
-<!--            >-->
-<!--                <ion-select-option-->
-<!--                        [value]="account"-->
-<!--                        *ngFor="let account of creditCardSourceAccounts; trackBy: trackByAccountId"-->
-<!--                        class="test-class"-->
-<!--                >-->
-<!--                    {{ account.accountTender | creditCardType }} ending in-->
-<!--                    {{ account.lastFour }}-->
-<!--                </ion-select-option>-->
-<!--                <ion-select-option value="billme" *ngIf="(isBillMePaymentTypesEnabled | async)">Bill Me-->
-<!--                </ion-select-option>-->
-<!--            </ion-select>-->
-<!--        </label>-->
-
-        <label class="deposit-form__label"
-        >Amount to deposit
-            <ion-select
-                    *ngIf="!(isAllowFreeFormBillMe | async)"
-                    [formControlName]="controlNames.amountToDeposit"
-                    [value]="autoDepositSettings.amount"
-                    class="deposit-form__control"
-                    [interfaceOptions]="customActionSheetOptions"
-                    interface="action-sheet"
-                    placeholder="Choose amount to deposit"
-                    [ngClass]="{ 'deposit-form__control--error': amountToDeposit.invalid && amountToDeposit.touched }"
-            >
+        <st-select-floating-label
+                *ngIf="!(isAllowFreeFormBillMe | async)"
+                [formControlName]="controlNames.amountToDeposit"
+                [control]="amountToDeposit"
+                [interfaceOptions]="customActionSheetOptions"
+                [isError]="amountToDeposit.invalid && amountToDeposit.touched"
+                interface="action-sheet"
+                title="Choose amount to deposit from a dropdown list below"
+                label="Amount to deposit"
+                class="deposit-form__label"
+                idd="amountToDeposit"
+        >
+            <ng-container role="options">
                 <ion-select-option *ngFor="let amount of (amountToDepositValues | async)"
                                    [value]="parseFloat(amount)">{{
-                    amount | transactionUnits
+                  amount | transactionUnits
                     }}</ion-select-option>
-            </ion-select>
+            </ng-container>
 
-            <ion-input
-                    [formControlName]="controlNames.amountToDeposit"
-                    *ngIf="(isAllowFreeFormBillMe | async)"
-                    type="number"
-                    placeholder="Choose amount to deposit"
-                    class="deposit-form__control"
-                    [ngClass]="{ 'deposit-form__control--error': amountToDeposit.invalid && amountToDeposit.touched }"
-            >
-            </ion-input>
-        </label>
-        <p
-                [ngClass]="{ 'deposit-form__control-error-msg--show': amountToDeposit.invalid && amountToDeposit.touched }"
-                class="deposit-form__control-error-msg"
+            <ng-container role="error">
+                <p  class="deposit-form__control-error-msg">
+                    {{ amountToDeposit.errors?.errorMsg }}
+                </p>
+            </ng-container>
+        </st-select-floating-label>
+
+        <st-input-floating-label
+                *ngIf="(isAllowFreeFormBillMe | async)"
+                [control]="amountToDeposit"
+                [formControlName]="controlNames.amountToDeposit"
+                title="enter amount to deposit"
+                class="deposit-form__label"
+                type="number"
+                idd="amountToDeposit"
+                label="Amount to deposit"
         >
-            {{ amountToDeposit.errors?.errorMsg }}
-        </p>
+            <p  class="deposit-form__control-error-msg">
+                {{ amountToDeposit.errors?.errorMsg }}
+            </p>
+        </st-input-floating-label>
 
-        <label class="deposit-form__label"
-        >Account
-            <ion-select
-                    class="deposit-form__control"
-                    [formControlName]="controlNames.account"
-                    [interfaceOptions]="customActionSheetOptions"
-                    interface="action-sheet"
-                    placeholder="Choose account"
-                    [ngClass]="{ 'deposit-form__control--error': account.invalid && account.touched }"
-            >
+        <st-select-floating-label
+                [formControlName]="controlNames.account"
+                [control]="account"
+                [interfaceOptions]="customActionSheetOptions"
+                [isError]="account.invalid && account.touched"
+                class="deposit-form__label"
+                interface="action-sheet"
+                title="Choose account from a dropdown list below"
+                label="Account"
+                idd="account"
+        >
+            <ng-container role="options">
                 <ion-select-option [value]="account"
                                    *ngFor="let account of destinationAccounts; trackBy: trackByAccountId">
                     {{ account.accountDisplayName }} ({{ account.balance | transactionUnits: account.accountType }})
                 </ion-select-option>
-            </ion-select>
-        </label>
-        <p
-                [ngClass]="{ 'deposit-form__control-error-msg--show': account.invalid && account.touched }"
-                class="deposit-form__control-error-msg"
-        >
-            {{ account.errors?.errorMsg }}
-        </p>
+            </ng-container>
+
+            <ng-container role="error">
+                <p  class="deposit-form__control-error-msg">
+                    {{ account.errors?.errorMsg }}
+                </p>
+            </ng-container>
+        </st-select-floating-label>
+
     </form>
     <ion-button
             class="deposit-form__button"

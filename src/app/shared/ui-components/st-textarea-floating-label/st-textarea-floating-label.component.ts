@@ -1,5 +1,5 @@
-import { Component, OnInit, Input, forwardRef } from '@angular/core';
-import { FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { Component, Input, forwardRef } from '@angular/core';
+import { AbstractControl, DefaultValueAccessor, FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 export const CUSTOM_TEXTAREA_CONTROL_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
@@ -13,23 +13,15 @@ export const CUSTOM_TEXTAREA_CONTROL_VALUE_ACCESSOR: any = {
   styleUrls: ['./st-textarea-floating-label.component.scss'],
   providers: [CUSTOM_TEXTAREA_CONTROL_VALUE_ACCESSOR],
 })
-export class StTextareaFloatingLabelComponent implements OnInit {
-  @Input() control: FormControl = new FormControl();
+export class StTextareaFloatingLabelComponent extends DefaultValueAccessor {
+  @Input() control: AbstractControl = new FormControl();
   @Input() label: string;
   @Input() idd: string;
-  @Input() rows: string;
+  @Input() isError: boolean;
+  @Input() rows: string = '3';
+  onTouched: () => void;
+  onChange: (_: any) => void;
   private innerValue: any = '';
-
-  constructor() {}
-
-  ngOnInit() {}
-
-  onChange(e: Event, value: any) {
-    //set changed value
-    this.innerValue = value;
-    // propagate value into form control using control value accessor interface
-    this.propagateChange(this.innerValue);
-  }
 
   //get accessor
   get value(): any {
@@ -39,12 +31,9 @@ export class StTextareaFloatingLabelComponent implements OnInit {
   //set accessor including call the onchange callback
   set value(v: any) {
     if (v !== this.innerValue) {
-      this.innerValue = v;
+      this.writeValue(v);
     }
   }
-
-  //propagate changes into the custom form control
-  propagateChange = (_: any) => {};
 
   //From ControlValueAccessor interface
   writeValue(value: any) {
@@ -54,9 +43,20 @@ export class StTextareaFloatingLabelComponent implements OnInit {
 
   //From ControlValueAccessor interface
   registerOnChange(fn: any) {
-    this.propagateChange = fn;
+    this.onChange = fn;
   }
 
   //From ControlValueAccessor interface
-  registerOnTouched(fn: any) {}
+  registerOnTouched(fn: any) {
+    this.onTouched = fn;
+  }
+
+  onChangeHandler({detail: {value}}: CustomEvent) {
+    this.writeValue(value);
+    this.onChange(value);
+  }
+
+  onBlur() {
+    this.onTouched()
+  }
 }

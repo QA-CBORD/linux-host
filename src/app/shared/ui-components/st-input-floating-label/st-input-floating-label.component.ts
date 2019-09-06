@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, forwardRef, ViewChild, ElementRef } from '@angular/core';
-import { FormControl, NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
+import { FormControl, NG_VALUE_ACCESSOR, ControlValueAccessor, AbstractControl } from '@angular/forms';
 
 export const CUSTOM_INPUT_CONTROL_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
@@ -14,14 +14,16 @@ export const CUSTOM_INPUT_CONTROL_VALUE_ACCESSOR: any = {
   providers: [CUSTOM_INPUT_CONTROL_VALUE_ACCESSOR],
 })
 export class StInputFloatingLabelComponent implements OnInit, ControlValueAccessor {
-  @Input() control: FormControl = new FormControl();
+  @Input() control: AbstractControl = new FormControl();
   @Input() label: string;
   @Input() type: string;
   @Input() maxlength: string = '';
   @Input() idd: string;
   @Input() isError: boolean;
   @ViewChild('input') inputRef: ElementRef;
-  private innerValue: any = '';
+  innerValue: string | number = '';
+  private onChange :(v: any) => void;
+  private onTouched: () => void;
 
   constructor() {}
 
@@ -30,25 +32,6 @@ export class StInputFloatingLabelComponent implements OnInit, ControlValueAccess
       this.control.markAsDirty();
       this.value = this.control.value;
     }
-  }
-
-  ngAfterViewInit() {
-    // RESET the custom input form control UI when the form control is RESET
-    this.control.valueChanges.subscribe(() => {
-      // check condition if the form control is RESET
-      if (this.control.value == '' || this.control.value == null || this.control.value == undefined) {
-        this.innerValue = '';
-        this.inputRef.nativeElement.value = '';
-      }
-    });
-  }
-
-  // event fired when input value is changed . later propagated up to the form control using the custom value accessor interface
-  onChange(e: Event, value: any) {
-    //set changed value
-    this.innerValue = value;
-    // propagate value into form control using control value accessor interface
-    this.propagateChange(this.innerValue);
   }
 
   //get accessor
@@ -60,11 +43,9 @@ export class StInputFloatingLabelComponent implements OnInit, ControlValueAccess
   set value(v: any) {
     if (v !== this.innerValue) {
       this.innerValue = v;
+      this.writeValue(this.innerValue)
     }
   }
-
-  //propagate changes into the custom form control
-  propagateChange = (_: any) => {};
 
   //From ControlValueAccessor interface
   writeValue(value: any) {
@@ -74,13 +55,20 @@ export class StInputFloatingLabelComponent implements OnInit, ControlValueAccess
 
   //From ControlValueAccessor interface
   registerOnChange(fn: any) {
-    this.propagateChange = fn;
+    this.onChange = fn;
   }
 
   //From ControlValueAccessor interface
-  registerOnTouched(fn: any) {}
+  registerOnTouched(fn: any) {
+    this.onTouched = fn;
+  }
 
   onBlur() {
-    !this.control.touched && this.control.markAsTouched();
+    this.onTouched();
+  }
+
+  onChangeHandler(value: string | number) {
+    this.value = value;
+    this.onChange(value);
   }
 }

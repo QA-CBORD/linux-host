@@ -54,7 +54,6 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
     private readonly depositService: DepositService,
     private readonly autoDepositService: AutoDepositService,
     private readonly popoverCtrl: PopoverController,
-    private readonly cdRef: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -210,7 +209,6 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
   }
 
   onPaymentMethodChanged({ target }) {
-    console.log('changed');
     this.defineDestAccounts(target.value);
   }
 
@@ -300,33 +298,32 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
 
   onSubmit() {
     let predefinedUpdateCall;
-    console.log(this.automaticDepositForm);
 
-    // if (this.automaticDepositForm === null) {
-    //   predefinedUpdateCall = this.autoDepositService.updateAutoDepositSettings({
-    //     ...this.autoDepositSettings,
-    //     active: false,
-    //   });
-    // } else {
-    //   const { paymentMethod, account, ...rest } = this.automaticDepositForm.value;
-    //   const isBillme: boolean = paymentMethod === 'billme';
-    //   const sourceAccForBillmeDeposit: Observable<UserAccount> = this.billmeMappingArr.pipe(
-    //     switchMap(billmeMappingArr => this.sourceAccForBillmeDeposit(account, billmeMappingArr))
-    //   );
-    //   const resultSettings = {
-    //     ...this.autoDepositSettings,
-    //     ...rest,
-    //     autoDepositType: this.activeType,
-    //     toAccountId: account.id,
-    //   };
-    //   predefinedUpdateCall = iif(() => isBillme, sourceAccForBillmeDeposit, of(paymentMethod)).pipe(
-    //     switchMap(sourceAcc =>
-    //       this.autoDepositService.updateAutoDepositSettings({ ...resultSettings, fromAccountId: sourceAcc.id })
-    //     )
-    //   );
-    // }
-    //
-    // predefinedUpdateCall.pipe(take(1)).subscribe(res => console.log(res));
+    if (this.automaticDepositForm === null) {
+      predefinedUpdateCall = this.autoDepositService.updateAutoDepositSettings({
+        ...this.autoDepositSettings,
+        active: false,
+      });
+    } else {
+      const { paymentMethod, account, ...rest } = this.automaticDepositForm.value;
+      const isBillme: boolean = paymentMethod === 'billme';
+      const sourceAccForBillmeDeposit: Observable<UserAccount> = this.billmeMappingArr.pipe(
+        switchMap(billmeMappingArr => this.sourceAccForBillmeDeposit(account, billmeMappingArr))
+      );
+      const resultSettings = {
+        ...this.autoDepositSettings,
+        ...rest,
+        autoDepositType: this.activeType,
+        toAccountId: account.id,
+      };
+      predefinedUpdateCall = iif(() => isBillme, sourceAccForBillmeDeposit, of(paymentMethod)).pipe(
+        switchMap(sourceAcc =>
+          this.autoDepositService.updateAutoDepositSettings({ ...resultSettings, fromAccountId: sourceAcc.id })
+        )
+      );
+    }
+
+    predefinedUpdateCall.pipe(take(1)).subscribe(res => console.log(res));
   }
 
   // -------------------- Events handlers block end --------------------------//
@@ -464,7 +461,6 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
 
   private initLowBalanceFormBlock(): { [key: string]: any[] } {
     return { [AUTOMATIC_DEPOSIT_CONTROL_NAMES.lowBalanceAmount]: [this.autoDepositSettings.lowBalanceAmount] };
-    // return { [AUTOMATIC_DEPOSIT_CONTROL_NAMES.lowBalanceAmount]: [''] };
   }
 
   // -------------------- Controls block end --------------------------//
