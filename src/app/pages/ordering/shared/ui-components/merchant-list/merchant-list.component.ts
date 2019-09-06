@@ -11,6 +11,7 @@ import { MerchantInfo } from '../../../models/merchant-info';
 export class MerchantListComponent implements OnInit {
   @Input() merchantList: MerchantInfo[];
   @Output('favouriteTrigger') favouriteTrigger: EventEmitter<string> = new EventEmitter<string>();
+  @Output('locationPinTrigger') locationPinTrigger: EventEmitter<string> = new EventEmitter<string>();
   constructor() {}
 
   ngOnInit() {}
@@ -22,4 +23,9 @@ export class MerchantListComponent implements OnInit {
   favouriteHandler(event: string) {
     this.favouriteTrigger.emit(event);
   }
+
+  locationPinHandler(event: string){
+    this.locationPinTrigger.emit(event);
+  }
+
 }

@@ -9,6 +9,7 @@ import { UserPhotoInfo } from '../../model/user';
 import { MessageResponse } from '../../model/service/message-response.model';
 import { UserSettings } from '../../model/user';
 import { UserPhotoList } from '../../model/user';
+import { AddressInfo, AddressInfoList } from './../../model/user/user-address.model';
 
 @Injectable({
   providedIn: 'root',
@@ -16,6 +17,7 @@ import { UserPhotoList } from '../../model/user';
 export class UserService extends BaseService {
   private readonly serviceUrl = '/json/user';
   private readonly userData$: BehaviorSubject<UserInfo> = new BehaviorSubject<UserInfo>(<UserInfo>{});
+  private readonly userAddresses$: BehaviorSubject<AddressInfo[]> = new BehaviorSubject<AddressInfo[]>([]);
   private userPhoto: UserPhotoInfo = null;
 
   private set _userData(userInfo: UserInfo) {
@@ -24,6 +26,14 @@ export class UserService extends BaseService {
 
   get userData(): Observable<UserInfo> {
     return this.userData$.asObservable();
+  }
+
+  private set _userAddresses(userAddresses: AddressInfo[]) {
+    this.userAddresses$.next(userAddresses);
+  }
+
+  get userAddresses(): Observable<AddressInfo[]> {
+    return this.userAddresses$.asObservable();
   }
 
   getUser(): Observable<UserInfo> {
@@ -52,8 +62,23 @@ export class UserService extends BaseService {
 
   getUserPhoto(userId: string): Observable<MessageResponse<UserPhotoInfo>> {
     const params = { userId };
-
     return this.httpRequest<MessageResponse<UserPhotoInfo>>(this.serviceUrl, 'retrieveUserPhoto', true, params);
+  }
+
+  getUserAddresses(): Observable<AddressInfo[]> {
+    const methodName = 'retrieveUserAddressList';
+    return this.getUser().pipe(
+      switchMap(({ id }) =>
+        this.httpRequest<MessageResponse<AddressInfoList>>(this.serviceUrl, methodName, true, {
+          userId: id,
+          addressId: '',
+        })
+      ),
+      map(({ response }) => {
+        this._userAddresses = response.addresses;
+        return response.addresses;
+      })
+    );
   }
 
   requestDeposit(

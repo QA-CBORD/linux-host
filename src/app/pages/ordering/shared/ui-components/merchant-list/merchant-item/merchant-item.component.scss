@@ -8,10 +8,10 @@
 
 .merchant {
   padding-top: 26px;
-//   padding-left: 18px;
-//   padding-right: 18px;
-  padding-bottom: 26px;
-  border-bottom: 1px solid #d8d8d8;
+  //   padding-left: 18px;
+  //   padding-right: 18px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid $color-light-gray;
 
   &__merchant-photo {
     object-fit: cover;
@@ -24,13 +24,14 @@
 
   &__merchant-name {
     @include ellipsis;
-    font-family: $font-nunito-semibold;
-    color: rgb(0, 0, 0);
+    @include font-nunito-semibold(12px);
+    letter-spacing: 0;
+    line-height: 12px;
+    margin: 0;
+    color: $color-black;
     font-size: 16px;
     font-weight: 600;
-    letter-spacing: 0px;
     line-height: 20px;
-    margin: 0px;
   }
 
   &__merchant-buttons {
@@ -42,13 +43,12 @@
 
   &__merchant-distance {
     @include ellipsis;
-    font-family: $font-nunito-semibold;
-    color: rgba(0, 0, 0, 0.6);
-    font-size: 12px;
+    @include font-nunito-semibold(12px);
+    color: $color-dark-gray;
+    letter-spacing: 0;
+    margin: 0;
     font-weight: 600;
-    letter-spacing: 0px;
     line-height: 12px;
-    margin: 0px;
   }
 
   &__merchant-button {
@@ -58,24 +58,32 @@
     margin-right: 8px;
   }
 
-  &__merchant-open-info {
-    color: rgb(20, 125, 99);
+  &__merchant-hours {
+    @include font-nunito-semibold(12px);
+    letter-spacing: 0;
+    margin: 0;
     font-size: 12px;
-    font-family: $font-nunito-semibold;
     font-weight: 600;
-    letter-spacing: 0px;
     line-height: 12px;
-    margin: 0px;
+
+    &--open {
+      color: #147d63;
+    }
+
+    &--closed {
+      color: #b52135;
+    }
   }
 
   &__merchant-order-types {
-    color: rgb(22, 109, 255);
+    color: #166dff;
     font-size: 12px;
-    font-family: $font-nunito-semibold;
+    @include font-nunito-semibold(12px);
+    line-height: 12px;
+    margin: 0;
     font-weight: 600;
     text-align: right;
     letter-spacing: 0.6px;
     line-height: 12px;
-    margin: 0px;
   }
 }
