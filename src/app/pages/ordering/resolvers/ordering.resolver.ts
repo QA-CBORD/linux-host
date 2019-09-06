@@ -5,10 +5,11 @@ import { Observable, of } from 'rxjs';
 import { tap, delay } from 'rxjs/operators';
 
 import { LoadingService } from 'src/app/core/service/loading/loading.service';
+import { MerchantListService } from '../service/merchant-list.service';
 
 @Injectable()
 export class OrderingResolver implements Resolve<Observable<any>> {
-  constructor(private readonly loadingService: LoadingService) {}
+  constructor(private readonly merchantListService: MerchantListService, private readonly loadingService: LoadingService) {}
   resolve(): Observable<any> {
     // const requireSettings = [
     //   SYSTEM_SETTINGS_CONFIG.depositTenders,
@@ -30,7 +31,7 @@ export class OrderingResolver implements Resolve<Observable<any>> {
     //   tap(() => this.loadingService.closeSpinner(), () => this.loadingService.closeSpinner())
     // );
 
-    return of(null).pipe(
+    return this.merchantListService.getMerchantsWithFavoriteInfo().pipe(
         delay(1000),
         tap(() => this.loadingService.closeSpinner(), () => this.loadingService.closeSpinner())
     );

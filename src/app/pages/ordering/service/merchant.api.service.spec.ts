@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 
-import { OrderingApiService } from './ordering.api.service'
+import { OrderingApiService } from './ordering.api.service';
 
-describe('OrderingService', () => {
+describe('OrderingService.ApiService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   it('should be created', () => {

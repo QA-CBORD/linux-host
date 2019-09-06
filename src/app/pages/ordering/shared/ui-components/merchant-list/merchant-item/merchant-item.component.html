@@ -1,4 +1,4 @@
-<ion-item class="merchant" lines="none">
+<ion-item class="merchant" lines="none" (click)="itemClickTest()">
   <ion-grid no-padding>
     <ion-row>
       <ion-col no-padding align-self-center>
@@ -25,6 +25,7 @@
           src="./assets/icon/location-pin.svg"
           alt="star"
           appClickStopPropagation
+          (click)="triggerLocationPin()"
         />
       </ion-col>
     </ion-row>
@@ -32,11 +33,10 @@
     <ion-row>
       <!-- Distance Info -->
       <ion-col align-self-start>
-        <p class="merchant__merchant-distance">{{merchantInfo.distanceFromUser | merchantDistance}}</p>
+        <p class="merchant__merchant-distance">{{ merchantInfo.distanceFromUser | merchantDistance }}</p>
       </ion-col>
     </ion-row>
     <ion-row>
-
       <!-- Times and order options -->
       <ion-col align-self-start>
         <p
@@ -49,7 +49,9 @@
           {{ merchantInfo.openNow ? 'Open' : 'Closed' }}
         </p>
       </ion-col>
-      <ion-col align-self-end> <p class="merchant__merchant-order-types">PICKUP & DELIVERY</p> </ion-col>
+      <ion-col align-self-end>
+        <p class="merchant__merchant-order-types">{{ getOrderTypes() }}</p>
+      </ion-col>
     </ion-row>
   </ion-grid>
 </ion-item>

@@ -6,14 +6,15 @@ import { OrderingSharedModule } from './shared/shared.module';
 
 import { OrderingPage } from './ordering.page';
 
-import { OrderingApiService } from './service/ordering.api.service';
+import { MerchantApiService } from './service/merchant.api.service';
 import { MerchantListService } from './service/merchant-list.service';
+import { OrderingApiService } from './service/ordering.api.service';
 
 import { OrderingResolver } from './resolvers/ordering.resolver';
 
 const imports = [CommonModule, OrderingSharedModule, OrderingRoutingModule];
 const declarations = [OrderingPage];
-const providers = [ OrderingResolver, OrderingApiService, MerchantListService];
+const providers = [ OrderingResolver, MerchantApiService, MerchantListService,OrderingApiService];
 
 @NgModule({
   declarations,
