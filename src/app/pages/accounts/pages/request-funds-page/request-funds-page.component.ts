@@ -58,7 +58,7 @@ export class RequestFundsPageComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.accounts$ = this.accountService.accounts$.pipe(
+    this.accounts$ = this.accountService.getAccountsFilteredByDepositTenders().pipe(
       map((accounts: UserAccount[]) => accounts.filter(account => account.depositAccepted))
     );
     this.initForm();
