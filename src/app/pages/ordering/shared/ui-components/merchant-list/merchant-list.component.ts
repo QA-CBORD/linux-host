@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 
 import { MerchantInfo } from '../../../models/merchant-info';
 
@@ -6,15 +6,14 @@ import { MerchantInfo } from '../../../models/merchant-info';
   selector: 'st-merchant-list',
   templateUrl: './merchant-list.component.html',
   styleUrls: ['./merchant-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MerchantListComponent implements OnInit {
-
   @Input() merchantList: MerchantInfo[];
   @Output('favouriteTrigger') favouriteTrigger: EventEmitter<string> = new EventEmitter<string>();
   constructor() {}
 
   ngOnInit() {}
-
 
   trackMerchantsById(index: number, { id }: MerchantInfo): string {
     return id;
@@ -23,5 +22,4 @@ export class MerchantListComponent implements OnInit {
   favouriteHandler(event: string) {
     this.favouriteTrigger.emit(event);
   }
-
 }

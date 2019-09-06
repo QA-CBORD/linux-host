@@ -4,14 +4,19 @@ import { Route, RouterModule } from '@angular/router';
 import { OrderingPage } from './ordering.page';
 
 import { OrderingResolver } from './resolvers/ordering.resolver';
+import { LOCAL_ROUTING } from './ordering.config';
 
 const routes: Route[] = [
   {
     path: '',
     component: OrderingPage,
     resolve: {
-     data: OrderingResolver,
+      data: OrderingResolver,
     },
+  },
+  {
+    path: `${LOCAL_ROUTING.ordersInfo}/:id`,
+    loadChildren: './pages/nav-modal-page/nav-modal.module#NavModalModule',
   },
 ];
 

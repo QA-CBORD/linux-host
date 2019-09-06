@@ -1,19 +1,18 @@
-import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output, ChangeDetectionStrategy } from '@angular/core';
 
 import { MerchantInfo } from './../../../../models/merchant-info';
-
 
 @Component({
   selector: 'st-merchant-item',
   templateUrl: './merchant-item.component.html',
   styleUrls: ['./merchant-item.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MerchantItemComponent implements OnInit {
-
-  @Input() merchantInfo: MerchantInfo;  
+  @Input() merchantInfo: MerchantInfo;
   @Output() addToFav: EventEmitter<string> = new EventEmitter<string>();
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit() {}
 
@@ -28,5 +27,4 @@ export class MerchantItemComponent implements OnInit {
   triggerFavourite() {
     this.addToFav.emit(this.merchantInfo.id);
   }
-
 }
