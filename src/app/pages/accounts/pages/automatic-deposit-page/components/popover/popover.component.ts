@@ -9,7 +9,7 @@ import { buttons } from '../../../../../../core/utils/buttons.config';
   styleUrls: ['./popover.component.scss'],
 })
 export class PopoverComponent implements OnInit {
-  @Input() private readonly data: { [key: string]: string };
+  @Input() data: { [key: string]: string };
   config: PopoverConfig;
 
   constructor() {}
