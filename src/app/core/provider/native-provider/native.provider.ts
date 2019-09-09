@@ -27,7 +27,7 @@ export class NativeProvider {
   }
 
   isIos(): boolean {
-    return window['webkit'] && window['webkit'].messageHandlers.JSListener;
+    return this.platform.platforms().includes('ios');
   }
 
   getAndroidData<T>(methodName: NativeData): T {
