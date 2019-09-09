@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { NavController, PopoverController, ToastController } from '@ionic/angular';
+import { DomSanitizer } from '@angular/platform-browser';
 
 import { map, take } from 'rxjs/operators';
 import { Observable, Subscription } from 'rxjs';
@@ -45,7 +46,8 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
     private readonly nav2: NavController,
     private readonly institutionService: InstitutionService,
     private readonly cdRef: ChangeDetectorRef,
-    private readonly loading: LoadingService
+    private readonly loading: LoadingService,
+    private readonly sanitizer: DomSanitizer
   ) {}
 
   get userFullName$(): Observable<string> {
@@ -164,7 +166,7 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
     this.userService
       .getAcceptedPhoto()
       .pipe(
-        map(({ data, mimeType }) => `data:${mimeType};base64,${data}`),
+        map(({ data, mimeType }) => this.sanitizer.bypassSecurityTrustUrl(`data:${mimeType};base64,${data}`)),
         take(1)
       )
       .subscribe((url: string) => {
