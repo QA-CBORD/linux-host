@@ -1,14 +1,14 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 import { MerchantDistancePipe } from './merchant-distance.pipe';
 
 const declarations = [MerchantDistancePipe];
 
 @NgModule({
-  declarations: [...declarations],
-  imports: [CommonModule],
-  exports: [...declarations],
-  providers: [],
+  declarations,
+  imports: [
+    CommonModule
+  ],
+  exports: declarations
 })
-export class PipesModule {}
+export class MerchantDistanceModule { }
