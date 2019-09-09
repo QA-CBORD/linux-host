@@ -21,10 +21,7 @@ export class UserService extends BaseService {
   private readonly userData$: BehaviorSubject<UserInfo> = new BehaviorSubject<UserInfo>(<UserInfo>{});
   private userPhoto: UserPhotoInfo = null;
 
-  constructor(
-    readonly http: HttpClient,
-    private readonly nativeProvider: NativeProvider
-  ) {
+  constructor(readonly http: HttpClient, private readonly nativeProvider: NativeProvider) {
     super(http);
   }
 
@@ -71,11 +68,15 @@ export class UserService extends BaseService {
       map(({ response }) => (this.userPhoto = response))
     );
 
-    if(this.nativeProvider.isAndroid()){
-      nativeProviderFunction = of(this.nativeProvider.getAndroidData(NativeData.USER_PHOTO));
-    } else if (this.nativeProvider.isIos()){
-      nativeProviderFunction = from(this.nativeProvider.getIosData(NativeData.USER_PHOTO));
-    }else {
+    if (this.nativeProvider.isAndroid()) {
+      nativeProviderFunction = of(this.nativeProvider.getAndroidData(NativeData.USER_PHOTO)).pipe(
+        map((data: any) => JSON.parse(data))
+      );
+    } else if (this.nativeProvider.isIos()) {
+      nativeProviderFunction = from(this.nativeProvider.getIosData(NativeData.USER_PHOTO)).pipe(
+        map((data: any) => JSON.parse(data))
+      );
+    } else {
       nativeProviderFunction = userPhotoInfoObservable;
     }
 
