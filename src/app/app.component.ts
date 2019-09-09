@@ -86,16 +86,16 @@ export class AppComponent implements OnDestroy {
         try {
           this.useJavaScriptInterface();
         } catch (e) {
-          if (environment.production === true) {
+          // if (environment.production === true) {
             /// if this is a production build, then get the session token
             this.parseHashParameters(hash);
 
             /// now perform normal page logic
             this.handleSessionToken();
-          } else {
+          // } else {
             /// if this is not production then use test session
-            this.testGetSession();
-          }
+            // this.testGetSession();
+          // }
         }
       });
     this.sourceSubscription.add(subscription);
