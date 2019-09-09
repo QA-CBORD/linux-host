@@ -1,5 +1,6 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
+
 import { NAVIGATE } from 'src/app/app.global';
 import { LOCAL_ROUTING } from '../../ordering.config';
 
@@ -9,15 +10,12 @@ import { LOCAL_ROUTING } from '../../ordering.config';
   styleUrls: ['./menu-ordering.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MenuOrderingComponent implements OnInit {
+export class MenuOrderingComponent {
 
   constructor(private readonly router: Router) {}
 
-  ngOnInit() {}
-
-  async openModalPage(titlePage) {
-    this.router.navigate([`${NAVIGATE.ordering}/${LOCAL_ROUTING.ordersInfo}/test`], {
-      queryParams: { page: titlePage },
+  async openModalPage(titlePage: string): Promise<void> {
+    this.router.navigate([`${NAVIGATE.ordering}/${LOCAL_ROUTING.ordersInfo}/${titlePage}`], {
       skipLocationChange: true,
     });
   }

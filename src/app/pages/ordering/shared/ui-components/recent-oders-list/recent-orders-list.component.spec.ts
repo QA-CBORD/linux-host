@@ -1,22 +1,22 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { RecentOdersListComponent } from './recent-oders-list.component';
+import { RecentOrdersListComponent } from './recent-orders-list.component';
 
 describe('RecentOdersListComponent', () => {
-  let component: RecentOdersListComponent;
-  let fixture: ComponentFixture<RecentOdersListComponent>;
+  let component: RecentOrdersListComponent;
+  let fixture: ComponentFixture<RecentOrdersListComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ RecentOdersListComponent ],
+      declarations: [ RecentOrdersListComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(RecentOdersListComponent);
+    fixture = TestBed.createComponent(RecentOrdersListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

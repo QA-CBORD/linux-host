@@ -12,9 +12,8 @@ export class MerchantListComponent {
   @Input() merchantList: MerchantInfo[];
   @Output('favouriteTrigger') favouriteTrigger: EventEmitter<string> = new EventEmitter<string>();
   @Output('locationPinTrigger') locationPinTrigger: EventEmitter<string> = new EventEmitter<string>();
-  constructor() {}
 
-  ngOnInit() {}
+  constructor() {}
 
   trackMerchantsById(index: number, { id }: MerchantInfo): string {
     return id;

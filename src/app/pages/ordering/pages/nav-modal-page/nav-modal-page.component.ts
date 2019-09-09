@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NAV_ORDERS_PAGES } from './nav-modal.config';
 import { NAVIGATE } from 'src/app/app.global';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'st-nav-modal-page',
@@ -12,12 +13,13 @@ import { NAVIGATE } from 'src/app/app.global';
 export class NavModalPage implements OnInit {
   title: string;
 
-  constructor(private readonly activatedRoute: ActivatedRoute, private readonly router: Router) {}
+  constructor(private readonly activatedRoute: ActivatedRoute,
+              private readonly router: Router) {}
 
   ngOnInit() {
-    this.activatedRoute.queryParams.subscribe(data => {
-      console.log(NAV_ORDERS_PAGES[data.page]);
-      this.title = NAV_ORDERS_PAGES[data.page].title;
+    // console.log(this.activatedRoute.data);
+    this.activatedRoute.params.pipe(take(1)).subscribe(data => {
+      this.title = NAV_ORDERS_PAGES[data.destinationPage].title;
     });
   }
 

@@ -5,7 +5,7 @@ import { IonicModule } from '@ionic/angular';
 import { NavModalRoutingModule } from './nav-modal.routing.module';
 import { NavModalPage } from './nav-modal-page.component';
 import { MerchantListModule } from '../../shared/ui-components/merchant-list/merchant-list.module';
-import { RecentOrdersListModule } from '../../shared/ui-components/recent-oders-list/recent-oders-list.module';
+import { RecentOrdersListModule } from '../../shared/ui-components/recent-oders-list/recent-orders-list.module';
 
 const declarations = [NavModalPage];
 const imports = [

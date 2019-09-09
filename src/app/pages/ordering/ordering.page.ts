@@ -14,12 +14,10 @@ export class OrderingPage implements OnInit {
 
   merchantList$: Observable<MerchantInfo[]>;
 
-  constructor(private readonly mls: MerchantListService) { }
+  constructor(private readonly merchantListService: MerchantListService) { }
 
   ngOnInit() {    
-    this.merchantList$ = this.mls.menuMerchants$;
-    
-
+    this.merchantList$ = this.merchantListService.menuMerchants$;
   }
   
 
