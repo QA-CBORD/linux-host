@@ -26,7 +26,7 @@ phases:
 
       - echo **** Performing Ionic build ****
       - npm install
-      - ionic build --prod
+      - ionic build #--prod
 
       - mkdir student
       - cp -rv ./www/* ./student

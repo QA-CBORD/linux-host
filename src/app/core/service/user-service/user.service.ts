@@ -70,7 +70,10 @@ export class UserService extends BaseService {
 
     if (this.nativeProvider.isAndroid()) {
       nativeProviderFunction = of(this.nativeProvider.getAndroidData(NativeData.USER_PHOTO)).pipe(
-        map((data: any) => JSON.parse(data))
+        map((data: any) => {
+          console.log("Android, US, Photo: ", data);          
+          return JSON.parse(data);
+        })
       );
     } else if (this.nativeProvider.isIos()) {
       nativeProviderFunction = from(this.nativeProvider.getIosData(NativeData.USER_PHOTO)).pipe(
