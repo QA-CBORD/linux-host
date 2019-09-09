@@ -47,9 +47,7 @@ export class AppComponent implements OnDestroy {
     private readonly popoverCtrl: PopoverController,
     private readonly nativeProvider: NativeProvider
   ) {
-    this.platform.ready().then(() => {
       this.initializeApp();
-    });
   }
 
   ngOnDestroy() {
