@@ -23,7 +23,7 @@ export class NativeProvider {
   private promises = {};
 
   isAndroid(): boolean {
-    return androidInterface;
+    return this.platform.platforms().includes('android');
   }
 
   isIos(): boolean {

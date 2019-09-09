@@ -20,7 +20,6 @@ import { StGlobalPopoverComponent } from './shared/ui-components/st-global-popov
 import { environment } from 'src/environments/environment';
 
 import { UserInfo } from './core/model/user';
-import { parseArrayFromString } from './core/utils/general-helpers';
 
 @Component({
   selector: 'app-root',
@@ -48,7 +47,9 @@ export class AppComponent implements OnDestroy {
     private readonly popoverCtrl: PopoverController,
     private readonly nativeProvider: NativeProvider
   ) {
-    this.initializeApp();
+    this.platform.ready().then(() => {
+      this.initializeApp();
+    });
   }
 
   ngOnDestroy() {
@@ -82,36 +83,27 @@ export class AppComponent implements OnDestroy {
       )
       .subscribe((hash: string) => {
         Environment.setEnvironmentViaURL(location.href);
-        this.debugStrings.push(`Location href: ${location.href}`);
         try {
-          this.debugStrings.push('useJavascriptInterface');
           this.useJavaScriptInterface();
         } catch (e) {
-          this.debugStrings.push('NI Failed, Do normal service calls');
-          if(environment.production === true){
-            this.debugStrings.push('prod');
-	          /// if this is a production build, then get the session token
-	          this.parseHashParameters(hash);
-		
-   	        /// now perform normal page logic
- 	          this.handleSessionToken();
- 	        }else{
-            this.debugStrings.push('testGetSession');
-	          /// if this is not production then use test session
-	          this.testGetSession();
-	        }
+          if (environment.production === true) {
+            /// if this is a production build, then get the session token
+            this.parseHashParameters(hash);
+
+            /// now perform normal page logic
+            this.handleSessionToken();
+          } else {
+            /// if this is not production then use test session
+            this.testGetSession();
+          }
         }
       });
     this.sourceSubscription.add(subscription);
   }
 
-  debugStrings: string[] = new Array();
 
-  useJavaScriptInterface() {    
-
+  useJavaScriptInterface() {
     if (this.nativeProvider.isAndroid()) {
-
-      this.debugStrings.push('isAndroid');
       const sessionId: string = this.nativeProvider.getAndroidData(NativeData.SESSION_ID);
       const userInfo: UserInfo = JSON.parse(this.nativeProvider.getAndroidData(NativeData.USER_INFO));
       const institutionId: string = this.nativeProvider.getAndroidData(NativeData.INSTITUTION_ID);
@@ -128,7 +120,6 @@ export class AppComponent implements OnDestroy {
 
       this.handlePageNavigation();
     } else if (this.nativeProvider.isIos()){
-      this.debugStrings.push('isIos');
       const sessionIdPromise: Promise<string> = this.nativeProvider.getIosData(NativeData.SESSION_ID);
       const userInfoPromise: Promise<UserInfo> = this.nativeProvider.getIosData(NativeData.USER_INFO);
       const institutionIdPromise: Promise<string> = this.nativeProvider.getIosData(NativeData.INSTITUTION_ID);
@@ -140,14 +131,9 @@ export class AppComponent implements OnDestroy {
         this.userService.setUserData(values[1]);
         DataCache.setInstitutionId(values[2]);
         this.destinationPage = <any>values[3];
-        this.debugStrings.push(`Session ID: ${DataCache.getSessionId()}`);
-        this.debugStrings.push(`UserInfo: ${DataCache.getUserInfo()}`);
-        this.debugStrings.push(`Institution ID: ${DataCache.getInstitutionId()}`);
-        this.debugStrings.push(`Dest Page : ${this.destinationPage}`);
         this.handlePageNavigation();
       });
     } else {
-      this.debugStrings.push('error no nativeinterface');
       throw new Error('No NativeInterface');
     }
   }
@@ -255,7 +241,7 @@ export class AppComponent implements OnDestroy {
   }
 
   private handlePageNavigation() {
-    // this.router.navigate([this.destinationPage], { skipLocationChange: true });
+    this.router.navigate([this.destinationPage], { skipLocationChange: true });
   }
 
   // Ionic gloabal configurate stuff
