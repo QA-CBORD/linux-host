@@ -1,6 +1,6 @@
-import { Component, OnInit, Input, EventEmitter, Output, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, EventEmitter, Output, ChangeDetectionStrategy } from '@angular/core';
 
-import { MerchantInfo } from './../../../../models/merchant-info';
+import { MerchantInfo } from '../../../models';
 
 @Component({
   selector: 'st-merchant-item',
@@ -8,14 +8,12 @@ import { MerchantInfo } from './../../../../models/merchant-info';
   styleUrls: ['./merchant-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MerchantItemComponent implements OnInit {
+export class MerchantItemComponent {
   @Input() merchantInfo: MerchantInfo;
   @Output() addToFav: EventEmitter<string> = new EventEmitter<string>();
   @Output() locationPin: EventEmitter<string> = new EventEmitter<string>();
 
   constructor() {}
-
-  ngOnInit() {}
 
   get starClass(): string {
     const empty = 'star-outline';

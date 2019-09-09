@@ -1,4 +1,3 @@
-import { MerchantSearchOptions, MerchantSearchOptionName } from '../models/merchant-search-options';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
@@ -10,8 +9,10 @@ import { UserService } from 'src/app/core/service/user-service/user.service';
 import { CoordsService } from 'src/app/core/service/coords/coords.service';
 
 import { MessageResponse } from 'src/app/core/model/service/message-response.model';
-import { MerchantInfo } from '../models/merchant-info';
 import { GeoCoordinates } from 'src/app/core/model/geolocation/geocoordinates.model';
+import { MerchantSearchOptions } from '../utils';
+import { MerchantInfo } from '../shared/models';
+import { MerchantSearchOptionName } from '../ordering.config';
 
 @Injectable()
 export class MerchantApiService extends BaseService {

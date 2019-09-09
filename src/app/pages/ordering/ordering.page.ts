@@ -1,10 +1,9 @@
-import { MerchantListService } from './service/merchant-list.service';
+import { MerchantListService } from './services';
 import { Component, OnInit } from '@angular/core';
 
 import { Observable } from 'rxjs';
 
-import { MerchantInfo } from './models/merchant-info';
-import { UserService } from 'src/app/core/service/user-service/user.service';
+import { MerchantInfo } from './shared/models';
 
 @Component({
   selector: 'st-ordering.page',

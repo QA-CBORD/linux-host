@@ -1,6 +1,6 @@
-import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 
-import { MerchantInfo } from '../../../models/merchant-info';
+import { MerchantInfo } from '../../models';
 
 @Component({
   selector: 'st-merchant-list',
@@ -8,7 +8,7 @@ import { MerchantInfo } from '../../../models/merchant-info';
   styleUrls: ['./merchant-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MerchantListComponent implements OnInit {
+export class MerchantListComponent {
   @Input() merchantList: MerchantInfo[];
   @Output('favouriteTrigger') favouriteTrigger: EventEmitter<string> = new EventEmitter<string>();
   @Output('locationPinTrigger') locationPinTrigger: EventEmitter<string> = new EventEmitter<string>();

@@ -5,7 +5,7 @@ import { Observable, of } from 'rxjs';
 import { tap, delay } from 'rxjs/operators';
 
 import { LoadingService } from 'src/app/core/service/loading/loading.service';
-import { MerchantListService } from '../service/merchant-list.service';
+import { MerchantListService } from '../services';
 
 @Injectable()
 export class OrderingResolver implements Resolve<Observable<any>> {

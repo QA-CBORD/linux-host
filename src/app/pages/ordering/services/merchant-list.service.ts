@@ -1,16 +1,16 @@
 import {
-  MerchantSearchOptions,
-  MerchantSearchOptionName,
+  MerchantInfo,
   MerchantSearchOption,
-} from './../models/merchant-search-options';
+} from '../shared/models';
 import { Injectable } from '@angular/core';
 
 import { BehaviorSubject, Observable, zip } from 'rxjs';
-import { tap, switchMap, map } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 
 import { MerchantApiService } from './merchant.api.service';
+import { MerchantSearchOptions } from '../utils';
+import { MerchantSearchOptionName } from '../ordering.config';
 
-import { MerchantInfo } from '../models/merchant-info';
 
 @Injectable()
 export class MerchantListService {

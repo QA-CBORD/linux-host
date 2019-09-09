@@ -10,6 +10,7 @@ import { LOCAL_ROUTING } from '../../ordering.config';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MenuOrderingComponent implements OnInit {
+
   constructor(private readonly router: Router) {}
 
   ngOnInit() {}
