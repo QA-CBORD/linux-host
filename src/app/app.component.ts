@@ -17,6 +17,7 @@ import { UserService } from './core/service/user-service/user.service';
 import { NativeProvider, NativeData } from './core/provider/native-provider/native.provider';
 import { BUTTON_TYPE } from './core/utils/buttons.config';
 import { StGlobalPopoverComponent } from './shared/ui-components/st-global-popover';
+import { environment } from 'src/environments/environment';
 
 import { UserInfo } from './core/model/user';
 
@@ -83,12 +84,16 @@ export class AppComponent implements OnDestroy {
         try {
           this.useJavaScriptInterface();
         } catch (e) {
-          this.parseHashParameters(hash);
-
-          /// now perform normal page logic
-          this.handleSessionToken();
-
-          // this.testGetSession();
+          if(environment.production === true){
+	          /// if this is a production build, then get the session token
+	          this.parseHashParameters(hash);
+		
+   	        /// now perform normal page logic
+ 	          this.handleSessionToken();
+ 	        }else{
+	          /// if this is not production then use test session
+	          this.testGetSession();
+	        }
         }
       });
     this.sourceSubscription.add(subscription);
