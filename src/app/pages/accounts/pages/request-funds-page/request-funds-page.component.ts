@@ -13,6 +13,7 @@ import { LoadingService } from '../../../../core/service/loading/loading.service
 import { PopoverComponent } from './popover/popover.component';
 import { NAVIGATE } from '../../../../app.global';
 import { formControlErrorDecorator, validateEmail } from '../../../../core/utils/general-helpers';
+import { Keyboard } from '@ionic-native/keyboard/ngx';
 
 @Component({
   selector: 'st-request-funds-page',
@@ -34,6 +35,7 @@ export class RequestFundsPageComponent implements OnInit {
     private readonly loadingService: LoadingService,
     private readonly toastController: ToastController,
     private readonly popoverCtrl: PopoverController,
+    private readonly keyboard: Keyboard,
     private readonly nav: Router
   ) {}
 
@@ -145,8 +147,8 @@ export class RequestFundsPageComponent implements OnInit {
     modal.present();
   }
 
-  change(event: any) {
-    console.log(event)
+  onBlur() {
+    this.keyboard.isVisible && this.keyboard.hide();
   }
 }
 
