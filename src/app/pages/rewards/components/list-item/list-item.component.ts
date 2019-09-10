@@ -30,7 +30,7 @@ export class ListItemComponent {
     private readonly rewardsApi: RewardsApiService,
     private readonly rewardsService: RewardsService,
     private readonly loadingService: LoadingService
-  ) {
+  ) {  
     this.initContentStrings();
   }
 

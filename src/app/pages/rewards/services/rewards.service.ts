@@ -149,7 +149,7 @@ export class RewardsService {
     ).pipe(
       map(([res, res0]) => {
         const finalArray = [...res, ...res0];
-        this.content = finalArray.reduce((init, elem) => ({ ...init, [elem.name]: elem.value }), {});
+        this.content = finalArray.reduce((init, elem) => ({ ...init, [elem.name]: elem.value }), {});        
         return finalArray;
       }),
       take(1)

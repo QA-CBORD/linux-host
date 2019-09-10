@@ -106,7 +106,6 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
 
   private setUserInfo() {
     const subscription = this.userService.getAcceptedPhoto().subscribe();
-
     this.sourceSubscription.add(subscription);
   }
 

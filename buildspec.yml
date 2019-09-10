@@ -29,7 +29,7 @@ phases:
       - ionic build --prod
 
       - mkdir student
-      - cp -r ./www/* ./student
+      - cp -rv ./www/* ./student
       - cp terms.html ./student
       - cp robots.txt ./student 
       - echo **** Perform tar ****
