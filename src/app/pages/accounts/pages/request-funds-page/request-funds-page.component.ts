@@ -147,7 +147,7 @@ export class RequestFundsPageComponent implements OnInit {
     modal.present();
   }
 
-  onBlur() {
+  onFocus() {
     this.keyboard.isVisible && this.keyboard.hide();
   }
 }

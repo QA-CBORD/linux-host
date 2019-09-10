@@ -6,6 +6,7 @@
                 [ngClass]="{ 'select__control--error': isError }"
                 (ionChange)="onChangeHandler($event)"
                 (ionBlur)="onBlur()"
+                (ionFocus)="onFocus()"
                 interface="{{ interface }}"
                 id="{{ idd }}"
     >
