@@ -35,7 +35,7 @@ export class AutoDepositApiService extends BaseService {
   }
 
   updateAutoDepositSettings(userAutoDepositSettingInfo: UserAutoDepositSettingInfo): Observable<boolean> {
-    const url = '/json/commerce';
+    const url = '/json/user';
     const method = 'updateAutoDepositSettings';
 
     return this.httpRequest(url, method, true, {userAutoDepositSettingInfo}).pipe(

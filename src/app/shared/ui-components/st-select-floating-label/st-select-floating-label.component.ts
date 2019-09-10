@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, forwardRef } from '@angular/core';
+import { Component, OnInit, Input, forwardRef, Output, EventEmitter } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor, FormControl, AbstractControl } from '@angular/forms';
 
 export const CUSTOM_SELECT_CONTROL_VALUE_ACCESSOR: any = {
@@ -20,6 +20,7 @@ export class StSelectFloatingLabelComponent implements OnInit, ControlValueAcces
   @Input() label: string;
   @Input() isError: boolean;
   @Input() idd: string;
+  @Output() focus: EventEmitter<any> = new EventEmitter<any>();
   private innerValue: any = '';
   private onChange :(v: any) => void;
   private onTouched: () => void;
@@ -65,5 +66,9 @@ export class StSelectFloatingLabelComponent implements OnInit, ControlValueAcces
   onChangeHandler({detail: {value}}: CustomEvent<any>) {
     this.writeValue(value);
     this.onChange(value);
+  }
+
+  onFocus() {
+    this.focus.emit();
   }
 }

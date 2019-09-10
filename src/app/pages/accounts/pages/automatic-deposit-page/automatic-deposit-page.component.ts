@@ -16,15 +16,16 @@ import {
   validateMonthRange,
 } from '../../../../core/utils/general-helpers';
 import { PopoverComponent } from './components/popover/popover.component';
-import { PopoverController } from '@ionic/angular';
+import { PopoverController, ToastController } from '@ionic/angular';
 import { map, take, tap, switchMap } from 'rxjs/operators';
 import { SYSTEM_SETTINGS_CONFIG, PAYMENT_TYPE } from '../../accounts.config';
 import { WEEK } from '../../../../core/utils/date-helper';
 import { UserAutoDepositSettingInfo } from './models/auto-deposit-settings';
 import { UserAccount } from 'src/app/core/model/account/account.model';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { DepositService } from '../../services/deposit.service';
 import { AutoDepositService } from './service/auto-deposit.service';
+import { NAVIGATE } from '../../../../app.global';
 
 @Component({
   selector: 'st-automatic-deposit-page',
@@ -54,7 +55,10 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
     private readonly depositService: DepositService,
     private readonly autoDepositService: AutoDepositService,
     private readonly popoverCtrl: PopoverController,
-  ) {}
+    private readonly router: Router,
+    private readonly toastController: ToastController,
+  ) {
+  }
 
   ngOnInit() {
     this.getAccounts();
@@ -119,11 +123,11 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
       map(settings => {
         const settingInfo = this.settingService.getSettingByName(
           settings,
-          SYSTEM_SETTINGS_CONFIG.lowBalanceAmounts.name
+          SYSTEM_SETTINGS_CONFIG.lowBalanceAmounts.name,
         );
 
         return settingInfo ? parseArrayFromString<string>(settingInfo.value) : [];
-      })
+      }),
     );
   }
 
@@ -132,11 +136,11 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
       map(settings => {
         const settingInfo = this.settingService.getSettingByName(
           settings,
-          SYSTEM_SETTINGS_CONFIG.billMeFreeFormAmounts.name
+          SYSTEM_SETTINGS_CONFIG.billMeFreeFormAmounts.name,
         );
 
         return settingInfo ? parseArrayFromString<string>(settingInfo.value) : [];
-      })
+      }),
     );
   }
 
@@ -145,11 +149,11 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
       map(settings => {
         const settingInfo = this.settingService.getSettingByName(
           settings,
-          SYSTEM_SETTINGS_CONFIG.autoDepositTenders.name
+          SYSTEM_SETTINGS_CONFIG.autoDepositTenders.name,
         );
 
         return settingInfo && parseArrayFromString<string>(settingInfo.value);
-      })
+      }),
     );
   }
 
@@ -158,11 +162,11 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
       map(settings => {
         const settingInfo = this.settingService.getSettingByName(
           settings,
-          SYSTEM_SETTINGS_CONFIG.billMeFreeFormEnabled.name
+          SYSTEM_SETTINGS_CONFIG.billMeFreeFormEnabled.name,
         );
 
         return settingInfo && Boolean(Number(settingInfo.value));
-      })
+      }),
     );
   }
 
@@ -171,11 +175,11 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
       map(settings => {
         const settingInfo = this.settingService.getSettingByName(
           settings,
-          SYSTEM_SETTINGS_CONFIG.lowBalanceFreeFormEnabled.name
+          SYSTEM_SETTINGS_CONFIG.lowBalanceFreeFormEnabled.name,
         );
 
         return settingInfo && Boolean(Number(settingInfo.value));
-      })
+      }),
     );
   }
 
@@ -184,13 +188,13 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
       map(settings => {
         const settingInfo = this.settingService.getSettingByName(
           settings,
-          SYSTEM_SETTINGS_CONFIG.autoDepositPaymentTypes.name
+          SYSTEM_SETTINGS_CONFIG.autoDepositPaymentTypes.name,
         );
 
         const parsedArray = parseArrayFromString(settingInfo.value);
 
         return parsedArray.indexOf(PAYMENT_TYPE.BILLME) !== -1;
-      })
+      }),
     );
   }
 
@@ -200,7 +204,7 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
         const settingInfo = this.settingService.getSettingByName(settings, SYSTEM_SETTINGS_CONFIG.billMeMapping.name);
 
         return settingInfo && parseArrayFromString<string>(settingInfo.value);
-      })
+      }),
     );
   }
 
@@ -231,9 +235,9 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
               this.creditCardSourceAccounts = this.filterAccountsByPaymentSystem(accounts);
               this.creditCardDestinationAccounts = this.filterCreditCardDestAccounts(arr[0], accounts);
               this.billmeDestinationAccounts = this.filterBillmeDestAccounts(arr[1], accounts);
-            })
+            }),
           );
-        })
+        }),
       )
       .subscribe(() => {
         // this.cdRef.detectChanges();
@@ -268,7 +272,7 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
 
   private sourceAccForBillmeDeposit(
     selectedAccount: UserAccount,
-    billmeMappingArr: Array<string>
+    billmeMappingArr: Array<string>,
   ): Observable<UserAccount> {
     return this.depositService.sourceAccForBillmeDeposit(selectedAccount, billmeMappingArr);
   }
@@ -297,6 +301,8 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
+    if(this.automaticDepositForm && this.automaticDepositForm.invalid) return;
+
     let predefinedUpdateCall;
 
     if (this.automaticDepositForm === null) {
@@ -308,7 +314,7 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
       const { paymentMethod, account, ...rest } = this.automaticDepositForm.value;
       const isBillme: boolean = paymentMethod === 'billme';
       const sourceAccForBillmeDeposit: Observable<UserAccount> = this.billmeMappingArr.pipe(
-        switchMap(billmeMappingArr => this.sourceAccForBillmeDeposit(account, billmeMappingArr))
+        switchMap(billmeMappingArr => this.sourceAccForBillmeDeposit(account, billmeMappingArr)),
       );
       const resultSettings = {
         ...this.autoDepositSettings,
@@ -318,12 +324,15 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
       };
       predefinedUpdateCall = iif(() => isBillme, sourceAccForBillmeDeposit, of(paymentMethod)).pipe(
         switchMap(sourceAcc =>
-          this.autoDepositService.updateAutoDepositSettings({ ...resultSettings, fromAccountId: sourceAcc.id })
-        )
+          this.autoDepositService.updateAutoDepositSettings({ ...resultSettings, fromAccountId: sourceAcc.id }),
+        ),
       );
     }
 
-    predefinedUpdateCall.pipe(take(1)).subscribe(res => console.log(res));
+    predefinedUpdateCall.pipe(take(1)).subscribe(
+      async res => res && await this.showModal(),
+      async () => await this.showToast('Something went wrong please try again later...'),
+    );
   }
 
   // -------------------- Events handlers block end --------------------------//
@@ -378,36 +387,36 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
 
   private setValidators() {
     this.automaticDepositForm.contains(AUTOMATIC_DEPOSIT_CONTROL_NAMES.lowBalanceAmount) &&
-      this.isLowBalanceFreeInput
-        .pipe(
-          tap(val => {
-            const error = val
-              ? CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.lowBalanceAmount].requiredEnter
-              : CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.lowBalanceAmount].requiredSelect;
+    this.isLowBalanceFreeInput
+      .pipe(
+        tap(val => {
+          const error = val
+            ? CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.lowBalanceAmount].requiredEnter
+            : CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.lowBalanceAmount].requiredSelect;
 
-            this.automaticDepositForm
-              .get(AUTOMATIC_DEPOSIT_CONTROL_NAMES.lowBalanceAmount)
-              .setValidators([formControlErrorDecorator(Validators.required, error)]);
-          }),
-          take(1)
-        )
-        .subscribe();
+          this.automaticDepositForm
+            .get(AUTOMATIC_DEPOSIT_CONTROL_NAMES.lowBalanceAmount)
+            .setValidators([formControlErrorDecorator(Validators.required, error)]);
+        }),
+        take(1),
+      )
+      .subscribe();
 
     this.automaticDepositForm.contains(AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit) &&
-      this.isAllowFreeFormBillMe
-        .pipe(
-          tap(val => {
-            const error = val
-              ? CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit].requiredEnter
-              : CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit].requiredSelect;
+    this.isAllowFreeFormBillMe
+      .pipe(
+        tap(val => {
+          const error = val
+            ? CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit].requiredEnter
+            : CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit].requiredSelect;
 
-            this.automaticDepositForm
-              .get(AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit)
-              .setValidators([formControlErrorDecorator(Validators.required, error)]);
-          }),
-          take(1)
-        )
-        .subscribe();
+          this.automaticDepositForm
+            .get(AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit)
+            .setValidators([formControlErrorDecorator(Validators.required, error)]);
+        }),
+        take(1),
+      )
+      .subscribe();
   }
 
   // -------------------- Controls block --------------------------//
@@ -419,7 +428,7 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
     const paymentMethodValidators = [
       formControlErrorDecorator(
         Validators.required,
-        CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.paymentMethod].required
+        CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.paymentMethod].required,
       ),
     ];
 
@@ -441,7 +450,7 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
       validators = [
         formControlErrorDecorator(
           Validators.required,
-          CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.dayOfMonth].required
+          CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.dayOfMonth].required,
         ),
         formControlErrorDecorator(validateMonthRange, CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.dayOfMonth].range),
       ];
@@ -451,7 +460,7 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
       validators = [
         formControlErrorDecorator(
           Validators.required,
-          CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.dayOfWeek].required
+          CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.dayOfWeek].required,
         ),
       ];
     }
@@ -474,7 +483,7 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
       animated: false,
       backdropDismiss: true,
     });
-    // modal.onDidDismiss().then(async () => await this.back());
+    modal.onDidDismiss().then(async () => await this.router.navigate([NAVIGATE.accounts]));
     modal.present();
   }
 
@@ -498,6 +507,15 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
         ? AUTO_DEPOST_SUCCESS_MESSAGE_TITLE.monthly
         : AUTO_DEPOST_SUCCESS_MESSAGE_TITLE.weekly;
     }
+  }
+
+  private async showToast(message: string) {
+    const toast = await this.toastController.create({
+      message,
+      duration: 3000,
+      position: 'top',
+    });
+    toast.present();
   }
 }
 

@@ -36,6 +36,7 @@
             </st-input-floating-label>
 
             <st-select-floating-label
+                    (focus)="onFocus()"
                     [formControlName]="controlsNames.account"
                     [control]="accounts"
                     [interfaceOptions]="customActionSheetOptions"

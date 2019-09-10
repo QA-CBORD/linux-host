@@ -8,12 +8,10 @@ import { IonicStorageModule } from '@ionic/storage';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { SharedModule } from './shared/shared.module';
-import { BrowserModule } from '@angular/platform-browser';
 
 @NgModule({
   declarations: [AppComponent],
   imports: [
-    BrowserModule,
     CoreModule,
     IonicModule.forRoot(),
     IonicStorageModule.forRoot(),
