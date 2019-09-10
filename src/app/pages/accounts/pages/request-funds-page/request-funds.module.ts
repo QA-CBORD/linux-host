@@ -14,7 +14,10 @@ const imports = [
   AccountsSharedModule,
   SharedModule,
   RequestFundsRoutingModule,
-  IonicModule,
+  IonicModule.forRoot({
+    scrollPadding: false,
+    scrollAssist: true,
+  }),
   ReactiveFormsModule,
 ];
 const entryComponents = [PopoverComponent];
