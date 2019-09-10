@@ -23,11 +23,11 @@ export class NativeProvider {
   private promises = {};
 
   isAndroid(): boolean {
-    return this.platform.platforms().includes('android');
+    return this.platform.platforms().includes('android') && typeof androidInterface !== 'undefined';
   }
 
   isIos(): boolean {
-    return this.platform.platforms().includes('ios');
+    return this.platform.platforms().includes('ios') && typeof window['webkit'] !== 'undefined';
   }
 
   getAndroidData<T>(methodName: NativeData): T {
