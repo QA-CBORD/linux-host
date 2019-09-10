@@ -3,15 +3,11 @@
 // The list of file replacements can be found in `angular.json`.
 
 import { UserLogin } from '../app/core/model/user';
+import { Dictionary } from '../app/core/model/cache/dictionary';
 
 export const environment = {
   production: false
 };
-
-
-interface Dictionary<T> {
-  [K: string]: T;
-}
 
 export const testCredentials:Dictionary<UserLogin> = {
   gold7: {
@@ -76,7 +72,7 @@ export const testCredentials:Dictionary<UserLogin> = {
     domain: null,
     institutionId: '46054f40-71fc-4d32-a8de-64b525d3ce56',
   }
-}
+};
 
 /*
  * For easier debugging in development mode, you can import the following file
