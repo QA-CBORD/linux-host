@@ -7,10 +7,14 @@ import { AccountDetailsRoutingModule } from './account-details.routing.module';
 import { AccountsSharedModule } from '../../shared/shared.module';
 
 const declarations = [AccountDetailsComponent];
-const imports = [CommonModule, SharedModule, AccountDetailsRoutingModule, IonicModule, AccountsSharedModule];
+const imports = [CommonModule, SharedModule, AccountDetailsRoutingModule, IonicModule.forRoot({
+  scrollPadding: false,
+  scrollAssist: true,
+}), AccountsSharedModule];
 
 @NgModule({
   declarations,
   imports,
 })
-export class AccountDetailsModule {}
+export class AccountDetailsModule {
+}

@@ -8,13 +8,17 @@ import { AccountsSharedModule } from '../../shared/shared.module';
 import { DepositResolver } from './resolvers/deposit.resolver';
 import { DepositService } from '../../services/deposit.service';
 
-const imports = [CommonModule, SharedModule, IonicModule, DepositRoutingModule, AccountsSharedModule];
+const imports = [CommonModule, SharedModule, IonicModule.forRoot({
+  scrollPadding: false,
+  scrollAssist: true,
+}), DepositRoutingModule, AccountsSharedModule];
 const declarations = [DepositPageComponent];
-const providers = [DepositResolver, DepositService]
+const providers = [DepositResolver, DepositService];
 
 @NgModule({
   declarations,
   imports,
-  providers
+  providers,
 })
-export class DepositModule { }
+export class DepositModule {
+}

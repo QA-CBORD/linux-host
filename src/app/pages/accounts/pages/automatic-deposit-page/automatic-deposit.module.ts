@@ -18,7 +18,10 @@ const declarations = [
   DepositFrequencyComponent,
   PopoverComponent,
 ];
-const imports = [CommonModule, SharedModule, AutomaticDepositRoutingModule, IonicModule, AccountsSharedModule];
+const imports = [CommonModule, SharedModule, AutomaticDepositRoutingModule, IonicModule.forRoot({
+  scrollPadding: false,
+  scrollAssist: true,
+}), AccountsSharedModule];
 const entryComponents = [PopoverComponent];
 const providers = [AutoDepositService, AutoDepositApiService, AutomaticDepositResolver];
 
@@ -28,4 +31,5 @@ const providers = [AutoDepositService, AutoDepositApiService, AutomaticDepositRe
   providers,
   entryComponents: entryComponents,
 })
-export class AutomaticDepositModule {}
+export class AutomaticDepositModule {
+}
