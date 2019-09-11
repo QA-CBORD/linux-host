@@ -21,8 +21,9 @@ export class StSelectFloatingLabelComponent implements OnInit, ControlValueAcces
   @Input() isError: boolean;
   @Input() idd: string;
   @Output() focus: EventEmitter<any> = new EventEmitter<any>();
+  @Output() change: EventEmitter<any> = new EventEmitter<any>();
   private innerValue: any = '';
-  private onChange :(v: any) => void;
+  private onChange:(v: any) => void;
   private onTouched: () => void;
 
   constructor() {}
@@ -66,6 +67,7 @@ export class StSelectFloatingLabelComponent implements OnInit, ControlValueAcces
   onChangeHandler({detail: {value}}: CustomEvent<any>) {
     this.writeValue(value);
     this.onChange(value);
+    this.change.emit(value);
   }
 
   onFocus() {

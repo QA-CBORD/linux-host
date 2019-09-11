@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Observable, zip, Subscription, of, iif } from 'rxjs';
+import { iif, Observable, of, Subscription, zip } from 'rxjs';
 import { SettingService } from '../../services/setting.service';
 import {
   AUTO_DEPOSIT_PAYMENT_TYPES,
@@ -17,8 +17,8 @@ import {
 } from '../../../../core/utils/general-helpers';
 import { PopoverComponent } from './components/popover/popover.component';
 import { PopoverController, ToastController } from '@ionic/angular';
-import { map, take, tap, switchMap } from 'rxjs/operators';
-import { SYSTEM_SETTINGS_CONFIG, PAYMENT_TYPE } from '../../accounts.config';
+import { map, switchMap, take, tap } from 'rxjs/operators';
+import { PAYMENT_TYPE, SYSTEM_SETTINGS_CONFIG } from '../../accounts.config';
 import { WEEK } from '../../../../core/utils/date-helper';
 import { UserAutoDepositSettingInfo } from './models/auto-deposit-settings';
 import { UserAccount } from 'src/app/core/model/account/account.model';
@@ -35,6 +35,9 @@ import { NAVIGATE } from '../../../../app.global';
 })
 export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
   private readonly sourceSubscription: Subscription = new Subscription();
+  private paymentMethodAccount: UserAccount;
+  private destinationAccount: UserAccount;
+  private activePaymentType: PAYMENT_TYPE = PAYMENT_TYPE.CREDIT;
 
   automaticDepositForm: FormGroup;
   activeType: number;
@@ -208,21 +211,27 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
     );
   }
 
+  get paymentTypes() {
+    return PAYMENT_TYPE;
+  }
+
   trackByAccountId(i: number, { id }: UserAccount): string {
     return `${i}-${id}-${Math.random()}`;
   }
 
-  onPaymentMethodChanged({ target }) {
-    this.defineDestAccounts(target.value);
+  onPaymentMethodChanged(value) {
+    if (isNaN(value)) return;
+    this.defineDestAccounts(value);
   }
 
   private defineDestAccounts(target) {
-    if (target === 'billme') {
+    if (this.activePaymentType !== target) this.account.reset();
+
+    if (target === PAYMENT_TYPE.BILLME) {
       this.destinationAccounts = this.billmeDestinationAccounts;
     } else {
       this.destinationAccounts = this.creditCardDestinationAccounts;
     }
-    this.account.reset();
   }
 
   private getAccounts() {
@@ -239,13 +248,18 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
           );
         }),
       )
-      .subscribe(() => {
-        // this.cdRef.detectChanges();
+      .subscribe(({data: {accounts, depositSettings}}) => {
+        this.initPredefinedAccounts(depositSettings, accounts);
         this.initForm();
-        this.defineDestAccounts('creditcard');
+        this.defineDestAccounts(PAYMENT_TYPE.CREDIT);
       });
 
     this.sourceSubscription.add(subscription);
+  }
+
+  initPredefinedAccounts(settings: UserAutoDepositSettingInfo, accounts: UserAccount[]) {
+    this.paymentMethodAccount = settings.fromAccountId && accounts.find(acc => acc.id === settings.fromAccountId);
+    this.destinationAccount = settings.toAccountId && accounts.find(acc => acc.id === settings.toAccountId);
   }
 
   //-------------------- Dynamic form settings block end--------------------------//
@@ -301,6 +315,7 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
+    console.log(this.automaticDepositForm.getRawValue());
     if(this.automaticDepositForm && this.automaticDepositForm.invalid) return;
 
     let predefinedUpdateCall;
@@ -340,9 +355,9 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
   // -------------------- Form main block --------------------------//
 
   private initForm() {
-    const payment = this.initPaymentFormBlock();
+    const paymentBlock = this.initPaymentFormBlock();
 
-    this.automaticDepositForm = this.fb.group(payment);
+    this.automaticDepositForm = this.fb.group(paymentBlock);
     this.setValidators();
   }
 
@@ -433,9 +448,9 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
     ];
 
     return {
-      [AUTOMATIC_DEPOSIT_CONTROL_NAMES.account]: ['', accountValidators],
+      [AUTOMATIC_DEPOSIT_CONTROL_NAMES.account]: [this.destinationAccount ? this.destinationAccount : '', accountValidators],
       [AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit]: [this.autoDepositSettings.amount],
-      [AUTOMATIC_DEPOSIT_CONTROL_NAMES.paymentMethod]: ['', paymentMethodValidators],
+      [AUTOMATIC_DEPOSIT_CONTROL_NAMES.paymentMethod]: [this.paymentMethodAccount ? this.paymentMethodAccount : '', paymentMethodValidators],
     };
   }
 
