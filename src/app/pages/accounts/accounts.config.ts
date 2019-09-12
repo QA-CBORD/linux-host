@@ -36,7 +36,7 @@ export const SYSTEM_SETTINGS_CONFIG = {
     category: 'deposit',
     name: 'allow_freeform_onetime_amounts',
   },
-  presetDepositAmountsBillMe: {
+  billMeAmounts: {
     domain: 'get',
     category: 'deposit',
     name: 'billme_amounts',
@@ -95,11 +95,6 @@ export const SYSTEM_SETTINGS_CONFIG = {
     domain: 'get',
     category: 'deposit',
     name: 'allow_freeform_billme_amounts',
-  },
-  billMeFreeFormAmounts: {
-    domain: 'get',
-    category: 'deposit',
-    name: 'billme_amounts',
   },
   autoDepositTenders: {
     domain: 'get',

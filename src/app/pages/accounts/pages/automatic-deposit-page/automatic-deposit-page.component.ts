@@ -139,7 +139,7 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
       map(settings => {
         const settingInfo = this.settingService.getSettingByName(
           settings,
-          SYSTEM_SETTINGS_CONFIG.billMeFreeFormAmounts.name,
+          SYSTEM_SETTINGS_CONFIG.billMeAmounts.name,
         );
 
         return settingInfo ? parseArrayFromString<string>(settingInfo.value) : [];
@@ -315,7 +315,6 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
-    console.log(this.automaticDepositForm.getRawValue());
     if(this.automaticDepositForm && this.automaticDepositForm.invalid) return;
 
     let predefinedUpdateCall;
@@ -336,6 +335,7 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
         ...rest,
         autoDepositType: this.activeType,
         toAccountId: account.id,
+        active: true,
       };
       predefinedUpdateCall = iif(() => isBillme, sourceAccForBillmeDeposit, of(paymentMethod)).pipe(
         switchMap(sourceAcc =>
