@@ -92,7 +92,8 @@ export class AddCreditCardComponent implements OnInit {
         billingAddressObject
       )
       .pipe(
-        tap(() => this.loadingService.closeSpinner()),
+        tap(() => this.loadingService.closeSpinner(),
+          () => this.loadingService.showSpinner()),
         take(1)
       )
       .subscribe(
