@@ -8,6 +8,7 @@ import { SuccessPopoverComponent } from './components/success-popover/success-po
 import { LoadingService } from 'src/app/core/service/loading/loading.service';
 import { Subscription } from 'rxjs';
 import { tap, take } from 'rxjs/operators';
+import { LOCAL_ROUTING } from '../../accounts.config';
 
 @Component({
   selector: 'st-add-credit-card',
@@ -117,7 +118,7 @@ export class AddCreditCardComponent implements OnInit {
       backdropDismiss: true,
     });
 
-    popover.onDidDismiss().then(() => this.router.navigate([NAVIGATE.accounts], { skipLocationChange: true }));
+    popover.onDidDismiss().then(() => this.router.navigate([NAVIGATE.accounts, LOCAL_ROUTING.addFunds], { skipLocationChange: true }));
 
     return await popover.present();
   }
