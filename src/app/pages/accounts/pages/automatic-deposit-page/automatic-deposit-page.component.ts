@@ -121,7 +121,64 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
 
   //-------------------- Dynamic form settings block --------------------------//
 
-  get lowBalanceValues(): Observable<string[]> {
+  get amountsForSelect$() {
+    return iif(
+      () => this.activePaymentType === PAYMENT_TYPE.BILLME,
+      this.billMeAmounts$,
+      this.oneTimeAmounts$,
+    );
+  }
+
+  get isFreeFormEnabled$(): Observable<boolean> {
+    return iif(
+      () => this.activePaymentType === PAYMENT_TYPE.BILLME,
+      this.isAllowFreeFormBillMe$,
+      this.isFreeFromDepositEnabled$,
+    );
+  }
+
+
+  get isFreeFromDepositEnabled$(): Observable<boolean> {
+    return this.settingService.settings$.pipe(
+      map(settings => {
+        const settingInfo = this.settingService.getSettingByName(
+          settings,
+          SYSTEM_SETTINGS_CONFIG.freeFromDepositEnabled.name,
+        );
+
+        return settingInfo && Boolean(Number(settingInfo.value));
+      }),
+    );
+  }
+
+  get billMeAmounts$(): Observable<string[]> {
+    return this.settingService.settings$.pipe(
+      map(settings => {
+        const settingInfo = this.settingService.getSettingByName(
+          settings,
+          SYSTEM_SETTINGS_CONFIG.billMeAmounts.name,
+        );
+
+        return settingInfo ? parseArrayFromString(settingInfo.value) : [];
+      }),
+    );
+  }
+
+
+  get oneTimeAmounts$(): Observable<string[]> {
+    return this.settingService.settings$.pipe(
+      map(settings => {
+        const settingInfo = this.settingService.getSettingByName(
+          settings,
+          SYSTEM_SETTINGS_CONFIG.presetDepositAmountsCreditCard.name,
+        );
+
+        return settingInfo ? parseArrayFromString(settingInfo.value) : [];
+      }),
+    );
+  }
+
+  get lowBalanceValues$(): Observable<string[]> {
     return this.settingService.settings$.pipe(
       map(settings => {
         const settingInfo = this.settingService.getSettingByName(
@@ -134,20 +191,7 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
     );
   }
 
-  get amountToDepositValues(): Observable<string[]> {
-    return this.settingService.settings$.pipe(
-      map(settings => {
-        const settingInfo = this.settingService.getSettingByName(
-          settings,
-          SYSTEM_SETTINGS_CONFIG.billMeAmounts.name,
-        );
-
-        return settingInfo ? parseArrayFromString<string>(settingInfo.value) : [];
-      }),
-    );
-  }
-
-  get autoDepositTenders(): Observable<string[]> {
+  get autoDepositTenders$(): Observable<string[]> {
     return this.settingService.settings$.pipe(
       map(settings => {
         const settingInfo = this.settingService.getSettingByName(
@@ -160,7 +204,7 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
     );
   }
 
-  get isAllowFreeFormBillMe(): Observable<boolean> {
+  get isAllowFreeFormBillMe$(): Observable<boolean> {
     return this.settingService.settings$.pipe(
       map(settings => {
         const settingInfo = this.settingService.getSettingByName(
@@ -173,7 +217,7 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
     );
   }
 
-  get isLowBalanceFreeInput(): Observable<boolean> {
+  get isLowBalanceFreeInput$(): Observable<boolean> {
     return this.settingService.settings$.pipe(
       map(settings => {
         const settingInfo = this.settingService.getSettingByName(
@@ -186,7 +230,7 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
     );
   }
 
-  get isBillMePaymentTypesEnabled(): Observable<boolean> {
+  get isBillMePaymentTypesEnabled$(): Observable<boolean> {
     return this.settingService.settings$.pipe(
       map(settings => {
         const settingInfo = this.settingService.getSettingByName(
@@ -201,7 +245,7 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
     );
   }
 
-  get billmeMappingArr(): Observable<string[]> {
+  get billmeMappingArr$(): Observable<string[]> {
     return this.settingService.settings$.pipe(
       map(settings => {
         const settingInfo = this.settingService.getSettingByName(settings, SYSTEM_SETTINGS_CONFIG.billMeMapping.name);
@@ -210,6 +254,8 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
       }),
     );
   }
+
+  //-------------------- Dynamic form settings block end--------------------------//
 
   get paymentTypes() {
     return PAYMENT_TYPE;
@@ -220,13 +266,15 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
   }
 
   onPaymentMethodChanged(value) {
-    if (isNaN(value)) return;
     this.defineDestAccounts(value);
   }
 
   private defineDestAccounts(target) {
-    if (this.activePaymentType !== target) this.account.reset();
-
+    if (this.activePaymentType !== target) {
+      this.account.reset();
+      this.amountToDeposit.reset();
+    }
+    this.activePaymentType = target instanceof Object ? PAYMENT_TYPE.CREDIT : target;
     if (target === PAYMENT_TYPE.BILLME) {
       this.destinationAccounts = this.billmeDestinationAccounts;
     } else {
@@ -235,7 +283,7 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
   }
 
   private getAccounts() {
-    const subscription = zip(this.autoDepositTenders, this.billmeMappingArr)
+    const subscription = zip(this.autoDepositTenders$, this.billmeMappingArr$)
       .pipe(
         switchMap(arr => {
           return this.route.data.pipe(
@@ -262,7 +310,7 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
     this.destinationAccount = settings.toAccountId && accounts.find(acc => acc.id === settings.toAccountId);
   }
 
-  //-------------------- Dynamic form settings block end--------------------------//
+
 
   private set _activeType(type: number) {
     this.activeType = type;
@@ -327,7 +375,7 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
     } else {
       const { paymentMethod, account, ...rest } = this.automaticDepositForm.value;
       const isBillme: boolean = paymentMethod === 'billme';
-      const sourceAccForBillmeDeposit: Observable<UserAccount> = this.billmeMappingArr.pipe(
+      const sourceAccForBillmeDeposit: Observable<UserAccount> = this.billmeMappingArr$.pipe(
         switchMap(billmeMappingArr => this.sourceAccForBillmeDeposit(account, billmeMappingArr)),
       );
       const resultSettings = {
@@ -402,7 +450,7 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
 
   private setValidators() {
     this.automaticDepositForm.contains(AUTOMATIC_DEPOSIT_CONTROL_NAMES.lowBalanceAmount) &&
-    this.isLowBalanceFreeInput
+    this.isLowBalanceFreeInput$
       .pipe(
         tap(val => {
           const error = val
@@ -418,7 +466,7 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
       .subscribe();
 
     this.automaticDepositForm.contains(AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit) &&
-    this.isAllowFreeFormBillMe
+    this.isAllowFreeFormBillMe$
       .pipe(
         tap(val => {
           const error = val

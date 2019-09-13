@@ -11,7 +11,7 @@
 
         <ng-template #lowBalance>
                 <st-input-floating-label
-                        *ngIf="(isLowBalanceFreeInput | async); else selectLowBalanceAmount"
+                        *ngIf="(isLowBalanceFreeInput$ | async); else selectLowBalanceAmount"
                         [isError]="lowBalanceAmount.errors && (lowBalanceAmount.dirty || lowBalanceAmount.touched)"
                         [control]="lowBalanceAmount"
                         [formControlName]="controlNames.lowBalanceAmount"
@@ -39,7 +39,7 @@
                             idd="lowBalanceAmount"
                     >
                         <ng-container role="options">
-                            <ion-select-option *ngFor="let amount of (lowBalanceValues | async)"
+                            <ion-select-option *ngFor="let amount of (lowBalanceValues$ | async)"
                                                [value]="parseFloat(amount)">{{ amount | transactionUnits }}
                             </ion-select-option>
                         </ng-container>
@@ -127,7 +127,7 @@
                     {{ account.accountTender | creditCardType }} ending in
                     {{ account.lastFour }}
                 </ion-select-option>
-                <ion-select-option [value]="paymentTypes.BILLME" *ngIf="(isBillMePaymentTypesEnabled | async)">Bill Me
+                <ion-select-option [value]="paymentTypes.BILLME" *ngIf="(isBillMePaymentTypesEnabled$ | async)">Bill Me
                 </ion-select-option>
             </ng-container>
 
@@ -163,46 +163,52 @@
             </ng-container>
         </st-select-floating-label>
 
-        <st-select-floating-label
-                *ngIf="!(isAllowFreeFormBillMe | async)"
-                [formControlName]="controlNames.amountToDeposit"
-                [control]="amountToDeposit"
-                [interfaceOptions]="customActionSheetOptions"
-                [isError]="amountToDeposit.invalid && amountToDeposit.touched"
-                interface="action-sheet"
-                title="Choose amount to deposit from a dropdown list below"
-                label="Amount to deposit"
-                class="deposit-form__label"
-                idd="amountToDeposit"
-        >
-            <ng-container role="options">
-                <ion-select-option *ngFor="let amount of (amountToDepositValues | async)"
-                                   [value]="parseFloat(amount)">{{
-                  amount | transactionUnits
-                    }}</ion-select-option>
-            </ng-container>
+        <ng-container *ngIf="(isFreeFormEnabled$ | async); then amountInput; else amountSelect"></ng-container>
 
-            <ng-container role="error">
+        <ng-template #amountSelect>
+            <st-select-floating-label
+
+              [formControlName]="controlNames.amountToDeposit"
+              [control]="amountToDeposit"
+              [interfaceOptions]="customActionSheetOptions"
+              [isError]="amountToDeposit.invalid && amountToDeposit.touched"
+              interface="action-sheet"
+              title="Choose amount to deposit from a dropdown list below"
+              label="Amount to deposit"
+              class="deposit-form__label"
+              idd="amountToDeposit"
+            >
+                <ng-container role="options">
+                    <ion-select-option *ngFor="let amount of (amountsForSelect$ | async)"
+                                       [value]="parseFloat(amount)">{{
+                      amount | transactionUnits
+                        }}</ion-select-option>
+                </ng-container>
+
+                <ng-container role="error">
+                    <p  class="deposit-form__control-error-msg">
+                        {{ amountToDeposit.errors?.errorMsg }}
+                    </p>
+                </ng-container>
+            </st-select-floating-label>
+        </ng-template>
+
+        <ng-template #amountInput>
+            <st-input-floating-label
+              [control]="amountToDeposit"
+              [formControlName]="controlNames.amountToDeposit"
+              title="enter amount to deposit"
+              class="deposit-form__label"
+              type="number"
+              idd="amountToDeposit"
+              label="Amount to deposit"
+            >
                 <p  class="deposit-form__control-error-msg">
                     {{ amountToDeposit.errors?.errorMsg }}
                 </p>
-            </ng-container>
-        </st-select-floating-label>
+            </st-input-floating-label>
+        </ng-template>
 
-        <st-input-floating-label
-                *ngIf="(isAllowFreeFormBillMe | async)"
-                [control]="amountToDeposit"
-                [formControlName]="controlNames.amountToDeposit"
-                title="enter amount to deposit"
-                class="deposit-form__label"
-                type="number"
-                idd="amountToDeposit"
-                label="Amount to deposit"
-        >
-            <p  class="deposit-form__control-error-msg">
-                {{ amountToDeposit.errors?.errorMsg }}
-            </p>
-        </st-input-floating-label>
 
         <ng-container *ngIf="activeType === autoDepositTypes.lowBalance" [ngTemplateOutlet]="lowBalance"></ng-container>
 
