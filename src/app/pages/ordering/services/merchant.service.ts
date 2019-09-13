@@ -7,23 +7,28 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, zip } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
-import { MerchantApiService } from './merchant.api.service';
+import { OrderingApiService } from './ordering.api.service';
+
 import { MerchantSearchOptions } from '../utils';
 import { MerchantSearchOptionName } from '../ordering.config';
 
 
 @Injectable()
-export class MerchantListService {
+export class MerchantService {
+
+  private menuMerchants: MerchantInfo[] = [];
+
   private readonly _menuMerchants$: BehaviorSubject<MerchantInfo[]> = new BehaviorSubject<MerchantInfo[]>([]);
 
-  constructor(private readonly orderingApiService: MerchantApiService) {}
+  constructor(private readonly orderingApiService: OrderingApiService) {}
 
   get menuMerchants$(): Observable<MerchantInfo[]> {
     return this._menuMerchants$.asObservable();
   }
 
-  private set _menuMerchants(value: MerchantInfo[]) {
-    this._menuMerchants$.next([...value]);
+  private set _menuMerchants(value: MerchantInfo[]) {    
+    this.menuMerchants = [...value];
+    this._menuMerchants$.next([...this.menuMerchants]);
   }
 
   getMenuMerchants(): Observable<MerchantInfo[]> {

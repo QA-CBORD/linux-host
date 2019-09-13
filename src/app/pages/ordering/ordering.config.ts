@@ -16,3 +16,11 @@ export enum MerchantSearchOptionName {
   MERCHANT_ID = 'merchant_id',
   INCLUDE_SETTINGS = 'include_settings', /// 1/0
 }
+
+export const SYSTEM_SETTINGS_CONFIG = {
+  addressRestrictionToOnCampus: {
+    domain: 'get',
+    category: 'feature',
+    name: 'institution_address_restriction',
+  },
+};

@@ -10,6 +10,7 @@ import { MerchantInfo } from '../../models';
 })
 export class MerchantListComponent {
   @Input() merchantList: MerchantInfo[];
+  @Output('merchantClickTrigger') merchantClickTrigger: EventEmitter<string> = new EventEmitter<string>();
   @Output('favouriteTrigger') favouriteTrigger: EventEmitter<string> = new EventEmitter<string>();
   @Output('locationPinTrigger') locationPinTrigger: EventEmitter<string> = new EventEmitter<string>();
 
@@ -17,6 +18,10 @@ export class MerchantListComponent {
 
   trackMerchantsById(index: number, { id }: MerchantInfo): string {
     return id;
+  }
+
+  merchantClickHandler(event: string) {
+    this.merchantClickTrigger.emit(event);
   }
 
   favouriteHandler(event: string) {

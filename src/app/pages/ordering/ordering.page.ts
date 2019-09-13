@@ -1,4 +1,4 @@
-import { MerchantListService } from './services';
+import { MerchantService } from './services';
 import { Component, OnInit } from '@angular/core';
 
 import { Observable } from 'rxjs';
@@ -11,24 +11,23 @@ import { MerchantInfo } from './shared/models';
   styleUrls: ['./ordering.page.scss'],
 })
 export class OrderingPage implements OnInit {
-
   merchantList$: Observable<MerchantInfo[]>;
 
-  constructor(private readonly merchantListService: MerchantListService) { }
+  constructor(private readonly merchantListService: MerchantService) {}
 
-  ngOnInit() {    
+  ngOnInit() {
     this.merchantList$ = this.merchantListService.menuMerchants$;
   }
-  
+
+  merchantClickHandler(id: string) {
+    console.log(`Merchant Clicked - Merch Id: ${id}`);
+  }
 
   favouriteHandler(id: string) {
     console.log(`Favorite Clicked - Merch Id: ${id}`);
-    
   }
 
   locationPinHandler(id: string) {
     console.log(`Location Pin Clicked - Merch Id: ${id}`);
-    
   }
-
 }

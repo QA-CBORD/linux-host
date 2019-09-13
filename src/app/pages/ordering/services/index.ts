@@ -1,1 +1,1 @@
-export * from './merchant-list.service';
+export * from './merchant.service';

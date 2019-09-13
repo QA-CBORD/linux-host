@@ -10,6 +10,7 @@ import { MerchantInfo } from '../../../models';
 })
 export class MerchantItemComponent {
   @Input() merchantInfo: MerchantInfo;
+  @Output() merchantClick: EventEmitter<string> = new EventEmitter<string>();
   @Output() addToFav: EventEmitter<string> = new EventEmitter<string>();
   @Output() locationPin: EventEmitter<string> = new EventEmitter<string>();
 
@@ -44,6 +45,10 @@ export class MerchantItemComponent {
     }
 
     return '';
+  }
+
+  triggerMerchantClick() {
+    this.merchantClick.emit(this.merchantInfo.id);
   }
 
   triggerFavourite() {

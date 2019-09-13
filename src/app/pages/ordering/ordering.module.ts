@@ -5,8 +5,7 @@ import { OrderingRoutingModule } from './ordering.routing.module';
 
 import { OrderingPage } from './ordering.page';
 
-import { MerchantApiService } from './services/merchant.api.service';
-import { MerchantListService } from './services';
+import { MerchantService } from './services';
 import { OrderingApiService } from './services/ordering.api.service';
 
 import { OrderingResolver } from './resolvers';
@@ -16,7 +15,7 @@ import { IonicModule } from '@ionic/angular';
 
 const imports = [CommonModule, OrderingRoutingModule, MerchantListModule, IonicModule];
 const declarations = [OrderingPage, MenuOrderingComponent];
-const providers = [OrderingResolver, MerchantApiService, MerchantListService,OrderingApiService];
+const providers = [OrderingResolver, MerchantService,OrderingApiService];
 
 @NgModule({
   declarations,

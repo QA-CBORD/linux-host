@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 
-import { OrderingApiService } from './ordering.api.service';
+import { MerchantService } from './merchant.service';
 
-describe('OrderingService.ApiService', () => {
+describe('MerchantListServiceService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   it('should be created', () => {
-    const service: OrderingApiService = TestBed.get(OrderingApiService);
+    const service: MerchantService = TestBed.get(MerchantService);
     expect(service).toBeTruthy();
   });
 });
