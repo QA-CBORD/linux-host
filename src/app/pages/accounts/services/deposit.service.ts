@@ -68,7 +68,7 @@ export class DepositService {
   }
 
   filterBillmeDestAccounts(billmeMappingArr: Array<string>, accounts: Array<UserAccount>): Array<UserAccount> {
-    const filterByBillme = (accountTender, purpose) =>
+    const filterByBillme = (accountTender, purpose): string =>
       billmeMappingArr.find(billmeMap => billmeMap[purpose] === accountTender);
 
     return accounts.filter(({ accountTender }) => {
