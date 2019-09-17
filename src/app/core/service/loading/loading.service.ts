@@ -16,6 +16,7 @@ export class LoadingService {
     config = typeof config === 'string' ? { message: config } : config;
     config = config.duration ? config : { ...config, duration: this.maxDuration };
 
+    if (this.loader !== null) await this.closeSpinner();
     this.loader = await this.loadingController.create(config);
     this.loader.present();
   }
