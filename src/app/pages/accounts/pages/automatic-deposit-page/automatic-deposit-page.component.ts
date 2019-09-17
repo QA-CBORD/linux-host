@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { iif, Observable, of, Subscription, zip } from 'rxjs';
 import { SettingService } from '../../services/setting.service';
@@ -26,6 +26,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { DepositService } from '../../services/deposit.service';
 import { AutoDepositService } from './service/auto-deposit.service';
 import { NAVIGATE } from '../../../../app.global';
+import { BillMeMapping } from '../../../../core/model/settings/billme-mapping.model';
 
 @Component({
   selector: 'st-automatic-deposit-page',
@@ -37,7 +38,7 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
   private readonly sourceSubscription: Subscription = new Subscription();
   private paymentMethodAccount: UserAccount;
   private destinationAccount: UserAccount;
-  private activePaymentType: PAYMENT_TYPE = PAYMENT_TYPE.CREDIT;
+  private activePaymentType: PAYMENT_TYPE;
 
   automaticDepositForm: FormGroup;
   activeType: number;
@@ -45,6 +46,7 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
   autoDepositSettings: UserAutoDepositSettingInfo;
   creditCardSourceAccounts: Array<UserAccount>;
   sourceAccounts: Array<UserAccount> = [];
+  billmeSourceAccounts: Array<UserAccount> = [];
   creditCardDestinationAccounts: Array<UserAccount>;
   billmeDestinationAccounts: Array<UserAccount>;
   destinationAccounts: Array<UserAccount>;
@@ -137,7 +139,6 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
       this.isFreeFromDepositEnabled$,
     );
   }
-
 
   get isFreeFromDepositEnabled$(): Observable<boolean> {
     return this.settingService.settings$.pipe(
@@ -245,21 +246,17 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
     );
   }
 
-  get billmeMappingArr$(): Observable<string[]> {
+  get billmeMappingArr$(): Observable<BillMeMapping[]> {
     return this.settingService.settings$.pipe(
       map(settings => {
         const settingInfo = this.settingService.getSettingByName(settings, SYSTEM_SETTINGS_CONFIG.billMeMapping.name);
 
-        return settingInfo && parseArrayFromString<string>(settingInfo.value);
+        return settingInfo && parseArrayFromString<BillMeMapping>(settingInfo.value);
       }),
     );
   }
 
   //-------------------- Dynamic form settings block end--------------------------//
-
-  get paymentTypes() {
-    return PAYMENT_TYPE;
-  }
 
   trackByAccountId(i: number, { id }: UserAccount): string {
     return `${i}-${id}-${Math.random()}`;
@@ -270,14 +267,19 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
   }
 
   private defineDestAccounts(target) {
-    if (this.activePaymentType !== target) {
+    let type = target;
+
+    if (target instanceof Object) {
+      type = this.isBillMeAccount(target) ? PAYMENT_TYPE.BILLME : PAYMENT_TYPE.CREDIT;
+    }
+
+    if (this.activePaymentType && this.activePaymentType !== type) {
       this.account.reset();
       this.amountToDeposit.reset();
     }
+    this.activePaymentType = type;
 
-    this.activePaymentType = target;
-
-    if (target === PAYMENT_TYPE.BILLME) {
+    if (type === PAYMENT_TYPE.BILLME) {
       this.destinationAccounts = this.billmeDestinationAccounts;
     } else {
       this.destinationAccounts = this.creditCardDestinationAccounts;
@@ -291,11 +293,11 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
           return this.route.data.pipe(
             tap(({ data: { accounts, depositSettings } }) => {
               this.autoDepositSettings = depositSettings;
-              this.creditCardSourceAccounts = this.filterAccountsByPaymentSystem(accounts);
+              this.creditCardSourceAccounts = this.depositService.filterAccountsByPaymentSystem(accounts);
               this.sourceAccounts = [...this.creditCardSourceAccounts];
-              this.creditCardDestinationAccounts = this.filterCreditCardDestAccounts(arr[0], accounts);
-              this.billmeDestinationAccounts = this.filterBillmeDestAccounts(arr[1], accounts);
-              console.log(this.billmeDestinationAccounts);
+              this.creditCardDestinationAccounts = this.depositService.filterCreditCardDestAccounts(arr[0], accounts);
+              this.billmeDestinationAccounts = this.depositService.filterBillmeDestAccounts(arr[1], accounts);
+              this.billmeSourceAccounts = this.depositService.filterBillmeSourceAccounts(arr[1], accounts);
             }),
           );
         }),
@@ -303,9 +305,7 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
       .subscribe(({data: {accounts, depositSettings}}) => {
         this.initPredefinedAccounts(depositSettings, accounts);
         this.initForm();
-        console.log(depositSettings);
-        // this.defineDestAccounts();
-
+        this.defineDestAccounts(this.paymentMethodAccount);
       });
 
     this.sourceSubscription.add(subscription);
@@ -313,18 +313,15 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
 
   initPredefinedAccounts(settings: UserAutoDepositSettingInfo, accounts: UserAccount[]) {
     this.paymentMethodAccount = settings.fromAccountId && accounts.find(acc => acc.id === settings.fromAccountId);
-    if (!this.creditCardSourceAccounts.some(({id}) => id === this.paymentMethodAccount.id)) {
+    if (this.paymentMethodAccount && !this.creditCardSourceAccounts.some(({id}) => id === this.paymentMethodAccount.id)) {
       this.sourceAccounts.push(this.paymentMethodAccount);
     }
     this.destinationAccount = settings.toAccountId && accounts.find(acc => acc.id === settings.toAccountId);
   }
 
-  // private isBillMeAccount(acc: UserAccount, billMeMapping: any[], accounts: UserAccount[]): Observable<boolean> {
-  //   if (accounts.some((account) => acc.id === account.id)) return of(false);
-  //
-  //   // return billMeMapping.some((obj) => obj.sourse === acc.accountTender);
-  //
-  // }
+  private isBillMeAccount({id}: UserAccount): boolean {
+    return this.billmeSourceAccounts.some(acc => acc.id === id);
+  }
 
   private set _activeType(type: number) {
     this.activeType = type;
@@ -334,21 +331,9 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
     return parseFloat(val);
   }
 
-  private filterAccountsByPaymentSystem(accounts): Array<UserAccount> {
-    return this.depositService.filterAccountsByPaymentSystem(accounts);
-  }
-
-  private filterCreditCardDestAccounts(tendersId: Array<string>, accounts: Array<UserAccount>): Array<UserAccount> {
-    return this.depositService.filterCreditCardDestAccounts(tendersId, accounts);
-  }
-
-  private filterBillmeDestAccounts(billmeMappingArr: Array<string>, accounts: Array<UserAccount>): Array<UserAccount> {
-    return this.depositService.filterBillmeDestAccounts(billmeMappingArr, accounts);
-  }
-
   private sourceAccForBillmeDeposit(
     selectedAccount: UserAccount,
-    billmeMappingArr: Array<string>,
+    billmeMappingArr: Array<BillMeMapping>,
   ): Observable<UserAccount> {
     return this.depositService.sourceAccForBillmeDeposit(selectedAccount, billmeMappingArr);
   }
@@ -377,8 +362,6 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
-    console.log(this.automaticDepositForm);
-    return;
     if(this.automaticDepositForm && this.automaticDepositForm.invalid) return;
 
     let predefinedUpdateCall;
@@ -390,8 +373,7 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
       });
     } else {
       const { paymentMethod, account, ...rest } = this.automaticDepositForm.value;
-      console.log(paymentMethod);
-      const isBillme: boolean = paymentMethod === PAYMENT_TYPE.BILLME;
+      const isBillme: boolean = this.isBillMeAccount(paymentMethod);
       const sourceAccForBillmeDeposit: Observable<UserAccount> = this.billmeMappingArr$.pipe(
         switchMap(billmeMappingArr => this.sourceAccForBillmeDeposit(account, billmeMappingArr)),
       );
@@ -421,7 +403,6 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
 
   private initForm() {
     const paymentBlock = this.initPaymentFormBlock();
-    console.log(paymentBlock[AUTOMATIC_DEPOSIT_CONTROL_NAMES.paymentMethod]);
 
     this.automaticDepositForm = this.fb.group(paymentBlock);
     this.setValidators();

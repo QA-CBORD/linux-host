@@ -93,7 +93,7 @@
                 >
                     <ng-container role="options">
                         <ion-select-option *ngFor="let day of weekArray; let i = index" [value]="i + 1">{{
-                            day
+                          day
                             }}</ion-select-option>
                     </ng-container>
 
@@ -121,11 +121,13 @@
         >
             <ng-container role="options" *ngFor="let account of sourceAccounts; trackBy: trackByAccountId">
 
-                <ng-container *ngIf="false; then billMe; else creditCard"></ng-container>
+                <ng-container *ngIf="isBillMeAccount(account); then billMe; else creditCard"></ng-container>
 
                 <ng-template #billMe>
-                    <ion-select-option [value]="paymentTypes.BILLME" *ngIf="(isBillMePaymentTypesEnabled$ | async)">Bill
-                        Me
+                    <ion-select-option
+                            [value]="account"
+                            *ngIf="(isBillMePaymentTypesEnabled$ | async)">
+                        Bill Me
                     </ion-select-option>
                 </ng-template>
 
@@ -188,7 +190,7 @@
                 <ng-container role="options">
                     <ion-select-option *ngFor="let amount of (amountsForSelect$ | async)"
                                        [value]="parseFloat(amount)">{{
-                        amount | transactionUnits
+                      amount | transactionUnits
                         }}</ion-select-option>
                 </ng-container>
 
