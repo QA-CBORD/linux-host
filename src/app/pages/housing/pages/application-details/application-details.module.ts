@@ -1,0 +1,17 @@
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { IonicModule } from '@ionic/angular';
+
+import { ApplicationDetailsRoutingModule } from './application-details.routing.module';
+
+import { ApplicationDetailsPage } from './application-details.page';
+
+const imports = [CommonModule, FormsModule, IonicModule, ApplicationDetailsRoutingModule];
+const declarations = [ApplicationDetailsPage];
+
+@NgModule({
+  imports,
+  declarations
+})
+export class ApplicationDetailsPageModule {}

@@ -15,6 +15,10 @@ const routes: Routes = [
         loadChildren: './pages/housing-dashboard/housing-dashboard.module#HousingDashboardPageModule',
       },
       {
+        path: `${LOCAL_ROUTING.applicationDetails}/:applicationId`,
+        loadChildren: './pages/application-details/application-details.module#ApplicationDetailsPageModule',
+      },
+      {
         path: '',
         redirectTo: LOCAL_ROUTING.dashboard,
         pathMatch: 'full'
