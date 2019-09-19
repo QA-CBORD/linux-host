@@ -1,4 +1,5 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, Input } from '@angular/core';
+import { OrderInfo } from '../../../models';
 
 @Component({
   selector: 'st-recent-orders-list-item',
@@ -7,6 +8,9 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecentOrdersListItemComponent implements OnInit {
+
+  @Input('orderInfo') orderInfo: OrderInfo;
+
   constructor() {}
 
   ngOnInit() {}

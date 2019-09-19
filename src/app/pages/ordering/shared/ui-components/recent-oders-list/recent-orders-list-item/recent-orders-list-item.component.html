@@ -2,11 +2,11 @@
   <ion-card-content>
     <div class="order-item__wrapper">
       <div class="order-item__container-info">
-        <div class="order-item__title">Breakfast Express</div>
+        <div class="order-item__title">{{ orderInfo.merchantName }}</div>
         <div class="order-item__body">French Fries x2, Orange Juice</div>
         <div class="order-item__data">8/10/19</div>
       </div>
-      <div class="order-item__order-number">Order #2391</div>
+      <div class="order-item__order-number">Order #{{ orderInfo.checkNumber }}</div>
     </div>
   </ion-card-content>
 </ion-card>
