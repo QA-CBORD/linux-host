@@ -12,7 +12,7 @@
       <ion-col class="ion-align-self-center" align-self-start>
         <h2 class="merchant__merchant-name">{{ merchantInfo.name }}</h2>
       </ion-col>
-      <ion-col align-self-end>
+      <ion-col class="ion-align-self-end">
         <img
           class="merchant__merchant-button"
           [src]="starClass"
@@ -49,7 +49,7 @@
           {{ merchantInfo.openNow ? 'Open' : 'Closed' }}
         </p>
       </ion-col>
-      <ion-col align-self-end>
+      <ion-col class="ion-align-self-end">
         <p class="merchant__merchant-order-types">{{ getOrderTypes() }}</p>
       </ion-col>
     </ion-row>
