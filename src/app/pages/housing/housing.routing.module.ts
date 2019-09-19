@@ -14,6 +14,11 @@ const routes: Routes = [
         path: LOCAL_ROUTING.dashboard,
         loadChildren: './pages/housing-dashboard/housing-dashboard.module#HousingDashboardPageModule',
       },
+      {
+        path: '',
+        redirectTo: LOCAL_ROUTING.dashboard,
+        pathMatch: 'full'
+      }
     ],
   },
 ];

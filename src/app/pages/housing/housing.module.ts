@@ -1,10 +1,12 @@
 import { NgModule } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 
-import { HousingPage } from './housing.page';
 import { HousingRoutingModule } from './housing.routing.module';
+import { HousingDashboardPageModule } from './pages/housing-dashboard/housing-dashboard.module';
 
-const imports = [IonicModule, HousingRoutingModule];
+import { HousingPage } from './housing.page';
+
+const imports = [IonicModule, HousingRoutingModule, HousingDashboardPageModule];
 const declarations = [HousingPage];
 
 @NgModule({
