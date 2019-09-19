@@ -1,7 +1,7 @@
 import { MerchantService } from './../../services/merchant.service';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NAV_ORDERS_PAGES } from './nav-modal.config';
+import { NAV_ORDERS_PAGES, OrderPageNames } from './nav-modal.config';
 import { NAVIGATE } from 'src/app/app.global';
 import { take } from 'rxjs/operators';
 import { Observable } from 'rxjs';
@@ -15,7 +15,9 @@ import { OrderInfo } from '@pages/ordering/shared';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NavModalPage implements OnInit {
-  title: string;
+  orderPageNames = OrderPageNames; // so it can be accesed in the template
+  title: OrderPageNames;
+  pageName:OrderPageNames;
 
   constructor(private readonly activatedRoute: ActivatedRoute,
               private readonly router: Router,
@@ -26,6 +28,7 @@ export class NavModalPage implements OnInit {
     // console.log(this.activatedRoute.data);
     this.activatedRoute.params.pipe(take(1)).subscribe(data => {
       this.title = NAV_ORDERS_PAGES[data.destinationPage].title;
+      this.pageName = data.destinationPage as OrderPageNames;
     });
   }
 

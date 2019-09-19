@@ -1,14 +1,14 @@
 <div class="menu__sub-navigation">
-  <div class="menu__nav-item-wrapper" (click)="openModalPage('recentOrders')">
+  <div class="menu__nav-item-wrapper" (click)="openModalPage(orderPageNames.RECENT_ORDERS)">
     <img src="./assets/icon/recents.svg" alt="recent orders" />
     <div class="menu__nav-item-content">Recent Orders</div>
   </div>
-  <div class="menu__nav-item-wrapper" (click)="openModalPage('savedAddresses')">
+  <div class="menu__nav-item-wrapper" (click)="openModalPage(orderPageNames.SAVED_ADDRESSES)">
     <img src="./assets/icon/address-marker.svg" alt="saved addresses" />
 
     <div class="menu__nav-item-content">Saved Addresses</div>
   </div>
-  <div class="menu__nav-item-wrapper" (click)="openModalPage('favorites')">
+  <div class="menu__nav-item-wrapper" (click)="openModalPage(orderPageNames.FAVORITES)">
     <img src="./assets/icon/favorite.svg" alt="favorites" />
     <div class="menu__nav-item-content">Favorites</div>
   </div>

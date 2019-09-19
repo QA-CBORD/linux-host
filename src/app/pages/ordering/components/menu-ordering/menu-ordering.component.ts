@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 
 import { NAVIGATE } from 'src/app/app.global';
 import { LOCAL_ROUTING } from '../../ordering.config';
+import { OrderPageNames } from '../../pages/nav-modal-page/nav-modal.config';
 
 @Component({
   selector: 'st-menu-ordering',
@@ -11,10 +12,11 @@ import { LOCAL_ROUTING } from '../../ordering.config';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MenuOrderingComponent {
+  orderPageNames = OrderPageNames; // so it can be accesed in the template
 
   constructor(private readonly router: Router) {}
 
-  async openModalPage(titlePage: string): Promise<void> {
+  async openModalPage(titlePage: OrderPageNames): Promise<void> {
     this.router.navigate([`${NAVIGATE.ordering}/${LOCAL_ROUTING.ordersInfo}/${titlePage}`], {
       skipLocationChange: true,
     });

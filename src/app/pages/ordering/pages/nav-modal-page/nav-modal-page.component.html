@@ -10,6 +10,7 @@
 </ion-header>
 
 <ion-content>
-  <st-recent-orders-list [recentOrders]="recentOrders$ | async"></st-recent-orders-list>
-  <!-- <st-merchant-list></st-merchant-list> -->
+  <st-recent-orders-list *ngIf="pageName === orderPageNames.RECENT_ORDERS" [recentOrders]="recentOrders$ | async"></st-recent-orders-list>
+  <st-order-address-list *ngIf="pageName == orderPageNames.SAVED_ADDRESSES"></st-order-address-list>
+  <st-merchant-list *ngIf="pageName == orderPageNames.FAVORITES"></st-merchant-list>
 </ion-content>
