@@ -14,6 +14,7 @@ import { StPopoverLayoutModule } from '../../../../shared/ui-components/st-popov
 import { StHeaderModule } from '../../../../shared/ui-components/st-header/st-header.module';
 import { StInputFloatingLabelModule } from '../../../../shared/ui-components/st-input-floating-label/st-input-floating-label.module';
 import { StSelectFloatingLabelModule } from '../../../../shared/ui-components/st-select-floating-label/st-select-floating-label.module';
+import { ReactiveFormsModule } from '@angular/forms';
 
 const declarations = [
   AutomaticDepositPageComponent,
@@ -23,6 +24,7 @@ const declarations = [
 ];
 const imports = [
   CommonModule,
+  ReactiveFormsModule,
   StInputFloatingLabelModule,
   StSelectFloatingLabelModule,
   StHeaderModule,

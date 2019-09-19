@@ -9,9 +9,11 @@ import { SuccessPopoverComponent } from './components/success-popover/success-po
 import { StPopoverLayoutModule } from '../../../../shared/ui-components/st-popover-layout/st-popover-layout.module';
 import { StHeaderModule } from '../../../../shared/ui-components/st-header/st-header.module';
 import { StInputFloatingLabelModule } from '../../../../shared/ui-components/st-input-floating-label/st-input-floating-label.module';
+import { ReactiveFormsModule } from '@angular/forms';
 
 const imports = [
   CommonModule,
+  ReactiveFormsModule,
   StPopoverLayoutModule,
   StHeaderModule,
   StInputFloatingLabelModule,

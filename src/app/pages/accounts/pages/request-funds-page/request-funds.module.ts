@@ -16,6 +16,7 @@ const declarations = [RequestFundsPageComponent, PopoverComponent];
 const imports = [
   CommonModule,
   AccountsSharedModule,
+  ReactiveFormsModule,
   StTextareaFloatingLabelModule,
   StInputFloatingLabelModule,
   StSelectFloatingLabelModule,
