@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
-  selector: 'app-work-orders',
-  templateUrl: './work-orders.page.html',
+  selector: 'st-work-order-details',
+  templateUrl: './work-order-details.page.html',
 })
-export class WorkOrdersPage implements OnInit {
+export class WorkOrderDetailsPage implements OnInit {
   constructor(private _route: ActivatedRoute) {}
 
   workOrderId: number;
