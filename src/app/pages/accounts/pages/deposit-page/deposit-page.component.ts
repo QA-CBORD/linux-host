@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, NgZone } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PopoverController, ModalController, ToastController } from '@ionic/angular';
 import { DepositService } from '../../services/deposit.service';
@@ -58,6 +58,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     private readonly router: Router,
     private readonly loadingService: LoadingService,
     private readonly k: Keyboard,
+    private readonly zone: NgZone
   ) {}
 
   ngOnInit() {
@@ -65,6 +66,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
 
     this.initForm();
     this.getAccounts();
+    this.k.onKeyboardHide().subscribe(() => this.zone.run(() => console.log('zoneCalled')))
   }
 
   ngOnDestroy() {
@@ -158,7 +160,6 @@ export class DepositPageComponent implements OnInit, OnDestroy {
 
   hide() {
     console.log(1);
-    this.k.hide();
   }
 
   onFormSubmit() {
