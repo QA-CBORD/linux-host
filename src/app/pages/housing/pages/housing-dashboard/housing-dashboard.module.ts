@@ -6,9 +6,10 @@ import { IonicModule } from '@ionic/angular';
 import { HousingDashboardRoutingModule } from './housing-dashboard.routing.module';
 
 import { HousingDashboardPage } from './housing-dashboard.page';
+import { ContractsComponent } from './contracts/contracts.component';
 
 const imports = [CommonModule, FormsModule, IonicModule, HousingDashboardRoutingModule];
-const declarations = [HousingDashboardPage];
+const declarations = [HousingDashboardPage, ContractsComponent];
 
 @NgModule({
   imports,
