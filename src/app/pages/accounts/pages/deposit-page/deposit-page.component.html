@@ -38,7 +38,6 @@
             maxlength="10"
             #inputText
             [value]="depositForm.get('mainInput') | customCurrency"
-            [autofocus]="true"
             placeholder="0"
             [ngStyle]="{ width: inputText.value ? inputText.value.length + 1 + 'ch' : '2ch' }"
             [ngClass]="{
@@ -47,7 +46,7 @@
               'deposit__main-input-container--decrease-font': inputText.value && inputText.value.length >= 7
             }"
             (ionFocus)="focusLine = true"
-            (ionBlur)="focusLine = false"
+            (ionBlur)="focusLine = false; hide()"
             (keydown)="formatInput($event)"
             formControlName="mainInput"
           ></ion-input>

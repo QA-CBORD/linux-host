@@ -20,6 +20,7 @@ import { amountRangeValidator } from './amount-range.validator';
 import { Router } from '@angular/router';
 import { NAVIGATE } from 'src/app/app.global';
 import { LoadingService } from 'src/app/core/service/loading/loading.service';
+import { Keyboard } from '@ionic-native/keyboard/ngx';
 
 @Component({
   selector: 'st-deposit-page',
@@ -55,7 +56,8 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     private readonly modalController: ModalController,
     private readonly toastController: ToastController,
     private readonly router: Router,
-    private readonly loadingService: LoadingService
+    private readonly loadingService: LoadingService,
+    private readonly k: Keyboard,
   ) {}
 
   ngOnInit() {
@@ -152,6 +154,11 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     if (index !== -1 && value.slice(index + 1).length > 1) {
       this.depositForm.get('mainInput').setValue(value.slice(0, index + 2));
     }
+  }
+
+  hide() {
+    console.log(1);
+    this.k.hide();
   }
 
   onFormSubmit() {
