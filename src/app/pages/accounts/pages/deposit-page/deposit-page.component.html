@@ -5,7 +5,7 @@
   [isToolbarShow]="true"
   class="deposit__header"
 ></st-header>
-<ion-content>
+<ion-content overflow-scroll="true">
   <form [formGroup]="depositForm" (ngSubmit)="onFormSubmit()">
     <div
       class="deposit__manual-amount"
