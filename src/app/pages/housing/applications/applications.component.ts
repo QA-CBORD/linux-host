@@ -10,24 +10,20 @@ import { Application } from './applications.model';
   styleUrls: ['./applications.component.scss'],
 })
 export class ApplicationsComponent implements OnInit {
-  constructor(private _formBuilder: FormBuilder, private appServ: ApplicationsService) {}
+  constructor(private _formBuilder: FormBuilder, private _applicationsService: ApplicationsService) {}
 
   applicationsForm: FormGroup;
 
   applications: Application[];
-  patronId: number;
-  termId: number;
 
   ngOnInit() {
-    this.applicationsForm = this._formBuilder.group({
-      patronId: null,
-      termId: null
-    })
+    this._initForm();
   }
 
   getApplications() {
-    const apps = this.appServ.GetApplicationsFromRescenter(this.patronId, this.termId);
-    apps.subscribe(x => (this.applications = x));
+    const { patronId, termId } = this.applicationsForm.value;
+
+    this._applicationsService.getApplications(patronId, termId).subscribe(this._handleSuccess.bind(this));
   }
 
   GetApplicationStatus(app: Application): string {
@@ -62,5 +58,16 @@ export class ApplicationsComponent implements OnInit {
 
   trackById(_: number, application: Application): number {
     return application.applicationDefinitionId;
+  }
+
+  private _initForm(): void {
+    this.applicationsForm = this._formBuilder.group({
+      patronId: null,
+      termId: null,
+    });
+  }
+
+  private _handleSuccess(applications: Application[]): void {
+    this.applications = applications;
   }
 }

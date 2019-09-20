@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, Validators, FormControl } from '@angular/forms';
-import { QuestionDetails } from '../../Models/questionDetail';
 import { ActivatedRoute } from '@angular/router';
-import { QuestionServiceService } from '../../services/question-service.service';
+import { FormGroup, Validators, FormControl } from '@angular/forms';
+
+import { QuestionService } from '../../services/questions/question-service.service';
 import { ApplicationsService } from '../../applications/applications.service';
+
+import { QuestionDetails } from '../../Models/questionDetail';
 import { Application } from '../../applications/applications.model';
 
 @Component({
@@ -12,20 +14,26 @@ import { Application } from '../../applications/applications.model';
   styleUrls: ['./application-details.page.scss'],
 })
 export class ApplicationDetailsPage implements OnInit {
-  displayedApplication: Application;
-  questions: QuestionDetails[];
-  public appForm: FormGroup;
   constructor(
-    private activatedroute: ActivatedRoute,
-    private qcs: QuestionServiceService,
-    private appServ: ApplicationsService
+    private _route: ActivatedRoute,
+    private _questionsService: QuestionService,
+    private _applicationsService: ApplicationsService
   ) {}
 
+  application: Application;
+  questions: QuestionDetails[];
+  public appForm: FormGroup;
+
   ngOnInit() {
-    const applicationId: number = parseInt(this.activatedroute.snapshot.paramMap.get('applicationId'), 10);
-    this.displayedApplication = this.appServ.RetrieveApplicationById(applicationId);
-    this.questions = this.qcs.GetQuestionsFromRescenter(applicationId);
     this.appForm = this.GetFormGroup();
+
+    const applicationId: number = parseInt(this._route.snapshot.paramMap.get('applicationId'), 10);
+
+    this._applicationsService
+      .getApplicationById(applicationId)
+      .subscribe((application: Application) => (this.application = application));
+
+    this.questions = this._questionsService.GetQuestionsFromRescenter(applicationId);
   }
 
   GetFormGroup() {

@@ -6,3 +6,5 @@ export enum LOCAL_ROUTING {
   workOrders = 'work-orders',
   units = 'units'
 }
+
+export const BASE_URL: string = 'http://ec2-3-92-142-213.compute-1.amazonaws.com:40000';

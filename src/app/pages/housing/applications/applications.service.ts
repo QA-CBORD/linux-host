@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 
-import { environment } from 'src/environments/environment';
+import { BASE_URL } from '../housing.config';
 
 import { Application } from './applications.model';
 
@@ -13,46 +13,54 @@ import { Application } from './applications.model';
 export class ApplicationsService {
   constructor(private _http: HttpClient) {}
 
-  retrievedApplications: Application[] = [];
+  applications: Application[] = [];
 
-  GetApplicationsFromRescenter(patronId: number, termId: number): Observable<Application[]> {
+  getApplications(patronId: number, termId: number): Observable<Application[]> {
     // Call RC to get the list of application for this particular patron id
-    const baseUrl = (environment as any).baseUrl || '';
-    const apiUrl = baseUrl + 'api/patrons/v.1.0/patron-applications/' + patronId + '/term/' + termId;
-    const apps = this._http.get(apiUrl).pipe(map(x => this.ConvertApplicationsJSONToModelObjects(x)));
-    apps.subscribe(x => (this.retrievedApplications = x)).unsubscribe();
-    return apps;
+    const apiUrl = `${BASE_URL}/api/patrons/v.1.0/patron-applications/${patronId}/term/${termId}`;
+
+    if (this.applications.length > 0) {
+      return of(this.applications);
+    }
+
+    return this._http.get(apiUrl).pipe(
+      map(response => [this._toModel(response)]),
+      tap((applications: Application[]) => (this.applications = applications))
+    );
   }
 
-  RetrieveApplicationById(appId: number): Application {
-    if (this.retrievedApplications.length > 0) {
+  getApplicationById(applicationId: number): Observable<Application> {
+    const apiUrl = `${BASE_URL}/api/setup/v.1.0/applications/new/${applicationId}`;
+
+    if (this.applications.length > 0) {
       // const result = this.retrievedApplications.filter(app => app.applicationDefinitionId == appId);
       // return result[0];
-      return this.retrievedApplications[0];
+      const foundApplication: Application = this.applications.find(
+        (application: Application) => application.applicationDefinitionId === applicationId
+      );
+
+      return of(foundApplication);
     }
+
+    return this._http.get(apiUrl).pipe(map(response => this._toModel(response)));
   }
 
-  private ConvertApplicationsJSONToModelObjects(appData: any): Application[] {
-    const app: Application[] = [];
-    const application: Application = appData.data[0];
+  private _toModel(appData: any): Application {
+    const responseApplication: Application = appData.data[0];
 
-    app.push(
-      new Application(
-        application.applicationDefinitionId,
-        application.createdDateTime,
-        application.submittedDateTime,
-        application.acceptedDateTime,
-        application.cancelledDateTime,
-        application.modifiedDate,
-        application.patronId,
-        application.isApplicationSubmitted,
-        application.isApplicationAccepted,
-        application.isApplicationCanceled,
-        application.applicationTitle,
-        application.applicationTerm
-      )
+    return new Application(
+      responseApplication.applicationDefinitionId,
+      responseApplication.createdDateTime,
+      responseApplication.submittedDateTime,
+      responseApplication.acceptedDateTime,
+      responseApplication.cancelledDateTime,
+      responseApplication.modifiedDate,
+      responseApplication.patronId,
+      responseApplication.isApplicationSubmitted,
+      responseApplication.isApplicationAccepted,
+      responseApplication.isApplicationCanceled,
+      responseApplication.applicationTitle,
+      responseApplication.applicationTerm
     );
-
-    return app;
   }
 }

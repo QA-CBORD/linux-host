@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { QuestionDetails } from '../Models/questionDetail';
+import { QuestionDetails } from '../../Models/questionDetail';
 
 @Injectable({
   providedIn: 'root'
 })
-export class QuestionServiceService {
+export class QuestionService {
 
   constructor() { }
 

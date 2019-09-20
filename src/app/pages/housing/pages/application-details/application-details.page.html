@@ -3,8 +3,9 @@
     <ion-buttons slot="start">
       <ion-back-button routerDirection="root"></ion-back-button>
     </ion-buttons>
-    <ion-title>{{ displayedApplication.applicationTitle }}</ion-title>
+    <ion-title>{{ application.applicationTitle }}</ion-title>
   </ion-toolbar>
+
   <ion-toolbar>
     <ion-grid>
       <ion-row>
@@ -75,7 +76,7 @@
           <div *ngSwitchCase="'reorder'">
             <ion-item *ngIf="ques.reorder.showFacilityList" lines="none" style="padding-top: 10px">
               <ion-button
-                [routerLink]="['facilityview', displayedApplication.applicationDefinitionId]"
+                [routerLink]="['facilityview', application.applicationDefinitionId]"
                 class="non-item-btn"
                 >Show Facility List</ion-button
               >
@@ -123,7 +124,7 @@
             <ion-grid>
               <ion-row *ngIf="ques.reorder.showFacilityList">
                 <ion-col>
-                  <ion-button [routerLink]="['facilityview', displayedApplication.applicationId]">Show Facility List</ion-button>
+                  <ion-button [routerLink]="['facilityview', application.applicationId]">Show Facility List</ion-button>
                 </ion-col>
               </ion-row>
               <ion-row>
