@@ -1,0 +1,46 @@
+<ion-list>
+  <ion-item>
+    <ion-label position="floating">Patron Id</ion-label>
+    <ion-input type="text" name="patronId" [(ngModel)]="patronId"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="floating">Term Id</ion-label>
+    <ion-input type="text" name="termId" [(ngModel)]="termId"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-button (click)="GetData()">Load Data</ion-button>
+  </ion-item>
+</ion-list>
+
+<ion-list>
+  <ion-list-header>
+    <h4>Applications</h4>
+    <ion-button
+      class="button-clear"
+      style="margin: 0px; margin-top: 5px; padding: 0px; font-size: 13px; font-weight: normal"
+    >
+      <ion-label class="ion-text-capitalize">View All</ion-label>
+      <ion-icon class="float-right" slot="end" name="arrow-dropright"></ion-icon>
+    </ion-button>
+  </ion-list-header>
+
+  <ion-item
+    [routerLink]="['/applicationview', app.applicationDefinitionId]"
+    routerDirection="forward"
+    detail="true"
+    *ngFor="let app of applicationList"
+  >
+    <ion-icon slot="start" name="create" *ngIf="!app.isApplicationSubmitted"></ion-icon>
+    <ion-icon slot="start" name="checkmark" *ngIf="app.isApplicationAccepted"></ion-icon>
+    <ion-label>
+      <h2>{{ app.applicationTitle }}</h2>
+      <p>{{ GetApplicationStatus(app) }}</p>
+      <p *ngIf="GetApplicationStatus(app) == 'Pending'">
+        Last Update: {{ GetApplicationModificationDate(app) | date: 'fullDate' }}
+      </p>
+      <p *ngIf="GetApplicationStatus(app) != 'New' && GetApplicationStatus(app) != 'Pending'">
+        {{ GetApplicationModificationDate(app) | date: 'fullDate' }}
+      </p>
+    </ion-label>
+  </ion-item>
+</ion-list>
