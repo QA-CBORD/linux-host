@@ -6,15 +6,17 @@ import { BASE_URL } from '../housing.config';
 
 import { generateContracts } from './contracts.mock';
 
+import { Contract } from './contracts.model';
+
 @Injectable({
   providedIn: 'root',
 })
 export class ContractsService {
   constructor(private _http: HttpClient) {}
 
-  contracts: any[] = generateContracts(5);
+  contracts: Contract[] = generateContracts(5);
 
-  getContracts(): Observable<any[]> {
+  getContracts(): Observable<Contract[]> {
     return of(this.contracts);
   }
 }

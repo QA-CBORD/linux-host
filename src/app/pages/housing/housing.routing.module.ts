@@ -27,7 +27,7 @@ const routes: Routes = [
         loadChildren: './pages/contract-details/contract-details.module#ContractDetailsPageModule',
       },
       {
-        path: LOCAL_ROUTING.workOrders,
+        path: `${LOCAL_ROUTING.workOrders}/:workOrderId`,
         loadChildren: './pages/work-orders/work-orders.module#WorkOrdersPageModule',
       },
       {
