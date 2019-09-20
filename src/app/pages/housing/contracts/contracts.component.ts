@@ -10,7 +10,17 @@ import { ContractsService } from './contracts.service';
 export class ContractsComponent implements OnInit {
   constructor(private _contractsService: ContractsService) {}
 
-  contracts: any[] = [];
+  contracts: any[];
 
-  ngOnInit() {}
+  ngOnInit() {
+    this._contractsService.getContracts().subscribe(this._handleSuccess.bind(this))
+  }
+
+  trackById(_: number, contract: any): number {
+    return contract.id;
+  }
+
+  private _handleSuccess(contracts: any[]): void {
+    this.contracts = contracts;
+  }
 }

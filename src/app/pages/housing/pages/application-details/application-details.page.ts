@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormGroup, Validators, FormControl } from '@angular/forms';
 
-import { QuestionService } from '../../services/questions/question-service.service';
+import { QuestionsService } from '../../services/questions/question-service.service';
 import { ApplicationsService } from '../../applications/applications.service';
 
 import { QuestionDetails } from '../../Models/questionDetail';
@@ -16,7 +16,7 @@ import { Application } from '../../applications/applications.model';
 export class ApplicationDetailsPage implements OnInit {
   constructor(
     private _route: ActivatedRoute,
-    private _questionsService: QuestionService,
+    private _questionsService: QuestionsService,
     private _applicationsService: ApplicationsService
   ) {}
 
@@ -33,7 +33,7 @@ export class ApplicationDetailsPage implements OnInit {
       .getApplicationById(applicationId)
       .subscribe((application: Application) => (this.application = application));
 
-    this.questions = this._questionsService.GetQuestionsFromRescenter(applicationId);
+    this.questions = this._questionsService.getQuestions(applicationId);
   }
 
   GetFormGroup() {

@@ -4,11 +4,11 @@ import { QuestionDetails } from '../../Models/questionDetail';
 @Injectable({
   providedIn: 'root'
 })
-export class QuestionService {
+export class QuestionsService {
 
   constructor() { }
 
-  GetQuestionsFromRescenter(applicationId: number) {
+  getQuestions(applicationId: number) {
     // Hit RC to get the list of questions for this particular application ID
     const json = `
     [
@@ -102,15 +102,18 @@ export class QuestionService {
         ]
       }
     ]`;
-    return this.ConvertJSONQuestionStringToModelObjects(json);
+
+    return this._toModel(json);
   }
 
-  private ConvertJSONQuestionStringToModelObjects(jsonData: string): QuestionDetails[] {
+  private _toModel(jsonData: string): QuestionDetails[] {
     const questions: QuestionDetails[] = [];
     const object = JSON.parse(jsonData);
+
     object.map(ques => {
       questions.push(new QuestionDetails(ques));
     });
+
     return questions;
   }
 }
