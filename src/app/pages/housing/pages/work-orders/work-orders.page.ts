@@ -4,15 +4,13 @@ import { ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'app-work-orders',
   templateUrl: './work-orders.page.html',
-  styleUrls: ['./work-orders.page.scss'],
 })
 export class WorkOrdersPage implements OnInit {
+  constructor(private _route: ActivatedRoute) {}
 
-  workOrderId = null;
-  constructor(private activatedroute: ActivatedRoute) { }
+  workOrderId: number;
 
   ngOnInit() {
-    this.workOrderId = this.activatedroute.snapshot.paramMap.get('workOrderId');
+    this.workOrderId = parseInt(this._route.snapshot.paramMap.get('workOrderId'), 10);
   }
-
 }

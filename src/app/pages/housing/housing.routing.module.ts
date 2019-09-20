@@ -27,6 +27,10 @@ const routes: Routes = [
         loadChildren: './pages/housing/pages/contract-details/contract-details.module#ContractDetailsPageModule',
       },
       {
+        path: LOCAL_ROUTING.workOrders,
+        loadChildren: './pages/housing/pages/work-orders/work-orders.module#WorkOrdersPageModule',
+      },
+      {
         path: '',
         redirectTo: LOCAL_ROUTING.dashboard,
         pathMatch: 'full',
