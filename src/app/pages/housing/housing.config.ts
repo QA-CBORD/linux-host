@@ -3,5 +3,6 @@ export enum LOCAL_ROUTING {
   applications = 'applications',
   facilities = 'facilities',
   contracts = 'contracts',
-  workOrders = 'work-orders'
+  workOrders = 'work-orders',
+  units = 'units'
 }

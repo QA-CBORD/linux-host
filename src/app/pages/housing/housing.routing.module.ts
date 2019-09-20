@@ -31,6 +31,10 @@ const routes: Routes = [
         loadChildren: './pages/housing/pages/work-orders/work-orders.module#WorkOrdersPageModule',
       },
       {
+        path: `${LOCAL_ROUTING.units}/:unitId`,
+        loadChildren: './pages/housing/pages/unit-details/unit-details.module#UnitDetailsPageModule',
+      },
+      {
         path: '',
         redirectTo: LOCAL_ROUTING.dashboard,
         pathMatch: 'full',
