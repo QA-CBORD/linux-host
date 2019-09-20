@@ -2,7 +2,7 @@ import { Component, OnInit, NgModule } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FacilitylistService } from '../services/facilitylist.service';
 import { FacilitiesList } from '../Models/facilities-list';
-import { ExpandableComponent } from '../expandable/expandable.component';
+import { ExpandableComponent } from '../pages/facility-details/expandable/expandable.component';
 
 @NgModule({
   declarations: [ExpandableComponent]

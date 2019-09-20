@@ -6,7 +6,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { FacilityviewPage } from './facilityview.page';
-import { ExpandableComponent } from '../expandable/expandable.component';
+import { ExpandableComponent } from '../pages/facility-details/expandable/expandable.component';
 
 const routes: Routes = [
     { path: '', component: FacilityviewPage },
