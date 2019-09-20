@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 
-import { ApplicationlistService } from './applicationlist.service';
+import { ApplicationsService } from './applications.service';
 import { Application } from './applications.model';
 
 @Component({
@@ -10,7 +10,7 @@ import { Application } from './applications.model';
   styleUrls: ['./applications.component.scss'],
 })
 export class ApplicationsComponent implements OnInit {
-  constructor(private _formBuilder: FormBuilder, private appServ: ApplicationlistService) {}
+  constructor(private _formBuilder: FormBuilder, private appServ: ApplicationsService) {}
 
   applicationsForm: FormGroup;
 

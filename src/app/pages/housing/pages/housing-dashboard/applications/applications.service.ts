@@ -10,8 +10,8 @@ import { Application } from './applications.model';
 @Injectable({
   providedIn: 'root',
 })
-export class ApplicationlistService {
-  constructor(private http: HttpClient) {}
+export class ApplicationsService {
+  constructor(private _http: HttpClient) {}
 
   retrievedApplications: Application[] = [];
 
@@ -19,7 +19,7 @@ export class ApplicationlistService {
     // Call RC to get the list of application for this particular patron id
     const baseUrl = (environment as any).baseUrl || '';
     const apiUrl = baseUrl + 'api/patrons/v.1.0/patron-applications/' + patronId + '/term/' + termId;
-    const apps = this.http.get(apiUrl).pipe(map(x => this.ConvertApplicationsJSONToModelObjects(x)));
+    const apps = this._http.get(apiUrl).pipe(map(x => this.ConvertApplicationsJSONToModelObjects(x)));
     apps.subscribe(x => (this.retrievedApplications = x)).unsubscribe();
     return apps;
   }
