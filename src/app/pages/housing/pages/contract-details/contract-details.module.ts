@@ -1,26 +1,17 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Routes, RouterModule } from '@angular/router';
-
 import { IonicModule } from '@ionic/angular';
+
+import { ContractDetailsRoutingModule } from './contract-details.routing.module';
 
 import { ContractDetailsPage } from './contract-details.page';
 
-const routes: Routes = [
-  {
-    path: '',
-    component: ContractDetailsPage
-  }
-];
+const imports = [CommonModule, FormsModule, IonicModule, ContractDetailsRoutingModule];
+const declarations = [ContractDetailsPage];
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    IonicModule,
-    RouterModule.forChild(routes)
-  ],
-  declarations: [ContractDetailsPage]
+  imports,
+  declarations,
 })
 export class ContractDetailsPageModule {}
