@@ -15,8 +15,12 @@ const routes: Routes = [
         loadChildren: './pages/housing-dashboard/housing-dashboard.module#HousingDashboardPageModule',
       },
       {
-        path: `${LOCAL_ROUTING.applicationDetails}/:applicationId`,
+        path: `${LOCAL_ROUTING.applications}/:applicationId`,
         loadChildren: './pages/application-details/application-details.module#ApplicationDetailsPageModule',
+      },
+      {
+        path: `${LOCAL_ROUTING.facilities}/:facilityId`,
+        loadChildren: './pages/facility-details/facility-details.module#FacilityDetailsPageModule',
       },
       {
         path: '',
