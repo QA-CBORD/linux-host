@@ -1,5 +1,6 @@
 export enum LOCAL_ROUTING {
   dashboard = 'dashboard',
   applications = 'applications',
-  facilities = 'facilities'
+  facilities = 'facilities',
+  contracts = 'contracts'
 }

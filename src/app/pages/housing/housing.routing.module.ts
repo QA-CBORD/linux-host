@@ -23,10 +23,14 @@ const routes: Routes = [
         loadChildren: './pages/facility-details/facility-details.module#FacilityDetailsPageModule',
       },
       {
+        path: `${LOCAL_ROUTING.contracts}/:contractId`,
+        loadChildren: './pages/housing/pages/contract-details/contract-details.module#ContractDetailsPageModule',
+      },
+      {
         path: '',
         redirectTo: LOCAL_ROUTING.dashboard,
-        pathMatch: 'full'
-      }
+        pathMatch: 'full',
+      },
     ],
   },
 ];
