@@ -8,7 +8,7 @@ import { HousingDashboardRoutingModule } from './housing-dashboard.routing.modul
 import { HousingDashboardPage } from './housing-dashboard.page';
 import { ContractsComponent } from './contracts/contracts.component';
 import { WorkOrdersComponent } from './work-orders/work-orders.component';
-import { ApplicationsComponent } from './applications/applications.component';
+import { ApplicationsComponent } from '../../applications/applications.component';
 
 const imports = [CommonModule, ReactiveFormsModule, IonicModule, HousingDashboardRoutingModule,];
 const declarations = [HousingDashboardPage, ContractsComponent, WorkOrdersComponent, ApplicationsComponent];

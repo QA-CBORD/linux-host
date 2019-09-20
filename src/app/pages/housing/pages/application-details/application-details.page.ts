@@ -3,8 +3,8 @@ import { FormGroup, Validators, FormControl } from '@angular/forms';
 import { QuestionDetails } from '../../Models/questionDetail';
 import { ActivatedRoute } from '@angular/router';
 import { QuestionServiceService } from '../../services/question-service.service';
-import { ApplicationsService } from '../housing-dashboard/applications/applications.service';
-import { Application } from '../housing-dashboard/applications/applications.model';
+import { ApplicationsService } from '../../applications/applications.service';
+import { Application } from '../../applications/applications.model';
 
 @Component({
   selector: 'st-application-details',
