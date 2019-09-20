@@ -1,9 +1,45 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>unit-details</ion-title>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button routerDirection="root"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Rooms</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-
+  <ion-card *ngFor="let unit of unitsList">
+    <ion-grid class="ion-no-margin ion-no-padding">
+      <ion-row>
+        <ion-col class="col-sm-8 col-md-8 col-lg-8">
+          <ion-grid>
+            <ion-row>
+              <ion-col>
+                <ion-label style="font-size: 18px; font-weight: bold" class="ion-text-capitalize">{{
+                  unit.unitName
+                }}</ion-label>
+                <p style="font-size: 14px; color: gray; margin: 0px; margin-top:5px">
+                  <b>{{ unit.unitBeds }}</b> Beds | <b>{{ unit.unitBaths }}</b> Baths
+                </p>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-col>
+        <ion-col
+          class="col-sm-3 col-md-3 col-lg-3 ion-text-right"
+          style="margin:0px; margin-left:10px; padding: 0px; padding-top: 25px"
+        >
+          <ion-label style="font-size: 18px; font-weight: bolder">${{ unit.unitRate }}</ion-label>
+        </ion-col>
+        <ion-col
+          class="col-sm-1 col-md-1 col-lg-1"
+          style="margin: 0px; margin-left: -70px; padding: 0px; padding-top: 13px;"
+        >
+          <ion-button class="button-clear ion-no-margin ion-float-right ion-text-center">
+            <ion-icon name="star-outline"></ion-icon>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card>
 </ion-content>
