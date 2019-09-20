@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { Applications } from '../../Models/application-list';
 import { FormGroup, Validators, FormControl } from '@angular/forms';
 import { QuestionDetails } from '../../Models/questionDetail';
 import { ActivatedRoute } from '@angular/router';
 import { QuestionServiceService } from '../../services/question-service.service';
-import { ApplicationlistService } from '../../services/applicationlist.service';
+import { ApplicationlistService } from '../housing-dashboard/applications/applicationlist.service';
+import { Application } from '../housing-dashboard/applications/applications.model';
 
 @Component({
   selector: 'st-application-details',
@@ -12,7 +12,7 @@ import { ApplicationlistService } from '../../services/applicationlist.service';
   styleUrls: ['./application-details.page.scss'],
 })
 export class ApplicationDetailsPage implements OnInit {
-  displayedApplication: Applications;
+  displayedApplication: Application;
   questions: QuestionDetails[];
   public appForm: FormGroup;
   constructor(

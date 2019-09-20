@@ -1,16 +1,18 @@
-<ion-list>
+<form [formGroup]="applicationsForm" (ngSubmit)="getApplications()">
   <ion-item>
     <ion-label position="floating">Patron Id</ion-label>
-    <ion-input type="text" name="patronId" [(ngModel)]="patronId"></ion-input>
+    <ion-input type="text" formControlName="patronId"></ion-input>
   </ion-item>
+
   <ion-item>
     <ion-label position="floating">Term Id</ion-label>
-    <ion-input type="text" name="termId" [(ngModel)]="termId"></ion-input>
+    <ion-input type="text" formControlName="termId"></ion-input>
   </ion-item>
+
   <ion-item>
-    <ion-button (click)="GetData()">Load Data</ion-button>
+    <ion-button type="submit" expand="block" color="primary">Load Data</ion-button>
   </ion-item>
-</ion-list>
+</form>
 
 <ion-list>
   <ion-list-header>
@@ -25,10 +27,10 @@
   </ion-list-header>
 
   <ion-item
-    [routerLink]="['/applicationview', app.applicationDefinitionId]"
+    [routerLink]="['applications', app.applicationDefinitionId]"
     routerDirection="forward"
     detail="true"
-    *ngFor="let app of applicationList"
+    *ngFor="let app of applications; trackBy: trackById"
   >
     <ion-icon slot="start" name="create" *ngIf="!app.isApplicationSubmitted"></ion-icon>
     <ion-icon slot="start" name="checkmark" *ngIf="app.isApplicationAccepted"></ion-icon>

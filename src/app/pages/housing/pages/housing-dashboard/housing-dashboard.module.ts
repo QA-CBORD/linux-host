@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 
 import { HousingDashboardRoutingModule } from './housing-dashboard.routing.module';
@@ -10,7 +10,7 @@ import { ContractsComponent } from './contracts/contracts.component';
 import { WorkOrdersComponent } from './work-orders/work-orders.component';
 import { ApplicationsComponent } from './applications/applications.component';
 
-const imports = [CommonModule, FormsModule, IonicModule, HousingDashboardRoutingModule,];
+const imports = [CommonModule, ReactiveFormsModule, IonicModule, HousingDashboardRoutingModule,];
 const declarations = [HousingDashboardPage, ContractsComponent, WorkOrdersComponent, ApplicationsComponent];
 
 @NgModule({

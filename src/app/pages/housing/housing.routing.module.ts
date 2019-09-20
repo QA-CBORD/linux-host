@@ -24,15 +24,15 @@ const routes: Routes = [
       },
       {
         path: `${LOCAL_ROUTING.contracts}/:contractId`,
-        loadChildren: './pages/housing/pages/contract-details/contract-details.module#ContractDetailsPageModule',
+        loadChildren: './pages/contract-details/contract-details.module#ContractDetailsPageModule',
       },
       {
         path: LOCAL_ROUTING.workOrders,
-        loadChildren: './pages/housing/pages/work-orders/work-orders.module#WorkOrdersPageModule',
+        loadChildren: './pages/work-orders/work-orders.module#WorkOrdersPageModule',
       },
       {
         path: `${LOCAL_ROUTING.units}/:unitId`,
-        loadChildren: './pages/housing/pages/unit-details/unit-details.module#UnitDetailsPageModule',
+        loadChildren: './pages/unit-details/unit-details.module#UnitDetailsPageModule',
       },
       {
         path: '',
