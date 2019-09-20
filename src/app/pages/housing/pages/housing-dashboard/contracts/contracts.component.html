@@ -1,3 +1,36 @@
-<p>
-  contracts works!
-</p>
+<ion-list>
+  <ion-list-header>
+    <h4>Contracts</h4>
+    <ion-button
+      class="button-clear"
+      style="margin: 0px; margin-top: 5px; padding: 0px; font-size: 13px; font-weight: normal"
+    >
+      <ion-label class="ion-text-capitalize">View All</ion-label>
+      <ion-icon class="float-right" slot="end" name="arrow-dropright"></ion-icon>
+    </ion-button>
+  </ion-list-header>
+  <ion-item [routerLink]="['/housing/contracts', 1]" routerDirection="forward" detail>
+    <ion-label>
+      <h2>Garage #10 Contract</h2>
+      <p>Summer 2019</p>
+      <p>Pending</p>
+    </ion-label>
+    <ion-icon name="create" slot="start"></ion-icon>
+  </ion-item>
+  <ion-item detail>
+    <ion-label>
+      <h2>Garage #10 Contract</h2>
+      <p>Spring 2019</p>
+      <p>Completed</p>
+    </ion-label>
+    <ion-icon slot="start" name="checkmark"></ion-icon>
+  </ion-item>
+  <ion-item detail>
+    <ion-label>
+      <h2>Garage #10 Contract</h2>
+      <p>Fall 2018</p>
+      <p>Completed</p>
+    </ion-label>
+    <ion-icon slot="start" name="checkmark"></ion-icon>
+  </ion-item>
+</ion-list>
