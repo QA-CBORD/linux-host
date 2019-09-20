@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { ContractlistService } from '../../services/contractlist.service';
+import { ContractsService } from '../../contracts/contracts.service';
 
 @Component({
   selector: 'st-housing-dashboard',
@@ -9,13 +9,9 @@ import { ContractlistService } from '../../services/contractlist.service';
 })
 export class HousingDashboardPage {
   // contractsList: Contracts[] = []
-  constructor(private contractServ: ContractlistService) {}
+  constructor(private contractServ: ContractsService) {}
 
   ngOnInit() {
     // this.contractsList = this.contractServ.GetContractsFromRescenter(1);
   }
-
-
-
-
 }
