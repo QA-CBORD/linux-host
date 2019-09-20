@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'st-contract-details',
@@ -6,10 +7,10 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./contract-details.page.scss'],
 })
 export class ContractDetailsPage implements OnInit {
-
-  constructor() { }
+  contractId = null;
+  constructor(private activatedRoute: ActivatedRoute) {}
 
   ngOnInit() {
+    this.contractId = this.activatedRoute.snapshot.paramMap.get('contractId');
   }
-
 }
