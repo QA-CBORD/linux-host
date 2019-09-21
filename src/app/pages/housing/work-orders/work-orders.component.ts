@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 import { WorkOrdersService } from './work-orders.service';
 
@@ -8,6 +8,7 @@ import { WorkOrder } from './work-orders.model';
   selector: 'st-work-orders',
   templateUrl: './work-orders.component.html',
   styleUrls: ['./work-orders.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WorkOrdersComponent implements OnInit {
   constructor(private _workOrdersService: WorkOrdersService) {}

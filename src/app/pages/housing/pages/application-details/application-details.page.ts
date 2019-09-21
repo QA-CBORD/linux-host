@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormGroup, Validators, FormControl } from '@angular/forms';
 
@@ -12,6 +12,7 @@ import { Application } from '../../applications/applications.model';
   selector: 'st-application-details',
   templateUrl: './application-details.page.html',
   styleUrls: ['./application-details.page.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ApplicationDetailsPage implements OnInit {
   constructor(

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { FacilitylistService } from '../../services/facilitylist.service';
@@ -9,6 +9,7 @@ import { FacilitiesList } from '../../Models/facilities-list';
   selector: 'st-facility-details',
   templateUrl: './facility-details.page.html',
   styleUrls: ['./facility-details.page.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FacilityDetailsPage implements OnInit {
   applicationId: number;

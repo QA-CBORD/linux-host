@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 
 import { ApplicationsService } from './applications.service';
@@ -8,6 +8,7 @@ import { Application } from './applications.model';
   selector: 'st-applications',
   templateUrl: './applications.component.html',
   styleUrls: ['./applications.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ApplicationsComponent implements OnInit {
   constructor(private _formBuilder: FormBuilder, private _applicationsService: ApplicationsService) {}

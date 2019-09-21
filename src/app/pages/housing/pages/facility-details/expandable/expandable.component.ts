@@ -1,21 +1,22 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'st-expandable',
   templateUrl: './expandable.component.html',
   styleUrls: ['./expandable.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ExpandableComponent implements OnInit {
+  @Input() expandHeight: any;
 
-  @Input('expandHeight') expandHeight;
-  @Input('isExpanded') isExpanded;
+  @Input() isExpanded: any;
+
   currentHeight = 0;
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit() {
     console.log(this.expandHeight);
     console.log(this.isExpanded);
   }
-
 }
