@@ -1,9 +1,9 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { FacilitiesService } from '../../services/facilities/facilities.service';
+import { FacilitiesService } from '../../facilities/facilities.service';
 
-import { Facility } from '../../models/facilities.model';
+import { Facility } from '../../facilities/facilities.model';
 
 @Component({
   selector: 'st-facility-details',
@@ -14,15 +14,13 @@ import { Facility } from '../../models/facilities.model';
 export class FacilityDetailsPage implements OnInit {
   constructor(private _route: ActivatedRoute, private _facilitiesService: FacilitiesService) {}
 
-  applicationId: number;
-
   facilities: Facility[];
 
   ngOnInit() {
-    this.applicationId = parseInt(this._route.snapshot.paramMap.get('applicationId'), 10);
+    const applicationId = parseInt(this._route.snapshot.paramMap.get('applicationId'), 10);
 
     this._facilitiesService
-      .getFacilities(this.applicationId)
+      .getFacilities(applicationId)
       .subscribe((facilities: Facility[]) => (this.facilities = facilities));
   }
 

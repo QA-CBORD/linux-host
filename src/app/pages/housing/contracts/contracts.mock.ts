@@ -1,9 +1,9 @@
 import { Contract } from './contracts.model';
 
 export function generateContract(_: any, index: number): Contract {
-  return {
-    id: index,
-  };
+  const id: number = index;
+
+  return new Contract(id);
 }
 
 export function generateContracts(amount: number): Contract[] {

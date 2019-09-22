@@ -1,3 +1,3 @@
-export interface Contract {
-  id: number;
+export class Contract {
+  constructor(public id: number) {}
 }
