@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
-import { FacilitiesList } from '../Models/facilities-list';
+import { of, Observable } from 'rxjs';
+
+import { Facility } from '../../models/facilities.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-export class FacilitylistService {
+export class FacilitiesService {
+  constructor() {}
 
-  constructor() { }
-
-  GetFacilityListForApplication(applicationId: number) {
+  getFacilities(applicationId: number): Observable<Facility[]> {
     // make api service call to RC to get the facility list associated with this application ID.
     const json = `[
       {
@@ -56,24 +57,26 @@ export class FacilitylistService {
         "availableUnits":"30"
       }
     ]`;
-    return this.ConvertJSONStringToModelObjects(json);
+
+    return of(this._toModel(json));
   }
 
-  private ConvertJSONStringToModelObjects(jsonString: string): FacilitiesList[] {
-    const facilitiesList: FacilitiesList[] = [];
-    const obj = JSON.parse(jsonString);
-    obj.map (fac => {
-      facilitiesList.push(
-        new FacilitiesList(fac.facilityName,
-                           fac.facilityId,
-                           fac.bedCount,
-                           fac.bathCount,
-                           fac.floors,
-                           fac.builtYear,
-                           fac.campus,
-                           fac.parking,
-                           fac.availableUnits));
-    });
-    return facilitiesList;
+  private _toModel(jsonString: string): Facility[] {
+    return JSON.parse(jsonString).map(
+      (facility: Facility) =>
+        new Facility(
+          facility.facilityName,
+          facility.facilityId,
+          null,
+          null,
+          facility.bedCount,
+          facility.bathCount,
+          facility.floors,
+          facility.builtYear,
+          facility.campus,
+          facility.parking,
+          facility.availableUnits
+        )
+    );
   }
 }

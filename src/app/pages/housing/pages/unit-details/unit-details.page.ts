@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UnitslistService } from '../../services/unitslist.service';
-import { UnitsList } from '../../Models/units-list';
+import { UnitsList } from '../../models/units-list';
 
 @Component({
   selector: 'st-unit-details',

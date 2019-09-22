@@ -1,9 +1,9 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { FacilitylistService } from '../../services/facilitylist.service';
+import { FacilitiesService } from '../../services/facilities/facilities.service';
 
-import { FacilitiesList } from '../../Models/facilities-list';
+import { Facility } from '../../models/facilities.model';
 
 @Component({
   selector: 'st-facility-details',
@@ -12,17 +12,26 @@ import { FacilitiesList } from '../../Models/facilities-list';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FacilityDetailsPage implements OnInit {
+  constructor(private _route: ActivatedRoute, private _facilitiesService: FacilitiesService) {}
+
   applicationId: number;
-  facilitiesList: FacilitiesList[];
-  constructor(private activatedRoute: ActivatedRoute, private facilityListService: FacilitylistService) {}
+
+  facilities: Facility[];
 
   ngOnInit() {
-    this.applicationId = parseInt(this.activatedRoute.snapshot.paramMap.get('applicationId'), 10);
-    this.facilitiesList = this.facilityListService.GetFacilityListForApplication(this.applicationId);
+    this.applicationId = parseInt(this._route.snapshot.paramMap.get('applicationId'), 10);
+
+    this._facilitiesService
+      .getFacilities(this.applicationId)
+      .subscribe((facilities: Facility[]) => (this.facilities = facilities));
   }
 
-  OpenDetails(fac: FacilitiesList) {
-    fac.isExpanded = !fac.isExpanded;
-    fac.iconName = fac.isExpanded ? 'arrow-up' : 'arrow-down';
+  toggle(facility: Facility) {
+    facility.isExpanded = !facility.isExpanded;
+    facility.iconName = facility.isExpanded ? 'arrow-up' : 'arrow-down';
+  }
+
+  trackById(_: number, facility: Facility): number {
+    return facility.facilityId;
   }
 }

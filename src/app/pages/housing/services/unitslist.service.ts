@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { UnitsList } from '../Models/units-list';
+import { UnitsList } from '../models/units-list';
 
 @Injectable({
   providedIn: 'root'

@@ -5,7 +5,7 @@ import { FormGroup, Validators, FormControl } from '@angular/forms';
 import { QuestionsService } from '../../services/questions/question-service.service';
 import { ApplicationsService } from '../../applications/applications.service';
 
-import { QuestionDetails } from '../../Models/questionDetail';
+import { QuestionDetails } from '../../models/questionDetail';
 import { Application } from '../../applications/applications.model';
 
 @Component({

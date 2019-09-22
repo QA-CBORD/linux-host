@@ -8,7 +8,7 @@
 </ion-header>
 
 <ion-content>
-  <ion-card *ngFor="let fac of facilitiesList">
+  <ion-card *ngFor="let facility of facilities; trackBy: trackById">
     <img
       src="http://via.placeholder.com/500x350"
       style="align-content: right; justify-content: center; max-height: 350px; max-width: 500px; background-size: cover"
@@ -20,16 +20,16 @@
             <ion-col class="ion-no-padding col-sm-4 col-md-3 col-lg-3" style="padding: 0px;padding-top: 5px">
               <!-- <ion-grid class="ion-no-padding">
                 <ion-row class="ion-no-padding"> -->
-              <ion-label class="facilityNameDisplay" style="padding-bottom: 3px">{{ fac.facilityName }}</ion-label>
+              <ion-label class="facilityNameDisplay" style="padding-bottom: 3px">{{ facility.facilityName }}</ion-label>
               <ion-label style="font-size: 14px; color: gray"
-                ><b>{{ fac.bedCount }}</b> Beds | <b>{{ fac.bathCount }}</b> Baths</ion-label
+                ><b>{{ facility.bedCount }}</b> Beds | <b>{{ facility.bathCount }}</b> Baths</ion-label
               >
               <!-- </ion-row> -->
               <!-- <ion-row class="ion-padding-top">
-                   <ion-label class="bedAndBathCount">{{fac.bedCount}}</ion-label>&nbsp;
+                   <ion-label class="bedAndBathCount">{{facility.bedCount}}</ion-label>&nbsp;
                   <ion-label style="font-size: 14px">Beds </ion-label>&nbsp;
                   <ion-label>|</ion-label>&nbsp;
-                  <ion-label class="bedAndBathCount">{{fac.bathCount}}</ion-label>&nbsp;
+                  <ion-label class="bedAndBathCount">{{facility.bathCount}}</ion-label>&nbsp;
                   <ion-label style="font-size: 14px">Baths</ion-label>
                 </ion-row> -->
               <!-- </ion-grid> -->
@@ -55,16 +55,16 @@
             <ion-col style="margin-left:-70px">
               <ion-button
                 class="col-sm-1 button-small button-clear ion-float-right ion-no-margin ion-no-padding"
-                (click)="OpenDetails(fac)"
+                (click)="toggle(facility)"
               >
-                <ion-icon [name]="fac.iconName"></ion-icon>
+                <ion-icon [name]="facility.iconName"></ion-icon>
               </ion-button>
             </ion-col>
           </ion-row>
         </ion-grid>
       </ion-item>
-      <ion-item lines="none" [class.collapseItemClass]="!fac.isExpanded" class="ion-no-padding">
-        <st-expandable expandHeight="400px" style="width: 100%" [isExpanded]="fac.isExpanded">
+      <ion-item lines="none" [class.collapseItemClass]="!facility.isExpanded" class="ion-no-padding">
+        <st-expandable expandHeight="400px" style="width: 100%" [isExpanded]="facility.isExpanded">
           <ion-grid class="ion-no-padding">
             <ion-row style="column-span: 12">
               <ion-col class="ion-text-left">
@@ -72,7 +72,7 @@
                   Floors
                 </ion-note>
                 <p class="pExpandable">
-                  {{ fac.floors }}
+                  {{ facility.floors }}
                 </p>
               </ion-col>
               <ion-col class="ion-text-right">
@@ -80,7 +80,7 @@
                   Year Built
                 </ion-note>
                 <p class="pExpandable">
-                  {{ fac.builtYear }}
+                  {{ facility.builtYear }}
                 </p>
               </ion-col>
             </ion-row>
@@ -90,7 +90,7 @@
                   Campus
                 </ion-note>
                 <p class="pExpandable">
-                  {{ fac.campus }}
+                  {{ facility.campus }}
                 </p>
               </ion-col>
               <ion-col class="ion-text-right">
@@ -98,7 +98,7 @@
                   Parking
                 </ion-note>
                 <p class="pExpandable">
-                  {{ fac.parking }}
+                  {{ facility.parking }}
                 </p>
               </ion-col>
             </ion-row>
@@ -108,14 +108,14 @@
                   # of available units
                 </ion-note>
                 <p class="pExpandable">
-                  {{ fac.availableUnits }}
+                  {{ facility.availableUnits }}
                 </p>
               </ion-col>
               <ion-col class="ion-text-right"> </ion-col>
             </ion-row>
             <ion-row>
               <ion-col style="column-width: 12" class="ion-text-center">
-                <ion-button class="button-outline button-block" [routerLink]="['unitsview', fac.facilityId]"
+                <ion-button class="button-outline button-block" [routerLink]="['unitsview', facility.facilityId]"
                   >View Units</ion-button
                 >
               </ion-col>
