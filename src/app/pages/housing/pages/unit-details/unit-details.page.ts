@@ -2,7 +2,8 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { UnitsService } from '../../units/units.service';
-import { UnitsList } from '../../models/units-list';
+
+import { Unit } from '../../units/units.model';
 
 @Component({
   selector: 'st-unit-details',
@@ -13,12 +14,11 @@ import { UnitsList } from '../../models/units-list';
 export class UnitDetailsPage implements OnInit {
   constructor(private _route: ActivatedRoute, private _unitsService: UnitsService) {}
 
-  facilityId: number;
-
-  unitsList: UnitsList[];
+  units: Unit[];
 
   ngOnInit() {
-    this.facilityId = parseInt(this._route.snapshot.paramMap.get('facilityId'), 10);
-    this.unitsList = this._unitsService.GetUnitsListForFacility(this.facilityId);
+    const facilityId = parseInt(this._route.snapshot.paramMap.get('facilityId'), 10);
+
+    this._unitsService.getUnits(facilityId).subscribe((units: Unit[]) => (this.units = units));
   }
 }
