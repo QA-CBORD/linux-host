@@ -2,10 +2,10 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormGroup, Validators, FormControl } from '@angular/forms';
 
-import { QuestionsService } from '../../services/questions/question-service.service';
+import { QuestionsService } from '../../questions/questions.service';
 import { ApplicationsService } from '../../applications/applications.service';
 
-import { QuestionDetails } from '../../models/questionDetail';
+import { QuestionDetails } from '../../questions/question-details';
 import { Application } from '../../applications/applications.model';
 
 @Component({
@@ -34,7 +34,9 @@ export class ApplicationDetailsPage implements OnInit {
       .getApplicationById(applicationId)
       .subscribe((application: Application) => (this.application = application));
 
-    this.questions = this._questionsService.getQuestions(applicationId);
+    this._questionsService
+      .getQuestions(applicationId)
+      .subscribe((questions: QuestionDetails[]) => (this.questions = questions));
   }
 
   GetFormGroup() {

@@ -1,4 +1,4 @@
-import { TextboxQuestion } from './question-textbox';
+import { QuestionTextbox } from './question-textbox';
 import { DropdownQuestion } from './question-dropdown';
 import { TextareaQuestion } from './question-textarea';
 import { ReorderQuestion } from './question-reorder';
@@ -11,7 +11,7 @@ export class QuestionDetails {
     controlType: string;
     type: string;
     placeholder: string;
-    textbox: TextboxQuestion;
+    textbox: QuestionTextbox;
     dropdown: DropdownQuestion;
     textarea: TextareaQuestion;
     reorder: ReorderQuestion;
@@ -29,7 +29,7 @@ export class QuestionDetails {
     private PopulateControlType(options: {}) {
         switch (this.controlType) {
             case 'text':
-                this.textbox = new TextboxQuestion(options);
+                this.textbox = new QuestionTextbox(options);
                 break;
             case 'select':
                 this.dropdown = new DropdownQuestion(options);

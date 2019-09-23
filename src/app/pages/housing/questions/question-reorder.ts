@@ -12,6 +12,7 @@ export class ReorderQuestion {
     options: ReorderQuestionOptions[] = [];
     showFacilityList: boolean;
     preferenceCount: number
+
     constructor(reorderOptions) {
         this.showFacilityList = reorderOptions.showFacilityList === '1' ? true : false;
         this.preferenceCount = reorderOptions.preferenceCount;
