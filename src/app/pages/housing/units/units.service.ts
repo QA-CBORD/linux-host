@@ -4,7 +4,7 @@ import { UnitsList } from '../models/units-list';
 @Injectable({
   providedIn: 'root'
 })
-export class UnitslistService {
+export class UnitsService {
 
   constructor() { }
 
