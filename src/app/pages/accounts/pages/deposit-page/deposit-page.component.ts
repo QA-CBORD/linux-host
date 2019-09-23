@@ -69,7 +69,8 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     this.k.onKeyboardHide().subscribe(() => {
       console.log('hiddened');
       this.zone.run(() => console.log('zoneCalled'))
-    })
+    });
+    console.log(this.k.onKeyboardHide());
   }
 
   ngOnDestroy() {
