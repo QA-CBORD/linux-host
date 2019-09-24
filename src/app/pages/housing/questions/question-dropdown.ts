@@ -1,7 +1,8 @@
-export class DropDownQuestionOptions {
+export class QuestionDropdownOptions {
     label: string;
     value: string;
     selected: boolean;
+
     constructor(label: string, value: string, selected: boolean) {
         this.label = label;
         this.value = value;
@@ -9,13 +10,13 @@ export class DropDownQuestionOptions {
     }
 }
 
-export class DropdownQuestion {
+export class QuestionDropdown {
     controlType =  'dropdown';
-    options: DropDownQuestionOptions[] = [];
+    options: QuestionDropdownOptions[] = [];
 
     constructor(dropdownOptions) {
         for (let i = 0; i < dropdownOptions.values.length; i++) {
-            this.options.push(new DropDownQuestionOptions(
+            this.options.push(new QuestionDropdownOptions(
                 dropdownOptions.values[i].label,
                 dropdownOptions.values[i].value,
                 dropdownOptions.values[i].selected === undefined ? false : true));

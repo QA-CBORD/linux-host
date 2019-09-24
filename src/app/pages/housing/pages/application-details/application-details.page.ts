@@ -26,7 +26,7 @@ export class ApplicationDetailsPage implements OnInit {
   public appForm: FormGroup;
 
   ngOnInit() {
-    this.appForm = this.GetFormGroup();
+    // this.appForm = this.GetFormGroup();
 
     const applicationId: number = parseInt(this._route.snapshot.paramMap.get('applicationId'), 10);
 
@@ -34,47 +34,47 @@ export class ApplicationDetailsPage implements OnInit {
       .getApplicationById(applicationId)
       .subscribe((application: Application) => (this.application = application));
 
-    this._questionsService
-      .getQuestions(applicationId)
-      .subscribe((questions: QuestionDetails[]) => (this.questions = questions));
+    // this._questionsService
+    //   .getQuestions(applicationId)
+    //   .subscribe((questions: QuestionDetails[]) => (this.questions = questions));
   }
 
-  GetFormGroup() {
-    const group: any = {};
+  // GetFormGroup() {
+  //   const group: any = {};
 
-    this.questions.forEach(question => {
-      group[question.key] = question.required
-        ? new FormControl('' || '', Validators.required)
-        : new FormControl('' || '');
-    });
+  //   this.questions.forEach(question => {
+  //     group[question.key] = question.required
+  //       ? new FormControl('' || '', Validators.required)
+  //       : new FormControl('' || '');
+  //   });
 
-    return new FormGroup(group);
-  }
+  //   return new FormGroup(group);
+  // }
 
-  SubmitClick() {
-    let finalJsonStr = JSON.stringify(this.appForm.value);
-    let reorderStr = '';
-    this.questions
-      .filter(item => item.controlType === 'reorder')
-      .forEach((item, index) => {
-        reorderStr = '"' + item.key + '"' + ':' + JSON.stringify(item.reorder.options);
-        finalJsonStr = finalJsonStr.replace('"' + item.key + '"' + ':' + '""', reorderStr);
-      });
-    console.log(finalJsonStr);
-    console.log(JSON.parse(finalJsonStr));
-  }
+  // SubmitClick() {
+  //   let finalJsonStr = JSON.stringify(this.appForm.value);
+  //   let reorderStr = '';
+  //   this.questions
+  //     .filter(item => item.controlType === 'reorder')
+  //     .forEach((item, index) => {
+  //       reorderStr = '"' + item.key + '"' + ':' + JSON.stringify(item.reorder.options);
+  //       finalJsonStr = finalJsonStr.replace('"' + item.key + '"' + ':' + '""', reorderStr);
+  //     });
+  //   console.log(finalJsonStr);
+  //   console.log(JSON.parse(finalJsonStr));
+  // }
 
-  doReorder(ev: any) {
-    const reorderQuestion = this.questions.filter(item => item.controlType === 'reorder')[0];
-    const temp = reorderQuestion.reorder.options.splice(ev.detail.from, 1)[0];
-    reorderQuestion.reorder.options.splice(ev.detail.to, 0, temp);
-    for (let i = 0; i < reorderQuestion.reorder.options.length; i++) {
-      if (i < 2) {
-        reorderQuestion.reorder.options[i].preference = (i + 1).toString();
-      } else {
-        reorderQuestion.reorder.options[i].preference = '';
-      }
-    }
-    ev.detail.complete();
-  }
+  // doReorder(ev: any) {
+  //   const reorderQuestion = this.questions.filter(item => item.controlType === 'reorder')[0];
+  //   const temp = reorderQuestion.reorder.options.splice(ev.detail.from, 1)[0];
+  //   reorderQuestion.reorder.options.splice(ev.detail.to, 0, temp);
+  //   for (let i = 0; i < reorderQuestion.reorder.options.length; i++) {
+  //     if (i < 2) {
+  //       reorderQuestion.reorder.options[i].preference = (i + 1).toString();
+  //     } else {
+  //       reorderQuestion.reorder.options[i].preference = '';
+  //     }
+  //   }
+  //   ev.detail.complete();
+  // }
 }

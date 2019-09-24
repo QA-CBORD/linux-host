@@ -1,8 +1,9 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 
 import { ApplicationsService } from './applications.service';
-import { Application } from './applications.model';
+
+import { Application, ApplicationStatus } from './applications.model';
 
 @Component({
   selector: 'st-applications',
@@ -11,7 +12,11 @@ import { Application } from './applications.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ApplicationsComponent implements OnInit {
-  constructor(private _formBuilder: FormBuilder, private _applicationsService: ApplicationsService) {}
+  constructor(
+    private _formBuilder: FormBuilder,
+    private _changeDetector: ChangeDetectorRef,
+    private _applicationsService: ApplicationsService
+  ) {}
 
   applicationsForm: FormGroup;
 
@@ -19,46 +24,52 @@ export class ApplicationsComponent implements OnInit {
 
   ngOnInit() {
     this._initForm();
+
+    this.getApplications();
   }
 
   getApplications() {
-    const { patronId, termId } = this.applicationsForm.value;
-
-    this._applicationsService.getApplications(patronId, termId).subscribe(this._handleSuccess.bind(this));
+    this._applicationsService.getApplications().subscribe(this._handleSuccess.bind(this));
   }
 
-  GetApplicationStatus(app: Application): string {
-    let appStatus: string;
-    if (app.isApplicationAccepted) {
-      appStatus = 'Accepted';
-    } else if (app.isApplicationSubmitted) {
-      appStatus = 'Submitted';
-    } else if (app.isApplicationCanceled) {
-      appStatus = 'Canceled';
-    } else {
-      appStatus = new Date(app.createdDateTime).getFullYear() == 1 ? 'New' : 'Pending';
-    }
-    return appStatus;
-  }
+  // getApplicationStatus(application: Application): string {
+  //   if (application.isApplicationAccepted) {
+  //     return ApplicationStatus.Accepted;
+  //   } else if (application.isApplicationSubmitted) {
+  //     return ApplicationStatus.Submitted;
+  //   } else if (application.isApplicationCanceled) {
+  //     return ApplicationStatus.Canceled;
+  //   } else if (new Date(application.createdDateTime).getFullYear() === 1) {
+  //     return ApplicationStatus.New;
+  //   } else {
+  //     return ApplicationStatus.Pending;
+  //   }
+  // }
 
-  GetApplicationModificationDate(app: Application): string {
-    let returnVal: string;
-    if (app.isApplicationAccepted) {
-      returnVal = new Date(app.acceptedDateTime).toDateString();
-    } else if (app.isApplicationSubmitted) {
-      returnVal = new Date(app.submittedDateTime).toDateString();
-    } else if (app.isApplicationCanceled) {
-      returnVal = new Date(app.cancelledDateTime).toDateString();
-    } else if (app.modifiedDate !== '') {
-      returnVal = new Date(app.modifiedDate).toDateString();
-    } else {
-      returnVal = '';
-    }
-    return returnVal;
-  }
+  // getApplicationModificationDate(application: Application): string {
+  //   if (application.isApplicationAccepted) {
+  //     return new Date(application.acceptedDateTime).toDateString();
+  //   } else if (application.isApplicationSubmitted) {
+  //     return new Date(application.submittedDateTime).toDateString();
+  //   } else if (application.isApplicationCanceled) {
+  //     return new Date(application.cancelledDateTime).toDateString();
+  //   } else if (application.modifiedDate !== '') {
+  //     return new Date(application.modifiedDate).toDateString();
+  //   } else {
+  //     return '';
+  //   }
+  // }
+
+  // isNotPending(application: Application): boolean {
+  //   return this.getApplicationStatus(application) !== ApplicationStatus.Pending;
+  // }
+
+  // isNotNewAndNotPending(application: Application): boolean {
+  //   return this.getApplicationStatus(application) !== ApplicationStatus.New && this.isNotPending(application);
+  // }
 
   trackById(_: number, application: Application): number {
-    return application.applicationDefinitionId;
+    return application.id;
   }
 
   private _initForm(): void {
@@ -70,5 +81,6 @@ export class ApplicationsComponent implements OnInit {
 
   private _handleSuccess(applications: Application[]): void {
     this.applications = applications;
+    this._changeDetector.markForCheck();
   }
 }

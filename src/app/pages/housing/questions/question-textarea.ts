@@ -1,12 +1,9 @@
-export class TextareaQuestion {
+import { QuestionTextbox, QuestionTextboxOptions } from './question-textbox';
 
-    controlType = 'textarea';
-    // type = 'string';
-    rows: number;
-    cols: number;
+export class QuestionTextarea extends QuestionTextbox {
+  constructor(options: QuestionTextboxOptions = {}) {
+    super(options);
 
-    constructor(options) {
-        this.rows = options.rows === '' ? 6 : parseInt(options.rows, 10);
-        this.cols = options.cols === '' ? 30 : parseInt(options.cols, 10);
-    }
+    this.type = options.type || 'textarea';
+  }
 }

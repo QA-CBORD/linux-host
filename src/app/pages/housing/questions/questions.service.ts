@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { FormControl, Validators, FormGroup } from '@angular/forms';
 
 import { generateQuestions } from './questions.mock';
 
@@ -10,13 +9,13 @@ import { QuestionDetails } from './question-details';
   providedIn: 'root',
 })
 export class QuestionsService {
-  questions: any[] = generateQuestions();
-
-  getQuestions(applicationId: number) {
-    return of(this.questions).pipe(map((questions: any[]) => questions.map(this._toModel)));
-  }
-
-  private _toModel(question: any): QuestionDetails {
-    return new QuestionDetails(question);
+  toFormGroup(questions: QuestionDetails[]) {
+    // let group: any = {};
+    // questions.forEach(question => {
+    //   group[question.key] = question.required
+    //     ? new FormControl(question.value || '', Validators.required)
+    //     : new FormControl(question.value || '');
+    // });
+    // return new FormGroup(group);
   }
 }

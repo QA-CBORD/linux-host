@@ -27,22 +27,25 @@
   </ion-list-header>
 
   <ion-item
-    [routerLink]="['applications', app.applicationDefinitionId]"
+    *ngFor="let application of applications; trackBy: trackById"
+    [routerLink]="['/housing/applications', application.id]"
     routerDirection="forward"
     detail="true"
-    *ngFor="let app of applications; trackBy: trackById"
   >
-    <ion-icon slot="start" name="create" *ngIf="!app.isApplicationSubmitted"></ion-icon>
-    <ion-icon slot="start" name="checkmark" *ngIf="app.isApplicationAccepted"></ion-icon>
+    <!-- <ion-icon slot="start" name="create" *ngIf="!application.isApplicationSubmitted"></ion-icon>
+    <ion-icon slot="start" name="checkmark" *ngIf="application.isApplicationAccepted"></ion-icon> -->
+
     <ion-label>
-      <h2>{{ app.applicationTitle }}</h2>
-      <p>{{ GetApplicationStatus(app) }}</p>
-      <p *ngIf="GetApplicationStatus(app) == 'Pending'">
-        Last Update: {{ GetApplicationModificationDate(app) | date: 'fullDate' }}
+      <h2>{{ application.applicationTitle }}</h2>
+      <!-- <p>{{ getApplicationStatus(application) }}</p>
+
+      <p *ngIf="isNotPending(application)">
+        Last Update: {{ getApplicationModificationDate(application) | date: 'fullDate' }}
       </p>
-      <p *ngIf="GetApplicationStatus(app) != 'New' && GetApplicationStatus(app) != 'Pending'">
-        {{ GetApplicationModificationDate(app) | date: 'fullDate' }}
-      </p>
+
+      <p *ngIf="isNotNewAndNotPending(application)">
+        {{ getApplicationModificationDate(application) | date: 'fullDate' }}
+      </p> -->
     </ion-label>
   </ion-item>
 </ion-list>

@@ -1,6 +1,6 @@
 import { QuestionTextbox } from './question-textbox';
-import { DropdownQuestion } from './question-dropdown';
-import { TextareaQuestion } from './question-textarea';
+import { QuestionDropdown } from './question-dropdown';
+import { QuestionTextarea } from './question-textarea';
 import { ReorderQuestion } from './question-reorder';
 
 export class QuestionDetails {
@@ -12,11 +12,11 @@ export class QuestionDetails {
     type: string;
     placeholder: string;
     textbox: QuestionTextbox;
-    dropdown: DropdownQuestion;
-    textarea: TextareaQuestion;
+    dropdown: QuestionDropdown;
+    textarea: QuestionTextarea;
     reorder: ReorderQuestion;
 
-    constructor(options) {
+    constructor(options: any) {
         this.key = options.name;
         this.label = options.label;
         this.required = options.required;
@@ -32,10 +32,10 @@ export class QuestionDetails {
                 this.textbox = new QuestionTextbox(options);
                 break;
             case 'select':
-                this.dropdown = new DropdownQuestion(options);
+                this.dropdown = new QuestionDropdown(options);
                 break;
             case 'textarea':
-                this.textarea = new TextareaQuestion(options);
+                this.textarea = new QuestionTextarea(options);
                 break;
            case 'reorder':
                this.reorder = new ReorderQuestion(options);
