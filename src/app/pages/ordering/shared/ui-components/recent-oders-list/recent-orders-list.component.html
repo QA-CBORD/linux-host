@@ -1,3 +1,15 @@
-
-<st-recent-orders-list-item *ngFor="let orderInfo of recentOrders; let i = index; trackBy: trackOrdersById" [orderInfo]="orderInfo"></st-recent-orders-list-item>
-
+<div class="order-list__header">
+  <span class="order-list__text-left">Pending</span><span class="order-list__text-right">({{ pendingOrders.length }})</span>
+</div>
+<st-recent-orders-list-item
+  *ngFor="let orderInfo of pendingOrders; let i = index; trackBy: trackOrdersById"
+  [orderInfo]="orderInfo"
+></st-recent-orders-list-item>
+<div class="order-list__divider"></div>
+<div class="order-list__header">
+  <span class="order-list__text-left">Completed</span><span class="order-list__text-right">({{ completedOrders.length }})</span>
+</div>
+<st-recent-orders-list-item
+  *ngFor="let orderInfo of completedOrders; let i = index; trackBy: trackOrdersById"
+  [orderInfo]="orderInfo"
+></st-recent-orders-list-item>

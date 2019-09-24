@@ -13,5 +13,6 @@ export class RecentOrdersListItemComponent implements OnInit {
 
   constructor() {}
 
-  ngOnInit() {}
+  ngOnInit() {
+  }
 }

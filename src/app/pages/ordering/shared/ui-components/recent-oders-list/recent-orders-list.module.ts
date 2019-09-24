@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 
@@ -12,6 +12,7 @@ const declarations = [RecentOrdersListComponent, RecentOrdersListItemComponent];
 @NgModule({
   declarations,
   exports: [RecentOrdersListComponent],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [CommonModule, IonicModule, OrderItemsSummaryModule, PipesModule],
 })
 export class RecentOrdersListModule {}
