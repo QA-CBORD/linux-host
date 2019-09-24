@@ -45,8 +45,8 @@
               shakeit: isMaxCharLength,
               'deposit__main-input-container--decrease-font': inputText.value && inputText.value.length >= 7
             }"
-            (ionFocus)="focusLine = true"
-            (ionBlur)="focusLine = false; hide()"
+            (ionFocus)="focusLine = true; hide()"
+            (ionBlur)="focusLine = false;"
             (keydown)="formatInput($event)"
             formControlName="mainInput"
           ></ion-input>
