@@ -163,7 +163,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   }
 
   hide() {
-    console.log(1);
+    console.log(this.k.isVisible, 'isVisible');
   }
 
   onFormSubmit() {
