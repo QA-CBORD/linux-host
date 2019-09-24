@@ -7,8 +7,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class RecentOrdersComponent implements OnInit {
 
-  constructor() { }
+  constructor() {
+    console.log('Recent Orders Construct');
+    
+  }
 
-  ngOnInit() {}
+  ngOnInit() {
+    console.log('Recent Orders Init');}
 
 }
