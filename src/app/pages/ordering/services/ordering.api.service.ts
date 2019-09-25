@@ -45,7 +45,7 @@ export class OrderingApiService extends BaseService {
     );
   }
 
-  getFavoriteMerchants(): Observable<string[]> {
+  getFavoriteMerchants(): Observable<MerchantInfo[]> {
     const methodName = 'getFavoriteMerchants';
     const postParams: ServiceParameters = { excludeNonOrdering: false };
     return this.httpRequestFull(this.serviceUrlMerchant, methodName, true, null, postParams).pipe(

@@ -1,6 +1,7 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 
 import { MerchantInfo } from '../../models';
+import { ActionSheetController } from '@ionic/angular';
 
 @Component({
   selector: 'st-merchant-list',
@@ -10,26 +11,62 @@ import { MerchantInfo } from '../../models';
 })
 export class MerchantListComponent {
   @Input() merchantList: MerchantInfo[];
-  @Output('merchantClickTrigger') merchantClickTrigger: EventEmitter<string> = new EventEmitter<string>();
-  @Output('favouriteTrigger') favouriteTrigger: EventEmitter<string> = new EventEmitter<string>();
-  @Output('locationPinTrigger') locationPinTrigger: EventEmitter<string> = new EventEmitter<string>();
 
-  constructor() {}
+  constructor(
+    public actionSheetController: ActionSheetController
+  ) { }
 
   trackMerchantsById(index: number, { id }: MerchantInfo): string {
     return id;
   }
 
   merchantClickHandler(event: string) {
-    this.merchantClickTrigger.emit(event);
+    console.log(`Merchant Clicked - Merch Id: ${event}`);
+    const actionSheet = await this.actionSheetController.create({
+      header: 'Order Options',
+      buttons: [{
+        text: 'Delete',
+        role: 'destructive',
+        icon: 'trash',
+        handler: () => {
+          console.log('Delete clicked');
+        }
+      }, {
+        text: 'Share',
+        icon: 'share',
+        handler: () => {
+          console.log('Share clicked');
+        }
+      }, {
+        text: 'Play (open modal)',
+        icon: 'arrow-dropright-circle',
+        handler: () => {
+          console.log('Play clicked');
+        }
+      }, {
+        text: 'Favorite',
+        icon: 'heart',
+        handler: () => {
+          console.log('Favorite clicked');
+        }
+      }, {
+        text: 'Cancel',
+        icon: 'close',
+        role: 'cancel',
+        handler: () => {
+          console.log('Cancel clicked');
+        }
+      }]
+    });
+    await actionSheet.present();
   }
 
   favouriteHandler(event: string) {
-    this.favouriteTrigger.emit(event);
+    console.log(`Favorite Clicked - Merch Id: ${event}`);
   }
 
-  locationPinHandler(event: string){
-    this.locationPinTrigger.emit(event);
+  locationPinHandler(event: string) {
+    console.log(`Location Pin Clicked - Merch Id: ${event}`);
   }
 
 }

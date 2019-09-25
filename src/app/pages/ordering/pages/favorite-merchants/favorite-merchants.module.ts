@@ -4,16 +4,17 @@ import { IonicModule } from '@ionic/angular';
 import { NgModule } from '@angular/core';
 import { FavoriteMerchantsComponent } from './favorite-merchants.component';
 import { FavoriteMerchantsRoutingModule } from './favorite-merchants.routing.module';
+import { FavoriteMerhantsResolver } from './resolvers/favorite-merchants.resolver';
+import { FavoriteMerhantsService } from './services/favorite-merhants.service';
+import { MerchantListModule } from '@pages/ordering/shared/ui-components/merchant-list/merchant-list.module';
 
-const imports = [CommonModule, SharedModule, IonicModule, FavoriteMerchantsRoutingModule];
+const imports = [CommonModule, SharedModule, IonicModule, FavoriteMerchantsRoutingModule, MerchantListModule];
 const declarations = [FavoriteMerchantsComponent];
-const providers = [];
-const entryComponents = [];
+const providers = [FavoriteMerhantsResolver, FavoriteMerhantsService];
 
 @NgModule({
   declarations,
   imports,
   providers,
-  entryComponents,
 })
 export class FavoriteMerchantsModule { }

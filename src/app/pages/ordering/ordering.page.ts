@@ -19,16 +19,4 @@ export class OrderingPage implements OnInit {
   ngOnInit() {
     this.merchantList$ = this.merchantListService.menuMerchants$;
   }
-
-  merchantClickHandler(id: string) {
-    console.log(`Merchant Clicked - Merch Id: ${id}`);
-  }
-
-  favouriteHandler(id: string) {
-    console.log(`Favorite Clicked - Merch Id: ${id}`);
-  }
-
-  locationPinHandler(id: string) {
-    console.log(`Location Pin Clicked - Merch Id: ${id}`);
-  }
 }
