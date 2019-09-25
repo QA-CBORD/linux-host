@@ -29,4 +29,10 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content> </ion-content>
+<ion-content>
+  <form *ngIf="applicationForm" [formGroup]="applicationForm" (ngSubmit)="handleSubmit()">
+    <st-question *ngFor="let question of questions" [parentGroup]="applicationForm" [question]="question"></st-question>
+
+    <ion-button type="submit">Submit</ion-button>
+  </form>
+</ion-content>

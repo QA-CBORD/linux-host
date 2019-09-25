@@ -1,0 +1,13 @@
+<div [formGroup]="parentGroup">
+  <ng-container [ngSwitch]="question.type">
+    <div *ngSwitchCase="'header'">
+      <h3>{{ question.label }}</h3>
+    </div>
+
+    <div *ngSwitchCase="'paragraph'">
+      <p>{{ question.label }}</p>
+    </div>
+
+    <div *ngSwitchDefault>{{ question.label }}</div>
+  </ng-container>
+</div>

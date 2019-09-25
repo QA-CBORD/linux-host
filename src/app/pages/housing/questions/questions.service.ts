@@ -1,21 +1,62 @@
 import { Injectable } from '@angular/core';
 import { FormControl, Validators, FormGroup } from '@angular/forms';
 
-import { generateQuestions } from './questions.mock';
+import { QuestionBase } from './question-base';
+import { QuestionHeader } from './question-header';
+import { QuestionParagraph } from './question-paragraph';
+import { QuestionTextbox } from './question-textbox';
+import { QuestionTextarea } from './question-textarea';
+import { QuestionDate } from './question-date';
+import { QuestionCheckboxGroup } from './question-checkbox-group';
 
-import { QuestionDetails } from './question-details';
+export const QuestionConstructorsMap = {
+  header: QuestionHeader,
+  paragraph: QuestionParagraph,
+  text: QuestionTextbox,
+  textarea: QuestionTextarea,
+  date: QuestionDate,
+  'checkbox-group': QuestionCheckboxGroup,
+};
 
 @Injectable({
   providedIn: 'root',
 })
 export class QuestionsService {
-  toFormGroup(questions: QuestionDetails[]) {
-    // let group: any = {};
-    // questions.forEach(question => {
-    //   group[question.key] = question.required
-    //     ? new FormControl(question.value || '', Validators.required)
-    //     : new FormControl(question.value || '');
-    // });
-    // return new FormGroup(group);
+  questions: QuestionBase[];
+
+  setQuestions(questions: QuestionBase[]): void {
+    this.questions = questions;
+  }
+
+  getQuestions(): QuestionBase[] {
+    return this.questions;
+  }
+
+  parseQuestions(json: string): QuestionBase[] {
+    const parsedQuestions: any[] = JSON.parse(json);
+
+    return parsedQuestions.map(this.toQuestionType);
+  }
+
+  toQuestionType(question: QuestionBase): QuestionBase {
+    if (QuestionConstructorsMap[question.type]) {
+      return new QuestionConstructorsMap[question.type](question);
+    }
+
+    return new QuestionBase(question);
+  }
+
+  toFormGroup(questions: QuestionBase[]) {
+    let group: any = {};
+
+    questions.forEach((question: QuestionBase) => {
+      if (question.name) {
+        group[question.name] = question.required
+          ? new FormControl('', Validators.required)
+          : new FormControl('');
+      }
+    });
+
+    return new FormGroup(group);
   }
 }

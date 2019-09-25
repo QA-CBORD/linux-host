@@ -4,10 +4,11 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 
 import { ApplicationDetailsRoutingModule } from './application-details.routing.module';
+import { QuestionsModule } from '../../questions/questions.module';
 
 import { ApplicationDetailsPage } from './application-details.page';
 
-const imports = [CommonModule, ReactiveFormsModule, IonicModule, ApplicationDetailsRoutingModule];
+const imports = [CommonModule, ReactiveFormsModule, IonicModule, ApplicationDetailsRoutingModule, QuestionsModule];
 const declarations = [ApplicationDetailsPage];
 
 @NgModule({
