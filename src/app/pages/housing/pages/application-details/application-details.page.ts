@@ -1,6 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormGroup, Validators, FormControl, FormBuilder } from '@angular/forms';
+import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
 import { QuestionsService } from '../../questions/questions.service';
@@ -18,7 +19,7 @@ import { QuestionBase } from '../../questions/types/question-base';
 export class ApplicationDetailsPage implements OnInit {
   application: Application;
 
-  questions: QuestionBase[];
+  questions$: Observable<QuestionBase[]>;
 
   applicationForm: FormGroup;
 
@@ -31,21 +32,19 @@ export class ApplicationDetailsPage implements OnInit {
   ) {}
 
   ngOnInit() {
-    // this._initForm();
-
     const applicationId: number = parseInt(this._route.snapshot.paramMap.get('applicationId'), 10);
+
+    this.questions$ = this._questionsService.getQuestions();
 
     this._applicationsService
       .getApplicationById(applicationId)
       .pipe(
         tap((application: Application) => {
           const questions: QuestionBase[] = this._questionsService.parseQuestions(application.applicationFormJson);
-          const form: FormGroup = this._questionsService.toFormGroup(questions);
 
-          this.questions = questions;
+          this.applicationForm = this._questionsService.toFormGroup(questions);
+
           this._questionsService.setQuestions(questions);
-
-          this.applicationForm = this._formBuilder.group(form);
         })
       )
       .subscribe(this._handleSuccess.bind(this));
@@ -55,26 +54,10 @@ export class ApplicationDetailsPage implements OnInit {
     // Code to submit form.
   }
 
-  private _initForm(): void {
-    this.applicationForm = this._formBuilder.group({});
-  }
-
   private _handleSuccess(application: Application): void {
     this.application = application;
     this._changeDetector.markForCheck();
   }
-
-  // GetFormGroup() {
-  //   const group: any = {};
-
-  //   this.questions.forEach(question => {
-  //     group[question.key] = question.required
-  //       ? new FormControl('' || '', Validators.required)
-  //       : new FormControl('' || '');
-  //   });
-
-  //   return new FormGroup(group);
-  // }
 
   // SubmitClick() {
   //   let finalJsonStr = JSON.stringify(this.appForm.value);

@@ -31,7 +31,11 @@
 
 <ion-content>
   <form *ngIf="applicationForm" [formGroup]="applicationForm" (ngSubmit)="handleSubmit()">
-    <st-question *ngFor="let question of questions" [parentGroup]="applicationForm" [question]="question"></st-question>
+    <st-question
+      *ngFor="let question of (questions$ | async)"
+      [parentGroup]="applicationForm"
+      [question]="question"
+    ></st-question>
 
     <ion-button type="submit">Submit</ion-button>
   </form>

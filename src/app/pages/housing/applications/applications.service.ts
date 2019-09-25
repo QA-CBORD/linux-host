@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { map, tap, catchError } from 'rxjs/operators';
 
 import { BASE_URL } from '../housing.config';
+
+import { generateApplications } from './applications.mock';
 
 import { Response } from '../housing.model';
 import { Application } from './applications.model';
@@ -39,7 +41,15 @@ export class ApplicationsService {
       .pipe(
         map((response: Response) => response.data),
         map((applications: Application[]) => applications.map(this._toModel)),
-        tap((applications: Application[]) => (this.applications = applications))
+        tap((applications: Application[]) => (this.applications = applications)),
+        catchError(() => {
+          // TODO: Remove this catchError when backend is ready.
+          const applications: Application[] = generateApplications();
+
+          this.applications = applications
+
+          return of(applications)
+        }),
       );
   }
 
@@ -70,7 +80,15 @@ export class ApplicationsService {
 
     return this._http.get(apiUrl).pipe(
       map((response: Response) => response.data),
-      map((application: Application) => this._toModel(application))
+      map((application: Application) => this._toModel(application)),
+      catchError(() => {
+        // TODO: Remove this catchError when backend is ready.
+        const applications: Application[] = generateApplications();
+
+        this.applications = applications
+
+        return of(applications[0])
+      }),
     );
   }
 

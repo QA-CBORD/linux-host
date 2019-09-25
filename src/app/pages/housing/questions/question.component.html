@@ -4,9 +4,23 @@
 
     <p *ngSwitchCase="'paragraph'">{{ question.label }}</p>
 
-    <ion-item *ngSwitchCase="'text'">
-      <ion-label position="stacked">{{ question.label }}</ion-label>
-      <ion-input type="text"></ion-input>
+    <st-input-floating-label
+      *ngSwitchCase="'text'"
+      [control]="parentGroup.get(question.name)"
+      [formControlName]="question.name"
+      [title]="question.label"
+      type="text"
+      idd="question.name"
+      [label]="question.label"
+    >
+      <p class="deposit-form__control-error-msg">
+        Error
+      </p>
+    </st-input-floating-label>
+
+    <ion-item *ngSwitchCase="'date'">
+      <ion-label>{{ question.label }}</ion-label>
+      <ion-datetime displayFormat="MMM/DD/YYYY" placeholder="Select Date"></ion-datetime>
     </ion-item>
 
     <div *ngSwitchDefault>{{ question.label }}</div>

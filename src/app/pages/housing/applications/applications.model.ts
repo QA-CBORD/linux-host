@@ -35,7 +35,7 @@ export class Application {
     public applicationDescription: string,
     public applicationFormJson: string,
     public applicationTitle: string,
-    public applicationTypeId: string,
+    public applicationTypeId: number,
     public cancellationDateTime: string,
     public expirationDateTime: string,
     public id: number,

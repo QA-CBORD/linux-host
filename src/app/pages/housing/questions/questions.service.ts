@@ -8,6 +8,7 @@ import { QuestionTextbox } from './types/question-textbox';
 import { QuestionTextarea } from './types/question-textarea';
 import { QuestionDate } from './types/question-date';
 import { QuestionCheckboxGroup } from './types/question-checkbox-group';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 export const QuestionConstructorsMap = {
   header: QuestionHeader,
@@ -22,14 +23,15 @@ export const QuestionConstructorsMap = {
   providedIn: 'root',
 })
 export class QuestionsService {
-  questions: QuestionBase[];
+  private _questionsSource: BehaviorSubject<QuestionBase[]> = new BehaviorSubject<QuestionBase[]>([]);
+  private _questions$: Observable<QuestionBase[]> = this._questionsSource.asObservable();
 
   setQuestions(questions: QuestionBase[]): void {
-    this.questions = questions;
+    this._questionsSource.next(questions);
   }
 
-  getQuestions(): QuestionBase[] {
-    return this.questions;
+  getQuestions(): Observable<QuestionBase[]> {
+    return this._questions$;
   }
 
   parseQuestions(json: string): QuestionBase[] {

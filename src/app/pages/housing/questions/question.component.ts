@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 
 import { QuestionBase } from './types/question-base';
@@ -6,6 +6,7 @@ import { QuestionBase } from './types/question-base';
 @Component({
   selector: 'st-question',
   templateUrl: './question.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class QuestionComponent {
   @Input() question: QuestionBase;
