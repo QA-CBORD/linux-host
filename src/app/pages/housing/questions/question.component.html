@@ -1,12 +1,13 @@
 <div [formGroup]="parentGroup">
   <ng-container [ngSwitch]="question.type">
-    <div *ngSwitchCase="'header'">
-      <h3>{{ question.label }}</h3>
-    </div>
+    <h3 *ngSwitchCase="'header'">{{ question.label }}</h3>
 
-    <div *ngSwitchCase="'paragraph'">
-      <p>{{ question.label }}</p>
-    </div>
+    <p *ngSwitchCase="'paragraph'">{{ question.label }}</p>
+
+    <ion-item *ngSwitchCase="'text'">
+      <ion-label position="stacked">{{ question.label }}</ion-label>
+      <ion-input type="text"></ion-input>
+    </ion-item>
 
     <div *ngSwitchDefault>{{ question.label }}</div>
   </ng-container>

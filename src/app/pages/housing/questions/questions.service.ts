@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { FormControl, Validators, FormGroup } from '@angular/forms';
 
-import { QuestionBase } from './question-base';
-import { QuestionHeader } from './question-header';
-import { QuestionParagraph } from './question-paragraph';
-import { QuestionTextbox } from './question-textbox';
-import { QuestionTextarea } from './question-textarea';
-import { QuestionDate } from './question-date';
-import { QuestionCheckboxGroup } from './question-checkbox-group';
+import { QuestionBase } from './types/question-base';
+import { QuestionHeader } from './types/question-header';
+import { QuestionParagraph } from './types/question-paragraph';
+import { QuestionTextbox } from './types/question-textbox';
+import { QuestionTextarea } from './types/question-textarea';
+import { QuestionDate } from './types/question-date';
+import { QuestionCheckboxGroup } from './types/question-checkbox-group';
 
 export const QuestionConstructorsMap = {
   header: QuestionHeader,

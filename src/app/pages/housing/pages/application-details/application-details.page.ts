@@ -7,7 +7,7 @@ import { QuestionsService } from '../../questions/questions.service';
 import { ApplicationsService } from '../../applications/applications.service';
 
 import { Application } from '../../applications/applications.model';
-import { QuestionBase } from '../../questions/question-base';
+import { QuestionBase } from '../../questions/types/question-base';
 
 @Component({
   selector: 'st-application-details',
