@@ -10,14 +10,15 @@ export class StHeaderComponent implements OnInit {
   @Input() title: string;
   @Input() placeholder: string;
   @Input() backButtonTitle: string = 'Back';
+  @Input() backButtonIcon: string | null = null;
   @Input() isToolbarShow: boolean = false;
   @Input() isSubToolbarShow: boolean = false;
   @Input() isTitleShow: boolean = false;
   @Output() onSearchedValue = new EventEmitter<string>();
 
-  constructor(private keyboard: Keyboard) {}
+  constructor(private keyboard: Keyboard) { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   onInputChanged(event) {
     this.onSearchedValue.emit(event.target.value);

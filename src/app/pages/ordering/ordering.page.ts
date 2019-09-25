@@ -20,14 +20,6 @@ export class OrderingPage implements OnInit {
     this.merchantList$ = this.merchantListService.menuMerchants$;
   }
 
-  menuOrderingRedirect(path: any) {
-    console.log(this.router);
-    console.log(path);
-    
-    
-    this.router.navigate(['ordering', `${path}`], { skipLocationChange: true });
-  }
-
   merchantClickHandler(id: string) {
     console.log(`Merchant Clicked - Merch Id: ${id}`);
   }

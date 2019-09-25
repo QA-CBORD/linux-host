@@ -11,4 +11,4 @@ const sharedModules = [PipesModule, DirectivesModule, UiComponentsModule, Reacti
   imports: [CommonModule, ...sharedModules],
   exports: [...sharedModules],
 })
-export class SharedModule {}
+export class SharedModule { }

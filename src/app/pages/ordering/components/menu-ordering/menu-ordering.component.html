@@ -1,14 +1,14 @@
 <div class="menu__sub-navigation">
-  <div class="menu__nav-item-wrapper" (click)="onClickItem(localRouting.recentOrders)">
+  <div class="menu__nav-item-wrapper" (click)="goToPage(localRouting.recentOrders)">
     <img src="./assets/icon/recents.svg" alt="recent orders" />
     <div class="menu__nav-item-content">Recent Orders</div>
   </div>
-  <div class="menu__nav-item-wrapper" (click)="onClickItem(localRouting.savedAddresses)">
+  <div class="menu__nav-item-wrapper" (click)="goToPage(localRouting.savedAddresses)">
     <img src="./assets/icon/address-marker.svg" alt="saved addresses" />
 
     <div class="menu__nav-item-content">Saved Addresses</div>
   </div>
-  <div class="menu__nav-item-wrapper" (click)="onClickItem(localRouting.favoriteMerchants)">
+  <div class="menu__nav-item-wrapper" (click)="goToPage(localRouting.favoriteMerchants)">
     <img src="./assets/icon/favorite.svg" alt="favorites" />
     <div class="menu__nav-item-content">Favorites</div>
   </div>

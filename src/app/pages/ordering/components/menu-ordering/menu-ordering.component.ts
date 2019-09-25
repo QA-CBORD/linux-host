@@ -1,6 +1,7 @@
-import { Component, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 import { LOCAL_ROUTING } from '../../ordering.config';
+import { NAVIGATE } from '../../../../app.global';
 
 @Component({
   selector: 'st-menu-ordering',
@@ -9,13 +10,12 @@ import { LOCAL_ROUTING } from '../../ordering.config';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MenuOrderingComponent {
-  @Output('redirect') redirect: EventEmitter<string> = new EventEmitter<string>();
 
   localRouting = LOCAL_ROUTING;
 
-  constructor(private readonly router: Router) {}
+  constructor(private readonly router: Router) { }
 
-  onClickItem(pageRoute: string) {
-    this.redirect.emit(pageRoute);
+  goToPage(pageRoute: string) {
+    this.router.navigate([NAVIGATE.ordering, pageRoute], { skipLocationChange: true });
   }
 }

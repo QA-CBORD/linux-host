@@ -1,7 +1,7 @@
 <ion-header class="st-header" no-border>
   <ion-toolbar mode="ios" class="st-header__nav-toolbar" *ngIf="isToolbarShow">
     <ion-buttons slot="start">
-      <ion-back-button class="st-header__back-btn" color="dark" [text]="backButtonTitle" mode="ios"></ion-back-button>
+      <ion-back-button class="st-header__back-btn" color="dark" [text]="backButtonTitle" [icon]="backButtonIcon" mode="ios"></ion-back-button>
     </ion-buttons>
     <ion-title class="st-header__title" *ngIf="isTitleShow">{{ title }}</ion-title>
   </ion-toolbar>
