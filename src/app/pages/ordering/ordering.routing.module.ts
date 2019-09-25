@@ -13,10 +13,19 @@ const routes: Route[] = [
     resolve: {
       data: OrderingResolver,
     },
+    children: [],
   },
   {
-    path: `${LOCAL_ROUTING.ordersInfo}/:destinationPage`,
-    loadChildren: './pages/nav-modal-page/nav-modal.module#NavModalModule',
+    path: LOCAL_ROUTING.recentOrders,
+    loadChildren: './pages/recent-orders/recent-orders.module#RecentOrdersModule',
+  },
+  {
+    path: LOCAL_ROUTING.savedAddresses,
+    loadChildren: './pages/saved-addresses/saved-addresses.module#SavedAddressesModule',
+  },
+  {
+    path: LOCAL_ROUTING.favoriteMerchants,
+    loadChildren: './pages/favorite-merchants/favorite-merchants.module#FavoriteMerchantsModule',
   },
 ];
 

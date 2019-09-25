@@ -1,21 +1,22 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { FilterMenuComponent } from './filter-menu.component';
+import { FavoriteMerchantsComponent } from './favorite-merchants.component';
 
-describe('FilterMenuComponent', () => {
-  let component: FilterMenuComponent;
-  let fixture: ComponentFixture<FilterMenuComponent>;
+describe('FavoriteMerchantsComponent', () => {
+  let component: FavoriteMerchantsComponent;
+  let fixture: ComponentFixture<FavoriteMerchantsComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [FilterMenuComponent],
+      declarations: [ FavoriteMerchantsComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    }).compileComponents();
+    })
+    .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(FilterMenuComponent);
+    fixture = TestBed.createComponent(FavoriteMerchantsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

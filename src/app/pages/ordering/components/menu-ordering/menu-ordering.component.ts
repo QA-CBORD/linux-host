@@ -1,9 +1,6 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
-
-import { NAVIGATE } from 'src/app/app.global';
 import { LOCAL_ROUTING } from '../../ordering.config';
-import { OrderPageNames } from '../../pages/nav-modal-page/nav-modal.config';
 
 @Component({
   selector: 'st-menu-ordering',
@@ -12,13 +9,13 @@ import { OrderPageNames } from '../../pages/nav-modal-page/nav-modal.config';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MenuOrderingComponent {
-  orderPageNames = OrderPageNames; // so it can be accesed in the template
+  @Output('redirect') redirect: EventEmitter<string> = new EventEmitter<string>();
+
+  localRouting = LOCAL_ROUTING;
 
   constructor(private readonly router: Router) {}
 
-  async openModalPage(titlePage: OrderPageNames): Promise<void> {
-    this.router.navigate([`${NAVIGATE.ordering}/${LOCAL_ROUTING.ordersInfo}/${titlePage}`], {
-      skipLocationChange: true,
-    });
+  onClickItem(pageRoute: string) {
+    this.redirect.emit(pageRoute);
   }
 }

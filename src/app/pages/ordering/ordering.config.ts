@@ -1,5 +1,7 @@
 export enum LOCAL_ROUTING {
-  ordersInfo = 'orders-info',
+  recentOrders = 'recent-orders',
+  favoriteMerchants = 'favorite-merchants',
+  savedAddresses = 'saved-addresses'
 }
 export enum MerchantSearchOptionName {
   OPEN_NOW = 'open_now', /// 1/0 - omit to return all

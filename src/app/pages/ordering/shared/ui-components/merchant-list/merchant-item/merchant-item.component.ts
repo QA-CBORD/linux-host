@@ -24,11 +24,6 @@ export class MerchantItemComponent {
     return `./assets/icon/${star}.svg`;
   }
 
-  itemClickTest(){
-    console.log("Click TEst");
-
-  }
-
   /// there is a better way, this is temporary (Oleksii, Oleh)
   getOrderTypes(): string {
     if (!this.merchantInfo.orderTypes) {
@@ -37,11 +32,11 @@ export class MerchantItemComponent {
 
     if (this.merchantInfo.orderTypes.pickup) {
       if (this.merchantInfo.orderTypes.delivery) {
-        return 'PICKUP & DELIVERY';
+        return 'Pickup & Delivery';
       }
-      return 'PICKUP';
+      return 'Pickup';
     } else if (this.merchantInfo.orderTypes.delivery) {
-      return 'DELIVERY';
+      return 'Delivery';
     }
 
     return '';
