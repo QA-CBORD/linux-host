@@ -1,3 +1,13 @@
-<p>
-  order-address-item works!
-</p>
+<ion-item detail (click)="itemSelected()" button="true">
+  <ion-icon 
+    class="item-icon__def"
+    [attr.alt]="iconAlt"
+    [src]="iconSrc" 
+    [name]="iconName" 
+    (click)="itemSelected()"></ion-icon>
+
+  <ion-label class="st-label">
+    <h3 class="title">{{ line1 }} </h3>
+    <p class="sub-title" *ngIf="line2">{{ line2 }}</p>
+  </ion-label>
+</ion-item>
