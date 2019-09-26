@@ -1,4 +1,4 @@
 
-export enum LOCAL_SETTINGS {
-    
+export enum SYSTEM_SETTINGS_LIST {
+    FEATURE = "get.feature"
 }

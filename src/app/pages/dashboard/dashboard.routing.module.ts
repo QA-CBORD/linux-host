@@ -1,3 +1,4 @@
+import { DashboardPageResolver } from './resolvers/dashboard.resolver';
 import { NgModule } from '@angular/core';
 import { Route, RouterModule } from '@angular/router';
 import { DashboardPage } from './dashboard.page';
@@ -6,9 +7,9 @@ const routes: Route[] = [
   {
     path: '',
     component: DashboardPage,
-    // resolve: {
-    //   data: AccountsPageResolver,
-    // },
+    resolve: {
+      data: DashboardPageResolver,
+    },
   },
 
 ];
