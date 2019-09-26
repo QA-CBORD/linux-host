@@ -119,25 +119,27 @@
                 idd="lowBalanceAmount"
                 class="deposit-form__label"
         >
-            <ng-container role="options" *ngFor="let account of sourceAccounts; trackBy: trackByAccountId">
+            <ng-container role="options">
 
-                <ng-container *ngIf="isBillMeAccount(account); then billMe; else creditCard"></ng-container>
+                <ng-container *ngFor="let account of sourceAccounts; trackBy: trackByAccountId">
 
-                <ng-template #billMe>
-                    <ion-select-option
-                            [value]="account"
-                            *ngIf="(isBillMePaymentTypesEnabled$ | async)">
-                        Bill Me
-                    </ion-select-option>
-                </ng-template>
+                    <ng-container *ngIf="account === paymentTypes.BILLME; then billMe; else creditCard"></ng-container>
 
-                <ng-template #creditCard>
-                    <ion-select-option [value]="account">
-                        {{ account.accountTender | creditCardType }} ending in
-                        {{ account.lastFour }}
-                    </ion-select-option>
+                    <ng-template #billMe>
+                        <ion-select-option [value]="account">
+                            Bill Me
+                        </ion-select-option>
+                    </ng-template>
 
-                </ng-template>
+                    <ng-template #creditCard>
+                        <ion-select-option [value]="account">
+                            {{ account.accountTender | creditCardType }} ending in
+                            {{ account.lastFour }}
+                        </ion-select-option>
+                    </ng-template>
+
+                </ng-container>
+
             </ng-container>
 
             <ng-container role="error">
