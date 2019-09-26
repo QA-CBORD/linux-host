@@ -1,7 +1,11 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 
 import { MerchantInfo } from '../../models';
-import { ActionSheetController } from '@ionic/angular';
+import { ActionSheetController, ModalController } from '@ionic/angular';
+import { Router } from '@angular/router';
+import { NAVIGATE } from 'src/app/app.global';
+import { LOCAL_ROUTING } from '../../../ordering.config';
+import { OrderOptionsActionSheetComponent } from '../order-options.action-sheet/order-options.action-sheet.component';
 
 @Component({
   selector: 'st-merchant-list',
@@ -13,8 +17,10 @@ export class MerchantListComponent {
   @Input() merchantList: MerchantInfo[];
 
   constructor(
-    public actionSheetController: ActionSheetController
-  ) { }
+    public actionSheetController: ActionSheetController,
+    private readonly router: Router,
+    private readonly modalController: ModalController
+  ) {}
 
   trackMerchantsById(index: number, { id }: MerchantInfo): string {
     return id;
@@ -22,43 +28,8 @@ export class MerchantListComponent {
 
   merchantClickHandler(event: string) {
     console.log(`Merchant Clicked - Merch Id: ${event}`);
-    const actionSheet = await this.actionSheetController.create({
-      header: 'Order Options',
-      buttons: [{
-        text: 'Delete',
-        role: 'destructive',
-        icon: 'trash',
-        handler: () => {
-          console.log('Delete clicked');
-        }
-      }, {
-        text: 'Share',
-        icon: 'share',
-        handler: () => {
-          console.log('Share clicked');
-        }
-      }, {
-        text: 'Play (open modal)',
-        icon: 'arrow-dropright-circle',
-        handler: () => {
-          console.log('Play clicked');
-        }
-      }, {
-        text: 'Favorite',
-        icon: 'heart',
-        handler: () => {
-          console.log('Favorite clicked');
-        }
-      }, {
-        text: 'Cancel',
-        icon: 'close',
-        role: 'cancel',
-        handler: () => {
-          console.log('Cancel clicked');
-        }
-      }]
-    });
-    await actionSheet.present();
+    // this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.orderOptions], { skipLocationChange: true });
+    this.openOrderOptions();
   }
 
   favouriteHandler(event: string) {
@@ -69,4 +40,15 @@ export class MerchantListComponent {
     console.log(`Location Pin Clicked - Merch Id: ${event}`);
   }
 
+  private async openOrderOptions() {
+    console.log(`Merchant Clicked - Merch Id: ${event}`);
+    const modal = await this.modalController.create({
+      component: OrderOptionsActionSheetComponent,
+      cssClass: 'order-options-action-sheet',
+      componentProps: {},
+    });
+    modal.onDidDismiss().then(() => {});
+
+    await modal.present();
+  }
 }

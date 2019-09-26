@@ -72,4 +72,14 @@ export class OrderingApiService extends BaseService {
       map(({ response }: MessageResponse<any>) => response.list)
     );
   }
+
+  getMerchantOrderSchedule(merchantId: string): Observable<any> {
+    const methodName = 'getMerchantOrderSchedule';
+    const postParams: ServiceParameters = { orderType: 0, startDate: null, endDate: null };
+
+    // getMerchantOrderSchedule(String sessionId, String merchantId, Integer orderType, Date startDate, Date endDate)
+    return this.httpRequestFull(this.serviceUrlOrdering, methodName, true, null, postParams).pipe(
+      map(({ response }: MessageResponse<any>) => response)
+    );
+  }
 }
