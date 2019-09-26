@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+import { TileInfo } from '../../../models';
 
 @Component({
   selector: 'st-tile',
@@ -6,6 +7,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./tile.component.scss'],
 })
 export class TileComponent implements OnInit {
+  @Input() tileInfo: TileInfo;
 
   constructor() { }
 

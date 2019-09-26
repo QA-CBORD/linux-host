@@ -21,7 +21,6 @@ const routes: Routes = [
     path: NAVIGATE.accounts,
     loadChildren: './pages/accounts/accounts.module#AccountsModule',
   },
-  { path: 'dashboard', loadChildren: './pages/dashboard/dashboard.module#DashboardPageModule' },
 ];
 
 @NgModule({

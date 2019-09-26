@@ -5,9 +5,10 @@ import { IonicModule } from '@ionic/angular';
 
 import { SharedModule } from './../../shared/shared.module';
 import { DashboardPage } from './dashboard.page';
+import { TileListComponent } from './components/tile-list';
 
 const imports = [CommonModule, SharedModule];
-const declarations = [DashboardPage];
+const declarations = [DashboardPage, TileListComponent];
 const providers = [];
 
 @NgModule({
