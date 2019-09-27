@@ -7,6 +7,7 @@ import { map, tap, switchMap } from 'rxjs/operators';
 import { ContentStringRequest } from 'src/app/core/model/content/content-string-request.model';
 import { SettingInfo } from 'src/app/core/model/configuration/setting-info.model';
 import { AccountsApiService } from './accounts.api.service';
+import { BillMeMapping } from '../../../core/model/settings/billme-mapping.model';
 
 @Injectable()
 export class DepositService {
@@ -48,13 +49,6 @@ export class DepositService {
     return settings.find(({ name: n }) => n === name);
   }
 
-  transformStringToArray(value: string): Array<string> {
-    if (!value.length) return [];
-    const result = JSON.parse(value);
-
-    return Array.isArray(result) ? result : [];
-  }
-
   filterAccountsByPaymentSystem(accounts: Array<UserAccount>): Array<UserAccount> {
     return accounts.filter(
       ({ paymentSystemType: type }) => type === PAYMENT_SYSTEM_TYPE.MONETRA || type === PAYMENT_SYSTEM_TYPE.USAEPAY
@@ -67,14 +61,14 @@ export class DepositService {
     );
   }
 
-  filterBillmeDestAccounts(billmeMappingArr: Array<string>, accounts: Array<UserAccount>): Array<UserAccount> {
-    const filterByBillme = (accountTender, purpose) =>
-      billmeMappingArr.find(billmeMap => billmeMap[purpose] === accountTender);
+  filterBillmeDestAccounts(billmeMappingArr: Array<BillMeMapping>, accounts: Array<UserAccount>): Array<UserAccount> {
+    const filterByBillme = (accountTender, key): BillMeMapping =>
+      billmeMappingArr.find(billmeMap => billmeMap[key] === accountTender);
 
-    return accounts.filter(({ accountTender }) => {
-      if (filterByBillme(accountTender, 'destination')) {
+    return accounts.filter(({ accountTender, depositAccepted }) => {
+      if (depositAccepted && filterByBillme(accountTender, 'destination')) {
         return accounts.filter(acc => {
-          if (acc.depositAccepted && filterByBillme(acc.accountTender, 'source')) {
+          if (filterByBillme(acc.accountTender, 'source')) {
             return acc;
           }
         });
@@ -82,7 +76,17 @@ export class DepositService {
     });
   }
 
-  sourceAccForBillmeDeposit(selectedAccount: UserAccount, billmeMappingArr: Array<string>): Observable<UserAccount> {
+  filterBillmeSourceAccounts(billmeMappingArr: Array<BillMeMapping>, accounts: Array<UserAccount>): Array<UserAccount> {
+    return billmeMappingArr.reduce((res, {source, destination}) => {
+      const sourceAcc = accounts.find(acc =>
+        acc.accountTender === source
+        && accounts.some(({depositAccepted : dAccepted, accountTender : tender}) => dAccepted && tender === destination)
+      );
+      return sourceAcc ? [...res, sourceAcc] : res;
+    }, [])
+  }
+
+  sourceAccForBillmeDeposit(selectedAccount: UserAccount, billmeMappingArr: Array<BillMeMapping>): Observable<UserAccount> {
     const filterByBillme = accTender => billmeMappingArr.find(billmeMap => billmeMap['destination'] === accTender);
 
     return of(filterByBillme(selectedAccount.accountTender)).pipe(

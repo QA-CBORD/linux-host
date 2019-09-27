@@ -13,8 +13,8 @@ import { FilterMenuComponent } from './filter/filter-menu/filter-menu.component'
 import { ConfirmDepositPopoverComponent } from './confirm-deposit-popover/confirm-deposit-popover.component';
 import { TimeRangePipe } from './filter/pipes/time-range.pipe';
 import { AccountNamePipe } from './filter/pipes/account-name.pipe';
-import { SharedModule } from 'src/app/shared/shared.module';
 import { DepositModalComponent } from './deposit-modal/deposit-modal.component';
+import { StPopoverLayoutModule } from '../../../../shared/ui-components/st-popover-layout/st-popover-layout.module';
 
 
 const declarations = [
@@ -33,7 +33,7 @@ const declarations = [
 
 @NgModule({
   declarations,
-  imports: [CommonModule, PipesModule, DirectivesModule, IonicModule, SharedModule],
+  imports: [CommonModule, PipesModule, DirectivesModule, IonicModule, StPopoverLayoutModule],
   exports: [...declarations, IonicModule],
   entryComponents: [FilterMenuComponent, ConfirmDepositPopoverComponent, DepositModalComponent],
 })

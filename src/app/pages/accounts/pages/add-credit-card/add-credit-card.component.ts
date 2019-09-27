@@ -94,7 +94,7 @@ export class AddCreditCardComponent implements OnInit {
       )
       .pipe(
         tap(() => this.loadingService.closeSpinner(),
-          () => this.loadingService.showSpinner()),
+          () => this.loadingService.closeSpinner()),
         take(1)
       )
       .subscribe(

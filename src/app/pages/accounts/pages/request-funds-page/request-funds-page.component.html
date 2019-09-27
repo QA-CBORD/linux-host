@@ -1,5 +1,5 @@
 <st-header title="Request funds" [isTitleShow]="true" [backButtonTitle]="'Back'" [isToolbarShow]="true"></st-header>
-<ion-content padding class="request-funds">
+<ion-content class="request-funds ion-padding">
     <ng-container *ngIf="(accounts$ | async).length; else empty">
         <p class="request-funds__info-msg">Email a friend or family member to request a deposit to your account.</p>
 
