@@ -13,7 +13,6 @@ const routes: Route[] = [
     resolve: {
       data: OrderingResolver,
     },
-    children: [],
   },
   {
     path: LOCAL_ROUTING.recentOrders,

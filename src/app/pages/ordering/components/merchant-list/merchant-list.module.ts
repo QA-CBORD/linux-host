@@ -3,10 +3,10 @@ import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 
 import { MerchantListComponent } from './merchant-list.component';
-import { SharedModule } from '../../../../../shared/shared.module';
-import { MerchantDistanceModule } from '../../pipes/merchant-distance/merchant-distance.module';
 import { MerchantItemComponent } from './merchant-item';
-import { OrderOptionsActionSheetModule } from '../order-options.action-sheet/order-options.action-sheet.module';
+import { SharedModule } from '@shared/shared.module';
+import { MerchantDistanceModule } from '@pages/ordering/shared/pipes/merchant-distance/merchant-distance.module';
+import { OrderOptionsActionSheetModule } from '@pages/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.module';
 
 const declarations = [MerchantListComponent, MerchantItemComponent];
 

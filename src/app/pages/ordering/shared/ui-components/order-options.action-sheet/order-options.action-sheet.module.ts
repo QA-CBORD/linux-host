@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { OrderOptionsActionSheetComponent } from './order-options.action-sheet.component';
 import { SharedModule } from '../../../../../shared/shared.module';
+import { DeliveryAddressesModalModule } from '../delivery-addresses.modal/delivery-addresses.modal.module';
 
 const declarations = [OrderOptionsActionSheetComponent];
 
@@ -10,6 +11,6 @@ const declarations = [OrderOptionsActionSheetComponent];
   declarations,
   exports: [OrderOptionsActionSheetComponent],
   entryComponents: [OrderOptionsActionSheetComponent],
-  imports: [CommonModule, IonicModule, SharedModule],
+  imports: [CommonModule, IonicModule, SharedModule, DeliveryAddressesModalModule],
 })
 export class OrderOptionsActionSheetModule {}

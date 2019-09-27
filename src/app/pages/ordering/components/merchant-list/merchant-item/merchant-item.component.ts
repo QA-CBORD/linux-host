@@ -1,6 +1,5 @@
 import { Component, Input, EventEmitter, Output, ChangeDetectionStrategy } from '@angular/core';
-
-import { MerchantInfo } from '../../../models';
+import { MerchantInfo } from '@pages/ordering/shared/models';
 
 @Component({
   selector: 'st-merchant-item',
@@ -10,7 +9,7 @@ import { MerchantInfo } from '../../../models';
 })
 export class MerchantItemComponent {
   @Input() merchantInfo: MerchantInfo;
-  @Output() merchantClick: EventEmitter<string> = new EventEmitter<string>();
+  @Output() merchantClick: EventEmitter<any> = new EventEmitter<any>();
   @Output() addToFav: EventEmitter<string> = new EventEmitter<string>();
   @Output() locationPin: EventEmitter<string> = new EventEmitter<string>();
 
@@ -24,33 +23,31 @@ export class MerchantItemComponent {
     return `./assets/icon/${star}.svg`;
   }
 
-  /// there is a better way, this is temporary (Oleksii, Oleh)
+  get orderTypes() {
+    return this.merchantInfo.orderTypes;
+  }
+
   getOrderTypes(): string {
-    if (!this.merchantInfo.orderTypes) {
+    if (!this.orderTypes || (!this.orderTypes.delivery && !this.orderTypes.pickup)) {
       return '';
     }
 
-    if (this.merchantInfo.orderTypes.pickup) {
-      if (this.merchantInfo.orderTypes.delivery) {
-        return 'Pickup & Delivery';
-      }
-      return 'Pickup';
-    } else if (this.merchantInfo.orderTypes.delivery) {
-      return 'Delivery';
+    if (this.orderTypes.delivery && this.orderTypes.pickup) {
+      return 'Pickup & Delivery';
     }
 
-    return '';
+    return this.orderTypes.delivery ? 'Delivery' : 'Pickup';
   }
 
-  triggerMerchantClick() {
-    this.merchantClick.emit(this.merchantInfo.id);
+  triggerMerchantClick({ id, orderTypes }) {
+    this.merchantClick.emit({ id, orderTypes });
   }
 
-  triggerFavourite() {
-    this.addToFav.emit(this.merchantInfo.id);
+  triggerFavourite(id) {
+    this.addToFav.emit(id);
   }
 
-  triggerLocationPin() {
-    this.locationPin.emit(this.merchantInfo.id);
+  triggerLocationPin(id) {
+    this.locationPin.emit(id);
   }
 }

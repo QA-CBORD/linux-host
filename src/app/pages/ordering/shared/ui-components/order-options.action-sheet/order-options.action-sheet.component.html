@@ -1,8 +1,8 @@
 <div class="order-options">
   <h1 class="order-options__title">Order Options</h1>
   <ion-list>
-    <div class="order-options__radio-group-container">
-      <ion-radio-group mode="md" class="order-options__radio-group">
+    <div class="order-options__radio-group-container" *ngIf="orderTypes.delivery && orderTypes.pickup">
+      <ion-radio-group mode="md" class="order-options__radio-group" (ionChange)="onRadioGroupChanged($event)">
         <ion-item lines="none" class="order-options__radio-container">
           <ion-label class="order-options__radio-label">Pickup</ion-label>
           <ion-radio slot="start" value="pickup" checked class="order-options__radio-item"></ion-radio>
@@ -14,9 +14,9 @@
         </ion-item>
       </ion-radio-group>
     </div>
-    <ion-item detail="true" lines="full">
+    <ion-item detail="true" lines="full" (click)="openDeliveryAddressesModal()">
       <div class="order-options__select-container">
-        <div class="order-options__select-label">PICKUP ADDRESS</div>
+        <div class="order-options__select-label">{{ orderTypes.pickup ? 'PICKUP' : 'DELIVERY' }} ADDRESS</div>
         <div class="order-options__select-value">
           <img width="16" src="./assets/icon/location-pin.svg" alt="pin" />290 Summer Street, Boston
         </div>
@@ -24,15 +24,14 @@
     </ion-item>
     <ion-item detail="true" lines="full">
       <div class="order-options__select-container">
-        <div class="order-options__select-label">
-          PICKUP TIME
+        <div class="order-options__select-label">{{ orderTypes.pickup ? 'PICKUP' : 'DELIVERY' }} TIME</div>
+        <div class="order-options__select-value" (click)="openPicker()">
+          <img width="16" src="./assets/icon/time.svg" alt="time" />ASAP
         </div>
-        <div class="order-options__select-value">ASAP</div>
       </div>
     </ion-item>
   </ion-list>
 
-  <!-- <ion-datetime displayFormat="DDDD MMM D, YYYY" min="2005" max="2016" value="2008-09-02"></ion-datetime> -->
   <ion-button expand="block" class="order-options__button" shape="round">
     set order options
   </ion-button>

@@ -31,7 +31,7 @@ export class OrderingApiService extends BaseService {
     const methodName = 'getMenuMerchants';
     return this.coords.getCoords().pipe(
       switchMap((geoData: GeoCoordinates) => {
-        if (geoData) {
+        if (geoData && geoData.latitude !== null && geoData.longitude !== null) {
           searchOptions.addSearchOption({ key: MerchantSearchOptionName.LATITUDE, value: geoData.latitude });
           searchOptions.addSearchOption({ key: MerchantSearchOptionName.LONGITUDE, value: geoData.longitude });
         }
@@ -73,9 +73,9 @@ export class OrderingApiService extends BaseService {
     );
   }
 
-  getMerchantOrderSchedule(merchantId: string): Observable<any> {
+  getMerchantOrderSchedule(merchantId: string, orderType: number): Observable<any[]> {
     const methodName = 'getMerchantOrderSchedule';
-    const postParams: ServiceParameters = { orderType: 0, startDate: null, endDate: null };
+    const postParams: ServiceParameters = { merchantId, orderType, startDate: null, endDate: null };
 
     // getMerchantOrderSchedule(String sessionId, String merchantId, Integer orderType, Date startDate, Date endDate)
     return this.httpRequestFull(this.serviceUrlOrdering, methodName, true, null, postParams).pipe(

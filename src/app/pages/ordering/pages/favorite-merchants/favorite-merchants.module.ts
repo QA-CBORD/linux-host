@@ -6,7 +6,7 @@ import { FavoriteMerchantsComponent } from './favorite-merchants.component';
 import { FavoriteMerchantsRoutingModule } from './favorite-merchants.routing.module';
 import { FavoriteMerhantsResolver } from './resolvers/favorite-merchants.resolver';
 import { FavoriteMerhantsService } from './services/favorite-merhants.service';
-import { MerchantListModule } from '@pages/ordering/shared/ui-components/merchant-list/merchant-list.module';
+import { MerchantListModule } from '@pages/ordering/components/merchant-list/merchant-list.module';
 
 const imports = [CommonModule, SharedModule, IonicModule, FavoriteMerchantsRoutingModule, MerchantListModule];
 const declarations = [FavoriteMerchantsComponent];

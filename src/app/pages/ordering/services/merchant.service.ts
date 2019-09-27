@@ -89,4 +89,8 @@ export class MerchantService {
       tap(recentOrders => (this._recentOrders = recentOrders))
     );
   }
+
+  getMerchantOrderSchedule(merchantId: string, orderType: number): Observable<any[]> {
+    return this.orderingApiService.getMerchantOrderSchedule(merchantId, orderType);
+  }
 }

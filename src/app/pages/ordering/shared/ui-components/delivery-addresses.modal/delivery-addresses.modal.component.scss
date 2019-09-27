@@ -1,0 +1,11 @@
+@import 'tools';
+
+.delivery-address {
+  &__header {
+    border-bottom: 1px solid $color-whisper;
+  }
+
+  &__title {
+    @include font-nunito-heavy(20px);
+  }
+}
