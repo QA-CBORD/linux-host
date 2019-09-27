@@ -1,9 +1,8 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
-import { PopoverController, ToastController } from '@ionic/angular';
-import { Router } from '@angular/router';
+import { NavController, PopoverController, ToastController } from '@ionic/angular';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AddCreditCardService } from './services/add-credit-card.service';
-import { NAVIGATE } from 'src/app/app.global';
 import { SuccessPopoverComponent } from './components/success-popover/success-popover.component';
 import { LoadingService } from 'src/app/core/service/loading/loading.service';
 import { Subscription } from 'rxjs';
@@ -28,7 +27,9 @@ export class AddCreditCardComponent implements OnInit {
     private readonly popoverCtrl: PopoverController,
     private readonly router: Router,
     private readonly toastController: ToastController,
-    private readonly loadingService: LoadingService
+    private readonly loadingService: LoadingService,
+    private readonly route: ActivatedRoute,
+    private readonly nav: NavController,
   ) {}
 
   ngOnInit() {
@@ -118,7 +119,7 @@ export class AddCreditCardComponent implements OnInit {
       backdropDismiss: true,
     });
 
-    popover.onDidDismiss().then(() => this.router.navigate([NAVIGATE.accounts, LOCAL_ROUTING.addFunds], { skipLocationChange: true }));
+    popover.onDidDismiss().then(() => this.nav.pop());
 
     return await popover.present();
   }

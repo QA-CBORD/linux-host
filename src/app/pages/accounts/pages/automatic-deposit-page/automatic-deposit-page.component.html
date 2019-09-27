@@ -3,10 +3,10 @@
     <h1 class="content__header">Automatic Deposit Type</h1>
     <st-deposit-type-nav
             [activeType]="autoDepositSettings?.active ? autoDepositSettings?.autoDepositType : autoDepositTypes.automaticDepositOff"
-            (onTypeChanged)="onTypeChangedHandler($event)"
+            (onTypeChanged)="onDepositTypeChangedHandler($event)"
     ></st-deposit-type-nav>
 
-    <form class="deposit-form" novalidate *ngIf="automaticDepositForm" [formGroup]="automaticDepositForm">
+    <form class="deposit-form" novalidate *ngIf="formHasBeenPrepared | async" [formGroup]="automaticDepositForm">
         <ng-container *ngIf="activeType === autoDepositTypes.timeBased" [ngTemplateOutlet]="timeBased"></ng-container>
 
         <ng-template #lowBalance>
@@ -140,6 +140,10 @@
 
                 </ng-container>
 
+                <ion-select-option *ngIf="isCreditPaymentTypeEnabled$ | async" [value]="'addCC'">
+                    Add credit card
+                </ion-select-option>
+
             </ng-container>
 
             <ng-container role="error">
@@ -208,6 +212,7 @@
             <st-input-floating-label
                     [control]="amountToDeposit"
                     [formControlName]="controlNames.amountToDeposit"
+                    [isError]="amountToDeposit.invalid && amountToDeposit.touched"
                     title="enter amount to deposit"
                     class="deposit-form__label"
                     type="number"
