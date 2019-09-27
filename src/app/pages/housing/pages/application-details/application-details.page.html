@@ -29,7 +29,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content class="ion-padding">
   <form
     *ngFor="let page of (pages$ | async); last as lastPage; first as firstPage"
     [formGroup]="page.form"

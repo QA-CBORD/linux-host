@@ -12,6 +12,7 @@
       [formControlName]="question.name"
       [title]="question.label"
       type="text"
+      class="question__item"
       [idd]="question.name"
       [label]="question.label"
     >
@@ -27,6 +28,7 @@
       [idd]="question.name"
       [label]="question.label"
       title="Type your message here..."
+      class="question__item"
       rows="3"
     >
       <p class="request-funds__control-error-msg">
@@ -34,7 +36,7 @@
       </p>
     </st-textarea-floating-label>
 
-    <ion-item *ngSwitchCase="'date'">
+    <ion-item *ngSwitchCase="'date'" class="question__item">
       <ion-label>{{ question.label }}</ion-label>
       <ion-datetime displayFormat="MMM/DD/YYYY" placeholder="Select Date"></ion-datetime>
     </ion-item>
@@ -48,6 +50,7 @@
       [title]="question.label"
       [label]="question.label"
       [idd]="question.name"
+      class="question__item"
     >
       <ng-container role="options">
         <ion-select-option *ngFor="let option of question.values" [value]="option.name">
@@ -62,12 +65,12 @@
       </ng-container>
     </st-select-floating-label>
 
-    <ng-container *ngSwitchCase="'checkbox-group'">
+    <div *ngSwitchCase="'checkbox-group'" class="question__item">
       <ion-item [formArrayName]="question.name" *ngFor="let item of question.values; index as idx">
         <ion-checkbox color="primary" [checked]="question.selected" [formControlName]="idx" slot="start"></ion-checkbox>
         <ion-label>{{ question.label }}</ion-label>
       </ion-item>
-    </ng-container>
+    </div>
 
     <div *ngSwitchDefault>{{ question.label }}</div>
   </ng-container>
