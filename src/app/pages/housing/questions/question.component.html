@@ -1,6 +1,8 @@
 <div [formGroup]="parentGroup">
   <ng-container [ngSwitch]="question.type">
-    <h3 *ngSwitchCase="'header'">{{ question.label }}</h3>
+    <ng-container *ngSwitchCase="'header'">
+      <div [innerHTML]="getHeaderHTML(question)"></div>
+    </ng-container>
 
     <p *ngSwitchCase="'paragraph'">{{ question.label }}</p>
 
@@ -10,7 +12,7 @@
       [formControlName]="question.name"
       [title]="question.label"
       type="text"
-      idd="question.name"
+      [idd]="question.name"
       [label]="question.label"
     >
       <p class="deposit-form__control-error-msg">
@@ -18,10 +20,54 @@
       </p>
     </st-input-floating-label>
 
+    <st-textarea-floating-label
+      *ngSwitchCase="'textarea'"
+      [control]="parentGroup.get(question.name)"
+      [formControlName]="question.name"
+      [idd]="question.name"
+      [label]="question.label"
+      title="Type your message here..."
+      rows="3"
+    >
+      <p class="request-funds__control-error-msg">
+        Error
+      </p>
+    </st-textarea-floating-label>
+
     <ion-item *ngSwitchCase="'date'">
       <ion-label>{{ question.label }}</ion-label>
       <ion-datetime displayFormat="MMM/DD/YYYY" placeholder="Select Date"></ion-datetime>
     </ion-item>
+
+    <st-select-floating-label
+      *ngSwitchCase="'select'"
+      interface="action-sheet"
+      [formControlName]="question.name"
+      [control]="parentGroup.get(question.name)"
+      [interfaceOptions]="customActionSheetOptions"
+      [title]="question.label"
+      [label]="question.label"
+      [idd]="question.name"
+    >
+      <ng-container role="options">
+        <ion-select-option *ngFor="let option of question.values" [value]="option.name">
+          {{ option.label }}
+        </ion-select-option>
+      </ng-container>
+
+      <ng-container role="error">
+        <p class="deposit-form__control-error-msg">
+          Error
+        </p>
+      </ng-container>
+    </st-select-floating-label>
+
+    <ng-container *ngSwitchCase="'checkbox-group'">
+      <ion-item [formArrayName]="question.name" *ngFor="let item of question.values; index as idx">
+        <ion-checkbox color="primary" [checked]="question.selected" [formControlName]="idx" slot="start"></ion-checkbox>
+        <ion-label>{{ question.label }}</ion-label>
+      </ion-item>
+    </ng-container>
 
     <div *ngSwitchDefault>{{ question.label }}</div>
   </ng-container>

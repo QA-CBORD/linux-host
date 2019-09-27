@@ -1,5 +1,6 @@
 export interface QuestionBaseOptions {
   type?: string;
+  subtype?: string;
   label?: string;
   name?: string;
   required?: boolean;
@@ -8,6 +9,7 @@ export interface QuestionBaseOptions {
 
 export class QuestionBase implements QuestionBaseOptions {
   type: string;
+  subtype: string;
   label: string;
   name: string;
   required: boolean;
@@ -15,6 +17,7 @@ export class QuestionBase implements QuestionBaseOptions {
 
   constructor(options: QuestionBaseOptions = {}) {
     this.type = options.type;
+    this.subtype = options.subtype || options.type;
     this.label = options.label || '';
     this.name = options.name || '';
     this.required = !!options.required;

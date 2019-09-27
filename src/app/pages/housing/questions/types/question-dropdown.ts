@@ -1,30 +1,21 @@
-export class QuestionDropdownOptions {
-    label: string;
-    value: string;
-    selected: boolean;
+import { QuestionBase, QuestionBaseOptions } from './question-base';
 
-    constructor(label: string, value: string, selected: boolean) {
-        this.label = label;
-        this.value = value;
-        this.selected = selected;
-    }
+export interface QuestionDropdownValue {
+  label: string;
+  value: string;
+  selected?: boolean;
 }
 
-export class QuestionDropdown {
-    controlType =  'dropdown';
-    options: QuestionDropdownOptions[] = [];
+export interface QuestionDropdownOptions extends QuestionBaseOptions {
+  values?: QuestionDropdownValue[];
+}
 
-    constructor(dropdownOptions) {
-        for (let i = 0; i < dropdownOptions.values.length; i++) {
-            this.options.push(new QuestionDropdownOptions(
-                dropdownOptions.values[i].label,
-                dropdownOptions.values[i].value,
-                dropdownOptions.values[i].selected === undefined ? false : true));
-        }
-        // this.options.push(dropdownOptions.values.flatMap(
-        //     opt => new DropDownQuestionOptions(
-        //         opt.label,
-        //         opt.value,
-        //         opt.selected === undefined ? false : opt.selected)));
-    }
+export class QuestionDropdown extends QuestionBase {
+  values: QuestionDropdownValue[];
+
+  constructor(options: QuestionDropdownOptions = {}) {
+    super(options);
+
+    this.values = options.values || [];
+  }
 }
