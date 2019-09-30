@@ -1,4 +1,8 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+} from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject, iif, Observable, of, Subscription, zip } from 'rxjs';
 import { SettingService } from '../../services/setting.service';
@@ -34,13 +38,13 @@ import { BillMeMapping } from '../../../../core/model/settings/billme-mapping.mo
   styleUrls: ['./automatic-deposit-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
+export class AutomaticDepositPageComponent {
   private readonly sourceSubscription: Subscription = new Subscription();
   private paymentMethodAccount: UserAccount | PAYMENT_TYPE;
   private destinationAccount: UserAccount;
   private activePaymentType: PAYMENT_TYPE;
-  private wasInited: boolean = false;
 
+  showContent: boolean;
   formHasBeenPrepared: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   automaticDepositForm: FormGroup;
   activeType: number;
@@ -64,28 +68,21 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
     private readonly autoDepositService: AutoDepositService,
     private readonly popoverCtrl: PopoverController,
     private readonly router: Router,
-    private readonly toastController: ToastController
+    private readonly toastController: ToastController,
+    private readonly cdRef: ChangeDetectorRef,
+
   ) {
   }
 
-  ngOnInit() {
-    this.getAccounts();
-    this.wasInited = true;
-  }
-
-  ngOnDestroy() {
-    this.sourceSubscription.unsubscribe();
-  }
-
   ionViewWillEnter() {
-    if (!this.automaticDepositForm && this.wasInited) {
-      this.getAccounts();
-      this.updateFormStateByDepositType(this.activeType)
-    }
+    this.showContent = true;
+    this.cdRef.detectChanges();
+    this.getAccounts();
   }
 
   ionViewWillLeave() {
     this.deleteForm();
+    this.showContent = false;
     this.sourceSubscription.unsubscribe();
   }
 
@@ -347,8 +344,8 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
       )
       .subscribe(({ data: { accounts, depositSettings } }) => {
         this.initPredefinedAccounts(depositSettings, accounts);
-        this.initForm();
         this.defineDestAccounts(this.paymentMethodAccount);
+        this.autoDepositSettings.active && this.initForm();
       });
 
     this.sourceSubscription.add(subscription);
