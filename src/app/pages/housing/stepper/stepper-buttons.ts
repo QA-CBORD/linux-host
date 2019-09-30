@@ -5,12 +5,11 @@ import { StepperComponent } from './stepper.component';
 @Directive({
   selector: 'button[stepperNext], ion-button[stepperNext]',
 })
-export class StepperNext {
+export class StepperNextDirective {
   constructor(public _stepper: StepperComponent) {}
 
   @HostListener('click')
-  _handleClick() {
-    console.log('next');
+  private _handleClick() {
     this._stepper.next();
   }
 }
@@ -18,12 +17,11 @@ export class StepperNext {
 @Directive({
   selector: 'button[stepperBack], ion-button[stepperBack]',
 })
-export class StepperBack {
+export class StepperBackDirective {
   constructor(public _stepper: StepperComponent) {}
 
   @HostListener('click')
-  _handleClick() {
-    console.log('back');
+  private _handleClick() {
     this._stepper.back();
   }
 }

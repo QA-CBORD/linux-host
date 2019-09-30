@@ -1,13 +1,14 @@
-<ul>
+<ul class="stepper__list" *ngIf="steps.length > 1">
   <li
     *ngFor="let step of steps; first as firstStep; last as lastStep; index as idx"
+    class="stepper__item"
     [ngClass]="{
-      active: selectedIndex === idx
+      'stepper__item--selected': selectedIndex === idx
     }"
   >
     <ng-container *ngIf="firstStep">First</ng-container>
-    <ng-container *ngIf="lastStep && !firstStep">Last</ng-container>
-    <ng-container *ngIf="!firstStep && !lastStep">{{ getStepLabel(step.label, idx) }}</ng-container>
+    <ng-container *ngIf="lastStep">Last</ng-container>
+    <ng-container *ngIf="!firstStep && !lastStep">{{ step.label || getStepLabel(idx) }}</ng-container>
   </li>
 </ul>
 

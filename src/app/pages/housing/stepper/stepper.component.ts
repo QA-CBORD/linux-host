@@ -70,8 +70,8 @@ export class StepperComponent {
     this._changeDetector.markForCheck();
   }
 
-  getStepLabel(label: string, index: number): string {
-    return label || STEPS_LABELS[index];
+  getStepLabel(index: number): string {
+    return STEPS_LABELS[index];
   }
 
   private _updateSelectedItemIndex(newIndex: number): void {

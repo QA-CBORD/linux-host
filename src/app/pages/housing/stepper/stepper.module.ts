@@ -3,10 +3,17 @@ import { CommonModule } from '@angular/common';
 
 import { StepperComponent } from './stepper.component';
 import { StepComponent } from './step/step.component';
-import { StepperNext, StepperBack } from './stepper-buttons';
+import { StepperNextDirective, StepperBackDirective } from './stepper-buttons';
+import { StepperFooterComponent } from './stepper-footer/stepper-footer.component';
 
 const imports = [CommonModule];
-const declarations = [StepperComponent, StepComponent, StepperNext, StepperBack];
+const declarations = [
+  StepperComponent,
+  StepComponent,
+  StepperNextDirective,
+  StepperBackDirective,
+  StepperFooterComponent,
+];
 
 @NgModule({
   imports,

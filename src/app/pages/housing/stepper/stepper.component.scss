@@ -1,0 +1,34 @@
+@import 'tools';
+
+.stepper__list {
+  padding: 0;
+  list-style: none;
+  display: flex;
+  justify-content: space-around;
+}
+
+.stepper__item {
+  color: $color-dim-gray;
+  position: relative;
+  padding-bottom: 15px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: $color-dim-gray;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+.stepper__item--selected {
+  color: $color-dodger-blue;
+
+  &::before {
+    background-color: $color-dodger-blue;
+  }
+}
