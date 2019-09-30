@@ -1,4 +1,11 @@
-<div>
-  {{ tileInfo.title }}
-</div>
+<!-- <div *ngIf="tileInfo">
+  {{tileInfo.title}}
+</div> -->
 
+<ion-item [button]="true" class="tile" (click)="handlePageNavigation()">
+  <ion-label>
+    <div class="tile">
+      <p class="tile__name">{{ tileInfo.title }}</p>
+    </div>
+  </ion-label>
+</ion-item>

@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { TileInfo } from '../../../models';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'st-tile',
@@ -9,8 +10,12 @@ import { TileInfo } from '../../../models';
 export class TileComponent implements OnInit {
   @Input() tileInfo: TileInfo;
 
-  constructor() { }
+  constructor(private readonly router: Router) { }
 
   ngOnInit() {}
+
+  private handlePageNavigation() {    
+    this.router.navigate([this.tileInfo.navigate], { skipLocationChange: true });
+  }
 
 }

@@ -1,7 +1,7 @@
-import { DashboardPageResolver } from './resolvers/dashboard.resolver';
 import { NgModule } from '@angular/core';
 import { Route, RouterModule } from '@angular/router';
 import { DashboardPage } from './dashboard.page';
+import { DashboardPageResolver } from './resolvers/dashboard.resolver';
 
 const routes: Route[] = [
   {

@@ -1,5 +1,8 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { TileInfo } from './models';
+import { NAVIGATE } from 'src/app/app.global';
+import { DashboardService } from './services/dashboard.service';
+import { SYSTEM_SETTING } from './dashboard.config';
 
 @Component({
   selector: 'st-dashboard.page',
@@ -10,15 +13,28 @@ import { TileInfo } from './models';
 export class DashboardPage implements OnInit {
   dashboardItems: TileInfo[] = [];
 
-  constructor() {
-    console.log("Dashboard page");
-    
+  constructor(private readonly dashService: DashboardService) {
   }
 
   ngOnInit() {
-    for (let i = 10; i > 0; i--) {
-      this.dashboardItems.push({ title: `Test ${i}` });
+    this.determineDashboardItems();
+  }
+
+  determineDashboardItems() {
+    if (this.checkSettingEnabled(SYSTEM_SETTING.SECURE_MESSAGING_ENABLED, 1)) {
+      this.dashboardItems.push({ title: 'Secure Messaging', navigate: NAVIGATE.secureMessage });
     }
-    console.log(this.dashboardItems);
+
+    if (this.checkSettingEnabled(SYSTEM_SETTING.REWARDS_ENABLED, 1)) {
+      this.dashboardItems.push({ title: 'Rewards', navigate: NAVIGATE.rewards });
+    }
+
+    if (this.checkSettingEnabled(SYSTEM_SETTING.MOBILE_ACCESS_ENABLED, 1)) {
+      this.dashboardItems.push({ title: 'Mobile Access', navigate: NAVIGATE.mobileAccess });
+    }
+  }
+
+  private checkSettingEnabled(settingName: SYSTEM_SETTING, checkValue: any): boolean {
+    return this.dashService.getSettingValueByName(settingName) == checkValue;
   }
 }

@@ -8,7 +8,7 @@ import { TileInfo } from '../../models';
 })
 export class TileListComponent implements OnInit {
 
-  @Input('tileInfoArray') tileInfo: TileInfo[];
+  @Input() tileInfoArray: TileInfo[] = [];
 
 
   constructor() { }

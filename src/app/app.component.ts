@@ -238,7 +238,7 @@ export class AppComponent implements OnDestroy {
       );
   }
 
-  private handlePageNavigation() {
+  private handlePageNavigation() {    
     this.router.navigate([this.destinationPage], { skipLocationChange: true });
   }
 
