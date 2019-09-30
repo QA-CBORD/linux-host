@@ -18,7 +18,7 @@ export class QuestionCheckboxGroup extends QuestionBase {
   constructor(options: QuestionCheckboxGroupOptions = {}) {
     super(options);
 
-    this.name = options.name || `checkboxgroup-${counter++}`;
+    this.name = options.name || `checkbox-group-${counter++}`;
     this.values = options.values || [];
   }
 }

@@ -10,6 +10,7 @@ import { QuestionTextarea } from './types/question-textarea';
 import { QuestionDate } from './types/question-date';
 import { QuestionDropdown } from './types/question-dropdown';
 import { QuestionCheckboxGroup, QuestionCheckboxGroupValue } from './types/question-checkbox-group';
+import { QuestionRadioGroup } from './types/question-readio-group';
 import { QuestionPage } from './questions.model';
 
 export const QuestionConstructorsMap = {
@@ -20,6 +21,7 @@ export const QuestionConstructorsMap = {
   date: QuestionDate,
   select: QuestionDropdown,
   'checkbox-group': QuestionCheckboxGroup,
+  'radio-group': QuestionRadioGroup,
 };
 
 @Injectable({

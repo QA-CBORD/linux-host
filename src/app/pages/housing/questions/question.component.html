@@ -72,6 +72,15 @@
       </ion-item>
     </div>
 
+    <div *ngSwitchCase="'radio-group'" class="question__item">
+      <ion-radio-group [formArrayName]="question.name">
+        <ion-item *ngFor="let item of question.values; index as idx">
+          <ion-label>{{ question.label }}</ion-label>
+          <ion-radio color="primary" [value]="item.value"></ion-radio>
+        </ion-item>
+      </ion-radio-group>
+    </div>
+
     <div *ngSwitchDefault>{{ question.label }}</div>
   </ng-container>
 </div>
