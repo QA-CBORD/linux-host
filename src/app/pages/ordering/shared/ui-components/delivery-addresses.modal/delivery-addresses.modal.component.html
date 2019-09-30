@@ -1,7 +1,7 @@
 <ion-header no-border class="delivery-address__header">
   <ion-toolbar mode="ios">
     <ion-buttons slot="start">
-      <ion-button (click)="onClickedDone()">
+      <ion-button mode="md" class="delivery-address__back-btn" (click)="onClickedDone()">
         <ion-icon name="close"></ion-icon>
       </ion-button>
     </ion-buttons>
@@ -10,7 +10,33 @@
 </ion-header>
 
 <ion-content>
-  <p>
-    delivery-addresses.modal works!
-  </p>
+  <ion-radio-group mode="md" class="delivery-address__radio-group" (ionChange)="onRadioGroupChanged($event)">
+    <ion-item lines="none" class="delivery-address__radio-container">
+      <ion-label class="delivery-address__radio-label">
+        <div class="delivery-address__radio-label-content">
+          <div class="delivery-address__radio-label-header">950 CBORD Drive</div>
+          <div class="delivery-address__radio-label-sub-header">Ithaca, NY</div>
+        </div>
+      </ion-label>
+      <ion-radio mode="md" slot="start" value="pickup" checked class="delivery-address__radio-item"></ion-radio>
+    </ion-item>
+
+    <ion-item lines="none" class="delivery-address__radio-container">
+      <ion-label class="delivery-address__radio-label">
+        <div class="delivery-address__radio-label-content">
+          <div class="delivery-address__radio-label-header">202 Main St.</div>
+          <div class="delivery-address__radio-label-sub-header">Ithaca, NY</div>
+        </div>
+      </ion-label>
+      <ion-radio mode="md" slot="start" value="delivery" class="delivery-address__radio-item"></ion-radio>
+    </ion-item>
+  </ion-radio-group>
 </ion-content>
+<ion-footer mode="md" class="delivery-address__footer">
+  <ion-button mode="md" expand="block" shape="round" fill="outline" class="delivery-address__add-new-address-btn">
+    add new address
+  </ion-button>
+  <ion-button mode="md" expand="block" shape="round" class="delivery-address__submit-btn">
+    set delivery address
+  </ion-button>
+</ion-footer>

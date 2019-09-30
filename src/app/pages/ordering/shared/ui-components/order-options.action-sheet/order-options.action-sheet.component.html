@@ -1,16 +1,16 @@
 <div class="order-options">
   <h1 class="order-options__title">Order Options</h1>
-  <ion-list>
+  <ion-list mode="md" class="order-options__list">
     <div class="order-options__radio-group-container" *ngIf="orderTypes.delivery && orderTypes.pickup">
       <ion-radio-group mode="md" class="order-options__radio-group" (ionChange)="onRadioGroupChanged($event)">
         <ion-item lines="none" class="order-options__radio-container">
           <ion-label class="order-options__radio-label">Pickup</ion-label>
-          <ion-radio slot="start" value="pickup" checked class="order-options__radio-item"></ion-radio>
+          <ion-radio mode="md" slot="start" value="pickup" checked class="order-options__radio-item"></ion-radio>
         </ion-item>
 
         <ion-item lines="none" class="order-options__radio-container">
           <ion-label class="order-options__radio-label">Delivery</ion-label>
-          <ion-radio slot="start" value="delivery" class="order-options__radio-item"></ion-radio>
+          <ion-radio mode="md" slot="start" value="delivery" class="order-options__radio-item"></ion-radio>
         </ion-item>
       </ion-radio-group>
     </div>
@@ -22,17 +22,17 @@
         </div>
       </div>
     </ion-item>
-    <ion-item detail="true" lines="full">
+    <ion-item detail="true" lines="full" (click)="openPicker()">
       <div class="order-options__select-container">
         <div class="order-options__select-label">{{ orderTypes.pickup ? 'PICKUP' : 'DELIVERY' }} TIME</div>
-        <div class="order-options__select-value" (click)="openPicker()">
+        <div class="order-options__select-value">
           <img width="16" src="./assets/icon/time.svg" alt="time" />ASAP
         </div>
       </div>
     </ion-item>
   </ion-list>
 
-  <ion-button expand="block" class="order-options__button" shape="round">
+  <ion-button mode="md" expand="block" class="order-options__button" shape="round">
     set order options
   </ion-button>
 </div>

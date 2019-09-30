@@ -14,4 +14,8 @@ export class DeliveryAddressesModalComponent implements OnInit {
   async onClickedDone() {
     await this.modalController.dismiss();
   }
+
+  onRadioGroupChanged({ target }) {
+    console.log(target.value);
+  }
 }

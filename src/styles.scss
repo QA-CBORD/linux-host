@@ -121,6 +121,7 @@
 
     .picker-toolbar {
       .picker-button {
+        color: #000;
         @include font-nunito-regular(16px);
       }
 
@@ -137,6 +138,12 @@
           @include font-nunito-heavy(20px);
         }
       }
+    }
+
+    .picker-opt.picker-opt-selected {
+      color: #000;
+      
+      @include font-nunito-heavy(20px);
     }
   }
 
