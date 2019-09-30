@@ -1,0 +1,16 @@
+<ul>
+  <li
+    *ngFor="let step of steps; first as firstStep; last as lastStep; index as idx"
+    [ngClass]="{
+      active: selectedIndex === idx
+    }"
+  >
+    <ng-container *ngIf="firstStep">First</ng-container>
+    <ng-container *ngIf="lastStep && !firstStep">Last</ng-container>
+    <ng-container *ngIf="!firstStep && !lastStep">{{ getStepLabel(step.label, idx) }}</ng-container>
+  </li>
+</ul>
+
+<ng-container *ngFor="let step of steps; index as idx">
+  <ng-container *ngIf="selectedIndex === idx" [ngTemplateOutlet]="step.content"></ng-container>
+</ng-container>

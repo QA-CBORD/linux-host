@@ -40,8 +40,6 @@ export class ApplicationDetailsPage implements OnInit {
           const questions: QuestionBase[] = this._questionsService.parseQuestions(application.applicationFormJson);
           const pages: QuestionPage[] = this._questionsService.splitByPages(questions);
 
-          console.log('PAGES', pages);
-
           this._questionsService.setPages(pages);
         })
       )

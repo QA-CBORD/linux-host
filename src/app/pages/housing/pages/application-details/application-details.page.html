@@ -30,19 +30,19 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <form
-    *ngFor="let page of (pages$ | async); last as lastPage; first as firstPage"
-    [formGroup]="page.form"
-    (ngSubmit)="handleSubmit()"
-  >
-    <st-question
-      *ngFor="let question of page.questions"
-      [parentGroup]="page.form"
-      [question]="question"
-    ></st-question>
+  <st-stepper>
+    <st-step *ngFor="let page of (pages$ | async); last as lastPage; first as firstPage">
+      <form [formGroup]="page.form" (ngSubmit)="handleSubmit()">
+        <st-question
+          *ngFor="let question of page.questions"
+          [parentGroup]="page.form"
+          [question]="question"
+        ></st-question>
 
-    <ion-button type="button" *ngIf="!lastPage && !firstPage">Next</ion-button>
-    <ion-button type="button" *ngIf="!firstPage">Back</ion-button>
-    <ion-button type="submit" *ngIf="lastPage">Submit</ion-button>
-  </form>
+        <ion-button type="button" *ngIf="!lastPage" stepperNext>Next</ion-button>
+        <ion-button type="button" *ngIf="!firstPage" stepperBack>Back</ion-button>
+        <ion-button type="submit" *ngIf="lastPage">Submit</ion-button>
+      </form>
+    </st-step>
+  </st-stepper>
 </ion-content>

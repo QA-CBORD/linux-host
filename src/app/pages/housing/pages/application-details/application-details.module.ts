@@ -5,10 +5,18 @@ import { IonicModule } from '@ionic/angular';
 
 import { ApplicationDetailsRoutingModule } from './application-details.routing.module';
 import { QuestionsModule } from '../../questions/questions.module';
+import { StepperModule } from '../../stepper/stepper.module';
 
 import { ApplicationDetailsPage } from './application-details.page';
 
-const imports = [CommonModule, ReactiveFormsModule, IonicModule, ApplicationDetailsRoutingModule, QuestionsModule];
+const imports = [
+  CommonModule,
+  ReactiveFormsModule,
+  IonicModule,
+  ApplicationDetailsRoutingModule,
+  QuestionsModule,
+  StepperModule,
+];
 const declarations = [ApplicationDetailsPage];
 
 @NgModule({
