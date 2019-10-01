@@ -4,7 +4,7 @@
       <ion-back-button defaultHref="/housing/dashboard"></ion-back-button>
     </ion-buttons>
 
-    <ion-title>{{ application?.applicationTitle }}</ion-title>
+    <ion-title *ngIf="(application$ | async) as application">{{ application.applicationTitle }}</ion-title>
   </ion-toolbar>
 
   <ion-toolbar>
@@ -40,6 +40,7 @@
         ></st-question>
 
         <st-stepper-footer>
+          <ion-button type="button" fill="clear" *ngIf="!firstPage" stepperBack>Back</ion-button>
           <ion-button
             [class.stepper-footer__button--right]="firstPage"
             fill="outline"
@@ -49,10 +50,9 @@
           >
             Next
           </ion-button>
-          <ion-button type="button" fill="clear" *ngIf="!firstPage" stepperBack>Back</ion-button>
-          <ion-button [class.stepper-footer__button--right]="firstPage" type="submit" *ngIf="lastPage"
-            >Submit</ion-button
-          >
+          <ion-button [class.stepper-footer__button--right]="firstPage" type="submit" *ngIf="lastPage">
+            Submit
+          </ion-button>
         </st-stepper-footer>
       </form>
     </st-step>

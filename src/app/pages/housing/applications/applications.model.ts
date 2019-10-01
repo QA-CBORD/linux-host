@@ -11,7 +11,8 @@ export class PatronApplication {
     public isApplicationAccepted: boolean,
     public isApplicationCanceled: boolean,
     public applicationTitle: string,
-    public applicationTerm: number
+    public applicationTerm: number,
+    public applicationFormJson: string
   ) {}
 }
 

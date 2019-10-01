@@ -1,4 +1,13 @@
-import { Component, ContentChildren, QueryList, Input, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
+import {
+  Component,
+  ContentChildren,
+  QueryList,
+  Input,
+  Output,
+  EventEmitter,
+  ChangeDetectorRef,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 
 import { StepComponent } from './step/step.component';
 
@@ -18,13 +27,14 @@ export const STEPS_LABELS = {
   6: 'Seventh',
   7: 'Eighth',
   8: 'Ninth',
-  9: 'Tenth'
+  9: 'Tenth',
 };
 
 @Component({
   selector: 'st-stepper',
   templateUrl: './stepper.component.html',
   styleUrls: ['./stepper.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StepperComponent {
   @ContentChildren(StepComponent) steps: QueryList<StepComponent>;

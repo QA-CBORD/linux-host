@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
@@ -7,7 +7,6 @@ import { QuestionsService } from '../../questions/questions.service';
 import { ApplicationsService } from '../../applications/applications.service';
 
 import { Application } from '../../applications/applications.model';
-import { QuestionBase } from '../../questions/types/question-base';
 import { QuestionPage } from '../../questions/questions.model';
 
 @Component({
@@ -17,15 +16,14 @@ import { QuestionPage } from '../../questions/questions.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ApplicationDetailsPage implements OnInit {
-  application: Application;
+  application$: Observable<Application>;
 
   pages$: Observable<QuestionPage[]>;
 
   constructor(
     private _route: ActivatedRoute,
     private _questionsService: QuestionsService,
-    private _applicationsService: ApplicationsService,
-    private _changeDetector: ChangeDetectorRef
+    private _applicationsService: ApplicationsService
   ) {}
 
   ngOnInit() {
@@ -33,25 +31,12 @@ export class ApplicationDetailsPage implements OnInit {
 
     this.pages$ = this._questionsService.getPages();
 
-    this._applicationsService
+    this.application$ = this._applicationsService
       .getApplicationById(applicationId)
-      .pipe(
-        tap((application: Application) => {
-          const questions: QuestionBase[] = this._questionsService.parseQuestions(application.applicationFormJson);
-          const pages: QuestionPage[] = this._questionsService.splitByPages(questions);
-
-          this._questionsService.setPages(pages);
-        })
-      )
-      .subscribe(this._handleSuccess.bind(this));
+      .pipe(tap((application: Application) => this._questionsService.parsePages(application)));
   }
 
   handleSubmit(): void {
     // Code to submit form.
-  }
-
-  private _handleSuccess(application: Application): void {
-    this.application = application;
-    this._changeDetector.markForCheck();
   }
 }

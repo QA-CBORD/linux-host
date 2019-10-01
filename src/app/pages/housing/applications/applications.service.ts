@@ -1,38 +1,95 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { map, tap, catchError } from 'rxjs/operators';
+import { map, tap, catchError, switchMap } from 'rxjs/operators';
 
 import { BASE_URL } from '../housing.config';
 
-import { generateApplications } from './applications.mock';
+import { HousingAuthService } from '../housing-auth/housing-auth.service';
+import { ApplicationsStateService } from './applications-state.service';
+
+import { generateApplications, generatePatronApplications } from './applications.mock';
 
 import { Response } from '../housing.model';
-import { Application } from './applications.model';
-
-const headers: HttpHeaders = new HttpHeaders({
-  Authorization:
-    'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpbnN0aXR1dGlvbl9pZCI6IjAiLCJ0b2tlbl92ZXJzaW9uIjoiMS4wIiwiaWRfdmFsdWUiOiI2NjY0NDQxOTgiLCJ0ZW1wX3BhdHJvbl9zayI6IjExNTYyIiwiaWRfZmllbGQiOiJob3VzaW5nX2lkIiwicm9sZSI6InBhdHJvbiIsIm5iZiI6MTU2OTI0OTkzNiwiZXhwIjoxNTY5MzM2MzM2LCJpYXQiOjE1NjkyNDk5MzZ9.Bcb_Myf8xvUvPggZI0OEDJMqSTY6w9dxbzm_BV6Up18',
-});
+import { Application, PatronApplication } from './applications.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ApplicationsService {
-  constructor(private _http: HttpClient) {}
+  constructor(
+    private _http: HttpClient,
+    private _authService: HousingAuthService,
+    private _applicationsStateService: ApplicationsStateService
+  ) {}
 
   private readonly _setupUrl: string = 'api/setup/v.1.0';
 
   private readonly _patronsUrl: string = 'api/patrons/v.1.0';
 
-  applications: Application[] = [];
+  private readonly _termId: number = 102;
+
+  private readonly _termStartDateTime: string = '2018-05-31 00:00:00.000';
+
+  private readonly _termEndDateTime: string = '2018-08-01 23:59:59.000';
 
   getApplications(): Observable<Application[]> {
-    const apiUrl = `${BASE_URL}/${this._setupUrl}/applications/new`;
+    const applications: Application[] = this._applicationsStateService.getApplicationsValue();
 
-    if (this.applications.length > 0) {
-      return of(this.applications);
+    if (applications.length > 0) {
+      return this._applicationsStateService.applications$;
     }
+
+    return this._authService.authorize().pipe(
+      switchMap((token: string) => this._requestApplications(token)),
+      tap((applications: Application[]) => this._applicationsStateService.setApplications(applications)),
+      catchError(() => {
+        // TODO: Remove this catchError when backend is ready.
+        const applications: Application[] = generateApplications();
+
+        this._applicationsStateService.setApplications(applications);
+
+        return of(applications);
+      })
+    );
+  }
+
+  getPatronApplications(): Observable<PatronApplication[]> {
+    const patronApplications: PatronApplication[] = this._applicationsStateService.getPatronApplicationsValue();
+
+    if (patronApplications.length > 0) {
+      return this._applicationsStateService.patronApplications$;
+    }
+
+    return this._authService.authorize().pipe(
+      switchMap((token: string) => this._requestPatronApplications(token)),
+      tap((applications: PatronApplication[]) => this._applicationsStateService.setPatronApplications(applications)),
+      catchError(() => {
+        // TODO: Remove this catchError when backend is ready.
+        const applications: PatronApplication[] = generatePatronApplications();
+
+        this._applicationsStateService.setPatronApplications(applications);
+
+        return of(applications);
+      })
+    );
+  }
+
+  getApplicationById(applicationId: number): Observable<Application> {
+    const patronApplications: PatronApplication[] = this._applicationsStateService.getPatronApplicationsValue();
+
+    if (patronApplications.length > 0) {
+      return this._applicationsStateService.getApplicationById(applicationId);
+    }
+
+    return this._requestApplicationById(applicationId);
+  }
+
+  private _requestApplications(token: string): Observable<Application[]> {
+    const apiUrl: string = `${BASE_URL}/${this._setupUrl}/applications/new`;
+    const headers: HttpHeaders = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
 
     return this._http
       .get(apiUrl, {
@@ -40,59 +97,65 @@ export class ApplicationsService {
       })
       .pipe(
         map((response: Response) => response.data),
-        map((applications: Application[]) => applications.map(this._toModel)),
-        tap((applications: Application[]) => (this.applications = applications)),
-        catchError(() => {
-          // TODO: Remove this catchError when backend is ready.
-          const applications: Application[] = generateApplications();
-
-          this.applications = applications
-
-          return of(applications)
-        }),
+        map((applications: Application[]) => applications.map(this._toApplication))
       );
   }
 
-  getApplicationsByPatronId(patronId: number, termId: number): Observable<Application[]> {
-    const apiUrl = `${BASE_URL}/${this._patronsUrl}/patron-applications/${patronId}/term/${termId}`;
+  private _requestPatronApplications(token: string): Observable<PatronApplication[]> {
+    const apiUrl: string = `${BASE_URL}/${this._patronsUrl}/patron-applications/self/term/${this._termId}`;
+    const headers: HttpHeaders = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+    const params: HttpParams = new HttpParams()
+      .append('termStartDatetime', this._termStartDateTime)
+      .append('termEndDateTime', this._termEndDateTime);
 
-    if (this.applications.length > 0) {
-      return of(this.applications);
-    }
-
-    return this._http.get(apiUrl).pipe(
-      map((response: Response) => response.data),
-      map((applications: Application[]) => applications.map(this._toModel)),
-      tap((applications: Application[]) => (this.applications = applications))
-    );
+    return this._http
+      .get(apiUrl, {
+        headers,
+        params,
+      })
+      .pipe(
+        map((response: Response) => response.data),
+        map((applications: PatronApplication[]) => applications.map(this._toPatronApplication)),
+        tap((applications: PatronApplication[]) => this._applicationsStateService.setPatronApplications(applications))
+      );
   }
 
-  getApplicationById(applicationId: number): Observable<Application> {
+  private _requestApplicationById(applicationId: number): Observable<Application> {
     const apiUrl = `${BASE_URL}/${this._setupUrl}/applications/new/${applicationId}`;
 
-    if (this.applications.length > 0) {
-      const foundApplication: Application = this.applications.find(
-        (application: Application) => application.id === applicationId
-      );
-
-      return of(foundApplication);
-    }
-
     return this._http.get(apiUrl).pipe(
       map((response: Response) => response.data),
-      map((application: Application) => this._toModel(application)),
+      map((application: Application) => this._toApplication(application)),
       catchError(() => {
         // TODO: Remove this catchError when backend is ready.
         const applications: Application[] = generateApplications();
 
-        this.applications = applications
-
-        return of(applications[0])
-      }),
+        return of(applications[0]);
+      })
     );
   }
 
-  private _toModel(application: any): Application {
+  private _toPatronApplication(application: any): PatronApplication {
+    return new PatronApplication(
+      application.applicationDefinitionId,
+      application.createdDateTime,
+      application.submittedDateTime,
+      application.acceptedDateTime,
+      application.cancelledDateTime,
+      application.modifiedDate,
+      application.patronId,
+      application.isApplicationSubmitted,
+      application.isApplicationAccepted,
+      application.isApplicationCanceled,
+      application.applicationTitle,
+      application.applicationTerm,
+      application.applicationFormJson
+    );
+  }
+
+  private _toApplication(application: any): Application {
     return new Application(
       application.applicationAttributes,
       application.applicationAvailableEndDateTime,

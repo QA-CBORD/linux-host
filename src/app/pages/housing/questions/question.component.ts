@@ -20,6 +20,9 @@ export class QuestionComponent {
   };
 
   getHeaderHTML(question: QuestionHeader): string {
-    return `<${question.subtype}>${question.label}</${question.subtype}>`;
+    const headerWight: number = parseInt(question.subtype.slice(1), 10);
+    const headerClass: string = headerWight > 1 ? 'secondary-header ion-text-uppercase' : 'primary-header';
+
+    return `<${question.subtype} class="${headerClass}">${question.label}</${question.subtype}>`;
   }
 }

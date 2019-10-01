@@ -10,7 +10,7 @@ import { ContractsComponent } from '../../contracts/contracts.component';
 import { WorkOrdersComponent } from '../../work-orders/work-orders.component';
 import { ApplicationsComponent } from '../../applications/applications.component';
 
-const imports = [CommonModule, ReactiveFormsModule, IonicModule, HousingDashboardRoutingModule,];
+const imports = [CommonModule, ReactiveFormsModule, IonicModule, HousingDashboardRoutingModule];
 const declarations = [HousingDashboardPage, ContractsComponent, WorkOrdersComponent, ApplicationsComponent];
 
 @NgModule({

@@ -3,7 +3,8 @@
     *ngFor="let step of steps; first as firstStep; last as lastStep; index as idx"
     class="stepper__item"
     [ngClass]="{
-      'stepper__item--selected': selectedIndex === idx
+      'stepper__item--selected': selectedIndex === idx,
+      'stepper__item--completed': selectedIndex > idx
     }"
   >
     <ng-container *ngIf="firstStep">First</ng-container>

@@ -11,7 +11,9 @@ import { QuestionDate } from './types/question-date';
 import { QuestionDropdown } from './types/question-dropdown';
 import { QuestionCheckboxGroup, QuestionCheckboxGroupValue } from './types/question-checkbox-group';
 import { QuestionRadioGroup } from './types/question-readio-group';
+
 import { QuestionPage } from './questions.model';
+import { Application } from '../applications/applications.model';
 
 export const QuestionConstructorsMap = {
   header: QuestionHeader,
@@ -40,9 +42,9 @@ export class QuestionsService {
   }
 
   parseQuestions(json: string): QuestionBase[] {
-    const parsedQuestions: any[] = JSON.parse(json);
+    const questions: any[] = JSON.parse(json);
 
-    return parsedQuestions.map(this.toQuestionType);
+    return questions.map(this.toQuestionType);
   }
 
   toQuestionType(question: QuestionBase): QuestionBase {
@@ -71,6 +73,13 @@ export class QuestionsService {
       form: this.toFormGroup(page),
       questions: page,
     }));
+  }
+
+  parsePages(application: Application): void {
+    const questions: QuestionBase[] = this.parseQuestions(application.applicationFormJson);
+    const pages: QuestionPage[] = this.splitByPages(questions);
+
+    this.setPages(pages);
   }
 
   toFormGroup(questions: QuestionBase[]) {
