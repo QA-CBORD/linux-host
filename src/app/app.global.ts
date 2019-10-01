@@ -128,6 +128,7 @@ export namespace User {
 
 export enum NAVIGATE {
   dashboard = 'dashboard',
+  housing = 'housing',
   rewards = 'rewards',
   mobileAccess = 'openmydoor',
   secureMessage = 'securemessaging',

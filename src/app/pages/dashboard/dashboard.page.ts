@@ -21,6 +21,8 @@ export class DashboardPage implements OnInit {
 
   determineDashboardItems() {
 
+    this.dashboardItems.push({ title: 'Housing', navigate: NAVIGATE.housing, iconName: 'home' });
+
     this.dashboardItems.push({ title: 'Accounts', navigate: NAVIGATE.accounts, iconName: 'wallet' });
 
     if (this.checkSettingEnabled(SYSTEM_SETTING.SECURE_MESSAGING_ENABLED, 1)) {
