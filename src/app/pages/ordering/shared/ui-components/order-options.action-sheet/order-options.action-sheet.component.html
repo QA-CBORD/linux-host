@@ -16,7 +16,7 @@
     </div>
     <ion-item detail="true" lines="full" (click)="openDeliveryAddressesModal()">
       <div class="order-options__select-container">
-        <div class="order-options__select-label">{{ orderTypes.pickup ? 'PICKUP' : 'DELIVERY' }} ADDRESS</div>
+        <div class="order-options__select-label">{{ currentOrderOptions ? 'PICKUP' : 'DELIVERY' }} ADDRESS</div>
         <div class="order-options__select-value">
           <img width="16" src="./assets/icon/location-pin.svg" alt="pin" />290 Summer Street, Boston
         </div>
@@ -24,10 +24,8 @@
     </ion-item>
     <ion-item detail="true" lines="full" (click)="openPicker()">
       <div class="order-options__select-container">
-        <div class="order-options__select-label">{{ orderTypes.pickup ? 'PICKUP' : 'DELIVERY' }} TIME</div>
-        <div class="order-options__select-value">
-          <img width="16" src="./assets/icon/time.svg" alt="time" />ASAP
-        </div>
+        <div class="order-options__select-label">{{ currentOrderOptions ? 'PICKUP' : 'DELIVERY' }} TIME</div>
+        <div class="order-options__select-value"><img width="16" src="./assets/icon/time.svg" alt="time" />ASAP</div>
       </div>
     </ion-item>
   </ion-list>

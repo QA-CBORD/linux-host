@@ -93,4 +93,8 @@ export class MerchantService {
   getMerchantOrderSchedule(merchantId: string, orderType: number): Observable<any[]> {
     return this.orderingApiService.getMerchantOrderSchedule(merchantId, orderType);
   }
+
+  retrieveUserAddressList(userId: string): Observable<any> {
+    return this.orderingApiService.retrieveUserAddressList(userId);
+  }
 }

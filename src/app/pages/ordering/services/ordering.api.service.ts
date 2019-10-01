@@ -82,4 +82,14 @@ export class OrderingApiService extends BaseService {
       map(({ response }: MessageResponse<any>) => response)
     );
   }
+
+  retrieveUserAddressList(userId: string): Observable<any> {
+    // String sessionId, String userId, String addressId
+    const methodName = 'retrieveUserAddressList';
+    const postParams: ServiceParameters = { userId, addressId: null };
+
+    return this.httpRequestFull('/json/user', methodName, true, null, postParams).pipe(
+      map(({ response }: MessageResponse<any>) => response)
+    );
+  }
 }

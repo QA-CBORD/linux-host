@@ -10,8 +10,13 @@ import { DeliveryAddressesModalComponent } from '../delivery-addresses.modal/del
   styleUrls: ['./order-options.action-sheet.component.scss'],
 })
 export class OrderOptionsActionSheetComponent implements OnInit {
-  @Input() addresses: any;
+  @Input() schedule: any;
   @Input() orderTypes: MerchantOrderTypesInfo;
+  @Input() defaultAddress: string;
+  @Input() addresses: any;
+  currentOrderOptions;
+  private prevSelectedTimeInfo = { prevIdx: 0, currentIdx: 0, maxValue: false };
+  private selectedDayIdx: number = 0;
 
   constructor(
     private readonly pickerController: PickerController,
@@ -20,13 +25,14 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    console.log(this.addresses.days);
-    console.log(this.orderTypes);
+    this.currentOrderOptions = this.orderTypes.pickup;
+    console.log(this.defaultAddress);
+    console.log(this.addresses);
   }
 
   public async openPicker() {
     const picker: HTMLIonPickerElement = await this.pickerController.create({
-      columns: this.createColumns(0),
+      columns: this.createColumns(),
       mode: 'ios',
       cssClass: 'picker-time-picker',
       buttons: [
@@ -46,37 +52,30 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     picker.addEventListener('ionPickerColChange', async (event: any) => {
       const data = event.detail;
       if (data.name === 1) {
-        return;
+        if (!data.options[data.selectedIndex].text) {
+          this.prevSelectedTimeInfo = { ...this.prevSelectedTimeInfo, maxValue: true };
+        } else {
+          this.prevSelectedTimeInfo = { ...this.prevSelectedTimeInfo, currentIdx: data.selectedIndex, maxValue: false };
+        }
+      } else {
+        this.selectedDayIdx = data.selectedIndex;
       }
-      const colSelectedIndex = data.selectedIndex;
 
-      const columns = this.createColumns(colSelectedIndex);
-
-      // debugger
-      // for (let i = 0; i < columns[1].options.length; i++) {
-      //   if (!columns[1].options[i].duration) {
-      //     columns[1].options[i] = {
-      //       ...columns[1].options[i],
-      //       duration: !columns[1].options[i].duration ? 150 : columns[1].options[i].duration,
-      //       transform: !columns[1].options[i].transform ? 'translate3d(0px,2322px,0px) scale(0.81)' : columns[1].options[i].transform,
-      //       selected: false,
-      //     };
-      //   }
-      //   return columns[1].options[i];
-      // }
-
-      console.log(columns);
+      const columns = this.createColumns();
 
       picker.columns = columns;
       picker.forceUpdate();
+      if (data.options[data.selectedIndex].text) {
+        this.prevSelectedTimeInfo = { ...this.prevSelectedTimeInfo, prevIdx: data.selectedIndex };
+      }
     });
 
     await picker.present();
   }
 
   preparePickerArr(i = 0) {
-    const arr1 = this.addresses.days.map(day => day.date);
-    const arr2 = this.addresses.days[i].hourBlocks.reduce(
+    const arr1 = this.schedule.days.map(day => day.date);
+    const arr2 = this.schedule.days[i].hourBlocks.reduce(
       (total, block) => [
         ...total,
         ...block.minuteBlocks.map(minuteBlock => `${block.hour}:${minuteBlock === 0 ? '00' : minuteBlock}`),
@@ -86,15 +85,22 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     return [arr1, arr2];
   }
 
-  createColumns(selectedIdx) {
+  createColumns() {
     let columns = [];
-    const dataArr = this.preparePickerArr(selectedIdx);
-    const [daysOptions, timeOptions] = dataArr;
+    let prevSelectedTimeIdx;
+    const dataArr = this.preparePickerArr(this.selectedDayIdx);
+    const [daysOptions] = dataArr;
+    if (this.prevSelectedTimeInfo.maxValue) {
+      prevSelectedTimeIdx = this.prevSelectedTimeInfo.prevIdx;
+      this.prevSelectedTimeInfo.maxValue = false;
+    } else {
+      prevSelectedTimeIdx = this.prevSelectedTimeInfo.currentIdx;
+    }
     for (let i = 0; i < 2; i++) {
       columns.push({
         name: i,
         options: this.getColumnOptions(i, daysOptions.length, 92, dataArr),
-        selectedIndex: i === 0 ? selectedIdx : null,
+        selectedIndex: i === 0 ? this.selectedDayIdx : prevSelectedTimeIdx,
       });
     }
     return columns;
@@ -103,14 +109,25 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   getColumnOptions(columnIndex, daysOptions, timeOptions, columnOptions) {
     let pickerColumns = [];
     const total = columnIndex === 0 ? daysOptions : timeOptions;
-    const text = i =>
-      columnIndex === 0
-        ? this.datePipe.transform(columnOptions[columnIndex][i % total], 'EE, MMM d')
-        : columnOptions[columnIndex][i % total];
+    const getColumnText = i => {
+      if (columnIndex === 1) {
+        return columnOptions[columnIndex][i % total];
+      }
+
+      if (this.isTodayOrTomorrow(columnOptions[columnIndex][i % total], true)) {
+        return 'Today';
+      }
+
+      if (this.isTodayOrTomorrow(columnOptions[columnIndex][i % total], false)) {
+        return 'Tomorrow';
+      }
+
+      return this.datePipe.transform(columnOptions[columnIndex][i % total], 'EE, MMM d');
+    };
 
     for (let i = 0; i < total; i++) {
       pickerColumns.push({
-        text: text(i),
+        text: getColumnText(i),
         value: columnOptions[columnIndex][i % total],
       });
     }
@@ -118,7 +135,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   }
 
   onRadioGroupChanged({ target }) {
-    console.log(target.value);
+    this.currentOrderOptions = target.value === 'pickup';
   }
 
   openDeliveryAddressesModal() {
@@ -132,5 +149,16 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     });
     modal.onDidDismiss().then(() => {});
     await modal.present();
+  }
+
+  private isTodayOrTomorrow(date, isToday) {
+    const today = new Date();
+    const someDate = new Date(date);
+    const index = isToday ? 0 : 1;
+    return (
+      someDate.getDate() == today.getDate() + index &&
+      someDate.getMonth() == today.getMonth() &&
+      someDate.getFullYear() == today.getFullYear()
+    );
   }
 }
