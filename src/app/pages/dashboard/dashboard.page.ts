@@ -13,8 +13,7 @@ import { SYSTEM_SETTING } from './dashboard.config';
 export class DashboardPage implements OnInit {
   dashboardItems: TileInfo[] = [];
 
-  constructor(private readonly dashService: DashboardService) {
-  }
+  constructor(private readonly dashService: DashboardService) {}
 
   ngOnInit() {
     this.determineDashboardItems();
@@ -22,15 +21,15 @@ export class DashboardPage implements OnInit {
 
   determineDashboardItems() {
     if (this.checkSettingEnabled(SYSTEM_SETTING.SECURE_MESSAGING_ENABLED, 1)) {
-      this.dashboardItems.push({ title: 'Secure Messaging', navigate: NAVIGATE.secureMessage });
+      this.dashboardItems.push({ title: 'Secure Messaging', navigate: NAVIGATE.secureMessage, iconName: 'text' });
     }
 
     if (this.checkSettingEnabled(SYSTEM_SETTING.REWARDS_ENABLED, 1)) {
-      this.dashboardItems.push({ title: 'Rewards', navigate: NAVIGATE.rewards });
+      this.dashboardItems.push({ title: 'Rewards', navigate: NAVIGATE.rewards, iconName: 'trophy' });
     }
 
     if (this.checkSettingEnabled(SYSTEM_SETTING.MOBILE_ACCESS_ENABLED, 1)) {
-      this.dashboardItems.push({ title: 'Mobile Access', navigate: NAVIGATE.mobileAccess });
+      this.dashboardItems.push({ title: 'Mobile Access', navigate: NAVIGATE.mobileAccess, iconName: 'wifi' });
     }
   }
 

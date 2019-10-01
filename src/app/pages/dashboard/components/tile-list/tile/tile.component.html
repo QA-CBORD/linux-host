@@ -1,11 +1,15 @@
-<!-- <div *ngIf="tileInfo">
-  {{tileInfo.title}}
-</div> -->
+<ion-item
+  lines="none"
+  [button]="true"
+  [detail]="true"
+  detailIcon="/assets/icon/angle-right.svg"
+  class="tile"
+  (click)="handlePageNavigation()"
+>
 
-<ion-item [button]="true" class="tile" (click)="handlePageNavigation()">
-  <ion-label>
-    <div class="tile">
-      <p class="tile__name">{{ tileInfo.title }}</p>
-    </div>
+  <ion-icon name="{{tileInfo.iconName}}" slot="start"></ion-icon>
+
+  <ion-label class="tile__name">
+    {{ tileInfo.title }}
   </ion-label>
 </ion-item>

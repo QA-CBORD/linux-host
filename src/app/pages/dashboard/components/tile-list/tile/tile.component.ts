@@ -14,7 +14,7 @@ export class TileComponent implements OnInit {
 
   ngOnInit() {}
 
-  private handlePageNavigation() {    
+  handlePageNavigation() {    
     this.router.navigate([this.tileInfo.navigate], { skipLocationChange: true });
   }
 
