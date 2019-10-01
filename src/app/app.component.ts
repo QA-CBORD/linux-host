@@ -47,7 +47,7 @@ export class AppComponent implements OnDestroy {
     private readonly popoverCtrl: PopoverController,
     private readonly nativeProvider: NativeProvider
   ) {
-      this.initializeApp();
+    this.initializeApp();
   }
 
   ngOnDestroy() {
@@ -99,7 +99,6 @@ export class AppComponent implements OnDestroy {
     this.sourceSubscription.add(subscription);
   }
 
-
   useJavaScriptInterface() {
     if (this.nativeProvider.isAndroid()) {
       const sessionId: string = this.nativeProvider.getAndroidData(NativeData.SESSION_ID);
@@ -117,7 +116,7 @@ export class AppComponent implements OnDestroy {
       DataCache.setInstitutionId(institutionId);
 
       this.handlePageNavigation();
-    } else if (this.nativeProvider.isIos()){
+    } else if (this.nativeProvider.isIos()) {
       const sessionIdPromise: Promise<string> = this.nativeProvider.getIosData(NativeData.SESSION_ID);
       const userInfoPromise: Promise<UserInfo> = this.nativeProvider.getIosData(NativeData.USER_INFO);
       const institutionIdPromise: Promise<string> = this.nativeProvider.getIosData(NativeData.INSTITUTION_ID);
@@ -238,9 +237,8 @@ export class AppComponent implements OnDestroy {
       );
   }
 
-  private handlePageNavigation() {    
-    console.log("Page Nav");
-    this.router.navigate([this.destinationPage]);//, { skipLocationChange: true });
+  private handlePageNavigation() {
+    this.router.navigate([this.destinationPage]); //, { skipLocationChange: true });
   }
 
   // Ionic gloabal configurate stuff
@@ -251,7 +249,6 @@ export class AppComponent implements OnDestroy {
     this.sourceSubscription.add(pauseSubscription);
     this.sourceSubscription.add(resumeSubscription);
   }
-  
 
   private subscribeToEvents() {
     const loaderSubscription = this.events.subscribe(Globals.Events.LOADER_SHOW, loaderInfo =>
