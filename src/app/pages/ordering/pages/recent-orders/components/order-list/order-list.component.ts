@@ -1,0 +1,14 @@
+import { Component, Input, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'st-order-list',
+  templateUrl: './order-list.component.html',
+  styleUrls: ['./order-list.component.scss'],
+})
+export class OrderListComponent implements OnInit {
+  @Input() orders: any[];
+
+  constructor() { }
+
+  ngOnInit() {}
+}

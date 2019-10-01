@@ -1,0 +1,12 @@
+@import "tools";
+
+.recent-orders {
+
+  &__header-title {
+    line-height: 27px;
+    letter-spacing: 0;
+    margin: 15px 0;
+
+    @include font-nunito-heavy(20px)
+  }
+}

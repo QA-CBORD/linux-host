@@ -4,8 +4,18 @@
            [backButtonIcon]="'close'"
            [isToolbarShow]="true"></st-header>
 
-<ion-content>
-  <h2>
-    recent-orders works!
-  </h2>
+<ion-content class="ion-padding">
+ <ng-container [ngTemplateOutlet]="completed"></ng-container>
+ <ng-container [ngTemplateOutlet]="pending"></ng-container>
 </ion-content>
+
+
+<ng-template #pending>
+ <h2 class="recent-orders__header-title">Pending Orders</h2>
+ <st-order-list></st-order-list>
+</ng-template>
+
+<ng-template #completed>
+ <h2 class="recent-orders__header-title">Completed Orders</h2>
+ <st-order-list></st-order-list>
+</ng-template>
