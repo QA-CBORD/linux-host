@@ -12,7 +12,9 @@ import { SettingInfo } from '../../model/configuration/setting-info.model';
 import { MessageResponse } from './../../model/service/message-response.model';
 import { SettingInfoList } from '../../model/configuration/setting-info-list.model';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class ConfigurationService extends BaseService {
   private readonly serviceUrl: string = '/json/configuration';
 

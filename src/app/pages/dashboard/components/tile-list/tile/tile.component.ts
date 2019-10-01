@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
 import { TileInfo } from '../../../models';
 import { Router } from '@angular/router';
 
@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
   selector: 'st-tile',
   templateUrl: './tile.component.html',
   styleUrls: ['./tile.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TileComponent implements OnInit {
   @Input() tileInfo: TileInfo;
@@ -15,7 +16,7 @@ export class TileComponent implements OnInit {
   ngOnInit() {}
 
   handlePageNavigation() {    
-    this.router.navigate([this.tileInfo.navigate], { skipLocationChange: true });
+    this.router.navigate([this.tileInfo.navigate]);//, { skipLocationChange: true });
   }
 
 }

@@ -10,7 +10,9 @@ import { DashboardService } from '../services/dashboard.service';
 export class DashboardPageResolver implements Resolve<Observable<SettingInfo[]>> {
   constructor(private readonly dashboardService: DashboardService, private readonly loadingService: LoadingService) {}
 
-  resolve(): Observable<SettingInfo[]> {
+  resolve(): Observable<SettingInfo[]> {   
+    console.log("Dashboard Resolver");
+     
        this.loadingService.showSpinner();
     return this.dashboardService.retrieveDashboardSettings().pipe(
       take(1),

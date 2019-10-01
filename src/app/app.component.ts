@@ -239,7 +239,8 @@ export class AppComponent implements OnDestroy {
   }
 
   private handlePageNavigation() {    
-    this.router.navigate([this.destinationPage], { skipLocationChange: true });
+    console.log("Page Nav");
+    this.router.navigate([this.destinationPage]);//, { skipLocationChange: true });
   }
 
   // Ionic gloabal configurate stuff
@@ -250,6 +251,7 @@ export class AppComponent implements OnDestroy {
     this.sourceSubscription.add(pauseSubscription);
     this.sourceSubscription.add(resumeSubscription);
   }
+  
 
   private subscribeToEvents() {
     const loaderSubscription = this.events.subscribe(Globals.Events.LOADER_SHOW, loaderInfo =>

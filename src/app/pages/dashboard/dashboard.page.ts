@@ -20,6 +20,9 @@ export class DashboardPage implements OnInit {
   }
 
   determineDashboardItems() {
+
+    this.dashboardItems.push({ title: 'Accounts', navigate: NAVIGATE.accounts, iconName: 'wallet' });
+
     if (this.checkSettingEnabled(SYSTEM_SETTING.SECURE_MESSAGING_ENABLED, 1)) {
       this.dashboardItems.push({ title: 'Secure Messaging', navigate: NAVIGATE.secureMessage, iconName: 'text' });
     }
