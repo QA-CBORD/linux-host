@@ -82,7 +82,7 @@ export class QuestionsService {
     this.setPages(pages);
   }
 
-  toFormGroup(questions: QuestionBase[]) {
+  toFormGroup(questions: QuestionBase[]): FormGroup {
     let group: any = {};
 
     questions.forEach((question: QuestionBase) => {

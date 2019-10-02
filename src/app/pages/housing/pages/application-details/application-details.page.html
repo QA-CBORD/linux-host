@@ -10,8 +10,8 @@
 
 <ion-content class="ion-padding">
   <st-stepper #stepper>
-    <st-step *ngFor="let page of (pages$ | async); last as isLastPage; first as isFirstPage">
-      <form [formGroup]="page.form" (ngSubmit)="handleSubmit(stepper, page.form.value, isLastPage)">
+    <st-step *ngFor="let page of (pages$ | async); index as idx; last as isLastPage; first as isFirstPage">
+      <form [formGroup]="page.form" (ngSubmit)="handleSubmit(stepper, idx, page.form.value, isLastPage)">
         <st-question
           *ngFor="let question of page.questions"
           [parentGroup]="page.form"
