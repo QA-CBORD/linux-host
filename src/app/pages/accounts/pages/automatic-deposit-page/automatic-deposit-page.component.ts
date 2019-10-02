@@ -218,6 +218,7 @@ export class AutomaticDepositPageComponent implements OnInit, OnDestroy {
 
   private defineDestAccounts(target) {
     if (target === 'billme') {
+
       this.destinationAccounts = this.billmeDestinationAccounts;
     } else {
       this.destinationAccounts = this.creditCardDestinationAccounts;
