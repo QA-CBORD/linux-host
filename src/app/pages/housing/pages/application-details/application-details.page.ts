@@ -1,12 +1,14 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
 import { QuestionsService } from '../../questions/questions.service';
 import { ApplicationsService } from '../../applications/applications.service';
 
-import { Application } from '../../applications/applications.model';
+import { StepperComponent } from '../../stepper/stepper.component';
+
+import { PatronApplication } from '../../applications/applications.model';
 import { QuestionPage } from '../../questions/questions.model';
 
 @Component({
@@ -16,27 +18,35 @@ import { QuestionPage } from '../../questions/questions.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ApplicationDetailsPage implements OnInit {
-  application$: Observable<Application>;
+  application$: Observable<PatronApplication>;
 
   pages$: Observable<QuestionPage[]>;
+
+  applicationId: number;
 
   constructor(
     private _route: ActivatedRoute,
     private _questionsService: QuestionsService,
-    private _applicationsService: ApplicationsService
+    private _applicationsService: ApplicationsService,
+    private _router: Router
   ) {}
 
   ngOnInit() {
-    const applicationId: number = parseInt(this._route.snapshot.paramMap.get('applicationId'), 10);
+    this.applicationId = parseInt(this._route.snapshot.paramMap.get('applicationId'), 10);
 
     this.pages$ = this._questionsService.getPages();
 
     this.application$ = this._applicationsService
-      .getApplicationById(applicationId)
-      .pipe(tap((application: Application) => this._questionsService.parsePages(application)));
+      .getPatronApplicationById(this.applicationId)
+      .pipe(tap((application: PatronApplication) => this._questionsService.parsePages(application)));
   }
 
-  handleSubmit(): void {
-    // Code to submit form.
+  handleSubmit(stepper: StepperComponent, formValue: any, isLastPage: boolean): void {
+    if (!isLastPage) {
+      stepper.next();
+    } else {
+      this._applicationsService.submitPatronApplication(this.applicationId);
+      this._router.navigate(['/housing/dashboard']);
+    }
   }
 }

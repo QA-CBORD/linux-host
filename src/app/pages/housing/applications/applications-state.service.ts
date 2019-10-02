@@ -2,43 +2,77 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { Application, PatronApplication } from './applications.model';
+import { PatronApplication } from './applications.model';
+
+export interface PatronApplicationEntity {
+  [key: number]: PatronApplication;
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class ApplicationsStateService {
-  private readonly _applicationsState: BehaviorSubject<Application[]> = new BehaviorSubject<Application[]>([]);
+  private readonly _patronApplicationsState: BehaviorSubject<PatronApplicationEntity> = new BehaviorSubject<
+    PatronApplicationEntity
+  >({});
 
-  private readonly _patronApplicationsState: BehaviorSubject<PatronApplication[]> = new BehaviorSubject<
-    PatronApplication[]
-  >([]);
+  readonly patronApplicationEntities$: Observable<
+    PatronApplicationEntity
+  > = this._patronApplicationsState.asObservable();
 
-  applications$: Observable<Application[]> = this._applicationsState.asObservable();
+  readonly patronApplications$: Observable<PatronApplication[]> = this.patronApplicationEntities$.pipe(
+    map((entities: PatronApplicationEntity) => this._toPatronApplicationsArray(entities))
+  );
 
-  patronApplications$: Observable<PatronApplication[]> = this._patronApplicationsState.asObservable();
-
-  setApplications(applications: Application[]): void {
-    this._applicationsState.next(applications);
+  set patronApplicationEntities(value: PatronApplicationEntity) {
+    this._patronApplicationsState.next(value);
   }
 
-  setPatronApplications(applications: PatronApplication[]): void {
-    this._patronApplicationsState.next(applications);
-  }
-
-  getApplicationsValue(): Application[] {
-    return this._applicationsState.getValue();
-  }
-
-  getPatronApplicationsValue(): PatronApplication[] {
+  get patronApplicationEntities(): PatronApplicationEntity {
     return this._patronApplicationsState.getValue();
   }
 
-  getApplicationById(applicationId: number): Observable<PatronApplication> {
-    return this.patronApplications$.pipe(
-      map((applications: PatronApplication[]) =>
-        applications.find((application: PatronApplication) => application.applicationDefinitionId === applicationId)
-      )
+  get patronApplications(): PatronApplication[] {
+    return this._toPatronApplicationsArray(this.patronApplicationEntities);
+  }
+
+  setPatronApplications(applications: PatronApplication[]): void {
+    const applicationEntities: PatronApplicationEntity = applications.reduce(
+      (entities: PatronApplicationEntity, application: PatronApplication) => {
+        return {
+          ...entities,
+          [application.applicationDefinitionId]: application,
+        };
+      },
+      {}
     );
+
+    this._patronApplicationsState.next(applicationEntities);
+  }
+
+  setPatronApplicationSubmitted(applicationId: number) {
+    const foundApplication: PatronApplication = this.patronApplicationEntities[applicationId];
+
+    if (foundApplication) {
+      const currentDateTime: string = new Date().toISOString().slice(0, -1);
+
+      this.patronApplicationEntities = {
+        ...this.patronApplicationEntities,
+        [applicationId]: {
+          ...foundApplication,
+          isApplicationSubmitted: true,
+          submittedDateTime: currentDateTime,
+          modifiedDate: currentDateTime,
+        },
+      };
+    }
+  }
+
+  getPatronApplicationById(applicationId: number): Observable<PatronApplication> {
+    return this.patronApplicationEntities$.pipe(map((entities: PatronApplicationEntity) => entities[applicationId]));
+  }
+
+  private _toPatronApplicationsArray(entities: PatronApplicationEntity): PatronApplication[] {
+    return Object.keys(entities).map((key: string) => entities[parseInt(key, 10)]);
   }
 }

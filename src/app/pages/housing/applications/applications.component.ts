@@ -1,9 +1,8 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { Observable } from 'rxjs';
 
 import { ApplicationsService } from './applications.service';
 
-import { Application, PatronApplication } from './applications.model';
+import { ApplicationsStateService } from './applications-state.service';
 
 @Component({
   selector: 'st-applications',
@@ -12,23 +11,12 @@ import { Application, PatronApplication } from './applications.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ApplicationsComponent implements OnInit {
-  constructor(private _applicationsService: ApplicationsService) {}
-
-  applications$: Observable<PatronApplication[]>;
+  constructor(
+    private _applicationsService: ApplicationsService,
+    public applicationsStateService: ApplicationsStateService
+  ) {}
 
   ngOnInit() {
-    this.applications$ = this._applicationsService.getPatronApplications();
-  }
-
-  // isNotPending(application: Application): boolean {
-  //   return this.getApplicationStatus(application) !== ApplicationStatus.Pending;
-  // }
-
-  // isNotNewAndNotPending(application: Application): boolean {
-  //   return this.getApplicationStatus(application) !== ApplicationStatus.New && this.isNotPending(application);
-  // }
-
-  trackById(_: number, application: Application): number {
-    return application.id;
+    this._applicationsService.getPatronApplications().subscribe();
   }
 }

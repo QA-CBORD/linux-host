@@ -6,33 +6,12 @@
 
     <ion-title *ngIf="(application$ | async) as application">{{ application.applicationTitle }}</ion-title>
   </ion-toolbar>
-
-  <ion-toolbar>
-    <ion-grid>
-      <ion-row>
-        <ion-col size="6" class="ion-text-left">
-          <ion-label style="font-size: 16px; font-weight: bold">Cbord Student</ion-label>
-        </ion-col>
-        <ion-col size="6" class="ion-text-right">
-          <ion-label style="font-size: 13px; font-weight: normal">12345678901234</ion-label>
-        </ion-col>
-      </ion-row>
-      <ion-row>
-        <ion-col size="6" class="ion-text-left">
-          <ion-label style="font-size: 13px; font-weight: normal">cbord.Student@uni.edu</ion-label>
-        </ion-col>
-        <ion-col size="6" class="ion-text-right">
-          <ion-label style="font-size: 13px; font-weight: normal">January 1 1990</ion-label>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-  </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
-  <st-stepper>
-    <st-step *ngFor="let page of (pages$ | async); last as lastPage; first as firstPage">
-      <form [formGroup]="page.form" (ngSubmit)="handleSubmit()">
+  <st-stepper #stepper>
+    <st-step *ngFor="let page of (pages$ | async); last as isLastPage; first as isFirstPage">
+      <form [formGroup]="page.form" (ngSubmit)="handleSubmit(stepper, page.form.value, isLastPage)">
         <st-question
           *ngFor="let question of page.questions"
           [parentGroup]="page.form"
@@ -40,17 +19,16 @@
         ></st-question>
 
         <st-stepper-footer>
-          <ion-button type="button" fill="clear" *ngIf="!firstPage" stepperBack>Back</ion-button>
+          <ion-button type="button" fill="clear" *ngIf="!isFirstPage" stepperBack>Back</ion-button>
           <ion-button
-            [class.stepper-footer__button--right]="firstPage"
+            [class.stepper-footer__button--right]="isFirstPage"
             fill="outline"
-            type="button"
-            *ngIf="!lastPage"
-            stepperNext
+            type="submit"
+            *ngIf="!isLastPage"
           >
             Next
           </ion-button>
-          <ion-button [class.stepper-footer__button--right]="firstPage" type="submit" *ngIf="lastPage">
+          <ion-button [class.stepper-footer__button--right]="isFirstPage" type="submit" *ngIf="isLastPage">
             Submit
           </ion-button>
         </st-stepper-footer>
