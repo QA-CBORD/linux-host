@@ -19,6 +19,8 @@
       border: 2px solid $color-dodger-blue;
 
       & + .select__placeholder {
+        z-index: 2;
+
         @include floating-label($color-dodger-blue);
       }
     }
@@ -31,11 +33,15 @@
         border: 2px solid $color-alizarin;
 
         & + .select__placeholder {
+          z-index: 2;
+
           @include floating-label($color-alizarin);
         }
       }
 
       & + .select__placeholder {
+        z-index: 2;
+
         @include floating-label($color-alizarin);
       }
     }
@@ -43,7 +49,6 @@
 
   &__placeholder {
     position: absolute;
-    z-index: 2;
     top: 0;
     left: 0;
     padding: 15px 0 0 13px;
@@ -56,6 +61,8 @@
   border: 2px solid $color-dodger-blue;
 
   & + .select__placeholder {
+    z-index: 2;
+
     @include floating-label($color-dodger-blue);
   }
 }

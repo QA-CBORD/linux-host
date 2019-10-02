@@ -1,12 +1,12 @@
 <st-header title="Automatic Deposit" [isTitleShow]="true" [backButtonTitle]="'Back'" [isToolbarShow]="true"></st-header>
-<ion-content class="content">
+<ion-content class="content" *ngIf="showContent">
     <h1 class="content__header">Automatic Deposit Type</h1>
     <st-deposit-type-nav
             [activeType]="autoDepositSettings?.active ? autoDepositSettings?.autoDepositType : autoDepositTypes.automaticDepositOff"
-            (onTypeChanged)="onTypeChangedHandler($event)"
+            (onTypeChanged)="onDepositTypeChangedHandler($event)"
     ></st-deposit-type-nav>
 
-    <form class="deposit-form" novalidate *ngIf="automaticDepositForm" [formGroup]="automaticDepositForm">
+    <form class="deposit-form" novalidate *ngIf="formHasBeenPrepared | async" [formGroup]="automaticDepositForm">
         <ng-container *ngIf="activeType === autoDepositTypes.timeBased" [ngTemplateOutlet]="timeBased"></ng-container>
 
         <ng-template #lowBalance>
@@ -31,7 +31,7 @@
                         [formControlName]="controlNames.lowBalanceAmount"
                         [control]="lowBalanceAmount"
                         [interfaceOptions]="customActionSheetOptions"
-                        [isError]="lowBalanceAmount.invalid && lowBalanceAmount.touched"
+                        [isError]="lowBalanceAmount?.invalid && lowBalanceAmount?.touched"
                         class="deposit-form__label"
                         interface="action-sheet"
                         title="Choose amount from a dropdown list below"
@@ -60,7 +60,7 @@
                     (onFrequencyChanged)="onFrequencyChanged($event)"
             ></st-deposit-frequency>
 
-            <ng-container *ngIf="activeFrequency === frequency.month; else week">
+            <ng-container *ngIf="activeFrequency === frequency.month && dayOfMonth; else week">
 
                 <st-input-floating-label
                         [isError]="dayOfMonth.errors && (dayOfMonth.dirty || dayOfMonth.touched)"
@@ -81,6 +81,7 @@
             <ng-template #week>
 
                 <st-select-floating-label
+                        *ngIf="dayOfWeek"
                         [formControlName]="controlNames.dayOfWeek"
                         [control]="dayOfWeek"
                         [interfaceOptions]="customActionSheetOptions"
@@ -139,6 +140,10 @@
                     </ng-template>
 
                 </ng-container>
+
+                <ion-select-option *ngIf="isCreditPaymentTypeEnabled$ | async" [value]="'addCC'">
+                    Add credit card
+                </ion-select-option>
 
             </ng-container>
 
@@ -208,6 +213,7 @@
             <st-input-floating-label
                     [control]="amountToDeposit"
                     [formControlName]="controlNames.amountToDeposit"
+                    [isError]="amountToDeposit.invalid && amountToDeposit.touched"
                     title="enter amount to deposit"
                     class="deposit-form__label"
                     type="number"
@@ -221,7 +227,7 @@
         </ng-template>
 
 
-        <ng-container *ngIf="activeType === autoDepositTypes.lowBalance" [ngTemplateOutlet]="lowBalance"></ng-container>
+        <ng-container *ngIf="activeType === autoDepositTypes.lowBalance && lowBalanceAmount" [ngTemplateOutlet]="lowBalance"></ng-container>
 
     </form>
     <ion-button
