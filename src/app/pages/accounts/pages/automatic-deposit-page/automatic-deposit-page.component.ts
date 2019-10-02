@@ -413,6 +413,9 @@ export class AutomaticDepositPageComponent {
       const sourceAccForBillmeDeposit: Observable<UserAccount> = this.billmeMappingArr$.pipe(
         switchMap(billmeMappingArr => this.getSourceAccForBillmeDeposit(account, billmeMappingArr)),
       );
+
+      if (this.activeType === AUTO_DEPOSIT_PAYMENT_TYPES.timeBased) this.timeBasedResolver();
+
       const resultSettings = {
         ...this.autoDepositSettings,
         ...rest,
@@ -431,6 +434,12 @@ export class AutomaticDepositPageComponent {
       async res => res && await this.showModal(),
       async () => await this.showToast('Something went wrong please try again later...'),
     );
+  }
+
+  private timeBasedResolver() {
+      this.autoDepositSettings = this.activeFrequency === DEPOSIT_FREQUENCY.week
+        ? {...this.autoDepositSettings, dayOfMonth : 0}
+        : {...this.autoDepositSettings, dayOfWeek : 0}
   }
 
   // -------------------- Events handlers block end --------------------------//
