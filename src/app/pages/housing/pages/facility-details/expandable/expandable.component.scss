@@ -1,0 +1,9 @@
+.expand-wrapper {
+    transition: max-height 0.25s ease-in-out;
+    overflow: hidden;
+    height: auto;
+}
+
+.expanded {
+    max-height: 0 !important;
+}

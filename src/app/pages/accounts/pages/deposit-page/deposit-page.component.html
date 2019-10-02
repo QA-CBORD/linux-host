@@ -108,7 +108,6 @@
                    maxlength="10"
                    #inputText
                    [value]="depositForm.get('mainInput') | customCurrency"
-                   [autofocus]="true"
                    placeholder="0"
                    [ngStyle]="{ width: inputText.value ? inputText.value.length + 1 + 'ch' : '2ch' }"
                    [ngClass]="{
@@ -146,3 +145,4 @@
     >
   </form>
 </ion-content>
+<ion-footer></ion-footer>

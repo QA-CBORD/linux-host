@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { NAVIGATE } from './app.global';
-import { SelectivePreloadingStrategy } from './shared/preload-strategy/SelectivePreloadingStrategy';
+import { SelectivePreloadingStrategy } from './core/utils/preload-strategy/selective-preloading-strategy';
 
 const routes: Routes = [
   {
@@ -21,6 +21,7 @@ const routes: Routes = [
     path: NAVIGATE.accounts,
     loadChildren: './pages/accounts/accounts.module#AccountsModule',
   },
+  { path: NAVIGATE.housing, loadChildren: './pages/housing/housing.module#HousingPageModule' },
 ];
 
 @NgModule({

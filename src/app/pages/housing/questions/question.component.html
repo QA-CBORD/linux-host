@@ -1,0 +1,115 @@
+<div [formGroup]="parentGroup">
+  <ng-container [ngSwitch]="question.type">
+    <ng-container *ngSwitchCase="'header'">
+      <div [innerHTML]="getHeaderHTML(question)"></div>
+    </ng-container>
+
+    <p *ngSwitchCase="'paragraph'">{{ question.label }}</p>
+
+    <ion-item *ngSwitchCase="'text'" class="question__item">
+      <ion-label position="stacked">{{ question.label }}</ion-label>
+      <ion-input [formControlName]="question.name"></ion-input>
+    </ion-item>
+
+    <ion-item *ngSwitchCase="'textarea'" class="question__item">
+      <ion-label position="stacked">{{ question.label }}</ion-label>
+      <ion-textarea [formControlName]="question.name"></ion-textarea>
+    </ion-item>
+
+    <!-- <st-input-floating-label
+      *ngSwitchCase="'text'"
+      [control]="parentGroup.get(question.name)"
+      [formControlName]="question.name"
+      [title]="question.label"
+      type="text"
+      class="question__item"
+      [idd]="question.name"
+      [label]="question.label"
+    >
+      <p class="deposit-form__control-error-msg">
+        Error
+      </p>
+    </st-input-floating-label> -->
+
+    <!-- <st-textarea-floating-label
+      *ngSwitchCase="'textarea'"
+      [control]="parentGroup.get(question.name)"
+      [formControlName]="question.name"
+      [idd]="question.name"
+      [label]="question.label"
+      title="Type your message here..."
+      class="question__item"
+      rows="3"
+    >
+      <p class="request-funds__control-error-msg">
+        Error
+      </p>
+    </st-textarea-floating-label> -->
+
+    <ion-item *ngSwitchCase="'date'" class="question__item">
+      <ion-label>{{ question.label }}</ion-label>
+      <ion-datetime
+        displayFormat="MMM/DD/YYYY"
+        placeholder="Select Date"
+        [formControlName]="question.name"
+      ></ion-datetime>
+    </ion-item>
+
+    <ion-item *ngSwitchCase="'select'" class="question__item">
+      <ion-label>{{ question.label }}</ion-label>
+      <ion-select
+        interface="action-sheet"
+        mode="md"
+        [placeholder]="question.label"
+        [interfaceOptions]="customActionSheetOptions"
+        [formControlName]="question.name"
+      >
+        <ion-select-option *ngFor="let option of question.values" [value]="option.name">
+          {{ option.label }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <!-- <st-select-floating-label
+      *ngSwitchCase="'select'"
+      interface="action-sheet"
+      [formControlName]="question.name"
+      [control]="parentGroup.get(question.name)"
+      [interfaceOptions]="customActionSheetOptions"
+      [title]="question.label"
+      [label]="question.label"
+      [idd]="question.name"
+      class="question__item"
+    >
+      <ng-container role="options">
+        <ion-select-option *ngFor="let option of question.values" [value]="option.name">
+          {{ option.label }}
+        </ion-select-option>
+      </ng-container>
+
+      <ng-container role="error">
+        <p class="deposit-form__control-error-msg">
+          Error
+        </p>
+      </ng-container>
+    </st-select-floating-label> -->
+
+    <div *ngSwitchCase="'checkbox-group'" class="question__item">
+      <ion-item [formArrayName]="question.name" *ngFor="let item of question.values; index as idx">
+        <ion-checkbox color="primary" [checked]="item.selected" [formControlName]="idx" slot="start"></ion-checkbox>
+        <ion-label>{{ question.label }}</ion-label>
+      </ion-item>
+    </div>
+
+    <div *ngSwitchCase="'radio-group'" class="question__item">
+      <ion-radio-group [formArrayName]="question.name">
+        <ion-item *ngFor="let item of question.values; index as idx">
+          <ion-label>{{ question.label }}</ion-label>
+          <ion-radio color="primary" [value]="item.value"></ion-radio>
+        </ion-item>
+      </ion-radio-group>
+    </div>
+
+    <div *ngSwitchDefault>{{ question.label }}</div>
+  </ng-container>
+</div>

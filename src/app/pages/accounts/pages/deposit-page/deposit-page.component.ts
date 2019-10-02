@@ -21,6 +21,7 @@ import { Router } from '@angular/router';
 import { NAVIGATE } from 'src/app/app.global';
 import { LoadingService } from 'src/app/core/service/loading/loading.service';
 import { parseArrayFromString } from '../../../../core/utils/general-helpers';
+import { BillMeMapping } from '../../../../core/model/settings/billme-mapping.model';
 
 @Component({
   selector: 'st-deposit-page',
@@ -302,17 +303,17 @@ export class DepositPageComponent implements OnInit, OnDestroy {
           const billmeMappingArr = this.getSettingByName(settings, SYSTEM_SETTINGS_CONFIG.billMeMapping);
 
           return {
-            depositTenders: this.depositService.transformStringToArray(depositTenders),
-            billmeMappingArr: this.depositService.transformStringToArray(billmeMappingArr),
+            depositTenders: parseArrayFromString(depositTenders),
+            billmeMappingArr: parseArrayFromString(billmeMappingArr),
           };
         }),
         switchMap(({ depositTenders, billmeMappingArr }) =>
           this.depositService.accounts$.pipe(
             tap(accounts => {
               this.billmeMappingArr = billmeMappingArr;
-              (this.creditCardSourceAccounts = this.filterAccountsByPaymentSystem(accounts)),
-                (this.creditCardDestinationAccounts = this.filterCreditCardDestAccounts(depositTenders, accounts)),
-                (this.billmeDestinationAccounts = this.filterBillmeDestAccounts(this.billmeMappingArr, accounts));
+              this.creditCardSourceAccounts = this.filterAccountsByPaymentSystem(accounts);
+              this.creditCardDestinationAccounts = this.filterCreditCardDestAccounts(depositTenders as string[], accounts);
+              this.billmeDestinationAccounts = this.filterBillmeDestAccounts(this.billmeMappingArr, accounts);
             }),
           ),
         ),
@@ -412,13 +413,13 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     return this.depositService.filterCreditCardDestAccounts(tendersId, accounts);
   }
 
-  private filterBillmeDestAccounts(billmeMappingArr: Array<string>, accounts: Array<UserAccount>): Array<UserAccount> {
+  private filterBillmeDestAccounts(billmeMappingArr: Array<BillMeMapping>, accounts: Array<UserAccount>): Array<UserAccount> {
     return this.depositService.filterBillmeDestAccounts(billmeMappingArr, accounts);
   }
 
   private sourceAccForBillmeDeposit(
     selectedAccount: UserAccount,
-    billmeMappingArr: Array<string>,
+    billmeMappingArr: Array<BillMeMapping>,
   ): Observable<UserAccount> {
     return this.depositService.sourceAccForBillmeDeposit(selectedAccount, billmeMappingArr);
   }

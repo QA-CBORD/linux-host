@@ -1,0 +1,38 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/housing/dashboard"></ion-back-button>
+    </ion-buttons>
+
+    <ion-title *ngIf="(application$ | async) as application">{{ application.applicationTitle }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <st-stepper #stepper>
+    <st-step *ngFor="let page of (pages$ | async); index as idx; last as isLastPage; first as isFirstPage">
+      <form [formGroup]="page.form" (ngSubmit)="handleSubmit(stepper, idx, page.form.value, isLastPage)">
+        <st-question
+          *ngFor="let question of page.questions"
+          [parentGroup]="page.form"
+          [question]="question"
+        ></st-question>
+
+        <st-stepper-footer>
+          <ion-button type="button" fill="clear" *ngIf="!isFirstPage" stepperBack>Back</ion-button>
+          <ion-button
+            [class.stepper-footer__button--right]="isFirstPage"
+            fill="outline"
+            type="submit"
+            *ngIf="!isLastPage"
+          >
+            Next
+          </ion-button>
+          <ion-button [class.stepper-footer__button--right]="isFirstPage" type="submit" *ngIf="isLastPage">
+            Submit
+          </ion-button>
+        </st-stepper-footer>
+      </form>
+    </st-step>
+  </st-stepper>
+</ion-content>
