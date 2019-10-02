@@ -114,8 +114,9 @@
 
   &__deposit-btn {
     --background: #166dff;
-    position: fixed;
-    bottom: 5%;
+
+    margin-top: 50px;
+    position: relative;
     left: 2.5%;
     width: 95%;
 
