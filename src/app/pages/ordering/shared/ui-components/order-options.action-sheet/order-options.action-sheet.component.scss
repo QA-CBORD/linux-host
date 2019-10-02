@@ -56,4 +56,11 @@
 
     @include font-nunito-heavy(14px);
   }
+
+  &__footer {
+    padding: 0 15px 20px;
+    &::before {
+      background: none;
+    }
+  }
 }

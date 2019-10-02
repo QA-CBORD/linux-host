@@ -12,8 +12,8 @@ import { DeliveryAddressesModalComponent } from '../delivery-addresses.modal/del
 export class OrderOptionsActionSheetComponent implements OnInit {
   @Input() schedule: any;
   @Input() orderTypes: MerchantOrderTypesInfo;
-  @Input() defaultAddress: string;
-  @Input() addresses: any;
+  @Input() defaultDeliveryAddress: string;
+  @Input() deliveryAddresses: any;
   currentOrderOptions;
   private prevSelectedTimeInfo = { prevIdx: 0, currentIdx: 0, maxValue: false };
   private selectedDayIdx: number = 0;
@@ -22,12 +22,12 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     private readonly pickerController: PickerController,
     private readonly modalController: ModalController,
     private datePipe: DatePipe
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.currentOrderOptions = this.orderTypes.pickup;
-    console.log(this.defaultAddress);
-    console.log(this.addresses);
+    console.log(this.defaultDeliveryAddress);
+    console.log(this.deliveryAddresses);
   }
 
   public async openPicker() {
@@ -99,7 +99,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     for (let i = 0; i < 2; i++) {
       columns.push({
         name: i,
-        options: this.getColumnOptions(i, daysOptions.length, 92, dataArr),
+        options: this.getColumnOptions(i, daysOptions.length, 93, dataArr),
         selectedIndex: i === 0 ? this.selectedDayIdx : prevSelectedTimeIdx,
       });
     }
@@ -125,7 +125,13 @@ export class OrderOptionsActionSheetComponent implements OnInit {
       return this.datePipe.transform(columnOptions[columnIndex][i % total], 'EE, MMM d');
     };
 
-    for (let i = 0; i < total; i++) {
+    if (columnIndex === 1) {
+      pickerColumns.push({
+        text: 'ASAP',
+        value: 'asap',
+      });
+    }
+    for (let i = 1; i < total; i++) {
       pickerColumns.push({
         text: getColumnText(i),
         value: columnOptions[columnIndex][i % total],
@@ -147,7 +153,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
       component: DeliveryAddressesModalComponent,
       componentProps: {},
     });
-    modal.onDidDismiss().then(() => {});
+    modal.onDidDismiss().then(() => { });
     await modal.present();
   }
 

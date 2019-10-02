@@ -77,18 +77,34 @@ export class OrderingApiService extends BaseService {
     const methodName = 'getMerchantOrderSchedule';
     const postParams: ServiceParameters = { merchantId, orderType, startDate: null, endDate: null };
 
-    // getMerchantOrderSchedule(String sessionId, String merchantId, Integer orderType, Date startDate, Date endDate)
     return this.httpRequestFull(this.serviceUrlOrdering, methodName, true, null, postParams).pipe(
       map(({ response }: MessageResponse<any>) => response)
     );
   }
 
   retrieveUserAddressList(userId: string): Observable<any> {
-    // String sessionId, String userId, String addressId
     const methodName = 'retrieveUserAddressList';
     const postParams: ServiceParameters = { userId, addressId: null };
 
     return this.httpRequestFull('/json/user', methodName, true, null, postParams).pipe(
+      map(({ response }: MessageResponse<any>) => response)
+    );
+  }
+
+  getMerchantSettings(merchantId: string): Observable<any> {
+    const methodName = 'getMerchantSettings';
+    const postParams: ServiceParameters = { merchantId, domain: 'merchant', category: 'order', name: 'pickup_locations_enabled' };
+
+    return this.httpRequestFull('/json/merchant', methodName, true, null, postParams).pipe(
+      map(({ response }: MessageResponse<any>) => response)
+    );
+  }
+
+  retrievePickupLocations(institutionId: string): Observable<any> {
+    const methodName = 'retrievePickupLocations';
+    const postParams: ServiceParameters = { active: true };
+
+    return this.httpRequestFull('/json/institution', methodName, true, institutionId, postParams).pipe(
       map(({ response }: MessageResponse<any>) => response)
     );
   }

@@ -1,14 +1,13 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 
 import { ActionSheetController, ModalController } from '@ionic/angular';
-import { Router } from '@angular/router';
-import { NAVIGATE } from 'src/app/app.global';
 import { MerchantInfo, MerchantOrderTypesInfo } from '@pages/ordering/shared/models';
 import { MerchantService } from '../../services/merchant.service';
 import { OrderOptionsActionSheetComponent } from '@pages/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
-import { take, switchMap, mergeMap } from 'rxjs/operators';
+import { take, switchMap, map } from 'rxjs/operators';
 import { OrderType } from '@pages/ordering/ordering.config';
 import { UserService } from '@core/service/user-service/user.service';
+import { LoadingService } from '@core/service/loading/loading.service';
 import { zip, of } from 'rxjs';
 
 @Component({
@@ -22,19 +21,19 @@ export class MerchantListComponent {
 
   constructor(
     public actionSheetController: ActionSheetController,
-    private readonly router: Router,
     private readonly modalController: ModalController,
     private readonly merchantService: MerchantService,
-    private readonly userService: UserService
-  ) {}
+    private readonly userService: UserService,
+    private readonly loadingService: LoadingService
+  ) { }
 
   trackMerchantsById(index: number, { id }: MerchantInfo): string {
     return id;
   }
 
-  merchantClickHandler({ id, orderTypes }) {
+  merchantClickHandler({ id, orderTypes, storeAddress }) {
     // this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.orderOptions], { skipLocationChange: true });
-    this.openOrderOptions(id, orderTypes);
+    this.openOrderOptions(id, orderTypes, storeAddress);
   }
 
   favouriteHandler(event: string) {
@@ -45,10 +44,12 @@ export class MerchantListComponent {
     console.log(`Location Pin Clicked - Merch Id: ${event}`);
   }
 
-  private openOrderOptions(merchantId, orderTypes) {
+  private openOrderOptions(merchantId, orderTypes, storeAddress) {
     const orderType =
       (orderTypes.delivery && orderTypes.pickup) || orderTypes.pickup ? OrderType.PICKUP : OrderType.DELIVERY;
 
+
+    this.loadingService.showSpinner()
     zip(
       this.merchantService.getMerchantOrderSchedule(merchantId, orderType),
       this.userService
@@ -57,15 +58,37 @@ export class MerchantListComponent {
           switchMap(({ response }) =>
             zip(of({ defaultAddress: response.value }), this.merchantService.retrieveUserAddressList(response.userId))
           )
+        ),
+      this.merchantService.getMerchantSettings(merchantId)
+        .pipe(
+          switchMap(({ list: [pickupLocationsEnabled] }): any => {
+            console.log(pickupLocationsEnabled)
+            debugger
+            switch (pickupLocationsEnabled.value) {
+              case null:
+                return of([]);
+              case "true":
+                return this.userService.getUser()
+                  .pipe(
+                    switchMap(({ institutionId }) => this.merchantService.retrievePickupLocations(institutionId))
+                  )
+              case "false":
+                return of(storeAddress);
+            }
+          }),
         )
     )
       .pipe(take(1))
-      .subscribe(([schedule, [defaultAddress, listOfAddresses]]) => {
+      .subscribe(([schedule, [defaultAddress, listOfAddresses], ...rest]) => {
+        console.log()
+        console.log(rest)
+        debugger
+        this.loadingService.closeSpinner();
         this.actionSheet(schedule, orderTypes, defaultAddress.defaultAddress, listOfAddresses.addresses);
       });
   }
 
-  private async actionSheet(schedule, orderTypes: MerchantOrderTypesInfo, defaultAddress, addresses) {
+  private async actionSheet(schedule, orderTypes: MerchantOrderTypesInfo, defaultDeliveryAddress, deliveryAddresses) {
     let cssClass = 'order-options-action-sheet';
     cssClass += orderTypes.delivery && orderTypes.pickup ? ' order-options-action-sheet-p-d' : '';
 
@@ -75,11 +98,11 @@ export class MerchantListComponent {
       componentProps: {
         schedule,
         orderTypes,
-        defaultAddress,
-        addresses,
+        defaultDeliveryAddress,
+        deliveryAddresses,
       },
     });
-    modal.onDidDismiss().then(() => {});
+    modal.onDidDismiss().then(() => { });
     await modal.present();
   }
 }

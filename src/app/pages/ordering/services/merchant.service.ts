@@ -18,7 +18,7 @@ export class MerchantService {
   private readonly _menuMerchants$: BehaviorSubject<MerchantInfo[]> = new BehaviorSubject<MerchantInfo[]>([]);
   private readonly _recentOrders$: BehaviorSubject<OrderInfo[]> = new BehaviorSubject<OrderInfo[]>([]);
 
-  constructor(private readonly orderingApiService: OrderingApiService, private readonly userService: UserService) {}
+  constructor(private readonly orderingApiService: OrderingApiService, private readonly userService: UserService) { }
 
   get menuMerchants$(): Observable<MerchantInfo[]> {
     return this._menuMerchants$.asObservable();
@@ -96,5 +96,13 @@ export class MerchantService {
 
   retrieveUserAddressList(userId: string): Observable<any> {
     return this.orderingApiService.retrieveUserAddressList(userId);
+  }
+
+  getMerchantSettings(merchantId: string): Observable<any> {
+    return this.orderingApiService.getMerchantSettings(merchantId);
+  }
+
+  retrievePickupLocations(institutionId: string): Observable<any> {
+    return this.orderingApiService.retrievePickupLocations(institutionId);
   }
 }
