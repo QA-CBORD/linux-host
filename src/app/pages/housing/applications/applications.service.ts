@@ -27,11 +27,11 @@ export class ApplicationsService {
 
   private readonly _patronsUrl: string = 'api/patrons/v.1.0';
 
-  private readonly _termId: number = 102;
+  private readonly _termId: number = 133;
 
-  private readonly _termStartDateTime: string = '2018-05-31 00:00:00.000';
+  private readonly _termStartDateTime: string = '2018-08-02 00:00:00.000';
 
-  private readonly _termEndDateTime: string = '2018-08-01 23:59:59.000';
+  private readonly _termEndDateTime: string = '2019-05-30 23:59:59.000';
 
   getPatronApplications(): Observable<PatronApplication[]> {
     const patronApplications: PatronApplication[] = this._applicationsStateService.patronApplications;
@@ -58,6 +58,10 @@ export class ApplicationsService {
     this._applicationsStateService.setPatronApplicationSubmitted(applicationId);
   }
 
+  getPatronApplicationById(applicationId): Observable<PatronApplication> {
+    return this._applicationsStateService.getPatronApplicationById(applicationId);
+  }
+
   private _requestPatronApplications(token: string): Observable<PatronApplication[]> {
     const apiUrl: string = `${BASE_URL}/${this._patronsUrl}/patron-applications/self/term/${this._termId}`;
     const headers: HttpHeaders = new HttpHeaders({
@@ -77,10 +81,6 @@ export class ApplicationsService {
         map((applications: PatronApplication[]) => applications.map(this._toPatronApplication)),
         tap((applications: PatronApplication[]) => this._applicationsStateService.setPatronApplications(applications))
       );
-  }
-
-  getPatronApplicationById(applicationId): Observable<PatronApplication> {
-    return this._applicationsStateService.getPatronApplicationById(applicationId);
   }
 
   private _toPatronApplication(application: any): PatronApplication {

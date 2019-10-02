@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
 
-import { PatronApplication } from '../applications.model';
+import { PatronApplication, ApplicationStatus } from '../applications.model';
 
 @Component({
   selector: 'st-applications-list',
@@ -14,11 +14,39 @@ export class ApplicationsListComponent {
     return application.applicationDefinitionId;
   }
 
-  // isNotPending(application: Application): boolean {
-  //   return this.getApplicationStatus(application) !== ApplicationStatus.Pending;
-  // }
+  isNotPending(application: PatronApplication): boolean {
+    return this.getApplicationStatus(application) !== ApplicationStatus.Pending;
+  }
 
-  // isNotNewAndNotPending(application: Application): boolean {
-  //   return this.getApplicationStatus(application) !== ApplicationStatus.New && this.isNotPending(application);
-  // }
+  isNotNewAndNotPending(application: PatronApplication): boolean {
+    return this.getApplicationStatus(application) !== ApplicationStatus.New && this.isNotPending(application);
+  }
+
+  getApplicationStatus(application: PatronApplication): string {
+    if (application.isApplicationAccepted) {
+      return ApplicationStatus.Accepted;
+    } else if (application.isApplicationSubmitted) {
+      return ApplicationStatus.Submitted;
+    } else if (application.isApplicationCanceled) {
+      return ApplicationStatus.Canceled;
+    } else if (new Date(application.createdDateTime).getFullYear() === 1) {
+      return ApplicationStatus.New;
+    } else {
+      return ApplicationStatus.Pending;
+    }
+  }
+
+  getApplicationModificationDate(application: PatronApplication): string {
+    if (application.isApplicationAccepted) {
+      return new Date(application.acceptedDateTime).toDateString();
+    } else if (application.isApplicationSubmitted) {
+      return new Date(application.submittedDateTime).toDateString();
+    } else if (application.isApplicationCanceled) {
+      return new Date(application.cancelledDateTime).toDateString();
+    } else if (application.modifiedDate !== '') {
+      return new Date(application.modifiedDate).toDateString();
+    } else {
+      return '';
+    }
+  }
 }

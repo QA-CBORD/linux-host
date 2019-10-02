@@ -18,9 +18,9 @@ export class HousingAuthService {
 
   private readonly _authUrl: string = 'patronIdentityTemp/auth/token';
 
-  private readonly _patronId: string = '000000015';
+  private readonly _patronId: string = '100200301';
 
-  private readonly _patronSK: number = 8001138;
+  private readonly _patronSK: number = 256;
 
   token$: Observable<string> = this._tokenSource.asObservable();
 

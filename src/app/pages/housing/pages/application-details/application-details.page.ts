@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { tap, filter } from 'rxjs/operators';
 
 import { QuestionsService } from '../../questions/questions.service';
 import { ApplicationsService } from '../../applications/applications.service';
@@ -48,9 +48,10 @@ export class ApplicationDetailsPage implements OnInit {
       )
     );
 
-    this.application$ = this._applicationsService
-      .getPatronApplicationById(this.applicationId)
-      .pipe(tap((application: PatronApplication) => this._questionsService.parsePages(application)));
+    this.application$ = this._applicationsService.getPatronApplicationById(this.applicationId).pipe(
+      filter(Boolean),
+      tap((application: PatronApplication) => this._questionsService.parsePages(application))
+    );
   }
 
   handleSubmit(stepper: StepperComponent, index: number, formValue: any, isLastPage: boolean): void {

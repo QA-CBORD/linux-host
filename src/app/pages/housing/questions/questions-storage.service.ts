@@ -15,7 +15,7 @@ export class QuestionsStorageService {
 
   async addApplicationForm(applicationId: number, form: any): Promise<any> {
     const applicationForms: ApplicationsForms = await this._storage.get(this._key);
-    const forms: any[] = applicationForms ? applicationForms[applicationId] : [];
+    const forms: any[] = applicationForms && applicationForms[applicationId] ? applicationForms[applicationId] : [];
 
     forms.push(form);
 
@@ -26,10 +26,10 @@ export class QuestionsStorageService {
 
   async updateApplicationForm(applicationId: number, index: number, form: any): Promise<any> {
     const applicationForms: ApplicationsForms = await this._storage.get(this._key);
-    const forms: any[] = applicationForms ? applicationForms[applicationId] : [];
+    const forms: any[] = applicationForms && applicationForms[applicationId] ? applicationForms[applicationId] : [];
 
     if (forms && forms[index]) {
-      forms[index] = form
+      forms[index] = form;
     } else {
       forms.push(form);
     }
