@@ -9,9 +9,9 @@ import { StPopoverLayoutComponent } from './st-popover-layout/st-popover-layout.
 import { StNavTabsComponent } from './st-nav-tabs/st-nav-tabs.component';
 import { StProgressBarComponent } from './st-progress-bar/st-progress-bar.component';
 import { StGlobalPopoverComponent } from './st-global-popover';
-import { StSelectFloatingLabelComponent } from './st-select-floating-label/st-select-floating-label.component';
-import { StInputFloatingLabelComponent } from './st-input-floating-label/st-input-floating-label.component';
-import { StTextareaFloatingLabelComponent } from './st-textarea-floating-label/st-textarea-floating-label.component';
+// import { StSelectFloatingLabelComponent } from './st-select-floating-label/st-select-floating-label.component';
+// import { StInputFloatingLabelComponent } from './st-input-floating-label/st-input-floating-label.component';
+// import { StTextareaFloatingLabelComponent } from './st-textarea-floating-label/st-textarea-floating-label.component';
 
 const components = [
   StHeaderComponent,
@@ -21,9 +21,9 @@ const components = [
   StNavTabsComponent,
   StProgressBarComponent,
   StGlobalPopoverComponent,
-  StSelectFloatingLabelComponent,
-  StInputFloatingLabelComponent,
-  StTextareaFloatingLabelComponent
+  // StSelectFloatingLabelComponent,
+  // StInputFloatingLabelComponent,
+  // StTextareaFloatingLabelComponent
 ];
 
 const entryComponents = [StGlobalPopoverComponent];
