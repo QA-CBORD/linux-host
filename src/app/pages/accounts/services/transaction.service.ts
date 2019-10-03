@@ -5,7 +5,7 @@ import { map, switchMap, tap, take } from 'rxjs/operators';
 
 import { AccountsService } from './accounts.service';
 import { CommerceApiService } from '../../../core/service/commerce/commerce-api.service';
-import { ContentService } from '../../../core/service/content-service/content.service';
+import { ContentService } from './../../../core/service/content-service/content.service';
 
 import { TransactionHistory } from '../models/transaction-history.model';
 import { QueryTransactionHistoryCriteria } from '../../../core/model/account/transaction-query.model';

@@ -1,0 +1,11 @@
+<ion-list>
+
+  <st-order-address-item 
+    *ngFor="let item of items;" 
+    (click)="itemSelected(item)" 
+    [line1]="item.address1" 
+    [line2]="item.city + ', ' + item.state" 
+    iconNameDefault="address-marker.svg" 
+    iconNameSelected="location-pin.svg" ></st-order-address-item>
+
+</ion-list>

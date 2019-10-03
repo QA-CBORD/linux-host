@@ -6,20 +6,20 @@ import { SelectivePreloadingStrategy } from './shared/preload-strategy/Selective
 const routes: Routes = [
   {
     path: NAVIGATE.mobileAccess,
-    loadChildren: './sections/mobile-access/mobile-access.module#MobileAccessPageModule',
+    loadChildren: './pages/mobile-access/mobile-access.module#MobileAccessPageModule',
   },
-  { path: NAVIGATE.rewards, loadChildren: './sections/rewards/rewards.module#RewardsPageModule' },
+  { path: NAVIGATE.rewards, loadChildren: './pages/rewards/rewards.module#RewardsPageModule' },
   {
     path: NAVIGATE.secureMessage,
-    loadChildren: './sections/secure-messaging/secure-message.module#SecureMessagePageModule',
+    loadChildren: './pages/secure-messaging/secure-message.module#SecureMessagePageModule',
   },
   {
     path: NAVIGATE.accounts,
-    loadChildren: './sections/accounts/accounts.module#AccountsModule',
+    loadChildren: './pages/accounts/accounts.module#AccountsModule',
   },
   {
     path: NAVIGATE.ordering,
-    loadChildren: './sections/ordering/ordering.module#OrderingPageModule',
+    loadChildren: './pages/ordering/ordering.module#OrderingPageModule',
   },
 ];
 

@@ -1,5 +1,5 @@
-import { AddressInfo } from '../../../../core/model/address/address-info';
-import { OrderItem, OrderPayment, OrderNotification } from '../models';
+import { AddressInfo } from './../../../../core/model/address/address-info';
+import { OrderItem, OrderPayment, OrderNotification } from '.';
 
 export interface OrderInfo {
   id: string;

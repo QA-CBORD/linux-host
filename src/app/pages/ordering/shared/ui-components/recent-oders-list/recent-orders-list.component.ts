@@ -7,7 +7,7 @@ import {
   SimpleChanges,
   SimpleChange,
 } from '@angular/core';
-import { OrderInfo } from '../../ui-components';
+import { OrderInfo } from '..';
 import { OrderStatus } from './recent-orders-list-item/recent-orders.config';
 
 @Component({

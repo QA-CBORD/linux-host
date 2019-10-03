@@ -9,7 +9,7 @@ import { CoordsService } from 'src/app/core/service/coords/coords.service';
 
 import { BaseService, ServiceParameters } from 'src/app/core/service/base-service/base.service';
 import { MessageResponse } from 'src/app/core/model/service/message-response.model';
-import { MerchantSearchOptions, MerchantInfo } from '../../ordering';
+import { MerchantSearchOptions, MerchantInfo } from '..';
 import { GeoCoordinates } from 'src/app/core/model/geolocation/geocoordinates.model';
 import { MerchantSearchOptionName } from '../ordering.config';
 import { OrderInfo } from '../shared';
