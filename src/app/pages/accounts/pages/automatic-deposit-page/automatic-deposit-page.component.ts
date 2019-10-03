@@ -656,7 +656,7 @@ export const CONTROL_ERROR = {
   [AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit]: {
     requiredEnter: 'You must enter an amount.',
     requiredSelect: 'You must select a suitable amount from select',
-    maxLength: 'Value can not be greater than 1 000 000',
+    maxLength: 'Value can not be greater than 999 999',
   },
   [AUTOMATIC_DEPOSIT_CONTROL_NAMES.paymentMethod]: {
     required: 'You must select payment method.',
@@ -666,7 +666,7 @@ export const CONTROL_ERROR = {
   },
   [AUTOMATIC_DEPOSIT_CONTROL_NAMES.lowBalanceAmount]: {
     requiredEnter: 'You must enter an amount.',
-    maxLength: 'Value can not be greater than 1 000 000',
+    maxLength: 'Value can not be greater than 999 999',
     requiredSelect: 'You must select a suitable amount from select',
   },
   [AUTOMATIC_DEPOSIT_CONTROL_NAMES.dayOfWeek]: {
