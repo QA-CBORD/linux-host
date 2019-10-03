@@ -50,7 +50,9 @@
       --box-shadow: none;
       --ion-color-primary: $color-white;
       --color-activated: #166dff;
-      --background-activated: #cccccc;
+      --background-activated: #000;
+      --background-focused:#00ff00;
+      --background-hover: #ff0000;
 
       position: absolute;
       bottom: 10px;
