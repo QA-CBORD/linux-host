@@ -114,11 +114,14 @@
 
   &__deposit-btn {
     --background: #166dff;
+    --background-activated: #cccccc;
+    --border-radius: 25px;
+    --box-shadow: none;
 
     margin-top: 50px;
     position: relative;
-    left: 2.5%;
-    width: 95%;
+    left: 5%;
+    width: 90%;
 
     &.button-disabled {
       --background: #cccccc;
