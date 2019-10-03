@@ -10,7 +10,11 @@
   }
 
   &__add-address-container {
-    padding: 0 20px 0 5px;
+    padding: 0 20px;
+  }
+
+  &__add-address-wrapper {
+    margin-bottom: 20px;
 
     @include font-nunito-semibold(16px);
   }
@@ -25,6 +29,18 @@
 
   &__add-address-text {
     margin-left: 15px;
+  }
+
+  &__add-address-btn-container {
+    display: flex;
+    justify-content: space-evenly;
+  }
+
+  &__add-address-btn {
+    min-width: 170px;
+    height: 48px;
+
+    @include font-nunito-heavy(14px);
   }
 
   &__back-btn {

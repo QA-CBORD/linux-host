@@ -1,14 +1,55 @@
-<form [formGroup]="addEditAddressesForm" (ngSubmit)="onFormSubmit()">
-  <!-- <st-input-floating-label
-    [control]="address1"
-    label="Address line 1"
-    type="text"
-    idd="address1"
-    maxlength="100"
-    formControlName="address1"
-    [isError]="address1.errors && (address1.dirty || address1.touched)"
-  > -->
-  <!-- <div
+<div class="addresses">
+  <form [formGroup]="addEditAddressesForm" (ngSubmit)="onFormSubmit()">
+    <st-input-floating-label
+      [control]="address1"
+      label="Address line 1"
+      type="text"
+      idd="address1"
+      maxlength="100"
+      formControlName="address1"
+      [isError]="address1.errors && (address1.dirty || address1.touched)"
+    >
+      <!-- <div
+        class="cc__input-error"
+        *ngIf="
+          cardNumberControl.errors &&
+          cardNumberControl.errors['required'] &&
+          (cardNumberControl.dirty || cardNumberControl.touched)
+        "
+      >
+        This field is required.
+      </div> -->
+    </st-input-floating-label>
+    <st-input-floating-label
+      [control]="city"
+      label="City"
+      type="text"
+      idd="city"
+      maxlength="100"
+      formControlName="city"
+      [isError]="city.errors && (city.dirty || city.touched)"
+    >
+      <!-- <div
+    class="cc__input-error"
+    *ngIf="
+      cardNumberControl.errors &&
+      cardNumberControl.errors['required'] &&
+      (cardNumberControl.dirty || cardNumberControl.touched)
+    "
+  >
+    This field is required.
+  </div> -->
+    </st-input-floating-label>
+    <st-input-floating-label
+      [control]="address2"
+      label="Address line 2"
+      type="text"
+      idd="address2"
+      maxlength="100"
+      formControlName="address2"
+      [isError]="address2.errors && (address2.dirty || address2.touched)"
+    >
+      <!-- <div
       class="cc__input-error"
       *ngIf="
         cardNumberControl.errors &&
@@ -18,8 +59,26 @@
     >
       This field is required.
     </div> -->
-  <!-- <div *ngIf="cardNumberControl.errors && cardNumberControl.errors['pattern']" class="cc__input-error">
-      Please enter a valid credit card number.
-    </div> -->
-  <!-- </st-input-floating-label> -->
-</form>
+    </st-input-floating-label>
+    <st-input-floating-label
+      [control]="nickname"
+      label="Nickname"
+      type="text"
+      idd="nickname"
+      maxlength="50"
+      formControlName="nickname"
+      [isError]="nickname.errors && (nickname.dirty || nickname.touched)"
+    >
+      <!-- <div
+    class="cc__input-error"
+    *ngIf="
+      cardNumberControl.errors &&
+      cardNumberControl.errors['required'] &&
+      (cardNumberControl.dirty || cardNumberControl.touched)
+    "
+  >
+    This field is required.
+  </div> -->
+    </st-input-floating-label>
+  </form>
+</div>

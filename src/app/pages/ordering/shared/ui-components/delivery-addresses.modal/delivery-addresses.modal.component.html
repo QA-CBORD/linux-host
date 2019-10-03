@@ -10,13 +10,24 @@
 </ion-header>
 
 <ion-content>
-  <ion-item class="delivery-address__add-address-container"
-    ><span class="delivery-address__add-address-sign">+ </span
-    ><span class="delivery-address__add-address-text">Add New Address</span>
-  </ion-item>
+  <div class="delivery-address__add-address-container">
+    <ion-item class="delivery-address__add-address-wrapper" lines="full"
+      ><span class="delivery-address__add-address-sign">+ </span
+      ><span class="delivery-address__add-address-text">Add New Address</span>
+    </ion-item>
 
-  <st-add-edit-addresses></st-add-edit-addresses>
-  
+    <st-add-edit-addresses></st-add-edit-addresses>
+
+    <div class="delivery-address__add-address-btn-container">
+      <ion-button fill="clear" mode="md" expand="full" shape="round" class="delivery-address__add-address-btn">
+        cancel
+      </ion-button>
+      <ion-button mode="md" expand="full" shape="round" class="delivery-address__add-address-btn">
+        save
+      </ion-button>
+    </div>
+  </div>
+
   <ion-radio-group mode="md" class="delivery-address__radio-group" (ionChange)="onRadioGroupChanged($event)">
     <ion-item lines="none" class="delivery-address__radio-container">
       <ion-label class="delivery-address__radio-label">
