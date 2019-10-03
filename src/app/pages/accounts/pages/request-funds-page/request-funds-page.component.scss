@@ -41,6 +41,9 @@
 
     &--disabled {
       --ion-color-primary: #c4c4c4;
+      --background-activated: #000;
+      --background-focused:#00ff00;
+      --background-hover: #ff0000;
       --box-shadow: none;
 
       color: $color-matterhorn;
@@ -50,9 +53,7 @@
       --box-shadow: none;
       --ion-color-primary: $color-white;
       --color-activated: #166dff;
-      --background-activated: #000;
-      --background-focused:#00ff00;
-      --background-hover: #ff0000;
+
 
       position: absolute;
       bottom: 10px;
