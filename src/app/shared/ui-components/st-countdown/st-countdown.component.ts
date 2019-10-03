@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Observable, timer } from 'rxjs';
 import { map, takeWhile, tap } from 'rxjs/operators';
 
@@ -6,6 +6,7 @@ import { map, takeWhile, tap } from 'rxjs/operators';
   selector: 'st-countdown',
   templateUrl: './st-countdown.component.html',
   styleUrls: ['./st-countdown.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class StCountdownComponent implements OnInit {
   @Input() seconds: number = 3;

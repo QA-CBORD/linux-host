@@ -1,45 +1,76 @@
-@import 'tools';
+@import "tools";
 
-.deposits {
-  &__content {
-    --padding-end: 20px;
-    --padding-start: 20px;
-  }
+.content {
+  --padding-end: 20px;
+  --padding-start: 20px;
 
   &__header {
+    line-height: 20px;
+    letter-spacing: 0;
+
     @include font-nunito-regular(16px);
   }
+}
 
-  &__radio-item {
-    border: 1px solid $color-silver;
+
+.deposit-form {
+  &__control {
+    height: 45px;
+    background: $color-white;
     border-radius: 8px;
-    margin-bottom: 8px;
+    border: 1px solid $color-link-water;
+    letter-spacing: 0;
 
-    &.item-radio-checked {
-      --background: #166dff0d;
-      border-color: $color-dodger-blue;
+    @include font-nunito-regular(16px);
+    --placeholder-color: #626262;
+    --padding-start: 5px;
 
-      .deposits__radio-label-wrapper {
-        color: #000;
-
-        @include font-nunito-heavy(16px);
-      }
-
-      ion-radio {
-        --color-checked: #166dff;
-      }
+    &--error {
+      border: 1px solid $color-alizarin;
     }
   }
 
-  &__radio-label-wrapper {
-    color: $color-matterhorn;
+  &__control-error-msg {
+    margin: 0;
+    color: $color-flame-red;
+    letter-spacing: 0;
+    min-height: 16px;
+    line-height: 16px;
+
+    @include font-nunito-heavy(12px);
   }
 
-  &__radio-label-title {
-    @include font-nunito-heavy(16px);
+  &__label {
+    margin-top: 25px;
+    display: block;
+
+    @include font-nunito-regular(14px)
   }
 
-  &__radio-label-sub-title {
-    @include font-nunito-regular(12px);
+  &__button {
+    --ion-color-primary: #166dff;
+    --border-radius: 25px;
+    --box-shadow: none;
+
+    margin-top: 40px;
+    height: 45px;
+    width: 90vw;
+    text-transform: uppercase;
+    line-height: 18px;
+
+    @include font-nunito-regular(14px);
+
+    &--fixed {
+      position: fixed;
+      bottom: 20px;
+      left: 5vw;
+    }
+
+    &--disabled {
+      --ion-color-primary: #c4c4c4;
+      --box-shadow: none;
+
+      color: $color-matterhorn;
+    }
   }
 }

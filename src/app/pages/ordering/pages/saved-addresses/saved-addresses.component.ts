@@ -6,9 +6,12 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./saved-addresses.component.scss'],
 })
 export class SavedAddressesComponent implements OnInit {
-
+  title = 'Saved Addresses';
   constructor() { }
 
   ngOnInit() {}
+  
+  onModalClose(){
 
+  }
 }

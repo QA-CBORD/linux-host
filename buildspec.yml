@@ -2,7 +2,7 @@ version: 0.2
 
 env:
   variables:
-    RPM_VERSION: "2.58"
+    RPM_VERSION: "2.60"
   parameter-store: 
     BUILD_NUMBER: "build-config-cbord-student-build-number"
 
@@ -11,7 +11,7 @@ phases:
     commands:
       - echo **** Installing required packages ****
       - yum install epel-release -y
-      - curl -sL https://rpm.nodesource.com/setup_10.x | bash -
+      - yum install -y @nodejs
       - yum install nodejs -y
       - node --version
       - npm --version
@@ -29,7 +29,7 @@ phases:
       - ionic build --prod
 
       - mkdir student
-      - cp -r ./www/* ./student
+      - cp -rv ./www/* ./student
       - cp terms.html ./student
       - cp robots.txt ./student 
       - echo **** Perform tar ****

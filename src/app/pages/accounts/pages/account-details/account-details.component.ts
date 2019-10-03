@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
 
 import { TransactionHistory } from '../../models/transaction-history.model';
-import { TIME_PERIOD, CONTENT_STRINGS } from '../../accounts.config';
+import { CONTENT_STRINGS, TIME_PERIOD } from '../../accounts.config';
 import { TransactionService } from '../../services/transaction.service';
 
 @Component({

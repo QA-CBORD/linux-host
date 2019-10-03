@@ -102,15 +102,27 @@ export class AccountsService {
     return Array.isArray(result) ? result : [];
   }
 
-  getAccountsFilteredByTenders(): Observable<UserAccount[]> {
+  getAccountsFilteredByDisplayTenders(): Observable<UserAccount[]> {
     return this.settings$.pipe(
       map(settings => {
-        const depositSetting = this.getSettingByName(settings, SYSTEM_SETTINGS_CONFIG.displayTenders.name);
-        return this.transformStringToArray(depositSetting.value);
+        const settingInfo = this.getSettingByName(settings, SYSTEM_SETTINGS_CONFIG.displayTenders.name);
+        return this.transformStringToArray(settingInfo.value);
       }),
       switchMap((tendersId: Array<string>) =>
         this.accounts$.pipe(map(accounts => this.filterAccountsByTenders(tendersId, accounts)))
       )
+    );
+  }
+
+  getAccountsFilteredByDepositTenders(): Observable<UserAccount[]> {
+    return this.settings$.pipe(
+        map(settings => {
+          const settingInfo = this.getSettingByName(settings, SYSTEM_SETTINGS_CONFIG.depositTenders.name);
+          return this.transformStringToArray(settingInfo.value);
+        }),
+        switchMap((tendersId: Array<string>) =>
+            this.accounts$.pipe(map(accounts => this.filterAccountsByTenders(tendersId, accounts)))
+        )
     );
   }
 

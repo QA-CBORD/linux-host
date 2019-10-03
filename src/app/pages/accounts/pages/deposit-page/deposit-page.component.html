@@ -7,68 +7,8 @@
 ></st-header>
 <ion-content>
   <form [formGroup]="depositForm" (ngSubmit)="onFormSubmit()">
-    <div
-      class="deposit__manual-amount"
-      [ngClass]="{ 'deposit__manual-amount--preset-amouts': !isFreeFromDepositEnabled }"
-    >
-      <div class="deposit__main-select-container" *ngIf="!isFreeFromDepositEnabled; else mainInput">
-        <div class="deposit__select-wrapper">
-          <ion-label class="deposit__label-select">Amount to Deposit</ion-label>
-          <ion-select
-            class="deposit__select deposit__select-account"
-            cancelText="Cancel"
-            mode="md"
-            placeholder="Please Choose"
-            interface="action-sheet"
-            [interfaceOptions]="customActionSheetOptions"
-            formControlName="mainSelect"
-          >
-            <ion-select-option [value]="amount" *ngFor="let amount of presetDepositAmounts">
-              {{ amount | transactionUnits: 2 }}
-            </ion-select-option>
-          </ion-select>
-        </div>
-      </div>
-      <ng-template #mainInput>
-        <div class="deposit__main-input-container">
-          <ion-input
-            class="deposit__main-input"
-            inputmode="tel"
-            type="tel"
-            maxlength="10"
-            #inputText
-            [value]="depositForm.get('mainInput') | customCurrency"
-            [autofocus]="true"
-            placeholder="0"
-            [ngStyle]="{ width: inputText.value ? inputText.value.length + 1 + 'ch' : '2ch' }"
-            [ngClass]="{
-              'deposit__main-input--focus': focusLine,
-              shakeit: isMaxCharLength,
-              'deposit__main-input-container--decrease-font': inputText.value && inputText.value.length >= 7
-            }"
-            (ionFocus)="focusLine = true"
-            (ionBlur)="focusLine = false"
-            (keydown)="formatInput($event)"
-            formControlName="mainInput"
-          ></ion-input>
-          <div *ngIf="mainFormInput.errors && mainFormInput.errors['maxLength']" class="deposit__main-input--error">
-            The maximum amount for a deposit is {{ mainFormInput.errors['maxLength'].max | transactionUnits: 2 }}.
-          </div>
-          <div *ngIf="mainFormInput.errors && mainFormInput.errors['minLength']" class="deposit__main-input--error">
-            The minimum amount for a deposit is {{ mainFormInput.errors['minLength'].min }}.
-          </div>
-          <div
-            *ngIf="
-              mainFormInput.errors && mainFormInput.errors['pattern'] && (mainFormInput.dirty || mainFormInput.touched)
-            "
-            class="deposit__main-input--error"
-          >
-            Please enter a valid amount.
-          </div>
-        </div>
-      </ng-template>
-    </div>
-    <section class="deposit__selection-block">
+
+   <section class="deposit__selection-block">
       <div class="deposit__select-wrapper">
         <ion-label class="deposit__label-select">Payment Method</ion-label>
         <ion-select
@@ -88,10 +28,38 @@
             >{{ account.accountTender | creditCardType }} ending in
             {{ account.lastFour }}
           </ion-select-option>
-          <ion-select-option value="billme" *ngIf="isBillMePaymentTypesEnabled">Bill Me</ion-select-option>
-          <ion-select-option value="newCreditCard"> Add a Credit Card</ion-select-option>
+          <ion-select-option [value]="paymentTypes.BILLME" *ngIf="isBillMePaymentTypesEnabled">Bill Me</ion-select-option>
+          <ion-select-option value="newCreditCard" *ngIf="isCreditCardPaymentTypesEnabled"> Add a Credit Card</ion-select-option>
         </ion-select>
       </div>
+
+     <div>
+       <div class="deposit__label-cvv" *ngIf="isCVVfieldShow">
+         <ion-label class="deposit__label-select">Card Security Code:</ion-label>
+         <ion-input
+                 class="deposit__input-cvv"
+                 inputmode="tel"
+                 type="tel"
+                 maxlength="4"
+                 placeholder="CVV"
+                 formControlName="fromAccountCvv"
+         ></ion-input>
+         <div
+                 class="deposit__input-cvv--error"
+                 *ngIf="
+            fromAccountCvv &&
+            fromAccountCvv.errors &&
+            (fromAccountCvv.errors['required'] ||
+              fromAccountCvv.errors['pattern'] ||
+              fromAccountCvv.errors['minlength']) &&
+            (fromAccountCvv.dirty || fromAccountCvv.touched)
+          "
+         >
+           Please enter a valid card security code.
+         </div>
+       </div>
+     </div>
+
       <div class="deposit__select-wrapper">
         <ion-label class="deposit__label-select">To Account</ion-label>
         <ion-select
@@ -108,32 +76,68 @@
           </ion-select-option>
         </ion-select>
       </div>
-    </section>
-    <section>
-      <div class="deposit__label-cvv" *ngIf="isCVVfieldShow">
-        <ion-label class="deposit__label-select">Card Security Code:</ion-label>
-        <ion-input
-          class="deposit__input-cvv"
-          inputmode="tel"
-          type="tel"
-          maxlength="4"
-          placeholder="CVV"
-          formControlName="fromAccountCvv"
-        ></ion-input>
-        <div
-          class="deposit__input-cvv--error"
-          *ngIf="
-            fromAccountCvv &&
-            fromAccountCvv.errors &&
-            (fromAccountCvv.errors['required'] ||
-              fromAccountCvv.errors['pattern'] ||
-              fromAccountCvv.errors['minlength']) &&
-            (fromAccountCvv.dirty || fromAccountCvv.touched)
-          "
-        >
-          Please enter a valid card security code.
-        </div>
-      </div>
+     <div
+             class="deposit__manual-amount"
+             [ngClass]="{ 'deposit__manual-amount--preset-amouts': !(isFreeFormEnabled$ | async)}"
+     >
+       <div class="deposit__main-select-container" *ngIf="!(isFreeFormEnabled$ | async); else mainInput">
+         <div class="deposit__select-wrapper">
+           <ion-label class="deposit__label-select">Amount to Deposit</ion-label>
+           <ion-select
+                   class="deposit__select deposit__select-account"
+                   cancelText="Cancel"
+                   mode="md"
+                   placeholder="Please Choose"
+                   interface="action-sheet"
+                   [interfaceOptions]="customActionSheetOptions"
+                   formControlName="mainSelect"
+           >
+             <ion-select-option [value]="amount" *ngFor="let amount of amountsForSelect$ | async">
+               {{ amount | transactionUnits }}
+             </ion-select-option>
+           </ion-select>
+         </div>
+       </div>
+
+       <ng-template #mainInput>
+         <div class="deposit__main-input-container">
+           <ion-input
+                   class="deposit__main-input"
+                   inputmode="tel"
+                   type="tel"
+                   maxlength="10"
+                   #inputText
+                   [value]="depositForm.get('mainInput') | customCurrency"
+                   placeholder="0"
+                   [ngStyle]="{ width: inputText.value ? inputText.value.length + 1 + 'ch' : '2ch' }"
+                   [ngClass]="{
+              'deposit__main-input--focus': focusLine,
+              shakeit: isMaxCharLength,
+              'deposit__main-input-container--decrease-font': inputText.value && inputText.value.length >= 7
+            }"
+                   (ionFocus)="focusLine = true"
+                   (ionBlur)="focusLine = false"
+                   (keydown)="formatInput($event)"
+                   formControlName="mainInput"
+           ></ion-input>
+           <div *ngIf="mainFormInput.errors && mainFormInput.errors['maxLength']" class="deposit__main-input--error">
+             The maximum amount for a deposit is {{ mainFormInput.errors['maxLength'].max | transactionUnits }}.
+           </div>
+           <div *ngIf="mainFormInput.errors && mainFormInput.errors['minLength']" class="deposit__main-input--error">
+             The minimum amount for a deposit is {{ mainFormInput.errors['minLength'].min | transactionUnits }}.
+           </div>
+           <div
+                   *ngIf="
+              mainFormInput.errors && mainFormInput.errors['pattern'] && (mainFormInput.dirty || mainFormInput.touched)
+            "
+                   class="deposit__main-input--error"
+           >
+             Please enter a valid amount.
+           </div>
+         </div>
+       </ng-template>
+
+     </div>
     </section>
 
     <ion-button expand="block" type="submit" class="deposit__deposit-btn" [disabled]="!depositForm.valid"
@@ -141,3 +145,4 @@
     >
   </form>
 </ion-content>
+<ion-footer></ion-footer>

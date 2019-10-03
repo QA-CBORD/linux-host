@@ -79,7 +79,7 @@ export class FilterComponent implements OnInit {
       component: FilterMenuComponent,
       animated: true,
       componentProps: {
-        accounts: this.accountsService.getAccountsFilteredByTenders(),
+        accounts: this.accountsService.getAccountsFilteredByDisplayTenders(),
         periods: this.expandTimeRange(getAmountOfMonthFromPeriod(6)),
         activeAccountId: accId,
         activeTimeRange: timeRange,

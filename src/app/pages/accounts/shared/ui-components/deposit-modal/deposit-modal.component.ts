@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 
-
 @Component({
   selector: 'st-deposit-modal',
   templateUrl: './deposit-modal.component.html',
@@ -11,7 +10,7 @@ import { ModalController } from '@ionic/angular';
 export class DepositModalComponent {
   @Input() data;
 
-  constructor(private readonly modalController: ModalController) { }
+  constructor(private readonly modalController: ModalController) {}
 
   async onClickedDone() {
     await this.modalController.dismiss();

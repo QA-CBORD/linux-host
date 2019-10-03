@@ -57,7 +57,7 @@
           idd="expDate"
           maxlength="7"
           formControlName="expDate"
-          [isError]="expDateControl.errors && (expDateControl.dirty || expDateControl.touched)"
+          [isError]="expDateControl.errors && expDateControl.touched"
           (keydown)="onInputFieldClicked($event)"
         >
           <div
@@ -83,7 +83,7 @@
         </st-input-floating-label>
         <span
           class="cc__exp-date-hint"
-          *ngIf="!(expDateControl.errors && (expDateControl.dirty || expDateControl.touched))"
+          *ngIf="!(expDateControl.errors && expDateControl.touched)"
           >MM/YYYY</span
         >
       </div>
@@ -96,7 +96,7 @@
           idd="securityCode"
           maxlength="4"
           formControlName="securityCode"
-          [isError]="securityCodeControl.errors && (securityCodeControl.dirty || securityCodeControl.touched)"
+          [isError]="securityCodeControl.errors && (securityCodeControl.touched)"
         >
           <div
             class="cc__input-error"
@@ -105,7 +105,7 @@
               (securityCodeControl.errors['required'] ||
                 securityCodeControl.errors['minlength'] ||
                 securityCodeControl.errors['pattern']) &&
-              (securityCodeControl.dirty || securityCodeControl.touched)
+              (securityCodeControl.touched)
             "
           >
             Please enter a valid card security code.
@@ -113,7 +113,7 @@
         </st-input-floating-label>
         <span
           class="cc__cvv-hint"
-          *ngIf="!(securityCodeControl.errors && (securityCodeControl.dirty || securityCodeControl.touched))"
+          *ngIf="!(securityCodeControl.errors && securityCodeControl.touched)"
           >CVV</span
         >
       </div>
@@ -122,7 +122,7 @@
       class="cc__input-wrapper"
       [control]="nameOnCCControl"
       label="Name on Credit Card"
-      type="tel"
+      type="text"
       idd="nameOnCC"
       formControlName="nameOnCC"
       [isError]="nameOnCCControl.errors && (nameOnCCControl.dirty || nameOnCCControl.touched)"
@@ -132,7 +132,7 @@
         *ngIf="
           nameOnCCControl.errors &&
           nameOnCCControl.errors['required'] &&
-          (nameOnCCControl.dirty || nameOnCCControl.touched)
+          (nameOnCCControl.touched)
         "
       >
         Please enter the name as it appears on the credit card.
@@ -143,10 +143,10 @@
       class="cc__input-wrapper"
       [control]="billingAddressControl"
       label="Billing Address"
-      type="tel"
+      type="text"
       idd="billingAddress"
       formControlName="billingAddress"
-      [isError]="billingAddressControl.errors && (billingAddressControl.dirty || billingAddressControl.touched)"
+      [isError]="billingAddressControl.errors && billingAddressControl.touched"
     >
       <div
         class="cc__input-error"
@@ -180,8 +180,12 @@
         Please enter a valid postal code.
       </div>
     </st-input-floating-label>
+    <div class="cc__disclaimer">
+      By saving this card, you consent for this card to be stored and used for purchases. You may remove this card at
+      any time within Settings.
+    </div>
     <ion-button expand="block" type="submit" class="cc__submit-btn" shape="round" [disabled]="!ccForm.valid">
-      add card
+      save card
     </ion-button>
   </form>
 </ion-content>

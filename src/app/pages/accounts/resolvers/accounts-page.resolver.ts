@@ -22,6 +22,7 @@ export class AccountsPageResolver
   resolve(): Observable<[ContentStringInfo[], ContentStringInfo[], TransactionHistory[], UserAccount[]]> {
     const requireSettings = [
       SYSTEM_SETTINGS_CONFIG.displayTenders,
+      SYSTEM_SETTINGS_CONFIG.depositTenders,
       SYSTEM_SETTINGS_CONFIG.enableAutoDeposits,
       SYSTEM_SETTINGS_CONFIG.enableOnetimeDeposits,
       SYSTEM_SETTINGS_CONFIG.guestDeposit,

@@ -10,7 +10,7 @@ export class SettingService {
   private settings: SettingInfo[] = [];
   private readonly _settings$: BehaviorSubject<SettingInfo[]> = new BehaviorSubject<SettingInfo[]>(this.settings);
 
-  constructor(private readonly apiService: AccountsApiService) { }
+  constructor(private readonly apiService: AccountsApiService) {}
 
   get settings$(): Observable<SettingInfo[]> {
     return this._settings$.asObservable();
@@ -23,11 +23,11 @@ export class SettingService {
 
   getUserSettings(settings: ContentStringRequest[]): Observable<SettingInfo[]> {
     const requestArray = settings.map(setting => this.apiService.getSettingByConfig(setting));
-2
-    return zip(...requestArray).pipe(tap(settings => this._settings = settings));
+
+    return zip(...requestArray).pipe(tap(settings => (this._settings = settings)));
   }
 
   getSettingByName(settings: SettingInfo[], name: string): SettingInfo | undefined {
-    return settings.find(({ name: n }) => n === name);
+    return settings.find(setting => setting && setting.name === name);
   }
 }

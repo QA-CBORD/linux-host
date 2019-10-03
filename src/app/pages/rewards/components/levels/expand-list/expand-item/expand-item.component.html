@@ -20,6 +20,7 @@
         <ion-item
           class="list-container__item"
           button="true"
+          detail="false"
           [ngClass]="{ 'list-container__item--disabled': isUnearnedItem(reward) || isLockedItem(reward) }"
           *ngFor="let reward of levelInfo.userClaimableRewards; trackBy: trackFn"
         >
