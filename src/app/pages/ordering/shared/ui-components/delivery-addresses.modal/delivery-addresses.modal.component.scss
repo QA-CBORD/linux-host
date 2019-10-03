@@ -9,6 +9,24 @@
     @include font-nunito-heavy(20px);
   }
 
+  &__add-address-container {
+    padding: 0 20px 0 5px;
+
+    @include font-nunito-semibold(16px);
+  }
+
+  &__add-address-sign {
+    position: relative;
+    bottom: 2px;
+    left: 4px;
+
+    @include font-nunito-semibold(24px);
+  }
+
+  &__add-address-text {
+    margin-left: 15px;
+  }
+
   &__back-btn {
     --color: #000 !important;
     font-size: 20px;
@@ -44,15 +62,6 @@
 
   &__footer {
     padding: 0 15px 20px;
-  }
-
-  &__add-new-address-btn {
-    --border-color: #166dff;
-    color: #166dff;
-    height: 48px;
-    margin-bottom: 15px;
-
-    @include font-nunito-heavy(14px);
   }
 
   &__submit-btn {

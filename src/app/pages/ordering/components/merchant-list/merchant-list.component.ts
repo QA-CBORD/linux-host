@@ -25,7 +25,7 @@ export class MerchantListComponent {
     private readonly merchantService: MerchantService,
     private readonly userService: UserService,
     private readonly loadingService: LoadingService
-  ) { }
+  ) {}
 
   trackMerchantsById(index: number, { id }: MerchantInfo): string {
     return id;
@@ -48,8 +48,7 @@ export class MerchantListComponent {
     const orderType =
       (orderTypes.delivery && orderTypes.pickup) || orderTypes.pickup ? OrderType.PICKUP : OrderType.DELIVERY;
 
-
-    this.loadingService.showSpinner()
+    this.loadingService.showSpinner();
     zip(
       this.merchantService.getMerchantOrderSchedule(merchantId, orderType),
       this.userService
@@ -59,30 +58,26 @@ export class MerchantListComponent {
             zip(of({ defaultAddress: response.value }), this.merchantService.retrieveUserAddressList(response.userId))
           )
         ),
-      this.merchantService.getMerchantSettings(merchantId)
-        .pipe(
-          switchMap(({ list: [pickupLocationsEnabled] }): any => {
-            console.log(pickupLocationsEnabled)
-            debugger
+      this.merchantService.getMerchantSettings(merchantId).pipe(
+        switchMap(
+          ({ list: [pickupLocationsEnabled] }): any => {
             switch (pickupLocationsEnabled.value) {
               case null:
-                return of([]);
-              case "true":
-                return this.userService.getUser()
-                  .pipe(
-                    switchMap(({ institutionId }) => this.merchantService.retrievePickupLocations(institutionId))
-                  )
-              case "false":
-                return of(storeAddress);
+                return of({ list: [] });
+              case 'true':
+                return this.userService
+                  .getUser()
+                  .pipe(switchMap(({ institutionId }) => this.merchantService.retrievePickupLocations(institutionId)));
+              case 'false':
+                return of({ list: [storeAddress] });
             }
-          }),
+          }
         )
+      )
     )
       .pipe(take(1))
-      .subscribe(([schedule, [defaultAddress, listOfAddresses], ...rest]) => {
-        console.log()
-        console.log(rest)
-        debugger
+      .subscribe(([schedule, [defaultAddress, listOfAddresses], pickupLocations]) => {
+        console.log(pickupLocations['list']);
         this.loadingService.closeSpinner();
         this.actionSheet(schedule, orderTypes, defaultAddress.defaultAddress, listOfAddresses.addresses);
       });
@@ -102,7 +97,7 @@ export class MerchantListComponent {
         deliveryAddresses,
       },
     });
-    modal.onDidDismiss().then(() => { });
+    modal.onDidDismiss().then(() => {});
     await modal.present();
   }
 }

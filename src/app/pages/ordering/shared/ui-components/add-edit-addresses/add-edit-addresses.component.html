@@ -1,0 +1,25 @@
+<form [formGroup]="addEditAddressesForm" (ngSubmit)="onFormSubmit()">
+  <!-- <st-input-floating-label
+    [control]="address1"
+    label="Address line 1"
+    type="text"
+    idd="address1"
+    maxlength="100"
+    formControlName="address1"
+    [isError]="address1.errors && (address1.dirty || address1.touched)"
+  > -->
+  <!-- <div
+      class="cc__input-error"
+      *ngIf="
+        cardNumberControl.errors &&
+        cardNumberControl.errors['required'] &&
+        (cardNumberControl.dirty || cardNumberControl.touched)
+      "
+    >
+      This field is required.
+    </div> -->
+  <!-- <div *ngIf="cardNumberControl.errors && cardNumberControl.errors['pattern']" class="cc__input-error">
+      Please enter a valid credit card number.
+    </div> -->
+  <!-- </st-input-floating-label> -->
+</form>
