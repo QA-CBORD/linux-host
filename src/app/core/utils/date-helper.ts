@@ -16,3 +16,4 @@ export const isSameDay = (c, n): boolean => {
     current.getMonth() === next.getMonth()
   );
 };
+export const WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];

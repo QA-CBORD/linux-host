@@ -10,9 +10,9 @@ const routes: Route[] = [
   {
     path: '',
     component: OrderingPage,
-    resolve: {
-      data: OrderingResolver,
-    },
+    // resolve: {
+    //   data: OrderingResolver,
+    // },
     children: [],
   },
   {

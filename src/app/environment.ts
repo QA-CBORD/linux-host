@@ -5,6 +5,13 @@ enum Development {
   secmsg_api = 'https://secmsg.api.dev.cbord.com',
 }
 
+enum Feature1 {
+  services_url = 'https://services.get.feature1.cbord.com/GETServices/services',
+  site_url = 'http://get.feature1.cbord.com',
+  cbordstudent_url = 'https://student.feature1.cbord.com',
+  secmsg_api = 'https://secmsg.api.dev.cbord.com',
+}
+
 enum Qa {
   services_url = 'https://services.get.qa.cbord.com/GETServices/services',
   site_url = 'http://get.qa.cbord.com',
@@ -52,6 +59,8 @@ export class Environment {
   static setEnvironmentViaURL(appBaseURL: string) {
     if (appBaseURL.includes('dev')) {
       this.setEnvironment(Development);
+    } else if (appBaseURL.includes('feature1')) {
+      this.setEnvironment(Feature1);
     } else if (appBaseURL.includes('qa')) {
       this.setEnvironment(Qa);
     } else if (appBaseURL.includes('pat')) {

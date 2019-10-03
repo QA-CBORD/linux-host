@@ -10,7 +10,6 @@ import { LevelsComponent } from './components/levels';
 import { RewardsRoutingModule } from './rewards-routing.module';
 import { RewardsApiService } from './services';
 import { RewardsService } from './services';
-import { SharedModule } from '../../shared/shared.module';
 import { RewardsResolverGuard } from './resolvers';
 import { BalanceComponent } from './components/balance';
 import { ListItemComponent } from './components/list-item';
@@ -18,8 +17,22 @@ import { RewardsPopoverComponent } from './components/rewards-popover';
 import { ExpandListComponent } from './components/levels/expand-list';
 import { ExpandItemComponent } from './components/levels/expand-list/expand-item';
 import { OptInGuard } from './guards';
+import { StPopoverLayoutModule } from '../../shared/ui-components/st-popover-layout/st-popover-layout.module';
+import { StHeaderModule } from '../../shared/ui-components/st-header/st-header.module';
+import { StNavTabsModule } from '../../shared/ui-components/st-nav-tabs/st-nav-tabs.module';
+import { StProgressBarModule } from '../../shared/ui-components/st-progress-bar/st-progress-bar.module';
 
-const imports = [CommonModule, FormsModule, IonicModule, RewardsRoutingModule, RewardsRoutingModule, SharedModule];
+const imports = [
+  CommonModule,
+  FormsModule,
+  IonicModule,
+  RewardsRoutingModule,
+  RewardsRoutingModule,
+  StPopoverLayoutModule,
+  StHeaderModule,
+  StNavTabsModule,
+  StProgressBarModule
+];
 const declarations = [
   RewardsPage,
   HistoryComponent,

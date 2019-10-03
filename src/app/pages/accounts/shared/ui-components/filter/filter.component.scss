@@ -2,7 +2,12 @@
 
 .filter {
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
+
+  &__header {
+    align-self: center;
+    margin: 0 10%;
+  }
 
   @include bp-before-tablet {
     padding:10px;
@@ -38,16 +43,22 @@
     }
   }
 
-  &__icon{
+  &__icon-image {
     width: 28px;
     height: 28px;
+  }
+
+  &__icon{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     margin: 0;
     cursor: pointer;
 
     @include bp-before-tablet {
-      position: absolute;
       right: 20px;
-      top: 0px;
+      top: 0;
     }
 
     @include bp-grid-tablet {
@@ -59,7 +70,8 @@
   &__icon-message {
     color: $color-black;
     letter-spacing: 0;
-    line-height: 0;
+    max-width: 50px;
+    word-break: break-word;
 
     @include font-nunito-semibold(12px);
     @include bp-grid-tablet {
