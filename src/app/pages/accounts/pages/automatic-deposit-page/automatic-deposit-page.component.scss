@@ -67,7 +67,7 @@
     }
 
     &--disabled {
-      --ion-color-primary: #c4c4c4;
+      --ion-color-primary: #c4c4c4 !important;
       --box-shadow: none;
 
       color: $color-matterhorn;

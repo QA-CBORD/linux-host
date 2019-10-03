@@ -21,13 +21,15 @@
           formControlName="sourceAccount"
           (ionChange)="onPaymentMethodChanged($event)"
         >
-          <ion-select-option
-            [value]="account"
-            *ngFor="let account of creditCardSourceAccounts; trackBy: trackByAccountId"
-            class="test-class"
+          <ng-container *ngIf="isCreditCardPaymentTypesEnabled">
+            <ion-select-option
+                    [value]="account"
+                    *ngFor="let account of creditCardSourceAccounts; trackBy: trackByAccountId"
+                    class="test-class"
             >{{ account.accountTender | creditCardType }} ending in
-            {{ account.lastFour }}
-          </ion-select-option>
+              {{ account.lastFour }}
+            </ion-select-option>
+          </ng-container>
           <ion-select-option [value]="paymentTypes.BILLME" *ngIf="isBillMePaymentTypesEnabled">Bill Me</ion-select-option>
           <ion-select-option value="newCreditCard" *ngIf="isCreditCardPaymentTypesEnabled"> Add a Credit Card</ion-select-option>
         </ion-select>
