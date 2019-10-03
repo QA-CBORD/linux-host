@@ -6,7 +6,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { AddressEditPage } from './address-edit.page';
-import { AddressEditModule } from '@pages/ordering/shared/ui-components/address-edit/address-edit.module';
+import { AddressEditModule } from 'src/app/sections/ordering/shared/ui-components/address-edit/address-edit.module';
 
 const routes: Routes = [
   {

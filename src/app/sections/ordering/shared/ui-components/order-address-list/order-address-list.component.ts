@@ -4,7 +4,7 @@ import { AddressInfo } from '@core/model/user/user-address.model';
 import { Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { NgZone  } from '@angular/core';
-import { LOCAL_ROUTING } from '@pages/ordering/ordering.config';
+import { LOCAL_ROUTING } from 'src/app/sections/ordering/ordering.config';
 import { Router } from '@angular/router';
 
 @Component({
@@ -39,6 +39,9 @@ export class OrderAddressListComponent implements OnInit {
       );
   }
   itemSelected(address:AddressInfo){
+    // const nextPage = this.defineResolution() ? LOCAL_ROUTING.accountDetails : LOCAL_ROUTING.accountDetailsM;
+
+    // this.router.navigate([`${NAVIGATE.accounts}/${nextPage}/${ALL_ACCOUNTS}`], { skipLocationChange: true });
     this.router.navigate([`ordering/${LOCAL_ROUTING.addressEdit}`], { skipLocationChange: true });
   }
 }

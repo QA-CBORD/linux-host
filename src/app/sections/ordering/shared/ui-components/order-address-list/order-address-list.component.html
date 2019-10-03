@@ -1,0 +1,28 @@
+<ion-list>
+
+  <st-order-address-item 
+    *ngFor="let item of items;" 
+    (click)="itemSelected(item)" 
+    [line1]="item.address1" 
+    [line2]="item.city + ', ' + item.state" 
+    iconNameDefault="address-marker.svg" 
+    iconNameSelected="location-pin.svg" ></st-order-address-item>
+
+  <!-- <button ion-item *ngFor="let item of items" (click)="itemSelected(item)">
+    {{ item }}
+  </button>  --> 
+  <!-- <st-order-address-item 
+    isSelected="true" 
+    iconNameDefault="pin" 
+    iconNameSelected="address-marker.svg" 
+    line1="The Legend of Zelda" 
+    line2="Gannon"></st-order-address-item>
+
+  <st-order-address-item iconNameDefault="location-pin.svg" line1="Mario Bros" line2="Luigi"></st-order-address-item>
+  <st-order-address-item iconNameDefault="pin" line1="Mario Bros" line2="Luigi"></st-order-address-item>
+
+  <st-order-address-item iconNameDefault="star-outline.svg" line1="Mario Bros" line2="Mario"></st-order-address-item>
+
+  <st-order-address-item line1="Mario Bros" line2="Luigi"></st-order-address-item> -->
+
+</ion-list>
