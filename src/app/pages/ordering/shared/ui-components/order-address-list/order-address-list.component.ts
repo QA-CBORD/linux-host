@@ -4,6 +4,8 @@ import { AddressInfo } from '@core/model/user/user-address.model';
 import { Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { NgZone  } from '@angular/core';
+import { LOCAL_ROUTING } from '@pages/ordering/ordering.config';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'st-order-address-list',
@@ -14,7 +16,7 @@ export class OrderAddressListComponent implements OnInit {
   
   userAddresses$: Observable<AddressInfo[]>;
   
-  constructor(private userService: UserService, private zone: NgZone, private ref: ChangeDetectorRef) { }
+  constructor(private userService: UserService, private zone: NgZone, private ref: ChangeDetectorRef, private router:Router) { }
 
   items:AddressInfo[];
   ngOnInit() {
@@ -36,7 +38,7 @@ export class OrderAddressListComponent implements OnInit {
         }
       );
   }
-  itemSelected(){
-    
+  itemSelected(address:AddressInfo){
+    this.router.navigate([`ordering/${LOCAL_ROUTING.addressEdit}`], { skipLocationChange: true });
   }
 }
