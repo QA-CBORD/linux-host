@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { Validators, FormGroup, FormBuilder, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
+import { debounceTime } from 'rxjs/operators';
 
 @Component({
   selector: 'st-add-edit-addresses',
@@ -9,6 +10,7 @@ import { Validators, FormGroup, FormBuilder, ValidatorFn, AbstractControl, Valid
 export class AddEditAddressesComponent implements OnInit {
   addEditAddressesForm: FormGroup;
 
+  @Output() onFormChanged: EventEmitter<any> = new EventEmitter<any>();
   constructor(private readonly fb: FormBuilder) {}
 
   get address1(): AbstractControl {
@@ -59,9 +61,19 @@ export class AddEditAddressesComponent implements OnInit {
       [this.controlsNames.address1]: ['', address1Errors],
       [this.controlsNames.address2]: [''],
       [this.controlsNames.city]: ['', cityErrors],
-      [this.controlsNames.state]: ['', stateErrors],
+      [this.controlsNames.state]: [''],
       [this.controlsNames.nickname]: [''],
-      [this.controlsNames.default]: [''],
+      [this.controlsNames.default]: [false],
+    });
+
+    this.onChanges();
+  }
+
+  private onChanges() {
+    this.addEditAddressesForm.valueChanges
+    .pipe(debounceTime(500))
+    .subscribe(value => {
+      this.onFormChanged.emit({ value, valid: this.addEditAddressesForm.valid });
     });
   }
 

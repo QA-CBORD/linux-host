@@ -11,21 +11,34 @@
 
 <ion-content>
   <div class="delivery-address__add-address-container">
-    <ion-item class="delivery-address__add-address-wrapper" lines="full"
+    <ion-item
+      class="delivery-address__add-address-wrapper"
+      lines="full"
+      [button]="true"
+      [detail]="true"
+      detailIcon="/assets/icon/angle-{{ addNewAdddressState ? 'up' : 'down' }}-select.svg"
+      (click)="addNewAdddressState = !addNewAdddressState"
       ><span class="delivery-address__add-address-sign">+ </span
       ><span class="delivery-address__add-address-text">Add New Address</span>
     </ion-item>
 
-    <st-add-edit-addresses></st-add-edit-addresses>
+    <ng-container *ngIf="addNewAdddressState">
+      <st-add-edit-addresses (onFormChanged)="onAddressFormChanged($event)"></st-add-edit-addresses>
 
-    <div class="delivery-address__add-address-btn-container">
-      <ion-button fill="clear" mode="md" expand="full" shape="round" class="delivery-address__add-address-btn">
-        cancel
-      </ion-button>
-      <ion-button mode="md" expand="full" shape="round" class="delivery-address__add-address-btn">
-        save
-      </ion-button>
-    </div>
+      <div class="delivery-address__add-address-btn-container">
+        <ion-button fill="clear" mode="md" expand="full" shape="round" class="delivery-address__add-address-btn">
+          cancel
+        </ion-button>
+        <ion-button
+          mode="md"
+          expand="full"
+          shape="round"
+          class="delivery-address__add-address-btn"
+        >
+          save
+        </ion-button>
+      </div>
+    </ng-container>
   </div>
 
   <ion-radio-group mode="md" class="delivery-address__radio-group" (ionChange)="onRadioGroupChanged($event)">

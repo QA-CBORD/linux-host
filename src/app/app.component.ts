@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
 import * as Globals from './app.global';
 import { DataCache } from './core/utils/data-cache';
 import { from, of, fromEvent, Subscription } from 'rxjs';
-import { switchMap, tap, take, map } from 'rxjs/operators';
+import { switchMap, tap, take, map, takeWhile } from 'rxjs/operators';
 import { Environment } from './environment';
 import { NAVIGATE } from './app.global';
 import { TestProvider } from './core/provider/test-provider/test.provider';

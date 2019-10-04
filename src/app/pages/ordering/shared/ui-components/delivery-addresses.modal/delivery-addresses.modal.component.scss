@@ -40,7 +40,23 @@
     min-width: 170px;
     height: 48px;
 
+    &:first-child {
+      --color: #166dff;
+      --background-hover: #e1e1e1;
+    }
+
+    &:last-child {
+      --background: #e1e1e1;
+      --background-hover: #e1e1e1;
+      --color: #8e8e8e;
+    }
+
     @include font-nunito-heavy(14px);
+
+    &--valid {
+      --background: #166dff;
+      --color: #fff;
+    }
   }
 
   &__back-btn {
