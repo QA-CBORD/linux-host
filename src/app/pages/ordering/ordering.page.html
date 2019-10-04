@@ -1,10 +1,13 @@
 <ion-content main class="ordering-content-wrapper">
-  <st-menu-ordering class="ordering-page__menu"></st-menu-ordering>
+<!--  <st-menu-ordering class="ordering-page__menu"></st-menu-ordering>-->
 
-  <st-merchant-list
-    [merchantList]="merchantList$ | async"
-    (merchantClickTrigger)="merchantClickHandler($event)"
-    (favouriteTrigger)="favouriteHandler($event)"
-    (locationPinTrigger)="locationPinHandler($event)"
-  ></st-merchant-list>
+<!--  <st-merchant-list-->
+<!--    [merchantList]="merchantList$ | async"-->
+<!--    (merchantClickTrigger)="merchantClickHandler($event)"-->
+<!--    (favouriteTrigger)="favouriteHandler($event)"-->
+<!--    (locationPinTrigger)="locationPinHandler($event)"-->
+<!--  ></st-merchant-list>-->
+  <st-order-details>
+    <st-button></st-button>
+  </st-order-details>
 </ion-content>

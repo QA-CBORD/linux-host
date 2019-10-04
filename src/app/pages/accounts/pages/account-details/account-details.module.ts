@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SharedModule } from '@shared/shared.module';
+import { SharedModule } from '../../../../shared/shared.module';
 import { IonicModule } from '@ionic/angular';
 import { AccountDetailsComponent } from './account-details.component';
 import { AccountDetailsRoutingModule } from './account-details.routing.module';

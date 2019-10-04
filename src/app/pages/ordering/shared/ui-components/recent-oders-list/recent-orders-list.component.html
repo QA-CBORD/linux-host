@@ -1,5 +1,6 @@
 <div class="order-list__header">
-  <span class="order-list__text-left">Pending</span><span class="order-list__text-right">({{ pendingOrders.length }})</span>
+  <span class="order-list__text-left">Pending</span>
+  <span class="order-list__text-right">({{ pendingOrders.length }})</span>
 </div>
 <st-recent-orders-list-item
   *ngFor="let orderInfo of pendingOrders; let i = index; trackBy: trackOrdersById"

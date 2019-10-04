@@ -9,7 +9,7 @@ import { AccountsService } from '../../services/accounts.service';
 export class TransactionUnitsPipe implements PipeTransform {
   constructor(private readonly accountsService: AccountsService) {}
 
-  transform(value: number, type: number): string {
+  transform(value: number | string, type: number): string {
     if (value === null) {
       return 'no info';
     }

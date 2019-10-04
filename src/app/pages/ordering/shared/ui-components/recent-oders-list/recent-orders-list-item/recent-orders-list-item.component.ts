@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, Input } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 import { OrderInfo } from '../../../models';
 
 @Component({
@@ -8,8 +8,8 @@ import { OrderInfo } from '../../../models';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecentOrdersListItemComponent implements OnInit {
-
   @Input('orderInfo') orderInfo: OrderInfo;
+  @Output() onClicked: EventEmitter<OrderInfo> = new EventEmitter<OrderInfo>();
 
   constructor() {}
 

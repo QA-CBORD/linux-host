@@ -1,0 +1,95 @@
+<div class="content">
+    <div class="order-details">
+        <ion-label class="order-details__label">Pickup time</ion-label>
+
+        <p *ngIf="readonly; else delivery" class="order-details__value">Please Choose</p>
+
+        <ng-template #delivery>
+            <ion-select
+                    class="order-details__value"
+                    cancelText="Cancel"
+                    mode="md"
+                    placeholder="Please Choose"
+                    interface="action-sheet"
+                    [interfaceOptions]="{cssClass: 'custom-deposit-actionSheet'}"
+            >
+                <ion-select-option [value]="amount" *ngFor="let amount of [1,2,3]">
+                    {{ amount }}
+                </ion-select-option>
+            </ion-select>
+        </ng-template>
+
+    </div>
+
+    <div class="order-details">
+        <ion-label class="order-details__label">Pickup address</ion-label>
+
+        <p *ngIf="readonly; else pickup" class="order-details__value">Please Choose</p>
+
+        <ng-template #pickup>
+            <ion-select
+                    class="order-details__value"
+                    cancelText="Cancel"
+                    mode="md"
+                    placeholder="Please Choose"
+                    interface="action-sheet"
+                    [interfaceOptions]="{cssClass: 'custom-deposit-actionSheet'}"
+            >
+                <ion-select-option [value]="amount" *ngFor="let amount of [1,2,3]">
+                    {{ amount }}
+                </ion-select-option>
+            </ion-select>
+        </ng-template>
+
+    </div>
+
+    <ion-list class="order-ingredient-list">
+        <!-- Sliding item with text options on both sides -->
+        <ion-item-sliding *ngFor="let a of [1,2,3,4]" class="order-ingredient-list__ingredient">
+            <ion-item class="order-ingredient-list__item">
+                <ion-label>
+                    <div class="order-ingredient-list__ingredient-header">
+                        <div class="order-ingredient-list__ingredient-number">{{a}}</div>
+                        <div class="order-ingredient-list__ingredient-name">Fries</div>
+                        <div class="order-ingredient-list__ingredient-price">$15.99</div>
+                    </div>
+                    <p class="order-ingredient-list__ingredient-description">small</p>
+                </ion-label>
+            </ion-item>
+
+            <ion-item-options side="end">
+                <ion-item-option (click)="onRemove($event)" color="danger">Remove Item</ion-item-option>
+            </ion-item-options>
+        </ion-item-sliding>
+    </ion-list>
+
+    <div class="total">
+        <div class="total__item">subtotal<span class="total__item-sum">$11.48</span></div>
+        <div class="total__item">tax<span class="total__item-sum">$0.48</span></div>
+        <div class="total__item total__item--bold">total<span class="total__item-sum">$11.48</span></div>
+    </div>
+
+
+    <div class="order-details__payment-method" *ngIf="readonly; else paymentSelect">payment method <span>apple pay</span></div>
+
+    <ng-template #paymentSelect>
+        <div class="order-details">
+            <ion-label class="order-details__label">Pickup time</ion-label>
+            <ion-select
+                    class="order-details__value"
+                    cancelText="Cancel"
+                    mode="md"
+                    placeholder="Please Choose"
+                    interface="action-sheet"
+                    [interfaceOptions]="{cssClass: 'custom-deposit-actionSheet'}"
+            >
+                <ion-select-option [value]="amount" *ngFor="let amount of [1,2,3]">
+                    {{ amount }}
+                </ion-select-option>
+            </ion-select>
+        </div>
+    </ng-template>
+
+
+    <ng-content></ng-content>
+</div>
