@@ -51,6 +51,7 @@
     --ion-color-primary: #166dff;
     --border-radius: 25px;
     --box-shadow: none;
+    --background-activated: #cccccc;
 
     margin-top: 40px;
     height: 45px;
@@ -68,6 +69,7 @@
 
     &--disabled {
       --ion-color-primary: #c4c4c4;
+      --background-hover: #c4c4c4;
       --box-shadow: none;
 
       color: $color-matterhorn;
