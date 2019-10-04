@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 
-import { SharedModule } from './../../shared/shared.module';
 import { DashboardPage } from './dashboard.page';
 import { TileListComponent, TileComponent } from './components/tile-list';
 import { DashboardRoutingModule } from './dashboard.routing.module';
@@ -11,7 +10,7 @@ import { ConfigurationService } from './../../core/service/config-service/config
 import { DashboardService } from './services/dashboard.service';
 
 
-const imports = [IonicModule, CommonModule, SharedModule, DashboardRoutingModule];
+const imports = [IonicModule, CommonModule, DashboardRoutingModule];
 const declarations = [DashboardPage, TileListComponent, TileComponent];
 const providers = [
   ConfigurationService,
