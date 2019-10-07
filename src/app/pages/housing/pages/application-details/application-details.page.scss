@@ -1,0 +1,45 @@
+@import 'tools';
+
+.application-details__actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.application-details__title {
+  font-size: 20px;
+  color: $color-night-rider;
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.application-details__content {
+  --background: #{$porcelain};
+}
+
+.application-details__card {
+  background-color: #fff;
+  border-radius: 12px 12px 8px 8px;
+  padding: var(--ion-padding, 16px);
+}
+
+.application__details-back {
+  --color: #{$color-dodger-blue};
+}
+
+.application__details-next,
+.application__details-submit {
+  --border-radius: 8px;
+  width: 150px;
+}
+
+.application__details-next {
+  --background-activated: #{$color-dodger-blue};
+  --border-color: #{$color-dodger-blue};
+  --border-width: 2px;
+  --color: #{$color-dodger-blue};
+}
+
+.application__details-submit {
+  --background: #{$color-dodger-blue};
+}

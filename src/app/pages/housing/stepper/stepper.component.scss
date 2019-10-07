@@ -1,0 +1,103 @@
+@import 'tools';
+
+.stepper__list-wrap {
+  overflow: hidden;
+  margin: 0 -16px;
+}
+
+.stepper__list {
+  border-bottom: 1px solid $color-light-gray;
+  margin-bottom: 40px;
+  padding: 0 16px 0 30px;
+  list-style: none;
+  display: flex;
+  justify-content: space-around;
+  position: relative;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 50px;
+  }
+
+  &::before {
+    left: 0;
+    background: linear-gradient(to right, rgba(#fff, 1) 0%, rgba(#fff, 0) 100%);
+  }
+
+  &::after {
+    right: 0;
+    background: linear-gradient(to right, rgba(#fff, 0) 0%, rgba(#fff, 1) 100%);
+  }
+}
+
+.stepper__item {
+  color: $color-dim-gray;
+  position: relative;
+  padding-bottom: 10px;
+  text-align: center;
+  width: 60px;
+  flex-shrink: 0;
+
+  &::before {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: $color-dim-gray;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
+  }
+}
+
+.stepper__item-inner {
+  position: relative;
+  padding-top: 15px;
+}
+
+.stepper__item--selected {
+  color: $color-dodger-blue;
+
+  &::before {
+    background-color: $color-dodger-blue;
+  }
+}
+
+.stepper__item--completed {
+  color: $color-light-sky-blue;
+
+  &::before {
+    background-color: $color-light-sky-blue;
+  }
+
+  .stepper__item-inner::before {
+    background-image: url('/assets/icon/check.svg');
+    content: '';
+    position: absolute;
+    width: 14px;
+    height: 10px;
+    top: 0;
+    left: 50%;
+    transform: translateX(-4px);
+  }
+}
+
+.stepper__item--selected,
+.stepper__item--completed {
+  position: relative;
+
+  &::after {
+    border-bottom: 1px solid $color-light-sky-blue;
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    right: 50%;
+    left: -999px;
+  }
+}

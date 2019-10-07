@@ -5,6 +5,10 @@ import { SelectivePreloadingStrategy } from './core/utils/preload-strategy/selec
 
 const routes: Routes = [
   {
+    path: NAVIGATE.dashboard,
+    loadChildren: './pages/dashboard/dashboard.module#DashboardPageModule',
+  },
+  {
     path: NAVIGATE.mobileAccess,
     loadChildren: './pages/mobile-access/mobile-access.module#MobileAccessPageModule',
   },
@@ -17,6 +21,7 @@ const routes: Routes = [
     path: NAVIGATE.accounts,
     loadChildren: './pages/accounts/accounts.module#AccountsModule',
   },
+  { path: NAVIGATE.housing, loadChildren: './pages/housing/housing.module#HousingPageModule' },
 ];
 
 @NgModule({

@@ -1,0 +1,56 @@
+<ion-content class="ion-padding application-details__content" *ngIf="(application$ | async) as application" #content>
+  <div class="application-details__actions">
+    <ion-button [routerLink]="['/housing/dashboard']" routerDirection="back" fill="clear" color="dark"
+      >Cancel</ion-button
+    >
+    <ion-button fill="clear" (click)="save()">Save</ion-button>
+  </div>
+
+  <h2 class="application-details__title">{{ application.applicationTitle }}</h2>
+
+  <div class="application-details__card">
+    <st-stepper class="stepper--white">
+      <st-step
+        *ngFor="let page of (pages$ | async); index as idx; last as isLastPage; first as isFirstPage"
+        [stepControl]="page.form"
+      >
+        <form [formGroup]="page.form" (ngSubmit)="handleSubmit(page.form.value, idx, isLastPage)">
+          <st-question
+            *ngFor="let question of page.questions"
+            [parentGroup]="page.form"
+            [question]="question"
+          ></st-question>
+
+          <st-stepper-footer>
+            <ion-button
+              class="application__details-back"
+              type="button"
+              fill="clear"
+              *ngIf="!isFirstPage"
+              stepperBack
+              (back)="content.scrollToTop()"
+              >Back</ion-button
+            >
+            <ion-button
+              class="application__details-next"
+              [class.stepper-footer__button--right]="isFirstPage"
+              fill="outline"
+              type="submit"
+              *ngIf="!isLastPage"
+            >
+              Next
+            </ion-button>
+            <ion-button
+              class="application__details-submit"
+              [class.stepper-footer__button--right]="isFirstPage"
+              type="submit"
+              *ngIf="isLastPage"
+            >
+              Submit
+            </ion-button>
+          </st-stepper-footer>
+        </form>
+      </st-step>
+    </st-stepper>
+  </div>
+</ion-content>

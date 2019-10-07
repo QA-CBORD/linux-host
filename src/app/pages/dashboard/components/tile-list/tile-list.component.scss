@@ -1,0 +1,10 @@
+.tile {
+  &__container {
+    border-radius: 16px;
+    box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.12);
+  }
+  &__header {
+      height: 48px;
+      background: #f7f7f7;
+  }
+}

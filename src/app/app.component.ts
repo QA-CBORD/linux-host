@@ -47,7 +47,7 @@ export class AppComponent implements OnDestroy {
     private readonly popoverCtrl: PopoverController,
     private readonly nativeProvider: NativeProvider
   ) {
-      this.initializeApp();
+    this.initializeApp();
   }
 
   ngOnDestroy() {
@@ -99,7 +99,6 @@ export class AppComponent implements OnDestroy {
     this.sourceSubscription.add(subscription);
   }
 
-
   useJavaScriptInterface() {
     if (this.nativeProvider.isAndroid()) {
       const sessionId: string = this.nativeProvider.getAndroidData(NativeData.SESSION_ID);
@@ -117,7 +116,7 @@ export class AppComponent implements OnDestroy {
       DataCache.setInstitutionId(institutionId);
 
       this.handlePageNavigation();
-    } else if (this.nativeProvider.isIos()){
+    } else if (this.nativeProvider.isIos()) {
       const sessionIdPromise: Promise<string> = this.nativeProvider.getIosData(NativeData.SESSION_ID);
       const userInfoPromise: Promise<UserInfo> = this.nativeProvider.getIosData(NativeData.USER_INFO);
       const institutionIdPromise: Promise<string> = this.nativeProvider.getIosData(NativeData.INSTITUTION_ID);
@@ -139,7 +138,7 @@ export class AppComponent implements OnDestroy {
   private testGetSession() {
     const subscription = this.testProvider.getTestUser().subscribe(
       () => {
-        this.destinationPage = NAVIGATE.mobileAccess;
+        this.destinationPage = NAVIGATE.dashboard;
         this.getUserInfo();
       },
       error => {
@@ -239,7 +238,7 @@ export class AppComponent implements OnDestroy {
   }
 
   private handlePageNavigation() {
-    this.router.navigate([this.destinationPage], { skipLocationChange: true });
+    this.router.navigate([this.destinationPage]); //, { skipLocationChange: true });
   }
 
   // Ionic gloabal configurate stuff
