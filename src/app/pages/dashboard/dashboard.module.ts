@@ -8,10 +8,11 @@ import { DashboardRoutingModule } from './dashboard.routing.module';
 import { DashboardPageResolver } from './resolvers/dashboard.resolver';
 import { ConfigurationService } from './../../core/service/config-service/configuration.service';
 import { DashboardService } from './services/dashboard.service';
+import { TileListModule } from './components/tile-list/tile-list.module';
 
 
-const imports = [IonicModule, CommonModule, DashboardRoutingModule];
-const declarations = [DashboardPage, TileListComponent, TileComponent];
+const imports = [IonicModule, CommonModule, DashboardRoutingModule, TileListModule];
+const declarations = [DashboardPage];
 const providers = [
   ConfigurationService,
   DashboardService,

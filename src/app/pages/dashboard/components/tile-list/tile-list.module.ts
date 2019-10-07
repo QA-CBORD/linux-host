@@ -12,7 +12,8 @@ const providers = [
 
 @NgModule({
     declarations,
-    imports,
+    imports: imports,
+    exports: declarations,
     providers,
 })
 export class TileListModule {
