@@ -18,14 +18,14 @@
           [src]="starClass"
           alt="star"
           appClickStopPropagation
-          (click)="triggerFavourite(merchantInfo.id)"
+          (click)="triggerFavourite($event, merchantInfo)"
         />
         <img
           class="merchant__merchant-button"
           src="./assets/icon/location-pin.svg"
           alt="star"
           appClickStopPropagation
-          (click)="triggerLocationPin(id)"
+          (click)="triggerLocationPin($event, merchantInfo.id)"
         />
       </ion-col>
     </ion-row>

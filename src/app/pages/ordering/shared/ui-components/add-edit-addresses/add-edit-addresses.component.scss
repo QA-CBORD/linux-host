@@ -3,7 +3,20 @@
 .addresses {
   &__control {
     display: block;
-    margin-bottom: 35px;
+    margin-bottom: 40px;
+  }
+
+  &__control-optional-wrapper {
+    position: relative;
+  }
+
+  &__control-optional {
+    color: $color-dim-gray;
+    position: absolute;
+    left: 15px;
+    top: 55px;
+
+    @include font-nunito-semibold(12px);
   }
 
   &__nickname-control {
@@ -11,6 +24,9 @@
   }
 
   &__checkbox {
+    --background-checked: #166dff;
+    --border-color-checked: #166dff;
+
     margin: 0 10px 0 0;
   }
 }

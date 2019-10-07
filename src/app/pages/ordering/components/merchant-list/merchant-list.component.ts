@@ -1,14 +1,6 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
 
-import { ActionSheetController, ModalController } from '@ionic/angular';
-import { MerchantInfo, MerchantOrderTypesInfo } from '@pages/ordering/shared/models';
-import { MerchantService } from '../../services/merchant.service';
-import { OrderOptionsActionSheetComponent } from '@pages/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
-import { take, switchMap, map } from 'rxjs/operators';
-import { OrderType } from '@pages/ordering/ordering.config';
-import { UserService } from '@core/service/user-service/user.service';
-import { LoadingService } from '@core/service/loading/loading.service';
-import { zip, of } from 'rxjs';
+import { MerchantInfo } from '@pages/ordering/shared/models';
 
 @Component({
   selector: 'st-merchant-list',
@@ -18,86 +10,28 @@ import { zip, of } from 'rxjs';
 })
 export class MerchantListComponent {
   @Input() merchantList: MerchantInfo[];
+  @Output() merchantClick: EventEmitter<any> = new EventEmitter<any>();
+  @Output() addToFav: EventEmitter<{ isFavorite: boolean; id: string }> = new EventEmitter<{
+    isFavorite: boolean;
+    id: string;
+  }>();
+  @Output() locationPin: EventEmitter<string> = new EventEmitter<string>();
 
-  constructor(
-    public actionSheetController: ActionSheetController,
-    private readonly modalController: ModalController,
-    private readonly merchantService: MerchantService,
-    private readonly userService: UserService,
-    private readonly loadingService: LoadingService
-  ) {}
+  constructor() {}
 
   trackMerchantsById(index: number, { id }: MerchantInfo): string {
     return id;
   }
 
   merchantClickHandler({ id, orderTypes, storeAddress }) {
-    // this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.orderOptions], { skipLocationChange: true });
-    this.openOrderOptions(id, orderTypes, storeAddress);
+    this.merchantClick.emit({ id, orderTypes });
   }
 
-  favouriteHandler(event: string) {
-    console.log(`Favorite Clicked - Merch Id: ${event}`);
+  favouriteHandler({ isFavorite, id }) {
+    this.addToFav.emit({ isFavorite, id });
   }
 
-  locationPinHandler(event: string) {
-    console.log(`Location Pin Clicked - Merch Id: ${event}`);
-  }
-
-  private openOrderOptions(merchantId, orderTypes, storeAddress) {
-    const orderType =
-      (orderTypes.delivery && orderTypes.pickup) || orderTypes.pickup ? OrderType.PICKUP : OrderType.DELIVERY;
-
-    this.loadingService.showSpinner();
-    zip(
-      this.merchantService.getMerchantOrderSchedule(merchantId, orderType),
-      this.userService
-        .getUserSettingsBySettingName('defaultaddress')
-        .pipe(
-          switchMap(({ response }) =>
-            zip(of({ defaultAddress: response.value }), this.merchantService.retrieveUserAddressList(response.userId))
-          )
-        ),
-      this.merchantService.getMerchantSettings(merchantId).pipe(
-        switchMap(
-          ({ list: [pickupLocationsEnabled] }): any => {
-            switch (pickupLocationsEnabled.value) {
-              case null:
-                return of({ list: [] });
-              case 'true':
-                return this.userService
-                  .getUser()
-                  .pipe(switchMap(({ institutionId }) => this.merchantService.retrievePickupLocations(institutionId)));
-              case 'false':
-                return of({ list: [storeAddress] });
-            }
-          }
-        )
-      )
-    )
-      .pipe(take(1))
-      .subscribe(([schedule, [defaultAddress, listOfAddresses], pickupLocations]) => {
-        console.log(pickupLocations['list']);
-        this.loadingService.closeSpinner();
-        this.actionSheet(schedule, orderTypes, defaultAddress.defaultAddress, listOfAddresses.addresses);
-      });
-  }
-
-  private async actionSheet(schedule, orderTypes: MerchantOrderTypesInfo, defaultDeliveryAddress, deliveryAddresses) {
-    let cssClass = 'order-options-action-sheet';
-    cssClass += orderTypes.delivery && orderTypes.pickup ? ' order-options-action-sheet-p-d' : '';
-
-    const modal = await this.modalController.create({
-      component: OrderOptionsActionSheetComponent,
-      cssClass,
-      componentProps: {
-        schedule,
-        orderTypes,
-        defaultDeliveryAddress,
-        deliveryAddresses,
-      },
-    });
-    modal.onDidDismiss().then(() => {});
-    await modal.present();
+  locationPinHandler(id: string) {
+    this.locationPin.emit(id);
   }
 }

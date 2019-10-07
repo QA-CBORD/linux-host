@@ -18,7 +18,7 @@ export class MerchantService {
   private readonly _menuMerchants$: BehaviorSubject<MerchantInfo[]> = new BehaviorSubject<MerchantInfo[]>([]);
   private readonly _recentOrders$: BehaviorSubject<OrderInfo[]> = new BehaviorSubject<OrderInfo[]>([]);
 
-  constructor(private readonly orderingApiService: OrderingApiService, private readonly userService: UserService) { }
+  constructor(private readonly orderingApiService: OrderingApiService, private readonly userService: UserService) {}
 
   get menuMerchants$(): Observable<MerchantInfo[]> {
     return this._menuMerchants$.asObservable();
@@ -59,12 +59,14 @@ export class MerchantService {
       value: 1,
     });
 
-    let resultHandler = (favoriteMerchants: string[], merchantList: MerchantInfo[]): MerchantInfo[] => {
+    const resultHandler = (favoriteMerchants: MerchantInfo[], merchantList: MerchantInfo[]): MerchantInfo[] => {
       if (!favoriteMerchants || favoriteMerchants.length <= 0) {
         this._menuMerchants = merchantList;
         return merchantList;
       }
-      merchantList.forEach(merchant => (merchant.isFavorite = favoriteMerchants.includes(merchant.id)));
+      merchantList.forEach(
+        merchant => (merchant.isFavorite = favoriteMerchants.some(item => item['id'] === merchant.id))
+      );
       this._menuMerchants = merchantList;
       return merchantList;
     };
@@ -104,5 +106,13 @@ export class MerchantService {
 
   retrievePickupLocations(institutionId: string): Observable<any> {
     return this.orderingApiService.retrievePickupLocations(institutionId);
+  }
+
+  addFavoriteMerchant(merchantId: string): Observable<any> {
+    return this.orderingApiService.addFavoriteMerchant(merchantId);
+  }
+
+  removeFavoriteMerchant(merchantId: string): Observable<any> {
+    return this.orderingApiService.removeFavoriteMerchant(merchantId);
   }
 }

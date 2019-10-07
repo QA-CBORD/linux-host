@@ -10,9 +10,7 @@ import { MerchantInfo } from '@pages/ordering';
 export class FavoriteMerhantsService extends BaseService {
   private readonly serviceUrlMerchant: string = '/json/merchant';
 
-  constructor(
-    protected readonly http: HttpClient,
-  ) {
+  constructor(protected readonly http: HttpClient) {
     super(http);
   }
 
@@ -20,7 +18,7 @@ export class FavoriteMerhantsService extends BaseService {
     const methodName = 'getFavoriteMerchants';
     const postParams: ServiceParameters = { excludeNonOrdering: false };
     return this.httpRequestFull(this.serviceUrlMerchant, methodName, true, null, postParams).pipe(
-      map(({ response }: MessageResponse<any>) => response.list)
+      map(({ response }: MessageResponse<any>) => response.list.map(merchant => ({ ...merchant, isFavorite: true })))
     );
   }
 }

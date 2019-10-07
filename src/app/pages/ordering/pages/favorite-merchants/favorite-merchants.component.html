@@ -1,10 +1,17 @@
-<st-header title="Favorite Merchants"
-           [isTitleShow]="true"
-           [backButtonTitle]="''"
-           [backButtonIcon]="'close'"
-           [isToolbarShow]="true"
-           class="favorites__header"></st-header>
+<st-header
+  title="Favorite Merchants"
+  [isTitleShow]="true"
+  [backButtonTitle]="''"
+  [backButtonIcon]="'close'"
+  [isToolbarShow]="true"
+  class="favorites__header"
+></st-header>
 
 <ion-content>
-  <st-merchant-list [merchantList]="merchantList"></st-merchant-list>
+  <st-merchant-list
+    [merchantList]="merchantList"
+    (addToFav)="favouriteHandler($event)"
+    (locationPin)="locationPinHandler($event)"
+    (merchantClick)="merchantClickHandler($event)"
+  ></st-merchant-list>
 </ion-content>

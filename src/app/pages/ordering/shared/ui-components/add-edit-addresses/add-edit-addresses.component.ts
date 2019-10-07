@@ -1,6 +1,7 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { Validators, FormGroup, FormBuilder, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
+import * as states from '../../../../../../assets/states.json';
 
 @Component({
   selector: 'st-add-edit-addresses',
@@ -9,9 +10,15 @@ import { debounceTime } from 'rxjs/operators';
 })
 export class AddEditAddressesComponent implements OnInit {
   addEditAddressesForm: FormGroup;
+  arrOfStates = states;
+  customActionSheetOptions: { [key: string]: string } = {
+    cssClass: 'custom-deposit-actionSheet',
+  };
 
   @Output() onFormChanged: EventEmitter<any> = new EventEmitter<any>();
-  constructor(private readonly fb: FormBuilder) {}
+  constructor(private readonly fb: FormBuilder) {
+    console.log(this.arrOfStates['default']);
+  }
 
   get address1(): AbstractControl {
     return this.addEditAddressesForm.get(this.controlsNames.address1);
@@ -61,7 +68,7 @@ export class AddEditAddressesComponent implements OnInit {
       [this.controlsNames.address1]: ['', address1Errors],
       [this.controlsNames.address2]: [''],
       [this.controlsNames.city]: ['', cityErrors],
-      [this.controlsNames.state]: [''],
+      [this.controlsNames.state]: ['', stateErrors],
       [this.controlsNames.nickname]: [''],
       [this.controlsNames.default]: [false],
     });
@@ -70,9 +77,7 @@ export class AddEditAddressesComponent implements OnInit {
   }
 
   private onChanges() {
-    this.addEditAddressesForm.valueChanges
-    .pipe(debounceTime(500))
-    .subscribe(value => {
+    this.addEditAddressesForm.valueChanges.pipe(debounceTime(500)).subscribe(value => {
       this.onFormChanged.emit({ value, valid: this.addEditAddressesForm.valid });
     });
   }

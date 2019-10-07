@@ -55,19 +55,19 @@ export class OrderingApiService extends BaseService {
 
   addFavoriteMerchant(merchantId: string): Observable<string> {
     const methodName = 'addFavoriteMerchant';
-    const postParams: ServiceParameters = { merchantId: merchantId, notes: '' };
+    const postParams: ServiceParameters = { merchantId, notes: '' };
     return this.httpRequestFull(this.serviceUrlMerchant, methodName, true, null, postParams);
   }
 
   removeFavoriteMerchant(merchantId: string): Observable<boolean> {
     const methodName = 'removeFavoriteMerchant';
-    const postParams: ServiceParameters = { merchantId: merchantId };
+    const postParams: ServiceParameters = { merchantId };
     return this.httpRequestFull(this.serviceUrlMerchant, methodName, true, null, postParams);
   }
 
   getSuccessfulOrdersList(userId: string, institutionId: string): Observable<OrderInfo[]> {
     const methodName = 'retrieveSuccessfulOrdersList';
-    const postParams: ServiceParameters = { userId: userId, merchantId: null, maxReturn: 30 };
+    const postParams: ServiceParameters = { userId, merchantId: null, maxReturn: 30 };
     return this.httpRequestFull(this.serviceUrlOrdering, methodName, true, institutionId, postParams).pipe(
       map(({ response }: MessageResponse<any>) => response.list)
     );
@@ -93,7 +93,12 @@ export class OrderingApiService extends BaseService {
 
   getMerchantSettings(merchantId: string): Observable<any> {
     const methodName = 'getMerchantSettings';
-    const postParams: ServiceParameters = { merchantId, domain: 'merchant', category: 'order', name: 'pickup_locations_enabled' };
+    const postParams: ServiceParameters = {
+      merchantId,
+      domain: 'merchant',
+      category: 'order',
+      name: 'pickup_locations_enabled',
+    };
 
     return this.httpRequestFull('/json/merchant', methodName, true, null, postParams).pipe(
       map(({ response }: MessageResponse<any>) => response)

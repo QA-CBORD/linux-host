@@ -10,7 +10,10 @@ import { MerchantInfo } from '@pages/ordering/shared/models';
 export class MerchantItemComponent {
   @Input() merchantInfo: MerchantInfo;
   @Output() merchantClick: EventEmitter<any> = new EventEmitter<any>();
-  @Output() addToFav: EventEmitter<string> = new EventEmitter<string>();
+  @Output() addToFav: EventEmitter<{ isFavorite: boolean; id: string }> = new EventEmitter<{
+    isFavorite: boolean;
+    id: string;
+  }>();
   @Output() locationPin: EventEmitter<string> = new EventEmitter<string>();
 
   constructor() {}
@@ -43,11 +46,13 @@ export class MerchantItemComponent {
     this.merchantClick.emit({ id, orderTypes });
   }
 
-  triggerFavourite(id) {
-    this.addToFav.emit(id);
+  triggerFavourite(event, { isFavorite, id }) {
+    this.addToFav.emit({ isFavorite, id });
+    event.stopPropagation();
   }
 
-  triggerLocationPin(id) {
+  triggerLocationPin(event, id) {
     this.locationPin.emit(id);
+    event.stopPropagation();
   }
 }

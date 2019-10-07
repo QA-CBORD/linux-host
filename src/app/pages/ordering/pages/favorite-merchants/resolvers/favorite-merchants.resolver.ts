@@ -7,13 +7,15 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { MerchantInfo } from '@pages/ordering';
 
 @Injectable()
-export class FavoriteMerhantsResolver implements Resolve<Observable<MerchantInfo>> {
-  constructor(private readonly favoriteMerhantsService: FavoriteMerhantsService, private readonly loadingService: LoadingService) { }
-  resolve(): Observable<any> {
+export class FavoriteMerhantsResolver implements Resolve<Observable<MerchantInfo[]>> {
+  constructor(
+    private readonly favoriteMerhantsService: FavoriteMerhantsService,
+    private readonly loadingService: LoadingService
+  ) {}
+  resolve(): Observable<MerchantInfo[]> {
     this.loadingService.showSpinner();
-
-    return this.favoriteMerhantsService.getFavoriteMerchants().pipe(
-      tap(() => this.loadingService.closeSpinner(), () => this.loadingService.closeSpinner())
-    );
+    return this.favoriteMerhantsService
+      .getFavoriteMerchants()
+      .pipe(tap(() => this.loadingService.closeSpinner(), () => this.loadingService.closeSpinner()));
   }
 }

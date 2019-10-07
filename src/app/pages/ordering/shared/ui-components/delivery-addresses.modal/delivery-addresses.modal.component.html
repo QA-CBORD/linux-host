@@ -34,6 +34,7 @@
           expand="full"
           shape="round"
           class="delivery-address__add-address-btn"
+          [ngClass]="{ 'delivery-address__add-address-btn--valid': addNewAdddressForm && addNewAdddressForm.valid }"
         >
           save
         </ion-button>
