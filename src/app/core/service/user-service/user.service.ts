@@ -1,4 +1,4 @@
-import { NativeProvider, NativeData } from './../../provider/native-provider/native.provider';
+import { NativeProvider, NativeData } from '../../provider/native-provider/native.provider';
 import { Injectable } from '@angular/core';
 
 import { map, switchMap, catchError } from 'rxjs/operators';
@@ -11,7 +11,6 @@ import { MessageResponse } from '../../model/service/message-response.model';
 import { UserSettings } from '../../model/user';
 import { UserPhotoList } from '../../model/user';
 import { HttpClient } from '@angular/common/http';
-import { Platform } from '@ionic/angular';
 
 @Injectable({
   providedIn: 'root',

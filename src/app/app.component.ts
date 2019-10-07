@@ -139,7 +139,7 @@ export class AppComponent implements OnDestroy {
   private testGetSession() {
     const subscription = this.testProvider.getTestUser().subscribe(
       () => {
-        this.destinationPage = NAVIGATE.accounts;
+        this.destinationPage = NAVIGATE.mobileAccess;
         this.getUserInfo();
       },
       error => {

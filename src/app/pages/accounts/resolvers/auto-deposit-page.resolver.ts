@@ -16,11 +16,12 @@ export class AutoDepositPageResolver implements Resolve<Observable<SettingInfo[]
   resolve(): Observable<SettingInfo[]> {
     const requireSettings = [
       SYSTEM_SETTINGS_CONFIG.autoDepositPaymentTypes,
+      SYSTEM_SETTINGS_CONFIG.paymentTypes,
       SYSTEM_SETTINGS_CONFIG.lowBalanceAutoDepositEnabled,
       SYSTEM_SETTINGS_CONFIG.lowBalanceAmounts,
       SYSTEM_SETTINGS_CONFIG.lowBalanceFreeFormEnabled,
       SYSTEM_SETTINGS_CONFIG.billMeFreeFormEnabled,
-      SYSTEM_SETTINGS_CONFIG.billMeFreeFormAmounts,
+      SYSTEM_SETTINGS_CONFIG.billMeAmounts,
       SYSTEM_SETTINGS_CONFIG.billMeMapping,
       SYSTEM_SETTINGS_CONFIG.freeFromDepositEnabled,
       SYSTEM_SETTINGS_CONFIG.presetDepositAmountsCreditCard,

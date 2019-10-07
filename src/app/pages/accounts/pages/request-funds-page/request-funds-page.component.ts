@@ -71,6 +71,8 @@ export class RequestFundsPageComponent implements OnInit {
   }
 
   async onSubmit() {
+    if (this.requestFundsForm.invalid) {return;}
+
     const {
       [this.controlsNames.name]: n,
       [this.controlsNames.email]: e,

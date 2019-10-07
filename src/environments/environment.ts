@@ -31,7 +31,7 @@ export const testCredentials:Dictionary<UserLogin> = {
     institutionId: '46054f40-71fc-4d32-a8de-64b525d3ce56',
   },
 
-  gold7_Yarik_odyssey:  {
+  KNAU_Yarik:  {
     userName: 'yxp@test.cbord.com',
     password: 'Dn210778pms#',
     domain: null,
