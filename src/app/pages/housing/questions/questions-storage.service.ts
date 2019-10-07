@@ -24,7 +24,7 @@ export class QuestionsStorageService {
     });
   }
 
-  async updateApplicationForm(applicationId: number, index: number, form: any): Promise<any> {
+  async updateApplicationForm(form: any, applicationId: number, index: number): Promise<any> {
     const applicationForms: ApplicationsForms = await this._storage.get(this._key);
     const forms: any[] = applicationForms && applicationForms[applicationId] ? applicationForms[applicationId] : [];
 

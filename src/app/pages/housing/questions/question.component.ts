@@ -21,7 +21,8 @@ export class QuestionComponent {
 
   getHeaderHTML(question: QuestionHeader): string {
     const headerWight: number = parseInt(question.subtype.slice(1), 10);
-    const headerClass: string = headerWight > 1 ? 'secondary-header ion-text-uppercase' : 'primary-header';
+    const headerClass: string =
+      headerWight > 1 ? 'question__secondary-header ion-text-uppercase' : 'question__primary-header';
 
     return `<${question.subtype} class="${headerClass}">${question.label}</${question.subtype}>`;
   }

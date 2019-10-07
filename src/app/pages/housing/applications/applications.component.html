@@ -1,10 +1,6 @@
 <ion-list>
   <ion-list-header>
     <h4>Applications</h4>
-    <ion-button>
-      <ion-label class="ion-text-capitalize">View All</ion-label>
-      <ion-icon slot="end" name="arrow-dropright"></ion-icon>
-    </ion-button>
   </ion-list-header>
 
   <st-applications-list [applications]="applicationsStateService.patronApplications$ | async"></st-applications-list>

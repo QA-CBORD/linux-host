@@ -8,6 +8,7 @@ import { StTextareaFloatingLabelModule } from '../../../shared/ui-components/st-
 import { StSelectFloatingLabelModule } from '../../../shared/ui-components/st-select-floating-label/st-select-floating-label.module';
 
 import { QuestionComponent } from './question.component';
+import { EmptyFormControlDirective } from '../empty-form-control/empty-form-control.directive';
 
 const imports = [
   CommonModule,
@@ -18,7 +19,7 @@ const imports = [
   StSelectFloatingLabelModule,
 ];
 const exports = [QuestionComponent];
-const declarations = [QuestionComponent];
+const declarations = [QuestionComponent, EmptyFormControlDirective];
 
 @NgModule({
   imports,

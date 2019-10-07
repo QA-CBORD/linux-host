@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { tap, filter } from 'rxjs/operators';
@@ -8,6 +8,7 @@ import { ApplicationsService } from '../../applications/applications.service';
 import { QuestionsStorageService } from '../../questions/questions-storage.service';
 
 import { StepperComponent } from '../../stepper/stepper.component';
+import { StepComponent } from '../../stepper/step/step.component';
 
 import { PatronApplication } from '../../applications/applications.model';
 import { QuestionPage } from '../../questions/questions.model';
@@ -19,6 +20,8 @@ import { QuestionPage } from '../../questions/questions.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ApplicationDetailsPage implements OnInit {
+  @ViewChild(StepperComponent) stepper: StepperComponent;
+
   application$: Observable<PatronApplication>;
 
   pages$: Observable<QuestionPage[]>;
@@ -54,11 +57,22 @@ export class ApplicationDetailsPage implements OnInit {
     );
   }
 
-  handleSubmit(stepper: StepperComponent, index: number, formValue: any, isLastPage: boolean): void {
-    this._questionsStorageService.updateApplicationForm(this.applicationId, index, formValue);
+  save(): void {
+    const selectedIndex: number = this.stepper.selectedIndex;
+    const selectedStep: StepComponent = this.stepper.steps.toArray()[selectedIndex];
+
+    this._questionsStorageService.updateApplicationForm(
+      selectedStep.stepControl.value,
+      this.applicationId,
+      selectedIndex
+    );
+  }
+
+  handleSubmit(formValue: any, index: number, isLastPage: boolean): void {
+    this._questionsStorageService.updateApplicationForm(formValue, this.applicationId, index);
 
     if (!isLastPage) {
-      stepper.next();
+      this.stepper.next();
     } else {
       this._applicationsService.submitPatronApplication(this.applicationId);
       this._router.navigate(['/housing/dashboard']);

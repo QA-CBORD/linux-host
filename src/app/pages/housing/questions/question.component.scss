@@ -1,4 +1,51 @@
+@import 'tools';
+
+@mixin empty-control($placeholder) {
+  &:not(:focus):not(:focus-within) {
+    border: 1px solid $color-light-gray !important;
+
+    & + #{$placeholder} {
+      color: inherit !important;
+      font-size: 100% !important;
+      opacity: 0.5 !important;
+      padding: 15px 0 0 13px !important;
+      transform: translate3d(0, 0, 0) !important;
+    }
+  }
+}
+
 .question__item {
-    display: block;
-    margin-bottom: 25px;
+  display: block;
+  margin-bottom: 30px;
+
+  &.empty-form-control ::ng-deep {
+    .input__control {
+      @include empty-control('.input__placeholder');
+    }
+
+    .select__control {
+      @include empty-control('.select__placeholder');
+    }
+  }
+}
+
+.question__primary-header {
+  @include font-nunito-heavy(20px);
+  margin-top: 0;
+  margin-bottom: 25px;
+}
+
+.question__secondary-header {
+  @include font-nunito-heavy(14px);
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.question__radio {
+  --color-checked: #{$color-dodger-blue};
+}
+
+.question__checkbox {
+  --background-checked: #{$color-dodger-blue};
+  --border-color-checked: #{$color-dodger-blue};
 }

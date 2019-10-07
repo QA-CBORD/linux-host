@@ -1,8 +1,13 @@
 @import 'tools';
 
+.stepper__list-wrap {
+  overflow: hidden;
+  margin: 0 -16px;
+}
+
 .stepper__list {
   border-bottom: 1px solid $color-light-gray;
-  margin: 0 -16px 40px;
+  margin-bottom: 40px;
   padding: 0 16px 0 30px;
   list-style: none;
   display: flex;
@@ -51,6 +56,11 @@
   }
 }
 
+.stepper__item-inner {
+  position: relative;
+  padding-top: 15px;
+}
+
 .stepper__item--selected {
   color: $color-dodger-blue;
 
@@ -64,6 +74,17 @@
 
   &::before {
     background-color: $color-light-sky-blue;
+  }
+
+  .stepper__item-inner::before {
+    background-image: url('/assets/icon/check.svg');
+    content: '';
+    position: absolute;
+    width: 14px;
+    height: 10px;
+    top: 0;
+    left: 50%;
+    transform: translateX(-4px);
   }
 }
 

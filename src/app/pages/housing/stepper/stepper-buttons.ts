@@ -1,4 +1,4 @@
-import { Directive, HostListener } from '@angular/core';
+import { Directive, HostListener, Output, EventEmitter } from '@angular/core';
 
 import { StepperComponent } from './stepper.component';
 
@@ -6,22 +6,28 @@ import { StepperComponent } from './stepper.component';
   selector: 'button[stepperNext], ion-button[stepperNext]',
 })
 export class StepperNextDirective {
-  constructor(public _stepper: StepperComponent) {}
-
   @HostListener('click')
   private _handleClick() {
     this._stepper.next();
+    this.next.emit();
   }
+
+  @Output() next: EventEmitter<void> = new EventEmitter();
+
+  constructor(public _stepper: StepperComponent) {}
 }
 
 @Directive({
   selector: 'button[stepperBack], ion-button[stepperBack]',
 })
 export class StepperBackDirective {
-  constructor(public _stepper: StepperComponent) {}
-
   @HostListener('click')
   private _handleClick() {
     this._stepper.back();
+    this.back.emit();
   }
+
+  constructor(public _stepper: StepperComponent) {}
+
+  @Output() back: EventEmitter<void> = new EventEmitter();
 }

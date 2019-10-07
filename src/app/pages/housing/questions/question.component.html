@@ -4,49 +4,50 @@
       <div [innerHTML]="getHeaderHTML(question)"></div>
     </ng-container>
 
-    <p *ngSwitchCase="'paragraph'">{{ question.label }}</p>
+    <p *ngSwitchCase="'paragraph'" class="question__item">{{ question.label }}</p>
 
-    <ion-item *ngSwitchCase="'text'" class="question__item">
-      <ion-label position="stacked">{{ question.label }}</ion-label>
-      <ion-input [formControlName]="question.name"></ion-input>
-    </ion-item>
-
-    <ion-item *ngSwitchCase="'textarea'" class="question__item">
-      <ion-label position="stacked">{{ question.label }}</ion-label>
-      <ion-textarea [formControlName]="question.name"></ion-textarea>
-    </ion-item>
-
-    <!-- <st-input-floating-label
+    <st-input-floating-label
       *ngSwitchCase="'text'"
-      [control]="parentGroup.get(question.name)"
-      [formControlName]="question.name"
-      [title]="question.label"
-      type="text"
       class="question__item"
-      [idd]="question.name"
+      type="text"
+      [control]="parentGroup.get(question.name)"
       [label]="question.label"
+      [idd]="question.name"
+      [formControlName]="question.name"
+      [isError]="
+        parentGroup.get(question.name).errors &&
+        (parentGroup.get(question.name).dirty || parentGroup.get(question.name).touched)
+      "
+      [stEmptyFormControl]="parentGroup.get(question.name)"
     >
-      <p class="deposit-form__control-error-msg">
-        Error
-      </p>
-    </st-input-floating-label> -->
+      <div
+        *ngIf="
+          parentGroup.get(question.name).errors &&
+          parentGroup.get(question.name).errors['required'] &&
+          (parentGroup.get(question.name).dirty || parentGroup.get(question.name).touched)
+        "
+      >
+        This field is required.
+      </div>
+    </st-input-floating-label>
 
-    <!-- <st-textarea-floating-label
+    <st-textarea-floating-label
       *ngSwitchCase="'textarea'"
       [control]="parentGroup.get(question.name)"
+      [isError]="parentGroup.get(question.name).invalid && parentGroup.get(question.name).touched"
       [formControlName]="question.name"
+      class="question__item"
       [idd]="question.name"
       [label]="question.label"
       title="Type your message here..."
-      class="question__item"
       rows="3"
     >
-      <p class="request-funds__control-error-msg">
-        Error
+      <p>
+        {{ parentGroup.get(question.name).errors && parentGroup.get(question.name).errors['errorMsg'] }}
       </p>
-    </st-textarea-floating-label> -->
+    </st-textarea-floating-label>
 
-    <ion-item *ngSwitchCase="'date'" class="question__item">
+    <ion-item *ngSwitchCase="'date'" class="question__item ion-no-padding" lines="none">
       <ion-label>{{ question.label }}</ion-label>
       <ion-datetime
         displayFormat="MMM/DD/YYYY"
@@ -55,61 +56,60 @@
       ></ion-datetime>
     </ion-item>
 
-    <ion-item *ngSwitchCase="'select'" class="question__item">
-      <ion-label>{{ question.label }}</ion-label>
-      <ion-select
-        interface="action-sheet"
-        mode="md"
-        [placeholder]="question.label"
-        [interfaceOptions]="customActionSheetOptions"
-        [formControlName]="question.name"
-      >
-        <ion-select-option *ngFor="let option of question.values" [value]="option.name">
-          {{ option.label }}
-        </ion-select-option>
-      </ion-select>
-    </ion-item>
-
-    <!-- <st-select-floating-label
+    <st-select-floating-label
       *ngSwitchCase="'select'"
-      interface="action-sheet"
       [formControlName]="question.name"
       [control]="parentGroup.get(question.name)"
+      [isError]="parentGroup.get(question.name).invalid && parentGroup.get(question.name).touched"
+      class="question__item"
+      interface="action-sheet"
       [interfaceOptions]="customActionSheetOptions"
-      [title]="question.label"
       [label]="question.label"
       [idd]="question.name"
-      class="question__item"
+      [stEmptyFormControl]="parentGroup.get(question.name)"
     >
       <ng-container role="options">
-        <ion-select-option *ngFor="let option of question.values" [value]="option.name">
+        <ion-select-option *ngFor="let option of question['values']" [value]="option.name">
           {{ option.label }}
         </ion-select-option>
       </ng-container>
 
       <ng-container role="error">
-        <p class="deposit-form__control-error-msg">
-          Error
+        <p>
+          {{ parentGroup.get(question.name).errors && parentGroup.get(question.name).errors['errorMsg'] }}
         </p>
       </ng-container>
-    </st-select-floating-label> -->
+    </st-select-floating-label>
 
-    <div *ngSwitchCase="'checkbox-group'" class="question__item">
-      <ion-item [formArrayName]="question.name" *ngFor="let item of question.values; index as idx">
-        <ion-checkbox color="primary" [checked]="item.selected" [formControlName]="idx" slot="start"></ion-checkbox>
-        <ion-label>{{ question.label }}</ion-label>
+    <div *ngSwitchCase="'checkbox-group'" class="question__item" lines="none">
+      <h3>{{ question.label }}</h3>
+
+      <ion-item
+        [formArrayName]="question.name"
+        *ngFor="let item of question['values']; index as idx"
+        class="ion-no-padding"
+        lines="none"
+      >
+        <ion-checkbox
+          class="question__checkbox"
+          mode="md"
+          [checked]="item.selected"
+          [formControlName]="idx"
+          slot="start"
+        ></ion-checkbox>
+        <ion-label>{{ item.label }}</ion-label>
       </ion-item>
     </div>
 
-    <div *ngSwitchCase="'radio-group'" class="question__item">
-      <ion-radio-group [formArrayName]="question.name">
-        <ion-item *ngFor="let item of question.values; index as idx">
-          <ion-label>{{ question.label }}</ion-label>
-          <ion-radio color="primary" [value]="item.value"></ion-radio>
+    <div *ngSwitchCase="'radio-group'" class="question__item" lines="none">
+      <h3>{{ question.label }}</h3>
+
+      <ion-radio-group [formControlName]="question.name">
+        <ion-item *ngFor="let item of question['values']; index as idx" class="ion-no-padding" lines="none">
+          <ion-label>{{ item.label }}</ion-label>
+          <ion-radio class="question__radio" mode="md" slot="start" [value]="item.value"></ion-radio>
         </ion-item>
       </ion-radio-group>
     </div>
-
-    <div *ngSwitchDefault>{{ question.label }}</div>
   </ng-container>
 </div>
