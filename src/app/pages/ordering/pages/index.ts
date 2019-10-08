@@ -1,3 +1,3 @@
-export * from './favorite-merchants'
-export * from './recent-orders'
-export * from './saved-addresses'
+export * from './favorite-merchants';
+export * from './recent-orders';
+export * from './saved-addresses';

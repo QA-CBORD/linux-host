@@ -2,10 +2,7 @@ import {
   Component,
   OnInit,
   ChangeDetectionStrategy,
-  Input,
-  OnChanges,
-  SimpleChanges,
-  SimpleChange,
+  Input, Output, EventEmitter,
 } from '@angular/core';
 import { OrderStatus } from './recent-orders-list-item/recent-orders.config';
 import { OrderInfo } from '../../models';
@@ -16,36 +13,11 @@ import { OrderInfo } from '../../models';
   styleUrls: ['./recent-orders-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RecentOrdersListComponent implements OnChanges, OnInit {
-  @Input('recentOrders') recentOrders: OrderInfo[];
+export class RecentOrdersListComponent {
+  @Input() orders: OrderInfo[];
+  @Output() onOrderClicked: EventEmitter<OrderInfo> = new EventEmitter<OrderInfo>();
 
-  pendingOrders: OrderInfo[] = [];
-  completedOrders: OrderInfo[] = [];
-
-  constructor() {}
-
-  ngOnInit() {}
-
-  ngOnChanges(changes: SimpleChanges): void {
-    const newRecentOrdersChange: OrderInfo[] = changes.recentOrders.currentValue;
-    if (newRecentOrdersChange === null) {
-      console.log('Recent Orders null');
-      return;
-    }
-    this.pendingOrders = this.getPendingOrders(newRecentOrdersChange);
-    this.completedOrders = this.getCompletedOrders(newRecentOrdersChange);
-  }
-
-  private getPendingOrders(orders: OrderInfo[]): OrderInfo[] {
-    return this.getOrderByStatus(OrderStatus.PENDING, orders);
-  }
-
-  private getCompletedOrders(orders: OrderInfo[]): OrderInfo[] {
-    return orders.filter((order: OrderInfo) => order.status != OrderStatus.PENDING);
-  }
-
-  private getOrderByStatus(orderStatus: OrderStatus, orders: OrderInfo[]): OrderInfo[] {
-    return orders.filter((order: OrderInfo) => order.status === orderStatus);
+  constructor() {
   }
 
   trackOrdersById(index: number, { id }: OrderInfo): string {

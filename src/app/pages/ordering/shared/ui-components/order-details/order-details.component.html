@@ -53,16 +53,21 @@
             <!-- Sliding item with text options on both sides -->
             <ion-item-sliding
                     [disabled]="readonly"
-                    *ngFor="let a of [1,2,3,4]"
+                    *ngFor="let ingredient of ingredients"
                     class="order-ingredient-list__ingredient">
                 <ion-item class="order-ingredient-list__item">
                     <ion-label>
                         <div class="order-ingredient-list__ingredient-header">
-                            <div class="order-ingredient-list__ingredient-number">{{a}}</div>
-                            <div class="order-ingredient-list__ingredient-name">Fries</div>
-                            <div class="order-ingredient-list__ingredient-price">$15.99</div>
+                            <div class="order-ingredient-list__ingredient-number">{{ingredient.quantity}}</div>
+                            <div class="order-ingredient-list__ingredient-name">{{ingredient.name}}</div>
+                            <div class="order-ingredient-list__ingredient-price">{{ingredient.salePrice | currency}}</div>
                         </div>
-                        <p class="order-ingredient-list__ingredient-description">small</p>
+                        <ng-container *ngIf="ingredient.orderItemOptions">
+                            <p *ngFor="let subIngredient of ingredient.orderItemOptions"
+                               class="order-ingredient-list__ingredient-description">
+                                {{subIngredient.quantity}} X {{subIngredient.name}} - {{subIngredient.salePrice | currency}}
+                            </p>
+                        </ng-container>
                     </ion-label>
                 </ion-item>
 
@@ -73,19 +78,23 @@
         </ion-list>
 
         <div class="total">
-            <div class="total__item">subtotal<span class="total__item-sum">$11.48</span></div>
-            <div class="total__item">tax<span class="total__item-sum">$0.48</span></div>
-            <div class="total__item total__item--bold">total<span class="total__item-sum">$11.48</span></div>
+            <div class="total__item">subtotal<span class="total__item-sum">{{subTotal | currency}}</span></div>
+            <div class="total__item">tax<span class="total__item-sum">{{tax | currency}}</span></div>
+            <div class="total__item">tip<span class="total__item-sum">{{tip | currency}}</span></div>
+            <div class="total__item">delivery fee<span class="total__item-sum">{{deliveryFee | currency}}</span></div>
+            <div class="total__item">pickup fee<span class="total__item-sum">{{pickupFee | currency}}</span></div>
+            <div class="total__item total__item--bold">total<span class="total__item-sum">{{total | currency}}</span>
+            </div>
         </div>
 
 
         <div class="order-details__payment-method" *ngIf="readonly; else paymentSelect">
-            payment method<span>apple pay</span>
+            Payment Method<span>{{accountName}}</span>
         </div>
 
         <ng-template #paymentSelect>
             <div class="order-details">
-                <ion-label class="order-details__label">Pickup time</ion-label>
+                <ion-label class="order-details__label">Payment Method</ion-label>
                 <ion-select
                         [formControlName]="controlsNames.paymentMethod"
                         class="order-details__value"
@@ -103,6 +112,6 @@
         </ng-template>
     </form>
 
-    <button (click)="test()">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</button>
+    <!--    <button (click)="test()">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</button>-->
     <ng-content></ng-content>
 </div>

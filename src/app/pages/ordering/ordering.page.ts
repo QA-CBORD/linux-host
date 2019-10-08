@@ -4,8 +4,7 @@ import { Component, OnInit } from '@angular/core';
 import { Observable, of, iif, zip } from 'rxjs';
 
 import { MerchantInfo, OrderInfo } from './shared/models';
-import { Router } from '@angular/router';
-import { MerchantInfo, MerchantOrderTypesInfo } from './shared/models';
+import { MerchantOrderTypesInfo } from './shared/models';
 import { ModalController, ToastController } from '@ionic/angular';
 import { UserService } from '@core/service/user-service/user.service';
 import { LoadingService } from '@core/service/loading/loading.service';

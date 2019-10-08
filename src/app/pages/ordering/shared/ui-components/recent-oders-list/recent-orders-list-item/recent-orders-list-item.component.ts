@@ -8,7 +8,7 @@ import { OrderInfo } from '../../../models';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecentOrdersListItemComponent implements OnInit {
-  @Input('orderInfo') orderInfo: OrderInfo;
+  @Input() orderInfo: OrderInfo;
   @Output() onClicked: EventEmitter<OrderInfo> = new EventEmitter<OrderInfo>();
 
   constructor() {}

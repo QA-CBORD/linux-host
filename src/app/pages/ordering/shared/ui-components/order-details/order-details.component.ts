@@ -1,18 +1,26 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { take } from 'rxjs/operators';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { OrderItem } from '@pages/ordering';
 
 @Component({
   selector: 'st-order-details',
   templateUrl: './order-details.component.html',
   styleUrls: ['./order-details.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OrderDetailsComponent implements OnInit {
-  @Input() readonly: boolean = false;
+  @Input() readonly: boolean = true;
   @Input() time: any = [];
   @Input() address: any = [];
-  @Input() ingredients: any = [];
+  @Input() ingredients: OrderItem[] = [];
   @Input() paymentMethod: any = [];
+  @Input() tax: number;
+  @Input() total: number;
+  @Input() deliveryFee: number;
+  @Input() pickupFee: number;
+  @Input() subTotal: number;
+  @Input() tip: number;
+  @Input() accountName: string;
   @Output() onFormChange: EventEmitter<any> = new EventEmitter<any>();
   detailsForm: FormGroup;
 
@@ -39,11 +47,11 @@ export class OrderDetailsComponent implements OnInit {
         [DETAILS_FORM_CONTROL_NAMES.paymentMethod]: [''],
       },{updateOn: 'blur'}
     );
-
-    this.subscribre()
+    console.log(this.detailsForm);
+    this.subscribe()
   }
 
-  private subscribre () {
+  private subscribe () {
     this.detailsForm.valueChanges
       .subscribe(data => {
         console.log(1);
@@ -52,11 +60,8 @@ export class OrderDetailsComponent implements OnInit {
   }
 
   private getIngredients() {
-
     return this.fb.array([
-      // ...arr.map((v) => this.fb.control(v))
-      new FormControl('a'),
-      new FormControl('b'),
+      ...this.ingredients.map((v) => this.fb.control(v))
     ])
   }
 

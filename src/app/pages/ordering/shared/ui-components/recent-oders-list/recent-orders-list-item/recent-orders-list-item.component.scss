@@ -1,33 +1,40 @@
-@import 'tools';
+@import "tools";
 
-.order-item {
-  box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.04), 0px 2px 14px 0px rgba(0, 0, 0, 0.12);
+.order-card {
+  box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.04), 0 2px 14px 0 rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
 
-  &__wrapper {
+  &__header {
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
   }
 
-  &__title {
-    color: #161616;
+  &__name {
+    color: $color-black;
 
     @include font-nunito-semibold(16px);
   }
 
-  &__body {
-    color: #6e6e6e;
+  &__number {
+    color: $color-black;
 
     @include font-nunito-regular(14px);
   }
 
-  &__data {
-    color: #6e6e6e;
+  &__description {
+    letter-spacing: 0;
+    line-height: 18px;
+    color: $color-dim-gray;
 
     @include font-nunito-regular(14px);
   }
 
-  &__order-number {
-    color: #000;
+  &__date {
+    letter-spacing: 0;
+    line-height: 18px;
+    color: $color-dim-gray;
 
     @include font-nunito-regular(14px);
   }
