@@ -1,34 +1,55 @@
 import { Injectable } from '@angular/core';
+
+import { Observable, of, zip } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
+
 import { UserAutoDepositSettingInfo } from '../models/auto-deposit-settings';
-import { AutoDepositApiServiceService } from './auto-deposit-api-service.service';
-import { Observable, zip } from 'rxjs';
-import { UserAccount } from '../../../../../core/model/account/account.model';
-import { switchMap } from 'rxjs/operators';
+import { AutoDepositApiService } from './auto-deposit-api-service.service';
 import { SYSTEM_SETTINGS_CONFIG } from '../../../accounts.config';
-import { transformStringToArray } from '../../../../../core/utils/general-helpers';
+import { parseArrayFromString } from '../../../../../core/utils/general-helpers';
 import { SettingService } from '../../../services/setting.service';
+import { UserService } from '../../../../../core/service/user-service/user.service';
 
 @Injectable()
 export class AutoDepositService {
-  private userAutoDepositInfo: UserAutoDepositSettingInfo;
-
-  constructor(private readonly apiServiceService:AutoDepositApiServiceService,
-              private readonly settingsService: SettingService) { }
+  constructor(
+    private readonly apiService: AutoDepositApiService,
+    private readonly settingsService: SettingService,
+    private readonly userService: UserService
+  ) {}
 
   getUserAutoDepositInfo(): Observable<UserAutoDepositSettingInfo> {
-    return this.apiServiceService.getUserAutoDepositSettingInfo();
+    return this.apiService
+      .getUserAutoDepositSettingInfo()
+      .pipe(switchMap(response => (response ? of(response) : this.getInitialAutoDepositSetting())));
   }
 
   getAutoDepositAccountList(): Observable<any> {
     return this.settingsService.settings$.pipe(
-      switchMap((settings) => {
-        const settingInfo = this.settingsService.getSettingByName(settings, SYSTEM_SETTINGS_CONFIG.depositPaymentTypes.name);
-        const paymentType = settingInfo ? transformStringToArray(settingInfo.value) : [];
-        const calls = paymentType.map((type: number) =>
-          this.apiServiceService.retrieveAutoDepositAccountList(type),
+      switchMap(settings => {
+        const settingInfo = this.settingsService.getSettingByName(
+          settings,
+          SYSTEM_SETTINGS_CONFIG.autoDepositPaymentTypes.name
         );
+        const paymentType = settingInfo ? parseArrayFromString(settingInfo.value) : [];
+        const calls = paymentType.map((type: number) => this.apiService.retrieveAutoDepositAccountList(type));
         return zip(...calls);
-      }),
+      })
+    );
+  }
+
+  updateAutoDepositSettings(settings: UserAutoDepositSettingInfo): Observable<boolean> {
+    return this.apiService.updateAutoDepositSettings(settings);
+  }
+
+  private getInitialAutoDepositSetting(): Observable<UserAutoDepositSettingInfo> {
+    return this.userService.userData.pipe(
+      map(({ id: userId }) => ({
+        userId,
+        amount: 0,
+        lowBalanceAmount: 0,
+        active: false,
+      }))
     );
   }
 }

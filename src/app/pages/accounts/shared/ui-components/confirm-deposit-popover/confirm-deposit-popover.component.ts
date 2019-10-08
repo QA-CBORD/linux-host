@@ -13,7 +13,7 @@ export class ConfirmDepositPopoverComponent implements OnInit {
   popoverConfig: PopoverConfig;
   contentString: { [key: string]: string };
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit() {
     this.initPopover();

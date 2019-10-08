@@ -31,7 +31,7 @@ export class OrderingApiService extends BaseService {
     const methodName = 'getMenuMerchants';
     return this.coords.getCoords().pipe(
       switchMap((geoData: GeoCoordinates) => {
-        if (geoData) {
+        if (geoData && geoData.latitude !== null && geoData.longitude !== null) {
           searchOptions.addSearchOption({ key: MerchantSearchOptionName.LATITUDE, value: geoData.latitude });
           searchOptions.addSearchOption({ key: MerchantSearchOptionName.LONGITUDE, value: geoData.longitude });
         }
@@ -45,7 +45,7 @@ export class OrderingApiService extends BaseService {
     );
   }
 
-  getFavoriteMerchants(): Observable<string[]> {
+  getFavoriteMerchants(): Observable<MerchantInfo[]> {
     const methodName = 'getFavoriteMerchants';
     const postParams: ServiceParameters = { excludeNonOrdering: false };
     return this.httpRequestFull(this.serviceUrlMerchant, methodName, true, null, postParams).pipe(
@@ -55,21 +55,62 @@ export class OrderingApiService extends BaseService {
 
   addFavoriteMerchant(merchantId: string): Observable<string> {
     const methodName = 'addFavoriteMerchant';
-    const postParams: ServiceParameters = { merchantId: merchantId, notes: '' };
+    const postParams: ServiceParameters = { merchantId, notes: '' };
     return this.httpRequestFull(this.serviceUrlMerchant, methodName, true, null, postParams);
   }
 
   removeFavoriteMerchant(merchantId: string): Observable<boolean> {
     const methodName = 'removeFavoriteMerchant';
-    const postParams: ServiceParameters = { merchantId: merchantId };
+    const postParams: ServiceParameters = { merchantId };
     return this.httpRequestFull(this.serviceUrlMerchant, methodName, true, null, postParams);
   }
 
   getSuccessfulOrdersList(userId: string, institutionId: string): Observable<OrderInfo[]> {
     const methodName = 'retrieveSuccessfulOrdersList';
-    const postParams: ServiceParameters = { userId: userId, merchantId: null, maxReturn: 30 };
+    const postParams: ServiceParameters = { userId, merchantId: null, maxReturn: 30 };
     return this.httpRequestFull(this.serviceUrlOrdering, methodName, true, institutionId, postParams).pipe(
       map(({ response }: MessageResponse<any>) => response.list)
+    );
+  }
+
+  getMerchantOrderSchedule(merchantId: string, orderType: number): Observable<any[]> {
+    const methodName = 'getMerchantOrderSchedule';
+    const postParams: ServiceParameters = { merchantId, orderType, startDate: null, endDate: null };
+
+    return this.httpRequestFull(this.serviceUrlOrdering, methodName, true, null, postParams).pipe(
+      map(({ response }: MessageResponse<any>) => response)
+    );
+  }
+
+  retrieveUserAddressList(userId: string): Observable<any> {
+    const methodName = 'retrieveUserAddressList';
+    const postParams: ServiceParameters = { userId, addressId: null };
+
+    return this.httpRequestFull('/json/user', methodName, true, null, postParams).pipe(
+      map(({ response }: MessageResponse<any>) => response)
+    );
+  }
+
+  getMerchantSettings(merchantId: string): Observable<any> {
+    const methodName = 'getMerchantSettings';
+    const postParams: ServiceParameters = {
+      merchantId,
+      domain: 'merchant',
+      category: 'order',
+      name: 'pickup_locations_enabled',
+    };
+
+    return this.httpRequestFull('/json/merchant', methodName, true, null, postParams).pipe(
+      map(({ response }: MessageResponse<any>) => response)
+    );
+  }
+
+  retrievePickupLocations(institutionId: string): Observable<any> {
+    const methodName = 'retrievePickupLocations';
+    const postParams: ServiceParameters = { active: true };
+
+    return this.httpRequestFull('/json/institution', methodName, true, institutionId, postParams).pipe(
+      map(({ response }: MessageResponse<any>) => response)
     );
   }
 }

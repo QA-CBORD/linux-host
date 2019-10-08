@@ -7,7 +7,7 @@ import { OrderListModule } from './components/order-list/order-list.module';
 import { SharedModule } from '@shared/shared.module';
 import { RecentOrdersListModule } from '@pages/ordering/shared/ui-components/recent-oders-list/recent-orders-list.module';
 
-const imports = [CommonModule, IonicModule, RecentOrdersRoutingModule, OrderListModule, SharedModule];
+const imports = [CommonModule, IonicModule, RecentOrdersRoutingModule, OrderListModule];
 const declarations = [RecentOrdersComponent];
 const providers = [];
 const entryComponents = [];

@@ -59,12 +59,14 @@ export class MerchantService {
       value: 1,
     });
 
-    let resultHandler = (favoriteMerchants: string[], merchantList: MerchantInfo[]): MerchantInfo[] => {
+    const resultHandler = (favoriteMerchants: MerchantInfo[], merchantList: MerchantInfo[]): MerchantInfo[] => {
       if (!favoriteMerchants || favoriteMerchants.length <= 0) {
         this._menuMerchants = merchantList;
         return merchantList;
       }
-      merchantList.forEach(merchant => (merchant.isFavorite = favoriteMerchants.includes(merchant.id)));
+      merchantList.forEach(
+        merchant => (merchant.isFavorite = favoriteMerchants.some(item => item['id'] === merchant.id))
+      );
       this._menuMerchants = merchantList;
       return merchantList;
     };
@@ -88,5 +90,29 @@ export class MerchantService {
       ),
       tap(recentOrders => (this._recentOrders = recentOrders))
     );
+  }
+
+  getMerchantOrderSchedule(merchantId: string, orderType: number): Observable<any[]> {
+    return this.orderingApiService.getMerchantOrderSchedule(merchantId, orderType);
+  }
+
+  retrieveUserAddressList(userId: string): Observable<any> {
+    return this.orderingApiService.retrieveUserAddressList(userId);
+  }
+
+  getMerchantSettings(merchantId: string): Observable<any> {
+    return this.orderingApiService.getMerchantSettings(merchantId);
+  }
+
+  retrievePickupLocations(institutionId: string): Observable<any> {
+    return this.orderingApiService.retrievePickupLocations(institutionId);
+  }
+
+  addFavoriteMerchant(merchantId: string): Observable<any> {
+    return this.orderingApiService.addFavoriteMerchant(merchantId);
+  }
+
+  removeFavoriteMerchant(merchantId: string): Observable<any> {
+    return this.orderingApiService.removeFavoriteMerchant(merchantId);
   }
 }

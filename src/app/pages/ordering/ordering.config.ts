@@ -1,7 +1,7 @@
 export enum LOCAL_ROUTING {
   recentOrders = 'recent-orders',
   favoriteMerchants = 'favorite-merchants',
-  savedAddresses = 'saved-addresses'
+  savedAddresses = 'saved-addresses',
 }
 export enum MerchantSearchOptionName {
   OPEN_NOW = 'open_now', /// 1/0 - omit to return all
@@ -26,3 +26,9 @@ export const SYSTEM_SETTINGS_CONFIG = {
     name: 'institution_address_restriction',
   },
 };
+
+export enum OrderType {
+  PICKUP = 0,
+  DELIVERY = 1,
+  DINEIN = 2,
+}

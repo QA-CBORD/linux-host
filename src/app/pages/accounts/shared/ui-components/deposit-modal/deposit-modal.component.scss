@@ -29,7 +29,7 @@
   }
 
   &__info-container {
-    margin: 10px 0 60% 0;
+    margin: 10px 0 0;
     background: #f7f7f7;
     padding: 16px 20px;
 
@@ -58,5 +58,8 @@
     border: 2px solid $color-dodger-blue;
     border-radius: 8px;
     margin: 0 20px;
+    position: fixed;
+    width: 90vw;
+    bottom: 20px;
   }
 }

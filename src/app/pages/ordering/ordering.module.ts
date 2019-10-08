@@ -10,6 +10,7 @@ import { MerchantService } from './services';
 import { OrderingApiService } from './services/ordering.api.service';
 
 import { OrderingResolver } from './resolvers';
+import { MerchantListModule } from './components/merchant-list/merchant-list.module';
 import { MenuOrderingComponent } from './components';
 import { MerchantListModule } from './shared/ui-components/merchant-list/merchant-list.module';
 import { OrderDetailsModule } from '@pages/ordering/shared/ui-components/order-details/order-details.module';

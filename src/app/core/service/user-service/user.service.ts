@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
-import { map, switchMap } from 'rxjs/operators';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { map, switchMap, catchError } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of, from } from 'rxjs';
 
 import { BaseService } from '../base-service/base.service';
 import { UserInfo } from 'src/app/core/model/user/user-info.model';
@@ -9,7 +9,9 @@ import { UserPhotoInfo } from '../../model/user';
 import { MessageResponse } from '../../model/service/message-response.model';
 import { UserSettings } from '../../model/user';
 import { UserPhotoList } from '../../model/user';
+import { HttpClient } from '@angular/common/http';
 import { AddressInfo, AddressInfoList } from './../../model/user/user-address.model';
+import { NativeProvider, NativeData } from '@core/provider/native-provider/native.provider';
 
 @Injectable({
   providedIn: 'root',
@@ -20,8 +22,16 @@ export class UserService extends BaseService {
   private readonly userAddresses$: BehaviorSubject<AddressInfo[]> = new BehaviorSubject<AddressInfo[]>([]);
   private userPhoto: UserPhotoInfo = null;
 
+  constructor(readonly http: HttpClient, private readonly nativeProvider: NativeProvider) {
+    super(http);
+  }
+
   private set _userData(userInfo: UserInfo) {
     this.userData$.next({ ...userInfo });
+  }
+
+  public setUserData(userInfo: UserInfo) {
+    this._userData = userInfo;
   }
 
   get userData(): Observable<UserInfo> {
@@ -51,12 +61,45 @@ export class UserService extends BaseService {
     });
   }
 
+  setAcceptedPhoto(acceptedPhoto: UserPhotoInfo) {
+    this.userPhoto = acceptedPhoto;
+  }
+
   getAcceptedPhoto(): Observable<UserPhotoInfo> {
     if (this.userPhoto) return of(this.userPhoto);
 
-    return this.getUser().pipe(
-      switchMap(({ id }: UserInfo) => this.getUserPhoto(id)),
+    let nativeProviderFunction: Observable<UserPhotoInfo>;
+
+    const userPhotoInfoObservable: Observable<UserPhotoInfo> = this.getUser().pipe(
+      switchMap(({ id }: UserInfo) => this.getPhotoListByUserId(id)),
+      map(({ response: { list } }) => this.getPhotoIdByStatus(list)),
+      switchMap(({ id }: UserPhotoInfo) => this.getPhotoById(id)),
       map(({ response }) => (this.userPhoto = response))
+    );
+
+    if (this.nativeProvider.isAndroid()) {
+      nativeProviderFunction = of(this.nativeProvider.getAndroidData(NativeData.USER_PHOTO)).pipe(
+        map((data: any) => JSON.parse(data))
+      );
+    } else if (this.nativeProvider.isIos()) {
+      nativeProviderFunction = from(this.nativeProvider.getIosData(NativeData.USER_PHOTO)).pipe(
+        map((data: any) => JSON.parse(data))
+      );
+    } else {
+      nativeProviderFunction = userPhotoInfoObservable;
+    }
+
+    return nativeProviderFunction.pipe(
+      catchError(e => {
+        return userPhotoInfoObservable;
+      }),
+      switchMap(userPhotoInfo => {
+        if (userPhotoInfo) {
+          return of(userPhotoInfo);
+        } else {
+          return userPhotoInfoObservable;
+        }
+      })
     );
   }
 

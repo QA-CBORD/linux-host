@@ -2,20 +2,24 @@ import { Component, OnDestroy } from '@angular/core';
 
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
-import { AlertController, Events, LoadingController, Platform, PopoverController } from '@ionic/angular';
+import { Events, LoadingController, Platform, PopoverController } from '@ionic/angular';
 
 import { Router } from '@angular/router';
 import * as Globals from './app.global';
 import { DataCache } from './core/utils/data-cache';
 import { from, of, fromEvent, Subscription } from 'rxjs';
-import { switchMap, tap, take, map } from 'rxjs/operators';
+import { switchMap, tap, take, map, takeWhile } from 'rxjs/operators';
 import { Environment } from './environment';
 import { NAVIGATE } from './app.global';
 import { TestProvider } from './core/provider/test-provider/test.provider';
 import { AuthService } from './core/service/auth-service/auth.service';
 import { UserService } from './core/service/user-service/user.service';
+import { NativeProvider, NativeData } from './core/provider/native-provider/native.provider';
 import { BUTTON_TYPE } from './core/utils/buttons.config';
 import { StGlobalPopoverComponent } from './shared/ui-components/st-global-popover';
+import { environment } from 'src/environments/environment';
+
+import { UserInfo } from './core/model/user';
 
 @Component({
   selector: 'app-root',
@@ -36,11 +40,11 @@ export class AppComponent implements OnDestroy {
     private readonly statusBar: StatusBar,
     private readonly events: Events,
     private readonly loadCtrl: LoadingController,
-    private readonly alertCtrl: AlertController,
     private readonly testProvider: TestProvider,
     private readonly authService: AuthService,
     private readonly userService: UserService,
-    private readonly popoverCtrl: PopoverController
+    private readonly popoverCtrl: PopoverController,
+    private readonly nativeProvider: NativeProvider
   ) {
     this.initializeApp();
   }
@@ -76,14 +80,58 @@ export class AppComponent implements OnDestroy {
       )
       .subscribe((hash: string) => {
         Environment.setEnvironmentViaURL(location.href);
-        // this.parseHashParameters(hash);
+        try {
+          this.useJavaScriptInterface();
+        } catch (e) {
+          if (environment.production === true) {
+            /// if this is a production build, then get the session token
+            this.parseHashParameters(hash);
 
-        /// now perform normal page logic
-        // this.handleSessionToken();
-
-        this.testGetSession();
+            /// now perform normal page logic
+            this.handleSessionToken();
+          } else {
+            /// if this is not production then use test session
+            this.testGetSession();
+          }
+        }
       });
     this.sourceSubscription.add(subscription);
+  }
+
+  useJavaScriptInterface() {
+    if (this.nativeProvider.isAndroid()) {
+      const sessionId: string = this.nativeProvider.getAndroidData(NativeData.SESSION_ID);
+      const userInfo: UserInfo = JSON.parse(this.nativeProvider.getAndroidData(NativeData.USER_INFO));
+      const institutionId: string = this.nativeProvider.getAndroidData(NativeData.INSTITUTION_ID);
+      this.destinationPage = this.nativeProvider.getAndroidData(NativeData.DESTINATION_PAGE);
+
+      if (!sessionId || !userInfo || !institutionId || !this.destinationPage) {
+        throw new Error('Error getting native data, retrieve info normally');
+      }
+
+      DataCache.setSessionId(sessionId);
+      DataCache.setUserInfo(userInfo);
+      this.userService.setUserData(userInfo);
+      DataCache.setInstitutionId(institutionId);
+
+      this.handlePageNavigation();
+    } else if (this.nativeProvider.isIos()) {
+      const sessionIdPromise: Promise<string> = this.nativeProvider.getIosData(NativeData.SESSION_ID);
+      const userInfoPromise: Promise<UserInfo> = this.nativeProvider.getIosData(NativeData.USER_INFO);
+      const institutionIdPromise: Promise<string> = this.nativeProvider.getIosData(NativeData.INSTITUTION_ID);
+      const destinationPagePromise: Promise<string> = this.nativeProvider.getIosData(NativeData.DESTINATION_PAGE);
+
+      Promise.all([sessionIdPromise, userInfoPromise, institutionIdPromise, destinationPagePromise]).then(values => {
+        DataCache.setSessionId(values[0]);
+        DataCache.setUserInfo(values[1]);
+        this.userService.setUserData(values[1]);
+        DataCache.setInstitutionId(values[2]);
+        this.destinationPage = <any>values[3];
+        this.handlePageNavigation();
+      });
+    } else {
+      throw new Error('No NativeInterface');
+    }
   }
 
   private testGetSession() {
