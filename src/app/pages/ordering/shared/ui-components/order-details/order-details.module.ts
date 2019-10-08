@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { OrderDetailsComponent } from './order-details.component';
 import { IonicModule } from '@ionic/angular';
+import { ReactiveFormsModule } from '@angular/forms';
 
 const declarations = [OrderDetailsComponent];
 
@@ -9,7 +10,8 @@ const declarations = [OrderDetailsComponent];
   declarations,
   imports: [
     CommonModule,
-    IonicModule
+    IonicModule,
+    ReactiveFormsModule,
   ],
   exports: declarations
 })

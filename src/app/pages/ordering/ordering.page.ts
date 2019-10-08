@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { Observable } from 'rxjs';
 
-import { MerchantInfo } from './shared/models';
+import { MerchantInfo, OrderInfo } from './shared/models';
 import { Router } from '@angular/router';
 
 @Component({
@@ -13,11 +13,13 @@ import { Router } from '@angular/router';
 })
 export class OrderingPage implements OnInit {
   merchantList$: Observable<MerchantInfo[]>;
+  orders$: Observable<OrderInfo[]>;
 
   constructor(private readonly merchantListService: MerchantService, private readonly router: Router) {}
 
   ngOnInit() {
     this.merchantList$ = this.merchantListService.menuMerchants$;
+    this.orders$ = this.merchantListService.getRecentOrders();
   }
 
   merchantClickHandler(id: string) {
