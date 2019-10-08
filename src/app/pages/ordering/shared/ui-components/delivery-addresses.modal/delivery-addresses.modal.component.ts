@@ -25,4 +25,14 @@ export class DeliveryAddressesModalComponent implements OnInit {
     console.log(event);
     this.addNewAdddressForm = event;
   }
+
+  clearAddressesForm() {
+    this.addNewAdddressState = !this.addNewAdddressState;
+  }
+
+  saveAddressesForm() {
+    // TODO: final form value:
+    console.log(this.addNewAdddressForm.value);
+    this.addNewAdddressState = !this.addNewAdddressState;
+  }
 }

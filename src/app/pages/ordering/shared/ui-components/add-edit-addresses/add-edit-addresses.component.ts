@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, OnChanges, Input, SimpleChanges } from '@angular/core';
 import { Validators, FormGroup, FormBuilder, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
 import * as states from '../../../../../../assets/states.json';
@@ -8,7 +8,7 @@ import * as states from '../../../../../../assets/states.json';
   templateUrl: './add-edit-addresses.component.html',
   styleUrls: ['./add-edit-addresses.component.scss'],
 })
-export class AddEditAddressesComponent implements OnInit {
+export class AddEditAddressesComponent implements OnInit, OnChanges {
   addEditAddressesForm: FormGroup;
   arrOfStates = states;
   customActionSheetOptions: { [key: string]: string } = {
@@ -16,9 +16,7 @@ export class AddEditAddressesComponent implements OnInit {
   };
 
   @Output() onFormChanged: EventEmitter<any> = new EventEmitter<any>();
-  constructor(private readonly fb: FormBuilder) {
-    console.log(this.arrOfStates['default']);
-  }
+  constructor(private readonly fb: FormBuilder) {}
 
   get address1(): AbstractControl {
     return this.addEditAddressesForm.get(this.controlsNames.address1);
