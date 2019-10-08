@@ -6,7 +6,9 @@
   class="shadow-header"
 ></st-header>
 -->
-<ion-list style="height: 100%; width: 100%;">
-  <img class="dashboard__tempId" src="/assets/images/temp_dash_idcard.PNG" alt="nature background" />
-  <st-tile-list [tileInfoArray]="dashboardItems"></st-tile-list>
-</ion-list>
+<ion-content scrollY="true">
+  <ion-list style="height: 100%; width: 100%;">
+    <img class="dashboard__tempId" src="/assets/images/temp_dash_idcard.PNG" alt="nature background" />
+    <st-tile-list [tileInfoArray]="dashboardItems"></st-tile-list>
+  </ion-list>
+</ion-content>

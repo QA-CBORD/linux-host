@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 
 import { DashboardPage } from './dashboard.page';
-import { TileListComponent, TileComponent } from './components/tile-list';
 import { DashboardRoutingModule } from './dashboard.routing.module';
 import { DashboardPageResolver } from './resolvers/dashboard.resolver';
 import { ConfigurationService } from './../../core/service/config-service/configuration.service';
