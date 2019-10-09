@@ -8,7 +8,7 @@ import * as states from '../../../../../../assets/states.json';
   templateUrl: './add-edit-addresses.component.html',
   styleUrls: ['./add-edit-addresses.component.scss'],
 })
-export class AddEditAddressesComponent implements OnInit, OnChanges {
+export class AddEditAddressesComponent implements OnInit {
   addEditAddressesForm: FormGroup;
   arrOfStates = states;
   customActionSheetOptions: { [key: string]: string } = {
