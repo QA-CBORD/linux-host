@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MerchantInfo, MerchantService, MerchantOrderTypesInfo } from '@pages/ordering';
 import { ModalController, ToastController } from '@ionic/angular';
 import { UserService } from '@core/service/user-service/user.service';
@@ -9,6 +9,7 @@ import { switchMap, take } from 'rxjs/operators';
 import { OrderType } from '@pages/ordering/ordering.config';
 import { of, zip } from 'rxjs';
 import { OrderOptionsActionSheetComponent } from '@pages/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
+import { NAVIGATE } from 'src/app/app.global';
 
 @Component({
   selector: 'st-favorite-merchants',
@@ -19,16 +20,21 @@ export class FavoriteMerchantsComponent implements OnInit {
   merchantList: MerchantInfo[];
   constructor(
     private readonly activatedRoute: ActivatedRoute,
+    private readonly router: Router,
     private readonly modalController: ModalController,
     private readonly merchantService: MerchantService,
     private readonly userService: UserService,
     private readonly loadingService: LoadingService,
     private readonly toastController: ToastController,
     private readonly favoriteMerhantsService: FavoriteMerhantsService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.activatedRoute.data.subscribe(({ data }) => (this.merchantList = data));
+  }
+
+  backToOrdering() {
+    this.router.navigate([NAVIGATE.ordering], { skipLocationChange: true });
   }
 
   merchantClickHandler({ id, orderTypes, storeAddress }) {
@@ -111,7 +117,7 @@ export class FavoriteMerchantsComponent implements OnInit {
         deliveryAddresses,
       },
     });
-    modal.onDidDismiss().then(() => {});
+    modal.onDidDismiss().then(() => { });
     await modal.present();
   }
 
