@@ -6,7 +6,7 @@ import { UserService } from '@core/service/user-service/user.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { FavoriteMerhantsService } from './services/favorite-merhants.service';
 import { switchMap, take } from 'rxjs/operators';
-import { OrderType } from '@pages/ordering/ordering.config';
+import { ORDER_TYPE } from '@pages/ordering/ordering.config';
 import { of, zip } from 'rxjs';
 import { OrderOptionsActionSheetComponent } from '@pages/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 
@@ -57,7 +57,7 @@ export class FavoriteMerchantsComponent implements OnInit {
 
   private openOrderOptions(merchantId, orderTypes, storeAddress) {
     const orderType =
-      (orderTypes.delivery && orderTypes.pickup) || orderTypes.pickup ? OrderType.PICKUP : OrderType.DELIVERY;
+      (orderTypes.delivery && orderTypes.pickup) || orderTypes.pickup ? ORDER_TYPE.PICKUP : ORDER_TYPE.DELIVERY;
 
     this.loadingService.showSpinner();
     zip(
@@ -66,7 +66,7 @@ export class FavoriteMerchantsComponent implements OnInit {
         .getUserSettingsBySettingName('defaultaddress')
         .pipe(
           switchMap(({ response }) =>
-            zip(of({ defaultAddress: response.value }), this.merchantService.retrieveUserAddressList(response.userId))
+            zip(of({ defaultAddress: response.value }), this.merchantService.retrieveUserAddressList())
           )
         ),
       this.merchantService.getMerchantSettings(merchantId).pipe(
@@ -91,7 +91,7 @@ export class FavoriteMerchantsComponent implements OnInit {
         ([schedule, [defaultAddress, listOfAddresses], pickupLocations]) => {
           console.log(pickupLocations['list']);
           this.loadingService.closeSpinner();
-          this.actionSheet(schedule, orderTypes, defaultAddress.defaultAddress, listOfAddresses.addresses);
+          this.actionSheet(schedule, orderTypes, defaultAddress.defaultAddress, listOfAddresses);
         },
         () => () => this.loadingService.closeSpinner()
       );

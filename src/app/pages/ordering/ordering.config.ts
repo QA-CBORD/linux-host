@@ -27,7 +27,7 @@ export const SYSTEM_SETTINGS_CONFIG = {
   },
 };
 
-export enum OrderType {
+export enum ORDER_TYPE {
   PICKUP = 0,
   DELIVERY = 1,
   DINEIN = 2,

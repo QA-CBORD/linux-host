@@ -9,7 +9,7 @@ import { ModalController, ToastController } from '@ionic/angular';
 import { UserService } from '@core/service/user-service/user.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { switchMap, take } from 'rxjs/operators';
-import { OrderType } from './ordering.config';
+import { ORDER_TYPE } from './ordering.config';
 import { OrderOptionsActionSheetComponent } from './shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 
 @Component({
@@ -58,7 +58,7 @@ export class OrderingPage implements OnInit {
 
   private openOrderOptions(merchantId, orderTypes, storeAddress) {
     const orderType =
-      (orderTypes.delivery && orderTypes.pickup) || orderTypes.pickup ? OrderType.PICKUP : OrderType.DELIVERY;
+      (orderTypes.delivery && orderTypes.pickup) || orderTypes.pickup ? ORDER_TYPE.PICKUP : ORDER_TYPE.DELIVERY;
 
     this.loadingService.showSpinner();
     zip(
@@ -67,7 +67,7 @@ export class OrderingPage implements OnInit {
         .getUserSettingsBySettingName('defaultaddress')
         .pipe(
           switchMap(({ response }) =>
-            zip(of({ defaultAddress: response.value }), this.merchantService.retrieveUserAddressList(response.userId))
+            zip(of({ defaultAddress: response.value }), this.merchantService.retrieveUserAddressList())
           )
         ),
       this.merchantService.getMerchantSettings(merchantId).pipe(
@@ -92,7 +92,7 @@ export class OrderingPage implements OnInit {
         ([schedule, [defaultAddress, listOfAddresses], pickupLocations]) => {
           console.log(pickupLocations['list']);
           this.loadingService.closeSpinner();
-          this.actionSheet(schedule, orderTypes, defaultAddress.defaultAddress, listOfAddresses.addresses);
+          this.actionSheet(schedule, orderTypes, defaultAddress.defaultAddress, listOfAddresses);
         },
         () => () => this.loadingService.closeSpinner()
       );

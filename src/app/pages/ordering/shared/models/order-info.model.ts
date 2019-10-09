@@ -34,6 +34,7 @@ export interface OrderInfo {
   statusDetail: string;
   notes: string;
   userName: string;
+  pickupAddressId: string;
   mealBased: boolean;
   mealBasedNames: string[];
   deliveryAddress: AddressInfo;

@@ -2,9 +2,9 @@
     <form novalidate [formGroup]="detailsForm">
 
         <div class="order-details">
-            <ion-label class="order-details__label">Pickup time</ion-label>
+            <ion-label class="order-details__label">{{type | typeMessage:'time'}}</ion-label>
 
-            <p *ngIf="readonly; else delivery" class="order-details__value">Please Choose</p>
+            <p *ngIf="readonly; else delivery" class="order-details__value">{{time | date:'shortTime'}}</p>
 
             <ng-template #delivery>
                 <ion-select
@@ -25,25 +25,25 @@
         </div>
 
         <div class="order-details">
-            <ion-label class="order-details__label">Pickup address</ion-label>
+            <ion-label class="order-details__label">{{type | typeMessage:'address'}}</ion-label>
 
-            <p *ngIf="readonly; else pickup" class="order-details__value">Please Choose</p>
+            <p *ngIf="readonly && address; else pickup" class="order-details__value">{{address.city}} {{address.state}}</p>
 
-            <ng-template #pickup>
-                <ion-select
-                        [formControlName]="controlsNames.address"
-                        class="order-details__value"
-                        cancelText="Cancel"
-                        mode="md"
-                        placeholder="Please Choose"
-                        interface="action-sheet"
-                        [interfaceOptions]="{cssClass: 'custom-deposit-actionSheet'}"
-                >
-                    <ion-select-option [value]="amount" *ngFor="let amount of [1,2,3]">
-                        {{ amount }}
-                    </ion-select-option>
-                </ion-select>
-            </ng-template>
+            <!--<ng-template #pickup>-->
+                <!--<ion-select-->
+                        <!--[formControlName]="controlsNames.address"-->
+                        <!--class="order-details__value"-->
+                        <!--cancelText="Cancel"-->
+                        <!--mode="md"-->
+                        <!--placeholder="Please Choose"-->
+                        <!--interface="action-sheet"-->
+                        <!--[interfaceOptions]="{cssClass: 'custom-deposit-actionSheet'}"-->
+                <!--&gt;-->
+                    <!--<ion-select-option [value]="amount" *ngFor="let amount of [1,2,3]">-->
+                        <!--{{ amount }}-->
+                    <!--</ion-select-option>-->
+                <!--</ion-select>-->
+            <!--</ng-template>-->
 
         </div>
 
@@ -65,7 +65,7 @@
                         <ng-container *ngIf="ingredient.orderItemOptions">
                             <p *ngFor="let subIngredient of ingredient.orderItemOptions"
                                class="order-ingredient-list__ingredient-description">
-                                {{subIngredient.quantity}} X {{subIngredient.name}} - {{subIngredient.salePrice | currency}}
+                                {{subIngredient.name}} ({{subIngredient.salePrice | currency}})
                             </p>
                         </ng-container>
                     </ion-label>
@@ -113,5 +113,5 @@
     </form>
 
     <!--    <button (click)="test()">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</button>-->
-    <ng-content></ng-content>
+    <div class="order-details__buttons"><ng-content></ng-content></div>
 </div>

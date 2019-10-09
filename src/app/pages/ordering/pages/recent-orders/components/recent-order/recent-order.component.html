@@ -1,5 +1,5 @@
 <st-header
-        [title]="'Order'"
+        [title]="'Order #' + (order$ | async).checkNumber"
         [isTitleShow]="true"
         [backButtonTitle]="'Back'"
         [isToolbarShow]="true"
@@ -14,5 +14,10 @@
         [total]="(order$ | async).total"
         [ingredients]="(order$ | async).orderItems"
         [accountName]="(order$ | async).orderPayment[0].accountName"
+        [time]="(order$ | async).dueTime"
+        [type]="(order$ | async).type"
+        [address]="(address$ | async)"
 >
+    <ion-button>close</ion-button>
+    <ion-button>reorder</ion-button>
 </st-order-details>

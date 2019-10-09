@@ -3,8 +3,9 @@ import { CommonModule } from '@angular/common';
 import { OrderDetailsComponent } from '@pages/ordering';
 import { IonicModule } from '@ionic/angular';
 import { ReactiveFormsModule } from '@angular/forms';
+import { TypeMessagePipe } from './type-message.pipe';
 
-const declarations = [OrderDetailsComponent];
+const declarations = [OrderDetailsComponent, TypeMessagePipe];
 
 @NgModule({
   declarations,
@@ -13,6 +14,6 @@ const declarations = [OrderDetailsComponent];
     IonicModule,
     ReactiveFormsModule,
   ],
-  exports: declarations
+  exports: [OrderDetailsComponent],
 })
 export class OrderDetailsModule { }
