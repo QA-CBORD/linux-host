@@ -6,6 +6,7 @@ import { IonicModule } from '@ionic/angular';
 import { StInputFloatingLabelModule } from '../../../shared/ui-components/st-input-floating-label/st-input-floating-label.module';
 import { StTextareaFloatingLabelModule } from '../../../shared/ui-components/st-textarea-floating-label/st-textarea-floating-label.module';
 import { StSelectFloatingLabelModule } from '../../../shared/ui-components/st-select-floating-label/st-select-floating-label.module';
+import { StDateSelectModule } from '../../../shared/ui-components/st-date-select/st-date-select.module';
 
 import { QuestionComponent } from './question.component';
 import { EmptyFormControlDirective } from '../empty-form-control/empty-form-control.directive';
@@ -17,6 +18,7 @@ const imports = [
   StInputFloatingLabelModule,
   StTextareaFloatingLabelModule,
   StSelectFloatingLabelModule,
+  StDateSelectModule,
 ];
 const exports = [QuestionComponent];
 const declarations = [QuestionComponent, EmptyFormControlDirective];

@@ -29,7 +29,7 @@ export function generateQuestions(): any[] {
       label: 'Year:',
       className: 'form-control',
       name: 'select-1559676230181',
-      required: 'false',
+      required: true,
       order: '3',
       values: [
         {

@@ -1,0 +1,59 @@
+@import 'tools';
+
+:host {
+  position: relative;
+}
+
+.date-select__control {
+  --padding-top: 14px;
+  --padding-bottom: 14px;
+  --padding-start: 13px;
+
+  border: 1px solid $color-light-gray;
+  border-radius: 8px;
+  position: relative;
+
+  &:focus,
+  &:focus-within,
+  &:active,
+  :host.date-select--filled & {
+    --padding-top: 13px;
+    --padding-bottom: 13px;
+
+    border: 2px solid $color-dodger-blue;
+
+    & + .date-select__placeholder {
+      background-color: $color-white;
+      color: $color-dodger-blue;
+      padding: 0 3px;
+      transform: scale(0.75) translateY(-29px);
+      opacity: 1;
+    }
+
+    &::before {
+      background-image: url('/assets/icon/chevron-down-active.svg');
+    }
+  }
+
+  &::before {
+    background-image: url('/assets/icon/chevron-down.svg');
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    width: 14px;
+    height: 9px;
+    transform: translateY(-50%);
+  }
+}
+
+.date-select__placeholder {
+  position: absolute;
+  top: 15px;
+  left: 13px;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  transform-origin: 0 0;
+  pointer-events: none;
+  opacity: 0.5;
+  z-index: 2;
+}

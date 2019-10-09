@@ -27,11 +27,11 @@ export class ApplicationsService {
 
   private readonly _patronsUrl: string = 'api/patrons/v.1.0';
 
-  private readonly _termId: number = 133;
+  private readonly _termId: number = 67;
 
-  private readonly _termStartDateTime: string = '2018-08-02 00:00:00.000';
+  private readonly _termStartDateTime: string = '2019-08-04 00:00:00.000';
 
-  private readonly _termEndDateTime: string = '2019-05-30 23:59:59.000';
+  private readonly _termEndDateTime: string = '2019-12-27 23:59:59.000';
 
   getPatronApplications(): Observable<PatronApplication[]> {
     const patronApplications: PatronApplication[] = this._applicationsStateService.patronApplications;
@@ -43,14 +43,7 @@ export class ApplicationsService {
     return this._authService.authorize().pipe(
       switchMap((token: string) => this._requestPatronApplications(token)),
       tap((applications: PatronApplication[]) => this._applicationsStateService.setPatronApplications(applications)),
-      catchError(() => {
-        // TODO: Remove this catchError when backend is ready.
-        const applications: PatronApplication[] = generatePatronApplications();
-
-        this._applicationsStateService.setPatronApplications(applications);
-
-        return of(applications);
-      })
+      catchError(() => of([]))
     );
   }
 

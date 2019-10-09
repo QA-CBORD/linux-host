@@ -14,7 +14,7 @@
         *ngFor="let page of (pages$ | async); index as idx; last as isLastPage; first as isFirstPage"
         [stepControl]="page.form"
       >
-        <form [formGroup]="page.form" (ngSubmit)="handleSubmit(page.form.value, idx, isLastPage)">
+        <form [formGroup]="page.form" (ngSubmit)="handleSubmit(page.form, idx, isLastPage)">
           <st-question
             *ngFor="let question of page.questions"
             [parentGroup]="page.form"

@@ -18,9 +18,9 @@ export class HousingAuthService {
 
   private readonly _authUrl: string = 'patronIdentityTemp/auth/token';
 
-  private readonly _patronId: string = '100200301';
+  private readonly _patronId: string = '612345678';
 
-  private readonly _patronSK: number = 256;
+  private readonly _patronSK: number = 8000712;
 
   token$: Observable<string> = this._tokenSource.asObservable();
 
@@ -37,12 +37,7 @@ export class HousingAuthService {
 
     return this._http.post<Response>(apiUrl, new User(this._patronId, this._patronSK)).pipe(
       map((response: Response) => response.data),
-      // TODO: Remove this catchError when backend is ready
-      catchError(() =>
-        of(
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpbnN0aXR1dGlvbl9pZCI6IjAiLCJ0b2tlbl92ZXJzaW9uIjoiMS4wIiwiaWRfdmFsdWUiOiIwMDAwMDAwMTUiLCJ0ZW1wX3BhdHJvbl9zayI6IjgwMDExMzgiLCJpZF9maWVsZCI6ImhvdXNpbmdfaWQiLCJyb2xlIjoicGF0cm9uIiwibmJmIjoxNTY5OTE3NjkyLCJleHAiOjE1NzAwMDQwOTIsImlhdCI6MTU2OTkxNzY5Mn0.AYVpDcZ326T1omdaing8ZnQ-Tjg7HQu1D_kwSpk7KN4'
-        )
-      )
+      catchError(() => of(null))
     );
   }
 }

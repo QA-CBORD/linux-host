@@ -1,7 +1,7 @@
 @import 'tools';
 
-@mixin empty-control($placeholder) {
-  &:not(:focus):not(:focus-within) {
+@mixin empty-control($control, $placeholder) {
+  &:not(:focus):not(:focus-within):not(#{$control}--error) {
     border: 1px solid $color-light-gray !important;
 
     & + #{$placeholder} {
@@ -20,11 +20,15 @@
 
   &.empty-form-control ::ng-deep {
     .input__control {
-      @include empty-control('.input__placeholder');
+      @include empty-control('.input__control', '.input__placeholder');
     }
 
     .select__control {
-      @include empty-control('.select__placeholder');
+      @include empty-control('.select__control', '.select__placeholder');
+    }
+
+    .textarea__control {
+      @include empty-control('.textarea__control', '.textarea__placeholder');
     }
   }
 }
