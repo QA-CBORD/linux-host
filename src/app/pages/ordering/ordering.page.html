@@ -3,8 +3,8 @@
 
   <st-merchant-list
     [merchantList]="merchantList$ | async"
-    (merchantClickTrigger)="merchantClickHandler($event)"
-    (favouriteTrigger)="favouriteHandler($event)"
-    (locationPinTrigger)="locationPinHandler($event)"
+    (addToFav)="favouriteHandler($event)"
+    (locationPin)="locationPinHandler($event)"
+    (merchantClick)="merchantClickHandler($event)"
   ></st-merchant-list>
 </ion-content>

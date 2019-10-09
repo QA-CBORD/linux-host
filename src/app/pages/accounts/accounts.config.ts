@@ -36,7 +36,7 @@ export const SYSTEM_SETTINGS_CONFIG = {
     category: 'deposit',
     name: 'allow_freeform_onetime_amounts',
   },
-  presetDepositAmountsBillMe: {
+  billMeAmounts: {
     domain: 'get',
     category: 'deposit',
     name: 'billme_amounts',
@@ -91,15 +91,30 @@ export const SYSTEM_SETTINGS_CONFIG = {
     category: 'deposit',
     name: 'low_balance_amounts',
   },
-  billMeFreeFormEnabled: {
-    domain: 'get',
-    category: 'deposit',
-    name: '.allow_freeform_billme_amounts',
-  },
   billMeFreeFormAmounts: {
     domain: 'get',
     category: 'deposit',
     name: '.billme_amounts',
+  },
+  autoDepositPaymentTypes: {
+    domain: 'get',
+    category: 'deposit',
+    name: 'auto_deposit_payment_types',
+  },
+  lowBalanceAmounts: {
+    domain: 'get',
+    category: 'deposit',
+    name: 'low_balance_amounts',
+  },
+  billMeFreeFormEnabled: {
+    domain: 'get',
+    category: 'deposit',
+    name: 'allow_freeform_billme_amounts',
+  },
+  autoDepositTenders: {
+    domain: 'get',
+    category: 'feature',
+    name: 'auto_deposit_tenders',
   },
 };
 
@@ -115,7 +130,7 @@ export enum LOCAL_ROUTING {
   addFunds = 'add-funds',
   accountDetails = 'account-details',
   accountDetailsM = 'account-details-m',
-  addCreditCard = 'add-credit-card'
+  addCreditCard = 'add-credit-card',
 }
 
 export enum TRANSACTION_TYPE {

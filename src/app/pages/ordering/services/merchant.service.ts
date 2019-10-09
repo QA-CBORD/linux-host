@@ -2,13 +2,14 @@ import { MerchantInfo, MerchantSearchOption, OrderInfo } from '../shared/models'
 import { Injectable } from '@angular/core';
 
 import { BehaviorSubject, Observable, zip } from 'rxjs';
-import { tap, switchMap } from 'rxjs/operators';
+import { tap, switchMap, map } from 'rxjs/operators';
 
 import { OrderingApiService } from './ordering.api.service';
 
 import { MerchantSearchOptions } from '../utils';
 import { MerchantSearchOptionName } from '../ordering.config';
 import { UserService } from 'src/app/core/service/user-service/user.service';
+import { AddressInfo } from "@core/model/address/address-info";
 
 @Injectable()
 export class MerchantService {
@@ -18,7 +19,8 @@ export class MerchantService {
   private readonly _menuMerchants$: BehaviorSubject<MerchantInfo[]> = new BehaviorSubject<MerchantInfo[]>([]);
   private readonly _recentOrders$: BehaviorSubject<OrderInfo[]> = new BehaviorSubject<OrderInfo[]>([]);
 
-  constructor(private readonly orderingApiService: OrderingApiService, private readonly userService: UserService) {}
+  constructor(private readonly orderingApiService: OrderingApiService,
+              private readonly userService: UserService) {}
 
   get menuMerchants$(): Observable<MerchantInfo[]> {
     return this._menuMerchants$.asObservable();
@@ -59,12 +61,14 @@ export class MerchantService {
       value: 1,
     });
 
-    let resultHandler = (favoriteMerchants: string[], merchantList: MerchantInfo[]): MerchantInfo[] => {
+    const resultHandler = (favoriteMerchants: MerchantInfo[], merchantList: MerchantInfo[]): MerchantInfo[] => {
       if (!favoriteMerchants || favoriteMerchants.length <= 0) {
         this._menuMerchants = merchantList;
         return merchantList;
       }
-      merchantList.forEach(merchant => (merchant.isFavorite = favoriteMerchants.includes(merchant.id)));
+      merchantList.forEach(
+        merchant => (merchant.isFavorite = favoriteMerchants.some(item => item['id'] === merchant.id))
+      );
       this._menuMerchants = merchantList;
       return merchantList;
     };
@@ -88,5 +92,32 @@ export class MerchantService {
       ),
       tap(recentOrders => (this._recentOrders = recentOrders))
     );
+  }
+
+  getMerchantOrderSchedule(merchantId: string, orderType: number): Observable<any[]> {
+    return this.orderingApiService.getMerchantOrderSchedule(merchantId, orderType);
+  }
+
+  retrieveUserAddressList(): Observable<AddressInfo[]> {
+    return this.userService.userData.pipe(
+        switchMap(({id}) => this.orderingApiService.retrieveUserAddressList(id)),
+        map(({addresses}) => addresses)
+    );
+  }
+
+  getMerchantSettings(merchantId: string): Observable<any> {
+    return this.orderingApiService.getMerchantSettings(merchantId);
+  }
+
+  retrievePickupLocations(institutionId: string): Observable<any> {
+    return this.orderingApiService.retrievePickupLocations(institutionId);
+  }
+
+  addFavoriteMerchant(merchantId: string): Observable<any> {
+    return this.orderingApiService.addFavoriteMerchant(merchantId);
+  }
+
+  removeFavoriteMerchant(merchantId: string): Observable<any> {
+    return this.orderingApiService.removeFavoriteMerchant(merchantId);
   }
 }

@@ -33,7 +33,7 @@ export class AccountsPage implements OnInit {
 
   ngOnInit() {
     this.setContentStrings();
-    this.accounts$ = this.accountsService.getAccountsFilteredByTenders();
+    this.accounts$ = this.accountsService.getAccountsFilteredByDisplayTenders();
     this.transactions$ = this.transactionsService.transactions$.pipe(map(arr => arr.slice(0, 4)));
 
     this.defineInitRoute();

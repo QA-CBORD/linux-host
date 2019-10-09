@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Resolve } from '@angular/router';
 import { Observable, zip } from 'rxjs';
-import { DepositService } from '../services/deposit.service';
 import { SYSTEM_SETTINGS_CONFIG } from '../../../accounts.config';
 import { LoadingService } from 'src/app/core/service/loading/loading.service';
 import { tap } from 'rxjs/operators';
+import { DepositService } from '../services/deposit.service';
 
 @Injectable()
 export class DepositResolver implements Resolve<Observable<any>> {
@@ -16,8 +16,9 @@ export class DepositResolver implements Resolve<Observable<any>> {
       SYSTEM_SETTINGS_CONFIG.billMeMapping,
       SYSTEM_SETTINGS_CONFIG.freeFromDepositEnabled,
       SYSTEM_SETTINGS_CONFIG.presetDepositAmountsCreditCard,
-      SYSTEM_SETTINGS_CONFIG.presetDepositAmountsBillMe,
+      SYSTEM_SETTINGS_CONFIG.billMeAmounts,
       SYSTEM_SETTINGS_CONFIG.minAmountbillme,
+      SYSTEM_SETTINGS_CONFIG.billMeFreeFormEnabled,
       SYSTEM_SETTINGS_CONFIG.minAmountCreditCard,
       // SYSTEM_SETTINGS_CONFIG.maxAmountbillme,
       SYSTEM_SETTINGS_CONFIG.maxAmountCreditCard,

@@ -1,0 +1,40 @@
+@import 'tools';
+
+.deposits {
+  &__header {
+    @include font-nunito-regular(16px);
+  }
+
+  &__radio-item {
+    border: 1px solid $color-silver;
+    border-radius: 8px;
+    margin-bottom: 8px;
+
+    &.item-radio-checked {
+      --background: #166dff0d;
+      border-color: $color-dodger-blue;
+
+      .deposits__radio-label-wrapper {
+        color: $color-black;
+
+        @include font-nunito-heavy(16px);
+      }
+    }
+  }
+
+  &__radio {
+    --color-checked: #166dff;
+  }
+
+  &__radio-label-wrapper {
+    color: $color-matterhorn;
+  }
+
+  &__radio-label-title {
+    @include font-nunito-heavy(16px);
+  }
+
+  &__radio-label-sub-title {
+    @include font-nunito-regular(12px);
+  }
+}

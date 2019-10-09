@@ -1,4 +1,4 @@
-import { SYSTEM_SETTINGS_CONFIG } from './../../../accounts.config';
+import { SYSTEM_SETTINGS_CONFIG } from '../../../accounts.config';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 

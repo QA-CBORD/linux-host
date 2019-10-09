@@ -8,7 +8,7 @@ const routes: Routes = [
     path: '',
     pathMatch: 'full',
     component: AutomaticDepositPageComponent,
-    resolve: {data: AutomaticDepositResolver}
+    resolve: { data: AutomaticDepositResolver },
   },
 ];
 

@@ -30,7 +30,7 @@ const routes: Route[] = [
   {
     path: LOCAL_ROUTING.autoDeposit,
     loadChildren: './pages/automatic-deposit-page/automatic-deposit.module#AutomaticDepositModule',
-    resolve: {data: AutoDepositPageResolver}
+    resolve: { data: AutoDepositPageResolver },
   },
   {
     path: LOCAL_ROUTING.requestFunds,

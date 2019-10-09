@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PopoverController, ToastController } from '@ionic/angular';
 import { Router } from '@angular/router';
 
@@ -12,6 +12,8 @@ import { UserService } from '../../../../core/service/user-service/user.service'
 import { LoadingService } from '../../../../core/service/loading/loading.service';
 import { PopoverComponent } from './popover/popover.component';
 import { NAVIGATE } from '../../../../app.global';
+import { formControlErrorDecorator, validateEmail } from '../../../../core/utils/general-helpers';
+import { Keyboard } from '@ionic-native/keyboard/ngx';
 
 @Component({
   selector: 'st-request-funds-page',
@@ -33,6 +35,7 @@ export class RequestFundsPageComponent implements OnInit {
     private readonly loadingService: LoadingService,
     private readonly toastController: ToastController,
     private readonly popoverCtrl: PopoverController,
+    private readonly keyboard: Keyboard,
     private readonly nav: Router
   ) {}
 
@@ -57,7 +60,7 @@ export class RequestFundsPageComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.accounts$ = this.accountService.accounts$.pipe(
+    this.accounts$ = this.accountService.getAccountsFilteredByDepositTenders().pipe(
       map((accounts: UserAccount[]) => accounts.filter(account => account.depositAccepted))
     );
     this.initForm();
@@ -68,6 +71,8 @@ export class RequestFundsPageComponent implements OnInit {
   }
 
   async onSubmit() {
+    if (this.requestFundsForm.invalid) {return;}
+
     const {
       [this.controlsNames.name]: n,
       [this.controlsNames.email]: e,
@@ -95,23 +100,23 @@ export class RequestFundsPageComponent implements OnInit {
 
   private initForm() {
     const nameErrors = [
-      errorDecorator(Validators.required, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.name].required),
-      errorDecorator(Validators.minLength(2), CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.name].minlength),
-      errorDecorator(Validators.maxLength(255), CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.name].maxlength),
+      formControlErrorDecorator(Validators.required, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.name].required),
+      formControlErrorDecorator(Validators.minLength(2), CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.name].minlength),
+      formControlErrorDecorator(Validators.maxLength(255), CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.name].maxlength),
     ];
 
     const emailErrors = [
-      errorDecorator(Validators.required, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.email].required),
-      errorDecorator(validateEmail, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.email].incorrect),
-      errorDecorator(Validators.maxLength(255), CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.email].maxlength),
+      formControlErrorDecorator(Validators.required, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.email].required),
+      formControlErrorDecorator(validateEmail, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.email].incorrect),
+      formControlErrorDecorator(Validators.maxLength(255), CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.email].maxlength),
     ];
 
     const accountErrors = [
-      errorDecorator(Validators.required, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.account].required),
+      formControlErrorDecorator(Validators.required, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.account].required),
     ];
 
     const messageErrors = [
-      errorDecorator(Validators.required, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.message].required),
+      formControlErrorDecorator(Validators.required, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.message].required),
     ];
 
     this.requestFundsForm = this.fb.group({
@@ -143,6 +148,10 @@ export class RequestFundsPageComponent implements OnInit {
     modal.onDidDismiss().then(async () => await this.back());
     modal.present();
   }
+
+  onFocus() {
+    this.keyboard.isVisible && this.keyboard.hide();
+  }
 }
 
 export enum REQUEST_FUNDS_CONTROL_NAMES {
@@ -169,15 +178,4 @@ export const CONTROL_ERROR = {
   [REQUEST_FUNDS_CONTROL_NAMES.message]: {
     required: 'Please enter a message.',
   },
-};
-
-const validateEmail = ({ value }: AbstractControl): ValidationErrors | null => {
-  const test = /^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z]+(\.[a-z]+)*\.[a-z]{2,6}$/.test(value);
-  return test ? null : { incorrect: true };
-};
-
-const errorDecorator = (fn: ValidatorFn, errorMsg: string): ((control: AbstractControl) => ValidationErrors | null) => {
-  return control => {
-    return fn(control) === null ? null : { errorMsg };
-  };
 };

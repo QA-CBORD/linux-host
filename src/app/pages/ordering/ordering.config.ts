@@ -27,3 +27,9 @@ export const SYSTEM_SETTINGS_CONFIG = {
     name: 'institution_address_restriction',
   },
 };
+
+export enum ORDER_TYPE {
+  PICKUP = 0,
+  DELIVERY = 1,
+  DINEIN = 2,
+}

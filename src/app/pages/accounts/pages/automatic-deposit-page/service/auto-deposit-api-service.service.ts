@@ -9,7 +9,7 @@ import { UserAutoDepositSettingInfo } from '../models/auto-deposit-settings';
 import { UserAccount } from '../../../../../core/model/account/account.model';
 
 @Injectable()
-export class AutoDepositApiServiceService extends BaseService {
+export class AutoDepositApiService extends BaseService {
   constructor(protected readonly http: HttpClient, private readonly userService: UserService) {
     super(http);
   }
@@ -19,7 +19,7 @@ export class AutoDepositApiServiceService extends BaseService {
     const method = 'retrieveAutoDepositSettings';
 
     return this.userService.userData.pipe(
-      switchMap(({id: userId}) => this.httpRequest(url, method, true, {userId})),
+      switchMap(({ id: userId }) => this.httpRequest(url, method, true, { userId })),
       map(({ response }: MessageResponse<UserAutoDepositSettingInfo>) => response)
     );
   }
@@ -29,16 +29,16 @@ export class AutoDepositApiServiceService extends BaseService {
     const method = 'retrieveAutoDepositAccountList';
 
     return this.userService.userData.pipe(
-      switchMap(({id: userId}) => this.httpRequest(url, method, true, {userId, paymentType})),
-      map(({ response }: MessageResponse<UserAccount[]>, index) => response)
+      switchMap(({ id: userId }) => this.httpRequest(url, method, true, { userId, paymentType })),
+      map(({ response }: MessageResponse<UserAccount[]>) => response)
     );
   }
 
-  updateAutoDepositSettings(settings: UserAutoDepositSettingInfo): Observable<boolean> {
-    const url = '/json/commerce';
+  updateAutoDepositSettings(userAutoDepositSettingInfo: UserAutoDepositSettingInfo): Observable<boolean> {
+    const url = '/json/user';
     const method = 'updateAutoDepositSettings';
 
-    return this.httpRequest(url, method, true, settings).pipe(
+    return this.httpRequest(url, method, true, {userAutoDepositSettingInfo}).pipe(
       map(({ response }: MessageResponse<boolean>) => response)
     );
   }

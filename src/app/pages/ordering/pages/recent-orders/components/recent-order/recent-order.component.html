@@ -1,0 +1,23 @@
+<st-header
+        [title]="'Order #' + (order$ | async).checkNumber"
+        [isTitleShow]="true"
+        [backButtonTitle]="'Back'"
+        [isToolbarShow]="true"
+        class="shadow-header"
+></st-header>
+<st-order-details
+        [tax]="(order$ | async).tax"
+        [tip]="(order$ | async).tip"
+        [subTotal]="(order$ | async).subTotal"
+        [pickupFee]="(order$ | async).pickupFee"
+        [deliveryFee]="(order$ | async).deliveryFee"
+        [total]="(order$ | async).total"
+        [ingredients]="(order$ | async).orderItems"
+        [accountName]="(order$ | async).orderPayment[0].accountName"
+        [time]="(order$ | async).dueTime"
+        [type]="(order$ | async).type"
+        [address]="(address$ | async)"
+>
+    <ion-button>close</ion-button>
+    <ion-button>reorder</ion-button>
+</st-order-details>

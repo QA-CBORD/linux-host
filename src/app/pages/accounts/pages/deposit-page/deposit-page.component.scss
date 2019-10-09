@@ -11,6 +11,7 @@
     justify-content: center;
     align-items: center;
     padding: 30px 0;
+    border-bottom: 1px solid $color-whisper;
 
     &--preset-amouts {
       padding: 0;
@@ -62,21 +63,13 @@
     }
   }
 
-  &__selection-block {
-    border-top: 1px solid $color-whisper;
-    border-bottom: 1px solid $color-whisper;
-  }
-
   &__main-select-container {
     width: 100%;
   }
 
   &__select-wrapper {
     position: relative;
-
-    &:last-child {
-      border-top: 1px solid $color-whisper;
-    }
+    border-bottom: 1px solid $color-whisper;
   }
 
   &__select {
@@ -84,9 +77,6 @@
     padding: 30px 15px;
 
     @include font-nunito-heavy(16px);
-  }
-
-  &__select-account {
   }
 
   &__label-select {
@@ -121,8 +111,9 @@
 
   &__deposit-btn {
     --background: #166dff;
-    position: fixed;
-    bottom: 5%;
+
+    margin-top: 50px;
+    position: relative;
     left: 2.5%;
     width: 95%;
 

@@ -5,6 +5,7 @@ import { OrderingPage } from './ordering.page';
 
 import { OrderingResolver } from './resolvers';
 import { LOCAL_ROUTING } from './ordering.config';
+import { RecentOrdersResolver } from '@pages/ordering/resolvers/recent-orders.resolver';
 
 const routes: Route[] = [
   {
@@ -13,11 +14,11 @@ const routes: Route[] = [
     resolve: {
       data: OrderingResolver,
     },
-    children: [],
   },
   {
     path: LOCAL_ROUTING.recentOrders,
     loadChildren: './pages/recent-orders/recent-orders.module#RecentOrdersModule',
+    resolve: {recentOrders: RecentOrdersResolver}
   },
   {
     path: LOCAL_ROUTING.savedAddresses,
@@ -36,5 +37,5 @@ const routes: Route[] = [
 const imports = [RouterModule.forChild(routes)];
 const exports = [RouterModule];
 
-@NgModule({ imports, exports })
+@NgModule({ imports, exports, providers: [RecentOrdersResolver] })
 export class OrderingRoutingModule {}

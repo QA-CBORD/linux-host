@@ -30,6 +30,7 @@ plugins/android.json
 plugins/ios.json
 $RECYCLE.BIN/
 android-sdk/
+dist/
 
 .DS_Store
 Thumbs.db
