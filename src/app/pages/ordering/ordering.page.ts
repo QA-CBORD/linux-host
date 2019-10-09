@@ -3,12 +3,13 @@ import { Component, OnInit } from '@angular/core';
 
 import { Observable, of, iif, zip } from 'rxjs';
 
-import { MerchantInfo, MerchantOrderTypesInfo } from './shared/models';
+import { MerchantInfo, OrderInfo } from './shared/models';
+import { MerchantOrderTypesInfo } from './shared/models';
 import { ModalController, ToastController } from '@ionic/angular';
 import { UserService } from '@core/service/user-service/user.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { switchMap, take } from 'rxjs/operators';
-import { OrderType } from './ordering.config';
+import { ORDER_TYPE } from './ordering.config';
 import { OrderOptionsActionSheetComponent } from './shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 
 @Component({
@@ -18,6 +19,7 @@ import { OrderOptionsActionSheetComponent } from './shared/ui-components/order-o
 })
 export class OrderingPage implements OnInit {
   merchantList$: Observable<MerchantInfo[]>;
+  orders$: Observable<OrderInfo[]>;
 
   constructor(
     private readonly modalController: ModalController,
@@ -29,6 +31,7 @@ export class OrderingPage implements OnInit {
 
   ngOnInit() {
     this.merchantList$ = this.merchantService.menuMerchants$;
+    this.orders$ = this.merchantService.getRecentOrders();
   }
 
   merchantClickHandler({ id, orderTypes, storeAddress }) {
@@ -55,7 +58,7 @@ export class OrderingPage implements OnInit {
 
   private openOrderOptions(merchantId, orderTypes, storeAddress) {
     const orderType =
-      (orderTypes.delivery && orderTypes.pickup) || orderTypes.pickup ? OrderType.PICKUP : OrderType.DELIVERY;
+      (orderTypes.delivery && orderTypes.pickup) || orderTypes.pickup ? ORDER_TYPE.PICKUP : ORDER_TYPE.DELIVERY;
 
     this.loadingService.showSpinner();
     zip(
@@ -64,7 +67,7 @@ export class OrderingPage implements OnInit {
         .getUserSettingsBySettingName('defaultaddress')
         .pipe(
           switchMap(({ response }) =>
-            zip(of({ defaultAddress: response.value }), this.merchantService.retrieveUserAddressList(response.userId))
+            zip(of({ defaultAddress: response.value }), this.merchantService.retrieveUserAddressList())
           )
         ),
       this.merchantService.getMerchantSettings(merchantId).pipe(
@@ -89,7 +92,7 @@ export class OrderingPage implements OnInit {
         ([schedule, [defaultAddress, listOfAddresses], pickupLocations]) => {
           console.log(pickupLocations['list']);
           this.loadingService.closeSpinner();
-          this.actionSheet(schedule, orderTypes, defaultAddress.defaultAddress, listOfAddresses.addresses);
+          this.actionSheet(schedule, orderTypes, defaultAddress.defaultAddress, listOfAddresses);
         },
         () => () => this.loadingService.closeSpinner()
       );

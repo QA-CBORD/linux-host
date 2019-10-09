@@ -1,12 +1,10 @@
-<ion-card class="order-item">
-  <ion-card-content>
-    <div class="order-item__wrapper">
-      <div class="order-item__container-info">
-        <div class="order-item__title">{{ orderInfo.merchantName }}</div>
-        <div class="order-item__body">{{ orderInfo.orderItems | orderItemsSummary }}</div>
-        <div class="order-item__data">{{orderInfo.dueTime | dateFormat:'MM/dd/yyyy'}}</div>
-      </div>
-      <div class="order-item__order-number">Order #{{ orderInfo.checkNumber }}</div>
-    </div>
-  </ion-card-content>
+<ion-card class="order-card" (click)="onClicked.emit(orderInfo)">
+    <ion-card-content>
+        <header class="order-card__header">
+            <h6 class="order-card__name">{{ orderInfo.merchantName }}</h6>
+            <p class="order-card__number">Order #{{ orderInfo.checkNumber }}</p>
+        </header>
+        <p class="order-card__description">{{ orderInfo.orderItems | orderItemsSummary }}</p>
+        <p class="order-card__date">{{orderInfo.dueTime | date:'MM/dd/yyyy'}}</p>
+    </ion-card-content>
 </ion-card>

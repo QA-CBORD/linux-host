@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { NAVIGATE } from './app.global';
-import { SelectivePreloadingStrategy } from './core/utils/preload-strategy/selective-preloading-strategy';
+import { SelectivePreloadingStrategy } from '@core/utils/preload-strategy/selective-preloading-strategy';
 
 const routes: Routes = [
   {

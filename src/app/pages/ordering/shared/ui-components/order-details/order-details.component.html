@@ -1,0 +1,117 @@
+<div class="content">
+    <form novalidate [formGroup]="detailsForm">
+
+        <div class="order-details">
+            <ion-label class="order-details__label">{{type | typeMessage:'time'}}</ion-label>
+
+            <p *ngIf="readonly; else delivery" class="order-details__value">{{time | date:'shortTime'}}</p>
+
+            <ng-template #delivery>
+                <ion-select
+                        [formControlName]="controlsNames.time"
+                        class="order-details__value"
+                        cancelText="Cancel"
+                        mode="md"
+                        placeholder="Please Choose"
+                        interface="action-sheet"
+                        [interfaceOptions]="{cssClass: 'custom-deposit-actionSheet'}"
+                >
+                    <ion-select-option [value]="amount" *ngFor="let amount of [1,2,3]">
+                        {{ amount }}
+                    </ion-select-option>
+                </ion-select>
+            </ng-template>
+
+        </div>
+
+        <div class="order-details">
+            <ion-label class="order-details__label">{{type | typeMessage:'address'}}</ion-label>
+
+            <p *ngIf="readonly && address; else pickup" class="order-details__value">{{address.city}} {{address.state}}</p>
+
+            <!--<ng-template #pickup>-->
+                <!--<ion-select-->
+                        <!--[formControlName]="controlsNames.address"-->
+                        <!--class="order-details__value"-->
+                        <!--cancelText="Cancel"-->
+                        <!--mode="md"-->
+                        <!--placeholder="Please Choose"-->
+                        <!--interface="action-sheet"-->
+                        <!--[interfaceOptions]="{cssClass: 'custom-deposit-actionSheet'}"-->
+                <!--&gt;-->
+                    <!--<ion-select-option [value]="amount" *ngFor="let amount of [1,2,3]">-->
+                        <!--{{ amount }}-->
+                    <!--</ion-select-option>-->
+                <!--</ion-select>-->
+            <!--</ng-template>-->
+
+        </div>
+
+        <ion-list class="order-ingredient-list"
+                  ngDefaultControl
+                  [formArrayName]="controlsNames.ingredients">
+            <!-- Sliding item with text options on both sides -->
+            <ion-item-sliding
+                    [disabled]="readonly"
+                    *ngFor="let ingredient of ingredients"
+                    class="order-ingredient-list__ingredient">
+                <ion-item class="order-ingredient-list__item">
+                    <ion-label>
+                        <div class="order-ingredient-list__ingredient-header">
+                            <div class="order-ingredient-list__ingredient-number">{{ingredient.quantity}}</div>
+                            <div class="order-ingredient-list__ingredient-name">{{ingredient.name}}</div>
+                            <div class="order-ingredient-list__ingredient-price">{{ingredient.salePrice | currency}}</div>
+                        </div>
+                        <ng-container *ngIf="ingredient.orderItemOptions">
+                            <p *ngFor="let subIngredient of ingredient.orderItemOptions"
+                               class="order-ingredient-list__ingredient-description">
+                                {{subIngredient.name}} ({{subIngredient.salePrice | currency}})
+                            </p>
+                        </ng-container>
+                    </ion-label>
+                </ion-item>
+
+                <ion-item-options side="end">
+                    <ion-item-option (click)="onRemove($event)" color="danger">Remove Item</ion-item-option>
+                </ion-item-options>
+            </ion-item-sliding>
+        </ion-list>
+
+        <div class="total">
+            <div class="total__item">subtotal<span class="total__item-sum">{{subTotal | currency}}</span></div>
+            <div class="total__item">tax<span class="total__item-sum">{{tax | currency}}</span></div>
+            <div class="total__item">tip<span class="total__item-sum">{{tip | currency}}</span></div>
+            <div class="total__item">delivery fee<span class="total__item-sum">{{deliveryFee | currency}}</span></div>
+            <div class="total__item">pickup fee<span class="total__item-sum">{{pickupFee | currency}}</span></div>
+            <div class="total__item total__item--bold">total<span class="total__item-sum">{{total | currency}}</span>
+            </div>
+        </div>
+
+
+        <div class="order-details__payment-method" *ngIf="readonly; else paymentSelect">
+            Payment Method<span>{{accountName}}</span>
+        </div>
+
+        <ng-template #paymentSelect>
+            <div class="order-details">
+                <ion-label class="order-details__label">Payment Method</ion-label>
+                <ion-select
+                        [formControlName]="controlsNames.paymentMethod"
+                        class="order-details__value"
+                        cancelText="Cancel"
+                        mode="md"
+                        placeholder="Please Choose"
+                        interface="action-sheet"
+                        [interfaceOptions]="{cssClass: 'custom-deposit-actionSheet'}"
+                >
+                    <ion-select-option [value]="amount" *ngFor="let amount of [1,2,3]">
+                        {{ amount }}
+                    </ion-select-option>
+                </ion-select>
+            </div>
+        </ng-template>
+    </form>
+
+    <!--    <button (click)="test()">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</button>-->
+    <div class="order-details__buttons"><ng-content></ng-content></div>
+</div>
