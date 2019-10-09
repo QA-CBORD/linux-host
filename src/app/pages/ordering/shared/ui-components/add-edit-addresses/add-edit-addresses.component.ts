@@ -20,6 +20,11 @@ export class AddEditAddressesComponent implements OnInit {
     console.log(this.arrOfStates['default']);
   }
 
+
+  get campus(): AbstractControl {
+    return this.addEditAddressesForm.get(this.controlsNames.campus);
+  }
+
   get address1(): AbstractControl {
     return this.addEditAddressesForm.get(this.controlsNames.address1);
   }
@@ -64,7 +69,7 @@ export class AddEditAddressesComponent implements OnInit {
     ];
 
     this.addEditAddressesForm = this.fb.group({
-      [this.controlsNames.campus]: [''],
+      [this.controlsNames.campus]: ['offcampus'],
       [this.controlsNames.address1]: ['', address1Errors],
       [this.controlsNames.address2]: [''],
       [this.controlsNames.city]: ['', cityErrors],
@@ -82,7 +87,7 @@ export class AddEditAddressesComponent implements OnInit {
     });
   }
 
-  onFormSubmit() {}
+  onFormSubmit() { }
 }
 
 export enum REQUEST_FUNDS_CONTROL_NAMES {
