@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
-import { UserTrackLevelInfo } from '../../../pages/rewards/models';
+import { UserTrackLevelInfo } from '../../../sections/rewards/models';
 
 @Component({
   selector: 'st-progress-bar',

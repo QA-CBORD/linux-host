@@ -1,4 +1,4 @@
-import { TransactionHistory } from '../../../pages/accounts/models/transaction-history.model';
+import { TransactionHistory } from '../../../sections/accounts/models/transaction-history.model';
 
 export interface TransactionResponse {
   returnCapped: boolean;
