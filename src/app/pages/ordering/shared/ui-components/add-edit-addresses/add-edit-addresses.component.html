@@ -2,7 +2,8 @@
   <form [formGroup]="addEditAddressesForm"
         (ngSubmit)="onFormSubmit()">
     <ion-radio-group class="addresses__control"
-                     [formControl]="campus">
+                     [formControl]="campus"
+                     (ionChange)="onCampusChanged($event)">
       <ion-item lines="none">
         <ion-label class="addresses__radio-label">Off Campus</ion-label>
         <ion-radio mode="md"

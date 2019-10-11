@@ -72,6 +72,16 @@ export class AddEditAddressesComponent implements OnInit {
     this.sourceSubscription.unsubscribe();
   }
 
+  onCampusChanged({ detail: { value } }: CustomEvent<any>) {
+    if (value === 'oncampus') {
+      this.cleanControls(Object.keys(this.offCampusFormBlock()));
+      this.addControls(this.onCampusFormBlock())
+    } else {
+      this.cleanControls(Object.keys(this.onCampusFormBlock()));
+      this.addControls(this.offCampusFormBlock())
+    }
+  }
+
   private initForm() {
     this.addEditAddressesForm = this.fb.group(this.offCampusFormBlock());
 
@@ -80,22 +90,8 @@ export class AddEditAddressesComponent implements OnInit {
 
   private onChanges() {
     const subscription = this.addEditAddressesForm.valueChanges
-      .pipe(
-        debounceTime(500)
-      )
-      .subscribe(value => {
-        if (value.campus === 'oncampus') {
-          this.cleanControls(Object.keys(this.offCampusFormBlock()));
-          this.addControls(this.onCampusFormBlock())
-        } else {
-          this.cleanControls(Object.keys(this.onCampusFormBlock()));
-          this.addControls(this.offCampusFormBlock())
-        }
-
-        if (this.addEditAddressesForm.valid) {
-          this.onFormChanged.emit({ value, valid: this.addEditAddressesForm.valid });
-        }
-      });
+      .pipe(debounceTime(500))
+      .subscribe(value => this.onFormChanged.emit({ value, valid: this.addEditAddressesForm.valid }));
 
     this.sourceSubscription.add(subscription);
   }

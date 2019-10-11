@@ -128,4 +128,13 @@ export class OrderingApiService extends BaseService {
       map(({ response }: MessageResponse<any>) => response.list)
     );
   }
+
+  updateUserAddress(address: AddressInfo): Observable<any> {
+    const methodName = 'updateUserAddress';
+    const postParams: ServiceParameters = { address };
+
+    return this.httpRequestFull('/json/user', methodName, true, null, postParams).pipe(
+      map(({ response }: MessageResponse<any>) => response)
+    );
+  }
 }

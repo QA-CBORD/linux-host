@@ -166,7 +166,9 @@ export class OrderOptionsActionSheetComponent implements OnInit {
       },
 
     });
-    modal.onDidDismiss().then(({ data }) => console.log(data));
+    modal.onDidDismiss().then(({ data }) => {
+      console.log(data)
+    });
     await modal.present();
   }
 
