@@ -1,3 +1,4 @@
+import { BuildingInfo } from './../../models/building-info.model';
 import { Component, OnInit, Input } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { MerchantOrderTypesInfo } from '../../models';
@@ -14,6 +15,9 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   @Input() orderTypes: MerchantOrderTypesInfo;
   @Input() defaultDeliveryAddress: string;
   @Input() deliveryAddresses: any;
+  @Input() pickupLocations: any;
+  @Input() buildingsForNewAddressForm: BuildingInfo[];
+
   currentOrderOptions;
   private prevSelectedTimeInfo = { prevIdx: 0, currentIdx: 0, maxValue: false };
   private selectedDayIdx: number = 0;
@@ -26,8 +30,9 @@ export class OrderOptionsActionSheetComponent implements OnInit {
 
   ngOnInit() {
     this.currentOrderOptions = this.orderTypes.pickup;
+    // console.log(this.pickupLocations)
     console.log(this.defaultDeliveryAddress);
-    console.log(this.deliveryAddresses);
+    // console.log(this.deliveryAddresses);
   }
 
   public async openPicker() {
@@ -149,11 +154,19 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   }
 
   private async modalWindow() {
+    const address = this.currentOrderOptions ? 'Pickup' : 'Delivery';
+    const listOfAddresses = this.currentOrderOptions ? this.pickupLocations : this.deliveryAddresses;
+
     const modal = await this.modalController.create({
       component: DeliveryAddressesModalComponent,
-      componentProps: {},
+      componentProps: {
+        address,
+        listOfAddresses,
+        buildings: this.buildingsForNewAddressForm
+      },
+
     });
-    modal.onDidDismiss().then(() => { });
+    modal.onDidDismiss().then(({ data }) => console.log(data));
     await modal.present();
   }
 

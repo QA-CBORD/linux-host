@@ -12,7 +12,7 @@ import { MessageResponse } from 'src/app/core/model/service/message-response.mod
 import { MerchantSearchOptions, MerchantInfo } from '..';
 import { GeoCoordinates } from 'src/app/core/model/geolocation/geocoordinates.model';
 import { MerchantSearchOptionName } from '../ordering.config';
-import { OrderInfo } from '../shared';
+import { OrderInfo, BuildingInfo, AddressInfo } from '../shared';
 
 @Injectable()
 export class OrderingApiService extends BaseService {
@@ -82,12 +82,12 @@ export class OrderingApiService extends BaseService {
     );
   }
 
-  retrieveUserAddressList(userId: string): Observable<any> {
+  retrieveUserAddressList(userId: string): Observable<AddressInfo[]> {
     const methodName = 'retrieveUserAddressList';
     const postParams: ServiceParameters = { userId, addressId: null };
 
     return this.httpRequestFull('/json/user', methodName, true, null, postParams).pipe(
-      map(({ response }: MessageResponse<any>) => response)
+      map(({ response }: MessageResponse<any>) => response.addresses)
     );
   }
 
@@ -105,12 +105,27 @@ export class OrderingApiService extends BaseService {
     );
   }
 
-  retrievePickupLocations(institutionId: string): Observable<any> {
+  retrievePickupLocations(): Observable<any> {
     const methodName = 'retrievePickupLocations';
     const postParams: ServiceParameters = { active: true };
 
-    return this.httpRequestFull('/json/institution', methodName, true, institutionId, postParams).pipe(
-      map(({ response }: MessageResponse<any>) => response)
+    return this.userService.userData.pipe(
+      switchMap(({ institutionId }) =>
+        this.httpRequestFull('/json/institution', methodName, true, institutionId, postParams)
+      ),
+      map(({ response }: MessageResponse<any>) => response.list)
+    );
+  }
+
+  retrieveBuildings(): Observable<BuildingInfo[]> {
+    const methodName = 'retrieveBuildings';
+    const postParams: ServiceParameters = { active: true };
+
+    return this.userService.userData.pipe(
+      switchMap(({ institutionId }) =>
+        this.httpRequestFull('/json/institution', methodName, true, institutionId, postParams)
+      ),
+      map(({ response }: MessageResponse<any>) => response.list)
     );
   }
 }

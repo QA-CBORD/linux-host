@@ -82,9 +82,7 @@ export class FavoriteMerchantsComponent implements OnInit {
               case null:
                 return of({ list: [] });
               case 'true':
-                return this.userService
-                  .getUser()
-                  .pipe(switchMap(({ institutionId }) => this.merchantService.retrievePickupLocations(institutionId)));
+                return this.merchantService.retrievePickupLocations();
               case 'false':
                 return of({ list: [storeAddress] });
             }
@@ -97,7 +95,7 @@ export class FavoriteMerchantsComponent implements OnInit {
         ([schedule, [defaultAddress, listOfAddresses], pickupLocations]) => {
           console.log(pickupLocations['list']);
           this.loadingService.closeSpinner();
-          this.actionSheet(schedule, orderTypes, defaultAddress.defaultAddress, listOfAddresses.addresses);
+          this.actionSheet(schedule, orderTypes, defaultAddress.defaultAddress, listOfAddresses);
         },
         () => () => this.loadingService.closeSpinner()
       );

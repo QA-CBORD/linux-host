@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 
 @Component({
@@ -7,18 +7,29 @@ import { ModalController } from '@ionic/angular';
   styleUrls: ['./delivery-addresses.modal.component.scss'],
 })
 export class DeliveryAddressesModalComponent implements OnInit {
+
+  @Input() address;
+  @Input() listOfAddresses;
+  @Input() buildings;
   addNewAdddressState: boolean = false;
   addNewAdddressForm: { value: any; valid: boolean };
-  constructor(private readonly modalController: ModalController) {}
+  selectedAddress;
+  constructor(private readonly modalController: ModalController) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    
+  }
 
-  async onClickedDone() {
-    await this.modalController.dismiss();
+  get addresses() {
+    return this.listOfAddresses.map(item => item.addressInfo ? item.addressInfo : item);
+  }
+
+  async onClickedDone(selectedAddress) {
+    await this.modalController.dismiss(selectedAddress);
   }
 
   onRadioGroupChanged({ target }) {
-    console.log(target.value);
+    this.selectedAddress = target.value;
   }
 
   onAddressFormChanged(event) {

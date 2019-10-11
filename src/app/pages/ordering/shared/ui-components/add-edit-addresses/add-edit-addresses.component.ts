@@ -1,7 +1,8 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { Validators, FormGroup, FormBuilder, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
 import * as states from '../../../../../../assets/states.json';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'st-add-edit-addresses',
@@ -15,9 +16,11 @@ export class AddEditAddressesComponent implements OnInit {
     cssClass: 'custom-deposit-actionSheet',
   };
 
+  private readonly sourceSubscription: Subscription = new Subscription();
+
+  @Input() buildingsOnCampus;
   @Output() onFormChanged: EventEmitter<any> = new EventEmitter<any>();
   constructor(private readonly fb: FormBuilder) {
-    console.log(this.arrOfStates['default']);
   }
 
 
@@ -49,6 +52,14 @@ export class AddEditAddressesComponent implements OnInit {
     return this.addEditAddressesForm.get(this.controlsNames.default);
   }
 
+  get room(): AbstractControl {
+    return this.addEditAddressesForm.get(this.controlsNames.room);
+  }
+
+  get buildings(): AbstractControl {
+    return this.addEditAddressesForm.get(this.controlsNames.buildings);
+  }
+
   get controlsNames() {
     return REQUEST_FUNDS_CONTROL_NAMES;
   }
@@ -57,7 +68,41 @@ export class AddEditAddressesComponent implements OnInit {
     this.initForm();
   }
 
+  ngOnDestroy() {
+    this.sourceSubscription.unsubscribe();
+  }
+
   private initForm() {
+    this.addEditAddressesForm = this.fb.group(this.offCampusFormBlock());
+
+    this.onChanges();
+  }
+
+  private onChanges() {
+    const subscription = this.addEditAddressesForm.valueChanges
+      .pipe(
+        debounceTime(500)
+      )
+      .subscribe(value => {
+        if (value.campus === 'oncampus') {
+          this.cleanControls(Object.keys(this.offCampusFormBlock()));
+          this.addControls(this.onCampusFormBlock())
+        } else {
+          this.cleanControls(Object.keys(this.onCampusFormBlock()));
+          this.addControls(this.offCampusFormBlock())
+        }
+
+        if (this.addEditAddressesForm.valid) {
+          this.onFormChanged.emit({ value, valid: this.addEditAddressesForm.valid });
+        }
+      });
+
+    this.sourceSubscription.add(subscription);
+  }
+
+  onFormSubmit() { }
+
+  private offCampusFormBlock() {
     const address1Errors = [
       errorDecorator(Validators.required, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.address1].required),
     ];
@@ -68,7 +113,7 @@ export class AddEditAddressesComponent implements OnInit {
       errorDecorator(Validators.required, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.state].required),
     ];
 
-    this.addEditAddressesForm = this.fb.group({
+    return {
       [this.controlsNames.campus]: ['offcampus'],
       [this.controlsNames.address1]: ['', address1Errors],
       [this.controlsNames.address2]: [''],
@@ -76,18 +121,40 @@ export class AddEditAddressesComponent implements OnInit {
       [this.controlsNames.state]: ['', stateErrors],
       [this.controlsNames.nickname]: [''],
       [this.controlsNames.default]: [false],
-    });
-
-    this.onChanges();
+    }
   }
 
-  private onChanges() {
-    this.addEditAddressesForm.valueChanges.pipe(debounceTime(500)).subscribe(value => {
-      this.onFormChanged.emit({ value, valid: this.addEditAddressesForm.valid });
-    });
+  private onCampusFormBlock() {
+    const buildingsErrors = [
+      errorDecorator(Validators.required, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.buildings].required),
+    ];
+
+    const roomErrors = [
+      errorDecorator(Validators.required, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.room].required),
+    ];
+
+    return {
+      [this.controlsNames.campus]: ['oncampus'],
+      [this.controlsNames.buildings]: ['', buildingsErrors],
+      [this.controlsNames.room]: ['', roomErrors],
+    }
   }
 
-  onFormSubmit() { }
+  private cleanControls(controlNames: string[]) {
+    for (let i = 0; i < controlNames.length; i++) {
+      this.addEditAddressesForm.contains(controlNames[i]) && this.addEditAddressesForm.removeControl(controlNames[i]);
+    }
+  }
+
+  private addControls(controls: any) {
+    const modifedControls = Object.entries(controls);
+    for (let i = 0; i < modifedControls.length; i++) {
+      this.addEditAddressesForm.addControl(
+        modifedControls[i][0],
+        this.fb.control(modifedControls[i][1][0], modifedControls[i][1][1])
+      );
+    }
+  }
 }
 
 export enum REQUEST_FUNDS_CONTROL_NAMES {
@@ -98,6 +165,8 @@ export enum REQUEST_FUNDS_CONTROL_NAMES {
   state = 'state',
   nickname = 'nickname',
   default = 'default',
+  buildings = 'buildings',
+  room = 'room'
 }
 
 export const CONTROL_ERROR = {
@@ -105,10 +174,16 @@ export const CONTROL_ERROR = {
     required: 'You must enter a address.',
   },
   [REQUEST_FUNDS_CONTROL_NAMES.city]: {
-    required: 'You must enter an city.',
+    required: 'You must enter a city.',
   },
   [REQUEST_FUNDS_CONTROL_NAMES.state]: {
-    required: 'You must choose an state.',
+    required: 'You must choose a state.',
+  },
+  [REQUEST_FUNDS_CONTROL_NAMES.buildings]: {
+    required: 'You must choose buildings.',
+  },
+  [REQUEST_FUNDS_CONTROL_NAMES.room]: {
+    required: 'You must choose a room.',
   },
 };
 
