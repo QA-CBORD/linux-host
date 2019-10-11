@@ -19,8 +19,8 @@ import { AddressInfo } from "@core/model/address/address-info";
   styleUrls: ['./order-details.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class OrderDetailsComponent implements OnInit, OnChanges {
-  @Input() address: AddressInfo;
+export class OrderDetailsComponent implements OnInit {
+  @Input() address: string;
   @Input() readonly: boolean = true;
   @Input() time: any = [];
   @Input() type: ORDER_TYPE;
@@ -79,10 +79,6 @@ export class OrderDetailsComponent implements OnInit, OnChanges {
 
   test() {
     console.log(this.detailsForm)
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes);
   }
 }
 

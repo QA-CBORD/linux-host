@@ -80,6 +80,10 @@ export class MerchantService {
     );
   }
 
+  cancelOrderById(id: string): any {
+    return this.orderingApiService.cancelOrder(id);
+  }
+
   getRecentOrders(): Observable<OrderInfo[]> {
     return this.userService.userData.pipe(
       switchMap(({ id, institutionId }) =>

@@ -4,7 +4,7 @@
         <div class="order-details">
             <ion-label class="order-details__label">{{type | typeMessage:'time'}}</ion-label>
 
-            <p *ngIf="readonly; else delivery" class="order-details__value">{{time | date:'shortTime'}}</p>
+            <p *ngIf="readonly; else delivery" class="order-details__value">{{time | date: 'M/d/yy, h:mm a'}}</p>
 
             <ng-template #delivery>
                 <ion-select
@@ -27,7 +27,7 @@
         <div class="order-details">
             <ion-label class="order-details__label">{{type | typeMessage:'address'}}</ion-label>
 
-            <p *ngIf="readonly && address; else pickup" class="order-details__value">{{address.city}} {{address.state}}</p>
+            <p *ngIf="readonly && address; else pickup" class="order-details__value">{{address}}</p>
 
             <!--<ng-template #pickup>-->
                 <!--<ion-select-->

@@ -9,4 +9,40 @@
 
     @include font-nunito-heavy(20px)
   }
+
+  &__no-orders-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10vh;
+  }
+
+  &__no-orders-image {
+    width: 200px;
+    height: 160px;
+  }
+
+  &__no-orders-message {
+    text-align: center;
+    color: $color-dark-gray;
+    max-width: 250px;
+
+    @include font-nunito-semibold(16px)
+  }
+
+  &__no-orders-btn {
+    --border-radius: 25px;
+    --background: #166DFF;
+
+    border-radius: 25px;
+    height: 50px;
+    width: 90vw;
+    position: fixed;
+    left: 5vw;
+    bottom: 5vh;
+    color: $color-white;
+    text-transform: uppercase;
+
+    @include font-nunito-heavy(14px);
+  }
 }
