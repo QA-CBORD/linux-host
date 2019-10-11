@@ -1,4 +1,7 @@
-import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
+import { IonItemSliding } from '@ionic/angular';
+
+import { QuestionsStorageService } from '../../questions/questions-storage.service';
 
 import { PatronApplication, ApplicationStatus } from '../applications.model';
 
@@ -10,43 +13,31 @@ import { PatronApplication, ApplicationStatus } from '../applications.model';
 export class ApplicationsListComponent {
   @Input() applications: PatronApplication[];
 
+  @Output() clear: EventEmitter<number> = new EventEmitter<number>();
+
+  constructor(private _questionsStorageService: QuestionsStorageService) {}
+
   trackById(_: number, application: PatronApplication): number {
     return application.applicationDefinitionId;
   }
 
-  isNotPending(application: PatronApplication): boolean {
-    return this.getApplicationStatus(application) !== ApplicationStatus.Pending;
-  }
+  async getApplicationStatus(application: PatronApplication): Promise<string> {
+    const applicationForms: any[] = await this._questionsStorageService.getApplicationForms(
+      application.applicationDefinitionId
+    );
 
-  isNotNewAndNotPending(application: PatronApplication): boolean {
-    return this.getApplicationStatus(application) !== ApplicationStatus.New && this.isNotPending(application);
-  }
-
-  getApplicationStatus(application: PatronApplication): string {
-    if (application.isApplicationAccepted) {
-      return ApplicationStatus.Accepted;
-    } else if (application.isApplicationSubmitted) {
+    if (application.isApplicationSubmitted) {
       return ApplicationStatus.Submitted;
-    } else if (application.isApplicationCanceled) {
-      return ApplicationStatus.Canceled;
-    } else if (new Date(application.createdDateTime).getFullYear() === 1) {
-      return ApplicationStatus.New;
-    } else {
+    } else if (applicationForms && applicationForms.length > 0) {
       return ApplicationStatus.Pending;
+    } else {
+      return ApplicationStatus.New;
     }
   }
 
-  getApplicationModificationDate(application: PatronApplication): string {
-    if (application.isApplicationAccepted) {
-      return new Date(application.acceptedDateTime).toDateString();
-    } else if (application.isApplicationSubmitted) {
-      return new Date(application.submittedDateTime).toDateString();
-    } else if (application.isApplicationCanceled) {
-      return new Date(application.cancelledDateTime).toDateString();
-    } else if (application.modifiedDate !== '') {
-      return new Date(application.modifiedDate).toDateString();
-    } else {
-      return '';
-    }
+  handleClear(applicationId: number, applicationSlide: IonItemSliding): void {
+    this.clear.emit(applicationId);
+
+    applicationSlide.close();
   }
 }

@@ -35,8 +35,31 @@ export class QuestionsStorageService {
     }
 
     return this._storage.set(this._key, {
+      ...applicationForms,
       [applicationId]: forms,
     });
+  }
+
+  async resetApplicationForm(applicationId: number): Promise<any> {
+    const applicationForms: ApplicationsForms = await this._storage.get(this._key);
+
+    if (applicationForms && applicationForms[applicationId]) {
+      const formsKeys: string[] = Object.keys(applicationForms);
+
+      if (formsKeys.length > 1) {
+        const formEntities: { [key: number]: any } = formsKeys.reduce((accumulator: any, key: string) => {
+          const numericKey: number = parseInt(key, 10);
+
+          return numericKey !== applicationId
+            ? { ...accumulator, [numericKey]: applicationForms[numericKey] }
+            : accumulator;
+        }, {});
+
+        return this._storage.set(this._key, formEntities);
+      } else {
+        return this._storage.remove(this._key);
+      }
+    }
   }
 
   async getApplicationForms(applicationId: number): Promise<any[]> {

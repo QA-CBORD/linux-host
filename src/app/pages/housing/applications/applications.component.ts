@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 import { ApplicationsService } from './applications.service';
-
+import { QuestionsStorageService } from '../questions/questions-storage.service';
 import { ApplicationsStateService } from './applications-state.service';
 
 @Component({
@@ -13,10 +13,15 @@ import { ApplicationsStateService } from './applications-state.service';
 export class ApplicationsComponent implements OnInit {
   constructor(
     private _applicationsService: ApplicationsService,
+    private _questionsStorageService: QuestionsStorageService,
     public applicationsStateService: ApplicationsStateService
   ) {}
 
   ngOnInit() {
     this._applicationsService.getPatronApplications().subscribe();
+  }
+
+  async handleClear(applicationId: number): Promise<void> {
+    await this._questionsStorageService.resetApplicationForm(applicationId);
   }
 }

@@ -53,19 +53,21 @@ export class ApplicationDetailsPage implements OnInit {
     );
   }
 
-  save(): void {
+  async save(): Promise<void> {
     const selectedIndex: number = this.stepper.selectedIndex;
     const selectedStep: StepComponent = this.stepper.steps.toArray()[selectedIndex];
 
-    this._questionsStorageService.updateApplicationForm(
+    await this._questionsStorageService.updateApplicationForm(
       selectedStep.stepControl.value,
       this.applicationId,
       selectedIndex
     );
+
+    this._router.navigate(['/housing/dashboard']);
   }
 
-  handleSubmit(form: FormGroup, index: number, isLastPage: boolean): void {
-    this._questionsStorageService.updateApplicationForm(form.value, this.applicationId, index);
+  async handleSubmit(form: FormGroup, index: number, isLastPage: boolean): Promise<void> {
+    await this._questionsStorageService.updateApplicationForm(form.value, this.applicationId, index);
 
     this.questions.toArray().forEach((question: QuestionComponent) => question.touch());
 
