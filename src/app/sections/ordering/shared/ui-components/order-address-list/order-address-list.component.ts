@@ -4,7 +4,7 @@ import { AddressInfo } from '@core/model/user/user-address.model';
 import { Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { NgZone  } from '@angular/core';
-import { LOCAL_ROUTING } from '@pages/ordering/ordering.config';
+import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
 import { Router } from '@angular/router';
 
 @Component({
