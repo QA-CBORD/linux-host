@@ -4,7 +4,7 @@ import { map } from 'rxjs/operators';
 
 import { PatronApplication } from './applications.model';
 
-export interface PatronApplicationEntity {
+export interface ApplicationEntity {
   [key: number]: PatronApplication;
 }
 
@@ -14,23 +14,21 @@ export interface PatronApplicationEntity {
 export class ApplicationsStateService {
   private readonly _defaultState: any = {};
 
-  private readonly _patronApplicationsState: BehaviorSubject<PatronApplicationEntity> = new BehaviorSubject<
-    PatronApplicationEntity
+  private readonly _patronApplicationsState: BehaviorSubject<ApplicationEntity> = new BehaviorSubject<
+    ApplicationEntity
   >(this._defaultState);
 
-  readonly patronApplicationEntities$: Observable<
-    PatronApplicationEntity
-  > = this._patronApplicationsState.asObservable();
+  readonly patronApplicationEntities$: Observable<ApplicationEntity> = this._patronApplicationsState.asObservable();
 
   readonly patronApplications$: Observable<PatronApplication[]> = this.patronApplicationEntities$.pipe(
-    map((entities: PatronApplicationEntity) => this._toPatronApplicationsArray(entities))
+    map((entities: ApplicationEntity) => this._toPatronApplicationsArray(entities))
   );
 
-  set patronApplicationEntities(value: PatronApplicationEntity) {
+  set patronApplicationEntities(value: ApplicationEntity) {
     this._patronApplicationsState.next(value);
   }
 
-  get patronApplicationEntities(): PatronApplicationEntity {
+  get patronApplicationEntities(): ApplicationEntity {
     return this._patronApplicationsState.getValue();
   }
 
@@ -39,7 +37,7 @@ export class ApplicationsStateService {
   }
 
   setPatronApplications(applications: PatronApplication[]): void {
-    const applicationEntities: PatronApplicationEntity = this._toPatronApplicationsEntities(applications);
+    const applicationEntities: ApplicationEntity = this._toPatronApplicationsEntities(applications);
 
     this._patronApplicationsState.next(applicationEntities);
   }
@@ -63,18 +61,18 @@ export class ApplicationsStateService {
   }
 
   getPatronApplicationById(applicationId: number): Observable<PatronApplication> {
-    return this.patronApplicationEntities$.pipe(map((entities: PatronApplicationEntity) => entities[applicationId]));
+    return this.patronApplicationEntities$.pipe(map((entities: ApplicationEntity) => entities[applicationId]));
   }
 
-  private _toPatronApplicationsEntities(applications: PatronApplication[]): PatronApplicationEntity {
-    return applications.reduce((entities: PatronApplicationEntity, application: PatronApplication) => {
+  private _toPatronApplicationsEntities(applications: PatronApplication[]): ApplicationEntity {
+    return applications.reduce((entities: ApplicationEntity, application: PatronApplication) => {
       return {
         ...entities,
         [application.applicationDefinitionId]: application,
       };
     }, {});
   }
-  private _toPatronApplicationsArray(entities: PatronApplicationEntity): PatronApplication[] {
+  private _toPatronApplicationsArray(entities: ApplicationEntity): PatronApplication[] {
     return Object.keys(entities).map((key: string) => entities[parseInt(key, 10)]);
   }
 }

@@ -9,12 +9,7 @@
 
     <ion-label>
       <h2>{{ application.applicationTitle }}</h2>
-      <p>
-        {{ getApplicationStatus(application) }}
-        <ng-container *ngIf="application.isApplicationSubmitted">
-          : {{ application.submittedDateTime | date: 'fullDate' }}
-        </ng-container>
-      </p>
+      <p>{{ getApplicationStatus(application) }}</p>
     </ion-label>
   </ion-item>
 

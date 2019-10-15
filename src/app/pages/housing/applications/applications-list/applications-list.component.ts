@@ -17,8 +17,14 @@ export class ApplicationsListComponent {
     return application.applicationDefinitionId;
   }
 
-  async getApplicationStatus(application: PatronApplication): Promise<string> {
-    return ApplicationStatus.New;
+  getApplicationStatus(application: PatronApplication): string {
+    if (application.isApplicationSubmitted) {
+      `${ApplicationStatus[ApplicationStatus.Submitted]}: ${application.submittedDateTime}`;
+    } else if (application.isApplicationAccepted) {
+      return ApplicationStatus[ApplicationStatus.Pending];
+    }
+
+    return ApplicationStatus[ApplicationStatus.New];
   }
 
   handleClear(applicationId: number, applicationSlide: IonItemSliding): void {
