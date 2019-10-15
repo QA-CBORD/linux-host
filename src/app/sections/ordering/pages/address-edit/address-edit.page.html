@@ -1,9 +1,13 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>Address Edit Page</ion-title>
-  </ion-toolbar>
-</ion-header>
+<st-header
+  title="Edit Address"
+  [isTitleShow]="true"
+  [backButtonTitle]="''"
+  [backButtonIcon]="'close'"
+  [isToolbarShow]="true"
+  class="address-edit__header"
+></st-header>
 
 <ion-content>
-  <st-address-edit></st-address-edit>
+  <!-- <st-address-edit></st-address-edit> -->
+  <st-add-edit-addresses (onFormChanged)="onAddressFormChanged($event)"></st-add-edit-addresses>
 </ion-content>

@@ -19,4 +19,8 @@ export class AddressEditPage implements OnInit {
     // this.router.navigate([`${NAVIGATE.accounts}/${nextPage}/${ALL_ACCOUNTS}`], { skipLocationChange: true });
   }
 
+  onAddressFormChanged(event) {
+    console.log(event);
+    // this.addNewAdddressForm = event;
+  }
 }
