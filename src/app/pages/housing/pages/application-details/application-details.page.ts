@@ -57,7 +57,7 @@ export class ApplicationDetailsPage implements OnInit {
     const selectedIndex: number = this.stepper.selectedIndex;
     const selectedStep: StepComponent = this.stepper.steps.toArray()[selectedIndex];
 
-    await this._questionsStorageService.updateApplicationForm(
+    await this._questionsStorageService.updateApplicationQuestions(
       selectedStep.stepControl.value,
       this.applicationId,
       selectedIndex
@@ -67,7 +67,7 @@ export class ApplicationDetailsPage implements OnInit {
   }
 
   async handleSubmit(form: FormGroup, index: number, isLastPage: boolean): Promise<void> {
-    await this._questionsStorageService.updateApplicationForm(form.value, this.applicationId, index);
+    await this._questionsStorageService.updateApplicationQuestions(form.value, this.applicationId, index);
 
     this.questions.toArray().forEach((question: QuestionComponent) => question.touch());
 
@@ -81,7 +81,7 @@ export class ApplicationDetailsPage implements OnInit {
 
   private _patchFormsFromState(pages: QuestionPage[]): void {
     pages.forEach(async (page: QuestionPage, index: number) => {
-      const applicationForms: any[] = await this._questionsStorageService.getApplicationForms(this.applicationId);
+      const applicationForms: any[] = await this._questionsStorageService.getApplicationQuestions(this.applicationId);
 
       if (applicationForms && applicationForms[index]) {
         page.form.patchValue(applicationForms[index]);

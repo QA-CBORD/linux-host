@@ -13,58 +13,60 @@ export class QuestionsStorageService {
 
   constructor(private _storage: Storage) {}
 
-  async addApplicationForm(applicationId: number, form: any): Promise<any> {
-    const applicationForms: ApplicationQuestions = await this._storage.get(this._key);
-    const forms: any[] = applicationForms && applicationForms[applicationId] ? applicationForms[applicationId] : [];
+  async addApplicationQuestions(applicationId: number, form: any): Promise<any> {
+    const applicationQuestions: ApplicationQuestions = await this._storage.get(this._key);
+    const questions: any[] =
+      applicationQuestions && applicationQuestions[applicationId] ? applicationQuestions[applicationId] : [];
 
-    forms.push(form);
+    questions.push(form);
 
     return this._storage.set(this._key, {
-      [applicationId]: forms,
+      [applicationId]: questions,
     });
   }
 
-  async updateApplicationForm(form: any, applicationId: number, index: number): Promise<any> {
-    const applicationForms: ApplicationQuestions = await this._storage.get(this._key);
-    const forms: any[] = applicationForms && applicationForms[applicationId] ? applicationForms[applicationId] : [];
+  async updateApplicationQuestions(form: any, applicationId: number, index: number): Promise<any> {
+    const applicationQuestions: ApplicationQuestions = await this._storage.get(this._key);
+    const questions: any[] =
+      applicationQuestions && applicationQuestions[applicationId] ? applicationQuestions[applicationId] : [];
 
-    if (forms && forms[index]) {
-      forms[index] = form;
+    if (questions && questions[index]) {
+      questions[index] = form;
     } else {
-      forms.push(form);
+      questions.push(form);
     }
 
     return this._storage.set(this._key, {
-      ...applicationForms,
-      [applicationId]: forms,
+      ...applicationQuestions,
+      [applicationId]: questions,
     });
   }
 
-  async resetApplicationForm(applicationId: number): Promise<any> {
-    const applicationForms: ApplicationQuestions = await this._storage.get(this._key);
+  async resetApplicationQuestions(applicationId: number): Promise<any> {
+    const applicationQuestions: ApplicationQuestions = await this._storage.get(this._key);
 
-    if (applicationForms && applicationForms[applicationId]) {
-      const formsKeys: string[] = Object.keys(applicationForms);
+    if (applicationQuestions && applicationQuestions[applicationId]) {
+      const questionKeys: string[] = Object.keys(applicationQuestions);
 
-      if (formsKeys.length > 1) {
-        const formEntities: { [key: number]: any } = formsKeys.reduce((accumulator: any, key: string) => {
+      if (questionKeys.length > 1) {
+        const questionEntities: { [key: number]: any } = questionKeys.reduce((accumulator: any, key: string) => {
           const numericKey: number = parseInt(key, 10);
 
           return numericKey !== applicationId
-            ? { ...accumulator, [numericKey]: applicationForms[numericKey] }
+            ? { ...accumulator, [numericKey]: applicationQuestions[numericKey] }
             : accumulator;
         }, {});
 
-        return this._storage.set(this._key, formEntities);
+        return this._storage.set(this._key, questionEntities);
       } else {
         return this._storage.remove(this._key);
       }
     }
   }
 
-  async getApplicationForms(applicationId: number): Promise<any[]> {
-    const applicationForms: ApplicationQuestions = await this._storage.get(this._key);
+  async getApplicationQuestions(applicationId: number): Promise<any[]> {
+    const applicationQuestions: ApplicationQuestions = await this._storage.get(this._key);
 
-    return applicationForms ? applicationForms[applicationId] : null;
+    return applicationQuestions ? applicationQuestions[applicationId] : null;
   }
 }
