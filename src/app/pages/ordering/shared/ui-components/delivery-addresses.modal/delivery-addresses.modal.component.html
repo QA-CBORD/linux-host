@@ -32,14 +32,16 @@
                     mode="md"
                     expand="full"
                     shape="round"
-                    class="delivery-address__add-address-btn">
+                    class="delivery-address__add-address-btn"
+                    (click)="addNewAdddressState = !addNewAdddressState">
           cancel
         </ion-button>
         <ion-button mode="md"
                     expand="full"
                     shape="round"
                     class="delivery-address__add-address-btn"
-                    [ngClass]="{ 'delivery-address__add-address-btn--valid': addNewAdddressForm && addNewAdddressForm.valid }">
+                    [ngClass]="{ 'delivery-address__add-address-btn--valid': addNewAdddressForm && addNewAdddressForm.valid }"
+                    (click)="addNewAdddressForm && addNewAdddressForm.valid && addAddress()">
           save
         </ion-button>
       </div>
@@ -64,8 +66,17 @@
                  class="delivery-address__radio-item"></ion-radio>
     </ion-item>
   </ion-radio-group>
+
+  <ng-container [ngTemplateOutlet]="footerButton"
+                *ngIf="addNewAdddressState"></ng-container>
 </ion-content>
-<ion-footer mode="ios">
+<ion-footer mode="ios"
+            *ngIf="!addNewAdddressState">
+  <ng-container [ngTemplateOutlet]="footerButton"></ng-container>
+</ion-footer>
+
+
+<ng-template #footerButton>
   <ion-button mode="md"
               expand="block"
               shape="round"
@@ -73,4 +84,4 @@
               (click)="onClickedDone(selectedAddress)">
     set delivery address
   </ion-button>
-</ion-footer>
+</ng-template>

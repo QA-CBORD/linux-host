@@ -32,7 +32,7 @@
                                 idd="buildings">
         <ng-container role="options">
           <ion-select-option *ngFor="let item of buildingsOnCampus"
-                             [value]="item">
+                             [value]="item.addressInfo.building">
             {{ item.addressInfo.building }}
           </ion-select-option>
         </ng-container>
@@ -46,7 +46,7 @@
       <st-input-floating-label class="addresses__control"
                                [control]="room"
                                label="Room"
-                               type="text"
+                               type="number"
                                idd="room"
                                maxlength="100"
                                formControlName="room"

@@ -119,4 +119,8 @@ export class MerchantService {
   retrieveBuildings(): Observable<BuildingInfo[]> {
     return this.orderingApiService.retrieveBuildings();
   }
+
+  updateUserAddress(updateUserAddress): Observable<any> {
+    return this.orderingApiService.updateUserAddress(updateUserAddress);
+  }
 }

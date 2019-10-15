@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 import { Observable } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { switchMap, map, tap } from 'rxjs/operators';
 
 import { UserService } from 'src/app/core/service/user-service/user.service';
 import { CoordsService } from 'src/app/core/service/coords/coords.service';
@@ -129,11 +129,54 @@ export class OrderingApiService extends BaseService {
     );
   }
 
-  updateUserAddress(address: AddressInfo): Observable<any> {
+  updateUserAddress({
+    address1 = null,
+    address2 = null,
+    campus = null,
+    city = null,
+    nickname = null,
+    state = null,
+    building = null,
+    room = null }): Observable<any> {
     const methodName = 'updateUserAddress';
-    const postParams: ServiceParameters = { address };
+    const postParams: ServiceParameters = {
+      address: {
+        objectRevision: null,
+        department: null,
+        company: null,
+        address1,
+        address2: address2 !== null && !address2.length ? null : address2,
+        city,
+        state,
+        postalcode: null,
+        country: null,
+        latitude: null,
+        longitude: null,
+        notes: null,
+        nickname: nickname !== null && !nickname.length ? null : nickname,
+        building,
+        floor: null,
+        room,
+        crossStreet: null,
+        accessCode: null,
+        phone: null,
+        phoneExt: null,
+        onCampus: campus
+      }
+    };
 
-    return this.httpRequestFull('/json/user', methodName, true, null, postParams).pipe(
+    return this.userService.userData.pipe(
+      switchMap(({ id }) => this.httpRequestFull('/json/user', methodName, true, null, { ...postParams, userId: id }).pipe(
+        map(({ response }: MessageResponse<any>) => response)
+      )))
+
+  }
+
+  isOutsideMerchantDeliveryArea(merchantId: string, latitude: number, longitude: number): Observable<any> {
+    const methodName = 'isOutsideMerchantDeliveryArea';
+    const postParams: ServiceParameters = { merchantId, latitude, longitude };
+
+    return this.httpRequestFull('/json/merchant', methodName, true, null, postParams).pipe(
       map(({ response }: MessageResponse<any>) => response)
     );
   }

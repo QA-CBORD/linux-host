@@ -91,7 +91,10 @@ export class AddEditAddressesComponent implements OnInit {
   private onChanges() {
     const subscription = this.addEditAddressesForm.valueChanges
       .pipe(debounceTime(500))
-      .subscribe(value => this.onFormChanged.emit({ value, valid: this.addEditAddressesForm.valid }));
+      .subscribe(value => {this.onFormChanged.emit({
+        value: { ...value, campus: value.campus === 'oncampus' ? '1' : '0' },
+        valid: this.addEditAddressesForm.valid
+      })});
 
     this.sourceSubscription.add(subscription);
   }
@@ -161,7 +164,7 @@ export enum REQUEST_FUNDS_CONTROL_NAMES {
   state = 'state',
   nickname = 'nickname',
   default = 'default',
-  buildings = 'buildings',
+  buildings = 'building',
   room = 'room'
 }
 
