@@ -42,7 +42,15 @@ export class QuestionsService {
   }
 
   parseQuestions(json: string): QuestionBase[] {
-    const questions: any[] = JSON.parse(json);
+    let parsedQuestions: any;
+
+    try {
+      parsedQuestions = JSON.parse(json);
+    } catch (error) {
+      parsedQuestions = [];
+    }
+
+    const questions: any[] = Array.isArray(parsedQuestions) ? parsedQuestions : [];
 
     return questions.map(this.toQuestionType);
   }

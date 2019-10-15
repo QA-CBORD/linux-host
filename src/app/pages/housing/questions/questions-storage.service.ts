@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
 
-export interface ApplicationsForms {
+export interface ApplicationQuestions {
   [key: number]: any[];
 }
 
@@ -14,7 +14,7 @@ export class QuestionsStorageService {
   constructor(private _storage: Storage) {}
 
   async addApplicationForm(applicationId: number, form: any): Promise<any> {
-    const applicationForms: ApplicationsForms = await this._storage.get(this._key);
+    const applicationForms: ApplicationQuestions = await this._storage.get(this._key);
     const forms: any[] = applicationForms && applicationForms[applicationId] ? applicationForms[applicationId] : [];
 
     forms.push(form);
@@ -25,7 +25,7 @@ export class QuestionsStorageService {
   }
 
   async updateApplicationForm(form: any, applicationId: number, index: number): Promise<any> {
-    const applicationForms: ApplicationsForms = await this._storage.get(this._key);
+    const applicationForms: ApplicationQuestions = await this._storage.get(this._key);
     const forms: any[] = applicationForms && applicationForms[applicationId] ? applicationForms[applicationId] : [];
 
     if (forms && forms[index]) {
@@ -41,7 +41,7 @@ export class QuestionsStorageService {
   }
 
   async resetApplicationForm(applicationId: number): Promise<any> {
-    const applicationForms: ApplicationsForms = await this._storage.get(this._key);
+    const applicationForms: ApplicationQuestions = await this._storage.get(this._key);
 
     if (applicationForms && applicationForms[applicationId]) {
       const formsKeys: string[] = Object.keys(applicationForms);
@@ -63,7 +63,7 @@ export class QuestionsStorageService {
   }
 
   async getApplicationForms(applicationId: number): Promise<any[]> {
-    const applicationForms: ApplicationsForms = await this._storage.get(this._key);
+    const applicationForms: ApplicationQuestions = await this._storage.get(this._key);
 
     return applicationForms ? applicationForms[applicationId] : null;
   }
