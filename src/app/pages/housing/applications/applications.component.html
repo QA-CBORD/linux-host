@@ -4,7 +4,7 @@
   </ion-list-header>
 
   <st-applications-list
-    [applications]="applicationsStateService.patronApplications$ | async"
+    [applications]="applicationsStateService.applications$ | async"
     (clear)="handleClear($event)"
   ></st-applications-list>
 </ion-list>

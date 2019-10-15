@@ -1,4 +1,4 @@
-export class PatronApplication {
+export class Application {
   constructor(
     public applicationDefinitionId: number,
     public createdDateTime: string,
@@ -16,39 +16,10 @@ export class PatronApplication {
   ) {}
 }
 
-export class ApplicationAttribute {
-  constructor(
-    public applicationAttributeId: number,
-    public applicationAttributeValue: string,
-    public applicationDefinitionId: number,
-    public consumerAttributeId: number,
-    public isDeleted: boolean,
-    public isNew: boolean,
-    public isUpdated: boolean
-  ) {}
-}
-
-export class Application {
-  constructor(
-    public applicationAttributes: ApplicationAttribute[],
-    public applicationAvailableEndDateTime: string,
-    public applicationAvailableStartDateTime: string,
-    public applicationDescription: string,
-    public applicationFormJson: string,
-    public applicationTitle: string,
-    public applicationTypeId: number,
-    public cancellationDateTime: string,
-    public expirationDateTime: string,
-    public id: number,
-    public numberOfDaysToExpire: number,
-    public termId: number
-  ) {}
-}
-
 export enum ApplicationStatus {
-  Accepted = 'Accepted',
-  Submitted = 'Submitted',
-  Canceled = 'Canceled',
-  New = 'New',
-  Pending = 'Pending',
+  Accepted,
+  Submitted,
+  Canceled,
+  New,
+  Pending,
 }

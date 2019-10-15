@@ -13,7 +13,7 @@ import { QuestionCheckboxGroup, QuestionCheckboxGroupValue } from './types/quest
 import { QuestionRadioGroup } from './types/question-readio-group';
 
 import { QuestionPage } from './questions.model';
-import { PatronApplication } from '../applications/applications.model';
+import { Application } from '../applications/applications.model';
 
 export const QuestionConstructorsMap = {
   header: QuestionHeader,
@@ -83,7 +83,7 @@ export class QuestionsService {
     }));
   }
 
-  parsePages(application: PatronApplication): void {
+  parsePages(application: Application): void {
     const questions: QuestionBase[] = this.parseQuestions(application.applicationFormJson);
     const pages: QuestionPage[] = this.splitByPages(questions);
 

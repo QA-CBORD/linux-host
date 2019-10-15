@@ -2,10 +2,10 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { PatronApplication } from './applications.model';
+import { Application } from './applications.model';
 
-export interface ApplicationEntity {
-  [key: number]: PatronApplication;
+export interface ApplicationEntities {
+  [key: number]: Application;
 }
 
 @Injectable({
@@ -14,42 +14,42 @@ export interface ApplicationEntity {
 export class ApplicationsStateService {
   private readonly _defaultState: any = {};
 
-  private readonly _patronApplicationsState: BehaviorSubject<ApplicationEntity> = new BehaviorSubject<
-    ApplicationEntity
-  >(this._defaultState);
-
-  readonly patronApplicationEntities$: Observable<ApplicationEntity> = this._patronApplicationsState.asObservable();
-
-  readonly patronApplications$: Observable<PatronApplication[]> = this.patronApplicationEntities$.pipe(
-    map((entities: ApplicationEntity) => this._toPatronApplicationsArray(entities))
+  private readonly _applicationsState: BehaviorSubject<ApplicationEntities> = new BehaviorSubject<ApplicationEntities>(
+    this._defaultState
   );
 
-  set patronApplicationEntities(value: ApplicationEntity) {
-    this._patronApplicationsState.next(value);
+  readonly applicationEntities$: Observable<ApplicationEntities> = this._applicationsState.asObservable();
+
+  readonly applications$: Observable<Application[]> = this.applicationEntities$.pipe(
+    map((entities: ApplicationEntities) => this._toApplicationsArray(entities))
+  );
+
+  set applicationEntities(value: ApplicationEntities) {
+    this._applicationsState.next(value);
   }
 
-  get patronApplicationEntities(): ApplicationEntity {
-    return this._patronApplicationsState.getValue();
+  get applicationEntities(): ApplicationEntities {
+    return this._applicationsState.getValue();
   }
 
-  get patronApplications(): PatronApplication[] {
-    return this._toPatronApplicationsArray(this.patronApplicationEntities);
+  get applications(): Application[] {
+    return this._toApplicationsArray(this.applicationEntities);
   }
 
-  setPatronApplications(applications: PatronApplication[]): void {
-    const applicationEntities: ApplicationEntity = this._toPatronApplicationsEntities(applications);
+  setApplications(applications: Application[]): void {
+    const applicationEntities: ApplicationEntities = this._toApplicationEntities(applications);
 
-    this._patronApplicationsState.next(applicationEntities);
+    this._applicationsState.next(applicationEntities);
   }
 
-  setPatronApplicationSubmitted(applicationId: number) {
-    const foundApplication: PatronApplication = this.patronApplicationEntities[applicationId];
+  setApplicationSubmitted(applicationId: number) {
+    const foundApplication: Application = this.applicationEntities[applicationId];
 
     if (foundApplication) {
       const currentDateTime: string = new Date().toISOString().slice(0, -1);
 
-      this.patronApplicationEntities = {
-        ...this.patronApplicationEntities,
+      this.applicationEntities = {
+        ...this.applicationEntities,
         [applicationId]: {
           ...foundApplication,
           isApplicationSubmitted: true,
@@ -60,19 +60,20 @@ export class ApplicationsStateService {
     }
   }
 
-  getPatronApplicationById(applicationId: number): Observable<PatronApplication> {
-    return this.patronApplicationEntities$.pipe(map((entities: ApplicationEntity) => entities[applicationId]));
+  getApplicationById(applicationId: number): Observable<Application> {
+    return this.applicationEntities$.pipe(map((entities: ApplicationEntities) => entities[applicationId]));
   }
 
-  private _toPatronApplicationsEntities(applications: PatronApplication[]): ApplicationEntity {
-    return applications.reduce((entities: ApplicationEntity, application: PatronApplication) => {
+  private _toApplicationEntities(applications: Application[]): ApplicationEntities {
+    return applications.reduce((entities: ApplicationEntities, application: Application) => {
       return {
         ...entities,
         [application.applicationDefinitionId]: application,
       };
     }, {});
   }
-  private _toPatronApplicationsArray(entities: ApplicationEntity): PatronApplication[] {
+
+  private _toApplicationsArray(entities: ApplicationEntities): Application[] {
     return Object.keys(entities).map((key: string) => entities[parseInt(key, 10)]);
   }
 }

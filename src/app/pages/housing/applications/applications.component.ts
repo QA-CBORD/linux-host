@@ -21,7 +21,7 @@ export class ApplicationsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this._applicationsSubscription = this._applicationsService.getPatronApplications().subscribe();
+    this._applicationsSubscription = this._applicationsService.getApplications().subscribe();
   }
 
   ngOnDestroy(): void {

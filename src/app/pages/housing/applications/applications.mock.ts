@@ -1,8 +1,8 @@
 import { generateQuestions } from '../questions/questions.mock';
 
-import { PatronApplication } from './applications.model';
+import { Application } from './applications.model';
 
-export function generatePatronApplication(_: any, index: number): PatronApplication {
+export function generateApplication(_: any, index: number): Application {
   return {
     applicationDefinitionId: 100 + index,
     createdDateTime: '0001-01-01T00:00:00',
@@ -10,16 +10,16 @@ export function generatePatronApplication(_: any, index: number): PatronApplicat
     acceptedDateTime: null,
     cancelledDateTime: null,
     modifiedDate: null,
-    patronId: 8001138,
+    patronId: 8000712,
     isApplicationSubmitted: false,
     isApplicationAccepted: false,
     isApplicationCanceled: false,
-    applicationTitle: `New application ${index + 1}`,
-    applicationTerm: 46,
+    applicationTitle: `New application ${index + 100}`,
+    applicationTerm: 67,
     applicationFormJson: JSON.stringify(generateQuestions()),
   };
 }
 
-export function generatePatronApplications(amount: number = 3): PatronApplication[] {
-  return Array.apply(null, Array(amount)).map(generatePatronApplication);
+export function generateApplications(amount: number = 3): Application[] {
+  return Array.apply(null, Array(amount)).map(generateApplication);
 }

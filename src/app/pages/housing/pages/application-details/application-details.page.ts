@@ -12,7 +12,7 @@ import { StepperComponent } from '../../stepper/stepper.component';
 import { StepComponent } from '../../stepper/step/step.component';
 import { QuestionComponent } from '../../questions/question.component';
 
-import { PatronApplication, ApplicationStatus } from '../../applications/applications.model';
+import { Application, ApplicationStatus } from '../../applications/applications.model';
 import { QuestionPage } from '../../questions/questions.model';
 
 @Component({
@@ -26,7 +26,7 @@ export class ApplicationDetailsPage implements OnInit {
 
   @ViewChildren(QuestionComponent) questions: QueryList<QuestionComponent>;
 
-  application$: Observable<PatronApplication>;
+  application$: Observable<Application>;
 
   pages$: Observable<QuestionPage[]>;
 
@@ -47,9 +47,9 @@ export class ApplicationDetailsPage implements OnInit {
       .getPages()
       .pipe(tap((pages: QuestionPage[]) => this._patchFormsFromState(pages)));
 
-    this.application$ = this._applicationsService.getPatronApplicationById(this.applicationId).pipe(
+    this.application$ = this._applicationsService.getApplicationById(this.applicationId).pipe(
       filter(Boolean),
-      tap((application: PatronApplication) => this._questionsService.parsePages(application))
+      tap((application: Application) => this._questionsService.parsePages(application))
     );
   }
 
@@ -68,19 +68,16 @@ export class ApplicationDetailsPage implements OnInit {
   }
 
   async handleSubmit(form: FormGroup, index: number, isLastPage: boolean): Promise<void> {
-    await this._questionsStorageService.updateApplicationQuestions(
-      form.value,
-      this.applicationId,
-      index,
-      ApplicationStatus.Submitted
-    );
+    const status: ApplicationStatus = !isLastPage ? ApplicationStatus.Pending : ApplicationStatus.Submitted;
+
+    await this._questionsStorageService.updateApplicationQuestions(form.value, this.applicationId, index, status);
 
     this.questions.toArray().forEach((question: QuestionComponent) => question.touch());
 
     if (!isLastPage) {
       this.stepper.next();
     } else {
-      this._applicationsService.submitPatronApplication(this.applicationId);
+      this._applicationsService.submitApplication(this.applicationId);
       this._router.navigate(['/housing/dashboard']);
     }
   }

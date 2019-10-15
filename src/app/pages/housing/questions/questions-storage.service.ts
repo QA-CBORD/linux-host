@@ -3,11 +3,14 @@ import { Storage } from '@ionic/storage';
 
 import { ApplicationStatus } from '../applications/applications.model';
 
+export interface ApplicationQuestion {
+  status: ApplicationStatus;
+  statusChange: number;
+  questions: any[];
+}
+
 export interface ApplicationQuestions {
-  [key: number]: {
-    status: ApplicationStatus;
-    questions: any[];
-  };
+  [key: number]: ApplicationQuestion;
 }
 
 @Injectable({
@@ -17,20 +20,6 @@ export class QuestionsStorageService {
   private readonly _key: string = 'housing-questions';
 
   constructor(private _storage: Storage) {}
-
-  async addApplicationQuestions(applicationId: number, form: any): Promise<any> {
-    const applicationQuestions: any[] = await this.getApplicationQuestions(applicationId);
-    const questions: any[] = applicationQuestions || [];
-
-    questions.push(form);
-
-    return this._storage.set(this._key, {
-      [applicationId]: {
-        status,
-        questions,
-      },
-    });
-  }
 
   async updateApplicationQuestions(
     form: any,
@@ -51,6 +40,7 @@ export class QuestionsStorageService {
       ...applicationQuestions,
       [applicationId]: {
         status,
+        statusChange: Date.now(),
         questions,
       },
     });
@@ -76,6 +66,10 @@ export class QuestionsStorageService {
         return this._storage.remove(this._key);
       }
     }
+  }
+
+  async getAllApplicationQuestions(): Promise<ApplicationQuestions> {
+    return await this._storage.get(this._key);
   }
 
   async getApplicationQuestions(applicationId: number): Promise<any[]> {

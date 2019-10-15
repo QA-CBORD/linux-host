@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 import { IonItemSliding } from '@ionic/angular';
 
-import { PatronApplication, ApplicationStatus } from '../applications.model';
+import { Application, ApplicationStatus } from '../applications.model';
 
 @Component({
   selector: 'st-applications-list',
@@ -9,15 +9,15 @@ import { PatronApplication, ApplicationStatus } from '../applications.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ApplicationsListComponent {
-  @Input() applications: PatronApplication[];
+  @Input() applications: Application[];
 
   @Output() clear: EventEmitter<number> = new EventEmitter<number>();
 
-  trackById(_: number, application: PatronApplication): number {
+  trackById(_: number, application: Application): number {
     return application.applicationDefinitionId;
   }
 
-  getApplicationStatus(application: PatronApplication): string {
+  getApplicationStatus(application: Application): string {
     if (application.isApplicationSubmitted) {
       `${ApplicationStatus[ApplicationStatus.Submitted]}: ${application.submittedDateTime}`;
     } else if (application.isApplicationAccepted) {
