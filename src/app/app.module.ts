@@ -10,7 +10,9 @@ import { environment } from '../environments/environment';
 import { StGlobalPopoverModule } from './shared/ui-components/st-global-popover/st-global-popover.module';
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [
+    AppComponent
+  ],
   imports: [
     StGlobalPopoverModule,
     CoreModule,

@@ -1,0 +1,106 @@
+<ion-content>
+  <div class="item">
+    <ion-header class="item__header">
+      <ion-toolbar mode="md" class="item__toolbar">
+        <img src="/assets/images/temp-merchant-photo.jpg" alt="french frees" class="item__img">
+        <ion-buttons slot="start" class="item__close-btns">
+          <ion-button color="dark" (click)="close()" class="item__close-btn">
+            <ion-icon size="large" slot="icon-only" name="close" class="item__toolbar-icon"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    
+    <div class="item__descriptions">
+      <div class="item__descriptions-title">{{data.itemName}}</div>
+      <p class="item__descriptions-content">{{data.itemNDescription}}</p>
+      <span class="item__descriptions-price">${{data.itemPrice}}</span>
+    </div>
+
+    <ion-list lines="none" class="item__list-size">
+        <ion-item-divider class="item__divider">
+          <div class="item__divider-title">Select a size</div>
+          <div class="item__divider-options">Requaired</div>
+          
+        </ion-item-divider>
+      <ion-radio-group class="item__size" lines="none" (ionChange)="onRadioGroupChanged($event.detail)">
+        <ion-item *ngFor="let size of data.size" lines="none" class="item__radio-item">
+          <ion-label>
+              <div class="item__size-title">{{size.name}}</div>
+              <div *ngIf="size.price" class="item__size-price">+${{size.price}}</div>
+          </ion-label>
+          <ion-radio class="item__radio-item__item" slot="start" value="{{size.name}}" mode="md"></ion-radio>
+        </ion-item>
+      </ion-radio-group>
+    </ion-list>
+
+    <ion-list class="item__list-toppings" *ngIf="data.toppings">
+      <ion-item-divider class="item__divider">
+        <div class="item__divider-title">Toppings</div>
+        <div class="item__divider-options">Select up to 3</div>
+      </ion-item-divider>
+      
+      <ion-item *ngFor="let topping of data.toppings" lines="none" no-lines class="item__toppings-item">
+          <ion-checkbox class="item__toppings-item-checkbox" mode="md"></ion-checkbox>
+          <ion-label class="item__toppings-lable">{{topping.name}}</ion-label>
+      </ion-item>
+
+    </ion-list>
+
+    <ion-list class="item__special-instructions">
+      <ion-item-divider class="item__divider">
+        <div class="item__divider-title">Specials instructions</div>
+      </ion-item-divider>
+      
+      <st-textarea-floating-label
+        class="item__textarea"
+        placeholder="Add a note for the kitchen..."
+        idd="message"
+        label=""
+        title="Add a note for the kitchen..."
+        rows="3"
+      >
+    </st-textarea-floating-label>
+
+    </ion-list>
+
+    <ion-list class="item__nutrition-info">
+      <ion-item-divider class="item__divider">
+        <div class="item__divider-title">Nutrition info</div>
+      </ion-item-divider>
+      <ion-grid>
+        <ion-row class="item__nutrition-info-row">
+          <ion-col class="item__nutrition-info-col">
+            <div class="item__nutrition-info-title">{{data.nutritionsValue.calories}}</div>
+            <div class="item__nutrition-info-subtitle">Calories</div>
+          </ion-col>
+          <ion-col class="item__nutrition-info-col">
+            <div class="item__nutrition-info-title">{{data.nutritionsValue.protein}}g</div>
+            <div class="item__nutrition-info-subtitle">Protein</div>
+          </ion-col>
+          <ion-col class="item__nutrition-info-col">
+            <div class="item__nutrition-info-title">{{data.nutritionsValue.carbs}}</div>
+            <div class="item__nutrition-info-subtitle">Carbs</div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+
+    </ion-list>
+    
+    
+  </div>
+</ion-content>
+<ion-footer class="item-footer" mode="md" lines="none">
+  <ion-toolbar class="item-footer__toolbar" lines="none">
+    <div class="item-footer__toolbar">
+      <div class="item-footer__counter-btns">
+        <ion-button no-border class="item-footer__counter-btn">-</ion-button>
+        <div>1</div>
+        <ion-button no-border class="item-footer__counter-btn">+</ion-button>
+      </div>
+      <div>
+        <ion-button no-border class="item-footer__add-btn">Add ${{data.itemPrice}}</ion-button>
+      </div>
+    </div>
+  </ion-toolbar>
+</ion-footer>
