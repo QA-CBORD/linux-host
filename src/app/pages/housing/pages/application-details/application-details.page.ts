@@ -12,7 +12,7 @@ import { StepperComponent } from '../../stepper/stepper.component';
 import { StepComponent } from '../../stepper/step/step.component';
 import { QuestionComponent } from '../../questions/question.component';
 
-import { PatronApplication } from '../../applications/applications.model';
+import { PatronApplication, ApplicationStatus } from '../../applications/applications.model';
 import { QuestionPage } from '../../questions/questions.model';
 
 @Component({
@@ -60,14 +60,20 @@ export class ApplicationDetailsPage implements OnInit {
     await this._questionsStorageService.updateApplicationQuestions(
       selectedStep.stepControl.value,
       this.applicationId,
-      selectedIndex
+      selectedIndex,
+      ApplicationStatus.Pending
     );
 
     this._router.navigate(['/housing/dashboard']);
   }
 
   async handleSubmit(form: FormGroup, index: number, isLastPage: boolean): Promise<void> {
-    await this._questionsStorageService.updateApplicationQuestions(form.value, this.applicationId, index);
+    await this._questionsStorageService.updateApplicationQuestions(
+      form.value,
+      this.applicationId,
+      index,
+      ApplicationStatus.Submitted
+    );
 
     this.questions.toArray().forEach((question: QuestionComponent) => question.touch());
 
@@ -81,10 +87,12 @@ export class ApplicationDetailsPage implements OnInit {
 
   private _patchFormsFromState(pages: QuestionPage[]): void {
     pages.forEach(async (page: QuestionPage, index: number) => {
-      const applicationForms: any[] = await this._questionsStorageService.getApplicationQuestions(this.applicationId);
+      const applicationQuestions: any[] = await this._questionsStorageService.getApplicationQuestions(
+        this.applicationId
+      );
 
-      if (applicationForms && applicationForms[index]) {
-        page.form.patchValue(applicationForms[index]);
+      if (applicationQuestions && applicationQuestions[index]) {
+        page.form.patchValue(applicationQuestions[index]);
 
         this.questions.toArray().forEach((question: QuestionComponent) => question.check());
       }

@@ -1,8 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
 
+import { ApplicationStatus } from '../applications/applications.model';
+
 export interface ApplicationQuestions {
-  [key: number]: any[];
+  [key: number]: {
+    status: ApplicationStatus;
+    questions: any[];
+  };
 }
 
 @Injectable({
@@ -14,21 +19,27 @@ export class QuestionsStorageService {
   constructor(private _storage: Storage) {}
 
   async addApplicationQuestions(applicationId: number, form: any): Promise<any> {
-    const applicationQuestions: ApplicationQuestions = await this._storage.get(this._key);
-    const questions: any[] =
-      applicationQuestions && applicationQuestions[applicationId] ? applicationQuestions[applicationId] : [];
+    const applicationQuestions: any[] = await this.getApplicationQuestions(applicationId);
+    const questions: any[] = applicationQuestions || [];
 
     questions.push(form);
 
     return this._storage.set(this._key, {
-      [applicationId]: questions,
+      [applicationId]: {
+        status,
+        questions,
+      },
     });
   }
 
-  async updateApplicationQuestions(form: any, applicationId: number, index: number): Promise<any> {
-    const applicationQuestions: ApplicationQuestions = await this._storage.get(this._key);
-    const questions: any[] =
-      applicationQuestions && applicationQuestions[applicationId] ? applicationQuestions[applicationId] : [];
+  async updateApplicationQuestions(
+    form: any,
+    applicationId: number,
+    index: number,
+    status: ApplicationStatus
+  ): Promise<any> {
+    const applicationQuestions: any[] = await this.getApplicationQuestions(applicationId);
+    const questions: any[] = applicationQuestions || [];
 
     if (questions && questions[index]) {
       questions[index] = form;
@@ -38,14 +49,17 @@ export class QuestionsStorageService {
 
     return this._storage.set(this._key, {
       ...applicationQuestions,
-      [applicationId]: questions,
+      [applicationId]: {
+        status,
+        questions,
+      },
     });
   }
 
-  async resetApplicationQuestions(applicationId: number): Promise<any> {
-    const applicationQuestions: ApplicationQuestions = await this._storage.get(this._key);
+  async removeApplicationQuestions(applicationId: number): Promise<any> {
+    const applicationQuestions: ApplicationQuestions = await this.getApplicationQuestions(applicationId);
 
-    if (applicationQuestions && applicationQuestions[applicationId]) {
+    if (applicationQuestions) {
       const questionKeys: string[] = Object.keys(applicationQuestions);
 
       if (questionKeys.length > 1) {
@@ -67,6 +81,8 @@ export class QuestionsStorageService {
   async getApplicationQuestions(applicationId: number): Promise<any[]> {
     const applicationQuestions: ApplicationQuestions = await this._storage.get(this._key);
 
-    return applicationQuestions ? applicationQuestions[applicationId] : null;
+    return applicationQuestions && applicationQuestions[applicationId]
+      ? applicationQuestions[applicationId].questions
+      : null;
   }
 }
