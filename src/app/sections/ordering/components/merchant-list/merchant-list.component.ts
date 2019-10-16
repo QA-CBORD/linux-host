@@ -23,8 +23,8 @@ export class MerchantListComponent {
     return id;
   }
 
-  merchantClickHandler({ id, orderTypes, storeAddress }) {
-    this.merchantClick.emit({ id, orderTypes });
+  merchantClickHandler({ id, orderTypes, storeAddress, settings }) {
+    this.merchantClick.emit({ id, orderTypes, storeAddress, settings });
   }
 
   favouriteHandler({ isFavorite, id }) {

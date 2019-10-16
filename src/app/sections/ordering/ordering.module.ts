@@ -12,7 +12,7 @@ import { OrderingApiService } from './services/ordering.api.service';
 import { OrderingResolver } from './resolvers';
 import { MerchantListModule } from './components/merchant-list/merchant-list.module';
 import { MenuOrderingComponent } from './components';
-import { OrderDetailsModule } from '@sections/ordering/shared/ui-components/order-details/order-details.module';
+import { OrderDetailsModule } from './shared/ui-components/order-details/order-details.module';
 
 const imports = [CommonModule, OrderingRoutingModule, MerchantListModule, IonicModule, OrderDetailsModule];
 const declarations = [OrderingPage, MenuOrderingComponent];
@@ -23,4 +23,4 @@ const providers = [OrderingResolver, MerchantService, OrderingApiService];
   imports,
   providers,
 })
-export class OrderingPageModule {}
+export class OrderingPageModule { }

@@ -8,8 +8,8 @@ const declarations = [DeliveryAddressesModalComponent];
 
 @NgModule({
   declarations,
-  exports: [declarations],
-  entryComponents: [declarations],
+  exports: declarations,
+  entryComponents: declarations,
   imports: [CommonModule, IonicModule, AddEditAddressesModule],
 })
 export class DeliveryAddressesModalModule {}
