@@ -29,6 +29,6 @@ export class ApplicationsComponent implements OnInit, OnDestroy {
   }
 
   async handleClear(applicationId: number): Promise<void> {
-    await this._questionsStorageService.removeApplicationQuestions(applicationId);
+    await this._questionsStorageService.removeQuestionsGroup(applicationId);
   }
 }

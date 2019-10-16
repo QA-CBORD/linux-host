@@ -3,14 +3,14 @@ import { Storage } from '@ionic/storage';
 
 import { ApplicationStatus } from '../applications/applications.model';
 
-export interface ApplicationQuestion {
+export interface QuestionsGroup {
   status: ApplicationStatus;
-  statusChange: number;
+  statusChange: string;
   questions: any[];
 }
 
-export interface ApplicationQuestions {
-  [key: number]: ApplicationQuestion;
+export interface QuestionGroups {
+  [key: number]: QuestionsGroup;
 }
 
 @Injectable({
@@ -21,14 +21,26 @@ export class QuestionsStorageService {
 
   constructor(private _storage: Storage) {}
 
-  async updateApplicationQuestions(
-    form: any,
-    applicationId: number,
-    index: number,
-    status: ApplicationStatus
-  ): Promise<any> {
-    const applicationQuestions: any[] = await this.getApplicationQuestions(applicationId);
-    const questions: any[] = applicationQuestions || [];
+  async getQuestionGroups(): Promise<QuestionGroups> {
+    return this._storage.get(this._key);
+  }
+
+  async getQuestionsGroup(applicationId: number): Promise<QuestionsGroup> {
+    const groups: QuestionGroups = await this.getQuestionGroups();
+
+    return groups && groups[applicationId] ? groups[applicationId] : null;
+  }
+
+  async getQuestions(applicationId: number): Promise<any[]> {
+    const group: QuestionsGroup = await this.getQuestionsGroup(applicationId);
+
+    return group ? group.questions : null;
+  }
+
+  async updateQuestionsGroup(applicationId: number, form: any, index: number, status: ApplicationStatus): Promise<any> {
+    const groups: QuestionGroups = await this.getQuestionGroups();
+    const group: QuestionsGroup = groups && groups[applicationId] ? groups[applicationId] : null;
+    let questions: any[] = group ? group.questions : [];
 
     if (questions && questions[index]) {
       questions[index] = form;
@@ -37,7 +49,7 @@ export class QuestionsStorageService {
     }
 
     return this._storage.set(this._key, {
-      ...applicationQuestions,
+      ...groups,
       [applicationId]: {
         status,
         statusChange: Date.now(),
@@ -46,19 +58,17 @@ export class QuestionsStorageService {
     });
   }
 
-  async removeApplicationQuestions(applicationId: number): Promise<any> {
-    const applicationQuestions: ApplicationQuestions = await this.getApplicationQuestions(applicationId);
+  async removeQuestionsGroup(applicationId: number): Promise<any> {
+    const groups: QuestionGroups = await this.getQuestionGroups();
 
-    if (applicationQuestions) {
-      const questionKeys: string[] = Object.keys(applicationQuestions);
+    if (groups && groups[applicationId]) {
+      const questionKeys: string[] = Object.keys(groups);
 
       if (questionKeys.length > 1) {
         const questionEntities: { [key: number]: any } = questionKeys.reduce((accumulator: any, key: string) => {
           const numericKey: number = parseInt(key, 10);
 
-          return numericKey !== applicationId
-            ? { ...accumulator, [numericKey]: applicationQuestions[numericKey] }
-            : accumulator;
+          return numericKey !== applicationId ? { ...accumulator, [numericKey]: groups[numericKey] } : accumulator;
         }, {});
 
         return this._storage.set(this._key, questionEntities);
@@ -66,17 +76,5 @@ export class QuestionsStorageService {
         return this._storage.remove(this._key);
       }
     }
-  }
-
-  async getAllApplicationQuestions(): Promise<ApplicationQuestions> {
-    return await this._storage.get(this._key);
-  }
-
-  async getApplicationQuestions(applicationId: number): Promise<any[]> {
-    const applicationQuestions: ApplicationQuestions = await this._storage.get(this._key);
-
-    return applicationQuestions && applicationQuestions[applicationId]
-      ? applicationQuestions[applicationId].questions
-      : null;
   }
 }

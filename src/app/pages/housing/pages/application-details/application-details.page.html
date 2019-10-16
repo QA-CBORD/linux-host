@@ -1,8 +1,8 @@
 <ion-content class="ion-padding application-details__content" *ngIf="(application$ | async) as application" #content>
   <div class="application-details__actions">
-    <ion-button [routerLink]="['/housing/dashboard']" routerDirection="back" fill="clear" color="dark"
-      >Cancel</ion-button
-    >
+    <ion-button [routerLink]="['/housing/dashboard']" routerDirection="back" fill="clear" color="dark">
+      Cancel
+    </ion-button>
     <ion-button fill="clear" (click)="save()">Save</ion-button>
   </div>
 

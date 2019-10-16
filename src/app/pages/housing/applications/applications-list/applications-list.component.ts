@@ -1,4 +1,5 @@
-import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter, Inject, LOCALE_ID } from '@angular/core';
+import { formatDate } from '@angular/common';
 import { IonItemSliding } from '@ionic/angular';
 
 import { Application, ApplicationStatus } from '../applications.model';
@@ -9,6 +10,8 @@ import { Application, ApplicationStatus } from '../applications.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ApplicationsListComponent {
+  constructor(@Inject(LOCALE_ID) private _localId: string) {}
+
   @Input() applications: Application[];
 
   @Output() clear: EventEmitter<number> = new EventEmitter<number>();
@@ -19,7 +22,13 @@ export class ApplicationsListComponent {
 
   getApplicationStatus(application: Application): string {
     if (application.isApplicationSubmitted) {
-      `${ApplicationStatus[ApplicationStatus.Submitted]}: ${application.submittedDateTime}`;
+      return application.submittedDateTime
+        ? `${ApplicationStatus[ApplicationStatus.Submitted]}:  ${formatDate(
+            application.submittedDateTime,
+            'MMM/dd/yyyy',
+            this._localId
+          )}`
+        : ApplicationStatus[ApplicationStatus.Submitted];
     } else if (application.isApplicationAccepted) {
       return ApplicationStatus[ApplicationStatus.Pending];
     }

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { map, tap, catchError, switchMap } from 'rxjs/operators';
+import { map, tap, catchError, switchMap, mergeMap } from 'rxjs/operators';
 
 import { BASE_URL } from '../housing.config';
 
@@ -10,11 +10,7 @@ import { ApplicationsStateService } from './applications-state.service';
 
 import { Response } from '../housing.model';
 import { Application, ApplicationStatus } from './applications.model';
-import {
-  ApplicationQuestions,
-  QuestionsStorageService,
-  ApplicationQuestion,
-} from '../questions/questions-storage.service';
+import { QuestionGroups, QuestionsStorageService, QuestionsGroup } from '../questions/questions-storage.service';
 
 @Injectable({
   providedIn: 'root',
@@ -39,7 +35,7 @@ export class ApplicationsService {
     const applications: Application[] = this._applicationsStateService.applications;
 
     if (applications.length > 0) {
-      return of(applications);
+      return of(applications).pipe(mergeMap((applications: Application[]) => this.getStoredApplications(applications)));
     }
 
     return this._authService.authorize().pipe(
@@ -49,7 +45,7 @@ export class ApplicationsService {
   }
 
   submitApplication(applicationId: number): void {
-    this._applicationsStateService.setApplicationSubmitted(applicationId);
+    this._applicationsStateService.submitApplication(applicationId);
   }
 
   getApplicationById(applicationId: number): Observable<Application> {
@@ -57,24 +53,28 @@ export class ApplicationsService {
   }
 
   async getStoredApplications(applications: Application[]): Promise<Application[]> {
-    const applicationQuestions: ApplicationQuestions = await this._questionsStorageService.getAllApplicationQuestions();
+    const groups: QuestionGroups = await this._questionsStorageService.getQuestionGroups();
 
-    if (!applicationQuestions) {
+    if (!groups) {
       return applications;
     }
 
     return applications.map((application: Application) => {
-      const applicationQuestion: ApplicationQuestion = applicationQuestions[application.applicationDefinitionId];
+      const group: QuestionsGroup = groups[application.applicationDefinitionId];
 
-      if (applicationQuestion) {
-        const isSubmitted: boolean = applicationQuestion.status === ApplicationStatus.Submitted;
-        const isPending: boolean = applicationQuestion.status === ApplicationStatus.Pending;
-
-        return {
-          ...application,
-          isApplicationSubmitted: isSubmitted || application.isApplicationSubmitted,
-          isApplicationAccepted: isPending || application.isApplicationAccepted,
-        };
+      if (group) {
+        if (group.status === ApplicationStatus.Submitted) {
+          return {
+            ...application,
+            isApplicationSubmitted: true,
+            submittedDateTime: group.statusChange.toString(),
+          };
+        } else if (group.status === ApplicationStatus.Pending) {
+          return {
+            ...application,
+            isApplicationAccepted: true,
+          };
+        }
       }
 
       return application;
@@ -97,7 +97,7 @@ export class ApplicationsService {
       })
       .pipe(
         map((response: Response) => response.data),
-        map((applications: Application[]) => applications.map(this._toApplication)),
+        map((applications: any[]) => applications.map(this._toApplication)),
         tap(async (applications: Application[]) => {
           const storedApplications: Application[] = await this.getStoredApplications(applications);
 

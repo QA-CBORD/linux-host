@@ -37,27 +37,27 @@ export class ApplicationsStateService {
   }
 
   setApplications(applications: Application[]): void {
-    const applicationEntities: ApplicationEntities = this._toApplicationEntities(applications);
-
-    this._applicationsState.next(applicationEntities);
+    this.applicationEntities = this._toApplicationEntities(applications);
   }
 
-  setApplicationSubmitted(applicationId: number) {
-    const foundApplication: Application = this.applicationEntities[applicationId];
+  submitApplication(applicationId: number): ApplicationEntities {
+    const application: Application = this.applicationEntities[applicationId];
 
-    if (foundApplication) {
+    if (application) {
       const currentDateTime: string = new Date().toISOString().slice(0, -1);
 
       this.applicationEntities = {
         ...this.applicationEntities,
         [applicationId]: {
-          ...foundApplication,
+          ...application,
           isApplicationSubmitted: true,
           submittedDateTime: currentDateTime,
           modifiedDate: currentDateTime,
         },
       };
     }
+
+    return this.applicationEntities;
   }
 
   getApplicationById(applicationId: number): Observable<Application> {
