@@ -1,4 +1,4 @@
-import { MerchantInfo, MerchantSearchOption, OrderInfo } from '../shared/models';
+import { MerchantInfo, MerchantSearchOption, OrderInfo, BuildingInfo, AddressInfo } from '../shared/models';
 import { Injectable } from '@angular/core';
 
 import { BehaviorSubject, Observable, zip } from 'rxjs';
@@ -9,7 +9,6 @@ import { OrderingApiService } from './ordering.api.service';
 import { MerchantSearchOptions } from '../utils';
 import { MerchantSearchOptionName } from '../ordering.config';
 import { UserService } from 'src/app/core/service/user-service/user.service';
-import { AddressInfo } from "@core/model/address/address-info";
 
 @Injectable()
 export class MerchantService {
@@ -19,8 +18,7 @@ export class MerchantService {
   private readonly _menuMerchants$: BehaviorSubject<MerchantInfo[]> = new BehaviorSubject<MerchantInfo[]>([]);
   private readonly _recentOrders$: BehaviorSubject<OrderInfo[]> = new BehaviorSubject<OrderInfo[]>([]);
 
-  constructor(private readonly orderingApiService: OrderingApiService,
-              private readonly userService: UserService) {}
+  constructor(private readonly orderingApiService: OrderingApiService, private readonly userService: UserService) { }
 
   get menuMerchants$(): Observable<MerchantInfo[]> {
     return this._menuMerchants$.asObservable();
@@ -98,26 +96,31 @@ export class MerchantService {
     return this.orderingApiService.getMerchantOrderSchedule(merchantId, orderType);
   }
 
-  retrieveUserAddressList(): Observable<AddressInfo[]> {
-    return this.userService.userData.pipe(
-        switchMap(({id}) => this.orderingApiService.retrieveUserAddressList(id)),
-        map(({addresses}) => addresses)
-    );
+  retrieveUserAddressList(userId: string): Observable<AddressInfo[]> {
+    return this.orderingApiService.retrieveUserAddressList(userId);
   }
 
   getMerchantSettings(merchantId: string): Observable<any> {
     return this.orderingApiService.getMerchantSettings(merchantId);
   }
 
-  retrievePickupLocations(institutionId: string): Observable<any> {
-    return this.orderingApiService.retrievePickupLocations(institutionId);
+  retrievePickupLocations(): Observable<any> {
+    return this.orderingApiService.retrievePickupLocations();
   }
 
-  addFavoriteMerchant(merchantId: string): Observable<any> {
+  addFavoriteMerchant(merchantId: string): Observable<string> {
     return this.orderingApiService.addFavoriteMerchant(merchantId);
   }
 
-  removeFavoriteMerchant(merchantId: string): Observable<any> {
+  removeFavoriteMerchant(merchantId: string): Observable<boolean> {
     return this.orderingApiService.removeFavoriteMerchant(merchantId);
+  }
+
+  retrieveBuildings(): Observable<BuildingInfo[]> {
+    return this.orderingApiService.retrieveBuildings();
+  }
+
+  updateUserAddress(updateUserAddress): Observable<any> {
+    return this.orderingApiService.updateUserAddress(updateUserAddress);
   }
 }

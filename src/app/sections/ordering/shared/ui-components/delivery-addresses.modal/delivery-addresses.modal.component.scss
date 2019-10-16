@@ -92,12 +92,9 @@
     @include font-nunito-semibold(16px);
   }
 
-  &__footer {
-    padding: 0 15px 20px;
-  }
-
   &__submit-btn {
     --background: #166dff;
+    margin: 20px 15px;
     height: 48px;
 
     @include font-nunito-heavy(14px);

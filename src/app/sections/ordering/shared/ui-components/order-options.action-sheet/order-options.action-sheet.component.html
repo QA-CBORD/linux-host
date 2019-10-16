@@ -28,15 +28,16 @@
           </ion-item>
         </ion-radio-group>
       </div>
-      <ion-item detail="true"
+      <ion-item [detail]="orderOptionsData.isClickble"
                 lines="full"
-                (click)="openDeliveryAddressesModal()">
+                (click)="orderOptionsData.isClickble && openDeliveryAddressesModal()">
         <div class="order-options__select-container">
-          <div class="order-options__select-label">{{ currentOrderOptions ? 'PICKUP' : 'DELIVERY' }} ADDRESS</div>
+          <div class="order-options__select-label">{{ orderOptionsData.label }} ADDRESS</div>
           <div class="order-options__select-value">
             <img width="16"
                  src="./assets/icon/location-pin.svg"
-                 alt="pin" />290 Summer Street, Boston
+                 alt="pin" />
+            {{ orderOptionsData.address.address1 }}, {{orderOptionsData.address.city}}
           </div>
         </div>
       </ion-item>
@@ -44,17 +45,16 @@
                 lines="full"
                 (click)="openPicker()">
         <div class="order-options__select-container">
-          <div class="order-options__select-label">{{ currentOrderOptions ? 'PICKUP' : 'DELIVERY' }} TIME</div>
-          <div class="order-options__select-value">
-            <img width="16" src="./assets/icon/time.svg" alt="time" />ASAP
-          </div>
+          <div class="order-options__select-label">{{ orderOptionsData.label }} TIME</div>
+          <div class="order-options__select-value"><img width="16"
+                 src="./assets/icon/time.svg"
+                 alt="time" />ASAP</div>
         </div>
       </ion-item>
     </ion-list>
   </div>
 </ion-content>
-<ion-footer mode="ios"
-            class="order-options__footer">
+<ion-footer mode="ios">
   <ion-button mode="md"
               expand="block"
               class="order-options__button"

@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 import { Observable } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { switchMap, map, tap } from 'rxjs/operators';
 
 import { UserService } from 'src/app/core/service/user-service/user.service';
 import { CoordsService } from 'src/app/core/service/coords/coords.service';
@@ -12,7 +12,7 @@ import { MessageResponse } from 'src/app/core/model/service/message-response.mod
 import { MerchantSearchOptions, MerchantInfo } from '../../ordering';
 import { GeoCoordinates } from 'src/app/core/model/geolocation/geocoordinates.model';
 import { MerchantSearchOptionName } from '../ordering.config';
-import { OrderInfo } from '../shared';
+import { OrderInfo, BuildingInfo, AddressInfo } from '../shared';
 
 @Injectable()
 export class OrderingApiService extends BaseService {
@@ -82,12 +82,12 @@ export class OrderingApiService extends BaseService {
     );
   }
 
-  retrieveUserAddressList(userId: string): Observable<any> {
+  retrieveUserAddressList(userId: string): Observable<AddressInfo[]> {
     const methodName = 'retrieveUserAddressList';
     const postParams: ServiceParameters = { userId, addressId: null };
 
     return this.httpRequestFull('/json/user', methodName, true, null, postParams).pipe(
-      map(({ response }: MessageResponse<any>) => response)
+      map(({ response }: MessageResponse<any>) => response.addresses)
     );
   }
 
@@ -105,11 +105,78 @@ export class OrderingApiService extends BaseService {
     );
   }
 
-  retrievePickupLocations(institutionId: string): Observable<any> {
+  retrievePickupLocations(): Observable<any> {
     const methodName = 'retrievePickupLocations';
     const postParams: ServiceParameters = { active: true };
 
-    return this.httpRequestFull('/json/institution', methodName, true, institutionId, postParams).pipe(
+    return this.userService.userData.pipe(
+      switchMap(({ institutionId }) =>
+        this.httpRequestFull('/json/institution', methodName, true, institutionId, postParams)
+      ),
+      map(({ response }: MessageResponse<any>) => response.list)
+    );
+  }
+
+  retrieveBuildings(): Observable<BuildingInfo[]> {
+    const methodName = 'retrieveBuildings';
+    const postParams: ServiceParameters = { active: true };
+
+    return this.userService.userData.pipe(
+      switchMap(({ institutionId }) =>
+        this.httpRequestFull('/json/institution', methodName, true, institutionId, postParams)
+      ),
+      map(({ response }: MessageResponse<any>) => response.list)
+    );
+  }
+
+  updateUserAddress({
+    address1 = null,
+    address2 = null,
+    campus = null,
+    city = null,
+    nickname = null,
+    state = null,
+    building = null,
+    room = null }): Observable<any> {
+    const methodName = 'updateUserAddress';
+    const postParams: ServiceParameters = {
+      address: {
+        objectRevision: null,
+        department: null,
+        company: null,
+        address1,
+        address2: address2 !== null && !address2.length ? null : address2,
+        city,
+        state,
+        postalcode: null,
+        country: null,
+        latitude: null,
+        longitude: null,
+        notes: null,
+        nickname: nickname !== null && !nickname.length ? null : nickname,
+        building,
+        floor: null,
+        room,
+        crossStreet: null,
+        accessCode: null,
+        phone: null,
+        phoneExt: null,
+        onCampus: campus
+      }
+    };
+
+    return this.userService.userData.pipe(
+      switchMap(({ id }) => this.httpRequestFull('/json/user', methodName, true, null, { ...postParams, userId: id }).pipe(
+        map(({ response }: MessageResponse<any>) => response)
+      )))
+
+  }
+
+  isOutsideMerchantDeliveryArea(merchantId: string, latitude: number, longitude: number): Observable<any> {
+    const methodName = 'isOutsideMerchantDeliveryArea';
+    const postParams: ServiceParameters = { merchantId, latitude, longitude };
+
+    return this.httpRequestFull('/json/merchant', methodName, true, null, postParams).pipe(
       map(({ response }: MessageResponse<any>) => response)
     );
   }

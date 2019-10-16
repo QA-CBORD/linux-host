@@ -1,21 +1,21 @@
 import { MerchantService } from './services';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { ModalController, ToastController } from '@ionic/angular';
 
 import { Observable, of, iif, zip } from 'rxjs';
+import { switchMap, take } from 'rxjs/operators';
 
-import { MerchantInfo, OrderInfo } from './shared/models';
-import { MerchantOrderTypesInfo } from './shared/models';
-import { ModalController, ToastController } from '@ionic/angular';
+import { MerchantInfo, MerchantOrderTypesInfo, OrderInfo } from './shared/models';
 import { UserService } from '@core/service/user-service/user.service';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { switchMap, take } from 'rxjs/operators';
-import { ORDER_TYPE } from './ordering.config';
 import { OrderOptionsActionSheetComponent } from './shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
+import { ORDER_TYPE } from './ordering.config';
 
 @Component({
   selector: 'st-ordering.page',
   templateUrl: './ordering.page.html',
   styleUrls: ['./ordering.page.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OrderingPage implements OnInit {
   merchantList$: Observable<MerchantInfo[]>;
@@ -27,7 +27,7 @@ export class OrderingPage implements OnInit {
     private readonly userService: UserService,
     private readonly loadingService: LoadingService,
     private readonly toastController: ToastController
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.merchantList$ = this.merchantService.menuMerchants$;
@@ -44,9 +44,9 @@ export class OrderingPage implements OnInit {
       .pipe(switchMap(() => this.merchantService.getMerchantsWithFavoriteInfo()))
       .subscribe(
         () => {
+          this.loadingService.closeSpinner();
           const message = isFavorite ? 'Removed from favorites' : 'Added to favorites';
           this.onToastDisplayed(message);
-          this.loadingService.closeSpinner();
         },
         () => this.loadingService.closeSpinner()
       );
@@ -63,42 +63,37 @@ export class OrderingPage implements OnInit {
     this.loadingService.showSpinner();
     zip(
       this.merchantService.getMerchantOrderSchedule(merchantId, orderType),
-      this.userService
-        .getUserSettingsBySettingName('defaultaddress')
-        .pipe(
-          switchMap(({ response }) =>
-            zip(of({ defaultAddress: response.value }), this.merchantService.retrieveUserAddressList())
-          )
-        ),
-      this.merchantService.getMerchantSettings(merchantId).pipe(
-        switchMap(
-          ({ list: [pickupLocationsEnabled] }): any => {
-            switch (pickupLocationsEnabled.value) {
-              case null:
-                return of({ list: [] });
-              case 'true':
-                return this.userService
-                  .getUser()
-                  .pipe(switchMap(({ institutionId }) => this.merchantService.retrievePickupLocations(institutionId)));
-              case 'false':
-                return of({ list: [storeAddress] });
-            }
-          }
-        )
-      )
+      this.retrieveDeliveryAddresses(),
+      this.retrievePickupLocations(merchantId, storeAddress),
+      this.merchantService.retrieveBuildings()
     )
       .pipe(take(1))
       .subscribe(
-        ([schedule, [defaultAddress, listOfAddresses], pickupLocations]) => {
-          console.log(pickupLocations['list']);
+        ([schedule, [deliveryAddress, deliveryLocations], pickupLocations, buildingsForNewAddressForm]) => {
           this.loadingService.closeSpinner();
-          this.actionSheet(schedule, orderTypes, defaultAddress.defaultAddress, listOfAddresses);
+          this.actionSheet(
+            schedule,
+            orderTypes,
+            deliveryAddress.defaultAddress,
+            deliveryLocations,
+            storeAddress,
+            pickupLocations,
+            buildingsForNewAddressForm
+          );
         },
-        () => () => this.loadingService.closeSpinner()
+        () => this.loadingService.closeSpinner()
       );
   }
 
-  private async actionSheet(schedule, orderTypes: MerchantOrderTypesInfo, defaultDeliveryAddress, deliveryAddresses) {
+  private async actionSheet(
+    schedule,
+    orderTypes: MerchantOrderTypesInfo,
+    defaultDeliveryAddress,
+    deliveryAddresses,
+    defaultPickupAddress,
+    pickupLocations,
+    buildingsForNewAddressForm
+  ) {
     let cssClass = 'order-options-action-sheet';
     cssClass += orderTypes.delivery && orderTypes.pickup ? ' order-options-action-sheet-p-d' : '';
 
@@ -110,9 +105,12 @@ export class OrderingPage implements OnInit {
         orderTypes,
         defaultDeliveryAddress,
         deliveryAddresses,
+        defaultPickupAddress,
+        pickupLocations,
+        buildingsForNewAddressForm
       },
     });
-    modal.onDidDismiss().then(() => {});
+    modal.onDidDismiss().then(() => { });
     await modal.present();
   }
 
@@ -125,5 +123,32 @@ export class OrderingPage implements OnInit {
       showCloseButton: true,
     });
     toast.present();
+  }
+
+  private retrievePickupLocations(merchantId, storeAddress) {
+    return this.merchantService.getMerchantSettings(merchantId).pipe(
+      switchMap(
+        ({ list: [pickupLocationsEnabled] }): any => {
+          switch (pickupLocationsEnabled.value) {
+            case null:
+              return of({ list: [] });
+            case 'true':
+              return this.merchantService.retrievePickupLocations();
+            case 'false':
+              return of({ list: [storeAddress] });
+          }
+        }
+      )
+    )
+  }
+
+  private retrieveDeliveryAddresses() {
+    return this.userService
+      .getUserSettingsBySettingName('defaultaddress')
+      .pipe(
+        switchMap(({ response }) =>
+          zip(of({ defaultAddress: response.value }), this.merchantService.retrieveUserAddressList(response.userId))
+        )
+      )
   }
 }

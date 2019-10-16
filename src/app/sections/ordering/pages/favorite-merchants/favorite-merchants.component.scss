@@ -4,4 +4,29 @@
 	&__header {
 		border-bottom: 1px solid $color-whisper;
 	}
+
+	&__empty-state-container {
+		display: flex;
+    	flex-direction: column;
+    	align-items: center;
+    	position: relative;
+    	top: 100px;
+	}
+
+	&__empty-state-text {
+		max-width: 220px;
+		opacity: .6;
+		text-align: center;
+
+		@include font-nunito-semibold(16px);
+	}
+
+	&__empty-state-btn {
+		--background: #166dff;
+		  --background-hover: #166dff;
+		  margin: 0 20px 20px;
+		  height: 48px;
+
+		  @include font-nunito-heavy(14px);
+	}
 }
