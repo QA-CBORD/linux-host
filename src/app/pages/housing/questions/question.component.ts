@@ -36,7 +36,10 @@ export class QuestionComponent {
   touch(): void {
     const controls: { [key: string]: AbstractControl } = this.parentGroup.controls;
 
-    Object.keys(controls).forEach((controlName: string) => controls[controlName].markAsTouched());
+    Object.keys(controls).forEach((controlName: string) => {
+      controls[controlName].markAsTouched();
+      controls[controlName].markAsDirty();
+    });
 
     this.check();
   }

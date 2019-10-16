@@ -72,12 +72,15 @@ export class ApplicationDetailsPage implements OnInit {
   async handleSubmit(form: FormGroup, index: number, isLastPage: boolean): Promise<void> {
     const status: ApplicationStatus = !isLastPage ? ApplicationStatus.Pending : ApplicationStatus.Submitted;
 
+    this.questions.forEach((question: QuestionComponent) => question.touch());
+
+    if (!form.valid) {
+      return;
+    }
+
     await this._questionsStorageService.updateQuestionsGroup(this.applicationId, form.value, index, status);
 
-    this.questions.toArray().forEach((question: QuestionComponent) => question.touch());
-
     if (!isLastPage) {
-      this._applicationsService.reloadApplications();
       this.stepper.next();
     } else {
       this._applicationsService.submitApplication(this.applicationId);
@@ -85,15 +88,15 @@ export class ApplicationDetailsPage implements OnInit {
     }
   }
 
-  private _patchFormsFromState(pages: QuestionPage[]): void {
-    pages.forEach(async (page: QuestionPage, index: number) => {
-      const questions: any[] = await this._questionsStorageService.getQuestions(this.applicationId);
+  private async _patchFormsFromState(pages: QuestionPage[]): Promise<void> {
+    const questions: any[] = await this._questionsStorageService.getQuestions(this.applicationId);
 
+    pages.forEach(async (page: QuestionPage, index: number) => {
       if (questions && questions[index]) {
         page.form.patchValue(questions[index]);
-
-        this.questions.toArray().forEach((question: QuestionComponent) => question.check());
       }
     });
+
+    this.questions.forEach((question: QuestionComponent) => question.touch());
   }
 }
