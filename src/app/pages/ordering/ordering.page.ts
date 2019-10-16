@@ -1,13 +1,13 @@
 import { MerchantService } from './services';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { ModalController, ToastController } from '@ionic/angular';
 
 import { Observable, of, iif, zip } from 'rxjs';
+import { switchMap, take } from 'rxjs/operators';
 
 import { MerchantInfo, MerchantOrderTypesInfo } from './shared/models';
-import { ModalController, ToastController } from '@ionic/angular';
 import { UserService } from '@core/service/user-service/user.service';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { switchMap, take } from 'rxjs/operators';
 import { OrderType } from './ordering.config';
 import { OrderOptionsActionSheetComponent } from './shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 
@@ -15,6 +15,7 @@ import { OrderOptionsActionSheetComponent } from './shared/ui-components/order-o
   selector: 'st-ordering.page',
   templateUrl: './ordering.page.html',
   styleUrls: ['./ordering.page.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OrderingPage implements OnInit {
   merchantList$: Observable<MerchantInfo[]>;
@@ -41,9 +42,9 @@ export class OrderingPage implements OnInit {
       .pipe(switchMap(() => this.merchantService.getMerchantsWithFavoriteInfo()))
       .subscribe(
         () => {
+          this.loadingService.closeSpinner();
           const message = isFavorite ? 'Removed from favorites' : 'Added to favorites';
           this.onToastDisplayed(message);
-          this.loadingService.closeSpinner();
         },
         () => this.loadingService.closeSpinner()
       );
@@ -68,23 +69,29 @@ export class OrderingPage implements OnInit {
       .subscribe(
         ([schedule, [deliveryAddress, deliveryLocations], pickupLocations, buildingsForNewAddressForm]) => {
           this.loadingService.closeSpinner();
-          this.actionSheet(schedule,
+          this.actionSheet(
+            schedule,
             orderTypes,
             deliveryAddress.defaultAddress,
             deliveryLocations,
+            storeAddress,
             pickupLocations,
-            buildingsForNewAddressForm);
+            buildingsForNewAddressForm
+          );
         },
-        () => () => this.loadingService.closeSpinner()
+        () => this.loadingService.closeSpinner()
       );
   }
 
-  private async actionSheet(schedule,
+  private async actionSheet(
+    schedule,
     orderTypes: MerchantOrderTypesInfo,
     defaultDeliveryAddress,
     deliveryAddresses,
+    defaultPickupAddress,
     pickupLocations,
-    buildingsForNewAddressForm) {
+    buildingsForNewAddressForm
+  ) {
     let cssClass = 'order-options-action-sheet';
     cssClass += orderTypes.delivery && orderTypes.pickup ? ' order-options-action-sheet-p-d' : '';
 
@@ -96,6 +103,7 @@ export class OrderingPage implements OnInit {
         orderTypes,
         defaultDeliveryAddress,
         deliveryAddresses,
+        defaultPickupAddress,
         pickupLocations,
         buildingsForNewAddressForm
       },

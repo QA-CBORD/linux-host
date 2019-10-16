@@ -8,7 +8,7 @@
         <ion-icon name="close"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title class="delivery-address__title">Select {{address}} Address</ion-title>
+    <ion-title class="delivery-address__title">Select {{addressLabel}} Address</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -23,7 +23,7 @@
       </span><span class="delivery-address__add-address-text">Add New Address</span>
     </ion-item>
 
-    <ng-container *ngIf="addNewAdddressState">
+    <ng-container *ngIf="addNewAdddressState && addressLabel !== 'Pickup'">
       <st-add-edit-addresses [buildingsOnCampus]="buildings"
                              (onFormChanged)="onAddressFormChanged($event)"></st-add-edit-addresses>
 
@@ -50,10 +50,11 @@
 
   <ion-radio-group mode="md"
                    class="delivery-address__radio-group"
-                   (ionChange)="onRadioGroupChanged($event)">
+                   (ionChange)="onRadioGroupChanged($event)"
+                   *ngIf="listOfAddresses.length">
     <ion-item lines="none"
               class="delivery-address__radio-container"
-              *ngFor="let item of addresses">
+              *ngFor="let item of listOfAddresses">
       <ion-label class="delivery-address__radio-label">
         <div class="delivery-address__radio-label-content">
           <div class="delivery-address__radio-label-header">{{item.address1}}</div>
@@ -63,6 +64,7 @@
       <ion-radio mode="md"
                  slot="start"
                  [value]="item"
+                 [checked]="item.checked"
                  class="delivery-address__radio-item"></ion-radio>
     </ion-item>
   </ion-radio-group>

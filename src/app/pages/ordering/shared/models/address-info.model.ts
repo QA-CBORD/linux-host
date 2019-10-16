@@ -20,4 +20,5 @@ export interface AddressInfo {
 	phone: string;
 	phoneExt: string;
 	onCampus: number;
+	id?: string;
 }

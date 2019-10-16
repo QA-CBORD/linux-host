@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { MerchantService } from '@pages/ordering/services';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -7,10 +7,12 @@ import { LoadingService } from '@core/service/loading/loading.service';
   selector: 'st-delivery-addresses.modal',
   templateUrl: './delivery-addresses.modal.component.html',
   styleUrls: ['./delivery-addresses.modal.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DeliveryAddressesModalComponent {
 
-  @Input() address;
+  @Input() addressLabel;
+  @Input() defaultAddress;
   @Input() listOfAddresses;
   @Input() buildings;
   addNewAdddressState: boolean = false;
@@ -19,12 +21,6 @@ export class DeliveryAddressesModalComponent {
   constructor(private readonly modalController: ModalController,
     private readonly merchantService: MerchantService,
     private readonly loadingService: LoadingService) { }
-
-  get addresses() {
-    if (this.listOfAddresses.length) {
-      return this.listOfAddresses.map(item => item.addressInfo ? item.addressInfo : item);
-    }
-  }
 
   async onClickedDone(selectedAddress) {
     await this.modalController.dismiss(selectedAddress);

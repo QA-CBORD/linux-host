@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input, ChangeDetectionStrategy } from '@angular/core';
 import { Validators, FormGroup, FormBuilder, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
 import * as states from '../../../../../../assets/states.json';
@@ -8,6 +8,7 @@ import { Subscription } from 'rxjs';
   selector: 'st-add-edit-addresses',
   templateUrl: './add-edit-addresses.component.html',
   styleUrls: ['./add-edit-addresses.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AddEditAddressesComponent implements OnInit {
   addEditAddressesForm: FormGroup;
@@ -91,10 +92,12 @@ export class AddEditAddressesComponent implements OnInit {
   private onChanges() {
     const subscription = this.addEditAddressesForm.valueChanges
       .pipe(debounceTime(500))
-      .subscribe(value => {this.onFormChanged.emit({
-        value: { ...value, campus: value.campus === 'oncampus' ? '1' : '0' },
-        valid: this.addEditAddressesForm.valid
-      })});
+      .subscribe(value => {
+        this.onFormChanged.emit({
+          value: { ...value, campus: value.campus === 'oncampus' ? '1' : '0' },
+          valid: this.addEditAddressesForm.valid
+        })
+      });
 
     this.sourceSubscription.add(subscription);
   }
