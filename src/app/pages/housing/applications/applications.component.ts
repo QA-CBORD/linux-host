@@ -1,9 +1,10 @@
-import { Component, OnInit, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Observable } from 'rxjs';
 
 import { ApplicationsService } from './applications.service';
 import { QuestionsStorageService } from '../questions/questions-storage.service';
-import { ApplicationsStateService } from './applications-state.service';
+
+import { Application } from './applications.model';
 
 @Component({
   selector: 'st-applications',
@@ -11,21 +12,16 @@ import { ApplicationsStateService } from './applications-state.service';
   styleUrls: ['./applications.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ApplicationsComponent implements OnInit, OnDestroy {
-  private _applicationsSubscription: Subscription;
-
+export class ApplicationsComponent implements OnInit {
   constructor(
     private _applicationsService: ApplicationsService,
-    private _questionsStorageService: QuestionsStorageService,
-    public applicationsStateService: ApplicationsStateService
+    private _questionsStorageService: QuestionsStorageService
   ) {}
 
-  ngOnInit(): void {
-    this._applicationsSubscription = this._applicationsService.getApplications().subscribe();
-  }
+  applications$: Observable<Application[]>;
 
-  ngOnDestroy(): void {
-    this._applicationsSubscription.unsubscribe();
+  ngOnInit(): void {
+    this.applications$ = this._applicationsService.getApplications();
   }
 
   async handleClear(applicationId: number): Promise<void> {
