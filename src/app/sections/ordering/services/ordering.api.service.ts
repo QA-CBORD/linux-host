@@ -12,7 +12,8 @@ import { MessageResponse } from 'src/app/core/model/service/message-response.mod
 import { MerchantSearchOptions, MerchantInfo } from '../../ordering';
 import { GeoCoordinates } from 'src/app/core/model/geolocation/geocoordinates.model';
 import { MerchantSearchOptionName } from '../ordering.config';
-import { OrderInfo, BuildingInfo, AddressInfo } from '../shared';
+import { OrderInfo, BuildingInfo } from '../shared';
+import { AddressInfo } from '@core/model/address/address-info';
 
 @Injectable()
 export class OrderingApiService extends BaseService {
@@ -82,27 +83,14 @@ export class OrderingApiService extends BaseService {
     );
   }
 
-  retrieveUserAddressList(userId: string): Observable<AddressInfo[]> {
+  retrieveUserAddressList(): Observable<AddressInfo[]> {
     const methodName = 'retrieveUserAddressList';
-    const postParams: ServiceParameters = { userId, addressId: null };
+    const postParams: ServiceParameters = { addressId: null };
 
-    return this.httpRequestFull('/json/user', methodName, true, null, postParams).pipe(
-      map(({ response }: MessageResponse<any>) => response.addresses)
-    );
-  }
-
-  getMerchantSettings(merchantId: string): Observable<any> {
-    const methodName = 'getMerchantSettings';
-    const postParams: ServiceParameters = {
-      merchantId,
-      domain: 'merchant',
-      category: 'order',
-      name: 'pickup_locations_enabled',
-    };
-
-    return this.httpRequestFull('/json/merchant', methodName, true, null, postParams).pipe(
-      map(({ response }: MessageResponse<any>) => response)
-    );
+    return this.userService.userData.pipe(
+      switchMap(({ id }) => this.httpRequestFull('/json/user', methodName, true, null, { ...postParams, userId: id }).pipe(
+        map(({ response }: MessageResponse<any>) => response.addresses)
+      )))
   }
 
   retrievePickupLocations(): Observable<any> {

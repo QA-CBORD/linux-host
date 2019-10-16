@@ -1,9 +1,10 @@
 import { BuildingInfo } from './../../models/building-info.model';
 import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { MerchantOrderTypesInfo, AddressInfo } from '../../models';
+import { MerchantOrderTypesInfo } from '../../models';
 import { PickerController, ModalController } from '@ionic/angular';
 import { DeliveryAddressesModalComponent } from '../delivery-addresses.modal/delivery-addresses.modal.component';
+import { AddressInfo } from '@core/model/address/address-info';
 
 @Component({
   selector: 'st-order-options.action-sheet',
@@ -19,6 +20,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   @Input() defaultPickupAddress: any;
   @Input() pickupLocations: any;
   @Input() buildingsForNewAddressForm: BuildingInfo[];
+  @Input() isTimeDisable
 
   private prevSelectedTimeInfo: TimeInfo = { prevIdx: 0, currentIdx: 0, maxValue: false };
   private selectedDayIdx: number = 0;
@@ -34,7 +36,6 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   ngOnInit() {
     this.isOrderTypePickup = this.orderTypes.pickup;
     this.defineOrderOptionsData(this.isOrderTypePickup);
-    // console.log(this.defaultDeliveryAddress);
   }
 
   public async openPicker() {
@@ -164,7 +165,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     const defineDeliveryAddress = this.deliveryAddresses.find(item => item.id === this.defaultDeliveryAddress);
 
     if (isOrderTypePickup) {
-      this.orderOptionsData = { label: 'PICKUP', address: 'mock address', isClickble: this.pickupLocations.length };
+      this.orderOptionsData = { label: 'PICKUP', address: this.defaultPickupAddress, isClickble: this.pickupLocations.length };
       return;
     }
     this.orderOptionsData = {
@@ -178,8 +179,11 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     const addressLabel = this.isOrderTypePickup ? 'Pickup' : 'Delivery';
     const defaultAddress = this.orderOptionsData.address
     let listOfAddresses = this.isOrderTypePickup ? this.pickupLocations : this.deliveryAddresses;
-    listOfAddresses = listOfAddresses.map(item =>
-      (item.addressInfo ? item.addressInfo : { ...item, checked: item.id == defaultAddress.id }));
+    listOfAddresses = listOfAddresses.map(item => {
+      const checked = defaultAddress ? item.id == defaultAddress.id : false;
+
+      return item.addressInfo ? item.addressInfo : { ...item, checked }
+    });
 
     const modal = await this.modalController.create({
       component: DeliveryAddressesModalComponent,

@@ -63,43 +63,7 @@ export class FavoriteMerchantsComponent implements OnInit {
   }
 
   private openOrderOptions(merchantId, orderTypes, storeAddress) {
-    const orderType =
-      (orderTypes.delivery && orderTypes.pickup) || orderTypes.pickup ? ORDER_TYPE.PICKUP : ORDER_TYPE.DELIVERY;
-
-    this.loadingService.showSpinner();
-    zip(
-      this.merchantService.getMerchantOrderSchedule(merchantId, orderType),
-      this.userService
-        .getUserSettingsBySettingName('defaultaddress')
-        .pipe(
-          switchMap(({ response }) =>
-            zip(of({ defaultAddress: response.value }), this.merchantService.retrieveUserAddressList())
-          )
-        ),
-      this.merchantService.getMerchantSettings(merchantId).pipe(
-        switchMap(
-          ({ list: [pickupLocationsEnabled] }): any => {
-            switch (pickupLocationsEnabled.value) {
-              case null:
-                return of({ list: [] });
-              case 'true':
-                return this.merchantService.retrievePickupLocations();
-              case 'false':
-                return of({ list: [storeAddress] });
-            }
-          }
-        )
-      )
-    )
-      .pipe(take(1))
-      .subscribe(
-        ([schedule, [defaultAddress, listOfAddresses], pickupLocations]) => {
-          console.log(pickupLocations['list']);
-          this.loadingService.closeSpinner();
-          this.actionSheet(schedule, orderTypes, defaultAddress.defaultAddress, listOfAddresses);
-        },
-        () => () => this.loadingService.closeSpinner()
-      );
+    console.log('click')
   }
 
   private async actionSheet(schedule, orderTypes: MerchantOrderTypesInfo, defaultDeliveryAddress, deliveryAddresses) {

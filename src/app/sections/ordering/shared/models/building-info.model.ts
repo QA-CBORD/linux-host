@@ -1,4 +1,4 @@
-import { AddressInfo } from '.';
+import { AddressInfo } from '@core/model/address/address-info';
 
 export interface BuildingInfo {
 	id: string;

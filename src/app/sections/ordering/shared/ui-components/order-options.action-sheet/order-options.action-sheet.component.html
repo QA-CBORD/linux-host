@@ -37,13 +37,17 @@
             <img width="16"
                  src="./assets/icon/location-pin.svg"
                  alt="pin" />
-            {{ orderOptionsData.address.address1 }}, {{orderOptionsData.address.city}}
+            <span *ngIf="orderOptionsData.address; else deliveryPlaceholder">
+              {{ orderOptionsData.address.address1 }}, {{orderOptionsData.address.city}}
+            </span>
+            <ng-template #deliveryPlaceholder></ng-template>
+            Add an Address
           </div>
         </div>
       </ion-item>
-      <ion-item detail="true"
+      <ion-item [detail]="isTimeDisable"
                 lines="full"
-                (click)="openPicker()">
+                (click)="isTimeDisable && openPicker()">
         <div class="order-options__select-container">
           <div class="order-options__select-label">{{ orderOptionsData.label }} TIME</div>
           <div class="order-options__select-value"><img width="16"

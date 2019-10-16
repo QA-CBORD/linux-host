@@ -3,7 +3,7 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ModalController, ToastController } from '@ionic/angular';
 
 import { Observable, of, iif, zip } from 'rxjs';
-import { switchMap, take } from 'rxjs/operators';
+import { switchMap, take, tap, map } from 'rxjs/operators';
 
 import { MerchantInfo, MerchantOrderTypesInfo, OrderInfo } from './shared/models';
 import { UserService } from '@core/service/user-service/user.service';
@@ -34,8 +34,8 @@ export class OrderingPage implements OnInit {
     this.orders$ = this.merchantService.getRecentOrders();
   }
 
-  merchantClickHandler({ id, orderTypes, storeAddress }) {
-    this.openOrderOptions(id, orderTypes, storeAddress);
+  merchantClickHandler({ id, orderTypes, storeAddress, settings }) {
+    this.openOrderOptions(id, orderTypes, storeAddress, settings);
   }
 
   favouriteHandler({ isFavorite, id }) {
@@ -56,20 +56,22 @@ export class OrderingPage implements OnInit {
     console.log(`Location Pin Clicked - Merch Id: ${event}`);
   }
 
-  private openOrderOptions(merchantId, orderTypes, storeAddress) {
+  private openOrderOptions(merchantId, orderTypes, storeAddress, settings) {
     const orderType =
       (orderTypes.delivery && orderTypes.pickup) || orderTypes.pickup ? ORDER_TYPE.PICKUP : ORDER_TYPE.DELIVERY;
 
     this.loadingService.showSpinner();
     zip(
       this.merchantService.getMerchantOrderSchedule(merchantId, orderType),
-      this.retrieveDeliveryAddresses(),
-      this.retrievePickupLocations(merchantId, storeAddress),
+      this.retrieveDeliveryAddresses(settings.map['merchant.order.delivery_address_restriction']),
+      this.retrievePickupLocations(storeAddress, settings.map['merchant.order.pickup_locations_enabled']),
       this.merchantService.retrieveBuildings()
     )
       .pipe(take(1))
       .subscribe(
         ([schedule, [deliveryAddress, deliveryLocations], pickupLocations, buildingsForNewAddressForm]) => {
+          const isTimeDisable = parseInt(settings.map['merchant.order.order_ahead_enabled'].value);
+
           this.loadingService.closeSpinner();
           this.actionSheet(
             schedule,
@@ -78,7 +80,8 @@ export class OrderingPage implements OnInit {
             deliveryLocations,
             storeAddress,
             pickupLocations,
-            buildingsForNewAddressForm
+            buildingsForNewAddressForm,
+            isTimeDisable
           );
         },
         () => this.loadingService.closeSpinner()
@@ -92,7 +95,8 @@ export class OrderingPage implements OnInit {
     deliveryAddresses,
     defaultPickupAddress,
     pickupLocations,
-    buildingsForNewAddressForm
+    buildingsForNewAddressForm,
+    isTimeDisable
   ) {
     let cssClass = 'order-options-action-sheet';
     cssClass += orderTypes.delivery && orderTypes.pickup ? ' order-options-action-sheet-p-d' : '';
@@ -107,7 +111,8 @@ export class OrderingPage implements OnInit {
         deliveryAddresses,
         defaultPickupAddress,
         pickupLocations,
-        buildingsForNewAddressForm
+        buildingsForNewAddressForm,
+        isTimeDisable
       },
     });
     modal.onDidDismiss().then(() => { });
@@ -125,30 +130,36 @@ export class OrderingPage implements OnInit {
     toast.present();
   }
 
-  private retrievePickupLocations(merchantId, storeAddress) {
-    return this.merchantService.getMerchantSettings(merchantId).pipe(
-      switchMap(
-        ({ list: [pickupLocationsEnabled] }): any => {
-          switch (pickupLocationsEnabled.value) {
-            case null:
-              return of({ list: [] });
-            case 'true':
-              return this.merchantService.retrievePickupLocations();
-            case 'false':
-              return of({ list: [storeAddress] });
-          }
-        }
-      )
-    )
+  private retrievePickupLocations(storeAddress, { value }) {
+    switch (value) {
+      case null:
+        return of([]);
+      case 'true':
+        return this.merchantService.retrievePickupLocations();
+      case 'false':
+        return of([storeAddress]);
+    }
   }
 
-  private retrieveDeliveryAddresses() {
+  private retrieveDeliveryAddresses(setting) {
     return this.userService
       .getUserSettingsBySettingName('defaultaddress')
       .pipe(
         switchMap(({ response }) =>
-          zip(of({ defaultAddress: response.value }), this.merchantService.retrieveUserAddressList(response.userId))
+          zip(of({ defaultAddress: response.value }), this.filterDeliveryAddresses(setting))
         )
       )
+  }
+
+  private filterDeliveryAddresses(setting) {
+    return this.merchantService.retrieveUserAddressList()
+      .pipe(
+        map(addresses => {
+          if (parseInt(setting.value) === 0) {
+            return addresses;
+          }
+
+          return addresses.filter(({ onCampus }) => onCampus === 1);
+        }));
   }
 }

@@ -1,9 +1,9 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { UserService } from '@core/service/user-service/user.service';
-import { AddressInfo } from '@core/model/user/user-address.model';
 import { Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { NgZone  } from '@angular/core';
+import { AddressInfo } from '@core/model/address/address-info';
 
 @Component({
   selector: 'st-order-address-list',

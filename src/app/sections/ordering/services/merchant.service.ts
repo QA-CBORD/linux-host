@@ -1,4 +1,4 @@
-import { MerchantInfo, MerchantSearchOption, OrderInfo, BuildingInfo, AddressInfo } from '../shared/models';
+import { MerchantInfo, MerchantSearchOption, OrderInfo, BuildingInfo } from '../shared/models';
 import { Injectable } from '@angular/core';
 
 import { BehaviorSubject, Observable, zip } from 'rxjs';
@@ -9,6 +9,7 @@ import { OrderingApiService } from './ordering.api.service';
 import { MerchantSearchOptions } from '../utils';
 import { MerchantSearchOptionName } from '../ordering.config';
 import { UserService } from 'src/app/core/service/user-service/user.service';
+import { AddressInfo } from '@core/model/address/address-info';
 
 @Injectable()
 export class MerchantService {
@@ -96,12 +97,8 @@ export class MerchantService {
     return this.orderingApiService.getMerchantOrderSchedule(merchantId, orderType);
   }
 
-  retrieveUserAddressList(userId: string): Observable<AddressInfo[]> {
-    return this.orderingApiService.retrieveUserAddressList(userId);
-  }
-
-  getMerchantSettings(merchantId: string): Observable<any> {
-    return this.orderingApiService.getMerchantSettings(merchantId);
+  retrieveUserAddressList(): Observable<AddressInfo[]> {
+    return this.orderingApiService.retrieveUserAddressList();
   }
 
   retrievePickupLocations(): Observable<any> {
