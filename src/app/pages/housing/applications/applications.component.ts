@@ -2,7 +2,6 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { ApplicationsService } from './applications.service';
-import { QuestionsStorageService } from '../questions/questions-storage.service';
 
 import { Application } from './applications.model';
 
@@ -13,10 +12,7 @@ import { Application } from './applications.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ApplicationsComponent implements OnInit {
-  constructor(
-    private _applicationsService: ApplicationsService,
-    private _questionsStorageService: QuestionsStorageService
-  ) {}
+  constructor(private _applicationsService: ApplicationsService) {}
 
   applications$: Observable<Application[]>;
 
@@ -25,6 +21,6 @@ export class ApplicationsComponent implements OnInit {
   }
 
   async handleClear(applicationId: number): Promise<void> {
-    await this._questionsStorageService.removeQuestionsGroup(applicationId);
+    await this._applicationsService.clearApplication(applicationId);
   }
 }

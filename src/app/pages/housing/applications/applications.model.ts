@@ -17,9 +17,9 @@ export class Application {
 }
 
 export enum ApplicationStatus {
+  New,
+  Pending,
   Accepted,
   Submitted,
   Canceled,
-  New,
-  Pending,
 }

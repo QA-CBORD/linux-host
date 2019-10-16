@@ -64,6 +64,8 @@ export class ApplicationDetailsPage implements OnInit {
       ApplicationStatus.Pending
     );
 
+    this._applicationsService.reloadApplications();
+
     this._router.navigate(['/housing/dashboard']);
   }
 
@@ -75,6 +77,7 @@ export class ApplicationDetailsPage implements OnInit {
     this.questions.toArray().forEach((question: QuestionComponent) => question.touch());
 
     if (!isLastPage) {
+      this._applicationsService.reloadApplications();
       this.stepper.next();
     } else {
       this._applicationsService.submitApplication(this.applicationId);

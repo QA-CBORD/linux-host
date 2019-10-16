@@ -40,24 +40,8 @@ export class ApplicationsStateService {
     this.applicationEntities = this._toApplicationEntities(applications);
   }
 
-  submitApplication(applicationId: number): ApplicationEntities {
-    const application: Application = this.applicationEntities[applicationId];
-
-    if (application) {
-      const currentDateTime: string = new Date().toISOString().slice(0, -1);
-
-      this.applicationEntities = {
-        ...this.applicationEntities,
-        [applicationId]: {
-          ...application,
-          isApplicationSubmitted: true,
-          submittedDateTime: currentDateTime,
-          modifiedDate: currentDateTime,
-        },
-      };
-    }
-
-    return this.applicationEntities;
+  reloadApplications(): void {
+    this.applicationEntities = { ...this.applicationEntities };
   }
 
   getApplicationById(applicationId: number): Observable<Application> {

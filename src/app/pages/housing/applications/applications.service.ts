@@ -35,21 +35,35 @@ export class ApplicationsService {
     const applications: Application[] = this._applicationsStateService.applications;
 
     if (applications.length > 0) {
-      return of(applications).pipe(mergeMap((applications: Application[]) => this.getStoredApplications(applications)));
+      return this._applicationsStateService.applications$.pipe(
+        mergeMap((applications: Application[]) => this.getStoredApplications(applications))
+      );
     }
 
     return this._authService.authorize().pipe(
       switchMap((token: string) => this._requestApplications(token)),
+      switchMap(() => this._applicationsStateService.applications$),
+      mergeMap((applications: Application[]) => this.getStoredApplications(applications)),
       catchError(() => of([]))
     );
   }
 
   submitApplication(applicationId: number): void {
-    this._applicationsStateService.submitApplication(applicationId);
+    this.reloadApplications();
   }
 
   getApplicationById(applicationId: number): Observable<Application> {
     return this._applicationsStateService.getApplicationById(applicationId);
+  }
+
+  reloadApplications(): void {
+    this._applicationsStateService.reloadApplications();
+  }
+
+  async clearApplication(applicationId: number): Promise<void> {
+    await this._questionsStorageService.removeQuestionsGroup(applicationId);
+
+    this.reloadApplications();
   }
 
   async getStoredApplications(applications: Application[]): Promise<Application[]> {
@@ -98,10 +112,8 @@ export class ApplicationsService {
       .pipe(
         map((response: Response) => response.data),
         map((applications: any[]) => applications.map(this._toApplication)),
-        tap(async (applications: Application[]) => {
-          const storedApplications: Application[] = await this.getStoredApplications(applications);
-
-          this._applicationsStateService.setApplications(storedApplications);
+        tap((applications: Application[]) => {
+          this._applicationsStateService.setApplications(applications);
         })
       );
   }
