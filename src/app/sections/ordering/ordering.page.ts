@@ -3,13 +3,13 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ModalController, ToastController } from '@ionic/angular';
 
 import { Observable, of, iif, zip } from 'rxjs';
-import { switchMap, take, tap, map } from 'rxjs/operators';
+import { switchMap, take, map } from 'rxjs/operators';
 
 import { MerchantInfo, MerchantOrderTypesInfo, OrderInfo } from './shared/models';
 import { UserService } from '@core/service/user-service/user.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { OrderOptionsActionSheetComponent } from './shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
-import { ORDER_TYPE } from './ordering.config';
+import { ORDER_TYPE, MerchantSettings } from './ordering.config';
 
 @Component({
   selector: 'st-ordering.page',
@@ -63,14 +63,15 @@ export class OrderingPage implements OnInit {
     this.loadingService.showSpinner();
     zip(
       this.merchantService.getMerchantOrderSchedule(merchantId, orderType),
-      this.retrieveDeliveryAddresses(settings.map['merchant.order.delivery_address_restriction']),
-      this.retrievePickupLocations(storeAddress, settings.map['merchant.order.pickup_locations_enabled']),
+      this.retrieveDeliveryAddresses(settings.map[MerchantSettings.deliveryAddressRestriction]),
+      this.retrievePickupLocations(storeAddress, settings.map[MerchantSettings.pickupLocationsEnabled]),
       this.merchantService.retrieveBuildings()
     )
       .pipe(take(1))
       .subscribe(
         ([schedule, [deliveryAddress, deliveryLocations], pickupLocations, buildingsForNewAddressForm]) => {
-          const isTimeDisable = parseInt(settings.map['merchant.order.order_ahead_enabled'].value);
+          const isTimeDisable = parseInt(settings.map[MerchantSettings.orderAheadEnabled].value);
+          const defaultPickupAddress = JSON.parse(settings.map[MerchantSettings.pickupLocationsEnabled].value) ? '' : storeAddress;
 
           this.loadingService.closeSpinner();
           this.actionSheet(
@@ -78,10 +79,11 @@ export class OrderingPage implements OnInit {
             orderTypes,
             deliveryAddress.defaultAddress,
             deliveryLocations,
-            storeAddress,
+            defaultPickupAddress,
             pickupLocations,
             buildingsForNewAddressForm,
-            isTimeDisable
+            isTimeDisable,
+            merchantId
           );
         },
         () => this.loadingService.closeSpinner()
@@ -96,8 +98,10 @@ export class OrderingPage implements OnInit {
     defaultPickupAddress,
     pickupLocations,
     buildingsForNewAddressForm,
-    isTimeDisable
+    isTimeDisable,
+    merchantId
   ) {
+    const footerButtonName = 'continue';
     let cssClass = 'order-options-action-sheet';
     cssClass += orderTypes.delivery && orderTypes.pickup ? ' order-options-action-sheet-p-d' : '';
 
@@ -112,7 +116,9 @@ export class OrderingPage implements OnInit {
         defaultPickupAddress,
         pickupLocations,
         buildingsForNewAddressForm,
-        isTimeDisable
+        isTimeDisable,
+        footerButtonName,
+        merchantId
       },
     });
     modal.onDidDismiss().then(() => { });
@@ -142,24 +148,6 @@ export class OrderingPage implements OnInit {
   }
 
   private retrieveDeliveryAddresses(setting) {
-    return this.userService
-      .getUserSettingsBySettingName('defaultaddress')
-      .pipe(
-        switchMap(({ response }) =>
-          zip(of({ defaultAddress: response.value }), this.filterDeliveryAddresses(setting))
-        )
-      )
-  }
-
-  private filterDeliveryAddresses(setting) {
-    return this.merchantService.retrieveUserAddressList()
-      .pipe(
-        map(addresses => {
-          if (parseInt(setting.value) === 0) {
-            return addresses;
-          }
-
-          return addresses.filter(({ onCampus }) => onCampus === 1);
-        }));
+    return this.merchantService.retrieveDeliveryAddresses(setting);
   }
 }

@@ -28,20 +28,19 @@
           </ion-item>
         </ion-radio-group>
       </div>
-      <ion-item [detail]="orderOptionsData.isClickble"
+      <ion-item 
                 lines="full"
-                (click)="orderOptionsData.isClickble && openDeliveryAddressesModal()">
+                (click)="openDeliveryAddressesModal()">
         <div class="order-options__select-container">
           <div class="order-options__select-label">{{ orderOptionsData.label }} ADDRESS</div>
           <div class="order-options__select-value">
             <img width="16"
                  src="./assets/icon/location-pin.svg"
                  alt="pin" />
-            <span *ngIf="orderOptionsData.address; else deliveryPlaceholder">
+            <span *ngIf="orderOptionsData.address?.address1; else deliveryPlaceholder">
               {{ orderOptionsData.address.address1 }}, {{orderOptionsData.address.city}}
             </span>
-            <ng-template #deliveryPlaceholder></ng-template>
-            Add an Address
+            <ng-template #deliveryPlaceholder>Add an Address</ng-template>
           </div>
         </div>
       </ion-item>
@@ -62,7 +61,8 @@
   <ion-button mode="md"
               expand="block"
               class="order-options__button"
-              shape="round">
-    continue
+              shape="round"
+              (click)="onSubmit()">
+    {{footerButtonName}}
   </ion-button>
 </ion-footer>

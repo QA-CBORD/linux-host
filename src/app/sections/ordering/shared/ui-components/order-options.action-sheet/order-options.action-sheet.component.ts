@@ -1,5 +1,6 @@
+import { MerchantService } from '@sections/ordering/services';
 import { BuildingInfo } from './../../models/building-info.model';
-import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { MerchantOrderTypesInfo } from '../../models';
 import { PickerController, ModalController } from '@ionic/angular';
@@ -20,17 +21,21 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   @Input() defaultPickupAddress: any;
   @Input() pickupLocations: any;
   @Input() buildingsForNewAddressForm: BuildingInfo[];
-  @Input() isTimeDisable
+  @Input() isTimeDisable: number;
+  @Input() footerButtonName: string;
+  @Input() merchantId: string;
 
   private prevSelectedTimeInfo: TimeInfo = { prevIdx: 0, currentIdx: 0, maxValue: false };
   private selectedDayIdx: number = 0;
   isOrderTypePickup: boolean;
-  orderOptionsData: any;
+  orderOptionsData: OrderOptions;
 
   constructor(
     private readonly pickerController: PickerController,
     private readonly modalController: ModalController,
-    private datePipe: DatePipe
+    private readonly merchantService: MerchantService,
+    private readonly datePipe: DatePipe,
+    private readonly cdRef: ChangeDetectorRef
   ) { }
 
   ngOnInit() {
@@ -38,7 +43,40 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     this.defineOrderOptionsData(this.isOrderTypePickup);
   }
 
-  public async openPicker() {
+  onRadioGroupChanged({ target }) {
+    this.isOrderTypePickup = target.value === 'pickup';
+    this.defineOrderOptionsData(this.isOrderTypePickup);
+  }
+
+  openDeliveryAddressesModal() {
+    this.modalWindow();
+  }
+
+  defineOrderOptionsData(isOrderTypePickup) {
+    const defineDeliveryAddress = this.deliveryAddresses.find(item => item.id === this.defaultDeliveryAddress);
+
+    if (isOrderTypePickup) {
+      this.orderOptionsData = { label: 'PICKUP', address: this.defaultPickupAddress, isClickble: this.pickupLocations.length };
+      return;
+    }
+    this.orderOptionsData = {
+      label: 'DELIVERY',
+      address: defineDeliveryAddress,
+      isClickble: this.deliveryAddresses.length
+    }
+  }
+
+  onSubmit() {
+    if (this.orderOptionsData.label === 'DELIVERY') {
+      const { latitude, longitude } = this.orderOptionsData.address;
+      this.merchantService.isOutsideMerchantDeliveryArea(this.merchantId, latitude, longitude)
+        .subscribe(res => console.log(res))
+
+    }
+    // this.merchantService.getMerchantPaymentAccounts(this.merchantId)
+  }
+
+  async openPicker() {
     const picker: HTMLIonPickerElement = await this.pickerController.create({
       columns: this.createColumns(),
       mode: 'ios',
@@ -148,42 +186,10 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     return pickerColumns;
   }
 
-  onRadioGroupChanged({ target }) {
-    this.isOrderTypePickup = target.value === 'pickup';
-    this.defineOrderOptionsData(this.isOrderTypePickup);
-  }
-
-  openDeliveryAddressesModal() {
-    this.modalWindow();
-  }
-
-  defineOrderOptionsData(isOrderTypePickup) {
-    console.log(this.defaultPickupAddress);
-    console.log(this.pickupLocations);
-    console.log(this.deliveryAddresses);
-    console.log(this.defaultDeliveryAddress);
-    const defineDeliveryAddress = this.deliveryAddresses.find(item => item.id === this.defaultDeliveryAddress);
-
-    if (isOrderTypePickup) {
-      this.orderOptionsData = { label: 'PICKUP', address: this.defaultPickupAddress, isClickble: this.pickupLocations.length };
-      return;
-    }
-    this.orderOptionsData = {
-      label: 'DELIVERY',
-      address: defineDeliveryAddress,
-      isClickble: this.deliveryAddresses.length
-    }
-  }
-
   private async modalWindow() {
     const addressLabel = this.isOrderTypePickup ? 'Pickup' : 'Delivery';
-    const defaultAddress = this.orderOptionsData.address
-    let listOfAddresses = this.isOrderTypePickup ? this.pickupLocations : this.deliveryAddresses;
-    listOfAddresses = listOfAddresses.map(item => {
-      const checked = defaultAddress ? item.id == defaultAddress.id : false;
-
-      return item.addressInfo ? item.addressInfo : { ...item, checked }
-    });
+    const defaultAddress = this.orderOptionsData.address;
+    const listOfAddresses = this.defineListOfAddresses(defaultAddress);
 
     const modal = await this.modalController.create({
       component: DeliveryAddressesModalComponent,
@@ -196,9 +202,22 @@ export class OrderOptionsActionSheetComponent implements OnInit {
 
     });
     modal.onDidDismiss().then(({ data }) => {
-      console.log(data)
+      if (data) {
+        this.orderOptionsData = { ...this.orderOptionsData, address: data };
+        this.cdRef.detectChanges();
+      }
     });
     await modal.present();
+  }
+
+  private defineListOfAddresses(defaultAddress) {
+    const listOfAddresses = this.isOrderTypePickup ? this.pickupLocations : this.deliveryAddresses;
+
+    return listOfAddresses.map(item => {
+      const checked = defaultAddress ? item.id == defaultAddress.id : false;
+
+      return item.addressInfo ? item.addressInfo : { ...item, checked }
+    });
   }
 
   private isTodayOrTomorrow(date, isToday) {
@@ -218,4 +237,10 @@ interface TimeInfo {
   prevIdx: number;
   currentIdx: number;
   maxValue: boolean
+}
+
+interface OrderOptions {
+  label: string,
+  address: any,
+  isClickble: number
 }

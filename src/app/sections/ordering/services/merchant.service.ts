@@ -1,7 +1,7 @@
 import { MerchantInfo, MerchantSearchOption, OrderInfo, BuildingInfo } from '../shared/models';
 import { Injectable } from '@angular/core';
 
-import { BehaviorSubject, Observable, zip } from 'rxjs';
+import { BehaviorSubject, Observable, zip, of } from 'rxjs';
 import { tap, switchMap, map } from 'rxjs/operators';
 
 import { OrderingApiService } from './ordering.api.service';
@@ -98,7 +98,7 @@ export class MerchantService {
   }
 
   retrieveUserAddressList(): Observable<AddressInfo[]> {
-    return this.orderingApiService.retrieveUserAddressList();
+    return this.userService.getUserAddresses();
   }
 
   retrievePickupLocations(): Observable<any> {
@@ -119,5 +119,35 @@ export class MerchantService {
 
   updateUserAddress(updateUserAddress): Observable<any> {
     return this.orderingApiService.updateUserAddress(updateUserAddress);
+  }
+
+  retrieveDeliveryAddresses(setting) {
+    return this.userService
+      .getUserSettingsBySettingName('defaultaddress')
+      .pipe(
+        switchMap(({ response }) =>
+          zip(of({ defaultAddress: response.value }), this.filterDeliveryAddresses(setting))
+        )
+      )
+  }
+
+  getMerchantPaymentAccounts(merchantId: string): Observable<any> {
+    return this.orderingApiService.getMerchantPaymentAccounts(merchantId);
+  }
+
+  isOutsideMerchantDeliveryArea(merchantId: string, latitude: number, longitude: number): Observable<boolean> {
+    return this.orderingApiService.isOutsideMerchantDeliveryArea(merchantId, latitude, longitude);
+  }
+
+  private filterDeliveryAddresses(setting) {
+    return this.retrieveUserAddressList()
+      .pipe(
+        map(addresses => {
+          if (parseInt(setting.value) === 0) {
+            return addresses;
+          }
+
+          return addresses.filter(({ onCampus }) => onCampus === 1);
+        }));
   }
 }

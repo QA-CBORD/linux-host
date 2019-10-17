@@ -13,7 +13,8 @@
 </ion-header>
 
 <ion-content>
-  <div class="delivery-address__add-address-container">
+  <div class="delivery-address__add-address-container"
+       *ngIf="addressLabel !== 'Pickup'">
     <ion-item class="delivery-address__add-address-wrapper"
               lines="full"
               [button]="true"
@@ -23,7 +24,7 @@
       </span><span class="delivery-address__add-address-text">Add New Address</span>
     </ion-item>
 
-    <ng-container *ngIf="addNewAdddressState && addressLabel !== 'Pickup'">
+    <ng-container *ngIf="addNewAdddressState">
       <st-add-edit-addresses [buildingsOnCampus]="buildings"
                              (onFormChanged)="onAddressFormChanged($event)"></st-add-edit-addresses>
 

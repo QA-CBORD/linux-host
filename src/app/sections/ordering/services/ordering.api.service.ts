@@ -19,6 +19,8 @@ import { AddressInfo } from '@core/model/address/address-info';
 export class OrderingApiService extends BaseService {
   private readonly serviceUrlMerchant: string = '/json/merchant';
   private readonly serviceUrlOrdering: string = '/json/ordering';
+  private readonly serviceUrlUser: string = '/json/user';
+  private readonly serviceUrlInstitution: string = '/json/institution';
 
   constructor(
     protected readonly http: HttpClient,
@@ -69,9 +71,10 @@ export class OrderingApiService extends BaseService {
   getSuccessfulOrdersList(userId: string, institutionId: string): Observable<OrderInfo[]> {
     const methodName = 'retrieveSuccessfulOrdersList';
     const postParams: ServiceParameters = { userId, merchantId: null, maxReturn: 30 };
-    return this.httpRequestFull(this.serviceUrlOrdering, methodName, true, institutionId, postParams).pipe(
-      map(({ response }: MessageResponse<any>) => response.list)
-    );
+    return this.httpRequestFull(this.serviceUrlOrdering, methodName, true, institutionId, postParams)
+      .pipe(
+        map(({ response }: MessageResponse<any>) => response.list)
+      );
   }
 
   getMerchantOrderSchedule(merchantId: string, orderType: number): Observable<any[]> {
@@ -83,23 +86,13 @@ export class OrderingApiService extends BaseService {
     );
   }
 
-  retrieveUserAddressList(): Observable<AddressInfo[]> {
-    const methodName = 'retrieveUserAddressList';
-    const postParams: ServiceParameters = { addressId: null };
-
-    return this.userService.userData.pipe(
-      switchMap(({ id }) => this.httpRequestFull('/json/user', methodName, true, null, { ...postParams, userId: id }).pipe(
-        map(({ response }: MessageResponse<any>) => response.addresses)
-      )))
-  }
-
   retrievePickupLocations(): Observable<any> {
     const methodName = 'retrievePickupLocations';
     const postParams: ServiceParameters = { active: true };
 
     return this.userService.userData.pipe(
       switchMap(({ institutionId }) =>
-        this.httpRequestFull('/json/institution', methodName, true, institutionId, postParams)
+        this.httpRequestFull(this.serviceUrlInstitution, methodName, true, institutionId, postParams)
       ),
       map(({ response }: MessageResponse<any>) => response.list)
     );
@@ -111,7 +104,7 @@ export class OrderingApiService extends BaseService {
 
     return this.userService.userData.pipe(
       switchMap(({ institutionId }) =>
-        this.httpRequestFull('/json/institution', methodName, true, institutionId, postParams)
+        this.httpRequestFull(this.serviceUrlInstitution, methodName, true, institutionId, postParams)
       ),
       map(({ response }: MessageResponse<any>) => response.list)
     );
@@ -154,18 +147,26 @@ export class OrderingApiService extends BaseService {
     };
 
     return this.userService.userData.pipe(
-      switchMap(({ id }) => this.httpRequestFull('/json/user', methodName, true, null, { ...postParams, userId: id }).pipe(
-        map(({ response }: MessageResponse<any>) => response)
-      )))
+      switchMap(({ id }) => this.httpRequestFull(this.serviceUrlUser, methodName, true, null, { ...postParams, userId: id })),
+      map(({ response }: MessageResponse<any>) => response))
 
   }
 
-  isOutsideMerchantDeliveryArea(merchantId: string, latitude: number, longitude: number): Observable<any> {
+  isOutsideMerchantDeliveryArea(merchantId: string, latitude: number, longitude: number): Observable<boolean> {
     const methodName = 'isOutsideMerchantDeliveryArea';
     const postParams: ServiceParameters = { merchantId, latitude, longitude };
 
-    return this.httpRequestFull('/json/merchant', methodName, true, null, postParams).pipe(
+    return this.httpRequestFull(this.serviceUrlMerchant, methodName, true, null, postParams).pipe(
       map(({ response }: MessageResponse<any>) => response)
     );
+  }
+
+  getMerchantPaymentAccounts(merchantId: string) {
+    const methodName = 'getMerchantPaymentAccounts';
+    const postParams: ServiceParameters = { merchantId };
+
+    return this.userService.userData.pipe(
+      switchMap(({ id }) => this.httpRequestFull(this.serviceUrlMerchant, methodName, true, null, { ...postParams, userId: id })),
+      map(({ response }: MessageResponse<any>) => response))
   }
 }
