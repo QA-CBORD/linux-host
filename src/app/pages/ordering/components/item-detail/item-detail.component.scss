@@ -1,9 +1,5 @@
 @import 'tools';
 
-// $font-nunito-regular: 'Nunito Regular', arial, sans-serif;
-// $font-nunito-semibold: 'Nunito SemiBold', arial, sans-serif;
-// $font-nunito-heavy: 'Nunito Bold', arial, sans-serif;
-
 .item {
 
     padding: 0;
@@ -39,35 +35,33 @@
     }
 
     &__descriptions {
-        font-family: $font-nunito-regular;
         background: #ffffff;
         padding: 17px;
+
+        @include font-nunito-regular(16px);
     }
     
     &__descriptions-title {
-        font-family: $font-nunito-heavy;
-        font-size: 20px;
-        font-weight: bold;
         letter-spacing: 0px;
         line-height: 24px;
+
+        @include font-nunito-heavy(20px);
     }
 
     &__descriptions-content {
-        font-family: $font-nunito-regular;
         color: #515151;
-        font-size: 16px;
-        font-weight: normal;
         letter-spacing: 0px;
         margin: 9px auto;
+
+        @include font-nunito-regular(16px);
     }
 
     &__descriptions-price {
-        font-family: $font-nunito-regular;
-        font-size: 14px;
-        font-weight: normal;
         height: 18px;
         letter-spacing: 0px;
         line-height: 18px;
+
+        @include font-nunito-regular(14px);
     }
 
     &__list-size {
@@ -86,40 +80,34 @@
     }
 
     &__divider-title {
-        font-family: $font-nunito-heavy;
-        font-size: 16px;
-        font-weight: 600;
         letter-spacing: 0px;
         color: #000;
+
+        @include font-nunito-heavy(16px);
     }
 
     &__divider-options {
-        font-family: $font-nunito-regular;
-        font-size: 12px;
-        font-weight: normal;
         letter-spacing: 0px;
         color: #515151;
+
+        @include font-nunito-regular(12px);
     }
 
-    &__size-title {
+    &__title {
         color: #000;
-        font-family: $font-nunito-heavy;
-        font-size: 16px;
-        font-weight: 600;
         height: 18px;
         letter-spacing: 0px;
-        // line-height: 5px;
-        width: 270px;
+
+        @include font-nunito-heavy(16px);
     }
 
-    &__size-price {
+    &__price {
         color: #000;
-        font-family: $font-nunito-regular;
-        font-size: 12px;
-        font-weight: normal;
         height: 14px;
         letter-spacing: 0px;
         width: 311px;
+
+        @include font-nunito-regular(12px);
     }
 
     &__radio-item {
@@ -130,43 +118,44 @@
 
     &__radio-item__item {
         margin-right: 10px;
+        --color-checked: #166dff;
     }
 
     &__list-toppings {
         padding: 0;
     }
 
-    &__toppings-item {
+    &__toppings-items {
         --border-style: unset;
         --border-color: #fff;
         color: rgb(0, 0, 0);
+        margin-left: 15px;
     }
 
-    &__toppings-lable {
-        font-family: $font-nunito-heavy;
-        font-size: 16px;
-        font-weight: 600;
-        height: 18px;
+    &__toppings-label {
         letter-spacing: 0px;
-        line-height: 20px;
+
+        @include font-nunito-heavy(16px);
     }
 
     &__toppings-item-checkbox {
         margin-right: 8px;
+        --background-checked: #166dff;
+        --border-color-checked: #166dff;
     }
 
     &__special-instructions {
         margin: 0;
     }
 
-    &__textarea {
+    &__order-message {
         display: block;
         margin: 20px 20px;
     }
 
     &__nutrition-info {
         width: 100%;
-        height: 212px;
+        height: 232px;
     }
 
     &__nutrition-info-row {
@@ -182,7 +171,6 @@
         flex-direction: column;
         align-items: center;
         height: 48px;
-        
     }
 
     &__nutrition-info-col:nth-child(2) {
@@ -195,27 +183,24 @@
     }
 
     &__nutrition-info-title {
-        color: rgb(0, 0, 0);
-        font-family: $font-nunito-heavy;
-        font-size: 16px;
-        font-weight: 600;
+        color: #000;
         height: 16px;
         letter-spacing: 0px;
         line-height: 16px;
         text-align: center;
-        width: 98.5px;
+
+        @include font-nunito-heavy(16px);
     }
 
     &__nutrition-info-subtitle {
-        color: rgb(81, 81, 81);
-        font-family: $font-nunito-regular;
-        font-size: 12px;
-        font-weight: normal;
+        color: #515151;
         height: 12px;
         letter-spacing: 0px;
         line-height: 12px;
         text-align: center;
         width: 98.5px;
+
+        @include font-nunito-regular(12px);
     }
 
 }
@@ -224,7 +209,6 @@
     position: absolute;
     bottom: 0px;
     --border: none;
-    // padding: 48px 20px 32px 20px;
       
     &__toolbar {
         border-style: none;
@@ -248,17 +232,29 @@
     }
 
     &__add-btn {
+        --background: #166dff;
+        --border-radius: 24px;
+        --color: #ffffff;
+        height: 48px;
+        width: 184px;
+        letter-spacing: 0px;
+        text-align: center;
+        text-transform: uppercase;
+
+        @include font-nunito-heavy(14px);
+    }
+
+    &__add-btn-disabled {
         --background: #e1e1e1;
         --border-radius: 24px;
         --color: #8e8e8e;
         height: 48px;
         width: 184px;
-        font-family: $font-nunito-heavy;
-        font-size: 14px;
-        font-weight: bold;
         letter-spacing: 0px;
         text-align: center;
         text-transform: uppercase;
+
+        @include font-nunito-heavy(14px);
     }
 
     &__counter-btn {
