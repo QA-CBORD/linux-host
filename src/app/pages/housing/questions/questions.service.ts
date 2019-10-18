@@ -3,6 +3,7 @@ import { FormControl, Validators, FormGroup, FormArray } from '@angular/forms';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 import { QuestionBase } from './types/question-base';
+import { QuestionFormControl } from './types/question-form-control';
 import { QuestionHeader } from './types/question-header';
 import { QuestionParagraph } from './types/question-paragraph';
 import { QuestionTextbox } from './types/question-textbox';
@@ -12,7 +13,7 @@ import { QuestionDropdown } from './types/question-dropdown';
 import { QuestionCheckboxGroup, QuestionCheckboxGroupValue } from './types/question-checkbox-group';
 import { QuestionRadioGroup } from './types/question-readio-group';
 
-import { QuestionPage } from './questions.model';
+import { QuestionPage, QuestionReorder } from './questions.model';
 import { Application } from '../applications/applications.model';
 
 export const QuestionConstructorsMap = {
@@ -57,6 +58,10 @@ export class QuestionsService {
 
   toQuestionType(question: QuestionBase): QuestionBase {
     if (QuestionConstructorsMap[question.type]) {
+      if ((question as QuestionReorder).facilityPicker) {
+        return new QuestionReorder(question);
+      }
+
       return new QuestionConstructorsMap[question.type](question);
     }
 
@@ -66,7 +71,7 @@ export class QuestionsService {
   splitByPages(questions: QuestionBase[]): QuestionPage[] {
     const questionsByPages: QuestionBase[][] = questions.reduce(
       (accumulator: QuestionBase[][], current: QuestionBase, index: number) => {
-        if (current.subtype === 'blockquote') {
+        if ((current as QuestionParagraph).subtype === 'blockquote') {
           return questions[index + 1] ? [...accumulator, []] : [...accumulator];
         }
 
@@ -93,7 +98,7 @@ export class QuestionsService {
   toFormGroup(questions: QuestionBase[]): FormGroup {
     let group: any = {};
 
-    questions.forEach((question: QuestionBase) => {
+    questions.forEach((question: QuestionFormControl) => {
       if (question.name) {
         if (question instanceof QuestionCheckboxGroup) {
           const values: FormControl[] = question.values.map(

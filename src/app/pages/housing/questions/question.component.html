@@ -6,15 +6,15 @@
       *ngSwitchCase="'text'"
       class="question__item question__control"
       type="text"
-      [control]="parentGroup.get(question.name)"
+      [control]="parentGroup.get(question['name'])"
       [label]="question.label"
-      [idd]="question.name"
-      [formControlName]="question.name"
-      [isError]="!parentGroup.get(question.name).valid && parentGroup.get(question.name).touched"
-      [stEmptyFormControl]="parentGroup.get(question.name)"
+      [idd]="question['name']"
+      [formControlName]="question['name']"
+      [isError]="!parentGroup.get(question['name']).valid && parentGroup.get(question['name']).touched"
+      [stEmptyFormControl]="parentGroup.get(question['name'])"
     >
-      <ng-container *ngIf="!parentGroup.get(question.name).valid && parentGroup.get(question.name).touched">
-        <p *ngIf="parentGroup.get(question.name).getError('required')" class="control-error">
+      <ng-container *ngIf="!parentGroup.get(question['name']).valid && parentGroup.get(question['name']).touched">
+        <p *ngIf="parentGroup.get(question['name']).getError('required')" class="control-error">
           This field is required.
         </p>
       </ng-container>
@@ -22,18 +22,18 @@
 
     <st-textarea-floating-label
       *ngSwitchCase="'textarea'"
-      [control]="parentGroup.get(question.name)"
-      [isError]="!parentGroup.get(question.name).valid && parentGroup.get(question.name).touched"
-      [formControlName]="question.name"
+      [control]="parentGroup.get(question['name'])"
+      [isError]="!parentGroup.get(question['name']).valid && parentGroup.get(question['name']).touched"
+      [formControlName]="question['name']"
       class="question__item question__control"
-      [idd]="question.name"
+      [idd]="question['name']"
       [label]="question.label"
       title="Type your message here..."
       rows="3"
-      [stEmptyFormControl]="parentGroup.get(question.name)"
+      [stEmptyFormControl]="parentGroup.get(question['name'])"
     >
-      <ng-container *ngIf="!parentGroup.get(question.name).valid && parentGroup.get(question.name).touched">
-        <p *ngIf="parentGroup.get(question.name).getError('required')" class="control-error">
+      <ng-container *ngIf="!parentGroup.get(question['name']).valid && parentGroup.get(question['name']).touched">
+        <p *ngIf="parentGroup.get(question['name']).getError('required')" class="control-error">
           This field is required.
         </p>
       </ng-container>
@@ -44,21 +44,21 @@
       class="question__item"
       [parentForm]="parentGroup"
       [label]="question.label"
-      [name]="question.name"
+      [name]="question['name']"
       displayFormat="MMM/DD/YYYY"
     ></st-date-select>
 
     <st-select-floating-label
       *ngSwitchCase="'select'"
-      [formControlName]="question.name"
-      [control]="parentGroup.get(question.name)"
-      [isError]="!parentGroup.get(question.name).valid && parentGroup.get(question.name).touched"
+      [formControlName]="question['name']"
+      [control]="parentGroup.get(question['name'])"
+      [isError]="!parentGroup.get(question['name']).valid && parentGroup.get(question['name']).touched"
       class="question__item question__control"
       interface="action-sheet"
       [interfaceOptions]="customActionSheetOptions"
       [label]="question.label"
-      [idd]="question.name"
-      [stEmptyFormControl]="parentGroup.get(question.name)"
+      [idd]="question['name']"
+      [stEmptyFormControl]="parentGroup.get(question['name'])"
     >
       <ng-container role="options">
         <ion-select-option *ngFor="let option of question['values']" [value]="option.name">
@@ -67,8 +67,8 @@
       </ng-container>
 
       <ng-container role="error">
-        <ng-container *ngIf="!parentGroup.get(question.name).valid && parentGroup.get(question.name).touched">
-          <p *ngIf="parentGroup.get(question.name).getError('required')" class="control-error">
+        <ng-container *ngIf="!parentGroup.get(question['name']).valid && parentGroup.get(question['name']).touched">
+          <p *ngIf="parentGroup.get(question['name']).getError('required')" class="control-error">
             This field is required.
           </p>
         </ng-container>
@@ -76,12 +76,12 @@
     </st-select-floating-label>
 
     <ng-container *ngSwitchCase="'checkbox-group'">
-      <div *ngIf="question.subtype === 'facilities'" class="question__item" lines="none">
+      <div *ngIf="question['facilityPicker']" class="question__item" lines="none">
         <h3 class="question__secondary-header">{{ question.label }}</h3>
 
         <ion-reorder-group disabled="false" (ionItemReorder)="doReorder($event)">
           <ng-container *ngFor="let item of question['values']; index as idx">
-            <ion-item [formArrayName]="question.name" *ngIf="item.selected">
+            <ion-item [formArrayName]="question['name']" *ngIf="item.selected">
               <ion-badge color="primary" slot="start">{{ idx + 1 }}</ion-badge>
               <ion-label>
                 {{ item.label }}
@@ -92,17 +92,17 @@
         </ion-reorder-group>
       </div>
 
-      <div *ngIf="question.subtype !== 'facilities'" class="question__item" lines="none">
+      <div *ngIf="!question['facilityPicker']" class="question__item" lines="none">
         <h3 class="question__secondary-header">{{ question.label }}</h3>
 
-        <ng-container *ngIf="!parentGroup.get(question.name).valid && parentGroup.get(question.name).touched">
-          <p *ngIf="parentGroup.get(question.name).getError('required')" class="control-error">
+        <ng-container *ngIf="!parentGroup.get(question['name']).valid && parentGroup.get(question['name']).touched">
+          <p *ngIf="parentGroup.get(question['name']).getError('required')" class="control-error">
             This field is required.
           </p>
         </ng-container>
 
         <ion-item
-          [formArrayName]="question.name"
+          [formArrayName]="question['name']"
           *ngFor="let item of question['values']; index as idx"
           class="ion-no-padding"
           lines="none"
@@ -122,13 +122,13 @@
     <div *ngSwitchCase="'radio-group'" class="question__item" lines="none">
       <h3 class="question__secondary-header">{{ question.label }}</h3>
 
-      <ng-container *ngIf="!parentGroup.get(question.name).valid && parentGroup.get(question.name).touched">
-        <p *ngIf="parentGroup.get(question.name).getError('required')" class="control-error">
+      <ng-container *ngIf="!parentGroup.get(question['name']).valid && parentGroup.get(question['name']).touched">
+        <p *ngIf="parentGroup.get(question['name']).getError('required')" class="control-error">
           This field is required.
         </p>
       </ng-container>
 
-      <ion-radio-group [formControlName]="question.name">
+      <ion-radio-group [formControlName]="question['name']">
         <ion-item *ngFor="let item of question['values']; index as idx" class="ion-no-padding" lines="none">
           <ion-label>{{ item.label }}</ion-label>
           <ion-radio class="question__radio" mode="md" slot="start" [value]="item.value"></ion-radio>

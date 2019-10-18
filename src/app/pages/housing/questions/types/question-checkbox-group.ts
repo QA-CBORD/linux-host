@@ -1,6 +1,6 @@
-import { QuestionBase, QuestionBaseOptions } from './question-base';
+import { QuestionFormControl, QuestionFormControlOptions } from './question-form-control';
 
-let counter = 0;
+let counter: number = 0;
 
 export interface QuestionCheckboxGroupValue {
   label: string;
@@ -8,11 +8,11 @@ export interface QuestionCheckboxGroupValue {
   selected: boolean;
 }
 
-export interface QuestionCheckboxGroupOptions extends QuestionBaseOptions {
+export interface QuestionCheckboxGroupOptions extends QuestionFormControlOptions {
   values?: QuestionCheckboxGroupValue[];
 }
 
-export class QuestionCheckboxGroup extends QuestionBase {
+export class QuestionCheckboxGroup extends QuestionFormControl implements QuestionCheckboxGroupOptions {
   values: QuestionCheckboxGroupValue[];
 
   constructor(options: QuestionCheckboxGroupOptions = {}) {

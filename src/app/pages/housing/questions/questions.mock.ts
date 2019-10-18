@@ -11,9 +11,9 @@ export function generateQuestions(): any[] {
     {
       type: 'checkbox-group',
       required: true,
-      label: 'Please rank your top 3 residence hall choices.',
+      label: 'Facility Preferences',
       inline: true,
-      subtype: 'facilities',
+      facilityPicker: true,
       name: 'checkbox-group-1571248515993',
       preferenceCount: 3,
       values: [

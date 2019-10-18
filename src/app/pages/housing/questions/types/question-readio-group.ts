@@ -1,6 +1,6 @@
-import { QuestionBase, QuestionBaseOptions } from './question-base';
+import { QuestionFormControl, QuestionFormControlOptions } from './question-form-control';
 
-let counter = 0;
+let counter: number = 0;
 
 export interface QuestionRadioGroupValue {
   label: string;
@@ -8,11 +8,11 @@ export interface QuestionRadioGroupValue {
   selected: boolean;
 }
 
-export interface QuestionRadioGroupOptions extends QuestionBaseOptions {
+export interface QuestionRadioGroupOptions extends QuestionFormControlOptions {
   values?: QuestionRadioGroupValue[];
 }
 
-export class QuestionRadioGroup extends QuestionBase {
+export class QuestionRadioGroup extends QuestionFormControl implements QuestionRadioGroupOptions {
   values: QuestionRadioGroupValue[];
 
   constructor(options: QuestionRadioGroupOptions = {}) {

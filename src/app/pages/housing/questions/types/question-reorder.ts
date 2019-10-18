@@ -1,12 +1,8 @@
-import { QuestionBaseOptions } from './question-base';
+import { QuestionFormControl, QuestionFormControlOptions } from './question-form-control';
 
-let counter = 0;
-
-export interface QuestionReorderOptions extends QuestionBaseOptions {
-  required?: boolean;
+export interface QuestionReorderOptions extends QuestionFormControlOptions {
   inline?: boolean;
-  subtype?: string;
-  name?: string;
+  facilityPicker?: boolean;
   values?: QuestionReorderValue[];
   preferenceCount?: number;
 }
@@ -15,23 +11,21 @@ export class QuestionReorderValue {
   constructor(public label: string, public value: string, public selected?: boolean) {}
 }
 
-export class QuestionReorder implements QuestionReorderOptions {
-  required: boolean;
+export class QuestionReorder extends QuestionFormControl implements QuestionReorderOptions {
   inline: boolean;
-  subtype: string;
-  name: string;
+  facilityPicker: boolean;
   values: QuestionReorderValue[];
   preferenceCount: number;
 
-  constructor(reorderOptions: QuestionReorderOptions = {}) {
-    this.required = !!reorderOptions.required;
-    this.inline = !!reorderOptions.inline;
-    this.subtype = reorderOptions.subtype || '';
-    this.name = reorderOptions.name || `reorder-${counter++}`;
-    this.values = reorderOptions.values || [];
-    this.preferenceCount = reorderOptions.preferenceCount;
+  constructor(options: QuestionReorderOptions = {}) {
+    super(options);
 
-    reorderOptions.values = reorderOptions.values.map(
+    this.inline = !!options.inline;
+    this.facilityPicker = !!options.facilityPicker;
+    this.values = options.values || [];
+    this.preferenceCount = options.preferenceCount;
+
+    options.values = options.values.map(
       (value: QuestionReorderValue) => new QuestionReorderValue(value.label, value.value, value.selected)
     );
   }

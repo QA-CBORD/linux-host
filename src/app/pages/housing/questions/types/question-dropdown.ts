@@ -1,4 +1,6 @@
-import { QuestionBase, QuestionBaseOptions } from './question-base';
+import { QuestionFormControl, QuestionFormControlOptions } from './question-form-control';
+
+let counter: number = 0;
 
 export interface QuestionDropdownValue {
   label: string;
@@ -6,16 +8,17 @@ export interface QuestionDropdownValue {
   selected?: boolean;
 }
 
-export interface QuestionDropdownOptions extends QuestionBaseOptions {
+export interface QuestionDropdownOptions extends QuestionFormControlOptions {
   values?: QuestionDropdownValue[];
 }
 
-export class QuestionDropdown extends QuestionBase {
+export class QuestionDropdown extends QuestionFormControl implements QuestionDropdownOptions {
   values: QuestionDropdownValue[];
 
   constructor(options: QuestionDropdownOptions = {}) {
     super(options);
 
     this.values = options.values || [];
+    this.name = options.name || `select-${counter++}`;
   }
 }

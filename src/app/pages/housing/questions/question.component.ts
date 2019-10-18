@@ -31,13 +31,9 @@ export class QuestionComponent implements OnInit {
     cssClass: 'custom-deposit-actionSheet',
   };
 
-  get isFacilityPicker(): boolean {
-    return this.question && this.question.type === 'checkbox-group' && this.question.subtype === 'facilities';
-  }
-
   ngOnInit(): void {
     if (this.question.type === 'header') {
-      this.createHeader(this.question);
+      this.createHeader(this.question as QuestionHeader);
     }
   }
 

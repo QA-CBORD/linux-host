@@ -1,14 +1,12 @@
-import { QuestionBase, QuestionBaseOptions } from './question-base';
+import { QuestionFormControl, QuestionFormControlOptions } from './question-form-control';
 
-let counter = 0;
+let counter: number = 0;
 
-export interface QuestionTextboxOptions extends QuestionBaseOptions {
-  name?: string;
+export interface QuestionTextboxOptions extends QuestionFormControlOptions {
   subtype?: string;
 }
 
-export class QuestionTextbox extends QuestionBase {
-  name: string;
+export class QuestionTextbox extends QuestionFormControl implements QuestionTextboxOptions {
   subtype: string;
 
   constructor(options: QuestionTextboxOptions = {}) {
