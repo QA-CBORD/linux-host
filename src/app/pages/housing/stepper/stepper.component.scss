@@ -7,8 +7,9 @@
 
 .stepper__list {
   border-bottom: 1px solid $color-light-gray;
+  margin-top: 0;
   margin-bottom: 40px;
-  padding: 0 16px 0 30px;
+  padding: 0 16px;
   list-style: none;
   display: flex;
   justify-content: space-around;

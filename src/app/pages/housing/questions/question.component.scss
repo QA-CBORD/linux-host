@@ -5,20 +5,35 @@
     border: 1px solid $color-light-gray !important;
 
     & + #{$placeholder} {
+      background-color: transparent !important;
       color: inherit !important;
       font-size: 100% !important;
       opacity: 0.5 !important;
-      padding: 15px 0 0 13px !important;
+      padding: 15px 0 0 10px !important;
       transform: translate3d(0, 0, 0) !important;
+      z-index: 1 !important;
     }
+  }
+}
+
+@mixin placeholder-transform() {
+  transform: translate3d(10px, -50%, 0) !important;
+}
+
+@mixin placeholder-transform-focus() {
+  &:focus,
+  &:focus-within,
+  &--error {
+    @content;
   }
 }
 
 .question__item {
   display: block;
+  margin-top: 0;
   margin-bottom: 30px;
 
-  &.empty-form-control ::ng-deep {
+  &.form-control--empty ::ng-deep {
     .input__control {
       @include empty-control('.input__control', '.input__placeholder');
     }
@@ -35,12 +50,14 @@
 
 .question__primary-header {
   @include font-nunito-heavy(20px);
+  color: $color-god-gray;
   margin-top: 0;
   margin-bottom: 25px;
 }
 
 .question__secondary-header {
   @include font-nunito-heavy(14px);
+  color: $color-matterhorn;
   margin-top: 0;
   margin-bottom: 16px;
 }
@@ -52,4 +69,56 @@
 .question__checkbox {
   --background-checked: #{$color-dodger-blue};
   --border-color-checked: #{$color-dodger-blue};
+}
+
+.question__control {
+  & ::ng-deep {
+    .input__control {
+      border-radius: 4px;
+
+      @include placeholder-transform-focus() {
+        & + .input__placeholder {
+          @include placeholder-transform();
+        }
+      }
+    }
+
+    .select__control {
+      border-radius: 4px;
+
+      @include placeholder-transform-focus() {
+        & + .select__placeholder {
+          @include placeholder-transform();
+        }
+      }
+    }
+
+    .textarea__control {
+      border-radius: 4px;
+
+      @include placeholder-transform-focus() {
+        & + .textarea__placeholder {
+          @include placeholder-transform();
+        }
+      }
+    }
+
+    .input__placeholder,
+    .select__placeholder,
+    .textarea__placeholder {
+      max-width: calc(100% - 25px);
+
+      @include ellipsis();
+    }
+  }
+}
+
+.form-control--filled {
+  & ::ng-deep {
+    .input__placeholder,
+    .select__placeholder,
+    .textarea__placeholder {
+      @include placeholder-transform();
+    }
+  }
 }

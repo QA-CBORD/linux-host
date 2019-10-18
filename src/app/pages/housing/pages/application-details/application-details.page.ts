@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectionStrategy, ViewChild, ViewChildren, QueryList } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormGroup } from '@angular/forms';
+import { AbstractControl, FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { tap, filter } from 'rxjs/operators';
 
@@ -90,13 +90,34 @@ export class ApplicationDetailsPage implements OnInit {
 
   private async _patchFormsFromState(pages: QuestionPage[]): Promise<void> {
     const questions: any[] = await this._questionsStorageService.getQuestions(this.applicationId);
+    const namesToTouch: Set<string> = new Set<string>();
 
-    pages.forEach(async (page: QuestionPage, index: number) => {
+    pages.forEach((page: QuestionPage, index: number) => {
       if (questions && questions[index]) {
         page.form.patchValue(questions[index]);
+
+        const controls = page.form.controls;
+
+        Object.keys(controls).forEach((controlName: string) => {
+          const control: AbstractControl = controls[controlName];
+          const hasValue: boolean = Array.isArray(control.value)
+            ? !control.value.some((value: any) => value == null || value === '')
+            : !(control.value == null || control.value === '');
+
+          if (hasValue) {
+            control.markAsDirty();
+            control.markAsTouched();
+
+            namesToTouch.add(controlName);
+          }
+        });
       }
     });
 
-    this.questions.forEach((question: QuestionComponent) => question.touch());
+    this.questions.forEach((question: QuestionComponent) => {
+      if (namesToTouch.has(question.name)) {
+        question.check();
+      }
+    });
   }
 }

@@ -19,6 +19,7 @@
             *ngFor="let question of page.questions"
             [parentGroup]="page.form"
             [question]="question"
+            [name]="question.name"
           ></st-question>
 
           <st-stepper-footer>

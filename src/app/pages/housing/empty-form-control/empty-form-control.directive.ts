@@ -9,8 +9,11 @@ export class EmptyFormControlDirective implements OnInit, OnDestroy {
   @Input()
   stEmptyFormControl: AbstractControl;
 
-  @HostBinding('class.empty-form-control')
+  @HostBinding('class.form-control--empty')
   isEmpty: boolean;
+
+  @HostBinding('class.form-control--filled')
+  isFilled: boolean;
 
   private _subscription: Subscription;
 
@@ -25,6 +28,12 @@ export class EmptyFormControlDirective implements OnInit, OnDestroy {
   }
 
   private _checkIsEmpty(value: any): void {
-    this.isEmpty = value == null || value === '';
+    if (value == null || value === '') {
+      this.isEmpty = true;
+      this.isFilled = false;
+    } else {
+      this.isFilled = true;
+      this.isEmpty = false;
+    }
   }
 }

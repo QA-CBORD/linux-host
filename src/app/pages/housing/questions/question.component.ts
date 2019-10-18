@@ -1,5 +1,13 @@
-import { Component, Input, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { FormGroup, AbstractControl } from '@angular/forms';
+import {
+  Component,
+  Input,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Renderer2 as Renderer,
+  ElementRef,
+  OnInit,
+} from '@angular/core';
+import { AbstractControl, FormGroup } from '@angular/forms';
 
 import { QuestionBase } from './types/question-base';
 import { QuestionHeader } from './questions.model';
@@ -10,8 +18,12 @@ import { QuestionHeader } from './questions.model';
   styleUrls: ['./question.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class QuestionComponent {
+export class QuestionComponent implements OnInit {
+  constructor(private _changeDetector: ChangeDetectorRef, private _renderer: Renderer, private _el: ElementRef) {}
+
   @Input() question: QuestionBase;
+
+  @Input() name: string;
 
   @Input() parentGroup: FormGroup;
 
@@ -19,14 +31,29 @@ export class QuestionComponent {
     cssClass: 'custom-deposit-actionSheet',
   };
 
-  constructor(private _changeDetector: ChangeDetectorRef) {}
+  get isFacilityPicker(): boolean {
+    return this.question && this.question.type === 'checkbox-group' && this.question.subtype === 'facilities';
+  }
 
-  getHeaderHTML(question: QuestionHeader): string {
-    const headerWight: number = parseInt(question.subtype.slice(1), 10);
-    const headerClass: string =
-      headerWight > 1 ? 'question__secondary-header ion-text-uppercase' : 'question__primary-header';
+  ngOnInit(): void {
+    if (this.question.type === 'header') {
+      this.createHeader(this.question);
+    }
+  }
 
-    return `<${question.subtype} class="${headerClass}">${question.label}</${question.subtype}>`;
+  createHeader(question: QuestionHeader): void {
+    const headerWeight: number = parseInt(question.subtype, 10);
+    const header: HTMLHeadingElement = this._renderer.createElement(question.subtype);
+    const text = this._renderer.createText(question.label);
+
+    if (headerWeight > 1) {
+      this._renderer.addClass(header, 'question__secondary-header ion-text-uppercase');
+    } else {
+      this._renderer.addClass(header, 'question__primary-header');
+    }
+
+    this._renderer.appendChild(header, text);
+    this._renderer.appendChild(this._el.nativeElement, header);
   }
 
   check(): void {
@@ -42,5 +69,9 @@ export class QuestionComponent {
     });
 
     this.check();
+  }
+
+  doReorder(reorderEvent: CustomEvent): void {
+    reorderEvent.detail.complete();
   }
 }
