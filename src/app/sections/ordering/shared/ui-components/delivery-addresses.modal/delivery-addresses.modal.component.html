@@ -42,7 +42,7 @@
                     shape="round"
                     class="delivery-address__add-address-btn"
                     [ngClass]="{ 'delivery-address__add-address-btn--valid': addNewAdddressForm && addNewAdddressForm.valid }"
-                    (click)="addNewAdddressForm && addNewAdddressForm.valid && addAddress()">
+                    (click)="addAddress();addNewAdddressState = !addNewAdddressState">
           save
         </ion-button>
       </div>
@@ -58,8 +58,16 @@
               *ngFor="let item of listOfAddresses">
       <ion-label class="delivery-address__radio-label">
         <div class="delivery-address__radio-label-content">
-          <div class="delivery-address__radio-label-header">{{item.address1}}</div>
-          <div class="delivery-address__radio-label-sub-header">{{item.city}}, {{item.state}}</div>
+          <ng-container *ngIf="item.onCampus; then onCampus; else ofCampus"></ng-container>
+
+          <ng-template #ofCampus>
+            <div class="delivery-address__radio-label-header">{{item.address1}}</div>
+            <div class="delivery-address__radio-label-sub-header">{{item.city}}, {{item.state}}</div>
+          </ng-template>
+          <ng-template #onCampus>
+            <div class="delivery-address__radio-label-header">{{item.room}}, {{item.building}}</div>
+          </ng-template>
+
         </div>
       </ion-label>
       <ion-radio mode="md"

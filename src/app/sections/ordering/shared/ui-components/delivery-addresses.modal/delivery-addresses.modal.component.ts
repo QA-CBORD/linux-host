@@ -1,7 +1,11 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
+import { Component, Input, ChangeDetectionStrategy, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { MerchantService } from '@sections/ordering/services';
 import { LoadingService } from '@core/service/loading/loading.service';
+import { take } from 'rxjs/operators';
+import { UserService } from '@core/service/user-service/user.service';
+import { of, zip, iif } from 'rxjs';
 
 @Component({
   selector: 'st-delivery-addresses.modal',
@@ -9,29 +13,54 @@ import { LoadingService } from '@core/service/loading/loading.service';
   styleUrls: ['./delivery-addresses.modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DeliveryAddressesModalComponent {
+export class DeliveryAddressesModalComponent implements OnInit {
 
-  @Input() addressLabel;
   @Input() defaultAddress;
-  @Input() listOfAddresses;
   @Input() buildings;
+  @Input() isOrderTypePickup;
+  @Input() pickupLocations;
+  @Input() deliveryAddresses;
+  @Input() deliveryAddressRestriction;
+
   addNewAdddressState: boolean = false;
   addNewAdddressForm: { value: any; valid: boolean };
   selectedAddress;
-  constructor(private readonly modalController: ModalController,
+  listOfAddresses;
+  addressLabel;
+  constructor(
+    private readonly modalController: ModalController,
     private readonly merchantService: MerchantService,
-    private readonly loadingService: LoadingService) { }
+    private readonly loadingService: LoadingService,
+    private readonly cdRef: ChangeDetectorRef,
+    private readonly userService: UserService
+  ) { }
 
-  async onClickedDone(selectedAddress) {
+  ngOnInit() {
+    this.listOfAddresses = this.defineListOfAddresses(this.defaultAddress)
+  }
+  async onClickedDone(selectedAddress?: any) {
     await this.modalController.dismiss(selectedAddress);
   }
 
   addAddress() {
+    if (!this.addNewAdddressForm && !this.addNewAdddressForm.valid) return;
     this.loadingService.showSpinner();
     this.merchantService.updateUserAddress(this.addNewAdddressForm.value)
-      .subscribe(() => {
-        this.addNewAdddressState = !this.addNewAdddressState
+      .pipe(
+        switchMap((addedAddress): any => zip(
+          iif(
+            () => this.addNewAdddressForm.value.default,
+            this.userService.saveUserSettingsBySettingName('defaultaddress', addedAddress.id),
+            of(false)
+          ),
+          of(addedAddress)
+        )),
+        take(1)
+      )
+      .subscribe(([isDefaultAddressAdded, addedAddress]) => {
         this.loadingService.closeSpinner();
+        this.listOfAddresses = [...this.listOfAddresses, addedAddress];
+        this.cdRef.detectChanges();
       }, () => this.loadingService.closeSpinner())
   }
 
@@ -52,4 +81,19 @@ export class DeliveryAddressesModalComponent {
     console.log(this.addNewAdddressForm.value);
     this.addNewAdddressState = !this.addNewAdddressState;
   }
+
+  private defineListOfAddresses(defaultAddress) {
+    const listOfAddresses = this.isOrderTypePickup ? this.pickupLocations : this.deliveryAddresses;
+    this.addressLabel = this.isOrderTypePickup ? 'Pickup' : 'Delivery';
+
+    return listOfAddresses.map(item => {
+      const checked = defaultAddress ? item.id == defaultAddress.id : false;
+
+      return item.addressInfo ? item.addressInfo : { ...item, checked }
+    });
+  }
+
+  // private retrieveDeliveryAddresses(setting) {
+  //   return this.merchantService.retrieveDeliveryAddresses(setting);
+  // }
 }

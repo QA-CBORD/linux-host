@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 import { Observable } from 'rxjs';
-import { switchMap, map, tap } from 'rxjs/operators';
+import { switchMap, map, tap, take } from 'rxjs/operators';
 
 import { UserService } from 'src/app/core/service/user-service/user.service';
 import { CoordsService } from 'src/app/core/service/coords/coords.service';

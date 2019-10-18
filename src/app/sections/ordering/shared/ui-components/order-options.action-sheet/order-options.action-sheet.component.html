@@ -28,31 +28,39 @@
           </ion-item>
         </ion-radio-group>
       </div>
-      <ion-item 
-                lines="full"
-                (click)="openDeliveryAddressesModal()">
+      <ion-item lines="full"
+                [detail]="orderOptionsData?.isClickble"
+                (click)="orderOptionsData?.isClickble && openDeliveryAddressesModal()">
         <div class="order-options__select-container">
-          <div class="order-options__select-label">{{ orderOptionsData.label }} ADDRESS</div>
+          <div class="order-options__select-label">{{ orderOptionsData?.label }} ADDRESS</div>
           <div class="order-options__select-value">
             <img width="16"
                  src="./assets/icon/location-pin.svg"
                  alt="pin" />
-            <span *ngIf="orderOptionsData.address?.address1; else deliveryPlaceholder">
-              {{ orderOptionsData.address.address1 }}, {{orderOptionsData.address.city}}
+            <span>
+              <ng-container *ngIf="orderOptionsData?.address; then addressContainer; else placeholder"></ng-container>
             </span>
-            <ng-template #deliveryPlaceholder>Add an Address</ng-template>
+
+            <ng-template #placeholder>Add an Address</ng-template>
+
+            <ng-template #addressContainer>
+              <ng-container *ngIf="orderOptionsData?.address?.onCampus; then onCampus; else ofCampus"></ng-container>
+            </ng-template>
+
+            <ng-template #ofCampus>
+              {{ orderOptionsData?.address?.address1 }}, {{orderOptionsData?.address?.city}}
+            </ng-template>
+            <ng-template #onCampus>
+              {{orderOptionsData?.address?.room}}, {{orderOptionsData?.address?.building}}
+            </ng-template>
           </div>
         </div>
       </ion-item>
       <ion-item [detail]="isTimeDisable"
-                lines="full"
-                (click)="isTimeDisable && openPicker()">
-        <div class="order-options__select-container">
-          <div class="order-options__select-label">{{ orderOptionsData.label }} TIME</div>
-          <div class="order-options__select-value"><img width="16"
-                 src="./assets/icon/time.svg"
-                 alt="time" />ASAP</div>
-        </div>
+                lines="full">
+        <st-date-time-picker [schedule]="schedule"
+                             [isTimeDisable]="isTimeDisable"
+                             [data]="orderOptionsData"></st-date-time-picker>
       </ion-item>
     </ion-list>
   </div>
