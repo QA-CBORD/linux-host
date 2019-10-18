@@ -38,8 +38,8 @@ export class ItemDetailComponent implements OnInit {
   itemOrderForm: FormGroup;
   checkedToppings = [];
   counter: number = 1;
-  sizePrice = 0;
-  toppingPrice = 0;
+  sizePrice: number = 0;
+  toppingPrice: number = 0;
   totalPrice: number = 0; 
 
   constructor(
@@ -104,12 +104,15 @@ export class ItemDetailComponent implements OnInit {
   }
 
   checked(topping) {
+
+    //TODO: need to implement checkbox functional
+    //TODO: validation "up to 3 checked element"
+
     console.log(topping);
     console.log(this.checkedToppings);
 
-    if(this.checkedToppings.map( v => v.checked).includes('false')) {
+    if(this.checkedToppings.map( v => v.checked).includes(false)) {
       console.log("hello");
-      
     }
 
     if (this.checkedToppings.length < 3) {
@@ -119,8 +122,6 @@ export class ItemDetailComponent implements OnInit {
         }
       }
     }     
-        
-
   }
   
   removeItems() {

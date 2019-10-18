@@ -1,6 +1,6 @@
 @import 'tools';
 
-.item {
+.order-detail {
 
     padding: 0;
     margin: 0;
@@ -86,7 +86,7 @@
         @include font-nunito-heavy(16px);
     }
 
-    &__divider-options {
+    &__divider-subtitle {
         letter-spacing: 0px;
         color: #515151;
 
@@ -110,13 +110,13 @@
         @include font-nunito-regular(12px);
     }
 
-    &__radio-item {
+    &__item-size {
         --color-checked: #166dff;
         --color: #c4c4c4;
         border-style: unset;
     }
 
-    &__radio-item__item {
+    &__radio-size {
         margin-right: 10px;
         --color-checked: #166dff;
     }
@@ -203,6 +203,15 @@
         @include font-nunito-regular(12px);
     }
 
+    &__control-error-msg {
+        margin: 0;
+        color: $color-alizarin;
+        letter-spacing: 0;
+        min-height: 16px;
+        line-height: 16px;
+    
+        @include font-nunito-heavy(12px);
+      }
 }
 
 .item-footer {
