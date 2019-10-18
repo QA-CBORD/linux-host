@@ -66,8 +66,4 @@ export class QuestionComponent implements OnInit {
 
     this.check();
   }
-
-  doReorder(reorderEvent: CustomEvent): void {
-    reorderEvent.detail.complete();
-  }
 }

@@ -77,19 +77,7 @@
 
     <ng-container *ngSwitchCase="'checkbox-group'">
       <div *ngIf="question['facilityPicker']" class="question__item" lines="none">
-        <h3 class="question__secondary-header">{{ question.label }}</h3>
-
-        <ion-reorder-group disabled="false" (ionItemReorder)="doReorder($event)">
-          <ng-container *ngFor="let item of question['values']; index as idx">
-            <ion-item [formArrayName]="question['name']" *ngIf="item.selected">
-              <ion-badge color="primary" slot="start">{{ idx + 1 }}</ion-badge>
-              <ion-label>
-                {{ item.label }}
-              </ion-label>
-              <ion-reorder slot="end"></ion-reorder>
-            </ion-item>
-          </ng-container>
-        </ion-reorder-group>
+        <st-facility-picker [question]="question" [parentForm]="parentGroup"></st-facility-picker>
       </div>
 
       <div *ngIf="!question['facilityPicker']" class="question__item" lines="none">

@@ -13,7 +13,7 @@ import { QuestionDropdown } from './types/question-dropdown';
 import { QuestionCheckboxGroup, QuestionCheckboxGroupValue } from './types/question-checkbox-group';
 import { QuestionRadioGroup } from './types/question-readio-group';
 
-import { QuestionPage, QuestionReorder } from './questions.model';
+import { QuestionPage, QuestionReorder, QuestionReorderValue } from './questions.model';
 import { Application } from '../applications/applications.model';
 
 export const QuestionConstructorsMap = {
@@ -104,6 +104,12 @@ export class QuestionsService {
           const values: FormControl[] = question.values.map(
             (value: QuestionCheckboxGroupValue) => new FormControl(value.selected)
           );
+
+          group[question.name] = new FormArray(values);
+        } else if (question instanceof QuestionReorder) {
+          const values: FormControl[] = question.values
+            .filter((value: QuestionReorderValue) => value.selected)
+            .map((value: QuestionReorderValue) => new FormControl(value));
 
           group[question.name] = new FormArray(values);
         } else {

@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, ViewChild, TemplateRef, Input } from '@angular/core';
-import { AbstractControl } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'st-step',
@@ -9,7 +9,7 @@ import { AbstractControl } from '@angular/forms';
 export class StepComponent {
   @ViewChild(TemplateRef) content: TemplateRef<any>;
 
-  @Input() stepControl: AbstractControl;
+  @Input() stepControl: FormGroup;
 
   @Input() label: string;
 

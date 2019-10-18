@@ -15,7 +15,7 @@ export function generateQuestions(): any[] {
       inline: true,
       facilityPicker: true,
       name: 'checkbox-group-1571248515993',
-      preferenceCount: 3,
+      prefRank: 3,
       values: [
         { label: '1101 - 10 Plex', value: '9000385' },
         { label: 'Stanford', value: '9000419', selected: true },

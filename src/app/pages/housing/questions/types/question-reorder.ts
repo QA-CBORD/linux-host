@@ -4,18 +4,20 @@ export interface QuestionReorderOptions extends QuestionFormControlOptions {
   inline?: boolean;
   facilityPicker?: boolean;
   values?: QuestionReorderValue[];
-  preferenceCount?: number;
+  prefRank?: number;
 }
 
-export class QuestionReorderValue {
-  constructor(public label: string, public value: string, public selected?: boolean) {}
+export interface QuestionReorderValue {
+  label: string;
+  value: string;
+  selected: boolean;
 }
 
 export class QuestionReorder extends QuestionFormControl implements QuestionReorderOptions {
   inline: boolean;
   facilityPicker: boolean;
   values: QuestionReorderValue[];
-  preferenceCount: number;
+  prefRank: number;
 
   constructor(options: QuestionReorderOptions = {}) {
     super(options);
@@ -23,10 +25,8 @@ export class QuestionReorder extends QuestionFormControl implements QuestionReor
     this.inline = !!options.inline;
     this.facilityPicker = !!options.facilityPicker;
     this.values = options.values || [];
-    this.preferenceCount = options.preferenceCount;
+    this.prefRank = options.prefRank || 0;
 
-    options.values = options.values.map(
-      (value: QuestionReorderValue) => new QuestionReorderValue(value.label, value.value, value.selected)
-    );
+    this.values = options.values || [];
   }
 }
