@@ -6,6 +6,7 @@
     [isToolbarShow]="true"
     class="appertizer__header"
 ></st-header>
-<p>
-  appertizer-list works!
-</p>
+<ng-container *ngIf="searchState; then searchBlock; else appertizersBlock"></ng-container>
+  <ng-template #searchBlock><div>search</div></ng-template>
+  <ng-template #appertizersBlock><div>appertizers Block</div></ng-template>
+
