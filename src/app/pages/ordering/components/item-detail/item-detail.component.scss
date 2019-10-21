@@ -2,110 +2,95 @@
 
 .order-detail {
 
-    padding: 0;
-    margin: 0;
-
     &__header {
         display: block;
         height: 250px;
     }
 
-    &__img {
+    &__appetizer-photo {
         height: 100%;
         width: 100%;
     }
 
-    &__close-btns {
+    &__header-buttons {
         position: absolute;
         top: 43px;
         left: 16px;
     }
 
-    &__close-btn {
+    &__close-button {
         width: 48px;
         height: 48px;
-        background: #ffffff;
+        background: $color-white;
         opacity: 0.75;
         border-radius: 50%;
     } 
     
-    &__toolbar-icon {
+    &__header-icon {
         width: 38px;
         height: 38px;
     }
 
     &__descriptions {
-        background: #ffffff;
-        padding: 17px;
+        background: $color-white;
+        padding: 17px 17px 11px 17px;
 
         @include font-nunito-regular(16px);
     }
     
     &__descriptions-title {
-        letter-spacing: 0px;
-        line-height: 24px;
-
+        
         @include font-nunito-heavy(20px);
     }
 
     &__descriptions-content {
-        color: #515151;
-        letter-spacing: 0px;
-        margin: 9px auto;
+        color: $color-matterhorn;
+        margin: 5px auto;
 
         @include font-nunito-regular(16px);
     }
 
     &__descriptions-price {
         height: 18px;
-        letter-spacing: 0px;
-        line-height: 18px;
 
         @include font-nunito-regular(14px);
     }
 
     &__list-size {
         padding: 0;
-        margin: 0;
     }
 
     &__divider {
         display: flex;
         flex-direction: column;
         align-items: flex-start;
-        background-color: #f7f7f7;
+        background-color: $color-white-smoke;
         padding: 9px 17px;
-        border-style: unset;
         --inner-padding-bottom: 0px;
     }
 
     &__divider-title {
-        letter-spacing: 0px;
-        color: #000;
+        color: $color-black;
 
         @include font-nunito-heavy(16px);
     }
 
     &__divider-subtitle {
-        letter-spacing: 0px;
-        color: #515151;
+        color: $color-matterhorn;
 
         @include font-nunito-regular(12px);
     }
 
-    &__title {
-        color: #000;
+    &__size-title, &__topping-title {
+        color: $color-black;
         height: 18px;
-        letter-spacing: 0px;
-
+        
         @include font-nunito-heavy(16px);
     }
 
-    &__price {
-        color: #000;
+    &__size-price, &__topping-price {
+        color: $color-black;
         height: 14px;
-        letter-spacing: 0px;
-        width: 311px;
 
         @include font-nunito-regular(12px);
     }
@@ -113,7 +98,6 @@
     &__item-size {
         --color-checked: #166dff;
         --color: #c4c4c4;
-        border-style: unset;
     }
 
     &__radio-size {
@@ -128,12 +112,11 @@
     &__toppings-items {
         --border-style: unset;
         --border-color: #fff;
-        color: rgb(0, 0, 0);
+        color: $color-black;
         margin-left: 15px;
     }
 
     &__toppings-label {
-        letter-spacing: 0px;
 
         @include font-nunito-heavy(16px);
     }
@@ -150,7 +133,7 @@
 
     &__order-message {
         display: block;
-        margin: 20px 20px;
+        margin: 20px;
     }
 
     &__nutrition-info {
@@ -160,7 +143,7 @@
 
     &__nutrition-info-row {
         display: flex;
-        flex-wrap: wrap;
+        justify-content: space-around;
         align-items: center;
         padding: 16px;
         height: 80px;
@@ -169,46 +152,36 @@
     &__nutrition-info-col {
         display: flex;
         flex-direction: column;
+        justify-content: center;
         align-items: center;
+        width: 100%;
         height: 48px;
     }
 
     &__nutrition-info-col:nth-child(2) {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        height: 48px;
-        border-left: 1px solid #ebebeb;
-        border-right: 1px solid #ebebeb;
+        border-left: 1px solid $color-whisper;
+        border-right: 1px solid $color-whisper;
     }
 
     &__nutrition-info-title {
-        color: #000;
+        color: $color-black;
         height: 16px;
-        letter-spacing: 0px;
         line-height: 16px;
-        text-align: center;
 
         @include font-nunito-heavy(16px);
     }
 
     &__nutrition-info-subtitle {
-        color: #515151;
+        color: $color-matterhorn;
         height: 12px;
-        letter-spacing: 0px;
         line-height: 12px;
-        text-align: center;
-        width: 98.5px;
 
         @include font-nunito-regular(12px);
     }
 
     &__control-error-msg {
-        margin: 0;
         color: $color-alizarin;
-        letter-spacing: 0;
         min-height: 16px;
-        line-height: 16px;
     
         @include font-nunito-heavy(12px);
       }
@@ -217,25 +190,20 @@
 .item-footer {
     position: absolute;
     bottom: 0px;
-    --border: none;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    min-height: 128px;
+    background: linear-gradient(to bottom,#00000000, $color-white, $color-white);
       
-    &__toolbar {
-        border-style: none;
-        display: flex;
-        justify-content: space-evenly;
-        align-items: center;
-        height: 128px;
-        background: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(255, 255, 255, 1), rgb(255, 255, 255));
-    }
-    
     &__counter-btns {
         display: inline-flex;
         height: 48px;
-        width: 134px;
-        background: #ffffff;
+        min-width: 134px;
+        background: $color-white;
         border-radius: 24px;
-        box-shadow: 0px 0px 24px 0px rgba(0, 0, 0, 0.04),
-        0px 12px 44px 0px rgba(0, 0, 0, 0.12);
+        box-shadow: 0px 0px 24px 0px #0000000a,
+        0px 12px 44px 0px #0000001f;
         justify-content: space-between;
         align-items: center;
     }
@@ -243,27 +211,17 @@
     &__add-btn {
         --background: #166dff;
         --border-radius: 24px;
-        --color: #ffffff;
+        --color: #fff;
         height: 48px;
-        width: 184px;
-        letter-spacing: 0px;
+        min-width: 184px;
         text-align: center;
-        text-transform: uppercase;
 
         @include font-nunito-heavy(14px);
-    }
 
-    &__add-btn-disabled {
-        --background: #e1e1e1;
-        --border-radius: 24px;
-        --color: #8e8e8e;
-        height: 48px;
-        width: 184px;
-        letter-spacing: 0px;
-        text-align: center;
-        text-transform: uppercase;
-
-        @include font-nunito-heavy(14px);
+        &-disabled {
+            --background: #e1e1e1;
+            --color: #8e8e8e;
+        }
     }
 
     &__counter-btn {
@@ -271,7 +229,6 @@
         --background: #fff;
         --color: #3c3c3c;
         --box-shadow: none;
-        font-weight: bold;
         height: 48px;
         width: 48px;
     }

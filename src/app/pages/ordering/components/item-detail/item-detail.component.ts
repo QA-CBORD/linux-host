@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { FormGroup, FormControl, FormBuilder, Validators, AbstractControl } from '@angular/forms';
 
@@ -6,6 +6,7 @@ import { FormGroup, FormControl, FormBuilder, Validators, AbstractControl } from
   selector: 'st-item-detail',
   templateUrl: './item-detail.component.html',
   styleUrls: ['./item-detail.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class ItemDetailComponent implements OnInit {
@@ -67,13 +68,13 @@ export class ItemDetailComponent implements OnInit {
     return REQUEST_FUNDS_CONTROL_NAMES;
   }
 
-  close() {
+  onClose() {
     this.modalContr.dismiss();
   }
 
-  calculate() {
-    let calcValue =(Number(this.sizePrice) + Number(this.toppingPrice))*this.counter;
-    return this.totalPrice = Number(calcValue.toFixed(2));
+  calculateTotalPrice() {
+    const calcValue =(Number(this.sizePrice) + Number(this.toppingPrice))*this.counter;
+    this.totalPrice = Number(calcValue.toFixed(2));
   }
 
   initForm() {
@@ -100,13 +101,14 @@ export class ItemDetailComponent implements OnInit {
         break;
     };
     
-    this.calculate();
+    this.calculateTotalPrice();
   }
 
-  checked(topping) {
+  toppingsChecked(topping) {
 
     //TODO: need to implement checkbox functional
     //TODO: validation "up to 3 checked element"
+    //TODO: calculate toppings price to totalPrice"
 
     console.log(topping);
     console.log(this.checkedToppings);
@@ -126,12 +128,12 @@ export class ItemDetailComponent implements OnInit {
   
   removeItems() {
     this.counter > 1? this.counter-- : null;
-    this.calculate();
+    this.calculateTotalPrice();
   }
 
   addItems() {
     this.counter++;
-    this.calculate();
+    this.calculateTotalPrice();
   }
 
   onFormSubmit() {
