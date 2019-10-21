@@ -3,15 +3,12 @@ import {
   Component,
   EventEmitter,
   Input,
-  OnChanges,
   OnInit,
   Output,
-  SimpleChanges
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { OrderItem } from '@pages/ordering';
 import { ORDER_TYPE } from "@pages/ordering/ordering.config";
-import { AddressInfo } from "@core/model/address/address-info";
 
 @Component({
   selector: 'st-order-details',

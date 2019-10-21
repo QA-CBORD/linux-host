@@ -19,7 +19,7 @@
             [type]="(order$ | async).type"
             [address]="(address$ | async)"
     >
-        <ng-container *ngIf="(order$ | async).status === orderStatus.PENDING; else pending" [ngTemplateOutlet]="complited"></ng-container>
+        <ng-container *ngIf="(order$ | async).status !== orderStatus.PENDING; else pending" [ngTemplateOutlet]="complited"></ng-container>
     </st-order-details>
 </ion-content>
 
