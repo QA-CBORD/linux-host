@@ -5,13 +5,13 @@ import { BehaviorSubject, Observable, of, from } from 'rxjs';
 
 import { BaseService } from '../base-service/base.service';
 import { UserInfo } from 'src/app/core/model/user/user-info.model';
-import { UserPhotoInfo } from '../../model/user';
+import { UserPhotoInfo, AddressInfoList } from '../../model/user';
 import { MessageResponse } from '../../model/service/message-response.model';
 import { UserSettings } from '../../model/user';
 import { UserPhotoList } from '../../model/user';
 import { HttpClient } from '@angular/common/http';
-import { AddressInfo, AddressInfoList } from './../../model/user/user-address.model';
 import { NativeProvider, NativeData } from '@core/provider/native-provider/native.provider';
+import { AddressInfo } from '@core/model/address/address-info';
 
 @Injectable({
   providedIn: 'root',
