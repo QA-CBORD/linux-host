@@ -1,9 +1,9 @@
 export enum LOCAL_ROUTING {
   recentOrders = 'recent-orders',
   favoriteMerchants = 'favorite-merchants',
-  savedAddresses = 'saved-addresses',
-  itemDetail = 'item-detail'
+  savedAddresses = 'saved-addresses'
 }
+
 export enum MerchantSearchOptionName {
   OPEN_NOW = 'open_now', /// 1/0 - omit to return all
   ACTIVE = 'active', /// 1/0 - default to 1
