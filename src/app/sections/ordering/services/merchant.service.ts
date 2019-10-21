@@ -10,6 +10,9 @@ import { MerchantSearchOptions } from '../utils';
 import { MerchantSearchOptionName } from '../ordering.config';
 import { UserService } from 'src/app/core/service/user-service/user.service';
 import { AddressInfo } from '@core/model/address/address-info';
+import { MessageResponse } from '@core/model/service/message-response.model';
+import { UserSettings } from '@core/model/user';
+import { SettingInfo } from '@core/model/configuration/setting-info.model';
 
 @Injectable()
 export class MerchantService {
@@ -19,7 +22,7 @@ export class MerchantService {
   private readonly _menuMerchants$: BehaviorSubject<MerchantInfo[]> = new BehaviorSubject<MerchantInfo[]>([]);
   private readonly _recentOrders$: BehaviorSubject<OrderInfo[]> = new BehaviorSubject<OrderInfo[]>([]);
 
-  constructor(private readonly orderingApiService: OrderingApiService, private readonly userService: UserService) { }
+  constructor(private readonly orderingApiService: OrderingApiService, private readonly userService: UserService) {}
 
   get menuMerchants$(): Observable<MerchantInfo[]> {
     return this._menuMerchants$.asObservable();
@@ -125,10 +128,8 @@ export class MerchantService {
     return this.userService
       .getUserSettingsBySettingName('defaultaddress')
       .pipe(
-        switchMap(({ response }) =>
-          zip(of({ defaultAddress: response.value }), this.filterDeliveryAddresses(setting))
-        )
-      )
+        switchMap(({ response }) => zip(of({ defaultAddress: response.value }), this.filterDeliveryAddresses(setting)))
+      );
   }
 
   getMerchantPaymentAccounts(merchantId: string): Observable<any> {
@@ -139,15 +140,19 @@ export class MerchantService {
     return this.orderingApiService.isOutsideMerchantDeliveryArea(merchantId, latitude, longitude);
   }
 
-  private filterDeliveryAddresses(setting) {
-    return this.retrieveUserAddressList()
-      .pipe(
-        map(addresses => {
-          if (parseInt(setting.value) === 0) {
-            return addresses;
-          }
+  getSettingByConfig(config): Observable<SettingInfo> {
+    return this.orderingApiService.getSettingByConfig(config);
+  }
 
-          return addresses.filter(({ onCampus }) => onCampus === 1);
-        }));
+  private filterDeliveryAddresses(setting) {
+    return this.retrieveUserAddressList().pipe(
+      map(addresses => {
+        if (parseInt(setting.value) === 0) {
+          return addresses;
+        }
+
+        return addresses.filter(({ onCampus }) => onCampus === 1);
+      })
+    );
   }
 }
