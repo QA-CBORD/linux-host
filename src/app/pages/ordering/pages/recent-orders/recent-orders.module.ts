@@ -7,19 +7,24 @@ import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module
 import { RecentOrdersComponent } from '@pages/ordering/pages';
 import { RecentOrderComponent } from '@pages/ordering/pages/recent-orders/components/recent-order/recent-order.component';
 import { OrderDetailsModule } from '@pages/ordering/shared/ui-components/order-details/order-details.module';
+import { ConfirmPopoverComponent } from "@pages/ordering/pages/recent-orders/components/confirm-popover/confirm-popover.component";
+import { StPopoverLayoutModule } from "@shared/ui-components/st-popover-layout/st-popover-layout.module";
 
 const imports = [
-  CommonModule,
-  IonicModule,
-  RecentOrdersRoutingModule,
-  StHeaderModule,
-  RecentOrdersListModule,
-  OrderDetailsModule,
+    CommonModule,
+    IonicModule,
+    RecentOrdersRoutingModule,
+    StHeaderModule,
+    RecentOrdersListModule,
+    OrderDetailsModule,
+    StPopoverLayoutModule
 ];
-const declarations = [RecentOrdersComponent, RecentOrderComponent];
+const declarations = [RecentOrdersComponent, RecentOrderComponent, ConfirmPopoverComponent];
 
 @NgModule({
-  declarations,
-  imports,
+    declarations,
+    imports,
+    entryComponents: [ConfirmPopoverComponent]
 })
-export class RecentOrdersModule { }
+export class RecentOrdersModule {
+}

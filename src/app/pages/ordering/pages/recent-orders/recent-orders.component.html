@@ -7,6 +7,7 @@
 </st-header>
 
 <ion-content class="ion-padding">
+ <ng-container *ngIf="!pendingOrders.length && !completedOrders.length" [ngTemplateOutlet]="empty"></ng-container>
  <ng-container *ngIf="pendingOrders.length" [ngTemplateOutlet]="pending"></ng-container>
  <ng-container *ngIf="completedOrders.length" [ngTemplateOutlet]="completed"></ng-container>
 </ion-content>
@@ -14,6 +15,14 @@
 <ng-template #pending>
  <h2 class="recent-orders__header-title">Pending Orders</h2>
  <st-recent-orders-list (onOrderClicked)="onOrderPicked($event)" [orders]="pendingOrders"></st-recent-orders-list>
+</ng-template>
+
+<ng-template #empty>
+ <main class="recent-orders__no-orders-block">
+  <img class="recent-orders__no-orders-image" src="/assets/images/recent_orders.svg" alt="">
+  <p class="recent-orders__no-orders-message">You recently placed orders will appear here.</p>
+  <ion-button class="recent-orders__no-orders-btn" (click)="back()">start an order</ion-button>
+ </main>
 </ng-template>
 
 <ng-template #completed>

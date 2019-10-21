@@ -2,13 +2,14 @@ import { MerchantInfo, MerchantSearchOption, OrderInfo } from '../shared/models'
 import { Injectable } from '@angular/core';
 
 import { BehaviorSubject, Observable, zip } from 'rxjs';
-import { tap, switchMap } from 'rxjs/operators';
+import { tap, switchMap, map } from 'rxjs/operators';
 
 import { OrderingApiService } from './ordering.api.service';
 
 import { MerchantSearchOptions } from '../utils';
 import { MerchantSearchOptionName } from '../ordering.config';
 import { UserService } from 'src/app/core/service/user-service/user.service';
+import { AddressInfo } from "@core/model/address/address-info";
 
 @Injectable()
 export class MerchantService {
@@ -18,7 +19,8 @@ export class MerchantService {
   private readonly _menuMerchants$: BehaviorSubject<MerchantInfo[]> = new BehaviorSubject<MerchantInfo[]>([]);
   private readonly _recentOrders$: BehaviorSubject<OrderInfo[]> = new BehaviorSubject<OrderInfo[]>([]);
 
-  constructor(private readonly orderingApiService: OrderingApiService, private readonly userService: UserService) {}
+  constructor(private readonly orderingApiService: OrderingApiService,
+              private readonly userService: UserService) {}
 
   get menuMerchants$(): Observable<MerchantInfo[]> {
     return this._menuMerchants$.asObservable();
@@ -78,6 +80,10 @@ export class MerchantService {
     );
   }
 
+  cancelOrderById(id: string): any {
+    return this.orderingApiService.cancelOrder(id);
+  }
+
   getRecentOrders(): Observable<OrderInfo[]> {
     return this.userService.userData.pipe(
       switchMap(({ id, institutionId }) =>
@@ -96,8 +102,11 @@ export class MerchantService {
     return this.orderingApiService.getMerchantOrderSchedule(merchantId, orderType);
   }
 
-  retrieveUserAddressList(userId: string): Observable<any> {
-    return this.orderingApiService.retrieveUserAddressList(userId);
+  retrieveUserAddressList(): Observable<AddressInfo[]> {
+    return this.userService.userData.pipe(
+        switchMap(({id}) => this.orderingApiService.retrieveUserAddressList(id)),
+        map(({addresses}) => addresses)
+    );
   }
 
   getMerchantSettings(merchantId: string): Observable<any> {

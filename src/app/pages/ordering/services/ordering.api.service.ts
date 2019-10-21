@@ -82,6 +82,15 @@ export class OrderingApiService extends BaseService {
     );
   }
 
+  cancelOrder(orderId: string): Observable<any> {
+    const methodName = 'getMerchantOrderSchedule';
+    const postParams: ServiceParameters = { orderId };
+
+    return this.httpRequestFull(this.serviceUrlOrdering, methodName, true, null, postParams).pipe(
+        map(({ response }: MessageResponse<any>) => response)
+    );
+  }
+
   retrieveUserAddressList(userId: string): Observable<any> {
     const methodName = 'retrieveUserAddressList';
     const postParams: ServiceParameters = { userId, addressId: null };

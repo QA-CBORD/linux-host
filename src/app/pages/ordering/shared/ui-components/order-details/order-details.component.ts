@@ -1,6 +1,17 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges
+} from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { OrderItem } from '@pages/ordering';
+import { ORDER_TYPE } from "@pages/ordering/ordering.config";
+import { AddressInfo } from "@core/model/address/address-info";
 
 @Component({
   selector: 'st-order-details',
@@ -9,9 +20,10 @@ import { OrderItem } from '@pages/ordering';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OrderDetailsComponent implements OnInit {
+  @Input() address: string;
   @Input() readonly: boolean = true;
   @Input() time: any = [];
-  @Input() address: any = [];
+  @Input() type: ORDER_TYPE;
   @Input() ingredients: OrderItem[] = [];
   @Input() paymentMethod: any = [];
   @Input() tax: number;

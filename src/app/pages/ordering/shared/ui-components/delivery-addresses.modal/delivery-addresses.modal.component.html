@@ -26,7 +26,14 @@
       <st-add-edit-addresses (onFormChanged)="onAddressFormChanged($event)"></st-add-edit-addresses>
 
       <div class="delivery-address__add-address-btn-container">
-        <ion-button fill="clear" mode="md" expand="full" shape="round" class="delivery-address__add-address-btn">
+        <ion-button
+          fill="clear"
+          mode="md"
+          expand="full"
+          shape="round"
+          class="delivery-address__add-address-btn"
+          (click)="clearAddressesForm()"
+        >
           cancel
         </ion-button>
         <ion-button
@@ -35,6 +42,7 @@
           shape="round"
           class="delivery-address__add-address-btn"
           [ngClass]="{ 'delivery-address__add-address-btn--valid': addNewAdddressForm && addNewAdddressForm.valid }"
+          (click)="addNewAdddressForm && addNewAdddressForm.valid && saveAddressesForm()"
         >
           save
         </ion-button>
