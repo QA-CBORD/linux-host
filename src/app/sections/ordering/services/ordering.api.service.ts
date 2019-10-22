@@ -9,11 +9,12 @@ import { CoordsService } from 'src/app/core/service/coords/coords.service';
 
 import { BaseService, ServiceParameters } from 'src/app/core/service/base-service/base.service';
 import { MessageResponse } from 'src/app/core/model/service/message-response.model';
-import { MerchantSearchOptions, MerchantInfo, BuildingInfo } from '..';
 import { GeoCoordinates } from 'src/app/core/model/geolocation/geocoordinates.model';
 import { MerchantSearchOptionName } from '../ordering.config';
-import { OrderInfo } from '../shared';
+import { OrderInfo, BuildingInfo, MerchantAccountInfoList, MerchantInfo } from '../shared';
+import { AddressInfo } from '@core/model/address/address-info';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
+import { MerchantSearchOptions } from '@sections/ordering';
 
 @Injectable()
 export class OrderingApiService extends BaseService {
@@ -195,7 +196,7 @@ export class OrderingApiService extends BaseService {
     );
   }
 
-  getMerchantPaymentAccounts(merchantId: string) {
+  getMerchantPaymentAccounts(merchantId: string): Observable<MerchantAccountInfoList> {
     const methodName = 'getMerchantPaymentAccounts';
     const postParams: ServiceParameters = { merchantId };
 
@@ -215,6 +216,21 @@ export class OrderingApiService extends BaseService {
         this.httpRequestFull('/json/configuration', methodName, true, institutionId, config)
       ),
       map(({ response }: MessageResponse<SettingInfo>) => response)
+    );
+  }
+
+  getDisplayMenu(
+    merchantId: string,
+    dateTime: string,
+    orderType: number,
+    locale: string = null,
+    depth: number = 4
+  ): Observable<any> {
+    const methodName = 'getDisplayMenu';
+    const postParams: ServiceParameters = { merchantId, dateTime, orderType, locale, depth };
+
+    return this.httpRequestFull(this.serviceUrlMerchant, methodName, true, null, postParams).pipe(
+      map(({ response }: MessageResponse<any>) => response)
     );
   }
 }
