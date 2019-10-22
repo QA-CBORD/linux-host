@@ -33,7 +33,7 @@
 
     &__descriptions {
         background: $color-white;
-        padding: 17px 17px 11px 17px;
+        padding: 17px 17px 11px;
 
         @include font-nunito-regular(16px);
     }
@@ -141,7 +141,7 @@
         height: 232px;
     }
 
-    &__nutrition-info-row {
+    &__nutrition-info-container {
         display: flex;
         justify-content: space-around;
         align-items: center;
@@ -149,7 +149,7 @@
         height: 80px;
     }
 
-    &__nutrition-info-col {
+    &__nutrition-info-wrapper {
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -158,7 +158,7 @@
         height: 48px;
     }
 
-    &__nutrition-info-col:nth-child(2) {
+    &__nutrition-info-container:nth-child(2) {
         border-left: 1px solid $color-whisper;
         border-right: 1px solid $color-whisper;
     }
