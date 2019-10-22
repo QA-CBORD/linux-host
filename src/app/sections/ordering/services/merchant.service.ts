@@ -1,28 +1,41 @@
-import { MerchantInfo, MerchantSearchOption, OrderInfo, BuildingInfo } from '../shared/models';
+import {
+  MerchantInfo,
+  MerchantSearchOption,
+  OrderInfo,
+  BuildingInfo,
+  MenuInfo,
+  MerchantAccountInfoList,
+} from '../shared/models';
 import { Injectable } from '@angular/core';
 
 import { BehaviorSubject, Observable, zip, of } from 'rxjs';
-import { tap, switchMap, map } from 'rxjs/operators';
+import { tap, switchMap, map, find } from 'rxjs/operators';
 
 import { OrderingApiService } from './ordering.api.service';
 
 import { MerchantSearchOptions } from '../utils';
-import { MerchantSearchOptionName } from '../ordering.config';
+import { MerchantSearchOptionName, PAYMENT_SYSTEM_TYPE, ACCOUNT_TYPES } from '../ordering.config';
 import { UserService } from 'src/app/core/service/user-service/user.service';
 import { AddressInfo } from '@core/model/address/address-info';
-import { MessageResponse } from '@core/model/service/message-response.model';
-import { UserSettings } from '@core/model/user';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
+import { CommerceApiService } from '@core/service/commerce/commerce-api.service';
+import { UserAccount } from '@core/model/account/account.model';
 
 @Injectable()
 export class MerchantService {
   private menuMerchants: MerchantInfo[] = [];
   private recentOrders: OrderInfo[] = [];
+  private _pickerTime: string;
 
   private readonly _menuMerchants$: BehaviorSubject<MerchantInfo[]> = new BehaviorSubject<MerchantInfo[]>([]);
   private readonly _recentOrders$: BehaviorSubject<OrderInfo[]> = new BehaviorSubject<OrderInfo[]>([]);
+  private readonly _menu$: BehaviorSubject<MenuInfo> = new BehaviorSubject<MenuInfo>(null);
 
-  constructor(private readonly orderingApiService: OrderingApiService, private readonly userService: UserService) {}
+  constructor(
+    private readonly orderingApiService: OrderingApiService,
+    private readonly userService: UserService,
+    private readonly commerceApiService: CommerceApiService
+  ) {}
 
   get menuMerchants$(): Observable<MerchantInfo[]> {
     return this._menuMerchants$.asObservable();
@@ -33,6 +46,14 @@ export class MerchantService {
     this._menuMerchants$.next([...this.menuMerchants]);
   }
 
+  get menu$(): Observable<MenuInfo> {
+    return this._menu$.asObservable();
+  }
+
+  private set _menu(value: MenuInfo) {
+    this._menu$.next(value);
+  }
+
   get recentOrders$(): Observable<OrderInfo[]> {
     return this._recentOrders$.asObservable();
   }
@@ -40,6 +61,14 @@ export class MerchantService {
   private set _recentOrders(value: OrderInfo[]) {
     this.recentOrders = [...value];
     this._recentOrders$.next([...this.recentOrders]);
+  }
+
+  get pickerTime() {
+    return this._pickerTime;
+  }
+
+  set pickerDateTime(value: Date) {
+    this._pickerTime = value.toISOString();
   }
 
   getMenuMerchants(): Observable<MerchantInfo[]> {
@@ -132,7 +161,7 @@ export class MerchantService {
       );
   }
 
-  getMerchantPaymentAccounts(merchantId: string): Observable<any> {
+  getMerchantPaymentAccounts(merchantId: string): Observable<MerchantAccountInfoList> {
     return this.orderingApiService.getMerchantPaymentAccounts(merchantId);
   }
 
@@ -142,6 +171,24 @@ export class MerchantService {
 
   getSettingByConfig(config): Observable<SettingInfo> {
     return this.orderingApiService.getSettingByConfig(config);
+  }
+
+  getDisplayMenu(merchantId: string, dateTime: string, orderType: number): Observable<MenuInfo> {
+    return this.orderingApiService
+      .getDisplayMenu(merchantId, dateTime, orderType)
+      .pipe(tap(menu => (this._menu = menu)));
+  }
+
+  getUserAccounts(): Observable<UserAccount[]> {
+    return this.commerceApiService
+      .getUserAccounts()
+      .pipe(map(accounts => this.filterAccountsByPaymentSystem(accounts)));
+  }
+
+  private filterAccountsByPaymentSystem(accounts: UserAccount[]): UserAccount[] {
+    return accounts.filter(
+      ({ paymentSystemType: type }) => type === PAYMENT_SYSTEM_TYPE.OPCS || type === PAYMENT_SYSTEM_TYPE.CSGOLD
+    );
   }
 
   private filterDeliveryAddresses(setting) {
