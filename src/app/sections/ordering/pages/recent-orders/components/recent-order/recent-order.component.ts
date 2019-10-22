@@ -1,14 +1,16 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MerchantService, OrderInfo } from '@pages/ordering';
+import { MerchantInfo, MerchantService, OrderInfo } from '@sections/ordering';
 import { map, switchMap, take, tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { LOCAL_ROUTING, ORDER_TYPE } from '@pages/ordering/ordering.config';
+import { LOCAL_ROUTING, ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { AddressInfo } from '@core/model/address/address-info';
 import { NAVIGATE } from '../../../../../../app.global';
-import { ORDERING_STATUS } from '@pages/ordering/shared/ui-components/recent-oders-list/recent-orders-list-item/recent-orders.config';
-import { PopoverController } from '@ionic/angular';
-import { ConfirmPopoverComponent } from '@pages/ordering/pages/recent-orders/components/confirm-popover/confirm-popover.component';
+import { ModalController, PopoverController } from '@ionic/angular';
+import { ORDERING_STATUS } from '@sections/ordering/shared/ui-components/recent-oders-list/recent-orders-list-item/recent-orders.config';
+import { ConfirmPopoverComponent } from '@sections/ordering/pages/recent-orders/components/confirm-popover/confirm-popover.component';
+import { BUTTON_TYPE } from '@core/utils/buttons.config';
+import { OrderOptionsActionSheetComponent } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 
 @Component({
   selector: 'st-recent-order',
@@ -19,11 +21,13 @@ import { ConfirmPopoverComponent } from '@pages/ordering/pages/recent-orders/com
 export class RecentOrderComponent implements OnInit {
   order$: Observable<OrderInfo>;
   address$: Observable<string>;
+  merchant$: Observable<MerchantInfo>;
 
   constructor(private readonly activatedRoute: ActivatedRoute,
               private readonly merchantService: MerchantService,
               private readonly router: Router,
-              private readonly popoverController: PopoverController) {
+              private readonly popoverController: PopoverController,
+              private readonly modalController: ModalController) {
   }
 
   ngOnInit() {
@@ -35,6 +39,13 @@ export class RecentOrderComponent implements OnInit {
     this.order$ = this.merchantService.recentOrders$.pipe(
       map(orders => orders.find(({ id }) => id === orderId)),
     );
+
+    this.merchant$ = this.merchantService.recentOrders$.pipe(
+      map(orders => orders.find(({ id }) => id === orderId)),
+      switchMap(({ merchantId }) => this.merchantService.menuMerchants$.pipe(
+        map(merchants => merchants.find(({ id }) => id === merchantId)),
+        tap(m => console.log(m))
+      )));
 
     this.order$.pipe(
       switchMap(({ merchantId }) =>
@@ -67,13 +78,12 @@ export class RecentOrderComponent implements OnInit {
         this.merchantService.menuMerchants$.pipe(
           map((merchants) => merchants.find(({ id }) => id === merchantId))),
       ),
-      map(({ storeAddress }) => `${storeAddress.address1} ${storeAddress.address1} ${storeAddress.city}`),
+      map(({ storeAddress }) => this.getPickupAddressAsString(storeAddress)),
     );
   }
 
   private getDeliveryAddress(deliveryId: string): Observable<string> {
     return this.merchantService.retrieveUserAddressList().pipe(
-      tap(d => console.log(d, deliveryId)),
       map((addresses) =>
         addresses.find(({ id }) => id === deliveryId),
       ),
@@ -81,7 +91,18 @@ export class RecentOrderComponent implements OnInit {
     );
   }
 
-  private getAddressAsString({ onCampus, address1, address2, city, room, building, state }: AddressInfo): string {
+  private getPickupAddressAsString({address1, address2, city}: AddressInfo): string {
+    address1 = address1 ? address1 : '';
+    address2 = address2 ? address2 : '';
+    city = city ? city : '';
+    debugger;
+    return `${address1} ${address2} ${city}`.trim();
+  }
+
+  private getAddressAsString(addressInfo: AddressInfo = {} as AddressInfo): string {
+    if (!Object.keys(addressInfo).length) return '';
+
+    let { onCampus, address1, address2, city, room, building, state } = addressInfo;
     room = room ? `Room ${room}` : '';
     building = building ? building : '';
     address1 = address1 ? address1 : '';
@@ -90,8 +111,8 @@ export class RecentOrderComponent implements OnInit {
     city = city ? city : '';
 
     return Boolean(Number(onCampus))
-      ? `${room}, ${building}`
-      : `${address1} ${address2}, ${city}, ${state}`;
+      ? `${room}, ${building}`.trim()
+      : `${address1} ${address2}, ${city}, ${state}`.trim();
   }
 
   async back(): Promise<void> {
@@ -111,7 +132,7 @@ export class RecentOrderComponent implements OnInit {
     ).subscribe(await this.initModal.bind(this));
   }
 
-  private async initModal(n: number) {
+  private async initModal(n: number): Promise<void> {
     const modal = await this.popoverController.create({
       component: ConfirmPopoverComponent,
       componentProps: {
@@ -120,7 +141,37 @@ export class RecentOrderComponent implements OnInit {
       animated: false,
       backdropDismiss: true,
     });
-    modal.onDidDismiss().then(d => console.log(d));
+    modal.onDidDismiss().then(({ role }) => {
+      role === BUTTON_TYPE.CANCEL && this.cancelOrder().pipe(
+        take(1),
+      ).subscribe(response => response && this.back());
+    });
+    await modal.present();
+  }
+
+  onReorderHandler() {
+    this.merchant$.pipe(take(1)).subscribe(this.orderOptions.bind(this));
+  }
+
+  private async orderOptions({ orderTypes, id: merchantId, storeAddress, settings }: MerchantInfo): Promise<void> {
+    const footerButtonName = 'continue';
+    const cssClass = 'order-options-action-sheet order-options-action-sheet-p-d';
+
+    const modal = await this.modalController.create({
+      component: OrderOptionsActionSheetComponent,
+      cssClass,
+      componentProps: {
+        orderTypes,
+        footerButtonName,
+        merchantId,
+        storeAddress,
+        settings,
+      },
+    });
+
+    modal.onDidDismiss().then((d) => {
+      console.log(d);
+    });
     await modal.present();
   }
 }

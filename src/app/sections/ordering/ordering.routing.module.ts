@@ -28,6 +28,10 @@ const routes: Route[] = [
     path: LOCAL_ROUTING.favoriteMerchants,
     loadChildren: './pages/favorite-merchants/favorite-merchants.module#FavoriteMerchantsModule',
   },
+  {
+    path: LOCAL_ROUTING.cart,
+    loadChildren: './pages/cart/cart.module#CartModule',
+  },
 ];
 
 const imports = [RouterModule.forChild(routes)];

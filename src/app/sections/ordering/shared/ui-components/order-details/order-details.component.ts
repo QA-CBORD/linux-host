@@ -18,7 +18,7 @@ import { AddressInfo } from "@core/model/address/address-info";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OrderDetailsComponent implements OnInit {
-  @Input() address: string;
+  @Input() address: string = '';
   @Input() readonly: boolean = true;
   @Input() time: any = [];
   @Input() type: ORDER_TYPE;

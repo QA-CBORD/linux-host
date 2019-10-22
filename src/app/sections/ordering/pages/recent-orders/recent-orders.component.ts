@@ -2,9 +2,9 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { OrderInfo } from '@sections/ordering';
-import { OrderStatus } from '@sections/ordering/shared/ui-components/recent-oders-list/recent-orders-list-item/recent-orders.config';
 import { NAVIGATE } from '../../../../app.global';
 import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
+import { ORDERING_STATUS } from '@sections/ordering/shared/ui-components/recent-oders-list/recent-orders-list-item/recent-orders.config';
 
 @Component({
   selector: 'st-recent-orders',

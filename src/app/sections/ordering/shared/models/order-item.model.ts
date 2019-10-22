@@ -1,4 +1,5 @@
 export interface OrderItem {
+  id: string;
   orderId: string;
   menuItemId: string;
   parentOrderItemId: string;

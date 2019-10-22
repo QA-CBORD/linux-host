@@ -7,6 +7,9 @@ import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module
 import { RecentOrdersComponent } from '@sections/ordering/pages';
 import { RecentOrderComponent } from '@sections/ordering/pages/recent-orders/components/recent-order/recent-order.component';
 import { OrderDetailsModule } from '@sections/ordering/shared/ui-components/order-details/order-details.module';
+import { StPopoverLayoutModule } from '@shared/ui-components/st-popover-layout/st-popover-layout.module';
+import { ConfirmPopoverComponent } from '@sections/ordering/pages/recent-orders/components/confirm-popover/confirm-popover.component';
+import { OrderOptionsActionSheetModule } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.module';
 
 const imports = [
     CommonModule,
@@ -15,7 +18,8 @@ const imports = [
     StHeaderModule,
     RecentOrdersListModule,
     OrderDetailsModule,
-    StPopoverLayoutModule
+    StPopoverLayoutModule,
+    OrderOptionsActionSheetModule
 ];
 const declarations = [RecentOrdersComponent, RecentOrderComponent, ConfirmPopoverComponent];
 

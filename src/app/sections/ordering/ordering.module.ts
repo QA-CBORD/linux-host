@@ -13,10 +13,11 @@ import { OrderingResolver } from './resolvers';
 import { MerchantListModule } from './components/merchant-list/merchant-list.module';
 import { MenuOrderingComponent } from './components';
 import { OrderDetailsModule } from './shared/ui-components/order-details/order-details.module';
+import { CartService } from '@sections/ordering/services/cart.service';
 
 const imports = [CommonModule, OrderingRoutingModule, MerchantListModule, IonicModule, OrderDetailsModule];
 const declarations = [OrderingPage, MenuOrderingComponent];
-const providers = [OrderingResolver, MerchantService, OrderingApiService];
+const providers = [OrderingResolver, MerchantService, OrderingApiService, CartService];
 
 @NgModule({
   declarations,

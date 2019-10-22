@@ -10,8 +10,6 @@ import { MerchantSearchOptions } from '../utils';
 import { MerchantSearchOptionName } from '../ordering.config';
 import { UserService } from 'src/app/core/service/user-service/user.service';
 import { AddressInfo } from '@core/model/address/address-info';
-import { MessageResponse } from '@core/model/service/message-response.model';
-import { UserSettings } from '@core/model/user';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 
 @Injectable()
@@ -82,7 +80,7 @@ export class MerchantService {
     );
   }
 
-  cancelOrderById(id: string): any {
+  cancelOrderById(id: string): Observable<boolean> {
     return this.orderingApiService.cancelOrder(id);
   }
 
