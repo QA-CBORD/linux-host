@@ -11,4 +11,9 @@ export class TileWrapperComponent implements OnInit {
 
   ngOnInit() {}
 
+
+  handlePageNavigation(){
+    
+  }
+
 }

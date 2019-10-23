@@ -1,3 +1,16 @@
-<p>
-  tile-wrapper works!
-</p>
+<ion-item
+  lines="none"
+  [button]="true"
+  [detail]="true"
+  detailIcon="/assets/icon/angle-right.svg"
+  class="tile"
+  (click)="handlePageNavigation()"
+>
+
+<!-- <ion-icon name="{{tileInfo.iconName}}" slot="start"></ion-icon> --> 
+
+  <ion-label class="tile__name">
+    Some Test Title
+    <!-- {{ tileInfo.title }} -->
+  </ion-label>
+</ion-item>

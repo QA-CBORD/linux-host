@@ -9,10 +9,10 @@ import { DashboardPageResolver } from './resolvers/dashboard-page.resolver';
 import { DashboardService } from './services/dashboard.service';
 
 import { DashboardPage } from './dashboard.page';
-import { TileWrapperComponent } from './components';
+import { TileWrapperComponent, AccountsTileComponent } from './components';
 
 const imports = [IonicModule, CommonModule, DashboardRoutingModule, StHeaderModule];
-const declarations = [DashboardPage, TileWrapperComponent];
+const declarations = [DashboardPage, TileWrapperComponent, AccountsTileComponent];
 const providers = [DashboardService, DashboardPageResolver];
 
 @NgModule({
