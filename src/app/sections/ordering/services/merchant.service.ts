@@ -9,12 +9,12 @@ import {
 import { Injectable } from '@angular/core';
 
 import { BehaviorSubject, Observable, zip, of } from 'rxjs';
-import { tap, switchMap, map, find } from 'rxjs/operators';
+import { tap, switchMap, map } from 'rxjs/operators';
 
 import { OrderingApiService } from './ordering.api.service';
 
 import { MerchantSearchOptions } from '../utils';
-import { MerchantSearchOptionName, PAYMENT_SYSTEM_TYPE, ACCOUNT_TYPES } from '../ordering.config';
+import { MerchantSearchOptionName, PAYMENT_SYSTEM_TYPE, SYSTEM_SETTINGS_CONFIG } from '../ordering.config';
 import { UserService } from 'src/app/core/service/user-service/user.service';
 import { AddressInfo } from '@core/model/address/address-info';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
@@ -192,13 +192,33 @@ export class MerchantService {
   }
 
   private filterDeliveryAddresses(setting) {
-    return this.retrieveUserAddressList().pipe(
-      map(addresses => {
+    return zip(
+      this.retrieveUserAddressList(),
+      this.getSettingByConfig(SYSTEM_SETTINGS_CONFIG.addressRestrictionToOnCampus)
+    ).pipe(
+      map(([addresses, institutionRestriction]) => {
+        // TODO: implement cache for all settings
+        let modifiedAddresses;
+        parseInt(setting.value);
+        parseInt(institutionRestriction.value);
+
         if (parseInt(setting.value) === 0) {
-          return addresses;
+          modifiedAddresses = addresses;
+        } else {
+          modifiedAddresses = addresses.filter(({ onCampus }) => onCampus === 1);
         }
 
-        return addresses.filter(({ onCampus }) => onCampus === 1);
+        return modifiedAddresses.filter(address => {
+          if (parseInt(institutionRestriction.value) === 1) {
+            return address.onCampus === 1;
+          }
+
+          if (parseInt(institutionRestriction.value) === 2) {
+            return address.onCampus === 0;
+          }
+
+          return address;
+        });
       })
     );
   }

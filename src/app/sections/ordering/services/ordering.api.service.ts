@@ -147,12 +147,13 @@ export class OrderingApiService extends BaseService {
       },
     };
 
-    return this.userService.userData.pipe(
-      switchMap(({ id }) =>
-        this.httpRequestFull(this.serviceUrlUser, methodName, true, null, { ...postParams, userId: id })
-      ),
-      map(({ response }: MessageResponse<any>) => response)
-    );
+    return this.addressToGeocode(postParams.address);
+    // return this.userService.userData.pipe(
+    //   switchMap(({ id }) =>
+    //     this.httpRequestFull(this.serviceUrlUser, methodName, true, null, { ...postParams, userId: id })
+    //   ),
+    //   map(({ response }: MessageResponse<any>) => response)
+    // );
   }
 
   isOutsideMerchantDeliveryArea(merchantId: string, latitude: number, longitude: number): Observable<boolean> {
@@ -198,6 +199,15 @@ export class OrderingApiService extends BaseService {
     const postParams: ServiceParameters = { merchantId, dateTime, orderType, locale, depth };
 
     return this.httpRequestFull(this.serviceUrlMerchant, methodName, true, null, postParams).pipe(
+      map(({ response }: MessageResponse<any>) => response)
+    );
+  }
+
+  addressToGeocode(address: AddressInfo): Observable<any> {
+    const methodName = 'addressToGeocode';
+    const postParams: ServiceParameters = { address };
+
+    return this.httpRequestFull(this.serviceUrlUser, methodName, true, null, postParams).pipe(
       map(({ response }: MessageResponse<any>) => response)
     );
   }

@@ -5,11 +5,10 @@ import { MerchantOrderTypesInfo, MenuInfo, MerchantAccountInfoList } from '../..
 import { ModalController, ToastController } from '@ionic/angular';
 import { DeliveryAddressesModalComponent } from '../delivery-addresses.modal/delivery-addresses.modal.component';
 import { AddressInfo } from '@core/model/address/address-info';
-import { zip, of, iif, throwError, Observable } from 'rxjs';
-import { take, switchMap, map } from 'rxjs/operators';
+import { zip, of, throwError, Observable } from 'rxjs';
+import { take, switchMap } from 'rxjs/operators';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ORDER_TYPE, MerchantSettings, ACCOUNT_TYPES } from '@sections/ordering/ordering.config';
-import { UserAccount } from '@core/model/account/account.model';
 
 @Component({
   selector: 'st-order-options.action-sheet',
@@ -33,6 +32,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   pickupLocations: any;
   buildingsForNewAddressForm: BuildingInfo[];
   isTimeDisable: number;
+  dateTimePicker: Date | string = 'ASAP';
   state;
   orderType: number;
 
@@ -115,9 +115,17 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     this.cdRef.detectChanges();
   }
 
+  onDateTimeSelected(event) {
+    this.dateTimePicker = event;
+    this.merchantService.pickerDateTime = event;
+    this.cdRef.detectChanges();
+  }
+
   onSubmit() {
-    let dateTime = new Date();
-    this.merchantService.pickerDateTime = dateTime;
+    if (!this.merchantService.pickerDateTime) {
+      let dateTime = new Date();
+      this.merchantService.pickerDateTime = dateTime;
+    }
 
     let isOutsideMerchantDeliveryArea = of(true);
     if (this.orderOptionsData.label === 'DELIVERY') {
@@ -215,7 +223,6 @@ export class OrderOptionsActionSheetComponent implements OnInit {
         isOrderTypePickup: this.isOrderTypePickup,
         pickupLocations: this.pickupLocations,
         deliveryAddresses: this.deliveryAddresses,
-        deliveryAddressRestriction: this.settings.map[MerchantSettings.deliveryAddressRestriction],
       },
     });
     modal.onDidDismiss().then(({ data }) => {

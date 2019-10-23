@@ -20,7 +20,6 @@ export class DeliveryAddressesModalComponent implements OnInit {
   @Input() isOrderTypePickup;
   @Input() pickupLocations;
   @Input() deliveryAddresses;
-  @Input() deliveryAddressRestriction;
 
   addNewAdddressState: boolean = false;
   addNewAdddressForm: { value: any; valid: boolean };
@@ -59,6 +58,7 @@ export class DeliveryAddressesModalComponent implements OnInit {
       )
       .subscribe(([isDefaultAddressAdded, addedAddress]) => {
         this.loadingService.closeSpinner();
+        // if(addedAddress.onCampus)
         this.listOfAddresses = [...this.listOfAddresses, addedAddress];
         this.cdRef.detectChanges();
       }, () => this.loadingService.closeSpinner())
