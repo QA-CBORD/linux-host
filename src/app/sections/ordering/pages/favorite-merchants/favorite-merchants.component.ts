@@ -38,8 +38,8 @@ export class FavoriteMerchantsComponent implements OnInit {
     this.router.navigate([NAVIGATE.ordering], { skipLocationChange: true });
   }
 
-  merchantClickHandler({ id, orderTypes, storeAddress }) {
-    this.openOrderOptions(id, orderTypes, storeAddress);
+  merchantClickHandler({ id, orderTypes, storeAddress, settings }) {
+    this.openOrderOptions(id, orderTypes, storeAddress, settings);
   }
 
   favouriteHandler({ id }) {
@@ -62,11 +62,12 @@ export class FavoriteMerchantsComponent implements OnInit {
     console.log(`Location Pin Clicked - Merch Id: ${event}`);
   }
 
-  private openOrderOptions(merchantId, orderTypes, storeAddress) {
-    console.log('click')
+  private openOrderOptions(merchantId, orderTypes, storeAddress, settings) {
+    this.actionSheet(orderTypes, merchantId, storeAddress, settings);
   }
 
-  private async actionSheet(schedule, orderTypes: MerchantOrderTypesInfo, defaultDeliveryAddress, deliveryAddresses) {
+  private async actionSheet(orderTypes: MerchantOrderTypesInfo, merchantId, storeAddress, settings) {
+    const footerButtonName = 'continue';
     let cssClass = 'order-options-action-sheet';
     cssClass += orderTypes.delivery && orderTypes.pickup ? ' order-options-action-sheet-p-d' : '';
 
@@ -74,10 +75,11 @@ export class FavoriteMerchantsComponent implements OnInit {
       component: OrderOptionsActionSheetComponent,
       cssClass,
       componentProps: {
-        schedule,
         orderTypes,
-        defaultDeliveryAddress,
-        deliveryAddresses,
+        footerButtonName,
+        merchantId,
+        storeAddress,
+        settings
       },
     });
     modal.onDidDismiss().then(() => { });

@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
-import { Observable } from 'rxjs';
-import { switchMap, map, tap, take } from 'rxjs/operators';
+import { Observable, of, zip } from 'rxjs';
+import { switchMap, map } from 'rxjs/operators';
 
 import { UserService } from 'src/app/core/service/user-service/user.service';
 import { CoordsService } from 'src/app/core/service/coords/coords.service';
@@ -121,6 +121,8 @@ export class OrderingApiService extends BaseService {
     room = null,
   }): Observable<any> {
     const methodName = 'updateUserAddress';
+    const campusValue = parseInt(campus);
+    let addedAddress;
     const postParams: ServiceParameters = {
       address: {
         objectRevision: null,
@@ -132,11 +134,11 @@ export class OrderingApiService extends BaseService {
         state,
         postalcode: null,
         country: null,
-        latitude: null,
-        longitude: null,
+        latitude: campusValue ? building.latitude : null,
+        longitude: campusValue ? building.longitude : null,
         notes: null,
         nickname: nickname !== null && !nickname.length ? null : nickname,
-        building,
+        building: building ? building.building : null,
         floor: null,
         room,
         crossStreet: null,
@@ -147,13 +149,19 @@ export class OrderingApiService extends BaseService {
       },
     };
 
-    return this.addressToGeocode(postParams.address);
-    // return this.userService.userData.pipe(
-    //   switchMap(({ id }) =>
-    //     this.httpRequestFull(this.serviceUrlUser, methodName, true, null, { ...postParams, userId: id })
-    //   ),
-    //   map(({ response }: MessageResponse<any>) => response)
-    // );
+    if (!campusValue) {
+      addedAddress = this.addressToGeocode(postParams.address);
+
+    } else {
+      addedAddress = of(postParams.address)
+    }
+
+    return zip(addedAddress, this.userService.userData)
+      .pipe(
+        switchMap(([address, user]) =>
+          this.httpRequestFull(this.serviceUrlUser, methodName, true, null, { ...postParams, address, userId: user.id })),
+        map(({ response }: MessageResponse<any>) => response)
+      )
   }
 
   isOutsideMerchantDeliveryArea(merchantId: string, latitude: number, longitude: number): Observable<boolean> {

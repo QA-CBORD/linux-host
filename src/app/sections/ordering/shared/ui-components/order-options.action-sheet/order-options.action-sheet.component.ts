@@ -42,7 +42,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     private readonly cdRef: ChangeDetectorRef,
     private readonly loadingService: LoadingService,
     private readonly toastController: ToastController
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.initData();
@@ -57,7 +57,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     this.loadingService.showSpinner();
     this.state = zip(
       this.merchantService.getMerchantOrderSchedule(this.merchantId, this.orderType),
-      this.retrieveDeliveryAddresses(this.settings.map[MerchantSettings.deliveryAddressRestriction]),
+      this.retrieveDeliveryAddresses(this.merchantId),
       this.retrievePickupLocations(this.storeAddress, this.settings.map[MerchantSettings.pickupLocationsEnabled]),
       this.merchantService.retrieveBuildings()
     )
@@ -127,7 +127,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
       this.merchantService.pickerDateTime = dateTime;
     }
 
-    let isOutsideMerchantDeliveryArea = of(true);
+    let isOutsideMerchantDeliveryArea = of(false);
     if (this.orderOptionsData.label === 'DELIVERY') {
       const { latitude, longitude } = this.orderOptionsData.address;
       isOutsideMerchantDeliveryArea = this.merchantService.isOutsideMerchantDeliveryArea(
@@ -140,7 +140,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
       .pipe(
         switchMap(
           (isOutside): Observable<MerchantAccountInfoList> => {
-            if (!isOutside) {
+            if (isOutside) {
               return throwError(new Error('Delivery address is too far away'));
             }
 
@@ -208,8 +208,8 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     toast.present();
   }
 
-  private retrieveDeliveryAddresses(setting) {
-    return this.merchantService.retrieveDeliveryAddresses(setting);
+  private retrieveDeliveryAddresses(merchantId) {
+    return this.merchantService.retrieveDeliveryAddresses(merchantId);
   }
 
   private async modalWindow() {
@@ -223,6 +223,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
         isOrderTypePickup: this.isOrderTypePickup,
         pickupLocations: this.pickupLocations,
         deliveryAddresses: this.deliveryAddresses,
+        merchantId: this.merchantId
       },
     });
     modal.onDidDismiss().then(({ data }) => {
