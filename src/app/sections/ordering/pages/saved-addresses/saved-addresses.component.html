@@ -8,5 +8,14 @@
 ></st-header>
 
 <ion-content>
+  <ion-item class="delivery-address__add-address-wrapper"
+    lines="full"
+    [button]="true"
+    [detail]="true"
+    detailIcon="/assets/icon/angle-{{ addNewAdddressState ? 'up' : 'down' }}-select.svg"
+    (click)="addNewAdddressState = !addNewAdddressState"><span class="delivery-address__add-address-sign">+
+    </span><span class="delivery-address__add-address-text">Add New Address</span>
+  </ion-item>
+  
   <st-order-address-list></st-order-address-list>
 </ion-content>

@@ -28,8 +28,27 @@ export const SYSTEM_SETTINGS_CONFIG = {
   },
 };
 
+export enum MerchantSettings {
+  deliveryAddressRestriction = 'merchant.order.delivery_address_restriction',
+  pickupLocationsEnabled = 'merchant.order.pickup_locations_enabled',
+  orderAheadEnabled = 'merchant.order.order_ahead_enabled'
+}
+
 export enum ORDER_TYPE {
   PICKUP = 0,
   DELIVERY = 1,
   DINEIN = 2,
+}
+
+export enum PAYMENT_SYSTEM_TYPE {
+  OPCS = 1,
+  CSGOLD = 2,
+  MONETRA = 3,
+  USAEPAY = 4,
+}
+
+export enum ACCOUNT_TYPES {
+  meals = 1, // Meals, Board
+  charge = 2, // Charge, Credit
+  decliningBalance = 3, // declining balance, points
 }

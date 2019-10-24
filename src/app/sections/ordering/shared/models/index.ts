@@ -7,3 +7,8 @@ export * from './order-item.model';
 export * from './order-payment.model';
 export * from './order-notification.model';
 export * from './building-info.model';
+export * from './merchant-account-info.model';
+export * from './menu-category-info.model';
+export * from './menu-category-item.model';
+export * from './menu-info.model';
+export * from './menu-item.model';

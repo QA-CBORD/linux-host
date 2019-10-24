@@ -1,10 +1,15 @@
+import { MerchantService } from '@sections/ordering/services';
 import { BuildingInfo } from './../../models/building-info.model';
-import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
-import { DatePipe } from '@angular/common';
-import { MerchantOrderTypesInfo } from '../../models';
-import { PickerController, ModalController } from '@ionic/angular';
+import { Component, OnInit, Input, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { MerchantOrderTypesInfo, MenuInfo, MerchantAccountInfoList } from '../../models';
+import { ModalController, ToastController } from '@ionic/angular';
 import { DeliveryAddressesModalComponent } from '../delivery-addresses.modal/delivery-addresses.modal.component';
 import { AddressInfo } from '@core/model/address/address-info';
+import { zip, of, iif, throwError, Observable } from 'rxjs';
+import { take, switchMap, map } from 'rxjs/operators';
+import { LoadingService } from '@core/service/loading/loading.service';
+import { ORDER_TYPE, MerchantSettings, ACCOUNT_TYPES } from '@sections/ordering/ordering.config';
+import { UserAccount } from '@core/model/account/account.model';
 
 @Component({
   selector: 'st-order-options.action-sheet',
@@ -13,139 +18,71 @@ import { AddressInfo } from '@core/model/address/address-info';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OrderOptionsActionSheetComponent implements OnInit {
-  @Input() schedule: any;
   @Input() orderTypes: MerchantOrderTypesInfo;
-  @Input() defaultDeliveryAddress: string;
-  @Input() deliveryAddresses: AddressInfo[];
-  @Input() defaultPickupAddress: any;
-  @Input() pickupLocations: any;
-  @Input() buildingsForNewAddressForm: BuildingInfo[];
-  @Input() isTimeDisable
+  @Input() footerButtonName: string;
+  @Input() merchantId: string;
+  @Input() storeAddress: AddressInfo;
+  @Input() settings: any;
 
-  private prevSelectedTimeInfo: TimeInfo = { prevIdx: 0, currentIdx: 0, maxValue: false };
-  private selectedDayIdx: number = 0;
   isOrderTypePickup: boolean;
-  orderOptionsData: any;
+  orderOptionsData: OrderOptions;
+  deliveryAddresses: AddressInfo[];
+  defaultDeliveryAddress: string;
+  schedule: any;
+  defaultPickupAddress: AddressInfo | '';
+  pickupLocations: any;
+  buildingsForNewAddressForm: BuildingInfo[];
+  isTimeDisable: number;
+  state;
+  orderType: number;
 
   constructor(
-    private readonly pickerController: PickerController,
     private readonly modalController: ModalController,
-    private datePipe: DatePipe
-  ) { }
+    private readonly merchantService: MerchantService,
+    private readonly cdRef: ChangeDetectorRef,
+    private readonly loadingService: LoadingService,
+    private readonly toastController: ToastController
+  ) {}
 
   ngOnInit() {
-    this.isOrderTypePickup = this.orderTypes.pickup;
-    this.defineOrderOptionsData(this.isOrderTypePickup);
+    this.initData();
   }
 
-  public async openPicker() {
-    const picker: HTMLIonPickerElement = await this.pickerController.create({
-      columns: this.createColumns(),
-      mode: 'ios',
-      cssClass: 'picker-time-picker',
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel',
+  initData() {
+    this.orderType =
+      (this.orderTypes.delivery && this.orderTypes.pickup) || this.orderTypes.pickup
+        ? ORDER_TYPE.PICKUP
+        : ORDER_TYPE.DELIVERY;
+
+    this.loadingService.showSpinner();
+    this.state = zip(
+      this.merchantService.getMerchantOrderSchedule(this.merchantId, this.orderType),
+      this.retrieveDeliveryAddresses(this.settings.map[MerchantSettings.deliveryAddressRestriction]),
+      this.retrievePickupLocations(this.storeAddress, this.settings.map[MerchantSettings.pickupLocationsEnabled]),
+      this.merchantService.retrieveBuildings()
+    )
+      .pipe(take(1))
+      .subscribe(
+        ([schedule, [deliveryAddress, deliveryLocations], pickupLocations, buildingsForNewAddressForm]) => {
+          this.loadingService.closeSpinner();
+          const isTimeDisable = parseInt(this.settings.map[MerchantSettings.orderAheadEnabled].value);
+          const defaultPickupAddress = JSON.parse(this.settings.map[MerchantSettings.pickupLocationsEnabled].value)
+            ? ''
+            : this.storeAddress;
+
+          this.deliveryAddresses = deliveryLocations;
+          this.defaultDeliveryAddress = deliveryAddress.defaultAddress;
+          this.schedule = schedule;
+          this.defaultPickupAddress = defaultPickupAddress;
+          this.pickupLocations = pickupLocations;
+          this.buildingsForNewAddressForm = buildingsForNewAddressForm;
+          this.isTimeDisable = isTimeDisable;
+
+          this.isOrderTypePickup = this.orderTypes.pickup;
+          this.defineOrderOptionsData(this.isOrderTypePickup);
         },
-        {
-          text: 'Confirm',
-          handler: value => {
-            console.log(value);
-          },
-        },
-      ],
-    });
-
-    picker.addEventListener('ionPickerColChange', async (event: any) => {
-      const data = event.detail;
-      if (data.name === 1) {
-        if (!data.options[data.selectedIndex].text) {
-          this.prevSelectedTimeInfo = { ...this.prevSelectedTimeInfo, maxValue: true };
-        } else {
-          this.prevSelectedTimeInfo = { ...this.prevSelectedTimeInfo, currentIdx: data.selectedIndex, maxValue: false };
-        }
-      } else {
-        this.selectedDayIdx = data.selectedIndex;
-      }
-
-      const columns = this.createColumns();
-
-      picker.columns = columns;
-      picker.forceUpdate();
-      if (data.options[data.selectedIndex].text) {
-        this.prevSelectedTimeInfo = { ...this.prevSelectedTimeInfo, prevIdx: data.selectedIndex };
-      }
-    });
-
-    await picker.present();
-  }
-
-  private preparePickerArr(i = 0) {
-    const arr1 = this.schedule.days.map(day => day.date);
-    const arr2 = this.schedule.days[i].hourBlocks.reduce(
-      (total, block) => [
-        ...total,
-        ...block.minuteBlocks.map(minuteBlock => `${block.hour}:${minuteBlock === 0 ? '00' : minuteBlock}`),
-      ],
-      []
-    );
-    return [arr1, arr2];
-  }
-
-  private createColumns() {
-    let columns = [];
-    let prevSelectedTimeIdx;
-    const dataArr = this.preparePickerArr(this.selectedDayIdx);
-    const [daysOptions] = dataArr;
-    if (this.prevSelectedTimeInfo.maxValue) {
-      prevSelectedTimeIdx = this.prevSelectedTimeInfo.prevIdx;
-      this.prevSelectedTimeInfo.maxValue = false;
-    } else {
-      prevSelectedTimeIdx = this.prevSelectedTimeInfo.currentIdx;
-    }
-    for (let i = 0; i < 2; i++) {
-      columns.push({
-        name: i,
-        options: this.getColumnOptions(i, daysOptions.length, 93, dataArr),
-        selectedIndex: i === 0 ? this.selectedDayIdx : prevSelectedTimeIdx,
-      });
-    }
-    return columns;
-  }
-
-  private getColumnOptions(columnIndex, daysOptions, timeOptions, columnOptions) {
-    let pickerColumns = [];
-    const total = columnIndex === 0 ? daysOptions : timeOptions;
-    const getColumnText = i => {
-      if (columnIndex === 1) {
-        return columnOptions[columnIndex][i % total];
-      }
-
-      if (this.isTodayOrTomorrow(columnOptions[columnIndex][i % total], true)) {
-        return 'Today';
-      }
-
-      if (this.isTodayOrTomorrow(columnOptions[columnIndex][i % total], false)) {
-        return 'Tomorrow';
-      }
-
-      return this.datePipe.transform(columnOptions[columnIndex][i % total], 'EE, MMM d');
-    };
-
-    if (columnIndex === 1) {
-      pickerColumns.push({
-        text: 'ASAP',
-        value: 'asap',
-      });
-    }
-    for (let i = 1; i < total; i++) {
-      pickerColumns.push({
-        text: getColumnText(i),
-        value: columnOptions[columnIndex][i % total],
-      });
-    }
-    return pickerColumns;
+        () => this.loadingService.closeSpinner()
+      );
   }
 
   onRadioGroupChanged({ target }) {
@@ -158,64 +95,141 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   }
 
   defineOrderOptionsData(isOrderTypePickup) {
-    console.log(this.defaultPickupAddress);
-    console.log(this.pickupLocations);
-    console.log(this.deliveryAddresses);
-    console.log(this.defaultDeliveryAddress);
+    if (!this.deliveryAddresses || !this.pickupLocations) return;
     const defineDeliveryAddress = this.deliveryAddresses.find(item => item.id === this.defaultDeliveryAddress);
 
     if (isOrderTypePickup) {
-      this.orderOptionsData = { label: 'PICKUP', address: this.defaultPickupAddress, isClickble: this.pickupLocations.length };
-      return;
+      this.orderOptionsData = {
+        label: 'PICKUP',
+        address: this.defaultPickupAddress,
+        isClickble: this.pickupLocations.length,
+      };
+    } else {
+      this.orderOptionsData = {
+        label: 'DELIVERY',
+        address: defineDeliveryAddress,
+        isClickble: 1,
+      };
     }
-    this.orderOptionsData = {
-      label: 'DELIVERY',
-      address: defineDeliveryAddress,
-      isClickble: this.deliveryAddresses.length
+
+    this.cdRef.detectChanges();
+  }
+
+  onSubmit() {
+    let dateTime = new Date();
+    this.merchantService.pickerDateTime = dateTime;
+
+    let isOutsideMerchantDeliveryArea = of(true);
+    if (this.orderOptionsData.label === 'DELIVERY') {
+      const { latitude, longitude } = this.orderOptionsData.address;
+      isOutsideMerchantDeliveryArea = this.merchantService.isOutsideMerchantDeliveryArea(
+        this.merchantId,
+        latitude,
+        longitude
+      );
+    }
+    isOutsideMerchantDeliveryArea
+      .pipe(
+        switchMap(
+          (isOutside): Observable<MerchantAccountInfoList> => {
+            if (!isOutside) {
+              return throwError(new Error('Delivery address is too far away'));
+            }
+
+            return this.merchantService.getMerchantPaymentAccounts(this.merchantId);
+          }
+        ),
+        switchMap(
+          (paymentAccounts): Observable<MenuInfo> => {
+            if (!paymentAccounts.accounts.length) {
+              return throwError(new Error("You don't have payment accounts"));
+            }
+            const pickerTime = this.merchantService.pickerTime;
+            return this.merchantService.getDisplayMenu(this.merchantId, pickerTime, this.orderType);
+          }
+        ),
+        switchMap(
+          ({ mealBased }): Observable<boolean> => {
+            if (!mealBased) {
+              return of(true);
+            }
+
+            return this.merchantService.getUserAccounts().pipe(
+              switchMap(
+                (accounts): any => {
+                  const isSomeAccMealBased = accounts.some(({ accountType }) => accountType === ACCOUNT_TYPES.meals);
+                  if (!isSomeAccMealBased) {
+                    return throwError(new Error("You don't have meal based accounts"));
+                  }
+
+                  return of(isSomeAccMealBased);
+                }
+              )
+            );
+          }
+        ),
+        take(1)
+      )
+      .subscribe(
+        paymentAccounts => {
+          console.log(paymentAccounts);
+        },
+        err => this.onToastDisplayed(err)
+      );
+  }
+
+  private retrievePickupLocations(storeAddress, { value }) {
+    switch (value) {
+      case null:
+        return of([]);
+      case 'true':
+        return this.merchantService.retrievePickupLocations();
+      case 'false':
+        return of([storeAddress]);
     }
   }
 
-  private async modalWindow() {
-    const addressLabel = this.isOrderTypePickup ? 'Pickup' : 'Delivery';
-    const defaultAddress = this.orderOptionsData.address
-    let listOfAddresses = this.isOrderTypePickup ? this.pickupLocations : this.deliveryAddresses;
-    listOfAddresses = listOfAddresses.map(item => {
-      const checked = defaultAddress ? item.id == defaultAddress.id : false;
-
-      return item.addressInfo ? item.addressInfo : { ...item, checked }
+  private async onToastDisplayed(message: string) {
+    const toast = await this.toastController.create({
+      message,
+      duration: 3000,
+      position: 'bottom',
+      closeButtonText: 'DISMISS',
+      showCloseButton: true,
     });
+    toast.present();
+  }
+
+  private retrieveDeliveryAddresses(setting) {
+    return this.merchantService.retrieveDeliveryAddresses(setting);
+  }
+
+  private async modalWindow() {
+    const defaultAddress = this.orderOptionsData.address;
 
     const modal = await this.modalController.create({
       component: DeliveryAddressesModalComponent,
       componentProps: {
         defaultAddress,
-        addressLabel,
-        listOfAddresses,
-        buildings: this.buildingsForNewAddressForm
+        buildings: this.buildingsForNewAddressForm,
+        isOrderTypePickup: this.isOrderTypePickup,
+        pickupLocations: this.pickupLocations,
+        deliveryAddresses: this.deliveryAddresses,
+        deliveryAddressRestriction: this.settings.map[MerchantSettings.deliveryAddressRestriction],
       },
-
     });
     modal.onDidDismiss().then(({ data }) => {
-      console.log(data)
+      if (data) {
+        this.orderOptionsData = { ...this.orderOptionsData, address: data };
+        this.cdRef.detectChanges();
+      }
     });
     await modal.present();
   }
-
-  private isTodayOrTomorrow(date, isToday) {
-    const today = new Date();
-    const someDate = new Date(date);
-    const index = isToday ? 0 : 1;
-    return (
-      someDate.getDate() == today.getDate() + index &&
-      someDate.getMonth() == today.getMonth() &&
-      someDate.getFullYear() == today.getFullYear()
-    );
-  }
 }
 
-
-interface TimeInfo {
-  prevIdx: number;
-  currentIdx: number;
-  maxValue: boolean
+interface OrderOptions {
+  label: string;
+  address: any;
+  isClickble: number;
 }

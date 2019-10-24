@@ -21,6 +21,7 @@ export class AddressEditPage implements OnInit {
 
   onAddressFormChanged(event) {
     console.log(event);
+    debugger;
     // this.addNewAdddressForm = event;
   }
 }

@@ -1,8 +1,18 @@
-import { Component, OnInit, Output, EventEmitter, Input, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Output,
+  EventEmitter,
+  Input,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { Validators, FormGroup, FormBuilder, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
-import { debounceTime } from 'rxjs/operators';
+import { debounceTime, take } from 'rxjs/operators';
 import * as states from '../../../../../../assets/states.json';
 import { Subscription } from 'rxjs';
+import { MerchantService } from '@sections/ordering/services';
+import { SYSTEM_SETTINGS_CONFIG } from '@sections/ordering/ordering.config.js';
 
 @Component({
   selector: 'st-add-edit-addresses',
@@ -13,6 +23,7 @@ import { Subscription } from 'rxjs';
 export class AddEditAddressesComponent implements OnInit {
   addEditAddressesForm: FormGroup;
   arrOfStates = states;
+  addressRestriction = { onCampus: false, offCampus: false };
   customActionSheetOptions: { [key: string]: string } = {
     cssClass: 'custom-deposit-actionSheet',
   };
@@ -20,13 +31,18 @@ export class AddEditAddressesComponent implements OnInit {
   private readonly sourceSubscription: Subscription = new Subscription();
 
   @Input() buildingsOnCampus;
+  @Input() editAddress;
   @Output() onFormChanged: EventEmitter<any> = new EventEmitter<any>();
-  constructor(private readonly fb: FormBuilder) {
-  }
-
+  constructor(
+    private readonly fb: FormBuilder,
+    private readonly merchantService: MerchantService,
+    private readonly cdRef: ChangeDetectorRef
+  ) {}
 
   get campus(): AbstractControl {
-    return this.addEditAddressesForm.get(this.controlsNames.campus);
+    if (this.addEditAddressesForm) {
+      return this.addEditAddressesForm.get(this.controlsNames.campus);
+    }
   }
 
   get address1(): AbstractControl {
@@ -66,7 +82,7 @@ export class AddEditAddressesComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.initForm();
+    this.getSettingByConfig(SYSTEM_SETTINGS_CONFIG.addressRestrictionToOnCampus);
   }
 
   ngOnDestroy() {
@@ -76,33 +92,49 @@ export class AddEditAddressesComponent implements OnInit {
   onCampusChanged({ detail: { value } }: CustomEvent<any>) {
     if (value === 'oncampus') {
       this.cleanControls(Object.keys(this.offCampusFormBlock()));
-      this.addControls(this.onCampusFormBlock())
+      this.addControls(this.onCampusFormBlock());
     } else {
       this.cleanControls(Object.keys(this.onCampusFormBlock()));
-      this.addControls(this.offCampusFormBlock())
+      this.addControls(this.offCampusFormBlock());
     }
   }
 
-  private initForm() {
-    this.addEditAddressesForm = this.fb.group(this.offCampusFormBlock());
+  private getSettingByConfig(config) {
+    this.merchantService
+      .getSettingByConfig(config)
+      .pipe(take(1))
+      .subscribe(({ value }) => {
+        this.initForm(parseInt(value));
+      });
+  }
+
+  private initForm(addressRestriction) {
+    let campusBlock;
+    if (addressRestriction === 2 || addressRestriction === 0) {
+      campusBlock = this.offCampusFormBlock();
+      if (addressRestriction === 2) this.addressRestriction = { ...this.addressRestriction, onCampus: true };
+    } else {
+      campusBlock = this.onCampusFormBlock();
+      this.addressRestriction = { ...this.addressRestriction, offCampus: true };
+    }
+    this.addEditAddressesForm = this.fb.group(campusBlock);
+    this.cdRef.detectChanges();
 
     this.onChanges();
   }
 
   private onChanges() {
-    const subscription = this.addEditAddressesForm.valueChanges
-      .pipe(debounceTime(500))
-      .subscribe(value => {
-        this.onFormChanged.emit({
-          value: { ...value, campus: value.campus === 'oncampus' ? '1' : '0' },
-          valid: this.addEditAddressesForm.valid
-        })
+    const subscription = this.addEditAddressesForm.valueChanges.pipe(debounceTime(500)).subscribe(value => {
+      this.onFormChanged.emit({
+        value: { ...value, campus: value.campus === 'oncampus' ? '1' : '0' },
+        valid: this.addEditAddressesForm.valid,
       });
+    });
 
     this.sourceSubscription.add(subscription);
   }
 
-  onFormSubmit() { }
+  onFormSubmit() {}
 
   private offCampusFormBlock() {
     const address1Errors = [
@@ -123,7 +155,7 @@ export class AddEditAddressesComponent implements OnInit {
       [this.controlsNames.state]: ['', stateErrors],
       [this.controlsNames.nickname]: [''],
       [this.controlsNames.default]: [false],
-    }
+    };
   }
 
   private onCampusFormBlock() {
@@ -131,15 +163,13 @@ export class AddEditAddressesComponent implements OnInit {
       errorDecorator(Validators.required, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.buildings].required),
     ];
 
-    const roomErrors = [
-      errorDecorator(Validators.required, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.room].required),
-    ];
+    const roomErrors = [errorDecorator(Validators.required, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.room].required)];
 
     return {
       [this.controlsNames.campus]: ['oncampus'],
       [this.controlsNames.buildings]: ['', buildingsErrors],
       [this.controlsNames.room]: ['', roomErrors],
-    }
+    };
   }
 
   private cleanControls(controlNames: string[]) {
@@ -168,7 +198,7 @@ export enum REQUEST_FUNDS_CONTROL_NAMES {
   nickname = 'nickname',
   default = 'default',
   buildings = 'building',
-  room = 'room'
+  room = 'room',
 }
 
 export const CONTROL_ERROR = {

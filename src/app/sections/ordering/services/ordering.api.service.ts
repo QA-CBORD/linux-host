@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 import { Observable } from 'rxjs';
-import { switchMap, map, tap } from 'rxjs/operators';
+import { switchMap, map, tap, take } from 'rxjs/operators';
 
 import { UserService } from 'src/app/core/service/user-service/user.service';
 import { CoordsService } from 'src/app/core/service/coords/coords.service';
@@ -12,13 +12,16 @@ import { MessageResponse } from 'src/app/core/model/service/message-response.mod
 import { MerchantSearchOptions, MerchantInfo } from '../../ordering';
 import { GeoCoordinates } from 'src/app/core/model/geolocation/geocoordinates.model';
 import { MerchantSearchOptionName } from '../ordering.config';
-import { OrderInfo, BuildingInfo } from '../shared';
+import { OrderInfo, BuildingInfo, MerchantAccountInfoList } from '../shared';
 import { AddressInfo } from '@core/model/address/address-info';
+import { SettingInfo } from '@core/model/configuration/setting-info.model';
 
 @Injectable()
 export class OrderingApiService extends BaseService {
   private readonly serviceUrlMerchant: string = '/json/merchant';
   private readonly serviceUrlOrdering: string = '/json/ordering';
+  private readonly serviceUrlUser: string = '/json/user';
+  private readonly serviceUrlInstitution: string = '/json/institution';
 
   constructor(
     protected readonly http: HttpClient,
@@ -83,23 +86,13 @@ export class OrderingApiService extends BaseService {
     );
   }
 
-  retrieveUserAddressList(): Observable<AddressInfo[]> {
-    const methodName = 'retrieveUserAddressList';
-    const postParams: ServiceParameters = { addressId: null };
-
-    return this.userService.userData.pipe(
-      switchMap(({ id }) => this.httpRequestFull('/json/user', methodName, true, null, { ...postParams, userId: id }).pipe(
-        map(({ response }: MessageResponse<any>) => response.addresses)
-      )))
-  }
-
   retrievePickupLocations(): Observable<any> {
     const methodName = 'retrievePickupLocations';
     const postParams: ServiceParameters = { active: true };
 
     return this.userService.userData.pipe(
       switchMap(({ institutionId }) =>
-        this.httpRequestFull('/json/institution', methodName, true, institutionId, postParams)
+        this.httpRequestFull(this.serviceUrlInstitution, methodName, true, institutionId, postParams)
       ),
       map(({ response }: MessageResponse<any>) => response.list)
     );
@@ -111,7 +104,7 @@ export class OrderingApiService extends BaseService {
 
     return this.userService.userData.pipe(
       switchMap(({ institutionId }) =>
-        this.httpRequestFull('/json/institution', methodName, true, institutionId, postParams)
+        this.httpRequestFull(this.serviceUrlInstitution, methodName, true, institutionId, postParams)
       ),
       map(({ response }: MessageResponse<any>) => response.list)
     );
@@ -125,7 +118,8 @@ export class OrderingApiService extends BaseService {
     nickname = null,
     state = null,
     building = null,
-    room = null }): Observable<any> {
+    room = null,
+  }): Observable<any> {
     const methodName = 'updateUserAddress';
     const postParams: ServiceParameters = {
       address: {
@@ -149,22 +143,61 @@ export class OrderingApiService extends BaseService {
         accessCode: null,
         phone: null,
         phoneExt: null,
-        onCampus: campus
-      }
+        onCampus: campus,
+      },
     };
 
     return this.userService.userData.pipe(
-      switchMap(({ id }) => this.httpRequestFull('/json/user', methodName, true, null, { ...postParams, userId: id }).pipe(
-        map(({ response }: MessageResponse<any>) => response)
-      )))
-
+      switchMap(({ id }) =>
+        this.httpRequestFull(this.serviceUrlUser, methodName, true, null, { ...postParams, userId: id })
+      ),
+      map(({ response }: MessageResponse<any>) => response)
+    );
   }
 
-  isOutsideMerchantDeliveryArea(merchantId: string, latitude: number, longitude: number): Observable<any> {
+  isOutsideMerchantDeliveryArea(merchantId: string, latitude: number, longitude: number): Observable<boolean> {
     const methodName = 'isOutsideMerchantDeliveryArea';
     const postParams: ServiceParameters = { merchantId, latitude, longitude };
 
-    return this.httpRequestFull('/json/merchant', methodName, true, null, postParams).pipe(
+    return this.httpRequestFull(this.serviceUrlMerchant, methodName, true, null, postParams).pipe(
+      map(({ response }: MessageResponse<any>) => response)
+    );
+  }
+
+  getMerchantPaymentAccounts(merchantId: string): Observable<MerchantAccountInfoList> {
+    const methodName = 'getMerchantPaymentAccounts';
+    const postParams: ServiceParameters = { merchantId };
+
+    return this.userService.userData.pipe(
+      switchMap(({ id }) =>
+        this.httpRequestFull(this.serviceUrlMerchant, methodName, true, null, { ...postParams, userId: id })
+      ),
+      map(({ response }: MessageResponse<any>) => response)
+    );
+  }
+
+  getSettingByConfig(config): Observable<SettingInfo> {
+    const methodName = 'retrieveSetting';
+
+    return this.userService.userData.pipe(
+      switchMap(({ institutionId }) =>
+        this.httpRequestFull('/json/configuration', methodName, true, institutionId, config)
+      ),
+      map(({ response }: MessageResponse<SettingInfo>) => response)
+    );
+  }
+
+  getDisplayMenu(
+    merchantId: string,
+    dateTime: string,
+    orderType: number,
+    locale: string = null,
+    depth: number = 4
+  ): Observable<any> {
+    const methodName = 'getDisplayMenu';
+    const postParams: ServiceParameters = { merchantId, dateTime, orderType, locale, depth };
+
+    return this.httpRequestFull(this.serviceUrlMerchant, methodName, true, null, postParams).pipe(
       map(({ response }: MessageResponse<any>) => response)
     );
   }

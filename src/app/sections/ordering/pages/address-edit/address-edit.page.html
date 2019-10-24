@@ -9,5 +9,5 @@
 
 <ion-content>
   <!-- <st-address-edit></st-address-edit> -->
-  <st-add-edit-addresses (onFormChanged)="onAddressFormChanged($event)"></st-add-edit-addresses>
+  <st-add-edit-addresses [buildingsOnCampus]="buildings" (onFormChanged)="onAddressFormChanged($event)"></st-add-edit-addresses>
 </ion-content>
