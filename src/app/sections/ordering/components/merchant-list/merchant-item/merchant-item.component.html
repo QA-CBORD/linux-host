@@ -42,9 +42,8 @@
         <p
           class="merchant__merchant-hours"
           [ngClass]="{
-            'merchant__merchant-hours--open': merchantInfo.openNow == true,
-            'merchant__merchant-hours--closed': merchantInfo.openNow == false
-          }"
+            'merchant__merchant-hours--open': merchantInfo.openNow,
+            'merchant__merchant-hours--closed': !merchantInfo.openNow}"
         >
           {{ merchantInfo.openNow ? 'Open' : 'Closed' }}
         </p>

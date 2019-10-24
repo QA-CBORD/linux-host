@@ -86,6 +86,15 @@ export class OrderingApiService extends BaseService {
     );
   }
 
+  validateOrder(order: OrderInfo) {
+    const methodName = 'validateOrder';
+    const postParams: ServiceParameters = { order };
+
+    return this.httpRequestFull(this.serviceUrlOrdering, methodName, true, null, postParams).pipe(
+      map(({ response }: MessageResponse<any>) => response)
+    );
+  }
+
   cancelOrder(orderId: string): Observable<boolean> {
     const methodName = 'cancelOrder';
     const postParams: ServiceParameters = { orderId };

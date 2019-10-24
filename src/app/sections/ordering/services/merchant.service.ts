@@ -4,7 +4,7 @@ import {
   OrderInfo,
   BuildingInfo,
   MenuInfo,
-  MerchantAccountInfoList,
+  MerchantAccountInfoList, MenuItemInfo,
 } from '../shared/models';
 import { Injectable } from '@angular/core';
 
@@ -29,7 +29,7 @@ export class MerchantService {
 
   private readonly _menuMerchants$: BehaviorSubject<MerchantInfo[]> = new BehaviorSubject<MerchantInfo[]>([]);
   private readonly _recentOrders$: BehaviorSubject<OrderInfo[]> = new BehaviorSubject<OrderInfo[]>([]);
-  private readonly _menu$: BehaviorSubject<MenuInfo> = new BehaviorSubject<MenuInfo>(null);
+  private readonly _menu$: BehaviorSubject<MenuInfo> = new BehaviorSubject<MenuInfo>(<MenuInfo>{});
 
   constructor(
     private readonly orderingApiService: OrderingApiService,
@@ -111,6 +111,10 @@ export class MerchantService {
     );
   }
 
+  validateOrder(order: OrderInfo): Observable<any> {
+    return this.orderingApiService.validateOrder(order);
+  }
+
   cancelOrderById(id: string): Observable<boolean> {
     return this.orderingApiService.cancelOrder(id);
   }
@@ -189,6 +193,28 @@ export class MerchantService {
       .pipe(map(accounts => this.filterAccountsByPaymentSystem(accounts)));
   }
 
+  extractAllAvailableMenuItemsFromMenu({menuCategories}: MenuInfo): MenuItemInfo[] {
+      return menuCategories.reduce((state, {menuCategoryItems}) => {
+        const item = menuCategoryItems.map(({active, visible, menuItem}) => {
+          if (active && visible && menuItem && menuItem.active && menuItem.visible && !menuItem.deleted) {
+            return menuItem
+          }
+        });
+        return [...state, ...item]
+      }, [])
+  }
+
+  extractAllAvailableMenuItemOptionsFromMenuItem({menuItemOptions}: MenuItemInfo): MenuItemInfo[] {
+    return menuItemOptions.reduce((state, {menuGroup: {menuGroupItems}}) => {
+      const res  = menuGroupItems.reduce((state, {active, visible, menuItem}) => {
+        if (active && visible && menuItem.active && menuItem.visible && !menuItem.deleted) {
+          return [...state, menuItem];
+        }
+      }, []);
+      return [...state, ...res]
+    },[]);
+  }
+  
   private filterAccountsByPaymentSystem(accounts: UserAccount[]): UserAccount[] {
     return accounts.filter(
       ({ paymentSystemType: type }) => type === PAYMENT_SYSTEM_TYPE.OPCS || type === PAYMENT_SYSTEM_TYPE.CSGOLD
