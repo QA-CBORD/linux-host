@@ -9,7 +9,7 @@ export interface OrderInfo {
   posOrderId: string;
   submittedTime: Date;
   displaySubmittedTime: string;
-  dueTime: Date;
+  dueTime: string;
   displayDueTime: string;
   userId: string;
   userPhone: string;

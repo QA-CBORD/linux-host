@@ -10,6 +10,7 @@ export interface OrderItem {
   keyedName: string;
   status: number;
   name: string;
+  reportingCategory: string;
   optionType: string;
   orderItemOptions: OrderItem[];
 }
