@@ -1,4 +1,10 @@
-import { Component, OnInit, Input } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { PickerController } from '@ionic/angular';
 import { DatePipe } from '@angular/common';
 
@@ -6,22 +12,23 @@ import { DatePipe } from '@angular/common';
   selector: 'st-date-time-picker',
   templateUrl: './st-date-time-picker.component.html',
   styleUrls: ['./st-date-time-picker.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class StDateTimePickerComponent implements OnInit {
-
+export class StDateTimePickerComponent {
   private prevSelectedTimeInfo: TimeInfo = { prevIdx: 0, currentIdx: 0, maxValue: false };
   private selectedDayIdx: number = 0;
 
   @Input() schedule: any;
   @Input() data: any;
   @Input() isTimeDisable: any;
+  @Input() dateTimePicker: Date | string;
+  @Output() onTimeSelected: EventEmitter<Date> = new EventEmitter<Date>();
 
-  constructor(
-    private readonly datePipe: DatePipe,
-    private readonly pickerController: PickerController,
-  ) { }
+  constructor(private readonly datePipe: DatePipe, private readonly pickerController: PickerController) {}
 
-  ngOnInit() { }
+  get isDefaultState() {
+    return typeof this.dateTimePicker === 'string';
+  }
 
   async openPicker() {
     const picker: HTMLIonPickerElement = await this.pickerController.create({
@@ -35,8 +42,16 @@ export class StDateTimePickerComponent implements OnInit {
         },
         {
           text: 'Confirm',
-          handler: value => {
-            console.log(value);
+          handler: ([date, time]) => {
+            const [year, month, day] = date.value.split('-');
+            if (time.value === 'asap') {
+              this.dateTimePicker = new Date(year, month - 1, day);
+            } else {
+              let [hours, mins] = time.value.split(':');
+              this.dateTimePicker = new Date(year, month - 1, day, hours, mins);
+            }
+
+            this.onTimeSelected.emit(this.dateTimePicker);
           },
         },
       ],
@@ -148,5 +163,5 @@ export class StDateTimePickerComponent implements OnInit {
 interface TimeInfo {
   prevIdx: number;
   currentIdx: number;
-  maxValue: boolean
+  maxValue: boolean;
 }

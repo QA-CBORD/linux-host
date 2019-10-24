@@ -9,12 +9,12 @@ import {
 import { Injectable } from '@angular/core';
 
 import { BehaviorSubject, Observable, zip, of } from 'rxjs';
-import { tap, switchMap, map, find } from 'rxjs/operators';
+import { tap, switchMap, map } from 'rxjs/operators';
 
 import { OrderingApiService } from './ordering.api.service';
 
 import { MerchantSearchOptions } from '../utils';
-import { MerchantSearchOptionName, PAYMENT_SYSTEM_TYPE, ACCOUNT_TYPES } from '../ordering.config';
+import { MerchantSearchOptionName, PAYMENT_SYSTEM_TYPE, SYSTEM_SETTINGS_CONFIG, MerchantSettings } from '../ordering.config';
 import { UserService } from 'src/app/core/service/user-service/user.service';
 import { AddressInfo } from '@core/model/address/address-info';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
@@ -35,7 +35,7 @@ export class MerchantService {
     private readonly orderingApiService: OrderingApiService,
     private readonly userService: UserService,
     private readonly commerceApiService: CommerceApiService
-  ) {}
+  ) { }
 
   get menuMerchants$(): Observable<MerchantInfo[]> {
     return this._menuMerchants$.asObservable();
@@ -153,11 +153,16 @@ export class MerchantService {
     return this.orderingApiService.updateUserAddress(updateUserAddress);
   }
 
-  retrieveDeliveryAddresses(setting) {
+  retrieveDeliveryAddresses(merchantId) {
     return this.userService
       .getUserSettingsBySettingName('defaultaddress')
       .pipe(
-        switchMap(({ response }) => zip(of({ defaultAddress: response.value }), this.filterDeliveryAddresses(setting)))
+        switchMap(({ response }) => zip(
+          of({ defaultAddress: response.value }),
+          this.retrieveUserAddressList()
+            .pipe(
+              switchMap(addresses => this.filterDeliveryAddresses(merchantId, addresses))
+            )))
       );
   }
 
@@ -191,15 +196,32 @@ export class MerchantService {
     );
   }
 
-  private filterDeliveryAddresses(setting) {
-    return this.retrieveUserAddressList().pipe(
-      map(addresses => {
-        if (parseInt(setting.value) === 0) {
-          return addresses;
-        }
+  filterDeliveryAddresses(merchantId, addresses) {
+    return zip(this.menuMerchants$, this.getSettingByConfig(SYSTEM_SETTINGS_CONFIG.addressRestrictionToOnCampus))
+      .pipe(
+        map(([merchants, institutionRestriction]) => {
+          const merchant = merchants.find(({ id }) => id === merchantId)
+          const deliveryAddressRestriction = merchant.settings.map[MerchantSettings.deliveryAddressRestriction];
+          let modifiedAddresses;
 
-        return addresses.filter(({ onCampus }) => onCampus === 1);
-      })
-    );
+          if (parseInt(deliveryAddressRestriction.value) === 0) {
+            modifiedAddresses = addresses;
+          } else {
+            modifiedAddresses = addresses.filter(({ onCampus }) => onCampus === 1);
+          }
+
+          return modifiedAddresses.filter(address => {
+            if (parseInt(institutionRestriction.value) === 1) {
+              return address.onCampus === 1;
+            }
+
+            if (parseInt(institutionRestriction.value) === 2) {
+              return address.onCampus === 0;
+            }
+
+            return address;
+          })
+        }
+        ))
   }
 }

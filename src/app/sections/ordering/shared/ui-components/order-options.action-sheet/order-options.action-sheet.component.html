@@ -60,7 +60,10 @@
                 lines="full">
         <st-date-time-picker [schedule]="schedule"
                              [isTimeDisable]="isTimeDisable"
-                             [data]="orderOptionsData"></st-date-time-picker>
+                             [data]="orderOptionsData"
+                             [dateTimePicker]="dateTimePicker"
+                             (onTimeSelected)="onDateTimeSelected($event)"
+                             ></st-date-time-picker>
       </ion-item>
     </ion-list>
   </div>

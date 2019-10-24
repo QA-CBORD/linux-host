@@ -13,6 +13,7 @@ import * as states from '../../../../../../assets/states.json';
 import { Subscription } from 'rxjs';
 import { MerchantService } from '@sections/ordering/services';
 import { SYSTEM_SETTINGS_CONFIG } from '@sections/ordering/ordering.config.js';
+import { LoadingService } from '@core/service/loading/loading.service.js';
 
 @Component({
   selector: 'st-add-edit-addresses',
@@ -36,7 +37,8 @@ export class AddEditAddressesComponent implements OnInit {
   constructor(
     private readonly fb: FormBuilder,
     private readonly merchantService: MerchantService,
-    private readonly cdRef: ChangeDetectorRef
+    private readonly cdRef: ChangeDetectorRef,
+    private readonly loader: LoadingService
   ) {}
 
   get campus(): AbstractControl {
@@ -100,12 +102,17 @@ export class AddEditAddressesComponent implements OnInit {
   }
 
   private getSettingByConfig(config) {
+    this.loader.showSpinner();
     this.merchantService
       .getSettingByConfig(config)
       .pipe(take(1))
-      .subscribe(({ value }) => {
-        this.initForm(parseInt(value));
-      });
+      .subscribe(
+        ({ value }) => {
+          this.loader.closeSpinner();
+          this.initForm(parseInt(value));
+        },
+        () => this.loader.closeSpinner()
+      );
   }
 
   private initForm(addressRestriction) {
@@ -133,8 +140,6 @@ export class AddEditAddressesComponent implements OnInit {
 
     this.sourceSubscription.add(subscription);
   }
-
-  onFormSubmit() {}
 
   private offCampusFormBlock() {
     const address1Errors = [
