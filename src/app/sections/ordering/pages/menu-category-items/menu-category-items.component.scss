@@ -16,7 +16,6 @@
     display: block;
     --icon-font-size: 20px;
     --icon-margin-end: 5px;
-    font-size: 16px;
   }
 
   &__search-btn {
@@ -49,7 +48,7 @@
     width: auto;
     height: 40px;
     margin-top: 41px;
-    --icon-color: $color-black;
+    --icon-color: #000;
   }
 }
 
