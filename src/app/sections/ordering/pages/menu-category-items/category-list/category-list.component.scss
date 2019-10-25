@@ -1,14 +1,8 @@
 @import 'tools';
 
-.menu-category {
-  width: 100%;
-  height: 100%;
-  --background: #f0f3f5;
-
-  &__category-list {
-    padding: 31px 16px;
-    background: #f0f3f5;
-  }
+.category-list {
+  padding: 31px 16px;
+  background: #f0f3f5;
 
   &__menu-item {
     display: flex;

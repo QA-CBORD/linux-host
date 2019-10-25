@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, ViewChild } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { fromEvent } from 'rxjs';
 
 @Component({
@@ -52,87 +52,7 @@ export class MenuCategoryItemsComponent implements OnInit {
        "visible":true,
        "active":true
     },
-    {
-      "id":"cb381a47-c53a-45a1-ac03-82690c9bfff3",
-      "menuCategoryId":"30328545-66ea-4a55-843b-e044e0402274",
-      "menuItem":{
-         "id":"e1f257c3-5faa-4997-9ef8-6e21725bc6ed",
-         "merchantId":"f7d95244-e4ff-4269-8573-574b117b53d0",
-         "name":"Imperial Meat Rolls",
-         "description":"hand rolled pork, glass noodles, shallots, carrots, cabbge and jicama fried in rice paper, served with our house tamarind sauce (nước mắm).",
-         "price":5.00,
-         "visible":true,
-         "active":true,
-         "deleted":false,
-         "reportingCategory":"APPETIZERS",
-         "menuItemOptions":[
-
-         ]
-      },
-      "displayRank":1,
-      "visible":true,
-      "active":true
-   },{
-      "id":"cb381a47-c53a-45a1-ac03-82690c9bfff3",
-      "menuCategoryId":"30328545-66ea-4a55-843b-e044e0402274",
-      "menuItem":{
-         "id":"e1f257c3-5faa-4997-9ef8-6e21725bc6ed",
-         "merchantId":"f7d95244-e4ff-4269-8573-574b117b53d0",
-         "name":"Imperial Meat Rolls",
-         "description":"hand rolled pork, glass noodles, shallots, carrots, cabbge and jicama fried in rice paper, served with our house tamarind sauce (nước mắm).",
-         "price":5.00,
-         "visible":true,
-         "active":true,
-         "deleted":false,
-         "reportingCategory":"APPETIZERS",
-         "menuItemOptions":[
-
-         ]
-      },
-      "displayRank":1,
-      "visible":true,
-      "active":true
-   },{
-      "id":"cb381a47-c53a-45a1-ac03-82690c9bfff3",
-      "menuCategoryId":"30328545-66ea-4a55-843b-e044e0402274",
-      "menuItem":{
-         "id":"e1f257c3-5faa-4997-9ef8-6e21725bc6ed",
-         "merchantId":"f7d95244-e4ff-4269-8573-574b117b53d0",
-         "name":"Imperial Meat Rolls",
-         "description":"hand rolled pork, glass noodles, shallots, carrots, cabbge and jicama fried in rice paper, served with our house tamarind sauce (nước mắm).",
-         "price":5.00,
-         "visible":true,
-         "active":true,
-         "deleted":false,
-         "reportingCategory":"APPETIZERS",
-         "menuItemOptions":[
-
-         ]
-      },
-      "displayRank":1,
-      "visible":true,
-      "active":true
-   },{
-      "id":"cb381a47-c53a-45a1-ac03-82690c9bfff3",
-      "menuCategoryId":"30328545-66ea-4a55-843b-e044e0402274",
-      "menuItem":{
-         "id":"e1f257c3-5faa-4997-9ef8-6e21725bc6ed",
-         "merchantId":"f7d95244-e4ff-4269-8573-574b117b53d0",
-         "name":"Imperial Meat Rolls",
-         "description":"hand rolled pork, glass noodles, shallots, carrots, cabbge and jicama fried in rice paper, served with our house tamarind sauce (nước mắm).",
-         "price":5.00,
-         "visible":true,
-         "active":true,
-         "deleted":false,
-         "reportingCategory":"APPETIZERS",
-         "menuItemOptions":[
-
-         ]
-      },
-      "displayRank":1,
-      "visible":true,
-      "active":true
-   },{
+   {
       "id":"cb381a47-c53a-45a1-ac03-82690c9bfff3",
       "menuCategoryId":"30328545-66ea-4a55-843b-e044e0402274",
       "menuItem":{
@@ -199,44 +119,35 @@ export class MenuCategoryItemsComponent implements OnInit {
    
   searchState: boolean = false;
   filteredMenuCategoryItems = [];
-  searchInput$;
-
-  @ViewChild('searchBar') input;
   
-  constructor() { }
-
-  ngOnInit() {
-   let inputValue = this.input.nativeElement;
-   this.searchInput$ = fromEvent(inputValue, 'keyup');
-
-   this.searchInput$.subscribe( v => {
-      console.log(v);
-      
-   })
-     
+  constructor() {
+   
   }
 
-    onSearch() {
-      this.searchState = true;
-      this.filteredMenuCategoryItems = this.menuCategoryItems.filter(v => {
-         v.menuItem.name.toLowerCase() == 'imperial meat rolls';
-      })
-      console.log(this.filteredMenuCategoryItems);
-      
-    }
+  ngOnInit() {
 
-    onInput() {
+  }
+
+  onSearchClick() {
+    this.searchState = true;
+  }
+
+  onSearchItemFilter(e) {
+    const value = e.target.value.trim().toLowerCase();
+    return this.filteredMenuCategoryItems = this.menuCategoryItems.filter((item) => {
+      return item.menuItem.name.toLowerCase().indexOf(value) > -1 ||
+             item.menuItem.description.toLowerCase().indexOf(value) > -1;
+      });
        
-    }
+  }
 
-    onCancel() {
-      this.searchState = false;
-    }
+  onCancel() {
+    this.searchState = false;
+    this.filteredMenuCategoryItems = [];
+  }
 
-    triggerMenuItemClick(event) {
-      console.log(event);
-      
-    }
-
+  triggerMenuItemClick(event) {
+   console.log(event);
+  }
     
 }

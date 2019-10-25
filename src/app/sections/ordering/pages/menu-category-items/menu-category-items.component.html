@@ -1,13 +1,15 @@
 <ng-container *ngIf="searchState; then searchBlock; else menuCategoryBlock"></ng-container> 
   
 <ng-template #searchBlock>
-  <ion-header class="appertizer-search-header" mode="ios" no-border>
-    <ion-toolbar class="appertizer-search-header__toolbar">
-      <ion-searchbar class="appertizer-search-header__searchbar" mode="ios" 
-      #searchBar
-      show-cancel-button="always" 
-      (ionCancel)="onCancel()"
-      (ionChange) = "onInput($event.detail.value)"
+  <ion-header class="menu-category-search-header" mode="ios" no-border>
+    <ion-toolbar class="menu-category-search-header__toolbar" mode="ios" no-border>
+      <ion-searchbar class="menu-category-search-header__searchbar" mode="ios" 
+        #searchBar
+        type="text" 
+        debounce="500"
+        show-cancel-button="always"
+        (ionCancel)="onCancel()"
+        (ionInput) = "onSearchItemFilter($event)"
       ></ion-searchbar>
     </ion-toolbar>
   </ion-header>
@@ -18,19 +20,26 @@
   </ion-content>
 </ng-template> 
   
-  
 <ng-template #menuCategoryBlock>
   <ion-header class="menu-category-header" mode="ios">
     <ion-toolbar mode="ios" class="menu-category-header__nav-toolbar">
       <ion-buttons slot="start">
-        <ion-back-button class="menu-category-header__back-btn" color="dark" [text]="'Full Menu'" [icon]="'ios-arrow-back'" mode="ios"></ion-back-button>
+        <ion-back-button 
+          class="menu-category-header__back-btn" 
+          color="dark" 
+          [text]="'Full Menu'" 
+          [icon]="'ios-arrow-back'" 
+          mode="ios">
+        </ion-back-button>
       </ion-buttons>
       <ion-buttons slot="end">
-        <ion-button class="menu-category-header__search-btn" color="dark" [icon]="'search'" mode="ios" (click)="onSearch()">
+        <ion-button class="menu-category-header__search-btn" color="dark" [icon]="'search'" mode="ios" (click)="onSearchClick()">
           <ion-icon class="menu-category-header__search-btn-icon" name="search"></ion-icon>
         </ion-button>
       </ion-buttons>
-      <ion-title class="menu-category-header__title">Appertizers</ion-title>
+      <ion-title class="menu-category-header__title">
+        Appertizers
+      </ion-title>
     </ion-toolbar>
   </ion-header>
   <ion-content class="menu-category" mode="ios">

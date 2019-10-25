@@ -15,6 +15,5 @@ export class CategoryListComponent implements OnInit {
 
   triggerMenuItemClick(event) {
     console.log(event);
-    
   }
 }
