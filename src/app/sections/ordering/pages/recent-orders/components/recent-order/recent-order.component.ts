@@ -40,22 +40,10 @@ export class RecentOrderComponent implements OnInit {
     this.setActiveOrder(orderId);
     this.setActiveMerchant(orderId);
     this.setActiveAddress();
-
-    this.cart.orderInfo$.subscribe(d => console.log(d));
   }
 
-  private setActiveOrder(orderId) {
-    this.order$ = this.merchantService.recentOrders$.pipe(
-      map(orders => orders.find(({ id }) => id === orderId)),
-    );
-  }
-
-  private setActiveMerchant(orderId) {
-    this.merchant$ = this.merchantService.recentOrders$.pipe(
-      map(orders => orders.find(({ id }) => id === orderId)),
-      switchMap(({ merchantId }) => this.merchantService.menuMerchants$.pipe(
-        map(merchants => merchants.find(({ id }) => id === merchantId)),
-      )));
+  onReorderHandler() {
+    this.initCart();
   }
 
   resolveMenuItemsInOrder(): Observable<MenuItemInfo[][]> {
@@ -74,6 +62,35 @@ export class RecentOrderComponent implements OnInit {
         return [availableMenuItems, unavailableMenuItemsName];
       }),
     );
+  }
+
+  get orderStatus() {
+    return ORDERING_STATUS;
+  }
+
+  async showModal(): Promise<void> {
+    this.order$.pipe(
+      take(1),
+      map(({ checkNumber }) => checkNumber),
+    ).subscribe(await this.initCancelOrderModal.bind(this));
+  }
+
+  async back(): Promise<void> {
+    await this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.recentOrders]);
+  }
+
+  private setActiveOrder(orderId) {
+    this.order$ = this.merchantService.recentOrders$.pipe(
+      map(orders => orders.find(({ id }) => id === orderId)),
+    );
+  }
+
+  private setActiveMerchant(orderId) {
+    this.merchant$ = this.merchantService.recentOrders$.pipe(
+      map(orders => orders.find(({ id }) => id === orderId)),
+      switchMap(({ merchantId }) => this.merchantService.menuMerchants$.pipe(
+        map(merchants => merchants.find(({ id }) => id === merchantId)),
+      )));
   }
 
   private getOrderItemInitialObject(orderItem: OrderItem, menuItem: MenuItemInfo) {
@@ -95,26 +112,8 @@ export class RecentOrderComponent implements OnInit {
     });
   }
 
-  get orderStatus() {
-    return ORDERING_STATUS;
-  }
-
-  async back(): Promise<void> {
-    await this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.recentOrders]);
-  }
-
-  async showModal(): Promise<void> {
-    this.order$.pipe(
-      take(1),
-      map(({ checkNumber }) => checkNumber),
-    ).subscribe(await this.initCancelOrderModal.bind(this));
-  }
-
-  onReorderHandler() {
-    this.initCart();
-  }
-
   private initCart(date?, type?, addressId?) {
+    // TODO rework it after modal will be reworked
     zip(this.merchant$, this.order$).pipe(take(1)).subscribe(async ([merchant, order]) => {
       await this.cart.setActiveMerchant(merchant);
       await this.cart.setActiveMerchantsMenuByOrderOptions(new Date(), order.type, order.deliveryAddressId);
