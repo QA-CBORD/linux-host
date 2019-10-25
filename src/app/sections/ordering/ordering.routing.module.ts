@@ -29,8 +29,8 @@ const routes: Route[] = [
     loadChildren: './pages/favorite-merchants/favorite-merchants.module#FavoriteMerchantsModule',
   },
   {
-    path: LOCAL_ROUTING.appertizerList,
-    loadChildren: './pages/appertizer-list/appertizer-list.module#AppertizerListModule',
+    path: LOCAL_ROUTING.menuCategoryItems,
+    loadChildren: './pages/menu-category-items/menu-category-items.module#MenuCategoryItemsModule',
   },
 ];
 

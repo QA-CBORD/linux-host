@@ -1,11 +1,12 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AppertizerListComponent } from './appertizer-list.component';
+import { MenuCategoryItemsComponent } from './menu-category-items.component';
+
 
 const routes: Routes = [
   {
     path: '',
-    component: AppertizerListComponent,
+    component: MenuCategoryItemsComponent,
   },
 ];
 
@@ -13,4 +14,4 @@ const imports = [RouterModule.forChild(routes)];
 const exports = [RouterModule];
 
 @NgModule({ imports, exports })
-export class AppertizerListRoutingModule { }
+export class MenuCategoryItemsRoutingModule { }
