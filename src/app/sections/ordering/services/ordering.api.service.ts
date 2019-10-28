@@ -9,7 +9,6 @@ import { CoordsService } from 'src/app/core/service/coords/coords.service';
 
 import { BaseService, ServiceParameters } from 'src/app/core/service/base-service/base.service';
 import { MessageResponse } from 'src/app/core/model/service/message-response.model';
-import { MerchantSearchOptions, MerchantInfo } from '../../ordering';
 import { GeoCoordinates } from 'src/app/core/model/geolocation/geocoordinates.model';
 import { MerchantSearchOptionName } from '../ordering.config';
 import { OrderInfo, BuildingInfo, MerchantAccountInfoList, MerchantInfo } from '../shared';
@@ -101,18 +100,6 @@ export class OrderingApiService extends BaseService {
 
     return this.httpRequestFull(this.serviceUrlOrdering, methodName, true, null, postParams).pipe(
       map(({ response }: MessageResponse<boolean>) => response)
-    );
-  }
-
-  retrievePickupLocations(): Observable<any> {
-    const methodName = 'retrievePickupLocations';
-    const postParams: ServiceParameters = { active: true };
-
-    return this.userService.userData.pipe(
-      switchMap(({ institutionId }) =>
-        this.httpRequestFull(this.serviceUrlInstitution, methodName, true, institutionId, postParams)
-      ),
-      map(({ response }: MessageResponse<any>) => response.list)
     );
   }
 

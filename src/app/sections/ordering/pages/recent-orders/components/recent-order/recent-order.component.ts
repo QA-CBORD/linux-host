@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { map, switchMap, take } from 'rxjs/operators';
+import { map, switchMap, take, tap } from 'rxjs/operators';
 import { Observable, zip } from 'rxjs';
 
 import { AddressInfo } from '@core/model/address/address-info';
@@ -43,7 +43,8 @@ export class RecentOrderComponent implements OnInit {
   }
 
   onReorderHandler() {
-    this.initCart();
+    // this.initCart();
+    this.merchant$.pipe(take(1), tap((m) => this.initOrderOptionsModal(m))).subscribe();
   }
 
   resolveMenuItemsInOrder(): Observable<MenuItemInfo[][]> {
