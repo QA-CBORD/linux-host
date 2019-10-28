@@ -129,7 +129,7 @@ export class MenuCategoryItemsComponent implements OnInit {
   }
 
   onSearchClick() {
-    this.searchState = true;
+    this.searchState = !this.searchState;
   }
 
   onSearchItemFilter(e) {
@@ -142,7 +142,7 @@ export class MenuCategoryItemsComponent implements OnInit {
   }
 
   onCancel() {
-    this.searchState = false;
+    this.searchState = !this.searchState;
     this.filteredMenuCategoryItems = [];
   }
 

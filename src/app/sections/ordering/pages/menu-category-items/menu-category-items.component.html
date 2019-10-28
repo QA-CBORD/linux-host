@@ -1,9 +1,9 @@
 <ng-container *ngIf="searchState; then searchBlock; else menuCategoryBlock"></ng-container> 
   
 <ng-template #searchBlock>
-  <ion-header class="menu-category-search-header" mode="ios" no-border>
-    <ion-toolbar class="menu-category-search-header__toolbar" mode="ios" no-border>
-      <ion-searchbar class="menu-category-search-header__searchbar" mode="ios" 
+  <ion-header class="menu-category__search-header" mode="ios" no-border>
+    <ion-toolbar class="menu-category__search-header-toolbar" mode="ios" no-border>
+      <ion-searchbar class="menu-category__search-header-searchbar" mode="ios" 
         #searchBar
         type="text" 
         debounce="500"
@@ -21,11 +21,11 @@
 </ng-template> 
   
 <ng-template #menuCategoryBlock>
-  <ion-header class="menu-category-header" mode="ios">
-    <ion-toolbar mode="ios" class="menu-category-header__nav-toolbar">
+  <ion-header class="menu-category__header" mode="ios">
+    <ion-toolbar mode="ios" class="menu-category__header-toolbar">
       <ion-buttons slot="start">
         <ion-back-button 
-          class="menu-category-header__back-btn" 
+          class="menu-category__header-back-btn" 
           color="dark" 
           [text]="'Full Menu'" 
           [icon]="'ios-arrow-back'" 
@@ -33,11 +33,11 @@
         </ion-back-button>
       </ion-buttons>
       <ion-buttons slot="end">
-        <ion-button class="menu-category-header__search-btn" color="dark" [icon]="'search'" mode="ios" (click)="onSearchClick()">
-          <ion-icon class="menu-category-header__search-btn-icon" name="search"></ion-icon>
+        <ion-button class="menu-category__header-search-btn" color="dark" [icon]="'search'" mode="ios" (click)="onSearchClick()">
+          <ion-icon class="menu-category__header-search-btn-icon" name="search"></ion-icon>
         </ion-button>
       </ion-buttons>
-      <ion-title class="menu-category-header__title">
+      <ion-title class="menu-category__header-title">
         Appertizers
       </ion-title>
     </ion-toolbar>
