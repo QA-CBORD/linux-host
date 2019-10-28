@@ -87,6 +87,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
 
   onRadioGroupChanged({ target }) {
     this.isOrderTypePickup = target.value === 'pickup';
+    this.orderType = target.value === 'pickup' ? 0 : 1;
     this.defineOrderOptionsData(this.isOrderTypePickup);
   }
 
@@ -129,61 +130,75 @@ export class OrderOptionsActionSheetComponent implements OnInit {
 
     let isOutsideMerchantDeliveryArea = of(false);
     if (this.orderOptionsData.label === 'DELIVERY') {
-      const { latitude, longitude } = this.orderOptionsData.address;
-      isOutsideMerchantDeliveryArea = this.merchantService.isOutsideMerchantDeliveryArea(
-        this.merchantId,
-        latitude,
-        longitude
-      );
+      if (this.orderOptionsData.address) {
+        const { latitude, longitude } = this.orderOptionsData.address;
+        isOutsideMerchantDeliveryArea = this.merchantService.isOutsideMerchantDeliveryArea(
+          this.merchantId,
+          latitude,
+          longitude
+        );
+      } else {
+        isOutsideMerchantDeliveryArea = of(false);
+        this.onToastDisplayed('Choose address please');
+        return;
+      }
     }
+    this.loadingService.showSpinner();
     isOutsideMerchantDeliveryArea
       .pipe(
-        switchMap(
-          (isOutside): Observable<MerchantAccountInfoList> => {
-            if (isOutside) {
-              return throwError(new Error('Delivery address is too far away'));
-            }
-
-            return this.merchantService.getMerchantPaymentAccounts(this.merchantId);
-          }
-        ),
-        switchMap(
-          (paymentAccounts): Observable<MenuInfo> => {
-            if (!paymentAccounts.accounts.length) {
-              return throwError(new Error("You don't have payment accounts"));
-            }
-            const pickerTime = this.merchantService.pickerTime;
-            return this.merchantService.getDisplayMenu(this.merchantId, pickerTime, this.orderType);
-          }
-        ),
-        switchMap(
-          ({ mealBased }): Observable<boolean> => {
-            if (!mealBased) {
-              return of(true);
-            }
-
-            return this.merchantService.getUserAccounts().pipe(
-              switchMap(
-                (accounts): any => {
-                  const isSomeAccMealBased = accounts.some(({ accountType }) => accountType === ACCOUNT_TYPES.meals);
-                  if (!isSomeAccMealBased) {
-                    return throwError(new Error("You don't have meal based accounts"));
-                  }
-
-                  return of(isSomeAccMealBased);
-                }
-              )
-            );
-          }
-        ),
+        switchMap((isOutside): Observable<MerchantAccountInfoList> => this.getMerchantPaymentAccounts(isOutside)),
+        switchMap((paymentAccounts): Observable<MenuInfo> => this.getDisplayMenu(paymentAccounts)),
+        switchMap(({ mealBased }): Observable<boolean> => this.isAccountsMealBased(mealBased)),
         take(1)
       )
       .subscribe(
-        paymentAccounts => {
-          console.log(paymentAccounts);
+        () => {
+          this.loadingService.closeSpinner();
+          this.modalController.dismiss({
+            addressId: this.orderOptionsData.address.id,
+            orderType: this.orderType
+          });
         },
-        err => this.onToastDisplayed(err)
+        err => {
+          this.loadingService.closeSpinner();
+          this.onToastDisplayed(err)
+        }
       );
+  }
+
+  private getMerchantPaymentAccounts(isOutside): Observable<MerchantAccountInfoList> {
+    if (isOutside) {
+      return throwError(new Error('Delivery address is too far away'));
+    }
+
+    return this.merchantService.getMerchantPaymentAccounts(this.merchantId);
+  }
+
+  private getDisplayMenu(paymentAccounts): Observable<MenuInfo> {
+    if (!paymentAccounts.accounts.length) {
+      return throwError(new Error("You don't have payment accounts"));
+    }
+    const pickerTime = this.merchantService.pickerTime;
+    return this.merchantService.getDisplayMenu(this.merchantId, pickerTime, this.orderType);
+  }
+
+  private isAccountsMealBased(mealBased): Observable<boolean> {
+    if (!mealBased) {
+      return of(true);
+    }
+
+    return this.merchantService.getUserAccounts().pipe(
+      switchMap(
+        (accounts): any => {
+          const isSomeAccMealBased = accounts.some(({ accountType }) => accountType === ACCOUNT_TYPES.meals);
+          if (!isSomeAccMealBased) {
+            return throwError(new Error("You don't have meal based accounts"));
+          }
+
+          return of(isSomeAccMealBased);
+        }
+      )
+    );
   }
 
   private retrievePickupLocations(storeAddress, { value }) {
