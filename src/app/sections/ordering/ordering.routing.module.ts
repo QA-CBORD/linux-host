@@ -18,7 +18,6 @@ const routes: Route[] = [
   {
     path: LOCAL_ROUTING.recentOrders,
     loadChildren: './pages/recent-orders/recent-orders.module#RecentOrdersModule',
-    resolve: {recentOrders: RecentOrdersResolver}
   },
   {
     path: LOCAL_ROUTING.savedAddresses,
