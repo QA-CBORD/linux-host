@@ -2,7 +2,6 @@ export enum LOCAL_ROUTING {
   recentOrders = 'recent-orders',
   favoriteMerchants = 'favorite-merchants',
   savedAddresses = 'saved-addresses',
-  menuCategoryItems = 'menu-category-items'
 }
 
 export enum MerchantSearchOptionName {

@@ -56,5 +56,21 @@
     margin-top: 41px;
     --icon-color: #000;
   }
-  
+
+  &__search-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 97px;
+  }
+
+  &__search-text {
+    text-align: center;
+    color: #00000099;
+    margin: 19px 72px 0;
+
+    @include font-nunito-semibold(16px);
+  }
+
 }
