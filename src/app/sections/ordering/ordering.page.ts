@@ -73,7 +73,9 @@ export class OrderingPage implements OnInit {
         settings
       },
     });
-    modal.onDidDismiss().then(() => { });
+    modal.onDidDismiss().then(({ data }) => {
+      console.log(data);
+    });
     await modal.present();
   }
 
