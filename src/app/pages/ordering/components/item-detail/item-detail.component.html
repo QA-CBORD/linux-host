@@ -1,0 +1,127 @@
+<ion-content class="order-detail">
+  <ion-header class="order-detail__header">
+    <img src="/assets/images/temp-merchant-photo.jpg" alt="french frees" class="order-detail__appetizer-photo">
+    <ion-buttons slot="start" class="order-detail__header-buttons">
+      <ion-button color="dark" (click)="onClose()" class="order-detail__close-button">
+        <ion-icon size="large" slot="icon-only" name="close" class="order-detail__header-icon"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-header>
+  <div class="order-detail__descriptions">
+    <div class="order-detail__descriptions-title">{{orderDetails.itemName}}</div>
+    <p class="order-detail__descriptions-content">{{orderDetails.itemNDescription}}</p>
+    <span class="order-detail__descriptions-price">${{orderDetails.itemPrice}}</span>
+  </div>
+  <form [formGroup]="itemOrderForm">
+    <ion-list lines="none" class="order-detail__list-size">
+      <ion-item-divider class="order-detail__divider" mode="ios">
+        <div class="order-detail__divider-title">Select a size</div>
+        <div 
+          class="order-detail__divider-subtitle" 
+          *ngIf="!orderSize.errors"
+        >
+          Required
+        </div>
+        <div
+          class="order-detail__control-error-msg"
+          *ngIf=" orderSize.errors && (orderSize.dirty || orderSize.touched)"
+        >
+          Required - You must select a size.
+        </div>
+      </ion-item-divider>
+      <ion-radio-group [formControl]="orderSize" lines="none">
+        <ion-item *ngFor="let size of orderDetails.size" lines="none"  class="order-detail__item-size" >
+          <ion-label>
+            <div class="order-detail__size-title">{{size.name}}</div>
+            <div *ngIf="size.price" class="order-detail__size-price">+${{size.price}}</div>
+          </ion-label>
+          <ion-radio 
+            class="order-detail__radio-size" 
+            slot="start" 
+            [value]="size"
+            (ionSelect)="sizeChosen($event.detail.value)"
+            mode="md" 
+          >
+          </ion-radio>
+        </ion-item>
+      </ion-radio-group>
+    </ion-list>
+    <ion-list class="order-detail__list-toppings">
+      <ion-item-divider class="order-detail__divider" mode="ios">
+        <div class="order-detail__divider-title">Toppings</div>
+        <div class="order-detail__divider-subtitle">Select up to 3</div>
+      </ion-item-divider>
+      <ion-item-group ngDefaultControl [formGroup]="orderToppings">
+        <ion-item *ngFor="let topping of orderDetails.toppings; let i = index"  lines="none" class="order-detail__toppings-items">
+          <ion-checkbox 
+            (ionChange)="toppingsChecked($event.detail)"
+            class="order-detail__toppings-item-checkbox" 
+            mode="md"
+            [value]="topping"
+            >
+          </ion-checkbox>
+          <ion-label class="order-detail__toppings-label">
+              <div class="order-detail__topping-title">{{topping.name}}</div>
+              <div *ngIf="topping.price" class="order-detail__topping-price">+${{topping.price}}</div>
+          </ion-label>
+        </ion-item>
+      </ion-item-group>
+    </ion-list>
+    <ion-list class="order-detail__special-instructions">
+      <ion-item-divider class="order-detail__divider" mode="ios">
+        <div class="order-detail__divider-title">Specials Instructions</div>
+      </ion-item-divider>
+      <st-textarea-floating-label
+        class="order-detail__order-message"
+        [formControlName] = "controlsNames.message"
+        [control]="orderMessage"
+        idd="orderMessage"
+        label="Add a note for the kitchen..."
+        rows="3"
+      >
+      </st-textarea-floating-label>
+    </ion-list>
+    <ion-list class="order-detail__nutrition-info">
+      <ion-item-divider class="order-detail__divider" mode="ios">
+        <div class="order-detail__divider-title">Nutrition Info</div>
+      </ion-item-divider>
+      <div class="order-detail__nutrition-info-container">
+        <div class="order-detail__nutrition-info-wrapper">
+          <div class="order-detail__nutrition-info-title">{{orderDetails.nutritionsValue.calories*counter}}</div>
+          <div class="order-detail__nutrition-info-subtitle">Calories</div>
+        </div>
+        <div class="order-detail__nutrition-info-wrapper">
+          <div class="order-detail__nutrition-info-title">{{orderDetails.nutritionsValue.protein*counter}}g</div>
+          <div class="order-detail__nutrition-info-subtitle">Protein</div>
+        </div>
+        <div class="order-detail__nutrition-info-wrapper">
+          <div class="order-detail__nutrition-info-title">{{orderDetails.nutritionsValue.carbs*counter}}</div>
+          <div class="order-detail__nutrition-info-subtitle">Carbs</div>
+        </div>
+      </div>
+    </ion-list>
+  </form>
+</ion-content>
+<ion-footer class="item-footer" mode="ios">
+  <div class="item-footer__counter-btns">
+    <ion-button 
+      [disabled]="counter == 1" 
+      class="item-footer__counter-btn" 
+      (click)="removeItems()"><ion-icon name="remove"></ion-icon></ion-button>
+    <div>{{this.counter}}</div>
+    <ion-button 
+      class="item-footer__counter-btn" 
+      (click)="addItems()"><ion-icon name="add"></ion-icon></ion-button>
+  </div>
+  <div>
+    <ion-button 
+    mode="md"
+    type="submit" 
+    (click)="onFormSubmit()" 
+    class="item-footer__add-btn"
+    [ngClass]="{ 'item-footer__add-btn-disabled': !itemOrderForm.valid }"
+    >
+      Add ${{totalPrice}}
+    </ion-button>
+  </div>
+</ion-footer>

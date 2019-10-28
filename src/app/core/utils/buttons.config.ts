@@ -16,6 +16,14 @@ const CANCEL = {
   type: BUTTON_TYPE.CANCEL,
 };
 
+const CANCELING_AGREEMENT = {
+  class: 'filled-red',
+  shape: 'round',
+  strong: true,
+  fill: 'default',
+  type: BUTTON_TYPE.CANCEL,
+};
+
 const RETRY = {
   class: 'filled',
   shape: 'round',
@@ -56,6 +64,14 @@ const CLOSE = {
   type: BUTTON_TYPE.CLOSE,
 };
 
+const NO = {
+  class: 'small-with-shadow',
+  shape: 'round',
+  strong: true,
+  fill: 'clear',
+  type: BUTTON_TYPE.CLOSE,
+};
+
 const OPT_IN = {
   class: 'filled',
   shape: 'round',
@@ -67,9 +83,11 @@ const OPT_IN = {
 export const buttons = {
   CANCEL,
   RETRY,
+  NO,
   OKAY,
   REDEEM,
   CLOSE,
   CLAIM,
   OPT_IN,
+  CANCELING_AGREEMENT
 };

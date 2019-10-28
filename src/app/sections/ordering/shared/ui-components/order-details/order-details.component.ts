@@ -2,11 +2,9 @@ import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
-  Input,
-  OnChanges,
+  Input, OnChanges,
   OnInit,
-  Output,
-  SimpleChanges
+  Output, SimpleChanges,
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { OrderItem } from '@sections/ordering';
@@ -19,8 +17,8 @@ import { AddressInfo } from "@core/model/address/address-info";
   styleUrls: ['./order-details.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class OrderDetailsComponent implements OnInit, OnChanges {
-  @Input() address: AddressInfo;
+export class OrderDetailsComponent implements OnInit {
+  @Input() address: string;
   @Input() readonly: boolean = true;
   @Input() time: any = [];
   @Input() type: ORDER_TYPE;
@@ -59,7 +57,7 @@ export class OrderDetailsComponent implements OnInit, OnChanges {
         [DETAILS_FORM_CONTROL_NAMES.paymentMethod]: [''],
       },{updateOn: 'blur'}
     );
-    console.log(this.detailsForm);
+    // console.log(this.detailsForm);
     this.subscribe()
   }
 
@@ -79,10 +77,6 @@ export class OrderDetailsComponent implements OnInit, OnChanges {
 
   test() {
     console.log(this.detailsForm)
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes);
   }
 }
 

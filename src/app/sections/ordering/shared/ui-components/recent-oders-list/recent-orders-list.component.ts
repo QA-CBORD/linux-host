@@ -4,7 +4,7 @@ import {
   ChangeDetectionStrategy,
   Input, Output, EventEmitter,
 } from '@angular/core';
-import { OrderStatus } from './recent-orders-list-item/recent-orders.config';
+import { ORDERING_STATUS } from './recent-orders-list-item/recent-orders.config';
 import { OrderInfo } from '../../models';
 
 @Component({

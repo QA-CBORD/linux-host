@@ -1,4 +1,4 @@
-import { MenuCategoryInfo } from './menu-category-info.model';
+import { MenuCategoryInfo } from '@sections/ordering';
 
 export interface MenuInfo {
   merchantId: string;

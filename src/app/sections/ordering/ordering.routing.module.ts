@@ -18,7 +18,6 @@ const routes: Route[] = [
   {
     path: LOCAL_ROUTING.recentOrders,
     loadChildren: './pages/recent-orders/recent-orders.module#RecentOrdersModule',
-    resolve: {recentOrders: RecentOrdersResolver}
   },
   {
     path: LOCAL_ROUTING.savedAddresses,
@@ -27,6 +26,10 @@ const routes: Route[] = [
   {
     path: LOCAL_ROUTING.favoriteMerchants,
     loadChildren: './pages/favorite-merchants/favorite-merchants.module#FavoriteMerchantsModule',
+  },
+  {
+    path: LOCAL_ROUTING.cart,
+    loadChildren: './pages/cart/cart.module#CartModule',
   },
   {
     path: LOCAL_ROUTING.addressEdit,

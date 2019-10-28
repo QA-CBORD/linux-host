@@ -1,14 +1,14 @@
 import { MerchantService } from '@sections/ordering/services';
 import { BuildingInfo } from './../../models/building-info.model';
-import { Component, OnInit, Input, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { MerchantOrderTypesInfo, MenuInfo, MerchantAccountInfoList } from '../../models';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { MenuInfo, MerchantAccountInfoList, MerchantOrderTypesInfo } from '../../models';
 import { ModalController, ToastController } from '@ionic/angular';
 import { DeliveryAddressesModalComponent } from '../delivery-addresses.modal/delivery-addresses.modal.component';
 import { AddressInfo } from '@core/model/address/address-info';
-import { zip, of, throwError, Observable } from 'rxjs';
-import { take, switchMap } from 'rxjs/operators';
+import { Observable, of, throwError, zip } from 'rxjs';
+import { switchMap, take } from 'rxjs/operators';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { ORDER_TYPE, MerchantSettings, ACCOUNT_TYPES } from '@sections/ordering/ordering.config';
+import { ACCOUNT_TYPES, MerchantSettings, ORDER_TYPE } from '@sections/ordering/ordering.config';
 
 @Component({
   selector: 'st-order-options.action-sheet',
@@ -123,9 +123,9 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   }
 
   onSubmit() {
-    if (!this.merchantService.pickerDateTime) {
-      let dateTime = new Date();
-      this.merchantService.pickerDateTime = dateTime;
+    if (!this.merchantService.pickerDateTime || this.merchantService.pickerTime === 'ASAP') {
+      this.merchantService.pickerDateTime = new Date();
+      this.dateTimePicker = new Date();
     }
 
     let isOutsideMerchantDeliveryArea = of(false);
@@ -156,7 +156,8 @@ export class OrderOptionsActionSheetComponent implements OnInit {
           this.loadingService.closeSpinner();
           this.modalController.dismiss({
             addressId: this.orderOptionsData.address.id,
-            orderType: this.orderType
+            orderType: this.orderType,
+            dueTime: this.dateTimePicker
           });
         },
         err => {
