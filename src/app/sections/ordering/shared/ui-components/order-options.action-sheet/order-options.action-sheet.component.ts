@@ -123,9 +123,9 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   }
 
   onSubmit() {
-    if (!this.merchantService.pickerDateTime) {
-      let dateTime = new Date();
-      this.merchantService.pickerDateTime = dateTime;
+    if (!this.merchantService.pickerDateTime || this.merchantService.pickerTime === 'ASAP') {
+      this.merchantService.pickerDateTime = new Date();
+      this.dateTimePicker = new Date();
     }
 
     let isOutsideMerchantDeliveryArea = of(false);
