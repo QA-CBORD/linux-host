@@ -3,7 +3,7 @@ import { Component, Input, ChangeDetectionStrategy, OnInit, ChangeDetectorRef } 
 import { ModalController } from '@ionic/angular';
 import { MerchantService } from '@sections/ordering/services';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { take } from 'rxjs/operators';
+import { take, map } from 'rxjs/operators';
 import { UserService } from '@core/service/user-service/user.service';
 import { of, zip, iif } from 'rxjs';
 
@@ -20,7 +20,7 @@ export class DeliveryAddressesModalComponent implements OnInit {
   @Input() isOrderTypePickup;
   @Input() pickupLocations;
   @Input() deliveryAddresses;
-  @Input() deliveryAddressRestriction;
+  @Input() merchantId: string;
 
   addNewAdddressState: boolean = false;
   addNewAdddressForm: { value: any; valid: boolean };
@@ -53,14 +53,17 @@ export class DeliveryAddressesModalComponent implements OnInit {
             this.userService.saveUserSettingsBySettingName('defaultaddress', addedAddress.id),
             of(false)
           ),
-          of(addedAddress)
+          of(addedAddress),
         )),
+        switchMap(([isDefaultAddressAdded, addedAddress]) => this.merchantService.filterDeliveryAddresses(this.merchantId, [addedAddress])),
         take(1)
       )
-      .subscribe(([isDefaultAddressAdded, addedAddress]) => {
+      .subscribe(([addedAddress]) => {
         this.loadingService.closeSpinner();
-        this.listOfAddresses = [...this.listOfAddresses, addedAddress];
-        this.cdRef.detectChanges();
+        if (addedAddress) {
+          this.listOfAddresses = [...this.listOfAddresses, addedAddress];
+          this.cdRef.detectChanges();
+        }
       }, () => this.loadingService.closeSpinner())
   }
 

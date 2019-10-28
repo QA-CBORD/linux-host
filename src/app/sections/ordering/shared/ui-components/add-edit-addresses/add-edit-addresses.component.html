@@ -36,7 +36,7 @@
         idd="buildings"
       >
         <ng-container role="options">
-          <ion-select-option *ngFor="let item of buildingsOnCampus" [value]="item.addressInfo.building">
+          <ion-select-option *ngFor="let item of buildingsOnCampus" [value]="item.addressInfo">
             {{ item.addressInfo.building }}
           </ion-select-option>
         </ng-container>

@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
-import { Observable } from 'rxjs';
+import { Observable, of, zip } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
 import { UserService } from 'src/app/core/service/user-service/user.service';
@@ -9,6 +9,7 @@ import { CoordsService } from 'src/app/core/service/coords/coords.service';
 
 import { BaseService, ServiceParameters } from 'src/app/core/service/base-service/base.service';
 import { MessageResponse } from 'src/app/core/model/service/message-response.model';
+import { MerchantSearchOptions, MerchantInfo } from '../../ordering';
 import { GeoCoordinates } from 'src/app/core/model/geolocation/geocoordinates.model';
 import { MerchantSearchOptionName } from '../ordering.config';
 import { OrderInfo, BuildingInfo, MerchantAccountInfoList, MerchantInfo } from '../shared';
@@ -85,7 +86,6 @@ export class OrderingApiService extends BaseService {
       map(({ response }: MessageResponse<any>) => response)
     );
   }
-
   validateOrder(order: OrderInfo) {
     const methodName = 'validateOrder';
     const postParams: ServiceParameters = { order };
@@ -101,6 +101,18 @@ export class OrderingApiService extends BaseService {
 
     return this.httpRequestFull(this.serviceUrlOrdering, methodName, true, null, postParams).pipe(
       map(({ response }: MessageResponse<boolean>) => response)
+    );
+  }
+
+  retrievePickupLocations(): Observable<any> {
+    const methodName = 'retrievePickupLocations';
+    const postParams: ServiceParameters = { active: true };
+
+    return this.userService.userData.pipe(
+      switchMap(({ institutionId }) =>
+        this.httpRequestFull(this.serviceUrlInstitution, methodName, true, institutionId, postParams)
+      ),
+      map(({ response }: MessageResponse<any>) => response.list)
     );
   }
 
@@ -126,16 +138,18 @@ export class OrderingApiService extends BaseService {
   }
 
   updateUserAddress({
-                      address1 = null,
-                      address2 = null,
-                      campus = null,
-                      city = null,
-                      nickname = null,
-                      state = null,
-                      building = null,
-                      room = null,
-                    }): Observable<any> {
+    address1 = null,
+    address2 = null,
+    campus = null,
+    city = null,
+    nickname = null,
+    state = null,
+    building = null,
+    room = null,
+  }): Observable<any> {
     const methodName = 'updateUserAddress';
+    const campusValue = parseInt(campus);
+    let addedAddress;
     const postParams: ServiceParameters = {
       address: {
         objectRevision: null,
@@ -147,11 +161,11 @@ export class OrderingApiService extends BaseService {
         state,
         postalcode: null,
         country: null,
-        latitude: null,
-        longitude: null,
+        latitude: campusValue ? building.latitude : null,
+        longitude: campusValue ? building.longitude : null,
         notes: null,
         nickname: nickname !== null && !nickname.length ? null : nickname,
-        building,
+        building: building ? building.building : null,
         floor: null,
         room,
         crossStreet: null,
@@ -162,12 +176,19 @@ export class OrderingApiService extends BaseService {
       },
     };
 
-    return this.userService.userData.pipe(
-      switchMap(({ id }) =>
-        this.httpRequestFull(this.serviceUrlUser, methodName, true, null, { ...postParams, userId: id })
-      ),
-      map(({ response }: MessageResponse<any>) => response)
-    );
+    if (!campusValue) {
+      addedAddress = this.addressToGeocode(postParams.address);
+
+    } else {
+      addedAddress = of(postParams.address)
+    }
+
+    return zip(addedAddress, this.userService.userData)
+      .pipe(
+        switchMap(([address, user]) =>
+          this.httpRequestFull(this.serviceUrlUser, methodName, true, null, { ...postParams, address, userId: user.id })),
+        map(({ response }: MessageResponse<any>) => response)
+      )
   }
 
   getMerchantSettings(merchantId: string): Observable<any> {
@@ -239,6 +260,15 @@ export class OrderingApiService extends BaseService {
     const postParams: ServiceParameters = { merchantId, dateTime, orderType, locale, depth };
 
     return this.httpRequestFull(this.serviceUrlMerchant, methodName, true, null, postParams).pipe(
+      map(({ response }: MessageResponse<any>) => response)
+    );
+  }
+
+  addressToGeocode(address: AddressInfo): Observable<any> {
+    const methodName = 'addressToGeocode';
+    const postParams: ServiceParameters = { address };
+
+    return this.httpRequestFull(this.serviceUrlUser, methodName, true, null, postParams).pipe(
       map(({ response }: MessageResponse<any>) => response)
     );
   }
