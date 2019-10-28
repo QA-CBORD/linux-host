@@ -1,3 +1,80 @@
-<p>
-  full-menu works!
-</p>
+<st-header title="Full Menu"
+           [isTitleShow]="true"
+           [backButtonTitle]="'Explore'"
+           [isToolbarShow]="true"
+           class="full-menu__header"></st-header>
+
+<ion-content>
+
+  <ion-list class="full-menu__address-info-list">
+    <ion-item lines="full">
+      <div class="full-menu__address-container">
+        <div class="full-menu__address-title">Breakfast Express</div>
+        <div class="full-menu__address-description">An award winning authentic restaurant that uses high-quality, fresh
+          ingredients to bring the best breakfast
+          cuisine...</div>
+        <div class="full-menu__address-info">
+          0.11 mi - 290 Summer Street, Boston
+        </div>
+      </div>
+    </ion-item>
+    <ion-item lines="full">
+      <div class="full-menu__date-time-container">
+        <div class="full-menu__date-time-value">Pickup</div>
+        <div class="full-menu__date-time-helper">for</div>
+        <div class="full-menu__date-time-value">ASAP</div>
+      </div>
+    </ion-item>
+  </ion-list>
+  <ion-list>
+    <ion-item detail
+              lines="full">
+      <div class="full-menu__menu-item">
+        <div>Appetizers</div>
+        <div class="full-menu__item-size">2</div>
+      </div>
+    </ion-item>
+    <ion-item detail
+              lines="full">
+      <div class="full-menu__menu-item">
+        <div>Soups and Salads</div>
+        <div class="full-menu__item-size">4</div>
+      </div>
+    </ion-item>
+    <ion-item detail
+              lines="full">
+      <div class="full-menu__menu-item">
+        <div>Treats</div>
+        <div>4</div>
+      </div>
+    </ion-item>
+    <ion-item detail
+              lines="full">
+      <div class="full-menu__menu-item">
+        <div>Beverages</div>
+        <div class="full-menu__item-size">4</div>
+      </div>
+    </ion-item>
+    <ion-item detail
+              lines="full">
+      <div class="full-menu__menu-item">
+        <div>Specials</div>
+        <div class="full-menu__item-size">4</div>
+      </div>
+    </ion-item>
+    <ion-item detail
+              lines="full">
+      <div class="full-menu__menu-item">
+        <div>Meals</div>
+        <div class="full-menu__item-size">4</div>
+      </div>
+    </ion-item>
+    <ion-item detail
+              lines="full">
+      <div class="full-menu__menu-item">
+        <div>Kids</div>
+        <div class="full-menu__item-size">4</div>
+      </div>
+    </ion-item>
+  </ion-list>
+</ion-content>

@@ -8,6 +8,10 @@ import { switchMap } from 'rxjs/operators';
 import { MerchantInfo, MerchantOrderTypesInfo, OrderInfo } from './shared/models';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { OrderOptionsActionSheetComponent } from './shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
+import { Router } from '@angular/router';
+import { LOCAL_ROUTING } from './ordering.config';
+import { NAVIGATE } from 'src/app/app.global';
+
 
 @Component({
   selector: 'st-ordering.page',
@@ -23,7 +27,8 @@ export class OrderingPage implements OnInit {
     private readonly modalController: ModalController,
     private readonly merchantService: MerchantService,
     private readonly loadingService: LoadingService,
-    private readonly toastController: ToastController
+    private readonly toastController: ToastController,
+    private readonly router: Router,
   ) { }
 
   ngOnInit() {
@@ -75,6 +80,7 @@ export class OrderingPage implements OnInit {
     });
     modal.onDidDismiss().then(({ data }) => {
       console.log(data);
+      this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.fullMenu], { skipLocationChange: true });
     });
     await modal.present();
   }
