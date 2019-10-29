@@ -8,6 +8,31 @@
 ></st-header>
 
 <ion-content>
-  <!-- <st-address-edit></st-address-edit> -->
-  <st-add-edit-addresses [buildingsOnCampus]="buildings" (onFormChanged)="onAddressFormChanged($event)"></st-add-edit-addresses>
+  <!-- <st-address-edit></st-address-edit>
+  <st-add-edit-addresses [editAddress]="editAddress" [buildingsOnCampus]="buildings" 
+  (onFormChanged)="onAddressFormChanged($event)"></st-add-edit-addresses> -->
+
+  <div class="address-edit__add-address-container">
+    <st-add-edit-addresses [(editAddress)]="addressData"
+    (onFormChanged)="onAddressFormChanged($event)"></st-add-edit-addresses>
+
+    <div class="address-edit__add-address-btn-container">
+      <ion-button fill="clear"
+                  mode="md"
+                  expand="full"
+                  shape="round"
+                  class="delivery-address__add-address-btn"
+                  (click)="addNewAdddressState = !addNewAdddressState">
+        cancel
+      </ion-button>
+      <ion-button mode="md"
+                  expand="full"
+                  shape="round"
+                  class="delivery-address__add-address-btn"
+                  [ngClass]="{ 'delivery-address__add-address-btn--valid': addNewAdddressForm && addNewAdddressForm.valid }"
+                  (click)="addAddress();addNewAdddressState = !addNewAdddressState">
+        save
+      </ion-button>
+    </div>
+  </div>
 </ion-content>

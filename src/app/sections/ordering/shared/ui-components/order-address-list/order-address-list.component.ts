@@ -15,7 +15,7 @@ import { AddressInfo } from '@core/model/address/address-info';
 export class OrderAddressListComponent implements OnInit {
   
   userAddresses$: Observable<AddressInfo[]>;
-  @Output() itemSelected: EventEmitter<any> = new EventEmitter<any>();
+  // @Output() itemSelected: EventEmitter<any> = new EventEmitter<any>();
  
   constructor(private userService: UserService, private zone: NgZone, private ref: ChangeDetectorRef, private router:Router) { }
   
@@ -39,7 +39,10 @@ export class OrderAddressListComponent implements OnInit {
         }
       );
   }
-  // itemSelected(address:AddressInfo){
-  //   this.router.navigate([`ordering/${LOCAL_ROUTING.addressEdit}`], { skipLocationChange: true });
-  // }
+  itemSelected(address:AddressInfo){
+    console.log(address);
+    // debugger;
+    this.userService.selectedAddress = address;
+    this.router.navigate([`ordering/${LOCAL_ROUTING.addressEdit}`], { skipLocationChange: true });
+  }
 }
