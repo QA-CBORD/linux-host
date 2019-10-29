@@ -1,22 +1,22 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { OrderOptions.ActionSheetComponent } from './order-options.action-sheet.component';
+import { CartComponent } from './cart.component';
 
-describe('OrderOptions.ActionSheetComponent', () => {
-  let component: OrderOptions.ActionSheetComponent;
-  let fixture: ComponentFixture<OrderOptions.ActionSheetComponent>;
+describe('CartComponent', () => {
+  let component: CartComponent;
+  let fixture: ComponentFixture<CartComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ OrderOptions.ActionSheetComponent ],
+      declarations: [ CartComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(OrderOptions.ActionSheetComponent);
+    fixture = TestBed.createComponent(CartComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

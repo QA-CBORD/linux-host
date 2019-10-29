@@ -14,4 +14,8 @@
 	  &__value {
 		@include font-nunito-heavy(16px);
 	  }
+
+	&__container {
+		padding: 10px 0;
+	}
 }

@@ -1,14 +1,15 @@
 import { MerchantService } from '@sections/ordering/services';
 import { BuildingInfo } from './../../models/building-info.model';
-import { Component, OnInit, Input, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { MerchantOrderTypesInfo, MenuInfo, MerchantAccountInfoList } from '../../models';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { MenuInfo, MerchantAccountInfoList, MerchantOrderTypesInfo } from '../../models';
 import { ModalController, ToastController } from '@ionic/angular';
 import { DeliveryAddressesModalComponent } from '../delivery-addresses.modal/delivery-addresses.modal.component';
 import { AddressInfo } from '@core/model/address/address-info';
-import { zip, of, throwError, Observable } from 'rxjs';
-import { take, switchMap } from 'rxjs/operators';
+import { Observable, of, throwError, zip } from 'rxjs';
+import { switchMap, take } from 'rxjs/operators';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { ORDER_TYPE, MerchantSettings, ACCOUNT_TYPES } from '@sections/ordering/ordering.config';
+import { ACCOUNT_TYPES, MerchantSettings, ORDER_TYPE } from '@sections/ordering/ordering.config';
+import { BUTTON_TYPE } from '@core/utils/buttons.config';
 
 @Component({
   selector: 'st-order-options.action-sheet',
@@ -22,6 +23,8 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   @Input() merchantId: string;
   @Input() storeAddress: AddressInfo;
   @Input() settings: any;
+  @Input() activeDeliveryAddressId: string;
+  @Input() activeOrderType: ORDER_TYPE = null;
 
   isOrderTypePickup: boolean;
   orderOptionsData: OrderOptions;
@@ -41,16 +44,22 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     private readonly merchantService: MerchantService,
     private readonly cdRef: ChangeDetectorRef,
     private readonly loadingService: LoadingService,
-    private readonly toastController: ToastController
-  ) { }
+    private readonly toastController: ToastController,
+  ) {
+  }
+
+  get enumOrderTypes() {
+    return ORDER_TYPE;
+  }
 
   ngOnInit() {
     this.initData();
   }
 
   initData() {
-    this.orderType =
-      (this.orderTypes.delivery && this.orderTypes.pickup) || this.orderTypes.pickup
+    this.orderType = this.activeOrderType !== null
+      ? this.activeOrderType
+      : this.orderTypes.pickup
         ? ORDER_TYPE.PICKUP
         : ORDER_TYPE.DELIVERY;
 
@@ -59,7 +68,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
       this.merchantService.getMerchantOrderSchedule(this.merchantId, this.orderType),
       this.retrieveDeliveryAddresses(this.merchantId),
       this.retrievePickupLocations(this.storeAddress, this.settings.map[MerchantSettings.pickupLocationsEnabled]),
-      this.merchantService.retrieveBuildings()
+      this.merchantService.retrieveBuildings(),
     )
       .pipe(take(1))
       .subscribe(
@@ -71,23 +80,23 @@ export class OrderOptionsActionSheetComponent implements OnInit {
             : this.storeAddress;
 
           this.deliveryAddresses = deliveryLocations;
-          this.defaultDeliveryAddress = deliveryAddress.defaultAddress;
+          this.defaultDeliveryAddress = this.activeDeliveryAddressId ? this.activeDeliveryAddressId : deliveryAddress.defaultAddress;
           this.schedule = schedule;
           this.defaultPickupAddress = defaultPickupAddress;
           this.pickupLocations = pickupLocations;
           this.buildingsForNewAddressForm = buildingsForNewAddressForm;
           this.isTimeDisable = isTimeDisable;
 
-          this.isOrderTypePickup = this.orderTypes.pickup;
+          this.isOrderTypePickup = this.orderType === ORDER_TYPE.PICKUP;
           this.defineOrderOptionsData(this.isOrderTypePickup);
         },
-        () => this.loadingService.closeSpinner()
+        () => this.loadingService.closeSpinner(),
       );
   }
 
   onRadioGroupChanged({ target }) {
     this.isOrderTypePickup = target.value === 'pickup';
-    this.orderType = target.value === 'pickup' ? 0 : 1;
+    this.orderType = this.isOrderTypePickup ? ORDER_TYPE.PICKUP : ORDER_TYPE.DELIVERY;
     this.defineOrderOptionsData(this.isOrderTypePickup);
   }
 
@@ -123,9 +132,9 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   }
 
   onSubmit() {
-    if (!this.merchantService.pickerDateTime) {
-      let dateTime = new Date();
-      this.merchantService.pickerDateTime = dateTime;
+    if (!this.merchantService.pickerDateTime || this.merchantService.pickerTime === 'ASAP') {
+      this.merchantService.pickerDateTime = new Date();
+      this.dateTimePicker = new Date();
     }
 
     let isOutsideMerchantDeliveryArea = of(false);
@@ -135,7 +144,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
         isOutsideMerchantDeliveryArea = this.merchantService.isOutsideMerchantDeliveryArea(
           this.merchantId,
           latitude,
-          longitude
+          longitude,
         );
       } else {
         isOutsideMerchantDeliveryArea = of(false);
@@ -149,20 +158,21 @@ export class OrderOptionsActionSheetComponent implements OnInit {
         switchMap((isOutside): Observable<MerchantAccountInfoList> => this.getMerchantPaymentAccounts(isOutside)),
         switchMap((paymentAccounts): Observable<MenuInfo> => this.getDisplayMenu(paymentAccounts)),
         switchMap(({ mealBased }): Observable<boolean> => this.isAccountsMealBased(mealBased)),
-        take(1)
+        take(1),
       )
       .subscribe(
         () => {
           this.loadingService.closeSpinner();
           this.modalController.dismiss({
             addressId: this.orderOptionsData.address.id,
-            orderType: this.orderType
-          });
+            orderType: this.orderType,
+            dueTime: this.dateTimePicker,
+          }, BUTTON_TYPE.CONTINUE);
         },
         err => {
           this.loadingService.closeSpinner();
-          this.onToastDisplayed(err)
-        }
+          this.onToastDisplayed(err);
+        },
       );
   }
 
@@ -176,7 +186,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
 
   private getDisplayMenu(paymentAccounts): Observable<MenuInfo> {
     if (!paymentAccounts.accounts.length) {
-      return throwError(new Error("You don't have payment accounts"));
+      return throwError(new Error('You don\'t have payment accounts'));
     }
     const pickerTime = this.merchantService.pickerTime;
     return this.merchantService.getDisplayMenu(this.merchantId, pickerTime, this.orderType);
@@ -192,12 +202,12 @@ export class OrderOptionsActionSheetComponent implements OnInit {
         (accounts): any => {
           const isSomeAccMealBased = accounts.some(({ accountType }) => accountType === ACCOUNT_TYPES.meals);
           if (!isSomeAccMealBased) {
-            return throwError(new Error("You don't have meal based accounts"));
+            return throwError(new Error('You don\'t have meal based accounts'));
           }
 
           return of(isSomeAccMealBased);
-        }
-      )
+        },
+      ),
     );
   }
 
@@ -238,7 +248,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
         isOrderTypePickup: this.isOrderTypePickup,
         pickupLocations: this.pickupLocations,
         deliveryAddresses: this.deliveryAddresses,
-        merchantId: this.merchantId
+        merchantId: this.merchantId,
       },
     });
     modal.onDidDismiss().then(({ data }) => {

@@ -1,6 +1,6 @@
-import { MerchantSettingInfo } from './merchant-setting.model';
-import { AddressInfo } from '../../../../core/model/address/address-info';
-import { MerchantOrderTypesInfo } from './merchant-order-types-info.model';
+import { MerchantSettingInfo } from '@sections/ordering';
+import { AddressInfo } from '@core/model/address/address-info';
+import { MerchantOrderTypesInfo } from '@sections/ordering';
 
 export interface MerchantInfo {
   id: string;

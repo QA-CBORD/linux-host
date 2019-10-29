@@ -1,4 +1,5 @@
 export interface OrderItem {
+  id: string;
   orderId: string;
   menuItemId: string;
   parentOrderItemId: string;
@@ -9,6 +10,7 @@ export interface OrderItem {
   keyedName: string;
   status: number;
   name: string;
+  reportingCategory: string;
   optionType: string;
   orderItemOptions: OrderItem[];
 }

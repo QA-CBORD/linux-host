@@ -1,4 +1,4 @@
-export enum OrderStatus {
+export enum ORDERING_STATUS {
   PENDING = 1,
   MERCHANT_SUBMITTED = 2,
   MERCHANT_ACKNOWLEDGED = 3,

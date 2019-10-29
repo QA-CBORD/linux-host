@@ -31,8 +31,6 @@
   }
 
   &__radio-label {
-    color: #c4c4c4;
-
     @include font-nunito-semibold(16px);
   }
 
@@ -40,6 +38,10 @@
     color: #7e7e7e;
 
     @include font-nunito-semibold(14px);
+  }
+
+  &__select-container {
+    padding: 10px 0;
   }
 
   &__select-value {

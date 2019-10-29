@@ -2,9 +2,9 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { OrderInfo } from '@sections/ordering';
-import { OrderStatus } from '@sections/ordering/shared/ui-components/recent-oders-list/recent-orders-list-item/recent-orders.config';
 import { NAVIGATE } from '../../../../app.global';
 import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
+import { ORDERING_STATUS } from '@sections/ordering/shared/ui-components/recent-oders-list/recent-orders-list-item/recent-orders.config';
 
 @Component({
   selector: 'st-recent-orders',
@@ -37,14 +37,18 @@ export class RecentOrdersComponent implements OnInit {
   }
 
   private getPendingOrders(orders: OrderInfo[]): OrderInfo[] {
-    return this.getOrderByStatus(OrderStatus.PENDING, orders);
+    return this.getOrderByStatus(ORDERING_STATUS.PENDING, orders);
   }
 
   private getCompletedOrders(orders: OrderInfo[]): OrderInfo[] {
-    return orders.filter((order: OrderInfo) => order.status != OrderStatus.PENDING);
+    return orders.filter((order: OrderInfo) => order.status != ORDERING_STATUS.PENDING);
   }
 
-  private getOrderByStatus(orderStatus: OrderStatus, orders: OrderInfo[]): OrderInfo[] {
+  private getOrderByStatus(orderStatus: ORDERING_STATUS, orders: OrderInfo[]): OrderInfo[] {
     return orders.filter((order: OrderInfo) => order.status === orderStatus);
+  }
+
+  async back(): Promise<void> {
+    await this.router.navigate([NAVIGATE.ordering]);
   }
 }

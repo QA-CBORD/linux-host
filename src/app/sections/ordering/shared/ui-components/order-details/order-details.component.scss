@@ -40,15 +40,16 @@
 
     @include font-nunito-regular(14px);
   }
+
   &__buttons {
-    display: flex;
-    justify-content: center;
-    align-items: center;
     margin-top: 50px;
+    display: flex;
+
+    & > * {
+      flex-grow: 1;
+    }
   }
-
 }
-
 
 .order-ingredient-list {
   background: #f0f3f5;
