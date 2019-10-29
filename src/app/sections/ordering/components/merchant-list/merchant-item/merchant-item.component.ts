@@ -42,8 +42,8 @@ export class MerchantItemComponent {
     return this.orderTypes.delivery ? 'Delivery' : 'Pickup';
   }
 
-  triggerMerchantClick({ id, orderTypes, storeAddress, settings }) {
-    this.merchantClick.emit({ id, orderTypes, storeAddress, settings });
+  triggerMerchantClick(merchantInfo) {
+    this.merchantClick.emit(merchantInfo);
   }
 
   triggerFavourite(event, { isFavorite, id }) {

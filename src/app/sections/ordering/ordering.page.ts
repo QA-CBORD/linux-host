@@ -1,4 +1,4 @@
-import { MerchantService } from './services';
+import { MerchantService, CartService } from './services';
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ModalController, ToastController } from '@ionic/angular';
 
@@ -29,6 +29,7 @@ export class OrderingPage implements OnInit {
     private readonly loadingService: LoadingService,
     private readonly toastController: ToastController,
     private readonly router: Router,
+    private readonly cartService: CartService
   ) { }
 
   ngOnInit() {
@@ -36,8 +37,8 @@ export class OrderingPage implements OnInit {
     this.orders$ = this.merchantService.getRecentOrders();
   }
 
-  merchantClickHandler({ id, orderTypes, storeAddress, settings }) {
-    this.openOrderOptions(id, orderTypes, storeAddress, settings);
+  merchantClickHandler(merchantInfo) {
+    this.openOrderOptions(merchantInfo);
   }
 
   favouriteHandler({ isFavorite, id }) {
@@ -58,8 +59,9 @@ export class OrderingPage implements OnInit {
     console.log(`Location Pin Clicked - Merch Id: ${event}`);
   }
 
-  private openOrderOptions(merchantId, orderTypes, storeAddress, settings) {
-    this.actionSheet(orderTypes, merchantId, storeAddress, settings);
+  private openOrderOptions(merchant) {
+    this.cartService.setActiveMerchant(merchant)
+    this.actionSheet(merchant.orderTypes, merchant.id, merchant.storeAddress, merchant.settings);
   }
 
   private async actionSheet(orderTypes: MerchantOrderTypesInfo, merchantId, storeAddress, settings) {
@@ -79,8 +81,10 @@ export class OrderingPage implements OnInit {
       },
     });
     modal.onDidDismiss().then(({ data }) => {
-      console.log(data);
-      this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.fullMenu], { skipLocationChange: true });
+      if (data) {
+        this.cartService.setActiveMerchantsMenuByOrderOptions(data.dueTime, data.orderType, data.addressId)
+        this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.fullMenu], { skipLocationChange: true });
+      }
     });
     await modal.present();
   }

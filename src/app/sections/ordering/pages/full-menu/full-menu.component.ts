@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { CartService } from '../../services/cart.service';
+import { Observable } from 'rxjs';
+import { MenuInfo } from '@sections/ordering/shared/models';
 
 @Component({
   selector: 'st-full-menu',
@@ -7,8 +10,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class FullMenuComponent implements OnInit {
 
-  constructor() { }
+  menu$: Observable<MenuInfo>;
+  constructor(
+    private readonly cartService: CartService
+  ) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.menu$ = this.cartService.menuInfo$
+  }
+
+  onCategoryClicked() {
+    console.log('category')
+  }
 
 }
