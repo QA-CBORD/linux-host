@@ -87,9 +87,11 @@
   }
 
   &__radio-label {
-    color: #c4c4c4;
-
     @include font-nunito-semibold(16px);
+  }
+
+  &__radio-label-sub-header {
+    color: #c4c4c4;
   }
 
   &__submit-btn {
