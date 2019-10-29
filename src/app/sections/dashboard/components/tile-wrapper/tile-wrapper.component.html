@@ -1,16 +1,28 @@
-<ion-item
-  lines="none"
-  [button]="true"
-  [detail]="true"
-  detailIcon="/assets/icon/angle-right.svg"
-  class="tile"
-  (click)="handlePageNavigation()"
->
+<table class="tile">
+  <tr>
+    <ion-item
+      lines="none"
+      [button]="true"
+      [detail]="true"
+      class="tile__topbar"
+      detailIcon="/assets/icon/angle-right.svg"
+      (click)="handleTopBarClick()"
+    >
+      <ion-icon name="{{ wrapperConfig.iconName }}" slot="start"></ion-icon>
 
-<!-- <ion-icon name="{{tileInfo.iconName}}" slot="start"></ion-icon> --> 
-
-  <ion-label class="tile__name">
-    Some Test Title
-    <!-- {{ tileInfo.title }} -->
-  </ion-label>
-</ion-item>
+      <ion-label class="tile__topbar_label">
+        {{ wrapperConfig.title }}
+      </ion-label>
+    </ion-item>
+  </tr>
+  <tr>
+    <ng-content></ng-content>
+  </tr>
+  <tr *ngIf="wrapperConfig.buttonConfig.show">
+    <ion-item lines="none" [button]="true" [detail]="false" class="tile__button" (click)="handleBottomButtonClick()">
+      <ion-label class="tile__button__label">
+        {{ wrapperConfig.buttonConfig.title }}
+      </ion-label>
+    </ion-item>
+  </tr>
+</table>

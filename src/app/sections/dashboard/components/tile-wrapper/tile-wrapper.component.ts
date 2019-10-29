@@ -1,4 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+
+
+import { TileWrapperConfig } from '../../models/tile-wrapper-config.model';
 
 @Component({
   selector: 'st-tile-wrapper',
@@ -7,12 +10,18 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TileWrapperComponent implements OnInit {
 
+  @Input() wrapperConfig: TileWrapperConfig;
+
   constructor() { }
 
   ngOnInit() {}
 
 
-  handlePageNavigation(){
+  handleTopBarClick(){
+    
+  }
+
+  handleBottomButtonClick(){
     
   }
 

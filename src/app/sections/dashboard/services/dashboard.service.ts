@@ -1,26 +1,54 @@
 import { Injectable } from '@angular/core';
 
-import { Observable } from 'rxjs';
-import { switchMap, tap, take } from 'rxjs/operators';
+import { Observable, BehaviorSubject, zip } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
-import { UserService } from 'src/app/core/service/user-service/user.service';
-import { ConfigurationService } from 'src/app/core/service/configuration/configuration.service';
+import { DashboardApiService } from './dashboard.api.service';
 
-import { UserInfo } from 'src/app/core/model/user/user-info.model';
 import { SettingInfoList } from 'src/app/core/model/configuration/setting-info-list.model';
+import { SettingInfo } from 'src/app/core/model/configuration/setting-info.model';
+import { SYSTEM_SETTING } from '../dashboard.config';
 
 @Injectable()
 export class DashboardService {
-  constructor(private readonly userService: UserService, private readonly configService: ConfigurationService) {}
+  public readonly _settings$: BehaviorSubject<SettingInfo[]> = new BehaviorSubject<SettingInfo[]>([]);
 
+  settings: SettingInfo[] = [];
+
+  constructor(
+    private readonly dashApiService: DashboardApiService
+  ) {}
+
+  get settings$(): Observable<SettingInfo[]> {
+    return this._settings$.asObservable();
+  }
+
+  private set _settings(value: SettingInfo[]) {
+    this.settings = [...this.settings, ...value];
+    this._settings$.next(this.settings);
+  }
+
+  retrieveSettings(settings: SettingInfo[]): Observable<SettingInfo[]> {
+    const requestArray = settings.map(setting => this.dashApiService.retrieveSetting(setting));
+    return zip(...requestArray).pipe(tap((settings: SettingInfo[]) => (this._settings = settings)));
+  }
 
   retrieveSettingsList(): Observable<SettingInfoList> {
-    return this.userService.userData.pipe(
-      switchMap(({ institutionId }: UserInfo) => {
-        return this.configService.retrieveSettingList(institutionId, { domain: 'get', category: 'feature' });
-      }),
-      tap(response => console.log(response)),
-      take(1)
-    );
+    return this.dashApiService.retrieveSettingsList({ domain: 'get', category: 'feature' });
   }
+
+  getSettingValueByName(settingName: SYSTEM_SETTING): any {
+    const split: string[] = settingName.toString().split('.');
+    let value: any = 0;
+    this.settings.some(setting => {
+      if (setting.domain === split[0] && setting.category === split[1] && setting.name === split[2]) {
+        value = setting.value;
+        return true;
+      }
+    });
+    return value;
+  }
+
+
+
 }

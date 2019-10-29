@@ -2,17 +2,41 @@
 
 .tile {
   width: stretch;
-  margin-top: 8px;
-  margin-left: 8px;
-  margin-right: 8px;
+  margin: 8px;
   border-radius: 15px;
   box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.04), 0px 2px 14px 0px rgba(0, 0, 0, 0.12);
 
-  &__name {
-    @include font-nunito-semibold(16px);
+  &__topbar {
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    --ion-background-color: #f7f7f7;
+    --item-ios-detail-push-color: #000; // #c4c4c4;
+    --item-md-detail-push-color: #000; // #c4c4c4;
+    --item-wp-detail-push-color: #000; // #c4c4c4;
 
-    color: $color-black;
-    letter-spacing: 0;
-    line-height: 18px;
+    &__label {
+      @include font-nunito-semibold(16px);
+  
+      color: $color-black;
+      letter-spacing: 0;
+      line-height: 18px;
+    }
+
+  }
+
+  
+
+  &__button {
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+    border-top: 1px solid #f3f3f3;
+
+    &__label {
+      @include font-nunito-heavy(14px);
+      color: #166dff;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 0px;
+    }
   }
 }

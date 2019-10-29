@@ -1,3 +1,4 @@
+export * from './access-card';
 export * from './accounts-tile';
 export * from './conversations-tile';
 export * from './explore-tile';

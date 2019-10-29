@@ -6,14 +6,15 @@ import { StHeaderModule } from 'src/app/shared/ui-components/st-header/st-header
 import { DashboardRoutingModule } from './dashboard.routing.module';
 import { DashboardPageResolver } from './resolvers/dashboard-page.resolver';
 
+import { DashboardApiService } from './services/dashboard.api.service';
 import { DashboardService } from './services/dashboard.service';
 
 import { DashboardPage } from './dashboard.page';
-import { TileWrapperComponent, AccountsTileComponent } from './components';
+import { TileWrapperComponent, AccountsTileComponent, AccessCardComponent } from './components';
 
 const imports = [IonicModule, CommonModule, DashboardRoutingModule, StHeaderModule];
-const declarations = [DashboardPage, TileWrapperComponent, AccountsTileComponent];
-const providers = [DashboardService, DashboardPageResolver];
+const declarations = [DashboardPage, AccessCardComponent, TileWrapperComponent, AccountsTileComponent];
+const providers = [DashboardApiService, DashboardService, DashboardPageResolver];
 
 @NgModule({
   declarations,
