@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { map, switchMap, take, tap } from 'rxjs/operators';
+import { first, map, switchMap, take, tap } from 'rxjs/operators';
 import { Observable, zip } from 'rxjs';
 
 import { AddressInfo } from '@core/model/address/address-info';
@@ -204,15 +204,19 @@ export class RecentOrderComponent implements OnInit {
     const footerButtonName = 'continue';
     const cssClass = 'order-options-action-sheet order-options-action-sheet-p-d';
 
+    const { deliveryAddressId, type } = await this.order$.pipe(first()).toPromise();
+
     const modal = await this.modalController.create({
       component: OrderOptionsActionSheetComponent,
       cssClass,
       componentProps: {
+        activeDeliveryAddressId: type === ORDER_TYPE.PICKUP ? null : deliveryAddressId,
         orderTypes,
         footerButtonName,
         merchantId,
         storeAddress,
         settings,
+        activeOrderType: type === ORDER_TYPE.DELIVERY ? ORDER_TYPE.DELIVERY : null,
       },
     });
 

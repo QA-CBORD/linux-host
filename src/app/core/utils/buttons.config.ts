@@ -6,6 +6,7 @@ export enum BUTTON_TYPE {
   OPT_IN = 'OPT_IN',
   CANCEL = 'CANCEL',
   CLOSE = 'CLOSE',
+  CONTINUE = 'CONTINUE',
 }
 
 const CANCEL = {
