@@ -12,8 +12,8 @@ import { ORDERING_STATUS } from '@sections/ordering/shared/ui-components/recent-
 import { ConfirmPopoverComponent } from '@sections/ordering/pages/recent-orders/components/confirm-popover/confirm-popover.component';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
 import { OrderOptionsActionSheetComponent } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
-import { UserService } from '@core/service/user-service/user.service';
 import { CartService } from '@sections/ordering/services/cart.service';
+import { LoadingService } from '@core/service/loading/loading.service';
 
 @Component({
   selector: 'st-recent-order',
@@ -31,8 +31,8 @@ export class RecentOrderComponent implements OnInit {
               private readonly router: Router,
               private readonly popoverController: PopoverController,
               private readonly modalController: ModalController,
-              private readonly us: UserService,
-              private readonly cart: CartService) {
+              private readonly cart: CartService,
+              private readonly loadingService: LoadingService) {
   }
 
   ngOnInit() {
@@ -42,9 +42,9 @@ export class RecentOrderComponent implements OnInit {
     this.setActiveAddress();
   }
 
-  onReorderHandler() {
-    // this.initCart();
-    this.merchant$.pipe(take(1), tap((m) => this.initOrderOptionsModal(m))).subscribe();
+  async onReorderHandler() {
+    const merchant = await this.merchant$.pipe(first()).toPromise();
+    await this.initOrderOptionsModal(merchant);
   }
 
   resolveMenuItemsInOrder(): Observable<MenuItemInfo[][]> {
@@ -113,16 +113,16 @@ export class RecentOrderComponent implements OnInit {
     });
   }
 
-  private initCart(date?, type?, addressId?) {
-    // TODO rework it after modal will be reworked
-    zip(this.merchant$, this.order$).pipe(take(1)).subscribe(async ([merchant, order]) => {
-      await this.cart.setActiveMerchant(merchant);
-      await this.cart.setActiveMerchantsMenuByOrderOptions(new Date(), order.type, order.deliveryAddressId);
-      this.resolveMenuItemsInOrder().subscribe(([orderItems])=> {
-        this.cart.addOrderItems(orderItems);
-        this.cart.validateOrder().subscribe();
-      });
-    });
+  private async initOrder({ addressId, dueTime, orderType }): Promise<void> {
+    await this.loadingService.showSpinner();
+    const merchant = await this.merchant$.pipe(take(1)).toPromise();
+    await this.cart.setActiveMerchant(merchant);
+    await this.cart.setActiveMerchantsMenuByOrderOptions(dueTime, orderType, addressId);
+    const [availableItems] = await this.resolveMenuItemsInOrder().pipe(first()).toPromise();
+    this.cart.addOrderItems(availableItems);
+    await this.cart.validateOrder().pipe(first()).toPromise();
+    await this.loadingService.closeSpinner();
+    await this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.cart], {skipLocationChange: true});
   }
 
   private setActiveAddress() {
@@ -220,9 +220,8 @@ export class RecentOrderComponent implements OnInit {
       },
     });
 
-    modal.onDidDismiss().then((d) => {
-      console.log(d);
-    });
+    modal.onDidDismiss().then(({ data, role }) => role === BUTTON_TYPE.CONTINUE && this.initOrder(data));
+
     await modal.present();
   }
 }
