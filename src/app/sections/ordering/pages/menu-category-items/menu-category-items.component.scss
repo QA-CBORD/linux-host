@@ -4,18 +4,9 @@
   width: 100%;
   height: 100%;
   --background: #f0f3f5;
-
-  &__header {
-    height: 86px;
-  }
   
   &__header-toolbar {
-    padding: 40px 10px 4px;
-    height: 86px;
-    --padding-bottom: 0;
-    --padding-end:0;
-    --padding-start:0;
-    --padding-top:0;
+    padding: 5px 15px 5px 10px;
   }
 
   &__header-back-btn {
@@ -29,7 +20,6 @@
     width: 36px;
     border: 2px solid $color-white-smoke;
     border-radius: 50%;
-    margin-right: 15px;
   }
 
   &__header-search-btn-icon {
@@ -42,18 +32,11 @@
   }
 
   &__search-header {
-    height: 86px;
     --background: #fff;
   }
 
-  &__search-header-toolbar {
-    width: 100%;
-  }
-
   &__search-header-searchbar {
-    width: auto;
-    height: 40px;
-    margin-top: 41px;
+    margin-top: 15px;
     --icon-color: #000;
   }
 

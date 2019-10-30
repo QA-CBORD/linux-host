@@ -1,3 +1,54 @@
-<p>
-  full-menu works!
-</p>
+<st-header title="Full Menu"
+           [isTitleShow]="true"
+           [backButtonTitle]="'Explore'"
+           [backButtonIcon]="'ios-arrow-back'"
+           [isToolbarShow]="true"
+           class="full-menu__header"></st-header>
+
+<ion-content>
+
+  <ion-list class="full-menu__address-info-list">
+    <ion-item lines="full">
+      <div class="full-menu__address-container">
+        <div>
+          <div class="full-menu__address-title">Breakfast Express</div>
+          <div class="full-menu__address-description">An award winning authentic restaurant that uses high-quality,
+            fresh
+            ingredients to bring the best breakfast
+            cuisine...</div>
+          <div class="full-menu__address-info">
+            0.11 mi - 290 Summer Street, Boston
+          </div>
+        </div>
+        <div class="full-menu__arrow-wrapper">
+          <img src="/assets/icon/angle-down-select.svg"
+               alt="arrow down">
+        </div>
+      </div>
+    </ion-item>
+    <ion-item lines="full">
+      <div class="full-menu__date-time-container">
+        <div class="full-menu__date-time-wrapper">
+          <div class="full-menu__date-time-value">Pickup</div>
+          <div class="full-menu__date-time-helper">for</div>
+          <div class="full-menu__date-time-value">ASAP</div>
+        </div>
+        <div class="full-menu__arrow-wrapper">
+          <img src="/assets/icon/angle-down-select.svg"
+               alt="arrow down">
+        </div>
+      </div>
+    </ion-item>
+  </ion-list>
+  <ion-list>
+    <ion-item detail
+              lines="full"
+              *ngFor="let category of (menu$ | async)?.menuCategories"
+              (click)="onCategoryClicked(category)">
+      <div class="full-menu__menu-item">
+        <div>{{category.name}}</div>
+        <div class="full-menu__item-size">{{category.menuCategoryItems.length}}</div>
+      </div>
+    </ion-item>
+  </ion-list>
+</ion-content>

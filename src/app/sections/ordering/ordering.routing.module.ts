@@ -28,8 +28,16 @@ const routes: Route[] = [
     loadChildren: './pages/favorite-merchants/favorite-merchants.module#FavoriteMerchantsModule',
   },
   {
+    path: LOCAL_ROUTING.fullMenu,
+    loadChildren: './pages/full-menu/full-menu.module#FullMenuModule',
+  },
+  {
     path: LOCAL_ROUTING.cart,
     loadChildren: './pages/cart/cart.module#CartModule',
+  },
+  {
+    path: `${LOCAL_ROUTING.menuCategoryItems}/:id`,
+    loadChildren: './pages/menu-category-items/menu-category-items.module#MenuCategoryItemsModule',
   },
 ];
 
@@ -37,4 +45,4 @@ const imports = [RouterModule.forChild(routes)];
 const exports = [RouterModule];
 
 @NgModule({ imports, exports, providers: [RecentOrdersResolver] })
-export class OrderingRoutingModule {}
+export class OrderingRoutingModule { }

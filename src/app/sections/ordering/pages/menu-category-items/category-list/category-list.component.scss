@@ -18,6 +18,12 @@
     --inner-padding-start: 0;
   }
 
+  &__menu-item-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+
   &__menu-item-wrapper {
     margin: 14px 9px 9px 15px;
     padding: 0;

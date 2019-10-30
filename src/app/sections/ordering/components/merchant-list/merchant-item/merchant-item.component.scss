@@ -42,13 +42,14 @@
   }
 
   &__merchant-distance {
-    @include ellipsis;
-    @include font-nunito-semibold(12px);
-    color: $color-dark-gray;
+    color: #00000099;
     letter-spacing: 0;
     margin: 0;
     font-weight: 600;
     line-height: 12px;
+
+    @include ellipsis;
+    @include font-nunito-semibold(12px);
   }
 
   &__merchant-button {
