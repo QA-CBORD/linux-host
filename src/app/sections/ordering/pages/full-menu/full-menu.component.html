@@ -1,6 +1,7 @@
 <st-header title="Full Menu"
            [isTitleShow]="true"
            [backButtonTitle]="'Explore'"
+           [backButtonIcon]="'ios-arrow-back'"
            [isToolbarShow]="true"
            class="full-menu__header"></st-header>
 
@@ -43,7 +44,7 @@
     <ion-item detail
               lines="full"
               *ngFor="let category of (menu$ | async)?.menuCategories"
-              (click)="onCategoryClicked()">
+              (click)="onCategoryClicked(category)">
       <div class="full-menu__menu-item">
         <div>{{category.name}}</div>
         <div class="full-menu__item-size">{{category.menuCategoryItems.length}}</div>

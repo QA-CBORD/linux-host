@@ -5,7 +5,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { UserService } from '@core/service/user-service/user.service';
 import { ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { MerchantService } from './merchant.service';
-import { MerchantInfo, OrderInfo, MenuInfo, MenuItemInfo } from '../shared/models';
+import { MerchantInfo, OrderInfo, MenuInfo, MenuItemInfo, OrderItem } from '../shared/models';
 
 @Injectable()
 export class CartService {
