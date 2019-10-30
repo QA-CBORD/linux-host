@@ -6,9 +6,10 @@
 
             <p *ngIf="readonly; else delivery" class="order-details__value">{{time | date: 'M/d/yy, h:mm a'}}</p>
 
-<!--            <ng-template #delivery>-->
+            <ng-template #delivery>
+                <p class="order-details__value" (click)="modalWindow()">modal</p>
 <!--                <ion-select-->
-<!--                        [formControlName]="controlsNames.dueTime"-->
+<!--                        [formControlName]="controlsNames.time"-->
 <!--                        class="order-details__value"-->
 <!--                        cancelText="Cancel"-->
 <!--                        mode="md"-->
@@ -20,7 +21,8 @@
 <!--                        {{ amount }}-->
 <!--                    </ion-select-option>-->
 <!--                </ion-select>-->
-<!--            </ng-template>-->
+
+            </ng-template>
 
         </div>
 

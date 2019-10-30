@@ -122,6 +122,7 @@ export class RecentOrderComponent implements OnInit {
     this.cart.addOrderItems(availableItems);
     await this.cart.validateOrder().pipe(first()).toPromise();
     await this.loadingService.closeSpinner();
+    console.log(dueTime);
     await this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.cart], {skipLocationChange: true});
   }
 
@@ -220,7 +221,10 @@ export class RecentOrderComponent implements OnInit {
       },
     });
 
-    modal.onDidDismiss().then(({ data, role }) => role === BUTTON_TYPE.CONTINUE && this.initOrder(data));
+    modal.onDidDismiss().then(({ data, role }) => {
+      console.log(data);
+      role === BUTTON_TYPE.CONTINUE && this.initOrder(data)
+    });
 
     await modal.present();
   }

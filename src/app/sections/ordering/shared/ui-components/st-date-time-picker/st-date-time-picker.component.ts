@@ -24,7 +24,8 @@ export class StDateTimePickerComponent {
   @Input() dateTimePicker: Date | string;
   @Output() onTimeSelected: EventEmitter<Date> = new EventEmitter<Date>();
 
-  constructor(private readonly datePipe: DatePipe, private readonly pickerController: PickerController) {}
+  constructor(private readonly datePipe: DatePipe,
+              private readonly pickerController: PickerController) {}
 
   get isDefaultState() {
     return typeof this.dateTimePicker === 'string';
