@@ -67,7 +67,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     this.state = zip(
       this.merchantService.getMerchantOrderSchedule(this.merchantId, this.orderType),
       this.retrieveDeliveryAddresses(this.merchantId),
-      this.retrievePickupLocations(this.storeAddress, this.settings.map[MerchantSettings.pickupLocationsEnabled]),
+      this.merchantService.retrievePickupLocations(this.storeAddress, this.settings.map[MerchantSettings.pickupLocationsEnabled]),
       this.merchantService.retrieveBuildings(),
     )
       .pipe(take(1))
@@ -211,17 +211,6 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     );
   }
 
-  private retrievePickupLocations(storeAddress, { value }) {
-    switch (value) {
-      case null:
-        return of([]);
-      case 'true':
-        return this.merchantService.retrievePickupLocations();
-      case 'false':
-        return of([storeAddress]);
-    }
-  }
-
   private async onToastDisplayed(message: string) {
     const toast = await this.toastController.create({
       message,
@@ -244,8 +233,8 @@ export class OrderOptionsActionSheetComponent implements OnInit {
       component: DeliveryAddressesModalComponent,
       componentProps: {
         defaultAddress,
-        buildings: this.buildingsForNewAddressForm,
         isOrderTypePickup: this.isOrderTypePickup,
+        buildings: this.buildingsForNewAddressForm,
         pickupLocations: this.pickupLocations,
         deliveryAddresses: this.deliveryAddresses,
         merchantId: this.merchantId,
