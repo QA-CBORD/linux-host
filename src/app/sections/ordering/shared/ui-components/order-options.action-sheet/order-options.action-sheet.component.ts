@@ -127,13 +127,11 @@ export class OrderOptionsActionSheetComponent implements OnInit {
 
   onDateTimeSelected(event) {
     this.dateTimePicker = event;
-    this.merchantService.pickerDateTime = event;
     this.cdRef.detectChanges();
   }
 
   onSubmit() {
-    if (!this.merchantService.pickerDateTime || this.merchantService.pickerTime === 'ASAP') {
-      this.merchantService.pickerDateTime = new Date();
+    if (this.dateTimePicker === 'ASAP') {
       this.dateTimePicker = new Date();
     }
 
@@ -188,7 +186,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     if (!paymentAccounts.accounts.length) {
       return throwError(new Error('You don\'t have payment accounts'));
     }
-    const pickerTime = this.merchantService.pickerTime;
+    const pickerTime = (<Date>this.dateTimePicker).toISOString();
     return this.merchantService.getDisplayMenu(this.merchantId, pickerTime, this.orderType);
   }
 

@@ -29,9 +29,9 @@
     <ion-item lines="full">
       <div class="full-menu__date-time-container">
         <div class="full-menu__date-time-wrapper">
-          <div class="full-menu__date-time-value">Pickup</div>
+          <div class="full-menu__date-time-value">{{orderType}}</div>
           <div class="full-menu__date-time-helper">for</div>
-          <div class="full-menu__date-time-value">ASAP</div>
+          <div class="full-menu__date-time-value">{{orderInfo.dueTime | date: 'EE, MMM d, h:mm a'}}</div>
         </div>
         <div class="full-menu__arrow-wrapper">
           <img src="/assets/icon/angle-down-select.svg"
