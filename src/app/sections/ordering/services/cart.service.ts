@@ -2,10 +2,7 @@ import { Injectable } from '@angular/core';
 import { distinctUntilChanged, first, map, tap } from 'rxjs/operators';
 import { BehaviorSubject, Observable } from 'rxjs';
 
-import { UserService } from '@core/service/user-service/user.service';
 import { ORDER_TYPE } from '@sections/ordering/ordering.config';
-import { MerchantService } from './merchant.service';
-import { MerchantInfo, OrderInfo, MenuInfo, MenuItemInfo, OrderItem } from '../shared/models';
 import { MerchantService } from './merchant.service';
 import { MerchantInfo, OrderInfo, MenuInfo, MenuItemInfo, OrderItem } from '../shared/models';
 import { UserService } from '@core/service/user-service/user.service';

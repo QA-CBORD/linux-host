@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { MenuInfo } from '@sections/ordering/shared/models';
 import { Router } from '@angular/router';
 import { NAVIGATE } from 'src/app/app.global';
-import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
+import { LOCAL_ROUTING, ORDER_TYPE } from '@sections/ordering/ordering.config';
 
 @Component({
   selector: 'st-full-menu',
@@ -14,13 +14,23 @@ import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
 export class FullMenuComponent implements OnInit {
 
   menu$: Observable<MenuInfo>;
+  orderInfo: { dueTime: Date, orderType: number, addressId };
   constructor(
     private readonly cartService: CartService,
     private readonly router: Router
   ) { }
 
+  get orderType() {
+    return this.orderInfo.orderType === ORDER_TYPE.PICKUP ? 'Pickup'
+      : this.orderInfo.orderType === ORDER_TYPE.DELIVERY ? 'Delivery' : 'DineIn';
+  }
+
   ngOnInit() {
     this.menu$ = this.cartService.menuInfo$
+    this.cartService.orderDetailsOptions$.subscribe(orderDetails => {
+      this.orderInfo = orderDetails;
+      console.log(this.orderInfo)
+    });
   }
 
   onCategoryClicked({ id }) {

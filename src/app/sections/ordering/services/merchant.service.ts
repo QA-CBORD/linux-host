@@ -25,7 +25,6 @@ import { UserAccount } from '@core/model/account/account.model';
 export class MerchantService {
   private menuMerchants: MerchantInfo[] = [];
   private recentOrders: OrderInfo[] = [];
-  private _pickerTime: string;
 
   private readonly _menuMerchants$: BehaviorSubject<MerchantInfo[]> = new BehaviorSubject<MerchantInfo[]>([]);
   private readonly _recentOrders$: BehaviorSubject<OrderInfo[]> = new BehaviorSubject<OrderInfo[]>([]);
@@ -61,14 +60,6 @@ export class MerchantService {
   private set _recentOrders(value: OrderInfo[]) {
     this.recentOrders = [...value];
     this._recentOrders$.next([...this.recentOrders]);
-  }
-
-  get pickerTime() {
-    return this._pickerTime;
-  }
-
-  set pickerDateTime(value: Date) {
-    this._pickerTime = value.toISOString();
   }
 
   getMenuMerchants(): Observable<MerchantInfo[]> {
