@@ -113,16 +113,15 @@ export class RecentOrderComponent implements OnInit {
     });
   }
 
-  private async initOrder({ addressId, dueTime, orderType }): Promise<void> {
+  private async initOrder({ address, dueTime, orderType }): Promise<void> {
     await this.loadingService.showSpinner();
     const merchant = await this.merchant$.pipe(take(1)).toPromise();
     await this.cart.setActiveMerchant(merchant);
-    await this.cart.setActiveMerchantsMenuByOrderOptions(dueTime, orderType, addressId);
+    await this.cart.setActiveMerchantsMenuByOrderOptions(dueTime, orderType, address);
     const [availableItems] = await this.resolveMenuItemsInOrder().pipe(first()).toPromise();
     this.cart.addOrderItems(availableItems);
     await this.cart.validateOrder().pipe(first()).toPromise();
     await this.loadingService.closeSpinner();
-    console.log(dueTime);
     await this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.cart], {skipLocationChange: true});
   }
 

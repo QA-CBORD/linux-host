@@ -164,7 +164,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
         () => {
           this.loadingService.closeSpinner();
           this.modalController.dismiss({
-            addressId: this.orderOptionsData.address.id,
+            address: this.orderOptionsData.address,
             orderType: this.orderType,
             dueTime: this.dateTimePicker,
           }, BUTTON_TYPE.CONTINUE);

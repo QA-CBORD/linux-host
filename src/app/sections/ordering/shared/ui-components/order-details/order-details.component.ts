@@ -33,6 +33,7 @@ export class OrderDetailsComponent implements OnInit {
   @Input() subTotal: number;
   @Input() tip: number;
   @Input() accountName: string;
+  @Input() addressModalConfig: {[key: string]: any};
   @Output() onFormChange: EventEmitter<any> = new EventEmitter<any>();
   detailsForm: FormGroup;
 

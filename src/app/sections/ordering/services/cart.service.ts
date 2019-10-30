@@ -2,13 +2,11 @@ import { Injectable } from '@angular/core';
 import { distinctUntilChanged, first, map, tap } from 'rxjs/operators';
 import { BehaviorSubject, Observable } from 'rxjs';
 
-import { UserService } from '@core/service/user-service/user.service';
 import { ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { MerchantService } from './merchant.service';
 import { MerchantInfo, OrderInfo, MenuInfo, MenuItemInfo, OrderItem } from '../shared/models';
-import { MerchantService } from './merchant.service';
-import { MerchantInfo, OrderInfo, MenuInfo, MenuItemInfo, OrderItem } from '../shared/models';
 import { UserService } from '@core/service/user-service/user.service';
+import { AddressInfo } from '@core/model/address/address-info';
 
 @Injectable()
 export class CartService {
@@ -70,8 +68,8 @@ export class CartService {
     this.onStateChanged();
   }
 
-  async setActiveMerchantsMenuByOrderOptions(dueTime: Date, orderType: ORDER_TYPE, addressId: string): Promise<void> {
-    this.cart.orderDetailsOptions = { orderType, dueTime, addressId };
+  async setActiveMerchantsMenuByOrderOptions(dueTime: Date, orderType: ORDER_TYPE, address: AddressInfo): Promise<void> {
+    this.cart.orderDetailsOptions = { orderType, dueTime, address };
     await this.getMerchantMenu().then(menu => this.cart.menu = menu);
     this.onStateChanged();
   }
@@ -115,10 +113,10 @@ export class CartService {
   }
 
   validateOrder(): Observable<OrderInfo> {
-    const { orderType: type, dueTime, addressId } = this.cart.orderDetailsOptions;
+    const { orderType: type, dueTime, address: {id} } = this.cart.orderDetailsOptions;
     const address = type === ORDER_TYPE.DELIVERY
-      ? { deliveryAddressId: addressId }
-      : { pickupAddressId: addressId };
+      ? { deliveryAddressId: id }
+      : { pickupAddressId: id };
     this.cart.order = { ...this.cart.order, type, dueTime, ...address };
 
     return this.merchantService.validateOrder(this.cart.order).pipe(
@@ -177,7 +175,7 @@ export interface CartState {
 }
 
 export interface OrderDetailOptions {
-  addressId: string;
+  address: AddressInfo;
   dueTime: Date;
   orderType: ORDER_TYPE;
 }
