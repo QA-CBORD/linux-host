@@ -1,16 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ModalController, ToastController } from '@ionic/angular';
-import { UserService } from '@core/service/user-service/user.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { FavoriteMerhantsService } from './services/favorite-merhants.service';
 import { switchMap, take } from 'rxjs/operators';
-import { of, zip } from 'rxjs';
 import { NAVIGATE } from 'src/app/app.global';
 import { MerchantInfo, MerchantOrderTypesInfo } from '../../shared/models';
-import { MerchantService } from '../../services';
-import { ORDER_TYPE } from '../../ordering.config';
+import { MerchantService, CartService } from '../../services';
 import { OrderOptionsActionSheetComponent } from '../../shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
+import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
 
 @Component({
   selector: 'st-favorite-merchants',
@@ -24,10 +22,10 @@ export class FavoriteMerchantsComponent implements OnInit {
     private readonly router: Router,
     private readonly modalController: ModalController,
     private readonly merchantService: MerchantService,
-    private readonly userService: UserService,
     private readonly loadingService: LoadingService,
     private readonly toastController: ToastController,
-    private readonly favoriteMerhantsService: FavoriteMerhantsService
+    private readonly favoriteMerhantsService: FavoriteMerhantsService,
+    private readonly cartService: CartService
   ) { }
 
   ngOnInit() {
@@ -38,20 +36,22 @@ export class FavoriteMerchantsComponent implements OnInit {
     this.router.navigate([NAVIGATE.ordering], { skipLocationChange: true });
   }
 
-  merchantClickHandler({ id, orderTypes, storeAddress, settings }) {
-    this.openOrderOptions(id, orderTypes, storeAddress, settings);
+  merchantClickHandler(merchantInfo) {
+    this.openOrderOptions(merchantInfo);
   }
 
   favouriteHandler({ id }) {
     this.loadingService.showSpinner();
     this.merchantService
       .removeFavoriteMerchant(id)
-      .pipe(switchMap(() => this.favoriteMerhantsService.getFavoriteMerchants()))
+      .pipe(
+        switchMap(() => this.favoriteMerhantsService.getFavoriteMerchants()),
+        take(1)
+      )
       .subscribe(
         data => {
           this.merchantList = data;
-          const message = 'Removed from favorites';
-          this.onToastDisplayed(message);
+          this.onToastDisplayed('Removed from favorites');
           this.loadingService.closeSpinner();
         },
         () => this.loadingService.closeSpinner()
@@ -62,8 +62,9 @@ export class FavoriteMerchantsComponent implements OnInit {
     console.log(`Location Pin Clicked - Merch Id: ${event}`);
   }
 
-  private openOrderOptions(merchantId, orderTypes, storeAddress, settings) {
-    this.actionSheet(orderTypes, merchantId, storeAddress, settings);
+  private openOrderOptions(merchant) {
+    this.cartService.setActiveMerchant(merchant);
+    this.actionSheet(merchant.orderTypes, merchant.id, merchant.storeAddress, merchant.settings);
   }
 
   private async actionSheet(orderTypes: MerchantOrderTypesInfo, merchantId, storeAddress, settings) {
@@ -82,7 +83,12 @@ export class FavoriteMerchantsComponent implements OnInit {
         settings
       },
     });
-    modal.onDidDismiss().then(() => { });
+    modal.onDidDismiss().then(({ data }) => {
+      if (data) {
+        this.cartService.setActiveMerchantsMenuByOrderOptions(data.dueTime, data.orderType, data.addressId)
+        this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.fullMenu], { skipLocationChange: true });
+      }
+    });
     await modal.present();
   }
 

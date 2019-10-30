@@ -60,7 +60,7 @@ export class OrderingPage implements OnInit {
   }
 
   private openOrderOptions(merchant) {
-    this.cartService.setActiveMerchant(merchant)
+    this.cartService.setActiveMerchant(merchant);
     this.actionSheet(merchant.orderTypes, merchant.id, merchant.storeAddress, merchant.settings);
   }
 
@@ -82,7 +82,7 @@ export class OrderingPage implements OnInit {
     });
     modal.onDidDismiss().then(({ data }) => {
       if (data) {
-        this.cartService.setActiveMerchantsMenuByOrderOptions(data.dueTime, data.orderType, data.addressId)
+        this.cartService.setActiveMerchantsMenuByOrderOptions(data.dueTime, data.orderType, data.address)
         this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.fullMenu], { skipLocationChange: true });
       }
     });

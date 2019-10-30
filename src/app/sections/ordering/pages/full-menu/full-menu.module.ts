@@ -4,14 +4,13 @@ import { NgModule } from '@angular/core';
 import { FullMenuComponent } from './full-menu.component';
 import { FullMenuRoutingModule } from './full-menu.routing.module';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
+import { MerchantDistanceModule } from '@sections/ordering/shared/pipes/merchant-distance/merchant-distance.module';
 
-const imports = [CommonModule, IonicModule, FullMenuRoutingModule, StHeaderModule];
+const imports = [CommonModule, IonicModule, FullMenuRoutingModule, StHeaderModule, MerchantDistanceModule];
 const declarations = [FullMenuComponent];
-const providers = [];
 
 @NgModule({
   declarations,
   imports,
-  providers
 })
 export class FullMenuModule { }

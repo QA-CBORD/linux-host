@@ -12,6 +12,7 @@
 	&__address-container {
 		display: flex;
 		justify-content: space-between;
+		width: 100%;
 	}
 
 	&__arrow-wrapper {
@@ -20,6 +21,7 @@
 	}
 
 	&__address-title {
+		@include ellipsis;
 		@include font-nunito-heavy(20px);
 	}
 
@@ -29,8 +31,13 @@
 
 	&__address-info {
 		margin: 10px 0;
+		display: flex;
 
 		@include font-nunito-heavy(14px);
+	}
+
+	&__address-info-content {
+		margin-left: 5px;
 	}
 
 	&__date-time-container {
