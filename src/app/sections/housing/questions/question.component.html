@@ -1,6 +1,10 @@
 <div [formGroup]="parentGroup">
   <ng-container [ngSwitch]="question.type">
-    <p *ngSwitchCase="'paragraph'" class="question__item">{{ question.label }}</p>
+    <ng-container *ngSwitchCase="'header'">
+      <div [innerHTML]="createHeader(question)"></div>
+    </ng-container>
+
+    <p *ngSwitchCase="'paragraph'" class="question__item" [innerHtml]="question.label"></p>
 
     <st-input-floating-label
       *ngSwitchCase="'text'"
