@@ -1,22 +1,37 @@
 <div class="card">
-  <div class="card__grid-container">
-    <div class="card__row1"></div>
-    <div class="card__row2"></div>
-    <div class="card__row3 center">
-      <img *ngIf="userPhoto" class="card__image" src="{{ userPhoto }}" alt="user photo" />
-    </div>
-    <div class="card__row4"></div>
-  </div>
-  <!-- <table class="card__table">
-    <tr class="card__top-row">
-      <div *ngIf="institutionInfo" class="">{{ institutionInfo.name }}</div>
-    </tr>
-    <tr class="card__middle-upper-row">
-      <div class="card__middle-upper-row__container"></div>
-    </tr>
-    <tr></tr>
-    <tr class="card__bottom-row">
-      <div class="card__bottom-row__container"></div>
-    </tr>
-  </table> -->
+  <ion-grid class="ion-no-padding" style="height: 280px;">
+    <ion-row class="card__row1 ion-align-items-center">
+      <ion-col size="2">
+        <img *ngIf="institutionPhotoUrl" class="image" src="{{ institutionPhotoUrl }}" alt="ip" />
+      </ion-col>
+      <ion-col size="9">
+        <div *ngIf="institutionInfo" class="title left">{{ institutionInfo.name }}</div>
+      </ion-col>
+      <ion-col size="1"></ion-col>
+    </ion-row>
+    <ion-row class="card__row2">
+      <ion-col class="center">
+        <img *ngIf="userPhoto" class="card__image" src="{{ userPhoto }}" alt="user photo" />
+      </ion-col>
+    </ion-row>
+    <ion-row class="card__row3 ion-align-items-end">
+      <ion-col class="ion-no-padding left">
+        <div *ngIf="userName" class="user-name">{{ userName }}</div>
+      </ion-col>
+      <ion-col class="ion-no-padding right">
+        <div class="provisioning">Card not added to wallet</div>
+      </ion-col>
+    </ion-row>
+    <ion-row class="card__row4 ion-align-items-center ion-justify-content-center">
+      <ion-col size="4">
+        <div class="button"></div>
+      </ion-col>
+      <ion-col size="4">
+        <div class="button"></div>
+      </ion-col>
+      <ion-col size="4">
+        <div class="button"></div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </div>

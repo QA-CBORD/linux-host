@@ -6,71 +6,74 @@
   background: linear-gradient(to bottom right, #166dff, #0043b3);
   height: 280px;
 
-  &__grid-container {
-    display: grid;
-    width: 100%;
-    grid-template-rows: [row1-start] 48px [row2-start] 84px [row3-start] 84px [row4-start] 64px ;
-    grid-template-columns: auto-fit;
-  }
-
-  &__ row1 {
-    grid-column: col1-start;
-    grid-row: row1-start / row2-start;
-  }
-
-  &__ row2 {
-    grid-column: col1-start;
-    grid-row: row2-start / row3-start;
-  }
-
-  &__ row3 {
-    grid-column: col1-start;
-    grid-row: row3-start / row4-start;
-  }
-
-  &__ row4 {
-    grid-column: col1-start;
-    grid-row: row4-start;
-  }
-
   &__image {
     border-radius: 180px;
     height: 100px;
     width: 100px;
-    transform: translate(0%, -50%);
+    transform: translate(0%, 35%);
     object-fit: cover;
   }
 
-
-  &__top-row {
-      width: 100%;
+  &__row1 {
     height: 48px;
 
-    &__title {
-      @include font-nunito-semibold(16px);
+    .title {
+      color: #fff;
+      @include font-nunito-regular(20px);
       letter-spacing: 0;
-      line-height: 18px;
+      // line-height: 18px;
     }
 
-    &__image {
-        height: 48px;
-        width: 48px;
-        padding: 8px;
+    .image {
+      height: 48px;
+      width: 48px;
     }
   }
 
-
-  &__title {
-    @include font-nunito-semibold(16px);
-
-    color: $color-black;
-    letter-spacing: 0;
-    line-height: 18px;
+  &__row2 {
+    height: 84px;
+    background-color: #ffffff5f;
   }
 
-  
+  &__row3 {
+    height: 84px;
+    padding-bottom: 4px;
+    .user-name {
+      color: #fff;
+      @include font-nunito-semibold(20px);
+      letter-spacing: 0px;
+      margin-left: 12px;
+    }
+
+    .provisioning {
+      color: #fff;
+      @include font-nunito-semibold(12px);
+      letter-spacing: 0px;
+      margin-bottom: 4px;
+      margin-right: 12px;
+    }
+  }
+
+  &__row4 {
+    height: 64px;
+    border-top: 1px solid #ffffff1f;
+    .button {
+      margin: 0 auto;
+      height: 48px;
+      background: #0000001f;
+      border-radius: 12px;
+    }
+  }
 }
 
 .center {
   text-align: center;
+}
+
+.left {
+  text-align: left;
+}
+
+.right {
+  text-align: right;
 }

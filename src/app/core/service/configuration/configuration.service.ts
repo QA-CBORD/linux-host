@@ -10,6 +10,7 @@ import { BaseService } from '../base-service/base.service';
 import { MessageResponse } from './../../model/service/message-response.model';
 import { ServiceParameters } from './../base-service/base.service';
 import { SettingInfo } from '../../model/configuration/setting-info.model';
+import { Settings } from 'src/app/app.global';
 
 @Injectable({
   providedIn: 'root',
@@ -19,7 +20,7 @@ export class ConfigurationService extends BaseService {
 
   private settings: SettingInfoList = {
     list: [],
-    map: new Map(),
+    map: new Map<string, SettingInfo>(),
   };
 
   constructor(protected readonly http: HttpClient) {
@@ -27,24 +28,25 @@ export class ConfigurationService extends BaseService {
   }
 
   // talk to team about this... caching settings for use app wide
-  getSetting(institutionId: string, { domain, category, name }: SettingInfo): Observable<SettingInfo> {
-    const delim = '~';
-    const settingKey = domain + delim + category + delim + name;
+  getSetting(institutionId: string, setting: Settings.ESetting): Observable<SettingInfo> {
+    const settingKey = setting.split('.').join('~');
 
     if (this.settings.map.has(settingKey)) {
       return of(this.settings.map.get(settingKey));
-    } else {
-      return this.retrieveSetting(institutionId, { domain, category, name });
+    } else {      
+      return this.retrieveSetting(institutionId, setting);
     }
   }
 
-  retrieveSetting(institutionId: string, { domain, category, name }: SettingInfo): Observable<SettingInfo> {
+  retrieveSetting(institutionId: string, setting: Settings.ESetting): Observable<SettingInfo> {
     const methodName = 'retrieveSetting';
 
+    const set: string[] = setting.split('.');
+
     const params: ServiceParameters = {
-      domain: domain,
-      category: category,
-      name: name,
+      domain: set[0],
+      category: set[1],
+      name: set[2],
     };
 
     return this.httpRequestFull(this.serviceUrl, methodName, true, institutionId, params).pipe(
@@ -52,12 +54,14 @@ export class ConfigurationService extends BaseService {
     );
   }
 
-  retrieveSettingList(institutionId: string, { domain, category }: SettingInfo): Observable<SettingInfoList> {
+  retrieveSettingList(institutionId: string, setting: Settings.ESettingList): Observable<SettingInfoList> {
     const methodName = 'retrieveSettingList';
 
+    const set: string[] = setting.split('.');
+
     const params: ServiceParameters = {
-      domain: domain,
-      category: category,
+      domain: set[0],
+      category: set[1],
     };
 
     return this.httpRequestFull(this.serviceUrl, methodName, true, institutionId, params).pipe(

@@ -10,6 +10,7 @@ import { ConfigurationService } from 'src/app/core/service/configuration/configu
 
 import { SettingInfoList } from 'src/app/core/model/configuration/setting-info-list.model';
 import { SettingInfo } from 'src/app/core/model/configuration/setting-info.model';
+import { Settings } from 'src/app/app.global';
 
 @Injectable()
 export class DashboardApiService extends BaseService {
@@ -21,16 +22,16 @@ export class DashboardApiService extends BaseService {
     super(http);
   }
 
-  retrieveSetting(settingInfo: SettingInfo): Observable<SettingInfo> {
+  retrieveSetting(settingInfo: Settings.ESetting): Observable<SettingInfo> {
     return this.userService.userData.pipe(
       switchMap(({ institutionId }) => this.configService.retrieveSetting(institutionId, settingInfo))
     );
   }
 
-  retrieveSettingsList({ domain, category }: SettingInfo): Observable<SettingInfoList> {
+  retrieveSettingsList(setting: Settings.ESettingList): Observable<SettingInfoList> {
     return this.userService.userData.pipe(
       switchMap(({ institutionId }) =>
-        this.configService.retrieveSettingList(institutionId, { domain: domain, category: category })
+        this.configService.retrieveSettingList(institutionId, setting)
       ),
       take(1)
     );
