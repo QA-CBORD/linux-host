@@ -15,23 +15,23 @@
           <div class="full-menu__address-title">{{ (merchantInfo$ | async).name }}</div>
           <ng-container *ngIf="merchantInfoState">
             <div class="full-menu__address-description">{{ (merchantInfo$ | async).description }}</div>
-            <div class="full-menu__address-info">
-              <img src="./assets/icon/location-pin.svg"
-                   height="16"
-                   alt="location-pin" />
-              <div class="full-menu__address-info-content">
-                {{ (merchantInfo$ | async).distanceFromUser | merchantDistance }} -
-                <ng-container *ngIf="orderInfo.address.onCampus; then onCampus; else ofCampus"></ng-container>
-
-                <ng-template #ofCampus>
-                  {{ orderInfo.address.address1 }}, {{orderInfo.address.city}}
-                </ng-template>
-                <ng-template #onCampus>
-                  {{orderInfo.address.room}}, {{orderInfo.address.building}}
-                </ng-template>
-              </div>
-            </div>
           </ng-container>
+          <div class="full-menu__address-info">
+            <img src="./assets/icon/location-pin.svg"
+                 height="16"
+                 alt="location-pin" />
+            <div class="full-menu__address-info-content">
+              {{ (merchantInfo$ | async).distanceFromUser | merchantDistance }} -
+              <ng-container *ngIf="orderInfo.address.onCampus; then onCampus; else ofCampus"></ng-container>
+
+              <ng-template #ofCampus>
+                {{ orderInfo.address.address1 }}, {{orderInfo.address.city}}
+              </ng-template>
+              <ng-template #onCampus>
+                {{orderInfo.address.room}}, {{orderInfo.address.building}}
+              </ng-template>
+            </div>
+          </div>
 
         </div>
         <div class="full-menu__arrow-wrapper">

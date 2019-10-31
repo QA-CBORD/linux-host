@@ -39,6 +39,10 @@ const routes: Route[] = [
     path: `${LOCAL_ROUTING.menuCategoryItems}/:id`,
     loadChildren: './pages/menu-category-items/menu-category-items.module#MenuCategoryItemsModule',
   },
+  {
+    path: `${LOCAL_ROUTING.itemDetail}`,
+    loadChildren: './pages/item-detail/item-detail.module#ItemDetailModule',
+  },
 ];
 
 const imports = [RouterModule.forChild(routes)];

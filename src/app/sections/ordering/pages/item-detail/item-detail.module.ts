@@ -6,16 +6,25 @@ import { IonicModule } from '@ionic/angular';
 import { StTextareaFloatingLabelModule } from '@shared/ui-components/st-textarea-floating-label/st-textarea-floating-label.module';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
+import { ItemDetailRoutingModule } from './item-detail.routing.module';
+import { MultiListComponent } from './multi-list/multi-list.component';
+import { SingleListComponent } from './single-list/single-list.component';
 
 
-const declarations = [ItemDetailComponent];
-const imports = [CommonModule, IonicModule, ReactiveFormsModule, StTextareaFloatingLabelModule]
+const declarations = [ItemDetailComponent, SingleListComponent, MultiListComponent];
+const imports = [
+  CommonModule,
+  IonicModule,
+  ReactiveFormsModule,
+  StTextareaFloatingLabelModule,
+  ItemDetailRoutingModule
+]
 
 @NgModule({
-  
+
   declarations,
-  exports: declarations,
-  entryComponents: declarations,
+  exports: [ItemDetailComponent],
+  entryComponents: [ItemDetailComponent],
   imports
 
 })
