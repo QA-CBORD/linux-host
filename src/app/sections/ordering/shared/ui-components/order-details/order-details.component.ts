@@ -6,8 +6,8 @@ import {
   OnInit,
   Output, SimpleChanges,
 } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { OrderItem } from '@sections/ordering';
+import { AbstractControl, FormBuilder, FormGroup } from '@angular/forms';
+import { BuildingInfo, OrderItem } from '@sections/ordering';
 import { ORDER_TYPE } from "@sections/ordering/ordering.config";
 import { AddressInfo } from "@core/model/address/address-info";
 import { ModalController } from '@ionic/angular';
@@ -33,7 +33,7 @@ export class OrderDetailsComponent implements OnInit {
   @Input() subTotal: number;
   @Input() tip: number;
   @Input() accountName: string;
-  @Input() addressModalConfig: {[key: string]: any};
+  @Input() addressModalConfig: AddressModalSettings;
   @Output() onFormChange: EventEmitter<any> = new EventEmitter<any>();
   detailsForm: FormGroup;
 
@@ -48,6 +48,18 @@ export class OrderDetailsComponent implements OnInit {
     return DETAILS_FORM_CONTROL_NAMES;
   }
 
+  get isAddressClickable(): boolean {
+    if(this.addressModalConfig && this.addressModalConfig.isOrderTypePickup) {
+      return !!this.addressModalConfig.pickupLocations.length;
+    } else {
+      return !!this.addressModalConfig
+    }
+  }
+
+  private get addressInfo(): AbstractControl {
+    return this.detailsForm.get(DETAILS_FORM_CONTROL_NAMES.address);
+  }
+
   onRemove($event: MouseEvent) {
     console.log($event)
   }
@@ -59,16 +71,14 @@ export class OrderDetailsComponent implements OnInit {
         [DETAILS_FORM_CONTROL_NAMES.address]: [''],
         [DETAILS_FORM_CONTROL_NAMES.ingredients]: this.getIngredients(),
         [DETAILS_FORM_CONTROL_NAMES.paymentMethod]: [''],
-      },{updateOn: 'blur'}
+      }
     );
-    // console.log(this.detailsForm);
     this.subscribe()
   }
 
   private subscribe () {
     this.detailsForm.valueChanges
       .subscribe(data => {
-        console.log(1);
         this.onFormChange.emit({ data, valid: this.detailsForm.valid })
       })
   }
@@ -83,19 +93,14 @@ export class OrderDetailsComponent implements OnInit {
     console.log(this.detailsForm)
   }
 
-  private async modalWindow() {
+  private async showAddressListModal(): Promise<void> {
+
     const modal = await this.modalController.create({
       component: DeliveryAddressesModalComponent,
-      componentProps: {
-        // buildings: this.buildingsForNewAddressForm,
-        // isOrderTypePickup: this.isOrderTypePickup,
-        // pickupLocations: this.pickupLocations,
-        // deliveryAddresses: this.deliveryAddresses,
-        // merchantId: this.merchantId,
-      },
+      componentProps: this.addressModalConfig,
     });
     modal.onDidDismiss().then(({ data }) => {
-      console.log(data)
+      this.addressInfo.setValue(data);
     });
     await modal.present();
   }
@@ -106,4 +111,13 @@ export enum DETAILS_FORM_CONTROL_NAMES {
   address = 'address',
   ingredients = 'ingredients',
   paymentMethod = 'paymentMethod',
+}
+
+export interface AddressModalSettings {
+  defaultAddress: AddressInfo;
+  buildings: BuildingInfo[];
+  isOrderTypePickup: boolean;
+  pickupLocations: BuildingInfo[];
+  deliveryAddresses: AddressInfo[];
+  merchantId: string;
 }

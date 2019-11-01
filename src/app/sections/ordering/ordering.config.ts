@@ -29,6 +29,16 @@ export const SYSTEM_SETTINGS_CONFIG = {
     category: 'feature',
     name: 'institution_address_restriction',
   },
+  displayCreditCard: {
+    domain: 'get',
+    category: 'feature',
+    name: 'display_credit_cards',
+  },
+  displayTenders: {
+    domain: 'get',
+    category: 'feature',
+    name: 'display_tenders',
+  },
 };
 
 export enum MerchantSettings {

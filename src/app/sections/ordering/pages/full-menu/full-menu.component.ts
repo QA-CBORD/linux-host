@@ -14,7 +14,7 @@ import { LOCAL_ROUTING, ORDER_TYPE } from '@sections/ordering/ordering.config';
 export class FullMenuComponent implements OnInit {
 
   menu$: Observable<MenuInfo>;
-  orderInfo: { dueTime: Date, orderType: number, addressId };
+  orderInfo: { dueTime: Date, orderType: number, address };
   constructor(
     private readonly cartService: CartService,
     private readonly router: Router
@@ -26,7 +26,7 @@ export class FullMenuComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.menu$ = this.cartService.menuInfo$
+    this.menu$ = this.cartService.menuInfo$;
     this.cartService.orderDetailsOptions$.subscribe(orderDetails => {
       this.orderInfo = orderDetails;
       console.log(this.orderInfo)

@@ -4,48 +4,24 @@
         <div class="order-details">
             <ion-label class="order-details__label">{{type | typeMessage:'dueTime'}}</ion-label>
 
-            <p *ngIf="readonly; else delivery" class="order-details__value">{{time | date: 'M/d/yy, h:mm a'}}</p>
+            <p class="order-details__value">{{time | date: 'M/d/yy, h:mm a'}}</p>
 
-            <ng-template #delivery>
-                <p class="order-details__value" (click)="modalWindow()">modal</p>
-<!--                <ion-select-->
-<!--                        [formControlName]="controlsNames.time"-->
-<!--                        class="order-details__value"-->
-<!--                        cancelText="Cancel"-->
-<!--                        mode="md"-->
-<!--                        placeholder="Please Choose"-->
-<!--                        interface="action-sheet"-->
-<!--                        [interfaceOptions]="{cssClass: 'custom-deposit-actionSheet'}"-->
-<!--                >-->
-<!--                    <ion-select-option [value]="amount" *ngFor="let amount of [1,2,3]">-->
-<!--                        {{ amount }}-->
-<!--                    </ion-select-option>-->
-<!--                </ion-select>-->
-
-            </ng-template>
+<!--            <ng-template #timeEditable>-->
+<!--                <p class="order-details__value order-details__value&#45;&#45;editable">{{time | date: 'M/d/yy, h:mm a'}}</p>-->
+<!--            </ng-template>-->
 
         </div>
 
         <div class="order-details" *ngIf="address?.length">
             <ion-label  class="order-details__label">{{type | typeMessage:'address'}}</ion-label>
 
-            <p *ngIf="readonly && address?.length; else pickup" class="order-details__value">{{address}}</p>
+            <p *ngIf="readonly && address?.length; else addressEditable" class="order-details__value">{{address}}</p>
 
-<!--            <ng-template #pickup>-->
-<!--                <ion-select-->
-<!--                        [formControlName]="controlsNames.address"-->
-<!--                        class="order-details__value"-->
-<!--                        cancelText="Cancel"-->
-<!--                        mode="md"-->
-<!--                        placeholder="Please Choose"-->
-<!--                        interface="action-sheet"-->
-<!--                        [interfaceOptions]="{cssClass: 'custom-deposit-actionSheet'}"-->
-<!--                >-->
-<!--                    <ion-select-option [value]="amount" *ngFor="let amount of [1,2,3]">-->
-<!--                        {{ amount }}-->
-<!--                    </ion-select-option>-->
-<!--                </ion-select>-->
-<!--            </ng-template>-->
+            <ng-template #addressEditable>
+                <p class="order-details__value"
+                   [ngClass]="{'order-details__value--editable': isAddressClickable}"
+                   (click)="isAddressClickable && showAddressListModal()">{{address}}</p>
+            </ng-template>
 
         </div>
 

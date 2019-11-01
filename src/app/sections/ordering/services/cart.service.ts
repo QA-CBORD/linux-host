@@ -124,6 +124,13 @@ export class CartService {
     );
   }
 
+  updateOrderAddress(address: AddressInfo) {
+    if (this.cart.orderDetailsOptions) {
+      this.cart.orderDetailsOptions = {...this.cart.orderDetailsOptions, address};
+      this.onStateChanged();
+    }
+  }
+
   async clearActiveOrder(): Promise<void> {
     await this.setInitialEmptyOrder();
   }

@@ -142,7 +142,7 @@ export class RecentOrderComponent implements OnInit {
         this.merchantService.menuMerchants$.pipe(
           map((merchants) => merchants.find(({ id }) => id === merchantId))),
       ),
-      map(({ storeAddress }) => this.getPickupAddressAsString(storeAddress)),
+      map(({ storeAddress }) => this.merchantService.getPickupAddressAsString(storeAddress)),
     );
   }
 
@@ -151,30 +151,8 @@ export class RecentOrderComponent implements OnInit {
       map((addresses) =>
         addresses.find(({ id }) => id === deliveryId),
       ),
-      map(address => this.getDeliveryAddressAsString(address)),
+      map(address => this.merchantService.getDeliveryAddressAsString(address)),
     );
-  }
-
-  private getPickupAddressAsString({ address1, address2, city }: AddressInfo): string {
-    address1 = address1 ? address1 : '';
-    address2 = address2 ? address2 : '';
-    city = city ? city : '';
-    return `${address1} ${address2} ${city}`.trim();
-  }
-
-  private getDeliveryAddressAsString(addressInfo: AddressInfo = {} as AddressInfo): string {
-    if (!Object.keys(addressInfo).length) return '';
-    let { onCampus, address1, address2, city, room, building, state } = addressInfo;
-    room = room ? `Room ${room}` : '';
-    building = building ? building : '';
-    address1 = address1 ? address1 : '';
-    state = state ? state : '';
-    address2 = address2 ? address2 : '';
-    city = city ? city : '';
-
-    return Boolean(Number(onCampus))
-      ? `${room}, ${building}`.trim()
-      : `${address1} ${address2}, ${city}, ${state}`.trim();
   }
 
   private cancelOrder(): Observable<any> {
@@ -221,7 +199,6 @@ export class RecentOrderComponent implements OnInit {
     });
 
     modal.onDidDismiss().then(({ data, role }) => {
-      console.log(data);
       role === BUTTON_TYPE.CONTINUE && this.initOrder(data)
     });
 
