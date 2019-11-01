@@ -2,14 +2,13 @@ import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
-  Input, OnChanges,
+  Input,
   OnInit,
-  Output, SimpleChanges,
+  Output,
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { OrderItem } from '@sections/ordering';
 import { ORDER_TYPE } from "@sections/ordering/ordering.config";
-import { AddressInfo } from "@core/model/address/address-info";
 import { ModalController } from '@ionic/angular';
 import { DeliveryAddressesModalComponent } from '@sections/ordering/shared/ui-components/delivery-addresses.modal/delivery-addresses.modal.component';
 
@@ -33,12 +32,12 @@ export class OrderDetailsComponent implements OnInit {
   @Input() subTotal: number;
   @Input() tip: number;
   @Input() accountName: string;
-  @Input() addressModalConfig: {[key: string]: any};
+  @Input() addressModalConfig: { [key: string]: any };
   @Output() onFormChange: EventEmitter<any> = new EventEmitter<any>();
   detailsForm: FormGroup;
 
   constructor(private readonly fb: FormBuilder,
-              private readonly modalController: ModalController) { }
+    private readonly modalController: ModalController) { }
 
   ngOnInit() {
     this.initForm();
@@ -59,13 +58,13 @@ export class OrderDetailsComponent implements OnInit {
         [DETAILS_FORM_CONTROL_NAMES.address]: [''],
         [DETAILS_FORM_CONTROL_NAMES.ingredients]: this.getIngredients(),
         [DETAILS_FORM_CONTROL_NAMES.paymentMethod]: [''],
-      },{updateOn: 'blur'}
+      }, { updateOn: 'blur' }
     );
     // console.log(this.detailsForm);
     this.subscribe()
   }
 
-  private subscribe () {
+  private subscribe() {
     this.detailsForm.valueChanges
       .subscribe(data => {
         console.log(1);

@@ -13,7 +13,6 @@
     </div> -->
   </ion-item-divider>
 
-  <!-- [formControl]="orderSize" -->
   <ion-radio-group lines="none">
     <ng-container *ngFor="let option of options">
       <ion-item lines="none"
@@ -26,7 +25,8 @@
         </ion-label>
         <ion-radio class="single-list__radio-size"
                    slot="start"
-                   (ionSelect)="itemChosen($event.detail.value)"
+                   (ionSelect)="itemChosen($event)"
+                   [value]="option.menuItem"
                    mode="md">
         </ion-radio>
       </ion-item>

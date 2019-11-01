@@ -4,14 +4,14 @@
     <div class="multi-list__divider-title">{{name}}</div>
     <div class="multi-list__divider-subtitle">Select up to 3</div>
   </ion-item-divider>
-  <!-- [formGroup]="itemOrderForm" -->
   <ion-item-group>
     <ng-container *ngFor="let option of options; let i = index">
       <ion-item lines="none"
                 class="multi-list__toppings-items"
                 *ngIf="option.visible">
-        <ion-checkbox (ionChange)="onItemsChecked($event.detail)"
+        <ion-checkbox (ionChange)="onItemsChecked($event)"
                       class="multi-list__toppings-item-checkbox"
+                      [value]="option.menuItem"
                       mode="md">
         </ion-checkbox>
         <ion-label class="multi-list__toppings-label">

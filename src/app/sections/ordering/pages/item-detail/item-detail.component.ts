@@ -36,22 +36,6 @@ export class ItemDetailComponent implements OnInit {
     this.initMenuItemOptions();
   }
 
-  get orderSize(): AbstractControl {
-    return this.itemOrderForm.get(this.controlsNames.size);
-  }
-
-  get orderToppings(): AbstractControl {
-    return this.itemOrderForm.get(this.controlsNames.toppings);
-  }
-
-  get orderMessage(): AbstractControl {
-    return this.itemOrderForm.get(this.controlsNames.message);
-  }
-
-  get controlsNames() {
-    return REQUEST_FUNDS_CONTROL_NAMES;
-  }
-
   onClose() {
     this.activatedRoute.queryParams
       .pipe(take(1))
@@ -77,45 +61,17 @@ export class ItemDetailComponent implements OnInit {
   }
 
   initForm() {
+    const formGroup = {};
+    this.menuItem.menuItemOptions
+      .map(menuGroupItem => {
+        formGroup[menuGroupItem.menuGroup.name] = ['']
+      })
+
     this.itemOrderForm = this.fb.group({
-      [this.controlsNames.size]: ['', [Validators.required]],
-      [this.controlsNames.toppings]: [this.checkedToppings],
-      [this.controlsNames.message]: ['', [Validators.maxLength(255)]],
+      ...formGroup,
+      'message': ['', [Validators.maxLength(255)]]
     });
-
-    // this.itemOrderForm = this.fb.group({
-    //   items: this.fb.array([this.createItem()])
-    // })
-
-    // const formGroup = {};
-    // this.menuItem.menuItemOptions
-    //   .map(menuGroupItem => {
-    //     formGroup[menuGroupItem.menuGroup.name] = ['']
-    //   })
-
-    //   this.itemOrderForm = this.fb.group(formGroup);
     console.log(this.itemOrderForm);
-  }
-
-  private onCampusFormBlock() {
-    // const buildingsErrors = [
-    //   errorDecorator(Validators.required, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.buildings].required),
-    // ];
-
-    // const roomErrors = [errorDecorator(Validators.required, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.room].required)];
-
-    // return {
-    //   [this.controlsNames.campus]: ['oncampus'],
-    //   [this.controlsNames.buildings]: ['', buildingsErrors],
-    //   [this.controlsNames.room]: ['', roomErrors],
-    // };
-  }
-
-  createItem() {
-    return this.fb.group({
-      name: ['Jon'],
-      surname: ['Doe']
-    })
   }
 
   sizeChosen(size) {
@@ -166,16 +122,7 @@ export class ItemDetailComponent implements OnInit {
 
   onFormSubmit() {
     if (this.itemOrderForm.valid) {
-      console.log('form is valid')
-      // const orderState = {
-      //   amount: this.totalPrice,
-      //   orderDetails: {
-      //     size: this.orderSize.value,
-      //     toppings: this.orderToppings.value,
-      //     message: this.orderMessage.value,
-      //   },
-      // };
-      // console.log(orderState);
+      console.log(this.itemOrderForm)
     }
   }
 
@@ -191,10 +138,4 @@ export class ItemDetailComponent implements OnInit {
         this.initForm();
       })
   }
-}
-
-export enum REQUEST_FUNDS_CONTROL_NAMES {
-  size = 'size',
-  toppings = 'toppings',
-  message = 'message',
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { CartService } from '../../services/cart.service';
 import { Observable, Subscription } from 'rxjs';
 import { MenuInfo, MerchantInfo, MerchantOrderTypesInfo } from '@sections/ordering/shared/models';
@@ -13,6 +13,7 @@ import { OrderOptionsActionSheetComponent } from '@sections/ordering/shared/ui-c
   selector: 'st-full-menu',
   templateUrl: './full-menu.component.html',
   styleUrls: ['./full-menu.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FullMenuComponent implements OnInit, OnDestroy {
 
