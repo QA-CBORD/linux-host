@@ -25,7 +25,6 @@ import { UserAccount } from '@core/model/account/account.model';
 export class MerchantService {
   private menuMerchants: MerchantInfo[] = [];
   private recentOrders: OrderInfo[] = [];
-  private _pickerTime: string;
 
   private readonly _menuMerchants$: BehaviorSubject<MerchantInfo[]> = new BehaviorSubject<MerchantInfo[]>([]);
   private readonly _recentOrders$: BehaviorSubject<OrderInfo[]> = new BehaviorSubject<OrderInfo[]>([]);
@@ -61,14 +60,6 @@ export class MerchantService {
   private set _recentOrders(value: OrderInfo[]) {
     this.recentOrders = [...value];
     this._recentOrders$.next([...this.recentOrders]);
-  }
-
-  get pickerTime() {
-    return this._pickerTime;
-  }
-
-  set pickerDateTime(value: Date) {
-    this._pickerTime = value.toISOString();
   }
 
   getMenuMerchants(): Observable<MerchantInfo[]> {
@@ -141,8 +132,15 @@ export class MerchantService {
     return this.userService.getUserAddresses();
   }
 
-  retrievePickupLocations(): Observable<any> {
-    return this.orderingApiService.retrievePickupLocations();
+  retrievePickupLocations(storeAddress, { value }): Observable<any> {
+    switch (value) {
+      case null:
+        return of([]);
+      case 'true':
+        return this.orderingApiService.retrievePickupLocations();
+      case 'false':
+        return of([storeAddress]);
+    }
   }
 
   addFavoriteMerchant(merchantId: string): Observable<string> {
@@ -198,28 +196,28 @@ export class MerchantService {
       .pipe(map(accounts => this.filterAccountsByPaymentSystem(accounts)));
   }
 
-  extractAllAvailableMenuItemsFromMenu({menuCategories}: MenuInfo): MenuItemInfo[] {
-      return menuCategories.reduce((state, {menuCategoryItems}) => {
-        const item = menuCategoryItems.map(({active, visible, menuItem}) => {
-          if (active && visible && menuItem && menuItem.active && menuItem.visible && !menuItem.deleted) {
-            return menuItem
-          }
-        });
-        return [...state, ...item]
-      }, [])
+  extractAllAvailableMenuItemsFromMenu({ menuCategories }: MenuInfo): MenuItemInfo[] {
+    return menuCategories.reduce((state, { menuCategoryItems }) => {
+      const item = menuCategoryItems.map(({ active, visible, menuItem }) => {
+        if (active && visible && menuItem && menuItem.active && menuItem.visible && !menuItem.deleted) {
+          return menuItem
+        }
+      });
+      return [...state, ...item]
+    }, [])
   }
 
-  extractAllAvailableMenuItemOptionsFromMenuItem({menuItemOptions}: MenuItemInfo): MenuItemInfo[] {
-    return menuItemOptions.reduce((state, {menuGroup: {menuGroupItems}}) => {
-      const res  = menuGroupItems.reduce((state, {active, visible, menuItem}) => {
+  extractAllAvailableMenuItemOptionsFromMenuItem({ menuItemOptions }: MenuItemInfo): MenuItemInfo[] {
+    return menuItemOptions.reduce((state, { menuGroup: { menuGroupItems } }) => {
+      const res = menuGroupItems.reduce((state, { active, visible, menuItem }) => {
         if (active && visible && menuItem.active && menuItem.visible && !menuItem.deleted) {
           return [...state, menuItem];
         }
       }, []);
       return [...state, ...res]
-    },[]);
+    }, []);
   }
-  
+
   private filterAccountsByPaymentSystem(accounts: UserAccount[]): UserAccount[] {
     return accounts.filter(
       ({ paymentSystemType: type }) => type === PAYMENT_SYSTEM_TYPE.OPCS || type === PAYMENT_SYSTEM_TYPE.CSGOLD

@@ -14,7 +14,7 @@
             <ion-radio mode="md"
                        slot="start"
                        value="pickup"
-                       checked
+                       [checked]="enumOrderTypes.PICKUP === orderType"
                        class="order-options__radio-item"></ion-radio>
           </ion-item>
 
@@ -24,6 +24,7 @@
             <ion-radio mode="md"
                        slot="start"
                        value="delivery"
+                       [checked]="enumOrderTypes.DELIVERY === orderType"
                        class="order-options__radio-item"></ion-radio>
           </ion-item>
         </ion-radio-group>

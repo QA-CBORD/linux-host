@@ -2,7 +2,10 @@ export enum LOCAL_ROUTING {
   recentOrders = 'recent-orders',
   favoriteMerchants = 'favorite-merchants',
   savedAddresses = 'saved-addresses',
+  fullMenu = 'full-menu',
   cart = 'cart',
+  menuCategoryItems = 'menu-category-items',
+  itemDetail = 'item-detail',
   addressEdit = 'address-edit'
 }
 

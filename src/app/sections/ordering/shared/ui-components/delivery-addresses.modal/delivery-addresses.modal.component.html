@@ -18,10 +18,12 @@
     <ion-item class="delivery-address__add-address-wrapper"
               lines="full"
               [button]="true"
-              [detail]="true"
-              detailIcon="/assets/icon/angle-{{ addNewAdddressState ? 'up' : 'down' }}-select.svg"
+              [detail]="false"
               (click)="addNewAdddressState = !addNewAdddressState"><span class="delivery-address__add-address-sign">+
       </span><span class="delivery-address__add-address-text">Add New Address</span>
+      <img src="/assets/icon/angle-{{ addNewAdddressState ? 'up' : 'down' }}-select.svg"
+           alt="arrow"
+           class="delivery-address__add-address-img">
     </ion-item>
 
     <ng-container *ngIf="addNewAdddressState">

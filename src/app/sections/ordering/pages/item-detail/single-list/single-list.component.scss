@@ -1,0 +1,52 @@
+@import 'tools';
+
+.single-list {
+	&__list-size {
+        padding: 0;
+    }
+
+    &__divider {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        background-color: $color-white-smoke;
+        padding: 9px 17px;
+        --inner-padding-bottom: 0px;
+    }
+
+    &__divider-title {
+        color: $color-black;
+
+        @include font-nunito-heavy(16px);
+    }
+
+    &__divider-subtitle {
+        color: $color-matterhorn;
+
+        @include font-nunito-regular(12px);
+	}
+	
+	&__size-title {
+        color: $color-black;
+        height: 18px;
+        
+        @include font-nunito-heavy(16px);
+    }
+
+    &__size-price {
+        color: $color-black;
+        height: 14px;
+
+        @include font-nunito-regular(12px);
+	}
+	
+	&__item-size {
+        --color-checked: #166dff;
+        --color: #c4c4c4;
+	}
+	
+	&__radio-size {
+        margin-right: 10px;
+        --color-checked: #166dff;
+    }
+}

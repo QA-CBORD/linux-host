@@ -16,7 +16,7 @@ export class MerchantItemComponent {
   }>();
   @Output() locationPin: EventEmitter<string> = new EventEmitter<string>();
 
-  constructor() {}
+  constructor() { }
 
   get starClass(): string {
     const empty = 'star-outline';
@@ -42,11 +42,11 @@ export class MerchantItemComponent {
     return this.orderTypes.delivery ? 'Delivery' : 'Pickup';
   }
 
-  triggerMerchantClick({ id, orderTypes, storeAddress, settings }) {
-    this.merchantClick.emit({ id, orderTypes, storeAddress, settings });
+  triggerMerchantClick(merchantInfo) {
+    this.merchantClick.emit(merchantInfo);
   }
 
-  triggerFavourite(event, { isFavorite, id }) {
+  triggerFavourite(event, { isFavorite = null, id }: MerchantInfo) {
     this.addToFav.emit({ isFavorite, id });
     event.stopPropagation();
   }

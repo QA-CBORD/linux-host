@@ -15,6 +15,7 @@
 
   &__add-address-wrapper {
     margin-bottom: 20px;
+    position: relative;
 
     @include font-nunito-semibold(16px);
   }
@@ -34,6 +35,11 @@
   &__add-address-btn-container {
     display: flex;
     justify-content: space-evenly;
+  }
+
+  &__add-address-img {
+    position: absolute;
+    right: 0;
   }
 
   &__add-address-btn {
@@ -87,9 +93,11 @@
   }
 
   &__radio-label {
-    color: #c4c4c4;
-
     @include font-nunito-semibold(16px);
+  }
+
+  &__radio-label-sub-header {
+    color: #c4c4c4;
   }
 
   &__submit-btn {

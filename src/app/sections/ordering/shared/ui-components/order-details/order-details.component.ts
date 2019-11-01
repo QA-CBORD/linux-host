@@ -10,6 +10,8 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { OrderItem } from '@sections/ordering';
 import { ORDER_TYPE } from "@sections/ordering/ordering.config";
 import { AddressInfo } from "@core/model/address/address-info";
+import { ModalController } from '@ionic/angular';
+import { DeliveryAddressesModalComponent } from '@sections/ordering/shared/ui-components/delivery-addresses.modal/delivery-addresses.modal.component';
 
 @Component({
   selector: 'st-order-details',
@@ -31,10 +33,12 @@ export class OrderDetailsComponent implements OnInit {
   @Input() subTotal: number;
   @Input() tip: number;
   @Input() accountName: string;
+  @Input() addressModalConfig: {[key: string]: any};
   @Output() onFormChange: EventEmitter<any> = new EventEmitter<any>();
   detailsForm: FormGroup;
 
-  constructor(private readonly fb: FormBuilder) { }
+  constructor(private readonly fb: FormBuilder,
+              private readonly modalController: ModalController) { }
 
   ngOnInit() {
     this.initForm();
@@ -78,10 +82,27 @@ export class OrderDetailsComponent implements OnInit {
   test() {
     console.log(this.detailsForm)
   }
+
+  private async modalWindow() {
+    const modal = await this.modalController.create({
+      component: DeliveryAddressesModalComponent,
+      componentProps: {
+        // buildings: this.buildingsForNewAddressForm,
+        // isOrderTypePickup: this.isOrderTypePickup,
+        // pickupLocations: this.pickupLocations,
+        // deliveryAddresses: this.deliveryAddresses,
+        // merchantId: this.merchantId,
+      },
+    });
+    modal.onDidDismiss().then(({ data }) => {
+      console.log(data)
+    });
+    await modal.present();
+  }
 }
 
 export enum DETAILS_FORM_CONTROL_NAMES {
-  time = 'address',
+  time = 'time',
   address = 'address',
   ingredients = 'ingredients',
   paymentMethod = 'paymentMethod',

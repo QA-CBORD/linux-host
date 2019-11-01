@@ -1,0 +1,80 @@
+@import "tools";
+
+.full-menu {
+	&__header {
+		border-bottom: 1px solid $color-whisper;
+	  }
+
+	&__address-info-list {
+		margin: 10px 0 50px;
+	}
+
+	&__address-container {
+		display: flex;
+		justify-content: space-between;
+		width: 100%;
+	}
+
+	&__arrow-wrapper {
+		flex-basis: 15%;
+    	text-align: right;
+	}
+
+	&__address-title {
+		@include ellipsis;
+		@include font-nunito-heavy(20px);
+	}
+
+	&__address-description {
+		@include font-nunito-regular(12px);
+	}
+
+	&__address-info {
+		margin: 10px 0;
+		display: flex;
+
+		@include font-nunito-heavy(14px);
+	}
+
+	&__address-info-content {
+		margin-left: 5px;
+	}
+
+	&__date-time-container {
+		display: flex;
+		justify-content: space-between;
+		width: 100%;
+	}
+
+	&__date-time-wrapper {
+		display: flex;
+	}
+
+	&__date-time-value {
+		&:first-child {
+			margin-right: 10px;
+		}
+		&:last-child {
+			margin-left: 10px;
+		}
+
+		@include font-nunito-heavy(16px);
+	}
+
+	&__date-time-helper {
+		@include font-nunito-regular(16px);
+	}
+
+	&__menu-item {
+		display: flex;
+		justify-content: space-between;
+		width: 100%;
+
+		@include font-nunito-semibold(16px);
+	}
+
+	&__item-size {
+		opacity: .6;
+	}
+	
+}
