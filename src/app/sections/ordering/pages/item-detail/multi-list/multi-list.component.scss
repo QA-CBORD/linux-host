@@ -1,0 +1,60 @@
+@import 'tools';
+
+.multi-list {
+	&__divider {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        background-color: $color-white-smoke;
+        padding: 9px 17px;
+        --inner-padding-bottom: 0px;
+    }
+
+    &__divider-title {
+        color: $color-black;
+
+        @include font-nunito-heavy(16px);
+    }
+
+    &__divider-subtitle {
+        color: $color-matterhorn;
+
+        @include font-nunito-regular(12px);
+	}
+
+	&__topping-title {
+        color: $color-black;
+        height: 18px;
+        
+        @include font-nunito-heavy(16px);
+    }
+
+    &__topping-price {
+        color: $color-black;
+        height: 14px;
+
+        @include font-nunito-regular(12px);
+	}
+
+	&__list-toppings {
+        padding: 0;
+    }
+
+    &__toppings-items {
+        --border-style: unset;
+        --border-color: #fff;
+        color: $color-black;
+        margin-left: 15px;
+    }
+
+    &__toppings-label {
+
+        @include font-nunito-heavy(16px);
+    }
+
+    &__toppings-item-checkbox {
+        margin-right: 8px;
+        --background-checked: #166dff;
+        --border-color-checked: #166dff;
+    }
+}
