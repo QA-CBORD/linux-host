@@ -57,11 +57,33 @@
   &__row4 {
     height: 64px;
     border-top: 1px solid #ffffff1f;
+
+    .pad-left {
+      padding-left: 10px;
+    }
+
+    .pad-right {
+      padding-right: 10px;
+    }
+
     .button {
       margin: 0 auto;
       height: 48px;
       background: #0000001f;
       border-radius: 12px;
+
+      .icon {
+        height: 28px;
+        width: 28px;
+      }
+
+      .title {
+        color: #fff;
+        @include font-nunito-semibold(11px);
+        letter-spacing: 0px;
+        height: 15px;
+        line-height: 15px;
+      }
     }
   }
 }

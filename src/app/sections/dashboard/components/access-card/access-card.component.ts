@@ -29,6 +29,9 @@ export class AccessCardComponent implements OnInit {
   institutionPhotoUrl: string = '';
   userName: string = '';
   userPhoto: string = '';
+  getMyCardEnabled: boolean = false;
+  mobileAccessEnabled: boolean = false;
+  applePayEnabled: boolean = false;
 
   constructor(
     private readonly userService: UserService,
@@ -38,13 +41,12 @@ export class AccessCardComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    console.log('ACCES CARD On Init Called');
-
     this.setUserName();
     this.setUserPhoto();
     this.setInstitution();
     this.isGETMyCardEnabled();
     this.isMobileAccessEnabled();
+    this.isApplePayEnabled();
   }
 
   private setUserName() {
@@ -94,9 +96,9 @@ export class AccessCardComponent implements OnInit {
         switchMap(({ institutionId }) =>
           this.configService.getSetting(institutionId, Settings.ESetting.MY_CARD_ENABLED)
         ),
-        map(({value}) => value === '1')
+        map(({ value }) => value === '1')
       )
-      .subscribe(response => console.log(response));
+      .subscribe(response => (this.getMyCardEnabled = response));
   }
 
   private isMobileAccessEnabled() {
@@ -105,9 +107,14 @@ export class AccessCardComponent implements OnInit {
         switchMap(({ institutionId }) =>
           this.configService.getSetting(institutionId, Settings.ESetting.MOBILE_ACCESS_ENABLED)
         ),
-        map(({value}) => value === '1')
+        map(({ value }) => value === '1')
       )
-      .subscribe(response => console.log(response));
+      .subscribe(response => (this.mobileAccessEnabled = response));
+  }
+
+  private isApplePayEnabled(){
+    
+
   }
 
 }

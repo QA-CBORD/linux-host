@@ -4,13 +4,15 @@
       lines="none"
       [button]="true"
       [detail]="true"
-      class="tile__topbar"
+      class="topbar"
       detailIcon="/assets/icon/angle-right.svg"
       (click)="handleTopBarClick()"
     >
-      <ion-icon name="{{ wrapperConfig.iconName }}" slot="start"></ion-icon>
+      <div slot="start" class="image-wrapper">
+        <ion-icon class="image" name="{{ wrapperConfig.iconName }}"> </ion-icon>
+      </div>
 
-      <ion-label class="tile__topbar_label">
+      <ion-label class="label">
         {{ wrapperConfig.title }}
       </ion-label>
     </ion-item>

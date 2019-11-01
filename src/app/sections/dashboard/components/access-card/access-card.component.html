@@ -19,18 +19,24 @@
         <div *ngIf="userName" class="user-name">{{ userName }}</div>
       </ion-col>
       <ion-col class="ion-no-padding right">
-        <div class="provisioning">Card not added to wallet</div>
+        <div *ngIf="applePayEnabled" class="provisioning">Card not added to wallet</div>
       </ion-col>
     </ion-row>
     <ion-row class="card__row4 ion-align-items-center ion-justify-content-center">
-      <ion-col size="4">
-        <div class="button"></div>
+      <ion-col size="4" class="pad-left">
+        <div *ngIf="getMyCardEnabled" class="button center">
+          <img class="icon" src="/assets/images/big-check-reward.svg" alt="ip" />
+          <div class="title">Scan Card</div>
+        </div>
       </ion-col>
       <ion-col size="4">
-        <div class="button"></div>
+        <div  *ngIf="mobileAccessEnabled" class="button center">
+          <img class="icon" src="/assets/images/big-check-reward.svg" alt="ip" />
+          <div class="title">Mobile Access</div>
+        </div>
       </ion-col>
-      <ion-col size="4">
-        <div class="button"></div>
+      <ion-col size="4" class="pad-right">
+        <div *ngIf="applePayEnabled"></div>
       </ion-col>
     </ion-row>
   </ion-grid>
