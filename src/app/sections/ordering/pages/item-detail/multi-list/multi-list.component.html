@@ -6,18 +6,20 @@
   </ion-item-divider>
   <!-- [formGroup]="itemOrderForm" -->
   <ion-item-group>
-    <ion-item *ngFor="let option of options; let i = index"
-              lines="none"
-              class="multi-list__toppings-items">
-      <ion-checkbox (ionChange)="onItemsChecked($event.detail)"
-                    class="multi-list__toppings-item-checkbox"
-                    mode="md">
-      </ion-checkbox>
-      <ion-label class="multi-list__toppings-label">
-        <div class="multi-list__topping-title">{{ option.menuItem.name  }}</div>
-        <div *ngIf="option.menuItem.price"
-             class="multi-list__topping-price">+${{ option.menuItem.price }}</div>
-      </ion-label>
-    </ion-item>
+    <ng-container *ngFor="let option of options; let i = index">
+      <ion-item lines="none"
+                class="multi-list__toppings-items"
+                *ngIf="option.visible">
+        <ion-checkbox (ionChange)="onItemsChecked($event.detail)"
+                      class="multi-list__toppings-item-checkbox"
+                      mode="md">
+        </ion-checkbox>
+        <ion-label class="multi-list__toppings-label">
+          <div class="multi-list__topping-title">{{ option.menuItem.name  }}</div>
+          <div *ngIf="option.menuItem.price"
+               class="multi-list__topping-price">+${{ option.menuItem.price }}</div>
+        </ion-label>
+      </ion-item>
+    </ng-container>
   </ion-item-group>
 </ion-list>

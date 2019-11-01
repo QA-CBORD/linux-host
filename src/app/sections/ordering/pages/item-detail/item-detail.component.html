@@ -38,8 +38,8 @@
                         mode="ios">
         <div class="order-detail__divider-title">Specials Instructions</div>
       </ion-item-divider>
+      <!-- [isError]="orderMessage.invalid && orderMessage.touched" -->
       <st-textarea-floating-label [control]="orderMessage"
-                                  [isError]="orderMessage.invalid && orderMessage.touched"
                                   [formControlName]="controlsNames.message"
                                   class="order-detail__order-message"
                                   idd="orderMessage"
@@ -85,12 +85,12 @@
     </ion-button>
   </div>
   <div>
-    <ion-button mode="md"
+    <!-- <ion-button mode="md"
                 type="submit"
                 (click)="onFormSubmit()"
                 class="item-footer__add-btn"
                 [ngClass]="{ 'item-footer__add-btn-disabled': itemOrderForm.invalid }">
       Add ${{ totalPrice }}
-    </ion-button>
+    </ion-button> -->
   </div>
 </ion-footer>

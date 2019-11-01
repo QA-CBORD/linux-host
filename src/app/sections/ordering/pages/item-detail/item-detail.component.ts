@@ -5,7 +5,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { NAVIGATE } from 'src/app/app.global';
 import { zip, fromEvent } from 'rxjs';
 import { CartService, MenuItemInfo } from '@sections/ordering';
-import { take, map, startWith, distinctUntilChanged, shareReplay, tap } from 'rxjs/operators';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'st-item-detail',
@@ -14,25 +14,6 @@ import { take, map, startWith, distinctUntilChanged, shareReplay, tap } from 'rx
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ItemDetailComponent implements OnInit {
-  orderDetails = {
-    itemName: 'French Frees',
-    itemNDescription:
-      "Whether you enjoy a slice as a snack or for breakfast, this bread is so flavorful, you won't need butter.",
-    itemPrice: 6.99,
-    size: [{ name: 'Small', price: null }, { name: 'Medium', price: '2.99' }, { name: 'Large', price: '4.99' }],
-    toppings: [
-      { name: 'Walnuts', price: null },
-      { name: 'Ketchup', price: '1.00' },
-      { name: 'Maple Syrup', price: null },
-      { name: 'Whipped Cream', price: null },
-      { name: 'Peanuts', price: null },
-    ],
-    nutritionsValue: {
-      calories: 210,
-      protein: 15,
-      carbs: 5,
-    },
-  };
 
   itemOrderForm: FormGroup;
   checkedToppings = [];
@@ -52,21 +33,7 @@ export class ItemDetailComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.initForm();
-
-    zip(this.cartService.menuInfo$, this.activatedRoute.queryParams)
-      .pipe(take(1))
-      .subscribe(([menu, { categoryId, menuItemId }]) => {
-        const menuCategory = menu.menuCategories.find(category => category.id === categoryId);
-        const itemDetail = menuCategory.menuCategoryItems.find(category => category.id === menuItemId);
-        this.menuItem = itemDetail.menuItem;
-
-        console.log(this.menuItem.menuItemOptions);
-
-      })
-
-    // fromEvent(window, 'scroll').pipe(tap(x => console.log(x)))
-    //   .subscribe(x => console.log(x));
+    this.initMenuItemOptions();
   }
 
   get orderSize(): AbstractControl {
@@ -96,17 +63,17 @@ export class ItemDetailComponent implements OnInit {
   }
 
   calculateTotalPrice() {
-    let toppingsSum: number = 0;
+    // let toppingsSum: number = 0;
 
-    if (this.checkedToppings.length > 0) {
-      this.checkedToppings.forEach(v => {
-        toppingsSum += Number(v.value.price)
-        this.toppingsPrice = toppingsSum;
-      });
-    }
+    // if (this.checkedToppings.length > 0) {
+    //   this.checkedToppings.forEach(v => {
+    //     toppingsSum += Number(v.value.price)
+    //     this.toppingsPrice = toppingsSum;
+    //   });
+    // }
 
-    const calcValue = (Number(this.sizePrice) + Number(this.toppingsPrice)) * this.counter;
-    this.totalPrice = Number(calcValue.toFixed(2));
+    // const calcValue = (Number(this.sizePrice) + Number(this.toppingsPrice)) * this.counter;
+    // this.totalPrice = Number(calcValue.toFixed(2));
   }
 
   initForm() {
@@ -115,66 +82,114 @@ export class ItemDetailComponent implements OnInit {
       [this.controlsNames.toppings]: [this.checkedToppings],
       [this.controlsNames.message]: ['', [Validators.maxLength(255)]],
     });
+
+    // this.itemOrderForm = this.fb.group({
+    //   items: this.fb.array([this.createItem()])
+    // })
+
+    // const formGroup = {};
+    // this.menuItem.menuItemOptions
+    //   .map(menuGroupItem => {
+    //     formGroup[menuGroupItem.menuGroup.name] = ['']
+    //   })
+
+    //   this.itemOrderForm = this.fb.group(formGroup);
+    console.log(this.itemOrderForm);
+  }
+
+  private onCampusFormBlock() {
+    // const buildingsErrors = [
+    //   errorDecorator(Validators.required, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.buildings].required),
+    // ];
+
+    // const roomErrors = [errorDecorator(Validators.required, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.room].required)];
+
+    // return {
+    //   [this.controlsNames.campus]: ['oncampus'],
+    //   [this.controlsNames.buildings]: ['', buildingsErrors],
+    //   [this.controlsNames.room]: ['', roomErrors],
+    // };
+  }
+
+  createItem() {
+    return this.fb.group({
+      name: ['Jon'],
+      surname: ['Doe']
+    })
   }
 
   sizeChosen(size) {
-    const { name, price } = size;
-    const defaultPrice = this.orderDetails.itemPrice;
+    // const { name, price } = size;
+    // const defaultPrice = this.orderDetails.itemPrice;
 
-    switch (name) {
-      case 'Small':
-        this.sizePrice = defaultPrice;
-        break;
-      case 'Medium':
-        this.sizePrice = Number(defaultPrice) + Number(price);
-        break;
-      case 'Large':
-        this.sizePrice = Number(defaultPrice) + Number(price);
-        break;
-    }
+    // switch (name) {
+    //   case 'Small':
+    //     this.sizePrice = defaultPrice;
+    //     break;
+    //   case 'Medium':
+    //     this.sizePrice = Number(defaultPrice) + Number(price);
+    //     break;
+    //   case 'Large':
+    //     this.sizePrice = Number(defaultPrice) + Number(price);
+    //     break;
+    // }
 
-    this.calculateTotalPrice();
+    // this.calculateTotalPrice();
   }
 
   toppingsChecked(topping) {
     //TODO: need to implement checkbox functional
 
-    console.log(topping);
-    console.log(this.checkedToppings);
+    // console.log(topping);
+    // console.log(this.checkedToppings);
 
 
-    if (!this.checkedToppings.map(v => v.value.name).includes(topping.value.name)) {
-      if (topping.checked && this.checkedToppings.length < 3) {
-        this.checkedToppings.push(topping);
-      }
+    // if (!this.checkedToppings.map(v => v.value.name).includes(topping.value.name)) {
+    //   if (topping.checked && this.checkedToppings.length < 3) {
+    //     this.checkedToppings.push(topping);
+    //   }
 
-    }
+    // }
 
-    this.calculateTotalPrice();
+    // this.calculateTotalPrice();
   }
 
   removeItems() {
-    this.counter > 1 ? this.counter-- : null;
-    this.calculateTotalPrice();
+    // this.counter > 1 ? this.counter-- : null;
+    // this.calculateTotalPrice();
   }
 
   addItems() {
-    this.counter++;
-    this.calculateTotalPrice();
+    // this.counter++;
+    // this.calculateTotalPrice();
   }
 
   onFormSubmit() {
     if (this.itemOrderForm.valid) {
-      const orderState = {
-        amount: this.totalPrice,
-        orderDetails: {
-          size: this.orderSize.value,
-          toppings: this.orderToppings.value,
-          message: this.orderMessage.value,
-        },
-      };
-      console.log(orderState);
+      console.log('form is valid')
+      // const orderState = {
+      //   amount: this.totalPrice,
+      //   orderDetails: {
+      //     size: this.orderSize.value,
+      //     toppings: this.orderToppings.value,
+      //     message: this.orderMessage.value,
+      //   },
+      // };
+      // console.log(orderState);
     }
+  }
+
+  private initMenuItemOptions() {
+    zip(this.cartService.menuInfo$, this.activatedRoute.queryParams)
+      .pipe(take(1))
+      .subscribe(([{ menuCategories }, { categoryId, menuItemId }]) => {
+        const menuCategory = menuCategories.find(({ id }) => id === categoryId);
+        const itemDetail = menuCategory.menuCategoryItems.find(({ id }) => id === menuItemId);
+
+        this.menuItem = itemDetail.menuItem;
+        console.log(this.menuItem.menuItemOptions);
+        this.initForm();
+      })
   }
 }
 

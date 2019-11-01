@@ -15,19 +15,21 @@
 
   <!-- [formControl]="orderSize" -->
   <ion-radio-group lines="none">
-    <ion-item *ngFor="let option of options"
-              lines="none"
-              class="single-list__item-size">
-      <ion-label>
-        <div class="single-list__size-title">{{ option.menuItem.name }}</div>
-        <div *ngIf="option.menuItem.price"
-             class="single-list__size-price">+${{ option.menuItem.price }}</div>
-      </ion-label>
-      <ion-radio class="single-list__radio-size"
-                 slot="start"
-                 (ionSelect)="itemChosen($event.detail.value)"
-                 mode="md">
-      </ion-radio>
-    </ion-item>
+    <ng-container *ngFor="let option of options">
+      <ion-item lines="none"
+                class="single-list__item-size"
+                *ngIf="option.visible">
+        <ion-label>
+          <div class="single-list__size-title">{{ option.menuItem.name }}</div>
+          <div *ngIf="option.menuItem.price"
+               class="single-list__size-price">+${{ option.menuItem.price }}</div>
+        </ion-label>
+        <ion-radio class="single-list__radio-size"
+                   slot="start"
+                   (ionSelect)="itemChosen($event.detail.value)"
+                   mode="md">
+        </ion-radio>
+      </ion-item>
+    </ng-container>
   </ion-radio-group>
 </ion-list>
