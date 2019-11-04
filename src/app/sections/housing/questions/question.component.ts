@@ -43,9 +43,9 @@ export class QuestionComponent implements OnInit {
     const text = this._renderer.createText(question.label);
 
     if (headerWeight > 1) {
-      this._renderer.addClass(header, 'question__secondary-header ion-text-uppercase');
+      this._renderer.addClass(header, 'form__secondary-header');
     } else {
-      this._renderer.addClass(header, 'question__primary-header');
+      this._renderer.addClass(header, 'form__primary-header');
     }
 
     this._renderer.appendChild(header, text);

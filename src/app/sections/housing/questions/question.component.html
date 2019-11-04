@@ -1,6 +1,6 @@
 <div [formGroup]="parentGroup">
   <ng-container [ngSwitch]="question.type">
-    <p *ngSwitchCase="'paragraph'" class="question__item">{{ question.label }}</p>
+    <p *ngSwitchCase="'paragraph'" class="question__paragraph">{{ question.label }}</p>
 
     <st-input-floating-label
       *ngSwitchCase="'text'"
@@ -14,7 +14,7 @@
       [stEmptyFormControl]="parentGroup.get(question['name'])"
     >
       <ng-container *ngIf="!parentGroup.get(question['name']).valid && parentGroup.get(question['name']).touched">
-        <p *ngIf="parentGroup.get(question['name']).getError('required')" class="control-error">
+        <p *ngIf="parentGroup.get(question['name']).getError('required')" class="control-hint control-hint--error">
           This field is required.
         </p>
       </ng-container>
@@ -33,7 +33,7 @@
       [stEmptyFormControl]="parentGroup.get(question['name'])"
     >
       <ng-container *ngIf="!parentGroup.get(question['name']).valid && parentGroup.get(question['name']).touched">
-        <p *ngIf="parentGroup.get(question['name']).getError('required')" class="control-error">
+        <p *ngIf="parentGroup.get(question['name']).getError('required')" class="control-hint control-hint--error">
           This field is required.
         </p>
       </ng-container>
@@ -68,7 +68,7 @@
 
       <ng-container role="error">
         <ng-container *ngIf="!parentGroup.get(question['name']).valid && parentGroup.get(question['name']).touched">
-          <p *ngIf="parentGroup.get(question['name']).getError('required')" class="control-error">
+          <p *ngIf="parentGroup.get(question['name']).getError('required')" class="control-hint control-hint--error">
             This field is required.
           </p>
         </ng-container>
@@ -76,15 +76,18 @@
     </st-select-floating-label>
 
     <ng-container *ngSwitchCase="'checkbox-group'">
-      <div *ngIf="question['facilityPicker']" class="question__item" lines="none">
-        <st-facility-picker [question]="question" [parentForm]="parentGroup"></st-facility-picker>
-      </div>
+      <st-facility-picker
+        class="form-section question__item"
+        [question]="question"
+        [parentForm]="parentGroup"
+        *ngIf="question['facilityPicker']"
+      ></st-facility-picker>
 
       <div *ngIf="!question['facilityPicker']" class="question__item" lines="none">
-        <h3 class="question__secondary-header">{{ question.label }}</h3>
+        <h3 class="form__secondary-header">{{ question.label }}</h3>
 
         <ng-container *ngIf="!parentGroup.get(question['name']).valid && parentGroup.get(question['name']).touched">
-          <p *ngIf="parentGroup.get(question['name']).getError('required')" class="control-error">
+          <p *ngIf="parentGroup.get(question['name']).getError('required')" class="control-hint control-hint--error">
             This field is required.
           </p>
         </ng-container>
@@ -92,34 +95,34 @@
         <ion-item
           [formArrayName]="question['name']"
           *ngFor="let item of question['values']; index as idx"
-          class="ion-no-padding"
+          class="ion-no-padding form-checkbox"
           lines="none"
         >
           <ion-checkbox
-            class="question__checkbox"
+            class="form-checkbox__control"
             mode="md"
             [checked]="item.selected"
             [formControlName]="idx"
             slot="start"
           ></ion-checkbox>
-          <ion-label>{{ item.label }}</ion-label>
+          <ion-label class="form-label">{{ item.label }}</ion-label>
         </ion-item>
       </div>
     </ng-container>
 
-    <div *ngSwitchCase="'radio-group'" class="question__item" lines="none">
-      <h3 class="question__secondary-header">{{ question.label }}</h3>
+    <div *ngSwitchCase="'radio-group'" class="form-section" lines="none">
+      <h3 class="form__secondary-header">{{ question.label }}</h3>
 
       <ng-container *ngIf="!parentGroup.get(question['name']).valid && parentGroup.get(question['name']).touched">
-        <p *ngIf="parentGroup.get(question['name']).getError('required')" class="control-error">
+        <p *ngIf="parentGroup.get(question['name']).getError('required')" class="control-hint control-hint--error">
           This field is required.
         </p>
       </ng-container>
 
       <ion-radio-group [formControlName]="question['name']">
         <ion-item *ngFor="let item of question['values']; index as idx" class="ion-no-padding" lines="none">
-          <ion-label>{{ item.label }}</ion-label>
-          <ion-radio class="question__radio" mode="md" slot="start" [value]="item.value"></ion-radio>
+          <ion-label class="form-label">{{ item.label }}</ion-label>
+          <ion-radio class="form-radio__control" mode="md" slot="start" [value]="item.value"></ion-radio>
         </ion-item>
       </ion-radio-group>
     </div>

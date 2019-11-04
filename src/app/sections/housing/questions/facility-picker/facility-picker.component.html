@@ -1,5 +1,5 @@
 <ng-container [formGroup]="parentForm">
-  <h3 class="question__secondary-header">{{ question.label }}</h3>
+  <h3 class="form__secondary-header">{{ question.label }}</h3>
 
   <ion-reorder-group disabled="false" (ionItemReorder)="doReorder($event)" [formArrayName]="question.name">
     <ion-item *ngFor="let facility of facilities; trackBy: trackByValue; index as idx">

@@ -10,7 +10,7 @@
   --padding-start: 13px;
 
   border: 1px solid $color-light-gray;
-  border-radius: 4px;
+  border-radius: 8px;
   position: relative;
 
   &:focus,
@@ -30,21 +30,10 @@
       opacity: 1;
     }
 
-    &::before {
-      background-image: url('/assets/icon/chevron-down-active.svg');
-    }
+    @include chevron-down-active();
   }
 
-  &::before {
-    background-image: url('/assets/icon/chevron-down.svg');
-    content: '';
-    position: absolute;
-    top: 50%;
-    right: 15px;
-    width: 14px;
-    height: 9px;
-    transform: translateY(-50%);
-  }
+  @include chevron-down();
 }
 
 .date-select__placeholder {
