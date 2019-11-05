@@ -31,6 +31,10 @@ export class QuestionComponent implements OnInit {
     cssClass: 'custom-deposit-actionSheet',
   };
 
+  errorMessages: any = {
+    required: 'This field is required.',
+  };
+
   ngOnInit(): void {
     if (this.question.type === 'header') {
       this.createHeader(this.question as QuestionHeader);

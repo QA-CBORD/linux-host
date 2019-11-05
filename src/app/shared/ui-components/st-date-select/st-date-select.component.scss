@@ -1,6 +1,14 @@
 @import 'tools';
 
+%placeholder-transform {
+  background-color: $color-white;
+  padding: 0 3px;
+  transform: scale(0.75) translateY(-29px);
+  opacity: 1;
+}
+
 :host {
+  display: block;
   position: relative;
 }
 
@@ -16,21 +24,31 @@
   &:focus,
   &:focus-within,
   &:active,
-  :host.date-select--filled & {
+  &--filled {
+    @include chevron-down-active();
+
     --padding-top: 13px;
     --padding-bottom: 13px;
 
     border: 2px solid $color-dodger-blue;
 
     & + .date-select__placeholder {
-      background-color: $color-white;
-      color: $color-dodger-blue;
-      padding: 0 3px;
-      transform: scale(0.75) translateY(-29px);
-      opacity: 1;
-    }
+      @extend %placeholder-transform;
 
-    @include chevron-down-active();
+      color: $color-dodger-blue;
+    }
+  }
+
+  &.ng-invalid.ng-touched {
+    @include chevron-down-error();
+
+    border: 2px solid $color-alizarin;
+
+    & + .date-select__placeholder {
+      @extend %placeholder-transform;
+
+      color: $color-alizarin;
+    }
   }
 
   @include chevron-down();

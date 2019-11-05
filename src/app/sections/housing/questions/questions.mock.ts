@@ -55,7 +55,14 @@ export function generateQuestions(): any[] {
       ],
       attribute: null,
     },
-    { type: 'text', label: 'Preferred Name', name: 'text-1568315394169', subtype: 'text', attribute: 'Name' },
+    {
+      type: 'text',
+      label: 'Preferred Name',
+      name: 'text-1568315394169',
+      subtype: 'text',
+      attribute: 'Name',
+      required: true,
+    },
     {
       type: 'text',
       label: 'University Student ID Number',
@@ -63,7 +70,7 @@ export function generateQuestions(): any[] {
       subtype: 'text',
       attribute: 'ID Number',
     },
-    { type: 'date', label: 'Date of birth', name: 'date-1568315399895', attribute: 'Date of birth' },
+    { type: 'date', label: 'Date of birth', name: 'date-1568315399895', attribute: 'Date of birth', required: true },
     {
       type: 'text',
       label: 'Cell Phone Number',

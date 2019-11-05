@@ -13,11 +13,10 @@
       [isError]="!parentGroup.get(question['name']).valid && parentGroup.get(question['name']).touched"
       [stEmptyFormControl]="parentGroup.get(question['name'])"
     >
-      <ng-container *ngIf="!parentGroup.get(question['name']).valid && parentGroup.get(question['name']).touched">
-        <p *ngIf="parentGroup.get(question['name']).getError('required')" class="control-hint control-hint--error">
-          This field is required.
-        </p>
-      </ng-container>
+      <st-control-errors
+        [control]="parentGroup.get(question['name'])"
+        [errorMessages]="errorMessages"
+      ></st-control-errors>
     </st-input-floating-label>
 
     <st-textarea-floating-label
@@ -32,21 +31,25 @@
       rows="3"
       [stEmptyFormControl]="parentGroup.get(question['name'])"
     >
-      <ng-container *ngIf="!parentGroup.get(question['name']).valid && parentGroup.get(question['name']).touched">
-        <p *ngIf="parentGroup.get(question['name']).getError('required')" class="control-hint control-hint--error">
-          This field is required.
-        </p>
-      </ng-container>
+      <st-control-errors
+        [control]="parentGroup.get(question['name'])"
+        [errorMessages]="errorMessages"
+      ></st-control-errors>
     </st-textarea-floating-label>
 
-    <st-date-select
-      *ngSwitchCase="'date'"
-      class="question__item"
-      [parentForm]="parentGroup"
-      [label]="question.label"
-      [name]="question['name']"
-      displayFormat="MMM/DD/YYYY"
-    ></st-date-select>
+    <div *ngSwitchCase="'date'" class="question__item">
+      <st-date-select
+        [parentGroup]="parentGroup"
+        [label]="question.label"
+        [name]="question['name']"
+        displayFormat="MMM/DD/YYYY"
+      ></st-date-select>
+
+      <st-control-errors
+        [control]="parentGroup.get(question['name'])"
+        [errorMessages]="errorMessages"
+      ></st-control-errors>
+    </div>
 
     <st-select-floating-label
       *ngSwitchCase="'select'"
@@ -67,11 +70,10 @@
       </ng-container>
 
       <ng-container role="error">
-        <ng-container *ngIf="!parentGroup.get(question['name']).valid && parentGroup.get(question['name']).touched">
-          <p *ngIf="parentGroup.get(question['name']).getError('required')" class="control-hint control-hint--error">
-            This field is required.
-          </p>
-        </ng-container>
+        <st-control-errors
+          [control]="parentGroup.get(question['name'])"
+          [errorMessages]="errorMessages"
+        ></st-control-errors>
       </ng-container>
     </st-select-floating-label>
 
@@ -83,14 +85,13 @@
         *ngIf="question['facilityPicker']"
       ></st-facility-picker>
 
-      <div *ngIf="!question['facilityPicker']" class="question__item" lines="none">
+      <div *ngIf="!question['facilityPicker']" class="question__item">
         <h3 class="form__secondary-header">{{ question.label }}</h3>
 
-        <ng-container *ngIf="!parentGroup.get(question['name']).valid && parentGroup.get(question['name']).touched">
-          <p *ngIf="parentGroup.get(question['name']).getError('required')" class="control-hint control-hint--error">
-            This field is required.
-          </p>
-        </ng-container>
+        <st-control-errors
+          [control]="parentGroup.get(question['name'])"
+          [errorMessages]="errorMessages"
+        ></st-control-errors>
 
         <ion-item
           [formArrayName]="question['name']"
@@ -110,17 +111,16 @@
       </div>
     </ng-container>
 
-    <div *ngSwitchCase="'radio-group'" class="form-section" lines="none">
+    <div *ngSwitchCase="'radio-group'" class="form-section">
       <h3 class="form__secondary-header">{{ question.label }}</h3>
 
-      <ng-container *ngIf="!parentGroup.get(question['name']).valid && parentGroup.get(question['name']).touched">
-        <p *ngIf="parentGroup.get(question['name']).getError('required')" class="control-hint control-hint--error">
-          This field is required.
-        </p>
-      </ng-container>
+      <st-control-errors
+        [control]="parentGroup.get(question['name'])"
+        [errorMessages]="errorMessages"
+      ></st-control-errors>
 
       <ion-radio-group [formControlName]="question['name']">
-        <ion-item *ngFor="let item of question['values']; index as idx" class="ion-no-padding" lines="none">
+        <ion-item *ngFor="let item of question['values']" class="ion-no-padding" lines="none">
           <ion-label class="form-label">{{ item.label }}</ion-label>
           <ion-radio class="form-radio__control" mode="md" slot="start" [value]="item.value"></ion-radio>
         </ion-item>
