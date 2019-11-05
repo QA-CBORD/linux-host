@@ -1,43 +1,53 @@
 <div class="card">
-  <ion-grid class="ion-no-padding" style="height: 280px;">
-    <ion-row class="card__row1 ion-align-items-center">
-      <ion-col size="2">
-        <img *ngIf="institutionPhotoUrl" class="image" src="{{ institutionPhotoUrl }}" alt="ip" />
+  <ion-grid class="ion-no-padding" style="height: 281px;">
+    <ion-row class="card__header">
+      <ion-col class="card__header-logo-wrapper">
+        <img *ngIf="institutionPhotoUrl" class="card__header-logo" [src]="institutionPhotoUrl" alt="institution logo" />
       </ion-col>
-      <ion-col size="9">
-        <div *ngIf="institutionInfo" class="title left">{{ institutionInfo.name }}</div>
+      <ion-col class="card__header-title-wrapper" size="9">
+        <div *ngIf="institutionInfo" class="card__header-title left">{{ institutionInfo.name }}</div>
       </ion-col>
-      <ion-col size="1"></ion-col>
-    </ion-row>
-    <ion-row class="card__row2">
-      <ion-col class="center">
-        <img *ngIf="userPhoto" class="card__image" src="{{ userPhoto }}" alt="user photo" />
+      <ion-col class="card__header-dots-btn-wrapper">
+        <ion-button class="card__header-dots-btn" mode="ios"><img src="/assets/icon/more-vertical.svg" /> </ion-button>
       </ion-col>
     </ion-row>
-    <ion-row class="card__row3 ion-align-items-end">
-      <ion-col class="ion-no-padding left">
-        <div *ngIf="userName" class="user-name">{{ userName }}</div>
-      </ion-col>
-      <ion-col class="ion-no-padding right">
-        <div *ngIf="applePayEnabled" class="provisioning">Card not added to wallet</div>
+    <ion-row class="card__campus-container">
+      <ion-col class="card__campus-background">
+        <img *ngIf="userPhoto" class="card__campus-student-avatar" src="{{ userPhoto }}" alt="user photo" />
       </ion-col>
     </ion-row>
-    <ion-row class="card__row4 ion-align-items-center ion-justify-content-center">
-      <ion-col size="4" class="pad-left">
-        <div *ngIf="getMyCardEnabled" class="button center">
-          <img class="icon" src="/assets/images/big-check-reward.svg" alt="ip" />
-          <div class="title">Scan Card</div>
-        </div>
+    <ion-row class="card__student-container">
+      <ion-col class="card__student-name-wrapper" size="auto">
+        <div *ngIf="userName" class="card__student-name">{{ userName }}</div>
       </ion-col>
-      <ion-col size="4">
-        <div  *ngIf="mobileAccessEnabled" class="button center">
-          <img class="icon" src="/assets/images/big-check-reward.svg" alt="ip" />
-          <div class="title">Mobile Access</div>
-        </div>
+      <ion-col>
+        <div *ngIf="applePayEnabled" class="card__student-card-not-added">Card not added to wallet</div>
       </ion-col>
-      <ion-col size="4" class="pad-right">
-        <div *ngIf="applePayEnabled"></div>
+    </ion-row>
+    <ion-row class="card__quick-actions-container">
+      <ion-col class="card__quick-actions-wrapper">
+        <ion-button mode="ios" *ngIf="getMyCardEnabled" class="card__quick-actions-btn">
+          <div class="card__quick-actions-btn-wrapper">
+            <img class="card__icon" src="/assets/icon/barcode.svg" alt="barcode" />
+            <div class="card__icon-title">Scan Card</div>
+          </div>
+        </ion-button>
+      </ion-col>
+      <ion-col class="card__quick-actions-wrapper">
+        <ion-button mode="ios" *ngIf="mobileAccessEnabled" class="card__quick-actions-btn">
+          <div class="card__quick-actions-btn-wrapper">
+            <img class="card__icon" src="/assets/icon/mobile-access.svg" alt="mobile access" />
+            <div class="card__icon-title">Mobile Access</div>
+          </div>
+        </ion-button>
+      </ion-col>
+      <ion-col *ngIf="applePayEnabled" class="card__quick-actions-wrapper">
+        <ion-button mode="ios" class="card__apple-wallet-btn"
+          ><img src="/assets/icon/Add_to_Apple_Wallet_rgb_US-UK.svg"
+        /></ion-button>
       </ion-col>
     </ion-row>
   </ion-grid>
 </div>
+
+<!-- <ion-icon mode="md" name="more"></ion-icon> -->

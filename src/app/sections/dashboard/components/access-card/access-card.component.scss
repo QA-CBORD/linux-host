@@ -6,96 +6,139 @@
   background: linear-gradient(to bottom right, #166dff, #0043b3);
   height: 280px;
 
-  &__image {
-    border-radius: 180px;
+  &__header {
+    height: 48px;
+    align-items: center;
+
+    &-logo-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0;
+    }
+
+    &-logo {
+      height: 32px;
+      width: 32px;
+    }
+
+    &-title-wrapper {
+      padding: 0;
+    }
+
+    &-title {
+      color: $color-white;
+
+      @include font-nunito-regular(20px);
+    }
+
+    &-dots-btn-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0;
+    }
+
+    &-dots-btn {
+      --border-radius: 15px;
+      --background: none;
+      --padding-start: 0;
+      --padding-end: 0;
+      font-size: 15px;
+    }
+  }
+
+  &__campus-container {
+    height: 85px;
+  }
+
+  &__campus-background {
+    background-color: #ffffff5f;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+  }
+
+  &__campus-student-avatar {
+    position: absolute;
+    object-fit: cover;
+    border-radius: 50%;
     height: 100px;
     width: 100px;
-    transform: translate(0%, 35%);
-    object-fit: cover;
+    top: 36px;
   }
 
-  &__row1 {
-    height: 48px;
-
-    .title {
-      color: #fff;
-      @include font-nunito-regular(20px);
-      letter-spacing: 0;
-      // line-height: 18px;
-    }
-
-    .image {
-      height: 48px;
-      width: 48px;
-    }
+  &__student-container {
+    height: 80px;
+    align-items: flex-end;
+    padding: 0 12px;
   }
 
-  &__row2 {
-    height: 84px;
-    background-color: #ffffff5f;
+  &__student-name-wrapper {
+    padding: 0;
   }
 
-  &__row3 {
-    height: 84px;
-    padding-bottom: 4px;
-    .user-name {
-      color: #fff;
-      @include font-nunito-semibold(20px);
-      letter-spacing: 0px;
-      margin-left: 12px;
-    }
+  &__student-name {
+    color: $color-white;
 
-    .provisioning {
-      color: #fff;
-      @include font-nunito-semibold(12px);
-      letter-spacing: 0px;
-      margin-bottom: 4px;
-      margin-right: 12px;
-    }
+    @include font-nunito-semibold(20px);
   }
 
-  &__row4 {
+  &__student-card-not-added {
+    color: $color-white;
+    text-align: right;
+    padding: 0;
+
+    @include font-nunito-semibold(12px);
+  }
+
+  &__quick-actions-container {
     height: 64px;
     border-top: 1px solid #ffffff1f;
-
-    .pad-left {
-      padding-left: 10px;
-    }
-
-    .pad-right {
-      padding-right: 10px;
-    }
-
-    .button {
-      margin: 0 auto;
-      height: 48px;
-      background: #0000001f;
-      border-radius: 12px;
-
-      .icon {
-        height: 28px;
-        width: 28px;
-      }
-
-      .title {
-        color: #fff;
-        @include font-nunito-semibold(11px);
-        letter-spacing: 0px;
-        height: 15px;
-        line-height: 15px;
-      }
-    }
+    margin: 0 8px;
   }
-}
 
-.center {
-  text-align: center;
-}
+  &__quick-actions-wrapper {
+    display: flex;
+    align-items: center;
+    padding: 2px;
+  }
 
-.left {
-  text-align: left;
-}
+  &__quick-actions-btn {
+    width: 100%;
+    height: 48px;
+    --background: #0000001f;
+    --padding-start: 0;
+    --padding-end: 0;
+    --border-radius: 12px;
+    margin: 0;
+  }
 
-.right {
-  text-align: right;
+  &__quick-actions-btn-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+  }
+
+  &__icon {
+    height: 28px;
+    width: 28px;
+    color: #326ac7;
+  }
+
+  &__icon-title {
+    color: #ced7e6;
+
+    @include font-nunito-semibold(10px);
+  }
+
+  &__apple-wallet-btn {
+    --background: none;
+    --padding-start: 0;
+    --padding-end: 0;
+    width: 111px;
+  }
 }

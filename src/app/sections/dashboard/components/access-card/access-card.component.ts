@@ -26,7 +26,7 @@ export class AccessCardComponent implements OnInit {
   /// apple wallet???
 
   institutionInfo: Institution;
-  institutionPhotoUrl: string = '';
+  institutionPhotoUrl: SafeResourceUrl;
   userName: string = '';
   userPhoto: string = '';
   getMyCardEnabled: boolean = false;
@@ -86,7 +86,11 @@ export class AccessCardComponent implements OnInit {
       )
       .subscribe(([instInfo, instPhotoUrl]) => {
         this.institutionInfo = instInfo;
-        this.institutionPhotoUrl = instPhotoUrl;
+        this.institutionPhotoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(instPhotoUrl);
+        console.log('notSafe:  '+instPhotoUrl);
+        console.log('Safe:  '+this.institutionPhotoUrl);
+        
+        
       });
   }
 
