@@ -133,7 +133,7 @@ export class OrderingApiService extends BaseService {
     state = null,
     building = null,
     room = null,
-  }): Observable<any> {
+  }): Observable<AddressInfo> {
     const methodName = 'updateUserAddress';
     const campusValue = parseInt(campus);
     let addedAddress;
