@@ -3,7 +3,7 @@
 .full-menu {
 	&__header {
 		border-bottom: 1px solid $color-whisper;
-	  }
+	}
 
 	&__address-info-list {
 		margin: 10px 0 50px;
@@ -17,7 +17,8 @@
 
 	&__arrow-wrapper {
 		flex-basis: 15%;
-    	text-align: right;
+		text-align: right;
+		margin-right: 10px;
 	}
 
 	&__address-title {
@@ -43,6 +44,7 @@
 	&__date-time-container {
 		display: flex;
 		justify-content: space-between;
+		align-items: center;
 		width: 100%;
 	}
 

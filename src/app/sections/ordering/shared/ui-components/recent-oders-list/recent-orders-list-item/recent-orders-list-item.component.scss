@@ -1,14 +1,15 @@
 @import "tools";
 
 .order-card {
-  box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.04), 0 2px 14px 0 rgba(0, 0, 0, 0.12);
+  box-shadow: 0 0 4px 0 #0000000a, 0 2px 14px 0 #0000001f;
   border-radius: 8px;
+  padding: 10px 15px;
+  margin: 15px 10px;
 
   &__header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 5px 0;
   }
 
   &__name {
@@ -24,16 +25,12 @@
   }
 
   &__description {
-    letter-spacing: 0;
-    line-height: 18px;
     color: $color-dim-gray;
 
     @include font-nunito-regular(14px);
   }
 
   &__date {
-    letter-spacing: 0;
-    line-height: 18px;
     color: $color-dim-gray;
 
     @include font-nunito-regular(14px);
