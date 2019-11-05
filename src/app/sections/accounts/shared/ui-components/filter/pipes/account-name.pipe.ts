@@ -1,9 +1,9 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { AccountsService } from 'src/app/pages/accounts/services/accounts.service';
-import { ALL_ACCOUNTS, CONTENT_STRINGS } from 'src/app/pages/accounts/accounts.config';
-import { TransactionService } from 'src/app/pages/accounts/services/transaction.service';
+import { AccountsService } from 'src/app/sections/accounts/services/accounts.service';
+import { ALL_ACCOUNTS, CONTENT_STRINGS } from 'src/app/sections/accounts/accounts.config';
+import { TransactionService } from 'src/app/sections/accounts/services/transaction.service';
 
 @Pipe({
   name: 'accountName',
