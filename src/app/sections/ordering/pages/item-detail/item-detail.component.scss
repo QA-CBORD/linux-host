@@ -56,6 +56,12 @@
         @include font-nunito-regular(14px);
     }
 
+    &__divider-title {
+        color: $color-black;
+
+        @include font-nunito-heavy(16px);
+    }
+    
     &__special-instructions {
         margin: 0;
     }

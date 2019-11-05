@@ -1,9 +1,9 @@
 import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { FormGroup, FormControl, FormBuilder, Validators, AbstractControl } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NAVIGATE } from 'src/app/app.global';
-import { zip, fromEvent } from 'rxjs';
+import { zip, Subscription } from 'rxjs';
 import { CartService, MenuItemInfo } from '@sections/ordering';
 import { take } from 'rxjs/operators';
 
@@ -15,14 +15,9 @@ import { take } from 'rxjs/operators';
 })
 export class ItemDetailComponent implements OnInit {
 
+  private readonly sourceSubscription: Subscription = new Subscription();
   itemOrderForm: FormGroup;
-  checkedToppings = [];
-  counter: number = 1;
-  sizePrice: number = 0;
-  toppingsPrice: number = 0;
-  totalPrice: number = 0;
-
-
+  order = { counter: 1, totalPrice: 0, optionsPrice: 0 }
 
   menuItem: MenuItemInfo;
   constructor(
@@ -36,6 +31,10 @@ export class ItemDetailComponent implements OnInit {
     this.initMenuItemOptions();
   }
 
+  ngOnDestroy() {
+    this.sourceSubscription.unsubscribe();
+  }
+
   onClose() {
     this.activatedRoute.queryParams
       .pipe(take(1))
@@ -46,78 +45,40 @@ export class ItemDetailComponent implements OnInit {
       })
   }
 
-  calculateTotalPrice() {
-    // let toppingsSum: number = 0;
-
-    // if (this.checkedToppings.length > 0) {
-    //   this.checkedToppings.forEach(v => {
-    //     toppingsSum += Number(v.value.price)
-    //     this.toppingsPrice = toppingsSum;
-    //   });
-    // }
-
-    // const calcValue = (Number(this.sizePrice) + Number(this.toppingsPrice)) * this.counter;
-    // this.totalPrice = Number(calcValue.toFixed(2));
-  }
-
   initForm() {
     const formGroup = {};
     this.menuItem.menuItemOptions
-      .map(menuGroupItem => {
-        formGroup[menuGroupItem.menuGroup.name] = ['']
+      .map(({ menuGroup }) => {
+        if (menuGroup.maximum === 1 && menuGroup.minimum === 1) {
+          formGroup[menuGroup.name] = ['', [Validators.required]];
+          return;
+        }
+        formGroup[menuGroup.name] = [[], [
+          validateMinLengthOfArray(menuGroup.minimum), validateMaxLengthOfArray(menuGroup.maximum)
+        ]];
       })
 
     this.itemOrderForm = this.fb.group({
       ...formGroup,
-      'message': ['', [Validators.maxLength(255)]]
+      'message': ['', [Validators.minLength(1), Validators.maxLength(255)]]
     });
-    console.log(this.itemOrderForm);
+
+    this.valueChanges();
   }
 
-  sizeChosen(size) {
-    // const { name, price } = size;
-    // const defaultPrice = this.orderDetails.itemPrice;
-
-    // switch (name) {
-    //   case 'Small':
-    //     this.sizePrice = defaultPrice;
-    //     break;
-    //   case 'Medium':
-    //     this.sizePrice = Number(defaultPrice) + Number(price);
-    //     break;
-    //   case 'Large':
-    //     this.sizePrice = Number(defaultPrice) + Number(price);
-    //     break;
-    // }
-
-    // this.calculateTotalPrice();
-  }
-
-  toppingsChecked(topping) {
-    //TODO: need to implement checkbox functional
-
-    // console.log(topping);
-    // console.log(this.checkedToppings);
-
-
-    // if (!this.checkedToppings.map(v => v.value.name).includes(topping.value.name)) {
-    //   if (topping.checked && this.checkedToppings.length < 3) {
-    //     this.checkedToppings.push(topping);
-    //   }
-
-    // }
-
-    // this.calculateTotalPrice();
+  calculateTotalPrice() {
+    const calcValue = (this.menuItem.price + this.order.optionsPrice) * this.order.counter;
+    this.order = { ...this.order, totalPrice: Number(calcValue.toFixed(2)) };
   }
 
   removeItems() {
-    // this.counter > 1 ? this.counter-- : null;
-    // this.calculateTotalPrice();
+    this.order.counter > 1 ? this.order.counter-- : null;
+    this.calculateTotalPrice();
   }
 
   addItems() {
-    // this.counter++;
-    // this.calculateTotalPrice();
+    this.order.counter++;
+    this.calculateTotalPrice();
   }
 
   onFormSubmit() {
@@ -134,8 +95,56 @@ export class ItemDetailComponent implements OnInit {
         const itemDetail = menuCategory.menuCategoryItems.find(({ id }) => id === menuItemId);
 
         this.menuItem = itemDetail.menuItem;
+        this.order = { ...this.order, totalPrice: this.menuItem.price }
+
         console.log(this.menuItem.menuItemOptions);
         this.initForm();
       })
+  }
+
+  private valueChanges() {
+    const subscription = this.itemOrderForm.valueChanges
+      .subscribe(formValue => {
+        const arrayOfvalues: any[] = Object.values(formValue);
+        this.order = { ...this.order, optionsPrice: 0 };
+        arrayOfvalues.map(value => {
+          if (typeof value === 'string') {
+            return;
+          }
+
+          if (value.length) {
+            this.order.optionsPrice = value.reduce((total, { price }) => price + total, 0);
+            return;
+          }
+
+          if (value && value.price) {
+            this.order = { ...this.order, optionsPrice: this.order.optionsPrice + value.price }
+            return;
+          }
+        })
+        console.log(this.order);
+        this.calculateTotalPrice();
+      })
+
+    this.sourceSubscription.add(subscription);
+  }
+}
+
+
+export const validateMinLengthOfArray = (min: number | undefined): ValidationErrors | null => {
+  return (c: AbstractControl): { [key: string]: any } => {
+    if (!min || c.value.length >= min)
+      return null;
+
+    return { 'minLength': { valid: false } };
+  }
+}
+
+export const validateMaxLengthOfArray = (max: number | undefined): ValidationErrors | null => {
+  return (c: AbstractControl): { [key: string]: any } => {
+    if (!max || c.value.length <= max)
+      return null;
+
+    return { 'maxLength': { valid: false } };
   }
 }

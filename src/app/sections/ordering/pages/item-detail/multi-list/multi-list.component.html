@@ -2,7 +2,12 @@
   <ion-item-divider class="multi-list__divider"
                     mode="ios">
     <div class="multi-list__divider-title">{{name}}</div>
-    <div class="multi-list__divider-subtitle">Select up to 3</div>
+    <div class="multi-list__divider-subtitle">
+      <ng-container *ngIf="!minimum && maximum">Select up to {{maximum}}</ng-container>
+      <ng-container *ngIf="minimum && !maximum">Select at least {{minimum}}</ng-container>
+      <ng-container *ngIf="minimum && maximum && minimum === maximum">Select {{maximum}}</ng-container>
+      <ng-container *ngIf="minimum < maximum">Select {{minimum}} to {{maximum}}</ng-container>
+    </div>
   </ion-item-divider>
   <ion-item-group>
     <ng-container *ngFor="let option of options; let i = index">

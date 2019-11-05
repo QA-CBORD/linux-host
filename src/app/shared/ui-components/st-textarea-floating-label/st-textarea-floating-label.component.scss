@@ -50,7 +50,7 @@
   }
 }
 
-:host-context(.ng-valid) .textarea__control {
+:host-context(.ng-valid.ng-toched) .textarea__control {
   border: 2px solid $color-dodger-blue;
 
   & + .textarea__placeholder {

@@ -18,16 +18,33 @@ export const CUSTOM_MULTILIST_CONTROL_VALUE_ACCESSOR: any = {
 export class MultiListComponent extends DefaultValueAccessor implements OnInit {
 
   @Input() name: string;
+  @Input() minimum: string;
+  @Input() maximum: string;
   @Input() options: MenuGroupItemInfo[];
   @Input() control: AbstractControl = new FormControl();
   onTouched: () => void;
   onChange: (_: any) => void;
-  private innerValue: any = '';
+  private innerValue: any[] = [];
 
-  ngOnInit() { }
+  ngOnInit() {
+  }
 
-  onItemsChecked(event) {
-    console.log(event);
+  onItemsChecked({ detail: { value } }) {
+    let innerArray = this.innerValue;
+    const formValue = innerArray.find(({ id }) => id === value.id);
+    if (!formValue) {
+      innerArray.push(value);
+    } else {
+      for (var i = 0; i < innerArray.length; i++) {
+        if (this.innerValue[i].id === value.id) {
+          innerArray.splice(i, 1);
+        }
+      }
+    }
+
+
+    this.writeValue(innerArray);
+    this.onChange(innerArray);
   }
 
   //get accessor
@@ -43,9 +60,10 @@ export class MultiListComponent extends DefaultValueAccessor implements OnInit {
   }
 
   //From ControlValueAccessor interface
-  writeValue(value: any) {
-    // this.inputRef.nativeElement.value = value;
-    this.innerValue = value;
+  writeValue(value) {
+    if (value) {
+      this.innerValue = value;
+    }
   }
 
   //From ControlValueAccessor interface
