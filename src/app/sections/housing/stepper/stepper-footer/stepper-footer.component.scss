@@ -1,0 +1,14 @@
+@import 'tools';
+
+.stepper__footer {
+  border-top: 1px solid $color-light-gray;
+  display: flex;
+  justify-content: space-between;
+  padding-top: 16px;
+}
+
+.stepper-footer__button--right {
+  :host ::ng-deep & {
+    margin-left: auto;
+  }
+}

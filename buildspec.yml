@@ -12,7 +12,6 @@ phases:
       - echo **** Installing required packages ****
       - yum install epel-release -y
       - yum install -y @nodejs
-      - yum install nodejs -y
       - node --version
       - npm --version
       - yum install rpm-build -y

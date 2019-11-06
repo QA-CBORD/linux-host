@@ -18,7 +18,7 @@
       }
     }
   }
-  .sc-ion-popover-ios{
+  .sc-ion-popover-ios {
     opacity: 1;
   }
   //Temp styles for popover:
@@ -131,4 +131,11 @@
       transform: translate3d(4px, 0, 0);
     }
   }
+}
+
+.control-error {
+  margin: 0;
+  color: $color-flame-red;
+
+  @include font-nunito-heavy(12px);
 }
