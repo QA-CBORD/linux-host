@@ -154,7 +154,7 @@ export class DataCache {
     DataCache.localCache.addSetting(settingInfo);
   }
 
-  getInstitutionSetting(setting: Globals.Settings.ESetting) {
+  getInstitutionSetting(setting: Globals.Settings.Setting) {
     return DataCache.localCache.getSetting(setting).value;
   }
 
