@@ -12,6 +12,8 @@ import { UserPhotoList } from '../../model/user';
 import { HttpClient } from '@angular/common/http';
 import { NativeProvider, NativeData } from '@core/provider/native-provider/native.provider';
 import { AddressInfo } from '@core/model/address/address-info';
+import { ContentStringRequest } from '@core/model/content/content-string-request.model';
+import { SettingInfo } from '@core/model/configuration/setting-info.model';
 
 @Injectable({
   providedIn: 'root',
@@ -22,7 +24,8 @@ export class UserService extends BaseService {
   private readonly userAddresses$: BehaviorSubject<AddressInfo[]> = new BehaviorSubject<AddressInfo[]>([]);
   private userPhoto: UserPhotoInfo = null;
 
-  constructor(readonly http: HttpClient, private readonly nativeProvider: NativeProvider) {
+  constructor(readonly http: HttpClient,
+              private readonly nativeProvider: NativeProvider) {
     super(http);
   }
 
@@ -51,7 +54,8 @@ export class UserService extends BaseService {
   }
 
   getUserSettingsBySettingName(settingName: string): Observable<MessageResponse<UserSettings>> {
-    return this.httpRequest<MessageResponse<UserSettings>>(this.serviceUrl, 'retrieveSetting', true, { settingName });
+    return this.httpRequest<MessageResponse<UserSettings>>
+    (this.serviceUrl, 'retrieveSetting', true, { settingName });
   }
 
   saveUserSettingsBySettingName(settingName: string, settingValue: string): Observable<MessageResponse<boolean>> {
@@ -59,6 +63,15 @@ export class UserService extends BaseService {
       settingName,
       settingValue,
     });
+  }
+
+  getSettingByConfig(config: ContentStringRequest): Observable<SettingInfo> {
+    const methodName = 'retrieveSetting';
+
+    return this.userData.pipe(
+      switchMap(({ institutionId }) => this.httpRequestFull(this.serviceUrl, methodName, true, institutionId, config)),
+      map(({ response }: MessageResponse<SettingInfo>) => response)
+    );
   }
 
   setAcceptedPhoto(acceptedPhoto: UserPhotoInfo) {
