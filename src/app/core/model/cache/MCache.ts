@@ -92,7 +92,7 @@ export class MCache {
     }
   }
 
-  getSetting(settingName: Globals.Settings.ESetting): SettingInfo {
+  getSetting(settingName: Globals.Settings.Setting): SettingInfo {
     for (const setting of this.institutionSettings) {
       if (this.getSettingName(setting) === settingName.toString()) {
         return setting;

@@ -22,13 +22,13 @@ export class DashboardApiService extends BaseService {
     super(http);
   }
 
-  retrieveSetting(settingInfo: Settings.ESetting): Observable<SettingInfo> {
+  retrieveSetting(settingInfo: Settings.Setting): Observable<SettingInfo> {
     return this.userService.userData.pipe(
       switchMap(({ institutionId }) => this.configService.retrieveSetting(institutionId, settingInfo))
     );
   }
 
-  retrieveSettingsList(setting: Settings.ESettingList): Observable<SettingInfoList> {
+  retrieveSettingsList(setting: Settings.SettingList): Observable<SettingInfoList> {
     return this.userService.userData.pipe(
       switchMap(({ institutionId }) =>
         this.configService.retrieveSettingList(institutionId, setting)

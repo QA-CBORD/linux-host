@@ -27,13 +27,13 @@ export class DashboardService {
     this._settings$.next(this.settings);
   }
 
-  retrieveSettings(settings: Settings.ESetting[]): Observable<SettingInfo[]> {
+  retrieveSettings(settings: Settings.Setting[]): Observable<SettingInfo[]> {
     const requestArray = settings.map(setting => this.dashApiService.retrieveSetting(setting));
     return zip(...requestArray).pipe(tap((settings: SettingInfo[]) => (this._settings = settings)));
   }
 
   retrieveSettingsList(): Observable<SettingInfoList> {
-    return this.dashApiService.retrieveSettingsList(Settings.ESettingList.FEATURES);
+    return this.dashApiService.retrieveSettingsList(Settings.SettingList.FEATURES);
   }
 
   getSettingValueByName(settingName: SYSTEM_SETTING): any {
