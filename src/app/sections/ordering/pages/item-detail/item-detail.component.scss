@@ -2,7 +2,7 @@
 
 .order-detail {
 
-    &__header {
+    &__static-header {
         display: block;
         height: 250px;
     }
@@ -61,7 +61,7 @@
 
         @include font-nunito-heavy(16px);
     }
-    
+
     &__special-instructions {
         margin: 0;
     }

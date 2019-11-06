@@ -9,6 +9,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { ItemDetailRoutingModule } from './item-detail.routing.module';
 import { MultiListComponent } from './multi-list/multi-list.component';
 import { SingleListComponent } from './single-list/single-list.component';
+import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
 
 
 const declarations = [ItemDetailComponent, SingleListComponent, MultiListComponent];
@@ -17,7 +18,8 @@ const imports = [
   IonicModule,
   ReactiveFormsModule,
   StTextareaFloatingLabelModule,
-  ItemDetailRoutingModule
+  ItemDetailRoutingModule,
+  StHeaderModule
 ]
 
 @NgModule({

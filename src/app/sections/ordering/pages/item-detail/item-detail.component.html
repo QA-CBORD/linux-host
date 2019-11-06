@@ -1,7 +1,17 @@
-<ion-content class="order-detail">
-  <ion-header class="order-detail__header">
-    <img src="/assets/images/temp-merchant-photo.jpg"
-         alt="french frees"
+<ng-container *ngIf="isStaticHeader;then staticHeader; else header"></ng-container>
+
+<ng-template #header>
+  <st-header [title]="menuItem.name"
+             [isTitleShow]="true"
+             [backButtonTitle]="''"
+             [isToolbarShow]="true"
+             [backButtonIcon]="'close'"></st-header>
+</ng-template>
+
+<ng-template #staticHeader>
+  <ion-header class="order-detail__static-header">
+    <img [src]="menuItemImg"
+         alt="{{menuItem.name}}"
          class="order-detail__appetizer-photo" />
     <ion-buttons slot="start"
                  class="order-detail__header-buttons">
@@ -15,6 +25,12 @@
       </ion-button>
     </ion-buttons>
   </ion-header>
+</ng-template>
+
+<ion-content class="order-detail"
+             (ionScroll)="scroll($event)"
+             [scrollEvents]="true">
+
   <div class="order-detail__descriptions">
     <div class="order-detail__descriptions-title">{{ menuItem.name }}</div>
     <p class="order-detail__descriptions-content">{{ menuItem.description }}</p>

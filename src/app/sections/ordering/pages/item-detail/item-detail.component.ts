@@ -17,9 +17,11 @@ export class ItemDetailComponent implements OnInit {
 
   private readonly sourceSubscription: Subscription = new Subscription();
   itemOrderForm: FormGroup;
-  order = { counter: 1, totalPrice: 0, optionsPrice: 0 }
-
+  order: { counter: number; totalPrice: number; optionsPrice: number } = { counter: 1, totalPrice: 0, optionsPrice: 0 };
   menuItem: MenuItemInfo;
+  menuItemImg: string;
+  isStaticHeader: boolean = true;
+
   constructor(
     private readonly router: Router,
     private readonly fb: FormBuilder,
@@ -43,6 +45,10 @@ export class ItemDetailComponent implements OnInit {
 
         this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.menuCategoryItems, id], { skipLocationChange: true });
       })
+  }
+
+  scroll({ detail }) {
+    this.isStaticHeader = detail.scrollTop === 0;
   }
 
   initForm() {
@@ -84,6 +90,44 @@ export class ItemDetailComponent implements OnInit {
   onFormSubmit() {
     if (this.itemOrderForm.valid) {
       console.log(this.itemOrderForm)
+      const menuItem = {
+        menuItemId: this.menuItem.id,
+        orderItemOptions: [],
+        quantity: this.order.counter
+      }
+
+      const arrayOfvalues: any[] = Object.values(this.itemOrderForm.value);
+      arrayOfvalues.forEach(value => {
+        if (typeof value === 'string') {
+          return;
+        }
+
+        if (value.length) {
+          value.forEach(elem => {
+            menuItem.orderItemOptions.push(
+              {
+                menuItemId: elem.id,
+                orderItemOptions: [],
+                quantity: menuItem.quantity
+              }
+            )
+          });
+          return;
+        }
+
+        if (value && value.price) {
+          menuItem.orderItemOptions.push(
+            {
+              menuItemId: value.id,
+              orderItemOptions: [],
+              quantity: menuItem.quantity
+            }
+          )
+          return;
+        }
+      })
+
+      this.cartService.addOrderItems(menuItem);
     }
   }
 
@@ -95,9 +139,12 @@ export class ItemDetailComponent implements OnInit {
         const itemDetail = menuCategory.menuCategoryItems.find(({ id }) => id === menuItemId);
 
         this.menuItem = itemDetail.menuItem;
+        console.log(this.menuItem);
+        // Temporary, while we don't have images:
+        // '/assets/images/temp-merchant-photo.jpg'
+        this.menuItemImg = '/assets/images/temp-merchant-photo.jpg';
         this.order = { ...this.order, totalPrice: this.menuItem.price }
 
-        console.log(this.menuItem.menuItemOptions);
         this.initForm();
       })
   }
@@ -113,7 +160,8 @@ export class ItemDetailComponent implements OnInit {
           }
 
           if (value.length) {
-            this.order.optionsPrice = value.reduce((total, { price }) => price + total, 0);
+            const optionPrice = value.reduce((total, { price }) => price + total, 0);
+            this.order = { ...this.order, optionsPrice: this.order.optionsPrice + optionPrice }
             return;
           }
 
@@ -122,7 +170,6 @@ export class ItemDetailComponent implements OnInit {
             return;
           }
         })
-        console.log(this.order);
         this.calculateTotalPrice();
       })
 
