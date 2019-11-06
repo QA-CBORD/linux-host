@@ -12,6 +12,7 @@ import { ORDER_TYPE } from "@sections/ordering/ordering.config";
 import { AddressInfo } from "@core/model/address/address-info";
 import { ModalController } from '@ionic/angular';
 import { DeliveryAddressesModalComponent } from '@sections/ordering/shared/ui-components/delivery-addresses.modal/delivery-addresses.modal.component';
+import { UserAccount } from '@core/model/account/account.model';
 
 @Component({
   selector: 'st-order-details',
@@ -28,11 +29,12 @@ export class OrderDetailsComponent implements OnInit {
   @Input() paymentMethod: any = [];
   @Input() tax: number;
   @Input() total: number;
+  @Input() orderPaymentName: string;
   @Input() deliveryFee: number;
   @Input() pickupFee: number;
   @Input() subTotal: number;
   @Input() tip: number;
-  @Input() accountName: string;
+  @Input() accounts: UserAccount[] = [];
   @Input() addressModalConfig: AddressModalSettings;
   @Output() onFormChange: EventEmitter<any> = new EventEmitter<any>();
   detailsForm: FormGroup;
@@ -42,6 +44,7 @@ export class OrderDetailsComponent implements OnInit {
 
   ngOnInit() {
     this.initForm();
+    console.log(this.ingredients);
   }
 
   get controlsNames() {

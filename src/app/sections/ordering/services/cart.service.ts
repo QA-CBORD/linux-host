@@ -4,7 +4,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 
 import { ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { MerchantService } from './merchant.service';
-import { MerchantInfo, OrderInfo, MenuInfo, MenuItemInfo, OrderItem } from '../shared/models';
+import { MerchantInfo, OrderInfo, MenuInfo, OrderItem } from '../shared/models';
 import { UserService } from '@core/service/user-service/user.service';
 import { AddressInfo } from '@core/model/address/address-info';
 
@@ -105,7 +105,7 @@ export class CartService {
 
   // ----------------------------------------- UPDATERS BLOCK -----------------------------------------//
 
-  addOrderItems(orderItems: MenuItemInfo | MenuItemInfo[]) {
+  addOrderItems(orderItems: Partial<OrderItem>| Partial<OrderItem>[]) {
     if (!this.cart.order) return;
     if (orderItems instanceof Array) orderItems.forEach(this.addOrderItem.bind(this));
     else this.addOrderItem(orderItems);
@@ -135,7 +135,7 @@ export class CartService {
     await this.setInitialEmptyOrder();
   }
 
-  private addOrderItem(orderItem: MenuItemInfo) {
+  private addOrderItem(orderItem: Partial<OrderItem>) {
     this.cart.order.orderItems.push(orderItem);
   }
 

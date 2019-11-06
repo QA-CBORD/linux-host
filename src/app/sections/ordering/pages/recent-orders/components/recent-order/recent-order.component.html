@@ -14,7 +14,7 @@
             [deliveryFee]="(order$ | async).deliveryFee"
             [total]="(order$ | async).total"
             [ingredients]="(order$ | async).orderItems"
-            [accountName]="(order$ | async).orderPayment[0].accountName"
+            [orderPaymentName]="(order$ | async).orderPayment[0].accountName"
             [time]="(order$ | async).dueTime"
             [type]="(order$ | async).type"
             [address]="(address$ | async)"

@@ -18,8 +18,8 @@
             [ingredients]="(order$ | async).orderItems"
             [address]="address$ | async"
             [time]="(order$ | async).dueTime"
+            [accounts]="accounts"
             [type]="(order$ | async).type"
-            [accountName]=""
             [addressModalConfig]="(addressModalSettings$ | async)"
             (onFormChange)="onAddressChanged($event)"
     >

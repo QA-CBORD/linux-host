@@ -120,9 +120,11 @@ export class RecentOrderComponent implements OnInit {
     await this.cart.setActiveMerchantsMenuByOrderOptions(dueTime, orderType, address);
     const [availableItems] = await this.resolveMenuItemsInOrder().pipe(first()).toPromise();
     this.cart.addOrderItems(availableItems);
-    await this.cart.validateOrder().pipe(first()).toPromise();
-    await this.loadingService.closeSpinner();
-    await this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.cart], {skipLocationChange: true});
+    await this.cart.validateOrder().pipe(first()).toPromise()
+      .then(await this.loadingService.closeSpinner.bind(this.loadingService))
+      .catch(await this.loadingService.closeSpinner.bind(this.loadingService));
+
+    await this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.cart], { skipLocationChange: true });
   }
 
   private setActiveAddress() {
@@ -199,7 +201,7 @@ export class RecentOrderComponent implements OnInit {
     });
 
     modal.onDidDismiss().then(({ data, role }) => {
-      role === BUTTON_TYPE.CONTINUE && this.initOrder(data)
+      role === BUTTON_TYPE.CONTINUE && this.initOrder(data);
     });
 
     await modal.present();

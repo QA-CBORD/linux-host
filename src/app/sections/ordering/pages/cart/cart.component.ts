@@ -117,23 +117,14 @@ export class CartComponent implements OnInit {
 
     if (merchantAccInfoList.creditAccepted) {
       merchantAccInfoList.accounts.forEach(acc => {
-        if (
-          (
-            acc.paymentSystemType === PAYMENT_SYSTEM_TYPE.MONETRA
-            || acc.paymentSystemType === PAYMENT_SYSTEM_TYPE.USAEPAY
-          )
-          && displayCreditCards.includes(acc.id)) {
-          accounts.push(acc);
+        if (acc.paymentSystemType === PAYMENT_SYSTEM_TYPE.MONETRA|| acc.paymentSystemType === PAYMENT_SYSTEM_TYPE.USAEPAY) {
+          displayCreditCards.includes(acc.id) && accounts.push(acc);
         }
       });
     }
 
     if (merchantAccInfoList.rollOver) {
-      merchantAccInfoList.accounts.forEach(acc => {
-        if (acc.accountDisplayName === 'Roll Over' || acc.paymentSystemType === PAYMENT_SYSTEM_TYPE.USAEPAY) {
-          accounts.push(acc);
-        }
-      });
+      merchantAccInfoList.accounts.forEach(acc => acc.id === 'rollup' && accounts.push(acc));
     }
 
     if (mealBased) {

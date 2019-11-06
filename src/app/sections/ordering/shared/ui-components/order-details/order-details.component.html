@@ -67,7 +67,7 @@
 
 
         <div class="order-details__payment-method" *ngIf="readonly; else paymentSelect">
-            Payment Method<span>{{accountName}}</span>
+            Payment Method<span>{{orderPaymentName}}</span>
         </div>
 
         <ng-template #paymentSelect>
@@ -82,8 +82,8 @@
                         interface="action-sheet"
                         [interfaceOptions]="{cssClass: 'custom-deposit-actionSheet'}"
                 >
-                    <ion-select-option [value]="amount" *ngFor="let amount of [1,2,3]">
-                        {{ amount }}
+                    <ion-select-option [value]="account" *ngFor="let account of accounts">
+                        {{ account.accountDisplayName }}
                     </ion-select-option>
                 </ion-select>
             </div>
