@@ -1,9 +1,9 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NAVIGATE } from 'src/app/app.global';
 import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
 import { CartService } from '@sections/ordering/services';
-import { zip } from 'rxjs';
+import { zip, Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { MenuCategoryInfo, MenuCategoryItemInfo } from '@sections/ordering/shared/models';
 
@@ -17,15 +17,18 @@ export class MenuCategoryItemsComponent implements OnInit {
   searchState: boolean = false;
   menuCategory: MenuCategoryInfo;
   filteredMenuCategoryItems: MenuCategoryItemInfo[] = [];
+  menuItems$: Observable<number>;
 
   constructor(
     private router: Router,
     private readonly cartService: CartService,
-    private readonly activatedRoute: ActivatedRoute
+    private readonly activatedRoute: ActivatedRoute,
+    private readonly cdRef: ChangeDetectorRef
   ) {}
 
   ionViewWillEnter() {
-    this.cartService.menuItems$.subscribe(items => console.log(items));
+    this.menuItems$ = this.cartService.menuItems$;
+    this.cdRef.detectChanges();
   }
 
   ngOnInit() {

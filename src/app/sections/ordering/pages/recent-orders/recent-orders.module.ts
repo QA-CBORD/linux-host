@@ -9,7 +9,7 @@ import { RecentOrderComponent } from '@sections/ordering/pages/recent-orders/com
 import { OrderDetailsModule } from '@sections/ordering/shared/ui-components/order-details/order-details.module';
 import { StPopoverLayoutModule } from '@shared/ui-components/st-popover-layout/st-popover-layout.module';
 import { ConfirmPopoverComponent } from '@sections/ordering/pages/recent-orders/components/confirm-popover/confirm-popover.component';
-import { OrderOptionsActionSheetModule } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.module';
+import { OrderOptionsActionSheetModule } from '@sections/ordering/shared/ui-components/order-options.action-sheet';
 
 const imports = [
     CommonModule,

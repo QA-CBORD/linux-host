@@ -5,8 +5,9 @@ import { FullMenuComponent } from './full-menu.component';
 import { FullMenuRoutingModule } from './full-menu.routing.module';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
 import { MerchantDistanceModule } from '@sections/ordering/shared/pipes/merchant-distance/merchant-distance.module';
+import { ViewCartModule } from '@sections/ordering/shared/ui-components/view-cart';
 
-const imports = [CommonModule, IonicModule, FullMenuRoutingModule, StHeaderModule, MerchantDistanceModule];
+const imports = [CommonModule, IonicModule, FullMenuRoutingModule, StHeaderModule, MerchantDistanceModule, ViewCartModule];
 const declarations = [FullMenuComponent];
 
 @NgModule({

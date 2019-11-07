@@ -5,7 +5,7 @@ import { IonicModule } from '@ionic/angular';
 import { MerchantListComponent } from './merchant-list.component';
 import { MerchantItemComponent } from './merchant-item';
 import { MerchantDistanceModule } from '@sections/ordering/shared/pipes/merchant-distance/merchant-distance.module';
-import { OrderOptionsActionSheetModule } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.module';
+import { OrderOptionsActionSheetModule } from '@sections/ordering/shared/ui-components/order-options.action-sheet';
 
 const declarations = [MerchantListComponent, MerchantItemComponent];
 

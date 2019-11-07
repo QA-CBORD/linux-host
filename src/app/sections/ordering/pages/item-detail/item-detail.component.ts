@@ -85,47 +85,48 @@ export class ItemDetailComponent implements OnInit {
   }
 
   onFormSubmit() {
-    if (this.itemOrderForm.valid) {
-      const menuItem = {
-        menuItemId: this.menuItem.id,
-        orderItemOptions: [],
-        quantity: this.order.counter,
-      };
+    if (this.itemOrderForm.invalid) {
+      return;
+    }
+    const menuItem = {
+      menuItemId: this.menuItem.id,
+      orderItemOptions: [],
+      quantity: this.order.counter,
+    };
 
-      const arrayOfvalues: any[] = Object.values(this.itemOrderForm.value);
-      arrayOfvalues.forEach(value => {
-        if (typeof value === 'string') {
-          return;
-        }
+    const arrayOfvalues: any[] = Object.values(this.itemOrderForm.value);
+    arrayOfvalues.forEach(value => {
+      if (typeof value === 'string') {
+        return;
+      }
 
-        if (value.length) {
-          value.forEach(elem => {
-            menuItem.orderItemOptions.push({
-              menuItemId: elem.id,
-              orderItemOptions: [],
-              quantity: menuItem.quantity,
-            });
-          });
-          return;
-        }
-
-        if (value && value.price) {
+      if (value.length) {
+        value.forEach(elem => {
           menuItem.orderItemOptions.push({
-            menuItemId: value.id,
+            menuItemId: elem.id,
             orderItemOptions: [],
             quantity: menuItem.quantity,
           });
-          return;
-        }
-      });
+        });
+        return;
+      }
 
-      this.cartService.addOrderItems(menuItem);
-      this.activatedRoute.queryParams.pipe(take(1)).subscribe(({ categoryId }) => {
-        const id = categoryId;
+      if (value && value.id) {
+        menuItem.orderItemOptions.push({
+          menuItemId: value.id,
+          orderItemOptions: [],
+          quantity: menuItem.quantity,
+        });
+        return;
+      }
+    });
 
-        this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.menuCategoryItems, id], { skipLocationChange: true });
-      });
-    }
+    this.cartService.addOrderItems(menuItem);
+    this.activatedRoute.queryParams.pipe(take(1)).subscribe(({ categoryId }) => {
+      const id = categoryId;
+
+      this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.menuCategoryItems, id], { skipLocationChange: true });
+    });
   }
 
   private initMenuItemOptions() {

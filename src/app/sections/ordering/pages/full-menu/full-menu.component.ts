@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CartService } from '../../services/cart.service';
 import { Observable, Subscription } from 'rxjs';
 import { MenuInfo, MerchantInfo, MerchantOrderTypesInfo } from '@sections/ordering/shared/models';
@@ -22,15 +22,23 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   orderInfo: { dueTime: Date, orderType: number, address };
   merchantInfo$: Observable<MerchantInfo>;
   merchantInfoState: boolean = false;
+  menuItems$: Observable<number>;
+
   constructor(
     private readonly cartService: CartService,
     private readonly router: Router,
-    private readonly modalController: ModalController
+    private readonly modalController: ModalController,
+    private readonly cdRef: ChangeDetectorRef,
   ) { }
 
   get orderType() {
     return this.orderInfo.orderType === ORDER_TYPE.PICKUP ? 'Pickup'
       : this.orderInfo.orderType === ORDER_TYPE.DELIVERY ? 'Delivery' : 'DineIn';
+  }
+
+  ionViewWillEnter() {
+    this.menuItems$ = this.cartService.menuItems$;
+    this.cdRef.detectChanges();
   }
 
   ngOnInit() {
