@@ -2,18 +2,19 @@
            [isTitleShow]="true"
            [backButtonTitle]="''"
            [backButtonIcon]="'close'"
-           [isToolbarShow]="true">
-
+           [isToolbarShow]="true"
+           class="recent-orders__header">
+           
 </st-header>
 
-<ion-content class="ion-padding">
+<ion-content class="ion-no-padding">
  <ng-container *ngIf="!pendingOrders.length && !completedOrders.length" [ngTemplateOutlet]="empty"></ng-container>
  <ng-container *ngIf="pendingOrders.length" [ngTemplateOutlet]="pending"></ng-container>
  <ng-container *ngIf="completedOrders.length" [ngTemplateOutlet]="completed"></ng-container>
 </ion-content>
 
 <ng-template #pending>
- <h2 class="recent-orders__header-title">Pending Orders</h2>
+ <h2 class="recent-orders__list-title">Pending Orders</h2>
  <st-recent-orders-list (onOrderClicked)="onOrderPicked($event)" [orders]="pendingOrders"></st-recent-orders-list>
 </ng-template>
 
@@ -26,6 +27,6 @@
 </ng-template>
 
 <ng-template #completed>
- <h2 class="recent-orders__header-title">Completed Orders</h2>
+ <h2 class="recent-orders__list-title">Completed Orders</h2>
  <st-recent-orders-list (onOrderClicked)="onOrderPicked($event)" [orders]="completedOrders"></st-recent-orders-list>
 </ng-template>

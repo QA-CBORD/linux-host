@@ -4,7 +4,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 
 import { ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { MerchantService } from './merchant.service';
-import { MerchantInfo, OrderInfo, MenuInfo, MenuItemInfo, OrderItem } from '../shared/models';
+import { MerchantInfo, OrderInfo, MenuInfo, OrderItem } from '../shared/models';
 import { UserService } from '@core/service/user-service/user.service';
 import { AddressInfo } from '@core/model/address/address-info';
 
@@ -47,6 +47,14 @@ export class CartService {
 
   get isMerchantOpenNow$(): Observable<boolean> {
     return this.merchant$.pipe(map(({ openNow }) => openNow));
+  }
+
+  get menuItems$(): Observable<number> {
+    return this.orderInfo$.pipe(
+      map(({ orderItems }) =>
+        orderItems.reduce((state, { quantity }) => state + quantity, 0),
+      ),
+    );
   }
 
   set _order(orderInfo: OrderInfo) {
@@ -113,7 +121,7 @@ export class CartService {
   }
 
   validateOrder(): Observable<OrderInfo> {
-    const { orderType: type, dueTime, address: {id} } = this.cart.orderDetailsOptions;
+    const { orderType: type, dueTime, address: { id } } = this.cart.orderDetailsOptions;
     const address = type === ORDER_TYPE.DELIVERY
       ? { deliveryAddressId: id }
       : { pickupAddressId: id };
@@ -122,6 +130,13 @@ export class CartService {
     return this.merchantService.validateOrder(this.cart.order).pipe(
       tap(updatedOrder => this._order = updatedOrder),
     );
+  }
+
+  updateOrderAddress(address: AddressInfo) {
+    if (this.cart.orderDetailsOptions) {
+      this.cart.orderDetailsOptions = { ...this.cart.orderDetailsOptions, address };
+      this.onStateChanged();
+    }
   }
 
   async clearActiveOrder(): Promise<void> {

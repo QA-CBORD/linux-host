@@ -1,5 +1,7 @@
+import { UserAccount } from '@core/model/account/account.model';
+
 export interface MerchantAccountInfoList {
-	accounts: any[]; // AccountInfo[] ???
+	accounts: UserAccount[];
 	cashlessAccepted: boolean;
 	creditAccepted: boolean;
 	rollOver: boolean;

@@ -16,7 +16,7 @@ export class MerchantItemComponent {
   }>();
   @Output() locationPin: EventEmitter<string> = new EventEmitter<string>();
 
-  constructor() {}
+  constructor() { }
 
   get starClass(): string {
     const empty = 'star-outline';
@@ -46,7 +46,7 @@ export class MerchantItemComponent {
     this.merchantClick.emit(merchantInfo);
   }
 
-  triggerFavourite(event, { isFavorite, id }) {
+  triggerFavourite(event, { isFavorite = null, id }: MerchantInfo) {
     this.addToFav.emit({ isFavorite, id });
     event.stopPropagation();
   }

@@ -1,5 +1,5 @@
 <ion-item class="merchant" lines="none" (click)="triggerMerchantClick(merchantInfo)">
-  <ion-grid class="ion-no-padding">
+  <ion-grid class="ion-no-padding" fixed>
     <ion-row>
       <ion-col class="ion-no-padding align-self-center">
         <!-- IMAGE -->
@@ -7,12 +7,19 @@
       </ion-col>
     </ion-row>
 
-    <ion-row>
+    <ion-row nowrap>
       <!-- NAME and ICONS -->
-      <ion-col class="ion-align-self-center align-self-start">
+      <ion-col size="9" class="ion-no-padding">
         <h2 class="merchant__merchant-name">{{ merchantInfo.name }}</h2>
       </ion-col>
-      <ion-col class="ion-align-self-end">
+      <ion-col class="merchant__merchant-buttons ion-no-padding">
+        <img
+          class="merchant__merchant-button"
+          src="./assets/icon/location-pin.svg"
+          alt="lacation"
+          appClickStopPropagation
+          (click)="triggerLocationPin($event, merchantInfo.id)"
+        />
         <img
           class="merchant__merchant-button"
           [src]="starClass"
@@ -20,25 +27,18 @@
           appClickStopPropagation
           (click)="triggerFavourite($event, merchantInfo)"
         />
-        <img
-          class="merchant__merchant-button"
-          src="./assets/icon/location-pin.svg"
-          alt="star"
-          appClickStopPropagation
-          (click)="triggerLocationPin($event, merchantInfo.id)"
-        />
       </ion-col>
     </ion-row>
 
     <ion-row>
       <!-- Distance Info -->
-      <ion-col class="align-self-start">
+      <ion-col class="ion-no-padding">
         <p class="merchant__merchant-distance">{{ merchantInfo.distanceFromUser | merchantDistance }}</p>
       </ion-col>
     </ion-row>
-    <ion-row>
+    <ion-row class="ion-no-padding">
       <!-- Times and order options -->
-      <ion-col class="align-self-start">
+      <ion-col class="align-self-start ion-no-padding">
         <p
           class="merchant__merchant-hours"
           [ngClass]="{
@@ -48,7 +48,7 @@
           {{ merchantInfo.openNow ? 'Open' : 'Closed' }}
         </p>
       </ion-col>
-      <ion-col class="ion-align-self-end">
+      <ion-col class="ion-align-self-end ion-no-padding">
         <p class="merchant__merchant-order-types">{{ getOrderTypes() }}</p>
       </ion-col>
     </ion-row>

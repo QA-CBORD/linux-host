@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { ContentStringRequest } from '../../../core/model/content/content-string-request.model';
+import { ContentStringRequest } from '@core/model/content/content-string-request.model';
 import { BehaviorSubject, Observable, zip } from 'rxjs';
-import { SettingInfo } from '../../../core/model/configuration/setting-info.model';
+import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { AccountsApiService } from './accounts.api.service';
 import { tap } from 'rxjs/operators';
 
