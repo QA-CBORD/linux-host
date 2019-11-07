@@ -57,6 +57,7 @@ export class UserService extends BaseService {
   }
 
   saveUserSettingsBySettingName(settingName: string, settingValue: string): Observable<MessageResponse<boolean>> {
+    debugger
     return this.httpRequest<MessageResponse<boolean>>(this.serviceUrl, 'saveSetting', true, {
       settingName,
       settingValue,
