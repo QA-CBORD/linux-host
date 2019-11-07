@@ -82,7 +82,7 @@ export class OrderingPage implements OnInit {
     });
     modal.onDidDismiss().then(({ data }) => {
       if (data) {
-        this.cartService.setActiveMerchantsMenuByOrderOptions(data.dueTime, data.orderType, data.addressId)
+        this.cartService.setActiveMerchantsMenuByOrderOptions(data.dueTime, data.orderType, data.addressId);
         this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.fullMenu], { skipLocationChange: true });
       }
     });

@@ -79,23 +79,23 @@ export class CartService {
     this.onStateChanged();
   }
 
-  // ----------------------------------------- REMOVE BLOCK ---------------------------------------//
+  // ----------------------------------------- REMOVING DATA BLOCK ---------------------------------------//
 
-  removeOrderItemFromOrderById(id: string) {
+  async removeOrderItemFromOrderById(id: string): Promise<OrderInfo | void> {
     if (!this.cart.order) return;
     const itemIndex = this.cart.order.orderItems.findIndex(({ id: oId }: OrderItem) => oId === id);
     if (itemIndex !== -1) {
       this.cart.order.orderItems.splice(itemIndex, 1);
-      this.onStateChanged();
+      return await this.validateOrder().pipe(first()).toPromise();
     }
   }
 
-  removeActiveOrderDetailsOptions() {
+  removeAllOrderDetailsOptions() {
     this.cart.orderDetailsOptions = null;
     this.onStateChanged();
   }
 
-  clearCrat() {
+  clearCart() {
     this.cart.merchant = null;
     this.cart.orderDetailsOptions = null;
     this.cart.menu = null;
@@ -118,7 +118,6 @@ export class CartService {
       ? { deliveryAddressId: id }
       : { pickupAddressId: id };
     this.cart.order = { ...this.cart.order, type, dueTime, ...address };
-
     return this.merchantService.validateOrder(this.cart.order).pipe(
       tap(updatedOrder => this._order = updatedOrder),
     );

@@ -2,17 +2,18 @@ import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
-  Input, OnChanges,
+  Input, OnDestroy,
   OnInit,
   Output, SimpleChanges,
 } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BuildingInfo, OrderItem } from '@sections/ordering';
 import { ORDER_TYPE } from "@sections/ordering/ordering.config";
 import { AddressInfo } from "@core/model/address/address-info";
 import { ModalController } from '@ionic/angular';
 import { DeliveryAddressesModalComponent } from '@sections/ordering/shared/ui-components/delivery-addresses.modal/delivery-addresses.modal.component';
 import { UserAccount } from '@core/model/account/account.model';
+import { Subscription } from "rxjs";
 
 @Component({
   selector: 'st-order-details',
@@ -20,12 +21,12 @@ import { UserAccount } from '@core/model/account/account.model';
   styleUrls: ['./order-details.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class OrderDetailsComponent implements OnInit {
-  @Input() address: string;
+export class OrderDetailsComponent implements OnInit, OnDestroy {
+  @Input() address: any;
   @Input() readonly: boolean = true;
   @Input() time: any = [];
   @Input() type: ORDER_TYPE;
-  @Input() ingredients: OrderItem[] = [];
+  @Input() orderItems: OrderItem[] = [];
   @Input() paymentMethod: any = [];
   @Input() tax: number;
   @Input() total: number;
@@ -36,15 +37,21 @@ export class OrderDetailsComponent implements OnInit {
   @Input() tip: number;
   @Input() accounts: UserAccount[] = [];
   @Input() addressModalConfig: AddressModalSettings;
-  @Output() onFormChange: EventEmitter<any> = new EventEmitter<any>();
+  @Output() onFormChange: EventEmitter<OrderDetailsFormData> = new EventEmitter<OrderDetailsFormData>();
+  @Output() onOrderItemRemovedId: EventEmitter<string> = new EventEmitter<string>();
   detailsForm: FormGroup;
+  private readonly sourceSub = new Subscription();
 
   constructor(private readonly fb: FormBuilder,
               private readonly modalController: ModalController) { }
 
   ngOnInit() {
     this.initForm();
-    console.log(this.ingredients);
+    console.log(this.address);
+  }
+
+  ngOnDestroy() {
+    this.sourceSub.unsubscribe();
   }
 
   get controlsNames() {
@@ -52,7 +59,7 @@ export class OrderDetailsComponent implements OnInit {
   }
 
   get isAddressClickable(): boolean {
-    if(this.addressModalConfig && this.addressModalConfig.isOrderTypePickup) {
+    if(!this.readonly && this.addressModalConfig && this.addressModalConfig.isOrderTypePickup) {
       return !!this.addressModalConfig.pickupLocations.length;
     } else {
       return !!this.addressModalConfig
@@ -63,37 +70,43 @@ export class OrderDetailsComponent implements OnInit {
     return this.detailsForm.get(DETAILS_FORM_CONTROL_NAMES.address);
   }
 
-  onRemove($event: MouseEvent) {
-    console.log($event)
+  private get orderItemsFormArray(): AbstractControl {
+    return this.detailsForm.get(DETAILS_FORM_CONTROL_NAMES.orderItems);
+  }
+
+  onRemove(id: string) {
+    this.onOrderItemRemovedId.emit(id);
+    const index = (this.orderItemsFormArray as FormArray).controls.findIndex(({value}) => value === id);
+    (this.orderItemsFormArray as FormArray).removeAt(index);
   }
 
   initForm() {
     this.detailsForm = this.fb.group(
       {
-        [DETAILS_FORM_CONTROL_NAMES.time]: [''],
-        [DETAILS_FORM_CONTROL_NAMES.address]: [''],
-        [DETAILS_FORM_CONTROL_NAMES.ingredients]: this.getIngredients(),
-        [DETAILS_FORM_CONTROL_NAMES.paymentMethod]: [''],
+        [DETAILS_FORM_CONTROL_NAMES.address]: [this.address],
+        [DETAILS_FORM_CONTROL_NAMES.orderItems]: this.getIngredients(),
+        [DETAILS_FORM_CONTROL_NAMES.paymentMethod]: ['', Validators.required],
       }
     );
     this.subscribe()
   }
 
   private subscribe () {
-    this.detailsForm.valueChanges
+    const sub = this.detailsForm.valueChanges
       .subscribe(data => {
         this.onFormChange.emit({ data, valid: this.detailsForm.valid })
-      })
+      });
+    this.sourceSub.add(sub);
   }
 
   private getIngredients() {
     return this.fb.array([
-      ...this.ingredients.map((v) => this.fb.control(v))
-    ])
+      ...this.orderItems.map(({menuItemId}) => this.fb.control(menuItemId))
+    ], Validators.required)
   }
 
   test() {
-    console.log(this.detailsForm)
+    console.log(this.address);
   }
 
   private async showAddressListModal(): Promise<void> {
@@ -107,12 +120,12 @@ export class OrderDetailsComponent implements OnInit {
     });
     await modal.present();
   }
+
 }
 
 export enum DETAILS_FORM_CONTROL_NAMES {
-  time = 'time',
   address = 'address',
-  ingredients = 'ingredients',
+  orderItems = 'orderItems',
   paymentMethod = 'paymentMethod',
 }
 
@@ -123,4 +136,13 @@ export interface AddressModalSettings {
   pickupLocations: BuildingInfo[];
   deliveryAddresses: AddressInfo[];
   merchantId: string;
+}
+
+export interface OrderDetailsFormData {
+  data: {
+    [DETAILS_FORM_CONTROL_NAMES.address]: BuildingInfo;
+    [DETAILS_FORM_CONTROL_NAMES.orderItems]: string[];
+    [DETAILS_FORM_CONTROL_NAMES.paymentMethod]: UserAccount;
+  };
+  valid: boolean;
 }

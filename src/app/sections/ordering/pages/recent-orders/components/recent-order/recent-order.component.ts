@@ -1,9 +1,8 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { first, map, switchMap, take, tap } from 'rxjs/operators';
+import { first, map, switchMap, take } from 'rxjs/operators';
 import { Observable, zip } from 'rxjs';
 
-import { AddressInfo } from '@core/model/address/address-info';
 import { MenuItemInfo, MerchantInfo, MerchantService, OrderInfo, OrderItem } from '@sections/ordering';
 import { LOCAL_ROUTING, ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { NAVIGATE } from '../../../../../../app.global';
@@ -23,7 +22,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
 })
 export class RecentOrderComponent implements OnInit {
   order$: Observable<OrderInfo>;
-  address$: Observable<string>;
+  address$: Observable<any>;
   merchant$: Observable<MerchantInfo>;
 
   constructor(private readonly activatedRoute: ActivatedRoute,
@@ -138,22 +137,22 @@ export class RecentOrderComponent implements OnInit {
     );
   }
 
-  private getPickupAddress(): Observable<string> {
+  private getPickupAddress(): Observable<any> {
     return this.order$.pipe(
       switchMap(({ merchantId }) =>
         this.merchantService.menuMerchants$.pipe(
           map((merchants) => merchants.find(({ id }) => id === merchantId))),
       ),
-      map(({ storeAddress }) => this.merchantService.getPickupAddressAsString(storeAddress)),
+      map(({ storeAddress }) => storeAddress),
     );
   }
 
-  private getDeliveryAddress(deliveryId: string): Observable<string> {
+  private getDeliveryAddress(deliveryId: string): Observable<any> {
     return this.merchantService.retrieveUserAddressList().pipe(
       map((addresses) =>
         addresses.find(({ id }) => id === deliveryId),
       ),
-      map(address => this.merchantService.getDeliveryAddressAsString(address)),
+      map(address => address),
     );
   }
 
