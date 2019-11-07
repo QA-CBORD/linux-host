@@ -10,10 +10,31 @@ import { DashboardApiService } from './services/dashboard.api.service';
 import { DashboardService } from './services/dashboard.service';
 
 import { DashboardPage } from './dashboard.page';
-import { TileWrapperComponent, AccountsTileComponent, AccessCardComponent, TransactionsTileComponent } from './components';
+import {
+  TileWrapperComponent,
+  AccountsTileComponent,
+  AccessCardComponent,
+  TransactionsTileComponent,
+  RewardsTileComponent,
+  MobileAccessTileComponent,
+  OrderTileComponent,
+  ExploreTileComponent,
+  ConversationsTileComponent
+} from './components';
 
 const imports = [IonicModule, CommonModule, DashboardRoutingModule, StHeaderModule];
-const declarations = [DashboardPage, AccessCardComponent, TileWrapperComponent, AccountsTileComponent, TransactionsTileComponent];
+const declarations = [
+  DashboardPage,
+  AccessCardComponent,
+  TileWrapperComponent,
+  AccountsTileComponent,
+  TransactionsTileComponent,
+  RewardsTileComponent,
+  OrderTileComponent,
+  MobileAccessTileComponent,
+  ExploreTileComponent,
+  ConversationsTileComponent
+];
 const providers = [DashboardApiService, DashboardService, DashboardPageResolver];
 
 @NgModule({

@@ -21,7 +21,7 @@
         <div *ngIf="userName" class="card__student-name">{{ userName }}</div>
       </ion-col>
       <ion-col>
-        <div *ngIf="applePayEnabled" class="card__student-card-not-added">Card not added to wallet</div>
+        <div *ngIf="!applePayEnabled" class="card__student-card-not-added">Card not added to wallet</div>
       </ion-col>
     </ion-row>
     <ion-row class="card__quick-actions-container">
@@ -36,12 +36,12 @@
       <ion-col class="card__quick-actions-wrapper">
         <ion-button mode="ios" *ngIf="mobileAccessEnabled" class="card__quick-actions-btn">
           <div class="card__quick-actions-btn-wrapper">
-            <img class="card__icon" src="/assets/icon/mobile-access.svg" alt="mobile access" />
+            <img class="card__icon" id="testerman" src="/assets/icon/mobile-access.svg" alt="mobile access" />
             <div class="card__icon-title">Mobile Access</div>
           </div>
         </ion-button>
       </ion-col>
-      <ion-col *ngIf="applePayEnabled" class="card__quick-actions-wrapper">
+      <ion-col *ngIf="!applePayEnabled" class="card__quick-actions-wrapper">
         <ion-button mode="ios" class="card__apple-wallet-btn"
           ><img src="/assets/icon/Add_to_Apple_Wallet_rgb_US-UK.svg"
         /></ion-button>
@@ -49,5 +49,3 @@
     </ion-row>
   </ion-grid>
 </div>
-
-<!-- <ion-icon mode="md" name="more"></ion-icon> -->

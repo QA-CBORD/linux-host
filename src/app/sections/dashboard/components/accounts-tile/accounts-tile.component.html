@@ -1,5 +1,18 @@
 <div class="tile">
-  accounts-tile works!
-
-  
+  <ion-slides [pager]="false" mode="md" [options]="slideOpts">
+    <ion-slide >
+      <div *ngFor="let product of accounts">
+        <ion-card mode="ios">
+          <ion-card-header>
+            <ion-card-subtitle>
+              {{ product.title }}
+            </ion-card-subtitle>
+            <ion-card-title>
+              ${{ product.total }}
+            </ion-card-title>
+          </ion-card-header>
+        </ion-card>
+      </div>
+    </ion-slide>
+  </ion-slides>
 </div>

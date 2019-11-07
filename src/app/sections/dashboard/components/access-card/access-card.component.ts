@@ -87,10 +87,6 @@ export class AccessCardComponent implements OnInit {
       .subscribe(([instInfo, instPhotoUrl]) => {
         this.institutionInfo = instInfo;
         this.institutionPhotoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(instPhotoUrl);
-        console.log('notSafe:  '+instPhotoUrl);
-        console.log('Safe:  '+this.institutionPhotoUrl);
-        
-        
       });
   }
 
