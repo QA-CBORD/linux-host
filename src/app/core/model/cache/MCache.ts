@@ -92,7 +92,7 @@ export class MCache {
     }
   }
 
-  getSetting(settingName: Globals.Settings.ESetting): SettingInfo {
+  getSetting(settingName: Globals.Settings.Setting): SettingInfo {
     for (const setting of this.institutionSettings) {
       if (this.getSettingName(setting) === settingName.toString()) {
         return setting;
@@ -111,15 +111,6 @@ export class MCache {
     } else {
       this.institutionStrings.push(newString);
     }
-  }
-
-  getContentString(stringName: Globals.Settings.EStrings): ContentStringInfo {
-    for (const string of this.institutionStrings) {
-      if (this.getStringName(string) === stringName.toString()) {
-        return string;
-      }
-    }
-    return null;
   }
 
   addUserSetting(newSetting: UserSettingInfo) {

@@ -21,6 +21,7 @@ import {
   ExploreTileComponent,
   ConversationsTileComponent
 } from './components';
+import { AccessCardService, AccountsService, TransactionService, SecureMessagingService } from './services';
 
 const imports = [IonicModule, CommonModule, DashboardRoutingModule, StHeaderModule];
 const declarations = [
@@ -35,7 +36,15 @@ const declarations = [
   ExploreTileComponent,
   ConversationsTileComponent
 ];
-const providers = [DashboardApiService, DashboardService, DashboardPageResolver];
+const providers = [
+  DashboardApiService,
+  DashboardService,
+  AccessCardService,
+  AccountsService,
+  TransactionService,
+  SecureMessagingService,
+  DashboardPageResolver,
+];
 
 @NgModule({
   declarations,

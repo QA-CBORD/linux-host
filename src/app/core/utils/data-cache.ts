@@ -154,7 +154,7 @@ export class DataCache {
     DataCache.localCache.addSetting(settingInfo);
   }
 
-  getInstitutionSetting(setting: Globals.Settings.ESetting) {
+  getInstitutionSetting(setting: Globals.Settings.Setting) {
     return DataCache.localCache.getSetting(setting).value;
   }
 
@@ -164,10 +164,6 @@ export class DataCache {
 
   setInstitutionContentString(contentStringInfo: ContentStringInfo) {
     DataCache.localCache.addContentString(contentStringInfo);
-  }
-
-  getInstitutionContentString(string: Globals.Settings.EStrings): string {
-    return DataCache.localCache.getContentString(string).value;
   }
 
   getPINSet(): boolean {

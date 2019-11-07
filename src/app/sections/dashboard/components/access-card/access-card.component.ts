@@ -10,6 +10,7 @@ import { ConfigurationService } from 'src/app/core/service/configuration/configu
 
 import { Institution } from 'src/app/core/model/institution';
 import { Settings } from 'src/app/app.global';
+import { AccessCardService } from '../../services/access-card.service';
 
 @Component({
   selector: 'st-access-card',
@@ -17,14 +18,7 @@ import { Settings } from 'src/app/app.global';
   styleUrls: ['./access-card.component.scss'],
 })
 export class AccessCardComponent implements OnInit {
-  /// X inst icon
-  /// X inst name
-  /// X user name
-  /// GMC enabled barcode link
-  /// mobile access enabled and link
-  /// user photo
-  /// apple wallet???
-
+ 
   institutionInfo: Institution;
   institutionPhotoUrl: SafeResourceUrl;
   userName: string = '';
@@ -112,9 +106,5 @@ export class AccessCardComponent implements OnInit {
       .subscribe(response => (this.mobileAccessEnabled = response));
   }
 
-  private isApplePayEnabled(){
-    
-
-  }
-
+  private isApplePayEnabled(){}
 }

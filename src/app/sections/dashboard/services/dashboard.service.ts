@@ -7,7 +7,6 @@ import { DashboardApiService } from './dashboard.api.service';
 
 import { SettingInfoList } from 'src/app/core/model/configuration/setting-info-list.model';
 import { SettingInfo } from 'src/app/core/model/configuration/setting-info.model';
-import { SYSTEM_SETTING } from '../dashboard.config';
 import { Settings } from 'src/app/app.global';
 
 @Injectable()
@@ -27,16 +26,16 @@ export class DashboardService {
     this._settings$.next(this.settings);
   }
 
-  retrieveSettings(settings: Settings.ESetting[]): Observable<SettingInfo[]> {
+  retrieveSettings(settings: Settings.Setting[]): Observable<SettingInfo[]> {
     const requestArray = settings.map(setting => this.dashApiService.retrieveSetting(setting));
     return zip(...requestArray).pipe(tap((settings: SettingInfo[]) => (this._settings = settings)));
   }
 
   retrieveSettingsList(): Observable<SettingInfoList> {
-    return this.dashApiService.retrieveSettingsList(Settings.ESettingList.FEATURES);
+    return this.dashApiService.retrieveSettingsList(Settings.SettingList.FEATURES);
   }
 
-  getSettingValueByName(settingName: SYSTEM_SETTING): any {
+  getSettingValueByName(settingName: Settings.Setting): any {
     const split: string[] = settingName.toString().split('.');
     let value: any = 0;
     this.settings.some(setting => {
