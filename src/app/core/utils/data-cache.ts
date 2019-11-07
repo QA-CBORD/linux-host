@@ -166,10 +166,6 @@ export class DataCache {
     DataCache.localCache.addContentString(contentStringInfo);
   }
 
-  getInstitutionContentString(string: Globals.Settings.EStrings): string {
-    return DataCache.localCache.getContentString(string).value;
-  }
-
   getPINSet(): boolean {
     return DataCache.localCache.bIsPINSet;
   }
