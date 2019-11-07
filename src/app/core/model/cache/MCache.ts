@@ -113,15 +113,6 @@ export class MCache {
     }
   }
 
-  getContentString(stringName: Globals.Settings.EStrings): ContentStringInfo {
-    for (const string of this.institutionStrings) {
-      if (this.getStringName(string) === stringName.toString()) {
-        return string;
-      }
-    }
-    return null;
-  }
-
   addUserSetting(newSetting: UserSettingInfo) {
     if (newSetting == null || newSetting.name == null) {
       return;

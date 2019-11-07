@@ -4,9 +4,11 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { APIService, HttpResponseType, RestCallType } from 'src/app/core/service/api-service/api.service';
-import { SecureMessageGroupInfo, SecureMessageInfo, SecureMessageSendBody } from '../models';
+import { SecureMessageGroupInfo, SecureMessageInfo, SecureMessageSendBody } from '../../model/secure-messaging/secure-messaging.model';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class SecureMessagingApiService {
   private static jwt: string;
 
