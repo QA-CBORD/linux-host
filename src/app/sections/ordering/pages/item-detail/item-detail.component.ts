@@ -14,7 +14,6 @@ import { take } from 'rxjs/operators';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ItemDetailComponent implements OnInit {
-
   private readonly sourceSubscription: Subscription = new Subscription();
   itemOrderForm: FormGroup;
   order: { counter: number; totalPrice: number; optionsPrice: number } = { counter: 1, totalPrice: 0, optionsPrice: 0 };
@@ -27,7 +26,7 @@ export class ItemDetailComponent implements OnInit {
     private readonly fb: FormBuilder,
     private readonly activatedRoute: ActivatedRoute,
     private readonly cartService: CartService
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.initMenuItemOptions();
@@ -38,13 +37,11 @@ export class ItemDetailComponent implements OnInit {
   }
 
   onClose() {
-    this.activatedRoute.queryParams
-      .pipe(take(1))
-      .subscribe(({ categoryId }) => {
-        const id = categoryId;
+    this.activatedRoute.queryParams.pipe(take(1)).subscribe(({ categoryId }) => {
+      const id = categoryId;
 
-        this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.menuCategoryItems, id], { skipLocationChange: true });
-      })
+      this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.menuCategoryItems, id], { skipLocationChange: true });
+    });
   }
 
   scroll({ detail }) {
@@ -53,20 +50,20 @@ export class ItemDetailComponent implements OnInit {
 
   initForm() {
     const formGroup = {};
-    this.menuItem.menuItemOptions
-      .map(({ menuGroup }) => {
-        if (menuGroup.maximum === 1 && menuGroup.minimum === 1) {
-          formGroup[menuGroup.name] = ['', [Validators.required]];
-          return;
-        }
-        formGroup[menuGroup.name] = [[], [
-          validateMinLengthOfArray(menuGroup.minimum), validateMaxLengthOfArray(menuGroup.maximum)
-        ]];
-      })
+    this.menuItem.menuItemOptions.map(({ menuGroup }) => {
+      if (menuGroup.maximum === 1 && menuGroup.minimum === 1) {
+        formGroup[menuGroup.name] = ['', [Validators.required]];
+        return;
+      }
+      formGroup[menuGroup.name] = [
+        [],
+        [validateMinLengthOfArray(menuGroup.minimum), validateMaxLengthOfArray(menuGroup.maximum)],
+      ];
+    });
 
     this.itemOrderForm = this.fb.group({
       ...formGroup,
-      'message': ['', [Validators.minLength(1), Validators.maxLength(255)]]
+      message: ['', [Validators.minLength(1), Validators.maxLength(255)]],
     });
 
     this.valueChanges();
@@ -89,12 +86,11 @@ export class ItemDetailComponent implements OnInit {
 
   onFormSubmit() {
     if (this.itemOrderForm.valid) {
-      console.log(this.itemOrderForm)
       const menuItem = {
         menuItemId: this.menuItem.id,
         orderItemOptions: [],
-        quantity: this.order.counter
-      }
+        quantity: this.order.counter,
+      };
 
       const arrayOfvalues: any[] = Object.values(this.itemOrderForm.value);
       arrayOfvalues.forEach(value => {
@@ -104,30 +100,31 @@ export class ItemDetailComponent implements OnInit {
 
         if (value.length) {
           value.forEach(elem => {
-            menuItem.orderItemOptions.push(
-              {
-                menuItemId: elem.id,
-                orderItemOptions: [],
-                quantity: menuItem.quantity
-              }
-            )
+            menuItem.orderItemOptions.push({
+              menuItemId: elem.id,
+              orderItemOptions: [],
+              quantity: menuItem.quantity,
+            });
           });
           return;
         }
 
         if (value && value.price) {
-          menuItem.orderItemOptions.push(
-            {
-              menuItemId: value.id,
-              orderItemOptions: [],
-              quantity: menuItem.quantity
-            }
-          )
+          menuItem.orderItemOptions.push({
+            menuItemId: value.id,
+            orderItemOptions: [],
+            quantity: menuItem.quantity,
+          });
           return;
         }
-      })
+      });
 
       this.cartService.addOrderItems(menuItem);
+      this.activatedRoute.queryParams.pipe(take(1)).subscribe(({ categoryId }) => {
+        const id = categoryId;
+
+        this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.menuCategoryItems, id], { skipLocationChange: true });
+      });
     }
   }
 
@@ -139,59 +136,54 @@ export class ItemDetailComponent implements OnInit {
         const itemDetail = menuCategory.menuCategoryItems.find(({ id }) => id === menuItemId);
 
         this.menuItem = itemDetail.menuItem;
-        console.log(this.menuItem);
         // Temporary, while we don't have images:
         // '/assets/images/temp-merchant-photo.jpg'
         this.menuItemImg = '/assets/images/temp-merchant-photo.jpg';
-        this.order = { ...this.order, totalPrice: this.menuItem.price }
+        this.order = { ...this.order, totalPrice: this.menuItem.price };
 
         this.initForm();
-      })
+      });
   }
 
   private valueChanges() {
-    const subscription = this.itemOrderForm.valueChanges
-      .subscribe(formValue => {
-        const arrayOfvalues: any[] = Object.values(formValue);
-        this.order = { ...this.order, optionsPrice: 0 };
-        arrayOfvalues.map(value => {
-          if (typeof value === 'string') {
-            return;
-          }
+    const subscription = this.itemOrderForm.valueChanges.subscribe(formValue => {
+      const arrayOfvalues: any[] = Object.values(formValue);
+      this.order = { ...this.order, optionsPrice: 0 };
+      arrayOfvalues.map(value => {
+        if (typeof value === 'string') {
+          return;
+        }
 
-          if (value.length) {
-            const optionPrice = value.reduce((total, { price }) => price + total, 0);
-            this.order = { ...this.order, optionsPrice: this.order.optionsPrice + optionPrice }
-            return;
-          }
+        if (value.length) {
+          const optionPrice = value.reduce((total, { price }) => price + total, 0);
+          this.order = { ...this.order, optionsPrice: this.order.optionsPrice + optionPrice };
+          return;
+        }
 
-          if (value && value.price) {
-            this.order = { ...this.order, optionsPrice: this.order.optionsPrice + value.price }
-            return;
-          }
-        })
-        this.calculateTotalPrice();
-      })
+        if (value && value.price) {
+          this.order = { ...this.order, optionsPrice: this.order.optionsPrice + value.price };
+          return;
+        }
+      });
+      this.calculateTotalPrice();
+    });
 
     this.sourceSubscription.add(subscription);
   }
 }
 
-
 export const validateMinLengthOfArray = (min: number | undefined): ValidationErrors | null => {
   return (c: AbstractControl): { [key: string]: any } => {
-    if (!min || c.value.length >= min)
-      return null;
+    if (!min || c.value.length >= min) return null;
 
-    return { 'minLength': { valid: false } };
-  }
-}
+    return { minLength: { valid: false } };
+  };
+};
 
 export const validateMaxLengthOfArray = (max: number | undefined): ValidationErrors | null => {
   return (c: AbstractControl): { [key: string]: any } => {
-    if (!max || c.value.length <= max)
-      return null;
+    if (!max || c.value.length <= max) return null;
 
-    return { 'maxLength': { valid: false } };
-  }
-}
+    return { maxLength: { valid: false } };
+  };
+};
