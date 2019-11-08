@@ -1,0 +1,68 @@
+@import "tools";
+
+.rewards {
+  margin: 25px 30px;
+
+  .progress-bar {
+    height: 20px;
+    background: $color-whisper;
+    border-radius: 10px;
+    padding: 2px;
+
+    &__gradient {
+      background-image: linear-gradient(to right, $color-deep-sky-blue, $color-navy-blue);
+      height: 100%;
+    }
+
+    &__line {
+      height: 100%;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+  }
+
+  .progress {
+    &__experience {
+      @include font-nunito-semibold(16px);
+      margin: 0;
+      padding: 5px 10px;
+      text-align: right;
+      font-weight: 600;
+      letter-spacing: 0;
+      line-height: 20px;
+    }
+
+    &__level {
+      @include font-nunito-semibold(20px);
+      margin: 0;
+      padding: 5px 10px;
+      font-weight: 600;
+      letter-spacing: 0;
+      line-height: 24px;
+    }
+
+    &__balance-wrapper {
+      text-align: center;
+      color: $color-dim-gray;
+    }
+
+    &__balance-title {
+      margin: 0;
+      text-transform: uppercase;
+
+      @include font-nunito-regular(13px)
+    }
+
+    &__balance-points {
+      margin: 5px;
+
+      @include font-nunito-semibold(24px)
+    }
+
+    &__balance-points-digit {
+      color: $color-black;
+      @include font-nunito-heavy(24px)
+    }
+  }
+}
+

@@ -1,7 +1,28 @@
 @import 'tools';
 
 .tile {
-    margin: 16px;
-    
+    height: 160px;
+    margin: 5px;
 
+    &__accounts-item {
+        width: 160px;
+        height: 55px;
+        margin: 4px;
+        padding: 5px;
+        display: flex;
+        flex-direction: column;
+        border-radius: 8px;
+        background: #f7f7f7;
+        text-align: left;
+    }
+
+     &__accounts-title {
+         color: $color-dim-gray; ;
+         @include font-nunito-semibold(12px)
+     }
+
+     &__accounts-total {
+         color: $color-black ;
+         @include font-nunito-heavy(20px)
+     }
 }

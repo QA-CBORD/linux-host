@@ -9,9 +9,21 @@ import { AccountsService } from '../../services/accounts.service';
 })
 export class AccountsTileComponent implements OnInit {
 
-  constructor(private readonly accountsService: AccountsService) { }
+  accounts = [
+    {title: "Dinning Dolars", total: 12343},
+    {title: "Bonus Bucks", total: 243},
+    {title: "Meal Swipes", total: 43},
+    {title: "Guest  Meals", total: 43},
+  ];
 
-  /// use accounts service to retrieve all data
+  slideOpts = {
+    initialSlide: 1,
+    spaceBetween: 0,
+    speed: 400,
+    width: 330,
+    autoHeight: true
+  };
+  constructor() { }
 
   ngOnInit() {}
 

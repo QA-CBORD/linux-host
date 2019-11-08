@@ -7,6 +7,10 @@ import { Component, OnInit } from '@angular/core';
 })
 export class OrderTileComponent implements OnInit {
 
+  orderList = [
+    {}
+  ]
+
   constructor() { }
 
   ngOnInit() {}

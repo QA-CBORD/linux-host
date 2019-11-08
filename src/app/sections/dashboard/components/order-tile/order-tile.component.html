@@ -1,3 +1,10 @@
-<p>
-  order-tile works!
-</p>
+<div class="order">
+  <ion-list *ngFor="let order of orderList"> 
+  <div class="order__card">
+    <div class="order__favorite-wrapper">
+      <img class="order__favorite-icon" src=""> 
+    </div>
+    <div class="order__title"></div>
+  </div>
+</ion-list>
+</div>

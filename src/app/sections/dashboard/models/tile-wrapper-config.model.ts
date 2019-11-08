@@ -1,6 +1,7 @@
 import { NAVIGATE } from '../../../app.global';
 
 export interface TileWrapperConfig {
+    id: string;
     title: string;
     navigate: NAVIGATE;
     iconName?: string;

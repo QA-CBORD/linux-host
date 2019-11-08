@@ -1,0 +1,32 @@
+@import 'tools';
+
+.access {
+  height: 190px;
+  margin: 0px 16px;
+  overflow: hidden;
+
+  &__list {
+    margin: 0;
+    padding: 0;
+  }
+  &__item {
+    display: flex;
+    align-items: center;
+    --padding-start: 0;
+    border-bottom: 1px solid $color-white-smoke;
+    margin: 2px 0;
+  }
+
+  &__item-icon {
+    width: 18px;
+    height: 18px;
+
+  }
+
+  &__item-lable {
+    margin-top: 2px;
+    margin-left: 10px;
+    @include font-nunito-semibold(14px)
+  }
+
+}

@@ -1,3 +1,8 @@
-<p>
-  mobile-access-tile works!
-</p>
+<div class="access">
+  <ion-list class="access__list" *ngFor="let access of accessList">
+    <ion-item class="access__item" mode="ios" lines="none">
+      <img class="access__item-icon" src="/assets/icon/star-filled.svg"/>
+      <div class="access__item-lable"> {{ access.id }} - {{ access.location }}</div>
+    </ion-item>
+  </ion-list>
+</div>

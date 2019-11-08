@@ -16,6 +16,11 @@ import {
   AccountsTileComponent,
   AccessCardComponent,
   TransactionsTileComponent,
+  RewardsTileComponent,
+  MobileAccessTileComponent,
+  OrderTileComponent,
+  ExploreTileComponent,
+  ConversationsTileComponent
 } from './components';
 
 import {
@@ -34,6 +39,11 @@ const declarations = [
   TileWrapperComponent,
   AccountsTileComponent,
   TransactionsTileComponent,
+  RewardsTileComponent,
+  OrderTileComponent,
+  MobileAccessTileComponent,
+  ExploreTileComponent,
+  ConversationsTileComponent
 ];
 const providers = [
   DashboardApiService,
