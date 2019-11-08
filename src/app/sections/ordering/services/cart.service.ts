@@ -7,6 +7,7 @@ import { MerchantService } from './merchant.service';
 import { MerchantInfo, OrderInfo, MenuInfo, OrderItem } from '../shared/models';
 import { UserService } from '@core/service/user-service/user.service';
 import { AddressInfo } from '@core/model/address/address-info';
+import { OrderingApiService } from '@sections/ordering/services/ordering.api.service';
 
 @Injectable()
 export class CartService {
@@ -14,7 +15,8 @@ export class CartService {
   private readonly _cart$: BehaviorSubject<CartState> = new BehaviorSubject<CartState>(<CartState>this.cart);
 
   constructor(private readonly userService: UserService,
-              private readonly merchantService: MerchantService) {
+              private readonly merchantService: MerchantService,
+              private readonly api: OrderingApiService) {
   }
 
   get merchant$(): Observable<MerchantInfo> {
@@ -121,6 +123,10 @@ export class CartService {
     return this.merchantService.validateOrder(this.cart.order).pipe(
       tap(updatedOrder => this._order = updatedOrder),
     );
+  }
+
+  submitOrder(accId: string, cvv: string): Observable<OrderInfo> {
+    return this.api.submitOrder(this.cart.order, accId, cvv);
   }
 
   updateOrderAddress(address: AddressInfo) {

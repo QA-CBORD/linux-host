@@ -6,14 +6,24 @@ import {
   OnInit,
   Output, SimpleChanges,
 } from '@angular/core';
-import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormArray,
+  FormBuilder,
+  FormGroup,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
 import { BuildingInfo, OrderItem } from '@sections/ordering';
-import { ORDER_TYPE } from "@sections/ordering/ordering.config";
+import { ORDER_TYPE, PAYMENT_SYSTEM_TYPE } from '@sections/ordering/ordering.config';
 import { AddressInfo } from "@core/model/address/address-info";
 import { ModalController } from '@ionic/angular';
 import { DeliveryAddressesModalComponent } from '@sections/ordering/shared/ui-components/delivery-addresses.modal/delivery-addresses.modal.component';
 import { UserAccount } from '@core/model/account/account.model';
 import { Subscription } from "rxjs";
+import { Variable } from '@angular/compiler/src/render3/r3_ast';
+import { PAYMENT_TYPE } from '@sections/accounts/accounts.config';
 
 @Component({
   selector: 'st-order-details',
@@ -41,13 +51,14 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
   @Output() onOrderItemRemovedId: EventEmitter<string> = new EventEmitter<string>();
   detailsForm: FormGroup;
   private readonly sourceSub = new Subscription();
+  cvv = false;
 
   constructor(private readonly fb: FormBuilder,
               private readonly modalController: ModalController) { }
 
   ngOnInit() {
     this.initForm();
-    console.log(this.address);
+    // this.addCvvControl();
   }
 
   ngOnDestroy() {
@@ -66,15 +77,19 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
     }
   }
 
-  private get addressInfo(): AbstractControl {
+  private get addressInfoFormControl(): AbstractControl {
     return this.detailsForm.get(DETAILS_FORM_CONTROL_NAMES.address);
+  }
+
+  private get cvvFormControl(): AbstractControl {
+    return this.detailsForm.get(DETAILS_FORM_CONTROL_NAMES.cvv);
   }
 
   private get orderItemsFormArray(): AbstractControl {
     return this.detailsForm.get(DETAILS_FORM_CONTROL_NAMES.orderItems);
   }
 
-  onRemove(id: string) {
+  onRemoveOrderItem(id: string) {
     this.onOrderItemRemovedId.emit(id);
     const index = (this.orderItemsFormArray as FormArray).controls.findIndex(({value}) => value === id);
     (this.orderItemsFormArray as FormArray).removeAt(index);
@@ -88,10 +103,10 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
         [DETAILS_FORM_CONTROL_NAMES.paymentMethod]: ['', Validators.required],
       }
     );
-    this.subscribe()
+    this.subscribeFormChanges()
   }
 
-  private subscribe () {
+  private subscribeFormChanges () {
     const sub = this.detailsForm.valueChanges
       .subscribe(data => {
         this.onFormChange.emit({ data, valid: this.detailsForm.valid })
@@ -105,8 +120,24 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
     ], Validators.required)
   }
 
+  private addCvvControl() {
+    this.cvv = true;
+    this.detailsForm.addControl(
+      DETAILS_FORM_CONTROL_NAMES.cvv,
+      this.fb.control('', [
+        Validators.required,
+        validatorCvv
+      ])
+    )
+  }
+
+  private removeCvvControl() {
+    this.cvv = false;
+    this.detailsForm.removeControl(DETAILS_FORM_CONTROL_NAMES.cvv);
+  }
+
   test() {
-    console.log(this.address);
+    console.log(this.detailsForm);
   }
 
   private async showAddressListModal(): Promise<void> {
@@ -116,17 +147,25 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
       componentProps: this.addressModalConfig,
     });
     modal.onDidDismiss().then(({ data }) => {
-      this.addressInfo.setValue(data);
+      this.addressInfoFormControl.setValue(data);
     });
     await modal.present();
   }
 
+  checkAccount({detail: { value }}) {
+    if (value.accountType === PAYMENT_TYPE.CREDIT && value.paymentSystemType !== PAYMENT_SYSTEM_TYPE.USAEPAY) {
+      this.addCvvControl();
+    } else {
+      this.removeCvvControl();
+    }
+  }
 }
 
 export enum DETAILS_FORM_CONTROL_NAMES {
   address = 'address',
   orderItems = 'orderItems',
   paymentMethod = 'paymentMethod',
+  cvv = 'cvv',
 }
 
 export interface AddressModalSettings {
@@ -146,3 +185,10 @@ export interface OrderDetailsFormData {
   };
   valid: boolean;
 }
+
+const validatorCvv: ValidatorFn = function ({value}) {
+  if (isNaN(value)) return {error: true};
+  if (!Number.isInteger(value)) return {error: true};
+  if (String(value).length < 3 || String(value).length > 4) return {error: true};
+  return null;
+};

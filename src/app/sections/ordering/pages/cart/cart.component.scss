@@ -1,6 +1,6 @@
 @import "tools";
 
-.btn{
+.btn {
   --border-radius: 25px;
   --background: #166DFF;
 
@@ -13,4 +13,10 @@
   padding-bottom: 5px;
 
   @include font-nunito-heavy(14px);
+
+  &--invalid {
+    --background: #999;
+
+    color: $color-white;
+  }
 }

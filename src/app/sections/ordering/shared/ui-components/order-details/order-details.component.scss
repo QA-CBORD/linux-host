@@ -11,6 +11,12 @@
   padding: 10px;
   background: #fff;
 
+  &--error {
+    color: $color-alizarin;
+
+    @include font-nunito-heavy(14px);
+  }
+
   &:nth-of-type(2) {
     border-top: none;
   }
