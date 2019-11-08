@@ -27,7 +27,7 @@ export class ItemDetailComponent implements OnInit {
     private readonly fb: FormBuilder,
     private readonly activatedRoute: ActivatedRoute,
     private readonly cartService: CartService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.initMenuItemOptions();
@@ -115,7 +115,7 @@ export class ItemDetailComponent implements OnInit {
         return;
       }
 
-      if (value && value.price) {
+      if (value && value.id) {
         menuItem.orderItemOptions.push(
           {
             menuItemId: value.id,
@@ -128,7 +128,7 @@ export class ItemDetailComponent implements OnInit {
     })
 
     this.cartService.addOrderItems(menuItem);
-    this.onClose();
+    this.cartService.validateOrder().subscribe(() => this.onClose(), () => console.log('invalid'));
   }
 
   private initMenuItemOptions() {
@@ -163,7 +163,7 @@ export class ItemDetailComponent implements OnInit {
           return;
         }
 
-        if (value && value.price) {
+        if (value && value.id) {
           this.order = { ...this.order, optionsPrice: this.order.optionsPrice + value.price };
           return;
         }
