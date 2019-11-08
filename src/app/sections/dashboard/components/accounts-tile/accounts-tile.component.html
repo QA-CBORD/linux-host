@@ -1,11 +1,9 @@
 <div class="tile">
-  <ion-slides [pager]="true" mode="md" [options]="slideOpts">
-    <ion-slide>
-      <div *ngFor="let product of accounts">
-        <div class="tile__accounts-item" >
-          <div class="tile__accounts-title" >{{product.title}}</div>
-          <div class="tile__accounts-total">{{product.total}}</div>
-        </div>
+  <ion-slides class="tile__slides" [pager]="true" mode="ios" [options]="slideOpts">
+    <ion-slide class="tile__slide" *ngFor="let account of accounts">
+      <div *ngFor="let product of account" class="tile__accounts-item" >
+        <div class="tile__accounts-title" >{{product.title}}</div>
+        <div class="tile__accounts-total">{{product.total}}</div>
       </div>
     </ion-slide>
   </ion-slides>

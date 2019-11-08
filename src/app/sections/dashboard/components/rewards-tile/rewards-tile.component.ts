@@ -9,7 +9,7 @@ export class RewardsTileComponent implements OnInit {
 
   levelInfo = {
     level: 1,
-    name: "Padavan"
+    name: "Padawan"
   };
   width = 50;
   expToNextLvl = "50/100XP";

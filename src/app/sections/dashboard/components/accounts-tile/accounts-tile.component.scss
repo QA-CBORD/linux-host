@@ -1,8 +1,22 @@
 @import 'tools';
 
 .tile {
+    width: 100%;
     height: 160px;
-    margin: 5px;
+
+    &__slides {
+        width: 340px;
+        height: 150px;
+        --bullet-background-active: #000;
+    }
+
+    &__slide {
+        display: flex;
+        width: 340px !important;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        margin-bottom: 15px;
+    }
 
     &__accounts-item {
         width: 160px;

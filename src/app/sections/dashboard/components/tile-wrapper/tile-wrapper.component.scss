@@ -2,7 +2,7 @@
 
 .tile {
   width: stretch;
-  margin: 10px;
+  margin: 15px 10px;
   border-radius: 15px;
   box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.12), 0px 2px 14px 0px rgba(0, 0, 0, 0.12);
 
@@ -28,7 +28,7 @@
     }
 
     .label {
-      @include font-nunito-semibold(16px);
+      @include font-nunito-heavy(20px);
 
       color: $color-black;
       letter-spacing: 0;
