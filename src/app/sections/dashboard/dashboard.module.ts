@@ -10,13 +10,22 @@ import { DashboardApiService } from './services/dashboard.api.service';
 import { DashboardService } from './services/dashboard.service';
 
 import { DashboardPage } from './dashboard.page';
+
 import {
   TileWrapperComponent,
   AccountsTileComponent,
   AccessCardComponent,
   TransactionsTileComponent,
 } from './components';
-import { AccessCardService, AccountsService, TransactionService, SecureMessagingService } from './services';
+
+import {
+  AccessCardService,
+  AccountsService,
+  TransactionService,
+  SecureMessagingService,
+  MobileAccessService,
+  RewardsService,
+} from './services';
 
 const imports = [IonicModule, CommonModule, DashboardRoutingModule, StHeaderModule];
 const declarations = [
@@ -33,6 +42,8 @@ const providers = [
   AccountsService,
   TransactionService,
   SecureMessagingService,
+  MobileAccessService,
+  RewardsService,
   DashboardPageResolver,
 ];
 

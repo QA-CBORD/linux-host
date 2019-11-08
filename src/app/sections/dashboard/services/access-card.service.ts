@@ -18,7 +18,10 @@ export class AccessCardService {
   ) {}
 
   getUserName(): Observable<string> {
-    return this.userService.userData.pipe(map(userInfo => userInfo.firstName + ' ' + userInfo.lastName));
+    return this.userService.userData.pipe(
+      map(userInfo => userInfo.firstName + ' ' + userInfo.lastName),
+      take(1)
+    );
   }
 
   getUserPhoto(): Observable<string> {
