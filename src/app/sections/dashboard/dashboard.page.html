@@ -1,4 +1,4 @@
-<ion-content>
+<ion-content class="dashboard">
   <st-access-card></st-access-card>
 
   <ng-container *ngFor="let tile of tilesConfig">
@@ -6,8 +6,22 @@
       <ng-container [ngSwitch]="tile.id">
         <st-accounts-tile *ngSwitchCase="'accounts'"></st-accounts-tile>
         <st-transactions-tile *ngSwitchCase="'transactions'"></st-transactions-tile>
+        <st-rewards-tile *ngSwitchCase="'rewards'"></st-rewards-tile>
         <st-mobile-access-tile *ngSwitchCase="'mobileAccess'"></st-mobile-access-tile>
+        <st-order-tile *ngSwitchCase="'order'"></st-order-tile>
+        <st-explore-tile *ngSwitchCase="'explore'"></st-explore-tile>
+        <st-conversations-tile *ngSwitchCase="'conversations'"></st-conversations-tile>
       </ng-container>
     </st-tile-wrapper>
   </ng-container>
+
+  <div class="dashboard__bottom-btn-wrapper">
+    <div class="dashboard__bottom-icon-wrapper">
+      <ion-icon name="menu"></ion-icon>
+    </div>
+    <div class="dashboard__bottom-title-wrapper">
+      <div class="dashboard__bottom-title">Edit Home Page</div>
+      <div class="dashboard__bottom-subtitle">Rearrange and show or hide cards</div>
+    </div>
+  </div>
 </ion-content>

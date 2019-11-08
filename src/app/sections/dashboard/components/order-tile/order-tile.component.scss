@@ -1,0 +1,12 @@
+@import 'tools'; 
+
+.order {
+  height: 200px;
+  margin: 16px 8px;
+
+  &__card {
+    width: 160px;
+    height: 160px;
+  }
+
+}

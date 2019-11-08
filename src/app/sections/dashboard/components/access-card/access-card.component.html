@@ -12,7 +12,14 @@
       </ion-col>
     </ion-row>
     <ion-row class="card__campus-container">
-      <ion-col class="card__campus-background">
+      <ion-col class="card__campus-wrapper">
+        <ng-container *ngIf="campusPhoto; then campusBackground; else defaultBackground"></ng-container>
+        <ng-template #defaultBackground>
+          <img class="card__campus-background" src="/assets/images/card_background_illustration.svg" alt="background photo" />
+        </ng-template>
+        <ng-template #campusBackground>
+          <img class="card__campus-background" src="{{ campusPhoto }}" alt="campus photo"/>
+        </ng-template>
         <img *ngIf="userPhoto" class="card__campus-student-avatar" src="{{ userPhoto }}" alt="user photo" />
       </ion-col>
     </ion-row>

@@ -26,6 +26,7 @@ export class AccessCardComponent implements OnInit {
   getMyCardEnabled: boolean = false;
   mobileAccessEnabled: boolean = false;
   applePayEnabled: boolean = false;
+  campusPhoto: string = '';
 
   constructor(
     private readonly userService: UserService,
@@ -88,7 +89,7 @@ export class AccessCardComponent implements OnInit {
     this.userService.userData
       .pipe(
         switchMap(({ institutionId }) =>
-          this.configService.getSetting(institutionId, Settings.ESetting.MY_CARD_ENABLED)
+          this.configService.getSetting(institutionId, Settings.Setting.MY_CARD_ENABLED)
         ),
         map(({ value }) => value === '1')
       )
@@ -99,7 +100,7 @@ export class AccessCardComponent implements OnInit {
     this.userService.userData
       .pipe(
         switchMap(({ institutionId }) =>
-          this.configService.getSetting(institutionId, Settings.ESetting.MOBILE_ACCESS_ENABLED)
+          this.configService.getSetting(institutionId, Settings.Setting.MOBILE_ACCESS_ENABLED)
         ),
         map(({ value }) => value === '1')
       )
