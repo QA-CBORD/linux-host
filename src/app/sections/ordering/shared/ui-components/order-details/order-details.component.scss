@@ -27,6 +27,22 @@
     color: $color-black;
 
     @include font-nunito-semibold(16px);
+
+    &--editable {
+      position: relative;
+
+      &:after {
+        content: '';
+        position: absolute;
+        display: block;
+        top: calc(50% - 30px);
+        width: 35px;
+        height: 30px;
+        right: 20px;
+        background-image: url('/assets/icon/angle-down-select.svg');
+        background-size: cover;
+      }
+    }
   }
 
   &__payment-method {

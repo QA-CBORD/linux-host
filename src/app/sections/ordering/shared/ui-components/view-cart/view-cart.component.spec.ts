@@ -1,22 +1,22 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { InputFloatingLabelComponent } from './input-floating-label.component';
+import { ViewCartComponent } from './view-cart.component';
 
-describe('InputFloatingLabelComponent', () => {
-  let component: InputFloatingLabelComponent;
-  let fixture: ComponentFixture<InputFloatingLabelComponent>;
+describe('ViewCartComponent', () => {
+  let component: ViewCartComponent;
+  let fixture: ComponentFixture<ViewCartComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ InputFloatingLabelComponent ],
+      declarations: [ ViewCartComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(InputFloatingLabelComponent);
+    fixture = TestBed.createComponent(ViewCartComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

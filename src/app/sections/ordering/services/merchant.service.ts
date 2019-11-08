@@ -228,7 +228,7 @@ export class MerchantService {
     return zip(this.menuMerchants$, this.getSettingByConfig(SYSTEM_SETTINGS_CONFIG.addressRestrictionToOnCampus))
       .pipe(
         map(([merchants, institutionRestriction]) => {
-          const merchant = merchants.find(({ id }) => id === merchantId)
+          const merchant = merchants.find(({ id }) => id === merchantId);
           const deliveryAddressRestriction = merchant.settings.map[MerchantSettings.deliveryAddressRestriction];
           let modifiedAddresses;
 
@@ -251,5 +251,35 @@ export class MerchantService {
           })
         }
         ))
+  }
+
+  getPickupAddressAsString({ address1, address2, city }: AddressInfo): string {
+    address1 = address1 ? address1 : '';
+    address2 = address2 ? address2 : '';
+    city = city ? city : '';
+    return `${address1} ${address2} ${city}`.trim();
+  }
+
+  getDeliveryAddressAsString(addressInfo: AddressInfo = {} as AddressInfo): string {
+    if (!Object.keys(addressInfo).length) return '';
+    let { onCampus, address1, address2, city, room, building, state } = addressInfo;
+    room = room ? `Room ${room}` : '';
+    building = building ? building : '';
+    address1 = address1 ? address1 : '';
+    state = state ? state : '';
+    address2 = address2 ? address2 : '';
+    city = city ? city : '';
+
+    return Boolean(Number(onCampus))
+      ? `${room}, ${building}`.trim()
+      : `${address1} ${address2}, ${city}, ${state}`.trim();
+  }
+
+  getDeliveryAddressById(deliveryId: string): Observable<AddressInfo> {
+    return this.retrieveUserAddressList().pipe(
+      map((addresses) =>
+        addresses.find(({ id }) => id === deliveryId),
+      ),
+    );
   }
 }

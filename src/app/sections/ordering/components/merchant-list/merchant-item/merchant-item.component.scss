@@ -1,90 +1,62 @@
 @import 'tools';
 
-:host {
-  width: 100%;
-  // display: flex;
-  // justify-content: space-between;
-}
-
 .merchant {
-  padding-top: 26px;
-  //   padding-left: 18px;
-  //   padding-right: 18px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid $color-light-gray;
+  padding: 20px 15px;
+  --padding-start: 0;
+  --inner-padding-end: 0;
+  // border-bottom: 1px solid $color-light-gray;
 
   &__merchant-photo {
     object-fit: cover;
-    border-radius: 15px;
-    height: 172px;
+    border-radius: 10px;
+    height: 170px;
     width: 100%;
-    left: 0;
-    right: 0;
   }
 
   &__merchant-name {
-    @include ellipsis;
-    @include font-nunito-semibold(12px);
-    letter-spacing: 0;
-    line-height: 12px;
-    margin: 0;
-    color: $color-black;
-    font-size: 16px;
-    font-weight: 600;
-    line-height: 20px;
-  }
+    margin: 10px;
 
-  &__merchant-buttons {
-    background: transparent;
-    fill: clear;
-    height: 48px;
-    width: 48px;
+    @include ellipsis;
+    @include font-nunito-heavy(16px);
   }
 
   &__merchant-distance {
     color: #00000099;
-    letter-spacing: 0;
-    margin: 0;
-    font-weight: 600;
-    line-height: 12px;
-
+    margin: 0 10px;
+    
     @include ellipsis;
     @include font-nunito-semibold(12px);
   }
 
+  &__merchant-buttons {
+    display: flex;
+    justify-content: space-around;
+  }
+
   &__merchant-button {
     width: 25px;
-    float: right;
-    margin-left: 8px;
-    margin-right: 8px;
+    margin: 5px 10px;
   }
 
   &__merchant-hours {
-    @include font-nunito-semibold(12px);
-    letter-spacing: 0;
-    margin: 0;
-    font-size: 12px;
-    font-weight: 600;
-    line-height: 12px;
+    margin: 0 10px;
+    
+    @include font-nunito-heavy(12px);
 
     &--open {
-      color: #147d63;
+      color: $color-deep-sea;
     }
 
     &--closed {
-      color: #b52135;
+      color: $color-cardinal;
     }
   }
 
   &__merchant-order-types {
-    color: #166dff;
-    font-size: 12px;
-    @include font-nunito-semibold(12px);
-    line-height: 12px;
-    margin: 0;
-    font-weight: 600;
+    margin: 0 10px;
     text-align: right;
-    letter-spacing: 0.6px;
-    line-height: 12px;
+    color: $color-dodger-blue;
+    
+    @include font-nunito-semibold(12px);
   }
 }
