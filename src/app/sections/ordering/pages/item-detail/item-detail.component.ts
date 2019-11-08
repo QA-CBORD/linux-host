@@ -21,6 +21,7 @@ export class ItemDetailComponent implements OnInit {
   menuItem: MenuItemInfo;
   menuItemImg: string;
   isStaticHeader: boolean = true;
+  errorState: boolean = false;
 
   constructor(
     private readonly router: Router,
@@ -88,47 +89,49 @@ export class ItemDetailComponent implements OnInit {
   }
 
   onFormSubmit() {
-    if (this.itemOrderForm.valid) {
-      console.log(this.itemOrderForm)
-      const menuItem = {
-        menuItemId: this.menuItem.id,
-        orderItemOptions: [],
-        quantity: this.order.counter
+    if (this.itemOrderForm.invalid) {
+      this.errorState = true;
+      return;
+    }
+    const menuItem = {
+      menuItemId: this.menuItem.id,
+      orderItemOptions: [],
+      quantity: this.order.counter
+    }
+
+    const arrayOfvalues: any[] = Object.values(this.itemOrderForm.value);
+    arrayOfvalues.forEach(value => {
+      if (typeof value === 'string') {
+        return;
       }
 
-      const arrayOfvalues: any[] = Object.values(this.itemOrderForm.value);
-      arrayOfvalues.forEach(value => {
-        if (typeof value === 'string') {
-          return;
-        }
-
-        if (value.length) {
-          value.forEach(elem => {
-            menuItem.orderItemOptions.push(
-              {
-                menuItemId: elem.id,
-                orderItemOptions: [],
-                quantity: menuItem.quantity
-              }
-            )
-          });
-          return;
-        }
-
-        if (value && value.price) {
+      if (value.length) {
+        value.forEach(elem => {
           menuItem.orderItemOptions.push(
             {
-              menuItemId: value.id,
+              menuItemId: elem.id,
               orderItemOptions: [],
               quantity: menuItem.quantity
             }
           )
-          return;
-        }
-      })
+        });
+        return;
+      }
 
-      this.cartService.addOrderItems(menuItem);
-    }
+      if (value && value.price) {
+        menuItem.orderItemOptions.push(
+          {
+            menuItemId: value.id,
+            orderItemOptions: [],
+            quantity: menuItem.quantity
+          }
+        )
+        return;
+      }
+    })
+
+    this.cartService.addOrderItems(menuItem);
+    this.onClose();
   }
 
   private initMenuItemOptions() {
@@ -139,7 +142,6 @@ export class ItemDetailComponent implements OnInit {
         const itemDetail = menuCategory.menuCategoryItems.find(({ id }) => id === menuItemId);
 
         this.menuItem = itemDetail.menuItem;
-        console.log(this.menuItem);
         // Temporary, while we don't have images:
         // '/assets/images/temp-merchant-photo.jpg'
         this.menuItemImg = '/assets/images/temp-merchant-photo.jpg';

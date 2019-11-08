@@ -49,6 +49,7 @@
         <st-single-list [name]="menuGroupItem.menuGroup.name"
                         [options]="menuGroupItem.menuGroup.menuGroupItems"
                         [control]="itemOrderForm.get(menuGroupItem.menuGroup.name)"
+                        [isError]="itemOrderForm.get(menuGroupItem.menuGroup.name).value ? false : errorState"
                         [formControlName]="menuGroupItem.menuGroup.name">
         </st-single-list>
       </ng-template>
@@ -59,6 +60,7 @@
                        [name]="menuGroupItem.menuGroup.name"
                        [options]="menuGroupItem.menuGroup.menuGroupItems"
                        [control]="itemOrderForm.get(menuGroupItem.menuGroup.name)"
+                       [isError]="itemOrderForm.get(menuGroupItem.menuGroup.name).value.length || !menuGroupItem.menuGroup.minimum ? false : errorState"
                        [formControlName]="menuGroupItem.menuGroup.name"></st-multi-list>
       </ng-template>
 

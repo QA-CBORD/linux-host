@@ -23,6 +23,10 @@
     &__divider-subtitle {
         color: $color-matterhorn;
 
+        &--error {
+            color: #e22942;
+        }
+
         @include font-nunito-regular(12px);
 	}
 	

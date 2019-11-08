@@ -1,8 +1,12 @@
-<ion-list class="multi-list__list-toppings">
+<ion-list class="multi-list__list-toppings"
+          (ionBlur)="onBlur()">
   <ion-item-divider class="multi-list__divider"
                     mode="ios">
     <div class="multi-list__divider-title">{{name}}</div>
-    <div class="multi-list__divider-subtitle">
+    <div class="multi-list__divider-subtitle"
+         [ngClass]="{'multi-list__divider-subtitle--error': isError}">
+      <ng-container *ngIf="isError">Error -
+      </ng-container>
       <ng-container *ngIf="!minimum && maximum">Select up to {{maximum}}</ng-container>
       <ng-container *ngIf="minimum && !maximum">Select at least {{minimum}}</ng-container>
       <ng-container *ngIf="minimum && maximum && minimum === maximum">Select {{maximum}}</ng-container>

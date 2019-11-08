@@ -3,13 +3,11 @@
   <ion-item-divider class="single-list__divider"
                     mode="ios">
     <div class="single-list__divider-title">Select a {{name}}</div>
-    <div class="single-list__divider-subtitle">
+    <div class="single-list__divider-subtitle"
+         [ngClass]="{'single-list__divider-subtitle--error': isError}">
+      <ng-container *ngIf="isError">Error - </ng-container>
       Required
     </div>
-    <!-- <div class="single-list__control-error-msg"
-         *ngIf="orderSize.touched">
-      Required - You must select a size.
-    </div> -->
   </ion-item-divider>
 
   <ion-radio-group lines="none">

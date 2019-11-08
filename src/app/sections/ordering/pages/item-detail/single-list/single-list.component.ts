@@ -21,6 +21,7 @@ export class SingleListComponent extends DefaultValueAccessor implements OnInit 
   @Input() name: string;
   @Input() options: MenuGroupItemInfo[];
   @Input() control: AbstractControl = new FormControl();
+  @Input() isError: boolean;
   onTouched: () => void;
   onChange: (_: any) => void;
   private innerValue: any = '';
