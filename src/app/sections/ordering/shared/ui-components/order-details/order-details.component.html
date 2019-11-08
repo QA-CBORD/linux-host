@@ -5,43 +5,38 @@
             <ion-label class="order-details__label">{{type | typeMessage:'dueTime'}}</ion-label>
 
             <p class="order-details__value">{{time | date: 'M/d/yy, h:mm a'}}</p>
-
-<!--            <ng-template #timeEditable>-->
-<!--                <p class="order-details__value order-details__value&#45;&#45;editable">{{time | date: 'M/d/yy, h:mm a'}}</p>-->
-<!--            </ng-template>-->
-
         </div>
 
-        <div class="order-details" *ngIf="address?.length">
-            <ion-label  class="order-details__label">{{type | typeMessage:'address'}}</ion-label>
+        <div class="order-details" *ngIf="address">
+            <ion-label class="order-details__label">{{type | typeMessage:'address'}}</ion-label>
 
-            <p *ngIf="readonly && address?.length; else addressEditable" class="order-details__value">{{address}}</p>
+            <p *ngIf="readonly && address; else addressEditable"
+               class="order-details__value">{{address | addressAsString: type}}</p>
 
             <ng-template #addressEditable>
                 <p class="order-details__value"
                    [ngClass]="{'order-details__value--editable': isAddressClickable}"
-                   (click)="isAddressClickable && showAddressListModal()">{{address}}</p>
+                   (click)="isAddressClickable && showAddressListModal()">{{address | addressAsString: type}}</p>
             </ng-template>
 
         </div>
 
         <ion-list class="order-ingredient-list"
                   ngDefaultControl
-                  [formArrayName]="controlsNames.ingredients">
-            <!-- Sliding item with text options on both sides -->
+                  [formArrayName]="controlsNames.orderItems">
             <ion-item-sliding
                     [disabled]="readonly"
-                    *ngFor="let ingredient of ingredients"
+                    *ngFor="let orderItem of orderItems"
                     class="order-ingredient-list__ingredient">
                 <ion-item class="order-ingredient-list__item">
                     <ion-label>
                         <div class="order-ingredient-list__ingredient-header">
-                            <div class="order-ingredient-list__ingredient-number">{{ingredient.quantity}}</div>
-                            <div class="order-ingredient-list__ingredient-name">{{ingredient.name}}</div>
-                            <div class="order-ingredient-list__ingredient-price">{{ingredient.salePrice | currency}}</div>
+                            <div class="order-ingredient-list__ingredient-number">{{orderItem.quantity}}</div>
+                            <div class="order-ingredient-list__ingredient-name">{{orderItem.name}}</div>
+                            <div class="order-ingredient-list__ingredient-price">{{orderItem.salePrice | currency}}</div>
                         </div>
-                        <ng-container *ngIf="ingredient.orderItemOptions">
-                            <p *ngFor="let subIngredient of ingredient.orderItemOptions"
+                        <ng-container *ngIf="orderItem.orderItemOptions">
+                            <p *ngFor="let subIngredient of orderItem.orderItemOptions"
                                class="order-ingredient-list__ingredient-description">
                                 {{subIngredient.name}} ({{subIngredient.salePrice | currency}})
                             </p>
@@ -50,7 +45,8 @@
                 </ion-item>
 
                 <ion-item-options side="end">
-                    <ion-item-option (click)="onRemove($event)" color="danger">Remove Item</ion-item-option>
+                    <ion-item-option (click)="onRemoveOrderItem(orderItem.id)" color="danger">Remove Item
+                    </ion-item-option>
                 </ion-item-options>
             </ion-item-sliding>
         </ion-list>
@@ -78,8 +74,9 @@
                         class="order-details__value"
                         cancelText="Cancel"
                         mode="md"
-                        placeholder="Please Choose"
+                        placeholder="Please choose payment method"
                         interface="action-sheet"
+                        (ionChange)="checkAccount($event)"
                         [interfaceOptions]="{cssClass: 'custom-deposit-actionSheet'}"
                 >
                     <ion-select-option [value]="account" *ngFor="let account of accounts">
@@ -88,8 +85,26 @@
                 </ion-select>
             </div>
         </ng-template>
+
+        <div class="order-details" *ngIf="cvv">
+            <ion-label class="order-details__label">Card Security Code:</ion-label>
+            <ion-input
+                    class="order-details__value"
+                    type="number"
+                    placeholder="Enter card security code"
+                    [formControlName]="controlsNames.cvv"
+            ></ion-input>
+            <div
+                    class="order-details--error"
+                    *ngIf="cvvFormControl.touched && cvvFormControl.invalid"
+            >
+                Please enter a valid card security code.
+            </div>
+        </div>
     </form>
 
-    <!--    <button (click)="test()">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</button>-->
-    <div class="order-details__buttons"><ng-content></ng-content></div>
+    <button (click)="test()">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</button>
+    <div class="order-details__buttons">
+        <ng-content></ng-content>
+    </div>
 </div>

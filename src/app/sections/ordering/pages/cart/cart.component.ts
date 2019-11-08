@@ -1,8 +1,14 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { CartService, OrderDetailOptions } from '@sections/ordering/services/cart.service';
+import { CartService } from '@sections/ordering/services/cart.service';
 import { Observable, zip } from 'rxjs';
-import { AddressModalSettings, MerchantService, OrderInfo } from '@sections/ordering';
-import { first, last, map, switchMap, tap } from 'rxjs/operators';
+import {
+  AddressModalSettings,
+  DETAILS_FORM_CONTROL_NAMES,
+  MerchantService,
+  OrderDetailsFormData,
+  OrderInfo,
+} from '@sections/ordering';
+import { first, map, switchMap, tap } from 'rxjs/operators';
 import {
   ACCOUNT_TYPES,
   MerchantSettings,
@@ -25,8 +31,9 @@ import { UserAccount } from '@core/model/account/account.model';
 export class CartComponent implements OnInit {
   order$: Observable<Partial<OrderInfo>>;
   addressModalSettings$: Observable<AddressModalSettings>;
-  address$: Observable<string>;
+  address$: Observable<any>;
   accounts: UserAccount[];
+  cartFormState: OrderDetailsFormData;
 
   constructor(private readonly cartService: CartService,
               private readonly merchantService: MerchantService,
@@ -38,8 +45,9 @@ export class CartComponent implements OnInit {
   ngOnInit() {
     this.order$ = this.cartService.orderInfo$;
     this.addressModalSettings$ = this.initAddressModalConfig();
-    this.address$ = this.getActiveAddress();
+    this.address$ = this.cartService.orderDetailsOptions$.pipe(map(({ address }) => address));
     this.getAvailableAccounts().then((acc) => this.accounts = acc);
+    // this.cartService._cart$.subscribe(d => console.log(d));
   }
 
   initAddressModalConfig(): Observable<AddressModalSettings> {
@@ -83,19 +91,10 @@ export class CartComponent implements OnInit {
     );
   }
 
-  private getActiveAddress(): Observable<string> {
-    return this.cartService.orderDetailsOptions$.pipe(
-      map(({ orderType, address }: OrderDetailOptions) => {
-          return orderType === ORDER_TYPE.DELIVERY
-            ? this.merchantService.getDeliveryAddressAsString(address)
-            : this.merchantService.getPickupAddressAsString(address);
-        },
-      ),
-    );
-  }
-
-  onAddressChanged({ data: { address } }) {
-    this.cartService.updateOrderAddress(address);
+  onCartStateFormChanged(state) {
+    this.cartService.updateOrderAddress(state.data[DETAILS_FORM_CONTROL_NAMES.address]);
+    this.cartFormState = state;
+    console.log(this.cartFormState);
   }
 
   private async getAvailableAccounts(): Promise<UserAccount[]> {
@@ -117,7 +116,7 @@ export class CartComponent implements OnInit {
 
     if (merchantAccInfoList.creditAccepted) {
       merchantAccInfoList.accounts.forEach(acc => {
-        if (acc.paymentSystemType === PAYMENT_SYSTEM_TYPE.MONETRA|| acc.paymentSystemType === PAYMENT_SYSTEM_TYPE.USAEPAY) {
+        if (acc.paymentSystemType === PAYMENT_SYSTEM_TYPE.MONETRA || acc.paymentSystemType === PAYMENT_SYSTEM_TYPE.USAEPAY) {
           displayCreditCards.includes(acc.id) && accounts.push(acc);
         }
       });
@@ -132,5 +131,20 @@ export class CartComponent implements OnInit {
     }
 
     return accounts;
+  }
+
+  removeOrderItem(id: string) {
+    this.cartService.removeOrderItemFromOrderById(id);
+  }
+
+  onSubmit() {
+    if (this.cartFormState.valid) {
+      this.cartService.submitOrder(
+        this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.paymentMethod].id,
+        this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.cvv]
+          ? this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.cvv]
+          : null,
+      ).subscribe(d => console.log(d));
+    }
   }
 }

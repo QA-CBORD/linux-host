@@ -259,4 +259,13 @@ export class OrderingApiService extends BaseService {
       map(({ response }: MessageResponse<any>) => response)
     );
   }
+
+  submitOrder(orderInfo: OrderInfo, accountId: string, cvv: string): Observable<OrderInfo> {
+    const methodName = 'submitOrder';
+    const postParams: ServiceParameters = { orderInfo, accountId, cvv };
+
+    return this.httpRequestFull(this.serviceUrlOrdering, methodName, true, null, postParams).pipe(
+      map(({ response }: MessageResponse<any>) => response)
+    );
+  }
 }

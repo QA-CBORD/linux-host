@@ -13,7 +13,7 @@
             [pickupFee]="(order$ | async).pickupFee"
             [deliveryFee]="(order$ | async).deliveryFee"
             [total]="(order$ | async).total"
-            [ingredients]="(order$ | async).orderItems"
+            [orderItems]="(order$ | async).orderItems"
             [orderPaymentName]="(order$ | async).orderPayment[0].accountName"
             [time]="(order$ | async).dueTime"
             [type]="(order$ | async).type"
