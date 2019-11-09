@@ -60,6 +60,7 @@ export class AccountsTileComponent implements OnInit {
     width: 330,
     autoHeight: true
   };
+  
   constructor() { }
 
   ngOnInit() {

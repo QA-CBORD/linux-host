@@ -1,10 +1,15 @@
 <div class="order">
-  <ion-list *ngFor="let order of orderList"> 
-  <div class="order__card">
-    <div class="order__favorite-wrapper">
-      <img class="order__favorite-icon" src=""> 
-    </div>
-    <div class="order__title"></div>
-  </div>
-</ion-list>
+  <ion-slides mode="ios" [options]="slideOpts" class="order__slides">
+    <ion-slide *ngFor="let order of orderList" class="order__slide">
+      <div class="order__card" *ngFor="let card of order">
+        <img class="order__card-photo" src="{{card.img}}" />
+        <div class="order__favorite-wrapper">
+          <img class="order__favorite-icon" src="/assets/icon/star-filled.svg" />
+        </div>
+        <div class="order__card-title-wrapper">
+          <div class="order__card-title">{{card.title}}</div>
+        </div>
+      </div>
+    </ion-slide>
+  </ion-slides>
 </div>

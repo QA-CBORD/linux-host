@@ -7,12 +7,26 @@ import { Component, OnInit } from '@angular/core';
 })
 export class OrderTileComponent implements OnInit {
 
-  orderList = [
-    {}
-  ]
-
-  constructor() { }
+  orderList: any[] = [
+    [
+    { title: 'Vegan food', img: '/assets/images/order-item-template.jpg' }, 
+    { title: 'Vegan food', img: '/assets/images/order-item-template.jpg' }, 
+    ],
+    [
+    { title: 'Vegan food', img: '/assets/images/order-item-template.jpg' }, 
+    { title: 'Vegan food', img: '/assets/images/order-item-template.jpg' }, 
+    ]
+  ];
+  
+  slideOpts = {
+    initialSlide: 0,
+    spaceBetween: 0,
+    speed: 400,
+    width: 330,
+    autoHeight: true
+  };
+  
+  constructor() {}
 
   ngOnInit() {}
-
 }
