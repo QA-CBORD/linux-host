@@ -1,0 +1,71 @@
+@import 'tools';
+
+.explore {
+  &__merchant-list {
+    margin: 0;
+    padding: 0;
+  }
+
+  &__merchant-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    --padding-start: 0;
+    --inner-padding-start: 0;
+    --inner-padding-end: 0;
+    padding: 16px 0;
+    margin: 0 16px;
+  }
+
+  &__merchant-info {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  &__merchant-item:first-child {
+    border-bottom: 1px solid $color-white-smoke;
+  }
+
+  &__merchant-photo-wrapper {
+    width: 125px;
+    height: 65px;
+  }
+
+  &__merchant-photo {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  &__merchant-info {
+    margin-left: 15px;
+  }
+
+  &__merchant-name {
+    @include ellipsis;
+    @include font-nunito-semibold(16px);
+  }
+
+  &__merchant-type {
+    color: #00000099;
+
+    @include ellipsis;
+    @include font-nunito-semibold(12px);
+  }
+
+  &__merchant-hours {
+    @include font-nunito-heavy(12px);
+
+    &--open {
+      color: #147d63;
+    }
+
+    &--closed {
+      color: #b52135;
+    }
+  }
+}

@@ -1,7 +1,7 @@
-@import "tools";
+@import 'tools';
 
 .rewards {
-  margin: 25px 30px;
+  padding: 25px 30px;
 
   .progress-bar {
     height: 20px;
@@ -23,22 +23,18 @@
 
   .progress {
     &__experience {
-      @include font-nunito-semibold(16px);
       margin: 0;
       padding: 5px 10px;
       text-align: right;
-      font-weight: 600;
-      letter-spacing: 0;
-      line-height: 20px;
+
+      @include font-nunito-semibold(16px);
     }
 
     &__level {
-      @include font-nunito-semibold(20px);
       margin: 0;
       padding: 5px 10px;
-      font-weight: 600;
-      letter-spacing: 0;
-      line-height: 24px;
+
+      @include font-nunito-semibold(20px);
     }
 
     &__balance-wrapper {
@@ -50,19 +46,18 @@
       margin: 0;
       text-transform: uppercase;
 
-      @include font-nunito-regular(13px)
+      @include font-nunito-regular(13px);
     }
 
     &__balance-points {
       margin: 5px;
 
-      @include font-nunito-semibold(24px)
+      @include font-nunito-semibold(24px);
     }
 
     &__balance-points-digit {
       color: $color-black;
-      @include font-nunito-heavy(24px)
+      @include font-nunito-heavy(24px);
     }
   }
 }
-

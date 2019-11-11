@@ -1,7 +1,6 @@
 @import 'tools';
 
 .access {
-  height: 190px;
   margin: 0px 16px;
   overflow: hidden;
 
@@ -20,13 +19,13 @@
   &__item-icon {
     width: 18px;
     height: 18px;
-
   }
 
   &__item-lable {
     margin-top: 2px;
     margin-left: 10px;
-    @include font-nunito-semibold(14px)
-  }
 
+    @include ellipsis;
+    @include font-nunito-semibold(14px);
+  }
 }

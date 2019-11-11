@@ -1,23 +1,23 @@
 @import 'tools';
 
 .transaction {
-  height: 200px;
   margin: 0 15px;
   overflow: hidden;
 
   &__list {
     width: 100%;
-    margin-bottom: 0px;
+    margin: 0px;
     padding: 0;
   }
 
   &__item {
-    --padding-start: 0;
-    --inner-padding-end: 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
+    border-bottom: 1px solid $color-white-smoke;
+    --padding-start: 1px;
+    --inner-padding-end: 1px;
   }
 
   &__label-container {
@@ -27,7 +27,6 @@
   }
 
   &__label {
-    
     @include font-nunito-semibold(16px);
   }
 
@@ -43,7 +42,6 @@
   }
 
   &__type-entity {
-    
     @include font-nunito-semibold(16px);
   }
 

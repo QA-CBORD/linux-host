@@ -1,12 +1,11 @@
 @import 'tools';
 
-.tile {
+.accounts {
     width: 100%;
-    height: 160px;
 
     &__slides {
         width: 340px;
-        height: 150px;
+        height: 170px;
         --bullet-background-active: #000;
     }
 
@@ -15,10 +14,10 @@
         width: 340px !important;
         flex-wrap: wrap;
         justify-content: flex-start;
-        margin-bottom: 15px;
+        margin: 8px 0;
     }
 
-    &__accounts-item {
+    &__item {
         width: 160px;
         height: 55px;
         margin: 4px;
@@ -26,17 +25,17 @@
         display: flex;
         flex-direction: column;
         border-radius: 8px;
-        background: #f7f7f7;
+        background: $color-white-smoke;
         text-align: left;
     }
 
-     &__accounts-title {
-         color: $color-dim-gray; ;
+     &__title {
+         color: $color-dim-gray;
          @include font-nunito-semibold(12px)
      }
 
-     &__accounts-total {
-         color: $color-black ;
+     &__total {
+         color: $color-black;
          @include font-nunito-heavy(20px)
      }
 }

@@ -1,0 +1,94 @@
+@import 'tools';
+
+.conversations {
+  
+  &__sender-list {
+    margin: 0;
+    padding: 0;
+  }
+
+  &__sender-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    --padding-start: 0;
+    --inner-padding-start: 0;
+    --inner-padding-end: 0;
+    padding: 12px 0;
+    margin: 0 16px;
+  }
+
+  &__sender-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-left: 15px;
+  }
+
+  &__sender-item:first-child {
+    border-bottom: 1px solid $color-white-smoke;
+  }
+
+  &__sender-avatar-wrapper {
+    display: flex;
+    width: 45px;
+    height: 45px;
+  }
+
+  &__sender-avatar {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+
+  &__sender-name-time-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+  }
+
+  &__sender-name {
+    max-width: 170px;
+
+    @include ellipsis;
+    @include font-nunito-semibold(16px);
+
+    &-unreaded {
+      max-width: 170px;
+
+      @include ellipsis;
+      @include font-nunito-heavy(16px);
+    }
+  }
+
+  &__sender-recent-message {
+    width: 240px;
+    color: #00000099;
+
+    @include ellipsis;
+    @include font-nunito-regular(12px);
+
+  }
+
+  &__sender-recent-time {
+    color: #00000099;
+
+    @include font-nunito-regular(12px);
+  }
+
+  &__sender-message-dot-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    margin-left: 15px;
+  }
+}
+
+.dot {
+  background: #166dff;
+  border-radius: 50%;
+  width: 7px;
+  height: 7px;
+}

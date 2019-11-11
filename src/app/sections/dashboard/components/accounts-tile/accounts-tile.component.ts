@@ -10,7 +10,7 @@ import { AccountsService } from '../../services/accounts.service';
 export class AccountsTileComponent implements OnInit {
 
 
-  accounts = [
+  accountsList = [
     [
     {title: "Dinning Dolars", total: 12343},
     {title: "Bonus Bucks", total: 243},
@@ -64,9 +64,7 @@ export class AccountsTileComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    this.accounts.forEach((account, index) => {
-
-    })
+    
   }
 
 }

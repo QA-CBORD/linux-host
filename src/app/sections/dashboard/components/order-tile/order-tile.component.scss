@@ -1,7 +1,6 @@
 @import 'tools';
 
 .order {
-  height: 190px;
   padding: 10px 0;
   overflow: hidden;
 
@@ -12,14 +11,12 @@
 
   &__slide {
     width: 330px !important;
-    
   }
 
   &__card {
-    display: block;
+    position: relative;
     width: 160px;
     height: 160px;
-    position: relative;
     margin: 3px;
   }
 
@@ -32,15 +29,15 @@
 
   &__favorite-wrapper {
     display: flex;
-    border-radius: 50%;
-    background: $color-white;
-    top: 6px;
-    right: 6px;
-    position: absolute;
-    width: 32px;
-    height: 32px;
     justify-content: center;
     align-items: center;
+    border-radius: 50%;
+    background: $color-white;
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 32px;
+    height: 32px;
   }
 
   &__favorite-icon {

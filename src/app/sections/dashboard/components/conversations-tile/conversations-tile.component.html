@@ -1,3 +1,27 @@
-<p>
-  conversations-tile works!
-</p>
+<div class="conversations">
+  <ion-list class="conversations__sender-list">
+    <ion-item *ngFor="let conversation of conversationsList" class="conversations__sender-item" lines="none">
+      <div class="conversations__sender-avatar-wrapper">
+        <img class="conversations__sender-avatar" src="{{ conversation.avatar }}" />
+      </div>
+      <div class="conversations__sender-info">
+        <div class="conversations__sender-name-time-wrapper">
+          <div
+            [ngClass]="{
+              'conversations__sender-name-unreaded': conversation.messageInfo.opened,
+              'conversations__sender-name': !conversation.messageInfo.opened
+            }"
+          >
+            {{ conversation.name }}
+          </div>
+          <div class="conversations__sender-recent-time">{{ conversation.time }}</div>
+        </div>
+        <div class="conversations__sender-recent-message">{{ conversation.recentMessage }}</div>
+      </div>
+      <ng-container *ngIf="conversation.messageInfo.opened"
+        ><div class="conversations__sender-message-dot-wrapper">
+          <span class="dot"></span></div
+      ></ng-container>
+    </ion-item>
+  </ion-list>
+</div>
