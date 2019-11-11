@@ -1,4 +1,4 @@
-import { Component, Input, HostBinding, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, AbstractControl } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
@@ -10,7 +10,7 @@ import { Subscription } from 'rxjs';
 export class StDateSelectComponent implements OnInit, OnDestroy {
   private _subscription: Subscription;
 
-  @Input() parentForm: FormGroup;
+  @Input() parentGroup: FormGroup;
 
   @Input() label: string;
 
@@ -28,11 +28,10 @@ export class StDateSelectComponent implements OnInit, OnDestroy {
 
   @Input() displayFormat: string;
 
-  @HostBinding('class.date-select--filled')
   isFilled: boolean;
 
   ngOnInit(): void {
-    const control: AbstractControl = this.parentForm.get(this.name);
+    const control: AbstractControl = this.parentGroup.get(this.name);
 
     this._subscription = control.valueChanges.subscribe((value: any) => this._checkIsFilled(value));
 

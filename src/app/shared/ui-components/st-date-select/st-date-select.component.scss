@@ -1,6 +1,14 @@
 @import 'tools';
 
+%placeholder-transform {
+  background-color: $color-white;
+  padding: 0 3px;
+  transform: scale(0.75) translateY(-29px);
+  opacity: 1;
+}
+
 :host {
+  display: block;
   position: relative;
 }
 
@@ -10,41 +18,40 @@
   --padding-start: 13px;
 
   border: 1px solid $color-light-gray;
-  border-radius: 4px;
+  border-radius: 8px;
   position: relative;
 
   &:focus,
   &:focus-within,
   &:active,
-  :host.date-select--filled & {
+  &--filled {
+    @include chevron-down-active();
+
     --padding-top: 13px;
     --padding-bottom: 13px;
 
     border: 2px solid $color-dodger-blue;
 
     & + .date-select__placeholder {
-      background-color: $color-white;
+      @extend %placeholder-transform;
+
       color: $color-dodger-blue;
-      padding: 0 3px;
-      transform: scale(0.75) translateY(-29px);
-      opacity: 1;
-    }
-
-    &::before {
-      background-image: url('/assets/icon/chevron-down-active.svg');
     }
   }
 
-  &::before {
-    background-image: url('/assets/icon/chevron-down.svg');
-    content: '';
-    position: absolute;
-    top: 50%;
-    right: 15px;
-    width: 14px;
-    height: 9px;
-    transform: translateY(-50%);
+  &.ng-invalid.ng-touched {
+    @include chevron-down-error();
+
+    border: 2px solid $color-alizarin;
+
+    & + .date-select__placeholder {
+      @extend %placeholder-transform;
+
+      color: $color-alizarin;
+    }
   }
+
+  @include chevron-down();
 }
 
 .date-select__placeholder {

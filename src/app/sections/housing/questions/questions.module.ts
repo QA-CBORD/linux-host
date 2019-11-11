@@ -8,6 +8,7 @@ import { StTextareaFloatingLabelModule } from '../../../shared/ui-components/st-
 import { StSelectFloatingLabelModule } from '../../../shared/ui-components/st-select-floating-label/st-select-floating-label.module';
 import { StDateSelectModule } from '../../../shared/ui-components/st-date-select/st-date-select.module';
 import { FacilityPickerModule } from './facility-picker/facility-picker.module';
+import { ControlErrorsModule } from '../../../shared/ui-components/control-errors/control-errors.module';
 
 import { QuestionComponent } from './question.component';
 import { EmptyFormControlDirective } from '../empty-form-control/empty-form-control.directive';
@@ -21,6 +22,7 @@ const imports = [
   StSelectFloatingLabelModule,
   StDateSelectModule,
   FacilityPickerModule,
+  ControlErrorsModule,
 ];
 const exports = [QuestionComponent];
 const declarations = [QuestionComponent, EmptyFormControlDirective];

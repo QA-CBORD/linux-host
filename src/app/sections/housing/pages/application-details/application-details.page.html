@@ -1,9 +1,15 @@
 <ion-content class="ion-padding application-details__content" *ngIf="(application$ | async) as application" #content>
   <div class="application-details__actions">
-    <ion-button [routerLink]="['/housing/dashboard']" routerDirection="back" fill="clear" color="dark">
+    <ion-button
+      class="btn application-details__page-back"
+      [routerLink]="['/housing/dashboard']"
+      routerDirection="back"
+      mode="ios"
+      fill="clear"
+    >
       Cancel
     </ion-button>
-    <ion-button fill="clear" (click)="save()">Save</ion-button>
+    <ion-button class="btn application-details__save" mode="ios" fill="clear" (click)="save()">Save</ion-button>
   </div>
 
   <h2 class="application-details__title">{{ application.applicationTitle }}</h2>
@@ -24,26 +30,31 @@
 
           <st-stepper-footer>
             <ion-button
-              class="application__details-back"
+              *ngIf="!isFirstPage"
+              class="btn application-details__back"
               type="button"
               fill="clear"
-              *ngIf="!isFirstPage"
+              mode="ios"
               stepperBack
               (back)="content.scrollToTop()"
               >Back</ion-button
             >
+
             <ion-button
-              class="application__details-next"
+              class="btn application-details__next"
               [class.stepper-footer__button--right]="isFirstPage"
+              mode="ios"
               fill="outline"
               type="submit"
               *ngIf="!isLastPage"
             >
               Next
             </ion-button>
+
             <ion-button
-              class="application__details-submit"
+              class="btn application-details__submit"
               [class.stepper-footer__button--right]="isFirstPage"
+              mode="ios"
               type="submit"
               *ngIf="isLastPage"
             >
