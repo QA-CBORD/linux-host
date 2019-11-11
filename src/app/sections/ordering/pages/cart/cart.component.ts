@@ -15,12 +15,14 @@ import {
   ORDER_TYPE,
   PAYMENT_SYSTEM_TYPE,
   SYSTEM_SETTINGS_CONFIG,
+  LOCAL_ROUTING,
 } from '@sections/ordering/ordering.config';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { SettingService } from '@core/service/settings/setting.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { parseArrayFromString } from '@core/utils/general-helpers';
 import { UserAccount } from '@core/model/account/account.model';
+import { NAVIGATE } from 'src/app/app.global';
 
 @Component({
   selector: 'st-cart',
@@ -35,18 +37,20 @@ export class CartComponent implements OnInit {
   accounts: UserAccount[];
   cartFormState: OrderDetailsFormData;
 
-  constructor(private readonly cartService: CartService,
-              private readonly merchantService: MerchantService,
-              private readonly loadingService: LoadingService,
-              private readonly settingService: SettingService,
-              private readonly activatedRoute: ActivatedRoute) {
-  }
+  constructor(
+    private readonly cartService: CartService,
+    private readonly merchantService: MerchantService,
+    private readonly loadingService: LoadingService,
+    private readonly settingService: SettingService,
+    private readonly activatedRoute: ActivatedRoute,
+    private readonly router: Router
+  ) {}
 
   ngOnInit() {
     this.order$ = this.cartService.orderInfo$;
     this.addressModalSettings$ = this.initAddressModalConfig();
     this.address$ = this.cartService.orderDetailsOptions$.pipe(map(({ address }) => address));
-    this.getAvailableAccounts().then((acc) => this.accounts = acc);
+    this.getAvailableAccounts().then(acc => (this.accounts = acc));
     // this.cartService._cart$.subscribe(d => console.log(d));
   }
 
@@ -57,37 +61,50 @@ export class CartComponent implements OnInit {
       this.merchantService.retrieveBuildings(),
       this.cartService.merchant$,
       this.getDeliveryLocations(),
-      this.getPickupLocations(),
+      this.getPickupLocations()
     ).pipe(
-      map(([
-             { address: defaultAddress, orderType },
-             buildings,
-             { id: merchantId },
-             deliveryAddresses,
-             pickupLocations,
-           ]) => ({
-        defaultAddress,
-        buildings,
-        isOrderTypePickup: orderType === ORDER_TYPE.PICKUP,
-        pickupLocations,
-        deliveryAddresses,
-        merchantId,
-      })),
-      tap(this.loadingService.closeSpinner.bind(this.loadingService)),
+      map(
+        ([
+          { address: defaultAddress, orderType },
+          buildings,
+          { id: merchantId },
+          deliveryAddresses,
+          pickupLocations,
+        ]) => ({
+          defaultAddress,
+          buildings,
+          isOrderTypePickup: orderType === ORDER_TYPE.PICKUP,
+          pickupLocations,
+          deliveryAddresses,
+          merchantId,
+        })
+      ),
+      tap(this.loadingService.closeSpinner.bind(this.loadingService))
     );
+  }
+
+  onOrderItemClicked({ menuItemId }) {
+    this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.itemDetail], {
+      skipLocationChange: true,
+      queryParams: { menuItemId },
+    });
   }
 
   private getDeliveryLocations(): Observable<any> {
     return this.cartService.merchant$.pipe(
       switchMap(({ id }) => this.merchantService.retrieveDeliveryAddresses(id)),
-      map(([, deliveryLocations]) => deliveryLocations));
+      map(([, deliveryLocations]) => deliveryLocations)
+    );
   }
 
   private getPickupLocations(): Observable<any> {
     return this.cartService.merchant$.pipe(
-      switchMap(({ storeAddress, settings }) => this.merchantService.retrievePickupLocations(
-        storeAddress, settings.map[MerchantSettings.pickupLocationsEnabled],
-      )),
+      switchMap(({ storeAddress, settings }) =>
+        this.merchantService.retrievePickupLocations(
+          storeAddress,
+          settings.map[MerchantSettings.pickupLocationsEnabled]
+        )
+      )
     );
   }
 
@@ -99,16 +116,29 @@ export class CartComponent implements OnInit {
 
   private async getAvailableAccounts(): Promise<UserAccount[]> {
     let accounts = [];
-    const { data: [settings, merchantAccInfoList] } = await this.activatedRoute.data.pipe(first()).toPromise();
-    const displayTenderSetting = this.settingService.getSettingByName(settings, SYSTEM_SETTINGS_CONFIG.displayTenders.name);
-    const displayCreditCardSetting = this.settingService.getSettingByName(settings, SYSTEM_SETTINGS_CONFIG.displayCreditCard.name);
+    const {
+      data: [settings, merchantAccInfoList],
+    } = await this.activatedRoute.data.pipe(first()).toPromise();
+    const displayTenderSetting = this.settingService.getSettingByName(
+      settings,
+      SYSTEM_SETTINGS_CONFIG.displayTenders.name
+    );
+    const displayCreditCardSetting = this.settingService.getSettingByName(
+      settings,
+      SYSTEM_SETTINGS_CONFIG.displayCreditCard.name
+    );
     const displayTenders = displayTenderSetting ? parseArrayFromString<string>(displayTenderSetting.value) : [];
-    const displayCreditCards = displayCreditCardSetting ? parseArrayFromString<string>(displayCreditCardSetting.value) : [];
+    const displayCreditCards = displayCreditCardSetting
+      ? parseArrayFromString<string>(displayCreditCardSetting.value)
+      : [];
     const { mealBased } = await this.cartService.menuInfo$.pipe(first()).toPromise();
 
     if (merchantAccInfoList.cashlessAccepted && !merchantAccInfoList.rollOverr) {
       merchantAccInfoList.accounts.forEach(acc => {
-        if (acc.paymentSystemType === PAYMENT_SYSTEM_TYPE.OPCS || acc.paymentSystemType === PAYMENT_SYSTEM_TYPE.CSGOLD) {
+        if (
+          acc.paymentSystemType === PAYMENT_SYSTEM_TYPE.OPCS ||
+          acc.paymentSystemType === PAYMENT_SYSTEM_TYPE.CSGOLD
+        ) {
           displayTenders.includes(acc.accountTender) && accounts.push(acc);
         }
       });
@@ -116,7 +146,10 @@ export class CartComponent implements OnInit {
 
     if (merchantAccInfoList.creditAccepted) {
       merchantAccInfoList.accounts.forEach(acc => {
-        if (acc.paymentSystemType === PAYMENT_SYSTEM_TYPE.MONETRA || acc.paymentSystemType === PAYMENT_SYSTEM_TYPE.USAEPAY) {
+        if (
+          acc.paymentSystemType === PAYMENT_SYSTEM_TYPE.MONETRA ||
+          acc.paymentSystemType === PAYMENT_SYSTEM_TYPE.USAEPAY
+        ) {
           displayCreditCards.includes(acc.id) && accounts.push(acc);
         }
       });
@@ -139,12 +172,14 @@ export class CartComponent implements OnInit {
 
   onSubmit() {
     if (this.cartFormState.valid) {
-      this.cartService.submitOrder(
-        this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.paymentMethod].id,
-        this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.cvv]
-          ? this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.cvv]
-          : null,
-      ).subscribe(d => console.log(d));
+      this.cartService
+        .submitOrder(
+          this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.paymentMethod].id,
+          this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.cvv]
+            ? this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.cvv]
+            : null
+        )
+        .subscribe(d => console.log(d));
     }
   }
 }

@@ -1,11 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  Input, OnDestroy,
-  OnInit,
-  Output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import {
   AbstractControl,
   FormArray,
@@ -17,11 +10,11 @@ import {
 } from '@angular/forms';
 import { BuildingInfo, OrderItem } from '@sections/ordering';
 import { ORDER_TYPE, PAYMENT_SYSTEM_TYPE } from '@sections/ordering/ordering.config';
-import { AddressInfo } from "@core/model/address/address-info";
+import { AddressInfo } from '@core/model/address/address-info';
 import { ModalController } from '@ionic/angular';
 import { DeliveryAddressesModalComponent } from '@sections/ordering/shared/ui-components/delivery-addresses.modal/delivery-addresses.modal.component';
 import { UserAccount } from '@core/model/account/account.model';
-import { Subscription } from "rxjs";
+import { Subscription } from 'rxjs';
 import { Variable } from '@angular/compiler/src/render3/r3_ast';
 import { PAYMENT_TYPE } from '@sections/accounts/accounts.config';
 
@@ -29,7 +22,7 @@ import { PAYMENT_TYPE } from '@sections/accounts/accounts.config';
   selector: 'st-order-details',
   templateUrl: './order-details.component.html',
   styleUrls: ['./order-details.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OrderDetailsComponent implements OnInit, OnDestroy {
   @Input() address: any;
@@ -50,12 +43,12 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
   @Input() addressModalConfig: AddressModalSettings;
   @Output() onFormChange: EventEmitter<OrderDetailsFormData> = new EventEmitter<OrderDetailsFormData>();
   @Output() onOrderItemRemovedId: EventEmitter<string> = new EventEmitter<string>();
+  @Output() onOrderItemClicked: EventEmitter<OrderItem> = new EventEmitter<OrderItem>();
   detailsForm: FormGroup;
   private readonly sourceSub = new Subscription();
   cvv = false;
 
-  constructor(private readonly fb: FormBuilder,
-    private readonly modalController: ModalController) { }
+  constructor(private readonly fb: FormBuilder, private readonly modalController: ModalController) {}
 
   ngOnInit() {
     this.initForm();
@@ -71,11 +64,15 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
   }
 
   get isAddressClickable(): boolean {
-    if(!this.readonly && this.addressModalConfig && this.addressModalConfig.isOrderTypePickup) {
+    if (!this.readonly && this.addressModalConfig && this.addressModalConfig.isOrderTypePickup) {
       return !!this.addressModalConfig.pickupLocations.length;
     } else {
-      return !!this.addressModalConfig
+      return !!this.addressModalConfig;
     }
+  }
+
+  goToItemDetails(orderItem) {
+    this.onOrderItemClicked.emit(orderItem);
   }
 
   private get addressInfoFormControl(): AbstractControl {
@@ -92,44 +89,39 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
 
   onRemoveOrderItem(id: string) {
     this.onOrderItemRemovedId.emit(id);
-    const index = (this.orderItemsFormArray as FormArray).controls.findIndex(({value}) => value === id);
+    const index = (this.orderItemsFormArray as FormArray).controls.findIndex(({ value }) => value === id);
     (this.orderItemsFormArray as FormArray).removeAt(index);
   }
 
   initForm() {
-    this.detailsForm = this.fb.group(
-      {
-        [DETAILS_FORM_CONTROL_NAMES.address]: [this.address],
-        [DETAILS_FORM_CONTROL_NAMES.orderItems]: this.getIngredients(),
-        [DETAILS_FORM_CONTROL_NAMES.paymentMethod]: ['', Validators.required],
-      }
-    );
-    this.subscribeFormChanges()
+    this.detailsForm = this.fb.group({
+      [DETAILS_FORM_CONTROL_NAMES.address]: [this.address],
+      [DETAILS_FORM_CONTROL_NAMES.orderItems]: this.getIngredients(),
+      [DETAILS_FORM_CONTROL_NAMES.paymentMethod]: ['', Validators.required],
+    });
+    this.subscribeFormChanges();
   }
 
-  private subscribeFormChanges () {
-    const sub = this.detailsForm.valueChanges
-      .subscribe(data => {
-        this.onFormChange.emit({ data, valid: this.detailsForm.valid })
-      });
+  private subscribeFormChanges() {
+    const sub = this.detailsForm.valueChanges.subscribe(data => {
+      this.onFormChange.emit({ data, valid: this.detailsForm.valid });
+    });
     this.sourceSub.add(sub);
   }
 
   private getIngredients() {
-    return this.fb.array([
-      ...this.orderItems.map(({menuItemId}) => this.fb.control(menuItemId))
-    ], Validators.required)
+    return this.fb.array(
+      [...this.orderItems.map(({ menuItemId }) => this.fb.control(menuItemId))],
+      Validators.required
+    );
   }
 
   private addCvvControl() {
     this.cvv = true;
     this.detailsForm.addControl(
       DETAILS_FORM_CONTROL_NAMES.cvv,
-      this.fb.control('', [
-        Validators.required,
-        validatorCvv
-      ])
-    )
+      this.fb.control('', [Validators.required, validatorCvv])
+    );
   }
 
   private removeCvvControl() {
@@ -142,7 +134,6 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
   }
 
   private async showAddressListModal(): Promise<void> {
-
     const modal = await this.modalController.create({
       component: DeliveryAddressesModalComponent,
       componentProps: this.addressModalConfig,
@@ -153,7 +144,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
     await modal.present();
   }
 
-  checkAccount({detail: { value }}) {
+  checkAccount({ detail: { value } }) {
     if (value.accountType === PAYMENT_TYPE.CREDIT && value.paymentSystemType !== PAYMENT_SYSTEM_TYPE.USAEPAY) {
       this.addCvvControl();
     } else {
@@ -187,9 +178,9 @@ export interface OrderDetailsFormData {
   valid: boolean;
 }
 
-const validatorCvv: ValidatorFn = function ({value}) {
-  if (isNaN(value)) return {error: true};
-  if (!Number.isInteger(value)) return {error: true};
-  if (String(value).length < 3 || String(value).length > 4) return {error: true};
+const validatorCvv: ValidatorFn = function({ value }) {
+  if (isNaN(value)) return { error: true };
+  if (!Number.isInteger(value)) return { error: true };
+  if (String(value).length < 3 || String(value).length > 4) return { error: true };
   return null;
 };

@@ -66,11 +66,9 @@ export class MenuCategoryItemsComponent implements OnInit {
   }
 
   triggerMenuItemClick(menuItemId) {
-    this.activatedRoute.params.pipe(take(1)).subscribe(({ id }) => {
-      this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.itemDetail], {
-        skipLocationChange: true,
-        queryParams: { categoryId: id, menuItemId },
-      });
+    this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.itemDetail], {
+      skipLocationChange: true,
+      queryParams: { menuItemId },
     });
   }
 }
