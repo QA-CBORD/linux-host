@@ -1,24 +1,30 @@
-<div class="tile">
+<div class="tile-container">
   <ion-item
     lines="none"
     [button]="true"
     [detail]="true"
-    class="topbar"
+    class="tile-container__topbar"
     detailIcon="/assets/icon/angle-right.svg"
     (click)="handleTopBarClick()"
   >
-    <div slot="start" class="image-wrapper">
-      <img class="image" src="{{ wrapperConfig.iconPath }}" />
+    <div slot="start" class="tile-container__image-wrapper">
+      <img class="tile-container__image" src="{{ wrapperConfig.iconPath }}" />
     </div>
 
-    <ion-label class="label">
+    <ion-label class="tile-container__label">
       {{ wrapperConfig.title }}
     </ion-label>
   </ion-item>
   <div><ng-content></ng-content></div>
   <ng-container *ngIf="wrapperConfig.buttonConfig.show">
-    <ion-item lines="none" [button]="true" [detail]="false" class="tile__button" (click)="handleBottomButtonClick()">
-      <ion-label class="tile__button__label">
+    <ion-item
+      lines="none"
+      [button]="true"
+      [detail]="false"
+      class="tile-container__button"
+      (click)="handleBottomButtonClick()"
+    >
+      <ion-label class="tile-container__button__label">
         {{ wrapperConfig.buttonConfig.title }}
       </ion-label>
     </ion-item>
