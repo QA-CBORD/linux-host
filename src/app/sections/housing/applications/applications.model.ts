@@ -16,6 +16,15 @@ export class Application {
   ) {}
 }
 
+export interface ApplicationRequest {
+  patronApplicationKey: number;
+  applicationCancelReasonKey?: number;
+  submittedDateTime?: string;
+  acceptedDateTime?: string;
+  cancelledDateTime?: string;
+  cancelledRejectedDate?: string;
+}
+
 export enum ApplicationStatus {
   New,
   Pending,

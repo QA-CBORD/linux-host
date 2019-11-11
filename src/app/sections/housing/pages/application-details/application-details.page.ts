@@ -64,9 +64,9 @@ export class ApplicationDetailsPage implements OnInit {
       ApplicationStatus.Pending
     );
 
-    this._applicationsService.reloadApplications();
-
-    this._router.navigate(['/housing/dashboard']);
+    this._applicationsService
+      .saveApplication(this.applicationId)
+      .subscribe(() => this._router.navigate(['/housing/dashboard']));
   }
 
   async handleSubmit(form: FormGroup, index: number, isLastPage: boolean): Promise<void> {
@@ -78,13 +78,14 @@ export class ApplicationDetailsPage implements OnInit {
       return;
     }
 
-    await this._questionsStorageService.updateQuestionsGroup(this.applicationId, form.value, index, status);
-
     if (!isLastPage) {
       this.stepper.next();
     } else {
-      this._applicationsService.submitApplication(this.applicationId);
-      this._router.navigate(['/housing/dashboard']);
+      await this._questionsStorageService.updateQuestionsGroup(this.applicationId, form.value, index, status);
+
+      this._applicationsService
+        .submitApplication(this.applicationId)
+        .subscribe(() => this._router.navigate(['/housing/dashboard']));
     }
   }
 

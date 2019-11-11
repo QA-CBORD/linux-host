@@ -5,7 +5,8 @@ import { ApplicationStatus } from '../applications/applications.model';
 
 export interface QuestionsGroup {
   status: ApplicationStatus;
-  statusChange: string;
+  creationDateTime: number;
+  submittedDateTime?: number;
   questions: any[];
 }
 
@@ -40,7 +41,9 @@ export class QuestionsStorageService {
   async updateQuestionsGroup(applicationId: number, form: any, index: number, status: ApplicationStatus): Promise<any> {
     const groups: QuestionGroups = await this.getQuestionGroups();
     const group: QuestionsGroup = groups && groups[applicationId] ? groups[applicationId] : null;
+    const creationDateTime: number = group && group.creationDateTime ? group.creationDateTime : Date.now();
     let questions: any[] = group ? group.questions : [];
+    let updatedGroup: QuestionsGroup;
 
     if (questions && questions[index]) {
       questions[index] = form;
@@ -48,13 +51,20 @@ export class QuestionsStorageService {
       questions.push(form);
     }
 
+    updatedGroup = {
+      ...group,
+      status,
+      creationDateTime,
+      questions,
+    };
+
+    if (status === ApplicationStatus.Submitted) {
+      updatedGroup.submittedDateTime = Date.now();
+    }
+
     return this._storage.set(this._key, {
       ...groups,
-      [applicationId]: {
-        status,
-        statusChange: Date.now(),
-        questions,
-      },
+      [applicationId]: updatedGroup,
     });
   }
 

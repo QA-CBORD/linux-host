@@ -27,7 +27,7 @@ export class StepperBackDirective {
     this.back.emit();
   }
 
-  constructor(public _stepper: StepperComponent) {}
-
   @Output() back: EventEmitter<void> = new EventEmitter();
+
+  constructor(public _stepper: StepperComponent) {}
 }

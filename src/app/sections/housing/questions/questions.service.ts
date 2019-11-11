@@ -11,7 +11,7 @@ import { QuestionTextarea } from './types/question-textarea';
 import { QuestionDate } from './types/question-date';
 import { QuestionDropdown } from './types/question-dropdown';
 import { QuestionCheckboxGroup, QuestionCheckboxGroupValue } from './types/question-checkbox-group';
-import { QuestionRadioGroup } from './types/question-readio-group';
+import { QuestionRadioGroup } from './types/question-radio-group';
 
 import { QuestionPage, QuestionReorder, QuestionReorderValue } from './questions.model';
 import { Application } from '../applications/applications.model';

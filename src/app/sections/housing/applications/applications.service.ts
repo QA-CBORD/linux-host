@@ -7,10 +7,10 @@ import { BASE_URL } from '../housing.config';
 
 import { HousingAuthService } from '../housing-auth/housing-auth.service';
 import { ApplicationsStateService } from './applications-state.service';
-
-import { Response } from '../housing.model';
-import { Application, ApplicationStatus } from './applications.model';
 import { QuestionGroups, QuestionsStorageService, QuestionsGroup } from '../questions/questions-storage.service';
+
+import { Response, ResponseStatus } from '../housing.model';
+import { Application, ApplicationRequest, ApplicationStatus } from './applications.model';
 
 @Injectable({
   providedIn: 'root',
@@ -24,6 +24,8 @@ export class ApplicationsService {
   ) {}
 
   private readonly _patronsUrl: string = 'api/patrons/v.1.0';
+
+  private readonly _patronApplicationsUrl: string = `${this._patronsUrl}/patron-applications/self`;
 
   private readonly _termId: number = 67;
 
@@ -48,8 +50,22 @@ export class ApplicationsService {
     );
   }
 
-  submitApplication(applicationId: number): void {
-    this.reloadApplications();
+  saveApplication(applicationId: number): Observable<ResponseStatus> {
+    const body: ApplicationRequest = {
+      patronApplicationKey: applicationId,
+      submittedDateTime: new Date().toISOString(),
+    };
+
+    return this._updateApplication(body);
+  }
+
+  submitApplication(applicationId: number): Observable<ResponseStatus> {
+    const body: ApplicationRequest = {
+      patronApplicationKey: applicationId,
+      submittedDateTime: new Date().toISOString(),
+    };
+
+    return this._updateApplication(body);
   }
 
   getApplicationById(applicationId: number): Observable<Application> {
@@ -81,7 +97,8 @@ export class ApplicationsService {
           return {
             ...application,
             isApplicationSubmitted: true,
-            submittedDateTime: group.statusChange.toString(),
+            submittedDateTime: group.submittedDateTime.toString(),
+            createdDateTime: group.creationDateTime.toString(),
           };
         } else if (group.status === ApplicationStatus.Pending) {
           return {
@@ -93,6 +110,21 @@ export class ApplicationsService {
 
       return application;
     });
+  }
+
+  private _updateApplication(body: any): Observable<ResponseStatus> {
+    const apiUrl: string = `${BASE_URL}/${this._patronApplicationsUrl}`;
+
+    return this._authService.authorize().pipe(
+      switchMap((token: string) =>
+        this._http.put<ResponseStatus>(apiUrl, body, {
+          headers: new HttpHeaders({
+            Authorization: `Bearer ${token}`,
+          }),
+        })
+      ),
+      tap(() => this.reloadApplications())
+    );
   }
 
   private _requestApplications(token: string): Observable<Application[]> {

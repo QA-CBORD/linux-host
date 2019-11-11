@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, of } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { map, catchError, tap } from 'rxjs/operators';
 
 import { BASE_URL } from '../housing.config';
 
@@ -24,12 +24,16 @@ export class HousingAuthService {
 
   token$: Observable<string> = this._tokenSource.asObservable();
 
-  getTokenValue(): string {
+  getToken(): string {
     return this._tokenSource.getValue();
   }
 
+  setToken(value: string) {
+    this._tokenSource.next(value);
+  }
+
   authorize(): Observable<string> {
-    if (this.getTokenValue()) {
+    if (this.getToken()) {
       return this.token$;
     }
 
@@ -37,6 +41,7 @@ export class HousingAuthService {
 
     return this._http.post<Response>(apiUrl, new User(this._patronId, this._patronSK)).pipe(
       map((response: Response) => response.data),
+      tap((token: string) => this.setToken(token)),
       catchError(() => of(null))
     );
   }
