@@ -7,11 +7,11 @@
             <p class="order-details__value">{{time | date: 'M/d/yy, h:mm a'}}</p>
         </div>
 
-        <div class="order-details" *ngIf="address">
+        <div class="order-details" *ngIf="(address | addressAsString: type).length">
             <ion-label class="order-details__label">{{type | typeMessage:'address'}}</ion-label>
 
             <p *ngIf="readonly && address; else addressEditable"
-               class="order-details__value">{{address | addressAsString: type}}</p>
+               class="order-details__value">{{ address | addressAsString: type }}</p>
 
             <ng-template #addressEditable>
                 <p class="order-details__value"
@@ -21,9 +21,7 @@
 
         </div>
 
-        <ion-list class="order-ingredient-list"
-                  ngDefaultControl
-                  [formArrayName]="controlsNames.orderItems">
+        <ion-list class="order-ingredient-list">
             <ion-item-sliding
                     [disabled]="readonly"
                     *ngFor="let orderItem of orderItems"
@@ -76,7 +74,7 @@
                         mode="md"
                         placeholder="Please choose payment method"
                         interface="action-sheet"
-                        (ionChange)="checkAccount($event)"
+                        (ionChange)="toggleCvvControl($event)"
                         [interfaceOptions]="{cssClass: 'custom-deposit-actionSheet'}"
                 >
                     <ion-select-option [value]="account" *ngFor="let account of accounts">
@@ -86,7 +84,7 @@
             </div>
         </ng-template>
 
-        <div class="order-details" *ngIf="cvv">
+        <div class="order-details" *ngIf="showCVVControl">
             <ion-label class="order-details__label">Card Security Code:</ion-label>
             <ion-input
                     class="order-details__value"
@@ -103,7 +101,6 @@
         </div>
     </form>
 
-    <!-- <button (click)="test()">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</button> -->
     <div class="order-details__buttons">
         <ng-content></ng-content>
     </div>
