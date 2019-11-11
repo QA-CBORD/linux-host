@@ -1,0 +1,41 @@
+<ion-header class="final-order__header">
+  <ion-toolbar mode="ios">
+    <ion-buttons slot="start">
+      <ion-button color="dark" (click)="onClosed()">
+        <ion-icon size="large" slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="final-order__title">Order #2255</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="final-order__body-wrapper">
+    <img src="/assets/images/big_check_order.svg" alt="big check order" class="final-order__main-img" />
+    <div class="final-order__sub-header">Order Placed</div>
+    <div class="final-order__body">
+      Your order has been placed successfully. You will receive an email confirmation shortly.
+    </div>
+    <div class="final-order__payment-info-wrapper">
+      <div class="final-order__payment-info">
+        <div>subtotal</div>
+        <div>tax</div>
+        <div class="final-order__payment-info-total">Total</div>
+      </div>
+      <div class="final-order__payment-info">
+        <div>$11.48</div>
+        <div>$0.92</div>
+        <div class="final-order__payment-info-total">$12.40</div>
+      </div>
+    </div>
+    <div class="final-order__payment-method-wrapper">
+      <div>Payment Method</div>
+      <div>Apple Pay</div>
+    </div>
+  </div>
+</ion-content>
+<ion-footer mode="ios">
+  <ion-button fill="clear" mode="md" expand="full" class="final-order__btn" (click)="onClosed()">
+    Done
+  </ion-button>
+</ion-footer>
