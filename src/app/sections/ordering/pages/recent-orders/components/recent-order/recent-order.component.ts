@@ -13,6 +13,7 @@ import { BUTTON_TYPE } from '@core/utils/buttons.config';
 import { OrderOptionsActionSheetComponent } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 import { CartService } from '@sections/ordering/services/cart.service';
 import { LoadingService } from '@core/service/loading/loading.service';
+import { AddressInfo } from '@core/model/address/address-info';
 
 @Component({
   selector: 'st-recent-order',
@@ -22,7 +23,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
 })
 export class RecentOrderComponent implements OnInit {
   order$: Observable<OrderInfo>;
-  address$: Observable<any>;
+  address$: Observable<AddressInfo>;
   merchant$: Observable<MerchantInfo>;
 
   constructor(private readonly activatedRoute: ActivatedRoute,
@@ -70,7 +71,7 @@ export class RecentOrderComponent implements OnInit {
 
   async showModal(): Promise<void> {
     this.order$.pipe(
-      take(1),
+      first(),
       map(({ checkNumber }) => checkNumber),
     ).subscribe(await this.initCancelOrderModal.bind(this));
   }
@@ -81,12 +82,14 @@ export class RecentOrderComponent implements OnInit {
 
   private setActiveOrder(orderId) {
     this.order$ = this.merchantService.recentOrders$.pipe(
+      first(),
       map(orders => orders.find(({ id }) => id === orderId)),
     );
   }
 
   private setActiveMerchant(orderId) {
     this.merchant$ = this.merchantService.recentOrders$.pipe(
+      first(),
       map(orders => orders.find(({ id }) => id === orderId)),
       switchMap(({ merchantId }) => this.merchantService.menuMerchants$.pipe(
         map(merchants => merchants.find(({ id }) => id === merchantId)),
@@ -128,6 +131,7 @@ export class RecentOrderComponent implements OnInit {
 
   private setActiveAddress() {
     this.address$ = this.order$.pipe(
+      first(),
       switchMap(({ type, deliveryAddressId }) => {
           return type === ORDER_TYPE.DELIVERY
             ? this.getDeliveryAddress(deliveryAddressId)

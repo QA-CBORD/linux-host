@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CartService } from '@sections/ordering/services/cart.service';
 import { Observable, zip } from 'rxjs';
 import {
@@ -12,15 +12,17 @@ import { first, map, switchMap, tap } from 'rxjs/operators';
 import {
   ACCOUNT_TYPES,
   MerchantSettings,
-  ORDER_TYPE,
+  ORDER_TYPE, ORDER_VALIDATION_ERRORS,
   PAYMENT_SYSTEM_TYPE,
   SYSTEM_SETTINGS_CONFIG,
 } from '@sections/ordering/ordering.config';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { SettingService } from '@core/service/settings/setting.service';
 import { ActivatedRoute } from '@angular/router';
-import { parseArrayFromString } from '@core/utils/general-helpers';
+import { handleServerError, parseArrayFromString } from '@core/utils/general-helpers';
 import { UserAccount } from '@core/model/account/account.model';
+import { ToastController } from '@ionic/angular';
+import { AddressInfo } from '@core/model/address/address-info';
 
 @Component({
   selector: 'st-cart',
@@ -31,7 +33,7 @@ import { UserAccount } from '@core/model/account/account.model';
 export class CartComponent implements OnInit {
   order$: Observable<Partial<OrderInfo>>;
   addressModalSettings$: Observable<AddressModalSettings>;
-  address$: Observable<any>;
+  address$: Observable<AddressInfo>;
   accounts: UserAccount[];
   cartFormState: OrderDetailsFormData;
 
@@ -39,15 +41,16 @@ export class CartComponent implements OnInit {
               private readonly merchantService: MerchantService,
               private readonly loadingService: LoadingService,
               private readonly settingService: SettingService,
-              private readonly activatedRoute: ActivatedRoute) {
+              private readonly activatedRoute: ActivatedRoute,
+              private readonly toastController: ToastController,
+              private readonly cdRef: ChangeDetectorRef) {
   }
 
   ngOnInit() {
     this.order$ = this.cartService.orderInfo$;
-    this.addressModalSettings$ = this.initAddressModalConfig();
     this.address$ = this.cartService.orderDetailsOptions$.pipe(map(({ address }) => address));
+    this.addressModalSettings$ = this.initAddressModalConfig();
     this.getAvailableAccounts().then((acc) => this.accounts = acc);
-    // this.cartService._cart$.subscribe(d => console.log(d));
   }
 
   initAddressModalConfig(): Observable<AddressModalSettings> {
@@ -77,6 +80,47 @@ export class CartComponent implements OnInit {
     );
   }
 
+  onCartStateFormChanged(state) {
+    this.cartService.updateOrderAddress(state.data[DETAILS_FORM_CONTROL_NAMES.address]);
+    this.cartFormState = state;
+  }
+
+  onSubmit() {
+    if (!this.cartFormState.valid) return;
+
+    this.cartService.submitOrder(
+      this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.paymentMethod].id,
+      this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.cvv]
+        ? this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.cvv]
+        : null,
+    ).pipe(first()).subscribe(d => console.log(d));
+  }
+
+  async removeOrderItem(id: string) {
+    this.cdRef.detach();
+    const removedItem = this.cartService.removeOrderItemFromOrderById(id);
+
+    if (!removedItem) {
+      this.cdRef.reattach();
+      return;
+    }
+    const onError = async (message) => {
+      await this.onValidateErrorToast(message);
+      this.cartService.addOrderItems(removedItem);
+    };
+    await this.validateOrder(onError);
+    this.cdRef.reattach();
+  }
+
+  private async onValidateErrorToast(message: string) {
+    const toast = await this.toastController.create({
+      message,
+      showCloseButton: true,
+      position: 'top',
+    });
+    await toast.present();
+  }
+
   private getDeliveryLocations(): Observable<any> {
     return this.cartService.merchant$.pipe(
       switchMap(({ id }) => this.merchantService.retrieveDeliveryAddresses(id)),
@@ -91,60 +135,60 @@ export class CartComponent implements OnInit {
     );
   }
 
-  onCartStateFormChanged(state) {
-    this.cartService.updateOrderAddress(state.data[DETAILS_FORM_CONTROL_NAMES.address]);
-    this.cartFormState = state;
-    console.log(this.cartFormState);
-  }
-
   private async getAvailableAccounts(): Promise<UserAccount[]> {
     let accounts = [];
-    const { data: [settings, merchantAccInfoList] } = await this.activatedRoute.data.pipe(first()).toPromise();
+    const { data: [settings, accInfo] } = await this.activatedRoute.data.pipe(first()).toPromise();
     const displayTenderSetting = this.settingService.getSettingByName(settings, SYSTEM_SETTINGS_CONFIG.displayTenders.name);
     const displayCreditCardSetting = this.settingService.getSettingByName(settings, SYSTEM_SETTINGS_CONFIG.displayCreditCard.name);
     const displayTenders = displayTenderSetting ? parseArrayFromString<string>(displayTenderSetting.value) : [];
     const displayCreditCards = displayCreditCardSetting ? parseArrayFromString<string>(displayCreditCardSetting.value) : [];
     const { mealBased } = await this.cartService.menuInfo$.pipe(first()).toPromise();
 
-    if (merchantAccInfoList.cashlessAccepted && !merchantAccInfoList.rollOverr) {
-      merchantAccInfoList.accounts.forEach(acc => {
-        if (acc.paymentSystemType === PAYMENT_SYSTEM_TYPE.OPCS || acc.paymentSystemType === PAYMENT_SYSTEM_TYPE.CSGOLD) {
-          displayTenders.includes(acc.accountTender) && accounts.push(acc);
-        }
-      });
+    if (accInfo.cashlessAccepted && !accInfo.rollOverr) {
+      accounts = [...accounts, ...this.filterCashlessAccounts(accInfo.accounts, displayTenders)];
     }
-
-    if (merchantAccInfoList.creditAccepted) {
-      merchantAccInfoList.accounts.forEach(acc => {
-        if (acc.paymentSystemType === PAYMENT_SYSTEM_TYPE.MONETRA || acc.paymentSystemType === PAYMENT_SYSTEM_TYPE.USAEPAY) {
-          displayCreditCards.includes(acc.id) && accounts.push(acc);
-        }
-      });
+    if (accInfo.creditAccepted) {
+      accounts = [...accounts, ...this.filterCreditAccounts(accInfo.accounts, displayCreditCards)];
     }
-
-    if (merchantAccInfoList.rollOver) {
-      merchantAccInfoList.accounts.forEach(acc => acc.id === 'rollup' && accounts.push(acc));
+    if (accInfo.rollOver) {
+      accounts = [...accounts, ...this.filterRollupAccounts(accInfo.accounts)];
     }
-
     if (mealBased) {
-      accounts = accounts.filter(({ accountType }: UserAccount) => accountType === ACCOUNT_TYPES.meals);
+      accounts = [...accounts, ...this.filterMealBasedAccounts(accInfo.accounts)];
     }
 
     return accounts;
   }
 
-  removeOrderItem(id: string) {
-    this.cartService.removeOrderItemFromOrderById(id);
+  private async validateOrder(onError): Promise<void> {
+    await this.loadingService.showSpinner();
+    await this.cartService.validateOrder().pipe(
+      first(),
+      handleServerError<OrderInfo>(ORDER_VALIDATION_ERRORS),
+    ).toPromise()
+      .catch(onError)
+      .finally(this.loadingService.closeSpinner.bind(this.loadingService));
   }
 
-  onSubmit() {
-    if (this.cartFormState.valid) {
-      this.cartService.submitOrder(
-        this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.paymentMethod].id,
-        this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.cvv]
-          ? this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.cvv]
-          : null,
-      ).subscribe(d => console.log(d));
-    }
+  private filterCashlessAccounts(sourceAccounts: UserAccount[], displayTenders: string[]): UserAccount[] {
+    return sourceAccounts.filter(({ paymentSystemType, accountTender }) =>
+      (paymentSystemType === PAYMENT_SYSTEM_TYPE.OPCS || paymentSystemType === PAYMENT_SYSTEM_TYPE.CSGOLD)
+      && displayTenders.includes(accountTender),
+    );
+  }
+
+  private filterCreditAccounts(sourceAccounts: UserAccount[], displayCreditCards: string[]): UserAccount[] {
+    return sourceAccounts.filter(({ paymentSystemType, id }) =>
+      (paymentSystemType === PAYMENT_SYSTEM_TYPE.MONETRA || paymentSystemType === PAYMENT_SYSTEM_TYPE.USAEPAY)
+      && displayCreditCards.includes(id),
+    );
+  }
+
+  private filterRollupAccounts(sourceAccounts: UserAccount[]): UserAccount[] {
+    return sourceAccounts.filter(acc => acc.id === 'rollup');
+  }
+
+  private filterMealBasedAccounts(sourceAccounts: UserAccount[]): UserAccount[] {
+    return sourceAccounts.filter(({ accountType }: UserAccount) => accountType === ACCOUNT_TYPES.meals);
   }
 }
