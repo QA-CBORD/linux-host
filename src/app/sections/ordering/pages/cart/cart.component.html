@@ -23,9 +23,15 @@
             [addressModalConfig]="(addressModalSettings$ | async)"
             (onFormChange)="onCartStateFormChanged($event)"
             (onOrderItemRemovedId)="removeOrderItem($event)"
+
+
+
     >
         <ion-button (click)="onSubmit()" class="btn" [ngClass]="{'btn--invalid': !cartFormState?.valid}">
             schedule order {{(order$ | async).total | currency}}
         </ion-button>
     </st-order-details>
+
+
+    <div>adddressssss {{address1$ | async}}</div>
 </ion-content>

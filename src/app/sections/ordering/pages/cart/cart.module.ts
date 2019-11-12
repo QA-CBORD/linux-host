@@ -5,15 +5,17 @@ import { CartRoutingModule } from '@sections/ordering/pages/cart/cart.routing.mo
 import { OrderDetailsModule } from '@sections/ordering/shared/ui-components/order-details/order-details.module';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
 import { IonicModule } from '@ionic/angular';
+import { SuccessModalComponent } from '@sections/ordering/pages/cart/components/success-modal/success-modal.component';
 
 @NgModule({
-  declarations: [CartComponent],
+  declarations: [CartComponent, SuccessModalComponent],
   imports: [
     CommonModule,
     CartRoutingModule,
     OrderDetailsModule,
     StHeaderModule,
     IonicModule
-  ]
+  ],
+   entryComponents: [SuccessModalComponent]
 })
 export class CartModule { }

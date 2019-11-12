@@ -7,7 +7,7 @@ export enum LOCAL_ROUTING {
   fullMenu = 'full-menu',
   cart = 'cart',
   menuCategoryItems = 'menu-category-items',
-  itemDetail = 'item-detail'
+  itemDetail = 'item-detail',
 }
 
 export enum MerchantSearchOptionName {
@@ -78,4 +78,5 @@ export const ORDER_VALIDATION_ERRORS: ServerErrorsInfo = {
   9006: 'Items in order  couldn\'t be more than merchant supports',
   9002: 'Order minimum total for delivery wasn\'t met',
   9014: 'Tip amount is negative or greater than the order subtotal',
+  9013: 'Order cannot be canceled due to it has been completed'
 };

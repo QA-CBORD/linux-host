@@ -7,7 +7,7 @@
             <p class="order-details__value">{{time | date: 'M/d/yy, h:mm a'}}</p>
         </div>
 
-        <div class="order-details" *ngIf="(address | addressAsString: type).length">
+        <div class="order-details" *ngIf="address && (address | addressAsString: type).length">
             <ion-label class="order-details__label">{{type | typeMessage:'address'}}</ion-label>
 
             <p *ngIf="readonly && address; else addressEditable"
@@ -58,7 +58,6 @@
             <div class="total__item total__item--bold">total<span class="total__item-sum">{{total | currency}}</span>
             </div>
         </div>
-
 
         <div class="order-details__payment-method" *ngIf="readonly; else paymentSelect">
             Payment Method<span>{{orderPaymentName}}</span>

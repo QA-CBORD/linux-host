@@ -2,14 +2,14 @@
 
 .content {
   height: 100vh;
-  background: #f0f3f5;
+  background: $color-white-smoke;
 }
 
 .order-details {
   border-top: 1px solid $color-whisper;
   border-bottom: 1px solid $color-whisper;
   padding: 10px;
-  background: #fff;
+  background: $color-white;
 
   &--error {
     color: $color-alizarin;
@@ -52,7 +52,7 @@
   }
 
   &__payment-method {
-    color: #464646;
+    color: $color-charcoal;
     letter-spacing: 0;
     text-transform: capitalize;
     display: flex;
@@ -74,7 +74,7 @@
 }
 
 .order-ingredient-list {
-  background: #f0f3f5;
+  background: $color-white-smoke;
 
   &__ingredient {
     border-radius: 10px;
@@ -131,7 +131,7 @@
 
 .total {
   padding: 10px 20px;
-  background: #fff;
+  background: $color-white;
 
   &__item {
     text-transform: uppercase;

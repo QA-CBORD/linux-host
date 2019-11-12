@@ -1,22 +1,22 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { FinalOrder.ModalComponent } from './final-order.modal.component';
+import { SuccessModalComponent } from './success-modal.component';
 
-describe('FinalOrder.ModalComponent', () => {
-  let component: FinalOrder.ModalComponent;
-  let fixture: ComponentFixture<FinalOrder.ModalComponent>;
+describe('SuccessModalComponent', () => {
+  let component: SuccessModalComponent;
+  let fixture: ComponentFixture<SuccessModalComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ FinalOrder.ModalComponent ],
+      declarations: [ SuccessModalComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(FinalOrder.ModalComponent);
+    fixture = TestBed.createComponent(SuccessModalComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

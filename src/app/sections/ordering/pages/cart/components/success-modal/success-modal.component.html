@@ -5,7 +5,7 @@
         <ion-icon size="large" slot="icon-only" name="close"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title class="final-order__title">Order #2255</ion-title>
+    <ion-title class="final-order__title">Order #{{checkNumber}}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -13,24 +13,23 @@
   <div class="final-order__body-wrapper">
     <img src="/assets/images/big_check_order.svg" alt="big check order" class="final-order__main-img" />
     <div class="final-order__sub-header">Order Placed</div>
+
     <div class="final-order__body">
       Your order has been placed successfully. You will receive an email confirmation shortly.
     </div>
-    <div class="final-order__payment-info-wrapper">
-      <div class="final-order__payment-info">
-        <div>subtotal</div>
-        <div>tax</div>
-        <div class="final-order__payment-info-total">Total</div>
-      </div>
-      <div class="final-order__payment-info">
-        <div>$11.48</div>
-        <div>$0.92</div>
-        <div class="final-order__payment-info-total">$12.40</div>
+
+    <div class="total">
+      <div class="total__item">subtotal<span class="total__item-sum">{{subTotal | currency}}</span></div>
+      <div class="total__item">tax<span class="total__item-sum">{{tax | currency}}</span></div>
+      <div class="total__item">tip<span class="total__item-sum">{{tip | currency}}</span></div>
+      <div class="total__item">delivery fee<span class="total__item-sum">{{deliveryFee | currency}}</span></div>
+      <div class="total__item">pickup fee<span class="total__item-sum">{{pickupFee | currency}}</span></div>
+      <div class="total__item total__item--bold">total<span class="total__item-sum">{{total | currency}}</span>
       </div>
     </div>
+
     <div class="final-order__payment-method-wrapper">
-      <div>Payment Method</div>
-      <div>Apple Pay</div>
+      <span>Payment Method</span><span>{{accountName}}</span>
     </div>
   </div>
 </ion-content>

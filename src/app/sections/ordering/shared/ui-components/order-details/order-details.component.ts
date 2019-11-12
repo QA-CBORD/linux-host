@@ -81,8 +81,6 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
 
   onRemoveOrderItem(id: string) {
     this.onOrderItemRemovedId.emit(id);
-    // const index = (this.orderItemsFormArray as FormArray).controls.findIndex(({ value }) => value === id);
-    // (this.orderItemsFormArray as FormArray).removeAt(index);
   }
 
   initForm() {
@@ -103,22 +101,12 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
     return this.detailsForm.get(DETAILS_FORM_CONTROL_NAMES.cvv);
   }
 
-  // private get orderItemsFormArray(): AbstractControl {
-  //   return this.detailsForm.get(DETAILS_FORM_CONTROL_NAMES.orderItems);
-  // }
-
   private subscribeOnFormChanges() {
     const sub = this.detailsForm.valueChanges
       .subscribe(data => {
         this.onFormChange.emit({ data, valid: this.detailsForm.valid });
       });
     this.sourceSub.add(sub);
-  }
-
-  private getIngredients() {
-    return this.fb.array([
-      ...this.orderItems.map(({ menuItemId }) => this.fb.control(menuItemId)),
-    ], Validators.required);
   }
 
   private addCvvControl() {

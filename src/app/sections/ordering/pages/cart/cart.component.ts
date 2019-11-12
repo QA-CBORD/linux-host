@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { CartService } from '@sections/ordering/services/cart.service';
 import { Observable, zip } from 'rxjs';
 import {
@@ -12,17 +12,20 @@ import { first, map, switchMap, tap } from 'rxjs/operators';
 import {
   ACCOUNT_TYPES,
   MerchantSettings,
-  ORDER_TYPE, ORDER_VALIDATION_ERRORS,
+  ORDER_TYPE,
+  ORDER_VALIDATION_ERRORS,
   PAYMENT_SYSTEM_TYPE,
   SYSTEM_SETTINGS_CONFIG,
 } from '@sections/ordering/ordering.config';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { SettingService } from '@core/service/settings/setting.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { handleServerError, parseArrayFromString } from '@core/utils/general-helpers';
 import { UserAccount } from '@core/model/account/account.model';
-import { ToastController } from '@ionic/angular';
+import { ModalController, ToastController } from '@ionic/angular';
 import { AddressInfo } from '@core/model/address/address-info';
+import { NAVIGATE } from '../../../../app.global';
+import { SuccessModalComponent } from '@sections/ordering/pages/cart/components/success-modal';
 
 @Component({
   selector: 'st-cart',
@@ -34,6 +37,8 @@ export class CartComponent implements OnInit {
   order$: Observable<Partial<OrderInfo>>;
   addressModalSettings$: Observable<AddressModalSettings>;
   address$: Observable<AddressInfo>;
+  address1$: Observable<AddressInfo>;
+
   accounts: UserAccount[];
   cartFormState: OrderDetailsFormData;
 
@@ -43,12 +48,16 @@ export class CartComponent implements OnInit {
               private readonly settingService: SettingService,
               private readonly activatedRoute: ActivatedRoute,
               private readonly toastController: ToastController,
-              private readonly cdRef: ChangeDetectorRef) {
+              private readonly cdRef: ChangeDetectorRef,
+              private readonly router: Router,
+              private readonly modalController: ModalController) {
   }
 
   ngOnInit() {
     this.order$ = this.cartService.orderInfo$;
-    this.address$ = this.cartService.orderDetailsOptions$.pipe(map(({ address }) => address));
+    this.address$ = this.cartService.orderDetailsOptions$.pipe(
+      map(({ address }) => address)
+    );
     this.addressModalSettings$ = this.initAddressModalConfig();
     this.getAvailableAccounts().then((acc) => this.accounts = acc);
   }
@@ -85,15 +94,39 @@ export class CartComponent implements OnInit {
     this.cartFormState = state;
   }
 
-  onSubmit() {
+  async onSubmit() {
     if (!this.cartFormState.valid) return;
 
+    await this.loadingService.showSpinner();
     this.cartService.submitOrder(
       this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.paymentMethod].id,
-      this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.cvv]
-        ? this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.cvv]
-        : null,
-    ).pipe(first()).subscribe(d => console.log(d));
+      this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.cvv] || null,
+    ).pipe().toPromise()
+      .then(async order => await this.showModal(order))
+      .finally( this.loadingService.closeSpinner.bind(this.loadingService));
+  }
+
+  async showModal({ tax, total, subTotal, orderPayment: [{ accountName }], deliveryFee, pickupFee, tip, checkNumber }: OrderInfo) {
+    const modal = await this.modalController.create({
+      component: SuccessModalComponent,
+      componentProps: {
+        tax,
+        total,
+        subTotal,
+        deliveryFee,
+        pickupFee,
+        tip,
+        checkNumber,
+        accountName,
+      },
+    });
+
+    modal.onDidDismiss().then(async () => {
+      await this.router.navigate([`../../`], { skipLocationChange: true, relativeTo: this.activatedRoute });
+
+    });
+
+    await modal.present();
   }
 
   async removeOrderItem(id: string) {
