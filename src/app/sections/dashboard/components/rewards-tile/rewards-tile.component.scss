@@ -7,7 +7,7 @@
     height: 20px;
     background: $color-whisper;
     border-radius: 10px;
-    padding: 2px;
+    padding: 5px;
 
     &__gradient {
       background-image: linear-gradient(to right, $color-deep-sky-blue, $color-navy-blue);
@@ -57,6 +57,7 @@
 
     &__balance-points-digit {
       color: $color-black;
+      
       @include font-nunito-heavy(24px);
     }
   }

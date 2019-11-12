@@ -4,23 +4,23 @@
   width: stretch;
   margin: 15px 10px;
   border-radius: 15px;
-  box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.12), 0px 2px 14px 0px rgba(0, 0, 0, 0.12);
+  box-shadow: 0px 0px 4px 0px #0000001f, 0px 2px 14px 0px #0000001f;
 
   &__topbar {
+    --ion-background-color: #f7f7f7;
+    --item-ios-detail-push-color: #000; 
+    --item-md-detail-push-color: #000;
+    --item-wp-detail-push-color: #000;
+
     border-top-left-radius: 15px;
     border-top-right-radius: 15px;
-    --ion-background-color: #f7f7f7;
-    --item-ios-detail-push-color: #000; // #c4c4c4;
-    --item-md-detail-push-color: #000; // #c4c4c4;
-    --item-wp-detail-push-color: #000; // #c4c4c4;
   }
 
   &__image-wrapper {
-    background: #fff;
-    border-radius: 180px;
-    width: 36px;
-    height: 36px;
-    padding: 2px;
+    background: $color-white;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
   }
 
   &__image {
@@ -34,16 +34,17 @@
     @include font-nunito-heavy(20px);
   }
 
-  &__button {
+  &__nav-button {
     border-bottom-left-radius: 15px;
     border-bottom-right-radius: 15px;
-    border-top: 1px solid #f3f3f3;
+    border-top: 1px solid $color-white-smoke;
 
-    &__label {
-      @include font-nunito-heavy(14px);
-      color: #166dff;
+    &--label {
+      color: $color-dodger-blue;
       text-align: center;
       text-transform: uppercase;
+
+      @include font-nunito-heavy(14px);
     }
   }
 }

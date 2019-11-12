@@ -7,14 +7,19 @@
   }
 
   &__merchant-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     --padding-start: 0;
     --inner-padding-start: 0;
     --inner-padding-end: 0;
-    padding: 16px 0;
-    margin: 0 16px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    margin: 0 15px;
+
+    &:first-child {
+      border-bottom: 1px solid $color-white-smoke;
+    }
   }
 
   &__merchant-info {
@@ -23,10 +28,6 @@
     flex-direction: column;
     justify-content: space-between;
     align-items: flex-start;
-  }
-
-  &__merchant-item:first-child {
-    border-bottom: 1px solid $color-white-smoke;
   }
 
   &__merchant-photo-wrapper {
@@ -61,11 +62,11 @@
     @include font-nunito-heavy(12px);
 
     &--open {
-      color: #147d63;
+      color: $color-deep-sea;
     }
 
     &--closed {
-      color: #b52135;
+      color: $color-cardinal;
     }
   }
 }

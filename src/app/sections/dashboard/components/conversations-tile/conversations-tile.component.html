@@ -7,10 +7,8 @@
       <div class="conversations__sender-info">
         <div class="conversations__sender-name-time-wrapper">
           <div
-            [ngClass]="{
-              'conversations__sender-name-unreaded': conversation.messageInfo.opened,
-              'conversations__sender-name': !conversation.messageInfo.opened
-            }"
+            class="conversations__sender-name"
+            [ngClass]="{ 'conversations__sender-name--unread': conversation.messageInfo.opened }"
           >
             {{ conversation.name }}
           </div>
@@ -19,8 +17,8 @@
         <div class="conversations__sender-recent-message">{{ conversation.recentMessage }}</div>
       </div>
       <ng-container *ngIf="conversation.messageInfo.opened"
-        ><div class="conversations__sender-message-dot-wrapper">
-          <span class="dot"></span></div
+        ><div class="conversations__sender-message-indicator-wrapper">
+          <span class="indicator"></span></div
       ></ng-container>
     </ion-item>
   </ion-list>

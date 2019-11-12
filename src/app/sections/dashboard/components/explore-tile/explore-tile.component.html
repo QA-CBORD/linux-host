@@ -1,6 +1,6 @@
 <div class="explore">
-  <ion-list *ngFor="let merchant of exploreList" class="explore__merchant-list">
-    <ion-item class="explore__merchant-item" lines="none">
+  <ion-list  class="explore__merchant-list">
+    <ion-item *ngFor="let merchant of exploreList" class="explore__merchant-item" lines="none">
       <div class="explore__merchant-photo-wrapper">
         <img class="explore__merchant-photo" src="{{ merchant.img }}" />
       </div>

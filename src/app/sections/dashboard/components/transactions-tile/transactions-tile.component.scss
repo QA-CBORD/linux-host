@@ -6,22 +6,23 @@
 
   &__list {
     width: 100%;
-    margin: 0px;
+    margin: 0;
     padding: 0;
   }
 
   &__item {
+    --padding-start: 0;
+    --inner-padding-end: 0;
+
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
     border-bottom: 1px solid $color-white-smoke;
-    --padding-start: 1px;
-    --inner-padding-end: 1px;
   }
 
   &__label-container {
-    margin-top: 12px;
+    margin-top: 15px;
     width: 100%;
     text-align: left;
   }
@@ -31,12 +32,12 @@
   }
 
   &__date {
-    margin: 5px 0 13px;
+    margin: 5px 0 15px;
     @include font-nunito-regular(10px);
   }
 
   &__type-container {
-    margin-top: 12px;
+    margin-top: 15px;
     width: 100%;
     text-align: right;
   }
@@ -47,6 +48,7 @@
 
   &__type-label {
     margin: 5px 0 13px;
+
     @include font-nunito-regular(10px);
   }
 }

@@ -1,21 +1,25 @@
 @import 'tools';
 
 .conversations {
-  
   &__sender-list {
     margin: 0;
     padding: 0;
   }
 
   &__sender-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     --padding-start: 0;
     --inner-padding-start: 0;
     --inner-padding-end: 0;
-    padding: 12px 0;
-    margin: 0 16px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    margin: 0 15px;
+
+    &:first-child {
+      border-bottom: 1px solid $color-white-smoke;
+    }
   }
 
   &__sender-info {
@@ -23,10 +27,6 @@
     flex-direction: column;
     align-items: flex-start;
     margin-left: 15px;
-  }
-
-  &__sender-item:first-child {
-    border-bottom: 1px solid $color-white-smoke;
   }
 
   &__sender-avatar-wrapper {
@@ -55,10 +55,7 @@
     @include ellipsis;
     @include font-nunito-semibold(16px);
 
-    &-unreaded {
-      max-width: 170px;
-
-      @include ellipsis;
+    &--unread {
       @include font-nunito-heavy(16px);
     }
   }
@@ -69,7 +66,6 @@
 
     @include ellipsis;
     @include font-nunito-regular(12px);
-
   }
 
   &__sender-recent-time {
@@ -78,7 +74,7 @@
     @include font-nunito-regular(12px);
   }
 
-  &__sender-message-dot-wrapper {
+  &__sender-message-indicator-wrapper {
     display: flex;
     justify-content: flex-end;
     align-items: flex-end;
@@ -86,9 +82,9 @@
   }
 }
 
-.dot {
-  background: #166dff;
+.indicator {
+  background: $color-dodger-blue;
   border-radius: 50%;
-  width: 7px;
-  height: 7px;
+  width: 10px;
+  height: 10px;
 }

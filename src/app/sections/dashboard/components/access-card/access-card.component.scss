@@ -1,13 +1,13 @@
 @import 'tools';
 
 .card {
-  margin: 8px;
+  margin: 5px;
   border-radius: 15px;
   background: linear-gradient(to bottom right, #166dff, #0043b3);
   height: 280px;
 
   &__header {
-    height: 48px;
+    height: 50px;
     align-items: center;
 
     &-logo-wrapper {
@@ -18,8 +18,8 @@
     }
 
     &-logo {
-      height: 32px;
-      width: 32px;
+      height: 35px;
+      width: 35px;
     }
 
     &-title-wrapper {
@@ -44,6 +44,7 @@
       --background: none;
       --padding-start: 0;
       --padding-end: 0;
+
       font-size: 15px;
     }
   }
@@ -70,13 +71,13 @@
     border-radius: 50%;
     height: 100px;
     width: 100px;
-    top: 36px;
+    top: 35px;
   }
 
   &__student-container {
     height: 80px;
     align-items: flex-end;
-    padding: 0 12px;
+    padding: 0 15px;
   }
 
   &__student-name-wrapper {
@@ -110,12 +111,13 @@
   }
 
   &__quick-actions-btn {
-    width: 100%;
-    height: 48px;
     --background: #0000001f;
     --padding-start: 0;
     --padding-end: 0;
     --border-radius: 12px;
+    
+    width: 100%;
+    height: 48px;
     margin: 0;
   }
 
@@ -134,7 +136,7 @@
 
 
   &__icon-title {
-    color: #ced7e6;
+    color: $color-white-smoke;
 
     @include font-nunito-semibold(10px);
   }
@@ -143,6 +145,7 @@
     --background: none;
     --padding-start: 0;
     --padding-end: 0;
+    
     width: 111px;
   }
 }

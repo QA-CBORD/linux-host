@@ -1,19 +1,19 @@
 @import "tools";
 
 .dashboard {
-  background: #f7f7f7;
-
-  
+  background: $color-white-smoke;
   
   &__bottom-btn-wrapper {
-    margin: 8px;
+    --background:  #fff;
+    --background-activated: #D9D9D9;
+
     display: flex;
     justify-content: center;
     align-items: center;
+    margin: 10px;
     border-radius: 16px;
-    height: 64px;
-    background: $color-white;
-    box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.12), 0px 2px 14px 0px rgba(0, 0, 0, 0.12);
+    height: 65px;
+    box-shadow: 0px 0px 4px 0px #0000001f, 0px 2px 14px 0px #0000001f;
   }
 
   &__bottom-icon-wrapper {
@@ -27,6 +27,7 @@
     text-align: left;
     display: flex;
     flex-direction: column;
+    color: $color-black;
   }
   
   &__bottom-title {
