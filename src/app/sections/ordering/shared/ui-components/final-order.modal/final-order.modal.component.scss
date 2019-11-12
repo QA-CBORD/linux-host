@@ -1,0 +1,72 @@
+@import 'tools';
+
+.final-order {
+  &__header {
+    border-bottom: 1px solid $color-whisper;
+  }
+
+  &__body-wrapper {
+    display: flex;
+    flex-direction: column;
+    padding: 0 20px;
+  }
+
+  &__main-img {
+    margin: 30px 0;
+  }
+
+  &__sub-header {
+    color: #464646;
+	text-align: center;
+	margin-bottom: 10px;
+
+    @include font-nunito-heavy(24px);
+  }
+
+  &__body {
+    color: #464646;
+    text-align: center;
+
+    @include font-nunito-regular(16px);
+  }
+
+  &__payment-info-wrapper {
+    display: flex;
+	justify-content: space-between;
+	margin-top: 40px;
+  }
+
+  &__payment-info {
+    color: $color-dark-gray;
+
+    @include font-nunito-regular(12px);
+
+    &:first-child {
+      text-transform: uppercase;
+    }
+  }
+
+  &__payment-info-total {
+    color: #000;
+    text-transform: capitalize;
+
+    @include font-nunito-semibold(14px);
+  }
+
+  &__payment-method-wrapper {
+    display: flex;
+    justify-content: space-between;
+    color: #464646;
+    margin-top: 35px;
+
+    @include font-nunito-regular(14px);
+  }
+
+  &__btn {
+    margin-bottom: 30px;
+    color: #000;
+    opacity: 0.87;
+
+    @include font-nunito-heavy(14px);
+  }
+}
