@@ -14,36 +14,37 @@ export class CartService {
   private readonly cart = { order: null, merchant: null, menu: null, orderDetailsOptions: null };
   private readonly _cart$: BehaviorSubject<CartState> = new BehaviorSubject<CartState>(<CartState>this.cart);
 
-  constructor(private readonly userService: UserService,
-              private readonly merchantService: MerchantService,
-              private readonly api: OrderingApiService) {
-  }
+  constructor(
+    private readonly userService: UserService,
+    private readonly merchantService: MerchantService,
+    private readonly api: OrderingApiService
+  ) {}
 
   get merchant$(): Observable<MerchantInfo> {
     return this._cart$.asObservable().pipe(
       map(cart => cart.merchant),
-      distinctUntilChanged(),
+      distinctUntilChanged()
     );
   }
 
   get orderInfo$(): Observable<Partial<OrderInfo>> {
     return this._cart$.asObservable().pipe(
       map(cart => cart.order),
-      distinctUntilChanged(),
+      distinctUntilChanged()
     );
   }
 
   get menuInfo$(): Observable<MenuInfo> {
     return this._cart$.asObservable().pipe(
       map(cart => cart.menu),
-      distinctUntilChanged(),
+      distinctUntilChanged()
     );
   }
 
   get orderDetailsOptions$(): Observable<OrderDetailOptions> {
     return this._cart$.asObservable().pipe(
       map(cart => cart.orderDetailsOptions),
-      distinctUntilChanged(),
+      distinctUntilChanged()
     );
   }
 
@@ -53,10 +54,12 @@ export class CartService {
 
   get menuItems$(): Observable<number> {
     return this.orderInfo$.pipe(
-      map(({ orderItems }) =>
-        orderItems.reduce((state, { quantity }) => state + quantity, 0),
-      ),
+      map(({ orderItems }) => orderItems.reduce((state, { quantity }) => state + quantity, 0))
     );
+  }
+
+  get orderItems$(): Observable<OrderItem[]> {
+    return this.orderInfo$.pipe(map(({ orderItems }) => orderItems));
   }
 
   set _order(orderInfo: OrderInfo) {
@@ -70,22 +73,24 @@ export class CartService {
     const prevMerchant = this.cart.merchant;
     this.cart.merchant = JSON.parse(JSON.stringify(merchant));
 
-    if (prevMerchant && prevMerchant.id !== merchant.id)
-      await this.refreshCartDate();
-    if (!prevMerchant)
-      await this.setInitialEmptyOrder();
+    if (prevMerchant && prevMerchant.id !== merchant.id) await this.refreshCartDate();
+    if (!prevMerchant) await this.setInitialEmptyOrder();
 
     this.onStateChanged();
   }
 
-  async setActiveMerchantsMenuByOrderOptions(dueTime: Date, orderType: ORDER_TYPE, address: AddressInfo): Promise<void> {
+  async setActiveMerchantsMenuByOrderOptions(
+    dueTime: Date,
+    orderType: ORDER_TYPE,
+    address: AddressInfo
+  ): Promise<void> {
     this.cart.orderDetailsOptions = { orderType, dueTime, address };
-    await this.getMerchantMenu().then(menu => this.cart.menu = menu);
+    await this.getMerchantMenu().then(menu => (this.cart.menu = menu));
     this.onStateChanged();
   }
 
   private async setInitialEmptyOrder(): Promise<void> {
-    await this.initEmptyOrder().then(order => this.cart.order = order);
+    await this.initEmptyOrder().then(order => (this.cart.order = order));
     this.onStateChanged();
   }
 
@@ -96,7 +101,9 @@ export class CartService {
     const itemIndex = this.cart.order.orderItems.findIndex(({ id: oId }: OrderItem) => oId === id);
     if (itemIndex !== -1) {
       this.cart.order.orderItems.splice(itemIndex, 1);
-      return await this.validateOrder().pipe(first()).toPromise();
+      return await this.validateOrder()
+        .pipe(first())
+        .toPromise();
     }
   }
 
@@ -123,14 +130,14 @@ export class CartService {
   }
 
   validateOrder(): Observable<OrderInfo> {
-    const { orderType: type, dueTime, address: { id } } = this.cart.orderDetailsOptions;
-    const address = type === ORDER_TYPE.DELIVERY
-      ? { deliveryAddressId: id }
-      : { pickupAddressId: id };
+    const {
+      orderType: type,
+      dueTime,
+      address: { id },
+    } = this.cart.orderDetailsOptions;
+    const address = type === ORDER_TYPE.DELIVERY ? { deliveryAddressId: id } : { pickupAddressId: id };
     this.cart.order = { ...this.cart.order, type, dueTime, ...address };
-    return this.merchantService.validateOrder(this.cart.order).pipe(
-      tap(updatedOrder => this._order = updatedOrder),
-    );
+    return this.merchantService.validateOrder(this.cart.order).pipe(tap(updatedOrder => (this._order = updatedOrder)));
   }
 
   submitOrder(accId: string, cvv: string): Observable<OrderInfo> {
@@ -157,17 +164,19 @@ export class CartService {
   }
 
   private async initEmptyOrder(): Promise<Partial<OrderInfo>> {
-    return this.userService.userData.pipe(
-      map(({ institutionId, id: userId }) => {
-        return {
-          userId,
-          orderItems: [],
-          merchantId: this.cart.merchant.id,
-          institutionId,
-        };
-      }),
-      first(),
-    ).toPromise();
+    return this.userService.userData
+      .pipe(
+        map(({ institutionId, id: userId }) => {
+          return {
+            userId,
+            orderItems: [],
+            merchantId: this.cart.merchant.id,
+            institutionId,
+          };
+        }),
+        first()
+      )
+      .toPromise();
   }
 
   private async refreshCartDate(): Promise<void> {
@@ -183,7 +192,9 @@ export class CartService {
     const { orderDetailsOptions: options, merchant } = this.cart;
     if (!options || !merchant || !options.dueTime || isNaN(options.orderType)) return Promise.reject();
 
-    return this.merchantService.getDisplayMenu(merchant.id, options.dueTime.toISOString(), options.orderType).toPromise();
+    return this.merchantService
+      .getDisplayMenu(merchant.id, options.dueTime.toISOString(), options.orderType)
+      .toPromise();
   }
 }
 

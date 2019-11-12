@@ -4,7 +4,7 @@ import { FormGroup, FormBuilder, Validators, AbstractControl, ValidationErrors }
 import { Router, ActivatedRoute } from '@angular/router';
 import { NAVIGATE } from 'src/app/app.global';
 import { zip, Subscription } from 'rxjs';
-import { CartService, MenuItemInfo } from '@sections/ordering';
+import { CartService, MenuItemInfo, OrderItem } from '@sections/ordering';
 import { take } from 'rxjs/operators';
 
 @Component({
@@ -31,6 +31,8 @@ export class ItemDetailComponent implements OnInit {
 
   ngOnInit() {
     this.initMenuItemOptions();
+
+    this.cartService.orderItems$.subscribe(data => console.log(data));
   }
 
   ngOnDestroy() {
@@ -49,7 +51,8 @@ export class ItemDetailComponent implements OnInit {
     this.isStaticHeader = detail.scrollTop === 0;
   }
 
-  initForm() {
+  initForm(cartSelectedItems: OrderItem[] = []) {
+    console.log(cartSelectedItems);
     const formGroup = {};
     this.menuItem.menuItemOptions.map(({ menuGroup }) => {
       if (menuGroup.maximum === 1 && menuGroup.minimum === 1) {
@@ -128,18 +131,31 @@ export class ItemDetailComponent implements OnInit {
   }
 
   private initMenuItemOptions() {
-    this.activatedRoute.data.subscribe(({ data: { menuItem } }) => {
-      if (menuItem) {
+    zip(this.activatedRoute.data, this.cartService.orderItems$).subscribe(
+      ([
+        {
+          data: {
+            menuItem,
+            queryParams: { menuItemId },
+          },
+        },
+        orderItems,
+      ]) => {
         this.menuItem = menuItem.menuItem;
+        console.log(this.menuItem);
 
         // Temporary, while we don't have images:
         // '/assets/images/temp-merchant-photo.jpg'
         this.menuItemImg = '/assets/images/temp-merchant-photo.jpg';
         this.order = { ...this.order, totalPrice: this.menuItem.price };
 
-        this.initForm();
+        debugger
+        const cartSelectedItem = orderItems.find(item => item.menuItemId === this.menuItem.id);
+        const cartOrderItemOptions = cartSelectedItem ? cartSelectedItem.orderItemOptions : [];
+        console.log(cartOrderItemOptions);
+        this.initForm(cartOrderItemOptions);
       }
-    });
+    );
   }
 
   private valueChanges() {
