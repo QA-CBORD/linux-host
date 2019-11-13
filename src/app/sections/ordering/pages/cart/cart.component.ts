@@ -44,7 +44,7 @@ export class CartComponent implements OnInit {
     private readonly settingService: SettingService,
     private readonly activatedRoute: ActivatedRoute,
     private readonly router: Router
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.order$ = this.cartService.orderInfo$;
@@ -83,10 +83,10 @@ export class CartComponent implements OnInit {
     );
   }
 
-  onOrderItemClicked({ menuItemId }) {
+  onOrderItemClicked({ menuItemId, id }) {
     this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.itemDetail], {
       skipLocationChange: true,
-      queryParams: { menuItemId },
+      queryParams: { menuItemId: menuItemId, orderItemId: id },
     });
   }
 

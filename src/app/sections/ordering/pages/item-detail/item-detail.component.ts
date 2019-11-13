@@ -27,7 +27,7 @@ export class ItemDetailComponent implements OnInit {
     private readonly fb: FormBuilder,
     private readonly activatedRoute: ActivatedRoute,
     private readonly cartService: CartService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.initMenuItemOptions();
@@ -54,17 +54,47 @@ export class ItemDetailComponent implements OnInit {
   initForm(cartSelectedItems: OrderItem[] = []) {
     console.log(cartSelectedItems);
     const formGroup = {};
-    this.menuItem.menuItemOptions.map(({ menuGroup }) => {
-      if (menuGroup.maximum === 1 && menuGroup.minimum === 1) {
-        formGroup[menuGroup.name] = ['', [Validators.required]];
-        return;
-      }
-      formGroup[menuGroup.name] = [
-        [],
-        [validateMinLengthOfArray(menuGroup.minimum), validateMaxLengthOfArray(menuGroup.maximum)],
-      ];
-    });
+    if (!cartSelectedItems.length) {
+      this.menuItem.menuItemOptions.forEach(({ menuGroup }) => {
+        if (menuGroup.maximum === 1 && menuGroup.minimum === 1) {
+          formGroup[menuGroup.name] = ['', [Validators.required]];
+          return;
+        }
+        formGroup[menuGroup.name] = [
+          [],
+          [validateMinLengthOfArray(menuGroup.minimum), validateMaxLengthOfArray(menuGroup.maximum)],
+        ];
+      });
+    } else {
+      this.menuItem.menuItemOptions.forEach(({ menuGroup }) => {
+        if (menuGroup.maximum === 1 && menuGroup.minimum === 1) {
+          const selectedOption = menuGroup.menuGroupItems.find((someItem) => {
+            const a = cartSelectedItems.find(({ menuItemId }) => menuItemId === someItem.menuItem.id)
+            return a && someItem.menuItem.id === a.menuItemId;
+          })
 
+          debugger
+          if (selectedOption) {
+            formGroup[menuGroup.name] = [selectedOption, [Validators.required]];
+            return;
+          }
+        }
+        const selectedOptions = menuGroup.menuGroupItems.filter(({ menuItem }) => {
+          const b = cartSelectedItems.find(({ menuItemId }) => menuItemId === menuItem.id);
+          return b && menuItem.id === b.menuItemId;
+        })
+
+        if (selectedOptions.length) {
+          formGroup[menuGroup.name] = [
+            selectedOptions,
+            [validateMinLengthOfArray(menuGroup.minimum), validateMaxLengthOfArray(menuGroup.maximum)],
+          ];
+        }
+      });
+    }
+
+    console.log(formGroup);
+    debugger
     this.itemOrderForm = this.fb.group({
       ...formGroup,
       message: ['', [Validators.minLength(1), Validators.maxLength(255)]],
@@ -136,7 +166,7 @@ export class ItemDetailComponent implements OnInit {
         {
           data: {
             menuItem,
-            queryParams: { menuItemId },
+            queryParams: { orderItemId },
           },
         },
         orderItems,
@@ -149,10 +179,8 @@ export class ItemDetailComponent implements OnInit {
         this.menuItemImg = '/assets/images/temp-merchant-photo.jpg';
         this.order = { ...this.order, totalPrice: this.menuItem.price };
 
-        debugger
-        const cartSelectedItem = orderItems.find(item => item.menuItemId === this.menuItem.id);
+        const cartSelectedItem = orderItems.find(item => item.id === orderItemId);
         const cartOrderItemOptions = cartSelectedItem ? cartSelectedItem.orderItemOptions : [];
-        console.log(cartOrderItemOptions);
         this.initForm(cartOrderItemOptions);
       }
     );
