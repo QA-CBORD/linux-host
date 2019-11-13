@@ -27,8 +27,7 @@ export class OrderAddressListComponent implements OnInit {
       .pipe(take(1))
       .subscribe(
         (data) => {
-          // this.items = data;
-          this.items = [];
+          this.items = data;
           this.displayList = this.items.length ? true : false;
           this.addressesLoaded.emit(this.displayList);
           console.log('addresses', this.items);
