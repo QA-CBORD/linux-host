@@ -6,6 +6,8 @@ import { AccountsService } from './services/accounts.service';
 import { TransactionService } from './services/transaction.service';
 import { SecureMessagingService, AccessCardService, MobileAccessService, RewardsService } from './services';
 import { tap, switchMap } from 'rxjs/operators';
+import { ModalController } from '@ionic/angular';
+import { EditHomePageModalComponent } from './components/edit-home-page-modal';
 
 @Component({
   selector: 'st-dashboard',
@@ -45,8 +47,6 @@ export class DashboardPage implements OnInit {
       navigate: NAVIGATE.rewards,
       buttonConfig: {
         show: false,
-        title: '',
-        navigate: NAVIGATE.rewards,
       },
     },
     {
@@ -101,7 +101,8 @@ export class DashboardPage implements OnInit {
     private readonly transactionService: TransactionService,
     private readonly secureMessagingService: SecureMessagingService,
     private readonly mobileAccessService: MobileAccessService,
-    private readonly rewardsService: RewardsService
+    private readonly rewardsService: RewardsService,
+    private readonly modalController: ModalController
   ) {}
 
   ngOnInit() {
@@ -130,5 +131,12 @@ export class DashboardPage implements OnInit {
         switchMap(ti => this.rewardsService.getUserOptInStatus())
       )
       .subscribe(r => console.log('getUserOptInStatus', r));
+  }
+
+  async presentModal() {
+    const modal = await this.modalController.create({
+      component: EditHomePageModalComponent,
+    });
+    return await modal.present();
   }
 }

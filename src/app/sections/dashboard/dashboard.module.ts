@@ -20,7 +20,7 @@ import {
   MobileAccessTileComponent,
   OrderTileComponent,
   ExploreTileComponent,
-  ConversationsTileComponent
+  ConversationsTileComponent,
 } from './components';
 
 import {
@@ -31,6 +31,7 @@ import {
   MobileAccessService,
   RewardsService,
 } from './services';
+import { EditHomePageModalComponent } from './components/edit-home-page-modal';
 
 const imports = [IonicModule, CommonModule, DashboardRoutingModule, StHeaderModule];
 const declarations = [
@@ -43,7 +44,8 @@ const declarations = [
   OrderTileComponent,
   MobileAccessTileComponent,
   ExploreTileComponent,
-  ConversationsTileComponent
+  ConversationsTileComponent,
+  EditHomePageModalComponent
 ];
 const providers = [
   DashboardApiService,
@@ -54,12 +56,15 @@ const providers = [
   SecureMessagingService,
   MobileAccessService,
   RewardsService,
-  DashboardPageResolver,
+  DashboardPageResolver
 ];
 
 @NgModule({
   declarations,
   imports,
   providers,
+  entryComponents: [
+    EditHomePageModalComponent
+  ]
 })
 export class DashboardPageModule {}
