@@ -73,7 +73,6 @@ export class ItemDetailComponent implements OnInit {
             return a && someItem.menuItem.id === a.menuItemId;
           })
 
-          debugger
           if (selectedOption) {
             formGroup[menuGroup.name] = [selectedOption, [Validators.required]];
             return;
