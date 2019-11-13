@@ -15,10 +15,11 @@ import { AddressInfo } from '@core/model/address/address-info';
 export class OrderAddressListComponent implements OnInit {
   
   userAddresses$: Observable<AddressInfo[]>;
-  // @Output() itemSelected: EventEmitter<any> = new EventEmitter<any>();
+  displayList: boolean = true;
+  @Output() addressesLoaded: EventEmitter<any> = new EventEmitter<any>();
  
   constructor(private userService: UserService, private zone: NgZone, private ref: ChangeDetectorRef, private router:Router) { }
-  
+
   items:AddressInfo[];
   ngOnInit() {
     this.userAddresses$ = this.userService.getUserAddresses()
@@ -26,7 +27,10 @@ export class OrderAddressListComponent implements OnInit {
       .pipe(take(1))
       .subscribe(
         (data) => {
-          this.items = data;
+          // this.items = data;
+          this.items = [];
+          this.displayList = this.items.length ? true : false;
+          this.addressesLoaded.emit(this.displayList);
           console.log('addresses', this.items);
           // debugger;
           /* this.zone.run(() => {
@@ -46,3 +50,4 @@ export class OrderAddressListComponent implements OnInit {
     this.router.navigate([`ordering/${LOCAL_ROUTING.addressEdit}`], { skipLocationChange: true });
   }
 }
+
