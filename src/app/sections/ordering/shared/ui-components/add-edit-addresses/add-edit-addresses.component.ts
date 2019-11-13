@@ -12,8 +12,8 @@ import { debounceTime, take } from 'rxjs/operators';
 import * as states from '../../../../../../assets/states.json';
 import { Subscription } from 'rxjs';
 import { MerchantService } from '@sections/ordering/services';
-import { SYSTEM_SETTINGS_CONFIG } from '@sections/ordering/ordering.config.js';
-import { LoadingService } from '@core/service/loading/loading.service.js';
+import { SYSTEM_SETTINGS_CONFIG } from '@sections/ordering/ordering.config';
+import { LoadingService } from '@core/service/loading/loading.service';
 
 @Component({
   selector: 'st-add-edit-addresses',
