@@ -8,24 +8,23 @@ import { MenuCategoryItemInfo } from '@sections/ordering/shared/models';
 @Injectable()
 export class ItemDetailResolver
   implements
-    Resolve<
-      Observable<{
-        menuItem: MenuCategoryItemInfo;
-        queryParams: { categoryId: string; menuItemId: string };
-      }>
-    > {
-  constructor(private readonly cartService: CartService) {}
+  Resolve<
+  Observable<{
+    menuItem: MenuCategoryItemInfo;
+    queryParams: QueryParamsModel;
+  }>
+  > {
+  constructor(private readonly cartService: CartService) { }
   resolve({
-    queryParams,
+    queryParams: { menuItemId, orderItemId },
   }: ActivatedRouteSnapshot): Observable<{
     menuItem: MenuCategoryItemInfo;
-    queryParams: { categoryId: string; menuItemId: string };
+    queryParams: QueryParamsModel;
   }> {
     return this.cartService.menuInfo$.pipe(
-      map(data => {
-        const menuItems: any[] = data.menuCategories.map(({ menuCategoryItems }) =>
-          menuCategoryItems.find(menuCategoryItem => menuCategoryItem.menuItem.id === queryParams.menuItemId)
-        );
+      map(({ menuCategories }) => {
+        const menuItems: any[] = menuCategories.map(({ menuCategoryItems }) =>
+          menuCategoryItems.find(menuCategoryItem => menuCategoryItem.menuItem.id === menuItemId));
 
         const menuItem = menuItems.find(item => {
           if (item) {
@@ -36,11 +35,17 @@ export class ItemDetailResolver
         if (menuItem) {
           return {
             menuItem,
-            queryParams: { categoryId: menuItem.menuCategoryId, menuItemId: menuItem.id },
+            queryParams: { categoryId: menuItem.menuCategoryId, menuItemId: menuItem.id, orderItemId },
           };
         }
       }),
       take(1)
     );
   }
+}
+
+export interface QueryParamsModel {
+  categoryId: string;
+  menuItemId: string,
+  orderItemId: string
 }
