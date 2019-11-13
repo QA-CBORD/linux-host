@@ -1,8 +1,10 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, EventEmitter, Output } from '@angular/core';
 import { UserService } from '@core/service/user-service/user.service';
 import { Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { NgZone  } from '@angular/core';
+import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
+import { Router } from '@angular/router';
 import { AddressInfo } from '@core/model/address/address-info';
 
 @Component({
@@ -13,8 +15,10 @@ import { AddressInfo } from '@core/model/address/address-info';
 export class OrderAddressListComponent implements OnInit {
   
   userAddresses$: Observable<AddressInfo[]>;
-  
-  constructor(private userService: UserService, private zone: NgZone, private ref: ChangeDetectorRef) { }
+  displayList: boolean = true;
+  @Output() addressesLoaded: EventEmitter<any> = new EventEmitter<any>();
+ 
+  constructor(private userService: UserService, private zone: NgZone, private ref: ChangeDetectorRef, private router:Router) { }
 
   items:AddressInfo[];
   ngOnInit() {
@@ -24,19 +28,25 @@ export class OrderAddressListComponent implements OnInit {
       .subscribe(
         (data) => {
           this.items = data;
+          this.displayList = this.items.length ? true : false;
+          this.addressesLoaded.emit(this.displayList);
           console.log('addresses', this.items);
           // debugger;
           /* this.zone.run(() => {
             console.log('force update the screen');
           }); */
-          this.ref.detectChanges();
+          //this.ref.detectChanges();
         },
         (e) => {
           console.log('error', e);
         }
       );
   }
-  itemSelected(){
-    
+  itemSelected(address:AddressInfo){
+    console.log(address);
+    // debugger;
+    this.userService.selectedAddress = address;
+    this.router.navigate([`ordering/${LOCAL_ROUTING.addressEdit}`], { skipLocationChange: true });
   }
 }
+

@@ -5,7 +5,8 @@ export enum LOCAL_ROUTING {
   fullMenu = 'full-menu',
   cart = 'cart',
   menuCategoryItems = 'menu-category-items',
-  itemDetail = 'item-detail'
+  itemDetail = 'item-detail',
+  addressEdit = 'address-edit'
 }
 
 export enum MerchantSearchOptionName {

@@ -164,9 +164,9 @@ export class MerchantService {
         return this.orderingApiService.retrieveBuildings();
     }
 
-    updateUserAddress(updateUserAddress): Observable<any> {
-        return this.orderingApiService.updateUserAddress(updateUserAddress);
-    }
+  updateUserAddress(updateUserAddress): Observable<AddressInfo> {
+    return this.orderingApiService.updateUserAddress(updateUserAddress);
+  }
 
     retrieveDeliveryAddresses(merchantId) {
         return this.userService
@@ -233,7 +233,7 @@ export class MerchantService {
         );
     }
 
-    filterDeliveryAddresses(merchantId, addresses) {
+    filterDeliveryAddresses(merchantId, addresses): Observable<AddressInfo[]> {
         return zip(this.menuMerchants$, this.getSettingByConfig(SYSTEM_SETTINGS_CONFIG.addressRestrictionToOnCampus))
             .pipe(
                 map(([merchants, institutionRestriction]) => {
