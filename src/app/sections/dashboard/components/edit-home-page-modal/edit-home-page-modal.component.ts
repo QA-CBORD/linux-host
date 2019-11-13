@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ModalController, IonReorderGroup } from '@ionic/angular';
 
 @Component({
   selector: 'st-edit-home-page-modal',
@@ -7,13 +7,35 @@ import { ModalController } from '@ionic/angular';
   styleUrls: ['./edit-home-page-modal.component.scss'],
 })
 export class EditHomePageModalComponent implements OnInit {
+  tileList = [
+    { name: 'CBORD University card' },
+    { name: 'Accounts' },
+    { name: 'Transactions' },
+    { name: 'Rewards' },
+    { name: 'Mobile Access' },
+    { name: 'Order' },
+    { name: 'Explore' },
+    { name: 'Conversation' },
+  ];
 
-  constructor(private readonly modalController: ModalController) { }
+  @ViewChild(IonReorderGroup) reorderGroup: IonReorderGroup;
+
+  constructor(private readonly modalController: ModalController) {}
 
   async onClickedDone() {
     await this.modalController.dismiss();
   }
 
-  ngOnInit() {}
+  async onClickedClose() {
+    await this.modalController.dismiss();
+  }
 
+  doReorder(ev: any) {
+    
+    console.log('Dragged from index', ev.detail.from, 'to', ev.detail.to);
+
+    ev.detail.complete();
+  }
+
+  ngOnInit() {}
 }

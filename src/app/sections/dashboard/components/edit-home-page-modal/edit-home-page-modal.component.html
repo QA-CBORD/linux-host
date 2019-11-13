@@ -1,9 +1,38 @@
-<header class="edit-modal__header">
+<ion-header class="edit-home__header" mode="ios">
   <ion-toolbar mode="ios">
-    <ion-buttons slot="start"
-      ><ion-back-button icon="close" ></ion-back-button>
-      <ion-button slot="end" (click)="onClickedDone()">Done</ion-button></ion-buttons
-    >
-    <ion-title class="deposit-modal__title">Edit Home Page</ion-title>
+    <ion-buttons slot="start" mode="ios">
+      <ion-button mode="ios" class="edit-home__header-back-btn" (click)="onClickedClose()"
+        ><ion-icon name="close"></ion-icon
+      ></ion-button>
+    </ion-buttons>
+    <ion-title mode="ios" class="edit-home__header-title">Edit Home Page</ion-title>
+    <ion-buttons slot="end" mode="ios">
+      <ion-button mode="ios" class="edit-home__header-done-btn" (click)="onClickedDone()">Done</ion-button>
+    </ion-buttons>
   </ion-toolbar>
-</header>
+</ion-header>
+
+<ion-content class="edit-home">
+  
+    <div class="edit-home__description-wrapper">
+      <p class="edit-home__description">
+        Hold and drag cards to reorder your Home Page.<br />Toggle cards On or Off to Show or Hide them.
+      </p>
+    </div>
+ 
+  <ion-list class="edit-home__reorder-list">
+    <ion-list-header class="edit-home__reorder-header">
+      <img class="edit-home__reorder-header-icon" src="/assets/icon/dashboard.svg" />
+      <div class="edit-home__reorder-header-title">Home Page</div>
+    </ion-list-header>
+    <ion-reorder-group (ionItemReorder)="doReorder($event)" [disabled]="false" mode="ios">
+      <ion-item *ngFor="let tile of tileList" class="edit-home__reorder-item">
+        <ion-label class="edit-home__reorder-label">
+          {{ tile.name }}
+        </ion-label>
+        <ion-toggle class="edit-home__reorder-toggle" mode="ios" checked></ion-toggle>
+        <ion-reorder></ion-reorder>
+      </ion-item>
+    </ion-reorder-group>
+  </ion-list>
+</ion-content>
