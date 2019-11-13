@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { CartService } from '@sections/ordering/services/cart.service';
-import { Observable, zip } from 'rxjs';
+import { combineLatest, Observable } from 'rxjs';
 import {
   AddressModalSettings,
   DETAILS_FORM_CONTROL_NAMES,
@@ -37,10 +37,8 @@ export class CartComponent implements OnInit {
   order$: Observable<Partial<OrderInfo>>;
   addressModalSettings$: Observable<AddressModalSettings>;
   address$: Observable<AddressInfo>;
-  address1$: Observable<AddressInfo>;
-
   accounts: UserAccount[];
-  cartFormState: OrderDetailsFormData;
+  cartFormState: OrderDetailsFormData = {} as OrderDetailsFormData;
 
   constructor(private readonly cartService: CartService,
               private readonly merchantService: MerchantService,
@@ -56,7 +54,7 @@ export class CartComponent implements OnInit {
   ngOnInit() {
     this.order$ = this.cartService.orderInfo$;
     this.address$ = this.cartService.orderDetailsOptions$.pipe(
-      map(({ address }) => address)
+        map(({ address }) => address)
     );
     this.addressModalSettings$ = this.initAddressModalConfig();
     this.getAvailableAccounts().then((acc) => this.accounts = acc);
@@ -64,28 +62,28 @@ export class CartComponent implements OnInit {
 
   initAddressModalConfig(): Observable<AddressModalSettings> {
     this.loadingService.showSpinner();
-    return zip(
-      this.cartService.orderDetailsOptions$,
-      this.merchantService.retrieveBuildings(),
-      this.cartService.merchant$,
-      this.getDeliveryLocations(),
-      this.getPickupLocations(),
+    return combineLatest(
+        this.cartService.orderDetailsOptions$,
+        this.merchantService.retrieveBuildings(),
+        this.cartService.merchant$,
+        this.getDeliveryLocations(),
+        this.getPickupLocations(),
     ).pipe(
-      map(([
-             { address: defaultAddress, orderType },
-             buildings,
-             { id: merchantId },
-             deliveryAddresses,
-             pickupLocations,
-           ]) => ({
-        defaultAddress,
-        buildings,
-        isOrderTypePickup: orderType === ORDER_TYPE.PICKUP,
-        pickupLocations,
-        deliveryAddresses,
-        merchantId,
-      })),
-      tap(this.loadingService.closeSpinner.bind(this.loadingService)),
+        map(([
+               { address: defaultAddress, orderType },
+               buildings,
+               { id: merchantId },
+               deliveryAddresses,
+               pickupLocations,
+             ]) => ({
+          defaultAddress,
+          buildings,
+          isOrderTypePickup: orderType === ORDER_TYPE.PICKUP,
+          pickupLocations,
+          deliveryAddresses,
+          merchantId,
+        })),
+        tap(this.loadingService.closeSpinner.bind(this.loadingService)),
     );
   }
 
@@ -96,14 +94,19 @@ export class CartComponent implements OnInit {
 
   async onSubmit() {
     if (!this.cartFormState.valid) return;
+    const { type } = await this.cartService.orderInfo$.pipe(first()).toPromise();
+    if (type === ORDER_TYPE.DELIVERY && await this.isDeliveryAddressOutOfRange()) {
+      await this.onValidateErrorToast('Delivery location is out of delivery range, please choose another location');
+      return;
+    }
 
     await this.loadingService.showSpinner();
     this.cartService.submitOrder(
-      this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.paymentMethod].id,
-      this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.cvv] || null,
+        this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.paymentMethod].id,
+        this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.cvv] || null,
     ).pipe().toPromise()
-      .then(async order => await this.showModal(order))
-      .finally( this.loadingService.closeSpinner.bind(this.loadingService));
+        .then(async order => await this.showModal(order))
+        .finally(this.loadingService.closeSpinner.bind(this.loadingService));
   }
 
   async showModal({ tax, total, subTotal, orderPayment: [{ accountName }], deliveryFee, pickupFee, tip, checkNumber }: OrderInfo) {
@@ -122,8 +125,7 @@ export class CartComponent implements OnInit {
     });
 
     modal.onDidDismiss().then(async () => {
-      await this.router.navigate([`../../`], { skipLocationChange: true, relativeTo: this.activatedRoute });
-
+      await this.router.navigate([NAVIGATE.ordering], { skipLocationChange: true });
     });
 
     await modal.present();
@@ -145,27 +147,50 @@ export class CartComponent implements OnInit {
     this.cdRef.reattach();
   }
 
-  private async onValidateErrorToast(message: string) {
-    const toast = await this.toastController.create({
-      message,
-      showCloseButton: true,
-      position: 'top',
-    });
-    await toast.present();
+  private async isDeliveryAddressOutOfRange(): Promise<boolean> {
+    const { latitude, longitude } = await this.address$.pipe(first()).toPromise();
+    const { id } = await this.cartService.merchant$.pipe(first()).toPromise();
+    return this.merchantService.isOutsideMerchantDeliveryArea(
+        id,
+        latitude,
+        longitude,
+    ).toPromise();
   }
 
   private getDeliveryLocations(): Observable<any> {
     return this.cartService.merchant$.pipe(
-      switchMap(({ id }) => this.merchantService.retrieveDeliveryAddresses(id)),
-      map(([, deliveryLocations]) => deliveryLocations));
+        switchMap(({ id }) => this.merchantService.retrieveDeliveryAddresses(id)),
+        map(([, deliveryLocations]) => deliveryLocations));
   }
 
   private getPickupLocations(): Observable<any> {
     return this.cartService.merchant$.pipe(
-      switchMap(({ storeAddress, settings }) => this.merchantService.retrievePickupLocations(
-        storeAddress, settings.map[MerchantSettings.pickupLocationsEnabled],
-      )),
+        switchMap(({ storeAddress, settings }) => this.merchantService.retrievePickupLocations(
+            storeAddress, settings.map[MerchantSettings.pickupLocationsEnabled],
+        )),
     );
+  }
+
+  private filterCashlessAccounts(sourceAccounts: UserAccount[], displayTenders: string[]): UserAccount[] {
+    return sourceAccounts.filter(({ paymentSystemType, accountTender }) =>
+        (paymentSystemType === PAYMENT_SYSTEM_TYPE.OPCS || paymentSystemType === PAYMENT_SYSTEM_TYPE.CSGOLD)
+        && displayTenders.includes(accountTender),
+    );
+  }
+
+  private filterCreditAccounts(sourceAccounts: UserAccount[], displayCreditCards: string[]): UserAccount[] {
+    return sourceAccounts.filter(({ paymentSystemType, id }) =>
+        (paymentSystemType === PAYMENT_SYSTEM_TYPE.MONETRA || paymentSystemType === PAYMENT_SYSTEM_TYPE.USAEPAY)
+        && displayCreditCards.includes(id),
+    );
+  }
+
+  private filterRollupAccounts(sourceAccounts: UserAccount[]): UserAccount[] {
+    return sourceAccounts.filter(acc => acc.id === 'rollup');
+  }
+
+  private filterMealBasedAccounts(sourceAccounts: UserAccount[]): UserAccount[] {
+    return sourceAccounts.filter(({ accountType }: UserAccount) => accountType === ACCOUNT_TYPES.meals);
   }
 
   private async getAvailableAccounts(): Promise<UserAccount[]> {
@@ -196,32 +221,19 @@ export class CartComponent implements OnInit {
   private async validateOrder(onError): Promise<void> {
     await this.loadingService.showSpinner();
     await this.cartService.validateOrder().pipe(
-      first(),
-      handleServerError<OrderInfo>(ORDER_VALIDATION_ERRORS),
+        first(),
+        handleServerError<OrderInfo>(ORDER_VALIDATION_ERRORS),
     ).toPromise()
-      .catch(onError)
-      .finally(this.loadingService.closeSpinner.bind(this.loadingService));
+        .catch(onError)
+        .finally(this.loadingService.closeSpinner.bind(this.loadingService));
   }
 
-  private filterCashlessAccounts(sourceAccounts: UserAccount[], displayTenders: string[]): UserAccount[] {
-    return sourceAccounts.filter(({ paymentSystemType, accountTender }) =>
-      (paymentSystemType === PAYMENT_SYSTEM_TYPE.OPCS || paymentSystemType === PAYMENT_SYSTEM_TYPE.CSGOLD)
-      && displayTenders.includes(accountTender),
-    );
-  }
-
-  private filterCreditAccounts(sourceAccounts: UserAccount[], displayCreditCards: string[]): UserAccount[] {
-    return sourceAccounts.filter(({ paymentSystemType, id }) =>
-      (paymentSystemType === PAYMENT_SYSTEM_TYPE.MONETRA || paymentSystemType === PAYMENT_SYSTEM_TYPE.USAEPAY)
-      && displayCreditCards.includes(id),
-    );
-  }
-
-  private filterRollupAccounts(sourceAccounts: UserAccount[]): UserAccount[] {
-    return sourceAccounts.filter(acc => acc.id === 'rollup');
-  }
-
-  private filterMealBasedAccounts(sourceAccounts: UserAccount[]): UserAccount[] {
-    return sourceAccounts.filter(({ accountType }: UserAccount) => accountType === ACCOUNT_TYPES.meals);
+  private async onValidateErrorToast(message: string) {
+    const toast = await this.toastController.create({
+      message,
+      showCloseButton: true,
+      position: 'top',
+    });
+    await toast.present();
   }
 }

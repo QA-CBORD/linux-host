@@ -93,6 +93,14 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
     this.subscribeOnFormChanges();
   }
 
+  toggleCvvControl({ detail: { value } }) {
+    if (value.paymentSystemType === PAYMENT_SYSTEM_TYPE.MONETRA) {
+      this.addCvvControl();
+    } else {
+      this.removeCvvControl();
+    }
+  }
+
   private get addressInfoFormControl(): AbstractControl {
     return this.detailsForm.get(DETAILS_FORM_CONTROL_NAMES.address);
   }
@@ -125,27 +133,15 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
     this.detailsForm.removeControl(DETAILS_FORM_CONTROL_NAMES.cvv);
   }
 
-  test() {
-    console.log(this.detailsForm);
-  }
-
   private async showAddressListModal(): Promise<void> {
     const modal = await this.modalController.create({
       component: DeliveryAddressesModalComponent,
       componentProps: this.addressModalConfig,
     });
     modal.onDidDismiss().then(({ data }) => {
-      this.addressInfoFormControl.setValue(data);
+      data && (this.addressInfoFormControl.setValue(data));
     });
     await modal.present();
-  }
-
-  toggleCvvControl({ detail: { value } }) {
-    if (value.paymentSystemType === PAYMENT_SYSTEM_TYPE.MONETRA) {
-      this.addCvvControl();
-    } else {
-      this.removeCvvControl();
-    }
   }
 }
 

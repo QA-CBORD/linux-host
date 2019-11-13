@@ -22,7 +22,7 @@ import { handleServerError } from '@core/utils/general-helpers';
   styleUrls: ['./recent-order.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RecentOrderComponent implements OnInit, OnDestroy {
+export class RecentOrderComponent implements OnInit {
   order$: Observable<OrderInfo>;
   address$: Observable<AddressInfo>;
   merchant$: Observable<MerchantInfo>;
@@ -230,10 +230,5 @@ export class RecentOrderComponent implements OnInit, OnDestroy {
     });
 
     await modal.present();
-  }
-
-  ngOnDestroy(): void {
-    console.log('destroyed recent');
-    this.cart.clearCart();
   }
 }
