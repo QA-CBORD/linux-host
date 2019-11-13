@@ -6,7 +6,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { AddressEditPage } from './address-edit.page';
-import { AddressEditModule } from '@sections/ordering/shared/ui-components/address-edit/address-edit.module';
+// import { AddressEditModule } from '@sections/ordering/shared/ui-components/address-edit/address-edit.module';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
 import { AddEditAddressesModule } from '@sections/ordering/shared/ui-components/add-edit-addresses/add-edit-addresses.modal.module';
 
@@ -23,7 +23,7 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     RouterModule.forChild(routes),
-    AddressEditModule,
+    // AddressEditModule,
     StHeaderModule,
     AddEditAddressesModule
   ],

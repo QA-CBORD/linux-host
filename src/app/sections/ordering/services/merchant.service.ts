@@ -156,7 +156,6 @@ export class MerchantService {
   }
 
   updateUserAddress(updateUserAddress): Observable<AddressInfo> {
-    debugger
     return this.orderingApiService.updateUserAddress(updateUserAddress);
   }
 

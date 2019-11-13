@@ -47,7 +47,6 @@ export class AddressEditPage implements OnInit {
   addAddress() {
     if (!this.addNewAdddressForm && !this.addNewAdddressForm.valid) return;
     this.loadingService.showSpinner();
-    debugger
     this.merchantService.updateUserAddress(this.addNewAdddressForm.value)
       .pipe(
         switchMap((addedAddress): any => zip(

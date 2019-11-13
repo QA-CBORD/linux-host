@@ -138,7 +138,6 @@ export class OrderingApiService extends BaseService {
     const methodName = 'updateUserAddress';
     const campusValue = parseInt(campus);
     let addedAddress;
-    debugger
     const postParams: ServiceParameters = {
       address: {
         id: id ? id : null,
