@@ -100,13 +100,7 @@ export class CartComponent implements OnInit {
       return;
     }
 
-    await this.loadingService.showSpinner();
-    this.cartService.submitOrder(
-        this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.paymentMethod].id,
-        this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.cvv] || null,
-    ).pipe().toPromise()
-        .then(async order => await this.showModal(order))
-        .finally(this.loadingService.closeSpinner.bind(this.loadingService));
+    await this.submitOrder();
   }
 
   async showModal({ tax, total, subTotal, orderPayment: [{ accountName }], deliveryFee, pickupFee, tip, checkNumber }: OrderInfo) {
@@ -155,6 +149,16 @@ export class CartComponent implements OnInit {
         latitude,
         longitude,
     ).toPromise();
+  }
+
+  private async submitOrder(): Promise<void> {
+    await this.loadingService.showSpinner();
+    this.cartService.submitOrder(
+      this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.paymentMethod].id,
+      this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.cvv] || null,
+    ).pipe().toPromise()
+      .then(async order => await this.showModal(order))
+      .finally(this.loadingService.closeSpinner.bind(this.loadingService));
   }
 
   private getDeliveryLocations(): Observable<any> {
