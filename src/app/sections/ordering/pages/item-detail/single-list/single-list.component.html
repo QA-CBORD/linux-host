@@ -10,7 +10,7 @@
     </div>
   </ion-item-divider>
 
-  <ion-radio-group lines="none">
+  <ion-radio-group lines="none" [value]="innerValue">
     <ng-container *ngFor="let option of options">
       <ion-item lines="none"
                 class="single-list__item-size"

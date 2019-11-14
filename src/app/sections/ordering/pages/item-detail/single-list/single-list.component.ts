@@ -8,7 +8,6 @@ export const CUSTOM_SINGLELIST_CONTROL_VALUE_ACCESSOR: any = {
   multi: true,
 };
 
-
 @Component({
   selector: 'st-single-list',
   templateUrl: './single-list.component.html',
@@ -17,16 +16,18 @@ export const CUSTOM_SINGLELIST_CONTROL_VALUE_ACCESSOR: any = {
   providers: [CUSTOM_SINGLELIST_CONTROL_VALUE_ACCESSOR],
 })
 export class SingleListComponent extends DefaultValueAccessor implements OnInit {
-
   @Input() name: string;
   @Input() options: MenuGroupItemInfo[];
   @Input() control: AbstractControl = new FormControl();
   @Input() isError: boolean;
   onTouched: () => void;
   onChange: (_: any) => void;
-  private innerValue: any = '';
+  innerValue: any = '';
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.writeValue(this.control.value);
+    this.onChange(this.control.value);
+  }
 
   itemChosen({ target: { value } }) {
     this.writeValue(value);
@@ -47,7 +48,6 @@ export class SingleListComponent extends DefaultValueAccessor implements OnInit 
 
   //From ControlValueAccessor interface
   writeValue(value: any) {
-    // this.inputRef.nativeElement.value = value;
     this.innerValue = value;
   }
 
@@ -62,6 +62,6 @@ export class SingleListComponent extends DefaultValueAccessor implements OnInit 
   }
 
   onBlur() {
-    this.onTouched()
+    this.onTouched();
   }
 }

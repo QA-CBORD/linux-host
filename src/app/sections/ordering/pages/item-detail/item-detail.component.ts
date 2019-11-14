@@ -27,12 +27,10 @@ export class ItemDetailComponent implements OnInit {
     private readonly fb: FormBuilder,
     private readonly activatedRoute: ActivatedRoute,
     private readonly cartService: CartService
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.initMenuItemOptions();
-
-    this.cartService.orderItems$.subscribe(data => console.log(data));
   }
 
   ngOnDestroy() {
@@ -52,7 +50,6 @@ export class ItemDetailComponent implements OnInit {
   }
 
   initForm(cartSelectedItems: OrderItem[] = []) {
-    console.log(cartSelectedItems);
     const formGroup = {};
     if (!cartSelectedItems.length) {
       this.menuItem.menuItemOptions.forEach(({ menuGroup }) => {
@@ -68,32 +65,42 @@ export class ItemDetailComponent implements OnInit {
     } else {
       this.menuItem.menuItemOptions.forEach(({ menuGroup }) => {
         if (menuGroup.maximum === 1 && menuGroup.minimum === 1) {
-          const selectedOption = menuGroup.menuGroupItems.find((someItem) => {
-            const a = cartSelectedItems.find(({ menuItemId }) => menuItemId === someItem.menuItem.id)
+          const selectedOption = menuGroup.menuGroupItems.find(someItem => {
+            const a = cartSelectedItems.find(({ menuItemId }) => menuItemId === someItem.menuItem.id);
             return a && someItem.menuItem.id === a.menuItemId;
-          })
+          });
 
           if (selectedOption) {
-            formGroup[menuGroup.name] = [selectedOption, [Validators.required]];
-            return;
+            formGroup[menuGroup.name] = [selectedOption.menuItem, [Validators.required]];
+            // return;
+          } else {
+            formGroup[menuGroup.name] = ['', [Validators.required]];
           }
-        }
-        const selectedOptions = menuGroup.menuGroupItems.filter(({ menuItem }) => {
-          const b = cartSelectedItems.find(({ menuItemId }) => menuItemId === menuItem.id);
-          return b && menuItem.id === b.menuItemId;
-        })
+        } else {
+          const selectedOptions = menuGroup.menuGroupItems.map(({ menuItem }) => {
+            const b = cartSelectedItems.find(({ menuItemId }) => menuItemId === menuItem.id);
+            // return b && menuItem.id === b.menuItemId;
+            if (b && menuItem.id === b.menuItemId) {
+              return menuItem;
+            }
+          });
 
-        if (selectedOptions.length) {
-          formGroup[menuGroup.name] = [
-            selectedOptions,
-            [validateMinLengthOfArray(menuGroup.minimum), validateMaxLengthOfArray(menuGroup.maximum)],
-          ];
+          if (selectedOptions.length) {
+            formGroup[menuGroup.name] = [
+              selectedOptions,
+              [validateMinLengthOfArray(menuGroup.minimum), validateMaxLengthOfArray(menuGroup.maximum)],
+            ];
+          } else {
+            formGroup[menuGroup.name] = [
+              [],
+              [validateMinLengthOfArray(menuGroup.minimum), validateMaxLengthOfArray(menuGroup.maximum)],
+            ];
+          }
         }
       });
     }
 
     console.log(formGroup);
-    debugger
     this.itemOrderForm = this.fb.group({
       ...formGroup,
       message: ['', [Validators.minLength(1), Validators.maxLength(255)]],

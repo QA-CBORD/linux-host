@@ -43,7 +43,7 @@
           [name]="menuGroupItem.menuGroup.name"
           [options]="menuGroupItem.menuGroup.menuGroupItems"
           [control]="itemOrderForm.get(menuGroupItem.menuGroup.name)"
-          [isError]="itemOrderForm.get(menuGroupItem.menuGroup.name).value ? false : errorState"
+          [isError]="itemOrderForm.get(menuGroupItem.menuGroup.name)?.value ? false : errorState"
           [formControlName]="menuGroupItem.menuGroup.name"
         >
         </st-single-list>
@@ -57,7 +57,7 @@
           [options]="menuGroupItem.menuGroup.menuGroupItems"
           [control]="itemOrderForm.get(menuGroupItem.menuGroup.name)"
           [isError]="
-            itemOrderForm.get(menuGroupItem.menuGroup.name).value.length || !menuGroupItem.menuGroup.minimum
+            itemOrderForm.get(menuGroupItem.menuGroup.name)?.value.length || !menuGroupItem.menuGroup.minimum
               ? false
               : errorState
           "

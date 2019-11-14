@@ -16,7 +16,6 @@ export const CUSTOM_MULTILIST_CONTROL_VALUE_ACCESSOR: any = {
   providers: [CUSTOM_MULTILIST_CONTROL_VALUE_ACCESSOR],
 })
 export class MultiListComponent extends DefaultValueAccessor implements OnInit {
-
   @Input() name: string;
   @Input() minimum: string;
   @Input() maximum: string;
@@ -25,9 +24,20 @@ export class MultiListComponent extends DefaultValueAccessor implements OnInit {
   @Input() isError: boolean;
   onTouched: () => void;
   onChange: (_: any) => void;
-  private innerValue: any[] = [];
+  innerValue: any[] = [];
 
   ngOnInit() {
+    this.writeValue(this.control.value);
+    this.onChange(this.control.value);
+
+    if (this.control.value.length) {
+      const a = this.innerValue.forEach(elem => {
+        if (this.control.value.includes(elem)) {
+          elem['checked'] = true;
+        }
+      });
+      console.log(a);
+    }
   }
 
   onItemsChecked({ detail: { value } }) {
@@ -42,7 +52,6 @@ export class MultiListComponent extends DefaultValueAccessor implements OnInit {
         }
       }
     }
-
 
     this.writeValue(innerArray);
     this.onChange(innerArray);
@@ -78,6 +87,6 @@ export class MultiListComponent extends DefaultValueAccessor implements OnInit {
   }
 
   onBlur() {
-    this.onTouched()
+    this.onTouched();
   }
 }
