@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core';
 
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, zip } from 'rxjs';
 import { map, tap, switchMap } from 'rxjs/operators';
 
-import { CommerceApiService } from '../../../core/service/commerce/commerce-api.service';
+import { CommerceApiService } from 'src/app/core/service/commerce/commerce-api.service';
 import { ConfigurationService } from 'src/app/core/service/configuration/configuration.service';
 import { UserService } from 'src/app/core/service/user-service/user.service';
 
-import { UserAccount } from '../../../core/model/account/account.model';
-
-import { Settings, PaymentSystemType } from 'src/app/app.global';
+import { Settings, PaymentSystemType, ContentStrings } from 'src/app/app.global';
+import { UserAccount } from 'src/app/core/model/account/account.model';
+import { ContentService } from 'src/app/core/service/content-service/content.service';
 
 @Injectable()
 export class AccountsService {
@@ -18,7 +18,8 @@ export class AccountsService {
   constructor(
     private readonly commerceApiService: CommerceApiService,
     private readonly userService: UserService,
-    private readonly configService: ConfigurationService
+    private readonly configService: ConfigurationService,
+    private readonly contentService: ContentService
   ) {}
 
   get accounts$(): Observable<UserAccount[]> {
@@ -64,6 +65,13 @@ export class AccountsService {
         this.accounts$.pipe(map(accounts => this.filterAccountsByTenders(tenderIds, accounts)))
       )
     );
+  }
+
+  getMealAccountStrings(): Observable<Array<string>> {
+    return zip(
+      this.contentService.retrieveContentString(ContentStrings.ContentString.MEAL_SUFFIX),
+      this.contentService.retrieveContentString(ContentStrings.ContentString.MEAL_SUFFIX_PLURAL)
+    ).pipe(map(([suffix, suffixPlural]) => [suffix.value, suffixPlural.value]));
   }
 
   private filterAccountsByTenders(tendersId: Array<string>, accounts: Array<UserAccount>): Array<UserAccount> {

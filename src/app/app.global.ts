@@ -84,8 +84,26 @@ export namespace Settings {
     LOW_BALANCE_AMOUNTS = 'get.deposit.low_balance_amounts',
     BILLME_FREEFORM_ENABLED = 'get.deposit.allow_freeform_billme_amounts',
     AUTO_DEPOSIT_TENDERS = 'get.feature.auto_deposit_tenders',
+    MOBILE_HEADER_COLOR = 'get.style.custom_site_colors',
   }
 
+}
+
+export namespace ContentStrings {
+  export enum ContentStringList{
+    TEMP = '1.2.3',
+  }
+
+  export enum ContentString {    
+    MEAL_SUFFIX = 'get_common.currency_display.meal_quantity_suffix',
+    MEAL_SUFFIX_PLURAL = 'get_common.currency_display.meal_quantity_suffix_plural',
+  }
+}
+
+export enum AccountType {
+  MEALS = 1,
+  CHARGE = 2,
+  DECLINING_BALANCE = 3,
 }
 
 export enum PaymentType {

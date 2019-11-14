@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
 
-import { AccountsService } from './accounts.service';
+import { AccountsService } from '../components/accounts-tile/services/accounts.service';
 import { CommerceApiService } from '../../../core/service/commerce/commerce-api.service';
 import { ConfigurationService } from 'src/app/core/service/configuration/configuration.service';
 import { UserService } from 'src/app/core/service/user-service/user.service';
