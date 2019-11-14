@@ -8,6 +8,7 @@ export enum LOCAL_ROUTING {
   cart = 'cart',
   menuCategoryItems = 'menu-category-items',
   itemDetail = 'item-detail',
+  addressEdit = 'address-edit'
 }
 
 export enum MerchantSearchOptionName {

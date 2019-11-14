@@ -7,11 +7,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SavedAddressesComponent implements OnInit {
   title = 'Saved Addresses';
+  addNewAdddressState: boolean = false;
+  displayList: boolean = true;
   constructor() { }
 
   ngOnInit() {}
   
   onModalClose(){
+  }
 
+  addressesLoaded(value: boolean) {
+    this.displayList = value;
+    // debugger;
   }
 }

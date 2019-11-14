@@ -1,12 +1,6 @@
 @import 'tools';
 
-.saved-addresses {
-	&__header {
-		border-bottom: 1px solid $color-whisper;
-	}
-}
-
-.delivery-address {
+.address-edit {
 	&__header {
 	  border-bottom: 1px solid $color-whisper;
 	}
@@ -105,5 +99,5 @@
   
 	  @include font-nunito-heavy(14px);
 	}
-	
   }
+  

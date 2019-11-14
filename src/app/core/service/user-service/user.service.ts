@@ -24,8 +24,9 @@ export class UserService extends BaseService {
   private readonly userAddresses$: BehaviorSubject<AddressInfo[]> = new BehaviorSubject<AddressInfo[]>([]);
   private userPhoto: UserPhotoInfo = null;
 
-  constructor(readonly http: HttpClient,
-              private readonly nativeProvider: NativeProvider) {
+  public selectedAddress:AddressInfo;
+
+  constructor(readonly http: HttpClient, private readonly nativeProvider: NativeProvider) {
     super(http);
   }
 
