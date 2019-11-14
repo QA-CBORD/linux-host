@@ -25,13 +25,13 @@
       <img class="edit-home__reorder-header-icon" src="/assets/icon/dashboard.svg" />
       <div class="edit-home__reorder-header-title">Home Page</div>
     </ion-list-header>
-    <ion-reorder-group (ionItemReorder)="doReorder($event)" [disabled]="false" mode="ios">
+    <ion-reorder-group (ionItemReorder)="doReorder($event)" [disabled]="false" mode="md">
       <ion-item *ngFor="let tile of tileList" class="edit-home__reorder-item">
         <ion-label class="edit-home__reorder-label">
           {{ tile.name }}
         </ion-label>
         <ion-toggle class="edit-home__reorder-toggle" mode="ios" checked></ion-toggle>
-        <ion-reorder></ion-reorder>
+        <ion-reorder ><ion-icon  class="edit-home__reorder-icon" name="md-reorder"></ion-icon></ion-reorder>
       </ion-item>
     </ion-reorder-group>
   </ion-list>

@@ -32,7 +32,7 @@ export class EditHomePageModalComponent implements OnInit {
 
   doReorder(ev: any) {
     
-    console.log('Dragged from index', ev.detail.from, 'to', ev.detail.to);
+    console.log(ev, 'Dragged from index', ev.detail.from, 'to', ev.detail.to);
 
     ev.detail.complete();
   }
