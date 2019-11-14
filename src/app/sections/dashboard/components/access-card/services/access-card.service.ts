@@ -64,10 +64,11 @@ export class AccessCardService {
     );
   }
 
+
   isGETMyCardEnabled(): Observable<boolean> {
     return this.userService.userData.pipe(
       switchMap(({ institutionId }) => this.configService.getSetting(institutionId, Settings.Setting.MY_CARD_ENABLED)),
-      map(({ value }) => value === '1')
+      map(({ value }) => Boolean(Number(value)))
     );
   }
 
@@ -76,7 +77,7 @@ export class AccessCardService {
       switchMap(({ institutionId }) =>
         this.configService.getSetting(institutionId, Settings.Setting.MOBILE_ACCESS_ENABLED)
       ),
-      map(({ value }) => value === '1')
+      map(({ value }) => Boolean(Number(value)))
     );
   }
 
