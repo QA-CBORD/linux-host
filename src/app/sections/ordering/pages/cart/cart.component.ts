@@ -241,7 +241,4 @@ export class CartComponent implements OnInit, OnDestroy {
     await toast.present();
   }
 
-  ngOnDestroy(): void {
-    this.cartService.clearCart();
-  }
 }
