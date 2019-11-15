@@ -8,15 +8,17 @@ import { ModalController, IonReorderGroup } from '@ionic/angular';
 })
 export class EditHomePageModalComponent implements OnInit {
   tileList = [
-    { name: 'CBORD University card' },
-    { name: 'Accounts' },
-    { name: 'Transactions' },
-    { name: 'Rewards' },
-    { name: 'Mobile Access' },
-    { name: 'Order' },
-    { name: 'Explore' },
-    { name: 'Conversation' },
+    { name: 'CBORD University card', checked: true },
+    { name: 'Accounts', checked: false },
+    { name: 'Transactions', checked: true },
+    { name: 'Rewards', checked: true },
+    { name: 'Mobile Access', checked: true },
+    { name: 'Order', checked: true },
+    { name: 'Explore', checked: true },
+    { name: 'Conversation', checked: true },
   ];
+
+  filteredList = [];
 
   @ViewChild(IonReorderGroup) reorderGroup: IonReorderGroup;
 
@@ -30,11 +32,25 @@ export class EditHomePageModalComponent implements OnInit {
     await this.modalController.dismiss();
   }
 
+  onToggle(event) {
+    console.log(event.detail.name);
+  }
+
+  swap(arr, indexA, indexB) {
+    let temp = arr[indexA];
+    arr[indexA] = arr[indexB];
+    arr[indexB] = temp;
+};
+
+
   doReorder(ev: any) {
-    
     console.log(ev, 'Dragged from index', ev.detail.from, 'to', ev.detail.to);
 
     ev.detail.complete();
+
+    this.swap(this.tileList, ev.detail.from, ev.detail.to)
+
+    console.log(this.tileList)
   }
 
   ngOnInit() {}
