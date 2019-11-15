@@ -25,18 +25,26 @@ export class MultiListComponent extends DefaultValueAccessor implements OnInit {
   onTouched: () => void;
   onChange: (_: any) => void;
   innerValue: any[] = [];
+  modifiedOptions: MenuGroupItemInfoChecked[];
 
   ngOnInit() {
     this.writeValue(this.control.value);
     this.onChange(this.control.value);
 
     if (this.control.value.length) {
-      const a = this.innerValue.forEach(elem => {
-        if (this.control.value.includes(elem)) {
+      this.modifiedOptions = <MenuGroupItemInfoChecked[]>this.options.map(elem => {
+        if (this.innerValue.includes(elem.menuItem)) {
           elem['checked'] = true;
+        } else {
+          elem['checked'] = false;
         }
+        
+        return elem;
       });
-      console.log(a);
+
+      console.log(this.modifiedOptions);
+    } else {
+      this.modifiedOptions = <MenuGroupItemInfoChecked[]>this.options;
     }
   }
 
@@ -89,4 +97,9 @@ export class MultiListComponent extends DefaultValueAccessor implements OnInit {
   onBlur() {
     this.onTouched();
   }
+}
+
+
+interface MenuGroupItemInfoChecked extends MenuGroupItemInfo {
+  checked: boolean;
 }

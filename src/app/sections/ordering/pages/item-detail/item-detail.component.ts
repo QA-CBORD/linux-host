@@ -1,11 +1,12 @@
+import { async } from '@angular/core/testing';
 import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NAVIGATE } from 'src/app/app.global';
-import { zip, Subscription } from 'rxjs';
+import { zip, Subscription, iif, of } from 'rxjs';
 import { CartService, MenuItemInfo, OrderItem } from '@sections/ordering';
-import { take } from 'rxjs/operators';
+import { take, switchMap, tap, map, first } from 'rxjs/operators';
 
 @Component({
   selector: 'st-item-detail',
@@ -21,13 +22,14 @@ export class ItemDetailComponent implements OnInit {
   menuItemImg: string;
   isStaticHeader: boolean = true;
   errorState: boolean = false;
+  cartOrderItemOptions: OrderItem[] = [];
 
   constructor(
     private readonly router: Router,
     private readonly fb: FormBuilder,
     private readonly activatedRoute: ActivatedRoute,
     private readonly cartService: CartService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.initMenuItemOptions();
@@ -49,7 +51,8 @@ export class ItemDetailComponent implements OnInit {
     this.isStaticHeader = detail.scrollTop === 0;
   }
 
-  initForm(cartSelectedItems: OrderItem[] = []) {
+  initForm() {
+    const cartSelectedItems = this.cartOrderItemOptions;
     const formGroup = {};
     if (!cartSelectedItems.length) {
       this.menuItem.menuItemOptions.forEach(({ menuGroup }) => {
@@ -87,7 +90,7 @@ export class ItemDetailComponent implements OnInit {
 
           if (selectedOptions.length) {
             formGroup[menuGroup.name] = [
-              selectedOptions,
+              selectedOptions.filter(item => item),
               [validateMinLengthOfArray(menuGroup.minimum), validateMaxLengthOfArray(menuGroup.maximum)],
             ];
           } else {
@@ -100,7 +103,6 @@ export class ItemDetailComponent implements OnInit {
       });
     }
 
-    console.log(formGroup);
     this.itemOrderForm = this.fb.group({
       ...formGroup,
       message: ['', [Validators.minLength(1), Validators.maxLength(255)]],
@@ -136,8 +138,9 @@ export class ItemDetailComponent implements OnInit {
     };
 
     const arrayOfvalues: any[] = Object.values(this.itemOrderForm.value);
+    debugger
     arrayOfvalues.forEach(value => {
-      if (typeof value === 'string') {
+      if (!value || typeof value === 'string') {
         return;
       }
 
@@ -162,8 +165,21 @@ export class ItemDetailComponent implements OnInit {
       }
     });
 
-    this.cartService.addOrderItems(menuItem);
-    this.cartService.validateOrder().subscribe(() => this.onClose(), () => console.log('invalid'));
+
+
+    const onSubmit = async () => {
+      if (this.cartOrderItemOptions.length) {
+        const data = await this.activatedRoute.data.pipe(first()).toPromise();
+        await this.cartService.removeOrderItemFromOrderById(data.data.queryParams.orderItemId);
+      }
+
+      this.cartService.addOrderItems(menuItem);
+      await this.cartService.validateOrder().pipe(first()).toPromise()
+        .catch(() => console.log('invalid'))
+        .finally(() => this.onClose())
+    }
+
+    onSubmit();
   }
 
   private initMenuItemOptions() {
@@ -186,8 +202,8 @@ export class ItemDetailComponent implements OnInit {
         this.order = { ...this.order, totalPrice: this.menuItem.price };
 
         const cartSelectedItem = orderItems.find(item => item.id === orderItemId);
-        const cartOrderItemOptions = cartSelectedItem ? cartSelectedItem.orderItemOptions : [];
-        this.initForm(cartOrderItemOptions);
+        this.cartOrderItemOptions = cartSelectedItem ? cartSelectedItem.orderItemOptions : [];
+        this.initForm();
       }
     );
   }
@@ -197,12 +213,17 @@ export class ItemDetailComponent implements OnInit {
       const arrayOfvalues: any[] = Object.values(formValue);
       this.order = { ...this.order, optionsPrice: 0 };
       arrayOfvalues.map(value => {
-        if (typeof value === 'string') {
+        if (!value || typeof value === 'string') {
           return;
         }
 
         if (value.length) {
-          const optionPrice = value.reduce((total, { price }) => price + total, 0);
+          const optionPrice = value.reduce((total, item) => {
+            if (!item) {
+              return total;
+            }
+            return item.price + total;
+          }, 0);
           this.order = { ...this.order, optionsPrice: this.order.optionsPrice + optionPrice };
           return;
         }
@@ -212,6 +233,7 @@ export class ItemDetailComponent implements OnInit {
           return;
         }
       });
+
       this.calculateTotalPrice();
     });
 
