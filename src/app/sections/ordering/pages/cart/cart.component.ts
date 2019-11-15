@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CartService } from '@sections/ordering/services/cart.service';
 import { combineLatest, Observable } from 'rxjs';
 import {
@@ -33,7 +33,7 @@ import { SuccessModalComponent } from '@sections/ordering/pages/cart/components/
   styleUrls: ['./cart.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CartComponent implements OnInit, OnDestroy {
+export class CartComponent implements OnInit {
   order$: Observable<Partial<OrderInfo>>;
   addressModalSettings$: Observable<AddressModalSettings>;
   address$: Observable<AddressInfo>;
