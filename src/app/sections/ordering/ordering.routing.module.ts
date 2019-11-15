@@ -43,6 +43,10 @@ const routes: Route[] = [
     path: `${LOCAL_ROUTING.itemDetail}`,
     loadChildren: './pages/item-detail/item-detail.module#ItemDetailModule',
   },
+  {
+    path: LOCAL_ROUTING.addressEdit,
+    loadChildren: './pages/address-edit/address-edit.module#AddressEditPageModule',
+  },
 ];
 
 const imports = [RouterModule.forChild(routes)];

@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input, OnChanges, OnDestroy,
+  OnInit,
+  Output, SimpleChanges,
+} from '@angular/core';
 import {
   AbstractControl,
   FormArray,
@@ -17,6 +24,7 @@ import { UserAccount } from '@core/model/account/account.model';
 import { Subscription } from 'rxjs';
 import { Variable } from '@angular/compiler/src/render3/r3_ast';
 import { PAYMENT_TYPE } from '@sections/accounts/accounts.config';
+import { cvvValidationFn } from '@core/utils/general-helpers';
 
 @Component({
   selector: 'st-order-details',
@@ -46,13 +54,14 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
   @Output() onOrderItemClicked: EventEmitter<OrderItem> = new EventEmitter<OrderItem>();
   detailsForm: FormGroup;
   private readonly sourceSub = new Subscription();
-  cvv = false;
+  showCVVControl = false;
 
-  constructor(private readonly fb: FormBuilder, private readonly modalController: ModalController) {}
+  constructor(private readonly fb: FormBuilder,
+              private readonly modalController: ModalController) {
+  }
 
   ngOnInit() {
     this.initForm();
-    // this.addCvvControl();
   }
 
   ngOnDestroy() {
@@ -74,6 +83,28 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
   goToItemDetails(orderItem) {
     this.onOrderItemClicked.emit(orderItem);
   }
+  
+  onRemoveOrderItem(id: string) {
+    this.onOrderItemRemovedId.emit(id);
+  }
+
+  initForm() {
+    this.detailsForm = this.fb.group(
+      {
+        [DETAILS_FORM_CONTROL_NAMES.address]: [this.address],
+        [DETAILS_FORM_CONTROL_NAMES.paymentMethod]: ['', Validators.required],
+      },
+    );
+    this.subscribeOnFormChanges();
+  }
+
+  toggleCvvControl({ detail: { value } }) {
+    if (value.paymentSystemType === PAYMENT_SYSTEM_TYPE.MONETRA) {
+      this.addCvvControl();
+    } else {
+      this.removeCvvControl();
+    }
+  }
 
   private get addressInfoFormControl(): AbstractControl {
     return this.detailsForm.get(DETAILS_FORM_CONTROL_NAMES.address);
@@ -83,54 +114,28 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
     return this.detailsForm.get(DETAILS_FORM_CONTROL_NAMES.cvv);
   }
 
-  private get orderItemsFormArray(): AbstractControl {
-    return this.detailsForm.get(DETAILS_FORM_CONTROL_NAMES.orderItems);
-  }
-
-  onRemoveOrderItem(id: string) {
-    this.onOrderItemRemovedId.emit(id);
-    const index = (this.orderItemsFormArray as FormArray).controls.findIndex(({ value }) => value === id);
-    (this.orderItemsFormArray as FormArray).removeAt(index);
-  }
-
-  initForm() {
-    this.detailsForm = this.fb.group({
-      [DETAILS_FORM_CONTROL_NAMES.address]: [this.address],
-      [DETAILS_FORM_CONTROL_NAMES.orderItems]: this.getIngredients(),
-      [DETAILS_FORM_CONTROL_NAMES.paymentMethod]: ['', Validators.required],
-    });
-    this.subscribeFormChanges();
-  }
-
-  private subscribeFormChanges() {
-    const sub = this.detailsForm.valueChanges.subscribe(data => {
-      this.onFormChange.emit({ data, valid: this.detailsForm.valid });
-    });
+  private subscribeOnFormChanges() {
+    const sub = this.detailsForm.valueChanges
+      .subscribe(data => {
+        this.onFormChange.emit({ data, valid: this.detailsForm.valid });
+      });
     this.sourceSub.add(sub);
   }
 
-  private getIngredients() {
-    return this.fb.array(
-      [...this.orderItems.map(({ menuItemId }) => this.fb.control(menuItemId))],
-      Validators.required
-    );
-  }
-
   private addCvvControl() {
-    this.cvv = true;
+    this.showCVVControl = true;
     this.detailsForm.addControl(
       DETAILS_FORM_CONTROL_NAMES.cvv,
-      this.fb.control('', [Validators.required, validatorCvv])
+      this.fb.control('', [
+        Validators.required,
+        cvvValidationFn,
+      ]),
     );
   }
 
   private removeCvvControl() {
-    this.cvv = false;
+    this.showCVVControl = false;
     this.detailsForm.removeControl(DETAILS_FORM_CONTROL_NAMES.cvv);
-  }
-
-  test() {
-    console.log(this.detailsForm);
   }
 
   private async showAddressListModal(): Promise<void> {
@@ -139,23 +144,14 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
       componentProps: this.addressModalConfig,
     });
     modal.onDidDismiss().then(({ data }) => {
-      this.addressInfoFormControl.setValue(data);
+      data && (this.addressInfoFormControl.setValue(data));
     });
     await modal.present();
-  }
-
-  checkAccount({ detail: { value } }) {
-    if (value.accountType === PAYMENT_TYPE.CREDIT && value.paymentSystemType !== PAYMENT_SYSTEM_TYPE.USAEPAY) {
-      this.addCvvControl();
-    } else {
-      this.removeCvvControl();
-    }
   }
 }
 
 export enum DETAILS_FORM_CONTROL_NAMES {
   address = 'address',
-  orderItems = 'orderItems',
   paymentMethod = 'paymentMethod',
   cvv = 'cvv',
 }
@@ -172,15 +168,8 @@ export interface AddressModalSettings {
 export interface OrderDetailsFormData {
   data: {
     [DETAILS_FORM_CONTROL_NAMES.address]: BuildingInfo;
-    [DETAILS_FORM_CONTROL_NAMES.orderItems]: string[];
     [DETAILS_FORM_CONTROL_NAMES.paymentMethod]: UserAccount;
   };
   valid: boolean;
 }
 
-const validatorCvv: ValidatorFn = function({ value }) {
-  if (isNaN(value)) return { error: true };
-  if (!Number.isInteger(value)) return { error: true };
-  if (String(value).length < 3 || String(value).length > 4) return { error: true };
-  return null;
-};

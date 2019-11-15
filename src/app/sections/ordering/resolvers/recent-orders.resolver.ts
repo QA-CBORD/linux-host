@@ -11,8 +11,8 @@ export class RecentOrdersResolver implements Resolve<Promise<OrderInfo[]>> {
               private readonly loadingService: LoadingService) {
   }
 
-  resolve(): Promise<OrderInfo[]> {
-    this.loadingService.showSpinner();
+  async resolve(): Promise<OrderInfo[]> {
+    await this.loadingService.showSpinner();
 
     return new Promise<OrderInfo[]>((resolve, reject) =>
       this.merchantService.getRecentOrders()

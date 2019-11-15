@@ -6,6 +6,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { take, map } from 'rxjs/operators';
 import { UserService } from '@core/service/user-service/user.service';
 import { of, zip, iif } from 'rxjs';
+import { AddressInfo } from '@core/model/address/address-info';
 
 @Component({
   selector: 'st-delivery-addresses.modal',

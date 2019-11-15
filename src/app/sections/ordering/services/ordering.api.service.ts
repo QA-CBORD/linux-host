@@ -133,14 +133,16 @@ export class OrderingApiService extends BaseService {
     state = null,
     building = null,
     room = null,
-  }): Observable<any> {
+    id = null,
+  }): Observable<AddressInfo> {
     const methodName = 'updateUserAddress';
     const campusValue = parseInt(campus);
     let addedAddress;
     const postParams: ServiceParameters = {
       address: {
-        objectRevision: null,
+        id: id ? id : null,
         department: null,
+        objectRevision: null,
         company: null,
         address1,
         address2: address2 !== null && !address2.length ? null : address2,
@@ -260,9 +262,9 @@ export class OrderingApiService extends BaseService {
     );
   }
 
-  submitOrder(orderInfo: OrderInfo, accountId: string, cvv: string): Observable<OrderInfo> {
+  submitOrder(order: OrderInfo, accountId: string, cvv: string): Observable<OrderInfo> {
     const methodName = 'submitOrder';
-    const postParams: ServiceParameters = { orderInfo, accountId, cvv };
+    const postParams: ServiceParameters = { order, accountId, cvv };
 
     return this.httpRequestFull(this.serviceUrlOrdering, methodName, true, null, postParams).pipe(
       map(({ response }: MessageResponse<any>) => response)

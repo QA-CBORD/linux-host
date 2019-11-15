@@ -6,14 +6,16 @@ import {
   Input,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  NgZone,
 } from '@angular/core';
 import { Validators, FormGroup, FormBuilder, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { debounceTime, take } from 'rxjs/operators';
 import * as states from '../../../../../../assets/states.json';
 import { Subscription } from 'rxjs';
 import { MerchantService } from '@sections/ordering/services';
-import { SYSTEM_SETTINGS_CONFIG } from '@sections/ordering/ordering.config.js';
-import { LoadingService } from '@core/service/loading/loading.service.js';
+import { SYSTEM_SETTINGS_CONFIG } from '@sections/ordering/ordering.config';
+import { LoadingService } from '@core/service/loading/loading.service';
+import { AddressInfo } from '@core/model/address/address-info.js';
 
 @Component({
   selector: 'st-add-edit-addresses',
@@ -32,11 +34,13 @@ export class AddEditAddressesComponent implements OnInit {
   private readonly sourceSubscription: Subscription = new Subscription();
 
   @Input() buildingsOnCampus;
+  @Input() editAddress:AddressInfo;
   @Output() onFormChanged: EventEmitter<any> = new EventEmitter<any>();
   constructor(
     private readonly fb: FormBuilder,
     private readonly merchantService: MerchantService,
     private readonly cdRef: ChangeDetectorRef,
+    private readonly zone:NgZone,
     private readonly loader: LoadingService
   ) {}
 
@@ -84,6 +88,7 @@ export class AddEditAddressesComponent implements OnInit {
 
   ngOnInit() {
     this.getSettingByConfig(SYSTEM_SETTINGS_CONFIG.addressRestrictionToOnCampus);
+    
   }
 
   ngOnDestroy() {
@@ -109,6 +114,23 @@ export class AddEditAddressesComponent implements OnInit {
         ({ value }) => {
           this.loader.closeSpinner();
           this.initForm(parseInt(value));
+          // debugger;
+          if(this.editAddress){
+            this.addEditAddressesForm.patchValue({
+              [this.controlsNames.address1]: this.editAddress.address1,
+              [this.controlsNames.address2]: this.editAddress.address2,
+              [this.controlsNames.buildings]: this.editAddress.building,
+              [this.controlsNames.city]: this.editAddress.city,
+              // [this.controlsNames.campus]: this.editAddress.onCampus,
+              [this.controlsNames.nickname]: this.editAddress.nickname,
+              [this.controlsNames.state]: this.editAddress.state,
+              [this.controlsNames.room]: this.editAddress.room
+            }, {onlySelf: false, emitEvent: true});
+            // this.cdRef.detectChanges();
+            this.zone.run(() => {
+              console.log('force update the screen');
+            });
+          }
         },
         () => this.loader.closeSpinner()
       );
@@ -129,10 +151,15 @@ export class AddEditAddressesComponent implements OnInit {
     this.onChanges();
   }
 
+  onFormSubmit() {
+
+  }
+
   private onChanges() {
     const subscription = this.addEditAddressesForm.valueChanges.pipe(debounceTime(500)).subscribe(value => {
       this.onFormChanged.emit({
-        value: { ...value, campus: value.campus === 'oncampus' ? '1' : '0' },
+        // value: { ...value, campus: value.campus === 'oncampus' ? '1' : '0'},
+        value: { ...value, campus: value.campus === 'oncampus' ? '1' : '0', id: this.editAddress.id },
         valid: this.addEditAddressesForm.valid,
       });
     });

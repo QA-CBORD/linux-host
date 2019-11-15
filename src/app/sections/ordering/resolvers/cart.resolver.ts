@@ -3,10 +3,12 @@ import { Resolve } from '@angular/router';
 import { Observable, zip } from 'rxjs';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { SettingService } from '@core/service/settings/setting.service';
-import { SYSTEM_SETTINGS_CONFIG } from '@sections/ordering/ordering.config';
+import { ACCOUNT_TYPES, PAYMENT_SYSTEM_TYPE, SYSTEM_SETTINGS_CONFIG } from '@sections/ordering/ordering.config';
 import { first, switchMap, tap } from 'rxjs/operators';
 import { CartService, MerchantAccountInfoList, MerchantService } from '@sections/ordering';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
+import { UserAccount } from '@core/model/account/account.model';
+import { parseArrayFromString } from '@core/utils/general-helpers';
 
 @Injectable()
 export class CartResolver implements Resolve<Observable<[SettingInfo[], MerchantAccountInfoList]>> {

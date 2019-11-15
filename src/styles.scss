@@ -102,10 +102,11 @@
   }
 
   .order-options-action-sheet {
-    --height: 275px;
+    --height: 280px;
     --border-radius: 10px 10px 0 0;
+
     &.order-options-action-sheet-p-d {
-      --height: 340px;
+      --height: 360px;
     }
 
     .modal-wrapper {

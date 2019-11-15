@@ -3,7 +3,7 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ModalController, ToastController } from '@ionic/angular';
 
 import { Observable, iif } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { first, switchMap } from 'rxjs/operators';
 
 import { MerchantInfo, MerchantOrderTypesInfo, OrderInfo } from './shared/models';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -44,7 +44,10 @@ export class OrderingPage implements OnInit {
   favouriteHandler({ isFavorite, id }) {
     this.loadingService.showSpinner();
     iif(() => isFavorite, this.merchantService.removeFavoriteMerchant(id), this.merchantService.addFavoriteMerchant(id))
-      .pipe(switchMap(() => this.merchantService.getMerchantsWithFavoriteInfo()))
+      .pipe(
+        switchMap(() => this.merchantService.getMerchantsWithFavoriteInfo()),
+        first()
+      )
       .subscribe(
         () => {
           this.loadingService.closeSpinner();
@@ -56,7 +59,8 @@ export class OrderingPage implements OnInit {
   }
 
   locationPinHandler(event: string) {
-    console.log(`Location Pin Clicked - Merch Id: ${event}`);
+    // TODO location feature
+    // console.log(`Location Pin Clicked - Merch Id: ${event}`);
   }
 
   private openOrderOptions(merchant) {
@@ -82,7 +86,7 @@ export class OrderingPage implements OnInit {
     });
     modal.onDidDismiss().then(({ data }) => {
       if (data) {
-        this.cartService.setActiveMerchantsMenuByOrderOptions(data.dueTime, data.orderType, data.address)
+        this.cartService.setActiveMerchantsMenuByOrderOptions(data.dueTime, data.orderType, data.address);
         this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.fullMenu], { skipLocationChange: true });
       }
     });

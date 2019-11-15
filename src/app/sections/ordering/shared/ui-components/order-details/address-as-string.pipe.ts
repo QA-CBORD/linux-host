@@ -1,16 +1,16 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { AddressInfo } from "@core/model/address/address-info";
-import { ORDER_TYPE } from "@sections/ordering/ordering.config";
+import { AddressInfo } from '@core/model/address/address-info';
+import { ORDER_TYPE } from '@sections/ordering/ordering.config';
 
 @Pipe({
-  name: 'addressAsString'
+  name: 'addressAsString',
 })
 export class AddressAsStringPipe implements PipeTransform {
 
-  transform(value: any, type: ORDER_TYPE): any {
+  transform(value: AddressInfo, type: ORDER_TYPE): string {
     return type === ORDER_TYPE.DELIVERY
-        ? this.getDeliveryAddressAsString(value)
-        : this.getPickupAddressAsString(value);
+      ? this.getDeliveryAddressAsString(value)
+      : this.getPickupAddressAsString(value);
   }
 
   private getPickupAddressAsString({ address1, address2, city }: AddressInfo): string {
@@ -31,7 +31,7 @@ export class AddressAsStringPipe implements PipeTransform {
     city = city ? city : '';
 
     return Boolean(Number(onCampus))
-        ? `${room}, ${building}`.trim()
-        : `${address1} ${address2}, ${city}, ${state}`.trim();
+      ? `${room}, ${building}`.trim()
+      : `${address1} ${address2}, ${city}, ${state}`.trim();
   }
 }

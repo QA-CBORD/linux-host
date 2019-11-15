@@ -1,18 +1,20 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { first, map, switchMap, take } from 'rxjs/operators';
 import { Observable, zip } from 'rxjs';
 
 import { MenuItemInfo, MerchantInfo, MerchantService, OrderInfo, OrderItem } from '@sections/ordering';
-import { LOCAL_ROUTING, ORDER_TYPE } from '@sections/ordering/ordering.config';
+import { LOCAL_ROUTING, ORDER_TYPE, ORDER_VALIDATION_ERRORS } from '@sections/ordering/ordering.config';
 import { NAVIGATE } from '../../../../../../app.global';
-import { ModalController, PopoverController } from '@ionic/angular';
+import { ModalController, PopoverController, ToastController } from '@ionic/angular';
 import { ORDERING_STATUS } from '@sections/ordering/shared/ui-components/recent-oders-list/recent-orders-list-item/recent-orders.config';
 import { ConfirmPopoverComponent } from '@sections/ordering/pages/recent-orders/components/confirm-popover/confirm-popover.component';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
 import { OrderOptionsActionSheetComponent } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 import { CartService } from '@sections/ordering/services/cart.service';
 import { LoadingService } from '@core/service/loading/loading.service';
+import { AddressInfo } from '@core/model/address/address-info';
+import { handleServerError } from '@core/utils/general-helpers';
 
 @Component({
   selector: 'st-recent-order',
@@ -22,7 +24,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
 })
 export class RecentOrderComponent implements OnInit {
   order$: Observable<OrderInfo>;
-  address$: Observable<any>;
+  address$: Observable<AddressInfo>;
   merchant$: Observable<MerchantInfo>;
 
   constructor(private readonly activatedRoute: ActivatedRoute,
@@ -31,7 +33,8 @@ export class RecentOrderComponent implements OnInit {
               private readonly popoverController: PopoverController,
               private readonly modalController: ModalController,
               private readonly cart: CartService,
-              private readonly loadingService: LoadingService) {
+              private readonly loadingService: LoadingService,
+              private readonly toastController: ToastController) {
   }
 
   ngOnInit() {
@@ -70,23 +73,25 @@ export class RecentOrderComponent implements OnInit {
 
   async showModal(): Promise<void> {
     this.order$.pipe(
-      take(1),
+      first(),
       map(({ checkNumber }) => checkNumber),
     ).subscribe(await this.initCancelOrderModal.bind(this));
   }
 
   async back(): Promise<void> {
-    await this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.recentOrders]);
+    await this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.recentOrders], { skipLocationChange: true });
   }
 
   private setActiveOrder(orderId) {
     this.order$ = this.merchantService.recentOrders$.pipe(
+      first(),
       map(orders => orders.find(({ id }) => id === orderId)),
     );
   }
 
   private setActiveMerchant(orderId) {
     this.merchant$ = this.merchantService.recentOrders$.pipe(
+      first(),
       map(orders => orders.find(({ id }) => id === orderId)),
       switchMap(({ merchantId }) => this.merchantService.menuMerchants$.pipe(
         map(merchants => merchants.find(({ id }) => id === merchantId)),
@@ -115,19 +120,39 @@ export class RecentOrderComponent implements OnInit {
   private async initOrder({ address, dueTime, orderType }): Promise<void> {
     await this.loadingService.showSpinner();
     const merchant = await this.merchant$.pipe(take(1)).toPromise();
+    this.cart.clearCart();
     await this.cart.setActiveMerchant(merchant);
     await this.cart.setActiveMerchantsMenuByOrderOptions(dueTime, orderType, address);
     const [availableItems] = await this.resolveMenuItemsInOrder().pipe(first()).toPromise();
     this.cart.addOrderItems(availableItems);
-    await this.cart.validateOrder().pipe(first()).toPromise()
-      .then(await this.loadingService.closeSpinner.bind(this.loadingService))
-      .catch(await this.loadingService.closeSpinner.bind(this.loadingService));
+    await this.cart.validateOrder().pipe(
+      first(),
+      handleServerError(ORDER_VALIDATION_ERRORS),
+    ).toPromise()
+      .then(this.redirectToCart.bind(this))
+      .catch(this.onValidateErrorToast.bind(this))
+      .finally(await this.loadingService.closeSpinner.bind(this.loadingService));
 
+  }
+
+  private async redirectToCart(): Promise<void> {
     await this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.cart], { skipLocationChange: true });
+  }
+
+  private async onValidateErrorToast(message: string) {
+    const toast = await this.toastController.create({
+      message,
+      showCloseButton: true,
+      position: 'top',
+    });
+
+    toast.onDidDismiss().then(() => this.back());
+    await toast.present();
   }
 
   private setActiveAddress() {
     this.address$ = this.order$.pipe(
+      first(),
       switchMap(({ type, deliveryAddressId }) => {
           return type === ORDER_TYPE.DELIVERY
             ? this.getDeliveryAddress(deliveryAddressId)
@@ -159,6 +184,7 @@ export class RecentOrderComponent implements OnInit {
   private cancelOrder(): Observable<any> {
     return this.order$.pipe(
       switchMap(({ id }) => this.merchantService.cancelOrderById(id)),
+      handleServerError(ORDER_VALIDATION_ERRORS),
     );
   }
 
@@ -174,7 +200,7 @@ export class RecentOrderComponent implements OnInit {
     modal.onDidDismiss().then(({ role }) => {
       role === BUTTON_TYPE.CANCEL && this.cancelOrder().pipe(
         take(1),
-      ).subscribe(response => response && this.back());
+      ).subscribe(response => response && this.back(), this.onValidateErrorToast.bind(this));
     });
     await modal.present();
   }

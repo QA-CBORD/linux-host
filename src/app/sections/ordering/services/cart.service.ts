@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { distinctUntilChanged, first, map, tap } from 'rxjs/operators';
+import { distinctUntilChanged, first, map, switchMap, tap } from 'rxjs/operators';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 import { ORDER_TYPE } from '@sections/ordering/ordering.config';
@@ -22,29 +22,29 @@ export class CartService {
 
   get merchant$(): Observable<MerchantInfo> {
     return this._cart$.asObservable().pipe(
-      map(cart => cart.merchant),
-      distinctUntilChanged()
+        map(cart => cart.merchant),
+        distinctUntilChanged(),
     );
   }
 
   get orderInfo$(): Observable<Partial<OrderInfo>> {
     return this._cart$.asObservable().pipe(
-      map(cart => cart.order),
-      distinctUntilChanged()
+        map(cart => cart.order),
+        distinctUntilChanged(),
     );
   }
 
   get menuInfo$(): Observable<MenuInfo> {
     return this._cart$.asObservable().pipe(
-      map(cart => cart.menu),
-      distinctUntilChanged()
+        map(cart => cart.menu),
+        distinctUntilChanged(),
     );
   }
 
   get orderDetailsOptions$(): Observable<OrderDetailOptions> {
     return this._cart$.asObservable().pipe(
-      map(cart => cart.orderDetailsOptions),
-      distinctUntilChanged()
+        map(cart => cart.orderDetailsOptions),
+        distinctUntilChanged(),
     );
   }
 
@@ -54,7 +54,9 @@ export class CartService {
 
   get menuItems$(): Observable<number> {
     return this.orderInfo$.pipe(
-      map(({ orderItems }) => orderItems.reduce((state, { quantity }) => state + quantity, 0))
+        map(({ orderItems }) =>
+            orderItems.reduce((state, { quantity }) => state + quantity, 0),
+        ),
     );
   }
 
@@ -96,18 +98,17 @@ export class CartService {
 
   // ----------------------------------------- REMOVING DATA BLOCK ---------------------------------------//
 
-  async removeOrderItemFromOrderById(id: string): Promise<OrderInfo | void> {
-    if (!this.cart.order) return;
+  removeOrderItemFromOrderById(id: string): Partial<OrderInfo | void> {
+    if (!this.cart.order || !this.cart.order.orderItems.length) return;
     const itemIndex = this.cart.order.orderItems.findIndex(({ id: oId }: OrderItem) => oId === id);
     if (itemIndex !== -1) {
-      this.cart.order.orderItems.splice(itemIndex, 1);
-      return await this.validateOrder()
-        .pipe(first())
-        .toPromise();
+      const [removedItem] = this.cart.order.orderItems.splice(itemIndex, 1);
+      this.onStateChanged();
+      return removedItem;
     }
   }
 
-  removeAllOrderDetailsOptions() {
+  removeOrderDetailsOptions() {
     this.cart.orderDetailsOptions = null;
     this.onStateChanged();
   }
@@ -130,14 +131,20 @@ export class CartService {
   }
 
   validateOrder(): Observable<OrderInfo> {
-    const {
-      orderType: type,
-      dueTime,
-      address: { id },
-    } = this.cart.orderDetailsOptions;
-    const address = type === ORDER_TYPE.DELIVERY ? { deliveryAddressId: id } : { pickupAddressId: id };
+    const { orderType: type, dueTime, address: { id } } = this.cart.orderDetailsOptions;
+    const address = type === ORDER_TYPE.DELIVERY
+        ? { deliveryAddressId: id }
+        : { pickupAddressId: id };
     this.cart.order = { ...this.cart.order, type, dueTime, ...address };
-    return this.merchantService.validateOrder(this.cart.order).pipe(tap(updatedOrder => (this._order = updatedOrder)));
+
+    return this.userService.userData.pipe(
+        first(),
+        switchMap(({ phone: userPhone }) => {
+          this.cart.order = { ...this.cart.order, userPhone };
+          return this.merchantService.validateOrder(this.cart.order);
+        }),
+        tap(updatedOrder => this._order = updatedOrder),
+    );
   }
 
   submitOrder(accId: string, cvv: string): Observable<OrderInfo> {
@@ -164,8 +171,7 @@ export class CartService {
   }
 
   private async initEmptyOrder(): Promise<Partial<OrderInfo>> {
-    return this.userService.userData
-      .pipe(
+    return this.userService.userData.pipe(
         map(({ institutionId, id: userId }) => {
           return {
             userId,
@@ -174,9 +180,8 @@ export class CartService {
             institutionId,
           };
         }),
-        first()
-      )
-      .toPromise();
+        first(),
+    ).toPromise();
   }
 
   private async refreshCartDate(): Promise<void> {

@@ -1,10 +1,8 @@
 import {
   Component,
-  OnInit,
   ChangeDetectionStrategy,
   Input, Output, EventEmitter,
 } from '@angular/core';
-import { ORDERING_STATUS } from './recent-orders-list-item/recent-orders.config';
 import { OrderInfo } from '../../models';
 
 @Component({

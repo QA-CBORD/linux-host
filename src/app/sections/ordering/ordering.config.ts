@@ -1,3 +1,5 @@
+import { ServerErrorsInfo } from '@core/model/server_error/server-error.model';
+
 export enum LOCAL_ROUTING {
   recentOrders = 'recent-orders',
   favoriteMerchants = 'favorite-merchants',
@@ -5,7 +7,8 @@ export enum LOCAL_ROUTING {
   fullMenu = 'full-menu',
   cart = 'cart',
   menuCategoryItems = 'menu-category-items',
-  itemDetail = 'item-detail'
+  itemDetail = 'item-detail',
+  addressEdit = 'address-edit'
 }
 
 export enum MerchantSearchOptionName {
@@ -66,3 +69,15 @@ export enum ACCOUNT_TYPES {
   charge = 2, // Charge, Credit
   decliningBalance = 3, // declining balance, points
 }
+export const ORDER_VALIDATION_ERRORS: ServerErrorsInfo = {
+  9001: 'Delivery Address is required for delivery orders',
+  9003: 'Merchant does not support the requested order type',
+  9011: 'The merchant is currently closed and not accepting orders',
+  9017: 'Order can not be processed for the given due time, it exceeds the merchants order capacity',
+  9801: 'The attempted order contains invalid items for the available menu',
+  9005: 'Items in order couldn\'t be lower than merchant supports',
+  9006: 'Items in order  couldn\'t be more than merchant supports',
+  9002: 'Order minimum total for delivery wasn\'t met',
+  9014: 'Tip amount is negative or greater than the order subtotal',
+  9013: 'Order cannot be canceled due to it has been completed'
+};
