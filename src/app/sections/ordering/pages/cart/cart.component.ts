@@ -33,7 +33,7 @@ import { SuccessModalComponent } from '@sections/ordering/pages/cart/components/
   styleUrls: ['./cart.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CartComponent implements OnInit {
+export class CartComponent implements OnInit, OnDestroy {
   order$: Observable<Partial<OrderInfo>>;
   addressModalSettings$: Observable<AddressModalSettings>;
   address$: Observable<AddressInfo>;
@@ -239,5 +239,9 @@ export class CartComponent implements OnInit {
       position: 'top',
     });
     await toast.present();
+  }
+
+  ngOnDestroy(): void {
+    this.cartService.clearCart();
   }
 }
