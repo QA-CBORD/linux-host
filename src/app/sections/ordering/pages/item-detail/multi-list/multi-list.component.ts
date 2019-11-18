@@ -38,13 +38,12 @@ export class MultiListComponent extends DefaultValueAccessor implements OnInit {
         } else {
           elem['checked'] = false;
         }
-        
+
         return elem;
       });
 
-      console.log(this.modifiedOptions);
     } else {
-      this.modifiedOptions = <MenuGroupItemInfoChecked[]>this.options;
+      this.modifiedOptions = <MenuGroupItemInfoChecked[]>this.options.map(elem => ({ ...elem, checked: false }));
     }
   }
 
@@ -98,7 +97,6 @@ export class MultiListComponent extends DefaultValueAccessor implements OnInit {
     this.onTouched();
   }
 }
-
 
 interface MenuGroupItemInfoChecked extends MenuGroupItemInfo {
   checked: boolean;

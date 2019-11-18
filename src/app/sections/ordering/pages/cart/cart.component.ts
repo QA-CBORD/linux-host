@@ -21,9 +21,6 @@ import {
 import { LoadingService } from '@core/service/loading/loading.service';
 import { SettingService } from '@core/service/settings/setting.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { parseArrayFromString } from '@core/utils/general-helpers';
-import { UserAccount } from '@core/model/account/account.model';
-import { NAVIGATE } from 'src/app/app.global';
 import { handleServerError, parseArrayFromString } from '@core/utils/general-helpers';
 import { UserAccount } from '@core/model/account/account.model';
 import { ModalController, ToastController } from '@ionic/angular';
