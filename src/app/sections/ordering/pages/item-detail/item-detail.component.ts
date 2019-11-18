@@ -48,8 +48,10 @@ export class ItemDetailComponent implements OnInit {
     });
   }
 
-  scroll({ detail }) {
-    this.isStaticHeader = detail.scrollTop === 0;
+  scroll({ detail: { scrollTop } }) {
+    if (this.menuItem.menuItemOptions.length) {
+      this.isStaticHeader = scrollTop === 0;
+    }
   }
 
   initForm() {
@@ -172,7 +174,6 @@ export class ItemDetailComponent implements OnInit {
       .pipe(take(1))
       .subscribe(([{ data: { menuItem, queryParams: { orderItemId } } }, orderItems]) => {
         this.menuItem = menuItem.menuItem;
-
         // Temporary, while we don't have images:
         // '/assets/images/temp-merchant-photo.jpg'
         this.menuItemImg = '/assets/images/temp-merchant-photo.jpg';

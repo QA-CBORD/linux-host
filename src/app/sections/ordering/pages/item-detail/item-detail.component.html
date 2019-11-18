@@ -81,20 +81,20 @@
       >
       </st-textarea-floating-label>
     </ion-list>
-    <ion-list class="order-detail__nutrition-info">
+    <ion-list class="order-detail__nutrition-info" *ngIf="menuItem.calories || menuItem.protein || menuItem.carbs">
       <ion-item-divider class="order-detail__divider" mode="ios">
         <div class="order-detail__divider-title">Nutrition Info</div>
       </ion-item-divider>
       <div class="order-detail__nutrition-info-container">
-        <div class="order-detail__nutrition-info-wrapper">
+        <div class="order-detail__nutrition-info-wrapper" *ngIf="menuItem.calories">
           <div class="order-detail__nutrition-info-title">{{ menuItem.calories }}</div>
           <div class="order-detail__nutrition-info-subtitle">Calories</div>
         </div>
-        <div class="order-detail__nutrition-info-wrapper">
+        <div class="order-detail__nutrition-info-wrapper" *ngIf="menuItem.protein">
           <div class="order-detail__nutrition-info-title">{{ menuItem.protein }}g</div>
           <div class="order-detail__nutrition-info-subtitle">Protein</div>
         </div>
-        <div class="order-detail__nutrition-info-wrapper">
+        <div class="order-detail__nutrition-info-wrapper" *ngIf="menuItem.carbs">
           <div class="order-detail__nutrition-info-title">{{ menuItem.carbs }}</div>
           <div class="order-detail__nutrition-info-subtitle">Carbs</div>
         </div>

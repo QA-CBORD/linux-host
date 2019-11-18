@@ -33,15 +33,10 @@ export class MultiListComponent extends DefaultValueAccessor implements OnInit {
 
     if (this.control.value.length) {
       this.modifiedOptions = <MenuGroupItemInfoChecked[]>this.options.map(elem => {
-        if (this.innerValue.includes(elem.menuItem)) {
-          elem['checked'] = true;
-        } else {
-          elem['checked'] = false;
-        }
+        const isMenuItemInclude = this.innerValue.includes(elem.menuItem);
 
-        return elem;
+        return {...elem, checked: isMenuItemInclude};
       });
-
     } else {
       this.modifiedOptions = <MenuGroupItemInfoChecked[]>this.options.map(elem => ({ ...elem, checked: false }));
     }
