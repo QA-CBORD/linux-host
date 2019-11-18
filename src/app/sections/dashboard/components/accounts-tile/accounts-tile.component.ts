@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-
+import { AccountsService } from './services/accounts.service';
+import { take } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'st-accounts-tile',
@@ -7,63 +9,29 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./accounts-tile.component.scss'],
 })
 export class AccountsTileComponent implements OnInit {
-
-
-  accountsList = [
-    [
-    {title: "Dinning Dolars", total: 12343},
-    {title: "Bonus Bucks", total: 243},
-    {title: "Meal Swipes", total: 43},
-    {title: "Meal Swipes", total: 43}
-    ],
-    [
-    {title: "M2eal Swipes", total: 43},
-    {title: "Meal Swipes", total: 43},
-    {title: "Meal Swipes", total: 43},
-    {title: "Meal Swipes", total: 43}
-    ],
-  [
-    {title: "Meal Swipes", total: 43},
-    {title: "Meal Swipes", total: 43},
-    {title: "Meal Swipes", total: 43},
-    {title: "Meal Swipes", total: 43}
-  ],
-  [
-    {title: "Meal Swipes", total: 43},
-    {title: "Meal Swipes", total: 43}
-  ]
-  ];
-
-  accounts2 = [
-    {title: "Dinning Dolars", total: 12343},
-    {title: "Bonus Bucks", total: 243},
-    {title: "Meal Swipes", total: 43},
-    {title: "Meal Swipes", total: 43},
-    {title: "M2eal Swipes", total: 43},
-    {title: "Meal Swipes", total: 43},
-    {title: "Meal Swipes", total: 43},
-    {title: "Meal Swipes", total: 43},
-    {title: "Meal Swipes", total: 43},
-    {title: "Meal Swipes", total: 43},
-    {title: "Meal Swipes", total: 43},
-    {title: "Meal Swipes", total: 43},
-    {title: "Guest  Meals", total: 43},
-  ];
-
-  slidesArray: any[];
-
   slideOpts = {
     initialSlide: 0,
     spaceBetween: 0,
     speed: 400,
     width: 330,
-    autoHeight: true
+    autoHeight: true,
   };
-  
-  constructor() { }
+
+  userAccounts$ = [];
+  parsedAccounts = [];
+
+  constructor(private readonly accountsService: AccountsService) {}
 
   ngOnInit() {
-    
+    this.accountsService.getUserAccounts().subscribe(r => {
+      r.forEach((item, index) => {
+        if (index % 4 === 0 && index !== 0) {
+          this.userAccounts$.push(this.parsedAccounts);
+          this.parsedAccounts = [];
+        }
+        this.parsedAccounts.push(item);
+      });
+      this.userAccounts$.push(this.parsedAccounts);
+    });
   }
-
 }
