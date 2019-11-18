@@ -1,6 +1,6 @@
 <div class="accounts">
   <ion-slides class="accounts__slides" [pager]="true" mode="ios" [options]="slideOpts">
-    <ion-slide class="accounts__slide" *ngFor="let accounts of userAccounts$">
+    <ion-slide class="accounts__slide" *ngFor="let accounts of userAccounts">
       <div class="accounts__item" *ngFor="let account of accounts"  >
         <div class="accounts__title" >{{account.accountDisplayName}}</div>
         <div class="accounts__total">{{account.balance}}</div>

@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { TransactionService } from '../../services/transaction.service';
+import { take } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'st-transactions-tile',
@@ -6,15 +9,21 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./transactions-tile.component.scss'],
 })
 export class TransactionsTileComponent implements OnInit {
+  transactions = [];
+  transactionsSubscriptions: Subscription;
 
-  transactions = [
-    {locationName: 'Pizza Pandemonium', actualDate: '2/16/19, 5:01pm', transactionType: '-2', amount: 2, accountName: "Dinning Dolars"},
-    {locationName: 'Pizza Pandemonium', actualDate: '2/16/19, 5:01pm', transactionType: '-2', amount: 2, accountName: "Dinning Dolars"},
-    {locationName: 'Pizza Pandemonium', actualDate: '2/16/19, 5:01pm', transactionType: '-2', amount: 2, accountName: "Dinning Dolars"},
-  ];
+  constructor(private readonly transactionService: TransactionService) {}
 
-  constructor() { }
+  ngOnInit() {
+    this.transactionsSubscriptions = this.transactionService
+      .getRecentTransactions(null, null, 3)
+      .pipe(take(1))
+      .subscribe(r => {
+        this.transactions = r;
+      });
+  }
 
-  ngOnInit() {}
-
+  ngOnDestroy() {
+    this.transactionsSubscriptions.unsubscribe();
+  }
 }
