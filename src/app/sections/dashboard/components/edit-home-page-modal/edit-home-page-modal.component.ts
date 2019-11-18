@@ -40,17 +40,16 @@ export class EditHomePageModalComponent implements OnInit {
     let temp = arr[indexA];
     arr[indexA] = arr[indexB];
     arr[indexB] = temp;
-};
-
+  }
 
   doReorder(ev: any) {
     console.log(ev, 'Dragged from index', ev.detail.from, 'to', ev.detail.to);
 
     ev.detail.complete();
 
-    this.swap(this.tileList, ev.detail.from, ev.detail.to)
+    this.swap(this.tileList, ev.detail.from, ev.detail.to);
 
-    console.log(this.tileList)
+    console.log(this.tileList);
   }
 
   ngOnInit() {}

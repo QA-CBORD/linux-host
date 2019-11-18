@@ -1,7 +1,9 @@
 @import 'tools';
 
 .edit-home {
-  --background: #f3f3f3;
+  &__content-container {
+    --background: #f3f3f3;
+  }
 
   &__header-back-btn {
     color: $color-black;
