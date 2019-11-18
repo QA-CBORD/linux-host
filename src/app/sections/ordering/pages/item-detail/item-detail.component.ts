@@ -198,12 +198,7 @@ export class ItemDetailComponent implements OnInit {
         }
 
         if (value.length) {
-          const optionPrice = value.reduce((total, item) => {
-            if (!item) {
-              return total;
-            }
-            return item.price + total;
-          }, 0);
+          const optionPrice = value.reduce((total, item) => (!item ? total : item.price + total), 0);
           this.order = { ...this.order, optionsPrice: this.order.optionsPrice + optionPrice };
           return;
         }
