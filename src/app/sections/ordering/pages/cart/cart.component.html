@@ -19,12 +19,13 @@
             [address]="address$ | async"
             [time]="(order$ | async).dueTime"
             [accounts]="accounts"
+            [mealBased]="(order$ | async).mealBased"
             [type]="(order$ | async).type"
             [addressModalConfig]="(addressModalSettings$ | async)"
             (onFormChange)="onCartStateFormChanged($event)"
             (onOrderItemRemovedId)="removeOrderItem($event)">
         <ion-button (click)="onSubmit()" class="btn" [ngClass]="{'btn--invalid': !cartFormState?.valid}">
-            schedule order {{(order$ | async).total | currency}}
+            schedule order {{(order$ | async).total | priceUnitsResolver: (order$ | async).mealBased}}
         </ion-button>
     </st-order-details>
 </ion-content>

@@ -7,6 +7,7 @@ import { TypeMessagePipe } from './type-message.pipe';
 import { StDateTimePickerModule } from '@sections/ordering/shared/ui-components/st-date-time-picker/st-date-time-picker.module';
 import { DeliveryAddressesModalModule } from '@sections/ordering/shared/ui-components/delivery-addresses.modal/delivery-addresses.modal.module';
 import { AddressAsStringPipe } from './address-as-string.pipe';
+import { PriceUnitsResolverModule } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.module';
 
 const declarations = [OrderDetailsComponent, TypeMessagePipe, AddressAsStringPipe];
 
@@ -17,7 +18,8 @@ const declarations = [OrderDetailsComponent, TypeMessagePipe, AddressAsStringPip
     IonicModule,
     ReactiveFormsModule,
     StDateTimePickerModule,
-    DeliveryAddressesModalModule
+    DeliveryAddressesModalModule,
+    PriceUnitsResolverModule
   ],
   exports: [OrderDetailsComponent],
 })

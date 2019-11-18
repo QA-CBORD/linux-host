@@ -119,7 +119,7 @@ export class RecentOrderComponent implements OnInit {
 
   private async initOrder({ address, dueTime, orderType }): Promise<void> {
     await this.loadingService.showSpinner();
-    const merchant = await this.merchant$.pipe(take(1)).toPromise();
+    const merchant = await this.merchant$.pipe(first()).toPromise();
     this.cart.clearCart();
     await this.cart.setActiveMerchant(merchant);
     await this.cart.setActiveMerchantsMenuByOrderOptions(dueTime, orderType, address);
@@ -130,7 +130,7 @@ export class RecentOrderComponent implements OnInit {
       handleServerError(ORDER_VALIDATION_ERRORS),
     ).toPromise()
       .then(this.redirectToCart.bind(this))
-      .catch(this.onValidateErrorToast.bind(this))
+      // .catch(this.onValidateErrorToast.bind(this))
       .finally(await this.loadingService.closeSpinner.bind(this.loadingService));
 
   }

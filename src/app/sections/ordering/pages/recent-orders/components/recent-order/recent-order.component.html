@@ -18,6 +18,7 @@
             [time]="(order$ | async).dueTime"
             [type]="(order$ | async).type"
             [address]="(address$ | async)"
+            [mealBased]="(order$ | async).mealBased"
     >
         <ng-container *ngIf="(order$ | async).status !== orderStatus.PENDING; else pending" [ngTemplateOutlet]="complited"></ng-container>
     </st-order-details>

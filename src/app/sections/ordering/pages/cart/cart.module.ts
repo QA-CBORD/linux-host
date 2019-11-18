@@ -6,6 +6,7 @@ import { OrderDetailsModule } from '@sections/ordering/shared/ui-components/orde
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
 import { IonicModule } from '@ionic/angular';
 import { SuccessModalComponent } from '@sections/ordering/pages/cart/components/success-modal/success-modal.component';
+import { PriceUnitsResolverModule } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.module';
 
 @NgModule({
   declarations: [CartComponent, SuccessModalComponent],
@@ -14,7 +15,8 @@ import { SuccessModalComponent } from '@sections/ordering/pages/cart/components/
     CartRoutingModule,
     OrderDetailsModule,
     StHeaderModule,
-    IonicModule
+    IonicModule,
+    PriceUnitsResolverModule,
   ],
    entryComponents: [SuccessModalComponent]
 })

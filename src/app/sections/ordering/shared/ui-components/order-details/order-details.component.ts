@@ -47,6 +47,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
   @Input() subTotal: number;
   @Input() tip: number;
   @Input() accountName: string;
+  @Input() mealBased: boolean;
   @Input() accounts: UserAccount[] = [];
   @Input() addressModalConfig: AddressModalSettings;
   @Output() onFormChange: EventEmitter<OrderDetailsFormData> = new EventEmitter<OrderDetailsFormData>();

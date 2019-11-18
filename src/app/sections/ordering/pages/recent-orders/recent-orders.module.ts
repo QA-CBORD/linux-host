@@ -11,6 +11,7 @@ import { StPopoverLayoutModule } from '@shared/ui-components/st-popover-layout/s
 import { ConfirmPopoverComponent } from '@sections/ordering/pages/recent-orders/components/confirm-popover/confirm-popover.component';
 import { OrderOptionsActionSheetModule } from '@sections/ordering/shared/ui-components/order-options.action-sheet';
 
+
 const imports = [
     CommonModule,
     IonicModule,
@@ -19,7 +20,7 @@ const imports = [
     RecentOrdersListModule,
     OrderDetailsModule,
     StPopoverLayoutModule,
-    OrderOptionsActionSheetModule
+    OrderOptionsActionSheetModule,
 ];
 const declarations = [RecentOrdersComponent, RecentOrderComponent, ConfirmPopoverComponent];
 
