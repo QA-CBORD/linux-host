@@ -144,8 +144,8 @@ export class RewardsService {
 
   initContentStringsList(): Observable<ContentStringInfo[]> {
     return combineLatest(
-      this.contentService.retrieveContentStringList(ContentStringsParams),
-      this.contentService.retrieveContentStringList(GenericContentStringsParams)
+      this.contentService.retrieveContentStringListByRequest(ContentStringsParams),
+      this.contentService.retrieveContentStringListByRequest(GenericContentStringsParams)
     ).pipe(
       map(([res, res0]) => {
         const finalArray = [...res, ...res0];

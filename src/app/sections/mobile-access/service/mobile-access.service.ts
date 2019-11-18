@@ -47,8 +47,8 @@ export class MobileAccessService extends BaseService {
 
   initContentStringsList(): Observable<ContentStringInfo[]> {
     return combineLatest(
-      this.contentService.retrieveContentStringList(MobileAccessContentStringsParams),
-      this.contentService.retrieveContentStringList(GenericContentStringsParams)
+      this.contentService.retrieveContentStringListByRequest(MobileAccessContentStringsParams),
+      this.contentService.retrieveContentStringListByRequest(GenericContentStringsParams)
     ).pipe(
       map(([mobileCS, genericCS]) => {
         const finalArray = [...mobileCS, ...genericCS];
@@ -61,7 +61,7 @@ export class MobileAccessService extends BaseService {
 
   initContentStringsListgfas(): Observable<ContentStringInfo[]> {
     return this.contentService
-      .retrieveContentStringList(GenericContentStringsParams)
+      .retrieveContentStringListByRequest(GenericContentStringsParams)
       .pipe(tap(res => (this.content = res.reduce((init, elem) => ({ ...init, [elem.name]: elem.value }), {}))));
   }
 

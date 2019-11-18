@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 
 import { BaseService } from '../base-service/base.service';
 
@@ -24,7 +24,7 @@ export class ConfigurationService extends BaseService {
     map: new Map<string, SettingInfo>(),
   };
 
-  constructor(protected readonly http: HttpClient, ) {
+  constructor(protected readonly http: HttpClient) {
     super(http);
   }
 
@@ -51,10 +51,14 @@ export class ConfigurationService extends BaseService {
     };
 
     return this.httpRequestFull(this.serviceUrl, methodName, true, institutionId, params).pipe(
-      map(({ response }: MessageResponse<SettingInfo>) => response)
+      map(({ response }: MessageResponse<SettingInfo>) => response),
+      tap(response => {
+        this.addSettingToCache(response);
+        return response;
+      })
     );
   }
-  
+
   retrieveSettingList(institutionId: string, setting: Settings.SettingList): Observable<SettingInfoList> {
     const methodName = 'retrieveSettingList';
 
@@ -66,7 +70,27 @@ export class ConfigurationService extends BaseService {
     };
 
     return this.httpRequestFull(this.serviceUrl, methodName, true, institutionId, params).pipe(
-      map(({ response }: MessageResponse<SettingInfoList>) => response)
+      map(({ response }: MessageResponse<SettingInfoList>) => response),
+      tap(settingList => {
+        settingList.list.forEach(setting => this.addSettingToCache(setting));
+        return settingList;
+      })
     );
+  }
+
+  private addSettingToCache(setting: SettingInfo) {
+    const index = this.settings.list.map(item => item.name).indexOf(setting.name);
+
+    if (index > 0) {
+      this.settings.list[index] = setting;
+    } else {
+      this.settings.list.push(setting);
+    }
+
+    this.settings.map.set(this.getSettingKey(setting), setting);
+  }
+
+  private getSettingKey(setting: SettingInfo) {
+    return setting.domain + '~' + setting.category + '~' + setting.name;
   }
 }

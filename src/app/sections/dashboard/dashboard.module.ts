@@ -13,8 +13,6 @@ import { DashboardPage } from './dashboard.page';
 
 import {
   TileWrapperComponent,
-  AccountsTileComponent,
-  AccessCardComponent,
   TransactionsTileComponent,
   RewardsTileComponent,
   MobileAccessTileComponent,
@@ -24,8 +22,6 @@ import {
 } from './components';
 
 import {
-  AccessCardService,
-  AccountsService,
   TransactionService,
   SecureMessagingService,
   MobileAccessService,
@@ -33,12 +29,14 @@ import {
 } from './services';
 import { EditHomePageModalComponent } from './components/edit-home-page-modal';
 
-const imports = [IonicModule, CommonModule, DashboardRoutingModule, StHeaderModule];
+import { AccessCardModule } from './components/access-card/access-card.module';
+import { AccountsTileModule } from './components/accounts-tile/accounts-tile.module';
+
+const imports = [IonicModule, CommonModule, DashboardRoutingModule, StHeaderModule, AccessCardModule, AccountsTileModule];
+
 const declarations = [
   DashboardPage,
-  AccessCardComponent,
   TileWrapperComponent,
-  AccountsTileComponent,
   TransactionsTileComponent,
   RewardsTileComponent,
   OrderTileComponent,
@@ -50,8 +48,6 @@ const declarations = [
 const providers = [
   DashboardApiService,
   DashboardService,
-  AccessCardService,
-  AccountsService,
   TransactionService,
   SecureMessagingService,
   MobileAccessService,
