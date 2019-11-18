@@ -29,7 +29,13 @@
         <ion-label class="edit-home__reorder-label">
           {{ tile.name }}
         </ion-label>
-        <ion-toggle value="{{tile.name}}" class="edit-home__reorder-toggle" (ionChange)="onToggle($event)" mode="ios" checked="{{tile.checked}}"></ion-toggle>
+        <ion-toggle
+          value="{{ tile.name }}"
+          class="edit-home__reorder-toggle"
+          (ionChange)="onToggle($event)"
+          mode="ios"
+          checked="{{ tile.checked }}"
+        ></ion-toggle>
         <ion-reorder><ion-icon class="edit-home__reorder-icon" name="md-reorder"></ion-icon></ion-reorder>
       </ion-item>
     </ion-reorder-group>
