@@ -33,7 +33,7 @@ export class EditHomePageModalComponent implements OnInit {
   }
 
   onToggle(event) {
-    console.log(event.detail.name);
+    console.log(event.detail);
   }
 
   swap(arr, indexA, indexB) {
