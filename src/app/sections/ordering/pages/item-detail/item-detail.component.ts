@@ -1,11 +1,11 @@
 import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NAVIGATE } from 'src/app/app.global';
-import { zip, Subscription } from 'rxjs';
-import { CartService, MenuItemInfo, OrderItem } from '@sections/ordering';
-import { take, first } from 'rxjs/operators';
+import { Observable, Subscription, zip } from 'rxjs';
+import { CartService, MenuInfo, MenuItemInfo, OrderItem } from '@sections/ordering';
+import { first, take } from 'rxjs/operators';
 import { LoadingService } from '@core/service/loading/loading.service';
 
 @Component({
@@ -21,6 +21,7 @@ export class ItemDetailComponent implements OnInit {
   menuItem: MenuItemInfo;
   menuItemImg: string;
   isStaticHeader: boolean = true;
+  menuInfo$: Observable<MenuInfo>;
   errorState: boolean = false;
   cartOrderItemOptions: OrderItem[] = [];
 
@@ -34,6 +35,7 @@ export class ItemDetailComponent implements OnInit {
 
   ngOnInit() {
     this.initMenuItemOptions();
+    this.menuInfo$ = this.cartService.menuInfo$;
   }
 
   ngOnDestroy() {
@@ -42,9 +44,7 @@ export class ItemDetailComponent implements OnInit {
 
   onClose() {
     this.activatedRoute.data.pipe(take(1)).subscribe(({ data: { queryParams: { categoryId } } }) => {
-      const id = categoryId;
-
-      this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.menuCategoryItems, id], { skipLocationChange: true });
+      this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.menuCategoryItems, categoryId], { skipLocationChange: true });
     });
   }
 

@@ -17,6 +17,7 @@ export const CUSTOM_SINGLELIST_CONTROL_VALUE_ACCESSOR: any = {
 })
 export class SingleListComponent extends DefaultValueAccessor implements OnInit {
   @Input() name: string;
+  @Input() mealBased: boolean;
   @Input() options: MenuGroupItemInfo[];
   @Input() control: AbstractControl = new FormControl();
   @Input() isError: boolean;
@@ -29,7 +30,7 @@ export class SingleListComponent extends DefaultValueAccessor implements OnInit 
     this.onChange(this.control.value);
   }
 
-  itemChosen({ target: { value } }) {
+  itemChosen({detail: { value }}: CustomEvent) {
     this.writeValue(value);
     this.onChange(value);
   }

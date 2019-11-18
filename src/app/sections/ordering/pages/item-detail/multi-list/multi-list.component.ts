@@ -17,8 +17,9 @@ export const CUSTOM_MULTILIST_CONTROL_VALUE_ACCESSOR: any = {
 })
 export class MultiListComponent extends DefaultValueAccessor implements OnInit {
   @Input() name: string;
-  @Input() minimum: string;
-  @Input() maximum: string;
+  @Input() mealBased: boolean;
+  @Input() minimum: number;
+  @Input() maximum: number;
   @Input() options: MenuGroupItemInfo[];
   @Input() control: AbstractControl = new FormControl();
   @Input() isError: boolean;

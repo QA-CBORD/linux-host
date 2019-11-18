@@ -1,17 +1,16 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { MenuCategoryItemInfo } from '@sections/ordering';
 
 @Component({
   selector: 'st-category-list',
   templateUrl: './category-list.component.html',
   styleUrls: ['./category-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CategoryListComponent implements OnInit {
-  @Input() menuCategoryItems;
+export class CategoryListComponent {
+  @Input() menuCategoryItems: MenuCategoryItemInfo[];
+  @Input() mealBased: boolean;
   @Output() onItemClicked: EventEmitter<string> = new EventEmitter<string>();
-
-  constructor() {}
-
-  ngOnInit() {}
 
   triggerMenuItemClick({ menuItem: { id } }) {
     this.onItemClicked.emit(id);

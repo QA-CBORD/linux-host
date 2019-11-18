@@ -1,11 +1,11 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NAVIGATE } from 'src/app/app.global';
 import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
 import { CartService } from '@sections/ordering/services';
-import { zip, Observable } from 'rxjs';
+import { Observable, zip } from 'rxjs';
 import { take } from 'rxjs/operators';
-import { MenuCategoryInfo, MenuCategoryItemInfo } from '@sections/ordering/shared/models';
+import { MenuCategoryInfo, MenuCategoryItemInfo, MenuInfo } from '@sections/ordering/shared/models';
 
 @Component({
   selector: 'st-menu-category-items',
@@ -15,12 +15,13 @@ import { MenuCategoryInfo, MenuCategoryItemInfo } from '@sections/ordering/share
 })
 export class MenuCategoryItemsComponent implements OnInit {
   searchState: boolean = false;
+  menuInfo$: Observable<MenuInfo>;
   menuCategory: MenuCategoryInfo;
   filteredMenuCategoryItems: MenuCategoryItemInfo[] = [];
   menuItems$: Observable<number>;
 
   constructor(
-    private router: Router,
+    private readonly router: Router,
     private readonly cartService: CartService,
     private readonly activatedRoute: ActivatedRoute,
     private readonly cdRef: ChangeDetectorRef
@@ -32,12 +33,12 @@ export class MenuCategoryItemsComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.menuInfo$ = this.cartService.menuInfo$;
+
     zip(this.cartService.menuInfo$, this.activatedRoute.params)
       .pipe(take(1))
       .subscribe(([menu, { id }]) => {
-        const menuCategory = menu.menuCategories.find(category => category.id === id);
-
-        this.menuCategory = menuCategory;
+        this.menuCategory = menu.menuCategories.find(category => category.id === id);
       });
   }
 

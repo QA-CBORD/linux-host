@@ -10,8 +10,9 @@ import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module
 import { SingleListComponent } from './single-list';
 import { MultiListComponent } from './multi-list';
 import { ItemDetailResolver } from './resolvers/item-detail.resolver';
+import { PriceUnitsResolverModule } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.module';
 
-const declarations = [ItemDetailComponent, SingleListComponent, MultiListComponent];
+const declarations = [ItemDetailComponent, SingleListComponent, MultiListComponent, ];
 const imports = [
   CommonModule,
   IonicModule,
@@ -19,13 +20,14 @@ const imports = [
   StTextareaFloatingLabelModule,
   ItemDetailRoutingModule,
   StHeaderModule,
+  PriceUnitsResolverModule
 ];
 
 @NgModule({
   declarations,
+  imports,
   exports: [ItemDetailComponent],
   entryComponents: [ItemDetailComponent],
-  imports,
   providers: [ItemDetailResolver],
 })
 export class ItemDetailModule {}

@@ -7,9 +7,10 @@ import { MenuCategoryItemsComponent } from './menu-category-items.component';
 import { CategoryListComponent } from './category-list/category-list.component';
 import { IonicModule } from '@ionic/angular';
 import { ViewCartModule } from '@sections/ordering/shared/ui-components/view-cart';
+import { PriceUnitsResolverModule } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.module';
 
-const imports = [CommonModule, IonicModule, MenuCategoryItemsRoutingModule, StHeaderModule, ViewCartModule];
-const declarations = [MenuCategoryItemsComponent, CategoryListComponent];
+const imports = [CommonModule, IonicModule, MenuCategoryItemsRoutingModule, StHeaderModule, ViewCartModule, PriceUnitsResolverModule];
+const declarations = [MenuCategoryItemsComponent, CategoryListComponent, CategoryListComponent];
 
 @NgModule({
   declarations,
