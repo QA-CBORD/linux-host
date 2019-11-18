@@ -52,6 +52,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
   @Input() addressModalConfig: AddressModalSettings;
   @Output() onFormChange: EventEmitter<OrderDetailsFormData> = new EventEmitter<OrderDetailsFormData>();
   @Output() onOrderItemRemovedId: EventEmitter<string> = new EventEmitter<string>();
+  @Output() onOrderItemClicked: EventEmitter<OrderItem> = new EventEmitter<OrderItem>();
   detailsForm: FormGroup;
   private readonly sourceSub = new Subscription();
   showCVVControl = false;
@@ -80,6 +81,10 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
     }
   }
 
+  goToItemDetails(orderItem) {
+    this.onOrderItemClicked.emit(orderItem);
+  }
+  
   onRemoveOrderItem(id: string) {
     this.onOrderItemRemovedId.emit(id);
   }

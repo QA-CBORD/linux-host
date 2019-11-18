@@ -4,8 +4,9 @@ import { FormGroup, FormBuilder, Validators, AbstractControl, ValidationErrors }
 import { Router, ActivatedRoute } from '@angular/router';
 import { NAVIGATE } from 'src/app/app.global';
 import { zip, Subscription } from 'rxjs';
-import { CartService, MenuItemInfo } from '@sections/ordering';
-import { take } from 'rxjs/operators';
+import { CartService, MenuItemInfo, OrderItem } from '@sections/ordering';
+import { take, first } from 'rxjs/operators';
+import { LoadingService } from '@core/service/loading/loading.service';
 
 @Component({
   selector: 'st-item-detail',
@@ -21,13 +22,15 @@ export class ItemDetailComponent implements OnInit {
   menuItemImg: string;
   isStaticHeader: boolean = true;
   errorState: boolean = false;
+  cartOrderItemOptions: OrderItem[] = [];
 
   constructor(
     private readonly router: Router,
     private readonly fb: FormBuilder,
     private readonly activatedRoute: ActivatedRoute,
-    private readonly cartService: CartService
-  ) { }
+    private readonly cartService: CartService,
+    private readonly loadingService: LoadingService
+  ) {}
 
   ngOnInit() {
     this.initMenuItemOptions();
@@ -38,29 +41,59 @@ export class ItemDetailComponent implements OnInit {
   }
 
   onClose() {
-    this.activatedRoute.queryParams.pipe(take(1)).subscribe(({ categoryId }) => {
+    this.activatedRoute.data.pipe(take(1)).subscribe(({ data: { queryParams: { categoryId } } }) => {
       const id = categoryId;
 
       this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.menuCategoryItems, id], { skipLocationChange: true });
     });
   }
 
-  scroll({ detail }) {
-    this.isStaticHeader = detail.scrollTop === 0;
+  scroll({ detail: { scrollTop } }) {
+    if (this.menuItem.menuItemOptions.length) {
+      this.isStaticHeader = scrollTop === 0;
+    }
   }
 
   initForm() {
+    const cartSelectedItems = this.cartOrderItemOptions;
     const formGroup = {};
-    this.menuItem.menuItemOptions.map(({ menuGroup }) => {
-      if (menuGroup.maximum === 1 && menuGroup.minimum === 1) {
-        formGroup[menuGroup.name] = ['', [Validators.required]];
-        return;
-      }
-      formGroup[menuGroup.name] = [
-        [],
-        [validateMinLengthOfArray(menuGroup.minimum), validateMaxLengthOfArray(menuGroup.maximum)],
-      ];
-    });
+    if (!cartSelectedItems.length) {
+      this.menuItem.menuItemOptions.forEach(({ menuGroup: { minimum, maximum, name } }) => {
+        if (minimum === 1 && maximum === 1) {
+          formGroup[name] = ['', [Validators.required]];
+          return;
+        }
+        formGroup[name] = [[], [validateMinLengthOfArray(minimum), validateMaxLengthOfArray(maximum)]];
+      });
+    } else {
+      this.menuItem.menuItemOptions.forEach(({ menuGroup: { minimum, maximum, menuGroupItems, name } }) => {
+        if (minimum === 1 && maximum === 1) {
+          let formItemValue: string | MenuItemInfo = '';
+          const selectedOption = menuGroupItems.find(({ menuItem: { id } }) => {
+            const selectedItem = cartSelectedItems.find(({ menuItemId }) => menuItemId === id);
+
+            return selectedItem && id === selectedItem.menuItemId;
+          });
+
+          if (selectedOption) {
+            formItemValue = selectedOption.menuItem;
+          }
+          formGroup[name] = [formItemValue, [Validators.required]];
+        } else {
+          const selectedOptions = menuGroupItems.map(({ menuItem }) => {
+            const selectedItem = cartSelectedItems.find(({ menuItemId }) => menuItemId === menuItem.id);
+            if (selectedItem && menuItem.id === selectedItem.menuItemId) {
+              return menuItem;
+            }
+          });
+
+          formGroup[name] = [
+            selectedOptions.filter(item => item),
+            [validateMinLengthOfArray(minimum), validateMaxLengthOfArray(maximum)],
+          ];
+        }
+      });
+    }
 
     this.itemOrderForm = this.fb.group({
       ...formGroup,
@@ -90,60 +123,67 @@ export class ItemDetailComponent implements OnInit {
       this.errorState = true;
       return;
     }
-    const menuItem = {
-      menuItemId: this.menuItem.id,
-      orderItemOptions: [],
-      quantity: this.order.counter
-    }
-
+    const menuItem = this.configureMenuItem(this.menuItem.id, this.order.counter);
     const arrayOfvalues: any[] = Object.values(this.itemOrderForm.value);
     arrayOfvalues.forEach(value => {
-      if (typeof value === 'string') {
+      if (!value || typeof value === 'string') {
         return;
       }
 
       if (value.length) {
         value.forEach(elem => {
-          menuItem.orderItemOptions.push(
-            {
-              menuItemId: elem.id,
-              orderItemOptions: [],
-              quantity: menuItem.quantity
-            }
-          )
+          menuItem.orderItemOptions.push(this.configureMenuItem(elem.id, menuItem.quantity));
         });
         return;
       }
 
       if (value && value.id) {
-        menuItem.orderItemOptions.push(
-          {
-            menuItemId: value.id,
-            orderItemOptions: [],
-            quantity: menuItem.quantity
-          }
-        )
+        menuItem.orderItemOptions.push(this.configureMenuItem(value.id, menuItem.quantity));
         return;
       }
-    })
+    });
+
+    this.onSubmit(menuItem);
+  }
+
+  private configureMenuItem(id, quantity) {
+    return { menuItemId: id, orderItemOptions: [], quantity: quantity };
+  }
+
+  private async onSubmit(menuItem) {
+    if (this.cartOrderItemOptions.length) {
+      const data = await this.activatedRoute.data.pipe(first()).toPromise();
+      await this.cartService.removeOrderItemFromOrderById(data.data.queryParams.orderItemId);
+    }
 
     this.cartService.addOrderItems(menuItem);
-    this.cartService.validateOrder().subscribe(() => this.onClose(), () => console.log('invalid'));
+    this.loadingService.showSpinner();
+    await this.cartService
+      .validateOrder()
+      .pipe(first())
+      .toPromise()
+      .catch(() => this.loadingService.closeSpinner())
+      .finally(() => {
+        this.loadingService.closeSpinner();
+        this.onClose();
+      });
   }
 
   private initMenuItemOptions() {
-    zip(this.cartService.menuInfo$, this.activatedRoute.queryParams)
+    zip(this.activatedRoute.data, this.cartService.orderItems$)
       .pipe(take(1))
-      .subscribe(([{ menuCategories }, { categoryId, menuItemId }]) => {
-        const menuCategory = menuCategories.find(({ id }) => id === categoryId);
-        const itemDetail = menuCategory.menuCategoryItems.find(({ id }) => id === menuItemId);
-
-        this.menuItem = itemDetail.menuItem;
+      .subscribe(([{ data: { menuItem, queryParams: { orderItemId } } }, orderItems]) => {
+        this.menuItem = menuItem.menuItem;
         // Temporary, while we don't have images:
         // '/assets/images/temp-merchant-photo.jpg'
         this.menuItemImg = '/assets/images/temp-merchant-photo.jpg';
         this.order = { ...this.order, totalPrice: this.menuItem.price };
 
+        const cartSelectedItem = orderItems.find(({ id }) => id === orderItemId);
+        if (cartSelectedItem) {
+          this.cartOrderItemOptions = cartSelectedItem.orderItemOptions;
+          this.order = { ...this.order, counter: cartSelectedItem.quantity };
+        }
         this.initForm();
       });
   }
@@ -153,12 +193,12 @@ export class ItemDetailComponent implements OnInit {
       const arrayOfvalues: any[] = Object.values(formValue);
       this.order = { ...this.order, optionsPrice: 0 };
       arrayOfvalues.map(value => {
-        if (typeof value === 'string') {
+        if (!value || typeof value === 'string') {
           return;
         }
 
         if (value.length) {
-          const optionPrice = value.reduce((total, { price }) => price + total, 0);
+          const optionPrice = value.reduce((total, item) => (!item ? total : item.price + total), 0);
           this.order = { ...this.order, optionsPrice: this.order.optionsPrice + optionPrice };
           return;
         }
@@ -168,6 +208,7 @@ export class ItemDetailComponent implements OnInit {
           return;
         }
       });
+
       this.calculateTotalPrice();
     });
 

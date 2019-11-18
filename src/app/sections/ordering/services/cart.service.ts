@@ -14,10 +14,11 @@ export class CartService {
   private readonly cart = { order: null, merchant: null, menu: null, orderDetailsOptions: null };
   private readonly _cart$: BehaviorSubject<CartState> = new BehaviorSubject<CartState>(<CartState>this.cart);
 
-  constructor(private readonly userService: UserService,
-              private readonly merchantService: MerchantService,
-              private readonly api: OrderingApiService) {
-  }
+  constructor(
+    private readonly userService: UserService,
+    private readonly merchantService: MerchantService,
+    private readonly api: OrderingApiService
+  ) {}
 
   get merchant$(): Observable<MerchantInfo> {
     return this._cart$.asObservable().pipe(
@@ -59,6 +60,10 @@ export class CartService {
     );
   }
 
+  get orderItems$(): Observable<OrderItem[]> {
+    return this.orderInfo$.pipe(map(({ orderItems }) => orderItems));
+  }
+
   set _order(orderInfo: OrderInfo) {
     this.cart.order = { ...orderInfo };
     this.onStateChanged();
@@ -70,22 +75,24 @@ export class CartService {
     const prevMerchant = this.cart.merchant;
     this.cart.merchant = JSON.parse(JSON.stringify(merchant));
 
-    if (prevMerchant && prevMerchant.id !== merchant.id)
-      await this.refreshCartDate();
-    if (!prevMerchant)
-      await this.setInitialEmptyOrder();
+    if (prevMerchant && prevMerchant.id !== merchant.id) await this.refreshCartDate();
+    if (!prevMerchant) await this.setInitialEmptyOrder();
 
     this.onStateChanged();
   }
 
-  async setActiveMerchantsMenuByOrderOptions(dueTime: Date, orderType: ORDER_TYPE, address: AddressInfo): Promise<void> {
+  async setActiveMerchantsMenuByOrderOptions(
+    dueTime: Date,
+    orderType: ORDER_TYPE,
+    address: AddressInfo
+  ): Promise<void> {
     this.cart.orderDetailsOptions = { orderType, dueTime, address };
-    await this.getMerchantMenu().then(menu => this.cart.menu = menu);
+    await this.getMerchantMenu().then(menu => (this.cart.menu = menu));
     this.onStateChanged();
   }
 
   private async setInitialEmptyOrder(): Promise<void> {
-    await this.initEmptyOrder().then(order => this.cart.order = order);
+    await this.initEmptyOrder().then(order => (this.cart.order = order));
     this.onStateChanged();
   }
 
@@ -190,7 +197,9 @@ export class CartService {
     const { orderDetailsOptions: options, merchant } = this.cart;
     if (!options || !merchant || !options.dueTime || isNaN(options.orderType)) return Promise.reject();
 
-    return this.merchantService.getDisplayMenu(merchant.id, options.dueTime.toISOString(), options.orderType).toPromise();
+    return this.merchantService
+      .getDisplayMenu(merchant.id, options.dueTime.toISOString(), options.orderType)
+      .toPromise();
   }
 }
 

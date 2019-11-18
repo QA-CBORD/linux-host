@@ -23,7 +23,9 @@
             [type]="(order$ | async).type"
             [addressModalConfig]="(addressModalSettings$ | async)"
             (onFormChange)="onCartStateFormChanged($event)"
-            (onOrderItemRemovedId)="removeOrderItem($event)">
+            (onOrderItemRemovedId)="removeOrderItem($event)"
+            (onOrderItemClicked)="onOrderItemClicked($event)"
+    >
         <ion-button (click)="onSubmit()" class="btn" [ngClass]="{'btn--invalid': !cartFormState?.valid}">
             schedule order {{(order$ | async).total | priceUnitsResolver: (order$ | async).mealBased}}
         </ion-button>

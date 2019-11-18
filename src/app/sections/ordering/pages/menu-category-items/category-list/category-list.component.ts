@@ -6,15 +6,14 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
   styleUrls: ['./category-list.component.scss'],
 })
 export class CategoryListComponent implements OnInit {
-
   @Input() menuCategoryItems;
   @Output() onItemClicked: EventEmitter<string> = new EventEmitter<string>();
 
-  constructor() { }
+  constructor() {}
 
-  ngOnInit() { }
+  ngOnInit() {}
 
-  triggerMenuItemClick({ id }) {
+  triggerMenuItemClick({ menuItem: { id } }) {
     this.onItemClicked.emit(id);
   }
 }

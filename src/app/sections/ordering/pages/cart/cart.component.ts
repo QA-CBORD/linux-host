@@ -16,6 +16,7 @@ import {
   ORDER_VALIDATION_ERRORS,
   PAYMENT_SYSTEM_TYPE,
   SYSTEM_SETTINGS_CONFIG,
+  LOCAL_ROUTING,
 } from '@sections/ordering/ordering.config';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { SettingService } from '@core/service/settings/setting.service';
@@ -41,20 +42,20 @@ export class CartComponent implements OnInit {
   cartFormState: OrderDetailsFormData = {} as OrderDetailsFormData;
 
   constructor(private readonly cartService: CartService,
-              private readonly merchantService: MerchantService,
-              private readonly loadingService: LoadingService,
-              private readonly settingService: SettingService,
-              private readonly activatedRoute: ActivatedRoute,
-              private readonly toastController: ToastController,
-              private readonly cdRef: ChangeDetectorRef,
-              private readonly router: Router,
-              private readonly modalController: ModalController) {
+    private readonly merchantService: MerchantService,
+    private readonly loadingService: LoadingService,
+    private readonly settingService: SettingService,
+    private readonly activatedRoute: ActivatedRoute,
+    private readonly toastController: ToastController,
+    private readonly cdRef: ChangeDetectorRef,
+    private readonly router: Router,
+    private readonly modalController: ModalController) {
   }
 
   ngOnInit() {
     this.order$ = this.cartService.orderInfo$;
     this.address$ = this.cartService.orderDetailsOptions$.pipe(
-        map(({ address }) => address)
+      map(({ address }) => address)
     );
     this.addressModalSettings$ = this.initAddressModalConfig();
     this.getAvailableAccounts().then((acc) => this.accounts = acc);
@@ -63,28 +64,35 @@ export class CartComponent implements OnInit {
   initAddressModalConfig(): Observable<AddressModalSettings> {
     this.loadingService.showSpinner();
     return combineLatest(
-        this.cartService.orderDetailsOptions$,
-        this.merchantService.retrieveBuildings(),
-        this.cartService.merchant$,
-        this.getDeliveryLocations(),
-        this.getPickupLocations(),
+      this.cartService.orderDetailsOptions$,
+      this.merchantService.retrieveBuildings(),
+      this.cartService.merchant$,
+      this.getDeliveryLocations(),
+      this.getPickupLocations(),
     ).pipe(
-        map(([
-               { address: defaultAddress, orderType },
-               buildings,
-               { id: merchantId },
-               deliveryAddresses,
-               pickupLocations,
-             ]) => ({
-          defaultAddress,
-          buildings,
-          isOrderTypePickup: orderType === ORDER_TYPE.PICKUP,
-          pickupLocations,
-          deliveryAddresses,
-          merchantId,
-        })),
-        tap(this.loadingService.closeSpinner.bind(this.loadingService)),
+      map(([
+        { address: defaultAddress, orderType },
+        buildings,
+        { id: merchantId },
+        deliveryAddresses,
+        pickupLocations,
+      ]) => ({
+        defaultAddress,
+        buildings,
+        isOrderTypePickup: orderType === ORDER_TYPE.PICKUP,
+        pickupLocations,
+        deliveryAddresses,
+        merchantId,
+      })),
+      tap(this.loadingService.closeSpinner.bind(this.loadingService)),
     );
+  }
+
+  onOrderItemClicked({ menuItemId, id }) {
+    this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.itemDetail], {
+      skipLocationChange: true,
+      queryParams: { menuItemId: menuItemId, orderItemId: id },
+    });
   }
 
   onCartStateFormChanged(state) {
@@ -145,9 +153,9 @@ export class CartComponent implements OnInit {
     const { latitude, longitude } = await this.address$.pipe(first()).toPromise();
     const { id } = await this.cartService.merchant$.pipe(first()).toPromise();
     return this.merchantService.isOutsideMerchantDeliveryArea(
-        id,
-        latitude,
-        longitude,
+      id,
+      latitude,
+      longitude,
     ).toPromise();
   }
 
@@ -177,15 +185,15 @@ export class CartComponent implements OnInit {
 
   private filterCashlessAccounts(sourceAccounts: UserAccount[], displayTenders: string[]): UserAccount[] {
     return sourceAccounts.filter(({ paymentSystemType, accountTender }) =>
-        (paymentSystemType === PAYMENT_SYSTEM_TYPE.OPCS || paymentSystemType === PAYMENT_SYSTEM_TYPE.CSGOLD)
-        && displayTenders.includes(accountTender),
+      (paymentSystemType === PAYMENT_SYSTEM_TYPE.OPCS || paymentSystemType === PAYMENT_SYSTEM_TYPE.CSGOLD)
+      && displayTenders.includes(accountTender),
     );
   }
 
   private filterCreditAccounts(sourceAccounts: UserAccount[], displayCreditCards: string[]): UserAccount[] {
     return sourceAccounts.filter(({ paymentSystemType, id }) =>
-        (paymentSystemType === PAYMENT_SYSTEM_TYPE.MONETRA || paymentSystemType === PAYMENT_SYSTEM_TYPE.USAEPAY)
-        && displayCreditCards.includes(id),
+      (paymentSystemType === PAYMENT_SYSTEM_TYPE.MONETRA || paymentSystemType === PAYMENT_SYSTEM_TYPE.USAEPAY)
+      && displayCreditCards.includes(id),
     );
   }
 
@@ -203,7 +211,9 @@ export class CartComponent implements OnInit {
     const displayTenderSetting = this.settingService.getSettingByName(settings, SYSTEM_SETTINGS_CONFIG.displayTenders.name);
     const displayCreditCardSetting = this.settingService.getSettingByName(settings, SYSTEM_SETTINGS_CONFIG.displayCreditCard.name);
     const displayTenders = displayTenderSetting ? parseArrayFromString<string>(displayTenderSetting.value) : [];
-    const displayCreditCards = displayCreditCardSetting ? parseArrayFromString<string>(displayCreditCardSetting.value) : [];
+    const displayCreditCards = displayCreditCardSetting
+      ? parseArrayFromString<string>(displayCreditCardSetting.value)
+      : [];
     const { mealBased } = await this.cartService.menuInfo$.pipe(first()).toPromise();
 
     if (mealBased) {
@@ -227,11 +237,11 @@ export class CartComponent implements OnInit {
   private async validateOrder(onError): Promise<void> {
     await this.loadingService.showSpinner();
     await this.cartService.validateOrder().pipe(
-        first(),
-        handleServerError<OrderInfo>(ORDER_VALIDATION_ERRORS),
+      first(),
+      handleServerError<OrderInfo>(ORDER_VALIDATION_ERRORS),
     ).toPromise()
-        .catch(onError)
-        .finally(this.loadingService.closeSpinner.bind(this.loadingService));
+      .catch(onError)
+      .finally(this.loadingService.closeSpinner.bind(this.loadingService));
   }
 
   private async onValidateErrorToast(message: string) {
