@@ -206,6 +206,11 @@ export class CartComponent implements OnInit {
     const displayCreditCards = displayCreditCardSetting ? parseArrayFromString<string>(displayCreditCardSetting.value) : [];
     const { mealBased } = await this.cartService.menuInfo$.pipe(first()).toPromise();
 
+    if (mealBased) {
+      accounts = [...accounts, ...this.filterMealBasedAccounts(accInfo.accounts)];
+      return accounts;
+    }
+
     if (accInfo.cashlessAccepted && !accInfo.rollOverr) {
       accounts = [...accounts, ...this.filterCashlessAccounts(accInfo.accounts, displayTenders)];
     }
@@ -214,9 +219,6 @@ export class CartComponent implements OnInit {
     }
     if (accInfo.rollOver) {
       accounts = [...accounts, ...this.filterRollupAccounts(accInfo.accounts)];
-    }
-    if (mealBased) {
-      accounts = [...accounts, ...this.filterMealBasedAccounts(accInfo.accounts)];
     }
 
     return accounts;
