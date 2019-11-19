@@ -9,6 +9,8 @@ import { ConfigurationService } from 'src/app/core/service/configuration/configu
 
 import { Settings } from 'src/app/app.global';
 
+
+// TODO: DO WE NEED IT???
 @Injectable()
 export class AccessCardService {
   constructor(
