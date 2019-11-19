@@ -2,13 +2,13 @@ import { Component, OnDestroy } from '@angular/core';
 
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
-import { AlertController, Events, LoadingController, Platform, PopoverController } from '@ionic/angular';
+import { Events, LoadingController, Platform, PopoverController } from '@ionic/angular';
 
 import { Router } from '@angular/router';
 import * as Globals from './app.global';
 import { DataCache } from './core/utils/data-cache';
 import { from, of, fromEvent, Subscription } from 'rxjs';
-import { switchMap, tap, take, map } from 'rxjs/operators';
+import { switchMap, tap, take, map, takeWhile } from 'rxjs/operators';
 import { Environment } from './environment';
 import { NAVIGATE } from './app.global';
 import { TestProvider } from './core/provider/test-provider/test.provider';
@@ -40,7 +40,6 @@ export class AppComponent implements OnDestroy {
     private readonly statusBar: StatusBar,
     private readonly events: Events,
     private readonly loadCtrl: LoadingController,
-    private readonly alertCtrl: AlertController,
     private readonly testProvider: TestProvider,
     private readonly authService: AuthService,
     private readonly userService: UserService,
@@ -138,7 +137,7 @@ export class AppComponent implements OnDestroy {
   private testGetSession() {
     const subscription = this.testProvider.getTestUser().subscribe(
       () => {
-        this.destinationPage = NAVIGATE.housing;
+        this.destinationPage = NAVIGATE.mobileAccess;
         this.getUserInfo();
       },
       error => {
@@ -238,7 +237,7 @@ export class AppComponent implements OnDestroy {
   }
 
   private handlePageNavigation() {
-    this.router.navigate([this.destinationPage]); //, { skipLocationChange: true });
+    this.router.navigate([this.destinationPage], { skipLocationChange: true });
   }
 
   // Ionic gloabal configurate stuff

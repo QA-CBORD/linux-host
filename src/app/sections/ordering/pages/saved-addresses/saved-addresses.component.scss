@@ -1,0 +1,109 @@
+@import 'tools';
+
+.saved-addresses {
+	&__header {
+		border-bottom: 1px solid $color-whisper;
+	}
+}
+
+.delivery-address {
+	&__header {
+	  border-bottom: 1px solid $color-whisper;
+	}
+  
+	&__title {
+	  @include font-nunito-heavy(20px);
+	}
+  
+	&__add-address-container {
+	  padding: 0 20px;
+	}
+  
+	&__add-address-wrapper {
+	  margin-bottom: 20px;
+  
+	  @include font-nunito-semibold(16px);
+	}
+  
+	&__add-address-sign {
+	  position: relative;
+	  bottom: 2px;
+	  left: 4px;
+  
+	  @include font-nunito-semibold(24px);
+	}
+  
+	&__add-address-text {
+	  margin-left: 15px;
+	}
+  
+	&__add-address-btn-container {
+	  display: flex;
+	  justify-content: space-evenly;
+	}
+  
+	&__add-address-btn {
+	  min-width: 170px;
+	  height: 48px;
+  
+	  &:first-child {
+		--color: #166dff;
+		--background-hover: #e1e1e1;
+	  }
+  
+	  &:last-child {
+		--background: #e1e1e1;
+		--background-hover: #e1e1e1;
+		--color: #8e8e8e;
+	  }
+  
+	  @include font-nunito-heavy(14px);
+  
+	  &--valid {
+		--background: #166dff !important;
+		--color: #fff !important;
+	  }
+	}
+  
+	&__back-btn {
+	  --color: #000 !important;
+	  font-size: 20px;
+	}
+  
+	&__radio-label-header {
+	  @include font-nunito-semibold(16px);
+	}
+  
+	&__radio-label-sub-header {
+	  @include font-nunito-regular(12px);
+	}
+  
+	&__radio-container {
+	  &.item-radio-checked {
+		.delivery-address__radio-label {
+		  color: #000;
+		}
+	  }
+	}
+  
+	&__radio-item {
+	  --color-checked: #166dff;
+	  --color: #c4c4c4;
+	  margin-right: 10px;
+	}
+  
+	&__radio-label {
+	  color: #c4c4c4;
+  
+	  @include font-nunito-semibold(16px);
+	}
+  
+	&__submit-btn {
+	  --background: #166dff;
+	  margin: 20px 15px;
+	  height: 48px;
+  
+	  @include font-nunito-heavy(14px);
+	}
+	
+  }

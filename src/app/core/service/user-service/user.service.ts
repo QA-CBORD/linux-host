@@ -1,4 +1,3 @@
-import { NativeProvider, NativeData } from '../../provider/native-provider/native.provider';
 import { Injectable } from '@angular/core';
 
 import { map, switchMap, catchError } from 'rxjs/operators';
@@ -6,11 +5,15 @@ import { BehaviorSubject, Observable, of, from } from 'rxjs';
 
 import { BaseService } from '../base-service/base.service';
 import { UserInfo } from 'src/app/core/model/user/user-info.model';
-import { UserPhotoInfo } from '../../model/user';
+import { UserPhotoInfo, AddressInfoList } from '../../model/user';
 import { MessageResponse } from '../../model/service/message-response.model';
 import { UserSettings } from '../../model/user';
 import { UserPhotoList } from '../../model/user';
 import { HttpClient } from '@angular/common/http';
+import { NativeProvider, NativeData } from '@core/provider/native-provider/native.provider';
+import { AddressInfo } from '@core/model/address/address-info';
+import { ContentStringRequest } from '@core/model/content/content-string-request.model';
+import { SettingInfo } from '@core/model/configuration/setting-info.model';
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +21,10 @@ import { HttpClient } from '@angular/common/http';
 export class UserService extends BaseService {
   private readonly serviceUrl = '/json/user';
   private readonly userData$: BehaviorSubject<UserInfo> = new BehaviorSubject<UserInfo>(<UserInfo>{});
+  private readonly userAddresses$: BehaviorSubject<AddressInfo[]> = new BehaviorSubject<AddressInfo[]>([]);
   private userPhoto: UserPhotoInfo = null;
+
+  public selectedAddress:AddressInfo;
 
   constructor(readonly http: HttpClient, private readonly nativeProvider: NativeProvider) {
     super(http);
@@ -36,12 +42,21 @@ export class UserService extends BaseService {
     return this.userData$.asObservable();
   }
 
+  private set _userAddresses(userAddresses: AddressInfo[]) {
+    this.userAddresses$.next(userAddresses);
+  }
+
+  get userAddresses(): Observable<AddressInfo[]> {
+    return this.userAddresses$.asObservable();
+  }
+
   getUser(): Observable<UserInfo> {
     return this.httpRequest(this.serviceUrl, 'retrieve', true).pipe(map(({ response }) => (this._userData = response)));
   }
 
   getUserSettingsBySettingName(settingName: string): Observable<MessageResponse<UserSettings>> {
-    return this.httpRequest<MessageResponse<UserSettings>>(this.serviceUrl, 'retrieveSetting', true, { settingName });
+    return this.httpRequest<MessageResponse<UserSettings>>
+    (this.serviceUrl, 'retrieveSetting', true, { settingName });
   }
 
   saveUserSettingsBySettingName(settingName: string, settingValue: string): Observable<MessageResponse<boolean>> {
@@ -49,6 +64,15 @@ export class UserService extends BaseService {
       settingName,
       settingValue,
     });
+  }
+
+  getSettingByConfig(config: ContentStringRequest): Observable<SettingInfo> {
+    const methodName = 'retrieveSetting';
+
+    return this.userData.pipe(
+      switchMap(({ institutionId }) => this.httpRequestFull(this.serviceUrl, methodName, true, institutionId, config)),
+      map(({ response }: MessageResponse<SettingInfo>) => response)
+    );
   }
 
   setAcceptedPhoto(acceptedPhoto: UserPhotoInfo) {
@@ -95,8 +119,23 @@ export class UserService extends BaseService {
 
   getUserPhoto(userId: string): Observable<MessageResponse<UserPhotoInfo>> {
     const params = { userId };
-
     return this.httpRequest<MessageResponse<UserPhotoInfo>>(this.serviceUrl, 'retrieveUserPhoto', true, params);
+  }
+
+  getUserAddresses(): Observable<AddressInfo[]> {
+    const methodName = 'retrieveUserAddressList';
+    return this.getUser().pipe(
+      switchMap(({ id }) =>
+        this.httpRequest<MessageResponse<AddressInfoList>>(this.serviceUrl, methodName, true, {
+          userId: id,
+          addressId: '',
+        })
+      ),
+      map(({ response }) => {
+        this._userAddresses = response.addresses;
+        return response.addresses;
+      })
+    );
   }
 
   requestDeposit(

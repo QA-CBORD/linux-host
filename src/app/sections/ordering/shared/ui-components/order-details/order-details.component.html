@@ -1,0 +1,105 @@
+<div class="content">
+    <form novalidate [formGroup]="detailsForm">
+
+        <div class="order-details">
+            <ion-label class="order-details__label">{{type | typeMessage:'dueTime'}}</ion-label>
+
+            <p class="order-details__value">{{time | date: 'M/d/yy, h:mm a'}}</p>
+        </div>
+
+        <div class="order-details" *ngIf="address && (address | addressAsString: type).length">
+            <ion-label class="order-details__label">{{type | typeMessage:'address'}}</ion-label>
+
+            <p *ngIf="readonly && address; else addressEditable"
+               class="order-details__value">{{ address | addressAsString: type }}</p>
+
+            <ng-template #addressEditable>
+                <p class="order-details__value"
+                   [ngClass]="{'order-details__value--editable': isAddressClickable}"
+                   (click)="isAddressClickable && showAddressListModal()">{{address | addressAsString: type}}</p>
+            </ng-template>
+
+        </div>
+
+        <ion-list class="order-ingredient-list">
+            <ion-item-sliding
+                    [disabled]="readonly"
+                    *ngFor="let orderItem of orderItems"
+                    class="order-ingredient-list__ingredient">
+                <ion-item class="order-ingredient-list__item" (click)="goToItemDetails(orderItem)">
+                    <ion-label>
+                        <div class="order-ingredient-list__ingredient-header">
+                            <div class="order-ingredient-list__ingredient-number">{{orderItem.quantity}}</div>
+                            <div class="order-ingredient-list__ingredient-name">{{orderItem.name}}</div>
+                            <div class="order-ingredient-list__ingredient-price">{{orderItem.salePrice | priceUnitsResolver: mealBased}}</div>
+                        </div>
+                        <ng-container *ngIf="orderItem.orderItemOptions">
+                            <p *ngFor="let subIngredient of orderItem.orderItemOptions"
+                               class="order-ingredient-list__ingredient-description">
+                                {{subIngredient.name}} ({{subIngredient.salePrice | priceUnitsResolver: mealBased}})
+                            </p>
+                        </ng-container>
+                    </ion-label>
+                </ion-item>
+
+                <ion-item-options side="end">
+                    <ion-item-option (click)="onRemoveOrderItem(orderItem.id)" color="danger">Remove Item
+                    </ion-item-option>
+                </ion-item-options>
+            </ion-item-sliding>
+        </ion-list>
+
+        <div class="total">
+            <div *ngIf="subTotal" class="total__item">subtotal<span class="total__item-sum">{{subTotal | priceUnitsResolver: mealBased}}</span></div>
+            <div *ngIf="tax" class="total__item">tax<span class="total__item-sum">{{tax | priceUnitsResolver: mealBased}}</span></div>
+            <div *ngIf="tip" class="total__item">tip<span class="total__item-sum">{{tip | priceUnitsResolver: mealBased}}</span></div>
+            <div *ngIf="deliveryFee" class="total__item">delivery fee<span class="total__item-sum">{{deliveryFee | priceUnitsResolver: mealBased}}</span></div>
+            <div *ngIf="pickupFee" class="total__item">pickup fee<span class="total__item-sum">{{pickupFee | priceUnitsResolver: mealBased}}</span></div>
+            <div *ngIf="total" class="total__item total__item--bold">total<span class="total__item-sum">{{total | priceUnitsResolver: mealBased}}</span></div>
+        </div>
+
+        <div class="order-details__payment-method" *ngIf="readonly; else paymentSelect">
+            Payment Method<span>{{orderPaymentName}}</span>
+        </div>
+
+        <ng-template #paymentSelect>
+            <div class="order-details">
+                <ion-label class="order-details__label">Payment Method</ion-label>
+                <ion-select
+                        [formControlName]="controlsNames.paymentMethod"
+                        class="order-details__value"
+                        cancelText="Cancel"
+                        mode="md"
+                        placeholder="Please choose payment method"
+                        interface="action-sheet"
+                        (ionChange)="toggleCvvControl($event)"
+                        [interfaceOptions]="{cssClass: 'custom-deposit-actionSheet'}"
+                >
+                    <ion-select-option [value]="account" *ngFor="let account of accounts">
+                        {{ account.accountDisplayName }}
+                    </ion-select-option>
+                </ion-select>
+            </div>
+        </ng-template>
+
+        <div class="order-details" *ngIf="showCVVControl">
+            <ion-label class="order-details__label">Card Security Code:</ion-label>
+            <ion-input
+                    class="order-details__value"
+                    type="number"
+                    placeholder="Enter card security code"
+                    [formControlName]="controlsNames.cvv"
+            ></ion-input>
+            <div
+                    class="order-details--error"
+                    *ngIf="cvvFormControl.touched && cvvFormControl.invalid"
+            >
+                Please enter a valid card security code.
+            </div>
+        </div>
+    </form>
+
+    <div class="order-details__buttons">
+        <ng-content></ng-content>
+    </div>
+</div>

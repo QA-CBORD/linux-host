@@ -1,0 +1,100 @@
+<ion-header no-border
+            class="delivery-address__header">
+  <ion-toolbar mode="ios">
+    <ion-buttons slot="start">
+      <ion-button mode="md"
+                  class="delivery-address__back-btn"
+                  (click)="onClickedDone()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="delivery-address__title">Select {{addressLabel}} Address</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="delivery-address__add-address-container"
+       *ngIf="addressLabel !== 'Pickup'">
+    <ion-item class="delivery-address__add-address-wrapper"
+              lines="full"
+              [button]="true"
+              [detail]="false"
+              (click)="addNewAdddressState = !addNewAdddressState"><span class="delivery-address__add-address-sign">+
+      </span><span class="delivery-address__add-address-text">Add New Address</span>
+      <img src="/assets/icon/angle-{{ addNewAdddressState ? 'up' : 'down' }}-select.svg"
+           alt="arrow"
+           class="delivery-address__add-address-img">
+    </ion-item>
+
+    <ng-container *ngIf="addNewAdddressState">
+      <st-add-edit-addresses [buildingsOnCampus]="buildings"
+                             (onFormChanged)="onAddressFormChanged($event)"></st-add-edit-addresses>
+
+      <div class="delivery-address__add-address-btn-container">
+        <ion-button fill="clear"
+                    mode="md"
+                    expand="full"
+                    shape="round"
+                    class="delivery-address__add-address-btn"
+                    (click)="addNewAdddressState = !addNewAdddressState">
+          cancel
+        </ion-button>
+        <ion-button mode="md"
+                    expand="full"
+                    shape="round"
+                    class="delivery-address__add-address-btn"
+                    [ngClass]="{ 'delivery-address__add-address-btn--valid': addNewAdddressForm && addNewAdddressForm.valid }"
+                    (click)="addAddress();addNewAdddressState = !addNewAdddressState">
+          save
+        </ion-button>
+      </div>
+    </ng-container>
+  </div>
+
+  <ion-radio-group mode="md"
+                   class="delivery-address__radio-group"
+                   (ionChange)="onRadioGroupChanged($event)"
+                   *ngIf="listOfAddresses.length">
+    <ion-item lines="none"
+              class="delivery-address__radio-container"
+              *ngFor="let item of listOfAddresses">
+      <ion-label class="delivery-address__radio-label">
+        <div class="delivery-address__radio-label-content">
+          <ng-container *ngIf="item.onCampus; then onCampus; else ofCampus"></ng-container>
+
+          <ng-template #ofCampus>
+            <div class="delivery-address__radio-label-header">{{item.address1}}</div>
+            <div class="delivery-address__radio-label-sub-header">{{item.city}}, {{item.state}}</div>
+          </ng-template>
+          <ng-template #onCampus>
+            <div class="delivery-address__radio-label-header">{{item.room}}, {{item.building}}</div>
+          </ng-template>
+
+        </div>
+      </ion-label>
+      <ion-radio mode="md"
+                 slot="start"
+                 [value]="item"
+                 [checked]="item.checked"
+                 class="delivery-address__radio-item"></ion-radio>
+    </ion-item>
+  </ion-radio-group>
+
+  <ng-container [ngTemplateOutlet]="footerButton"
+                *ngIf="addNewAdddressState"></ng-container>
+</ion-content>
+<ion-footer mode="ios"
+            *ngIf="!addNewAdddressState">
+  <ng-container [ngTemplateOutlet]="footerButton"></ng-container>
+</ion-footer>
+
+
+<ng-template #footerButton>
+  <ion-button mode="md"
+              expand="block"
+              shape="round"
+              class="delivery-address__submit-btn"
+              (click)="onClickedDone(selectedAddress)">
+    set delivery address
+  </ion-button>
+</ng-template>

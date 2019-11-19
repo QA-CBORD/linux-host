@@ -1,4 +1,4 @@
-import { PopupTypes } from '../../../sections/rewards/rewards.config';
+import { PopupTypes } from '@sections/rewards/rewards.config';
 import { PopupButton } from '../button';
 
 export interface PopoverConfig {

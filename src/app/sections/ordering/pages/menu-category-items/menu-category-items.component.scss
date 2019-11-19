@@ -1,0 +1,62 @@
+@import 'tools';
+
+.menu-category {
+  width: 100%;
+  height: 100%;
+  --background: #f0f3f5;
+  
+  &__header-toolbar {
+    padding: 5px 15px 5px 10px;
+  }
+
+  &__header-back-btn {
+    display: block;
+    --icon-font-size: 20px;
+    --icon-margin-end: 5px;
+  }
+
+  &__header-search-btn {
+    height: 36px;
+    width: 36px;
+    border: 2px solid $color-white-smoke;
+    border-radius: 50%;
+  }
+
+  &__header-search-btn-icon {
+    font-size: 20px;
+  }
+
+  &__title {
+
+    @include font-nunito-heavy(20px);
+  }
+
+  &__search-header {
+    --background: #fff;
+  }
+
+  &__search-header-searchbar {
+    margin-top: 15px;
+    --icon-color: #000;
+  }
+
+  &__search-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 97px;
+  }
+
+  &__search-text {
+    text-align: center;
+    color: #00000099;
+    margin: 19px 72px 0;
+
+    @include font-nunito-semibold(16px);
+  }
+
+  &__footer {
+    background-color: $color-alice-blue;
+  }
+}

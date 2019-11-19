@@ -1,0 +1,25 @@
+<ion-list *ngIf="displayList">
+
+  <st-order-address-item 
+    *ngFor="let item of items;" 
+    (click)="itemSelected(item)" 
+    [line1]="item.address1" 
+    [line2]="item.city + ', ' + item.state" 
+    iconNameDefault="address-marker.svg" 
+    iconNameSelected="location-pin.svg" ></st-order-address-item>
+
+</ion-list>
+
+<ng-container *ngIf="!displayList">
+
+    <div class="address-list__empty-block-wrapper">
+      <div class="address-list__empty-block-message">
+        <img class="address-list__empty-block-img" src="/assets/images/addresses_empty_state.svg" alt="girl with map locations">
+        <p class="address-list__empty-block-text">You don't have any saved addresses.</p>
+      </div>
+      <button class="address-list__empty-block-btn" expand="block">
+        <span class="address-list__empty-block-btn-text">add new address</span>
+      </button>
+    </div>
+    
+</ng-container>

@@ -2,12 +2,12 @@ import { Injectable } from '@angular/core';
 import { CommerceApiService } from 'src/app/core/service/commerce/commerce-api.service';
 import { Observable, BehaviorSubject, zip, of } from 'rxjs';
 import { UserAccount } from 'src/app/core/model/account/account.model';
-import { PAYMENT_SYSTEM_TYPE } from '../accounts.config';
 import { map, tap, switchMap } from 'rxjs/operators';
 import { ContentStringRequest } from 'src/app/core/model/content/content-string-request.model';
 import { SettingInfo } from 'src/app/core/model/configuration/setting-info.model';
-import { AccountsApiService } from './accounts.api.service';
-import { BillMeMapping } from '../../../core/model/settings/billme-mapping.model';
+import { AccountsApiService } from '@sections/accounts/services/accounts.api.service';
+import { PAYMENT_SYSTEM_TYPE } from '@sections/accounts/accounts.config';
+import { BillMeMapping } from '@core/model/settings/billme-mapping.model';
 
 @Injectable()
 export class DepositService {

@@ -1,0 +1,23 @@
+import { Component, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'st-saved-addresses',
+  templateUrl: './saved-addresses.component.html',
+  styleUrls: ['./saved-addresses.component.scss'],
+})
+export class SavedAddressesComponent implements OnInit {
+  title = 'Saved Addresses';
+  addNewAdddressState: boolean = false;
+  displayList: boolean = true;
+  constructor() { }
+
+  ngOnInit() {}
+  
+  onModalClose(){
+  }
+
+  addressesLoaded(value: boolean) {
+    this.displayList = value;
+    // debugger;
+  }
+}

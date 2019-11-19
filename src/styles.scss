@@ -101,6 +101,55 @@
     }
   }
 
+  .order-options-action-sheet {
+    --height: 280px;
+    --border-radius: 10px 10px 0 0;
+
+    &.order-options-action-sheet-p-d {
+      --height: 360px;
+    }
+
+    .modal-wrapper {
+      position: absolute;
+      bottom: 0;
+    }
+  }
+
+  .picker-time-picker {
+    --border-color: #ebebeb;
+
+    .picker-wrapper {
+      border-radius: 10px 10px 0 0;
+    }
+
+    .picker-toolbar {
+      .picker-button {
+        color: #000;
+        @include font-nunito-regular(16px);
+      }
+
+      .picker-toolbar-cancel .picker-button {
+        padding-left: 30px;
+        @include font-nunito-regular(16px);
+
+        &::after {
+          content: 'Pickup Time';
+          color: #161616;
+          position: absolute;
+          left: 35%;
+
+          @include font-nunito-heavy(20px);
+        }
+      }
+    }
+
+    .picker-opt.picker-opt-selected {
+      color: #000;
+      
+      @include font-nunito-heavy(20px);
+    }
+  }
+
   // Shake animation:
   .shakeit {
     animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;

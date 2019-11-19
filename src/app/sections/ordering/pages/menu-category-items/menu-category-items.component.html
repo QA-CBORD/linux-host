@@ -1,0 +1,67 @@
+<ng-container *ngIf="searchState; then searchBlock; else menuCategoryBlock"></ng-container>
+
+<ng-template #searchBlock>
+    <ion-header class="menu-category__search-header" mode="ios" no-border>
+        <ion-toolbar class="menu-category__search-header-toolbar" mode="ios" no-border>
+            <ion-searchbar
+                    class="menu-category__search-header-searchbar"
+                    mode="ios"
+                    #searchBar
+                    type="text"
+                    debounce="500"
+                    show-cancel-button="always"
+                    (ionCancel)="onCancelClicked()"
+                    (ionInput)="onSearchItemFiltered($event)"
+            ></ion-searchbar>
+        </ion-toolbar>
+    </ion-header>
+    <ion-content class="menu-category" mode="ios">
+        <div *ngIf="!filteredMenuCategoryItems.length" class="menu-category__search-wrapper">
+            <img class="menu-category__search-icon" src="/assets/icon/search.svg"/>
+            <div class="menu-category__search-text">
+                Enter a few words to search the menu.
+            </div>
+        </div>
+        <st-category-list
+                [mealBased]="(menuInfo$ | async).mealBased"
+                [menuCategoryItems]="filteredMenuCategoryItems"
+                (onItemClicked)="triggerMenuItemClick($event)"
+        ></st-category-list>
+    </ion-content>
+</ng-template>
+
+<ng-template #menuCategoryBlock>
+    <ion-header class="menu-category__header" mode="ios">
+        <ion-toolbar mode="ios" class="menu-category__header-toolbar">
+            <ion-buttons slot="start">
+                <ion-back-button
+                        class="menu-category__header-back-btn"
+                        color="dark"
+                        [text]="'Full Menu'"
+                        [icon]="'ios-arrow-back'"
+                        mode="ios"
+                        (click)="onBackBtnClicked()"
+                >
+                </ion-back-button>
+            </ion-buttons>
+            <ion-buttons slot="end">
+                <ion-button class="menu-category__header-search-btn" color="dark" mode="ios" (click)="onSearchClick()">
+                    <ion-icon class="menu-category__header-search-btn-icon" name="search"></ion-icon>
+                </ion-button>
+            </ion-buttons>
+            <ion-title class="menu-category__header-title">
+                {{ menuCategory.name }}
+            </ion-title>
+        </ion-toolbar>
+    </ion-header>
+    <ion-content class="menu-category" mode="ios">
+        <st-category-list
+                [mealBased]="(menuInfo$ | async).mealBased"
+                [menuCategoryItems]="menuCategory.menuCategoryItems"
+                (onItemClicked)="triggerMenuItemClick($event)"
+        ></st-category-list>
+    </ion-content>
+</ng-template>
+<ion-footer mode="ios" class="menu-category__footer" *ngIf="(menuItems$ | async)">
+    <st-view-cart [menuItemsCount]="menuItems$ | async"></st-view-cart>
+</ion-footer>

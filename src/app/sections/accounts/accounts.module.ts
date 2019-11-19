@@ -10,15 +10,10 @@ import { TransactionService } from './services/transaction.service';
 import { TransactionsResolver } from './resolvers/transactions.resolver';
 import { AutoDepositPageResolver } from './resolvers/auto-deposit-page.resolver';
 import { SettingService } from './services/setting.service';
-import { DepositService } from './services/deposit.service';
-import { StHeaderModule } from '../../shared/ui-components/st-header/st-header.module';
+import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
+import { DepositService } from '@sections/accounts/services/deposit.service';
 
-const imports = [
-  CommonModule,
-  AccountsRoutingModule,
-  AccountsSharedModule,
-  StHeaderModule
-];
+const imports = [CommonModule, AccountsRoutingModule, AccountsSharedModule, StHeaderModule];
 const declarations = [AccountsPage];
 const providers = [
   AccountsApiService,
@@ -36,5 +31,4 @@ const providers = [
   imports,
   providers,
 })
-export class AccountsModule {
-}
+export class AccountsModule {}

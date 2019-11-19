@@ -1,0 +1,40 @@
+<ion-header class="final-order__header">
+  <ion-toolbar mode="ios">
+    <ion-buttons slot="start">
+      <ion-button color="dark" (click)="onClosed()">
+        <ion-icon size="large" slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="final-order__title">Order #{{checkNumber}}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="final-order__body-wrapper">
+    <img src="/assets/images/big_check_order.svg" alt="big check order" class="final-order__main-img" />
+    <div class="final-order__sub-header">Order Placed</div>
+
+    <div class="final-order__body">
+      Your order has been placed successfully. You will receive an email confirmation shortly.
+    </div>
+
+    <div class="total">
+      <div class="total__item">subtotal<span class="total__item-sum">{{subTotal | currency}}</span></div>
+      <div class="total__item">tax<span class="total__item-sum">{{tax | currency}}</span></div>
+      <div class="total__item">tip<span class="total__item-sum">{{tip | currency}}</span></div>
+      <div class="total__item">delivery fee<span class="total__item-sum">{{deliveryFee | currency}}</span></div>
+      <div class="total__item">pickup fee<span class="total__item-sum">{{pickupFee | currency}}</span></div>
+      <div class="total__item total__item--bold">total<span class="total__item-sum">{{total | currency}}</span>
+      </div>
+    </div>
+
+    <div class="final-order__payment-method-wrapper">
+      <span>Payment Method</span><span>{{accountName}}</span>
+    </div>
+  </div>
+</ion-content>
+<ion-footer mode="ios">
+  <ion-button fill="clear" mode="md" expand="full" class="final-order__btn" (click)="onClosed()">
+    Done
+  </ion-button>
+</ion-footer>

@@ -5,7 +5,7 @@ import { DataCache } from '../../utils/data-cache';
 
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { testCredentials } from '../../../../environments/environment';
+import { testCredentials } from '@environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +18,7 @@ export class TestProvider {
    *  Environment Institutions
    */
   getTestUser(): Observable<string> {
-    let creds = testCredentials.gold7;
+    let creds = testCredentials.odysseyPreview;
     return this.authService
       .authenticateUser(creds)
       .pipe(tap(newSessionId => DataCache.setSessionId(newSessionId)));
