@@ -42,20 +42,20 @@ export class CartComponent implements OnInit {
   cartFormState: OrderDetailsFormData = {} as OrderDetailsFormData;
 
   constructor(private readonly cartService: CartService,
-    private readonly merchantService: MerchantService,
-    private readonly loadingService: LoadingService,
-    private readonly settingService: SettingService,
-    private readonly activatedRoute: ActivatedRoute,
-    private readonly toastController: ToastController,
-    private readonly cdRef: ChangeDetectorRef,
-    private readonly router: Router,
-    private readonly modalController: ModalController) {
+              private readonly merchantService: MerchantService,
+              private readonly loadingService: LoadingService,
+              private readonly settingService: SettingService,
+              private readonly activatedRoute: ActivatedRoute,
+              private readonly toastController: ToastController,
+              private readonly cdRef: ChangeDetectorRef,
+              private readonly router: Router,
+              private readonly modalController: ModalController) {
   }
 
   ngOnInit() {
     this.order$ = this.cartService.orderInfo$;
     this.address$ = this.cartService.orderDetailsOptions$.pipe(
-      map(({ address }) => address)
+      map(({ address }) => address),
     );
     this.addressModalSettings$ = this.initAddressModalConfig();
     this.getAvailableAccounts().then((acc) => this.accounts = acc);
@@ -71,12 +71,12 @@ export class CartComponent implements OnInit {
       this.getPickupLocations(),
     ).pipe(
       map(([
-        { address: defaultAddress, orderType },
-        buildings,
-        { id: merchantId },
-        deliveryAddresses,
-        pickupLocations,
-      ]) => ({
+             { address: defaultAddress, orderType },
+             buildings,
+             { id: merchantId },
+             deliveryAddresses,
+             pickupLocations,
+           ]) => ({
         defaultAddress,
         buildings,
         isOrderTypePickup: orderType === ORDER_TYPE.PICKUP,
@@ -171,15 +171,15 @@ export class CartComponent implements OnInit {
 
   private getDeliveryLocations(): Observable<any> {
     return this.cartService.merchant$.pipe(
-        switchMap(({ id }) => this.merchantService.retrieveDeliveryAddresses(id)),
-        map(([, deliveryLocations]) => deliveryLocations));
+      switchMap(({ id }) => this.merchantService.retrieveDeliveryAddresses(id)),
+      map(([, deliveryLocations]) => deliveryLocations));
   }
 
   private getPickupLocations(): Observable<any> {
     return this.cartService.merchant$.pipe(
-        switchMap(({ storeAddress, settings }) => this.merchantService.retrievePickupLocations(
-            storeAddress, settings.map[MerchantSettings.pickupLocationsEnabled],
-        )),
+      switchMap(({ storeAddress, settings }) => this.merchantService.retrievePickupLocations(
+        storeAddress, settings.map[MerchantSettings.pickupLocationsEnabled],
+      )),
     );
   }
 
@@ -190,10 +190,9 @@ export class CartComponent implements OnInit {
     );
   }
 
-  private filterCreditAccounts(sourceAccounts: UserAccount[], displayCreditCards: string[]): UserAccount[] {
+  private filterCreditAccounts(sourceAccounts: UserAccount[]): UserAccount[] {
     return sourceAccounts.filter(({ paymentSystemType, id }) =>
-      (paymentSystemType === PAYMENT_SYSTEM_TYPE.MONETRA || paymentSystemType === PAYMENT_SYSTEM_TYPE.USAEPAY)
-      && displayCreditCards.includes(id),
+      paymentSystemType === PAYMENT_SYSTEM_TYPE.MONETRA || paymentSystemType === PAYMENT_SYSTEM_TYPE.USAEPAY,
     );
   }
 
@@ -206,32 +205,12 @@ export class CartComponent implements OnInit {
   }
 
   private async getAvailableAccounts(): Promise<UserAccount[]> {
-    let accounts = [];
     const { data: [settings, accInfo] } = await this.activatedRoute.data.pipe(first()).toPromise();
-    const displayTenderSetting = this.settingService.getSettingByName(settings, SYSTEM_SETTINGS_CONFIG.displayTenders.name);
-    const displayCreditCardSetting = this.settingService.getSettingByName(settings, SYSTEM_SETTINGS_CONFIG.displayCreditCard.name);
-    const displayTenders = displayTenderSetting ? parseArrayFromString<string>(displayTenderSetting.value) : [];
-    const displayCreditCards = displayCreditCardSetting
-      ? parseArrayFromString<string>(displayCreditCardSetting.value)
-      : [];
     const { mealBased } = await this.cartService.menuInfo$.pipe(first()).toPromise();
 
-    if (mealBased) {
-      accounts = [...accounts, ...this.filterMealBasedAccounts(accInfo.accounts)];
-      return accounts;
-    }
-
-    if (accInfo.cashlessAccepted && !accInfo.rollOverr) {
-      accounts = [...accounts, ...this.filterCashlessAccounts(accInfo.accounts, displayTenders)];
-    }
-    if (accInfo.creditAccepted) {
-      accounts = [...accounts, ...this.filterCreditAccounts(accInfo.accounts, displayCreditCards)];
-    }
-    if (accInfo.rollOver) {
-      accounts = [...accounts, ...this.filterRollupAccounts(accInfo.accounts)];
-    }
-
-    return accounts;
+    return mealBased
+      ? this.filterMealBasedAccounts(accInfo.accounts)
+      : this.extractNoneMealsAccounts(accInfo, settings);
   }
 
   private async validateOrder(onError): Promise<void> {
@@ -253,4 +232,26 @@ export class CartComponent implements OnInit {
     await toast.present();
   }
 
+  private extractNoneMealsAccounts({ cashlessAccepted, rollOver, accounts, creditAccepted }, settings): UserAccount[] {
+    accounts = this.filterNoneMealsAccounts(accounts);
+    let accs = [];
+    const displayTenderSetting = this.settingService.getSettingByName(settings, SYSTEM_SETTINGS_CONFIG.displayTenders.name);
+    const displayTenders = displayTenderSetting ? parseArrayFromString<string>(displayTenderSetting.value) : [];
+
+    if (cashlessAccepted && !rollOver) {
+      accs = [...accs, ...this.filterCashlessAccounts(accounts, displayTenders)];
+    }
+    if (creditAccepted) {
+      accs = [...accs, ...this.filterCreditAccounts(accounts)];
+    }
+    if (rollOver) {
+      accs = [...accs, ...this.filterRollupAccounts(accounts)];
+    }
+
+    return accs;
+  }
+
+  private filterNoneMealsAccounts(sourceAccounts): UserAccount[] {
+    return sourceAccounts.filter(({ accountType }: UserAccount) => accountType !== ACCOUNT_TYPES.meals);
+  }
 }
