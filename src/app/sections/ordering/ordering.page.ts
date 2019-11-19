@@ -86,6 +86,7 @@ export class OrderingPage implements OnInit {
     });
     modal.onDidDismiss().then(({ data }) => {
       if (data) {
+        this.cartService.clearActiveOrder();
         this.cartService.setActiveMerchantsMenuByOrderOptions(data.dueTime, data.orderType, data.address);
         this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.fullMenu], { skipLocationChange: true });
       }
