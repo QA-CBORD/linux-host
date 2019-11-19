@@ -59,6 +59,6 @@
     </ion-item>
   </ion-list>
 </ion-content>
-<ion-footer mode="ios" *ngIf="(menuItems$ | async)">
+<ion-footer mode="ios" class="full-menu__footer" *ngIf="(menuItems$ | async)">
   <st-view-cart [menuItemsCount]="menuItems$ | async"></st-view-cart>
 </ion-footer>
