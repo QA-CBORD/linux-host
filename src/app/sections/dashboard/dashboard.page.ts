@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { TileWrapperConfig } from './models/tile-wrapper-config.model';
 import { NAVIGATE } from 'src/app/app.global';
 import { TransactionService } from './services/transaction.service';
-import { SecureMessagingService, MobileAccessService, RewardsService } from './services';
+import { SecureMessagingService, MobileAccessService } from './services';
 import { tap, switchMap } from 'rxjs/operators';
 
 @Component({
@@ -98,7 +98,7 @@ export class DashboardPage implements OnInit {
     private readonly transactionService: TransactionService,
     private readonly secureMessagingService: SecureMessagingService,
     private readonly mobileAccessService: MobileAccessService,
-    private readonly rewardsService: RewardsService
+    
   ) {}
 
   ngOnInit() {
@@ -121,12 +121,12 @@ export class DashboardPage implements OnInit {
       console.log('SecureMessaging Groups and Messages:', r0, r1);
     });
     this.mobileAccessService.getLocations().subscribe(r => console.log('getMobileAccessLocations: ', r));
-    this.rewardsService
-      .getUserRewardTrackInfo()
-      .pipe(
-        tap(r => console.log('getUserRewardTrackInfo', r)),
-        switchMap(ti => this.rewardsService.getUserOptInStatus())
-      )
-      .subscribe(r => console.log('getUserOptInStatus', r));
+    // this.rewardsService
+    //   .getUserRewardTrackInfo()
+    //   .pipe(
+    //     tap(r => console.log('getUserRewardTrackInfo', r)),
+    //     switchMap(ti => this.rewardsService.getUserOptInStatus())
+    //   )
+    //   .subscribe(r => console.log('getUserOptInStatus', r));
   }
 }

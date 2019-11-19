@@ -24,12 +24,14 @@ import {
 import {
   TransactionService,
   SecureMessagingService,
-  MobileAccessService,
-  RewardsService,
+  MobileAccessService
 } from './services';
+
+import { RewardsService } from './../rewards/services/rewards.service';
 
 import { AccessCardModule } from './components/access-card/access-card.module';
 import { AccountsTileModule } from './components/accounts-tile/accounts-tile.module';
+import { RewardsApiService } from '../rewards/services';
 
 const imports = [IonicModule, CommonModule, DashboardRoutingModule, StHeaderModule, AccessCardModule, AccountsTileModule];
 
@@ -51,11 +53,12 @@ const providers = [
   MobileAccessService,
   RewardsService,
   DashboardPageResolver,
+  RewardsApiService
 ];
 
 @NgModule({
-  declarations,
   imports,
+  declarations,
   providers,
 })
 export class DashboardPageModule {}
