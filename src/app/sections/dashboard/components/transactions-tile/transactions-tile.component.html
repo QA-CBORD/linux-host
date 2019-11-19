@@ -7,7 +7,7 @@
       </div>
       <div class="transaction__type-container">
         <div class="transaction__type-entity">
-          {{ transaction.transactionType }}
+          {{ transaction.transactionType | transactionUnits: accountInfo.accountType }}
           {{ transaction.amount }}
         </div>
         <div class="transaction__type-label">{{ transaction.accountName }}</div>

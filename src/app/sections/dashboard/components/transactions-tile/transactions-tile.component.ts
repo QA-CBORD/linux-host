@@ -22,8 +22,5 @@ export class TransactionsTileComponent implements OnInit {
         this.transactions = r;
       });
   }
-
-  ngOnDestroy() {
-    this.transactionsSubscriptions.unsubscribe();
-  }
+  
 }
