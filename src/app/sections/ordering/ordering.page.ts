@@ -99,8 +99,6 @@ export class OrderingPage implements OnInit {
       message,
       duration: 1000,
       position: 'bottom',
-      closeButtonText: 'DISMISS',
-      showCloseButton: true,
     });
     await toast.present();
   }
