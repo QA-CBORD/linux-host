@@ -1,0 +1,9 @@
+<ng-container [formGroup]="parentGroup">
+  <ion-datetime
+    [displayFormat]="displayFormat"
+    [formControlName]="name"
+    class="date-select__control"
+    [class.date-select__control--filled]="isFilled"
+  ></ion-datetime>
+  <label [attr.for]="idd" class="date-select__placeholder">{{ label }}</label>
+</ng-container>

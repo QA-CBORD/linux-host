@@ -10,8 +10,8 @@ import { TransactionService } from './services/transaction.service';
 import { TransactionsResolver } from './resolvers/transactions.resolver';
 import { AutoDepositPageResolver } from './resolvers/auto-deposit-page.resolver';
 import { SettingService } from './services/setting.service';
-import { StHeaderModule } from '../../shared/ui-components/st-header/st-header.module';
-import { DepositService } from './pages/deposit-page/services/deposit.service';
+import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
+import { DepositService } from '@sections/accounts/services/deposit.service';
 
 const imports = [CommonModule, AccountsRoutingModule, AccountsSharedModule, StHeaderModule];
 const declarations = [AccountsPage];

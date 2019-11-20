@@ -1,4 +1,8 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+} from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject, iif, Observable, of, Subscription, zip } from 'rxjs';
 import { SettingService } from '../../services/setting.service';
@@ -14,19 +18,19 @@ import {
   formControlErrorDecorator,
   parseArrayFromString,
   validateMonthRange,
-} from '../../../../core/utils/general-helpers';
+} from '@core/utils/general-helpers';
 import { PopoverComponent } from './components/popover/popover.component';
 import { PopoverController, ToastController } from '@ionic/angular';
 import { map, switchMap, take, tap } from 'rxjs/operators';
 import { LOCAL_ROUTING, PAYMENT_TYPE, SYSTEM_SETTINGS_CONFIG } from '../../accounts.config';
-import { WEEK } from '../../../../core/utils/date-helper';
+import { WEEK } from '@core/utils/date-helper';
 import { UserAutoDepositSettingInfo } from './models/auto-deposit-settings';
 import { UserAccount } from 'src/app/core/model/account/account.model';
 import { ActivatedRoute, Router } from '@angular/router';
+import { DepositService } from '../../services/deposit.service';
 import { AutoDepositService } from './service/auto-deposit.service';
 import { NAVIGATE } from '../../../../app.global';
-import { BillMeMapping } from '../../../../core/model/settings/billme-mapping.model';
-import { DepositService } from '../deposit-page/services/deposit.service';
+import { BillMeMapping } from '@core/model/settings/billme-mapping.model';
 
 @Component({
   selector: 'st-automatic-deposit-page',
@@ -65,8 +69,9 @@ export class AutomaticDepositPageComponent {
     private readonly popoverCtrl: PopoverController,
     private readonly router: Router,
     private readonly toastController: ToastController,
-    private readonly cdRef: ChangeDetectorRef
-  ) {}
+    private readonly cdRef: ChangeDetectorRef,
+  ) {
+  }
 
   ionViewWillEnter() {
     this.showContent = true;
@@ -135,14 +140,18 @@ export class AutomaticDepositPageComponent {
   //-------------------- Dynamic form settings block --------------------------//
 
   get amountsForSelect$() {
-    return iif(() => this.activePaymentType === PAYMENT_TYPE.BILLME, this.billMeAmounts$, this.oneTimeAmounts$);
+    return iif(
+      () => this.activePaymentType === PAYMENT_TYPE.BILLME,
+      this.billMeAmounts$,
+      this.oneTimeAmounts$,
+    );
   }
 
   get isFreeFormEnabled$(): Observable<boolean> {
     return iif(
       () => this.activePaymentType === PAYMENT_TYPE.BILLME,
       this.isAllowFreeFormBillMe$,
-      this.isFreeFromDepositEnabled$
+      this.isFreeFromDepositEnabled$,
     );
   }
 
@@ -151,21 +160,24 @@ export class AutomaticDepositPageComponent {
       map(settings => {
         const settingInfo = this.settingService.getSettingByName(
           settings,
-          SYSTEM_SETTINGS_CONFIG.freeFromDepositEnabled.name
+          SYSTEM_SETTINGS_CONFIG.freeFromDepositEnabled.name,
         );
 
         return settingInfo && Boolean(Number(settingInfo.value));
-      })
+      }),
     );
   }
 
   get billMeAmounts$(): Observable<string[]> {
     return this.settingService.settings$.pipe(
       map(settings => {
-        const settingInfo = this.settingService.getSettingByName(settings, SYSTEM_SETTINGS_CONFIG.billMeAmounts.name);
+        const settingInfo = this.settingService.getSettingByName(
+          settings,
+          SYSTEM_SETTINGS_CONFIG.billMeAmounts.name,
+        );
 
         return settingInfo ? parseArrayFromString(settingInfo.value) : [];
-      })
+      }),
     );
   }
 
@@ -174,11 +186,11 @@ export class AutomaticDepositPageComponent {
       map(settings => {
         const settingInfo = this.settingService.getSettingByName(
           settings,
-          SYSTEM_SETTINGS_CONFIG.presetDepositAmountsCreditCard.name
+          SYSTEM_SETTINGS_CONFIG.presetDepositAmountsCreditCard.name,
         );
 
         return settingInfo ? parseArrayFromString(settingInfo.value) : [];
-      })
+      }),
     );
   }
 
@@ -187,11 +199,11 @@ export class AutomaticDepositPageComponent {
       map(settings => {
         const settingInfo = this.settingService.getSettingByName(
           settings,
-          SYSTEM_SETTINGS_CONFIG.lowBalanceAmounts.name
+          SYSTEM_SETTINGS_CONFIG.lowBalanceAmounts.name,
         );
 
         return settingInfo ? parseArrayFromString<string>(settingInfo.value) : [];
-      })
+      }),
     );
   }
 
@@ -200,11 +212,11 @@ export class AutomaticDepositPageComponent {
       map(settings => {
         const settingInfo = this.settingService.getSettingByName(
           settings,
-          SYSTEM_SETTINGS_CONFIG.autoDepositTenders.name
+          SYSTEM_SETTINGS_CONFIG.autoDepositTenders.name,
         );
 
         return settingInfo && parseArrayFromString<string>(settingInfo.value);
-      })
+      }),
     );
   }
 
@@ -213,11 +225,11 @@ export class AutomaticDepositPageComponent {
       map(settings => {
         const settingInfo = this.settingService.getSettingByName(
           settings,
-          SYSTEM_SETTINGS_CONFIG.billMeFreeFormEnabled.name
+          SYSTEM_SETTINGS_CONFIG.billMeFreeFormEnabled.name,
         );
 
         return settingInfo && Boolean(Number(settingInfo.value));
-      })
+      }),
     );
   }
 
@@ -226,31 +238,36 @@ export class AutomaticDepositPageComponent {
       map(settings => {
         const settingInfo = this.settingService.getSettingByName(
           settings,
-          SYSTEM_SETTINGS_CONFIG.lowBalanceFreeFormEnabled.name
+          SYSTEM_SETTINGS_CONFIG.lowBalanceFreeFormEnabled.name,
         );
 
         return settingInfo && Boolean(Number(settingInfo.value));
-      })
+      }),
     );
   }
 
   get isBillMePaymentTypesEnabled$(): Observable<boolean> {
-    return this.getPaymentTypeByName(SYSTEM_SETTINGS_CONFIG.autoDepositPaymentTypes.name).pipe(
-      map(types => types.indexOf(PAYMENT_TYPE.BILLME) !== -1)
-    );
+    return this.getPaymentTypeByName(SYSTEM_SETTINGS_CONFIG.autoDepositPaymentTypes.name)
+      .pipe(switchMap(types => {
+          if (types.length) {
+            return of(types.indexOf(PAYMENT_TYPE.BILLME) !== -1);
+          }
+          return this.getPaymentTypeByName(SYSTEM_SETTINGS_CONFIG.paymentTypes.name)
+            .pipe(map(types => types.indexOf(PAYMENT_TYPE.BILLME) !== -1));
+        }),
+      );
   }
 
   get isCreditPaymentTypeEnabled$(): Observable<boolean> {
-    return this.getPaymentTypeByName(SYSTEM_SETTINGS_CONFIG.autoDepositPaymentTypes.name).pipe(
-      switchMap(types => {
-        if (types.length) {
-          return of(types.indexOf(PAYMENT_TYPE.CREDIT) !== -1);
-        }
-        return this.getPaymentTypeByName(SYSTEM_SETTINGS_CONFIG.paymentTypes.name).pipe(
-          map(types => types.indexOf(PAYMENT_TYPE.CREDIT) !== -1)
-        );
-      })
-    );
+    return this.getPaymentTypeByName(SYSTEM_SETTINGS_CONFIG.autoDepositPaymentTypes.name)
+      .pipe(switchMap(types => {
+          if (types.length) {
+            return of(types.indexOf(PAYMENT_TYPE.CREDIT) !== -1);
+          }
+          return this.getPaymentTypeByName(SYSTEM_SETTINGS_CONFIG.paymentTypes.name)
+            .pipe(map(types => types.indexOf(PAYMENT_TYPE.CREDIT) !== -1));
+        }),
+      );
   }
 
   get billmeMappingArr$(): Observable<BillMeMapping[]> {
@@ -259,7 +276,7 @@ export class AutomaticDepositPageComponent {
         const settingInfo = this.settingService.getSettingByName(settings, SYSTEM_SETTINGS_CONFIG.billMeMapping.name);
 
         return settingInfo && parseArrayFromString<BillMeMapping>(settingInfo.value);
-      })
+      }),
     );
   }
 
@@ -267,8 +284,10 @@ export class AutomaticDepositPageComponent {
     return this.settingService.settings$.pipe(
       map(settings => {
         const settingInfo = this.settingService.getSettingByName(settings, settingName);
-        return settingInfo.value && settingInfo.value.length > 0 ? parseArrayFromString(settingInfo.value) : [];
-      })
+        return (settingInfo.value && settingInfo.value.length > 0)
+          ? parseArrayFromString(settingInfo.value)
+          : [];
+      }),
     );
   }
 
@@ -313,21 +332,21 @@ export class AutomaticDepositPageComponent {
   }
 
   private getAccounts() {
-    const subscription = zip(this.autoDepositTenders$, this.billmeMappingArr$, this.isBillMePaymentTypesEnabled$)
+    const subscription = zip(this.autoDepositTenders$, this.billmeMappingArr$, this.isBillMePaymentTypesEnabled$, this.isCreditPaymentTypeEnabled$)
       .pipe(
-        switchMap(([tenders, mapping, isBillMeEnabled]) => {
+        switchMap(([tenders, mapping, isBillMeEnabled, isCreditCardEnabled]) => {
           return this.route.data.pipe(
             tap(({ data: { accounts, depositSettings } }) => {
               this.autoDepositSettings = depositSettings;
-              this.creditCardSourceAccounts = this.depositService.filterAccountsByPaymentSystem(accounts);
+              this.creditCardSourceAccounts =isCreditCardEnabled ? this.depositService.filterAccountsByPaymentSystem(accounts) : [];
               this.sourceAccounts = [...this.creditCardSourceAccounts];
               if (isBillMeEnabled) this.sourceAccounts.push(PAYMENT_TYPE.BILLME);
               this.creditCardDestinationAccounts = this.depositService.filterCreditCardDestAccounts(tenders, accounts);
               this.billmeDestinationAccounts = this.depositService.filterBillmeDestAccounts(mapping, accounts);
               this.billmeSourceAccounts = this.depositService.filterBillmeSourceAccounts(mapping, accounts);
-            })
+            }),
           );
-        })
+        }),
       )
       .subscribe(({ data: { accounts, depositSettings } }) => {
         this.initPredefinedAccounts(depositSettings, accounts);
@@ -340,10 +359,7 @@ export class AutomaticDepositPageComponent {
 
   private initPredefinedAccounts(settings: UserAutoDepositSettingInfo, accounts: UserAccount[]) {
     this.paymentMethodAccount = settings.fromAccountId && accounts.find(acc => acc.id === settings.fromAccountId);
-    if (
-      this.paymentMethodAccount &&
-      !this.creditCardSourceAccounts.some(({ id }) => id === (<UserAccount>this.paymentMethodAccount).id)
-    ) {
+    if (this.paymentMethodAccount && !this.creditCardSourceAccounts.some(({ id }) => id === (<UserAccount>this.paymentMethodAccount).id)) {
       this.paymentMethodAccount = PAYMENT_TYPE.BILLME;
     }
     this.destinationAccount = settings.toAccountId && accounts.find(acc => acc.id === settings.toAccountId);
@@ -355,13 +371,6 @@ export class AutomaticDepositPageComponent {
 
   private set _activeType(type: number) {
     this.activeType = type;
-  }
-
-  private getSourceAccForBillmeDeposit(
-    selectedAccount: UserAccount,
-    billmeMappingArr: Array<BillMeMapping>
-  ): Observable<UserAccount> {
-    return this.depositService.sourceAccForBillmeDeposit(selectedAccount, billmeMappingArr);
   }
 
   // -------------------- Events handlers block--------------------------//
@@ -401,7 +410,7 @@ export class AutomaticDepositPageComponent {
       const { paymentMethod, account, ...rest } = this.automaticDepositForm.value;
       const isBillme: boolean = paymentMethod === PAYMENT_TYPE.BILLME;
       const sourceAccForBillmeDeposit: Observable<UserAccount> = this.billmeMappingArr$.pipe(
-        switchMap(billmeMappingArr => this.getSourceAccForBillmeDeposit(account, billmeMappingArr))
+        switchMap(billmeMappingArr => this.depositService.sourceAccForBillmeDeposit(account, billmeMappingArr)),
       );
 
       if (this.activeType === AUTO_DEPOSIT_PAYMENT_TYPES.timeBased) this.timeBasedResolver();
@@ -415,24 +424,21 @@ export class AutomaticDepositPageComponent {
       };
       predefinedUpdateCall = iif(() => isBillme, sourceAccForBillmeDeposit, of(paymentMethod)).pipe(
         switchMap(sourceAcc =>
-          this.autoDepositService.updateAutoDepositSettings({ ...resultSettings, fromAccountId: sourceAcc.id })
-        )
+          this.autoDepositService.updateAutoDepositSettings({ ...resultSettings, fromAccountId: sourceAcc.id }),
+        ),
       );
     }
 
-    predefinedUpdateCall
-      .pipe(take(1))
-      .subscribe(
-        async res => res && (await this.showModal()),
-        async () => await this.showToast('Something went wrong please try again later...')
-      );
+    predefinedUpdateCall.pipe(take(1)).subscribe(
+      async res => res && await this.showModal(),
+      async () => await this.showToast('Something went wrong please try again later...'),
+    );
   }
 
   private timeBasedResolver() {
-    this.autoDepositSettings =
-      this.activeFrequency === DEPOSIT_FREQUENCY.week
-        ? { ...this.autoDepositSettings, dayOfMonth: 0 }
-        : { ...this.autoDepositSettings, dayOfWeek: 0 };
+    this.autoDepositSettings = this.activeFrequency === DEPOSIT_FREQUENCY.week
+      ? { ...this.autoDepositSettings, dayOfMonth: 0 }
+      : { ...this.autoDepositSettings, dayOfWeek: 0 };
   }
 
   // -------------------- Events handlers block end --------------------------//
@@ -493,36 +499,46 @@ export class AutomaticDepositPageComponent {
 
   private setValidators() {
     this.automaticDepositForm.contains(AUTOMATIC_DEPOSIT_CONTROL_NAMES.lowBalanceAmount) &&
-      this.isLowBalanceFreeInput$
-        .pipe(
-          tap(val => {
-            const error = val
-              ? CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.lowBalanceAmount].requiredEnter
-              : CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.lowBalanceAmount].requiredSelect;
-
-            this.automaticDepositForm
-              .get(AUTOMATIC_DEPOSIT_CONTROL_NAMES.lowBalanceAmount)
-              .setValidators([formControlErrorDecorator(Validators.required, error)]);
-          }),
-          take(1)
-        )
-        .subscribe();
+    this.isLowBalanceFreeInput$
+      .pipe(
+        tap(val => {
+          let errors;
+          if (val) {
+            errors = [
+              formControlErrorDecorator(Validators.required, CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.lowBalanceAmount].requiredEnter),
+              formControlErrorDecorator(Validators.maxLength(6), CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.lowBalanceAmount].maxLength),
+            ];
+          } else {
+            errors = [formControlErrorDecorator(Validators.required, CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.lowBalanceAmount].requiredSelect)];
+          }
+          this.automaticDepositForm
+            .get(AUTOMATIC_DEPOSIT_CONTROL_NAMES.lowBalanceAmount)
+            .setValidators([...errors]);
+        }),
+        take(1),
+      )
+      .subscribe();
 
     this.automaticDepositForm.contains(AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit) &&
-      this.isAllowFreeFormBillMe$
-        .pipe(
-          tap(val => {
-            const error = val
-              ? CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit].requiredEnter
-              : CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit].requiredSelect;
-
-            this.automaticDepositForm
-              .get(AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit)
-              .setValidators([formControlErrorDecorator(Validators.required, error)]);
-          }),
-          take(1)
-        )
-        .subscribe();
+    this.isAllowFreeFormBillMe$
+      .pipe(
+        tap(val => {
+          let errors;
+          if (val) {
+            errors = [
+              formControlErrorDecorator(Validators.required, CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit].requiredEnter),
+              formControlErrorDecorator(Validators.maxLength(6), CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit].maxLength),
+            ];
+          } else {
+            errors = [formControlErrorDecorator(Validators.required, CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit].requiredSelect)];
+          }
+          this.automaticDepositForm
+            .get(AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit)
+            .setValidators([...errors]);
+        }),
+        take(1),
+      )
+      .subscribe();
   }
 
   // -------------------- Controls block --------------------------//
@@ -534,20 +550,14 @@ export class AutomaticDepositPageComponent {
     const paymentMethodValidators = [
       formControlErrorDecorator(
         Validators.required,
-        CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.paymentMethod].required
+        CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.paymentMethod].required,
       ),
     ];
 
     return {
-      [AUTOMATIC_DEPOSIT_CONTROL_NAMES.account]: [
-        this.destinationAccount ? this.destinationAccount : '',
-        accountValidators,
-      ],
+      [AUTOMATIC_DEPOSIT_CONTROL_NAMES.account]: [this.destinationAccount ? this.destinationAccount : '', accountValidators],
       [AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit]: [this.autoDepositSettings.amount],
-      [AUTOMATIC_DEPOSIT_CONTROL_NAMES.paymentMethod]: [
-        this.paymentMethodAccount ? this.paymentMethodAccount : '',
-        paymentMethodValidators,
-      ],
+      [AUTOMATIC_DEPOSIT_CONTROL_NAMES.paymentMethod]: [this.paymentMethodAccount ? this.paymentMethodAccount : '', paymentMethodValidators],
     };
   }
 
@@ -562,7 +572,7 @@ export class AutomaticDepositPageComponent {
       validators = [
         formControlErrorDecorator(
           Validators.required,
-          CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.dayOfMonth].required
+          CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.dayOfMonth].required,
         ),
         formControlErrorDecorator(validateMonthRange, CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.dayOfMonth].range),
       ];
@@ -572,7 +582,7 @@ export class AutomaticDepositPageComponent {
       validators = [
         formControlErrorDecorator(
           Validators.required,
-          CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.dayOfWeek].required
+          CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.dayOfWeek].required,
         ),
       ];
     }
@@ -646,6 +656,7 @@ export const CONTROL_ERROR = {
   [AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit]: {
     requiredEnter: 'You must enter an amount.',
     requiredSelect: 'You must select a suitable amount from select',
+    maxLength: 'Value can not be greater than 999 999',
   },
   [AUTOMATIC_DEPOSIT_CONTROL_NAMES.paymentMethod]: {
     required: 'You must select payment method.',
@@ -655,6 +666,7 @@ export const CONTROL_ERROR = {
   },
   [AUTOMATIC_DEPOSIT_CONTROL_NAMES.lowBalanceAmount]: {
     requiredEnter: 'You must enter an amount.',
+    maxLength: 'Value can not be greater than 999 999',
     requiredSelect: 'You must select a suitable amount from select',
   },
   [AUTOMATIC_DEPOSIT_CONTROL_NAMES.dayOfWeek]: {

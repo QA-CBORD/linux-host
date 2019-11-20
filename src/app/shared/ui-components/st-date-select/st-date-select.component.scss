@@ -1,0 +1,66 @@
+@import 'tools';
+
+%placeholder-transform {
+  background-color: $color-white;
+  padding: 0 3px;
+  transform: scale(0.75) translateY(-29px);
+  opacity: 1;
+}
+
+:host {
+  display: block;
+  position: relative;
+}
+
+.date-select__control {
+  --padding-top: 14px;
+  --padding-bottom: 14px;
+  --padding-start: 13px;
+
+  border: 1px solid $color-light-gray;
+  border-radius: 8px;
+  position: relative;
+
+  &:focus,
+  &:focus-within,
+  &:active,
+  &--filled {
+    @include chevron-down-active();
+
+    --padding-top: 13px;
+    --padding-bottom: 13px;
+
+    border: 2px solid $color-dodger-blue;
+
+    & + .date-select__placeholder {
+      @extend %placeholder-transform;
+
+      color: $color-dodger-blue;
+    }
+  }
+
+  &.ng-invalid.ng-touched {
+    @include chevron-down-error();
+
+    border: 2px solid $color-alizarin;
+
+    & + .date-select__placeholder {
+      @extend %placeholder-transform;
+
+      color: $color-alizarin;
+    }
+  }
+
+  @include chevron-down();
+}
+
+.date-select__placeholder {
+  position: absolute;
+  top: 15px;
+  left: 13px;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  transform-origin: 0 0;
+  pointer-events: none;
+  opacity: 0.5;
+  z-index: 2;
+}

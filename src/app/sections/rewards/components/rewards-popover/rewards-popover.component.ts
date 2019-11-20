@@ -70,10 +70,10 @@ export class RewardsPopoverComponent implements OnInit, AfterViewInit {
     return '';
   }
 
-  private getMessage({ name = null, itemName = null, shortDescription }: RedeemableRewardInfo): Message {
+  private getMessage({ name = null, itemName = null, description }: RedeemableRewardInfo): Message {
     return {
       title: name || itemName,
-      description: shortDescription,
+      description: description,
     };
   }
 

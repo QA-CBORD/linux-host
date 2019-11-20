@@ -21,6 +21,7 @@ const routes: Routes = [
     path: NAVIGATE.ordering,
     loadChildren: './sections/ordering/ordering.module#OrderingPageModule',
   },
+  { path: NAVIGATE.housing, loadChildren: './sections/housing/housing.module#HousingPageModule' },
 ];
 
 @NgModule({

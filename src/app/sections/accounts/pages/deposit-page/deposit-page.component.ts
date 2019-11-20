@@ -11,7 +11,7 @@ import {
 } from '../../accounts.config';
 import { SettingInfo } from 'src/app/core/model/configuration/setting-info.model';
 import { iif, Observable, of, Subscription } from 'rxjs';
-import { UserAccount } from '../../../../core/model/account/account.model';
+import { UserAccount } from '@core/model/account/account.model';
 import { ConfirmDepositPopoverComponent } from '../../shared/ui-components/confirm-deposit-popover/confirm-deposit-popover.component';
 import { DepositModalComponent } from '../../shared/ui-components/deposit-modal/deposit-modal.component';
 import { BUTTON_TYPE } from 'src/app/core/utils/buttons.config';
@@ -19,9 +19,9 @@ import { amountRangeValidator } from './amount-range.validator';
 import { Router } from '@angular/router';
 import { NAVIGATE } from 'src/app/app.global';
 import { LoadingService } from 'src/app/core/service/loading/loading.service';
-import { parseArrayFromString } from '../../../../core/utils/general-helpers';
-import { BillMeMapping } from '../../../../core/model/settings/billme-mapping.model';
-import { DepositService } from './services/deposit.service';
+import { DepositService } from '@sections/accounts/services/deposit.service';
+import { parseArrayFromString } from '@core/utils/general-helpers';
+import { BillMeMapping } from '@core/model/settings/billme-mapping.model';
 
 @Component({
   selector: 'st-deposit-page',

@@ -66,3 +66,33 @@
   margin: 0;
   color: $color;
 }
+
+@mixin chevron-down() {
+  &::before {
+    background-color: $color-white;
+    background-image: url('/assets/icon/chevron-down.svg');
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    width: 14px;
+    height: 9px;
+    transform: translateY(-50%);
+    pointer-events: none;
+    z-index: 1;
+  }
+}
+
+@mixin chevron-down-active() {
+  &::before {
+    background-image: url('/assets/icon/chevron-down-active.svg');
+    right: 14px;
+  }
+}
+
+@mixin chevron-down-error() {
+  &::before {
+    background-image: url('/assets/icon/chevron-down-error.svg');
+    right: 14px;
+  }
+}

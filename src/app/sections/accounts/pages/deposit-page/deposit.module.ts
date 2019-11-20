@@ -6,8 +6,8 @@ import { DepositPageComponent } from './deposit-page.component';
 import { DepositRoutingModule } from './deposit.routing.module';
 import { AccountsSharedModule } from '../../shared/shared.module';
 import { DepositResolver } from './resolvers/deposit.resolver';
-import { StHeaderModule } from '../../../../shared/ui-components/st-header/st-header.module';
-import { DepositService } from './services/deposit.service';
+import { DepositService } from '@sections/accounts/services/deposit.service';
+import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
 
 const imports = [
   CommonModule,

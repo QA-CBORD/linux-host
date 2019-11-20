@@ -4,7 +4,7 @@ import { Observable, zip } from 'rxjs';
 import { SYSTEM_SETTINGS_CONFIG } from '../../../accounts.config';
 import { LoadingService } from 'src/app/core/service/loading/loading.service';
 import { tap } from 'rxjs/operators';
-import { DepositService } from '../services/deposit.service';
+import { DepositService } from '@sections/accounts/services/deposit.service';
 
 @Injectable()
 export class DepositResolver implements Resolve<Observable<any>> {
