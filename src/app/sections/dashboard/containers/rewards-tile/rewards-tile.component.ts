@@ -11,6 +11,8 @@ import { RewardsService } from './services/rewards.service';
   
 })
 export class RewardsTileComponent implements OnInit {
+  showSpiner = true;
+
   userLevel;
   userLevelName;
   currentPointsSpent;
@@ -42,7 +44,10 @@ export class RewardsTileComponent implements OnInit {
           return trackLevels.find(({ level }) => level === userLevel + 1) ? nextLevel.requiredPoints : null;
         })
       ).pipe(take(1))
-      .subscribe(nextLevelPoints => this.nextLevelPoints = nextLevelPoints);
+      .subscribe(nextLevelPoints => {
+        this.nextLevelPoints = nextLevelPoints;
+        this.showSpiner = false;
+      });
 
     this.width = this.calculateWidth();
     this.expToNextLvl = this.calculateExpToNextLvl();

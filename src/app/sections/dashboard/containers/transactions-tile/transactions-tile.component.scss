@@ -23,11 +23,12 @@
 
   &__label-container {
     margin-top: 15px;
-    width: 100%;
+    width: 70%;
     text-align: left;
   }
 
   &__label {
+    @include ellipsis;
     @include font-nunito-semibold(16px);
   }
 
@@ -38,7 +39,7 @@
 
   &__type-container {
     margin-top: 15px;
-    width: 100%;
+    width: 30%;
     text-align: right;
   }
 

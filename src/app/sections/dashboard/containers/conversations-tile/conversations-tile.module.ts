@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { ConversationsTileComponent } from './conversations-tile.component';
-import { SecureMessagingService } from './services/secure-messaging.service';
+import { SecureMessagingApiService, SecureMessagingService } from '@sections/secure-messaging';
 
 
 const imports = [IonicModule, CommonModule];
@@ -12,7 +12,7 @@ const exports = [ConversationsTileComponent];
 @NgModule({
   declarations,
   imports,
-  providers: [SecureMessagingService],
+  providers: [SecureMessagingService, SecureMessagingApiService],
   exports,
 })
 export class ConversationsTileModule { }

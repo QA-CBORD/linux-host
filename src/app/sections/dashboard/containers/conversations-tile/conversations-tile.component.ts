@@ -1,5 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 
+import { take, tap } from 'rxjs/operators';
+import { SecureMessagingService } from '@sections/secure-messaging';
+import { Subscription } from 'rxjs';
+
 @Component({
   selector: 'st-conversations-tile',
   templateUrl: './conversations-tile.component.html',
@@ -23,9 +27,21 @@ export class ConversationsTileComponent implements OnInit {
       time: '1 minute ago'
     },
   ];
-  // your Dashboard UI branch
-  constructor() { }
+  groupsArray: any;
+  messagesArray: any;
+  subscription: Subscription;
+  
+  constructor( private readonly secureMessagingService: SecureMessagingService) { }
 
-  ngOnInit() {}
+  ngOnInit() {
 
+
+    this.secureMessagingService.getInitialData().subscribe(([r0, r1]) => {
+        console.log('SecureMessaging Groups and Messages:', r0, r1);
+      });
+
+   
+  }
+
+  
 }

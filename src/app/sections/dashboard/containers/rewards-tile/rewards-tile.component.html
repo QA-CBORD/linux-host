@@ -1,4 +1,7 @@
-<div class="rewards">
+<div *ngIf="showSpiner" class="spinner-wrapper">
+    <ion-spinner></ion-spinner>
+</div>
+<div *ngIf="!showSpiner" class="rewards">
   <p class="progress__level">Level {{ userLevel }}: {{ userLevelName }}</p>
   <div class="progress-bar">
     <div class="progress-bar__line" [style.width.%]="width">
