@@ -1,14 +1,14 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { FavoriteMerchantsComponent } from './favorite-merchants.component';
-import { FavoriteMerhantsResolver } from './resolvers/favorite-merchants.resolver';
+import { FavoriteMerchantsComponent } from '@sections/ordering/pages';
+import { FavoriteMerchantsResolver } from './resolvers/favorite-merchants.resolver';
 
 const routes: Routes = [
   {
     path: '',
     component: FavoriteMerchantsComponent,
     resolve: {
-      data: FavoriteMerhantsResolver,
+      data: FavoriteMerchantsResolver,
     },
   },
 ];

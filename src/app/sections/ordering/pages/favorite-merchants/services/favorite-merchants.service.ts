@@ -7,12 +7,8 @@ import { HttpClient } from '@angular/common/http';
 import { MerchantInfo } from '@sections/ordering';
 
 @Injectable()
-export class FavoriteMerhantsService extends BaseService {
+export class FavoriteMerchantsService extends BaseService {
   private readonly serviceUrlMerchant: string = '/json/merchant';
-
-  constructor(protected readonly http: HttpClient) {
-    super(http);
-  }
 
   getFavoriteMerchants(): Observable<MerchantInfo[]> {
     const methodName = 'getFavoriteMerchants';

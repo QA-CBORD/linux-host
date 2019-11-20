@@ -1,12 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ModalController, ToastController } from '@ionic/angular';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { FavoriteMerhantsService } from './services/favorite-merhants.service';
+import { FavoriteMerchantsService } from './services/favorite-merchants.service';
 import { switchMap, take } from 'rxjs/operators';
 import { NAVIGATE } from 'src/app/app.global';
 import { MerchantInfo, MerchantOrderTypesInfo } from '../../shared/models';
-import { MerchantService, CartService } from '../../services';
+import { CartService, MerchantService } from '../../services';
 import { OrderOptionsActionSheetComponent } from '../../shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
 
@@ -14,6 +14,7 @@ import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
   selector: 'st-favorite-merchants',
   templateUrl: './favorite-merchants.component.html',
   styleUrls: ['./favorite-merchants.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FavoriteMerchantsComponent implements OnInit {
   merchantList: MerchantInfo[];
@@ -24,7 +25,7 @@ export class FavoriteMerchantsComponent implements OnInit {
     private readonly merchantService: MerchantService,
     private readonly loadingService: LoadingService,
     private readonly toastController: ToastController,
-    private readonly favoriteMerhantsService: FavoriteMerhantsService,
+    private readonly favoriteMerchantsService: FavoriteMerchantsService,
     private readonly cartService: CartService
   ) { }
 
@@ -36,16 +37,15 @@ export class FavoriteMerchantsComponent implements OnInit {
     this.router.navigate([NAVIGATE.ordering], { skipLocationChange: true });
   }
 
-  merchantClickHandler(merchantInfo) {
+  async merchantClickHandler(merchantInfo): Promise<void> {
     this.openOrderOptions(merchantInfo);
   }
 
-  favouriteHandler({ id }) {
-    this.loadingService.showSpinner();
-    this.merchantService
-      .removeFavoriteMerchant(id)
+  async favouriteHandler({ id }): Promise<void> {
+    await this.loadingService.showSpinner();
+    this.merchantService.removeFavoriteMerchant(id)
       .pipe(
-        switchMap(() => this.favoriteMerhantsService.getFavoriteMerchants()),
+        switchMap(() => this.favoriteMerchantsService.getFavoriteMerchants()),
         take(1)
       )
       .subscribe(
@@ -59,15 +59,15 @@ export class FavoriteMerchantsComponent implements OnInit {
   }
 
   locationPinHandler(event: string) {
-    console.log(`Location Pin Clicked - Merch Id: ${event}`);
+    // console.log(`Location Pin Clicked - Merch Id: ${event}`);
   }
 
-  private openOrderOptions(merchant) {
-    this.cartService.setActiveMerchant(merchant);
-    this.actionSheet(merchant.orderTypes, merchant.id, merchant.storeAddress, merchant.settings);
+  private async openOrderOptions(merchant): Promise<void> {
+    await this.cartService.setActiveMerchant(merchant);
+    await this.actionSheet(merchant.orderTypes, merchant.id, merchant.storeAddress, merchant.settings);
   }
 
-  private async actionSheet(orderTypes: MerchantOrderTypesInfo, merchantId, storeAddress, settings) {
+  private async actionSheet(orderTypes: MerchantOrderTypesInfo, merchantId, storeAddress, settings): Promise<void> {
     const footerButtonName = 'continue';
     let cssClass = 'order-options-action-sheet';
     cssClass += orderTypes.delivery && orderTypes.pickup ? ' order-options-action-sheet-p-d' : '';
@@ -85,14 +85,14 @@ export class FavoriteMerchantsComponent implements OnInit {
     });
     modal.onDidDismiss().then(({ data }) => {
       if (data) {
-        this.cartService.setActiveMerchantsMenuByOrderOptions(data.dueTime, data.orderType, data.addressId)
+        this.cartService.setActiveMerchantsMenuByOrderOptions(data.dueTime, data.orderType, data.addressId);
         this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.fullMenu], { skipLocationChange: true });
       }
     });
     await modal.present();
   }
 
-  private async onToastDisplayed(message: string) {
+  private async onToastDisplayed(message: string): Promise<void> {
     const toast = await this.toastController.create({
       message,
       duration: 1000,
@@ -100,6 +100,7 @@ export class FavoriteMerchantsComponent implements OnInit {
       closeButtonText: 'DISMISS',
       showCloseButton: true,
     });
-    toast.present();
+
+    await toast.present();
   }
 }

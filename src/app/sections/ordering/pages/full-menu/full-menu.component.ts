@@ -1,11 +1,11 @@
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { CartService } from '../../services/cart.service';
+import { CartService, OrderDetailOptions } from '@sections/ordering';
 import { Observable, Subscription } from 'rxjs';
 import { MenuInfo, MerchantInfo, MerchantOrderTypesInfo } from '@sections/ordering/shared/models';
 import { Router } from '@angular/router';
 import { NAVIGATE } from 'src/app/app.global';
 import { LOCAL_ROUTING, ORDER_TYPE } from '@sections/ordering/ordering.config';
-import { take, tap } from 'rxjs/operators';
+import { first, map, take, tap } from 'rxjs/operators';
 import { ModalController } from '@ionic/angular';
 import { OrderOptionsActionSheetComponent } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 
@@ -19,7 +19,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
 
   private readonly sourceSubscription: Subscription = new Subscription();
   menu$: Observable<MenuInfo>;
-  orderInfo: { dueTime: Date, orderType: number, address };
+  orderInfo$: Observable<OrderDetailOptions>;
   merchantInfo$: Observable<MerchantInfo>;
   merchantInfoState: boolean = false;
   menuItems$: Observable<number>;
@@ -29,11 +29,20 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     private readonly router: Router,
     private readonly modalController: ModalController,
     private readonly cdRef: ChangeDetectorRef,
-  ) { }
+  ) {
+  }
 
-  get orderType() {
-    return this.orderInfo.orderType === ORDER_TYPE.PICKUP ? 'Pickup'
-      : this.orderInfo.orderType === ORDER_TYPE.DELIVERY ? 'Delivery' : 'DineIn';
+  get orderType(): Observable<string> {
+    return this.orderInfo$.pipe(map(({ orderType }) => {
+      switch (orderType) {
+        case ORDER_TYPE.PICKUP:
+          return 'Pickup';
+        case ORDER_TYPE.DELIVERY:
+          return 'Delivery';
+        default:
+          return 'DineIn';
+      }
+    }));
   }
 
   ionViewWillEnter() {
@@ -42,14 +51,9 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.menu$ = this.cartService.menuInfo$
+    this.menu$ = this.cartService.menuInfo$;
     this.merchantInfo$ = this.cartService.merchant$;
-    const subscription = this.cartService.orderDetailsOptions$
-      .subscribe(orderDetails => {
-        this.orderInfo = orderDetails;
-      });
-
-    this.sourceSubscription.add(subscription);
+    this.orderInfo$ = this.cartService.orderDetailsOptions$;
   }
 
   ngOnDestroy() {
@@ -64,16 +68,17 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     this.merchantInfo$
       .pipe(
         tap(merchant => this.actionSheet(merchant.orderTypes, merchant.id, merchant.storeAddress, merchant.settings)),
-        take(1)
+        take(1),
       )
-      .subscribe()
+      .subscribe();
   }
 
   private async actionSheet(orderTypes: MerchantOrderTypesInfo, merchantId, storeAddress, settings) {
     const footerButtonName = 'set order options';
-    let cssClass = 'order-options-action-sheet';
-    cssClass += orderTypes.delivery && orderTypes.pickup ? ' order-options-action-sheet-p-d' : '';
-
+    const cssClass = `order-options-action-sheet ${orderTypes.delivery || orderTypes.pickup 
+      ? ' order-options-action-sheet-p-d' 
+      : ''}`;
+    const orderInfo = await this.orderInfo$.pipe(first()).toPromise();
     const modal = await this.modalController.create({
       component: OrderOptionsActionSheetComponent,
       cssClass,
@@ -83,15 +88,17 @@ export class FullMenuComponent implements OnInit, OnDestroy {
         merchantId,
         storeAddress,
         settings,
-        activeDeliveryAddressId: this.orderInfo.orderType === ORDER_TYPE.PICKUP ? null : this.orderInfo.address.id,
-        activeOrderType: this.orderInfo.orderType === ORDER_TYPE.DELIVERY ? ORDER_TYPE.DELIVERY : null,
+        activeDeliveryAddressId: orderInfo.orderType === ORDER_TYPE.PICKUP ? null : orderInfo.address.id,
+        activeOrderType: orderInfo.orderType === ORDER_TYPE.DELIVERY ? ORDER_TYPE.DELIVERY : null,
       },
     });
+
     modal.onDidDismiss().then(({ data }) => {
       if (data) {
-        this.cartService.setActiveMerchantsMenuByOrderOptions(data.dueTime, data.orderType, data.address)
+        this.cartService.setActiveMerchantsMenuByOrderOptions(data.dueTime, data.orderType, data.address);
       }
     });
+
     await modal.present();
   }
 

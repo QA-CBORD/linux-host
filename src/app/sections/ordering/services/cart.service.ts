@@ -131,10 +131,15 @@ export class CartService {
   }
 
   validateOrder(): Observable<OrderInfo> {
-    const { orderType: type, dueTime, address: { id } } = this.cart.orderDetailsOptions;
-    const address = type === ORDER_TYPE.DELIVERY
-        ? { deliveryAddressId: id }
-        : { pickupAddressId: id };
+    const { orderType: type, dueTime, address: addr } = this.cart.orderDetailsOptions;
+    let address = {};
+
+    if (addr) {
+      address = type === ORDER_TYPE.DELIVERY
+        ? { deliveryAddressId: addr.id }
+        : { pickupAddressId: addr.id };
+    }
+
     this.cart.order = { ...this.cart.order, type, dueTime, ...address };
 
     return this.userService.userData.pipe(

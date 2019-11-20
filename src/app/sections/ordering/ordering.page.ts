@@ -94,7 +94,7 @@ export class OrderingPage implements OnInit {
     await modal.present();
   }
 
-  private async onToastDisplayed(message: string) {
+  private async onToastDisplayed(message: string): Promise<void> {
     const toast = await this.toastController.create({
       message,
       duration: 1000,
@@ -102,6 +102,6 @@ export class OrderingPage implements OnInit {
       closeButtonText: 'DISMISS',
       showCloseButton: true,
     });
-    toast.present();
+    await toast.present();
   }
 }

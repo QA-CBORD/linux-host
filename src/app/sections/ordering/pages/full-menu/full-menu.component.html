@@ -18,12 +18,12 @@
           </ng-container>
           <div class="full-menu__address-info">
             <img src="./assets/icon/location-pin.svg" height="16" alt="location-pin" />
-            <div class="full-menu__address-info-content">
+            <div *ngIf="(orderInfo$ | async).address" class="full-menu__address-info-content">
               {{ (merchantInfo$ | async).distanceFromUser | merchantDistance }} -
-              <ng-container *ngIf="orderInfo.address.onCampus; then onCampus; else ofCampus"></ng-container>
+              <ng-container *ngIf="(orderInfo$ | async).address.onCampus; then onCampus; else ofCampus"></ng-container>
 
-              <ng-template #ofCampus> {{ orderInfo.address.address1 }}, {{ orderInfo.address.city }} </ng-template>
-              <ng-template #onCampus> {{ orderInfo.address.room }}, {{ orderInfo.address.building }} </ng-template>
+              <ng-template #ofCampus> {{ (orderInfo$ | async).address.address1 }}, {{ (orderInfo$ | async).address.city }} </ng-template>
+              <ng-template #onCampus> {{ (orderInfo$ | async).address.room }}, {{ (orderInfo$ | async).address.building }} </ng-template>
             </div>
           </div>
         </div>
@@ -35,9 +35,9 @@
     <ion-item lines="full" (click)="openOrderOptions()">
       <div class="full-menu__date-time-container">
         <div class="full-menu__date-time-wrapper">
-          <div class="full-menu__date-time-value">{{ orderType }}</div>
+          <div class="full-menu__date-time-value">{{ orderType | async }}</div>
           <div class="full-menu__date-time-helper">for</div>
-          <div class="full-menu__date-time-value">{{ orderInfo.dueTime | date: 'EE, MMM d, h:mm a' }}</div>
+          <div class="full-menu__date-time-value">{{ (orderInfo$ | async).dueTime | date: 'EE, MMM d, h:mm a' }}</div>
         </div>
         <div class="full-menu__arrow-wrapper">
           <img src="/assets/icon/angle-down-select.svg" alt="arrow down" />
