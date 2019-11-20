@@ -1,70 +1,61 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { RewardsService } from '../../../rewards/services';
+
 import { take, map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { UserRewardTrackInfo } from 'src/app/core/model/rewards/rewards.model';
-import { UserTrackLevelInfo } from 'src/app/sections/rewards';
+import { RewardsService } from './services/rewards.service';
 
 @Component({
   selector: 'st-rewards-tile',
   templateUrl: './rewards-tile.component.html',
   styleUrls: ['./rewards-tile.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  
 })
 export class RewardsTileComponent implements OnInit {
-  trackInfo$: Observable<UserRewardTrackInfo>;
-  currentLevelInfo$: Observable<UserTrackLevelInfo>;
-  levels$: Observable<UserTrackLevelInfo[]>;
-  nextLevelPoints$: Observable<number>;
-
-  levelInfo;
+  userLevel;
+  userLevelName;
   currentPointsSpent;
   nextLevelPoints;
   pointsBalance;
+
   width;
   expToNextLvl;
-
 
   constructor(private readonly rewardsService: RewardsService) {}
 
   ngOnInit() {
-    // this.trackInfo$ = this.rewardsService.rewardTrack;
-    // this.currentLevelInfo$ = this.rewardsService.rewardTrack.pipe(
-    //   map(({ userLevel, trackLevels }) => trackLevels.find(({ level }) => level === userLevel))
-    // );
-    // this.levels$ = this.rewardsService.getTrackLevels();
-    // this.nextLevelPoints$ = this.rewardsService.rewardTrack.pipe(
-    //   map(({ userLevel, trackLevels }) => {
-    //     const nextLevel = trackLevels.find(({ level }) => level === userLevel + 1);
+    this.rewardsService
+      .getUserRewardTrackInfo()
+      .pipe(take(1))
+      .subscribe(({ userLevel, trackLevels, userExperiencePoints, userCurrentPoints }) => {
+        this.userLevel = userLevel;
+        this.userLevelName = trackLevels.pop().name;
+        this.pointsBalance = userExperiencePoints;
+        this.currentPointsSpent = userCurrentPoints;
+      });
 
-    //     return trackLevels.find(({ level }) => level === userLevel + 1) ? nextLevel.requiredPoints : null;
-    //   })
-    // );
+    this.rewardsService
+      .getUserRewardTrackInfo()
+      .pipe(
+        map(({ userLevel, trackLevels }) => {
+          const nextLevel = trackLevels.find(({ level }) => level === userLevel + 1);
 
-    // this.currentLevelInfo$.pipe(take(1)).subscribe(r => {
-    //   this.levelInfo = r;
-    // });
+          return trackLevels.find(({ level }) => level === userLevel + 1) ? nextLevel.requiredPoints : null;
+        })
+      ).pipe(take(1))
+      .subscribe(nextLevelPoints => this.nextLevelPoints = nextLevelPoints);
 
-    // this.trackInfo$.pipe(take(1)).subscribe(r => {
-    //   this.currentPointsSpent = r.userExperiencePoints;
-    // });
-
-    // this.nextLevelPoints$.pipe(take(1)).subscribe(r => {
-    //   this.nextLevelPoints = r;
-    // });
-    
-    // this.width = this.widthFunc();
-    // this.expToNextLvl = this.expToNextLvlFunc();
+    this.width = this.calculateWidth();
+    this.expToNextLvl = this.calculateExpToNextLvl();
   }
 
-  widthFunc(): number {
+  calculateWidth(): number {
     const percent = (this.currentPointsSpent / this.nextLevelPoints) * 100;
 
     return percent > 100 || !this.nextLevelPoints ? 100 : percent;
   }
 
-  expToNextLvlFunc(): string {
-    if (!this.nextLevelPoints$) return 'Max Level';
+  calculateExpToNextLvl(): string {
+    if (!this.nextLevelPoints) return 'Max Level';
 
     return `${this.currentPointsSpent}/${this.nextLevelPoints}XP`;
   }

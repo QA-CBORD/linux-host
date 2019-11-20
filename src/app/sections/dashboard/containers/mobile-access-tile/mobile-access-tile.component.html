@@ -1,4 +1,7 @@
-<div class="access">
+<div *ngIf="showSpiner" class="spinner-wrapper">
+    <ion-spinner></ion-spinner>
+</div>
+<div *ngIf="!showSpiner" class="access">
   <ion-list class="access__list" *ngFor="let access of accessList">
     <ion-item class="access__item" mode="ios" lines="none">
       <img class="access__item-icon" src="/assets/icon/star-filled.svg"/>

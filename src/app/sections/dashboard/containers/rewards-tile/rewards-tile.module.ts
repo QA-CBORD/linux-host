@@ -1,9 +1,12 @@
-import { RewardsService } from './../../../rewards/services/rewards.service';
+
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
-import { RewardsTileComponent } from './rewards-tile.component';
+
 import { RewardsApiService } from '@sections/rewards/services';
+import { RewardsTileComponent } from './rewards-tile.component';
+import { RewardsService } from './services/rewards.service';
+
 
 
 const imports = [IonicModule, CommonModule];

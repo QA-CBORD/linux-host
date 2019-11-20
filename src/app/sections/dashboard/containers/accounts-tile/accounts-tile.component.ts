@@ -17,23 +17,29 @@ export class AccountsTileComponent implements OnInit {
     autoHeight: true,
   };
 
-  userAccounts = [];
-  parsedAccountsBySlide = [];
+  showSpiner = true;
+
+  userAccountsSlides = [];
+  parsedAccountsByOneSlide = [];
 
   constructor(private readonly accountsService: AccountsService) {}
 
   ngOnInit() {
+    
+
     this.accountsService.getUserAccounts().pipe(
       take(1)
     ).subscribe(accounts => {
       accounts.forEach((item, index) => {
         if (index % 4 === 0 && index !== 0) {
-          this.userAccounts.push(this.parsedAccountsBySlide);
-          this.parsedAccountsBySlide = [];
+          this.userAccountsSlides.push(this.parsedAccountsByOneSlide);
+          this.parsedAccountsByOneSlide = [];
         }
-        this.parsedAccountsBySlide.push(item);
+        this.parsedAccountsByOneSlide.push(item);
       });
-      this.userAccounts.push(this.parsedAccountsBySlide);
+      this.userAccountsSlides.push(this.parsedAccountsByOneSlide);
+      this.showSpiner = false;
     });
+    
   }
 }

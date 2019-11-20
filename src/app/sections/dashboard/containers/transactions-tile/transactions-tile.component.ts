@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { TransactionService } from './services/transaction.service';
 import { take } from 'rxjs/operators';
-import { Subscription, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'st-transactions-tile',
@@ -10,8 +10,7 @@ import { Subscription, Observable } from 'rxjs';
 })
 export class TransactionsTileComponent implements OnInit {
   transactions$: Observable<any[]>;
-  transactionsSubscriptions: Subscription;
-
+  
   constructor(private readonly transactionService: TransactionService) { }
 
   ngOnInit() {

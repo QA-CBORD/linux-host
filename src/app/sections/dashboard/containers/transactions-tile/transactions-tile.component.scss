@@ -52,3 +52,10 @@
     @include font-nunito-regular(10px);
   }
 }
+
+.spinner-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 25px;
+}

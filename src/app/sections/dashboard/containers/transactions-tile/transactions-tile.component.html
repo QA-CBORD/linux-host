@@ -1,4 +1,7 @@
-<div class="transaction">
+<div *ngIf="!(transactions$ | async)" class="spinner-wrapper">
+    <ion-spinner></ion-spinner>
+</div>
+<div *ngIf="transactions$" class="transaction">
   <ion-list class="transaction__list"
             *ngFor="let transaction of (transactions$ | async)">
     <ion-item class="transaction__item"

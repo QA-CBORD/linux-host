@@ -1,7 +1,11 @@
-<div class="accounts">
+<div *ngIf="showSpiner" class="spinner-wrapper">
+    <ion-spinner></ion-spinner>
+</div>
+
+<div *ngIf="!showSpiner" class="accounts">
   <ion-slides class="accounts__slides" [pager]="true" mode="ios" [options]="slideOpts">
-    <ion-slide class="accounts__slide" *ngFor="let accounts of userAccounts">
-      <div class="accounts__item" *ngFor="let account of accounts"  >
+    <ion-slide class="accounts__slide" *ngFor="let accountsByOneSlide of userAccountsSlides">
+      <div class="accounts__item" *ngFor="let account of accountsByOneSlide"  >
         <div class="accounts__title" >{{account.accountDisplayName}}</div>
         <div class="accounts__total">{{account.balance}}</div>
       </div>

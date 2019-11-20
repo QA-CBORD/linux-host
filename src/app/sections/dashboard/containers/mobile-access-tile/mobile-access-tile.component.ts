@@ -9,6 +9,7 @@ import { MobileAccessService } from './services/mobile-access.service';
 })
 export class MobileAccessTileComponent implements OnInit {
   accessList = [];
+  showSpiner = true;
 
   constructor(private readonly mobileAccessService: MobileAccessService) { }
 
@@ -17,7 +18,9 @@ export class MobileAccessTileComponent implements OnInit {
       .getLocations()
       .pipe(take(1))
       .subscribe(access => {
-        this.accessList = access.slice(3);
+        this.accessList = access.slice(0,4);
+        this.showSpiner = false;
       });
+      
   }
 }
