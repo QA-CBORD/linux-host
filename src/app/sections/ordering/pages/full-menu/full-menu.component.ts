@@ -75,8 +75,8 @@ export class FullMenuComponent implements OnInit, OnDestroy {
 
   private async actionSheet(orderTypes: MerchantOrderTypesInfo, merchantId, storeAddress, settings) {
     const footerButtonName = 'set order options';
-    const cssClass = `order-options-action-sheet ${orderTypes.delivery || orderTypes.pickup 
-      ? ' order-options-action-sheet-p-d' 
+    const cssClass = `order-options-action-sheet ${orderTypes.delivery && orderTypes.pickup 
+      ? ' order-options-action-sheet-p-d'
       : ''}`;
     const orderInfo = await this.orderInfo$.pipe(first()).toPromise();
     const modal = await this.modalController.create({
