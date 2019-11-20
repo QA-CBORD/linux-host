@@ -17,6 +17,8 @@
       border: 2px solid $color-dodger-blue;
 
       & + .textarea__placeholder {
+        z-index: 2;
+
         @include floating-label($color-dodger-blue);
       }
     }
@@ -26,14 +28,20 @@
 
       &:focus,
       &:focus-within {
+        z-index: 2;
+
         border: 2px solid $color-alizarin;
 
         & + .textarea__placeholder {
+          z-index: 2;
+
           @include floating-label($color-alizarin);
         }
       }
 
       & + .textarea__placeholder {
+        z-index: 2;
+
         @include floating-label($color-alizarin);
       }
     }
@@ -41,19 +49,20 @@
 
   &__placeholder {
     position: absolute;
-    z-index: 2;
     top: 0;
     left: 0;
     padding: 15px 0 0 13px;
     transition: all 200ms;
-    opacity: 0.5;
+    opacity: 0.8;
   }
 }
 
-:host-context(.ng-valid.ng-toched) .textarea__control {
+:host-context(.ng-valid.ng-touched) .textarea__control {
   border: 2px solid $color-dodger-blue;
 
   & + .textarea__placeholder {
+    z-index: 2;
+
     @include floating-label($color-dodger-blue);
   }
 }
