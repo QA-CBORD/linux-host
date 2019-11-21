@@ -1,8 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-
-import { take, tap } from 'rxjs/operators';
-import { SecureMessagingService } from '@sections/secure-messaging';
-import { Subscription } from 'rxjs';
+import { SecureMessagingService } from './services/secure-messaging.service';
 
 @Component({
   selector: 'st-conversations-tile',
@@ -29,16 +26,19 @@ export class ConversationsTileComponent implements OnInit {
   ];
   groupsArray: any;
   messagesArray: any;
-  subscription: Subscription;
   
   constructor( private readonly secureMessagingService: SecureMessagingService) { }
 
   ngOnInit() {
 
 
-    this.secureMessagingService.getInitialData().subscribe(([r0, r1]) => {
-        console.log('SecureMessaging Groups and Messages:', r0, r1);
-      });
+    this.secureMessagingService.getInitialData().subscribe((r) => {
+        console.log('SecureMessaging Groups and Messages:', r);
+      },
+
+      err => { console.log(err);
+      }
+      );
 
    
   }

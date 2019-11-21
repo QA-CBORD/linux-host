@@ -1,9 +1,8 @@
 <ion-content class="dashboard">
   <st-access-card></st-access-card>
 
-  <ng-container *ngFor="let tile of tilesConfig">
-    <st-tile-wrapper *ngIf="true"
-                     [wrapperConfig]="tile">
+  <ng-container #ref *ngFor="let tile of tilesConfig">
+    <st-tile-wrapper *ngIf="true" [wrapperConfig]="tile">
       <ng-container [ngSwitch]="tile.id">
         <st-accounts-tile *ngSwitchCase="'accounts'"></st-accounts-tile>
         <st-transactions-tile *ngSwitchCase="'transactions'"></st-transactions-tile>
@@ -16,11 +15,9 @@
     </st-tile-wrapper>
   </ng-container>
 
-  <ion-button class="dashboard__bottom-btn-wrapper"
-              mode="ios"
-              (click)="presentModal()">
+  <ion-button class="dashboard__bottom-btn-wrapper" mode="ios" (click)="presentEditHomePageModal()">
     <div class="dashboard__bottom-icon-wrapper">
-      <img src="/assets/icon/dashboard.svg">
+      <img src="/assets/icon/dashboard.svg" />
     </div>
     <div class="dashboard__bottom-title-wrapper">
       <div class="dashboard__bottom-title">Edit Home Page</div>

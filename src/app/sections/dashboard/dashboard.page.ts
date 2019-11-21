@@ -129,7 +129,7 @@ export class DashboardPage implements OnInit {
     //   .subscribe(r => console.log('getUserOptInStatus', r));
   }
 
-  async presentModal() {
+  async presentEditHomePageModal() {
     const modal = await this.modalController.create({
       component: EditHomePageModalComponent,
     });

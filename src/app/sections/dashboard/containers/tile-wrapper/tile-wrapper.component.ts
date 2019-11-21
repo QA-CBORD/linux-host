@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ContentChild, AfterContentInit, ContentChildren } from '@angular/core';
 
 
 import { TileWrapperConfig } from '../../models/tile-wrapper-config.model';
@@ -9,20 +9,24 @@ import { TileWrapperConfig } from '../../models/tile-wrapper-config.model';
   styleUrls: ['./tile-wrapper.component.scss'],
 })
 export class TileWrapperComponent implements OnInit {
-
+  
   @Input() wrapperConfig: TileWrapperConfig;
+  @ContentChild('ref') contentEl ;
 
   constructor() { }
 
-  ngOnInit() {}
-
-
-  handleTopBarClick(){
+  ngOnInit() {
+   
+    
+  }
+  ngAfterContentInit(): void {
+    console.log(this.contentEl);
     
   }
 
-  handleBottomButtonClick(){
-    
-  }
+   
+  handleTopBarClick(){}
+
+  handleBottomButtonClick(){}
 
 }
