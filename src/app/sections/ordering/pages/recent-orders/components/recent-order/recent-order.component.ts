@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { first, map, switchMap, take } from 'rxjs/operators';
 import { Observable, zip } from 'rxjs';
@@ -9,12 +9,13 @@ import { NAVIGATE } from '../../../../../../app.global';
 import { ModalController, PopoverController, ToastController } from '@ionic/angular';
 import { ORDERING_STATUS } from '@sections/ordering/shared/ui-components/recent-oders-list/recent-orders-list-item/recent-orders.config';
 import { ConfirmPopoverComponent } from '@sections/ordering/pages/recent-orders/components/confirm-popover/confirm-popover.component';
-import { BUTTON_TYPE } from '@core/utils/buttons.config';
+import { BUTTON_TYPE, buttons } from '@core/utils/buttons.config';
 import { OrderOptionsActionSheetComponent } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 import { CartService } from '@sections/ordering/services/cart.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { AddressInfo } from '@core/model/address/address-info';
 import { handleServerError } from '@core/utils/general-helpers';
+import { StGlobalPopoverComponent } from '@shared/ui-components';
 
 @Component({
   selector: 'st-recent-order',
@@ -49,20 +50,28 @@ export class RecentOrderComponent implements OnInit {
     await this.initOrderOptionsModal(merchant);
   }
 
-  resolveMenuItemsInOrder(): Observable<MenuItemInfo[][]> {
+  resolveMenuItemsInOrder(): Observable<any> {
     return zip(this.cart.menuInfo$, this.order$).pipe(
       map(([menu, orderInfo]) => {
         const existingMenuItems = this.merchantService.extractAllAvailableMenuItemsFromMenu(menu);
-        const availableMenuItems = [];
-        const unavailableMenuItemsName = [];
+        let availableMenuItems = [];
+        let isOrderHasUnavailableMenuItems = false;
 
         for (let i = 0; i < orderInfo.orderItems.length; i++) {
           const item = existingMenuItems.find(({ id }) => id === orderInfo.orderItems[i].menuItemId);
           if (item) availableMenuItems.push(this.getOrderItemInitialObject(orderInfo.orderItems[i], item));
-          else unavailableMenuItemsName.push(orderInfo.orderItems[i].name);
+          else isOrderHasUnavailableMenuItems = true;
         }
+        availableMenuItems = availableMenuItems.map((item) => {
+          const filteredOptions = item.orderItemOptions.filter(i => !!i);
+          if (filteredOptions.length !== item.orderItemOptions.length) {
+            isOrderHasUnavailableMenuItems = true;
+            return {...item, orderItemOptions: filteredOptions}
+          }
+          return item;
+        });
 
-        return [availableMenuItems, unavailableMenuItemsName];
+        return [availableMenuItems, isOrderHasUnavailableMenuItems];
       }),
     );
   }
@@ -118,21 +127,27 @@ export class RecentOrderComponent implements OnInit {
   }
 
   private async initOrder({ address, dueTime, orderType }): Promise<void> {
-    await this.loadingService.showSpinner();
     const merchant = await this.merchant$.pipe(first()).toPromise();
     this.cart.clearCart();
     await this.cart.setActiveMerchant(merchant);
     await this.cart.setActiveMerchantsMenuByOrderOptions(dueTime, orderType, address);
-    const [availableItems] = await this.resolveMenuItemsInOrder().pipe(first()).toPromise();
+    let [availableItems, hasMissedItems] = await this.resolveMenuItemsInOrder().pipe(first()).toPromise();
+    if (hasMissedItems) {
+      await this.initConfirmModal(this.reorderOrder.bind(this, availableItems))
+    } else {
+      this.reorderOrder(availableItems);
+    }
+  }
+
+  private async reorderOrder(availableItems) {
+    await this.loadingService.showSpinner();
     this.cart.addOrderItems(availableItems);
     await this.cart.validateOrder().pipe(
       first(),
       handleServerError(ORDER_VALIDATION_ERRORS),
     ).toPromise()
       .then(this.redirectToCart.bind(this))
-      // .catch(this.onValidateErrorToast.bind(this))
       .finally(await this.loadingService.closeSpinner.bind(this.loadingService));
-
   }
 
   private async redirectToCart(): Promise<void> {
@@ -202,6 +217,27 @@ export class RecentOrderComponent implements OnInit {
         take(1),
       ).subscribe(response => response && this.back(), this.onValidateErrorToast.bind(this));
     });
+    await modal.present();
+  }
+
+  private async initConfirmModal(onSuccessCb): Promise<void> {
+    const modal = await this.popoverController.create({
+      component: StGlobalPopoverComponent,
+      componentProps: {
+        data: {
+          title: 'Warning',
+          message: 'Some of order items dont available for picked date',
+          buttons: [{ ...buttons.OKAY, label: 'PROCEED' }],
+        },
+      },
+      animated: false,
+      backdropDismiss: true,
+    });
+
+    modal.onDidDismiss().then(({role}) => {
+      role === BUTTON_TYPE.OKAY && onSuccessCb()
+    });
+
     await modal.present();
   }
 

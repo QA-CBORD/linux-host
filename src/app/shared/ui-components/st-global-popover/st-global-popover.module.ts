@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { StGlobalPopoverComponent } from './st-global-popover.component';
+import { StGlobalPopoverComponent } from '@shared/ui-components';
 import { StPopoverLayoutModule } from '../st-popover-layout/st-popover-layout.module';
 
 const declarations = [StGlobalPopoverComponent];

@@ -17,6 +17,10 @@
   &--invalid {
     --background: #999;
 
+    &:hover {
+      --background: #999;
+    }
+
     color: $color-white;
   }
 }

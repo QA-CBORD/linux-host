@@ -111,7 +111,7 @@ export class CartComponent implements OnInit {
     await this.submitOrder();
   }
 
-  async showModal({ tax, total, subTotal, orderPayment: [{ accountName }], deliveryFee, pickupFee, tip, checkNumber }: OrderInfo) {
+  async showModal({ tax, total, subTotal, orderPayment: [{ accountName }], deliveryFee, pickupFee, tip, checkNumber, mealBased }: OrderInfo) {
     const modal = await this.modalController.create({
       component: SuccessModalComponent,
       componentProps: {
@@ -123,6 +123,7 @@ export class CartComponent implements OnInit {
         tip,
         checkNumber,
         accountName,
+        mealBased
       },
     });
 

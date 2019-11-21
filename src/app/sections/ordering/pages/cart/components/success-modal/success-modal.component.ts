@@ -1,10 +1,11 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 
 @Component({
   selector: 'st-success-modal',
   templateUrl: './success-modal.component.html',
   styleUrls: ['./success-modal.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SuccessModalComponent {
   @Input() tax: number;
@@ -15,6 +16,7 @@ export class SuccessModalComponent {
   @Input() pickupFee: number;
   @Input() subTotal: number;
   @Input() tip: number;
+  @Input() mealBased: boolean;
 
   constructor(private readonly modalController: ModalController) {}
 
