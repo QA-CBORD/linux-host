@@ -27,6 +27,7 @@ import { ModalController, ToastController } from '@ionic/angular';
 import { AddressInfo } from '@core/model/address/address-info';
 import { NAVIGATE } from '../../../../app.global';
 import { SuccessModalComponent } from '@sections/ordering/pages/cart/components/success-modal';
+import { StGlobalPopoverComponent } from '@shared/ui-components';
 
 @Component({
   selector: 'st-cart',
@@ -134,6 +135,22 @@ export class CartComponent implements OnInit {
     await modal.present();
   }
 
+  private async onErrorModal(message) {
+    const modal = await this.modalController.create({
+      component: StGlobalPopoverComponent,
+      componentProps: {
+        data: {
+          title: 'Timeout error',
+          message,
+        },
+      },
+      animated: false,
+      backdropDismiss: true,
+    });
+
+    await modal.present();
+  }
+
   async removeOrderItem(id: string) {
     this.cdRef.detach();
     const removedItem = this.cartService.removeOrderItemFromOrderById(id);
@@ -165,8 +182,11 @@ export class CartComponent implements OnInit {
     this.cartService.submitOrder(
       this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.paymentMethod].id,
       this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.cvv] || null,
-    ).pipe().toPromise()
+    ).pipe(
+      handleServerError(ORDER_VALIDATION_ERRORS),
+    ).toPromise()
       .then(async order => await this.showModal(order))
+      .catch(async error => await this.onErrorModal(error))
       .finally(this.loadingService.closeSpinner.bind(this.loadingService));
   }
 
