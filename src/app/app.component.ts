@@ -139,7 +139,7 @@ export class AppComponent implements OnDestroy {
       },
       error => {
         this.modalHandler(
-          { ...error, title: 'Error getting test user', isRetryBtnExist: true },
+          { ...error, title: 'Error getting test user', buttons: [{ ...buttons.RETRY, label: 'RETRY' }], },
           this.testGetSession.bind(this)
         );
       }
