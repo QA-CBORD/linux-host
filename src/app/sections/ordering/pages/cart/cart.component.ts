@@ -23,7 +23,7 @@ import { SettingService } from '@core/service/settings/setting.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { handleServerError, parseArrayFromString } from '@core/utils/general-helpers';
 import { UserAccount } from '@core/model/account/account.model';
-import { ModalController, ToastController } from '@ionic/angular';
+import { ModalController, PopoverController, ToastController } from '@ionic/angular';
 import { AddressInfo } from '@core/model/address/address-info';
 import { NAVIGATE } from '../../../../app.global';
 import { SuccessModalComponent } from '@sections/ordering/pages/cart/components/success-modal';
@@ -48,6 +48,7 @@ export class CartComponent implements OnInit {
               private readonly settingService: SettingService,
               private readonly activatedRoute: ActivatedRoute,
               private readonly toastController: ToastController,
+              private readonly popoverController: PopoverController,
               private readonly cdRef: ChangeDetectorRef,
               private readonly router: Router,
               private readonly modalController: ModalController) {
@@ -124,7 +125,7 @@ export class CartComponent implements OnInit {
         tip,
         checkNumber,
         accountName,
-        mealBased
+        mealBased,
       },
     });
 
@@ -136,7 +137,7 @@ export class CartComponent implements OnInit {
   }
 
   private async onErrorModal(message) {
-    const modal = await this.modalController.create({
+    const modal = await this.popoverController.create({
       component: StGlobalPopoverComponent,
       componentProps: {
         data: {
@@ -182,9 +183,7 @@ export class CartComponent implements OnInit {
     this.cartService.submitOrder(
       this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.paymentMethod].id,
       this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.cvv] || null,
-    ).pipe(
-      handleServerError(ORDER_VALIDATION_ERRORS),
-    ).toPromise()
+    ).pipe(handleServerError(ORDER_VALIDATION_ERRORS)).toPromise()
       .then(async order => await this.showModal(order))
       .catch(async error => await this.onErrorModal(error))
       .finally(this.loadingService.closeSpinner.bind(this.loadingService));
