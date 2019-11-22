@@ -94,11 +94,11 @@ export class AddEditAddressesComponent implements OnInit {
 
   onCampusChanged({ detail: { value } }: CustomEvent<any>) {
     if (value === 'oncampus') {
-      this.cleanControls(Object.keys(this.offCampusFormBlock(this.editAddress.address)));
-      this.addControls(this.onCampusFormBlock(this.editAddress.address));
+      this.cleanControls(Object.keys(this.offCampusFormBlock(this.editAddress && this.editAddress.address)));
+      this.addControls(this.onCampusFormBlock(this.editAddress && this.editAddress.address));
     } else {
-      this.cleanControls(Object.keys(this.onCampusFormBlock(this.editAddress)));
-      this.addControls(this.offCampusFormBlock(this.editAddress.address));
+      this.cleanControls(Object.keys(this.onCampusFormBlock(this.editAddress && this.editAddress.address)));
+      this.addControls(this.offCampusFormBlock(this.editAddress && this.editAddress.address));
     }
   }
 
@@ -110,7 +110,7 @@ export class AddEditAddressesComponent implements OnInit {
       .subscribe(
         ({ value }) => {
           this.loader.closeSpinner();
-          this.initForm(parseInt(value), this.editAddress.address);
+          this.initForm(parseInt(value), this.editAddress && this.editAddress.address);
         },
         () => this.loader.closeSpinner()
       );
@@ -146,7 +146,7 @@ export class AddEditAddressesComponent implements OnInit {
 
   private onChanges() {
     const subscription = this.addEditAddressesForm.valueChanges.pipe(debounceTime(500)).subscribe(value => {
-      const id = this.editAddress.address ? this.editAddress.address.id : null;
+      const id = this.editAddress && this.editAddress.address ? this.editAddress.address.id : null;
       this.onFormChanged.emit({
         value: { ...value, campus: value.campus === 'oncampus' ? '1' : '0', id },
         valid: this.addEditAddressesForm.valid,
