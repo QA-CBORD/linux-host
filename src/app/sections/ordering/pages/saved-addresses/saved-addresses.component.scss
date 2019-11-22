@@ -4,9 +4,7 @@
 	&__header {
 		border-bottom: 1px solid $color-whisper;
 	}
-}
 
-.delivery-address {
 	&__header {
 	  border-bottom: 1px solid $color-whisper;
 	}
@@ -31,6 +29,12 @@
 	  left: 4px;
   
 	  @include font-nunito-semibold(24px);
+	}
+
+	&__add-address-divider {
+		background: $color-white-smoke;
+		height: 20px;
+		margin-top: 20px;
 	}
   
 	&__add-address-text {

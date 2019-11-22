@@ -1,23 +1,23 @@
 @import 'tools';
 
-:host {
-  .st-label {
-    margin: 0;
-
-    .title {
-      @include ellipsis;
-      font-family: $font-nunito-semibold;
-    }
-
-    .sub-title {
-      margin-top: -5px;
-      @include font-nunito-regular(10px);
-    }
-  }
-}
-
-.item-icon {
-  &__def {
+.order-item {
+  &__icon {
     margin-right: 10px;
+  }
+
+  &__label-container {
+    margin: 0;
+  }
+
+  &__label-title {
+    font-family: $font-nunito-semibold;
+
+    @include ellipsis;
+  }
+
+  &__label-subtitle {
+    margin-top: -5px;
+
+    @include font-nunito-regular(10px);
   }
 }

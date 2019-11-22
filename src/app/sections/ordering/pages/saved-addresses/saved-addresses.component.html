@@ -1,28 +1,49 @@
-<st-header
-  title="{{ title }}"
-  [isTitleShow]="true"
-  [backButtonTitle]="''"
-  [backButtonIcon]="'close'"
-  [isToolbarShow]="true"
-  class="saved-addresses__header"
-></st-header>
+<st-header title="Saved Addresses"
+           [isTitleShow]="true"
+           [backButtonTitle]="''"
+           [backButtonIcon]="'close'"
+           [isToolbarShow]="true"
+           class="saved-addresses__header"></st-header>
 
 
 <ion-content>
-  <ng-container *ngIf="displayList">
-    <ion-item 
-      class="delivery-address__add-address-wrapper"
-      lines="full"
-      [button]="true"
-      [detail]="true"
-      detailIcon="/assets/icon/angle-{{ addNewAdddressState ? 'up' : 'down' }}-select.svg"
-      (click)="addNewAdddressState = !addNewAdddressState">
-        <span class="delivery-address__add-address-sign">+</span>
-        <span class="delivery-address__add-address-text">Add New Address</span>
+  <div class="saved-addresses__add-address-container">
+    <ion-item class="saved-addresses__add-address-wrapper"
+              lines="full"
+              [button]="true"
+              [detail]="true"
+              detailIcon="/assets/icon/angle-{{ addNewAdddressState ? 'up' : 'down' }}-select.svg"
+              (click)="addNewAdddressState = !addNewAdddressState">
+      <span class="saved-addresses__add-address-sign">+</span>
+      <span class="saved-addresses__add-address-text">Add New Address</span>
     </ion-item>
-  </ng-container>
-  <st-order-address-list
-    (addressesLoaded)="addressesLoaded($event)">
+    <ng-container *ngIf="addNewAdddressState">
+      <st-add-edit-addresses [buildingsOnCampus]="buildings$ | async"
+                             (onFormChanged)="onAddressFormChanged($event)"></st-add-edit-addresses>
+
+      <div class="saved-addresses__add-address-btn-container">
+        <ion-button fill="clear"
+                    mode="md"
+                    expand="full"
+                    shape="round"
+                    class="saved-addresses__add-address-btn"
+                    (click)="addNewAdddressState = !addNewAdddressState">
+          cancel
+        </ion-button>
+        <ion-button mode="md"
+                    expand="full"
+                    shape="round"
+                    class="saved-addresses__add-address-btn"
+                    [ngClass]="{ 'saved-addresses__add-address-btn--valid': addNewAdddressForm && addNewAdddressForm.valid }"
+                    (click)="addAddress();addNewAdddressState = !addNewAdddressState">
+          save
+        </ion-button>
+      </div>
+    </ng-container>
+  </div>
+  <div class="saved-addresses__add-address-divider"
+       *ngIf="addNewAdddressState"></div>
+  <st-order-address-list [addresses]="userAddresses">
   </st-order-address-list>
 
 </ion-content>

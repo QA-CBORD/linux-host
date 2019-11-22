@@ -270,4 +270,16 @@ export class OrderingApiService extends BaseService {
       map(({ response }: MessageResponse<any>) => response)
     );
   }
+
+  removeAddress(addressId: string): Observable<any> {
+    const methodName = 'deleteUserAddress';
+    const postParams: ServiceParameters = { addressId };
+
+    return this.userService.userData.pipe(
+      switchMap(({ id }) =>
+        this.httpRequestFull('/json/user', methodName, true, null, { ...postParams, userId: id })
+      ),
+      map(({ response }: MessageResponse<any>) => response)
+    );
+  }
 }

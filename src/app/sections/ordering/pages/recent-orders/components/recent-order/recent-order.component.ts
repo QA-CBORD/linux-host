@@ -8,7 +8,6 @@ import { LOCAL_ROUTING, ORDER_TYPE, ORDER_VALIDATION_ERRORS } from '@sections/or
 import { NAVIGATE } from '../../../../../../app.global';
 import { ModalController, PopoverController, ToastController } from '@ionic/angular';
 import { ORDERING_STATUS } from '@sections/ordering/shared/ui-components/recent-oders-list/recent-orders-list-item/recent-orders.config';
-import { ConfirmPopoverComponent } from '@sections/ordering/pages/recent-orders/components/confirm-popover/confirm-popover.component';
 import { BUTTON_TYPE, buttons } from '@core/utils/buttons.config';
 import { OrderOptionsActionSheetComponent } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 import { CartService } from '@sections/ordering/services/cart.service';
@@ -16,6 +15,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { AddressInfo } from '@core/model/address/address-info';
 import { handleServerError } from '@core/utils/general-helpers';
 import { StGlobalPopoverComponent } from '@shared/ui-components';
+import { ConfirmPopoverComponent } from '@sections/ordering/shared/ui-components/confirm-popover/confirm-popover.component';
 
 @Component({
   selector: 'st-recent-order',
@@ -28,15 +28,16 @@ export class RecentOrderComponent implements OnInit {
   address$: Observable<AddressInfo>;
   merchant$: Observable<MerchantInfo>;
 
-  constructor(private readonly activatedRoute: ActivatedRoute,
-              private readonly merchantService: MerchantService,
-              private readonly router: Router,
-              private readonly popoverController: PopoverController,
-              private readonly modalController: ModalController,
-              private readonly cart: CartService,
-              private readonly loadingService: LoadingService,
-              private readonly toastController: ToastController) {
-  }
+  constructor(
+    private readonly activatedRoute: ActivatedRoute,
+    private readonly merchantService: MerchantService,
+    private readonly router: Router,
+    private readonly popoverController: PopoverController,
+    private readonly modalController: ModalController,
+    private readonly cart: CartService,
+    private readonly loadingService: LoadingService,
+    private readonly toastController: ToastController
+  ) {}
 
   ngOnInit() {
     const orderId = this.activatedRoute.snapshot.params.id;
@@ -62,17 +63,17 @@ export class RecentOrderComponent implements OnInit {
           if (item) availableMenuItems.push(this.getOrderItemInitialObject(orderInfo.orderItems[i], item));
           else isOrderHasUnavailableMenuItems = true;
         }
-        availableMenuItems = availableMenuItems.map((item) => {
+        availableMenuItems = availableMenuItems.map(item => {
           const filteredOptions = item.orderItemOptions.filter(i => !!i);
           if (filteredOptions.length !== item.orderItemOptions.length) {
             isOrderHasUnavailableMenuItems = true;
-            return {...item, orderItemOptions: filteredOptions}
+            return { ...item, orderItemOptions: filteredOptions };
           }
           return item;
         });
 
         return [availableMenuItems, isOrderHasUnavailableMenuItems];
-      }),
+      })
     );
   }
 
@@ -81,10 +82,12 @@ export class RecentOrderComponent implements OnInit {
   }
 
   async showModal(): Promise<void> {
-    this.order$.pipe(
-      first(),
-      map(({ checkNumber }) => checkNumber),
-    ).subscribe(await this.initCancelOrderModal.bind(this));
+    this.order$
+      .pipe(
+        first(),
+        map(({ checkNumber }) => checkNumber)
+      )
+      .subscribe(await this.initCancelOrderModal.bind(this));
   }
 
   async back(): Promise<void> {
@@ -94,7 +97,7 @@ export class RecentOrderComponent implements OnInit {
   private setActiveOrder(orderId) {
     this.order$ = this.merchantService.recentOrders$.pipe(
       first(),
-      map(orders => orders.find(({ id }) => id === orderId)),
+      map(orders => orders.find(({ id }) => id === orderId))
     );
   }
 
@@ -102,9 +105,10 @@ export class RecentOrderComponent implements OnInit {
     this.merchant$ = this.merchantService.recentOrders$.pipe(
       first(),
       map(orders => orders.find(({ id }) => id === orderId)),
-      switchMap(({ merchantId }) => this.merchantService.menuMerchants$.pipe(
-        map(merchants => merchants.find(({ id }) => id === merchantId)),
-      )));
+      switchMap(({ merchantId }) =>
+        this.merchantService.menuMerchants$.pipe(map(merchants => merchants.find(({ id }) => id === merchantId)))
+      )
+    );
   }
 
   private getOrderItemInitialObject(orderItem: OrderItem, menuItem: MenuItemInfo) {
@@ -120,7 +124,7 @@ export class RecentOrderComponent implements OnInit {
   private getOrderItemOptionsInitialObjects(orderOptions: OrderItem[], menuItem: MenuItemInfo) {
     const allAvailableMenuOptions = this.merchantService.extractAllAvailableMenuItemOptionsFromMenuItem(menuItem);
 
-    return orderOptions.map((orderItem) => {
+    return orderOptions.map(orderItem => {
       const res = allAvailableMenuOptions.find(({ id }) => id === orderItem.menuItemId);
       return res && this.getOrderItemInitialObject(orderItem, res);
     });
@@ -131,9 +135,11 @@ export class RecentOrderComponent implements OnInit {
     this.cart.clearCart();
     await this.cart.setActiveMerchant(merchant);
     await this.cart.setActiveMerchantsMenuByOrderOptions(dueTime, orderType, address);
-    let [availableItems, hasMissedItems] = await this.resolveMenuItemsInOrder().pipe(first()).toPromise();
+    let [availableItems, hasMissedItems] = await this.resolveMenuItemsInOrder()
+      .pipe(first())
+      .toPromise();
     if (hasMissedItems) {
-      await this.initConfirmModal(this.reorderOrder.bind(this, availableItems))
+      await this.initConfirmModal(this.reorderOrder.bind(this, availableItems));
     } else {
       this.reorderOrder(availableItems);
     }
@@ -142,10 +148,13 @@ export class RecentOrderComponent implements OnInit {
   private async reorderOrder(availableItems) {
     await this.loadingService.showSpinner();
     this.cart.addOrderItems(availableItems);
-    await this.cart.validateOrder().pipe(
-      first(),
-      handleServerError(ORDER_VALIDATION_ERRORS),
-    ).toPromise()
+    await this.cart
+      .validateOrder()
+      .pipe(
+        first(),
+        handleServerError(ORDER_VALIDATION_ERRORS)
+      )
+      .toPromise()
       .then(this.redirectToCart.bind(this))
       .finally(await this.loadingService.closeSpinner.bind(this.loadingService));
   }
@@ -169,37 +178,31 @@ export class RecentOrderComponent implements OnInit {
     this.address$ = this.order$.pipe(
       first(),
       switchMap(({ type, deliveryAddressId }) => {
-          return type === ORDER_TYPE.DELIVERY
-            ? this.getDeliveryAddress(deliveryAddressId)
-            : this.getPickupAddress();
-        },
-      ),
+        return type === ORDER_TYPE.DELIVERY ? this.getDeliveryAddress(deliveryAddressId) : this.getPickupAddress();
+      })
     );
   }
 
   private getPickupAddress(): Observable<any> {
     return this.order$.pipe(
       switchMap(({ merchantId }) =>
-        this.merchantService.menuMerchants$.pipe(
-          map((merchants) => merchants.find(({ id }) => id === merchantId))),
+        this.merchantService.menuMerchants$.pipe(map(merchants => merchants.find(({ id }) => id === merchantId)))
       ),
-      map(({ storeAddress }) => storeAddress),
+      map(({ storeAddress }) => storeAddress)
     );
   }
 
   private getDeliveryAddress(deliveryId: string): Observable<any> {
     return this.merchantService.retrieveUserAddressList().pipe(
-      map((addresses) =>
-        addresses.find(({ id }) => id === deliveryId),
-      ),
-      map(address => address),
+      map(addresses => addresses.find(({ id }) => id === deliveryId)),
+      map(address => address)
     );
   }
 
   private cancelOrder(): Observable<any> {
     return this.order$.pipe(
       switchMap(({ id }) => this.merchantService.cancelOrderById(id)),
-      handleServerError(ORDER_VALIDATION_ERRORS),
+      handleServerError(ORDER_VALIDATION_ERRORS)
     );
   }
 
@@ -207,15 +210,20 @@ export class RecentOrderComponent implements OnInit {
     const modal = await this.popoverController.create({
       component: ConfirmPopoverComponent,
       componentProps: {
-        data: { message: `Are you sure you want to cancel order #${n}` },
+        data: {
+          message: `Are you sure you want to cancel order #${n}`,
+          title: 'Cancel order?',
+          buttons: [{ ...buttons.NO, label: 'no' }, { ...buttons.REMOVE, label: 'yes, cancel' }],
+        },
       },
       animated: false,
       backdropDismiss: true,
     });
     modal.onDidDismiss().then(({ role }) => {
-      role === BUTTON_TYPE.CANCEL && this.cancelOrder().pipe(
-        take(1),
-      ).subscribe(response => response && this.back(), this.onValidateErrorToast.bind(this));
+      role === BUTTON_TYPE.CANCEL &&
+        this.cancelOrder()
+          .pipe(take(1))
+          .subscribe(response => response && this.back(), this.onValidateErrorToast.bind(this));
     });
     await modal.present();
   }
@@ -234,14 +242,19 @@ export class RecentOrderComponent implements OnInit {
       backdropDismiss: true,
     });
 
-    modal.onDidDismiss().then(({role}) => {
-      role === BUTTON_TYPE.OKAY && onSuccessCb()
+    modal.onDidDismiss().then(({ role }) => {
+      role === BUTTON_TYPE.OKAY && onSuccessCb();
     });
 
     await modal.present();
   }
 
-  private async initOrderOptionsModal({ orderTypes, id: merchantId, storeAddress, settings }: MerchantInfo): Promise<void> {
+  private async initOrderOptionsModal({
+    orderTypes,
+    id: merchantId,
+    storeAddress,
+    settings,
+  }: MerchantInfo): Promise<void> {
     const footerButtonName = 'continue';
     const cssClass = 'order-options-action-sheet order-options-action-sheet-p-d';
 

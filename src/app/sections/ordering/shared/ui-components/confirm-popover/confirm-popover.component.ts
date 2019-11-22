@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { PopoverConfig } from "@core/model/popover/popover.model";
-import { PopupTypes } from "@sections/rewards/rewards.config";
-import { buttons } from "@core/utils/buttons.config";
+import { PopoverConfig } from '@core/model/popover/popover.model';
+import { PopupTypes } from '@sections/rewards/rewards.config';
 
 @Component({
   selector: 'st-confirm-popover',
@@ -17,14 +16,13 @@ export class ConfirmPopoverComponent implements OnInit {
   ngOnInit() {
     this.config = {
       type: PopupTypes.CANCEL,
-      title: 'Cancel order?',
-      buttons: [{ ...buttons.NO, label: 'no' }, { ...buttons.CANCELING_AGREEMENT, label: 'yes, cancel' }],
+      title: '',
+      buttons: [],
       message: '',
       code: '',
       closeBtn: true,
     };
 
-    this.config = {...this.config, ...this.data};
+    this.config = { ...this.config, ...this.data };
   }
-
 }

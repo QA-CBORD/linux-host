@@ -6,7 +6,6 @@ import {
   Input,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  NgZone,
 } from '@angular/core';
 import { Validators, FormGroup, FormBuilder, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { debounceTime, take } from 'rxjs/operators';
@@ -34,13 +33,12 @@ export class AddEditAddressesComponent implements OnInit {
   private readonly sourceSubscription: Subscription = new Subscription();
 
   @Input() buildingsOnCampus;
-  @Input() editAddress:AddressInfo;
+  @Input() editAddress: any;
   @Output() onFormChanged: EventEmitter<any> = new EventEmitter<any>();
   constructor(
     private readonly fb: FormBuilder,
     private readonly merchantService: MerchantService,
     private readonly cdRef: ChangeDetectorRef,
-    private readonly zone:NgZone,
     private readonly loader: LoadingService
   ) {}
 
@@ -88,7 +86,6 @@ export class AddEditAddressesComponent implements OnInit {
 
   ngOnInit() {
     this.getSettingByConfig(SYSTEM_SETTINGS_CONFIG.addressRestrictionToOnCampus);
-    
   }
 
   ngOnDestroy() {
@@ -97,11 +94,11 @@ export class AddEditAddressesComponent implements OnInit {
 
   onCampusChanged({ detail: { value } }: CustomEvent<any>) {
     if (value === 'oncampus') {
-      this.cleanControls(Object.keys(this.offCampusFormBlock()));
-      this.addControls(this.onCampusFormBlock());
+      this.cleanControls(Object.keys(this.offCampusFormBlock(this.editAddress.address)));
+      this.addControls(this.onCampusFormBlock(this.editAddress.address));
     } else {
-      this.cleanControls(Object.keys(this.onCampusFormBlock()));
-      this.addControls(this.offCampusFormBlock());
+      this.cleanControls(Object.keys(this.onCampusFormBlock(this.editAddress)));
+      this.addControls(this.offCampusFormBlock(this.editAddress.address));
     }
   }
 
@@ -113,37 +110,31 @@ export class AddEditAddressesComponent implements OnInit {
       .subscribe(
         ({ value }) => {
           this.loader.closeSpinner();
-          this.initForm(parseInt(value));
-          // debugger;
-          if(this.editAddress){
-            this.addEditAddressesForm.patchValue({
-              [this.controlsNames.address1]: this.editAddress.address1,
-              [this.controlsNames.address2]: this.editAddress.address2,
-              [this.controlsNames.buildings]: this.editAddress.building,
-              [this.controlsNames.city]: this.editAddress.city,
-              // [this.controlsNames.campus]: this.editAddress.onCampus,
-              [this.controlsNames.nickname]: this.editAddress.nickname,
-              [this.controlsNames.state]: this.editAddress.state,
-              [this.controlsNames.room]: this.editAddress.room
-            }, {onlySelf: false, emitEvent: true});
-            // this.cdRef.detectChanges();
-            this.zone.run(() => {
-              console.log('force update the screen');
-            });
-          }
+          this.initForm(parseInt(value), this.editAddress.address);
         },
         () => this.loader.closeSpinner()
       );
   }
 
-  private initForm(addressRestriction) {
+  private initForm(addressRestriction, selectedAddress) {
     let campusBlock;
-    if (addressRestriction === 2 || addressRestriction === 0) {
-      campusBlock = this.offCampusFormBlock();
-      if (addressRestriction === 2) this.addressRestriction = { ...this.addressRestriction, onCampus: true };
+
+    if (selectedAddress && Object.keys(selectedAddress).length) {
+      if (selectedAddress.onCampus) {
+        campusBlock = this.onCampusFormBlock(selectedAddress);
+        this.addressRestriction = { ...this.addressRestriction, offCampus: true };
+      } else {
+        campusBlock = this.offCampusFormBlock(selectedAddress);
+        this.addressRestriction = { ...this.addressRestriction, onCampus: true };
+      }
     } else {
-      campusBlock = this.onCampusFormBlock();
-      this.addressRestriction = { ...this.addressRestriction, offCampus: true };
+      if (addressRestriction === 2 || addressRestriction === 0) {
+        campusBlock = this.offCampusFormBlock(selectedAddress);
+        if (addressRestriction === 2) this.addressRestriction = { ...this.addressRestriction, onCampus: true };
+      } else {
+        campusBlock = this.onCampusFormBlock(selectedAddress);
+        this.addressRestriction = { ...this.addressRestriction, offCampus: true };
+      }
     }
     this.addEditAddressesForm = this.fb.group(campusBlock);
     this.cdRef.detectChanges();
@@ -151,15 +142,13 @@ export class AddEditAddressesComponent implements OnInit {
     this.onChanges();
   }
 
-  onFormSubmit() {
-
-  }
+  onFormSubmit() {}
 
   private onChanges() {
     const subscription = this.addEditAddressesForm.valueChanges.pipe(debounceTime(500)).subscribe(value => {
+      const id = this.editAddress.address ? this.editAddress.address.id : null;
       this.onFormChanged.emit({
-        // value: { ...value, campus: value.campus === 'oncampus' ? '1' : '0'},
-        value: { ...value, campus: value.campus === 'oncampus' ? '1' : '0', id: this.editAddress.id },
+        value: { ...value, campus: value.campus === 'oncampus' ? '1' : '0', id },
         valid: this.addEditAddressesForm.valid,
       });
     });
@@ -167,7 +156,7 @@ export class AddEditAddressesComponent implements OnInit {
     this.sourceSubscription.add(subscription);
   }
 
-  private offCampusFormBlock() {
+  private offCampusFormBlock(selectedAddress) {
     const address1Errors = [
       errorDecorator(Validators.required, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.address1].required),
     ];
@@ -178,28 +167,55 @@ export class AddEditAddressesComponent implements OnInit {
       errorDecorator(Validators.required, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.state].required),
     ];
 
+    let campus;
+    if (selectedAddress && selectedAddress.onCampus !== null) {
+      campus = selectedAddress.onCampus ? 'oncampus' : 'offcampus';
+    }
     return {
-      [this.controlsNames.campus]: ['offcampus'],
-      [this.controlsNames.address1]: ['', address1Errors],
-      [this.controlsNames.address2]: [''],
-      [this.controlsNames.city]: ['', cityErrors],
-      [this.controlsNames.state]: ['', stateErrors],
-      [this.controlsNames.nickname]: [''],
+      [this.controlsNames.campus]: [campus || 'offcampus'],
+      [this.controlsNames.address1]: [
+        selectedAddress && selectedAddress.address1 !== null ? selectedAddress.address1 : '',
+        address1Errors,
+      ],
+      [this.controlsNames.address2]: [
+        selectedAddress && selectedAddress.address2 !== null ? selectedAddress.address2 : '',
+      ],
+      [this.controlsNames.city]: [
+        selectedAddress && selectedAddress.city !== null ? selectedAddress.city : '',
+        cityErrors,
+      ],
+      [this.controlsNames.state]: [
+        selectedAddress && selectedAddress.state !== null ? selectedAddress.state : '',
+        stateErrors,
+      ],
+      [this.controlsNames.nickname]: [
+        selectedAddress && selectedAddress.nickname !== null ? selectedAddress.nickname : '',
+      ],
       [this.controlsNames.default]: [false],
     };
   }
 
-  private onCampusFormBlock() {
+  private onCampusFormBlock(selectedAddress) {
     const buildingsErrors = [
       errorDecorator(Validators.required, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.buildings].required),
     ];
 
     const roomErrors = [errorDecorator(Validators.required, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.room].required)];
+    let campus;
+    if (selectedAddress && selectedAddress.onCampus !== null) {
+      campus = selectedAddress.onCampus ? 'oncampus' : 'offcampus';
+    }
 
     return {
-      [this.controlsNames.campus]: ['oncampus'],
-      [this.controlsNames.buildings]: ['', buildingsErrors],
-      [this.controlsNames.room]: ['', roomErrors],
+      [this.controlsNames.campus]: [campus || 'oncampus'],
+      [this.controlsNames.buildings]: [
+        selectedAddress && selectedAddress.building !== null ? this.editAddress.activeBuilding.addressInfo.building : '',
+        buildingsErrors,
+      ],
+      [this.controlsNames.room]: [
+        selectedAddress && selectedAddress.room !== null ? selectedAddress.room : '',
+        roomErrors,
+      ],
     };
   }
 
