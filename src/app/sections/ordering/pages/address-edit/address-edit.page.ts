@@ -66,9 +66,11 @@ export class AddressEditPage implements OnInit {
     const modal = await this.popoverCtrl.create({
       component: ConfirmPopoverComponent,
       componentProps: {
-        data: { message: `Are you sure you want to remove: ${address}` },
-        title: 'Remove Address?',
-        buttons: [{ ...buttons.CANCEL, label: 'CANCEL' }, { ...buttons.REMOVE, label: 'REMOVE' }],
+        data: {
+          message: `Are you sure you want to remove: ${address}`,
+          title: 'Remove Address?',
+          buttons: [{ ...buttons.CANCEL, label: 'CANCEL' }, { ...buttons.REMOVE, label: 'REMOVE' }],
+        },
       },
       animated: false,
       backdropDismiss: true,

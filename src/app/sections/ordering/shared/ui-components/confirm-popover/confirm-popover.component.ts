@@ -9,8 +9,6 @@ import { PopupTypes } from '@sections/rewards/rewards.config';
 })
 export class ConfirmPopoverComponent implements OnInit {
   @Input() data: { [key: string]: string };
-  @Input() title: string;
-  @Input() buttons: any[];
   config: PopoverConfig;
 
   constructor() {}
@@ -18,8 +16,8 @@ export class ConfirmPopoverComponent implements OnInit {
   ngOnInit() {
     this.config = {
       type: PopupTypes.CANCEL,
-      title: this.title,
-      buttons: this.buttons,
+      title: '',
+      buttons: [],
       message: '',
       code: '',
       closeBtn: true,
