@@ -20,7 +20,7 @@ export class TileWrapperComponent implements OnInit {
     
   }
   ngAfterContentInit(): void {
-    console.log(this.contentEl);
+    
     
   }
 
