@@ -1,13 +1,13 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'st-order-address-item',
   templateUrl: './order-address-item.component.html',
   styleUrls: ['./order-address-item.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OrderAddressItemComponent implements OnInit {
-  @Input() line1: string;
-  @Input() line2: string;
+  @Input() item: any;
   @Input() iconAlt: string;
   @Input() isDefault: boolean;
   @Input() isSelected: boolean;
@@ -18,31 +18,29 @@ export class OrderAddressItemComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    if(this.iconNameDefault.includes('.svg') && !this.isSelected 
-    || this.iconNameSelected.includes('.svg') && this.isSelected){
+    if (this.iconNameDefault.includes('.svg') && !this.isSelected
+      || this.iconNameSelected.includes('.svg') && this.isSelected) {
       this.iconIsFile = true;
     }
   }
 
-  itemSelected(){
-    
-  }
   get iconSrc(): string {
-    if(this.iconIsFile){
-      const name = (this.isSelected && this.iconNameSelected) ? this.iconNameSelected : this.iconNameDefault;
-      return `./assets/icon/${name}`;
-    }else{
+    if (!this.iconIsFile) {
       return '';
     }
+
+    return `./assets/icon/${this.getIconName()}`;
   }
 
   get iconName(): string {
-    if(!this.iconIsFile){
-      return (this.isSelected && this.iconNameSelected) ? this.iconNameSelected : this.iconNameDefault;
-    }else{
+    if (this.iconIsFile) {
       return '';
     }
+
+    return this.getIconName();
   }
-  
-  
+
+  private getIconName(): string {
+    return (this.isSelected && this.iconNameSelected) ? this.iconNameSelected : this.iconNameDefault;
+  }
 }

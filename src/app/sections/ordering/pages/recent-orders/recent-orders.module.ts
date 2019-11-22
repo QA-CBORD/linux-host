@@ -7,9 +7,8 @@ import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module
 import { RecentOrdersComponent } from '@sections/ordering/pages';
 import { RecentOrderComponent } from '@sections/ordering/pages/recent-orders/components/recent-order/recent-order.component';
 import { OrderDetailsModule } from '@sections/ordering/shared/ui-components/order-details/order-details.module';
-import { StPopoverLayoutModule } from '@shared/ui-components/st-popover-layout/st-popover-layout.module';
-import { ConfirmPopoverComponent } from '@sections/ordering/pages/recent-orders/components/confirm-popover/confirm-popover.component';
 import { OrderOptionsActionSheetModule } from '@sections/ordering/shared/ui-components/order-options.action-sheet';
+import { ConfirmPopoverModule } from '@sections/ordering/shared/ui-components/confirm-popover/confirm-popover.module';
 
 
 const imports = [
@@ -19,15 +18,15 @@ const imports = [
     StHeaderModule,
     RecentOrdersListModule,
     OrderDetailsModule,
-    StPopoverLayoutModule,
+    OrderOptionsActionSheetModule,
+    ConfirmPopoverModule,
     OrderOptionsActionSheetModule,
 ];
-const declarations = [RecentOrdersComponent, RecentOrderComponent, ConfirmPopoverComponent];
+const declarations = [RecentOrdersComponent, RecentOrderComponent];
 
 @NgModule({
     declarations,
     imports,
-    entryComponents: [ConfirmPopoverComponent]
 })
 export class RecentOrdersModule {
 }

@@ -8,7 +8,6 @@ import { LOCAL_ROUTING, ORDER_TYPE, ORDER_VALIDATION_ERRORS } from '@sections/or
 import { NAVIGATE } from '../../../../../../app.global';
 import { ModalController, PopoverController, ToastController } from '@ionic/angular';
 import { ORDERING_STATUS } from '@sections/ordering/shared/ui-components/recent-oders-list/recent-orders-list-item/recent-orders.config';
-import { ConfirmPopoverComponent } from '@sections/ordering/pages/recent-orders/components/confirm-popover/confirm-popover.component';
 import { BUTTON_TYPE, buttons } from '@core/utils/buttons.config';
 import { OrderOptionsActionSheetComponent } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 import { CartService } from '@sections/ordering/services/cart.service';
@@ -16,6 +15,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { AddressInfo } from '@core/model/address/address-info';
 import { handleServerError } from '@core/utils/general-helpers';
 import { StGlobalPopoverComponent } from '@shared/ui-components';
+import { ConfirmPopoverComponent } from '@sections/ordering/shared/ui-components/confirm-popover/confirm-popover.component';
 
 @Component({
   selector: 'st-recent-order',
@@ -208,6 +208,8 @@ export class RecentOrderComponent implements OnInit {
       component: ConfirmPopoverComponent,
       componentProps: {
         data: { message: `Are you sure you want to cancel order #${n}` },
+        title: 'Cancel order?',
+        buttons: [{ ...buttons.NO, label: 'no' }, { ...buttons.REMOVE, label: 'yes, cancel' }]
       },
       animated: false,
       backdropDismiss: true,

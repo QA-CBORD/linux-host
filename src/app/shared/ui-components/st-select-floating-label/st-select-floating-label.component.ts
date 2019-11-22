@@ -1,4 +1,13 @@
-import { Component, OnInit, Input, forwardRef, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  forwardRef,
+  Output,
+  EventEmitter,
+  ChangeDetectionStrategy,
+  SimpleChanges,
+} from '@angular/core';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor, FormControl, AbstractControl } from '@angular/forms';
 
 export const CUSTOM_SELECT_CONTROL_VALUE_ACCESSOR: any = {
@@ -12,6 +21,7 @@ export const CUSTOM_SELECT_CONTROL_VALUE_ACCESSOR: any = {
   templateUrl: './st-select-floating-label.component.html',
   styleUrls: ['./st-select-floating-label.component.scss'],
   providers: [CUSTOM_SELECT_CONTROL_VALUE_ACCESSOR],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StSelectFloatingLabelComponent implements OnInit, ControlValueAccessor {
   @Input() control: AbstractControl = new FormControl();
@@ -22,8 +32,8 @@ export class StSelectFloatingLabelComponent implements OnInit, ControlValueAcces
   @Input() idd: string;
   @Output() focus: EventEmitter<any> = new EventEmitter<any>();
   @Output() change: EventEmitter<any> = new EventEmitter<any>();
-  private innerValue: any = '';
-  private onChange:(v: any) => void;
+  innerValue: any = '';
+  private onChange: (v: any) => void;
   private onTouched: () => void;
 
   constructor() {}
@@ -64,7 +74,7 @@ export class StSelectFloatingLabelComponent implements OnInit, ControlValueAcces
     this.onTouched();
   }
 
-  onChangeHandler({detail: {value}}: CustomEvent<any>) {
+  onChangeHandler({ detail: { value } }: CustomEvent<any>) {
     this.writeValue(value);
     this.onChange(value);
     this.change.emit(value);

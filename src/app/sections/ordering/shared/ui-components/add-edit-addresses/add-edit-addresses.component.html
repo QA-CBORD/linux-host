@@ -33,16 +33,19 @@
         interface="action-sheet"
         title="Choose an account from a dropdown list below"
         label="Buildings"
-        idd="buildings"
+        idd="building"
       >
         <ng-container role="options">
-          <ion-select-option *ngFor="let item of buildingsOnCampus" [value]="item.addressInfo">
+          <ion-select-option
+            *ngFor="let item of buildingsOnCampus"
+            [value]="item.addressInfo.building"
+          >
             {{ item.addressInfo.building }}
           </ion-select-option>
         </ng-container>
 
         <ng-container role="error">
-          <p class="request-funds__control-error-msg">
+          <p class="addresses__control-error-msg">
             {{ buildings?.errors?.errorMsg }}
           </p>
         </ng-container>
@@ -57,7 +60,7 @@
         formControlName="room"
         [isError]="room?.errors && (room?.dirty || room?.touched)"
       >
-        <p class="request-funds__control-error-msg">
+        <p class="addresses__control-error-msg">
           {{ room?.errors?.errorMsg }}
         </p>
       </st-input-floating-label>
@@ -74,7 +77,7 @@
         formControlName="address1"
         [isError]="address1.errors && (address1.dirty || address1.touched)"
       >
-        <p class="request-funds__control-error-msg">
+        <p class="addresses__control-error-msg">
           {{ address1.errors?.errorMsg }}
         </p>
       </st-input-floating-label>
@@ -102,7 +105,7 @@
         formControlName="city"
         [isError]="city.errors && (city.dirty || city.touched)"
       >
-        <p class="request-funds__control-error-msg">
+        <p class="addresses__control-error-msg">
           {{ city.errors?.errorMsg }}
         </p>
       </st-input-floating-label>
@@ -124,7 +127,7 @@
         </ng-container>
 
         <ng-container role="error">
-          <p class="request-funds__control-error-msg">
+          <p class="addresses__control-error-msg">
             {{ state.errors?.errorMsg }}
           </p>
         </ng-container>

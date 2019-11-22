@@ -17,7 +17,7 @@ const CANCEL = {
   type: BUTTON_TYPE.CANCEL,
 };
 
-const CANCELING_AGREEMENT = {
+const REMOVE = {
   class: 'filled-red',
   shape: 'round',
   strong: true,
@@ -90,5 +90,5 @@ export const buttons = {
   CLOSE,
   CLAIM,
   OPT_IN,
-  CANCELING_AGREEMENT
+  REMOVE
 };

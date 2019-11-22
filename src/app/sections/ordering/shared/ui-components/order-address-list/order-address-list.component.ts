@@ -1,11 +1,8 @@
-import { Component, OnInit, ChangeDetectorRef, EventEmitter, Output } from '@angular/core';
-import { UserService } from '@core/service/user-service/user.service';
-import { Observable } from 'rxjs';
-import { take } from 'rxjs/operators';
-import { NgZone  } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
 import { Router } from '@angular/router';
 import { AddressInfo } from '@core/model/address/address-info';
+import { MerchantService } from '@sections/ordering/services';
 
 @Component({
   selector: 'st-order-address-list',
@@ -13,40 +10,13 @@ import { AddressInfo } from '@core/model/address/address-info';
   styleUrls: ['./order-address-list.component.scss'],
 })
 export class OrderAddressListComponent implements OnInit {
-  
-  userAddresses$: Observable<AddressInfo[]>;
-  displayList: boolean = true;
-  @Output() addressesLoaded: EventEmitter<any> = new EventEmitter<any>();
- 
-  constructor(private userService: UserService, private zone: NgZone, private ref: ChangeDetectorRef, private router:Router) { }
+  @Input() addresses: AddressInfo[] = [];
 
-  items:AddressInfo[];
-  ngOnInit() {
-    this.userAddresses$ = this.userService.getUserAddresses()
-    this.userAddresses$
-      .pipe(take(1))
-      .subscribe(
-        (data) => {
-          this.items = data;
-          this.displayList = this.items.length ? true : false;
-          this.addressesLoaded.emit(this.displayList);
-          console.log('addresses', this.items);
-          // debugger;
-          /* this.zone.run(() => {
-            console.log('force update the screen');
-          }); */
-          //this.ref.detectChanges();
-        },
-        (e) => {
-          console.log('error', e);
-        }
-      );
-  }
-  itemSelected(address:AddressInfo){
-    console.log(address);
-    // debugger;
-    this.userService.selectedAddress = address;
+  constructor(private readonly merchantService: MerchantService, private router: Router) {}
+
+  ngOnInit() {}
+  itemSelected(address: AddressInfo) {
+    this.merchantService.selectedAddress = address;
     this.router.navigate([`ordering/${LOCAL_ROUTING.addressEdit}`], { skipLocationChange: true });
   }
 }
-

@@ -1,12 +1,17 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { UserService } from '@core/service/user-service/user.service';
 import { AddressInfo } from '@core/model/address/address-info';
 import { MerchantService } from '@sections/ordering/services';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { take, map } from 'rxjs/operators';
-import { of, zip, iif } from 'rxjs';
+import { take, tap, map } from 'rxjs/operators';
+import { of, zip, iif, Observable } from 'rxjs';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
+import { NAVIGATE } from 'src/app/app.global';
+import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
+import { ConfirmPopoverComponent } from '@sections/ordering/shared/ui-components/confirm-popover/confirm-popover.component';
+import { buttons, BUTTON_TYPE } from '@core/utils/buttons.config';
+import { PopoverController } from '@ionic/angular';
+import { UserService } from '@core/service/user-service/user.service';
 
 @Component({
   selector: 'st-address-edit-page',
@@ -14,58 +19,101 @@ import { switchMap } from 'rxjs/internal/operators/switchMap';
   styleUrls: ['./address-edit.page.scss'],
 })
 export class AddressEditPage implements OnInit {
-  
-  addressData:AddressInfo;
+  addressData: any;
   addNewAdddressState: boolean = false;
   addNewAdddressForm: { value: any; valid: boolean };
   merchantId: string;
+  buildings$: Observable<any[]>;
 
-  constructor(private readonly router: Router, 
+  constructor(
+    private readonly router: Router,
     private readonly merchantService: MerchantService,
     private readonly loadingService: LoadingService,
-    private readonly cdRef: ChangeDetectorRef,
+    private readonly popoverCtrl: PopoverController,
     private readonly userService: UserService
-    ) { }
+  ) {}
 
-  ngOnInit() {
-    this.addressData = this.userService.selectedAddress;
-    // this.merchantId = this.userService.
+  ngOnInit() {}
+
+  ionViewWillEnter() {
+    this.buildings$ = this.merchantService.retrieveBuildings();
+    zip(this.buildings$, this.merchantService.selectedAddress$)
+      .pipe(
+        map(([buildings, address]) => {
+          const activeBuilding = buildings.find(({ addressInfo }) => addressInfo.building === address.building);
+          return {
+            activeBuilding,
+            address,
+          };
+        }),
+        take(1)
+      )
+      .subscribe(address => {
+        this.addressData = address;
+      });
   }
 
-  addressSelected(){
-    // const nextPage = this.defineResolution() ? LOCAL_ROUTING.accountDetails : LOCAL_ROUTING.accountDetailsM;
-    // debugger;
-    // this.router.navigate([`${NAVIGATE.accounts}/${nextPage}/${ALL_ACCOUNTS}`], { skipLocationChange: true });
+  onBack() {
+    this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.savedAddresses], { skipLocationChange: true });
+  }
+
+  onRemove() {
+    this.presentAlert();
+  }
+
+  private async presentAlert(): Promise<void> {
+    const address = `${this.addressData.address1}, ${this.addressData.city}, ${this.addressData.state}`;
+    const modal = await this.popoverCtrl.create({
+      component: ConfirmPopoverComponent,
+      componentProps: {
+        data: { message: `Are you sure you want to remove: ${address}` },
+        title: 'Remove Address?',
+        buttons: [{ ...buttons.CANCEL, label: 'CANCEL' }, { ...buttons.REMOVE, label: 'REMOVE' }],
+      },
+      animated: false,
+      backdropDismiss: true,
+    });
+    modal.onDidDismiss().then(({ role }) => {
+      role === BUTTON_TYPE.CANCEL;
+      this.merchantService
+        .removeAddress(this.addressData.id)
+        .pipe(take(1))
+        .subscribe(() =>
+          this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.savedAddresses], { skipLocationChange: true })
+        );
+    });
+    await modal.present();
   }
 
   onAddressFormChanged(event) {
-    console.log(event);
-    // debugger;
     this.addNewAdddressForm = event;
   }
 
   addAddress() {
     if (!this.addNewAdddressForm && !this.addNewAdddressForm.valid) return;
     this.loadingService.showSpinner();
-    this.merchantService.updateUserAddress(this.addNewAdddressForm.value)
+    this.merchantService
+      .updateUserAddress(this.addNewAdddressForm.value)
       .pipe(
-        switchMap((addedAddress): any => zip(
-          iif(
-            () => this.addNewAdddressForm.value.default,
-            this.userService.saveUserSettingsBySettingName('defaultaddress', addedAddress.id),
-            of(false)
-          ),
-          of(addedAddress),
-        )),
-        switchMap(([isDefaultAddressAdded, addedAddress]) => this.merchantService.filterDeliveryAddresses(this.merchantId, [addedAddress])),
+        switchMap(
+          (addedAddress): any =>
+            zip(
+              iif(
+                () => this.addNewAdddressForm.value.default,
+                this.userService.saveUserSettingsBySettingName('defaultaddress', addedAddress.id),
+                of(false)
+              ),
+              of(addedAddress)
+            )
+        ),
         take(1)
       )
-      .subscribe(([addedAddress]) => {
-        this.loadingService.closeSpinner();
-        if (addedAddress) {
-          //this.listOfAddresses = [...this.listOfAddresses, addedAddress];
-          this.cdRef.detectChanges();
-        }
-      }, () => this.loadingService.closeSpinner())
+      .subscribe(
+        () => {
+          this.merchantService.selectedAddress = null;
+          this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.savedAddresses], { skipLocationChange: true });
+        },
+        () => this.loadingService.closeSpinner()
+      );
   }
 }

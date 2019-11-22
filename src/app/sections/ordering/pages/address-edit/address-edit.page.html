@@ -1,36 +1,45 @@
-<st-header
-  title="Edit Address"
-  [isTitleShow]="true"
-  [backButtonTitle]="''"
-  [backButtonIcon]="'close'"
-  [isToolbarShow]="true"
-  class="address-edit__header"
-></st-header>
+<ion-header class="address-edit__header" mode="ios">
+  <ion-toolbar mode="ios" class="address-edit__header-toolbar">
+    <ion-buttons slot="start">
+      <ion-back-button
+        class="address-edit__header-back-btn"
+        color="dark"
+        [text]="'Back'"
+        [icon]="'ios-arrow-back'"
+        mode="ios"
+        (click)="onBack()"
+      >
+      </ion-back-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button class="address-edit__header-remove-btn" mode="ios" (click)="onRemove()">
+        Remove
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="address-edit__header-title">
+      Edit Address
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
 
 <ion-content>
-  <!-- <st-address-edit></st-address-edit>
-  <st-add-edit-addresses [editAddress]="editAddress" [buildingsOnCampus]="buildings" 
-  (onFormChanged)="onAddressFormChanged($event)"></st-add-edit-addresses> -->
-
   <div class="address-edit__add-address-container">
-    <st-add-edit-addresses [(editAddress)]="addressData"
-    (onFormChanged)="onAddressFormChanged($event)"></st-add-edit-addresses>
+    <ng-container *ngIf="addressData">
+      <st-add-edit-addresses
+        [editAddress]="addressData"
+        [buildingsOnCampus]="buildings$ | async"
+        (onFormChanged)="onAddressFormChanged($event)"
+      ></st-add-edit-addresses>
+    </ng-container>
 
     <div class="address-edit__add-address-btn-container">
-      <ion-button fill="clear"
-                  mode="md"
-                  expand="full"
-                  shape="round"
-                  class="delivery-address__add-address-btn"
-                  (click)="addNewAdddressState = !addNewAdddressState">
-        cancel
-      </ion-button>
-      <ion-button mode="md"
-                  expand="full"
-                  shape="round"
-                  class="delivery-address__add-address-btn"
-                  [ngClass]="{ 'delivery-address__add-address-btn--valid': addNewAdddressForm && addNewAdddressForm.valid }"
-                  (click)="addAddress();addNewAdddressState = !addNewAdddressState">
+      <ion-button
+        mode="md"
+        expand="full"
+        shape="round"
+        class="address-edit__add-address-btn"
+        (click)="addAddress(); addNewAdddressState = !addNewAdddressState"
+      >
         save
       </ion-button>
     </div>

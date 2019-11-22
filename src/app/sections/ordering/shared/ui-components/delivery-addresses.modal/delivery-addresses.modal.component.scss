@@ -37,6 +37,12 @@
     justify-content: space-evenly;
   }
 
+  &__add-address-divider {
+		background: $color-white-smoke;
+		height: 20px;
+		margin-top: 20px;
+	}
+
   &__add-address-img {
     position: absolute;
     right: 0;
