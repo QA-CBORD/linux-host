@@ -63,6 +63,12 @@ export class CartComponent implements OnInit {
     this.getAvailableAccounts().then((acc) => this.accounts = acc);
   }
 
+  get isOrderASAP(): Observable<boolean> {
+    return this.cartService.orderDetailsOptions$.pipe(
+      map(({dueTime}) => Date.now() > new Date(dueTime).getTime())
+    );
+  }
+
   initAddressModalConfig(): Observable<AddressModalSettings> {
     this.loadingService.showSpinner();
     return combineLatest(
