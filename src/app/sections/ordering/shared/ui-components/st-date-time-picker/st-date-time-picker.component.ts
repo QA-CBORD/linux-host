@@ -95,6 +95,7 @@ export class StDateTimePickerComponent {
   }
 
   private createColumns() {
+    const numberOfColumns = 2;
     let columns = [];
     let isToday;
     let prevSelectedTimeIdx;
@@ -106,7 +107,7 @@ export class StDateTimePickerComponent {
     } else {
       prevSelectedTimeIdx = this.prevSelectedTimeInfo.currentIdx;
     }
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < numberOfColumns; i++) {
       if (i === 1 && columns[0].selectedIndex === 0) {
         isToday = this.isTodayOrTomorrow(columns[columns[0].selectedIndex].options[0].value, true);
       }

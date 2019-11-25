@@ -31,7 +31,7 @@ export class ItemDetailComponent implements OnInit {
     private readonly activatedRoute: ActivatedRoute,
     private readonly cartService: CartService,
     private readonly loadingService: LoadingService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.initMenuItemOptions();
@@ -153,8 +153,8 @@ export class ItemDetailComponent implements OnInit {
   private async onSubmit(menuItem) {
     const orderItems = await this.cartService.orderItems$.pipe(first()).toPromise();
     if (orderItems.length) {
-      const data = await this.activatedRoute.data.pipe(first()).toPromise();
-      await this.cartService.removeOrderItemFromOrderById(data.data.queryParams.orderItemId);
+      const { data: { queryParams: { orderItemId } } } = await this.activatedRoute.data.pipe(first()).toPromise();
+      await this.cartService.removeOrderItemFromOrderById(orderItemId);
     }
 
     this.cartService.addOrderItems(menuItem);
