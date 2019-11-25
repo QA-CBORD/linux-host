@@ -151,7 +151,8 @@ export class ItemDetailComponent implements OnInit {
   }
 
   private async onSubmit(menuItem) {
-    if (this.cartOrderItemOptions.length) {
+    const orderItems = await this.cartService.orderItems$.pipe(first()).toPromise();
+    if (orderItems.length) {
       const data = await this.activatedRoute.data.pipe(first()).toPromise();
       await this.cartService.removeOrderItemFromOrderById(data.data.queryParams.orderItemId);
     }

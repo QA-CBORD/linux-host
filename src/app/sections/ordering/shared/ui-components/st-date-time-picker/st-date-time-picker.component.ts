@@ -25,7 +25,7 @@ export class StDateTimePickerComponent {
   @Output() onTimeSelected: EventEmitter<Date> = new EventEmitter<Date>();
 
   constructor(private readonly datePipe: DatePipe,
-              private readonly pickerController: PickerController) {}
+    private readonly pickerController: PickerController) { }
 
   get isDefaultState() {
     return typeof this.dateTimePicker === 'string';
@@ -96,6 +96,7 @@ export class StDateTimePickerComponent {
 
   private createColumns() {
     let columns = [];
+    let isToday;
     let prevSelectedTimeIdx;
     const dataArr = this.preparePickerArr(this.selectedDayIdx);
     const [daysOptions] = dataArr;
@@ -106,16 +107,20 @@ export class StDateTimePickerComponent {
       prevSelectedTimeIdx = this.prevSelectedTimeInfo.currentIdx;
     }
     for (let i = 0; i < 2; i++) {
+      if (i === 1 && columns[0].selectedIndex === 0) {
+        isToday = this.isTodayOrTomorrow(columns[columns[0].selectedIndex].options[0].value, true);
+      }
+
       columns.push({
         name: i,
-        options: this.getColumnOptions(i, daysOptions.length, 93, dataArr),
+        options: this.getColumnOptions(i, daysOptions.length, 93, dataArr, isToday),
         selectedIndex: i === 0 ? this.selectedDayIdx : prevSelectedTimeIdx,
       });
     }
     return columns;
   }
 
-  private getColumnOptions(columnIndex, daysOptions, timeOptions, columnOptions) {
+  private getColumnOptions(columnIndex, daysOptions, timeOptions, columnOptions, isToday) {
     let pickerColumns = [];
     const total = columnIndex === 0 ? daysOptions : timeOptions;
     const getColumnText = i => {
@@ -134,13 +139,14 @@ export class StDateTimePickerComponent {
       return this.datePipe.transform(columnOptions[columnIndex][i % total], 'EE, MMM d');
     };
 
-    if (columnIndex === 1) {
-      pickerColumns.push({
-        text: 'ASAP',
-        value: 'asap',
-      });
-    }
-    for (let i = 1; i < total; i++) {
+    for (let i = 0; i < total; i++) {
+      if (columnIndex === 1 && i === 0 && isToday) {
+        pickerColumns.push({
+          text: 'ASAP',
+          value: 'asap',
+        });
+      }
+
       pickerColumns.push({
         text: getColumnText(i),
         value: columnOptions[columnIndex][i % total],
