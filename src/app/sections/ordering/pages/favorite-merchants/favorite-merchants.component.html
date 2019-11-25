@@ -18,14 +18,17 @@
     <div class="favorites__empty-state-text">Your favorited merchants will appear here.</div>
   </div>
 </ion-content>
-<ion-footer mode="ios">
-  <ion-button mode="md"
-              expand="full"
-              shape="round"
-              size="large"
-              class="favorites__empty-state-btn"
-              (click)="backToOrdering()"
-              *ngIf="!merchantList.length">
-    back to ordering
-  </ion-button>
+<ion-footer mode="ios"
+            *ngIf="!merchantList.length"
+            no-border>
+  <ion-toolbar>
+    <ion-button mode="md"
+                expand="full"
+                shape="round"
+                size="large"
+                class="favorites__empty-state-btn"
+                (click)="backToOrdering()">
+      back to ordering
+    </ion-button>
+  </ion-toolbar>
 </ion-footer>

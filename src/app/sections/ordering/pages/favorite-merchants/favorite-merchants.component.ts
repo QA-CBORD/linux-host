@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ModalController, ToastController } from '@ionic/angular';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -26,7 +26,8 @@ export class FavoriteMerchantsComponent implements OnInit {
     private readonly loadingService: LoadingService,
     private readonly toastController: ToastController,
     private readonly favoriteMerchantsService: FavoriteMerchantsService,
-    private readonly cartService: CartService
+    private readonly cartService: CartService,
+    private readonly cdRef: ChangeDetectorRef,
   ) { }
 
   ngOnInit() {
@@ -50,7 +51,8 @@ export class FavoriteMerchantsComponent implements OnInit {
       )
       .subscribe(
         data => {
-          this.merchantList = data;
+          this.merchantList = [...data];
+          this.cdRef.detectChanges();
           this.onToastDisplayed('Removed from favorites');
           this.loadingService.closeSpinner();
         },
