@@ -1,7 +1,7 @@
 <ion-content class="dashboard">
   <st-access-card></st-access-card>
 
-  <ng-container #ref *ngFor="let tile of tilesConfig">
+  <ng-container *ngFor="let tile of tilesConfig">
     <st-tile-wrapper *ngIf="true" [wrapperConfig]="tile">
       <ng-container [ngSwitch]="tile.id">
         <st-accounts-tile *ngSwitchCase="'accounts'"></st-accounts-tile>

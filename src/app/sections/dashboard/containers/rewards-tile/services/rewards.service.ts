@@ -1,10 +1,13 @@
 import { Injectable } from '@angular/core';
 
 import { BehaviorSubject, Observable } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { map, tap, switchMap } from 'rxjs/operators';
 
 import { UserRewardTrackInfo, UserFulfillmentActivityInfo, UserTrackLevelInfo, LEVEL_STATUS, CLAIM_STATUS, RedeemableRewardInfo, OPT_IN_STATUS } from 'src/app/core/model/rewards/rewards.model';
 import { RewardsApiService } from 'src/app/core/service/rewards/rewards-api.service';
+import { UserService } from '@core/service/user-service/user.service';
+import { Settings } from 'src/app/app.global';
+import { ConfigurationService } from '@core/service/configuration/configuration.service';
 
 @Injectable()
 export class RewardsService {
@@ -12,7 +15,7 @@ export class RewardsService {
  
   private rewardTrackInfo: UserRewardTrackInfo;
 
-  constructor(private readonly rewardsApi: RewardsApiService) {}
+  constructor(private readonly rewardsApi: RewardsApiService, private readonly userService: UserService, private readonly configService: ConfigurationService) {}
 
   get rewardTrack(): Observable<UserRewardTrackInfo> {
     return this.rewardTrack$.asObservable();
@@ -65,5 +68,14 @@ export class RewardsService {
       ({ receivedTime: a }, { receivedTime: b }) => Date.parse(b.toString()) - Date.parse(a.toString())
     );
   }
+
+  isRewardsEnabled(): Observable<boolean> {
+    return this.userService.userData.pipe(
+      switchMap(({ institutionId }) => this.configService.getSetting(institutionId, Settings.Setting.REWARDS_ENABLED)),
+      map(({ value }) => Boolean(Number(value)))
+    );
+  }
+
+  
 
 }

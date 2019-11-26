@@ -1,22 +1,29 @@
+<div *ngIf="showSpiner" class="spinner-wrapper">
+  <ion-spinner></ion-spinner>
+</div>
 <div class="conversations">
   <ion-list class="conversations__sender-list">
-    <ion-item *ngFor="let conversation of conversationsList" class="conversations__sender-item" lines="none">
+    <ion-item *ngFor="let conversation of conversationsArray" class="conversations__sender-item" lines="none">
       <ion-avatar class="conversations__sender-avatar-wrapper">
-        <img class="" src="{{ conversation.avatar }}" />
+        <img class="" src="/assets/images/order-item-template.jpg" />
       </ion-avatar>
       <div class="conversations__sender-info">
         <div class="conversations__sender-name-time-wrapper">
           <div
             class="conversations__sender-name"
-            [ngClass]="{ 'conversations__sender-name--unread': conversation.messageInfo.opened }"
+            [ngClass]="{
+              'conversations__sender-name--unread': !conversation.read_date && conversation.sender.type !== 'patron'
+            }"
           >
-            {{ conversation.name }}
+            {{ conversation.recipient.name }}
           </div>
-          <div class="conversations__sender-recent-time">{{ conversation.time }}</div>
+          <div class="conversations__sender-recent-time">{{ conversation.sent_date | date: 'short' }}</div>
         </div>
-        <div class="conversations__sender-recent-message">{{ conversation.recentMessage }}</div>
+        <div class="conversations__sender-recent-message">
+          <span *ngIf="conversation.sender.type == 'patron'">You: </span>{{ conversation.body }}
+        </div>
       </div>
-      <ng-container *ngIf="conversation.messageInfo.opened"
+      <ng-container *ngIf="!conversation.read_date && conversation.sender.type !== 'patron'"
         ><div class="conversations__sender-message-indicator-wrapper">
           <span class="indicator"></span></div
       ></ng-container>

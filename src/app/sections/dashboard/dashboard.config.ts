@@ -1,3 +1,4 @@
+import * as Globals from '../../app.global';
 
 export const SYSTEM_SETTINGS_CONFIG = {
 
