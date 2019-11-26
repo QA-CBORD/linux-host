@@ -3,6 +3,7 @@
 .btn {
   --border-radius: 25px;
   --background: #166DFF;
+  --background-hover: #166DFF;
 
   border-radius: 25px;
   height: 50px;
@@ -18,7 +19,7 @@
     --background: #999;
 
     &:hover {
-      --background: #999;
+      --background-hover: #999;
     }
 
     color: $color-white;
