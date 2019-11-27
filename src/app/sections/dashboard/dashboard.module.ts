@@ -21,6 +21,7 @@ import { TransactionsTileModule } from './containers/transactions-tile';
 import { RewardsTileModule } from './containers/rewards-tile';
 import { DashboardPageResolver } from './resolvers/dashboard-page.resolver';
 import { EditHomePageModalComponent } from './components/edit-home-page-modal';
+import { AccountsApiService } from '@sections/accounts/services/accounts.api.service';
 
 const imports = [
   IonicModule, 
@@ -46,7 +47,8 @@ const providers = [
   DashboardApiService,
   AccountsService,
   DashboardService,
-  DashboardPageResolver
+  DashboardPageResolver,
+  AccountsApiService
 ];
 
 @NgModule({

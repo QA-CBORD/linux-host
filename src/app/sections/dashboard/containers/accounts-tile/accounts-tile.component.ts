@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AccountsService } from '../../services/accounts.service';
 import { take } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { UserAccount } from '@core/model/account/account.model';
 
 @Component({
   selector: 'st-accounts-tile',
@@ -17,29 +17,29 @@ export class AccountsTileComponent implements OnInit {
     autoHeight: true,
   };
 
-  showSpiner = true;
-
+  showSpiner: boolean = true;
   userAccountsSlides = [];
-  parsedAccountsByOneSlide = [];
 
-  constructor(private readonly accountsService: AccountsService) {}
+  constructor(private readonly accountsService: AccountsService) { }
 
   ngOnInit() {
-    
+    this.initUserAccounts();
+  }
 
+  private initUserAccounts() {
+    let parsedAccountsByOneSlide = [];
     this.accountsService.getUserAccounts().pipe(
       take(1)
     ).subscribe(accounts => {
       accounts.forEach((item, index) => {
         if (index % 4 === 0 && index !== 0) {
-          this.userAccountsSlides.push(this.parsedAccountsByOneSlide);
-          this.parsedAccountsByOneSlide = [];
+          this.userAccountsSlides.push(parsedAccountsByOneSlide);
+          parsedAccountsByOneSlide = [];
         }
-        this.parsedAccountsByOneSlide.push(item);
+        parsedAccountsByOneSlide.push(item);
       });
-      this.userAccountsSlides.push(this.parsedAccountsByOneSlide);
-      this.showSpiner = false;
+      this.userAccountsSlides.push(parsedAccountsByOneSlide);
+      this.showSpiner = !this.showSpiner;
     });
-    
   }
 }
