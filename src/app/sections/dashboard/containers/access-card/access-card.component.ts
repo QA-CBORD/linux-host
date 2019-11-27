@@ -1,5 +1,5 @@
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -20,24 +20,16 @@ export class AccessCardComponent implements OnInit {
   institutionPhoto$: Observable<SafeResourceUrl>;
   institutionBackgroundImage$: Observable<string>;
   getMyCardEnabled$: Observable<boolean>;
-  mobileAccessEnabled$: Observable<boolean>;
   applePayEnabled$: Observable<boolean>;
+  @Input() isMobileAccessButtonEnabled: boolean;
 
-  constructor(private readonly accessCardService: AccessCardService, private readonly sanitizer: DomSanitizer) {}
+  constructor(private readonly accessCardService: AccessCardService, private readonly sanitizer: DomSanitizer) { }
 
   ngOnInit() {
-    this.setUserName();
-    this.setUserPhoto();
+    this.userName$ = this.accessCardService.getUserName();
+    this.userPhoto$ = this.accessCardService.getUserPhoto();
     this.setInstitutionData();
     this.getFeaturesEnabled();
-  }
-
-  private setUserName() {
-    this.userName$ = this.accessCardService.getUserName();
-  }
-
-  private setUserPhoto() {
-    this.userPhoto$ = this.accessCardService.getUserPhoto();
   }
 
   private setInstitutionData() {
@@ -50,7 +42,6 @@ export class AccessCardComponent implements OnInit {
 
   private getFeaturesEnabled() {
     this.getMyCardEnabled$ = this.accessCardService.isGETMyCardEnabled();
-    this.mobileAccessEnabled$ = this.accessCardService.isMobileAccessEnabled();
     this.applePayEnabled$ = this.accessCardService.isApplePayEnabled();
   }
 }
