@@ -1,4 +1,4 @@
-<div class="content">
+<div class="content" [ngClass]="{'content--disabled': readonly}">
   <form novalidate [formGroup]="detailsForm">
 
     <div class="order-details">

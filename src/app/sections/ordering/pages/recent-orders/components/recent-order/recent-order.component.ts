@@ -29,15 +29,16 @@ export class RecentOrderComponent implements OnInit {
   merchant$: Observable<MerchantInfo>;
 
   constructor(
-    private readonly activatedRoute: ActivatedRoute,
-    private readonly merchantService: MerchantService,
-    private readonly router: Router,
-    private readonly popoverController: PopoverController,
-    private readonly modalController: ModalController,
-    private readonly cart: CartService,
-    private readonly loadingService: LoadingService,
-    private readonly toastController: ToastController
-  ) {}
+      private readonly activatedRoute: ActivatedRoute,
+      private readonly merchantService: MerchantService,
+      private readonly router: Router,
+      private readonly popoverController: PopoverController,
+      private readonly modalController: ModalController,
+      private readonly cart: CartService,
+      private readonly loadingService: LoadingService,
+      private readonly toastController: ToastController
+  ) {
+  }
 
   ngOnInit() {
     const orderId = this.activatedRoute.snapshot.params.id;
@@ -155,6 +156,7 @@ export class RecentOrderComponent implements OnInit {
         handleServerError(ORDER_VALIDATION_ERRORS)
       )
       .toPromise()
+        .catch(this.onValidateErrorToast.bind(this))
       .then(this.redirectToCart.bind(this))
       .finally(await this.loadingService.closeSpinner.bind(this.loadingService));
   }
@@ -163,46 +165,46 @@ export class RecentOrderComponent implements OnInit {
     await this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.cart], { skipLocationChange: true });
   }
 
-  private async onValidateErrorToast(message: string) {
+  private async onValidateErrorToast(message: string, onDismiss: () => {}) {
     const toast = await this.toastController.create({
       message,
       showCloseButton: true,
       position: 'top',
     });
 
-    toast.onDidDismiss().then(() => this.back());
+    toast.onDidDismiss().then(() => onDismiss && onDismiss());
     await toast.present();
   }
 
   private setActiveAddress() {
     this.address$ = this.order$.pipe(
-      first(),
-      switchMap(({ type, deliveryAddressId }) => {
-        return type === ORDER_TYPE.DELIVERY ? this.getDeliveryAddress(deliveryAddressId) : this.getPickupAddress();
-      })
+        first(),
+        switchMap(({ type, deliveryAddressId }) => {
+          return type === ORDER_TYPE.DELIVERY ? this.getDeliveryAddress(deliveryAddressId) : this.getPickupAddress();
+        })
     );
   }
 
   private getPickupAddress(): Observable<any> {
     return this.order$.pipe(
-      switchMap(({ merchantId }) =>
-        this.merchantService.menuMerchants$.pipe(map(merchants => merchants.find(({ id }) => id === merchantId)))
-      ),
-      map(({ storeAddress }) => storeAddress)
+        switchMap(({ merchantId }) =>
+            this.merchantService.menuMerchants$.pipe(map(merchants => merchants.find(({ id }) => id === merchantId)))
+        ),
+        map(({ storeAddress }) => storeAddress)
     );
   }
 
   private getDeliveryAddress(deliveryId: string): Observable<any> {
     return this.merchantService.retrieveUserAddressList().pipe(
-      map(addresses => addresses.find(({ id }) => id === deliveryId)),
-      map(address => address)
+        map(addresses => addresses.find(({ id }) => id === deliveryId)),
+        map(address => address)
     );
   }
 
   private cancelOrder(): Observable<any> {
     return this.order$.pipe(
-      switchMap(({ id }) => this.merchantService.cancelOrderById(id)),
-      handleServerError(ORDER_VALIDATION_ERRORS)
+        switchMap(({ id }) => this.merchantService.cancelOrderById(id)),
+        handleServerError(ORDER_VALIDATION_ERRORS)
     );
   }
 
@@ -223,7 +225,10 @@ export class RecentOrderComponent implements OnInit {
       role === BUTTON_TYPE.REMOVE &&
         this.cancelOrder()
           .pipe(take(1))
-          .subscribe(response => response && this.back(), this.onValidateErrorToast.bind(this));
+          .subscribe(
+              response => response && this.back(),
+              (msg) => this.onValidateErrorToast(msg, this.back.bind(this))
+          );
     });
     await modal.present();
   }

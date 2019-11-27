@@ -107,12 +107,12 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
     }
   }
 
-  private get addressInfoFormControl(): AbstractControl {
-    return this.detailsForm.get(DETAILS_FORM_CONTROL_NAMES.address);
+  get cvvFormControl(): AbstractControl {
+    return this.detailsForm.get(DETAILS_FORM_CONTROL_NAMES.cvv);
   }
 
-  private get cvvFormControl(): AbstractControl {
-    return this.detailsForm.get(DETAILS_FORM_CONTROL_NAMES.cvv);
+  private get addressInfoFormControl(): AbstractControl {
+    return this.detailsForm.get(DETAILS_FORM_CONTROL_NAMES.address);
   }
 
   private subscribeOnFormChanges() {

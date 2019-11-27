@@ -1,8 +1,38 @@
 @import "tools";
 
 .content {
-  height: 100vh;
+  min-height: calc(100vh - 35px);
   background: $color-white-smoke;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  &--disabled {
+    background-color: $color-white;
+
+    .order-details {
+      background-color: $color-white-smoke;
+      margin-bottom: 10px;
+
+      &__payment-method {
+        margin: 0;
+        background-color: $color-white-smoke;
+      }
+    }
+
+    .order-ingredient-list {
+      margin-top: -10px;
+      background-color: $color-white;
+
+      &__ingredient {
+        --ion-item-background: #f3f3f3;
+      }
+    }
+
+    .total {
+      background-color: $color-white-smoke;
+    }
+  }
 }
 
 .order-details {
@@ -64,7 +94,6 @@
   }
 
   &__buttons {
-    margin-top: 50px;
     display: flex;
 
     & > * {
