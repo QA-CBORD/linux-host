@@ -220,7 +220,7 @@ export class RecentOrderComponent implements OnInit {
       backdropDismiss: true,
     });
     modal.onDidDismiss().then(({ role }) => {
-      role === BUTTON_TYPE.CANCEL &&
+      role === BUTTON_TYPE.REMOVE &&
         this.cancelOrder()
           .pipe(take(1))
           .subscribe(response => response && this.back(), this.onValidateErrorToast.bind(this));

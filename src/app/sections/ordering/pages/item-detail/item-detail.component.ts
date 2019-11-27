@@ -1,4 +1,4 @@
-import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
+import { LOCAL_ROUTING, ORDER_VALIDATION_ERRORS } from '@sections/ordering/ordering.config';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -7,6 +7,8 @@ import { Observable, Subscription, zip } from 'rxjs';
 import { CartService, MenuInfo, MenuItemInfo, OrderItem } from '@sections/ordering';
 import { first, take } from 'rxjs/operators';
 import { LoadingService } from '@core/service/loading/loading.service';
+import { ToastController } from '@ionic/angular';
+import { handleServerError } from '@core/utils/general-helpers';
 
 @Component({
   selector: 'st-item-detail',
@@ -30,7 +32,8 @@ export class ItemDetailComponent implements OnInit {
     private readonly fb: FormBuilder,
     private readonly activatedRoute: ActivatedRoute,
     private readonly cartService: CartService,
-    private readonly loadingService: LoadingService
+    private readonly loadingService: LoadingService,
+    private readonly toastController: ToastController,
   ) { }
 
   ngOnInit() {
@@ -161,13 +164,23 @@ export class ItemDetailComponent implements OnInit {
     this.loadingService.showSpinner();
     await this.cartService
       .validateOrder()
-      .pipe(first())
+      .pipe(
+        first(),
+        handleServerError(ORDER_VALIDATION_ERRORS)
+      )
       .toPromise()
-      .catch(() => this.loadingService.closeSpinner())
-      .finally(() => {
-        this.loadingService.closeSpinner();
-        this.onClose();
-      });
+      .then(() => this.onClose())
+      .catch(error => this.failedValidateOrder(error))
+      .finally(() => this.loadingService.closeSpinner());
+  }
+
+  private async failedValidateOrder(message: string) {
+    const toast = await this.toastController.create({
+      message,
+      duration: 3000,
+      position: 'top',
+    });
+    toast.present();
   }
 
   private initMenuItemOptions() {

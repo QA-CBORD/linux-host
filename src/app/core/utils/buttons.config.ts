@@ -7,6 +7,7 @@ export enum BUTTON_TYPE {
   CANCEL = 'CANCEL',
   CLOSE = 'CLOSE',
   CONTINUE = 'CONTINUE',
+  REMOVE = 'REMOVE'
 }
 
 const CANCEL = {
@@ -22,7 +23,7 @@ const REMOVE = {
   shape: 'round',
   strong: true,
   fill: 'default',
-  type: BUTTON_TYPE.CANCEL,
+  type: BUTTON_TYPE.REMOVE,
 };
 
 const RETRY = {
