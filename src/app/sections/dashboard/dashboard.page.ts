@@ -102,44 +102,40 @@ export class DashboardPage implements OnInit {
     },
   ];
 
-  
-
   constructor(private readonly modalController: ModalController, private readonly dashboardService: DashboardService) {}
 
   ngOnInit() {
     let settings = [];
 
-    this.dashboardService.retrieveSettingsList().subscribe(
-      v => {
-        // this.tilesConfig[0].isEnable = Boolean(Number(v.map['get~feature~enable_rewards'].value));
+    this.dashboardService.retrieveSettingsList().subscribe(v => {
+      // this.tilesConfig[0].isEnable = Boolean(Number(v.map['get~feature~enable_rewards'].value));
 
       const value = Boolean(Number(v.map['get~feature~enable_rewards'].value));
 
       this.setEnable('rewards', this.tilesConfig, this.tilesConfig[0].isEnable, value);
       this.setEnable('accounts', this.tilesConfig, this.tilesConfig[0].isEnable, value);
+    });
+    // console.log(settings['get~feature~enable_rewards']);
 
-
-      }
-    )
-      // console.log(settings['get~feature~enable_rewards']);
-      
-  this.dashboardService.retrieveSettingsList().pipe(take(1)).subscribe(
-    v => {
-      // console.log(v);
-    },
-    error => {
-     error.log(error);
-      
-    }
-  )
+    this.dashboardService
+      .retrieveSettingsList()
+      .pipe(take(1))
+      .subscribe(
+        v => {
+          // console.log(v);
+        },
+        error => {
+          error.log(error);
+        }
+      );
   }
 
   setEnable(prop, obj, isEnable, enable) {
     for (prop in obj) {
       if (Object.prototype.hasOwnProperty.call(obj, prop)) {
-          obj[isEnable] = enable;
+        obj[isEnable] = enable;
       }
-  }
+    }
   }
 
   async presentEditHomePageModal() {
@@ -148,7 +144,4 @@ export class DashboardPage implements OnInit {
     });
     return await modal.present();
   }
-
-  
-
 }

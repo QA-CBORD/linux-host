@@ -3,9 +3,15 @@
 </div>
 <div class="conversations">
   <ion-list class="conversations__sender-list">
-    <ion-item *ngFor="let conversation of conversationsArray" class="conversations__sender-item" lines="none">
-      <ion-avatar class="conversations__sender-avatar-wrapper">
-        <img class="" src="/assets/images/order-item-template.jpg" />
+    <ion-item
+      *ngFor="let conversation of lastTwoConversationsMessagesArray; let i"
+      class="conversations__sender-item"
+      lines="none"
+    >
+      <ion-avatar *ngIf="showTextAvatar" class="conversations__sender-avatar-wrapper">
+        <div class="conversations__sender-avatar-text">
+          {{ getConversationGroupInitial(conversation.recipient.name) }}
+        </div>
       </ion-avatar>
       <div class="conversations__sender-info">
         <div class="conversations__sender-name-time-wrapper">
@@ -17,7 +23,7 @@
           >
             {{ conversation.recipient.name }}
           </div>
-          <div class="conversations__sender-recent-time">{{ conversation.sent_date | date: 'short' }}</div>
+          <div class="conversations__sender-recent-time">{{ conversation | messageDate }}</div>
         </div>
         <div class="conversations__sender-recent-message">
           <span *ngIf="conversation.sender.type == 'patron'">You: </span>{{ conversation.body }}

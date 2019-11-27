@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { SecureMessagingService } from './services/secure-messaging.service';
-import { SecureMessageConversation } from '@core/model/secure-messaging/secure-messaging.model';
-import { fromEvent } from 'rxjs';
+import { SecureMessageConversation, SecureMessageInfo } from '@core/model/secure-messaging/secure-messaging.model';
 import { take } from 'rxjs/operators';
 
 @Component({
@@ -10,28 +9,12 @@ import { take } from 'rxjs/operators';
   styleUrls: ['./conversations-tile.component.scss'],
 })
 export class ConversationsTileComponent implements OnInit {
-  conversationsList = [
-    {
-      name: 'Benjamin P.',
-      recentMessage: 'Hey Andrew. Could you please merge your Dashboard UI branch',
-      avatar: '/assets/images/order-item-template.jpg',
-      messageInfo: { opened: true },
-      time: 'Just Now',
-    },
-    {
-      name: 'Oleh P.',
-      recentMessage: 'Yo, did you install the webstorm?',
-      avatar: '/assets/images/order-item-template.jpg',
-      messageInfo: { opened: false },
-      time: '1 minute ago',
-    },
-  ];
-
-  groupsArray: any;
-  messagesArray: any;
-  conversationsArray;
-  sourceSubscription: any;
+  
+  private groupsArray: any;
+  private messagesArray: SecureMessageInfo[] = [];
+  lastTwoConversationsMessagesArray: SecureMessageInfo[] = [];
   showSpiner: boolean = true;
+  showTextAvatar: boolean = true;
 
   constructor(private readonly secureMessagingService: SecureMessagingService) {}
 
@@ -39,7 +22,7 @@ export class ConversationsTileComponent implements OnInit {
     this.initializePage();
   }
 
-  initializePage() {
+  private initializePage() {
     this.secureMessagingService
       .getInitialData()
       .pipe(take(1))
@@ -47,7 +30,7 @@ export class ConversationsTileComponent implements OnInit {
         ([smGroupArray, smMessageArray]) => {
           this.groupsArray = smGroupArray;
           this.messagesArray = smMessageArray;
-          this.createConversations(false);
+          this.createConversations();
           this.pollForData();
         },
         error => {
@@ -56,7 +39,7 @@ export class ConversationsTileComponent implements OnInit {
       );
   }
 
-  pollForData() {
+  private pollForData() {
     this.secureMessagingService
       .pollForData()
       .pipe(take(1))
@@ -66,20 +49,14 @@ export class ConversationsTileComponent implements OnInit {
           if (this.messagesArray.length !== smGroupArray.length) {
             this.messagesArray = smMessageArray;
           }
-          /// if there are new messages, update the conversations
-          if (this.messagesArray.length !== smMessageArray.length) {
-            this.messagesArray = smMessageArray;
-            this.createConversations(true);
-          }
         },
         error => {
-          /// only deal with connection error ?
           console.log(error);
         }
       );
   }
 
-  createConversations(bIsPollingData: boolean) {
+  private createConversations() {
     const tempConversations: SecureMessageConversation[] = [];
 
     /// create 'conversations' out of message array
@@ -143,12 +120,12 @@ export class ConversationsTileComponent implements OnInit {
       }
     }
 
-    this.conversationsArray = tempConversations.map(conversation => conversation.messages.pop()).slice(0, 2);
+    this.lastTwoConversationsMessagesArray = tempConversations.map(conversation => conversation.messages.pop()).slice(0, 2);
     this.showSpiner = false;
 
-    console.log(this.conversationsArray);
-   
+  }
 
-    
+  getConversationGroupInitial(groupName: string): string {
+    return groupName == null || groupName.length < 1 ? 'U' : groupName[0];
   }
 }

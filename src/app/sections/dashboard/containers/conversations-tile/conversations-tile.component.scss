@@ -31,15 +31,23 @@
 
   &__sender-avatar-wrapper {
     display: flex;
+    justify-content: center;
+    align-items: center;
     width: 45px;
     height: 45px;
   }
 
-  &__sender-avatar {
-    height: 100%;
+  &__sender-avatar-text {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 100%;
-    object-fit: cover;
+    height: 100%;
     border-radius: 50%;
+    color: $color-white;
+    background: $color-harley-davidson-orange;
+    
+    @include font-nunito-semibold(16px);
   }
 
   &__sender-name-time-wrapper {
