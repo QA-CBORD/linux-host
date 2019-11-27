@@ -34,7 +34,7 @@ export class DashboardPage implements OnInit {
       id: 'transactions',
       title: 'Transactions',
       iconPath: '/assets/icon/transactions.svg',
-      isEnable: this.getRewardEnable$,
+      isEnable: true,
       navigate: NAVIGATE.accounts,
       buttonConfig: {
         show: true,
@@ -68,7 +68,7 @@ export class DashboardPage implements OnInit {
       id: 'order',
       title: 'Order',
       iconPath: '/assets/icon/order.svg',
-      isEnable: this.getRewardEnable$,
+      isEnable: true,
       navigate: NAVIGATE.accounts,
       buttonConfig: {
         show: true,
@@ -80,7 +80,7 @@ export class DashboardPage implements OnInit {
       id: 'explore',
       title: 'Explore',
       iconPath: '/assets/icon/map.svg',
-      isEnable: this.getRewardEnable$,
+      isEnable: true,
       navigate: NAVIGATE.accounts,
       buttonConfig: {
         show: true,
@@ -92,7 +92,7 @@ export class DashboardPage implements OnInit {
       id: 'conversations',
       title: 'Conversations',
       iconPath: '/assets/icon/chat.svg',
-      isEnable: this.getRewardEnable$,
+      isEnable: true,
       navigate: NAVIGATE.accounts,
       buttonConfig: {
         show: true,
