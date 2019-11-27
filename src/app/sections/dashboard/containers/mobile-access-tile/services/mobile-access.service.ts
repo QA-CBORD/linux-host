@@ -1,6 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ToastController } from '@ionic/angular';
 
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import { catchError, map, retry, switchMap } from 'rxjs/operators';
@@ -26,7 +25,6 @@ export class MobileAccessService extends BaseService {
     protected readonly http: HttpClient,
     private readonly userService: UserService,
     private readonly coords: CoordsService,
-    private readonly toastController: ToastController
   ) {
     super(http);
   }
@@ -110,24 +108,24 @@ export class MobileAccessService extends BaseService {
     );
   }
 
-  private saveFavourites(favourites: string[]): Observable<MessageResponse<boolean>> {
-    const favouritesAsString = JSON.stringify(favourites);
+  // private saveFavourites(favourites: string[]): Observable<MessageResponse<boolean>> {
+  //   const favouritesAsString = JSON.stringify(favourites);
 
-    return this.userService
-      .saveUserSettingsBySettingName(this.favouritesLocationSettingsName, favouritesAsString)
-      .pipe(retry(1));
-  }
+  //   return this.userService
+  //     .saveUserSettingsBySettingName(this.favouritesLocationSettingsName, favouritesAsString)
+  //     .pipe(retry(1));
+  // }
 
-  private handleFavouriteById(locationId: string, favourites: string[]): string[] | [] {
-    const wasFavorite = this.isFavouriteLocation(locationId, favourites);
+  // private handleFavouriteById(locationId: string, favourites: string[]): string[] | [] {
+  //   const wasFavorite = this.isFavouriteLocation(locationId, favourites);
 
-    if (wasFavorite) {
-      return (favourites = favourites.filter(id => id !== locationId));
-    }
-    favourites.push(locationId);
+  //   if (wasFavorite) {
+  //     return (favourites = favourites.filter(id => id !== locationId));
+  //   }
+  //   favourites.push(locationId);
 
-    return favourites;
-  }
+  //   return favourites;
+  // }
 
   private addFavouriteFieldToLocations(locations: MMobileLocationInfo[], favourites: string[]): MMobileLocationInfo[] {
     return locations.map(location => ({

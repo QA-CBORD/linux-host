@@ -1,16 +1,16 @@
 <ion-content class="dashboard">
   <st-access-card></st-access-card>
 
-  <ng-container *ngFor="let tile of tilesConfig">
-    <st-tile-wrapper *ngIf="true" [wrapperConfig]="tile">
-      <ng-container [ngSwitch]="tile.id">
-        <st-accounts-tile *ngSwitchCase="'accounts'"></st-accounts-tile>
-        <st-transactions-tile *ngSwitchCase="'transactions'"></st-transactions-tile>
-        <st-rewards-tile *ngSwitchCase="'rewards'"></st-rewards-tile>
-        <st-mobile-access-tile *ngSwitchCase="'mobileAccess'"></st-mobile-access-tile>
-        <st-order-tile *ngSwitchCase="'order'"></st-order-tile>
-        <st-explore-tile *ngSwitchCase="'explore'"></st-explore-tile>
-        <st-conversations-tile *ngSwitchCase="'conversations'"></st-conversations-tile>
+  <ng-container *ngFor="let tile of tiles">
+    <st-tile-wrapper *ngIf="tile.isEnable" [wrapperConfig]="tile">
+      <ng-container [ngSwitch]="tile.title">
+        <st-accounts-tile *ngSwitchCase="tilesTitle.accounts"></st-accounts-tile>
+        <st-transactions-tile *ngSwitchCase="tilesTitle.transactions"></st-transactions-tile>
+        <st-rewards-tile *ngSwitchCase="tilesTitle.rewards"></st-rewards-tile>
+        <st-mobile-access-tile *ngSwitchCase="tilesTitle.mobileAccess"></st-mobile-access-tile>
+        <st-order-tile *ngSwitchCase="tilesTitle.order"></st-order-tile>
+        <st-explore-tile *ngSwitchCase="tilesTitle.explore"></st-explore-tile>
+        <st-conversations-tile *ngSwitchCase="tilesTitle.conversations"></st-conversations-tile>
       </ng-container>
     </st-tile-wrapper>
   </ng-container>

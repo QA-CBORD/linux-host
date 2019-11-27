@@ -10,6 +10,9 @@ import { UserService } from 'src/app/core/service/user-service/user.service';
 import { Settings, PaymentSystemType, ContentStrings } from 'src/app/app.global';
 import { UserAccount } from 'src/app/core/model/account/account.model';
 import { ContentService } from 'src/app/core/service/content-service/content.service';
+import { ContentStringRequest } from '@core/model/content/content-string-request.model';
+import { SettingInfo } from '@core/model/configuration/setting-info.model';
+import { AccountsApiService } from '@sections/accounts/services/accounts.api.service';
 
 @Injectable()
 export class AccountsService {
@@ -19,7 +22,8 @@ export class AccountsService {
     private readonly commerceApiService: CommerceApiService,
     private readonly userService: UserService,
     private readonly configService: ConfigurationService,
-    private readonly contentService: ContentService
+    private readonly contentService: ContentService,
+    private readonly apiService: AccountsApiService,
   ) {}
 
   get accounts$(): Observable<UserAccount[]> {
@@ -82,5 +86,11 @@ export class AccountsService {
     return accounts.filter(
       ({ paymentSystemType: type }) => type === PaymentSystemType.OPCS || type === PaymentSystemType.CSGOLD
     );
+  }
+
+  getUserSettings(settings: ContentStringRequest[]): Observable<SettingInfo[]> {
+    const requestArray = settings.map(setting => this.apiService.getSettingByConfig(setting));
+
+    return zip(...requestArray);
   }
 }
