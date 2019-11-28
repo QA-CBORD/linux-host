@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AccountsService } from '../../services/accounts.service';
 import { take } from 'rxjs/operators';
-import { UserAccount } from '@core/model/account/account.model';
 
 @Component({
   selector: 'st-accounts-tile',

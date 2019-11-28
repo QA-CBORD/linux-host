@@ -1,7 +1,7 @@
-import { Component, OnInit, Input, ContentChild, AfterContentInit, ContentChildren } from '@angular/core';
-
+import { Component, OnInit, Input } from '@angular/core';
 
 import { TileWrapperConfig } from '../../models/tile-wrapper-config.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'st-tile-wrapper',
@@ -9,24 +9,17 @@ import { TileWrapperConfig } from '../../models/tile-wrapper-config.model';
   styleUrls: ['./tile-wrapper.component.scss'],
 })
 export class TileWrapperComponent implements OnInit {
-  
   @Input() wrapperConfig: TileWrapperConfig;
-  @ContentChild('ref') contentEl ;
 
-  constructor() { }
+  constructor(private readonly router: Router) {}
 
-  ngOnInit() {
-   
-    
-  }
-  ngAfterContentInit(): void {
-    
-    
+  ngOnInit() {}
+
+  handleTopBarClick(path) {
+    this.router.navigate([path]);
   }
 
-   
-  handleTopBarClick(){}
-
-  handleBottomButtonClick(){}
-
+  handleBottomButtonClick(path) {
+    this.router.navigate([path]);
+  }
 }

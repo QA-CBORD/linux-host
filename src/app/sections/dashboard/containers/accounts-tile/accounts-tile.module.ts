@@ -2,11 +2,11 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 
-
 import { AccountsTileComponent } from './accounts-tile.component';
+import { TransactionUnitsPipeModule } from '../transactions-tile/pipes/transactions-units';
 
-const imports = [IonicModule, CommonModule];
-const declarations = [AccountsTileComponent, ];
+const imports = [IonicModule, CommonModule, TransactionUnitsPipeModule];
+const declarations = [AccountsTileComponent];
 const exports = [AccountsTileComponent];
 
 @NgModule({

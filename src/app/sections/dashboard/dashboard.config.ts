@@ -119,11 +119,11 @@ export const tilesConfig: TileWrapperConfig[] = [
     title: 'Order',
     iconPath: '/assets/icon/order.svg',
     isEnable: false,
-    navigate: NAVIGATE.accounts,
+    navigate: NAVIGATE.ordering,
     buttonConfig: {
       show: true,
       title: 'Start an order',
-      navigate: NAVIGATE.accounts,
+      navigate: NAVIGATE.ordering,
     },
   },
   {
@@ -143,11 +143,11 @@ export const tilesConfig: TileWrapperConfig[] = [
     title: 'Conversations',
     iconPath: '/assets/icon/chat.svg',
     isEnable: false,
-    navigate: NAVIGATE.accounts,
+    navigate: NAVIGATE.secureMessage,
     buttonConfig: {
       show: true,
       title: 'Start a conversation',
-      navigate: NAVIGATE.accounts,
+      navigate: NAVIGATE.secureMessage,
     },
   },
 ];

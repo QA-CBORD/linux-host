@@ -7,7 +7,7 @@
     <ion-slide class="accounts__slide" *ngFor="let accountsByOneSlide of userAccountsSlides">
       <div class="accounts__item" *ngFor="let account of accountsByOneSlide">
         <div class="accounts__title">{{ account.accountDisplayName }}</div>
-        <div class="accounts__total">{{ account.balance }}</div>
+        <div class="accounts__total">{{ account.balance | transactionUnits: account.accountType }}</div>
       </div>
     </ion-slide>
   </ion-slides>
