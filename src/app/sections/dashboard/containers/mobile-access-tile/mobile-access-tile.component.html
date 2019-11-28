@@ -4,7 +4,8 @@
 <div *ngIf="!showSpiner" class="access">
   <ion-list class="access__list" *ngFor="let access of accessList">
     <ion-item class="access__item" mode="ios" lines="none">
-      <img class="access__item-icon" src="/assets/icon/star-filled.svg"/>
+      <img *ngIf="!access.isFavourite" class="access__item-icon" src="/assets/icon/star-outline.svg"/>
+      <img *ngIf="access.isFavourite" class="access__item-icon" src="/assets/icon/star-filled.svg"/>
       <div class="access__item-lable"> {{ access.locationId }} - {{ access.name}}</div>
     </ion-item>
   </ion-list>

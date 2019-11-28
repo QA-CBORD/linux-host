@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 
 import { AccountsTileComponent } from './accounts-tile.component';
-import { TransactionUnitsPipeModule } from '../transactions-tile/pipes/transactions-units';
+import { TransactionUnitsPipeModule } from '../transactions-tile/pipes/transaction-units';
 
 const imports = [IonicModule, CommonModule, TransactionUnitsPipeModule];
 const declarations = [AccountsTileComponent];

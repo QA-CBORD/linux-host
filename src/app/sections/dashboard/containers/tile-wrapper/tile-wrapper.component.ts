@@ -15,11 +15,8 @@ export class TileWrapperComponent implements OnInit {
 
   ngOnInit() {}
 
-  handleTopBarClick(path) {
+  navigateTo(path) {
     this.router.navigate([path]);
   }
-
-  handleBottomButtonClick(path) {
-    this.router.navigate([path]);
-  }
+  
 }

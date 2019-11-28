@@ -4,10 +4,10 @@ import { IonicModule } from '@ionic/angular';
 import { ConversationsTileComponent } from './conversations-tile.component';
 import { SecureMessagingApiService } from '@sections/secure-messaging';
 import { SecureMessagingService } from './services/secure-messaging.service';
-import { MessageDatePipe } from '@sections/secure-messaging/pipes/message-date.pipe';
+import { MessageDatePipeModule } from './pipes/message-date';
 
-const imports = [IonicModule, CommonModule];
-const declarations = [ConversationsTileComponent, MessageDatePipe];
+const imports = [IonicModule, CommonModule, MessageDatePipeModule];
+const declarations = [ConversationsTileComponent];
 const exports = [ConversationsTileComponent];
 
 @NgModule({

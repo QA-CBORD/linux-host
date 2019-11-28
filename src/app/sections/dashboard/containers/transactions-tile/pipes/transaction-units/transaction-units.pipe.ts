@@ -1,11 +1,15 @@
+
 import { Pipe, PipeTransform } from '@angular/core';
+
+import { AccountsService } from '@sections/accounts/services/accounts.service';
 import { ACCOUNT_TYPES, CONTENT_STRINGS } from '@sections/accounts/accounts.config';
+
 
 @Pipe({
   name: 'transactionUnits',
 })
 export class TransactionUnitsPipe implements PipeTransform {
-  constructor() {}
+  constructor(private readonly accountsService: AccountsService) {}
 
   transform(value: number | string, type: ACCOUNT_TYPES = ACCOUNT_TYPES.charge): string {
     if (value === null) {
@@ -35,6 +39,7 @@ export class TransactionUnitsPipe implements PipeTransform {
     return finalFirst + withDecimal.slice(firstPartIndex);
   }
   private getContentStringValueByName(name: string): string {
-    return name;
+    
+    return this.accountsService.getContentValueByName(name);
   }
 }

@@ -2,11 +2,9 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Component, OnInit, Input } from '@angular/core';
 
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, startWith } from 'rxjs/operators';
 
 import { AccessCardService } from './services/access-card.service';
-
-import { Institution } from 'src/app/core/model/institution';
 
 @Component({
   selector: 'st-access-card',
@@ -21,13 +19,14 @@ export class AccessCardComponent implements OnInit {
   institutionBackgroundImage$: Observable<string>;
   getMyCardEnabled$: Observable<boolean>;
   applePayEnabled$: Observable<boolean>;
+  defaultAvatarUrl = '../../../../../assets/images/no_photo.svg';
   @Input() isMobileAccessButtonEnabled: boolean;
 
-  constructor(private readonly accessCardService: AccessCardService, private readonly sanitizer: DomSanitizer) { }
+  constructor(private readonly accessCardService: AccessCardService, private readonly sanitizer: DomSanitizer) {}
 
   ngOnInit() {
     this.userName$ = this.accessCardService.getUserName();
-    this.userPhoto$ = this.accessCardService.getUserPhoto();
+    this.userPhoto$ = this.accessCardService.getUserPhoto().pipe(startWith(this.defaultAvatarUrl));
     this.setInstitutionData();
     this.getFeaturesEnabled();
   }

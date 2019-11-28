@@ -5,7 +5,7 @@
     [detail]="true"
     class="tile-container__topbar"
     detailIcon="/assets/icon/angle-right.svg"
-    (click)="handleTopBarClick(wrapperConfig.navigate)"
+    (click)="navigateTo(wrapperConfig.navigate)"
   >
     <div slot="start" class="tile-container__image-wrapper">
       <img class="tile-container__image" src="{{ wrapperConfig.iconPath }}" />
@@ -22,7 +22,7 @@
       [button]="true"
       [detail]="false"
       class="tile-container__nav-button"
-      (click)="handleBottomButtonClick(wrapperConfig.navigate)"
+      (click)="navigateTo(wrapperConfig.buttonConfig.navigate)"
     >
       <ion-label class="tile-container__nav-button--label">
         {{ wrapperConfig.buttonConfig.title }}

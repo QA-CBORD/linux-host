@@ -12,7 +12,7 @@ export class ConversationsTileComponent implements OnInit {
   
   private groupsArray: any;
   private messagesArray: SecureMessageInfo[] = [];
-  lastTwoConversationsMessagesArray: SecureMessageInfo[] = [];
+  lastTwoMessagesArray: SecureMessageInfo[] = [];
   showSpiner: boolean = true;
   showTextAvatar: boolean = true;
 
@@ -120,9 +120,9 @@ export class ConversationsTileComponent implements OnInit {
       }
     }
 
-    this.lastTwoConversationsMessagesArray = tempConversations.map(conversation => conversation.messages.pop()).slice(0, 2);
+    this.lastTwoMessagesArray = tempConversations.map(conversation => conversation.messages.pop()).slice(0, 2);
     this.showSpiner = false;
-
+    
   }
 
   getConversationGroupInitial(groupName: string): string {

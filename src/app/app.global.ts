@@ -176,5 +176,6 @@ export enum NAVIGATE {
   mobileAccess = 'openmydoor',
   secureMessage = 'securemessaging',
   accounts = 'accounts',
+  addFounds = 'accounts/add-funds',
   ordering = 'ordering'
 }

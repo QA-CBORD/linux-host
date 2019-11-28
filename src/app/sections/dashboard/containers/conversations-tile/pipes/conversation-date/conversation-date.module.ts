@@ -1,9 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TransactionUnitsPipe } from './transaction-units.pipe';
+import { ConversationDatePipe } from './conversation-date.pipe';
 
-
-const declarations = [TransactionUnitsPipe];
+const declarations = [ConversationDatePipe];
 @NgModule({
   declarations,
   imports: [
@@ -11,4 +10,4 @@ const declarations = [TransactionUnitsPipe];
   ],
   exports: declarations
 })
-export class TransactionUnitsPipeModule { }
+export class ConversationDatePipeModule { }

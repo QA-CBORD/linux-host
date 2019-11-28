@@ -77,7 +77,7 @@ export const tilesConfig: TileWrapperConfig[] = [
     buttonConfig: {
       show: false,
       title: 'Add Funds',
-      navigate: NAVIGATE.accounts,
+      navigate: NAVIGATE.addFounds,
     },
   },
   {
