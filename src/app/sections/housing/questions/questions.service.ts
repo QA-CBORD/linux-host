@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
-import { FormControl, Validators, FormGroup, FormArray } from '@angular/forms';
+import { FormControl, Validators, FormGroup, FormArray, AbstractControl } from '@angular/forms';
 import { BehaviorSubject, Observable } from 'rxjs';
+
+import { QuestionsStorageService } from './questions-storage.service';
 
 import { QuestionBase } from './types/question-base';
 import { QuestionFormControl } from './types/question-form-control';
@@ -14,7 +16,7 @@ import { QuestionCheckboxGroup, QuestionCheckboxGroupValue } from './types/quest
 import { QuestionRadioGroup } from './types/question-radio-group';
 
 import { QuestionPage, QuestionReorder, QuestionReorderValue } from './questions.model';
-import { Application } from '../applications/applications.model';
+import { ApplicationDetails, PatronAttribute } from '../applications/applications.model';
 
 export const QuestionConstructorsMap = {
   header: QuestionHeader,
@@ -34,12 +36,54 @@ export class QuestionsService {
   private _pagesSource: BehaviorSubject<QuestionPage[]> = new BehaviorSubject<QuestionPage[]>([]);
   private _pages$: Observable<QuestionPage[]> = this._pagesSource.asObservable();
 
+  constructor(private _questionsStorageService: QuestionsStorageService) {}
+
   setPages(pages: QuestionPage[]): void {
     this._pagesSource.next(pages);
   }
 
   getPages(): Observable<QuestionPage[]> {
     return this._pages$;
+  }
+
+  parsePages(application: ApplicationDetails): void {
+    const questions: QuestionBase[] = this.parseQuestions(application.applicationDefinition.applicationFormJson);
+    const pages: QuestionPage[] = this._splitByPages(questions, application.patronAttributes);
+
+    this.setPages(pages);
+  }
+
+  async _patchFormsFromState(
+    pages: QuestionPage[],
+    applicationId: number,
+    checkCallback: (namesToTouch: Set<string>) => void
+  ): Promise<void> {
+    const questions: any = await this._questionsStorageService.getQuestions(applicationId);
+    const namesToTouch: Set<string> = new Set<string>();
+
+    pages.forEach((page: QuestionPage, index: number) => {
+      if (questions) {
+        page.form.patchValue(questions);
+
+        const controls = page.form.controls;
+
+        Object.keys(controls).forEach((controlName: string) => {
+          const control: AbstractControl = controls[controlName];
+          const hasValue: boolean = Array.isArray(control.value)
+            ? !control.value.some((value: any) => value == null || value === '')
+            : !(control.value == null || control.value === '');
+
+          if (hasValue) {
+            control.markAsDirty();
+            control.markAsTouched();
+
+            namesToTouch.add(controlName);
+          }
+        });
+      }
+    });
+
+    checkCallback(namesToTouch);
   }
 
   parseQuestions(json: string): QuestionBase[] {
@@ -53,10 +97,10 @@ export class QuestionsService {
 
     const questions: any[] = Array.isArray(parsedQuestions) ? parsedQuestions : [];
 
-    return questions.map(this.toQuestionType);
+    return questions.map(this._toQuestionType);
   }
 
-  toQuestionType(question: QuestionBase): QuestionBase {
+  private _toQuestionType(question: QuestionBase): QuestionBase {
     if (QuestionConstructorsMap[question.type]) {
       if ((question as QuestionReorder).facilityPicker) {
         return new QuestionReorder(question);
@@ -68,7 +112,7 @@ export class QuestionsService {
     return new QuestionBase(question);
   }
 
-  splitByPages(questions: QuestionBase[]): QuestionPage[] {
+  private _splitByPages(questions: QuestionBase[], attributes: PatronAttribute[]): QuestionPage[] {
     const questionsByPages: QuestionBase[][] = questions.reduce(
       (accumulator: QuestionBase[][], current: QuestionBase, index: number) => {
         if ((current as QuestionParagraph).subtype === 'blockquote') {
@@ -83,19 +127,12 @@ export class QuestionsService {
     );
 
     return questionsByPages.map((page: QuestionBase[]) => ({
-      form: this.toFormGroup(page),
+      form: this._toFormGroup(page, attributes),
       questions: page,
     }));
   }
 
-  parsePages(application: Application): void {
-    const questions: QuestionBase[] = this.parseQuestions(application.applicationFormJson);
-    const pages: QuestionPage[] = this.splitByPages(questions);
-
-    this.setPages(pages);
-  }
-
-  toFormGroup(questions: QuestionBase[]): FormGroup {
+  private _toFormGroup(questions: QuestionBase[], attributes: PatronAttribute[]): FormGroup {
     let group: any = {};
 
     questions.forEach((question: QuestionFormControl) => {
@@ -113,11 +150,23 @@ export class QuestionsService {
 
           group[question.name] = new FormArray(values);
         } else {
-          group[question.name] = question.required ? new FormControl('', Validators.required) : new FormControl('');
+          const value: any = this._getValueFromAttribute(question, attributes);
+
+          group[question.name] = question.required
+            ? new FormControl(value, Validators.required)
+            : new FormControl(value);
         }
       }
     });
 
     return new FormGroup(group);
+  }
+
+  private _getValueFromAttribute(question: QuestionFormControl, attributes: PatronAttribute[]): any {
+    const foundAttribute: PatronAttribute = attributes.find(
+      (attribute: PatronAttribute) => attribute.consumerKey === question.consumerKey
+    );
+
+    return foundAttribute ? foundAttribute.value : null;
   }
 }

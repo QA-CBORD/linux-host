@@ -12,28 +12,28 @@ import { User } from './housing-auth.model';
   providedIn: 'root',
 })
 export class HousingAuthService {
-  constructor(private _http: HttpClient) {}
-
-  private _tokenSource: BehaviorSubject<string> = new BehaviorSubject<string>(null);
-
   private readonly _authUrl: string = 'patronIdentityTemp/auth/token';
 
   private readonly _patronId: string = '612345678';
 
   private readonly _patronSK: number = 8000712;
 
+  private _tokenSource: BehaviorSubject<string> = new BehaviorSubject<string>(null);
+
   token$: Observable<string> = this._tokenSource.asObservable();
 
-  getToken(): string {
-    return this._tokenSource.getValue();
-  }
+  constructor(private _http: HttpClient) {}
 
-  setToken(value: string) {
+  set token(value: string) {
     this._tokenSource.next(value);
   }
 
+  get token(): string {
+    return this._tokenSource.getValue();
+  }
+
   authorize(): Observable<string> {
-    if (this.getToken()) {
+    if (this.token) {
       return this.token$;
     }
 
@@ -41,7 +41,7 @@ export class HousingAuthService {
 
     return this._http.post<Response>(apiUrl, new User(this._patronId, this._patronSK)).pipe(
       map((response: Response) => response.data),
-      tap((token: string) => this.setToken(token)),
+      tap((token: string) => (this.token = token)),
       catchError(() => of(null))
     );
   }

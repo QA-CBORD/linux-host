@@ -8,3 +8,5 @@ export enum LOCAL_ROUTING {
 }
 
 export const BASE_URL: string = 'https://housing.api.demo.cbord.com/RescenterApi';
+
+export const STORAGE_KEY: string = 'housing';

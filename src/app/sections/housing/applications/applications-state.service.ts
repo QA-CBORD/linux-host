@@ -2,7 +2,14 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { Application } from './applications.model';
+import { Application, ApplicationDetails } from './applications.model';
+
+export interface ApplicationsState {
+  entities: ApplicationEntities;
+  applicationDetails: ApplicationDetails;
+  loading: boolean;
+  loaded: boolean;
+}
 
 export interface ApplicationEntities {
   [key: number]: Application;
@@ -12,47 +19,82 @@ export interface ApplicationEntities {
   providedIn: 'root',
 })
 export class ApplicationsStateService {
-  private readonly _defaultState: any = {};
+  private readonly _defaultState: ApplicationsState = {
+    entities: {},
+    applicationDetails: null,
+    loading: false,
+    loaded: false,
+  };
 
-  private readonly _applicationsState: BehaviorSubject<ApplicationEntities> = new BehaviorSubject<ApplicationEntities>(
-    this._defaultState
-  );
+  private readonly _applicationsStateSource: BehaviorSubject<ApplicationsState> = new BehaviorSubject<
+    ApplicationsState
+  >(this._defaultState);
 
-  readonly applicationEntities$: Observable<ApplicationEntities> = this._applicationsState.asObservable();
+  readonly applicationsState$: Observable<ApplicationsState> = this._applicationsStateSource.asObservable();
+
+  readonly applicationEntities$: Observable<ApplicationEntities> = this.applicationsState$.pipe(map(this._getEntities));
 
   readonly applications$: Observable<Application[]> = this.applicationEntities$.pipe(
-    map((entities: ApplicationEntities) => this._toApplicationsArray(entities))
+    map(this._getApplications.bind(this))
   );
 
-  set applicationEntities(value: ApplicationEntities) {
-    this._applicationsState.next(value);
+  readonly applicationDetails$: Observable<ApplicationDetails> = this.applicationsState$.pipe(
+    map(this._getApplicationDetails)
+  );
+
+  readonly loading$: Observable<boolean> = this.applicationsState$.pipe(map(this._getLoading));
+
+  readonly loaded$: Observable<boolean> = this.applicationsState$.pipe(map(this._getLoaded));
+
+  set applicationsState(value: ApplicationsState) {
+    this._applicationsStateSource.next(value);
   }
 
-  get applicationEntities(): ApplicationEntities {
-    return this._applicationsState.getValue();
-  }
-
-  get applications(): Application[] {
-    return this._toApplicationsArray(this.applicationEntities);
+  get applicationState(): ApplicationsState {
+    return this._applicationsStateSource.getValue();
   }
 
   setApplications(applications: Application[]): void {
-    this.applicationEntities = this._toApplicationEntities(applications);
+    this.applicationsState = { ...this.applicationsState, entities: this._toApplicationEntities(applications) };
   }
 
-  reloadApplications(): void {
-    this.applicationEntities = { ...this.applicationEntities };
+  setApplicationDetails(applicationDetails: ApplicationDetails): void {
+    this.applicationsState = { ...this.applicationsState, applicationDetails };
   }
 
-  getApplicationById(applicationId: number): Observable<Application> {
-    return this.applicationEntities$.pipe(map((entities: ApplicationEntities) => entities[applicationId]));
+  setLoading(loading: boolean): void {
+    this.applicationsState = { ...this.applicationsState, loading };
+  }
+
+  setLoaded(loaded: boolean): void {
+    this.applicationsState = { ...this.applicationsState, loaded };
+  }
+
+  private _getEntities(state: ApplicationsState) {
+    return state.entities;
+  }
+
+  private _getApplications(entities: ApplicationEntities) {
+    return this._toApplicationsArray(entities);
+  }
+
+  private _getApplicationDetails(state: ApplicationsState) {
+    return state.applicationDetails;
+  }
+
+  private _getLoading(state: ApplicationsState): boolean {
+    return state.loading;
+  }
+
+  private _getLoaded(state: ApplicationsState): boolean {
+    return state.loaded;
   }
 
   private _toApplicationEntities(applications: Application[]): ApplicationEntities {
     return applications.reduce((entities: ApplicationEntities, application: Application) => {
       return {
         ...entities,
-        [application.applicationDefinitionId]: application,
+        [application.key]: application,
       };
     }, {});
   }

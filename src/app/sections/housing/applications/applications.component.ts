@@ -12,15 +12,15 @@ import { Application } from './applications.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ApplicationsComponent implements OnInit {
-  constructor(private _applicationsService: ApplicationsService) {}
-
   applications$: Observable<Application[]>;
+
+  constructor(private _applicationsService: ApplicationsService) {}
 
   ngOnInit(): void {
     this.applications$ = this._applicationsService.getApplications();
   }
 
-  async handleClear(applicationId: number): Promise<void> {
-    await this._applicationsService.clearApplication(applicationId);
+  handleClear(applicationId: number): void {
+    this._applicationsService.clearApplication(applicationId);
   }
 }

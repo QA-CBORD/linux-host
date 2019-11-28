@@ -1,90 +1,78 @@
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
 
+import { STORAGE_KEY } from '../housing.config';
+
 import { ApplicationStatus } from '../applications/applications.model';
 
 export interface QuestionsGroup {
-  status: ApplicationStatus;
-  creationDateTime: number;
-  submittedDateTime?: number;
   questions: any[];
-}
-
-export interface QuestionGroups {
-  [key: number]: QuestionsGroup;
+  status: ApplicationStatus;
+  createdDateTime: string;
+  submittedDateTime?: string;
 }
 
 @Injectable({
   providedIn: 'root',
 })
 export class QuestionsStorageService {
-  private readonly _key: string = 'housing-questions';
+  private readonly _key: string = `${STORAGE_KEY}-questions`;
 
   constructor(private _storage: Storage) {}
 
-  async getQuestionGroups(): Promise<QuestionGroups> {
-    return this._storage.get(this._key);
-  }
-
   async getQuestionsGroup(applicationId: number): Promise<QuestionsGroup> {
-    const groups: QuestionGroups = await this.getQuestionGroups();
-
-    return groups && groups[applicationId] ? groups[applicationId] : null;
+    return this._storage.get(`${this._key}-${applicationId}`);
   }
 
   async getQuestions(applicationId: number): Promise<any[]> {
-    const group: QuestionsGroup = await this.getQuestionsGroup(applicationId);
-
-    return group ? group.questions : null;
+    return this.getQuestionsGroup(applicationId).then((group: QuestionsGroup) => (group ? group.questions : null));
   }
 
-  async updateQuestionsGroup(applicationId: number, form: any, index: number, status: ApplicationStatus): Promise<any> {
-    const groups: QuestionGroups = await this.getQuestionGroups();
-    const group: QuestionsGroup = groups && groups[applicationId] ? groups[applicationId] : null;
-    const creationDateTime: number = group && group.creationDateTime ? group.creationDateTime : Date.now();
-    let questions: any[] = group ? group.questions : [];
-    let updatedGroup: QuestionsGroup;
+  async getCreatedDateTime(applicationId: number): Promise<string> {
+    return this.getQuestionsGroup(applicationId).then((group: QuestionsGroup) =>
+      group ? group.createdDateTime : null
+    );
+  }
 
-    if (questions && questions[index]) {
-      questions[index] = form;
-    } else {
-      questions.push(form);
-    }
+  async updateCreatedDateTime(applicationId: number, createdDateTime: string): Promise<any> {
+    return this.getQuestionsGroup(applicationId).then((group: QuestionsGroup) =>
+      this._storage.set(`${this._key}-${applicationId}`, {
+        ...group,
+        createdDateTime,
+      })
+    );
+  }
 
-    updatedGroup = {
-      ...group,
-      status,
-      creationDateTime,
-      questions,
-    };
+  async getSubmittedDateTime(applicationId: number): Promise<string> {
+    return this.getQuestionsGroup(applicationId).then((group: QuestionsGroup) =>
+      group ? group.submittedDateTime : null
+    );
+  }
 
-    if (status === ApplicationStatus.Submitted) {
-      updatedGroup.submittedDateTime = Date.now();
-    }
+  async updateSubmittedDateTime(applicationId: number, submittedDateTime: string): Promise<void> {
+    return this.getQuestionsGroup(applicationId).then((group: QuestionsGroup) =>
+      this._storage.set(`${this._key}-${applicationId}`, {
+        ...group,
+        submittedDateTime,
+      })
+    );
+  }
 
-    return this._storage.set(this._key, {
-      ...groups,
-      [applicationId]: updatedGroup,
+  async updateQuestionsGroup(applicationId: number, form: any, status: ApplicationStatus): Promise<any> {
+    return this.getQuestionsGroup(applicationId).then((group: QuestionsGroup) => {
+      let questions: { [key: string]: any } = group && group.questions ? group.questions : {};
+
+      Object.keys(form).forEach((formControlName: any) => (questions[formControlName] = form[formControlName]));
+
+      return this._storage.set(`${this._key}-${applicationId}`, {
+        ...group,
+        status,
+        questions,
+      });
     });
   }
 
   async removeQuestionsGroup(applicationId: number): Promise<any> {
-    const groups: QuestionGroups = await this.getQuestionGroups();
-
-    if (groups && groups[applicationId]) {
-      const questionKeys: string[] = Object.keys(groups);
-
-      if (questionKeys.length > 1) {
-        const questionEntities: { [key: number]: any } = questionKeys.reduce((accumulator: any, key: string) => {
-          const numericKey: number = parseInt(key, 10);
-
-          return numericKey !== applicationId ? { ...accumulator, [numericKey]: groups[numericKey] } : accumulator;
-        }, {});
-
-        return this._storage.set(this._key, questionEntities);
-      } else {
-        return this._storage.remove(this._key);
-      }
-    }
+    return this._storage.remove(`${this._key}-${applicationId}`);
   }
 }

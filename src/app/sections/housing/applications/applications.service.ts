@@ -1,16 +1,29 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { map, tap, catchError, switchMap, mergeMap } from 'rxjs/operators';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable, of, from, forkJoin } from 'rxjs';
+import { map, tap, catchError, switchMap } from 'rxjs/operators';
 
 import { BASE_URL } from '../housing.config';
+import { parseJsonToArray } from '../utils';
 
 import { HousingAuthService } from '../housing-auth/housing-auth.service';
 import { ApplicationsStateService } from './applications-state.service';
-import { QuestionGroups, QuestionsStorageService, QuestionsGroup } from '../questions/questions-storage.service';
+import { QuestionsService } from '../questions/questions.service';
+import { QuestionsStorageService, QuestionsGroup } from '../questions/questions-storage.service';
+
+import { generateApplications, generateApplicationDetails } from './applications.mock';
 
 import { Response, ResponseStatus } from '../housing.model';
-import { Application, ApplicationRequest, ApplicationStatus } from './applications.model';
+import {
+  Application,
+  ApplicationDetails,
+  ApplicationRequest,
+  PatronAttribute,
+  PatronPreference,
+  ApplicationStatus,
+  PatronApplication,
+} from './applications.model';
+import { QuestionReorder, QuestionFormControl, QuestionReorderPreference } from '../questions/questions.model';
 
 @Injectable({
   providedIn: 'root',
@@ -20,151 +33,204 @@ export class ApplicationsService {
     private _http: HttpClient,
     private _authService: HousingAuthService,
     private _applicationsStateService: ApplicationsStateService,
+    private _questionsService: QuestionsService,
     private _questionsStorageService: QuestionsStorageService
   ) {}
 
-  private readonly _patronsUrl: string = 'api/patrons/v.1.0';
+  private readonly _patronApplicationsUrl: string = `${BASE_URL}/api/patron-applications/v.1.0/patron-applications`;
 
-  private readonly _patronApplicationsUrl: string = `${this._patronsUrl}/patron-applications/self`;
+  private readonly _applicationDefinitionUrl: string = `${this._patronApplicationsUrl}/application-definition`;
 
   private readonly _termId: number = 67;
 
-  private readonly _termStartDateTime: string = '2019-08-04 00:00:00.000';
-
-  private readonly _termEndDateTime: string = '2019-12-27 23:59:59.000';
-
   getApplications(): Observable<Application[]> {
-    const applications: Application[] = this._applicationsStateService.applications;
+    const apiUrl: string = `${this._applicationDefinitionUrl}/term/${this._termId}/patron/self`;
 
-    if (applications.length > 0) {
-      return this._applicationsStateService.applications$.pipe(
-        mergeMap((applications: Application[]) => this.getStoredApplications(applications))
-      );
-    }
-
-    return this._authService.authorize().pipe(
-      switchMap((token: string) => this._requestApplications(token)),
-      switchMap(() => this._applicationsStateService.applications$),
-      mergeMap((applications: Application[]) => this.getStoredApplications(applications)),
-      catchError(() => of([]))
+    return this._getRequest<Application[]>(apiUrl).pipe(
+      map((applications: any[]) => applications.map(this._toApplication)),
+      tap((applications: Application[]) => this._applicationsStateService.setApplications(applications))
     );
   }
 
-  saveApplication(applicationId: number): Observable<ResponseStatus> {
-    const body: ApplicationRequest = {
-      patronApplicationKey: applicationId,
-      submittedDateTime: new Date().toISOString(),
-    };
+  getApplicationDetails(applicationId: number): Observable<ApplicationDetails> {
+    const apiUrl: string = `${this._applicationDefinitionUrl}/${applicationId}/patron/self`;
 
-    return this._updateApplication(body);
+    return this._getRequest<ApplicationDetails>(apiUrl).pipe(
+      map((applications: any) => applications.map(this._toApplicationDetails)),
+      tap((application: ApplicationDetails) => this._applicationsStateService.setApplicationDetails(application)),
+      tap((application: ApplicationDetails) => this._questionsService.parsePages(application))
+    );
   }
 
-  submitApplication(applicationId: number): Observable<ResponseStatus> {
-    const body: ApplicationRequest = {
-      patronApplicationKey: applicationId,
-      submittedDateTime: new Date().toISOString(),
-    };
+  submitApplication(application: ApplicationDetails, form: any): Observable<ResponseStatus> {
+    const nowDateTime: string = new Date().toISOString();
 
-    return this._updateApplication(body);
+    return forkJoin(
+      this._questionsStorageService.updateSubmittedDateTime(application.applicationDefinition.key, nowDateTime),
+      this.updateCreatedDateTime(application.applicationDefinition.key, application.patronApplication)
+    ).pipe(switchMap(() => this._updateApplication(application, form, ApplicationStatus.Submitted)));
   }
 
-  getApplicationById(applicationId: number): Observable<Application> {
-    return this._applicationsStateService.getApplicationById(applicationId);
+  saveApplication(application: ApplicationDetails, form: any): Observable<ResponseStatus> {
+    const applicationId: number = application.applicationDefinition.key;
+    const patronApplication: PatronApplication = application.patronApplication;
+
+    return from(this.updateCreatedDateTime(applicationId, patronApplication)).pipe(
+      switchMap(() => this._updateApplication(application, form, ApplicationStatus.Pending))
+    );
   }
 
-  reloadApplications(): void {
-    this._applicationsStateService.reloadApplications();
+  clearApplication(applicationId: number): void {
+    this._questionsStorageService.removeQuestionsGroup(applicationId);
   }
 
-  async clearApplication(applicationId: number): Promise<void> {
-    await this._questionsStorageService.removeQuestionsGroup(applicationId);
+  async updateCreatedDateTime(applicationId: number, patronApplication: PatronApplication): Promise<any> {
+    return this._questionsStorageService.getCreatedDateTime(applicationId).then((createdDateTime: string) => {
+      let dateTime: string;
 
-    this.reloadApplications();
-  }
-
-  async getStoredApplications(applications: Application[]): Promise<Application[]> {
-    const groups: QuestionGroups = await this._questionsStorageService.getQuestionGroups();
-
-    if (!groups) {
-      return applications;
-    }
-
-    return applications.map((application: Application) => {
-      const group: QuestionsGroup = groups[application.applicationDefinitionId];
-
-      if (group) {
-        if (group.status === ApplicationStatus.Submitted) {
-          return {
-            ...application,
-            isApplicationSubmitted: true,
-            submittedDateTime: group.submittedDateTime.toString(),
-            createdDateTime: group.creationDateTime.toString(),
-          };
-        } else if (group.status === ApplicationStatus.Pending) {
-          return {
-            ...application,
-            isApplicationAccepted: true,
-          };
-        }
+      if (patronApplication.key && patronApplication.createdDateTime) {
+        dateTime = patronApplication.createdDateTime;
+      } else if (createdDateTime) {
+        dateTime = createdDateTime;
+      } else {
+        dateTime = new Date().toISOString();
       }
 
-      return application;
+      return this._questionsStorageService.updateCreatedDateTime(applicationId, dateTime);
     });
   }
 
-  private _updateApplication(body: any): Observable<ResponseStatus> {
-    const apiUrl: string = `${BASE_URL}/${this._patronApplicationsUrl}`;
-
+  private _request<T>(
+    apiUrl: string,
+    callback: (headers: HttpHeaders, apiUrl: string) => Observable<T>
+  ): Observable<T> {
     return this._authService.authorize().pipe(
-      switchMap((token: string) =>
-        this._http.put<ResponseStatus>(apiUrl, body, {
-          headers: new HttpHeaders({
-            Authorization: `Bearer ${token}`,
-          }),
-        })
-      ),
-      tap(() => this.reloadApplications())
+      switchMap((token: string) => {
+        const headers: HttpHeaders = new HttpHeaders({
+          Authorization: `Bearer ${token}`,
+        });
+
+        return callback(headers, apiUrl);
+      })
     );
   }
 
-  private _requestApplications(token: string): Observable<Application[]> {
-    const apiUrl: string = `${BASE_URL}/${this._patronsUrl}/patron-applications/self/term/${this._termId}`;
-    const headers: HttpHeaders = new HttpHeaders({
-      Authorization: `Bearer ${token}`,
-    });
-    const params: HttpParams = new HttpParams()
-      .append('termStartDatetime', this._termStartDateTime)
-      .append('termEndDateTime', this._termEndDateTime);
-
-    return this._http
-      .get(apiUrl, {
-        headers,
-        params,
-      })
-      .pipe(
-        map((response: Response) => response.data),
-        map((applications: any[]) => applications.map(this._toApplication)),
-        tap((applications: Application[]) => {
-          this._applicationsStateService.setApplications(applications);
+  private _getRequest<T>(apiUrl: string): Observable<T> {
+    return this._request<T>(apiUrl, (headers, apiUrl) =>
+      this._http
+        .get(apiUrl, {
+          headers,
         })
-      );
+        .pipe(map((response: Response) => response.data))
+    );
+  }
+
+  private _putRequest(apiUrl: string, body: any): Observable<ResponseStatus> {
+    return this._request<ResponseStatus>(apiUrl, (headers, apiUrl) =>
+      this._http.put<ResponseStatus>(apiUrl, body, {
+        headers,
+      })
+    );
+  }
+
+  private _updateApplication(
+    application: ApplicationDetails,
+    form: any,
+    status: ApplicationStatus
+  ): Observable<ResponseStatus> {
+    const apiUrl: string = `${this._patronApplicationsUrl}/patron/self`;
+
+    return from(
+      this._questionsStorageService.updateQuestionsGroup(application.applicationDefinition.key, form, status)
+    ).pipe(
+      switchMap((group: QuestionsGroup) => {
+        const json: string = application.applicationDefinition.applicationFormJson;
+        const attributes: PatronAttribute[] = this._getAttributes(application.patronAttributes, json, group.questions);
+        const preferences: PatronPreference[] = this._getPreferences(
+          application.patronPreferences,
+          json,
+          group.questions
+        );
+        const body: ApplicationRequest = new ApplicationRequest(application.patronApplication, attributes, preferences);
+
+        return this._putRequest(apiUrl, body);
+      })
+    );
+  }
+
+  private _getAttributes(patronAttributes: PatronAttribute[], json: string, questions: any[]): PatronAttribute[] {
+    return parseJsonToArray(json)
+      .filter((control: QuestionFormControl) => control.consumerKey)
+      .map((control: QuestionFormControl) => {
+        const foundAttribute: PatronAttribute = patronAttributes
+          ? patronAttributes.find((attribute: PatronAttribute) => attribute.consumerKey === control.consumerKey)
+          : null;
+        const key: number = foundAttribute ? foundAttribute.key : null;
+        const foundQuestion: any = questions[control.name];
+        const value: any = foundQuestion || null;
+
+        return new PatronAttribute(key, control.consumerKey, value);
+      });
+  }
+
+  private _getPreferences(patronPreferences: PatronPreference[], json: string, questions: any[]): PatronPreference[] {
+    return parseJsonToArray(json)
+      .filter((control: QuestionReorder) => control.facilityPicker)
+      .map((control: QuestionReorder) => {
+        const foundQuestion: any = questions[control.name];
+        const facilities: any[] = foundQuestion ? foundQuestion.slice(0, control.prefRank) : [];
+
+        return facilities.map((facility: any, index: number) => {
+          console.log('facility', facility);
+          const rank: number = index + 1;
+          const foundFacilityPreference: QuestionReorderPreference = control.PrefKeys.find(
+            (preference: QuestionReorderPreference) => preference.defaultRank === rank
+          );
+          const preferenceKey: number = foundFacilityPreference ? foundFacilityPreference.preferenceKey : null;
+          const foundPreference: PatronPreference = patronPreferences.find(
+            (preference: PatronPreference) => preference.preferenceKey === preferenceKey
+          );
+          const key: number = foundPreference ? foundPreference.key : null;
+
+          return new PatronPreference(key, preferenceKey, rank, facility.facilityKey);
+        });
+      })
+      .reduce((accumulator: any[], current: any) => accumulator.concat(current), []);
+  }
+
+  private _toPatronAttribute(attribute: any): PatronAttribute {
+    return new PatronAttribute(attribute.key, attribute.consumerKey, attribute.value);
+  }
+
+  private _toPatronPreference(preference: any): PatronPreference {
+    return new PatronPreference(preference.key, preference.preferenceKey, preference.rank, preference.facilityKey);
   }
 
   private _toApplication(application: any): Application {
     return new Application(
-      application.applicationDefinitionId,
-      application.createdDateTime,
-      application.submittedDateTime,
-      application.acceptedDateTime,
-      application.cancelledDateTime,
-      application.modifiedDate,
-      application.patronId,
-      application.isApplicationSubmitted,
-      application.isApplicationAccepted,
-      application.isApplicationCanceled,
+      application.key,
+      application.termKey,
+      application.patronApplicationKey,
       application.applicationTitle,
-      application.applicationTerm,
-      application.applicationFormJson
+      application.status,
+      application.createdDateTime,
+      application.submittedDateTime
+    );
+  }
+
+  private _toApplicationDetails(application: any): ApplicationDetails {
+    const patronAttributes: PatronAttribute[] = Array.isArray(application.patronAttributes)
+      ? application.patronAttributes.map(this._toPatronAttribute)
+      : [];
+    const patronPreferences: PatronPreference[] = Array.isArray(application.patronAttributes)
+      ? application.patronPreferences.map(this._toPatronPreference)
+      : [];
+
+    return new ApplicationDetails(
+      application.applicationDefinition,
+      application.patronApplication,
+      patronAttributes,
+      patronPreferences
     );
   }
 }

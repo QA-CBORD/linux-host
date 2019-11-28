@@ -1,11 +1,7 @@
 <ion-item-sliding *ngFor="let application of applications; trackBy: trackById" #applicationSlide>
-  <ion-item
-    [routerLink]="['/housing/applications', application.applicationDefinitionId]"
-    routerDirection="forward"
-    detail="true"
-  >
-    <ion-icon slot="start" name="create" *ngIf="!application.isApplicationSubmitted"></ion-icon>
-    <ion-icon slot="start" name="checkmark-circle" *ngIf="application.isApplicationSubmitted"></ion-icon>
+  <ion-item [routerLink]="['/housing/applications', application.key]" routerDirection="forward" detail="true">
+    <ion-icon slot="start" name="create" *ngIf="!isSubmitted(application)"></ion-icon>
+    <ion-icon slot="start" name="checkmark-circle" *ngIf="isSubmitted(application)"></ion-icon>
 
     <ion-label>
       <h2>{{ application.applicationTitle }}</h2>
@@ -14,7 +10,7 @@
   </ion-item>
 
   <ion-item-options side="end">
-    <ion-item-option color="danger" (click)="handleClear(application.applicationDefinitionId, applicationSlide)">
+    <ion-item-option color="danger" (click)="handleClear(application.key, applicationSlide)">
       Clear
     </ion-item-option>
   </ion-item-options>
