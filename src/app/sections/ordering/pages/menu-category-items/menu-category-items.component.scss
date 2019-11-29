@@ -26,8 +26,9 @@
     font-size: 20px;
   }
 
-  &__title {
-
+  &__header-title {
+    padding-left: 105px;
+    
     @include font-nunito-heavy(20px);
   }
 
