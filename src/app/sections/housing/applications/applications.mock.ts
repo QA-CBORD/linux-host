@@ -23,8 +23,8 @@ export function generateApplication(_: any, index: number): Application {
   );
 }
 
-export function generateApplications(amount: number = 3): Application[] {
-  return Array.apply(null, Array(amount)).map(generateApplication);
+export function generateApplications(amount: number = 3): ApplicationDetails[] {
+  return Array.apply(null, Array(amount)).map(generateApplicationDetails);
 }
 
 export function generateApplicationDefinition(key: number): ApplicationDefinition {
@@ -34,7 +34,20 @@ export function generateApplicationDefinition(key: number): ApplicationDefinitio
 }
 
 export function generatePatronApplication(key: number): PatronApplication {
-  return new PatronApplication(200, key, 8000712, null, null, null, null, null, false, false, false);
+  return new PatronApplication(
+    200,
+    key,
+    8000712,
+    null,
+    null,
+    null,
+    null,
+    null,
+    false,
+    false,
+    false,
+    ApplicationStatus.New
+  );
 }
 
 export function generatePatronAttribute(_: any, index: number): PatronAttribute {

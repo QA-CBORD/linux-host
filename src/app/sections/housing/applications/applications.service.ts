@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, of, from, forkJoin } from 'rxjs';
-import { map, tap, catchError, switchMap } from 'rxjs/operators';
+import { Observable, from, forkJoin } from 'rxjs';
+import { map, tap, switchMap } from 'rxjs/operators';
 
 import { BASE_URL } from '../housing.config';
 import { parseJsonToArray } from '../utils';
@@ -11,11 +11,8 @@ import { ApplicationsStateService } from './applications-state.service';
 import { QuestionsService } from '../questions/questions.service';
 import { QuestionsStorageService, QuestionsGroup } from '../questions/questions-storage.service';
 
-import { generateApplications, generateApplicationDetails } from './applications.mock';
-
 import { Response, ResponseStatus } from '../housing.model';
 import {
-  Application,
   ApplicationDetails,
   ApplicationRequest,
   PatronAttribute,
@@ -43,12 +40,12 @@ export class ApplicationsService {
 
   private readonly _termId: number = 67;
 
-  getApplications(): Observable<Application[]> {
-    const apiUrl: string = `${this._applicationDefinitionUrl}/term/${this._termId}/patron/self`;
+  getApplications(): Observable<ApplicationDetails[]> {
+    const apiUrl: string = `${this._patronApplicationsUrl}/term/${this._termId}/patron/self`;
 
-    return this._getRequest<Application[]>(apiUrl).pipe(
-      map((applications: any[]) => applications.map(this._toApplication)),
-      tap((applications: Application[]) => this._applicationsStateService.setApplications(applications))
+    return this._getRequest<ApplicationDetails[]>(apiUrl).pipe(
+      map((applications: any[]) => applications.map(this._toApplicationDetails)),
+      tap((applications: ApplicationDetails[]) => this._applicationsStateService.setApplications(applications))
     );
   }
 
@@ -56,7 +53,7 @@ export class ApplicationsService {
     const apiUrl: string = `${this._applicationDefinitionUrl}/${applicationId}/patron/self`;
 
     return this._getRequest<ApplicationDetails>(apiUrl).pipe(
-      map((applications: any) => applications.map(this._toApplicationDetails)),
+      map((application: any) => this._toApplicationDetails(application)),
       tap((application: ApplicationDetails) => this._applicationsStateService.setApplicationDetails(application)),
       tap((application: ApplicationDetails) => this._questionsService.parsePages(application))
     );
@@ -204,18 +201,6 @@ export class ApplicationsService {
 
   private _toPatronPreference(preference: any): PatronPreference {
     return new PatronPreference(preference.key, preference.preferenceKey, preference.rank, preference.facilityKey);
-  }
-
-  private _toApplication(application: any): Application {
-    return new Application(
-      application.key,
-      application.termKey,
-      application.patronApplicationKey,
-      application.applicationTitle,
-      application.status,
-      application.createdDateTime,
-      application.submittedDateTime
-    );
   }
 
   private _toApplicationDetails(application: any): ApplicationDetails {

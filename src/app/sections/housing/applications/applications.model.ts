@@ -23,7 +23,7 @@ export class ApplicationDefinition {
     public key: number,
     public termKey: number,
     public applicationTitle: string,
-    public applicationFormJson: string
+    public applicationFormJson?: string
   ) {}
 }
 
@@ -39,7 +39,8 @@ export class PatronApplication {
     public modifiedDate: string,
     public isApplicationSubmitted: boolean,
     public isApplicationAccepted: boolean,
-    public isApplicationCanceled: boolean
+    public isApplicationCanceled: boolean,
+    public status: ApplicationStatus
   ) {}
 }
 

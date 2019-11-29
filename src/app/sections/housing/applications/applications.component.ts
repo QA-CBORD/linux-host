@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 
 import { ApplicationsService } from './applications.service';
 
-import { Application } from './applications.model';
+import { ApplicationDetails } from './applications.model';
 
 @Component({
   selector: 'st-applications',
@@ -12,7 +12,7 @@ import { Application } from './applications.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ApplicationsComponent implements OnInit {
-  applications$: Observable<Application[]>;
+  applications$: Observable<ApplicationDetails[]>;
 
   constructor(private _applicationsService: ApplicationsService) {}
 

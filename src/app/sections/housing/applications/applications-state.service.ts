@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { Application, ApplicationDetails } from './applications.model';
+import { ApplicationDetails } from './applications.model';
 
 export interface ApplicationsState {
   entities: ApplicationEntities;
@@ -12,7 +12,7 @@ export interface ApplicationsState {
 }
 
 export interface ApplicationEntities {
-  [key: number]: Application;
+  [key: number]: ApplicationDetails;
 }
 
 @Injectable({
@@ -34,7 +34,7 @@ export class ApplicationsStateService {
 
   readonly applicationEntities$: Observable<ApplicationEntities> = this.applicationsState$.pipe(map(this._getEntities));
 
-  readonly applications$: Observable<Application[]> = this.applicationEntities$.pipe(
+  readonly applications$: Observable<ApplicationDetails[]> = this.applicationEntities$.pipe(
     map(this._getApplications.bind(this))
   );
 
@@ -54,7 +54,7 @@ export class ApplicationsStateService {
     return this._applicationsStateSource.getValue();
   }
 
-  setApplications(applications: Application[]): void {
+  setApplications(applications: ApplicationDetails[]): void {
     this.applicationsState = { ...this.applicationsState, entities: this._toApplicationEntities(applications) };
   }
 
@@ -90,16 +90,16 @@ export class ApplicationsStateService {
     return state.loaded;
   }
 
-  private _toApplicationEntities(applications: Application[]): ApplicationEntities {
-    return applications.reduce((entities: ApplicationEntities, application: Application) => {
+  private _toApplicationEntities(applications: ApplicationDetails[]): ApplicationEntities {
+    return applications.reduce((entities: ApplicationEntities, application: ApplicationDetails) => {
       return {
         ...entities,
-        [application.key]: application,
+        [application.applicationDefinition.key]: application,
       };
     }, {});
   }
 
-  private _toApplicationsArray(entities: ApplicationEntities): Application[] {
+  private _toApplicationsArray(entities: ApplicationEntities): ApplicationDetails[] {
     return Object.keys(entities).map((key: string) => entities[parseInt(key, 10)]);
   }
 }

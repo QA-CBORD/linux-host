@@ -2,7 +2,7 @@ import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter, Inject
 import { formatDate } from '@angular/common';
 import { IonItemSliding } from '@ionic/angular';
 
-import { Application, ApplicationStatus } from '../applications.model';
+import { ApplicationStatus, ApplicationDetails, PatronApplication } from '../applications.model';
 
 @Component({
   selector: 'st-applications-list',
@@ -12,24 +12,30 @@ import { Application, ApplicationStatus } from '../applications.model';
 export class ApplicationsListComponent {
   constructor(@Inject(LOCALE_ID) private _localId: string) {}
 
-  @Input() applications: Application[];
+  @Input() applications: ApplicationDetails[];
 
   @Output() clear: EventEmitter<number> = new EventEmitter<number>();
 
-  isSubmitted(application: Application): boolean {
-    return application.status === ApplicationStatus.Submitted;
+  isSubmitted(application: ApplicationDetails): boolean {
+    return application.patronApplication ? application.patronApplication.status === ApplicationStatus.Submitted : false;
   }
 
-  trackById(_: number, application: Application): number {
-    return application.key;
+  trackById(_: number, application: ApplicationDetails): number {
+    return application.applicationDefinition.key;
   }
 
-  getApplicationStatus(application: Application): string {
-    if (application.status === ApplicationStatus.Submitted) {
-      return `Submitted: ${formatDate(application.submittedDateTime, 'MMM/dd/yyyy', this._localId)}`;
+  getApplicationStatus(application: ApplicationDetails): string {
+    const patronApplication: PatronApplication = application.patronApplication;
+
+    if (!patronApplication) {
+      return ApplicationStatus[ApplicationStatus.New];
     }
 
-    return ApplicationStatus[application.status];
+    if (patronApplication.status === ApplicationStatus.Submitted) {
+      return `Submitted: ${formatDate(patronApplication.submittedDateTime, 'MMM/dd/yyyy', this._localId)}`;
+    }
+
+    return ApplicationStatus[patronApplication.status];
   }
 
   handleClear(applicationId: number, applicationSlide: IonItemSliding): void {
