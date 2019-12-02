@@ -214,7 +214,7 @@ export class ApplicationsService {
     const patronAttributes: PatronAttribute[] = Array.isArray(application.patronAttributes)
       ? application.patronAttributes.map(this._toPatronAttribute)
       : [];
-    const patronPreferences: PatronPreference[] = Array.isArray(application.patronAttributes)
+    const patronPreferences: PatronPreference[] = Array.isArray(application.patronPreferences)
       ? application.patronPreferences.map(this._toPatronPreference)
       : [];
 
