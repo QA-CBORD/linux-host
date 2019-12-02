@@ -29,23 +29,23 @@ export class ApplicationDefinition {
 
 export class PatronApplication {
   constructor(
-    public key: number,
     public applicationDefinitionKey: number,
-    public patronKey: number,
-    public createdDateTime: string,
-    public submittedDateTime: string,
-    public acceptedDateTime: string,
-    public cancelledDateTime: string,
-    public modifiedDate: string,
-    public isApplicationSubmitted: boolean,
-    public isApplicationAccepted: boolean,
-    public isApplicationCanceled: boolean,
-    public status: ApplicationStatus
+    public status: ApplicationStatus,
+    public key?: number,
+    public patronKey?: number,
+    public createdDateTime?: string,
+    public submittedDateTime?: string,
+    public acceptedDateTime?: string,
+    public cancelledDateTime?: string,
+    public modifiedDate?: string,
+    public isApplicationSubmitted?: boolean,
+    public isApplicationAccepted?: boolean,
+    public isApplicationCanceled?: boolean
   ) {}
 }
 
 export class PatronAttribute {
-  constructor(public key: number, public consumerKey: number, public value: string) {}
+  constructor(public attributeConsumerKey: number, public value: string, public key?: number) {}
 }
 
 export class PatronPreference {

@@ -35,8 +35,9 @@ export function generateApplicationDefinition(key: number): ApplicationDefinitio
 
 export function generatePatronApplication(key: number): PatronApplication {
   return new PatronApplication(
-    200,
     key,
+    ApplicationStatus.New,
+    200,
     8000712,
     null,
     null,
@@ -45,13 +46,12 @@ export function generatePatronApplication(key: number): PatronApplication {
     null,
     false,
     false,
-    false,
-    ApplicationStatus.New
+    false
   );
 }
 
 export function generatePatronAttribute(_: any, index: number): PatronAttribute {
-  return new PatronAttribute(index, index + 100, `Attribute Value ${index}`);
+  return new PatronAttribute(index + 100, `Attribute Value ${index}`, index);
 }
 
 export function generatePatronAttributes(amount: number = 2): PatronAttribute[] {

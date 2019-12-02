@@ -164,7 +164,7 @@ export class QuestionsService {
 
   private _getValueFromAttribute(question: QuestionFormControl, attributes: PatronAttribute[]): any {
     const foundAttribute: PatronAttribute = attributes.find(
-      (attribute: PatronAttribute) => attribute.consumerKey === question.consumerKey
+      (attribute: PatronAttribute) => attribute.attributeConsumerKey === question.consumerKey
     );
 
     return foundAttribute ? foundAttribute.value : null;

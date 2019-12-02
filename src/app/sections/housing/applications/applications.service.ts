@@ -85,7 +85,7 @@ export class ApplicationsService {
     return this._questionsStorageService.getCreatedDateTime(applicationId).then((createdDateTime: string) => {
       let dateTime: string;
 
-      if (patronApplication.key && patronApplication.createdDateTime) {
+      if (patronApplication && patronApplication.key && patronApplication.createdDateTime) {
         dateTime = patronApplication.createdDateTime;
       } else if (createdDateTime) {
         dateTime = createdDateTime;
@@ -135,7 +135,7 @@ export class ApplicationsService {
     form: any,
     status: ApplicationStatus
   ): Observable<ResponseStatus> {
-    const apiUrl: string = `${this._patronApplicationsUrl}/patron/self`;
+    const apiUrl: string = `${this._patronApplicationsUrl}`;
 
     return from(
       this._questionsStorageService.updateQuestionsGroup(application.applicationDefinition.key, form, status)
@@ -148,7 +148,13 @@ export class ApplicationsService {
           json,
           group.questions
         );
-        const body: ApplicationRequest = new ApplicationRequest(application.patronApplication, attributes, preferences);
+        const patronApplication: PatronApplication = new PatronApplication(
+          application.applicationDefinition.key,
+          status
+        );
+        const patronAttributes: PatronAttribute[] = attributes && attributes.length > 0 ? attributes : null;
+        const patronPreferences: PatronPreference[] = preferences && preferences.length > 0 ? preferences : null;
+        const body: ApplicationRequest = new ApplicationRequest(patronApplication, patronAttributes, patronPreferences);
 
         return this._putRequest(apiUrl, body);
       })
@@ -160,13 +166,15 @@ export class ApplicationsService {
       .filter((control: QuestionFormControl) => control.consumerKey)
       .map((control: QuestionFormControl) => {
         const foundAttribute: PatronAttribute = patronAttributes
-          ? patronAttributes.find((attribute: PatronAttribute) => attribute.consumerKey === control.consumerKey)
+          ? patronAttributes.find(
+              (attribute: PatronAttribute) => attribute.attributeConsumerKey === control.consumerKey
+            )
           : null;
         const key: number = foundAttribute ? foundAttribute.key : null;
         const foundQuestion: any = questions[control.name];
         const value: any = foundQuestion || null;
 
-        return new PatronAttribute(key, control.consumerKey, value);
+        return new PatronAttribute(control.consumerKey, value, key);
       });
   }
 
@@ -178,7 +186,6 @@ export class ApplicationsService {
         const facilities: any[] = foundQuestion ? foundQuestion.slice(0, control.prefRank) : [];
 
         return facilities.map((facility: any, index: number) => {
-          console.log('facility', facility);
           const rank: number = index + 1;
           const foundFacilityPreference: QuestionReorderPreference = control.PrefKeys.find(
             (preference: QuestionReorderPreference) => preference.defaultRank === rank
@@ -196,7 +203,7 @@ export class ApplicationsService {
   }
 
   private _toPatronAttribute(attribute: any): PatronAttribute {
-    return new PatronAttribute(attribute.key, attribute.consumerKey, attribute.value);
+    return new PatronAttribute(attribute.attributeConsumerKey, attribute.value, attribute.key);
   }
 
   private _toPatronPreference(preference: any): PatronPreference {
