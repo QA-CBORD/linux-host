@@ -1,10 +1,4 @@
-import {
-  Component,
-  Input,
-  Output,
-  EventEmitter,
-  ChangeDetectionStrategy,
-} from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { PickerController } from '@ionic/angular';
 import { DatePipe } from '@angular/common';
 
@@ -24,8 +18,7 @@ export class StDateTimePickerComponent {
   @Input() dateTimePicker: Date | string;
   @Output() onTimeSelected: EventEmitter<Date> = new EventEmitter<Date>();
 
-  constructor(private readonly datePipe: DatePipe,
-    private readonly pickerController: PickerController) { }
+  constructor(private readonly datePipe: DatePipe, private readonly pickerController: PickerController) {}
 
   get isDefaultState() {
     return typeof this.dateTimePicker === 'string';
@@ -157,8 +150,15 @@ export class StDateTimePickerComponent {
   }
 
   private isTodayOrTomorrow(date, isToday) {
-    const today = new Date();
-    const someDate = new Date(date);
+    const getUtc = (date) => {
+      return new Date(date.getTime() + date.getTimezoneOffset() * 60000);
+    }
+
+    const now = new Date();
+    const selectedTime = new Date(date);
+    const today = getUtc(now);
+    const someDate = getUtc(selectedTime);
+  
     const index = isToday ? 0 : 1;
     return (
       someDate.getDate() == today.getDate() + index &&
