@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { FormControl, Validators, FormGroup, FormArray, AbstractControl } from '@angular/forms';
 import { BehaviorSubject, Observable } from 'rxjs';
 
+import { parseJsonToArray } from '../utils';
+
 import { QuestionsStorageService } from './questions-storage.service';
 
 import { QuestionBase } from './types/question-base';
@@ -87,20 +89,16 @@ export class QuestionsService {
   }
 
   parseQuestions(json: string): QuestionBase[] {
-    let parsedQuestions: any;
-
-    try {
-      parsedQuestions = JSON.parse(json);
-    } catch (error) {
-      parsedQuestions = [];
-    }
-
-    const questions: any[] = Array.isArray(parsedQuestions) ? parsedQuestions : [];
+    const questions: any[] = parseJsonToArray(json);
 
     return questions.map(this._toQuestionType);
   }
 
   private _toQuestionType(question: QuestionBase): QuestionBase {
+    if (!question || !question.type) {
+      return question;
+    }
+
     if (QuestionConstructorsMap[question.type]) {
       if ((question as QuestionReorder).facilityPicker) {
         return new QuestionReorder(question);
@@ -115,7 +113,7 @@ export class QuestionsService {
   private _splitByPages(questions: QuestionBase[], attributes: PatronAttribute[]): QuestionPage[] {
     const questionsByPages: QuestionBase[][] = questions.reduce(
       (accumulator: QuestionBase[][], current: QuestionBase, index: number) => {
-        if ((current as QuestionParagraph).subtype === 'blockquote') {
+        if (current && (current as QuestionParagraph).subtype === 'blockquote') {
           return questions[index + 1] ? [...accumulator, []] : [...accumulator];
         }
 
@@ -136,7 +134,7 @@ export class QuestionsService {
     let group: any = {};
 
     questions.forEach((question: QuestionFormControl) => {
-      if (question.name) {
+      if (question && question.name) {
         if (question instanceof QuestionCheckboxGroup) {
           const values: FormControl[] = question.values.map(
             (value: QuestionCheckboxGroupValue) => new FormControl(value.selected)

@@ -27,12 +27,14 @@
         [stepControl]="page.form"
       >
         <form [formGroup]="page.form" (ngSubmit)="submit(applicationDetails, page.form, isLastPage)">
-          <st-question
-            *ngFor="let question of page.questions"
-            [parentGroup]="page.form"
-            [question]="question"
-            [name]="question.name"
-          ></st-question>
+          <ng-container *ngFor="let question of page.questions">
+            <st-question
+              *ngIf="question"
+              [parentGroup]="page.form"
+              [question]="question"
+              [name]="$any(question).name"
+            ></st-question>
+          </ng-container>
 
           <st-stepper-footer>
             <ion-button

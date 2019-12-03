@@ -1,7 +1,17 @@
-import { Component, OnInit, ChangeDetectionStrategy, ViewChild, ViewChildren, QueryList } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ChangeDetectionStrategy,
+  ViewChild,
+  ViewChildren,
+  QueryList,
+  OnDestroy,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ToastController } from '@ionic/angular';
 import { FormGroup } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
 import { QuestionsService } from '../../questions/questions.service';
@@ -14,6 +24,7 @@ import { QuestionComponent } from '../../questions/question.component';
 
 import { ApplicationStatus, ApplicationDetails, PatronApplication } from '../../applications/applications.model';
 import { QuestionPage } from '../../questions/questions.model';
+import { Response } from '../../housing.model';
 
 @Component({
   selector: 'st-application-details',
@@ -21,7 +32,7 @@ import { QuestionPage } from '../../questions/questions.model';
   styleUrls: ['./application-details.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ApplicationDetailsPage implements OnInit {
+export class ApplicationDetailsPage implements OnInit, OnDestroy {
   @ViewChild(StepperComponent) stepper: StepperComponent;
 
   @ViewChildren(QuestionComponent) questions: QueryList<QuestionComponent>;
@@ -32,15 +43,18 @@ export class ApplicationDetailsPage implements OnInit {
 
   applicationId: number;
 
+  private _subscription: Subscription = new Subscription();
+
   constructor(
     private _route: ActivatedRoute,
     private _questionsService: QuestionsService,
     private _applicationsService: ApplicationsService,
     private _router: Router,
-    private _questionsStorageService: QuestionsStorageService
+    private _questionsStorageService: QuestionsStorageService,
+    private _toastController: ToastController
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.applicationId = parseInt(this._route.snapshot.paramMap.get('applicationId'), 10);
 
     this.pages$ = this._questionsService
@@ -54,13 +68,22 @@ export class ApplicationDetailsPage implements OnInit {
     this.applicationDetails$ = this._applicationsService.getApplicationDetails(this.applicationId);
   }
 
+  ngOnDestroy(): void {
+    this._subscription.unsubscribe();
+  }
+
   save(application: ApplicationDetails): void {
     const selectedIndex: number = this.stepper.selectedIndex;
     const selectedStep: StepComponent = this.stepper.steps.toArray()[selectedIndex];
 
-    this._applicationsService
+    const saveSubscription: Subscription = this._applicationsService
       .saveApplication(application, selectedStep.stepControl.value)
-      .subscribe(() => this._router.navigate(['/housing/dashboard']));
+      .subscribe({
+        next: () => this._router.navigate(['/housing/dashboard']),
+        error: (error: HttpErrorResponse) => this._handleErrors(error.error),
+      });
+
+    this._subscription.add(saveSubscription);
   }
 
   submit(application: ApplicationDetails, form: FormGroup, isLastPage: boolean): void {
@@ -73,9 +96,14 @@ export class ApplicationDetailsPage implements OnInit {
     if (!isLastPage) {
       this._next(application.patronApplication, form.value);
     } else {
-      this._applicationsService
+      const submitSubscription: Subscription = this._applicationsService
         .submitApplication(application, form.value)
-        .subscribe(() => this._router.navigate(['/housing/dashboard']));
+        .subscribe({
+          next: () => this._router.navigate(['/housing/dashboard']),
+          error: (error: HttpErrorResponse) => this._handleErrors(error.error),
+        });
+
+      this._subscription.add(submitSubscription);
     }
   }
 
@@ -94,5 +122,15 @@ export class ApplicationDetailsPage implements OnInit {
       .forEach((question: QuestionComponent) => {
         question.check();
       });
+  }
+
+  private _handleErrors(error: Response): void {
+    this._toastController
+      .create({
+        message: error.status.message,
+        position: 'top',
+        duration: 3000,
+      })
+      .then((toast: HTMLIonToastElement) => toast.present());
   }
 }
