@@ -147,7 +147,7 @@ export class CartComponent implements OnInit {
       component: StGlobalPopoverComponent,
       componentProps: {
         data: {
-          title: 'Timeout error',
+          title: 'Oooops',
           message,
         },
       },

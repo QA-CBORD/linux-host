@@ -81,7 +81,7 @@ export class BaseService {
 
   protected parseExceptionResponse(exceptionString: string) {
     // check the exception string for a number|description string format
-    const regEx = new RegExp('^[0-9]*|.*$');
+    const regEx = /^[0-9]{4}\|[a-z]+/gi;
     if (regEx.test(exceptionString)) {
       const parts = exceptionString.split('|');
       this.determineErrorByCodeAndThrow(parts[0], parts.length > 1 ? parts[1] : null);
