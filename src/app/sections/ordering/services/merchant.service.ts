@@ -6,6 +6,7 @@ import {
   MenuInfo,
   MerchantAccountInfoList,
   MenuItemInfo,
+  MerchantOrderTypesInfo,
 } from '../shared/models';
 import { Injectable } from '@angular/core';
 
@@ -36,6 +37,7 @@ export class MerchantService {
   private readonly _recentOrders$: BehaviorSubject<OrderInfo[]> = new BehaviorSubject<OrderInfo[]>([]);
   private readonly _menu$: BehaviorSubject<MenuInfo> = new BehaviorSubject<MenuInfo>(<MenuInfo>{});
   private readonly _selectedAddress$: BehaviorSubject<any> = new BehaviorSubject<any>(<any>{});
+  private readonly _orderTypes$: BehaviorSubject<MerchantOrderTypesInfo> = new BehaviorSubject<MerchantOrderTypesInfo>(<MerchantOrderTypesInfo>{});
 
   constructor(
     private readonly orderingApiService: OrderingApiService,
@@ -52,12 +54,12 @@ export class MerchantService {
     this._menuMerchants$.next([...this.menuMerchants]);
   }
 
-  get menu$(): Observable<MenuInfo> {
-    return this._menu$.asObservable();
+  get orderTypes$(): Observable<MerchantOrderTypesInfo> {
+    return this._orderTypes$.asObservable();
   }
 
-  private set _menu(value: MenuInfo) {
-    this._menu$.next(value);
+  set orderTypes(value: MerchantOrderTypesInfo) {
+    this._orderTypes$.next(value);
   }
 
   get recentOrders$(): Observable<OrderInfo[]> {
@@ -75,6 +77,14 @@ export class MerchantService {
 
   set selectedAddress(value: any) {
     this._selectedAddress$.next(value);
+  }
+
+  get menu$(): Observable<MenuInfo> {
+    return this._menu$.asObservable();
+  }
+
+  private set _menu(value: MenuInfo) {
+    this._menu$.next(value);
   }
 
   getMenuMerchants(): Observable<MerchantInfo[]> {

@@ -22,8 +22,12 @@
               {{ (merchantInfo$ | async).distanceFromUser | merchantDistance }} -
               <ng-container *ngIf="(orderInfo$ | async).address.onCampus; then onCampus; else ofCampus"></ng-container>
 
-              <ng-template #ofCampus> {{ (orderInfo$ | async).address.address1 }}, {{ (orderInfo$ | async).address.city }} </ng-template>
-              <ng-template #onCampus> {{ (orderInfo$ | async).address.room }}, {{ (orderInfo$ | async).address.building }} </ng-template>
+              <ng-template #ofCampus>
+                {{ (orderInfo$ | async).address.address1 }}, {{ (orderInfo$ | async).address.city }}
+              </ng-template>
+              <ng-template #onCampus>
+                {{ (orderInfo$ | async).address.room }}, {{ (orderInfo$ | async).address.building }}
+              </ng-template>
             </div>
           </div>
         </div>
@@ -37,7 +41,9 @@
         <div class="full-menu__date-time-wrapper">
           <div class="full-menu__date-time-value">{{ orderType | async }}</div>
           <div class="full-menu__date-time-helper">for</div>
-          <div class="full-menu__date-time-value">{{ (orderInfo$ | async).dueTime | date: 'EE, MMM d, h:mm a' }}</div>
+          <div class="full-menu__date-time-value">
+            {{ (orderInfo$ | async) | modifyPrepTime: (orderTypes$ | async) }}
+          </div>
         </div>
         <div class="full-menu__arrow-wrapper">
           <img src="/assets/icon/angle-down-select.svg" alt="arrow down" />

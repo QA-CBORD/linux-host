@@ -72,6 +72,7 @@ export class OrderingPage implements OnInit {
     const footerButtonName = 'continue';
     let cssClass = 'order-options-action-sheet';
     cssClass += orderTypes.delivery && orderTypes.pickup ? ' order-options-action-sheet-p-d' : '';
+    this.merchantService.orderTypes = orderTypes;
 
     const modal = await this.modalController.create({
       component: OrderOptionsActionSheetComponent,
