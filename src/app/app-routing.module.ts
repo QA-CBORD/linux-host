@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { NAVIGATE } from './app.global';
-import { SelectivePreloadingStrategy } from './core/utils/preload-strategy/selective-preloading-strategy';
+import { SelectivePreloadingStrategy } from '@core/utils/preload-strategy/selective-preloading-strategy';
 
 const routes: Routes = [
   { path: NAVIGATE.dashboard, loadChildren: './sections/dashboard/dashboard.module#DashboardPageModule' },
@@ -17,8 +17,12 @@ const routes: Routes = [
   {
     path: NAVIGATE.accounts,
     loadChildren: './sections/accounts/accounts.module#AccountsModule',
-  }
-
+  },
+  {
+    path: NAVIGATE.ordering,
+    loadChildren: './sections/ordering/ordering.module#OrderingPageModule',
+  },
+  { path: NAVIGATE.housing, loadChildren: './sections/housing/housing.module#HousingPageModule' },
 ];
 
 @NgModule({

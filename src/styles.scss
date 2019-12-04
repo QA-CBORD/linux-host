@@ -18,7 +18,7 @@
       }
     }
   }
-  .sc-ion-popover-ios{
+  .sc-ion-popover-ios {
     opacity: 1;
   }
   //Temp styles for popover:
@@ -101,6 +101,55 @@
     }
   }
 
+  .order-options-action-sheet {
+    --height: 280px;
+    --border-radius: 10px 10px 0 0;
+
+    &.order-options-action-sheet-p-d {
+      --height: 360px;
+    }
+
+    .modal-wrapper {
+      position: absolute;
+      bottom: 0;
+    }
+  }
+
+  .picker-time-picker {
+    --border-color: #ebebeb;
+
+    .picker-wrapper {
+      border-radius: 10px 10px 0 0;
+    }
+
+    .picker-toolbar {
+      .picker-button {
+        color: #000;
+        @include font-nunito-regular(16px);
+      }
+
+      .picker-toolbar-cancel .picker-button {
+        padding-left: 30px;
+        @include font-nunito-regular(16px);
+
+        &::after {
+          content: 'Pickup Time';
+          color: #161616;
+          position: absolute;
+          left: 35%;
+
+          @include font-nunito-heavy(20px);
+        }
+      }
+    }
+
+    .picker-opt.picker-opt-selected {
+      color: #000;
+      
+      @include font-nunito-heavy(20px);
+    }
+  }
+
   // Shake animation:
   .shakeit {
     animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
@@ -131,4 +180,84 @@
       transform: translate3d(4px, 0, 0);
     }
   }
+}
+
+.btn {
+  --padding-start: 8px;
+  --padding-end: 8px;
+
+  height: 48px;
+  margin: 0;
+}
+
+.form__primary-header,
+.form__secondary-header {
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+
+.form__primary-header {
+  @include font-nunito-heavy(20px);
+
+  color: $color-god-gray;
+}
+
+.form__secondary-header {
+  @include font-nunito-heavy(14px);
+
+  color: $color-matterhorn;
+  text-transform: uppercase;
+}
+
+.form-section {
+  padding-top: 16px;
+  padding-bottom: 16px;
+
+  &:not(.form-section--last) {
+    border-bottom: 1px solid $color-white-smoke;
+  }
+}
+
+.form-checkbox__control {
+  --background-checked: #{$color-dodger-blue};
+  --border-color: #{$color-silver};
+  --border-color-checked: #{$color-dodger-blue};
+  --border-radius: 2px;
+  --size: 24px;
+
+  margin: 0 8px 0 0;
+}
+
+.form-radio__control {
+  --color: #{$color-silver};
+  --color-checked: #{$color-dodger-blue};
+
+  width: 24px;
+  height: 24px;
+  margin: 0 8px 0 0;
+}
+
+.form-label {
+  --ion-font-family: #{$font-nunito-semibold};
+
+  line-height: 20px;
+  margin: 0;
+}
+
+.form-label__description {
+  @include font-nunito-regular(12px);
+
+  color: rgba($color-black, 0.6);
+  line-height: 16px;
+}
+
+.control-hint {
+  @include font-nunito-semibold(12px);
+
+  color: $color-dim-gray;
+  margin: 5px 0 0 12px;
+}
+
+.control-hint--error {
+  color: $color-alizarin;
 }

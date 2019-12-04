@@ -1,25 +1,22 @@
 import { Component, OnDestroy } from '@angular/core';
-
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
-import { AlertController, Events, LoadingController, Platform, PopoverController } from '@ionic/angular';
-
+import { Events, LoadingController, Platform, PopoverController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import * as Globals from './app.global';
-import { DataCache } from './core/utils/data-cache';
+import { DataCache } from '@core/utils/data-cache';
 import { from, of, fromEvent, Subscription } from 'rxjs';
 import { switchMap, tap, take, map } from 'rxjs/operators';
 import { Environment } from './environment';
 import { NAVIGATE } from './app.global';
-import { TestProvider } from './core/provider/test-provider/test.provider';
-import { AuthService } from './core/service/auth-service/auth.service';
-import { UserService } from './core/service/user-service/user.service';
-import { NativeProvider, NativeData } from './core/provider/native-provider/native.provider';
-import { BUTTON_TYPE } from './core/utils/buttons.config';
-import { StGlobalPopoverComponent } from './shared/ui-components/st-global-popover';
+import { TestProvider } from '@core/provider/test-provider/test.provider';
+import { AuthService } from '@core/service/auth-service/auth.service';
+import { UserService } from '@core/service/user-service/user.service';
+import { NativeProvider, NativeData } from '@core/provider/native-provider/native.provider';
+import { BUTTON_TYPE, buttons } from '@core/utils/buttons.config';
+import { StGlobalPopoverComponent } from '@shared/ui-components';
 import { environment } from 'src/environments/environment';
-
-import { UserInfo } from './core/model/user';
+import { UserInfo } from '@core/model/user';
 
 @Component({
   selector: 'app-root',
@@ -40,14 +37,13 @@ export class AppComponent implements OnDestroy {
     private readonly statusBar: StatusBar,
     private readonly events: Events,
     private readonly loadCtrl: LoadingController,
-    private readonly alertCtrl: AlertController,
     private readonly testProvider: TestProvider,
     private readonly authService: AuthService,
     private readonly userService: UserService,
     private readonly popoverCtrl: PopoverController,
     private readonly nativeProvider: NativeProvider
   ) {
-      this.initializeApp();
+    this.initializeApp();
   }
 
   ngOnDestroy() {
@@ -99,7 +95,6 @@ export class AppComponent implements OnDestroy {
     this.sourceSubscription.add(subscription);
   }
 
-
   useJavaScriptInterface() {
     if (this.nativeProvider.isAndroid()) {
       const sessionId: string = this.nativeProvider.getAndroidData(NativeData.SESSION_ID);
@@ -117,7 +112,7 @@ export class AppComponent implements OnDestroy {
       DataCache.setInstitutionId(institutionId);
 
       this.handlePageNavigation();
-    } else if (this.nativeProvider.isIos()){
+    } else if (this.nativeProvider.isIos()) {
       const sessionIdPromise: Promise<string> = this.nativeProvider.getIosData(NativeData.SESSION_ID);
       const userInfoPromise: Promise<UserInfo> = this.nativeProvider.getIosData(NativeData.USER_INFO);
       const institutionIdPromise: Promise<string> = this.nativeProvider.getIosData(NativeData.INSTITUTION_ID);
@@ -139,12 +134,12 @@ export class AppComponent implements OnDestroy {
   private testGetSession() {
     const subscription = this.testProvider.getTestUser().subscribe(
       () => {
-        this.destinationPage = NAVIGATE.dashboard;
+        this.destinationPage = NAVIGATE.ordering;
         this.getUserInfo();
       },
       error => {
         this.modalHandler(
-          { ...error, title: 'Error getting test user', isRetryBtnExist: true },
+          { ...error, title: 'Error getting test user', buttons: [{ ...buttons.RETRY, label: 'RETRY' }], },
           this.testGetSession.bind(this)
         );
       }
@@ -186,7 +181,7 @@ export class AppComponent implements OnDestroy {
               const error = {
                 title: Globals.Exception.Strings.TITLE,
                 message: 'We were unable to verify your credentials',
-                isRetryBtnExist: true,
+                buttons: [{ ...buttons.RETRY, label: 'RETRY' }],
               };
               this.modalHandler(error, this.handleSessionToken.bind(this));
               return;
@@ -196,12 +191,12 @@ export class AppComponent implements OnDestroy {
             this.getUserInfo();
           },
           () => {
-            const exceptionObj = {
+            const modalConfigurationObject = {
               title: Globals.Exception.Strings.TITLE,
               message: 'We were unable to verify your credentials',
-              isRetryBtnExist: true,
+              buttons: [{ ...buttons.RETRY, label: 'RETRY' }],
             };
-            this.modalHandler(exceptionObj, this.handleSessionToken.bind(this));
+            this.modalHandler(modalConfigurationObject, this.handleSessionToken.bind(this));
           }
         );
     } else {
@@ -211,7 +206,6 @@ export class AppComponent implements OnDestroy {
       const exceptionObj = {
         title: Globals.Exception.Strings.TITLE,
         message: 'Handling session response and the session data is null',
-        isRetryBtnExist: false,
       };
       this.modalHandler(exceptionObj, this.handleSessionToken.bind(this));
     }
@@ -231,7 +225,7 @@ export class AppComponent implements OnDestroy {
           const exceptionObj = {
             title: Globals.Exception.Strings.TITLE,
             message: 'Unable to verify your user information',
-            isRetryBtnExist: true,
+            buttons: [{ ...buttons.RETRY, label: 'RETRY' }],
           };
           this.modalHandler(exceptionObj, this.handleSessionToken.bind(this));
         }
@@ -266,7 +260,7 @@ export class AppComponent implements OnDestroy {
         this.loader = await this.loadCtrl.create({
           message: loaderInfo.message,
         });
-        this.loader.present();
+        await this.loader.present();
       }
     } else {
       if (this.loader) {

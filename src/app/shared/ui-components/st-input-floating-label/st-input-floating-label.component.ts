@@ -26,13 +26,15 @@ export class StInputFloatingLabelComponent implements OnInit, ControlValueAccess
   private onTouched: () => void;
 
   constructor() {}
-
-  ngOnInit() {
+  
+  ngOnChanges() {
     if (this.control.value !== '') {
       this.control.markAsDirty();
       this.value = this.control.value;
     }
   }
+
+  ngOnInit() {}
 
   //get accessor
   get value(): any {

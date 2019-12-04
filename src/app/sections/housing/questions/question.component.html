@@ -1,0 +1,134 @@
+<div [formGroup]="parentGroup">
+  <ng-container [ngSwitch]="question.type">
+    <ng-container *ngSwitchCase="'header'">
+      <div [innerHTML]="createHeader(question)"></div>
+    </ng-container>
+
+    <p *ngSwitchCase="'paragraph'" class="question__paragraph" [innerHtml]="question.label">{{ question.label }}</p>
+
+    <st-input-floating-label
+      *ngSwitchCase="'text'"
+      class="question__item question__control"
+      type="text"
+      [control]="parentGroup.get(question['name'])"
+      [label]="question.label"
+      [idd]="question['name']"
+      [formControlName]="question['name']"
+      [isError]="!parentGroup.get(question['name']).valid && parentGroup.get(question['name']).touched"
+      [stEmptyFormControl]="parentGroup.get(question['name'])"
+    >
+      <st-control-errors
+        [control]="parentGroup.get(question['name'])"
+        [errorMessages]="errorMessages"
+      ></st-control-errors>
+    </st-input-floating-label>
+
+    <st-textarea-floating-label
+      *ngSwitchCase="'textarea'"
+      [control]="parentGroup.get(question['name'])"
+      [isError]="!parentGroup.get(question['name']).valid && parentGroup.get(question['name']).touched"
+      [formControlName]="question['name']"
+      class="question__item question__control"
+      [idd]="question['name']"
+      [label]="question.label"
+      title="Type your message here..."
+      rows="3"
+      [stEmptyFormControl]="parentGroup.get(question['name'])"
+    >
+      <st-control-errors
+        [control]="parentGroup.get(question['name'])"
+        [errorMessages]="errorMessages"
+      ></st-control-errors>
+    </st-textarea-floating-label>
+
+    <div *ngSwitchCase="'date'" class="question__item">
+      <st-date-select
+        [parentGroup]="parentGroup"
+        [label]="question.label"
+        [name]="question['name']"
+        displayFormat="MMM/DD/YYYY"
+      ></st-date-select>
+
+      <st-control-errors
+        [control]="parentGroup.get(question['name'])"
+        [errorMessages]="errorMessages"
+      ></st-control-errors>
+    </div>
+
+    <st-select-floating-label
+      *ngSwitchCase="'select'"
+      [formControlName]="question['name']"
+      [control]="parentGroup.get(question['name'])"
+      [isError]="!parentGroup.get(question['name']).valid && parentGroup.get(question['name']).touched"
+      class="question__item question__control"
+      interface="action-sheet"
+      [interfaceOptions]="customActionSheetOptions"
+      [label]="question.label"
+      [idd]="question['name']"
+      [stEmptyFormControl]="parentGroup.get(question['name'])"
+    >
+      <ng-container role="options">
+        <ion-select-option *ngFor="let option of question['values']" [value]="option.name">
+          {{ option.label }}
+        </ion-select-option>
+      </ng-container>
+
+      <ng-container role="error">
+        <st-control-errors
+          [control]="parentGroup.get(question['name'])"
+          [errorMessages]="errorMessages"
+        ></st-control-errors>
+      </ng-container>
+    </st-select-floating-label>
+
+    <ng-container *ngSwitchCase="'checkbox-group'">
+      <st-facility-picker
+        class="form-section question__item"
+        [question]="question"
+        [parentForm]="parentGroup"
+        *ngIf="question['facilityPicker']"
+      ></st-facility-picker>
+
+      <div *ngIf="!question['facilityPicker']" class="question__item">
+        <h3 class="form__secondary-header">{{ question.label }}</h3>
+
+        <st-control-errors
+          [control]="parentGroup.get(question['name'])"
+          [errorMessages]="errorMessages"
+        ></st-control-errors>
+
+        <ion-item
+          [formArrayName]="question['name']"
+          *ngFor="let item of question['values']; index as idx"
+          class="ion-no-padding form-checkbox"
+          lines="none"
+        >
+          <ion-checkbox
+            class="form-checkbox__control"
+            mode="md"
+            [checked]="item.selected"
+            [formControlName]="idx"
+            slot="start"
+          ></ion-checkbox>
+          <ion-label class="form-label">{{ item.label }}</ion-label>
+        </ion-item>
+      </div>
+    </ng-container>
+
+    <div *ngSwitchCase="'radio-group'" class="form-section">
+      <h3 class="form__secondary-header">{{ question.label }}</h3>
+
+      <st-control-errors
+        [control]="parentGroup.get(question['name'])"
+        [errorMessages]="errorMessages"
+      ></st-control-errors>
+
+      <ion-radio-group [formControlName]="question['name']">
+        <ion-item *ngFor="let item of question['values']" class="ion-no-padding" lines="none">
+          <ion-label class="form-label">{{ item.label }}</ion-label>
+          <ion-radio class="form-radio__control" mode="md" slot="start" [value]="item.value"></ion-radio>
+        </ion-item>
+      </ion-radio-group>
+    </div>
+  </ng-container>
+</div>

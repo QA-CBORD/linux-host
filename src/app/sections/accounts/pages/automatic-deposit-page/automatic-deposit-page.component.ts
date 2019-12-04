@@ -18,19 +18,19 @@ import {
   formControlErrorDecorator,
   parseArrayFromString,
   validateMonthRange,
-} from '../../../../core/utils/general-helpers';
+} from '@core/utils/general-helpers';
 import { PopoverComponent } from './components/popover/popover.component';
 import { PopoverController, ToastController } from '@ionic/angular';
 import { map, switchMap, take, tap } from 'rxjs/operators';
 import { LOCAL_ROUTING, PAYMENT_TYPE, SYSTEM_SETTINGS_CONFIG } from '../../accounts.config';
-import { WEEK } from '../../../../core/utils/date-helper';
+import { WEEK } from '@core/utils/date-helper';
 import { UserAutoDepositSettingInfo } from './models/auto-deposit-settings';
 import { UserAccount } from 'src/app/core/model/account/account.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DepositService } from '../../services/deposit.service';
 import { AutoDepositService } from './service/auto-deposit.service';
 import { NAVIGATE } from '../../../../app.global';
-import { BillMeMapping } from '../../../../core/model/settings/billme-mapping.model';
+import { BillMeMapping } from '@core/model/settings/billme-mapping.model';
 
 @Component({
   selector: 'st-automatic-deposit-page',

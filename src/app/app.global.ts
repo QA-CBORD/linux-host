@@ -94,7 +94,7 @@ export namespace ContentStrings {
     TEMP = '1.2.3',
   }
 
-  export enum ContentString {    
+  export enum ContentString {
     MEAL_SUFFIX = 'get_common.currency_display.meal_quantity_suffix',
     MEAL_SUFFIX_PLURAL = 'get_common.currency_display.meal_quantity_suffix_plural',
   }
@@ -171,11 +171,12 @@ export namespace User {
 }
 
 export enum NAVIGATE {
+  housing = 'housing',
   dashboard = 'dashboard',
   rewards = 'rewards',
   mobileAccess = 'openmydoor',
   secureMessage = 'securemessaging',
   accounts = 'accounts',
-  addFounds = 'accounts/add-funds',
-  ordering = 'ordering'
+  ordering = 'ordering',
+  addFounds = 'accounts/add-funds'
 }

@@ -6,6 +6,8 @@ export enum BUTTON_TYPE {
   OPT_IN = 'OPT_IN',
   CANCEL = 'CANCEL',
   CLOSE = 'CLOSE',
+  CONTINUE = 'CONTINUE',
+  REMOVE = 'REMOVE'
 }
 
 const CANCEL = {
@@ -14,6 +16,14 @@ const CANCEL = {
   strong: true,
   fill: 'clear',
   type: BUTTON_TYPE.CANCEL,
+};
+
+const REMOVE = {
+  class: 'filled-red',
+  shape: 'round',
+  strong: true,
+  fill: 'default',
+  type: BUTTON_TYPE.REMOVE,
 };
 
 const RETRY = {
@@ -56,6 +66,14 @@ const CLOSE = {
   type: BUTTON_TYPE.CLOSE,
 };
 
+const NO = {
+  class: 'small-with-shadow',
+  shape: 'round',
+  strong: true,
+  fill: 'clear',
+  type: BUTTON_TYPE.CLOSE,
+};
+
 const OPT_IN = {
   class: 'filled',
   shape: 'round',
@@ -67,9 +85,11 @@ const OPT_IN = {
 export const buttons = {
   CANCEL,
   RETRY,
+  NO,
   OKAY,
   REDEEM,
   CLOSE,
   CLAIM,
   OPT_IN,
+  REMOVE
 };

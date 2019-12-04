@@ -1,0 +1,34 @@
+<st-header title="Cart"
+           [isTitleShow]="true"
+           [backButtonTitle]="''"
+           [backButtonIcon]="'close'"
+           [isToolbarShow]="true">
+
+</st-header>
+
+<ion-content>
+    <st-order-details
+            [readonly]="false"
+            [tax]="(order$ | async).tax"
+            [tip]="(order$ | async).tip"
+            [subTotal]="(order$ | async).subTotal"
+            [pickupFee]="(order$ | async).pickupFee"
+            [deliveryFee]="(order$ | async).deliveryFee"
+            [total]="(order$ | async).total"
+            [orderItems]="(order$ | async).orderItems"
+            [address]="address$ | async"
+            [time]="(order$ | async).dueTime"
+            [accounts]="accounts"
+            [mealBased]="(order$ | async).mealBased"
+            [type]="(order$ | async).type"
+            [addressModalConfig]="(addressModalSettings$ | async)"
+            (onFormChange)="onCartStateFormChanged($event)"
+            (onOrderItemRemovedId)="removeOrderItem($event)"
+            (onOrderItemClicked)="onOrderItemClicked($event)"
+    >
+        <ion-button (click)="onSubmit()" class="btn" [ngClass]="{'btn--invalid': !cartFormState?.valid}">
+            {{(isOrderASAP | async) ? 'Place order' : 'Schedule Order'}}
+            {{(order$ | async).total | priceUnitsResolver: (order$ | async).mealBased}}
+        </ion-button>
+    </st-order-details>
+</ion-content>

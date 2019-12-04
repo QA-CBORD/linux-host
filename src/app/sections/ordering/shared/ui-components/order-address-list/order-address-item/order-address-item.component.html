@@ -1,0 +1,15 @@
+<ion-item detail button="true" class="order-item">
+  <ion-icon class="order-item__icon" [attr.alt]="iconAlt" [src]="iconSrc" [name]="iconName"></ion-icon>
+
+  <ion-label class="order-item__label-container">
+    <ng-container *ngIf="item.onCampus; then onCampus; else ofCampus"></ng-container>
+
+    <ng-template #ofCampus>
+      <div class="order-item__label-title">{{ item.address1 }}</div>
+      <div class="order-item__label-subtitle">{{ item.city }}, {{ item.state }}</div>
+    </ng-template>
+    <ng-template #onCampus>
+      <div class="order-item__label-title">{{ item.room }}, {{ item.building }}</div>
+    </ng-template>
+  </ion-label>
+</ion-item>

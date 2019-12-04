@@ -10,6 +10,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
+    "resolveJsonModule": true,
     "target": "es5",
     "typeRoots": [
       "node_modules/@types"
@@ -18,11 +19,12 @@
       "es2018",
       "dom"
     ],
-    "paths": { 
-      "@core/*": ["src/app/core/*"], 
-      "@sections/*": ["src/app/sections/*"], 
-      "@shared/*": ["src/app/shared/*"], 
-      "@environments/*": ["src/environments/*"] 
+
+    "paths": {
+      "@core/*": ["src/app/core/*"],
+      "@sections/*": ["src/app/sections/*"],
+      "@shared/*": ["src/app/shared/*"],
+      "@environments/*": ["src/environments/*"]
     }
   }
 }

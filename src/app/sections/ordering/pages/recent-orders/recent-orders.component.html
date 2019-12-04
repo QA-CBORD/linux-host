@@ -1,0 +1,31 @@
+<st-header title="Recent Orders"
+           [isTitleShow]="true"
+           [backButtonTitle]="''"
+           [backButtonIcon]="'close'"
+           [isToolbarShow]="true"
+           class="recent-orders__header">
+</st-header>
+
+<ion-content class="ion-no-padding">
+ <ng-container *ngIf="!(pendingOrders$ | async).length && !(completedOrders$ | async).length" [ngTemplateOutlet]="empty"></ng-container>
+ <ng-container *ngIf="(pendingOrders$ | async).length" [ngTemplateOutlet]="pending"></ng-container>
+ <ng-container *ngIf="(completedOrders$ | async).length" [ngTemplateOutlet]="completed"></ng-container>
+</ion-content>
+
+<ng-template #pending>
+ <h2 class="recent-orders__list-title">Pending Orders</h2>
+ <st-recent-orders-list (onOrderClicked)="onOrderPicked($event)" [orders]="(pendingOrders$ | async)"></st-recent-orders-list>
+</ng-template>
+
+<ng-template #empty>
+ <main class="recent-orders__no-orders-block">
+  <img class="recent-orders__no-orders-image" src="/assets/images/recent_orders.svg" alt="">
+  <p class="recent-orders__no-orders-message">You recently placed orders will appear here.</p>
+  <ion-button class="recent-orders__no-orders-btn" (click)="back()">start an order</ion-button>
+ </main>
+</ng-template>
+
+<ng-template #completed>
+ <h2 class="recent-orders__list-title">Completed Orders</h2>
+ <st-recent-orders-list (onOrderClicked)="onOrderPicked($event)" [orders]="(completedOrders$ | async)"></st-recent-orders-list>
+</ng-template>

@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { DateUtilObject } from '../date-util';
-import { CONTENT_STRINGS, TIME_PERIOD } from 'src/app/sections/accounts/accounts.config';
+import { CONTENT_STRINGS, TIME_PERIOD } from '@sections/accounts/accounts.config';
 
 @Pipe({
   name: 'timeRange',
