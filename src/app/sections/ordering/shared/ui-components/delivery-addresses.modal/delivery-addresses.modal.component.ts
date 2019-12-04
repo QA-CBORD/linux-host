@@ -44,7 +44,6 @@ export class DeliveryAddressesModalComponent implements OnInit {
   }
 
   addAddress() {
-    if (!this.addNewAdddressForm && !this.addNewAdddressForm.valid) return;
     this.loadingService.showSpinner();
     this.merchantService.updateUserAddress(this.addNewAdddressForm.value)
       .pipe(
@@ -61,6 +60,7 @@ export class DeliveryAddressesModalComponent implements OnInit {
       )
       .subscribe(([addedAddress]) => {
         this.loadingService.closeSpinner();
+        this.addNewAdddressState = !this.addNewAdddressState;
         if (addedAddress) {
           this.listOfAddresses = [...this.listOfAddresses, addedAddress];
           this.cdRef.detectChanges();

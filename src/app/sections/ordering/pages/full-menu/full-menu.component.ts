@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { CartService, OrderDetailOptions } from '@sections/ordering';
+import { CartService, OrderDetailOptions, MerchantService } from '@sections/ordering';
 import { Observable, Subscription } from 'rxjs';
 import { MenuInfo, MerchantInfo, MerchantOrderTypesInfo } from '@sections/ordering/shared/models';
 import { Router } from '@angular/router';
@@ -23,12 +23,14 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   merchantInfo$: Observable<MerchantInfo>;
   merchantInfoState: boolean = false;
   menuItems$: Observable<number>;
+  orderTypes$: Observable<MerchantOrderTypesInfo>
 
   constructor(
     private readonly cartService: CartService,
     private readonly router: Router,
     private readonly modalController: ModalController,
     private readonly cdRef: ChangeDetectorRef,
+    private readonly merchantService: MerchantService,
   ) {
   }
 
@@ -48,12 +50,14 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   ionViewWillEnter() {
     this.menuItems$ = this.cartService.menuItems$;
     this.cdRef.detectChanges();
+    this.orderTypes$ = this.merchantService.orderTypes$
   }
 
   ngOnInit() {
     this.menu$ = this.cartService.menuInfo$;
     this.merchantInfo$ = this.cartService.merchant$;
     this.orderInfo$ = this.cartService.orderDetailsOptions$;
+    this.merchantService.orderTypes$.subscribe(types => console.log(types))
   }
 
   ngOnDestroy() {
