@@ -60,7 +60,7 @@ export class DeliveryAddressesModalComponent implements OnInit {
       )
       .subscribe(([addedAddress]) => {
         this.loadingService.closeSpinner();
-        this.addNewAdddressState = !this.addNewAdddressState;
+        this.resetForm();
         if (addedAddress) {
           this.listOfAddresses = [...this.listOfAddresses, addedAddress];
           this.cdRef.detectChanges();
@@ -76,14 +76,9 @@ export class DeliveryAddressesModalComponent implements OnInit {
     this.addNewAdddressForm = event;
   }
 
-  clearAddressesForm() {
+  resetForm() {
     this.addNewAdddressState = !this.addNewAdddressState;
-  }
-
-  saveAddressesForm() {
-    // TODO: final form value:
-    console.log(this.addNewAdddressForm.value);
-    this.addNewAdddressState = !this.addNewAdddressState;
+    this.addNewAdddressForm = null;
   }
 
   private defineListOfAddresses(defaultAddress) {
@@ -96,8 +91,4 @@ export class DeliveryAddressesModalComponent implements OnInit {
       return item.addressInfo ? item.addressInfo : { ...item, checked }
     });
   }
-
-  // private retrieveDeliveryAddresses(setting) {
-  //   return this.merchantService.retrieveDeliveryAddresses(setting);
-  // }
 }

@@ -25,6 +25,6 @@ export class ModifyPrepTimePipe implements PipeTransform {
           return this.datePipe.transform(new Date(finalTime), 'EE, MMM d, h:mm a');
       }
     }
-    return value;
+    return '';
   }
 }

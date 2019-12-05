@@ -45,10 +45,10 @@
             <ng-template #placeholder>Add an Address</ng-template>
 
             <ng-template #addressContainer>
-              <ng-container *ngIf="orderOptionsData?.address?.onCampus; then onCampus; else ofCampus"></ng-container>
+              <ng-container *ngIf="orderOptionsData?.address?.onCampus; then onCampus; else offCampus"></ng-container>
             </ng-template>
 
-            <ng-template #ofCampus>
+            <ng-template #offCampus>
               {{ orderOptionsData?.address?.address1 }}, {{orderOptionsData?.address?.city}}
             </ng-template>
             <ng-template #onCampus>
