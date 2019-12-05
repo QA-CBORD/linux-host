@@ -38,8 +38,8 @@ export class ApplicationsListComponent {
     return ApplicationStatus[patronApplication.status];
   }
 
-  handleClear(applicationId: number, applicationSlide: IonItemSliding): void {
-    this.clear.emit(applicationId);
+  handleClear(applicationKey: number, applicationSlide: IonItemSliding): void {
+    this.clear.emit(applicationKey);
 
     applicationSlide.close();
   }

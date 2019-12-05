@@ -23,7 +23,7 @@ import { StepComponent } from '../../stepper/step/step.component';
 import { QuestionComponent } from '../../questions/question.component';
 
 import { ApplicationStatus, ApplicationDetails, PatronApplication } from '../../applications/applications.model';
-import { QuestionPage } from '../../questions/questions.model';
+import { ApplicationPage } from '../../questions/questions.model';
 import { Response } from '../../housing.model';
 
 @Component({
@@ -33,17 +33,17 @@ import { Response } from '../../housing.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ApplicationDetailsPage implements OnInit, OnDestroy {
+  private _subscription: Subscription = new Subscription();
+
   @ViewChild(StepperComponent) stepper: StepperComponent;
 
   @ViewChildren(QuestionComponent) questions: QueryList<QuestionComponent>;
 
   applicationDetails$: Observable<ApplicationDetails>;
 
-  pages$: Observable<QuestionPage[]>;
+  pages$: Observable<ApplicationPage[]>;
 
-  applicationId: number;
-
-  private _subscription: Subscription = new Subscription();
+  applicationKey: number;
 
   constructor(
     private _route: ActivatedRoute,
@@ -55,17 +55,17 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.applicationId = parseInt(this._route.snapshot.paramMap.get('applicationId'), 10);
+    this.applicationKey = parseInt(this._route.snapshot.paramMap.get('applicationKey'), 10);
 
     this.pages$ = this._questionsService
       .getPages()
       .pipe(
-        tap((pages: QuestionPage[]) =>
-          this._questionsService._patchFormsFromState(pages, this.applicationId, this._checkQuestions.bind(this))
+        tap((pages: ApplicationPage[]) =>
+          this._questionsService._patchFormsFromState(pages, this.applicationKey, this._checkQuestions.bind(this))
         )
       );
 
-    this.applicationDetails$ = this._applicationsService.getApplicationDetails(this.applicationId);
+    this.applicationDetails$ = this._applicationsService.getApplicationDetails(this.applicationKey);
   }
 
   ngOnDestroy(): void {
@@ -94,25 +94,26 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
     }
 
     if (!isLastPage) {
-      this._next(application.patronApplication, form.value);
+      this._next(application, form.value);
     } else {
       const submitSubscription: Subscription = this._applicationsService
         .submitApplication(application, form.value)
         .subscribe({
           next: () => this._router.navigate(['/housing/dashboard']),
-          error: (error: HttpErrorResponse) => this._handleErrors(error.error),
+          error: (error: any) => this._handleErrors(error),
         });
 
       this._subscription.add(submitSubscription);
     }
   }
 
-  private _next(application: PatronApplication, form: any): void {
+  private _next(application: ApplicationDetails, form: any): void {
     this._applicationsService
-      .updateCreatedDateTime(this.applicationId, application)
-      .then(() =>
-        this._questionsStorageService.updateQuestionsGroup(this.applicationId, form, ApplicationStatus.Pending)
+      .getCreatedDateTime(application.applicationDefinition.key, application.patronApplication)
+      .then((createdDateTime: string) =>
+        this._applicationsService.updateCreatedDateTime(this.applicationKey, createdDateTime)
       )
+      .then(() => this._questionsStorageService.updateQuestions(this.applicationKey, form, ApplicationStatus.Pending))
       .then(() => this.stepper.next());
   }
 
@@ -124,10 +125,12 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
       });
   }
 
-  private _handleErrors(error: Response): void {
+  private _handleErrors(error: any): void {
+    const message = error && (error as Response).status ? error.status.message : 'Error';
+
     this._toastController
       .create({
-        message: error.status.message,
+        message,
         position: 'top',
         duration: 3000,
       })

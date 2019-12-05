@@ -11,7 +11,7 @@ export * from './types/question-dropdown';
 export * from './types/question-reorder';
 export * from './types/question-form-control';
 
-export interface QuestionPage {
+export interface ApplicationPage {
   form: FormGroup;
   questions: QuestionBase[];
 }

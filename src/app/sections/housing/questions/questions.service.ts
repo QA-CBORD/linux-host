@@ -17,7 +17,7 @@ import { QuestionDropdown } from './types/question-dropdown';
 import { QuestionCheckboxGroup, QuestionCheckboxGroupValue } from './types/question-checkbox-group';
 import { QuestionRadioGroup } from './types/question-radio-group';
 
-import { QuestionPage, QuestionReorder, QuestionReorderValue } from './questions.model';
+import { ApplicationPage, QuestionReorder, QuestionReorderValue } from './questions.model';
 import { ApplicationDetails, PatronAttribute } from '../applications/applications.model';
 
 export const QuestionConstructorsMap = {
@@ -35,35 +35,35 @@ export const QuestionConstructorsMap = {
   providedIn: 'root',
 })
 export class QuestionsService {
-  private _pagesSource: BehaviorSubject<QuestionPage[]> = new BehaviorSubject<QuestionPage[]>([]);
-  private _pages$: Observable<QuestionPage[]> = this._pagesSource.asObservable();
+  private _pagesSource: BehaviorSubject<ApplicationPage[]> = new BehaviorSubject<ApplicationPage[]>([]);
+  private _pages$: Observable<ApplicationPage[]> = this._pagesSource.asObservable();
 
   constructor(private _questionsStorageService: QuestionsStorageService) {}
 
-  setPages(pages: QuestionPage[]): void {
+  setPages(pages: ApplicationPage[]): void {
     this._pagesSource.next(pages);
   }
 
-  getPages(): Observable<QuestionPage[]> {
+  getPages(): Observable<ApplicationPage[]> {
     return this._pages$;
   }
 
   parsePages(application: ApplicationDetails): void {
     const questions: QuestionBase[] = this.parseQuestions(application.applicationDefinition.applicationFormJson);
-    const pages: QuestionPage[] = this._splitByPages(questions, application.patronAttributes);
+    const pages: ApplicationPage[] = this._splitByPages(questions, application.patronAttributes);
 
     this.setPages(pages);
   }
 
   async _patchFormsFromState(
-    pages: QuestionPage[],
-    applicationId: number,
+    pages: ApplicationPage[],
+    applicationKey: number,
     checkCallback: (namesToTouch: Set<string>) => void
   ): Promise<void> {
-    const questions: any = await this._questionsStorageService.getQuestions(applicationId);
+    const questions: any = await this._questionsStorageService.getQuestions(applicationKey);
     const namesToTouch: Set<string> = new Set<string>();
 
-    pages.forEach((page: QuestionPage, index: number) => {
+    pages.forEach((page: ApplicationPage, index: number) => {
       if (questions) {
         page.form.patchValue(questions);
 
@@ -110,7 +110,7 @@ export class QuestionsService {
     return new QuestionBase(question);
   }
 
-  private _splitByPages(questions: QuestionBase[], attributes: PatronAttribute[]): QuestionPage[] {
+  private _splitByPages(questions: QuestionBase[], attributes: PatronAttribute[]): ApplicationPage[] {
     const questionsByPages: QuestionBase[][] = questions.reduce(
       (accumulator: QuestionBase[][], current: QuestionBase, index: number) => {
         if (current && (current as QuestionParagraph).subtype === 'blockquote') {

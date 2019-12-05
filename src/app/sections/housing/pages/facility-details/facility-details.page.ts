@@ -17,10 +17,10 @@ export class FacilityDetailsPage implements OnInit {
   facilities: Facility[];
 
   ngOnInit() {
-    const applicationId = parseInt(this._route.snapshot.paramMap.get('applicationId'), 10);
+    const applicationKey = parseInt(this._route.snapshot.paramMap.get('applicationKey'), 10);
 
     this._facilitiesService
-      .getFacilities(applicationId)
+      .getFacilities(applicationKey)
       .subscribe((facilities: Facility[]) => (this.facilities = facilities));
   }
 

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { ApplicationDetails } from './applications.model';
+import { ApplicationDetails, ApplicationStatus } from './applications.model';
 
 export interface ApplicationsState {
   entities: ApplicationEntities;
@@ -50,7 +50,7 @@ export class ApplicationsStateService {
     this._applicationsStateSource.next(value);
   }
 
-  get applicationState(): ApplicationsState {
+  get applicationsState(): ApplicationsState {
     return this._applicationsStateSource.getValue();
   }
 
@@ -68,6 +68,45 @@ export class ApplicationsStateService {
 
   setLoaded(loaded: boolean): void {
     this.applicationsState = { ...this.applicationsState, loaded };
+  }
+
+  setCreatedDateTime(applicationKey: number, createdDateTime: string): void {
+    const state: ApplicationsState = this.applicationsState;
+    const application: ApplicationDetails = state.entities[applicationKey];
+
+    if (application) {
+      const updatedApplication: ApplicationDetails = {
+        ...application,
+        patronApplication: { ...application.patronApplication, createdDateTime },
+      };
+      this.applicationsState = { ...state, entities: { ...state.entities, [applicationKey]: updatedApplication } };
+    }
+  }
+
+  setSubmittedDateTime(applicationKey: number, submittedDateTime: string): void {
+    const state: ApplicationsState = this.applicationsState;
+    const application: ApplicationDetails = state.entities[applicationKey];
+
+    if (application) {
+      const updatedApplication: ApplicationDetails = {
+        ...application,
+        patronApplication: { ...application.patronApplication, submittedDateTime },
+      };
+      this.applicationsState = { ...state, entities: { ...state.entities, [applicationKey]: updatedApplication } };
+    }
+  }
+
+  setStatus(applicationKey: number, status: ApplicationStatus): void {
+    const state: ApplicationsState = this.applicationsState;
+    const application: ApplicationDetails = state.entities[applicationKey];
+
+    if (application) {
+      const updatedApplication: ApplicationDetails = {
+        ...application,
+        patronApplication: { ...application.patronApplication, status },
+      };
+      this.applicationsState = { ...state, entities: { ...state.entities, [applicationKey]: updatedApplication } };
+    }
   }
 
   private _getEntities(state: ApplicationsState) {

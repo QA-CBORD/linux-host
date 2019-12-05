@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { ApplicationsService } from './applications.service';
 
 import { ApplicationDetails } from './applications.model';
+import { ApplicationsStateService } from './applications-state.service';
 
 @Component({
   selector: 'st-applications',
@@ -14,13 +15,18 @@ import { ApplicationDetails } from './applications.model';
 export class ApplicationsComponent implements OnInit {
   applications$: Observable<ApplicationDetails[]>;
 
-  constructor(private _applicationsService: ApplicationsService) {}
+  constructor(
+    private _applicationsService: ApplicationsService,
+    private _applicationsStateService: ApplicationsStateService
+  ) {}
 
   ngOnInit(): void {
-    this.applications$ = this._applicationsService.getApplications();
+    this.applications$ = this._applicationsStateService.applications$;
+
+    this._applicationsService.getApplications().subscribe();
   }
 
-  handleClear(applicationId: number): void {
-    this._applicationsService.clearApplication(applicationId);
+  handleClear(applicationKey: number): void {
+    this._applicationsService.clearApplication(applicationKey);
   }
 }

@@ -5,8 +5,12 @@ import { STORAGE_KEY } from '../housing.config';
 
 import { ApplicationStatus } from '../applications/applications.model';
 
-export interface QuestionsGroup {
-  questions: any[];
+export interface QuestionsEntries {
+  [key: string]: any;
+}
+
+export interface StoredApplication {
+  questions: QuestionsEntries;
   status: ApplicationStatus;
   createdDateTime: string;
   submittedDateTime?: string;
@@ -16,63 +20,65 @@ export interface QuestionsGroup {
   providedIn: 'root',
 })
 export class QuestionsStorageService {
-  private readonly _key: string = `${STORAGE_KEY}-questions`;
+  private readonly _key: string = `${STORAGE_KEY}-applications`;
 
   constructor(private _storage: Storage) {}
 
-  async getQuestionsGroup(applicationId: number): Promise<QuestionsGroup> {
-    return this._storage.get(`${this._key}-${applicationId}`);
+  async getApplication(applicationKey: number): Promise<StoredApplication> {
+    return this._storage.get(`${this._key}-${applicationKey}`);
   }
 
-  async getQuestions(applicationId: number): Promise<any[]> {
-    return this.getQuestionsGroup(applicationId).then((group: QuestionsGroup) => (group ? group.questions : null));
+  async removeApplication(applicationKey: number): Promise<any> {
+    return this._storage.remove(`${this._key}-${applicationKey}`);
   }
 
-  async getCreatedDateTime(applicationId: number): Promise<string> {
-    return this.getQuestionsGroup(applicationId).then((group: QuestionsGroup) =>
-      group ? group.createdDateTime : null
+  async getQuestions(applicationKey: number): Promise<QuestionsEntries> {
+    return this.getApplication(applicationKey).then((application: StoredApplication) =>
+      application ? application.questions : null
     );
   }
 
-  async updateCreatedDateTime(applicationId: number, createdDateTime: string): Promise<any> {
-    return this.getQuestionsGroup(applicationId).then((group: QuestionsGroup) =>
-      this._storage.set(`${this._key}-${applicationId}`, {
-        ...group,
+  async getCreatedDateTime(applicationKey: number): Promise<string> {
+    return this.getApplication(applicationKey).then((application: StoredApplication) =>
+      application ? application.createdDateTime : null
+    );
+  }
+
+  async updateCreatedDateTime(applicationKey: number, createdDateTime: string): Promise<any> {
+    return this.getApplication(applicationKey).then((application: StoredApplication) =>
+      this._storage.set(`${this._key}-${applicationKey}`, {
+        ...application,
         createdDateTime,
       })
     );
   }
 
-  async getSubmittedDateTime(applicationId: number): Promise<string> {
-    return this.getQuestionsGroup(applicationId).then((group: QuestionsGroup) =>
-      group ? group.submittedDateTime : null
+  async getSubmittedDateTime(applicationKey: number): Promise<string> {
+    return this.getApplication(applicationKey).then((application: StoredApplication) =>
+      application ? application.submittedDateTime : null
     );
   }
 
-  async updateSubmittedDateTime(applicationId: number, submittedDateTime: string): Promise<void> {
-    return this.getQuestionsGroup(applicationId).then((group: QuestionsGroup) =>
-      this._storage.set(`${this._key}-${applicationId}`, {
-        ...group,
+  async updateSubmittedDateTime(applicationKey: number, submittedDateTime: string): Promise<void> {
+    return this.getApplication(applicationKey).then((application: StoredApplication) =>
+      this._storage.set(`${this._key}-${applicationKey}`, {
+        ...application,
         submittedDateTime,
       })
     );
   }
 
-  async updateQuestionsGroup(applicationId: number, form: any, status: ApplicationStatus): Promise<any> {
-    return this.getQuestionsGroup(applicationId).then((group: QuestionsGroup) => {
-      let questions: { [key: string]: any } = group && group.questions ? group.questions : {};
+  async updateQuestions(applicationKey: number, form: any, status: ApplicationStatus): Promise<any> {
+    return this.getApplication(applicationKey).then((application: StoredApplication) => {
+      let questions: QuestionsEntries = application && application.questions ? application.questions : {};
 
       Object.keys(form).forEach((formControlName: any) => (questions[formControlName] = form[formControlName]));
 
-      return this._storage.set(`${this._key}-${applicationId}`, {
-        ...group,
+      return this._storage.set(`${this._key}-${applicationKey}`, {
+        ...application,
         status,
         questions,
       });
     });
-  }
-
-  async removeQuestionsGroup(applicationId: number): Promise<any> {
-    return this._storage.remove(`${this._key}-${applicationId}`);
   }
 }
