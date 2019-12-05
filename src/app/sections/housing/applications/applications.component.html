@@ -3,5 +3,8 @@
     <h4>Applications</h4>
   </ion-list-header>
 
-  <st-applications-list [applications]="applications$ | async" (clear)="handleClear($event)"></st-applications-list>
+  <st-applications-list
+    [applications]="applicationsStateService.applications$ | async"
+    (clear)="handleClear($event)"
+  ></st-applications-list>
 </ion-list>

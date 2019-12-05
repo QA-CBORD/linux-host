@@ -4,12 +4,12 @@
     routerDirection="forward"
     detail="true"
   >
-    <ion-icon slot="start" name="create" *ngIf="!isSubmitted(application)"></ion-icon>
-    <ion-icon slot="start" name="checkmark-circle" *ngIf="isSubmitted(application)"></ion-icon>
+    <ion-icon slot="start" name="create" *ngIf="!isSubmitted(application.patronApplication)"></ion-icon>
+    <ion-icon slot="start" name="checkmark-circle" *ngIf="isSubmitted(application.patronApplication)"></ion-icon>
 
     <ion-label>
       <h2>{{ application.applicationDefinition.applicationTitle }}</h2>
-      <p>{{ getApplicationStatus(application) }}</p>
+      <p>{{ getApplicationStatus(application.patronApplication) }}</p>
     </ion-label>
   </ion-item>
 

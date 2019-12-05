@@ -12,11 +12,12 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ToastController } from '@ionic/angular';
 import { FormGroup } from '@angular/forms';
 import { Observable, Subscription } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { tap, switchMap } from 'rxjs/operators';
 
 import { QuestionsService } from '../../questions/questions.service';
 import { ApplicationsService } from '../../applications/applications.service';
 import { QuestionsStorageService } from '../../questions/questions-storage.service';
+import { ApplicationsStateService } from '../../applications/applications-state.service';
 
 import { StepperComponent } from '../../stepper/stepper.component';
 import { StepComponent } from '../../stepper/step/step.component';
@@ -51,7 +52,8 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
     private _applicationsService: ApplicationsService,
     private _router: Router,
     private _questionsStorageService: QuestionsStorageService,
-    private _toastController: ToastController
+    private _toastController: ToastController,
+    private _applicationsStateService: ApplicationsStateService
   ) {}
 
   ngOnInit(): void {
@@ -78,6 +80,7 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
 
     const saveSubscription: Subscription = this._applicationsService
       .saveApplication(application, selectedStep.stepControl.value)
+      .pipe(switchMap(() => this._applicationsService.getApplications()))
       .subscribe({
         next: () => this._router.navigate(['/housing/dashboard']),
         error: (error: HttpErrorResponse) => this._handleErrors(error.error),
@@ -98,6 +101,7 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
     } else {
       const submitSubscription: Subscription = this._applicationsService
         .submitApplication(application, form.value)
+        .pipe(switchMap(() => this._applicationsService.getApplications()))
         .subscribe({
           next: () => this._router.navigate(['/housing/dashboard']),
           error: (error: any) => this._handleErrors(error),
@@ -108,12 +112,27 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
   }
 
   private _next(application: ApplicationDetails, form: any): void {
+    const applicationKey: number = application.applicationDefinition.key;
+
     this._applicationsService
       .getCreatedDateTime(application.applicationDefinition.key, application.patronApplication)
-      .then((createdDateTime: string) =>
-        this._applicationsService.updateCreatedDateTime(this.applicationKey, createdDateTime)
-      )
-      .then(() => this._questionsStorageService.updateQuestions(this.applicationKey, form, ApplicationStatus.Pending))
+      .then((createdDateTime: string) => {
+        this._applicationsService.updateCreatedDateTime(this.applicationKey, createdDateTime);
+
+        return createdDateTime;
+      })
+      .then((createdDateTime: string) => {
+        const patronApplication: PatronApplication = {
+          ...application.patronApplication,
+          createdDateTime,
+          status: ApplicationStatus.Pending,
+        };
+        const applicationDetails: ApplicationDetails = { ...application, patronApplication };
+
+        this._applicationsStateService.updateApplication(applicationKey, applicationDetails);
+
+        return this._questionsStorageService.updateQuestions(this.applicationKey, form, ApplicationStatus.Pending);
+      })
       .then(() => this.stepper.next());
   }
 

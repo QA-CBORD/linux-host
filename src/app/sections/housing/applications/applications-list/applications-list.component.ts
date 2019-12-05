@@ -16,26 +16,24 @@ export class ApplicationsListComponent {
 
   @Output() clear: EventEmitter<number> = new EventEmitter<number>();
 
-  isSubmitted(application: ApplicationDetails): boolean {
-    return application.patronApplication ? application.patronApplication.status === ApplicationStatus.Submitted : false;
+  isSubmitted(application: PatronApplication): boolean {
+    return application ? application.status === ApplicationStatus.Submitted : false;
   }
 
   trackById(_: number, application: ApplicationDetails): number {
     return application.applicationDefinition.key;
   }
 
-  getApplicationStatus(application: ApplicationDetails): string {
-    const patronApplication: PatronApplication = application.patronApplication;
-
-    if (!patronApplication) {
+  getApplicationStatus(application: PatronApplication): string {
+    if (!application) {
       return ApplicationStatus[ApplicationStatus.New];
     }
 
-    if (patronApplication.status === ApplicationStatus.Submitted) {
-      return `Submitted: ${formatDate(patronApplication.submittedDateTime, 'MMM/dd/yyyy', this._localId)}`;
+    if (application.status === ApplicationStatus.Submitted) {
+      return `Submitted: ${formatDate(application.submittedDateTime, 'MMM/dd/yyyy', this._localId)}`;
     }
 
-    return ApplicationStatus[patronApplication.status];
+    return ApplicationStatus[application.status];
   }
 
   handleClear(applicationKey: number, applicationSlide: IonItemSliding): void {

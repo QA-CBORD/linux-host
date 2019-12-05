@@ -2,13 +2,11 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { ApplicationDetails, ApplicationStatus } from './applications.model';
+import { ApplicationDetails } from './applications.model';
 
 export interface ApplicationsState {
   entities: ApplicationEntities;
   applicationDetails: ApplicationDetails;
-  loading: boolean;
-  loaded: boolean;
 }
 
 export interface ApplicationEntities {
@@ -22,29 +20,23 @@ export class ApplicationsStateService {
   private readonly _defaultState: ApplicationsState = {
     entities: {},
     applicationDetails: null,
-    loading: false,
-    loaded: false,
   };
 
   private readonly _applicationsStateSource: BehaviorSubject<ApplicationsState> = new BehaviorSubject<
     ApplicationsState
   >(this._defaultState);
 
-  readonly applicationsState$: Observable<ApplicationsState> = this._applicationsStateSource.asObservable();
-
-  readonly applicationEntities$: Observable<ApplicationEntities> = this.applicationsState$.pipe(map(this._getEntities));
+  readonly applicationEntities$: Observable<ApplicationEntities> = this._applicationsStateSource.pipe(
+    map(this._getEntities)
+  );
 
   readonly applications$: Observable<ApplicationDetails[]> = this.applicationEntities$.pipe(
     map(this._getApplications.bind(this))
   );
 
-  readonly applicationDetails$: Observable<ApplicationDetails> = this.applicationsState$.pipe(
+  readonly applicationDetails$: Observable<ApplicationDetails> = this._applicationsStateSource.pipe(
     map(this._getApplicationDetails)
   );
-
-  readonly loading$: Observable<boolean> = this.applicationsState$.pipe(map(this._getLoading));
-
-  readonly loaded$: Observable<boolean> = this.applicationsState$.pipe(map(this._getLoaded));
 
   set applicationsState(value: ApplicationsState) {
     this._applicationsStateSource.next(value);
@@ -62,51 +54,13 @@ export class ApplicationsStateService {
     this.applicationsState = { ...this.applicationsState, applicationDetails };
   }
 
-  setLoading(loading: boolean): void {
-    this.applicationsState = { ...this.applicationsState, loading };
-  }
+  updateApplication(applicationKey: number, applicationDetails: ApplicationDetails) {
+    const entites: ApplicationEntities = this.applicationsState.entities;
 
-  setLoaded(loaded: boolean): void {
-    this.applicationsState = { ...this.applicationsState, loaded };
-  }
-
-  setCreatedDateTime(applicationKey: number, createdDateTime: string): void {
-    const state: ApplicationsState = this.applicationsState;
-    const application: ApplicationDetails = state.entities[applicationKey];
-
-    if (application) {
-      const updatedApplication: ApplicationDetails = {
-        ...application,
-        patronApplication: { ...application.patronApplication, createdDateTime },
-      };
-      this.applicationsState = { ...state, entities: { ...state.entities, [applicationKey]: updatedApplication } };
-    }
-  }
-
-  setSubmittedDateTime(applicationKey: number, submittedDateTime: string): void {
-    const state: ApplicationsState = this.applicationsState;
-    const application: ApplicationDetails = state.entities[applicationKey];
-
-    if (application) {
-      const updatedApplication: ApplicationDetails = {
-        ...application,
-        patronApplication: { ...application.patronApplication, submittedDateTime },
-      };
-      this.applicationsState = { ...state, entities: { ...state.entities, [applicationKey]: updatedApplication } };
-    }
-  }
-
-  setStatus(applicationKey: number, status: ApplicationStatus): void {
-    const state: ApplicationsState = this.applicationsState;
-    const application: ApplicationDetails = state.entities[applicationKey];
-
-    if (application) {
-      const updatedApplication: ApplicationDetails = {
-        ...application,
-        patronApplication: { ...application.patronApplication, status },
-      };
-      this.applicationsState = { ...state, entities: { ...state.entities, [applicationKey]: updatedApplication } };
-    }
+    this.applicationsState = {
+      ...this.applicationsState,
+      entities: { ...entites, [applicationKey]: applicationDetails },
+    };
   }
 
   private _getEntities(state: ApplicationsState) {
@@ -119,14 +73,6 @@ export class ApplicationsStateService {
 
   private _getApplicationDetails(state: ApplicationsState) {
     return state.applicationDetails;
-  }
-
-  private _getLoading(state: ApplicationsState): boolean {
-    return state.loading;
-  }
-
-  private _getLoaded(state: ApplicationsState): boolean {
-    return state.loaded;
   }
 
   private _toApplicationEntities(applications: ApplicationDetails[]): ApplicationEntities {

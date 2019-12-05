@@ -68,6 +68,7 @@ export class ApplicationsService {
         const submittedDateTime: string = new Date().toISOString();
         const patronApplication: PatronApplication = {
           ...application.patronApplication,
+          applicationDefinitionKey: applicationKey,
           createdDateTime,
           submittedDateTime,
         };
@@ -76,7 +77,12 @@ export class ApplicationsService {
         return forkJoin(
           this._questionsStorageService.updateCreatedDateTime(applicationKey, createdDateTime),
           this._questionsStorageService.updateSubmittedDateTime(applicationKey, submittedDateTime)
-        ).pipe(switchMap(() => this._updateApplication(applicationDetails, form, ApplicationStatus.Submitted)));
+        ).pipe(
+          switchMap(() => this._updateApplication(applicationDetails, form, ApplicationStatus.Submitted)),
+          tap(() => {
+            this._applicationsStateService.updateApplication(applicationKey, applicationDetails);
+          })
+        );
       })
     );
   }
@@ -88,12 +94,16 @@ export class ApplicationsService {
       switchMap((createdDateTime: string) => {
         const patronApplication: PatronApplication = {
           ...application.patronApplication,
+          applicationDefinitionKey: applicationKey,
           createdDateTime,
         };
         const applicationDetails: ApplicationDetails = { ...application, patronApplication };
 
         return from(this._questionsStorageService.updateCreatedDateTime(applicationKey, createdDateTime)).pipe(
-          switchMap(() => this._updateApplication(applicationDetails, form, ApplicationStatus.Pending))
+          switchMap(() => this._updateApplication(applicationDetails, form, ApplicationStatus.Pending)),
+          tap(() => {
+            this._applicationsStateService.updateApplication(applicationKey, applicationDetails);
+          })
         );
       })
     );
