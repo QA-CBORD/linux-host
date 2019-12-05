@@ -57,7 +57,6 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     this.menu$ = this.cartService.menuInfo$;
     this.merchantInfo$ = this.cartService.merchant$;
     this.orderInfo$ = this.cartService.orderDetailsOptions$;
-    this.merchantService.orderTypes$.subscribe(types => console.log(types))
   }
 
   ngOnDestroy() {
