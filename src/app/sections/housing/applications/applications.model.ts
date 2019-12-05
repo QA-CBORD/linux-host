@@ -45,7 +45,14 @@ export class PatronApplication {
 }
 
 export class PatronAttribute {
-  constructor(public attributeConsumerKey: number, public value: string, public key?: number) {}
+  constructor(
+    public attributeConsumerKey: number,
+    public value: string,
+    public key?: number,
+    public patronKey?: number,
+    public effectiveDate?: string,
+    public endDate?: string
+  ) {}
 }
 
 export class PatronPreference {

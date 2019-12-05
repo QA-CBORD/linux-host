@@ -51,7 +51,9 @@ export function generatePatronApplication(key: number): PatronApplication {
 }
 
 export function generatePatronAttribute(_: any, index: number): PatronAttribute {
-  return new PatronAttribute(index + 100, `Attribute Value ${index}`, index);
+  const nowDateTime: string = new Date().toISOString();
+
+  return new PatronAttribute(index + 100, `Attribute Value ${index}`, index, 123, nowDateTime, nowDateTime);
 }
 
 export function generatePatronAttributes(amount: number = 2): PatronAttribute[] {

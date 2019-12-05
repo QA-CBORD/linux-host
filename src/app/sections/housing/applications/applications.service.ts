@@ -163,20 +163,38 @@ export class ApplicationsService {
     parsedJson: any[],
     questions: QuestionsEntries
   ): PatronAttribute[] {
-    return parsedJson
-      .filter((control: QuestionFormControl) => control && control.consumerKey)
-      .map((control: QuestionFormControl) => {
-        const foundAttribute: PatronAttribute = patronAttributes
-          ? patronAttributes.find(
-              (attribute: PatronAttribute) => attribute.attributeConsumerKey === control.consumerKey
-            )
-          : null;
-        const key: number = foundAttribute ? foundAttribute.key : null;
-        const foundQuestion: any = questions[control.name];
-        const value: any = foundQuestion || null;
+    const resultAttributes: PatronAttribute[] = patronAttributes ? [...patronAttributes] : [];
 
-        return new PatronAttribute(control.consumerKey, value, key);
+    parsedJson
+      .filter((control: QuestionFormControl) => control && control.consumerKey)
+      .forEach((control: QuestionFormControl) => {
+        const foundAttributeIndex: number = patronAttributes.findIndex(
+          (attribute: PatronAttribute) => attribute.attributeConsumerKey === control.consumerKey
+        );
+
+        if (foundAttributeIndex !== -1) {
+          const foundAttribute: PatronAttribute = patronAttributes[foundAttributeIndex];
+          const key: number = foundAttribute.key;
+          const foundQuestion: any = questions[control.name];
+          const value: any = foundQuestion || foundAttribute.value;
+
+          resultAttributes[foundAttributeIndex] = new PatronAttribute(
+            control.consumerKey,
+            value,
+            key,
+            foundAttribute.patronKey,
+            foundAttribute.effectiveDate,
+            foundAttribute.endDate
+          );
+        } else {
+          const foundQuestion: any = questions[control.name];
+          const value: any = foundQuestion || null;
+
+          resultAttributes.push(new PatronAttribute(control.consumerKey, value, null));
+        }
       });
+
+    return resultAttributes;
   }
 
   private _getPreferences(
@@ -211,8 +229,15 @@ export class ApplicationsService {
     return Array.isArray(attributes) ? attributes.map(this._toPatronAttribute) : [];
   }
 
-  private _toPatronAttribute(attribute: any): PatronAttribute {
-    return new PatronAttribute(attribute.attributeConsumerKey, attribute.value, attribute.key);
+  private _toPatronAttribute(attribute: PatronAttribute): PatronAttribute {
+    return new PatronAttribute(
+      attribute.attributeConsumerKey,
+      attribute.value,
+      attribute.key,
+      attribute.patronKey,
+      attribute.effectiveDate,
+      attribute.endDate
+    );
   }
 
   private _toPatronPreferences(preferences: any[]): PatronPreference[] {
@@ -223,9 +248,9 @@ export class ApplicationsService {
     return new PatronPreference(preference.key, preference.preferenceKey, preference.rank, preference.facilityKey);
   }
 
-  private _toApplicationDetails(application: any): ApplicationDetails {
-    const patronAttributes: PatronAttribute[] = this._toPatronAttributes(application.attributes);
-    const patronPreferences: PatronPreference[] = this._toPatronPreferences(application.preferences);
+  private _toApplicationDetails(application: ApplicationDetails): ApplicationDetails {
+    const patronAttributes: PatronAttribute[] = this._toPatronAttributes(application.patronAttributes);
+    const patronPreferences: PatronPreference[] = this._toPatronPreferences(application.patronPreferences);
 
     return new ApplicationDetails(
       application.applicationDefinition,
