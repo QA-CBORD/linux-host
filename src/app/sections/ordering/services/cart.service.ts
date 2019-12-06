@@ -84,9 +84,10 @@ export class CartService {
   async setActiveMerchantsMenuByOrderOptions(
     dueTime: Date,
     orderType: ORDER_TYPE,
-    address: AddressInfo
+    address: AddressInfo,
+    isASAP?: boolean
   ): Promise<void> {
-    this.cart.orderDetailsOptions = { orderType, dueTime, address };
+    this.cart.orderDetailsOptions = { orderType, dueTime, address, isASAP };
     await this.getMerchantMenu().then(menu => (this.cart.menu = menu));
     this.onStateChanged();
   }

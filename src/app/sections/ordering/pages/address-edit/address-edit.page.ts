@@ -31,9 +31,9 @@ export class AddressEditPage implements OnInit {
     private readonly loadingService: LoadingService,
     private readonly popoverCtrl: PopoverController,
     private readonly userService: UserService
-  ) { }
+  ) {}
 
-  ngOnInit() { }
+  ngOnInit() {}
 
   ionViewWillEnter() {
     this.buildings$ = this.merchantService.retrieveBuildings();
@@ -48,7 +48,7 @@ export class AddressEditPage implements OnInit {
         }),
         take(1)
       )
-      .subscribe(({ address }) => {
+      .subscribe((address) => {
         this.addressData = address;
       });
   }
@@ -77,12 +77,12 @@ export class AddressEditPage implements OnInit {
     });
     modal.onDidDismiss().then(({ role }) => {
       role === BUTTON_TYPE.REMOVE &&
-      this.merchantService
-        .removeAddress(this.addressData.id)
-        .pipe(take(1))
-        .subscribe(() =>
-          this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.savedAddresses], { skipLocationChange: true })
-        );
+        this.merchantService
+          .removeAddress(this.addressData.id)
+          .pipe(take(1))
+          .subscribe(() =>
+            this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.savedAddresses], { skipLocationChange: true })
+          );
     });
     await modal.present();
   }
