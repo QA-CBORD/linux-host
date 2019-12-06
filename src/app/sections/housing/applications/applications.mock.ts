@@ -1,7 +1,6 @@
 import { generateQuestions } from '../questions/questions.mock';
 
 import {
-  Application,
   ApplicationStatus,
   ApplicationDetails,
   ApplicationDefinition,
@@ -11,18 +10,6 @@ import {
 } from './applications.model';
 import { QuestionBase } from '../questions/types/question-base';
 
-export function generateApplication(_: any, index: number): Application {
-  return new Application(
-    index + 100,
-    67,
-    index + 200,
-    `New application ${index + 100}`,
-    ApplicationStatus.New,
-    null,
-    null
-  );
-}
-
 export function generateApplications(amount: number = 3): ApplicationDetails[] {
   return Array.apply(null, Array(amount)).map(generateApplicationDetails);
 }
@@ -30,30 +17,40 @@ export function generateApplications(amount: number = 3): ApplicationDetails[] {
 export function generateApplicationDefinition(key: number): ApplicationDefinition {
   const questions: QuestionBase[] = generateQuestions();
 
-  return new ApplicationDefinition(key, 67, `New application 100`, JSON.stringify(questions));
+  return new ApplicationDefinition({
+    key,
+    termKey: 67,
+    applicationTitle: 'New application 100',
+    applicationFormJson: JSON.stringify(questions),
+  });
 }
 
-export function generatePatronApplication(key: number): PatronApplication {
-  return new PatronApplication(
-    key,
-    ApplicationStatus.New,
-    200,
-    8000712,
-    null,
-    null,
-    null,
-    null,
-    null,
-    false,
-    false,
-    false
-  );
+export function generatePatronApplication(applicationDefinitionKey: number): PatronApplication {
+  return new PatronApplication({
+    applicationDefinitionKey,
+    status: ApplicationStatus.New,
+    key: 200,
+    patronKey: 8000712,
+  });
 }
 
 export function generatePatronAttribute(_: any, index: number): PatronAttribute {
   const nowDateTime: string = new Date().toISOString();
+  const attributeConsumerKey = index + 100;
+  const value: string = `Attribute Value ${index}`;
+  const key: number = index;
+  const patronKey: number = 8000712;
+  const effectiveDate: string = nowDateTime;
+  const endDate: string = nowDateTime;
 
-  return new PatronAttribute(index + 100, `Attribute Value ${index}`, index, 123, nowDateTime, nowDateTime);
+  return new PatronAttribute({
+    attributeConsumerKey,
+    value,
+    key,
+    patronKey,
+    effectiveDate,
+    endDate,
+  });
 }
 
 export function generatePatronAttributes(amount: number = 2): PatronAttribute[] {
@@ -61,7 +58,17 @@ export function generatePatronAttributes(amount: number = 2): PatronAttribute[] 
 }
 
 export function generatePatronPreference(_: any, index: number): PatronPreference {
-  return new PatronPreference(index, index + 9000419, index, index + 200);
+  const key: number = index;
+  const preferenceKey: number = index + 9000419;
+  const rank: number = index;
+  const facilityKey: number = index + 200;
+
+  return new PatronPreference({
+    key,
+    preferenceKey,
+    rank,
+    facilityKey,
+  });
 }
 
 export function generatePatronPreferences(amount: number = 2): PatronPreference[] {
@@ -74,5 +81,10 @@ export function generateApplicationDetails(key: number): ApplicationDetails {
   const patronAttributes: PatronAttribute[] = generatePatronAttributes();
   const patronPreferences: PatronPreference[] = generatePatronPreferences();
 
-  return new ApplicationDetails(applicationDefinition, patronApplication, patronAttributes, patronPreferences);
+  return new ApplicationDetails({
+    applicationDefinition,
+    patronApplication,
+    patronAttributes,
+    patronPreferences,
+  });
 }

@@ -11,7 +11,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ToastController } from '@ionic/angular';
 import { FormGroup } from '@angular/forms';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subscription, Subject } from 'rxjs';
 import { tap, switchMap } from 'rxjs/operators';
 
 import { QuestionsService } from '../../questions/questions.service';
@@ -36,6 +36,8 @@ import { Response } from '../../housing.model';
 export class ApplicationDetailsPage implements OnInit, OnDestroy {
   private _subscription: Subscription = new Subscription();
 
+  private readonly _refresh$: Subject<void> = new Subject<void>();
+
   @ViewChild(StepperComponent) stepper: StepperComponent;
 
   @ViewChildren(QuestionComponent) questions: QueryList<QuestionComponent>;
@@ -59,15 +61,9 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.applicationKey = parseInt(this._route.snapshot.paramMap.get('applicationKey'), 10);
 
-    this.pages$ = this._questionsService
-      .getPages()
-      .pipe(
-        tap((pages: ApplicationPage[]) =>
-          this._questionsService._patchFormsFromState(pages, this.applicationKey, this._checkQuestions.bind(this))
-        )
-      );
-
-    this.applicationDetails$ = this._applicationsService.getApplicationDetails(this.applicationKey);
+    this._initApplicationDetailsSubscription();
+    this._initPagesSubscription();
+    this._initRefreshSubscription();
   }
 
   ngOnDestroy(): void {
@@ -75,16 +71,13 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
   }
 
   save(application: ApplicationDetails): void {
-    const selectedIndex: number = this.stepper.selectedIndex;
-    const selectedStep: StepComponent = this.stepper.steps.toArray()[selectedIndex];
+    const selectedStep: StepComponent = this.stepper.selected;
+    const formValue: any = selectedStep.stepControl.value;
 
-    const saveSubscription: Subscription = this._applicationsService
-      .saveApplication(application, selectedStep.stepControl.value)
-      .pipe(switchMap(() => this._applicationsService.getApplications()))
-      .subscribe({
-        next: () => this._router.navigate(['/housing/dashboard']),
-        error: (error: HttpErrorResponse) => this._handleErrors(error.error),
-      });
+    const saveSubscription: Subscription = this._applicationsService.saveApplication(application, formValue).subscribe({
+      next: () => this._handleSuccess(),
+      error: (error: HttpErrorResponse) => this._handleErrors(error.error),
+    });
 
     this._subscription.add(saveSubscription);
   }
@@ -101,9 +94,8 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
     } else {
       const submitSubscription: Subscription = this._applicationsService
         .submitApplication(application, form.value)
-        .pipe(switchMap(() => this._applicationsService.getApplications()))
         .subscribe({
-          next: () => this._router.navigate(['/housing/dashboard']),
+          next: () => this._handleSuccess(),
           error: (error: any) => this._handleErrors(error),
         });
 
@@ -111,27 +103,42 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
     }
   }
 
-  private _next(application: ApplicationDetails, form: any): void {
-    const applicationKey: number = application.applicationDefinition.key;
+  private _initApplicationDetailsSubscription(): void {
+    this.applicationDetails$ = this._applicationsService.getApplicationDetails(this.applicationKey);
+  }
 
-    this._applicationsService
-      .getCreatedDateTime(application.applicationDefinition.key, application.patronApplication)
-      .then((createdDateTime: string) => {
-        this._applicationsService.updateCreatedDateTime(this.applicationKey, createdDateTime);
+  private _initPagesSubscription(): void {
+    this.pages$ = this._questionsService
+      .getPages()
+      .pipe(
+        tap((pages: ApplicationPage[]) =>
+          this._questionsService._patchFormsFromState(pages, this.applicationKey, this._checkQuestions.bind(this))
+        )
+      );
+  }
 
-        return createdDateTime;
-      })
+  private _initRefreshSubscription(): void {
+    const refreshSubscription: Subscription = this._refresh$
+      .pipe(switchMap(() => this._applicationsService.getApplications()))
+      .subscribe();
+
+    this._subscription.add(refreshSubscription);
+  }
+
+  private _next(application: ApplicationDetails, formValue: any): void {
+    this._questionsStorageService
+      .updateCreatedDateTime(this.applicationKey, application.patronApplication)
       .then((createdDateTime: string) => {
-        const patronApplication: PatronApplication = {
+        const patronApplication: PatronApplication = new PatronApplication({
           ...application.patronApplication,
           createdDateTime,
           status: ApplicationStatus.Pending,
-        };
-        const applicationDetails: ApplicationDetails = { ...application, patronApplication };
+        });
+        const applicationDetails: ApplicationDetails = new ApplicationDetails({ ...application, patronApplication });
 
-        this._applicationsStateService.updateApplication(applicationKey, applicationDetails);
+        this._applicationsStateService.setApplication(this.applicationKey, applicationDetails);
 
-        return this._questionsStorageService.updateQuestions(this.applicationKey, form, ApplicationStatus.Pending);
+        return this._questionsStorageService.updateQuestions(this.applicationKey, formValue, ApplicationStatus.Pending);
       })
       .then(() => this.stepper.next());
   }
@@ -142,6 +149,11 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
       .forEach((question: QuestionComponent) => {
         question.check();
       });
+  }
+
+  private _handleSuccess(): void {
+    this._refresh$.next();
+    this._router.navigate(['/housing/dashboard']);
   }
 
   private _handleErrors(error: any): void {

@@ -6,7 +6,6 @@ import { ApplicationDetails } from './applications.model';
 
 export interface ApplicationsState {
   entities: ApplicationEntities;
-  applicationDetails: ApplicationDetails;
 }
 
 export interface ApplicationEntities {
@@ -19,7 +18,6 @@ export interface ApplicationEntities {
 export class ApplicationsStateService {
   private readonly _defaultState: ApplicationsState = {
     entities: {},
-    applicationDetails: null,
   };
 
   private readonly _applicationsStateSource: BehaviorSubject<ApplicationsState> = new BehaviorSubject<
@@ -34,10 +32,6 @@ export class ApplicationsStateService {
     map(this._getApplications.bind(this))
   );
 
-  readonly applicationDetails$: Observable<ApplicationDetails> = this._applicationsStateSource.pipe(
-    map(this._getApplicationDetails)
-  );
-
   set applicationsState(value: ApplicationsState) {
     this._applicationsStateSource.next(value);
   }
@@ -50,11 +44,7 @@ export class ApplicationsStateService {
     this.applicationsState = { ...this.applicationsState, entities: this._toApplicationEntities(applications) };
   }
 
-  setApplicationDetails(applicationDetails: ApplicationDetails): void {
-    this.applicationsState = { ...this.applicationsState, applicationDetails };
-  }
-
-  updateApplication(applicationKey: number, applicationDetails: ApplicationDetails) {
+  setApplication(applicationKey: number, applicationDetails: ApplicationDetails) {
     const entites: ApplicationEntities = this.applicationsState.entities;
 
     this.applicationsState = {
@@ -69,10 +59,6 @@ export class ApplicationsStateService {
 
   private _getApplications(entities: ApplicationEntities) {
     return this._toApplicationsArray(entities);
-  }
-
-  private _getApplicationDetails(state: ApplicationsState) {
-    return state.applicationDetails;
   }
 
   private _toApplicationEntities(applications: ApplicationDetails[]): ApplicationEntities {

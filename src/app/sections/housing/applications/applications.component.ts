@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectionStrategy, OnDestroy } from '@angular/
 import { Subscription } from 'rxjs';
 
 import { ApplicationsService } from './applications.service';
+import { QuestionsStorageService } from '../questions/questions-storage.service';
 import { ApplicationsStateService } from './applications-state.service';
 
 @Component({
@@ -14,6 +15,7 @@ export class ApplicationsComponent implements OnInit, OnDestroy {
 
   constructor(
     private _applicationsService: ApplicationsService,
+    private _questionsStorageService: QuestionsStorageService,
     public applicationsStateService: ApplicationsStateService
   ) {}
 
@@ -28,6 +30,6 @@ export class ApplicationsComponent implements OnInit, OnDestroy {
   }
 
   handleClear(applicationKey: number): void {
-    this._applicationsService.clearApplication(applicationKey);
+    this._questionsStorageService.removeApplication(applicationKey);
   }
 }

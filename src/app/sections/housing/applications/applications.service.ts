@@ -42,19 +42,22 @@ export class ApplicationsService {
   getApplications(): Observable<ApplicationDetails[]> {
     const apiUrl: string = `${this._patronApplicationsUrl}/term/${this._termId}/patron/self`;
 
-    return this._housingProxyService.get<ApplicationDetails[]>(apiUrl).pipe(
-      map((applications: any[]) => applications.map(this._toApplicationDetails.bind(this))),
-      tap((applications: ApplicationDetails[]) => this._applicationsStateService.setApplications(applications))
-    );
+    return this._housingProxyService
+      .get<ApplicationDetails[]>(apiUrl)
+      .pipe(
+        map((applications: any[]) =>
+          Array.isArray(applications) ? applications.map((application: any) => new ApplicationDetails(application)) : []
+        ),
+        tap((applications: ApplicationDetails[]) => this._applicationsStateService.setApplications(applications))
+      );
   }
 
   getApplicationDetails(applicationKey: number): Observable<ApplicationDetails> {
     const apiUrl: string = `${this._applicationDefinitionUrl}/${applicationKey}/patron/self`;
 
     return this._housingProxyService.get<ApplicationDetails>(apiUrl).pipe(
-      map((application: any) => this._toApplicationDetails(application)),
+      map((application: any) => new ApplicationDetails(application)),
       tap((application: ApplicationDetails) => {
-        this._applicationsStateService.setApplicationDetails(application);
         this._questionsService.parsePages(application);
       })
     );
@@ -63,9 +66,11 @@ export class ApplicationsService {
   submitApplication(application: ApplicationDetails, form: any): Observable<ResponseStatus> {
     const applicationKey: number = application.applicationDefinition.key;
 
-    return from(this.getCreatedDateTime(applicationKey, application.patronApplication)).pipe(
-      switchMap((createdDateTime: string) => {
-        const submittedDateTime: string = new Date().toISOString();
+    return forkJoin(
+      this._questionsStorageService.updateCreatedDateTime(applicationKey, application.patronApplication),
+      this._questionsStorageService.updateSubmittedDateTime(applicationKey)
+    ).pipe(
+      switchMap(([createdDateTime, submittedDateTime]: [string, string]) => {
         const patronApplication: PatronApplication = {
           ...application.patronApplication,
           applicationDefinitionKey: applicationKey,
@@ -74,13 +79,9 @@ export class ApplicationsService {
         };
         const applicationDetails: ApplicationDetails = { ...application, patronApplication };
 
-        return forkJoin(
-          this._questionsStorageService.updateCreatedDateTime(applicationKey, createdDateTime),
-          this._questionsStorageService.updateSubmittedDateTime(applicationKey, submittedDateTime)
-        ).pipe(
-          switchMap(() => this._updateApplication(applicationDetails, form, ApplicationStatus.Submitted)),
+        return this._updateApplication(applicationDetails, form, ApplicationStatus.Submitted).pipe(
           tap(() => {
-            this._applicationsStateService.updateApplication(applicationKey, applicationDetails);
+            this._applicationsStateService.setApplication(applicationKey, applicationDetails);
           })
         );
       })
@@ -90,7 +91,9 @@ export class ApplicationsService {
   saveApplication(application: ApplicationDetails, form: any): Observable<ResponseStatus> {
     const applicationKey: number = application.applicationDefinition.key;
 
-    return from(this.getCreatedDateTime(applicationKey, application.patronApplication)).pipe(
+    return from(
+      this._questionsStorageService.updateCreatedDateTime(applicationKey, application.patronApplication)
+    ).pipe(
       switchMap((createdDateTime: string) => {
         const patronApplication: PatronApplication = {
           ...application.patronApplication,
@@ -99,36 +102,13 @@ export class ApplicationsService {
         };
         const applicationDetails: ApplicationDetails = { ...application, patronApplication };
 
-        return from(this._questionsStorageService.updateCreatedDateTime(applicationKey, createdDateTime)).pipe(
-          switchMap(() => this._updateApplication(applicationDetails, form, ApplicationStatus.Pending)),
+        return this._updateApplication(applicationDetails, form, ApplicationStatus.Pending).pipe(
           tap(() => {
-            this._applicationsStateService.updateApplication(applicationKey, applicationDetails);
+            this._applicationsStateService.setApplication(applicationKey, applicationDetails);
           })
         );
       })
     );
-  }
-
-  clearApplication(applicationKey: number): void {
-    this._questionsStorageService.removeApplication(applicationKey);
-  }
-
-  async getCreatedDateTime(applicationKey: number, patronApplication: PatronApplication): Promise<string> {
-    if (patronApplication && patronApplication.createdDateTime) {
-      return Promise.resolve(patronApplication.createdDateTime);
-    }
-
-    return this._questionsStorageService.getCreatedDateTime(applicationKey).then((createdDateTime: string) => {
-      if (createdDateTime) {
-        return createdDateTime;
-      }
-
-      return new Date().toISOString();
-    });
-  }
-
-  async updateCreatedDateTime(applicationKey: number, createdDateTime: string): Promise<any> {
-    return this._questionsStorageService.updateCreatedDateTime(applicationKey, createdDateTime);
   }
 
   private _updateApplication(
@@ -136,7 +116,6 @@ export class ApplicationsService {
     form: any,
     status: ApplicationStatus
   ): Observable<ResponseStatus> {
-    const apiUrl: string = `${this._patronApplicationsUrl}`;
     const applicationDefinition: ApplicationDefinition = application.applicationDefinition;
     const applicationKey: number = application.applicationDefinition.key;
 
@@ -151,9 +130,9 @@ export class ApplicationsService {
           questions
         );
         const updatedPatronApplication: PatronApplication = { ...application.patronApplication, status };
-        const body: ApplicationRequest = new ApplicationRequest(updatedPatronApplication, attributes, preferences);
+        const body: ApplicationRequest = new ApplicationRequest({ updatedPatronApplication, attributes, preferences });
 
-        return this._housingProxyService.put(apiUrl, body);
+        return this._housingProxyService.put(this._patronApplicationsUrl, body);
       })
     );
   }
@@ -171,26 +150,30 @@ export class ApplicationsService {
         const foundAttributeIndex: number = patronAttributes.findIndex(
           (attribute: PatronAttribute) => attribute.attributeConsumerKey === control.consumerKey
         );
+        const consumerKey: number = control.consumerKey;
 
         if (foundAttributeIndex !== -1) {
           const foundAttribute: PatronAttribute = patronAttributes[foundAttributeIndex];
           const key: number = foundAttribute.key;
           const foundQuestion: any = questions[control.name];
           const value: any = foundQuestion || foundAttribute.value;
+          const patronKey: number = foundAttribute.patronKey;
+          const effectiveDate: string = foundAttribute.effectiveDate;
+          const endDate: string = foundAttribute.endDate;
 
-          resultAttributes[foundAttributeIndex] = new PatronAttribute(
-            control.consumerKey,
+          resultAttributes[foundAttributeIndex] = new PatronAttribute({
+            consumerKey,
             value,
             key,
-            foundAttribute.patronKey,
-            foundAttribute.effectiveDate,
-            foundAttribute.endDate
-          );
+            patronKey,
+            effectiveDate,
+            endDate,
+          });
         } else {
           const foundQuestion: any = questions[control.name];
           const value: any = foundQuestion || null;
 
-          resultAttributes.push(new PatronAttribute(control.consumerKey, value, null));
+          resultAttributes.push(new PatronAttribute({ consumerKey, value }));
         }
       });
 
@@ -219,44 +202,9 @@ export class ApplicationsService {
           );
           const key: number = foundPreference ? foundPreference.key : null;
 
-          return new PatronPreference(key, preferenceKey, rank, facility.facilityKey);
+          return new PatronPreference({ key, preferenceKey, rank, facilityKey: facility.facilityKey });
         });
       })
       .reduce((accumulator: any[], current: any) => accumulator.concat(current), []);
-  }
-
-  private _toPatronAttributes(attributes: any[]): PatronAttribute[] {
-    return Array.isArray(attributes) ? attributes.map(this._toPatronAttribute) : [];
-  }
-
-  private _toPatronAttribute(attribute: PatronAttribute): PatronAttribute {
-    return new PatronAttribute(
-      attribute.attributeConsumerKey,
-      attribute.value,
-      attribute.key,
-      attribute.patronKey,
-      attribute.effectiveDate,
-      attribute.endDate
-    );
-  }
-
-  private _toPatronPreferences(preferences: any[]): PatronPreference[] {
-    return Array.isArray(preferences) ? preferences.map(this._toPatronPreference) : [];
-  }
-
-  private _toPatronPreference(preference: any): PatronPreference {
-    return new PatronPreference(preference.key, preference.preferenceKey, preference.rank, preference.facilityKey);
-  }
-
-  private _toApplicationDetails(application: ApplicationDetails): ApplicationDetails {
-    const patronAttributes: PatronAttribute[] = this._toPatronAttributes(application.patronAttributes);
-    const patronPreferences: PatronPreference[] = this._toPatronPreferences(application.patronPreferences);
-
-    return new ApplicationDetails(
-      application.applicationDefinition,
-      application.patronApplication,
-      patronAttributes,
-      patronPreferences
-    );
   }
 }

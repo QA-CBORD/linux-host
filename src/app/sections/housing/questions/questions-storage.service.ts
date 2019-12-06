@@ -3,7 +3,7 @@ import { Storage } from '@ionic/storage';
 
 import { STORAGE_KEY } from '../housing.config';
 
-import { ApplicationStatus } from '../applications/applications.model';
+import { ApplicationStatus, PatronApplication } from '../applications/applications.model';
 
 export interface QuestionsEntries {
   [key: string]: any;
@@ -38,41 +38,45 @@ export class QuestionsStorageService {
     );
   }
 
-  async getCreatedDateTime(applicationKey: number): Promise<string> {
-    return this.getApplication(applicationKey).then((application: StoredApplication) =>
-      application ? application.createdDateTime : null
-    );
+  async updateCreatedDateTime(applicationKey: number, patronApplication: PatronApplication): Promise<string> {
+    return this.getApplication(applicationKey).then(async (application: StoredApplication) => {
+      let createdDateTime: string = new Date().toISOString();
+
+      if (patronApplication && patronApplication.createdDateTime) {
+        createdDateTime = patronApplication.createdDateTime;
+      } else if (application.createdDateTime) {
+        createdDateTime = createdDateTime;
+      }
+
+      return this._storage
+        .set(`${this._key}-${applicationKey}`, {
+          ...application,
+          createdDateTime,
+        })
+        .then(() => createdDateTime);
+    });
   }
 
-  async updateCreatedDateTime(applicationKey: number, createdDateTime: string): Promise<any> {
-    return this.getApplication(applicationKey).then((application: StoredApplication) =>
-      this._storage.set(`${this._key}-${applicationKey}`, {
-        ...application,
-        createdDateTime,
-      })
-    );
+  async updateSubmittedDateTime(applicationKey: number): Promise<string> {
+    const submittedDateTime: string = new Date().toISOString();
+
+    return this.getApplication(applicationKey)
+      .then((application: StoredApplication) =>
+        this._storage.set(`${this._key}-${applicationKey}`, {
+          ...application,
+          submittedDateTime,
+        })
+      )
+      .then(() => submittedDateTime);
   }
 
-  async getSubmittedDateTime(applicationKey: number): Promise<string> {
-    return this.getApplication(applicationKey).then((application: StoredApplication) =>
-      application ? application.submittedDateTime : null
-    );
-  }
-
-  async updateSubmittedDateTime(applicationKey: number, submittedDateTime: string): Promise<void> {
-    return this.getApplication(applicationKey).then((application: StoredApplication) =>
-      this._storage.set(`${this._key}-${applicationKey}`, {
-        ...application,
-        submittedDateTime,
-      })
-    );
-  }
-
-  async updateQuestions(applicationKey: number, form: any, status: ApplicationStatus): Promise<any> {
+  async updateQuestions(applicationKey: number, formValue: any, status: ApplicationStatus): Promise<any> {
     return this.getApplication(applicationKey).then((application: StoredApplication) => {
       let questions: QuestionsEntries = application && application.questions ? application.questions : {};
 
-      Object.keys(form).forEach((formControlName: any) => (questions[formControlName] = form[formControlName]));
+      Object.keys(formValue).forEach(
+        (formControlName: any) => (questions[formControlName] = formValue[formControlName])
+      );
 
       return this._storage.set(`${this._key}-${applicationKey}`, {
         ...application,

@@ -63,7 +63,7 @@ export class QuestionsService {
     const questions: any = await this._questionsStorageService.getQuestions(applicationKey);
     const namesToTouch: Set<string> = new Set<string>();
 
-    pages.forEach((page: ApplicationPage, index: number) => {
+    pages.forEach((page: ApplicationPage) => {
       if (questions) {
         page.form.patchValue(questions);
 
