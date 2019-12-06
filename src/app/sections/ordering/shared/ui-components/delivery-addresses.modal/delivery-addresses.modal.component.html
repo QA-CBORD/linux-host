@@ -100,7 +100,8 @@
     expand="block"
     shape="round"
     class="delivery-address__submit-btn"
-    (click)="onClickedDone(selectedAddress)"
+    [ngClass]="{ 'delivery-address__submit-btn--disabled': !selectedAddress }"
+    (click)="selectedAddress && onClickedDone(selectedAddress)"
   >
     set delivery address
   </ion-button>

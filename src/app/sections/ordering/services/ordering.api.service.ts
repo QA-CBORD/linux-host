@@ -154,7 +154,7 @@ export class OrderingApiService extends BaseService {
         longitude: campusValue ? building.longitude : null,
         notes: null,
         nickname: nickname !== null && !nickname.length ? null : nickname,
-        building: building ? building.building : null,
+        building: building ? building : null,
         floor: null,
         room,
         crossStreet: null,

@@ -60,11 +60,11 @@ export class DeliveryAddressesModalComponent implements OnInit {
       )
       .subscribe(([addedAddress]) => {
         this.loadingService.closeSpinner();
-        this.resetForm();
         if (addedAddress) {
           this.listOfAddresses = [...this.listOfAddresses, addedAddress];
-          this.cdRef.detectChanges();
         }
+        this.resetForm();
+        this.cdRef.detectChanges();
       }, () => this.loadingService.closeSpinner())
   }
 

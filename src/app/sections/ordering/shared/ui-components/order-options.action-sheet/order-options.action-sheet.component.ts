@@ -131,8 +131,10 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   }
 
   onSubmit() {
+    let isASAP: boolean = false;
     if (this.dateTimePicker === 'ASAP') {
       this.dateTimePicker = new Date();
+      isASAP = !isASAP;
     }
 
     let isOutsideMerchantDeliveryArea = of(false);
@@ -165,6 +167,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
             address: this.orderOptionsData.address,
             orderType: this.orderType,
             dueTime: this.dateTimePicker,
+            isASAP
           }, BUTTON_TYPE.CONTINUE);
         },
         err => {
