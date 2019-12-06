@@ -9,22 +9,22 @@ export class ModifyPrepTimePipe implements PipeTransform {
   constructor(private readonly datePipe: DatePipe) {}
   transform(value: any, args?: any): any {
     const minute = 60000;
-    let finalTime;
     const time = new Date(value.dueTime);
     const timeInMiliseconds = time.getTime();
+    let finalTime = timeInMiliseconds;
 
     if (args !== null) {
-      switch (value.orderType) {
-        case ORDER_TYPE.PICKUP:
-          finalTime = timeInMiliseconds + args.pickupPrepTime * minute;
-
-          return this.datePipe.transform(new Date(finalTime), 'EE, MMM d, h:mm a');
-        case ORDER_TYPE.DELIVERY:
-          finalTime = timeInMiliseconds + args.deliveryPrepTime * minute;
-
-          return this.datePipe.transform(new Date(finalTime), 'EE, MMM d, h:mm a');
+      if (value.isASAP) {
+        switch (value.orderType) {
+          case ORDER_TYPE.PICKUP:
+            finalTime = timeInMiliseconds + args.pickupPrepTime * minute;
+          case ORDER_TYPE.DELIVERY:
+            finalTime = timeInMiliseconds + args.deliveryPrepTime * minute;
+        }
       }
+
+      return this.datePipe.transform(new Date(finalTime), 'EE, MMM d, h:mm a');
     }
-    return value;
+    return '';
   }
 }

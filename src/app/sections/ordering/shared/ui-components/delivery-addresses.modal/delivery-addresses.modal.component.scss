@@ -112,5 +112,14 @@
     height: 48px;
 
     @include font-nunito-heavy(14px);
+
+    &--disabled {
+      --ion-color-primary: #c4c4c4;
+      --background-hover: #c4c4c4;
+      --background: #e1e1e1;
+      --box-shadow: none;
+
+      color: $color-matterhorn;
+    }
   }
 }

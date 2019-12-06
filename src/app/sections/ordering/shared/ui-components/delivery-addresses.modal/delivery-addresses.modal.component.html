@@ -39,7 +39,7 @@
           expand="full"
           shape="round"
           class="delivery-address__add-address-btn"
-          (click)="addNewAdddressState = !addNewAdddressState"
+          (click)="resetForm()"
         >
           cancel
         </ion-button>
@@ -67,9 +67,9 @@
     <ion-item lines="none" class="delivery-address__radio-container" *ngFor="let item of listOfAddresses">
       <ion-label class="delivery-address__radio-label">
         <div class="delivery-address__radio-label-content">
-          <ng-container *ngIf="item.onCampus; then onCampus; else ofCampus"></ng-container>
+          <ng-container *ngIf="item.onCampus; then onCampus; else offCampus"></ng-container>
 
-          <ng-template #ofCampus>
+          <ng-template #offCampus>
             <div class="delivery-address__radio-label-header">{{ item.address1 }}</div>
             <div class="delivery-address__radio-label-sub-header">{{ item.city }}, {{ item.state }}</div>
           </ng-template>
@@ -100,7 +100,8 @@
     expand="block"
     shape="round"
     class="delivery-address__submit-btn"
-    (click)="onClickedDone(selectedAddress)"
+    [ngClass]="{ 'delivery-address__submit-btn--disabled': !selectedAddress }"
+    (click)="selectedAddress && onClickedDone(selectedAddress)"
   >
     set delivery address
   </ion-button>
