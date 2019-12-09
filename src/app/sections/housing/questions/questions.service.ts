@@ -36,35 +36,29 @@ export const QuestionConstructorsMap = {
 })
 export class QuestionsService {
   private _pagesSource: BehaviorSubject<ApplicationPage[]> = new BehaviorSubject<ApplicationPage[]>([]);
-  private _pages$: Observable<ApplicationPage[]> = this._pagesSource.asObservable();
+
+  pages$: Observable<ApplicationPage[]> = this._pagesSource.asObservable();
 
   constructor(private _questionsStorageService: QuestionsStorageService) {}
 
-  setPages(pages: ApplicationPage[]): void {
+  setPages(application: ApplicationDetails): void {
+    const questions: QuestionBase[] = this._parseQuestions(application.applicationDefinition.applicationFormJson);
+    const pages: ApplicationPage[] = this._splitByPages(questions, application.patronAttributes);
+
     this._pagesSource.next(pages);
   }
 
-  getPages(): Observable<ApplicationPage[]> {
-    return this._pages$;
-  }
-
-  parsePages(application: ApplicationDetails): void {
-    const questions: QuestionBase[] = this.parseQuestions(application.applicationDefinition.applicationFormJson);
-    const pages: ApplicationPage[] = this._splitByPages(questions, application.patronAttributes);
-
-    this.setPages(pages);
-  }
-
   async _patchFormsFromState(
-    pages: ApplicationPage[],
     applicationKey: number,
+    pages: ApplicationPage[],
     checkCallback: (namesToTouch: Set<string>) => void
   ): Promise<void> {
     const questions: any = await this._questionsStorageService.getQuestions(applicationKey);
-    const namesToTouch: Set<string> = new Set<string>();
 
-    pages.forEach((page: ApplicationPage) => {
-      if (questions) {
+    if (questions) {
+      const namesToTouch: Set<string> = new Set<string>();
+
+      pages.forEach((page: ApplicationPage) => {
         page.form.patchValue(questions);
 
         const controls = page.form.controls;
@@ -82,13 +76,13 @@ export class QuestionsService {
             namesToTouch.add(controlName);
           }
         });
-      }
-    });
+      });
 
-    checkCallback(namesToTouch);
+      checkCallback(namesToTouch);
+    }
   }
 
-  parseQuestions(json: string): QuestionBase[] {
+  _parseQuestions(json: string): QuestionBase[] {
     const questions: any[] = parseJsonToArray(json);
 
     return questions.map(this._toQuestionType);
@@ -133,38 +127,43 @@ export class QuestionsService {
   private _toFormGroup(questions: QuestionBase[], attributes: PatronAttribute[]): FormGroup {
     let group: any = {};
 
-    questions.forEach((question: QuestionFormControl) => {
-      if (question && question.name) {
+    questions
+      .filter((question: QuestionBase) => question && (question as QuestionFormControl).name)
+      .forEach((question: QuestionFormControl) => {
         if (question instanceof QuestionCheckboxGroup) {
-          const values: FormControl[] = question.values.map(
-            (value: QuestionCheckboxGroupValue) => new FormControl(value.selected)
-          );
-
-          group[question.name] = new FormArray(values);
+          group[question.name] = this._toQuestionCheckboxControl(question);
         } else if (question instanceof QuestionReorder) {
-          const values: FormControl[] = question.values
-            .filter((value: QuestionReorderValue) => value.selected)
-            .map((value: QuestionReorderValue) => new FormControl(value));
-
-          group[question.name] = new FormArray(values);
+          group[question.name] = this._toQuestionReorderControl(question);
         } else {
-          const value: any = this._getValueFromAttribute(question, attributes);
-
-          group[question.name] = question.required
-            ? new FormControl(value, Validators.required)
-            : new FormControl(value);
+          group[question.name] = this._toFormControl(question, attributes);
         }
-      }
-    });
+      });
 
     return new FormGroup(group);
   }
 
-  private _getValueFromAttribute(question: QuestionFormControl, attributes: PatronAttribute[]): any {
+  private _toFormControl(question: QuestionFormControl, attributes: PatronAttribute[]): FormControl {
     const foundAttribute: PatronAttribute = attributes.find(
       (attribute: PatronAttribute) => attribute.attributeConsumerKey === question.consumerKey
     );
+    const value: any = foundAttribute ? foundAttribute.value : null;
 
-    return foundAttribute ? foundAttribute.value : null;
+    return question.required ? new FormControl(value, Validators.required) : new FormControl(value);
+  }
+
+  private _toQuestionCheckboxControl(question: QuestionCheckboxGroup): FormArray {
+    const values: FormControl[] = question.values.map(
+      (value: QuestionCheckboxGroupValue) => new FormControl(value.selected)
+    );
+
+    return new FormArray(values);
+  }
+
+  private _toQuestionReorderControl(question: QuestionReorder): FormArray {
+    const values: FormControl[] = question.values
+      .filter((value: QuestionReorderValue) => value.selected)
+      .map((value: QuestionReorderValue) => new FormControl(value));
+
+    return new FormArray(values);
   }
 }

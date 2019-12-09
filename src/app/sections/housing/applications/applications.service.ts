@@ -42,14 +42,12 @@ export class ApplicationsService {
   getApplications(): Observable<ApplicationDetails[]> {
     const apiUrl: string = `${this._patronApplicationsUrl}/term/${this._termId}/patron/self`;
 
-    return this._housingProxyService
-      .get<ApplicationDetails[]>(apiUrl)
-      .pipe(
-        map((applications: any[]) =>
-          Array.isArray(applications) ? applications.map((application: any) => new ApplicationDetails(application)) : []
-        ),
-        tap((applications: ApplicationDetails[]) => this._applicationsStateService.setApplications(applications))
-      );
+    return this._housingProxyService.get<ApplicationDetails[]>(apiUrl).pipe(
+      map((applications: any[]) =>
+        Array.isArray(applications) ? applications.map((application: any) => new ApplicationDetails(application)) : []
+      ),
+      tap((applications: ApplicationDetails[]) => this._applicationsStateService.setApplications(applications))
+    );
   }
 
   getApplicationDetails(applicationKey: number): Observable<ApplicationDetails> {
@@ -58,14 +56,12 @@ export class ApplicationsService {
     return this._housingProxyService.get<ApplicationDetails>(apiUrl).pipe(
       map((application: any) => new ApplicationDetails(application)),
       tap((application: ApplicationDetails) => {
-        this._questionsService.parsePages(application);
+        this._questionsService.setPages(application);
       })
     );
   }
 
-  submitApplication(application: ApplicationDetails, form: any): Observable<ResponseStatus> {
-    const applicationKey: number = application.applicationDefinition.key;
-
+  submitApplication(applicationKey: number, application: ApplicationDetails, form: any): Observable<ResponseStatus> {
     return forkJoin(
       this._questionsStorageService.updateCreatedDateTime(applicationKey, application.patronApplication),
       this._questionsStorageService.updateSubmittedDateTime(applicationKey)
@@ -88,9 +84,7 @@ export class ApplicationsService {
     );
   }
 
-  saveApplication(application: ApplicationDetails, form: any): Observable<ResponseStatus> {
-    const applicationKey: number = application.applicationDefinition.key;
-
+  saveApplication(applicationKey: number, application: ApplicationDetails, form: any): Observable<ResponseStatus> {
     return from(
       this._questionsStorageService.updateCreatedDateTime(applicationKey, application.patronApplication)
     ).pipe(
@@ -185,8 +179,15 @@ export class ApplicationsService {
     parsedJson: any[],
     questions: QuestionsEntries
   ): PatronPreference[] {
-    return parsedJson
-      .filter((control: QuestionReorder) => control && control.facilityPicker)
+    const facilityControls: QuestionReorder[] = parsedJson.filter(
+      (control: QuestionReorder) => control && control.facilityPicker
+    );
+
+    if (!facilityControls.length) {
+      return patronPreferences;
+    }
+
+    return facilityControls
       .map((control: QuestionReorder) => {
         const foundQuestion: any = questions[control.name];
         const facilities: any[] = foundQuestion ? foundQuestion.slice(0, control.prefRank) : [];

@@ -74,10 +74,12 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
     const selectedStep: StepComponent = this.stepper.selected;
     const formValue: any = selectedStep.stepControl.value;
 
-    const saveSubscription: Subscription = this._applicationsService.saveApplication(application, formValue).subscribe({
-      next: () => this._handleSuccess(),
-      error: (error: HttpErrorResponse) => this._handleErrors(error.error),
-    });
+    const saveSubscription: Subscription = this._applicationsService
+      .saveApplication(this.applicationKey, application, formValue)
+      .subscribe({
+        next: () => this._handleSuccess(),
+        error: (error: HttpErrorResponse) => this._handleErrors(error.error),
+      });
 
     this._subscription.add(saveSubscription);
   }
@@ -93,7 +95,7 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
       this._next(application, form.value);
     } else {
       const submitSubscription: Subscription = this._applicationsService
-        .submitApplication(application, form.value)
+        .submitApplication(this.applicationKey, application, form.value)
         .subscribe({
           next: () => this._handleSuccess(),
           error: (error: any) => this._handleErrors(error),
@@ -108,13 +110,11 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
   }
 
   private _initPagesSubscription(): void {
-    this.pages$ = this._questionsService
-      .getPages()
-      .pipe(
-        tap((pages: ApplicationPage[]) =>
-          this._questionsService._patchFormsFromState(pages, this.applicationKey, this._checkQuestions.bind(this))
-        )
-      );
+    this.pages$ = this._questionsService.pages$.pipe(
+      tap((pages: ApplicationPage[]) =>
+        this._questionsService._patchFormsFromState(this.applicationKey, pages, this._checkQuestions.bind(this))
+      )
+    );
   }
 
   private _initRefreshSubscription(): void {
