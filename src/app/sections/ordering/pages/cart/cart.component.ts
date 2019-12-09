@@ -28,6 +28,7 @@ import { AddressInfo } from '@core/model/address/address-info';
 import { NAVIGATE } from '../../../../app.global';
 import { SuccessModalComponent } from '@sections/ordering/pages/cart/components/success-modal';
 import { StGlobalPopoverComponent } from '@shared/ui-components';
+import { MerchantOrderTypesInfo } from '@sections/ordering/shared/models';
 
 @Component({
   selector: 'st-cart',
@@ -38,34 +39,34 @@ import { StGlobalPopoverComponent } from '@shared/ui-components';
 export class CartComponent implements OnInit {
   order$: Observable<Partial<OrderInfo>>;
   addressModalSettings$: Observable<AddressModalSettings>;
-  address$: Observable<AddressInfo>;
+  orderDetailOptions$;
+  orderTypes$: Observable<MerchantOrderTypesInfo>;
   accounts: UserAccount[];
   cartFormState: OrderDetailsFormData = {} as OrderDetailsFormData;
 
   constructor(private readonly cartService: CartService,
-              private readonly merchantService: MerchantService,
-              private readonly loadingService: LoadingService,
-              private readonly settingService: SettingService,
-              private readonly activatedRoute: ActivatedRoute,
-              private readonly toastController: ToastController,
-              private readonly popoverController: PopoverController,
-              private readonly cdRef: ChangeDetectorRef,
-              private readonly router: Router,
-              private readonly modalController: ModalController) {
+    private readonly merchantService: MerchantService,
+    private readonly loadingService: LoadingService,
+    private readonly settingService: SettingService,
+    private readonly activatedRoute: ActivatedRoute,
+    private readonly toastController: ToastController,
+    private readonly popoverController: PopoverController,
+    private readonly cdRef: ChangeDetectorRef,
+    private readonly router: Router,
+    private readonly modalController: ModalController) {
   }
 
   ngOnInit() {
     this.order$ = this.cartService.orderInfo$;
-    this.address$ = this.cartService.orderDetailsOptions$.pipe(
-      map(({ address }) => address),
-    );
+    this.orderTypes$ = this.merchantService.orderTypes$;
+    this.orderDetailOptions$ = this.cartService.orderDetailsOptions$;
     this.addressModalSettings$ = this.initAddressModalConfig();
     this.getAvailableAccounts().then((acc) => this.accounts = acc);
   }
 
   get isOrderASAP(): Observable<boolean> {
     return this.cartService.orderDetailsOptions$.pipe(
-      map(({dueTime}) => Date.now() > new Date(dueTime).getTime())
+      map(({ isASAP }) => isASAP)
     );
   }
 
@@ -79,12 +80,12 @@ export class CartComponent implements OnInit {
       this.getPickupLocations(),
     ).pipe(
       map(([
-             { address: defaultAddress, orderType },
-             buildings,
-             { id: merchantId },
-             deliveryAddresses,
-             pickupLocations,
-           ]) => ({
+        { address: defaultAddress, orderType },
+        buildings,
+        { id: merchantId },
+        deliveryAddresses,
+        pickupLocations,
+      ]) => ({
         defaultAddress,
         buildings,
         isOrderTypePickup: orderType === ORDER_TYPE.PICKUP,
@@ -175,7 +176,7 @@ export class CartComponent implements OnInit {
   }
 
   private async isDeliveryAddressOutOfRange(): Promise<boolean> {
-    const { latitude, longitude } = await this.address$.pipe(first()).toPromise();
+    const { latitude, longitude } = await this.orderDetailOptions$.pipe(first(), map(({ address }) => address)).toPromise();
     const { id } = await this.cartService.merchant$.pipe(first()).toPromise();
     return this.merchantService.isOutsideMerchantDeliveryArea(
       id,

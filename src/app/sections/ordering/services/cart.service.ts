@@ -1,6 +1,7 @@
+import { async } from '@angular/core/testing';
 import { Injectable } from '@angular/core';
 import { distinctUntilChanged, first, map, switchMap, tap } from 'rxjs/operators';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, zip } from 'rxjs';
 
 import { ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { MerchantService } from './merchant.service';
@@ -24,14 +25,14 @@ export class CartService {
 
   get merchant$(): Observable<MerchantInfo> {
     return this._cart$.asObservable().pipe(
-      map(cart => cart.merchant),
+      map(({ merchant }) => merchant),
       distinctUntilChanged()
     );
   }
 
   get orderInfo$(): Observable<Partial<OrderInfo>> {
     return this._cart$.asObservable().pipe(
-      map(cart => cart.order),
+      map(({ order }) => order),
       distinctUntilChanged()
     );
   }
@@ -44,8 +45,18 @@ export class CartService {
   }
 
   get orderDetailsOptions$(): Observable<OrderDetailOptions> {
-    return this._cart$.asObservable().pipe(
-      map(cart => cart.orderDetailsOptions),
+    return zip(this._cart$.asObservable(), this.userService.userData).pipe(
+      map(([{ orderDetailsOptions }, { locale, timeZone }]) => {
+        if (orderDetailsOptions.isASAP) {
+          const date = new Date();
+          const dueTime = date.toLocaleString(locale, { hour12: false, timeZone })
+
+          this.cart.orderDetailsOptions = { ...this.cart.orderDetailsOptions, dueTime: new Date(dueTime) };
+          return { ...orderDetailsOptions, dueTime: new Date(dueTime) };
+        };
+        return orderDetailsOptions;
+
+      }),
       distinctUntilChanged()
     );
   }
@@ -224,4 +235,5 @@ export interface OrderDetailOptions {
   address: AddressInfo;
   dueTime: Date;
   orderType: ORDER_TYPE;
+  isASAP: boolean;
 }

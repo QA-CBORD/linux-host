@@ -15,10 +15,10 @@
             [total]="(order$ | async).total"
             [orderItems]="(order$ | async).orderItems"
             [orderPaymentName]="(order$ | async).orderPayment[0].accountName"
-            [time]="(order$ | async).dueTime"
+            [time]="(orderDetailsOptions$ | async).dueTime"
             [type]="(order$ | async).type"
-            [address]="(address$ | async)"
             [mealBased]="(order$ | async).mealBased"
+            [orderDetailOptions]="orderDetailsOptions$ | async"
     >
         <ng-container *ngIf="(order$ | async).status !== orderStatus.PENDING; else pending" [ngTemplateOutlet]="complited"></ng-container>
     </st-order-details>

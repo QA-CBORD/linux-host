@@ -2,28 +2,23 @@ import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
-  Input, OnChanges, OnDestroy,
+  Input, OnDestroy,
   OnInit,
-  Output, SimpleChanges,
+  Output,
 } from '@angular/core';
 import {
   AbstractControl,
-  FormArray,
   FormBuilder,
   FormGroup,
-  ValidationErrors,
-  ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { BuildingInfo, OrderItem } from '@sections/ordering';
+import { BuildingInfo, OrderItem, MerchantOrderTypesInfo } from '@sections/ordering';
 import { ORDER_TYPE, PAYMENT_SYSTEM_TYPE } from '@sections/ordering/ordering.config';
 import { AddressInfo } from '@core/model/address/address-info';
 import { ModalController } from '@ionic/angular';
 import { DeliveryAddressesModalComponent } from '@sections/ordering/shared/ui-components/delivery-addresses.modal/delivery-addresses.modal.component';
 import { UserAccount } from '@core/model/account/account.model';
 import { Subscription } from 'rxjs';
-import { Variable } from '@angular/compiler/src/render3/r3_ast';
-import { PAYMENT_TYPE } from '@sections/accounts/accounts.config';
 import { cvvValidationFn } from '@core/utils/general-helpers';
 
 @Component({
@@ -33,9 +28,10 @@ import { cvvValidationFn } from '@core/utils/general-helpers';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OrderDetailsComponent implements OnInit, OnDestroy {
-  @Input() address: any;
+  @Input() orderDetailOptions: any;
   @Input() readonly: boolean = true;
   @Input() time: any = [];
+  @Input() orderTypes: MerchantOrderTypesInfo;
   @Input() type: ORDER_TYPE;
   @Input() orderItems: OrderItem[] = [];
   @Input() paymentMethod: any = [];
@@ -58,7 +54,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
   showCVVControl = false;
 
   constructor(private readonly fb: FormBuilder,
-              private readonly modalController: ModalController) {
+    private readonly modalController: ModalController) {
   }
 
   ngOnInit() {
@@ -81,10 +77,14 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
     }
   }
 
+  get timeWithoutTimezone() {
+    return { ...this.orderDetailOptions, dueTime: new Date(this.time.slice(0, 19)) };
+  }
+
   goToItemDetails(orderItem) {
     this.onOrderItemClicked.emit(orderItem);
   }
-  
+
   onRemoveOrderItem(id: string) {
     this.onOrderItemRemovedId.emit(id);
   }
@@ -92,7 +92,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
   initForm() {
     this.detailsForm = this.fb.group(
       {
-        [DETAILS_FORM_CONTROL_NAMES.address]: [this.address],
+        [DETAILS_FORM_CONTROL_NAMES.address]: [this.orderDetailOptions.address],
         [DETAILS_FORM_CONTROL_NAMES.paymentMethod]: ['', Validators.required],
       },
     );
