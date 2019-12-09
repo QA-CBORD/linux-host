@@ -8,6 +8,7 @@ import { MerchantInfo, OrderInfo, MenuInfo, OrderItem } from '../shared/models';
 import { UserService } from '@core/service/user-service/user.service';
 import { AddressInfo } from '@core/model/address/address-info';
 import { OrderingApiService } from '@sections/ordering/services/ordering.api.service';
+import { getDateTimeInGMT } from '@core/utils/date-helper';
 // import * as moment from 'moment';
 
 @Injectable()
@@ -19,7 +20,7 @@ export class CartService {
     private readonly userService: UserService,
     private readonly merchantService: MerchantService,
     private readonly api: OrderingApiService
-  ) {}
+  ) { }
 
   get merchant$(): Observable<MerchantInfo> {
     return this._cart$.asObservable().pipe(
@@ -137,34 +138,16 @@ export class CartService {
       address = type === ORDER_TYPE.DELIVERY ? { deliveryAddressId: addr.id } : { pickupAddressId: addr.id };
     }
 
-    this.cart.order = { ...this.cart.order, type, dueTime, ...address };
-
     return this.userService.userData.pipe(
       first(),
-      switchMap(({ phone: userPhone, timeZone }) => {
-        var usaTime = new Date().toLocaleString('en-US', { timeZone });
-        var currentTimezone = new Date().toLocaleString('en-US', { timeZone: 'Europe/London' });
-        var a: any = (<any>new Date(currentTimezone) - <any>new Date(usaTime)) / 1000 / 60 / 60;
-        a = a * -1;
-        console.log(a);
-        var l = JSON.stringify(a);
-        a = `${l[0]}${l[1].length > 1 ? l[1] : '0' + l[1]}`;
-
-        var usa = new Date(dueTime);
-        var da = usa.toLocaleString('en-US', {
-          hour12: false,
-          hour: '2-digit',
-          day: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
-          year: 'numeric',
-          month: '2-digit',
-        });
-        var ga = da.split(',');
-        var t = ga[0].split('/');
-        var sum = `${t[2]}-${t[0]}-${t[1]}T${ga[1].trim()}.000${a}00`;
-        debugger;
-        this.cart.order = { ...this.cart.order, userPhone, dueTime: sum };
+      switchMap(({ phone: userPhone, timeZone, locale }) => {
+        this.cart.order = {
+          ...this.cart.order,
+          ...address,
+          userPhone,
+          type,
+          dueTime: getDateTimeInGMT(dueTime, locale, timeZone)
+        };
         return this.merchantService.validateOrder(this.cart.order);
       }),
       tap(updatedOrder => (this._order = { ...updatedOrder, dueTime: this.cart.order.dueTime }))
