@@ -8,6 +8,8 @@ import { MerchantInfo, OrderInfo, MenuInfo, OrderItem } from '../shared/models';
 import { UserService } from '@core/service/user-service/user.service';
 import { AddressInfo } from '@core/model/address/address-info';
 import { OrderingApiService } from '@sections/ordering/services/ordering.api.service';
+import { getDateTimeInGMT } from '@core/utils/date-helper';
+// import * as moment from 'moment';
 
 @Injectable()
 export class CartService {
@@ -18,33 +20,33 @@ export class CartService {
     private readonly userService: UserService,
     private readonly merchantService: MerchantService,
     private readonly api: OrderingApiService
-  ) {}
+  ) { }
 
   get merchant$(): Observable<MerchantInfo> {
     return this._cart$.asObservable().pipe(
-        map(cart => cart.merchant),
-        distinctUntilChanged(),
+      map(cart => cart.merchant),
+      distinctUntilChanged()
     );
   }
 
   get orderInfo$(): Observable<Partial<OrderInfo>> {
     return this._cart$.asObservable().pipe(
-        map(cart => cart.order),
-        distinctUntilChanged(),
+      map(cart => cart.order),
+      distinctUntilChanged()
     );
   }
 
   get menuInfo$(): Observable<MenuInfo> {
     return this._cart$.asObservable().pipe(
-        map(cart => cart.menu),
-        distinctUntilChanged(),
+      map(cart => cart.menu),
+      distinctUntilChanged()
     );
   }
 
   get orderDetailsOptions$(): Observable<OrderDetailOptions> {
     return this._cart$.asObservable().pipe(
-        map(cart => cart.orderDetailsOptions),
-        distinctUntilChanged(),
+      map(cart => cart.orderDetailsOptions),
+      distinctUntilChanged()
     );
   }
 
@@ -54,9 +56,7 @@ export class CartService {
 
   get menuItems$(): Observable<number> {
     return this.orderInfo$.pipe(
-        map(({ orderItems }) =>
-            orderItems.reduce((state, { quantity }) => state + quantity, 0),
-        ),
+      map(({ orderItems }) => orderItems.reduce((state, { quantity }) => state + quantity, 0))
     );
   }
 
@@ -136,20 +136,22 @@ export class CartService {
     let address = {};
 
     if (addr) {
-      address = type === ORDER_TYPE.DELIVERY
-        ? { deliveryAddressId: addr.id }
-        : { pickupAddressId: addr.id };
+      address = type === ORDER_TYPE.DELIVERY ? { deliveryAddressId: addr.id } : { pickupAddressId: addr.id };
     }
 
-    this.cart.order = { ...this.cart.order, type, dueTime, ...address };
-
     return this.userService.userData.pipe(
-        first(),
-        switchMap(({ phone: userPhone }) => {
-          this.cart.order = { ...this.cart.order, userPhone };
-          return this.merchantService.validateOrder(this.cart.order);
-        }),
-        tap(updatedOrder => this._order = updatedOrder),
+      first(),
+      switchMap(({ phone: userPhone, timeZone, locale }) => {
+        this.cart.order = {
+          ...this.cart.order,
+          ...address,
+          userPhone,
+          type,
+          dueTime: getDateTimeInGMT(dueTime, locale, timeZone)
+        };
+        return this.merchantService.validateOrder(this.cart.order);
+      }),
+      tap(updatedOrder => (this._order = { ...updatedOrder, dueTime: this.cart.order.dueTime }))
     );
   }
 
@@ -177,7 +179,8 @@ export class CartService {
   }
 
   private async initEmptyOrder(): Promise<Partial<OrderInfo>> {
-    return this.userService.userData.pipe(
+    return this.userService.userData
+      .pipe(
         map(({ institutionId, id: userId }) => {
           return {
             userId,
@@ -186,8 +189,9 @@ export class CartService {
             institutionId,
           };
         }),
-        first(),
-    ).toPromise();
+        first()
+      )
+      .toPromise();
   }
 
   private async refreshCartDate(): Promise<void> {
