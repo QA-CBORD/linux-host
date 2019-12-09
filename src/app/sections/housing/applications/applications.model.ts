@@ -13,8 +13,8 @@ export class ApplicationDefinition {
   applicationFormJson?: string;
 
   constructor(options: any) {
-    if (typeof options !== 'object') {
-      throw new Error('ApplicationDefinition - options should be an object');
+    if (options == null || typeof options !== 'object') {
+      options = {};
     }
 
     this.key = Number(options.key);
@@ -42,8 +42,8 @@ export class PatronApplication {
   isApplicationCanceled?: boolean;
 
   constructor(options: any) {
-    if (typeof options !== 'object') {
-      throw new Error('PatronApplication - options is not an object');
+    if (options == null || typeof options !== 'object') {
+      options = {};
     }
 
     this.applicationDefinitionKey = Number(options.applicationDefinitionKey);
@@ -88,8 +88,8 @@ export class PatronAttribute {
   endDate?: string;
 
   constructor(options: any) {
-    if (typeof options !== 'object') {
-      throw new Error('PatronAttribute - options should be an object');
+    if (options == null || typeof options !== 'object') {
+      options = {};
     }
 
     this.attributeConsumerKey = Number(options.attributeConsumerKey);
@@ -120,8 +120,8 @@ export class PatronPreference {
   facilityKey: number;
 
   constructor(options: any) {
-    if (typeof options !== 'object') {
-      throw new Error('PatronPreference - options is not an object');
+    if (options == null || typeof options !== 'object') {
+      options = {};
     }
 
     this.key = Number(options.key);
@@ -137,11 +137,12 @@ export class ApplicationRequest {
   patronPreferences?: PatronPreference[];
 
   constructor(options: any) {
-    if (typeof options !== 'object') {
-      throw new Error('ApplicationRequest - options is not an object');
+    if (options == null || typeof options !== 'object') {
+      options = {};
     }
 
-    this.patronApplication = new PatronApplication(options.patronApplication);
+    this.patronApplication =
+      options.patronApplication != null ? new PatronApplication(options.patronApplication) : null;
 
     if (Array.isArray(options.patronAttributes)) {
       this.patronAttributes = options.map((attribute: any) => new PatronAttribute(attribute));
@@ -160,12 +161,14 @@ export class ApplicationDetails {
   patronPreferences?: PatronPreference[];
 
   constructor(options: any) {
-    if (typeof options !== 'object') {
-      throw new Error('ApplicationDetails - options is not an object');
+    if (options == null || typeof options !== 'object') {
+      options = {};
     }
 
-    this.applicationDefinition = new ApplicationDefinition(options.applicationDefinition);
-    this.patronApplication = new PatronApplication(options.patronApplication);
+    this.applicationDefinition =
+      options.applicationDefinition != null ? new ApplicationDefinition(options.applicationDefinition) : null;
+    this.patronApplication =
+      options.patronApplication != null ? new PatronApplication(options.patronApplication) : null;
 
     if (Array.isArray(options.patronAttributes)) {
       this.patronAttributes = options.map((attribute: any) => new PatronAttribute(attribute));
