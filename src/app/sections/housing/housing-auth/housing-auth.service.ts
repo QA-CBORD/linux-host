@@ -14,9 +14,7 @@ import { User } from './housing-auth.model';
 export class HousingAuthService {
   private readonly _authUrl: string = 'patronIdentityTemp/auth/token';
 
-  private readonly _patronId: string = '612345678';
-
-  private readonly _patronSK: number = 8000712;
+  private readonly _patronId: string = 'EC2MSG001';
 
   private _tokenSource: BehaviorSubject<string> = new BehaviorSubject<string>(null);
 
@@ -39,7 +37,7 @@ export class HousingAuthService {
 
     const apiUrl: string = `${BASE_URL}/${this._authUrl}`;
 
-    return this._http.post<Response>(apiUrl, new User(this._patronId, this._patronSK)).pipe(
+    return this._http.post<Response>(apiUrl, new User(this._patronId)).pipe(
       map((response: Response) => response.data),
       tap((token: string) => (this.token = token)),
       catchError(() => of(null))

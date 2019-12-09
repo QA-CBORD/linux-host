@@ -37,7 +37,7 @@ export class ApplicationsService {
 
   private readonly _applicationDefinitionUrl: string = `${this._patronApplicationsUrl}/application-definition`;
 
-  private readonly _termId: number = 67;
+  private readonly _termId: number = 135;
 
   getApplications(): Observable<ApplicationDetails[]> {
     const apiUrl: string = `${this._patronApplicationsUrl}/term/${this._termId}/patron/self`;
