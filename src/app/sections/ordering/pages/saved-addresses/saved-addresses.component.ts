@@ -68,8 +68,11 @@ export class SavedAddressesComponent implements OnInit {
       return this.buildings$.pipe(
         tap(buildings => {
           const activeBuilding = buildings.find(({ addressInfo: { building } }) => building === this.addNewAdddressForm.value.building);
-          const { addressInfo: { address1, address2, city, nickname, state } } = activeBuilding;
-          this.addNewAdddressForm.value = { ...this.addNewAdddressForm.value, address1, address2, city, nickname, state };
+          const { addressInfo: { address1, address2, city, nickname, state, latitude, longitude } } = activeBuilding;
+          this.addNewAdddressForm.value = {
+            ...this.addNewAdddressForm.value, address1, address2, city,
+            nickname, state, latitude, longitude
+          };
         })
       )
     }
