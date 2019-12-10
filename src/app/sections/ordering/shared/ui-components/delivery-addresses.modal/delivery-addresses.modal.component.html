@@ -29,6 +29,7 @@
     <ng-container *ngIf="addNewAdddressState">
       <st-add-edit-addresses
         [buildingsOnCampus]="buildings"
+        [isError]="errorState"
         (onFormChanged)="onAddressFormChanged($event)"
       ></st-add-edit-addresses>
 
@@ -49,7 +50,7 @@
           shape="round"
           class="delivery-address__add-address-btn"
           [ngClass]="{ 'delivery-address__add-address-btn--valid': addNewAdddressForm && addNewAdddressForm.valid }"
-          (click)="addNewAdddressForm && addNewAdddressForm.valid && addAddress()"
+          (click)="addAddress()"
         >
           save
         </ion-button>

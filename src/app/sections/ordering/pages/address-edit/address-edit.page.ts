@@ -31,9 +31,9 @@ export class AddressEditPage implements OnInit {
     private readonly loadingService: LoadingService,
     private readonly popoverCtrl: PopoverController,
     private readonly userService: UserService
-  ) {}
+  ) { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   ionViewWillEnter() {
     this.buildings$ = this.merchantService.retrieveBuildings();
@@ -95,9 +95,9 @@ export class AddressEditPage implements OnInit {
   addAddress() {
     if (!this.addNewAdddressForm && !this.addNewAdddressForm.valid) return;
     this.loadingService.showSpinner();
-    this.merchantService
-      .updateUserAddress(this.addNewAdddressForm.value)
+    this.getBuildingData$(parseInt(this.addNewAdddressForm.value.campus))
       .pipe(
+        switchMap(() => this.merchantService.updateUserAddress(this.addNewAdddressForm.value)),
         switchMap(
           (addedAddress): any =>
             zip(
@@ -118,5 +118,23 @@ export class AddressEditPage implements OnInit {
         },
         () => this.loadingService.closeSpinner()
       );
+  }
+
+  private getBuildingData$(isOncampus): Observable<any> {
+    if (isOncampus) {
+      return this.buildings$.pipe(
+        tap(buildings => {
+          const activeBuilding = buildings.find(({ addressInfo: { building } }) => building === this.addNewAdddressForm.value.building);
+          const { addressInfo: { address1, address2, city, nickname, state, latitude, longitude } } = activeBuilding;
+          this.addNewAdddressForm.value = {
+            ...this.addNewAdddressForm.value, address1, address2, city,
+            state, latitude, longitude,
+            nickname: `${this.addNewAdddressForm.value.building}, Room ${this.addNewAdddressForm.value.room}`
+          };
+        })
+      )
+    }
+
+    return of(true);
   }
 }

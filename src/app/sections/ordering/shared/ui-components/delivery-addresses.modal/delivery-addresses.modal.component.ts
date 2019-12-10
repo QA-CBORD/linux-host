@@ -24,7 +24,8 @@ export class DeliveryAddressesModalComponent implements OnInit {
   @Input() merchantId: string;
 
   addNewAdddressState: boolean = false;
-  addNewAdddressForm: { value: any; valid: boolean };
+  addNewAdddressForm: { value: any; valid: boolean } = { value: null, valid: false };
+  errorState: boolean = false;
   selectedAddress;
   listOfAddresses;
   addressLabel;
@@ -44,6 +45,10 @@ export class DeliveryAddressesModalComponent implements OnInit {
   }
 
   addAddress() {
+    if (!this.addNewAdddressForm.valid) {
+      this.errorState = true;
+      return;
+    }
     this.loadingService.showSpinner();
     this.merchantService.updateUserAddress(this.addNewAdddressForm.value)
       .pipe(
@@ -74,6 +79,7 @@ export class DeliveryAddressesModalComponent implements OnInit {
 
   onAddressFormChanged(event) {
     this.addNewAdddressForm = event;
+    this.errorState = false;
   }
 
   resetForm() {
