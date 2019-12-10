@@ -131,10 +131,9 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   }
 
   onSubmit() {
-    let isASAP: boolean = false;
+    let date = { dueTime: this.dateTimePicker, isASAP: false };
     if (this.dateTimePicker === 'ASAP') {
-      this.dateTimePicker = new Date();
-      isASAP = !isASAP;
+      date = { dueTime: new Date(), isASAP: !date.isASAP };
     }
 
     let isOutsideMerchantDeliveryArea = of(false);
@@ -156,7 +155,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     isOutsideMerchantDeliveryArea
       .pipe(
         switchMap((isOutside): Observable<MerchantAccountInfoList> => this.getMerchantPaymentAccounts(isOutside)),
-        switchMap((paymentAccounts): Observable<MenuInfo> => this.getDisplayMenu(paymentAccounts)),
+        switchMap((paymentAccounts): Observable<MenuInfo> => this.getDisplayMenu(paymentAccounts, date.dueTime)),
         switchMap(({ mealBased }): Observable<boolean> => this.isAccountsMealBased(mealBased)),
         take(1),
       )
@@ -166,8 +165,8 @@ export class OrderOptionsActionSheetComponent implements OnInit {
           this.modalController.dismiss({
             address: this.orderOptionsData.address,
             orderType: this.orderType,
-            dueTime: this.dateTimePicker,
-            isASAP
+            dueTime: date.dueTime,
+            isASAP: date.isASAP
           }, BUTTON_TYPE.CONTINUE);
         },
         err => {
@@ -185,11 +184,11 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     return this.merchantService.getMerchantPaymentAccounts(this.merchantId);
   }
 
-  private getDisplayMenu(paymentAccounts): Observable<MenuInfo> {
+  private getDisplayMenu(paymentAccounts, dueTime): Observable<MenuInfo> {
     if (!paymentAccounts.accounts.length) {
       return throwError(new Error('You don\'t have payment accounts'));
     }
-    const pickerTime = (<Date>this.dateTimePicker).toISOString();
+    const pickerTime = (<Date>dueTime).toISOString();
     return this.merchantService.getDisplayMenu(this.merchantId, pickerTime, this.orderType);
   }
 

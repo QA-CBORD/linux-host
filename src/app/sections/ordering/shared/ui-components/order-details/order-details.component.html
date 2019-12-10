@@ -4,19 +4,19 @@
     <div class="order-details">
       <ion-label class="order-details__label">{{type | typeMessage:'dueTime'}}</ion-label>
 
-      <p class="order-details__value">{{time | date: 'M/d/yy, h:mm a'}}</p>
+      <p class="order-details__value">{{timeWithoutTimezone | modifyPrepTime: orderTypes}}</p>
     </div>
 
-    <div class="order-details" *ngIf="address && (address | addressAsString: type).length">
+    <div class="order-details" *ngIf="orderDetailOptions.address && (orderDetailOptions.address | addressAsString: type).length">
       <ion-label class="order-details__label">{{type | typeMessage:'address'}}</ion-label>
 
-      <p *ngIf="readonly && address; else addressEditable"
-         class="order-details__value">{{ address | addressAsString: type }}</p>
+      <p *ngIf="readonly && orderDetailOptions.address; else addressEditable"
+         class="order-details__value">{{ orderDetailOptions.address | addressAsString: type }}</p>
 
       <ng-template #addressEditable>
         <p class="order-details__value"
            [ngClass]="{'order-details__value--editable': isAddressClickable}"
-           (click)="isAddressClickable && showAddressListModal()">{{address | addressAsString: type}}</p>
+           (click)="isAddressClickable && showAddressListModal()">{{orderDetailOptions.address | addressAsString: type}}</p>
       </ng-template>
 
     </div>

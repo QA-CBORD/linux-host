@@ -62,7 +62,8 @@ export class AddressEditPage implements OnInit {
   }
 
   private async presentAlert(): Promise<void> {
-    const address = `${this.addressData.address1}, ${this.addressData.city}, ${this.addressData.state}`;
+    const addressData = this.addressData.address;
+    const address = `${addressData.address1}, ${addressData.city}, ${addressData.state}`;
     const modal = await this.popoverCtrl.create({
       component: ConfirmPopoverComponent,
       componentProps: {
@@ -78,7 +79,7 @@ export class AddressEditPage implements OnInit {
     modal.onDidDismiss().then(({ role }) => {
       role === BUTTON_TYPE.REMOVE &&
         this.merchantService
-          .removeAddress(this.addressData.id)
+          .removeAddress(addressData.id)
           .pipe(take(1))
           .subscribe(() =>
             this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.savedAddresses], { skipLocationChange: true })
