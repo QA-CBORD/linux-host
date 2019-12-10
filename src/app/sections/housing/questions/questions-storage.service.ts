@@ -44,7 +44,7 @@ export class QuestionsStorageService {
 
       if (patronApplication && patronApplication.createdDateTime) {
         createdDateTime = patronApplication.createdDateTime;
-      } else if (application.createdDateTime) {
+      } else if (application && application.createdDateTime) {
         createdDateTime = createdDateTime;
       }
 

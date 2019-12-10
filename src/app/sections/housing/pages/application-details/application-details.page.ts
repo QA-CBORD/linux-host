@@ -25,7 +25,7 @@ import { QuestionComponent } from '../../questions/question.component';
 
 import { ApplicationStatus, ApplicationDetails, PatronApplication } from '../../applications/applications.model';
 import { ApplicationPage } from '../../questions/questions.model';
-import { Response } from '../../housing.model';
+import { Response, ResponseStatus } from '../../housing.model';
 
 @Component({
   selector: 'st-application-details',
@@ -78,7 +78,7 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
       .saveApplication(this.applicationKey, application, formValue)
       .subscribe({
         next: () => this._handleSuccess(),
-        error: (error: HttpErrorResponse) => this._handleErrors(error.error),
+        error: (error: any) => this._handleErrors(error),
       });
 
     this._subscription.add(saveSubscription);
@@ -157,13 +157,18 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
   }
 
   private _handleErrors(error: any): void {
-    const message = error && (error as Response).status ? error.status.message : 'Error';
+    let message = 'Something went wrong. Try again later';
+
+    if (error instanceof HttpErrorResponse) {
+      message = (error.error as Response).status.message;
+    }
 
     this._toastController
       .create({
         message,
         position: 'top',
         duration: 3000,
+        showCloseButton: true,
       })
       .then((toast: HTMLIonToastElement) => toast.present());
   }
