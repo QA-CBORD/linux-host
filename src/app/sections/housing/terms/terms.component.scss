@@ -1,0 +1,14 @@
+@import 'tools';
+
+:host {
+  border-top: 1px solid $color-light-gray;
+  border-bottom: 2px solid $color-light-gray;
+  display: flex;
+  justify-content: center;
+}
+
+.terms-select {
+  --padding-top: 14px;
+  --padding-bottom: 15px;
+  --padding-end: 16px;
+}

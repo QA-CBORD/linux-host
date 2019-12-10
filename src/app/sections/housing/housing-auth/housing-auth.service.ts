@@ -14,9 +14,9 @@ import { User } from './housing-auth.model';
 export class HousingAuthService {
   private readonly _authUrl: string = 'patronIdentityTemp/auth/token';
 
-  private readonly _patronId: string = 'EC2MSG001';
-
   private _tokenSource: BehaviorSubject<string> = new BehaviorSubject<string>(null);
+
+  static readonly patronId: string = 'EC2MSG001';
 
   token$: Observable<string> = this._tokenSource.asObservable();
 
@@ -37,7 +37,7 @@ export class HousingAuthService {
 
     const apiUrl: string = `${BASE_URL}/${this._authUrl}`;
 
-    return this._http.post<Response>(apiUrl, new User(this._patronId)).pipe(
+    return this._http.post<Response>(apiUrl, new User(HousingAuthService.patronId)).pipe(
       map((response: Response) => response.data),
       tap((token: string) => (this.token = token)),
       catchError(() => of(null))
