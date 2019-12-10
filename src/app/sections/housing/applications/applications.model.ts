@@ -145,11 +145,11 @@ export class ApplicationRequest {
       options.patronApplication != null ? new PatronApplication(options.patronApplication) : null;
 
     if (Array.isArray(options.patronAttributes)) {
-      this.patronAttributes = options.map((attribute: any) => new PatronAttribute(attribute));
+      this.patronAttributes = options.patronAttributes.map((attribute: any) => new PatronAttribute(attribute));
     }
 
     if (Array.isArray(options.patronPreferences)) {
-      this.patronPreferences = options.map((preference: any) => new PatronPreference(preference));
+      this.patronPreferences = options.patronPreferences.map((preference: any) => new PatronPreference(preference));
     }
   }
 }
@@ -171,11 +171,11 @@ export class ApplicationDetails {
       options.patronApplication != null ? new PatronApplication(options.patronApplication) : null;
 
     if (Array.isArray(options.patronAttributes)) {
-      this.patronAttributes = options.map((attribute: any) => new PatronAttribute(attribute));
+      this.patronAttributes = options.patronAttributes.map((attribute: any) => new PatronAttribute(attribute));
     }
 
     if (Array.isArray(options.patronPreferences)) {
-      this.patronPreferences = options.map((preference: any) => new PatronPreference(preference));
+      this.patronPreferences = options.patronPreferences.map((preference: any) => new PatronPreference(preference));
     }
   }
 }
