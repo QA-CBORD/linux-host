@@ -6,6 +6,9 @@ import {
   Input,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  SimpleChanges,
+  OnChanges,
+  OnDestroy,
 } from '@angular/core';
 import { Validators, FormGroup, FormBuilder, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { debounceTime, take } from 'rxjs/operators';
@@ -22,7 +25,7 @@ import { AddressInfo } from '@core/model/address/address-info.js';
   styleUrls: ['./add-edit-addresses.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AddEditAddressesComponent implements OnInit {
+export class AddEditAddressesComponent implements OnInit, OnChanges, OnDestroy {
   addEditAddressesForm: FormGroup;
   arrOfStates = states;
   addressRestriction = { onCampus: false, offCampus: false };
@@ -34,13 +37,14 @@ export class AddEditAddressesComponent implements OnInit {
 
   @Input() buildingsOnCampus;
   @Input() editAddress: any;
+  @Input() isError: boolean;
   @Output() onFormChanged: EventEmitter<any> = new EventEmitter<any>();
   constructor(
     private readonly fb: FormBuilder,
     private readonly merchantService: MerchantService,
     private readonly cdRef: ChangeDetectorRef,
     private readonly loader: LoadingService
-  ) {}
+  ) { }
 
   get campus(): AbstractControl {
     if (this.addEditAddressesForm) {
@@ -49,7 +53,9 @@ export class AddEditAddressesComponent implements OnInit {
   }
 
   get address1(): AbstractControl {
-    return this.addEditAddressesForm.get(this.controlsNames.address1);
+    if (this.addEditAddressesForm) {
+      return this.addEditAddressesForm.get(this.controlsNames.address1);
+    }
   }
 
   get address2(): AbstractControl {
@@ -82,6 +88,28 @@ export class AddEditAddressesComponent implements OnInit {
 
   get controlsNames() {
     return REQUEST_FUNDS_CONTROL_NAMES;
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.addEditAddressesForm && changes.isError.currentValue) {
+      if (this.campus.value === 'oncampus') {
+        this.buildings.markAsDirty();
+        this.room.markAsDirty();
+      } else {
+        this.address1.markAsDirty();
+        this.city.markAsDirty();
+        this.state.markAsDirty();
+      }
+    } else {
+      if (this.campus && this.campus.value === 'oncampus' && this.buildings.dirty) {
+        this.buildings.markAsPristine();
+        this.room.markAsPristine();
+      } else if (this.campus && this.campus.value === 'offcampus' && this.address1.dirty) {
+        this.address1.markAsPristine();
+        this.city.markAsPristine();
+        this.state.markAsPristine();
+      }
+    }
   }
 
   ngOnInit() {
@@ -142,7 +170,7 @@ export class AddEditAddressesComponent implements OnInit {
     this.onChanges();
   }
 
-  onFormSubmit() {}
+  onFormSubmit() { }
 
   private onChanges() {
     const subscription = this.addEditAddressesForm.valueChanges.pipe(debounceTime(500)).subscribe(value => {

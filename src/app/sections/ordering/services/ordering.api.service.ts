@@ -134,6 +134,8 @@ export class OrderingApiService extends BaseService {
     building = null,
     room = null,
     id = null,
+    latitude = null,
+    longitude = null
   }): Observable<AddressInfo> {
     const methodName = 'updateUserAddress';
     const campusValue = parseInt(campus);
@@ -150,10 +152,10 @@ export class OrderingApiService extends BaseService {
         state,
         postalcode: null,
         country: null,
-        latitude: campusValue ? building.latitude : null,
-        longitude: campusValue ? building.longitude : null,
+        latitude: campusValue ? latitude : null,
+        longitude: campusValue ? longitude : null,
         notes: null,
-        nickname: nickname !== null && !nickname.length ? null : nickname,
+        nickname: nickname === null || !nickname ? address1 : nickname,
         building: building ? building : null,
         floor: null,
         room,
