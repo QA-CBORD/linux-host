@@ -5,6 +5,7 @@ import { Observable, of, zip, iif } from 'rxjs';
 import { tap, switchMap, take } from 'rxjs/operators';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { MerchantService } from '@sections/ordering/services';
+import { BuildingInfo } from '@sections/ordering/shared/models';
 
 @Component({
   selector: 'st-saved-addresses',
@@ -13,7 +14,7 @@ import { MerchantService } from '@sections/ordering/services';
 })
 export class SavedAddressesComponent implements OnInit {
   userAddresses: AddressInfo[];
-  buildings$: Observable<any[]>;
+  buildings$: Observable<BuildingInfo[]>;
   addNewAdddressState: boolean = false;
   addNewAdddressForm: { value: any; valid: boolean };
 
@@ -21,9 +22,9 @@ export class SavedAddressesComponent implements OnInit {
     private readonly userService: UserService,
     private readonly loader: LoadingService,
     private readonly merchantService: MerchantService
-  ) {}
+  ) { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   ionViewWillEnter() {
     this.buildings$ = this.merchantService.retrieveBuildings();
@@ -37,15 +38,15 @@ export class SavedAddressesComponent implements OnInit {
   addAddress() {
     if (!this.addNewAdddressForm && !this.addNewAdddressForm.valid) return;
     this.loader.showSpinner();
-    this.merchantService
-      .updateUserAddress(this.addNewAdddressForm.value)
+    this.getBuildingData$(parseInt(this.addNewAdddressForm.value.campus))
       .pipe(
+        switchMap(() => this.merchantService.updateUserAddress(this.addNewAdddressForm.value)),
         switchMap(
           (addedAddress): any =>
             zip(
               iif(
                 () => this.addNewAdddressForm.value.default,
-                this.userService.saveUserSettingsBySettingName('defaultaddress', addedAddress.id),
+                this.userService.saveUserSettingsBySettingName('defaultaddress', addedAddress['id']),
                 of(false)
               ),
               of(addedAddress)
@@ -60,6 +61,20 @@ export class SavedAddressesComponent implements OnInit {
         },
         () => this.loader.closeSpinner()
       );
+  }
+
+  private getBuildingData$(isOncampus): Observable<any> {
+    if (isOncampus) {
+      return this.buildings$.pipe(
+        tap(buildings => {
+          const activeBuilding = buildings.find(({ addressInfo: { building } }) => building === this.addNewAdddressForm.value.building);
+          const { addressInfo: { address1, address2, city, nickname, state } } = activeBuilding;
+          this.addNewAdddressForm.value = { ...this.addNewAdddressForm.value, address1, address2, city, nickname, state };
+        })
+      )
+    }
+
+    return of(true);
   }
 
   private initAddresses() {
