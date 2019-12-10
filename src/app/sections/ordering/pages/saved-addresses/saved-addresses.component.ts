@@ -30,8 +30,6 @@ export class SavedAddressesComponent implements OnInit {
     this.initAddresses();
   }
 
-  onModalClose() {}
-
   onAddressFormChanged(event) {
     this.addNewAdddressForm = event;
   }

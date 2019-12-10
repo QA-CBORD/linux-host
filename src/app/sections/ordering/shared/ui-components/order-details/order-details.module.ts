@@ -1,3 +1,4 @@
+import { ModifyPrepTimeModule } from '@sections/ordering/shared/pipes/modify-prep-time';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { OrderDetailsComponent } from '@sections/ordering';
@@ -22,7 +23,8 @@ const declarations = [OrderDetailsComponent, TypeMessagePipe, AddressAsStringPip
     ReactiveFormsModule,
     StDateTimePickerModule,
     DeliveryAddressesModalModule,
-    PriceUnitsResolverModule
+    PriceUnitsResolverModule,
+    ModifyPrepTimeModule
   ],
   exports: [OrderDetailsComponent],
   providers: [CreditCardTypePipe, PriceUnitsResolverPipe]
