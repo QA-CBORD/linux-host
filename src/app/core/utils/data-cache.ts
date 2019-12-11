@@ -20,6 +20,7 @@ import { StartupInfo } from '../model/institution/native-startup-info.model';
 import { InstitutionInfo } from '../model/institution/institution-info.model';
 import { EnvironmentInfo } from '../model/environment/environment-info.model';
 import { NAVIGATE } from '../../app.global';
+import { take } from 'rxjs/operators';
 
 @Injectable()
 export class DataCache {
@@ -94,19 +95,21 @@ export class DataCache {
   }
 
   refreshCacheFromStorage(onSuccess: () => void, onFailure: () => void) {
-    this.getData(this.CACHE).subscribe(
-      (data: string) => {
-        if (data != null) {
-          DataCache.localCache = MCache.fromT(JSON.parse(data));
-          onSuccess();
-        } else {
+    this.getData(this.CACHE)
+      .pipe(take(1))
+      .subscribe(
+        (data: string) => {
+          if (data != null) {
+            DataCache.localCache = MCache.fromT(JSON.parse(data));
+            onSuccess();
+          } else {
+            onFailure();
+          }
+        },
+        error => {
           onFailure();
         }
-      },
-      error => {
-        onFailure();
-      }
-    );
+      );
   }
 
   clearLocalCache() {
