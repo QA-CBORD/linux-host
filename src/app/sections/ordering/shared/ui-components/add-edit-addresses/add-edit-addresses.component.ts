@@ -44,7 +44,7 @@ export class AddEditAddressesComponent implements OnInit, OnChanges, OnDestroy {
     private readonly merchantService: MerchantService,
     private readonly cdRef: ChangeDetectorRef,
     private readonly loader: LoadingService
-  ) { }
+  ) {}
 
   get campus(): AbstractControl {
     if (this.addEditAddressesForm) {
@@ -91,23 +91,12 @@ export class AddEditAddressesComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (this.addEditAddressesForm && changes.isError.currentValue) {
-      if (this.campus.value === 'oncampus') {
-        this.buildings.markAsDirty();
-        this.room.markAsDirty();
+    if (this.addEditAddressesForm) {
+      const { controls } = this.addEditAddressesForm;
+      if (changes.isError && changes.isError.currentValue) {
+        Object.keys(controls).forEach(controlName => controls[controlName].markAsTouched());
       } else {
-        this.address1.markAsDirty();
-        this.city.markAsDirty();
-        this.state.markAsDirty();
-      }
-    } else {
-      if (this.campus && this.campus.value === 'oncampus' && this.buildings.dirty) {
-        this.buildings.markAsPristine();
-        this.room.markAsPristine();
-      } else if (this.campus && this.campus.value === 'offcampus' && this.address1.dirty) {
-        this.address1.markAsPristine();
-        this.city.markAsPristine();
-        this.state.markAsPristine();
+        Object.keys(controls).forEach(controlName => controls[controlName].markAsUntouched());
       }
     }
   }
@@ -169,8 +158,6 @@ export class AddEditAddressesComponent implements OnInit, OnChanges, OnDestroy {
 
     this.onChanges();
   }
-
-  onFormSubmit() { }
 
   private onChanges() {
     const subscription = this.addEditAddressesForm.valueChanges.pipe(debounceTime(500)).subscribe(value => {
@@ -237,7 +224,9 @@ export class AddEditAddressesComponent implements OnInit, OnChanges, OnDestroy {
     return {
       [this.controlsNames.campus]: [campus || 'oncampus'],
       [this.controlsNames.buildings]: [
-        selectedAddress && selectedAddress.building !== null ? this.editAddress.activeBuilding.addressInfo.building : '',
+        selectedAddress && selectedAddress.building !== null
+          ? this.editAddress.activeBuilding.addressInfo.building
+          : '',
         buildingsErrors,
       ],
       [this.controlsNames.room]: [
