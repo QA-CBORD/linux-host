@@ -15,16 +15,17 @@ import { BuildingInfo } from '@sections/ordering/shared/models';
 export class SavedAddressesComponent implements OnInit {
   userAddresses: AddressInfo[];
   buildings$: Observable<BuildingInfo[]>;
+  errorState: boolean = false;
   addNewAdddressState: boolean = false;
-  addNewAdddressForm: { value: any; valid: boolean };
+  addNewAddressForm: { value: any; valid: boolean } = { value: null, valid: false };
 
   constructor(
     private readonly userService: UserService,
     private readonly loader: LoadingService,
     private readonly merchantService: MerchantService
-  ) { }
+  ) {}
 
-  ngOnInit() { }
+  ngOnInit() {}
 
   ionViewWillEnter() {
     this.buildings$ = this.merchantService.retrieveBuildings();
@@ -32,20 +33,24 @@ export class SavedAddressesComponent implements OnInit {
   }
 
   onAddressFormChanged(event) {
-    this.addNewAdddressForm = event;
+    this.addNewAddressForm = event;
+    this.errorState = false;
   }
 
   addAddress() {
-    if (!this.addNewAdddressForm && !this.addNewAdddressForm.valid) return;
+    if (!this.addNewAddressForm.valid) {
+      this.errorState = true;
+      return;
+    }
     this.loader.showSpinner();
-    this.getBuildingData$(parseInt(this.addNewAdddressForm.value.campus))
+    this.getBuildingData$(parseInt(this.addNewAddressForm.value.campus))
       .pipe(
-        switchMap(() => this.merchantService.updateUserAddress(this.addNewAdddressForm.value)),
+        switchMap(() => this.merchantService.updateUserAddress(this.addNewAddressForm.value)),
         switchMap(
           (addedAddress): any =>
             zip(
               iif(
-                () => this.addNewAdddressForm.value.default,
+                () => this.addNewAddressForm.value.default,
                 this.userService.saveUserSettingsBySettingName('defaultaddress', addedAddress['id']),
                 of(false)
               ),
@@ -58,6 +63,7 @@ export class SavedAddressesComponent implements OnInit {
         ([bool, addedAddress]) => {
           this.loader.closeSpinner();
           this.userAddresses = [...this.userAddresses, addedAddress];
+          this.addNewAdddressState = !this.addNewAdddressState;
         },
         () => this.loader.closeSpinner()
       );
@@ -67,15 +73,24 @@ export class SavedAddressesComponent implements OnInit {
     if (isOncampus) {
       return this.buildings$.pipe(
         tap(buildings => {
-          const activeBuilding = buildings.find(({ addressInfo: { building } }) => building === this.addNewAdddressForm.value.building);
-          const { addressInfo: { address1, address2, city, nickname, state, latitude, longitude } } = activeBuilding;
-          this.addNewAdddressForm.value = {
-            ...this.addNewAdddressForm.value, address1, address2, city,
-            state, latitude, longitude,
-            nickname: `${this.addNewAdddressForm.value.building}, Room ${this.addNewAdddressForm.value.room}`
+          const activeBuilding = buildings.find(
+            ({ addressInfo: { building } }) => building === this.addNewAddressForm.value.building
+          );
+          const {
+            addressInfo: { address1, address2, city, nickname, state, latitude, longitude },
+          } = activeBuilding;
+          this.addNewAddressForm.value = {
+            ...this.addNewAddressForm.value,
+            address1,
+            address2,
+            city,
+            state,
+            latitude,
+            longitude,
+            nickname: `${this.addNewAddressForm.value.building}, Room ${this.addNewAddressForm.value.room}`,
           };
         })
-      )
+      );
     }
 
     return of(true);
