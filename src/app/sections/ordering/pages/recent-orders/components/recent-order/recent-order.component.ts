@@ -191,7 +191,7 @@ export class RecentOrderComponent implements OnInit {
         const time = date.toLocaleString(locale, { hour12: false, timeZone })
         return {
           address,
-          dueTime: time,
+          dueTime: new Date(time),
           orderType: type,
           isASAP: false
         }
