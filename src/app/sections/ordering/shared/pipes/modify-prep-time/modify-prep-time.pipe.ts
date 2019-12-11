@@ -18,8 +18,10 @@ export class ModifyPrepTimePipe implements PipeTransform {
         switch (value.orderType) {
           case ORDER_TYPE.PICKUP:
             finalTime = timeInMiliseconds + args.pickupPrepTime * minute;
+            break;
           case ORDER_TYPE.DELIVERY:
             finalTime = timeInMiliseconds + args.deliveryPrepTime * minute;
+            break;
         }
       }
 

@@ -11,7 +11,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 import { SelectivePreloadingStrategy } from './utils/preload-strategy/selective-preloading-strategy';
-import { SettingService } from '@core/service/settings/setting.service';
 
 const imports = [CommonModule, BrowserModule, HttpClientModule];
 
@@ -25,7 +24,6 @@ const providers = [
   Keyboard,
   BarcodeScanner,
   Geolocation,
-  SettingService
 ];
 
 @NgModule({
