@@ -16,7 +16,7 @@ export class StDateTimePickerComponent {
   @Input() data: any;
   @Input() isTimeDisable: any;
   @Input() dateTimePicker: Date | string;
-  @Output() onTimeSelected: EventEmitter<Date> = new EventEmitter<Date>();
+  @Output() onTimeSelected: EventEmitter<Date | string> = new EventEmitter<Date | string>();
 
   constructor(private readonly datePipe: DatePipe, private readonly pickerController: PickerController) {}
 
@@ -39,7 +39,7 @@ export class StDateTimePickerComponent {
           handler: ([date, time]) => {
             const [year, month, day] = date.value.split('-');
             if (time.value === 'asap') {
-              this.dateTimePicker = new Date(year, month - 1, day);
+              this.dateTimePicker = 'ASAP';
             } else {
               let [hours, mins] = time.value.split(':');
               this.dateTimePicker = new Date(year, month - 1, day, hours, mins);
