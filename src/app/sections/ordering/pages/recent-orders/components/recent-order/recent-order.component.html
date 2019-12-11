@@ -15,8 +15,6 @@
             [total]="(order$ | async).total"
             [orderItems]="(order$ | async).orderItems"
             [orderPaymentName]="(order$ | async).orderPayment[0].accountName"
-            [time]="(orderDetailsOptions$ | async).dueTime"
-            [type]="(order$ | async).type"
             [mealBased]="(order$ | async).mealBased"
             [orderDetailOptions]="orderDetailsOptions$ | async"
     >

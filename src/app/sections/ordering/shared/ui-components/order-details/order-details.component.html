@@ -2,21 +2,21 @@
   <form novalidate [formGroup]="detailsForm">
 
     <div class="order-details">
-      <ion-label class="order-details__label">{{type | typeMessage:'dueTime'}}</ion-label>
+      <ion-label class="order-details__label">{{orderDetailOptions.orderType | typeMessage:'dueTime'}}</ion-label>
 
       <p class="order-details__value">{{timeWithoutTimezone | modifyPrepTime: orderTypes}}</p>
     </div>
 
-    <div class="order-details" *ngIf="orderDetailOptions.address && (orderDetailOptions.address | addressAsString: type).length">
-      <ion-label class="order-details__label">{{type | typeMessage:'address'}}</ion-label>
+    <div class="order-details" *ngIf="orderDetailOptions.address && (orderDetailOptions.address | addressAsString: orderDetailOptions.orderType).length">
+      <ion-label class="order-details__label">{{orderDetailOptions.orderType | typeMessage:'address'}}</ion-label>
 
       <p *ngIf="readonly && orderDetailOptions.address; else addressEditable"
-         class="order-details__value">{{ orderDetailOptions.address | addressAsString: type }}</p>
+         class="order-details__value">{{ orderDetailOptions.address | addressAsString: orderDetailOptions.orderType }}</p>
 
       <ng-template #addressEditable>
         <p class="order-details__value"
            [ngClass]="{'order-details__value--editable': isAddressClickable}"
-           (click)="isAddressClickable && showAddressListModal()">{{orderDetailOptions.address | addressAsString: type}}</p>
+           (click)="isAddressClickable && showAddressListModal()">{{orderDetailOptions.address | addressAsString: orderDetailOptions.orderType}}</p>
       </ng-template>
 
     </div>

@@ -98,7 +98,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
 
     modal.onDidDismiss().then(({ data }) => {
       if (data) {
-        this.cartService.setActiveMerchantsMenuByOrderOptions(data.dueTime, data.orderType, data.address);
+        this.cartService.setActiveMerchantsMenuByOrderOptions(data.dueTime, data.orderType, data.address, data.isASAP);
       }
     });
 

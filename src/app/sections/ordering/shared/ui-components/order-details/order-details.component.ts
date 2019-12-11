@@ -13,7 +13,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { BuildingInfo, OrderItem, MerchantOrderTypesInfo } from '@sections/ordering';
-import { ORDER_TYPE, PAYMENT_SYSTEM_TYPE } from '@sections/ordering/ordering.config';
+import { PAYMENT_SYSTEM_TYPE } from '@sections/ordering/ordering.config';
 import { AddressInfo } from '@core/model/address/address-info';
 import { ModalController } from '@ionic/angular';
 import { DeliveryAddressesModalComponent } from '@sections/ordering/shared/ui-components/delivery-addresses.modal/delivery-addresses.modal.component';
@@ -30,9 +30,7 @@ import { cvvValidationFn } from '@core/utils/general-helpers';
 export class OrderDetailsComponent implements OnInit, OnDestroy {
   @Input() orderDetailOptions: any;
   @Input() readonly: boolean = true;
-  @Input() time: any = [];
   @Input() orderTypes: MerchantOrderTypesInfo;
-  @Input() type: ORDER_TYPE;
   @Input() orderItems: OrderItem[] = [];
   @Input() paymentMethod: any = [];
   @Input() tax: number;
@@ -78,7 +76,11 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
   }
 
   get timeWithoutTimezone() {
-    return { ...this.orderDetailOptions, dueTime: new Date(this.time.slice(0, 19)) };
+    console.log(this.orderDetailOptions.dueTime);
+    if(this.orderDetailOptions.dueTime instanceof Date) {
+      return this.orderDetailOptions;
+    }
+    return { ...this.orderDetailOptions, dueTime: new Date(this.orderDetailOptions.dueTime.slice(0, 19)) };
   }
 
   goToItemDetails(orderItem) {
