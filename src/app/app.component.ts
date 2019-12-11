@@ -41,7 +41,7 @@ export class AppComponent implements OnDestroy {
     private readonly authService: AuthService,
     private readonly userService: UserService,
     private readonly popoverCtrl: PopoverController,
-    private readonly nativeProvider: NativeProvider
+    private readonly nativeProvider: NativeProvider,
   ) {
     this.initializeApp();
   }

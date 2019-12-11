@@ -8,7 +8,9 @@ import { BaseService } from '@core/service/base-service/base.service';
 import { HttpClient } from '@angular/common/http';
 import { MessageResponse } from '@core/model/service/message-response.model';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class SettingService extends BaseService {
   private settings: SettingInfo[] = [];
   private readonly _settings$: BehaviorSubject<SettingInfo[]> = new BehaviorSubject<SettingInfo[]>(this.settings);
