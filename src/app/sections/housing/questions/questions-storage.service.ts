@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
 
+import { hasValue } from '../utils';
 import { STORAGE_KEY } from '../housing.config';
 
 import { ApplicationStatus, PatronApplication } from '../applications/applications.model';
@@ -74,9 +75,13 @@ export class QuestionsStorageService {
     return this.getApplication(applicationKey).then((application: StoredApplication) => {
       let questions: QuestionsEntries = application && application.questions ? application.questions : {};
 
-      Object.keys(formValue).forEach(
-        (formControlName: any) => (questions[formControlName] = formValue[formControlName])
-      );
+      Object.keys(formValue).forEach((formControlName: any) => {
+        const value: any = formValue[formControlName];
+
+        if (hasValue(value)) {
+          questions[formControlName] = value;
+        }
+      });
 
       return this._storage.set(`${this._key}-${applicationKey}`, {
         ...application,

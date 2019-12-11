@@ -160,7 +160,9 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
     let message = 'Something went wrong. Try again later';
 
     if (error instanceof HttpErrorResponse) {
-      message = (error.error as Response).status.message;
+      const statusMessage: string = (error.error as Response).status.message;
+
+      message = statusMessage || message;
     }
 
     this._toastController

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { FormControl, Validators, FormGroup, FormArray, AbstractControl } from '@angular/forms';
 import { BehaviorSubject, Observable } from 'rxjs';
 
-import { parseJsonToArray } from '../utils';
+import { parseJsonToArray, hasValue } from '../utils';
 
 import { QuestionsStorageService } from './questions-storage.service';
 
@@ -65,11 +65,8 @@ export class QuestionsService {
 
         Object.keys(controls).forEach((controlName: string) => {
           const control: AbstractControl = controls[controlName];
-          const hasValue: boolean = Array.isArray(control.value)
-            ? !control.value.some((value: any) => value == null || value === '')
-            : !(control.value == null || control.value === '');
 
-          if (hasValue) {
+          if (hasValue(control.value)) {
             control.markAsDirty();
             control.markAsTouched();
 
