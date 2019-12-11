@@ -120,7 +120,7 @@
             type="submit"
             (click)="onFormSubmit()"
             class="item-footer__add-btn"
-            [ngClass]="{ 'item-footer__add-btn-disabled': itemOrderForm.invalid }"
+            [ngClass]="{ 'item-footer__add-btn--disabled': itemOrderForm.invalid }"
     >
       Add {{ order.totalPrice | priceUnitsResolver: (menuInfo$ | async).mealBased }}
     </ion-button>
