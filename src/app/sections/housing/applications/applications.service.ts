@@ -185,7 +185,7 @@ export class ApplicationsService {
       }
     });
 
-    return resultAttributes;
+    return resultAttributes.filter((attribute: PatronAttribute) => hasValue(attribute.value));
   }
 
   private _getPreferences(
