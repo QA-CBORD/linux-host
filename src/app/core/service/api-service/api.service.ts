@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpHeaders, HttpParams, HttpClient } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
-import { subscribeOn, observeOn, timeout } from 'rxjs/operators';
+import { subscribeOn, observeOn, timeout, catchError } from 'rxjs/operators';
 import { async } from 'rxjs/internal/scheduler/async';
 import { queue } from 'rxjs/internal/scheduler/queue';
 
@@ -115,59 +115,29 @@ export class APIService {
     headers?: HttpHeaders
   ): Observable<any> {
     const finalURL = Environment.getSecureMessagingAPIURL().concat(resourceURL);
+    let httpCall$;
+    switch (callType) {
+      case RestCallType.get:
+        httpCall$ = this.get<any>(finalURL, responseType, params, headers);
+        break;
+      case RestCallType.post:
+        httpCall$ = this.post(finalURL, body, responseType, params, headers);
+        break;
+      case RestCallType.put:
+        httpCall$ = this.put(finalURL, body, responseType, params, headers);
+        break;
+    }
 
-    return Observable.create((observer: any) => {
-      // sort by call type
-      switch (callType) {
-        case RestCallType.get:
-          this.get<any>(finalURL, responseType, params, headers).subscribe(
-            response => {
-              observer.next(response);
-            },
-            (error: any) => {
-              if (error.status === 401) {
-                /// AUTHENTICATION ERROR, HANDLE WHEN WE KNOW HOW
-                this.handleAuthenticationError(error);
-              } else {
-                observer.error(error);
-              }
-            }
-          );
-          break;
-        case RestCallType.post:
-          this.post(finalURL, body, responseType, params, headers).subscribe(
-            response => {
-              observer.next(response);
-            },
-            (error: any) => {
-              if (error.status === 401) {
-                /// AUTHENTICATION ERROR, HANDLE WHEN WE KNOW HOW
-                this.handleAuthenticationError(error);
-              } else {
-                observer.error(error);
-              }
-            }
-          );
-          break;
-        case RestCallType.put:
-          this.put(finalURL, body, responseType, params, headers).subscribe(
-            response => {
-              observer.next(response);
-            },
-            (error: any) => {
-              if (error.status === 401) {
-                /// AUTHENTICATION ERROR, HANDLE WHEN WE KNOW HOW
-                this.handleAuthenticationError(error);
-              } else {
-                observer.error(error);
-              }
-            }
-          );
-          break;
-        default:
-          observer.error('Incorrect call type');
-      }
-    });
+    return httpCall$.pipe(
+      catchError(error => {
+        if (error.status === 401) {
+          /// AUTHENTICATION ERROR, HANDLE WHEN WE KNOW HOW
+          this.handleAuthenticationError(error);
+        } else {
+          return error;
+        }
+      })
+    );
   }
 
   /**
