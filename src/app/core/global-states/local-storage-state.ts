@@ -1,4 +1,4 @@
-import { ExtendableStateManager } from '@core/utils/classes/extendable-state-manager';
+import { ExtendableStateManager } from '@core/classes/extendable-state-manager';
 import { BehaviorSubject, EMPTY, Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { distinctUntilChanged, map, tap } from 'rxjs/operators';

@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { StateManager } from '@core/utils/classes/state-manager';
+import { StateManager } from '@core/classes/state-manager';
 
 export abstract class ExtendableStateManager<T = { [key: string]: any }> extends StateManager<T> {
   abstract registerStateEntity(key: string, value): void

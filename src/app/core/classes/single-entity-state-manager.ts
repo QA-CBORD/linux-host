@@ -1,4 +1,4 @@
-import { StateManager } from '@core/utils/classes/state-manager';
+import { StateManager } from '@core/classes/state-manager';
 
 export abstract class SingleEntityStateManager<T> extends StateManager<T> {
 
