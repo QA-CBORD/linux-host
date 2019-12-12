@@ -12,7 +12,7 @@ export class LocalStorageState extends ExtendableStateManager<LocalStorageStateE
   protected activeUpdaters: number = 0;
   protected state: LocalStorageStateEntity = {};
   protected readonly _state$: BehaviorSubject<LocalStorageStateEntity> = new BehaviorSubject<LocalStorageStateEntity>(this.state);
-  protected readonly _isUpdating$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  protected readonly _isUpdating$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(!!this.activeUpdaters);
 
   constructor() {
     super();

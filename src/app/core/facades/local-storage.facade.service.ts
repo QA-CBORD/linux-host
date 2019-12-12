@@ -35,5 +35,4 @@ export class LocalStorageFacadeService extends ServiceStateFacade {
   removeStorageEntityByKey(key: string) {
     this.localStorageState.deleteStateEntityByKey(key);
   }
-
 }
