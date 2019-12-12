@@ -44,7 +44,7 @@ export const ACCOUNTS_SETTINGS_CONFIG = {
     domain: 'get',
     category: 'deposit',
     name: 'payment_types',
-  }
+  },
 };
 
 export enum TILES_ID {
@@ -55,7 +55,7 @@ export enum TILES_ID {
   order = 'order',
   explore = 'explore',
   conversations = 'conversations'
-};
+}
 
 export enum TILES_TITLE {
   accounts = 'Accounts',

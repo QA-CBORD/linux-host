@@ -1,11 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 
 import { EditHomePageModalComponent } from './components/edit-home-page-modal';
-import { TileWrapperConfig } from './models/tile-wrapper-config.model';
-import { DashboardService, AccountsService } from './services';
-import { take, tap, switchMap } from 'rxjs/operators';
-import { DASHBOARD_SETTINGS_CONFIG, tilesConfig, TILES_TITLE, ACCOUNTS_SETTINGS_CONFIG, TILES_ID } from './dashboard.config';
+import { TileWrapperConfig } from '@sections/dashboard/models';
+import { AccountsService, DashboardService } from './services';
+import { switchMap, take, tap } from 'rxjs/operators';
+import {
+  ACCOUNTS_SETTINGS_CONFIG,
+  DASHBOARD_SETTINGS_CONFIG,
+  TILES_ID,
+  TILES_TITLE,
+  tilesConfig,
+} from './dashboard.config';
 import { Observable } from 'rxjs';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 
@@ -13,6 +19,7 @@ import { SettingInfo } from '@core/model/configuration/setting-info.model';
   selector: 'st-dashboard',
   templateUrl: './dashboard.page.html',
   styleUrls: ['./dashboard.page.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardPage implements OnInit {
   tiles: TileWrapperConfig[];
@@ -28,9 +35,11 @@ export class DashboardPage implements OnInit {
   get tilesTitle() {
     return TILES_TITLE;
   }
+
   ngOnInit() {
     this.dashboardService.retrieveSettingsList()
       .pipe(
+        tap(d => console.log(d)),
         tap(settings => this.updateTilesConfig(settings)),
         switchMap(() => this.isAddFundsButtonEnabled()),
         take(1)
@@ -50,12 +59,15 @@ export class DashboardPage implements OnInit {
           this.isMobileAccessButtonEnabled = isMobileAccessEnabled;
           e.isEnable = isMobileAccessEnabled;
           break;
+
         case DASHBOARD_SETTINGS_CONFIG.enableOrder.name:
           e.isEnable = this.getBoolValue(settings.map[`get~feature~${DASHBOARD_SETTINGS_CONFIG.enableOrder.name}`].value);
           break;
+
         case DASHBOARD_SETTINGS_CONFIG.enableExplore.name:
           e.isEnable = this.getBoolValue(settings.map[`get~feature~${DASHBOARD_SETTINGS_CONFIG.enableExplore.name}`].value);
           break;
+
         case DASHBOARD_SETTINGS_CONFIG.enableConversation.name:
           e.isEnable = this.getBoolValue(settings.map[`get~feature~${DASHBOARD_SETTINGS_CONFIG.enableConversation.name}`].value);
           break;

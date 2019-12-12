@@ -7,9 +7,11 @@ export interface TileWrapperConfig {
     isEnable?: boolean;
     iconName?: string;
     iconPath?: string;
-    buttonConfig: {
-        show: boolean;
-        title?: string;
-        navigate?: NAVIGATE;
-    }
+    buttonConfig: ButtonConfig
+}
+
+export interface ButtonConfig {
+    show: boolean;
+    title?: string;
+    navigate?: NAVIGATE;
 }

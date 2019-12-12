@@ -1,8 +1,8 @@
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { Component, OnInit, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 
 import { Observable } from 'rxjs';
-import { map, startWith, tap, first } from 'rxjs/operators';
+import { first, map } from 'rxjs/operators';
 
 import { AccessCardService } from './services/access-card.service';
 
@@ -10,6 +10,7 @@ import { AccessCardService } from './services/access-card.service';
   selector: 'st-access-card',
   templateUrl: './access-card.component.html',
   styleUrls: ['./access-card.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AccessCardComponent implements OnInit {
   userName$: Observable<string>;
