@@ -131,16 +131,20 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
     this._questionsStorageService
       .updateCreatedDateTime(this.applicationKey, application.patronApplication)
       .then((createdDateTime: string) => {
+        const status: ApplicationStatus =
+          application.patronApplication && application.patronApplication.status
+            ? application.patronApplication.status
+            : ApplicationStatus.Pending;
         const patronApplication: PatronApplication = new PatronApplication({
           ...application.patronApplication,
           createdDateTime,
-          status: ApplicationStatus.Pending,
+          status,
         });
         const applicationDetails: ApplicationDetails = new ApplicationDetails({ ...application, patronApplication });
 
         this._applicationsStateService.setApplication(this.applicationKey, applicationDetails);
 
-        return this._questionsStorageService.updateQuestions(this.applicationKey, formValue, ApplicationStatus.Pending);
+        return this._questionsStorageService.updateQuestions(this.applicationKey, formValue, status);
       })
       .then(() => this.stepper.next());
   }
