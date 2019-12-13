@@ -19,7 +19,6 @@ export class FullMenuComponent implements OnInit, OnDestroy {
 
   private readonly sourceSubscription: Subscription = new Subscription();
   menu$: Observable<MenuInfo>;
-  orderInfo$: Observable<OrderDetailOptions>;
   merchantInfo$: Observable<MerchantInfo>;
   merchantInfoState: boolean = false;
   menuItems$: Observable<number>;
@@ -35,7 +34,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   }
 
   get orderType(): Observable<string> {
-    return this.orderInfo$.pipe(map(({ orderType }) => {
+    return this.cartService.orderDetailsOptions$.pipe(map(({ orderType }) => {
       switch (orderType) {
         case ORDER_TYPE.PICKUP:
           return 'Pickup';
@@ -47,6 +46,10 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     }));
   }
 
+  get orderInfo$(): Observable<OrderDetailOptions> {
+    return this.cartService.orderDetailsOptions$;
+  }
+
   ionViewWillEnter() {
     this.menuItems$ = this.cartService.menuItems$;
     this.cdRef.detectChanges();
@@ -56,7 +59,6 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.menu$ = this.cartService.menuInfo$;
     this.merchantInfo$ = this.cartService.merchant$;
-    this.orderInfo$ = this.cartService.orderDetailsOptions$;
   }
 
   ngOnDestroy() {
@@ -78,7 +80,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
 
   private async actionSheet(orderTypes: MerchantOrderTypesInfo, merchantId, storeAddress, settings) {
     const footerButtonName = 'set order options';
-    const cssClass = `order-options-action-sheet ${orderTypes.delivery && orderTypes.pickup 
+    const cssClass = `order-options-action-sheet ${orderTypes.delivery && orderTypes.pickup
       ? ' order-options-action-sheet-p-d'
       : ''}`;
     const orderInfo = await this.orderInfo$.pipe(first()).toPromise();

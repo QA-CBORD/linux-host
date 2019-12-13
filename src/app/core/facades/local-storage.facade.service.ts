@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { LocalStorageState, LocalStorageStateEntity } from '@core/state/local-storage-state';
-import { ServiceStateFacade } from '@core/utils/classes/service-state-facade';
+import { LocalStorageState, LocalStorageStateEntity } from '@core/global-states/local-storage-state';
+import { ServiceStateFacade } from '@core/classes/service-state-facade';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -35,5 +35,4 @@ export class LocalStorageFacadeService extends ServiceStateFacade {
   removeStorageEntityByKey(key: string) {
     this.localStorageState.deleteStateEntityByKey(key);
   }
-
 }

@@ -1,4 +1,4 @@
-import { ExtendableStateManager } from '@core/utils/classes/extendable-state-manager';
+import { ExtendableStateManager } from '@core/classes/extendable-state-manager';
 import { BehaviorSubject, EMPTY, Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { distinctUntilChanged, map, tap } from 'rxjs/operators';
@@ -12,7 +12,7 @@ export class LocalStorageState extends ExtendableStateManager<LocalStorageStateE
   protected activeUpdaters: number = 0;
   protected state: LocalStorageStateEntity = {};
   protected readonly _state$: BehaviorSubject<LocalStorageStateEntity> = new BehaviorSubject<LocalStorageStateEntity>(this.state);
-  protected readonly _isUpdating$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  protected readonly _isUpdating$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(!!this.activeUpdaters);
 
   constructor() {
     super();

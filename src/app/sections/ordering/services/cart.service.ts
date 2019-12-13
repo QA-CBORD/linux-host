@@ -52,10 +52,10 @@ export class CartService {
           const dueTime = date.toLocaleString(locale, { hour12: false, timeZone })
 
           this.cart.orderDetailsOptions = { ...this.cart.orderDetailsOptions, dueTime: new Date(dueTime) };
-          return { ...orderDetailsOptions, dueTime: new Date(dueTime) };
+          this.onStateChanged();
+          return this.cart.orderDetailsOptions;
         };
         return orderDetailsOptions;
-
       }),
       distinctUntilChanged()
     );

@@ -1,5 +1,5 @@
 import { HttpEvent } from '@angular/common/http';
-import { StateManager } from '@core/utils/classes/state-manager';
+import { StateManager } from '@core/classes/state-manager';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
