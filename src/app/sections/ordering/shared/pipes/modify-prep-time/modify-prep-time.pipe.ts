@@ -6,14 +6,14 @@ import { DatePipe } from '@angular/common';
   name: 'modifyPrepTime',
 })
 export class ModifyPrepTimePipe implements PipeTransform {
-  constructor(private readonly datePipe: DatePipe) {}
+  constructor(private readonly datePipe: DatePipe) { }
   transform(value: any, args?: any): any {
     const minute = 60000;
     const time = new Date(value.dueTime);
     const timeInMiliseconds = time.getTime();
     let finalTime = timeInMiliseconds;
 
-    if (args !== null) {
+    if (args) {
       if (value.isASAP) {
         switch (value.orderType) {
           case ORDER_TYPE.PICKUP:
@@ -24,7 +24,6 @@ export class ModifyPrepTimePipe implements PipeTransform {
             break;
         }
       }
-
       return this.datePipe.transform(new Date(finalTime), 'EE, MMM d, h:mm a');
     }
     return '';
