@@ -4,10 +4,12 @@ import { Observable, Subscription } from 'rxjs';
 import { MenuInfo, MerchantInfo, MerchantOrderTypesInfo } from '@sections/ordering/shared/models';
 import { Router } from '@angular/router';
 import { NAVIGATE } from 'src/app/app.global';
-import { LOCAL_ROUTING, ORDER_TYPE } from '@sections/ordering/ordering.config';
+import { LOCAL_ROUTING, ORDER_TYPE, ORDER_VALIDATION_ERRORS } from '@sections/ordering/ordering.config';
 import { first, map, take, tap } from 'rxjs/operators';
-import { ModalController } from '@ionic/angular';
+import { ModalController, ToastController } from '@ionic/angular';
 import { OrderOptionsActionSheetComponent } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
+import { LoadingService } from '@core/service/loading/loading.service';
+import { handleServerError } from '@core/utils/general-helpers';
 
 @Component({
   selector: 'st-full-menu',
@@ -30,6 +32,8 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     private readonly modalController: ModalController,
     private readonly cdRef: ChangeDetectorRef,
     private readonly merchantService: MerchantService,
+    private readonly loadingService: LoadingService,
+    private readonly toastController: ToastController
   ) {
   }
 
@@ -107,4 +111,30 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     await modal.present();
   }
 
+  async redirectToCart() {
+    // this.loadingService.showSpinner();
+    // await this.cartService
+    //   .validateOrder()
+    //   .pipe(
+    //     first(),
+    //     handleServerError(ORDER_VALIDATION_ERRORS)
+    //   )
+    //   .toPromise()
+    //   .then(() => this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.cart], { skipLocationChange: true }))
+    //   .catch(error => {
+    //     // this.cartService.removeLastOrderItem();
+    //     this.failedValidateOrder(error)
+    //   })
+    //   .finally(() => this.loadingService.closeSpinner());
+    // this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.cart], { skipLocationChange: true });
+  }
+
+  private async failedValidateOrder(message: string) {
+    const toast = await this.toastController.create({
+      message,
+      duration: 3000,
+      position: 'top',
+    });
+    toast.present();
+  }
 }

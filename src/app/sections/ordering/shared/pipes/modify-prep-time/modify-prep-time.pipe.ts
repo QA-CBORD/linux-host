@@ -13,6 +13,8 @@ export class ModifyPrepTimePipe implements PipeTransform {
     const timeInMiliseconds = time.getTime();
     let finalTime = timeInMiliseconds;
 
+    console.log(value);
+    console.log(args)
     if (args) {
       if (value.isASAP) {
         switch (value.orderType) {
