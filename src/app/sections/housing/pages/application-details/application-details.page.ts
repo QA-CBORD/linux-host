@@ -70,7 +70,7 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
     this._subscription.unsubscribe();
   }
 
-  save(application: ApplicationDetails): void {
+  save(application: ApplicationDetails): boolean {
     const selectedStep: StepComponent = this.stepper.selected;
     const formValue: any = selectedStep.stepControl.value;
 
@@ -82,6 +82,8 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
       });
 
     this._subscription.add(saveSubscription);
+
+    return false;
   }
 
   submit(application: ApplicationDetails, form: FormGroup, isLastPage: boolean): void {

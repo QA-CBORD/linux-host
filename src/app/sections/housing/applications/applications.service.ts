@@ -147,45 +147,49 @@ export class ApplicationsService {
     parsedJson: any[],
     questionEntries: QuestionsEntries
   ): PatronAttribute[] {
-    const resultAttributes: PatronAttribute[] = patronAttributes ? [...patronAttributes] : [];
+    const resultAttributes: PatronAttribute[] = [];
     const facilityControls: QuestionFormControl[] = parsedJson.filter(
       (control: QuestionBase) => control && (control as QuestionFormControl).consumerKey
     );
+    const questions: string[] = Object.keys(questionEntries);
 
-    if (!facilityControls.length) {
-      return patronAttributes;
+    if (!facilityControls.length || !questions.length) {
+      return resultAttributes;
     }
 
-    facilityControls.forEach((control: QuestionFormControl) => {
-      const foundAttributeIndex: number = patronAttributes.findIndex(
-        (attribute: PatronAttribute) => attribute.attributeConsumerKey === control.consumerKey
-      );
-      const attributeConsumerKey: number = control.consumerKey;
-      const foundQuestion: any = questionEntries[control.name];
-      const value: string = hasValue(foundQuestion) ? foundQuestion : '';
+    return questions
+      .filter((questionName: string) =>
+        facilityControls.find((control: QuestionFormControl) => control.name === questionName)
+      )
+      .map((questionName: string) => {
+        const value: any = questionEntries[questionName];
+        const foundFacility: QuestionFormControl = facilityControls.find(
+          (control: QuestionFormControl) => control.name === questionName
+        );
+        const attributeConsumerKey: number = foundFacility.consumerKey;
+        const foundAttribute: PatronAttribute = patronAttributes.find(
+          (attribute: PatronAttribute) => attribute.attributeConsumerKey === attributeConsumerKey
+        );
 
-      if (foundAttributeIndex !== -1) {
-        const foundAttribute: PatronAttribute = patronAttributes[foundAttributeIndex];
-        const key: number = foundAttribute.key;
+        if (foundAttribute) {
+          const key: number = foundAttribute.key;
+          const patronKey: number = foundAttribute.patronKey;
+          const effectiveDate: string = foundAttribute.effectiveDate;
+          const endDate: string = foundAttribute.endDate;
 
-        const patronKey: number = foundAttribute.patronKey;
-        const effectiveDate: string = foundAttribute.effectiveDate;
-        const endDate: string = foundAttribute.endDate;
+          return new PatronAttribute({
+            attributeConsumerKey,
+            value,
+            key,
+            patronKey,
+            effectiveDate,
+            endDate,
+          });
+        }
 
-        resultAttributes[foundAttributeIndex] = new PatronAttribute({
-          attributeConsumerKey,
-          value,
-          key,
-          patronKey,
-          effectiveDate,
-          endDate,
-        });
-      } else {
-        resultAttributes.push(new PatronAttribute({ attributeConsumerKey, value }));
-      }
-    });
-
-    return resultAttributes.filter((attribute: PatronAttribute) => hasValue(attribute.value));
+        return new PatronAttribute({ attributeConsumerKey, value });
+      })
+      .filter((attribute: PatronAttribute) => hasValue(attribute.value));
   }
 
   private _getPreferences(
@@ -193,31 +197,28 @@ export class ApplicationsService {
     parsedJson: any[],
     questions: QuestionsEntries
   ): PatronPreference[] {
-    if (!patronPreferences.length) {
-      return patronPreferences;
-    }
-
-    const facilityControl: QuestionReorder = parsedJson.filter(
+    const facilityPicker: QuestionReorder = parsedJson.filter(
       (control: QuestionBase) => control && (control as QuestionReorder).facilityPicker
     )[0];
-    const foundQuestion: any = questions[facilityControl.name];
+    const facilities: QuestionReorderValue[] = facilityPicker.values.filter(
+      (facility: QuestionReorderValue) => facility.selected
+    );
+    const foundQuestion: any = questions[facilityPicker.name];
 
-    if (!foundQuestion) {
-      return patronPreferences;
-    }
+    return patronPreferences
+      .slice(0, facilityPicker.prefRank)
+      .map((preference: PatronPreference) => {
+        const rank: number = preference.rank - 1;
+        const foundFacility: QuestionReorderValue = foundQuestion ? foundQuestion[rank] : facilities[rank];
 
-    const facilities: QuestionReorderValue[] = foundQuestion.slice(0, facilityControl.prefRank);
+        if (!foundFacility) {
+          return preference;
+        }
 
-    return patronPreferences.map((preference: PatronPreference) => {
-      const foundFacility: QuestionReorderValue = facilities[preference.rank - 1];
+        const facilityKey: number = foundFacility.facilityKey;
 
-      if (!foundFacility) {
-        return preference;
-      }
-
-      const facilityKey: number = foundFacility.facilityKey;
-
-      return new PatronPreference({ ...preference, facilityKey });
-    });
+        return new PatronPreference({ ...preference, facilityKey });
+      })
+      .filter((preference: PatronPreference) => preference.facilityKey);
   }
 }

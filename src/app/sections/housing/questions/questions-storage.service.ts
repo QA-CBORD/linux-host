@@ -75,13 +75,9 @@ export class QuestionsStorageService {
     return this.getApplication(applicationKey).then((application: StoredApplication) => {
       let questions: QuestionsEntries = application && application.questions ? application.questions : {};
 
-      Object.keys(formValue).forEach((formControlName: any) => {
-        const value: any = formValue[formControlName];
-
-        if (hasValue(value)) {
-          questions[formControlName] = value;
-        }
-      });
+      Object.keys(formValue).forEach(
+        (formControlName: any) => (questions[formControlName] = formValue[formControlName])
+      );
 
       return this._storage.set(`${this._key}-${applicationKey}`, {
         ...application,

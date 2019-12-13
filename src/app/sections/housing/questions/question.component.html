@@ -83,13 +83,13 @@
 
     <ng-container *ngSwitchCase="'checkbox-group'">
       <st-facility-picker
-        class="form-section question__item"
+        class="question__section"
         [question]="question"
         [parentForm]="parentGroup"
         *ngIf="question['facilityPicker']"
       ></st-facility-picker>
 
-      <div *ngIf="!question['facilityPicker']" class="question__item">
+      <div *ngIf="!question['facilityPicker']" class="question__section">
         <h3 class="form__secondary-header">{{ question.label }}</h3>
 
         <st-control-errors
@@ -116,7 +116,7 @@
       </div>
     </ng-container>
 
-    <div *ngSwitchCase="'radio-group'" class="form-section">
+    <div *ngSwitchCase="'radio-group'" class="question__section">
       <h3 class="form__secondary-header">{{ question.label }}</h3>
 
       <st-control-errors
