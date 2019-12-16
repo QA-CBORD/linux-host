@@ -4,10 +4,12 @@ import { Observable, Subscription } from 'rxjs';
 import { MenuInfo, MerchantInfo, MerchantOrderTypesInfo } from '@sections/ordering/shared/models';
 import { Router } from '@angular/router';
 import { NAVIGATE } from 'src/app/app.global';
-import { LOCAL_ROUTING, ORDER_TYPE } from '@sections/ordering/ordering.config';
+import { LOCAL_ROUTING, ORDER_TYPE, ORDER_VALIDATION_ERRORS } from '@sections/ordering/ordering.config';
 import { first, map, take, tap } from 'rxjs/operators';
-import { ModalController } from '@ionic/angular';
+import { ModalController, ToastController } from '@ionic/angular';
 import { OrderOptionsActionSheetComponent } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
+import { LoadingService } from '@core/service/loading/loading.service';
+import { handleServerError } from '@core/utils/general-helpers';
 
 @Component({
   selector: 'st-full-menu',
@@ -16,13 +18,12 @@ import { OrderOptionsActionSheetComponent } from '@sections/ordering/shared/ui-c
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FullMenuComponent implements OnInit, OnDestroy {
-
   private readonly sourceSubscription: Subscription = new Subscription();
   menu$: Observable<MenuInfo>;
   merchantInfo$: Observable<MerchantInfo>;
   merchantInfoState: boolean = false;
   menuItems$: Observable<number>;
-  orderTypes$: Observable<MerchantOrderTypesInfo>
+  orderTypes$: Observable<MerchantOrderTypesInfo>;
 
   constructor(
     private readonly cartService: CartService,
@@ -30,20 +31,23 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     private readonly modalController: ModalController,
     private readonly cdRef: ChangeDetectorRef,
     private readonly merchantService: MerchantService,
-  ) {
-  }
+    private readonly loadingService: LoadingService,
+    private readonly toastController: ToastController
+  ) {}
 
   get orderType(): Observable<string> {
-    return this.cartService.orderDetailsOptions$.pipe(map(({ orderType }) => {
-      switch (orderType) {
-        case ORDER_TYPE.PICKUP:
-          return 'Pickup';
-        case ORDER_TYPE.DELIVERY:
-          return 'Delivery';
-        default:
-          return 'DineIn';
-      }
-    }));
+    return this.cartService.orderDetailsOptions$.pipe(
+      map(({ orderType }) => {
+        switch (orderType) {
+          case ORDER_TYPE.PICKUP:
+            return 'Pickup';
+          case ORDER_TYPE.DELIVERY:
+            return 'Delivery';
+          default:
+            return 'DineIn';
+        }
+      })
+    );
   }
 
   get orderInfo$(): Observable<OrderDetailOptions> {
@@ -53,7 +57,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   ionViewWillEnter() {
     this.menuItems$ = this.cartService.menuItems$;
     this.cdRef.detectChanges();
-    this.orderTypes$ = this.merchantService.orderTypes$
+    this.orderTypes$ = this.merchantService.orderTypes$;
   }
 
   ngOnInit() {
@@ -73,16 +77,16 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     this.merchantInfo$
       .pipe(
         tap(merchant => this.actionSheet(merchant.orderTypes, merchant.id, merchant.storeAddress, merchant.settings)),
-        take(1),
+        take(1)
       )
       .subscribe();
   }
 
   private async actionSheet(orderTypes: MerchantOrderTypesInfo, merchantId, storeAddress, settings) {
     const footerButtonName = 'set order options';
-    const cssClass = `order-options-action-sheet ${orderTypes.delivery && orderTypes.pickup
-      ? ' order-options-action-sheet-p-d'
-      : ''}`;
+    const cssClass = `order-options-action-sheet ${
+      orderTypes.delivery && orderTypes.pickup ? ' order-options-action-sheet-p-d' : ''
+    }`;
     const orderInfo = await this.orderInfo$.pipe(first()).toPromise();
     const modal = await this.modalController.create({
       component: OrderOptionsActionSheetComponent,
@@ -107,4 +111,26 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     await modal.present();
   }
 
+  async redirectToCart() {
+    this.loadingService.showSpinner();
+    await this.cartService
+      .validateOrder()
+      .pipe(
+        first(),
+        handleServerError(ORDER_VALIDATION_ERRORS)
+      )
+      .toPromise()
+      .then(() => this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.cart], { skipLocationChange: true }))
+      .catch(error => this.failedValidateOrder(error))
+      .finally(() => this.loadingService.closeSpinner());
+  }
+
+  private async failedValidateOrder(message: string) {
+    const toast = await this.toastController.create({
+      message,
+      duration: 3000,
+      position: 'top',
+    });
+    toast.present();
+  }
 }

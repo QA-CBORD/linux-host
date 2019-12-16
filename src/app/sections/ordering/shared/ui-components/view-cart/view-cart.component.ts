@@ -1,7 +1,4 @@
-import { Component, Input, OnChanges, ChangeDetectionStrategy } from '@angular/core';
-import { NAVIGATE } from 'src/app/app.global';
-import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
-import { Router } from '@angular/router';
+import { Component, Input, OnChanges, ChangeDetectionStrategy, SimpleChanges } from '@angular/core';
 
 @Component({
   selector: 'st-view-cart',
@@ -11,15 +8,12 @@ import { Router } from '@angular/router';
 })
 export class ViewCartComponent implements OnChanges {
   @Input() menuItemsCount: number = 0;
-  constructor(private readonly router: Router) {}
+  constructor() {}
 
-  ngOnChanges(changes) {
-    if (changes.menuItemsCount.currentValue !== null) {
-      this.menuItemsCount = changes.menuItemsCount.currentValue;
+  ngOnChanges(changes: SimpleChanges) {
+    const { menuItemsCount } = changes;
+    if (menuItemsCount.currentValue !== null) {
+      this.menuItemsCount = menuItemsCount.currentValue;
     }
-  }
-
-  redirectTo() {
-    this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.cart], { skipLocationChange: true });
   }
 }

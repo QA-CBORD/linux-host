@@ -76,7 +76,6 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
   }
 
   get timeWithoutTimezone() {
-    console.log(this.orderDetailOptions.dueTime);
     if(this.orderDetailOptions.dueTime instanceof Date) {
       return this.orderDetailOptions;
     }
