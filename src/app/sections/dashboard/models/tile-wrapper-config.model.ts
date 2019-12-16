@@ -1,4 +1,5 @@
 import { NAVIGATE } from '../../../app.global';
+import { LOCAL_ROUTING } from '@sections/accounts/accounts.config';
 
 export interface TileWrapperConfig {
     id: string;
@@ -10,6 +11,6 @@ export interface TileWrapperConfig {
     buttonConfig: {
         show: boolean;
         title?: string;
-        navigate?: NAVIGATE;
+        navigate?: string[] | NAVIGATE;
     }
 }

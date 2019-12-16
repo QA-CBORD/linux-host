@@ -25,16 +25,16 @@
       <div class="edit-home__reorder-header-title">Home Page</div>
     </ion-list-header>
     <ion-reorder-group (ionItemReorder)="doReorder($event)" [disabled]="false" mode="md">
-      <ion-item *ngFor="let tile of tileList" class="edit-home__reorder-item">
+      <ion-item *ngFor="let tileConfig of homeConfigList" class="edit-home__reorder-item">
         <ion-label class="edit-home__reorder-label">
-          {{ tile.name }}
+          {{ tileConfig.title }}
         </ion-label>
         <ion-toggle
-          value="{{ tile.name }}"
+          value="{{ tileConfig.title }}"
           class="edit-home__reorder-toggle"
           (ionChange)="onToggle($event)"
           mode="ios"
-          checked="{{ tile.checked }}"
+          checked="{{ tileConfig.isEnable }}"
         ></ion-toggle>
         <ion-reorder><ion-icon class="edit-home__reorder-icon" name="md-reorder"></ion-icon></ion-reorder>
       </ion-item>

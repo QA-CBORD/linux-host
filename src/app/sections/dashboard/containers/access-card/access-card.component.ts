@@ -1,10 +1,13 @@
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 import { Observable } from 'rxjs';
-import { map, startWith, tap, first } from 'rxjs/operators';
+import { map, first } from 'rxjs/operators';
 
 import { AccessCardService } from './services/access-card.service';
+import { Router } from '@angular/router';
+import { NAVIGATE } from 'src/app/app.global';
+import { DASHBOARD_NAVIGATE } from '@sections/dashboard/dashboard.config';
 
 @Component({
   selector: 'st-access-card',
@@ -15,14 +18,20 @@ export class AccessCardComponent implements OnInit {
   userName$: Observable<string>;
   userPhoto$: Promise<string>;
   institutionName$: Observable<string>;
+  institutionColor$: Observable<string>;
   institutionPhoto$: Observable<SafeResourceUrl>;
   institutionBackgroundImage$: Observable<string>;
   getMyCardEnabled$: Observable<boolean>;
+  isMobileAccessButtonEnabled: Observable<boolean>;
   applePayEnabled$: Observable<boolean>;
   isLoadingImg: boolean;
-  @Input() isMobileAccessButtonEnabled: boolean;
+  
 
-  constructor(private readonly accessCardService: AccessCardService, private readonly sanitizer: DomSanitizer) { }
+  constructor(
+    private readonly accessCardService: AccessCardService,
+    private readonly sanitizer: DomSanitizer,
+    private readonly router: Router
+  ) {}
 
   ngOnInit() {
     this.getUserData();
@@ -33,8 +42,14 @@ export class AccessCardComponent implements OnInit {
   private getUserData() {
     this.isLoadingImg = true;
     this.userName$ = this.accessCardService.getUserName();
-    this.userPhoto$ = this.accessCardService.getUserPhoto().pipe(first())
-      .toPromise().finally(() => this.isLoadingImg = !this.isLoadingImg);
+    this.institutionColor$ = this.accessCardService
+      .getInstitutionColor()
+      .pipe(map(v => '#' + JSON.parse(v)['native-header-bg']));
+    this.userPhoto$ = this.accessCardService
+      .getUserPhoto()
+      .pipe(first())
+      .toPromise()
+      .finally(() => (this.isLoadingImg = !this.isLoadingImg));
   }
 
   private setInstitutionData() {
@@ -47,6 +62,13 @@ export class AccessCardComponent implements OnInit {
 
   private getFeaturesEnabled() {
     this.getMyCardEnabled$ = this.accessCardService.isGETMyCardEnabled();
+    this.isMobileAccessButtonEnabled = this.accessCardService.isMobileAccessEnable();
     this.applePayEnabled$ = this.accessCardService.isApplePayEnabled();
+  }
+  onMobileAccessClick() {
+    this.router.navigate([NAVIGATE.mobileAccess]);
+  }
+  onScanCardClick() {
+    this.router.navigate([NAVIGATE.dashboard, DASHBOARD_NAVIGATE.scanCard]);
   }
 }
