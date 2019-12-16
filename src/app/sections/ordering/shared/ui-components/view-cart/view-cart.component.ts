@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, OnChanges, ChangeDetectionStrategy, SimpleChanges } from '@angular/core';
 
 @Component({
   selector: 'st-view-cart',
@@ -8,39 +8,12 @@ import { Component, Input, OnChanges, ChangeDetectionStrategy } from '@angular/c
 })
 export class ViewCartComponent implements OnChanges {
   @Input() menuItemsCount: number = 0;
-  constructor() { }
+  constructor() {}
 
-  ngOnChanges(changes) {
-    if (changes.menuItemsCount.currentValue !== null) {
-      console.log(changes.menuItemsCount.currentValue);
-      this.menuItemsCount = changes.menuItemsCount.currentValue;
+  ngOnChanges(changes: SimpleChanges) {
+    const { menuItemsCount } = changes;
+    if (menuItemsCount.currentValue !== null) {
+      this.menuItemsCount = menuItemsCount.currentValue;
     }
   }
-
-  // async redirectToCart() {
-  //   this.loadingService.showSpinner();
-  //   await this.cartService
-  //     .validateOrder()
-  //     .pipe(
-  //       first(),
-  //       handleServerError(ORDER_VALIDATION_ERRORS)
-  //     )
-  //     .toPromise()
-  //     .then(() => this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.cart], { skipLocationChange: true }))
-  //     .catch(error => {
-  //       // this.cartService.removeLastOrderItem();
-  //       this.failedValidateOrder(error)
-  //     })
-  //     .finally(() => this.loadingService.closeSpinner());
-  //   // this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.cart], { skipLocationChange: true });
-  // }
-
-  // private async failedValidateOrder(message: string) {
-  //   const toast = await this.toastController.create({
-  //     message,
-  //     duration: 3000,
-  //     position: 'top',
-  //   });
-  //   toast.present();
-  // }
 }

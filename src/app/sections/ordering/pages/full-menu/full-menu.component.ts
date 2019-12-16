@@ -18,13 +18,12 @@ import { handleServerError } from '@core/utils/general-helpers';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FullMenuComponent implements OnInit, OnDestroy {
-
   private readonly sourceSubscription: Subscription = new Subscription();
   menu$: Observable<MenuInfo>;
   merchantInfo$: Observable<MerchantInfo>;
   merchantInfoState: boolean = false;
   menuItems$: Observable<number>;
-  orderTypes$: Observable<MerchantOrderTypesInfo>
+  orderTypes$: Observable<MerchantOrderTypesInfo>;
 
   constructor(
     private readonly cartService: CartService,
@@ -34,20 +33,21 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     private readonly merchantService: MerchantService,
     private readonly loadingService: LoadingService,
     private readonly toastController: ToastController
-  ) {
-  }
+  ) {}
 
   get orderType(): Observable<string> {
-    return this.cartService.orderDetailsOptions$.pipe(map(({ orderType }) => {
-      switch (orderType) {
-        case ORDER_TYPE.PICKUP:
-          return 'Pickup';
-        case ORDER_TYPE.DELIVERY:
-          return 'Delivery';
-        default:
-          return 'DineIn';
-      }
-    }));
+    return this.cartService.orderDetailsOptions$.pipe(
+      map(({ orderType }) => {
+        switch (orderType) {
+          case ORDER_TYPE.PICKUP:
+            return 'Pickup';
+          case ORDER_TYPE.DELIVERY:
+            return 'Delivery';
+          default:
+            return 'DineIn';
+        }
+      })
+    );
   }
 
   get orderInfo$(): Observable<OrderDetailOptions> {
@@ -57,7 +57,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   ionViewWillEnter() {
     this.menuItems$ = this.cartService.menuItems$;
     this.cdRef.detectChanges();
-    this.orderTypes$ = this.merchantService.orderTypes$
+    this.orderTypes$ = this.merchantService.orderTypes$;
   }
 
   ngOnInit() {
@@ -77,16 +77,16 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     this.merchantInfo$
       .pipe(
         tap(merchant => this.actionSheet(merchant.orderTypes, merchant.id, merchant.storeAddress, merchant.settings)),
-        take(1),
+        take(1)
       )
       .subscribe();
   }
 
   private async actionSheet(orderTypes: MerchantOrderTypesInfo, merchantId, storeAddress, settings) {
     const footerButtonName = 'set order options';
-    const cssClass = `order-options-action-sheet ${orderTypes.delivery && orderTypes.pickup
-      ? ' order-options-action-sheet-p-d'
-      : ''}`;
+    const cssClass = `order-options-action-sheet ${
+      orderTypes.delivery && orderTypes.pickup ? ' order-options-action-sheet-p-d' : ''
+    }`;
     const orderInfo = await this.orderInfo$.pipe(first()).toPromise();
     const modal = await this.modalController.create({
       component: OrderOptionsActionSheetComponent,
@@ -112,21 +112,17 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   }
 
   async redirectToCart() {
-    // this.loadingService.showSpinner();
-    // await this.cartService
-    //   .validateOrder()
-    //   .pipe(
-    //     first(),
-    //     handleServerError(ORDER_VALIDATION_ERRORS)
-    //   )
-    //   .toPromise()
-    //   .then(() => this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.cart], { skipLocationChange: true }))
-    //   .catch(error => {
-    //     // this.cartService.removeLastOrderItem();
-    //     this.failedValidateOrder(error)
-    //   })
-    //   .finally(() => this.loadingService.closeSpinner());
-    // this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.cart], { skipLocationChange: true });
+    this.loadingService.showSpinner();
+    await this.cartService
+      .validateOrder()
+      .pipe(
+        first(),
+        handleServerError(ORDER_VALIDATION_ERRORS)
+      )
+      .toPromise()
+      .then(() => this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.cart], { skipLocationChange: true }))
+      .catch(error => this.failedValidateOrder(error))
+      .finally(() => this.loadingService.closeSpinner());
   }
 
   private async failedValidateOrder(message: string) {

@@ -10,7 +10,6 @@ import { UserService } from '@core/service/user-service/user.service';
 import { AddressInfo } from '@core/model/address/address-info';
 import { OrderingApiService } from '@sections/ordering/services/ordering.api.service';
 import { getDateTimeInGMT } from '@core/utils/date-helper';
-// import * as moment from 'moment';
 
 @Injectable()
 export class CartService {
@@ -47,14 +46,11 @@ export class CartService {
   get orderDetailsOptions$(): Observable<OrderDetailOptions> {
     return zip(this._cart$.asObservable(), this.userService.userData).pipe(
       map(([{ orderDetailsOptions }, { locale, timeZone }]) => {
-        console.log(orderDetailsOptions);
         if (orderDetailsOptions.isASAP) {
-          console.log(this.cart);
           const date = new Date();
           const dueTime = date.toLocaleString(locale, { hour12: false, timeZone })
 
           this.cart.orderDetailsOptions = { ...this.cart.orderDetailsOptions, dueTime: new Date(dueTime) };
-          // this._order = { ...this.cart.order, dueTime: this.cart.order.dueTime }
           this.onStateChanged();
           return this.cart.orderDetailsOptions;
         };
@@ -102,7 +98,6 @@ export class CartService {
     isASAP?: boolean
   ): Promise<void> {
     this.cart.orderDetailsOptions = { orderType, dueTime, address, isASAP };
-    // this._order = { ...this.cart.order, dueTime: this.cart.order.dueTime }
     await this.getMerchantMenu().then(menu => (this.cart.menu = menu));
     this.onStateChanged();
   }
