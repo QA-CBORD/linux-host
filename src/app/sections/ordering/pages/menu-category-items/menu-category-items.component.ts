@@ -1,11 +1,14 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NAVIGATE } from 'src/app/app.global';
-import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
+import { LOCAL_ROUTING, ORDER_VALIDATION_ERRORS } from '@sections/ordering/ordering.config';
 import { CartService } from '@sections/ordering/services';
 import { Observable, zip } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { take, first } from 'rxjs/operators';
 import { MenuCategoryInfo, MenuCategoryItemInfo, MenuInfo } from '@sections/ordering/shared/models';
+import { handleServerError } from '@core/utils/general-helpers';
+import { ToastController } from '@ionic/angular';
+import { LoadingService } from '@core/service/loading/loading.service';
 
 @Component({
   selector: 'st-menu-category-items',
@@ -24,7 +27,9 @@ export class MenuCategoryItemsComponent implements OnInit {
     private readonly router: Router,
     private readonly cartService: CartService,
     private readonly activatedRoute: ActivatedRoute,
-    private readonly cdRef: ChangeDetectorRef
+    private readonly cdRef: ChangeDetectorRef,
+    private readonly loadingService: LoadingService,
+    private readonly toastController: ToastController
   ) {}
 
   ionViewWillEnter() {
@@ -71,5 +76,28 @@ export class MenuCategoryItemsComponent implements OnInit {
       skipLocationChange: true,
       queryParams: { menuItemId },
     });
+  }
+
+  async redirectToCart() {
+    this.loadingService.showSpinner();
+    await this.cartService
+      .validateOrder()
+      .pipe(
+        first(),
+        handleServerError(ORDER_VALIDATION_ERRORS)
+      )
+      .toPromise()
+      .then(() => this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.cart], { skipLocationChange: true }))
+      .catch(error => this.failedValidateOrder(error))
+      .finally(() => this.loadingService.closeSpinner());
+  }
+
+  private async failedValidateOrder(message: string) {
+    const toast = await this.toastController.create({
+      message,
+      duration: 3000,
+      position: 'top',
+    });
+    toast.present();
   }
 }
