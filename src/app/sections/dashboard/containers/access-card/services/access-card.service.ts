@@ -72,6 +72,13 @@ export class AccessCardService {
     );
   }
 
+  isMobileAccessEnable(): Observable<boolean> {
+    return this.userService.userData.pipe(
+      switchMap(({ institutionId }) => this.configService.getSetting(institutionId, Settings.Setting.MOBILE_ACCESS_ENABLED)),
+      map(({ value }) => Boolean(Number(value)))
+    );
+  }
+
   isApplePayEnabled(): Observable<boolean> {
     return of(false);
   }

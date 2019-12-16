@@ -10,7 +10,6 @@ import { UserService } from '@core/service/user-service/user.service';
 import { AddressInfo } from '@core/model/address/address-info';
 import { OrderingApiService } from '@sections/ordering/services/ordering.api.service';
 import { getDateTimeInGMT } from '@core/utils/date-helper';
-// import * as moment from 'moment';
 
 @Injectable()
 export class CartService {
@@ -52,10 +51,10 @@ export class CartService {
           const dueTime = date.toLocaleString(locale, { hour12: false, timeZone })
 
           this.cart.orderDetailsOptions = { ...this.cart.orderDetailsOptions, dueTime: new Date(dueTime) };
-          return { ...orderDetailsOptions, dueTime: new Date(dueTime) };
+          this.onStateChanged();
+          return this.cart.orderDetailsOptions;
         };
         return orderDetailsOptions;
-
       }),
       distinctUntilChanged()
     );
@@ -175,6 +174,11 @@ export class CartService {
       this.cart.orderDetailsOptions = { ...this.cart.orderDetailsOptions, address };
       this.onStateChanged();
     }
+  }
+
+  removeLastOrderItem() {
+    this.cart.order.orderItems.pop();
+    this.onStateChanged();
   }
 
   async clearActiveOrder(): Promise<void> {

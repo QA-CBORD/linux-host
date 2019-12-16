@@ -1,5 +1,10 @@
 import { NAVIGATE } from 'src/app/app.global';
 import { TileWrapperConfig } from './models';
+import { LOCAL_ROUTING } from '@sections/accounts/accounts.config';
+
+export enum DASHBOARD_NAVIGATE {
+  scanCard = 'scancard',
+}
 
 export const DASHBOARD_SETTINGS_CONFIG = {
   enableScanCardButton: {
@@ -77,7 +82,7 @@ export const tilesConfig: TileWrapperConfig[] = [
     buttonConfig: {
       show: false,
       title: 'Add Funds',
-      navigate: NAVIGATE.addFounds,
+      navigate: [NAVIGATE.accounts +'/'+ LOCAL_ROUTING.addFunds],
     },
   },
   {

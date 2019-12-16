@@ -22,6 +22,8 @@ import { RewardsTileModule } from './containers/rewards-tile';
 import { DashboardPageResolver } from './resolvers/dashboard-page.resolver';
 import { EditHomePageModalComponent } from './components/edit-home-page-modal';
 import { AccountsApiService } from '@sections/accounts/services/accounts.api.service';
+import { MobileAccessService } from '@sections/mobile-access';
+
 
 const imports = [
   IonicModule, 
@@ -41,14 +43,16 @@ const imports = [
 
 const declarations = [
   DashboardPage,
-  EditHomePageModalComponent
+  EditHomePageModalComponent,
 ];
+
 const providers = [
   DashboardApiService,
   AccountsService,
   DashboardService,
+  MobileAccessService,
   DashboardPageResolver,
-  AccountsApiService
+  AccountsApiService,
 ];
 
 @NgModule({
