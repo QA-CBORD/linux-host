@@ -1,11 +1,7 @@
-<div *ngIf="!(transactions$ | async)" class="spinner-wrapper">
-    <ion-spinner></ion-spinner>
-</div>
-<div *ngIf="transactions$" class="transaction">
-  <ion-list class="transaction__list"
-            *ngFor="let transaction of (transactions$ | async)">
+<div class="transaction" [ngClass]="{'transaction--auto-height': !isLoadingData}">
+  <ion-list class="transaction__list" *ngIf="!isLoadingData">
     <ion-item class="transaction__item"
-              lines="none"
+              *ngFor="let transaction of (transactions$ | async)"
               mode="md">
       <div class="transaction__label-container">
         <div class="transaction__label">{{ transaction.locationName }}</div>
@@ -17,6 +13,21 @@
         </div>
         <div class="transaction__type-label">{{ transaction.accountName }}</div>
       </div>
+    </ion-item>
+  </ion-list>
+
+  <ion-list *ngIf="!(transactions$ | async)">
+    <ion-item *ngFor="let i of skeletonArray">
+      <ion-label>
+        <p class="transaction__skeleton-string">
+          <ion-skeleton-text animated class="transaction__skeleton-name"></ion-skeleton-text>
+          <ion-skeleton-text animated class="transaction__skeleton-amount"></ion-skeleton-text>
+        </p>
+        <p class="transaction__skeleton-string">
+          <ion-skeleton-text animated class="transaction__skeleton-date"></ion-skeleton-text>
+          <ion-skeleton-text animated class="transaction__skeleton-account"></ion-skeleton-text>
+        </p>
+      </ion-label>
     </ion-item>
   </ion-list>
 </div>

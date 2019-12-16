@@ -96,7 +96,7 @@ export const tilesConfig: TileWrapperConfig[] = [
     id: DASHBOARD_SETTINGS_CONFIG.enableRewards.name,
     title: 'Rewards',
     iconPath: '/assets/icon/trophy.svg',
-    isEnable: false,
+    isEnable: true,
     navigate: NAVIGATE.rewards,
     buttonConfig: {
       show: false,
@@ -106,7 +106,7 @@ export const tilesConfig: TileWrapperConfig[] = [
     id: DASHBOARD_SETTINGS_CONFIG.enableMobileAccess.name,
     title: 'Mobile Access',
     iconPath: '/assets/icon/mobile-access-tile.svg',
-    isEnable: false,
+    isEnable: true,
     navigate: NAVIGATE.mobileAccess,
     buttonConfig: {
       show: true,
@@ -118,7 +118,7 @@ export const tilesConfig: TileWrapperConfig[] = [
     id: DASHBOARD_SETTINGS_CONFIG.enableOrder.name,
     title: 'Order',
     iconPath: '/assets/icon/order.svg',
-    isEnable: false,
+    isEnable: true,
     navigate: NAVIGATE.ordering,
     buttonConfig: {
       show: true,
@@ -130,7 +130,7 @@ export const tilesConfig: TileWrapperConfig[] = [
     id: DASHBOARD_SETTINGS_CONFIG.enableExplore.name,
     title: 'Explore',
     iconPath: '/assets/icon/map.svg',
-    isEnable: false,
+    isEnable: true,
     navigate: NAVIGATE.accounts,
     buttonConfig: {
       show: true,
@@ -142,7 +142,7 @@ export const tilesConfig: TileWrapperConfig[] = [
     id: DASHBOARD_SETTINGS_CONFIG.enableConversation.name,
     title: 'Conversations',
     iconPath: '/assets/icon/chat.svg',
-    isEnable: false,
+    isEnable: true,
     navigate: NAVIGATE.secureMessage,
     buttonConfig: {
       show: true,

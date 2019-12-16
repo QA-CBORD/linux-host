@@ -4,79 +4,57 @@ import { ModalController } from '@ionic/angular';
 import { EditHomePageModalComponent } from './components/edit-home-page-modal';
 import { TileWrapperConfig } from '@sections/dashboard/models';
 import { AccountsService, DashboardService } from './services';
-import { switchMap, take, tap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import {
-  ACCOUNTS_SETTINGS_CONFIG,
-  DASHBOARD_SETTINGS_CONFIG,
+  ACCOUNTS_SETTINGS_CONFIG, DASHBOARD_SETTINGS_CONFIG,
   TILES_ID,
   TILES_TITLE,
   tilesConfig,
 } from './dashboard.config';
-import { Observable } from 'rxjs';
-import { SettingInfo } from '@core/model/configuration/setting-info.model';
+import { Observable, of } from 'rxjs';
+import { parseArrayFromString } from '@core/utils/general-helpers';
 
 @Component({
   selector: 'st-dashboard',
   templateUrl: './dashboard.page.html',
   styleUrls: ['./dashboard.page.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardPage implements OnInit {
-  tiles: TileWrapperConfig[];
-  isMobileAccessButtonEnabled: boolean;
-
+  tiles$: Observable<TileWrapperConfig[]>;
+  isMobileAccessButtonEnabled$: Observable<boolean>;
 
   constructor(
     private readonly modalController: ModalController,
     private readonly dashboardService: DashboardService,
-    private readonly accountsService: AccountsService
-  ) { }
+    private readonly accountsService: AccountsService,
+  ) {
+  }
 
   get tilesTitle() {
     return TILES_TITLE;
   }
 
   ngOnInit() {
-    this.dashboardService.retrieveSettingsList()
-      .pipe(
-        tap(d => console.log(d)),
-        tap(settings => this.updateTilesConfig(settings)),
-        switchMap(() => this.isAddFundsButtonEnabled()),
-        take(1)
+    this.tiles$ = this.dashboardService.retrieveSettingsList().pipe(
+      map(settings => this.getUpdatedTilesConfig(settings)),
+      switchMap((settings) => this.isAddFundsButtonEnabled(settings)),
+    );
+    this.isMobileAccessButtonEnabled$ = this.tiles$.pipe(
+      map(settings =>
+        settings.find((s) => (s.id === DASHBOARD_SETTINGS_CONFIG.enableMobileAccess.name))!.isEnable
       )
-      .subscribe()
+    );
   }
 
-  private updateTilesConfig(settings) {
-    tilesConfig.forEach((e) => {
-      switch (e.id) {
-        case DASHBOARD_SETTINGS_CONFIG.enableRewards.name:
-          e.isEnable = this.getBoolValue(settings.map[`get~feature~${DASHBOARD_SETTINGS_CONFIG.enableRewards.name}`].value);
-          break;
-
-        case DASHBOARD_SETTINGS_CONFIG.enableMobileAccess.name:
-          const isMobileAccessEnabled = this.getBoolValue(settings.map[`get~feature~${DASHBOARD_SETTINGS_CONFIG.enableMobileAccess.name}`].value);
-          this.isMobileAccessButtonEnabled = isMobileAccessEnabled;
-          e.isEnable = isMobileAccessEnabled;
-          break;
-
-        case DASHBOARD_SETTINGS_CONFIG.enableOrder.name:
-          e.isEnable = this.getBoolValue(settings.map[`get~feature~${DASHBOARD_SETTINGS_CONFIG.enableOrder.name}`].value);
-          break;
-
-        case DASHBOARD_SETTINGS_CONFIG.enableExplore.name:
-          e.isEnable = this.getBoolValue(settings.map[`get~feature~${DASHBOARD_SETTINGS_CONFIG.enableExplore.name}`].value);
-          break;
-
-        case DASHBOARD_SETTINGS_CONFIG.enableConversation.name:
-          e.isEnable = this.getBoolValue(settings.map[`get~feature~${DASHBOARD_SETTINGS_CONFIG.enableConversation.name}`].value);
-          break;
-      }
+  private getUpdatedTilesConfig(settings) {
+    return tilesConfig.map((setting) => {
+      let s = settings.list.find((s) => s.name === setting.id);
+      return s ? { ...setting, isEnable: DashboardPage.getBoolValue(s.value) } : setting;
     });
-    this.tiles = tilesConfig;
   }
 
-  private isAddFundsButtonEnabled(): Observable<SettingInfo[]> {
+  private isAddFundsButtonEnabled(settings: TileWrapperConfig[]): Observable<TileWrapperConfig[]> {
     const requireSettings = [
       ACCOUNTS_SETTINGS_CONFIG.paymentTypes,
       ACCOUNTS_SETTINGS_CONFIG.enableOnetimeDeposits,
@@ -84,27 +62,24 @@ export class DashboardPage implements OnInit {
 
     return this.accountsService.getUserSettings(requireSettings)
       .pipe(
-        tap(([paymentTypes, onetimeDeposits]) => {
-          if (JSON.parse(paymentTypes.value).length && this.getBoolValue(onetimeDeposits.value)) {
-            this.tiles = this.tiles.map((elem) => {
-              if (elem.id === TILES_ID.accounts) {
-                elem.buttonConfig.show = true;
-              }
-              return elem
-            })
-          }
-        })
-      )
+        switchMap(([paymentTypes, onetimeDeposits]) =>
+          parseArrayFromString(paymentTypes.value).length && DashboardPage.getBoolValue(onetimeDeposits.value)
+            ? of(settings.map((elem) =>
+              (elem.id === TILES_ID.accounts) ? { ...elem, buttonConfig: { ...elem.buttonConfig, show: true } } : elem,
+            ))
+            : of(settings),
+        ),
+      );
   }
 
-  async presentEditHomePageModal() {
+  async presentEditHomePageModal(): Promise<void> {
     const modal = await this.modalController.create({
       component: EditHomePageModalComponent,
     });
     return await modal.present();
   }
 
-  private getBoolValue(value) {
-    return !!parseInt(value);
+  private static getBoolValue(value): boolean {
+    return !!Number(value);
   }
 }

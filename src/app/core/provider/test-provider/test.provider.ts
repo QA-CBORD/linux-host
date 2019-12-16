@@ -18,7 +18,7 @@ export class TestProvider {
    *  Environment Institutions
    */
   getTestUser(): Observable<string> {
-    let creds = testCredentials.odysseyPreview;
+    let creds = testCredentials.gold7;
     return this.authService
       .authenticateUser(creds)
       .pipe(tap(newSessionId => DataCache.setSessionId(newSessionId)));

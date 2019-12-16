@@ -1,7 +1,7 @@
 <ion-content class="dashboard">
-  <st-access-card [isMobileAccessButtonEnabled]="isMobileAccessButtonEnabled"></st-access-card>
+  <st-access-card [isMobileAccessButtonEnabled]="isMobileAccessButtonEnabled$ | async"></st-access-card>
 
-  <ng-container *ngFor="let tile of tiles">
+  <ng-container *ngFor="let tile of tiles$ | async">
     <st-tile-wrapper *ngIf="tile.isEnable"
                      [wrapperConfig]="tile">
       <ng-container [ngSwitch]="tile.title">

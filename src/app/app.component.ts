@@ -17,6 +17,8 @@ import { BUTTON_TYPE, buttons } from '@core/utils/buttons.config';
 import { StGlobalPopoverComponent } from '@shared/ui-components';
 import { environment } from 'src/environments/environment';
 import { UserInfo } from '@core/model/user';
+import { LocalStorageService } from '@core/global-states/local-storage.service';
+import { SessionStorageService } from '@core/global-states/session-storage.service';
 
 @Component({
   selector: 'app-root',

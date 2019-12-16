@@ -1,12 +1,23 @@
-<div *ngIf="showSpiner" class="spinner-wrapper">
-    <ion-spinner></ion-spinner>
-</div>
-<div *ngIf="!showSpiner" class="access">
-  <ion-list class="access__list" *ngFor="let access of accessList">
-    <ion-item class="access__item" mode="ios" lines="none">
-      <img *ngIf="!access.isFavourite" class="access__item-icon" src="/assets/icon/star-outline.svg"/>
-      <img *ngIf="access.isFavourite" class="access__item-icon" src="/assets/icon/star-filled.svg"/>
+<div class="access" [ngClass]="{'access--auto-height': !isLoadingData}">
+
+  <ion-list class="skeleton" *ngIf="isLoadingData">
+    <ion-item *ngFor="let i of skeletonArray">
+      <ion-skeleton-text animated style="width: 27px; height: 27px" slot="start"></ion-skeleton-text>
+      <ion-label>
+        <ion-skeleton-text animated style="width: 80%"></ion-skeleton-text>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <ion-list class="access__list" [ngClass]="{'access----auto-height': !isLoadingData}">
+    <ion-item class="access__item" mode="ios" lines="none" *ngFor="let access of accessList$ | async">
+      <img
+              class="access__item-icon"
+              [src]="!access.isFavourite ? '/assets/icon/star-outline.svg' : '/assets/icon/star-filled.svg'"
+              alt="favourite icon"
+      />
       <div class="access__item-lable"> {{ access.locationId }} - {{ access.name}}</div>
     </ion-item>
   </ion-list>
+
 </div>

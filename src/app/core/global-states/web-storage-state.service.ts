@@ -1,25 +1,20 @@
 import { ExtendableStateManager } from '@core/classes/extendable-state-manager';
 import { BehaviorSubject, EMPTY, Observable } from 'rxjs';
-import { Injectable } from '@angular/core';
-import { distinctUntilChanged, map, tap } from 'rxjs/operators';
+import { distinctUntilChanged, map } from 'rxjs/operators';
 
-@Injectable({
-  providedIn: 'root',
-})
-export class LocalStorageState extends ExtendableStateManager<LocalStorageStateEntity> {
-  private localStorage: Storage = window.localStorage;
-  private lsKey: string = 'cbordIdentifier';
+export class WebStorageState extends ExtendableStateManager<WebStorageStateEntity> {
   protected activeUpdaters: number = 0;
-  protected state: LocalStorageStateEntity = {};
-  protected readonly _state$: BehaviorSubject<LocalStorageStateEntity> = new BehaviorSubject<LocalStorageStateEntity>(this.state);
+  protected state: WebStorageStateEntity = {};
+  protected readonly _state$: BehaviorSubject<WebStorageStateEntity> = new BehaviorSubject<WebStorageStateEntity>(this.state);
   protected readonly _isUpdating$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(!!this.activeUpdaters);
 
-  constructor() {
+  constructor(protected storage: Storage,
+              private readonly storageKey: string = 'cbord') {
     super();
     this.initState();
   }
 
-  get state$(): Observable<LocalStorageStateEntity> {
+  get state$(): Observable<WebStorageStateEntity> {
     return this._state$.asObservable().pipe(distinctUntilChanged());
   }
 
@@ -79,23 +74,23 @@ export class LocalStorageState extends ExtendableStateManager<LocalStorageStateE
     this.setStateToLocalStorage();
   }
 
-  private setStateFromLocalStorage() {
+  protected setStateFromLocalStorage() {
     this.state = this.getStateFromLocalStorage();
   }
 
-  private initState(): void {
+  protected initState(): void {
     this.setStateFromLocalStorage();
     this.setStateToLocalStorage();
   }
 
-  private setStateToLocalStorage(): void {
-    this.localStorage.setItem(this.lsKey, JSON.stringify(this.state));
+  protected setStateToLocalStorage(): void {
+    this.storage.setItem(this.storageKey, JSON.stringify(this.state));
     this.dispatchStateChanges();
   }
 
-  private getStateFromLocalStorage(): LocalStorageStateEntity {
+  protected getStateFromLocalStorage(): WebStorageStateEntity {
     try {
-      const state = JSON.parse(this.localStorage.getItem(this.lsKey));
+      const state = JSON.parse(this.storage.getItem(this.storageKey));
       if (typeof state === 'object' && state !== null && state.__proto__ === Object.prototype) {
         return state;
       }
@@ -115,6 +110,6 @@ export class LocalStorageState extends ExtendableStateManager<LocalStorageStateE
   }
 }
 
-export interface LocalStorageStateEntity {
+export interface WebStorageStateEntity {
   [key: string]: any;
 }
