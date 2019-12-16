@@ -23,6 +23,7 @@
   }
 
   &__sender-info {
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -33,8 +34,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 45px;
-    height: 45px;
+    min-width: 45px;
+    min-height: 45px;
   }
 
   &__sender-avatar-text {
@@ -70,15 +71,15 @@
   }
 
   &__sender-recent-message {
-    width: 240px;
-    color: #00000099;
+    width: 100%;
+    color: rgba($color-black, 0.6);
 
     @include ellipsis;
     @include font-nunito-regular(12px);
   }
 
   &__sender-recent-time {
-    color: #00000099;
+    color: rgba($color-black, 0.6);
 
     @include font-nunito-regular(12px);
   }

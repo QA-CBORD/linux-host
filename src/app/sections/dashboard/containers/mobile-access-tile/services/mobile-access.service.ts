@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
-import { catchError, map, retry, switchMap } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
 
 import { BaseService, ServiceParameters } from 'src/app/core/service/base-service/base.service';
 import { GeoCoordinates } from 'src/app/core/model/geolocation/geocoordinates.model';
@@ -38,13 +38,13 @@ export class MobileAccessService extends BaseService {
     this.locations$.next([...this.locationsInfo]);
   }
 
-  
+
   getLocations(): Observable<MMobileLocationInfo[]> {
     return combineLatest(this.getMobileLocations(), this.getFavouritesLocations()).pipe(
       map(
         ([locations, favourites]: [MMobileLocationInfo[], string[]]) =>
           (this._locations = this.getLocationsMultiSorted(locations, favourites))
-      )
+      ),
     );
   }
 
@@ -85,7 +85,7 @@ export class MobileAccessService extends BaseService {
       catchError(() => {
         this.favourites = [];
         return of([]);
-      })
+      }),
     );
   }
 

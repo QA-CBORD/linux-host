@@ -1,7 +1,7 @@
-<div class="card">
+<div class="card" [ngStyle]="{'background-color': (institutionColor$ | async)}">
   <ion-grid class="ion-no-padding">
     <ion-row class="card__header">
-      <ion-col class="card__header-logo-wrapper">
+      <ion-col class="card__header-logo-wrapper" size="2">
         <img
           *ngIf="(institutionPhoto$ | async)"
           class="card__header-logo"
@@ -12,9 +12,9 @@
       <ion-col class="card__header-title-wrapper" size="9">
         <div *ngIf="(institutionName$ | async)" class="card__header-title left">{{ institutionName$ | async }}</div>
       </ion-col>
-      <ion-col class="card__header-dots-btn-wrapper">
+      <!-- <ion-col class="card__header-dots-btn-wrapper">
         <ion-button class="card__header-dots-btn" mode="ios"><img src="/assets/icon/more-vertical.svg" /> </ion-button>
-      </ion-col>
+      </ion-col> -->
     </ion-row>
     <ion-row class="card__campus-container">
       <ion-col class="card__campus-wrapper">
@@ -50,7 +50,7 @@
     </ion-row>
     <ion-row class="card__quick-actions-container">
       <ion-col class="card__quick-actions-wrapper" *ngIf="(getMyCardEnabled$ | async)">
-        <ion-button mode="ios" class="card__quick-actions-btn">
+        <ion-button mode="ios" class="card__quick-actions-btn" (click)="onScanCardClick()">
           <div class="card__quick-actions-btn-wrapper">
             <img class="card__icon" src="/assets/icon/barcode.svg" alt="barcode" />
             <div class="card__icon-title">Scan Card</div>
@@ -58,7 +58,7 @@
         </ion-button>
       </ion-col>
       <ion-col class="card__quick-actions-wrapper" *ngIf="isMobileAccessButtonEnabled">
-        <ion-button mode="ios" class="card__quick-actions-btn">
+        <ion-button mode="ios" class="card__quick-actions-btn" (click)="onMobileAccessClick()">
           <div class="card__quick-actions-btn-wrapper">
             <img class="card__icon" src="/assets/icon/mobile-access.svg" alt="mobile access" />
             <div class="card__icon-title">Mobile Access</div>

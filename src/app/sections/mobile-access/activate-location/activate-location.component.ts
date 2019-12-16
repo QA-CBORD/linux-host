@@ -1,9 +1,8 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Location } from '@angular/common';
 import { NavController, PopoverController, ToastController } from '@ionic/angular';
 
-import { map, take } from 'rxjs/operators';
+import { map, take, switchMap } from 'rxjs/operators';
 import { Observable, Subscription } from 'rxjs';
 
 import { UserService } from '../../../core/service/user-service/user.service';
@@ -17,6 +16,8 @@ import { LoadingService } from '../../../core/service/loading/loading.service';
 import { CONTENT_STRINGS } from '../mobile-acces.config';
 import { BUTTON_TYPE } from '../../../core/utils/buttons.config';
 import { NAVIGATE } from '../../../app.global';
+import { InstitutionPhotoInfo } from '@core/model/institution';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'st-activate-location',
@@ -28,9 +29,12 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
   private readonly toastDuration: number = 6000;
   private readonly sourceSubscription: Subscription = new Subscription();
   private locationId: string;
+
   userInfo$: Observable<UserInfo>;
   location$: Observable<MMobileLocationInfo>;
   institution$: Observable<Institution>;
+  institutionPhoto$: Observable<SafeResourceUrl>;
+  userPhoto$: Observable<string>;
   contentString;
   photo: string = null;
 
@@ -41,16 +45,16 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
     private readonly popoverCtrl: PopoverController,
     private readonly toastController: ToastController,
     private readonly router: Router,
-    private readonly location: Location,
     private readonly nav2: NavController,
     private readonly institutionService: InstitutionService,
-    private readonly cdRef: ChangeDetectorRef,
-    private readonly loading: LoadingService
-  ) {}
+    private readonly loading: LoadingService,
+    private readonly sanitizer: DomSanitizer,
+  ) {
+  }
 
   get userFullName$(): Observable<string> {
     return this.userInfo$.pipe(
-      map(({ firstName: fn, middleName: mn, lastName: ln }: UserInfo) => `${fn || ''} ${mn || ''} ${ln || ''}`)
+      map(({ firstName: fn = '', middleName: mn = '', lastName: ln = '' }: UserInfo) => `${fn} ${mn} ${ln}`),
     );
   }
 
@@ -71,16 +75,16 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
     this.location$ = this.mobileAccessService.getLocationById(this.locationId);
     this.setUserPhoto();
     this.setInstitution();
+    this.setInstitutionPhoto();
   }
 
   async activateLocation() {
     await this.loading.showSpinner(this.contentString.activateLocationLoader);
-
     const subscription = this.mobileAccessService.activateMobileLocation(this.locationId).subscribe(
       res => this.loading.closeSpinner().then(() => this.modalHandler(res)),
       () => {
         this.loading.closeSpinner().then(() => this.presentToast(this.contentString.errorResponseActivateLocation));
-      }
+      },
     );
 
     this.sourceSubscription.add(subscription);
@@ -126,26 +130,26 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
 
   private setInstitution() {
     this.institution$ = this.institutionService.institutionData;
-    this.cdRef.detectChanges();
   }
-  //TODO: add this function to ngOnInit after back-end will be ready
-  // private setInstitutionPhoto() {
-  //   this.institutionPhoto$ = this.userInfo$.pipe(
-  //     switchMap(({ institutionId }: UserInfo) => this.institutionService.getInstitutionPhotoById(institutionId)),
-  //     map(({ data, mimeType }: InstitutionPhotoInfo) => {
-  //       return `data:${mimeType};base64,${data}`;
-  //     })
-  //   );
-  // }
+
+  private setInstitutionPhoto() {
+    this.institutionPhoto$ = this.userInfo$.pipe(
+      switchMap(({ institutionId }: UserInfo) => this.institutionService.getInstitutionPhotoById(institutionId)),
+      map(({ data, mimeType }: InstitutionPhotoInfo) => {
+        return `data:${mimeType};base64,${data}`;
+      }),
+      map(response => this.sanitizer.bypassSecurityTrustResourceUrl(response)),
+    );
+  }
 
   private setContentStrings() {
     const activate = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.activateBtn);
     const header = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.headerTitle);
     const activateLocationLoader = this.mobileAccessService.getContentValueByName(
-      CONTENT_STRINGS.activateLocationLoader
+      CONTENT_STRINGS.activateLocationLoader,
     );
     const errorResponseActivateLocation = this.mobileAccessService.getContentValueByName(
-      CONTENT_STRINGS.errorResponseActivateLocation
+      CONTENT_STRINGS.errorResponseActivateLocation,
     );
     const headerTitleActivate = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.headerTitleActivate);
     const backBtnHeader = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.backBtnHeader);
@@ -161,15 +165,11 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
   }
 
   private setUserPhoto() {
-    this.userService
+    this.userPhoto$ = this.userService
       .getAcceptedPhoto()
       .pipe(
         map(({ data, mimeType }) => `data:${mimeType};base64,${data}`),
-        take(1)
-      )
-      .subscribe((url: string) => {
-        this.photo = url;
-        this.cdRef.detectChanges();
-      });
+        take(1),
+      );
   }
 }

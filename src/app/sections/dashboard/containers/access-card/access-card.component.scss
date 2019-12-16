@@ -3,7 +3,7 @@
 .card {
   margin: 5px;
   border-radius: 15px;
-  background: linear-gradient(to bottom right, #166dff, #0043b3);
+  background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.2));
   height: 280px;
 
   &__header {
@@ -77,8 +77,9 @@
   &__campus-student-avatar {
     width: 100%;
     height: 100%;
-    border-radius: 50%;
     object-fit: cover;
+    border-radius: 50%;
+    border: 1px solid $color-white;
   }
 
   &__student-container {

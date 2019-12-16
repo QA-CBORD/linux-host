@@ -1,0 +1,14 @@
+<st-header [title]="'Scan Card'" [backButtonTitle]="'Back'" [isToolbarShow]="true" [isTitleShow]="true"></st-header>
+<ion-content class="ion-padding">
+  <st-activate-location-item
+    [institutionName]="(institution$ | async).name"
+    [userFullName]="(userFullName$ | async)"
+    [userInfoId]="(userInfo$ | async).id"
+    [institutionPhoto]="institutionPhoto$ | async"
+    [userPhoto]="userPhoto"
+  >
+    <div class="scan-card__barcode-wrapper">
+      <canvas class="scan-card__barcode" id="barcodeCanvas"></canvas>
+    </div>
+  </st-activate-location-item>
+</ion-content>
