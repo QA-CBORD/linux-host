@@ -17,6 +17,11 @@ export const DASHBOARD_SETTINGS_CONFIG = {
     category: 'feature',
     name: 'enable_open_my_door',
   },
+  enableMealDonations: {
+    domain: 'get',
+    category: 'feature',
+    name: 'meal_donations_enabled',
+  },
   enableOrder: {
     domain: 'get',
     category: 'feature',
@@ -52,6 +57,7 @@ export enum TILES_ID {
   transactions = 'transactions',
   rewards = 'rewards',
   mobileAccess = 'mobileAccess',
+  mealDonations = 'mealDonations',
   order = 'order',
   explore = 'explore',
   conversations = 'conversations'
@@ -62,6 +68,7 @@ export enum TILES_TITLE {
   transactions = 'Transactions',
   rewards = 'Rewards',
   mobileAccess = 'Mobile Access',
+  mealDonations = 'Meal Donations',
   order = 'Order',
   explore = 'Explore',
   conversations = 'Conversations'
@@ -112,6 +119,18 @@ export const tilesConfig: TileWrapperConfig[] = [
       show: true,
       title: 'All Locations',
       navigate: NAVIGATE.mobileAccess,
+    },
+  },
+  {
+    id: DASHBOARD_SETTINGS_CONFIG.enableMealDonations.name,
+    title: 'Meal Donations',
+    iconPath: '/assets/icon/meal-filled.svg',
+    isEnable: false,
+    navigate: NAVIGATE.mealDonations,
+    buttonConfig: {
+      show: true,
+      title: 'Donate a Meal',
+      navigate: NAVIGATE.mealDonations,
     },
   },
   {

@@ -22,6 +22,7 @@ import { RewardsTileModule } from './containers/rewards-tile';
 import { DashboardPageResolver } from './resolvers/dashboard-page.resolver';
 import { EditHomePageModalComponent } from './components/edit-home-page-modal';
 import { AccountsApiService } from '@sections/accounts/services/accounts.api.service';
+import { MealDonationsTileModule } from './containers/meal-donations-tile/meal-donations-tile.module';
 
 const imports = [
   IonicModule, 
@@ -36,7 +37,8 @@ const imports = [
   OrderTileModule,
   TileWrapperModule,
   TransactionsTileModule,
-  RewardsTileModule
+  RewardsTileModule,
+  MealDonationsTileModule
 ];
 
 const declarations = [
