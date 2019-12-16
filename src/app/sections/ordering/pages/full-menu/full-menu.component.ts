@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CartService, OrderDetailOptions, MerchantService } from '@sections/ordering';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subscription, zip } from 'rxjs';
 import { MenuInfo, MerchantInfo, MerchantOrderTypesInfo } from '@sections/ordering/shared/models';
 import { Router } from '@angular/router';
 import { NAVIGATE } from 'src/app/app.global';
@@ -23,7 +23,8 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   merchantInfo$: Observable<MerchantInfo>;
   merchantInfoState: boolean = false;
   menuItems$: Observable<number>;
-  orderTypes$: Observable<MerchantOrderTypesInfo>;
+  orderTypes: MerchantOrderTypesInfo;
+  orderInfo: OrderDetailOptions;
 
   constructor(
     private readonly cartService: CartService,
@@ -36,7 +37,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   ) {}
 
   get orderType(): Observable<string> {
-    return this.cartService.orderDetailsOptions$.pipe(
+    return this.orderInfo$.pipe(
       map(({ orderType }) => {
         switch (orderType) {
           case ORDER_TYPE.PICKUP:
@@ -56,8 +57,13 @@ export class FullMenuComponent implements OnInit, OnDestroy {
 
   ionViewWillEnter() {
     this.menuItems$ = this.cartService.menuItems$;
-    this.cdRef.detectChanges();
-    this.orderTypes$ = this.merchantService.orderTypes$;
+    zip(this.merchantService.orderTypes$, this.cartService.orderDetailsOptions$)
+      .pipe(first())
+      .subscribe(([orderTypes, orderInfo]) => {
+        this.orderTypes = orderTypes;
+        this.orderInfo = orderInfo;
+        this.cdRef.detectChanges();
+      });
   }
 
   ngOnInit() {
