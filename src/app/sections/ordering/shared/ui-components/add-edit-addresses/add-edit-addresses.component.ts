@@ -38,6 +38,7 @@ export class AddEditAddressesComponent implements OnInit, OnChanges, OnDestroy {
   @Input() buildingsOnCampus;
   @Input() editAddress: any;
   @Input() isError: boolean;
+  @Input() defaultAddress: string;
   @Output() onFormChanged: EventEmitter<any> = new EventEmitter<any>();
   constructor(
     private readonly fb: FormBuilder,
@@ -206,7 +207,7 @@ export class AddEditAddressesComponent implements OnInit, OnChanges, OnDestroy {
       [this.controlsNames.nickname]: [
         selectedAddress && selectedAddress.nickname !== null ? selectedAddress.nickname : '',
       ],
-      [this.controlsNames.default]: [false],
+      [this.controlsNames.default]: [this.defaultAddress && selectedAddress.id === this.defaultAddress],
     };
   }
 
@@ -233,6 +234,7 @@ export class AddEditAddressesComponent implements OnInit, OnChanges, OnDestroy {
         selectedAddress && selectedAddress.room !== null ? selectedAddress.room : '',
         roomErrors,
       ],
+      [this.controlsNames.default]: [this.defaultAddress && selectedAddress.id === this.defaultAddress],
     };
   }
 
