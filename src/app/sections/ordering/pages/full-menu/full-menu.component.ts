@@ -52,18 +52,17 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   }
 
   get orderInfo$(): Observable<OrderDetailOptions> {
-    return this.cartService.orderDetailsOptions$;
+    return this.cartService.orderDetailsOptions$.pipe(tap(s => console.log(s)));
+  }
+
+  get orderDetails$() {
+    return zip(this.merchantService.orderTypes$, this.cartService.orderDetailsOptions$).pipe(
+      map(([orderTypes, orderInfo]) => ({ orderTypes, orderInfo }))
+    );
   }
 
   ionViewWillEnter() {
     this.menuItems$ = this.cartService.menuItems$;
-    zip(this.merchantService.orderTypes$, this.cartService.orderDetailsOptions$)
-      .pipe(first())
-      .subscribe(([orderTypes, orderInfo]) => {
-        this.orderTypes = orderTypes;
-        this.orderInfo = orderInfo;
-        this.cdRef.detectChanges();
-      });
   }
 
   ngOnInit() {

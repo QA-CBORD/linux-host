@@ -52,9 +52,9 @@ export class CartService {
 
           this.cart.orderDetailsOptions = { ...this.cart.orderDetailsOptions, dueTime: new Date(dueTime) };
           this.onStateChanged();
-          return this.cart.orderDetailsOptions;
+          return { ...this.cart.orderDetailsOptions };
         }
-        return orderDetailsOptions;
+        return { ...orderDetailsOptions };
       }),
       distinctUntilChanged()
     );
@@ -224,7 +224,6 @@ export class CartService {
     const { timeZone, locale } = await this.userService.userData.pipe(first()).toPromise();
     const timeInGMT = await getDateTimeInGMT(dueTime, locale, timeZone);
 
-    debugger;
     return this.merchantService
       .getDisplayMenu(id, timeInGMT, orderType)
       .pipe(first())
