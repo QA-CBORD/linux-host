@@ -5,7 +5,7 @@
     <ng-container *ngIf="item.onCampus; then onCampus; else offCampus"></ng-container>
 
     <ng-template #offCampus>
-      <div class="order-item__label-title">{{ item.address1 }}</div>
+      <div class="order-item__label-title">{{ item.nickname }}</div>
       <div class="order-item__label-subtitle">{{ item.city }}, {{ item.state }}</div>
     </ng-template>
     <ng-template #onCampus>

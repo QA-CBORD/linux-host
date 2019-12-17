@@ -24,6 +24,7 @@ export class AddressEditPage implements OnInit {
   addNewAddressForm: { value: any; valid: boolean } = { value: null, valid: false };
   merchantId: string;
   buildings$: Observable<any[]>;
+  defaultAddress$: Observable<string>;
 
   constructor(
     private readonly router: Router,
@@ -37,6 +38,7 @@ export class AddressEditPage implements OnInit {
 
   ionViewWillEnter() {
     this.buildings$ = this.merchantService.retrieveBuildings();
+    this.defaultAddress$ = this.merchantService.getDefaultAddress().pipe(map(({ response: { value } }) => value));
     zip(this.buildings$, this.merchantService.selectedAddress$)
       .pipe(
         map(([buildings, address]) => {
@@ -93,7 +95,11 @@ export class AddressEditPage implements OnInit {
   }
 
   addAddress() {
-    if (this.addNewAddressForm && !this.addNewAddressForm.valid) {
+    if (this.addNewAddressForm && this.addNewAddressForm.value && !this.addNewAddressForm.valid) {
+      return;
+    }
+    if (this.addNewAddressForm && !this.addNewAddressForm.value && !this.addNewAddressForm.valid) {
+      this.onBack();
       return;
     }
     this.loadingService.showSpinner();
