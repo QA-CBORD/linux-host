@@ -124,13 +124,16 @@ export const tilesConfig: TileWrapperConfig[] = [
   {
     id: DASHBOARD_SETTINGS_CONFIG.enableMealDonations.name,
     title: 'Meal Donations',
-    iconPath: '/assets/icon/meal-filled.svg',
+    iconPath: '/assets/icon/meal-outline.svg',
     isEnable: false,
-    navigate: NAVIGATE.mealDonations,
+    navigate: NAVIGATE.accounts,  
+    //TODO:Added this after mealDonations module will done
+    //navigate: `${NAVIGATE.accounts}/${ACCOUNTS_NAVIGATE.mealDonations}`,
     buttonConfig: {
       show: true,
       title: 'Donate a Meal',
-      navigate: NAVIGATE.mealDonations,
+      navigate: NAVIGATE.accounts,
+      //navigate: `${NAVIGATE.accounts}/${ACCOUNTS_NAVIGATE.mealDonations}`,
     },
   },
   {
