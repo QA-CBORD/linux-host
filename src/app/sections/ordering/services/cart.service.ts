@@ -91,7 +91,7 @@ export class CartService {
     this.onStateChanged();
   }
 
-  async   qsetActiveMerchantsMenuByOrderOptions(
+  async setActiveMerchantsMenuByOrderOptions(
     dueTime: Date,
     orderType: ORDER_TYPE,
     address: AddressInfo,
@@ -224,7 +224,7 @@ export class CartService {
     const { timeZone, locale } = await this.userService.userData.pipe(first()).toPromise();
     const timeInGMT = await getDateTimeInGMT(dueTime, locale, timeZone);
 
-    debugger
+    debugger;
     return this.merchantService
       .getDisplayMenu(id, timeInGMT, orderType)
       .pipe(first())
