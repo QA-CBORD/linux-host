@@ -61,11 +61,16 @@
     @include ellipsis;
     @include font-nunito-semibold(14px);
   }
-}
 
-.spinner-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 25px;
+  &__skeleton-card {
+    display: inline-block;
+    width: 160px;
+    height: 160px;
+  }
+
+  &__skeleton-list {
+    display: flex;
+    padding: 0;
+    justify-content: space-around;
+  }
 }

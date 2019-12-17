@@ -5,16 +5,16 @@ import { NavController, PopoverController, ToastController } from '@ionic/angula
 import { map, take, switchMap } from 'rxjs/operators';
 import { Observable, Subscription } from 'rxjs';
 
-import { UserService } from '../../../core/service/user-service/user.service';
+import { UserService } from '@core/service/user-service/user.service';
 import { MobileAccessService } from '../service';
-import { UserInfo } from '../../../core/model/user';
-import { InstitutionService } from '../../../core/service/institution/institution.service';
+import { UserInfo } from '@core/model/user';
+import { InstitutionService } from '@core/service/institution/institution.service';
 import { MMobileLocationInfo } from '../model';
-import { Institution } from '../../../core/model/institution/institution.model';
-import { MobileAccessPopoverComponent } from '../mobile-access-popover';
-import { LoadingService } from '../../../core/service/loading/loading.service';
+import { Institution } from '@core/model/institution';
+import { MobileAccessPopoverComponent } from '@sections/mobile-access/mobile-access-popover';
+import { LoadingService } from '@core/service/loading/loading.service';
 import { CONTENT_STRINGS } from '../mobile-acces.config';
-import { BUTTON_TYPE } from '../../../core/utils/buttons.config';
+import { BUTTON_TYPE } from '@core/utils/buttons.config';
 import { NAVIGATE } from '../../../app.global';
 import { InstitutionPhotoInfo } from '@core/model/institution';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
@@ -35,8 +35,9 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
   institution$: Observable<Institution>;
   institutionPhoto$: Observable<SafeResourceUrl>;
   userPhoto$: Observable<string>;
-  contentString;
   photo: string = null;
+  institutionColor$: Observable<string>;
+  contentString;
 
   constructor(
     private readonly userService: UserService,
@@ -76,6 +77,8 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
     this.setUserPhoto();
     this.setInstitution();
     this.setInstitutionPhoto();
+    this.setInstitutionColor();
+
   }
 
   async activateLocation() {
@@ -171,5 +174,10 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
         map(({ data, mimeType }) => `data:${mimeType};base64,${data}`),
         take(1),
       );
+  }
+
+  private setInstitutionColor() {
+    this.institutionColor$ = this.mobileAccessService.getInstitutionColor()
+      .pipe(map(v => '#' + JSON.parse(v)['native-header-bg']));
   }
 }

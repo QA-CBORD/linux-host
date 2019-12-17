@@ -8,6 +8,7 @@ import { map, take, switchMap } from 'rxjs/operators';
 import { Institution, InstitutionPhotoInfo } from '@core/model/institution';
 import bwipjs from 'bwip-angular2';
 import { SafeResourceUrl, DomSanitizer } from '@angular/platform-browser';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'st-scan-card',
@@ -20,10 +21,15 @@ export class ScanCardComponent implements OnInit {
   institutionPhoto$: Observable<SafeResourceUrl>;
   userPhoto: string;
   userId: string;
+  institutionColor: string;
 
-  constructor(private readonly userService: UserService, private readonly institutionService: InstitutionService, private readonly sanitizer: DomSanitizer) {}
+  constructor(private readonly userService: UserService,
+              private readonly institutionService: InstitutionService,
+              private readonly sanitizer: DomSanitizer,
+              private readonly route: ActivatedRoute) {}
 
   ngOnInit() {
+    this.setInstitutionColor();
     this.setUserInfo();
     this.setUserId();
     this.setUserPhoto();
@@ -73,7 +79,7 @@ export class ScanCardComponent implements OnInit {
         }),
         map(response => this.sanitizer.bypassSecurityTrustResourceUrl(response))
       )
-      
+
   }
 
   private initBarcode() {
@@ -87,5 +93,9 @@ export class ScanCardComponent implements OnInit {
       },
       (err, cvs) => {}
     );
+  }
+
+  private setInstitutionColor() {
+    this.institutionColor = this.route.snapshot.queryParams.color;
   }
 }

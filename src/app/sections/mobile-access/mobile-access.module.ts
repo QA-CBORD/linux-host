@@ -5,7 +5,6 @@ import { IonicModule } from '@ionic/angular';
 
 import { MobileAccessPage } from './mobile-access.page';
 import { MobileAccessRoutingModule } from './mobile-access-routing.module';
-// import { LocationsResolverGuard } from './resolvers';
 import { LocationListComponent } from './location-list';
 import { LocationItemComponent } from './location-list/location-item';
 import { MobileAccessService } from './service';

@@ -1,9 +1,9 @@
 import { NAVIGATE } from 'src/app/app.global';
 import { TileWrapperConfig } from './models';
-import { LOCAL_ROUTING } from '@sections/accounts/accounts.config';
+import { LOCAL_ROUTING as ACCOUNT_ROUTING } from '@sections/accounts/accounts.config';
 
 export enum DASHBOARD_NAVIGATE {
-  scanCard = 'scancard',
+  scanCard = 'scan-card',
 }
 
 export const DASHBOARD_SETTINGS_CONFIG = {
@@ -82,7 +82,7 @@ export const tilesConfig: TileWrapperConfig[] = [
     buttonConfig: {
       show: false,
       title: 'Add Funds',
-      navigate: [NAVIGATE.accounts +'/'+ LOCAL_ROUTING.addFunds],
+      navigate: `${NAVIGATE.accounts}/${ACCOUNT_ROUTING.addFunds}`,
     },
   },
   {

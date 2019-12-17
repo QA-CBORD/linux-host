@@ -47,7 +47,7 @@
     border-radius: 50%;
     color: $color-white;
     background: $color-harley-davidson-orange;
-    
+
     @include font-nunito-semibold(16px);
   }
 
@@ -90,6 +90,42 @@
     align-items: flex-end;
     margin-left: 15px;
   }
+
+
+  &__skeleton-conversation {
+    display: flex;
+    align-items: center;
+  }
+
+  &__skeleton-avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+
+  &__skeleton-body {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    flex-grow: 1;
+    align-items: flex-end;
+  }
+
+  &__skeleton-name {
+    height: 20px;
+    width: 40%;
+  }
+
+  &__skeleton-time {
+    width: 20%;
+    height: 12px;
+  }
+
+  &__skeleton-msg {
+    width: 100%;
+    height: 12px;
+  }
 }
 
 .indicator {
@@ -97,11 +133,4 @@
   border-radius: 50%;
   width: 10px;
   height: 10px;
-}
-
-.spinner-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 25px;
 }

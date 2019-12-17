@@ -13,5 +13,5 @@ export interface TileWrapperConfig {
 export interface ButtonConfig {
     show: boolean;
     title?: string;
-    navigate?: NAVIGATE;
+    navigate?: NAVIGATE | string;
 }

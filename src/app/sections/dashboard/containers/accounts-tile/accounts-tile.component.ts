@@ -1,54 +1,51 @@
-import { Component, OnInit } from '@angular/core';
-import { AccountsService } from '../../services/accounts.service';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { AccountsService } from '@sections/dashboard/services';
 import { take } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { NAVIGATE } from 'src/app/app.global';
-import { ALL_ACCOUNTS } from '@sections/accounts/accounts.config';
+import { UserAccount } from '@core/model/account/account.model';
+import { LOCAL_ROUTING } from '@sections/accounts/accounts.config';
 
 @Component({
   selector: 'st-accounts-tile',
   templateUrl: './accounts-tile.component.html',
   styleUrls: ['./accounts-tile.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccountsTileComponent implements OnInit {
   slideOpts = {
     initialSlide: 0,
     spaceBetween: 0,
     speed: 400,
-    width: 330,
+    width: 350,
     autoHeight: true,
   };
+  itemsPerSlide: number = 4;
+  slides: UserAccount[][] = [];
 
-  showSpiner: boolean = true;
-  userAccountsSlides = [];
-
-  constructor(private readonly accountsService: AccountsService, private readonly router: Router) {}
+  constructor(private readonly accountsService: AccountsService,
+              private readonly router: Router,
+              private readonly cdRef: ChangeDetectorRef) {
+  }
 
   ngOnInit() {
     this.initUserAccounts();
   }
 
   private initUserAccounts() {
-    let parsedAccountsByOneSlide = [];
     this.accountsService
       .getUserAccounts()
       .pipe(take(1))
       .subscribe(accounts => {
-        accounts.forEach((item, index) => {
-          if (index % 4 === 0 && index !== 0) {
-            this.userAccountsSlides.push(parsedAccountsByOneSlide);
-            parsedAccountsByOneSlide = [];
-          }
-          parsedAccountsByOneSlide.push(item);
-        });
-        if (parsedAccountsByOneSlide.length) {
-          this.userAccountsSlides.push(parsedAccountsByOneSlide);
+        while (accounts.length > 0) {
+          this.slides.push(accounts.splice(0, this.itemsPerSlide));
         }
-        this.showSpiner = !this.showSpiner;
+        this.cdRef.markForCheck();
       });
   }
 
-  goToAllAccounts() {
-    this.router.navigate([`${NAVIGATE.accounts}`], { skipLocationChange: true });
+  goToAccountHistory(id: string) {
+    // this.router.navigate([NAVIGATE.accounts, LOCAL_ROUTING.accountDetails, id]);
+    this.router.navigate([`${NAVIGATE.accounts}/${LOCAL_ROUTING.accountDetailsM}/${id}`]);
   }
 }

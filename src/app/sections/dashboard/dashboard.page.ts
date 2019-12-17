@@ -4,15 +4,16 @@ import { ModalController } from '@ionic/angular';
 import { EditHomePageModalComponent } from './components/edit-home-page-modal';
 import { TileWrapperConfig } from '@sections/dashboard/models';
 import { AccountsService, DashboardService } from './services';
-import { map, switchMap } from 'rxjs/operators';
 import {
-  ACCOUNTS_SETTINGS_CONFIG, DASHBOARD_SETTINGS_CONFIG,
-  TILES_ID,
+  ACCOUNTS_SETTINGS_CONFIG, TILES_ID,
   TILES_TITLE,
   tilesConfig,
 } from './dashboard.config';
-import { Observable, of } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
+import { Observable } from 'rxjs';
+import { first, map } from 'rxjs/operators';
 import { parseArrayFromString } from '@core/utils/general-helpers';
+import { LocalStorageFacadeService } from '@core/facades/local-storage.facade.service';
 
 @Component({
   selector: 'st-dashboard',
@@ -21,13 +22,14 @@ import { parseArrayFromString } from '@core/utils/general-helpers';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardPage implements OnInit {
-  tiles$: Observable<TileWrapperConfig[]>;
-  isMobileAccessButtonEnabled$: Observable<boolean>;
+  tiles: TileWrapperConfig[];
 
   constructor(
     private readonly modalController: ModalController,
     private readonly dashboardService: DashboardService,
     private readonly accountsService: AccountsService,
+    private readonly route: ActivatedRoute,
+    private readonly localStorageFacadeService: LocalStorageFacadeService
   ) {
   }
 
@@ -36,15 +38,10 @@ export class DashboardPage implements OnInit {
   }
 
   ngOnInit() {
-    this.tiles$ = this.dashboardService.retrieveSettingsList().pipe(
-      map(settings => this.getUpdatedTilesConfig(settings)),
-      switchMap((settings) => this.isAddFundsButtonEnabled(settings)),
-    );
-    this.isMobileAccessButtonEnabled$ = this.tiles$.pipe(
-      map(settings =>
-        settings.find((s) => (s.id === DASHBOARD_SETTINGS_CONFIG.enableMobileAccess.name))!.isEnable
-      )
-    );
+    const { data: [settings] } = this.route.snapshot.data;
+    // this.localStorageFacadeService.addKeyToStorage();
+    this.tiles = this.getUpdatedTilesConfig(settings);
+    this.updateAccountTile();
   }
 
   private getUpdatedTilesConfig(settings) {
@@ -54,24 +51,6 @@ export class DashboardPage implements OnInit {
     });
   }
 
-  private isAddFundsButtonEnabled(settings: TileWrapperConfig[]): Observable<TileWrapperConfig[]> {
-    const requireSettings = [
-      ACCOUNTS_SETTINGS_CONFIG.paymentTypes,
-      ACCOUNTS_SETTINGS_CONFIG.enableOnetimeDeposits,
-    ];
-
-    return this.accountsService.getUserSettings(requireSettings)
-      .pipe(
-        switchMap(([paymentTypes, onetimeDeposits]) =>
-          parseArrayFromString(paymentTypes.value).length && DashboardPage.getBoolValue(onetimeDeposits.value)
-            ? of(settings.map((elem) =>
-              (elem.id === TILES_ID.accounts) ? { ...elem, buttonConfig: { ...elem.buttonConfig, show: true } } : elem,
-            ))
-            : of(settings),
-        ),
-      );
-  }
-
   async presentEditHomePageModal(): Promise<void> {
     const modal = await this.modalController.create({
       component: EditHomePageModalComponent,
@@ -79,7 +58,33 @@ export class DashboardPage implements OnInit {
     return await modal.present();
   }
 
+  private updateAccountTile() {
+    this.isAddFundsButtonEnabled().pipe(
+      first(),
+    ).subscribe(enabled => {
+      const index = this.tiles.findIndex((tile) => tile.id === TILES_ID.accounts);
+      if (index >= 0 && enabled) {
+        const tile = this.tiles[index];
+        this.tiles[index] = { ...tile, buttonConfig: { ...tile.buttonConfig, show: enabled } };
+      }
+    });
+  }
+
   private static getBoolValue(value): boolean {
     return !!Number(value);
+  }
+
+  private isAddFundsButtonEnabled(): Observable<boolean> {
+    const requireSettings = [
+      ACCOUNTS_SETTINGS_CONFIG.paymentTypes,
+      ACCOUNTS_SETTINGS_CONFIG.enableOnetimeDeposits,
+    ];
+
+    return this.accountsService.getUserSettings(requireSettings)
+      .pipe(
+        map(([paymentTypes, onetimeDeposits]) =>
+          parseArrayFromString(paymentTypes.value).length && !!Number(onetimeDeposits.value),
+        ),
+      );
   }
 }

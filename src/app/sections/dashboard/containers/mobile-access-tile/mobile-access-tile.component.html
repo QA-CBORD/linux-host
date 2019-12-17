@@ -10,7 +10,12 @@
   </ion-list>
 
   <ion-list class="access__list" [ngClass]="{'access----auto-height': !isLoadingData}">
-    <ion-item class="access__item" mode="ios" lines="none" *ngFor="let access of accessList$ | async">
+    <ion-item
+            class="access__item"
+            mode="ios"
+            lines="none"
+            *ngFor="let access of accessList$ | async"
+            (click)="navigateTo(access.locationId)">
       <img
               class="access__item-icon"
               [src]="!access.isFavourite ? '/assets/icon/star-outline.svg' : '/assets/icon/star-filled.svg'"

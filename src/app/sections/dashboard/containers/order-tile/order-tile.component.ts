@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { MerchantService } from '@sections/ordering';
 import { take } from 'rxjs/operators';
 
@@ -6,6 +6,7 @@ import { take } from 'rxjs/operators';
   selector: 'st-order-tile',
   templateUrl: './order-tile.component.html',
   styleUrls: ['./order-tile.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OrderTileComponent implements OnInit {
   slideOpts = {
@@ -15,35 +16,32 @@ export class OrderTileComponent implements OnInit {
     width: 330,
     autoHeight: true,
   };
+  amountPerSlide: number = 2;
+  slides = [];
+  skeletonArray: any[] = new Array(this.amountPerSlide);
 
-  userMarchentsSlides = [];
-  showSpiner = true;
-
-  constructor(private readonly merchantService: MerchantService) {}
+  constructor(private readonly merchantService: MerchantService,
+              private readonly cdRef: ChangeDetectorRef) {
+  }
 
   ngOnInit() {
     this.initMerchantSlides();
   }
 
   private initMerchantSlides() {
-    let parsedMarchentsByOneSlide = [];
     this.merchantService
       .getMerchantsWithFavoriteInfo()
       .pipe(take(1))
       .subscribe(merchants => {
-        merchants
-          .filter(({ isFavorite }) => isFavorite === true)
-          .forEach((item, index) => {
-            if (index % 2 === 0 && index !== 0) {
-              this.userMarchentsSlides.push(parsedMarchentsByOneSlide);
-              parsedMarchentsByOneSlide = [];
-            }
-            parsedMarchentsByOneSlide.push(item);
-          });
-        if (parsedMarchentsByOneSlide.length) {
-          this.userMarchentsSlides.push(parsedMarchentsByOneSlide);
+        const favMerchants = merchants.filter(({ isFavorite }) => isFavorite === true);
+        while (favMerchants.length > 0) {
+          this.slides.push(favMerchants.splice(0, this.amountPerSlide));
         }
-        this.showSpiner = false;
+        this.cdRef.detectChanges();
       });
+  }
+
+  goToMerchant(merchant: any) {
+    console.log(merchant)
   }
 }

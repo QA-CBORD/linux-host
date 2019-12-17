@@ -11,6 +11,7 @@
     [userInfoId]="(userInfo$ | async).id"
     [institutionName]="(institution$ | async).name"
     [institutionPhoto]="institutionPhoto$ | async"
+    [institutionColor]="institutionColor$ | async"
   >
     <p class="user-data__location">
       <span [ngClass]="starClass | async" aria-label="star" role="img" (click)="favouriteHandler()"></span>

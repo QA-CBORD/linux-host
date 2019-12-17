@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { TRANSACTION_TYPE } from '@sections/accounts/accounts.config';
+import { TRANSACTION_TYPE } from '../../../app.global';
 
 @Pipe({
   name: 'transactionAction',
