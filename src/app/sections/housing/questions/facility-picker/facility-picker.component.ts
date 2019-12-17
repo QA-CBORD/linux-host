@@ -9,20 +9,24 @@ import { QuestionReorder, QuestionReorderValue } from '../types/question-reorder
   templateUrl: './facility-picker.component.html',
 })
 export class FacilityPickerComponent implements OnInit, OnDestroy {
+  private _subscription: Subscription = new Subscription();
+
   @Input() question: QuestionReorder;
 
   @Input() parentForm: FormGroup;
 
   facilities: QuestionReorderValue[];
 
-  private _subscription: Subscription;
-
   ngOnInit(): void {
     const facilitiesControl: AbstractControl = this.parentForm.get(this.question.name);
 
-    this._subscription = facilitiesControl.valueChanges.subscribe((value: QuestionReorderValue[]) => {
-      this.facilities = value;
-    });
+    const valueChangesSubscription: Subscription = facilitiesControl.valueChanges.subscribe(
+      (value: QuestionReorderValue[]) => {
+        this.facilities = value;
+      }
+    );
+
+    this._subscription.add(valueChangesSubscription);
 
     this.facilities = facilitiesControl.value;
   }

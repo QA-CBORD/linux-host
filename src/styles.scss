@@ -160,15 +160,6 @@
   text-transform: uppercase;
 }
 
-.form-section {
-  margin-top: 16px;
-  padding-bottom: 16px;
-
-  &:not(.form-section--last) {
-    border-bottom: 1px solid $color-white-smoke;
-  }
-}
-
 .form-checkbox__control {
   --background-checked: #{$color-dodger-blue};
   --border-color: #{$color-silver};

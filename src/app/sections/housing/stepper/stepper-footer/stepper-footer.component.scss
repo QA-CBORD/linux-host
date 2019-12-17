@@ -4,7 +4,8 @@
   border-top: 1px solid $color-white-smoke;
   display: flex;
   justify-content: space-between;
-  padding-top: 16px;
+  margin: 16px -10px 0;
+  padding: 16px 10px 0;
 }
 
 .stepper-footer__button--right {

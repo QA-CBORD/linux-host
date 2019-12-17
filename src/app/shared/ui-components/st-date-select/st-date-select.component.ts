@@ -8,7 +8,7 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./st-date-select.component.scss'],
 })
 export class StDateSelectComponent implements OnInit, OnDestroy {
-  private _subscription: Subscription;
+  private _subscription: Subscription = new Subscription();
 
   @Input() parentGroup: FormGroup;
 
@@ -33,7 +33,11 @@ export class StDateSelectComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     const control: AbstractControl = this.parentGroup.get(this.name);
 
-    this._subscription = control.valueChanges.subscribe((value: any) => this._checkIsFilled(value));
+    const valueChangesSubscription: Subscription = control.valueChanges.subscribe((value: any) =>
+      this._checkIsFilled(value)
+    );
+
+    this._subscription.add(valueChangesSubscription);
 
     this._checkIsFilled(control.value);
   }

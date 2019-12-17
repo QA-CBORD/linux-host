@@ -70,7 +70,7 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
     this._subscription.unsubscribe();
   }
 
-  save(application: ApplicationDetails): void {
+  save(application: ApplicationDetails): boolean {
     const selectedStep: StepComponent = this.stepper.selected;
     const formValue: any = selectedStep.stepControl.value;
 
@@ -78,10 +78,12 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
       .saveApplication(this.applicationKey, application, formValue)
       .subscribe({
         next: () => this._handleSuccess(),
-        error: (error: HttpErrorResponse) => this._handleErrors(error.error),
+        error: (error: any) => this._handleErrors(error),
       });
 
     this._subscription.add(saveSubscription);
+
+    return false;
   }
 
   submit(application: ApplicationDetails, form: FormGroup, isLastPage: boolean): void {
@@ -129,16 +131,20 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
     this._questionsStorageService
       .updateCreatedDateTime(this.applicationKey, application.patronApplication)
       .then((createdDateTime: string) => {
+        const status: ApplicationStatus =
+          application.patronApplication && application.patronApplication.status
+            ? application.patronApplication.status
+            : ApplicationStatus.Pending;
         const patronApplication: PatronApplication = new PatronApplication({
           ...application.patronApplication,
           createdDateTime,
-          status: ApplicationStatus.Pending,
+          status,
         });
         const applicationDetails: ApplicationDetails = new ApplicationDetails({ ...application, patronApplication });
 
         this._applicationsStateService.setApplication(this.applicationKey, applicationDetails);
 
-        return this._questionsStorageService.updateQuestions(this.applicationKey, formValue, ApplicationStatus.Pending);
+        return this._questionsStorageService.updateQuestions(this.applicationKey, formValue, status);
       })
       .then(() => this.stepper.next());
   }
@@ -157,13 +163,20 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
   }
 
   private _handleErrors(error: any): void {
-    const message = error && (error as Response).status ? error.status.message : 'Error';
+    let message = 'Something went wrong. Try again later';
+
+    if (error instanceof HttpErrorResponse) {
+      const statusMessage: string = (error.error as Response).status.message;
+
+      message = statusMessage || message;
+    }
 
     this._toastController
       .create({
         message,
         position: 'top',
         duration: 3000,
+        showCloseButton: true,
       })
       .then((toast: HTMLIonToastElement) => toast.present());
   }

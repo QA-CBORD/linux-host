@@ -27,12 +27,13 @@
         [stepControl]="page.form"
       >
         <form [formGroup]="page.form" (ngSubmit)="submit(applicationDetails, page.form, isLastPage)">
-          <ng-container *ngFor="let question of page.questions">
+          <ng-container *ngFor="let question of page.questions; first as isFirstQuestion">
             <st-question
               *ngIf="question"
               [parentGroup]="page.form"
               [question]="question"
               [name]="$any(question).name"
+              [class.question--first]="isFirstQuestion"
             ></st-question>
           </ng-container>
 

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { FormControl, Validators, FormGroup, FormArray, AbstractControl } from '@angular/forms';
 import { BehaviorSubject, Observable } from 'rxjs';
 
-import { parseJsonToArray } from '../utils';
+import { parseJsonToArray, hasValue } from '../utils';
 
 import { QuestionsStorageService } from './questions-storage.service';
 
@@ -18,7 +18,7 @@ import { QuestionCheckboxGroup, QuestionCheckboxGroupValue } from './types/quest
 import { QuestionRadioGroup } from './types/question-radio-group';
 
 import { ApplicationPage, QuestionReorder, QuestionReorderValue } from './questions.model';
-import { ApplicationDetails, PatronAttribute } from '../applications/applications.model';
+import { ApplicationDetails, PatronAttribute, PatronPreference } from '../applications/applications.model';
 
 export const QuestionConstructorsMap = {
   header: QuestionHeader,
@@ -43,7 +43,11 @@ export class QuestionsService {
 
   setPages(application: ApplicationDetails): void {
     const questions: QuestionBase[] = this._parseQuestions(application.applicationDefinition.applicationFormJson);
-    const pages: ApplicationPage[] = this._splitByPages(questions, application.patronAttributes);
+    const pages: ApplicationPage[] = this._splitByPages(
+      questions,
+      application.patronAttributes,
+      application.patronPreferences
+    );
 
     this._pagesSource.next(pages);
   }
@@ -65,11 +69,8 @@ export class QuestionsService {
 
         Object.keys(controls).forEach((controlName: string) => {
           const control: AbstractControl = controls[controlName];
-          const hasValue: boolean = Array.isArray(control.value)
-            ? !control.value.some((value: any) => value == null || value === '')
-            : !(control.value == null || control.value === '');
 
-          if (hasValue) {
+          if (hasValue(control.value)) {
             control.markAsDirty();
             control.markAsTouched();
 
@@ -104,7 +105,11 @@ export class QuestionsService {
     return new QuestionBase(question);
   }
 
-  private _splitByPages(questions: QuestionBase[], attributes: PatronAttribute[]): ApplicationPage[] {
+  private _splitByPages(
+    questions: QuestionBase[],
+    attributes: PatronAttribute[],
+    preferences: PatronPreference[]
+  ): ApplicationPage[] {
     const questionsByPages: QuestionBase[][] = questions.reduce(
       (accumulator: QuestionBase[][], current: QuestionBase, index: number) => {
         if (current && (current as QuestionParagraph).subtype === 'blockquote') {
@@ -119,12 +124,16 @@ export class QuestionsService {
     );
 
     return questionsByPages.map((page: QuestionBase[]) => ({
-      form: this._toFormGroup(page, attributes),
+      form: this._toFormGroup(page, attributes, preferences),
       questions: page,
     }));
   }
 
-  private _toFormGroup(questions: QuestionBase[], attributes: PatronAttribute[]): FormGroup {
+  private _toFormGroup(
+    questions: QuestionBase[],
+    attributes: PatronAttribute[],
+    preferences: PatronPreference[]
+  ): FormGroup {
     let group: any = {};
 
     questions
@@ -133,7 +142,7 @@ export class QuestionsService {
         if (question instanceof QuestionCheckboxGroup) {
           group[question.name] = this._toQuestionCheckboxControl(question);
         } else if (question instanceof QuestionReorder) {
-          group[question.name] = this._toQuestionReorderControl(question);
+          group[question.name] = this._toQuestionReorderControl(question, preferences);
         } else {
           group[question.name] = this._toFormControl(question, attributes);
         }
@@ -159,9 +168,19 @@ export class QuestionsService {
     return new FormArray(values);
   }
 
-  private _toQuestionReorderControl(question: QuestionReorder): FormArray {
+  private _toQuestionReorderControl(question: QuestionReorder, preferences: PatronPreference[]): FormArray {
     const values: FormControl[] = question.values
       .filter((value: QuestionReorderValue) => value.selected)
+      .sort((current: QuestionReorderValue, next: QuestionReorderValue) => {
+        const currentIndex: number = preferences.findIndex(
+          (preference: PatronPreference) => preference.facilityKey === current.facilityKey
+        );
+        const nextIndex: number = preferences.findIndex(
+          (preference: PatronPreference) => preference.facilityKey === next.facilityKey
+        );
+
+        return currentIndex - nextIndex;
+      })
       .map((value: QuestionReorderValue) => new FormControl(value));
 
     return new FormArray(values);

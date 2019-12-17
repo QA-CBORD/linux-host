@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
 
+import { hasValue } from '../utils';
 import { STORAGE_KEY } from '../housing.config';
 
 import { ApplicationStatus, PatronApplication } from '../applications/applications.model';
@@ -44,7 +45,7 @@ export class QuestionsStorageService {
 
       if (patronApplication && patronApplication.createdDateTime) {
         createdDateTime = patronApplication.createdDateTime;
-      } else if (application.createdDateTime) {
+      } else if (application && application.createdDateTime) {
         createdDateTime = createdDateTime;
       }
 

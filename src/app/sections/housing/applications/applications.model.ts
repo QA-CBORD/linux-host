@@ -1,3 +1,5 @@
+import { define, isDefined } from '../utils';
+
 export enum ApplicationStatus {
   New = 1,
   Pending = 2,
@@ -17,11 +19,11 @@ export class ApplicationDefinition {
       options = {};
     }
 
-    this.key = Number(options.key);
-    this.termKey = Number(options.termKey);
-    this.applicationTitle = String(options.applicationTitle);
+    this.key = define(options.key, Number(options.key));
+    this.termKey = define(options.termKey, Number(options.termKey));
+    this.applicationTitle = define(options.applicationTitle, String(options.applicationTitle));
 
-    if (options.applicationFormJson != null) {
+    if (isDefined(options.applicationFormJson)) {
       this.applicationFormJson = String(options.applicationFormJson);
     }
   }
@@ -46,35 +48,47 @@ export class PatronApplication {
       options = {};
     }
 
-    this.applicationDefinitionKey = Number(options.applicationDefinitionKey);
-    this.status = options.status;
+    this.applicationDefinitionKey = define(options.applicationDefinitionKey, Number(options.applicationDefinitionKey));
+    this.status = define(options.status);
 
-    if (options.key != null) {
+    if (isDefined(options.key)) {
       this.key = Number(options.key);
     }
 
-    if (options.patronKey != null) {
+    if (isDefined(options.patronKey)) {
       this.patronKey = Number(options.patronKey);
     }
 
-    if (options.createdDateTime != null) {
+    if (isDefined(options.createdDateTime)) {
       this.createdDateTime = String(options.createdDateTime);
     }
 
-    if (options.submittedDateTime != null) {
+    if (isDefined(options.submittedDateTime)) {
       this.submittedDateTime = String(options.submittedDateTime);
     }
 
-    if (options.acceptedDateTime != null) {
+    if (isDefined(options.acceptedDateTime)) {
       this.acceptedDateTime = String(options.acceptedDateTime);
     }
 
-    if (options.cancelledDateTime != null) {
+    if (isDefined(options.cancelledDateTime)) {
       this.cancelledDateTime = String(options.cancelledDateTime);
     }
 
-    if (options.cancelledDateTime != null) {
-      this.cancelledDateTime = String(options.cancelledDateTime);
+    if (isDefined(options.modifiedDate)) {
+      this.modifiedDate = String(options.modifiedDate);
+    }
+
+    if (isDefined(options.isApplicationSubmitted)) {
+      this.isApplicationSubmitted = Boolean(options.isApplicationSubmitted);
+    }
+
+    if (isDefined(options.isApplicationAccepted)) {
+      this.isApplicationAccepted = Boolean(options.isApplicationAccepted);
+    }
+
+    if (isDefined(options.isApplicationCanceled)) {
+      this.isApplicationCanceled = Boolean(options.isApplicationCanceled);
     }
   }
 }
@@ -92,42 +106,48 @@ export class PatronAttribute {
       options = {};
     }
 
-    this.attributeConsumerKey = Number(options.attributeConsumerKey);
-    this.value = String(options.value);
+    this.attributeConsumerKey = define(options.attributeConsumerKey, Number(options.attributeConsumerKey));
+    this.value = define(options.value, String(options.value));
 
-    if (options.key != null) {
+    if (isDefined(options.key)) {
       this.key = Number(options.key);
     }
 
-    if (options.patronKey != null) {
+    if (isDefined(options.patronKey)) {
       this.patronKey = Number(options.patronKey);
     }
 
-    if (options.effectiveDate != null) {
+    if (isDefined(options.effectiveDate)) {
       this.effectiveDate = String(options.effectiveDate);
     }
 
-    if (options.endDate != null) {
+    if (isDefined(options.endDate)) {
       this.endDate = String(options.endDate);
     }
   }
 }
 
 export class PatronPreference {
-  key: number;
-  preferenceKey: number;
   rank: number;
   facilityKey: number;
+  key?: number;
+  preferenceKey?: number;
 
   constructor(options: any) {
     if (options == null || typeof options !== 'object') {
       options = {};
     }
 
-    this.key = Number(options.key);
-    this.preferenceKey = Number(options.preferenceKey);
-    this.rank = Number(options.rank);
-    this.facilityKey = Number(options.facilityKey);
+    this.rank = define(options.rank, Number(options.rank));
+    this.facilityKey = define(options.facilityKey, Number(options.facilityKey));
+
+    if (isDefined(options.key)) {
+      this.key = Number(options.key);
+    }
+
+    if (isDefined(options.preferenceKey)) {
+      this.preferenceKey = Number(options.preferenceKey);
+    }
   }
 }
 
@@ -141,15 +161,18 @@ export class ApplicationRequest {
       options = {};
     }
 
-    this.patronApplication =
-      options.patronApplication != null ? new PatronApplication(options.patronApplication) : null;
+    this.patronApplication = define(options.patronApplication, new PatronApplication(options.patronApplication));
 
     if (Array.isArray(options.patronAttributes)) {
-      this.patronAttributes = options.patronAttributes.map((attribute: any) => new PatronAttribute(attribute));
+      this.patronAttributes = options.patronAttributes.map((attribute: any) =>
+        define(attribute, new PatronAttribute(attribute))
+      );
     }
 
     if (Array.isArray(options.patronPreferences)) {
-      this.patronPreferences = options.patronPreferences.map((preference: any) => new PatronPreference(preference));
+      this.patronPreferences = options.patronPreferences.map((preference: any) =>
+        define(preference, new PatronPreference(preference))
+      );
     }
   }
 }
@@ -165,17 +188,21 @@ export class ApplicationDetails {
       options = {};
     }
 
-    this.applicationDefinition =
-      options.applicationDefinition != null ? new ApplicationDefinition(options.applicationDefinition) : null;
-    this.patronApplication =
-      options.patronApplication != null ? new PatronApplication(options.patronApplication) : null;
+    this.applicationDefinition = define(options.applicationDefinition, new ApplicationDefinition(
+      options.applicationDefinition
+    ));
+    this.patronApplication = define(options.patronApplication, new PatronApplication(options.patronApplication));
 
     if (Array.isArray(options.patronAttributes)) {
-      this.patronAttributes = options.patronAttributes.map((attribute: any) => new PatronAttribute(attribute));
+      this.patronAttributes = options.patronAttributes.map((attribute: any) =>
+        define(attribute, new PatronAttribute(attribute))
+      );
     }
 
     if (Array.isArray(options.patronPreferences)) {
-      this.patronPreferences = options.patronPreferences.map((preference: any) => new PatronPreference(preference));
+      this.patronPreferences = options.patronPreferences.map((preference: any) =>
+        define(preference, new PatronPreference(preference))
+      );
     }
   }
 }

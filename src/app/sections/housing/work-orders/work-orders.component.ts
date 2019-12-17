@@ -1,4 +1,5 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
 
 import { WorkOrdersService } from './work-orders.service';
 
@@ -10,13 +11,23 @@ import { WorkOrder } from './work-orders.model';
   styleUrls: ['./work-orders.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class WorkOrdersComponent implements OnInit {
+export class WorkOrdersComponent implements OnInit, OnDestroy {
+  private _subscription: Subscription = new Subscription();
+
   constructor(private _workOrdersService: WorkOrdersService) {}
 
   workOrders: WorkOrder[];
 
   ngOnInit() {
-    this._workOrdersService.getWorkOrders().subscribe(this._handleSuccess.bind(this));
+    const workOrdersSubscription: Subscription = this._workOrdersService
+      .getWorkOrders()
+      .subscribe(this._handleSuccess.bind(this));
+
+    this._subscription.add(workOrdersSubscription);
+  }
+
+  ngOnDestroy(): void {
+    this._subscription.unsubscribe();
   }
 
   trackById(_: number, workOrder: WorkOrder): number {
