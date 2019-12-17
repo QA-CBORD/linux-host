@@ -20,7 +20,7 @@ export class CartService {
     private readonly userService: UserService,
     private readonly merchantService: MerchantService,
     private readonly api: OrderingApiService
-  ) { }
+  ) {}
 
   get merchant$(): Observable<MerchantInfo> {
     return this._cart$.asObservable().pipe(
@@ -48,12 +48,12 @@ export class CartService {
       map(([{ orderDetailsOptions }, { locale, timeZone }]) => {
         if (orderDetailsOptions.isASAP) {
           const date = new Date();
-          const dueTime = date.toLocaleString(locale, { hour12: false, timeZone })
+          const dueTime = date.toLocaleString(locale, { hour12: false, timeZone });
 
           this.cart.orderDetailsOptions = { ...this.cart.orderDetailsOptions, dueTime: new Date(dueTime) };
           this.onStateChanged();
           return this.cart.orderDetailsOptions;
-        };
+        }
         return orderDetailsOptions;
       }),
       distinctUntilChanged()
@@ -91,7 +91,7 @@ export class CartService {
     this.onStateChanged();
   }
 
-  async setActiveMerchantsMenuByOrderOptions(
+  async   qsetActiveMerchantsMenuByOrderOptions(
     dueTime: Date,
     orderType: ORDER_TYPE,
     address: AddressInfo,
@@ -157,7 +157,7 @@ export class CartService {
           ...address,
           userPhone,
           type,
-          dueTime: getDateTimeInGMT(dueTime, locale, timeZone)
+          dueTime: getDateTimeInGMT(dueTime, locale, timeZone),
         };
         return this.merchantService.validateOrder(this.cart.order);
       }),
@@ -218,12 +218,16 @@ export class CartService {
 
   // ----------------------------------------- GETTERS BLOCK -----------------------------------------//
 
-  private getMerchantMenu(): Promise<MenuInfo> {
-    const { orderDetailsOptions: options, merchant } = this.cart;
-    if (!options || !merchant || !options.dueTime || isNaN(options.orderType)) return Promise.reject();
+  private async getMerchantMenu(): Promise<MenuInfo> {
+    const { dueTime, orderType } = await this.orderDetailsOptions$.pipe(first()).toPromise();
+    const { id } = await this.merchant$.pipe(first()).toPromise();
+    const { timeZone, locale } = await this.userService.userData.pipe(first()).toPromise();
+    const timeInGMT = await getDateTimeInGMT(dueTime, locale, timeZone);
 
+    debugger
     return this.merchantService
-      .getDisplayMenu(merchant.id, options.dueTime.toISOString(), options.orderType)
+      .getDisplayMenu(id, timeInGMT, orderType)
+      .pipe(first())
       .toPromise();
   }
 }
