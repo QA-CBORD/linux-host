@@ -188,8 +188,7 @@ export class MerchantService {
   }
 
   retrieveDeliveryAddresses(merchantId) {
-    return this.userService
-      .getUserSettingsBySettingName('defaultaddress')
+    return this.getDefaultAddress()
       .pipe(
         switchMap(({ response }) =>
           zip(
@@ -246,6 +245,10 @@ export class MerchantService {
       }, []);
       return [...state, ...res];
     }, []);
+  }
+
+  getDefaultAddress() {
+    return this.userService.getUserSettingsBySettingName('defaultaddress');
   }
 
   private filterAccountsByPaymentSystem(accounts: UserAccount[]): UserAccount[] {

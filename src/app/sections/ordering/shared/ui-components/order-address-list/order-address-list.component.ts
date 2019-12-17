@@ -11,6 +11,7 @@ import { MerchantService } from '@sections/ordering/services';
 })
 export class OrderAddressListComponent implements OnInit {
   @Input() addresses: AddressInfo[] = [];
+  @Input() defaultAddress: string;
 
   constructor(private readonly merchantService: MerchantService, private router: Router) {}
 

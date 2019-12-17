@@ -28,6 +28,7 @@
       <st-add-edit-addresses
         [editAddress]="addressData"
         [buildingsOnCampus]="buildings$ | async"
+        [defaultAddress]="defaultAddress$ | async"
         (onFormChanged)="onAddressFormChanged($event)"
       ></st-add-edit-addresses>
     </ng-container>
