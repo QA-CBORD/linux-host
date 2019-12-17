@@ -45,8 +45,8 @@
         <div class="full-menu__date-time-wrapper">
           <div class="full-menu__date-time-value">{{ orderType | async }}</div>
           <div class="full-menu__date-time-helper">for</div>
-          <div class="full-menu__date-time-value" *ngIf="orderInfo && orderTypes">
-            {{ orderInfo | modifyPrepTime: orderTypes }}
+          <div class="full-menu__date-time-value" *ngIf="orderDetails$ | async">
+            {{ (orderDetails$ | async).orderInfo | modifyPrepTime: (orderDetails$ | async).orderTypes }}
           </div>
         </div>
         <div class="full-menu__arrow-wrapper">

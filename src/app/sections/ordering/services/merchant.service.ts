@@ -59,7 +59,7 @@ export class MerchantService {
   }
 
   set orderTypes(value: MerchantOrderTypesInfo) {
-    this._orderTypes$.next(value);
+    this._orderTypes$.next({...value});
   }
 
   get recentOrders$(): Observable<OrderInfo[]> {
