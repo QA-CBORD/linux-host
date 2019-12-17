@@ -6,6 +6,8 @@ import { Subscription } from 'rxjs';
   selector: '[stEmptyFormControl]',
 })
 export class EmptyFormControlDirective implements OnInit, OnDestroy {
+  private _subscription: Subscription = new Subscription();
+
   @Input()
   stEmptyFormControl: AbstractControl;
 
@@ -15,10 +17,12 @@ export class EmptyFormControlDirective implements OnInit, OnDestroy {
   @HostBinding('class.form-control--filled')
   isFilled: boolean;
 
-  private _subscription: Subscription;
-
   ngOnInit(): void {
-    this._subscription = this.stEmptyFormControl.valueChanges.subscribe((value: any) => this._checkIsEmpty(value));
+    const valueChangesSubscription: Subscription = this.stEmptyFormControl.valueChanges.subscribe((value: any) =>
+      this._checkIsEmpty(value)
+    );
+
+    this._subscription.add(valueChangesSubscription);
 
     this._checkIsEmpty(this.stEmptyFormControl.value);
   }

@@ -1,4 +1,5 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
 
 import { ContractsService } from './contracts.service';
 
@@ -8,13 +9,23 @@ import { ContractsService } from './contracts.service';
   styleUrls: ['./contracts.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ContractsComponent implements OnInit {
+export class ContractsComponent implements OnInit, OnDestroy {
+  private _subscription: Subscription = new Subscription();
+
   constructor(private _contractsService: ContractsService) {}
 
   contracts: any[];
 
-  ngOnInit() {
-    this._contractsService.getContracts().subscribe(this._handleSuccess.bind(this));
+  ngOnInit(): void {
+    const contractsSubscription: Subscription = this._contractsService
+      .getContracts()
+      .subscribe(this._handleSuccess.bind(this));
+
+    this._subscription.add(contractsSubscription);
+  }
+
+  ngOnDestroy(): void {
+    this._subscription.unsubscribe();
   }
 
   trackById(_: number, contract: any): number {

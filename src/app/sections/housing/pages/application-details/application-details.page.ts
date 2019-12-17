@@ -25,7 +25,7 @@ import { QuestionComponent } from '../../questions/question.component';
 
 import { ApplicationStatus, ApplicationDetails, PatronApplication } from '../../applications/applications.model';
 import { ApplicationPage } from '../../questions/questions.model';
-import { Response, ResponseStatus } from '../../housing.model';
+import { Response } from '../../housing.model';
 
 @Component({
   selector: 'st-application-details',
