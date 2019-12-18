@@ -1,17 +1,22 @@
 import { Injectable } from '@angular/core';
+import { Observable, ReplaySubject } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 
-import { Observable } from 'rxjs';
+import { DataCache } from '../../utils/data-cache';
 
 import { BaseService, ServiceParameters } from '../base-service/base.service';
 
 import { UserLogin } from '../../model/user';
-import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService extends BaseService {
   private serviceUrl = '/json/authentication';
+
+  private sessionIdSource: ReplaySubject<string> = new ReplaySubject<string>(1);
+
+  sessionId$: Observable<string> = this.sessionIdSource.asObservable();
 
   /**
    *  Authenticate the device/system to get a device session
@@ -51,7 +56,8 @@ export class AuthService extends BaseService {
     };
 
     return this.httpRequest<any>(this.serviceUrl, 'authenticateUser', false, postParams).pipe(
-      map(({ response }) => response)
+      map(({ response }) => response),
+      tap((sessionId: string) => this.setSessionId(sessionId))
     );
   }
 
@@ -71,7 +77,8 @@ export class AuthService extends BaseService {
     };
 
     return this.httpRequest<any>(this.serviceUrl, 'authenticateSessionToken', false, postParams).pipe(
-      map(({ response }) => response)
+      map(({ response }) => response),
+      tap((sessionId: string) => this.setSessionId(sessionId))
     );
   }
 
@@ -89,5 +96,11 @@ export class AuthService extends BaseService {
     return this.httpRequest<any>(this.serviceUrl, 'retrieveExternalAuthenticationToken', true, postParams).pipe(
       map(({ response }) => response)
     );
+  }
+
+  setSessionId(sessionId: string): void {
+    DataCache.setSessionId(sessionId);
+
+    this.sessionIdSource.next(sessionId);
   }
 }

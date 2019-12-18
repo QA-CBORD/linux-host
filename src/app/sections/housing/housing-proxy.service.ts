@@ -11,10 +11,10 @@ import { Response, ResponseStatus } from './housing.model';
   providedIn: 'root',
 })
 export class HousingProxyService {
-  constructor(private _http: HttpClient, private _authService: HousingAuthService) {}
+  constructor(private _http: HttpClient, private _housingAuthService: HousingAuthService) {}
 
   request<T>(apiUrl: string, callback: (headers: HttpHeaders, apiUrl: string) => Observable<T>): Observable<T> {
-    return this._authService.authorize().pipe(
+    return this._housingAuthService.authorize().pipe(
       switchMap((token: string) => {
         const headers: HttpHeaders = new HttpHeaders({
           Authorization: `Bearer ${token}`,

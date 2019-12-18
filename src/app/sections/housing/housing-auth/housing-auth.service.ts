@@ -1,46 +1,16 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject, of } from 'rxjs';
-import { map, catchError, tap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
-import { BASE_URL } from '../housing.config';
-
-import { Response } from '../housing.model';
-import { User } from './housing-auth.model';
+import { AuthService } from '../../../core/service/auth-service/auth.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class HousingAuthService {
-  private readonly _authUrl: string = 'patronIdentityTemp/auth/token';
-
-  private _tokenSource: BehaviorSubject<string> = new BehaviorSubject<string>(null);
-
-  static readonly patronId: string = 'EC2MSG001';
-
-  token$: Observable<string> = this._tokenSource.asObservable();
-
-  constructor(private _http: HttpClient) {}
-
-  set token(value: string) {
-    this._tokenSource.next(value);
-  }
-
-  get token(): string {
-    return this._tokenSource.getValue();
-  }
+  constructor(private _authService: AuthService) {}
 
   authorize(): Observable<string> {
-    if (this.token) {
-      return this.token$;
-    }
-
-    const apiUrl: string = `${BASE_URL}/${this._authUrl}`;
-
-    return this._http.post<Response>(apiUrl, new User(HousingAuthService.patronId)).pipe(
-      map((response: Response) => response.data),
-      tap((token: string) => (this.token = token)),
-      catchError(() => of(null))
-    );
+    return this._authService.sessionId$.pipe(switchMap(() => this._authService.getExternalAuthenticationToken()));
   }
 }
