@@ -8,7 +8,11 @@
 }
 
 .terms-select {
+  @include font-nunito-heavy(16px);
+
   --padding-top: 14px;
   --padding-bottom: 15px;
   --padding-end: 16px;
+
+  color: rgba($color-black, 0.6);
 }

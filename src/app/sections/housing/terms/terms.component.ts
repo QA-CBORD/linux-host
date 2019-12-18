@@ -23,7 +23,7 @@ export class TermsComponent implements OnInit {
     this.terms$ = this._termsService.getTerms();
   }
 
-  selectTerm($event: any): void {
-    console.log('event ', $event);
+  handleSelectTermId(termId: number): void {
+    this._termsService.setTermId(termId);
   }
 }

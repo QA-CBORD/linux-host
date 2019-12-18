@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable, from, forkJoin } from 'rxjs';
-import { map, tap, switchMap } from 'rxjs/operators';
+import { Observable, from, forkJoin, of } from 'rxjs';
+import { map, tap, switchMap, catchError } from 'rxjs/operators';
 
 import { BASE_URL } from '../housing.config';
 import { parseJsonToArray, hasValue } from '../utils';
@@ -38,16 +38,19 @@ export class ApplicationsService {
 
   private readonly _applicationDefinitionUrl: string = `${this._patronApplicationsUrl}/application-definition`;
 
-  private readonly _termId: number = 135;
-
-  getApplications(): Observable<ApplicationDetails[]> {
-    const apiUrl: string = `${this._patronApplicationsUrl}/term/${this._termId}/patron/self`;
+  getApplications(termId: number): Observable<ApplicationDetails[]> {
+    const apiUrl: string = `${this._patronApplicationsUrl}/term/${termId}/patron/self`;
 
     return this._housingProxyService.get<ApplicationDetails[]>(apiUrl).pipe(
       map((applications: any[]) =>
         Array.isArray(applications) ? applications.map((application: any) => new ApplicationDetails(application)) : []
       ),
-      tap((applications: ApplicationDetails[]) => this._applicationsStateService.setApplications(applications))
+      tap((applications: ApplicationDetails[]) => this._applicationsStateService.setApplications(applications)),
+      catchError(() => {
+        this._applicationsStateService.setApplications([]);
+
+        return of([]);
+      })
     );
   }
 

@@ -160,6 +160,19 @@
   text-transform: uppercase;
 }
 
+.secondary-header {
+  @include font-nunito-semibold(14px);
+
+  color: rgba($color-black, 0.6);
+  line-height: 16px;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.secondary-header--m {
+  font-size: 12px;
+}
+
 .form-checkbox__control {
   --background-checked: #{$color-dodger-blue};
   --border-color: #{$color-silver};
@@ -202,4 +215,9 @@
 
 .control-hint--error {
   color: $color-alizarin;
+}
+
+.bg-transparent {
+  --background: transparent;
+  background: transparent;
 }

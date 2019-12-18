@@ -2,9 +2,10 @@
   *ngIf="(terms$ | async) as terms"
   class="terms-select"
   interface="popover"
+  placeholder="Select Term"
+  #termsSelect
   [interfaceOptions]="customPopoverOptions"
-  [value]="terms[0].termId"
-  (ionChange)="selectTerm($event)"
+  (ionChange)="handleSelectTermId(termsSelect.value)"
 >
   <ion-select-option [value]="term.termId" *ngFor="let term of terms">{{ term.termName }}</ion-select-option>
 </ion-select>

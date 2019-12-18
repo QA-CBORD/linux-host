@@ -1,21 +1,14 @@
-<ion-item-sliding *ngFor="let application of applications; trackBy: trackById" #applicationSlide>
-  <ion-item
-    [routerLink]="['/housing/applications', application.applicationDefinition.key]"
-    routerDirection="forward"
-    detail="true"
-  >
-    <ion-icon slot="start" name="create" *ngIf="!isSubmitted(application.patronApplication)"></ion-icon>
-    <ion-icon slot="start" name="checkmark-circle" *ngIf="isSubmitted(application.patronApplication)"></ion-icon>
+<ion-item class="applications-list__item" *ngFor="let application of applications; trackBy: trackById">
+  <ion-label class="applications-list__wrap">
+    <div class="applications-list__info">
+      <h5 class="applications-list__status">{{ getApplicationStatus(application.patronApplication) }}</h5>
+      <div class="applications-list__date" *ngIf="application?.patronApplication?.isApplicationSubmitted">
+        Submitted {{ application?.patronApplication.submittedDateTime | date: 'MM/d/yyyy' }}
+      </div>
+    </div>
 
-    <ion-label>
-      <h2>{{ application.applicationDefinition.applicationTitle }}</h2>
-      <p>{{ getApplicationStatus(application.patronApplication) }}</p>
-    </ion-label>
-  </ion-item>
+    <h2 class="applications-list__title">{{ application.applicationDefinition.applicationTitle }}</h2>
+  </ion-label>
 
-  <ion-item-options side="end">
-    <ion-item-option color="danger" (click)="handleClear(application.applicationDefinition.key, applicationSlide)">
-      Clear
-    </ion-item-option>
-  </ion-item-options>
-</ion-item-sliding>
+  <st-application-actions [application]="application"></st-application-actions>
+</ion-item>

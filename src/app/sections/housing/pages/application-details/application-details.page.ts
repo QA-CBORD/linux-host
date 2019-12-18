@@ -12,12 +12,13 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ToastController } from '@ionic/angular';
 import { FormGroup } from '@angular/forms';
 import { Observable, Subscription, Subject } from 'rxjs';
-import { tap, switchMap } from 'rxjs/operators';
+import { tap, switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { QuestionsService } from '../../questions/questions.service';
 import { ApplicationsService } from '../../applications/applications.service';
 import { QuestionsStorageService } from '../../questions/questions-storage.service';
 import { ApplicationsStateService } from '../../applications/applications-state.service';
+import { TermsService } from '../../terms/terms.service';
 
 import { StepperComponent } from '../../stepper/stepper.component';
 import { StepComponent } from '../../stepper/step/step.component';
@@ -55,7 +56,8 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
     private _router: Router,
     private _questionsStorageService: QuestionsStorageService,
     private _toastController: ToastController,
-    private _applicationsStateService: ApplicationsStateService
+    private _applicationsStateService: ApplicationsStateService,
+    private _termsService: TermsService
   ) {}
 
   ngOnInit(): void {
@@ -121,7 +123,10 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
 
   private _initRefreshSubscription(): void {
     const refreshSubscription: Subscription = this._refresh$
-      .pipe(switchMap(() => this._applicationsService.getApplications()))
+      .pipe(
+        withLatestFrom(this._termsService.termId$),
+        switchMap(([_, termId]: [void, number]) => this._applicationsService.getApplications(termId))
+      )
       .subscribe();
 
     this._subscription.add(refreshSubscription);
