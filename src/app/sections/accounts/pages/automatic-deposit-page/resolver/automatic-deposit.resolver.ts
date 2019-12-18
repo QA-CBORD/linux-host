@@ -4,8 +4,8 @@ import { Resolve } from '@angular/router';
 import { Observable, zip } from 'rxjs';
 import { tap, map, take } from 'rxjs/operators';
 import { AutoDepositService } from '../service/auto-deposit.service';
-import { LoadingService } from '../../../../../core/service/loading/loading.service';
-import { DepositService } from '../../../services/deposit.service';
+import { DepositService } from '@sections/accounts/services/deposit.service';
+import { LoadingService } from '@core/service/loading/loading.service';
 
 @Injectable()
 export class AutomaticDepositResolver implements Resolve<Observable<any>> {

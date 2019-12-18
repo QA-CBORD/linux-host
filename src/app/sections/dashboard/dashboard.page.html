@@ -1,0 +1,30 @@
+<ion-content class="dashboard">
+  <st-access-card></st-access-card>
+
+  <ng-container *ngFor="let tile of tiles">
+    <st-tile-wrapper *ngIf="tile.isEnable"
+                     [wrapperConfig]="tile">
+      <ng-container [ngSwitch]="tile.title">
+        <st-accounts-tile *ngSwitchCase="tilesTitle.accounts"></st-accounts-tile>
+        <st-transactions-tile *ngSwitchCase="tilesTitle.transactions"></st-transactions-tile>
+        <st-rewards-tile *ngSwitchCase="tilesTitle.rewards"></st-rewards-tile>
+        <st-mobile-access-tile *ngSwitchCase="tilesTitle.mobileAccess"></st-mobile-access-tile>
+        <st-order-tile *ngSwitchCase="tilesTitle.order"></st-order-tile>
+        <st-explore-tile *ngSwitchCase="tilesTitle.explore"></st-explore-tile>
+        <st-conversations-tile *ngSwitchCase="tilesTitle.conversations"></st-conversations-tile>
+      </ng-container>
+    </st-tile-wrapper>
+  </ng-container>
+
+  <ion-button class="dashboard__bottom-btn-wrapper"
+              mode="ios"
+              (click)="presentEditHomePageModal()">
+    <div class="dashboard__bottom-icon-wrapper">
+      <img src="/assets/icon/dashboard.svg" />
+    </div>
+    <div class="dashboard__bottom-title-wrapper">
+      <div class="dashboard__bottom-title">Edit Home Page</div>
+      <div class="dashboard__bottom-subtitle">Rearrange and show or hide cards</div>
+    </div>
+  </ion-button>
+</ion-content>

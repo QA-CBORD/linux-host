@@ -1,0 +1,27 @@
+@import "tools";
+
+.btn {
+  --border-radius: 25px;
+  --background: #166DFF;
+  --background-hover: #166DFF;
+
+  border-radius: 25px;
+  height: 50px;
+  color: $color-white;
+  text-transform: uppercase;
+  width: 95%;
+  margin: 0 5% 5%;
+  padding-bottom: 5px;
+
+  @include font-nunito-heavy(14px);
+
+  &--invalid {
+    --background: #999;
+
+    &:hover {
+      --background-hover: #999;
+    }
+
+    color: $color-white;
+  }
+}

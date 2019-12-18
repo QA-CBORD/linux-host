@@ -47,7 +47,13 @@ export class Events {
 }
 
 export namespace Settings {
-  export enum ESetting {
+  export enum SettingList {
+    FEATURES = 'get.feature',
+    DEPOSITS = 'get.deposit',
+    MEAL_PLAN = 'get.meal_plan',
+  }
+
+  export enum Setting {
     PIN_ENABLED = 'get.feature.enable_mobile_pin_entry',
     SOA_KEY = 'soa.general.key',
     PIN_ENTRY_MAX_FAILURES = 'get.login.pin_max_failed',
@@ -58,19 +64,57 @@ export namespace Settings {
     REWARDS_ENABLED = 'get.feature.enable_rewards',
     FOOD_ENABLED = 'get.feature.enable_food',
     PLACES_ENABLED = 'get.feature.enable_merchants',
+    ONETIME_DEPOSITS_ENABLED = 'get.deposit.enable_onetime_deposits',
+    AUTO_DEPOSIT_ENABLED = 'get.deposit.enable_auto_deposit',
+    DEPOSIT_TENDERS = 'get.feature.deposit_tenders',
+    DISPLAY_TENDERS = 'get.feature.display_tenders',
+    GUEST_DEPOSIT = 'get.deposit.enable_guest_deposits',
+    BILLME_MAPPING = 'get.deposit.billme_mapping',
+    FREEFORM_DEPOSIT_ENABLED = 'get.deposit.allow_freeform_onetime_amounts',
+    BILLME_AMOUNTS = 'get.deposit.billme_amounts',
+    PRESET_DEPOSIT_AMOUNTS_CREDITCARD = 'get.deposit.onetime_amounts',
+    PAYMENT_TYPES = 'get.deposit.payment_types',
+    BILLME_AMOUNT_MIN = 'get.deposit.billme_min',
+    CREDITCARD_AMOUNT_MIN = 'get.deposit.onetime_minimum',
+    BILLME_AMOUNT_MAX = 'get.deposit.billme_maximum',
+    CREDITCARD_AMOUNT_MAX = 'get.deposit.onetime_maximum',
+    AUTO_DEPOSIT_PAYMENT_TYPES = 'get.deposit.auto_deposit_payment_types',
+    LOW_BALANCE_AUTO_DEPOSIT_ENABLED = 'get.feature.enable_low_balance_auto_deposit',
+    LOW_BALANCE_FREEFORM_ENABLED = 'get.deposit.allow_freeform_low_balance_amounts',
+    LOW_BALANCE_AMOUNTS = 'get.deposit.low_balance_amounts',
+    BILLME_FREEFORM_ENABLED = 'get.deposit.allow_freeform_billme_amounts',
+    AUTO_DEPOSIT_TENDERS = 'get.feature.auto_deposit_tenders',
+    MOBILE_HEADER_COLOR = 'get.style.custom_site_colors',
   }
 
-  export enum ESettingList {
-    FEATURES = 'get.feature',
-    DEPOSITS = 'get.deposit',
-    MEAL_PLAN = 'get.meal_plan',
+}
+
+export namespace ContentStrings {
+  export enum ContentStringList{
+    TEMP = '1.2.3',
   }
 
-  export enum EStrings {
-    USERNAME_TITLE = 'get_web_gui.login_screen.email_username',
-    GET_MY_CARD_BACK = 'get_mobile_app.get_my_card.back_instructions',
-    REWARDS_PATRON_DISABLED = 'get_common.error.RewardsDisabledForUserException',
+  export enum ContentString {
+    MEAL_SUFFIX = 'get_common.currency_display.meal_quantity_suffix',
+    MEAL_SUFFIX_PLURAL = 'get_common.currency_display.meal_quantity_suffix_plural',
   }
+}
+
+export enum AccountType {
+  MEALS = 1,
+  CHARGE = 2,
+  DECLINING_BALANCE = 3,
+}
+
+export enum PaymentType {
+  CREDIT = 1,
+  BILLME = 2,
+}
+export enum PaymentSystemType {
+  OPCS = 1,
+  CSGOLD = 2,
+  MONETRA = 3,
+  USAEPAY = 4,
 }
 
 export namespace ContentString {
@@ -128,8 +172,10 @@ export namespace User {
 
 export enum NAVIGATE {
   housing = 'housing',
+  dashboard = 'dashboard',
   rewards = 'rewards',
   mobileAccess = 'openmydoor',
   secureMessage = 'securemessaging',
   accounts = 'accounts',
+  ordering = 'ordering',
 }

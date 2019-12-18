@@ -1,0 +1,20 @@
+<div class="menu__sub-navigation">
+  <div class="menu__nav-item-wrapper" (click)="goToPage(localRouting.recentOrders)">
+    <div class="menu__nav-item-icon-wrapper">
+      <img src="./assets/icon/history-solid.svg" alt="recent orders" />
+    </div>
+    <div class="menu__nav-item-content">Recent Orders</div>
+  </div>
+  <div class="menu__nav-item-wrapper" (click)="goToPage(localRouting.savedAddresses)">
+    <div class="menu__nav-item-icon-wrapper">
+      <img src="./assets/icon/map-marker-alt-fill.svg" alt="saved addresses" />
+    </div>
+    <div class="menu__nav-item-content">Saved Addresses</div>
+  </div>
+  <div class="menu__nav-item-wrapper" (click)="goToPage(localRouting.favoriteMerchants)">
+    <div class="menu__nav-item-icon-wrapper">
+      <img src="./assets/icon/favorite.svg" alt="favorites" />
+    </div>
+    <div class="menu__nav-item-content">Favorites</div>
+  </div>
+</div>

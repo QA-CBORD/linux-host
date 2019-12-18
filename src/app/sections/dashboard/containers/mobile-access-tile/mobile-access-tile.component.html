@@ -1,0 +1,13 @@
+<div *ngIf="showSpinner" class="spinner-wrapper">
+  <ion-spinner></ion-spinner>
+</div>
+<div class="access">
+  <ion-list class="access__list" *ngFor="let access of locations">
+    <ion-item class="access__item" mode="ios" lines="none" (click)="navigateTo(access.locationId)">
+      <img class="access__item-icon"
+           [src]="!access.isFavourite ? '/assets/icon/star-outline.svg' : '/assets/icon/star-filled.svg'"
+           alt="favourite icon"/>
+      <div class="access__item-lable"> {{ access.locationId }} - {{ access.name}}</div>
+    </ion-item>
+  </ion-list>
+</div>

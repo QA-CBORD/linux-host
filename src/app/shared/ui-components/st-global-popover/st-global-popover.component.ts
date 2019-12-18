@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { PopoverConfig } from 'src/app/core/model/popover/popover.model';
-import { buttons } from '../../../core/utils/buttons.config';
+import { buttons as BUTTONS } from '@core/utils/buttons.config';
 
 @Component({
   selector: 'st-global-popover',
@@ -21,22 +21,21 @@ export class StGlobalPopoverComponent implements OnInit {
   }
 
   initPopover() {
-    const { message, title, isRetryBtnExist } = this.data;
+    const { message, title, buttons } = this.data;
 
     this.popoverConfig = {
       ...this.popoverConfig,
       title,
       message,
-      buttons: this.configureButtons(isRetryBtnExist),
+      buttons: this.resolveButtons(buttons),
     };
   }
 
-  configureButtons(isRetryBtnExist) {
-    if (!isRetryBtnExist) {
-      return [{ ...buttons.CLOSE, label: 'CLOSE' }];
-    }
-
-    return [{ ...buttons.CLOSE, label: 'CLOSE' }, { ...buttons.RETRY, label: 'RETRY' }];
+  resolveButtons(buttons = []) {
+    const cancelBtn = { ...BUTTONS.CLOSE, label: 'CLOSE' };
+    return buttons.length
+      ? [cancelBtn, ...buttons]
+      : [cancelBtn];
   }
 
   // private setContentStrings() {

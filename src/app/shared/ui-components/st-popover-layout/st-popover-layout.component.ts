@@ -13,7 +13,9 @@ export class StPopoverLayoutComponent implements OnInit {
 
   constructor(private popoverCtrl: PopoverController) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    // console.log(this.popoverConfig)
+  }
 
   async closeModal(closeModal = 'CANCEL', btnType: string = BUTTON_TYPE.CANCEL) {
     await this.popoverCtrl.dismiss(closeModal, btnType);

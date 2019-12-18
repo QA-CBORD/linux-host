@@ -1,0 +1,10 @@
+<ion-content main class="ordering-content-wrapper">
+  <st-menu-ordering class="ordering-page__menu"></st-menu-ordering>
+
+  <st-merchant-list
+    [merchantList]="merchantList$ | async"
+    (addToFav)="favouriteHandler($event)"
+    (locationPin)="locationPinHandler($event)"
+    (merchantClick)="merchantClickHandler($event)"
+  ></st-merchant-list>
+</ion-content>

@@ -5,7 +5,7 @@ import { DataCache } from '../../utils/data-cache';
 
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { testCredentials } from '../../../../environments/environment';
+import { testCredentials } from '@environments/environment';
 
 @Injectable({
   providedIn: 'root',

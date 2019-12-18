@@ -1,0 +1,128 @@
+<ng-container *ngIf="isStaticHeader; then staticHeader; else header"></ng-container>
+
+<ng-template #header>
+  <st-header
+          [title]="menuItem.name"
+          [isTitleShow]="true"
+          [backButtonTitle]="''"
+          [isToolbarShow]="true"
+          [backButtonIcon]="'close'"
+  ></st-header>
+</ng-template>
+
+<ng-template #staticHeader>
+  <ion-header class="order-detail__static-header">
+    <img [src]="menuItemImg" alt="{{ menuItem.name }}" class="order-detail__appetizer-photo"/>
+    <ion-buttons slot="start" class="order-detail__header-buttons">
+      <ion-button color="dark" (click)="onClose()" class="order-detail__close-button">
+        <ion-icon size="large" slot="icon-only" name="close" class="order-detail__header-icon"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-header>
+</ng-template>
+
+<ion-content class="order-detail" (ionScroll)="scroll($event)" [scrollEvents]="true">
+  <div class="order-detail__descriptions">
+    <div class="order-detail__descriptions-title">{{ menuItem.name }}</div>
+    <p class="order-detail__descriptions-content">{{ menuItem.description }}</p>
+    <span class="order-detail__descriptions-price">{{ menuItem.price | priceUnitsResolver: (menuInfo$ | async).mealBased }}</span>
+  </div>
+  <form *ngIf="itemOrderForm" [formGroup]="itemOrderForm" novalidate>
+    <ng-container *ngFor="let menuGroupItem of menuItem.menuItemOptions">
+      <ng-container
+              *ngIf="
+          menuGroupItem.menuGroup?.maximum === 1 && menuGroupItem.menuGroup?.minimum === 1;
+          then singleList;
+          else multiList
+        "
+      >
+      </ng-container>
+
+      <ng-template #singleList>
+        <st-single-list
+                [mealBased]="(menuInfo$ | async).mealBased"
+                [name]="menuGroupItem.menuGroup.name"
+                [options]="menuGroupItem.menuGroup.menuGroupItems"
+                [control]="itemOrderForm.get(menuGroupItem.menuGroup.name)"
+                [isError]="itemOrderForm.get(menuGroupItem.menuGroup.name)?.value ? false : errorState"
+                [formControlName]="menuGroupItem.menuGroup.name"
+        >
+        </st-single-list>
+      </ng-template>
+
+      <ng-template #multiList>
+        <st-multi-list
+                [mealBased]="(menuInfo$ | async).mealBased"
+                [minimum]="menuGroupItem.menuGroup.minimum"
+                [maximum]="menuGroupItem.menuGroup.maximum"
+                [name]="menuGroupItem.menuGroup.name"
+                [options]="menuGroupItem.menuGroup.menuGroupItems"
+                [control]="itemOrderForm.get(menuGroupItem.menuGroup.name)"
+                [isError]="
+            itemOrderForm.get(menuGroupItem.menuGroup.name)?.value.length || !menuGroupItem.menuGroup.minimum
+              ? false
+              : errorState
+          "
+                [formControlName]="menuGroupItem.menuGroup.name"
+        ></st-multi-list>
+      </ng-template>
+    </ng-container>
+
+    <ion-list class="order-detail__special-instructions">
+      <ion-item-divider class="order-detail__divider" mode="ios">
+        <div class="order-detail__divider-title">Specials Instructions</div>
+      </ion-item-divider>
+      <st-textarea-floating-label
+              [control]="itemOrderForm.get('message')"
+              formControlName="message"
+              [isError]="itemOrderForm.get('message').invalid && itemOrderForm.get('message').touched"
+              class="order-detail__order-message"
+              idd="message"
+              label="Add a note for the kitchen"
+              rows="3"
+      >
+      </st-textarea-floating-label>
+    </ion-list>
+    <ion-list class="order-detail__nutrition-info" *ngIf="menuItem.calories || menuItem.protein || menuItem.carbs">
+      <ion-item-divider class="order-detail__divider" mode="ios">
+        <div class="order-detail__divider-title">Nutrition Info</div>
+      </ion-item-divider>
+      <div class="order-detail__nutrition-info-container">
+        <div class="order-detail__nutrition-info-wrapper" *ngIf="menuItem.calories">
+          <div class="order-detail__nutrition-info-title">{{ menuItem.calories }}</div>
+          <div class="order-detail__nutrition-info-subtitle">Calories</div>
+        </div>
+        <div class="order-detail__nutrition-info-wrapper" *ngIf="menuItem.protein">
+          <div class="order-detail__nutrition-info-title">{{ menuItem.protein }}g</div>
+          <div class="order-detail__nutrition-info-subtitle">Protein</div>
+        </div>
+        <div class="order-detail__nutrition-info-wrapper" *ngIf="menuItem.carbs">
+          <div class="order-detail__nutrition-info-title">{{ menuItem.carbs }}</div>
+          <div class="order-detail__nutrition-info-subtitle">Carbs</div>
+        </div>
+      </div>
+    </ion-list>
+  </form>
+</ion-content>
+<ion-footer class="item-footer" mode="ios">
+  <div class="item-footer__counter-btns">
+    <ion-button [disabled]="order.counter == 1" class="item-footer__counter-btn" (click)="removeItems()">
+      <ion-icon name="remove"></ion-icon>
+    </ion-button>
+    <div>{{ order.counter }}</div>
+    <ion-button class="item-footer__counter-btn" (click)="addItems()">
+      <ion-icon name="add"></ion-icon>
+    </ion-button>
+  </div>
+  <div>
+    <ion-button
+            mode="md"
+            type="submit"
+            (click)="onFormSubmit()"
+            class="item-footer__add-btn"
+            [ngClass]="{ 'item-footer__add-btn--disabled': itemOrderForm.invalid }"
+    >
+      Add {{ order.totalPrice | priceUnitsResolver: (menuInfo$ | async).mealBased }}
+    </ion-button>
+  </div>
+</ion-footer>

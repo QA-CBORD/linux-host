@@ -59,16 +59,19 @@ export class BaseService {
       subscribeOn(async),
       observeOn(queue),
       timeout(this.TIMEOUT_MS),
-      map(response => this.extractData(response)),
+      map(response => this.errorDetection(response)),
       catchError(error => this.handleError(error))
     );
   }
+
+  // XXX - Remove this block of code and organize error catching and handling directly in the
+  // services which are inherited from this service
 
   protected handleError(error: any) {
     return throwError(error);
   }
 
-  protected extractData(response: any) {
+  protected errorDetection(response: any) {
     if (response.exception) {
       this.parseExceptionResponse(response.exception);
     } else {
@@ -78,7 +81,7 @@ export class BaseService {
 
   protected parseExceptionResponse(exceptionString: string) {
     // check the exception string for a number|description string format
-    const regEx = new RegExp('^[0-9]*|.*$');
+    const regEx = /^[0-9]{4}\|[a-z]+/gi;
     if (regEx.test(exceptionString)) {
       const parts = exceptionString.split('|');
       this.determineErrorByCodeAndThrow(parts[0], parts.length > 1 ? parts[1] : null);
@@ -88,7 +91,7 @@ export class BaseService {
   }
 
   protected determineErrorByCodeAndThrow(code: string, message: string) {
-    const newError = new Error('Unexpected error occurred.');
+    const newError = new Error(`${code}|${message}`);
     switch (code) {
       case '9999':
         newError.name = 'CannotParseResponseException';
@@ -113,6 +116,8 @@ export class BaseService {
     }
     throw newError;
   }
+
+  // XXX - end of block
 
   protected getOptions(): any {
     return {

@@ -1,0 +1,24 @@
+<div class="explore">
+  <ion-list class="explore__merchant-list">
+    <ion-item *ngFor="let merchant of exploreList"
+              class="explore__merchant-item"
+              lines="none">
+      <div class="explore__merchant-photo-wrapper">
+        <img class="explore__merchant-photo"
+             src="{{ merchant.img }}"
+             alt="{{merchant.name}}" />
+      </div>
+      <div class="explore__merchant-info">
+        <div class="explore__merchant-name">{{ merchant.name }}</div>
+        <div class="explore__merchant-type">{{ merchant.type }}</div>
+        <div class="explore__merchant-hours"
+             [ngClass]="{
+            'explore__merchant-hours--open': merchant.merchantInfo.openNow,
+            'explore__merchant-hours--closed': !merchant.merchantInfo.openNow
+          }">
+          {{ merchant.merchantInfo.openNow ? 'Open' : 'Closed' }}
+        </div>
+      </div>
+    </ion-item>
+  </ion-list>
+</div>

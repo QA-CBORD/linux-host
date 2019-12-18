@@ -65,8 +65,8 @@ export class AccountsService {
 
   initContentStringsList(): Observable<ContentStringInfo[]> {
     return combineLatest(
-      this.contentService.retrieveContentStringList(ContentStringsParamsAccounts),
-      this.contentService.retrieveContentStringList(GenericContentStringsParams)
+      this.contentService.retrieveContentStringListByRequest(ContentStringsParamsAccounts),
+      this.contentService.retrieveContentStringListByRequest(GenericContentStringsParams)
     ).pipe(
       map(([res, res0]) => {
         const finalArray = [...res, ...res0];

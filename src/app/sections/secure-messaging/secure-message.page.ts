@@ -44,13 +44,16 @@ export class SecureMessagePage implements OnDestroy, OnInit {
   }
 
   ngOnInit() {
-    this.network.onDisconnect().subscribe(() => {
+    const subscription1 = this.network.onDisconnect().subscribe(() => {
       console.log('network was disconnected :-(');
     });
 
-    this.network.onConnect().subscribe(() => {
+    const subscription2 = this.network.onConnect().subscribe(() => {
       console.log('network connected!');
     });
+
+    this.sourceSubscription.add(subscription1);
+    this.sourceSubscription.add(subscription2);
   }
 
   ngOnDestroy() {
@@ -65,7 +68,7 @@ export class SecureMessagePage implements OnDestroy, OnInit {
   }
 
   private initComponent() {
-    /// set subscription to check screen size change
+    /// set subscription to check screen size onAddressChanged
     /// used to adjust ui layout
     this.bIsLargeScreen = this.platform.width() > this.largeScreenPixelMin;
     const subscription = fromEvent(window, 'resize').subscribe(this.onWindowResizeHandler.bind(this));

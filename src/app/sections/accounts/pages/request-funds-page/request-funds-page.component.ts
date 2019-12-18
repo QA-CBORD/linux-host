@@ -4,7 +4,7 @@ import { PopoverController, ToastController } from '@ionic/angular';
 import { Router } from '@angular/router';
 
 import { Observable } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { map, switchMap, take } from 'rxjs/operators';
 
 import { AccountsService } from '../../services/accounts.service';
 import { UserAccount } from '../../../../core/model/account/account.model';
@@ -60,9 +60,9 @@ export class RequestFundsPageComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.accounts$ = this.accountService.getAccountsFilteredByDepositTenders().pipe(
-      map((accounts: UserAccount[]) => accounts.filter(account => account.depositAccepted))
-    );
+    this.accounts$ = this.accountService
+      .getAccountsFilteredByDepositTenders()
+      .pipe(map((accounts: UserAccount[]) => accounts.filter(account => account.depositAccepted)));
     this.initForm();
   }
 
@@ -71,7 +71,9 @@ export class RequestFundsPageComponent implements OnInit {
   }
 
   async onSubmit() {
-    if (this.requestFundsForm.invalid) {return;}
+    if (this.requestFundsForm.invalid) {
+      return;
+    }
 
     const {
       [this.controlsNames.name]: n,
@@ -84,7 +86,10 @@ export class RequestFundsPageComponent implements OnInit {
 
     this.userService
       .getUserSettingsBySettingName('quick_amount')
-      .pipe(switchMap(({ response: { value: v } }) => this.userService.requestDeposit(n, e, m, a, v)))
+      .pipe(
+        switchMap(({ response: { value: v } }) => this.userService.requestDeposit(n, e, m, a, v)),
+        take(1)
+      )
       .subscribe(
         async ({ response }) => {
           await this.loadingService.closeSpinner();

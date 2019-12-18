@@ -66,6 +66,13 @@ export const testCredentials: Dictionary<UserLogin> = {
     institutionId: 'ec1307c4-d59e-4981-b5f9-860e23229a0d',
   },
 
+  usaEPay: {
+    userName: 'gsaas@tpsmail.dev',
+    password: 'password1',
+    domain: null,
+    institutionId: 'd0a8487d-d30d-4013-acd4-29e5927fe0d0',
+  },
+
   lowBalance: {
     userName: 'lowbalance@tpsmail.dev',
     password: 'password1',

@@ -1,0 +1,252 @@
+import { LOCAL_ROUTING, ORDER_VALIDATION_ERRORS } from '@sections/ordering/ordering.config';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { NAVIGATE } from 'src/app/app.global';
+import { Observable, Subscription, zip } from 'rxjs';
+import { CartService, MenuInfo, MenuItemInfo, OrderItem } from '@sections/ordering';
+import { first, take } from 'rxjs/operators';
+import { LoadingService } from '@core/service/loading/loading.service';
+import { ToastController } from '@ionic/angular';
+import { handleServerError } from '@core/utils/general-helpers';
+
+@Component({
+  selector: 'st-item-detail',
+  templateUrl: './item-detail.component.html',
+  styleUrls: ['./item-detail.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class ItemDetailComponent implements OnInit {
+  private readonly sourceSubscription: Subscription = new Subscription();
+  itemOrderForm: FormGroup;
+  order: { counter: number; totalPrice: number; optionsPrice: number } = { counter: 1, totalPrice: 0, optionsPrice: 0 };
+  menuItem: MenuItemInfo;
+  menuItemImg: string;
+  isStaticHeader: boolean = true;
+  menuInfo$: Observable<MenuInfo>;
+  errorState: boolean = false;
+  cartOrderItemOptions: OrderItem[] = [];
+
+  constructor(
+    private readonly router: Router,
+    private readonly fb: FormBuilder,
+    private readonly activatedRoute: ActivatedRoute,
+    private readonly cartService: CartService,
+    private readonly loadingService: LoadingService,
+    private readonly toastController: ToastController,
+  ) { }
+
+  ngOnInit() {
+    this.initMenuItemOptions();
+    this.menuInfo$ = this.cartService.menuInfo$;
+  }
+
+  ngOnDestroy() {
+    this.sourceSubscription.unsubscribe();
+  }
+
+  onClose() {
+    this.activatedRoute.data.pipe(take(1)).subscribe(({ data: { queryParams: { categoryId } } }) => {
+      this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.menuCategoryItems, categoryId], { skipLocationChange: true });
+    });
+  }
+
+  scroll({ detail: { scrollTop } }) {
+    if (this.menuItem.menuItemOptions.length) {
+      this.isStaticHeader = scrollTop === 0;
+    }
+  }
+
+  initForm() {
+    const cartSelectedItems = this.cartOrderItemOptions;
+    const formGroup = {};
+    if (!cartSelectedItems.length) {
+      this.menuItem.menuItemOptions.forEach(({ menuGroup: { minimum, maximum, name } }) => {
+        if (minimum === 1 && maximum === 1) {
+          formGroup[name] = ['', [Validators.required]];
+          return;
+        }
+        formGroup[name] = [[], [validateMinLengthOfArray(minimum), validateMaxLengthOfArray(maximum)]];
+      });
+    } else {
+      this.menuItem.menuItemOptions.forEach(({ menuGroup: { minimum, maximum, menuGroupItems, name } }) => {
+        if (minimum === 1 && maximum === 1) {
+          let formItemValue: string | MenuItemInfo = '';
+          const selectedOption = menuGroupItems.find(({ menuItem: { id } }) => {
+            const selectedItem = cartSelectedItems.find(({ menuItemId }) => menuItemId === id);
+
+            return selectedItem && id === selectedItem.menuItemId;
+          });
+
+          if (selectedOption) {
+            formItemValue = selectedOption.menuItem;
+          }
+          formGroup[name] = [formItemValue, [Validators.required]];
+        } else {
+          const selectedOptions = menuGroupItems.map(({ menuItem }) => {
+            const selectedItem = cartSelectedItems.find(({ menuItemId }) => menuItemId === menuItem.id);
+            if (selectedItem && menuItem.id === selectedItem.menuItemId) {
+              return menuItem;
+            }
+          });
+
+          formGroup[name] = [
+            selectedOptions.filter(item => item),
+            [validateMinLengthOfArray(minimum), validateMaxLengthOfArray(maximum)],
+          ];
+        }
+      });
+    }
+
+    this.itemOrderForm = this.fb.group({
+      ...formGroup,
+      message: ['', [Validators.minLength(1), Validators.maxLength(255)]],
+    });
+
+    this.valueChanges();
+  }
+
+  calculateTotalPrice() {
+    const calcValue = (this.menuItem.price + this.order.optionsPrice) * this.order.counter;
+    this.order = { ...this.order, totalPrice: Number(calcValue.toFixed(2)) };
+  }
+
+  removeItems() {
+    this.order.counter > 1 ? this.order.counter-- : null;
+    this.calculateTotalPrice();
+  }
+
+  addItems() {
+    this.order.counter++;
+    this.calculateTotalPrice();
+  }
+
+  onFormSubmit() {
+    if (this.itemOrderForm.invalid) {
+      this.errorState = true;
+      return;
+    }
+    const menuItem = this.configureMenuItem(this.menuItem.id, this.order.counter);
+    const arrayOfvalues: any[] = Object.values(this.itemOrderForm.value);
+    arrayOfvalues.forEach(value => {
+      if (!value || typeof value === 'string') {
+        return;
+      }
+
+      if (value.length) {
+        value.forEach(elem => {
+          menuItem.orderItemOptions.push(this.configureMenuItem(elem.id, menuItem.quantity));
+        });
+        return;
+      }
+
+      if (value && value.id) {
+        menuItem.orderItemOptions.push(this.configureMenuItem(value.id, menuItem.quantity));
+        return;
+      }
+    });
+
+    this.onSubmit(menuItem);
+  }
+
+  private configureMenuItem(id, quantity) {
+    return { menuItemId: id, orderItemOptions: [], quantity: quantity };
+  }
+
+  private async onSubmit(menuItem) {
+    const orderItems = await this.cartService.orderItems$.pipe(first()).toPromise();
+    if (orderItems.length) {
+      const { data: { queryParams: { orderItemId } } } = await this.activatedRoute.data.pipe(first()).toPromise();
+      await this.cartService.removeOrderItemFromOrderById(orderItemId);
+    }
+
+
+    this.cartService.addOrderItems(menuItem);
+    this.onClose();
+    this.loadingService.showSpinner();
+    await this.cartService
+      .validateOrder()
+      .pipe(
+        first(),
+        handleServerError(ORDER_VALIDATION_ERRORS)
+      )
+      .toPromise()
+      .then(() => this.onClose())
+      .catch(error => {
+        this.cartService.removeLastOrderItem();
+        this.failedValidateOrder(error)
+      })
+      .finally(() => this.loadingService.closeSpinner());
+  }
+
+  private async failedValidateOrder(message: string) {
+    const toast = await this.toastController.create({
+      message,
+      duration: 3000,
+      position: 'top',
+    });
+    toast.present();
+  }
+
+  private initMenuItemOptions() {
+    zip(this.activatedRoute.data, this.cartService.orderItems$)
+      .pipe(take(1))
+      .subscribe(([{ data: { menuItem, queryParams: { orderItemId } } }, orderItems]) => {
+        this.menuItem = menuItem.menuItem;
+        // Temporary, while we don't have images:
+        // '/assets/images/temp-merchant-photo.jpg'
+        this.menuItemImg = '/assets/images/temp-merchant-photo.jpg';
+        this.order = { ...this.order, totalPrice: this.menuItem.price };
+
+        const cartSelectedItem = orderItems.find(({ id }) => id === orderItemId);
+        if (cartSelectedItem) {
+          this.cartOrderItemOptions = cartSelectedItem.orderItemOptions;
+          this.order = { ...this.order, counter: cartSelectedItem.quantity };
+        }
+        this.initForm();
+      });
+  }
+
+  private valueChanges() {
+    const subscription = this.itemOrderForm.valueChanges.subscribe(formValue => {
+      const arrayOfvalues: any[] = Object.values(formValue);
+      this.order = { ...this.order, optionsPrice: 0 };
+      arrayOfvalues.map(value => {
+        if (!value || typeof value === 'string') {
+          return;
+        }
+
+        if (value.length) {
+          const optionPrice = value.reduce((total, item) => (!item ? total : item.price + total), 0);
+          this.order = { ...this.order, optionsPrice: this.order.optionsPrice + optionPrice };
+          return;
+        }
+
+        if (value && value.id) {
+          this.order = { ...this.order, optionsPrice: this.order.optionsPrice + value.price };
+          return;
+        }
+      });
+
+      this.calculateTotalPrice();
+    });
+
+    this.sourceSubscription.add(subscription);
+  }
+}
+
+export const validateMinLengthOfArray = (min: number | undefined): ValidationErrors | null => {
+  return (c: AbstractControl): { [key: string]: any } => {
+    if (!min || c.value.length >= min) return null;
+
+    return { minLength: { valid: false } };
+  };
+};
+
+export const validateMaxLengthOfArray = (max: number | undefined): ValidationErrors | null => {
+  return (c: AbstractControl): { [key: string]: any } => {
+    if (!max || c.value.length <= max) return null;
+
+    return { maxLength: { valid: false } };
+  };
+};

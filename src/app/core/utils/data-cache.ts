@@ -20,6 +20,7 @@ import { StartupInfo } from '../model/institution/native-startup-info.model';
 import { InstitutionInfo } from '../model/institution/institution-info.model';
 import { EnvironmentInfo } from '../model/environment/environment-info.model';
 import { NAVIGATE } from '../../app.global';
+import { take } from 'rxjs/operators';
 
 @Injectable()
 export class DataCache {
@@ -94,19 +95,21 @@ export class DataCache {
   }
 
   refreshCacheFromStorage(onSuccess: () => void, onFailure: () => void) {
-    this.getData(this.CACHE).subscribe(
-      (data: string) => {
-        if (data != null) {
-          DataCache.localCache = MCache.fromT(JSON.parse(data));
-          onSuccess();
-        } else {
+    this.getData(this.CACHE)
+      .pipe(take(1))
+      .subscribe(
+        (data: string) => {
+          if (data != null) {
+            DataCache.localCache = MCache.fromT(JSON.parse(data));
+            onSuccess();
+          } else {
+            onFailure();
+          }
+        },
+        error => {
           onFailure();
         }
-      },
-      error => {
-        onFailure();
-      }
-    );
+      );
   }
 
   clearLocalCache() {
@@ -154,7 +157,7 @@ export class DataCache {
     DataCache.localCache.addSetting(settingInfo);
   }
 
-  getInstitutionSetting(setting: Globals.Settings.ESetting) {
+  getInstitutionSetting(setting: Globals.Settings.Setting) {
     return DataCache.localCache.getSetting(setting).value;
   }
 
@@ -164,10 +167,6 @@ export class DataCache {
 
   setInstitutionContentString(contentStringInfo: ContentStringInfo) {
     DataCache.localCache.addContentString(contentStringInfo);
-  }
-
-  getInstitutionContentString(string: Globals.Settings.EStrings): string {
-    return DataCache.localCache.getContentString(string).value;
   }
 
   getPINSet(): boolean {

@@ -193,8 +193,8 @@ export class TransactionService {
 
   initContentStringsList(): Observable<ContentStringInfo[]> {
     return combineLatest(
-      this.contentService.retrieveContentStringList(ContentStringsParamsTransactions),
-      this.contentService.retrieveContentStringList(GenericContentStringsParams)
+      this.contentService.retrieveContentStringListByRequest(ContentStringsParamsTransactions),
+      this.contentService.retrieveContentStringListByRequest(GenericContentStringsParams)
     ).pipe(
       map(([res, res0]) => {
         const finalArray = [...res, ...res0];

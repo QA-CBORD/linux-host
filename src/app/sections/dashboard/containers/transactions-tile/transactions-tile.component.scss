@@ -1,0 +1,62 @@
+@import 'tools';
+
+.transaction {
+  margin: 0 15px;
+  overflow: hidden;
+
+  &__list {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  &__item {
+    --padding-start: 0;
+    --inner-padding-end: 0;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    border-bottom: 1px solid $color-white-smoke;
+  }
+
+  &__label-container {
+    margin-top: 15px;
+    width: 65%;
+    text-align: left;
+  }
+
+  &__label {
+    @include ellipsis;
+    @include font-nunito-semibold(16px);
+  }
+
+  &__date {
+    margin: 5px 0 15px;
+    @include font-nunito-regular(10px);
+  }
+
+  &__type-container {
+    margin-top: 15px;
+    width: 35%;
+    text-align: right;
+  }
+
+  &__type-entity {
+    @include font-nunito-semibold(16px);
+  }
+
+  &__type-label {
+    margin: 5px 0 13px;
+
+    @include font-nunito-regular(10px);
+  }
+}
+
+.spinner-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 25px;
+}

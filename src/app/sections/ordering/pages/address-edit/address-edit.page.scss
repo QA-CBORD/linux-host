@@ -1,0 +1,91 @@
+@import 'tools';
+
+.address-edit {
+  &__header {
+    border-bottom: 1px solid $color-whisper;
+  }
+
+  &__header-title {
+    @include font-nunito-heavy(20px);
+  }
+
+  &__header-remove-btn {
+    --color: #e22942 !important;
+
+    @include font-nunito-semibold(16px);
+  }
+
+  &__add-address-container {
+    padding: 25px 20px 0;
+  }
+
+  &__add-address-wrapper {
+    margin-bottom: 20px;
+
+    @include font-nunito-semibold(16px);
+  }
+
+  &__add-address-sign {
+    position: relative;
+    bottom: 2px;
+    left: 4px;
+
+    @include font-nunito-semibold(24px);
+  }
+
+  &__add-address-text {
+    margin-left: 15px;
+  }
+
+  &__add-address-btn {
+    min-width: 170px;
+    height: 48px;
+
+    --background: #166dff !important;
+    --color: #fff !important;
+
+    @include font-nunito-heavy(14px);
+  }
+
+  &__header-back-btn {
+    --color: #000 !important;
+
+    @include font-nunito-regular(16px);
+  }
+
+  &__radio-label-header {
+    @include font-nunito-semibold(16px);
+  }
+
+  &__radio-label-sub-header {
+    @include font-nunito-regular(12px);
+  }
+
+  &__radio-container {
+    &.item-radio-checked {
+      .delivery-address__radio-label {
+        color: #000;
+      }
+    }
+  }
+
+  &__radio-item {
+    --color-checked: #166dff;
+    --color: #c4c4c4;
+    margin-right: 10px;
+  }
+
+  &__radio-label {
+    color: #c4c4c4;
+
+    @include font-nunito-semibold(16px);
+  }
+
+  &__submit-btn {
+    --background: #166dff;
+    margin: 20px 15px;
+    height: 48px;
+
+    @include font-nunito-heavy(14px);
+  }
+}

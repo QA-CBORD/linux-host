@@ -1,0 +1,75 @@
+<div class="card" [ngStyle]="{'background-color': (institutionColor$ | async)}">
+  <ion-grid class="ion-no-padding">
+    <ion-row class="card__header">
+      <ion-col class="card__header-logo-wrapper" size="2">
+        <img
+          *ngIf="(institutionPhoto$ | async)"
+          class="card__header-logo"
+          [src]="institutionPhoto$ | async"
+          alt="institution logo"
+        />
+      </ion-col>
+      <ion-col class="card__header-title-wrapper" size="9">
+        <div *ngIf="(institutionName$ | async)" class="card__header-title left">{{ institutionName$ | async }}</div>
+      </ion-col>
+      <!-- <ion-col class="card__header-dots-btn-wrapper">
+        <ion-button class="card__header-dots-btn" mode="ios"><img src="/assets/icon/more-vertical.svg" /> </ion-button>
+      </ion-col> -->
+    </ion-row>
+    <ion-row class="card__campus-container">
+      <ion-col class="card__campus-wrapper">
+        <ng-container *ngIf="(institutionBackgroundImage$ | async); then campusBackground; else defaultBackground">
+        </ng-container>
+        <ng-template #defaultBackground>
+          <img
+            class="card__campus-background"
+            src="/assets/images/card_background_illustration.svg"
+            alt="background photo"
+          />
+        </ng-template>
+        <ng-template #campusBackground>
+          <img class="card__campus-background" src="{{ institutionBackgroundImage$ | async }}" alt="campus photo" />
+        </ng-template>
+        <div class="card__campus-student-avatar-wrapper">
+          <img
+            class="card__campus-student-avatar"
+            [src]="userPhoto$ | async"
+            alt="user photo"
+            *ngIf="!isLoadingImg"
+          />
+        </div>
+      </ion-col>
+    </ion-row>
+    <ion-row class="card__student-container">
+      <ion-col class="card__student-name-wrapper" size="auto">
+        <div *ngIf="(userName$ | async)" class="card__student-name">{{ userName$ | async }}</div>
+      </ion-col>
+      <ion-col>
+        <div *ngIf="(applePayEnabled$ | async)" class="card__student-card-not-added">Card not added to wallet</div>
+      </ion-col>
+    </ion-row>
+    <ion-row class="card__quick-actions-container">
+      <ion-col class="card__quick-actions-wrapper" *ngIf="(getMyCardEnabled$ | async)">
+        <ion-button mode="ios" class="card__quick-actions-btn" (click)="onScanCardClick()">
+          <div class="card__quick-actions-btn-wrapper">
+            <img class="card__icon" src="/assets/icon/barcode.svg" alt="barcode" />
+            <div class="card__icon-title">Scan Card</div>
+          </div>
+        </ion-button>
+      </ion-col>
+      <ion-col class="card__quick-actions-wrapper" *ngIf="isMobileAccessButtonEnabled">
+        <ion-button mode="ios" class="card__quick-actions-btn" (click)="onMobileAccessClick()">
+          <div class="card__quick-actions-btn-wrapper">
+            <img class="card__icon" src="/assets/icon/mobile-access.svg" alt="mobile access" />
+            <div class="card__icon-title">Mobile Access</div>
+          </div>
+        </ion-button>
+      </ion-col>
+      <ion-col *ngIf="(applePayEnabled$ | async)" class="card__quick-actions-wrapper">
+        <ion-button mode="ios" class="card__apple-wallet-btn"
+          ><img src="/assets/icon/Add_to_Apple_Wallet_rgb_US-UK.svg" />
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</div>
