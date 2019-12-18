@@ -52,7 +52,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   }
 
   get orderInfo$(): Observable<OrderDetailOptions> {
-    return this.cartService.orderDetailsOptions$.pipe(tap(s => console.log(s)));
+    return this.cartService.orderDetailsOptions$;
   }
 
   get orderDetails$() {
@@ -78,13 +78,9 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.menuCategoryItems, id], { skipLocationChange: true });
   }
 
-  openOrderOptions() {
-    this.merchantInfo$
-      .pipe(
-        tap(merchant => this.actionSheet(merchant.orderTypes, merchant.id, merchant.storeAddress, merchant.settings)),
-        take(1)
-      )
-      .subscribe();
+  async openOrderOptions() {
+    const { orderTypes, id, storeAddress, settings } = await this.merchantInfo$.pipe(take(1)).toPromise();
+    await this.actionSheet(orderTypes, id, storeAddress, settings);
   }
 
   private async actionSheet(orderTypes: MerchantOrderTypesInfo, merchantId, storeAddress, settings) {
