@@ -1,4 +1,4 @@
-import { MerchantService } from '@sections/ordering/services';
+import { MerchantService, CartService } from '@sections/ordering/services';
 import { BuildingInfo } from './../../models/building-info.model';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { MenuInfo, MerchantAccountInfoList, MerchantOrderTypesInfo } from '../../models';
@@ -6,10 +6,12 @@ import { ModalController, ToastController } from '@ionic/angular';
 import { DeliveryAddressesModalComponent } from '../delivery-addresses.modal/delivery-addresses.modal.component';
 import { AddressInfo } from '@core/model/address/address-info';
 import { Observable, of, throwError, zip } from 'rxjs';
-import { switchMap, take } from 'rxjs/operators';
+import { switchMap, take, tap } from 'rxjs/operators';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ACCOUNT_TYPES, MerchantSettings, ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
+import { UserService } from '@core/service/user-service/user.service';
+import { getDateTimeInGMT } from '@core/utils/date-helper';
 
 @Component({
   selector: 'st-order-options.action-sheet',
@@ -36,7 +38,6 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   buildingsForNewAddressForm: BuildingInfo[];
   isTimeDisable: number;
   dateTimePicker: Date | string = 'ASAP';
-  state;
   orderType: number;
 
   constructor(
@@ -45,8 +46,8 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     private readonly cdRef: ChangeDetectorRef,
     private readonly loadingService: LoadingService,
     private readonly toastController: ToastController,
-  ) {
-  }
+    private readonly cartService: CartService
+  ) {}
 
   get enumOrderTypes() {
     return ORDER_TYPE;
@@ -57,30 +58,35 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   }
 
   initData() {
-    this.orderType = this.activeOrderType !== null
-      ? this.activeOrderType
-      : this.orderTypes.pickup
+    this.orderType =
+      this.activeOrderType !== null
+        ? this.activeOrderType
+        : this.orderTypes.pickup
         ? ORDER_TYPE.PICKUP
         : ORDER_TYPE.DELIVERY;
 
     this.loadingService.showSpinner();
-    this.state = zip(
+    zip(
       this.merchantService.getMerchantOrderSchedule(this.merchantId, this.orderType),
       this.retrieveDeliveryAddresses(this.merchantId),
-      this.merchantService.retrievePickupLocations(this.storeAddress, this.settings.map[MerchantSettings.pickupLocationsEnabled]),
-      this.merchantService.retrieveBuildings(),
+      this.merchantService.retrievePickupLocations(
+        this.storeAddress,
+        this.settings.map[MerchantSettings.pickupLocationsEnabled]
+      ),
+      this.merchantService.retrieveBuildings()
     )
       .pipe(take(1))
       .subscribe(
         ([schedule, [deliveryAddress, deliveryLocations], pickupLocations, buildingsForNewAddressForm]) => {
-          this.loadingService.closeSpinner();
           const isTimeDisable = parseInt(this.settings.map[MerchantSettings.orderAheadEnabled].value);
           const defaultPickupAddress = JSON.parse(this.settings.map[MerchantSettings.pickupLocationsEnabled].value)
             ? ''
             : this.storeAddress;
 
           this.deliveryAddresses = deliveryLocations;
-          this.defaultDeliveryAddress = this.activeDeliveryAddressId ? this.activeDeliveryAddressId : deliveryAddress.defaultAddress;
+          this.defaultDeliveryAddress = this.activeDeliveryAddressId
+            ? this.activeDeliveryAddressId
+            : deliveryAddress.defaultAddress;
           this.schedule = schedule;
           this.defaultPickupAddress = defaultPickupAddress;
           this.pickupLocations = pickupLocations;
@@ -90,7 +96,8 @@ export class OrderOptionsActionSheetComponent implements OnInit {
           this.isOrderTypePickup = this.orderType === ORDER_TYPE.PICKUP;
           this.defineOrderOptionsData(this.isOrderTypePickup);
         },
-        () => this.loadingService.closeSpinner(),
+        null,
+        () => this.loadingService.closeSpinner()
       );
   }
 
@@ -106,21 +113,13 @@ export class OrderOptionsActionSheetComponent implements OnInit {
 
   defineOrderOptionsData(isOrderTypePickup) {
     if (!this.deliveryAddresses || !this.pickupLocations) return;
-    const defineDeliveryAddress = this.deliveryAddresses.find(item => item.id === this.defaultDeliveryAddress);
+    const defineDeliveryAddress = this.deliveryAddresses.find(({ id }) => id === this.defaultDeliveryAddress);
 
-    if (isOrderTypePickup) {
-      this.orderOptionsData = {
-        label: 'PICKUP',
-        address: this.defaultPickupAddress,
-        isClickble: this.pickupLocations.length,
-      };
-    } else {
-      this.orderOptionsData = {
-        label: 'DELIVERY',
-        address: defineDeliveryAddress,
-        isClickble: 1,
-      };
-    }
+    this.orderOptionsData = {
+        label: isOrderTypePickup ? 'PICKUP' : 'DELIVERY',
+        address: isOrderTypePickup ? this.defaultPickupAddress : defineDeliveryAddress,
+        isClickble: isOrderTypePickup ? this.pickupLocations.length : 1,
+      }
 
     this.cdRef.detectChanges();
   }
@@ -131,49 +130,48 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   }
 
   onSubmit() {
-    let date = { dueTime: this.dateTimePicker, isASAP: false };
-    if (this.dateTimePicker === 'ASAP') {
-      date = { dueTime: new Date(), isASAP: !date.isASAP };
-    }
+    let date = { dueTime: this.dateTimePicker, isASAP: this.dateTimePicker === 'ASAP' };
 
     let isOutsideMerchantDeliveryArea = of(false);
     if (this.orderOptionsData.label === 'DELIVERY') {
       if (this.orderOptionsData.address) {
-        const { latitude, longitude } = this.orderOptionsData.address;
-        isOutsideMerchantDeliveryArea = this.merchantService.isOutsideMerchantDeliveryArea(
-          this.merchantId,
-          latitude,
-          longitude,
-        );
+        isOutsideMerchantDeliveryArea = this.isOutsideMerchantDeliveryArea();
       } else {
-        isOutsideMerchantDeliveryArea = of(false);
         this.onToastDisplayed('Choose address please');
         return;
       }
     }
     this.loadingService.showSpinner();
-    isOutsideMerchantDeliveryArea
+    zip(isOutsideMerchantDeliveryArea, this.merchantService.getCurrentLocaleTime())
       .pipe(
-        switchMap((isOutside): Observable<MerchantAccountInfoList> => this.getMerchantPaymentAccounts(isOutside)),
-        switchMap((paymentAccounts): Observable<MenuInfo> => this.getDisplayMenu(paymentAccounts, date.dueTime)),
+        tap(([isOtside, dueTime]) => (date = date.isASAP ? { ...date, dueTime } : { ...date })),
+        switchMap(([isOutside]): Observable<MerchantAccountInfoList> => this.getMerchantPaymentAccounts(isOutside)),
+        switchMap(
+          (paymentAccounts): Promise<MenuInfo | never> =>
+            this.getDisplayMenu(paymentAccounts, this.merchantId, date.dueTime, this.orderType)
+        ),
         switchMap(({ mealBased }): Observable<boolean> => this.isAccountsMealBased(mealBased)),
-        take(1),
+        take(1)
       )
       .subscribe(
-        () => {
-          this.loadingService.closeSpinner();
-          this.modalController.dismiss({
-            address: this.orderOptionsData.address,
-            orderType: this.orderType,
-            dueTime: date.dueTime,
-            isASAP: date.isASAP
-          }, BUTTON_TYPE.CONTINUE);
-        },
-        err => {
-          this.loadingService.closeSpinner();
-          this.onToastDisplayed(err);
-        },
+        () =>
+          this.modalController.dismiss(
+            {
+              address: this.orderOptionsData.address,
+              orderType: this.orderType,
+              dueTime: date.dueTime,
+              isASAP: date.isASAP,
+            },
+            BUTTON_TYPE.CONTINUE
+          ),
+        err => this.onToastDisplayed(err),
+        () => this.loadingService.closeSpinner()
       );
+  }
+
+  private isOutsideMerchantDeliveryArea(): Observable<boolean> {
+    const { latitude, longitude } = this.orderOptionsData.address;
+    return this.merchantService.isOutsideMerchantDeliveryArea(this.merchantId, latitude, longitude);
   }
 
   private getMerchantPaymentAccounts(isOutside): Observable<MerchantAccountInfoList> {
@@ -184,15 +182,20 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     return this.merchantService.getMerchantPaymentAccounts(this.merchantId);
   }
 
-  private getDisplayMenu(paymentAccounts, dueTime): Observable<MenuInfo> {
+  private async getDisplayMenu(
+    paymentAccounts: MerchantAccountInfoList,
+    id: string,
+    dueTime: string | Date,
+    type: number
+  ): Promise<MenuInfo | never> {
     if (!paymentAccounts.accounts.length) {
-      return throwError(new Error('You don\'t have payment accounts'));
+      return Promise.reject(new Error("You don't have payment accounts"));
     }
-    const pickerTime = (<Date>dueTime).toISOString();
-    return this.merchantService.getDisplayMenu(this.merchantId, pickerTime, this.orderType);
+
+    return this.cartService.getMerchantMenu(id, dueTime, type);
   }
 
-  private isAccountsMealBased(mealBased): Observable<boolean> {
+  private isAccountsMealBased(mealBased: boolean): Observable<boolean> {
     if (!mealBased) {
       return of(true);
     }
@@ -202,16 +205,16 @@ export class OrderOptionsActionSheetComponent implements OnInit {
         (accounts): any => {
           const isSomeAccMealBased = accounts.some(({ accountType }) => accountType === ACCOUNT_TYPES.meals);
           if (!isSomeAccMealBased) {
-            return throwError(new Error('You don\'t have meal based accounts'));
+            return throwError(new Error("You don't have meal based accounts"));
           }
 
           return of(isSomeAccMealBased);
-        },
-      ),
+        }
+      )
     );
   }
 
-  private async onToastDisplayed(message: string) {
+  private async onToastDisplayed(message: string): Promise<void> {
     const toast = await this.toastController.create({
       message,
       duration: 3000,
@@ -222,7 +225,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     toast.present();
   }
 
-  private retrieveDeliveryAddresses(merchantId) {
+  private retrieveDeliveryAddresses(merchantId: string) {
     return this.merchantService.retrieveDeliveryAddresses(merchantId);
   }
 
