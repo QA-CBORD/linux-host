@@ -17,7 +17,6 @@ import { Subscription } from 'rxjs';
 import { MerchantService } from '@sections/ordering/services';
 import { SYSTEM_SETTINGS_CONFIG } from '@sections/ordering/ordering.config';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { AddressInfo } from '@core/model/address/address-info.js';
 
 @Component({
   selector: 'st-add-edit-addresses',
@@ -127,9 +126,9 @@ export class AddEditAddressesComponent implements OnInit, OnChanges, OnDestroy {
       .pipe(take(1))
       .subscribe(
         ({ value }) => {
-          this.loader.closeSpinner();
           this.initForm(parseInt(value), this.editAddress && this.editAddress.address);
         },
+        null,
         () => this.loader.closeSpinner()
       );
   }

@@ -50,10 +50,10 @@ export class OrderingPage implements OnInit {
       )
       .subscribe(
         () => {
-          this.loadingService.closeSpinner();
           const message = isFavorite ? 'Removed from favorites' : 'Added to favorites';
           this.onToastDisplayed(message);
         },
+        null,
         () => this.loadingService.closeSpinner()
       );
   }

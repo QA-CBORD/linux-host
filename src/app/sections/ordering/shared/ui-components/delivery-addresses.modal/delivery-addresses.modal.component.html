@@ -71,7 +71,7 @@
           <ng-container *ngIf="item.onCampus; then onCampus; else offCampus"></ng-container>
 
           <ng-template #offCampus>
-            <div class="delivery-address__radio-label-header">{{ item.address1 }}</div>
+            <div class="delivery-address__radio-label-header">{{ item.nickname }}</div>
             <div class="delivery-address__radio-label-sub-header">{{ item.city }}, {{ item.state }}</div>
           </ng-template>
           <ng-template #onCampus>

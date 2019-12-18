@@ -125,6 +125,7 @@ export class AddressEditPage implements OnInit {
           this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.savedAddresses], { skipLocationChange: true });
           this.addNewAdddressState = !this.addNewAdddressState;
         },
+        null,
         () => this.loadingService.closeSpinner()
       );
   }

@@ -85,12 +85,12 @@ export class OrderingApiService extends BaseService {
       map(({ response }: MessageResponse<any>) => response)
     );
   }
-  validateOrder(order: OrderInfo) {
+  validateOrder(order: OrderInfo): Observable<OrderInfo> {
     const methodName = 'validateOrder';
     const postParams: ServiceParameters = { order };
 
     return this.httpRequestFull(this.serviceUrlOrdering, methodName, true, null, postParams).pipe(
-      map(({ response }: MessageResponse<any>) => response)
+      map(({ response }: MessageResponse<OrderInfo>) => response)
     );
   }
 
@@ -111,16 +111,7 @@ export class OrderingApiService extends BaseService {
       switchMap(({ institutionId }) =>
         this.httpRequestFull(this.serviceUrlInstitution, methodName, true, institutionId, postParams)
       ),
-      map(({ response }: MessageResponse<any>) => response.list)
-    );
-  }
-
-  retrieveUserAddressList(userId: string): Observable<any> {
-    const methodName = 'retrieveUserAddressList';
-    const postParams: ServiceParameters = { userId, addressId: null };
-
-    return this.httpRequestFull('/json/user', methodName, true, null, postParams).pipe(
-      map(({ response }: MessageResponse<any>) => response)
+      map(({ response: { list } }: MessageResponse<any>) => list)
     );
   }
 
@@ -135,7 +126,7 @@ export class OrderingApiService extends BaseService {
     room = null,
     id = null,
     latitude = null,
-    longitude = null
+    longitude = null,
   }): Observable<AddressInfo> {
     const methodName = 'updateUserAddress';
     const campusValue = parseInt(campus);
@@ -169,29 +160,14 @@ export class OrderingApiService extends BaseService {
 
     if (!campusValue) {
       addedAddress = this.addressToGeocode(postParams.address);
-
     } else {
-      addedAddress = of(postParams.address)
+      addedAddress = of(postParams.address);
     }
 
-    return zip(addedAddress, this.userService.userData)
-      .pipe(
-        switchMap(([address, user]) =>
-          this.httpRequestFull(this.serviceUrlUser, methodName, true, null, { ...postParams, address, userId: user.id })),
-        map(({ response }: MessageResponse<any>) => response)
-      )
-  }
-
-  getMerchantSettings(merchantId: string): Observable<any> {
-    const methodName = 'getMerchantSettings';
-    const postParams: ServiceParameters = {
-      merchantId,
-      domain: 'merchant',
-      category: 'order',
-      name: 'pickup_locations_enabled',
-    };
-
-    return this.httpRequestFull('/json/merchant', methodName, true, null, postParams).pipe(
+    return zip(addedAddress, this.userService.userData).pipe(
+      switchMap(([address, user]) =>
+        this.httpRequestFull(this.serviceUrlUser, methodName, true, null, { ...postParams, address, userId: user.id })
+      ),
       map(({ response }: MessageResponse<any>) => response)
     );
   }
@@ -213,7 +189,7 @@ export class OrderingApiService extends BaseService {
     const postParams: ServiceParameters = { merchantId, latitude, longitude };
 
     return this.httpRequestFull(this.serviceUrlMerchant, methodName, true, null, postParams).pipe(
-      map(({ response }: MessageResponse<any>) => response)
+      map(({ response }: MessageResponse<boolean>) => response)
     );
   }
 
@@ -278,9 +254,7 @@ export class OrderingApiService extends BaseService {
     const postParams: ServiceParameters = { addressId };
 
     return this.userService.userData.pipe(
-      switchMap(({ id }) =>
-        this.httpRequestFull('/json/user', methodName, true, null, { ...postParams, userId: id })
-      ),
+      switchMap(({ id }) => this.httpRequestFull('/json/user', methodName, true, null, { ...postParams, userId: id })),
       map(({ response }: MessageResponse<any>) => response)
     );
   }
