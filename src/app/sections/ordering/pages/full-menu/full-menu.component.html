@@ -19,16 +19,16 @@
             <img src="./assets/icon/location-pin.svg"
                  height="16"
                  alt="location-pin" />
-            <div *ngIf="(orderInfo$ | async).address"
+            <div *ngIf="orderInfo?.address"
                  class="full-menu__address-info-content">
               {{ (merchantInfo$ | async).distanceFromUser | merchantDistance }} -
-              <ng-container *ngIf="(orderInfo$ | async).address.onCampus; then onCampus; else offCampus"></ng-container>
+              <ng-container *ngIf="orderInfo?.address.onCampus; then onCampus; else offCampus"></ng-container>
 
               <ng-template #offCampus>
-                {{ (orderInfo$ | async).address.address1 }}, {{ (orderInfo$ | async).address.city }}
+                {{ orderInfo?.address.address1 }}, {{ orderInfo?.address.city }}
               </ng-template>
               <ng-template #onCampus>
-                {{ (orderInfo$ | async).address.building }}, Room {{ (orderInfo$ | async).address.room }}
+                {{ orderInfo?.address.building }}, Room {{ orderInfo?.address.room }}
               </ng-template>
             </div>
           </div>
@@ -45,8 +45,8 @@
         <div class="full-menu__date-time-wrapper">
           <div class="full-menu__date-time-value">{{ orderType | async }}</div>
           <div class="full-menu__date-time-helper">for</div>
-          <div class="full-menu__date-time-value">
-            {{ (orderInfo$ | async) | modifyPrepTime: (orderTypes$ | async) }}
+          <div class="full-menu__date-time-value" *ngIf="orderDetails$ | async">
+            {{ (orderDetails$ | async).orderInfo | modifyPrepTime: (orderDetails$ | async).orderTypes }}
           </div>
         </div>
         <div class="full-menu__arrow-wrapper">

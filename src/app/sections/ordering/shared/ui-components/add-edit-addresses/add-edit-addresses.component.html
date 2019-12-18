@@ -36,10 +36,7 @@
         idd="building"
       >
         <ng-container role="options">
-          <ion-select-option
-            *ngFor="let item of buildingsOnCampus"
-            [value]="item.addressInfo.building"
-          >
+          <ion-select-option *ngFor="let item of buildingsOnCampus" [value]="item.addressInfo.building">
             {{ item.addressInfo.building }}
           </ion-select-option>
         </ng-container>
@@ -146,11 +143,11 @@
         </st-input-floating-label>
         <ng-container [ngTemplateOutlet]="optionalPlaceholder"></ng-container>
       </div>
-      <ion-item lines="none">
-        <ion-label>Set as Default</ion-label>
-        <ion-checkbox mode="md" class="addresses__checkbox" slot="start" [formControl]="default"></ion-checkbox>
-      </ion-item>
     </ng-container>
+    <ion-item lines="none">
+      <ion-label>Set as Default</ion-label>
+      <ion-checkbox mode="md" class="addresses__checkbox" slot="start" [formControl]="default"></ion-checkbox>
+    </ion-item>
   </form>
 </div>
 

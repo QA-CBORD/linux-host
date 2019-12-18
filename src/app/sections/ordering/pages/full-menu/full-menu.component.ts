@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CartService, OrderDetailOptions, MerchantService } from '@sections/ordering';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subscription, zip } from 'rxjs';
 import { MenuInfo, MerchantInfo, MerchantOrderTypesInfo } from '@sections/ordering/shared/models';
 import { Router } from '@angular/router';
 import { NAVIGATE } from 'src/app/app.global';
@@ -23,7 +23,8 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   merchantInfo$: Observable<MerchantInfo>;
   merchantInfoState: boolean = false;
   menuItems$: Observable<number>;
-  orderTypes$: Observable<MerchantOrderTypesInfo>;
+  orderTypes: MerchantOrderTypesInfo;
+  orderInfo: OrderDetailOptions;
 
   constructor(
     private readonly cartService: CartService,
@@ -36,7 +37,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   ) {}
 
   get orderType(): Observable<string> {
-    return this.cartService.orderDetailsOptions$.pipe(
+    return this.orderInfo$.pipe(
       map(({ orderType }) => {
         switch (orderType) {
           case ORDER_TYPE.PICKUP:
@@ -54,10 +55,14 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     return this.cartService.orderDetailsOptions$;
   }
 
+  get orderDetails$() {
+    return zip(this.merchantService.orderTypes$, this.cartService.orderDetailsOptions$).pipe(
+      map(([orderTypes, orderInfo]) => ({ orderTypes, orderInfo }))
+    );
+  }
+
   ionViewWillEnter() {
     this.menuItems$ = this.cartService.menuItems$;
-    this.cdRef.detectChanges();
-    this.orderTypes$ = this.merchantService.orderTypes$;
   }
 
   ngOnInit() {
@@ -73,13 +78,9 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.menuCategoryItems, id], { skipLocationChange: true });
   }
 
-  openOrderOptions() {
-    this.merchantInfo$
-      .pipe(
-        tap(merchant => this.actionSheet(merchant.orderTypes, merchant.id, merchant.storeAddress, merchant.settings)),
-        take(1)
-      )
-      .subscribe();
+  async openOrderOptions() {
+    const { orderTypes, id, storeAddress, settings } = await this.merchantInfo$.pipe(take(1)).toPromise();
+    await this.actionSheet(orderTypes, id, storeAddress, settings);
   }
 
   private async actionSheet(orderTypes: MerchantOrderTypesInfo, merchantId, storeAddress, settings) {

@@ -35,9 +35,10 @@ export class MerchantService {
 
   private readonly _menuMerchants$: BehaviorSubject<MerchantInfo[]> = new BehaviorSubject<MerchantInfo[]>([]);
   private readonly _recentOrders$: BehaviorSubject<OrderInfo[]> = new BehaviorSubject<OrderInfo[]>([]);
-  private readonly _menu$: BehaviorSubject<MenuInfo> = new BehaviorSubject<MenuInfo>(<MenuInfo>{});
   private readonly _selectedAddress$: BehaviorSubject<any> = new BehaviorSubject<any>(<any>{});
-  private readonly _orderTypes$: BehaviorSubject<MerchantOrderTypesInfo> = new BehaviorSubject<MerchantOrderTypesInfo>(<MerchantOrderTypesInfo>{});
+  private readonly _orderTypes$: BehaviorSubject<MerchantOrderTypesInfo> = new BehaviorSubject<MerchantOrderTypesInfo>(<
+    MerchantOrderTypesInfo
+  >{});
 
   constructor(
     private readonly orderingApiService: OrderingApiService,
@@ -59,7 +60,7 @@ export class MerchantService {
   }
 
   set orderTypes(value: MerchantOrderTypesInfo) {
-    this._orderTypes$.next(value);
+    this._orderTypes$.next({ ...value });
   }
 
   get recentOrders$(): Observable<OrderInfo[]> {
@@ -77,14 +78,6 @@ export class MerchantService {
 
   set selectedAddress(value: any) {
     this._selectedAddress$.next(value);
-  }
-
-  get menu$(): Observable<MenuInfo> {
-    return this._menu$.asObservable();
-  }
-
-  private set _menu(value: MenuInfo) {
-    this._menu$.next(value);
   }
 
   getMenuMerchants(): Observable<MerchantInfo[]> {
@@ -127,7 +120,7 @@ export class MerchantService {
     );
   }
 
-  validateOrder(order: OrderInfo): Observable<any> {
+  validateOrder(order: OrderInfo): Observable<OrderInfo> {
     return this.orderingApiService.validateOrder(order);
   }
 
@@ -188,18 +181,16 @@ export class MerchantService {
   }
 
   retrieveDeliveryAddresses(merchantId) {
-    return this.userService
-      .getUserSettingsBySettingName('defaultaddress')
-      .pipe(
-        switchMap(({ response }) =>
-          zip(
-            of({ defaultAddress: response.value }),
-            this.retrieveUserAddressList().pipe(
-              switchMap(addresses => this.filterDeliveryAddresses(merchantId, addresses))
-            )
+    return this.getDefaultAddress().pipe(
+      switchMap(({ response }) =>
+        zip(
+          of({ defaultAddress: response.value }),
+          this.retrieveUserAddressList().pipe(
+            switchMap(addresses => this.filterDeliveryAddresses(merchantId, addresses))
           )
         )
-      );
+      )
+    );
   }
 
   getMerchantPaymentAccounts(merchantId: string): Observable<MerchantAccountInfoList> {
@@ -215,9 +206,7 @@ export class MerchantService {
   }
 
   getDisplayMenu(merchantId: string, dateTime: string, orderType: number): Observable<MenuInfo> {
-    return this.orderingApiService
-      .getDisplayMenu(merchantId, dateTime, orderType)
-      .pipe(tap(menu => (this._menu = menu)));
+    return this.orderingApiService.getDisplayMenu(merchantId, dateTime, orderType);
   }
 
   getUserAccounts(): Observable<UserAccount[]> {
@@ -246,6 +235,10 @@ export class MerchantService {
       }, []);
       return [...state, ...res];
     }, []);
+  }
+
+  getDefaultAddress() {
+    return this.userService.getUserSettingsBySettingName('defaultaddress');
   }
 
   private filterAccountsByPaymentSystem(accounts: UserAccount[]): UserAccount[] {
@@ -288,5 +281,16 @@ export class MerchantService {
 
   removeAddress(addressId: string): Observable<any> {
     return this.orderingApiService.removeAddress(addressId);
+  }
+
+  getCurrentLocaleTime(): Observable<Date> {
+    return this.userService.userData.pipe(
+      map(({ timeZone, locale }) => {
+        const date = new Date();
+        const dueTime = date.toLocaleString(locale, { hour12: false, timeZone });
+
+        return new Date(dueTime);
+      })
+    );
   }
 }
