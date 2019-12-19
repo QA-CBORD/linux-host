@@ -133,11 +133,6 @@ export enum LOCAL_ROUTING {
   addCreditCard = 'add-credit-card',
 }
 
-export enum TRANSACTION_TYPE {
-  debit = 1,
-  deposit = 3,
-}
-
 export enum PAYMENT_SYSTEM_TYPE {
   OPCS = 1,
   CSGOLD = 2,

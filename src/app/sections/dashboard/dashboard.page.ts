@@ -43,7 +43,7 @@ export class DashboardPage implements OnInit {
 
   private getUpdatedTilesConfig(settings) {
     return tilesConfig.map((setting) => {
-      let s = settings.list.find((s) => s.name === setting.id);
+      let s = settings.list.find(({name}) => name === setting.id);
       return s ? { ...setting, isEnable: DashboardPage.getBoolValue(s.value) } : setting;
     });
   }

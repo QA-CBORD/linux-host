@@ -89,12 +89,6 @@ export namespace Settings {
 
 }
 
-export enum TRANSACTION_TYPE {
-  debit = 1,
-  deposit = 3,
-}
-
-
 export namespace ContentStrings {
   export enum ContentStringList{
     TEMP = '1.2.3',

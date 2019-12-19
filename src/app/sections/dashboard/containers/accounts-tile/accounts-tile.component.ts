@@ -45,7 +45,6 @@ export class AccountsTileComponent implements OnInit {
   }
 
   goToAccountHistory(id: string) {
-    // this.router.navigate([NAVIGATE.accounts, LOCAL_ROUTING.accountDetails, id]);
     this.router.navigate([`${NAVIGATE.accounts}/${LOCAL_ROUTING.accountDetailsM}/${id}`]);
   }
 }
