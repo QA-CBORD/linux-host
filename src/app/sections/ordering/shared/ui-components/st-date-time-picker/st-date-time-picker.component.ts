@@ -1,4 +1,10 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { PickerController } from '@ionic/angular';
 import { DatePipe } from '@angular/common';
 
@@ -13,8 +19,8 @@ export class StDateTimePickerComponent {
   private selectedDayIdx: number = 0;
 
   @Input() schedule: any;
-  @Input() data: any;
-  @Input() isTimeDisable: any;
+  @Input() data: { label: string; address: any; isClickble: number };
+  @Input() isTimeDisable: number;
   @Input() dateTimePicker: Date | string;
   @Output() onTimeSelected: EventEmitter<Date | string> = new EventEmitter<Date | string>();
 
@@ -52,7 +58,7 @@ export class StDateTimePickerComponent {
     });
 
     picker.addEventListener('ionPickerColChange', async (event: any) => {
-      const data = event.detail;
+      const { detail: data } = event;
       if (data.name === 1) {
         if (!data.options[data.selectedIndex].text) {
           this.prevSelectedTimeInfo = { ...this.prevSelectedTimeInfo, maxValue: true };
@@ -76,7 +82,7 @@ export class StDateTimePickerComponent {
   }
 
   private preparePickerArr(i = 0) {
-    const arr1 = this.schedule.days.map(day => day.date);
+    const arr1 = this.schedule.days.map(({ date }) => date);
     const arr2 = this.schedule.days[i].hourBlocks.reduce(
       (total, block) => [
         ...total,
@@ -150,15 +156,15 @@ export class StDateTimePickerComponent {
   }
 
   private isTodayOrTomorrow(date, isToday) {
-    const getUtc = (date) => {
+    const getUtc = date => {
       return new Date(date.getTime() + date.getTimezoneOffset() * 60000);
-    }
+    };
 
     const now = new Date();
     const selectedTime = new Date(date);
     const today = getUtc(now);
     const someDate = getUtc(selectedTime);
-  
+
     const index = isToday ? 0 : 1;
     return (
       someDate.getDate() == today.getDate() + index &&
