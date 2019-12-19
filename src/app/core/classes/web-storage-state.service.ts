@@ -56,9 +56,7 @@ export class WebStorageState extends ExtendableStateManager<WebStorageStateEntit
   }
 
   registerStateEntity(key: string, value = null): void {
-    if (this.isKeyExistInState(key)) {
-      return this.updateStateByKey(key, value);
-    }
+    this.setStateFromLocalStorage();
     this.state = { ...this.state, [key]: JSON.parse(JSON.stringify(value)) };
     this.setStateToLocalStorage();
   }

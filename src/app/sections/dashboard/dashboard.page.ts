@@ -13,7 +13,6 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { first, map } from 'rxjs/operators';
 import { parseArrayFromString } from '@core/utils/general-helpers';
-import { LocalStorageFacadeService } from '@core/facades/local-storage.facade.service';
 
 @Component({
   selector: 'st-dashboard',
@@ -29,7 +28,6 @@ export class DashboardPage implements OnInit {
     private readonly dashboardService: DashboardService,
     private readonly accountsService: AccountsService,
     private readonly route: ActivatedRoute,
-    private readonly localStorageFacadeService: LocalStorageFacadeService
   ) {
   }
 
@@ -39,7 +37,6 @@ export class DashboardPage implements OnInit {
 
   ngOnInit() {
     const { data: [settings] } = this.route.snapshot.data;
-    // this.localStorageFacadeService.addKeyToStorage();
     this.tiles = this.getUpdatedTilesConfig(settings);
     this.updateAccountTile();
   }

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { WebStorageStateEntity } from '@core/classes/web-storage-state.service';
 import { ServiceStateFacade } from '@core/classes/service-state-facade';
 import { Observable } from 'rxjs';
-import { LocalStorageService } from '@core/global-states/local-storage.service';
+import { LocalStorageService } from '@core/states/local-storage/local-storage.service';
 
 @Injectable({
   providedIn: 'root'

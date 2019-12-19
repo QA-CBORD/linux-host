@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { MerchantService } from '@sections/ordering';
+import { MerchantInfo, MerchantService } from '@sections/ordering';
 import { take } from 'rxjs/operators';
+import { Router } from '@angular/router';
+import { NAVIGATE } from '../../../../app.global';
 
 @Component({
   selector: 'st-order-tile',
@@ -17,11 +19,12 @@ export class OrderTileComponent implements OnInit {
     autoHeight: true,
   };
   amountPerSlide: number = 2;
-  slides = [];
+  slides: MerchantInfo[][] = [];
   skeletonArray: any[] = new Array(this.amountPerSlide);
 
   constructor(private readonly merchantService: MerchantService,
-              private readonly cdRef: ChangeDetectorRef) {
+              private readonly cdRef: ChangeDetectorRef,
+              private readonly router: Router) {
   }
 
   ngOnInit() {
@@ -41,7 +44,7 @@ export class OrderTileComponent implements OnInit {
       });
   }
 
-  goToMerchant(merchant: any) {
-    console.log(merchant)
+  goToMerchant({id: merchantId}: MerchantInfo) {
+    this.router.navigate([NAVIGATE.ordering], {skipLocationChange: true, queryParams: {merchantId}});
   }
 }
