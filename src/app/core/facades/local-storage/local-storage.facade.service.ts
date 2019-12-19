@@ -2,14 +2,14 @@ import { Injectable } from '@angular/core';
 import { WebStorageStateEntity } from '@core/classes/web-storage-state.service';
 import { ServiceStateFacade } from '@core/classes/service-state-facade';
 import { Observable } from 'rxjs';
-import { LocalStorageService } from '@core/states/local-storage/local-storage.service';
+import { LocalStorageStateService } from '@core/states/local-storage/local-storage-state.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LocalStorageFacadeService extends ServiceStateFacade {
 
-  constructor(private readonly localStorageState: LocalStorageService ) {
+  constructor(private readonly localStorageState: LocalStorageStateService ) {
     super();
   }
 

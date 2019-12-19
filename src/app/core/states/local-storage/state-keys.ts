@@ -1,3 +1,3 @@
 export enum LOCAL_STORAGE_STATE_KEYS {
-  SETTINGS,
+  SETTINGS = 'SETTINGS',
 }

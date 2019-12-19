@@ -4,15 +4,9 @@ import { ModalController } from '@ionic/angular';
 import { EditHomePageModalComponent } from './components/edit-home-page-modal';
 import { TileWrapperConfig } from '@sections/dashboard/models';
 import { AccountsService, DashboardService } from './services';
-import {
-  ACCOUNTS_SETTINGS_CONFIG, TILES_ID,
-  TILES_TITLE,
-  tilesConfig,
-} from './dashboard.config';
-import { ActivatedRoute } from '@angular/router';
+import {  TILES_TITLE } from './dashboard.config';
 import { Observable } from 'rxjs';
-import { first, map } from 'rxjs/operators';
-import { parseArrayFromString } from '@core/utils/general-helpers';
+import { TileConfigFacadeService } from '@sections/dashboard/tile-config-facade.service';
 
 @Component({
   selector: 'st-dashboard',
@@ -21,13 +15,13 @@ import { parseArrayFromString } from '@core/utils/general-helpers';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardPage implements OnInit {
-  tiles: TileWrapperConfig[];
+  tiles$: Observable<TileWrapperConfig[]>;
 
   constructor(
     private readonly modalController: ModalController,
     private readonly dashboardService: DashboardService,
     private readonly accountsService: AccountsService,
-    private readonly route: ActivatedRoute,
+    private readonly tileConfigFacadeService: TileConfigFacadeService,
   ) {
   }
 
@@ -36,16 +30,7 @@ export class DashboardPage implements OnInit {
   }
 
   ngOnInit() {
-    const { data: [settings] } = this.route.snapshot.data;
-    this.tiles = this.getUpdatedTilesConfig(settings);
-    this.updateAccountTile();
-  }
-
-  private getUpdatedTilesConfig(settings) {
-    return tilesConfig.map((setting) => {
-      let s = settings.list.find((s) => s.name === setting.id);
-      return s ? { ...setting, isEnable: DashboardPage.getBoolValue(s.value) } : setting;
-    });
+    this.tiles$ = this.tileConfigFacadeService.tileSettings$();
   }
 
   async presentEditHomePageModal(): Promise<void> {
@@ -53,35 +38,5 @@ export class DashboardPage implements OnInit {
       component: EditHomePageModalComponent,
     });
     return await modal.present();
-  }
-
-  private updateAccountTile() {
-    this.isAddFundsButtonEnabled().pipe(
-      first(),
-    ).subscribe(enabled => {
-      const index = this.tiles.findIndex((tile) => tile.id === TILES_ID.accounts);
-      if (index >= 0 && enabled) {
-        const tile = this.tiles[index];
-        this.tiles[index] = { ...tile, buttonConfig: { ...tile.buttonConfig, show: enabled } };
-      }
-    });
-  }
-
-  private static getBoolValue(value): boolean {
-    return !!Number(value);
-  }
-
-  private isAddFundsButtonEnabled(): Observable<boolean> {
-    const requireSettings = [
-      ACCOUNTS_SETTINGS_CONFIG.paymentTypes,
-      ACCOUNTS_SETTINGS_CONFIG.enableOnetimeDeposits,
-    ];
-
-    return this.accountsService.getUserSettings(requireSettings)
-      .pipe(
-        map(([paymentTypes, onetimeDeposits]) =>
-          parseArrayFromString(paymentTypes.value).length && !!Number(onetimeDeposits.value),
-        ),
-      );
   }
 }

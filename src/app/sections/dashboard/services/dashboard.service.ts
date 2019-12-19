@@ -1,49 +1,72 @@
 import { Injectable } from '@angular/core';
-
-import { Observable, BehaviorSubject, zip } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { Observable, BehaviorSubject } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 
 import { DashboardApiService } from './dashboard.api.service';
 
 import { SettingInfoList } from 'src/app/core/model/configuration/setting-info-list.model';
-import { SettingInfo } from 'src/app/core/model/configuration/setting-info.model';
 import { Settings } from 'src/app/app.global';
+import { ACCOUNTS_SETTINGS_CONFIG, TILES_ID } from '@sections/dashboard/dashboard.config';
+import { parseArrayFromString } from '@core/utils/general-helpers';
+import { AccountsService } from '@sections/dashboard/services/accounts.service';
+import { TileWrapperConfig } from '@sections/dashboard/models';
 
 @Injectable()
 export class DashboardService {
-  public readonly _settings$: BehaviorSubject<SettingInfo[]> = new BehaviorSubject<SettingInfo[]>([]);
+  private settings: SettingInfoList = {} as SettingInfoList;
+  private readonly _settings$: BehaviorSubject<SettingInfoList> = new BehaviorSubject<SettingInfoList>(this.settings);
 
-  settings: SettingInfo[] = [];
+  constructor(private readonly dashApiService: DashboardApiService,
+              private readonly accountsService: AccountsService) {
+  }
 
-  constructor(private readonly dashApiService: DashboardApiService) {}
-
-  get settings$(): Observable<SettingInfo[]> {
+  get settings$(): Observable<SettingInfoList> {
     return this._settings$.asObservable();
   }
 
-  private set _settings(value: SettingInfo[]) {
-    this.settings = [...this.settings, ...value];
-    this._settings$.next(this.settings);
-  }
-
-  retrieveSettings(settings: Settings.Setting[]): Observable<SettingInfo[]> {
-    const requestArray = settings.map(setting => this.dashApiService.retrieveSetting(setting));
-    return zip(...requestArray).pipe(tap((settings: SettingInfo[]) => (this._settings = settings)));
+  private set _settings(value: SettingInfoList) {
+    this.settings = { ...value };
+    this._settings$.next({ ...this.settings });
   }
 
   retrieveSettingsList(): Observable<SettingInfoList> {
-    return this.dashApiService.retrieveSettingsList(Settings.SettingList.FEATURES);
+    return this.dashApiService.retrieveSettingsList(Settings.SettingList.FEATURES).pipe(
+      tap(settings => this._settings = settings),
+    );
   }
 
-  getSettingValueByName(settingName: Settings.Setting): any {
-    const split: string[] = settingName.toString().split('.');
-    let value: any = 0;
-    this.settings.some(setting => {
-      if (setting.domain === split[0] && setting.category === split[1] && setting.name === split[2]) {
-        value = setting.value;
-        return true;
-      }
+  isAddFundsButtonEnabled(): Observable<boolean> {
+    const requireSettings = [
+      ACCOUNTS_SETTINGS_CONFIG.paymentTypes,
+      ACCOUNTS_SETTINGS_CONFIG.enableOnetimeDeposits,
+    ];
+
+    return this.accountsService.getUserSettings(requireSettings)
+      .pipe(
+        map(([paymentTypes, onetimeDeposits]) =>
+          parseArrayFromString(paymentTypes.value).length && !!Number(onetimeDeposits.value),
+        ),
+      );
+  }
+
+  updateAccountTile(config: TileWrapperConfig[]): Observable<TileWrapperConfig[]> {
+    return this.isAddFundsButtonEnabled().pipe(
+      map((enabled) => {
+        const index = config.findIndex((tile) => tile.id === TILES_ID.accounts);
+        if (index >= 0) {
+          const tile = config[index];
+          config[index] = { ...tile, buttonConfig: { ...tile.buttonConfig, show: enabled } };
+          return config;
+        }
+        return config;
+      }),
+    );
+  }
+
+  getUpdatedTilesConfig(tilesConfig: TileWrapperConfig[], settings: SettingInfoList): TileWrapperConfig[] {
+    return tilesConfig.map((setting) => {
+      let s = settings.list.find(({ name }) => name === setting.id);
+      return s ? { ...setting, isEnable: !!Number(s.value) } : setting;
     });
-    return value;
   }
 }

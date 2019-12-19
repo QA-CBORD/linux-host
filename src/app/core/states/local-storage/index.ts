@@ -1,2 +1,2 @@
-export * from './local-storage.service';
+export * from './local-storage-state.service';
 export * from './state-keys';

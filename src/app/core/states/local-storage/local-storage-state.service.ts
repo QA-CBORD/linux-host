@@ -4,7 +4,7 @@ import { WebStorageState } from '@core/classes/web-storage-state.service';
 @Injectable({
   providedIn: 'root'
 })
-export class LocalStorageService extends WebStorageState {
+export class LocalStorageStateService extends WebStorageState {
 
   constructor() {
     super(window.localStorage);
