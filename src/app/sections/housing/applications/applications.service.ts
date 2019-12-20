@@ -3,6 +3,7 @@ import { Observable, from, forkJoin, of } from 'rxjs';
 import { map, tap, switchMap, catchError } from 'rxjs/operators';
 
 import { BASE_URL } from '../housing.config';
+import { Environment } from '../../../environment';
 import { parseJsonToArray, hasValue } from '../utils';
 
 import { HousingProxyService } from '../housing-proxy.service';
@@ -34,7 +35,9 @@ export class ApplicationsService {
     private _questionsStorageService: QuestionsStorageService
   ) {}
 
-  private readonly _patronApplicationsUrl: string = `${BASE_URL}/api/patron-applications/v.1.0/patron-applications`;
+  private readonly _patronApplicationsUrl: string = `${BASE_URL}/${
+    Environment.currentEnvironment.housing_aws_prefix
+  }/patron-applications/v.1.0/patron-applications`;
 
   private readonly _applicationDefinitionUrl: string = `${this._patronApplicationsUrl}/application-definition`;
 

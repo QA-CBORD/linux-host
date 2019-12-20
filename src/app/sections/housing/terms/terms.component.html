@@ -1,11 +1,14 @@
-<ion-select
-  *ngIf="(terms$ | async) as terms"
-  class="terms-select"
-  interface="popover"
-  placeholder="Select Term"
-  #termsSelect
-  [interfaceOptions]="customPopoverOptions"
-  (ionChange)="handleSelectTermId(termsSelect.value)"
->
-  <ion-select-option [value]="term.termId" *ngFor="let term of terms">{{ term.termName }}</ion-select-option>
-</ion-select>
+<ion-item class="ion-no-padding terms">
+  <ion-label class="terms-label">{{ label }}</ion-label>
+  <ion-select
+    *ngIf="(terms$ | async) as terms"
+    class="terms-select"
+    interface="popover"
+    mode="md"
+    #termsSelect
+    [interfaceOptions]="customPopoverOptions"
+    (ionChange)="handleSelectTerm(termsSelect.value)"
+  >
+    <ion-select-option [value]="term" *ngFor="let term of terms">{{ term.termName }}</ion-select-option>
+  </ion-select>
+</ion-item>

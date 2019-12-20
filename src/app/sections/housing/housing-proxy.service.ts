@@ -14,7 +14,7 @@ export class HousingProxyService {
   constructor(private _http: HttpClient, private _housingAuthService: HousingAuthService) {}
 
   request<T>(apiUrl: string, callback: (headers: HttpHeaders, apiUrl: string) => Observable<T>): Observable<T> {
-    return this._housingAuthService.authorize().pipe(
+    return this._housingAuthService.token$.pipe(
       switchMap((token: string) => {
         const headers: HttpHeaders = new HttpHeaders({
           Authorization: `Bearer ${token}`,

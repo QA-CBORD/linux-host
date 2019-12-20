@@ -1,18 +1,24 @@
 @import 'tools';
 
 :host {
+  display: block;
   border-top: 1px solid $color-light-gray;
-  border-bottom: 2px solid $color-light-gray;
-  display: flex;
-  justify-content: center;
+  border-bottom: 1px solid $color-light-gray;
+}
+
+.terms {
+  --inner-padding-end: 0;
+}
+
+.terms-label {
+  text-align: center;
 }
 
 .terms-select {
   @include font-nunito-heavy(16px);
 
-  --padding-top: 14px;
-  --padding-bottom: 15px;
-  --padding-end: 16px;
-
   color: rgba($color-black, 0.6);
+  opacity: 0;
+  width: 0;
+  padding: 0;
 }

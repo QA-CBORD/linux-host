@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, shareReplay } from 'rxjs/operators';
 
 import { AuthService } from '../../../core/service/auth-service/auth.service';
 
@@ -8,9 +8,16 @@ import { AuthService } from '../../../core/service/auth-service/auth.service';
   providedIn: 'root',
 })
 export class HousingAuthService {
-  constructor(private _authService: AuthService) {}
+  token$: Observable<string>;
 
-  authorize(): Observable<string> {
-    return this._authService.sessionId$.pipe(switchMap(() => this._authService.getExternalAuthenticationToken()));
+  constructor(private _authService: AuthService) {
+    this._initToken();
+  }
+
+  private _initToken(): void {
+    this.token$ = this._authService.sessionId$.pipe(
+      switchMap(() => this._authService.getExternalAuthenticationToken()),
+      shareReplay(1)
+    );
   }
 }

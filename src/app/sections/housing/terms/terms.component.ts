@@ -13,6 +13,8 @@ import { Term } from './terms.model';
 export class TermsComponent implements OnInit {
   terms$: Observable<Term[]>;
 
+  label: string = 'Select Term';
+
   customPopoverOptions: any = {
     mode: 'md',
   };
@@ -23,7 +25,9 @@ export class TermsComponent implements OnInit {
     this.terms$ = this._termsService.getTerms();
   }
 
-  handleSelectTermId(termId: number): void {
-    this._termsService.setTermId(termId);
+  handleSelectTerm(term: Term): void {
+    this.label = term.termName;
+
+    this._termsService.setTermId(term.termId);
   }
 }
