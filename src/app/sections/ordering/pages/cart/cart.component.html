@@ -24,6 +24,7 @@
             (onFormChange)="onCartStateFormChanged($event)"
             (onOrderItemRemovedId)="removeOrderItem($event)"
             (onOrderItemClicked)="onOrderItemClicked($event)"
+            (onOrderPaymentInfoChanged)="onOrderPaymentInfoChanged($event)"
     >
         <ion-button (click)="onSubmit()" class="btn" [ngClass]="{'btn--invalid': !cartFormState?.valid}">
             {{(isOrderASAP | async) ? 'Place order' : 'Schedule Order'}}

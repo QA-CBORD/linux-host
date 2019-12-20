@@ -47,6 +47,8 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
   @Output() onFormChange: EventEmitter<OrderDetailsFormData> = new EventEmitter<OrderDetailsFormData>();
   @Output() onOrderItemRemovedId: EventEmitter<string> = new EventEmitter<string>();
   @Output() onOrderItemClicked: EventEmitter<OrderItem> = new EventEmitter<OrderItem>();
+  @Output() onOrderPaymentInfoChanged: EventEmitter<any> = new EventEmitter<any>();
+
   detailsForm: FormGroup;
   private readonly sourceSub = new Subscription();
   showCVVControl = false;
@@ -76,7 +78,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
   }
 
   get timeWithoutTimezone() {
-    if(this.orderDetailOptions.dueTime instanceof Date) {
+    if (this.orderDetailOptions.dueTime instanceof Date) {
       return this.orderDetailOptions;
     }
     return { ...this.orderDetailOptions, dueTime: new Date(this.orderDetailOptions.dueTime.slice(0, 19)) };
@@ -101,6 +103,8 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
   }
 
   toggleCvvControl({ detail: { value } }) {
+    console.log(value);
+    this.onOrderPaymentInfoChanged.emit({ accountId: value.id, paymentSystemType: value.paymentSystemType });
     if (value.paymentSystemType === PAYMENT_SYSTEM_TYPE.MONETRA) {
       this.addCvvControl();
     } else {
