@@ -6,6 +6,7 @@ import { ApplicationsService } from './applications.service';
 import { QuestionsStorageService } from '../questions/questions-storage.service';
 import { ApplicationsStateService } from './applications-state.service';
 import { TermsService } from '../terms/terms.service';
+import { LoadingService } from '../../../core/service/loading/loading.service';
 
 @Component({
   selector: 'st-applications',
@@ -19,13 +20,23 @@ export class ApplicationsComponent implements OnInit, OnDestroy {
     private _applicationsService: ApplicationsService,
     private _questionsStorageService: QuestionsStorageService,
     private _termsService: TermsService,
+    private _loadingService: LoadingService,
     public applicationsStateService: ApplicationsStateService
   ) {}
 
   ngOnInit(): void {
     const applicationsSubscription: Subscription = this._termsService.termId$
-      .pipe(switchMap((termId: number) => this._applicationsService.getApplications(termId)))
-      .subscribe();
+      .pipe(
+        switchMap((termId: number) => {
+          this._loadingService.showSpinner();
+
+          return this._applicationsService.getApplications(termId);
+        })
+      )
+      .subscribe({
+        next: () => this._loadingService.closeSpinner(),
+        error: () => this._loadingService.closeSpinner(),
+      });
 
     this._subscription.add(applicationsSubscription);
   }

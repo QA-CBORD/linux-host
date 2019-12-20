@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 import { TermsService } from './terms.service';
+import { LoadingService } from '../../../core/service/loading/loading.service';
 
 import { Term } from './terms.model';
 
@@ -17,12 +19,15 @@ export class TermsComponent implements OnInit {
 
   customPopoverOptions: any = {
     mode: 'md',
+    showBackdrop: false,
   };
 
-  constructor(private _termsService: TermsService) {}
+  constructor(private _termsService: TermsService, private _loadingService: LoadingService) {}
 
   ngOnInit() {
-    this.terms$ = this._termsService.getTerms();
+    this._loadingService.showSpinner();
+
+    this.terms$ = this._termsService.getTerms().pipe(tap(() => this._loadingService.closeSpinner()));
   }
 
   handleSelectTerm(term: Term): void {
