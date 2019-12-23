@@ -11,9 +11,10 @@ import { SecureMessagingApiService } from '@sections/secure-messaging/service';
 export class SecureMessagingService {
   private static smAuthInfo: SecureMessagingAuthInfo;
   private readonly ma_type = 'patron';
-  private readonly refreshTime = 10000;
+  private readonly refreshTime = 100000;
 
-  constructor(private authService: AuthService, private secureMessagingService: SecureMessagingApiService) {}
+  constructor(private readonly authService: AuthService,
+              private readonly secureMessagingService: SecureMessagingApiService) {}
 
   static GetSecureMessagesAuthInfo(): SecureMessagingAuthInfo {
     return SecureMessagingService.smAuthInfo;
@@ -42,7 +43,7 @@ export class SecureMessagingService {
   }
 
   pollForData(): Observable<[SecureMessageGroupInfo[], SecureMessageInfo[]]> {
-    return timer(this.refreshTime, this.refreshTime).pipe(
+    return timer(0, this.refreshTime).pipe(
       switchMap(() => zip(this.getSecureMessagesGroups(), this.getSecureMessages()))
     );
   }

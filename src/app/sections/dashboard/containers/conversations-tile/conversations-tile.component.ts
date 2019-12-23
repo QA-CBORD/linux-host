@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { SecureMessagingService } from './services/secure-messaging.service';
 import { SecureMessageConversation, SecureMessageInfo } from '@core/model/secure-messaging/secure-messaging.model';
 import { take } from 'rxjs/operators';
@@ -7,16 +7,18 @@ import { take } from 'rxjs/operators';
   selector: 'st-conversations-tile',
   templateUrl: './conversations-tile.component.html',
   styleUrls: ['./conversations-tile.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ConversationsTileComponent implements OnInit {
-  
   private groupsArray: any;
   private messagesArray: SecureMessageInfo[] = [];
   lastTwoMessagesArray: SecureMessageInfo[] = [];
-  showSpiner: boolean = true;
   showTextAvatar: boolean = true;
+  conversationDisplayedAmount: number = 2;
+  conversationSkeletonArray: any[] = new Array(this.conversationDisplayedAmount);
 
-  constructor(private readonly secureMessagingService: SecureMessagingService) {}
+  constructor(private readonly secureMessagingService: SecureMessagingService,
+              private readonly cdRef: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.initializePage();
@@ -121,8 +123,7 @@ export class ConversationsTileComponent implements OnInit {
     }
 
     this.lastTwoMessagesArray = tempConversations.map(conversation => conversation.messages.pop()).slice(0, 2);
-    this.showSpiner = false;
-    
+    this.cdRef.detectChanges();
   }
 
   getConversationGroupInitial(groupName: string): string {

@@ -5,7 +5,6 @@ import { IonicModule } from '@ionic/angular';
 
 import { MobileAccessPage } from './mobile-access.page';
 import { MobileAccessRoutingModule } from './mobile-access-routing.module';
-import { LocationsResolverGuard } from './resolvers';
 import { LocationListComponent } from './location-list';
 import { LocationItemComponent } from './location-list/location-item';
 import { MobileAccessService } from './service';
@@ -18,6 +17,8 @@ import { StCountdownModule } from '../../shared/ui-components/st-countdown/st-co
 import { StPopoverLayoutModule } from '../../shared/ui-components/st-popover-layout/st-popover-layout.module';
 import { StHeaderModule } from '../../shared/ui-components/st-header/st-header.module';
 import { StSpinnerModule } from '../../shared/ui-components/st-spinner/st-spinner.module';
+import { StActivateLocationItemModule } from '@shared/ui-components/st-activate-location-item/st-activate-location-item.module';
+import { LocationsResolverGuard } from './resolvers/locations.resolver.guard';
 
 const imports = [
   CommonModule,
@@ -30,7 +31,8 @@ const imports = [
   StCountdownModule,
   StPopoverLayoutModule,
   StHeaderModule,
-  StSpinnerModule
+  StSpinnerModule,
+  StActivateLocationItemModule
 ];
 
 const declarations = [

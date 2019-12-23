@@ -160,7 +160,9 @@ export class ItemDetailComponent implements OnInit {
       await this.cartService.removeOrderItemFromOrderById(orderItemId);
     }
 
+
     this.cartService.addOrderItems(menuItem);
+    this.onClose();
     this.loadingService.showSpinner();
     await this.cartService
       .validateOrder()
@@ -170,7 +172,10 @@ export class ItemDetailComponent implements OnInit {
       )
       .toPromise()
       .then(() => this.onClose())
-      .catch(error => this.failedValidateOrder(error))
+      .catch(error => {
+        this.cartService.removeLastOrderItem();
+        this.failedValidateOrder(error)
+      })
       .finally(() => this.loadingService.closeSpinner());
   }
 

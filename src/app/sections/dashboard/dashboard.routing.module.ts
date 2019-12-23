@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { Route, RouterModule } from '@angular/router';
 import { DashboardPage } from './dashboard.page';
 import { DashboardPageResolver } from './resolvers/dashboard-page.resolver';
+import { DASHBOARD_NAVIGATE } from './dashboard.config';
 
 const routes: Route[] = [
   {
@@ -11,7 +12,11 @@ const routes: Route[] = [
       data: DashboardPageResolver,
     }
   },
- 
+  {
+    path: DASHBOARD_NAVIGATE.scanCard,
+    loadChildren: './containers/scan-card/scan-card.module#ScanCardModule',
+  }
+
 ];
 
 const imports = [RouterModule.forChild(routes)];

@@ -1,38 +1,46 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve } from '@angular/router';
 
-import { take, tap, switchMap } from 'rxjs/operators';
+import { tap, switchMap } from 'rxjs/operators';
 
 import { TransactionService } from '../services/transaction.service';
-import { LoadingService } from '../../../core/service/loading/loading.service';
-import { TIME_PERIOD } from '../accounts.config';
+import { LoadingService } from '@core/service/loading/loading.service';
+import { SYSTEM_SETTINGS_CONFIG, TIME_PERIOD } from '../accounts.config';
+import { AccountsService } from '@sections/accounts/services/accounts.service';
+import { Observable, zip } from 'rxjs';
+import { ContentStringInfo } from '@core/model/content/content-string-info.model';
+import { UserAccount } from '@core/model/account/account.model';
+import { TransactionHistory } from '@sections/accounts/models/transaction-history.model';
 
 @Injectable()
-export class TransactionsResolver implements Resolve<Promise<any>> {
+export class TransactionsResolver implements Resolve<Observable<[ContentStringInfo[], TransactionHistory[], UserAccount[]]>> {
   constructor(
     private readonly transactionService: TransactionService,
-    private readonly loadingService: LoadingService
-  ) {}
+    private readonly loadingService: LoadingService,
+    private readonly accountsService: AccountsService,
+  ) {
+  }
 
-  async resolve(route: ActivatedRouteSnapshot): Promise<any> {
-    await this.loadingService.showSpinner();
-    return new Promise((resolve, reject) => {
-      this.transactionService
-        .initContentStringsList()
-        .pipe(
-          switchMap(() =>
-            this.transactionService.getRecentTransactions(route.params.id, { name: TIME_PERIOD.pastSixMonth }, 20)
+  resolve(route: ActivatedRouteSnapshot): Observable<[ContentStringInfo[], TransactionHistory[], UserAccount[]]> {
+    const requireSettings = [
+      SYSTEM_SETTINGS_CONFIG.displayTenders,
+      SYSTEM_SETTINGS_CONFIG.depositTenders,
+    ];
+    const transactionContentStrings = this.transactionService.initContentStringsList();
+    const accountsCall = this.accountsService.getUserAccounts();
+    const historyCall = this.accountsService
+      .getUserSettings(requireSettings)
+      .pipe(
+        switchMap(() =>
+          this.transactionService.getRecentTransactions(
+            route.params.id, { name: TIME_PERIOD.pastSixMonth }, 20,
           ),
-          tap(
-            async () => {
-              resolve();
-              await this.loadingService.closeSpinner();
-            },
-            () => this.loadingService.closeSpinner()
-          ),
-          take(1)
-        )
-        .subscribe();
-    });
+        ),
+      );
+    this.loadingService.showSpinner();
+
+    return zip(transactionContentStrings, historyCall, accountsCall).pipe(
+      tap(() => this.loadingService.closeSpinner(), () => this.loadingService.closeSpinner()),
+    );
   }
 }

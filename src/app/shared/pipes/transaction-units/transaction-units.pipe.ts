@@ -1,9 +1,7 @@
-
 import { Pipe, PipeTransform } from '@angular/core';
 
 import { AccountsService } from '@sections/accounts/services/accounts.service';
 import { ACCOUNT_TYPES, CONTENT_STRINGS } from '@sections/accounts/accounts.config';
-
 
 @Pipe({
   name: 'transactionUnits',
@@ -39,7 +37,7 @@ export class TransactionUnitsPipe implements PipeTransform {
     return finalFirst + withDecimal.slice(firstPartIndex);
   }
   private getContentStringValueByName(name: string): string {
-    
+
     return this.accountsService.getContentValueByName(name);
   }
 }

@@ -3,15 +3,14 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ModalController, ToastController } from '@ionic/angular';
 
 import { Observable, iif } from 'rxjs';
-import { first, switchMap } from 'rxjs/operators';
+import { first, map, switchMap } from 'rxjs/operators';
 
-import { MerchantInfo, MerchantOrderTypesInfo, OrderInfo } from './shared/models';
+import { MerchantInfo, MerchantOrderTypesInfo } from './shared/models';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { OrderOptionsActionSheetComponent } from './shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LOCAL_ROUTING } from './ordering.config';
 import { NAVIGATE } from 'src/app/app.global';
-
 
 @Component({
   selector: 'st-ordering.page',
@@ -21,7 +20,6 @@ import { NAVIGATE } from 'src/app/app.global';
 })
 export class OrderingPage implements OnInit {
   merchantList$: Observable<MerchantInfo[]>;
-  orders$: Observable<OrderInfo[]>;
 
   constructor(
     private readonly modalController: ModalController,
@@ -29,15 +27,16 @@ export class OrderingPage implements OnInit {
     private readonly loadingService: LoadingService,
     private readonly toastController: ToastController,
     private readonly router: Router,
-    private readonly cartService: CartService
+    private readonly cartService: CartService,
+    private readonly activatedRoute: ActivatedRoute
   ) { }
 
   ngOnInit() {
     this.merchantList$ = this.merchantService.menuMerchants$;
-    this.orders$ = this.merchantService.getRecentOrders();
+    this.handleActiveMerchantInRoute();
   }
 
-  merchantClickHandler(merchantInfo) {
+  merchantClickHandler(merchantInfo: MerchantInfo) {
     this.openOrderOptions(merchantInfo);
   }
 
@@ -50,10 +49,10 @@ export class OrderingPage implements OnInit {
       )
       .subscribe(
         () => {
-          this.loadingService.closeSpinner();
           const message = isFavorite ? 'Removed from favorites' : 'Added to favorites';
           this.onToastDisplayed(message);
         },
+        null,
         () => this.loadingService.closeSpinner()
       );
   }
@@ -93,6 +92,17 @@ export class OrderingPage implements OnInit {
       }
     });
     await modal.present();
+  }
+
+  private async handleActiveMerchantInRoute(): Promise<void> {
+    const merchantId = this.activatedRoute.snapshot.queryParams.merchantId;
+    if(merchantId) {
+      const merchant = await this.merchantList$.pipe(
+        map((merchants: MerchantInfo[]) => merchants.find(({id}) => id === merchantId)),
+        first()
+      ).toPromise();
+      this.openOrderOptions(merchant);
+    }
   }
 
   private async onToastDisplayed(message: string): Promise<void> {

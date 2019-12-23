@@ -6,7 +6,7 @@ import { map, switchMap } from 'rxjs/operators';
 import { AccountsService } from './services/accounts.service';
 import { UserAccount } from '../../core/model/account/account.model';
 import { TransactionHistory } from './models/transaction-history.model';
-import { ALL_ACCOUNTS, LOCAL_ROUTING, SYSTEM_SETTINGS_CONFIG, CONTENT_STRINGS } from './accounts.config';
+import { ALL_ACCOUNTS, LOCAL_ROUTING, CONTENT_STRINGS } from './accounts.config';
 import { NAVIGATE } from '../../app.global';
 import { Platform } from '@ionic/angular';
 import { Router } from '@angular/router';

@@ -1,14 +1,26 @@
-<div *ngIf="showSpiner" class="spinner-wrapper">
-  <ion-spinner></ion-spinner>
-</div>
-
-<div *ngIf="!showSpiner" class="accounts">
-  <ion-slides class="accounts__slides" [pager]="true" mode="ios" [options]="slideOpts">
-    <ion-slide class="accounts__slide" *ngFor="let accountsByOneSlide of userAccountsSlides">
-      <div class="accounts__item" *ngFor="let account of accountsByOneSlide">
+<div class="accounts">
+  <ion-slides *ngIf="slides.length"
+              class="accounts__slides"
+              [pager]="true" mode="ios"
+              [options]="slideOpts">
+    <ion-slide class="accounts__slide" *ngFor="let accountsByOneSlide of slides">
+      <div class="accounts__item" *ngFor="let account of accountsByOneSlide" (click)="goToAccountHistory(account.id)">
         <div class="accounts__title">{{ account.accountDisplayName }}</div>
         <div class="accounts__total">{{ account.balance | transactionUnits: account.accountType }}</div>
       </div>
     </ion-slide>
   </ion-slides>
+
+  <ion-list *ngIf="!slides.length">
+    <ion-item lines="none">
+      <ion-label>
+        <p class="accounts__skeleton-row">
+          <ion-skeleton-text class="accounts__skeleton-account-card" animated></ion-skeleton-text>
+          <ion-skeleton-text class="accounts__skeleton-account-card" animated></ion-skeleton-text>
+          <ion-skeleton-text class="accounts__skeleton-account-card" animated></ion-skeleton-text>
+          <ion-skeleton-text class="accounts__skeleton-account-card" animated></ion-skeleton-text>
+        </p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
 </div>

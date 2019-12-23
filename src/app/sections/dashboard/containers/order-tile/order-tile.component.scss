@@ -61,4 +61,16 @@
     @include ellipsis;
     @include font-nunito-semibold(14px);
   }
+
+  &__skeleton-card {
+    display: inline-block;
+    width: 160px;
+    height: 160px;
+  }
+
+  &__skeleton-list {
+    display: flex;
+    padding: 0;
+    justify-content: space-around;
+  }
 }

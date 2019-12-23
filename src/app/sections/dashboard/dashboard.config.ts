@@ -1,5 +1,10 @@
 import { NAVIGATE } from 'src/app/app.global';
 import { TileWrapperConfig } from './models';
+import { LOCAL_ROUTING as ACCOUNT_ROUTING } from '@sections/accounts/accounts.config';
+
+export enum DASHBOARD_NAVIGATE {
+  scanCard = 'scan-card',
+}
 
 export const DASHBOARD_SETTINGS_CONFIG = {
   enableScanCardButton: {
@@ -49,7 +54,7 @@ export const ACCOUNTS_SETTINGS_CONFIG = {
     domain: 'get',
     category: 'deposit',
     name: 'payment_types',
-  }
+  },
 };
 
 export enum TILES_ID {
@@ -61,7 +66,7 @@ export enum TILES_ID {
   order = 'order',
   explore = 'explore',
   conversations = 'conversations'
-};
+}
 
 export enum TILES_TITLE {
   accounts = 'Accounts',
@@ -84,7 +89,7 @@ export const tilesConfig: TileWrapperConfig[] = [
     buttonConfig: {
       show: false,
       title: 'Add Funds',
-      navigate: NAVIGATE.addFounds,
+      navigate: `${NAVIGATE.accounts}/${ACCOUNT_ROUTING.addFunds}`,
     },
   },
   {
@@ -103,7 +108,7 @@ export const tilesConfig: TileWrapperConfig[] = [
     id: DASHBOARD_SETTINGS_CONFIG.enableRewards.name,
     title: 'Rewards',
     iconPath: '/assets/icon/trophy.svg',
-    isEnable: false,
+    isEnable: true,
     navigate: NAVIGATE.rewards,
     buttonConfig: {
       show: false,
@@ -113,7 +118,7 @@ export const tilesConfig: TileWrapperConfig[] = [
     id: DASHBOARD_SETTINGS_CONFIG.enableMobileAccess.name,
     title: 'Mobile Access',
     iconPath: '/assets/icon/mobile-access-tile.svg',
-    isEnable: false,
+    isEnable: true,
     navigate: NAVIGATE.mobileAccess,
     buttonConfig: {
       show: true,
@@ -140,7 +145,7 @@ export const tilesConfig: TileWrapperConfig[] = [
     id: DASHBOARD_SETTINGS_CONFIG.enableOrder.name,
     title: 'Order',
     iconPath: '/assets/icon/order.svg',
-    isEnable: false,
+    isEnable: true,
     navigate: NAVIGATE.ordering,
     buttonConfig: {
       show: true,
@@ -152,7 +157,7 @@ export const tilesConfig: TileWrapperConfig[] = [
     id: DASHBOARD_SETTINGS_CONFIG.enableExplore.name,
     title: 'Explore',
     iconPath: '/assets/icon/map.svg',
-    isEnable: false,
+    isEnable: true,
     navigate: NAVIGATE.accounts,
     buttonConfig: {
       show: true,
@@ -164,7 +169,7 @@ export const tilesConfig: TileWrapperConfig[] = [
     id: DASHBOARD_SETTINGS_CONFIG.enableConversation.name,
     title: 'Conversations',
     iconPath: '/assets/icon/chat.svg',
-    isEnable: false,
+    isEnable: true,
     navigate: NAVIGATE.secureMessage,
     buttonConfig: {
       show: true,

@@ -1,6 +1,9 @@
-@import "tools";
+@import 'tools';
 
 :host {
+  --ion-background-color: $color-very-light-gray;
+  --ion-color-primary: $color-black;
+
   ion-card-header {
     display: flex;
     align-items: center;
@@ -9,91 +12,11 @@
 
   ion-content {
     background: $color-very-light-gray;
+    height: 100%;
   }
-
-  --ion-background-color: $color-very-light-gray;
-  --ion-color-primary: $color-black;
 }
 
 .user-data {
-  max-width: 400px;
-  margin: 0 auto;
-  background: $color-navy-blue;
-  border-radius: 15px;
-  box-sizing: border-box;
-  font-size: 1rem;
-  box-shadow: 0 0 10px 3px $color-night-rider;
-  border: none;
-  height: calc(100vh - 65px);
-  min-height: 420px;
-
-  ion-card-content {
-    padding: 0 15px 10px;
-  }
-
-  &__university-photo {
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    margin-right: 10px;
-  }
-
-  &__university {
-    color: $color-white;
-    font-size: 1.5rem;
-    font-weight: 500;
-    min-height: 27px;
-    margin: 0;
-    font-family:$font-nunito-semibold;
-  }
-
-  &__university-bg {
-    height: 100px;
-    position: absolute;
-    left: 0;
-    right: 0;
-  }
-
-  &__photo {
-    height: 100%;
-    object-fit: cover;
-  }
-
-  &__photo-container {
-    display: block;
-    margin: 15px 0 0;
-    border-radius: 15px;
-    overflow: hidden;
-    background:$color-very-light-gray url('/assets/images/no_photo.svg') no-repeat center;
-    height: 45vh;
-
-    @media (min-height: 550px) {
-    height: 50vh;
-    }
-
-    @media (min-height: 650px) {
-    height: 55vh;
-    }
-
-    @media (min-height: 720px) {
-    height: 60vh;
-    }
-  }
-
-  &__data-card {
-    border-radius: 15px;
-    margin-top: 0;
-  }
-
-  &__info {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(0, 0, 0, .3);
-    padding: 10px 15px;
-    max-height: 150px;
-  }
 
   &__location-star {
     display: inline-block;
@@ -108,44 +31,23 @@
     &--active {
       background-image: url('/assets/icon/star-white.svg');
     }
-
-  }
-
-  &__name {
-    font-size: 1.2rem;
-    letter-spacing: 0;
-    color: $color-white;
-    font-family: $font-nunito-semibold;
-    word-wrap: break-word;
-    word-break: break-all;
-    max-height: 3.4rem;
-    overflow: hidden;
-  }
-
-  &__id {
-    font-size: 1rem;
-    font-weight: 900;
-    max-height: 20px;
-    letter-spacing: 0;
-    color: $color-white;
   }
 
   &__location {
-    color: $color-white;
-    text-align: center;
-    font-size: 1.2rem;
     position: relative;
-    max-height: 3.4rem;
-    @include font-family($font-nunito-semibold);
-    word-wrap: break-word;
-    word-break: break-word;
+    text-align: center;
+    color: $color-white;
+    
+    @include ellipsis;
+    @include font-nunito-heavy(18px);
   }
 
   &__activate-btn {
     max-width: 330px;
     width: 80%;
     margin: 10px auto;
-    @include font-family($font-nunito-semibold);
     text-transform: uppercase;
+
+    @include font-nunito-heavy(14px);
   }
 }
