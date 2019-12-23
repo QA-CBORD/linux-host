@@ -34,6 +34,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
   @Input() orderItems: OrderItem[] = [];
   @Input() paymentMethod: any = [];
   @Input() tax: number;
+  @Input() discount: number;
   @Input() total: number;
   @Input() orderPaymentName: string;
   @Input() deliveryFee: number;
@@ -102,10 +103,9 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
     this.subscribeOnFormChanges();
   }
 
-  toggleCvvControl({ detail: { value } }) {
-    console.log(value);
-    this.onOrderPaymentInfoChanged.emit({ accountId: value.id, paymentSystemType: value.paymentSystemType });
-    if (value.paymentSystemType === PAYMENT_SYSTEM_TYPE.MONETRA) {
+  toggleCvvControl({ detail: { value: { id, paymentSystemType } } }) {
+    this.onOrderPaymentInfoChanged.emit({ accountId: id, paymentSystemType });
+    if (paymentSystemType === PAYMENT_SYSTEM_TYPE.MONETRA) {
       this.addCvvControl();
     } else {
       this.removeCvvControl();
