@@ -33,7 +33,7 @@ export const testCredentials:Dictionary<UserLogin> = {
 
   KNAU_Yarik:  {
     userName: 'yxp@test.cbord.com',
-    password: 'Dn210778pms#',
+    password: 'Dn210778pms',
     domain: null,
     institutionId: '72ae1e24-2e31-4927-82a5-4379081e4334',
   },

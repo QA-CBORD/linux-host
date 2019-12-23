@@ -12,6 +12,7 @@ import { AutoDepositPageResolver } from './resolvers/auto-deposit-page.resolver'
 import { SettingService } from './services/setting.service';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
 import { DepositService } from '@sections/accounts/services/deposit.service';
+import { TransactionUnitsPipeModule } from '@shared/pipes';
 
 const imports = [CommonModule, AccountsRoutingModule, AccountsSharedModule, StHeaderModule];
 const declarations = [AccountsPage];
@@ -28,7 +29,10 @@ const providers = [
 
 @NgModule({
   declarations,
-  imports,
+  imports: [
+    imports,
+    TransactionUnitsPipeModule,
+  ],
   providers,
 })
 export class AccountsModule {}

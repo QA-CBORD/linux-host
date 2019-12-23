@@ -1,8 +1,8 @@
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 
 import { Observable } from 'rxjs';
-import { map, first } from 'rxjs/operators';
+import { first, map } from 'rxjs/operators';
 
 import { AccessCardService } from './services/access-card.service';
 import { Router } from '@angular/router';
@@ -13,10 +13,10 @@ import { DASHBOARD_NAVIGATE } from '@sections/dashboard/dashboard.config';
   selector: 'st-access-card',
   templateUrl: './access-card.component.html',
   styleUrls: ['./access-card.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccessCardComponent implements OnInit {
   userName$: Observable<string>;
-  userPhoto$: Promise<string>;
   institutionName$: Observable<string>;
   institutionColor$: Observable<string>;
   institutionPhoto$: Observable<SafeResourceUrl>;
@@ -24,14 +24,16 @@ export class AccessCardComponent implements OnInit {
   getMyCardEnabled$: Observable<boolean>;
   isMobileAccessButtonEnabled: Observable<boolean>;
   applePayEnabled$: Observable<boolean>;
-  isLoadingImg: boolean;
-  
+  userPhoto: string;
+  isLoadingPhoto: boolean = true;
 
   constructor(
     private readonly accessCardService: AccessCardService,
     private readonly sanitizer: DomSanitizer,
-    private readonly router: Router
-  ) {}
+    private readonly router: Router,
+    private readonly cdRef: ChangeDetectorRef,
+  ) {
+  }
 
   ngOnInit() {
     this.getUserData();
@@ -40,19 +42,20 @@ export class AccessCardComponent implements OnInit {
   }
 
   private getUserData() {
-    this.isLoadingImg = true;
     this.userName$ = this.accessCardService.getUserName();
-    this.institutionColor$ = this.accessCardService
-      .getInstitutionColor()
-      .pipe(map(v => '#' + JSON.parse(v)['native-header-bg']));
-    this.userPhoto$ = this.accessCardService
-      .getUserPhoto()
-      .pipe(first())
-      .toPromise()
-      .finally(() => (this.isLoadingImg = !this.isLoadingImg));
+    this.accessCardService.getUserPhoto().pipe(
+      first(),
+    ).subscribe(photo => {
+      this.isLoadingPhoto = false;
+      this.userPhoto = photo;
+      this.cdRef.detectChanges();
+    });
   }
 
   private setInstitutionData() {
+    this.institutionColor$ = this.accessCardService
+      .getInstitutionColor()
+      .pipe(map(v => '#' + JSON.parse(v)['native-header-bg']));
     this.institutionName$ = this.accessCardService.getInstitutionName();
     this.institutionPhoto$ = this.accessCardService
       .getInstitutionImage()
@@ -65,10 +68,16 @@ export class AccessCardComponent implements OnInit {
     this.isMobileAccessButtonEnabled = this.accessCardService.isMobileAccessEnable();
     this.applePayEnabled$ = this.accessCardService.isApplePayEnabled();
   }
-  onMobileAccessClick() {
-    this.router.navigate([NAVIGATE.mobileAccess]);
+
+  async onMobileAccessClick(): Promise<void> {
+    const color = await this.institutionColor$.pipe(first()).toPromise();
+    await this.router.navigate([NAVIGATE.mobileAccess],
+      { skipLocationChange: true, queryParams: { color } });
   }
-  onScanCardClick() {
-    this.router.navigate([NAVIGATE.dashboard, DASHBOARD_NAVIGATE.scanCard]);
+
+  async onScanCardClick(): Promise<void> {
+    const color = await this.institutionColor$.pipe(first()).toPromise();
+    await this.router.navigate([NAVIGATE.dashboard, DASHBOARD_NAVIGATE.scanCard],
+      { skipLocationChange: true, queryParams: { color } });
   }
 }

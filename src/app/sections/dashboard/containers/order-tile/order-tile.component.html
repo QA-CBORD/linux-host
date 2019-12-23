@@ -1,10 +1,7 @@
-<div *ngIf="showSpiner" class="spinner-wrapper">
-  <ion-spinner></ion-spinner>
-</div>
-<div *ngIf="!showSpiner && userMarchentsSlides.length" class="order">
-  <ion-slides mode="ios" [options]="slideOpts" class="order__slides">
-    <ion-slide *ngFor="let merchantSlide of userMarchentsSlides" class="order__slide">
-      <div class="order__card" *ngFor="let merchant of merchantSlide">
+<div class="order">
+  <ion-slides *ngIf="slides.length" mode="ios" [options]="slideOpts" class="order__slides">
+    <ion-slide *ngFor="let merchantSlide of slides" class="order__slide">
+      <div class="order__card" (click)="goToMerchant(merchant)" *ngFor="let merchant of merchantSlide">
         <img class="order__card-photo" src="/assets/images/order-item-template.jpg" />
         <div class="order__favorite-wrapper">
           <img class="order__favorite-icon" src="/assets/icon/star-filled.svg" />
@@ -15,4 +12,12 @@
       </div>
     </ion-slide>
   </ion-slides>
+
+  <ion-list *ngIf="!slides.length" class="order__skeleton-list">
+    <ion-item *ngFor="let i of skeletonArray" lines="none">
+      <ion-label class="ion-no-margin">
+        <ion-skeleton-text animated class="order__skeleton-card"></ion-skeleton-text>
+      </ion-label>
+    </ion-item>
+  </ion-list>
 </div>

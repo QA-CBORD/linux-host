@@ -8,6 +8,7 @@ import { AccountsSharedModule } from '../../shared/shared.module';
 import { DepositResolver } from './resolvers/deposit.resolver';
 import { DepositService } from '@sections/accounts/services/deposit.service';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
+import { TransactionUnitsPipeModule } from '@shared/pipes';
 
 const imports = [
   CommonModule,
@@ -25,7 +26,10 @@ const providers = [DepositResolver, DepositService];
 
 @NgModule({
   declarations,
-  imports,
+  imports: [
+    imports,
+    TransactionUnitsPipeModule,
+  ],
   providers,
 })
 export class DepositModule {}

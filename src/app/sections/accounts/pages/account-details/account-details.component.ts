@@ -66,12 +66,12 @@ export class AccountDetailsComponent implements OnInit, AfterViewInit {
     return this.transactionsService.activeTimeRange.name === TIME_PERIOD.pastSixMonth;
   }
 
-  private async onErrorRetrieveTransactions(message: string) {
+  private async onErrorRetrieveTransactions(message: string): Promise<void> {
     const toast = await this.toastController.create({
       message,
       duration: 1000,
     });
-    toast.present();
+    await toast.present();
   }
 
   get csNames() {

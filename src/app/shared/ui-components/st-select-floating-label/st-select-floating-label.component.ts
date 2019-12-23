@@ -6,7 +6,6 @@ import {
   Output,
   EventEmitter,
   ChangeDetectionStrategy,
-  SimpleChanges,
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor, FormControl, AbstractControl } from '@angular/forms';
 
