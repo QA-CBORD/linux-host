@@ -2,11 +2,9 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IsDividerAppearDirective } from './is-divider-appear.directive';
 
-const declarations = [IsDividerAppearDirective];
-
 @NgModule({
-  declarations: [...declarations],
   imports: [CommonModule],
-  exports: [...declarations],
+  declarations: [IsDividerAppearDirective],
+  exports: [IsDividerAppearDirective],
 })
-export class DirectivesModule {}
+export class IsDividerAppearDirectiveModule {}

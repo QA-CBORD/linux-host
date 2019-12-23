@@ -33,9 +33,18 @@
 
   &__item-text {
     margin-top: 5px;
-    font-size: 10px;
-    color: $color-dim-gray;
+    
+    @include font-nunito-semibold(14px)
+  }
 
+  &__item-icon-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    background: $color-navy-blue;
+    height: 45px;
+    width: 45px;
   }
 
   &__item-icon {

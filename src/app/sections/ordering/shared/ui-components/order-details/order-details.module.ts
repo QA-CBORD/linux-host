@@ -9,7 +9,7 @@ import { StDateTimePickerModule } from '@sections/ordering/shared/ui-components/
 import { DeliveryAddressesModalModule } from '@sections/ordering/shared/ui-components/delivery-addresses.modal/delivery-addresses.modal.module';
 import { AddressAsStringPipe } from './address-as-string.pipe';
 import { PriceUnitsResolverModule } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.module';
-import { CreditCardTypePipe } from '@sections/accounts/shared/pipes/credit-card-type.pipe';
+import { CreditCardTypePipe } from '@sections/accounts/shared/pipes/credit-card-type/credit-card-type.pipe';
 import { AccountTypeResolverPipe } from './pipes/account-type-resolver.pipe';
 import { PriceUnitsResolverPipe } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.pipe';
 

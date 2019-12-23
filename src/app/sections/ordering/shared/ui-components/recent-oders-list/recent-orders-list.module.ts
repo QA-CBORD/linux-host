@@ -5,7 +5,6 @@ import { IonicModule } from '@ionic/angular';
 import { RecentOrdersListComponent } from './recent-orders-list.component';
 import { RecentOrdersListItemComponent } from './recent-orders-list-item';
 import { OrderItemsSummaryModule } from '../../pipes/order-items-summary/order-items-summary.module';
-import { PipesModule } from '@sections/accounts/shared/pipes/pipes.module';
 
 const declarations = [RecentOrdersListComponent, RecentOrdersListItemComponent];
 
@@ -13,6 +12,6 @@ const declarations = [RecentOrdersListComponent, RecentOrdersListItemComponent];
   declarations,
   exports: [RecentOrdersListComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [CommonModule, IonicModule, OrderItemsSummaryModule, PipesModule],
+  imports: [CommonModule, IonicModule, OrderItemsSummaryModule, ],
 })
 export class RecentOrdersListModule {}
