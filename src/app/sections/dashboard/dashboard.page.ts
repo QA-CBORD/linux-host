@@ -44,7 +44,8 @@ export class DashboardPage implements OnInit {
 
   private getUpdatedTilesConfig(settings) {
     return tilesConfig.map((setting) => {
-      let s = settings.list.find(({ name }) => name === setting.id);
+      // name !== 'enable_merchants' - temporary condition for Explore tile until that functionality is ready
+      let s = settings.list.find(({ name }) => name === setting.id && name !== 'enable_merchants');
       return s ? { ...setting, isEnable: DashboardPage.getBoolValue(s.value) } : setting;
     });
   }
