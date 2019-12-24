@@ -11,7 +11,6 @@ import { TimeRangePipe } from './pipes/time-range.pipe';
     IonicModule,
     CommonModule,
   ],
-  providers: [, ],
   declarations: [FilterComponent, FilterMenuComponent, AccountNamePipe, TimeRangePipe],
   entryComponents: [FilterMenuComponent],
   exports: [FilterComponent]
