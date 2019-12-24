@@ -20,12 +20,17 @@
   &__item {
     --padding-start: 0;
     --inner-padding-end: 0;
+    --border-style: none;
 
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
     border-bottom: 1px solid $color-white-smoke;
+
+    &:last-child {
+      border-style: none;
+    }
   }
 
   &__label-container {

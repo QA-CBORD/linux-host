@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { CREDITCARD_TYPE } from '../../accounts.config';
+import { CREDITCARD_TYPE } from '../../../accounts.config';
 
 @Pipe({
   name: 'creditCardType',

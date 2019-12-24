@@ -157,7 +157,7 @@ export const tilesConfig: TileWrapperConfig[] = [
     id: DASHBOARD_SETTINGS_CONFIG.enableExplore.name,
     title: 'Explore',
     iconPath: '/assets/icon/map.svg',
-    isEnable: true,
+    isEnable: false,
     navigate: NAVIGATE.accounts,
     buttonConfig: {
       show: true,

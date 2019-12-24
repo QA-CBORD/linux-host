@@ -1,1 +1,1 @@
-export * from './transaction-action.pipe.js';
+export * from './transaction-action-pipe.module';

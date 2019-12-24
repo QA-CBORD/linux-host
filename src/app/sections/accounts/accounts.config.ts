@@ -116,6 +116,31 @@ export const SYSTEM_SETTINGS_CONFIG = {
     category: 'feature',
     name: 'auto_deposit_tenders',
   },
+  enableMealDonations: {
+    domain: 'get',
+    category: 'feature',
+    name: 'meal_donations_enabled',
+  },
+  mealDonationsTenders: {
+    domain: 'get',
+    category: 'meal_donation',
+    name: 'tenders',
+  },
+  mealDonationsAllowFreeform: {
+    domain: 'get',
+    category: 'meal_donation',
+    name: 'allow_freeform',
+  },
+  mealDonationsFixedMealAmounts: {
+    domain: 'get',
+    category: 'meal_donation',
+    name: 'fixed_meal_amounts',
+  },
+  mealDonationsFixedDollarAmounts: {
+    domain: 'get',
+    category: 'meal_donation',
+    name: 'fixed_dollar_amounts',
+  },
 };
 
 export enum ACCOUNT_TYPES {
@@ -131,6 +156,7 @@ export enum LOCAL_ROUTING {
   accountDetails = 'account-details',
   accountDetailsM = 'account-details-m',
   addCreditCard = 'add-credit-card',
+  mealDonations = 'meal-donations',
 }
 
 export enum PAYMENT_SYSTEM_TYPE {
@@ -161,6 +187,7 @@ export enum CONTENT_STRINGS {
   addFundsBtn = 'button_add-funds',
   autoDepositBtn = 'button_auto-deposit',
   requestFundsBtn = 'button_request-funds',
+  mealDonations = 'deposit_tenders', // temp
   headerTitle = 'header_title',
   headerBackBtn = 'header_button_back',
   allAccountsLabel = 'label_all-accounts',

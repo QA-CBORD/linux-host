@@ -3,10 +3,21 @@
     <ng-container *ngFor="let setting of (menuItems$ | async); trackBy: trackByMenuName">
       <li class="menu__item" *ngIf="setting.isShow">
         <figure class="menu__item-figure" (click)="redirect(setting.name)">
-          <img class="menu__item-icon" [src]="setting.name | iconPath" alt="menu icon" />
+          <div class="menu__item-icon-wrapper">
+            <img class="menu__item-icon" [src]="setting.name | iconPath" alt="menu icon" />
+          </div>
           <figcaption class="menu__item-text">{{ setting.displayName }}</figcaption>
         </figure>
       </li>
     </ng-container>
+    <!--  delete this when backend calls will done -->
+    <li class="menu__item">
+      <figure class="menu__item-figure" (click)="onMealDonations()">
+        <div class="menu__item-icon-wrapper">
+          <img class="menu__item-icon" [src]="'assets/icon/meal-filled-white.svg'" alt="menu icon" />
+        </div>
+        <figcaption class="menu__item-text">Meal Donations</figcaption>
+      </figure>
+    </li>
   </ul>
 </nav>
