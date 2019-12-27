@@ -14,7 +14,7 @@ import { ConfirmDepositPopoverComponent } from './confirm-deposit-popover/confir
 import { TimeRangePipe } from './filter/pipes/time-range.pipe';
 import { AccountNamePipe } from './filter/pipes/account-name.pipe';
 import { DepositModalComponent } from './deposit-modal/deposit-modal.component';
-import { StPopoverLayoutModule } from '../../../../shared/ui-components/st-popover-layout/st-popover-layout.module';
+import { StPopoverLayoutModule } from '@shared/ui-components/st-popover-layout/st-popover-layout.module';
 
 
 const declarations = [

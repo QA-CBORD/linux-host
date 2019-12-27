@@ -9,10 +9,10 @@ import {
 
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-
-import { SettingService } from '../../../../services/setting.service';
-import { SYSTEM_SETTINGS_CONFIG } from '../../../../accounts.config';
+import { SettingService } from '@core/service/settings/setting.service';
 import { AUTO_DEPOSIT_PAYMENT_TYPES } from '../../auto-deposit.config';
+import { SYSTEM_SETTINGS_CONFIG } from '@sections/accounts/accounts.config';
+
 
 @Component({
   selector: 'st-deposit-type-nav',

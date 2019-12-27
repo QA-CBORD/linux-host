@@ -1,12 +1,12 @@
 import { Component, Input, OnInit, AfterViewInit } from '@angular/core';
 import bwipjs from 'bwip-angular2';
+import { RedeemableRewardInfo, UserFulfillmentActivityInfo } from '@sections/rewards/models';
+import { PopoverConfig, Message } from '@core/model/popover/popover.model';
+import { RewardsService } from '@sections/rewards/services';
+import { PopupTypes, CONTENT_STRINGS } from '@sections/rewards/rewards.config';
+import { buttons } from '@core/utils/buttons.config';
+import { PopupButton } from '@core/model/button/popup-button.model';
 
-import { Message, PopoverConfig } from '../../../../core/model/popover/popover.model';
-import { buttons } from '../../../../core/utils/buttons.config';
-import { CONTENT_STRINGS, PopupTypes } from '../../rewards.config';
-import { RedeemableRewardInfo, UserFulfillmentActivityInfo } from '../../models';
-import { PopupButton } from '../../../../core/model/button';
-import { RewardsService } from '../../services';
 
 @Component({
   selector: 'st-rewards-popover',

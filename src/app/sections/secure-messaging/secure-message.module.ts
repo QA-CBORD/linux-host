@@ -10,8 +10,8 @@ import { SecureMessageRoutingModule } from './secure-message-routing.module';
 import { SecureMessagePopoverComponent } from './secure-message-popover';
 import { MessageDatePipe } from './pipes/message-date.pipe';
 import { ConversationDatePipe } from './pipes/conversation-date.pipe';
-import { StopPropagationModule } from '../../shared/directives/stop-propogation/stop-propagation.module';
-import { StPopoverLayoutModule } from '../../shared/ui-components/st-popover-layout/st-popover-layout.module';
+import { StopPropagationModule } from '@shared/directives/stop-propogation/stop-propagation.module';
+import { StPopoverLayoutModule } from '@shared/ui-components/st-popover-layout/st-popover-layout.module';
 
 const declarations = [SecureMessagePage, SecureMessagePopoverComponent, MessageDatePipe, ConversationDatePipe];
 

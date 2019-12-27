@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { BaseService } from '../../../../../core/service/base-service/base.service';
 import { HttpClient } from '@angular/common/http';
-import { UserService } from '../../../../../core/service/user-service/user.service';
 import { map, switchMap } from 'rxjs/operators';
-import { MessageResponse } from '../../../../../core/model/service/message-response.model';
 import { Observable } from 'rxjs';
 import { UserAutoDepositSettingInfo } from '../models/auto-deposit-settings';
-import { UserAccount } from '../../../../../core/model/account/account.model';
+import { UserService } from '@core/service/user-service/user.service';
+import { MessageResponse } from '@core/model/service/message-response.model';
+import { BaseService } from '@core/service/base-service/base.service';
+import { UserAccount } from '@core/model/account/account.model';
 
 @Injectable()
 export class AutoDepositApiService extends BaseService {

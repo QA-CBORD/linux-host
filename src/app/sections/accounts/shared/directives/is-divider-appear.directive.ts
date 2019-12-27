@@ -1,6 +1,6 @@
 import { Directive, OnInit, Input, ElementRef, Renderer2 } from '@angular/core';
-import { TransactionHistory } from '../../models/transaction-history.model';
-import { isSameDay } from '../../../../core/utils/date-helper';
+import { TransactionHistory } from '@sections/accounts/models/transaction-history.model';
+import { isSameDay } from '@core/utils/date-helper';
 
 @Directive({
   selector: '[stIsDividerAppear]',

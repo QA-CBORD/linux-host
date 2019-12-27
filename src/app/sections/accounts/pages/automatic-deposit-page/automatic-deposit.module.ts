@@ -10,11 +10,11 @@ import { AutomaticDepositResolver } from './resolver/automatic-deposit.resolver'
 import { DepositFrequencyComponent } from './components/deposit-frequency/deposit-frequency.component';
 import { AccountsSharedModule } from '../../shared/shared.module';
 import { PopoverComponent } from './components/popover/popover.component';
-import { StPopoverLayoutModule } from '../../../../shared/ui-components/st-popover-layout/st-popover-layout.module';
-import { StHeaderModule } from '../../../../shared/ui-components/st-header/st-header.module';
-import { StInputFloatingLabelModule } from '../../../../shared/ui-components/st-input-floating-label/st-input-floating-label.module';
-import { StSelectFloatingLabelModule } from '../../../../shared/ui-components/st-select-floating-label/st-select-floating-label.module';
 import { ReactiveFormsModule } from '@angular/forms';
+import { StInputFloatingLabelModule } from '@shared/ui-components/st-input-floating-label/st-input-floating-label.module';
+import { StSelectFloatingLabelModule } from '@shared/ui-components/st-select-floating-label/st-select-floating-label.module';
+import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
+import { StPopoverLayoutModule } from '@shared/ui-components/st-popover-layout/st-popover-layout.module';
 
 const declarations = [
   AutomaticDepositPageComponent,

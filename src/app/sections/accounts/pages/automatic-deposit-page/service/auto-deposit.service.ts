@@ -5,10 +5,10 @@ import { map, switchMap } from 'rxjs/operators';
 
 import { UserAutoDepositSettingInfo } from '../models/auto-deposit-settings';
 import { AutoDepositApiService } from './auto-deposit-api-service.service';
-import { SYSTEM_SETTINGS_CONFIG } from '../../../accounts.config';
-import { parseArrayFromString } from '../../../../../core/utils/general-helpers';
-import { SettingService } from '../../../services/setting.service';
-import { UserService } from '../../../../../core/service/user-service/user.service';
+import { SettingService } from '@core/service/settings/setting.service';
+import { UserService } from '@core/service/user-service/user.service';
+import { SYSTEM_SETTINGS_CONFIG } from '@sections/accounts/accounts.config';
+import { parseArrayFromString } from '@core/utils/general-helpers';
 
 @Injectable()
 export class AutoDepositService {

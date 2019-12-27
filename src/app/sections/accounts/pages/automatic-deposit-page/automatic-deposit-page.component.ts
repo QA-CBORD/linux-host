@@ -5,7 +5,6 @@ import {
 } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject, iif, Observable, of, Subscription, zip } from 'rxjs';
-import { SettingService } from '../../services/setting.service';
 import {
   AUTO_DEPOSIT_PAYMENT_TYPES,
   AUTO_DEPOST_SUCCESS_MESSAGE_TITLE,
@@ -22,15 +21,16 @@ import {
 import { PopoverComponent } from './components/popover/popover.component';
 import { PopoverController, ToastController } from '@ionic/angular';
 import { map, switchMap, take, tap } from 'rxjs/operators';
-import { LOCAL_ROUTING, PAYMENT_TYPE, SYSTEM_SETTINGS_CONFIG } from '../../accounts.config';
 import { WEEK } from '@core/utils/date-helper';
 import { UserAutoDepositSettingInfo } from './models/auto-deposit-settings';
 import { UserAccount } from 'src/app/core/model/account/account.model';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DepositService } from '../../services/deposit.service';
 import { AutoDepositService } from './service/auto-deposit.service';
-import { NAVIGATE } from '../../../../app.global';
 import { BillMeMapping } from '@core/model/settings/billme-mapping.model';
+import { PAYMENT_TYPE, SYSTEM_SETTINGS_CONFIG, LOCAL_ROUTING } from '@sections/accounts/accounts.config';
+import { SettingService } from '@sections/accounts/services/setting.service';
+import { DepositService } from '@sections/accounts/services/deposit.service';
+import { NAVIGATE } from 'src/app/app.global';
 
 @Component({
   selector: 'st-automatic-deposit-page',
