@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { CartService, OrderDetailOptions, MerchantService } from '@sections/ordering';
 import { Observable, Subscription, zip } from 'rxjs';
 import { MenuInfo, MerchantInfo, MerchantOrderTypesInfo } from '@sections/ordering/shared/models';
@@ -6,10 +6,12 @@ import { Router } from '@angular/router';
 import { NAVIGATE } from 'src/app/app.global';
 import { LOCAL_ROUTING, ORDER_TYPE, ORDER_VALIDATION_ERRORS } from '@sections/ordering/ordering.config';
 import { first, map, take, tap } from 'rxjs/operators';
-import { ModalController, ToastController } from '@ionic/angular';
+import { ModalController, ToastController, PopoverController } from '@ionic/angular';
 import { OrderOptionsActionSheetComponent } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { handleServerError } from '@core/utils/general-helpers';
+import { FullMenuPopoverComponent } from './full-menu-popover';
+import { BUTTON_TYPE } from '@core/utils/buttons.config';
 
 @Component({
   selector: 'st-full-menu',
@@ -30,10 +32,10 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     private readonly cartService: CartService,
     private readonly router: Router,
     private readonly modalController: ModalController,
-    private readonly cdRef: ChangeDetectorRef,
     private readonly merchantService: MerchantService,
     private readonly loadingService: LoadingService,
-    private readonly toastController: ToastController
+    private readonly toastController: ToastController,
+    private readonly popoverCtrl: PopoverController
   ) {}
 
   get orderType(): Observable<string> {
@@ -88,7 +90,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     const cssClass = `order-options-action-sheet ${
       orderTypes.delivery && orderTypes.pickup ? ' order-options-action-sheet-p-d' : ''
     }`;
-    const orderInfo = await this.orderInfo$.pipe(first()).toPromise();
+    const { orderType, address } = await this.orderInfo$.pipe(first()).toPromise();
     const modal = await this.modalController.create({
       component: OrderOptionsActionSheetComponent,
       cssClass,
@@ -98,21 +100,38 @@ export class FullMenuComponent implements OnInit, OnDestroy {
         merchantId,
         storeAddress,
         settings,
-        activeDeliveryAddressId: orderInfo.orderType === ORDER_TYPE.PICKUP ? null : orderInfo.address.id,
-        activeOrderType: orderInfo.orderType === ORDER_TYPE.DELIVERY ? ORDER_TYPE.DELIVERY : null,
+        activeDeliveryAddressId: orderType === ORDER_TYPE.PICKUP ? null : address.id,
+        activeOrderType: orderType === ORDER_TYPE.DELIVERY ? ORDER_TYPE.DELIVERY : null,
       },
     });
 
     modal.onDidDismiss().then(({ data }) => {
+      const cachedData = this.cartService.orderDetailsOptions$.pipe(first()).toPromise();
       if (data) {
-        this.cartService.setActiveMerchantsMenuByOrderOptions(data.dueTime, data.orderType, data.address, data.isASAP);
+        this.cartService
+          .setActiveMerchantsMenuByOrderOptions(data.dueTime, data.orderType, data.address, data.isASAP)
+          .then(() => {
+            this.cartService.orderItems$.pipe(first()).subscribe(items => {
+              if (items.length) {
+                const successCb = null;
+                const errorCB = () => this.modalHandler(cachedData);
+                this.validateOrder(successCb, errorCB);
+              }
+            });
+          });
       }
     });
 
     await modal.present();
   }
 
-  async redirectToCart() {
+  redirectToCart() {
+    const successCb = () => this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.cart], { skipLocationChange: true });
+    const errorCB = error => this.failedValidateOrder(error);
+    this.validateOrder(successCb, errorCB);
+  }
+
+  private async validateOrder(successCb, errorCB) {
     this.loadingService.showSpinner();
     await this.cartService
       .validateOrder()
@@ -121,8 +140,8 @@ export class FullMenuComponent implements OnInit, OnDestroy {
         handleServerError(ORDER_VALIDATION_ERRORS)
       )
       .toPromise()
-      .then(() => this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.cart], { skipLocationChange: true }))
-      .catch(error => this.failedValidateOrder(error))
+      .then(successCb)
+      .catch(errorCB)
       .finally(() => this.loadingService.closeSpinner());
   }
 
@@ -133,5 +152,29 @@ export class FullMenuComponent implements OnInit, OnDestroy {
       position: 'top',
     });
     toast.present();
+  }
+
+  private async modalHandler(cachedData) {
+    const popover = await this.popoverCtrl.create({
+      component: FullMenuPopoverComponent,
+      componentProps: {},
+      animated: false,
+      backdropDismiss: true,
+    });
+
+    popover.onDidDismiss().then(({ role }) => {
+      switch (role) {
+        case BUTTON_TYPE.CLOSE:
+          cachedData.then(({ dueTime, orderType, address, isASAP }) => {
+            this.cartService.setActiveMerchantsMenuByOrderOptions(dueTime, orderType, address, isASAP);
+          });
+          break;
+        case BUTTON_TYPE.OKAY:
+          this.cartService.removeLastOrderItem();
+          break;
+      }
+    });
+
+    return await popover.present();
   }
 }
