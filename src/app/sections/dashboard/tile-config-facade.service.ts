@@ -3,7 +3,6 @@ import { ServiceStateFacade } from '@core/classes/service-state-facade';
 import { LOCAL_STORAGE_STATE_KEYS, LocalStorageStateService } from '@core/states/local-storage';
 import { DashboardService } from '@sections/dashboard/services';
 import { Observable, zip } from 'rxjs';
-import { tilesConfig } from '@sections/dashboard/dashboard.config';
 import { TileWrapperConfig } from '@sections/dashboard/models';
 import { map, switchMap, tap } from 'rxjs/operators';
 
@@ -16,34 +15,42 @@ export class TileConfigFacadeService extends ServiceStateFacade {
     super();
   }
 
-  tileSettings$(): Observable<TileWrapperConfig[]> {
+  get tileSettings$(): Observable<TileWrapperConfig[]> {
     if (!this.isTileConfigInStorage()) {
-      this.localStorageStateService.registerStateEntity(LOCAL_STORAGE_STATE_KEYS.SETTINGS, tilesConfig);
+      this.localStorageStateService.registerStateEntity(this.key);
     }
-    return this.localStorageStateService.getStateEntityByKey$<TileWrapperConfig[]>(LOCAL_STORAGE_STATE_KEYS.SETTINGS)
-      .pipe(
-        tap((config) => {
-          if (!config || !Array.isArray(config) || !config.length) {
-            this.localStorageStateService.updateStateByKey(LOCAL_STORAGE_STATE_KEYS.SETTINGS, tilesConfig);
-          }
-        }),
-      );
+    return this.localStorageStateService.getStateEntityByKey$<TileWrapperConfig[]>(this.key);
   }
 
-  private isTileConfigInStorage(): boolean {
-    return this.localStorageStateService.isKeyExistInState(LOCAL_STORAGE_STATE_KEYS.SETTINGS);
+  isValidConfig(config: any): boolean {
+    return config && Array.isArray(config) && !!config.length;
+  }
+
+  isTileConfigInStorage(): boolean {
+    return this.localStorageStateService.isKeyExistInState(this.key);
   }
 
   updateTilesConfigBySystemSettings(): Observable<TileWrapperConfig[]> {
-    const operation = zip(
-      this.tileSettings$(),
+    const configData = zip(
+      this.tileSettings$,
       this.dashboardService.retrieveSettingsList(),
     );
 
-    return this.makeRequestWithUpdatingStateHandler(operation, this.localStorageStateService).pipe(
-      map(([config, settings]) => this.dashboardService.getUpdatedTilesConfig(config, settings)),
+    return this.makeRequestWithUpdatingStateHandler(configData, this.localStorageStateService).pipe(
+      map(([config, settings]) => {
+        const updatedBaseConfigs = this.dashboardService.getUpdatedTilesBaseConfig(settings);
+        const allowedConfigFromBE = updatedBaseConfigs.filter(({ isEnable }) => isEnable);
+
+        return this.isValidConfig(config)
+          ? this.dashboardService.updateConfigByCashedConfig(allowedConfigFromBE, config)
+          : allowedConfigFromBE;
+      }),
       switchMap((updatedConfig) => this.dashboardService.updateAccountTile(updatedConfig)),
-      tap(config => this.localStorageStateService.updateStateByKey(this.key, config)),
+      tap(config => this.updateConfigState(config)),
     );
+  }
+
+  updateConfigState(value: TileWrapperConfig[]) {
+    this.localStorageStateService.updateStateByKey(this.key, value);
   }
 }

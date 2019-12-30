@@ -1,31 +1,34 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { SecureMessagingService } from './services/secure-messaging.service';
 import { SecureMessageConversation, SecureMessageInfo } from '@core/model/secure-messaging/secure-messaging.model';
 import { take } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'st-conversations-tile',
   templateUrl: './conversations-tile.component.html',
   styleUrls: ['./conversations-tile.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ConversationsTileComponent implements OnInit {
-  private groupsArray: any;
-  private messagesArray: SecureMessageInfo[] = [];
+export class ConversationsTileComponent implements OnInit, OnDestroy {
   lastTwoMessagesArray: SecureMessageInfo[] = [];
   showTextAvatar: boolean = true;
   conversationDisplayedAmount: number = 2;
   conversationSkeletonArray: any[] = new Array(this.conversationDisplayedAmount);
+  private messagesArray: SecureMessageInfo[] = [];
+  private groupsArray: any;
+  private readonly sourceSub: Subscription = new Subscription();
 
   constructor(private readonly secureMessagingService: SecureMessagingService,
-              private readonly cdRef: ChangeDetectorRef) {}
+              private readonly cdRef: ChangeDetectorRef) {
+  }
 
   ngOnInit() {
     this.initializePage();
   }
 
   private initializePage() {
-    this.secureMessagingService
+    const sub = this.secureMessagingService
       .getInitialData()
       .pipe(take(1))
       .subscribe(
@@ -37,8 +40,9 @@ export class ConversationsTileComponent implements OnInit {
         },
         error => {
           console.log(error);
-        }
+        },
       );
+    this.sourceSub.add(sub);
   }
 
   private pollForData() {
@@ -54,7 +58,7 @@ export class ConversationsTileComponent implements OnInit {
         },
         error => {
           console.log(error);
-        }
+        },
       );
   }
 
@@ -128,5 +132,9 @@ export class ConversationsTileComponent implements OnInit {
 
   getConversationGroupInitial(groupName: string): string {
     return groupName == null || groupName.length < 1 ? 'U' : groupName[0];
+  }
+
+  ngOnDestroy(): void {
+    this.sourceSub.unsubscribe();
   }
 }

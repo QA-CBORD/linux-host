@@ -72,7 +72,7 @@ export enum TILES_TITLE {
   conversations = 'Conversations'
 }
 
-export const tilesConfig: TileWrapperConfig[] = [
+export const TILES_BASE_CONFIG: TileWrapperConfig[] = [
   {
     id: TILES_ID.accounts,
     title: 'Accounts',

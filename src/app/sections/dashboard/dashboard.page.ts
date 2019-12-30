@@ -30,7 +30,7 @@ export class DashboardPage implements OnInit {
   }
 
   ngOnInit() {
-    this.tiles$ = this.tileConfigFacadeService.tileSettings$();
+    this.tiles$ = this.tileConfigFacadeService.tileSettings$;
   }
 
   async presentEditHomePageModal(): Promise<void> {
@@ -38,5 +38,9 @@ export class DashboardPage implements OnInit {
       component: EditHomePageModalComponent,
     });
     return await modal.present();
+  }
+
+  trackFn(i,{id, iconPath}): string {
+    return id + iconPath;
   }
 }

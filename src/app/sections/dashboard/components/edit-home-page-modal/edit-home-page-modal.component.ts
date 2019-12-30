@@ -1,9 +1,9 @@
 import { Component, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { ModalController, IonReorderGroup } from '@ionic/angular';
-import { tilesConfig } from '@sections/dashboard/dashboard.config';
 import { TileWrapperConfig } from '@sections/dashboard/models';
 import { TileConfigFacadeService } from '@sections/dashboard/tile-config-facade.service';
 import { Observable } from 'rxjs';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'st-edit-home-page-modal',
@@ -13,7 +13,6 @@ import { Observable } from 'rxjs';
 })
 export class EditHomePageModalComponent implements OnInit {
   homeConfigList$: Observable<TileWrapperConfig[]>;
-
   @ViewChild(IonReorderGroup) reorderGroup: IonReorderGroup;
 
   constructor(private readonly modalController: ModalController,
@@ -21,18 +20,21 @@ export class EditHomePageModalComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.homeConfigList$ = this.tileConfigFacadeService.tileSettings$();
+    this.homeConfigList$ = this.tileConfigFacadeService.tileSettings$;
   }
 
-  onToggle({ detail: { value, checked } }) {
-    // const choosedItem = this.homeConfigList.find(({ title }) => title === value);
-    // choosedItem.isEnable = checked;
+  async onToggle({ detail: { value, checked } }) {
+    let config = await this.homeConfigList$.pipe(take(1)).toPromise();
+    config = config.map((cfg) => cfg.title === value ? { ...cfg, isEnable: checked } : cfg);
+    this.tileConfigFacadeService.updateConfigState(config);
   }
 
-  doReorder({ detail: { from, to }, detail }) {
-    // let draggedItem = this.homeConfigList.splice(from, 1)[0];
-    // this.homeConfigList.splice(to, 0, draggedItem);
-    // detail.complete();
+  async doReorder({ detail: { from, to }, detail }) {
+    let config = await this.homeConfigList$.pipe(take(1)).toPromise();
+    const movedElement = config.splice(from, 1)[0];
+    config.splice(to, 0, movedElement);
+    this.tileConfigFacadeService.updateConfigState(config);
+    detail.complete();
   }
 
   async onClickedClose() {
@@ -40,7 +42,6 @@ export class EditHomePageModalComponent implements OnInit {
   }
 
   async onClickedDone() {
-
     await this.modalController.dismiss();
   }
 }
