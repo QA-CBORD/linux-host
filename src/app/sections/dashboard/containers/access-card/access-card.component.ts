@@ -2,7 +2,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 
 import { Observable } from 'rxjs';
-import { first, map } from 'rxjs/operators';
+import { first, map, tap } from 'rxjs/operators';
 
 import { AccessCardService } from './services/access-card.service';
 import { Router } from '@angular/router';

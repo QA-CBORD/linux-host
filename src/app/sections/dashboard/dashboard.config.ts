@@ -131,7 +131,7 @@ export const TILES_BASE_CONFIG: TileWrapperConfig[] = [
     title: 'Meal Donations',
     iconPath: '/assets/icon/meal-outline.svg',
     isEnable: false,
-    navigate: NAVIGATE.accounts,  
+    navigate: NAVIGATE.accounts,
     //TODO:Added this after mealDonations module will done
     //navigate: `${NAVIGATE.accounts}/${ACCOUNTS_NAVIGATE.mealDonations}`,
     buttonConfig: {
