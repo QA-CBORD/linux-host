@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { MENU_LIST_ICONS } from '../ui-components/menu-receiving-funds/local.config';
+import { MENU_LIST_ICONS } from '../../ui-components/menu-receiving-funds/local.config';
 
 @Pipe({
   name: 'iconPath',

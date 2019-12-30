@@ -1,9 +1,9 @@
-import { SYSTEM_SETTINGS_CONFIG } from '../../../accounts.config';
+import { SYSTEM_SETTINGS_CONFIG, LOCAL_ROUTING } from '../../../accounts.config';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, take, tap } from 'rxjs/operators';
 
 import { SettingInfo } from '../../../../../core/model/configuration/setting-info.model';
 import { AccountsService } from '../../../services/accounts.service';
@@ -30,11 +30,16 @@ export class MenuReceivingFundsComponent implements OnInit {
   }
 
   get hasShowedItem$(): Observable<boolean> {
-    return this.menuItems$.pipe(map(items => items.some(({ isShow }) => isShow)));
+    return this.menuItems$.pipe(map(items => items.some((item) => item && item.isShow)));
   }
 
   redirect(name: string) {
     this.router.navigate([NAVIGATE.accounts, MENU_LIST_ROUTES.get(name)], { skipLocationChange: true });
+  }
+
+  //Delete this method when back-end wiil done
+  onMealDonations() {
+    this.router.navigate([NAVIGATE.accounts,LOCAL_ROUTING.mealDonations])
   }
 
   trackByMenuName(i: number, { name }: MenuReceivingFundsListItem): string {
@@ -58,6 +63,9 @@ export class MenuReceivingFundsComponent implements OnInit {
         case SYSTEM_SETTINGS_CONFIG.guestDeposit.name:
           displayName = this.contentString[CONTENT_STRINGS.requestFundsBtn];
           break;
+        // case SYSTEM_SETTINGS_CONFIG.enableMealDonations.name:
+        //   displayName = this.contentString[CONTENT_STRINGS.mealDonations];
+        //   break;
       }
       return { name: setting.name, displayName: displayName, isShow: Boolean(Number(setting.value)) };
     });
@@ -68,6 +76,7 @@ export class MenuReceivingFundsComponent implements OnInit {
       CONTENT_STRINGS.autoDepositBtn,
       CONTENT_STRINGS.requestFundsBtn,
       CONTENT_STRINGS.addFundsBtn,
+      // CONTENT_STRINGS.mealDonations,
     ];
 
     this.contentString = this.accountsService.getContentStrings(accountStringNames);

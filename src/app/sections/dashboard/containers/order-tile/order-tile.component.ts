@@ -36,7 +36,7 @@ export class OrderTileComponent implements OnInit {
       .getMerchantsWithFavoriteInfo()
       .pipe(take(1))
       .subscribe(merchants => {
-        const favMerchants = merchants.filter(({ isFavorite }) => isFavorite === true);
+        const favMerchants = merchants.filter(({ isFavorite }) => isFavorite);
         while (favMerchants.length > 0) {
           this.slides.push(favMerchants.splice(0, this.amountPerSlide));
         }

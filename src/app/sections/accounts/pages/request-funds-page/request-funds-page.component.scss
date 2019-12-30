@@ -1,9 +1,9 @@
-@import "tools";
+@import 'tools';
 
 .request-funds {
   padding: 0 10px;
 
- &__info-msg {
+  &__info-msg {
     letter-spacing: 0;
 
     @include font-nunito-semibold(16px);
@@ -29,7 +29,7 @@
   &__button {
     --ion-color-primary: #166dff;
     --border-radius: 25px;
-    --box-shadow:0 4px 0 #1651b3;
+    --box-shadow: 0 4px 0 #1651b3;
 
     margin-top: 40px;
     height: 45px;
@@ -51,7 +51,6 @@
       --box-shadow: none;
       --ion-color-primary: $color-white;
       --color-activated: #166dff;
-
 
       position: absolute;
       bottom: 10px;

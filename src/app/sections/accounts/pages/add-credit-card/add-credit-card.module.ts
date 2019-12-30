@@ -20,7 +20,8 @@ const imports = [
   IonicModule.forRoot({
   scrollPadding: false,
   scrollAssist: true,
-}), AddCreditCardRoutingModule];
+}), AddCreditCardRoutingModule,
+  ];
 const declarations = [AddCreditCardComponent, SuccessPopoverComponent];
 const providers = [AddCreditCardService];
 const entryComponents = [SuccessPopoverComponent];

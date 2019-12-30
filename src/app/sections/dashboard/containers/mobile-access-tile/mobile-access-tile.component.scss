@@ -23,6 +23,10 @@
     align-items: center;
     border-bottom: 1px solid $color-white-smoke;
     margin: 0;
+    
+    &:last-child {
+      border-style: none;
+    }
   }
 
   &__item-icon {
