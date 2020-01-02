@@ -145,7 +145,7 @@
 
     .picker-opt.picker-opt-selected {
       color: #000;
-      
+
       @include font-nunito-heavy(20px);
     }
   }
@@ -269,4 +269,18 @@
 .bg-transparent {
   --background: transparent;
   background: transparent;
+}
+
+:root {
+  .application-actions-popover {
+    --min-width: 115px !important;
+    --width: auto;
+
+    .popover-content {
+      &.sc-ion-popover-md,
+      &.sc-ion-popover-ios {
+        border-radius: 8px;
+      }
+    }
+  }
 }

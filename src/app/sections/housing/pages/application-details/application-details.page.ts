@@ -11,14 +11,15 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ToastController } from '@ionic/angular';
 import { FormGroup } from '@angular/forms';
-import { Observable, Subscription, Subject } from 'rxjs';
-import { tap, switchMap, withLatestFrom } from 'rxjs/operators';
+import { Observable, Subscription, Subject, throwError } from 'rxjs';
+import { tap, switchMap, withLatestFrom, catchError } from 'rxjs/operators';
 
 import { QuestionsService } from '../../questions/questions.service';
 import { ApplicationsService } from '../../applications/applications.service';
 import { QuestionsStorageService } from '../../questions/questions-storage.service';
 import { ApplicationsStateService } from '../../applications/applications-state.service';
 import { TermsService } from '../../terms/terms.service';
+import { LoadingService } from '../../../../core/service/loading/loading.service';
 
 import { StepperComponent } from '../../stepper/stepper.component';
 import { StepComponent } from '../../stepper/step/step.component';
@@ -57,7 +58,8 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
     private _questionsStorageService: QuestionsStorageService,
     private _toastController: ToastController,
     private _applicationsStateService: ApplicationsStateService,
-    private _termsService: TermsService
+    private _termsService: TermsService,
+    private _loadingService: LoadingService
   ) {}
 
   ngOnInit(): void {
@@ -75,6 +77,8 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
   save(application: ApplicationDetails): boolean {
     const selectedStep: StepComponent = this.stepper.selected;
     const formValue: any = selectedStep.stepControl.value;
+
+    this._loadingService.showSpinner();
 
     const saveSubscription: Subscription = this._applicationsService
       .saveApplication(this.applicationKey, application, formValue)
@@ -98,6 +102,8 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
     if (!isLastPage) {
       this._next(application, form.value);
     } else {
+      this._loadingService.showSpinner();
+
       const submitSubscription: Subscription = this._applicationsService
         .submitApplication(this.applicationKey, application, form.value)
         .subscribe({
@@ -110,7 +116,16 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
   }
 
   private _initApplicationDetailsSubscription(): void {
-    this.applicationDetails$ = this._applicationsService.getApplicationDetails(this.applicationKey);
+    this._loadingService.showSpinner();
+
+    this.applicationDetails$ = this._applicationsService.getApplicationDetails(this.applicationKey).pipe(
+      tap(() => this._loadingService.closeSpinner()),
+      catchError((error: any) => {
+        this._loadingService.closeSpinner();
+
+        return throwError(error);
+      })
+    );
   }
 
   private _initPagesSubscription(): void {
@@ -164,11 +179,14 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
 
   private _handleSuccess(): void {
     this._refresh$.next();
+    this._loadingService.closeSpinner();
     this._router.navigate(['/housing/dashboard']);
   }
 
   private _handleErrors(error: any): void {
     let message = 'Something went wrong. Try again later';
+
+    this._loadingService.closeSpinner();
 
     if (error instanceof HttpErrorResponse) {
       const statusMessage: string = (error.error as Response).status.message;

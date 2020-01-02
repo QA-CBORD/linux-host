@@ -22,8 +22,10 @@ export class ApplicationActionsComponent {
         componentProps: {
           application,
         },
+        cssClass: 'application-actions-popover',
         event,
         showBackdrop: false,
+        mode: 'md',
       })
       .then((popover: HTMLIonPopoverElement) => popover.present());
   }

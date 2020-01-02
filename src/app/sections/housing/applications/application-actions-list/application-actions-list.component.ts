@@ -7,7 +7,6 @@ import { ApplicationDetails } from '../applications.model';
 @Component({
   selector: 'st-application-actions-list',
   templateUrl: './application-actions-list.component.html',
-  styleUrls: ['./application-actions-list.component.scss'],
 })
 export class ApplicationActionsListComponent {
   @Input() application: ApplicationDetails;

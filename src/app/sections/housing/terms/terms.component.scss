@@ -11,6 +11,9 @@
 }
 
 .terms-label {
+  @include font-nunito-heavy(16px);
+
+  color: rgba($color-black, 0.6);
   padding-right: 20px;
   position: relative;
 
@@ -24,9 +27,6 @@
 }
 
 .terms-select {
-  @include font-nunito-heavy(16px);
-
-  color: rgba($color-black, 0.6);
   opacity: 0;
   width: 0;
   padding: 0;

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
+import { tap, catchError } from 'rxjs/operators';
 
 import { TermsService } from './terms.service';
 import { LoadingService } from '../../../core/service/loading/loading.service';
@@ -27,7 +27,14 @@ export class TermsComponent implements OnInit {
   ngOnInit() {
     this._loadingService.showSpinner();
 
-    this.terms$ = this._termsService.getTerms().pipe(tap(() => this._loadingService.closeSpinner()));
+    this.terms$ = this._termsService.getTerms().pipe(
+      tap(() => this._loadingService.closeSpinner()),
+      catchError((error: any) => {
+        this._loadingService.closeSpinner();
+
+        return throwError(error);
+      })
+    );
   }
 
   handleSelectTerm(term: Term): void {
