@@ -106,6 +106,23 @@ export class ItemDetailComponent implements OnInit {
     this.valueChanges();
   }
 
+  isErrorMultiList({ menuGroup: { minimum, maximum, name } }) {
+    const { value } = this.itemOrderForm.get(name);
+
+    if (!minimum && !maximum) {
+      return true;
+    }
+    if (!minimum && maximum) {
+      return value.length <= maximum;
+    }
+    if (minimum && !maximum) {
+      return value.length >= minimum;
+    }
+    if (minimum && maximum && minimum === maximum) {
+      return value.length === minimum;
+    }
+  }
+
   calculateTotalPrice() {
     const calcValue = (this.menuItem.price + this.order.optionsPrice) * this.order.counter;
     this.order = { ...this.order, totalPrice: Number(calcValue.toFixed(2)) };

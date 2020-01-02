@@ -1,22 +1,24 @@
-import { Component, OnInit, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+} from '@angular/core';
 
-import { TileWrapperConfig } from '../../models/tile-wrapper-config.model';
+import { TileWrapperConfig } from '@sections/dashboard/models';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'st-tile-wrapper',
   templateUrl: './tile-wrapper.component.html',
   styleUrls: ['./tile-wrapper.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TileWrapperComponent implements OnInit {
+export class TileWrapperComponent {
   @Input() wrapperConfig: TileWrapperConfig;
 
   constructor(private readonly router: Router) {}
 
-  ngOnInit() {}
-
   navigateTo(path) {
     this.router.navigate([path]);
   }
-  
 }

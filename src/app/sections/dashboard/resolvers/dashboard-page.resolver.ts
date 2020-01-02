@@ -4,7 +4,6 @@ import { Observable, zip } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
 import { AccountsService } from '@sections/accounts/services/accounts.service';
-import { MobileAccessService } from '@sections/mobile-access';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { SettingInfoList } from '@core/model/configuration/setting-info-list.model';
 import { DashboardService } from '../services';
@@ -15,7 +14,6 @@ export class DashboardPageResolver implements Resolve<Observable<SettingInfoList
     private readonly dashboardService: DashboardService,
     private readonly accountsService: AccountsService,
     private readonly loadingService: LoadingService,
-    private readonly mobileAccessService: MobileAccessService
   ) {}
 
   resolve(): Observable<any> {

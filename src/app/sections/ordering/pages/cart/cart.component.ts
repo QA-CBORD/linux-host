@@ -109,6 +109,12 @@ export class CartComponent implements OnInit {
     this.cartFormState = state;
   }
 
+  onOrderPaymentInfoChanged(orderInfo: UserAccount) {
+    const errMesage = 'something went wrong';
+    this.cartService.addPaymentInfoToOrder(orderInfo);
+    this.validateOrder(errMesage);
+  }
+
   async onSubmit() {
     if (!this.cartFormState.valid) return;
     const { type } = await this.cartService.orderInfo$.pipe(first()).toPromise();

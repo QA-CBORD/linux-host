@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
-import { UserTrackLevelInfo } from '../../../sections/rewards/models';
+import { UserTrackLevelInfo } from '@sections/rewards';
 
 @Component({
   selector: 'st-progress-bar',
@@ -9,11 +9,9 @@ import { UserTrackLevelInfo } from '../../../sections/rewards/models';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StProgressBarComponent {
-  @Input() currentPointsSpent: number;
-  @Input() levelInfo: UserTrackLevelInfo;
+  @Input() currentPointsSpent: number = null;
+  @Input() currentLevelInfo: UserTrackLevelInfo = {} as UserTrackLevelInfo;
   @Input() nextLevelPoints: number = null;
-
-  constructor() {}
 
   get width(): number {
     const percent = (this.currentPointsSpent / this.nextLevelPoints) * 100;

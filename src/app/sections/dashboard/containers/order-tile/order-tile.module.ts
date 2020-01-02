@@ -8,7 +8,7 @@ import { OrderingApiService } from '@sections/ordering/services/ordering.api.ser
 
 const imports = [IonicModule, CommonModule];
 const declarations = [OrderTileComponent];
-const providers = [MerchantService, OrderingApiService]
+const providers = [MerchantService, OrderingApiService];
 const exports = [OrderTileComponent];
 
 @NgModule({

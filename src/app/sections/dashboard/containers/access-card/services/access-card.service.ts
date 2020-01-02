@@ -1,4 +1,3 @@
-import { ContentStringInfo } from 'src/app/core/model/content/content-string-info.model';
 import { Injectable } from '@angular/core';
 
 import { Observable, of } from 'rxjs';
@@ -8,8 +7,7 @@ import { UserService } from 'src/app/core/service/user-service/user.service';
 import { InstitutionService } from 'src/app/core/service/institution/institution.service';
 import { ConfigurationService } from 'src/app/core/service/configuration/configuration.service';
 
-import { Settings, ContentStrings } from 'src/app/app.global';
-import { ContentService } from 'src/app/core/service/content-service/content.service';
+import { Settings } from 'src/app/app.global';
 
 @Injectable()
 export class AccessCardService {

@@ -10,7 +10,7 @@ import { MerchantInfo } from '@sections/ordering/shared/models';
 })
 export class MerchantListComponent {
   @Input() merchantList: MerchantInfo[];
-  @Output() merchantClick: EventEmitter<any> = new EventEmitter<any>();
+  @Output() merchantClick: EventEmitter<MerchantInfo> = new EventEmitter<MerchantInfo>();
   @Output() addToFav: EventEmitter<{ isFavorite: boolean; id: string }> = new EventEmitter<{
     isFavorite: boolean;
     id: string;

@@ -16,7 +16,7 @@ const routes: Route[] = [
     path: DASHBOARD_NAVIGATE.scanCard,
     loadChildren: './containers/scan-card/scan-card.module#ScanCardModule',
   }
-  
+
 ];
 
 const imports = [RouterModule.forChild(routes)];

@@ -40,9 +40,13 @@ const routes: Route[] = [
     path: LOCAL_ROUTING.addCreditCard,
     loadChildren: './pages/add-credit-card/add-credit-card.module#AddCreditCardModule',
   },
+  {
+    path: LOCAL_ROUTING.mealDonations,
+    loadChildren: './pages/meal-donations/meal-donations.module#MealDonationsModule',
+  },
 ];
 
-const imports = [RouterModule.forChild(routes)];
+const imports = [RouterModule.forChild(routes),];
 const exports = [RouterModule];
 
 @NgModule({ imports, exports })

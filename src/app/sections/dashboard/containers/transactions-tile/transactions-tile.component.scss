@@ -3,6 +3,13 @@
 .transaction {
   margin: 0 15px;
   overflow: hidden;
+  min-height: 180px;
+  max-height: 220px;
+  transition: 2s cubic-bezier(1.000, 0.005, 1.000, 0);
+
+  &--auto-height {
+    min-height: 0;
+  }
 
   &__list {
     width: 100%;
@@ -13,12 +20,17 @@
   &__item {
     --padding-start: 0;
     --inner-padding-end: 0;
+    --border-style: none;
 
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
     border-bottom: 1px solid $color-white-smoke;
+
+    &:last-child {
+      border-style: none;
+    }
   }
 
   &__label-container {
@@ -52,11 +64,29 @@
 
     @include font-nunito-regular(10px);
   }
-}
 
-.spinner-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 25px;
+  &__skeleton-string {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &__skeleton-name {
+    width: 50%;
+    height: 18px;
+  }
+
+  &__skeleton-amount {
+    width: 30%;
+    height: 20px;
+  }
+
+  &__skeleton-date {
+    width: 30%;
+    height: 12px;
+  }
+
+  &__skeleton-account {
+    width: 20%;
+    height: 12px;
+  }
 }

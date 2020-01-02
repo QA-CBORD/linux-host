@@ -2,7 +2,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { UserAccount } from '@core/model/account/account.model';
 import { PriceUnitsResolverPipe } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.pipe';
 import { PAYMENT_SYSTEM_TYPE } from '@sections/ordering/ordering.config';
-import { CreditCardTypePipe } from '@sections/accounts/shared/pipes/credit-card-type.pipe';
+import { CreditCardTypePipe } from '@sections/accounts/shared/pipes/credit-card-type/credit-card-type.pipe';
 
 @Pipe({
   name: 'accountTypeResolver',

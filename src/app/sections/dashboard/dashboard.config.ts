@@ -1,9 +1,9 @@
 import { NAVIGATE } from 'src/app/app.global';
 import { TileWrapperConfig } from './models';
-import { LOCAL_ROUTING } from '@sections/accounts/accounts.config';
+import { LOCAL_ROUTING as ACCOUNT_ROUTING } from '@sections/accounts/accounts.config';
 
 export enum DASHBOARD_NAVIGATE {
-  scanCard = 'scancard',
+  scanCard = 'scan-card',
 }
 
 export const DASHBOARD_SETTINGS_CONFIG = {
@@ -21,6 +21,11 @@ export const DASHBOARD_SETTINGS_CONFIG = {
     domain: 'get',
     category: 'feature',
     name: 'enable_open_my_door',
+  },
+  enableMealDonations: {
+    domain: 'get',
+    category: 'feature',
+    name: 'meal_donations_enabled',
   },
   enableOrder: {
     domain: 'get',
@@ -49,7 +54,7 @@ export const ACCOUNTS_SETTINGS_CONFIG = {
     domain: 'get',
     category: 'deposit',
     name: 'payment_types',
-  }
+  },
 };
 
 export enum TILES_ID {
@@ -57,16 +62,18 @@ export enum TILES_ID {
   transactions = 'transactions',
   rewards = 'rewards',
   mobileAccess = 'mobileAccess',
+  mealDonations = 'mealDonations',
   order = 'order',
   explore = 'explore',
   conversations = 'conversations'
-};
+}
 
 export enum TILES_TITLE {
   accounts = 'Accounts',
   transactions = 'Transactions',
   rewards = 'Rewards',
   mobileAccess = 'Mobile Access',
+  mealDonations = 'Meal Donations',
   order = 'Order',
   explore = 'Explore',
   conversations = 'Conversations'
@@ -82,7 +89,7 @@ export const tilesConfig: TileWrapperConfig[] = [
     buttonConfig: {
       show: false,
       title: 'Add Funds',
-      navigate: [NAVIGATE.accounts +'/'+ LOCAL_ROUTING.addFunds],
+      navigate: `${NAVIGATE.accounts}/${ACCOUNT_ROUTING.addFunds}`,
     },
   },
   {
@@ -101,7 +108,7 @@ export const tilesConfig: TileWrapperConfig[] = [
     id: DASHBOARD_SETTINGS_CONFIG.enableRewards.name,
     title: 'Rewards',
     iconPath: '/assets/icon/trophy.svg',
-    isEnable: false,
+    isEnable: true,
     navigate: NAVIGATE.rewards,
     buttonConfig: {
       show: false,
@@ -111,7 +118,7 @@ export const tilesConfig: TileWrapperConfig[] = [
     id: DASHBOARD_SETTINGS_CONFIG.enableMobileAccess.name,
     title: 'Mobile Access',
     iconPath: '/assets/icon/mobile-access-tile.svg',
-    isEnable: false,
+    isEnable: true,
     navigate: NAVIGATE.mobileAccess,
     buttonConfig: {
       show: true,
@@ -120,10 +127,25 @@ export const tilesConfig: TileWrapperConfig[] = [
     },
   },
   {
+    id: DASHBOARD_SETTINGS_CONFIG.enableMealDonations.name,
+    title: 'Meal Donations',
+    iconPath: '/assets/icon/meal-outline.svg',
+    isEnable: false,
+    navigate: NAVIGATE.accounts,  
+    //TODO:Added this after mealDonations module will done
+    //navigate: `${NAVIGATE.accounts}/${ACCOUNTS_NAVIGATE.mealDonations}`,
+    buttonConfig: {
+      show: true,
+      title: 'Donate a Meal',
+      navigate: NAVIGATE.accounts,
+      //navigate: `${NAVIGATE.accounts}/${ACCOUNTS_NAVIGATE.mealDonations}`,
+    },
+  },
+  {
     id: DASHBOARD_SETTINGS_CONFIG.enableOrder.name,
     title: 'Order',
     iconPath: '/assets/icon/order.svg',
-    isEnable: false,
+    isEnable: true,
     navigate: NAVIGATE.ordering,
     buttonConfig: {
       show: true,
@@ -147,7 +169,7 @@ export const tilesConfig: TileWrapperConfig[] = [
     id: DASHBOARD_SETTINGS_CONFIG.enableConversation.name,
     title: 'Conversations',
     iconPath: '/assets/icon/chat.svg',
-    isEnable: false,
+    isEnable: true,
     navigate: NAVIGATE.secureMessage,
     buttonConfig: {
       show: true,

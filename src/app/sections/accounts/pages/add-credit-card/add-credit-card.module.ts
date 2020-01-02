@@ -6,9 +6,9 @@ import { AddCreditCardComponent } from './add-credit-card.component';
 import { AddCreditCardRoutingModule } from './add-credit-card.routing.module';
 import { AddCreditCardService } from './services/add-credit-card.service';
 import { SuccessPopoverComponent } from './components/success-popover/success-popover.component';
-import { StPopoverLayoutModule } from '../../../../shared/ui-components/st-popover-layout/st-popover-layout.module';
-import { StHeaderModule } from '../../../../shared/ui-components/st-header/st-header.module';
-import { StInputFloatingLabelModule } from '../../../../shared/ui-components/st-input-floating-label/st-input-floating-label.module';
+import { StPopoverLayoutModule } from '@shared/ui-components/st-popover-layout/st-popover-layout.module';
+import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
+import { StInputFloatingLabelModule } from '@shared/ui-components/st-input-floating-label/st-input-floating-label.module';
 import { ReactiveFormsModule } from '@angular/forms';
 
 const imports = [
@@ -20,7 +20,8 @@ const imports = [
   IonicModule.forRoot({
   scrollPadding: false,
   scrollAssist: true,
-}), AddCreditCardRoutingModule];
+}), AddCreditCardRoutingModule,
+  ];
 const declarations = [AddCreditCardComponent, SuccessPopoverComponent];
 const providers = [AddCreditCardService];
 const entryComponents = [SuccessPopoverComponent];

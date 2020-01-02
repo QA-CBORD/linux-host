@@ -15,6 +15,8 @@ import { GeoLocationInfo } from '../../../core/model/geolocation/geoLocationInfo
 import { ContentStringInfo } from '../../../core/model/content/content-string-info.model';
 import { ContentService } from '../../../core/service/content-service/content.service';
 import { CONTENT_STRINGS, GenericContentStringsParams, MobileAccessContentStringsParams } from '../mobile-acces.config';
+import { Settings } from '../../../app.global';
+import { ConfigurationService } from '@core/service/configuration/configuration.service';
 
 @Injectable()
 export class MobileAccessService extends BaseService {
@@ -31,7 +33,8 @@ export class MobileAccessService extends BaseService {
     private readonly userService: UserService,
     private readonly coords: CoordsService,
     private readonly contentService: ContentService,
-    private readonly toastController: ToastController
+    private readonly toastController: ToastController,
+    private readonly configService: ConfigurationService
   ) {
     super(http);
   }
@@ -43,6 +46,15 @@ export class MobileAccessService extends BaseService {
   private set _locations(locations: MMobileLocationInfo[]) {
     this.locationsInfo = [...locations];
     this.locations$.next([...this.locationsInfo]);
+  }
+
+  getInstitutionColor(): Observable<string> {
+    return this.userService.userData.pipe(
+      switchMap(({ institutionId }) =>
+        this.configService.getSetting(institutionId, Settings.Setting.MOBILE_HEADER_COLOR)
+      ),
+      map(({ value }) => value)
+    );
   }
 
   initContentStringsList(): Observable<ContentStringInfo[]> {

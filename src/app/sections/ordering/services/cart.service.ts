@@ -1,4 +1,3 @@
-import { async } from '@angular/core/testing';
 import { Injectable } from '@angular/core';
 import { distinctUntilChanged, first, map, switchMap, tap } from 'rxjs/operators';
 import { BehaviorSubject, Observable, zip } from 'rxjs';
@@ -20,7 +19,7 @@ export class CartService {
     private readonly userService: UserService,
     private readonly merchantService: MerchantService,
     private readonly api: OrderingApiService
-  ) {}
+  ) { }
 
   get merchant$(): Observable<MerchantInfo> {
     return this._cart$.asObservable().pipe(
@@ -172,6 +171,10 @@ export class CartService {
   removeLastOrderItem() {
     this.cart.order.orderItems.pop();
     this.onStateChanged();
+  }
+
+  addPaymentInfoToOrder(peymentInfo: any) {
+    this.cart.order.orderPayment = [peymentInfo];
   }
 
   async clearActiveOrder(): Promise<void> {
