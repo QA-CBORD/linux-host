@@ -35,10 +35,16 @@ export class StSelectFloatingLabelComponent implements OnInit, ControlValueAcces
   private onChange: (v: any) => void;
   private onTouched: () => void;
 
-  constructor() {}
+  constructor() {
+  }
 
   ngOnInit() {
     this.value = this.control.value;
+    const reset = this.control.reset.bind(this.control);
+    this.control.reset = () => {
+      this.value = '';
+      reset();
+    };
   }
 
   //get accessor

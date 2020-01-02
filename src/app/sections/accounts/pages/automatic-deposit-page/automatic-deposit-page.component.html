@@ -183,7 +183,6 @@
 
         <ng-template #amountSelect>
             <st-select-floating-label
-
                     [formControlName]="controlNames.amountToDeposit"
                     [control]="amountToDeposit"
                     [interfaceOptions]="customActionSheetOptions"
@@ -225,7 +224,6 @@
                 </p>
             </st-input-floating-label>
         </ng-template>
-
 
         <ng-container *ngIf="activeType === autoDepositTypes.lowBalance && lowBalanceAmount" [ngTemplateOutlet]="lowBalance"></ng-container>
 
