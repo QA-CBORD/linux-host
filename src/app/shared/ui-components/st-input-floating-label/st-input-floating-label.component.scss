@@ -53,9 +53,16 @@
 }
 
 :host-context(.ng-valid.ng-dirty) .input__control {
-  border: 2px solid $color-dodger-blue;
+  &:focus-within {
+    & + .input__placeholder {
+
+      @include floating-label($color-dodger-blue);
+    }
+  }
 
   & + .input__placeholder {
-   @include floating-label($color-dodger-blue);
+    z-index: 2;
+
+    @include floating-label($color-dim-gray);
   }
 }

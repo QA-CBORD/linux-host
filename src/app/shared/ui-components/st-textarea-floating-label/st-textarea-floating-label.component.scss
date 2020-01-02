@@ -58,11 +58,16 @@
 }
 
 :host-context(.ng-valid.ng-touched) .textarea__control {
-  border: 2px solid $color-dodger-blue;
+  &:focus-within {
+    & + .textarea__placeholder {
+
+      @include floating-label($color-dodger-blue);
+    }
+  }
 
   & + .textarea__placeholder {
     z-index: 2;
 
-    @include floating-label($color-dodger-blue);
+    @include floating-label($color-dim-gray);
   }
 }

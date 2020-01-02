@@ -24,10 +24,12 @@
 
   &__radio {
     --color-checked: #166dff;
+    margin-right: 10px;
   }
 
   &__radio-label-wrapper {
     color: $color-matterhorn;
+    white-space: pre-line;
   }
 
   &__radio-label-title {
