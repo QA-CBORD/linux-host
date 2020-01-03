@@ -1,7 +1,7 @@
 <div class="addresses">
-  <form *ngIf="addEditAddressesForm" [formGroup]="addEditAddressesForm" (ngSubmit)="onFormSubmit()">
+  <form *ngIf="addEditAddressesForm" [formGroup]="addEditAddressesForm">
     <ion-radio-group class="addresses__control" [formControl]="campus" (ionChange)="onCampusChanged($event)">
-      <ion-item lines="none">
+      <ion-item lines="none" *ngIf="!addressRestriction.offCampus">
         <ion-label class="addresses__radio-label">Off Campus</ion-label>
         <ion-radio
           mode="md"
@@ -12,7 +12,7 @@
         ></ion-radio>
       </ion-item>
 
-      <ion-item lines="none">
+      <ion-item lines="none" *ngIf="!addressRestriction.onCampus">
         <ion-label class="addresses__radio-label">On Campus</ion-label>
         <ion-radio
           mode="md"
