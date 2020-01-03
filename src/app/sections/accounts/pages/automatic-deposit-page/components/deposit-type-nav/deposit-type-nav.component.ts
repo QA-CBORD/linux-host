@@ -9,9 +9,9 @@ import {
 
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { SettingService } from '@core/service/settings/setting.service';
+import { SettingService } from '../../../../services/setting.service';
 import { AUTO_DEPOSIT_PAYMENT_TYPES } from '../../auto-deposit.config';
-import { SYSTEM_SETTINGS_CONFIG } from '@sections/accounts/accounts.config';
+import { SYSTEM_SETTINGS_CONFIG } from '../../../../accounts.config';
 
 
 @Component({
@@ -59,7 +59,6 @@ export class DepositTypeNavComponent implements OnInit{
           settings,
           SYSTEM_SETTINGS_CONFIG.lowBalanceAutoDepositEnabled.name
         );
-
         return {
           [AUTO_DEPOSIT_PAYMENT_TYPES.lowBalance]: low && Boolean(Number(low.value)),
           [AUTO_DEPOSIT_PAYMENT_TYPES.timeBased]: timeBased && Boolean(Number(timeBased.value)),
