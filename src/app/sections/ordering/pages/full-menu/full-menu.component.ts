@@ -35,8 +35,9 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     private readonly merchantService: MerchantService,
     private readonly loadingService: LoadingService,
     private readonly toastController: ToastController,
-    private readonly popoverCtrl: PopoverController
-  ) {}
+    private readonly popoverCtrl: PopoverController,
+  ) {
+  }
 
   get orderType(): Observable<string> {
     return this.orderInfo$.pipe(
@@ -49,7 +50,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
           default:
             return 'DineIn';
         }
-      })
+      }),
     );
   }
 
@@ -59,7 +60,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
 
   get orderDetails$() {
     return zip(this.merchantService.orderTypes$, this.cartService.orderDetailsOptions$).pipe(
-      map(([orderTypes, orderInfo]) => ({ orderTypes, orderInfo }))
+      map(([orderTypes, orderInfo]) => ({ orderTypes, orderInfo })),
     );
   }
 
@@ -105,21 +106,15 @@ export class FullMenuComponent implements OnInit, OnDestroy {
       },
     });
 
-    modal.onDidDismiss().then(({ data }) => {
-      const cachedData = this.cartService.orderDetailsOptions$.pipe(first()).toPromise();
-      if (data) {
-        this.cartService
-          .setActiveMerchantsMenuByOrderOptions(data.dueTime, data.orderType, data.address, data.isASAP)
-          .then(() => {
-            this.cartService.orderItems$.pipe(first()).subscribe(items => {
-              if (items.length) {
-                const successCb = null;
-                const errorCB = () => this.modalHandler(cachedData);
-                this.validateOrder(successCb, errorCB);
-              }
-            });
-          });
-      }
+    modal.onDidDismiss().then(async ({ data }) => {
+      const cachedData = await this.cartService.orderDetailsOptions$.pipe(first()).toPromise();
+      await this.cartService.setActiveMerchantsMenuByOrderOptions(data.dueTime, data.orderType, data.address, data.isASAP);
+      this.cartService.orderItems$.pipe(first()).subscribe(items => {
+        if (items.length) {
+          const errorCB = () => this.modalHandler(cachedData);
+          this.validateOrder(null, errorCB);
+        }
+      });
     });
 
     await modal.present();
@@ -137,7 +132,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
       .validateOrder()
       .pipe(
         first(),
-        handleServerError(ORDER_VALIDATION_ERRORS)
+        handleServerError(ORDER_VALIDATION_ERRORS),
       )
       .toPromise()
       .then(successCb)
@@ -145,7 +140,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
       .finally(() => this.loadingService.closeSpinner());
   }
 
-  private async failedValidateOrder(message: string) {
+  private async failedValidateOrder(message: string): Promise<void> {
     const toast = await this.toastController.create({
       message,
       duration: 3000,
@@ -154,7 +149,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     toast.present();
   }
 
-  private async modalHandler(cachedData) {
+  private async modalHandler({ dueTime, orderType, address, isASAP }) {
     const popover = await this.popoverCtrl.create({
       component: FullMenuPopoverComponent,
       componentProps: {},
@@ -165,9 +160,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     popover.onDidDismiss().then(({ role }) => {
       switch (role) {
         case BUTTON_TYPE.CLOSE:
-          cachedData.then(({ dueTime, orderType, address, isASAP }) => {
-            this.cartService.setActiveMerchantsMenuByOrderOptions(dueTime, orderType, address, isASAP);
-          });
+          this.cartService.setActiveMerchantsMenuByOrderOptions(dueTime, orderType, address, isASAP);
           break;
         case BUTTON_TYPE.OKAY:
           this.cartService.removeLastOrderItem();
