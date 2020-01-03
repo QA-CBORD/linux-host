@@ -1,8 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject, iif, Observable, of, Subscription, zip } from 'rxjs';
 import {
@@ -13,21 +9,17 @@ import {
   getMonthlySuccessBodyMessage,
   getWeeklySuccessBodyMessage,
 } from './auto-deposit.config';
-import {
-  formControlErrorDecorator,
-  parseArrayFromString,
-  validateMonthRange,
-} from '@core/utils/general-helpers';
+import { formControlErrorDecorator, parseArrayFromString, validateMonthRange } from '@core/utils/general-helpers';
 import { PopoverComponent } from './components/popover/popover.component';
 import { PopoverController, ToastController } from '@ionic/angular';
-import { map, switchMap, take, tap } from 'rxjs/operators';
+import { first, map, switchMap, take, tap } from 'rxjs/operators';
 import { WEEK } from '@core/utils/date-helper';
 import { UserAutoDepositSettingInfo } from './models/auto-deposit-settings';
 import { UserAccount } from 'src/app/core/model/account/account.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AutoDepositService } from './service/auto-deposit.service';
 import { BillMeMapping } from '@core/model/settings/billme-mapping.model';
-import { PAYMENT_TYPE, SYSTEM_SETTINGS_CONFIG, LOCAL_ROUTING } from '@sections/accounts/accounts.config';
+import { LOCAL_ROUTING, PAYMENT_TYPE, SYSTEM_SETTINGS_CONFIG } from '@sections/accounts/accounts.config';
 import { SettingService } from '@sections/accounts/services/setting.service';
 import { DepositService } from '@sections/accounts/services/deposit.service';
 import { NAVIGATE } from 'src/app/app.global';
@@ -47,7 +39,7 @@ export class AutomaticDepositPageComponent {
   showContent: boolean;
   formHasBeenPrepared: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   automaticDepositForm: FormGroup;
-  activeType: number;
+  activeAutoDepositType: number;
   activeFrequency: string;
   autoDepositSettings: UserAutoDepositSettingInfo;
   creditCardSourceAccounts: Array<UserAccount>;
@@ -75,8 +67,8 @@ export class AutomaticDepositPageComponent {
 
   ionViewWillEnter() {
     this.showContent = true;
-    this.cdRef.detectChanges();
     this.getAccounts();
+    this.cdRef.detectChanges();
   }
 
   ionViewWillLeave() {
@@ -147,7 +139,7 @@ export class AutomaticDepositPageComponent {
     );
   }
 
-  get isFreeFormEnabled$(): Observable<boolean> {
+  get isFreeFormAmountToDepositEnabled$(): Observable<boolean> {
     return iif(
       () => this.activePaymentType === PAYMENT_TYPE.BILLME,
       this.isAllowFreeFormBillMe$,
@@ -303,6 +295,7 @@ export class AutomaticDepositPageComponent {
     } else {
       this.defineDestAccounts(value);
     }
+    this.setValidators();
   }
 
   parseFloat(val: string): number {
@@ -338,7 +331,7 @@ export class AutomaticDepositPageComponent {
           return this.route.data.pipe(
             tap(({ data: { accounts, depositSettings } }) => {
               this.autoDepositSettings = depositSettings;
-              this.creditCardSourceAccounts =isCreditCardEnabled ? this.depositService.filterAccountsByPaymentSystem(accounts) : [];
+              this.creditCardSourceAccounts = isCreditCardEnabled ? this.depositService.filterAccountsByPaymentSystem(accounts) : [];
               this.sourceAccounts = [...this.creditCardSourceAccounts];
               if (isBillMeEnabled) this.sourceAccounts.push(PAYMENT_TYPE.BILLME);
               this.creditCardDestinationAccounts = this.depositService.filterCreditCardDestAccounts(tenders, accounts);
@@ -370,7 +363,7 @@ export class AutomaticDepositPageComponent {
   }
 
   private set _activeType(type: number) {
-    this.activeType = type;
+    this.activeAutoDepositType = type;
   }
 
   // -------------------- Events handlers block--------------------------//
@@ -379,7 +372,7 @@ export class AutomaticDepositPageComponent {
     const isAutomaticDepositOff = type === this.autoDepositTypes.automaticDepositOff;
     const wasDestroyed =
       type !== this.autoDepositTypes.automaticDepositOff &&
-      this.activeType === this.autoDepositTypes.automaticDepositOff;
+      this.activeAutoDepositType === this.autoDepositTypes.automaticDepositOff;
 
     if (isAutomaticDepositOff) {
       this.deleteForm();
@@ -393,7 +386,7 @@ export class AutomaticDepositPageComponent {
 
   onFrequencyChanged(event: string) {
     this.activeFrequency = event;
-    this.updateFormStateByDepositType(this.activeType, event);
+    this.updateFormStateByDepositType(this.activeAutoDepositType, event);
   }
 
   onSubmit() {
@@ -413,12 +406,12 @@ export class AutomaticDepositPageComponent {
         switchMap(billmeMappingArr => this.depositService.sourceAccForBillmeDeposit(account, billmeMappingArr)),
       );
 
-      if (this.activeType === AUTO_DEPOSIT_PAYMENT_TYPES.timeBased) this.timeBasedResolver();
+      if (this.activeAutoDepositType === AUTO_DEPOSIT_PAYMENT_TYPES.timeBased) this.timeBasedResolver();
 
       const resultSettings = {
         ...this.autoDepositSettings,
         ...rest,
-        autoDepositType: this.activeType,
+        autoDepositType: this.activeAutoDepositType,
         toAccountId: account.id,
         active: true,
       };
@@ -497,48 +490,52 @@ export class AutomaticDepositPageComponent {
     }
   }
 
-  private setValidators() {
-    this.automaticDepositForm.contains(AUTOMATIC_DEPOSIT_CONTROL_NAMES.lowBalanceAmount) &&
-    this.isLowBalanceFreeInput$
-      .pipe(
-        tap(val => {
-          let errors;
-          if (val) {
-            errors = [
-              formControlErrorDecorator(Validators.required, CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.lowBalanceAmount].requiredEnter),
-              formControlErrorDecorator(Validators.maxLength(6), CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.lowBalanceAmount].maxLength),
-            ];
-          } else {
-            errors = [formControlErrorDecorator(Validators.required, CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.lowBalanceAmount].requiredSelect)];
-          }
-          this.automaticDepositForm
-            .get(AUTOMATIC_DEPOSIT_CONTROL_NAMES.lowBalanceAmount)
-            .setValidators([...errors]);
-        }),
-        take(1),
-      )
-      .subscribe();
+  private async getAmountToDepositErrors(): Promise<any[]> {
+    const settings = await this.settingService.settings$.pipe(first()).toPromise();
+    const maxSetting = this.activePaymentType === PAYMENT_TYPE.BILLME
+      ? SYSTEM_SETTINGS_CONFIG.maxAmountbillme
+      : SYSTEM_SETTINGS_CONFIG.maxAmountCreditCard;
 
-    this.automaticDepositForm.contains(AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit) &&
-    this.isAllowFreeFormBillMe$
-      .pipe(
-        tap(val => {
-          let errors;
-          if (val) {
-            errors = [
-              formControlErrorDecorator(Validators.required, CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit].requiredEnter),
-              formControlErrorDecorator(Validators.maxLength(6), CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit].maxLength),
-            ];
-          } else {
-            errors = [formControlErrorDecorator(Validators.required, CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit].requiredSelect)];
-          }
-          this.automaticDepositForm
-            .get(AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit)
-            .setValidators([...errors]);
-        }),
-        take(1),
-      )
-      .subscribe();
+    const minSetting = this.activePaymentType === PAYMENT_TYPE.BILLME
+      ? SYSTEM_SETTINGS_CONFIG.minAmountbillme
+      : SYSTEM_SETTINGS_CONFIG.minAmountCreditCard;
+
+    const max = parseFloat(this.settingService.getSettingByName(settings, maxSetting.name).value);
+    const min = parseFloat(this.settingService.getSettingByName(settings, minSetting.name).value);
+
+    return [
+      formControlErrorDecorator(Validators.required, CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit].requiredEnter),
+      formControlErrorDecorator(Validators.max(max), CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit].maximum + max),
+      formControlErrorDecorator(Validators.min(min), CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit].minimum + min),
+    ];
+  }
+
+  private async setValidators() {
+    if (this.automaticDepositForm.contains(this.controlNames.lowBalanceAmount)) {
+      const isLowBalanceFreeInput = await this.isLowBalanceFreeInput$.pipe(first()).toPromise();
+      const freeFormErrors = [
+        formControlErrorDecorator(Validators.required, CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.lowBalanceAmount].requiredEnter),
+        formControlErrorDecorator(Validators.maxLength(6), CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.lowBalanceAmount].maximum),
+        formControlErrorDecorator(Validators.min(0), CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.lowBalanceAmount].minimum),
+      ];
+      const selectErrors = formControlErrorDecorator(Validators.required, CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.lowBalanceAmount].requiredSelect);
+      const errors = isLowBalanceFreeInput ? freeFormErrors : selectErrors;
+
+      this.automaticDepositForm
+        .get(this.controlNames.lowBalanceAmount)
+        .setValidators(errors);
+    }
+
+    if (this.automaticDepositForm.contains(this.controlNames.amountToDeposit)) {
+      const isAllowFreeFormAmountToDeposit = await this.isFreeFormAmountToDepositEnabled$.pipe(first()).toPromise();
+      const errors = isAllowFreeFormAmountToDeposit
+        ? await this.getAmountToDepositErrors()
+        : formControlErrorDecorator(Validators.required, CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit].requiredSelect);
+
+      this.automaticDepositForm
+        .get(this.controlNames.amountToDeposit)
+        .setValidators(errors);
+    }
   }
 
   // -------------------- Controls block --------------------------//
@@ -599,10 +596,10 @@ export class AutomaticDepositPageComponent {
   // ---------------------- interactive block ----------------------------------//
 
   private getModalTitle(): string {
-    if (this.activeType === AUTO_DEPOSIT_PAYMENT_TYPES.lowBalance) {
+    if (this.activeAutoDepositType === AUTO_DEPOSIT_PAYMENT_TYPES.lowBalance) {
       return AUTO_DEPOST_SUCCESS_MESSAGE_TITLE.lowBalance;
     }
-    if (this.activeType === AUTO_DEPOSIT_PAYMENT_TYPES.timeBased) {
+    if (this.activeAutoDepositType === AUTO_DEPOSIT_PAYMENT_TYPES.timeBased) {
       return this.activeFrequency === DEPOSIT_FREQUENCY.month
         ? AUTO_DEPOST_SUCCESS_MESSAGE_TITLE.monthly
         : AUTO_DEPOST_SUCCESS_MESSAGE_TITLE.weekly;
@@ -610,10 +607,10 @@ export class AutomaticDepositPageComponent {
   }
 
   private getModalBodyMessage(): string {
-    if (this.activeType === AUTO_DEPOSIT_PAYMENT_TYPES.lowBalance) {
+    if (this.activeAutoDepositType === AUTO_DEPOSIT_PAYMENT_TYPES.lowBalance) {
       return getLowBalanceSuccessBodyMessage(this.amountToDeposit.value, this.lowBalanceAmount.value, 'Bill me');
     }
-    if (this.activeType === AUTO_DEPOSIT_PAYMENT_TYPES.timeBased) {
+    if (this.activeAutoDepositType === AUTO_DEPOSIT_PAYMENT_TYPES.timeBased) {
       return this.activeFrequency === DEPOSIT_FREQUENCY.month
         ? getMonthlySuccessBodyMessage(this.amountToDeposit.value, this.dayOfMonth.value, 'Bill me')
         : getWeeklySuccessBodyMessage(this.amountToDeposit.value, this.dayOfWeek.value - 1, 'Bill me');
@@ -630,7 +627,7 @@ export class AutomaticDepositPageComponent {
       backdropDismiss: true,
     });
     modal.onDidDismiss().then(async () => await this.router.navigate([NAVIGATE.accounts]));
-    modal.present();
+    await modal.present();
   }
 
   private async showToast(message: string) {
@@ -639,7 +636,7 @@ export class AutomaticDepositPageComponent {
       duration: 3000,
       position: 'top',
     });
-    toast.present();
+    await toast.present();
   }
 }
 
@@ -656,7 +653,8 @@ export const CONTROL_ERROR = {
   [AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit]: {
     requiredEnter: 'You must enter an amount.',
     requiredSelect: 'You must select a suitable amount from select',
-    maxLength: 'Value can not be greater than 999 999',
+    maximum: 'Maximum Deposit Amount: $',
+    minimum: 'Minimum Deposit Amount: $',
   },
   [AUTOMATIC_DEPOSIT_CONTROL_NAMES.paymentMethod]: {
     required: 'You must select payment method.',
@@ -666,7 +664,8 @@ export const CONTROL_ERROR = {
   },
   [AUTOMATIC_DEPOSIT_CONTROL_NAMES.lowBalanceAmount]: {
     requiredEnter: 'You must enter an amount.',
-    maxLength: 'Value can not be greater than 999 999',
+    minimum: 'Value can not be lower than 0',
+    maximum: 'Value can not be greater than 999 999',
     requiredSelect: 'You must select a suitable amount from select',
   },
   [AUTOMATIC_DEPOSIT_CONTROL_NAMES.dayOfWeek]: {

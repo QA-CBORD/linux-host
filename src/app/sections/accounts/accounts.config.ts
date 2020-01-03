@@ -64,7 +64,7 @@ export const SYSTEM_SETTINGS_CONFIG = {
   maxAmountbillme: {
     domain: 'get',
     category: 'deposit',
-    name: '	billme_maximum',
+    name: 'billme_maximum',
   },
   maxAmountCreditCard: {
     domain: 'get',
