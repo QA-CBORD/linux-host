@@ -45,8 +45,36 @@ export class ApplicationsService {
     const apiUrl: string = `${this._patronApplicationsUrl}/term/${termId}/patron/self`;
 
     return this._housingProxyService.get<ApplicationDetails[]>(apiUrl).pipe(
-      map((applications: any[]) =>
-        Array.isArray(applications) ? applications.map((application: any) => new ApplicationDetails(application)) : []
+      switchMap((applications: any[]) =>
+        Array.isArray(applications)
+          ? Promise.all(
+              applications.map(async (application: any) => {
+                let applicationDetails: ApplicationDetails = new ApplicationDetails(application);
+                let patronApplication: PatronApplication = applicationDetails.patronApplication;
+                const status: ApplicationStatus =
+                  patronApplication && patronApplication.status ? patronApplication.status : null;
+
+                if (status !== ApplicationStatus.New) {
+                  return applicationDetails;
+                }
+
+                const storedApplication: StoredApplication = await this._questionsStorageService.getApplication(
+                  applicationDetails.applicationDefinition.key
+                );
+
+                if (storedApplication) {
+                  patronApplication = new PatronApplication({
+                    ...patronApplication,
+                    status: storedApplication.status,
+                  });
+
+                  applicationDetails = new ApplicationDetails({ ...applicationDetails, patronApplication });
+                }
+
+                return applicationDetails;
+              })
+            )
+          : []
       ),
       tap((applications: ApplicationDetails[]) => this._applicationsStateService.setApplications(applications)),
       catchError(() => {

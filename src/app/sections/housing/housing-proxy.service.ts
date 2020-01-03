@@ -38,7 +38,7 @@ export class HousingProxyService {
   put(apiUrl: string, body: any): Observable<ResponseStatus> {
     return this.request<ResponseStatus>(apiUrl, (headers, apiUrl) =>
       this._http.put<ResponseStatus>(apiUrl, body, {
-        headers,
+        headers: { ...headers, 'Content-Type': 'application/json' },
       })
     );
   }
