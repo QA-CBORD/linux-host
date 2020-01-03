@@ -1,13 +1,12 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, take, finalize } from 'rxjs/operators';
 
 import { MerchantService, OrderInfo } from '@sections/ordering';
-import { NAVIGATE } from '../../../../app.global';
 import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
 import { ORDERING_STATUS } from '@sections/ordering/shared/ui-components/recent-oders-list/recent-orders-list-item/recent-orders.config';
+import { NAVIGATE } from 'src/app/app.global';
 
 @Component({
   selector: 'st-recent-orders',
@@ -19,19 +18,24 @@ export class RecentOrdersComponent implements OnInit {
   pendingOrders$: Observable<OrderInfo[]>;
   completedOrders$: Observable<OrderInfo[]>;
 
-  constructor(private readonly activatedRoute: ActivatedRoute,
-              private readonly router: Router,
-              private readonly merchantService: MerchantService) {
-  }
+  constructor(private readonly router: Router, private readonly merchantService: MerchantService) {}
 
   ngOnInit() {
     this.initOrders();
   }
 
+  refreshRecentOrders({ target }) {
+    this.merchantService
+      .getRecentOrders()
+      .pipe(
+        take(1),
+        finalize(() => target.complete())
+      )
+      .subscribe();
+  }
+
   async onOrderPicked(order: OrderInfo): Promise<void> {
-    await this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.recentOrders, order.id],
-      { skipLocationChange: true },
-    );
+    await this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.recentOrders, order.id], { skipLocationChange: true });
   }
 
   async back(): Promise<void> {
