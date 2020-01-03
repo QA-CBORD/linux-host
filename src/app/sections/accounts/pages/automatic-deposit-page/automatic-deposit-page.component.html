@@ -7,7 +7,7 @@
     ></st-deposit-type-nav>
 
     <form class="deposit-form" novalidate *ngIf="formHasBeenPrepared | async" [formGroup]="automaticDepositForm">
-        <ng-container *ngIf="activeType === autoDepositTypes.timeBased" [ngTemplateOutlet]="timeBased"></ng-container>
+        <ng-container *ngIf="activeAutoDepositType === autoDepositTypes.timeBased" [ngTemplateOutlet]="timeBased"></ng-container>
 
         <ng-template #lowBalance>
             <st-input-floating-label
@@ -179,7 +179,7 @@
             </ng-container>
         </st-select-floating-label>
 
-        <ng-container *ngIf="(isFreeFormEnabled$ | async); then amountInput; else amountSelect"></ng-container>
+        <ng-container *ngIf="(isFreeFormAmountToDepositEnabled$ | async); then amountInput; else amountSelect"></ng-container>
 
         <ng-template #amountSelect>
             <st-select-floating-label
@@ -225,7 +225,7 @@
             </st-input-floating-label>
         </ng-template>
 
-        <ng-container *ngIf="activeType === autoDepositTypes.lowBalance && lowBalanceAmount" [ngTemplateOutlet]="lowBalance"></ng-container>
+        <ng-container *ngIf="activeAutoDepositType === autoDepositTypes.lowBalance && lowBalanceAmount" [ngTemplateOutlet]="lowBalance"></ng-container>
 
     </form>
     <ion-button
