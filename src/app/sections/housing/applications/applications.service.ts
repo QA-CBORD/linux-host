@@ -234,10 +234,14 @@ export class ApplicationsService {
     const facilityPicker: QuestionReorder = parsedJson.filter(
       (control: QuestionBase) => control && (control as QuestionReorder).facilityPicker
     )[0];
-    const facilities: QuestionReorderValue[] =
-      facilityPicker && facilityPicker.values
-        ? facilityPicker.values.filter((facility: QuestionReorderValue) => facility.selected)
-        : [];
+
+    if (!facilityPicker) {
+      return patronPreferences.filter((preference: PatronPreference) => preference.facilityKey);
+    }
+
+    const facilities: QuestionReorderValue[] = facilityPicker.values
+      ? facilityPicker.values.filter((facility: QuestionReorderValue) => facility.selected)
+      : [];
     const foundQuestion: any = questions[facilityPicker.name];
 
     return patronPreferences
