@@ -8,15 +8,15 @@ import { catchError, map, retry, switchMap, take, tap } from 'rxjs/operators';
 import { BaseService, ServiceParameters } from 'src/app/core/service/base-service/base.service';
 import { GeoCoordinates } from 'src/app/core/model/geolocation/geocoordinates.model';
 import { MActivateMobileLocationResult, MMobileLocationInfo } from '../model';
-import { MessageResponse } from '../../../core/model/service/message-response.model';
-import { UserService } from '../../../core/service/user-service/user.service';
-import { CoordsService } from '../../../core/service/coords/coords.service';
-import { GeoLocationInfo } from '../../../core/model/geolocation/geoLocationInfo.model';
-import { ContentStringInfo } from '../../../core/model/content/content-string-info.model';
-import { ContentService } from '../../../core/service/content-service/content.service';
 import { CONTENT_STRINGS, GenericContentStringsParams, MobileAccessContentStringsParams } from '../mobile-acces.config';
 import { Settings } from '../../../app.global';
 import { ConfigurationService } from '@core/service/configuration/configuration.service';
+import { UserService } from '@core/service/user-service/user.service';
+import { CoordsService } from '@core/service/coords/coords.service';
+import { ContentService } from '@core/service/content-service/content.service';
+import { ContentStringInfo } from '@core/model/content/content-string-info.model';
+import { MessageResponse } from '@core/model/service/message-response.model';
+import { GeoLocationInfo } from '@core/model/geolocation/geoLocationInfo.model';
 
 @Injectable()
 export class MobileAccessService extends BaseService {

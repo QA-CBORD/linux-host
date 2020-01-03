@@ -6,14 +6,14 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, switchMap, take } from 'rxjs/operators';
 
-import { AccountsService } from '../../services/accounts.service';
-import { UserAccount } from '../../../../core/model/account/account.model';
-import { UserService } from '../../../../core/service/user-service/user.service';
-import { LoadingService } from '../../../../core/service/loading/loading.service';
 import { PopoverComponent } from './popover/popover.component';
-import { NAVIGATE } from '../../../../app.global';
-import { formControlErrorDecorator, validateEmail } from '../../../../core/utils/general-helpers';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
+import { UserAccount } from '@core/model/account/account.model';
+import { AccountsService } from '@sections/accounts/services/accounts.service';
+import { UserService } from '@core/service/user-service/user.service';
+import { LoadingService } from '@core/service/loading/loading.service';
+import { NAVIGATE } from 'src/app/app.global';
+import { formControlErrorDecorator, validateEmail } from '@core/utils/general-helpers';
 
 @Component({
   selector: 'st-request-funds-page',

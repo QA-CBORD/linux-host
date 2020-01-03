@@ -4,8 +4,8 @@ import { Observable } from 'rxjs';
 
 import { BaseService, ServiceParameters } from '../base-service/base.service';
 
-import { UserLogin } from '../../model/user';
 import { map } from 'rxjs/operators';
+import { UserLogin } from '@core/model/user';
 
 @Injectable({
   providedIn: 'root',

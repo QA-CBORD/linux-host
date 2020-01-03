@@ -87,10 +87,9 @@ export class CartService {
     isASAP?: boolean
   ): Promise<void> {
     this.cart.orderDetailsOptions = { orderType, dueTime, address, isASAP };
-
-    const { dueTime: time, orderType: type } = await this.orderDetailsOptions$.pipe(first()).toPromise();
     const { id } = await this.merchant$.pipe(first()).toPromise();
-    await this.getMerchantMenu(id, time, type).then(menu => (this.cart.menu = menu));
+    
+    await this.getMerchantMenu(id, dueTime, orderType).then(menu => (this.cart.menu = menu));
     this.onStateChanged();
   }
 

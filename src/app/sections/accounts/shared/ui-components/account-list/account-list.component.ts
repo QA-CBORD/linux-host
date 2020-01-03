@@ -1,14 +1,14 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { UserAccount } from '../../../../../core/model/account/account.model';
-import { TransactionHistory } from '../../../models/transaction-history.model';
 import { Platform } from '@ionic/angular';
-import { ALL_ACCOUNTS, LOCAL_ROUTING, CONTENT_STRINGS } from '../../../accounts.config';
-import { NAVIGATE } from '../../../../../app.global';
 import { Router } from '@angular/router';
-import { AccountsService } from '../../../services/accounts.service';
-import { TransactionService } from '../../../services/transaction.service';
+import { TransactionHistory } from '@sections/accounts/models/transaction-history.model';
+import { UserAccount } from '@core/model/account/account.model';
+import { ALL_ACCOUNTS, LOCAL_ROUTING, CONTENT_STRINGS } from '@sections/accounts/accounts.config';
+import { AccountsService } from '@sections/accounts/services/accounts.service';
+import { TransactionService } from '@sections/accounts/services/transaction.service';
+import { NAVIGATE } from 'src/app/app.global';
 
 @Component({
   selector: 'st-account-list',

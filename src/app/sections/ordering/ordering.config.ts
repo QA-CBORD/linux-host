@@ -72,6 +72,7 @@ export enum ACCOUNT_TYPES {
 export const ORDER_VALIDATION_ERRORS: ServerErrorsInfo = {
   9001: 'The selected delivery address could not be mapped to valid coordinates.',
   9003: 'Merchant does not support the requested order type',
+  9010: 'Incorrect time for menu item',
   9011: 'The merchant is currently closed and not accepting orders',
   9017: 'Order can not be processed for the given due time, it exceeds the merchants order capacity',
   9801: 'The attempted order contains invalid items for the available menu',

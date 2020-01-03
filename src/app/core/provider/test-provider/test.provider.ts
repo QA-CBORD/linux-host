@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 
-import { AuthService } from '../../service/auth-service/auth.service';
 import { DataCache } from '../../utils/data-cache';
 
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { testCredentials } from '@environments/environment';
+import { AuthService } from '@core/service/auth-service/auth.service';
 
 @Injectable({
   providedIn: 'root',

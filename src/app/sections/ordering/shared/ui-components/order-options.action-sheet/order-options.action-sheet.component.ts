@@ -10,8 +10,6 @@ import { switchMap, take, tap } from 'rxjs/operators';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ACCOUNT_TYPES, MerchantSettings, ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
-import { UserService } from '@core/service/user-service/user.service';
-import { getDateTimeInGMT } from '@core/utils/date-helper';
 
 @Component({
   selector: 'st-order-options.action-sheet',
@@ -119,7 +117,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
         label: isOrderTypePickup ? 'PICKUP' : 'DELIVERY',
         address: isOrderTypePickup ? this.defaultPickupAddress : defineDeliveryAddress,
         isClickble: isOrderTypePickup ? this.pickupLocations.length : 1,
-      }
+      };
 
     this.cdRef.detectChanges();
   }
