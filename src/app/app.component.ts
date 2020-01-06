@@ -97,22 +97,21 @@ export class AppComponent implements OnDestroy {
 
   useJavaScriptInterface() {
     if (this.nativeProvider.isAndroid()) {
-      throw new Error('Error getting native data, retrieve info normally');
-      // const sessionId: string = this.nativeProvider.getAndroidData(NativeData.SESSION_ID);
-      // const userInfo: UserInfo = JSON.parse(this.nativeProvider.getAndroidData(NativeData.USER_INFO));
-      // const institutionId: string = this.nativeProvider.getAndroidData(NativeData.INSTITUTION_ID);
-      // this.destinationPage = this.nativeProvider.getAndroidData(NativeData.DESTINATION_PAGE);
+      const sessionId: string = this.nativeProvider.getAndroidData(NativeData.SESSION_ID);
+      const userInfo: UserInfo = JSON.parse(this.nativeProvider.getAndroidData(NativeData.USER_INFO));
+      const institutionId: string = this.nativeProvider.getAndroidData(NativeData.INSTITUTION_ID);
+      this.destinationPage = this.nativeProvider.getAndroidData(NativeData.DESTINATION_PAGE);
 
-      // if (!sessionId || !userInfo || !institutionId || !this.destinationPage) {
-      //   throw new Error('Error getting native data, retrieve info normally');
-      // }
+      if (!sessionId || !userInfo || !institutionId || !this.destinationPage) {
+        throw new Error('Error getting native data, retrieve info normally');
+      }
 
-      // DataCache.setSessionId(sessionId);
-      // DataCache.setUserInfo(userInfo);
-      // this.userService.setUserData(userInfo);
-      // DataCache.setInstitutionId(institutionId);
+      DataCache.setSessionId(sessionId);
+      DataCache.setUserInfo(userInfo);
+      this.userService.setUserData(userInfo);
+      DataCache.setInstitutionId(institutionId);
 
-      // this.handlePageNavigation();
+      this.handlePageNavigation();
     } else if (this.nativeProvider.isIos()) {
       const sessionIdPromise: Promise<string> = this.nativeProvider.getIosData(NativeData.SESSION_ID);
       const userInfoPromise: Promise<UserInfo> = this.nativeProvider.getIosData(NativeData.USER_INFO);
