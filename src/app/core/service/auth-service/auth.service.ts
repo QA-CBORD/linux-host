@@ -6,7 +6,7 @@ import { DataCache } from '../../utils/data-cache';
 
 import { BaseService, ServiceParameters } from '../base-service/base.service';
 
-import { UserLogin } from '../../model/user';
+import { UserLogin } from '@core/model/user';
 
 @Injectable({
   providedIn: 'root',

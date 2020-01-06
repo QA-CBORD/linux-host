@@ -13,7 +13,7 @@ import { UserAccount } from '@core/model/account/account.model';
 import { TransactionHistory } from '@sections/accounts/models/transaction-history.model';
 
 @Injectable()
-export class TransactionsResolver implements Resolve<Observable<[ContentStringInfo[], TransactionHistory[], UserAccount[]]>> {
+export class TransactionsResolver implements Resolve<Observable<[ContentStringInfo[], ContentStringInfo[], TransactionHistory[], UserAccount[]]>> {
   constructor(
     private readonly transactionService: TransactionService,
     private readonly loadingService: LoadingService,
@@ -21,12 +21,13 @@ export class TransactionsResolver implements Resolve<Observable<[ContentStringIn
   ) {
   }
 
-  resolve(route: ActivatedRouteSnapshot): Observable<[ContentStringInfo[], TransactionHistory[], UserAccount[]]> {
+  resolve(route: ActivatedRouteSnapshot): Observable<[ContentStringInfo[], ContentStringInfo[], TransactionHistory[], UserAccount[]]> {
     const requireSettings = [
       SYSTEM_SETTINGS_CONFIG.displayTenders,
       SYSTEM_SETTINGS_CONFIG.depositTenders,
     ];
     const transactionContentStrings = this.transactionService.initContentStringsList();
+    const accountContentStrings = this.accountsService.initContentStringsList();
     const accountsCall = this.accountsService.getUserAccounts();
     const historyCall = this.accountsService
       .getUserSettings(requireSettings)
@@ -39,7 +40,7 @@ export class TransactionsResolver implements Resolve<Observable<[ContentStringIn
       );
     this.loadingService.showSpinner();
 
-    return zip(transactionContentStrings, historyCall, accountsCall).pipe(
+    return zip(transactionContentStrings,accountContentStrings, historyCall, accountsCall).pipe(
       tap(() => this.loadingService.closeSpinner(), () => this.loadingService.closeSpinner()),
     );
   }

@@ -1,49 +1,75 @@
 import { Injectable } from '@angular/core';
-
-import { Observable, BehaviorSubject, zip } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { DashboardApiService } from './dashboard.api.service';
 
 import { SettingInfoList } from 'src/app/core/model/configuration/setting-info-list.model';
-import { SettingInfo } from 'src/app/core/model/configuration/setting-info.model';
 import { Settings } from 'src/app/app.global';
+import {
+  ACCOUNTS_SETTINGS_CONFIG,
+  TILES_ID,
+  TILES_BASE_CONFIG,
+  DASHBOARD_SETTINGS_CONFIG,
+} from '@sections/dashboard/dashboard.config';
+import { parseArrayFromString } from '@core/utils/general-helpers';
+import { AccountsService } from '@sections/dashboard/services/accounts.service';
+import { TileWrapperConfig } from '@sections/dashboard/models';
 
 @Injectable()
 export class DashboardService {
-  public readonly _settings$: BehaviorSubject<SettingInfo[]> = new BehaviorSubject<SettingInfo[]>([]);
 
-  settings: SettingInfo[] = [];
-
-  constructor(private readonly dashApiService: DashboardApiService) {}
-
-  get settings$(): Observable<SettingInfo[]> {
-    return this._settings$.asObservable();
-  }
-
-  private set _settings(value: SettingInfo[]) {
-    this.settings = [...this.settings, ...value];
-    this._settings$.next(this.settings);
-  }
-
-  retrieveSettings(settings: Settings.Setting[]): Observable<SettingInfo[]> {
-    const requestArray = settings.map(setting => this.dashApiService.retrieveSetting(setting));
-    return zip(...requestArray).pipe(tap((settings: SettingInfo[]) => (this._settings = settings)));
+  constructor(private readonly dashApiService: DashboardApiService,
+              private readonly accountsService: AccountsService) {
   }
 
   retrieveSettingsList(): Observable<SettingInfoList> {
     return this.dashApiService.retrieveSettingsList(Settings.SettingList.FEATURES);
   }
 
-  getSettingValueByName(settingName: Settings.Setting): any {
-    const split: string[] = settingName.toString().split('.');
-    let value: any = 0;
-    this.settings.some(setting => {
-      if (setting.domain === split[0] && setting.category === split[1] && setting.name === split[2]) {
-        value = setting.value;
-        return true;
-      }
+  isAddFundsButtonEnabled(): Observable<boolean> {
+    const requireSettings = [
+      ACCOUNTS_SETTINGS_CONFIG.paymentTypes,
+      ACCOUNTS_SETTINGS_CONFIG.enableOnetimeDeposits,
+    ];
+
+    return this.accountsService.getUserSettings(requireSettings)
+      .pipe(
+        map(([paymentTypes, onetimeDeposits]) =>
+          parseArrayFromString(paymentTypes.value).length && !!Number(onetimeDeposits.value),
+        ),
+      );
+  }
+
+  updateAccountTile(config: TileWrapperConfig[]): Observable<TileWrapperConfig[]> {
+    return this.isAddFundsButtonEnabled().pipe(
+      map((enabled) => {
+        const index = config.findIndex((tile) => tile.id === TILES_ID.accounts);
+        if (index >= 0) {
+          const tile = config[index];
+          config[index] = { ...tile, buttonConfig: { ...tile.buttonConfig, show: enabled } };
+        }
+        return config;
+      }),
+    );
+  }
+
+  getUpdatedTilesBaseConfig(settings: SettingInfoList): TileWrapperConfig[] {
+    return TILES_BASE_CONFIG.map((setting) => {
+      let s = settings.list.find(({ name }) => name === setting.id);
+      // temporary solution for skipping explore tab (s.name !== DASHBOARD_SETTINGS_CONFIG.enableExplore.name)
+      return s && s.name !== DASHBOARD_SETTINGS_CONFIG.enableExplore.name
+        ? { ...setting, isEnable: !!Number(s.value) }
+        : setting;
     });
-    return value;
+  }
+
+  updateConfigByCashedConfig(allowedConfig: TileWrapperConfig[], cashedConfig: TileWrapperConfig[]): TileWrapperConfig[] {
+    const temp = [];
+    return cashedConfig.reduce((res, cfg) => {
+      const elem = allowedConfig.some(({ id }) => id === cfg.id);
+      elem ? res.push(cfg) : temp.push(cfg);
+      return res;
+    }, []).concat(temp);
   }
 }

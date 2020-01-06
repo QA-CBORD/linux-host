@@ -17,10 +17,10 @@ import { RewardsPopoverComponent } from './components/rewards-popover';
 import { ExpandListComponent } from './components/levels/expand-list';
 import { ExpandItemComponent } from './components/levels/expand-list/expand-item';
 import { OptInGuard } from './guards';
-import { StPopoverLayoutModule } from '../../shared/ui-components/st-popover-layout/st-popover-layout.module';
-import { StHeaderModule } from '../../shared/ui-components/st-header/st-header.module';
-import { StNavTabsModule } from '../../shared/ui-components/st-nav-tabs/st-nav-tabs.module';
-import { StProgressBarModule } from '../../shared/ui-components/st-progress-bar/st-progress-bar.module';
+import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
+import { StPopoverLayoutModule } from '@shared/ui-components/st-popover-layout/st-popover-layout.module';
+import { StNavTabsModule } from '@shared/ui-components/st-nav-tabs/st-nav-tabs.module';
+import { StProgressBarModule } from '@shared/ui-components/st-progress-bar/st-progress-bar.module';
 
 const imports = [
   CommonModule,

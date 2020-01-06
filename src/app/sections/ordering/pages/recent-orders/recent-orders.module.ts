@@ -9,6 +9,7 @@ import { RecentOrderComponent } from '@sections/ordering/pages/recent-orders/com
 import { OrderDetailsModule } from '@sections/ordering/shared/ui-components/order-details/order-details.module';
 import { OrderOptionsActionSheetModule } from '@sections/ordering/shared/ui-components/order-options.action-sheet';
 import { ConfirmPopoverModule } from '@sections/ordering/shared/ui-components/confirm-popover/confirm-popover.module';
+import { StSpinnerModule } from '@shared/ui-components/st-spinner/st-spinner.module';
 
 
 const imports = [
@@ -21,6 +22,7 @@ const imports = [
     OrderOptionsActionSheetModule,
     ConfirmPopoverModule,
     OrderOptionsActionSheetModule,
+    StSpinnerModule
 ];
 const declarations = [RecentOrdersComponent, RecentOrderComponent];
 

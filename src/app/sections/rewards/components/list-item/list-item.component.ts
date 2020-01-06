@@ -1,14 +1,13 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
-import { RedeemableRewardInfo } from '../../models';
 import { RewardsPopoverComponent } from '../rewards-popover';
-import { RewardsApiService, RewardsService } from '../../services';
-import { CLAIM_STATUS, CONTENT_STRINGS, LEVEL_STATUS } from '../../rewards.config';
-import { PopupTypes } from '../../rewards.config';
 import { catchError, map, switchMap, take, tap } from 'rxjs/operators';
 import { Observable, pipe, throwError } from 'rxjs';
-import { LoadingService } from '../../../../core/service/loading/loading.service';
-import { BUTTON_TYPE } from '../../../../core/utils/buttons.config';
+import { RedeemableRewardInfo } from '@sections/rewards/models';
+import { RewardsApiService, RewardsService } from '@sections/rewards/services';
+import { LoadingService } from '@core/service/loading/loading.service';
+import { CLAIM_STATUS, PopupTypes, CONTENT_STRINGS, LEVEL_STATUS } from '@sections/rewards/rewards.config';
+import { BUTTON_TYPE } from '@core/utils/buttons.config';
 
 @Component({
   selector: 'st-list-item',

@@ -2,18 +2,11 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 
 import { EditHomePageModalComponent } from './components/edit-home-page-modal';
-import { TileWrapperConfig } from './models/tile-wrapper-config.model';
-import { AccountsService } from './services';
-import {
-  tilesConfig,
-  TILES_TITLE,
-  ACCOUNTS_SETTINGS_CONFIG,
-  TILES_ID,
-} from './dashboard.config';
+import { TileWrapperConfig } from '@sections/dashboard/models';
+import { AccountsService, DashboardService } from './services';
+import {  TILES_TITLE } from './dashboard.config';
 import { Observable } from 'rxjs';
-import { first, map } from 'rxjs/operators';
-import { parseArrayFromString } from '@core/utils/general-helpers';
-import { ActivatedRoute } from '@angular/router';
+import { TileConfigFacadeService } from '@sections/dashboard/tile-config-facade.service';
 
 @Component({
   selector: 'st-dashboard',
@@ -22,13 +15,13 @@ import { ActivatedRoute } from '@angular/router';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardPage implements OnInit {
-  tiles: TileWrapperConfig[];
-  isMobileAccessButtonEnabled: boolean;
+  tiles$: Observable<TileWrapperConfig[]>;
 
   constructor(
     private readonly modalController: ModalController,
+    private readonly dashboardService: DashboardService,
     private readonly accountsService: AccountsService,
-    private readonly route: ActivatedRoute,
+    private readonly tileConfigFacadeService: TileConfigFacadeService,
   ) {
   }
 
@@ -37,17 +30,7 @@ export class DashboardPage implements OnInit {
   }
 
   ngOnInit() {
-    const { data: [settings] } = this.route.snapshot.data;
-    this.tiles = this.getUpdatedTilesConfig(settings);
-    this.updateAccountTile();
-  }
-
-  private getUpdatedTilesConfig(settings) {
-    return tilesConfig.map((setting) => {
-      // name !== 'enable_merchants' - temporary condition for Explore tile until that functionality is ready
-      let s = settings.list.find(({ name }) => name === setting.id && name !== 'enable_merchants');
-      return s ? { ...setting, isEnable: DashboardPage.getBoolValue(s.value) } : setting;
-    });
+    this.tiles$ = this.tileConfigFacadeService.tileSettings$;
   }
 
   async presentEditHomePageModal(): Promise<void> {
@@ -57,33 +40,7 @@ export class DashboardPage implements OnInit {
     return await modal.present();
   }
 
-  private updateAccountTile() {
-    this.isAddFundsButtonEnabled().pipe(
-      first(),
-    ).subscribe(enabled => {
-      const index = this.tiles.findIndex((tile) => tile.id === TILES_ID.accounts);
-      if (index >= 0 && enabled) {
-        const tile = this.tiles[index];
-        this.tiles[index] = { ...tile, buttonConfig: { ...tile.buttonConfig, show: enabled } };
-      }
-    });
-  }
-
-  private static getBoolValue(value): boolean {
-    return !!Number(value);
-  }
-
-  private isAddFundsButtonEnabled(): Observable<boolean> {
-    const requireSettings = [
-      ACCOUNTS_SETTINGS_CONFIG.paymentTypes,
-      ACCOUNTS_SETTINGS_CONFIG.enableOnetimeDeposits,
-    ];
-
-    return this.accountsService.getUserSettings(requireSettings)
-      .pipe(
-        map(([paymentTypes, onetimeDeposits]) =>
-          parseArrayFromString(paymentTypes.value).length && !!Number(onetimeDeposits.value),
-        ),
-      );
+  trackFn(i,{id, iconPath}): string {
+    return id + iconPath;
   }
 }

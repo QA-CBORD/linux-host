@@ -79,7 +79,7 @@ export enum TILES_TITLE {
   conversations = 'Conversations'
 }
 
-export const tilesConfig: TileWrapperConfig[] = [
+export const TILES_BASE_CONFIG: TileWrapperConfig[] = [
   {
     id: TILES_ID.accounts,
     title: 'Accounts',
@@ -108,7 +108,7 @@ export const tilesConfig: TileWrapperConfig[] = [
     id: DASHBOARD_SETTINGS_CONFIG.enableRewards.name,
     title: 'Rewards',
     iconPath: '/assets/icon/trophy.svg',
-    isEnable: true,
+    isEnable: false,
     navigate: NAVIGATE.rewards,
     buttonConfig: {
       show: false,
@@ -118,7 +118,7 @@ export const tilesConfig: TileWrapperConfig[] = [
     id: DASHBOARD_SETTINGS_CONFIG.enableMobileAccess.name,
     title: 'Mobile Access',
     iconPath: '/assets/icon/mobile-access-tile.svg',
-    isEnable: true,
+    isEnable: false,
     navigate: NAVIGATE.mobileAccess,
     buttonConfig: {
       show: true,
@@ -131,7 +131,7 @@ export const tilesConfig: TileWrapperConfig[] = [
     title: 'Meal Donations',
     iconPath: '/assets/icon/meal-outline.svg',
     isEnable: false,
-    navigate: NAVIGATE.accounts,  
+    navigate: NAVIGATE.accounts,
     //TODO:Added this after mealDonations module will done
     //navigate: `${NAVIGATE.accounts}/${ACCOUNTS_NAVIGATE.mealDonations}`,
     buttonConfig: {
@@ -145,7 +145,7 @@ export const tilesConfig: TileWrapperConfig[] = [
     id: DASHBOARD_SETTINGS_CONFIG.enableOrder.name,
     title: 'Order',
     iconPath: '/assets/icon/order.svg',
-    isEnable: true,
+    isEnable: false,
     navigate: NAVIGATE.ordering,
     buttonConfig: {
       show: true,
@@ -169,7 +169,7 @@ export const tilesConfig: TileWrapperConfig[] = [
     id: DASHBOARD_SETTINGS_CONFIG.enableConversation.name,
     title: 'Conversations',
     iconPath: '/assets/icon/chat.svg',
-    isEnable: true,
+    isEnable: false,
     navigate: NAVIGATE.secureMessage,
     buttonConfig: {
       show: true,

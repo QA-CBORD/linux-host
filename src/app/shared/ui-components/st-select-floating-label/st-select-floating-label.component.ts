@@ -5,7 +5,7 @@ import {
   forwardRef,
   Output,
   EventEmitter,
-  ChangeDetectionStrategy,
+  ChangeDetectionStrategy, ViewChild, ChangeDetectorRef,
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor, FormControl, AbstractControl } from '@angular/forms';
 
@@ -31,11 +31,13 @@ export class StSelectFloatingLabelComponent implements OnInit, ControlValueAcces
   @Input() idd: string;
   @Output() focus: EventEmitter<any> = new EventEmitter<any>();
   @Output() change: EventEmitter<any> = new EventEmitter<any>();
+  @ViewChild('temp') select;
   innerValue: any = '';
   private onChange: (v: any) => void;
   private onTouched: () => void;
 
-  constructor() {}
+  constructor(private readonly cdRef: ChangeDetectorRef) {
+  }
 
   ngOnInit() {
     this.value = this.control.value;
@@ -57,6 +59,7 @@ export class StSelectFloatingLabelComponent implements OnInit, ControlValueAcces
   //From ControlValueAccessor interface
   writeValue(value: any) {
     this.innerValue = value;
+    this.cdRef.detectChanges();
   }
 
   //From ControlValueAccessor interface

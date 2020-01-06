@@ -24,13 +24,14 @@ import { EditHomePageModalComponent } from './components/edit-home-page-modal';
 import { AccountsApiService } from '@sections/accounts/services/accounts.api.service';
 import { MealDonationsTileModule } from './containers/meal-donations-tile/meal-donations-tile.module';
 import { MobileAccessService } from '@sections/mobile-access';
+import { TileConfigFacadeService } from '@sections/dashboard/tile-config-facade.service';
 
 const imports = [
-  IonicModule, 
-  CommonModule, 
-  DashboardRoutingModule, 
+  IonicModule,
+  CommonModule,
+  DashboardRoutingModule,
   StHeaderModule,
-  AccessCardModule, 
+  AccessCardModule,
   AccountsTileModule,
   ConversationsTileModule,
   ExploreTileModule,
@@ -54,6 +55,7 @@ const providers = [
   MobileAccessService,
   DashboardPageResolver,
   AccountsApiService,
+  TileConfigFacadeService
 ];
 
 @NgModule({

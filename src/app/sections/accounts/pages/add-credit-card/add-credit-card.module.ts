@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
+import { ReactiveFormsModule } from '@angular/forms';
 
 import { AddCreditCardComponent } from './add-credit-card.component';
 import { AddCreditCardRoutingModule } from './add-credit-card.routing.module';
@@ -9,7 +10,6 @@ import { SuccessPopoverComponent } from './components/success-popover/success-po
 import { StPopoverLayoutModule } from '@shared/ui-components/st-popover-layout/st-popover-layout.module';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
 import { StInputFloatingLabelModule } from '@shared/ui-components/st-input-floating-label/st-input-floating-label.module';
-import { ReactiveFormsModule } from '@angular/forms';
 
 const imports = [
   CommonModule,

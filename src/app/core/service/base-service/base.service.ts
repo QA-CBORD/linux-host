@@ -7,7 +7,7 @@ import { async } from 'rxjs/internal/scheduler/async';
 import { queue } from 'rxjs/internal/scheduler/queue';
 
 import { Environment } from '../../../environment';
-import { DataCache } from '../../utils/data-cache';
+import { DataCache } from '@core/utils/data-cache';
 
 export interface ServiceParameters {
   [key: string]: any;

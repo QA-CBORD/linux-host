@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { Observable, of } from 'rxjs';
-import { map, take, switchMap } from 'rxjs/operators';
+import { map, take, switchMap, skipWhile } from 'rxjs/operators';
 
 import { UserService } from 'src/app/core/service/user-service/user.service';
 import { InstitutionService } from 'src/app/core/service/institution/institution.service';
@@ -41,6 +41,7 @@ export class AccessCardService {
   getInstitutionImage(): Observable<string> {
     return this.userService.userData.pipe(
       switchMap(({ institutionId }) => this.institutionService.getInstitutionPhotoById(institutionId)),
+      skipWhile(val => !val),
       map(({ data, mimeType }) => `data:${mimeType};base64,${data}`)
     );
   }

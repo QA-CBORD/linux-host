@@ -1,16 +1,20 @@
-@import "tools";
+@import 'tools';
 
 .recent-orders {
-
   &__header {
     border-bottom: 1px solid $color-light-gray;
+  }
+
+  &__content {
+    background: $color-white !important;
+    z-index: 1;
   }
 
   &__list-title {
     line-height: 27px;
     margin: 15px;
 
-    @include font-nunito-heavy(20px)
+    @include font-nunito-heavy(20px);
   }
 
   &__no-orders-block {
@@ -30,12 +34,12 @@
     color: $color-dim-gray;
     max-width: 250px;
 
-    @include font-nunito-semibold(16px)
+    @include font-nunito-semibold(16px);
   }
 
   &__no-orders-btn {
     --border-radius: 25px;
-    --background: #166DFF;
+    --background: #166dff;
 
     border-radius: 25px;
     height: 50px;

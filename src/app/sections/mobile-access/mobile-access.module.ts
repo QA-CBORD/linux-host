@@ -10,15 +10,15 @@ import { LocationItemComponent } from './location-list/location-item';
 import { MobileAccessService } from './service';
 import { ActivateLocationComponent } from './activate-location';
 import { MobileAccessPopoverComponent } from './mobile-access-popover';
-import { StopPropagationModule } from '../../shared/directives/stop-propogation/stop-propagation.module';
-import { MetersToMilesPipeModule } from '../../shared/pipes/meters-to-miles-pipe/meters-to-miles-pipe.module';
-import { TruncatePipeModule } from '../../shared/pipes/truncate-pipe/truncate-pipe.module';
-import { StCountdownModule } from '../../shared/ui-components/st-countdown/st-countdown.module';
-import { StPopoverLayoutModule } from '../../shared/ui-components/st-popover-layout/st-popover-layout.module';
-import { StHeaderModule } from '../../shared/ui-components/st-header/st-header.module';
-import { StSpinnerModule } from '../../shared/ui-components/st-spinner/st-spinner.module';
 import { StActivateLocationItemModule } from '@shared/ui-components/st-activate-location-item/st-activate-location-item.module';
 import { LocationsResolverGuard } from './resolvers/locations.resolver.guard';
+import { StopPropagationModule } from '@shared/directives/stop-propogation/stop-propagation.module';
+import { MetersToMilesPipeModule } from '@shared/pipes/meters-to-miles-pipe/meters-to-miles-pipe.module';
+import { TruncatePipeModule } from '@shared/pipes/truncate-pipe/truncate-pipe.module';
+import { StCountdownModule } from '@shared/ui-components/st-countdown/st-countdown.module';
+import { StPopoverLayoutModule } from '@shared/ui-components/st-popover-layout/st-popover-layout.module';
+import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
+import { StSpinnerModule } from '@shared/ui-components/st-spinner/st-spinner.module';
 
 const imports = [
   CommonModule,

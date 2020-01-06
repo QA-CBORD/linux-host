@@ -3,14 +3,14 @@ import { HttpClient } from '@angular/common/http';
 
 import { BaseService } from '../base-service/base.service';
 import { UserService } from '../user-service/user.service';
+import { SettingInfo } from '@core/model/configuration/setting-info.model';
+import { SettingRequest } from '@core/model/configuration/setting-requst.model';
+import { MessageResponse } from '@core/model/service/message-response.model';
+import { SettingInfoList } from '@core/model/configuration/setting-info-list.model';
 
 import { Observable } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { SettingRequest } from '../../model/configuration/setting-requst.model';
-import { SettingInfo } from '../../model/configuration/setting-info.model';
-import { MessageResponse } from './../../model/service/message-response.model';
-import { SettingInfoList } from '../../model/configuration/setting-info-list.model';
 
 @Injectable({
   providedIn: 'root',
