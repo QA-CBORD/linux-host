@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 
-import { Observable, of } from 'rxjs';
+import { Observable, of, from } from 'rxjs';
 import { map, take, switchMap, skipWhile } from 'rxjs/operators';
 
 import { UserService } from 'src/app/core/service/user-service/user.service';
 import { InstitutionService } from 'src/app/core/service/institution/institution.service';
 import { ConfigurationService } from 'src/app/core/service/configuration/configuration.service';
 
-import { Settings } from 'src/app/app.global';
+import { Settings, ContentStrings } from 'src/app/app.global';
+import { NativeProvider, NativeData } from '../../../../../core/provider/native-provider/native.provider';
 
 @Injectable()
 export class AccessCardService {
@@ -15,6 +16,7 @@ export class AccessCardService {
     private readonly userService: UserService,
     private readonly institutionService: InstitutionService,
     private readonly configService: ConfigurationService,
+    private nativeProvider: NativeProvider,
   ) {}
 
   getUserName(): Observable<string> {
@@ -78,8 +80,18 @@ export class AccessCardService {
     );
   }
 
-  isApplePayEnabled(): Observable<boolean> {
-    return of(false);
+  isAppleWalletEnabled(): Observable<boolean> {
+    if(this.nativeProvider.isIos()){
+      return from(this.nativeProvider.getIosData(NativeData.APPLE_WALLET_INFO)).pipe(
+        map((data: any) => {
+          let result: boolean = JSON.parse(data).isAppleWalletEnabled as boolean;
+          return result;
+        })
+      );
+    }else{
+      return of(false);
+    }
+
   }
 
 }
