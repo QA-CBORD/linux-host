@@ -39,6 +39,15 @@ export class CommerceApiService extends BaseService {
     );
   }
 
+  getCashlessUserId(): Observable<string> {
+    const method = 'retrieveCashlessPatronMobileDisplayMediaValue';
+    return this.httpRequest<MessageResponse<string>>(
+      this.serviceUrl,
+      method,
+      true
+    ).pipe(map(({ response }) => response));
+  }
+
   calculateDepositFee(fromAccountId, toAccountId, amount): Observable<number> {
     const method = 'calculateDepositFee';
     const params = {

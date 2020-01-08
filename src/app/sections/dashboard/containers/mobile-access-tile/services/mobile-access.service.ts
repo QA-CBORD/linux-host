@@ -81,7 +81,7 @@ export class MobileAccessService extends BaseService {
 
   getFavouritesLocations(): Observable<string[] | []> {
     return this.userService.getUserSettingsBySettingName(this.favouritesLocationSettingsName).pipe(
-      map(({ response: { value } }) => (this.favourites = this.parseArrayFromString(value))),
+      map(({ value }) => (this.favourites = this.parseArrayFromString(value))),
       catchError(() => {
         this.favourites = [];
         return of([]);

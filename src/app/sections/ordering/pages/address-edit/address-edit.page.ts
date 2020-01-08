@@ -38,7 +38,7 @@ export class AddressEditPage implements OnInit {
 
   ionViewWillEnter() {
     this.buildings$ = this.merchantService.retrieveBuildings();
-    this.defaultAddress$ = this.merchantService.getDefaultAddress().pipe(map(({ response: { value } }) => value));
+    this.defaultAddress$ = this.merchantService.getDefaultAddress().pipe(map(({ value }) => value));
     zip(this.buildings$, this.merchantService.selectedAddress$)
       .pipe(
         map(([buildings, address]) => {
