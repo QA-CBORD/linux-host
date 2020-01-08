@@ -6,6 +6,8 @@ declare var androidInterface: any;
 export enum NativeData {
   SESSION_ID = 'getSessionId',
   DESTINATION_PAGE = 'getDestinationPage',
+  APPLE_WALLET_INFO = 'getAppleWalletInfo',
+  ADD_TO_APPLE_WALLET = 'addToAppleWallet',
   INSTITUTION_ID = 'getInstitutionId',
   USER_INFO = 'getUserInfo',
   USER_PHOTO = 'getAcceptedUserPhoto',

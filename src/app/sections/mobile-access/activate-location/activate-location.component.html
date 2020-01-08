@@ -8,7 +8,7 @@
   <st-activate-location-item
     [userPhoto]="userPhoto$ | async"
     [userFullName]="userFullName$ | async"
-    [userInfoId]="(userInfo$ | async).id"
+    [userInfoId]="userInfoId$ | async"
     [institutionName]="(institution$ | async).name"
     [institutionPhoto]="institutionPhoto$ | async"
     [institutionColor]="institutionColor$ | async"

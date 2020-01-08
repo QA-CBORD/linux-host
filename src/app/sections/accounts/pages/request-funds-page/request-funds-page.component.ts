@@ -87,7 +87,7 @@ export class RequestFundsPageComponent implements OnInit {
     this.userService
       .getUserSettingsBySettingName('quick_amount')
       .pipe(
-        switchMap(({ response: { value: v } }) => this.userService.requestDeposit(n, e, m, a, v)),
+        switchMap(({ value: v }) => this.userService.requestDeposit(n, e, m, a, v)),
         take(1)
       )
       .subscribe(

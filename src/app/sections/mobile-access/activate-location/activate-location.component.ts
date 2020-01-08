@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { NavController, PopoverController, ToastController } from '@ionic/angular';
 
 import { map, take, switchMap } from 'rxjs/operators';
@@ -15,9 +15,10 @@ import { MobileAccessPopoverComponent } from '@sections/mobile-access/mobile-acc
 import { LoadingService } from '@core/service/loading/loading.service';
 import { CONTENT_STRINGS } from '../mobile-acces.config';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
-import { NAVIGATE } from '../../../app.global';
 import { InstitutionPhotoInfo } from '@core/model/institution';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { NAVIGATE } from 'src/app/app.global';
+import { CommerceApiService } from '@core/service/commerce/commerce-api.service';
 
 @Component({
   selector: 'st-activate-location',
@@ -30,11 +31,11 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
   private readonly sourceSubscription: Subscription = new Subscription();
   private locationId: string;
 
-  userInfo$: Observable<UserInfo>;
   location$: Observable<MMobileLocationInfo>;
   institution$: Observable<Institution>;
   institutionPhoto$: Observable<SafeResourceUrl>;
   userPhoto$: Observable<string>;
+  userInfoId$: Observable<string>;
   photo: string = null;
   institutionColor$: Observable<string>;
   contentString;
@@ -45,16 +46,16 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
     private readonly mobileAccessService: MobileAccessService,
     private readonly popoverCtrl: PopoverController,
     private readonly toastController: ToastController,
-    private readonly router: Router,
     private readonly nav2: NavController,
     private readonly institutionService: InstitutionService,
     private readonly loading: LoadingService,
     private readonly sanitizer: DomSanitizer,
+    private readonly commerceApiService: CommerceApiService
   ) {
   }
 
   get userFullName$(): Observable<string> {
-    return this.userInfo$.pipe(
+    return this.userService.userData.pipe(
       map(({ firstName: fn = '', middleName: mn = '', lastName: ln = '' }: UserInfo) => `${fn} ${mn} ${ln}`),
     );
   }
@@ -72,13 +73,12 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.setContentStrings();
     this.locationId = this.routerLink.snapshot.params.id;
-    this.userInfo$ = this.userService.userData;
     this.location$ = this.mobileAccessService.getLocationById(this.locationId);
     this.setUserPhoto();
     this.setInstitution();
     this.setInstitutionPhoto();
     this.setInstitutionColor();
-
+    this.userInfoId$ = this.commerceApiService.getCashlessUserId();
   }
 
   async activateLocation() {
@@ -136,7 +136,7 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
   }
 
   private setInstitutionPhoto() {
-    this.institutionPhoto$ = this.userInfo$.pipe(
+    this.institutionPhoto$ = this.userService.userData.pipe(
       switchMap(({ institutionId }: UserInfo) => this.institutionService.getInstitutionPhotoById(institutionId)),
       map(({ data, mimeType }: InstitutionPhotoInfo) => {
         return `data:${mimeType};base64,${data}`;

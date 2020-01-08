@@ -1,14 +1,16 @@
-import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
-import { UserService } from '@core/service/user-service/user.service';
-import { InstitutionService } from '@core/service/institution/institution.service';
-import { UserInfo } from '@core/model/user';
-import { map, take, switchMap } from 'rxjs/operators';
-
-import { Institution, InstitutionPhotoInfo } from '@core/model/institution';
-import bwipjs from 'bwip-angular2';
 import { SafeResourceUrl, DomSanitizer } from '@angular/platform-browser';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { map, take, switchMap, tap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import bwipjs from 'bwip-angular2';
+
+import { UserInfo, UserSettingInfo } from '@core/model/user';
+import { InstitutionService } from '@core/service/institution/institution.service';
+import { UserService } from '@core/service/user-service/user.service';
+import { Institution, InstitutionPhotoInfo } from '@core/model/institution';
+import { User } from 'src/app/app.global';
+import { CommerceApiService } from '@core/service/commerce/commerce-api.service';
 
 @Component({
   selector: 'st-scan-card',
@@ -16,36 +18,35 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./scan-card.component.scss'],
 })
 export class ScanCardComponent implements OnInit {
-  userInfo$: Observable<UserInfo>;
+  userInfoId$: Observable<string>;
   institution$: Observable<Institution>;
   institutionPhoto$: Observable<SafeResourceUrl>;
   userPhoto: string;
   userId: string;
   institutionColor: string;
 
-  constructor(private readonly userService: UserService,
-              private readonly institutionService: InstitutionService,
-              private readonly sanitizer: DomSanitizer,
-              private readonly route: ActivatedRoute) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly institutionService: InstitutionService,
+    private readonly sanitizer: DomSanitizer,
+    private readonly route: ActivatedRoute,
+    private readonly commerceApiService: CommerceApiService
+  ) {}
 
   ngOnInit() {
     this.setInstitutionColor();
-    this.setUserInfo();
     this.setUserId();
     this.setUserPhoto();
     this.setInstitution();
     this.setInstitutionPhoto();
     this.initBarcode();
+    this.userInfoId$ = this.commerceApiService.getCashlessUserId();
   }
 
   get userFullName$(): Observable<string> {
-    return this.userInfo$.pipe(
+    return this.userService.userData.pipe(
       map(({ firstName: fn, middleName: mn, lastName: ln }: UserInfo) => `${fn || ''} ${mn || ''} ${ln || ''}`)
     );
-  }
-
-  private setUserInfo() {
-    this.userInfo$ = this.userService.userData;
   }
 
   private setUserId() {
@@ -71,15 +72,13 @@ export class ScanCardComponent implements OnInit {
   }
 
   private setInstitutionPhoto() {
-    this.institutionPhoto$ = this.userInfo$
-      .pipe(
-        switchMap(({ institutionId }: UserInfo) => this.institutionService.getInstitutionPhotoById(institutionId)),
-        map(({ data, mimeType }: InstitutionPhotoInfo) => {
-          return `data:${mimeType};base64,${data}`;
-        }),
-        map(response => this.sanitizer.bypassSecurityTrustResourceUrl(response))
-      )
-
+    this.institutionPhoto$ = this.userService.userData.pipe(
+      switchMap(({ institutionId }: UserInfo) => this.institutionService.getInstitutionPhotoById(institutionId)),
+      map(({ data, mimeType }: InstitutionPhotoInfo) => {
+        return `data:${mimeType};base64,${data}`;
+      }),
+      map(response => this.sanitizer.bypassSecurityTrustResourceUrl(response))
+    );
   }
 
   private initBarcode() {
