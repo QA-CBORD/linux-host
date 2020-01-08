@@ -62,7 +62,8 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.depositService.settings$.pipe(take(1)).subscribe(depositSettings => (this.depositSettings = depositSettings));
+    this.depositService.settings$.pipe(take(1))
+      .subscribe(depositSettings => this.depositSettings = depositSettings);
 
     this.initForm();
     this.getAccounts();
@@ -154,8 +155,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
 
   get minMaxOfAmmounts() {
     const minAmountbillme = this.getSettingByName(this.depositSettings, SYSTEM_SETTINGS_CONFIG.minAmountbillme);
-    // FIXME: fix it after backend apply his fixes with billme_maximum FIELD
-    const maxAmountbillme = 100000;
+    const maxAmountbillme = this.getSettingByName(this.depositSettings, SYSTEM_SETTINGS_CONFIG.maxAmountbillme);
     const minAmountOneTime = this.getSettingByName(this.depositSettings, SYSTEM_SETTINGS_CONFIG.minAmountCreditCard);
     const maxAmountOneTime = this.getSettingByName(this.depositSettings, SYSTEM_SETTINGS_CONFIG.maxAmountCreditCard);
 
@@ -175,14 +175,13 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     return this.depositForm.get('fromAccountCvv');
   }
 
-  get isCVVfieldShow() {
+  get isCVVfieldShow(): boolean {
     const sourceAcc = this.depositForm.get('sourceAccount').value;
 
-    if (sourceAcc && (sourceAcc !== PAYMENT_TYPE.BILLME || sourceAcc !== 'newCreditCard')) {
-      return (
-        sourceAcc.accountType === ACCOUNT_TYPES.charge && sourceAcc.paymentSystemType !== PAYMENT_SYSTEM_TYPE.USAEPAY
-      );
-    }
+    return sourceAcc
+      && (sourceAcc !== PAYMENT_TYPE.BILLME || sourceAcc !== 'newCreditCard')
+      && sourceAcc.accountType === ACCOUNT_TYPES.charge
+      && sourceAcc.paymentSystemType !== PAYMENT_SYSTEM_TYPE.USAEPAY;
   }
 
   formatInput(event) {
@@ -263,8 +262,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
         this.depositForm.controls['mainSelect'].setValidators([Validators.required]);
         this.mainFormInput.clearValidators();
         this.mainFormInput.setErrors(null);
-        this.depositForm.controls['mainSelect'].reset();
-        this.depositForm.controls['mainInput'].reset();
+        this.resetControls(['mainSelect', 'mainInput']);
       }
     });
   }
@@ -327,7 +325,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   onPaymentMethodChanged({ target }) {
     this.defineDestAccounts(target.value);
 
-    this.depositForm.controls['mainSelect'].reset();
+    this.resetControls(['mainSelect', 'mainInput', 'selectedAccount']);
     this.setFormValidators();
   }
 
@@ -365,6 +363,12 @@ export class DepositPageComponent implements OnInit, OnDestroy {
 
   get paymentTypes() {
     return PAYMENT_TYPE;
+  }
+
+  private resetControls(controlNames: string[]) {
+    controlNames.forEach((controlName) =>
+      this.depositForm.contains(controlName) && this.depositForm.get(controlName).reset(),
+    );
   }
 
   private defineDestAccounts(target) {
