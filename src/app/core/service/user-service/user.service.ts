@@ -5,7 +5,7 @@ import { BehaviorSubject, Observable, of, from } from 'rxjs';
 
 import { BaseService } from '../base-service/base.service';
 import { UserInfo } from 'src/app/core/model/user/user-info.model';
-import { UserPhotoInfo, AddressInfoList } from '../../model/user';
+import { UserPhotoInfo, AddressInfoList, UserSettingInfo } from '../../model/user';
 import { MessageResponse } from '../../model/service/message-response.model';
 import { UserSettings } from '../../model/user';
 import { UserPhotoList } from '../../model/user';
@@ -24,7 +24,7 @@ export class UserService extends BaseService {
   private readonly userAddresses$: BehaviorSubject<AddressInfo[]> = new BehaviorSubject<AddressInfo[]>([]);
   private userPhoto: UserPhotoInfo = null;
 
-  public selectedAddress:AddressInfo;
+  public selectedAddress: AddressInfo;
 
   constructor(readonly http: HttpClient, private readonly nativeProvider: NativeProvider) {
     super(http);
@@ -54,9 +54,10 @@ export class UserService extends BaseService {
     return this.httpRequest(this.serviceUrl, 'retrieve', true).pipe(map(({ response }) => (this._userData = response)));
   }
 
-  getUserSettingsBySettingName(settingName: string): Observable<MessageResponse<UserSettings>> {
-    return this.httpRequest<MessageResponse<UserSettings>>
-    (this.serviceUrl, 'retrieveSetting', true, { settingName });
+  getUserSettingsBySettingName(settingName: string): Observable<UserSettingInfo> {
+    return this.httpRequest<MessageResponse<UserSettingInfo>>(this.serviceUrl, 'retrieveSetting', true, {
+      settingName,
+    }).pipe(map(({ response }) => response));
   }
 
   saveUserSettingsBySettingName(settingName: string, settingValue: string): Observable<MessageResponse<boolean>> {

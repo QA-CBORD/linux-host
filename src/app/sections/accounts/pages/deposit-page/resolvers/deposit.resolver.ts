@@ -8,7 +8,10 @@ import { DepositService } from '@sections/accounts/services/deposit.service';
 
 @Injectable()
 export class DepositResolver implements Resolve<Observable<any>> {
-  constructor(private readonly depositService: DepositService, private readonly loadingService: LoadingService) {}
+
+  constructor(private readonly depositService: DepositService,
+              private readonly loadingService: LoadingService) {}
+
   resolve(): Observable<any> {
     const requireSettings = [
       SYSTEM_SETTINGS_CONFIG.depositTenders,
@@ -20,7 +23,7 @@ export class DepositResolver implements Resolve<Observable<any>> {
       SYSTEM_SETTINGS_CONFIG.minAmountbillme,
       SYSTEM_SETTINGS_CONFIG.billMeFreeFormEnabled,
       SYSTEM_SETTINGS_CONFIG.minAmountCreditCard,
-      // SYSTEM_SETTINGS_CONFIG.maxAmountbillme,
+      SYSTEM_SETTINGS_CONFIG.maxAmountbillme,
       SYSTEM_SETTINGS_CONFIG.maxAmountCreditCard,
     ];
     const accountsCall = this.depositService.getUserAccounts();

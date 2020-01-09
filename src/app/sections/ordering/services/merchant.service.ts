@@ -27,6 +27,7 @@ import { AddressInfo } from '@core/model/address/address-info';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { CommerceApiService } from '@core/service/commerce/commerce-api.service';
 import { UserAccount } from '@core/model/account/account.model';
+import { UserSettingInfo } from '@core/model/user';
 
 @Injectable()
 export class MerchantService {
@@ -182,9 +183,9 @@ export class MerchantService {
 
   retrieveDeliveryAddresses(merchantId) {
     return this.getDefaultAddress().pipe(
-      switchMap(({ response }) =>
+      switchMap(({ value }) =>
         zip(
-          of({ defaultAddress: response.value }),
+          of({ defaultAddress: value }),
           this.retrieveUserAddressList().pipe(
             switchMap(addresses => this.filterDeliveryAddresses(merchantId, addresses))
           )
@@ -237,7 +238,7 @@ export class MerchantService {
     }, []);
   }
 
-  getDefaultAddress() {
+  getDefaultAddress(): Observable<UserSettingInfo> {
     return this.userService.getUserSettingsBySettingName('defaultaddress');
   }
 
