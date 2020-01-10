@@ -31,6 +31,13 @@ export const testCredentials:Dictionary<UserLogin> = {
     institutionId: '46054f40-71fc-4d32-a8de-64b525d3ce56',
   },
 
+  gold7_discount: {
+    userName: 'Discounts6@tpsmail.dev',
+    password: 'password1',
+    domain: null,
+    institutionId: '46054f40-71fc-4d32-a8de-64b525d3ce56',
+  },
+
   KNAU_Yarik:  {
     userName: 'yxp@test.cbord.com',
     password: 'Dn210778pms#',
