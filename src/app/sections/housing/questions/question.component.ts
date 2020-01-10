@@ -25,6 +25,8 @@ export class QuestionComponent {
 
   errorMessages: any = {
     required: 'This field is required.',
+    numeric: 'This field should be numeric',
+    integer: 'This field should be integer',
   };
 
   createHeader(question: QuestionHeader): string {

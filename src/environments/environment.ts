@@ -86,6 +86,20 @@ export const testCredentials: Dictionary<UserLogin> = {
     domain: null,
     institutionId: 'a5f51c3d-a329-415b-8efa-d40b5a33d837',
   },
+
+  housingQAASA: {
+    userName: 'smsg12@tpsmail.dev',
+    password: 'password1',
+    domain: null,
+    institutionId: '1e418ca8-7148-4956-b7c4-1f35db6d8a11',
+  },
+
+  housingQAOracle: {
+    userName: 'o18msg03@tpsmail.dev',
+    password: 'password1',
+    domain: null,
+    institutionId: '14916c0a-5dda-4725-9d71-b132192d7b23',
+  },
 };
 
 /*

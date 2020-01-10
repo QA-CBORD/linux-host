@@ -47,33 +47,7 @@ export class ApplicationsService {
     return this._housingProxyService.get<ApplicationDetails[]>(apiUrl).pipe(
       switchMap((applications: any[]) =>
         Array.isArray(applications)
-          ? Promise.all(
-              applications.map(async (application: any) => {
-                let applicationDetails: ApplicationDetails = new ApplicationDetails(application);
-                let patronApplication: PatronApplication = applicationDetails.patronApplication;
-                const status: ApplicationStatus =
-                  patronApplication && patronApplication.status ? patronApplication.status : null;
-
-                if (status !== ApplicationStatus.New) {
-                  return applicationDetails;
-                }
-
-                const storedApplication: StoredApplication = await this._questionsStorageService.getApplication(
-                  applicationDetails.applicationDefinition.key
-                );
-
-                if (storedApplication) {
-                  patronApplication = new PatronApplication({
-                    ...patronApplication,
-                    status: storedApplication.status,
-                  });
-
-                  applicationDetails = new ApplicationDetails({ ...applicationDetails, patronApplication });
-                }
-
-                return applicationDetails;
-              })
-            )
+          ? Promise.all(applications.map((application: any) => this._setStoredApplicationStatus(application)))
           : []
       ),
       tap((applications: ApplicationDetails[]) => this._applicationsStateService.setApplications(applications)),
@@ -259,5 +233,30 @@ export class ApplicationsService {
         return new PatronPreference({ ...preference, facilityKey });
       })
       .filter((preference: PatronPreference) => preference.facilityKey);
+  }
+
+  private async _setStoredApplicationStatus(application: any): Promise<ApplicationDetails> {
+    let applicationDetails: ApplicationDetails = new ApplicationDetails(application);
+    let patronApplication: PatronApplication = applicationDetails.patronApplication;
+    const status: ApplicationStatus = patronApplication && patronApplication.status ? patronApplication.status : null;
+
+    if (status !== ApplicationStatus.New) {
+      return applicationDetails;
+    }
+
+    const storedApplication: StoredApplication = await this._questionsStorageService.getApplication(
+      applicationDetails.applicationDefinition.key
+    );
+
+    if (storedApplication) {
+      patronApplication = new PatronApplication({
+        ...patronApplication,
+        status: storedApplication.status,
+      });
+
+      applicationDetails = new ApplicationDetails({ ...applicationDetails, patronApplication });
+    }
+
+    return applicationDetails;
   }
 }

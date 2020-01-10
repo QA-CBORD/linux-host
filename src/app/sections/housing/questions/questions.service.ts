@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { FormControl, Validators, FormGroup, FormArray, AbstractControl } from '@angular/forms';
+import { FormControl, Validators, FormGroup, FormArray, AbstractControl, ValidatorFn } from '@angular/forms';
 import { BehaviorSubject, Observable } from 'rxjs';
 
-import { parseJsonToArray, hasValue } from '../utils';
+import { parseJsonToArray, hasValue, integerValidator, numericValidator } from '../utils';
 
 import { QuestionsStorageService } from './questions-storage.service';
 
@@ -36,6 +36,11 @@ export const QuestionConstructorsMap = {
 })
 export class QuestionsService {
   private _pagesSource: BehaviorSubject<ApplicationPage[]> = new BehaviorSubject<ApplicationPage[]>([]);
+
+  private _dataTypesValidators: { [key: string]: ValidatorFn } = {
+    integer: integerValidator(),
+    numeric: numericValidator(),
+  };
 
   pages$: Observable<ApplicationPage[]> = this._pagesSource.asObservable();
 
@@ -156,8 +161,20 @@ export class QuestionsService {
       (attribute: PatronAttribute) => attribute.attributeConsumerKey === question.consumerKey
     );
     const value: any = foundAttribute ? foundAttribute.value : null;
+    const dataType: string = question.dataType ? question.dataType.toLowerCase() : null;
+    const validators: ValidatorFn[] = [];
 
-    return question.required ? new FormControl(value, Validators.required) : new FormControl(value);
+    if (question.required) {
+      validators.push(Validators.required);
+    }
+
+    const dataTypeValidator: ValidatorFn = this._dataTypesValidators[dataType];
+
+    if (dataTypeValidator) {
+      validators.push(dataTypeValidator);
+    }
+
+    return new FormControl(value, validators);
   }
 
   private _toQuestionCheckboxControl(question: QuestionCheckboxGroup): FormArray {
