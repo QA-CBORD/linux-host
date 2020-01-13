@@ -1,0 +1,11 @@
+<ion-button
+  class="st-button {{ buttonModifier && 'st-button--' + buttonModifier }}"
+  [expand]="expand"
+  [ngClass]="{ 'st-button--disabled': isDisabled }"
+  [type]="type"
+  [fill]="fill"
+  (click)="onClickButton($event)"
+  mode="md"
+>
+  <ng-content></ng-content>
+</ion-button>

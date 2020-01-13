@@ -33,16 +33,9 @@
       ></st-add-edit-addresses>
     </ng-container>
 
-    <div class="address-edit__add-address-btn-container">
-      <ion-button
-        mode="md"
-        expand="full"
-        shape="round"
-        class="address-edit__add-address-btn"
-        (click)="addAddress()"
-      >
-        save
-      </ion-button>
-    </div>
+    
+    <st-button (onClick)="addAddress()">
+      save
+    </st-button>
   </div>
 </ion-content>

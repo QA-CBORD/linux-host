@@ -108,21 +108,11 @@
       @include font-nunito-heavy(14px);
     }
   }
-
-  &__deposit-btn {
-    --background: #166dff;
-    --background-activated: #cccccc;
-    --border-radius: 25px;
-    --box-shadow: none;
-
-    margin-top: 50px;
-    position: relative;
-    left: 5%;
-    width: 90%;
-
-    &.button-disabled {
-      --background: #cccccc;
-      --background-hover: #c4c4c4;
-    }
+  
+  &__footer {
+    display: flex;
+    justify-content: center;
+    padding: 10px 10px 50px;
+    background-color: $color-white;
   }
 }

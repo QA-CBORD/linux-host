@@ -24,10 +24,10 @@
 </ion-content>
 
 <ng-template #complited>
-    <ion-button (click)="back()" class="recent-order__btn recent-order__btn--white">close</ion-button>
-    <ion-button (click)="onReorderHandler()" class="recent-order__btn">reorder</ion-button>
+    <st-button [fill]="'clear'" [buttonModifier]="'black'" (onClick)="back()">close</st-button>
+    <st-button (onClick)="onReorderHandler()">reorder</st-button>
 </ng-template>
 
 <ng-template #pending>
-    <ion-button (click)="showModal()" class="recent-order__btn recent-order__btn--danger">cancel order</ion-button>
+    <st-button [buttonModifier]="'danger'" (onClick)="showModal()" >cancel order</st-button>
 </ng-template>

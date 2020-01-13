@@ -29,17 +29,14 @@ export class MenuReceivingFundsComponent implements OnInit {
     this.menuItems$ = this.accountsService.settings$.pipe(map(settings => this.handleListItems(settings)));
   }
 
+  //TODO: Add correct Desktop Settings for menu icons
+  
   get hasShowedItem$(): Observable<boolean> {
     return this.menuItems$.pipe(map(items => items.some((item) => item && item.isShow)));
   }
 
   redirect(name: string) {
     this.router.navigate([NAVIGATE.accounts, MENU_LIST_ROUTES.get(name)], { skipLocationChange: true });
-  }
-
-  //Delete this method when back-end wiil done
-  onMealDonations() {
-    this.router.navigate([NAVIGATE.accounts,LOCAL_ROUTING.mealDonations])
   }
 
   trackByMenuName(i: number, { name }: MenuReceivingFundsListItem): string {
@@ -63,9 +60,11 @@ export class MenuReceivingFundsComponent implements OnInit {
         case SYSTEM_SETTINGS_CONFIG.guestDeposit.name:
           displayName = this.contentString[CONTENT_STRINGS.requestFundsBtn];
           break;
-        // case SYSTEM_SETTINGS_CONFIG.enableMealDonations.name:
-        //   displayName = this.contentString[CONTENT_STRINGS.mealDonations];
-        //   break;
+        case SYSTEM_SETTINGS_CONFIG.enableMealDonations.name:
+          // There are no ui-patron Content Settings API response for meal donations
+          // displayName = this.contentString[CONTENT_STRINGS.mealDonationsBtn];
+          displayName = 'Meal Donations';
+          break;
       }
       return { name: setting.name, displayName: displayName, isShow: Boolean(Number(setting.value)) };
     });
@@ -76,7 +75,7 @@ export class MenuReceivingFundsComponent implements OnInit {
       CONTENT_STRINGS.autoDepositBtn,
       CONTENT_STRINGS.requestFundsBtn,
       CONTENT_STRINGS.addFundsBtn,
-      // CONTENT_STRINGS.mealDonations,
+      // CONTENT_STRINGS.mealDonationsBtn,
     ];
 
     this.contentString = this.accountsService.getContentStrings(accountStringNames);

@@ -14,6 +14,7 @@ import { ConfirmDepositPopoverModule } from '@sections/accounts/shared/ui-compon
 import { DepositModalComponent } from '@sections/accounts/shared/ui-components/deposit-modal';
 import { DepositModalModule } from '@sections/accounts/shared/ui-components/deposit-modal/deposit-modal.module';
 import { TransactionUnitsPipeModule } from '@shared/pipes';
+import { StButtonModule } from '@shared/ui-components/st-button/st-button.module';
 
 const imports = [
   CommonModule,
@@ -28,7 +29,8 @@ const imports = [
   }),
   DepositRoutingModule,
   ConfirmDepositPopoverModule,
-  DepositModalModule
+  DepositModalModule,
+  StButtonModule
 ];
 const declarations = [DepositPageComponent];
 const providers = [DepositResolver, DepositService];

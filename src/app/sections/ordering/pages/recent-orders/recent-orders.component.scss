@@ -37,19 +37,9 @@
     @include font-nunito-semibold(16px);
   }
 
-  &__no-orders-btn {
-    --border-radius: 25px;
-    --background: #166dff;
-
-    border-radius: 25px;
-    height: 50px;
-    width: 90vw;
-    position: fixed;
-    left: 5vw;
-    bottom: 5vh;
-    color: $color-white;
-    text-transform: uppercase;
-
-    @include font-nunito-heavy(14px);
+  &__no-orders-btn-wrapper {
+    width: 100%;
+    margin-top: 140px;
+    padding: 15px;
   }
 }

@@ -19,6 +19,7 @@ import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module
 import { StPopoverLayoutModule } from '@shared/ui-components/st-popover-layout/st-popover-layout.module';
 import { UnsavedChangesGuard } from '@sections/accounts/pages/automatic-deposit-page/deactivate-page/unsaved-changes.guard';
 import { ConfirmUnsavedChangesPopoverComponent } from '@sections/accounts/pages/automatic-deposit-page/components/confirm-usaved-changes-popover/confirm-unsaved-changes-popover.component';
+import { StButtonModule } from '@shared/ui-components/st-button';
 
 const declarations = [
   AutomaticDepositPageComponent,
@@ -37,6 +38,7 @@ const imports = [
   TransactionUnitsPipeModule,
   CreditCardTypeModule,
   AutomaticDepositRoutingModule,
+  StButtonModule,
   IonicModule.forRoot({
     scrollPadding: false,
     scrollAssist: true,

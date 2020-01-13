@@ -89,11 +89,7 @@
   </div>
 </ion-content>
 <ion-footer mode="ios" class="meals-donate__footer">
-  <ion-button
-    (click)="onSubmit()"
-    class="meals-donate__button"
-    [ngClass]="{ 'meals-donate__button--disabled': mealDonationsForm.invalid }"
-  >
+  <st-button (onClick)="onSubmit()" [isDisabled]="!mealDonationsForm.valid">
     Donate {{ selectAmount.value | transactionUnits: account.value.accountType }}
-  </ion-button>
+  </st-button>
 </ion-footer>

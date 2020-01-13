@@ -228,13 +228,11 @@
         <ng-container *ngIf="activeAutoDepositType === autoDepositTypes.lowBalance && lowBalanceAmount" [ngTemplateOutlet]="lowBalance"></ng-container>
 
     </form>
-    <ion-button
-            class="deposit-form__button"
-            [ngClass]="{
-      'deposit-form__button--fixed': !automaticDepositForm,
-      'deposit-form__button--disabled': automaticDepositForm && automaticDepositForm.invalid
-    }"
-            (click)="onSubmit()"
-    >save settings
-    </ion-button>
+    
 </ion-content>
+
+<ion-footer class="deposit-form__footer" mode="ios">
+    <st-button [isDisabled]="automaticDepositForm && automaticDepositForm.invalid" (onClick)="onSubmit()">
+        save settings
+    </st-button>
+</ion-footer>

@@ -46,18 +46,10 @@
     @include font-nunito-heavy(14px);
   }
 
-  &__btn {
-    --background: #166dff !important;
-    --color: #fff !important;
-
-    opacity: .9;
-    height: 48px;
-    margin: 0 5% 5%;
-
-    @include font-nunito-heavy(14px);
+  &__footer {
+    padding: 10px 10px 50px;
   }
 }
-
 
 .total {
   margin-top: 50px;

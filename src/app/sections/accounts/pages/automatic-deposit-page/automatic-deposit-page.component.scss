@@ -47,33 +47,10 @@
     @include font-nunito-regular(14px)
   }
 
-  &__button {
-    --ion-color-primary: #166dff;
-    --border-radius: 25px;
-    --box-shadow: none;
-    --background-activated: #cccccc;
-
-    font-weight: bold;
-    margin-top: 40px;
-    height: 45px;
-    width: 90vw;
-    text-transform: uppercase;
-    line-height: 18px;
-
-    @include font-nunito-regular(14px);
-
-    &--fixed {
-      position: fixed;
-      bottom: 20px;
-      left: 5vw;
-    }
-
-    &--disabled {
-      --ion-color-primary: #c4c4c4;
-      --background-hover: #c4c4c4;
-      --box-shadow: none;
-
-      color: $color-matterhorn;
-    }
+  &__footer {
+    display: flex;
+    justify-content: center;
+    padding: 10px 10px 50px;
+    background-color: $color-white;
   }
 }

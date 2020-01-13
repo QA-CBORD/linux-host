@@ -11,6 +11,7 @@ import { SingleListComponent } from './single-list';
 import { MultiListComponent } from './multi-list';
 import { ItemDetailResolver } from './resolvers/item-detail.resolver';
 import { PriceUnitsResolverModule } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.module';
+import { StButtonModule } from '@shared/ui-components/st-button/st-button.module';
 
 const declarations = [ItemDetailComponent, SingleListComponent, MultiListComponent, ];
 const imports = [
@@ -20,7 +21,8 @@ const imports = [
   StTextareaFloatingLabelModule,
   ItemDetailRoutingModule,
   StHeaderModule,
-  PriceUnitsResolverModule
+  PriceUnitsResolverModule,
+  StButtonModule
 ];
 
 @NgModule({

@@ -10,6 +10,7 @@ import { AddressEditPage } from './address-edit.page';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
 import { AddEditAddressesModule } from '@sections/ordering/shared/ui-components/add-edit-addresses/add-edit-addresses.modal.module';
 import { ConfirmPopoverModule } from '@sections/ordering/shared/ui-components/confirm-popover/confirm-popover.module';
+import { StButtonModule } from '@shared/ui-components/st-button/st-button.module';
 
 const routes: Routes = [
   {
@@ -27,7 +28,8 @@ const routes: Routes = [
     // AddressEditModule,
     StHeaderModule,
     AddEditAddressesModule,
-    ConfirmPopoverModule
+    ConfirmPopoverModule,
+    StButtonModule
   ],
   declarations: [AddressEditPage]
 })

@@ -10,6 +10,7 @@ import { StInputFloatingLabelModule } from '@shared/ui-components/st-input-float
 import { MealDonationsService } from '@sections/accounts/services/meal-donations.service';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TransactionUnitsPipeModule } from '@shared/pipes';
+import { StButtonModule } from '@shared/ui-components/st-button/st-button.module';
 
 @NgModule({
   imports: [
@@ -20,7 +21,8 @@ import { TransactionUnitsPipeModule } from '@shared/pipes';
     StSelectFloatingLabelModule,
     StInputFloatingLabelModule,
     ReactiveFormsModule,
-    TransactionUnitsPipeModule
+    TransactionUnitsPipeModule,
+    StButtonModule
   ],
   providers: [MealDonationsResolver, MealDonationsService],
   declarations: [MealDonationsComponent],

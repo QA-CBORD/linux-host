@@ -17,7 +17,6 @@
 }
 
 .user-data {
-
   &__location-star {
     display: inline-block;
     width: 30px;
@@ -37,17 +36,12 @@
     position: relative;
     text-align: center;
     color: $color-white;
-    
+
     @include ellipsis;
     @include font-nunito-heavy(18px);
   }
 
-  &__activate-btn {
-    max-width: 330px;
-    width: 80%;
-    margin: 10px auto;
-    text-transform: uppercase;
-
-    @include font-nunito-heavy(14px);
+  &__activate-btn-wrapper {
+    margin-top: 20px;
   }
 }

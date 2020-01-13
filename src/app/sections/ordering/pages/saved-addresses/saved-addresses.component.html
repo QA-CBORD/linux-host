@@ -28,26 +28,12 @@
       ></st-add-edit-addresses>
 
       <div class="saved-addresses__add-address-btn-container">
-        <ion-button
-          fill="clear"
-          mode="md"
-          expand="full"
-          shape="round"
-          class="saved-addresses__add-address-btn"
-          (click)="addNewAdddressState = !addNewAdddressState"
-        >
+        <st-button [fill]="'clear'" (onClick)="addNewAdddressState = !addNewAdddressState">
           cancel
-        </ion-button>
-        <ion-button
-          mode="md"
-          expand="full"
-          shape="round"
-          class="saved-addresses__add-address-btn"
-          [ngClass]="{ 'saved-addresses__add-address-btn--valid': addNewAddressForm && addNewAddressForm.valid }"
-          (click)="addAddress()"
-        >
+        </st-button>
+        <st-button (onClick)="addAddress()" [isDisabled]="addNewAddressForm && !addNewAddressForm.valid">
           save
-        </ion-button>
+        </st-button>
       </div>
     </ng-container>
   </div>

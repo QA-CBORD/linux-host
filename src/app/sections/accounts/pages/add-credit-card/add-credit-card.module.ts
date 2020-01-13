@@ -10,6 +10,7 @@ import { SuccessPopoverComponent } from './components/success-popover/success-po
 import { StPopoverLayoutModule } from '@shared/ui-components/st-popover-layout/st-popover-layout.module';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
 import { StInputFloatingLabelModule } from '@shared/ui-components/st-input-floating-label/st-input-floating-label.module';
+import { StButtonModule } from '@shared/ui-components/st-button';
 
 const imports = [
   CommonModule,
@@ -21,6 +22,7 @@ const imports = [
   scrollPadding: false,
   scrollAssist: true,
 }), AddCreditCardRoutingModule,
+  StButtonModule
   ];
 const declarations = [AddCreditCardComponent, SuccessPopoverComponent];
 const providers = [AddCreditCardService];

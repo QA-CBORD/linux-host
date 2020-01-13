@@ -69,12 +69,6 @@
     </ion-list>
   </div>
 </ion-content>
-<ion-footer mode="ios">
-  <ion-button mode="md"
-              expand="block"
-              class="order-options__button"
-              shape="round"
-              (click)="onSubmit()">
-    {{footerButtonName}}
-  </ion-button>
+<ion-footer mode="ios" class="order-options__footer">
+  <st-button (onClick)="onSubmit()">{{footerButtonName}}</st-button>
 </ion-footer>

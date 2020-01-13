@@ -131,7 +131,7 @@
     min-height: 128px;
     background: linear-gradient(to bottom,#00000000, $color-white, $color-white);
       
-    &__counter-btns {
+    &__counter-btns-container {
         display: inline-flex;
         height: 48px;
         min-width: 134px;
@@ -143,21 +143,8 @@
         align-items: center;
     }
 
-    &__add-btn {
-        --background: #166dff;
-        --border-radius: 24px;
-        --color: #fff;
-        height: 48px;
+    &__add-btn-wrapper {
         min-width: 184px;
-        text-align: center;
-
-        @include font-nunito-heavy(14px);
-
-        &--disabled {
-            --background: #e1e1e1;
-            --background-hover: #e1e1e1;
-            --color: #8e8e8e;
-        }
     }
 
     &__counter-btn {
@@ -165,6 +152,8 @@
         --background: #fff;
         --color: #3c3c3c;
         --box-shadow: none;
+        --background-activated: #fff;
+
         height: 48px;
         width: 48px;
     }

@@ -19,6 +19,7 @@ import { StCountdownModule } from '@shared/ui-components/st-countdown/st-countdo
 import { StPopoverLayoutModule } from '@shared/ui-components/st-popover-layout/st-popover-layout.module';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
 import { StSpinnerModule } from '@shared/ui-components/st-spinner/st-spinner.module';
+import { StButtonModule } from '@shared/ui-components/st-button';
 
 const imports = [
   CommonModule,
@@ -32,7 +33,8 @@ const imports = [
   StPopoverLayoutModule,
   StHeaderModule,
   StSpinnerModule,
-  StActivateLocationItemModule
+  StActivateLocationItemModule,
+  StButtonModule
 ];
 
 const declarations = [

@@ -30,8 +30,10 @@
       </span>
     </div>
   </section>
-  <ion-button expand="block" fill="clear" class="deposit-modal__button" (click)="onClickedDone()">DONE</ion-button>
 </ion-content>
+<ion-footer class="deposit-modal__footer" mode="ios">
+  <st-button (onClick)="onClickedDone()" [buttonModifier]="'border-only'">DONE</st-button>
+</ion-footer>
 
 <ng-template #billme>
   <span class="cdp__value">Bill me</span>

@@ -73,24 +73,9 @@
 
   &__disclaimer {
     color: #00000099;
+    margin-bottom: 20px;
 
     @include font-nunito-regular(12px);
-  }
-
-  &__submit-btn {
-    --background: #166dff;
-
-    text-transform: uppercase;
-    height: 50px;
-    margin: 20px 0 10px;
-
-    &.button-disabled {
-      --background: #e1e1e1;
-
-      color: #8e8e8e;
-
-      @include font-nunito-heavy(14px);
-    }
   }
 
   &__input-error {
