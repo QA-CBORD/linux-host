@@ -172,7 +172,7 @@ export enum CONTENT_STRINGS {
   addFundsBtn = 'button_add-funds',
   autoDepositBtn = 'button_auto-deposit',
   requestFundsBtn = 'button_request-funds',
-  mealDonations = 'deposit_tenders', // temp
+  // mealDonationsBtn = 'button_meal-donations', 
   headerTitle = 'header_title',
   headerBackBtn = 'header_button_back',
   allAccountsLabel = 'label_all-accounts',
