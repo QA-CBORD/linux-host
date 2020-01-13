@@ -17,12 +17,15 @@ import { StInputFloatingLabelModule } from '@shared/ui-components/st-input-float
 import { StSelectFloatingLabelModule } from '@shared/ui-components/st-select-floating-label/st-select-floating-label.module';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
 import { StPopoverLayoutModule } from '@shared/ui-components/st-popover-layout/st-popover-layout.module';
+import { UnsavedChangesGuard } from '@sections/accounts/pages/automatic-deposit-page/deactivate-page/unsaved-changes.guard';
+import { ConfirmUnsavedChangesPopoverComponent } from '@sections/accounts/pages/automatic-deposit-page/components/confirm-usaved-changes-popover/confirm-unsaved-changes-popover.component';
 
 const declarations = [
   AutomaticDepositPageComponent,
   DepositTypeNavComponent,
   DepositFrequencyComponent,
   PopoverComponent,
+  ConfirmUnsavedChangesPopoverComponent
 ];
 const imports = [
   CommonModule,
@@ -39,8 +42,8 @@ const imports = [
     scrollAssist: true,
   }),
 ];
-const entryComponents = [PopoverComponent];
-const providers = [AutoDepositService, AutoDepositApiService, AutomaticDepositResolver];
+const entryComponents = [PopoverComponent, ConfirmUnsavedChangesPopoverComponent];
+const providers = [AutoDepositService, AutoDepositApiService, AutomaticDepositResolver, UnsavedChangesGuard];
 
 @NgModule({
   imports: [

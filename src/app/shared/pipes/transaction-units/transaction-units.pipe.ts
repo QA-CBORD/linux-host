@@ -37,7 +37,6 @@ export class TransactionUnitsPipe implements PipeTransform {
     return finalFirst + withDecimal.slice(firstPartIndex);
   }
   private getContentStringValueByName(name: string): string {
-
     return this.accountsService.getContentValueByName(name);
   }
 }

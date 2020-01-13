@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
-import { Observable, of, zip } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of, zip } from 'rxjs';
+import { map, switchMap, tap } from 'rxjs/operators';
 
 import { UserAutoDepositSettingInfo } from '../models/auto-deposit-settings';
 import { AutoDepositApiService } from './auto-deposit-api-service.service';
@@ -12,16 +12,29 @@ import { parseArrayFromString } from '@core/utils/general-helpers';
 
 @Injectable()
 export class AutoDepositService {
+  private readonly settings: BehaviorSubject<UserAutoDepositSettingInfo> = new BehaviorSubject<UserAutoDepositSettingInfo>(null);
+
   constructor(
     private readonly apiService: AutoDepositApiService,
     private readonly settingsService: SettingService,
     private readonly userService: UserService
   ) {}
 
+  set _settings(val: UserAutoDepositSettingInfo) {
+    this.settings.next(val);
+  }
+
+  get settings$(): Observable<UserAutoDepositSettingInfo> {
+    return this.settings.asObservable();
+  }
+
   getUserAutoDepositInfo(): Observable<UserAutoDepositSettingInfo> {
     return this.apiService
       .getUserAutoDepositSettingInfo()
-      .pipe(switchMap(response => (response ? of(response) : this.getInitialAutoDepositSetting())));
+      .pipe(
+        switchMap(response => (response ? of(response) : this.getInitialAutoDepositSetting())),
+        tap((settings) => this._settings = settings)
+        );
   }
 
   getAutoDepositAccountList(): Observable<any> {
@@ -39,7 +52,9 @@ export class AutoDepositService {
   }
 
   updateAutoDepositSettings(settings: UserAutoDepositSettingInfo): Observable<boolean> {
-    return this.apiService.updateAutoDepositSettings(settings);
+    return this.apiService.updateAutoDepositSettings(settings).pipe(
+      tap((response) => response && (this._settings = settings))
+    );
   }
 
   private getInitialAutoDepositSetting(): Observable<UserAutoDepositSettingInfo> {

@@ -1,0 +1,25 @@
+import { Component, Input, OnInit } from '@angular/core';
+import { PopoverConfig } from '@core/model/popover/popover.model';
+import { PopupTypes } from '@sections/rewards/rewards.config';
+import { buttons } from '@core/utils/buttons.config';
+
+@Component({
+  selector: 'st-confirm-unsaved-changes-popover',
+  templateUrl: './confirm-unsaved-changes-popover.component.html',
+  styleUrls: ['./confirm-unsaved-changes-popover.component.scss'],
+})
+export class ConfirmUnsavedChangesPopoverComponent implements OnInit {
+  config: PopoverConfig;
+
+  constructor() {}
+
+  ngOnInit() {
+    this.config = {
+      type: PopupTypes.CANCEL,
+      title: 'unsaved changes',
+      buttons: [{ ...buttons.CANCEL, label: 'no' }, { ...buttons.OKAY, label: 'save' },],
+      message: 'Your changes wont be saved, would you like to save it before leave?',
+      code: '',
+    };
+  }
+}

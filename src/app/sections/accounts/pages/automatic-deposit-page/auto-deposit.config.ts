@@ -14,6 +14,7 @@ export enum AUTO_DEPOST_SUCCESS_MESSAGE_TITLE {
   lowBalance = 'Low Balance Deposit Enabled!',
   weekly = 'Weekly Deposit Enabled!',
   monthly = 'Monthly Deposit Enabled!',
+  off = 'Automatic Deposit Disabled'
 }
 
 export const getLowBalanceSuccessBodyMessage = (amount: string, lowAmount: string, accName: string) => {
