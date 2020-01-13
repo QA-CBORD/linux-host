@@ -1,10 +1,74 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable, zip } from 'rxjs';
+import { UserAccount } from '@core/model/account/account.model';
+import { SettingInfo } from '@core/model/configuration/setting-info.model';
+import { CommerceApiService } from '@core/service/commerce/commerce-api.service';
+import { tap, map, switchMap } from 'rxjs/operators';
+import { ContentStringRequest } from '@core/model/content/content-string-request.model';
+import { AccountsApiService } from './accounts.api.service';
+import { SYSTEM_SETTINGS_CONFIG } from '../accounts.config';
 
 @Injectable()
 export class MealDonationsService {
 
-  // TODO: Implement service when back-end will done
+  private readonly _tenders$: BehaviorSubject<UserAccount[]> = new BehaviorSubject<UserAccount[]>([]);
+  public readonly _settings$: BehaviorSubject<SettingInfo[]> = new BehaviorSubject<SettingInfo[]>([]);
 
-  constructor() { }
+  constructor( 
+    private readonly commerceApiService: CommerceApiService,
+    private readonly accountsApiService: AccountsApiService,
+    ) { }
 
+  get tenders$(): Observable<UserAccount[]> {
+    return this._tenders$.asObservable();
+  }
+
+  private set _tenders(value: UserAccount[]) {
+    this._tenders$.next([...value]);
+  }
+
+  get settings$(): Observable<SettingInfo[]> {
+    return this._settings$.asObservable();
+  }
+
+  private set _settings(value: SettingInfo[]) {
+    this._settings$.next([...value]);
+  }
+
+  getUserAccounts(): Observable<UserAccount[]> {
+    return this.commerceApiService.getUserAccounts().pipe(tap(accounts => (this._tenders = accounts)));
+  }
+
+  getSettingByName(settings: SettingInfo[], name: string): SettingInfo | undefined {
+    return settings.find(({ name: n }) => n === name);
+  }
+
+  getUserSettings(settings: ContentStringRequest[]): Observable<SettingInfo[]> {
+    const requestArray = settings.map(setting => this.accountsApiService.getSettingByConfig(setting));
+
+    return zip(...requestArray).pipe(tap(settings => (this._settings = settings)));
+  }
+
+  getAccountsFilteredByMealDonationsTenders(): Observable<UserAccount[]> {
+    return this.settings$.pipe(
+        map(settings => {
+          const settingInfo = this.getSettingByName(settings, SYSTEM_SETTINGS_CONFIG.mealDonationsTenders.name);
+          return this.transformStringToArray(settingInfo.value);
+        }),
+        switchMap((tendersId: Array<string>) =>
+            this.tenders$.pipe(map(accounts => this.filterAccountsByTenders(tendersId, accounts)))
+        )
+    );
+  }
+
+  transformStringToArray(value: string): Array<unknown> {
+    if (!value.length) return [];
+    const result = JSON.parse(value);
+
+    return Array.isArray(result) ? result : [];
+  }
+
+  private filterAccountsByTenders(tendersId: Array<string>, accounts: Array<UserAccount>): Array<UserAccount> {
+    return accounts.filter(({ accountTender: tId }) => tendersId.includes(tId));
+  }
 }

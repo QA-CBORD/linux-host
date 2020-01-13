@@ -46,7 +46,7 @@
         <div class="meals-donate__amount">
           <st-select-floating-label
             (focus)="onFocus()"
-            [label]="'Meals to Donate'"
+            [label]="(account.value.accountType === 1 ? 'Meals': 'Amount') + ' to Donate'"
             [formControlName]="controlsNames.selectAmount"
             [control]="selectAmount"
             [interfaceOptions]="customActionSheetOptions"
@@ -90,6 +90,6 @@
 </ion-content>
 <ion-footer mode="ios" class="meals-donate__footer">
   <st-button (onClick)="onSubmit()" [isDisabled]="!mealDonationsForm.valid">
-    Donate {{ selectAmount.value | transactionUnits: account.value.accountType }}
+    Donate {{ selectAmount.value || inputAmount.value | transactionUnits: account.value.accountType }}
   </st-button>
 </ion-footer>

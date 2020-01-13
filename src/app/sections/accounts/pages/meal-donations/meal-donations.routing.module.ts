@@ -1,16 +1,14 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { MealDonationsComponent } from './meal-donations.component';
-import { MealDonationsResolver } from '../../resolvers/meal-donations.resolver';
+import { MealDonationsResolver } from './resolver/meal-donations.resolver';
 
 const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
     component: MealDonationsComponent,
-    // resolve: {
-    //   data: MealDonationsResolver,
-    // },
+    resolve: { data: MealDonationsResolver },
   },
 ];
 

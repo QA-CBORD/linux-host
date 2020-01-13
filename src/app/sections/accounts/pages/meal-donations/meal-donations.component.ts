@@ -11,20 +11,21 @@ import { AccountsService } from '@sections/accounts/services/accounts.service';
 import { ActivatedRoute } from '@angular/router';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { PopoverController, ToastController } from '@ionic/angular';
+import { SYSTEM_SETTINGS_CONFIG } from '@sections/accounts/accounts.config';
 
 @Component({
   selector: 'st-meal-donations',
   templateUrl: './meal-donations.component.html',
   styleUrls: ['./meal-donations.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MealDonationsComponent implements OnInit {
   tenders$: Observable<UserAccount[]>;
   activeAccount$: Observable<UserAccount>;
+  isFreeFormEnabled$: Observable<boolean>;
   amountsForSelect$: Observable<any> = of([1, 2, 3]);
-  isFreeFormEnabled$: Observable<boolean> = of(false);
   mealDonationsForm: FormGroup;
-  mealDonationsSettings: SettingInfo[];
+  // mealDonationsSettings: SettingInfo[];
   mealEquivalent: Observable<number> = of(6);
   minAmount: number = 1;
   maxAmount: number;
@@ -44,10 +45,9 @@ export class MealDonationsComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.tenders$ = this.accountService
-      .getAccountsFilteredByDepositTenders()
-      .pipe(map((accounts: UserAccount[]) => accounts.filter(account => account.depositAccepted)));
-
+    this.tenders$ = this.mealDonatService.getAccountsFilteredByMealDonationsTenders();
+    
+    this.isFreeFormEnabled();
     this.initForm();
     this.changesHandler();
   }
@@ -66,6 +66,21 @@ export class MealDonationsComponent implements OnInit {
 
   get controlsNames() {
     return REQUEST_MEALS_CONTROL_NAMES;
+  }
+
+  isFreeFormEnabled() {
+    this.isFreeFormEnabled$ = this.mealDonatService.settings$.pipe(
+      take(1),
+      map(settings => {
+        console.log(settings)
+        const settingInfo = this.mealDonatService.getSettingByName(
+          settings,
+          SYSTEM_SETTINGS_CONFIG.mealDonationsAllowFreeform.name,
+        );
+
+        return settingInfo && Boolean(Number(settingInfo.value));
+      }),
+    );
   }
 
   onFocus() {

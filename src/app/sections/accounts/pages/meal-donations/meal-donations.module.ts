@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MealDonationsComponent } from './meal-donations.component';
 import { MealDonationsRoutingModule } from './meal-donations.routing.module';
-import { MealDonationsResolver } from '../../resolvers/meal-donations.resolver';
+import { MealDonationsResolver } from './resolver/meal-donations.resolver';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
 import { IonicModule } from '@ionic/angular';
 import { StSelectFloatingLabelModule } from '@shared/ui-components/st-select-floating-label/st-select-floating-label.module';
