@@ -7,7 +7,7 @@
 ></st-header>
 
 <ion-content class="cc__content">
-  <form [formGroup]="ccForm" (ngSubmit)="onFormSubmit()">
+  <form [formGroup]="ccForm">
     <div class="cc__input-wrapper cc__card-number-container">
       <img
         class="cc__card-visa"
@@ -184,8 +184,8 @@
       By saving this card, you consent for this card to be stored and used for purchases. You may remove this card at
       any time within Settings.
     </div>
-    <ion-button expand="block" type="submit" class="cc__submit-btn" shape="round" [disabled]="!ccForm.valid">
+    <st-button [isDisabled]="!ccForm.valid" (onClick)="onFormSubmit()">
       save card
-    </ion-button>
+    </st-button>
   </form>
 </ion-content>

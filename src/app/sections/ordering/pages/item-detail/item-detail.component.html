@@ -110,12 +110,9 @@
     </ion-list>
   </form>
 </ion-content>
-<ion-footer class="item-footer"
-            mode="ios">
-  <div class="item-footer__counter-btns">
-    <ion-button [disabled]="order.counter == 1"
-                class="item-footer__counter-btn"
-                (click)="removeItems()">
+<ion-footer class="item-footer" mode="ios">
+  <div class="item-footer__counter-btns-container">
+    <ion-button [disabled]="order.counter == 1" class="item-footer__counter-btn" (click)="removeItems()">
       <ion-icon name="remove"></ion-icon>
     </ion-button>
     <div>{{ order.counter }}</div>
@@ -124,13 +121,9 @@
       <ion-icon name="add"></ion-icon>
     </ion-button>
   </div>
-  <div>
-    <ion-button mode="md"
-                type="submit"
-                (click)="onFormSubmit()"
-                class="item-footer__add-btn"
-                [ngClass]="{ 'item-footer__add-btn--disabled': itemOrderForm.invalid }">
-      Add {{ order.totalPrice | priceUnitsResolver: (menuInfo$ | async).mealBased }}
-    </ion-button>
+  <div class="item-footer__add-btn-wrapper">
+    <st-button (onClick)="onFormSubmit()" [isDisabled]="!itemOrderForm.valid">
+        Add {{ order.totalPrice | priceUnitsResolver: (menuInfo$ | async).mealBased }}
+    </st-button>
   </div>
 </ion-footer>

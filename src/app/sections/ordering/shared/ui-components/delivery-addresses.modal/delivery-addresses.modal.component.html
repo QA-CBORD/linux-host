@@ -34,26 +34,18 @@
       ></st-add-edit-addresses>
 
       <div class="delivery-address__add-address-btn-container">
-        <ion-button
-          fill="clear"
-          mode="md"
-          expand="full"
-          shape="round"
-          class="delivery-address__add-address-btn"
-          (click)="resetForm()"
+        <st-button
+          [fill]="'clear'"
+          (onClick)="resetForm()"
         >
           cancel
-        </ion-button>
-        <ion-button
-          mode="md"
-          expand="full"
-          shape="round"
-          class="delivery-address__add-address-btn"
-          [ngClass]="{ 'delivery-address__add-address-btn--valid': addNewAdddressForm && addNewAdddressForm.valid }"
-          (click)="addAddress()"
+        </st-button>
+        <st-button
+          [isDisabled]="addNewAdddressForm && !addNewAdddressForm.valid"
+          (onClick)="addAddress()"
         >
           save
-        </ion-button>
+        </st-button>
       </div>
     </ng-container>
   </div>
@@ -91,19 +83,15 @@
 
   <ng-container [ngTemplateOutlet]="footerButton" *ngIf="addNewAdddressState"></ng-container>
 </ion-content>
-<ion-footer mode="ios" *ngIf="!addNewAdddressState">
+<ion-footer mode="ios" *ngIf="!addNewAdddressState" class="delivery-address__footer">
   <ng-container [ngTemplateOutlet]="footerButton"></ng-container>
 </ion-footer>
 
 <ng-template #footerButton>
-  <ion-button
-    mode="md"
-    expand="block"
-    shape="round"
-    class="delivery-address__submit-btn"
-    [ngClass]="{ 'delivery-address__submit-btn--disabled': !selectedAddress }"
-    (click)="selectedAddress && onClickedDone(selectedAddress)"
+  <st-button
+    [isDisabled]="!selectedAddress"
+    (onClick)="selectedAddress && onClickedDone(selectedAddress)"
   >
     set delivery address
-  </ion-button>
+  </st-button>
 </ng-template>

@@ -27,9 +27,9 @@
             (onOrderItemClicked)="onOrderItemClicked($event)"
             (onOrderPaymentInfoChanged)="onOrderPaymentInfoChanged($event)"
     >
-        <ion-button (click)="onSubmit()" class="btn" [ngClass]="{'btn--invalid': !cartFormState?.valid}">
+        <st-button (onClick)="onSubmit()" [isDisabled]="!cartFormState?.valid">
             {{(isOrderASAP | async) ? 'Place order' : 'Schedule Order'}}
             {{(order$ | async).total | priceUnitsResolver: (order$ | async).mealBased}}
-        </ion-button>
+        </st-button>
     </st-order-details>
 </ion-content>

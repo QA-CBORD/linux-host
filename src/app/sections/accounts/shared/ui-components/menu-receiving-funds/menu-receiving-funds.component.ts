@@ -29,6 +29,8 @@ export class MenuReceivingFundsComponent implements OnInit {
     this.menuItems$ = this.accountsService.settings$.pipe(map(settings => this.handleListItems(settings)));
   }
 
+  //TODO: Add correct Desktop Settings for menu icons
+  
   get hasShowedItem$(): Observable<boolean> {
     return this.menuItems$.pipe(map(items => items.some((item) => item && item.isShow)));
   }
@@ -75,7 +77,7 @@ export class MenuReceivingFundsComponent implements OnInit {
       CONTENT_STRINGS.addFundsBtn,
       // CONTENT_STRINGS.mealDonationsBtn,
     ];
-     
+
     this.contentString = this.accountsService.getContentStrings(accountStringNames);
   }
 }

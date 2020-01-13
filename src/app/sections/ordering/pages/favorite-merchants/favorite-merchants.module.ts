@@ -7,8 +7,9 @@ import { FavoriteMerchantsResolver } from './resolvers/favorite-merchants.resolv
 import { FavoriteMerchantsService } from './services/favorite-merchants.service';
 import { MerchantListModule } from '@sections/ordering/components/merchant-list/merchant-list.module';
 import { FavoriteMerchantsComponent } from '@sections/ordering/pages';
+import { StButtonModule } from '@shared/ui-components/st-button/st-button.module';
 
-const imports = [CommonModule, IonicModule, FavoriteMerchantsRoutingModule, StHeaderModule, MerchantListModule];
+const imports = [CommonModule, IonicModule, FavoriteMerchantsRoutingModule, StHeaderModule, MerchantListModule, StButtonModule];
 const declarations = [FavoriteMerchantsComponent];
 const providers = [FavoriteMerchantsResolver, FavoriteMerchantsService];
 

@@ -1,0 +1,51 @@
+@import 'tools';
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+.st-button {
+  --ion-color-primary: #166dff;
+  --border-radius: 25px;
+  --background-activated: rgba(0, 0, 0, 0.14);
+
+  height: 50px;
+
+  @include font-nunito-heavy(15px);
+
+  &--disabled {
+    --ion-color-primary: #e1e1e1;
+    --background-hover: #e1e1e1;
+    --box-shadow: none;
+    --background-activated: #c4c4c4;
+
+    color: $color-matterhorn;
+  }
+
+  &--border-only {
+    --ion-color-primary: #fff;
+    --box-shadow: none;
+
+    border: 2px solid $color-dodger-blue;
+    color: $color-dodger-blue;
+    border-radius: 25px;
+  }
+
+  &--border-less {
+    --ion-color-primary: #fff;
+    --background-activated: #c4c4c4;
+    --border-radius: 8px;
+
+    border-radius: 8px; //we need this second border-radius
+    color: $color-black;
+  }
+
+  &--black {
+    color: $color-black;
+  }
+
+  &--danger {
+    --background: #e22942;
+  }
+}

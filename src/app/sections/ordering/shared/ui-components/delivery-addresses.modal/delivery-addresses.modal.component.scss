@@ -48,29 +48,6 @@
     right: 0;
   }
 
-  &__add-address-btn {
-    min-width: 170px;
-    height: 48px;
-
-    &:first-child {
-      --color: #166dff;
-      --background-hover: #e1e1e1;
-    }
-
-    &:last-child {
-      --background: #e1e1e1;
-      --background-hover: #e1e1e1;
-      --color: #8e8e8e;
-    }
-
-    @include font-nunito-heavy(14px);
-
-    &--valid {
-      --background: #166dff !important;
-      --color: #fff !important;
-    }
-  }
-
   &__back-btn {
     --color: #000 !important;
     font-size: 20px;
@@ -106,20 +83,7 @@
     color: #c4c4c4;
   }
 
-  &__submit-btn {
-    --background: #166dff;
-    margin: 20px 15px;
-    height: 48px;
-
-    @include font-nunito-heavy(14px);
-
-    &--disabled {
-      --ion-color-primary: #c4c4c4;
-      --background-hover: #c4c4c4;
-      --background: #e1e1e1;
-      --box-shadow: none;
-
-      color: $color-matterhorn;
-    }
+  &__footer {
+    padding: 20px 15px;
   }
 }

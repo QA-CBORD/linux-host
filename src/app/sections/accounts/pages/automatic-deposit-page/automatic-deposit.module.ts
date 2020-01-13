@@ -17,6 +17,7 @@ import { StInputFloatingLabelModule } from '@shared/ui-components/st-input-float
 import { StSelectFloatingLabelModule } from '@shared/ui-components/st-select-floating-label/st-select-floating-label.module';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
 import { StPopoverLayoutModule } from '@shared/ui-components/st-popover-layout/st-popover-layout.module';
+import { StButtonModule } from '@shared/ui-components/st-button';
 
 const declarations = [
   AutomaticDepositPageComponent,
@@ -34,6 +35,7 @@ const imports = [
   TransactionUnitsPipeModule,
   CreditCardTypeModule,
   AutomaticDepositRoutingModule,
+  StButtonModule,
   IonicModule.forRoot({
     scrollPadding: false,
     scrollAssist: true,

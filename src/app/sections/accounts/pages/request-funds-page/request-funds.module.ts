@@ -12,6 +12,7 @@ import { StInputFloatingLabelModule } from '@shared/ui-components/st-input-float
 import { StSelectFloatingLabelModule } from '@shared/ui-components/st-select-floating-label/st-select-floating-label.module';
 import { StPopoverLayoutModule } from '@shared/ui-components/st-popover-layout/st-popover-layout.module';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
+import { StButtonModule } from '@shared/ui-components/st-button';
 
 const declarations = [RequestFundsPageComponent, PopoverComponent];
 const imports = [
@@ -28,7 +29,8 @@ const imports = [
     scrollAssist: true,
   }),
   ReactiveFormsModule,
-  TransactionUnitsPipeModule
+  TransactionUnitsPipeModule,
+  StButtonModule
 ];
 const entryComponents = [PopoverComponent];
 @NgModule({

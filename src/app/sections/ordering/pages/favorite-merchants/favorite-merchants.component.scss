@@ -21,12 +21,8 @@
 		@include font-nunito-semibold(16px);
 	}
 
-	&__empty-state-btn {
-		--background: #166dff;
-		  --background-hover: #166dff;
-		  margin: 0 20px 20px;
-		  height: 48px;
-
-		  @include font-nunito-heavy(14px);
+	&__empty-state-footer {
+		padding: 10px 10px 50px;
+		background: $color-white;
 	}
 }

@@ -29,11 +29,13 @@
 </ng-template>
 
 <ng-template #empty>
-  <main class="recent-orders__no-orders-block">
-    <img class="recent-orders__no-orders-image" src="/assets/images/recent_orders.svg" alt="" />
-    <p class="recent-orders__no-orders-message">You recently placed orders will appear here.</p>
-    <ion-button class="recent-orders__no-orders-btn" (click)="back()">start an order</ion-button>
-  </main>
+ <main class="recent-orders__no-orders-block">
+  <img class="recent-orders__no-orders-image" src="/assets/images/recent_orders.svg" alt="">
+  <p class="recent-orders__no-orders-message">You recently placed orders will appear here.</p>
+  <div class="recent-orders__no-orders-btn-wrapper" >
+    <st-button (onClick)="back()">start an order</st-button>
+  </div>
+ </main>
 </ng-template>
 
 <ng-template #completed>

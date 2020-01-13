@@ -17,10 +17,12 @@
       <span [ngClass]="starClass | async" aria-label="star" role="img" (click)="favouriteHandler()"></span>
       {{ (location$ | async)?.locationId }} - {{ (location$ | async)?.name }}
     </p>
-    <div class="user-data__activate-btn">
-      <ion-button shape="round" size="large" color="light" expand="full" (click)="activateLocation()"
-        >{{ contentString.activate }}
-      </ion-button>
+    <div class="user-data__activate-btn-wrapper">
+      <st-button 
+        (onClick)="activateLocation()"
+        [buttonModifier]="'border-less'">
+        {{ contentString.activate }}
+      </st-button>
     </div>
   </st-activate-location-item>
 </ion-content>

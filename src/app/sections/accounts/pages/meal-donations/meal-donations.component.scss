@@ -27,42 +27,8 @@
   &__footer {
     display: flex;
     justify-content: center;
-  }
-
-  &__button {
-    --ion-color-primary: #166dff;
-    --border-radius: 25px;
-    --box-shadow: 0 4px 0 #1651b3;
-
-    margin: 20px 0 50px;
-    padding: 0 20px;
-    width: 100%;
-    height: 45px;
-    text-transform: uppercase;
-    line-height: 18px;
-
-    @include font-nunito-heavy(14px);
-
-    &--disabled {
-      --ion-color-primary: #c4c4c4;
-      --background-hover: #c4c4c4;
-      --box-shadow: none;
-
-      color: $color-matterhorn;
-    }
-
-    &--blue {
-      --box-shadow: none;
-      --ion-color-primary: $color-white;
-      --color-activated: #166dff;
-
-      position: absolute;
-      bottom: 10px;
-      left: 5vw;
-      color: #166dff;
-      border-radius: 25px;
-      border: 1px solid $color-dodger-blue;
-    }
+    padding: 10px 10px 50px;
+    background-color: $color-white;
   }
 
   &__control-error-msg {
