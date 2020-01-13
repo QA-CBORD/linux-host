@@ -216,21 +216,16 @@ export class CartComponent implements OnInit {
     );
   }
 
-  private filterCashlessAccounts(sourceAccounts: UserAccount[], displayTenders: string[]): UserAccount[] {
-    return sourceAccounts.filter(({ paymentSystemType, accountTender }) =>
-      (paymentSystemType === PAYMENT_SYSTEM_TYPE.OPCS || paymentSystemType === PAYMENT_SYSTEM_TYPE.CSGOLD)
-      && displayTenders.includes(accountTender),
+  private filterCashlessAccounts(sourceAccounts: UserAccount[]): UserAccount[] {
+    return sourceAccounts.filter(({ paymentSystemType, id }) =>
+      id === 'rollup' || (paymentSystemType === PAYMENT_SYSTEM_TYPE.OPCS || paymentSystemType === PAYMENT_SYSTEM_TYPE.CSGOLD)
     );
   }
 
   private filterCreditAccounts(sourceAccounts: UserAccount[]): UserAccount[] {
-    return sourceAccounts.filter(({ paymentSystemType, id }) =>
+    return sourceAccounts.filter(({ paymentSystemType }) =>
       paymentSystemType === PAYMENT_SYSTEM_TYPE.MONETRA || paymentSystemType === PAYMENT_SYSTEM_TYPE.USAEPAY,
     );
-  }
-
-  private filterRollupAccounts(sourceAccounts: UserAccount[]): UserAccount[] {
-    return sourceAccounts.filter(acc => acc.id === 'rollup');
   }
 
   private filterMealBasedAccounts(sourceAccounts: UserAccount[]): UserAccount[] {
@@ -243,7 +238,22 @@ export class CartComponent implements OnInit {
 
     return mealBased
       ? this.filterMealBasedAccounts(accInfo.accounts)
-      : this.extractNoneMealsAccounts(accInfo, settings);
+      : this.extractNoneMealsAccounts(accInfo);
+  }
+
+  private extractNoneMealsAccounts({ cashlessAccepted, accounts, creditAccepted }): UserAccount[] {
+    accounts = this.filterNoneMealsAccounts(accounts);
+
+    if (cashlessAccepted) {
+      return this.filterCashlessAccounts(accounts);
+    }
+    if (creditAccepted) {
+      return this.filterCreditAccounts(accounts);
+    }
+  }
+
+  private filterNoneMealsAccounts(sourceAccounts): UserAccount[] {
+    return sourceAccounts.filter(({ accountType }: UserAccount) => accountType !== ACCOUNT_TYPES.meals);
   }
 
   private async validateOrder(onError): Promise<void> {
@@ -263,28 +273,5 @@ export class CartComponent implements OnInit {
       position: 'top',
     });
     await toast.present();
-  }
-
-  private extractNoneMealsAccounts({ cashlessAccepted, rollOver, accounts, creditAccepted }, settings): UserAccount[] {
-    accounts = this.filterNoneMealsAccounts(accounts);
-    let accs = [];
-    const displayTenderSetting = this.settingService.getSettingByName(settings, SYSTEM_SETTINGS_CONFIG.displayTenders.name);
-    const displayTenders = displayTenderSetting ? parseArrayFromString<string>(displayTenderSetting.value) : [];
-
-    if (cashlessAccepted && !rollOver) {
-      accs = [...accs, ...this.filterCashlessAccounts(accounts, displayTenders)];
-    }
-    if (creditAccepted) {
-      accs = [...accs, ...this.filterCreditAccounts(accounts)];
-    }
-    if (rollOver) {
-      accs = [...accs, ...this.filterRollupAccounts(accounts)];
-    }
-
-    return accs;
-  }
-
-  private filterNoneMealsAccounts(sourceAccounts): UserAccount[] {
-    return sourceAccounts.filter(({ accountType }: UserAccount) => accountType !== ACCOUNT_TYPES.meals);
   }
 }
