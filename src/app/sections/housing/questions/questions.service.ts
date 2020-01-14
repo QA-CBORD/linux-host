@@ -161,17 +161,20 @@ export class QuestionsService {
       (attribute: PatronAttribute) => attribute.attributeConsumerKey === question.consumerKey
     );
     const value: any = foundAttribute ? foundAttribute.value : null;
-    const dataType: string = question.dataType ? question.dataType.toLowerCase() : null;
     const validators: ValidatorFn[] = [];
 
     if (question.required) {
       validators.push(Validators.required);
     }
 
-    const dataTypeValidator: ValidatorFn = this._dataTypesValidators[dataType];
+    if (question instanceof QuestionTextbox) {
+      const dataType: string = question.dataType ? question.dataType.toLowerCase() : null;
 
-    if (dataTypeValidator) {
-      validators.push(dataTypeValidator);
+      const dataTypeValidator: ValidatorFn = this._dataTypesValidators[dataType];
+
+      if (dataTypeValidator) {
+        validators.push(dataTypeValidator);
+      }
     }
 
     return new FormControl(value, validators);

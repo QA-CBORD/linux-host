@@ -93,6 +93,7 @@
         <h3 class="form__secondary-header">{{ question.label }}</h3>
 
         <st-control-errors
+          class="control-hint--no-indent"
           [control]="parentGroup.get(question['name'])"
           [errorMessages]="errorMessages"
         ></st-control-errors>
@@ -120,6 +121,7 @@
       <h3 class="form__secondary-header">{{ question.label }}</h3>
 
       <st-control-errors
+        class="control-hint--no-indent"
         [control]="parentGroup.get(question['name'])"
         [errorMessages]="errorMessages"
       ></st-control-errors>

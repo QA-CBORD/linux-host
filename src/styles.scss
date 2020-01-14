@@ -260,6 +260,11 @@
 
   color: $color-dim-gray;
   margin: 5px 0 0 12px;
+
+  .control-hint--no-indent &,
+  &.control-hint--no-indent {
+    margin-left: 0;
+  }
 }
 
 .control-hint--error {
