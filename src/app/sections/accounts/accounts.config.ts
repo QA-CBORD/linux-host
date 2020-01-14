@@ -101,31 +101,31 @@ export const SYSTEM_SETTINGS_CONFIG = {
     category: 'feature',
     name: 'auto_deposit_tenders',
   },
-  enableMealDonations: {
+  enableMeals: {
     domain: 'get',
     category: 'feature',
     name: 'meal_donations_enabled',
   },
-  mealDonationsTenders: {
+  mealsTenders: {
     domain: 'get',
     category: 'meal_donation',
     name: 'tenders',
   },
-  mealDonationsAllowFreeform: {
+  mealsAllowFreeform: {
     domain: 'get',
     category: 'meal_donation',
     name: 'allow_freeform',
   },
-  mealDonationsFixedMealAmounts: {
+  mealsFixedMealAmounts: {
     domain: 'get',
     category: 'meal_donation',
     name: 'fixed_meal_amounts',
   },
-  mealDonationsFixedDollarAmounts: {
+  mealsFixedDollarAmounts: {
     domain: 'get',
     category: 'meal_donation',
     name: 'fixed_dollar_amounts',
-  },
+  }
 };
 
 export enum ACCOUNT_TYPES {

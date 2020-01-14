@@ -60,7 +60,7 @@ export class MenuReceivingFundsComponent implements OnInit {
         case SYSTEM_SETTINGS_CONFIG.guestDeposit.name:
           displayName = this.contentString[CONTENT_STRINGS.requestFundsBtn];
           break;
-        case SYSTEM_SETTINGS_CONFIG.enableMealDonations.name:
+        case SYSTEM_SETTINGS_CONFIG.enableMeals.name:
           // There are no ui-patron Content Settings API response for meal donations
           // displayName = this.contentString[CONTENT_STRINGS.mealDonationsBtn];
           displayName = 'Meal Donations';

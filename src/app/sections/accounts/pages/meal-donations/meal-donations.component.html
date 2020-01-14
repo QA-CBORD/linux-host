@@ -9,14 +9,9 @@
 <ion-content>
   <div class="meals-donate__content">
     <div class="meals-donate__description-wrapper">
-      You can donate meals from your
-      <span *ngFor="let accounts of (tenders$ | async); let i = index">
-        {{ accounts.accountDisplayName }}
-        <span *ngIf="(tenders$ | async).length > 1 && (tenders$ | async).length - 1 !== i"> or </span></span
-      >
-      account<span *ngIf="(tenders$ | async).length > 1">s</span>. 1 meal is equivalent to {{ mealEquivalent | async }}.
+      You can donate meals from your Funding Accounts below:
     </div>
-    <form class="request-funds__form" [formGroup]="mealDonationsForm">
+    <form class="request-funds__form" [formGroup]="mealsForm">
       <div class="meals-donate__accounts">
         <st-select-floating-label
           (focus)="onFocus()"
@@ -29,7 +24,7 @@
           idd="account"
         >
           <ng-container role="options">
-            <ion-select-option *ngFor="let account of (tenders$ | async)" [value]="account">
+            <ion-select-option *ngFor="let account of (accounts$ | async)" [value]="account">
               {{ account.accountDisplayName }} ({{ account.balance | transactionUnits: account.accountType }})
             </ion-select-option>
           </ng-container>
@@ -46,7 +41,7 @@
         <div class="meals-donate__amount">
           <st-select-floating-label
             (focus)="onFocus()"
-            [label]="(account.value.accountType === 1 ? 'Meals': 'Amount') + ' to Donate'"
+            [label]="(account.value.accountType === accountTypes.MEALS ? 'Meals': 'Amount') + ' to Donate'"
             [formControlName]="controlsNames.selectAmount"
             [control]="selectAmount"
             [interfaceOptions]="customActionSheetOptions"
@@ -55,8 +50,8 @@
             idd="selectAmount"
           >
             <ng-container role="options">
-              <ion-select-option [value]="amount" *ngFor="let amount of (amountsForSelect$ | async)">
-                {{ amount }}
+              <ion-select-option [value]="amount" *ngFor="let amount of (fixedAmounts$ | async)">
+                {{ amount | transactionUnits: account.value.accountType }}
               </ion-select-option>
             </ng-container>
             <ng-container role="error">
@@ -89,7 +84,7 @@
   </div>
 </ion-content>
 <ion-footer mode="ios" class="meals-donate__footer">
-  <st-button (onClick)="onSubmit()" [isDisabled]="!mealDonationsForm.valid">
+  <st-button (onClick)="onSubmit()" [isDisabled]="!mealsForm.valid">
     Donate {{ selectAmount.value || inputAmount.value | transactionUnits: account.value.accountType }}
   </st-button>
 </ion-footer>

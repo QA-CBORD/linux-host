@@ -11,7 +11,7 @@ import { SYSTEM_SETTINGS_CONFIG } from '../accounts.config';
 @Injectable()
 export class MealDonationsService {
 
-  private readonly _tenders$: BehaviorSubject<UserAccount[]> = new BehaviorSubject<UserAccount[]>([]);
+  private readonly _accounts$: BehaviorSubject<UserAccount[]> = new BehaviorSubject<UserAccount[]>([]);
   public readonly _settings$: BehaviorSubject<SettingInfo[]> = new BehaviorSubject<SettingInfo[]>([]);
 
   constructor( 
@@ -19,12 +19,12 @@ export class MealDonationsService {
     private readonly accountsApiService: AccountsApiService,
     ) { }
 
-  get tenders$(): Observable<UserAccount[]> {
-    return this._tenders$.asObservable();
+  get accounts$(): Observable<UserAccount[]> {
+    return this._accounts$.asObservable();
   }
 
-  private set _tenders(value: UserAccount[]) {
-    this._tenders$.next([...value]);
+  private set _accounts(value: UserAccount[]) {
+    this._accounts$.next([...value]);
   }
 
   get settings$(): Observable<SettingInfo[]> {
@@ -36,7 +36,7 @@ export class MealDonationsService {
   }
 
   getUserAccounts(): Observable<UserAccount[]> {
-    return this.commerceApiService.getUserAccounts().pipe(tap(accounts => (this._tenders = accounts)));
+    return this.commerceApiService.getUserAccounts().pipe(tap(accounts => (this._accounts = accounts)));
   }
 
   getSettingByName(settings: SettingInfo[], name: string): SettingInfo | undefined {
@@ -49,14 +49,14 @@ export class MealDonationsService {
     return zip(...requestArray).pipe(tap(settings => (this._settings = settings)));
   }
 
-  getAccountsFilteredByMealDonationsTenders(): Observable<UserAccount[]> {
+  getAccountsFilteredByMealsTenders(): Observable<UserAccount[]> {
     return this.settings$.pipe(
         map(settings => {
-          const settingInfo = this.getSettingByName(settings, SYSTEM_SETTINGS_CONFIG.mealDonationsTenders.name);
+          const settingInfo = this.getSettingByName(settings, SYSTEM_SETTINGS_CONFIG.mealsTenders.name);
           return this.transformStringToArray(settingInfo.value);
         }),
         switchMap((tendersId: Array<string>) =>
-            this.tenders$.pipe(map(accounts => this.filterAccountsByTenders(tendersId, accounts)))
+            this.accounts$.pipe(map(accounts => this.filterAccountsByTenders(tendersId, accounts)))
         )
     );
   }
@@ -68,7 +68,12 @@ export class MealDonationsService {
     return Array.isArray(result) ? result : [];
   }
 
-  private filterAccountsByTenders(tendersId: Array<string>, accounts: Array<UserAccount>): Array<UserAccount> {
-    return accounts.filter(({ accountTender: tId }) => tendersId.includes(tId));
+  donate(accountId, amount): Observable<string> {
+    return this.commerceApiService.donate(accountId, amount);
   }
+
+  private filterAccountsByTenders(accountsId: Array<string>, accounts: Array<UserAccount>): Array<UserAccount> {
+    return accounts.filter(({ accountTender: tId }) => accountsId.includes(tId));
+  }
+
 }

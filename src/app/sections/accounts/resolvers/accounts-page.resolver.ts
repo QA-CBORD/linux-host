@@ -26,7 +26,7 @@ export class AccountsPageResolver
       SYSTEM_SETTINGS_CONFIG.enableAutoDeposits,
       SYSTEM_SETTINGS_CONFIG.enableOnetimeDeposits,
       SYSTEM_SETTINGS_CONFIG.guestDeposit,
-      SYSTEM_SETTINGS_CONFIG.enableMealDonations,
+      SYSTEM_SETTINGS_CONFIG.enableMeals,
     ];
     const accountContentStrings = this.accountsService.initContentStringsList();
     const transactionContentStrings = this.transactionService.initContentStringsList();
