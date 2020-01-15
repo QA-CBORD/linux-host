@@ -35,6 +35,10 @@ const routes: Routes = [
         loadChildren: './pages/unit-details/unit-details.module#UnitDetailsPageModule',
       },
       {
+        path: LOCAL_ROUTING.roomsSearch,
+        loadChildren: './pages/rooms-search/rooms-search.module#RoomsSearchModule',
+      },
+      {
         path: '',
         redirectTo: LOCAL_ROUTING.dashboard,
         pathMatch: 'full',
