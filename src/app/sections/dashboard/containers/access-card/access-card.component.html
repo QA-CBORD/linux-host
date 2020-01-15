@@ -62,7 +62,7 @@
         </ion-button>
       </ion-col>
       <ion-col *ngIf="appleWalletEnabled" class="card__quick-actions-wrapper">
-        <ion-button mode="ios" class="card__apple-wallet-btn"
+        <ion-button mode="ios" class="card__apple-wallet-btn" (click)="addToAppleWallet()"
         ><img src="/assets/icon/Add_to_Apple_Wallet_rgb_US-UK.svg"/>
         </ion-button>
       </ion-col>
