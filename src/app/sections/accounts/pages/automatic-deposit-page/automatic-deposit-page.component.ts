@@ -423,7 +423,9 @@ export class AutomaticDepositPageComponent {
         toAccountId: account.id,
         active: true,
       };
-      predefinedUpdateCall = iif(() => isBillme, sourceAccForBillmeDeposit, of(paymentMethod)).pipe(
+      predefinedUpdateCall = iif(() => isBillme,
+        sourceAccForBillmeDeposit.pipe(tap((acc) => this.paymentMethod.setValue(acc))),
+        of(paymentMethod)).pipe(
         switchMap(sourceAcc =>
           this.autoDepositService.updateAutoDepositSettings({ ...resultSettings, fromAccountId: sourceAcc.id }),
         ),
