@@ -186,6 +186,15 @@
 
   height: 48px;
   margin: 0;
+
+  @include disabled() {
+    --color: #{$color-gray};
+    --background: #{$color-mercury};
+  }
+}
+
+.btn--primary {
+  --background: #{$color-dodger-blue};
 }
 
 .form__primary-header,
