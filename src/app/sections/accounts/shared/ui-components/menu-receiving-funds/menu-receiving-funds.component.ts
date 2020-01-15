@@ -1,9 +1,9 @@
-import { SYSTEM_SETTINGS_CONFIG, LOCAL_ROUTING } from '../../../accounts.config';
+import { SYSTEM_SETTINGS_CONFIG } from '../../../accounts.config';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { Observable } from 'rxjs';
-import { map, take, tap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 import { SettingInfo } from '../../../../../core/model/configuration/setting-info.model';
 import { AccountsService } from '../../../services/accounts.service';
@@ -22,15 +22,18 @@ export class MenuReceivingFundsComponent implements OnInit {
   menuItems$: Observable<MenuReceivingFundsListItem[]>;
   contentString: { [key: string]: string };
 
-  constructor(private readonly accountsService: AccountsService, private readonly router: Router) {}
+  constructor(private readonly accountsService: AccountsService, private readonly router: Router) { }
 
   ngOnInit() {
     this.setContentStrings();
-    this.menuItems$ = this.accountsService.settings$.pipe(map(settings => this.handleListItems(settings)));
+    this.menuItems$ = this.accountsService.settings$.pipe(map(settings => {
+      const fullList = this.handleListItems(settings);
+      return fullList.filter(item => item)
+    }));
   }
 
   //TODO: Add correct Desktop Settings for menu icons
-  
+
   get hasShowedItem$(): Observable<boolean> {
     return this.menuItems$.pipe(map(items => items.some((item) => item && item.isShow)));
   }
@@ -47,7 +50,7 @@ export class MenuReceivingFundsComponent implements OnInit {
     const navList = Array.from(MENU_LIST_ITEMS.keys());
 
     return navList.map(element => {
-      const setting = settings.find(setting => setting.name === element);
+      const setting = settings.find(setting => setting !== null && setting.name === element);
       if (!setting) return;
       let displayName = '';
       switch (setting.name) {
@@ -66,7 +69,7 @@ export class MenuReceivingFundsComponent implements OnInit {
           displayName = 'Meal Donations';
           break;
       }
-      return { name: setting.name, displayName: displayName, isShow: Boolean(Number(setting.value)) };
+      return element !== null && { name: setting.name, displayName: displayName, isShow: Boolean(Number(setting.value)) };
     });
   }
 
