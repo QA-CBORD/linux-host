@@ -14,8 +14,8 @@ import { TransactionUnitsPipeModule } from '@shared/pipes';
 import { StButtonModule } from '@shared/ui-components/st-button/st-button.module';
 import { ConfirmDonatePopoverComponent } from './components/confirm-donate-popover';
 import { ConfirmDonatePopoverModule } from './components/confirm-donate-popover/confirm-donate-popover.module';
-import { PopoverComponent } from '../request-funds-page/popover/popover.component';
 import { StPopoverLayoutModule } from '@shared/ui-components/st-popover-layout/st-popover-layout.module';
+import { PopoverComponent } from './components/popover/popover.component';
 
 const imports = [
   IonicModule,
