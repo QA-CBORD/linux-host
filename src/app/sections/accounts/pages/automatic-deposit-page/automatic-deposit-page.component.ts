@@ -302,7 +302,7 @@ export class AutomaticDepositPageComponent {
     return parseFloat(val);
   }
 
-  private defineDestAccounts(target) {
+  private async defineDestAccounts(target: any) {
     let type = target;
 
     if (target instanceof Object) {
@@ -319,7 +319,7 @@ export class AutomaticDepositPageComponent {
 
     if (type === PAYMENT_TYPE.BILLME) {
       this.destinationAccounts = this.billmeDestinationAccounts;
-      this.setBillmeActiveAccount();
+      await this.setBillmeActiveAccount();
     } else {
       this.destinationAccounts = this.creditCardDestinationAccounts;
     }
