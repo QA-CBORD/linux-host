@@ -4,6 +4,7 @@ import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { PopoverController, ToastController } from '@ionic/angular';
 import { map, take, finalize } from 'rxjs/operators';
 import { Observable, Subscription } from 'rxjs';
+import { Router } from '@angular/router';
 
 import { MealDonationsService } from '@sections/accounts/services/meal-donations.service';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -11,10 +12,10 @@ import { formControlErrorDecorator } from '@core/utils/general-helpers';
 import { UserAccount } from '@core/model/account/account.model';
 import { SYSTEM_SETTINGS_CONFIG } from '@sections/accounts/accounts.config';
 import { parseArrayFromString } from '@core/utils/general-helpers';
-import { AccountType } from 'src/app/app.global';
+import { AccountType, NAVIGATE } from 'src/app/app.global';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
 import { ConfirmDonatePopoverComponent } from './components/confirm-donate-popover';
-import { PopoverComponent } from '../request-funds-page/popover/popover.component';
+import { PopoverComponent } from './components/popover/popover.component';
 
 @Component({
   selector: 'st-meal-donations',
@@ -40,7 +41,8 @@ export class MealDonationsComponent implements OnInit, OnDestroy {
     private readonly loadingService: LoadingService,
     private readonly toastController: ToastController,
     private readonly popoverCtrl: PopoverController,
-    private readonly keyboard: Keyboard
+    private readonly keyboard: Keyboard,
+    private readonly router: Router
   ) {}
 
   ngOnInit() {
@@ -125,7 +127,7 @@ export class MealDonationsComponent implements OnInit, OnDestroy {
 
   private accountChangesHandler() {
     const subscription = this.account.valueChanges.subscribe(({ balance, accountType }) => {
-      this.maxAmount = balance.toFixed();
+      this.maxAmount = balance.toFixed(2);
       this.setFixedAmount(accountType);
       this.selectAmount.reset();
       this.inputAmount.reset();
@@ -152,8 +154,9 @@ export class MealDonationsComponent implements OnInit, OnDestroy {
     if (!this.mealsForm.valid) {
       return;
     }
+
     const { account, inputAmount, selectAmount } = this.mealsForm.value;
-    let amount = Number(inputAmount || selectAmount);
+    let amount = Number((inputAmount || selectAmount).toFixed(2));
 
     this.confirmationDepositPopover({ account, amount });
   }
@@ -173,7 +176,6 @@ export class MealDonationsComponent implements OnInit, OnDestroy {
         this.loadingService.showSpinner();
         this.mealDonationsService
           .donate(data.account.id, data.amount)
-          // .donate('e6a05d65-ec26-43ae-88a7-4785541decbb', 1)
           .pipe(
             take(1),
             finalize(() => this.loadingService.closeSpinner())
@@ -194,8 +196,12 @@ export class MealDonationsComponent implements OnInit, OnDestroy {
       animated: false,
       backdropDismiss: true,
     });
-    modal.onDidDismiss();
+    modal.onDidDismiss().then(async () => await this.back());
     modal.present();
+  }
+
+  private async back(): Promise<void> {
+    await this.router.navigate([NAVIGATE.accounts]);
   }
 
   private async onErrorRetrieve(message: string) {
