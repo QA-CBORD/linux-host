@@ -13,6 +13,7 @@ import { UserAutoDepositSettingInfo } from '@sections/accounts/pages/automatic-d
 import { PopoverController } from '@ionic/angular';
 import { ConfirmUnsavedChangesPopoverComponent } from '@sections/accounts/pages/automatic-deposit-page/components/confirm-usaved-changes-popover/confirm-unsaved-changes-popover.component';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
+import { PAYMENT_TYPE } from '@sections/accounts/accounts.config';
 
 @Injectable()
 export class UnsavedChangesGuard implements CanDeactivate<AutomaticDepositPageComponent> {
@@ -53,11 +54,13 @@ export class UnsavedChangesGuard implements CanDeactivate<AutomaticDepositPageCo
       account: { value: { id: toId } },
       amountToDeposit: { value: amountToDeposit },
       paymentMethod: { value: { id: fromId } },
+      activeBillMeAccount,
+      activePaymentType,
     } = this.component;
     const { amount, fromAccountId, toAccountId } = this.autoDepositSettings;
 
     return Number(amount) === Number(amountToDeposit)
-      && fromAccountId === fromId
+      && fromAccountId === (activePaymentType === PAYMENT_TYPE.BILLME ? activeBillMeAccount && activeBillMeAccount.id : fromId)
       && toId === toAccountId;
   }
 

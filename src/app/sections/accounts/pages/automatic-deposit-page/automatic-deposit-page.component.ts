@@ -34,12 +34,13 @@ export class AutomaticDepositPageComponent {
   private readonly sourceSubscription: Subscription = new Subscription();
   private paymentMethodAccount: UserAccount | PAYMENT_TYPE;
   private destinationAccount: UserAccount;
-  private activePaymentType: PAYMENT_TYPE;
   private creditCardSourceAccounts: Array<UserAccount>;
   private billmeSourceAccounts: Array<UserAccount> = [];
   private creditCardDestinationAccounts: Array<UserAccount>;
   private billmeDestinationAccounts: Array<UserAccount>;
 
+  activeBillMeAccount: UserAccount;
+  activePaymentType: PAYMENT_TYPE;
   showContent: boolean;
   formHasBeenPrepared: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   automaticDepositForm: FormGroup;
@@ -76,7 +77,6 @@ export class AutomaticDepositPageComponent {
     this.showContent = false;
     this.sourceSubscription.unsubscribe();
   }
-
   //-------------------- Constants block --------------------------//
 
   get controlNames() {
@@ -319,6 +319,7 @@ export class AutomaticDepositPageComponent {
 
     if (type === PAYMENT_TYPE.BILLME) {
       this.destinationAccounts = this.billmeDestinationAccounts;
+      this.setBillmeActiveAccount();
     } else {
       this.destinationAccounts = this.creditCardDestinationAccounts;
     }
@@ -397,7 +398,7 @@ export class AutomaticDepositPageComponent {
     await this.updateFormStateByDepositType(this.activeAutoDepositType, event);
   }
 
-  onSubmit() {
+  async onSubmit() {
     if (this.automaticDepositForm && this.automaticDepositForm.invalid) return;
 
     let predefinedUpdateCall;
@@ -423,8 +424,10 @@ export class AutomaticDepositPageComponent {
         toAccountId: account.id,
         active: true,
       };
+
+      if (isBillme) await this.setBillmeActiveAccount();
       predefinedUpdateCall = iif(() => isBillme,
-        sourceAccForBillmeDeposit.pipe(tap((acc) => this.paymentMethod.setValue(acc))),
+        sourceAccForBillmeDeposit,
         of(paymentMethod)).pipe(
         switchMap(sourceAcc =>
           this.autoDepositService.updateAutoDepositSettings({ ...resultSettings, fromAccountId: sourceAcc.id }),
@@ -453,7 +456,17 @@ export class AutomaticDepositPageComponent {
 
     this.automaticDepositForm = this.fb.group(paymentBlock);
     await this.setValidators();
+    await this.setBillmeActiveAccount();
     this.formHasBeenPrepared.next(true);
+  }
+
+  private async setBillmeActiveAccount() {
+    if (this.activePaymentType !== PAYMENT_TYPE.BILLME || !this.automaticDepositForm) return;
+    const { account } = this.automaticDepositForm.value;
+    if (!account) return;
+    this.activeBillMeAccount = await this.billmeMappingArr$.pipe(
+      switchMap(billmeMappingArr => this.depositService.sourceAccForBillmeDeposit(account, billmeMappingArr)),
+    ).pipe(first()).toPromise();
   }
 
   private deleteForm() {
@@ -517,11 +530,11 @@ export class AutomaticDepositPageComponent {
       formControlErrorDecorator(Validators.required, CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit].requiredEnter),
       formControlErrorDecorator(
         Validators.max(max),
-        CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit].maximum + Number(max).toFixed(2)
+        CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit].maximum + Number(max).toFixed(2),
       ),
       formControlErrorDecorator(
         Validators.min(min),
-        CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit].minimum + Number(min).toFixed(2)
+        CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit].minimum + Number(min).toFixed(2),
       ),
     ];
   }
