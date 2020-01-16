@@ -238,9 +238,9 @@ export class ApplicationsService {
   private async _setStoredApplicationStatus(application: any): Promise<ApplicationDetails> {
     let applicationDetails: ApplicationDetails = new ApplicationDetails(application);
     let patronApplication: PatronApplication = applicationDetails.patronApplication;
-    const status: ApplicationStatus = patronApplication && patronApplication.status ? patronApplication.status : null;
+    const status: ApplicationStatus = patronApplication && patronApplication.status;
 
-    if (status !== ApplicationStatus.New) {
+    if (status && status !== ApplicationStatus.New) {
       return applicationDetails;
     }
 
