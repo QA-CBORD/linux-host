@@ -61,8 +61,8 @@ export class MealDonationsService {
     );
   }
 
-  transformStringToArray(value: string): Array<unknown> {
-    if (!value.length) return [];
+  transformStringToArray(value: string | null): Array<unknown> {
+    if (value === null || !value.length) return [];
     const result = JSON.parse(value);
 
     return Array.isArray(result) ? result : [];

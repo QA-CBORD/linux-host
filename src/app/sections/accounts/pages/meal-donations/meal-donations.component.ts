@@ -155,8 +155,7 @@ export class MealDonationsComponent implements OnInit, OnDestroy {
     const { account, inputAmount, selectAmount } = this.mealsForm.value;
     let amount = Number(inputAmount || selectAmount);
 
-    this.loadingService.showSpinner();
-    this.confirmationDepositPopover({ account, amount }).finally(() => this.loadingService.closeSpinner());
+    this.confirmationDepositPopover({ account, amount });
   }
 
   async confirmationDepositPopover(data: { account: Account; amount: number }) {
@@ -174,7 +173,7 @@ export class MealDonationsComponent implements OnInit, OnDestroy {
         this.loadingService.showSpinner();
         this.mealDonationsService
           .donate(data.account.id, data.amount)
-          // .donate('e6a05d65-ec26-43ae-88a7-4785541decbb', data.amount)
+          // .donate('e6a05d65-ec26-43ae-88a7-4785541decbb', 1)
           .pipe(
             take(1),
             finalize(() => this.loadingService.closeSpinner())

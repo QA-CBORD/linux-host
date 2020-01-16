@@ -6,82 +6,81 @@
   [isToolbarShow]="true"
   class="meals-donate__header"
 ></st-header>
-<ion-content>
-  <div class="meals-donate__content">
-    <div class="meals-donate__description-wrapper">
-      You can donate meals from your Funding Accounts below:
+<ion-content class="meals-donate__content">
+  <div class="meals-donate__description-wrapper">
+    You can donate meals from your Funding Accounts below:
+  </div>
+  <form class="request-funds__form" [formGroup]="mealsForm">
+    <div class="meals-donate__accounts">
+      <st-select-floating-label
+        (focus)="onFocus()"
+        [label]="'Funding Account'"
+        [formControlName]="controlsNames.account"
+        [control]="account"
+        [interfaceOptions]="customActionSheetOptions"
+        [isError]="account.invalid && account.touched"
+        interface="action-sheet"
+        idd="account"
+      >
+        <ng-container role="options">
+          <ion-select-option *ngFor="let account of (accounts$ | async)" [value]="account">
+            {{ account.accountDisplayName }} ({{ account.balance | transactionUnits: account.accountType }})
+          </ion-select-option>
+        </ng-container>
+
+        <ng-container role="error">
+          <p class="meals-donate__control-error-msg">
+            {{ account.errors?.errorMsg }}
+          </p>
+        </ng-container>
+      </st-select-floating-label>
     </div>
-    <form class="request-funds__form" [formGroup]="mealsForm">
-      <div class="meals-donate__accounts">
+
+    <ng-container *ngIf="(isFreeFormEnabled$ | async); then freeInput; else fixedInput"></ng-container>
+    <ng-template #fixedInput
+      ><div class="meals-donate__amount">
         <st-select-floating-label
           (focus)="onFocus()"
-          [label]="'Funding Account'"
-          [formControlName]="controlsNames.account"
-          [control]="account"
+          [label]="(account.value.accountType === accountTypes.MEALS ? 'Meals' : 'Amount') + ' to Donate'"
+          [formControlName]="controlsNames.selectAmount"
+          [control]="selectAmount"
           [interfaceOptions]="customActionSheetOptions"
-          [isError]="account.invalid && account.touched"
+          [isError]="selectAmount.invalid && selectAmount.touched"
           interface="action-sheet"
-          idd="account"
+          idd="selectAmount"
         >
           <ng-container role="options">
-            <ion-select-option *ngFor="let account of (accounts$ | async)" [value]="account">
-              {{ account.accountDisplayName }} ({{ account.balance | transactionUnits: account.accountType }})
+            <ion-select-option [value]="amount" *ngFor="let amount of (fixedAmounts$ | async)">
+              {{ amount | transactionUnits: account.value.accountType }}
             </ion-select-option>
           </ng-container>
-
           <ng-container role="error">
             <p class="meals-donate__control-error-msg">
-              {{ account.errors?.errorMsg }}
+              {{ selectAmount.errors?.errorMsg }}
             </p>
           </ng-container>
         </st-select-floating-label>
+      </div></ng-template
+    >
+
+    <ng-template #freeInput>
+      <div class="meals-donate__amount">
+        <st-input-floating-label
+          [label]="(account.value.accountType === accountTypes.MEALS ? 'Meals' : 'Amount') + ' to Donate'"
+          [isError]="inputAmount.invalid && inputAmount.touched"
+          [control]="inputAmount"
+          [formControlName]="controlsNames.inputAmount"
+          title="Enter amount"
+          type="number"
+          idd="amount"
+        >
+          <p class="meals-donate__control-error-msg">
+            {{ inputAmount.errors?.errorMsg }}
+          </p>
+        </st-input-floating-label>
       </div>
-
-      <ng-container *ngIf="!(isFreeFormEnabled$ | async); else freeInput">
-        <div class="meals-donate__amount">
-          <st-select-floating-label
-            (focus)="onFocus()"
-            [label]="(account.value.accountType === accountTypes.MEALS ? 'Meals': 'Amount') + ' to Donate'"
-            [formControlName]="controlsNames.selectAmount"
-            [control]="selectAmount"
-            [interfaceOptions]="customActionSheetOptions"
-            [isError]="selectAmount.invalid && selectAmount.touched"
-            interface="action-sheet"
-            idd="selectAmount"
-          >
-            <ng-container role="options">
-              <ion-select-option [value]="amount" *ngFor="let amount of (fixedAmounts$ | async)">
-                {{ amount | transactionUnits: account.value.accountType }}
-              </ion-select-option>
-            </ng-container>
-            <ng-container role="error">
-              <p class="meals-donate__control-error-msg">
-                {{ selectAmount.errors?.errorMsg }}
-              </p>
-            </ng-container>
-          </st-select-floating-label>
-        </div>
-      </ng-container>
-
-      <ng-template #freeInput>
-        <div class="meals-donate__amount">
-          <st-input-floating-label
-            [label]="(account.value.accountType === accountTypes.MEALS ? 'Meals': 'Amount') + ' to Donate'"
-            [isError]="inputAmount.invalid && inputAmount.touched"
-            [control]="inputAmount"
-            [formControlName]="controlsNames.inputAmount"
-            title="Enter amount"
-            type="number"
-            idd="amount"
-          >
-            <p class="meals-donate__control-error-msg">
-              {{ inputAmount.errors?.errorMsg }}
-            </p>
-          </st-input-floating-label>
-        </div>
-      </ng-template>
-    </form>
-  </div>
+    </ng-template>
+  </form>
 </ion-content>
 <ion-footer mode="ios" class="meals-donate__footer">
   <st-button (onClick)="onSubmit()" [isDisabled]="!mealsForm.valid">

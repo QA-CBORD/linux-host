@@ -28,7 +28,7 @@ const imports = [
   TransactionUnitsPipeModule,
   StButtonModule,
   ConfirmDonatePopoverModule,
-  StPopoverLayoutModule,
+  StPopoverLayoutModule
 ];
 const declarations = [MealDonationsComponent, PopoverComponent];
 const providers = [MealDonationsResolver, MealDonationsService];

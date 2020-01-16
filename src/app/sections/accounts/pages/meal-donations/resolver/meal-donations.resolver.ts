@@ -28,6 +28,7 @@ export class MealDonationsResolver implements Resolve<Observable<SettingInfo[]>>
     const accountsCall = this.mealDonationsService.getUserAccounts();
     const settingsCall = this.mealDonationsService.getUserSettings(requireSettings);
     this.loadingService.showSpinner();
+    
     return zip(accountsCall, settingsCall, accountContentStrings).pipe(
       finalize(() => this.loadingService.closeSpinner())
     );

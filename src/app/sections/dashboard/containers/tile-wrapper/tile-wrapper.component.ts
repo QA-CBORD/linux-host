@@ -1,17 +1,13 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  Input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { TileWrapperConfig } from '@sections/dashboard/models';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'st-tile-wrapper',
   templateUrl: './tile-wrapper.component.html',
   styleUrls: ['./tile-wrapper.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TileWrapperComponent {
   @Input() wrapperConfig: TileWrapperConfig;
@@ -19,6 +15,6 @@ export class TileWrapperComponent {
   constructor(private readonly router: Router) {}
 
   navigateTo(path) {
-    this.router.navigate([path]);
+    this.router.navigate([path], { skipLocationChange: true });
   }
 }
