@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CanDeactivate } from '@angular/router';
+import { ActivatedRouteSnapshot, CanDeactivate, RouterStateSnapshot } from '@angular/router';
 
 import { first } from 'rxjs/operators';
 
@@ -24,7 +24,11 @@ export class UnsavedChangesGuard implements CanDeactivate<AutomaticDepositPageCo
               private readonly popoverCtrl: PopoverController) {
   }
 
-  async canDeactivate(component: AutomaticDepositPageComponent): Promise<boolean> {
+  async canDeactivate(component: AutomaticDepositPageComponent,
+                      currentRoute: ActivatedRouteSnapshot,
+                      currentState: RouterStateSnapshot,
+                      nextState?: RouterStateSnapshot): Promise<boolean> {
+    if (nextState.root.queryParams.skip) return true;
     this.component = component;
     this.autoDepositSettings = await this.autoDepositService.settings$.pipe(first()).toPromise();
     const { active, autoDepositType } = this.autoDepositSettings;

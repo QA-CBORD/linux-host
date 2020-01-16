@@ -77,6 +77,7 @@ export class AutomaticDepositPageComponent {
     this.showContent = false;
     this.sourceSubscription.unsubscribe();
   }
+
   //-------------------- Constants block --------------------------//
 
   get controlNames() {
@@ -291,7 +292,10 @@ export class AutomaticDepositPageComponent {
 
   onPaymentMethodChanged(value) {
     if (value === 'addCC') {
-      this.router.navigate([NAVIGATE.accounts, LOCAL_ROUTING.addCreditCard], { skipLocationChange: true });
+      this.router.navigate([NAVIGATE.accounts, LOCAL_ROUTING.addCreditCard], {
+        skipLocationChange: true,
+        queryParams: { skip: true },
+      });
     } else {
       this.defineDestAccounts(value);
     }
