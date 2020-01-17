@@ -51,8 +51,9 @@ export class MealDonationsComponent implements OnInit, OnDestroy {
     this.initForm();
   }
 
-  ngOnDestroy() {
+  ionViewWillLeave() {
     this.sourceSubscription.unsubscribe();
+    this.mealsForm.reset();
   }
 
   get accountTypes() {
@@ -156,7 +157,7 @@ export class MealDonationsComponent implements OnInit, OnDestroy {
     }
 
     const { account, inputAmount, selectAmount } = this.mealsForm.value;
-    let amount = Number((inputAmount || selectAmount).toFixed(2));
+    let amount = +Number(inputAmount || selectAmount).toFixed(2);
 
     this.confirmationDepositPopover({ account, amount });
   }
