@@ -6,11 +6,11 @@
   [isToolbarShow]="true"
   class="meals-donate__header"
 ></st-header>
-<ion-content class="meals-donate__content">
+<ion-content class="meals-donate__content" *ngIf="showContent">
   <div class="meals-donate__description-wrapper">
     You can donate meals from your Funding Accounts below:
   </div>
-  <form class="request-funds__form" [formGroup]="mealsForm">
+  <form class="request-funds__form" *ngIf="formHasBeenPrepared | async" [formGroup]="mealsForm">
     <div class="meals-donate__accounts">
       <st-select-floating-label
         (focus)="onFocus()"
@@ -82,7 +82,7 @@
     </ng-template>
   </form>
 </ion-content>
-<ion-footer mode="ios" class="meals-donate__footer">
+<ion-footer mode="ios" class="meals-donate__footer" *ngIf="formHasBeenPrepared | async">
   <st-button (onClick)="onSubmit()" [isDisabled]="!mealsForm.valid">
     Donate {{ selectAmount.value || inputAmount.value | transactionUnits: account.value.accountType }}
   </st-button>

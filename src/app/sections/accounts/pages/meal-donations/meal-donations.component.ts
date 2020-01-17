@@ -1,9 +1,9 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormGroup, Validators, FormBuilder, AbstractControl } from '@angular/forms';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { PopoverController, ToastController } from '@ionic/angular';
 import { map, take, finalize } from 'rxjs/operators';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subscription, BehaviorSubject } from 'rxjs';
 import { Router } from '@angular/router';
 
 import { MealDonationsService } from '@sections/accounts/pages/meal-donations/service/meal-donations.service';
@@ -23,8 +23,11 @@ import { PopoverComponent } from './components/popover/popover.component';
   styleUrls: ['./meal-donations.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MealDonationsComponent implements OnInit {
+export class MealDonationsComponent {
   private readonly sourceSubscription: Subscription = new Subscription();
+  
+  formHasBeenPrepared: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  showContent: boolean;
   accounts$: Observable<UserAccount[]>;
   isFreeFormEnabled$: Observable<boolean>;
   fixedAmounts$: Observable<Array<number>>;
@@ -42,18 +45,22 @@ export class MealDonationsComponent implements OnInit {
     private readonly toastController: ToastController,
     private readonly popoverCtrl: PopoverController,
     private readonly keyboard: Keyboard,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly cdRef: ChangeDetectorRef
   ) {}
 
-  ngOnInit() {
+  ionViewWillEnter() {
     this.accounts$ = this.mealDonationsService.getAccountsFilteredByMealsTenders();
+    this.showContent = true;
     this.isFreeFormEnabled();
     this.initForm();
+    this.cdRef.detectChanges();
   }
 
   ionViewWillLeave() {
     this.sourceSubscription.unsubscribe();
-    this.mealsForm.reset();
+    this.deleteForm();
+    this.showContent = false;
   }
 
   get accountTypes() {
@@ -105,6 +112,7 @@ export class MealDonationsComponent implements OnInit {
 
     this.setValidators();
     this.accountChangesHandler();
+    this.formHasBeenPrepared.next(true);
   }
 
   private setValidators() {
@@ -203,10 +211,6 @@ export class MealDonationsComponent implements OnInit {
     await modal.present();
   }
 
-  private async back(): Promise<void> {
-    await this.router.navigate([NAVIGATE.accounts], { skipLocationChange: true });
-  }
-
   private async onErrorRetrieve(message: string) {
     const toast = await this.toastController.create({
       message,
@@ -214,6 +218,11 @@ export class MealDonationsComponent implements OnInit {
       position: 'top',
     });
     toast.present();
+  }
+
+  private deleteForm() {
+    this.mealsForm = null;
+    this.formHasBeenPrepared.next(false);
   }
 }
 
