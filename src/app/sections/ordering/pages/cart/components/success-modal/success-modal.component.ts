@@ -9,6 +9,7 @@ import { ModalController } from '@ionic/angular';
 })
 export class SuccessModalComponent {
   @Input() tax: number;
+  @Input() discount: string;
   @Input() checkNumber: number;
   @Input() total: number;
   @Input() accountName: string;
