@@ -5,8 +5,8 @@ import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { CommerceApiService } from '@core/service/commerce/commerce-api.service';
 import { tap, map, switchMap } from 'rxjs/operators';
 import { ContentStringRequest } from '@core/model/content/content-string-request.model';
-import { AccountsApiService } from './accounts.api.service';
-import { SYSTEM_SETTINGS_CONFIG } from '../accounts.config';
+import { AccountsApiService } from '../../../services/accounts.api.service';
+import { SYSTEM_SETTINGS_CONFIG } from '../../../accounts.config';
 
 @Injectable()
 export class MealDonationsService {

@@ -20,9 +20,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AutoDepositService } from './service/auto-deposit.service';
 import { BillMeMapping } from '@core/model/settings/billme-mapping.model';
 import { LOCAL_ROUTING, PAYMENT_TYPE, SYSTEM_SETTINGS_CONFIG } from '@sections/accounts/accounts.config';
-import { SettingService } from '@sections/accounts/services/setting.service';
 import { DepositService } from '@sections/accounts/services/deposit.service';
 import { NAVIGATE } from 'src/app/app.global';
+import { SettingService } from '@core/service/settings/setting.service';
 
 @Component({
   selector: 'st-automatic-deposit-page',

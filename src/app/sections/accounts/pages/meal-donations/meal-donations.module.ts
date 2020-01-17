@@ -9,13 +9,13 @@ import { MealDonationsResolver } from './resolver/meal-donations.resolver';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
 import { StSelectFloatingLabelModule } from '@shared/ui-components/st-select-floating-label/st-select-floating-label.module';
 import { StInputFloatingLabelModule } from '@shared/ui-components/st-input-floating-label/st-input-floating-label.module';
-import { MealDonationsService } from '@sections/accounts/services/meal-donations.service';
 import { TransactionUnitsPipeModule } from '@shared/pipes';
 import { StButtonModule } from '@shared/ui-components/st-button/st-button.module';
 import { ConfirmDonatePopoverComponent } from './components/confirm-donate-popover';
 import { ConfirmDonatePopoverModule } from './components/confirm-donate-popover/confirm-donate-popover.module';
 import { StPopoverLayoutModule } from '@shared/ui-components/st-popover-layout/st-popover-layout.module';
 import { PopoverComponent } from './components/popover/popover.component';
+import { MealDonationsService } from './service/meal-donations.service';
 
 const imports = [
   IonicModule,

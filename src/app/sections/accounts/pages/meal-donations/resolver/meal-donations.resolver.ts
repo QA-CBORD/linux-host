@@ -6,7 +6,7 @@ import { finalize } from 'rxjs/operators';
 import { SYSTEM_SETTINGS_CONFIG} from '../../../accounts.config';
 import { ContentStringRequest } from '@core/model/content/content-string-request.model';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
-import { MealDonationsService } from '../../../services/meal-donations.service';
+import { MealDonationsService } from '../service/meal-donations.service';
 import { AccountsService } from '@sections/accounts/services/accounts.service';
 
 @Injectable()

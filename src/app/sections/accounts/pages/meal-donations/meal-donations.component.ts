@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormGroup, Validators, FormBuilder, AbstractControl } from '@angular/forms';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { PopoverController, ToastController } from '@ionic/angular';
@@ -6,7 +6,7 @@ import { map, take, finalize } from 'rxjs/operators';
 import { Observable, Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 
-import { MealDonationsService } from '@sections/accounts/services/meal-donations.service';
+import { MealDonationsService } from '@sections/accounts/pages/meal-donations/service/meal-donations.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { formControlErrorDecorator } from '@core/utils/general-helpers';
 import { UserAccount } from '@core/model/account/account.model';
@@ -23,7 +23,7 @@ import { PopoverComponent } from './components/popover/popover.component';
   styleUrls: ['./meal-donations.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MealDonationsComponent implements OnInit, OnDestroy {
+export class MealDonationsComponent implements OnInit {
   private readonly sourceSubscription: Subscription = new Subscription();
   accounts$: Observable<UserAccount[]>;
   isFreeFormEnabled$: Observable<boolean>;
