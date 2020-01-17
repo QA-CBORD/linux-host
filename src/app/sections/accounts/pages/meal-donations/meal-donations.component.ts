@@ -109,7 +109,7 @@ export class MealDonationsComponent implements OnInit {
 
   private setValidators() {
     const subscription = this.isFreeFormEnabled$.subscribe(isFreeForm => {
-      const amount = isFreeForm ? 'inputAmount' : 'selectAmount';
+      const amount = isFreeForm ? REQUEST_MEALS_CONTROL_NAMES.inputAmount : REQUEST_MEALS_CONTROL_NAMES.selectAmount;
 
       this.mealsForm.controls[this.controlsNames[amount]].setValidators([
         formControlErrorDecorator(Validators.required, CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES[amount]].required),
@@ -133,7 +133,6 @@ export class MealDonationsComponent implements OnInit {
       this.selectAmount.reset();
       this.inputAmount.reset();
     });
-
     this.sourceSubscription.add(subscription);
   }
 
@@ -152,7 +151,8 @@ export class MealDonationsComponent implements OnInit {
   }
 
   onSubmit() {
-    if (!this.mealsForm.valid) {
+    if (this.mealsForm.invalid) {
+      this.onErrorRetrieve('Form is invalid');
       return;
     }
 
@@ -202,7 +202,7 @@ export class MealDonationsComponent implements OnInit {
   }
 
   private async back(): Promise<void> {
-    await this.router.navigate([NAVIGATE.accounts]);
+    await this.router.navigate([NAVIGATE.accounts], { skipLocationChange: true });
   }
 
   private async onErrorRetrieve(message: string) {
