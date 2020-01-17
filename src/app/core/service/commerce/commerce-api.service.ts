@@ -7,7 +7,13 @@ import { AccountResponse } from '@core/model/account/account-response.model';
 import { QueryTransactionHistoryCriteria } from '@core/model/account/transaction-query.model';
 import { TransactionResponse } from '@core/model/account/transaction-response.model';
 import { Observable } from 'rxjs';
+import { MessageResponse } from '../../model/service/message-response.model';
 import { map } from 'rxjs/operators';
+import { AccountResponse } from '../../model/account/account-response.model';
+import { UserAccount } from '../../model/account/account.model';
+import { QueryTransactionHistoryCriteria } from '../../model/account/transaction-query.model';
+import { TransactionResponse } from '../../model/account/transaction-response.model';
+import { QueryTransactionHistoryCriteriaDateRange } from '@core/model/account/transaction-query-date-range.model';
 
 @Injectable({
   providedIn: 'root',
@@ -39,13 +45,16 @@ export class CommerceApiService extends BaseService {
     );
   }
 
-  getCashlessUserId(): Observable<string> {
-    const method = 'retrieveCashlessPatronMobileDisplayMediaValue';
-    return this.httpRequest<MessageResponse<string>>(
-      this.serviceUrl,
-      method,
-      true
-    ).pipe(map(({ response }) => response));
+  getTransactionsHistoryByDate(queryCriteria: QueryTransactionHistoryCriteriaDateRange): Observable<TransactionResponse> {
+    const method = 'retrieveTransactionHistoryWithinDateRange';
+    const params = {
+      paymentSystemType: 0,
+      queryCriteria,
+    };
+
+    return this.httpRequest(this.serviceUrl, method, true, params).pipe(
+      map(({ response }: MessageResponse<TransactionResponse>) => response)
+    );
   }
 
   calculateDepositFee(fromAccountId, toAccountId, amount): Observable<number> {

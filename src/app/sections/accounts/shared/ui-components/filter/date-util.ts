@@ -55,26 +55,26 @@ export const getAmountOfMonthFromPeriod = (n: number, date?: Date): DateUtilObje
 };
 
 export const getTimeRangeOfDate = (date: DateUtilObject): TimeRange => {
-  let startDate;
-  let endDate;
+  let earliestDate;
+  let latestDate;
   const month = 30;
   const halfYear = 180;
 
   if (date.name === TIME_PERIOD.pastMonth || date.name === TIME_PERIOD.pastSixMonth) {
     const daysBack = date.name === TIME_PERIOD.pastMonth ? month : halfYear;
 
-    endDate = new Date();
-    startDate = new Date(new Date().setDate(endDate.getDate() - daysBack));
+    earliestDate = new Date();
+    latestDate = new Date(new Date().setDate(earliestDate.getDate() - daysBack));
   } else {
     const nextMonth = new Date(date.year, date.month + 1).valueOf();
 
-    startDate = new Date(date.year, date.month);
-    endDate = new Date(nextMonth - 1);
+    earliestDate = new Date(date.year, date.month);
+    latestDate = new Date(nextMonth - 1);
   }
-  startDate = startDate.toISOString();
-  endDate = endDate.toISOString();
+  earliestDate = earliestDate.toISOString();
+  latestDate = latestDate.toISOString();
 
-  return { startDate, endDate };
+  return { startDate: earliestDate, endDate: latestDate };
 };
 export const getRangeBetweenDates = (sourceDate: DateUtilObject, targetDate: DateUtilObject): TimeRange => {
   const { startDate: endDate } = getTimeRangeOfDate(sourceDate);
