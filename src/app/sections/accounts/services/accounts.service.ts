@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { AccountsApiService } from './accounts.api.service';
 
 import { BehaviorSubject, Observable, zip, combineLatest } from 'rxjs';
 import { map, tap, take, switchMap } from 'rxjs/operators';
@@ -10,6 +9,7 @@ import { ContentService } from '../../../core/service/content-service/content.se
 import { UserAccount } from '../../../core/model/account/account.model';
 import { SettingInfo } from '../../../core/model/configuration/setting-info.model';
 import { ContentStringInfo } from 'src/app/core/model/content/content-string-info.model';
+import { ConfigurationService } from '@core/service/config-service/configuration.service';
 import {
   PAYMENT_SYSTEM_TYPE,
   ContentStringsParamsAccounts,
@@ -25,7 +25,7 @@ export class AccountsService {
   private contentString;
 
   constructor(
-    private readonly apiService: AccountsApiService,
+    private readonly configurationService: ConfigurationService,
     private readonly commerceApiService: CommerceApiService,
     private readonly contentService: ContentService
   ) {}
@@ -47,7 +47,7 @@ export class AccountsService {
   }
 
   getUserSettings(settings: ContentStringRequest[]): Observable<SettingInfo[]> {
-    const requestArray = settings.map(setting => this.apiService.getSettingByConfig(setting));
+    const requestArray = settings.map(setting => this.configurationService.getSettingByConfig(setting));
 
     return zip(...requestArray).pipe(tap(settings => (this._settings = settings)));
   }

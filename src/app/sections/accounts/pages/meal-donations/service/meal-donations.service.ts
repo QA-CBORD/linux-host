@@ -5,8 +5,8 @@ import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { CommerceApiService } from '@core/service/commerce/commerce-api.service';
 import { tap, map, switchMap } from 'rxjs/operators';
 import { ContentStringRequest } from '@core/model/content/content-string-request.model';
-import { AccountsApiService } from '../../../services/accounts.api.service';
 import { SYSTEM_SETTINGS_CONFIG } from '../../../accounts.config';
+import { ConfigurationService } from '@core/service/config-service/configuration.service';
 
 @Injectable()
 export class MealDonationsService {
@@ -16,7 +16,7 @@ export class MealDonationsService {
 
   constructor( 
     private readonly commerceApiService: CommerceApiService,
-    private readonly accountsApiService: AccountsApiService,
+    private readonly configurationService: ConfigurationService,
     ) { }
 
   get accounts$(): Observable<UserAccount[]> {
@@ -44,7 +44,7 @@ export class MealDonationsService {
   }
 
   getUserSettings(settings: ContentStringRequest[]): Observable<SettingInfo[]> {
-    const requestArray = settings.map(setting => this.accountsApiService.getSettingByConfig(setting));
+    const requestArray = settings.map(setting => this.configurationService.getSettingByConfig(setting));
 
     return zip(...requestArray).pipe(tap(settings => (this._settings = settings)));
   }

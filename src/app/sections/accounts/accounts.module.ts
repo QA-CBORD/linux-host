@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AccountsPage } from './accounts.page';
 import { AccountsRoutingModule } from './accounts.routing.module';
-import { AccountsApiService } from './services/accounts.api.service';
 import { AccountsService } from './services/accounts.service';
 import { AccountsPageResolver } from './resolvers/accounts-page.resolver';
 import { TransactionService } from './services/transaction.service';
@@ -28,7 +27,6 @@ const imports = [
 ];
 const declarations = [AccountsPage];
 const providers = [
-  AccountsApiService,
   AccountsService,
   AccountsPageResolver,
   TransactionService,

@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 
-import { BehaviorSubject, Observable, zip } from 'rxjs';
+import { BehaviorSubject, Observable, zip, config } from 'rxjs';
 import { map, tap, switchMap } from 'rxjs/operators';
 
 import { CommerceApiService } from 'src/app/core/service/commerce/commerce-api.service';
-import { ConfigurationService } from 'src/app/core/service/configuration/configuration.service';
+import { ConfigurationService as ConfigService } from 'src/app/core/service/configuration/configuration.service';
 import { UserService } from 'src/app/core/service/user-service/user.service';
 
 import { Settings, PaymentSystemType, ContentStrings } from 'src/app/app.global';
@@ -12,7 +12,7 @@ import { UserAccount } from 'src/app/core/model/account/account.model';
 import { ContentService } from 'src/app/core/service/content-service/content.service';
 import { ContentStringRequest } from '@core/model/content/content-string-request.model';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
-import { AccountsApiService } from '@sections/accounts/services/accounts.api.service';
+import { ConfigurationService } from '@core/service/config-service/configuration.service';
 
 @Injectable()
 export class AccountsService {
@@ -21,9 +21,9 @@ export class AccountsService {
   constructor(
     private readonly commerceApiService: CommerceApiService,
     private readonly userService: UserService,
-    private readonly configService: ConfigurationService,
+    private readonly configService: ConfigService,
     private readonly contentService: ContentService,
-    private readonly apiService: AccountsApiService,
+    private readonly configurationService: ConfigurationService,
   ) {}
 
   get accounts$(): Observable<UserAccount[]> {
@@ -89,7 +89,7 @@ export class AccountsService {
   }
 
   getUserSettings(settings: ContentStringRequest[]): Observable<SettingInfo[]> {
-    const requestArray = settings.map(setting => this.apiService.getSettingByConfig(setting));
+    const requestArray = settings.map(setting => this.configurationService.getSettingByConfig(setting));
 
     return zip(...requestArray);
   }

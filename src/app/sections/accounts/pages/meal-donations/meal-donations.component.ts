@@ -181,7 +181,7 @@ export class MealDonationsComponent implements OnInit {
             take(1),
             finalize(() => this.loadingService.closeSpinner())
           )
-          .subscribe(() => this.showModal(), () => this.onErrorRetrieve('Something went wrong, please try again...'));
+          .subscribe(async () => await this.showModal(), () => this.onErrorRetrieve('Something went wrong, please try again...'));
       }
     });
 
@@ -197,8 +197,10 @@ export class MealDonationsComponent implements OnInit {
       animated: false,
       backdropDismiss: true,
     });
-    modal.onDidDismiss().then(async () => await this.back());
-    modal.present();
+    modal
+      .onDidDismiss()
+      .then(async () => await this.router.navigate([NAVIGATE.accounts], { skipLocationChange: true }));
+    await modal.present();
   }
 
   private async back(): Promise<void> {
