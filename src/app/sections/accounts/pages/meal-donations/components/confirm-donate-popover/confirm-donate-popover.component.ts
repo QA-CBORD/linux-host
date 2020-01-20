@@ -8,7 +8,7 @@ import { buttons } from 'src/app/core/utils/buttons.config';
   styleUrls: ['./confirm-donate-popover.component.scss'],
 })
 export class ConfirmDonatePopoverComponent implements OnInit {
-  @Input() data: { [key: string]: string };
+  @Input() data: { [key: string]: string | number };
 
   popoverConfig: PopoverConfig;
   contentString: { [key: string]: string };

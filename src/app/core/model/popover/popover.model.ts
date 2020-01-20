@@ -4,9 +4,13 @@ import { PopupButton } from '../button';
 export interface PopoverConfig {
   type: string | keyof PopupTypes;
   title: string;
-  message: string | { [key: string]: string };
+  message: string | Message | { [key: string]: string | number };
   buttons: PopupButton[];
   code?: string;
   validityTime?: number;
   closeBtn?: boolean;
+}
+export interface Message {
+  title: string;
+  description: string;
 }

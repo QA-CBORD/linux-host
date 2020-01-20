@@ -97,7 +97,7 @@ export class MealDonationsComponent {
     }
 
     const { account, amount } = this.mealsForm.value;
-    const toDecimal = amount.toFixed(2);
+    const toDecimal = Number(amount).toFixed(2);
     const amountValue = Number(toDecimal);
 
     this.confirmationDepositPopover({ account, amountValue });
