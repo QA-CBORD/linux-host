@@ -1,9 +1,11 @@
 import { NgModule } from '@angular/core';
+import { IonicModule } from '@ionic/angular';
 
-import { RoomsSearchPage } from './rooms-search.page';
 import { RoomsSearchRoutingModule } from './rooms-search.routing.module';
 
-const imports = [RoomsSearchRoutingModule];
+import { RoomsSearchPage } from './rooms-search.page';
+
+const imports = [IonicModule, RoomsSearchRoutingModule];
 const declarations = [RoomsSearchPage];
 
 @NgModule({
