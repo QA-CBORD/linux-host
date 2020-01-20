@@ -88,7 +88,7 @@ export class UnsavedChangesGuard implements CanDeactivate<AutomaticDepositPageCo
     const modal = await this.popoverCtrl.create({
       component: ConfirmUnsavedChangesPopoverComponent,
       animated: false,
-      backdropDismiss: true,
+      backdropDismiss: false,
     });
     await modal.present();
 
