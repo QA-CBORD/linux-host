@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { PopoverConfig, DonationInfo } from 'src/app/core/model/popover/popover.model';
+import { PopoverConfig } from 'src/app/core/model/popover/popover.model';
 import { buttons } from 'src/app/core/utils/buttons.config';
 
 @Component({
@@ -8,7 +8,7 @@ import { buttons } from 'src/app/core/utils/buttons.config';
   styleUrls: ['./confirm-donate-popover.component.scss'],
 })
 export class ConfirmDonatePopoverComponent implements OnInit {
-  @Input() data: DonationInfo;
+  @Input() data: { [key: string]: string };
 
   popoverConfig: PopoverConfig;
   contentString: { [key: string]: string };
