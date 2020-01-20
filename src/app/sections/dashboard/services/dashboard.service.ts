@@ -8,9 +8,9 @@ import { SettingInfoList } from 'src/app/core/model/configuration/setting-info-l
 import { Settings } from 'src/app/app.global';
 import {
   ACCOUNTS_SETTINGS_CONFIG,
-  TILES_ID,
-  TILES_BASE_CONFIG,
   DASHBOARD_SETTINGS_CONFIG,
+  TILES_BASE_CONFIG,
+  TILES_ID,
 } from '@sections/dashboard/dashboard.config';
 import { parseArrayFromString } from '@core/utils/general-helpers';
 import { AccountsService } from '@sections/dashboard/services/accounts.service';
@@ -66,9 +66,9 @@ export class DashboardService {
 
   updateConfigByCashedConfig(allowedConfig: TileWrapperConfig[], cashedConfig: TileWrapperConfig[]): TileWrapperConfig[] {
     const temp = [];
-    return cashedConfig.reduce((res, cfg) => {
-      const elem = allowedConfig.some(({ id }) => id === cfg.id);
-      elem ? res.push(cfg) : temp.push(cfg);
+    return allowedConfig.reduce((res, config) => {
+      const cashedSettingIndex = cashedConfig.findIndex(({ id }) => id === config.id);
+      cashedSettingIndex !== -1 ? res.push(cashedConfig[cashedSettingIndex]) : temp.push(config);
       return res;
     }, []).concat(temp);
   }
