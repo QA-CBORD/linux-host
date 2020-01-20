@@ -76,7 +76,7 @@ export class CommerceApiService extends BaseService {
     );
   }
 
-  donate(accountId: string, amountToDonate: number): Observable<any> {
+  donate(accountId: string, amountToDonate: number): Observable<string> {
     const method = 'donate';
     const params = {
       accountId,
@@ -84,7 +84,7 @@ export class CommerceApiService extends BaseService {
     };
 
     return this.httpRequest(this.serviceUrl, method, true, params).pipe(
-      map(({ response }: MessageResponse<any>) => response)
+      map(({ response }: MessageResponse<string>) => response)
     );
   }
 

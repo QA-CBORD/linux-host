@@ -10,10 +10,9 @@
   <div class="meals-donate__description-wrapper">
     You can donate meals from your Funding Accounts below:
   </div>
-  <form class="request-funds__form" *ngIf="formHasBeenPrepared | async" [formGroup]="mealsForm">
+  <form class="request-funds__form" *ngIf="(formHasBeenPrepared | async)" [formGroup]="mealsForm">
     <div class="meals-donate__accounts">
       <st-select-floating-label
-        (focus)="onFocus()"
         [label]="'Funding Account'"
         [formControlName]="controlsNames.account"
         [control]="account"
@@ -38,25 +37,26 @@
 
     <ng-container *ngIf="(isFreeFormEnabled$ | async); then freeInput; else fixedInput"></ng-container>
     <ng-template #fixedInput
-      ><div class="meals-donate__amount">
+      ><div class="meals-donate__amount" (click)="isAccountSelected()">
         <st-select-floating-label
-          (focus)="onFocus()"
-          [label]="(account.value.accountType === accountTypes.MEALS ? 'Meals' : 'Amount') + ' to Donate'"
-          [formControlName]="controlsNames.selectAmount"
-          [control]="selectAmount"
+          [label]="account.value.accountType | accountTypePipe"
+          (click)="isAccountSelected($event)"
+          [formControlName]="controlsNames.amount"
+          [control]="amount"
           [interfaceOptions]="customActionSheetOptions"
-          [isError]="selectAmount.invalid && selectAmount.touched"
+          [isError]="amount.invalid && amount.touched"
           interface="action-sheet"
-          idd="selectAmount"
+          [isDisabled]="!account.value"
+          idd="amount"
         >
           <ng-container role="options">
-            <ion-select-option [value]="amount" *ngFor="let amount of (fixedAmounts$ | async)">
-              {{ amount | transactionUnits: account.value.accountType }}
+            <ion-select-option [value]="amountItem" *ngFor="let amountItem of (fixedAmounts$ | async)">
+              {{ amountItem | transactionUnits: account.value.accountType }}
             </ion-select-option>
           </ng-container>
           <ng-container role="error">
             <p class="meals-donate__control-error-msg">
-              {{ selectAmount.errors?.errorMsg }}
+              {{ amount.errors?.errorMsg }}
             </p>
           </ng-container>
         </st-select-floating-label>
@@ -66,24 +66,24 @@
     <ng-template #freeInput>
       <div class="meals-donate__amount">
         <st-input-floating-label
-          [label]="(account.value.accountType === accountTypes.MEALS ? 'Meals' : 'Amount') + ' to Donate'"
-          [isError]="inputAmount.invalid && inputAmount.touched"
-          [control]="inputAmount"
-          [formControlName]="controlsNames.inputAmount"
+          [label]="account.value.accountType | accountTypePipe"
+          [isError]="amount.invalid && amount.touched"
+          [control]="amount"
+          [formControlName]="controlsNames.amount"
           title="Enter amount"
           type="number"
           idd="amount"
         >
           <p class="meals-donate__control-error-msg">
-            {{ inputAmount.errors?.errorMsg }}
+            {{ amount.errors?.errorMsg }}
           </p>
         </st-input-floating-label>
       </div>
     </ng-template>
   </form>
 </ion-content>
-<ion-footer mode="ios" class="meals-donate__footer" *ngIf="formHasBeenPrepared | async">
+<ion-footer mode="ios" class="meals-donate__footer" *ngIf="(formHasBeenPrepared | async)">
   <st-button (onClick)="onSubmit()" [isDisabled]="!mealsForm.valid">
-    Donate {{ selectAmount.value || inputAmount.value | transactionUnits: account.value.accountType }}
+    Donate {{ amount.value | transactionUnits: account.value.accountType }}
   </st-button>
 </ion-footer>

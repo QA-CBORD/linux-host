@@ -4,7 +4,7 @@ import { PopupButton } from '../button';
 export interface PopoverConfig {
   type: string | keyof PopupTypes;
   title: string;
-  message: string | Message;
+  message: string | Message | DonationInfo;
   buttons: PopupButton[];
   code?: string;
   validityTime?: number;
@@ -13,4 +13,8 @@ export interface PopoverConfig {
 export interface Message {
   title: string;
   description: string;
+}
+export interface DonationInfo {
+  account: Account;
+  amount: number;
 }

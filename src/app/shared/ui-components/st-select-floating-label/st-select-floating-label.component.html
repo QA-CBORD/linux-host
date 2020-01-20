@@ -8,6 +8,7 @@
                 (ionBlur)="onBlur()"
                 (ionFocus)="onFocus()"
                 interface="{{ interface }}"
+                [disabled]= "isDisabled"
                 id="{{ idd }}"
     >
         <ng-content select="[role=options]"></ng-content>

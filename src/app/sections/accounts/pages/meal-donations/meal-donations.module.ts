@@ -16,6 +16,7 @@ import { ConfirmDonatePopoverModule } from './components/confirm-donate-popover/
 import { StPopoverLayoutModule } from '@shared/ui-components/st-popover-layout/st-popover-layout.module';
 import { PopoverComponent } from './components/popover/popover.component';
 import { MealDonationsService } from './service/meal-donations.service';
+import { AccountTypePipe } from './pipes/account-type';
 
 const imports = [
   IonicModule,
@@ -30,7 +31,7 @@ const imports = [
   ConfirmDonatePopoverModule,
   StPopoverLayoutModule
 ];
-const declarations = [MealDonationsComponent, PopoverComponent];
+const declarations = [MealDonationsComponent, PopoverComponent, AccountTypePipe];
 const providers = [MealDonationsResolver, MealDonationsService];
 const entryComponents = [ConfirmDonatePopoverComponent, PopoverComponent];
 @NgModule({
