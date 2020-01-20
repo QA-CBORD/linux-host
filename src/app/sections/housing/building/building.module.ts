@@ -9,6 +9,7 @@ export const declarations = [BuildingComponent];
 
 @NgModule({
   imports,
+  exports: declarations,
   declarations,
 })
 export class BuildingModule {}
