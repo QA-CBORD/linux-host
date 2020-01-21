@@ -1,6 +1,6 @@
 import { NAVIGATE } from 'src/app/app.global';
 import { TileWrapperConfig } from './models';
-import { LOCAL_ROUTING as ACCOUNT_ROUTING } from '@sections/accounts/accounts.config';
+import { LOCAL_ROUTING as ACCOUNT_ROUTING, ALL_ACCOUNTS } from '@sections/accounts/accounts.config';
 
 export enum DASHBOARD_NAVIGATE {
   scanCard = 'scan-card',
@@ -97,11 +97,11 @@ export const TILES_BASE_CONFIG: TileWrapperConfig[] = [
     title: 'Transactions',
     iconPath: '/assets/icon/transactions.svg',
     isEnable: true,
-    navigate: NAVIGATE.accounts,
+    navigate: `${NAVIGATE.accounts}/${ACCOUNT_ROUTING.accountDetailsM}/${ALL_ACCOUNTS}`,
     buttonConfig: {
       show: true,
       title: 'All Transactions',
-      navigate: NAVIGATE.accounts,
+      navigate: `${NAVIGATE.accounts}/${ACCOUNT_ROUTING.accountDetailsM}/${ALL_ACCOUNTS}`,
     },
   },
   {
