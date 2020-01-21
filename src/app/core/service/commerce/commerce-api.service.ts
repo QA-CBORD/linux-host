@@ -1,11 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BaseService } from '../base-service/base.service';
 import { HttpClient } from '@angular/common/http';
-import { UserAccount } from '@core/model/account/account.model';
-import { MessageResponse } from '@core/model/service/message-response.model';
-import { AccountResponse } from '@core/model/account/account-response.model';
-import { QueryTransactionHistoryCriteria } from '@core/model/account/transaction-query.model';
-import { TransactionResponse } from '@core/model/account/transaction-response.model';
 import { Observable } from 'rxjs';
 import { MessageResponse } from '../../model/service/message-response.model';
 import { map } from 'rxjs/operators';
@@ -33,6 +28,13 @@ export class CommerceApiService extends BaseService {
     );
   }
 
+  getCashlessUserId(): Observable<string> {
+    const method = 'retrieveCashlessPatronMobileDisplayMediaValue';
+    return this.httpRequest<MessageResponse<string>>(this.serviceUrl, method, true).pipe(
+      map(({ response }) => response)
+    );
+  }
+
   getTransactionsHistory(queryCriteria: QueryTransactionHistoryCriteria): Observable<TransactionResponse> {
     const method = 'retrieveTransactionHistory';
     const params = {
@@ -45,7 +47,9 @@ export class CommerceApiService extends BaseService {
     );
   }
 
-  getTransactionsHistoryByDate(queryCriteria: QueryTransactionHistoryCriteriaDateRange): Observable<TransactionResponse> {
+  getTransactionsHistoryByDate(
+    queryCriteria: QueryTransactionHistoryCriteriaDateRange
+  ): Observable<TransactionResponse> {
     const method = 'retrieveTransactionHistoryWithinDateRange';
     const params = {
       paymentSystemType: 0,
