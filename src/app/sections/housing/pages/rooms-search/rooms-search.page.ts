@@ -1,12 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
+
+import { generateBuildings } from '../../building/building.mock';
 
 @Component({
   selector: 'st-rooms-search',
   templateUrl: './rooms-search.page.html',
   styleUrls: ['./rooms-search.page.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RoomsSearchPage implements OnInit {
-  constructor() {}
-
-  ngOnInit() {}
+export class RoomsSearchPage {
+  buildings = generateBuildings();
 }

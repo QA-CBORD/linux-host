@@ -9,5 +9,5 @@
 </ion-header>
 
 <ion-content>
-  <st-building></st-building>
+  <st-building *ngFor="let building of buildings" [building]="building"></st-building>
 </ion-content>

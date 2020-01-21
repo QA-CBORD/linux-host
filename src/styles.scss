@@ -287,3 +287,21 @@
     }
   }
 }
+
+// Display helpers
+.d-flex {
+  display: flex;
+}
+
+// Hidden scrollbar
+.scroll-horizontal-hidden {
+  overflow-x: scroll;
+  margin-bottom: -25px;
+  padding-bottom: 25px;
+}
+
+.scroll-vertical-hidden {
+  overflow-y: scroll;
+  margin-right: -25px;
+  padding-right: 25px;
+}
