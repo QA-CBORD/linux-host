@@ -1,13 +1,19 @@
 @import 'tools';
 
+:host {
+  border-bottom: 1px solid $color-mercury;
+  display: block;
+  margin: 24px 16px 0;
+  padding-bottom: 24px;
+}
+
 .building__figure {
   border-radius: 8px;
   overflow: hidden;
-  margin-bottom: 10px;
+  margin: 0 0 10px;
 }
 
 .building__image {
-  max-width: 100%;
   height: auto;
 }
 
