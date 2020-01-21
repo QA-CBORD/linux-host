@@ -17,5 +17,6 @@ export interface MenuItemInfo {
   reportingCategory: string;
   carbs: number;
   protein: number;
+  imageReference: string;
   menuItemOptions: MenuItemOptionInfo[];
 }

@@ -48,11 +48,9 @@ export class MerchantItemComponent {
 
   triggerFavourite(event, { isFavorite = null, id }: MerchantInfo) {
     this.addToFav.emit({ isFavorite, id });
-    event.stopPropagation();
   }
 
   triggerLocationPin(event, id) {
     this.locationPin.emit(id);
-    event.stopPropagation();
   }
 }

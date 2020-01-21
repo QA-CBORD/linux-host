@@ -67,7 +67,9 @@ export class AccessCardComponent implements OnInit {
   private setInstitutionData() {
     this.institutionColor$ = this.accessCardService
       .getInstitutionColor()
-      .pipe(map(v => '#' + JSON.parse(v)['native-header-bg']));
+      .pipe(
+        map(v => '#' + (JSON.parse(v) ? JSON.parse(v)['native-header-bg'] : '')),
+      );
     this.institutionName$ = this.accessCardService.getInstitutionName();
     this.institutionPhoto$ = this.accessCardService
       .getInstitutionImage()

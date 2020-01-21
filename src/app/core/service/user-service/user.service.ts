@@ -7,7 +7,6 @@ import { BaseService } from '../base-service/base.service';
 import { UserInfo } from 'src/app/core/model/user/user-info.model';
 import { UserPhotoInfo, AddressInfoList, UserSettingInfo } from '../../model/user';
 import { MessageResponse } from '../../model/service/message-response.model';
-import { UserSettings } from '../../model/user';
 import { UserPhotoList } from '../../model/user';
 import { HttpClient } from '@angular/common/http';
 import { NativeProvider, NativeData } from '@core/provider/native-provider/native.provider';

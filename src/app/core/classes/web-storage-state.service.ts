@@ -8,14 +8,10 @@ export class WebStorageState extends ExtendableStateManager<WebStorageStateEntit
   protected readonly _state$: BehaviorSubject<WebStorageStateEntity> = new BehaviorSubject<WebStorageStateEntity>(this.state);
   protected readonly _isUpdating$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(!!this.activeUpdaters);
 
-  constructor(protected storage: Storage,
+  constructor(protected readonly storage: Storage,
               private readonly storageKey: string = 'cbord') {
     super();
     this.initState();
-  }
-
-  get state$(): Observable<WebStorageStateEntity> {
-    return this._state$.asObservable().pipe(distinctUntilChanged());
   }
 
   /**Stream which gives information about current
@@ -26,20 +22,6 @@ export class WebStorageState extends ExtendableStateManager<WebStorageStateEntit
    * are trying to update state asynchronously. Incorrect amount of using these methods
    * might lead to get an infinity state updating indicator
    *  */
-  get isUpdating$(): Observable<boolean> {
-    return this._isUpdating$.asObservable().pipe(distinctUntilChanged());
-  }
-
-  removeUpdater(): void {
-    this.activeUpdaters--;
-    this.activeUpdaters = this.activeUpdaters < 0 ? 0 : this.activeUpdaters;
-    this._isUpdating$.next(!!this.activeUpdaters);
-  }
-
-  addUpdater(): void {
-    this.activeUpdaters++;
-    this._isUpdating$.next(!!this.activeUpdaters);
-  }
 
   getStateEntityByKey$<T>(key: string): Observable<T> {
     if (!this.isKeyExistInState(key)) return EMPTY;
@@ -104,7 +86,7 @@ export class WebStorageState extends ExtendableStateManager<WebStorageStateEntit
     this._state$.next({ ...this.state });
   }
 
-  protected clearState(): void {
+  clearState(): void {
     this.state = {};
     this.setStateToLocalStorage();
   }

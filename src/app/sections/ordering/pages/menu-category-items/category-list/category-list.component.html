@@ -12,6 +12,8 @@
         <div class="category-list__menu-item-description">{{ menuItem.menuItem.description }}</div>
         <div class="category-list__menu-item-price">{{ menuItem.menuItem.price | priceUnitsResolver: mealBased }}</div>
       </div>
+<!--      <img *ngIf="menuItem.menuItem.imageReference" class="category-list__menu-item-photo"-->
+<!--           src="https://3bulchr7pb.execute-api.us-east-1.amazonaws.com/dev/image/{{menuItem.menuItem.imageReference}}">-->
       <img class="category-list__menu-item-photo"
            src="/assets/images/temp-merchant-photo.jpg">
     </div>

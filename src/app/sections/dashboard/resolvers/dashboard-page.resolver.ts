@@ -1,7 +1,7 @@
 import { Resolve } from '@angular/router';
 import { Injectable } from '@angular/core';
 import { Observable, zip } from 'rxjs';
-import { first, tap } from 'rxjs/operators';
+import { finalize, first } from 'rxjs/operators';
 
 import { AccountsService } from '@sections/accounts/services/accounts.service';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -26,7 +26,7 @@ export class DashboardPageResolver implements Resolve<Observable<SettingInfoList
       this.tileConfigFacadeService.updateTilesConfigBySystemSettings().pipe(first()),
       accountContentStrings,
     ).pipe(
-      tap(() => this.loadingService.closeSpinner(), () => this.loadingService.closeSpinner()),
+      finalize(() => this.loadingService.closeSpinner()),
     );
   }
 }
