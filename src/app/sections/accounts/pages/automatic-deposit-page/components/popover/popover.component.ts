@@ -10,7 +10,7 @@ import { buttons } from '@core/utils/buttons.config';
 })
 export class PopoverComponent implements OnInit {
   @Input() data: { [key: string]: string };
-  config: PopoverConfig;
+  config: PopoverConfig<string>;
 
   constructor() {}
 

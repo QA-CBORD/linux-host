@@ -10,7 +10,7 @@ import { buttons } from 'src/app/core/utils/buttons.config';
 export class FullMenuPopoverComponent implements OnInit {
   @Input() data: any;
 
-  popoverConfig: PopoverConfig;
+  popoverConfig: PopoverConfig<string>;
   contentString: { [key: string]: string };
 
   ngOnInit() {

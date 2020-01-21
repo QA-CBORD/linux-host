@@ -10,10 +10,10 @@ import { buttons } from 'src/app/core/utils/buttons.config';
 export class ConfirmDepositPopoverComponent implements OnInit {
   @Input() data: any;
 
-  popoverConfig: PopoverConfig;
+  popoverConfig: PopoverConfig<string | number>;
   contentString: { [key: string]: string };
 
-  constructor() {}
+  constructor() { }
 
   ngOnInit() {
     this.initPopover();

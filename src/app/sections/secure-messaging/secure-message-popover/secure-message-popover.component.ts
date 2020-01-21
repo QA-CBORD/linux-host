@@ -10,7 +10,7 @@ import { buttons } from '../../../core/utils/buttons.config';
 export class SecureMessagePopoverComponent implements OnInit {
   @Input() data: any;
 
-  popoverConfig: PopoverConfig;
+  popoverConfig: PopoverConfig<string>;
   contentString: { [key: string]: string };
 
   constructor() {}

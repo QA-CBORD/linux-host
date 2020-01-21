@@ -9,7 +9,7 @@ import { BUTTON_TYPE } from '../../../core/utils/buttons.config';
   styleUrls: ['./st-popover-layout.component.scss'],
 })
 export class StPopoverLayoutComponent implements OnInit {
-  @Input() popoverConfig: PopoverConfig;
+  @Input() popoverConfig: PopoverConfig<string | number>;
 
   constructor(private popoverCtrl: PopoverController) {}
 

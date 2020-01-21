@@ -84,6 +84,6 @@
 </ion-content>
 <ion-footer mode="ios" class="meals-donate__footer" *ngIf="(formHasBeenPrepared | async)">
   <st-button (onClick)="onSubmit()" [isDisabled]="!mealsForm.valid">
-    Donate {{ amount.value | transactionUnits: account.value.accountType }}
+    Donate {{ amount.value && (amount.value | transactionUnits: account.value.accountType) }}
   </st-button>
 </ion-footer>
