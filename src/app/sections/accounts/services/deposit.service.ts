@@ -5,9 +5,9 @@ import { UserAccount } from 'src/app/core/model/account/account.model';
 import { map, tap, switchMap } from 'rxjs/operators';
 import { ContentStringRequest } from 'src/app/core/model/content/content-string-request.model';
 import { SettingInfo } from 'src/app/core/model/configuration/setting-info.model';
-import { AccountsApiService } from '@sections/accounts/services/accounts.api.service';
 import { PAYMENT_SYSTEM_TYPE } from '@sections/accounts/accounts.config';
 import { BillMeMapping } from '@core/model/settings/billme-mapping.model';
+import { ConfigurationService } from '@core/service/config-service/configuration.service';
 
 @Injectable()
 export class DepositService {
@@ -16,7 +16,7 @@ export class DepositService {
 
   constructor(
     private readonly commerceApiService: CommerceApiService,
-    private readonly accountsApiService: AccountsApiService
+    private readonly configurationService: ConfigurationService
   ) {}
 
   get accounts$(): Observable<UserAccount[]> {
@@ -40,7 +40,7 @@ export class DepositService {
   }
 
   getUserSettings(settings: ContentStringRequest[]): Observable<SettingInfo[]> {
-    const requestArray = settings.map(setting => this.accountsApiService.getSettingByConfig(setting));
+    const requestArray = settings.map(setting => this.configurationService.getSettingByConfig(setting));
 
     return zip(...requestArray).pipe(tap(settings => (this._settings = settings)));
   }

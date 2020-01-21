@@ -22,7 +22,7 @@ export const DASHBOARD_SETTINGS_CONFIG = {
     category: 'feature',
     name: 'enable_open_my_door',
   },
-  enableMealDonations: {
+  enableMeals: {
     domain: 'get',
     category: 'feature',
     name: 'meal_donations_enabled',
@@ -127,18 +127,15 @@ export const TILES_BASE_CONFIG: TileWrapperConfig[] = [
     },
   },
   {
-    id: DASHBOARD_SETTINGS_CONFIG.enableMealDonations.name,
+    id: DASHBOARD_SETTINGS_CONFIG.enableMeals.name,
     title: 'Meal Donations',
     iconPath: '/assets/icon/meal-outline.svg',
     isEnable: false,
-    navigate: NAVIGATE.accounts,
-    //TODO:Added this after mealDonations module will done
-    //navigate: `${NAVIGATE.accounts}/${ACCOUNTS_NAVIGATE.mealDonations}`,
+    navigate: `${NAVIGATE.accounts}/${ACCOUNT_ROUTING.mealDonations}`,
     buttonConfig: {
       show: true,
       title: 'Donate a Meal',
-      navigate: NAVIGATE.accounts,
-      //navigate: `${NAVIGATE.accounts}/${ACCOUNTS_NAVIGATE.mealDonations}`,
+      navigate: `${NAVIGATE.accounts}/${ACCOUNT_ROUTING.mealDonations}`,
     },
   },
   {

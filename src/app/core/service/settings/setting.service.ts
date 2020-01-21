@@ -37,7 +37,7 @@ export class SettingService extends BaseService {
     return zip(...requestArray).pipe(tap(settings => (this._settings = settings)));
   }
 
-  getSettingByName(settings: SettingInfo[], name: string): SettingInfo | void {
+  getSettingByName(settings: SettingInfo[], name: string): SettingInfo | undefined {
     return settings.find(setting => setting && setting.name === name);
   }
 

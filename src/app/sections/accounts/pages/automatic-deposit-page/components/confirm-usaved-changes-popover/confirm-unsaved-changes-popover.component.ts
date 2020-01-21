@@ -9,7 +9,7 @@ import { buttons } from '@core/utils/buttons.config';
   styleUrls: ['./confirm-unsaved-changes-popover.component.scss'],
 })
 export class ConfirmUnsavedChangesPopoverComponent implements OnInit {
-  config: PopoverConfig;
+  config: PopoverConfig<string>;
 
   constructor() {}
 

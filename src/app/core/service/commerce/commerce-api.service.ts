@@ -76,6 +76,18 @@ export class CommerceApiService extends BaseService {
     );
   }
 
+  donate(accountId: string, amountToDonate: number): Observable<string> {
+    const method = 'donate';
+    const params = {
+      accountId,
+      amountToDonate,
+    };
+
+    return this.httpRequest(this.serviceUrl, method, true, params).pipe(
+      map(({ response }: MessageResponse<string>) => response)
+    );
+  }
+
   createAccount(accountInfo): Observable<string> {
     const method = 'createAccount';
     const params = { accountInfo };

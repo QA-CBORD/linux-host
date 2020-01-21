@@ -3,13 +3,11 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AccountsPage } from './accounts.page';
 import { AccountsRoutingModule } from './accounts.routing.module';
-import { AccountsApiService } from './services/accounts.api.service';
 import { AccountsService } from './services/accounts.service';
 import { AccountsPageResolver } from './resolvers/accounts-page.resolver';
 import { TransactionService } from './services/transaction.service';
 import { TransactionsResolver } from './resolvers/transactions.resolver';
 import { AutoDepositPageResolver } from './resolvers/auto-deposit-page.resolver';
-import { SettingService } from './services/setting.service';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
 import { DepositService } from '@sections/accounts/services/deposit.service';
 import { TransactionsModule } from './shared/ui-components/transactions/transactions.module';
@@ -29,13 +27,11 @@ const imports = [
 ];
 const declarations = [AccountsPage];
 const providers = [
-  AccountsApiService,
   AccountsService,
   AccountsPageResolver,
   TransactionService,
   TransactionsResolver,
   AutoDepositPageResolver,
-  SettingService,
   DepositService,
 ];
 

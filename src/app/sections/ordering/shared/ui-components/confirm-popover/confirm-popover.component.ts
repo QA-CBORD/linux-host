@@ -9,7 +9,7 @@ import { PopupTypes } from '@sections/rewards/rewards.config';
 })
 export class ConfirmPopoverComponent implements OnInit {
   @Input() data: { [key: string]: string };
-  config: PopoverConfig;
+  config: PopoverConfig<string>;
 
   constructor() {}
 

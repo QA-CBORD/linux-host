@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { PopoverConfig } from '@core/model/popover/popover.model';
 import { PopupTypes } from '@sections/rewards/rewards.config';
 import { buttons } from '@core/utils/buttons.config';
@@ -20,7 +20,7 @@ export class PopoverComponent implements OnInit {
       title: null,
       buttons: [{ ...buttons.CLOSE, label: 'done' }],
       message: '',
-      code: '',
+      code: 'center',
     };
   }
 }

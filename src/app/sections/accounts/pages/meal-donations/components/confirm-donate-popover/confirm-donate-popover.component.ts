@@ -3,12 +3,12 @@ import { PopoverConfig } from 'src/app/core/model/popover/popover.model';
 import { buttons } from 'src/app/core/utils/buttons.config';
 
 @Component({
-  selector: 'confirm-deposit-popover',
-  templateUrl: './confirm-deposit-popover.component.html',
-  styleUrls: ['./confirm-deposit-popover.component.scss'],
+  selector: 'confirm-donate-popover',
+  templateUrl: './confirm-donate-popover.component.html',
+  styleUrls: ['./confirm-donate-popover.component.scss'],
 })
-export class ConfirmDepositPopoverComponent implements OnInit {
-  @Input() data: any;
+export class ConfirmDonatePopoverComponent implements OnInit {
+  @Input() data: { [key: string]: string | number };
 
   popoverConfig: PopoverConfig<string | number>;
   contentString: { [key: string]: string };
@@ -21,9 +21,9 @@ export class ConfirmDepositPopoverComponent implements OnInit {
 
   initPopover() {
     this.popoverConfig = {
-      title: 'Confirm Deposit',
+      title: 'Confirm Donate',
       type: 'SUCCESS',
-      buttons: [{ ...buttons.CANCEL, label: 'CANCEL' }, { ...buttons.OKAY, label: 'DEPOSIT' }],
+      buttons: [{ ...buttons.CANCEL, label: 'CANCEL' }, { ...buttons.OKAY, label: 'DONATE' }],
       message: this.data,
     };
   }

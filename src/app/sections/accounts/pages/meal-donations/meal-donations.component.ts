@@ -1,31 +1,36 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { MealDonationsService } from '@sections/accounts/services/meal-donations.service';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormGroup, Validators, FormBuilder, AbstractControl } from '@angular/forms';
+import { PopoverController, ToastController } from '@ionic/angular';
+import { Observable, Subscription, BehaviorSubject } from 'rxjs';
+import { map, take, finalize } from 'rxjs/operators';
+import { Router } from '@angular/router';
+
+import { MealDonationsService } from '@sections/accounts/pages/meal-donations/service/meal-donations.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { formControlErrorDecorator } from '@core/utils/general-helpers';
-import { Keyboard } from '@ionic-native/keyboard/ngx';
-import { Observable, of } from 'rxjs';
 import { UserAccount } from '@core/model/account/account.model';
-import { map, tap, take } from 'rxjs/operators';
-import { AccountsService } from '@sections/accounts/services/accounts.service';
-import { ActivatedRoute } from '@angular/router';
-import { SettingInfo } from '@core/model/configuration/setting-info.model';
-import { PopoverController, ToastController } from '@ionic/angular';
+import { SYSTEM_SETTINGS_CONFIG } from '@sections/accounts/accounts.config';
+import { parseArrayFromString } from '@core/utils/general-helpers';
+import { AccountType, NAVIGATE } from 'src/app/app.global';
+import { BUTTON_TYPE } from '@core/utils/buttons.config';
+import { ConfirmDonatePopoverComponent } from './components/confirm-donate-popover';
+import { PopoverComponent } from './components/popover/popover.component';
 
 @Component({
   selector: 'st-meal-donations',
   templateUrl: './meal-donations.component.html',
   styleUrls: ['./meal-donations.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MealDonationsComponent implements OnInit {
-  tenders$: Observable<UserAccount[]>;
-  activeAccount$: Observable<UserAccount>;
-  amountsForSelect$: Observable<any> = of([1, 2, 3]);
-  isFreeFormEnabled$: Observable<boolean> = of(false);
-  mealDonationsForm: FormGroup;
-  mealDonationsSettings: SettingInfo[];
-  mealEquivalent: Observable<number> = of(6);
+export class MealDonationsComponent {
+  private readonly sourceSubscription: Subscription = new Subscription();
+
+  formHasBeenPrepared: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  showContent: boolean;
+  accounts$: Observable<UserAccount[]>;
+  isFreeFormEnabled$: Observable<boolean>;
+  fixedAmounts$: Observable<Array<number>>;
+  mealsForm: FormGroup;
   minAmount: number = 1;
   maxAmount: number;
   customActionSheetOptions: { [key: string]: string } = {
@@ -33,169 +38,196 @@ export class MealDonationsComponent implements OnInit {
   };
 
   constructor(
-    private readonly mealDonatService: MealDonationsService,
-    private readonly loadingService: LoadingService,
-    private readonly accountService: AccountsService,
     private readonly fb: FormBuilder,
-    private readonly route: ActivatedRoute,
+    private readonly mealDonationsService: MealDonationsService,
+    private readonly loadingService: LoadingService,
     private readonly toastController: ToastController,
     private readonly popoverCtrl: PopoverController,
-    private readonly keyboard: Keyboard
+    private readonly router: Router,
+    private readonly cdRef: ChangeDetectorRef
   ) {}
 
-  ngOnInit() {
-    this.tenders$ = this.accountService
-      .getAccountsFilteredByDepositTenders()
-      .pipe(map((accounts: UserAccount[]) => accounts.filter(account => account.depositAccepted)));
-
+  ionViewWillEnter() {
+    this.accounts$ = this.mealDonationsService.getAccountsFilteredByMealsTenders();
+    this.showContent = true;
+    this.isFreeFormEnabled();
     this.initForm();
-    this.changesHandler();
+    this.cdRef.detectChanges();
+  }
+
+  ionViewWillLeave() {
+    this.sourceSubscription.unsubscribe();
+    this.deleteForm();
+    this.showContent = false;
+  }
+
+  get accountTypes() {
+    return AccountType;
   }
 
   get account(): AbstractControl {
-    return this.mealDonationsForm.get(this.controlsNames.account);
+    return this.mealsForm.get(this.controlsNames.account);
   }
 
-  get inputAmount(): AbstractControl {
-    return this.mealDonationsForm.get(this.controlsNames.inputAmount);
-  }
-
-  get selectAmount(): AbstractControl {
-    return this.mealDonationsForm.get(this.controlsNames.selectAmount);
+  get amount(): AbstractControl {
+    return this.mealsForm.get(this.controlsNames.amount);
   }
 
   get controlsNames() {
     return REQUEST_MEALS_CONTROL_NAMES;
   }
 
-  onFocus() {
-    this.keyboard.isVisible && this.keyboard.hide();
+  isFreeFormEnabled() {
+    this.isFreeFormEnabled$ = this.mealDonationsService.settings$.pipe(
+      map(settings => {
+        const settingInfo = this.mealDonationsService.getSettingByName(
+          settings,
+          SYSTEM_SETTINGS_CONFIG.mealsAllowFreeform.name
+        );
+
+        return settingInfo && Boolean(Number(settingInfo.value));
+      })
+    );
+  }
+
+  onSubmit() {
+    if (this.mealsForm.invalid) {
+      this.onErrorRetrieve('Form is invalid');
+      return;
+    }
+
+    const { account, amount } = this.mealsForm.value;
+    const toDecimal = Number(amount).toFixed(2);
+    const amountValue = Number(toDecimal);
+
+    this.confirmationDepositPopover({ account, amountValue });
+  }
+
+  async confirmationDepositPopover(data: { account: Account; amountValue: number }) {
+    const popover = await this.popoverCtrl.create({
+      component: ConfirmDonatePopoverComponent,
+      componentProps: {
+        data,
+      },
+      animated: false,
+      backdropDismiss: true,
+    });
+
+    popover.onDidDismiss().then(({ role }) => {
+      if (role === BUTTON_TYPE.OKAY) {
+        this.loadingService.showSpinner();
+        this.mealDonationsService
+          .donate(data.account.id, data.amountValue)
+          .pipe(
+            take(1),
+            finalize(() => this.loadingService.closeSpinner())
+          )
+          .subscribe(
+            async () => await this.showModal(),
+            () => this.onErrorRetrieve('Something went wrong, please try again...')
+          );
+      }
+    });
+
+    return await popover.present();
+  }
+
+  isAccountSelected() {
+    if (!this.account.value) {
+      this.onErrorRetrieve('Please select accounts');
+    }
   }
 
   private initForm() {
     const accountErrors = [
       formControlErrorDecorator(Validators.required, CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES.account].required),
     ];
-    this.mealDonationsForm = this.fb.group({
+    this.mealsForm = this.fb.group({
       [this.controlsNames.account]: ['', accountErrors],
-      [this.controlsNames.inputAmount]: [''],
-      [this.controlsNames.selectAmount]: [''],
+      [this.controlsNames.amount]: [''],
     });
 
     this.setValidators();
+    this.accountChangesHandler();
+    this.formHasBeenPrepared.next(true);
   }
 
   private setValidators() {
-    this.isFreeFormEnabled$.pipe(take(1)).subscribe(isFreeForm => {
-      isFreeForm
-        ? this.mealDonationsForm.controls[this.controlsNames.inputAmount].setValidators([
-            formControlErrorDecorator(
-              Validators.required,
-              CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES.inputAmount].required
-            ),
-            formControlErrorDecorator(
-              Validators.min(this.minAmount),
-              CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES.inputAmount].min
-            ),
-            formControlErrorDecorator(
-              (control: AbstractControl) => Validators.max(this.maxAmount)(control),
-              CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES.inputAmount].max
-            ),
-          ])
-        : this.mealDonationsForm.controls[this.controlsNames.selectAmount].setValidators([
-            formControlErrorDecorator(
-              Validators.required,
-              CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES.selectAmount].required
-            ),
-            formControlErrorDecorator(
-              Validators.min(this.minAmount),
-              CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES.selectAmount].min
-            ),
-            formControlErrorDecorator(
-              (control: AbstractControl) => Validators.max(this.maxAmount)(control),
-              CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES.selectAmount].max
-            ),
-          ]);
+    const amount = REQUEST_MEALS_CONTROL_NAMES.amount;
+    this.mealsForm.controls[this.controlsNames[amount]].setValidators([
+      formControlErrorDecorator(Validators.required, CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES[amount]].required),
+      formControlErrorDecorator(Validators.min(this.minAmount), CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES[amount]].min),
+      formControlErrorDecorator(
+        (control: AbstractControl) => Validators.max(this.maxAmount)(control),
+        CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES[amount]].max
+      ),
+    ]);
+  }
+
+  private accountChangesHandler() {
+    const subscription = this.account.valueChanges.subscribe(({ balance, accountType }) => {
+      this.maxAmount = balance.toFixed(2);
+      this.setFixedAmount(accountType);
+      this.amount.reset();
     });
+    this.sourceSubscription.add(subscription);
   }
 
-  private changesHandler() {
-    this.mealDonationsForm.valueChanges.subscribe(value => {
-      this.activeAccount$ = value.account;
-      this.maxAmount = value.account.balance.toFixed();
+  private setFixedAmount(accountType: number) {
+    this.fixedAmounts$ = this.mealDonationsService.settings$.pipe(
+      map(settings => {
+        const settingInfo = this.mealDonationsService.getSettingByName(
+          settings,
+          accountType === AccountType.MEALS
+            ? SYSTEM_SETTINGS_CONFIG.mealsFixedMealAmounts.name
+            : SYSTEM_SETTINGS_CONFIG.mealsFixedDollarAmounts.name
+        );
+        return settingInfo && parseArrayFromString(settingInfo.value);
+      })
+    );
+  }
+
+  private async showModal(): Promise<void> {
+    const modal = await this.popoverCtrl.create({
+      component: PopoverComponent,
+      componentProps: {
+        data: { title: 'Donations Sent!', message: 'Yor donations was sent successfully.' },
+      },
+      animated: false,
+      backdropDismiss: true,
     });
+    modal
+      .onDidDismiss()
+      .then(async () => await this.router.navigate([NAVIGATE.accounts], { skipLocationChange: true }));
+    await modal.present();
   }
 
-  async onSubmit() {
-    if (!this.mealDonationsForm.valid) {
-      return;
-    }
-
-    const {
-      [this.controlsNames.account]: account,
-      [this.controlsNames.inputAmount]: inputAmount,
-      [this.controlsNames.selectAmount]: selectAmount,
-    } = this.mealDonationsForm.getRawValue();
-
-    console.log(account, inputAmount, selectAmount);
-
-    // await this.loadingService.showSpinner();
-
-    // this.userService
-    //   .getUserSettingsBySettingName('quick_amount')
-    //   .pipe(
-    //     switchMap(({ response: { value: v } }) => this.userService.requestDeposit(n, e, m, a, v)),
-    //     take(1)
-    //   )
-    //   .subscribe(
-    //     async ({ response }) => {
-    //       await this.loadingService.closeSpinner();
-    //       response ? this.showModal() : this.showToast();
-    //     },
-    //     async () => await this.loadingService.closeSpinner()
-    //   );
+  private async onErrorRetrieve(message: string) {
+    const toast = await this.toastController.create({
+      message,
+      duration: 5000,
+      position: 'top',
+    });
+    toast.present();
   }
 
-  // private async showToast(): Promise<void> {
-  //   const toast = await this.toastController.create({
-  //     message: 'Something went wrong...',
-  //     duration: 3000,
-  //     position: 'top',
-  //   });
-  //   await toast.present();
-  // }
-
-  // private async showModal(): Promise<void> {
-  //   const modal = await this.popoverCtrl.create({
-  //     component: PopoverComponent,
-  //     componentProps: {
-  //       data: { title: 'Donations Sent!', message: 'Yor donations was sent successfully.' },
-  //     },
-  //     animated: false,
-  //     backdropDismiss: true,
-  //   });
-  //   modal.onDidDismiss();
-  //   modal.present();
-  // }
+  private deleteForm() {
+    this.mealsForm = null;
+    this.formHasBeenPrepared.next(false);
+  }
 }
 
 export enum REQUEST_MEALS_CONTROL_NAMES {
   account = 'account',
-  inputAmount = 'inputAmount',
-  selectAmount = 'selectAmount',
+  amount = 'amount',
 }
 
 export const CONTROL_ERROR = {
   [REQUEST_MEALS_CONTROL_NAMES.account]: {
     required: 'You must choose an account.',
   },
-  [REQUEST_MEALS_CONTROL_NAMES.inputAmount]: {
+  [REQUEST_MEALS_CONTROL_NAMES.amount]: {
     required: 'Please enter an amount',
-    max: 'The amount should be less or equal to the balance',
-    min: 'The amount must be more than 0',
-  },
-  [REQUEST_MEALS_CONTROL_NAMES.selectAmount]: {
-    required: 'Please select an amount',
     max: 'The amount should be less or equal to the balance',
     min: 'The amount must be more than 0',
   },

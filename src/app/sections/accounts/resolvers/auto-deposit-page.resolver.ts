@@ -6,8 +6,8 @@ import { take, tap } from 'rxjs/operators';
 
 import { SYSTEM_SETTINGS_CONFIG } from '../accounts.config';
 import { SettingInfo } from '../../../core/model/configuration/setting-info.model';
-import { SettingService } from '../services/setting.service';
 import { LoadingService } from '../../../core/service/loading/loading.service';
+import { SettingService } from '@core/service/settings/setting.service';
 
 @Injectable()
 export class AutoDepositPageResolver implements Resolve<Observable<SettingInfo[]>> {
