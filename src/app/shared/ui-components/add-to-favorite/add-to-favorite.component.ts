@@ -27,21 +27,27 @@ export class AddToFavoriteComponent implements OnChanges {
     const { active }: SimpleChanges = changes;
 
     if (active && active.previousValue !== active.currentValue) {
-      this.updateIconUrl(active.currentValue);
+      this.updateFavoriteState(active.currentValue);
     }
   }
 
   addToFavorite(): void {
-    this.active = !this.active;
-
-    this.updateIconUrl(this.active);
+    this.updateFavoriteState(!this.active);
     this.added.emit();
+  }
+
+  private updateFavoriteState(active: boolean): void {
+    this.updateActive(active);
+    this.updateIconUrl(active);
+  }
+
+  private updateActive(active: boolean): void {
+    this.active = active;
   }
 
   private updateIconUrl(active: boolean): void {
     const iconUrlPostfix: string = active ? '-active' : '';
 
-    this.active = active;
     this.iconUrl = `${this.iconUrlPrefix}${iconUrlPostfix}.svg`;
   }
 }
