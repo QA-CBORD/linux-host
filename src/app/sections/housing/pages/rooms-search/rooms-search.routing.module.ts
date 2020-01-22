@@ -12,10 +12,10 @@ const routes: Routes = [
         path: 'buildings',
         loadChildren: '../buildings/buildings.module#BuildingsPageModule',
       },
-      // {
-      //   path: 'units',
-      //   loadChildren: '../units/units.module#UnitsPageModule',
-      // },
+      {
+        path: 'units',
+        loadChildren: '../units/units.module#UnitsPageModule',
+      },
       {
         path: '',
         redirectTo: 'buildings',
