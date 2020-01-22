@@ -3,10 +3,30 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { RoomsSearchPage } from './rooms-search.page';
 
-const routes: Routes = [{ path: '', component: RoomsSearchPage }];
+const routes: Routes = [
+  {
+    path: '',
+    component: RoomsSearchPage,
+    children: [
+      {
+        path: 'buildings',
+        loadChildren: '../buildings/buildings.module#BuildingsPageModule',
+      },
+      // {
+      //   path: 'units',
+      //   loadChildren: '../units/units.module#UnitsPageModule',
+      // },
+      {
+        path: '',
+        redirectTo: 'buildings',
+        pathMatch: 'full',
+      },
+    ],
+  },
+];
 
-const imports = [RouterModule.forChild(routes)];
-const exports = [RouterModule];
+export const imports = [RouterModule.forChild(routes)];
+export const exports = [RouterModule];
 
 @NgModule({
   imports,

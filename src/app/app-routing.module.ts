@@ -4,7 +4,10 @@ import { NAVIGATE } from './app.global';
 import { SelectivePreloadingStrategy } from '@core/preload-strategy/selective-preloading-strategy';
 
 const routes: Routes = [
-  { path: NAVIGATE.dashboard, loadChildren: './sections/dashboard/dashboard.module#DashboardPageModule' },
+  {
+    path: NAVIGATE.dashboard,
+    loadChildren: './sections/dashboard/dashboard.module#DashboardPageModule',
+  },
   {
     path: NAVIGATE.mobileAccess,
     loadChildren: './sections/mobile-access/mobile-access.module#MobileAccessPageModule',
