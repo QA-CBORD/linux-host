@@ -7,4 +7,6 @@ export enum LOCAL_ROUTING {
   units = 'units',
 }
 
-export const BASE_URL: string = 'https://housing.api.demo.cbord.com/RescenterApi';
+export const BASE_URL: string = 'https://z6u8er70s9.execute-api.us-east-1.amazonaws.com';
+
+export const STORAGE_KEY: string = 'housing';

@@ -1,11 +1,9 @@
 import { Injectable } from '@angular/core';
-
-import { DataCache } from '../../utils/data-cache';
-
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
-import { testCredentials } from '@environments/environment';
+
 import { AuthService } from '@core/service/auth-service/auth.service';
+
+import { testCredentials } from '@environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -19,8 +17,6 @@ export class TestProvider {
    */
   getTestUser(): Observable<string> {
     let creds = testCredentials.gold7;
-    return this.authService
-      .authenticateUser(creds)
-      .pipe(tap(newSessionId => DataCache.setSessionId(newSessionId)));
+    return this.authService.authenticateUser(creds);
   }
 }

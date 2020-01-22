@@ -1,0 +1,59 @@
+@import 'tools';
+
+.applications-list__item {
+  margin-bottom: 8px;
+
+  --border-width: 1px;
+  --border-style: solid;
+  --border-color: #{$color-link-water};
+  --border-radius: 8px;
+  --padding-top: 10px;
+  --padding-start: 16px;
+  --padding-end: 5px;
+  --padding-bottom: 10px;
+  --inner-border-width: 0;
+  --inner-padding-end: 0;
+  --min-height: auto;
+
+  &::before {
+    background-color: $color-casablanca;
+    border-radius: 0 0 2px 2px;
+    width: 32px;
+    height: 4px;
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 16px;
+    z-index: 1;
+  }
+}
+
+.applications-list__wrap {
+  margin: 0;
+}
+
+.applications-list__info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.applications-list__status {
+  @include font-nunito-heavy(12px);
+
+  color: $color-hot-curry;
+  text-transform: uppercase;
+}
+
+.applications-list__date {
+  @include font-nunito-heavy(12px);
+
+  color: $color-dusty-gray;
+}
+
+.applications-list__title {
+  @include font-nunito-heavy(18px);
+
+  color: $color-night-rider;
+  margin-bottom: 0;
+}

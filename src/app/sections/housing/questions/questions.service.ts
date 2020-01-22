@@ -1,6 +1,10 @@
 import { Injectable } from '@angular/core';
-import { FormControl, Validators, FormGroup, FormArray } from '@angular/forms';
+import { FormControl, Validators, FormGroup, FormArray, AbstractControl, ValidatorFn } from '@angular/forms';
 import { BehaviorSubject, Observable } from 'rxjs';
+
+import { parseJsonToArray, hasValue, integerValidator, numericValidator } from '../utils';
+
+import { QuestionsStorageService } from './questions-storage.service';
 
 import { QuestionBase } from './types/question-base';
 import { QuestionFormControl } from './types/question-form-control';
@@ -13,8 +17,8 @@ import { QuestionDropdown } from './types/question-dropdown';
 import { QuestionCheckboxGroup, QuestionCheckboxGroupValue } from './types/question-checkbox-group';
 import { QuestionRadioGroup } from './types/question-radio-group';
 
-import { QuestionPage, QuestionReorder, QuestionReorderValue } from './questions.model';
-import { Application } from '../applications/applications.model';
+import { ApplicationPage, QuestionReorder, QuestionReorderValue } from './questions.model';
+import { ApplicationDetails, PatronAttribute, PatronPreference } from '../applications/applications.model';
 
 export const QuestionConstructorsMap = {
   header: QuestionHeader,
@@ -31,32 +35,70 @@ export const QuestionConstructorsMap = {
   providedIn: 'root',
 })
 export class QuestionsService {
-  private _pagesSource: BehaviorSubject<QuestionPage[]> = new BehaviorSubject<QuestionPage[]>([]);
-  private _pages$: Observable<QuestionPage[]> = this._pagesSource.asObservable();
+  private _pagesSource: BehaviorSubject<ApplicationPage[]> = new BehaviorSubject<ApplicationPage[]>([]);
 
-  setPages(pages: QuestionPage[]): void {
+  private _dataTypesValidators: { [key: string]: ValidatorFn } = {
+    integer: integerValidator(),
+    numeric: numericValidator(),
+  };
+
+  pages$: Observable<ApplicationPage[]> = this._pagesSource.asObservable();
+
+  constructor(private _questionsStorageService: QuestionsStorageService) {}
+
+  setPages(application: ApplicationDetails): void {
+    const questions: QuestionBase[] = this._parseQuestions(application.applicationDefinition.applicationFormJson);
+    const pages: ApplicationPage[] = this._splitByPages(
+      questions,
+      application.patronAttributes,
+      application.patronPreferences
+    );
+
     this._pagesSource.next(pages);
   }
 
-  getPages(): Observable<QuestionPage[]> {
-    return this._pages$;
+  async _patchFormsFromState(
+    applicationKey: number,
+    pages: ApplicationPage[],
+    checkCallback: (namesToTouch: Set<string>) => void
+  ): Promise<void> {
+    const questions: any = await this._questionsStorageService.getQuestions(applicationKey);
+
+    if (questions) {
+      const namesToTouch: Set<string> = new Set<string>();
+
+      pages.forEach((page: ApplicationPage) => {
+        page.form.patchValue(questions);
+
+        const controls = page.form.controls;
+
+        Object.keys(controls).forEach((controlName: string) => {
+          const control: AbstractControl = controls[controlName];
+
+          if (hasValue(control.value)) {
+            control.markAsDirty();
+            control.markAsTouched();
+
+            namesToTouch.add(controlName);
+          }
+        });
+      });
+
+      checkCallback(namesToTouch);
+    }
   }
 
-  parseQuestions(json: string): QuestionBase[] {
-    let parsedQuestions: any;
+  _parseQuestions(json: string): QuestionBase[] {
+    const questions: any[] = parseJsonToArray(json);
 
-    try {
-      parsedQuestions = JSON.parse(json);
-    } catch (error) {
-      parsedQuestions = [];
+    return questions.map(this._toQuestionType);
+  }
+
+  private _toQuestionType(question: QuestionBase): QuestionBase {
+    if (!question || !question.type) {
+      return question;
     }
 
-    const questions: any[] = Array.isArray(parsedQuestions) ? parsedQuestions : [];
-
-    return questions.map(this.toQuestionType);
-  }
-
-  toQuestionType(question: QuestionBase): QuestionBase {
     if (QuestionConstructorsMap[question.type]) {
       if ((question as QuestionReorder).facilityPicker) {
         return new QuestionReorder(question);
@@ -68,10 +110,14 @@ export class QuestionsService {
     return new QuestionBase(question);
   }
 
-  splitByPages(questions: QuestionBase[]): QuestionPage[] {
+  private _splitByPages(
+    questions: QuestionBase[],
+    attributes: PatronAttribute[],
+    preferences: PatronPreference[]
+  ): ApplicationPage[] {
     const questionsByPages: QuestionBase[][] = questions.reduce(
       (accumulator: QuestionBase[][], current: QuestionBase, index: number) => {
-        if ((current as QuestionParagraph).subtype === 'blockquote') {
+        if (current && (current as QuestionParagraph).subtype === 'blockquote') {
           return questions[index + 1] ? [...accumulator, []] : [...accumulator];
         }
 
@@ -83,41 +129,80 @@ export class QuestionsService {
     );
 
     return questionsByPages.map((page: QuestionBase[]) => ({
-      form: this.toFormGroup(page),
+      form: this._toFormGroup(page, attributes, preferences),
       questions: page,
     }));
   }
 
-  parsePages(application: Application): void {
-    const questions: QuestionBase[] = this.parseQuestions(application.applicationFormJson);
-    const pages: QuestionPage[] = this.splitByPages(questions);
-
-    this.setPages(pages);
-  }
-
-  toFormGroup(questions: QuestionBase[]): FormGroup {
+  private _toFormGroup(
+    questions: QuestionBase[],
+    attributes: PatronAttribute[],
+    preferences: PatronPreference[]
+  ): FormGroup {
     let group: any = {};
 
-    questions.forEach((question: QuestionFormControl) => {
-      if (question.name) {
+    questions
+      .filter((question: QuestionBase) => question && (question as QuestionFormControl).name)
+      .forEach((question: QuestionFormControl) => {
         if (question instanceof QuestionCheckboxGroup) {
-          const values: FormControl[] = question.values.map(
-            (value: QuestionCheckboxGroupValue) => new FormControl(value.selected)
-          );
-
-          group[question.name] = new FormArray(values);
+          group[question.name] = this._toQuestionCheckboxControl(question);
         } else if (question instanceof QuestionReorder) {
-          const values: FormControl[] = question.values
-            .filter((value: QuestionReorderValue) => value.selected)
-            .map((value: QuestionReorderValue) => new FormControl(value));
-
-          group[question.name] = new FormArray(values);
+          group[question.name] = this._toQuestionReorderControl(question, preferences);
         } else {
-          group[question.name] = question.required ? new FormControl('', Validators.required) : new FormControl('');
+          group[question.name] = this._toFormControl(question, attributes);
         }
-      }
-    });
+      });
 
     return new FormGroup(group);
+  }
+
+  private _toFormControl(question: QuestionFormControl, attributes: PatronAttribute[]): FormControl {
+    const foundAttribute: PatronAttribute = attributes.find(
+      (attribute: PatronAttribute) => attribute.attributeConsumerKey === question.consumerKey
+    );
+    const value: any = foundAttribute ? foundAttribute.value : null;
+    const validators: ValidatorFn[] = [];
+
+    if (question.required) {
+      validators.push(Validators.required);
+    }
+
+    if (question instanceof QuestionTextbox) {
+      const dataType: string = question.dataType ? question.dataType.toLowerCase() : null;
+
+      const dataTypeValidator: ValidatorFn = this._dataTypesValidators[dataType];
+
+      if (dataTypeValidator) {
+        validators.push(dataTypeValidator);
+      }
+    }
+
+    return new FormControl(value, validators);
+  }
+
+  private _toQuestionCheckboxControl(question: QuestionCheckboxGroup): FormArray {
+    const values: FormControl[] = question.values.map(
+      (value: QuestionCheckboxGroupValue) => new FormControl(value.selected)
+    );
+
+    return new FormArray(values);
+  }
+
+  private _toQuestionReorderControl(question: QuestionReorder, preferences: PatronPreference[]): FormArray {
+    const values: FormControl[] = question.values
+      .filter((value: QuestionReorderValue) => value.selected)
+      .sort((current: QuestionReorderValue, next: QuestionReorderValue) => {
+        const currentIndex: number = preferences.findIndex(
+          (preference: PatronPreference) => preference.facilityKey === current.facilityKey
+        );
+        const nextIndex: number = preferences.findIndex(
+          (preference: PatronPreference) => preference.facilityKey === next.facilityKey
+        );
+
+        return currentIndex - nextIndex;
+      })
+      .map((value: QuestionReorderValue) => new FormControl(value));
+
+    return new FormArray(values);
   }
 }

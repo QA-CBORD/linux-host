@@ -12,7 +12,7 @@ import { Facility } from './facilities.model';
 export class FacilitiesService {
   facilities: Facility[] = generateFacilities(4);
 
-  getFacilities(applicationId: number): Observable<Facility[]> {
+  getFacilities(applicationKey: number): Observable<Facility[]> {
     return of(this.facilities).pipe(map((facilities: Facility[]) => facilities.map(this._toModel)));
   }
 
