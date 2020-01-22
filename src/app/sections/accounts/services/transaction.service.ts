@@ -33,13 +33,11 @@ export class TransactionService {
   private queryCriteria: QueryTransactionHistoryCriteriaDateRange;
   private infiniteFetchDateRecord = { lastShownDate: null};
   private transactionResponse: TransactionResponse;
-
+  private contentString;
   private readonly lazyAmount: number = 20;
   private readonly _transactions$: BehaviorSubject<TransactionHistory[]> = new BehaviorSubject<TransactionHistory[]>(
     this.transactionHistory
   );
-
-  private contentString;
 
   constructor(
     private readonly accountsService: AccountsService,
@@ -205,7 +203,6 @@ export class TransactionService {
   getContentValueByName(name: string): string {
     return this.contentString[name] || '';
   }
-
 
   private getLatestDateInRange(range: TransactionHistory[]): any {
     if(range && range.length > 0){

@@ -37,7 +37,7 @@ export class AccessCardComponent implements OnInit {
     private readonly sanitizer: DomSanitizer,
     private readonly router: Router,
     private readonly cdRef: ChangeDetectorRef,
-    private nativeProvider: NativeProvider
+    private readonly nativeProvider: NativeProvider
   ) {}
 
   ngOnInit() {
