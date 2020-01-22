@@ -8,7 +8,7 @@ import {
   OrderDetailsFormData,
   OrderInfo,
 } from '@sections/ordering';
-import { first, map, switchMap, tap } from 'rxjs/operators';
+import { first, map, switchMap, tap, finalize } from 'rxjs/operators';
 import {
   ACCOUNT_TYPES,
   MerchantSettings,
@@ -93,7 +93,7 @@ export class CartComponent implements OnInit {
         deliveryAddresses,
         merchantId,
       })),
-      tap(this.loadingService.closeSpinner.bind(this.loadingService)),
+      finalize(() => this.loadingService.closeSpinner()),
     );
   }
 

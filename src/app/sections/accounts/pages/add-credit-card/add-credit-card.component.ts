@@ -1,13 +1,11 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { NavController, PopoverController, ToastController } from '@ionic/angular';
-import { ActivatedRoute, Router } from '@angular/router';
 import { AddCreditCardService } from './services/add-credit-card.service';
 import { SuccessPopoverComponent } from './components/success-popover/success-popover.component';
 import { LoadingService } from 'src/app/core/service/loading/loading.service';
 import { Subscription } from 'rxjs';
-import { tap, take } from 'rxjs/operators';
-import { LOCAL_ROUTING } from '../../accounts.config';
+import { take, finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'st-add-credit-card',
@@ -25,10 +23,8 @@ export class AddCreditCardComponent implements OnInit {
     private readonly fb: FormBuilder,
     private readonly addCreditCardService: AddCreditCardService,
     private readonly popoverCtrl: PopoverController,
-    private readonly router: Router,
     private readonly toastController: ToastController,
     private readonly loadingService: LoadingService,
-    private readonly route: ActivatedRoute,
     private readonly nav: NavController,
   ) {}
 
@@ -94,8 +90,7 @@ export class AddCreditCardComponent implements OnInit {
         billingAddressObject
       )
       .pipe(
-        tap(() => this.loadingService.closeSpinner(),
-          () => this.loadingService.closeSpinner()),
+        finalize(() => this.loadingService.closeSpinner()),
         take(1)
       )
       .subscribe(

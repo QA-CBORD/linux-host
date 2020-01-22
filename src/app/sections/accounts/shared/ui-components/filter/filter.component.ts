@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 
-import { take, tap } from 'rxjs/operators';
+import { take, tap, finalize } from 'rxjs/operators';
 
 import { DateUtilObject, getAmountOfMonthFromPeriod } from './date-util';
 import { FilterMenuComponent, FilterState } from './filter-menu/filter-menu.component';
@@ -46,14 +46,13 @@ export class FilterComponent implements OnInit {
           async () => {
             this.updateActiveState();
             this.cdRef.detectChanges();
-            await this.loadingService.closeSpinner();
             this.onFilterChanged.emit(true);
           },
           async () => {
-            await this.loadingService.closeSpinner();
             this.onFilterChanged.emit(true);
           }
         ),
+        finalize(() => this.loadingService.closeSpinner()),
         take(1)
       )
       .subscribe();
