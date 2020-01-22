@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 
-import { Observable, of, from } from 'rxjs';
-import { map, take, switchMap, skipWhile } from 'rxjs/operators';
+import { from, Observable, of } from 'rxjs';
+import { map, skipWhile, switchMap, take, tap } from 'rxjs/operators';
 
 import { UserService } from 'src/app/core/service/user-service/user.service';
 import { InstitutionService } from 'src/app/core/service/institution/institution.service';
 import { ConfigurationService } from 'src/app/core/service/configuration/configuration.service';
 
-import { Settings, ContentStrings } from 'src/app/app.global';
-import { NativeProvider, NativeData } from '../../../../../core/provider/native-provider/native.provider';
+import { Settings } from 'src/app/app.global';
+import { NativeData, NativeProvider } from '../../../../../core/provider/native-provider/native.provider';
 
 @Injectable()
 export class AccessCardService {
@@ -76,6 +76,7 @@ export class AccessCardService {
   isMobileAccessEnable(): Observable<boolean> {
     return this.userService.userData.pipe(
       switchMap(({ institutionId }) => this.configService.getSetting(institutionId, Settings.Setting.MOBILE_ACCESS_ENABLED)),
+      tap((d) => console.log(d)),
       map(({ value }) => Boolean(Number(value)))
     );
   }
@@ -83,12 +84,9 @@ export class AccessCardService {
   isAppleWalletEnabled(): Observable<boolean> {
     if(this.nativeProvider.isIos()){
       return from(this.nativeProvider.getIosData(NativeData.APPLE_WALLET_INFO)).pipe(
-        map((data: any) => {
-          let result: boolean = JSON.parse(data).isAppleWalletEnabled as boolean;
-          return result;
-        })
+        map((data: any) => JSON.parse(data).isAppleWalletEnabled as boolean)
       );
-    }else{
+    } else {
       return of(false);
     }
 

@@ -37,7 +37,7 @@ export class NativeProvider {
   }
 
   getIosData(methodName: NativeData): Promise<any> {
-    const promise = new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       // we generate a unique id to reference the promise later
       // from native function
       const promiseId = this.generateUUID();
@@ -49,7 +49,6 @@ export class NativeProvider {
         throw new Error('Error with NativeInterface');
       }
     });
-    return promise;
   }
 
   // generates a unique id, not obligator a UUID
