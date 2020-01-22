@@ -76,6 +76,7 @@ export class AccessCardService {
   isMobileAccessEnable(): Observable<boolean> {
     return this.userService.userData.pipe(
       switchMap(({ institutionId }) => this.configService.getSetting(institutionId, Settings.Setting.MOBILE_ACCESS_ENABLED)),
+      tap((d) => console.log(d)),
       map(({ value }) => Boolean(Number(value)))
     );
   }
