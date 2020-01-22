@@ -48,6 +48,7 @@
         "ionic": "^5.2.2",
         "phonegap-plugin-barcodescanner": "^8.1.0",
         "rxjs": "~6.3.3",
+        "tslib": "^1.10.0",
         "zone.js": "~0.8.29"
     },
     "devDependencies": {
@@ -73,6 +74,7 @@
         "karma-jasmine": "~1.1.2",
         "karma-jasmine-html-reporter": "^0.2.2",
         "lite-server": "^2.5.3",
+        "node-sass": "^4.13.1",
         "prettier": "1.16.4",
         "protractor": "~5.4.0",
         "ts-node": "~8.0.0",
