@@ -1,4 +1,6 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
+
+import { generateBuildings } from './building/building.mock';
 
 @Component({
   selector: 'st-buildings',
@@ -6,8 +8,6 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
   styleUrls: ['./buildings.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BuildingsPage implements OnInit {
-  constructor() {}
-
-  ngOnInit() {}
+export class BuildingsPage {
+  buildings = generateBuildings();
 }

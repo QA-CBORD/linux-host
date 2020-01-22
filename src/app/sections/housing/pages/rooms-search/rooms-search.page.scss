@@ -10,6 +10,8 @@
 .rooms-search__tab {
   @include font-nunito-semibold(16px);
 
+  --border-radius: 0;
+
   color: rgba($color-black, 0.6);
   border-bottom: 2px solid transparent;
   flex-grow: 1;

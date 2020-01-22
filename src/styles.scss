@@ -184,7 +184,7 @@
   --padding-start: 8px;
   --padding-end: 8px;
 
-  height: 48px;
+  min-height: 48px;
   margin: 0;
 
   @include disabled() {
