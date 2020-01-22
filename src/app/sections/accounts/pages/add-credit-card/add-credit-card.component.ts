@@ -7,7 +7,6 @@ import { SuccessPopoverComponent } from './components/success-popover/success-po
 import { LoadingService } from 'src/app/core/service/loading/loading.service';
 import { Subscription } from 'rxjs';
 import { tap, take } from 'rxjs/operators';
-import { LOCAL_ROUTING } from '../../accounts.config';
 
 @Component({
   selector: 'st-add-credit-card',

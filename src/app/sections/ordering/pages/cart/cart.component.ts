@@ -1,30 +1,30 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { CartService } from '@sections/ordering/services/cart.service';
+import { CartService, OrderDetailOptions } from '@sections/ordering/services/cart.service';
 import { combineLatest, Observable } from 'rxjs';
 import {
   AddressModalSettings,
   DETAILS_FORM_CONTROL_NAMES,
+  MerchantAccountInfoList,
   MerchantService,
   OrderDetailsFormData,
-  OrderInfo,
+  OrderInfo, OrderPayment,
 } from '@sections/ordering';
 import { first, map, switchMap, tap } from 'rxjs/operators';
+import { LOCAL_ROUTING as ACCOUNT_LOCAL_ROUTING } from '@sections/accounts/accounts.config';
 import {
   ACCOUNT_TYPES,
+  LOCAL_ROUTING,
   MerchantSettings,
   ORDER_TYPE,
   ORDER_VALIDATION_ERRORS,
   PAYMENT_SYSTEM_TYPE,
-  SYSTEM_SETTINGS_CONFIG,
-  LOCAL_ROUTING,
 } from '@sections/ordering/ordering.config';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { SettingService } from '@core/service/settings/setting.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { handleServerError, parseArrayFromString } from '@core/utils/general-helpers';
+import { handleServerError } from '@core/utils/general-helpers';
 import { UserAccount } from '@core/model/account/account.model';
 import { ModalController, PopoverController, ToastController } from '@ionic/angular';
-import { AddressInfo } from '@core/model/address/address-info';
 import { NAVIGATE } from '../../../../app.global';
 import { SuccessModalComponent } from '@sections/ordering/pages/cart/components/success-modal';
 import { StGlobalPopoverComponent } from '@shared/ui-components';
@@ -39,21 +39,27 @@ import { MerchantOrderTypesInfo } from '@sections/ordering/shared/models';
 export class CartComponent implements OnInit {
   order$: Observable<Partial<OrderInfo>>;
   addressModalSettings$: Observable<AddressModalSettings>;
-  orderDetailOptions$;
+  orderDetailOptions$: Observable<OrderDetailOptions>;
   orderTypes$: Observable<MerchantOrderTypesInfo>;
-  accounts: UserAccount[];
+  accounts$: Promise<UserAccount[]>;
+  accountInfoList$: Observable<MerchantAccountInfoList>;
   cartFormState: OrderDetailsFormData = {} as OrderDetailsFormData;
 
   constructor(private readonly cartService: CartService,
-    private readonly merchantService: MerchantService,
-    private readonly loadingService: LoadingService,
-    private readonly settingService: SettingService,
-    private readonly activatedRoute: ActivatedRoute,
-    private readonly toastController: ToastController,
-    private readonly popoverController: PopoverController,
-    private readonly cdRef: ChangeDetectorRef,
-    private readonly router: Router,
-    private readonly modalController: ModalController) {
+              private readonly merchantService: MerchantService,
+              private readonly loadingService: LoadingService,
+              private readonly settingService: SettingService,
+              private readonly activatedRoute: ActivatedRoute,
+              private readonly toastController: ToastController,
+              private readonly popoverController: PopoverController,
+              private readonly cdRef: ChangeDetectorRef,
+              private readonly router: Router,
+              private readonly modalController: ModalController) {
+  }
+
+  ionViewWillEnter() {
+    this.accounts$ = this.getAvailableAccounts();
+    this.cdRef.detectChanges();
   }
 
   ngOnInit() {
@@ -61,12 +67,12 @@ export class CartComponent implements OnInit {
     this.orderTypes$ = this.merchantService.orderTypes$;
     this.orderDetailOptions$ = this.cartService.orderDetailsOptions$;
     this.addressModalSettings$ = this.initAddressModalConfig();
-    this.getAvailableAccounts().then((acc) => this.accounts = acc);
+    this.accountInfoList$ = this.activatedRoute.data.pipe(map(({ data: [, accInfo] }) => accInfo));
   }
 
   get isOrderASAP(): Observable<boolean> {
     return this.cartService.orderDetailsOptions$.pipe(
-      map(({ isASAP }) => isASAP)
+      map(({ isASAP }) => isASAP),
     );
   }
 
@@ -80,12 +86,12 @@ export class CartComponent implements OnInit {
       this.getPickupLocations(),
     ).pipe(
       map(([
-        { address: defaultAddress, orderType },
-        buildings,
-        { id: merchantId },
-        deliveryAddresses,
-        pickupLocations,
-      ]) => ({
+             { address: defaultAddress, orderType },
+             buildings,
+             { id: merchantId },
+             deliveryAddresses,
+             pickupLocations,
+           ]) => ({
         defaultAddress,
         buildings,
         isOrderTypePickup: orderType === ORDER_TYPE.PICKUP,
@@ -109,10 +115,15 @@ export class CartComponent implements OnInit {
     this.cartFormState = state;
   }
 
-  onOrderPaymentInfoChanged(orderInfo: UserAccount) {
-    const errMesage = 'something went wrong';
-    this.cartService.addPaymentInfoToOrder(orderInfo);
-    this.validateOrder(errMesage);
+  onOrderPaymentInfoChanged(selectedValue: Partial<OrderPayment> | string) {
+    if (selectedValue instanceof Object) {
+      const errMessage = 'something went wrong';
+      this.cartService.addPaymentInfoToOrder(selectedValue);
+      this.validateOrder(errMessage);
+    }
+    if (typeof selectedValue === 'string' && selectedValue === 'add credit cars') {
+      this.router.navigate([NAVIGATE.accounts, ACCOUNT_LOCAL_ROUTING.addCreditCard], {skipLocationChange: true})
+    }
   }
 
   async onSubmit() {
@@ -219,7 +230,7 @@ export class CartComponent implements OnInit {
 
   private filterCashlessAccounts(sourceAccounts: UserAccount[]): UserAccount[] {
     return sourceAccounts.filter(({ paymentSystemType, id }) =>
-      id === 'rollup' || (paymentSystemType === PAYMENT_SYSTEM_TYPE.OPCS || paymentSystemType === PAYMENT_SYSTEM_TYPE.CSGOLD)
+      id === 'rollup' || (paymentSystemType === PAYMENT_SYSTEM_TYPE.OPCS || paymentSystemType === PAYMENT_SYSTEM_TYPE.CSGOLD),
     );
   }
 
@@ -234,7 +245,7 @@ export class CartComponent implements OnInit {
   }
 
   private async getAvailableAccounts(): Promise<UserAccount[]> {
-    const { data: [settings, accInfo] } = await this.activatedRoute.data.pipe(first()).toPromise();
+    const accInfo = await this.accountInfoList$.pipe(first()).toPromise();
     const { mealBased } = await this.cartService.menuInfo$.pipe(first()).toPromise();
 
     return mealBased
@@ -243,14 +254,17 @@ export class CartComponent implements OnInit {
   }
 
   private extractNoneMealsAccounts({ cashlessAccepted, accounts, creditAccepted }): UserAccount[] {
+    let res = [];
     accounts = this.filterNoneMealsAccounts(accounts);
 
     if (cashlessAccepted) {
-      return this.filterCashlessAccounts(accounts);
+      res = res.concat(this.filterCashlessAccounts(accounts));
     }
     if (creditAccepted) {
-      return this.filterCreditAccounts(accounts);
+      res = res.concat(this.filterCreditAccounts(accounts));
     }
+
+    return res;
   }
 
   private filterNoneMealsAccounts(sourceAccounts): UserAccount[] {
