@@ -38,37 +38,6 @@ export class NativeProvider {
     return androidInterface[methodName]() || null;
   }
 
-  private androidObserver: Observer<any>;
-  getAndroidDataAsObservable<T>(methodName: NativeData): Observable<T> {
-    return Observable.create((observer: Observer<T>) => {
-      this.androidObserver = observer;
-      try {
-        this.getAndroidData<T>(methodName) || null;
-      } catch (error) {
-        observer.error(error);
-        observer.complete();
-      }
-    });
-  }
-
-  /// I'd like this to return an observable
-   addUSAePayCreditCard(): Observable<boolean> {
-    if(this.isAndroid()){
-      return this.getAndroidDataAsObservable<boolean>(NativeData.ADD_TO_USAEPAY);
-    } else if(this.isIos()){
-      return from(this.getIosData(NativeData.ADD_TO_USAEPAY));
-    } else {
-      return of(false);
-    }
-  }
-  
-  addUSAePayCreditCardComplete(success: boolean) {
-    if(this.isAndroid()){
-      this.androidObserver.next(success);
-      this.androidObserver.complete();
-    }
-  }
-
   getIosData(methodName: NativeData): Promise<any> {
     return new Promise((resolve, reject) => {
       // we generate a unique id to reference the promise later
