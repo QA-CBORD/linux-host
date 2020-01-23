@@ -19,7 +19,7 @@
             [orderItems]="(order$ | async).orderItems"
             [orderDetailOptions]="orderDetailOptions$ | async"
             [orderTypes]="orderTypes$ | async"
-            [accounts]="accounts"
+            [accounts]="accounts$"
             [mealBased]="(order$ | async).mealBased"
             [addressModalConfig]="(addressModalSettings$ | async)"
             (onFormChange)="onCartStateFormChanged($event)"
