@@ -1,139 +1,425 @@
 export function generateQuestions(): any[] {
   return [
-    { type: 'header', subtype: 'h1', label: 'CBORD University New Student Application', attribute: null },
+    {
+      type: 'text',
+      label: 'PNumeric',
+      name: 'text-1575977632617',
+      value: '1.1',
+      subtype: 'text',
+      maxlength: 1.1,
+      attribute: 'PNumeric',
+      dataType: 'Numeric',
+      consumerKey: 2348,
+    },
+    {
+      type: 'text',
+      subtype: 'email',
+      label: 'e-mail',
+      name: 'text-1578306075403',
+      attribute: 'e-mail',
+      consumerKey: 2328,
+    },
     {
       type: 'paragraph',
-      subtype: 'p',
-      label:
-        'We are so excited you have chosen to live on campus at CBORD University! Please fill out the following application and submit it to reserve a space on campus.',
+      subtype: 'blockquote',
+      label: 'New Page',
       attribute: null,
+      consumerKey: null,
     },
     {
       type: 'checkbox-group',
-      required: true,
       label: 'Facility Preferences',
       inline: true,
-      facilityPicker: true,
-      name: 'checkbox-group-1571248515993',
-      prefRank: 3,
-      values: [
-        { label: '1101 - 10 Plex', value: '9000385' },
-        { label: 'Stanford', value: '9000419', selected: true },
-        { label: 'Able', value: '9000485', selected: true },
-        { label: 'Baker', value: '9000486', selected: true },
-        { label: 'Charles', value: '9000487', selected: true },
-        { label: 'Davis', value: '9000488', selected: true },
-        { label: 'Evans', value: '9000489', selected: true },
-        { label: 'Fuller', value: '9000490' },
-        { label: 'Gregory', value: '9000491' },
-        { label: 'Harker', value: '9000492' },
-        { label: 'Boyd', value: '9000513' },
-        { label: 'Dobbs', value: '9000514' },
-        { label: 'Shared Baths', value: '9000531' },
-        { label: 'Apts', value: '9000538' },
-        { label: 'Apartments', value: '9000541' },
-        { label: 'Family Housing', value: '9000547' },
-        { label: 'Alumni Hall', value: '9000554' },
-        { label: 'Sarah hall', value: '9000579' },
-        { label: 'Covelli Tower', value: '9000003' },
-        { label: 'Harmon Hall', value: '9000004' },
-        { label: 'Beckett Hall 2', value: '9000005' },
-        { label: 'Jordan Hall', value: '9000035' },
-        { label: 'Wilson Suites', value: '9000039' },
-        { label: 'Westbrook Res Hall', value: '9000058' },
-        { label: 'Silvana Hall', value: '9000148' },
-        { label: 'Reef Tower', value: '9000167' },
-        { label: 'Gleason Apartments', value: '9000186' },
-        { label: 'Sproul Hall', value: '9000211' },
-        { label: 'Lancaster', value: '9000234' },
-        { label: 'York', value: '9000242' },
-        { label: 'Anderson Hall', value: '9000316' },
-        { label: 'Grace Hall', value: '9000344' },
-        { label: '1100 - 10 Plex', value: '9000367' },
-        { label: '1000 2 BR', value: '9000378' },
-        { label: '1221 1 BR', value: '9000383' },
-      ],
-      attribute: null,
-    },
-    {
-      type: 'text',
-      label: 'Preferred Name',
-      name: 'text-1568315394169',
-      subtype: 'text',
-      attribute: 'Name',
-      required: true,
-    },
-    {
-      type: 'text',
-      label: 'University Student ID Number',
-      name: 'text-1568315396303',
-      subtype: 'text',
-      attribute: 'ID Number',
-    },
-    { type: 'date', label: 'Date of birth', name: 'date-1568315399895', attribute: 'Date of birth', required: true },
-    {
-      type: 'text',
-      label: 'Cell Phone Number',
-      name: 'textarea-1568315408199',
-      subtype: 'textarea',
-      attribute: 'Phone Number',
-    },
-    {
-      type: 'select',
-      label: 'Year:',
-      name: 'select-1559676230181',
-      required: true,
-      order: '3',
+      name: 'checkbox-group-1575977639369',
+      prefRank: 5,
       values: [
         {
-          label: 'Freshman',
-          value: '1',
-        },
-        {
-          label: 'Sophomore',
+          label: 'Building1-50(133)',
           value: '2',
         },
         {
-          label: 'Junior',
-          value: '3',
+          label: 'Building2',
+          value: '11',
         },
         {
-          label: 'Senior',
-          value: '4',
+          label: 'BldS2',
+          value: '22',
+        },
+        {
+          label: 'BldCS3',
+          value: '28',
+        },
+        {
+          label: 'BldS4',
+          value: '43',
+        },
+        {
+          label: 'BldS5',
+          value: '48',
+        },
+        {
+          label: 'Building_ivn',
+          value: '64',
+        },
+        {
+          label: 'Building_ivn_12-buckel-my-shoe',
+          value: '65',
+        },
+        {
+          label: 'Building_ivn_2',
+          value: '70',
+        },
+        {
+          label: 'BD1S7',
+          value: '77',
+          selected: true,
+          facilityKey: 77,
+        },
+        {
+          label: 'BLD1S8',
+          value: '81',
+        },
+        {
+          label: 'Bld1',
+          value: '84',
+        },
+        {
+          label: '1',
+          value: '126',
+        },
+        {
+          label: 'cgshmsb1_name',
+          value: '136',
+        },
+        {
+          label: 'cgshmsb2_name',
+          value: '143',
+        },
+        {
+          label: 'cgshmsb3_name',
+          value: '144',
+        },
+        {
+          label: 'cgshmsb4_name',
+          value: '145',
+        },
+        {
+          label: 'Copy of Building1',
+          value: '166',
+          selected: true,
+          facilityKey: 166,
+        },
+        {
+          label: 'MIT_1',
+          value: '453',
+          selected: true,
+          facilityKey: 453,
+        },
+        {
+          label: 'MIT_2',
+          value: '454',
+        },
+        {
+          label: 'MIT_3',
+          value: '455',
+        },
+        {
+          label: 'MIT_4',
+          value: '457',
+        },
+        {
+          label: 'MIT_4F',
+          value: '459',
+        },
+        {
+          label: 'MIT_5',
+          value: '460',
+        },
+        {
+          label: 'MIT_5M',
+          value: '461',
+        },
+        {
+          label: 'MIT_6',
+          value: '477',
+        },
+        {
+          label: 'Cook',
+          value: '311',
+        },
+        {
+          label: 'Harris',
+          value: '312',
+        },
+        {
+          label: 'Smith',
+          value: '313',
+        },
+        {
+          label: 'Adams',
+          value: '314',
+        },
+        {
+          label: 'Bldg A',
+          value: '406',
+        },
+        {
+          label: 'Bldg B',
+          value: '420',
+        },
+        {
+          label: 'Copy of 1',
+          value: '210',
+        },
+        {
+          label: 'Dorm1',
+          value: '238',
+        },
+        {
+          label: 'Tavern',
+          value: '240',
+        },
+        {
+          label: 'Dorm2',
+          value: '250',
+        },
+      ],
+      attribute: null,
+      consumerKey: null,
+      facilityPicker: true,
+      options: [
+        {
+          label: 'Building1-50(133)',
+          value: '2',
+        },
+        {
+          label: 'Building2',
+          value: '11',
+        },
+        {
+          label: 'BldS2',
+          value: '22',
+        },
+        {
+          label: 'BldCS3',
+          value: '28',
+        },
+        {
+          label: 'BldS4',
+          value: '43',
+        },
+        {
+          label: 'BldS5',
+          value: '48',
+        },
+        {
+          label: 'Building_ivn',
+          value: '64',
+        },
+        {
+          label: 'Building_ivn_12-buckel-my-shoe',
+          value: '65',
+        },
+        {
+          label: 'Building_ivn_2',
+          value: '70',
+        },
+        {
+          label: 'BD1S7',
+          value: '77',
+          selected: true,
+          facilityKey: 77,
+        },
+        {
+          label: 'BLD1S8',
+          value: '81',
+        },
+        {
+          label: 'Bld1',
+          value: '84',
+        },
+        {
+          label: '1',
+          value: '126',
+        },
+        {
+          label: 'cgshmsb1_name',
+          value: '136',
+        },
+        {
+          label: 'cgshmsb2_name',
+          value: '143',
+        },
+        {
+          label: 'cgshmsb3_name',
+          value: '144',
+        },
+        {
+          label: 'cgshmsb4_name',
+          value: '145',
+        },
+        {
+          label: 'Copy of Building1',
+          value: '166',
+          selected: true,
+          facilityKey: 166,
+        },
+        {
+          label: 'MIT_1',
+          value: '453',
+          selected: true,
+          facilityKey: 453,
+        },
+        {
+          label: 'MIT_2',
+          value: '454',
+        },
+        {
+          label: 'MIT_3',
+          value: '455',
+        },
+        {
+          label: 'MIT_4',
+          value: '457',
+        },
+        {
+          label: 'MIT_4F',
+          value: '459',
+        },
+        {
+          label: 'MIT_5',
+          value: '460',
+        },
+        {
+          label: 'MIT_5M',
+          value: '461',
+        },
+        {
+          label: 'MIT_6',
+          value: '477',
+        },
+        {
+          label: 'Cook',
+          value: '311',
+        },
+        {
+          label: 'Harris',
+          value: '312',
+        },
+        {
+          label: 'Smith',
+          value: '313',
+        },
+        {
+          label: 'Adams',
+          value: '314',
+        },
+        {
+          label: 'Bldg A',
+          value: '406',
+        },
+        {
+          label: 'Bldg B',
+          value: '420',
+        },
+        {
+          label: 'Copy of 1',
+          value: '210',
+        },
+        {
+          label: 'Dorm1',
+          value: '238',
+        },
+        {
+          label: 'Tavern',
+          value: '240',
+        },
+        {
+          label: 'Dorm2',
+          value: '250',
+        },
+      ],
+      PrefKeys: [
+        {
+          defaultRank: 1,
+          preferenceKey: 49,
+          active: true,
+          maxRank: 5,
+          name: 'djs fac pref 1',
+          preferenceType: 'SpecificFacility',
+        },
+        {
+          defaultRank: 2,
+          preferenceKey: 54,
+          active: true,
+          maxRank: 5,
+          name: 'djs fac pref 2',
+          preferenceType: 'SpecificFacility',
+        },
+        {
+          defaultRank: 3,
+          preferenceKey: 55,
+          active: true,
+          maxRank: 5,
+          name: 'djs fac pref 3',
+          preferenceType: 'SpecificFacility',
+        },
+        {
+          defaultRank: 4,
+          preferenceKey: 56,
+          active: true,
+          maxRank: 5,
+          name: 'djs fac pref 4',
+          preferenceType: 'SpecificFacility',
+        },
+        {
+          defaultRank: 5,
+          preferenceKey: 57,
+          active: true,
+          maxRank: 5,
+          name: 'djs fac pref 5',
+          preferenceType: 'SpecificFacility',
         },
       ],
     },
     {
-      type: 'radio-group',
-      required: true,
-      label: 'Gender',
-      name: 'radio-group-1568315413042',
-      values: [
-        { label: 'Female', value: 'Female', selected: false },
-        { label: 'Male', value: 'Male', selected: false },
-        { label: 'Transgender Female', value: 'Transgender Female', selected: false },
-        { label: 'Transgender Male', value: 'Transgender Male', selected: false },
-        { label: 'Non-binary', value: 'Non-binary', selected: false },
-      ],
-      attribute: 'Gender',
+      type: 'text',
+      label: 'PInteger',
+      name: 'text-1576066241527',
+      value: '1',
+      subtype: 'text',
+      maxlength: 1,
+      attribute: 'PInteger',
+      dataType: 'Integer',
+      consumerKey: 2500,
     },
-    { type: 'paragraph', subtype: 'blockquote', label: 'New Page', attribute: null },
-
-    { type: 'text', label: 'Email Address', name: 'text-1568315409856', subtype: 'text', attribute: 'Email' },
     {
-      type: 'checkbox-group',
-      label: 'Starting Semester',
-      name: 'checkbox-group-1568315414321',
-      values: [
-        { label: 'Fall 2020', value: 'Fall 2020', selected: false },
-        { label: 'Spring 2021', value: 'Spring 2021', selected: false },
-      ],
-      attribute: 'Starting Semester',
+      type: 'date',
+      label: 'Birth Date',
+      name: 'date-1576066243616',
+      attribute: 'Birth Date',
+      consumerKey: 2327,
     },
-    { type: 'text', label: 'Graduation Year', name: 'text-1568315415312', subtype: 'text', attribute: 'Year' },
-
-    { type: 'paragraph', subtype: 'blockquote', label: 'New Page', attribute: null },
-
-    { type: 'textarea', label: 'Feedback', name: 'textarea-1568315409856', subtype: 'textarea', attribute: 'Feedback' },
+    {
+      type: 'select',
+      label: 'Student_Group',
+      name: 'select-1576243374964',
+      values: [
+        {
+          label: '1',
+          value: '1',
+        },
+        {
+          label: '2',
+          value: '2',
+        },
+        {
+          label: '3',
+          value: '3',
+        },
+      ],
+      attribute: 'Student_Group',
+      consumerKey: 2397,
+    },
   ];
 }

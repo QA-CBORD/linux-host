@@ -9,8 +9,9 @@ export * from './types/question-date';
 export * from './types/question-checkbox-group';
 export * from './types/question-dropdown';
 export * from './types/question-reorder';
+export * from './types/question-form-control';
 
-export interface QuestionPage {
-    form: FormGroup;
-    questions: QuestionBase[]
+export interface ApplicationPage {
+  form: FormGroup;
+  questions: QuestionBase[];
 }

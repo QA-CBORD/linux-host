@@ -68,7 +68,7 @@
       [stEmptyFormControl]="parentGroup.get(question['name'])"
     >
       <ng-container role="options">
-        <ion-select-option *ngFor="let option of question['values']" [value]="option.name">
+        <ion-select-option *ngFor="let option of question['values']" [value]="option.value">
           {{ option.label }}
         </ion-select-option>
       </ng-container>
@@ -83,16 +83,17 @@
 
     <ng-container *ngSwitchCase="'checkbox-group'">
       <st-facility-picker
-        class="form-section question__item"
+        class="question__section"
         [question]="question"
         [parentForm]="parentGroup"
         *ngIf="question['facilityPicker']"
       ></st-facility-picker>
 
-      <div *ngIf="!question['facilityPicker']" class="question__item">
+      <div *ngIf="!question['facilityPicker']" class="question__section">
         <h3 class="form__secondary-header">{{ question.label }}</h3>
 
         <st-control-errors
+          class="control-hint--no-indent"
           [control]="parentGroup.get(question['name'])"
           [errorMessages]="errorMessages"
         ></st-control-errors>
@@ -108,6 +109,7 @@
             mode="md"
             [checked]="item.selected"
             [formControlName]="idx"
+            [value]="item.value"
             slot="start"
           ></ion-checkbox>
           <ion-label class="form-label">{{ item.label }}</ion-label>
@@ -115,10 +117,11 @@
       </div>
     </ng-container>
 
-    <div *ngSwitchCase="'radio-group'" class="form-section">
+    <div *ngSwitchCase="'radio-group'" class="question__section">
       <h3 class="form__secondary-header">{{ question.label }}</h3>
 
       <st-control-errors
+        class="control-hint--no-indent"
         [control]="parentGroup.get(question['name'])"
         [errorMessages]="errorMessages"
       ></st-control-errors>

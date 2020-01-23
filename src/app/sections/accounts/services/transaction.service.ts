@@ -4,12 +4,11 @@ import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
 import { map, switchMap, tap, take } from 'rxjs/operators';
 
 import { AccountsService } from './accounts.service';
-import { CommerceApiService } from '../../../core/service/commerce/commerce-api.service';
-import { ContentService } from '../../../core/service/content-service/content.service';
+import { CommerceApiService } from '@core/service/commerce/commerce-api.service';
+import { ContentService } from '@core/service/content-service/content.service';
 
 import { TransactionHistory } from '../models/transaction-history.model';
-import { QueryTransactionHistoryCriteria } from '../../../core/model/account/transaction-query.model';
-import { TransactionResponse } from '../../../core/model/account/transaction-response.model';
+import { TransactionResponse } from '@core/model/account/transaction-response.model';
 import { ContentStringInfo } from 'src/app/core/model/content/content-string-info.model';
 import {
   ALL_ACCOUNTS,
@@ -23,23 +22,22 @@ import {
   DateUtilObject,
   getTimeRangeOfDate,
   getUniquePeriodName,
-  TimeRange,
 } from '../shared/ui-components/filter/date-util';
+import { QueryTransactionHistoryCriteriaDateRange } from '@core/model/account/transaction-query-date-range.model';
 
 @Injectable()
 export class TransactionService {
   private currentAccountId: string;
   private currentTimeRange: DateUtilObject;
   private transactionHistory: TransactionHistory[] = [];
-  private queryCriteria: QueryTransactionHistoryCriteria;
+  private queryCriteria: QueryTransactionHistoryCriteriaDateRange;
+  private infiniteFetchDateRecord = { lastShownDate: null};
   private transactionResponse: TransactionResponse;
-
+  private contentString;
   private readonly lazyAmount: number = 20;
   private readonly _transactions$: BehaviorSubject<TransactionHistory[]> = new BehaviorSubject<TransactionHistory[]>(
     this.transactionHistory
   );
-
-  private contentString;
 
   constructor(
     private readonly accountsService: AccountsService,
@@ -63,6 +61,7 @@ export class TransactionService {
     this.transactionHistory = [...this.transactionHistory, ...value];
     this.transactionHistory = this.cleanDuplicateTransactions(this.transactionHistory);
     this.transactionHistory.sort((a, b) => new Date(b.actualDate).getTime() - new Date(a.actualDate).getTime());
+    this.infiniteFetchDateRecord.lastShownDate = this.getLatestDateInRange(value);
     this._transactions$.next([...this.transactionHistory]);
   }
 
@@ -73,14 +72,14 @@ export class TransactionService {
     return this.getTransactionHistoryByQuery(this.queryCriteria);
   }
 
-  getRecentTransactions(id: string, period?: DateUtilObject, maxReturn?: number): Observable<TransactionHistory[]> {
+  getRecentTransactions(id: string, period?: DateUtilObject, maxReturnMostRecent?: number): Observable<TransactionHistory[]> {
     period = period ? period : { name: TIME_PERIOD.pastSixMonth };
-    maxReturn = maxReturn ? maxReturn : 0;
+    maxReturnMostRecent = maxReturnMostRecent ? maxReturnMostRecent : 0;
 
     const { startDate, endDate } = getTimeRangeOfDate(period);
 
     this.setInitialQueryObject(id, startDate, endDate);
-    this.queryCriteria = { ...this.queryCriteria, maxReturn };
+    this.queryCriteria = { ...this.queryCriteria, maxReturnMostRecent };
     if (this.currentAccountId !== id) this.transactionHistory = [];
     this.updateTransactionActiveState(id, period);
 
@@ -102,7 +101,9 @@ export class TransactionService {
     return this.getTransactionHistoryByQuery(this.queryCriteria);
   }
 
-  private getTransactionHistoryByQuery(query: QueryTransactionHistoryCriteria): Observable<Array<TransactionHistory>> {
+  private getTransactionHistoryByQuery(
+    query: QueryTransactionHistoryCriteriaDateRange
+  ): Observable<Array<TransactionHistory>> {
     return this.accountsService.settings$.pipe(
       map(settings => {
         const depositSetting = this.accountsService.getSettingByName(
@@ -112,7 +113,7 @@ export class TransactionService {
         return this.accountsService.transformStringToArray(depositSetting.value);
       }),
       switchMap((tendersId: Array<string>) =>
-        this.commerceApiService.getTransactionsHistory(query).pipe(
+        this.commerceApiService.getTransactionsHistoryByDate(query).pipe(
           tap(response => (this.transactionResponse = response)),
           map(({ transactions }) => this.filterByTenderIds(tendersId, transactions))
         )
@@ -143,37 +144,21 @@ export class TransactionService {
   }
 
   private updateQuery() {
-    const startingReturnRow = this.queryCriteria.startingReturnRow + this.queryCriteria.maxReturn;
-    const transactionQuery = { startingReturnRow, maxReturn: this.lazyAmount };
-    const { endDate, startDate } = this.getDateRangeLazyByQuery(this.queryCriteria);
-    this.queryCriteria = { ...this.queryCriteria, ...transactionQuery, endDate, startDate };
-  }
-
-  private getDateRangeLazyByQuery(query: QueryTransactionHistoryCriteria): TimeRange {
-    let endDate;
-    let startDate;
-    if (query.maxReturn !== 0) {
-      startDate = query.startDate;
-      endDate = query.endDate;
-    } else {
-      startDate = getTimeRangeOfDate({ name: TIME_PERIOD.pastSixMonth }).startDate;
-      endDate = query.startDate === startDate ? query.endDate : query.startDate;
-    }
-
-    return { startDate, endDate };
+    const startingReturnDate = this.infiniteFetchDateRecord.lastShownDate;
+    const transactionQuery = { maxReturnMostRecent: this.lazyAmount };
+    this.queryCriteria = { ...this.queryCriteria, ...transactionQuery, newestDate: startingReturnDate };
   }
 
   private setInitialQueryObject(
     accountId: string = null,
-    startDate: string = null,
-    endDate: string = null,
-    maxReturn: number = 0
+    newestDate: string = null,
+    oldestDate: string = null,
+    maxReturnMostRecent: number = 0
   ) {
     this.queryCriteria = {
-      maxReturn,
-      startingReturnRow: 0,
-      startDate,
-      endDate,
+      maxReturnMostRecent,
+      newestDate,
+      oldestDate,
       accountId: accountId === ALL_ACCOUNTS ? null : accountId,
     };
   }
@@ -218,4 +203,12 @@ export class TransactionService {
   getContentValueByName(name: string): string {
     return this.contentString[name] || '';
   }
+
+  private getLatestDateInRange(range: TransactionHistory[]): any {
+    if(range && range.length > 0){
+      return new Date(range[range.length - 1].actualDate).toISOString();
+    }
+    return '';
+  }
+
 }

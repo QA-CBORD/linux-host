@@ -145,7 +145,7 @@
 
     .picker-opt.picker-opt-selected {
       color: #000;
-      
+
       @include font-nunito-heavy(20px);
     }
   }
@@ -209,13 +209,17 @@
   text-transform: uppercase;
 }
 
-.form-section {
-  padding-top: 16px;
-  padding-bottom: 16px;
+.secondary-header {
+  @include font-nunito-semibold(14px);
 
-  &:not(.form-section--last) {
-    border-bottom: 1px solid $color-white-smoke;
-  }
+  color: rgba($color-black, 0.6);
+  line-height: 16px;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.secondary-header--m {
+  font-size: 12px;
 }
 
 .form-checkbox__control {
@@ -256,8 +260,32 @@
 
   color: $color-dim-gray;
   margin: 5px 0 0 12px;
+
+  .control-hint--no-indent &,
+  &.control-hint--no-indent {
+    margin-left: 0;
+  }
 }
 
 .control-hint--error {
   color: $color-alizarin;
+}
+
+.bg-transparent {
+  --background: transparent;
+  background: transparent;
+}
+
+:root {
+  .application-actions-popover {
+    --min-width: 115px !important;
+    --width: auto;
+
+    .popover-content {
+      &.sc-ion-popover-md,
+      &.sc-ion-popover-ios {
+        border-radius: 8px;
+      }
+    }
+  }
 }

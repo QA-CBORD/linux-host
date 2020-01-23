@@ -1,19 +1,33 @@
-import { Component, OnInit, ChangeDetectionStrategy, ViewChild, ViewChildren, QueryList } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ChangeDetectionStrategy,
+  ViewChild,
+  ViewChildren,
+  QueryList,
+  OnDestroy,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AbstractControl, FormGroup } from '@angular/forms';
-import { Observable } from 'rxjs';
-import { tap, filter } from 'rxjs/operators';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ToastController } from '@ionic/angular';
+import { FormGroup } from '@angular/forms';
+import { Observable, Subscription, Subject, throwError } from 'rxjs';
+import { tap, switchMap, withLatestFrom, catchError } from 'rxjs/operators';
 
 import { QuestionsService } from '../../questions/questions.service';
 import { ApplicationsService } from '../../applications/applications.service';
 import { QuestionsStorageService } from '../../questions/questions-storage.service';
+import { ApplicationsStateService } from '../../applications/applications-state.service';
+import { TermsService } from '../../terms/terms.service';
+import { LoadingService } from '../../../../core/service/loading/loading.service';
 
 import { StepperComponent } from '../../stepper/stepper.component';
 import { StepComponent } from '../../stepper/step/step.component';
 import { QuestionComponent } from '../../questions/question.component';
 
-import { Application, ApplicationStatus } from '../../applications/applications.model';
-import { QuestionPage } from '../../questions/questions.model';
+import { ApplicationStatus, ApplicationDetails, PatronApplication } from '../../applications/applications.model';
+import { ApplicationPage } from '../../questions/questions.model';
+import { Response } from '../../housing.model';
 
 @Component({
   selector: 'st-application-details',
@@ -21,57 +35,64 @@ import { QuestionPage } from '../../questions/questions.model';
   styleUrls: ['./application-details.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ApplicationDetailsPage implements OnInit {
+export class ApplicationDetailsPage implements OnInit, OnDestroy {
+  private _subscription: Subscription = new Subscription();
+
+  private readonly _refresh$: Subject<void> = new Subject<void>();
+
   @ViewChild(StepperComponent) stepper: StepperComponent;
 
   @ViewChildren(QuestionComponent) questions: QueryList<QuestionComponent>;
 
-  application$: Observable<Application>;
+  applicationDetails$: Observable<ApplicationDetails>;
 
-  pages$: Observable<QuestionPage[]>;
+  pages$: Observable<ApplicationPage[]>;
 
-  applicationId: number;
+  applicationKey: number;
 
   constructor(
     private _route: ActivatedRoute,
     private _questionsService: QuestionsService,
     private _applicationsService: ApplicationsService,
     private _router: Router,
-    private _questionsStorageService: QuestionsStorageService
+    private _questionsStorageService: QuestionsStorageService,
+    private _toastController: ToastController,
+    private _applicationsStateService: ApplicationsStateService,
+    private _termsService: TermsService,
+    private _loadingService: LoadingService
   ) {}
 
-  ngOnInit() {
-    this.applicationId = parseInt(this._route.snapshot.paramMap.get('applicationId'), 10);
+  ngOnInit(): void {
+    this.applicationKey = parseInt(this._route.snapshot.paramMap.get('applicationKey'), 10);
 
-    this.pages$ = this._questionsService
-      .getPages()
-      .pipe(tap((pages: QuestionPage[]) => this._patchFormsFromState(pages)));
-
-    this.application$ = this._applicationsService.getApplicationById(this.applicationId).pipe(
-      filter(Boolean),
-      tap((application: Application) => this._questionsService.parsePages(application))
-    );
+    this._initApplicationDetailsSubscription();
+    this._initPagesSubscription();
+    this._initRefreshSubscription();
   }
 
-  async save(): Promise<void> {
-    const selectedIndex: number = this.stepper.selectedIndex;
-    const selectedStep: StepComponent = this.stepper.steps.toArray()[selectedIndex];
-
-    await this._questionsStorageService.updateQuestionsGroup(
-      this.applicationId,
-      selectedStep.stepControl.value,
-      selectedIndex,
-      ApplicationStatus.Pending
-    );
-
-    this._applicationsService
-      .saveApplication(this.applicationId)
-      .subscribe(() => this._router.navigate(['/housing/dashboard']));
+  ngOnDestroy(): void {
+    this._subscription.unsubscribe();
   }
 
-  async handleSubmit(form: FormGroup, index: number, isLastPage: boolean): Promise<void> {
-    const status: ApplicationStatus = !isLastPage ? ApplicationStatus.Pending : ApplicationStatus.Submitted;
+  save(application: ApplicationDetails): boolean {
+    const selectedStep: StepComponent = this.stepper.selected;
+    const formValue: any = selectedStep.stepControl.value;
 
+    this._loadingService.showSpinner();
+
+    const saveSubscription: Subscription = this._applicationsService
+      .saveApplication(this.applicationKey, application, formValue)
+      .subscribe({
+        next: () => this._handleSuccess(),
+        error: (error: any) => this._handleErrors(error),
+      });
+
+    this._subscription.add(saveSubscription);
+
+    return false;
+  }
+
+  submit(application: ApplicationDetails, form: FormGroup, isLastPage: boolean): void {
     this.questions.forEach((question: QuestionComponent) => question.touch());
 
     if (!form.valid) {
@@ -79,46 +100,107 @@ export class ApplicationDetailsPage implements OnInit {
     }
 
     if (!isLastPage) {
-      this.stepper.next();
+      this._next(application, form.value);
     } else {
-      await this._questionsStorageService.updateQuestionsGroup(this.applicationId, form.value, index, status);
+      this._loadingService.showSpinner();
 
-      this._applicationsService
-        .submitApplication(this.applicationId)
-        .subscribe(() => this._router.navigate(['/housing/dashboard']));
+      const submitSubscription: Subscription = this._applicationsService
+        .submitApplication(this.applicationKey, application, form.value)
+        .subscribe({
+          next: () => this._handleSuccess(),
+          error: (error: any) => this._handleErrors(error),
+        });
+
+      this._subscription.add(submitSubscription);
     }
   }
 
-  private async _patchFormsFromState(pages: QuestionPage[]): Promise<void> {
-    const questions: any[] = await this._questionsStorageService.getQuestions(this.applicationId);
-    const namesToTouch: Set<string> = new Set<string>();
+  private _initApplicationDetailsSubscription(): void {
+    this._loadingService.showSpinner();
 
-    pages.forEach((page: QuestionPage, index: number) => {
-      if (questions && questions[index]) {
-        page.form.patchValue(questions[index]);
+    this.applicationDetails$ = this._applicationsService.getApplicationDetails(this.applicationKey).pipe(
+      tap(() => this._loadingService.closeSpinner()),
+      catchError((error: any) => {
+        this._loadingService.closeSpinner();
 
-        const controls = page.form.controls;
+        return throwError(error);
+      })
+    );
+  }
 
-        Object.keys(controls).forEach((controlName: string) => {
-          const control: AbstractControl = controls[controlName];
-          const hasValue: boolean = Array.isArray(control.value)
-            ? !control.value.some((value: any) => value == null || value === '')
-            : !(control.value == null || control.value === '');
+  private _initPagesSubscription(): void {
+    this.pages$ = this._questionsService.pages$.pipe(
+      tap((pages: ApplicationPage[]) =>
+        this._questionsService._patchFormsFromState(this.applicationKey, pages, this._checkQuestions.bind(this))
+      )
+    );
+  }
 
-          if (hasValue) {
-            control.markAsDirty();
-            control.markAsTouched();
+  private _initRefreshSubscription(): void {
+    const refreshSubscription: Subscription = this._refresh$
+      .pipe(
+        withLatestFrom(this._termsService.termId$),
+        switchMap(([_, termId]: [void, number]) => this._applicationsService.getApplications(termId))
+      )
+      .subscribe();
 
-            namesToTouch.add(controlName);
-          }
+    this._subscription.add(refreshSubscription);
+  }
+
+  private _next(application: ApplicationDetails, formValue: any): void {
+    this._questionsStorageService
+      .updateCreatedDateTime(this.applicationKey, application.patronApplication)
+      .then((createdDateTime: string) => {
+        const status: ApplicationStatus =
+          application.patronApplication && application.patronApplication.status
+            ? application.patronApplication.status
+            : ApplicationStatus.Pending;
+        const patronApplication: PatronApplication = new PatronApplication({
+          ...application.patronApplication,
+          createdDateTime,
+          status,
         });
-      }
-    });
+        const applicationDetails: ApplicationDetails = new ApplicationDetails({ ...application, patronApplication });
 
-    this.questions.forEach((question: QuestionComponent) => {
-      if (namesToTouch.has(question.name)) {
+        this._applicationsStateService.setApplication(this.applicationKey, applicationDetails);
+
+        return this._questionsStorageService.updateQuestions(this.applicationKey, formValue, status);
+      })
+      .then(() => this.stepper.next());
+  }
+
+  private _checkQuestions(namesToTouch: Set<string>): void {
+    this.questions
+      .filter((question: QuestionComponent) => namesToTouch.has(question.name))
+      .forEach((question: QuestionComponent) => {
         question.check();
-      }
-    });
+      });
+  }
+
+  private _handleSuccess(): void {
+    this._refresh$.next();
+    this._loadingService.closeSpinner();
+    this._router.navigate(['/housing/dashboard']);
+  }
+
+  private _handleErrors(error: any): void {
+    let message = 'Something went wrong. Try again later';
+
+    this._loadingService.closeSpinner();
+
+    if (error instanceof HttpErrorResponse) {
+      const statusMessage: string = (error.error as Response).status.message;
+
+      message = statusMessage || message;
+    }
+
+    this._toastController
+      .create({
+        message,
+        position: 'top',
+        duration: 3000,
+        showCloseButton: true,
+      })
+      .then((toast: HTMLIonToastElement) => toast.present());
   }
 }

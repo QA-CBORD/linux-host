@@ -3,22 +3,23 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 
+import { TermsModule } from '../../terms/terms.module';
 import { HousingDashboardRoutingModule } from './housing-dashboard.routing.module';
+import { ApplicationsModule } from '../../applications/applications.module';
 
 import { HousingDashboardPage } from './housing-dashboard.page';
 import { ContractsComponent } from '../../contracts/contracts.component';
 import { WorkOrdersComponent } from '../../work-orders/work-orders.component';
-import { ApplicationsComponent } from '../../applications/applications.component';
-import { ApplicationsListComponent } from '../../applications/applications-list/applications-list.component';
 
-const imports = [CommonModule, ReactiveFormsModule, IonicModule, HousingDashboardRoutingModule];
-const declarations = [
-  HousingDashboardPage,
-  ContractsComponent,
-  WorkOrdersComponent,
-  ApplicationsComponent,
-  ApplicationsListComponent,
+const imports = [
+  CommonModule,
+  ReactiveFormsModule,
+  IonicModule,
+  HousingDashboardRoutingModule,
+  TermsModule,
+  ApplicationsModule,
 ];
+const declarations = [HousingDashboardPage, ContractsComponent, WorkOrdersComponent];
 
 @NgModule({
   imports,

@@ -15,7 +15,7 @@ const routes: Routes = [
         loadChildren: './pages/housing-dashboard/housing-dashboard.module#HousingDashboardPageModule',
       },
       {
-        path: `${LOCAL_ROUTING.applications}/:applicationId`,
+        path: `${LOCAL_ROUTING.applications}/:applicationKey`,
         loadChildren: './pages/application-details/application-details.module#ApplicationDetailsPageModule',
       },
       {

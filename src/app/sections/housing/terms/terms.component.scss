@@ -1,0 +1,33 @@
+@import 'tools';
+
+:host {
+  display: block;
+  border-top: 1px solid $color-light-gray;
+  border-bottom: 1px solid $color-light-gray;
+}
+
+.terms {
+  --inner-padding-end: 0;
+}
+
+.terms-label {
+  @include font-nunito-heavy(16px);
+
+  color: rgba($color-black, 0.6);
+  padding-right: 20px;
+  position: relative;
+
+  @include chevron-down();
+
+  &::before {
+    background-color: transparent;
+    right: 0;
+    transform: translateY(-40%);
+  }
+}
+
+.terms-select {
+  opacity: 0;
+  width: 0;
+  padding: 0;
+}

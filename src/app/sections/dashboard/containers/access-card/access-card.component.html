@@ -53,7 +53,7 @@
           </div>
         </ion-button>
       </ion-col>
-      <ion-col class="card__quick-actions-wrapper" *ngIf="isMobileAccessButtonEnabled">
+      <ion-col class="card__quick-actions-wrapper" *ngIf="isMobileAccessButtonEnabled$ | async">
         <ion-button mode="ios" class="card__quick-actions-btn" (click)="onMobileAccessClick()">
           <div class="card__quick-actions-btn-wrapper">
             <img class="card__icon" src="/assets/icon/mobile-access.svg" alt="mobile access"/>

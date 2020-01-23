@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from '@core/service/user-service/user.service';
 import { AddressInfo } from '@core/model/address/address-info';
 import { Observable, of, zip, iif } from 'rxjs';
-import { tap, switchMap, take } from 'rxjs/operators';
+import { tap, switchMap, take, finalize } from 'rxjs/operators';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { MerchantService } from '@sections/ordering/services';
 import { BuildingInfo } from '@sections/ordering/shared/models';
@@ -101,7 +101,7 @@ export class SavedAddressesComponent implements OnInit {
     this.userService
       .getUserAddresses()
       .pipe(
-        tap(() => this.loader.closeSpinner(), () => this.loader.closeSpinner()),
+        finalize(() => this.loader.closeSpinner()),
         take(1)
       )
       .subscribe(addresses => {

@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Events, Platform, PopoverController } from '@ionic/angular';
 import { Network } from '@ionic-native/network/ngx';
 import { fromEvent, Subscription } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { tap, finalize } from 'rxjs/operators';
 
 import { SecureMessagingService } from './service';
 import { DataCache } from '../../core/utils/data-cache';
@@ -91,7 +91,7 @@ export class SecureMessagePage implements OnDestroy, OnInit {
     this.loading.showSpinner('Retrieving conversations...');
     const subscription = this.secureMessagingService
       .getInitialData()
-      .pipe(tap(() => this.loading.closeSpinner()))
+      .pipe(finalize(() => this.loading.closeSpinner()))
       .subscribe(
         ([smGroupArray, smMessageArray]) => {
           this.groupsArray = smGroupArray;
@@ -100,7 +100,6 @@ export class SecureMessagePage implements OnDestroy, OnInit {
           this.pollForData();
         },
         error => {
-          this.loading.closeSpinner();
           this.modalHandler({ ...error, title: Globals.Exception.Strings.TITLE }, this.initializePage.bind(this));
         }
       );

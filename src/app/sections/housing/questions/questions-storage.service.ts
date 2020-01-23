@@ -1,90 +1,89 @@
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
 
-import { ApplicationStatus } from '../applications/applications.model';
+import { hasValue } from '../utils';
+import { STORAGE_KEY } from '../housing.config';
 
-export interface QuestionsGroup {
-  status: ApplicationStatus;
-  creationDateTime: number;
-  submittedDateTime?: number;
-  questions: any[];
+import { ApplicationStatus, PatronApplication } from '../applications/applications.model';
+
+export interface QuestionsEntries {
+  [key: string]: any;
 }
 
-export interface QuestionGroups {
-  [key: number]: QuestionsGroup;
+export interface StoredApplication {
+  questions: QuestionsEntries;
+  status: ApplicationStatus;
+  createdDateTime: string;
+  submittedDateTime?: string;
 }
 
 @Injectable({
   providedIn: 'root',
 })
 export class QuestionsStorageService {
-  private readonly _key: string = 'housing-questions';
+  private readonly _key: string = `${STORAGE_KEY}-applications`;
 
   constructor(private _storage: Storage) {}
 
-  async getQuestionGroups(): Promise<QuestionGroups> {
-    return this._storage.get(this._key);
+  async getApplication(applicationKey: number): Promise<StoredApplication> {
+    return this._storage.get(`${this._key}-${applicationKey}`);
   }
 
-  async getQuestionsGroup(applicationId: number): Promise<QuestionsGroup> {
-    const groups: QuestionGroups = await this.getQuestionGroups();
-
-    return groups && groups[applicationId] ? groups[applicationId] : null;
+  async removeApplication(applicationKey: number): Promise<any> {
+    return this._storage.remove(`${this._key}-${applicationKey}`);
   }
 
-  async getQuestions(applicationId: number): Promise<any[]> {
-    const group: QuestionsGroup = await this.getQuestionsGroup(applicationId);
-
-    return group ? group.questions : null;
+  async getQuestions(applicationKey: number): Promise<QuestionsEntries> {
+    return this.getApplication(applicationKey).then((application: StoredApplication) =>
+      application ? application.questions : null
+    );
   }
 
-  async updateQuestionsGroup(applicationId: number, form: any, index: number, status: ApplicationStatus): Promise<any> {
-    const groups: QuestionGroups = await this.getQuestionGroups();
-    const group: QuestionsGroup = groups && groups[applicationId] ? groups[applicationId] : null;
-    const creationDateTime: number = group && group.creationDateTime ? group.creationDateTime : Date.now();
-    let questions: any[] = group ? group.questions : [];
-    let updatedGroup: QuestionsGroup;
+  async updateCreatedDateTime(applicationKey: number, patronApplication: PatronApplication): Promise<string> {
+    return this.getApplication(applicationKey).then(async (application: StoredApplication) => {
+      let createdDateTime: string = new Date().toISOString();
 
-    if (questions && questions[index]) {
-      questions[index] = form;
-    } else {
-      questions.push(form);
-    }
+      if (patronApplication && patronApplication.createdDateTime) {
+        createdDateTime = patronApplication.createdDateTime;
+      } else if (application && application.createdDateTime) {
+        createdDateTime = createdDateTime;
+      }
 
-    updatedGroup = {
-      ...group,
-      status,
-      creationDateTime,
-      questions,
-    };
-
-    if (status === ApplicationStatus.Submitted) {
-      updatedGroup.submittedDateTime = Date.now();
-    }
-
-    return this._storage.set(this._key, {
-      ...groups,
-      [applicationId]: updatedGroup,
+      return this._storage
+        .set(`${this._key}-${applicationKey}`, {
+          ...application,
+          createdDateTime,
+        })
+        .then(() => createdDateTime);
     });
   }
 
-  async removeQuestionsGroup(applicationId: number): Promise<any> {
-    const groups: QuestionGroups = await this.getQuestionGroups();
+  async updateSubmittedDateTime(applicationKey: number): Promise<string> {
+    const submittedDateTime: string = new Date().toISOString();
 
-    if (groups && groups[applicationId]) {
-      const questionKeys: string[] = Object.keys(groups);
+    return this.getApplication(applicationKey)
+      .then((application: StoredApplication) =>
+        this._storage.set(`${this._key}-${applicationKey}`, {
+          ...application,
+          submittedDateTime,
+        })
+      )
+      .then(() => submittedDateTime);
+  }
 
-      if (questionKeys.length > 1) {
-        const questionEntities: { [key: number]: any } = questionKeys.reduce((accumulator: any, key: string) => {
-          const numericKey: number = parseInt(key, 10);
+  async updateQuestions(applicationKey: number, formValue: any, status: ApplicationStatus): Promise<any> {
+    return this.getApplication(applicationKey).then((application: StoredApplication) => {
+      let questions: QuestionsEntries = application && application.questions ? application.questions : {};
 
-          return numericKey !== applicationId ? { ...accumulator, [numericKey]: groups[numericKey] } : accumulator;
-        }, {});
+      Object.keys(formValue).forEach(
+        (formControlName: any) => (questions[formControlName] = formValue[formControlName])
+      );
 
-        return this._storage.set(this._key, questionEntities);
-      } else {
-        return this._storage.remove(this._key);
-      }
-    }
+      return this._storage.set(`${this._key}-${applicationKey}`, {
+        ...application,
+        status,
+        questions,
+      });
+    });
   }
 }

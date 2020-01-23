@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 import { RewardsPopoverComponent } from '../rewards-popover';
-import { catchError, map, switchMap, take, tap } from 'rxjs/operators';
+import { catchError, map, switchMap, take, tap, finalize } from 'rxjs/operators';
 import { Observable, pipe, throwError } from 'rxjs';
 import { RedeemableRewardInfo } from '@sections/rewards/models';
 import { RewardsApiService, RewardsService } from '@sections/rewards/services';
@@ -130,11 +130,8 @@ export class ListItemComponent {
   private refreshData(): Observable<any> {
     this.loadingService.showSpinner();
     return this.rewardsService.getAllData().pipe(
-      tap(() => this.loadingService.closeSpinner()),
-      catchError(e => {
-        this.loadingService.closeSpinner();
-        return throwError(e);
-      })
+      finalize(() => this.loadingService.closeSpinner()),
+      catchError(e => throwError(e))
     );
   }
 

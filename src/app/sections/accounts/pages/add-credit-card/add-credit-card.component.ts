@@ -7,6 +7,7 @@ import { SuccessPopoverComponent } from './components/success-popover/success-po
 import { LoadingService } from 'src/app/core/service/loading/loading.service';
 import { Subscription } from 'rxjs';
 import { tap, take } from 'rxjs/operators';
+import { take, finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'st-add-credit-card',
@@ -93,8 +94,7 @@ export class AddCreditCardComponent implements OnInit {
         billingAddressObject
       )
       .pipe(
-        tap(() => this.loadingService.closeSpinner(),
-          () => this.loadingService.closeSpinner()),
+        finalize(() => this.loadingService.closeSpinner()),
         take(1)
       )
       .subscribe(

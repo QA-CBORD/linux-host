@@ -14,6 +14,6 @@ export interface ResponseStatus {
 }
 
 export interface Response {
-  data: any;
+  data?: any;
   status: ResponseStatus;
 }
