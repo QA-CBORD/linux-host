@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
-import { Observable, Observer } from 'rxjs';
+import { Observable, Observer, from, of } from 'rxjs';
 
 declare var androidInterface: any;
 
@@ -12,7 +12,7 @@ export enum NativeData {
   INSTITUTION_ID = 'getInstitutionId',
   USER_INFO = 'getUserInfo',
   USER_PHOTO = 'getAcceptedUserPhoto',
-  ADD_TO_USAEPAY = 'addUSAePayCreditCard'
+  ADD_TO_USAEPAY = 'addUSAePayCreditCard',
 }
 
 @Injectable({
@@ -38,19 +38,54 @@ export class NativeProvider {
     return androidInterface[methodName]() || null;
   }
 
-  addUSAePayCreditCard() {
-      if(this.isAndroid){
-        console.log("Android Device =)");
-        this.getAndroidData<void>(NativeData.ADD_TO_USAEPAY);
-      } else {
-        console.log("Not Android Device =(");
-        
+  private androidObserver: Observer<any>;
+  getAndroidDataAsObservable<T>(methodName: NativeData): Observable<T> {
+    return Observable.create((observer: Observer<T>) => {
+      this.androidObserver = observer;
+      try {
+        this.getAndroidData<T>(methodName) || null;
+      } catch (error) {
+        observer.error(error);
+        observer.complete();
       }
-    
+    });
   }
 
-   addUsaEPayCreditCardComplete(success: boolean){
-    console.log("Response USAEPAY!: ", success);
+  /// I'd like this to return an observable
+   addUSAePayCreditCard(): Observable<boolean> {
+    if(this.isAndroid()){
+      return this.getAndroidDataAsObservable<boolean>(NativeData.ADD_TO_USAEPAY);
+    } else if(this.isIos()){
+      return from(this.getIosData(NativeData.ADD_TO_USAEPAY));
+    } else {
+      return of(false);
+    }
+
+    // return Observable.create((observer: Observer<boolean>) => {
+    //   if (this.isAndroid) {
+    //     console.log('Android Device =)');
+    //     const result = this.getAndroidData<boolean>(NativeData.ADD_TO_USAEPAY);
+    //   } else {
+    //     console.log('iOS Device');
+    //     this.getIosData(NativeData.ADD_TO_USAEPAY)
+    //       .then(response => {
+    //         observer.next(response);
+    //       })
+    //       .catch(error => {
+    //         observer.error(error);
+    //       })
+    //       .finally(() => {
+    //         observer.complete();
+    //       });
+    //   }
+    // });
+  }
+
+  addUsaEPayCreditCardComplete(success: boolean) {
+    if(this.isAndroid()){
+      this.androidObserver.next(success);
+      this.androidObserver.complete();
+    }
   }
 
   getIosData(methodName: NativeData): Promise<any> {

@@ -67,9 +67,7 @@ export class AccessCardComponent implements OnInit {
   private setInstitutionData() {
     this.institutionColor$ = this.accessCardService
       .getInstitutionColor()
-      .pipe(
-        map(v => '#' + (JSON.parse(v) ? JSON.parse(v)['native-header-bg'] : '')),
-      );
+      .pipe(map(v => '#' + (JSON.parse(v) ? JSON.parse(v)['native-header-bg'] : '')));
     this.institutionName$ = this.accessCardService.getInstitutionName();
     this.institutionPhoto$ = this.accessCardService
       .getInstitutionImage()
@@ -95,14 +93,17 @@ export class AccessCardComponent implements OnInit {
     //   queryParams: { color },
     // });
 
-    this.nativeProvider.addUSAePayCreditCard();
+    this.nativeProvider.addUSAePayCreditCard().subscribe(
+      resp => {
+        console.log('USAEPAY RESP:', resp);
+      },
+      error => console.error('USAPAY ERR: ', error),
+      () => console.log('USAPAY COMPELTE!')
+    );
   }
 
-  
-
-  addUSAePayCreditCardComplete(success: boolean){
-    console.log("Response USAEPAY Received: ", success);
-    
+  addUSAePayCreditCardComplete(success: boolean) {
+    console.log('Response USAEPAY Received: ', success);
   }
 
   private setAppleWalletMessage() {
