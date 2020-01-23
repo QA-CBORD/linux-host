@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
+import { Observable, Observer } from 'rxjs';
 
 declare var androidInterface: any;
 
@@ -11,6 +12,7 @@ export enum NativeData {
   INSTITUTION_ID = 'getInstitutionId',
   USER_INFO = 'getUserInfo',
   USER_PHOTO = 'getAcceptedUserPhoto',
+  ADD_TO_USAEPAY = 'addUSAePayCreditCard'
 }
 
 @Injectable({
@@ -34,6 +36,21 @@ export class NativeProvider {
 
   getAndroidData<T>(methodName: NativeData): T {
     return androidInterface[methodName]() || null;
+  }
+
+  addUSAePayCreditCard() {
+      if(this.isAndroid){
+        console.log("Android Device =)");
+        this.getAndroidData<void>(NativeData.ADD_TO_USAEPAY);
+      } else {
+        console.log("Not Android Device =(");
+        
+      }
+    
+  }
+
+   addUsaEPayCreditCardComplete(success: boolean){
+    console.log("Response USAEPAY!: ", success);
   }
 
   getIosData(methodName: NativeData): Promise<any> {

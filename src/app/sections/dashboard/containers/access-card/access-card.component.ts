@@ -89,11 +89,20 @@ export class AccessCardComponent implements OnInit {
   }
 
   async onScanCardClick(): Promise<void> {
-    const color = await this.institutionColor$.pipe(first()).toPromise();
-    await this.router.navigate([NAVIGATE.dashboard, DASHBOARD_NAVIGATE.scanCard], {
-      skipLocationChange: true,
-      queryParams: { color },
-    });
+    // const color = await this.institutionColor$.pipe(first()).toPromise();
+    // await this.router.navigate([NAVIGATE.dashboard, DASHBOARD_NAVIGATE.scanCard], {
+    //   skipLocationChange: true,
+    //   queryParams: { color },
+    // });
+
+    this.nativeProvider.addUSAePayCreditCard();
+  }
+
+  
+
+  addUSAePayCreditCardComplete(success: boolean){
+    console.log("Response USAEPAY Received: ", success);
+    
   }
 
   private setAppleWalletMessage() {
