@@ -23,7 +23,7 @@ export class AccessCardComponent implements OnInit {
   institutionPhoto$: Observable<SafeResourceUrl>;
   institutionBackgroundImage$: Observable<string>;
   getMyCardEnabled$: Observable<boolean>;
-  isMobileAccessButtonEnabled: Observable<boolean>;
+  isMobileAccessButtonEnabled$: Observable<boolean>;
   appleWalletEnabled: boolean;
   appleWalletInfo: any;
   appleWalletMessage: string;
@@ -37,7 +37,7 @@ export class AccessCardComponent implements OnInit {
     private readonly sanitizer: DomSanitizer,
     private readonly router: Router,
     private readonly cdRef: ChangeDetectorRef,
-    private nativeProvider: NativeProvider
+    private readonly nativeProvider: NativeProvider
   ) {}
 
   ngOnInit() {
@@ -79,7 +79,7 @@ export class AccessCardComponent implements OnInit {
 
   private getFeaturesEnabled() {
     this.getMyCardEnabled$ = this.accessCardService.isGETMyCardEnabled();
-    this.isMobileAccessButtonEnabled = this.accessCardService.isMobileAccessEnable();
+    this.isMobileAccessButtonEnabled$ = this.accessCardService.isMobileAccessEnable();
     // this.applePayEnabled$ = this.accessCardService.isApplePayEnabled();
   }
 
