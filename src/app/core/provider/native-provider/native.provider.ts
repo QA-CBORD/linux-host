@@ -60,25 +60,6 @@ export class NativeProvider {
     } else {
       return of(false);
     }
-
-    // return Observable.create((observer: Observer<boolean>) => {
-    //   if (this.isAndroid) {
-    //     console.log('Android Device =)');
-    //     const result = this.getAndroidData<boolean>(NativeData.ADD_TO_USAEPAY);
-    //   } else {
-    //     console.log('iOS Device');
-    //     this.getIosData(NativeData.ADD_TO_USAEPAY)
-    //       .then(response => {
-    //         observer.next(response);
-    //       })
-    //       .catch(error => {
-    //         observer.error(error);
-    //       })
-    //       .finally(() => {
-    //         observer.complete();
-    //       });
-    //   }
-    // });
   }
 
   addUsaEPayCreditCardComplete(success: boolean) {
