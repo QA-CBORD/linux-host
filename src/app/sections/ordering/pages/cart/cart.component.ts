@@ -9,17 +9,14 @@ import {
   OrderDetailsFormData,
   OrderInfo, OrderPayment,
 } from '@sections/ordering';
-import { first, map, switchMap, tap } from 'rxjs/operators';
 import { LOCAL_ROUTING as ACCOUNT_LOCAL_ROUTING } from '@sections/accounts/accounts.config';
-import { first, map, switchMap, tap, finalize } from 'rxjs/operators';
+import { first, map, switchMap, finalize } from 'rxjs/operators';
 import {
   ACCOUNT_TYPES,
-  LOCAL_ROUTING,
   MerchantSettings,
   ORDER_TYPE,
   ORDER_VALIDATION_ERRORS,
   PAYMENT_SYSTEM_TYPE,
-  SYSTEM_SETTINGS_CONFIG,
   LOCAL_ROUTING,
 } from '@sections/ordering/ordering.config';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -28,7 +25,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { handleServerError, parseArrayFromString } from '@core/utils/general-helpers';
 import { UserAccount } from '@core/model/account/account.model';
 import { ModalController, PopoverController, ToastController } from '@ionic/angular';
-import { AddressInfo } from '@core/model/address/address-info';
 import { NAVIGATE } from '../../../../app.global';
 import { SuccessModalComponent } from '@sections/ordering/pages/cart/components/success-modal';
 import { StGlobalPopoverComponent } from '@shared/ui-components';
@@ -122,7 +118,7 @@ export class CartComponent implements OnInit {
   onOrderPaymentInfoChanged(selectedValue: Partial<OrderPayment> | string) {
     if (selectedValue instanceof Object) {
       const errMessage = 'something went wrong';
-      this.cartService.addPaymentInfoToOrder(selectedValue);
+      this.cartService.addPaymentInfoToOrder(selectedValue as Partial<OrderPayment>);
       this.validateOrder(errMessage);
     }
     if (typeof selectedValue === 'string' && selectedValue === 'add credit cars') {

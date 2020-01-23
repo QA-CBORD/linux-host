@@ -8,7 +8,6 @@ import { finalize, first, skipWhile, switchMap } from 'rxjs/operators';
 import { CartService, MerchantAccountInfoList, MerchantService } from '@sections/ordering';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 
-
 @Injectable()
 export class CartResolver implements Resolve<Observable<[SettingInfo[], MerchantAccountInfoList]>> {
 

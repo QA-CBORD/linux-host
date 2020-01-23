@@ -1,4 +1,4 @@
-<ng-container *ngIf="isStaticHeader; then staticHeader; else header"></ng-container>
+<ng-container *ngIf="isStaticHeader && menuItemImg; then staticHeader; else header"></ng-container>
 
 <ng-template #header>
   <st-header [backButtonIcon]="'close'"
