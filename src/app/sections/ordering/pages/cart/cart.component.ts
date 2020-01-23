@@ -121,7 +121,7 @@ export class CartComponent implements OnInit {
       this.cartService.addPaymentInfoToOrder(selectedValue as Partial<OrderPayment>);
       this.validateOrder(errMessage);
     }
-    if (typeof selectedValue === 'string' && selectedValue === 'add credit cars') {
+    if (typeof selectedValue === 'string' && selectedValue === 'addCC') {
       this.router.navigate([NAVIGATE.accounts, ACCOUNT_LOCAL_ROUTING.addCreditCard], {skipLocationChange: true})
     }
   }
