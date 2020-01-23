@@ -62,7 +62,7 @@ export class NativeProvider {
     }
   }
 
-  addUsaEPayCreditCardComplete(success: boolean) {
+  addUSAePayCreditCardComplete(success: boolean) {
     if(this.isAndroid()){
       this.androidObserver.next(success);
       this.androidObserver.complete();
