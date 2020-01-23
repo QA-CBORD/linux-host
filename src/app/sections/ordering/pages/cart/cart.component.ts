@@ -10,7 +10,7 @@ import {
   OrderInfo, OrderPayment,
 } from '@sections/ordering';
 import { LOCAL_ROUTING as ACCOUNT_LOCAL_ROUTING } from '@sections/accounts/accounts.config';
-import { first, map, switchMap, finalize } from 'rxjs/operators';
+import { first, map, switchMap, tap} from 'rxjs/operators';
 import {
   ACCOUNT_TYPES,
   MerchantSettings,
@@ -46,15 +46,15 @@ export class CartComponent implements OnInit {
   cartFormState: OrderDetailsFormData = {} as OrderDetailsFormData;
 
   constructor(private readonly cartService: CartService,
-              private readonly merchantService: MerchantService,
-              private readonly loadingService: LoadingService,
-              private readonly settingService: SettingService,
-              private readonly activatedRoute: ActivatedRoute,
-              private readonly toastController: ToastController,
-              private readonly popoverController: PopoverController,
-              private readonly cdRef: ChangeDetectorRef,
-              private readonly router: Router,
-              private readonly modalController: ModalController) {
+    private readonly merchantService: MerchantService,
+    private readonly loadingService: LoadingService,
+    private readonly settingService: SettingService,
+    private readonly activatedRoute: ActivatedRoute,
+    private readonly toastController: ToastController,
+    private readonly popoverController: PopoverController,
+    private readonly cdRef: ChangeDetectorRef,
+    private readonly router: Router,
+    private readonly modalController: ModalController) {
   }
 
   ionViewWillEnter() {
@@ -86,12 +86,12 @@ export class CartComponent implements OnInit {
       this.getPickupLocations(),
     ).pipe(
       map(([
-             { address: defaultAddress, orderType },
-             buildings,
-             { id: merchantId },
-             deliveryAddresses,
-             pickupLocations,
-           ]) => ({
+        { address: defaultAddress, orderType },
+        buildings,
+        { id: merchantId },
+        deliveryAddresses,
+        pickupLocations,
+      ]) => ({
         defaultAddress,
         buildings,
         isOrderTypePickup: orderType === ORDER_TYPE.PICKUP,
@@ -99,7 +99,7 @@ export class CartComponent implements OnInit {
         deliveryAddresses,
         merchantId,
       })),
-      finalize(() => this.loadingService.closeSpinner()),
+      tap(() => this.loadingService.closeSpinner()),
     );
   }
 
