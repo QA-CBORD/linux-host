@@ -6,24 +6,27 @@ import { map, switchMap, tap } from 'rxjs/operators';
 import { ConfigurationService } from 'src/app/core/service/configuration/configuration.service';
 import { UserService } from 'src/app/core/service/user-service/user.service';
 
-
-import { TIME_PERIOD, DateUtilObject, getTimeRangeOfDate, getUniquePeriodName } from '../../../utils/date-util';
+import { DateUtilObject, getTimeRangeOfDate, getUniquePeriodName } from '../../../utils/date-util';
 import { Settings, PaymentSystemType } from 'src/app/app.global';
 import { TransactionHistory } from '@sections/dashboard/models';
-import { AccountsService } from '@sections/dashboard/services';
+import { AccountsService } from '@sections/accounts/services/accounts.service';
 import { CommerceApiService } from '@core/service/commerce/commerce-api.service';
 import { TransactionResponse } from '@core/model/account/transaction-response.model';
-import { QueryTransactionHistoryCriteria } from '@core/model/account/transaction-query.model';
+import { QueryTransactionHistoryCriteriaDateRange } from '@core/model/account/transaction-query-date-range.model';
 
-
-const ALL_ACCOUNTS = 'all_accounts';
+import {
+  ALL_ACCOUNTS,
+  PAYMENT_SYSTEM_TYPE,
+  SYSTEM_SETTINGS_CONFIG,
+  TIME_PERIOD,
+} from '@sections/accounts/accounts.config';
 
 @Injectable()
 export class TransactionService {
   private currentAccountId: string;
   private currentTimeRange: DateUtilObject;
   private transactionHistory: TransactionHistory[] = [];
-  private queryCriteria: QueryTransactionHistoryCriteria;
+  private queryCriteria: QueryTransactionHistoryCriteriaDateRange;
   private transactionResponse: TransactionResponse;
 
   private readonly lazyAmount: number = 20;
@@ -57,14 +60,18 @@ export class TransactionService {
     this._transactions$.next([...this.transactionHistory]);
   }
 
-  getRecentTransactions(id: string, period?: DateUtilObject, maxReturn?: number): Observable<TransactionHistory[]> {
+  getRecentTransactions(
+    id: string,
+    period?: DateUtilObject,
+    maxReturnMostRecent?: number
+  ): Observable<TransactionHistory[]> {
     period = period ? period : { name: TIME_PERIOD.pastSixMonth };
-    maxReturn = maxReturn ? maxReturn : 0;
+    maxReturnMostRecent = maxReturnMostRecent ? maxReturnMostRecent : 0;
 
     const { startDate, endDate } = getTimeRangeOfDate(period);
 
     this.setInitialQueryObject(id, startDate, endDate);
-    this.queryCriteria = { ...this.queryCriteria, maxReturn };
+    this.queryCriteria = { ...this.queryCriteria, maxReturnMostRecent };
     if (this.currentAccountId !== id) this.transactionHistory = [];
     this.updateTransactionActiveState(id, period);
 
@@ -86,12 +93,14 @@ export class TransactionService {
     return this.getTransactionHistoryByQuery(this.queryCriteria);
   }
 
-  private getTransactionHistoryByQuery(query: QueryTransactionHistoryCriteria): Observable<Array<TransactionHistory>> {
+  private getTransactionHistoryByQuery(
+    query: QueryTransactionHistoryCriteriaDateRange
+  ): Observable<Array<TransactionHistory>> {
     return this.userService.userData.pipe(
       switchMap(({ institutionId }) => this.configService.getSetting(institutionId, Settings.Setting.DISPLAY_TENDERS)),
       map(({ value }) => this.accountsService.transformStringToArray(value)),
       switchMap((tendersId: Array<string>) =>
-        this.commerceApiService.getTransactionsHistory(query).pipe(
+        this.commerceApiService.getTransactionsHistoryByDate(query).pipe(
           tap(response => (this.transactionResponse = response)),
           map(({ transactions }) => this.filterByTenderIds(tendersId, transactions))
         )
@@ -114,15 +123,14 @@ export class TransactionService {
 
   private setInitialQueryObject(
     accountId: string = null,
-    startDate: string = null,
-    endDate: string = null,
-    maxReturn: number = 0
+    newestDate: string = null,
+    oldestDate: string = null,
+    maxReturnMostRecent: number = 0
   ) {
     this.queryCriteria = {
-      maxReturn,
-      startingReturnRow: 0,
-      startDate,
-      endDate,
+      maxReturnMostRecent,
+      newestDate,
+      oldestDate,
       accountId: accountId === ALL_ACCOUNTS ? null : accountId,
     };
   }
@@ -136,8 +144,7 @@ export class TransactionService {
   private filterByTenderIds(tendersId: string[], transactions: TransactionHistory[]): TransactionHistory[] {
     return transactions.filter(
       ({ paymentSystemType: type, tenderId: tenId }) =>
-        type === PaymentSystemType.MONETRA || type === PaymentSystemType.USAEPAY || tendersId.includes(tenId)
+        type === PAYMENT_SYSTEM_TYPE.MONETRA || type === PAYMENT_SYSTEM_TYPE.USAEPAY || tendersId.includes(tenId)
     );
   }
-
 }
