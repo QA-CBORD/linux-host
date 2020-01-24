@@ -1,5 +1,5 @@
 <ion-header mode="ios">
-  <ion-toolbar mode="ios" class="rooms-search__header">
+  <ion-toolbar mode="ios" class="rooms-search__toolbar">
     <ion-buttons slot="start">
       <ion-back-button
         color="dark"
@@ -19,7 +19,7 @@
     </ion-buttons>
   </ion-toolbar>
 
-  <ion-toolbar class="rooms-search__tabs" mode="ios">
+  <ion-toolbar class="rooms-search__toolbar rooms-search__tabs" mode="ios">
     <ion-buttons>
       <ion-button
         class="ion-no-padding ion-no-margin btn rooms-search__tab"
@@ -41,13 +41,8 @@
     </ion-buttons>
   </ion-toolbar>
 
-  <ion-toolbar>
-    <ion-buttons slot="secondary">
-      <ion-button class="ion-no-padding ion-no-margin btn" mode="md">
-        <ion-icon></ion-icon>
-        Filter
-      </ion-button>
-    </ion-buttons>
+  <ion-toolbar class="rooms-search__filters">
+    <st-rooms-filter slot="end"></st-rooms-filter>
   </ion-toolbar>
 </ion-header>
 

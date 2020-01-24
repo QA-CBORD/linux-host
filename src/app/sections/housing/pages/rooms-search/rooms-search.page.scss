@@ -1,6 +1,6 @@
 @import 'tools';
 
-.rooms-search__header {
+.rooms-search__toolbar {
   border-bottom: 1px solid $color-whisper;
 }
 
@@ -33,4 +33,8 @@
     color: rgba($color-black, 0.9);
     border-bottom-color: $color-dodger-blue;
   }
+}
+
+.rooms-search__filters {
+  --min-height: 55px;
 }
