@@ -85,6 +85,7 @@ export namespace Settings {
     BILLME_FREEFORM_ENABLED = 'get.deposit.allow_freeform_billme_amounts',
     AUTO_DEPOSIT_TENDERS = 'get.feature.auto_deposit_tenders',
     MOBILE_HEADER_COLOR = 'get.style.custom_site_colors',
+    HOUSING_ENABLED = 'get.feature.enable_housing',
   }
 
 }
