@@ -15,6 +15,11 @@ export enum NativeData {
   ADD_TO_USAEPAY = 'addUSAePayCreditCard',
 }
 
+export interface USAePayResponse {
+  success: boolean;
+  errorMessage: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -51,19 +56,18 @@ export class NativeProvider {
     });
   }
 
-  /// I'd like this to return an observable
-   addUSAePayCreditCard(): Observable<boolean> {
-    if(this.isAndroid()){
-      return this.getAndroidDataAsObservable<boolean>(NativeData.ADD_TO_USAEPAY);
-    } else if(this.isIos()){
+  addUSAePayCreditCard(): Observable<USAePayResponse> {
+    if (this.isAndroid()) {
+      return this.getAndroidDataAsObservable<USAePayResponse>(NativeData.ADD_TO_USAEPAY);
+    } else if (this.isIos()) {
       return from(this.getIosData(NativeData.ADD_TO_USAEPAY));
     } else {
-      return of(false);
+      return of({ success: false, errorMessage: 'This is not a native device' });
     }
   }
 
   addUSAePayCreditCardComplete(success: boolean) {
-    if(this.isAndroid()){
+    if (this.isAndroid()) {
       this.androidObserver.next(success);
       this.androidObserver.complete();
     }
