@@ -1,6 +1,11 @@
 @import 'tools';
 
 .rooms-search__toolbar {
+  --padding-top: 0;
+  --padding-bottom: 0;
+  --padding-start: 16px;
+  --padding-end: 16px;
+
   border-bottom: 1px solid $color-whisper;
 }
 
@@ -10,13 +15,9 @@
 
 .rooms-search__back {
   @include font-nunito-regular(16px);
-}
 
-.rooms-search__tabs {
-  --padding-top: 0;
-  --padding-bottom: 0;
-  --padding-start: 15px;
-  --padding-end: 15px;
+  --icon-font-size: 16px;
+  --icon-padding-end: 5px;
 }
 
 .rooms-search__tab {
