@@ -42,6 +42,11 @@ export const DASHBOARD_SETTINGS_CONFIG = {
     category: 'feature',
     name: 'enable_secure_messaging',
   },
+  enableHousing: {
+    domain: 'get',
+    category: 'feature',
+    name: 'enable_housing',
+  },
 };
 
 export const ACCOUNTS_SETTINGS_CONFIG = {
@@ -65,7 +70,8 @@ export enum TILES_ID {
   mealDonations = 'mealDonations',
   order = 'order',
   explore = 'explore',
-  conversations = 'conversations'
+  conversations = 'conversations',
+  housing = 'housing'
 }
 
 export enum TILES_TITLE {
@@ -76,7 +82,8 @@ export enum TILES_TITLE {
   mealDonations = 'Meal Donations',
   order = 'Order',
   explore = 'Explore',
-  conversations = 'Conversations'
+  conversations = 'Conversations',
+  housing = 'Housing'
 }
 
 export const TILES_BASE_CONFIG: TileWrapperConfig[] = [
@@ -172,6 +179,16 @@ export const TILES_BASE_CONFIG: TileWrapperConfig[] = [
       show: true,
       title: 'Start a conversation',
       navigate: NAVIGATE.secureMessage,
+    },
+  },
+  {
+    id: DASHBOARD_SETTINGS_CONFIG.enableHousing.name,
+    title: 'Housing',
+    iconPath: '/assets/icon/building.svg',
+    isEnable: false,
+    navigate: NAVIGATE.housing,
+    buttonConfig: {
+      show: false,
     },
   },
 ];
