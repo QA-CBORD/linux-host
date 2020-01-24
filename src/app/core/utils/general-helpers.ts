@@ -44,7 +44,7 @@ export const validateInteger = ({ value }: AbstractControl): ValidationErrors | 
   const isStartedWithZero = /^(0+)/g.test(value);
   const isInteger = /(?<=\s|^)\d+(?=\s|$)/g.test(value);
 
-  return isNaN(value) || !isInteger || isStartedWithZero ? { incorrect: true } : null;
+  return !isInteger || isStartedWithZero ? { incorrect: true } : null;
 };
 
 export const handleServerError = <T>(serverError: ServerErrorsInfo): MonoTypeOperatorFunction<T> => {
