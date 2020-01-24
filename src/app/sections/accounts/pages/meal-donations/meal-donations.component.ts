@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 
 import { MealDonationsService } from '@sections/accounts/pages/meal-donations/service/meal-donations.service';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { formControlErrorDecorator, validateInteger, validateIntegerOrDecimals } from '@core/utils/general-helpers';
+import { formControlErrorDecorator, validateInteger, validateInputAmount } from '@core/utils/general-helpers';
 import { UserAccount } from '@core/model/account/account.model';
 import { SYSTEM_SETTINGS_CONFIG } from '@sections/accounts/accounts.config';
 import { parseArrayFromString } from '@core/utils/general-helpers';
@@ -174,7 +174,7 @@ export class MealDonationsComponent {
     if(accountType === AccountType.MEALS) {
       amountError.push(formControlErrorDecorator(validateInteger, CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES.amount].integer));
     } else {
-      amountError.push(formControlErrorDecorator(validateIntegerOrDecimals, CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES.amount].integer));
+      amountError.push(formControlErrorDecorator(validateInputAmount, CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES.amount].integer));
     }
 
     this.amount.setValidators(amountError);

@@ -33,16 +33,18 @@ export const validateMonthRange = ({ value }: AbstractControl): ValidationErrors
   return isNaN(value) || value <= 0 || value > 31 || isStartedWithZero ? { incorrect: true } : null;
 };
 
-export const validateInteger = ({ value }: AbstractControl): ValidationErrors | null => {
-  const test = /\-?\d+\.\d+/g.test(value);
+export const validateInputAmount = ({ value }: AbstractControl): ValidationErrors | null => {
+  const isStartedWithZero = /^(0+)/g.test(value);
+  const isIntegerOrDecimal = /[0-9]+(\.[0-9][0-9]?)?/g.test(value);
 
-  return test ? { incorrect: true } : null;
+  return isNaN(value) || isStartedWithZero || !isIntegerOrDecimal ?  { incorrect: true } : null;
 };
 
-export const validateIntegerOrDecimals = ({ value }: AbstractControl): ValidationErrors | null => {
-  const test = /[0-9]+(\.[0-9][0-9]?)?/g.test(value);
+export const validateInteger = ({ value }: AbstractControl): ValidationErrors | null => {
+  const isStartedWithZero = /^(0+)/g.test(value);
+  const isInteger = /\-?\d+\.\d+/g.test(value);
 
-  return test ? { incorrect: true } : null;
+  return isNaN(value) || !isInteger || isStartedWithZero ? { incorrect: true } : null;
 };
 
 export const handleServerError = <T>(serverError: ServerErrorsInfo): MonoTypeOperatorFunction<T> => {
