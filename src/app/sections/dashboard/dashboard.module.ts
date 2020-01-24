@@ -24,6 +24,7 @@ import { EditHomePageModalComponent } from './components/edit-home-page-modal';
 import { MealDonationsTileModule } from './containers/meal-donations-tile/meal-donations-tile.module';
 import { MobileAccessService } from '@sections/mobile-access';
 import { TileConfigFacadeService } from '@sections/dashboard/tile-config-facade.service';
+import { HousingTileModule } from './containers/housing-tile/housing-tile.module';
 
 const imports = [
   IonicModule,
@@ -39,7 +40,8 @@ const imports = [
   TileWrapperModule,
   TransactionsTileModule,
   RewardsTileModule,
-  MealDonationsTileModule
+  MealDonationsTileModule,
+  HousingTileModule
 ];
 
 const declarations = [

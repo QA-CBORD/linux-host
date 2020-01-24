@@ -27,9 +27,10 @@ export const validateEmail = ({ value }: AbstractControl): ValidationErrors | nu
 };
 
 export const validateMonthRange = ({ value }: AbstractControl): ValidationErrors | null => {
-  value = Number(value);
+  const isStartedWithZero = /^(0+)/g.test(value);
 
-  return isNaN(value) || value <= 0 || value > 31 ? { incorrect: true } : null;
+  value = Number(value);
+  return isNaN(value) || value <= 0 || value > 31 || isStartedWithZero ? { incorrect: true } : null;
 };
 
 export const handleServerError = <T>(serverError: ServerErrorsInfo): MonoTypeOperatorFunction<T> => {
