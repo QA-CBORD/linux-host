@@ -8,6 +8,10 @@
   @include font-nunito-heavy(20px);
 }
 
+.rooms-search__back {
+  @include font-nunito-regular(16px);
+}
+
 .rooms-search__tabs {
   --padding-top: 0;
   --padding-bottom: 0;

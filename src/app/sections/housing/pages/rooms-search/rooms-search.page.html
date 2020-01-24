@@ -1,10 +1,22 @@
 <ion-header mode="ios">
   <ion-toolbar mode="ios" class="rooms-search__header">
     <ion-buttons slot="start">
-      <ion-back-button color="dark" text="Back" mode="ios" defaultHref="/housing/dashboard"></ion-back-button>
+      <ion-back-button
+        color="dark"
+        text="Back"
+        mode="ios"
+        defaultHref="/housing/dashboard"
+        class="rooms-search__back"
+      ></ion-back-button>
     </ion-buttons>
 
     <ion-title class="rooms-search__title">Rooms</ion-title>
+
+    <ion-buttons slot="end">
+      <ion-button mode="md">
+        Favorites
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 
   <ion-toolbar class="rooms-search__tabs" mode="ios">
@@ -25,6 +37,15 @@
         routerLinkActive="active"
       >
         Units
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+  <ion-toolbar>
+    <ion-buttons slot="secondary">
+      <ion-button class="ion-no-padding ion-no-margin btn" mode="md">
+        <ion-icon></ion-icon>
+        Filter
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
