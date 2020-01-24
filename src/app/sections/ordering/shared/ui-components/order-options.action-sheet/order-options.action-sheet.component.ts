@@ -1,12 +1,12 @@
-import { MerchantService, CartService } from '@sections/ordering/services';
+import { CartService, MerchantService } from '@sections/ordering/services';
 import { BuildingInfo } from './../../models/building-info.model';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { MenuInfo, MerchantAccountInfoList, MerchantOrderTypesInfo } from '../../models';
 import { ModalController, ToastController } from '@ionic/angular';
 import { DeliveryAddressesModalComponent } from '../delivery-addresses.modal/delivery-addresses.modal.component';
 import { AddressInfo } from '@core/model/address/address-info';
-import { Observable, of, throwError, zip } from 'rxjs';
-import { switchMap, take, tap } from 'rxjs/operators';
+import { EMPTY, Observable, of, throwError, zip } from 'rxjs';
+import { finalize, switchMap, take, tap } from 'rxjs/operators';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ACCOUNT_TYPES, MerchantSettings, ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
@@ -44,8 +44,9 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     private readonly cdRef: ChangeDetectorRef,
     private readonly loadingService: LoadingService,
     private readonly toastController: ToastController,
-    private readonly cartService: CartService
-  ) {}
+    private readonly cartService: CartService,
+  ) {
+  }
 
   get enumOrderTypes() {
     return ORDER_TYPE;
@@ -69,9 +70,9 @@ export class OrderOptionsActionSheetComponent implements OnInit {
       this.retrieveDeliveryAddresses(this.merchantId),
       this.merchantService.retrievePickupLocations(
         this.storeAddress,
-        this.settings.map[MerchantSettings.pickupLocationsEnabled]
+        this.settings.map[MerchantSettings.pickupLocationsEnabled],
       ),
-      this.merchantService.retrieveBuildings()
+      this.merchantService.retrieveBuildings(),
     )
       .pipe(take(1))
       .subscribe(
@@ -95,7 +96,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
           this.defineOrderOptionsData(this.isOrderTypePickup);
         },
         null,
-        () => this.loadingService.closeSpinner()
+        () => this.loadingService.closeSpinner(),
       );
   }
 
@@ -114,10 +115,10 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     const defineDeliveryAddress = this.deliveryAddresses.find(({ id }) => id === this.defaultDeliveryAddress);
 
     this.orderOptionsData = {
-        label: isOrderTypePickup ? 'PICKUP' : 'DELIVERY',
-        address: isOrderTypePickup ? this.defaultPickupAddress : defineDeliveryAddress,
-        isClickble: isOrderTypePickup ? this.pickupLocations.length : 1,
-      };
+      label: isOrderTypePickup ? 'PICKUP' : 'DELIVERY',
+      address: isOrderTypePickup ? this.defaultPickupAddress : defineDeliveryAddress,
+      isClickble: isOrderTypePickup ? this.pickupLocations.length : 1,
+    };
 
     this.cdRef.detectChanges();
   }
@@ -127,7 +128,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     this.cdRef.detectChanges();
   }
 
-  onSubmit() {
+  async onSubmit() {
     let date = { dueTime: this.dateTimePicker, isASAP: this.dateTimePicker === 'ASAP' };
 
     let isOutsideMerchantDeliveryArea = of(false);
@@ -139,17 +140,18 @@ export class OrderOptionsActionSheetComponent implements OnInit {
         return;
       }
     }
-    this.loadingService.showSpinner();
+    await this.loadingService.showSpinner();
     zip(isOutsideMerchantDeliveryArea, this.merchantService.getCurrentLocaleTime())
       .pipe(
         tap(([isOtside, dueTime]) => (date = date.isASAP ? { ...date, dueTime } : { ...date })),
         switchMap(([isOutside]): Observable<MerchantAccountInfoList> => this.getMerchantPaymentAccounts(isOutside)),
         switchMap(
           (paymentAccounts): Promise<MenuInfo | never> =>
-            this.getDisplayMenu(paymentAccounts, this.merchantId, date.dueTime, this.orderType)
+            this.getDisplayMenu(paymentAccounts, this.merchantId, date.dueTime, this.orderType),
         ),
-        switchMap(({ mealBased }): Observable<boolean> => this.isAccountsMealBased(mealBased)),
-        take(1)
+        switchMap(({ mealBased }): Observable<boolean | never> => this.isAccountsMealBased(mealBased)),
+        take(1),
+        finalize(() => this.loadingService.closeSpinner()),
       )
       .subscribe(
         () =>
@@ -163,7 +165,6 @@ export class OrderOptionsActionSheetComponent implements OnInit {
             BUTTON_TYPE.CONTINUE
           ),
         err => this.onToastDisplayed(err),
-        () => this.loadingService.closeSpinner()
       );
   }
 
@@ -172,7 +173,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     return this.merchantService.isOutsideMerchantDeliveryArea(this.merchantId, latitude, longitude);
   }
 
-  private getMerchantPaymentAccounts(isOutside): Observable<MerchantAccountInfoList> {
+  private getMerchantPaymentAccounts(isOutside: boolean): Observable<MerchantAccountInfoList> {
     if (isOutside) {
       return throwError(new Error('Delivery address is too far away'));
     }
@@ -181,34 +182,30 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   }
 
   private async getDisplayMenu(
-    paymentAccounts: MerchantAccountInfoList,
+    accountInfoList: MerchantAccountInfoList,
     id: string,
     dueTime: string | Date,
-    type: number
+    type: number,
   ): Promise<MenuInfo | never> {
-    if (!paymentAccounts.accounts.length) {
-      return Promise.reject(new Error("You don't have payment accounts"));
+    if (!accountInfoList.accounts.length && !accountInfoList.creditAccepted) {
+      return Promise.reject(new Error('You don\'t have payment accounts'));
     }
 
     return this.cartService.getMerchantMenu(id, dueTime, type);
   }
 
-  private isAccountsMealBased(mealBased: boolean): Observable<boolean> {
+  private isAccountsMealBased(mealBased: boolean): Observable<boolean | never> {
     if (!mealBased) {
       return of(true);
     }
 
     return this.merchantService.getUserAccounts().pipe(
       switchMap(
-        (accounts): any => {
+        (accounts): Observable<boolean | never> => {
           const isSomeAccMealBased = accounts.some(({ accountType }) => accountType === ACCOUNT_TYPES.meals);
-          if (!isSomeAccMealBased) {
-            return throwError(new Error("You don't have meal based accounts"));
-          }
-
-          return of(isSomeAccMealBased);
-        }
-      )
+          return (!isSomeAccMealBased) ? throwError(new Error('You don\'t have meal based accounts')) : of(true);
+        },
+      ),
     );
   }
 
@@ -220,7 +217,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
       closeButtonText: 'DISMISS',
       showCloseButton: true,
     });
-    toast.present();
+    await toast.present();
   }
 
   private retrieveDeliveryAddresses(merchantId: string) {

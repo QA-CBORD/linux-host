@@ -16,10 +16,6 @@ import { QueryTransactionHistoryCriteriaDateRange } from '@core/model/account/tr
 export class CommerceApiService extends BaseService {
   private readonly serviceUrl = '/json/commerce';
 
-  constructor(protected readonly http: HttpClient) {
-    super(http);
-  }
-
   getUserAccounts(): Observable<UserAccount[]> {
     const method = 'retrieveAccounts';
 

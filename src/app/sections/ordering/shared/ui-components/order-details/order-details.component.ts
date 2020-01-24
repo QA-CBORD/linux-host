@@ -1,18 +1,12 @@
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  Input, OnDestroy,
-  OnInit,
-  Output,
-} from '@angular/core';
-import {
-  AbstractControl,
-  FormBuilder,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
-import { BuildingInfo, OrderItem, MerchantOrderTypesInfo } from '@sections/ordering';
+  BuildingInfo,
+  MerchantAccountInfoList,
+  MerchantOrderTypesInfo,
+  OrderItem,
+  OrderPayment,
+} from '@sections/ordering';
 import { PAYMENT_SYSTEM_TYPE } from '@sections/ordering/ordering.config';
 import { AddressInfo } from '@core/model/address/address-info';
 import { ModalController } from '@ionic/angular';
@@ -30,6 +24,7 @@ import { cvvValidationFn } from '@core/utils/general-helpers';
 export class OrderDetailsComponent implements OnInit, OnDestroy {
   @Input() orderDetailOptions: any;
   @Input() readonly: boolean = true;
+  @Input() accInfoList: MerchantAccountInfoList = {} as MerchantAccountInfoList;
   @Input() orderTypes: MerchantOrderTypesInfo;
   @Input() orderItems: OrderItem[] = [];
   @Input() paymentMethod: any = [];
@@ -48,14 +43,15 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
   @Output() onFormChange: EventEmitter<OrderDetailsFormData> = new EventEmitter<OrderDetailsFormData>();
   @Output() onOrderItemRemovedId: EventEmitter<string> = new EventEmitter<string>();
   @Output() onOrderItemClicked: EventEmitter<OrderItem> = new EventEmitter<OrderItem>();
-  @Output() onOrderPaymentInfoChanged: EventEmitter<any> = new EventEmitter<any>();
+  @Output() onOrderPaymentInfoChanged: EventEmitter<Partial<OrderPayment> | string>
+    = new EventEmitter<Partial<OrderPayment> | string>();
 
   detailsForm: FormGroup;
   private readonly sourceSub = new Subscription();
   showCVVControl = false;
 
   constructor(private readonly fb: FormBuilder,
-    private readonly modalController: ModalController) {
+              private readonly modalController: ModalController) {
   }
 
   ngOnInit() {
@@ -103,8 +99,16 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
     this.subscribeOnFormChanges();
   }
 
-  toggleCvvControl({ detail: { value: { id, paymentSystemType } } }) {
-    this.onOrderPaymentInfoChanged.emit({ accountId: id, paymentSystemType });
+  onPaymentChanged({ detail: { value } }) {
+    const { id, paymentSystemType } = value;
+
+    if (value instanceof Object) {
+      this.onOrderPaymentInfoChanged.emit({ accountId: id, paymentSystemType });
+    } else {
+      this.onOrderPaymentInfoChanged.emit(value);
+      this.detailsForm.get(this.controlsNames.paymentMethod).reset();
+    }
+
     if (paymentSystemType === PAYMENT_SYSTEM_TYPE.MONETRA) {
       this.addCvvControl();
     } else {

@@ -80,11 +80,14 @@
                 mode="md"
                 placeholder="Please choose payment method"
                 interface="action-sheet"
-                (ionChange)="toggleCvvControl($event)"
+                (ionChange)="onPaymentChanged($event)"
                 [interfaceOptions]="{cssClass: 'custom-deposit-actionSheet'}"
         >
           <ion-select-option [value]="account" *ngFor="let account of accounts">
             {{ account | accountTypeResolver: mealBased }}
+          </ion-select-option>
+          <ion-select-option *ngIf="accInfoList.creditAccepted" [value]="'addCC'">
+            add credit card
           </ion-select-option>
         </ion-select>
       </div>

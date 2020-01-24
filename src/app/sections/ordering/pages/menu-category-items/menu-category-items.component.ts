@@ -79,7 +79,7 @@ export class MenuCategoryItemsComponent implements OnInit {
   }
 
   async redirectToCart() {
-    this.loadingService.showSpinner();
+    await this.loadingService.showSpinner();
     await this.cartService
       .validateOrder()
       .pipe(
@@ -92,12 +92,12 @@ export class MenuCategoryItemsComponent implements OnInit {
       .finally(() => this.loadingService.closeSpinner());
   }
 
-  private async failedValidateOrder(message: string) {
+  private async failedValidateOrder(message: string): Promise<void> {
     const toast = await this.toastController.create({
       message,
       duration: 3000,
       position: 'top',
     });
-    toast.present();
+    await toast.present();
   }
 }
