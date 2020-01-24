@@ -705,7 +705,7 @@ export enum AUTOMATIC_DEPOSIT_CONTROL_NAMES {
 export const CONTROL_ERROR = {
   [AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit]: {
     requiredEnter: 'You must enter an amount.',
-    input: 'You must enter correct amount.',
+    input: '',
     requiredSelect: 'You must select a suitable amount from select',
     maximum: 'Maximum Deposit Amount: $',
     minimum: 'Minimum Deposit Amount: $',
@@ -718,7 +718,7 @@ export const CONTROL_ERROR = {
   },
   [AUTOMATIC_DEPOSIT_CONTROL_NAMES.lowBalanceAmount]: {
     requiredEnter: 'You must enter an amount.',
-    input: 'You must enter correct amount.',
+    input: '',
     minimum: 'Value can not be lower than 0',
     maximum: 'Value can not be greater than 999 999',
     requiredSelect: 'You must select a suitable amount from select',
