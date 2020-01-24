@@ -35,14 +35,14 @@ export const validateMonthRange = ({ value }: AbstractControl): ValidationErrors
 
 export const validateInputAmount = ({ value }: AbstractControl): ValidationErrors | null => {
   const isStartedWithZero = /^(0+)/g.test(value);
-  const isIntegerOrDecimal = /[0-9]+(\.[0-9][0-9]?)?/g.test(value);
+  const isIntegerOrDecemals = /^\s*(?=.*[1-9])\d*(?:\.\d{1,2})?\s*$/g.test(value);
 
-  return isNaN(value) || isStartedWithZero || !isIntegerOrDecimal ?  { incorrect: true } : null;
+  return isNaN(value) || isStartedWithZero || !isIntegerOrDecemals ?  { incorrect: true } : null;
 };
 
 export const validateInteger = ({ value }: AbstractControl): ValidationErrors | null => {
   const isStartedWithZero = /^(0+)/g.test(value);
-  const isInteger = /\-?\d+\.\d+/g.test(value);
+  const isInteger = /(?<=\s|^)\d+(?=\s|$)/g.test(value);
 
   return isNaN(value) || !isInteger || isStartedWithZero ? { incorrect: true } : null;
 };

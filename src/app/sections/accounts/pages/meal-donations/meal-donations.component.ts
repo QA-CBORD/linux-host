@@ -174,7 +174,7 @@ export class MealDonationsComponent {
     if(accountType === AccountType.MEALS) {
       amountError.push(formControlErrorDecorator(validateInteger, CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES.amount].integer));
     } else {
-      amountError.push(formControlErrorDecorator(validateInputAmount, CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES.amount].integer));
+      amountError.push(formControlErrorDecorator(validateInputAmount, CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES.amount].integerOrDecimal));
     }
 
     this.amount.setValidators(amountError);
@@ -236,7 +236,7 @@ export const CONTROL_ERROR = {
   [REQUEST_MEALS_CONTROL_NAMES.amount]: {
     required: 'Please enter an amount',
     integer: 'The amount should be an integer',
-    integerOrDecimal: 'The amount should be an integer or decimal',
+    integerOrDecimal: '',
     max: 'The amount should be less or equal to the balance',
     min: 'The amount must be more than 0',
   },
