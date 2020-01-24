@@ -33,6 +33,13 @@ export const validateMonthRange = ({ value }: AbstractControl): ValidationErrors
   return isNaN(value) || value <= 0 || value > 31 || isStartedWithZero ? { incorrect: true } : null;
 };
 
+export const validateInputAmount = ({ value }: AbstractControl): ValidationErrors | null => {
+  const isStartedWithZero = /^(0+)/g.test(value);
+  const isIntegerOrDecimal = /[0-9]+(\.[0-9][0-9]?)?/g.test(value);
+
+  return isNaN(value) || isStartedWithZero || !isIntegerOrDecimal ?  { incorrect: true } : null;
+};
+
 export const handleServerError = <T>(serverError: ServerErrorsInfo): MonoTypeOperatorFunction<T> => {
   return (source: Observable<T>) => source.pipe(
     catchError(({ message }) => {

@@ -9,7 +9,7 @@ import {
   getMonthlySuccessBodyMessage,
   getWeeklySuccessBodyMessage,
 } from './auto-deposit.config';
-import { formControlErrorDecorator, parseArrayFromString, validateMonthRange } from '@core/utils/general-helpers';
+import { formControlErrorDecorator, parseArrayFromString, validateMonthRange, validateInputAmount } from '@core/utils/general-helpers';
 import { PopoverComponent } from './components/popover/popover.component';
 import { PopoverController, ToastController } from '@ionic/angular';
 import { first, map, switchMap, take, tap } from 'rxjs/operators';
@@ -532,6 +532,7 @@ export class AutomaticDepositPageComponent {
 
     return [
       formControlErrorDecorator(Validators.required, CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit].requiredEnter),
+      formControlErrorDecorator(validateInputAmount, CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit].input),
       formControlErrorDecorator(
         Validators.max(max),
         CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit].maximum + Number(max).toFixed(2),
@@ -548,6 +549,7 @@ export class AutomaticDepositPageComponent {
       const isLowBalanceFreeInput = await this.isLowBalanceFreeInput$.pipe(first()).toPromise();
       const freeFormErrors = [
         formControlErrorDecorator(Validators.required, CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.lowBalanceAmount].requiredEnter),
+        formControlErrorDecorator(validateInputAmount, CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.lowBalanceAmount].input),
         formControlErrorDecorator(Validators.maxLength(6), CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.lowBalanceAmount].maximum),
         formControlErrorDecorator(Validators.min(0), CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.lowBalanceAmount].minimum),
       ];
@@ -703,6 +705,7 @@ export enum AUTOMATIC_DEPOSIT_CONTROL_NAMES {
 export const CONTROL_ERROR = {
   [AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit]: {
     requiredEnter: 'You must enter an amount.',
+    input: 'You must enter correct amount.',
     requiredSelect: 'You must select a suitable amount from select',
     maximum: 'Maximum Deposit Amount: $',
     minimum: 'Minimum Deposit Amount: $',
@@ -715,6 +718,7 @@ export const CONTROL_ERROR = {
   },
   [AUTOMATIC_DEPOSIT_CONTROL_NAMES.lowBalanceAmount]: {
     requiredEnter: 'You must enter an amount.',
+    input: 'You must enter correct amount.',
     minimum: 'Value can not be lower than 0',
     maximum: 'Value can not be greater than 999 999',
     requiredSelect: 'You must select a suitable amount from select',
