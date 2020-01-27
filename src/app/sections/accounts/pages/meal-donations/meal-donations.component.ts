@@ -169,17 +169,11 @@ export class MealDonationsComponent {
         (control: AbstractControl) => Validators.max(this.maxAmount)(control),
         CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES.amount].max
       ),
+      formControlErrorDecorator(
+        accountType === AccountType.MEALS ? validateInteger : validateInputAmount,
+        CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES.amount].input
+      ),
     ];
-
-    if (accountType === AccountType.MEALS) {
-      amountError.push(
-        formControlErrorDecorator(validateInteger, CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES.amount].input)
-      );
-    } else {
-      amountError.push(
-        formControlErrorDecorator(validateInputAmount, CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES.amount].input)
-      );
-    }
 
     this.amount.setValidators(amountError);
   }
