@@ -94,10 +94,6 @@ export class AccessCardComponent implements OnInit {
     });
   }
 
-  addUSAePayCreditCardComplete(success: boolean) {
-    console.log('Response USAEPAY Received: ', success);
-  }
-
   private setAppleWalletMessage() {
     this.appleWalletEnabled = this.appleWalletInfo.isAppleWalletEnabled;
     let isIPhoneAlreadyProvisioned = this.appleWalletInfo.iPhoneProvisioned;
