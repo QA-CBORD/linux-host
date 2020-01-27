@@ -6,7 +6,7 @@ import { Unit } from './unit.model';
 export function generateUnit(_: any, index: number): Unit {
   const title: string = `Merion Hall ${index}`;
   const isFavorite: boolean = index % 2 !== 0;
-  const labels: Label[] = generateLabels();
+  const labels: Label[] = generateLabels(3);
 
   return new Unit({
     title,
