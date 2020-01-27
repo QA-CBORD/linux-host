@@ -244,7 +244,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
       if (data) {
         if (sourceAcc === 'newCreditCard') {
           this.depositForm.reset();
-          this.nativeProvider.addUSAePayCreditCard().subscribe(res => console.log(res));
+          this.nativeProvider.addUSAePayCreditCard().subscribe(res => console.log(res), error => console.error(error));
           // this.router.navigate([NAVIGATE.accounts, LOCAL_ROUTING.addCreditCard], { skipLocationChange: true });
         }
 
