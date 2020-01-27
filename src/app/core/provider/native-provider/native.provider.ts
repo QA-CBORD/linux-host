@@ -43,6 +43,7 @@ export class NativeProvider {
     return androidInterface[methodName]() || null;
   }
 
+  /// get data from native Android in observable form
   private androidObserver: Observer<any>;
   getAndroidDataAsObservable<T>(methodName: NativeData): Observable<T> {
     return Observable.create((observer: Observer<T>) => {
@@ -56,6 +57,7 @@ export class NativeProvider {
     });
   }
 
+  /// used to allow user to add USAePay CC and handle response
   addUSAePayCreditCard(): Observable<USAePayResponse> {
     if (this.isAndroid()) {
       return this.getAndroidDataAsObservable<USAePayResponse>(NativeData.ADD_TO_USAEPAY);
@@ -66,6 +68,7 @@ export class NativeProvider {
     }
   }
 
+  /// do not use -- for native devices to call only
   addUSAePayCreditCardComplete(response: USAePayResponse) {
     if (this.isAndroid()) {
       this.androidObserver.next(response);
