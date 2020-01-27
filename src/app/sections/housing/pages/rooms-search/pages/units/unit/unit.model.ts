@@ -1,6 +1,6 @@
 import { Label } from '../../../rooms-search.model';
 
-export class Building {
+export class Unit {
   title: string;
   isFavorite: boolean;
   labels: Label[];

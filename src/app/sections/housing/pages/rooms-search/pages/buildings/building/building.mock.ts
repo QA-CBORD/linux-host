@@ -1,12 +1,7 @@
-import { Label, Building } from './building.model';
+import { generateLabels } from '../../../rooms-search.mock';
 
-export function generateLabel(_: any, index: number): Label {
-  return new Label(`Honors Building ${index}`);
-}
-
-export function generateLabels(amount: number = 2): Label[] {
-  return Array.apply(null, Array(amount)).map(generateLabel);
-}
+import { Label } from '../../../rooms-search.model';
+import { Building } from './building.model';
 
 export function generateBuilding(_: any, index: number): Building {
   const title: string = `Merion Hall ${index}`;

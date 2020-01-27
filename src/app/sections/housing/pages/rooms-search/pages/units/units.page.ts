@@ -1,9 +1,12 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 
+import { generateUnits } from './unit/unit.mock';
+
 @Component({
   selector: 'st-units',
   templateUrl: './units.page.html',
-  styleUrls: ['./units.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UnitsPage {}
+export class UnitsPage {
+  units = generateUnits();
+}

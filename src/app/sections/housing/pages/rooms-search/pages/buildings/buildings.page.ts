@@ -5,7 +5,6 @@ import { generateBuildings } from './building/building.mock';
 @Component({
   selector: 'st-buildings',
   templateUrl: './buildings.page.html',
-  styleUrls: ['./buildings.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BuildingsPage {
