@@ -240,11 +240,8 @@ export class DepositPageComponent implements OnInit, OnDestroy {
       this.depositForm.controls['mainSelect'].clearValidators();
       this.depositForm.controls['mainSelect'].setErrors(null);
       this.resolveCVVValidators(sourceAcc);
-
-      console.log(data);
       
       if (data) {
-
         this.depositForm.controls['mainInput'].setValidators([
           Validators.required,
           ...minMaxValidators,
@@ -256,15 +253,12 @@ export class DepositPageComponent implements OnInit, OnDestroy {
         this.mainFormInput.setErrors(null);
         this.resetControls(['mainSelect', 'mainInput']);
       }
-      
-      if (sourceAcc === 'newCreditCard') {
-        console.log('this.nativeProvider.addUSAePayCreditCard()');
-        
+
+      if (sourceAcc === 'newCreditCard') {        
         this.depositForm.reset();
         this.nativeProvider.addUSAePayCreditCard().subscribe(res => console.log(res), error => console.error(error));
         // this.router.navigate([NAVIGATE.accounts, LOCAL_ROUTING.addCreditCard], { skipLocationChange: true });
       }
-
 
     });
   }
