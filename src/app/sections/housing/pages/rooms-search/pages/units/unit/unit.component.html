@@ -1,0 +1,23 @@
+<section class="unit__details">
+  <header class="unit__header">
+    <div class="unit__description">
+      <h3 class="unit__title">Unit 101</h3>
+      <div class="unit__facilities">1-4 Beds * 1-2 Baths</div>
+    </div>
+
+    <div class="ion-text-end d-flex ion-align-items-center">
+      <div class="unit__price-amount">$640/mo</div>
+      <st-add-to-favorite *ngIf="!unit.labels.length" [active]="unit.isFavorite"></st-add-to-favorite>
+    </div>
+  </header>
+
+  <div class="unit__tools" *ngIf="unit.labels.length">
+    <div class="unit__labels-wrap">
+      <div class="d-flex scroll-horizontal-hidden">
+        <st-label class="unit__labels-item" *ngFor="let label of unit.labels">{{ label.name }}</st-label>
+      </div>
+    </div>
+
+    <st-add-to-favorite [active]="unit.isFavorite"></st-add-to-favorite>
+  </div>
+</section>

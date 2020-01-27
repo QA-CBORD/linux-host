@@ -7,78 +7,60 @@
   padding-bottom: 15px;
 }
 
-.building__figure {
-  border-radius: 8px;
-  overflow: hidden;
-  margin: 0 0 10px;
-}
-
-.building__image {
-  height: auto;
-}
-
-.building__details {
+.unit__details {
   margin: 0 8px;
 }
 
-.building__header {
+.unit__header {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 10px;
-  padding-bottom: 8px;
   align-items: center;
   margin-bottom: 8px;
 }
 
-.building__title {
+.unit__title {
   @include font-nunito-heavy(16px);
 
   line-height: 20px;
   margin: 0;
 }
 
-.building__facilities {
+.unit__facilities {
   @include font-nunito-semibold(14px);
 
   color: rgba($color-black, 0.6);
   line-height: 19px;
 }
 
-.building__price-title {
-  @include font-nunito-heavy(12px);
-
-  color: rgba($color-black, 0.6);
-  line-height: 16px;
-}
-
-.building__price-amount {
+.unit__price-amount {
   @include font-nunito-heavy(18px);
 
   line-height: 24px;
 }
 
-.building__tools {
+.unit__tools {
   border-top: 1px solid $color-white-smoke;
   display: flex;
   align-items: center;
 }
 
-.building__labels-wrap {
+.unit__labels-wrap {
   overflow: hidden;
   position: relative;
+  flex-grow: 1;
 
   &::before {
     background-image: linear-gradient(90deg, rgba($color-white, 0) 0%, $color-white 60%);
     content: '';
     position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: 30%;
+    top: -5px;
+    right: -5px;
+    bottom: -5px;
+    width: 20%;
     z-index: 1;
   }
 }
 
-.building__labels-item {
+.unit__labels-item {
   margin-right: 8px;
 }
