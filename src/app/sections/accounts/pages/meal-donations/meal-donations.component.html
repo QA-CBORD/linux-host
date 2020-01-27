@@ -40,7 +40,6 @@
       ><div class="meals-donate__amount" (click)="isAccountSelected()">
         <st-select-floating-label
           [label]="account.value.accountType | accountTypePipe"
-          (click)="isAccountSelected($event)"
           [formControlName]="controlsNames.amount"
           [control]="amount"
           [interfaceOptions]="customActionSheetOptions"
@@ -64,12 +63,13 @@
     >
 
     <ng-template #freeInput>
-      <div class="meals-donate__amount">
+      <div class="meals-donate__amount" (click)="isAccountSelected()">
         <st-input-floating-label
           [label]="account.value.accountType | accountTypePipe"
           [isError]="amount.invalid && amount.touched"
           [control]="amount"
           [formControlName]="controlsNames.amount"
+          [isDisabled]="!account.value"
           title="Enter amount"
           type="number"
           idd="amount"
