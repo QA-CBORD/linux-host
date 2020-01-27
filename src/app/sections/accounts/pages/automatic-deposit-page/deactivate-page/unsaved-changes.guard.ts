@@ -32,11 +32,9 @@ export class UnsavedChangesGuard implements CanDeactivate<AutomaticDepositPageCo
     this.component = component;
     this.autoDepositSettings = await this.autoDepositService.settings$.pipe(first()).toPromise();
     const { active, autoDepositType } = this.autoDepositSettings;
-    const { activeAutoDepositType, automaticDepositForm } = this.component;
+    const { activeAutoDepositType } = this.component;
 
     if (!active && activeAutoDepositType === AUTO_DEPOSIT_PAYMENT_TYPES.automaticDepositOff) return true;
-
-    if (automaticDepositForm && automaticDepositForm.invalid) return true;
 
     if (!active && activeAutoDepositType !== AUTO_DEPOSIT_PAYMENT_TYPES.automaticDepositOff) return this.showModal();
 
@@ -92,12 +90,6 @@ export class UnsavedChangesGuard implements CanDeactivate<AutomaticDepositPageCo
     });
     await modal.present();
 
-    return modal.onDidDismiss().then(({ role }) => {
-      if (role === BUTTON_TYPE.OKAY) {
-        this.component.onSubmit();
-        return false;
-      }
-      return true;
-    });
+    return modal.onDidDismiss().then(({ role }) => role === BUTTON_TYPE.OKAY);
   }
 }
