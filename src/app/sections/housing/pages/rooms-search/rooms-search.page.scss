@@ -13,13 +13,6 @@
   @include font-nunito-heavy(20px);
 }
 
-.rooms-search__back {
-  @include font-nunito-regular(16px);
-
-  --icon-font-size: 16px;
-  --icon-padding-end: 5px;
-}
-
 .rooms-search__tab {
   @include font-nunito-semibold(16px);
 
