@@ -16,9 +16,9 @@ export class ConfirmUnsavedChangesPopoverComponent implements OnInit {
   ngOnInit() {
     this.config = {
       type: PopupTypes.CANCEL,
-      title: 'unsaved changes',
-      buttons: [{ ...buttons.CANCEL, label: 'no' }, { ...buttons.OKAY, label: 'save' },],
-      message: 'Your changes wont be saved, would you like to save it before leave?',
+      title: 'Unsaved changes',
+      buttons: [{ ...buttons.CANCEL, label: 'no' }, { ...buttons.OKAY, label: 'yes' },],
+      message: 'Your changes wont be saved, would you like to leave without saving?',
       code: '',
     };
   }

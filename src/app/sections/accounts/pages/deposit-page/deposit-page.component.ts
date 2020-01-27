@@ -22,6 +22,7 @@ import { LoadingService } from 'src/app/core/service/loading/loading.service';
 import { DepositService } from '@sections/accounts/services/deposit.service';
 import { parseArrayFromString } from '@core/utils/general-helpers';
 import { BillMeMapping } from '@core/model/settings/billme-mapping.model';
+import { NativeProvider } from '@core/provider/native-provider/native.provider';
 
 @Component({
   selector: 'st-deposit-page',
@@ -58,12 +59,11 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     private readonly toastController: ToastController,
     private readonly router: Router,
     private readonly loadingService: LoadingService,
-  ) {
-  }
+    private readonly nativeProvider: NativeProvider
+  ) {}
 
   ngOnInit() {
-    this.depositService.settings$.pipe(take(1))
-      .subscribe(depositSettings => this.depositSettings = depositSettings);
+    this.depositService.settings$.pipe(take(1)).subscribe(depositSettings => (this.depositSettings = depositSettings));
 
     this.initForm();
     this.getAccounts();
@@ -78,11 +78,11 @@ export class DepositPageComponent implements OnInit, OnDestroy {
       map(settings => {
         const settingInfo = this.depositService.getSettingByName(
           settings,
-          SYSTEM_SETTINGS_CONFIG.freeFromDepositEnabled.name,
+          SYSTEM_SETTINGS_CONFIG.freeFromDepositEnabled.name
         );
 
         return settingInfo && Boolean(Number(settingInfo.value));
-      }),
+      })
     );
   }
 
@@ -91,11 +91,11 @@ export class DepositPageComponent implements OnInit, OnDestroy {
       map(settings => {
         const settingInfo = this.depositService.getSettingByName(
           settings,
-          SYSTEM_SETTINGS_CONFIG.billMeFreeFormEnabled.name,
+          SYSTEM_SETTINGS_CONFIG.billMeFreeFormEnabled.name
         );
 
         return settingInfo && Boolean(Number(settingInfo.value));
-      }),
+      })
     );
   }
 
@@ -103,20 +103,17 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     return iif(
       () => this.activePaymentType === PAYMENT_TYPE.BILLME,
       this.isAllowFreeFormBillMe$,
-      this.isFreeFromDepositEnabled$,
+      this.isFreeFromDepositEnabled$
     );
   }
 
   get billMeAmounts$(): Observable<string[]> {
     return this.depositService.settings$.pipe(
       map(settings => {
-        const settingInfo = this.depositService.getSettingByName(
-          settings,
-          SYSTEM_SETTINGS_CONFIG.billMeAmounts.name,
-        );
+        const settingInfo = this.depositService.getSettingByName(settings, SYSTEM_SETTINGS_CONFIG.billMeAmounts.name);
 
         return settingInfo ? parseArrayFromString(settingInfo.value) : [];
-      }),
+      })
     );
   }
 
@@ -125,20 +122,16 @@ export class DepositPageComponent implements OnInit, OnDestroy {
       map(settings => {
         const settingInfo = this.depositService.getSettingByName(
           settings,
-          SYSTEM_SETTINGS_CONFIG.presetDepositAmountsCreditCard.name,
+          SYSTEM_SETTINGS_CONFIG.presetDepositAmountsCreditCard.name
         );
 
         return settingInfo ? parseArrayFromString(settingInfo.value) : [];
-      }),
+      })
     );
   }
 
   get amountsForSelect$() {
-    return iif(
-      () => this.activePaymentType === PAYMENT_TYPE.BILLME,
-      this.billMeAmounts$,
-      this.oneTimeAmounts$,
-    );
+    return iif(() => this.activePaymentType === PAYMENT_TYPE.BILLME, this.billMeAmounts$, this.oneTimeAmounts$);
   }
 
   get isBillMePaymentTypesEnabled(): boolean {
@@ -178,10 +171,12 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   get isCVVfieldShow(): boolean {
     const sourceAcc = this.depositForm.get('sourceAccount').value;
 
-    return sourceAcc
-      && (sourceAcc !== PAYMENT_TYPE.BILLME || sourceAcc !== 'newCreditCard')
-      && sourceAcc.accountType === ACCOUNT_TYPES.charge
-      && sourceAcc.paymentSystemType !== PAYMENT_SYSTEM_TYPE.USAEPAY;
+    return (
+      sourceAcc &&
+      (sourceAcc !== PAYMENT_TYPE.BILLME || sourceAcc !== 'newCreditCard') &&
+      sourceAcc.accountType === ACCOUNT_TYPES.charge &&
+      sourceAcc.paymentSystemType !== PAYMENT_SYSTEM_TYPE.USAEPAY
+    );
   }
 
   formatInput(event) {
@@ -203,7 +198,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     const regex = /[,\s]/g;
     const sourceAccForBillmeDeposit: Observable<UserAccount> = this.sourceAccForBillmeDeposit(
       selectedAccount,
-      this.billmeMappingArr,
+      this.billmeMappingArr
     );
     let amount = mainInput || mainSelect;
     amount = amount.replace(regex, '');
@@ -215,43 +210,40 @@ export class DepositPageComponent implements OnInit, OnDestroy {
             const calculateDepositFee: Observable<number> = this.depositService.calculateDepositFee(
               sourceAcc.id,
               selectedAccount.id,
-              amount,
+              amount
             );
 
             return iif(() => isBillme, of(0), calculateDepositFee).pipe(
-              map(valueFee => ({ fee: valueFee, sourceAcc, selectedAccount, amount, billme: isBillme })),
+              map(valueFee => ({ fee: valueFee, sourceAcc, selectedAccount, amount, billme: isBillme }))
             );
-          },
+          }
         ),
-        take(1),
+        take(1)
       )
       .subscribe(
         info => this.confirmationDepositPopover(info),
         () => {
           this.loadingService.closeSpinner();
           this.onErrorRetrieve('Something went wrong, please try again...');
-        },
+        }
       );
   }
 
   setFormValidators() {
+    const minMaxValidators =
+      this.activePaymentType !== PAYMENT_TYPE.CREDIT
+        ? [amountRangeValidator(+this.minMaxOfAmmounts.minAmountbillme, +this.minMaxOfAmmounts.maxAmountbillme)]
+        : [amountRangeValidator(+this.minMaxOfAmmounts.minAmountOneTime, +this.minMaxOfAmmounts.maxAmountOneTime)];
 
-    const minMaxValidators = this.activePaymentType !== PAYMENT_TYPE.CREDIT
-      ? [amountRangeValidator(+this.minMaxOfAmmounts.minAmountbillme, +this.minMaxOfAmmounts.maxAmountbillme)]
-      : [amountRangeValidator(+this.minMaxOfAmmounts.minAmountOneTime, +this.minMaxOfAmmounts.maxAmountOneTime)];
-
-    this.isFreeFormEnabled$.pipe(take(1)).subscribe((data) => {
-
+    this.isFreeFormEnabled$.pipe(take(1)).subscribe(data => {
       const sourceAcc = this.depositForm.get('sourceAccount').value;
       this.depositForm.controls['mainSelect'].clearValidators();
       this.depositForm.controls['mainSelect'].setErrors(null);
       this.resolveCVVValidators(sourceAcc);
 
+      console.log(data);
+      
       if (data) {
-        if (sourceAcc === 'newCreditCard') {
-          this.depositForm.reset();
-          this.router.navigate([NAVIGATE.accounts, LOCAL_ROUTING.addCreditCard], { skipLocationChange: true });
-        }
 
         this.depositForm.controls['mainInput'].setValidators([
           Validators.required,
@@ -264,6 +256,16 @@ export class DepositPageComponent implements OnInit, OnDestroy {
         this.mainFormInput.setErrors(null);
         this.resetControls(['mainSelect', 'mainInput']);
       }
+      
+      if (sourceAcc === 'newCreditCard') {
+        console.log('this.nativeProvider.addUSAePayCreditCard()');
+        
+        this.depositForm.reset();
+        this.nativeProvider.addUSAePayCreditCard().subscribe(res => console.log(res), error => console.error(error));
+        // this.router.navigate([NAVIGATE.accounts, LOCAL_ROUTING.addCreditCard], { skipLocationChange: true });
+      }
+
+
     });
   }
 
@@ -310,11 +312,14 @@ export class DepositPageComponent implements OnInit, OnDestroy {
             tap(accounts => {
               this.billmeMappingArr = billmeMappingArr;
               this.creditCardSourceAccounts = this.filterAccountsByPaymentSystem(accounts);
-              this.creditCardDestinationAccounts = this.filterCreditCardDestAccounts(depositTenders as string[], accounts);
+              this.creditCardDestinationAccounts = this.filterCreditCardDestAccounts(
+                depositTenders as string[],
+                accounts
+              );
               this.billmeDestinationAccounts = this.filterBillmeDestAccounts(this.billmeMappingArr, accounts);
-            }),
-          ),
-        ),
+            })
+          )
+        )
       )
       .subscribe(() => {
         this.defineDestAccounts(PAYMENT_TYPE.CREDIT);
@@ -353,7 +358,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
             () => {
               this.loadingService.closeSpinner();
               this.onErrorRetrieve('Your information could not be verified.');
-            },
+            }
           );
       }
     });
@@ -366,18 +371,16 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   }
 
   private resetControls(controlNames: string[]) {
-    controlNames.forEach((controlName) =>
-      this.depositForm.contains(controlName) && this.depositForm.get(controlName).reset(),
+    controlNames.forEach(
+      controlName => this.depositForm.contains(controlName) && this.depositForm.get(controlName).reset()
     );
   }
 
   private defineDestAccounts(target) {
-    this.activePaymentType = target instanceof Object
-      ? PAYMENT_TYPE.CREDIT
-      : typeof target === 'string'
-        ? this.activePaymentType
-        : target;
-    this.destinationAccounts = (target === PAYMENT_TYPE.BILLME) ? this.billmeDestinationAccounts : this.creditCardDestinationAccounts;
+    this.activePaymentType =
+      target instanceof Object ? PAYMENT_TYPE.CREDIT : typeof target === 'string' ? this.activePaymentType : target;
+    this.destinationAccounts =
+      target === PAYMENT_TYPE.BILLME ? this.billmeDestinationAccounts : this.creditCardDestinationAccounts;
   }
 
   private async finalizeDepositModal(data): Promise<void> {
@@ -417,13 +420,16 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     return this.depositService.filterCreditCardDestAccounts(tendersId, accounts);
   }
 
-  private filterBillmeDestAccounts(billmeMappingArr: Array<BillMeMapping>, accounts: Array<UserAccount>): Array<UserAccount> {
+  private filterBillmeDestAccounts(
+    billmeMappingArr: Array<BillMeMapping>,
+    accounts: Array<UserAccount>
+  ): Array<UserAccount> {
     return this.depositService.filterBillmeDestAccounts(billmeMappingArr, accounts);
   }
 
   private sourceAccForBillmeDeposit(
     selectedAccount: UserAccount,
-    billmeMappingArr: Array<BillMeMapping>,
+    billmeMappingArr: Array<BillMeMapping>
   ): Observable<UserAccount> {
     return this.depositService.sourceAccForBillmeDeposit(selectedAccount, billmeMappingArr);
   }
