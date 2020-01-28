@@ -42,7 +42,7 @@ export const validateInputAmount = ({ value }: AbstractControl): ValidationError
 
 export const validateInteger = ({ value }: AbstractControl): ValidationErrors | null => {
   const isStartedWithZero = /^(0+)/g.test(value);
-  const isInteger = /(?<=\s|^)\d+(?=\s|$)/g.test(value);
+  const isInteger = /(?:\s|^)\d+(?=\s|$)/g.test(value);
 
   return !isInteger || isStartedWithZero ? { incorrect: true } : null;
 };
