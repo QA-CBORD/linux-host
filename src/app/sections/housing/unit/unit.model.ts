@@ -1,4 +1,4 @@
-import { Label } from '../../../rooms-search.model';
+import { Label } from '../housing.model';
 
 export class Unit {
   title: string;

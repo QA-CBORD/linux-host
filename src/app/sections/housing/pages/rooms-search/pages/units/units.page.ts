@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 
-import { generateUnits } from './unit/unit.mock';
+import { generateUnits } from '@sections/housing/unit/unit.mock';
 
 @Component({
   selector: 'st-units',
