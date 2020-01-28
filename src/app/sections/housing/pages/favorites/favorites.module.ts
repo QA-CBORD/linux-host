@@ -5,6 +5,7 @@ import { IonicModule } from '@ionic/angular';
 import { BackButtonModule } from '@shared/ui-components/back-button/back-button.module';
 import { PageTitleModule } from '../../page-title/page-title.module';
 import { RoomsSwitchModule } from '../../rooms-switch/rooms-switch.module';
+import { SearchFilterModule } from '../../search-filter/search-filter.module';
 import { FavoritesRoutingModule } from './favorites.routing.module';
 
 import { FavoritesPage } from './favorites.page';
@@ -16,6 +17,7 @@ export const imports = [
   BackButtonModule,
   PageTitleModule,
   RoomsSwitchModule,
+  SearchFilterModule,
 ];
 export const declarations = [FavoritesPage];
 

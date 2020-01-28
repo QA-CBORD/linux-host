@@ -2,6 +2,7 @@
 
 .search-filter {
   --padding-start: 20px;
+  --padding-end: 0;
 
   @include font-nunito-heavy(12px);
 
