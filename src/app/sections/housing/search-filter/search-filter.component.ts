@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 
-import { RoomsFilterModalComponent } from './rooms-filter-modal/rooms-filter-modal.component';
+import { SearchFilterModalComponent } from './search-filter-modal/search-filter-modal.component';
 
 @Component({
   selector: 'st-search-filter',
@@ -15,7 +15,7 @@ export class SearchFilterComponent {
   openFilterModal(): void {
     this.modalController
       .create({
-        component: RoomsFilterModalComponent,
+        component: SearchFilterModalComponent,
         animated: true,
       })
       .then((modal: HTMLIonModalElement) => {

@@ -5,11 +5,11 @@ import { IonicModule } from '@ionic/angular';
 import { PageTitleModule } from '@sections/housing/page-title/page-title.module';
 
 import { SearchFilterComponent } from './search-filter.component';
-import { RoomsFilterModalComponent } from './rooms-filter-modal/rooms-filter-modal.component';
+import { SearchFilterModalComponent } from './search-filter-modal/search-filter-modal.component';
 
 export const imports = [CommonModule, IonicModule, PageTitleModule];
-export const declarations = [SearchFilterComponent, RoomsFilterModalComponent];
-export const entryComponents = [RoomsFilterModalComponent];
+export const declarations = [SearchFilterComponent, SearchFilterModalComponent];
+export const entryComponents = [SearchFilterModalComponent];
 
 @NgModule({
   imports,
