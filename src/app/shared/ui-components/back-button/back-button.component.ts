@@ -8,4 +8,6 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 })
 export class BackButtonComponent {
   @Input() defaultHref: string;
+
+  @Input() text: string = 'Back';
 }

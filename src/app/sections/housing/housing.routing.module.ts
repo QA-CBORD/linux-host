@@ -36,7 +36,11 @@ const routes: Routes = [
       },
       {
         path: LOCAL_ROUTING.roomsSearch,
-        loadChildren: './pages/rooms-search/rooms-search.module#RoomsSearchModule',
+        loadChildren: './pages/rooms-search/rooms-search.module#RoomsSearchPageModule',
+      },
+      {
+        path: LOCAL_ROUTING.favorites,
+        loadChildren: './pages/favorites/favorites.module#FavoritesPageModule',
       },
       {
         path: '',

@@ -25,4 +25,4 @@ const declarations = [RoomsSearchPage];
   imports,
   declarations,
 })
-export class RoomsSearchModule {}
+export class RoomsSearchPageModule {}
