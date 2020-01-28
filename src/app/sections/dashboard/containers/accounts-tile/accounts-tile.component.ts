@@ -34,7 +34,7 @@ export class AccountsTileComponent implements OnInit {
 
   private initUserAccounts() {
     this.accountsService
-      .getUserAccounts()
+      .getAccountsFilteredByDisplayTenders()
       .pipe(take(1))
       .subscribe(accounts => {
         while (accounts.length > 0) {
