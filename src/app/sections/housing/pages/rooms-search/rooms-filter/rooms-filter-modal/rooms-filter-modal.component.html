@@ -1,32 +1,12 @@
 <ion-header mode="ios">
   <ion-toolbar mode="ios" class="rooms-search__toolbar">
-    <st-page-title>Filters</st-page-title>
-  </ion-toolbar>
-
-  <ion-toolbar class="rooms-search__toolbar" mode="ios">
-    <ion-buttons>
-      <ion-button
-        class="ion-no-padding ion-no-margin btn rooms-search__tab"
-        mode="md"
-        routerLink="/housing/rooms-search/buildings"
-        routerLinkActive="active"
-      >
-        Buildings
-      </ion-button>
-
-      <ion-button
-        class="ion-no-padding ion-no-margin btn rooms-search__tab"
-        mode="md"
-        routerLink="/housing/rooms-search/units"
-        routerLinkActive="active"
-      >
-        Units
+    <ion-buttons slot="start" mode="ios">
+      <ion-button mode="ios" fill="clear" color="dark" class="ion-no-padding" (click)="close()">
+        <ion-icon name="close" slot="icon-only" mode="ios"></ion-icon>
       </ion-button>
     </ion-buttons>
-  </ion-toolbar>
 
-  <ion-toolbar class="rooms-search__toolbar rooms-search__filters">
-    <st-rooms-filter slot="end"></st-rooms-filter>
+    <st-page-title>Filters</st-page-title>
   </ion-toolbar>
 </ion-header>
 

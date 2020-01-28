@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ModalController } from '@ionic/angular';
 
 @Component({
   selector: 'st-rooms-filter-modal',
@@ -6,4 +7,10 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   styleUrls: ['./rooms-filter-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RoomsFilterModalComponent {}
+export class RoomsFilterModalComponent {
+  constructor(private modalController: ModalController) {}
+
+  close(): void {
+    this.modalController.dismiss();
+  }
+}
