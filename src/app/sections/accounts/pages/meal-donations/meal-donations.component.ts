@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormGroup, Validators, FormBuilder, AbstractControl } from '@angular/forms';
-import { PopoverController, ToastController } from '@ionic/angular';
+import { PopoverController, ToastController, ModalController } from '@ionic/angular';
 import { Observable, Subscription, BehaviorSubject } from 'rxjs';
 import { map, take, finalize } from 'rxjs/operators';
 import { Router } from '@angular/router';
@@ -14,7 +14,7 @@ import { parseArrayFromString } from '@core/utils/general-helpers';
 import { AccountType, NAVIGATE } from 'src/app/app.global';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
 import { ConfirmDonatePopoverComponent } from './components/confirm-donate-popover';
-import { PopoverComponent } from './components/popover/popover.component';
+import { DonateModalComponent } from './components/donate-modal';
 
 @Component({
   selector: 'st-meal-donations',
@@ -43,6 +43,7 @@ export class MealDonationsComponent {
     private readonly loadingService: LoadingService,
     private readonly toastController: ToastController,
     private readonly popoverCtrl: PopoverController,
+    private readonly modalCtrl: ModalController,
     private readonly router: Router,
     private readonly cdRef: ChangeDetectorRef
   ) {}
@@ -123,7 +124,7 @@ export class MealDonationsComponent {
             finalize(() => this.loadingService.closeSpinner())
           )
           .subscribe(
-            async () => await this.showModal(),
+            async () => await this.showModal(data),
             () => this.onErrorRetrieve('Something went wrong, please try again...')
           );
       }
@@ -192,13 +193,13 @@ export class MealDonationsComponent {
     );
   }
 
-  private async showModal(): Promise<void> {
-    const modal = await this.popoverCtrl.create({
-      component: PopoverComponent,
+  private async showModal(data): Promise<void> {
+    const modal = await this.modalCtrl.create({
+      component: DonateModalComponent,
+      animated: true,
       componentProps: {
-        data: { title: 'Donations Sent!', message: 'Yor donations was sent successfully.' },
+        data
       },
-      animated: false,
       backdropDismiss: true,
     });
     modal

@@ -13,10 +13,10 @@ import { TransactionUnitsPipeModule } from '@shared/pipes';
 import { StButtonModule } from '@shared/ui-components/st-button/st-button.module';
 import { ConfirmDonatePopoverComponent } from './components/confirm-donate-popover';
 import { ConfirmDonatePopoverModule } from './components/confirm-donate-popover/confirm-donate-popover.module';
-import { StPopoverLayoutModule } from '@shared/ui-components/st-popover-layout/st-popover-layout.module';
-import { PopoverComponent } from './components/popover/popover.component';
 import { MealDonationsService } from './service/meal-donations.service';
 import { AccountTypePipe } from './pipes/account-type';
+import { DonateModalComponent } from './components/donate-modal';
+import { DonateModalModule } from './components/donate-modal/donate-modal.module';
 
 const imports = [
   IonicModule,
@@ -29,11 +29,12 @@ const imports = [
   TransactionUnitsPipeModule,
   StButtonModule,
   ConfirmDonatePopoverModule,
-  StPopoverLayoutModule
+  DonateModalModule
+
 ];
-const declarations = [MealDonationsComponent, PopoverComponent, AccountTypePipe];
+const declarations = [MealDonationsComponent, AccountTypePipe];
 const providers = [MealDonationsResolver, MealDonationsService];
-const entryComponents = [ConfirmDonatePopoverComponent, PopoverComponent];
+const entryComponents = [ConfirmDonatePopoverComponent, DonateModalComponent];
 @NgModule({
   declarations,
   imports,
