@@ -4,12 +4,12 @@ import { ModalController } from '@ionic/angular';
 import { RoomsFilterModalComponent } from './rooms-filter-modal/rooms-filter-modal.component';
 
 @Component({
-  selector: 'st-rooms-filter',
-  templateUrl: './rooms-filter.component.html',
-  styleUrls: ['./rooms-filter.component.scss'],
+  selector: 'st-search-filter',
+  templateUrl: './search-filter.component.html',
+  styleUrls: ['./search-filter.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RoomsFilterComponent {
+export class SearchFilterComponent {
   constructor(private modalController: ModalController) {}
 
   openFilterModal(): void {
