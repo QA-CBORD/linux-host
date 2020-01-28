@@ -63,3 +63,7 @@ export class DetailsResponse implements DetailsResponseOptions {
     this.contractDetails = new ContractDetails(options.contractDetails);
   }
 }
+
+export class Label {
+  constructor(public name: string) {}
+}

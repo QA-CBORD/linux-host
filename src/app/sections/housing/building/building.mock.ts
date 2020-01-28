@@ -1,6 +1,6 @@
-import { generateLabels } from '../../../rooms-search.mock';
+import { generateLabels } from '../housing.mock';
 
-import { Label } from '../../../rooms-search.model';
+import { Label } from '../housing.model';
 import { Building } from './building.model';
 
 export function generateBuilding(_: any, index: number): Building {

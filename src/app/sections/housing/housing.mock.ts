@@ -4,6 +4,7 @@ import { generateContractsList, generateContractDetails } from './contracts/cont
 import { DefinitionsResponse, DetailsResponse } from './housing.model';
 import { ApplicationDetails } from './applications/applications.model';
 import { ContractListDetails, ContractDetails } from './contracts/contracts.model';
+import { Label } from './housing.model';
 
 export function generateDefinitionsResponse(): DefinitionsResponse {
   const applicationDefinitions: ApplicationDetails[] = generateApplications();
@@ -23,4 +24,11 @@ export function generateDetailsResponse(key: number): DetailsResponse {
     applicationDetails,
     contractDetails,
   });
+
+export function generateLabel(_: any, index: number): Label {
+  return new Label(`Honors Unit ${index}`);
+}
+
+export function generateLabels(amount: number = 2): Label[] {
+  return Array.apply(null, Array(amount)).map(generateLabel);
 }
