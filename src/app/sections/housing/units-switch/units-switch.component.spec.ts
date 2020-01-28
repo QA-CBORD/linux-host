@@ -1,22 +1,21 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { RoomsSwitchComponent } from './rooms-switch.component';
+import { UnitsSwitchComponent } from './units-switch.component';
 
-describe('RoomsSwitchComponent', () => {
-  let component: RoomsSwitchComponent;
-  let fixture: ComponentFixture<RoomsSwitchComponent>;
+describe('UnitsSwitchComponent', () => {
+  let component: UnitsSwitchComponent;
+  let fixture: ComponentFixture<UnitsSwitchComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ RoomsSwitchComponent ],
+      declarations: [UnitsSwitchComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(RoomsSwitchComponent);
+    fixture = TestBed.createComponent(UnitsSwitchComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

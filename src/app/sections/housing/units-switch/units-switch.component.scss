@@ -1,6 +1,6 @@
 @import 'tools';
 
-.rooms-switch__toolbar {
+.units-switch__toolbar {
   --padding-top: 0;
   --padding-bottom: 0;
   --padding-start: 16px;
@@ -9,7 +9,7 @@
   --border-color: #{$color-whisper};
 }
 
-.rooms-switch__tab {
+.units-switch__tab {
   @include font-nunito-semibold(16px);
 
   --border-radius: 4px 4px 0 0;

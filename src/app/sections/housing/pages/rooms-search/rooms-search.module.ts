@@ -4,7 +4,7 @@ import { IonicModule } from '@ionic/angular';
 
 import { PageTitleModule } from '@sections/housing/page-title/page-title.module';
 import { BackButtonModule } from '@shared/ui-components/back-button/back-button.module';
-import { RoomsSwitchModule } from '../../rooms-switch/rooms-switch.module';
+import { UnitsSwitchModule } from '../../units-switch/units-switch.module';
 import { SearchFilterModule } from '../../search-filter/search-filter.module';
 import { RoomsSearchRoutingModule } from './rooms-search.routing.module';
 
@@ -16,7 +16,7 @@ const imports = [
   PageTitleModule,
   BackButtonModule,
   SearchFilterModule,
-  RoomsSwitchModule,
+  UnitsSwitchModule,
   RoomsSearchRoutingModule,
 ];
 const declarations = [RoomsSearchPage];
