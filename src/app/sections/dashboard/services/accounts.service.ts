@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 
-import { BehaviorSubject, Observable, zip, config } from 'rxjs';
-import { map, tap, switchMap } from 'rxjs/operators';
+import { Observable, zip } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 
 import { CommerceApiService } from 'src/app/core/service/commerce/commerce-api.service';
 import { ConfigurationService as ConfigService } from 'src/app/core/service/configuration/configuration.service';
 import { UserService } from 'src/app/core/service/user-service/user.service';
 
-import { Settings, PaymentSystemType, ContentStrings } from 'src/app/app.global';
+import { PaymentSystemType, Settings } from 'src/app/app.global';
 import { UserAccount } from 'src/app/core/model/account/account.model';
 import { ContentService } from 'src/app/core/service/content-service/content.service';
 import { ContentStringRequest } from '@core/model/content/content-string-request.model';
@@ -16,7 +16,6 @@ import { ConfigurationService } from '@core/service/config-service/configuration
 
 @Injectable()
 export class AccountsService {
-  private readonly _accounts$: BehaviorSubject<UserAccount[]> = new BehaviorSubject<UserAccount[]>([]);
 
   constructor(
     private readonly commerceApiService: CommerceApiService,
@@ -24,24 +23,13 @@ export class AccountsService {
     private readonly configService: ConfigService,
     private readonly contentService: ContentService,
     private readonly configurationService: ConfigurationService,
-  ) {}
-
-  get accounts$(): Observable<UserAccount[]> {
-    return this._accounts$.asObservable();
+  ) {
   }
 
-  private set _accounts(value: UserAccount[]) {
-    this._accounts$.next([...value]);
-  }
-
-  getAccountById(accountId: string): Observable<UserAccount> {
-    return this.accounts$.pipe(map(accounts => accounts.find(({ id }) => accountId === id)));
-  }
 
   getUserAccounts(): Observable<UserAccount[]> {
     return this.commerceApiService.getUserAccounts().pipe(
       map(accounts => this.filterAccountsByPaymentSystem(accounts)),
-      tap(accounts => (this._accounts = accounts))
     );
   }
 
@@ -56,8 +44,8 @@ export class AccountsService {
       switchMap(({ institutionId }) => this.configService.getSetting(institutionId, Settings.Setting.DISPLAY_TENDERS)),
       map(({ value }) => this.transformStringToArray(value)),
       switchMap((tenderIds: Array<string>) =>
-        this.accounts$.pipe(map(accounts => this.filterAccountsByTenders(tenderIds, accounts)))
-      )
+        this.getUserAccounts().pipe(map(accounts => this.filterAccountsByTenders(tenderIds, accounts))),
+      ),
     );
   }
 
@@ -66,16 +54,9 @@ export class AccountsService {
       switchMap(({ institutionId }) => this.configService.getSetting(institutionId, Settings.Setting.DEPOSIT_TENDERS)),
       map(({ value }) => this.transformStringToArray(value)),
       switchMap((tenderIds: Array<string>) =>
-        this.accounts$.pipe(map(accounts => this.filterAccountsByTenders(tenderIds, accounts)))
-      )
+        this.getUserAccounts().pipe(map(accounts => this.filterAccountsByTenders(tenderIds, accounts))),
+      ),
     );
-  }
-
-  getMealAccountStrings(): Observable<Array<string>> {
-    return zip(
-      this.contentService.retrieveContentString(ContentStrings.ContentString.MEAL_SUFFIX),
-      this.contentService.retrieveContentString(ContentStrings.ContentString.MEAL_SUFFIX_PLURAL)
-    ).pipe(map(([suffix, suffixPlural]) => [suffix.value, suffixPlural.value]));
   }
 
   private filterAccountsByTenders(tendersId: Array<string>, accounts: Array<UserAccount>): Array<UserAccount> {
@@ -84,7 +65,7 @@ export class AccountsService {
 
   private filterAccountsByPaymentSystem(accounts: UserAccount[]): UserAccount[] {
     return accounts.filter(
-      ({ paymentSystemType: type }) => type === PaymentSystemType.OPCS || type === PaymentSystemType.CSGOLD
+      ({ paymentSystemType: type }) => type === PaymentSystemType.OPCS || type === PaymentSystemType.CSGOLD,
     );
   }
 

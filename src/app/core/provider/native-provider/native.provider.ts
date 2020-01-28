@@ -58,19 +58,12 @@ export class NativeProvider {
   }
 
   /// used to allow user to add USAePay CC and handle response
-  addUSAePayCreditCard(): Observable<USAePayResponse> {
-    console.log("addUSAePayCalled");
-    
+  addUSAePayCreditCard(): Observable<USAePayResponse> {    
     if (this.isAndroid()) {
-      console.log("addUSAePayCalled - Android");
       return this.getAndroidDataAsObservable<USAePayResponse>(NativeData.ADD_TO_USAEPAY);
     } else if (this.isIos()) {
-      
-    console.log("addUSAePayCalled - iOS");
       return from(this.getIosData(NativeData.ADD_TO_USAEPAY));
     } else {
-      
-    console.log("addUSAePayCalled - Failed");
       return of({ success: false, errorMessage: 'This is not a native device' });
     }
   }
