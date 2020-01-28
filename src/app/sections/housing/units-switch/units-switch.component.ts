@@ -1,4 +1,6 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
+
+import { Unit } from './units-switch.model';
 
 @Component({
   selector: 'st-units-switch',
@@ -6,4 +8,6 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
   styleUrls: ['./units-switch.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UnitsSwitchComponent {}
+export class UnitsSwitchComponent {
+  @Input() units: Unit[];
+}

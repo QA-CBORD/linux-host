@@ -3,19 +3,11 @@
     <ion-button
       class="ion-no-padding ion-no-margin btn units-switch__tab"
       mode="md"
-      routerLink="/housing/rooms-search/buildings"
+      [routerLink]="unit.href"
       routerLinkActive="active"
+      *ngFor="let unit of units"
     >
-      Buildings
-    </ion-button>
-
-    <ion-button
-      class="ion-no-padding ion-no-margin btn units-switch__tab"
-      mode="md"
-      routerLink="/housing/rooms-search/units"
-      routerLinkActive="active"
-    >
-      Units
+      {{ unit.title }}
     </ion-button>
   </ion-buttons>
 </ion-toolbar>
