@@ -60,7 +60,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     private readonly router: Router,
     private readonly loadingService: LoadingService,
     private readonly nativeProvider: NativeProvider
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.depositService.settings$.pipe(take(1)).subscribe(depositSettings => (this.depositSettings = depositSettings));
@@ -244,6 +244,12 @@ export class DepositPageComponent implements OnInit, OnDestroy {
       if (data) {
         if (sourceAcc === 'newCreditCard') {
           this.depositForm.reset();
+          const paymentSystem = this.getSettingByName(this.depositSettings, SYSTEM_SETTINGS_CONFIG.paymentSystem);
+          
+          if (parseInt(paymentSystem) === PAYMENT_SYSTEM_TYPE.MONETRA) {
+            this.router.navigate([NAVIGATE.accounts, LOCAL_ROUTING.addCreditCard], { skipLocationChange: true });
+            return;
+          }
           this.nativeProvider
             .addUSAePayCreditCard()
             .pipe(take(1))
@@ -253,8 +259,8 @@ export class DepositPageComponent implements OnInit, OnDestroy {
               }
 
               this.getAccounts();
+              return;
             });
-          // this.router.navigate([NAVIGATE.accounts, LOCAL_ROUTING.addCreditCard], { skipLocationChange: true });
         }
 
         this.depositForm.controls['mainInput'].setValidators([
@@ -268,13 +274,6 @@ export class DepositPageComponent implements OnInit, OnDestroy {
         this.mainFormInput.setErrors(null);
         this.resetControls(['mainSelect', 'mainInput']);
       }
-
-      if (sourceAcc === 'newCreditCard') {
-        this.depositForm.reset();
-        this.nativeProvider.addUSAePayCreditCard().subscribe(res => console.log(res));
-        // this.router.navigate([NAVIGATE.accounts, LOCAL_ROUTING.addCreditCard], { skipLocationChange: true });
-      }
-
     });
   }
 

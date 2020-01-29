@@ -125,7 +125,12 @@ export const SYSTEM_SETTINGS_CONFIG = {
     domain: 'get',
     category: 'meal_donation',
     name: 'fixed_dollar_amounts',
-  }
+  },
+  paymentSystem: {
+    domain: 'get',
+    category: 'credit',
+    name: 'payment_system_type',
+  },
 };
 
 export enum ACCOUNT_TYPES {
