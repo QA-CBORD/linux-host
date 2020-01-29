@@ -1,3 +1,11 @@
 <ion-content>
-  <st-unit *ngFor="let unit of units" [unit]="unit"></st-unit>
+  <st-empty-placeholder
+    *ngIf="!units.length"
+    src="/assets/images/housing/empty-units.svg"
+    text="Your favorited units will appear here."
+  ></st-empty-placeholder>
+
+  <ng-container *ngIf="units.length">
+    <st-unit *ngFor="let unit of units" [unit]="unit"></st-unit>
+  </ng-container>
 </ion-content>
