@@ -7,6 +7,21 @@ const routes: Routes = [
   {
     path: '',
     component: FavoritesPage,
+    children: [
+      {
+        path: 'buildings',
+        loadChildren: './pages/buildings/buildings.module#BuildingsPageModule',
+      },
+      {
+        path: 'units',
+        loadChildren: './pages/units/units.module#UnitsPageModule',
+      },
+      {
+        path: '',
+        redirectTo: 'buildings',
+        pathMatch: 'full',
+      },
+    ],
   },
 ];
 

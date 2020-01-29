@@ -13,11 +13,11 @@ import { FavoritesPage } from './favorites.page';
 export const imports = [
   CommonModule,
   IonicModule,
-  FavoritesRoutingModule,
   BackButtonModule,
   PageTitleModule,
   UnitsSwitchModule,
   SearchFilterModule,
+  FavoritesRoutingModule,
 ];
 export const declarations = [FavoritesPage];
 
