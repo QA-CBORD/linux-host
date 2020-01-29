@@ -8,5 +8,5 @@ import { generateBuildings } from '@sections/housing/building/building.mock';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BuildingsPage {
-  buildings = generateBuildings(1);
+  buildings = [];
 }

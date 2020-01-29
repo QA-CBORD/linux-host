@@ -1,22 +1,21 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { EmptyBuildingsComponent } from './empty-buildings.component';
+import { EmptyPlaceholderComponent } from './empty-placeholder.component';
 
-describe('EmptyBuildingsComponent', () => {
-  let component: EmptyBuildingsComponent;
-  let fixture: ComponentFixture<EmptyBuildingsComponent>;
+describe('EmptyPlaceholderComponent', () => {
+  let component: EmptyPlaceholderComponent;
+  let fixture: ComponentFixture<EmptyPlaceholderComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ EmptyBuildingsComponent ],
+      declarations: [EmptyPlaceholderComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(EmptyBuildingsComponent);
+    fixture = TestBed.createComponent(EmptyPlaceholderComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
