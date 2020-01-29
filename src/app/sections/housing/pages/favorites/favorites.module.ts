@@ -6,6 +6,8 @@ import { BackButtonModule } from '@shared/ui-components/back-button/back-button.
 import { PageTitleModule } from '../../page-title/page-title.module';
 import { UnitsSwitchModule } from '../../units-switch/units-switch.module';
 import { SearchFilterModule } from '../../search-filter/search-filter.module';
+import { BuildingsPageModule } from './pages/buildings/buildings.module';
+import { UnitsPageModule } from './pages/units/units.module';
 import { FavoritesRoutingModule } from './favorites.routing.module';
 
 import { FavoritesPage } from './favorites.page';
@@ -17,6 +19,8 @@ export const imports = [
   PageTitleModule,
   UnitsSwitchModule,
   SearchFilterModule,
+  BuildingsPageModule,
+  UnitsPageModule,
   FavoritesRoutingModule,
 ];
 export const declarations = [FavoritesPage];

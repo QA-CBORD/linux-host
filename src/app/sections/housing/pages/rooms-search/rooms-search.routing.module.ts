@@ -2,6 +2,8 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { RoomsSearchPage } from './rooms-search.page';
+import { BuildingsPage } from './pages/buildings/buildings.page';
+import { UnitsPage } from './pages/units/units.page';
 
 const routes: Routes = [
   {
@@ -10,11 +12,11 @@ const routes: Routes = [
     children: [
       {
         path: 'buildings',
-        loadChildren: './pages/buildings/buildings.module#BuildingsPageModule',
+        component: BuildingsPage,
       },
       {
         path: 'units',
-        loadChildren: './pages/units/units.module#UnitsPageModule',
+        component: UnitsPage,
       },
       {
         path: '',

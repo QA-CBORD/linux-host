@@ -6,6 +6,8 @@ import { PageTitleModule } from '@sections/housing/page-title/page-title.module'
 import { BackButtonModule } from '@shared/ui-components/back-button/back-button.module';
 import { UnitsSwitchModule } from '../../units-switch/units-switch.module';
 import { SearchFilterModule } from '../../search-filter/search-filter.module';
+import { BuildingsPageModule } from './pages/buildings/buildings.module';
+import { UnitsPageModule } from './pages/units/units.module';
 import { RoomsSearchRoutingModule } from './rooms-search.routing.module';
 
 import { RoomsSearchPage } from './rooms-search.page';
@@ -17,6 +19,8 @@ const imports = [
   BackButtonModule,
   SearchFilterModule,
   UnitsSwitchModule,
+  BuildingsPageModule,
+  UnitsPageModule,
   RoomsSearchRoutingModule,
 ];
 const declarations = [RoomsSearchPage];
