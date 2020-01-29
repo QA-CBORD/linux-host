@@ -65,11 +65,13 @@ export class DashboardService {
   }
 
   updateConfigByCashedConfig(allowedConfig: TileWrapperConfig[], cashedConfig: TileWrapperConfig[]): TileWrapperConfig[] {
-    const temp = [];
-    return allowedConfig.reduce((res, config) => {
+    const newSettings = [];
+    const existingSettingsInCache = allowedConfig.reduce((res, config) => {
       const cashedSettingIndex = cashedConfig.findIndex(({ id }) => id === config.id);
-      cashedSettingIndex !== -1 ? res.push(cashedConfig[cashedSettingIndex]) : temp.push(config);
+      cashedSettingIndex !== -1 ? res[cashedSettingIndex] = cashedConfig[cashedSettingIndex] : newSettings.push(config);
       return res;
-    }, []).concat(temp);
+    }, []).filter(Boolean);
+
+    return [...newSettings, ...existingSettingsInCache];
   }
 }

@@ -177,10 +177,8 @@ export class ItemDetailComponent implements OnInit {
       await this.cartService.removeOrderItemFromOrderById(orderItemId);
     }
 
-
     this.cartService.addOrderItems(menuItem);
-    this.onClose();
-    this.loadingService.showSpinner();
+    await this.loadingService.showSpinner();
     await this.cartService
       .validateOrder()
       .pipe(
@@ -209,10 +207,11 @@ export class ItemDetailComponent implements OnInit {
     zip(this.activatedRoute.data, this.cartService.orderItems$)
       .pipe(take(1))
       .subscribe(([{ data: { menuItem, queryParams: { orderItemId } } }, orderItems]) => {
+        const imageBaseUrl = 'https://3bulchr7pb.execute-api.us-east-1.amazonaws.com/dev/image';
         this.menuItem = menuItem.menuItem;
-        // Temporary, while we don't have images:
-        // '/assets/images/temp-merchant-photo.jpg'
-        this.menuItemImg = '/assets/images/temp-merchant-photo.jpg';
+        this.menuItemImg = this.menuItem.imageReference
+          ? `${imageBaseUrl}/${this.menuItem.imageReference}`
+          : '';
         this.order = { ...this.order, totalPrice: this.menuItem.price };
 
         const cartSelectedItem = orderItems.find(({ id }) => id === orderItemId);
@@ -226,9 +225,9 @@ export class ItemDetailComponent implements OnInit {
 
   private valueChanges() {
     const subscription = this.itemOrderForm.valueChanges.subscribe(formValue => {
-      const arrayOfvalues: any[] = Object.values(formValue);
+      const arrayValues: any[] = Object.values(formValue);
       this.order = { ...this.order, optionsPrice: 0 };
-      arrayOfvalues.map(value => {
+      arrayValues.map(value => {
         if (!value || typeof value === 'string') {
           return;
         }

@@ -27,20 +27,36 @@ export const validateEmail = ({ value }: AbstractControl): ValidationErrors | nu
 };
 
 export const validateMonthRange = ({ value }: AbstractControl): ValidationErrors | null => {
-  value = Number(value);
+  const isStartedWithZero = /^(0+)/g.test(value);
 
-  return isNaN(value) || value <= 0 || value > 31 ? { incorrect: true } : null;
+  value = Number(value);
+  return isNaN(value) || value <= 0 || value > 31 || isStartedWithZero ? { incorrect: true } : null;
+};
+
+export const validateInputAmount = ({ value }: AbstractControl): ValidationErrors | null => {
+  const isStartedWithZero = /^(0+)/g.test(value);
+  const isIntegerOrDecemals = /^\s*(?=.*[1-9])\d*(?:\.\d{1,2})?\s*$/g.test(value);
+
+  return isNaN(value) || isStartedWithZero || !isIntegerOrDecemals ?  { incorrect: true } : null;
+};
+
+export const validateInteger = ({ value }: AbstractControl): ValidationErrors | null => {
+  const isStartedWithZero = /^(0+)/g.test(value);
+  const isInteger = /(?:\s|^)\d+(?=\s|$)/g.test(value);
+
+  return !isInteger || isStartedWithZero ? { incorrect: true } : null;
 };
 
 export const handleServerError = <T>(serverError: ServerErrorsInfo): MonoTypeOperatorFunction<T> => {
-  return (source: Observable<T>) => source.pipe(
-    catchError(({ message }) => {
-      message = message.split('|');
-      if (message.length <= 1) throw new Error(message);
-      const [code, text] = message;
-      return throwError(serverError[code] ? serverError[code] : text);
-    }),
-  );
+  return (source: Observable<T>) =>
+    source.pipe(
+      catchError(({ message }) => {
+        message = message.split('|');
+        if (message.length <= 1) throw new Error(message);
+        const [code, text] = message;
+        return throwError(serverError[code] ? serverError[code] : text);
+      })
+    );
 };
 
 export const cvvValidationFn: ValidatorFn = function({ value }) {

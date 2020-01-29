@@ -4,7 +4,7 @@ import { BehaviorSubject, Observable, zip } from 'rxjs';
 
 import { ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { MerchantService } from './merchant.service';
-import { MerchantInfo, OrderInfo, MenuInfo, OrderItem } from '../shared/models';
+import { MerchantInfo, OrderInfo, MenuInfo, OrderItem, OrderPayment } from '../shared/models';
 import { UserService } from '@core/service/user-service/user.service';
 import { AddressInfo } from '@core/model/address/address-info';
 import { OrderingApiService } from '@sections/ordering/services/ordering.api.service';
@@ -88,7 +88,7 @@ export class CartService {
   ): Promise<void> {
     this.cart.orderDetailsOptions = { orderType, dueTime, address, isASAP };
     const { id } = await this.merchant$.pipe(first()).toPromise();
-    
+
     await this.getMerchantMenu(id, dueTime, orderType).then(menu => (this.cart.menu = menu));
     this.onStateChanged();
   }
@@ -172,7 +172,7 @@ export class CartService {
     this.onStateChanged();
   }
 
-  addPaymentInfoToOrder(peymentInfo: any) {
+  addPaymentInfoToOrder(peymentInfo: Partial<OrderPayment>) {
     this.cart.order.orderPayment = [peymentInfo];
   }
 

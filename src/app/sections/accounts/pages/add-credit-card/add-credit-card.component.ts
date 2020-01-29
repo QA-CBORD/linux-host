@@ -1,6 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { NavController, PopoverController, ToastController } from '@ionic/angular';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AddCreditCardService } from './services/add-credit-card.service';
 import { SuccessPopoverComponent } from './components/success-popover/success-popover.component';
 import { LoadingService } from 'src/app/core/service/loading/loading.service';
@@ -23,8 +24,10 @@ export class AddCreditCardComponent implements OnInit {
     private readonly fb: FormBuilder,
     private readonly addCreditCardService: AddCreditCardService,
     private readonly popoverCtrl: PopoverController,
+    private readonly router: Router,
     private readonly toastController: ToastController,
     private readonly loadingService: LoadingService,
+    private readonly route: ActivatedRoute,
     private readonly nav: NavController,
   ) {}
 

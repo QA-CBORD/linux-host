@@ -1,20 +1,20 @@
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormGroup, Validators, FormBuilder, AbstractControl } from '@angular/forms';
-import { PopoverController, ToastController } from '@ionic/angular';
+import { PopoverController, ToastController, ModalController } from '@ionic/angular';
 import { Observable, Subscription, BehaviorSubject } from 'rxjs';
 import { map, take, finalize } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
 import { MealDonationsService } from '@sections/accounts/pages/meal-donations/service/meal-donations.service';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { formControlErrorDecorator } from '@core/utils/general-helpers';
+import { formControlErrorDecorator, validateInteger, validateInputAmount } from '@core/utils/general-helpers';
 import { UserAccount } from '@core/model/account/account.model';
 import { SYSTEM_SETTINGS_CONFIG } from '@sections/accounts/accounts.config';
 import { parseArrayFromString } from '@core/utils/general-helpers';
 import { AccountType, NAVIGATE } from 'src/app/app.global';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
 import { ConfirmDonatePopoverComponent } from './components/confirm-donate-popover';
-import { PopoverComponent } from './components/popover/popover.component';
+import { DonateModalComponent } from './components/donate-modal';
 
 @Component({
   selector: 'st-meal-donations',
@@ -43,6 +43,7 @@ export class MealDonationsComponent {
     private readonly loadingService: LoadingService,
     private readonly toastController: ToastController,
     private readonly popoverCtrl: PopoverController,
+    private readonly modalCtrl: ModalController,
     private readonly router: Router,
     private readonly cdRef: ChangeDetectorRef
   ) {}
@@ -123,7 +124,7 @@ export class MealDonationsComponent {
             finalize(() => this.loadingService.closeSpinner())
           )
           .subscribe(
-            async () => await this.showModal(),
+            async () => await this.showModal(data),
             () => this.onErrorRetrieve('Something went wrong, please try again...')
           );
       }
@@ -147,30 +148,35 @@ export class MealDonationsComponent {
       [this.controlsNames.amount]: [''],
     });
 
-    this.setValidators();
     this.accountChangesHandler();
     this.formHasBeenPrepared.next(true);
-  }
-
-  private setValidators() {
-    const amount = REQUEST_MEALS_CONTROL_NAMES.amount;
-    this.mealsForm.controls[this.controlsNames[amount]].setValidators([
-      formControlErrorDecorator(Validators.required, CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES[amount]].required),
-      formControlErrorDecorator(Validators.min(this.minAmount), CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES[amount]].min),
-      formControlErrorDecorator(
-        (control: AbstractControl) => Validators.max(this.maxAmount)(control),
-        CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES[amount]].max
-      ),
-    ]);
   }
 
   private accountChangesHandler() {
     const subscription = this.account.valueChanges.subscribe(({ balance, accountType }) => {
       this.maxAmount = balance.toFixed(2);
       this.setFixedAmount(accountType);
+      this.setAmountValidators(accountType);
       this.amount.reset();
     });
     this.sourceSubscription.add(subscription);
+  }
+
+  private setAmountValidators(accountType: number) {
+    const amountError = [
+      formControlErrorDecorator(Validators.required, CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES.amount].required),
+      formControlErrorDecorator(Validators.min(this.minAmount), CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES.amount].min),
+      formControlErrorDecorator(
+        (control: AbstractControl) => Validators.max(this.maxAmount)(control),
+        CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES.amount].max
+      ),
+      formControlErrorDecorator(
+        accountType === AccountType.MEALS ? validateInteger : validateInputAmount,
+        CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES.amount].input
+      ),
+    ];
+
+    this.amount.setValidators(amountError);
   }
 
   private setFixedAmount(accountType: number) {
@@ -187,13 +193,13 @@ export class MealDonationsComponent {
     );
   }
 
-  private async showModal(): Promise<void> {
-    const modal = await this.popoverCtrl.create({
-      component: PopoverComponent,
+  private async showModal(data): Promise<void> {
+    const modal = await this.modalCtrl.create({
+      component: DonateModalComponent,
+      animated: true,
       componentProps: {
-        data: { title: 'Donations Sent!', message: 'Yor donations was sent successfully.' },
+        data
       },
-      animated: false,
       backdropDismiss: true,
     });
     modal
@@ -230,5 +236,6 @@ export const CONTROL_ERROR = {
     required: 'Please enter an amount',
     max: 'The amount should be less or equal to the balance',
     min: 'The amount must be more than 0',
+    input: '',
   },
 };

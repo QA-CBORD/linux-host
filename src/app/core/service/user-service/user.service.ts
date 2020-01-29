@@ -1,15 +1,14 @@
 import { Injectable } from '@angular/core';
 
-import { map, switchMap, catchError } from 'rxjs/operators';
-import { BehaviorSubject, Observable, of, from } from 'rxjs';
+import { catchError, map, switchMap } from 'rxjs/operators';
+import { BehaviorSubject, from, Observable, of } from 'rxjs';
 
 import { BaseService } from '../base-service/base.service';
 import { UserInfo } from 'src/app/core/model/user/user-info.model';
-import { UserPhotoInfo, AddressInfoList, UserSettingInfo } from '../../model/user';
+import { AddressInfoList, UserPhotoInfo, UserPhotoList, UserSettingInfo } from '../../model/user';
 import { MessageResponse } from '../../model/service/message-response.model';
-import { UserPhotoList } from '../../model/user';
 import { HttpClient } from '@angular/common/http';
-import { NativeProvider, NativeData } from '@core/provider/native-provider/native.provider';
+import { NativeData, NativeProvider } from '@core/provider/native-provider/native.provider';
 import { AddressInfo } from '@core/model/address/address-info';
 import { ContentStringRequest } from '@core/model/content/content-string-request.model';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
@@ -22,8 +21,7 @@ export class UserService extends BaseService {
   private readonly userData$: BehaviorSubject<UserInfo> = new BehaviorSubject<UserInfo>(<UserInfo>{});
   private readonly userAddresses$: BehaviorSubject<AddressInfo[]> = new BehaviorSubject<AddressInfo[]>([]);
   private userPhoto: UserPhotoInfo = null;
-
-  public selectedAddress: AddressInfo;
+  selectedAddress: AddressInfo;
 
   constructor(readonly http: HttpClient, private readonly nativeProvider: NativeProvider) {
     super(http);
@@ -71,7 +69,7 @@ export class UserService extends BaseService {
 
     return this.userData.pipe(
       switchMap(({ institutionId }) => this.httpRequestFull(this.serviceUrl, methodName, true, institutionId, config)),
-      map(({ response }: MessageResponse<SettingInfo>) => response)
+      map(({ response }: MessageResponse<SettingInfo>) => response),
     );
   }
 
@@ -88,16 +86,16 @@ export class UserService extends BaseService {
       switchMap(({ id }: UserInfo) => this.getPhotoListByUserId(id)),
       map(({ response: { list } }) => this.getPhotoIdByStatus(list)),
       switchMap(({ id }: UserPhotoInfo) => this.getPhotoById(id)),
-      map(({ response }) => (this.userPhoto = response))
+      map(({ response }) => (this.userPhoto = response)),
     );
 
     if (this.nativeProvider.isAndroid()) {
       nativeProviderFunction = of(this.nativeProvider.getAndroidData(NativeData.USER_PHOTO)).pipe(
-        map((data: any) => JSON.parse(data))
+        map((data: any) => JSON.parse(data)),
       );
     } else if (this.nativeProvider.isIos()) {
       nativeProviderFunction = from(this.nativeProvider.getIosData(NativeData.USER_PHOTO)).pipe(
-        map((data: any) => JSON.parse(data))
+        map((data: any) => JSON.parse(data)),
       );
     } else {
       nativeProviderFunction = userPhotoInfoObservable;
@@ -113,7 +111,7 @@ export class UserService extends BaseService {
         } else {
           return userPhotoInfoObservable;
         }
-      })
+      }),
     );
   }
 
@@ -129,12 +127,12 @@ export class UserService extends BaseService {
         this.httpRequest<MessageResponse<AddressInfoList>>(this.serviceUrl, methodName, true, {
           userId: id,
           addressId: '',
-        })
+        }),
       ),
       map(({ response }) => {
         this._userAddresses = response.addresses;
         return response.addresses;
-      })
+      }),
     );
   }
 
@@ -143,7 +141,7 @@ export class UserService extends BaseService {
     recipientEmail: string,
     message: string,
     depositToAccountId: string,
-    requestAmount: string
+    requestAmount: string,
   ) {
     const params = { recipientName, recipientEmail, message, depositToAccountId, requestAmount };
 

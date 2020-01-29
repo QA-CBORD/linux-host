@@ -58,7 +58,7 @@ export class NativeProvider {
   }
 
   /// used to allow user to add USAePay CC and handle response
-  addUSAePayCreditCard(): Observable<USAePayResponse> {
+  addUSAePayCreditCard(): Observable<USAePayResponse> {    
     if (this.isAndroid()) {
       return this.getAndroidDataAsObservable<USAePayResponse>(NativeData.ADD_TO_USAEPAY);
     } else if (this.isIos()) {
