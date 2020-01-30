@@ -11,7 +11,7 @@ export class SearchFilterSectionComponent {
 
   @Input() subtitle: string;
 
-  toggled: boolean = false;
+  @Input() toggled: boolean = false;
 
   toggle(): void {
     this.toggled = !this.toggled;

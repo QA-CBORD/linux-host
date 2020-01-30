@@ -1,5 +1,5 @@
 <ion-header mode="ios">
-  <ion-toolbar mode="ios" class="rooms-search__toolbar">
+  <ion-toolbar mode="ios">
     <ion-buttons slot="start" mode="ios">
       <ion-button mode="ios" fill="clear" color="dark" class="ion-no-padding" (click)="close()">
         <ion-icon name="close" slot="icon-only" mode="ios"></ion-icon>
@@ -11,7 +11,15 @@
 </ion-header>
 
 <ion-content>
-  <st-search-filter-section title="Price" subtitle="per month">
-    aksjdaksdj
-  </st-search-filter-section>
+  <section class="search-filter-model__sorting"></section>
+
+  <section class="search-filter-model__sections">
+    <st-search-filter-section title="Price" subtitle="per month" [toggled]="true">
+      <st-range [min]="0" [max]="1000" [value]="1000"></st-range>
+    </st-search-filter-section>
+
+    <st-search-filter-section title="Price" subtitle="per month">
+      aksjdaksdj
+    </st-search-filter-section>
+  </section>
 </ion-content>
