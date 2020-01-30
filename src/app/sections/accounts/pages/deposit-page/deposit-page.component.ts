@@ -240,29 +240,29 @@ export class DepositPageComponent implements OnInit, OnDestroy {
       this.depositForm.controls['mainSelect'].clearValidators();
       this.depositForm.controls['mainSelect'].setErrors(null);
       this.resolveCVVValidators(sourceAcc);
-      
-      if (data) {
-        if (sourceAcc === 'newCreditCard') {
-          this.depositForm.reset();
-          const paymentSystem = this.getSettingByName(this.depositSettings, SYSTEM_SETTINGS_CONFIG.paymentSystem);
-          
-          if (parseInt(paymentSystem) === PAYMENT_SYSTEM_TYPE.MONETRA) {
-            this.router.navigate([NAVIGATE.accounts, LOCAL_ROUTING.addCreditCard], { skipLocationChange: true });
-            return;
-          }
-          this.nativeProvider
-            .addUSAePayCreditCard()
-            .pipe(take(1))
-            .subscribe(({ success, errorMessage }) => {
-              if (!success) {
-                return this.onErrorRetrieve(errorMessage);
-              }
 
-              this.getAccounts();
-              return;
-            });
+      if (sourceAcc === 'newCreditCard') {
+        this.depositForm.reset();
+        const paymentSystem = this.getSettingByName(this.depositSettings, SYSTEM_SETTINGS_CONFIG.paymentSystem);
+        
+        if (parseInt(paymentSystem) === PAYMENT_SYSTEM_TYPE.MONETRA) {
+          this.router.navigate([NAVIGATE.accounts, LOCAL_ROUTING.addCreditCard], { skipLocationChange: true });
+          return;
         }
 
+        return this.nativeProvider
+          .addUSAePayCreditCard()
+          .pipe(take(1))
+          .subscribe(({ success, errorMessage }) => {
+            if (!success) {
+              return this.onErrorRetrieve(errorMessage);
+            }
+
+            this.getAccounts();
+          });
+      }
+
+      if (data) {
         this.depositForm.controls['mainInput'].setValidators([
           Validators.required,
           ...minMaxValidators,
