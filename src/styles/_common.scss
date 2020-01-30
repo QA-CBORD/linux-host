@@ -67,14 +67,15 @@
   color: $color;
 }
 
-@mixin chevron-down() {
+@mixin chevron($rigth: 15px) {
+  position: relative;
+
   &::before {
     background-color: $color-white;
-    background-image: url('/assets/icon/chevron-down.svg');
     content: '';
     position: absolute;
     top: 50%;
-    right: 15px;
+    right: $rigth;
     width: 14px;
     height: 9px;
     transform: translateY(-50%);
@@ -83,16 +84,50 @@
   }
 }
 
-@mixin chevron-down-active() {
+@mixin chevron-down($right: 15px) {
+  @include chevron($right);
+
   &::before {
-    background-image: url('/assets/icon/chevron-down-active.svg');
-    right: 14px;
+    background-image: url('/assets/icon/chevron-down.svg');
   }
 }
 
-@mixin chevron-down-error() {
+@mixin chevron-up($right: 15px) {
+  @include chevron($right: 15px);
+
+  &::before {
+    background-image: url('/assets/icon/chevron-up.svg');
+  }
+}
+
+@mixin chevron-down-active($right: 14px) {
+  @include chevron($right);
+
+  &::before {
+    background-image: url('/assets/icon/chevron-down-active.svg');
+  }
+}
+
+@mixin chevron-up-active($right: 14px) {
+  @include chevron($right);
+
+  &::before {
+    background-image: url('/assets/icon/chevron-up-active.svg');
+  }
+}
+
+@mixin chevron-down-error($right: 14px) {
+  @include chevron($right);
+
   &::before {
     background-image: url('/assets/icon/chevron-down-error.svg');
-    right: 14px;
+  }
+}
+
+@mixin chevron-up-error($right: 14px) {
+  @include chevron($right);
+
+  &::before {
+    background-image: url('/assets/icon/chevron-up-error.svg');
   }
 }

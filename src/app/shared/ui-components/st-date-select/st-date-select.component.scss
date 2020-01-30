@@ -41,6 +41,8 @@
 }
 
 .date-select__control {
+  @include chevron-down();
+
   --padding-top: 14px;
   --padding-bottom: 14px;
   --padding-start: 13px;
@@ -71,8 +73,6 @@
       @extend %placeholder-transform;
     }
   }
-
-  @include chevron-down();
 }
 
 .date-select__placeholder {

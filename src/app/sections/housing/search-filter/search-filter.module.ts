@@ -6,9 +6,10 @@ import { PageTitleModule } from '@sections/housing/page-title/page-title.module'
 
 import { SearchFilterComponent } from './search-filter.component';
 import { SearchFilterModalComponent } from './search-filter-modal/search-filter-modal.component';
+import { SearchFilterSectionComponent } from './search-filter-section/search-filter-section.component';
 
 export const imports = [CommonModule, IonicModule, PageTitleModule];
-export const declarations = [SearchFilterComponent, SearchFilterModalComponent];
+export const declarations = [SearchFilterComponent, SearchFilterModalComponent, SearchFilterSectionComponent];
 export const entryComponents = [SearchFilterModalComponent];
 
 @NgModule({
