@@ -23,6 +23,7 @@ export class CartResolver implements Resolve<Observable<[SettingInfo[], Merchant
     const requireSettings = [
       SYSTEM_SETTINGS_CONFIG.displayTenders,
       SYSTEM_SETTINGS_CONFIG.displayCreditCard,
+      SYSTEM_SETTINGS_CONFIG.paymentSystem
     ];
 
     const accountsCall = this.cartService.merchant$.pipe(
