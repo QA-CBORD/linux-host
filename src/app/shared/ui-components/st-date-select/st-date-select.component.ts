@@ -26,7 +26,7 @@ export class StDateSelectComponent implements OnInit, OnDestroy {
   }
   private _id: string;
 
-  @Input() displayFormat: string;
+  @Input() displayFormat: string = 'MMM DD, YYYY';
 
   isFilled: boolean;
 

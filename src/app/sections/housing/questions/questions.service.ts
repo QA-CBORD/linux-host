@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { FormControl, Validators, FormGroup, FormArray, AbstractControl, ValidatorFn } from '@angular/forms';
 import { BehaviorSubject, Observable } from 'rxjs';
 
-import { parseJsonToArray, hasValue, integerValidator, numericValidator } from '../utils';
+import { parseJsonToArray, hasValue, integerValidator, numericValidator, trimEmptyKeys } from '../utils';
 
 import { QuestionsStorageService } from './questions-storage.service';
 
@@ -68,7 +68,9 @@ export class QuestionsService {
       const namesToTouch: Set<string> = new Set<string>();
 
       pages.forEach((page: ApplicationPage) => {
-        page.form.patchValue(questions);
+        const trimmedQuestions: any = trimEmptyKeys(questions);
+
+        page.form.patchValue(trimmedQuestions);
 
         const controls = page.form.controls;
 
