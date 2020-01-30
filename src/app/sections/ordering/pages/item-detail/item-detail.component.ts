@@ -1,4 +1,4 @@
-import { LOCAL_ROUTING, ORDER_VALIDATION_ERRORS } from '@sections/ordering/ordering.config';
+import { LOCAL_ROUTING, ORDER_VALIDATION_ERRORS, MerchantSettings } from '@sections/ordering/ordering.config';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -26,6 +26,7 @@ export class ItemDetailComponent implements OnInit {
   menuInfo$: Observable<MenuInfo>;
   errorState: boolean = false;
   cartOrderItemOptions: OrderItem[] = [];
+  allowNotes: boolean;
 
   constructor(
     private readonly router: Router,
@@ -189,7 +190,7 @@ export class ItemDetailComponent implements OnInit {
       .then(() => this.onClose())
       .catch(error => {
         this.cartService.removeLastOrderItem();
-        this.failedValidateOrder(error)
+        this.failedValidateOrder(error);
       })
       .finally(() => this.loadingService.closeSpinner());
   }
@@ -204,15 +205,16 @@ export class ItemDetailComponent implements OnInit {
   }
 
   private initMenuItemOptions() {
-    zip(this.activatedRoute.data, this.cartService.orderItems$)
+    zip(this.activatedRoute.data, this.cartService.orderItems$, this.cartService.merchant$)
       .pipe(take(1))
-      .subscribe(([{ data: { menuItem, queryParams: { orderItemId } } }, orderItems]) => {
+      .subscribe(([{ data: { menuItem, queryParams: { orderItemId } } }, orderItems, { settings }]) => {
         const imageBaseUrl = 'https://3bulchr7pb.execute-api.us-east-1.amazonaws.com/dev/image';
         this.menuItem = menuItem.menuItem;
-        this.menuItemImg = this.menuItem.imageReference
+        this.menuItemImg = this.menuItem.imageReference 
           ? `${imageBaseUrl}/${this.menuItem.imageReference}`
           : '';
         this.order = { ...this.order, totalPrice: this.menuItem.price };
+        this.allowNotes = !JSON.parse(settings.map[MerchantSettings.disableItemNotes].value);
 
         const cartSelectedItem = orderItems.find(({ id }) => id === orderItemId);
         if (cartSelectedItem) {

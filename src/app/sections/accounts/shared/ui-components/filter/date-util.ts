@@ -63,15 +63,15 @@ export const getTimeRangeOfDate = (date: DateUtilObject): TimeRange => {
   if (date.name === TIME_PERIOD.pastMonth || date.name === TIME_PERIOD.pastSixMonth) {
     const daysBack = date.name === TIME_PERIOD.pastMonth ? month : halfYear;
 
-    earliestDate = new Date();
-    latestDate = new Date(new Date().setDate(earliestDate.getDate() - daysBack));
+    earliestDate = null;
+    latestDate = new Date(new Date().setDate(new Date().getDate() - daysBack));
   } else {
     const nextMonth = new Date(date.year, date.month + 1).valueOf();
 
     earliestDate = new Date(date.year, date.month);
     latestDate = new Date(nextMonth - 1);
   }
-  earliestDate = earliestDate.toISOString();
+  earliestDate = earliestDate ? earliestDate.toISOString() : null;
   latestDate = latestDate.toISOString();
 
   return { startDate: earliestDate, endDate: latestDate };
