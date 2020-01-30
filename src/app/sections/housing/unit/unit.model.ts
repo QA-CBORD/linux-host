@@ -1,4 +1,4 @@
-import { Label } from '../housing.model';
+import { Label } from '@shared/ui-components/label/label.model';
 
 export class Unit {
   title: string;

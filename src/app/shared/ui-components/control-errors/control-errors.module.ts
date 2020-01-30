@@ -7,8 +7,8 @@ const imports = [CommonModule];
 const declarations = [ControlErrorsComponent];
 
 @NgModule({
-  declarations,
   imports,
   exports: declarations,
+  declarations,
 })
 export class ControlErrorsModule {}

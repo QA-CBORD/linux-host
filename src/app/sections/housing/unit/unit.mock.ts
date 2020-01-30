@@ -1,6 +1,6 @@
-import { generateLabels } from '../housing.mock';
+import { generateLabels } from '@shared/ui-components/label/label.mock';
 
-import { Label } from '../housing.model';
+import { Label } from '@shared/ui-components/label/label.model';
 import { Unit } from './unit.model';
 
 export function generateUnit(_: any, index: number): Unit {
