@@ -19,10 +19,11 @@ import { UserAccount } from 'src/app/core/model/account/account.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AutoDepositService } from './service/auto-deposit.service';
 import { BillMeMapping } from '@core/model/settings/billme-mapping.model';
-import { LOCAL_ROUTING, PAYMENT_TYPE, SYSTEM_SETTINGS_CONFIG } from '@sections/accounts/accounts.config';
+import { LOCAL_ROUTING, PAYMENT_TYPE, SYSTEM_SETTINGS_CONFIG, PAYMENT_SYSTEM_TYPE } from '@sections/accounts/accounts.config';
 import { DepositService } from '@sections/accounts/services/deposit.service';
 import { NAVIGATE } from 'src/app/app.global';
 import { SettingService } from '@core/service/settings/setting.service';
+import { NativeProvider } from '@core/provider/native-provider/native.provider';
 
 @Component({
   selector: 'st-automatic-deposit-page',
@@ -63,6 +64,7 @@ export class AutomaticDepositPageComponent {
     private readonly router: Router,
     private readonly toastController: ToastController,
     private readonly cdRef: ChangeDetectorRef,
+    private readonly nativeProvider: NativeProvider
   ) {
   }
 
@@ -242,24 +244,24 @@ export class AutomaticDepositPageComponent {
   get isBillMePaymentTypesEnabled$(): Observable<boolean> {
     return this.getPaymentTypeByName(SYSTEM_SETTINGS_CONFIG.autoDepositPaymentTypes.name)
       .pipe(switchMap(types => {
-          if (types.length) {
-            return of(types.indexOf(PAYMENT_TYPE.BILLME) !== -1);
-          }
-          return this.getPaymentTypeByName(SYSTEM_SETTINGS_CONFIG.paymentTypes.name)
-            .pipe(map(types => types.indexOf(PAYMENT_TYPE.BILLME) !== -1));
-        }),
+        if (types.length) {
+          return of(types.indexOf(PAYMENT_TYPE.BILLME) !== -1);
+        }
+        return this.getPaymentTypeByName(SYSTEM_SETTINGS_CONFIG.paymentTypes.name)
+          .pipe(map(types => types.indexOf(PAYMENT_TYPE.BILLME) !== -1));
+      }),
       );
   }
 
   get isCreditPaymentTypeEnabled$(): Observable<boolean> {
     return this.getPaymentTypeByName(SYSTEM_SETTINGS_CONFIG.autoDepositPaymentTypes.name)
       .pipe(switchMap(types => {
-          if (types.length) {
-            return of(types.indexOf(PAYMENT_TYPE.CREDIT) !== -1);
-          }
-          return this.getPaymentTypeByName(SYSTEM_SETTINGS_CONFIG.paymentTypes.name)
-            .pipe(map(types => types.indexOf(PAYMENT_TYPE.CREDIT) !== -1));
-        }),
+        if (types.length) {
+          return of(types.indexOf(PAYMENT_TYPE.CREDIT) !== -1);
+        }
+        return this.getPaymentTypeByName(SYSTEM_SETTINGS_CONFIG.paymentTypes.name)
+          .pipe(map(types => types.indexOf(PAYMENT_TYPE.CREDIT) !== -1));
+      }),
       );
   }
 
@@ -290,16 +292,45 @@ export class AutomaticDepositPageComponent {
     return `${i}`;
   }
 
-  onPaymentMethodChanged(value) {
+  async onPaymentMethodChanged(value) {
     if (value === 'addCC') {
-      this.router.navigate([NAVIGATE.accounts, LOCAL_ROUTING.addCreditCard], {
-        skipLocationChange: true,
-        queryParams: { skip: true },
-      });
+      const paymentSystem = await this.settingService.settings$.pipe(
+        map(settings => {
+          const settingInfo = this.settingService.getSettingByName(
+            settings,
+            SYSTEM_SETTINGS_CONFIG.paymentSystem.name,
+          );
+
+          return parseInt(settingInfo.value);
+        }),
+        first()
+      ).toPromise();
+
+      if (paymentSystem === PAYMENT_SYSTEM_TYPE.MONETRA) {
+        this.router.navigate([NAVIGATE.accounts, LOCAL_ROUTING.addCreditCard], {
+          skipLocationChange: true,
+          queryParams: { skip: true },
+        });
+
+        return;
+      }
+
+      this.nativeProvider
+        .addUSAePayCreditCard()
+        .pipe(take(1))
+        .subscribe(({ success, errorMessage }) => {
+          if (!success) {
+            return this.showToast(errorMessage);
+          }
+
+          this.getAccounts();
+          this.setValidators();
+        });
+
     } else {
-      this.defineDestAccounts(value);
+      await this.defineDestAccounts(value)
+        .then(() => this.setValidators());
     }
-    this.setValidators();
   }
 
   parseFloat(val: string): number {
@@ -433,10 +464,10 @@ export class AutomaticDepositPageComponent {
       predefinedUpdateCall = iif(() => isBillme,
         sourceAccForBillmeDeposit,
         of(paymentMethod)).pipe(
-        switchMap(sourceAcc =>
-          this.autoDepositService.updateAutoDepositSettings({ ...resultSettings, fromAccountId: sourceAcc.id }),
-        ),
-      );
+          switchMap(sourceAcc =>
+            this.autoDepositService.updateAutoDepositSettings({ ...resultSettings, fromAccountId: sourceAcc.id }),
+          ),
+        );
     }
 
     predefinedUpdateCall.pipe(take(1)).subscribe(
