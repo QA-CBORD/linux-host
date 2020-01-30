@@ -48,7 +48,8 @@ export const SYSTEM_SETTINGS_CONFIG = {
 export enum MerchantSettings {
   deliveryAddressRestriction = 'merchant.order.delivery_address_restriction',
   pickupLocationsEnabled = 'merchant.order.pickup_locations_enabled',
-  orderAheadEnabled = 'merchant.order.order_ahead_enabled'
+  orderAheadEnabled = 'merchant.order.order_ahead_enabled',
+  disableItemNotes = 'merchant.order.disable_item_notes'
 }
 
 export enum ORDER_TYPE {
