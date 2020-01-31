@@ -72,6 +72,15 @@
     height: 100px;
     width: 100px;
     top: 35px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &__campus-empty-photo {
+    width: 80%;
+    height: 80%;
+    padding-left: 5px;
   }
 
   &__campus-student-avatar {
