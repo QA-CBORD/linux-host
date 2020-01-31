@@ -10,10 +10,10 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content class="search-filter-model__content">
   <section class="search-filter-model__sorting"></section>
 
-  <section class="search-filter-model__sections">
+  <section>
     <st-search-filter-section title="Price" subtitle="per month" [toggled]="true">
       <st-range [min]="0" [max]="1000" [value]="1000"></st-range>
     </st-search-filter-section>
@@ -47,7 +47,49 @@
     </st-search-filter-section>
 
     <st-show-more>
-      Some Content
+      <st-search-filter-section title="Floor" [toggled]="true">
+        <div class="search-filter-model__row">
+          <ion-item class="ion-no-padding form-checkbox search-filter-model__col" lines="none">
+            <ion-checkbox class="form-checkbox__control" mode="md" slot="start"></ion-checkbox>
+            <ion-label class="form-label">Top Floor</ion-label>
+          </ion-item>
+
+          <ion-item class="ion-no-padding form-checkbox search-filter-model__col" lines="none">
+            <ion-checkbox class="form-checkbox__control" mode="md" slot="start"></ion-checkbox>
+            <ion-label class="form-label">Bottom Floor</ion-label>
+          </ion-item>
+
+          <ion-item class="ion-no-padding form-checkbox search-filter-model__col" lines="none">
+            <ion-checkbox class="form-checkbox__control" mode="md" slot="start"></ion-checkbox>
+            <ion-label class="form-label">1st Floor</ion-label>
+          </ion-item>
+
+          <ion-item class="ion-no-padding form-checkbox search-filter-model__col" lines="none">
+            <ion-checkbox class="form-checkbox__control" mode="md" slot="start"></ion-checkbox>
+            <ion-label class="form-label">2nd Floor</ion-label>
+          </ion-item>
+
+          <ion-item class="ion-no-padding form-checkbox search-filter-model__col" lines="none">
+            <ion-checkbox class="form-checkbox__control" mode="md" slot="start"></ion-checkbox>
+            <ion-label class="form-label">3rd Floor</ion-label>
+          </ion-item>
+
+          <ion-item class="ion-no-padding form-checkbox search-filter-model__col" lines="none">
+            <ion-checkbox class="form-checkbox__control" mode="md" slot="start"></ion-checkbox>
+            <ion-label class="form-label">4th Floor</ion-label>
+          </ion-item>
+
+          <ion-item class="ion-no-padding form-checkbox search-filter-model__col" lines="none">
+            <ion-checkbox class="form-checkbox__control" mode="md" slot="start"></ion-checkbox>
+            <ion-label class="form-label">5th Floor</ion-label>
+          </ion-item>
+
+          <ion-item class="ion-no-padding form-checkbox search-filter-model__col" lines="none">
+            <ion-checkbox class="form-checkbox__control" mode="md" slot="start"></ion-checkbox>
+            <ion-label class="form-label">6th Floor</ion-label>
+          </ion-item>
+        </div>
+      </st-search-filter-section>
     </st-show-more>
   </section>
 </ion-content>
