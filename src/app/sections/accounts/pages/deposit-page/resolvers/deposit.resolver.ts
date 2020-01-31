@@ -25,6 +25,7 @@ export class DepositResolver implements Resolve<Observable<any>> {
       SYSTEM_SETTINGS_CONFIG.minAmountCreditCard,
       SYSTEM_SETTINGS_CONFIG.maxAmountbillme,
       SYSTEM_SETTINGS_CONFIG.maxAmountCreditCard,
+      SYSTEM_SETTINGS_CONFIG.paymentSystem
     ];
     const accountsCall = this.depositService.getUserAccounts();
     const settingsCall = this.depositService.getUserSettings(requireSettings);
