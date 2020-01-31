@@ -67,20 +67,27 @@
   color: $color;
 }
 
-@mixin chevron($rigth: 15px) {
+@mixin icon() {
   position: relative;
 
   &::before {
-    background-color: $color-white;
     content: '';
     position: absolute;
     top: 50%;
-    right: $rigth;
-    width: 14px;
-    height: 9px;
     transform: translateY(-50%);
     pointer-events: none;
     z-index: 1;
+  }
+}
+
+@mixin chevron($rigth: 15px) {
+  @include icon();
+
+  &::before {
+    background-color: $color-white;
+    right: $rigth;
+    width: 14px;
+    height: 9px;
   }
 }
 
@@ -129,5 +136,30 @@
 
   &::before {
     background-image: url('/assets/icon/chevron-up-error.svg');
+  }
+}
+
+@mixin arrow() {
+  @include icon();
+
+  &::before {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+@mixin arrow-up-active() {
+  @include arrow();
+
+  &::before {
+    background-image: url('/assets/icon/arrow-up-active.svg');
+  }
+}
+
+@mixin arrow-down-active() {
+  @include arrow();
+
+  &::before {
+    background-image: url('/assets/icon/arrow-down-active.svg');
   }
 }

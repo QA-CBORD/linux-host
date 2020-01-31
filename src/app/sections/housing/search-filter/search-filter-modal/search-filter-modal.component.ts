@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 
+import { SortControlComponent } from '../filter-sort/sort-control/sort-control.component';
+
 import { generateCategories } from '../filter-sort/filter-sort.mock';
 
 import { Category } from '../filter-sort/filter-sort.model';
@@ -20,5 +22,5 @@ export class SearchFilterModalComponent {
     this.modalController.dismiss();
   }
 
-  sort(category: Category): void {}
+  sort(control: SortControlComponent): void {}
 }

@@ -21,15 +21,29 @@ import { Category } from './filter-sort.model';
 export class FilterSortComponent {
   @Input() categories: Category[];
 
-  @Output() sorted: EventEmitter<Category> = new EventEmitter<Category>();
+  @Output() sorted: EventEmitter<SortControlComponent> = new EventEmitter<SortControlComponent>();
 
   @ViewChildren(SortControlComponent) sortControls: QueryList<SortControlComponent>;
 
-  sort(control: SortControlComponent, category: Category): void {
-    this.sortControls.forEach((control: SortControlComponent) => control.unselect());
+  sort(control: SortControlComponent): void {
+    if (control.isSelected) {
+      this.select(control);
 
+      return;
+    }
+
+    this.unselectAll();
+
+    this.select(control);
+  }
+
+  private select(control: SortControlComponent): void {
     control.select();
 
-    this.sorted.emit(category);
+    this.sorted.emit(control);
+  }
+
+  private unselectAll(): void {
+    this.sortControls.forEach((control: SortControlComponent) => control.unselect());
   }
 }

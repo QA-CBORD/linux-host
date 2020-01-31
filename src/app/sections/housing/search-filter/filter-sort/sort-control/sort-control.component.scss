@@ -4,6 +4,11 @@
   .sort-control {
     --color: #{$color-night-rider};
     --background: #{$color-white};
+    --padding-start: 35px;
+
+    &::before {
+      display: block;
+    }
   }
 }
 
@@ -11,7 +16,7 @@
   @include font-nunito-semibold(16px);
 
   --color: #{$color-dim-gray};
-  --background: #{$color-light-gray};
+  --background: #{$color-alice-blue};
   --border-radius: 0;
   --padding-start: 20px;
   --padding-end: 20px;
@@ -19,4 +24,17 @@
 
   height: 56px;
   margin: 0;
+
+  &::before {
+    display: none;
+    left: 12px;
+  }
+
+  &.ascend {
+    @include arrow-up-active();
+  }
+
+  &.descend {
+    @include arrow-down-active();
+  }
 }
