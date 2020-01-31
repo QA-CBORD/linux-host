@@ -32,6 +32,7 @@ export class AutoDepositPageResolver implements Resolve<Observable<SettingInfo[]
       SYSTEM_SETTINGS_CONFIG.presetDepositAmountsCreditCard,
       SYSTEM_SETTINGS_CONFIG.enableAutoDeposits,
       SYSTEM_SETTINGS_CONFIG.autoDepositTenders,
+      SYSTEM_SETTINGS_CONFIG.paymentSystem
     ];
 
     this.loadingService.showSpinner();

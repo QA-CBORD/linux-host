@@ -43,6 +43,11 @@ export const SYSTEM_SETTINGS_CONFIG = {
     category: 'feature',
     name: 'display_tenders',
   },
+  paymentSystem: {
+    domain: 'get',
+    category: 'credit',
+    name: 'payment_system_type',
+  }
 };
 
 export enum MerchantSettings {

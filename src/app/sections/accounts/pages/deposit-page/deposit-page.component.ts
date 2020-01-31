@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ModalController, PopoverController, ToastController } from '@ionic/angular';
-import { map, switchMap, take, tap } from 'rxjs/operators';
+import { map, switchMap, take, tap, finalize } from 'rxjs/operators';
 import {
   ACCOUNT_TYPES,
   LOCAL_ROUTING,
@@ -179,6 +179,10 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     );
   }
 
+  get paymentTypes() {
+    return PAYMENT_TYPE;
+  }
+
   formatInput(event) {
     const { value } = event.target;
     const index = value.indexOf('.');
@@ -240,7 +244,28 @@ export class DepositPageComponent implements OnInit, OnDestroy {
       this.depositForm.controls['mainSelect'].clearValidators();
       this.depositForm.controls['mainSelect'].setErrors(null);
       this.resolveCVVValidators(sourceAcc);
-      
+
+      if (sourceAcc === 'newCreditCard') {
+        this.depositForm.reset();
+        const paymentSystem = this.getSettingByName(this.depositSettings, SYSTEM_SETTINGS_CONFIG.paymentSystem);
+
+        if (parseInt(paymentSystem) === PAYMENT_SYSTEM_TYPE.MONETRA) {
+          this.router.navigate([NAVIGATE.accounts, LOCAL_ROUTING.addCreditCard], { skipLocationChange: true });
+          return;
+        }
+
+        return this.nativeProvider
+          .addUSAePayCreditCard()
+          .pipe(take(1))
+          .subscribe(({ success, errorMessage }) => {
+            if (!success) {
+              return this.onErrorRetrieve(errorMessage);
+            }
+
+            this.getAccounts();
+          });
+      }
+
       if (data) {
         this.depositForm.controls['mainInput'].setValidators([
           Validators.required,
@@ -253,13 +278,6 @@ export class DepositPageComponent implements OnInit, OnDestroy {
         this.mainFormInput.setErrors(null);
         this.resetControls(['mainSelect', 'mainInput']);
       }
-
-      if (sourceAcc === 'newCreditCard') {        
-        this.depositForm.reset();
-        this.nativeProvider.addUSAePayCreditCard().subscribe(res => console.log(res), error => console.error(error));
-        // this.router.navigate([NAVIGATE.accounts, LOCAL_ROUTING.addCreditCard], { skipLocationChange: true });
-      }
-
     });
   }
 
@@ -275,7 +293,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     this.setFormValidators();
   }
 
-  private resolveCVVValidators(sourceAcc) {
+  private resolveCVVValidators(sourceAcc: UserAccount | number) {
     if (sourceAcc !== PAYMENT_TYPE.BILLME) {
       this.depositForm.controls['fromAccountCvv'].setValidators([
         Validators.required,
@@ -283,10 +301,10 @@ export class DepositPageComponent implements OnInit, OnDestroy {
         Validators.pattern('[0-9.-]*'),
       ]);
       this.depositForm.controls['fromAccountCvv'].reset();
-    } else {
-      this.depositForm.controls['fromAccountCvv'].setErrors(null);
-      this.depositForm.controls['fromAccountCvv'].clearValidators();
+      return;
     }
+    this.depositForm.controls['fromAccountCvv'].setErrors(null);
+    this.depositForm.controls['fromAccountCvv'].clearValidators();
   }
 
   private getAccounts() {
@@ -343,16 +361,13 @@ export class DepositPageComponent implements OnInit, OnDestroy {
         this.loadingService.showSpinner();
         this.depositService
           .deposit(data.sourceAcc.id, data.selectedAccount.id, data.amount, this.fromAccountCvv.value)
-          .pipe(take(1))
+          .pipe(
+            take(1),
+            finalize(() => this.loadingService.closeSpinner())
+          )
           .subscribe(
-            () => {
-              this.loadingService.closeSpinner();
-              this.finalizeDepositModal(data);
-            },
-            () => {
-              this.loadingService.closeSpinner();
-              this.onErrorRetrieve('Your information could not be verified.');
-            }
+            () => this.finalizeDepositModal(data),
+            () => this.onErrorRetrieve('Your information could not be verified.')
           );
       }
     });
@@ -360,8 +375,8 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     return await popover.present();
   }
 
-  get paymentTypes() {
-    return PAYMENT_TYPE;
+  trackByAccountId(i: number, { id }: UserAccount): string {
+    return `${i}-${id}-${Math.random()}`;
   }
 
   private resetControls(controlNames: string[]) {
@@ -391,10 +406,6 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     });
 
     await modal.present();
-  }
-
-  trackByAccountId(i: number, { id }: UserAccount): string {
-    return `${i}-${id}-${Math.random()}`;
   }
 
   private async onErrorRetrieve(message: string) {
