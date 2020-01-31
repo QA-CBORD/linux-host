@@ -8,8 +8,9 @@ import {
   QueryList,
 } from '@angular/core';
 
-import { Category } from './filter-sort.model';
 import { SortControlComponent } from './sort-control/sort-control.component';
+
+import { Category } from './filter-sort.model';
 
 @Component({
   selector: 'st-filter-sort',
@@ -24,8 +25,10 @@ export class FilterSortComponent {
 
   @ViewChildren(SortControlComponent) sortControls: QueryList<SortControlComponent>;
 
-  sort(category: Category): void {
+  sort(control: SortControlComponent, category: Category): void {
     this.sortControls.forEach((control: SortControlComponent) => control.unselect());
+
+    control.select();
 
     this.sorted.emit(category);
   }

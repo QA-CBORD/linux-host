@@ -4,9 +4,5 @@ export enum SortDirection {
 }
 
 export class Category {
-  constructor(
-    public name: string,
-    public selected: boolean,
-    public sortDirection: SortDirection = SortDirection.ascend
-  ) {}
+  constructor(public name: string) {}
 }

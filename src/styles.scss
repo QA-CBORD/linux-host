@@ -294,13 +294,17 @@
 }
 
 // Hidden scrollbar
-.scroll-horizontal-hidden {
+.scroll-hidden {
+  overflow: hidden;
+}
+
+.scroll-horizontal-hidden__inner {
   overflow-x: scroll;
   margin-bottom: -25px;
   padding-bottom: 25px;
 }
 
-.scroll-vertical-hidden {
+.scroll-vertical-hidden__inner {
   overflow-y: scroll;
   margin-right: -25px;
   padding-right: 25px;

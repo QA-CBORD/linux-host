@@ -1,3 +1,9 @@
-<st-sort-control *ngFor="let category of categories" (sorted)="sort($event)" [category]="category">
-  {{ category.name }}
-</st-sort-control>
+<div class="scroll-hidden">
+  <div class="d-flex scroll-horizontal-hidden__inner">
+    <div class="filter-sort__container">
+      <st-sort-control *ngFor="let category of categories" (sorted)="sort($event, category)" [category]="category">
+        {{ category.name }}
+      </st-sort-control>
+    </div>
+  </div>
+</div>

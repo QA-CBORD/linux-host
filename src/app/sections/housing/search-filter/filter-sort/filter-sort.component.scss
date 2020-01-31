@@ -1,0 +1,10 @@
+@import 'tools';
+
+:host {
+  display: block;
+}
+
+.filter-sort__container {
+  display: flex;
+  padding: 0 16px;
+}

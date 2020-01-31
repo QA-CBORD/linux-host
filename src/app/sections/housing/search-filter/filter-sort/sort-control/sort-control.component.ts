@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter, HostBinding } from '@angular/core';
 
 import { Category, SortDirection } from '../filter-sort.model';
 
@@ -11,8 +11,9 @@ import { Category, SortDirection } from '../filter-sort.model';
 export class SortControlComponent {
   @Input() category: Category;
 
-  @Output() sorted: EventEmitter<Category> = new EventEmitter<Category>();
+  @Output() sorted: EventEmitter<SortControlComponent> = new EventEmitter<SortControlComponent>();
 
+  @HostBinding('class.selected')
   isSelected: boolean;
 
   sortDirection: SortDirection;
@@ -26,9 +27,7 @@ export class SortControlComponent {
   }
 
   sort(): void {
-    this.select();
-
-    this.sorted.emit(this.category);
+    this.sorted.emit(this);
   }
 
   select(): void {

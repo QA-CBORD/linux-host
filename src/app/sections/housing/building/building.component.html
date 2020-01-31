@@ -16,8 +16,8 @@
   </header>
 
   <div class="building__tools">
-    <div class="building__labels-wrap">
-      <div class="d-flex scroll-horizontal-hidden">
+    <div class="scroll-hidden building__labels-wrap">
+      <div class="d-flex scroll-horizontal-hidden__inner">
         <st-label class="building__labels-item" *ngFor="let label of building.labels">{{ label.name }}</st-label>
       </div>
     </div>
