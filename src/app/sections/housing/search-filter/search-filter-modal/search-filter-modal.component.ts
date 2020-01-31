@@ -1,6 +1,10 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 
+import { generateCategories } from '../filter-sort/filter-sort.mock';
+
+import { Category } from '../filter-sort/filter-sort.model';
+
 @Component({
   selector: 'st-search-filter-modal',
   templateUrl: './search-filter-modal.component.html',
@@ -8,9 +12,13 @@ import { ModalController } from '@ionic/angular';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SearchFilterModalComponent {
+  categories: Category[] = generateCategories();
+
   constructor(private modalController: ModalController) {}
 
   close(): void {
     this.modalController.dismiss();
   }
+
+  sort(category: Category): void {}
 }
