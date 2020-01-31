@@ -1,0 +1,5 @@
+@import 'tools';
+
+.show-more {
+  @include font-nunito-heavy(16px);
+}

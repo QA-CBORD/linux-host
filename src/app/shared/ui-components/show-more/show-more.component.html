@@ -1,0 +1,5 @@
+<ng-content *ngIf="toggled"></ng-content>
+
+<ion-button class="show-more" fill="clear" [class.toggled]="toggled" mode="ios">
+  Show {{ toggled ? 'Less' : 'More' }}
+</ion-button>
