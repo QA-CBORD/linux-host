@@ -36,7 +36,6 @@ export class AccessCardComponent implements OnInit {
       private readonly accessCardService: AccessCardService,
       private readonly sanitizer: DomSanitizer,
       private readonly router: Router,
-      private readonly cdRef: ChangeDetectorRef,
       private readonly nativeProvider: NativeProvider
   ) {
   }
@@ -61,7 +60,6 @@ export class AccessCardComponent implements OnInit {
         .subscribe(photo => {
           this.isLoadingPhoto = false;
           this.userPhoto = photo;
-          this.cdRef.detectChanges();
         });
   }
 
@@ -79,7 +77,6 @@ export class AccessCardComponent implements OnInit {
   private getFeaturesEnabled() {
     this.getMyCardEnabled$ = this.accessCardService.isGETMyCardEnabled();
     this.isMobileAccessButtonEnabled$ = this.accessCardService.isMobileAccessEnable();
-    // this.applePayEnabled$ = this.accessCardService.isApplePayEnabled();
   }
 
   async onMobileAccessClick(): Promise<void> {
