@@ -294,6 +294,10 @@ export class AutomaticDepositPageComponent {
     return `${i}`;
   }
 
+  parseFloat(value): number {
+    return parseFloat(value);
+  }
+
   async onPaymentMethodChanged(value) {
     if (value === 'addCC') {
       this.automaticDepositForm.reset();
