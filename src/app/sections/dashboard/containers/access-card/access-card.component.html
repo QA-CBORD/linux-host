@@ -41,7 +41,7 @@
         <div *ngIf="(userName$ | async)" class="card__student-name">{{ userName$ | async }}</div>
       </ion-col>
       <ion-col>
-        <div *ngIf="appleWalletEnabled" class="card__student-card-not-added">Card not added to wallet</div>
+        <div *ngIf="appleWalletEnabled" class="card__student-card-not-added"><img *ngIf="appleWalletMessageImage" class="card__wallet-icon" src="/assets/images/{{appleWalletMessageImage}}.png" alt="{{ appleWalletMessage }}" />{{ appleWalletMessage }}</div>
       </ion-col>
     </ion-row>
     <ion-row class="card__quick-actions-container">
@@ -61,7 +61,7 @@
           </div>
         </ion-button>
       </ion-col>
-      <ion-col *ngIf="appleWalletEnabled" class="card__quick-actions-wrapper">
+      <ion-col *ngIf="!appleWalletButtonHidden" class="card__quick-actions-wrapper">
         <ion-button mode="ios" class="card__apple-wallet-btn" (click)="addToAppleWallet()"
         ><img src="/assets/icon/Add_to_Apple_Wallet_rgb_US-UK.svg"/>
         </ion-button>
