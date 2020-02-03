@@ -187,7 +187,7 @@ export class RecentOrderComponent implements OnInit {
     )
     this.orderDetailsOptions$ = zip(address, this.order$, this.userService.userData)
       .pipe(map(([address, { type, dueTime }, { locale, timeZone }]) => {
-        const date = new Date(dueTime);
+        const date = new Date(dueTime.replace(/([+\-]\d\d)(\d\d)$/, "$1:$2"));
         const time = date.toLocaleString(locale, { hour12: false, timeZone })
         return {
           address,

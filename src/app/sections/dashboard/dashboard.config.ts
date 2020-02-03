@@ -12,6 +12,11 @@ export const DASHBOARD_SETTINGS_CONFIG = {
     category: 'feature',
     name: 'enable_get_my_card',
   },
+  displayMediaType: {
+    domain: 'get',
+    category: 'feature',
+    name: 'mobile_patron_cashless_display_media_type',
+  },
   enableRewards: {
     domain: 'get',
     category: 'feature',
