@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { distinctUntilChanged, first, map, switchMap, tap } from 'rxjs/operators';
-import { BehaviorSubject, Observable, zip } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 import { ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { MerchantService } from './merchant.service';
