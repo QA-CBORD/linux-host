@@ -20,6 +20,7 @@ import {
 } from '../accounts.config';
 import { DateUtilObject, getTimeRangeOfDate, getUniquePeriodName } from '../shared/ui-components/filter/date-util';
 import { QueryTransactionHistoryCriteriaDateRange } from '@core/model/account/transaction-query-date-range.model';
+import { TIMEZONE_REGEXP } from '@core/utils/regexp-patterns';
 
 @Injectable()
 export class TransactionService {
@@ -206,7 +207,7 @@ export class TransactionService {
 
   private getLatestDateInRange(range: TransactionHistory[]): any {
     if (range && range.length > 0) {
-      return new Date(range[range.length - 1].actualDate.toString().replace(/([+\-]\d\d)(\d\d)$/, '$1:$2'));
+      return new Date(range[range.length - 1].actualDate.toString().replace(TIMEZONE_REGEXP, '$1:$2'));
     }
     return '';
   }

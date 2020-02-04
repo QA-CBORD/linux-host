@@ -2,7 +2,7 @@ import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { ServerErrorsInfo } from '@core/model/server_error/server-error.model';
 import { MonoTypeOperatorFunction, Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { ZERO_FIRST_REGEXP, INT_REGEXP, INT_DEC_REGEXP, EMAIL_REGEXP } from './regexp-paterns';
+import { ZERO_FIRST_REGEXP, INT_REGEXP, INT_DEC_REGEXP, EMAIL_REGEXP } from './regexp-patterns';
 
 export function parseArrayFromString<T>(value: string): Array<T> {
   if (value && !value.length) return [];

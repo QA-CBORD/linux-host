@@ -23,6 +23,7 @@ import { DepositService } from '@sections/accounts/services/deposit.service';
 import { parseArrayFromString } from '@core/utils/general-helpers';
 import { BillMeMapping } from '@core/model/settings/billme-mapping.model';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
+import { COMMA_REGEXP, NUM_COMMA_DOT_REGEXP } from '@core/utils/regexp-patterns';
 
 @Component({
   selector: 'st-deposit-page',
@@ -186,8 +187,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   formatInput(event) {
     const { value } = event.target;
     const index = value.indexOf('.');
-    const regex = /^[0-9.,]+$/;
-    if (!regex.test(value)) {
+    if (!NUM_COMMA_DOT_REGEXP.test(value)) {
       this.depositForm.get('mainInput').setValue(value.slice(0, value.length - 1));
     }
 
@@ -199,13 +199,12 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   onFormSubmit() {
     const { sourceAccount, selectedAccount, mainInput, mainSelect } = this.depositForm.value;
     const isBillme: boolean = sourceAccount === PAYMENT_TYPE.BILLME;
-    const regex = /[,\s]/g;
     const sourceAccForBillmeDeposit: Observable<UserAccount> = this.sourceAccForBillmeDeposit(
       selectedAccount,
       this.billmeMappingArr
     );
     let amount = mainInput || mainSelect;
-    amount = amount.replace(regex, '');
+    amount = amount.replace(COMMA_REGEXP, '');
 
     iif(() => isBillme, sourceAccForBillmeDeposit, of(sourceAccount))
       .pipe(

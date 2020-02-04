@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { CommerceApiService } from 'src/app/core/service/commerce/commerce-api.service';
 import { AccountCreationInfo } from '../models/account-creation-info';
+import { MASTERCARD_REGEXP } from '@core/utils/regexp-patterns';
 
 @Injectable()
 export class AddCreditCardService {
@@ -13,10 +14,7 @@ export class AddCreditCardService {
     if (number.match(re) != null) return 'Visa';
 
     // Mastercard
-    if (
-      /^(5[1-5][0-9]{14}|2(22[1-9][0-9]{12}|2[3-9][0-9]{13}|[3-6][0-9]{14}|7[0-1][0-9]{13}|720[0-9]{12}))$/.test(number)
-    )
-      return 'MasterCard';
+    if (MASTERCARD_REGEXP.test(number)) return 'MasterCard';
 
     return '';
   }

@@ -8,6 +8,7 @@ import { EnvironmentInfo } from '../environment/environment-info.model';
 import { UserInfo } from '../user/user-info.model';
 import { UserPhotoInfo } from '../user/user-photo-info.model';
 import { UserSettingInfo } from '../user/user-setting-info.model';
+import { X_Y_REGEXP } from '@core/utils/regexp-patterns';
 
 export class MCache {
   applicationUUID: string;
@@ -55,7 +56,7 @@ export class MCache {
   }
 
   private generateUUID() {
-    this.applicationUUID = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    this.applicationUUID = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(X_Y_REGEXP, function(c) {
       // tslint:disable-next-line:no-bitwise
       const r = (Math.random() * 16) | 0,
         v = c === 'x' ? r : (r & 0x3) | 0x8;
