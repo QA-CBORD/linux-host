@@ -4,7 +4,7 @@ import { map, tap, switchMap, catchError } from 'rxjs/operators';
 
 import { BASE_URL } from '../housing.config';
 import { Environment } from '../../../environment';
-import { parseJsonToArray, hasValue } from '../utils';
+import { parseJsonToArray } from '../utils';
 
 import { HousingProxyService } from '../housing-proxy.service';
 import { ApplicationsStateService } from './applications-state.service';
@@ -76,20 +76,15 @@ export class ApplicationsService {
       this._questionsStorageService.updateSubmittedDateTime(applicationKey)
     ).pipe(
       switchMap(([createdDateTime, submittedDateTime]: [string, string]) => {
-        const patronApplication: PatronApplication = new PatronApplication({
-          ...application.patronApplication,
-          applicationDefinitionKey: applicationKey,
+        const applicationDetails: ApplicationDetails = this._createApplicationDetails(
+          applicationKey,
+          application,
+          ApplicationStatus.Submitted,
           createdDateTime,
-          submittedDateTime,
-          status: ApplicationStatus.Submitted,
-        });
-        const applicationDetails: ApplicationDetails = new ApplicationDetails({ ...application, patronApplication });
-
-        return this._updateApplication(applicationDetails, form, ApplicationStatus.Submitted).pipe(
-          tap(() => {
-            this._applicationsStateService.setApplication(applicationKey, applicationDetails);
-          })
+          submittedDateTime
         );
+
+        return this._updateApplication(applicationDetails, form, ApplicationStatus.Submitted);
       })
     );
   }
@@ -99,46 +94,41 @@ export class ApplicationsService {
       this._questionsStorageService.updateCreatedDateTime(applicationKey, application.patronApplication)
     ).pipe(
       switchMap((createdDateTime: string) => {
-        const patronApplication: PatronApplication = new PatronApplication({
-          ...application.patronApplication,
-          applicationDefinitionKey: applicationKey,
-          createdDateTime,
-          status: ApplicationStatus.Pending,
-        });
-        const applicationDetails: ApplicationDetails = new ApplicationDetails({ ...application, patronApplication });
-
-        return this._updateApplication(applicationDetails, form, ApplicationStatus.Pending).pipe(
-          tap(() => {
-            this._applicationsStateService.setApplication(applicationKey, applicationDetails);
-          })
+        const applicationDetails: ApplicationDetails = this._createApplicationDetails(
+          applicationKey,
+          application,
+          ApplicationStatus.Pending,
+          createdDateTime
         );
+
+        return this._updateApplication(applicationDetails, form, ApplicationStatus.Pending);
       })
     );
   }
 
   private _updateApplication(
-    application: ApplicationDetails,
+    applicationDetails: ApplicationDetails,
     form: any,
     status: ApplicationStatus
   ): Observable<ResponseStatus> {
-    const applicationDefinition: ApplicationDefinition = application.applicationDefinition;
-    const applicationKey: number = application.applicationDefinition.key;
+    const applicationDefinition: ApplicationDefinition = applicationDetails.applicationDefinition;
+    const applicationKey: number = applicationDetails.applicationDefinition.key;
 
     return from(this._questionsStorageService.updateQuestions(applicationKey, form, status)).pipe(
       switchMap((storedApplication: StoredApplication) => {
         const parsedJson: any[] = parseJsonToArray(applicationDefinition.applicationFormJson);
         const questions = storedApplication.questions;
         const patronAttributes: PatronAttribute[] = this._getAttributes(
-          application.patronAttributes,
+          applicationDetails.patronAttributes,
           parsedJson,
           questions
         );
         const patronPreferences: PatronPreference[] = this._getPreferences(
-          application.patronPreferences,
+          applicationDetails.patronPreferences,
           parsedJson,
           questions
         );
-        const patronApplication: PatronApplication = new PatronApplication({ ...application.patronApplication });
+        const patronApplication: PatronApplication = new PatronApplication({ ...applicationDetails.patronApplication });
         const body: ApplicationRequest = new ApplicationRequest({
           patronApplication,
           patronAttributes,
@@ -146,8 +136,34 @@ export class ApplicationsService {
         });
 
         return this._housingProxyService.put(this._patronApplicationsUrl, body);
+      }),
+      tap(() => {
+        this._applicationsStateService.setApplication(applicationKey, applicationDetails);
       })
     );
+  }
+
+  private _createApplicationDetails(
+    applicationKey: number,
+    applicationDetails: ApplicationDetails,
+    status: ApplicationStatus,
+    createdDateTime: string,
+    submittedDateTime?: string
+  ): ApplicationDetails {
+    const options: any = {
+      ...applicationDetails.patronApplication,
+      applicationDefinitionKey: applicationKey,
+      createdDateTime,
+      status,
+    };
+
+    if (submittedDateTime) {
+      options.submittedDateTime = submittedDateTime;
+    }
+
+    const patronApplication: PatronApplication = new PatronApplication(options);
+
+    return new ApplicationDetails({ ...applicationDetails, patronApplication });
   }
 
   private _getAttributes(
@@ -155,14 +171,13 @@ export class ApplicationsService {
     parsedJson: any[],
     questionEntries: QuestionsEntries
   ): PatronAttribute[] {
-    const resultAttributes: PatronAttribute[] = [];
     const facilityControls: QuestionFormControl[] = parsedJson.filter(
       (control: QuestionBase) => control && (control as QuestionFormControl).consumerKey
     );
     const questions: string[] = Object.keys(questionEntries);
 
     if (!facilityControls.length || !questions.length) {
-      return resultAttributes;
+      return [];
     }
 
     return questions
@@ -196,8 +211,7 @@ export class ApplicationsService {
         }
 
         return new PatronAttribute({ attributeConsumerKey, value });
-      })
-      .filter((attribute: PatronAttribute) => hasValue(attribute.value));
+      });
   }
 
   private _getPreferences(
