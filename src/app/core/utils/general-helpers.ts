@@ -2,8 +2,7 @@ import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { ServerErrorsInfo } from '@core/model/server_error/server-error.model';
 import { MonoTypeOperatorFunction, Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-
-export const EMAIL_REGEXP = /^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z]+(\.[a-z]+)*\.[a-z]{2,6}$/gi;
+import { ZERO_FIRST_REGEXP, INT_REGEXP, INT_DEC_REGEXP, EMAIL_REGEXP } from './regexp-paterns';
 
 export function parseArrayFromString<T>(value: string): Array<T> {
   if (value && !value.length) return [];
@@ -22,27 +21,27 @@ export const formControlErrorDecorator = (
 };
 
 export const validateEmail = ({ value }: AbstractControl): ValidationErrors | null => {
-  const test = /^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z]+(\.[a-z]+)*\.[a-z]{2,6}$/.test(value);
+  const test = EMAIL_REGEXP.test(value);
   return test ? null : { incorrect: true };
 };
 
 export const validateMonthRange = ({ value }: AbstractControl): ValidationErrors | null => {
-  const isStartedWithZero = /^(0+)/g.test(value);
+  const isStartedWithZero = ZERO_FIRST_REGEXP.test(value);
 
   value = Number(value);
   return isNaN(value) || value <= 0 || value > 31 || isStartedWithZero ? { incorrect: true } : null;
 };
 
 export const validateInputAmount = ({ value }: AbstractControl): ValidationErrors | null => {
-  const isStartedWithZero = /^(0+)/g.test(value);
-  const isIntegerOrDecemals = /^\s*(?=.*[1-9])\d*(?:\.\d{1,2})?\s*$/g.test(value);
+  const isStartedWithZero = ZERO_FIRST_REGEXP.test(value);
+  const isIntegerOrDecemals = INT_DEC_REGEXP.test(value);
 
   return isNaN(value) || isStartedWithZero || !isIntegerOrDecemals ?  { incorrect: true } : null;
 };
 
 export const validateInteger = ({ value }: AbstractControl): ValidationErrors | null => {
-  const isStartedWithZero = /^(0+)/g.test(value);
-  const isInteger = /(?:\s|^)\d+(?=\s|$)/g.test(value);
+  const isStartedWithZero = ZERO_FIRST_REGEXP.test(value);
+  const isInteger = INT_REGEXP.test(value);
 
   return !isInteger || isStartedWithZero ? { incorrect: true } : null;
 };
