@@ -6,6 +6,7 @@ import { tap, switchMap, take, finalize } from 'rxjs/operators';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { MerchantService } from '@sections/ordering/services';
 import { BuildingInfo } from '@sections/ordering/shared/models';
+import { SYSTEM_SETTINGS_CONFIG, INSTITUTION_ADRESS_RESTRICTIONS } from '@sections/ordering/ordering.config';
 
 @Component({
   selector: 'st-saved-addresses',
@@ -98,14 +99,26 @@ export class SavedAddressesComponent implements OnInit {
 
   private initAddresses() {
     this.loader.showSpinner();
-    this.userService
-      .getUserAddresses()
+    zip(
+      this.merchantService.getSettingByConfig(SYSTEM_SETTINGS_CONFIG.addressRestrictionToOnCampus),
+      this.userService.getUserAddresses()
+    )
       .pipe(
         finalize(() => this.loader.closeSpinner()),
         take(1)
       )
-      .subscribe(addresses => {
-        this.userAddresses = addresses;
+      .subscribe(([{ value }, addresses]) => {
+        const institutionRestriction = parseInt(value);
+        const filteredByInstitution = addresses.filter(({ onCampus }) => {
+          if (institutionRestriction === INSTITUTION_ADRESS_RESTRICTIONS.onCampus) {
+            return onCampus;
+          }
+          if (institutionRestriction === INSTITUTION_ADRESS_RESTRICTIONS.offCampus) {
+            return !onCampus;
+          }
+        });
+
+        this.userAddresses = !institutionRestriction ? addresses : filteredByInstitution;
       });
   }
 }
