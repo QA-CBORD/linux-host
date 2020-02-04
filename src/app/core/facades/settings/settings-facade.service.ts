@@ -27,7 +27,7 @@ export class SettingsFacadeService extends ServiceStateFacade {
     return this.stateService.isUpdating$;
   }
 
-  getSetting$(domain: string, category: string, name: string): Observable<SettingInfo> {
+  getSetting$({ domain = '', category = '', name = '' }: ContentStringRequest): Observable<SettingInfo> {
     return this.stateService.getSetting$(domain, category, name);
   }
 
@@ -39,7 +39,7 @@ export class SettingsFacadeService extends ServiceStateFacade {
     const call = this.settingsApiService.getUserSettingsByName(settingName);
 
     return this.makeRequestWithUpdatingStateHandler<UserSettingInfo>(call, this.stateService).pipe(
-      tap((data: UserSettingInfo) => this.addSettingsToState(data))
+      tap((data: UserSettingInfo) => this.addSettingsToState(data)),
     );
   }
 
@@ -51,7 +51,7 @@ export class SettingsFacadeService extends ServiceStateFacade {
     const call = this.settingsApiService.getSettingByConfig(config);
 
     return this.makeRequestWithUpdatingStateHandler<SettingInfo>(call, this.stateService).pipe(
-      tap((data: SettingInfo) => this.addSettingsToState(data))
+      tap((data: SettingInfo) => this.addSettingsToState(data)),
     );
   }
 
@@ -60,7 +60,7 @@ export class SettingsFacadeService extends ServiceStateFacade {
     const call = zip(...requestArray);
 
     return this.makeRequestWithUpdatingStateHandler<SettingInfo[]>(call, this.stateService).pipe(
-      tap((data: SettingInfo[]) => this.addSettingsToState(data))
+      tap((data: SettingInfo[]) => this.addSettingsToState(data)),
     );
   }
 

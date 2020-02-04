@@ -11,6 +11,7 @@ import { SafeResourceUrl } from '@angular/platform-browser';
 })
 export class StActivateLocationItemComponent {
   @Input() userInfoId: string;
+  @Input() isShowId: boolean = true;
   @Input() location$: Observable<MMobileLocationInfo>;
   @Input() institutionName: string;
   @Input() userPhoto: string = null;

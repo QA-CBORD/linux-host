@@ -34,12 +34,12 @@ export class AccessCardComponent implements OnInit {
   isLoadingPhoto: boolean = true;
 
   constructor(
-    private readonly accessCardService: AccessCardService,
-    private readonly sanitizer: DomSanitizer,
-    private readonly router: Router,
-    private readonly cdRef: ChangeDetectorRef,
-    private readonly nativeProvider: NativeProvider
-  ) {}
+      private readonly accessCardService: AccessCardService,
+      private readonly sanitizer: DomSanitizer,
+      private readonly router: Router,
+      private readonly nativeProvider: NativeProvider
+  ) {
+  }
 
   ngOnInit() {
     this.getUserData();
@@ -56,30 +56,28 @@ export class AccessCardComponent implements OnInit {
   private getUserData() {
     this.userName$ = this.accessCardService.getUserName();
     this.accessCardService
-      .getUserPhoto()
-      .pipe(first())
-      .subscribe(photo => {
-        this.isLoadingPhoto = false;
-        this.userPhoto = photo;
-        this.cdRef.detectChanges();
-      });
+        .getUserPhoto()
+        .pipe(first())
+        .subscribe(photo => {
+          this.isLoadingPhoto = false;
+          this.userPhoto = photo;
+        });
   }
 
   private setInstitutionData() {
     this.institutionColor$ = this.accessCardService
-      .getInstitutionColor()
-      .pipe(map(v => '#' + (JSON.parse(v) ? JSON.parse(v)['native-header-bg'] : '')));
+        .getInstitutionColor()
+        .pipe(map(v => '#' + (JSON.parse(v) ? JSON.parse(v)['native-header-bg'] : '')));
     this.institutionName$ = this.accessCardService.getInstitutionName();
     this.institutionPhoto$ = this.accessCardService
-      .getInstitutionImage()
-      .pipe(map(response => this.sanitizer.bypassSecurityTrustResourceUrl(response)));
+        .getInstitutionImage()
+        .pipe(map(response => this.sanitizer.bypassSecurityTrustResourceUrl(response)));
     this.institutionBackgroundImage$ = this.accessCardService.getInstitutionBackgroundImage();
   }
 
   private getFeaturesEnabled() {
     this.getMyCardEnabled$ = this.accessCardService.isGETMyCardEnabled();
     this.isMobileAccessButtonEnabled$ = this.accessCardService.isMobileAccessEnable();
-    // this.applePayEnabled$ = this.accessCardService.isApplePayEnabled();
   }
 
   async onMobileAccessClick(): Promise<void> {
