@@ -64,9 +64,7 @@ export class ApplicationsService {
 
     return this._housingProxyService.get<ApplicationDetails>(apiUrl).pipe(
       map((application: any) => new ApplicationDetails(application)),
-      tap((application: ApplicationDetails) => {
-        this._questionsService.setPages(application);
-      })
+      tap((application: ApplicationDetails) => this._questionsService.setPages(application))
     );
   }
 
@@ -112,7 +110,7 @@ export class ApplicationsService {
     status: ApplicationStatus
   ): Observable<ResponseStatus> {
     const applicationDefinition: ApplicationDefinition = applicationDetails.applicationDefinition;
-    const applicationKey: number = applicationDetails.applicationDefinition.key;
+    const applicationKey: number = applicationDefinition.key;
 
     return from(this._questionsStorageService.updateQuestions(applicationKey, form, status)).pipe(
       switchMap((storedApplication: StoredApplication) => {
@@ -128,9 +126,8 @@ export class ApplicationsService {
           parsedJson,
           questions
         );
-        const patronApplication: PatronApplication = new PatronApplication({ ...applicationDetails.patronApplication });
         const body: ApplicationRequest = new ApplicationRequest({
-          patronApplication,
+          patronApplication: applicationDetails.patronApplication,
           patronAttributes,
           patronPreferences,
         });
@@ -150,7 +147,7 @@ export class ApplicationsService {
     createdDateTime: string,
     submittedDateTime?: string
   ): ApplicationDetails {
-    const options: any = {
+    const options: PatronApplication = {
       ...applicationDetails.patronApplication,
       applicationDefinitionKey: applicationKey,
       createdDateTime,
@@ -159,6 +156,7 @@ export class ApplicationsService {
 
     if (submittedDateTime) {
       options.submittedDateTime = submittedDateTime;
+      options.isApplicationSubmitted = true;
     }
 
     const patronApplication: PatronApplication = new PatronApplication(options);

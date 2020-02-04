@@ -10,6 +10,8 @@
     [interfaceOptions]="customPopoverOptions"
     (ionChange)="handleSelectTerm(termsSelect.value)"
   >
-    <ion-select-option [value]="term" *ngFor="let term of terms">{{ term.termName }}</ion-select-option>
+    <ion-select-option [value]="term" *ngFor="let term of terms; trackBy: trackById">
+      {{ term.termName }}
+    </ion-select-option>
   </ion-select>
 </ion-item>

@@ -4,6 +4,12 @@ export interface QuestionBaseOptions {
   attribute?: string;
 }
 
+export interface QuestionBaseOptionValue {
+  label: string;
+  value: string;
+  selected?: boolean;
+}
+
 export class QuestionBase implements QuestionBaseOptions {
   type: string;
   label: string;
