@@ -1,7 +1,7 @@
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { map, skipWhile, switchMap, take } from 'rxjs/operators';
+import { map, skipWhile, switchMap, take, tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import bwipjs from 'bwip-angular2';
 
@@ -46,7 +46,7 @@ export class ScanCardComponent implements OnInit {
     this.setInstitution();
     this.setInstitutionPhoto();
     this.initBarcode();
-    this.userInfoId$ = this.commerceApiService.getCashlessUserId();
+    this.userInfoId$ = this.commerceApiService.getCashlessUserId().pipe(map(d => d.length ? d : 'None'));
   }
 
   get userFullName$(): Observable<string> {
