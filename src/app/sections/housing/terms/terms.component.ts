@@ -42,4 +42,8 @@ export class TermsComponent implements OnInit {
 
     this._termsService.setTermId(term.termId);
   }
+
+  trackById(_: number, term: Term): number {
+    return term.termId;
+  }
 }

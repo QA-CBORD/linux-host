@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
 
-import { hasValue } from '../utils';
 import { STORAGE_KEY } from '../housing.config';
 
 import { ApplicationStatus, PatronApplication } from '../applications/applications.model';
@@ -40,18 +39,18 @@ export class QuestionsStorageService {
   }
 
   async updateCreatedDateTime(applicationKey: number, patronApplication: PatronApplication): Promise<string> {
-    return this.getApplication(applicationKey).then(async (application: StoredApplication) => {
+    return this.getApplication(applicationKey).then(async (storedApplication: StoredApplication) => {
       let createdDateTime: string = new Date().toISOString();
 
       if (patronApplication && patronApplication.createdDateTime) {
         createdDateTime = patronApplication.createdDateTime;
-      } else if (application && application.createdDateTime) {
-        createdDateTime = createdDateTime;
+      } else if (storedApplication && storedApplication.createdDateTime) {
+        createdDateTime = storedApplication.createdDateTime;
       }
 
       return this._storage
         .set(`${this._key}-${applicationKey}`, {
-          ...application,
+          ...storedApplication,
           createdDateTime,
         })
         .then(() => createdDateTime);

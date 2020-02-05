@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { FormControl, Validators, FormGroup, FormArray, AbstractControl, ValidatorFn } from '@angular/forms';
 import { BehaviorSubject, Observable } from 'rxjs';
 
-import { parseJsonToArray, hasValue, integerValidator, numericValidator, trimEmptyKeys } from '../utils';
+import { parseJsonToArray, integerValidator, numericValidator } from '../utils';
 
 import { QuestionsStorageService } from './questions-storage.service';
 
@@ -68,21 +68,17 @@ export class QuestionsService {
       const namesToTouch: Set<string> = new Set<string>();
 
       pages.forEach((page: ApplicationPage) => {
-        const trimmedQuestions: any = trimEmptyKeys(questions);
-
-        page.form.patchValue(trimmedQuestions);
+        page.form.patchValue(questions);
 
         const controls = page.form.controls;
 
         Object.keys(controls).forEach((controlName: string) => {
           const control: AbstractControl = controls[controlName];
 
-          if (hasValue(control.value)) {
-            control.markAsDirty();
-            control.markAsTouched();
+          control.markAsDirty();
+          control.markAsTouched();
 
-            namesToTouch.add(controlName);
-          }
+          namesToTouch.add(controlName);
         });
       });
 
@@ -162,7 +158,7 @@ export class QuestionsService {
     const foundAttribute: PatronAttribute = attributes.find(
       (attribute: PatronAttribute) => attribute.attributeConsumerKey === question.consumerKey
     );
-    const value: any = foundAttribute ? foundAttribute.value : null;
+    const value: any = foundAttribute ? foundAttribute.value : '';
     const validators: ValidatorFn[] = [];
 
     if (question.required) {
@@ -170,16 +166,20 @@ export class QuestionsService {
     }
 
     if (question instanceof QuestionTextbox) {
-      const dataType: string = question.dataType ? question.dataType.toLowerCase() : null;
-
-      const dataTypeValidator: ValidatorFn = this._dataTypesValidators[dataType];
-
-      if (dataTypeValidator) {
-        validators.push(dataTypeValidator);
-      }
+      this._addDataTypeValidator(question, validators);
     }
 
     return new FormControl(value, validators);
+  }
+
+  private _addDataTypeValidator(question: QuestionTextbox, validators: ValidatorFn[]): void {
+    const dataType: string = question.dataType ? question.dataType.toLowerCase() : null;
+
+    const dataTypeValidator: ValidatorFn = this._dataTypesValidators[dataType];
+
+    if (dataTypeValidator) {
+      validators.push(dataTypeValidator);
+    }
   }
 
   private _toQuestionCheckboxControl(question: QuestionCheckboxGroup): FormArray {
@@ -193,18 +193,26 @@ export class QuestionsService {
   private _toQuestionReorderControl(question: QuestionReorder, preferences: PatronPreference[]): FormArray {
     const values: FormControl[] = question.values
       .filter((value: QuestionReorderValue) => value.selected)
-      .sort((current: QuestionReorderValue, next: QuestionReorderValue) => {
-        const currentIndex: number = preferences.findIndex(
-          (preference: PatronPreference) => preference.facilityKey === current.facilityKey
-        );
-        const nextIndex: number = preferences.findIndex(
-          (preference: PatronPreference) => preference.facilityKey === next.facilityKey
-        );
-
-        return currentIndex - nextIndex;
-      })
+      .sort((current: QuestionReorderValue, next: QuestionReorderValue) =>
+        this._sortQuestionReorder(preferences, current, next)
+      )
       .map((value: QuestionReorderValue) => new FormControl(value));
 
     return new FormArray(values);
+  }
+
+  private _sortQuestionReorder(
+    preferences: PatronPreference[],
+    current: QuestionReorderValue,
+    next: QuestionReorderValue
+  ): number {
+    const currentIndex: number = preferences.findIndex(
+      (preference: PatronPreference) => preference.facilityKey === current.facilityKey
+    );
+    const nextIndex: number = preferences.findIndex(
+      (preference: PatronPreference) => preference.facilityKey === next.facilityKey
+    );
+
+    return currentIndex - nextIndex;
   }
 }

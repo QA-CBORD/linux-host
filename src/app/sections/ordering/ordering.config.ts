@@ -75,6 +75,13 @@ export enum ACCOUNT_TYPES {
   charge = 2, // Charge, Credit
   decliningBalance = 3, // declining balance, points
 }
+
+export enum INSTITUTION_ADRESS_RESTRICTIONS {
+  both = 0,
+  onCampus = 1,
+  offCampus = 2
+}
+
 export const ORDER_VALIDATION_ERRORS: ServerErrorsInfo = {
   9001: 'The selected delivery address could not be mapped to valid coordinates.',
   9003: 'Merchant does not support the requested order type',
