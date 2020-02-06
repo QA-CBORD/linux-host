@@ -61,7 +61,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     private readonly loadingService: LoadingService,
     private readonly nativeProvider: NativeProvider,
     private readonly cdRef: ChangeDetectorRef
-
+    
   ) {}
 
   ngOnInit() {
@@ -74,6 +74,11 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.sourceSubscription.unsubscribe();
   }
+
+  // ionViewWillEnter(){
+  //   console.log(1);
+
+  // }
 
   get isFreeFromDepositEnabled$(): Observable<boolean> {
     return this.depositService.settings$.pipe(
@@ -264,7 +269,10 @@ export class DepositPageComponent implements OnInit, OnDestroy {
               return this.onErrorRetrieve(errorMessage);
             }
 
-            this.getAccounts();
+            this.depositService
+              .getUserAccounts()
+              .pipe(take(1), tap(()=> this.cdRef.detectChanges()))
+              .subscribe();
           });
       }
 
@@ -326,13 +334,11 @@ export class DepositPageComponent implements OnInit, OnDestroy {
             tap(accounts => {
               this.billmeMappingArr = billmeMappingArr;
               this.creditCardSourceAccounts = this.filterAccountsByPaymentSystem(accounts);
-              console.log(accounts);
               this.creditCardDestinationAccounts = this.filterCreditCardDestAccounts(
                 depositTenders as string[],
                 accounts
               );
               this.billmeDestinationAccounts = this.filterBillmeDestAccounts(this.billmeMappingArr, accounts);
-              this.cdRef.detectChanges();
             })
           )
         )
