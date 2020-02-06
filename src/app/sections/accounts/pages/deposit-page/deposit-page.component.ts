@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ChangeDetectorRef } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ModalController, PopoverController, ToastController } from '@ionic/angular';
 import { map, switchMap, take, tap, finalize } from 'rxjs/operators';
@@ -59,7 +59,9 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     private readonly toastController: ToastController,
     private readonly router: Router,
     private readonly loadingService: LoadingService,
-    private readonly nativeProvider: NativeProvider
+    private readonly nativeProvider: NativeProvider,
+    private readonly cdRef: ChangeDetectorRef
+
   ) {}
 
   ngOnInit() {
@@ -263,6 +265,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
             }
 
             this.getAccounts();
+            this.cdRef.detectChanges();
           });
       }
 
@@ -330,6 +333,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
                 accounts
               );
               this.billmeDestinationAccounts = this.filterBillmeDestAccounts(this.billmeMappingArr, accounts);
+              
             })
           )
         )
