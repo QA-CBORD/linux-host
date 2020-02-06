@@ -188,7 +188,7 @@
   margin: 0;
 
   @include disabled() {
-    --color: #{$color-gray};
+    --color: #{rgba($color-black, 0.3)};
     --background: #{$color-mercury};
   }
 }

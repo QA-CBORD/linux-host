@@ -51,6 +51,10 @@
   border-radius: 8px;
   position: relative;
 
+  &::before {
+    background-color: $color-white;
+  }
+
   &:focus,
   &:focus-within,
   &:active,

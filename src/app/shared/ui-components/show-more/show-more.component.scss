@@ -1,7 +1,7 @@
 @import 'tools';
 
 :host(.toggled) {
-  .show-more__inner {
+  .show-more__icon-container {
     @include chevron-up-active(0);
   }
 }

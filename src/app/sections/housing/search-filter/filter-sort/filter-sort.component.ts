@@ -37,13 +37,13 @@ export class FilterSortComponent {
     this.select(control);
   }
 
+  unselectAll(): void {
+    this.sortControls.forEach((control: SortControlComponent) => control.unselect());
+  }
+
   private select(control: SortControlComponent): void {
     control.select();
 
     this.sorted.emit(control);
-  }
-
-  private unselectAll(): void {
-    this.sortControls.forEach((control: SortControlComponent) => control.unselect());
   }
 }

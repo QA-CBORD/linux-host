@@ -16,6 +16,10 @@
     border-radius: 8px;
     padding: 15px 10px 0;
 
+    &::before {
+      background-color: $color-white;
+    }
+
     &:focus-within {
       @include chevron-down-active();
 
@@ -67,7 +71,6 @@
 :host-context(.ng-valid) .select__control {
   &:focus-within {
     & + .select__placeholder {
-
       @include floating-label($color-dodger-blue);
     }
   }

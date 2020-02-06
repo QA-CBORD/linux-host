@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
+import { ReactiveFormsModule } from '@angular/forms';
 
 import { PageTitleModule } from '@sections/housing/page-title/page-title.module';
 import { FilterSortModule } from './filter-sort/filter-sort.module';
@@ -11,7 +12,15 @@ import { SearchFilterComponent } from './search-filter.component';
 import { SearchFilterModalComponent } from './search-filter-modal/search-filter-modal.component';
 import { SearchFilterSectionComponent } from './search-filter-section/search-filter-section.component';
 
-export const imports = [CommonModule, IonicModule, PageTitleModule, FilterSortModule, RangeModule, ShowMoreModule];
+export const imports = [
+  CommonModule,
+  IonicModule,
+  ReactiveFormsModule,
+  PageTitleModule,
+  FilterSortModule,
+  RangeModule,
+  ShowMoreModule,
+];
 export const declarations = [SearchFilterComponent, SearchFilterModalComponent, SearchFilterSectionComponent];
 export const entryComponents = [SearchFilterModalComponent];
 

@@ -5,6 +5,7 @@
     --color: #{$color-night-rider};
     --background: #{$color-white};
     --padding-start: 35px;
+    --ripple-color: #{$color-white};
 
     &::before {
       display: block;

@@ -1,4 +1,4 @@
-<ng-container>
+<ng-container [formGroup]="parentGroup">
   <ion-range
     dual-knobs
     pin
@@ -8,6 +8,7 @@
     [value]="value"
     class="range"
     #range
+    [formControlName]="name"
     (ionChange)="handleRangeChange(range.value)"
   ></ion-range>
 

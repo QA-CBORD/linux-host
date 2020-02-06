@@ -18,6 +18,8 @@ export class RangeComponent implements OnInit {
 
   @Input() value: RangeValue;
 
+  @Input() name: string;
+
   price: string;
 
   ngOnInit(): void {

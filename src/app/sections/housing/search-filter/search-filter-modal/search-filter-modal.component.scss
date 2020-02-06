@@ -9,6 +9,14 @@
   background-color: $color-alabaster;
 }
 
+.search-filter-modal__clear {
+  @include font-nunito-semibold(16px);
+
+  @include disabled() {
+    opacity: 0.3;
+  }
+}
+
 .search-filter-model__content,
 .search-filter-model__footer-toolbar {
   --background: #{$color-alabaster};
