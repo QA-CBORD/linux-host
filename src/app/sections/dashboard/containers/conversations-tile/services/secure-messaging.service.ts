@@ -6,6 +6,7 @@ import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { AuthService } from 'src/app/core/service/auth-service/auth.service';
 import { SecureMessagingAuthInfo, SecureMessageGroupInfo, SecureMessageInfo, SecureMessageSendBody } from '@sections/secure-messaging/models';
 import { SecureMessagingApiService } from '@sections/secure-messaging/service';
+import { X_Y_REGEXP } from '@core/utils/regexp-patterns';
 
 @Injectable()
 export class SecureMessagingService {
@@ -53,7 +54,7 @@ export class SecureMessagingService {
   }
 
   private newGuid() {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(X_Y_REGEXP, function(c) {
       // tslint:disable-next-line:no-bitwise
       const r = (Math.random() * 16) | 0,
         v = c === 'x' ? r : (r & 0x3) | 0x8;

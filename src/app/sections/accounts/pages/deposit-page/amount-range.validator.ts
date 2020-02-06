@@ -1,12 +1,12 @@
 import { ValidatorFn, AbstractControl } from '@angular/forms';
+import { COMMA_REGEXP } from '@core/utils/regexp-patterns';
 
 export function amountRangeValidator(min: number, max: number): ValidatorFn {
   return (control: AbstractControl): { [key: string]: { [key: string]: string | number } } | null => {
     const { value } = control;
 
     if (value) {
-      const regex = /[,\s]/g;
-      const amount = value.replace(regex, '');
+        const amount = value.replace(COMMA_REGEXP, '');
 
       if (isNaN(amount) || amount < min) {
         return { minLength: { min, actual: value } };

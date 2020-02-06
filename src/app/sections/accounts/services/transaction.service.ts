@@ -18,12 +18,9 @@ import {
   ContentStringsParamsTransactions,
   GenericContentStringsParams,
 } from '../accounts.config';
-import {
-  DateUtilObject,
-  getTimeRangeOfDate,
-  getUniquePeriodName,
-} from '../shared/ui-components/filter/date-util';
+import { DateUtilObject, getTimeRangeOfDate, getUniquePeriodName } from '../shared/ui-components/filter/date-util';
 import { QueryTransactionHistoryCriteriaDateRange } from '@core/model/account/transaction-query-date-range.model';
+import { TIMEZONE_REGEXP } from '@core/utils/regexp-patterns';
 
 @Injectable()
 export class TransactionService {
@@ -31,7 +28,7 @@ export class TransactionService {
   private currentTimeRange: DateUtilObject;
   private transactionHistory: TransactionHistory[] = [];
   private queryCriteria: QueryTransactionHistoryCriteriaDateRange;
-  private infiniteFetchDateRecord = { lastShownDate: null};
+  private infiniteFetchDateRecord = { lastShownDate: null };
   private transactionResponse: TransactionResponse;
   private contentString;
   private readonly lazyAmount: number = 20;
@@ -72,7 +69,11 @@ export class TransactionService {
     return this.getTransactionHistoryByQuery(this.queryCriteria);
   }
 
-  getRecentTransactions(id: string, period?: DateUtilObject, maxReturnMostRecent?: number): Observable<TransactionHistory[]> {
+  getRecentTransactions(
+    id: string,
+    period?: DateUtilObject,
+    maxReturnMostRecent?: number
+  ): Observable<TransactionHistory[]> {
     period = period ? period : { name: TIME_PERIOD.pastSixMonth };
     maxReturnMostRecent = maxReturnMostRecent ? maxReturnMostRecent : 0;
 
@@ -205,10 +206,9 @@ export class TransactionService {
   }
 
   private getLatestDateInRange(range: TransactionHistory[]): any {
-    if(range && range.length > 0){
-      return new Date(range[range.length - 1].actualDate).toISOString();
+    if (range && range.length > 0) {
+      return new Date(range[range.length - 1].actualDate.toString().replace(TIMEZONE_REGEXP, '$1:$2'));
     }
     return '';
   }
-
 }

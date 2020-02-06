@@ -42,11 +42,7 @@
     </st-textarea-floating-label>
 
     <div *ngSwitchCase="'date'" class="question__item">
-      <st-date-select
-        [parentGroup]="parentGroup"
-        [label]="question.label"
-        [name]="question['name']"
-      ></st-date-select>
+      <st-date-select [parentGroup]="parentGroup" [label]="question.label" [name]="question['name']"></st-date-select>
 
       <st-control-errors
         [control]="parentGroup.get(question['name'])"
@@ -67,7 +63,7 @@
       [stEmptyFormControl]="parentGroup.get(question['name'])"
     >
       <ng-container role="options">
-        <ion-select-option *ngFor="let option of question['values']" [value]="option.value">
+        <ion-select-option *ngFor="let option of question['values']; trackBy: trackByLabel" [value]="option.value">
           {{ option.label }}
         </ion-select-option>
       </ng-container>
@@ -99,7 +95,7 @@
 
         <ion-item
           [formArrayName]="question['name']"
-          *ngFor="let item of question['values']; index as idx"
+          *ngFor="let item of question['values']; index as idx; trackBy: trackByLabel"
           class="ion-no-padding form-checkbox"
           lines="none"
         >
@@ -126,7 +122,7 @@
       ></st-control-errors>
 
       <ion-radio-group [formControlName]="question['name']">
-        <ion-item *ngFor="let item of question['values']" class="ion-no-padding" lines="none">
+        <ion-item *ngFor="let item of question['values']; trackBy: trackByLabel" class="ion-no-padding" lines="none">
           <ion-label class="form-label">{{ item.label }}</ion-label>
           <ion-radio class="form-radio__control" mode="md" slot="start" [value]="item.value"></ion-radio>
         </ion-item>

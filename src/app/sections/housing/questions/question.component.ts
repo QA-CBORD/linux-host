@@ -1,7 +1,7 @@
 import { Component, Input, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 
-import { QuestionBase } from './types/question-base';
+import { QuestionBase, QuestionBaseOptionValue } from './types/question-base';
 import { QuestionHeader } from './questions.model';
 
 @Component({
@@ -50,5 +50,9 @@ export class QuestionComponent {
     });
 
     this.check();
+  }
+
+  trackByLabel(_: number, option: QuestionBaseOptionValue): string {
+    return option.label;
   }
 }
