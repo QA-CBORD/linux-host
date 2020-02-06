@@ -265,7 +265,6 @@ export class DepositPageComponent implements OnInit, OnDestroy {
             }
 
             this.getAccounts();
-            this.cdRef.detectChanges();
           });
       }
 
@@ -333,7 +332,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
                 accounts
               );
               this.billmeDestinationAccounts = this.filterBillmeDestAccounts(this.billmeMappingArr, accounts);
-              
+              this.cdRef.detectChanges();
             })
           )
         )
