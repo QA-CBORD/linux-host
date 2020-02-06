@@ -7,6 +7,7 @@ import { SuccessPopoverComponent } from './components/success-popover/success-po
 import { LoadingService } from 'src/app/core/service/loading/loading.service';
 import { Subscription } from 'rxjs';
 import { take, finalize } from 'rxjs/operators';
+import { WHITESPACE_REGEXP, FOUR_DIGITS_REGEXP } from '@core/utils/regexp-patterns';
 
 @Component({
   selector: 'st-add-credit-card',
@@ -68,7 +69,7 @@ export class AddCreditCardComponent implements OnInit {
   onFormSubmit() {
     const { cardNumber, expDate, securityCode, nameOnCC, billingAddress, zip } = this.ccForm.value;
     const accountTender = this.cardType === 'Visa' ? '4' : '3';
-    const mediaValue = cardNumber.replace(/\s/g, '');
+    const mediaValue = cardNumber.replace(WHITESPACE_REGEXP, '');
     const expirationMonth = expDate.slice(0, 2);
     const expirationYear = expDate.slice(3);
     const accountDisplayName = nameOnCC;
@@ -133,9 +134,9 @@ export class AddCreditCardComponent implements OnInit {
 
   private cardTypeControlSubscribtion() {
     const subscription = this.cardNumberControl.valueChanges.subscribe(value => {
-      this.cardType = this.getCardType(value.replace(/\s/g, ''));
+      this.cardType = this.getCardType(value.replace(WHITESPACE_REGEXP, ''));
       if (this.inputKeyCode !== 8 && value.length <= 16) {
-        this.cardNumberControl.patchValue(value.replace(/(\d{4}(?!\s))/g, '$1 '), { emitEvent: false });
+        this.cardNumberControl.patchValue(value.replace(FOUR_DIGITS_REGEXP, '$1 '), { emitEvent: false });
       }
     });
     this.sourceSubscription.add(subscription);

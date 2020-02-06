@@ -16,6 +16,7 @@ import { handleServerError } from '@core/utils/general-helpers';
 import { StGlobalPopoverComponent } from '@shared/ui-components';
 import { ConfirmPopoverComponent } from '@sections/ordering/shared/ui-components/confirm-popover/confirm-popover.component';
 import { UserService } from '@core/service/user-service/user.service';
+import { TIMEZONE_REGEXP } from '@core/utils/regexp-patterns';
 
 @Component({
   selector: 'st-recent-order',
@@ -187,7 +188,8 @@ export class RecentOrderComponent implements OnInit {
     )
     this.orderDetailsOptions$ = zip(address, this.order$, this.userService.userData)
       .pipe(map(([address, { type, dueTime }, { locale, timeZone }]) => {
-        const date = new Date(dueTime.replace(/([+\-]\d\d)(\d\d)$/, "$1:$2"));
+        //Formated timezone from +0000 to +00:00 for Safari date format
+        const date = new Date(dueTime.replace(TIMEZONE_REGEXP, "$1:$2"));
         const time = date.toLocaleString(locale, { hour12: false, timeZone })
         return {
           address,

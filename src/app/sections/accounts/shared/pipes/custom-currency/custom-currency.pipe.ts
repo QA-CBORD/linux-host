@@ -1,5 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
+import { COMMA_REGEXP } from '@core/utils/regexp-patterns';
 
 @Pipe({
   name: 'customCurrency',
@@ -10,8 +11,7 @@ export class CustomCurrencyPipe implements PipeTransform {
     if (!value || value === null || value.length <= 1) {
       return value;
     }
-    const regex = /[,\s]/g;
-    const result = value.replace(regex, '');
+    const result = value.replace(COMMA_REGEXP, '');
     const num = parseFloat(result);
 
     return num.toLocaleString('en-US', { maximumFractionDigits: 2 });

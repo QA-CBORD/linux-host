@@ -2,6 +2,10 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { CommerceApiService } from 'src/app/core/service/commerce/commerce-api.service';
 import { AccountCreationInfo } from '../models/account-creation-info';
+import {
+  MASTERCARD_REGEXP, EXPRTN_DATE_1_REGEXP, EXPRTN_DATE_2_REGEXP, EXPRTN_DATE_3_REGEXP, EXPRTN_DATE_4_REGEXP, EXPRTN_DATE_5_REGEXP, EXPRTN_DATE_6_REGEXP, EXPRTN_DATE_7_REGEXP, EXPRTN_DATE_8_REGEXP,
+ 
+} from '@core/utils/regexp-patterns';
 
 @Injectable()
 export class AddCreditCardService {
@@ -13,24 +17,21 @@ export class AddCreditCardService {
     if (number.match(re) != null) return 'Visa';
 
     // Mastercard
-    if (
-      /^(5[1-5][0-9]{14}|2(22[1-9][0-9]{12}|2[3-9][0-9]{13}|[3-6][0-9]{14}|7[0-1][0-9]{13}|720[0-9]{12}))$/.test(number)
-    )
-      return 'MasterCard';
+    if (MASTERCARD_REGEXP.test(number)) return 'MasterCard';
 
     return '';
   }
 
   formatExpirationDate(string): string {
     return string
-      .replace(/^([1-9]\/|[2-9])$/g, '0$1/')
-      .replace(/^(0[1-9]{1}|1[0-2]{1})$/g, '$1/')
-      .replace(/^([0-1]{1})([3-9]{1})$/g, '0$1/$2')
-      .replace(/^(\d)\/(\d\d)$/g, '0$1/$2')
-      .replace(/^(0?[1-9]{1}|1[0-2]{1})([0-9]{2})$/g, '$1/$2')
-      .replace(/^([0]{1,})\/|[0]{1,}$/g, '0')
-      .replace(/[^\d\/]|^[\/]{0,}$/g, '')
-      .replace(/\/\//g, '/');
+      .replace(EXPRTN_DATE_1_REGEXP, '0$1/')
+      .replace(EXPRTN_DATE_2_REGEXP, '$1/')
+      .replace(EXPRTN_DATE_3_REGEXP, '0$1/$2')
+      .replace(EXPRTN_DATE_4_REGEXP, '0$1/$2')
+      .replace(EXPRTN_DATE_5_REGEXP, '$1/$2')
+      .replace(EXPRTN_DATE_6_REGEXP, '0')
+      .replace(EXPRTN_DATE_7_REGEXP, '')
+      .replace(EXPRTN_DATE_8_REGEXP, '/');
   }
 
   createAccount(
