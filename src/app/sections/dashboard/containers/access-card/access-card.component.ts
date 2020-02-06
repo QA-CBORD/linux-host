@@ -29,7 +29,7 @@ export class AccessCardComponent implements OnInit {
   appleWalletMessage: string;
   appleWalletMessageImage: string;
   appleWalletMessageImageHidden: boolean;
-  appleWalletButtonHidden: boolean;
+  appleWalletButtonHidden: boolean = true;
   userPhoto: string;
   isLoadingPhoto: boolean = true;
 
