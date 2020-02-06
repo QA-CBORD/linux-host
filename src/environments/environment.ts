@@ -87,6 +87,13 @@ export const testCredentials: Dictionary<UserLogin> = {
     institutionId: 'd0a8487d-d30d-4013-acd4-29e5927fe0d0',
   },
 
+  ithacaUniveristy: {
+    userName: 'cw100@test.cbord.com',
+    password: 'P@ssword2',
+    domain: null,
+    institutionId: '66c6e2ab-4658-4f18-83ff-c0461b169e16',
+  },
+
   lowBalance: {
     userName: 'lowbalance@tpsmail.dev',
     password: 'password1',
