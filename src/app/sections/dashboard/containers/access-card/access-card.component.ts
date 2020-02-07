@@ -29,7 +29,7 @@ export class AccessCardComponent implements OnInit {
   appleWalletMessage: string;
   appleWalletMessageImage: string;
   appleWalletMessageImageHidden: boolean;
-  appleWalletButtonHidden: boolean;
+  appleWalletButtonHidden: boolean = true;
   userPhoto: string;
   isLoadingPhoto: boolean = true;
 
@@ -95,40 +95,49 @@ export class AccessCardComponent implements OnInit {
 
   private setAppleWalletMessage() {
     this.appleWalletEnabled = this.appleWalletInfo.isAppleWalletEnabled;
-    let isIPhoneAlreadyProvisioned = this.appleWalletInfo.iPhoneProvisioned;
-    let isWatchPaired = this.appleWalletInfo.watchPaired;
-    let isIWatchAlreadyProvisioned = this.appleWalletInfo.watchProvisioned;
-    let watchCredStatus = this.appleWalletInfo.watchCredStatus;
-    let iPhoneCredStatus = this.appleWalletInfo.iPhoneCredStatus;
-    let watchCred = this.appleWalletInfo.watchCred;
+    if(this.appleWalletEnabled){
+    
+      let isIPhoneAlreadyProvisioned = this.appleWalletInfo.iPhoneProvisioned;
+      let isWatchPaired = this.appleWalletInfo.watchPaired;
+      let isIWatchAlreadyProvisioned = this.appleWalletInfo.watchProvisioned;
+      let watchCredStatus = this.appleWalletInfo.watchCredStatus;
+      let iPhoneCredStatus = this.appleWalletInfo.iPhoneCredStatus;
+      let watchCred = this.appleWalletInfo.watchCred;
 
-    /// code ported from iOS with some unused parts left commented out, which we might use later
-    if (isIPhoneAlreadyProvisioned && !isWatchPaired) {
-      //no watch, only phone
-      this.appleWalletMessageImage = 'iphonex';
-      this.appleWalletMessage = 'Added to iPhone';
-      // this.appleWalletMessageImageHidden = false;
-      this.appleWalletButtonHidden = true;
-    } else if (isIPhoneAlreadyProvisioned && isWatchPaired && !isIWatchAlreadyProvisioned) {
-      this.appleWalletMessageImage = 'iphonex';
-      this.appleWalletMessage = 'Added to iPhone';
-      // this.appleWalletMessageImageHidden =  false;
-      this.appleWalletButtonHidden = !(watchCredStatus == watchCred);
-    } else if (isWatchPaired && isIWatchAlreadyProvisioned && !isIPhoneAlreadyProvisioned) {
-      this.appleWalletMessageImage = 'applewatch';
-      this.appleWalletMessage = 'Added to Watch';
-      // this.appleWalletMessageImageHidden = false;
-      this.appleWalletButtonHidden = !(iPhoneCredStatus == watchCred);
-    } else if (isIPhoneAlreadyProvisioned && isIWatchAlreadyProvisioned && isWatchPaired) {
-      this.appleWalletMessage = 'Added to iPhone and Watch';
-      this.appleWalletMessageImage = 'iphonex_applewatch';
-      // this.appleWalletMessageImageHidden = false;
-      this.appleWalletButtonHidden = true;
+      /// code ported from iOS with some unused parts left commented out, which we might use later
+      if (isIPhoneAlreadyProvisioned && !isWatchPaired) {
+        //no watch, only phone
+        this.appleWalletMessageImage = 'iphonex';
+        this.appleWalletMessage = 'Added to iPhone';
+        // this.appleWalletMessageImageHidden = false;
+        this.appleWalletButtonHidden = true;
+      } else if (isIPhoneAlreadyProvisioned && isWatchPaired && !isIWatchAlreadyProvisioned) {
+        this.appleWalletMessageImage = 'iphonex';
+        this.appleWalletMessage = 'Added to iPhone';
+        // this.appleWalletMessageImageHidden =  false;
+        this.appleWalletButtonHidden = !(watchCredStatus == watchCred);
+      } else if (isWatchPaired && isIWatchAlreadyProvisioned && !isIPhoneAlreadyProvisioned) {
+        this.appleWalletMessageImage = 'applewatch';
+        this.appleWalletMessage = 'Added to Watch';
+        // this.appleWalletMessageImageHidden = false;
+        this.appleWalletButtonHidden = !(iPhoneCredStatus == watchCred);
+      } else if (isIPhoneAlreadyProvisioned && isIWatchAlreadyProvisioned && isWatchPaired) {
+        this.appleWalletMessage = 'Added to iPhone and Watch';
+        this.appleWalletMessageImage = 'iphonex_applewatch';
+        // this.appleWalletMessageImageHidden = false;
+        this.appleWalletButtonHidden = true;
+      } else {
+        this.appleWalletMessage = 'Card not added to Wallet';
+        this.appleWalletMessageImage = null;
+        // this.appleWalletMessageImageHidden = true;
+        this.appleWalletButtonHidden = false;
+      }
+        
     } else {
-      this.appleWalletMessage = 'Card not added to Wallet';
+      this.appleWalletMessage = null;
       this.appleWalletMessageImage = null;
       // this.appleWalletMessageImageHidden = true;
-      this.appleWalletButtonHidden = false;
+      this.appleWalletButtonHidden = true;
     }
   }
 
