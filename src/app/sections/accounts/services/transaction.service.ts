@@ -75,7 +75,7 @@ export class TransactionService {
     maxReturnMostRecent?: number
   ): Observable<TransactionHistory[]> {
     period = period ? period : { name: TIME_PERIOD.pastSixMonth };
-    maxReturnMostRecent = maxReturnMostRecent ? maxReturnMostRecent : 0;
+    maxReturnMostRecent = maxReturnMostRecent ? maxReturnMostRecent : 20;
 
     const { startDate, endDate } = getTimeRangeOfDate(period);
 
@@ -154,7 +154,7 @@ export class TransactionService {
     accountId: string = null,
     newestDate: string = null,
     oldestDate: string = null,
-    maxReturnMostRecent: number = 0
+    maxReturnMostRecent: number = 20
   ) {
     this.queryCriteria = {
       maxReturnMostRecent,

@@ -1,54 +1,55 @@
-<st-header title="Request funds" [isTitleShow]="true" [backButtonTitle]="'Back'" [isToolbarShow]="true"></st-header>
+<st-header title="Request funds"
+           [isTitleShow]="true"
+           [backButtonTitle]="'Back'"
+           [backButtonIcon]="'ios-arrow-back'"
+           [isToolbarShow]="true"></st-header>
 
 <ion-content class="request-funds ion-padding">
   <ng-container *ngIf="(accounts$ | async).length; else emptyContent">
     <p class="request-funds__info-msg">Email a friend or family member to request a deposit to your account.</p>
 
-    <form class="request-funds__form" [formGroup]="requestFundsForm" novalidate>
-      <st-input-floating-label
-        [isError]="name.invalid && name.touched"
-        [control]="name"
-        [formControlName]="controlsNames.name"
-        title="Enter name"
-        class="request-funds__control"
-        type="text"
-        idd="name"
-        label="Name"
-      >
+    <form class="request-funds__form"
+          [formGroup]="requestFundsForm"
+          novalidate>
+      <st-input-floating-label [isError]="name.invalid && name.touched"
+                               [control]="name"
+                               [formControlName]="controlsNames.name"
+                               title="Enter name"
+                               class="request-funds__control"
+                               type="text"
+                               idd="name"
+                               label="Name">
         <p class="request-funds__control-error-msg">
           {{ name.errors?.errorMsg }}
         </p>
       </st-input-floating-label>
 
-      <st-input-floating-label
-        [isError]="email.invalid && email.touched"
-        [control]="email"
-        [formControlName]="controlsNames.email"
-        title="Enter email"
-        class="request-funds__control"
-        type="email"
-        idd="email"
-        label="Email Address"
-      >
+      <st-input-floating-label [isError]="email.invalid && email.touched"
+                               [control]="email"
+                               [formControlName]="controlsNames.email"
+                               title="Enter email"
+                               class="request-funds__control"
+                               type="email"
+                               idd="email"
+                               label="Email Address">
         <p class="request-funds__control-error-msg">
           {{ email.errors?.errorMsg }}
         </p>
       </st-input-floating-label>
 
-      <st-select-floating-label
-        (focus)="onFocus()"
-        [formControlName]="controlsNames.account"
-        [control]="accounts"
-        [interfaceOptions]="customActionSheetOptions"
-        [isError]="accounts.invalid && accounts.touched"
-        class="request-funds__control"
-        interface="action-sheet"
-        title="Choose an account from a dropdown list below"
-        label="Select Your Account"
-        idd="accounts"
-      >
+      <st-select-floating-label (focus)="onFocus()"
+                                [formControlName]="controlsNames.account"
+                                [control]="accounts"
+                                [interfaceOptions]="customActionSheetOptions"
+                                [isError]="accounts.invalid && accounts.touched"
+                                class="request-funds__control"
+                                interface="action-sheet"
+                                title="Choose an account from a dropdown list below"
+                                label="Select Your Account"
+                                idd="accounts">
         <ng-container role="options">
-          <ion-select-option *ngFor="let account of (accounts$ | async); trackBy: accountTrack" [value]="account.id">
+          <ion-select-option *ngFor="let account of (accounts$ | async); trackBy: accountTrack"
+                             [value]="account.id">
             {{ account.accountDisplayName }} ({{ account.balance | transactionUnits: account.accountType }})
           </ion-select-option>
         </ng-container>
@@ -60,15 +61,13 @@
         </ng-container>
       </st-select-floating-label>
 
-      <st-textarea-floating-label
-        [control]="message"
-        [isError]="message.invalid && message.touched"
-        [formControlName]="controlsNames.message"
-        class="request-funds__control"
-        idd="message"
-        label="Message"
-        rows="3"
-      >
+      <st-textarea-floating-label [control]="message"
+                                  [isError]="message.invalid && message.touched"
+                                  [formControlName]="controlsNames.message"
+                                  class="request-funds__control"
+                                  idd="message"
+                                  label="Message"
+                                  rows="3">
         <p class="request-funds__control-error-msg">
           {{ message.errors?.errorMsg }}
         </p>
@@ -77,9 +76,11 @@
   </ng-container>
 </ion-content>
 
-<ion-footer class="request-funds__footer" mode="ios">
+<ion-footer class="request-funds__footer"
+            mode="ios">
   <ng-container *ngIf="(accounts$ | async).length; else emptyFooterBtn">
-    <st-button (onClick)="onSubmit()" [isDisabled]="requestFundsForm.invalid">
+    <st-button (onClick)="onSubmit()"
+               [isDisabled]="requestFundsForm.invalid">
       send request
     </st-button>
   </ng-container>
@@ -87,7 +88,9 @@
 
 <ng-template #emptyContent>
   <div class="request-funds__empty-container">
-    <img class="request-funds__empty-image" src="/assets/images/transfer_illustration.svg" alt="money transfer image" />
+    <img class="request-funds__empty-image"
+         src="/assets/images/transfer_illustration.svg"
+         alt="money transfer image" />
     <p class="request-funds__empty-message">
       No compatible accounts. You can only request funds for deposit accounts.
     </p>
@@ -95,7 +98,8 @@
 </ng-template>
 
 <ng-template #emptyFooterBtn>
-  <st-button [buttonModifier]="'border-only'" (onClick)="back()">
+  <st-button [buttonModifier]="'border-only'"
+             (onClick)="back()">
     back to accounts
   </st-button>
 </ng-template>
