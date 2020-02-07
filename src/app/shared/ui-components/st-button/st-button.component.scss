@@ -11,6 +11,7 @@
   --background-activated: rgba(0, 0, 0, 0.14);
 
   height: 50px;
+  border-radius: 25px;
 
   @include font-nunito-heavy(15px);
 
@@ -43,6 +44,8 @@
 
   &--black {
     color: $color-black;
+    border-radius: 25px;
+    box-shadow: 0 0 24px 0 #0000000a, 0 12px 44px 0 #0000001f;
   }
 
   &--danger {
