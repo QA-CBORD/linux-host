@@ -37,7 +37,8 @@ export class AccessCardComponent implements OnInit {
       private readonly accessCardService: AccessCardService,
       private readonly sanitizer: DomSanitizer,
       private readonly router: Router,
-      private readonly nativeProvider: NativeProvider
+      private readonly nativeProvider: NativeProvider,
+      private readonly changeRef: ChangeDetectorRef
   ) {
   }
 
@@ -139,6 +140,7 @@ export class AccessCardComponent implements OnInit {
       // this.appleWalletMessageImageHidden = true;
       this.appleWalletButtonHidden = true;
     }
+    this.changeRef.detectChanges();
   }
 
   private addToAppleWallet() {
