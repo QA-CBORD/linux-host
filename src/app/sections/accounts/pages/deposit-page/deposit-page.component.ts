@@ -197,6 +197,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   }
 
   onFormSubmit() {
+    if (this.depositForm && this.depositForm.invalid) return;
     const { sourceAccount, selectedAccount, mainInput, mainSelect } = this.depositForm.value;
     const isBillme: boolean = sourceAccount === PAYMENT_TYPE.BILLME;
     const sourceAccForBillmeDeposit: Observable<UserAccount> = this.sourceAccForBillmeDeposit(
