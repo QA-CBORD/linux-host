@@ -1,6 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { MealDonationsService } from '@sections/accounts/pages/meal-donations/service/meal-donations.service';
-import { CONTENT_STRING_NAMES } from '@sections/accounts/pages/meal-donations/content-strings';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 
 @Component({
@@ -9,12 +7,6 @@ import { CONTENT_STRING_NAMES } from '@sections/accounts/pages/meal-donations/co
   styleUrls: ['./meal-donations-tile.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MealDonationsTileComponent implements OnInit {
+export class MealDonationsTileComponent {
 
-  constructor() {
-  }
-
-  ngOnInit() {
-
-  }
 }

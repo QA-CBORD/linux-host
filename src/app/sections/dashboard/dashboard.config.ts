@@ -146,7 +146,7 @@ export const TILES_BASE_CONFIG: TileWrapperConfig[] = [
     navigate: `${NAVIGATE.accounts}/${ACCOUNT_ROUTING.mealDonations}`,
     buttonConfig: {
       show: true,
-      title: 'fgasdhjkghasd;ioghasdhfasdjkh',
+      title: 'Meal Donation',
       navigate: `${NAVIGATE.accounts}/${ACCOUNT_ROUTING.mealDonations}`,
     },
   },
