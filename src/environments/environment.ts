@@ -87,7 +87,7 @@ export const testCredentials: Dictionary<UserLogin> = {
     institutionId: 'd0a8487d-d30d-4013-acd4-29e5927fe0d0',
   },
 
-  ithacaUniveristy: {
+  ithacaUniversity: {
     userName: 'cw100@test.cbord.com',
     password: 'P@ssword2',
     domain: null,
