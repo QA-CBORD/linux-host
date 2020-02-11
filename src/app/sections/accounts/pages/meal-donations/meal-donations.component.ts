@@ -1,20 +1,25 @@
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { FormGroup, Validators, FormBuilder, AbstractControl } from '@angular/forms';
-import { PopoverController, ToastController, ModalController } from '@ionic/angular';
-import { Observable, Subscription, BehaviorSubject } from 'rxjs';
-import { map, take, finalize } from 'rxjs/operators';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ModalController, PopoverController, ToastController } from '@ionic/angular';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { finalize, map, take } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
 import { MealDonationsService } from '@sections/accounts/pages/meal-donations/service/meal-donations.service';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { formControlErrorDecorator, validateInteger, validateInputAmount } from '@core/utils/general-helpers';
+import {
+  formControlErrorDecorator,
+  parseArrayFromString,
+  validateInputAmount,
+  validateInteger,
+} from '@core/utils/general-helpers';
 import { UserAccount } from '@core/model/account/account.model';
 import { SYSTEM_SETTINGS_CONFIG } from '@sections/accounts/accounts.config';
-import { parseArrayFromString } from '@core/utils/general-helpers';
 import { AccountType, NAVIGATE } from 'src/app/app.global';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
 import { ConfirmDonatePopoverComponent } from './components/confirm-donate-popover';
 import { DonateModalComponent } from './components/donate-modal';
+import { CONTENT_STRING_NAMES } from '@sections/accounts/pages/meal-donations/content-strings';
 
 @Component({
   selector: 'st-meal-donations',
@@ -22,9 +27,7 @@ import { DonateModalComponent } from './components/donate-modal';
   styleUrls: ['./meal-donations.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MealDonationsComponent {
-  private readonly sourceSubscription: Subscription = new Subscription();
-
+export class MealDonationsComponent implements OnInit {
   formHasBeenPrepared: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   showContent: boolean;
   accounts$: Observable<UserAccount[]>;
@@ -37,6 +40,14 @@ export class MealDonationsComponent {
     cssClass: 'custom-deposit-actionSheet',
   };
 
+  //Content Strings
+  header$: Observable<string>;
+  instructions$: Observable<string>;
+  accountLabelControl$: Observable<string>;
+  buttonDonate$: Observable<string>;
+
+  private readonly sourceSubscription: Subscription = new Subscription();
+
   constructor(
     private readonly fb: FormBuilder,
     private readonly mealDonationsService: MealDonationsService,
@@ -45,8 +56,9 @@ export class MealDonationsComponent {
     private readonly popoverCtrl: PopoverController,
     private readonly modalCtrl: ModalController,
     private readonly router: Router,
-    private readonly cdRef: ChangeDetectorRef
-  ) {}
+    private readonly cdRef: ChangeDetectorRef,
+  ) {
+  }
 
   ionViewWillEnter() {
     this.accounts$ = this.mealDonationsService.getAccountsFilteredByMealsTenders();
@@ -60,6 +72,10 @@ export class MealDonationsComponent {
     this.sourceSubscription.unsubscribe();
     this.deleteForm();
     this.showContent = false;
+  }
+
+  ngOnInit() {
+    this.initContentStrings();
   }
 
   get accountTypes() {
@@ -83,11 +99,11 @@ export class MealDonationsComponent {
       map(settings => {
         const settingInfo = this.mealDonationsService.getSettingByName(
           settings,
-          SYSTEM_SETTINGS_CONFIG.mealsAllowFreeform.name
+          SYSTEM_SETTINGS_CONFIG.mealsAllowFreeform.name,
         );
 
         return settingInfo && Boolean(Number(settingInfo.value));
-      })
+      }),
     );
   }
 
@@ -109,6 +125,12 @@ export class MealDonationsComponent {
       component: ConfirmDonatePopoverComponent,
       componentProps: {
         data,
+        policyTitle$: this.mealDonationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.donationPolicyTitle),
+        policyContent$: this.mealDonationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.donationPolicyContent),
+        buttonDonate$: this.mealDonationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.buttonDonate),
+        confirmationTitle$: this.mealDonationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.donationConfirmationTitle),
+        donateAmount$: this.mealDonationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.donateAmount),
+        account$: this.mealDonationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.labelAccount),
       },
       animated: false,
       backdropDismiss: true,
@@ -121,11 +143,11 @@ export class MealDonationsComponent {
           .donate(data.account.id, data.amountValue)
           .pipe(
             take(1),
-            finalize(() => this.loadingService.closeSpinner())
+            finalize(() => this.loadingService.closeSpinner()),
           )
           .subscribe(
             async () => await this.showModal(data),
-            () => this.onErrorRetrieve('Something went wrong, please try again...')
+            () => this.onErrorRetrieve('Something went wrong, please try again...'),
           );
       }
     });
@@ -145,7 +167,7 @@ export class MealDonationsComponent {
     ];
     this.mealsForm = this.fb.group({
       [this.controlsNames.account]: ['', accountErrors],
-      [this.controlsNames.amount]: [''],
+      [this.controlsNames.amount]: ['', Validators.required],
     });
 
     this.accountChangesHandler();
@@ -168,11 +190,11 @@ export class MealDonationsComponent {
       formControlErrorDecorator(Validators.min(this.minAmount), CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES.amount].min),
       formControlErrorDecorator(
         (control: AbstractControl) => Validators.max(this.maxAmount)(control),
-        CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES.amount].max
+        CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES.amount].max,
       ),
       formControlErrorDecorator(
         accountType === AccountType.MEALS ? validateInteger : validateInputAmount,
-        CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES.amount].input
+        CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES.amount].input,
       ),
     ];
 
@@ -186,10 +208,10 @@ export class MealDonationsComponent {
           settings,
           accountType === AccountType.MEALS
             ? SYSTEM_SETTINGS_CONFIG.mealsFixedMealAmounts.name
-            : SYSTEM_SETTINGS_CONFIG.mealsFixedDollarAmounts.name
+            : SYSTEM_SETTINGS_CONFIG.mealsFixedDollarAmounts.name,
         );
         return settingInfo && parseArrayFromString(settingInfo.value);
-      })
+      }),
     );
   }
 
@@ -198,7 +220,13 @@ export class MealDonationsComponent {
       component: DonateModalComponent,
       animated: true,
       componentProps: {
-        data
+        data,
+        headerTitle$: this.mealDonationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.headerTitle),
+        dialogLabelSuccess$: this.mealDonationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.dialogLabelSuccess),
+        completeMessage$: this.mealDonationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.completeMessage),
+        buttonDone$: this.mealDonationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.buttonDone),
+        donateAmount$: this.mealDonationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.donateAmount),
+        account$: this.mealDonationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.labelAccount),
       },
       backdropDismiss: true,
     });
@@ -220,6 +248,13 @@ export class MealDonationsComponent {
   private deleteForm() {
     this.mealsForm = null;
     this.formHasBeenPrepared.next(false);
+  }
+
+  private initContentStrings() {
+    this.header$ = this.mealDonationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.headerTitle);
+    this.buttonDonate$ = this.mealDonationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.buttonDonate);
+    this.accountLabelControl$ = this.mealDonationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.fundingAccounts);
+    this.instructions$ = this.mealDonationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.donationInstructions);
   }
 }
 

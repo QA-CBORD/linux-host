@@ -14,7 +14,7 @@ export class MealDonationsResolver implements Resolve<Observable<SettingInfo[]>>
   constructor(
     private readonly loadingService: LoadingService,
     private readonly mealDonationsService: MealDonationsService,
-    private readonly accountsService: AccountsService
+    private readonly accountsService: AccountsService,
   ) {}
   resolve(): Observable<any> {
     const requireSettings: ContentStringRequest[] = [
@@ -27,9 +27,10 @@ export class MealDonationsResolver implements Resolve<Observable<SettingInfo[]>>
     const accountContentStrings = this.accountsService.initContentStringsList();
     const accountsCall = this.mealDonationsService.getUserAccounts();
     const settingsCall = this.mealDonationsService.getUserSettings(requireSettings);
+    const contentStrings = this.mealDonationsService.fetchMealsDonationContentStrings$();
     this.loadingService.showSpinner();
-    
-    return zip(accountsCall, settingsCall, accountContentStrings).pipe(
+
+    return zip(accountsCall, settingsCall, accountContentStrings, contentStrings).pipe(
       finalize(() => this.loadingService.closeSpinner())
     );
   }

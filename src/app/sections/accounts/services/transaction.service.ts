@@ -5,7 +5,7 @@ import { map, switchMap, tap, take } from 'rxjs/operators';
 
 import { AccountsService } from './accounts.service';
 import { CommerceApiService } from '@core/service/commerce/commerce-api.service';
-import { ContentService } from '@core/service/content-service/content.service';
+import { ContentStringsApiService } from '@core/service/content-service/content-strings-api.service';
 
 import { TransactionHistory } from '../models/transaction-history.model';
 import { TransactionResponse } from '@core/model/account/transaction-response.model';
@@ -39,7 +39,7 @@ export class TransactionService {
   constructor(
     private readonly accountsService: AccountsService,
     private readonly commerceApiService: CommerceApiService,
-    private readonly contentService: ContentService
+    private readonly contentService: ContentStringsApiService
   ) {}
 
   get transactions$(): Observable<TransactionHistory[]> {

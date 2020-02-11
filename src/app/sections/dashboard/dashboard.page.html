@@ -4,16 +4,16 @@
   <ng-container *ngFor="let tile of tiles$ | async; trackBy: trackFn">
     <st-tile-wrapper *ngIf="tile.isEnable"
                      [wrapperConfig]="tile">
-      <ng-container [ngSwitch]="tile.title">
-        <st-accounts-tile *ngSwitchCase="tilesTitle.accounts"></st-accounts-tile>
-        <st-transactions-tile *ngSwitchCase="tilesTitle.transactions"></st-transactions-tile>
-        <st-rewards-tile *ngSwitchCase="tilesTitle.rewards"></st-rewards-tile>
-        <st-mobile-access-tile *ngSwitchCase="tilesTitle.mobileAccess"></st-mobile-access-tile>
-        <st-meal-donations-tile *ngSwitchCase="tilesTitle.mealDonations"></st-meal-donations-tile>
-        <st-order-tile *ngSwitchCase="tilesTitle.order"></st-order-tile>
-        <st-explore-tile *ngSwitchCase="tilesTitle.explore"></st-explore-tile>
-        <st-conversations-tile *ngSwitchCase="tilesTitle.conversations"></st-conversations-tile>
-        <st-housing-tile *ngSwitchCase="tilesTitle.housing"></st-housing-tile>
+      <ng-container [ngSwitch]="tile.id">
+        <st-accounts-tile *ngSwitchCase="tilesIds.accounts"></st-accounts-tile>
+        <st-transactions-tile *ngSwitchCase="tilesIds.transactions"></st-transactions-tile>
+        <st-rewards-tile *ngSwitchCase="tilesIds.rewards"></st-rewards-tile>
+        <st-mobile-access-tile *ngSwitchCase="tilesIds.mobileAccess"></st-mobile-access-tile>
+        <st-meal-donations-tile *ngSwitchCase="tilesIds.mealDonations"></st-meal-donations-tile>
+        <st-order-tile *ngSwitchCase="tilesIds.order"></st-order-tile>
+        <st-explore-tile *ngSwitchCase="tilesIds.explore"></st-explore-tile>
+        <st-conversations-tile *ngSwitchCase="tilesIds.conversations"></st-conversations-tile>
+        <st-housing-tile *ngSwitchCase="tilesIds.housing"></st-housing-tile>
       </ng-container>
     </st-tile-wrapper>
   </ng-container>

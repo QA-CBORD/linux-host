@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { DashboardApiService } from './dashboard.api.service';
 
 import { SettingInfoList } from 'src/app/core/model/configuration/setting-info-list.model';
 import { Settings } from 'src/app/app.global';
@@ -15,6 +14,7 @@ import {
 import { parseArrayFromString } from '@core/utils/general-helpers';
 import { AccountsService } from '@sections/dashboard/services/accounts.service';
 import { TileWrapperConfig } from '@sections/dashboard/models';
+import { DashboardApiService } from '@sections/dashboard/services/dashboard.api.service';
 
 @Injectable()
 export class DashboardService {

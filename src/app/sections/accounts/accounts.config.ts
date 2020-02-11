@@ -177,7 +177,7 @@ export enum CONTENT_STRINGS {
   addFundsBtn = 'button_add-funds',
   autoDepositBtn = 'button_auto-deposit',
   requestFundsBtn = 'button_request-funds',
-  // mealDonationsBtn = 'button_meal-donations', 
+  mealDonationsBtn = 'dashboard_title',
   headerTitle = 'header_title',
   headerBackBtn = 'header_button_back',
   allAccountsLabel = 'label_all-accounts',

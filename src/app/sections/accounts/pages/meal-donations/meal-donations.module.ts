@@ -14,9 +14,9 @@ import { StButtonModule } from '@shared/ui-components/st-button/st-button.module
 import { ConfirmDonatePopoverComponent } from './components/confirm-donate-popover';
 import { ConfirmDonatePopoverModule } from './components/confirm-donate-popover/confirm-donate-popover.module';
 import { MealDonationsService } from './service/meal-donations.service';
-import { AccountTypePipe } from './pipes/account-type';
 import { DonateModalComponent } from './components/donate-modal';
 import { DonateModalModule } from './components/donate-modal/donate-modal.module';
+import { AmountLabelControlPipe } from '@sections/accounts/pages/meal-donations/pipes/amount-label-control.pipe';
 
 const imports = [
   IonicModule,
@@ -30,9 +30,8 @@ const imports = [
   StButtonModule,
   ConfirmDonatePopoverModule,
   DonateModalModule
-
 ];
-const declarations = [MealDonationsComponent, AccountTypePipe];
+const declarations = [MealDonationsComponent, AmountLabelControlPipe];
 const providers = [MealDonationsResolver, MealDonationsService];
 const entryComponents = [ConfirmDonatePopoverComponent, DonateModalComponent];
 @NgModule({
@@ -41,4 +40,5 @@ const entryComponents = [ConfirmDonatePopoverComponent, DonateModalComponent];
   providers,
   entryComponents,
 })
-export class MealDonationsModule {}
+export class MealDonationsModule {
+}

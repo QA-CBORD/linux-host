@@ -9,7 +9,6 @@ import { UserService } from 'src/app/core/service/user-service/user.service';
 
 import { PaymentSystemType, Settings } from 'src/app/app.global';
 import { UserAccount } from 'src/app/core/model/account/account.model';
-import { ContentService } from 'src/app/core/service/content-service/content.service';
 import { ContentStringRequest } from '@core/model/content/content-string-request.model';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { ConfigurationService } from '@core/service/config-service/configuration.service';
@@ -21,11 +20,9 @@ export class AccountsService {
     private readonly commerceApiService: CommerceApiService,
     private readonly userService: UserService,
     private readonly configService: ConfigService,
-    private readonly contentService: ContentService,
     private readonly configurationService: ConfigurationService,
   ) {
   }
-
 
   getUserAccounts(): Observable<UserAccount[]> {
     return this.commerceApiService.getUserAccounts().pipe(

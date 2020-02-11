@@ -8,10 +8,11 @@ import { IconPathModule } from '../../pipes/icon-path/icon-path.module';
   imports: [
     IonicModule,
     CommonModule,
-    IconPathModule
+    IconPathModule,
   ],
-  providers: [ ],
+  providers: [],
   declarations: [MenuReceivingFundsComponent],
-  exports: [MenuReceivingFundsComponent]
+  exports: [MenuReceivingFundsComponent],
 })
-export class MenuReceivingFundsModule { }
+export class MenuReceivingFundsModule {
+}

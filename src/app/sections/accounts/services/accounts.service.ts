@@ -1,21 +1,24 @@
 import { Injectable } from '@angular/core';
 
-import { BehaviorSubject, Observable, zip, combineLatest } from 'rxjs';
-import { map, tap, take, switchMap } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, Observable, zip } from 'rxjs';
+import { map, switchMap, take, tap } from 'rxjs/operators';
 
-import { ContentStringRequest } from '../../../core/model/content/content-string-request.model';
-import { CommerceApiService } from '../../../core/service/commerce/commerce-api.service';
-import { ContentService } from '../../../core/service/content-service/content.service';
-import { UserAccount } from '../../../core/model/account/account.model';
-import { SettingInfo } from '../../../core/model/configuration/setting-info.model';
+import { ContentStringRequest } from '@core/model/content/content-string-request.model';
+import { CommerceApiService } from '@core/service/commerce/commerce-api.service';
+import { ContentStringsApiService } from '@core/service/content-service/content-strings-api.service';
+import { UserAccount } from '@core/model/account/account.model';
+import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { ContentStringInfo } from 'src/app/core/model/content/content-string-info.model';
 import { ConfigurationService } from '@core/service/config-service/configuration.service';
 import {
-  PAYMENT_SYSTEM_TYPE,
   ContentStringsParamsAccounts,
   GenericContentStringsParams,
+  PAYMENT_SYSTEM_TYPE,
   SYSTEM_SETTINGS_CONFIG,
 } from '../accounts.config';
+import { CONTENT_STRING_NAMES } from '@sections/accounts/pages/meal-donations/content-strings';
+import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
+import { CONTENT_STINGS_CATEGORIES, CONTENT_STINGS_DOMAINS } from '../../../content-strings';
 
 @Injectable()
 export class AccountsService {
@@ -27,8 +30,10 @@ export class AccountsService {
   constructor(
     private readonly configurationService: ConfigurationService,
     private readonly commerceApiService: CommerceApiService,
-    private readonly contentService: ContentService
-  ) {}
+    private readonly contentService: ContentStringsApiService,
+    private readonly contentStringsFacadeService: ContentStringsFacadeService,
+  ) {
+  }
 
   get accounts$(): Observable<UserAccount[]> {
     return this._accounts$.asObservable();
@@ -59,21 +64,26 @@ export class AccountsService {
   getUserAccounts(): Observable<UserAccount[]> {
     return this.commerceApiService.getUserAccounts().pipe(
       map(accounts => this.filterAccountsByPaymentSystem(accounts)),
-      tap(accounts => (this._accounts = accounts))
+      tap(accounts => (this._accounts = accounts)),
     );
   }
 
   initContentStringsList(): Observable<ContentStringInfo[]> {
     return combineLatest(
       this.contentService.retrieveContentStringListByRequest(ContentStringsParamsAccounts),
-      this.contentService.retrieveContentStringListByRequest(GenericContentStringsParams)
+      this.contentService.retrieveContentStringListByRequest(GenericContentStringsParams),
+      this.contentStringsFacadeService.fetchContentString$(
+        CONTENT_STINGS_DOMAINS.patronUi,
+        CONTENT_STINGS_CATEGORIES.mealDonation,
+        CONTENT_STRING_NAMES.dashboardTitle),
     ).pipe(
-      map(([res, res0]) => {
+      map(([res, res0, res1]) => {
         const finalArray = [...res, ...res0];
+        finalArray.push(res1);
         this.contentString = finalArray.reduce((init, elem) => ({ ...init, [elem.name]: elem.value }), {});
         return finalArray;
       }),
-      take(1)
+      take(1),
     );
   }
 
@@ -109,20 +119,20 @@ export class AccountsService {
         return this.transformStringToArray(settingInfo.value);
       }),
       switchMap((tendersId: Array<string>) =>
-        this.accounts$.pipe(map(accounts => this.filterAccountsByTenders(tendersId, accounts)))
-      )
+        this.accounts$.pipe(map(accounts => this.filterAccountsByTenders(tendersId, accounts))),
+      ),
     );
   }
 
   getAccountsFilteredByDepositTenders(): Observable<UserAccount[]> {
     return this.settings$.pipe(
-        map(settings => {
-          const settingInfo = this.getSettingByName(settings, SYSTEM_SETTINGS_CONFIG.depositTenders.name);
-          return this.transformStringToArray(settingInfo.value);
-        }),
-        switchMap((tendersId: Array<string>) =>
-            this.accounts$.pipe(map(accounts => this.filterAccountsByTenders(tendersId, accounts)))
-        )
+      map(settings => {
+        const settingInfo = this.getSettingByName(settings, SYSTEM_SETTINGS_CONFIG.depositTenders.name);
+        return this.transformStringToArray(settingInfo.value);
+      }),
+      switchMap((tendersId: Array<string>) =>
+        this.accounts$.pipe(map(accounts => this.filterAccountsByTenders(tendersId, accounts))),
+      ),
     );
   }
 
@@ -132,7 +142,7 @@ export class AccountsService {
 
   private filterAccountsByPaymentSystem(accounts: UserAccount[]): UserAccount[] {
     return accounts.filter(
-      ({ paymentSystemType: type }) => type === PAYMENT_SYSTEM_TYPE.OPCS || type === PAYMENT_SYSTEM_TYPE.CSGOLD
+      ({ paymentSystemType: type }) => type === PAYMENT_SYSTEM_TYPE.OPCS || type === PAYMENT_SYSTEM_TYPE.CSGOLD,
     );
   }
 }

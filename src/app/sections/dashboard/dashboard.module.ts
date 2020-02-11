@@ -25,6 +25,7 @@ import { MealDonationsTileModule } from './containers/meal-donations-tile/meal-d
 import { MobileAccessService } from '@sections/mobile-access';
 import { TileConfigFacadeService } from '@sections/dashboard/tile-config-facade.service';
 import { HousingTileModule } from './containers/housing-tile/housing-tile.module';
+import { MealDonationsService } from '@sections/accounts/pages/meal-donations/service/meal-donations.service';
 
 const imports = [
   IonicModule,
@@ -55,7 +56,7 @@ const providers = [
   DashboardService,
   MobileAccessService,
   DashboardPageResolver,
-  TileConfigFacadeService
+  TileConfigFacadeService,
 ];
 
 @NgModule({

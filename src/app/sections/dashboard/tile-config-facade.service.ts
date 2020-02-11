@@ -3,8 +3,8 @@ import { ServiceStateFacade } from '@core/classes/service-state-facade';
 import { LOCAL_STORAGE_STATE_KEYS, LocalStorageStateService } from '@core/states/local-storage';
 import { DashboardService } from '@sections/dashboard/services';
 import { Observable, zip } from 'rxjs';
-import { TileWrapperConfig } from '@sections/dashboard/models';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { ButtonConfig, TileWrapperConfig } from '@sections/dashboard/models';
+import { first, map, switchMap, tap } from 'rxjs/operators';
 
 @Injectable()
 export class TileConfigFacadeService extends ServiceStateFacade {
@@ -22,7 +22,11 @@ export class TileConfigFacadeService extends ServiceStateFacade {
     return this.localStorageStateService.getStateEntityByKey$<TileWrapperConfig[]>(this.key);
   }
 
-  isValidConfig(config: any): boolean {
+  getTileById$(id: string): Observable<TileWrapperConfig> {
+    return this.tileSettings$.pipe(map(tiles => tiles.find(({ id: tId }) => id === tId)));
+  }
+
+  isValidConfig(config: TileWrapperConfig[]): boolean {
     return config && Array.isArray(config) && !!config.length;
   }
 
@@ -48,6 +52,46 @@ export class TileConfigFacadeService extends ServiceStateFacade {
       switchMap((updatedConfig) => this.dashboardService.updateAccountTile(updatedConfig)),
       tap(config => this.updateConfigState(config)),
     );
+  }
+
+  async updateConfigById(id: string, config: Partial<TileWrapperConfig>): Promise<void> {
+    const tiles = await this.tileSettings$.pipe(first()).toPromise();
+    const index = tiles.findIndex(({ id: tileId }) => id === tileId);
+    if (index !== -1) {
+      tiles[index] = {
+        ...tiles[index],
+        ...config,
+        buttonConfig: { ...tiles[index]['buttonConfig'], ...config['buttonConfig'] },
+      };
+      this.updateConfigState(tiles);
+    }
+  }
+
+  async resolveAsyncUpdatingConfig(instructions: {
+      [key in keyof Partial<TileWrapperConfig>]: Observable<any> |
+      { [key in keyof Partial<ButtonConfig>]: Observable<any> }
+    }
+    | { [key in keyof Partial<ButtonConfig>]: Observable<any> }): Promise<Partial<TileWrapperConfig>> {
+    const promises = [];
+    let res = {};
+
+    for (const key in instructions) {
+      if (key === 'buttonConfig') {
+        const buttonConfig = instructions['buttonConfig'];
+        for (const bkey in buttonConfig) {
+          promises.push(buttonConfig[bkey].pipe(first()).toPromise().then(
+            (value) => res = { ...res, buttonConfig: { ...buttonConfig, [bkey]: value } }),
+          );
+        }
+      } else {
+        promises.push(instructions[key].pipe(first()).toPromise().then(
+          (value) => res = { ...res, [key]: value }),
+        );
+      }
+    }
+
+    await Promise.all(promises);
+    return res;
   }
 
   updateConfigState(value: TileWrapperConfig[]) {

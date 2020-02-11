@@ -4,7 +4,7 @@ import { BehaviorSubject, combineLatest, Observable, zip } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 
 import { RewardsApiService } from './rewards-api.service';
-import { ContentService } from '../../../core/service/content-service/content.service';
+import { ContentStringsApiService } from '@core/service/content-service/content-strings-api.service';
 
 import {
   CLAIM_STATUS,
@@ -30,7 +30,7 @@ export class RewardsService {
 
   private content;
 
-  constructor(private readonly rewardsApi: RewardsApiService, private readonly contentService: ContentService) {}
+  constructor(private readonly rewardsApi: RewardsApiService, private readonly contentService: ContentStringsApiService) {}
 
   get rewardTrack(): Observable<UserRewardTrackInfo> {
     return this.rewardTrack$.asObservable();

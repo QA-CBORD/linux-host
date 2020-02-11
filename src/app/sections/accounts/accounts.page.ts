@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { AccountsService } from './services/accounts.service';
-import { UserAccount } from '../../core/model/account/account.model';
+import { UserAccount } from '@core/model/account/account.model';
 import { TransactionHistory } from './models/transaction-history.model';
 import { ALL_ACCOUNTS, LOCAL_ROUTING, CONTENT_STRINGS } from './accounts.config';
 import { NAVIGATE } from '../../app.global';
@@ -28,7 +28,7 @@ export class AccountsPage implements OnInit {
     private readonly accountsService: AccountsService,
     private readonly platform: Platform,
     private readonly router: Router,
-    private readonly transactionsService: TransactionService
+    private readonly transactionsService: TransactionService,
   ) {}
 
   ngOnInit() {

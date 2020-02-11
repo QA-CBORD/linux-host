@@ -8,6 +8,9 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { SettingInfoList } from '@core/model/configuration/setting-info-list.model';
 import { DashboardService } from '../services';
 import { TileConfigFacadeService } from '@sections/dashboard/tile-config-facade.service';
+import { CONTENT_STRING_NAMES } from '@sections/accounts/pages/meal-donations/content-strings';
+import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
+import { CONTENT_STINGS_CATEGORIES, CONTENT_STINGS_DOMAINS } from '../../../content-strings';
 
 @Injectable()
 export class DashboardPageResolver implements Resolve<Observable<SettingInfoList>> {
@@ -16,15 +19,27 @@ export class DashboardPageResolver implements Resolve<Observable<SettingInfoList
     private readonly accountsService: AccountsService,
     private readonly loadingService: LoadingService,
     private readonly tileConfigFacadeService: TileConfigFacadeService,
+    private readonly contentStringsFacadeService: ContentStringsFacadeService,
   ) {
   }
 
   resolve(): Observable<any> {
     this.loadingService.showSpinner();
+    const donationMealsStrings = [
+      this.contentStringsFacadeService.fetchContentString$(
+        CONTENT_STINGS_DOMAINS.patronUi,
+        CONTENT_STINGS_CATEGORIES.mealDonation,
+        CONTENT_STRING_NAMES.dashboardTitle),
+      this.contentStringsFacadeService.fetchContentString$(
+        CONTENT_STINGS_DOMAINS.patronUi,
+        CONTENT_STINGS_CATEGORIES.mealDonation,
+        CONTENT_STRING_NAMES.buttonDonateAMeal),
+    ];
     const accountContentStrings = this.accountsService.initContentStringsList();
     return zip(
       this.tileConfigFacadeService.updateTilesConfigBySystemSettings().pipe(first()),
       accountContentStrings,
+      ...donationMealsStrings,
     ).pipe(
       finalize(() => this.loadingService.closeSpinner()),
     );

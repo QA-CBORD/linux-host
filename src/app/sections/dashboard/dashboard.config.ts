@@ -1,6 +1,6 @@
 import { NAVIGATE } from 'src/app/app.global';
 import { TileWrapperConfig } from './models';
-import { LOCAL_ROUTING as ACCOUNT_ROUTING, ALL_ACCOUNTS } from '@sections/accounts/accounts.config';
+import { ALL_ACCOUNTS, LOCAL_ROUTING as ACCOUNT_ROUTING } from '@sections/accounts/accounts.config';
 
 export enum DASHBOARD_NAVIGATE {
   scanCard = 'scan-card',
@@ -67,17 +67,17 @@ export const ACCOUNTS_SETTINGS_CONFIG = {
   },
 };
 
-export enum TILES_ID {
-  accounts = 'accounts',
-  transactions = 'transactions',
-  rewards = 'rewards',
-  mobileAccess = 'mobileAccess',
-  mealDonations = 'mealDonations',
-  order = 'order',
-  explore = 'explore',
-  conversations = 'conversations',
-  housing = 'housing'
-}
+export const TILES_ID = {
+  accounts: 'accounts',
+  transactions: 'transactions',
+  rewards: DASHBOARD_SETTINGS_CONFIG.enableRewards.name,
+  mobileAccess: DASHBOARD_SETTINGS_CONFIG.enableMobileAccess.name,
+  mealDonations: DASHBOARD_SETTINGS_CONFIG.enableMeals.name,
+  order: DASHBOARD_SETTINGS_CONFIG.enableOrder.name,
+  explore: DASHBOARD_SETTINGS_CONFIG.enableExplore.name,
+  conversations: DASHBOARD_SETTINGS_CONFIG.enableConversation.name,
+  housing: DASHBOARD_SETTINGS_CONFIG.enableHousing.name,
+};
 
 export enum TILES_TITLE {
   accounts = 'Accounts',
@@ -117,7 +117,7 @@ export const TILES_BASE_CONFIG: TileWrapperConfig[] = [
     },
   },
   {
-    id: DASHBOARD_SETTINGS_CONFIG.enableRewards.name,
+    id: TILES_ID.rewards,
     title: 'Rewards',
     iconPath: '/assets/icon/trophy.svg',
     isEnable: false,
@@ -127,7 +127,7 @@ export const TILES_BASE_CONFIG: TileWrapperConfig[] = [
     },
   },
   {
-    id: DASHBOARD_SETTINGS_CONFIG.enableMobileAccess.name,
+    id: TILES_ID.mobileAccess,
     title: 'Mobile Access',
     iconPath: '/assets/icon/mobile-access-tile.svg',
     isEnable: false,
@@ -139,19 +139,19 @@ export const TILES_BASE_CONFIG: TileWrapperConfig[] = [
     },
   },
   {
-    id: DASHBOARD_SETTINGS_CONFIG.enableMeals.name,
-    title: 'Meal Donations',
+    id: TILES_ID.mealDonations,
+    title: 'Meals',
     iconPath: '/assets/icon/meal-outline.svg',
     isEnable: false,
     navigate: `${NAVIGATE.accounts}/${ACCOUNT_ROUTING.mealDonations}`,
     buttonConfig: {
       show: true,
-      title: 'Donate a Meal',
+      title: 'fgasdhjkghasd;ioghasdhfasdjkh',
       navigate: `${NAVIGATE.accounts}/${ACCOUNT_ROUTING.mealDonations}`,
     },
   },
   {
-    id: DASHBOARD_SETTINGS_CONFIG.enableOrder.name,
+    id: TILES_ID.order,
     title: 'Order',
     iconPath: '/assets/icon/order.svg',
     isEnable: false,
@@ -163,7 +163,7 @@ export const TILES_BASE_CONFIG: TileWrapperConfig[] = [
     },
   },
   {
-    id: DASHBOARD_SETTINGS_CONFIG.enableExplore.name,
+    id: TILES_ID.explore,
     title: 'Explore',
     iconPath: '/assets/icon/map.svg',
     isEnable: false,
@@ -175,7 +175,7 @@ export const TILES_BASE_CONFIG: TileWrapperConfig[] = [
     },
   },
   {
-    id: DASHBOARD_SETTINGS_CONFIG.enableConversation.name,
+    id: TILES_ID.conversations,
     title: 'Conversations',
     iconPath: '/assets/icon/chat.svg',
     isEnable: false,
@@ -187,7 +187,7 @@ export const TILES_BASE_CONFIG: TileWrapperConfig[] = [
     },
   },
   {
-    id: DASHBOARD_SETTINGS_CONFIG.enableHousing.name,
+    id: TILES_ID.housing,
     title: 'Housing',
     iconPath: '/assets/icon/building.svg',
     isEnable: false,

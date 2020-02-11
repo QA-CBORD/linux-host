@@ -13,7 +13,7 @@ import { Settings } from '../../../app.global';
 import { ConfigurationService } from '@core/service/configuration/configuration.service';
 import { UserService } from '@core/service/user-service/user.service';
 import { CoordsService } from '@core/service/coords/coords.service';
-import { ContentService } from '@core/service/content-service/content.service';
+import { ContentStringsApiService } from '@core/service/content-service/content-strings-api.service';
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
 import { MessageResponse } from '@core/model/service/message-response.model';
 import { GeoLocationInfo } from '@core/model/geolocation/geoLocationInfo.model';
@@ -32,7 +32,7 @@ export class MobileAccessService extends BaseService {
     protected readonly http: HttpClient,
     private readonly userService: UserService,
     private readonly coords: CoordsService,
-    private readonly contentService: ContentService,
+    private readonly contentService: ContentStringsApiService,
     private readonly toastController: ToastController,
     private readonly configService: ConfigurationService
   ) {

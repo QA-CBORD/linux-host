@@ -90,17 +90,6 @@ export namespace Settings {
 
 }
 
-export namespace ContentStrings {
-  export enum ContentStringList{
-    TEMP = '1.2.3',
-  }
-
-  export enum ContentString {
-    MEAL_SUFFIX = 'get_common.currency_display.meal_quantity_suffix',
-    MEAL_SUFFIX_PLURAL = 'get_common.currency_display.meal_quantity_suffix_plural',
-  }
-}
-
 export enum AccountType {
   MEALS = 1,
   CHARGE = 2,
