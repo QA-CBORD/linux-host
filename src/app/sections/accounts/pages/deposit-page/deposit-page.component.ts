@@ -75,11 +75,6 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     this.sourceSubscription.unsubscribe();
   }
 
-  // ionViewWillEnter(){
-  //   console.log(1);
-
-  // }
-
   get isFreeFromDepositEnabled$(): Observable<boolean> {
     return this.depositService.settings$.pipe(
       map(settings => {
@@ -269,10 +264,11 @@ export class DepositPageComponent implements OnInit, OnDestroy {
               return this.onErrorRetrieve(errorMessage);
             }
 
+            // Update user accounts for refreshing Credit Card dropdown list
             this.depositService
               .getUserAccounts()
-              .pipe(take(1), tap(()=> this.cdRef.detectChanges()))
-              .subscribe();
+              .pipe(take(1))
+              .subscribe(() => this.cdRef.detectChanges());
           });
       }
 

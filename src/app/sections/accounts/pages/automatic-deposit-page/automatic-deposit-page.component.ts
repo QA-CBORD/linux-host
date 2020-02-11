@@ -725,8 +725,17 @@ export class AutomaticDepositPageComponent {
           return this.showToast(errorMessage);
         }
 
-        this.getAccounts();
-        this.setValidators();
+        // Update user accounts for refreshing Credit Card dropdown list
+        zip(this.depositService.getUserAccounts(), this.isBillMePaymentTypesEnabled$)
+          .pipe(take(1))
+          .subscribe(([accounts, isBillMeEnabled]) => {
+            const creditCardSourceAccounts = accounts
+              ? this.depositService.filterAccountsByPaymentSystem(accounts)
+              : [];
+            this.sourceAccounts = [...creditCardSourceAccounts];
+            if (isBillMeEnabled) this.sourceAccounts.push(PAYMENT_TYPE.BILLME);
+            this.cdRef.detectChanges();
+          });
       });
   }
 
