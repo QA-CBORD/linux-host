@@ -58,7 +58,6 @@ export class AccountDetailsComponent implements OnInit, AfterViewInit {
   async onFilterChanged(): Promise<void> {
     if (this.transactionsService.activeAccountId !== this.currentAccountId)
       this.currentAccountId = this.transactionsService.activeAccountId;
-    this.lazy && (this.lazy.disabled = !this.isAbleToScrollByActivePeriod());
     await this.content.scrollToTop(700);
   }
 
