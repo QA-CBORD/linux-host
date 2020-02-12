@@ -139,7 +139,7 @@ export class ItemDetailComponent implements OnInit {
     this.calculateTotalPrice();
   }
 
-  onFormSubmit() {
+  async onFormSubmit(): Promise<void> {
     if (this.itemOrderForm.invalid) {
       this.errorState = true;
       return;
@@ -153,25 +153,25 @@ export class ItemDetailComponent implements OnInit {
 
       if (value.length) {
         value.forEach(elem => {
-          menuItem.orderItemOptions.push(this.configureMenuItem(elem.id, menuItem.quantity));
+          menuItem.orderItemOptions.push(this.configureMenuItem(elem.id, 1) as OrderItem);
         });
         return;
       }
 
       if (value && value.id) {
-        menuItem.orderItemOptions.push(this.configureMenuItem(value.id, menuItem.quantity));
+        menuItem.orderItemOptions.push(this.configureMenuItem(value.id, 1) as OrderItem);
         return;
       }
     });
 
-    this.onSubmit(menuItem);
+    await this.onSubmit(menuItem);
   }
 
-  private configureMenuItem(id, quantity) {
+  private configureMenuItem(id, quantity): Partial<OrderItem> {
     return { menuItemId: id, orderItemOptions: [], quantity: quantity };
   }
 
-  private async onSubmit(menuItem) {
+  private async onSubmit(menuItem): Promise<void> {
     const orderItems = await this.cartService.orderItems$.pipe(first()).toPromise();
     if (orderItems.length) {
       const { data: { queryParams: { orderItemId } } } = await this.activatedRoute.data.pipe(first()).toPromise();
@@ -210,7 +210,7 @@ export class ItemDetailComponent implements OnInit {
       .subscribe(([{ data: { menuItem, queryParams: { orderItemId } } }, orderItems, { settings }]) => {
         const imageBaseUrl = 'https://3bulchr7pb.execute-api.us-east-1.amazonaws.com/dev/image';
         this.menuItem = menuItem.menuItem;
-        this.menuItemImg = this.menuItem.imageReference 
+        this.menuItemImg = this.menuItem.imageReference
           ? `${imageBaseUrl}/${this.menuItem.imageReference}`
           : '';
         this.order = { ...this.order, totalPrice: this.menuItem.price };

@@ -68,8 +68,8 @@ export const getTimeRangeOfDate = (date: DateUtilObject): TimeRange => {
   } else {
     const nextMonth = new Date(date.year, date.month + 1).valueOf();
 
-    earliestDate = new Date(date.year, date.month);
-    latestDate = new Date(nextMonth - 1);
+    latestDate = new Date(date.year, date.month);
+    earliestDate = new Date(nextMonth - 1);
   }
   earliestDate = earliestDate ? earliestDate.toISOString() : null;
   latestDate = latestDate.toISOString();

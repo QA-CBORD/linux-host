@@ -8,7 +8,7 @@ import { InstitutionService } from 'src/app/core/service/institution/institution
 import { ConfigurationService } from 'src/app/core/service/configuration/configuration.service';
 
 import { Settings } from 'src/app/app.global';
-import { NativeData, NativeProvider } from '../../../../../core/provider/native-provider/native.provider';
+import { NativeData, NativeProvider } from '@core/provider/native-provider/native.provider';
 
 @Injectable()
 export class AccessCardService {
@@ -88,7 +88,6 @@ export class AccessCardService {
     } else {
       return of(false);
     }
-
   }
 
 }

@@ -53,10 +53,10 @@ export const testCredentials: Dictionary<UserLogin> = {
   },
 
   odysseyPreviewWithUSAePay: {
-    userName: 'testuser702',
-    password: 'testpassword702',
+    userName: 'getaws401@tpsmail.dev',
+    password: 'password1',
     domain: null,
-    institutionId: '1e418ca8-7148-4956-b7c4-1f35db6d8a11',
+    institutionId: '7612d8de-51e1-4cab-971d-88a317326437',
   },
 
   odysseyPreviewWithUSAePay1: {
@@ -92,6 +92,13 @@ export const testCredentials: Dictionary<UserLogin> = {
     password: 'password1',
     domain: null,
     institutionId: 'd0a8487d-d30d-4013-acd4-29e5927fe0d0',
+  },
+
+  ithacaUniveristy: {
+    userName: 'cw100@test.cbord.com',
+    password: 'P@ssword2',
+    domain: null,
+    institutionId: '66c6e2ab-4658-4f18-83ff-c0461b169e16',
   },
 
   lowBalance: {

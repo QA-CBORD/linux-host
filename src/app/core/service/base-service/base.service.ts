@@ -8,6 +8,7 @@ import { queue } from 'rxjs/internal/scheduler/queue';
 
 import { Environment } from '../../../environment';
 import { DataCache } from '@core/utils/data-cache';
+import { NUM_DSCRPTN_REGEXP } from '@core/utils/regexp-patterns';
 
 export interface ServiceParameters {
   [key: string]: any;
@@ -81,8 +82,7 @@ export class BaseService {
 
   protected parseExceptionResponse(exceptionString: string) {
     // check the exception string for a number|description string format
-    const regEx = /^[0-9]{4}\|[a-z]+/gi;
-    if (regEx.test(exceptionString)) {
+    if (NUM_DSCRPTN_REGEXP.test(exceptionString)) {
       const parts = exceptionString.split('|');
       this.determineErrorByCodeAndThrow(parts[0], parts.length > 1 ? parts[1] : null);
     } else {
