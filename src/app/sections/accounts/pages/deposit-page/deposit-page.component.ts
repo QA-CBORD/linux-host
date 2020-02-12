@@ -262,11 +262,15 @@ export class DepositPageComponent implements OnInit, OnDestroy {
             if (!success) {
               return this.onErrorRetrieve(errorMessage);
             }
+            this.loadingService.showSpinner();
 
             // Update user accounts for refreshing Credit Card dropdown list
             this.depositService
               .getUserAccounts()
-              .pipe(take(1))
+              .pipe(
+                take(1),
+                finalize(() => this.loadingService.closeSpinner())
+              )
               .subscribe(() => this.cdRef.detectChanges());
           });
       }
