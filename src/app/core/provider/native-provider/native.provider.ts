@@ -1,4 +1,3 @@
-import { Location } from '@angular/common';
 import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { Observable, Observer, from, of } from 'rxjs';
@@ -15,7 +14,6 @@ export enum NativeData {
   USER_INFO = 'getUserInfo',
   USER_PHOTO = 'getAcceptedUserPhoto',
   ADD_TO_USAEPAY = 'addUSAePayCreditCard',
-  UPDATE_ROUTE = 'updateNativeWithRoute'
 }
 
 export interface USAePayResponse {
@@ -27,7 +25,7 @@ export interface USAePayResponse {
   providedIn: 'root',
 })
 export class NativeProvider {
-  constructor(private readonly platform: Platform, private readonly location: Location) {
+  constructor(private readonly platform: Platform) {
     window['NativeInterface'] = this;
   }
 
@@ -40,11 +38,6 @@ export class NativeProvider {
 
   isIos(): boolean {
     return this.platform.platforms().includes('ios') && typeof window['webkit'] !== 'undefined';
-  }
-
-
-  sendAndroidData<T>(methodName: NativeData, data: T){
-    androidInterface[methodName](data);
   }
 
   getAndroidData<T>(methodName: NativeData): T {
@@ -63,10 +56,6 @@ export class NativeProvider {
         observer.complete();
       }
     });
-  }
-
-  onNativeBackClicked() {
-    this.location.back();
   }
 
   /// used to allow user to add USAePay CC and handle response

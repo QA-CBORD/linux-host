@@ -2,11 +2,11 @@ import { Component, OnDestroy } from '@angular/core';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { Events, LoadingController, Platform, PopoverController } from '@ionic/angular';
-import { Router, NavigationStart, Event } from '@angular/router';
+import { Router } from '@angular/router';
 import * as Globals from './app.global';
 import { DataCache } from '@core/utils/data-cache';
 import { from, of, fromEvent, Subscription } from 'rxjs';
-import { switchMap, tap, take, map, retryWhen, delay } from 'rxjs/operators';
+import { switchMap, tap, take, map } from 'rxjs/operators';
 import { Environment } from './environment';
 import { NAVIGATE } from './app.global';
 import { TestProvider } from '@core/provider/test-provider/test.provider';
@@ -93,25 +93,6 @@ export class AppComponent implements OnDestroy {
         }
       });
     this.sourceSubscription.add(subscription);
-  }
-
-  initializeRouteListener() {
-    if (this.nativeProvider.isAndroid()) {
-      this.router.events
-        .pipe(
-          retryWhen(errors =>
-            errors.pipe(
-              delay(1000),
-              take(5)
-            )
-          )
-        )
-        .subscribe((event: Event) => {
-          if (event instanceof NavigationStart) {
-            this.nativeProvider.sendAndroidData(NativeData.UPDATE_ROUTE, event.url);
-          }
-        });
-    }
   }
 
   useJavaScriptInterface() {
@@ -252,7 +233,6 @@ export class AppComponent implements OnDestroy {
   }
 
   private handlePageNavigation() {
-    this.initializeRouteListener();
     this.router.navigate([this.destinationPage], { skipLocationChange: true });
   }
 
