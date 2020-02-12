@@ -315,6 +315,10 @@ export class CartComponent implements OnInit {
           return this.onValidateErrorToast(errorMessage);
         }
 
+        // Update user accounts for refreshing Credit Card dropdown list
+        this.accountInfoList$ = this.cartService.merchant$.pipe(
+          switchMap(({ id }) => this.merchantService.getMerchantPaymentAccounts(id))
+        );
         this.accounts$ = this.getAvailableAccounts();
       });
   }
