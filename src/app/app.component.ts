@@ -97,7 +97,7 @@ export class AppComponent implements OnDestroy {
 
   initializeRouteListener() {
     if (this.nativeProvider.isAndroid()) {
-      this.router.events
+      const subscription = this.router.events
         .pipe(
           retryWhen(errors =>
             errors.pipe(
@@ -111,6 +111,7 @@ export class AppComponent implements OnDestroy {
             this.nativeProvider.sendAndroidData(NativeData.UPDATE_ROUTE, event.url);
           }
         });
+      this.sourceSubscription.add(subscription);
     }
   }
 
