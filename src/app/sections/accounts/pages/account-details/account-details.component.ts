@@ -45,7 +45,7 @@ export class AccountDetailsComponent implements OnInit, AfterViewInit {
       .subscribe(
         async data => {
           await this.lazy.complete();
-          if (data.length === 0) this.lazy.disabled = true;
+          data.length === 0 ? (this.lazy.disabled = true) : (this.lazy.disabled = false);
         },
         async () => {
           await this.lazy.complete();
@@ -56,8 +56,10 @@ export class AccountDetailsComponent implements OnInit, AfterViewInit {
   }
 
   async onFilterChanged(): Promise<void> {
-    if (this.transactionsService.activeAccountId !== this.currentAccountId)
+    if (this.transactionsService.activeAccountId !== this.currentAccountId) {
       this.currentAccountId = this.transactionsService.activeAccountId;
+    }
+    this.lazy.disabled = false;
     await this.content.scrollToTop(700);
   }
 
