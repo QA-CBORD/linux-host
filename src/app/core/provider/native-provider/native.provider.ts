@@ -1,4 +1,5 @@
-import { Location } from '@angular/common';
+import { NAVIGATE } from './../../../app.global';
+import { Router } from '@angular/router';
 import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { Observable, Observer, from, of } from 'rxjs';
@@ -15,7 +16,7 @@ export enum NativeData {
   USER_INFO = 'getUserInfo',
   USER_PHOTO = 'getAcceptedUserPhoto',
   ADD_TO_USAEPAY = 'addUSAePayCreditCard',
-  UPDATE_ROUTE = 'updateNativeWithRoute'
+  UPDATE_ROUTE = 'updateNativeWithRoute',
 }
 
 export interface USAePayResponse {
@@ -27,7 +28,7 @@ export interface USAePayResponse {
   providedIn: 'root',
 })
 export class NativeProvider {
-  constructor(private readonly platform: Platform, private readonly location: Location) {
+  constructor(private readonly platform: Platform, private readonly router: Router) {
     window['NativeInterface'] = this;
   }
 
@@ -42,8 +43,7 @@ export class NativeProvider {
     return this.platform.platforms().includes('ios') && typeof window['webkit'] !== 'undefined';
   }
 
-
-  sendAndroidData<T>(methodName: NativeData, data: T){
+  sendAndroidData<T>(methodName: NativeData, data: T) {
     androidInterface[methodName](data);
   }
 
@@ -66,11 +66,34 @@ export class NativeProvider {
   }
 
   onNativeBackClicked() {
-    this.location.back();
+    let url: string = this.router.url;
+    let destination: string = NAVIGATE.dashboard;    
+
+    if (this.checkRoute(url, NAVIGATE.accounts)) {
+      destination = NAVIGATE.accounts;
+    } else if (this.checkRoute(url, NAVIGATE.mobileAccess)) {
+      destination = NAVIGATE.mobileAccess;
+    } else if (this.checkRoute(url, NAVIGATE.ordering)) {
+      if (url.indexOf('/ordering/cart') >= 0) {
+        destination = 'ordering/full-menu';
+      } else {
+        destination = NAVIGATE.ordering;
+      }
+    } else if (this.checkRoute(url, NAVIGATE.rewards)) {
+      destination = NAVIGATE.rewards;
+    } else if (this.checkRoute(url, NAVIGATE.secureMessage)) {
+      destination = NAVIGATE.secureMessage;
+    }
+    
+    this.router.navigate(['/' + destination], { skipLocationChange: true });
+  }
+
+  private checkRoute(url: string, route: string): boolean{    
+    return url.indexOf(route) >= 0 && url !== '/' + route;
   }
 
   /// used to allow user to add USAePay CC and handle response
-  addUSAePayCreditCard(): Observable<USAePayResponse> {    
+  addUSAePayCreditCard(): Observable<USAePayResponse> {
     if (this.isAndroid()) {
       return this.getAndroidDataAsObservable<USAePayResponse>(NativeData.ADD_TO_USAEPAY);
     } else if (this.isIos()) {

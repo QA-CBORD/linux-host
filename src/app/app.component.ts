@@ -2,7 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { Events, LoadingController, Platform, PopoverController } from '@ionic/angular';
-import { Router, NavigationStart, Event } from '@angular/router';
+import { Router, Event, NavigationEnd } from '@angular/router';
 import * as Globals from './app.global';
 import { DataCache } from '@core/utils/data-cache';
 import { from, of, fromEvent, Subscription } from 'rxjs';
@@ -107,7 +107,7 @@ export class AppComponent implements OnDestroy {
           )
         )
         .subscribe((event: Event) => {
-          if (event instanceof NavigationStart) {
+          if (event instanceof NavigationEnd) {
             this.nativeProvider.sendAndroidData(NativeData.UPDATE_ROUTE, event.url);
           }
         });
