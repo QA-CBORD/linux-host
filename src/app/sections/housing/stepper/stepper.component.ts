@@ -7,6 +7,7 @@ import {
   EventEmitter,
   ChangeDetectorRef,
   ChangeDetectionStrategy,
+  AfterViewInit,
 } from '@angular/core';
 
 import { StepComponent } from './step/step.component';
@@ -36,7 +37,7 @@ export const STEPS_LABELS = {
   styleUrls: ['./stepper.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class StepperComponent {
+export class StepperComponent implements AfterViewInit {
   @ContentChildren(StepComponent) steps: QueryList<StepComponent>;
 
   @Input()
@@ -66,18 +67,16 @@ export class StepperComponent {
 
   constructor(private _changeDetector: ChangeDetectorRef) {}
 
+  ngAfterViewInit(): void {
+    this.steps.changes.subscribe(() => this._changeDetector.markForCheck());
+  }
+
   next(): void {
     this.selectedIndex = Math.min(this._selectedIndex + 1, this.steps.length - 1);
   }
 
   back(): void {
     this.selectedIndex = Math.max(this._selectedIndex - 1, 0);
-  }
-
-  reset(): void {
-    this._updateSelectedItemIndex(0);
-    this.steps.forEach(step => step.reset());
-    this._changeDetector.markForCheck();
   }
 
   getStepLabel(index: number): string {

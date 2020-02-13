@@ -61,7 +61,9 @@ export class ApplicationsService {
 
     return this._housingProxyService.get<ApplicationDetails>(apiUrl).pipe(
       map((application: any) => new ApplicationDetails(application)),
-      shareReplay(1)
+      tap((applicationDetails: ApplicationDetails) =>
+        this._applicationsStateService.setApplicationDetails(applicationDetails)
+      )
     );
   }
 
@@ -129,9 +131,7 @@ export class ApplicationsService {
 
         return this._housingProxyService.put(this._patronApplicationsUrl, body);
       }),
-      tap(() => {
-        this._applicationsStateService.setApplication(applicationKey, applicationDetails);
-      })
+      tap(() => this._applicationsStateService.setApplication(applicationKey, applicationDetails))
     );
   }
 

@@ -129,7 +129,7 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
   }
 
   private _initPagesSubscription(): void {
-    this.pages$ = this._questionsService.getPages(this.applicationKey).pipe(tap(() => this._checkQuestions()));
+    this.pages$ = this._questionsService.getPages(this.applicationKey);
   }
 
   private _initRefreshSubscription(): void {
@@ -169,10 +169,6 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
       });
 
     this._subscription.add(updateCreatedDateTimeSubscription);
-  }
-
-  private _checkQuestions(): void {
-    this.questions.forEach((question: QuestionComponent) => question.check());
   }
 
   private _handleSuccess(): void {
