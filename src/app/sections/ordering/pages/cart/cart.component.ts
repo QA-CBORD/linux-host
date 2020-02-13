@@ -240,6 +240,8 @@ export class CartComponent implements OnInit {
     /// if Apple Pay Order
     if(this.cartFormState.data.paymentMethod.accountType === AccountType.APPLEPAY){
       let orderData = await this.cartService.orderInfo$.pipe(first()).toPromise();
+      orderData["orderTotal"] = orderData.total;
+      orderData["fee"] = orderData.useFee;
       await this.nativeProvider.payWithApplePay(NativeData.ORDERS_WITH_APPLE_PAY, orderData).toPromise()
       .catch(async error => await this.onErrorModal(error));
     }
