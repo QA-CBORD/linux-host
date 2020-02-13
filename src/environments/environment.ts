@@ -59,6 +59,13 @@ export const testCredentials: Dictionary<UserLogin> = {
     institutionId: '7612d8de-51e1-4cab-971d-88a317326437',
   },
 
+  odysseyPreviewWithUSAePay1: {
+    userName: 'getaws401@tpsmail.dev',
+    password: 'password1',
+    domain: null,
+    institutionId: '7612d8de-51e1-4cab-971d-88a317326437',
+    },
+
   odysseyPreview2: {
     userName: 'getaws2@tpsmail.dev',
     password: 'password1',
