@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { catchError, map, switchMap, take } from 'rxjs/operators';
 import { BehaviorSubject, from, Observable, of } from 'rxjs';
 
 import { BaseService } from '../base-service/base.service';
@@ -121,10 +121,13 @@ export class UserService extends BaseService {
   }
 
   isApplePayEnabled$(): Observable<boolean> {
-    return this.userData.pipe(
-      switchMap(({ institutionId }) => this.configService.getSetting(institutionId, Settings.Setting.APPLE_PAY_ENABLED)),
-      map(({ value }) => Boolean(Number(value)))
-    );
+    return (this.nativeProvider.isIos()) ? this.userData.pipe(
+      switchMap(({ institutionId }) => {
+        return this.configService.getSetting(institutionId, Settings.Setting.APPLE_PAY_ENABLED)
+      }),
+      map(( { value } ) => Boolean(Number(value))),
+      take(1)
+    ) : of(false);
   }
 
 

@@ -86,7 +86,7 @@ export class AutomaticDepositPageComponent {
     this.showContent = true;
     this.getAccounts();
     this.cdRef.detectChanges();
-    this.applePayEnabled$ = this.userService.isApplePayEnabled$.bind(this);
+    this.applePayEnabled$ = this.userService.isApplePayEnabled$();
   }
 
   ionViewWillLeave() {

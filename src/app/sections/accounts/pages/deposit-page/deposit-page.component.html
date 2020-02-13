@@ -20,6 +20,9 @@
           formControlName="sourceAccount"
           (ionChange)="onPaymentMethodChanged($event)"
         >
+          <ion-select-option *ngIf="applePayEnabled" [value]="applePayAccountType">
+            Apple Pay
+          </ion-select-option>
           <ng-container *ngIf="isCreditCardPaymentTypesEnabled">
             <ion-select-option
                     [value]="account"

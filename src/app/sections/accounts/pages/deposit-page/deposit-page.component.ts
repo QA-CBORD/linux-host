@@ -17,13 +17,14 @@ import { DepositModalComponent } from '../../shared/ui-components/deposit-modal/
 import { BUTTON_TYPE } from 'src/app/core/utils/buttons.config';
 import { amountRangeValidator } from './amount-range.validator';
 import { Router } from '@angular/router';
-import { NAVIGATE } from 'src/app/app.global';
+import { NAVIGATE, AccountType } from 'src/app/app.global';
 import { LoadingService } from 'src/app/core/service/loading/loading.service';
 import { DepositService } from '@sections/accounts/services/deposit.service';
 import { parseArrayFromString } from '@core/utils/general-helpers';
 import { BillMeMapping } from '@core/model/settings/billme-mapping.model';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { COMMA_REGEXP, NUM_COMMA_DOT_REGEXP } from '@core/utils/regexp-patterns';
+import { UserService } from '@core/service/user-service/user.service';
 
 @Component({
   selector: 'st-deposit-page',
@@ -43,7 +44,12 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   destinationAccounts: Array<UserAccount>;
   billmeMappingArr: any[];
   isMaxCharLength: boolean = false;
-
+  applePayAccountType: Partial<UserAccount> = {
+    accountType: AccountType.APPLEPAY,
+    accountDisplayName: "Apple Pay",
+    isActive: true,
+  };
+  applePayEnabled:Observable<boolean>;
   customActionSheetOptions: any = {
     cssClass: 'custom-deposit-actionSheet',
   };
@@ -61,6 +67,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     private readonly router: Router,
     private readonly loadingService: LoadingService,
     private readonly nativeProvider: NativeProvider,
+    private readonly userService: UserService,
     private readonly cdRef: ChangeDetectorRef
     
   ) {}
@@ -70,6 +77,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
 
     this.initForm();
     this.getAccounts();
+    this.applePayEnabled = this.userService.isApplePayEnabled$();
   }
 
   ngOnDestroy() {

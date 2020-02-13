@@ -76,7 +76,7 @@ export class CartComponent implements OnInit {
     this.orderDetailOptions$ = this.cartService.orderDetailsOptions$;
     this.addressModalSettings$ = this.initAddressModalConfig();
     this.accountInfoList$ = this.activatedRoute.data.pipe(map(({ data: [, accInfo] }) => accInfo));
-    this.applePayEnabled$ = this.userService.isApplePayEnabled$.bind(this);
+    this.applePayEnabled$ = this.userService.isApplePayEnabled$();
   }
 
   get isOrderASAP(): Observable<boolean> {
@@ -236,13 +236,11 @@ export class CartComponent implements OnInit {
 
   private async submitOrder(): Promise<void> {
     await this.loadingService.showSpinner();
-    debugger;
+    
     /// if Apple Pay Order
     if(this.cartFormState.data.paymentMethod.accountType === AccountType.APPLEPAY){
       let orderData = await this.cartService.orderInfo$.pipe(first()).toPromise();
-      await this.nativeProvider.payWithApplePay(NativeData.ORDERS_WITH_APPLE_PAY, orderData).toPromise().then(result => {
-        console.log(result);
-      })
+      await this.nativeProvider.payWithApplePay(NativeData.ORDERS_WITH_APPLE_PAY, orderData).toPromise()
       .catch(async error => await this.onErrorModal(error));
     }
 

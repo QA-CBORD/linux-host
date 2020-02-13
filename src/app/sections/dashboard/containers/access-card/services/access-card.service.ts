@@ -80,13 +80,6 @@ export class AccessCardService {
     );
   }
 
-  isApplePayEnabled(): Observable<boolean> {
-    return this.userService.userData.pipe(
-      switchMap(({ institutionId }) => this.configService.getSetting(institutionId, Settings.Setting.APPLE_PAY_ENABLED)),
-      map(({ value }) => Boolean(Number(value)))
-    );
-  }
-
   isAppleWalletEnabled(): Observable<boolean> {
     if(this.nativeProvider.isIos()){
       return from(this.nativeProvider.getIosData(NativeData.APPLE_WALLET_INFO)).pipe(
@@ -96,7 +89,5 @@ export class AccessCardService {
       return of(false);
     }
   }
-
-  
 
 }
