@@ -11,6 +11,10 @@ export enum LOCAL_ROUTING {
   addressEdit = 'address-edit'
 }
 
+export enum ORDERING_CONTENT_STRINGS {
+ errorMessageTimeSlotCapacityReached = 'error_message_time-slot-capacity-reached',
+}
+
 export enum MerchantSearchOptionName {
   OPEN_NOW = 'open_now', /// 1/0 - omit to return all
   ACTIVE = 'active', /// 1/0 - default to 1
@@ -82,7 +86,7 @@ export enum INSTITUTION_ADRESS_RESTRICTIONS {
   offCampus = 2
 }
 
-export const ORDER_VALIDATION_ERRORS: ServerErrorsInfo = {
+export let ORDER_VALIDATION_ERRORS: ServerErrorsInfo = {
   9001: 'The selected delivery address could not be mapped to valid coordinates.',
   9003: 'Merchant does not support the requested order type',
   9010: 'Incorrect time for menu item',
@@ -94,5 +98,6 @@ export const ORDER_VALIDATION_ERRORS: ServerErrorsInfo = {
   9002: 'Order minimum total for delivery wasn\'t met',
   9014: 'Tip amount is negative or greater than the order subtotal',
   9013: 'Order cannot be canceled due to it has been completed',
+  6112: 'You dont have enough money',
   9997: 'Timeout error, please try again later'
 };
