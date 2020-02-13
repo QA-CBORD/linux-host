@@ -62,7 +62,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     private readonly loadingService: LoadingService,
     private readonly nativeProvider: NativeProvider,
     private readonly cdRef: ChangeDetectorRef
-
+    
   ) {}
 
   ngOnInit() {
@@ -262,8 +262,16 @@ export class DepositPageComponent implements OnInit, OnDestroy {
             if (!success) {
               return this.onErrorRetrieve(errorMessage);
             }
+            this.loadingService.showSpinner();
 
-            this.getAccounts();
+            // Update user accounts for refreshing Credit Card dropdown list
+            this.depositService
+              .getUserAccounts()
+              .pipe(
+                take(1),
+                finalize(() => this.loadingService.closeSpinner())
+              )
+              .subscribe(() => this.cdRef.detectChanges());
           });
       }
 
@@ -325,13 +333,11 @@ export class DepositPageComponent implements OnInit, OnDestroy {
             tap(accounts => {
               this.billmeMappingArr = billmeMappingArr;
               this.creditCardSourceAccounts = this.filterAccountsByPaymentSystem(accounts);
-              console.log(accounts);
               this.creditCardDestinationAccounts = this.filterCreditCardDestAccounts(
                 depositTenders as string[],
                 accounts
               );
               this.billmeDestinationAccounts = this.filterBillmeDestAccounts(this.billmeMappingArr, accounts);
-              this.cdRef.detectChanges();
             })
           )
         )

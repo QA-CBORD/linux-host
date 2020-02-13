@@ -17,7 +17,7 @@ import {
 } from '@core/utils/general-helpers';
 import { PopoverComponent } from './components/popover/popover.component';
 import { PopoverController, ToastController } from '@ionic/angular';
-import { first, map, switchMap, take, tap } from 'rxjs/operators';
+import { first, map, switchMap, take, tap, finalize } from 'rxjs/operators';
 import { WEEK } from '@core/utils/date-helper';
 import { UserAutoDepositSettingInfo } from './models/auto-deposit-settings';
 import { UserAccount } from 'src/app/core/model/account/account.model';
@@ -35,6 +35,7 @@ import { NAVIGATE } from 'src/app/app.global';
 import { SettingService } from '@core/service/settings/setting.service';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { UserService } from '@core/service/user-service/user.service';
+import { LoadingService } from '@core/service/loading/loading.service';
 
 @Component({
   selector: 'st-automatic-deposit-page',
@@ -77,7 +78,8 @@ export class AutomaticDepositPageComponent {
     private readonly toastController: ToastController,
     private readonly cdRef: ChangeDetectorRef,
     private readonly userService: UserService,
-    private readonly nativeProvider: NativeProvider
+    private readonly nativeProvider: NativeProvider,
+    private readonly loadingService: LoadingService
   ) {}
 
   ionViewWillEnter() {
@@ -728,9 +730,23 @@ export class AutomaticDepositPageComponent {
         if (!success) {
           return this.showToast(errorMessage);
         }
+        this.loadingService.showSpinner();
 
-        this.getAccounts();
-        this.setValidators();
+        // Update user accounts for refreshing Credit Card dropdown list
+        zip(this.depositService.getUserAccounts(), this.isBillMePaymentTypesEnabled$)
+          .pipe(
+            take(1),
+            finalize(() => this.loadingService.closeSpinner())
+          )
+          .subscribe(([accounts, isBillMeEnabled]) => {
+            const creditCardSourceAccounts = accounts
+              ? this.depositService.filterAccountsByPaymentSystem(accounts)
+              : [];
+            this.sourceAccounts = [...creditCardSourceAccounts];
+            if (isBillMeEnabled) this.sourceAccounts.push(PAYMENT_TYPE.BILLME);
+            this.automaticDepositForm.reset();
+            this.cdRef.detectChanges();
+          });
       });
   }
 

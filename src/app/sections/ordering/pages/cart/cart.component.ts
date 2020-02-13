@@ -11,7 +11,7 @@ import {
   OrderPayment,
 } from '@sections/ordering';
 import { LOCAL_ROUTING as ACCOUNT_LOCAL_ROUTING } from '@sections/accounts/accounts.config';
-import { first, map, switchMap, tap } from 'rxjs/operators';
+import { first, map, switchMap, tap, finalize } from 'rxjs/operators';
 import {
   ACCOUNT_TYPES,
   MerchantSettings,
@@ -328,7 +328,13 @@ export class CartComponent implements OnInit {
         if (!success) {
           return this.onValidateErrorToast(errorMessage);
         }
+        this.loadingService.showSpinner();
 
+        // Update user accounts for refreshing Credit Card dropdown list
+        this.accountInfoList$ = this.cartService.merchant$.pipe(
+          switchMap(({ id }) => this.merchantService.getMerchantPaymentAccounts(id)),
+          finalize(() => this.loadingService.closeSpinner())
+        );
         this.accounts$ = this.getAvailableAccounts();
       });
   }

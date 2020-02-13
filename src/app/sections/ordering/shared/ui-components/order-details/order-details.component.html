@@ -89,7 +89,7 @@
           <ion-select-option [value]="account" *ngFor="let account of accounts">
             {{ account | accountTypeResolver: mealBased }}
           </ion-select-option>
-          <ion-select-option *ngIf="accInfoList.creditAccepted" [value]="'addCC'">
+          <ion-select-option *ngIf="accInfoList?.creditAccepted" [value]="'addCC'">
             Add a Credit Card
           </ion-select-option>
           
