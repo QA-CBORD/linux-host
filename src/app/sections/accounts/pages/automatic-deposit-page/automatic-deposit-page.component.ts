@@ -34,6 +34,7 @@ import { DepositService } from '@sections/accounts/services/deposit.service';
 import { NAVIGATE } from 'src/app/app.global';
 import { SettingService } from '@core/service/settings/setting.service';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
+import { UserService } from '@core/service/user-service/user.service';
 
 @Component({
   selector: 'st-automatic-deposit-page',
@@ -57,6 +58,7 @@ export class AutomaticDepositPageComponent {
   automaticDepositForm: FormGroup;
   activeAutoDepositType: number;
   activeFrequency: string;
+  applePayEnabled$: Observable<boolean>;
   autoDepositSettings: UserAutoDepositSettingInfo;
   sourceAccounts: Array<UserAccount | PAYMENT_TYPE> = [];
   destinationAccounts: Array<UserAccount>;
@@ -74,6 +76,7 @@ export class AutomaticDepositPageComponent {
     private readonly router: Router,
     private readonly toastController: ToastController,
     private readonly cdRef: ChangeDetectorRef,
+    private readonly userService: UserService,
     private readonly nativeProvider: NativeProvider
   ) {}
 
@@ -81,6 +84,7 @@ export class AutomaticDepositPageComponent {
     this.showContent = true;
     this.getAccounts();
     this.cdRef.detectChanges();
+    this.applePayEnabled$ = this.userService.isApplePayEnabled$.bind(this);
   }
 
   ionViewWillLeave() {

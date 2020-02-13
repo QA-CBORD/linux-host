@@ -137,6 +137,7 @@ export enum ACCOUNT_TYPES {
   meals = 1, // Meals, Board
   charge = 2, // Charge, Credit
   decliningBalance = 3, // declining balance, points
+  applePay = 4 // Apple Pay
 }
 
 export enum LOCAL_ROUTING {

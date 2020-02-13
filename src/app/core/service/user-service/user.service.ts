@@ -12,6 +12,8 @@ import { NativeData, NativeProvider } from '@core/provider/native-provider/nativ
 import { AddressInfo } from '@core/model/address/address-info';
 import { ContentStringRequest } from '@core/model/content/content-string-request.model';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
+import { ConfigurationService } from 'src/app/core/service/configuration/configuration.service';
+import { Settings } from 'src/app/app.global';
 
 @Injectable({
   providedIn: 'root',
@@ -23,7 +25,10 @@ export class UserService extends BaseService {
   private userPhoto: UserPhotoInfo = null;
   selectedAddress: AddressInfo;
 
-  constructor(readonly http: HttpClient, private readonly nativeProvider: NativeProvider) {
+  constructor(
+    readonly http: HttpClient, 
+    readonly configService: ConfigurationService,
+    private readonly nativeProvider: NativeProvider) {
     super(http);
   }
 
@@ -114,6 +119,14 @@ export class UserService extends BaseService {
       }),
     );
   }
+
+  isApplePayEnabled$(): Observable<boolean> {
+    return this.userData.pipe(
+      switchMap(({ institutionId }) => this.configService.getSetting(institutionId, Settings.Setting.APPLE_PAY_ENABLED)),
+      map(({ value }) => Boolean(Number(value)))
+    );
+  }
+
 
   getUserPhoto(userId: string): Observable<MessageResponse<UserPhotoInfo>> {
     const params = { userId };

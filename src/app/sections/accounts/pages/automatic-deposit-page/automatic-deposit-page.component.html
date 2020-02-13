@@ -122,6 +122,10 @@
         >
             <ng-container role="options">
 
+                <ion-select-option *ngIf="applePayEnabled$ | async" [value]="'applePay'">
+                    Apple Pay
+                </ion-select-option>
+                
                 <ng-container *ngFor="let account of sourceAccounts; trackBy: trackByAccountId">
 
                     <ng-container *ngIf="account === paymentTypes.BILLME; then billMe; else creditCard"></ng-container>

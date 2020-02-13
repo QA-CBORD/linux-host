@@ -14,6 +14,8 @@ export enum NativeData {
   USER_INFO = 'getUserInfo',
   USER_PHOTO = 'getAcceptedUserPhoto',
   ADD_TO_USAEPAY = 'addUSAePayCreditCard',
+  ORDERS_WITH_APPLE_PAY = 'ordersApplePay',
+  DEPOSITS_WITH_APPLE_PAY = 'depositsApplePay',
 }
 
 export interface USAePayResponse {
@@ -77,7 +79,20 @@ export class NativeProvider {
     }
   }
 
-  getIosData(methodName: NativeData): Promise<any> {
+  /**
+   *  Apple Pay
+   */
+  payWithApplePay(payType:NativeData, moreParams:Object): Observable<USAePayResponse> {    
+    if (this.isAndroid()) {
+      return of({ success: false, errorMessage: 'Apple Pay does not work on Android.' });
+    } else if (this.isIos()) {
+      return from(this.getIosData(payType, moreParams));
+    } else {
+      return of({ success: false, errorMessage: 'This is not a native device' });
+    }
+  }
+
+  getIosData(methodName: NativeData, moreParams?:Object): Promise<any> {
     return new Promise((resolve, reject) => {
       // we generate a unique id to reference the promise later
       // from native function
@@ -85,7 +100,7 @@ export class NativeProvider {
       // save reference to promise in the global variable
       this.promises[promiseId] = { resolve, reject };
       try {
-        this.postAppMessage({ promiseId: promiseId, methodName: methodName });
+        this.postAppMessage({ promiseId: promiseId, methodName: methodName, ...moreParams });
       } catch (exception) {
         throw new Error('Error with NativeInterface');
       }
