@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
 import { FormControl, Validators, FormGroup, FormArray, AbstractControl, ValidatorFn } from '@angular/forms';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
+import { map, filter, switchMap } from 'rxjs/operators';
 
 import { parseJsonToArray, integerValidator, numericValidator } from '../utils';
 
-import { QuestionsStorageService } from './questions-storage.service';
+import { QuestionsStorageService, QuestionsEntries } from './questions-storage.service';
+import { ApplicationsService } from '../applications/applications.service';
 
 import { QuestionBase } from './types/question-base';
 import { QuestionFormControl } from './types/question-form-control';
@@ -17,7 +19,7 @@ import { QuestionDropdown } from './types/question-dropdown';
 import { QuestionCheckboxGroup, QuestionCheckboxGroupValue } from './types/question-checkbox-group';
 import { QuestionRadioGroup } from './types/question-radio-group';
 
-import { ApplicationPage, QuestionReorder, QuestionReorderValue } from './questions.model';
+import { QuestionsPage, QuestionReorder, QuestionReorderValue } from './questions.model';
 import { ApplicationDetails, PatronAttribute, PatronPreference } from '../applications/applications.model';
 
 export const QuestionConstructorsMap = {
@@ -35,58 +37,41 @@ export const QuestionConstructorsMap = {
   providedIn: 'root',
 })
 export class QuestionsService {
-  private _pagesSource: BehaviorSubject<ApplicationPage[]> = new BehaviorSubject<ApplicationPage[]>([]);
-
   private _dataTypesValidators: { [key: string]: ValidatorFn } = {
     integer: integerValidator(),
     numeric: numericValidator(),
   };
 
-  pages$: Observable<ApplicationPage[]> = this._pagesSource.asObservable();
+  constructor(
+    private _questionsStorageService: QuestionsStorageService,
+    private _applicationsService: ApplicationsService
+  ) {}
 
-  constructor(private _questionsStorageService: QuestionsStorageService) {}
+  getPages(applicationKey: number): Observable<QuestionsPage[]> {
+    return this._applicationsService.getApplicationDetails(applicationKey).pipe(
+      map((applicationDetails: ApplicationDetails) => {
+        const questions: QuestionBase[] = this._parseQuestions(
+          applicationDetails.applicationDefinition.applicationFormJson
+        );
 
-  setPages(application: ApplicationDetails): void {
-    const questions: QuestionBase[] = this._parseQuestions(application.applicationDefinition.applicationFormJson);
-    const pages: ApplicationPage[] = this._splitByPages(
-      questions,
-      application.patronAttributes,
-      application.patronPreferences
+        return this._splitByPages(questions, applicationDetails.patronAttributes, applicationDetails.patronPreferences);
+      }),
+      switchMap((pages: QuestionsPage[]) => this.patchFormsFromState(applicationKey, pages))
     );
-
-    this._pagesSource.next(pages);
   }
 
-  async _patchFormsFromState(
-    applicationKey: number,
-    pages: ApplicationPage[],
-    checkCallback: (namesToTouch: Set<string>) => void
-  ): Promise<void> {
-    const questions: any = await this._questionsStorageService.getQuestions(applicationKey);
+  patchFormsFromState(applicationKey: number, pages: QuestionsPage[]): Observable<QuestionsPage[]> {
+    return this._questionsStorageService.getQuestions(applicationKey).pipe(
+      filter((questions: QuestionsEntries) => Boolean(questions)),
+      map((questions: QuestionsEntries) => {
+        pages.forEach((page: QuestionsPage) => page.form.patchValue(questions));
 
-    if (questions) {
-      const namesToTouch: Set<string> = new Set<string>();
-
-      pages.forEach((page: ApplicationPage) => {
-        page.form.patchValue(questions);
-
-        const controls = page.form.controls;
-
-        Object.keys(controls).forEach((controlName: string) => {
-          const control: AbstractControl = controls[controlName];
-
-          control.markAsDirty();
-          control.markAsTouched();
-
-          namesToTouch.add(controlName);
-        });
-      });
-
-      checkCallback(namesToTouch);
-    }
+        return pages;
+      })
+    );
   }
 
-  _parseQuestions(json: string): QuestionBase[] {
+  private _parseQuestions(json: string): QuestionBase[] {
     const questions: any[] = parseJsonToArray(json);
 
     return questions.map(this._toQuestionType);
@@ -94,7 +79,7 @@ export class QuestionsService {
 
   private _toQuestionType(question: QuestionBase): QuestionBase {
     if (!question || !question.type) {
-      return question;
+      return new QuestionBase();
     }
 
     if (QuestionConstructorsMap[question.type]) {
@@ -112,7 +97,7 @@ export class QuestionsService {
     questions: QuestionBase[],
     attributes: PatronAttribute[],
     preferences: PatronPreference[]
-  ): ApplicationPage[] {
+  ): QuestionsPage[] {
     const questionsByPages: QuestionBase[][] = questions.reduce(
       (accumulator: QuestionBase[][], current: QuestionBase, index: number) => {
         if (current && (current as QuestionParagraph).subtype === 'blockquote') {

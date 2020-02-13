@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable, from, forkJoin, of } from 'rxjs';
-import { map, tap, switchMap, catchError } from 'rxjs/operators';
+import { Observable, forkJoin, of } from 'rxjs';
+import { map, tap, switchMap, catchError, shareReplay } from 'rxjs/operators';
 
 import { BASE_URL } from '../housing.config';
 import { Environment } from '../../../environment';
@@ -8,7 +8,6 @@ import { parseJsonToArray } from '../utils';
 
 import { HousingProxyService } from '../housing-proxy.service';
 import { ApplicationsStateService } from './applications-state.service';
-import { QuestionsService } from '../questions/questions.service';
 import { QuestionsStorageService, StoredApplication, QuestionsEntries } from '../questions/questions-storage.service';
 
 import { ResponseStatus } from '../housing.model';
@@ -31,7 +30,6 @@ export class ApplicationsService {
   constructor(
     private _housingProxyService: HousingProxyService,
     private _applicationsStateService: ApplicationsStateService,
-    private _questionsService: QuestionsService,
     private _questionsStorageService: QuestionsStorageService
   ) {}
 
@@ -45,10 +43,9 @@ export class ApplicationsService {
     const apiUrl: string = `${this._patronApplicationsUrl}/term/${termId}/patron/self`;
 
     return this._housingProxyService.get<ApplicationDetails[]>(apiUrl).pipe(
-      switchMap((applications: any[]) =>
-        Array.isArray(applications)
-          ? Promise.all(applications.map((application: any) => this._setStoredApplicationStatus(application)))
-          : []
+      map((applications: any) => ApplicationDetails.toApplicationsDetails(applications)),
+      switchMap((applications: ApplicationDetails[]) =>
+        forkJoin(applications.map((application: ApplicationDetails) => this._setStoredApplicationStatus(application)))
       ),
       tap((applications: ApplicationDetails[]) => this._applicationsStateService.setApplications(applications)),
       catchError(() => {
@@ -64,7 +61,7 @@ export class ApplicationsService {
 
     return this._housingProxyService.get<ApplicationDetails>(apiUrl).pipe(
       map((application: any) => new ApplicationDetails(application)),
-      tap((application: ApplicationDetails) => this._questionsService.setPages(application))
+      shareReplay(1)
     );
   }
 
@@ -88,9 +85,7 @@ export class ApplicationsService {
   }
 
   saveApplication(applicationKey: number, application: ApplicationDetails, form: any): Observable<ResponseStatus> {
-    return from(
-      this._questionsStorageService.updateCreatedDateTime(applicationKey, application.patronApplication)
-    ).pipe(
+    return this._questionsStorageService.updateCreatedDateTime(applicationKey, application.patronApplication).pipe(
       switchMap((createdDateTime: string) => {
         const applicationDetails: ApplicationDetails = this._createApplicationDetails(
           applicationKey,
@@ -112,7 +107,7 @@ export class ApplicationsService {
     const applicationDefinition: ApplicationDefinition = applicationDetails.applicationDefinition;
     const applicationKey: number = applicationDefinition.key;
 
-    return from(this._questionsStorageService.updateQuestions(applicationKey, form, status)).pipe(
+    return this._questionsStorageService.updateQuestions(applicationKey, form, status).pipe(
       switchMap((storedApplication: StoredApplication) => {
         const parsedJson: any[] = parseJsonToArray(applicationDefinition.applicationFormJson);
         const questions = storedApplication.questions;
@@ -247,28 +242,27 @@ export class ApplicationsService {
       .filter((preference: PatronPreference) => preference.facilityKey);
   }
 
-  private async _setStoredApplicationStatus(application: any): Promise<ApplicationDetails> {
-    let applicationDetails: ApplicationDetails = new ApplicationDetails(application);
+  private _setStoredApplicationStatus(applicationDetails: ApplicationDetails): Observable<ApplicationDetails> {
     let patronApplication: PatronApplication = applicationDetails.patronApplication;
     const status: ApplicationStatus = patronApplication && patronApplication.status;
 
     if (status && status !== ApplicationStatus.New) {
-      return applicationDetails;
+      return of(applicationDetails);
     }
 
-    const storedApplication: StoredApplication = await this._questionsStorageService.getApplication(
-      applicationDetails.applicationDefinition.key
+    return this._questionsStorageService.getApplicationStatus(applicationDetails.applicationDefinition.key).pipe(
+      map((status: ApplicationStatus) => {
+        if (!status) {
+          return applicationDetails;
+        }
+
+        applicationDetails.patronApplication = new PatronApplication({
+          ...patronApplication,
+          status,
+        });
+
+        return applicationDetails;
+      })
     );
-
-    if (storedApplication) {
-      patronApplication = new PatronApplication({
-        ...patronApplication,
-        status: storedApplication.status,
-      });
-
-      applicationDetails = new ApplicationDetails({ ...applicationDetails, patronApplication });
-    }
-
-    return applicationDetails;
   }
 }

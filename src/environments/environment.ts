@@ -109,7 +109,7 @@ export const testCredentials: Dictionary<UserLogin> = {
   },
 
   housingQAASA: {
-    userName: 'smsg12@tpsmail.dev',
+    userName: 'smsg02@tpsmail.dev',
     password: 'password1',
     domain: null,
     institutionId: '1e418ca8-7148-4956-b7c4-1f35db6d8a11',
