@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, forkJoin, of } from 'rxjs';
-import { map, tap, switchMap, catchError, shareReplay } from 'rxjs/operators';
+import { map, tap, switchMap, catchError, mapTo } from 'rxjs/operators';
 
 import { BASE_URL } from '../housing.config';
 import { Environment } from '../../../environment';
@@ -131,7 +131,10 @@ export class ApplicationsService {
 
         return this._housingProxyService.put(this._patronApplicationsUrl, body);
       }),
-      tap(() => this._applicationsStateService.setApplication(applicationKey, applicationDetails))
+      tap(() => this._applicationsStateService.setApplication(applicationKey, applicationDetails)),
+      switchMap((response: ResponseStatus) =>
+        this._questionsStorageService.removeApplication(applicationKey).pipe(mapTo(response))
+      )
     );
   }
 

@@ -143,11 +143,9 @@ export class QuestionsService {
   }
 
   private _toFormControl(storedValue: any, question: QuestionFormControl, attributes: PatronAttribute[]): FormControl {
-    let value: any;
+    let value: any = storedValue;
 
-    if (storedValue) {
-      value = storedValue;
-    } else {
+    if (value == null) {
       const foundAttribute: PatronAttribute = attributes.find(
         (attribute: PatronAttribute) => attribute.attributeConsumerKey === question.consumerKey
       );
@@ -170,7 +168,6 @@ export class QuestionsService {
 
   private _addDataTypeValidator(question: QuestionTextbox, validators: ValidatorFn[]): void {
     const dataType: string = question.dataType ? question.dataType.toLowerCase() : null;
-
     const dataTypeValidator: ValidatorFn = this._dataTypesValidators[dataType];
 
     if (dataTypeValidator) {

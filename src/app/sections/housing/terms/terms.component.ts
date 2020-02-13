@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
-import { tap, catchError } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 
 import { TermsService } from './terms.service';
-import { LoadingService } from '../../../core/service/loading/loading.service';
+import { LoadingService } from '@core/service/loading/loading.service';
 
 import { Term } from './terms.model';
 
@@ -11,6 +11,7 @@ import { Term } from './terms.model';
   selector: 'st-terms',
   templateUrl: './terms.component.html',
   styleUrls: ['./terms.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TermsComponent implements OnInit {
   terms$: Observable<Term[]>;
