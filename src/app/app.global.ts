@@ -23,6 +23,7 @@ export namespace Environment {
 
   export enum AWSAPIUrl {
     DEVELOPMENT = 'https://dwptofebk7.execute-api.us-east-1.amazonaws.com/dev',
+    images = 'https://3bulchr7pb.execute-api.us-east-1.amazonaws.com/dev/image/',
   }
 }
 
@@ -86,6 +87,7 @@ export namespace Settings {
     AUTO_DEPOSIT_TENDERS = 'get.feature.auto_deposit_tenders',
     MOBILE_HEADER_COLOR = 'get.style.custom_site_colors',
     HOUSING_ENABLED = 'get.feature.enable_housing',
+    APPLE_PAY_ENABLED = 'get.feature.enable_apple_pay',
   }
 
 }
@@ -94,6 +96,7 @@ export enum AccountType {
   MEALS = 1,
   CHARGE = 2,
   DECLINING_BALANCE = 3,
+  APPLEPAY = 4,
 }
 
 export enum PaymentType {

@@ -4,6 +4,7 @@ export enum CONTENT_STINGS_DOMAINS {
 
 export enum CONTENT_STINGS_CATEGORIES {
   mealDonation = 'meal_donation',
+  ordering = 'ordering',
 }
 
 export enum CONTENT_STINGS_LOCALES {

@@ -39,7 +39,7 @@ export const testCredentials: Dictionary<UserLogin> = {
   },
 
   KNAU_Yarik: {
-    userName: 'yxp@test.cbord.com',
+    userName: 'yxp4@test.cbord.com',
     password: 'Dn210778pms',
     domain: null,
     institutionId: '72ae1e24-2e31-4927-82a5-4379081e4334',
@@ -58,6 +58,13 @@ export const testCredentials: Dictionary<UserLogin> = {
     domain: null,
     institutionId: '7612d8de-51e1-4cab-971d-88a317326437',
   },
+
+  odysseyPreviewWithUSAePay1: {
+    userName: 'getaws401@tpsmail.dev',
+    password: 'password1',
+    domain: null,
+    institutionId: '7612d8de-51e1-4cab-971d-88a317326437',
+    },
 
   odysseyPreview2: {
     userName: 'getaws2@tpsmail.dev',
@@ -109,7 +116,7 @@ export const testCredentials: Dictionary<UserLogin> = {
   },
 
   housingQAASA: {
-    userName: 'smsg12@tpsmail.dev',
+    userName: 'smsg02@tpsmail.dev',
     password: 'password1',
     domain: null,
     institutionId: '1e418ca8-7148-4956-b7c4-1f35db6d8a11',

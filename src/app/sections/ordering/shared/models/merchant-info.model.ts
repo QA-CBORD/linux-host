@@ -32,6 +32,8 @@ export interface MerchantInfo {
   orderTypes: MerchantOrderTypesInfo;
   taxRate: number;
   image: string;
+  imageThumbnail: string;
+  imageFull: string;
   hasMenu: boolean;
   serviceConsumerId: string;
   settings: MerchantSettingInfo[];

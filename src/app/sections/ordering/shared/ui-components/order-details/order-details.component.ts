@@ -14,6 +14,7 @@ import { DeliveryAddressesModalComponent } from '@sections/ordering/shared/ui-co
 import { UserAccount } from '@core/model/account/account.model';
 import { Subscription } from 'rxjs';
 import { cvvValidationFn } from '@core/utils/general-helpers';
+import { AccountType } from 'src/app/app.global';
 
 @Component({
   selector: 'st-order-details',
@@ -40,6 +41,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
   @Input() mealBased: boolean;
   @Input() accounts: UserAccount[] = [];
   @Input() addressModalConfig: AddressModalSettings;
+  @Input() applePayEnabled: boolean;
   @Output() onFormChange: EventEmitter<OrderDetailsFormData> = new EventEmitter<OrderDetailsFormData>();
   @Output() onOrderItemRemovedId: EventEmitter<string> = new EventEmitter<string>();
   @Output() onOrderItemClicked: EventEmitter<OrderItem> = new EventEmitter<OrderItem>();
@@ -49,6 +51,11 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
   detailsForm: FormGroup;
   private readonly sourceSub = new Subscription();
   showCVVControl = false;
+  applePayAccountType: Partial<UserAccount> = {
+    accountType: AccountType.APPLEPAY,
+    accountDisplayName: "Apple Pay",
+    isActive: true,
+  }
 
   constructor(private readonly fb: FormBuilder,
               private readonly modalController: ModalController) {
