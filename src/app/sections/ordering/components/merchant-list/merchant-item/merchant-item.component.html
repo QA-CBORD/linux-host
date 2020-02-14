@@ -3,7 +3,7 @@
     <ion-row>
       <ion-col class="ion-no-padding align-self-center">
         <img *ngIf="merchantInfo.imageFull"
-             src="https://3bulchr7pb.execute-api.us-east-1.amazonaws.com/dev/image/{{merchantInfo.imageFull}}"
+             src="{{awsImageUrl + merchantInfo.imageFull}}"
              class="merchant__merchant-photo"
              alt="merchant image"/>
       </ion-col>

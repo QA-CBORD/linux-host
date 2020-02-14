@@ -3,7 +3,7 @@
     <ion-slide *ngFor="let merchantSlide of slides" class="order__slide">
       <div class="order__card" (click)="goToMerchant(merchant)" *ngFor="let merchant of merchantSlide">
         <img *ngIf="merchant.imageThumbnail" class="order__card-photo"
-             src="https://3bulchr7pb.execute-api.us-east-1.amazonaws.com/dev/image/{{merchant.imageThumbnail}}"
+             src="{{ awsImageUrl + merchant.imageThumbnail }}"
              alt="merchant image"/>
         <img *ngIf="!merchant.imageThumbnail" class="order__card-photo"
              src="/assets/images/order-item-template.jpg"

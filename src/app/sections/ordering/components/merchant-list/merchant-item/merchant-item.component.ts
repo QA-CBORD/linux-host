@@ -1,5 +1,7 @@
 import { Component, Input, EventEmitter, Output, ChangeDetectionStrategy } from '@angular/core';
 import { MerchantInfo } from '@sections/ordering/shared/models';
+import { Environment } from '../../../../../app.global';
+import AWSAPIUrl = Environment.AWSAPIUrl;
 
 @Component({
   selector: 'st-merchant-item',
@@ -15,8 +17,7 @@ export class MerchantItemComponent {
     id: string;
   }>();
   @Output() locationPin: EventEmitter<string> = new EventEmitter<string>();
-
-  constructor() { }
+  awsImageUrl: string = AWSAPIUrl.images;
 
   get starClass(): string {
     const empty = 'star-outline';
