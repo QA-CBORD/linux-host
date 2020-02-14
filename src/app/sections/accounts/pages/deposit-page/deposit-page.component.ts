@@ -333,7 +333,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
           this.depositService.accounts$.pipe(
             tap(accounts => {
               this.billmeMappingArr = billmeMappingArr;
-              this.creditCardSourceAccounts = this.filterAccountsByPaymentSystem(accounts);
+              this.creditCardSourceAccounts = [...this.filterAccountsByPaymentSystem(accounts)];
               this.creditCardDestinationAccounts = this.filterCreditCardDestAccounts(
                 depositTenders as string[],
                 accounts
