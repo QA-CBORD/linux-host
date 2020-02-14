@@ -3,10 +3,9 @@ import {
   Component,
   EventEmitter,
   Input,
-  OnChanges,
   OnDestroy,
   OnInit,
-  Output, SimpleChanges,
+  Output,
 } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
@@ -31,7 +30,7 @@ import { AccountType } from 'src/app/app.global';
   styleUrls: ['./order-details.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
+export class OrderDetailsComponent implements OnInit, OnDestroy {
   @Input() orderDetailOptions: OrderDetailOptions;
   @Input() readonly: boolean = true;
   @Input() accInfoList: MerchantAccountInfoList = {} as MerchantAccountInfoList;
@@ -75,11 +74,6 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     this.initForm();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    //TODO fix initial value null of this.orderDetailOptions
-    this.initForm();
-  }
-
   ngOnDestroy() {
     this.sourceSub.unsubscribe();
   }
@@ -112,7 +106,6 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   initForm() {
-    if (!this.orderDetailOptions) return;
     this.detailsForm = this.fb.group(
       {
         [DETAILS_FORM_CONTROL_NAMES.address]: [this.orderDetailOptions.address],
