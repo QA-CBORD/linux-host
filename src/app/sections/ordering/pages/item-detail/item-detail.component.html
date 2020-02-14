@@ -73,7 +73,7 @@
     <ion-list class="order-detail__special-instructions" *ngIf="allowNotes">
       <ion-item-divider class="order-detail__divider"
                         mode="ios">
-        <div class="order-detail__divider-title">Specials Instructions</div>
+        <div class="order-detail__divider-title">Notes</div>
       </ion-item-divider>
       <st-textarea-floating-label [control]="itemOrderForm.get('message')"
                                   [isError]="itemOrderForm.get('message').invalid && itemOrderForm.get('message').touched"

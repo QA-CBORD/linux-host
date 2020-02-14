@@ -44,9 +44,15 @@ export class ApplicationsService {
 
     return this._housingProxyService.get<ApplicationDetails[]>(apiUrl).pipe(
       map((applications: any) => ApplicationDetails.toApplicationsDetails(applications)),
-      switchMap((applications: ApplicationDetails[]) =>
-        forkJoin(applications.map((application: ApplicationDetails) => this._setStoredApplicationStatus(application)))
-      ),
+      switchMap((applications: ApplicationDetails[]) => {
+        if (!applications.length) {
+          return of([]);
+        }
+
+        return forkJoin(
+          applications.map((application: ApplicationDetails) => this._setStoredApplicationStatus(application))
+        );
+      }),
       tap((applications: ApplicationDetails[]) => this._applicationsStateService.setApplications(applications)),
       catchError(() => {
         this._applicationsStateService.setApplications([]);
