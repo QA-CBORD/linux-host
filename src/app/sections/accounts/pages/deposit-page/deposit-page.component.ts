@@ -49,7 +49,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     accountDisplayName: "Apple Pay",
     isActive: true,
   };
-  applePayEnabled:Observable<boolean>;
+  applePayEnabled$:Observable<boolean>;
   customActionSheetOptions: any = {
     cssClass: 'custom-deposit-actionSheet',
   };
@@ -77,7 +77,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
 
     this.initForm();
     this.getAccounts();
-    this.applePayEnabled = this.userService.isApplePayEnabled$();
+    this.applePayEnabled$ = this.userService.isApplePayEnabled$();
   }
 
   ngOnDestroy() {
