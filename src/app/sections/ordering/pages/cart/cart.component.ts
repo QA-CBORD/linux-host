@@ -11,7 +11,7 @@ import {
   OrderPayment,
 } from '@sections/ordering';
 import { LOCAL_ROUTING as ACCOUNT_LOCAL_ROUTING } from '@sections/accounts/accounts.config';
-import { first, map, switchMap, tap } from 'rxjs/operators';
+import { first, map, switchMap, tap, finalize } from 'rxjs/operators';
 import {
   ACCOUNT_TYPES,
   MerchantSettings,
@@ -27,11 +27,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { handleServerError } from '@core/utils/general-helpers';
 import { UserAccount } from '@core/model/account/account.model';
 import { ModalController, PopoverController, ToastController } from '@ionic/angular';
-import { NAVIGATE } from '../../../../app.global';
+import { NAVIGATE, AccountType } from '../../../../app.global';
 import { SuccessModalComponent } from '@sections/ordering/pages/cart/components/success-modal';
 import { StGlobalPopoverComponent } from '@shared/ui-components';
 import { MerchantOrderTypesInfo } from '@sections/ordering/shared/models';
-import { NativeProvider } from '@core/provider/native-provider/native.provider';
+import { NativeProvider, NativeData } from '@core/provider/native-provider/native.provider';
+import { UserService } from '@core/service/user-service/user.service';
 
 @Component({
   selector: 'st-cart',
@@ -43,6 +44,7 @@ export class CartComponent implements OnInit {
   order$: Observable<Partial<OrderInfo>>;
   addressModalSettings$: Observable<AddressModalSettings>;
   orderDetailOptions$: Observable<OrderDetailOptions>;
+  applePayEnabled$: Observable<boolean>;
   orderTypes$: Observable<MerchantOrderTypesInfo>;
   accounts$: Promise<UserAccount[]>;
   accountInfoList$: Observable<MerchantAccountInfoList>;
@@ -59,6 +61,7 @@ export class CartComponent implements OnInit {
     private readonly cdRef: ChangeDetectorRef,
     private readonly router: Router,
     private readonly modalController: ModalController,
+    private readonly userService: UserService,
     private readonly nativeProvider: NativeProvider
   ) {}
 
@@ -73,6 +76,7 @@ export class CartComponent implements OnInit {
     this.orderDetailOptions$ = this.cartService.orderDetailsOptions$;
     this.addressModalSettings$ = this.initAddressModalConfig();
     this.accountInfoList$ = this.activatedRoute.data.pipe(map(({ data: [, accInfo] }) => accInfo));
+    this.applePayEnabled$ = this.userService.isApplePayEnabled$();
   }
 
   get isOrderASAP(): Observable<boolean> {
@@ -232,6 +236,16 @@ export class CartComponent implements OnInit {
 
   private async submitOrder(): Promise<void> {
     await this.loadingService.showSpinner();
+    
+    /// if Apple Pay Order
+    if(this.cartFormState.data.paymentMethod.accountType === AccountType.APPLEPAY){
+      let orderData = await this.cartService.orderInfo$.pipe(first()).toPromise();
+      orderData["orderTotal"] = orderData.total;
+      orderData["fee"] = orderData.useFee;
+      await this.nativeProvider.payWithApplePay(NativeData.ORDERS_WITH_APPLE_PAY, orderData).toPromise()
+      .catch(async error => await this.onErrorModal(error));
+    }
+
     this.cartService
       .submitOrder(
         this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.paymentMethod].id,
@@ -314,7 +328,13 @@ export class CartComponent implements OnInit {
         if (!success) {
           return this.onValidateErrorToast(errorMessage);
         }
+        this.loadingService.showSpinner();
 
+        // Update user accounts for refreshing Credit Card dropdown list
+        this.accountInfoList$ = this.cartService.merchant$.pipe(
+          switchMap(({ id }) => this.merchantService.getMerchantPaymentAccounts(id)),
+          finalize(() => this.loadingService.closeSpinner())
+        );
         this.accounts$ = this.getAvailableAccounts();
       });
   }

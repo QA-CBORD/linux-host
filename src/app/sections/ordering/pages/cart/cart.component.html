@@ -21,6 +21,7 @@
             [orderDetailOptions]="orderDetailOptions$ | async"
             [orderTypes]="orderTypes$ | async"
             [accounts]="accounts$ | async"
+            [applePayEnabled]="applePayEnabled$ | async"
             [mealBased]="(order$ | async).mealBased"
             [addressModalConfig]="(addressModalSettings$ | async)"
             (onFormChange)="onCartStateFormChanged($event)"

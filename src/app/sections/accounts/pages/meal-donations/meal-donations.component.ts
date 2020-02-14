@@ -1,9 +1,8 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ModalController, PopoverController, ToastController } from '@ionic/angular';
+import { ModalController, PopoverController, ToastController, NavController } from '@ionic/angular';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { finalize, map, take } from 'rxjs/operators';
-import { Router } from '@angular/router';
 
 import { MealDonationsService } from '@sections/accounts/pages/meal-donations/service/meal-donations.service';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -55,7 +54,7 @@ export class MealDonationsComponent implements OnInit {
     private readonly toastController: ToastController,
     private readonly popoverCtrl: PopoverController,
     private readonly modalCtrl: ModalController,
-    private readonly router: Router,
+    private readonly navCtrl: NavController,
     private readonly cdRef: ChangeDetectorRef,
   ) {
   }
@@ -232,7 +231,7 @@ export class MealDonationsComponent implements OnInit {
     });
     modal
       .onDidDismiss()
-      .then(async () => await this.router.navigate([NAVIGATE.accounts], { skipLocationChange: true }));
+      .then(async () => await this.navCtrl.navigateBack([NAVIGATE.accounts], {skipLocationChange: true}));
     await modal.present();
   }
 
