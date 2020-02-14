@@ -69,29 +69,26 @@ export class NativeProvider {
 
   onNativeBackClicked() {
     let url: string = this.router.url;
-    let destination: string = NAVIGATE.dashboard;    
+    let destination: string = NAVIGATE.dashboard;
 
-    if (this.checkRoute(url, NAVIGATE.accounts)) {
-      destination = NAVIGATE.accounts;
-    } else if (this.checkRoute(url, NAVIGATE.mobileAccess)) {
-      destination = NAVIGATE.mobileAccess;
-    } else if (this.checkRoute(url, NAVIGATE.ordering)) {
-      if (url.indexOf('/ordering/cart') >= 0) {
-        destination = 'ordering/full-menu';
-      } else {
-        destination = NAVIGATE.ordering;
-      }
-    } else if (this.checkRoute(url, NAVIGATE.rewards)) {
-      destination = NAVIGATE.rewards;
-    } else if (this.checkRoute(url, NAVIGATE.secureMessage)) {
-      destination = NAVIGATE.secureMessage;
+    for (let n in NAVIGATE) {
+      /// if 1 page deep from dashboard, navigate back to dashboard
+      destination = url.indexOf(NAVIGATE[n]) >= 0 && url !== `/${NAVIGATE[n]}` ? NAVIGATE[n] : destination;
+      /// if beyond initial order page, navigate back to main order page
+      destination =
+        url.indexOf(`/${NAVIGATE.ordering}/`) >= 0 &&
+        url.indexOf('full-menu') < 0 &&
+        url.indexOf('recent-orders') < 0 &&
+        url.indexOf('saved-addresses') < 0 &&
+        url.indexOf('favorite-merchants') < 0
+          ? `${NAVIGATE.ordering}/full-menu`
+          : destination;
+
+      /// if beyond main accounts page, navigate back to accounts page
+      destination = url.indexOf(`/${NAVIGATE.accounts}/`) >= 0 ? NAVIGATE.accounts : destination;
     }
-    
-    this.router.navigate(['/' + destination], { skipLocationChange: true });
-  }
 
-  private checkRoute(url: string, route: string): boolean{    
-    return url.indexOf(route) >= 0 && url !== '/' + route;
+     this.router.navigate(['/' + destination], { skipLocationChange: true });
   }
 
   /// used to allow user to add USAePay CC and handle response
@@ -116,7 +113,7 @@ export class NativeProvider {
   /**
    *  Apple Pay
    */
-  payWithApplePay(payType:NativeData, moreParams:Object): Observable<USAePayResponse> {    
+  payWithApplePay(payType: NativeData, moreParams: Object): Observable<USAePayResponse> {
     if (this.isAndroid()) {
       return of({ success: false, errorMessage: 'Apple Pay does not work on Android.' });
     } else if (this.isIos()) {
@@ -126,7 +123,7 @@ export class NativeProvider {
     }
   }
 
-  getIosData(methodName: NativeData, moreParams?:Object): Promise<any> {
+  getIosData(methodName: NativeData, moreParams?: Object): Promise<any> {
     return new Promise((resolve, reject) => {
       // we generate a unique id to reference the promise later
       // from native function
