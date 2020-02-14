@@ -340,8 +340,10 @@ export class DepositPageComponent implements OnInit, OnDestroy {
         switchMap(({ depositTenders, billmeMappingArr }) =>
           this.depositService.accounts$.pipe(
             tap(accounts => {
-              console.log('accounts', accounts);
-              console.log('filtered accounts', this.filterAccountsByPaymentSystem(accounts));
+              console.log('accounts:')
+              console.log(accounts);
+              console.log('filtered accounts:')
+              console.log(this.filterAccountsByPaymentSystem(accounts));
 
               this.billmeMappingArr = billmeMappingArr;
               this.creditCardSourceAccounts = [...this.filterAccountsByPaymentSystem(accounts)];
