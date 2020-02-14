@@ -2,13 +2,10 @@
   <ion-grid class="ion-no-padding" fixed>
     <ion-row>
       <ion-col class="ion-no-padding align-self-center">
-        <!-- IMAGE -->
-        <img class="merchant__merchant-photo" src="/assets/images/temp-merchant-photo.jpg" alt="nature background"/>
-        <!--        issue under consideration -->
-        <!--        <img *ngIf="merchantInfo.image" class="merchant__merchant-photo"-->
-        <!--             src="https://get.dev.cbord.com/OP/full/images/slides/{{merchantInfo.image}}">-->
-        <!--        <img *ngIf="!merchantInfo.image" class="merchant__merchant-photo"-->
-        <!--             src="https://get.dev.cbord.com/OP/full/merchant_photo.php?merchantid={{merchantInfo.id}}">-->
+        <img *ngIf="merchantInfo.imageFull"
+             src="https://3bulchr7pb.execute-api.us-east-1.amazonaws.com/dev/image/{{merchantInfo.imageFull}}"
+             class="merchant__merchant-photo"
+             alt="merchant image"/>
       </ion-col>
     </ion-row>
 
