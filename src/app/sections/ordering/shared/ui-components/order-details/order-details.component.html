@@ -83,7 +83,7 @@
                 (ionChange)="onPaymentChanged($event)"
                 [interfaceOptions]="{cssClass: 'custom-deposit-actionSheet'}"
         >
-          <ion-select-option *ngIf="applePayEnabled" [value]="applePayAccountType">
+          <ion-select-option *ngIf="applePayEnabled && accInfoList?.creditAccepted" [value]="applePayAccountType">
             Apple Pay
           </ion-select-option>
           <ion-select-option [value]="account" *ngFor="let account of accounts">

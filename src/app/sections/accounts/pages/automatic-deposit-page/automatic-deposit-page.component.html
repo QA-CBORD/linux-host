@@ -118,7 +118,7 @@
                                   class="deposit-form__label">
             <ng-container role="options">
 
-                <ion-select-option *ngIf="applePayEnabled$ | async" [value]="'applePay'">
+                <ion-select-option *ngIf="isCreditPaymentTypeEnabled$ && applePayEnabled$ | async" [value]="'applePay'">
                     Apple Pay
                 </ion-select-option>
                 
