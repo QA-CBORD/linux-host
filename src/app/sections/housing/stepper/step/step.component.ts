@@ -18,10 +18,4 @@ export class StepComponent {
   get completed(): boolean {
     return this.stepControl ? this.stepControl.valid && this.interacted : this.interacted;
   }
-
-  reset(): void {
-    if (this.stepControl) {
-      this.stepControl.reset();
-    }
-  }
 }

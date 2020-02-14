@@ -6,6 +6,7 @@ import { ApplicationDetails } from './applications.model';
 
 export interface ApplicationsState {
   entities: ApplicationEntities;
+  applicationDetails: ApplicationDetails;
 }
 
 export interface ApplicationEntities {
@@ -18,6 +19,7 @@ export interface ApplicationEntities {
 export class ApplicationsStateService {
   private readonly _defaultState: ApplicationsState = {
     entities: {},
+    applicationDetails: null,
   };
 
   private readonly _applicationsStateSource: BehaviorSubject<ApplicationsState> = new BehaviorSubject<
@@ -30,6 +32,10 @@ export class ApplicationsStateService {
 
   readonly applications$: Observable<ApplicationDetails[]> = this.applicationEntities$.pipe(
     map(this._getApplications.bind(this))
+  );
+
+  readonly applicationDetails$: Observable<ApplicationDetails> = this._applicationsStateSource.pipe(
+    map(this._getApplicationDetails)
   );
 
   set applicationsState(value: ApplicationsState) {
@@ -53,6 +59,10 @@ export class ApplicationsStateService {
     };
   }
 
+  setApplicationDetails(applicationDetails: ApplicationDetails): void {
+    this.applicationsState = { ...this.applicationsState, applicationDetails };
+  }
+
   private _getEntities(state: ApplicationsState) {
     return state.entities;
   }
@@ -72,5 +82,9 @@ export class ApplicationsStateService {
 
   private _toApplicationsArray(entities: ApplicationEntities): ApplicationDetails[] {
     return Object.keys(entities).map((key: string) => entities[parseInt(key, 10)]);
+  }
+
+  private _getApplicationDetails(state: ApplicationsState): ApplicationDetails {
+    return state.applicationDetails;
   }
 }

@@ -9,6 +9,8 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '@environments/environment';
 import { StGlobalPopoverModule } from '@shared/ui-components/st-global-popover/st-global-popover.module';
 
+import { OBSERVABLE_STORAGE_PROVIDERS } from '@shared/services/observable-storage/observable-storage.service';
+
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -19,6 +21,7 @@ import { StGlobalPopoverModule } from '@shared/ui-components/st-global-popover/s
     AppRoutingModule,
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
   ],
+  providers: [OBSERVABLE_STORAGE_PROVIDERS],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

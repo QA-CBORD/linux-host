@@ -26,8 +26,8 @@ import { StepComponent } from '../../stepper/step/step.component';
 import { QuestionComponent } from '../../questions/question.component';
 
 import { ApplicationStatus, ApplicationDetails, PatronApplication } from '../../applications/applications.model';
-import { ApplicationPage } from '../../questions/questions.model';
 import { Response } from '../../housing.model';
+import { QuestionsPage } from '../../questions/questions.model';
 
 @Component({
   selector: 'st-application-details',
@@ -46,7 +46,7 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
 
   applicationDetails$: Observable<ApplicationDetails>;
 
-  pages$: Observable<ApplicationPage[]>;
+  pages$: Observable<QuestionsPage[]>;
 
   applicationKey: number;
 
@@ -129,11 +129,7 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
   }
 
   private _initPagesSubscription(): void {
-    this.pages$ = this._questionsService.pages$.pipe(
-      tap((pages: ApplicationPage[]) =>
-        this._questionsService._patchFormsFromState(this.applicationKey, pages, this._checkQuestions.bind(this))
-      )
-    );
+    this.pages$ = this._questionsService.getPages(this.applicationKey);
   }
 
   private _initRefreshSubscription(): void {
@@ -148,33 +144,31 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
   }
 
   private _next(application: ApplicationDetails, formValue: any): void {
-    this._questionsStorageService
+    const updateCreatedDateTimeSubscription: Subscription = this._questionsStorageService
       .updateCreatedDateTime(this.applicationKey, application.patronApplication)
-      .then((createdDateTime: string) => {
-        const status: ApplicationStatus =
-          application.patronApplication && application.patronApplication.status
-            ? application.patronApplication.status
-            : ApplicationStatus.Pending;
-        const patronApplication: PatronApplication = new PatronApplication({
-          ...application.patronApplication,
-          createdDateTime,
-          status,
-        });
-        const applicationDetails: ApplicationDetails = new ApplicationDetails({ ...application, patronApplication });
+      .pipe(
+        switchMap((createdDateTime: string) => {
+          const status: ApplicationStatus =
+            application.patronApplication && application.patronApplication.status
+              ? application.patronApplication.status
+              : ApplicationStatus.Pending;
+          const patronApplication: PatronApplication = new PatronApplication({
+            ...application.patronApplication,
+            createdDateTime,
+            status,
+          });
+          const applicationDetails: ApplicationDetails = new ApplicationDetails({ ...application, patronApplication });
 
-        this._applicationsStateService.setApplication(this.applicationKey, applicationDetails);
+          this._applicationsStateService.setApplication(this.applicationKey, applicationDetails);
 
-        return this._questionsStorageService.updateQuestions(this.applicationKey, formValue, status);
-      })
-      .then(() => this.stepper.next());
-  }
-
-  private _checkQuestions(namesToTouch: Set<string>): void {
-    this.questions
-      .filter((question: QuestionComponent) => namesToTouch.has(question.name))
-      .forEach((question: QuestionComponent) => {
-        question.check();
+          return this._questionsStorageService.updateQuestions(this.applicationKey, formValue, status);
+        })
+      )
+      .subscribe({
+        next: () => this.stepper.next(),
       });
+
+    this._subscription.add(updateCreatedDateTimeSubscription);
   }
 
   private _handleSuccess(): void {

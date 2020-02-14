@@ -3,10 +3,9 @@ import { Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { ApplicationsService } from './applications.service';
-import { QuestionsStorageService } from '../questions/questions-storage.service';
 import { ApplicationsStateService } from './applications-state.service';
 import { TermsService } from '../terms/terms.service';
-import { LoadingService } from '../../../core/service/loading/loading.service';
+import { LoadingService } from '@core/service/loading/loading.service';
 
 @Component({
   selector: 'st-applications',
@@ -18,7 +17,6 @@ export class ApplicationsComponent implements OnInit, OnDestroy {
 
   constructor(
     private _applicationsService: ApplicationsService,
-    private _questionsStorageService: QuestionsStorageService,
     private _termsService: TermsService,
     private _loadingService: LoadingService,
     public applicationsStateService: ApplicationsStateService
@@ -43,9 +41,5 @@ export class ApplicationsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this._subscription.unsubscribe();
-  }
-
-  handleClear(applicationKey: number): void {
-    this._questionsStorageService.removeApplication(applicationKey);
   }
 }

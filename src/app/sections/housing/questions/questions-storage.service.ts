@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Storage } from '@ionic/storage';
+import { Observable } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 
 import { STORAGE_KEY } from '../housing.config';
+
+import { ObservableStorageService } from '@shared/services/observable-storage/observable-storage.service';
 
 import { ApplicationStatus, PatronApplication } from '../applications/applications.model';
 
@@ -22,67 +25,79 @@ export interface StoredApplication {
 export class QuestionsStorageService {
   private readonly _key: string = `${STORAGE_KEY}-applications`;
 
-  constructor(private _storage: Storage) {}
+  constructor(private _observableStorage: ObservableStorageService) {}
 
-  async getApplication(applicationKey: number): Promise<StoredApplication> {
-    return this._storage.get(`${this._key}-${applicationKey}`);
+  getApplication(applicationKey: number): Observable<StoredApplication> {
+    return this._observableStorage.get<StoredApplication>(`${this._key}-${applicationKey}`);
   }
 
-  async removeApplication(applicationKey: number): Promise<any> {
-    return this._storage.remove(`${this._key}-${applicationKey}`);
-  }
-
-  async getQuestions(applicationKey: number): Promise<QuestionsEntries> {
-    return this.getApplication(applicationKey).then((application: StoredApplication) =>
-      application ? application.questions : null
+  getApplicationStatus(applicationKey: number): Observable<ApplicationStatus> {
+    return this.getApplication(applicationKey).pipe(
+      map((storedApplication: StoredApplication) => (storedApplication ? storedApplication.status : null))
     );
   }
 
-  async updateCreatedDateTime(applicationKey: number, patronApplication: PatronApplication): Promise<string> {
-    return this.getApplication(applicationKey).then(async (storedApplication: StoredApplication) => {
-      let createdDateTime: string = new Date().toISOString();
-
-      if (patronApplication && patronApplication.createdDateTime) {
-        createdDateTime = patronApplication.createdDateTime;
-      } else if (storedApplication && storedApplication.createdDateTime) {
-        createdDateTime = storedApplication.createdDateTime;
-      }
-
-      return this._storage
-        .set(`${this._key}-${applicationKey}`, {
-          ...storedApplication,
-          createdDateTime,
-        })
-        .then(() => createdDateTime);
-    });
+  removeApplication(applicationKey: number): Observable<any> {
+    return this._observableStorage.remove(`${this._key}-${applicationKey}`);
   }
 
-  async updateSubmittedDateTime(applicationKey: number): Promise<string> {
+  getQuestions(applicationKey: number): Observable<QuestionsEntries> {
+    return this.getApplication(applicationKey).pipe(
+      map((application: StoredApplication) => (application ? application.questions : null))
+    );
+  }
+
+  updateCreatedDateTime(applicationKey: number, patronApplication: PatronApplication): Observable<string> {
+    return this.getApplication(applicationKey).pipe(
+      switchMap((storedApplication: StoredApplication) => {
+        let createdDateTime: string = new Date().toISOString();
+
+        if (patronApplication && patronApplication.createdDateTime) {
+          createdDateTime = patronApplication.createdDateTime;
+        } else if (storedApplication && storedApplication.createdDateTime) {
+          createdDateTime = storedApplication.createdDateTime;
+        }
+
+        return this._observableStorage
+          .set(`${this._key}-${applicationKey}`, {
+            ...storedApplication,
+            createdDateTime,
+          })
+          .pipe(map(() => createdDateTime));
+      })
+    );
+  }
+
+  updateSubmittedDateTime(applicationKey: number): Observable<string> {
     const submittedDateTime: string = new Date().toISOString();
 
-    return this.getApplication(applicationKey)
-      .then((application: StoredApplication) =>
-        this._storage.set(`${this._key}-${applicationKey}`, {
-          ...application,
+    return this.getApplication(applicationKey).pipe(
+      switchMap((storedApplication: StoredApplication) =>
+        this._observableStorage.set(`${this._key}-${applicationKey}`, {
+          ...storedApplication,
           submittedDateTime,
         })
-      )
-      .then(() => submittedDateTime);
+      ),
+      map(() => submittedDateTime)
+    );
   }
 
-  async updateQuestions(applicationKey: number, formValue: any, status: ApplicationStatus): Promise<any> {
-    return this.getApplication(applicationKey).then((application: StoredApplication) => {
-      let questions: QuestionsEntries = application && application.questions ? application.questions : {};
+  updateQuestions(applicationKey: number, formValue: any, status: ApplicationStatus): Observable<any> {
+    return this.getApplication(applicationKey).pipe(
+      switchMap((storedApplication: StoredApplication) => {
+        let questions: QuestionsEntries =
+          storedApplication && storedApplication.questions ? storedApplication.questions : {};
 
-      Object.keys(formValue).forEach(
-        (formControlName: any) => (questions[formControlName] = formValue[formControlName])
-      );
+        Object.keys(formValue).forEach(
+          (formControlName: any) => (questions[formControlName] = formValue[formControlName])
+        );
 
-      return this._storage.set(`${this._key}-${applicationKey}`, {
-        ...application,
-        status,
-        questions,
-      });
-    });
+        return this._observableStorage.set(`${this._key}-${applicationKey}`, {
+          ...storedApplication,
+          status,
+          questions,
+        });
+      })
+    );
   }
 }
