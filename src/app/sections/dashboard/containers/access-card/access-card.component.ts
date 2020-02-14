@@ -24,7 +24,7 @@ export class AccessCardComponent implements OnInit {
   institutionBackgroundImage$: Observable<string>;
   getMyCardEnabled$: Observable<boolean>;
   isMobileAccessButtonEnabled$: Observable<boolean>;
-  appleWalletEnabled: boolean;
+  appleWalletEnabled: boolean = false;
   appleWalletInfo: any;
   appleWalletMessage: string;
   appleWalletMessageImage: string;
@@ -43,9 +43,9 @@ export class AccessCardComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getUserData();
     this.setInstitutionData();
     this.getFeaturesEnabled();
+    this.getUserData();
     if (this.nativeProvider.isIos()) {
       this.nativeProvider.getIosData(NativeData.APPLE_WALLET_INFO).then(value => {
         this.appleWalletInfo = JSON.parse(value);
@@ -62,6 +62,7 @@ export class AccessCardComponent implements OnInit {
         .subscribe(photo => {
           this.isLoadingPhoto = false;
           this.userPhoto = photo;
+          this.changeRef.detectChanges();
         });
   }
 
@@ -97,7 +98,7 @@ export class AccessCardComponent implements OnInit {
   private setAppleWalletMessage() {
     this.appleWalletEnabled = this.appleWalletInfo.isAppleWalletEnabled;
     if(this.appleWalletEnabled){
-    
+
       let isIPhoneAlreadyProvisioned = this.appleWalletInfo.iPhoneProvisioned;
       let isWatchPaired = this.appleWalletInfo.watchPaired;
       let isIWatchAlreadyProvisioned = this.appleWalletInfo.watchProvisioned;
@@ -133,7 +134,7 @@ export class AccessCardComponent implements OnInit {
         // this.appleWalletMessageImageHidden = true;
         this.appleWalletButtonHidden = false;
       }
-        
+
     } else {
       this.appleWalletMessage = null;
       this.appleWalletMessageImage = null;

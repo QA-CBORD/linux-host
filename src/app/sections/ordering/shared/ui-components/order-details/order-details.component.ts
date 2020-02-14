@@ -1,9 +1,17 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
   BuildingInfo,
   MerchantAccountInfoList,
-  MerchantOrderTypesInfo,
+  MerchantOrderTypesInfo, OrderDetailOptions,
   OrderItem,
   OrderPayment,
 } from '@sections/ordering';
@@ -23,7 +31,7 @@ import { AccountType } from 'src/app/app.global';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OrderDetailsComponent implements OnInit, OnDestroy {
-  @Input() orderDetailOptions: any;
+  @Input() orderDetailOptions: OrderDetailOptions;
   @Input() readonly: boolean = true;
   @Input() accInfoList: MerchantAccountInfoList = {} as MerchantAccountInfoList;
   @Input() orderTypes: MerchantOrderTypesInfo;
@@ -55,10 +63,11 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
     accountType: AccountType.APPLEPAY,
     accountDisplayName: "Apple Pay",
     isActive: true,
-  }
+  };
 
   constructor(private readonly fb: FormBuilder,
               private readonly modalController: ModalController) {
+
   }
 
   ngOnInit() {
@@ -85,7 +94,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
     if (this.orderDetailOptions.dueTime instanceof Date) {
       return this.orderDetailOptions;
     }
-    return { ...this.orderDetailOptions, dueTime: new Date(this.orderDetailOptions.dueTime.slice(0, 19)) };
+    return { ...this.orderDetailOptions, dueTime: new Date((<string>this.orderDetailOptions.dueTime).slice(0, 19)) };
   }
 
   goToItemDetails(orderItem) {

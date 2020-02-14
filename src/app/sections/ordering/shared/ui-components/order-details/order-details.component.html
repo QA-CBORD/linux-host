@@ -1,4 +1,4 @@
-<div class="content" [ngClass]="{'content--disabled': readonly}">
+<div class="content" *ngIf="detailsForm" [ngClass]="{'content--disabled': readonly}">
   <form novalidate [formGroup]="detailsForm">
 
     <div class="order-details">
@@ -92,7 +92,7 @@
           <ion-select-option *ngIf="accInfoList?.creditAccepted" [value]="'addCC'">
             Add a Credit Card
           </ion-select-option>
-          
+
         </ion-select>
       </div>
     </ng-template>

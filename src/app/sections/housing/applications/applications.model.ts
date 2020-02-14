@@ -205,4 +205,10 @@ export class ApplicationDetails {
       );
     }
   }
+
+  static toApplicationsDetails(applications: any): ApplicationDetails[] {
+    return Array.isArray(applications)
+      ? applications.map((application: any) => new ApplicationDetails(application))
+      : [];
+  }
 }
