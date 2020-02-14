@@ -61,8 +61,8 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     private readonly loadingService: LoadingService,
     private readonly nativeProvider: NativeProvider,
     private readonly cdRef: ChangeDetectorRef
-    
-  ) {}
+
+  ) { }
 
   ngOnInit() {
     this.depositService.settings$.pipe(take(1)).subscribe(depositSettings => (this.depositSettings = depositSettings));
@@ -271,7 +271,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
 
             this.depositService
               .getUserAccounts()
-              .pipe(take(1), tap(()=> this.cdRef.detectChanges()))
+              .pipe(take(1))
               .subscribe();
           });
       }
@@ -339,6 +339,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
                 accounts
               );
               this.billmeDestinationAccounts = this.filterBillmeDestAccounts(this.billmeMappingArr, accounts);
+              this.cdRef.detectChanges();
             })
           )
         )
