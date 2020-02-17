@@ -120,7 +120,7 @@ export class NativeProvider {
 
   resolvePromise(promiseId, data, error?) {
     if (error || !data) {
-      this.promises[promiseId].reject(data);
+      this.promises[promiseId].reject(error);
     } else {
       this.promises[promiseId].resolve(data);
     }
