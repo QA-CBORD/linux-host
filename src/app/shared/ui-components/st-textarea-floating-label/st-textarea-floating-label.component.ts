@@ -13,7 +13,7 @@ export const CUSTOM_TEXTAREA_CONTROL_VALUE_ACCESSOR: any = {
   styleUrls: ['./st-textarea-floating-label.component.scss'],
   providers: [CUSTOM_TEXTAREA_CONTROL_VALUE_ACCESSOR],
 })
-export class StTextareaFloatingLabelComponent extends DefaultValueAccessor implements AfterViewInit {
+export class StTextareaFloatingLabelComponent extends DefaultValueAccessor {
   @Input() control: AbstractControl = new FormControl();
   @Input() label: string;
   @Input() idd: string;
@@ -22,12 +22,6 @@ export class StTextareaFloatingLabelComponent extends DefaultValueAccessor imple
   onTouched: () => void;
   onChange: (_: any) => void;
   innerValue: any = '';
-
-  ngAfterViewInit(): void {
-    // if (this.control && this.control.value) {
-    //   this.writeValue(this.control.value);
-    // }
-  }
 
   //get accessor
   get value(): any {
