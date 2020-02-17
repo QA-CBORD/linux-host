@@ -25,6 +25,11 @@ export interface USAePayResponse {
   success: boolean;
   errorMessage: string;
 }
+export interface ApplePayResponse {
+  success: boolean;
+  errorMessage: string;
+  accountId: string;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -113,13 +118,13 @@ export class NativeProvider {
   /**
    *  Apple Pay
    */
-  payWithApplePay(payType: NativeData, moreParams: Object): Observable<USAePayResponse> {
+  payWithApplePay(payType: NativeData, moreParams: Object): Observable<ApplePayResponse> {
     if (this.isAndroid()) {
-      return of({ success: false, errorMessage: 'Apple Pay does not work on Android.' });
+      return of({ success: false, errorMessage: 'Apple Pay does not work on Android.', accountId: null});
     } else if (this.isIos()) {
       return from(this.getIosData(payType, moreParams));
     } else {
-      return of({ success: false, errorMessage: 'This is not a native device' });
+      return of({ success: false, errorMessage: 'This is not a native device', accountId: null});
     }
   }
 
