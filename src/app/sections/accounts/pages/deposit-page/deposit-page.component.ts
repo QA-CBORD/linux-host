@@ -389,7 +389,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   }
 
   trackByAccountId(i: number, { id }: UserAccount): string {
-    return `${i}-${Math.random()}`;
+    return `${id}-${Math.random()}`;
   }
 
   private resetControls(controlNames: string[]) {
