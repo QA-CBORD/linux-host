@@ -23,7 +23,7 @@
           </ion-select-option>
           <ng-container *ngIf="isCreditCardPaymentTypesEnabled">
             <ion-select-option [value]="account"
-                               *ngFor="let account of creditCardSourceAccounts"
+                               *ngFor="let account of creditCardSourceAccounts; trackBy: trackByAccountId"
                                class="test-class">{{ account.accountTender | creditCardType }} ending in
               {{ account.lastFour }}
             </ion-select-option>
