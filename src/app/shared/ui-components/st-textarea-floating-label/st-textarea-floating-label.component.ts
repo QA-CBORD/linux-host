@@ -24,9 +24,9 @@ export class StTextareaFloatingLabelComponent extends DefaultValueAccessor imple
   innerValue: any = '';
 
   ngAfterViewInit(): void {
-    if (this.control && this.control.value) {
-      this.writeValue(this.control.value);
-    }
+    // if (this.control && this.control.value) {
+    //   this.writeValue(this.control.value);
+    // }
   }
 
   //get accessor
@@ -44,8 +44,6 @@ export class StTextareaFloatingLabelComponent extends DefaultValueAccessor imple
 
   //From ControlValueAccessor interface
   writeValue(value: any) {
-    console.log('Write Value: ', value);
-
     // this.inputRef.nativeElement.value = value;
     this.innerValue = value;
   }
