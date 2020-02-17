@@ -84,10 +84,6 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     this.sourceSubscription.unsubscribe();
   }
 
-  ionViewWillEnter() {
-    console.log('----------------WILL ENTER--------------')
-  }
-
   get isFreeFromDepositEnabled$(): Observable<boolean> {
     return this.depositService.settings$.pipe(
       map(settings => {
