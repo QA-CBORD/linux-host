@@ -10,7 +10,7 @@ import {
   SYSTEM_SETTINGS_CONFIG,
 } from '../../accounts.config';
 import { SettingInfo } from 'src/app/core/model/configuration/setting-info.model';
-import { iif, Observable, of, Subscription } from 'rxjs';
+import { iif, Observable, of, Subscription, throwError } from 'rxjs';
 import { UserAccount } from '@core/model/account/account.model';
 import { ConfirmDepositPopoverComponent } from '../../shared/ui-components/confirm-deposit-popover/confirm-deposit-popover.component';
 import { DepositModalComponent } from '../../shared/ui-components/deposit-modal/deposit-modal.component';
@@ -270,22 +270,18 @@ export class DepositPageComponent implements OnInit, OnDestroy {
 
         return this.nativeProvider
           .addUSAePayCreditCard()
-          .pipe(take(1))
-          .subscribe(({ success, errorMessage }) => {
-            if (!success) {
-              return this.onErrorRetrieve(errorMessage);
-            }
-            // this.loadingService.showSpinner();
+          .pipe(
+            switchMap(({ success, errorMessage }) => {
+              if (!success) {
+                return throwError(errorMessage);
+              }
 
-            // Update user accounts for refreshing Credit Card dropdown list
-            // this.depositService
-            //   .getUserAccounts()
-            //   .pipe(
-            //     take(1),
-            //     finalize(() => this.loadingService.closeSpinner())
-            //   )
-            //   .subscribe();
-          });
+              return this.depositService
+                .getUserAccounts();
+            }),
+            take(1))
+          .subscribe(() => { },
+            (message) => this.onErrorRetrieve(message));
       }
 
       if (data) {
