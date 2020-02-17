@@ -1,6 +1,13 @@
 @import 'tools';
 
 .conversations {
+  min-height: 150px;
+  transition: 1s ease-out;
+
+  &--auto-height {
+      min-height: 0;
+  }
+
   &__sender-list {
     margin: 0;
     padding: 0;

@@ -1,5 +1,5 @@
-<div class="conversations">
-  <ion-list class="conversations__sender-list">
+<div class="conversations" [ngClass]="{'conversations--auto-height': !isLoading}">
+  <ion-list class="conversations__sender-list" *ngIf="lastTwoMessagesArray.length && !isLoading">
     <ion-item
             *ngFor="let message of lastTwoMessagesArray"
             class="conversations__sender-item"
@@ -34,7 +34,7 @@
     </ion-item>
   </ion-list>
 
-  <ion-list *ngIf="!lastTwoMessagesArray.length">
+  <ion-list *ngIf="isLoading">
     <ion-item *ngFor="let a of conversationSkeletonArray">
       <ion-label>
         <div class="conversations__skeleton-conversation">
