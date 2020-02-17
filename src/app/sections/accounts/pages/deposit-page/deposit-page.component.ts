@@ -35,6 +35,7 @@ import { UserService } from '@core/service/user-service/user.service';
 export class DepositPageComponent implements OnInit, OnDestroy {
   private readonly sourceSubscription: Subscription = new Subscription();
   private activePaymentType: PAYMENT_TYPE;
+  refreshedSelect: boolean = true;
   focusLine: boolean = false;
   depositSettings: SettingInfo[];
   depositForm: FormGroup;
@@ -326,6 +327,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   }
 
   private getAccounts() {
+    this.refreshedSelect = !this.refreshedSelect;
     const subscription = this.depositService.settings$
       .pipe(
         map(settings => {
@@ -341,15 +343,14 @@ export class DepositPageComponent implements OnInit, OnDestroy {
           this.depositService.accounts$.pipe(
             tap(accounts => {
               this.billmeMappingArr = billmeMappingArr;
+              this.creditCardSourceAccounts = [...this.filterAccountsByPaymentSystem(accounts)];
               this.creditCardDestinationAccounts = this.filterCreditCardDestAccounts(
                 depositTenders as string[],
                 accounts
               );
               this.billmeDestinationAccounts = this.filterBillmeDestAccounts(this.billmeMappingArr, accounts);
-              setTimeout(() => {
-                this.creditCardSourceAccounts = [...this.filterAccountsByPaymentSystem(accounts)];
-                this.cdRef.detectChanges();
-              }, 0)
+              this.refreshedSelect = !this.refreshedSelect;
+              this.cdRef.detectChanges();
             })
           )
         )
