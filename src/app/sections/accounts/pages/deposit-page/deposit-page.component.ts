@@ -49,7 +49,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     accountDisplayName: "Apple Pay",
     isActive: true,
   };
-  applePayEnabled:Observable<boolean>;
+  applePayEnabled: Observable<boolean>;
   customActionSheetOptions: any = {
     cssClass: 'custom-deposit-actionSheet',
   };
@@ -340,19 +340,16 @@ export class DepositPageComponent implements OnInit, OnDestroy {
         switchMap(({ depositTenders, billmeMappingArr }) =>
           this.depositService.accounts$.pipe(
             tap(accounts => {
-              console.log('accounts:')
-              console.log(accounts);
-              console.log('filtered accounts:')
-              console.log(this.filterAccountsByPaymentSystem(accounts));
-
               this.billmeMappingArr = billmeMappingArr;
-              this.creditCardSourceAccounts = [...this.filterAccountsByPaymentSystem(accounts)];
               this.creditCardDestinationAccounts = this.filterCreditCardDestAccounts(
                 depositTenders as string[],
                 accounts
               );
               this.billmeDestinationAccounts = this.filterBillmeDestAccounts(this.billmeMappingArr, accounts);
-              this.cdRef.detectChanges();
+              setTimeout(() => {
+                this.creditCardSourceAccounts = [...this.filterAccountsByPaymentSystem(accounts)];
+                this.cdRef.detectChanges();
+              }, 0)
             })
           )
         )
