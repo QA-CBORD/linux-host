@@ -2,9 +2,14 @@
   <ion-slides *ngIf="slides.length" mode="ios" [options]="slideOpts" class="order__slides">
     <ion-slide *ngFor="let merchantSlide of slides" class="order__slide">
       <div class="order__card" (click)="goToMerchant(merchant)" *ngFor="let merchant of merchantSlide">
-        <img class="order__card-photo" src="/assets/images/order-item-template.jpg" />
+        <img *ngIf="merchant.imageThumbnail" class="order__card-photo"
+             src="{{ awsImageUrl + merchant.imageThumbnail }}"
+             alt="merchant image"/>
+        <img *ngIf="!merchant.imageThumbnail" class="order__card-photo"
+             src="/assets/images/order-item-template.jpg"
+             alt="merchant image"/>
         <div class="order__favorite-wrapper">
-          <img class="order__favorite-icon" src="/assets/icon/star-filled.svg" />
+          <img class="order__favorite-icon" src="/assets/icon/star-filled.svg" alt="star icon"/>
         </div>
         <div class="order__card-title-wrapper">
           <div class="order__card-title">{{ merchant.name }}</div>
