@@ -54,7 +54,7 @@ export class ApplicationsService {
         );
       }),
       tap((applications: ApplicationDetails[]) => this._applicationsStateService.setApplications(applications)),
-      catchError(() => {
+      catchError((error: any) => {
         this._applicationsStateService.setApplications([]);
 
         return of([]);
