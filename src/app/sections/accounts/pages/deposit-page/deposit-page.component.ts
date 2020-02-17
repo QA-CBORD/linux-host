@@ -35,7 +35,6 @@ import { UserService } from '@core/service/user-service/user.service';
 export class DepositPageComponent implements OnInit, OnDestroy {
   private readonly sourceSubscription: Subscription = new Subscription();
   private activePaymentType: PAYMENT_TYPE;
-  refreshedSelect: boolean = true;
   focusLine: boolean = false;
   depositSettings: SettingInfo[];
   depositForm: FormGroup;
@@ -83,6 +82,10 @@ export class DepositPageComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.sourceSubscription.unsubscribe();
+  }
+
+  ionViewWillEnter() {
+    console.log('----------------WILL ENTER--------------')
   }
 
   get isFreeFromDepositEnabled$(): Observable<boolean> {
@@ -341,19 +344,15 @@ export class DepositPageComponent implements OnInit, OnDestroy {
         switchMap(({ depositTenders, billmeMappingArr }) =>
           this.depositService.accounts$.pipe(
             tap(accounts => {
-              this.refreshedSelect = !this.refreshedSelect;
               this.billmeMappingArr = billmeMappingArr;
               this.creditCardSourceAccounts = [...this.filterAccountsByPaymentSystem(accounts)];
               this.creditCardDestinationAccounts = this.filterCreditCardDestAccounts(
                 depositTenders as string[],
                 accounts
-                );
+              );
               this.billmeDestinationAccounts = this.filterBillmeDestAccounts(this.billmeMappingArr, accounts);
-            }))),
-        tap(() => {
-          this.refreshedSelect = !this.refreshedSelect;
-          this.cdRef.detectChanges();
-        })
+              this.cdRef.detectChanges();
+            })))
       )
       .subscribe(() => {
         this.defineDestAccounts(PAYMENT_TYPE.CREDIT);
