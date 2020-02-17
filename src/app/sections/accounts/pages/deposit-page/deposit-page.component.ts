@@ -312,7 +312,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   }
 
   private resolveCVVValidators(sourceAcc: UserAccount | number) {
-    if (sourceAcc !== PAYMENT_TYPE.BILLME) {
+    if (sourceAcc !== PAYMENT_TYPE.BILLME && this.isCVVfieldShow) {
       this.depositForm.controls['fromAccountCvv'].setValidators([
         Validators.required,
         Validators.minLength(3),
