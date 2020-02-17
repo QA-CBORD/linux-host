@@ -349,6 +349,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
                 accounts
               );
               this.billmeDestinationAccounts = this.filterBillmeDestAccounts(this.billmeMappingArr, accounts);
+              
             }))),
         tap(() => {
           this.refreshedSelect = !this.refreshedSelect;
