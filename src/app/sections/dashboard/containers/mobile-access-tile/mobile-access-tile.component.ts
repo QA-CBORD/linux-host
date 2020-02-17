@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { map, tap } from 'rxjs/operators';
+import { ChangeDetectionStrategy, Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { map, finalize } from 'rxjs/operators';
 import { MobileAccessService } from './services/mobile-access.service';
 import { MMobileLocationInfo } from '@sections/dashboard/models';
 import { Observable } from 'rxjs';
@@ -19,14 +19,19 @@ export class MobileAccessTileComponent implements OnInit {
   maxAmount: number = 4;
   skeletonArray: any[] = new Array(this.maxAmount);
 
-  constructor(private readonly mobileAccessService: MobileAccessService,
-              private readonly router: Router) {
-  }
+  constructor(
+    private readonly mobileAccessService: MobileAccessService,
+    private readonly router: Router,
+    private readonly cdRef: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
     this.accessList$ = this.mobileAccessService.getLocations().pipe(
-      map((locations) => locations.slice(0, this.maxAmount)),
-      tap(() => this.isLoadingData = false),
+      map(locations => locations.slice(0, this.maxAmount)),
+      finalize(() => {
+        this.isLoadingData = false;
+        this.cdRef.detectChanges();
+      })
     );
   }
 

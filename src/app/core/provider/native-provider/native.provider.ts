@@ -1,3 +1,5 @@
+import { NAVIGATE } from './../../../app.global';
+import { Router } from '@angular/router';
 import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { Observable, Observer, from, of } from 'rxjs';
@@ -14,6 +16,7 @@ export enum NativeData {
   USER_INFO = 'getUserInfo',
   USER_PHOTO = 'getAcceptedUserPhoto',
   ADD_TO_USAEPAY = 'addUSAePayCreditCard',
+  UPDATE_ROUTE = 'updateNativeWithRoute',
   ORDERS_WITH_APPLE_PAY = 'ordersApplePay',
   DEPOSITS_WITH_APPLE_PAY = 'depositsApplePay',
 }
@@ -27,7 +30,7 @@ export interface USAePayResponse {
   providedIn: 'root',
 })
 export class NativeProvider {
-  constructor(private readonly platform: Platform) {
+  constructor(private readonly platform: Platform, private readonly router: Router) {
     window['NativeInterface'] = this;
   }
 
@@ -40,6 +43,10 @@ export class NativeProvider {
 
   isIos(): boolean {
     return this.platform.platforms().includes('ios') && typeof window['webkit'] !== 'undefined';
+  }
+
+  sendAndroidData<T>(methodName: NativeData, data: T) {
+    androidInterface[methodName](data);
   }
 
   getAndroidData<T>(methodName: NativeData): T {
@@ -60,8 +67,32 @@ export class NativeProvider {
     });
   }
 
+  onNativeBackClicked() {
+    let url: string = this.router.url;
+    let destination: string = NAVIGATE.dashboard;
+
+    for (let n in NAVIGATE) {
+      /// if 1 page deep from dashboard, navigate back to dashboard
+      destination = url.indexOf(NAVIGATE[n]) >= 0 && url !== `/${NAVIGATE[n]}` ? NAVIGATE[n] : destination;
+      /// if beyond initial order page, navigate back to main order page
+      destination =
+        url.indexOf(`/${NAVIGATE.ordering}/`) >= 0 &&
+        url.indexOf('full-menu') < 0 &&
+        url.indexOf('recent-orders') < 0 &&
+        url.indexOf('saved-addresses') < 0 &&
+        url.indexOf('favorite-merchants') < 0
+          ? `${NAVIGATE.ordering}/full-menu`
+          : destination;
+
+      /// if beyond main accounts page, navigate back to accounts page
+      destination = url.indexOf(`/${NAVIGATE.accounts}/`) >= 0 ? NAVIGATE.accounts : destination;
+    }
+
+     this.router.navigate(['/' + destination], { skipLocationChange: true });
+  }
+
   /// used to allow user to add USAePay CC and handle response
-  addUSAePayCreditCard(): Observable<USAePayResponse> {    
+  addUSAePayCreditCard(): Observable<USAePayResponse> {
     if (this.isAndroid()) {
       return this.getAndroidDataAsObservable<USAePayResponse>(NativeData.ADD_TO_USAEPAY);
     } else if (this.isIos()) {
@@ -82,7 +113,7 @@ export class NativeProvider {
   /**
    *  Apple Pay
    */
-  payWithApplePay(payType:NativeData, moreParams:Object): Observable<USAePayResponse> {    
+  payWithApplePay(payType: NativeData, moreParams: Object): Observable<USAePayResponse> {
     if (this.isAndroid()) {
       return of({ success: false, errorMessage: 'Apple Pay does not work on Android.' });
     } else if (this.isIos()) {
@@ -92,7 +123,7 @@ export class NativeProvider {
     }
   }
 
-  getIosData(methodName: NativeData, moreParams?:Object): Promise<any> {
+  getIosData(methodName: NativeData, moreParams?: Object): Promise<any> {
     return new Promise((resolve, reject) => {
       // we generate a unique id to reference the promise later
       // from native function

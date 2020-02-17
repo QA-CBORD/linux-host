@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, ChangeDetectorRef } from '@angular/core';
 
-import { map, tap } from 'rxjs/operators';
+import { map, finalize } from 'rxjs/operators';
 import { RewardsService } from './services/rewards.service';
 import { UserTrackLevelInfo } from '@sections/rewards';
 import { Observable } from 'rxjs';
@@ -13,18 +13,18 @@ import { UserRewardTrackInfo } from '@core/model/rewards/rewards.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RewardsTileComponent implements OnInit {
-  isLoadingData = true;
+  isLoadingData: boolean = true;
   rewardTrackInfo$: Observable<UserRewardTrackInfo>;
   currentLvlInfo$: Observable<UserTrackLevelInfo>;
   nextLvlRequirePoints$: Observable<number | null>;
   userPointsSpent$: Observable<number>;
 
-  constructor(private readonly rewardsService: RewardsService) {
+  constructor(private readonly rewardsService: RewardsService, private readonly cdRef: ChangeDetectorRef) {
   }
 
   ngOnInit() {
     this.rewardTrackInfo$ = this.rewardsService.getUserRewardTrackInfo().pipe(
-      tap(() => this.isLoadingData = false)
+      finalize(()=> this.isLoadingData = false)
     );
 
     this.currentLvlInfo$ = this.rewardTrackInfo$.pipe(

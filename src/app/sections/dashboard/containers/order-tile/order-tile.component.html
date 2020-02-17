@@ -1,5 +1,5 @@
-<div class="order">
-  <ion-slides *ngIf="slides.length" mode="ios" [options]="slideOpts" class="order__slides">
+<div class="order" [ngClass]="{'order--auto-height': !isLoading}">
+  <ion-slides *ngIf="slides.length && !isLoading" mode="ios" [options]="slideOpts" class="order__slides">
     <ion-slide *ngFor="let merchantSlide of slides" class="order__slide">
       <div class="order__card" (click)="goToMerchant(merchant)" *ngFor="let merchant of merchantSlide">
         <img *ngIf="merchant.imageThumbnail" class="order__card-photo"
@@ -18,7 +18,7 @@
     </ion-slide>
   </ion-slides>
 
-  <ion-list *ngIf="!slides.length" class="order__skeleton-list">
+  <ion-list *ngIf="isLoading" class="order__skeleton-list">
     <ion-item *ngFor="let i of skeletonArray" lines="none">
       <ion-label class="ion-no-margin">
         <ion-skeleton-text animated class="order__skeleton-card"></ion-skeleton-text>

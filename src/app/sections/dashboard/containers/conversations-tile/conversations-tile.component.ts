@@ -11,20 +11,31 @@ import { Subscription } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConversationsTileComponent implements OnInit, OnDestroy {
-  lastTwoMessagesArray: SecureMessageInfo[] = [];
-  showTextAvatar: boolean = true;
-  conversationDisplayedAmount: number = 2;
-  conversationSkeletonArray: any[] = new Array(this.conversationDisplayedAmount);
   private messagesArray: SecureMessageInfo[] = [];
   private groupsArray: any;
   private readonly sourceSub: Subscription = new Subscription();
 
-  constructor(private readonly secureMessagingService: SecureMessagingService,
-              private readonly cdRef: ChangeDetectorRef) {
-  }
+  lastTwoMessagesArray: SecureMessageInfo[] = [];
+  showTextAvatar: boolean = true;
+  conversationDisplayedAmount: number = 2;
+  conversationSkeletonArray: any[] = new Array(this.conversationDisplayedAmount);
+  isLoading: boolean = true;
+
+  constructor(
+    private readonly secureMessagingService: SecureMessagingService,
+    private readonly cdRef: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
     this.initializePage();
+  }
+
+  ngOnDestroy() {
+    this.sourceSub.unsubscribe();
+  }
+
+  getConversationGroupInitial(groupName: string): string {
+    return groupName == null || groupName.length < 1 ? 'U' : groupName[0];
   }
 
   private initializePage() {
@@ -125,16 +136,8 @@ export class ConversationsTileComponent implements OnInit, OnDestroy {
         tempConversations.push(conversation);
       }
     }
-
+    this.isLoading = false;
     this.lastTwoMessagesArray = tempConversations.map(conversation => conversation.messages.pop()).slice(0, 2);
     this.cdRef.detectChanges();
-  }
-
-  getConversationGroupInitial(groupName: string): string {
-    return groupName == null || groupName.length < 1 ? 'U' : groupName[0];
-  }
-
-  ngOnDestroy(): void {
-    this.sourceSub.unsubscribe();
   }
 }

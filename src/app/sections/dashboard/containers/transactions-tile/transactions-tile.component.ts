@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { TransactionService } from './services/transaction.service';
 import { TransactionHistory } from '@sections/dashboard/models';
-import { take } from 'rxjs/operators';
+import { take, finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'st-transactions-tile',
@@ -13,6 +13,7 @@ export class TransactionsTileComponent implements OnInit {
   transactions: TransactionHistory[] = [];
   transactionsAmount: number = 3;
   skeletonArray: any[] = new Array(this.transactionsAmount);
+  isLoading: boolean = true
 
   constructor(private readonly transactionService: TransactionService,
               private readonly cdRef: ChangeDetectorRef) { }
@@ -22,10 +23,13 @@ export class TransactionsTileComponent implements OnInit {
     this.transactionService.getRecentTransactions(null, null, this.transactionsAmount)
       .pipe(
         take(1),
+        finalize(()=> {
+          this.isLoading = false;
+          this.cdRef.detectChanges();
+        })
       )
       .subscribe((data) => {
         this.transactions = data;
-        this.cdRef.detectChanges();
       });
   }
 }
