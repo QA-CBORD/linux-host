@@ -6,13 +6,13 @@
     [ngClass]="{ 'textarea__control--error': isError }"
     rows="{{ rows }}"
     autoGrow="true"
-    value="{{ innerValue }}"
     (ionBlur)="onBlur()"
     (ionChange)="onChangeHandler($event)"
+    [value]="innerValue"
   >
   </ion-textarea>
-  <ion-label class="textarea__placeholder" [attr.for]="idd" position="{{ innerValue ? 'stacked' : 'floating' }}">{{
+  <label class="textarea__placeholder" [attr.for]="idd">{{
     label
-  }}</ion-label>
+  }}</label>
   <ng-content *ngIf="isError"></ng-content>
 </div>
