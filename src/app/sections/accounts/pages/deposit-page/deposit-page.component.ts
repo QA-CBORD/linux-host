@@ -327,7 +327,6 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   }
 
   private getAccounts() {
-    this.refreshedSelect = !this.refreshedSelect;
     const subscription = this.depositService.settings$
       .pipe(
         map(settings => {
@@ -342,6 +341,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
         switchMap(({ depositTenders, billmeMappingArr }) =>
           this.depositService.accounts$.pipe(
             tap(accounts => {
+              this.refreshedSelect = !this.refreshedSelect;
               this.billmeMappingArr = billmeMappingArr;
               this.creditCardSourceAccounts = [...this.filterAccountsByPaymentSystem(accounts)];
               this.creditCardDestinationAccounts = this.filterCreditCardDestAccounts(
