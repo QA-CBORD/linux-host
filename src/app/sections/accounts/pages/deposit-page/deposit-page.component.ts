@@ -17,12 +17,12 @@ import { DepositModalComponent } from '../../shared/ui-components/deposit-modal/
 import { BUTTON_TYPE } from 'src/app/core/utils/buttons.config';
 import { amountRangeValidator } from './amount-range.validator';
 import { Router } from '@angular/router';
-import { NAVIGATE, AccountType } from 'src/app/app.global';
+import { NAVIGATE, AccountType, PaymentSystemType } from 'src/app/app.global';
 import { LoadingService } from 'src/app/core/service/loading/loading.service';
 import { DepositService } from '@sections/accounts/services/deposit.service';
 import { parseArrayFromString } from '@core/utils/general-helpers';
 import { BillMeMapping } from '@core/model/settings/billme-mapping.model';
-import { NativeProvider } from '@core/provider/native-provider/native.provider';
+import { NativeProvider, NativeData } from '@core/provider/native-provider/native.provider';
 import { COMMA_REGEXP, NUM_COMMA_DOT_REGEXP } from '@core/utils/regexp-patterns';
 import { UserService } from '@core/service/user-service/user.service';
 
@@ -210,37 +210,52 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     if (this.depositForm && this.depositForm.invalid) return;
     const { sourceAccount, selectedAccount, mainInput, mainSelect } = this.depositForm.value;
     const isBillme: boolean = sourceAccount === PAYMENT_TYPE.BILLME;
+    const isApplePay: boolean = sourceAccount.accountType === AccountType.APPLEPAY;
     const sourceAccForBillmeDeposit: Observable<UserAccount> = this.sourceAccForBillmeDeposit(
       selectedAccount,
       this.billmeMappingArr
     );
     let amount = mainInput || mainSelect;
     amount = amount.replace(COMMA_REGEXP, '');
-
-    iif(() => isBillme, sourceAccForBillmeDeposit, of(sourceAccount))
-      .pipe(
-        switchMap(
-          (sourceAcc): any => {
-            const calculateDepositFee: Observable<number> = this.depositService.calculateDepositFee(
-              sourceAcc.id,
-              selectedAccount.id,
-              amount
-            );
-
-            return iif(() => isBillme, of(0), calculateDepositFee).pipe(
-              map(valueFee => ({ fee: valueFee, sourceAcc, selectedAccount, amount, billme: isBillme }))
-            );
-          }
-        ),
-        take(1)
-      )
-      .subscribe(
-        info => this.confirmationDepositPopover(info),
-        () => {
-          this.loadingService.closeSpinner();
-          this.onErrorRetrieve('Something went wrong, please try again...');
+    if(isApplePay){
+      this.nativeProvider.payWithApplePay(NativeData.DEPOSITS_WITH_APPLE_PAY, {accountId: selectedAccount.id, depositAmount: amount }).toPromise()
+      .then(result => {
+        if(result.success){
+          this.finalizeDepositModal(result.success)
+        }else{
+          this.onErrorRetrieve(result.errorMessage);
         }
-      );
+      })
+      .catch(async error => {
+        this.onErrorRetrieve('Something went wrong, please try again...');
+      });
+    }else{
+      iif(() => isBillme, sourceAccForBillmeDeposit, of(sourceAccount))
+        .pipe(
+          switchMap(
+            (sourceAcc): any => {
+              const calculateDepositFee: Observable<number> = this.depositService.calculateDepositFee(
+                sourceAcc.id,
+                selectedAccount.id,
+                amount
+              );
+
+              return iif(() => isBillme, of(0), calculateDepositFee).pipe(
+                map(valueFee => ({ fee: valueFee, sourceAcc, selectedAccount, amount, billme: isBillme }))
+              );
+            }
+          ),
+          take(1)
+        )
+        .subscribe(
+          info => this.confirmationDepositPopover(info),
+          () => {
+            this.loadingService.closeSpinner();
+            this.onErrorRetrieve('Something went wrong, please try again...');
+          }
+        );
+            
+    }
   }
 
   setFormValidators() {
