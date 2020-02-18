@@ -22,11 +22,13 @@
             Apple Pay
           </ion-select-option>
           <ng-container *ngIf="isCreditCardPaymentTypesEnabled">
-            <ion-select-option [value]="account"
+            <ng-container *ngIf="refreshedSelect">
+              <ion-select-option [value]="account"
                                *ngFor="let account of creditCardSourceAccounts; trackBy: trackByAccountId"
                                class="test-class">{{ account.accountTender | creditCardType }} ending in
               {{ account.lastFour }}
-            </ion-select-option>
+              </ion-select-option>
+          </ng-container>
           </ng-container>
           <ion-select-option [value]="paymentTypes.BILLME"
                              *ngIf="isBillMePaymentTypesEnabled">Bill Me</ion-select-option>
