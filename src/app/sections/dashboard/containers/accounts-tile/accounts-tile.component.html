@@ -1,5 +1,5 @@
 <div class="accounts" [ngClass]="{'accounts--auto-height': !isLoading}">
-  <ion-slides *ngIf="slides.length && !isLoading"
+  <ion-slides *ngIf="!isLoading && slides.length"
               class="accounts__slides"
               [pager]="true" mode="ios"
               [options]="slideOpts">
