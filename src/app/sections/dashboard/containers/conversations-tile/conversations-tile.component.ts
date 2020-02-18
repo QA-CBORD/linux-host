@@ -41,24 +41,6 @@ export class ConversationsTileComponent implements OnInit, OnDestroy {
   private initializePage() {
     const sub = this.secureMessagingService
       .getInitialData()
-      .pipe(take(1))
-      .subscribe(
-        ([smGroupArray, smMessageArray]) => {
-          this.groupsArray = smGroupArray;
-          this.messagesArray = smMessageArray;
-          this.createConversations();
-          this.pollForData();
-        },
-        error => {
-          console.log(error);
-        },
-      );
-    this.sourceSub.add(sub);
-  }
-
-  private pollForData() {
-    this.secureMessagingService
-      .pollForData()
       .pipe(
         take(1),
         finalize(() => {
@@ -66,17 +48,25 @@ export class ConversationsTileComponent implements OnInit, OnDestroy {
           this.cdRef.detectChanges();
         })
       )
-      .subscribe(
-        ([smGroupArray, smMessageArray]) => {
-          /// if there are new groups, update the list
-          if (this.messagesArray.length !== smGroupArray.length) {
-            this.messagesArray = smMessageArray;
-          }
-        },
-        error => {
-          console.log(error);
-        },
-      );
+      .subscribe(([smGroupArray, smMessageArray]) => {
+        this.groupsArray = smGroupArray;
+        this.messagesArray = smMessageArray;
+        this.createConversations();
+        this.pollForData();
+      });
+    this.sourceSub.add(sub);
+  }
+
+  private pollForData() {
+    this.secureMessagingService
+      .pollForData()
+      .pipe(take(1))
+      .subscribe(([smGroupArray, smMessageArray]) => {
+        /// if there are new groups, update the list
+        if (this.messagesArray.length !== smGroupArray.length) {
+          this.messagesArray = smMessageArray;
+        }
+      });
   }
 
   private createConversations() {
