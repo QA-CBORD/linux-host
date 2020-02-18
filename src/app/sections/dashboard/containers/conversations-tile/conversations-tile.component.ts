@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { SecureMessagingService } from './services/secure-messaging.service';
 import { SecureMessageConversation, SecureMessageInfo } from '@core/model/secure-messaging/secure-messaging.model';
-import { take } from 'rxjs/operators';
+import { take, finalize } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -59,7 +59,13 @@ export class ConversationsTileComponent implements OnInit, OnDestroy {
   private pollForData() {
     this.secureMessagingService
       .pollForData()
-      .pipe(take(1))
+      .pipe(
+        take(1),
+        finalize(() => {
+          this.isLoading = false;
+          this.cdRef.detectChanges();
+        })
+      )
       .subscribe(
         ([smGroupArray, smMessageArray]) => {
           /// if there are new groups, update the list
@@ -136,8 +142,6 @@ export class ConversationsTileComponent implements OnInit, OnDestroy {
         tempConversations.push(conversation);
       }
     }
-    this.isLoading = false;
     this.lastTwoMessagesArray = tempConversations.map(conversation => conversation.messages.pop()).slice(0, 2);
-    this.cdRef.detectChanges();
   }
 }

@@ -1,5 +1,5 @@
 <div class="transaction" [ngClass]="{'transaction--auto-height': !isLoading}">
-  <ion-list class="transaction__list" *ngIf="transactions.length && !isLoading">
+  <ion-list class="transaction__list" *ngIf="!isLoading && transactions.length">
     <ion-item class="transaction__item"
               *ngFor="let transaction of transactions"
               mode="md">
