@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subscriber } from 'rxjs';
 
+import { ObservableStorage } from '../observable-storage/observable-storage.service';
+
 @Injectable()
-export class ObservableSessionStorageService {
-  get<T>(key: string): Observable<T> {
-    return new Observable((subscriber: Subscriber<T>) => {
+export class ObservableSessionStorageService implements ObservableStorage {
+  get(key: string): Observable<any> {
+    return new Observable((subscriber: Subscriber<any>) => {
       const stringifiedValue: string = window.sessionStorage.getItem(key);
       const value: any = JSON.parse(stringifiedValue);
 
@@ -25,7 +27,7 @@ export class ObservableSessionStorageService {
   }
 
   remove(key: string): Observable<any> {
-    return new Observable((subscriber: Subscriber<void>) => {
+    return new Observable((subscriber: Subscriber<any>) => {
       window.sessionStorage.removeItem(key);
 
       subscriber.next();

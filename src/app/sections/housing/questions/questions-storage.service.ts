@@ -1,10 +1,13 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
 import { STORAGE_KEY } from '../housing.config';
 
-import { ObservableStorageService } from '@shared/services/observable-storage/observable-storage.service';
+import {
+  OBSERVABLE_STORAGE_TOKEN,
+  ObservableStorage,
+} from '@shared/services/observable-storage/observable-storage.service';
 
 import { ApplicationStatus, PatronApplication } from '../applications/applications.model';
 
@@ -25,10 +28,10 @@ export interface StoredApplication {
 export class QuestionsStorageService {
   private readonly _key: string = `${STORAGE_KEY}-applications`;
 
-  constructor(private _observableStorage: ObservableStorageService) {}
+  constructor(@Inject(OBSERVABLE_STORAGE_TOKEN) private _observableStorage: ObservableStorage) {}
 
   getApplication(applicationKey: number): Observable<StoredApplication> {
-    return this._observableStorage.get<StoredApplication>(`${this._key}-${applicationKey}`);
+    return this._observableStorage.get(`${this._key}-${applicationKey}`);
   }
 
   getApplicationStatus(applicationKey: number): Observable<ApplicationStatus> {

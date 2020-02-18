@@ -1,15 +1,26 @@
-import { forwardRef, Injectable } from '@angular/core';
+import { InjectionToken, Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
 import { Platform } from '@ionic/angular';
 import { Observable, from } from 'rxjs';
 
 import { ObservableSessionStorageService } from '../observable-session-storage/observable-session-storage.service';
 
+export interface ObservableStorage {
+  get(key: string): Observable<any>;
+  set(key: string, value: any): Observable<any>;
+  remove(key: string): Observable<any>;
+  clear(): Observable<void>;
+}
+
+export const OBSERVABLE_STORAGE_TOKEN: InjectionToken<ObservableStorage> = new InjectionToken<any>(
+  'OBSERVABLE_STORAGE'
+);
+
 export const OBSERVABLE_STORAGE_PROVIDERS = [
   {
-    provide: forwardRef(() => ObservableStorageService),
+    provide: OBSERVABLE_STORAGE_TOKEN,
     deps: [Platform, Storage],
-    useFactory(platform: Platform, storage: Storage): ObservableStorageService | ObservableSessionStorageService {
+    useFactory(platform: Platform, storage: Storage): ObservableStorage {
       if (platform.is('desktop')) {
         return new ObservableSessionStorageService();
       }
@@ -20,10 +31,10 @@ export const OBSERVABLE_STORAGE_PROVIDERS = [
 ];
 
 @Injectable()
-export class ObservableStorageService {
+export class ObservableStorageService implements ObservableStorage {
   constructor(private _storage: Storage) {}
 
-  get<T>(key: string): Observable<T> {
+  get(key: string): Observable<any> {
     return from(this._storage.get(key));
   }
 
