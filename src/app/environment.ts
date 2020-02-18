@@ -11,7 +11,7 @@ enum Feature1 {
   site_url = 'http://get.feature1.cbord.com',
   cbordstudent_url = 'https://student.feature1.cbord.com',
   secmsg_api = 'https://secmsg.api.dev.cbord.com',
-  housing_aws_prefix = 'feature1',
+  housing_aws_prefix = 'dev',
 }
 
 enum Qa {
@@ -43,7 +43,7 @@ enum Production {
   site_url = 'http://get.cbord.com',
   cbordstudent_url = 'https://student.cbord.com',
   secmsg_api = 'https://secmsg.api.cbord.com',
-  housing_aws_prefix = 'prod',
+  housing_aws_prefix = '',
 }
 
 export class Environment {
