@@ -31,7 +31,6 @@ export class StTextareaFloatingLabelComponent extends DefaultValueAccessor imple
 
   //get accessor
   get value(): any {
-    // return this.control.value;
     return this.innerValue;
   }
 
