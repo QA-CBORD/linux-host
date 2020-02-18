@@ -62,16 +62,22 @@ export class DepositService {
   }
 
   filterBillmeDestAccounts(billmeMappingArr: Array<BillMeMapping>, accounts: Array<UserAccount>): Array<UserAccount> {
-    const filterByBillme = (accountTender, key): BillMeMapping =>
-      billmeMappingArr.find(billmeMap => billmeMap[key] === accountTender);
-
-    return accounts.filter(({ accountTender, depositAccepted }) => {
-      if (depositAccepted && filterByBillme(accountTender, 'destination')) {
-        return accounts.filter(acc => {
-          if (filterByBillme(acc.accountTender, 'source')) {
-            return acc;
-          }
-        });
+  return accounts.filter(destinationAccount => {
+      const destTender = destinationAccount.accountTender || null;
+      const destDepositAccepted = destinationAccount.depositAccepted || false;
+      /// destination account deposits accepted?
+      if (destDepositAccepted && destTender) {
+        /* if an account in our account array matches the source tender 
+        associated to the billMe map with the destination
+        account as the destination tender, then we have a destination
+        account with an associated source account.  This destination account is legit */
+        return (
+          billmeMappingArr
+            .filter(({ destination }) => destTender === destination)
+            .filter(bmi => {
+              return accounts.filter(sourceAccount => sourceAccount.accountTender === bmi.source).length > 0;
+            }).length > 0
+        );
       }
     });
   }

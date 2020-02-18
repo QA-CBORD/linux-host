@@ -1,7 +1,7 @@
 import { NAVIGATE } from './../../../app.global';
 import { Router } from '@angular/router';
-import { Injectable } from '@angular/core';
-import { Platform } from '@ionic/angular';
+import { Injectable, NgZone } from '@angular/core';
+import { Platform, ModalController, PopoverController } from '@ionic/angular';
 import { Observable, Observer, from, of } from 'rxjs';
 import { X_Y_REGEXP } from '@core/utils/regexp-patterns';
 
@@ -35,7 +35,13 @@ export interface ApplePayResponse {
   providedIn: 'root',
 })
 export class NativeProvider {
-  constructor(private readonly platform: Platform, private readonly router: Router) {
+  constructor(
+    private readonly platform: Platform,
+    private readonly router: Router,
+    private readonly zone: NgZone,
+    private readonly modalController: ModalController,
+    private readonly popoverController: PopoverController
+  ) {
     window['NativeInterface'] = this;
   }
 
@@ -73,6 +79,16 @@ export class NativeProvider {
   }
 
   onNativeBackClicked() {
+    Promise.all([this.modalController.getTop(), this.popoverController.getTop()])
+      .then(([modal, popover]) => {
+        console.log(modal, popover);
+        if (modal) modal.dismiss();
+        if (popover) popover.dismiss();
+      })
+      .finally(() => this.zone.run(() => this.doNativeNavigation()));
+  }
+
+  private doNativeNavigation() {
     let url: string = this.router.url;
     let destination: string = NAVIGATE.dashboard;
 
@@ -93,7 +109,7 @@ export class NativeProvider {
       destination = url.indexOf(`/${NAVIGATE.accounts}/`) >= 0 ? NAVIGATE.accounts : destination;
     }
 
-     this.router.navigate(['/' + destination], { skipLocationChange: true });
+    this.router.navigate(['/' + destination], { skipLocationChange: true });
   }
 
   /// used to allow user to add USAePay CC and handle response

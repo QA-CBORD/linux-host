@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { SecureMessagingService } from './services/secure-messaging.service';
 import { SecureMessageConversation, SecureMessageInfo } from '@core/model/secure-messaging/secure-messaging.model';
-import { take } from 'rxjs/operators';
+import { take, finalize } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -41,18 +41,19 @@ export class ConversationsTileComponent implements OnInit, OnDestroy {
   private initializePage() {
     const sub = this.secureMessagingService
       .getInitialData()
-      .pipe(take(1))
-      .subscribe(
-        ([smGroupArray, smMessageArray]) => {
-          this.groupsArray = smGroupArray;
-          this.messagesArray = smMessageArray;
-          this.createConversations();
-          this.pollForData();
-        },
-        error => {
-          console.log(error);
-        },
-      );
+      .pipe(
+        take(1),
+        finalize(() => {
+          this.isLoading = false;
+          this.cdRef.detectChanges();
+        })
+      )
+      .subscribe(([smGroupArray, smMessageArray]) => {
+        this.groupsArray = smGroupArray;
+        this.messagesArray = smMessageArray;
+        this.createConversations();
+        this.pollForData();
+      });
     this.sourceSub.add(sub);
   }
 
@@ -60,17 +61,12 @@ export class ConversationsTileComponent implements OnInit, OnDestroy {
     this.secureMessagingService
       .pollForData()
       .pipe(take(1))
-      .subscribe(
-        ([smGroupArray, smMessageArray]) => {
-          /// if there are new groups, update the list
-          if (this.messagesArray.length !== smGroupArray.length) {
-            this.messagesArray = smMessageArray;
-          }
-        },
-        error => {
-          console.log(error);
-        },
-      );
+      .subscribe(([smGroupArray, smMessageArray]) => {
+        /// if there are new groups, update the list
+        if (this.messagesArray.length !== smGroupArray.length) {
+          this.messagesArray = smMessageArray;
+        }
+      });
   }
 
   private createConversations() {
@@ -136,8 +132,6 @@ export class ConversationsTileComponent implements OnInit, OnDestroy {
         tempConversations.push(conversation);
       }
     }
-    this.isLoading = false;
     this.lastTwoMessagesArray = tempConversations.map(conversation => conversation.messages.pop()).slice(0, 2);
-    this.cdRef.detectChanges();
   }
 }
