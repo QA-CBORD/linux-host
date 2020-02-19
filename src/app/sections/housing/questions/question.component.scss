@@ -28,7 +28,14 @@
 }
 
 @mixin placeholder-transform() {
+  background-color: $color-white;
+  color: $color-dim-gray;
+  font-size: 75%;
+  opacity: 1;
+  padding: 0 3px;
+  margin: 0;
   transform: translate3d(10px, -50%, 0) !important;
+  z-index: 2;
 }
 
 @mixin placeholder-transform-focus() {

@@ -1,52 +1,74 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
-import { FormGroup, AbstractControl } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  forwardRef,
+  HostBinding,
+  Input,
+  StaticProvider,
+} from '@angular/core';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+
+import { hasValue } from '@sections/housing/utils';
+
+export const DATE_SELECT_VALUE_ACCESSOR: StaticProvider = {
+  provide: NG_VALUE_ACCESSOR,
+  useExisting: forwardRef(() => StDateSelectComponent),
+  multi: true,
+};
 
 @Component({
   selector: 'st-date-select',
   templateUrl: './st-date-select.component.html',
   styleUrls: ['./st-date-select.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [DATE_SELECT_VALUE_ACCESSOR],
 })
-export class StDateSelectComponent implements OnInit, OnDestroy {
-  private _subscription: Subscription = new Subscription();
-
-  @Input() parentGroup: FormGroup;
-
+export class StDateSelectComponent implements ControlValueAccessor {
   @Input() label: string;
 
   @Input() name: string;
 
-  @Input()
-  get idd(): string {
-    return this._id;
-  }
-
-  set idd(value: string) {
-    this._id = value || this.name;
-  }
-  private _id: string;
+  @Input() idd: string = this.name;
 
   @Input() displayFormat: string = 'MMM DD, YYYY';
 
+  @HostBinding('class.date-select__disabled')
+  @Input()
+  isDisabled: boolean = false;
+
+  onChange: (value: any) => void;
+
+  onTouched: () => void;
+
+  value: string;
+
   isFilled: boolean;
 
-  ngOnInit(): void {
-    const control: AbstractControl = this.parentGroup.get(this.name);
+  constructor(private _changeDetector: ChangeDetectorRef) {}
 
-    const valueChangesSubscription: Subscription = control.valueChanges.subscribe((value: any) =>
-      this._checkIsFilled(value)
-    );
-
-    this._subscription.add(valueChangesSubscription);
-
-    this._checkIsFilled(control.value);
+  registerOnChange(fn: any): void {
+    this.onChange = fn;
   }
 
-  ngOnDestroy(): void {
-    this._subscription.unsubscribe();
+  registerOnTouched(fn: any): void {
+    this.onTouched = fn;
+  }
+
+  setDisabledState(isDisabled: boolean): void {
+    this.isDisabled = isDisabled;
+    this._changeDetector.markForCheck();
+  }
+
+  writeValue(value: any): void {
+    if (value !== this.value) {
+      this.value = value;
+      this._checkIsFilled(value);
+      this._changeDetector.markForCheck();
+    }
   }
 
   private _checkIsFilled(value: any): void {
-    this.isFilled = value != null && value !== '';
+    this.isFilled = hasValue(value);
   }
 }

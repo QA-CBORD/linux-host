@@ -5,7 +5,8 @@ import {
   forwardRef,
   Output,
   EventEmitter,
-  ChangeDetectionStrategy, ViewChild, ChangeDetectorRef,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor, FormControl, AbstractControl } from '@angular/forms';
 
@@ -36,8 +37,7 @@ export class StSelectFloatingLabelComponent implements OnInit, ControlValueAcces
   private onChange: (v: any) => void;
   private onTouched: () => void;
 
-  constructor(private readonly cdRef: ChangeDetectorRef) {
-  }
+  constructor(private readonly cdRef: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.value = this.control.value;
@@ -70,6 +70,12 @@ export class StSelectFloatingLabelComponent implements OnInit, ControlValueAcces
   //From ControlValueAccessor interface
   registerOnTouched(fn: any) {
     this.onTouched = fn;
+  }
+
+  //From ControlValueAccessor interface
+  setDisabledState(isDisabled: boolean): void {
+    this.isDisabled = isDisabled;
+    this.cdRef.detectChanges();
   }
 
   onBlur() {

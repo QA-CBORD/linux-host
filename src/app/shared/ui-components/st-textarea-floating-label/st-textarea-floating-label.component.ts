@@ -19,6 +19,7 @@ export class StTextareaFloatingLabelComponent extends DefaultValueAccessor {
   @Input() idd: string;
   @Input() isError: boolean;
   @Input() rows: string = '3';
+  @Input() isDisabled: boolean;
   onTouched: () => void;
   onChange: (_: any) => void;
   private innerValue: any = '';
@@ -49,6 +50,10 @@ export class StTextareaFloatingLabelComponent extends DefaultValueAccessor {
   //From ControlValueAccessor interface
   registerOnTouched(fn: any) {
     this.onTouched = fn;
+  }
+
+  setDisabledState(isDisabled: boolean): void {
+    this.isDisabled = isDisabled;
   }
 
   onChangeHandler({detail: {value}}: CustomEvent) {
