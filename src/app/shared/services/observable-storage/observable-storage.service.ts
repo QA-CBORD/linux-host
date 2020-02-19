@@ -22,9 +22,11 @@ export const OBSERVABLE_STORAGE_PROVIDERS = [
     deps: [Platform, Storage],
     useFactory(platform: Platform, storage: Storage): ObservableStorage {
       if (platform.is('desktop')) {
+        console.log('desktop');
         return new ObservableSessionStorageService();
       }
 
+      console.log('NOT desktop');
       return new ObservableStorageService(storage);
     },
   },

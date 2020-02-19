@@ -10,6 +10,7 @@ import {
 } from '@shared/services/observable-storage/observable-storage.service';
 
 import { ApplicationStatus, PatronApplication } from '../applications/applications.model';
+import { ObservableSessionStorageService } from '@shared/services/observable-session-storage/observable-session-storage.service';
 
 export interface QuestionsEntries {
   [key: string]: any;
@@ -28,7 +29,13 @@ export interface StoredApplication {
 export class QuestionsStorageService {
   private readonly _key: string = `${STORAGE_KEY}-applications`;
 
-  constructor(@Inject(OBSERVABLE_STORAGE_TOKEN) private _observableStorage: ObservableStorage) {}
+  constructor(@Inject(OBSERVABLE_STORAGE_TOKEN) private _observableStorage: ObservableStorage) {
+    console.log(
+      'observable storage',
+      this._observableStorage,
+      this._observableStorage instanceof ObservableSessionStorageService
+    );
+  }
 
   getApplication(applicationKey: number): Observable<StoredApplication> {
     return this._observableStorage.get(`${this._key}-${applicationKey}`);

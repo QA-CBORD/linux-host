@@ -28,14 +28,7 @@ export class TermsComponent implements OnInit {
   ngOnInit() {
     this._loadingService.showSpinner();
 
-    this.terms$ = this._termsService.getTerms().pipe(
-      tap(() => this._loadingService.closeSpinner()),
-      catchError((error: any) => {
-        this._loadingService.closeSpinner();
-
-        return throwError(error);
-      })
-    );
+    this.terms$ = this._termsService.getTerms().pipe(tap(() => this._loadingService.closeSpinner()));
   }
 
   handleSelectTerm(term: Term): void {
