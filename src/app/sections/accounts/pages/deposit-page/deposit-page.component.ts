@@ -221,8 +221,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
       this.nativeProvider.payWithApplePay(NativeData.DEPOSITS_WITH_APPLE_PAY, {accountId: selectedAccount.id, depositAmount: amount }).toPromise()
       .then(result => {
         if(result.success){
-          this.depositForm.reset();
-          this.router.navigate([NAVIGATE.accounts], { skipLocationChange: true });
+          this.finalizeDepositModal(result);
         }else{
           this.onErrorRetrieve(result.errorMessage);
         }
