@@ -22,7 +22,7 @@ import { LoadingService } from 'src/app/core/service/loading/loading.service';
 import { DepositService } from '@sections/accounts/services/deposit.service';
 import { parseArrayFromString } from '@core/utils/general-helpers';
 import { BillMeMapping } from '@core/model/settings/billme-mapping.model';
-import { NativeProvider, NativeData } from '@core/provider/native-provider/native.provider';
+import { NativeProvider, NativeData, ApplePayResponse } from '@core/provider/native-provider/native.provider';
 import { COMMA_REGEXP, NUM_COMMA_DOT_REGEXP } from '@core/utils/regexp-patterns';
 import { UserService } from '@core/service/user-service/user.service';
 
@@ -219,7 +219,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     amount = amount.replace(COMMA_REGEXP, '');
     if(isApplePay){
       this.nativeProvider.payWithApplePay(NativeData.DEPOSITS_WITH_APPLE_PAY, {accountId: selectedAccount.id, depositAmount: amount }).toPromise()
-      .then(result => {
+      .then((result:ApplePayResponse) => {
         if(result.success){
           this.finalizeDepositModal(result);
         }else{

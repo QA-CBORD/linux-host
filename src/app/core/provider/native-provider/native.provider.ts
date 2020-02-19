@@ -29,6 +29,9 @@ export interface ApplePayResponse {
   success: boolean;
   errorMessage: string;
   accountId: string;
+  selectedAccount?: {accountDisplayName: string};
+  amount?: string;
+  sourceAcc?:  { accountTender: string };
 }
 
 @Injectable({
