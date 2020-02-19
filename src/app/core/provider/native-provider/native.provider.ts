@@ -1,7 +1,7 @@
 import { NAVIGATE } from './../../../app.global';
 import { Router } from '@angular/router';
 import { Injectable, NgZone } from '@angular/core';
-import { Platform, ModalController, PopoverController } from '@ionic/angular';
+import { Platform, ModalController, PopoverController, ActionSheetController } from '@ionic/angular';
 import { Observable, Observer, from, of } from 'rxjs';
 import { X_Y_REGEXP } from '@core/utils/regexp-patterns';
 
@@ -40,7 +40,8 @@ export class NativeProvider {
     private readonly router: Router,
     private readonly zone: NgZone,
     private readonly modalController: ModalController,
-    private readonly popoverController: PopoverController
+    private readonly popoverController: PopoverController,
+    private readonly actionSheetController: ActionSheetController,
   ) {
     window['NativeInterface'] = this;
   }
@@ -79,11 +80,12 @@ export class NativeProvider {
   }
 
   onNativeBackClicked() {
-    Promise.all([this.modalController.getTop(), this.popoverController.getTop()])
-      .then(([modal, popover]) => {
+    Promise.all([this.modalController.getTop(), this.popoverController.getTop(), this.actionSheetController.getTop()])
+      .then(([modal, popover, actionSheet]) => {
         console.log(modal, popover);
         if (modal) modal.dismiss();
         if (popover) popover.dismiss();
+        if (actionSheet) actionSheet.dismiss();
       })
       .finally(() => this.zone.run(() => this.doNativeNavigation()));
   }
