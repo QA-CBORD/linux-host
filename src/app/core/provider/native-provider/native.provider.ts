@@ -1,7 +1,7 @@
 import { NAVIGATE } from './../../../app.global';
 import { Router } from '@angular/router';
 import { Injectable, NgZone } from '@angular/core';
-import { Platform, ModalController, PopoverController } from '@ionic/angular';
+import { Platform, ModalController, PopoverController, ActionSheetController } from '@ionic/angular';
 import { Observable, Observer, from, of } from 'rxjs';
 import { X_Y_REGEXP } from '@core/utils/regexp-patterns';
 
@@ -35,12 +35,14 @@ export interface ApplePayResponse {
   providedIn: 'root',
 })
 export class NativeProvider {
+  private previousRoute: string = '';
   constructor(
     private readonly platform: Platform,
     private readonly router: Router,
     private readonly zone: NgZone,
     private readonly modalController: ModalController,
-    private readonly popoverController: PopoverController
+    private readonly popoverController: PopoverController,
+    private readonly actionSheetController: ActionSheetController,
   ) {
     window['NativeInterface'] = this;
   }
@@ -58,6 +60,10 @@ export class NativeProvider {
 
   sendAndroidData<T>(methodName: NativeData, data: T) {
     androidInterface[methodName](data);
+  }
+
+  updatePreviousRoute(){
+    this.previousRoute = this.router.url;
   }
 
   getAndroidData<T>(methodName: NativeData): T {
@@ -79,11 +85,11 @@ export class NativeProvider {
   }
 
   onNativeBackClicked() {
-    Promise.all([this.modalController.getTop(), this.popoverController.getTop()])
-      .then(([modal, popover]) => {
-        console.log(modal, popover);
+    Promise.all([this.modalController.getTop(), this.popoverController.getTop(), this.actionSheetController.getTop()])
+      .then(([modal, popover, actionSheet]) => {
         if (modal) modal.dismiss();
         if (popover) popover.dismiss();
+        if (actionSheet) actionSheet.dismiss();
       })
       .finally(() => this.zone.run(() => this.doNativeNavigation()));
   }
@@ -107,8 +113,14 @@ export class NativeProvider {
 
       /// if beyond main accounts page, navigate back to accounts page
       destination = url.indexOf(`/${NAVIGATE.accounts}/`) >= 0 ? NAVIGATE.accounts : destination;
-    }
 
+      /// if in add-card page from the deposit page, navigate back to deposit page
+      destination = (url.indexOf('add-credit-card') > 0 && this.previousRoute.indexOf('add-funds') > 0) ? 'accounts/add-funds' : destination;
+
+      /// if in add-card page from the cart page, navigate back to cart page
+      destination = (url.indexOf('add-credit-card') > 0 && this.previousRoute.indexOf('cart') > 0) ? 'ordering/cart' : destination;
+
+    }
     this.router.navigate(['/' + destination], { skipLocationChange: true });
   }
 

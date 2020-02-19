@@ -3,15 +3,18 @@ import {
   Component,
   EventEmitter,
   Input,
+  OnChanges,
   OnDestroy,
   OnInit,
   Output,
+  SimpleChanges,
 } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
   BuildingInfo,
   MerchantAccountInfoList,
-  MerchantOrderTypesInfo, OrderDetailOptions,
+  MerchantOrderTypesInfo,
+  OrderDetailOptions,
   OrderItem,
   OrderPayment,
 } from '@sections/ordering';
@@ -30,7 +33,7 @@ import { AccountType } from 'src/app/app.global';
   styleUrls: ['./order-details.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class OrderDetailsComponent implements OnInit, OnDestroy {
+export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   @Input() orderDetailOptions: OrderDetailOptions;
   @Input() readonly: boolean = true;
   @Input() accInfoList: MerchantAccountInfoList = {} as MerchantAccountInfoList;
@@ -61,7 +64,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
   showCVVControl = false;
   applePayAccountType: Partial<UserAccount> = {
     accountType: AccountType.APPLEPAY,
-    accountDisplayName: "Apple Pay",
+    accountDisplayName: 'Apple Pay',
     isActive: true,
   };
 
@@ -76,6 +79,12 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.sourceSub.unsubscribe();
+  }
+
+  ngOnChanges({ orderDetailOptions }: SimpleChanges): void {
+    if (orderDetailOptions && orderDetailOptions.currentValue === null) {
+      this.orderDetailOptions = {} as OrderDetailOptions;
+    }
   }
 
   get controlsNames() {
@@ -174,6 +183,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
     });
     await modal.present();
   }
+
 }
 
 export enum DETAILS_FORM_CONTROL_NAMES {

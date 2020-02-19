@@ -85,9 +85,9 @@ export class OrderingApiService extends BaseService {
       map(({ response }: MessageResponse<any>) => response)
     );
   }
-  validateOrder(order: OrderInfo): Observable<OrderInfo> {
+  validateOrder(orderInfo: OrderInfo): Observable<OrderInfo> {
     const methodName = 'validateOrder';
-    const postParams: ServiceParameters = { order };
+    const postParams: ServiceParameters = { order: this.adjustOrderIfRollUp(orderInfo) };
 
     return this.httpRequestFull(this.serviceUrlOrdering, methodName, true, null, postParams).pipe(
       map(({ response }: MessageResponse<OrderInfo>) => response)
@@ -240,9 +240,10 @@ export class OrderingApiService extends BaseService {
     );
   }
 
-  submitOrder(order: OrderInfo, accountId: string, cvv: string): Observable<OrderInfo> {
+  submitOrder(orderInfo: OrderInfo, accountId: string, cvv: string): Observable<OrderInfo> {
     const methodName = 'submitOrder';
-    const postParams: ServiceParameters = { order, accountId, cvv };
+    accountId = accountId === 'rollup' ? null : accountId;
+    const postParams: ServiceParameters = { order: this.adjustOrderIfRollUp(orderInfo), accountId, cvv };
 
     return this.httpRequestFull(this.serviceUrlOrdering, methodName, true, null, postParams).pipe(
       map(({ response }: MessageResponse<any>) => response)
@@ -257,5 +258,18 @@ export class OrderingApiService extends BaseService {
       switchMap(({ id }) => this.httpRequestFull('/json/user', methodName, true, null, { ...postParams, userId: id })),
       map(({ response }: MessageResponse<any>) => response)
     );
+  }
+
+  private adjustOrderIfRollUp(order: OrderInfo): OrderInfo {
+    if (
+      order &&
+      order.orderPayment &&
+      order.orderPayment.length > 0 &&
+      order.orderPayment[0].accountId &&
+      order.orderPayment[0].accountId === 'rollup'
+    ) {
+      order.orderPayment = [];
+    }
+    return order;
   }
 }
