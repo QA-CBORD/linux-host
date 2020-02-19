@@ -1,7 +1,7 @@
 <div class="content" *ngIf="detailsForm" [ngClass]="{'content--disabled': readonly}">
   <form novalidate [formGroup]="detailsForm">
 
-    <div class="order-details">
+    <div class="order-details" *ngIf="orderDetailOptions.orderType">
       <ion-label class="order-details__label">{{orderDetailOptions.orderType | typeMessage:'dueTime'}}</ion-label>
 
       <p class="order-details__value">{{timeWithoutTimezone | modifyPrepTime: orderTypes}}</p>
