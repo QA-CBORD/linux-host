@@ -35,6 +35,7 @@ export interface ApplePayResponse {
   providedIn: 'root',
 })
 export class NativeProvider {
+  private previousRoute: string = '';
   constructor(
     private readonly platform: Platform,
     private readonly router: Router,
@@ -61,6 +62,10 @@ export class NativeProvider {
     androidInterface[methodName](data);
   }
 
+  updatePreviousRoute(){
+    this.previousRoute = this.router.url;
+  }
+
   getAndroidData<T>(methodName: NativeData): T {
     return androidInterface[methodName]() || null;
   }
@@ -82,7 +87,6 @@ export class NativeProvider {
   onNativeBackClicked() {
     Promise.all([this.modalController.getTop(), this.popoverController.getTop(), this.actionSheetController.getTop()])
       .then(([modal, popover, actionSheet]) => {
-        console.log(modal, popover);
         if (modal) modal.dismiss();
         if (popover) popover.dismiss();
         if (actionSheet) actionSheet.dismiss();
@@ -109,8 +113,14 @@ export class NativeProvider {
 
       /// if beyond main accounts page, navigate back to accounts page
       destination = url.indexOf(`/${NAVIGATE.accounts}/`) >= 0 ? NAVIGATE.accounts : destination;
-    }
 
+      /// if in add-card page from the deposit page, navigate back to deposit page
+      destination = (url.indexOf('add-credit-card') > 0 && this.previousRoute.indexOf('add-funds') > 0) ? 'accounts/add-funds' : destination;
+
+      /// if in add-card page from the cart page, navigate back to cart page
+      destination = (url.indexOf('add-credit-card') > 0 && this.previousRoute.indexOf('cart') > 0) ? 'ordering/cart' : destination;
+
+    }
     this.router.navigate(['/' + destination], { skipLocationChange: true });
   }
 
