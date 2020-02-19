@@ -4,7 +4,6 @@ import {
   Component,
   forwardRef,
   Input,
-  OnInit,
   StaticProvider,
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
@@ -24,7 +23,7 @@ export const RADIO_GROUP_VALUE_ACCESSOR: StaticProvider = {
   providers: [RADIO_GROUP_VALUE_ACCESSOR],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RadioGroupComponent implements OnInit, ControlValueAccessor {
+export class RadioGroupComponent implements ControlValueAccessor {
   @Input() value: string;
 
   @Input() options: RadioGroupOption[];
@@ -37,7 +36,9 @@ export class RadioGroupComponent implements OnInit, ControlValueAccessor {
 
   constructor(private _changeDetector: ChangeDetectorRef) {}
 
-  ngOnInit() {}
+  handleChange(event: CustomEvent): void {
+    this.onChange(event.detail.value);
+  }
 
   trackByLabel(_: number, option: RadioGroupOption): string {
     return option.label;

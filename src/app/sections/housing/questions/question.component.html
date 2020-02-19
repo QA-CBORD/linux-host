@@ -85,6 +85,7 @@
         class="question__section"
         [question]="question"
         [parentForm]="parentGroup"
+        [isDisabled]="isSubmitted"
         *ngIf="question['facilityPicker']"
       ></st-facility-picker>
 
@@ -109,6 +110,7 @@
             [checked]="item.selected"
             [formControlName]="idx"
             [value]="item.value"
+            [disabled]="isSubmitted"
             slot="start"
           ></ion-checkbox>
           <ion-label class="form-label">{{ item.label }}</ion-label>

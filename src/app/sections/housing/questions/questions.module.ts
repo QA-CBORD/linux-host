@@ -9,7 +9,7 @@ import { StSelectFloatingLabelModule } from '@shared/ui-components/st-select-flo
 import { StDateSelectModule } from '@shared/ui-components/st-date-select/st-date-select.module';
 import { FacilityPickerModule } from './facility-picker/facility-picker.module';
 import { ControlErrorsModule } from '@shared/ui-components/control-errors/control-errors.module';
-import { RadioGroupModule } from '@sections/ordering/shared/ui-components/radio-group/radio-group.module';
+import { RadioGroupModule } from '@shared/ui-components/radio-group/radio-group.module';
 
 import { QuestionComponent } from './question.component';
 import { EmptyFormControlDirective } from '../empty-form-control/empty-form-control.directive';

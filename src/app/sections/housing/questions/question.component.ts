@@ -19,6 +19,8 @@ export class QuestionComponent {
 
   @Input() parentGroup: FormGroup;
 
+  @Input() isSubmitted: boolean;
+
   customActionSheetOptions: { [key: string]: string } = {
     cssClass: 'custom-deposit-actionSheet',
   };
