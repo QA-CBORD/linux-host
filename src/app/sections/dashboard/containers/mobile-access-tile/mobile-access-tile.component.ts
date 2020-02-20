@@ -1,8 +1,7 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { map, tap } from 'rxjs/operators';
+import { ChangeDetectionStrategy, Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { finalize, take } from 'rxjs/operators';
 import { MobileAccessService } from './services/mobile-access.service';
 import { MMobileLocationInfo } from '@sections/dashboard/models';
-import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { NAVIGATE } from '../../../../app.global';
 import { LOCAL_ROUTING } from '@sections/mobile-access/mobile-acces.config';
@@ -14,20 +13,32 @@ import { LOCAL_ROUTING } from '@sections/mobile-access/mobile-acces.config';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MobileAccessTileComponent implements OnInit {
-  accessList$: Observable<MMobileLocationInfo[]>;
+  accessList: MMobileLocationInfo[];
   isLoadingData = true;
   maxAmount: number = 4;
   skeletonArray: any[] = new Array(this.maxAmount);
 
-  constructor(private readonly mobileAccessService: MobileAccessService,
-              private readonly router: Router) {
-  }
+  constructor(
+    private readonly mobileAccessService: MobileAccessService,
+    private readonly router: Router,
+    private readonly cdRef: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
-    this.accessList$ = this.mobileAccessService.getLocations().pipe(
-      map((locations) => locations.slice(0, this.maxAmount)),
-      tap(() => this.isLoadingData = false),
-    );
+
+    // TODO: Look at | async type implementation
+    this.mobileAccessService
+      .getLocations()
+      .pipe(
+        take(1),
+        finalize(() => {
+          this.isLoadingData = false;
+          this.cdRef.detectChanges();
+        })
+      )
+      .subscribe(locations => {
+        this.accessList = locations.slice(0, this.maxAmount);
+      });
   }
 
   navigateTo(locationId) {

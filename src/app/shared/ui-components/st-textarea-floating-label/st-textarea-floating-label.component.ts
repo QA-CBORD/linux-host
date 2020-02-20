@@ -1,4 +1,4 @@
-import { Component, Input, forwardRef } from '@angular/core';
+import { Component, Input, forwardRef, OnInit, AfterViewInit } from '@angular/core';
 import { AbstractControl, DefaultValueAccessor, FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 export const CUSTOM_TEXTAREA_CONTROL_VALUE_ACCESSOR: any = {
@@ -13,7 +13,7 @@ export const CUSTOM_TEXTAREA_CONTROL_VALUE_ACCESSOR: any = {
   styleUrls: ['./st-textarea-floating-label.component.scss'],
   providers: [CUSTOM_TEXTAREA_CONTROL_VALUE_ACCESSOR],
 })
-export class StTextareaFloatingLabelComponent extends DefaultValueAccessor {
+export class StTextareaFloatingLabelComponent extends DefaultValueAccessor implements AfterViewInit {
   @Input() control: AbstractControl = new FormControl();
   @Input() label: string;
   @Input() idd: string;
@@ -22,7 +22,13 @@ export class StTextareaFloatingLabelComponent extends DefaultValueAccessor {
   @Input() isDisabled: boolean;
   onTouched: () => void;
   onChange: (_: any) => void;
-  private innerValue: any = '';
+  innerValue: any = '';
+
+  ngAfterViewInit(): void {
+    if (this.control && this.control.value) {
+      this.control.markAsTouched();
+    }
+  }
 
   //get accessor
   get value(): any {
@@ -52,16 +58,12 @@ export class StTextareaFloatingLabelComponent extends DefaultValueAccessor {
     this.onTouched = fn;
   }
 
-  setDisabledState(isDisabled: boolean): void {
-    this.isDisabled = isDisabled;
-  }
-
-  onChangeHandler({detail: {value}}: CustomEvent) {
+  onChangeHandler({ detail: { value } }: CustomEvent) {
     this.writeValue(value);
     this.onChange(value);
   }
 
   onBlur() {
-    this.onTouched()
+    this.onTouched();
   }
 }

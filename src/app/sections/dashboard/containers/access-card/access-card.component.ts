@@ -24,7 +24,7 @@ export class AccessCardComponent implements OnInit {
   institutionBackgroundImage$: Observable<string>;
   getMyCardEnabled$: Observable<boolean>;
   isMobileAccessButtonEnabled$: Observable<boolean>;
-  appleWalletEnabled: boolean;
+  appleWalletEnabled: boolean = false;
   appleWalletInfo: any;
   appleWalletMessage: string;
   appleWalletMessageImage: string;

@@ -17,6 +17,13 @@ export const testCredentials: Dictionary<UserLogin> = {
     institutionId: '46054f40-71fc-4d32-a8de-64b525d3ce56',
   },
 
+  gold7_usaepay: {
+    userName: 'GSaas@tpsmail.dev',
+    password: 'password1',
+    domain: null,
+    institutionId: 'd0a8487d-d30d-4013-acd4-29e5927fe0d0',
+  },
+
   gold7_1: {
     userName: 'BSaas@tpsmail.dev',
     password: 'password1',

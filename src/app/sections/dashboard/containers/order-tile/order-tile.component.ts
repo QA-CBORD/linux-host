@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { MerchantInfo, MerchantService } from '@sections/ordering';
-import { take } from 'rxjs/operators';
+import { take, finalize } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { Environment, NAVIGATE } from '../../../../app.global';
 import AWSAPIUrl = Environment.AWSAPIUrl;
@@ -23,11 +23,13 @@ export class OrderTileComponent implements OnInit {
   amountPerSlide: number = 2;
   slides: MerchantInfo[][] = [];
   skeletonArray: any[] = new Array(this.amountPerSlide);
+  isLoading: boolean = true;
 
-  constructor(private readonly merchantService: MerchantService,
-              private readonly cdRef: ChangeDetectorRef,
-              private readonly router: Router) {
-  }
+  constructor(
+    private readonly merchantService: MerchantService,
+    private readonly cdRef: ChangeDetectorRef,
+    private readonly router: Router
+  ) {}
 
   ngOnInit() {
     this.initMerchantSlides();
@@ -36,17 +38,22 @@ export class OrderTileComponent implements OnInit {
   private initMerchantSlides() {
     this.merchantService
       .getMerchantsWithFavoriteInfo()
-      .pipe(take(1))
+      .pipe(
+        take(1),
+        finalize(()=> {
+          this.isLoading = false;
+          this.cdRef.detectChanges();
+        })
+      )
       .subscribe(merchants => {
         const favMerchants = merchants.filter(({ isFavorite }) => isFavorite);
         while (favMerchants.length > 0) {
           this.slides.push(favMerchants.splice(0, this.amountPerSlide));
         }
-        this.cdRef.detectChanges();
       });
   }
 
-  goToMerchant({id: merchantId}: MerchantInfo) {
-    this.router.navigate([NAVIGATE.ordering], {skipLocationChange: true, queryParams: {merchantId}});
+  goToMerchant({ id: merchantId }: MerchantInfo) {
+    this.router.navigate([NAVIGATE.ordering], { skipLocationChange: true, queryParams: { merchantId } });
   }
 }

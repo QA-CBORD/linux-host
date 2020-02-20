@@ -9,16 +9,17 @@
     <section class="deposit__selection-block">
       <div class="deposit__select-wrapper">
         <ion-label class="deposit__label-select">Payment Method</ion-label>
-        <ion-select class="deposit__select"
-                    cancelText="Cancel"
-                    mode="md"
-                    placeholder="Please Choose"
-                    interface="action-sheet"
-                    [interfaceOptions]="customActionSheetPaymentOptions"
-                    formControlName="sourceAccount"
-                    (ionChange)="onPaymentMethodChanged($event)">
-          <ion-select-option *ngIf="applePayEnabled"
-                             [value]="applePayAccountType">
+        <ion-select
+          class="deposit__select"
+          cancelText="Cancel"
+          mode="md"
+          placeholder="Please Choose"
+          interface="action-sheet"
+          [interfaceOptions]="customActionSheetPaymentOptions"
+          formControlName="sourceAccount"
+          (ionChange)="onPaymentMethodChanged($event)"
+        >
+          <ion-select-option *ngIf="isCreditCardPaymentTypesEnabled && applePayEnabled$ | async" [value]="applePayAccountType">
             Apple Pay
           </ion-select-option>
           <ng-container *ngIf="isCreditCardPaymentTypesEnabled">

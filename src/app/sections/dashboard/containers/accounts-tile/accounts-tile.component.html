@@ -1,5 +1,5 @@
-<div class="accounts">
-  <ion-slides *ngIf="slides.length"
+<div class="accounts" [ngClass]="{'accounts--auto-height': !isLoading}">
+  <ion-slides *ngIf="!isLoading && slides.length"
               class="accounts__slides"
               [pager]="true" mode="ios"
               [options]="slideOpts">
@@ -11,7 +11,7 @@
     </ion-slide>
   </ion-slides>
 
-  <ion-list *ngIf="!slides.length">
+  <ion-list *ngIf="isLoading">
     <ion-item lines="none">
       <ion-label>
         <p class="accounts__skeleton-row">

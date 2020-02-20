@@ -1,11 +1,17 @@
 @import 'tools';
 
 .order {
-  padding: 10px 0;
   overflow: hidden;
+  min-height: 180px;
+  transition: 1s ease-out;
+
+  &--auto-height {
+      min-height: 0;
+    }
 
   &__slides {
     margin: 0;
+    padding: 10px 0;
   }
 
   &__slide {

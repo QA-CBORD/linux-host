@@ -19,16 +19,16 @@
             <img src="./assets/icon/location-pin.svg"
                  height="16"
                  alt="location-pin" />
-            <div *ngIf="orderInfo?.address"
+            <div *ngIf="(orderInfo$ | async)?.address"
                  class="full-menu__address-info-content">
               {{ (merchantInfo$ | async).distanceFromUser | merchantDistance }} -
-              <ng-container *ngIf="orderInfo?.address.onCampus; then onCampus; else offCampus"></ng-container>
+              <ng-container *ngIf="(orderInfo$ | async)?.address.onCampus; then onCampus; else offCampus"></ng-container>
 
               <ng-template #offCampus>
-                {{ orderInfo?.address.address1 }}, {{ orderInfo?.address.city }}
+                {{ (orderInfo$ | async)?.address.address1 }}, {{ (orderInfo$ | async)?.address.city }}
               </ng-template>
               <ng-template #onCampus>
-                {{ orderInfo?.address.building }}, Room {{ orderInfo?.address.room }}
+                {{ (orderInfo$ | async)?.address.building }}, Room {{ (orderInfo$ | async)?.address.room }}
               </ng-template>
             </div>
           </div>

@@ -44,6 +44,7 @@ export class MealDonationsComponent implements OnInit {
   instructions$: Observable<string>;
   accountLabelControl$: Observable<string>;
   buttonDonate$: Observable<string>;
+  buttonCancel$: Observable<string>;
 
   private readonly sourceSubscription: Subscription = new Subscription();
 
@@ -127,6 +128,7 @@ export class MealDonationsComponent implements OnInit {
         policyTitle$: this.mealDonationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.donationPolicyTitle),
         policyContent$: this.mealDonationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.donationPolicyContent),
         buttonDonate$: this.mealDonationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.buttonDonate),
+        buttonCancel$: this.mealDonationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.buttonCancel),
         confirmationTitle$: this.mealDonationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.donationConfirmationTitle),
         donateAmount$: this.mealDonationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.donateAmount),
         account$: this.mealDonationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.labelAccount),
@@ -252,6 +254,7 @@ export class MealDonationsComponent implements OnInit {
   private initContentStrings() {
     this.header$ = this.mealDonationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.headerTitle);
     this.buttonDonate$ = this.mealDonationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.buttonDonate);
+    this.buttonCancel$ = this.mealDonationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.buttonCancel);
     this.accountLabelControl$ = this.mealDonationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.fundingAccounts);
     this.instructions$ = this.mealDonationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.donationInstructions);
   }

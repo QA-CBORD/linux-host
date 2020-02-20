@@ -1,4 +1,4 @@
-<div class="rewards">
+<div class="rewards" [ngClass]="{'rewards--auto-height': !isLoadingData}">
   <ion-list *ngIf="isLoadingData">
     <ion-item lines="none" class="skeleton">
       <ion-label>

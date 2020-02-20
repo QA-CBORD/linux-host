@@ -14,6 +14,7 @@ export class ConfirmDonatePopoverComponent implements OnInit {
   @Input() policyTitle$: Observable<string>;
   @Input() policyContent$: Observable<string>;
   @Input() buttonDonate$: Observable<string>;
+  @Input() buttonCancel$: Observable<string>;
   @Input() donateAmount$: Observable<string>;
   @Input() account$: Observable<string>;
   @Input() confirmationTitle$: Observable<string>;
@@ -37,6 +38,7 @@ export class ConfirmDonatePopoverComponent implements OnInit {
 
   private async updateConfig() {
     this.popoverConfig.title = await this.confirmationTitle$.pipe(first()).toPromise();
+    this.popoverConfig.buttons[0].label = (await this.buttonCancel$.pipe(first()).toPromise()).toUpperCase();
     this.popoverConfig.buttons[1].label = (await this.buttonDonate$.pipe(first()).toPromise()).toUpperCase();
   }
 

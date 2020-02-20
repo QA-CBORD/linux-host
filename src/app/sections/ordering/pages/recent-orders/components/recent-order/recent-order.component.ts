@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { first, map, switchMap, take, tap } from 'rxjs/operators';
-import { Observable, zip, iif, of } from 'rxjs';
+import { first, map, switchMap, take } from 'rxjs/operators';
+import { iif, Observable, zip } from 'rxjs';
 
 import { MenuItemInfo, MerchantInfo, MerchantService, OrderInfo, OrderItem } from '@sections/ordering';
 import { LOCAL_ROUTING, ORDER_TYPE, ORDER_VALIDATION_ERRORS } from '@sections/ordering/ordering.config';
@@ -10,7 +10,7 @@ import { ModalController, PopoverController, ToastController } from '@ionic/angu
 import { ORDERING_STATUS } from '@sections/ordering/shared/ui-components/recent-oders-list/recent-orders-list-item/recent-orders.config';
 import { BUTTON_TYPE, buttons } from '@core/utils/buttons.config';
 import { OrderOptionsActionSheetComponent } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
-import { CartService, OrderDetailOptions } from '@sections/ordering/services/cart.service';
+import { CartService } from '@sections/ordering/services/cart.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { handleServerError } from '@core/utils/general-helpers';
 import { StGlobalPopoverComponent } from '@shared/ui-components';
@@ -76,7 +76,7 @@ export class RecentOrderComponent implements OnInit {
         });
 
         return [availableMenuItems, isOrderHasUnavailableMenuItems];
-      })
+      }),
     );
   }
 
@@ -88,7 +88,7 @@ export class RecentOrderComponent implements OnInit {
     this.order$
       .pipe(
         first(),
-        map(({ checkNumber }) => checkNumber)
+        map(({ checkNumber }) => checkNumber),
       )
       .subscribe(await this.initCancelOrderModal.bind(this));
   }
@@ -100,7 +100,7 @@ export class RecentOrderComponent implements OnInit {
   private setActiveOrder(orderId) {
     this.order$ = this.merchantService.recentOrders$.pipe(
       first(),
-      map(orders => orders.find(({ id }) => id === orderId))
+      map(orders => orders.find(({ id }) => id === orderId)),
     );
   }
 
@@ -109,8 +109,8 @@ export class RecentOrderComponent implements OnInit {
       first(),
       map(orders => orders.find(({ id }) => id === orderId)),
       switchMap(({ merchantId }) =>
-        this.merchantService.menuMerchants$.pipe(map(merchants => merchants.find(({ id }) => id === merchantId)))
-      )
+        this.merchantService.menuMerchants$.pipe(map(merchants => merchants.find(({ id }) => id === merchantId))),
+      ),
     );
   }
 
@@ -155,7 +155,7 @@ export class RecentOrderComponent implements OnInit {
       .validateOrder()
       .pipe(
         first(),
-        handleServerError(ORDER_VALIDATION_ERRORS)
+        handleServerError(ORDER_VALIDATION_ERRORS),
       )
       .toPromise()
       .catch(this.onValidateErrorToast.bind(this))
@@ -184,42 +184,42 @@ export class RecentOrderComponent implements OnInit {
       switchMap(({ type, deliveryAddressId }): any => iif(
         () => type === ORDER_TYPE.DELIVERY,
         this.getDeliveryAddress(deliveryAddressId),
-        this.getPickupAddress()))
-    )
+        this.getPickupAddress())),
+    );
     this.orderDetailsOptions$ = zip(address, this.order$, this.userService.userData)
       .pipe(map(([address, { type, dueTime }, { locale, timeZone }]) => {
         //Formated timezone from +0000 to +00:00 for Safari date format
-        const date = new Date(dueTime.replace(TIMEZONE_REGEXP, "$1:$2"));
-        const time = date.toLocaleString(locale, { hour12: false, timeZone })
+        const date = new Date(dueTime.replace(TIMEZONE_REGEXP, '$1:$2'));
+        const time = date.toLocaleString(locale, { hour12: false, timeZone });
         return {
           address,
           dueTime: new Date(time),
           orderType: type,
-          isASAP: false
-        }
-      }))
+          isASAP: false,
+        };
+      }));
   }
 
   private getPickupAddress(): Observable<any> {
     return this.order$.pipe(
       switchMap(({ merchantId }) =>
-        this.merchantService.menuMerchants$.pipe(map(merchants => merchants.find(({ id }) => id === merchantId)))
+        this.merchantService.menuMerchants$.pipe(map(merchants => merchants.find(({ id }) => id === merchantId))),
       ),
-      map(({ storeAddress }) => storeAddress)
+      map(({ storeAddress }) => storeAddress),
     );
   }
 
   private getDeliveryAddress(deliveryId: string): Observable<any> {
     return this.merchantService.retrieveUserAddressList().pipe(
       map(addresses => addresses.find(({ id }) => id === deliveryId)),
-      map(address => address)
+      map(address => address),
     );
   }
 
   private cancelOrder(): Observable<any> {
     return this.order$.pipe(
       switchMap(({ id }) => this.merchantService.cancelOrderById(id)),
-      handleServerError(ORDER_VALIDATION_ERRORS)
+      handleServerError(ORDER_VALIDATION_ERRORS),
     );
   }
 
@@ -238,12 +238,12 @@ export class RecentOrderComponent implements OnInit {
     });
     modal.onDidDismiss().then(({ role }) => {
       role === BUTTON_TYPE.REMOVE &&
-        this.cancelOrder()
-          .pipe(take(1))
-          .subscribe(
-            response => response && this.back(),
-            (msg) => this.onValidateErrorToast(msg, this.back.bind(this))
-          );
+      this.cancelOrder()
+        .pipe(take(1))
+        .subscribe(
+          response => response && this.back(),
+          (msg) => this.onValidateErrorToast(msg, this.back.bind(this)),
+        );
     });
     await modal.present();
   }
@@ -270,11 +270,11 @@ export class RecentOrderComponent implements OnInit {
   }
 
   private async initOrderOptionsModal({
-    orderTypes,
-    id: merchantId,
-    storeAddress,
-    settings,
-  }: MerchantInfo): Promise<void> {
+                                        orderTypes,
+                                        id: merchantId,
+                                        storeAddress,
+                                        settings,
+                                      }: MerchantInfo): Promise<void> {
     const footerButtonName = 'continue';
     const cssClass = 'order-options-action-sheet order-options-action-sheet-p-d';
 

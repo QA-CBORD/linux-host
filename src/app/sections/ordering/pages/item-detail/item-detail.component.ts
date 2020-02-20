@@ -25,6 +25,7 @@ export class ItemDetailComponent implements OnInit {
   isStaticHeader: boolean = true;
   menuInfo$: Observable<MenuInfo>;
   errorState: boolean = false;
+  cartSelectedItem: OrderItem;
   cartOrderItemOptions: OrderItem[] = [];
   allowNotes: boolean;
 
@@ -101,7 +102,7 @@ export class ItemDetailComponent implements OnInit {
 
     this.itemOrderForm = this.fb.group({
       ...formGroup,
-      message: ['', [Validators.minLength(1), Validators.maxLength(255)]],
+      message: [this.cartSelectedItem && this.cartSelectedItem.specialInstructions ? this.cartSelectedItem.specialInstructions : '', [Validators.minLength(1), Validators.maxLength(255)]],
     });
 
     this.valueChanges();
@@ -147,7 +148,12 @@ export class ItemDetailComponent implements OnInit {
     const menuItem = this.configureMenuItem(this.menuItem.id, this.order.counter);
     const arrayOfvalues: any[] = Object.values(this.itemOrderForm.value);
     arrayOfvalues.forEach(value => {
-      if (!value || typeof value === 'string') {
+      if (!value) {
+        return;
+      }
+
+      if (typeof value === 'string') {
+        menuItem.specialInstructions = value;
         return;
       }
 
@@ -216,10 +222,10 @@ export class ItemDetailComponent implements OnInit {
         this.order = { ...this.order, totalPrice: this.menuItem.price };
         this.allowNotes = !JSON.parse(settings.map[MerchantSettings.disableItemNotes].value);
 
-        const cartSelectedItem = orderItems.find(({ id }) => id === orderItemId);
-        if (cartSelectedItem) {
-          this.cartOrderItemOptions = cartSelectedItem.orderItemOptions;
-          this.order = { ...this.order, counter: cartSelectedItem.quantity };
+        this.cartSelectedItem = orderItems.find(({ id }) => id === orderItemId);
+        if (this.cartSelectedItem) {
+          this.cartOrderItemOptions = this.cartSelectedItem.orderItemOptions;
+          this.order = { ...this.order, counter: this.cartSelectedItem.quantity };
         }
         this.initForm();
       });
