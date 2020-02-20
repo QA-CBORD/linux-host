@@ -3,7 +3,9 @@ import { Observable, Subscriber } from 'rxjs';
 
 import { ObservableStorage } from '../observable-storage/observable-storage.service';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class ObservableSessionStorageService implements ObservableStorage {
   get(key: string): Observable<any> {
     return new Observable((subscriber: Subscriber<any>) => {

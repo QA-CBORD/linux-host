@@ -1,12 +1,13 @@
-import { Injectable, Inject } from '@angular/core';
+import { Injectable } from '@angular/core';
+import { Platform } from '@ionic/angular';
 import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
 import { STORAGE_KEY } from '../housing.config';
 
 import {
-  OBSERVABLE_STORAGE_TOKEN,
   ObservableStorage,
+  ObservableStorageService,
 } from '@shared/services/observable-storage/observable-storage.service';
 
 import { ApplicationStatus, PatronApplication } from '../applications/applications.model';
@@ -29,12 +30,16 @@ export interface StoredApplication {
 export class QuestionsStorageService {
   private readonly _key: string = `${STORAGE_KEY}-applications`;
 
-  constructor(@Inject(OBSERVABLE_STORAGE_TOKEN) private _observableStorage: ObservableStorage) {
-    console.log(
-      'observable storage',
-      this._observableStorage,
-      this._observableStorage instanceof ObservableSessionStorageService
-    );
+  private _observableStorage: ObservableStorage;
+
+  constructor(
+    private _platform: Platform,
+    private _observableStorageService: ObservableStorageService,
+    private _observableSessionStorageService: ObservableSessionStorageService
+  ) {
+    this._observableStorage = this._platform.is('desktop')
+      ? this._observableSessionStorageService
+      : this._observableStorageService;
   }
 
   getApplication(applicationKey: number): Observable<StoredApplication> {

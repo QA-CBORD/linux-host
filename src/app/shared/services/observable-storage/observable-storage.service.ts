@@ -1,9 +1,6 @@
-import { InjectionToken, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
-import { Platform } from '@ionic/angular';
 import { Observable, from } from 'rxjs';
-
-import { ObservableSessionStorageService } from '../observable-session-storage/observable-session-storage.service';
 
 export interface ObservableStorage {
   get(key: string): Observable<any>;
@@ -12,27 +9,9 @@ export interface ObservableStorage {
   clear(): Observable<void>;
 }
 
-export const OBSERVABLE_STORAGE_TOKEN: InjectionToken<ObservableStorage> = new InjectionToken<any>(
-  'OBSERVABLE_STORAGE'
-);
-
-export const OBSERVABLE_STORAGE_PROVIDERS = [
-  {
-    provide: OBSERVABLE_STORAGE_TOKEN,
-    deps: [Platform, Storage],
-    useFactory(platform: Platform, storage: Storage): ObservableStorage {
-      if (platform.is('desktop')) {
-        console.log('desktop');
-        return new ObservableSessionStorageService();
-      }
-
-      console.log('NOT desktop');
-      return new ObservableStorageService(storage);
-    },
-  },
-];
-
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class ObservableStorageService implements ObservableStorage {
   constructor(private _storage: Storage) {}
 
