@@ -1,12 +1,17 @@
 import { Injectable } from '@angular/core';
+import { Platform } from '@ionic/angular';
 import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
 import { STORAGE_KEY } from '../housing.config';
 
-import { ObservableStorageService } from '@shared/services/observable-storage/observable-storage.service';
+import {
+  ObservableStorage,
+  ObservableStorageService,
+} from '@shared/services/observable-storage/observable-storage.service';
 
 import { ApplicationStatus, PatronApplication } from '../applications/applications.model';
+import { ObservableSessionStorageService } from '@shared/services/observable-session-storage/observable-session-storage.service';
 
 export interface QuestionsEntries {
   [key: string]: any;
@@ -25,10 +30,20 @@ export interface StoredApplication {
 export class QuestionsStorageService {
   private readonly _key: string = `${STORAGE_KEY}-applications`;
 
-  constructor(private _observableStorage: ObservableStorageService) {}
+  private _observableStorage: ObservableStorage;
+
+  constructor(
+    private _platform: Platform,
+    private _observableStorageService: ObservableStorageService,
+    private _observableSessionStorageService: ObservableSessionStorageService
+  ) {
+    this._observableStorage = this._platform.is('desktop')
+      ? this._observableSessionStorageService
+      : this._observableStorageService;
+  }
 
   getApplication(applicationKey: number): Observable<StoredApplication> {
-    return this._observableStorage.get<StoredApplication>(`${this._key}-${applicationKey}`);
+    return this._observableStorage.get(`${this._key}-${applicationKey}`);
   }
 
   getApplicationStatus(applicationKey: number): Observable<ApplicationStatus> {

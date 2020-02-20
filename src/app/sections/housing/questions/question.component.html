@@ -42,7 +42,11 @@
     </st-textarea-floating-label>
 
     <div *ngSwitchCase="'date'" class="question__item">
-      <st-date-select [parentGroup]="parentGroup" [label]="question.label" [name]="question['name']"></st-date-select>
+      <st-date-select
+        [name]="question['name']"
+        [label]="question.label"
+        [formControlName]="question['name']"
+      ></st-date-select>
 
       <st-control-errors
         [control]="parentGroup.get(question['name'])"
@@ -81,6 +85,7 @@
         class="question__section"
         [question]="question"
         [parentForm]="parentGroup"
+        [isDisabled]="isSubmitted"
         *ngIf="question['facilityPicker']"
       ></st-facility-picker>
 
@@ -105,6 +110,7 @@
             [checked]="item.selected"
             [formControlName]="idx"
             [value]="item.value"
+            [disabled]="isSubmitted"
             slot="start"
           ></ion-checkbox>
           <ion-label class="form-label">{{ item.label }}</ion-label>
@@ -121,12 +127,7 @@
         [errorMessages]="errorMessages"
       ></st-control-errors>
 
-      <ion-radio-group [formControlName]="question['name']">
-        <ion-item *ngFor="let item of question['values']; trackBy: trackByLabel" class="ion-no-padding" lines="none">
-          <ion-label class="form-label">{{ item.label }}</ion-label>
-          <ion-radio class="form-radio__control" mode="md" slot="start" [value]="item.value"></ion-radio>
-        </ion-item>
-      </ion-radio-group>
+      <st-radio-group [formControlName]="question['name']" [options]="question['values']"></st-radio-group>
     </div>
   </ng-container>
 </div>

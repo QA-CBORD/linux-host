@@ -15,8 +15,8 @@ import { ORDER_VALIDATION_ERRORS, ORDERING_CONTENT_STRINGS } from '@sections/ord
 export class OrderingResolver implements Resolve<Observable<[ContentStringInfo[], MerchantInfo[]]>> {
 
   constructor(private readonly merchantService: MerchantService,
-              private readonly loadingService: LoadingService,
-              private readonly contentStringsFacadeService: ContentStringsFacadeService) {
+    private readonly loadingService: LoadingService,
+    private readonly contentStringsFacadeService: ContentStringsFacadeService) {
   }
 
   resolve(): Observable<[ContentStringInfo[], MerchantInfo[]]> {
@@ -35,8 +35,9 @@ export class OrderingResolver implements Resolve<Observable<[ContentStringInfo[]
       CONTENT_STINGS_CATEGORIES.ordering,
     ).pipe(
       tap(strings => {
+        if (!strings.length) return;
         const { value } =
-          strings.find(({name}) => name === ORDERING_CONTENT_STRINGS.errorMessageTimeSlotCapacityReached);
+          strings.find(({ name }) => name === ORDERING_CONTENT_STRINGS.errorMessageTimeSlotCapacityReached);
         ORDER_VALIDATION_ERRORS['9017'] = value;
       })
     );

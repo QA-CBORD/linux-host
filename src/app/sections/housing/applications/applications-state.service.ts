@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { ApplicationDetails } from './applications.model';
+import { ApplicationDetails, ApplicationStatus, PatronApplication } from './applications.model';
 
 export interface ApplicationsState {
   entities: ApplicationEntities;
@@ -56,6 +56,7 @@ export class ApplicationsStateService {
     this.applicationsState = {
       ...this.applicationsState,
       entities: { ...entites, [applicationKey]: applicationDetails },
+      applicationDetails,
     };
   }
 

@@ -10,7 +10,7 @@ import {
   SYSTEM_SETTINGS_CONFIG,
 } from '../../accounts.config';
 import { SettingInfo } from 'src/app/core/model/configuration/setting-info.model';
-import { iif, Observable, of, Subscription } from 'rxjs';
+import { iif, Observable, of, Subscription, throwError } from 'rxjs';
 import { UserAccount } from '@core/model/account/account.model';
 import { ConfirmDepositPopoverComponent } from '../../shared/ui-components/confirm-deposit-popover/confirm-deposit-popover.component';
 import { DepositModalComponent } from '../../shared/ui-components/deposit-modal/deposit-modal.component';
@@ -69,8 +69,8 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     private readonly nativeProvider: NativeProvider,
     private readonly userService: UserService,
     private readonly cdRef: ChangeDetectorRef
-    
-  ) {}
+
+  ) { }
 
   ngOnInit() {
     this.depositService.settings$.pipe(take(1)).subscribe(depositSettings => (this.depositSettings = depositSettings));
@@ -281,22 +281,18 @@ export class DepositPageComponent implements OnInit, OnDestroy {
 
         return this.nativeProvider
           .addUSAePayCreditCard()
-          .pipe(take(1))
-          .subscribe(({ success, errorMessage }) => {
-            if (!success) {
-              return this.onErrorRetrieve(errorMessage);
-            }
-            this.loadingService.showSpinner();
+          .pipe(
+            switchMap(({ success, errorMessage }) => {
+              if (!success) {
+                return throwError(errorMessage);
+              }
 
-            // Update user accounts for refreshing Credit Card dropdown list
-            this.depositService
-              .getUserAccounts()
-              .pipe(
-                take(1),
-                finalize(() => this.loadingService.closeSpinner())
-              )
-              .subscribe(() => this.cdRef.detectChanges());
-          });
+              return this.depositService
+                .getUserAccounts();
+            }),
+            take(1))
+          .subscribe(() => { },
+            (message) => this.onErrorRetrieve(message));
       }
 
       if (data) {
@@ -362,9 +358,8 @@ export class DepositPageComponent implements OnInit, OnDestroy {
                 accounts
               );
               this.billmeDestinationAccounts = this.filterBillmeDestAccounts(this.billmeMappingArr, accounts);
-            })
-          )
-        )
+              this.cdRef.markForCheck();
+            })))
       )
       .subscribe(() => {
         this.defineDestAccounts(PAYMENT_TYPE.CREDIT);
@@ -408,8 +403,8 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     return await popover.present();
   }
 
-  trackByAccountId(i: number, { id }: UserAccount): string {
-    return `${i}-${id}-${Math.random()}`;
+  trackByAccountId(i: number): string {
+    return `${i}-${Math.random()}`;
   }
 
   private resetControls(controlNames: string[]) {

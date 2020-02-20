@@ -19,6 +19,7 @@ export class StTextareaFloatingLabelComponent extends DefaultValueAccessor imple
   @Input() idd: string;
   @Input() isError: boolean;
   @Input() rows: string = '3';
+  @Input() isDisabled: boolean;
   onTouched: () => void;
   onChange: (_: any) => void;
   innerValue: any = '';

@@ -106,6 +106,10 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     return { ...this.orderDetailOptions, dueTime: new Date((<string>this.orderDetailOptions.dueTime).slice(0, 19)) };
   }
 
+  trackByAccountId(i: number): string {
+    return `${i}-${Math.random()}`;
+  }
+
   goToItemDetails(orderItem) {
     this.onOrderItemClicked.emit(orderItem);
   }
