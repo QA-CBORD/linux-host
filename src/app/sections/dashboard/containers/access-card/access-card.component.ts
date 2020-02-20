@@ -97,8 +97,9 @@ export class AccessCardComponent implements OnInit {
 
   private setAppleWalletMessage() {
     this.appleWalletEnabled = this.appleWalletInfo.isAppleWalletEnabled;
-    if(this.appleWalletEnabled){
-
+    let canAddPass = this.appleWalletInfo.canAddPass;
+    
+    if(this.appleWalletEnabled && canAddPass){
       let isIPhoneAlreadyProvisioned = this.appleWalletInfo.iPhoneProvisioned;
       let isWatchPaired = this.appleWalletInfo.watchPaired;
       let isIWatchAlreadyProvisioned = this.appleWalletInfo.watchProvisioned;
