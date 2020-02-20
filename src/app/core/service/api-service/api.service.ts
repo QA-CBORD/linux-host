@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpHeaders, HttpParams, HttpClient } from '@angular/common/http';
 
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { subscribeOn, observeOn, timeout, catchError } from 'rxjs/operators';
 import { async } from 'rxjs/internal/scheduler/async';
 import { queue } from 'rxjs/internal/scheduler/queue';
@@ -128,16 +128,7 @@ export class APIService {
         break;
     }
 
-    return httpCall$.pipe(
-      catchError(error => {
-        if (error.status === 401) {
-          /// AUTHENTICATION ERROR, HANDLE WHEN WE KNOW HOW
-          this.handleAuthenticationError(error);
-        } else {
-          return error;
-        }
-      })
-    );
+    return httpCall$.pipe(catchError(error => throwError({ message: 'There was an issue with the request' })));
   }
 
   /**

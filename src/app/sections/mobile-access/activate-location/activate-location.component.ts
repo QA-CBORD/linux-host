@@ -56,7 +56,7 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
 
   get userFullName$(): Observable<string> {
     return this.userService.userData.pipe(
-      map(({ firstName: fn = '', middleName: mn = '', lastName: ln = '' }: UserInfo) => `${fn} ${mn} ${ln}`),
+      map(({ firstName, middleName, lastName}: UserInfo) => `${firstName || ''} ${middleName || ''} ${lastName || ''}`),
     );
   }
 

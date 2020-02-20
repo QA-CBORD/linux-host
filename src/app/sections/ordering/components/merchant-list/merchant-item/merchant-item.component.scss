@@ -4,7 +4,7 @@
   padding: 20px 15px;
   --padding-start: 0;
   --inner-padding-end: 0;
-  // border-bottom: 1px solid $color-light-gray;
+   border-bottom: 1px solid $color-light-gray;
 
   &__merchant-photo {
     object-fit: cover;
@@ -23,7 +23,7 @@
   &__merchant-distance {
     color: #00000099;
     margin: 0 10px;
-    
+
     @include ellipsis;
     @include font-nunito-semibold(12px);
   }
@@ -41,7 +41,7 @@
 
   &__merchant-hours {
     margin: 0 10px;
-    
+
     @include font-nunito-heavy(12px);
 
     &--open {
@@ -57,7 +57,7 @@
     margin: 0 10px;
     text-align: right;
     color: $color-dodger-blue;
-    
+
     @include font-nunito-semibold(12px);
   }
 }

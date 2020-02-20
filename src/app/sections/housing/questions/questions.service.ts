@@ -1,29 +1,35 @@
 import { Injectable } from '@angular/core';
-import { FormControl, Validators, FormGroup, FormArray, ValidatorFn } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, withLatestFrom } from 'rxjs/operators';
 
-import { parseJsonToArray, integerValidator, numericValidator } from '../utils';
+import { integerValidator, numericValidator, parseJsonToArray } from '../utils';
 
-import { QuestionsStorageService, QuestionsEntries } from './questions-storage.service';
+import { QuestionsEntries, QuestionsStorageService } from './questions-storage.service';
 import { ApplicationsStateService } from '../applications/applications-state.service';
 
 import {
-  QuestionRadioGroup,
+  QuestionBase,
   QuestionCheckboxGroup,
   QuestionCheckboxGroupValue,
+  QuestionDate,
   QuestionDropdown,
-  QuestionBase,
   QuestionFormControl,
   QuestionHeader,
   QuestionParagraph,
-  QuestionTextbox,
+  QuestionRadioGroup,
   QuestionTextarea,
-  QuestionDate,
+  QuestionTextbox,
 } from './types';
 
-import { QuestionsPage, QuestionReorder, QuestionReorderValue } from './questions.model';
-import { ApplicationDetails, PatronAttribute, PatronPreference } from '../applications/applications.model';
+import { QuestionReorder, QuestionReorderValue, QuestionsPage } from './questions.model';
+import {
+  ApplicationDetails,
+  ApplicationStatus,
+  PatronApplication,
+  PatronAttribute,
+  PatronPreference,
+} from '../applications/applications.model';
 
 export const QuestionConstructorsMap = {
   header: QuestionHeader,
@@ -57,14 +63,17 @@ export class QuestionsService {
         const questions: QuestionBase[] = this._parseQuestions(
           applicationDetails.applicationDefinition.applicationFormJson
         );
-        const pages: QuestionsPage[] = this._splitByPages(
+        const patronApplication: PatronApplication = applicationDetails.patronApplication;
+        const status: ApplicationStatus = patronApplication && patronApplication.status;
+        const isSubmitted = status === ApplicationStatus.Submitted;
+
+        return this._splitByPages(
           questions,
           applicationDetails.patronAttributes,
           applicationDetails.patronPreferences,
-          storedQuestions
+          storedQuestions,
+          isSubmitted
         );
-
-        return pages;
       })
     );
   }
@@ -95,7 +104,8 @@ export class QuestionsService {
     questions: QuestionBase[],
     attributes: PatronAttribute[],
     preferences: PatronPreference[],
-    storedQuestions: QuestionsEntries
+    storedQuestions: QuestionsEntries,
+    isSubmitted: boolean
   ): QuestionsPage[] {
     const questionsByPages: QuestionBase[][] = questions.reduce(
       (accumulator: QuestionBase[][], current: QuestionBase, index: number) => {
@@ -111,7 +121,7 @@ export class QuestionsService {
     );
 
     return questionsByPages.map((pageQuestions: QuestionBase[]) => ({
-      form: this._toFormGroup(pageQuestions, attributes, preferences, storedQuestions),
+      form: this._toFormGroup(pageQuestions, attributes, preferences, storedQuestions, isSubmitted),
       questions: pageQuestions,
     }));
   }
@@ -120,7 +130,8 @@ export class QuestionsService {
     questions: QuestionBase[],
     attributes: PatronAttribute[],
     preferences: PatronPreference[],
-    storedQuestions: QuestionsEntries
+    storedQuestions: QuestionsEntries,
+    isSubmitted: boolean
   ): FormGroup {
     let group: any = {};
 
@@ -135,14 +146,19 @@ export class QuestionsService {
         } else if (question instanceof QuestionReorder) {
           group[questionName] = this._toQuestionReorderControl(storedValue, question, preferences);
         } else {
-          group[questionName] = this._toFormControl(storedValue, question, attributes);
+          group[questionName] = this._toFormControl(storedValue, question, attributes, isSubmitted);
         }
       });
 
     return new FormGroup(group);
   }
 
-  private _toFormControl(storedValue: any, question: QuestionFormControl, attributes: PatronAttribute[]): FormControl {
+  private _toFormControl(
+    storedValue: any,
+    question: QuestionFormControl,
+    attributes: PatronAttribute[],
+    isSubmitted: boolean
+  ): FormControl {
     let value: any = storedValue;
 
     if (value == null) {
@@ -163,7 +179,7 @@ export class QuestionsService {
       this._addDataTypeValidator(question, validators);
     }
 
-    return new FormControl(value, validators);
+    return new FormControl({ value, disabled: isSubmitted }, validators);
   }
 
   private _addDataTypeValidator(question: QuestionTextbox, validators: ValidatorFn[]): void {

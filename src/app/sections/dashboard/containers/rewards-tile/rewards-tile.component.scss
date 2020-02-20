@@ -2,6 +2,12 @@
 
 .rewards {
   padding: 25px 30px;
+  min-height: 150px;
+  transition: 1s ease-out;
+
+  &--auto-height {
+    min-height: 0;
+  }
 
   .progress {
     &__experience {

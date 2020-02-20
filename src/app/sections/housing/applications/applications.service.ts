@@ -73,7 +73,16 @@ export class ApplicationsService {
     );
   }
 
-  submitApplication(applicationKey: number, application: ApplicationDetails, form: any): Observable<ResponseStatus> {
+  submitApplication(
+    applicationKey: number,
+    application: ApplicationDetails,
+    form: any,
+    isSubmitted: boolean
+  ): Observable<ResponseStatus> {
+    if (isSubmitted) {
+      return this._updateApplication(application, form, ApplicationStatus.Submitted);
+    }
+
     return forkJoin(
       this._questionsStorageService.updateCreatedDateTime(applicationKey, application.patronApplication),
       this._questionsStorageService.updateSubmittedDateTime(applicationKey)
@@ -92,7 +101,16 @@ export class ApplicationsService {
     );
   }
 
-  saveApplication(applicationKey: number, application: ApplicationDetails, form: any): Observable<ResponseStatus> {
+  saveApplication(
+    applicationKey: number,
+    application: ApplicationDetails,
+    form: any,
+    isSubmitted: boolean
+  ): Observable<ResponseStatus> {
+    if (isSubmitted) {
+      return this._updateApplication(application, form, ApplicationStatus.Pending);
+    }
+
     return this._questionsStorageService.updateCreatedDateTime(applicationKey, application.patronApplication).pipe(
       switchMap((createdDateTime: string) => {
         const applicationDetails: ApplicationDetails = this._createApplicationDetails(
@@ -103,6 +121,30 @@ export class ApplicationsService {
         );
 
         return this._updateApplication(applicationDetails, form, ApplicationStatus.Pending);
+      })
+    );
+  }
+
+  next(applicationKey: number, applicationDetails: ApplicationDetails, formValue: any): Observable<any> {
+    const patronApplication: PatronApplication = applicationDetails.patronApplication;
+    const status: ApplicationStatus = patronApplication && patronApplication.status;
+
+    return this._questionsStorageService.updateCreatedDateTime(applicationKey, patronApplication).pipe(
+      switchMap((createdDateTime: string) => {
+        const updatedStatus: ApplicationStatus = status || ApplicationStatus.Pending;
+        const updatedPatronApplication: PatronApplication = new PatronApplication({
+          ...patronApplication,
+          createdDateTime,
+          status: updatedStatus,
+        });
+        const updatedApplicationDetails: ApplicationDetails = new ApplicationDetails({
+          ...applicationDetails,
+          updatedPatronApplication,
+        });
+
+        this._applicationsStateService.setApplication(applicationKey, updatedApplicationDetails);
+
+        return this._questionsStorageService.updateQuestions(applicationKey, formValue, updatedStatus);
       })
     );
   }

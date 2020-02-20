@@ -62,6 +62,12 @@ export class TransactionService {
     this._transactions$.next([...this.transactionHistory]);
   }
 
+  clearTransactionHistory(): void {
+    this.currentAccountId = null;
+    this.transactionHistory = [];
+    this.queryCriteria = null;
+  }
+
   getNextTransactionsByAccountId(id?: string): Observable<Array<TransactionHistory>> {
     if (this.transactionResponse && !this.transactionResponse.totalCount) return this.transactions$;
     this.setNextQueryObject(id);

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { AccountsService } from '@sections/dashboard/services';
-import { take } from 'rxjs/operators';
+import { take, finalize } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { NAVIGATE } from 'src/app/app.global';
 import { UserAccount } from '@core/model/account/account.model';
@@ -22,6 +22,7 @@ export class AccountsTileComponent implements OnInit {
   };
   itemsPerSlide: number = 4;
   slides: UserAccount[][] = [];
+  isLoading: boolean = true;
 
   constructor(private readonly accountsService: AccountsService,
               private readonly router: Router,
@@ -35,12 +36,15 @@ export class AccountsTileComponent implements OnInit {
   private initUserAccounts() {
     this.accountsService
       .getAccountsFilteredByDisplayTenders()
-      .pipe(take(1))
+      .pipe(take(1),
+      finalize(()=> {
+        this.isLoading = false;
+        this.cdRef.detectChanges();
+      }))
       .subscribe(accounts => {
         while (accounts.length > 0) {
           this.slides.push(accounts.splice(0, this.itemsPerSlide));
         }
-        this.cdRef.markForCheck();
       });
   }
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, forwardRef, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, Input, forwardRef, ViewChild, ElementRef, HostBinding } from '@angular/core';
 import { FormControl, NG_VALUE_ACCESSOR, ControlValueAccessor, AbstractControl } from '@angular/forms';
 
 export const CUSTOM_INPUT_CONTROL_VALUE_ACCESSOR: any = {
@@ -20,14 +20,18 @@ export class StInputFloatingLabelComponent implements OnInit, ControlValueAccess
   @Input() maxlength: string = '';
   @Input() idd: string;
   @Input() isError: boolean;
-  @Input() isDisabled: boolean = false;
+
+  @HostBinding('class.disabled')
+  @Input()
+  isDisabled: boolean = false;
+
   @ViewChild('input') inputRef: ElementRef;
   innerValue: string | number = '';
-  private onChange :(v: any) => void;
+  private onChange: (v: any) => void;
   private onTouched: () => void;
 
   constructor() {}
-  
+
   ngOnChanges() {
     if (this.control.value !== '') {
       this.control.markAsDirty();
@@ -46,7 +50,7 @@ export class StInputFloatingLabelComponent implements OnInit, ControlValueAccess
   set value(v: any) {
     if (v !== this.innerValue) {
       this.innerValue = v;
-      this.writeValue(this.innerValue)
+      this.writeValue(this.innerValue);
     }
   }
 
@@ -64,6 +68,11 @@ export class StInputFloatingLabelComponent implements OnInit, ControlValueAccess
   //From ControlValueAccessor interface
   registerOnTouched(fn: any) {
     this.onTouched = fn;
+  }
+
+  //From ControlValueAccessor interface
+  setDisabledState(isDisabled: boolean): void {
+    this.isDisabled = isDisabled;
   }
 
   onBlur() {

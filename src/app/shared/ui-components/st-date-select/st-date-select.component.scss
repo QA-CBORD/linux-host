@@ -10,6 +10,34 @@
 :host {
   display: block;
   position: relative;
+
+  &.date-select__disabled {
+    .date-select__control--filled {
+      & + .date-select__placeholder {
+        color: rgba($color-black, 0.4);
+      }
+    }
+  }
+
+  &:not(.date-select__disabled) {
+    .date-select__control {
+      &--filled {
+        border-color: $color-dodger-blue;
+
+        & + .date-select__placeholder {
+          color: $color-dodger-blue;
+        }
+      }
+
+      &.ng-invalid.ng-touched {
+        border-color: $color-alizarin;
+
+        & + .date-select__placeholder {
+          color: $color-alizarin;
+        }
+      }
+    }
+  }
 }
 
 .date-select__control {
@@ -26,28 +54,21 @@
   &:active,
   &--filled {
     @include chevron-down-active();
-
-    --padding-top: 13px;
-    --padding-bottom: 13px;
-
-    border: 2px solid $color-dodger-blue;
-
-    & + .date-select__placeholder {
-      @extend %placeholder-transform;
-
-      color: $color-dodger-blue;
-    }
   }
 
   &.ng-invalid.ng-touched {
     @include chevron-down-error();
+  }
 
-    border: 2px solid $color-alizarin;
+  &--filled,
+  &.ng-invalid.ng-touched {
+    --padding-top: 13px;
+    --padding-bottom: 13px;
+
+    border-width: 2px;
 
     & + .date-select__placeholder {
       @extend %placeholder-transform;
-
-      color: $color-alizarin;
     }
   }
 

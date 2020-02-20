@@ -17,6 +17,13 @@ export const testCredentials: Dictionary<UserLogin> = {
     institutionId: '46054f40-71fc-4d32-a8de-64b525d3ce56',
   },
 
+  gold7_usaepay: {
+    userName: 'GSaas@tpsmail.dev',
+    password: 'password1',
+    domain: null,
+    institutionId: 'd0a8487d-d30d-4013-acd4-29e5927fe0d0',
+  },
+
   gold7_1: {
     userName: 'BSaas@tpsmail.dev',
     password: 'password1',
@@ -64,7 +71,7 @@ export const testCredentials: Dictionary<UserLogin> = {
     password: 'password1',
     domain: null,
     institutionId: '7612d8de-51e1-4cab-971d-88a317326437',
-    },
+  },
 
   odysseyPreview2: {
     userName: 'getaws2@tpsmail.dev',
@@ -116,7 +123,7 @@ export const testCredentials: Dictionary<UserLogin> = {
   },
 
   housingQAASA: {
-    userName: 'smsg02@tpsmail.dev',
+    userName: 'smsg11@tpsmail.dev',
     password: 'password1',
     domain: null,
     institutionId: '1e418ca8-7148-4956-b7c4-1f35db6d8a11',

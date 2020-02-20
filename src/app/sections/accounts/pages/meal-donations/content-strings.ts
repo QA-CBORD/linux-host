@@ -16,4 +16,5 @@ export enum CONTENT_STRING_NAMES {
   donateAmount = 'label_donate-amount',
   labelAccount = 'label_account',
   buttonDone = 'button_done',
+  buttonCancel = 'button_cancel',
 }

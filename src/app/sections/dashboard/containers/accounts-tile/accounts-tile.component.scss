@@ -2,6 +2,12 @@
 
 .accounts {
     width: 100%;
+    min-height: 180px;
+    transition: 1s ease-out;
+
+    &--auto-height {
+        min-height: 0;
+    }
 
     &__slides {
         --bullet-background-active: #000;

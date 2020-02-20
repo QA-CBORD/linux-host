@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable, ReplaySubject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, ReplaySubject, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 
 import { BASE_URL } from '../housing.config';
 import { Environment } from '../../../environment';
@@ -24,9 +24,10 @@ export class TermsService {
       Environment.currentEnvironment.housing_aws_prefix
     }/patron-applications/v.1.0/patron-terms/patrons/self`;
 
-    return this._housingProxyService
-      .get<Term[]>(apiUrl)
-      .pipe(map((terms: any[]) => (Array.isArray(terms) ? terms.map((term: any) => new Term(term)) : [])));
+    return this._housingProxyService.get<Term[]>(apiUrl).pipe(
+      map((terms: any[]) => (Array.isArray(terms) ? terms.map((term: any) => new Term(term)) : [])),
+      catchError(() => of([]))
+    );
   }
 
   setTermId(termId: number): void {

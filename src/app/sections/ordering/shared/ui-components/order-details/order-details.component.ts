@@ -1,9 +1,20 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
   BuildingInfo,
   MerchantAccountInfoList,
   MerchantOrderTypesInfo,
+  OrderDetailOptions,
   OrderItem,
   OrderPayment,
 } from '@sections/ordering';
@@ -22,8 +33,8 @@ import { AccountType } from 'src/app/app.global';
   styleUrls: ['./order-details.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class OrderDetailsComponent implements OnInit, OnDestroy {
-  @Input() orderDetailOptions: any;
+export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
+  @Input() orderDetailOptions: OrderDetailOptions;
   @Input() readonly: boolean = true;
   @Input() accInfoList: MerchantAccountInfoList = {} as MerchantAccountInfoList;
   @Input() orderTypes: MerchantOrderTypesInfo;
@@ -53,12 +64,13 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
   showCVVControl = false;
   applePayAccountType: Partial<UserAccount> = {
     accountType: AccountType.APPLEPAY,
-    accountDisplayName: "Apple Pay",
+    accountDisplayName: 'Apple Pay',
     isActive: true,
-  }
+  };
 
   constructor(private readonly fb: FormBuilder,
               private readonly modalController: ModalController) {
+
   }
 
   ngOnInit() {
@@ -67,6 +79,12 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.sourceSub.unsubscribe();
+  }
+
+  ngOnChanges({ orderDetailOptions }: SimpleChanges): void {
+    if (orderDetailOptions && orderDetailOptions.currentValue === null) {
+      this.orderDetailOptions = {} as OrderDetailOptions;
+    }
   }
 
   get controlsNames() {
@@ -85,7 +103,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
     if (this.orderDetailOptions.dueTime instanceof Date) {
       return this.orderDetailOptions;
     }
-    return { ...this.orderDetailOptions, dueTime: new Date(this.orderDetailOptions.dueTime.slice(0, 19)) };
+    return { ...this.orderDetailOptions, dueTime: new Date((<string>this.orderDetailOptions.dueTime).slice(0, 19)) };
   }
 
   trackByAccountId(i: number): string {
@@ -169,6 +187,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
     });
     await modal.present();
   }
+
 }
 
 export enum DETAILS_FORM_CONTROL_NAMES {

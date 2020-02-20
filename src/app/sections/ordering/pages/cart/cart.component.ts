@@ -236,19 +236,27 @@ export class CartComponent implements OnInit {
 
   private async submitOrder(): Promise<void> {
     await this.loadingService.showSpinner();
-    
+    let accountId = this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.paymentMethod].id;
+
     /// if Apple Pay Order
     if(this.cartFormState.data.paymentMethod.accountType === AccountType.APPLEPAY){
       let orderData = await this.cartService.orderInfo$.pipe(first()).toPromise();
-      orderData["orderTotal"] = orderData.total;
-      orderData["fee"] = orderData.useFee;
       await this.nativeProvider.payWithApplePay(NativeData.ORDERS_WITH_APPLE_PAY, orderData).toPromise()
-      .catch(async error => await this.onErrorModal(error));
+      .then(result => {
+        if(result.success){
+          accountId = result.accountId;
+        }else{
+          this.onErrorModal(result.errorMessage);
+        }
+      })
+      .catch(async error => {
+        return await this.onErrorModal(error)
+      });
     }
 
     this.cartService
       .submitOrder(
-        this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.paymentMethod].id,
+        accountId,
         this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.cvv] || null
       )
       .pipe(handleServerError(ORDER_VALIDATION_ERRORS))

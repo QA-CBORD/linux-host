@@ -1,31 +1,31 @@
 import {
-  Component,
-  OnInit,
   ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  OnInit,
+  QueryList,
   ViewChild,
   ViewChildren,
-  QueryList,
-  OnDestroy,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ToastController } from '@ionic/angular';
 import { FormGroup } from '@angular/forms';
-import { Observable, Subscription, Subject, throwError } from 'rxjs';
-import { tap, switchMap, withLatestFrom, catchError } from 'rxjs/operators';
+import { Observable, Subject, Subscription, throwError } from 'rxjs';
+import { catchError, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
 import { QuestionsService } from '../../questions/questions.service';
 import { ApplicationsService } from '../../applications/applications.service';
 import { QuestionsStorageService } from '../../questions/questions-storage.service';
 import { ApplicationsStateService } from '../../applications/applications-state.service';
 import { TermsService } from '../../terms/terms.service';
-import { LoadingService } from '../../../../core/service/loading/loading.service';
+import { LoadingService } from '@core/service/loading/loading.service';
 
 import { StepperComponent } from '../../stepper/stepper.component';
 import { StepComponent } from '../../stepper/step/step.component';
 import { QuestionComponent } from '../../questions/question.component';
 
-import { ApplicationStatus, ApplicationDetails, PatronApplication } from '../../applications/applications.model';
+import { ApplicationDetails, ApplicationStatus, PatronApplication } from '../../applications/applications.model';
 import { Response } from '../../housing.model';
 import { QuestionsPage } from '../../questions/questions.model';
 
@@ -49,6 +49,8 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
   pages$: Observable<QuestionsPage[]>;
 
   applicationKey: number;
+
+  isSubmitted: boolean;
 
   constructor(
     private _route: ActivatedRoute,
@@ -74,52 +76,62 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
     this._subscription.unsubscribe();
   }
 
-  save(application: ApplicationDetails): boolean {
+  save(applicationDetails: ApplicationDetails): boolean {
+    this._touch();
+
     const selectedStep: StepComponent = this.stepper.selected;
     const formValue: any = selectedStep.stepControl.value;
 
-    this._loadingService.showSpinner();
-
-    const saveSubscription: Subscription = this._applicationsService
-      .saveApplication(this.applicationKey, application, formValue)
-      .subscribe({
-        next: () => this._handleSuccess(),
-        error: (error: any) => this._handleErrors(error),
-      });
-
-    this._subscription.add(saveSubscription);
+    this._update('save', this.applicationKey, applicationDetails, formValue);
 
     return false;
   }
 
-  submit(application: ApplicationDetails, form: FormGroup, isLastPage: boolean): void {
-    this.questions.forEach((question: QuestionComponent) => question.touch());
+  submit(applicationDetails: ApplicationDetails, form: FormGroup, isLastPage: boolean): void {
+    this._touch();
 
-    if (!form.valid) {
+    if (!this.isSubmitted && !form.valid) {
       return;
     }
 
     if (!isLastPage) {
-      this._next(application, form.value);
+      this._next(applicationDetails, form.value);
     } else {
-      this._loadingService.showSpinner();
-
-      const submitSubscription: Subscription = this._applicationsService
-        .submitApplication(this.applicationKey, application, form.value)
-        .subscribe({
-          next: () => this._handleSuccess(),
-          error: (error: any) => this._handleErrors(error),
-        });
-
-      this._subscription.add(submitSubscription);
+      this._update('submit', this.applicationKey, applicationDetails, form.value);
     }
+  }
+
+  private _touch(): void {
+    this.questions.forEach((question: QuestionComponent) => question.touch());
+  }
+
+  private _update(type: string, applicationKey: number, applicationDetails: ApplicationDetails, formValue: any): void {
+    this._loadingService.showSpinner();
+
+    const subscription: Subscription = this._applicationsService[`${type}Application`](
+      applicationKey,
+      applicationDetails,
+      formValue,
+      this.isSubmitted
+    ).subscribe({
+      next: () => this._handleSuccess(),
+      error: (error: any) => this._handleErrors(error),
+    });
+
+    this._subscription.add(subscription);
   }
 
   private _initApplicationDetailsSubscription(): void {
     this._loadingService.showSpinner();
 
     this.applicationDetails$ = this._applicationsService.getApplicationDetails(this.applicationKey).pipe(
-      tap(() => this._loadingService.closeSpinner()),
+      tap((applicationDetails: ApplicationDetails) => {
+        const patronApplication: PatronApplication = applicationDetails.patronApplication;
+        const status: ApplicationStatus = patronApplication && patronApplication.status;
+
+        this.isSubmitted = status === ApplicationStatus.Submitted;
+        this._loadingService.closeSpinner();
+      }),
       catchError((error: any) => {
         this._loadingService.closeSpinner();
 
@@ -143,32 +155,18 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
     this._subscription.add(refreshSubscription);
   }
 
-  private _next(application: ApplicationDetails, formValue: any): void {
-    const updateCreatedDateTimeSubscription: Subscription = this._questionsStorageService
-      .updateCreatedDateTime(this.applicationKey, application.patronApplication)
-      .pipe(
-        switchMap((createdDateTime: string) => {
-          const status: ApplicationStatus =
-            application.patronApplication && application.patronApplication.status
-              ? application.patronApplication.status
-              : ApplicationStatus.Pending;
-          const patronApplication: PatronApplication = new PatronApplication({
-            ...application.patronApplication,
-            createdDateTime,
-            status,
-          });
-          const applicationDetails: ApplicationDetails = new ApplicationDetails({ ...application, patronApplication });
+  private _next(applicationDetails: ApplicationDetails, formValue: any): void {
+    if (this.isSubmitted) {
+      return this.stepper.next();
+    }
 
-          this._applicationsStateService.setApplication(this.applicationKey, applicationDetails);
-
-          return this._questionsStorageService.updateQuestions(this.applicationKey, formValue, status);
-        })
-      )
+    const nextSubscription: Subscription = this._applicationsService
+      .next(this.applicationKey, applicationDetails, formValue)
       .subscribe({
         next: () => this.stepper.next(),
       });
 
-    this._subscription.add(updateCreatedDateTimeSubscription);
+    this._subscription.add(nextSubscription);
   }
 
   private _handleSuccess(): void {

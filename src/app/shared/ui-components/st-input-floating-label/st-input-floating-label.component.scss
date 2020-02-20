@@ -3,6 +3,17 @@
 :host {
   display: block;
   width: 100%;
+
+  &.disabled {
+    .input__control {
+      background-color: transparent;
+      opacity: 0.4;
+
+      & + .input__placeholder {
+        color: rgba($color-black, 0.4);
+      }
+    }
+  }
 }
 .input {
   &__wrapper {
@@ -20,7 +31,7 @@
     padding-left: 10px;
 
     &:focus,
-    &:focus-within{
+    &:focus-within {
       border: 2px solid $color-dodger-blue;
 
       & + .input__placeholder {
@@ -32,7 +43,7 @@
       border: 2px solid $color-alizarin;
 
       &:focus,
-      &:focus-within{
+      &:focus-within {
         border: 2px solid $color-alizarin;
 
         & + .input__placeholder {
@@ -60,7 +71,6 @@
 :host-context(.ng-valid.ng-dirty) .input__control {
   &:focus-within {
     & + .input__placeholder {
-
       @include floating-label($color-dodger-blue);
     }
   }
