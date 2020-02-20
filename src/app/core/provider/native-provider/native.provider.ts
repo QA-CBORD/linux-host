@@ -20,6 +20,16 @@ export enum NativeData {
   ORDERS_WITH_APPLE_PAY = 'ordersApplePay',
   DEPOSITS_WITH_APPLE_PAY = 'depositsApplePay',
 }
+export enum AppleWalletCredentialStatus {
+  Disabled = 0,
+  Available = 1,
+  SuspendRequested = 4,
+  Suspended = 5,
+  UnlinkRequested = 6,
+  DisableRequested = 7,
+  ResumeRequested = 8,
+  StatusActive = 20
+};
 
 export interface USAePayResponse {
   success: boolean;
@@ -32,6 +42,15 @@ export interface ApplePayResponse {
   selectedAccount?: {accountDisplayName: string};
   amount?: string;
   sourceAcc?:  { accountTender: string };
+}
+export interface AppleWalletInfo {
+  iPhoneProvisioned: boolean;
+  watchProvisioned: boolean;
+  watchPaired: boolean;
+  iPhoneCredStatus: any;
+  watchCredStatus: any;
+  isAppleWalletEnabled: boolean;
+  canAddPass: boolean;
 }
 
 @Injectable({

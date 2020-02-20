@@ -8,7 +8,7 @@ import { AccessCardService } from './services/access-card.service';
 import { Router } from '@angular/router';
 import { NAVIGATE } from 'src/app/app.global';
 import { DASHBOARD_NAVIGATE } from '@sections/dashboard/dashboard.config';
-import { NativeProvider, NativeData } from '@core/provider/native-provider/native.provider';
+import { NativeProvider, NativeData, AppleWalletInfo, AppleWalletCredentialStatus } from '@core/provider/native-provider/native.provider';
 
 @Component({
   selector: 'st-access-card',
@@ -25,7 +25,7 @@ export class AccessCardComponent implements OnInit {
   getMyCardEnabled$: Observable<boolean>;
   isMobileAccessButtonEnabled$: Observable<boolean>;
   appleWalletEnabled: boolean = false;
-  appleWalletInfo: any;
+  appleWalletInfo: AppleWalletInfo;
   appleWalletMessage: string;
   appleWalletMessageImage: string;
   appleWalletMessageImageHidden: boolean;
@@ -96,16 +96,13 @@ export class AccessCardComponent implements OnInit {
   }
 
   private setAppleWalletMessage() {
-    this.appleWalletEnabled = this.appleWalletInfo.isAppleWalletEnabled;
-    let canAddPass = this.appleWalletInfo.canAddPass;
-    
-    if(this.appleWalletEnabled && canAddPass){
+    if(this.appleWalletInfo && this.appleWalletInfo.isAppleWalletEnabled && this.appleWalletInfo.canAddPass) {
+      this.appleWalletEnabled = this.appleWalletInfo.isAppleWalletEnabled;
       let isIPhoneAlreadyProvisioned = this.appleWalletInfo.iPhoneProvisioned;
       let isWatchPaired = this.appleWalletInfo.watchPaired;
       let isIWatchAlreadyProvisioned = this.appleWalletInfo.watchProvisioned;
       let watchCredStatus = this.appleWalletInfo.watchCredStatus;
       let iPhoneCredStatus = this.appleWalletInfo.iPhoneCredStatus;
-      let watchCred = this.appleWalletInfo.watchCred;
 
       /// code ported from iOS with some unused parts left commented out, which we might use later
       if (isIPhoneAlreadyProvisioned && !isWatchPaired) {
@@ -118,12 +115,12 @@ export class AccessCardComponent implements OnInit {
         this.appleWalletMessageImage = 'iphonex';
         this.appleWalletMessage = 'Added to iPhone';
         // this.appleWalletMessageImageHidden =  false;
-        this.appleWalletButtonHidden = !(watchCredStatus == watchCred);
+        this.appleWalletButtonHidden = (watchCredStatus == AppleWalletCredentialStatus.Disabled);
       } else if (isWatchPaired && isIWatchAlreadyProvisioned && !isIPhoneAlreadyProvisioned) {
         this.appleWalletMessageImage = 'applewatch';
         this.appleWalletMessage = 'Added to Watch';
         // this.appleWalletMessageImageHidden = false;
-        this.appleWalletButtonHidden = !(iPhoneCredStatus == watchCred);
+        this.appleWalletButtonHidden = (iPhoneCredStatus == AppleWalletCredentialStatus.Disabled);
       } else if (isIPhoneAlreadyProvisioned && isIWatchAlreadyProvisioned && isWatchPaired) {
         this.appleWalletMessage = 'Added to iPhone and Watch';
         this.appleWalletMessageImage = 'iphonex_applewatch';
@@ -141,6 +138,7 @@ export class AccessCardComponent implements OnInit {
       this.appleWalletMessageImage = null;
       // this.appleWalletMessageImageHidden = true;
       this.appleWalletButtonHidden = true;
+      this.appleWalletEnabled = false;
     }
     this.changeRef.detectChanges();
   }
