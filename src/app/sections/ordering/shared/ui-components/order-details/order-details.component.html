@@ -86,7 +86,7 @@
           <ion-select-option *ngIf="applePayEnabled" [value]="applePayAccountType">
             Apple Pay
           </ion-select-option>
-          <ion-select-option [value]="account" *ngFor="let account of accounts">
+          <ion-select-option [value]="account" *ngFor="let account of accounts; trackBy: trackByAccountId">
             {{ account | accountTypeResolver: mealBased }}
           </ion-select-option>
           <ion-select-option *ngIf="accInfoList?.creditAccepted" [value]="'addCC'">

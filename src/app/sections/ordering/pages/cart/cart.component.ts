@@ -328,14 +328,15 @@ export class CartComponent implements OnInit {
         if (!success) {
           return this.onValidateErrorToast(errorMessage);
         }
-        this.loadingService.showSpinner();
 
+        this.loadingService.showSpinner();
         // Update user accounts for refreshing Credit Card dropdown list
         this.accountInfoList$ = this.cartService.merchant$.pipe(
           switchMap(({ id }) => this.merchantService.getMerchantPaymentAccounts(id)),
           finalize(() => this.loadingService.closeSpinner())
         );
         this.accounts$ = this.getAvailableAccounts();
+        this.cdRef.markForCheck();
       });
   }
 

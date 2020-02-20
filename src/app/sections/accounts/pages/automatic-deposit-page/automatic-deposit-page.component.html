@@ -90,10 +90,9 @@
                                           class="deposit-form__label"
                                           idd="lowBalanceAmount">
                     <ng-container role="options">
-                        <ion-select-option *ngFor="let day of weekArray; let i = index"
-                                           [value]="i + 1">{{
-                          day
-                            }}</ion-select-option>
+                        <ion-select-option *ngFor="let day of weekArray; let i = index;"
+                                           [value]="i + 1">{{day}}
+                        </ion-select-option>
                     </ng-container>
 
                     <ng-container role="error">
@@ -118,10 +117,11 @@
                                   class="deposit-form__label">
             <ng-container role="options">
 
-                <ion-select-option *ngIf="applePayEnabled$ | async" [value]="'applePay'">
+                <ion-select-option *ngIf="applePayEnabled$ | async"
+                                   [value]="'applePay'">
                     Apple Pay
                 </ion-select-option>
-                
+
                 <ng-container *ngFor="let account of sourceAccounts; trackBy: trackByAccountId">
 
                     <ng-container *ngIf="account === paymentTypes.BILLME; then billMe; else creditCard"></ng-container>

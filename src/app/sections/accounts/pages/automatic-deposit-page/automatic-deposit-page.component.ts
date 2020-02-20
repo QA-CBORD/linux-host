@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { BehaviorSubject, iif, Observable, of, Subscription, zip } from 'rxjs';
+import { BehaviorSubject, iif, Observable, of, Subscription, zip, throwError } from 'rxjs';
 import {
   AUTO_DEPOSIT_PAYMENT_TYPES,
   AUTO_DEPOST_SUCCESS_MESSAGE_TITLE,
@@ -80,7 +80,7 @@ export class AutomaticDepositPageComponent {
     private readonly userService: UserService,
     private readonly nativeProvider: NativeProvider,
     private readonly loadingService: LoadingService
-  ) {}
+  ) { }
 
   ionViewWillEnter() {
     this.showContent = true;
@@ -297,7 +297,7 @@ export class AutomaticDepositPageComponent {
   //-------------------- Dynamic form settings block end--------------------------//
 
   trackByAccountId(i: number): string {
-    return `${i}`;
+    return `${i}-${Math.random()}`;
   }
 
   parseFloat(value): number {
@@ -613,9 +613,9 @@ export class AutomaticDepositPageComponent {
       const errors = isAllowFreeFormAmountToDeposit
         ? await this.getAmountToDepositErrors()
         : formControlErrorDecorator(
-            Validators.required,
-            CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit].requiredSelect
-          );
+          Validators.required,
+          CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit].requiredSelect
+        );
 
       this.automaticDepositForm.get(this.controlNames.amountToDeposit).setValidators(errors);
     }
@@ -725,29 +725,27 @@ export class AutomaticDepositPageComponent {
   private addUSAePayCreditCard() {
     this.nativeProvider
       .addUSAePayCreditCard()
-      .pipe(take(1))
-      .subscribe(({ success, errorMessage }) => {
-        if (!success) {
-          return this.showToast(errorMessage);
-        }
-        this.loadingService.showSpinner();
+      .pipe(
+        switchMap(({ success, errorMessage }) => {
+          if (!success) {
+            return throwError(errorMessage);
+          }
 
-        // Update user accounts for refreshing Credit Card dropdown list
-        zip(this.depositService.getUserAccounts(), this.isBillMePaymentTypesEnabled$)
-          .pipe(
-            take(1),
-            finalize(() => this.loadingService.closeSpinner())
-          )
-          .subscribe(([accounts, isBillMeEnabled]) => {
-            const creditCardSourceAccounts = accounts
-              ? this.depositService.filterAccountsByPaymentSystem(accounts)
-              : [];
-            this.sourceAccounts = [...creditCardSourceAccounts];
-            if (isBillMeEnabled) this.sourceAccounts.push(PAYMENT_TYPE.BILLME);
-            this.automaticDepositForm.reset();
-            this.cdRef.detectChanges();
-          });
-      });
+          this.loadingService.showSpinner();
+          // Update user accounts for refreshing Credit Card dropdown list
+          return zip(this.depositService.getUserAccounts(), this.isBillMePaymentTypesEnabled$)
+        }),
+        take(1)
+      )
+      .subscribe(([accounts = [], isBillMeEnabled]) => {
+        const creditCardSourceAccounts = accounts.length && this.depositService.filterAccountsByPaymentSystem(accounts) || [];
+        this.sourceAccounts = [...creditCardSourceAccounts];
+        if (isBillMeEnabled) this.sourceAccounts.push(PAYMENT_TYPE.BILLME);
+        this.paymentMethod.setValue('');
+        this.cdRef.detectChanges();
+      },
+        (err) => this.showToast(err),
+        () => this.loadingService.closeSpinner());
   }
 
   private async showModal(): Promise<void> {

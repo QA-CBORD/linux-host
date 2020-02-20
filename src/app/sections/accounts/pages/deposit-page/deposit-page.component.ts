@@ -321,8 +321,6 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     this.depositForm.controls['fromAccountCvv'].clearValidators();
   }
 
-  refreshedSelect = true;
-  
   private getAccounts() {
     const subscription = this.depositService.settings$
       .pipe(
@@ -338,18 +336,14 @@ export class DepositPageComponent implements OnInit, OnDestroy {
         switchMap(({ depositTenders, billmeMappingArr }) =>
           this.depositService.accounts$.pipe(
             tap(accounts => {
-              this.refreshedSelect = !this.refreshedSelect;
               this.billmeMappingArr = billmeMappingArr;
-              this.creditCardSourceAccounts = [...this.filterAccountsByPaymentSystem(accounts)];
+              this.creditCardSourceAccounts = this.filterAccountsByPaymentSystem(accounts);
               this.creditCardDestinationAccounts = this.filterCreditCardDestAccounts(
                 depositTenders as string[],
                 accounts
               );
               this.billmeDestinationAccounts = this.filterBillmeDestAccounts(this.billmeMappingArr, accounts);
-              setTimeout(() => {
-                this.refreshedSelect = !this.refreshedSelect;
-              }, 5000);
-              this.cdRef.detectChanges();
+              this.cdRef.markForCheck();
             })))
       )
       .subscribe(() => {
@@ -394,8 +388,8 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     return await popover.present();
   }
 
-  trackByAccountId(i: number, { id }: UserAccount): string {
-    return `${id}-${Math.random()}`;
+  trackByAccountId(i: number): string {
+    return `${i}-${Math.random()}`;
   }
 
   private resetControls(controlNames: string[]) {
