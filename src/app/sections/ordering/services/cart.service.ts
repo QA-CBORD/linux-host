@@ -7,8 +7,8 @@ import { MerchantService } from './merchant.service';
 import { MerchantInfo, OrderInfo, MenuInfo, OrderItem, OrderPayment } from '../shared/models';
 import { UserService } from '@core/service/user-service/user.service';
 import { AddressInfo } from '@core/model/address/address-info';
-import { OrderingApiService } from '@sections/ordering/services/ordering.api.service';
 import { getDateTimeInGMT } from '@core/utils/date-helper';
+import { OrderingApiService } from '@sections/ordering/services/ordering.api.service';
 
 @Injectable()
 export class CartService {

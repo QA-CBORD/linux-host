@@ -14,7 +14,7 @@ export const ZERO_FIRST_REGEXP = /^(0+)/g;
 export const COMMA_REGEXP = /[,\s]/g;
 
 // Number | Description string format pattern
-export const NUM_DSCRPTN_REGEXP = /^[0-9]{4}\|[a-z]+/gi;
+export const NUM_DSCRPTN_REGEXP = /^[0-9]{4,}\|.*/gi;
 
 // x | y string format pattern
 export const X_Y_REGEXP = /[xy]/g;
@@ -43,7 +43,7 @@ export const EXPRTN_DATE_1_REGEXP = /^([1-9]\/|[2-9])$/g;
 // 0(1-9) | 1(0-2)
 export const EXPRTN_DATE_2_REGEXP = /^(0[1-9]{1}|1[0-2]{1})$/g;
 
-// more then 12 
+// more then 12
 export const EXPRTN_DATE_3_REGEXP = /^([0-1]{1})([3-9]{1})$/g;
 
 // d/dd

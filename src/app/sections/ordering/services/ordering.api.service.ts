@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 import { Observable, of, zip } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 
 import { UserService } from 'src/app/core/service/user-service/user.service';
 import { CoordsService } from 'src/app/core/service/coords/coords.service';
@@ -11,7 +11,7 @@ import { BaseService, ServiceParameters } from 'src/app/core/service/base-servic
 import { MessageResponse } from 'src/app/core/model/service/message-response.model';
 import { GeoCoordinates } from 'src/app/core/model/geolocation/geocoordinates.model';
 import { MerchantSearchOptionName } from '../ordering.config';
-import { OrderInfo, BuildingInfo, MerchantAccountInfoList, MerchantInfo } from '../shared';
+import { BuildingInfo, MerchantAccountInfoList, MerchantInfo, OrderInfo } from '../shared';
 import { AddressInfo } from '@core/model/address/address-info';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { MerchantSearchOptions } from '@sections/ordering';
@@ -26,7 +26,7 @@ export class OrderingApiService extends BaseService {
   constructor(
     protected readonly http: HttpClient,
     private readonly userService: UserService,
-    private readonly coords: CoordsService
+    private readonly coords: CoordsService,
   ) {
     super(http);
   }
@@ -41,11 +41,11 @@ export class OrderingApiService extends BaseService {
         }
         return this.userService.userData.pipe(
           switchMap(({ institutionId }) =>
-            this.httpRequestFull(this.serviceUrlMerchant, methodName, true, institutionId, { searchOptions })
+            this.httpRequestFull(this.serviceUrlMerchant, methodName, true, institutionId, { searchOptions }),
           ),
-          map(({ response }: MessageResponse<any>) => response.list)
+          map(({ response }: MessageResponse<any>) => response.list),
         );
-      })
+      }),
     );
   }
 
@@ -53,7 +53,7 @@ export class OrderingApiService extends BaseService {
     const methodName = 'getFavoriteMerchants';
     const postParams: ServiceParameters = { excludeNonOrdering: false };
     return this.httpRequestFull(this.serviceUrlMerchant, methodName, true, null, postParams).pipe(
-      map(({ response }: MessageResponse<any>) => response.list)
+      map(({ response }: MessageResponse<any>) => response.list),
     );
   }
 
@@ -73,7 +73,7 @@ export class OrderingApiService extends BaseService {
     const methodName = 'retrieveSuccessfulOrdersList';
     const postParams: ServiceParameters = { userId, merchantId: null, maxReturn: 30 };
     return this.httpRequestFull(this.serviceUrlOrdering, methodName, true, institutionId, postParams).pipe(
-      map(({ response }: MessageResponse<any>) => response.list)
+      map(({ response }: MessageResponse<any>) => response.list),
     );
   }
 
@@ -82,15 +82,16 @@ export class OrderingApiService extends BaseService {
     const postParams: ServiceParameters = { merchantId, orderType, startDate: null, endDate: null };
 
     return this.httpRequestFull(this.serviceUrlOrdering, methodName, true, null, postParams).pipe(
-      map(({ response }: MessageResponse<any>) => response)
+      map(({ response }: MessageResponse<any>) => response),
     );
   }
+
   validateOrder(orderInfo: OrderInfo): Observable<OrderInfo> {
     const methodName = 'validateOrder';
     const postParams: ServiceParameters = { order: this.adjustOrderIfRollUp(orderInfo) };
 
     return this.httpRequestFull(this.serviceUrlOrdering, methodName, true, null, postParams).pipe(
-      map(({ response }: MessageResponse<OrderInfo>) => response)
+      map(({ response }: MessageResponse<OrderInfo>) => response),
     );
   }
 
@@ -99,7 +100,7 @@ export class OrderingApiService extends BaseService {
     const postParams: ServiceParameters = { orderId };
 
     return this.httpRequestFull(this.serviceUrlOrdering, methodName, true, null, postParams).pipe(
-      map(({ response }: MessageResponse<boolean>) => response)
+      map(({ response }: MessageResponse<boolean>) => response),
     );
   }
 
@@ -109,25 +110,25 @@ export class OrderingApiService extends BaseService {
 
     return this.userService.userData.pipe(
       switchMap(({ institutionId }) =>
-        this.httpRequestFull(this.serviceUrlInstitution, methodName, true, institutionId, postParams)
+        this.httpRequestFull(this.serviceUrlInstitution, methodName, true, institutionId, postParams),
       ),
-      map(({ response: { list } }: MessageResponse<any>) => list)
+      map(({ response: { list } }: MessageResponse<any>) => list),
     );
   }
 
   updateUserAddress({
-    address1 = null,
-    address2 = null,
-    campus = null,
-    city = null,
-    nickname = null,
-    state = null,
-    building = null,
-    room = null,
-    id = null,
-    latitude = null,
-    longitude = null,
-  }): Observable<AddressInfo> {
+                      address1 = null,
+                      address2 = null,
+                      campus = null,
+                      city = null,
+                      nickname = null,
+                      state = null,
+                      building = null,
+                      room = null,
+                      id = null,
+                      latitude = null,
+                      longitude = null,
+                    }): Observable<AddressInfo> {
     const methodName = 'updateUserAddress';
     const campusValue = parseInt(campus);
     let addedAddress;
@@ -166,9 +167,9 @@ export class OrderingApiService extends BaseService {
 
     return zip(addedAddress, this.userService.userData).pipe(
       switchMap(([address, user]) =>
-        this.httpRequestFull(this.serviceUrlUser, methodName, true, null, { ...postParams, address, userId: user.id })
+        this.httpRequestFull(this.serviceUrlUser, methodName, true, null, { ...postParams, address, userId: user.id }),
       ),
-      map(({ response }: MessageResponse<any>) => response)
+      map(({ response }: MessageResponse<any>) => response),
     );
   }
 
@@ -178,9 +179,9 @@ export class OrderingApiService extends BaseService {
 
     return this.userService.userData.pipe(
       switchMap(({ institutionId }) =>
-        this.httpRequestFull(this.serviceUrlInstitution, methodName, true, institutionId, postParams)
+        this.httpRequestFull(this.serviceUrlInstitution, methodName, true, institutionId, postParams),
       ),
-      map(({ response }: MessageResponse<any>) => response.list)
+      map(({ response }: MessageResponse<any>) => response.list),
     );
   }
 
@@ -189,7 +190,7 @@ export class OrderingApiService extends BaseService {
     const postParams: ServiceParameters = { merchantId, latitude, longitude };
 
     return this.httpRequestFull(this.serviceUrlMerchant, methodName, true, null, postParams).pipe(
-      map(({ response }: MessageResponse<boolean>) => response)
+      map(({ response }: MessageResponse<boolean>) => response),
     );
   }
 
@@ -199,9 +200,9 @@ export class OrderingApiService extends BaseService {
 
     return this.userService.userData.pipe(
       switchMap(({ id }) =>
-        this.httpRequestFull(this.serviceUrlMerchant, methodName, true, null, { ...postParams, userId: id })
+        this.httpRequestFull(this.serviceUrlMerchant, methodName, true, null, { ...postParams, userId: id }),
       ),
-      map(({ response }: MessageResponse<any>) => response)
+      map(({ response }: MessageResponse<any>) => response),
     );
   }
 
@@ -210,9 +211,9 @@ export class OrderingApiService extends BaseService {
 
     return this.userService.userData.pipe(
       switchMap(({ institutionId }) =>
-        this.httpRequestFull('/json/configuration', methodName, true, institutionId, config)
+        this.httpRequestFull('/json/configuration', methodName, true, institutionId, config),
       ),
-      map(({ response }: MessageResponse<SettingInfo>) => response)
+      map(({ response }: MessageResponse<SettingInfo>) => response),
     );
   }
 
@@ -221,13 +222,13 @@ export class OrderingApiService extends BaseService {
     dateTime: string,
     orderType: number,
     locale: string = null,
-    depth: number = 4
+    depth: number = 4,
   ): Observable<any> {
     const methodName = 'getDisplayMenu';
     const postParams: ServiceParameters = { merchantId, dateTime, orderType, locale, depth };
 
     return this.httpRequestFull(this.serviceUrlMerchant, methodName, true, null, postParams).pipe(
-      map(({ response }: MessageResponse<any>) => response)
+      map(({ response }: MessageResponse<any>) => response),
     );
   }
 
@@ -236,7 +237,7 @@ export class OrderingApiService extends BaseService {
     const postParams: ServiceParameters = { address };
 
     return this.httpRequestFull(this.serviceUrlUser, methodName, true, null, postParams).pipe(
-      map(({ response }: MessageResponse<any>) => response)
+      map(({ response }: MessageResponse<any>) => response),
     );
   }
 
@@ -256,7 +257,7 @@ export class OrderingApiService extends BaseService {
 
     return this.userService.userData.pipe(
       switchMap(({ id }) => this.httpRequestFull('/json/user', methodName, true, null, { ...postParams, userId: id })),
-      map(({ response }: MessageResponse<any>) => response)
+      map(({ response }: MessageResponse<any>) => response),
     );
   }
 

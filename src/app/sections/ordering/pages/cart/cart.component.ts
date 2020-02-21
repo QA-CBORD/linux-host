@@ -11,14 +11,14 @@ import {
   OrderPayment,
 } from '@sections/ordering';
 import { LOCAL_ROUTING as ACCOUNT_LOCAL_ROUTING } from '@sections/accounts/accounts.config';
-import { first, map, switchMap, tap, finalize } from 'rxjs/operators';
+import { finalize, first, map, switchMap, tap } from 'rxjs/operators';
 import {
   ACCOUNT_TYPES,
+  LOCAL_ROUTING,
   MerchantSettings,
   ORDER_TYPE,
   ORDER_VALIDATION_ERRORS,
   PAYMENT_SYSTEM_TYPE,
-  LOCAL_ROUTING,
   SYSTEM_SETTINGS_CONFIG,
 } from '@sections/ordering/ordering.config';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -27,11 +27,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { handleServerError } from '@core/utils/general-helpers';
 import { UserAccount } from '@core/model/account/account.model';
 import { ModalController, PopoverController, ToastController } from '@ionic/angular';
-import { NAVIGATE, AccountType } from '../../../../app.global';
+import { AccountType, NAVIGATE } from '../../../../app.global';
 import { SuccessModalComponent } from '@sections/ordering/pages/cart/components/success-modal';
 import { StGlobalPopoverComponent } from '@shared/ui-components';
 import { MerchantOrderTypesInfo } from '@sections/ordering/shared/models';
-import { NativeProvider, NativeData } from '@core/provider/native-provider/native.provider';
+import { NativeData, NativeProvider } from '@core/provider/native-provider/native.provider';
 import { UserService } from '@core/service/user-service/user.service';
 
 @Component({
@@ -62,8 +62,9 @@ export class CartComponent implements OnInit {
     private readonly router: Router,
     private readonly modalController: ModalController,
     private readonly userService: UserService,
-    private readonly nativeProvider: NativeProvider
-  ) {}
+    private readonly nativeProvider: NativeProvider,
+  ) {
+  }
 
   ionViewWillEnter() {
     this.accounts$ = this.getAvailableAccounts();
@@ -90,25 +91,25 @@ export class CartComponent implements OnInit {
       this.merchantService.retrieveBuildings(),
       this.cartService.merchant$,
       this.getDeliveryLocations(),
-      this.getPickupLocations()
+      this.getPickupLocations(),
     ).pipe(
       map(
         ([
-          { address: defaultAddress, orderType },
-          buildings,
-          { id: merchantId },
-          deliveryAddresses,
-          pickupLocations,
-        ]) => ({
+           { address: defaultAddress, orderType },
+           buildings,
+           { id: merchantId },
+           deliveryAddresses,
+           pickupLocations,
+         ]) => ({
           defaultAddress,
           buildings,
           isOrderTypePickup: orderType === ORDER_TYPE.PICKUP,
           pickupLocations,
           deliveryAddresses,
           merchantId,
-        })
+        }),
       ),
-      tap(() => this.loadingService.closeSpinner())
+      tap(() => this.loadingService.closeSpinner()),
     );
   }
 
@@ -157,17 +158,17 @@ export class CartComponent implements OnInit {
   }
 
   async showModal({
-    tax,
-    discount,
-    total,
-    subTotal,
-    orderPayment: [{ accountName }],
-    deliveryFee,
-    pickupFee,
-    tip,
-    checkNumber,
-    mealBased,
-  }: OrderInfo) {
+                    tax,
+                    discount,
+                    total,
+                    subTotal,
+                    orderPayment: [{ accountName }],
+                    deliveryFee,
+                    pickupFee,
+                    tip,
+                    checkNumber,
+                    mealBased,
+                  }: OrderInfo) {
     const modal = await this.modalController.create({
       component: SuccessModalComponent,
       componentProps: {
@@ -227,7 +228,7 @@ export class CartComponent implements OnInit {
     const { latitude, longitude } = await this.orderDetailOptions$
       .pipe(
         first(),
-        map(({ address }) => address)
+        map(({ address }) => address),
       )
       .toPromise();
     const { id } = await this.cartService.merchant$.pipe(first()).toPromise();
@@ -239,25 +240,25 @@ export class CartComponent implements OnInit {
     let accountId = this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.paymentMethod].id;
 
     /// if Apple Pay Order
-    if(this.cartFormState.data.paymentMethod.accountType === AccountType.APPLEPAY){
+    if (this.cartFormState.data.paymentMethod.accountType === AccountType.APPLEPAY) {
       let orderData = await this.cartService.orderInfo$.pipe(first()).toPromise();
       await this.nativeProvider.payWithApplePay(NativeData.ORDERS_WITH_APPLE_PAY, orderData).toPromise()
-      .then(result => {
-        if(result.success){
-          accountId = result.accountId;
-        }else{
-          this.onErrorModal(result.errorMessage);
-        }
-      })
-      .catch(async error => {
-        return await this.onErrorModal(error)
-      });
+        .then(result => {
+          if (result.success) {
+            accountId = result.accountId;
+          } else {
+            this.onErrorModal(result.errorMessage);
+          }
+        })
+        .catch(async error => {
+          return await this.onErrorModal(error);
+        });
     }
 
     this.cartService
       .submitOrder(
         accountId,
-        this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.cvv] || null
+        this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.cvv] || null,
       )
       .pipe(handleServerError(ORDER_VALIDATION_ERRORS))
       .toPromise()
@@ -269,7 +270,7 @@ export class CartComponent implements OnInit {
   private getDeliveryLocations(): Observable<any> {
     return this.cartService.merchant$.pipe(
       switchMap(({ id }) => this.merchantService.retrieveDeliveryAddresses(id)),
-      map(([, deliveryLocations]) => deliveryLocations)
+      map(([, deliveryLocations]) => deliveryLocations),
     );
   }
 
@@ -278,9 +279,9 @@ export class CartComponent implements OnInit {
       switchMap(({ storeAddress, settings }) =>
         this.merchantService.retrievePickupLocations(
           storeAddress,
-          settings.map[MerchantSettings.pickupLocationsEnabled]
-        )
-      )
+          settings.map[MerchantSettings.pickupLocationsEnabled],
+        ),
+      ),
     );
   }
 
@@ -288,14 +289,14 @@ export class CartComponent implements OnInit {
     return sourceAccounts.filter(
       ({ paymentSystemType, id }) =>
         id === 'rollup' ||
-        (paymentSystemType === PAYMENT_SYSTEM_TYPE.OPCS || paymentSystemType === PAYMENT_SYSTEM_TYPE.CSGOLD)
+        (paymentSystemType === PAYMENT_SYSTEM_TYPE.OPCS || paymentSystemType === PAYMENT_SYSTEM_TYPE.CSGOLD),
     );
   }
 
   private filterCreditAccounts(sourceAccounts: UserAccount[]): UserAccount[] {
     return sourceAccounts.filter(
       ({ paymentSystemType }) =>
-        paymentSystemType === PAYMENT_SYSTEM_TYPE.MONETRA || paymentSystemType === PAYMENT_SYSTEM_TYPE.USAEPAY
+        paymentSystemType === PAYMENT_SYSTEM_TYPE.MONETRA || paymentSystemType === PAYMENT_SYSTEM_TYPE.USAEPAY,
     );
   }
 
@@ -341,7 +342,7 @@ export class CartComponent implements OnInit {
         // Update user accounts for refreshing Credit Card dropdown list
         this.accountInfoList$ = this.cartService.merchant$.pipe(
           switchMap(({ id }) => this.merchantService.getMerchantPaymentAccounts(id)),
-          finalize(() => this.loadingService.closeSpinner())
+          finalize(() => this.loadingService.closeSpinner()),
         );
         this.accounts$ = this.getAvailableAccounts();
         this.cdRef.markForCheck();
@@ -356,7 +357,7 @@ export class CartComponent implements OnInit {
 
           return parseInt(settingInfo.value);
         }),
-        first()
+        first(),
       )
       .toPromise();
   }
@@ -367,7 +368,7 @@ export class CartComponent implements OnInit {
       .validateOrder()
       .pipe(
         first(),
-        handleServerError<OrderInfo>(ORDER_VALIDATION_ERRORS)
+        handleServerError<OrderInfo>(ORDER_VALIDATION_ERRORS),
       )
       .toPromise()
       .catch(onError)
