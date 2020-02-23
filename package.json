@@ -6,6 +6,7 @@
     "scripts": {
         "ng": "ng",
         "start": "ionic serve",
+        "start-ip": "ionic serve --address 10.28.160.60",
         "build": "ng build",
         "test": "ng test",
         "lint": "ng lint",
