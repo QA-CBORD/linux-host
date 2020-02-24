@@ -204,10 +204,10 @@ export class QuestionsService {
     preferences: PatronPreference[]
   ): FormArray {
     const values: QuestionReorderValue[] = storedValue || question.values;
-    const controls: FormControl[] = values
-      .filter((value: QuestionReorderValue) => value.selected)
+    const selectedValues: QuestionReorderValue[] = values.filter((value: QuestionReorderValue) => value.selected);
+    const controls: FormControl[] = selectedValues
       .sort((current: QuestionReorderValue, next: QuestionReorderValue) =>
-        this._sortQuestionReorder(preferences, current, next)
+        this._sortQuestionReorder(preferences, current, next, selectedValues.length)
       )
       .map((value: QuestionReorderValue) => new FormControl(value));
 
@@ -217,14 +217,23 @@ export class QuestionsService {
   private _sortQuestionReorder(
     preferences: PatronPreference[],
     current: QuestionReorderValue,
-    next: QuestionReorderValue
+    next: QuestionReorderValue,
+    length: number
   ): number {
-    const currentIndex: number = preferences.findIndex(
+    let currentIndex: number = preferences.findIndex(
       (preference: PatronPreference) => preference.facilityKey === current.facilityKey
     );
-    const nextIndex: number = preferences.findIndex(
+    let nextIndex: number = preferences.findIndex(
       (preference: PatronPreference) => preference.facilityKey === next.facilityKey
     );
+
+    if (currentIndex === -1) {
+      currentIndex = length;
+    }
+
+    if (nextIndex === -1) {
+      nextIndex = length;
+    }
 
     return currentIndex - nextIndex;
   }
