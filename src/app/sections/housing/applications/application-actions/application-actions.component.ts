@@ -20,7 +20,7 @@ export class ApplicationActionsComponent {
       .create({
         component: ApplicationActionsListComponent,
         componentProps: {
-          application,
+          applicationKey: application.applicationDefinition.key,
         },
         cssClass: 'application-actions-popover',
         event,

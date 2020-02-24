@@ -11,14 +11,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ToastController } from '@ionic/angular';
 import { FormGroup } from '@angular/forms';
-import { Observable, Subject, Subscription, throwError } from 'rxjs';
-import { catchError, switchMap, tap, withLatestFrom } from 'rxjs/operators';
+import { Observable, Subscription, throwError } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
 
 import { QuestionsService } from '../../questions/questions.service';
 import { ApplicationsService } from '../../applications/applications.service';
-import { QuestionsStorageService } from '../../questions/questions-storage.service';
-import { ApplicationsStateService } from '../../applications/applications-state.service';
-import { TermsService } from '../../terms/terms.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 
 import { StepperComponent } from '../../stepper/stepper.component';
@@ -38,8 +35,6 @@ import { QuestionsPage } from '../../questions/questions.model';
 export class ApplicationDetailsPage implements OnInit, OnDestroy {
   private _subscription: Subscription = new Subscription();
 
-  private readonly _refresh$: Subject<void> = new Subject<void>();
-
   @ViewChild(StepperComponent) stepper: StepperComponent;
 
   @ViewChildren(QuestionComponent) questions: QueryList<QuestionComponent>;
@@ -57,19 +52,15 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
     private _questionsService: QuestionsService,
     private _applicationsService: ApplicationsService,
     private _router: Router,
-    private _questionsStorageService: QuestionsStorageService,
     private _toastController: ToastController,
-    private _applicationsStateService: ApplicationsStateService,
-    private _termsService: TermsService,
     private _loadingService: LoadingService
   ) {}
 
   ngOnInit(): void {
     this.applicationKey = parseInt(this._route.snapshot.paramMap.get('applicationKey'), 10);
 
-    this._initApplicationDetailsSubscription();
-    this._initPagesSubscription();
-    this._initRefreshSubscription();
+    this._initApplicationDetailsObservable();
+    this._initPagesObservable();
   }
 
   ngOnDestroy(): void {
@@ -121,7 +112,7 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
     this._subscription.add(subscription);
   }
 
-  private _initApplicationDetailsSubscription(): void {
+  private _initApplicationDetailsObservable(): void {
     this._loadingService.showSpinner();
 
     this.applicationDetails$ = this._applicationsService.getApplicationDetails(this.applicationKey).pipe(
@@ -140,19 +131,8 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
     );
   }
 
-  private _initPagesSubscription(): void {
+  private _initPagesObservable(): void {
     this.pages$ = this._questionsService.getPages(this.applicationKey);
-  }
-
-  private _initRefreshSubscription(): void {
-    const refreshSubscription: Subscription = this._refresh$
-      .pipe(
-        withLatestFrom(this._termsService.termId$),
-        switchMap(([_, termId]: [void, number]) => this._applicationsService.getApplications(termId))
-      )
-      .subscribe();
-
-    this._subscription.add(refreshSubscription);
   }
 
   private _next(applicationDetails: ApplicationDetails, formValue: any): void {
@@ -170,9 +150,8 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
   }
 
   private _handleSuccess(): void {
-    this._refresh$.next();
     this._loadingService.closeSpinner();
-    this._router.navigate(['/housing/dashboard']);
+    this._router.navigate(['/housing/dashboard']).then(() => this._applicationsService.refreshApplications());
   }
 
   private _handleErrors(error: any): void {

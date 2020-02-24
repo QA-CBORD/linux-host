@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Subscription, merge } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { ApplicationsService } from './applications.service';
@@ -23,7 +23,18 @@ export class ApplicationsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    const applicationsSubscription: Subscription = this._termsService.termId$
+    this._initApplicationsSubscription();
+  }
+
+  ngOnDestroy(): void {
+    this._subscription.unsubscribe();
+  }
+
+  private _initApplicationsSubscription(): void {
+    const applicationsSubscription: Subscription = merge(
+      this._applicationsService.refreshApplications$,
+      this._termsService.termId$
+    )
       .pipe(
         switchMap((termId: number) => {
           this._loadingService.showSpinner();
@@ -37,9 +48,5 @@ export class ApplicationsComponent implements OnInit, OnDestroy {
       });
 
     this._subscription.add(applicationsSubscription);
-  }
-
-  ngOnDestroy(): void {
-    this._subscription.unsubscribe();
   }
 }

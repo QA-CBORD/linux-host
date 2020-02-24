@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, forkJoin, of } from 'rxjs';
+import { Observable, forkJoin, of, Subject } from 'rxjs';
 import { map, tap, switchMap, catchError, mapTo } from 'rxjs/operators';
 
 import { BASE_URL } from '../housing.config';
@@ -9,6 +9,7 @@ import { parseJsonToArray } from '../utils';
 import { HousingProxyService } from '../housing-proxy.service';
 import { ApplicationsStateService } from './applications-state.service';
 import { QuestionsStorageService, StoredApplication, QuestionsEntries } from '../questions/questions-storage.service';
+import { TermsService } from '../terms/terms.service';
 
 import { ResponseStatus } from '../housing.model';
 import {
@@ -27,17 +28,24 @@ import { QuestionBase } from '../questions/types/question-base';
   providedIn: 'root',
 })
 export class ApplicationsService {
-  constructor(
-    private _housingProxyService: HousingProxyService,
-    private _applicationsStateService: ApplicationsStateService,
-    private _questionsStorageService: QuestionsStorageService
-  ) {}
-
   private readonly _patronApplicationsUrl: string = `${BASE_URL}/${
     Environment.currentEnvironment.housing_aws_prefix
   }/patron-applications/v.1.0/patron-applications`;
 
   private readonly _applicationDefinitionUrl: string = `${this._patronApplicationsUrl}/application-definition`;
+
+  private _refreshApplicationsSource: Subject<void> = new Subject<void>();
+
+  refreshApplications$: Observable<number> = this._refreshApplicationsSource
+    .asObservable()
+    .pipe(switchMap(() => this._termsService.termId$));
+
+  constructor(
+    private _housingProxyService: HousingProxyService,
+    private _applicationsStateService: ApplicationsStateService,
+    private _questionsStorageService: QuestionsStorageService,
+    private _termsService: TermsService
+  ) {}
 
   getApplications(termId: number): Observable<ApplicationDetails[]> {
     const apiUrl: string = `${this._patronApplicationsUrl}/term/${termId}/patron/self`;
@@ -54,7 +62,7 @@ export class ApplicationsService {
         );
       }),
       tap((applications: ApplicationDetails[]) => this._applicationsStateService.setApplications(applications)),
-      catchError((error: any) => {
+      catchError(() => {
         this._applicationsStateService.setApplications([]);
 
         return of([]);
@@ -147,6 +155,10 @@ export class ApplicationsService {
         return this._questionsStorageService.updateQuestions(applicationKey, formValue, updatedStatus);
       })
     );
+  }
+
+  refreshApplications(): void {
+    this._refreshApplicationsSource.next();
   }
 
   private _updateApplication(
@@ -302,14 +314,14 @@ export class ApplicationsService {
     }
 
     return this._questionsStorageService.getApplicationStatus(applicationDetails.applicationDefinition.key).pipe(
-      map((status: ApplicationStatus) => {
-        if (!status) {
+      map((storedStatus: ApplicationStatus) => {
+        if (!storedStatus) {
           return applicationDetails;
         }
 
         applicationDetails.patronApplication = new PatronApplication({
           ...patronApplication,
-          status,
+          status: storedStatus,
         });
 
         return applicationDetails;
