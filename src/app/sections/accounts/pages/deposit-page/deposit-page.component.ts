@@ -287,12 +287,14 @@ export class DepositPageComponent implements OnInit, OnDestroy {
                 return throwError(errorMessage);
               }
 
+              this.loadingService.showSpinner();
               return this.depositService
                 .getUserAccounts();
             }),
             take(1))
           .subscribe(() => { },
-            (message) => this.onErrorRetrieve(message));
+            (message) => this.onErrorRetrieve(message),
+            () => this.loadingService.closeSpinner());
       }
 
       if (data) {
