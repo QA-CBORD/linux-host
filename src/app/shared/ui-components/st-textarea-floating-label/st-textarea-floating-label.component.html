@@ -5,10 +5,10 @@
     [ngClass]="{ 'textarea__control--error': isError }"
     rows="{{ rows }}"
     autoGrow="true"
-    [disabled]="isDisabled"
-    (ionBlur)="onBlur()"
+    (ionBlur)="ionBlur($event)"
     (ionChange)="onChangeHandler($event)"
     [value]="innerValue"
+    (ionFocus)="ionFocus($event)"
   >
   </ion-textarea>
 

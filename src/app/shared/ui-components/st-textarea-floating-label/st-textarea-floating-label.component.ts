@@ -1,4 +1,4 @@
-import { Component, Input, forwardRef, OnInit, AfterViewInit } from '@angular/core';
+import { Component, Input, forwardRef, OnInit, AfterViewInit, Output, EventEmitter } from '@angular/core';
 import { AbstractControl, DefaultValueAccessor, FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 export const CUSTOM_TEXTAREA_CONTROL_VALUE_ACCESSOR: any = {
@@ -23,6 +23,8 @@ export class StTextareaFloatingLabelComponent extends DefaultValueAccessor imple
   onTouched: () => void;
   onChange: (_: any) => void;
   innerValue: any = '';
+  @Output() onFocus: EventEmitter<Event> = new EventEmitter<Event>();
+  @Output() onBlur: EventEmitter<Event> = new EventEmitter<Event>();
 
   ngAfterViewInit(): void {
     if (this.control && this.control.value) {
@@ -63,7 +65,12 @@ export class StTextareaFloatingLabelComponent extends DefaultValueAccessor imple
     this.onChange(value);
   }
 
-  onBlur() {
+  ionBlur(event: Event) {
     this.onTouched();
+    this.onBlur.emit(event);
+  }
+
+  ionFocus(event: Event) {
+    this.onFocus.emit(event);
   }
 }

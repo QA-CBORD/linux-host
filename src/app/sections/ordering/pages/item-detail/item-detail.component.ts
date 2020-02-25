@@ -1,14 +1,15 @@
-import { LOCAL_ROUTING, ORDER_VALIDATION_ERRORS, MerchantSettings } from '@sections/ordering/ordering.config';
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
+import { ToastController, IonContent, Platform } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NAVIGATE } from 'src/app/app.global';
 import { Observable, Subscription, zip } from 'rxjs';
-import { CartService, MenuInfo, MenuItemInfo, OrderItem } from '@sections/ordering';
 import { first, take } from 'rxjs/operators';
+
+import { LOCAL_ROUTING, ORDER_VALIDATION_ERRORS, MerchantSettings } from '@sections/ordering/ordering.config';
+import { CartService, MenuInfo, MenuItemInfo, OrderItem } from '@sections/ordering';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { ToastController } from '@ionic/angular';
 import { handleServerError } from '@core/utils/general-helpers';
+import { NAVIGATE } from 'src/app/app.global';
 
 @Component({
   selector: 'st-item-detail',
@@ -28,6 +29,9 @@ export class ItemDetailComponent implements OnInit {
   cartSelectedItem: OrderItem;
   cartOrderItemOptions: OrderItem[] = [];
   allowNotes: boolean;
+  showFooter: boolean = true;
+ 
+  @ViewChild('content') content: IonContent;
 
   constructor(
     private readonly router: Router,
@@ -36,7 +40,12 @@ export class ItemDetailComponent implements OnInit {
     private readonly cartService: CartService,
     private readonly loadingService: LoadingService,
     private readonly toastController: ToastController,
-  ) { }
+    private readonly platform: Platform
+  ) {}
+
+  get isLargeScreen(): boolean {
+    return this.platform.height() > 600;
+  }
 
   ngOnInit() {
     this.initMenuItemOptions();
@@ -54,9 +63,14 @@ export class ItemDetailComponent implements OnInit {
   }
 
   scroll({ detail: { scrollTop } }) {
-    if (this.menuItem.menuItemOptions.length) {
+    if (this.menuItem.menuItemOptions.length || this.allowNotes) {
       this.isStaticHeader = scrollTop === 0;
     }
+  }
+
+  onNotesType(isFocus?: boolean) {
+    if(isFocus) this.content.scrollToBottom(400);
+    this.showFooter = !this.showFooter;
   }
 
   initForm() {
@@ -216,7 +230,7 @@ export class ItemDetailComponent implements OnInit {
       .subscribe(([{ data: { menuItem, queryParams: { orderItemId } } }, orderItems, { settings }]) => {
         const imageBaseUrl = 'https://3bulchr7pb.execute-api.us-east-1.amazonaws.com/dev/image';
         this.menuItem = menuItem.menuItem;
-        this.menuItemImg = this.menuItem.imageReference
+        this.menuItemImg = this.menuItem.imageReference 
           ? `${imageBaseUrl}/${this.menuItem.imageReference}`
           : '';
         this.order = { ...this.order, totalPrice: this.menuItem.price };
