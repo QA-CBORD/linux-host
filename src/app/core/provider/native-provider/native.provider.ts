@@ -150,7 +150,7 @@ export class NativeProvider {
 
   getPatronBarcode(): Observable<string>{
     if (this.isAndroid()) {
-      return this.getAndroidDataAsObservable<string>(NativeData.BARCODE);
+      return of(this.getAndroidData<string>(NativeData.BARCODE));
     } else if (this.isIos()) {
       return from(this.getIosData(NativeData.BARCODE));
     } else {

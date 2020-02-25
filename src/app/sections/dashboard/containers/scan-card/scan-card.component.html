@@ -11,7 +11,7 @@
                              [institutionPhoto]="institutionPhoto$ | async"
                              [institutionColor]="institutionColor"
                              [userPhoto]="userPhoto">
-    <div class="scan-card__barcode-wrapper">
+    <div class="scan-card__barcode-wrapper" *ngIf="generateBarcode$ | async">
       <canvas class="scan-card__barcode"
               id="barcodeCanvas"></canvas>
     </div>

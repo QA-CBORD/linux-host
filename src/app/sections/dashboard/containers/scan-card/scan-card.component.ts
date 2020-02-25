@@ -1,8 +1,8 @@
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { map, skipWhile, switchMap, take, tap } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { map, skipWhile, switchMap, take, catchError } from 'rxjs/operators';
+import { Observable, of, timer } from 'rxjs';
 import bwipjs from 'bwip-angular2';
 
 import { UserInfo } from '@core/model/user';
@@ -12,6 +12,7 @@ import { Institution, InstitutionPhotoInfo } from '@core/model/institution';
 import { CommerceApiService } from '@core/service/commerce/commerce-api.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { DASHBOARD_SETTINGS_CONFIG } from '@sections/dashboard/dashboard.config';
+import { NativeProvider } from '@core/provider/native-provider/native.provider';
 
 @Component({
   selector: 'st-scan-card',
@@ -19,6 +20,8 @@ import { DASHBOARD_SETTINGS_CONFIG } from '@sections/dashboard/dashboard.config'
   styleUrls: ['./scan-card.component.scss'],
 })
 export class ScanCardComponent implements OnInit {
+  private readonly BARCODE_GEN_INTERVAL = 180000; /// 3 minutes
+  generateBarcode$: Observable<boolean>;
   userInfoId$: Observable<string>;
   institution$: Observable<Institution>;
   institutionPhoto$: Observable<SafeResourceUrl>;
@@ -34,8 +37,8 @@ export class ScanCardComponent implements OnInit {
     private readonly route: ActivatedRoute,
     private readonly commerceApiService: CommerceApiService,
     private readonly settingsFacadeService: SettingsFacadeService,
-  ) {
-  }
+    private readonly nativeInterface: NativeProvider
+  ) {}
 
   ngOnInit() {
     this.isMediaSettingExists$ = this.settingsFacadeService.getSetting$(DASHBOARD_SETTINGS_CONFIG.displayMediaType)
@@ -84,21 +87,33 @@ export class ScanCardComponent implements OnInit {
       map(({ data, mimeType }: InstitutionPhotoInfo) => {
         return `data:${mimeType};base64,${data}`;
       }),
-      map(response => this.sanitizer.bypassSecurityTrustResourceUrl(response)),
+      map(response => this.sanitizer.bypassSecurityTrustResourceUrl(response))
     );
   }
 
   private initBarcode() {
+    this.generateBarcode$ = timer(0, this.BARCODE_GEN_INTERVAL).pipe(
+      switchMap(_ => this.nativeInterface.getPatronBarcode()),
+      map(value => {
+        this.generateBarcode(value);
+        return true;
+      }),
+      catchError(_ => of(false))
+    );
+  }
+
+  private generateBarcode(value: string) {
     bwipjs(
       'barcodeCanvas',
       {
         bcid: 'pdf417',
-        text: this.userId,
+        text: value,
         includetext: false,
         height: 10,
       },
       (err, cvs) => {
-      },
+        /// don't care
+      }
     );
   }
 
