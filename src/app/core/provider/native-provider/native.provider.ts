@@ -2,7 +2,7 @@ import { NAVIGATE } from './../../../app.global';
 import { Router } from '@angular/router';
 import { Injectable, NgZone } from '@angular/core';
 import { Platform, ModalController, PopoverController, ActionSheetController } from '@ionic/angular';
-import { Observable, Observer, from, of } from 'rxjs';
+import { Observable, Observer, from, of, throwError } from 'rxjs';
 import { X_Y_REGEXP } from '@core/utils/regexp-patterns';
 
 declare var androidInterface: any;
@@ -19,7 +19,9 @@ export enum NativeData {
   UPDATE_ROUTE = 'updateNativeWithRoute',
   ORDERS_WITH_APPLE_PAY = 'ordersApplePay',
   DEPOSITS_WITH_APPLE_PAY = 'depositsApplePay',
+  BARCODE = 'getPatronBarcode'
 }
+
 export enum AppleWalletCredentialStatus {
   Disabled = 0,
   Available = 1,
@@ -144,6 +146,16 @@ export class NativeProvider {
 
     }
     this.router.navigate(['/' + destination], { skipLocationChange: true });
+  }
+
+  getPatronBarcode(): Observable<string>{
+    if (this.isAndroid()) {
+      return this.getAndroidDataAsObservable<string>(NativeData.BARCODE);
+    } else if (this.isIos()) {
+      return from(this.getIosData(NativeData.BARCODE));
+    } else {
+      return throwError(new Error('This is not a native device'));
+    }
   }
 
   /// used to allow user to add USAePay CC and handle response
