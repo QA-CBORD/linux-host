@@ -31,10 +31,7 @@
              [scrollEvents]="true"
              #content
              class="order-detail"
-             [ngClass]="{
-               'order-detail--increased-sm': allowNotes && isLargeScreen,
-               'order-detail--increased-lg': allowNotes && isLargeScreen
-               }">
+             [ngClass]="{'order-detail--increased': allowNotes}">
   <div class="order-detail__descriptions">
     <div class="order-detail__descriptions-title">{{ menuItem.name }}</div>
     <p class="order-detail__descriptions-content">{{ menuItem.description }}</p>

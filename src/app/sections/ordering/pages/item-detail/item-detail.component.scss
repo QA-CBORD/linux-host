@@ -3,12 +3,11 @@
 .order-detail {
     --padding-bottom: 220px;
 
-    &--increased-sm {
-        --padding-bottom: 280px;
-    }
+    min-height: 100%;
+    position: relative;
 
-    &--increased-lg {
-        --padding-bottom: 330px;
+    &--increased {
+        --padding-bottom: 23rem;
     }
 
     &__static-header {

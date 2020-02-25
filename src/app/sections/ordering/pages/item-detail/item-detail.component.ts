@@ -1,6 +1,6 @@
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
-import { ToastController, IonContent, Platform } from '@ionic/angular';
+import { ToastController, IonContent } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subscription, zip } from 'rxjs';
 import { first, take } from 'rxjs/operators';
@@ -31,7 +31,7 @@ export class ItemDetailComponent implements OnInit {
   allowNotes: boolean;
   showFooter: boolean = true;
  
-  @ViewChild('content') content: IonContent;
+  @ViewChild('content') private content: IonContent;
 
   constructor(
     private readonly router: Router,
@@ -40,12 +40,7 @@ export class ItemDetailComponent implements OnInit {
     private readonly cartService: CartService,
     private readonly loadingService: LoadingService,
     private readonly toastController: ToastController,
-    private readonly platform: Platform
   ) {}
-
-  get isLargeScreen(): boolean {
-    return this.platform.height() > 600;
-  }
 
   ngOnInit() {
     this.initMenuItemOptions();
@@ -69,7 +64,7 @@ export class ItemDetailComponent implements OnInit {
   }
 
   onNotesType(isFocus?: boolean) {
-    if(isFocus) this.content.scrollToBottom(400);
+    if(isFocus) this.content.scrollByPoint(0, 150, 400);
     this.showFooter = !this.showFooter;
   }
 
