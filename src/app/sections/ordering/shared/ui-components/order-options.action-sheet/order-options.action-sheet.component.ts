@@ -61,8 +61,8 @@ export class OrderOptionsActionSheetComponent implements OnInit {
       this.activeOrderType !== null
         ? this.activeOrderType
         : this.orderTypes.pickup
-        ? ORDER_TYPE.PICKUP
-        : ORDER_TYPE.DELIVERY;
+          ? ORDER_TYPE.PICKUP
+          : ORDER_TYPE.DELIVERY;
 
     this.loadingService.showSpinner();
     zip(
@@ -132,14 +132,14 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     let date = { dueTime: this.dateTimePicker, isASAP: this.dateTimePicker === 'ASAP' };
 
     let isOutsideMerchantDeliveryArea = of(false);
-    if (this.orderOptionsData.label === 'DELIVERY') {
-      if (this.orderOptionsData.address) {
-        isOutsideMerchantDeliveryArea = this.isOutsideMerchantDeliveryArea();
-      } else {
-        this.onToastDisplayed('Choose address please');
-        return;
-      }
+    if (!this.orderOptionsData.address) {
+      this.onToastDisplayed('Choose address please');
+      return;
     }
+    if (this.orderOptionsData.label === 'DELIVERY') {
+      isOutsideMerchantDeliveryArea = this.isOutsideMerchantDeliveryArea();
+    }
+
     await this.loadingService.showSpinner();
     zip(isOutsideMerchantDeliveryArea, this.merchantService.getCurrentLocaleTime())
       .pipe(
