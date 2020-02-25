@@ -30,7 +30,7 @@ import { ModalController, PopoverController, ToastController } from '@ionic/angu
 import { AccountType, NAVIGATE } from '../../../../app.global';
 import { SuccessModalComponent } from '@sections/ordering/pages/cart/components/success-modal';
 import { StGlobalPopoverComponent } from '@shared/ui-components';
-import { MerchantOrderTypesInfo } from '@sections/ordering/shared/models';
+import { MerchantOrderTypesInfo, MerchantInfo } from '@sections/ordering/shared/models';
 import { NativeData, NativeProvider } from '@core/provider/native-provider/native.provider';
 import { UserService } from '@core/service/user-service/user.service';
 
@@ -42,6 +42,7 @@ import { UserService } from '@core/service/user-service/user.service';
 })
 export class CartComponent implements OnInit {
   order$: Observable<Partial<OrderInfo>>;
+  merchant$: Observable<MerchantInfo>;
   addressModalSettings$: Observable<AddressModalSettings>;
   orderDetailOptions$: Observable<OrderDetailOptions>;
   applePayEnabled$: Observable<boolean>;
@@ -73,6 +74,7 @@ export class CartComponent implements OnInit {
 
   ngOnInit() {
     this.order$ = this.cartService.orderInfo$;
+    this.merchant$ = this.cartService.merchant$;
     this.orderTypes$ = this.merchantService.orderTypes$;
     this.orderDetailOptions$ = this.cartService.orderDetailsOptions$;
     this.addressModalSettings$ = this.initAddressModalConfig();
@@ -123,6 +125,10 @@ export class CartComponent implements OnInit {
   onCartStateFormChanged(state) {
     this.cartService.updateOrderAddress(state.data[DETAILS_FORM_CONTROL_NAMES.address]);
     this.cartFormState = state;
+  }
+
+  onOrderTipChanged(amount: number){
+    this.cartService.setOrderTip(amount);
   }
 
   async onOrderPaymentInfoChanged(selectedValue: Partial<OrderPayment> | string) {
@@ -197,7 +203,7 @@ export class CartComponent implements OnInit {
       component: StGlobalPopoverComponent,
       componentProps: {
         data: {
-          title: 'Oooops',
+          title: 'Oooops', /// xD
           message,
         },
       },

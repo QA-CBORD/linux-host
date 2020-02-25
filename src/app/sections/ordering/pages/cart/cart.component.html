@@ -23,11 +23,13 @@
             [accounts]="accounts$ | async"
             [applePayEnabled]="applePayEnabled$ | async"
             [mealBased]="(order$ | async).mealBased"
+            [merchantSettingsList]="(merchant$ | async).settings.list"
             [addressModalConfig]="(addressModalSettings$ | async)"
             (onFormChange)="onCartStateFormChanged($event)"
             (onOrderItemRemovedId)="removeOrderItem($event)"
             (onOrderItemClicked)="onOrderItemClicked($event)"
             (onOrderPaymentInfoChanged)="onOrderPaymentInfoChanged($event)"
+            (onOrderTipChanged)="onOrderTipChanged($event)"
     >
         <st-button (onClick)="onSubmit()" [isDisabled]="!cartFormState?.valid">
             {{(isOrderASAP | async) ? 'Place order' : 'Schedule Order'}}

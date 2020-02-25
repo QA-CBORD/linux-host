@@ -15,6 +15,7 @@ import { PriceUnitsResolverPipe } from '@sections/ordering/shared/pipes/price-un
 
 const declarations = [OrderDetailsComponent, TypeMessagePipe, AddressAsStringPipe, AccountTypeResolverPipe];
 
+
 @NgModule({
   declarations,
   imports: [
@@ -24,7 +25,7 @@ const declarations = [OrderDetailsComponent, TypeMessagePipe, AddressAsStringPip
     StDateTimePickerModule,
     DeliveryAddressesModalModule,
     PriceUnitsResolverModule,
-    ModifyPrepTimeModule
+    ModifyPrepTimeModule,
   ],
   exports: [OrderDetailsComponent],
   providers: [CreditCardTypePipe, PriceUnitsResolverPipe]

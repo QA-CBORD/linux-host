@@ -9,7 +9,7 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, Validators, ValidatorFn } from '@angular/forms';
 import {
   BuildingInfo,
   MerchantAccountInfoList,
@@ -17,14 +17,15 @@ import {
   OrderDetailOptions,
   OrderItem,
   OrderPayment,
+  MerchantSettingInfo,
 } from '@sections/ordering';
-import { PAYMENT_SYSTEM_TYPE } from '@sections/ordering/ordering.config';
+import { PAYMENT_SYSTEM_TYPE, MerchantSettings } from '@sections/ordering/ordering.config';
 import { AddressInfo } from '@core/model/address/address-info';
 import { ModalController } from '@ionic/angular';
 import { DeliveryAddressesModalComponent } from '@sections/ordering/shared/ui-components/delivery-addresses.modal/delivery-addresses.modal.component';
 import { UserAccount } from '@core/model/account/account.model';
 import { Subscription } from 'rxjs';
-import { cvvValidationFn } from '@core/utils/general-helpers';
+import { cvvValidationFn, formControlErrorDecorator, validateLessThanOther, validateGreaterOrEqualToZero, validateCurrency } from '@core/utils/general-helpers';
 import { AccountType } from 'src/app/app.global';
 
 @Component({
@@ -51,13 +52,16 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   @Input() accountName: string;
   @Input() mealBased: boolean;
   @Input() accounts: UserAccount[] = [];
+  @Input() merchantSettingsList: MerchantSettingInfo[];
   @Input() addressModalConfig: AddressModalSettings;
   @Input() applePayEnabled: boolean;
   @Output() onFormChange: EventEmitter<OrderDetailsFormData> = new EventEmitter<OrderDetailsFormData>();
   @Output() onOrderItemRemovedId: EventEmitter<string> = new EventEmitter<string>();
   @Output() onOrderItemClicked: EventEmitter<OrderItem> = new EventEmitter<OrderItem>();
-  @Output() onOrderPaymentInfoChanged: EventEmitter<Partial<OrderPayment> | string>
-    = new EventEmitter<Partial<OrderPayment> | string>();
+  @Output() onOrderPaymentInfoChanged: EventEmitter<Partial<OrderPayment> | string> = new EventEmitter<
+    Partial<OrderPayment> | string
+  >();
+  @Output() onOrderTipChanged: EventEmitter<number> = new EventEmitter<number>();
 
   detailsForm: FormGroup;
   private readonly sourceSub = new Subscription();
@@ -68,10 +72,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     isActive: true,
   };
 
-  constructor(private readonly fb: FormBuilder,
-              private readonly modalController: ModalController) {
-
-  }
+  constructor(private readonly fb: FormBuilder, private readonly modalController: ModalController) {}
 
   ngOnInit() {
     this.initForm();
@@ -106,6 +107,13 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     return { ...this.orderDetailOptions, dueTime: new Date((<string>this.orderDetailOptions.dueTime).slice(0, 19)) };
   }
 
+  get isTipEnabled() {
+    return !!this.merchantSettingsList.filter(
+      ({ domain, category, name, value }) =>
+        `${domain}.${category}.${name}` === MerchantSettings.tipEnabled && !!Number(value)
+    ).length;    
+  }
+
   trackByAccountId(i: number): string {
     return `${i}-${Math.random()}`;
   }
@@ -119,13 +127,28 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   initForm() {
-    this.detailsForm = this.fb.group(
-      {
-        [DETAILS_FORM_CONTROL_NAMES.address]: [this.orderDetailOptions.address],
-        [DETAILS_FORM_CONTROL_NAMES.paymentMethod]: ['', Validators.required],
-      },
-    );
+    this.detailsForm = this.fb.group({
+      [DETAILS_FORM_CONTROL_NAMES.address]: [this.orderDetailOptions.address],
+      [DETAILS_FORM_CONTROL_NAMES.paymentMethod]: ['', Validators.required],
+    });
+
+
+    if (this.isTipEnabled) {
+      const tipErrors = [
+        formControlErrorDecorator(validateLessThanOther(this.subTotal), CONTROL_ERROR[DETAILS_FORM_CONTROL_NAMES.tip].subtotal),
+        formControlErrorDecorator(validateCurrency, CONTROL_ERROR[DETAILS_FORM_CONTROL_NAMES.tip].currency),
+        formControlErrorDecorator(validateGreaterOrEqualToZero, CONTROL_ERROR[DETAILS_FORM_CONTROL_NAMES.tip].min),
+      ];
+
+      this.detailsForm.addControl(DETAILS_FORM_CONTROL_NAMES.tip, this.fb.control(this.tip ? this.tip : ''));
+      this.detailsForm.controls[DETAILS_FORM_CONTROL_NAMES.tip].setValidators(tipErrors);
+    }
     this.subscribeOnFormChanges();
+  }
+
+  onTipChanged({ detail: { value } }) {
+    if(!this.tipFormControl.valid) return;
+    this.onOrderTipChanged.emit(value ? Number(value) : 0);
   }
 
   onPaymentChanged({ detail: { value } }) {
@@ -145,6 +168,14 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
+  get paymentFormControl(): AbstractControl {
+    return this.detailsForm.get(DETAILS_FORM_CONTROL_NAMES.paymentMethod);
+  }
+
+  get tipFormControl(): AbstractControl {
+    return this.detailsForm.get(DETAILS_FORM_CONTROL_NAMES.tip);
+  }
+
   get cvvFormControl(): AbstractControl {
     return this.detailsForm.get(DETAILS_FORM_CONTROL_NAMES.cvv);
   }
@@ -154,10 +185,9 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private subscribeOnFormChanges() {
-    const sub = this.detailsForm.valueChanges
-      .subscribe(data => {
-        this.onFormChange.emit({ data, valid: this.detailsForm.valid });
-      });
+    const sub = this.detailsForm.valueChanges.subscribe(data => {
+      this.onFormChange.emit({ data, valid: this.detailsForm.valid });
+    });
     this.sourceSub.add(sub);
   }
 
@@ -165,10 +195,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     this.showCVVControl = true;
     this.detailsForm.addControl(
       DETAILS_FORM_CONTROL_NAMES.cvv,
-      this.fb.control('', [
-        Validators.required,
-        cvvValidationFn,
-      ]),
+      this.fb.control('', [Validators.required, cvvValidationFn])
     );
   }
 
@@ -183,7 +210,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
       componentProps: this.addressModalConfig,
     });
     modal.onDidDismiss().then(({ data }) => {
-      data && (this.addressInfoFormControl.setValue(data));
+      data && this.addressInfoFormControl.setValue(data);
     });
     await modal.present();
   }
@@ -194,7 +221,17 @@ export enum DETAILS_FORM_CONTROL_NAMES {
   address = 'address',
   paymentMethod = 'paymentMethod',
   cvv = 'cvv',
+  tip = 'tip',
 }
+
+export const CONTROL_ERROR = {
+  [DETAILS_FORM_CONTROL_NAMES.tip]: {
+    min: 'Tip must be greater than zero',
+    currency: 'Invalid format',
+    subtotal: 'Tip must be less than the Subtotal amount',
+  },
+  
+};
 
 export interface AddressModalSettings {
   defaultAddress: AddressInfo;

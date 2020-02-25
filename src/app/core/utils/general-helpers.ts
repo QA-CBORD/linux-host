@@ -2,7 +2,8 @@ import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { ServerErrorsInfo } from '@core/model/server_error/server-error.model';
 import { MonoTypeOperatorFunction, Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { ZERO_FIRST_REGEXP, INT_REGEXP, INT_DEC_REGEXP, EMAIL_REGEXP } from './regexp-patterns';
+import { ZERO_FIRST_REGEXP, INT_REGEXP, INT_DEC_REGEXP, EMAIL_REGEXP, CURRENCY_REGEXP } from './regexp-patterns';
+
 
 export function parseArrayFromString<T>(value: string): Array<T> {
   if (value && !value.length) return [];
@@ -37,6 +38,19 @@ export const validateInputAmount = ({ value }: AbstractControl): ValidationError
   const isIntegerOrDecemals = INT_DEC_REGEXP.test(value);
 
   return isNaN(value) || isStartedWithZero || !isIntegerOrDecemals ?  { incorrect: true } : null;
+};
+
+export const validateLessThanOther = (other: number): ValidatorFn => {
+  return ({ value }: AbstractControl): { [key: string]: any } => (value > other ? { incorrect: true } : null);
+};
+
+export const validateGreaterOrEqualToZero = ({ value }: AbstractControl): ValidationErrors | null => {
+  return value < 0 ? { incorrect: true } : null;
+};
+
+export const validateCurrency = ({ value }: AbstractControl): ValidationErrors | null => {
+  const isCurrency = CURRENCY_REGEXP.test(value);
+  return value && !isCurrency ? { incorrect: true } : null;
 };
 
 export const validateInteger = ({ value }: AbstractControl): ValidationErrors | null => {

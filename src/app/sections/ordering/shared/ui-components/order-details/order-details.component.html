@@ -56,7 +56,7 @@
               class="total__item-sum">{{tax | priceUnitsResolver: mealBased}}</span></div>
       <div *ngIf="discount" class="total__item">Discount<span
               class="total__item-sum">{{discount | priceUnitsResolver: mealBased}}</span></div>
-      <div *ngIf="tip" class="total__item">tip<span
+      <div *ngIf="isTipEnabled" class="total__item">tip<span
               class="total__item-sum">{{tip | priceUnitsResolver: mealBased}}</span></div>
       <div *ngIf="deliveryFee" class="total__item">delivery fee<span
               class="total__item-sum">{{deliveryFee | priceUnitsResolver: mealBased}}</span></div>
@@ -112,6 +112,28 @@
         Please enter a valid card security code.
       </div>
     </div>
+
+    <div class="order-details" *ngIf="isTipEnabled">
+      <ion-label class="order-details__label">Tip Amount:</ion-label>
+      <ion-input
+              class="order-details__value"
+              type="tel"
+              [disabled]="!paymentFormControl.value"
+              [maxlength]="'6'"
+              [value]="tip"
+              [placeholder]="mealBased ? '0': '0.00'"
+              [formControlName]="controlsNames.tip"
+              (ionChange)="onTipChanged($event)"
+      ></ion-input>
+      <div
+              class="order-details--error" 
+      >
+        {{tipFormControl.errors?.errorMsg}}
+      </div>
+    
+    </div>
+
+    
   </form>
 
   <div class="order-details__buttons">

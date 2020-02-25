@@ -172,6 +172,12 @@ export class CartService {
     this.onStateChanged();
   }
 
+  setOrderTip(amount: number) {
+    this.cart.order.tip = amount;
+    this.cart.order.total = this.calculateTotal();
+    this.onStateChanged();
+  }
+
   addPaymentInfoToOrder(peymentInfo: Partial<OrderPayment>) {
     this.cart.order.orderPayment = [peymentInfo];
   }
@@ -196,6 +202,19 @@ export class CartService {
 
   private onStateChanged() {
     this._cart$.next(this.cart);
+  }
+
+  private calculateTotal(): number {
+    const { subTotal, tax, useFee, deliveryFee, pickupFee, tip, discount } = this.cart.order;
+    return (
+      (subTotal || 0) +
+      (tax || 0) +
+      (useFee || 0) +
+      (deliveryFee || 0) +
+      (pickupFee || 0) +
+      (tip || 0) -
+      (discount || 0)
+    );
   }
 
   private async initEmptyOrder(): Promise<Partial<OrderInfo>> {
