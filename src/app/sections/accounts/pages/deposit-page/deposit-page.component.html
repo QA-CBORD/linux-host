@@ -99,8 +99,8 @@
         <ng-template #mainInput>
           <div class="deposit__main-input-container">
             <ion-input class="deposit__main-input"
-                       inputmode="tel"
-                       type="tel"
+                       type="number"
+                       inputmode="decimal"
                        maxlength="10"
                        #inputText
                        [value]="depositForm.get('mainInput') | customCurrency"
