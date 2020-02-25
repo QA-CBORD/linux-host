@@ -64,7 +64,7 @@ export class ItemDetailComponent implements OnInit {
   }
 
   onNotesType(isFocus?: boolean) {
-    if(isFocus) this.content.scrollByPoint(0, 150, 400);
+    if(isFocus) this.content.scrollToBottom();
     this.showFooter = !this.showFooter;
   }
 
