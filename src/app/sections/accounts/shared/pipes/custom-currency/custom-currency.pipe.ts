@@ -7,11 +7,11 @@ import { COMMA_REGEXP } from '@core/utils/regexp-patterns';
   pure: false,
 })
 export class CustomCurrencyPipe implements PipeTransform {
-  transform({ value }: AbstractControl): string {
+  transform({ value }: AbstractControl): string {    
     if (!value || value === null || value.length <= 1) {
-      return value;
+      return '';
     }
-    const result = value.replace(COMMA_REGEXP, '');
+    const result = value.toString().replace(COMMA_REGEXP, '');
     const num = parseFloat(result);
 
     return num.toLocaleString('en-US', { maximumFractionDigits: 2 });

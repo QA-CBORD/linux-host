@@ -6,7 +6,7 @@ export function amountRangeValidator(min: number, max: number): ValidatorFn {
     const { value } = control;
 
     if (value) {
-        const amount = value.replace(COMMA_REGEXP, '');
+        const amount = value.toString().replace(COMMA_REGEXP, '');
 
       if (isNaN(amount) || amount < min) {
         return { minLength: { min, actual: value } };
