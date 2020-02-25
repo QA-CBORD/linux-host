@@ -216,7 +216,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
       this.billmeMappingArr
     );
     let amount = mainInput || mainSelect;
-    amount = amount.replace(COMMA_REGEXP, '');
+    amount = amount.toString().replace(COMMA_REGEXP, '');
     if(isApplePay){
       this.nativeProvider.payWithApplePay(NativeData.DEPOSITS_WITH_APPLE_PAY, {accountId: selectedAccount.id, depositAmount: amount }).toPromise()
       .then((result:ApplePayResponse) => {
