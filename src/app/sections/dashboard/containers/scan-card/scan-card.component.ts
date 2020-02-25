@@ -1,8 +1,8 @@
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { map, skipWhile, switchMap, take, tap } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { map, skipWhile, switchMap, take, tap, delay } from 'rxjs/operators';
+import { Observable, timer, Subscription } from 'rxjs';
 import bwipjs from 'bwip-angular2';
 
 import { UserInfo } from '@core/model/user';
@@ -12,13 +12,17 @@ import { Institution, InstitutionPhotoInfo } from '@core/model/institution';
 import { CommerceApiService } from '@core/service/commerce/commerce-api.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { DASHBOARD_SETTINGS_CONFIG } from '@sections/dashboard/dashboard.config';
+import { NativeProvider } from '@core/provider/native-provider/native.provider';
 
 @Component({
   selector: 'st-scan-card',
   templateUrl: './scan-card.component.html',
   styleUrls: ['./scan-card.component.scss'],
 })
-export class ScanCardComponent implements OnInit {
+export class ScanCardComponent implements OnInit, OnDestroy {
+  private readonly BARCODE_GEN_INTERVAL = 180000; /// 3 minutes
+  private readonly subscription: Subscription = new Subscription();
+  showBarcode: boolean = false;
   userInfoId$: Observable<string>;
   institution$: Observable<Institution>;
   institutionPhoto$: Observable<SafeResourceUrl>;
@@ -34,8 +38,8 @@ export class ScanCardComponent implements OnInit {
     private readonly route: ActivatedRoute,
     private readonly commerceApiService: CommerceApiService,
     private readonly settingsFacadeService: SettingsFacadeService,
-  ) {
-  }
+    private readonly nativeInterface: NativeProvider
+  ) {}
 
   ngOnInit() {
     this.isMediaSettingExists$ = this.settingsFacadeService.getSetting$(DASHBOARD_SETTINGS_CONFIG.displayMediaType)
@@ -46,12 +50,16 @@ export class ScanCardComponent implements OnInit {
     this.setInstitution();
     this.setInstitutionPhoto();
     this.initBarcode();
-    this.userInfoId$ = this.commerceApiService.getCashlessUserId().pipe(map(d => d.length ? d : 'None'));
+    this.userInfoId$ = this.commerceApiService.getCashlessUserId().pipe(map(d => (d.length ? d : 'None')));
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
   get userFullName$(): Observable<string> {
     return this.userService.userData.pipe(
-      map(({ firstName: fn, middleName: mn, lastName: ln }: UserInfo) => `${fn || ''} ${mn || ''} ${ln || ''}`),
+      map(({ firstName: fn, middleName: mn, lastName: ln }: UserInfo) => `${fn || ''} ${mn || ''} ${ln || ''}`)
     );
   }
 
@@ -84,21 +92,43 @@ export class ScanCardComponent implements OnInit {
       map(({ data, mimeType }: InstitutionPhotoInfo) => {
         return `data:${mimeType};base64,${data}`;
       }),
-      map(response => this.sanitizer.bypassSecurityTrustResourceUrl(response)),
+      map(response => this.sanitizer.bypassSecurityTrustResourceUrl(response))
     );
   }
 
   private initBarcode() {
+    this.subscription.add(
+      timer(0, this.BARCODE_GEN_INTERVAL)
+        .pipe(
+          switchMap(_ => this.nativeInterface.getPatronBarcode()),
+          tap(value => {
+            value ? (this.showBarcode = true) : (this.showBarcode = false);
+          }),
+          delay(500)
+        )
+        .subscribe(
+          value => {
+            this.generateBarcode(value);
+          },
+          error => {
+            this.showBarcode = false;
+          }
+        )
+    );
+  }
+
+  private generateBarcode(value: string) {
     bwipjs(
       'barcodeCanvas',
       {
         bcid: 'pdf417',
-        text: this.userId,
+        text: value,
         includetext: false,
         height: 10,
       },
       (err, cvs) => {
-      },
+        /// don't care
+      }
     );
   }
 
