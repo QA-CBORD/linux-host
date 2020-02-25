@@ -117,7 +117,8 @@
       <ion-label class="order-details__label">Tip Amount:</ion-label>
       <ion-input
               class="order-details__value"
-              type="tel"
+              type="number"
+              inputmode="decimal"
               [disabled]="!paymentFormControl.value"
               [maxlength]="'6'"
               [value]="tip"

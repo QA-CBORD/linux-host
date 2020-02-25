@@ -23,7 +23,7 @@ import { DepositService } from '@sections/accounts/services/deposit.service';
 import { parseArrayFromString } from '@core/utils/general-helpers';
 import { BillMeMapping } from '@core/model/settings/billme-mapping.model';
 import { NativeProvider, NativeData, ApplePayResponse } from '@core/provider/native-provider/native.provider';
-import { COMMA_REGEXP, NUM_COMMA_DOT_REGEXP } from '@core/utils/regexp-patterns';
+import { COMMA_REGEXP, NUM_COMMA_DOT_REGEXP, CURRENCY_REGEXP } from '@core/utils/regexp-patterns';
 import { UserService } from '@core/service/user-service/user.service';
 
 @Component({
@@ -216,7 +216,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
       this.billmeMappingArr
     );
     let amount = mainInput || mainSelect;
-    amount = amount.replace(COMMA_REGEXP, '');
+    amount = amount.toString().replace(COMMA_REGEXP, '');
     if(isApplePay){
       this.nativeProvider.payWithApplePay(NativeData.DEPOSITS_WITH_APPLE_PAY, {accountId: selectedAccount.id, depositAmount: amount }).toPromise()
       .then((result:ApplePayResponse) => {
@@ -301,7 +301,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
         this.depositForm.controls['mainInput'].setValidators([
           Validators.required,
           ...minMaxValidators,
-          Validators.pattern('[0-9.,]+'),
+          Validators.pattern(CURRENCY_REGEXP),
         ]);
       } else {
         this.depositForm.controls['mainSelect'].setValidators([Validators.required]);
