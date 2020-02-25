@@ -1,8 +1,8 @@
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { map, skipWhile, switchMap, take, catchError } from 'rxjs/operators';
-import { Observable, of, timer } from 'rxjs';
+import { map, skipWhile, switchMap, take, tap, delay } from 'rxjs/operators';
+import { Observable, timer, Subscription } from 'rxjs';
 import bwipjs from 'bwip-angular2';
 
 import { UserInfo } from '@core/model/user';
@@ -19,9 +19,10 @@ import { NativeProvider } from '@core/provider/native-provider/native.provider';
   templateUrl: './scan-card.component.html',
   styleUrls: ['./scan-card.component.scss'],
 })
-export class ScanCardComponent implements OnInit {
+export class ScanCardComponent implements OnInit, OnDestroy {
   private readonly BARCODE_GEN_INTERVAL = 180000; /// 3 minutes
-  generateBarcode$: Observable<boolean>;
+  private readonly subscription: Subscription = new Subscription();
+  showBarcode: boolean = false;
   userInfoId$: Observable<string>;
   institution$: Observable<Institution>;
   institutionPhoto$: Observable<SafeResourceUrl>;
@@ -49,12 +50,16 @@ export class ScanCardComponent implements OnInit {
     this.setInstitution();
     this.setInstitutionPhoto();
     this.initBarcode();
-    this.userInfoId$ = this.commerceApiService.getCashlessUserId().pipe(map(d => d.length ? d : 'None'));
+    this.userInfoId$ = this.commerceApiService.getCashlessUserId().pipe(map(d => (d.length ? d : 'None')));
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
   get userFullName$(): Observable<string> {
     return this.userService.userData.pipe(
-      map(({ firstName: fn, middleName: mn, lastName: ln }: UserInfo) => `${fn || ''} ${mn || ''} ${ln || ''}`),
+      map(({ firstName: fn, middleName: mn, lastName: ln }: UserInfo) => `${fn || ''} ${mn || ''} ${ln || ''}`)
     );
   }
 
@@ -92,13 +97,23 @@ export class ScanCardComponent implements OnInit {
   }
 
   private initBarcode() {
-    this.generateBarcode$ = timer(0, this.BARCODE_GEN_INTERVAL).pipe(
-      switchMap(_ => this.nativeInterface.getPatronBarcode()),
-      map(value => {
-        this.generateBarcode(value);
-        return true;
-      }),
-      catchError(_ => of(false))
+    this.subscription.add(
+      timer(0, this.BARCODE_GEN_INTERVAL)
+        .pipe(
+          switchMap(_ => this.nativeInterface.getPatronBarcode()),
+          tap(value => {
+            value ? (this.showBarcode = true) : (this.showBarcode = false);
+          }),
+          delay(500)
+        )
+        .subscribe(
+          value => {
+            this.generateBarcode(value);
+          },
+          error => {
+            this.showBarcode = false;
+          }
+        )
     );
   }
 
