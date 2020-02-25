@@ -41,18 +41,18 @@
     display: flex;
     justify-content: space-between;
     color: $color-charcoal;
-    margin-top: 35px;
+    margin-top: 16px;
 
     @include font-nunito-heavy(14px);
   }
 
   &__footer {
-    padding: 10px 10px 50px;
+    padding: 10px 10px 16px;
   }
 }
 
 .total {
-  margin-top: 50px;
+  margin-top: 16px;
   background: $color-white;
 
   &__item {
