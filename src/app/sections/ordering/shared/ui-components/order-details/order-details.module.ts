@@ -12,9 +12,9 @@ import { CreditCardTypePipe } from '@sections/accounts/shared/pipes/credit-card-
 import { AccountTypeResolverPipe } from './pipes/account-type-resolver.pipe';
 import { PriceUnitsResolverPipe } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.pipe';
 import { AddressHeaderFormatPipeModule } from '@shared/pipes/address-header-format-pipe/address-header-format-pipe.module';
+import { AddressAsStringPipe } from './address-as-string.pipe';
 
-const declarations = [OrderDetailsComponent, TypeMessagePipe, AccountTypeResolverPipe];
-
+const declarations = [OrderDetailsComponent, TypeMessagePipe, AccountTypeResolverPipe, AddressAsStringPipe];
 
 @NgModule({
   declarations,
@@ -26,9 +26,9 @@ const declarations = [OrderDetailsComponent, TypeMessagePipe, AccountTypeResolve
     DeliveryAddressesModalModule,
     PriceUnitsResolverModule,
     ModifyPrepTimeModule,
-    AddressHeaderFormatPipeModule
+    AddressHeaderFormatPipeModule,
   ],
   exports: [OrderDetailsComponent],
-  providers: [CreditCardTypePipe, PriceUnitsResolverPipe]
+  providers: [CreditCardTypePipe, PriceUnitsResolverPipe],
 })
-export class OrderDetailsModule { }
+export class OrderDetailsModule {}
