@@ -80,9 +80,9 @@ export class BaseService {
     }
   }
 
-  protected parseExceptionResponse(exceptionString: string) {
+  protected parseExceptionResponse(exceptionString: string = '') {
     // check the exception string for a number|description string format
-    if (NUM_DSCRPTN_REGEXP.test(exceptionString)) {
+    if (exceptionString.search(NUM_DSCRPTN_REGEXP) !== -1) {
       const parts = exceptionString.split('|');
       this.determineErrorByCodeAndThrow(parts[0], parts.length > 1 ? parts[1] : null);
     } else {
@@ -107,7 +107,7 @@ export class BaseService {
         break;
       case '6100':
         newError.name = 'PaymentSystemGatewayException';
-        newError.message = message;
+        newError.message = 'Transaction failed';
         break;
       case '6113':
         newError.name = 'PaymentSystemBusinessLogicException';
