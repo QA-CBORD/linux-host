@@ -45,13 +45,6 @@
             <ng-template #placeholder>Select an Address</ng-template>
 
             <ng-template #addressContainer>
-              <ng-container *ngIf="orderOptionsData?.address?.onCampus; then onCampus; else offCampus"></ng-container>
-            </ng-template>
-
-            <ng-template #offCampus>
-              {{ orderOptionsData.address | addressHeaderFormat }}
-            </ng-template>
-            <ng-template #onCampus>
               {{ orderOptionsData.address | addressHeaderFormat }}
             </ng-template>
           </div>

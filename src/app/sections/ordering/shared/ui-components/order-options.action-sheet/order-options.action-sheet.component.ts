@@ -4,7 +4,8 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } 
 import { MenuInfo, MerchantAccountInfoList, MerchantOrderTypesInfo } from '../../models';
 import { ModalController, ToastController } from '@ionic/angular';
 import { DeliveryAddressesModalComponent } from '../delivery-addresses.modal/delivery-addresses.modal.component';
-import { AddressInfo, getAddressHeader } from '@core/model/address/address-info';
+import { AddressInfo } from '@core/model/address/address-info';
+import { getAddressHeader } from '@core/utils/address-helper';
 import { EMPTY, Observable, of, throwError, zip } from 'rxjs';
 import { finalize, switchMap, take, tap } from 'rxjs/operators';
 import { LoadingService } from '@core/service/loading/loading.service';

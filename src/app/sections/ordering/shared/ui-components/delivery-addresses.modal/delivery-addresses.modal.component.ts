@@ -3,9 +3,11 @@ import { ModalController } from '@ionic/angular';
 import { MerchantService } from '@sections/ordering/services';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { UserService } from '@core/service/user-service/user.service';
-import { AddressInfo, getAddressHeader, getAddressSubHeader  } from '@core/model/address/address-info';
 import { take, switchMap } from 'rxjs/operators';
 import { of, zip, iif } from 'rxjs';
+import { AddressInfoExpanded } from '../../models/address-info-expanded';
+import { getAddressSubHeader, getAddressHeader } from '@core/utils/address-helper';
+import { AddressInfo } from '@core/model/address/address-info';
 
 @Component({
   selector: 'st-delivery-addresses.modal',
@@ -25,7 +27,7 @@ export class DeliveryAddressesModalComponent implements OnInit {
   addNewAdddressForm: { value: any; valid: boolean } = { value: null, valid: false };
   errorState: boolean = false;
   selectedAddress: AddressInfo;
-  listOfAddresses: Array<AddressInfo>;
+  listOfAddresses: Array<AddressInfoExpanded>;
   addressLabel: string;
   constructor(
     private readonly modalController: ModalController,
@@ -70,7 +72,14 @@ export class DeliveryAddressesModalComponent implements OnInit {
       .subscribe(
         ([addedAddress]) => {
           if (addedAddress) {
-            this.listOfAddresses = [...this.listOfAddresses, addedAddress];
+            this.listOfAddresses = [...this.listOfAddresses, {
+              onCampus: addedAddress.onCampus,
+              id: addedAddress.id,
+              item: addedAddress,
+              checked: false,
+              displayHeader: getAddressHeader(addedAddress),
+              displaySubheader: getAddressSubHeader(addedAddress),
+            }];
           }
           this.resetForm();
           this.cdRef.detectChanges();
@@ -94,16 +103,16 @@ export class DeliveryAddressesModalComponent implements OnInit {
     this.addNewAdddressForm = null;
   }
 
-  private defineListOfAddresses(defaultAddress) {
+  private defineListOfAddresses(defaultAddress: AddressInfo): AddressInfoExpanded[] {
     const listOfAddresses = this.isOrderTypePickup ? this.pickupLocations : this.deliveryAddresses;
     this.addressLabel = this.isOrderTypePickup ? 'Pickup' : 'Delivery';
     return listOfAddresses.map(ad => {
       const addressInfo = this.isOrderTypePickup ? ad.addressInfo : ad;
       return {
-        onCampus: addressInfo.onCampus || false,
+        onCampus: addressInfo.onCampus,
         id: addressInfo.id,
         item: addressInfo,
-        checked: defaultAddress ? addressInfo.id == defaultAddress.id : false,
+        checked: defaultAddress && addressInfo.id === defaultAddress.id,
         displayHeader: getAddressHeader(addressInfo),
         displaySubheader: getAddressSubHeader(addressInfo),
       };

@@ -1,3 +1,8 @@
+export enum ADDRESS_LOCATION {    
+  onCampus = 1,
+  offCampus = 0
+}
+
 export interface AddressInfo {
     id: string;
     objectRevision: number;
@@ -20,23 +25,7 @@ export interface AddressInfo {
     accessCode: string;
     phone: string;
     phoneExt: string;
-    onCampus: number;
+    onCampus: ADDRESS_LOCATION;
 }
 
-export const getAddressHeader = (address: AddressInfo): string => {
-  const { nickname, building, address1, address2 } = address;
-  return (
-    (nickname ? nickname : '') +
-    (building ? (nickname ? '' : building) : '') +
-    (address1 ? (nickname || building ? ', ' + address1 : address1) : '') +
-    (address2 ? (address1 ? ' ' + address2 : address2) : '')
-  );
-};
-
-export const getAddressSubHeader = (address: AddressInfo): string => {
-  const { city, state, postalcode } = address;
-  return (
-    (city ? city : '') + (state ? (city ? ', ' + state : state) : '') + (state && postalcode ? ' ' + postalcode : '')
-  );
-};
 

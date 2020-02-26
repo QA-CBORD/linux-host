@@ -1,5 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { AddressInfo, getAddressHeader } from '@core/model/address/address-info';
+import { AddressInfo } from '@core/model/address/address-info';
+import { getAddressHeader } from '@core/utils/address-helper';
 
 @Pipe({
   name: 'addressHeaderFormat'
@@ -7,8 +8,7 @@ import { AddressInfo, getAddressHeader } from '@core/model/address/address-info'
 export class AddressHeaderFormatPipe implements PipeTransform {
 
   transform(address: AddressInfo): string {
-    if(!address) return 'Address misconfigured =(';
-    return getAddressHeader(address);
+    return address ? getAddressHeader(address) : 'Address misconfigured =(';
   }
 
 }

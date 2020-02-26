@@ -82,7 +82,7 @@ export enum ACCOUNT_TYPES {
   decliningBalance = 3, // declining balance, points
 }
 
-export enum INSTITUTION_ADRESS_RESTRICTIONS {
+export enum INSTITUTION_ADDRESS_RESTRICTIONS {
   both = 0,
   onCampus = 1,
   offCampus = 2
