@@ -23,7 +23,6 @@ export class ItemDetailComponent implements OnInit {
   order: { counter: number; totalPrice: number; optionsPrice: number } = { counter: 1, totalPrice: 0, optionsPrice: 0 };
   menuItem: MenuItemInfo;
   menuItemImg: string;
-  isStaticHeader: boolean = true;
   menuInfo$: Observable<MenuInfo>;
   errorState: boolean = false;
   cartSelectedItem: OrderItem;
@@ -57,14 +56,9 @@ export class ItemDetailComponent implements OnInit {
     });
   }
 
-  scroll({ detail: { scrollTop } }) {
-    if (this.menuItem.menuItemOptions.length || this.allowNotes) {
-      this.isStaticHeader = scrollTop === 0;
-    }
-  }
 
   onNotesType(isFocus?: boolean) {
-    if(isFocus) this.content.scrollByPoint(0, 150, 400);
+    if(isFocus) this.content.scrollToBottom(600);
     this.showFooter = !this.showFooter;
   }
 

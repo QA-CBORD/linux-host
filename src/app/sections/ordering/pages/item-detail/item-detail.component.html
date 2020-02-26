@@ -1,4 +1,4 @@
-<ng-container *ngIf="isStaticHeader && menuItemImg; then staticHeader; else header"></ng-container>
+<ng-container *ngIf="!menuItemImg; then header"></ng-container>
 
 <ng-template #header>
   <st-header [backButtonIcon]="'close'"
@@ -27,11 +27,11 @@
   </ion-header>
 </ng-template>
 
-<ion-content (ionScroll)="scroll($event)"
-             [scrollEvents]="true"
-             #content
-             class="order-detail"
-             [ngClass]="{'order-detail--increased': allowNotes}">
+<ion-content #content
+             class="order-detail"    
+>
+<ng-container *ngIf="menuItemImg; then staticHeader"></ng-container>
+
   <div class="order-detail__descriptions">
     <div class="order-detail__descriptions-title">{{ menuItem.name }}</div>
     <p class="order-detail__descriptions-content">{{ menuItem.description }}</p>
@@ -80,9 +80,9 @@
       <st-textarea-floating-label [control]="itemOrderForm.get('message')"
                                   [isError]="itemOrderForm.get('message').invalid && itemOrderForm.get('message').touched"
                                   class="order-detail__order-message"
-                                  formControlName="message"
+                                  formControlName="message"      
                                   (onFocus)="onNotesType(true)"
-                                  (onBlur)="onNotesType()"
+                                  (onBlur)="onNotesType()"                                  
                                   idd="message"
                                   label="Add a note for the kitchen"
                                   rows="3">
