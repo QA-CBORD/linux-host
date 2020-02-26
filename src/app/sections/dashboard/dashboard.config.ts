@@ -88,7 +88,7 @@ export enum TILES_TITLE {
   order = 'Order',
   explore = 'Explore',
   conversations = 'Conversations',
-  housing = 'Housing'
+  housing = 'Housing',
 }
 
 export const TILES_BASE_CONFIG: TileWrapperConfig[] = [
@@ -193,7 +193,9 @@ export const TILES_BASE_CONFIG: TileWrapperConfig[] = [
     isEnable: false,
     navigate: NAVIGATE.housing,
     buttonConfig: {
-      show: false,
+      show: true,
+      title: 'Go to Housing',
+      navigate: NAVIGATE.housing,
     },
   },
 ];

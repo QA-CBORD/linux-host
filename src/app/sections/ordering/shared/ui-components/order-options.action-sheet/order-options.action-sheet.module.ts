@@ -5,6 +5,7 @@ import { OrderOptionsActionSheetComponent } from './order-options.action-sheet.c
 import { StDateTimePickerModule } from '../st-date-time-picker';
 import { DeliveryAddressesModalModule } from '../delivery-addresses.modal';
 import { StButtonModule } from '@shared/ui-components/st-button/st-button.module';
+import { AddressHeaderFormatPipeModule } from '@shared/pipes/address-header-format-pipe/address-header-format-pipe.module';
 
 const declarations = [OrderOptionsActionSheetComponent];
 
@@ -12,6 +13,6 @@ const declarations = [OrderOptionsActionSheetComponent];
   declarations,
   exports: [OrderOptionsActionSheetComponent],
   entryComponents: [OrderOptionsActionSheetComponent],
-  imports: [CommonModule, IonicModule, DeliveryAddressesModalModule, StDateTimePickerModule, StButtonModule],
+  imports: [CommonModule, IonicModule, DeliveryAddressesModalModule, StDateTimePickerModule, StButtonModule, AddressHeaderFormatPipeModule],
 })
 export class OrderOptionsActionSheetModule { }

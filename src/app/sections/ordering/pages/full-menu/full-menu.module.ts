@@ -9,6 +9,7 @@ import { ViewCartModule } from '@sections/ordering/shared/ui-components/view-car
 import { ModifyPrepTimeModule } from '@sections/ordering/shared/pipes/modify-prep-time';
 import { FullMenuPopoverComponent } from './full-menu-popover';
 import { StPopoverLayoutModule } from '@shared/ui-components/st-popover-layout/st-popover-layout.module';
+import { AddressHeaderFormatPipeModule } from '@shared/pipes/address-header-format-pipe/address-header-format-pipe.module';
 
 const imports = [
   CommonModule,
@@ -18,7 +19,8 @@ const imports = [
   MerchantDistanceModule,
   ViewCartModule,
   ModifyPrepTimeModule,
-  StPopoverLayoutModule
+  StPopoverLayoutModule,
+  AddressHeaderFormatPipeModule
 ];
 const declarations = [FullMenuComponent, FullMenuPopoverComponent];
 

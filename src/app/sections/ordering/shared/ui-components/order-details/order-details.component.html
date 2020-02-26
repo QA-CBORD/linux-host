@@ -7,16 +7,16 @@
       <p class="order-details__value">{{timeWithoutTimezone | modifyPrepTime: orderTypes}}</p>
     </div>
 
-    <div class="order-details" *ngIf="orderDetailOptions.address && (orderDetailOptions.address | addressAsString: orderDetailOptions.orderType).length">
+    <div class="order-details" *ngIf="orderDetailOptions.address">
       <ion-label class="order-details__label">{{orderDetailOptions.orderType | typeMessage:'address'}}</ion-label>
 
       <p *ngIf="readonly && orderDetailOptions.address; else addressEditable"
-         class="order-details__value">{{ orderDetailOptions.address | addressAsString: orderDetailOptions.orderType }}</p>
+         class="order-details__value">{{ orderDetailOptions.address | addressHeaderFormat }}</p>
 
       <ng-template #addressEditable>
         <p class="order-details__value"
            [ngClass]="{'order-details__value--editable': isAddressClickable}"
-           (click)="isAddressClickable && showAddressListModal()">{{orderDetailOptions.address | addressAsString: orderDetailOptions.orderType}}</p>
+           (click)="isAddressClickable && showAddressListModal()">{{orderDetailOptions.address | addressHeaderFormat}}</p>
       </ng-template>
 
     </div>

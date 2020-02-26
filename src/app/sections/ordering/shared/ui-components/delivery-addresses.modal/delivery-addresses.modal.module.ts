@@ -4,6 +4,7 @@ import { IonicModule } from '@ionic/angular';
 import { DeliveryAddressesModalComponent } from './delivery-addresses.modal.component';
 import { AddEditAddressesModule } from '../add-edit-addresses';
 import { StButtonModule } from '@shared/ui-components/st-button/st-button.module';
+import { AddressHeaderFormatPipeModule } from '@shared/pipes/address-header-format-pipe/address-header-format-pipe.module';
 
 const declarations = [DeliveryAddressesModalComponent];
 
@@ -11,6 +12,6 @@ const declarations = [DeliveryAddressesModalComponent];
   declarations,
   exports: declarations,
   entryComponents: declarations,
-  imports: [CommonModule, IonicModule, AddEditAddressesModule, StButtonModule],
+  imports: [CommonModule, IonicModule, AddEditAddressesModule, StButtonModule, AddressHeaderFormatPipeModule],
 })
 export class DeliveryAddressesModalModule {}

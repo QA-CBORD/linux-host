@@ -1,3 +1,8 @@
+export enum ADDRESS_LOCATION {    
+  onCampus = 1,
+  offCampus = 0
+}
+
 export interface AddressInfo {
     id: string;
     objectRevision: number;
@@ -20,5 +25,7 @@ export interface AddressInfo {
     accessCode: string;
     phone: string;
     phoneExt: string;
-    onCampus: number;
+    onCampus: ADDRESS_LOCATION;
 }
+
+

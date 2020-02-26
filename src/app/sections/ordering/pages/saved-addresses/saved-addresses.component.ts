@@ -6,7 +6,7 @@ import { tap, switchMap, take, finalize } from 'rxjs/operators';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { MerchantService } from '@sections/ordering/services';
 import { BuildingInfo } from '@sections/ordering/shared/models';
-import { SYSTEM_SETTINGS_CONFIG, INSTITUTION_ADRESS_RESTRICTIONS } from '@sections/ordering/ordering.config';
+import { SYSTEM_SETTINGS_CONFIG, INSTITUTION_ADDRESS_RESTRICTIONS } from '@sections/ordering/ordering.config';
 
 @Component({
   selector: 'st-saved-addresses',
@@ -110,10 +110,10 @@ export class SavedAddressesComponent implements OnInit {
       .subscribe(([{ value }, addresses]) => {
         const institutionRestriction = parseInt(value);
         const filteredByInstitution = addresses.filter(({ onCampus }) => {
-          if (institutionRestriction === INSTITUTION_ADRESS_RESTRICTIONS.onCampus) {
+          if (institutionRestriction === INSTITUTION_ADDRESS_RESTRICTIONS.onCampus) {
             return onCampus;
           }
-          if (institutionRestriction === INSTITUTION_ADRESS_RESTRICTIONS.offCampus) {
+          if (institutionRestriction === INSTITUTION_ADDRESS_RESTRICTIONS.offCampus) {
             return !onCampus;
           }
         });
