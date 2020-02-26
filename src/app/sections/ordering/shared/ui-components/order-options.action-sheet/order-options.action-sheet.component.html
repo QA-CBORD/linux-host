@@ -42,17 +42,17 @@
               <ng-container *ngIf="orderOptionsData?.address; then addressContainer; else placeholder"></ng-container>
             </span>
 
-            <ng-template #placeholder>Add an Address</ng-template>
+            <ng-template #placeholder>Select an Address</ng-template>
 
             <ng-template #addressContainer>
               <ng-container *ngIf="orderOptionsData?.address?.onCampus; then onCampus; else offCampus"></ng-container>
             </ng-template>
 
             <ng-template #offCampus>
-              {{ orderOptionsData?.address?.address1 }}, {{orderOptionsData?.address?.city}}
+              {{ orderOptionsData.address | addressHeaderFormat }}
             </ng-template>
             <ng-template #onCampus>
-              {{orderOptionsData?.address?.building}}, Room {{orderOptionsData?.address?.room}}
+              {{ orderOptionsData.address | addressHeaderFormat }}
             </ng-template>
           </div>
         </div>

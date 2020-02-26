@@ -55,7 +55,7 @@
     mode="md"
     class="delivery-address__radio-group"
     (ionChange)="onRadioGroupChanged($event)"
-    *ngIf="listOfAddresses.length"
+    *ngIf="listOfAddresses?.length"
   >
     <ion-item lines="none" class="delivery-address__radio-container" *ngFor="let item of listOfAddresses">
       <ion-label class="delivery-address__radio-label">
@@ -63,18 +63,19 @@
           <ng-container *ngIf="item.onCampus; then onCampus; else offCampus"></ng-container>
 
           <ng-template #offCampus>
-            <div class="delivery-address__radio-label-header">{{ item.nickname }}</div>
-            <div class="delivery-address__radio-label-sub-header">{{ item.city }}, {{ item.state }}</div>
+            <div class="delivery-address__radio-label-header">{{ item.displayHeader }}</div>
+            <div class="delivery-address__radio-label-sub-header">{{ item.displaySubheader }}</div>
           </ng-template>
           <ng-template #onCampus>
-            <div class="delivery-address__radio-label-header">{{ item.building }}, Room {{ item.room }}</div>
+            <div class="delivery-address__radio-label-header">{{ item.displayHeader }}</div>
+            <div class="delivery-address__radio-label-sub-header">{{ item.displaySubheader }}</div>
           </ng-template>
         </div>
       </ion-label>
       <ion-radio
         mode="md"
         slot="start"
-        [value]="item"
+        [value]="item.item"
         [checked]="item.checked"
         class="delivery-address__radio-item"
       ></ion-radio>
@@ -92,6 +93,6 @@
     [isDisabled]="!selectedAddress"
     (onClick)="selectedAddress && onClickedDone(selectedAddress)"
   >
-    set delivery address
+    set {{ addressLabel }} address
   </st-button>
 </ng-template>

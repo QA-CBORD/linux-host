@@ -3,7 +3,7 @@ import { ModalController } from '@ionic/angular';
 import { MerchantService } from '@sections/ordering/services';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { UserService } from '@core/service/user-service/user.service';
-import { AddressInfo } from '@core/model/address/address-info';
+import { AddressInfo, getAddressHeader, getAddressSubHeader  } from '@core/model/address/address-info';
 import { take, switchMap } from 'rxjs/operators';
 import { of, zip, iif } from 'rxjs';
 
@@ -97,11 +97,16 @@ export class DeliveryAddressesModalComponent implements OnInit {
   private defineListOfAddresses(defaultAddress) {
     const listOfAddresses = this.isOrderTypePickup ? this.pickupLocations : this.deliveryAddresses;
     this.addressLabel = this.isOrderTypePickup ? 'Pickup' : 'Delivery';
-
-    return listOfAddresses.map(item => {
-      const checked = defaultAddress ? item.id == defaultAddress.id : false;
-
-      return item.addressInfo ? item.addressInfo : { ...item, checked };
+    return listOfAddresses.map(ad => {
+      const addressInfo = this.isOrderTypePickup ? ad.addressInfo : ad;
+      return {
+        onCampus: addressInfo.onCampus || false,
+        id: addressInfo.id,
+        item: addressInfo,
+        checked: defaultAddress ? addressInfo.id == defaultAddress.id : false,
+        displayHeader: getAddressHeader(addressInfo),
+        displaySubheader: getAddressSubHeader(addressInfo),
+      };
     });
   }
 }

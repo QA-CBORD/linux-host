@@ -25,10 +25,10 @@
               <ng-container *ngIf="(orderInfo$ | async)?.address.onCampus; then onCampus; else offCampus"></ng-container>
 
               <ng-template #offCampus>
-                {{ (orderInfo$ | async)?.address.address1 }}, {{ (orderInfo$ | async)?.address.city }}
+                {{ (orderInfo$ | async)?.address | addressHeaderFormat }}
               </ng-template>
               <ng-template #onCampus>
-                {{ (orderInfo$ | async)?.address.building }}, Room {{ (orderInfo$ | async)?.address.room }}
+                {{ (orderInfo$ | async)?.address | addressHeaderFormat }}
               </ng-template>
             </div>
           </div>

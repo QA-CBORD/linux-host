@@ -22,3 +22,21 @@ export interface AddressInfo {
     phoneExt: string;
     onCampus: number;
 }
+
+export const getAddressHeader = (address: AddressInfo): string => {
+  const { nickname, building, address1, address2 } = address;
+  return (
+    (nickname ? nickname : '') +
+    (building ? (nickname ? '' : building) : '') +
+    (address1 ? (nickname || building ? ', ' + address1 : address1) : '') +
+    (address2 ? (address1 ? ' ' + address2 : address2) : '')
+  );
+};
+
+export const getAddressSubHeader = (address: AddressInfo): string => {
+  const { city, state, postalcode } = address;
+  return (
+    (city ? city : '') + (state ? (city ? ', ' + state : state) : '') + (state && postalcode ? ' ' + postalcode : '')
+  );
+};
+
