@@ -46,6 +46,9 @@ export class AccessCardComponent implements OnInit {
     this.setInstitutionData();
     this.getFeaturesEnabled();
     this.getUserData();
+  }
+
+  ionViewWillEnter(){
     if (this.nativeProvider.isIos()) {
       this.nativeProvider.getIosData(NativeData.APPLE_WALLET_INFO).then(value => {
         this.appleWalletInfo = JSON.parse(value);
