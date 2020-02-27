@@ -15,7 +15,6 @@ import { AddressHeaderFormatPipeModule } from '@shared/pipes/address-header-form
 
 const declarations = [OrderDetailsComponent, TypeMessagePipe, AccountTypeResolverPipe];
 
-
 @NgModule({
   declarations,
   imports: [
@@ -26,9 +25,9 @@ const declarations = [OrderDetailsComponent, TypeMessagePipe, AccountTypeResolve
     DeliveryAddressesModalModule,
     PriceUnitsResolverModule,
     ModifyPrepTimeModule,
-    AddressHeaderFormatPipeModule
+    AddressHeaderFormatPipeModule,
   ],
   exports: [OrderDetailsComponent],
-  providers: [CreditCardTypePipe, PriceUnitsResolverPipe]
+  providers: [CreditCardTypePipe, PriceUnitsResolverPipe],
 })
-export class OrderDetailsModule { }
+export class OrderDetailsModule {}

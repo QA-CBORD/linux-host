@@ -47,6 +47,13 @@ export class StDateSelectComponent implements ControlValueAccessor {
 
   constructor(private _changeDetector: ChangeDetectorRef) {}
 
+  handleChange(event: CustomEvent): void {
+    const value: string = event.detail.value;
+
+    this.onChange(value);
+    this._checkIsFilled(value);
+  }
+
   registerOnChange(fn: any): void {
     this.onChange = fn;
   }
@@ -64,11 +71,11 @@ export class StDateSelectComponent implements ControlValueAccessor {
     if (value !== this.value) {
       this.value = value;
       this._checkIsFilled(value);
-      this._changeDetector.markForCheck();
     }
   }
 
   private _checkIsFilled(value: any): void {
     this.isFilled = hasValue(value);
+    this._changeDetector.markForCheck();
   }
 }

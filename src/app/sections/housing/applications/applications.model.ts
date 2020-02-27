@@ -49,7 +49,7 @@ export class PatronApplication {
     }
 
     this.applicationDefinitionKey = define(options.applicationDefinitionKey, Number(options.applicationDefinitionKey));
-    this.status = define(options.status);
+    this.status = define(options.status, ApplicationStatus.New);
 
     if (isDefined(options.key)) {
       this.key = Number(options.key);

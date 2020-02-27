@@ -25,7 +25,7 @@ const imports = [
   ItemDetailRoutingModule,
   StHeaderModule,
   PriceUnitsResolverModule,
-  StButtonModule
+  StButtonModule,
 ];
 
 @NgModule({
