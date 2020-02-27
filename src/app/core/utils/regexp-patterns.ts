@@ -8,7 +8,7 @@ export const INT_REGEXP = /(?:\s|^)\d+(?=\s|$)/;
 export const INT_DEC_REGEXP = /^\s*(?=.*[1-9])\d*(?:\.\d{1,2})?\s*$/;
 
 // Currency
-export const CURRENCY_REGEXP = /^[0-9]+(\.[0-9]{1,2})?$/;
+export const CURRENCY_REGEXP = /^([1-9]{1}[0-9]{0,2}(\,[0-9]{3})*(\.[0-9]{0,2})?|[1-9]{1}[0-9]{0,}(\.[0-9]{0,2})?|0(\.[0-9]{0,2})?|(\.[0-9]{1,2})?)$/m;
 
 // Leading zero pattern
 export const ZERO_FIRST_REGEXP = /^(0+)/g;
