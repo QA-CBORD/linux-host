@@ -3,11 +3,12 @@ import { ModalController } from '@ionic/angular';
 import { MerchantService } from '@sections/ordering/services';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { UserService } from '@core/service/user-service/user.service';
-import { take, switchMap } from 'rxjs/operators';
-import { of, zip, iif } from 'rxjs';
+import { take, switchMap, tap } from 'rxjs/operators';
+import { of, zip, iif, Observable } from 'rxjs';
 import { AddressInfoExpanded } from '../../models/address-info-expanded';
 import { getAddressSubHeader, getAddressHeader } from '@core/utils/address-helper';
 import { AddressInfo } from '@core/model/address/address-info';
+import { BuildingInfo } from '@sections/ordering/shared/models';
 
 @Component({
   selector: 'st-delivery-addresses.modal',
@@ -23,6 +24,7 @@ export class DeliveryAddressesModalComponent implements OnInit {
   @Input() deliveryAddresses: Array<AddressInfo>;
   @Input() merchantId: string;
 
+  buildings$: Observable<BuildingInfo[]>;
   addNewAdddressState: boolean = false;
   addNewAdddressForm: { value: any; valid: boolean } = { value: null, valid: false };
   errorState: boolean = false;
@@ -39,7 +41,9 @@ export class DeliveryAddressesModalComponent implements OnInit {
 
   ngOnInit() {
     this.listOfAddresses = this.defineListOfAddresses(this.defaultAddress);
+    this.buildings$ = this.merchantService.retrieveBuildings();
   }
+
   async onClickedDone(selectedAddress?: AddressInfo) {
     await this.modalController.dismiss(selectedAddress);
   }
@@ -50,15 +54,15 @@ export class DeliveryAddressesModalComponent implements OnInit {
       return;
     }
     this.loadingService.showSpinner();
-    this.merchantService
-      .updateUserAddress(this.addNewAdddressForm.value)
+    this.getBuildingData$(parseInt(this.addNewAdddressForm.value.campus))
       .pipe(
+        switchMap(() => this.merchantService.updateUserAddress(this.addNewAdddressForm.value)),
         switchMap(
           (addedAddress): any =>
             zip(
               iif(
                 () => this.addNewAdddressForm.value.default,
-                this.userService.saveUserSettingsBySettingName('defaultaddress', addedAddress.id),
+                this.userService.saveUserSettingsBySettingName('defaultaddress', addedAddress['id']),
                 of(false)
               ),
               of(addedAddress)
@@ -72,14 +76,17 @@ export class DeliveryAddressesModalComponent implements OnInit {
       .subscribe(
         ([addedAddress]) => {
           if (addedAddress) {
-            this.listOfAddresses = [...this.listOfAddresses, {
-              onCampus: addedAddress.onCampus,
-              id: addedAddress.id,
-              item: addedAddress,
-              checked: false,
-              displayHeader: getAddressHeader(addedAddress),
-              displaySubheader: getAddressSubHeader(addedAddress),
-            }];
+            this.listOfAddresses = [
+              ...this.listOfAddresses,
+              {
+                onCampus: addedAddress.onCampus,
+                id: addedAddress.id,
+                item: addedAddress,
+                checked: false,
+                displayHeader: getAddressHeader(addedAddress),
+                displaySubheader: getAddressSubHeader(addedAddress),
+              },
+            ];
           }
           this.resetForm();
           this.cdRef.detectChanges();
@@ -117,5 +124,32 @@ export class DeliveryAddressesModalComponent implements OnInit {
         displaySubheader: getAddressSubHeader(addressInfo),
       };
     });
+  }
+
+  private getBuildingData$(isOncampus): Observable<any> {
+    if (isOncampus) {
+      return this.buildings$.pipe(
+        tap(buildings => {
+          const activeBuilding = buildings.find(
+            ({ addressInfo: { building } }) => building === this.addNewAdddressForm.value.building
+          );
+          const {
+            addressInfo: { address1, address2, city, state, latitude, longitude },
+          } = activeBuilding;
+          this.addNewAdddressForm.value = {
+            ...this.addNewAdddressForm.value,
+            address1,
+            address2,
+            city,
+            state,
+            latitude,
+            longitude,
+            nickname: `${this.addNewAdddressForm.value.building}, Room ${this.addNewAdddressForm.value.room}`,
+          };
+        })
+      );
+    }
+
+    return of(true);
   }
 }

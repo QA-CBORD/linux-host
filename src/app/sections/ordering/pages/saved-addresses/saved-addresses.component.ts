@@ -78,7 +78,7 @@ export class SavedAddressesComponent implements OnInit {
             ({ addressInfo: { building } }) => building === this.addNewAddressForm.value.building
           );
           const {
-            addressInfo: { address1, address2, city, nickname, state, latitude, longitude },
+            addressInfo: { address1, address2, city, state, latitude, longitude },
           } = activeBuilding;
           this.addNewAddressForm.value = {
             ...this.addNewAddressForm.value,
