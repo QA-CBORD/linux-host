@@ -3,7 +3,7 @@
   [displayFormat]="displayFormat"
   [class.date-select__control--filled]="isFilled"
   [value]="value"
-  (ionChange)="onChange($event)"
+  (ionChange)="handleChange($event)"
   (ionBlur)="onTouched()"
   [disabled]="isDisabled"
 ></ion-datetime>
