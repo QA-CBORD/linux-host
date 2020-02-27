@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 
 import { EditHomePageModalComponent } from './components/edit-home-page-modal';
@@ -9,6 +9,8 @@ import { TileConfigFacadeService } from '@sections/dashboard/tile-config-facade.
 import { CONTENT_STRING_NAMES } from '@sections/accounts/pages/meal-donations/content-strings';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { CONTENT_STINGS_CATEGORIES, CONTENT_STINGS_DOMAINS } from '../../content-strings';
+import { AccessCardComponent } from './containers/access-card/access-card.component';
+import { AccessCardService } from './containers/access-card/services/access-card.service';
 
 @Component({
   selector: 'st-dashboard',
@@ -17,6 +19,7 @@ import { CONTENT_STINGS_CATEGORIES, CONTENT_STINGS_DOMAINS } from '../../content
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardPage implements OnInit {
+  @ViewChild(AccessCardComponent) accessCard:AccessCardComponent;
   tiles$: Observable<TileWrapperConfig[]>;
 
   constructor(
@@ -33,6 +36,9 @@ export class DashboardPage implements OnInit {
   ngOnInit() {
     this.tiles$ = this.tileConfigFacadeService.tileSettings$;
     this.updateDonationMealsStrings();
+  }
+  ionViewWillEnter(){
+    this.accessCard.ionViewWillEnter();
   }
 
   async presentEditHomePageModal(): Promise<void> {
