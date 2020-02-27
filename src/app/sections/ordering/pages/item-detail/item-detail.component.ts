@@ -1,6 +1,6 @@
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
-import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
-import { ToastController, IonContent } from '@ionic/angular';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ToastController } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subscription, zip } from 'rxjs';
 import { first, take } from 'rxjs/operators';
@@ -28,10 +28,7 @@ export class ItemDetailComponent implements OnInit {
   cartSelectedItem: OrderItem;
   cartOrderItemOptions: OrderItem[] = [];
   allowNotes: boolean;
-  showFooter: boolean = true;
- 
-  @ViewChild('content') private content: IonContent;
-
+  
   constructor(
     private readonly router: Router,
     private readonly fb: FormBuilder,
@@ -54,12 +51,6 @@ export class ItemDetailComponent implements OnInit {
     this.activatedRoute.data.pipe(take(1)).subscribe(({ data: { queryParams: { categoryId } } }) => {
       this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.menuCategoryItems, categoryId], { skipLocationChange: true });
     });
-  }
-
-
-  onNotesType(isFocus?: boolean) {
-    if(isFocus) this.content.scrollToBottom(600);
-    this.showFooter = !this.showFooter;
   }
 
   initForm() {
