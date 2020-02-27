@@ -81,8 +81,6 @@
                                   [isError]="itemOrderForm.get('message').invalid && itemOrderForm.get('message').touched"
                                   class="order-detail__order-message"
                                   formControlName="message"      
-                                  (onFocus)="onNotesType(true)"
-                                  (onBlur)="onNotesType()"                                  
                                   idd="message"
                                   label="Add a note for the kitchen"
                                   rows="3">
@@ -114,7 +112,7 @@
     </ion-list>
   </form>
 </ion-content>
-<ion-footer class="item-footer" mode="ios" [ngClass]="{'item-footer--hide': !showFooter}">
+<ion-footer class="item-footer" mode="ios">
   <div class="item-footer__counter-btns-container">
     <ion-button (click)="removeItems()" [disabled]="order.counter == 1" class="item-footer__counter-btn">
       <ion-icon name="remove"></ion-icon>

@@ -16,13 +16,16 @@ import { StButtonModule } from '@shared/ui-components/st-button/st-button.module
 const declarations = [ItemDetailComponent, SingleListComponent, MultiListComponent, ];
 const imports = [
   CommonModule,
-  IonicModule,
+  IonicModule.forRoot({
+    scrollPadding: false,
+    scrollAssist: true,
+  }),
   ReactiveFormsModule,
   StTextareaFloatingLabelModule,
   ItemDetailRoutingModule,
   StHeaderModule,
   PriceUnitsResolverModule,
-  StButtonModule
+  StButtonModule,
 ];
 
 @NgModule({
