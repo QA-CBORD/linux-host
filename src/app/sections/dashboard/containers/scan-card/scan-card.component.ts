@@ -1,8 +1,8 @@
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { map, skipWhile, switchMap, take, tap, delay } from 'rxjs/operators';
-import { Observable, timer, Subscription } from 'rxjs';
+import { map, skipWhile, switchMap, take, catchError } from 'rxjs/operators';
+import { Observable, timer, of } from 'rxjs';
 import bwipjs from 'bwip-angular2';
 
 import { UserInfo } from '@core/model/user';
@@ -19,10 +19,9 @@ import { NativeProvider } from '@core/provider/native-provider/native.provider';
   templateUrl: './scan-card.component.html',
   styleUrls: ['./scan-card.component.scss'],
 })
-export class ScanCardComponent implements OnInit, OnDestroy {
+export class ScanCardComponent implements OnInit {
   private readonly BARCODE_GEN_INTERVAL = 180000; /// 3 minutes
-  private readonly subscription: Subscription = new Subscription();
-  showBarcode: boolean = false;
+  generateBarcode$: Observable<boolean>;
   userInfoId$: Observable<string>;
   institution$: Observable<Institution>;
   institutionPhoto$: Observable<SafeResourceUrl>;
@@ -42,7 +41,8 @@ export class ScanCardComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.isMediaSettingExists$ = this.settingsFacadeService.getSetting$(DASHBOARD_SETTINGS_CONFIG.displayMediaType)
+    this.isMediaSettingExists$ = this.settingsFacadeService
+      .getSetting$(DASHBOARD_SETTINGS_CONFIG.displayMediaType)
       .pipe(map(({ value }) => !!value && !!value.length));
     this.setInstitutionColor();
     this.setUserId();
@@ -51,10 +51,6 @@ export class ScanCardComponent implements OnInit, OnDestroy {
     this.setInstitutionPhoto();
     this.initBarcode();
     this.userInfoId$ = this.commerceApiService.getCashlessUserId().pipe(map(d => (d.length ? d : 'None')));
-  }
-
-  ngOnDestroy() {
-    this.subscription.unsubscribe();
   }
 
   get userFullName$(): Observable<string> {
@@ -74,7 +70,7 @@ export class ScanCardComponent implements OnInit, OnDestroy {
       .getAcceptedPhoto()
       .pipe(
         map(({ data, mimeType }) => `data:${mimeType};base64,${data}`),
-        take(1),
+        take(1)
       )
       .subscribe((url: string) => {
         this.userPhoto = url;
@@ -97,23 +93,13 @@ export class ScanCardComponent implements OnInit, OnDestroy {
   }
 
   private initBarcode() {
-    this.subscription.add(
-      timer(0, this.BARCODE_GEN_INTERVAL)
-        .pipe(
-          switchMap(_ => this.nativeInterface.getPatronBarcode()),
-          tap(value => {
-            value ? (this.showBarcode = true) : (this.showBarcode = false);
-          }),
-          delay(500)
-        )
-        .subscribe(
-          value => {
-            this.generateBarcode(value);
-          },
-          error => {
-            this.showBarcode = false;
-          }
-        )
+    this.generateBarcode$ = timer(0, this.BARCODE_GEN_INTERVAL).pipe(
+      switchMap(_ => this.nativeInterface.getPatronBarcode()),
+      map(value => {
+        this.generateBarcode(value);
+        return true;
+      }),
+      catchError(_ => of(false))
     );
   }
 

@@ -1,14 +1,10 @@
 @import 'tools';
 
 .order-detail {
-    --padding-bottom: 220px;
+    --keyboard-offset: 250px;
 
     min-height: 100%;
     position: relative;
-
-    &--increased {
-        --padding-bottom: 23rem;
-    }
 
     &__static-header {
         display: block;
