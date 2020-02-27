@@ -1,21 +1,21 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ActivateLocationComponent } from './st-activate-location-item.component';
+import { StActivateLocationItemComponent } from './st-activate-location-item.component';
 
-describe('ActivateLocationComponent', () => {
-  let component: ActivateLocationComponent;
-  let fixture: ComponentFixture<ActivateLocationComponent>;
+describe('StActivateLocationItemComponent', () => {
+  let component: StActivateLocationItemComponent;
+  let fixture: ComponentFixture<StActivateLocationItemComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ActivateLocationComponent],
+      declarations: [StActivateLocationItemComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ActivateLocationComponent);
+    fixture = TestBed.createComponent(StActivateLocationItemComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

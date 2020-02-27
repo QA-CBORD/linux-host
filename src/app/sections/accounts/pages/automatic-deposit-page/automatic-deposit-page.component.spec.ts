@@ -1,21 +1,21 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AutomaticDepositPagePage } from './automatic-deposit-page.page';
+import { AutomaticDepositPageComponent } from './automatic-deposit-page.component';
 
-describe('AutomaticDepositPagePage', () => {
-  let component: AutomaticDepositPagePage;
-  let fixture: ComponentFixture<AutomaticDepositPagePage>;
+describe('AutomaticDepositPageComponent', () => {
+  let component: AutomaticDepositPageComponent;
+  let fixture: ComponentFixture<AutomaticDepositPageComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [AutomaticDepositPagePage],
+      declarations: [AutomaticDepositPageComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(AutomaticDepositPagePage);
+    fixture = TestBed.createComponent(AutomaticDepositPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

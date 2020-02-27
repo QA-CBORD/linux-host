@@ -1,21 +1,21 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { StProgressBarPage } from './st-progress-bar.page';
+import { StProgressBarComponent } from './st-progress-bar.component';
 
-describe('StProgressBarPage', () => {
-  let component: StProgressBarPage;
-  let fixture: ComponentFixture<StProgressBarPage>;
+describe('StProgressBarComponent', () => {
+  let component: StProgressBarComponent;
+  let fixture: ComponentFixture<StProgressBarComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [StProgressBarPage],
+      declarations: [StProgressBarComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(StProgressBarPage);
+    fixture = TestBed.createComponent(StProgressBarComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
