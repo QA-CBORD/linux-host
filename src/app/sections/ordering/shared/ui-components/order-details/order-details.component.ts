@@ -52,7 +52,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   @Input() accountName: string;
   @Input() mealBased: boolean;
   @Input() accounts: UserAccount[] = [];
-  @Input() merchantSettingsList: MerchantSettingInfo[];
+  @Input() merchantSettingsList: MerchantSettingInfo[] = [];
   @Input() addressModalConfig: AddressModalSettings;
   @Input() applePayEnabled: boolean;
   @Output() onFormChange: EventEmitter<OrderDetailsFormData> = new EventEmitter<OrderDetailsFormData>();
@@ -111,7 +111,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     return !!this.merchantSettingsList.filter(
       ({ domain, category, name, value }) =>
         `${domain}.${category}.${name}` === MerchantSettings.tipEnabled && !!Number(value)
-    ).length;    
+    ).length;
   }
 
   trackByAccountId(i: number): string {
@@ -230,7 +230,7 @@ export const CONTROL_ERROR = {
     currency: 'Invalid format',
     subtotal: 'Tip must be less than the Subtotal amount',
   },
-  
+
 };
 
 export interface AddressModalSettings {
