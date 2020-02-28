@@ -3,7 +3,7 @@ enum Development {
   site_url = 'http://get.dev.cbord.com',
   cbordstudent_url = 'https://student.dev.cbord.com',
   secmsg_api = 'https://secmsg.api.dev.cbord.com',
-  housing_aws_prefix = 'dev',
+  housing_aws_url = 'https://z6u8er70s9.execute-api.us-east-1.amazonaws.com/dev',
 }
 
 enum Feature1 {
@@ -11,7 +11,7 @@ enum Feature1 {
   site_url = 'http://get.feature1.cbord.com',
   cbordstudent_url = 'https://student.feature1.cbord.com',
   secmsg_api = 'https://secmsg.api.dev.cbord.com',
-  housing_aws_prefix = 'dev',
+  housing_aws_url = 'https://z6u8er70s9.execute-api.us-east-1.amazonaws.com/dev',
 }
 
 enum Qa {
@@ -19,7 +19,7 @@ enum Qa {
   site_url = 'http://get.qa.cbord.com',
   cbordstudent_url = 'https://student.qa.cbord.com',
   secmsg_api = 'https://secmsg.api.qa.cbord.com',
-  housing_aws_prefix = 'qa',
+  housing_aws_url = 'https://z4ffq7e1m9.execute-api.us-east-1.amazonaws.com/qa',
 }
 
 enum Pat {
@@ -27,7 +27,7 @@ enum Pat {
   site_url = 'http://get.pat.cbord.com',
   cbordstudent_url = 'https://student.pat.cbord.com',
   secmsg_api = 'https://secmsg.api.pat.cbord.com',
-  housing_aws_prefix = 'pat',
+  housing_aws_url = 'https://z6u8er70s9.execute-api.us-east-1.amazonaws.com/dev',
 }
 
 enum Demo {
@@ -35,7 +35,7 @@ enum Demo {
   site_url = 'http://get.demo.cbord.com',
   cbordstudent_url = 'https://student.demo.cbord.com',
   secmsg_api = 'https://secmsg.api.demo.cbord.com',
-  housing_aws_prefix = 'demo',
+  housing_aws_url = 'https://z4ffq7e1m9.execute-api.us-east-1.amazonaws.com/qa',
 }
 
 enum Production {
@@ -43,7 +43,7 @@ enum Production {
   site_url = 'http://get.cbord.com',
   cbordstudent_url = 'https://student.cbord.com',
   secmsg_api = 'https://secmsg.api.cbord.com',
-  housing_aws_prefix = '',
+  housing_aws_url = 'https://z6u8er70s9.execute-api.us-east-1.amazonaws.com',
 }
 
 export class Environment {
