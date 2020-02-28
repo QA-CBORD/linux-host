@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MenuCategoryItemInfo } from '@sections/ordering';
-import AWSAPIUrl = Environment.AWSAPIUrl;
-import { Environment } from '../../../../../app.global';
+import { Environment } from '../../../../../environment';
 
 @Component({
   selector: 'st-category-list',
@@ -13,7 +12,7 @@ export class CategoryListComponent {
   @Input() menuCategoryItems: MenuCategoryItemInfo[];
   @Input() mealBased: boolean;
   @Output() onItemClicked: EventEmitter<string> = new EventEmitter<string>();
-  awsImageUrl: string = AWSAPIUrl.images;
+  awsImageUrl: string = Environment.getImageURL();
 
   triggerMenuItemClick({ menuItem: { id } }) {
     this.onItemClicked.emit(id);

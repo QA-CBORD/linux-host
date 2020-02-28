@@ -10,6 +10,7 @@ import { CartService, MenuInfo, MenuItemInfo, OrderItem } from '@sections/orderi
 import { LoadingService } from '@core/service/loading/loading.service';
 import { handleServerError } from '@core/utils/general-helpers';
 import { NAVIGATE } from 'src/app/app.global';
+import { Environment } from 'src/app/environment';
 
 @Component({
   selector: 'st-item-detail',
@@ -208,10 +209,10 @@ export class ItemDetailComponent implements OnInit {
     zip(this.activatedRoute.data, this.cartService.orderItems$, this.cartService.merchant$)
       .pipe(take(1))
       .subscribe(([{ data: { menuItem, queryParams: { orderItemId } } }, orderItems, { settings }]) => {
-        const imageBaseUrl = 'https://3bulchr7pb.execute-api.us-east-1.amazonaws.com/dev/image';
+        const imageBaseUrl = Environment.getImageURL();
         this.menuItem = menuItem.menuItem;
         this.menuItemImg = this.menuItem.imageReference 
-          ? `${imageBaseUrl}/${this.menuItem.imageReference}`
+          ? `${imageBaseUrl}${this.menuItem.imageReference}`
           : '';
         this.order = { ...this.order, totalPrice: this.menuItem.price };
         this.allowNotes = !JSON.parse(settings.map[MerchantSettings.disableItemNotes].value);

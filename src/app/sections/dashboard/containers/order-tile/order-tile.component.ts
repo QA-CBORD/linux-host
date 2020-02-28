@@ -2,8 +2,8 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@
 import { MerchantInfo, MerchantService } from '@sections/ordering';
 import { take, finalize } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import { Environment, NAVIGATE } from '../../../../app.global';
-import AWSAPIUrl = Environment.AWSAPIUrl;
+import { NAVIGATE } from '../../../../app.global';
+import { Environment } from 'src/app/environment';
 
 @Component({
   selector: 'st-order-tile',
@@ -19,7 +19,8 @@ export class OrderTileComponent implements OnInit {
     width: 330,
     autoHeight: true,
   };
-  awsImageUrl: string = AWSAPIUrl.images;
+
+  awsImageUrl: string = Environment.getImageURL();
   amountPerSlide: number = 2;
   slides: MerchantInfo[][] = [];
   skeletonArray: any[] = new Array(this.amountPerSlide);

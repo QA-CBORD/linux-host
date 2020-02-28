@@ -20,11 +20,6 @@ export namespace Environment {
     DEMO = 'http://getdemo.cbord.com/GETServices/services',
     PRODUCTION = 'https://services.get.cbord.com/GETServices/services',
   }
-
-  export enum AWSAPIUrl {
-    DEVELOPMENT = 'https://dwptofebk7.execute-api.us-east-1.amazonaws.com/dev',
-    images = 'https://3bulchr7pb.execute-api.us-east-1.amazonaws.com/dev/image/',
-  }
 }
 
 export namespace Exception {
