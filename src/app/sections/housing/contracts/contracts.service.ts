@@ -2,8 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 
-import { BASE_URL } from '../housing.config';
-
 import { generateContracts } from './contracts.mock';
 
 import { Contract } from './contracts.model';

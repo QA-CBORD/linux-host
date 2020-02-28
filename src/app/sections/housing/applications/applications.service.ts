@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Observable, forkJoin, of, Subject } from 'rxjs';
 import { map, tap, switchMap, catchError, mapTo } from 'rxjs/operators';
 
-import { BASE_URL } from '../housing.config';
 import { Environment } from '../../../environment';
 import { parseJsonToArray } from '../utils';
 
@@ -28,8 +27,8 @@ import { QuestionBase } from '../questions/types/question-base';
   providedIn: 'root',
 })
 export class ApplicationsService {
-  private readonly _patronApplicationsUrl: string = `${BASE_URL}/${
-    Environment.currentEnvironment.housing_aws_prefix
+  private readonly _patronApplicationsUrl: string = `${
+    Environment.currentEnvironment.housing_aws_url
   }/patron-applications/v.1.0/patron-applications`;
 
   private readonly _applicationDefinitionUrl: string = `${this._patronApplicationsUrl}/application-definition`;
