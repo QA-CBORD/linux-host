@@ -1,0 +1,35 @@
+@import 'tools';
+
+:host {
+  .history {
+    &__content {
+      @include bp-grid-tablet {
+        margin: 0 25%;
+      }
+
+      @include bp-grid-desktop {
+        margin: 0 30%;
+      }
+    }
+
+    &__empty-message {
+      margin-top: 30px;
+      text-align: center;
+      color: $color-dim-gray;
+      text-shadow: 0 0 1px $color-dark-gray;
+    }
+
+    &__list {
+      .list-container {
+        &__item {
+          --padding-start: 0 !important;
+          --border-color: #f3f3f3 !important;
+
+          &-content {
+            margin: 10px 0 10px 15px;
+          }
+        }
+      }
+    }
+  }
+}

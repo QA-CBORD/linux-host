@@ -1,0 +1,69 @@
+<st-header title="Full Menu"
+           [isTitleShow]="true"
+           [backButtonTitle]="'Explore'"
+           [backButtonIcon]="'ios-arrow-back'"
+           [isToolbarShow]="true"
+           class="full-menu__header"></st-header>
+
+<ion-content>
+  <ion-list class="full-menu__address-info-list">
+    <ion-item lines="full"
+              (click)="merchantInfoState = !merchantInfoState">
+      <div class="full-menu__address-container">
+        <div>
+          <div class="full-menu__address-title">{{ (merchantInfo$ | async).name }}</div>
+          <ng-container *ngIf="merchantInfoState">
+            <div class="full-menu__address-description">{{ (merchantInfo$ | async).description }}</div>
+          </ng-container>
+          <div class="full-menu__address-info">
+            <img src="./assets/icon/location-pin.svg"
+                 height="16"
+                 alt="location-pin" />
+            <div *ngIf="(orderInfo$ | async)?.address"
+                 class="full-menu__address-info-content">
+              {{ (merchantInfo$ | async).distanceFromUser | merchantDistance }} -              
+              {{ (orderInfo$ | async)?.address | addressHeaderFormat }}
+            </div>
+          </div>
+        </div>
+        <div class="full-menu__arrow-wrapper">
+          <img src="/assets/icon/angle-{{ merchantInfoState ? 'up' : 'down' }}-select.svg"
+               alt="arrow" />
+        </div>
+      </div>
+    </ion-item>
+    <ion-item lines="full"
+              (click)="openOrderOptions()">
+      <div class="full-menu__date-time-container">
+        <div class="full-menu__date-time-wrapper">
+          <div class="full-menu__date-time-value">{{ orderType | async }}</div>
+          <div class="full-menu__date-time-helper">for</div>
+          <div class="full-menu__date-time-value" *ngIf="orderDetails$ | async">
+            {{ (orderDetails$ | async).orderInfo | modifyPrepTime: (orderDetails$ | async).orderTypes }}
+          </div>
+        </div>
+        <div class="full-menu__arrow-wrapper">
+          <img src="/assets/icon/angle-down-select.svg"
+               alt="arrow down" />
+        </div>
+      </div>
+    </ion-item>
+  </ion-list>
+  <ion-list>
+    <ion-item detail
+              lines="full"
+              *ngFor="let category of (menu$ | async)?.menuCategories"
+              (click)="onCategoryClicked(category)">
+      <div class="full-menu__menu-item">
+        <div>{{ category.name }}</div>
+        <div class="full-menu__item-size">{{ category.menuCategoryItems.length }}</div>
+      </div>
+    </ion-item>
+  </ion-list>
+</ion-content>
+<ion-footer mode="ios"
+            class="full-menu__footer"
+            *ngIf="(menuItems$ | async)">
+  <st-view-cart [menuItemsCount]="menuItems$ | async"
+                (click)="redirectToCart()"></st-view-cart>
+</ion-footer>

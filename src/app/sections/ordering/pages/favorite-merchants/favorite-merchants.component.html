@@ -1,0 +1,26 @@
+<st-header
+  title="Favorite Merchants"
+  [isTitleShow]="true"
+  [backButtonTitle]="''"
+  [backButtonIcon]="'close'"
+  [isToolbarShow]="true"
+  class="favorites__header"
+></st-header>
+
+<ion-content>
+  <st-merchant-list
+    [merchantList]="merchantList"
+    (addToFav)="favouriteHandler($event)"
+    (locationPin)="locationPinHandler($event)"
+    (merchantClick)="merchantClickHandler($event)"
+  ></st-merchant-list>
+  <div class="favorites__empty-state-container" *ngIf="!merchantList.length">
+    <img src="/assets/images/favorite_merchants.svg" alt="empty favorites list" class="favorites__empty-state-img" />
+    <div class="favorites__empty-state-text">Your favorited merchants will appear here.</div>
+  </div>
+</ion-content>
+<ion-footer mode="ios" *ngIf="!merchantList.length" no-border class="favorites__empty-state-footer">
+  <ion-toolbar>
+    <st-button (onClick)="backToOrdering()">back to ordering</st-button>
+  </ion-toolbar>
+</ion-footer>

@@ -1,0 +1,73 @@
+@import 'tools';
+
+.textarea {
+  &__wrapper {
+    position: relative;
+  }
+
+  &__control {
+    width: 100%;
+    outline: none;
+    border: 1px solid $color-light-gray;
+    border-radius: 8px;
+    padding: 0 0 0 10px;
+
+    &:focus,
+    &:focus-within {
+      border: 2px solid $color-dodger-blue;
+
+      & + .textarea__placeholder {
+        z-index: 2;
+
+        @include floating-label($color-dodger-blue);
+      }
+    }
+
+    &--error {
+      border: 2px solid $color-alizarin;
+
+      &:focus,
+      &:focus-within {
+        z-index: 2;
+
+        border: 2px solid $color-alizarin;
+
+        & + .textarea__placeholder {
+          z-index: 2;
+
+          @include floating-label($color-alizarin);
+        }
+      }
+
+      & + .textarea__placeholder {
+        z-index: 2;
+
+        @include floating-label($color-alizarin);
+      }
+    }
+  }
+
+  &__placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 15px 0 0 13px;
+    transition: all 200ms;
+    opacity: 0.6;
+  }
+}
+
+:host-context(.ng-valid.ng-touched) .textarea__control {
+  &:focus-within {
+    & + .textarea__placeholder {
+
+      @include floating-label($color-dodger-blue);
+    }
+  }
+
+  & + .textarea__placeholder {
+    z-index: 2;
+
+    @include floating-label($color-dim-gray);
+  }
+}

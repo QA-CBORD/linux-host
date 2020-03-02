@@ -1,173 +1,291 @@
-import { Component } from '@angular/core';
-
+import { Component, OnDestroy } from '@angular/core';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
-import {
-  AlertController,
-  Events,
-  LoadingController,
-  Platform,
-} from '@ionic/angular';
-
-import { Router } from '@angular/router';
+import { Events, LoadingController, Platform, PopoverController } from '@ionic/angular';
+import { Router, Event, NavigationEnd, NavigationStart } from '@angular/router';
 import * as Globals from './app.global';
-import { ExceptionPayload } from './core/model/exception/exception-interface';
-import { DataCache } from './core/utils/data-cache';
-import { EDestination } from './pages/home/home.page';
+import { DataCache } from '@core/utils/data-cache';
+import { from, of, fromEvent, Subscription } from 'rxjs';
+import { switchMap, tap, take, map, retryWhen, delay } from 'rxjs/operators';
+import { Environment } from './environment';
+import { NAVIGATE } from './app.global';
+import { TestProvider } from '@core/provider/test-provider/test.provider';
+import { AuthService } from '@core/service/auth-service/auth.service';
+import { UserService } from '@core/service/user-service/user.service';
+import { NativeProvider, NativeData } from '@core/provider/native-provider/native.provider';
+import { BUTTON_TYPE, buttons } from '@core/utils/buttons.config';
+import { StGlobalPopoverComponent } from '@shared/ui-components';
+import { environment } from 'src/environments/environment';
+import { UserInfo } from '@core/model/user';
 
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
 })
-export class AppComponent {
-  static readonly EVENT_APP_PAUSE = 'event.apppause';
-  static readonly EVENT_APP_RESUME = 'event.appresume';
-
+export class AppComponent implements OnDestroy {
+  private readonly EVENT_APP_PAUSE = 'event.apppause';
+  private readonly EVENT_APP_RESUME = 'event.appresume';
+  private readonly sourceSubscription: Subscription = new Subscription();
+  private sessionToken: string = null;
   private loader;
+  private destinationPage: NAVIGATE;
 
   constructor(
-    private platform: Platform,
-    private router: Router,
-    private splashScreen: SplashScreen,
-    private statusBar: StatusBar,
-    private events: Events,
-    private loadCtrl: LoadingController,
-    private alertCtrl: AlertController
+    private readonly platform: Platform,
+    private readonly router: Router,
+    private readonly splashScreen: SplashScreen,
+    private readonly statusBar: StatusBar,
+    private readonly events: Events,
+    private readonly loadCtrl: LoadingController,
+    private readonly testProvider: TestProvider,
+    private readonly authService: AuthService,
+    private readonly userService: UserService,
+    private readonly popoverCtrl: PopoverController,
+    private readonly nativeProvider: NativeProvider,
   ) {
     this.initializeApp();
   }
 
+  ngOnDestroy() {
+    this.sourceSubscription.unsubscribe();
+  }
+
   initializeApp() {
-    this.platform.ready().then(() => {
-      this.statusBar.styleDefault();
-      this.splashScreen.hide();
-      this.setupAppStateEvent();
-      this.subscribeToEvents();
-      this.getHashParameters();
-      this.router.navigate(['home'], { skipLocationChange: true });
-    });
+    const subscription = from(this.platform.ready())
+      .pipe(
+        tap(() => {
+          this.statusBar.styleDefault();
+          this.splashScreen.hide();
+          this.setupAppStateEvent();
+          this.subscribeToEvents();
+        }),
+        switchMap(() => {
+          if (location.hash.length) {
+            return of(location.hash);
+          } else {
+            return fromEvent(window, 'message').pipe(
+              take(1),
+              map((event: any) => {
+                const iframeUrl = event.data;
+                const isString = typeof iframeUrl === 'string';
+
+                return !isString ? '' : iframeUrl.split('#')[1];
+              })
+            );
+          }
+        })
+      )
+      .subscribe((hash: string) => {
+        Environment.setEnvironmentViaURL(location.href);
+        try {
+          this.useJavaScriptInterface();
+        } catch (e) {
+          if (environment.production === true) {
+            /// if this is a production build, then get the session token
+            this.parseHashParameters(hash);
+
+            /// now perform normal page logic
+            this.handleSessionToken();
+          } else {
+            /// if this is not production then use test session
+            this.testGetSession();
+          }
+        }
+      });
+    this.sourceSubscription.add(subscription);
+  }
+
+  initializeRouteListener() {
+    if (this.nativeProvider.isAndroid()) {
+      const subscription = this.router.events
+        .pipe(
+          retryWhen(errors =>
+            errors.pipe(
+              delay(1000),
+              take(5)
+            )
+          )
+        )
+        .subscribe((event: Event) => {
+          if (event instanceof NavigationStart) {
+            this.nativeProvider.updatePreviousRoute();
+          }
+          
+          if (event instanceof NavigationEnd) {
+            this.nativeProvider.sendAndroidData(NativeData.UPDATE_ROUTE, event.url);
+          }
+        });
+      this.sourceSubscription.add(subscription);
+    }
+  }
+
+  useJavaScriptInterface() {
+    if (this.nativeProvider.isAndroid()) {
+      const sessionId: string = this.nativeProvider.getAndroidData(NativeData.SESSION_ID);
+      const userInfo: UserInfo = JSON.parse(this.nativeProvider.getAndroidData(NativeData.USER_INFO));
+      const institutionId: string = this.nativeProvider.getAndroidData(NativeData.INSTITUTION_ID);
+      this.destinationPage = this.nativeProvider.getAndroidData(NativeData.DESTINATION_PAGE);
+
+      if (!sessionId || !userInfo || !institutionId || !this.destinationPage) {
+        throw new Error('Error getting native data, retrieve info normally');
+      }
+
+      DataCache.setSessionId(sessionId);
+      DataCache.setUserInfo(userInfo);
+      this.userService.setUserData(userInfo);
+      DataCache.setInstitutionId(institutionId);
+
+      this.handlePageNavigation();
+    } else if (this.nativeProvider.isIos()) {
+      const sessionIdPromise: Promise<string> = this.nativeProvider.getIosData(NativeData.SESSION_ID);
+      const userInfoPromise: Promise<UserInfo> = this.nativeProvider.getIosData(NativeData.USER_INFO);
+      const institutionIdPromise: Promise<string> = this.nativeProvider.getIosData(NativeData.INSTITUTION_ID);
+      const destinationPagePromise: Promise<string> = this.nativeProvider.getIosData(NativeData.DESTINATION_PAGE);
+
+      Promise.all([sessionIdPromise, userInfoPromise, institutionIdPromise, destinationPagePromise]).then(values => {
+        DataCache.setSessionId(values[0]);
+        DataCache.setUserInfo(values[1]);
+        this.userService.setUserData(values[1]);
+        DataCache.setInstitutionId(values[2]);
+        this.destinationPage = <any>values[3];
+        this.handlePageNavigation();
+      });
+    } else {
+      throw new Error('No NativeInterface');
+    }
+  }
+
+  private testGetSession() {
+    const subscription = this.testProvider.getTestUser().subscribe(
+      () => {
+        this.destinationPage = NAVIGATE.dashboard;
+        this.getUserInfo();
+      },
+      error => {
+        this.modalHandler(
+          { ...error, title: 'Error getting test user', buttons: [{ ...buttons.RETRY, label: 'RETRY' }], },
+          this.testGetSession.bind(this)
+        );
+      }
+    );
+
+    this.sourceSubscription.add(subscription);
   }
 
   /**
    * Get hash parameters from url
    */
-  private getHashParameters() {
-    const hashParameters: string[] = location.hash.split('/');
+  private parseHashParameters(urlString: string) {
+    const hashParameters: string[] = urlString.split('/');
+    const destinationPage = hashParameters[3] as NAVIGATE;
+    const existsInNavigate = Object.values(NAVIGATE).some(route => route === destinationPage);
 
-    const destinationPageString = hashParameters[3];
-    let destinationPage = EDestination.NONE;
-
-    if (destinationPageString === EDestination.MOBILE_ACCESS) {
-      destinationPage = EDestination.MOBILE_ACCESS;
-    } else if (destinationPageString === EDestination.REWARDS) {
-      destinationPage = EDestination.REWARDS;
-    } else if (destinationPageString === EDestination.SECURE_MESSAGING) {
-      destinationPage = EDestination.SECURE_MESSAGING;
+    if (existsInNavigate) {
+      DataCache.setWebInitiValues(hashParameters[2] || null, destinationPage);
+      this.sessionToken = hashParameters[2];
+      this.destinationPage = destinationPage;
     }
 
-    /// get required params from the URL
-    DataCache.setWebInitiValues(hashParameters[2] || null, destinationPage);
+    this.cleanUrlAfterGetInfo();
   }
 
+  private cleanUrlAfterGetInfo() {
+    this.router.navigate([''], { skipLocationChange: true });
+  }
+
+  private handleSessionToken() {
+    if (this.sessionToken) {
+      /// acquire the new session id with the session token
+      this.authService
+        .authenticateSessionToken(this.sessionToken)
+        .pipe(take(1))
+        .subscribe(
+          newSessionId => {
+            if (newSessionId.length <= 0) {
+              const error = {
+                title: Globals.Exception.Strings.TITLE,
+                message: 'We were unable to verify your credentials',
+                buttons: [{ ...buttons.RETRY, label: 'RETRY' }],
+              };
+              this.modalHandler(error, this.handleSessionToken.bind(this));
+              return;
+            }
+            /// set session id for services base and get the user info for caching
+            DataCache.setSessionId(newSessionId);
+            this.getUserInfo();
+          },
+          () => {
+            const modalConfigurationObject = {
+              title: Globals.Exception.Strings.TITLE,
+              message: 'We were unable to verify your credentials',
+              buttons: [{ ...buttons.RETRY, label: 'RETRY' }],
+            };
+            this.modalHandler(modalConfigurationObject, this.handleSessionToken.bind(this));
+          }
+        );
+    } else {
+      /// no session sharing token sent via URL
+      /// show no session error or redirect back natively or something
+      /// use proper method to parse the message and determine proper message
+      const exceptionObj = {
+        title: Globals.Exception.Strings.TITLE,
+        message: 'Handling session response and the session data is null',
+      };
+      this.modalHandler(exceptionObj, this.handleSessionToken.bind(this));
+    }
+  }
+
+  private getUserInfo() {
+    this.userService
+      .getUser()
+      .pipe(take(1))
+      .subscribe(
+        data => {
+          DataCache.setUserInfo(data);
+          DataCache.setInstitutionId(data.institutionId);
+          this.handlePageNavigation();
+        },
+        () => {
+          const exceptionObj = {
+            title: Globals.Exception.Strings.TITLE,
+            message: 'Unable to verify your user information',
+            buttons: [{ ...buttons.RETRY, label: 'RETRY' }],
+          };
+          this.modalHandler(exceptionObj, this.handleSessionToken.bind(this));
+        }
+      );
+  }
+
+  private handlePageNavigation() {
+    this.initializeRouteListener();
+    this.router.navigate([this.destinationPage], { skipLocationChange: true });
+  }
+
+  // Ionic gloabal configurate stuff
   private setupAppStateEvent() {
-    this.platform.pause.subscribe(() => {
-      this.events.publish(AppComponent.EVENT_APP_PAUSE, null);
-    });
-    this.platform.resume.subscribe(() => {
-      this.events.publish(AppComponent.EVENT_APP_RESUME, null);
-    });
+    const pauseSubscription = this.platform.pause.subscribe(() => this.events.publish(this.EVENT_APP_PAUSE, null));
+    const resumeSubscription = this.platform.resume.subscribe(() => this.events.publish(this.EVENT_APP_RESUME, null));
+
+    this.sourceSubscription.add(pauseSubscription);
+    this.sourceSubscription.add(resumeSubscription);
   }
 
   private subscribeToEvents() {
-    this.events.subscribe(Globals.Events.LOADER_SHOW, loaderInfo =>
+    const loaderSubscription = this.events.subscribe(Globals.Events.LOADER_SHOW, loaderInfo =>
       this.showLoader(loaderInfo)
     );
 
-    this.events.subscribe(Globals.Events.EXCEPTION_SHOW, exceptionPayload =>
-      this.presentException(exceptionPayload)
-    );
+    this.sourceSubscription.add(loaderSubscription);
   }
 
-  presentException(exceptionPayload: ExceptionPayload) {
-    switch (exceptionPayload.displayOptions) {
-      case Globals.Exception.DisplayOptions.ONE_BUTTON:
-        this.presentOneButtonAlert(exceptionPayload.messageInfo);
-        break;
-      case Globals.Exception.DisplayOptions.TWO_BUTTON:
-        this.presentTwoButtonAlert(exceptionPayload.messageInfo);
-        break;
-      case Globals.Exception.DisplayOptions.THREE_BUTTON:
-        this.presentThreeButtonAlert(exceptionPayload.messageInfo);
-        break;
-    }
-  }
-
-  async presentOneButtonAlert(alertOneButtonInfo) {
-    const alert = await this.alertCtrl.create({
-      header: alertOneButtonInfo.title,
-      message: alertOneButtonInfo.message,
-      backdropDismiss: false,
-      buttons: [
-        {
-          text: alertOneButtonInfo.positiveButtonTitle,
-          handler: alertOneButtonInfo.positiveButtonHandler,
-        },
-      ],
-    });
-    alert.present();
-  }
-
-  async presentTwoButtonAlert(alertTwoButtonInfo) {
-    const alert = await this.alertCtrl.create({
-      header: alertTwoButtonInfo.title,
-      message: alertTwoButtonInfo.message,
-      backdropDismiss: false,
-      buttons: [
-        {
-          text: alertTwoButtonInfo.negativeButtonTitle,
-          role: 'cancel',
-          handler: alertTwoButtonInfo.negativeButtonHandler,
-        },
-        {
-          text: alertTwoButtonInfo.positiveButtonTitle,
-          handler: alertTwoButtonInfo.positiveButtonHandler,
-        },
-      ],
-    });
-    alert.present();
-  }
-
-  async presentThreeButtonAlert(alertThreeButtonInfo) {
-    const alert = await this.alertCtrl.create({
-      header: alertThreeButtonInfo.title,
-      message: alertThreeButtonInfo.message,
-      backdropDismiss: false,
-      buttons: [
-        {
-          text: alertThreeButtonInfo.negativeButtonTitle,
-          role: 'cancel',
-          handler: alertThreeButtonInfo.negativeButtonHandler,
-        },
-        {
-          text: alertThreeButtonInfo.indifferentButtonTitle,
-          handler: alertThreeButtonInfo.indifferentButtonHandler,
-        },
-        {
-          text: alertThreeButtonInfo.positiveButtonTitle,
-          handler: alertThreeButtonInfo.positiveButtonHandler,
-        },
-      ],
-    });
-    alert.present();
-  }
-
+  // XXX - remove after rewrite all the places where it was used to. Current version of this functionality LoadingService
   private async showLoader(loaderInfo: any) {
     if (loaderInfo.bShow) {
       if (!this.loader) {
         this.loader = await this.loadCtrl.create({
           message: loaderInfo.message,
         });
-        this.loader.present();
+        await this.loader.present();
       }
     } else {
       if (this.loader) {
@@ -175,5 +293,28 @@ export class AppComponent {
         this.loader = null;
       }
     }
+  }
+
+  private async modalHandler(res, cb) {
+    const popover = await this.popoverCtrl.create({
+      component: StGlobalPopoverComponent,
+      componentProps: {
+        data: res,
+      },
+      animated: false,
+      backdropDismiss: true,
+    });
+
+    popover.onDidDismiss().then(({ role }) => {
+      if (role === BUTTON_TYPE.CLOSE) {
+        //TODO: this.platform.exitApp();
+      }
+
+      if (role === BUTTON_TYPE.RETRY) {
+        cb();
+      }
+    });
+
+    return await popover.present();
   }
 }

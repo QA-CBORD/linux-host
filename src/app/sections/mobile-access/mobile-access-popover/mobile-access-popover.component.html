@@ -1,0 +1,18 @@
+<st-popover-layout [popoverConfig]="popoverConfig">
+  <div class="ma-popover__content">
+    <div class="ma-popover__message">
+      {{ popoverConfig.message }}
+    </div>
+    <st-countdown
+      [seconds]="popoverConfig.validityTime"
+      (onTimeout)="onFinishTimeout()"
+      *ngIf="popoverConfig.type === 'BARCODE' || popoverConfig.type === 'CODE'"
+    ></st-countdown>
+  </div>
+  <div class="ma-popover__temp-code" *ngIf="popoverConfig.type === 'CODE'">
+    {{ popoverConfig.code }}
+  </div>
+  <div class="ma-popover__barcode">
+    <canvas id="barcodeCanvas" *ngIf="popoverConfig.type === 'BARCODE'"></canvas>
+  </div>
+</st-popover-layout>

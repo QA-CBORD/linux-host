@@ -1,0 +1,14 @@
+<ion-item detail (click)="openLocation()" button="true">
+  <img
+    class="location__fav"
+    [src]="starClass"
+    width="25px"
+    alt="star"
+    appClickStopPropagation
+    (click)="triggerFavourite()"
+  />
+  <ion-label class="st-label">
+    <h3 class="title">{{ location.locationId }} - {{ location.name }}</h3>
+    <p class="sub-title" *ngIf="location.distance">{{ location.distance | metersToMiles }}</p>
+  </ion-label>
+</ion-item>

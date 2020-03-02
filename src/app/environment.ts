@@ -1,119 +1,98 @@
+enum Development {
+  services_url = 'https://services.get.dev.cbord.com/GETServices/services',
+  site_url = 'http://get.dev.cbord.com',
+  cbordstudent_url = 'https://student.dev.cbord.com',
+  secmsg_api = 'https://secmsg.api.dev.cbord.com',
+  image_url = 'https://3bulchr7pb.execute-api.us-east-1.amazonaws.com/dev/image/',
+  // image_url = 'https://object-store.api.dev.cbord.com', once DNS entry is entered
+  housing_aws_url = 'https://z6u8er70s9.execute-api.us-east-1.amazonaws.com/dev',
+}
 
+enum Feature1 {
+  services_url = 'https://services.get.feature1.cbord.com/GETServices/services',
+  site_url = 'http://get.feature1.cbord.com',
+  cbordstudent_url = 'https://student.feature1.cbord.com',
+  secmsg_api = 'https://secmsg.api.dev.cbord.com',
+  image_url = 'https://3bulchr7pb.execute-api.us-east-1.amazonaws.com/dev/image/',
+  // image_url = 'https://object-store.api.dev.cbord.com', once DNS entry is entered
+  housing_aws_url = 'https://z6u8er70s9.execute-api.us-east-1.amazonaws.com/dev',
+}
 
-export enum EnvType {
-    development,
-    vendorvalidation,
-    production
+enum Qa {
+  services_url = 'https://services.get.qa.cbord.com/GETServices/services',
+  site_url = 'http://get.qa.cbord.com',
+  cbordstudent_url = 'https://student.qa.cbord.com',
+  secmsg_api = 'https://secmsg.api.qa.cbord.com',
+  image_url = 'https://object-store.api.qa.cbord.com',
+  housing_aws_url = 'https://z4ffq7e1m9.execute-api.us-east-1.amazonaws.com/qa',
+}
+
+enum Pat {
+  services_url = 'https://services.get.pat.cbord.com/GETServices/services',
+  site_url = 'http://get.pat.cbord.com',
+  cbordstudent_url = 'https://student.pat.cbord.com',
+  secmsg_api = 'https://secmsg.api.pat.cbord.com',
+  image_url = 'https://object-store.api.pat.cbord.com',
+  housing_aws_url = 'https://z6u8er70s9.execute-api.us-east-1.amazonaws.com/dev',
+}
+
+enum Demo {
+  services_url = 'https://services.get.demo.cbord.com/GETServices/services',
+  site_url = 'http://get.demo.cbord.com',
+  cbordstudent_url = 'https://student.demo.cbord.com',
+  secmsg_api = 'https://secmsg.api.demo.cbord.com',
+  image_url = 'https://object-store.api.demo.cbord.com',
+  housing_aws_url = 'https://z4ffq7e1m9.execute-api.us-east-1.amazonaws.com/qa',
+}
+
+enum Production {
+  services_url = 'https://services.get.cbord.com/GETServices/services',
+  site_url = 'http://get.cbord.com',
+  cbordstudent_url = 'https://student.cbord.com',
+  secmsg_api = 'https://secmsg.api.cbord.com',
+  image_url = 'https://object-store.api.cbord.com',
+  housing_aws_url = 'https://z6u8er70s9.execute-api.us-east-1.amazonaws.com',
 }
 
 export class Environment {
+  static currentEnvironment = Development;
+  constructor() {}
 
-    /// GET Development
-    static readonly BASE_SERVICES_URL_DEVTEST = 'https://services.get.dev.cbord.com/GETServices/services';
-    static readonly BASE_GET_PATRON_URL_DEVTEST = 'http://get.dev.cbord.com';
+  static getServicesURL(): string {
+    return Environment.currentEnvironment.services_url;
+  }
 
-    /// GET Vendor Validation
-    static readonly BASE_SERVICES_URL_VENDORVAL = 'http://getdemo.cbord.com/GETServices/services';           // Vendor validation
-    static readonly BASE_GET_PATRON_URL_VENDORVAL = 'http://get.demo.cbord.com';
+  static getSecureMessagingAPIURL(): string {
+    return Environment.currentEnvironment.secmsg_api;
+  }
 
-    // GET Production
-    static readonly BASE_SERVICES_URL_PRODUCTION = 'https://services.get.cbord.com/GETServices/services';    // PRODUCTION
-    static readonly BASE_GET_PATRON_URL_PRODUCTION = 'https://get.cbord.com';
+  static getImageURL(): string {
+    return Environment.currentEnvironment.image_url;
+  }
 
+  static setEnvironment(newEnvironment) {
+    Environment.currentEnvironment = newEnvironment;
+  }
 
-    /// CBORD Student Development
-    static readonly BASE_CBORD_STUDENT_URL_DEVTEST = 'https://student.dev.cbord.com';
-
-    /// CBORD Student Vendor Validation
-    static readonly BASE_CBORD_STUDENT_URL_VENDORVAL = 'https://student.demo.cbord.com';
-
-    /// CBORD Student Production
-    static readonly BASE_CBORD_STUDENT_URL_PRODUCTION = 'https://student.cbord.com';
-
-
-    /// AWS API Gateway Development
-    static readonly BASE_AWS_API_URL_DEVTEST = 'https://dwptofebk7.execute-api.us-east-1.amazonaws.com/dev';
-
-
-    static currentEnvironment: EnvType = EnvType.development;
-
-    static servicesBaseURL: string = Environment.BASE_SERVICES_URL_DEVTEST;
-    static fullSiteBaseURL: string = Environment.BASE_GET_PATRON_URL_DEVTEST;
-
-    static apiGatewayServiceBaseURL: string = Environment.BASE_AWS_API_URL_DEVTEST;
-
-
-    constructor() {
+  static setEnvironmentViaURL(appBaseURL: string) {
+    if (appBaseURL.includes('dev')) {
+      this.setEnvironment(Development);
+    } else if (appBaseURL.includes('feature1')) {
+      this.setEnvironment(Feature1);
+    } else if (appBaseURL.includes('qa')) {
+      this.setEnvironment(Qa);
+    } else if (appBaseURL.includes('pat')) {
+      this.setEnvironment(Pat);
+    } else if (appBaseURL.includes('demo')) {
+      this.setEnvironment(Demo);
+    } else if (appBaseURL.includes('student.cbord')) {
+      this.setEnvironment(Production);
+    } else {
+      this.setEnvironment(Development);
     }
+  }
 
-    /**
-     *  Get the GET current services URL
-     */
-    static getGETServicesBaseURL(): string {
-        return Environment.servicesBaseURL;
-    }
-
-    /**
-     *  Get the AWS API Gateway current services URL
-     */
-    static getAPIGatewayServicesBaseURL(): string {
-        return Environment.apiGatewayServiceBaseURL;
-    }
-
-    /**
-     * Set the current environment
-     *
-     * @param newEnvironment    New environment enum value
-     */
-    static setEnvironment(newEnvironment: EnvType) {
-        Environment.currentEnvironment = newEnvironment;
-        if (newEnvironment === EnvType.development) {
-            Environment.servicesBaseURL = Environment.BASE_SERVICES_URL_DEVTEST;
-            Environment.fullSiteBaseURL = Environment.BASE_CBORD_STUDENT_URL_DEVTEST;
-        } else if (newEnvironment === EnvType.vendorvalidation) {
-            Environment.servicesBaseURL = Environment.BASE_SERVICES_URL_VENDORVAL;
-            Environment.fullSiteBaseURL = Environment.BASE_CBORD_STUDENT_URL_VENDORVAL;
-        } else if (newEnvironment === EnvType.production) {
-            Environment.servicesBaseURL = Environment.BASE_SERVICES_URL_PRODUCTION;
-            Environment.fullSiteBaseURL = Environment.BASE_CBORD_STUDENT_URL_PRODUCTION;
-        } else {
-            // will never happen due to enum restrictions
-            Environment.servicesBaseURL = Environment.BASE_SERVICES_URL_DEVTEST;
-            Environment.fullSiteBaseURL = Environment.BASE_CBORD_STUDENT_URL_DEVTEST;
-        }
-    }
-
-
-    /**
-     * Set the current environment using the app/page URL
-     *
-     * @param appBaseURL    App / Page URL
-     */
-    static setEnvironmentViaURL(appBaseURL: string) {
-        if (appBaseURL.includes('dev')) {
-            Environment.currentEnvironment = EnvType.development;
-            Environment.servicesBaseURL = Environment.BASE_SERVICES_URL_DEVTEST;
-            Environment.fullSiteBaseURL = Environment.BASE_CBORD_STUDENT_URL_DEVTEST;
-        } else if (appBaseURL.includes('demo')) {
-            Environment.currentEnvironment = EnvType.vendorvalidation;
-            Environment.servicesBaseURL = Environment.BASE_SERVICES_URL_VENDORVAL;
-            Environment.fullSiteBaseURL = Environment.BASE_CBORD_STUDENT_URL_VENDORVAL;
-        } else if (appBaseURL.includes('student.cbord')) {
-            Environment.currentEnvironment = EnvType.production;
-            Environment.servicesBaseURL = Environment.BASE_SERVICES_URL_PRODUCTION;
-            Environment.fullSiteBaseURL = Environment.BASE_CBORD_STUDENT_URL_PRODUCTION;
-        } else {
-            Environment.currentEnvironment = EnvType.development;
-            Environment.servicesBaseURL = Environment.BASE_SERVICES_URL_DEVTEST;
-            Environment.fullSiteBaseURL = Environment.BASE_CBORD_STUDENT_URL_DEVTEST;
-        }
-    }
-
-    static isDevelopmentEnvironment(appBaseURL: string): boolean {
-        if (appBaseURL.includes('dev') || appBaseURL.includes('localhost')) {
-            return true;
-        }
-        return false;
-    }
-
+  static isDevelopmentEnvironment(appBaseURL: string): boolean {
+    return appBaseURL.includes('dev') || appBaseURL.includes('localhost');
+  }
 }

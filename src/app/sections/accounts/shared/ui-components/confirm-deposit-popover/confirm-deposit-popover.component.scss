@@ -1,0 +1,43 @@
+@import 'tools';
+
+:host {
+  .cdp {
+    &__info-container {
+      margin-top: 10px;
+
+      @include font-nunito-regular(16px);
+    }
+
+    &__label {
+      display: flex;
+      justify-content: space-between;
+      &:not(&:last-child) {
+        margin-bottom: 10px;
+      }
+
+      @include font-nunito-regular(16px);
+    }
+
+    &__value {
+      text-align: right;
+
+      @include font-nunito-heavy(16px);
+    }
+
+    &__policy-container {
+      background: #f7f7f7;
+      border-radius: 8px;
+      padding: 8px 12px;
+    }
+
+    &__policy-title {
+      margin: 0;
+
+      @include font-nunito-heavy(10px);
+    }
+
+    &__policy-body {
+      @include font-nunito-semibold(10px);
+    }
+  }
+}

@@ -18,4 +18,265 @@
       }
     }
   }
+  .sc-ion-popover-ios {
+    opacity: 1;
+  }
+  //Temp styles for popover:
+  .sc-ion-popover-md-h,
+  .sc-ion-popover-ios-h {
+    --min-width: 300px !important;
+
+    ion-backdrop {
+      opacity: 0.5 !important;
+    }
+
+    .popover-content {
+      &.sc-ion-popover-md,
+      &.sc-ion-popover-ios {
+        border-radius: 15px;
+      }
+    }
+  }
+
+  .st-nav-tabs {
+    &.tabs-wrapper {
+      //  Remove ionic bug for ion-router-outlet for Rewards Tabs page:
+      .ion-page {
+        overflow-y: auto;
+      }
+    }
+  }
+
+  ion-toast.exception-toast {
+    --ion-color-primary: #00a0ff;
+  }
+
+  .custom-deposit-actionSheet {
+    .action-sheet-group {
+      .action-sheet-button {
+        border-bottom: 1px solid $color-whisper;
+
+        .action-sheet-button-inner {
+          @include font-nunito-semibold(16px);
+        }
+
+        &.action-sheet-selected {
+          .action-sheet-button-inner {
+            position: relative;
+
+            &::after {
+              content: 'L';
+              font-size: 25px;
+              transform: scaleX(-1) rotate(-45deg);
+              color: #3c3c3c;
+              position: absolute;
+              right: 10px;
+            }
+          }
+        }
+      }
+    }
+
+    .action-sheet-container {
+      .action-sheet-group-cancel {
+        .action-sheet-button {
+          &:last-child {
+            color: $color-dodger-blue;
+            border: none;
+
+            .action-sheet-button-inner {
+              justify-content: center;
+
+              @include font-nunito-heavy(16px);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .custom-deposit-actionSheet-last-btn {
+    .action-sheet-group .action-sheet-button:last-child {
+      color: #6e6e6e;
+    }
+  }
+
+  .order-options-action-sheet {
+    --height: 280px;
+    --border-radius: 10px 10px 0 0;
+
+    &.order-options-action-sheet-p-d {
+      --height: 360px;
+    }
+
+    .modal-wrapper {
+      position: absolute;
+      bottom: 0;
+    }
+  }
+
+  .picker-time-picker {
+    --border-color: #ebebeb;
+
+    .picker-wrapper {
+      border-radius: 10px 10px 0 0;
+    }
+
+    .picker-toolbar {
+      .picker-button {
+        color: #000;
+        @include font-nunito-regular(16px);
+      }
+
+      .picker-toolbar-cancel .picker-button {
+        padding-left: 30px;
+        @include font-nunito-regular(16px);
+
+        &::after {
+          content: 'Select Time';
+          color: #161616;
+          position: absolute;
+          left: 35%;
+
+          @include font-nunito-heavy(20px);
+        }
+      }
+    }
+
+    .picker-opt.picker-opt-selected {
+      color: #000;
+
+      @include font-nunito-heavy(20px);
+    }
+  }
+
+  // Shake animation:
+  .shakeit {
+    animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+  }
+
+  @keyframes shake {
+    10%,
+    90% {
+      transform: translate3d(-1px, 0, 0);
+    }
+
+    20%,
+    80% {
+      transform: translate3d(2px, 0, 0);
+    }
+
+    30%,
+    50%,
+    70% {
+      transform: translate3d(-4px, 0, 0);
+    }
+
+    40%,
+    60% {
+      transform: translate3d(4px, 0, 0);
+    }
+  }
+}
+
+.btn {
+  --padding-start: 8px;
+  --padding-end: 8px;
+
+  height: 48px;
+  margin: 0;
+}
+
+.form__primary-header,
+.form__secondary-header {
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+
+.form__primary-header {
+  @include font-nunito-heavy(20px);
+
+  color: $color-god-gray;
+}
+
+.form__secondary-header {
+  @include font-nunito-heavy(14px);
+
+  color: $color-matterhorn;
+  text-transform: uppercase;
+}
+
+.secondary-header {
+  @include font-nunito-semibold(14px);
+
+  color: rgba($color-black, 0.6);
+  line-height: 16px;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.secondary-header--m {
+  font-size: 12px;
+}
+
+.form-checkbox__control {
+  --background-checked: #{$color-dodger-blue};
+  --border-color: #{$color-silver};
+  --border-color-checked: #{$color-dodger-blue};
+  --border-radius: 2px;
+  --size: 24px;
+
+  margin: 0 8px 0 0;
+}
+
+.form-label {
+  --ion-font-family: #{$font-nunito-semibold};
+
+  line-height: 20px;
+  margin: 0;
+}
+
+.form-label__description {
+  @include font-nunito-regular(12px);
+
+  color: rgba($color-black, 0.6);
+  line-height: 16px;
+}
+
+.control-hint {
+  @include font-nunito-semibold(12px);
+
+  color: $color-dim-gray;
+  margin: 5px 0 0 12px;
+
+  .control-hint--no-indent &,
+  &.control-hint--no-indent {
+    margin-left: 0;
+  }
+}
+
+.control-hint--error {
+  color: $color-alizarin;
+}
+
+.bg-transparent {
+  --background: transparent;
+  background: transparent;
+}
+
+:root {
+  .application-actions-popover {
+    --min-width: 115px !important;
+    --width: auto;
+
+    .popover-content {
+      &.sc-ion-popover-md,
+      &.sc-ion-popover-ios {
+        border-radius: 8px;
+      }
+    }
+  }
 }

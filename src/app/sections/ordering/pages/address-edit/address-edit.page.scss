@@ -1,0 +1,27 @@
+@import 'tools';
+
+.address-edit {
+  &__header {
+    border-bottom: 1px solid $color-whisper;
+  }
+
+  &__header-title {
+    @include font-nunito-heavy(20px);
+  }
+
+  &__header-back-btn {
+    --color: #000 !important;
+ 
+    @include font-nunito-regular(16px);
+  }
+
+  &__header-remove-btn {
+    --color: #e22942 !important;
+
+    @include font-nunito-semibold(16px);
+  }
+
+  &__add-address-container {
+    padding: 25px 20px 0;
+  }
+}

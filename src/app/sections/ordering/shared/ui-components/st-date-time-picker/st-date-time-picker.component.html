@@ -1,0 +1,10 @@
+<div class="st-date-time-picker__container" (click)="isTimeDisable && openPicker()">
+  <div class="st-date-time-picker__label">{{ data?.label }} TIME</div>
+  <div class="st-date-time-picker__value">
+    <img width="16" src="./assets/icon/time.svg" alt="time" />
+    <ng-container *ngIf="isDefaultState; then placeholder; else dateTime"></ng-container>
+  </div>
+</div>
+
+<ng-template #placeholder>ASAP</ng-template>
+<ng-template #dateTime>{{ dateTimePicker | date: 'EE, MMM d, h:mm a' }}</ng-template>

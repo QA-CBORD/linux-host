@@ -1,0 +1,28 @@
+<st-header
+  [title]="contentString.headerTitleActivate"
+  [backButtonTitle]="contentString.backBtnHeader"
+  [isToolbarShow]="true"
+  [isTitleShow]="true"
+></st-header>
+<ion-content class="ion-padding">
+  <st-activate-location-item
+    [userPhoto]="userPhoto$ | async"
+    [userFullName]="userFullName$ | async"
+    [userInfoId]="userInfoId$ | async"
+    [institutionName]="(institution$ | async).name"
+    [institutionPhoto]="institutionPhoto$ | async"
+    [institutionColor]="institutionColor$ | async"
+  >
+    <p class="user-data__location">
+      <span [ngClass]="starClass | async" aria-label="star" role="img" (click)="favouriteHandler()"></span>
+      {{ (location$ | async)?.locationId }} - {{ (location$ | async)?.name }}
+    </p>
+    <div class="user-data__activate-btn-wrapper">
+      <st-button 
+        (onClick)="activateLocation()"
+        [buttonModifier]="'border-less'">
+        {{ contentString.activate }}
+      </st-button>
+    </div>
+  </st-activate-location-item>
+</ion-content>

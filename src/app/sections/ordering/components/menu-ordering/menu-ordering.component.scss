@@ -1,0 +1,41 @@
+@import "tools";
+
+.menu {
+  &__sub-navigation {
+    display: flex;
+    justify-content: space-around;
+    height: 125px;
+    padding: 0 25px;
+    align-items: center;
+    border-bottom: 1px solid $color-light-gray;
+  }
+
+  &__nav-item-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 90px;
+    height: 100%;
+  }
+  
+  &__nav-item-icon-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: $color-navy-blue;
+    border-radius: 50%;
+    height: 45px;
+    width: 45px;
+  }
+
+  &__nav-item-content {
+    display: flex;
+    align-items: center;
+    height: 35px;
+    margin-top: 5px;
+
+    @include font-nunito-semibold(14px);
+  }
+}

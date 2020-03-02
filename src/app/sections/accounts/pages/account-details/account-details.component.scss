@@ -1,0 +1,57 @@
+@import 'tools';
+:root {
+  --ion-safe-area-top: 20px;
+  --ion-safe-area-bottom: 10px;
+}
+
+.account-details {
+  &__header-wrapper {
+    @include bp-grid-tablet {
+      display: flex;
+      justify-content: space-between;
+      padding: 0 30px;
+    }
+
+    &--full-site {
+      @include bp-before-tablet {
+        display: none;
+      }
+    }
+  }
+
+  &__empty-block-img {
+    display: block;
+    margin: 20px auto;
+    width: 250px;
+    height: 200px;
+  }
+
+  &__empty-block-message {
+    margin: 0;
+    text-align: center;
+    color: $color-night-rider;
+
+    @include font-nunito-semibold(16px);
+  }
+
+  &__header {
+    @include bp-grid-tablet {
+      display: none;
+    }
+  }
+
+  &__header-title {
+    margin: 20px 0 0;
+
+    @include bp-before-tablet {
+      display: none;
+    }
+  }
+
+  &__content {
+    @include bp-grid-tablet {
+      --padding-end: 30px !important;
+      --padding-start: 30px !important;
+    }
+  }
+}

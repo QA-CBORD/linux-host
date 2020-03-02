@@ -1,0 +1,8 @@
+<ion-item detail button="true" class="order-item">
+  <ion-icon class="order-item__icon" [attr.alt]="iconAlt" [src]="iconSrc" [name]="iconName"></ion-icon>
+
+  <ion-label class="order-item__label-container">
+    <div class="order-item__label-title">{{ item | addressHeaderFormat }}</div>
+    <div class="order-item__label-subtitle">{{ item | addressSubHeaderFormat }}</div>
+  </ion-label>
+</ion-item>

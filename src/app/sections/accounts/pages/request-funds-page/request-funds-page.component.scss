@@ -1,0 +1,50 @@
+@import 'tools';
+
+.request-funds {
+  padding: 0 10px;
+
+  &__info-msg {
+    letter-spacing: 0;
+
+    @include font-nunito-semibold(16px);
+  }
+
+  &__control {
+    display: block;
+    margin-top: 30px;
+  }
+
+  &__empty-container {
+    margin-top: 130px;
+  }
+
+  &__empty-image {
+    display: block;
+    margin: 0 auto;
+  }
+
+  &__empty-message {
+    color: $color-matterhorn;
+    text-align: center;
+    padding: 0 40px;
+
+    @include font-nunito-heavy(16px);
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: center;
+    padding: 10px 10px 50px;
+    background-color: $color-white;
+  }
+
+  &__control-error-msg {
+    margin: 0;
+    color: $color-flame-red;
+    letter-spacing: 0;
+    min-height: 16px;
+    line-height: 16px;
+
+    @include font-nunito-heavy(12px);
+  }
+}

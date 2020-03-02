@@ -1,0 +1,33 @@
+<div class="transaction" [ngClass]="{'transaction--auto-height': !isLoading}">
+  <ion-list class="transaction__list" *ngIf="!isLoading && transactions.length">
+    <ion-item class="transaction__item"
+              *ngFor="let transaction of transactions"
+              mode="md">
+      <div class="transaction__label-container">
+        <div class="transaction__label">{{ transaction.locationName }}</div>
+        <div class="transaction__date">{{ transaction.actualDate | date:'short'}} </div>
+      </div>
+      <div class="transaction__type-container">
+        <div class="transaction__type-entity">
+          {{ transaction.transactionType | transactionAction}} {{ transaction.amount | transactionUnits: transaction.accountType }}
+        </div>
+        <div class="transaction__type-label">{{ transaction.accountName }}</div>
+      </div>
+    </ion-item>
+  </ion-list>
+
+  <ion-list *ngIf="isLoading" [ngClass]="{'transaction--auto-height': !isLoading}">
+    <ion-item *ngFor="let i of skeletonArray">
+      <ion-label>
+        <p class="transaction__skeleton-string">
+          <ion-skeleton-text animated class="transaction__skeleton-name"></ion-skeleton-text>
+          <ion-skeleton-text animated class="transaction__skeleton-amount"></ion-skeleton-text>
+        </p>
+        <p class="transaction__skeleton-string">
+          <ion-skeleton-text animated class="transaction__skeleton-date"></ion-skeleton-text>
+          <ion-skeleton-text animated class="transaction__skeleton-account"></ion-skeleton-text>
+        </p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+</div>

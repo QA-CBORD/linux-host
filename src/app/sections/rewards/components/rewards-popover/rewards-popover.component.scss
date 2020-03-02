@@ -1,0 +1,29 @@
+@import 'tools';
+
+:host {
+  .rewards-popover {
+    &__title {
+      @include font-nunito-semibold(20px);
+    }
+
+    &__description {
+      color: $color-dim-gray;
+
+      @include font-nunito-regular(12px);
+    }
+
+    &__qrcode {
+      margin-top: 10px;
+
+      &-text {
+        color: $color-dim-gray;
+
+        @include font-nunito-regular(14px);
+      }
+    }
+
+    &__success {
+      object-fit: none;
+    }
+  }
+}

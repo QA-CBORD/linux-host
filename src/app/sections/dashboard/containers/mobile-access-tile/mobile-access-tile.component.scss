@@ -1,0 +1,43 @@
+@import 'tools';
+
+.access {
+  margin: 0 15px;
+  overflow: hidden;
+  min-height: 180px;
+  max-height: 220px;
+  transition: 1s ease-out;
+
+  &--auto-height {
+    min-height: 0;
+  }
+
+  &__list {
+    margin: 0;
+    padding: 0;
+  }
+
+  &__item {
+    --padding-start: 0;
+
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid $color-white-smoke;
+    margin: 0;
+    
+    &:last-child {
+      border-style: none;
+    }
+  }
+
+  &__item-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  &__item-lable {
+    margin-left: 10px;
+
+    @include ellipsis;
+    @include font-nunito-semibold(14px);
+  }
+}

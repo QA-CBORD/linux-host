@@ -1,0 +1,45 @@
+@import 'tools';
+
+.meals-donate {
+  &__header {
+    border-bottom: 1px solid $color-white-smoke;
+  }
+
+  &__content {
+    --padding-start: 20px;
+    --padding-end: 20px;
+    --padding-top: 20px;
+    --padding-bottom: 20px;
+  }
+
+  &__description-wrapper {
+    margin: 10px 0;
+
+    @include font-nunito-heavy(15px);
+  }
+
+  &__accounts {
+    padding: 20px 0;
+  }
+
+  &__amount {
+    padding: 20px 0;
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: center;
+    padding: 10px 10px 50px;
+    background-color: $color-white;
+  }
+
+  &__control-error-msg {
+    margin: 0;
+    color: $color-flame-red;
+    letter-spacing: 0;
+    min-height: 16px;
+    line-height: 16px;
+
+    @include font-nunito-heavy(12px);
+  }
+}

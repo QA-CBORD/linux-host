@@ -1,0 +1,67 @@
+<ion-content>
+  <div class="order-options">
+    <h1 class="order-options__title">Order Options</h1>
+    <ion-list mode="md"
+              class="order-options__list">
+      <div class="order-options__radio-group-container"
+           *ngIf="orderTypes.delivery && orderTypes.pickup">
+        <ion-radio-group mode="md"
+                         class="order-options__radio-group"
+                         (ionChange)="onRadioGroupChanged($event)">
+          <ion-item lines="none"
+                    class="order-options__radio-container">
+            <ion-label class="order-options__radio-label">Pickup</ion-label>
+            <ion-radio mode="md"
+                       slot="start"
+                       value="pickup"
+                       [checked]="enumOrderTypes.PICKUP === orderType"
+                       class="order-options__radio-item"></ion-radio>
+          </ion-item>
+
+          <ion-item lines="none"
+                    class="order-options__radio-container">
+            <ion-label class="order-options__radio-label">Delivery</ion-label>
+            <ion-radio mode="md"
+                       slot="start"
+                       value="delivery"
+                       [checked]="enumOrderTypes.DELIVERY === orderType"
+                       class="order-options__radio-item"></ion-radio>
+          </ion-item>
+        </ion-radio-group>
+      </div>
+      <ion-item lines="full"
+                [detail]="orderOptionsData?.isClickble"
+                (click)="orderOptionsData?.isClickble && openDeliveryAddressesModal()">
+        <div class="order-options__select-container">
+          <div class="order-options__select-label">{{ orderOptionsData?.label }} ADDRESS</div>
+          <div class="order-options__select-value">
+            <img width="16"
+                 src="./assets/icon/location-pin.svg"
+                 alt="pin" />
+            <span>
+              <ng-container *ngIf="orderOptionsData?.address; then addressContainer; else placeholder"></ng-container>
+            </span>
+
+            <ng-template #placeholder>Select an Address</ng-template>
+
+            <ng-template #addressContainer>
+              {{ orderOptionsData.address | addressHeaderFormat }}
+            </ng-template>
+          </div>
+        </div>
+      </ion-item>
+      <ion-item [detail]="isTimeDisable"
+                lines="full">
+        <st-date-time-picker [schedule]="schedule"
+                             [isTimeDisable]="isTimeDisable"
+                             [data]="orderOptionsData"
+                             [dateTimePicker]="dateTimePicker"
+                             (onTimeSelected)="onDateTimeSelected($event)"
+                             ></st-date-time-picker>
+      </ion-item>
+    </ion-list>
+  </div>
+</ion-content>
+<ion-footer mode="ios" class="order-options__footer">
+  <st-button (onClick)="onSubmit()">{{footerButtonName}}</st-button>
+</ion-footer>

@@ -1,17 +1,32 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { NAVIGATE } from './app.global';
+import { SelectivePreloadingStrategy } from '@core/preload-strategy/selective-preloading-strategy';
 
 const routes: Routes = [
-  /// initial route handled in app.component.ts
-  // { path: '', redirectTo: 'home', pathMatch: 'full' },
-  { path: 'home', loadChildren: './pages/home/home.module#HomePageModule' },
-  { path: 'mobile-access', loadChildren: './pages/mobile-access/mobile-access.module#MobileAccessPageModule' },
-  { path: 'rewards', loadChildren: './pages/rewards/rewards.module#RewardsPageModule' },
-  { path: 'secure-message', loadChildren: './pages/secure-messaging/secure-message.module#SecureMessagePageModule' },
+  { path: NAVIGATE.dashboard, loadChildren: './sections/dashboard/dashboard.module#DashboardPageModule' },
+  {
+    path: NAVIGATE.mobileAccess,
+    loadChildren: './sections/mobile-access/mobile-access.module#MobileAccessPageModule',
+  },
+  { path: NAVIGATE.rewards, loadChildren: './sections/rewards/rewards.module#RewardsPageModule' },
+  {
+    path: NAVIGATE.secureMessage,
+    loadChildren: './sections/secure-messaging/secure-message.module#SecureMessagePageModule',
+  },
+  {
+    path: NAVIGATE.accounts,
+    loadChildren: './sections/accounts/accounts.module#AccountsModule',
+  },
+  {
+    path: NAVIGATE.ordering,
+    loadChildren: './sections/ordering/ordering.module#OrderingPageModule',
+  },
+  { path: NAVIGATE.housing, loadChildren: './sections/housing/housing.module#HousingPageModule' },
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  imports: [RouterModule.forRoot(routes, { preloadingStrategy: SelectivePreloadingStrategy })],
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

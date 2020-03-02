@@ -1,0 +1,47 @@
+@import 'tools';
+
+:host {
+  --ion-background-color: $color-very-light-gray;
+  --ion-color-primary: $color-black;
+
+  ion-card-header {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+  }
+
+  ion-content {
+    background: $color-very-light-gray;
+    height: 100%;
+  }
+}
+
+.user-data {
+  &__location-star {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    position: relative;
+    top: 5px;
+    background-image: url('/assets/icon/star-outline-white.svg');
+    background-position: center;
+    background-size: contain;
+
+    &--active {
+      background-image: url('/assets/icon/star-white.svg');
+    }
+  }
+
+  &__location {
+    position: relative;
+    text-align: center;
+    color: $color-white;
+
+    @include ellipsis;
+    @include font-nunito-heavy(18px);
+  }
+
+  &__activate-btn-wrapper {
+    margin-top: 20px;
+  }
+}

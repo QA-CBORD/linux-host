@@ -1,0 +1,45 @@
+@import 'tools';
+
+.recent-orders {
+  &__header {
+    border-bottom: 1px solid $color-light-gray;
+  }
+
+  &__content {
+    background: $color-white !important;
+    z-index: 1;
+  }
+
+  &__list-title {
+    line-height: 27px;
+    margin: 15px;
+
+    @include font-nunito-heavy(20px);
+  }
+
+  &__no-orders-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 140px;
+  }
+
+  &__no-orders-image {
+    width: 250px;
+    height: 200px;
+  }
+
+  &__no-orders-message {
+    text-align: center;
+    color: $color-dim-gray;
+    max-width: 250px;
+
+    @include font-nunito-semibold(16px);
+  }
+
+  &__no-orders-btn-wrapper {
+    width: 100%;
+    margin-top: 140px;
+    padding: 15px;
+  }
+}

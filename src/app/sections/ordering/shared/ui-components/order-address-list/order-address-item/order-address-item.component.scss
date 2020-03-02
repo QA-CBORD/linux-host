@@ -1,0 +1,21 @@
+@import 'tools';
+
+.order-item {
+  &__icon {
+    margin-right: 10px;
+  }
+
+  &__label-container {
+    margin: 0;
+  }
+
+  &__label-title {
+    font-family: $font-nunito-semibold;
+
+    @include ellipsis;
+  }
+
+  &__label-subtitle {
+    @include font-nunito-regular(10px);
+  }
+}

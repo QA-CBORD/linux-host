@@ -1,22 +1,22 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { StHeaderPage } from './st-header.page';
+// @ts-ignore
+import { StHeaderComponent } from './st-header.component';
 
-describe('StHeaderPage', () => {
-  let component: StHeaderPage;
-  let fixture: ComponentFixture<StHeaderPage>;
+describe('StHeaderComponent', () => {
+  let component: StHeaderComponent;
+  let fixture: ComponentFixture<StHeaderComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ StHeaderPage ],
+      declarations: [StHeaderComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(StHeaderPage);
+    fixture = TestBed.createComponent(StHeaderComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

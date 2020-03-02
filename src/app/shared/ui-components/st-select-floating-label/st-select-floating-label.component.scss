@@ -1,0 +1,80 @@
+@import 'tools';
+
+.select {
+  &__wrapper {
+    position: relative;
+    height: 50px;
+  }
+
+  &__control {
+    @include chevron-down();
+
+    width: 100%;
+    height: 100%;
+    outline: none;
+    border: 1px solid $color-light-gray;
+    border-radius: 8px;
+    padding: 15px 10px 0;
+
+    &:focus-within {
+      @include chevron-down-active();
+
+      border: 2px solid $color-dodger-blue;
+
+      & + .select__placeholder {
+        z-index: 2;
+
+        @include floating-label($color-dodger-blue);
+      }
+    }
+
+    &--error {
+      @include chevron-down-error();
+
+      border: 2px solid $color-alizarin;
+
+      &:focus,
+      &:focus-within {
+        @include chevron-down-error();
+
+        border: 2px solid $color-alizarin;
+
+        & + .select__placeholder {
+          z-index: 2;
+
+          @include floating-label($color-alizarin);
+        }
+      }
+
+      & + .select__placeholder {
+        z-index: 2;
+
+        @include floating-label($color-alizarin);
+      }
+    }
+  }
+
+  &__placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 15px 0 0 13px;
+    transition: all 200ms;
+    opacity: 0.6;
+  }
+}
+
+:host-context(.ng-valid) .select__control {
+  &:focus-within {
+    & + .select__placeholder {
+
+      @include floating-label($color-dodger-blue);
+    }
+  }
+
+  & + .select__placeholder {
+    z-index: 2;
+
+    @include floating-label($color-dim-gray);
+  }
+}

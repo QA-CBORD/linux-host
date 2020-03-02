@@ -13,6 +13,7 @@ log.txt
 npm-debug.log*
 
 .idea/
+package-lock.json
 .ionic/
 .sourcemaps/
 .sass-cache/
@@ -28,6 +29,8 @@ plugins/
 plugins/android.json
 plugins/ios.json
 $RECYCLE.BIN/
+android-sdk/
+dist/
 
 .DS_Store
 Thumbs.db

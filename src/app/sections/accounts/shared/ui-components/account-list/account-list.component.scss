@@ -1,0 +1,27 @@
+@import 'tools';
+
+.accounts-list {
+  padding-top: 0;
+
+  &__all-accounts-label {
+    color: $color-black;
+    letter-spacing: 0;
+    line-height: 18px;
+
+    @include font-nunito-heavy(14px);
+
+    @include bp-grid-tablet {
+      @include font-nunito-semibold(14px);
+    }
+  }
+
+  &--active {
+    @include bp-grid-tablet {
+      --background: #166dff;
+
+      .accounts-list__all-accounts-label {
+        color: #fff;
+      }
+    }
+  }
+}

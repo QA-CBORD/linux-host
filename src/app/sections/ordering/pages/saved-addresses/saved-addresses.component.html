@@ -1,0 +1,42 @@
+<st-header
+  title="Saved Addresses"
+  [isTitleShow]="true"
+  [backButtonTitle]="''"
+  [backButtonIcon]="'close'"
+  [isToolbarShow]="true"
+  class="saved-addresses__header"
+></st-header>
+
+<ion-content>
+  <div class="saved-addresses__add-address-container">
+    <ion-item
+      class="saved-addresses__add-address-wrapper"
+      lines="full"
+      [button]="true"
+      [detail]="true"
+      detailIcon="/assets/icon/angle-{{ addNewAdddressState ? 'up' : 'down' }}-select.svg"
+      (click)="addNewAdddressState = !addNewAdddressState"
+    >
+      <span class="saved-addresses__add-address-sign">+</span>
+      <span class="saved-addresses__add-address-text">Add New Address</span>
+    </ion-item>
+    <ng-container *ngIf="addNewAdddressState">
+      <st-add-edit-addresses
+        [buildingsOnCampus]="buildings$ | async"
+        [isError]="errorState"
+        (onFormChanged)="onAddressFormChanged($event)"
+      ></st-add-edit-addresses>
+
+      <div class="saved-addresses__add-address-btn-container">
+        <st-button [fill]="'clear'" (onClick)="addNewAdddressState = !addNewAdddressState">
+          cancel
+        </st-button>
+        <st-button (onClick)="addAddress()" [isDisabled]="addNewAddressForm && !addNewAddressForm.valid">
+          save
+        </st-button>
+      </div>
+    </ng-container>
+  </div>
+  <div class="saved-addresses__add-address-divider" *ngIf="addNewAdddressState"></div>
+  <st-order-address-list [addresses]="userAddresses"> </st-order-address-list>
+</ion-content>

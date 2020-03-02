@@ -1,0 +1,98 @@
+@mixin font-size($font-size) {
+  font-size: $font-size;
+}
+
+@mixin font-family($font-family) {
+  font-family: $font-family;
+}
+
+@mixin font-nunito-regular($font-size) {
+  @include font-size($font-size);
+  @include font-family($font-nunito-regular);
+}
+
+@mixin font-nunito-semibold($font-size) {
+  @include font-size($font-size);
+  @include font-family($font-nunito-semibold);
+}
+
+@mixin font-nunito-heavy($font-size) {
+  @include font-size($font-size);
+  @include font-family($font-nunito-heavy);
+}
+
+@mixin link-color($color) {
+  color: $color;
+
+  &:link,
+  &:visited,
+  &:focus,
+  &:hover,
+  &:active {
+    color: $color;
+  }
+}
+
+@mixin hover {
+  &:hover,
+  &:focus {
+    @content;
+  }
+}
+
+@mixin disabled {
+  &.disabled,
+  &.disabled:focus,
+  &.disabled:hover,
+  &[disabled],
+  &[disabled]:focus,
+  &[disabled]:hover {
+    @content;
+  }
+}
+
+@mixin ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@mixin floating-label($color) {
+  font-size: 75%;
+  transform: translate3d(15%, -50%, 0);
+  opacity: 1;
+  background: $color-white;
+  padding: 0 3px;
+  margin: 0;
+  color: $color;
+}
+
+@mixin chevron-down() {
+  &::before {
+    background-color: $color-white;
+    background-image: url('/assets/icon/chevron-down.svg');
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    width: 14px;
+    height: 9px;
+    transform: translateY(-50%);
+    pointer-events: none;
+    z-index: 1;
+  }
+}
+
+@mixin chevron-down-active() {
+  &::before {
+    background-image: url('/assets/icon/chevron-down-active.svg');
+    right: 14px;
+  }
+}
+
+@mixin chevron-down-error() {
+  &::before {
+    background-image: url('/assets/icon/chevron-down-error.svg');
+    right: 14px;
+  }
+}

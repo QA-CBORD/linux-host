@@ -1,0 +1,38 @@
+@import "tools";
+
+.order-card {
+  box-shadow: 0 0 4px 0 #0000000a, 0 2px 14px 0 #0000001f;
+  border-radius: 8px;
+  padding: 10px 15px;
+  margin: 15px 10px;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__name {
+    color: $color-black;
+
+    @include font-nunito-semibold(16px);
+  }
+
+  &__number {
+    color: $color-black;
+
+    @include font-nunito-regular(14px);
+  }
+
+  &__description {
+    color: $color-dim-gray;
+
+    @include font-nunito-regular(14px);
+  }
+
+  &__date {
+    color: $color-dim-gray;
+
+    @include font-nunito-regular(14px);
+  }
+}

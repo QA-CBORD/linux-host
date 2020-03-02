@@ -1,0 +1,17 @@
+<div class="textarea__wrapper">
+  <ion-textarea
+    class="textarea__control"
+    id="{{ idd }}"
+    [ngClass]="{ 'textarea__control--error': isError }"
+    rows="{{ rows }}"
+    autoGrow="true"
+    (ionBlur)="ionBlur($event)"
+    (ionChange)="onChangeHandler($event)"
+    [value]="innerValue"
+    (ionFocus)="ionFocus($event)"
+  >
+  </ion-textarea>
+
+  <label class="textarea__placeholder" [attr.for]="idd">{{ label }}</label>
+  <ng-content *ngIf="isError"></ng-content>
+</div>

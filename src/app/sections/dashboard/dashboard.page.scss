@@ -1,0 +1,40 @@
+@import "tools";
+
+.dashboard {
+  background: $color-white-smoke;
+  
+  &__bottom-btn-wrapper {
+    --background:  #fff;
+    --background-activated: #D9D9D9;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px;
+    border-radius: 16px;
+    height: 65px;
+    box-shadow: 0px 0px 4px 0px rgba($color-black, 0.12), 0px 2px 14px 0px rgba($color-black, 0.12);
+  }
+
+  &__bottom-icon-wrapper {
+    display: flex;
+    align-items: center;
+    font-size: 35px;
+    margin-right: 5px;
+  }
+
+  &__bottom-title-wrapper {
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    color: $color-black;
+  }
+  
+  &__bottom-title {
+    @include font-nunito-semibold(16px) ;
+  }
+  &__bottom-subtitle {
+    @include font-nunito-regular(10px) ;
+  }
+
+}

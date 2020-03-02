@@ -1,0 +1,28 @@
+@import 'tools';
+
+.favorites {
+	&__header {
+		border-bottom: 1px solid $color-whisper;
+	}
+
+	&__empty-state-container {
+		display: flex;
+    	flex-direction: column;
+    	align-items: center;
+    	position: relative;
+    	top: 100px;
+	}
+
+	&__empty-state-text {
+		max-width: 220px;
+		opacity: .6;
+		text-align: center;
+
+		@include font-nunito-semibold(16px);
+	}
+
+	&__empty-state-footer {
+		padding: 10px 10px 50px;
+		background: $color-white;
+	}
+}

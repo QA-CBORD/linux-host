@@ -1,0 +1,38 @@
+<div class="store__content">
+  <st-balance [points]="(track | async).userCurrentPoints"></st-balance>
+  <div class="store__active-wrapper" *ngIf="(activeRewards | async).length">
+    <div class="store__active-list">
+      <h4 class="store__active-title">{{ contentString.activeRewardsLabel }}</h4>
+      <div class="store__active-description">
+        {{ contentString.claimInstructionsLabel }}
+      </div>
+    </div>
+
+    <ion-list class="store__list list-container">
+      <ion-item
+        class="list-container__item"
+        button="true"
+        *ngFor="let item of (activeRewards | async); trackBy: trackByFn"
+      >
+        <st-list-item
+          class="list-container__item-content"
+          environment="store"
+          [item]="item"
+          [active]="true"
+        ></st-list-item>
+      </ion-item>
+    </ion-list>
+  </div>
+
+  <ion-list class="store__list list-container">
+    <ion-item class="list-container__item" button="true" *ngFor="let item of (rewards | async); trackBy: trackByFn">
+      <st-list-item
+        class="list-container__item-content"
+        environment="store"
+        [currentPoints]="(track | async).userCurrentPoints"
+        [item]="item"
+        [active]="false"
+      ></st-list-item>
+    </ion-item>
+  </ion-list>
+</div>
