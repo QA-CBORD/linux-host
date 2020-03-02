@@ -8,7 +8,6 @@ import { DepositResolver } from './resolvers/deposit.resolver';
 import { DepositService } from '@sections/accounts/services/deposit.service';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
 import { CreditCardTypeModule } from '@sections/accounts/shared/pipes/credit-card-type/credit-card-type.module';
-import { CustomCurrencyModule } from '@sections/accounts/shared/pipes/custom-currency/custom-currency.module';
 import { ConfirmDepositPopoverComponent } from '@sections/accounts/shared/ui-components/confirm-deposit-popover';
 import { ConfirmDepositPopoverModule } from '@sections/accounts/shared/ui-components/confirm-deposit-popover/confirm-deposit-popover.module';
 import { DepositModalComponent } from '@sections/accounts/shared/ui-components/deposit-modal';
@@ -22,7 +21,6 @@ const imports = [
   ReactiveFormsModule,
   CreditCardTypeModule,
   TransactionUnitsPipeModule,
-  CustomCurrencyModule,
   IonicModule.forRoot({
     scrollPadding: false,
     scrollAssist: true,
