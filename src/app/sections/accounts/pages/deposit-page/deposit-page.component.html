@@ -99,11 +99,11 @@
         <ng-template #mainInput>
           <div class="deposit__main-input-container">
             <ion-input class="deposit__main-input"
-                       type="number"
+                       type="tel"
                        inputmode="decimal"
                        maxlength="10"
                        #inputText
-                       [value]="depositForm.get('mainInput') | customCurrency"
+                       [value]="depositForm.get('mainInput')"
                        placeholder="0"
                        [ngStyle]="{ width: inputText.value ? inputText.value.length + 1 + 'ch' : '2ch' }"
                        [ngClass]="{
