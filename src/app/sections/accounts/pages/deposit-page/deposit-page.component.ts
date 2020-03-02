@@ -309,6 +309,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
         this.mainFormInput.setErrors(null);
         this.resetControls(['mainSelect', 'mainInput']);
       }
+      this.depositForm.controls['mainSelect'].setValue(0);
     });
   }
 
