@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { SingleEntityStateManager } from '@core/classes/single-entity-state-manager';
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { distinctUntilChanged, map } from 'rxjs/operators';
 
 @Injectable({

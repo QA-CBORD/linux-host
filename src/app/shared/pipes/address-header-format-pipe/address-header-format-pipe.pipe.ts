@@ -3,12 +3,13 @@ import { AddressInfo } from '@core/model/address/address-info';
 import { getAddressHeader } from '@core/utils/address-helper';
 
 @Pipe({
-  name: 'addressHeaderFormat'
+  name: 'addressHeaderFormat',
 })
 export class AddressHeaderFormatPipe implements PipeTransform {
 
   transform(address: AddressInfo): string {
-    return address ? getAddressHeader(address) : 'Address misconfigured =(';
+    const emptyAddressMessage = 'No address provided, contact merchant for address';
+    let res;
+    return !address || !(res = getAddressHeader(address)).length ? emptyAddressMessage : res;
   }
-
 }
