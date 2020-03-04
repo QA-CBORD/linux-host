@@ -1,10 +1,12 @@
 @import 'tools';
 
 .merchant {
-  padding: 20px 15px;
   --padding-start: 0;
   --inner-padding-end: 0;
-   border-bottom: 1px solid $color-light-gray;
+
+  padding: 20px 0;
+  margin: 0 15px;
+  border-bottom: 1px solid $color-light-gray;
 
   &__merchant-photo {
     object-fit: cover;
