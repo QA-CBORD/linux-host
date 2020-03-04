@@ -16,7 +16,7 @@ export class AccountsPageResolver
   constructor(
     private readonly accountsService: AccountsService,
     private readonly transactionService: TransactionService,
-    private readonly loadingService: LoadingService
+    private readonly loadingService: LoadingService,
   ) {}
 
   resolve(): Observable<[ContentStringInfo[], ContentStringInfo[], TransactionHistory[], UserAccount[]]> {

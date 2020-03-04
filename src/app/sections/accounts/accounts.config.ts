@@ -1,4 +1,5 @@
 import * as Globals from '../../app.global';
+import { ServerErrorsInfo } from '@core/model/server_error/server-error.model';
 
 export const SYSTEM_SETTINGS_CONFIG = {
   enableOnetimeDeposits: {
@@ -216,3 +217,7 @@ export enum CREDITCARD_TYPE {
   'Visa',
   'Dindes',
 }
+
+export const ACCOUNTS_VALIDATION_ERRORS: ServerErrorsInfo = {
+  6112: 'You have insufficient funds in the selected account',
+};

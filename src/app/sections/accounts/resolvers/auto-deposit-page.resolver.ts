@@ -5,8 +5,8 @@ import { Observable } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
 
 import { SYSTEM_SETTINGS_CONFIG } from '../accounts.config';
-import { SettingInfo } from '../../../core/model/configuration/setting-info.model';
-import { LoadingService } from '../../../core/service/loading/loading.service';
+import { SettingInfo } from '@core/model/configuration/setting-info.model';
+import { LoadingService } from '@core/service/loading/loading.service';
 import { SettingService } from '@core/service/settings/setting.service';
 
 @Injectable()
