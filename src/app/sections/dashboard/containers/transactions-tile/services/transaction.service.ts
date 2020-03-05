@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, zip, of } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
 
 import { ConfigurationService } from 'src/app/core/service/configuration/configuration.service';
@@ -20,6 +20,7 @@ import {
   SYSTEM_SETTINGS_CONFIG,
   TIME_PERIOD,
 } from '@sections/accounts/accounts.config';
+import { convertGMTintoLocalTime } from '@core/utils/date-helper';
 
 @Injectable()
 export class TransactionService {
@@ -39,7 +40,7 @@ export class TransactionService {
     private readonly commerceApiService: CommerceApiService,
     private readonly userService: UserService,
     private readonly configService: ConfigurationService
-  ) {}
+  ) { }
 
   get transactions$(): Observable<TransactionHistory[]> {
     return this._transactions$.asObservable();
@@ -105,6 +106,9 @@ export class TransactionService {
           map(({ transactions }) => this.filterByTenderIds(tendersId, transactions))
         )
       ),
+      switchMap(transactions => zip(of(transactions), this.userService.userData)),
+      map(([transactions, { timeZone, locale }]) =>
+        transactions.map(item => ({ ...item, actualDate: convertGMTintoLocalTime(item.actualDate, locale, timeZone) }))),
       tap(transactions => (this._transactions = transactions))
     );
   }

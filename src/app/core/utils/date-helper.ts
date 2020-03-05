@@ -7,9 +7,9 @@ export const toLocaleString = (date?: string) => determineDate(date).toLocaleStr
 export const getTime = (date?: string) => determineDate(date).getTime();
 
 export const getDateTimeInGMT = (dueTime, locale, timeZone) => {
-  const usaTimezone = new Date().toLocaleString('en-US', { timeZone });
-  const greenwichTimezone = new Date().toLocaleString('en-US', { timeZone: 'Europe/London' });
-  let timeZoneinGMT: any = (<any>new Date(greenwichTimezone) - <any>new Date(usaTimezone)) / 1000 / 60 / 60;
+  const localTimezone = new Date().toLocaleString(locale, { timeZone });
+  const greenwichTimezone = new Date().toLocaleString(locale, { timeZone: 'Europe/London' });
+  let timeZoneinGMT: any = (<any>new Date(greenwichTimezone) - <any>new Date(localTimezone)) / 1000 / 60 / 60;
   timeZoneinGMT = timeZoneinGMT * -1;
   const toString = JSON.stringify(timeZoneinGMT);
   timeZoneinGMT = `${toString[0]}${toString[1].length > 1 ? toString[1] : '0' + toString[1]}`;
@@ -27,6 +27,12 @@ export const getDateTimeInGMT = (dueTime, locale, timeZone) => {
   const arrOfDatetime = usaTime.split(',');
   const splettedTime = arrOfDatetime[0].split('/');
   return `${splettedTime[2]}-${splettedTime[0]}-${splettedTime[1]}T${arrOfDatetime[1].trim()}.000${timeZoneinGMT}00`;
+};
+
+export const convertGMTintoLocalTime = (dueTime, locale, timeZone): Date => {
+  const localTimeInString: string = new Date(dueTime).toLocaleString(locale, { timeZone });
+
+  return new Date(localTimeInString);
 };
 
 export const isSameDay = (c, n): boolean => {

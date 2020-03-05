@@ -43,15 +43,12 @@ export class AccountDetailsComponent implements OnInit, AfterViewInit {
       .getNextTransactionsByAccountId(this.currentAccountId)
       .pipe(take(1))
       .subscribe(
-        async data => {
-          await this.lazy.complete();
-          data.length === 0 ? (this.lazy.disabled = true) : (this.lazy.disabled = false);
-        },
+        async data => this.lazy.disabled = !data.length,
         async () => {
-          await this.lazy.complete();
           await this.onErrorRetrieveTransactions('Something went wrong, please try again...');
           await this.content.scrollByPoint(null, -100, 700);
-        }
+        },
+        async () => await this.lazy.complete()
       );
   }
 

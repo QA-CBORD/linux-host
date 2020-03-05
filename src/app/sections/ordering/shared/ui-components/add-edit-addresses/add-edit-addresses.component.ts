@@ -44,7 +44,11 @@ export class AddEditAddressesComponent implements OnInit, OnChanges, OnDestroy {
     private readonly merchantService: MerchantService,
     private readonly cdRef: ChangeDetectorRef,
     private readonly loader: LoadingService
-  ) {}
+  ) { }
+
+  get controlsNames() {
+    return ADD_EDIT_ADDRESS_CONTROL_NAMES;
+  }
 
   get campus(): AbstractControl {
     if (this.addEditAddressesForm) {
@@ -84,10 +88,6 @@ export class AddEditAddressesComponent implements OnInit, OnChanges, OnDestroy {
 
   get buildings(): AbstractControl {
     return this.addEditAddressesForm.get(this.controlsNames.buildings);
-  }
-
-  get controlsNames() {
-    return REQUEST_FUNDS_CONTROL_NAMES;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -172,15 +172,10 @@ export class AddEditAddressesComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private offCampusFormBlock(selectedAddress) {
-    const address1Errors = [
-      errorDecorator(Validators.required, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.address1].required),
-    ];
-
-    const cityErrors = [errorDecorator(Validators.required, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.city].required)];
-
-    const stateErrors = [
-      errorDecorator(Validators.required, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.state].required),
-    ];
+    const { address1, city, state } = ADD_EDIT_ADDRESS_CONTROL_NAMES;
+    const address1Errors = [errorDecorator(Validators.required, CONTROL_ERROR[address1].required)];
+    const cityErrors = [errorDecorator(Validators.required, CONTROL_ERROR[city].required)];
+    const stateErrors = [errorDecorator(Validators.required, CONTROL_ERROR[state].required)];
 
     let campus;
     if (selectedAddress && selectedAddress.onCampus !== null) {
@@ -211,11 +206,12 @@ export class AddEditAddressesComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private onCampusFormBlock(selectedAddress) {
+    const { buildings, room } = ADD_EDIT_ADDRESS_CONTROL_NAMES;
     const buildingsErrors = [
-      errorDecorator(Validators.required, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.buildings].required),
+      errorDecorator(Validators.required, CONTROL_ERROR[buildings].required),
     ];
 
-    const roomErrors = [errorDecorator(Validators.required, CONTROL_ERROR[REQUEST_FUNDS_CONTROL_NAMES.room].required)];
+    const roomErrors = [errorDecorator(Validators.required, CONTROL_ERROR[room].required)];
     let campus;
     if (selectedAddress && selectedAddress.onCampus !== null) {
       campus = selectedAddress.onCampus ? 'oncampus' : 'offcampus';
@@ -254,7 +250,7 @@ export class AddEditAddressesComponent implements OnInit, OnChanges, OnDestroy {
   }
 }
 
-export enum REQUEST_FUNDS_CONTROL_NAMES {
+export enum ADD_EDIT_ADDRESS_CONTROL_NAMES {
   campus = 'campus',
   address1 = 'address1',
   address2 = 'address2',
@@ -267,19 +263,19 @@ export enum REQUEST_FUNDS_CONTROL_NAMES {
 }
 
 export const CONTROL_ERROR = {
-  [REQUEST_FUNDS_CONTROL_NAMES.address1]: {
+  [ADD_EDIT_ADDRESS_CONTROL_NAMES.address1]: {
     required: 'You must enter a address.',
   },
-  [REQUEST_FUNDS_CONTROL_NAMES.city]: {
+  [ADD_EDIT_ADDRESS_CONTROL_NAMES.city]: {
     required: 'You must enter a city.',
   },
-  [REQUEST_FUNDS_CONTROL_NAMES.state]: {
+  [ADD_EDIT_ADDRESS_CONTROL_NAMES.state]: {
     required: 'You must choose a state.',
   },
-  [REQUEST_FUNDS_CONTROL_NAMES.buildings]: {
+  [ADD_EDIT_ADDRESS_CONTROL_NAMES.buildings]: {
     required: 'You must choose buildings.',
   },
-  [REQUEST_FUNDS_CONTROL_NAMES.room]: {
+  [ADD_EDIT_ADDRESS_CONTROL_NAMES.room]: {
     required: 'You must choose a room.',
   },
 };

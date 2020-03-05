@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
+import { BehaviorSubject, Observable, combineLatest, zip, of } from 'rxjs';
 import { map, switchMap, tap, take } from 'rxjs/operators';
 
 import { AccountsService } from './accounts.service';
@@ -21,6 +21,8 @@ import {
 import { DateUtilObject, getTimeRangeOfDate, getUniquePeriodName } from '../shared/ui-components/filter/date-util';
 import { QueryTransactionHistoryCriteriaDateRange } from '@core/model/account/transaction-query-date-range.model';
 import { TIMEZONE_REGEXP } from '@core/utils/regexp-patterns';
+import { UserService } from '@core/service/user-service/user.service';
+import { convertGMTintoLocalTime } from '@core/utils/date-helper';
 
 @Injectable()
 export class TransactionService {
@@ -39,8 +41,9 @@ export class TransactionService {
   constructor(
     private readonly accountsService: AccountsService,
     private readonly commerceApiService: CommerceApiService,
-    private readonly contentService: ContentStringsApiService
-  ) {}
+    private readonly contentService: ContentStringsApiService,
+    private readonly userService: UserService,
+  ) { }
 
   get transactions$(): Observable<TransactionHistory[]> {
     return this._transactions$.asObservable();
@@ -125,6 +128,9 @@ export class TransactionService {
           map(({ transactions }) => this.filterByTenderIds(tendersId, transactions))
         )
       ),
+      switchMap(transactions => zip(of(transactions), this.userService.userData)),
+      map(([transactions, { timeZone, locale }]) =>
+        transactions.map(item => ({ ...item, actualDate: convertGMTintoLocalTime(item.actualDate, locale, timeZone) }))),
       tap(transactions => (this._transactions = transactions))
     );
   }

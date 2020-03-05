@@ -544,6 +544,7 @@ export class AutomaticDepositPageComponent {
   }
 
   private async getAmountToDepositErrors(): Promise<any[]> {
+    const { amountToDeposit } = AUTOMATIC_DEPOSIT_CONTROL_NAMES;
     const settings = await this.settingService.settings$.pipe(first()).toPromise();
     const maxSetting =
       this.activePaymentType === PAYMENT_TYPE.BILLME
@@ -559,116 +560,84 @@ export class AutomaticDepositPageComponent {
     const min = parseFloat(this.settingService.getSettingByName(settings, minSetting.name).value);
 
     return [
-      formControlErrorDecorator(
-        Validators.required,
-        CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit].requiredEnter
-      ),
-      formControlErrorDecorator(
-        validateInputAmount,
-        CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit].input
-      ),
-      formControlErrorDecorator(
-        Validators.max(max),
-        CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit].maximum + Number(max).toFixed(2)
-      ),
-      formControlErrorDecorator(
-        Validators.min(min),
-        CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit].minimum + Number(min).toFixed(2)
-      ),
+      formControlErrorDecorator(Validators.required, CONTROL_ERROR[amountToDeposit].requiredEnter),
+      formControlErrorDecorator(validateInputAmount, CONTROL_ERROR[amountToDeposit].input),
+      formControlErrorDecorator(Validators.max(max), CONTROL_ERROR[amountToDeposit].maximum + Number(max).toFixed(2)),
+      formControlErrorDecorator(Validators.min(min), CONTROL_ERROR[amountToDeposit].minimum + Number(min).toFixed(2)),
     ];
   }
 
   private async setValidators() {
+    const { lowBalanceAmount, amountToDeposit } = AUTOMATIC_DEPOSIT_CONTROL_NAMES;
     if (this.automaticDepositForm.contains(this.controlNames.lowBalanceAmount)) {
       const isLowBalanceFreeInput = await this.isLowBalanceFreeInput$.pipe(first()).toPromise();
       const freeFormErrors = [
-        formControlErrorDecorator(
-          Validators.required,
-          CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.lowBalanceAmount].requiredEnter
-        ),
-        formControlErrorDecorator(
-          validateInputAmount,
-          CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.lowBalanceAmount].input
-        ),
-        formControlErrorDecorator(
-          Validators.maxLength(6),
-          CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.lowBalanceAmount].maximum
-        ),
-        formControlErrorDecorator(
-          Validators.min(0),
-          CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.lowBalanceAmount].minimum
-        ),
+        formControlErrorDecorator(Validators.required, CONTROL_ERROR[lowBalanceAmount].requiredEnter),
+        formControlErrorDecorator(validateInputAmount, CONTROL_ERROR[lowBalanceAmount].input),
+        formControlErrorDecorator(Validators.maxLength(6), CONTROL_ERROR[lowBalanceAmount].maximum),
+        formControlErrorDecorator(Validators.min(0), CONTROL_ERROR[lowBalanceAmount].minimum),
       ];
-      const selectErrors = formControlErrorDecorator(
-        Validators.required,
-        CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.lowBalanceAmount].requiredSelect
-      );
+      const selectErrors = formControlErrorDecorator(Validators.required, CONTROL_ERROR[lowBalanceAmount].requiredSelect);
       const errors = isLowBalanceFreeInput ? freeFormErrors : selectErrors;
 
-      this.automaticDepositForm.get(this.controlNames.lowBalanceAmount).setValidators(errors);
+      this.automaticDepositForm.get(lowBalanceAmount).setValidators(errors);
     }
 
-    if (this.automaticDepositForm.contains(this.controlNames.amountToDeposit)) {
+    if (this.automaticDepositForm.contains(amountToDeposit)) {
       const isAllowFreeFormAmountToDeposit = await this.isFreeFormAmountToDepositEnabled$.pipe(first()).toPromise();
       const errors = isAllowFreeFormAmountToDeposit
         ? await this.getAmountToDepositErrors()
-        : formControlErrorDecorator(
-          Validators.required,
-          CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit].requiredSelect
-        );
+        : formControlErrorDecorator(Validators.required, CONTROL_ERROR[amountToDeposit].requiredSelect);
 
-      this.automaticDepositForm.get(this.controlNames.amountToDeposit).setValidators(errors);
+      this.automaticDepositForm.get(amountToDeposit).setValidators(errors);
     }
   }
 
   // -------------------- Controls block --------------------------//
 
   private initPaymentFormBlock(): { [key: string]: any[] } {
-    const accountValidators = [
-      formControlErrorDecorator(Validators.required, CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.account].required),
-    ];
+    const { account, paymentMethod, amountToDeposit } = AUTOMATIC_DEPOSIT_CONTROL_NAMES;
+    const accountValidators = [formControlErrorDecorator(Validators.required, CONTROL_ERROR[account].required)];
     const paymentMethodValidators = [
-      formControlErrorDecorator(
-        Validators.required,
-        CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.paymentMethod].required
-      ),
+      formControlErrorDecorator(Validators.required, CONTROL_ERROR[paymentMethod].required),
     ];
 
     return {
-      [AUTOMATIC_DEPOSIT_CONTROL_NAMES.account]: [
-        this.destinationAccount ? this.destinationAccount : '',
+      [account]: [
+        this.destinationAccount || '',
         accountValidators,
       ],
-      [AUTOMATIC_DEPOSIT_CONTROL_NAMES.amountToDeposit]: [this.autoDepositSettings.amount],
-      [AUTOMATIC_DEPOSIT_CONTROL_NAMES.paymentMethod]: [
-        this.paymentMethodAccount ? this.paymentMethodAccount : '',
+      [amountToDeposit]: [this.autoDepositSettings.amount],
+      [paymentMethod]: [
+        this.paymentMethodAccount || '',
         paymentMethodValidators,
       ],
     };
   }
 
   private initTimeBasedBlock(frequency: string): { [key: string]: any[] } {
+    const { dayOfMonth, dayOfWeek } = AUTOMATIC_DEPOSIT_CONTROL_NAMES;
     let validators;
     let controlName;
     let day;
 
     if (frequency === this.frequency.month) {
       day = this.autoDepositSettings.dayOfMonth;
-      controlName = AUTOMATIC_DEPOSIT_CONTROL_NAMES.dayOfMonth;
+      controlName = dayOfMonth;
       validators = [
         formControlErrorDecorator(
           Validators.required,
-          CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.dayOfMonth].required
+          CONTROL_ERROR[dayOfMonth].required
         ),
-        formControlErrorDecorator(validateMonthRange, CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.dayOfMonth].range),
+        formControlErrorDecorator(validateMonthRange, CONTROL_ERROR[dayOfMonth].range),
       ];
     } else {
       day = this.autoDepositSettings.dayOfWeek;
-      controlName = AUTOMATIC_DEPOSIT_CONTROL_NAMES.dayOfWeek;
+      controlName = dayOfWeek;
       validators = [
         formControlErrorDecorator(
           Validators.required,
-          CONTROL_ERROR[AUTOMATIC_DEPOSIT_CONTROL_NAMES.dayOfWeek].required
+          CONTROL_ERROR[dayOfWeek].required
         ),
       ];
     }
