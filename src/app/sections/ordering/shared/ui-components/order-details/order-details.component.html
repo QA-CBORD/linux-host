@@ -26,7 +26,7 @@
               [disabled]="readonly"
               *ngFor="let orderItem of orderItems"
               class="order-ingredient-list__ingredient">
-        <ion-item class="order-ingredient-list__item" (click)="goToItemDetails(orderItem)">
+        <ion-item class="order-ingredient-list__item" lines="none" (click)="goToItemDetails(orderItem)">
           <ion-label>
             <div class="order-ingredient-list__ingredient-header">
               <div class="order-ingredient-list__ingredient-number">{{orderItem.quantity}}</div>
