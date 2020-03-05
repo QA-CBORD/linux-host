@@ -8,7 +8,7 @@ import { getAddressHeader } from '@core/utils/address-helper';
 export class AddressHeaderFormatPipe implements PipeTransform {
 
   transform(address: AddressInfo): string {
-    const emptyAddressMessage = 'No address provided, contact merchant for address';
+    const emptyAddressMessage = 'Address unknown';
     let res;
     return !address || !(res = getAddressHeader(address)).length ? emptyAddressMessage : res;
   }
