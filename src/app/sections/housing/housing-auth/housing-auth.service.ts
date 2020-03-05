@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { switchMap, shareReplay } from 'rxjs/operators';
 
-import { AuthService } from '../../../core/service/auth-service/auth.service';
+import { AuthService } from '@core/service/auth-service/auth.service';
 
 @Injectable({
   providedIn: 'root',

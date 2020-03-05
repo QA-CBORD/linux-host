@@ -41,7 +41,7 @@ export class AppComponent implements OnDestroy {
     private readonly authService: AuthService,
     private readonly userService: UserService,
     private readonly popoverCtrl: PopoverController,
-    private readonly nativeProvider: NativeProvider,
+    private readonly nativeProvider: NativeProvider
   ) {
     this.initializeApp();
   }
@@ -110,7 +110,7 @@ export class AppComponent implements OnDestroy {
           if (event instanceof NavigationStart) {
             this.nativeProvider.updatePreviousRoute();
           }
-          
+
           if (event instanceof NavigationEnd) {
             this.nativeProvider.sendAndroidData(NativeData.UPDATE_ROUTE, event.url);
           }
@@ -130,7 +130,7 @@ export class AppComponent implements OnDestroy {
         throw new Error('Error getting native data, retrieve info normally');
       }
 
-      DataCache.setSessionId(sessionId);
+      this.authService.setSessionId(sessionId);
       DataCache.setUserInfo(userInfo);
       this.userService.setUserData(userInfo);
       DataCache.setInstitutionId(institutionId);
@@ -143,7 +143,7 @@ export class AppComponent implements OnDestroy {
       const destinationPagePromise: Promise<string> = this.nativeProvider.getIosData(NativeData.DESTINATION_PAGE);
 
       Promise.all([sessionIdPromise, userInfoPromise, institutionIdPromise, destinationPagePromise]).then(values => {
-        DataCache.setSessionId(values[0]);
+        this.authService.setSessionId(values[0]);
         DataCache.setUserInfo(values[1]);
         this.userService.setUserData(values[1]);
         DataCache.setInstitutionId(values[2]);
@@ -163,7 +163,7 @@ export class AppComponent implements OnDestroy {
       },
       error => {
         this.modalHandler(
-          { ...error, title: 'Error getting test user', buttons: [{ ...buttons.RETRY, label: 'RETRY' }], },
+          { ...error, title: 'Error getting test user', buttons: [{ ...buttons.RETRY, label: 'RETRY' }] },
           this.testGetSession.bind(this)
         );
       }
@@ -211,7 +211,7 @@ export class AppComponent implements OnDestroy {
               return;
             }
             /// set session id for services base and get the user info for caching
-            DataCache.setSessionId(newSessionId);
+            this.authService.setSessionId(newSessionId);
             this.getUserInfo();
           },
           () => {
