@@ -590,7 +590,13 @@ export class AutomaticDepositPageComponent {
         : formControlErrorDecorator(Validators.required, CONTROL_ERROR[amountToDeposit].requiredSelect);
 
       this.automaticDepositForm.get(amountToDeposit).setValidators(errors);
+      this.automaticDepositForm.get(this.controlNames.amountToDeposit).value !== '' && this.amountToDeposit.markAsTouched();
     }
+    
+    // Temporary method for detecting changes after markAsTouched() execute;
+    setTimeout(() => {
+      this.cdRef.detectChanges();
+    }, 0);
   }
 
   // -------------------- Controls block --------------------------//
