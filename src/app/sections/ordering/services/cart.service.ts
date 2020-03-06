@@ -167,6 +167,10 @@ export class CartService {
     }
   }
 
+  updateOrderNote(note: string){
+    this.cart.order.notes = note;
+  }
+
   removeLastOrderItem() {
     this.cart.order.orderItems.pop();
     this.onStateChanged();

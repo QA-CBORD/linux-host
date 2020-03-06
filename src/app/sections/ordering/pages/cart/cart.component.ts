@@ -244,6 +244,7 @@ export class CartComponent implements OnInit {
   private async submitOrder(): Promise<void> {
     await this.loadingService.showSpinner();
     let accountId = this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.paymentMethod].id;
+    this.cartService.updateOrderNote(this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.note]);
 
     /// if Apple Pay Order
     if (this.cartFormState.data.paymentMethod.accountType === AccountType.APPLEPAY) {
