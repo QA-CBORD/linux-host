@@ -4,7 +4,7 @@ enum Development {
   cbordstudent_url = 'https://student.dev.cbord.com',
   secmsg_api = 'https://secmsg.api.dev.cbord.com',
   image_url = 'https://3bulchr7pb.execute-api.us-east-1.amazonaws.com/dev/image/',
-  // image_url = 'https://object-store.api.dev.cbord.com', once DNS entry is entered
+  // image_url = 'https://object-store.api.dev.cbord.com/image/', once DNS entry is entered
   housing_aws_url = 'https://z6u8er70s9.execute-api.us-east-1.amazonaws.com/dev',
 }
 
@@ -14,7 +14,7 @@ enum Feature1 {
   cbordstudent_url = 'https://student.feature1.cbord.com',
   secmsg_api = 'https://secmsg.api.dev.cbord.com',
   image_url = 'https://3bulchr7pb.execute-api.us-east-1.amazonaws.com/dev/image/',
-  // image_url = 'https://object-store.api.dev.cbord.com', once DNS entry is entered
+  // image_url = 'https://object-store.api.feature1.cbord.com/image/', once DNS entry is entered
   housing_aws_url = 'https://z6u8er70s9.execute-api.us-east-1.amazonaws.com/dev',
 }
 
@@ -23,7 +23,7 @@ enum Qa {
   site_url = 'http://get.qa.cbord.com',
   cbordstudent_url = 'https://student.qa.cbord.com',
   secmsg_api = 'https://secmsg.api.qa.cbord.com',
-  image_url = 'https://object-store.api.qa.cbord.com',
+  image_url = 'https://object-store.api.qa.cbord.com/image/',
   housing_aws_url = 'https://z4ffq7e1m9.execute-api.us-east-1.amazonaws.com/qa',
 }
 
@@ -32,7 +32,7 @@ enum Pat {
   site_url = 'http://get.pat.cbord.com',
   cbordstudent_url = 'https://student.pat.cbord.com',
   secmsg_api = 'https://secmsg.api.pat.cbord.com',
-  image_url = 'https://object-store.api.pat.cbord.com',
+  image_url = 'https://object-store.api.pat.cbord.com/image/',
   housing_aws_url = 'https://z6u8er70s9.execute-api.us-east-1.amazonaws.com/dev',
 }
 
@@ -41,7 +41,7 @@ enum Demo {
   site_url = 'http://get.demo.cbord.com',
   cbordstudent_url = 'https://student.demo.cbord.com',
   secmsg_api = 'https://secmsg.api.demo.cbord.com',
-  image_url = 'https://object-store.api.demo.cbord.com',
+  image_url = 'https://object-store.api.demo.cbord.com/image/',
   housing_aws_url = 'https://z4ffq7e1m9.execute-api.us-east-1.amazonaws.com/qa',
 }
 
@@ -50,7 +50,7 @@ enum Production {
   site_url = 'http://get.cbord.com',
   cbordstudent_url = 'https://student.cbord.com',
   secmsg_api = 'https://secmsg.api.cbord.com',
-  image_url = 'https://object-store.api.cbord.com',
+  image_url = 'https://object-store.api.cbord.com/image/',
   housing_aws_url = 'https://z6u8er70s9.execute-api.us-east-1.amazonaws.com',
 }
 
