@@ -1,7 +1,7 @@
 @import 'tools';
 
 .order-detail {
-    --padding-bottom: 130px;
+    --padding-bottom: 70px;
 
     &__static-header {
         display: block;
@@ -79,7 +79,6 @@
     &__nutrition-info {
         width: 100%;
         height: 100px;
-        margin: 0;
     }
 
     &__nutrition-info-container {
