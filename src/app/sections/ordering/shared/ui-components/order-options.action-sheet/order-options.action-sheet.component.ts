@@ -74,14 +74,20 @@ export class OrderOptionsActionSheetComponent implements OnInit {
         this.settings.map[MerchantSettings.pickupLocationsEnabled],
       ),
       this.merchantService.retrieveBuildings(),
+      this.cartService.orderDetailsOptions$
     )
       .pipe(take(1))
       .subscribe(
-        ([schedule, [deliveryAddress, deliveryLocations], pickupLocations, buildingsForNewAddressForm]) => {
+        ([schedule, [deliveryAddress, deliveryLocations], pickupLocations, buildingsForNewAddressForm, orderDetailsOptions]) => {
           const isTimeDisable = parseInt(this.settings.map[MerchantSettings.orderAheadEnabled].value);
-          const defaultPickupAddress = JSON.parse(this.settings.map[MerchantSettings.pickupLocationsEnabled].value)
-            ? ''
-            : this.storeAddress;
+          let defaultPickupAddress;
+          if (orderDetailsOptions === null) {
+            defaultPickupAddress = JSON.parse(this.settings.map[MerchantSettings.pickupLocationsEnabled].value)
+              ? ''
+              : this.storeAddress;
+          } else {
+            defaultPickupAddress = orderDetailsOptions.address;
+          }
 
           this.deliveryAddresses = deliveryLocations;
           this.defaultDeliveryAddress = this.activeDeliveryAddressId

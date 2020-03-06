@@ -90,7 +90,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     const footerButtonName = 'set order options';
     const cssClass = `order-options-action-sheet ${
       orderTypes.delivery && orderTypes.pickup ? ' order-options-action-sheet-p-d' : ''
-    }`;
+      }`;
     const { orderType, address } = await this.orderInfo$.pipe(first()).toPromise();
     const modal = await this.modalController.create({
       component: OrderOptionsActionSheetComponent,
@@ -107,6 +107,8 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     });
 
     modal.onDidDismiss().then(async ({ data }) => {
+      if (!data) return;
+
       const cachedData = await this.cartService.orderDetailsOptions$.pipe(first()).toPromise();
       await this.cartService.setActiveMerchantsMenuByOrderOptions(data.dueTime, data.orderType, data.address, data.isASAP);
       this.cartService.orderItems$.pipe(first()).subscribe(items => {
