@@ -3,7 +3,7 @@ import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/fo
 import { ModalController, PopoverController, ToastController } from '@ionic/angular';
 import { map, switchMap, take, tap, finalize } from 'rxjs/operators';
 import {
-  ACCOUNT_TYPES,
+  ACCOUNT_TYPES, CONTENT_STRINGS,
   LOCAL_ROUTING,
   PAYMENT_SYSTEM_TYPE,
   PAYMENT_TYPE,
@@ -211,6 +211,8 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     const { sourceAccount, selectedAccount, mainInput, mainSelect } = this.depositForm.value;
     const isBillme: boolean = sourceAccount === PAYMENT_TYPE.BILLME;
     const isApplePay: boolean = sourceAccount.accountType === AccountType.APPLEPAY;
+    const depositReviewBillMe = this.depositService.getContentValueByName(CONTENT_STRINGS.billMeDepositReviewInstructions);
+    const depositReviewCredit = this.depositService.getContentValueByName(CONTENT_STRINGS.creditDepositReviewInstructions);
     const sourceAccForBillmeDeposit: Observable<UserAccount> = this.sourceAccForBillmeDeposit(
       selectedAccount,
       this.billmeMappingArr
@@ -248,7 +250,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
           take(1)
         )
         .subscribe(
-          info => this.confirmationDepositPopover(info),
+          info => this.confirmationDepositPopover({...info, depositReviewBillMe, depositReviewCredit}),
           () => {
             this.loadingService.closeSpinner();
             this.onErrorRetrieve('Something went wrong, please try again...');

@@ -183,6 +183,8 @@ export enum CONTENT_STRINGS {
   headerBackBtn = 'header_button_back',
   allAccountsLabel = 'label_all-accounts',
   accountsLabel = 'label_accounts',
+  billMeDepositReviewInstructions = 'label_deposit-billme_review-instructions',
+  creditDepositReviewInstructions = 'label_deposit-credit_review-instructions',
   filterLabel = 'label_filter',
   mealSuffixLabel = 'meal-plan-suffix',
   mealSuffixPluralLabel = 'meal-plan-suffix-plural',

@@ -1,22 +1,31 @@
 import { Injectable } from '@angular/core';
 import { CommerceApiService } from 'src/app/core/service/commerce/commerce-api.service';
-import { Observable, BehaviorSubject, zip, of } from 'rxjs';
+import { Observable, BehaviorSubject, zip, of, combineLatest } from 'rxjs';
 import { UserAccount } from 'src/app/core/model/account/account.model';
-import { map, tap, switchMap } from 'rxjs/operators';
+import { map, tap, switchMap, take } from 'rxjs/operators';
 import { ContentStringRequest } from 'src/app/core/model/content/content-string-request.model';
 import { SettingInfo } from 'src/app/core/model/configuration/setting-info.model';
-import { PAYMENT_SYSTEM_TYPE } from '@sections/accounts/accounts.config';
+import {
+  CONTENT_STRINGS,
+  PAYMENT_SYSTEM_TYPE,
+} from '@sections/accounts/accounts.config';
 import { BillMeMapping } from '@core/model/settings/billme-mapping.model';
 import { ConfigurationService } from '@core/service/config-service/configuration.service';
+import { ContentStringInfo } from '@core/model/content/content-string-info.model';
+import { CONTENT_STINGS_CATEGORIES, CONTENT_STINGS_DOMAINS } from '../../../content-strings';
+import { ContentStringsApiService } from '@core/service/content-service/content-strings-api.service';
 
 @Injectable()
 export class DepositService {
   private readonly _accounts$: BehaviorSubject<UserAccount[]> = new BehaviorSubject<UserAccount[]>([]);
   public readonly _settings$: BehaviorSubject<SettingInfo[]> = new BehaviorSubject<SettingInfo[]>([]);
 
+  private contentString;
+
   constructor(
     private readonly commerceApiService: CommerceApiService,
-    private readonly configurationService: ConfigurationService
+    private readonly configurationService: ConfigurationService,
+    private readonly contentService: ContentStringsApiService,
   ) {}
 
   get accounts$(): Observable<UserAccount[]> {
@@ -111,4 +120,30 @@ export class DepositService {
   deposit(fromAccountId, toAccountId, amount, fromAccountCvv): Observable<string> {
     return this.commerceApiService.deposit(fromAccountId, toAccountId, amount, fromAccountCvv);
   }
+
+  initContentStringsList(): Observable<ContentStringInfo[]> {
+    return combineLatest(
+      this.contentService.retrieveContentStringByConfig({
+      domain: CONTENT_STINGS_DOMAINS.patronUi,
+      category: CONTENT_STINGS_CATEGORIES.accounts,
+      name: CONTENT_STRINGS.creditDepositReviewInstructions})
+    ,
+      this.contentService.retrieveContentStringByConfig({
+        domain: CONTENT_STINGS_DOMAINS.patronUi,
+        category: CONTENT_STINGS_CATEGORIES.accounts,
+        name: CONTENT_STRINGS.billMeDepositReviewInstructions})
+    ).pipe(
+      map(([res, res0]) => {
+        const finalArray = [res, res0];
+        this.contentString = finalArray.reduce((init, elem) => ({ ...init, [elem.name]: elem.value }), {});
+        return finalArray;
+      }),
+      take(1),
+    );
+  }
+
+  getContentValueByName(name: string): string {
+    return this.contentString[name] || '';
+  }
+
 }

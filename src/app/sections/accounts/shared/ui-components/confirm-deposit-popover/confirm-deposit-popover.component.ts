@@ -27,4 +27,8 @@ export class ConfirmDepositPopoverComponent implements OnInit {
       message: this.data,
     };
   }
+
+  get showDepositInstructions(): boolean {
+    return (this.popoverConfig.message['billme'] ? this.data.depositReviewBillMe : this.data.depositReviewCredit);
+  }
 }
