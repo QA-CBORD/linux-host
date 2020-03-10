@@ -17,7 +17,7 @@ import { BUTTON_TYPE } from '@core/utils/buttons.config';
   selector: 'st-full-menu',
   templateUrl: './full-menu.component.html',
   styleUrls: ['./full-menu.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FullMenuComponent implements OnInit, OnDestroy {
   private readonly sourceSubscription: Subscription = new Subscription();
