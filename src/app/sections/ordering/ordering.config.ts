@@ -101,5 +101,5 @@ export const ORDER_VALIDATION_ERRORS: ServerErrorsInfo = {
   9014: 'Tip amount is negative or greater than the order subtotal',
   9013: 'Order cannot be canceled due to it has been completed',
   6112: 'You dont have enough money',
-  9997: 'Timeout error, please try again later',
+  9997: 'Timeout error, please try again later'
 };
