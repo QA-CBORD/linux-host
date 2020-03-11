@@ -130,6 +130,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     this.detailsForm = this.fb.group({
       [DETAILS_FORM_CONTROL_NAMES.address]: [this.orderDetailOptions.address],
       [DETAILS_FORM_CONTROL_NAMES.paymentMethod]: ['', Validators.required],
+      [DETAILS_FORM_CONTROL_NAMES.note]: [''],
     });
 
 
@@ -222,6 +223,7 @@ export enum DETAILS_FORM_CONTROL_NAMES {
   paymentMethod = 'paymentMethod',
   cvv = 'cvv',
   tip = 'tip',
+  note = 'note'
 }
 
 export const CONTROL_ERROR = {
@@ -246,6 +248,7 @@ export interface OrderDetailsFormData {
   data: {
     [DETAILS_FORM_CONTROL_NAMES.address]: BuildingInfo;
     [DETAILS_FORM_CONTROL_NAMES.paymentMethod]: UserAccount;
+    [DETAILS_FORM_CONTROL_NAMES.note]: string;
   };
   valid: boolean;
 }

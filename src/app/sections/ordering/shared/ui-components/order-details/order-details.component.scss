@@ -81,6 +81,11 @@
     }
   }
 
+  &__order-note {
+    display: block;
+    margin: 30px;
+  }
+
   &__payment-method {
     color: $color-charcoal;
     letter-spacing: 0;

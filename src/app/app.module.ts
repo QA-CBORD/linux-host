@@ -14,7 +14,7 @@ import { StGlobalPopoverModule } from '@shared/ui-components/st-global-popover/s
   imports: [
     StGlobalPopoverModule,
     CoreModule,
-    IonicModule.forRoot(),
+    IonicModule.forRoot({ swipeBackEnabled: false }),
     IonicStorageModule.forRoot(),
     AppRoutingModule,
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),

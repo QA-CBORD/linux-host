@@ -131,9 +131,18 @@
       >
         {{tipFormControl.errors?.errorMsg}}
       </div>
-    
     </div>
-
+      <div class="order-details" *ngIf="!readonly">
+          <st-textarea-floating-label
+                  [control]="detailsForm.get(controlsNames.note)"
+                  [isError]="false"
+                  class="order-details__order-note"
+                  [formControlName]="controlsNames.note"
+                  [idd]="controlsNames.note"
+                  label="Order Note"
+                  rows="3">
+          </st-textarea-floating-label>
+      </div>
     
   </form>
 

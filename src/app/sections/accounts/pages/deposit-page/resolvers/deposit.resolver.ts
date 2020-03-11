@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Resolve } from '@angular/router';
 import { Observable, zip } from 'rxjs';
-import { SYSTEM_SETTINGS_CONFIG } from '../../../accounts.config';
+import { CONTENT_STRINGS, SYSTEM_SETTINGS_CONFIG } from '../../../accounts.config';
 import { LoadingService } from 'src/app/core/service/loading/loading.service';
 import { tap } from 'rxjs/operators';
 import { DepositService } from '@sections/accounts/services/deposit.service';
@@ -27,11 +27,13 @@ export class DepositResolver implements Resolve<Observable<any>> {
       SYSTEM_SETTINGS_CONFIG.maxAmountCreditCard,
       SYSTEM_SETTINGS_CONFIG.paymentSystem
     ];
+
+    const contentStringCall = this.depositService.initContentStringsList();
     const accountsCall = this.depositService.getUserAccounts();
     const settingsCall = this.depositService.getUserSettings(requireSettings);
     this.loadingService.showSpinner();
 
-    return zip(settingsCall, accountsCall).pipe(
+    return zip(contentStringCall, settingsCall, accountsCall).pipe(
       tap(() => this.loadingService.closeSpinner(), () => this.loadingService.closeSpinner())
     );
   }

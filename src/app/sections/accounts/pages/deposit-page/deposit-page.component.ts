@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ChangeDetectorRef } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ModalController, PopoverController, ToastController } from '@ionic/angular';
-import { finalize, map, switchMap, take, tap } from 'rxjs/operators';
+import { map, switchMap, take, tap, finalize } from 'rxjs/operators';
 import {
-  ACCOUNT_TYPES,
   ACCOUNTS_VALIDATION_ERRORS,
+  ACCOUNT_TYPES, CONTENT_STRINGS,
   LOCAL_ROUTING,
   PAYMENT_SYSTEM_TYPE,
   PAYMENT_TYPE,
@@ -18,7 +18,7 @@ import { DepositModalComponent } from '../../shared/ui-components/deposit-modal/
 import { BUTTON_TYPE } from 'src/app/core/utils/buttons.config';
 import { amountRangeValidator } from './amount-range.validator';
 import { Router } from '@angular/router';
-import { AccountType, NAVIGATE } from 'src/app/app.global';
+import { NAVIGATE, AccountType, PaymentSystemType } from 'src/app/app.global';
 import { LoadingService } from 'src/app/core/service/loading/loading.service';
 import { DepositService } from '@sections/accounts/services/deposit.service';
 import { handleServerError, parseArrayFromString } from '@core/utils/general-helpers';
@@ -212,6 +212,8 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     const { sourceAccount, selectedAccount, mainInput, mainSelect } = this.depositForm.value;
     const isBillme: boolean = sourceAccount === PAYMENT_TYPE.BILLME;
     const isApplePay: boolean = sourceAccount.accountType === AccountType.APPLEPAY;
+    const depositReviewBillMe = this.depositService.getContentValueByName(CONTENT_STRINGS.billMeDepositReviewInstructions);
+    const depositReviewCredit = this.depositService.getContentValueByName(CONTENT_STRINGS.creditDepositReviewInstructions);
     const sourceAccForBillmeDeposit: Observable<UserAccount> = this.sourceAccForBillmeDeposit(
       selectedAccount,
       this.billmeMappingArr,
@@ -252,7 +254,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
           take(1),
         )
         .subscribe(
-          info => this.confirmationDepositPopover(info),
+          info => this.confirmationDepositPopover({...info, depositReviewBillMe, depositReviewCredit}),
           () => {
             this.loadingService.closeSpinner();
             this.onErrorRetrieve('Something went wrong, please try again...');
