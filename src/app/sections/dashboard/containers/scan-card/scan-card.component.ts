@@ -13,6 +13,7 @@ import { CommerceApiService } from '@core/service/commerce/commerce-api.service'
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { DASHBOARD_SETTINGS_CONFIG } from '@sections/dashboard/dashboard.config';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
+import { getUserFullName } from '@core/utils/general-helpers';
 
 @Component({
   selector: 'st-scan-card',
@@ -54,9 +55,7 @@ export class ScanCardComponent implements OnInit {
   }
 
   get userFullName$(): Observable<string> {
-    return this.userService.userData.pipe(
-      map(({ firstName: fn, middleName: mn, lastName: ln }: UserInfo) => `${fn || ''} ${mn || ''} ${ln || ''}`)
-    );
+    return this.userService.userData.pipe(map((userInfo: UserInfo) => getUserFullName(userInfo)));
   }
 
   private setUserId() {

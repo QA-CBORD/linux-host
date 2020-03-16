@@ -3,7 +3,7 @@ import { ServerErrorsInfo } from '@core/model/server_error/server-error.model';
 import { MonoTypeOperatorFunction, Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { ZERO_FIRST_REGEXP, INT_REGEXP, INT_DEC_REGEXP, EMAIL_REGEXP, CURRENCY_REGEXP } from './regexp-patterns';
-
+import { UserInfo } from '@core/model/user';
 
 export function parseArrayFromString<T>(value: string): Array<T> {
   if (value && !value.length) return [];
@@ -37,7 +37,7 @@ export const validateInputAmount = ({ value }: AbstractControl): ValidationError
   const isStartedWithZero = ZERO_FIRST_REGEXP.test(value);
   const isIntegerOrDecemals = INT_DEC_REGEXP.test(value);
 
-  return isNaN(value) || isStartedWithZero || !isIntegerOrDecemals ?  { incorrect: true } : null;
+  return isNaN(value) || isStartedWithZero || !isIntegerOrDecemals ? { incorrect: true } : null;
 };
 
 export const validateLessThanOther = (other: number): ValidatorFn => {
@@ -77,4 +77,8 @@ export const cvvValidationFn: ValidatorFn = function({ value }) {
   if (!Number.isInteger(value)) return { error: true };
   if (String(value).length < 3 || String(value).length > 4) return { error: true };
   return null;
+};
+
+export const getUserFullName = ({ firstName: fn, lastName: ln, middleName: mn }: UserInfo): string => {
+  return fn || ln || mn ? `${fn || ''} ${mn || ''} ${ln || ''}` : 'Unknown Name';
 };
