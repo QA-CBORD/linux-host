@@ -1,14 +1,16 @@
-import { Component, Input, ChangeDetectionStrategy, OnInit, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { MerchantService } from '@sections/ordering/services';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { UserService } from '@core/service/user-service/user.service';
-import { take, switchMap, tap } from 'rxjs/operators';
-import { of, zip, iif, Observable } from 'rxjs';
+import { switchMap, take, tap } from 'rxjs/operators';
+import { iif, Observable, of, zip } from 'rxjs';
 import { AddressInfoExpanded } from '../../models/address-info-expanded';
-import { getAddressSubHeader, getAddressHeader } from '@core/utils/address-helper';
+import { getAddressHeader, getAddressSubHeader } from '@core/utils/address-helper';
 import { AddressInfo } from '@core/model/address/address-info';
 import { BuildingInfo } from '@sections/ordering/shared/models';
+import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
+import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 
 @Component({
   selector: 'st-delivery-addresses.modal',
@@ -30,18 +32,21 @@ export class DeliveryAddressesModalComponent implements OnInit {
   errorState: boolean = false;
   selectedAddress: AddressInfo;
   listOfAddresses: Array<AddressInfoExpanded>;
-  addressLabel: string;
+  contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
+
   constructor(
     private readonly modalController: ModalController,
     private readonly merchantService: MerchantService,
     private readonly loadingService: LoadingService,
     private readonly cdRef: ChangeDetectorRef,
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private readonly orderingService: OrderingService
   ) {}
 
   ngOnInit() {
     this.listOfAddresses = this.defineListOfAddresses(this.defaultAddress);
     this.buildings$ = this.merchantService.retrieveBuildings();
+    this.initContentStrings();
   }
 
   async onClickedDone(selectedAddress?: AddressInfo) {
@@ -112,7 +117,7 @@ export class DeliveryAddressesModalComponent implements OnInit {
 
   private defineListOfAddresses(defaultAddress: AddressInfo): AddressInfoExpanded[] {
     const listOfAddresses = this.isOrderTypePickup ? this.pickupLocations : this.deliveryAddresses;
-    this.addressLabel = this.isOrderTypePickup ? 'Pickup' : 'Delivery';
+
     return listOfAddresses.map(ad => {
       const addressInfo = this.isOrderTypePickup ? ad.addressInfo : ad;
       return {
@@ -128,8 +133,8 @@ export class DeliveryAddressesModalComponent implements OnInit {
 
   private getBuildingData$(isOncampus): Observable<any> {
     if (isOncampus) {
-      return this.buildings$.pipe(
-        tap(buildings => {
+      return zip(this.buildings$, this.contentStrings.labelRoom).pipe(
+        tap(([buildings, labelRoom]) => {
           const activeBuilding = buildings.find(
             ({ addressInfo: { building } }) => building === this.addNewAdddressForm.value.building
           );
@@ -144,12 +149,31 @@ export class DeliveryAddressesModalComponent implements OnInit {
             state,
             latitude,
             longitude,
-            nickname: `${this.addNewAdddressForm.value.building}, Room ${this.addNewAdddressForm.value.room}`,
+            nickname: `${this.addNewAdddressForm.value.building}, ${labelRoom} ${this.addNewAdddressForm.value.room}`,
           };
         })
       );
     }
 
     return of(true);
+  }
+
+  private initContentStrings() {
+    this.contentStrings.buttonCancel =
+      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonCancel);
+    this.contentStrings.buttonSave =
+      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonSave);
+    this.contentStrings.buttonSetDeliveryAddress =
+      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonSetDeliveryAddress);
+    this.contentStrings.buttonSetPickupAddress =
+      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonSetPickupAddress);
+    this.contentStrings.labelAddNewAddress =
+      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelAddNewAddress);
+    this.contentStrings.labelSelectDeliveryAddress =
+      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelSelectDeliveryAddress);
+    this.contentStrings.labelSelectPickupAddress =
+      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelSelectPickupAddress);
+    this.contentStrings.labelRoom =
+      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelRoom);
   }
 }

@@ -5,12 +5,17 @@ import { MenuInfo, MerchantAccountInfoList, MerchantOrderTypesInfo } from '../..
 import { ModalController, ToastController } from '@ionic/angular';
 import { DeliveryAddressesModalComponent } from '../delivery-addresses.modal/delivery-addresses.modal.component';
 import { AddressInfo } from '@core/model/address/address-info';
-import { getAddressHeader } from '@core/utils/address-helper';
-import { EMPTY, Observable, of, throwError, zip } from 'rxjs';
-import { finalize, switchMap, take, tap } from 'rxjs/operators';
+import { Observable, of, throwError, zip } from 'rxjs';
+import { finalize, switchMap, take, tap, first } from 'rxjs/operators';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { ACCOUNT_TYPES, MerchantSettings, ORDER_TYPE } from '@sections/ordering/ordering.config';
+import {
+  ACCOUNT_TYPES,
+  MerchantSettings,
+  ORDER_TYPE,
+  ORDERING_CONTENT_STRINGS,
+} from '@sections/ordering/ordering.config';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
+import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 
 @Component({
   selector: 'st-order-options.action-sheet',
@@ -38,6 +43,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   isTimeDisable: number;
   dateTimePicker: Date | string = 'ASAP';
   orderType: number;
+  contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
 
   constructor(
     private readonly modalController: ModalController,
@@ -46,15 +52,17 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     private readonly loadingService: LoadingService,
     private readonly toastController: ToastController,
     private readonly cartService: CartService,
+    private readonly orderingService: OrderingService,
   ) {
-  }
-
-  get enumOrderTypes() {
-    return ORDER_TYPE;
   }
 
   ngOnInit() {
     this.initData();
+    this.initContentStrings();
+  }
+
+  get enumOrderTypes() {
+    return ORDER_TYPE;
   }
 
   initData() {
@@ -62,8 +70,8 @@ export class OrderOptionsActionSheetComponent implements OnInit {
       this.activeOrderType !== null
         ? this.activeOrderType
         : this.orderTypes.pickup
-          ? ORDER_TYPE.PICKUP
-          : ORDER_TYPE.DELIVERY;
+        ? ORDER_TYPE.PICKUP
+        : ORDER_TYPE.DELIVERY;
 
     this.loadingService.showSpinner();
     zip(
@@ -74,7 +82,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
         this.settings.map[MerchantSettings.pickupLocationsEnabled],
       ),
       this.merchantService.retrieveBuildings(),
-      this.cartService.orderDetailsOptions$
+      this.cartService.orderDetailsOptions$,
     )
       .pipe(take(1))
       .subscribe(
@@ -117,12 +125,18 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     this.modalWindow();
   }
 
-  defineOrderOptionsData(isOrderTypePickup) {
+  async defineOrderOptionsData(isOrderTypePickup) {
     if (!this.deliveryAddresses || !this.pickupLocations) return;
     const defineDeliveryAddress = this.deliveryAddresses.find(({ id }) => id === this.defaultDeliveryAddress);
 
+    const labelPickupTime = await this.contentStrings.labelPickupTime.pipe(first()).toPromise();
+    const labelDeliveryTime = await this.contentStrings.labelDeliveryTime.pipe(first()).toPromise();
+    const labelPickupAddress = await this.contentStrings.labelPickupAddress.pipe(first()).toPromise();
+    const labelDeliveryAddress = await this.contentStrings.labelDeliveryAddress.pipe(first()).toPromise();
+
     this.orderOptionsData = {
-      label: isOrderTypePickup ? 'PICKUP' : 'DELIVERY',
+      labelTime: isOrderTypePickup ? labelPickupTime : labelDeliveryTime,
+      labelAddress: isOrderTypePickup ? labelPickupAddress : labelDeliveryAddress,
       address: isOrderTypePickup ? this.defaultPickupAddress : defineDeliveryAddress,
       isClickble: isOrderTypePickup ? this.pickupLocations.length : 1,
     };
@@ -137,13 +151,14 @@ export class OrderOptionsActionSheetComponent implements OnInit {
 
   async onSubmit() {
     let date = { dueTime: this.dateTimePicker, isASAP: this.dateTimePicker === 'ASAP' };
+    const chooseAddressError = await this.contentStrings.formErrorChooseAddress.pipe(take(1)).toPromise();
 
     let isOutsideMerchantDeliveryArea = of(false);
     if (!this.orderOptionsData.address) {
-      this.onToastDisplayed('Choose address please');
-      return;
+      return this.onToastDisplayed(chooseAddressError);
     }
-    if (this.orderOptionsData.label === 'DELIVERY') {
+    const labelDeliveryAddress = await this.contentStrings.labelDeliveryAddress.pipe(first()).toPromise();
+    if (this.orderOptionsData.labelAddress === labelDeliveryAddress) {
       isOutsideMerchantDeliveryArea = this.isOutsideMerchantDeliveryArea();
     }
 
@@ -169,7 +184,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
               dueTime: date.dueTime,
               isASAP: date.isASAP,
             },
-            BUTTON_TYPE.CONTINUE
+            BUTTON_TYPE.CONTINUE,
           ),
         err => this.onToastDisplayed(err),
       );
@@ -201,7 +216,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     return this.cartService.getMerchantMenu(id, dueTime, type);
   }
 
-  private isAccountsMealBased(mealBased: boolean): Observable<boolean | never> {
+  private isAccountsMealBased(mealBased: boolean): Observable<boolean> {
     if (!mealBased) {
       return of(true);
     }
@@ -217,11 +232,13 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   }
 
   private async onToastDisplayed(message: string): Promise<void> {
+    const dismiss = await this.contentStrings.buttonDismiss.pipe(take(1)).toPromise();
+
     const toast = await this.toastController.create({
       message,
       duration: 3000,
       position: 'bottom',
-      closeButtonText: 'DISMISS',
+      closeButtonText: dismiss.toUpperCase(),
       showCloseButton: true,
     });
     await toast.present();
@@ -253,10 +270,41 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     });
     await modal.present();
   }
+
+  private initContentStrings() {
+    this.contentStrings.buttonDismiss = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.buttonDismiss
+    );
+    this.contentStrings.formErrorChooseAddress = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.formErrorChooseAddress
+    );
+    this.contentStrings.labelPickupTime = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.labelPickupTime
+    );
+    this.contentStrings.labelDeliveryTime = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.labelDeliveryTime
+    );
+    this.contentStrings.labelDeliveryAddress = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.labelDeliveryAddress
+    );
+    this.contentStrings.labelPickupAddress = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.labelPickupAddress
+    );
+    this.contentStrings.labelPickup = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.labelPickup
+    );
+    this.contentStrings.labelDelivery = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.labelDelivery
+    );
+    this.contentStrings.labelOrderOptions = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.labelOrderOptions
+    );
+  }
 }
 
 interface OrderOptions {
-  label: string;
+  labelTime: string;
+  labelAddress: string;
   address: any;
   isClickble: number;
 }

@@ -1,14 +1,15 @@
-import { ChangeDetectionStrategy, Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ModalController, ToastController } from '@ionic/angular';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { FavoriteMerchantsService } from './services/favorite-merchants.service';
-import { switchMap, take } from 'rxjs/operators';
+import { switchMap, take, first } from 'rxjs/operators';
 import { NAVIGATE } from 'src/app/app.global';
 import { MerchantInfo, MerchantOrderTypesInfo } from '../../shared/models';
 import { CartService, MerchantService } from '../../services';
 import { OrderOptionsActionSheetComponent } from '../../shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
-import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
+import { LOCAL_ROUTING, ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
+import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 
 @Component({
   selector: 'st-favorite-merchants',
@@ -17,7 +18,9 @@ import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FavoriteMerchantsComponent implements OnInit {
-  merchantList: MerchantInfo[];
+  merchantList: MerchantInfo[] = [];
+  contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
+
   constructor(
     private readonly activatedRoute: ActivatedRoute,
     private readonly router: Router,
@@ -28,10 +31,12 @@ export class FavoriteMerchantsComponent implements OnInit {
     private readonly favoriteMerchantsService: FavoriteMerchantsService,
     private readonly cartService: CartService,
     private readonly cdRef: ChangeDetectorRef,
+    private readonly orderingService: OrderingService
   ) { }
 
   ngOnInit() {
     this.activatedRoute.data.subscribe(({ data }) => (this.merchantList = data));
+    this.initContentStrings();
   }
 
   backToOrdering() {
@@ -44,6 +49,7 @@ export class FavoriteMerchantsComponent implements OnInit {
 
   async favouriteHandler({ id }): Promise<void> {
     await this.loadingService.showSpinner();
+    const removeFavoriteMessage = await this.contentStrings.labelRemovedFromFavorites.pipe(first()).toPromise();
     this.merchantService.removeFavoriteMerchant(id)
       .pipe(
         switchMap(() => this.favoriteMerchantsService.getFavoriteMerchants()),
@@ -53,7 +59,7 @@ export class FavoriteMerchantsComponent implements OnInit {
         data => {
           this.merchantList = [...data];
           this.cdRef.detectChanges();
-          this.onToastDisplayed('Removed from favorites');
+          this.onToastDisplayed(removeFavoriteMessage);
           this.loadingService.closeSpinner();
         },
         () => this.loadingService.closeSpinner()
@@ -102,5 +108,14 @@ export class FavoriteMerchantsComponent implements OnInit {
     });
 
     await toast.present();
+  }
+
+  private initContentStrings() {
+    this.contentStrings.backToOrdering = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.backToOrdering);
+    this.contentStrings.buttonClose = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonClose);
+    this.contentStrings.labelEmptyFavorites =
+      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelEmptyFavorites);
+    this.contentStrings.labelFavorites = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelFavorites);
+    this.contentStrings.labelRemovedFromFavorites = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelRemovedFromFavorites);
   }
 }

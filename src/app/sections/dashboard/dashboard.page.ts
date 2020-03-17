@@ -11,6 +11,7 @@ import { ContentStringsFacadeService } from '@core/facades/content-strings/conte
 import { CONTENT_STINGS_CATEGORIES, CONTENT_STINGS_DOMAINS } from '../../content-strings';
 import { AccessCardComponent } from './containers/access-card/access-card.component';
 import { AccessCardService } from './containers/access-card/services/access-card.service';
+import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 
 @Component({
   selector: 'st-dashboard',
@@ -36,7 +37,9 @@ export class DashboardPage implements OnInit {
   ngOnInit() {
     this.tiles$ = this.tileConfigFacadeService.tileSettings$;
     this.updateDonationMealsStrings();
+    this.updateOrderingStrings();
   }
+
   ionViewWillEnter(){
     this.accessCard.ionViewWillEnter();
   }
@@ -67,5 +70,16 @@ export class DashboardPage implements OnInit {
     });
 
     await this.tileConfigFacadeService.updateConfigById(TILES_ID.mealDonations, res);
+  }
+
+  private async updateOrderingStrings(): Promise<void> {
+    const res = await this.tileConfigFacadeService.resolveAsyncUpdatingConfig({
+      title: this.contentStringsFacadeService.getContentStringValue$(
+        CONTENT_STINGS_DOMAINS.patronUi,
+        CONTENT_STINGS_CATEGORIES.ordering,
+        ORDERING_CONTENT_STRINGS.labelDashboard),
+    });
+
+    await this.tileConfigFacadeService.updateConfigById(TILES_ID.order, res);
   }
 }

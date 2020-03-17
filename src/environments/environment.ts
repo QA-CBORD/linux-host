@@ -2,14 +2,13 @@
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
-import { UserLogin } from '../app/core/model/user';
-import { Dictionary } from '../app/core/model/cache/dictionary';
+import { UserLogin } from '@core/model/user';
 
 export const environment = {
   production: false,
 };
 
-export const testCredentials: Dictionary<UserLogin> = {
+export const testCredentials: { [key: string]: UserLogin } = {
   gold7: {
     userName: 'GSaas@tpsmail.dev',
     password: 'password1',
@@ -64,6 +63,13 @@ export const testCredentials: Dictionary<UserLogin> = {
     password: 'password1',
     domain: null,
     institutionId: '1e418ca8-7148-4956-b7c4-1f35db6d8a11',
+  },
+
+  odysseyPreview222: {
+    userName: 'testuser701',
+    password: 'testpassword701',
+    domain: null,
+    institutionId: '2942944d-7d4b-496a-9833-1b18e1320ed9',
   },
 
   odysseyPreviewWithUSAePay: {

@@ -131,15 +131,13 @@
       .picker-toolbar-cancel .picker-button {
         padding-left: 30px;
         @include font-nunito-regular(16px);
+      }
 
-        &::after {
-          content: 'Select Time';
-          color: #161616;
-          position: absolute;
-          left: 35%;
+      .picker-toolbar-title .picker-button {
+        color: #161616;
+        padding: 0;
 
-          @include font-nunito-heavy(20px);
-        }
+        @include font-nunito-heavy(20px);
       }
     }
 

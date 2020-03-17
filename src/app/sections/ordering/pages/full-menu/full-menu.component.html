@@ -1,6 +1,6 @@
-<st-header title="Full Menu"
+<st-header [title]="contentStrings.labelFullMenu | async"
            [isTitleShow]="true"
-           [backButtonTitle]="'Explore'"
+           [backButtonTitle]="contentStrings.buttonExplore | async"
            [backButtonIcon]="'ios-arrow-back'"
            [isToolbarShow]="true"
            class="full-menu__header"></st-header>
@@ -18,17 +18,17 @@
           <div class="full-menu__address-info">
             <img src="./assets/icon/location-pin.svg"
                  height="16"
-                 alt="location-pin" />
+                 alt="location-pin"/>
             <div *ngIf="(orderInfo$ | async)?.address"
                  class="full-menu__address-info-content">
-              {{ (merchantInfo$ | async).distanceFromUser | merchantDistance }} -              
+              {{ (merchantInfo$ | async).distanceFromUser | merchantDistance }} -
               {{ (orderInfo$ | async)?.address | addressHeaderFormat }}
             </div>
           </div>
         </div>
         <div class="full-menu__arrow-wrapper">
           <img src="/assets/icon/angle-{{ merchantInfoState ? 'up' : 'down' }}-select.svg"
-               alt="arrow" />
+               alt="arrow"/>
         </div>
       </div>
     </ion-item>
@@ -37,14 +37,14 @@
       <div class="full-menu__date-time-container">
         <div class="full-menu__date-time-wrapper">
           <div class="full-menu__date-time-value">{{ orderType | async }}</div>
-          <div class="full-menu__date-time-helper">for</div>
+          <div class="full-menu__date-time-helper">{{contentStrings.labelFor | async}}</div>
           <div class="full-menu__date-time-value" *ngIf="orderDetails$ | async">
             {{ (orderDetails$ | async).orderInfo | modifyPrepTime: (orderDetails$ | async).orderTypes }}
           </div>
         </div>
         <div class="full-menu__arrow-wrapper">
           <img src="/assets/icon/angle-down-select.svg"
-               alt="arrow down" />
+               alt="arrow down"/>
         </div>
       </div>
     </ion-item>

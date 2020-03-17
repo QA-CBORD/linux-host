@@ -5,12 +5,18 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subscription, zip } from 'rxjs';
 import { first, take } from 'rxjs/operators';
 
-import { LOCAL_ROUTING, ORDER_VALIDATION_ERRORS, MerchantSettings } from '@sections/ordering/ordering.config';
+import {
+  LOCAL_ROUTING,
+  MerchantSettings,
+  ORDER_VALIDATION_ERRORS,
+  ORDERING_CONTENT_STRINGS,
+} from '@sections/ordering/ordering.config';
 import { CartService, MenuInfo, MenuItemInfo, OrderItem } from '@sections/ordering';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { handleServerError } from '@core/utils/general-helpers';
 import { NAVIGATE } from 'src/app/app.global';
 import { Environment } from 'src/app/environment';
+import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 
 @Component({
   selector: 'st-item-detail',
@@ -29,7 +35,8 @@ export class ItemDetailComponent implements OnInit {
   cartSelectedItem: OrderItem;
   cartOrderItemOptions: OrderItem[] = [];
   allowNotes: boolean;
-  
+  contentStrings:OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
+
   constructor(
     private readonly router: Router,
     private readonly fb: FormBuilder,
@@ -37,11 +44,13 @@ export class ItemDetailComponent implements OnInit {
     private readonly cartService: CartService,
     private readonly loadingService: LoadingService,
     private readonly toastController: ToastController,
+    private readonly orderingService: OrderingService
   ) {}
 
   ngOnInit() {
     this.initMenuItemOptions();
     this.menuInfo$ = this.cartService.menuInfo$;
+    this.initContentStrings();
   }
 
   ngOnDestroy() {
@@ -211,7 +220,7 @@ export class ItemDetailComponent implements OnInit {
       .subscribe(([{ data: { menuItem, queryParams: { orderItemId } } }, orderItems, { settings }]) => {
         const imageBaseUrl = Environment.getImageURL();
         this.menuItem = menuItem.menuItem;
-        this.menuItemImg = this.menuItem.imageReference 
+        this.menuItemImg = this.menuItem.imageReference
           ? `${imageBaseUrl}${this.menuItem.imageReference}`
           : '';
         this.order = { ...this.order, totalPrice: this.menuItem.price };
@@ -251,6 +260,12 @@ export class ItemDetailComponent implements OnInit {
     });
 
     this.sourceSubscription.add(subscription);
+  }
+
+  private initContentStrings() {
+    this.contentStrings.buttonAdd = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonAdd);
+    this.contentStrings.buttonClose = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonClose);
+    this.contentStrings.labelItemNote = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelItemNote);
   }
 }
 

@@ -6,7 +6,7 @@
                      (ionChange)="onCampusChanged($event)">
       <ion-item lines="none"
                 *ngIf="!addressRestriction.offCampus">
-        <ion-label class="addresses__radio-label">Off Campus</ion-label>
+        <ion-label class="addresses__radio-label">{{contentStrings.labelOffCampus | async}}</ion-label>
         <ion-radio mode="md"
                    slot="start"
                    value="offcampus"
@@ -16,7 +16,7 @@
 
       <ion-item lines="none"
                 *ngIf="!addressRestriction.onCampus">
-        <ion-label class="addresses__radio-label">On Campus</ion-label>
+        <ion-label class="addresses__radio-label">{{contentStrings.labelOnCampus | async}}</ion-label>
         <ion-radio mode="md"
                    slot="start"
                    value="oncampus"
@@ -29,12 +29,12 @@
                                 [control]="buildings"
                                 [interfaceOptions]="customActionSheetOptions"
                                 [isError]="
-                                buildings?.invalid && 
+                                buildings?.invalid &&
                                 buildings?.touched"
                                 class="addresses__control"
                                 interface="action-sheet"
-                                title="Choose an account from a dropdown list below"
-                                label="Buildings"
+                                [title]="contentStrings.selectAccount | async"
+                                label="{{contentStrings.labelBuildings | async}}"
                                 idd="building">
         <ng-container role="options">
           <ion-select-option *ngFor="let item of buildingsOnCampus"
@@ -52,13 +52,13 @@
       <st-input-floating-label class="addresses__control"
                                [formControlName]="controlsNames.room"
                                [control]="room"
-                               label="Room"
+                               label="{{contentStrings.labelRoom | async}}"
                                type="number"
                                idd="room"
                                maxlength="100"
                                [isError]="
-        room?.errors && 
-        (room?.dirty || 
+        room?.errors &&
+        (room?.dirty ||
         room?.touched)">
         <p class="addresses__control-error-msg">
           {{ room?.errors?.errorMsg }}
@@ -69,13 +69,13 @@
     <ng-container *ngIf="addEditAddressesForm.value.campus === 'offcampus' && state">
       <st-input-floating-label class="addresses__control"
                                [control]="address1"
-                               label="Address line 1"
+                               label="{{contentStrings.labelAddressLine1 | async}}"
                                type="text"
                                idd="address1"
                                maxlength="100"
                                [formControlName]="controlsNames.address1"
                                [isError]="
-                               address1.errors && 
+                               address1.errors &&
                                (address1.dirty || address1.touched)">
         <p class="addresses__control-error-msg">
           {{ address1.errors?.errorMsg }}
@@ -85,11 +85,11 @@
         <st-input-floating-label class="addresses__control"
                                  [control]="address2"
                                  [formControlName]="controlsNames.address2"
-                                 label="Address line 2"
+                                 label="{{contentStrings.labelAddressLine2 | async}}"
                                  type="text"
                                  idd="address2"
                                  maxlength="100"
-                                 [isError]="address2.errors && 
+                                 [isError]="address2.errors &&
                                  (address2.dirty || address2.touched)">
         </st-input-floating-label>
         <ng-container [ngTemplateOutlet]="optionalPlaceholder"></ng-container>
@@ -97,11 +97,11 @@
       <st-input-floating-label class="addresses__control"
                                [control]="city"
                                [formControlName]="controlsNames.city"
-                               label="City"
+                               label="{{contentStrings.labelCity | async}}"
                                type="text"
                                idd="city"
                                maxlength="100"
-                               [isError]="city.errors && 
+                               [isError]="city.errors &&
                                (city.dirty || city.touched)">
         <p class="addresses__control-error-msg">
           {{ city.errors?.errorMsg }}
@@ -113,13 +113,13 @@
                                 [isError]="state.invalid && state.touched"
                                 class="addresses__control"
                                 interface="action-sheet"
-                                title="Choose an account from a dropdown list below"
-                                label="State"
+                                [title]="contentStrings.selectAccount | async"
+                                label="{{ contentStrings.labelState | async }}"
                                 idd="state">
         <ng-container role="options">
-          <ion-select-option *ngFor="let state of arrOfStates['default']"
-                             [value]="state.name">
-            {{ state.name }}
+          <ion-select-option *ngFor="let state of arrOfStates$ | async"
+                             [value]="state">
+            {{ state }}
           </ion-select-option>
         </ng-container>
 
@@ -133,19 +133,19 @@
         <st-input-floating-label class="addresses__control addresses__nickname-control"
                                  [control]="nickname"
                                  [formControlName]="controlsNames.nickname"
-                                 label="Nickname"
+                                 label="{{contentStrings.labelNickname | async}}"
                                  type="text"
                                  idd="nickname"
                                  maxlength="50"
                                  [isError]="
-                                 nickname.errors && 
+                                 nickname.errors &&
                                  (nickname.dirty || nickname.touched)">
         </st-input-floating-label>
         <ng-container [ngTemplateOutlet]="optionalPlaceholder"></ng-container>
       </div>
     </ng-container>
     <ion-item lines="none">
-      <ion-label>Set as Default</ion-label>
+      <ion-label>{{ contentStrings.labelSetAsDefault | async }}</ion-label>
       <ion-checkbox mode="md"
                     class="addresses__checkbox"
                     slot="start"
@@ -156,6 +156,6 @@
 
 <ng-template #optionalPlaceholder>
   <div class="addresses__control-optional">
-    Optional
+    {{contentStrings.labelOptional | async}}
   </div>
 </ng-template>

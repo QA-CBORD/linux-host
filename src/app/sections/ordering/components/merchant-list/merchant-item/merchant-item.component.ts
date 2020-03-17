@@ -1,6 +1,9 @@
-import { Component, Input, EventEmitter, Output, ChangeDetectionStrategy } from '@angular/core';
-import { MerchantInfo } from '@sections/ordering/shared/models';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { MerchantInfo, MerchantOrderTypesInfo } from '@sections/ordering/shared/models';
 import { Environment } from '../../../../../environment';
+import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
+import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'st-merchant-item',
@@ -17,6 +20,16 @@ export class MerchantItemComponent {
   }>();
   @Output() locationPin: EventEmitter<string> = new EventEmitter<string>();
   awsImageUrl: string = Environment.getImageURL();
+  contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
+
+  constructor(private readonly orderingService: OrderingService) {
+  }
+
+  ngOnInit() {
+    this.contentStrings.labelClosed = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelClosed);
+    this.contentStrings.labelOpen = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelOpen);
+  }
+
 
   get starClass(): string {
     const empty = 'star-outline';
@@ -24,22 +37,6 @@ export class MerchantItemComponent {
     const star = this.merchantInfo.isFavorite ? filled : empty;
 
     return `./assets/icon/${star}.svg`;
-  }
-
-  get orderTypes() {
-    return this.merchantInfo.orderTypes;
-  }
-
-  getOrderTypes(): string {
-    if (!this.orderTypes || (!this.orderTypes.delivery && !this.orderTypes.pickup)) {
-      return '';
-    }
-
-    if (this.orderTypes.delivery && this.orderTypes.pickup) {
-      return 'Pickup & Delivery';
-    }
-
-    return this.orderTypes.delivery ? 'Delivery' : 'Pickup';
   }
 
   triggerMerchantClick(merchantInfo) {

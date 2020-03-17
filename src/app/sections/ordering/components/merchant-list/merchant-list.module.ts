@@ -7,12 +7,13 @@ import { MerchantItemComponent } from './merchant-item';
 import { MerchantDistanceModule } from '@sections/ordering/shared/pipes/merchant-distance/merchant-distance.module';
 import { OrderOptionsActionSheetModule } from '@sections/ordering/shared/ui-components/order-options.action-sheet';
 import { StopPropagationModule } from '@shared/directives/stop-propogation/stop-propagation.module';
+import { OrderTypePipeModule } from '@sections/ordering/shared/pipes/order-type/order-type.module';
 
 const declarations = [MerchantListComponent, MerchantItemComponent];
 
 @NgModule({
   declarations,
   exports: [MerchantListComponent],
-  imports: [CommonModule, IonicModule, MerchantDistanceModule, OrderOptionsActionSheetModule, StopPropagationModule],
+  imports: [CommonModule, IonicModule, MerchantDistanceModule, OrderOptionsActionSheetModule, StopPropagationModule, OrderTypePipeModule],
 })
 export class MerchantListModule {}

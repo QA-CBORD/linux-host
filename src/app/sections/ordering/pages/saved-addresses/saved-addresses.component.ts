@@ -1,12 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '@core/service/user-service/user.service';
 import { AddressInfo } from '@core/model/address/address-info';
-import { Observable, of, zip, iif } from 'rxjs';
-import { tap, switchMap, take, finalize } from 'rxjs/operators';
+import { iif, Observable, of, zip } from 'rxjs';
+import { finalize, switchMap, take, tap } from 'rxjs/operators';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { MerchantService } from '@sections/ordering/services';
 import { BuildingInfo } from '@sections/ordering/shared/models';
-import { SYSTEM_SETTINGS_CONFIG, INSTITUTION_ADDRESS_RESTRICTIONS } from '@sections/ordering/ordering.config';
+import {
+  INSTITUTION_ADDRESS_RESTRICTIONS,
+  ORDERING_CONTENT_STRINGS,
+  SYSTEM_SETTINGS_CONFIG,
+} from '@sections/ordering/ordering.config';
+import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 
 @Component({
   selector: 'st-saved-addresses',
@@ -19,14 +24,18 @@ export class SavedAddressesComponent implements OnInit {
   errorState: boolean = false;
   addNewAdddressState: boolean = false;
   addNewAddressForm: { value: any; valid: boolean } = { value: null, valid: false };
+  contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
 
   constructor(
     private readonly userService: UserService,
     private readonly loader: LoadingService,
-    private readonly merchantService: MerchantService
+    private readonly merchantService: MerchantService,
+    private readonly orderingService: OrderingService
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.initContentStrings();
+  }
 
   ionViewWillEnter() {
     this.buildings$ = this.merchantService.retrieveBuildings();
@@ -72,8 +81,8 @@ export class SavedAddressesComponent implements OnInit {
 
   private getBuildingData$(isOncampus): Observable<any> {
     if (isOncampus) {
-      return this.buildings$.pipe(
-        tap(buildings => {
+      return zip(this.buildings$, this.contentStrings.labelRoom).pipe(
+        tap(([buildings, labelRoom]) => {
           const activeBuilding = buildings.find(
             ({ addressInfo: { building } }) => building === this.addNewAddressForm.value.building
           );
@@ -88,7 +97,7 @@ export class SavedAddressesComponent implements OnInit {
             state,
             latitude,
             longitude,
-            nickname: `${this.addNewAddressForm.value.building}, Room ${this.addNewAddressForm.value.room}`,
+            nickname: `${this.addNewAddressForm.value.building}, ${labelRoom} ${this.addNewAddressForm.value.room}`,
           };
         })
       );
@@ -120,5 +129,15 @@ export class SavedAddressesComponent implements OnInit {
 
         this.userAddresses = !institutionRestriction ? addresses : filteredByInstitution;
       });
+  }
+
+  private initContentStrings() {
+    this.contentStrings.buttonCancel = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonCancel);
+    this.contentStrings.buttonClose = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonClose);
+    this.contentStrings.buttonSave = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonSave);
+    this.contentStrings.labelAddNewAddress =
+      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelAddNewAddress);
+    this.contentStrings.labelSavedAddresses = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelSavedAddresses);
+    this.contentStrings.labelRoom = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelRoom);
   }
 }

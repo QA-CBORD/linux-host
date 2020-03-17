@@ -1,16 +1,17 @@
-import { MerchantService, CartService } from './services';
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { CartService, MerchantService } from './services';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ModalController, ToastController } from '@ionic/angular';
 
-import { Observable, iif } from 'rxjs';
-import { first, map, switchMap } from 'rxjs/operators';
+import { iif, Observable } from 'rxjs';
+import { first, map, switchMap, take } from 'rxjs/operators';
 
 import { MerchantInfo, MerchantOrderTypesInfo } from './shared/models';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { OrderOptionsActionSheetComponent } from './shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LOCAL_ROUTING } from './ordering.config';
+import { LOCAL_ROUTING, ORDERING_CONTENT_STRINGS } from './ordering.config';
 import { NAVIGATE } from 'src/app/app.global';
+import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 
 @Component({
   selector: 'st-ordering.page',
@@ -20,6 +21,7 @@ import { NAVIGATE } from 'src/app/app.global';
 })
 export class OrderingPage implements OnInit {
   merchantList$: Observable<MerchantInfo[]>;
+  contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
 
   constructor(
     private readonly modalController: ModalController,
@@ -28,11 +30,14 @@ export class OrderingPage implements OnInit {
     private readonly toastController: ToastController,
     private readonly router: Router,
     private readonly cartService: CartService,
-    private readonly activatedRoute: ActivatedRoute
-  ) { }
+    private readonly activatedRoute: ActivatedRoute,
+    private readonly orderingService: OrderingService,
+  ) {
+  }
 
   ngOnInit() {
     this.merchantList$ = this.merchantService.menuMerchants$;
+    this.initContentStrings();
     this.handleActiveMerchantInRoute();
   }
 
@@ -40,20 +45,20 @@ export class OrderingPage implements OnInit {
     this.openOrderOptions(merchantInfo);
   }
 
-  favouriteHandler({ isFavorite, id }) {
-    this.loadingService.showSpinner();
+  async favouriteHandler({ isFavorite, id }): Promise<void> {
+    await this.loadingService.showSpinner();
+    const addedToFav = await this.contentStrings.labelAddedToFavorites.pipe(take(1)).toPromise();
+    const removeToFav = await this.contentStrings.labelRemovedFromFavorites.pipe(take(1)).toPromise();
+
     iif(() => isFavorite, this.merchantService.removeFavoriteMerchant(id), this.merchantService.addFavoriteMerchant(id))
       .pipe(
         switchMap(() => this.merchantService.getMerchantsWithFavoriteInfo()),
-        first()
+        first(),
       )
       .subscribe(
-        () => {
-          const message = isFavorite ? 'Removed from favorites' : 'Added to favorites';
-          this.onToastDisplayed(message);
-        },
+        () => this.onToastDisplayed(isFavorite ? removeToFav : addedToFav),
         null,
-        () => this.loadingService.closeSpinner()
+        () => this.loadingService.closeSpinner(),
       );
   }
 
@@ -81,7 +86,7 @@ export class OrderingPage implements OnInit {
         footerButtonName,
         merchantId,
         storeAddress,
-        settings
+        settings,
       },
     });
     modal.onDidDismiss().then(({ data }) => {
@@ -96,10 +101,10 @@ export class OrderingPage implements OnInit {
 
   private async handleActiveMerchantInRoute(): Promise<void> {
     const merchantId = this.activatedRoute.snapshot.queryParams.merchantId;
-    if(merchantId) {
+    if (merchantId) {
       const merchant = await this.merchantList$.pipe(
-        map((merchants: MerchantInfo[]) => merchants.find(({id}) => id === merchantId)),
-        first()
+        map((merchants: MerchantInfo[]) => merchants.find(({ id }) => id === merchantId)),
+        first(),
       ).toPromise();
       this.openOrderOptions(merchant);
     }
@@ -112,5 +117,12 @@ export class OrderingPage implements OnInit {
       position: 'bottom',
     });
     await toast.present();
+  }
+
+  private initContentStrings() {
+    this.contentStrings.labelAddedToFavorites =
+      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelAddedToFavorites);
+    this.contentStrings.labelRemovedFromFavorites =
+      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelRemovedFromFavorites);
   }
 }

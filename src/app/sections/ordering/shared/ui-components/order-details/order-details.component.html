@@ -43,42 +43,42 @@
         </ion-item>
 
         <ion-item-options side="end">
-          <ion-item-option (click)="onRemoveOrderItem(orderItem.id)" color="danger">Remove Item
+          <ion-item-option (click)="onRemoveOrderItem(orderItem.id)" color="danger">{{contentStrings.labelRemoveItem | async}}
           </ion-item-option>
         </ion-item-options>
       </ion-item-sliding>
     </ion-list>
 
     <div class="total">
-      <div *ngIf="subTotal" class="total__item">subtotal<span
+      <div *ngIf="subTotal" class="total__item">{{contentStrings.labelSubtotal | async}}<span
               class="total__item-sum">{{subTotal | priceUnitsResolver: mealBased}}</span></div>
-      <div *ngIf="tax" class="total__item">tax<span
+      <div *ngIf="tax" class="total__item">{{contentStrings.labelTax | async}}<span
               class="total__item-sum">{{tax | priceUnitsResolver: mealBased}}</span></div>
-      <div *ngIf="discount" class="total__item">Discount<span
+      <div *ngIf="discount" class="total__item">{{ contentStrings.labelDiscount | async }}<span
               class="total__item-sum">{{discount | priceUnitsResolver: mealBased}}</span></div>
-      <div *ngIf="isTipEnabled" class="total__item">tip<span
+      <div *ngIf="isTipEnabled" class="total__item">{{contentStrings.labelTip | async}}<span
               class="total__item-sum">{{tip | priceUnitsResolver: mealBased}}</span></div>
-      <div *ngIf="deliveryFee" class="total__item">delivery fee<span
+      <div *ngIf="deliveryFee" class="total__item">{{ contentStrings.labelDeliveryFee | async }}<span
               class="total__item-sum">{{deliveryFee | priceUnitsResolver: mealBased}}</span></div>
-      <div *ngIf="pickupFee" class="total__item">pickup fee<span
+      <div *ngIf="pickupFee" class="total__item">{{contentStrings.labelPickupFee | async}}<span
               class="total__item-sum">{{pickupFee | priceUnitsResolver: mealBased}}</span></div>
-      <div *ngIf="total" class="total__item total__item--bold">total<span
+      <div *ngIf="total" class="total__item total__item--bold">{{contentStrings.labelTotal | async}}<span
               class="total__item-sum">{{total | priceUnitsResolver: mealBased}}</span></div>
     </div>
 
     <div class="order-details__payment-method" *ngIf="readonly; else paymentSelect">
-      Payment Method<span>{{orderPaymentName}}</span>
+      {{contentStrings.labelPaymentMethod | async}}<span>{{orderPaymentName}}</span>
     </div>
 
     <ng-template #paymentSelect>
       <div class="order-details">
-        <ion-label class="order-details__label">Payment Method</ion-label>
+        <ion-label class="order-details__label">{{contentStrings.labelPaymentMethod | async}}</ion-label>
         <ion-select
                 [formControlName]="controlsNames.paymentMethod"
                 class="order-details__value"
-                cancelText="Cancel"
+                [cancelText]="contentStrings.buttonCancel | async"
                 mode="md"
-                placeholder="Please choose payment method"
+                [placeholder]="contentStrings.selectAccount | async"
                 interface="action-sheet"
                 (ionChange)="onPaymentChanged($event)"
                 [interfaceOptions]="{cssClass: 'custom-deposit-actionSheet'}"
@@ -114,7 +114,7 @@
     </div>
 
     <div class="order-details" *ngIf="isTipEnabled">
-      <ion-label class="order-details__label">Tip Amount:</ion-label>
+      <ion-label class="order-details__label">{{contentStrings.labelTipAmount | async}}:</ion-label>
       <ion-input
               class="order-details__value"
               type="tel"
@@ -127,7 +127,7 @@
               (ionChange)="onTipChanged($event)"
       ></ion-input>
       <div
-              class="order-details--error" 
+              class="order-details--error"
       >
         {{tipFormControl.errors?.errorMsg}}
       </div>
@@ -139,11 +139,10 @@
                   class="order-details__order-note"
                   [formControlName]="controlsNames.note"
                   [idd]="controlsNames.note"
-                  label="Order Note"
+                  [label]="contentStrings.labelOrderNotes | async"
                   rows="3">
           </st-textarea-floating-label>
       </div>
-    
   </form>
 
   <div class="order-details__buttons">

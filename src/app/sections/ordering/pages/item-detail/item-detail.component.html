@@ -1,7 +1,7 @@
 <ng-container *ngIf="!menuItemImg; then header"></ng-container>
 
 <ng-template #header>
-  <st-header [backButtonIcon]="'close'"
+  <st-header [backButtonIcon]="contentStrings.buttonClose | async"
              [backButtonTitle]="''"
              [isTitleShow]="true"
              [isToolbarShow]="true"
@@ -80,7 +80,7 @@
                                   class="order-detail__order-message"
                                   formControlName="message"
                                   idd="message"
-                                  label="Add a note for the kitchen"
+                                  [label]="contentStrings.labelItemNote | async"
                                   rows="3">
       </st-textarea-floating-label>
     </ion-list>
@@ -124,7 +124,7 @@
   </div>
   <div class="item-footer__add-btn-wrapper">
     <st-button (onClick)="onFormSubmit()" [isDisabled]="!itemOrderForm.valid">
-      Add {{ order.totalPrice | priceUnitsResolver: (menuInfo$ | async).mealBased }}
+      {{contentStrings.buttonAdd | async}} {{ order.totalPrice | priceUnitsResolver: (menuInfo$ | async).mealBased }}
     </st-button>
   </div>
 </ion-footer>

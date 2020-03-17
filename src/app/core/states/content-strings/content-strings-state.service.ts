@@ -25,6 +25,18 @@ export class ContentStringsStateService extends SingleEntityStateManager<Content
     );
   }
 
+  getContentStrings$(domain: string, category: string): Observable<ContentStringInfo[]> {
+    return this.state$.pipe(
+      map((settings) => {
+        if (!settings.length) return null;
+        return settings.filter(
+          ({ domain: d, category: c}) => domain === d && category === c,
+        );
+      }),
+      distinctUntilChanged(),
+    );
+  }
+
   removeContentString(domain: string, category: string, name: string): void {
     const index = this.state.findIndex(
       ({ category: c, name: n, domain: d }) => d === domain && c === category && n === name,

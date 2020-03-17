@@ -12,19 +12,37 @@ import { ContentStringInfo } from '@core/model/content/content-string-info.model
 import { ORDER_VALIDATION_ERRORS, ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 
 @Injectable()
-export class OrderingResolver implements Resolve<Observable<[ContentStringInfo[], MerchantInfo[]]>> {
+export class OrderingResolver implements Resolve<Observable<[
+  ContentStringInfo[],
+  ContentStringInfo[],
+  ContentStringInfo[],
+  ContentStringInfo[],
+  MerchantInfo[]]>> {
 
-  constructor(private readonly merchantService: MerchantService,
+  constructor(
+    private readonly merchantService: MerchantService,
     private readonly loadingService: LoadingService,
     private readonly contentStringsFacadeService: ContentStringsFacadeService) {
   }
 
-  resolve(): Observable<[ContentStringInfo[], MerchantInfo[]]> {
-    const contentStringsCall = this.updateOrderValidationErrorObject();
+  resolve(): Observable<[ContentStringInfo[], ContentStringInfo[], ContentStringInfo[], ContentStringInfo[], MerchantInfo[]]> {
+    const orderingContentStrings = this.updateOrderValidationErrorObject();
     const favouriteMerchant = this.merchantService.getMerchantsWithFavoriteInfo();
+    const statesStrings =
+      this.contentStringsFacadeService.fetchContentStrings$(
+        CONTENT_STINGS_DOMAINS.patronUi,
+        CONTENT_STINGS_CATEGORIES.usStates);
+    const weekDaysShortForm =
+      this.contentStringsFacadeService.fetchContentStrings$(
+        CONTENT_STINGS_DOMAINS.patronUi,
+        CONTENT_STINGS_CATEGORIES.dayOfWeekAbbreviated);
+    const dayMonthShortForm =
+      this.contentStringsFacadeService.fetchContentStrings$(
+        CONTENT_STINGS_DOMAINS.patronUi,
+        CONTENT_STINGS_CATEGORIES.monthAbbreviated);
 
     this.loadingService.showSpinner();
-    return zip(contentStringsCall, favouriteMerchant).pipe(
+    return zip(dayMonthShortForm, weekDaysShortForm,orderingContentStrings, statesStrings, favouriteMerchant).pipe(
       finalize(() => this.loadingService.closeSpinner()),
     );
   }

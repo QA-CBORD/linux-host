@@ -4,7 +4,12 @@ import { Observable, Subscription, zip } from 'rxjs';
 import { MenuInfo, MerchantInfo, MerchantOrderTypesInfo } from '@sections/ordering/shared/models';
 import { Router } from '@angular/router';
 import { NAVIGATE } from 'src/app/app.global';
-import { LOCAL_ROUTING, ORDER_TYPE, ORDER_VALIDATION_ERRORS } from '@sections/ordering/ordering.config';
+import {
+  LOCAL_ROUTING,
+  ORDER_TYPE,
+  ORDER_VALIDATION_ERRORS,
+  ORDERING_CONTENT_STRINGS,
+} from '@sections/ordering/ordering.config';
 import { first, map, take, tap } from 'rxjs/operators';
 import { ModalController, ToastController, PopoverController } from '@ionic/angular';
 import { OrderOptionsActionSheetComponent } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
@@ -12,6 +17,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { handleServerError } from '@core/utils/general-helpers';
 import { FullMenuPopoverComponent } from './full-menu-popover';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
+import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 
 @Component({
   selector: 'st-full-menu',
@@ -26,7 +32,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   merchantInfoState: boolean = false;
   menuItems$: Observable<number>;
   orderTypes: MerchantOrderTypesInfo;
-  orderInfo: OrderDetailOptions;
+  contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
 
   constructor(
     private readonly cartService: CartService,
@@ -36,21 +42,32 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     private readonly loadingService: LoadingService,
     private readonly toastController: ToastController,
     private readonly popoverCtrl: PopoverController,
+    private readonly orderingService: OrderingService
   ) {
   }
 
+  ngOnInit() {
+    this.menu$ = this.cartService.menuInfo$;
+    this.merchantInfo$ = this.cartService.merchant$;
+    this.initContentStrings();
+  }
+
+  ngOnDestroy() {
+    this.sourceSubscription.unsubscribe();
+  }
+
   get orderType(): Observable<string> {
-    return this.orderInfo$.pipe(
-      map(({ orderType }) => {
+    return zip(this.orderInfo$, this.contentStrings.labelPickup, this.contentStrings.labelDelivery).pipe(
+      map(([{ orderType }, pickup, delivery]) => {
         switch (orderType) {
           case ORDER_TYPE.PICKUP:
-            return 'Pickup';
+            return pickup;
           case ORDER_TYPE.DELIVERY:
-            return 'Delivery';
+            return delivery;
           default:
             return 'DineIn';
         }
-      }),
+      })
     );
   }
 
@@ -68,15 +85,6 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     this.menuItems$ = this.cartService.menuItems$;
   }
 
-  ngOnInit() {
-    this.menu$ = this.cartService.menuInfo$;
-    this.merchantInfo$ = this.cartService.merchant$;
-  }
-
-  ngOnDestroy() {
-    this.sourceSubscription.unsubscribe();
-  }
-
   onCategoryClicked({ id }) {
     this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.menuCategoryItems, id], { skipLocationChange: true });
   }
@@ -90,7 +98,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     const footerButtonName = 'set order options';
     const cssClass = `order-options-action-sheet ${
       orderTypes.delivery && orderTypes.pickup ? ' order-options-action-sheet-p-d' : ''
-      }`;
+    }`;
     const { orderType, address } = await this.orderInfo$.pipe(first()).toPromise();
     const modal = await this.modalController.create({
       component: OrderOptionsActionSheetComponent,
@@ -110,7 +118,12 @@ export class FullMenuComponent implements OnInit, OnDestroy {
       if (!data) return;
 
       const cachedData = await this.cartService.orderDetailsOptions$.pipe(first()).toPromise();
-      await this.cartService.setActiveMerchantsMenuByOrderOptions(data.dueTime, data.orderType, data.address, data.isASAP);
+      await this.cartService.setActiveMerchantsMenuByOrderOptions(
+        data.dueTime,
+        data.orderType,
+        data.address,
+        data.isASAP
+      );
       this.cartService.orderItems$.pipe(first()).subscribe(items => {
         if (items.length) {
           const errorCB = () => this.modalHandler(cachedData);
@@ -171,5 +184,18 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     });
 
     return await popover.present();
+  }
+
+  private initContentStrings() {
+    this.contentStrings.buttonExplore
+      = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonExplore);
+    this.contentStrings.labelFor
+      = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelFor);
+    this.contentStrings.labelFullMenu
+      = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelFullMenu);
+    this.contentStrings.labelPickup = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelPickup);
+    this.contentStrings.labelDelivery = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.labelDelivery
+    );
   }
 }

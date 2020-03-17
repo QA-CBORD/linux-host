@@ -5,46 +5,52 @@
         <ion-icon name="close"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title class="delivery-address__title">Select {{ addressLabel }} Address</ion-title>
+    <ion-title class="delivery-address__title">
+      {{
+        (isOrderTypePickup
+          ? contentStrings.labelSelectPickupAddress
+          : contentStrings.labelSelectDeliveryAddress) | async
+      }}
+    </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <div class="delivery-address__add-address-container" *ngIf="addressLabel !== 'Pickup'">
+  <div class="delivery-address__add-address-container" *ngIf="!isOrderTypePickup">
     <ion-item
-      class="delivery-address__add-address-wrapper"
-      lines="full"
-      [button]="true"
-      [detail]="false"
-      (click)="addNewAdddressState = !addNewAdddressState"
-      ><span class="delivery-address__add-address-sign">+ </span
-      ><span class="delivery-address__add-address-text">Add New Address</span>
+            class="delivery-address__add-address-wrapper"
+            lines="full"
+            [button]="true"
+            [detail]="false"
+            (click)="addNewAdddressState = !addNewAdddressState"
+    ><span class="delivery-address__add-address-sign">+ </span
+    ><span class="delivery-address__add-address-text">{{contentStrings.labelAddNewAddress | async}}</span>
       <img
-        src="/assets/icon/angle-{{ addNewAdddressState ? 'up' : 'down' }}-select.svg"
-        alt="arrow"
-        class="delivery-address__add-address-img"
+              src="/assets/icon/angle-{{ addNewAdddressState ? 'up' : 'down' }}-select.svg"
+              alt="arrow"
+              class="delivery-address__add-address-img"
       />
     </ion-item>
 
     <ng-container *ngIf="addNewAdddressState">
       <st-add-edit-addresses
-        [buildingsOnCampus]="buildings"
-        [isError]="errorState"
-        (onFormChanged)="onAddressFormChanged($event)"
+              [buildingsOnCampus]="buildings"
+              [isError]="errorState"
+              (onFormChanged)="onAddressFormChanged($event)"
       ></st-add-edit-addresses>
 
       <div class="delivery-address__add-address-btn-container">
         <st-button
-          [fill]="'clear'"
-          (onClick)="resetForm()"
+                [fill]="'clear'"
+                (onClick)="resetForm()"
         >
-          cancel
+          {{contentStrings.buttonCancel | async}}
         </st-button>
         <st-button
-          [isDisabled]="addNewAdddressForm && !addNewAdddressForm.valid"
-          (onClick)="addAddress()"
+                [isDisabled]="addNewAdddressForm && !addNewAdddressForm.valid"
+                (onClick)="addAddress()"
         >
-          save
+          {{contentStrings.buttonSave | async}}
         </st-button>
       </div>
     </ng-container>
@@ -52,24 +58,24 @@
   <div class="delivery-address__add-address-divider" *ngIf="addNewAdddressState"></div>
 
   <ion-radio-group
-    mode="md"
-    class="delivery-address__radio-group"
-    (ionChange)="onRadioGroupChanged($event)"
-    *ngIf="listOfAddresses?.length"
+          mode="md"
+          class="delivery-address__radio-group"
+          (ionChange)="onRadioGroupChanged($event)"
+          *ngIf="listOfAddresses?.length"
   >
     <ion-item lines="none" class="delivery-address__radio-container" *ngFor="let item of listOfAddresses">
       <ion-label class="delivery-address__radio-label">
-        <div class="delivery-address__radio-label-content">          
+        <div class="delivery-address__radio-label-content">
           <div class="delivery-address__radio-label-header">{{ item.displayHeader }}</div>
           <div class="delivery-address__radio-label-sub-header">{{ item.displaySubheader }}</div>
         </div>
       </ion-label>
       <ion-radio
-        mode="md"
-        slot="start"
-        [value]="item.item"
-        [checked]="item.checked"
-        class="delivery-address__radio-item"
+              mode="md"
+              slot="start"
+              [value]="item.item"
+              [checked]="item.checked"
+              class="delivery-address__radio-item"
       ></ion-radio>
     </ion-item>
   </ion-radio-group>
@@ -82,9 +88,13 @@
 
 <ng-template #footerButton>
   <st-button
-    [isDisabled]="!selectedAddress"
-    (onClick)="selectedAddress && onClickedDone(selectedAddress)"
+          [isDisabled]="!selectedAddress"
+          (onClick)="selectedAddress && onClickedDone(selectedAddress)"
   >
-    set {{ addressLabel }} address
+    {{
+      (isOrderTypePickup
+        ? contentStrings.buttonSetPickupAddress
+        : contentStrings.buttonSetDeliveryAddress) | async
+    }}
   </st-button>
 </ng-template>

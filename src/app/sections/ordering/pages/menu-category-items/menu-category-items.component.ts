@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NAVIGATE } from 'src/app/app.global';
-import { LOCAL_ROUTING, ORDER_VALIDATION_ERRORS } from '@sections/ordering/ordering.config';
+import { LOCAL_ROUTING, ORDER_VALIDATION_ERRORS, ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { CartService } from '@sections/ordering/services';
 import { Observable, zip } from 'rxjs';
 import { take, first } from 'rxjs/operators';
@@ -9,6 +9,7 @@ import { MenuCategoryInfo, MenuCategoryItemInfo, MenuInfo } from '@sections/orde
 import { handleServerError } from '@core/utils/general-helpers';
 import { ToastController } from '@ionic/angular';
 import { LoadingService } from '@core/service/loading/loading.service';
+import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 
 @Component({
   selector: 'st-menu-category-items',
@@ -22,6 +23,7 @@ export class MenuCategoryItemsComponent implements OnInit {
   menuCategory: MenuCategoryInfo;
   filteredMenuCategoryItems: MenuCategoryItemInfo[] = [];
   menuItems$: Observable<number>;
+  contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
 
   constructor(
     private readonly router: Router,
@@ -29,11 +31,13 @@ export class MenuCategoryItemsComponent implements OnInit {
     private readonly activatedRoute: ActivatedRoute,
     private readonly cdRef: ChangeDetectorRef,
     private readonly loadingService: LoadingService,
-    private readonly toastController: ToastController
+    private readonly toastController: ToastController,
+    private readonly orderingService: OrderingService
   ) {}
 
   ionViewWillEnter() {
     this.menuItems$ = this.cartService.menuItems$;
+    this.initContentStrings();
     this.cdRef.detectChanges();
   }
 
@@ -99,5 +103,14 @@ export class MenuCategoryItemsComponent implements OnInit {
       position: 'top',
     });
     await toast.present();
+  }
+
+  private initContentStrings() {
+    this.contentStrings.labelSearch =
+      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelSearch);
+    this.contentStrings.labelEmptySearch =
+      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelEmptySearch);
+    this.contentStrings.labelFullMenu =
+      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelFullMenu);
   }
 }

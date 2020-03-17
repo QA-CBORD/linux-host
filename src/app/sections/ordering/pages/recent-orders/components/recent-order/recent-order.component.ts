@@ -4,7 +4,12 @@ import { first, map, switchMap, take } from 'rxjs/operators';
 import { iif, Observable, zip } from 'rxjs';
 
 import { MenuItemInfo, MerchantInfo, MerchantService, OrderInfo, OrderItem } from '@sections/ordering';
-import { LOCAL_ROUTING, ORDER_TYPE, ORDER_VALIDATION_ERRORS } from '@sections/ordering/ordering.config';
+import {
+  LOCAL_ROUTING,
+  ORDER_TYPE,
+  ORDER_VALIDATION_ERRORS,
+  ORDERING_CONTENT_STRINGS,
+} from '@sections/ordering/ordering.config';
 import { NAVIGATE } from '../../../../../../app.global';
 import { ModalController, PopoverController, ToastController } from '@ionic/angular';
 import { ORDERING_STATUS } from '@sections/ordering/shared/ui-components/recent-oders-list/recent-orders-list-item/recent-orders.config';
@@ -17,6 +22,7 @@ import { StGlobalPopoverComponent } from '@shared/ui-components';
 import { ConfirmPopoverComponent } from '@sections/ordering/shared/ui-components/confirm-popover/confirm-popover.component';
 import { UserService } from '@core/service/user-service/user.service';
 import { TIMEZONE_REGEXP } from '@core/utils/regexp-patterns';
+import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 
 @Component({
   selector: 'st-recent-order',
@@ -28,6 +34,7 @@ export class RecentOrderComponent implements OnInit {
   order$: Observable<OrderInfo>;
   orderDetailsOptions$: Observable<any>;
   merchant$: Observable<MerchantInfo>;
+  contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
 
   constructor(
     private readonly activatedRoute: ActivatedRoute,
@@ -39,6 +46,7 @@ export class RecentOrderComponent implements OnInit {
     private readonly loadingService: LoadingService,
     private readonly toastController: ToastController,
     private readonly userService: UserService,
+    private readonly orderingService: OrderingService
   ) {
   }
 
@@ -47,6 +55,7 @@ export class RecentOrderComponent implements OnInit {
     this.setActiveOrder(orderId);
     this.setActiveMerchant(orderId);
     this.setActiveAddress();
+    this.initContentStrings();
   }
 
   async onReorderHandler() {
@@ -299,5 +308,16 @@ export class RecentOrderComponent implements OnInit {
     });
 
     await modal.present();
+  }
+
+  private initContentStrings() {
+    this.contentStrings.buttonClose =
+      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonClose);
+    this.contentStrings.buttonReorder =
+      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonReorder);
+    this.contentStrings.labelOrder =
+      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelOrder);
+    this.contentStrings.buttonCancelOrder =
+      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonCancelOrder);
   }
 }

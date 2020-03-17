@@ -1,6 +1,6 @@
 <ion-content>
   <div class="order-options">
-    <h1 class="order-options__title">Order Options</h1>
+    <h1 class="order-options__title">{{ contentStrings.labelOrderOptions | async }}</h1>
     <ion-list mode="md"
               class="order-options__list">
       <div class="order-options__radio-group-container"
@@ -10,7 +10,7 @@
                          (ionChange)="onRadioGroupChanged($event)">
           <ion-item lines="none"
                     class="order-options__radio-container">
-            <ion-label class="order-options__radio-label">Pickup</ion-label>
+            <ion-label class="order-options__radio-label">{{ contentStrings.labelPickup | async }}</ion-label>
             <ion-radio mode="md"
                        slot="start"
                        value="pickup"
@@ -20,7 +20,7 @@
 
           <ion-item lines="none"
                     class="order-options__radio-container">
-            <ion-label class="order-options__radio-label">Delivery</ion-label>
+            <ion-label class="order-options__radio-label">{{ contentStrings.labelDelivery | async }}</ion-label>
             <ion-radio mode="md"
                        slot="start"
                        value="delivery"
@@ -33,7 +33,7 @@
                 [detail]="orderOptionsData?.isClickble"
                 (click)="orderOptionsData?.isClickble && openDeliveryAddressesModal()">
         <div class="order-options__select-container">
-          <div class="order-options__select-label">{{ orderOptionsData?.label }} ADDRESS</div>
+          <div class="order-options__select-label">{{ orderOptionsData?.labelAddress }}</div>
           <div class="order-options__select-value">
             <img width="16"
                  src="./assets/icon/location-pin.svg"

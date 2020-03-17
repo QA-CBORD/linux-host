@@ -17,7 +17,7 @@ import {
   LOCAL_ROUTING,
   MerchantSettings,
   ORDER_TYPE,
-  ORDER_VALIDATION_ERRORS,
+  ORDER_VALIDATION_ERRORS, ORDERING_CONTENT_STRINGS,
   PAYMENT_SYSTEM_TYPE,
   SYSTEM_SETTINGS_CONFIG,
 } from '@sections/ordering/ordering.config';
@@ -33,6 +33,7 @@ import { StGlobalPopoverComponent } from '@shared/ui-components';
 import { MerchantOrderTypesInfo, MerchantInfo } from '@sections/ordering/shared/models';
 import { NativeData, NativeProvider } from '@core/provider/native-provider/native.provider';
 import { UserService } from '@core/service/user-service/user.service';
+import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 
 @Component({
   selector: 'st-cart',
@@ -50,6 +51,7 @@ export class CartComponent implements OnInit {
   accounts$: Promise<UserAccount[]>;
   accountInfoList$: Observable<MerchantAccountInfoList>;
   cartFormState: OrderDetailsFormData = {} as OrderDetailsFormData;
+  contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
 
   constructor(
     private readonly cartService: CartService,
@@ -64,6 +66,7 @@ export class CartComponent implements OnInit {
     private readonly modalController: ModalController,
     private readonly userService: UserService,
     private readonly nativeProvider: NativeProvider,
+    private readonly orderingService: OrderingService
   ) {
   }
 
@@ -80,6 +83,7 @@ export class CartComponent implements OnInit {
     this.addressModalSettings$ = this.initAddressModalConfig();
     this.accountInfoList$ = this.activatedRoute.data.pipe(map(({ data: [, accInfo] }) => accInfo));
     this.applePayEnabled$ = this.userService.isApplePayEnabled$();
+    this.initContentStrings();
   }
 
   get isOrderASAP(): Observable<boolean> {
@@ -389,5 +393,16 @@ export class CartComponent implements OnInit {
       position: 'top',
     });
     await toast.present();
+  }
+
+  private initContentStrings() {
+    this.contentStrings.buttonClose =
+      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonClose);
+    this.contentStrings.buttonPlaceOrder =
+      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonPlaceOrder);
+    this.contentStrings.labelCart =
+      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelCart);
+    this.contentStrings.buttonScheduleOrder =
+      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonScheduleOrder);
   }
 }

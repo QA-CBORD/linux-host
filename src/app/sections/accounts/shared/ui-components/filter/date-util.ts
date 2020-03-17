@@ -1,18 +1,18 @@
 import { TIME_PERIOD } from '../../../accounts.config';
 
-const month = [];
-month[0] = 'January';
-month[1] = 'February';
-month[2] = 'March';
-month[3] = 'April';
-month[4] = 'May';
-month[5] = 'June';
-month[6] = 'July';
-month[7] = 'August';
-month[8] = 'September';
-month[9] = 'October';
-month[10] = 'November';
-month[11] = 'December';
+export const MONTH = [];
+MONTH[0] = 'January';
+MONTH[1] = 'February';
+MONTH[2] = 'March';
+MONTH[3] = 'April';
+MONTH[4] = 'May';
+MONTH[5] = 'June';
+MONTH[6] = 'July';
+MONTH[7] = 'August';
+MONTH[8] = 'September';
+MONTH[9] = 'October';
+MONTH[10] = 'November';
+MONTH[11] = 'December';
 
 export interface DateUtilObject {
   readonly name: string;
@@ -26,7 +26,7 @@ export interface TimeRange {
 }
 
 const getNameMonth = (m: number): string => {
-  return month[m];
+  return MONTH[m];
 };
 
 const createMonthObject = (date: Date): DateUtilObject => {

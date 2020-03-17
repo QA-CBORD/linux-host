@@ -1,12 +1,12 @@
-import {
-  Component,
-  Input,
-  Output,
-  EventEmitter,
-  ChangeDetectionStrategy,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { PickerController } from '@ionic/angular';
-import { DatePipe } from '@angular/common';
+import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
+import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
+import { take } from 'rxjs/operators';
+import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
+import { CONTENT_STINGS_CATEGORIES, CONTENT_STINGS_DOMAINS } from '../../../../../content-strings';
+import { formatDateByContentStrings } from '@core/utils/date-helper';
+import { ContentStringInfo } from '@core/model/content/content-string-info.model';
 
 @Component({
   selector: 'st-date-time-picker',
@@ -14,34 +14,58 @@ import { DatePipe } from '@angular/common';
   styleUrls: ['./st-date-time-picker.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class StDateTimePickerComponent {
-  private prevSelectedTimeInfo: TimeInfo = { prevIdx: 0, currentIdx: 0, maxValue: false };
-  private selectedDayIdx: number = 0;
-
+export class StDateTimePickerComponent implements OnInit {
   @Input() schedule: any;
-  @Input() data: { label: string; address: any; isClickble: number };
+  @Input() data: { labelTime: string; address: any; isClickble: number };
   @Input() isTimeDisable: number;
   @Input() dateTimePicker: Date | string;
   @Output() onTimeSelected: EventEmitter<Date | string> = new EventEmitter<Date | string>();
 
-  constructor(private readonly datePipe: DatePipe, private readonly pickerController: PickerController) {}
+  private prevSelectedTimeInfo: TimeInfo = { prevIdx: 0, currentIdx: 0, maxValue: false };
+  private selectedDayIdx: number = 0;
+  private picker: HTMLIonPickerElement;
+  contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
+  private weekArray: ContentStringInfo[];
+  private monthArray: ContentStringInfo[];
+  private tomorrowString: string = 'Tomorrow';
 
-  get isDefaultState() {
+  constructor(private readonly pickerController: PickerController,
+              private readonly orderingService: OrderingService,
+              private readonly contentStringsFacadeService: ContentStringsFacadeService) {
+  }
+
+  ngOnInit(): void {
+    this.initContentStrings();
+  }
+
+  get isDefaultState(): boolean {
     return typeof this.dateTimePicker === 'string';
   }
 
-  async openPicker() {
+  async openPicker(): Promise<void> {
+    const confirm = await this.contentStrings.buttonConfirm.pipe(take(1)).toPromise();
+    const cancel = await this.contentStrings.buttonCancel.pipe(take(1)).toPromise();
+    const title = await this.contentStrings.labelSelectTime.pipe(take(1)).toPromise();
+    this.monthArray = await this.contentStringsFacadeService.getContentStrings$(CONTENT_STINGS_DOMAINS.patronUi,
+      CONTENT_STINGS_CATEGORIES.monthAbbreviated).pipe(take(1)).toPromise();
+    this.weekArray = await this.contentStringsFacadeService.getContentStrings$(CONTENT_STINGS_DOMAINS.patronUi,
+      CONTENT_STINGS_CATEGORIES.dayOfWeekAbbreviated).pipe(take(1)).toPromise();
+
     const picker: HTMLIonPickerElement = await this.pickerController.create({
       columns: this.createColumns(),
       mode: 'ios',
       cssClass: 'picker-time-picker',
       buttons: [
         {
-          text: 'Cancel',
+          text: cancel,
           role: 'cancel',
         },
         {
-          text: 'Confirm',
+          text: title,
+          role: 'title',
+        },
+        {
+          text: confirm,
           handler: ([date, time]) => {
             const [year, month, day] = date.value.split('-');
             if (time.value === 'asap') {
@@ -69,26 +93,25 @@ export class StDateTimePickerComponent {
         this.selectedDayIdx = data.selectedIndex;
       }
 
-      const columns = this.createColumns();
-
-      picker.columns = columns;
+      picker.columns = this.createColumns();
       picker.forceUpdate();
       if (data.options[data.selectedIndex].text) {
         this.prevSelectedTimeInfo = { ...this.prevSelectedTimeInfo, prevIdx: data.selectedIndex };
       }
     });
-
+    this.picker = picker;
+    await this.updateAsapOption();
     await picker.present();
   }
 
-  private preparePickerArr(i = 0) {
+  private preparePickerArr(i: number = 0): any[] {
     const arr1 = this.schedule.days.map(({ date }) => date);
     const arr2 = this.schedule.days[i].hourBlocks.reduce(
       (total, block) => [
         ...total,
         ...block.minuteBlocks.map(minuteBlock => `${block.hour}:${minuteBlock === 0 ? '00' : minuteBlock}`),
       ],
-      []
+      [],
     );
     return [arr1, arr2];
   }
@@ -120,7 +143,7 @@ export class StDateTimePickerComponent {
     return columns;
   }
 
-  private getColumnOptions(columnIndex, daysOptions, timeOptions, columnOptions, isToday) {
+  private getColumnOptions(columnIndex, daysOptions, timeOptions, columnOptions, isToday): any[] {
     let pickerColumns = [];
     const total = columnIndex === 0 ? daysOptions : timeOptions;
     const getColumnText = i => {
@@ -133,10 +156,10 @@ export class StDateTimePickerComponent {
       }
 
       if (this.isTodayOrTomorrow(columnOptions[columnIndex][i % total], false)) {
-        return 'Tomorrow';
+        return this.tomorrowString;
       }
 
-      return this.datePipe.transform(columnOptions[columnIndex][i % total], 'EE, MMM d');
+      return formatDateByContentStrings(new Date(columnOptions[columnIndex][i % total]), this.weekArray, this.monthArray);
     };
 
     for (let i = 0; i < total; i++) {
@@ -171,6 +194,30 @@ export class StDateTimePickerComponent {
       someDate.getMonth() == today.getMonth() &&
       someDate.getFullYear() == today.getFullYear()
     );
+  }
+
+  private async initContentStrings() {
+    this.contentStrings.buttonConfirm =
+      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonConfirm);
+    this.contentStrings.buttonCancel =
+      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonCancel);
+    this.contentStrings.labelAsap =
+      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelAsap);
+    this.contentStrings.labelSelectTime =
+      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelSelectTime);
+    this.tomorrowString = await
+      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelTomorrow)
+        .pipe(take(1)).toPromise();
+  }
+
+  async updateAsapOption(): Promise<void> {
+    const asapLabel = await this.contentStrings.labelAsap.pipe(take(1)).toPromise();
+    this.picker && this.picker.columns.forEach(({ options }) => {
+      const index = options.findIndex(({ value }) => value === 'asap');
+      if (index !== -1) {
+        options[index] = { ...options[index], text: asapLabel };
+      }
+    });
   }
 }
 

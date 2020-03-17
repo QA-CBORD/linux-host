@@ -9,24 +9,32 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, Validators, ValidatorFn } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
   BuildingInfo,
   MerchantAccountInfoList,
   MerchantOrderTypesInfo,
+  MerchantSettingInfo,
   OrderDetailOptions,
   OrderItem,
   OrderPayment,
-  MerchantSettingInfo,
 } from '@sections/ordering';
-import { PAYMENT_SYSTEM_TYPE, MerchantSettings } from '@sections/ordering/ordering.config';
+import { MerchantSettings, ORDERING_CONTENT_STRINGS, PAYMENT_SYSTEM_TYPE } from '@sections/ordering/ordering.config';
 import { AddressInfo } from '@core/model/address/address-info';
 import { ModalController } from '@ionic/angular';
 import { DeliveryAddressesModalComponent } from '@sections/ordering/shared/ui-components/delivery-addresses.modal/delivery-addresses.modal.component';
 import { UserAccount } from '@core/model/account/account.model';
 import { Subscription } from 'rxjs';
-import { cvvValidationFn, formControlErrorDecorator, validateLessThanOther, validateGreaterOrEqualToZero, validateCurrency } from '@core/utils/general-helpers';
+import {
+  cvvValidationFn,
+  formControlErrorDecorator,
+  validateCurrency,
+  validateGreaterOrEqualToZero,
+  validateLessThanOther,
+} from '@core/utils/general-helpers';
 import { AccountType } from 'src/app/app.global';
+import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'st-order-details',
@@ -58,13 +66,12 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   @Output() onFormChange: EventEmitter<OrderDetailsFormData> = new EventEmitter<OrderDetailsFormData>();
   @Output() onOrderItemRemovedId: EventEmitter<string> = new EventEmitter<string>();
   @Output() onOrderItemClicked: EventEmitter<OrderItem> = new EventEmitter<OrderItem>();
-  @Output() onOrderPaymentInfoChanged: EventEmitter<Partial<OrderPayment> | string> = new EventEmitter<
-    Partial<OrderPayment> | string
-  >();
+  @Output() onOrderPaymentInfoChanged: EventEmitter<Partial<OrderPayment> | string> = new EventEmitter<Partial<OrderPayment> | string>();
   @Output() onOrderTipChanged: EventEmitter<number> = new EventEmitter<number>();
 
-  detailsForm: FormGroup;
   private readonly sourceSub = new Subscription();
+  contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
+  detailsForm: FormGroup;
   showCVVControl = false;
   applePayAccountType: Partial<UserAccount> = {
     accountType: AccountType.APPLEPAY,
@@ -72,10 +79,15 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     isActive: true,
   };
 
-  constructor(private readonly fb: FormBuilder, private readonly modalController: ModalController) {}
+  constructor(private readonly fb: FormBuilder,
+              private readonly modalController: ModalController,
+              private readonly orderingService: OrderingService) {
+  }
 
   ngOnInit() {
     this.initForm();
+    this.initContentStrings();
+    this.updateFormErrorsByContentStrings();
   }
 
   ngOnDestroy() {
@@ -110,7 +122,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   get isTipEnabled() {
     return !!this.merchantSettingsList.filter(
       ({ domain, category, name, value }) =>
-        `${domain}.${category}.${name}` === MerchantSettings.tipEnabled && !!Number(value)
+        `${domain}.${category}.${name}` === MerchantSettings.tipEnabled && !!Number(value),
     ).length;
   }
 
@@ -148,7 +160,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   onTipChanged({ detail: { value } }) {
-    if(!this.tipFormControl.valid) return;
+    if (!this.tipFormControl.valid) return;
     this.onOrderTipChanged.emit(value ? Number(value) : 0);
   }
 
@@ -196,7 +208,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     this.showCVVControl = true;
     this.detailsForm.addControl(
       DETAILS_FORM_CONTROL_NAMES.cvv,
-      this.fb.control('', [Validators.required, cvvValidationFn])
+      this.fb.control('', [Validators.required, cvvValidationFn]),
     );
   }
 
@@ -205,7 +217,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     this.detailsForm.removeControl(DETAILS_FORM_CONTROL_NAMES.cvv);
   }
 
-  private async showAddressListModal(): Promise<void> {
+  async showAddressListModal(): Promise<void> {
     const modal = await this.modalController.create({
       component: DeliveryAddressesModalComponent,
       componentProps: this.addressModalConfig,
@@ -216,6 +228,49 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     await modal.present();
   }
 
+  private initContentStrings() {
+    this.contentStrings.buttonCancel =
+      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonCancel);
+    this.contentStrings.formErrorTipInvalidFormat =
+      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.formErrorTipInvalidFormat);
+    this.contentStrings.formErrorTipMinimum =
+      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.formErrorTipMinimum);
+    this.contentStrings.formErrorTipSubtotal =
+      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.formErrorTipSubtotal);
+    this.contentStrings.labelTotal =
+      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelTotal);
+    this.contentStrings.labelTip =
+      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelTip);
+    this.contentStrings.labelTipAmount =
+      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelTipAmount);
+    this.contentStrings.labelTax =
+      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelTax);
+    this.contentStrings.labelSubtotal =
+      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelSubtotal);
+    this.contentStrings.labelRemoveItem =
+      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelRemoveItem);
+    this.contentStrings.labelPickupFee =
+      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelPickupFee);
+    this.contentStrings.labelPaymentMethod =
+      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelPaymentMethod);
+    this.contentStrings.labelDeliveryFee =
+      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelDeliveryFee);
+    this.contentStrings.labelDiscount =
+      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelDiscount);
+    this.contentStrings.labelOrderNotes =
+      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelOrderNotes);
+    this.contentStrings.selectAccount =
+      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.selectAccount);
+  }
+
+  private async updateFormErrorsByContentStrings(): Promise<void> {
+    CONTROL_ERROR[DETAILS_FORM_CONTROL_NAMES.tip].currency =
+      await this.contentStrings.formErrorTipInvalidFormat.pipe(take(1)).toPromise();
+    CONTROL_ERROR[DETAILS_FORM_CONTROL_NAMES.tip].min =
+      await this.contentStrings.formErrorTipMinimum.pipe(take(1)).toPromise();
+    CONTROL_ERROR[DETAILS_FORM_CONTROL_NAMES.tip].subtotal =
+      await this.contentStrings.formErrorTipSubtotal.pipe(take(1)).toPromise();
+  }
 }
 
 export enum DETAILS_FORM_CONTROL_NAMES {

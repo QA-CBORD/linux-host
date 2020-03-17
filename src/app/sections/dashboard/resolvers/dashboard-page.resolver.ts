@@ -11,6 +11,8 @@ import { TileConfigFacadeService } from '@sections/dashboard/tile-config-facade.
 import { CONTENT_STRING_NAMES } from '@sections/accounts/pages/meal-donations/content-strings';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { CONTENT_STINGS_CATEGORIES, CONTENT_STINGS_DOMAINS } from '../../../content-strings';
+import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
+import { ContentStringInfo } from '@core/model/content/content-string-info.model';
 
 @Injectable()
 export class DashboardPageResolver implements Resolve<Observable<SettingInfoList>> {
@@ -25,7 +27,20 @@ export class DashboardPageResolver implements Resolve<Observable<SettingInfoList
 
   resolve(): Observable<any> {
     this.loadingService.showSpinner();
-    const donationMealsStrings = [
+    const strings = this.loadContentStrings();
+
+    const accountContentStrings = this.accountsService.initContentStringsList();
+    return zip(
+      this.tileConfigFacadeService.updateTilesConfigBySystemSettings().pipe(first()),
+      accountContentStrings,
+      ...strings,
+    ).pipe(
+      finalize(() => this.loadingService.closeSpinner()),
+    );
+  }
+
+  private loadContentStrings(): Observable<ContentStringInfo>[] {
+    return [
       this.contentStringsFacadeService.fetchContentString$(
         CONTENT_STINGS_DOMAINS.patronUi,
         CONTENT_STINGS_CATEGORIES.mealDonation,
@@ -34,14 +49,10 @@ export class DashboardPageResolver implements Resolve<Observable<SettingInfoList
         CONTENT_STINGS_DOMAINS.patronUi,
         CONTENT_STINGS_CATEGORIES.mealDonation,
         CONTENT_STRING_NAMES.buttonDonateAMeal),
+      this.contentStringsFacadeService.fetchContentString$(
+        CONTENT_STINGS_DOMAINS.patronUi,
+        CONTENT_STINGS_CATEGORIES.ordering,
+        ORDERING_CONTENT_STRINGS.labelDashboard),
     ];
-    const accountContentStrings = this.accountsService.initContentStringsList();
-    return zip(
-      this.tileConfigFacadeService.updateTilesConfigBySystemSettings().pipe(first()),
-      accountContentStrings,
-      ...donationMealsStrings,
-    ).pipe(
-      finalize(() => this.loadingService.closeSpinner()),
-    );
   }
 }

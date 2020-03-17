@@ -5,7 +5,10 @@ export enum CONTENT_STINGS_DOMAINS {
 export enum CONTENT_STINGS_CATEGORIES {
   mealDonation = 'meal_donation',
   ordering = 'ordering',
-  accounts = 'accounts'
+  usStates = 'us-state_full',
+  accounts = 'accounts',
+  dayOfWeekAbbreviated = 'day-of-week_abbreviated',
+  monthAbbreviated = 'month_abbreviated',
 }
 
 export enum CONTENT_STINGS_LOCALES {

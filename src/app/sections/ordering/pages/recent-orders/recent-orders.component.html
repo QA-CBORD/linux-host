@@ -1,8 +1,8 @@
 <st-header
-  title="Recent Orders"
+  title="{{ contentStrings.labelRecentOrders | async }}"
   [isTitleShow]="true"
   [backButtonTitle]="''"
-  [backButtonIcon]="'close'"
+  [backButtonIcon]="contentStrings.buttonClose | async"
   [isToolbarShow]="true"
   class="recent-orders__header"
 >
@@ -21,7 +21,7 @@
 </ion-content>
 
 <ng-template #pending>
-  <h2 class="recent-orders__list-title">Pending Orders</h2>
+  <h2 class="recent-orders__list-title">{{contentStrings.labelPendingOrders | async}}</h2>
   <st-recent-orders-list
     (onOrderClicked)="onOrderPicked($event)"
     [orders]="pendingOrders$ | async"
@@ -29,17 +29,17 @@
 </ng-template>
 
 <ng-template #empty>
- <main class="recent-orders__no-orders-block">
-  <img class="recent-orders__no-orders-image" src="/assets/images/recent_orders.svg" alt="">
-  <p class="recent-orders__no-orders-message">You recently placed orders will appear here.</p>
-  <div class="recent-orders__no-orders-btn-wrapper" >
-    <st-button (onClick)="back()">start an order</st-button>
-  </div>
- </main>
+  <main class="recent-orders__no-orders-block">
+    <img class="recent-orders__no-orders-image" src="/assets/images/recent_orders.svg" alt="">
+    <p class="recent-orders__no-orders-message">{{contentStrings.noRecentOrders | async}}</p>
+    <div class="recent-orders__no-orders-btn-wrapper">
+      <st-button (onClick)="back()">{{contentStrings.buttonDashboardStartOrder | async}}</st-button>
+    </div>
+  </main>
 </ng-template>
 
 <ng-template #completed>
-  <h2 class="recent-orders__list-title">Completed Orders</h2>
+  <h2 class="recent-orders__list-title">{{contentStrings.labelCompletedOrders | async}}</h2>
   <st-recent-orders-list
     (onOrderClicked)="onOrderPicked($event)"
     [orders]="completedOrders$ | async"

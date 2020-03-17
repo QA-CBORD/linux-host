@@ -1,3 +1,6 @@
+import { ContentStringInfo } from '@core/model/content/content-string-info.model';
+import { MONTH } from '@sections/accounts/shared/ui-components/filter/date-util';
+
 export const determineDate = (date?: string) => (date ? new Date(date) : new Date());
 
 export const toISOString = () => new Date().toISOString();
@@ -46,3 +49,23 @@ export const isSameDay = (c, n): boolean => {
   );
 };
 export const WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+export const formatDateByContentStrings = (date: Date,
+                                    weekContentStrings: ContentStringInfo[],
+                                    monthContentStrings: ContentStringInfo[]): string => {
+  let formattedWeek = sortContentStringsBySourceArray(weekContentStrings, WEEK);
+  let formattedMonth = sortContentStringsBySourceArray(monthContentStrings, MONTH);
+
+  return `${formattedWeek[date.getDay()]}, ${formattedMonth[date.getMonth()]} ${date.getDate()}`;
+};
+
+export const sortContentStringsBySourceArray = (contentStrings: ContentStringInfo[], sourceArray: string[]): string[] => {
+  let res = [];
+
+  for (let i = 0; i < contentStrings.length; i++) {
+    const index = sourceArray.findIndex((elem) => elem.toLowerCase() === contentStrings[i].name.toLowerCase());
+    res[index] = contentStrings[i].value;
+  }
+
+  return res;
+};

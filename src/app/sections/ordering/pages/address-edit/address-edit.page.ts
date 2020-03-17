@@ -1,17 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AddressInfo } from '@core/model/address/address-info';
 import { MerchantService } from '@sections/ordering/services';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { take, tap, map } from 'rxjs/operators';
-import { of, zip, iif, Observable } from 'rxjs';
+import { map, take, tap } from 'rxjs/operators';
+import { iif, Observable, of, zip } from 'rxjs';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { NAVIGATE } from 'src/app/app.global';
-import { LOCAL_ROUTING } from '@sections/ordering/ordering.config';
+import { LOCAL_ROUTING, ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { ConfirmPopoverComponent } from '@sections/ordering/shared/ui-components/confirm-popover/confirm-popover.component';
-import { buttons, BUTTON_TYPE } from '@core/utils/buttons.config';
+import { BUTTON_TYPE, buttons } from '@core/utils/buttons.config';
 import { PopoverController } from '@ionic/angular';
 import { UserService } from '@core/service/user-service/user.service';
+import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 
 @Component({
   selector: 'st-address-edit-page',
@@ -25,16 +25,20 @@ export class AddressEditPage implements OnInit {
   merchantId: string;
   buildings$: Observable<any[]>;
   defaultAddress$: Observable<string>;
+  contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
 
   constructor(
     private readonly router: Router,
     private readonly merchantService: MerchantService,
     private readonly loadingService: LoadingService,
     private readonly popoverCtrl: PopoverController,
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private readonly orderingService: OrderingService
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.initContentStrings();
+  }
 
   ionViewWillEnter() {
     this.buildings$ = this.merchantService.retrieveBuildings();
@@ -132,8 +136,8 @@ export class AddressEditPage implements OnInit {
 
   private getBuildingData$(isOncampus): Observable<any> {
     if (isOncampus) {
-      return this.buildings$.pipe(
-        tap(buildings => {
+      return zip(this.buildings$, this.contentStrings.labelRoom).pipe(
+        tap(([buildings, labelRoom]) => {
           const activeBuilding = buildings.find(
             ({ addressInfo: { building } }) => building === this.addNewAddressForm.value.building
           );
@@ -148,12 +152,17 @@ export class AddressEditPage implements OnInit {
             state,
             latitude,
             longitude,
-            nickname: `${this.addNewAddressForm.value.building}, Room ${this.addNewAddressForm.value.room}`,
+            nickname: `${this.addNewAddressForm.value.building}, ${labelRoom} ${this.addNewAddressForm.value.room}`,
           };
         })
       );
     }
 
     return of(true);
+  }
+
+  private initContentStrings() {
+    this.contentStrings.buttonSave = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonSave);
+    this.contentStrings.labelRoom = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelRoom);
   }
 }
