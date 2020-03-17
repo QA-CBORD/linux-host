@@ -1,27 +1,26 @@
 import { Injectable } from '@angular/core';
-import { Observable, forkJoin, of, Subject } from 'rxjs';
-import { map, tap, switchMap, catchError, mapTo } from 'rxjs/operators';
+import { Observable, forkJoin, of } from 'rxjs';
+import { map, tap, switchMap, mapTo } from 'rxjs/operators';
 
 import { Environment } from '../../../environment';
 import { parseJsonToArray } from '../utils';
 
 import { HousingProxyService } from '../housing-proxy.service';
+import { AttributesService } from '../attributes/attributes.service';
+import { PreferencesService } from '../preferences/preferences.service';
 import { ApplicationsStateService } from './applications-state.service';
-import { QuestionsStorageService, StoredApplication, QuestionsEntries } from '../questions/questions-storage.service';
-import { TermsService } from '../terms/terms.service';
+import { QuestionsStorageService, StoredApplication } from '../questions/questions-storage.service';
 
 import { ResponseStatus } from '../housing.model';
 import {
+  ApplicationStatus,
   ApplicationDetails,
-  ApplicationRequest,
+  PatronApplication,
   PatronAttribute,
   PatronPreference,
-  ApplicationStatus,
-  PatronApplication,
+  ApplicationRequest,
   ApplicationDefinition,
 } from './applications.model';
-import { QuestionReorder, QuestionFormControl, QuestionReorderValue } from '../questions/questions.model';
-import { QuestionBase } from '../questions/types/question-base';
 
 @Injectable({
   providedIn: 'root',
@@ -31,54 +30,13 @@ export class ApplicationsService {
     Environment.currentEnvironment.housing_aws_url
   }/patron-applications/v.1.0/patron-applications`;
 
-  private readonly _applicationDefinitionUrl: string = `${this._patronApplicationsUrl}/application-definition`;
-
-  private _refreshApplicationsSource: Subject<void> = new Subject<void>();
-
-  refreshApplications$: Observable<number> = this._refreshApplicationsSource
-    .asObservable()
-    .pipe(switchMap(() => this._termsService.termId$));
-
   constructor(
     private _housingProxyService: HousingProxyService,
+    private _attributesService: AttributesService,
+    private _preferencesService: PreferencesService,
     private _applicationsStateService: ApplicationsStateService,
-    private _questionsStorageService: QuestionsStorageService,
-    private _termsService: TermsService
+    private _questionsStorageService: QuestionsStorageService
   ) {}
-
-  getApplications(termId: number): Observable<ApplicationDetails[]> {
-    const apiUrl: string = `${this._patronApplicationsUrl}/term/${termId}/patron/self`;
-
-    return this._housingProxyService.get<ApplicationDetails[]>(apiUrl).pipe(
-      map((applications: any) => ApplicationDetails.toApplicationsDetails(applications)),
-      switchMap((applications: ApplicationDetails[]) => {
-        if (!applications.length) {
-          return of([]);
-        }
-
-        return forkJoin(
-          applications.map((application: ApplicationDetails) => this._setStoredApplicationStatus(application))
-        );
-      }),
-      tap((applications: ApplicationDetails[]) => this._applicationsStateService.setApplications(applications)),
-      catchError(() => {
-        this._applicationsStateService.setApplications([]);
-
-        return of([]);
-      })
-    );
-  }
-
-  getApplicationDetails(applicationKey: number): Observable<ApplicationDetails> {
-    const apiUrl: string = `${this._applicationDefinitionUrl}/${applicationKey}/patron/self`;
-
-    return this._housingProxyService.get<ApplicationDetails>(apiUrl).pipe(
-      map((application: any) => new ApplicationDetails(application)),
-      tap((applicationDetails: ApplicationDetails) =>
-        this._applicationsStateService.setApplicationDetails(applicationDetails)
-      )
-    );
-  }
 
   submitApplication(
     applicationKey: number,
@@ -91,7 +49,7 @@ export class ApplicationsService {
     }
 
     return forkJoin(
-      this._questionsStorageService.updateCreatedDateTime(applicationKey, application.patronApplication),
+      this._updateCreatedDateTime(applicationKey, application.patronApplication),
       this._questionsStorageService.updateSubmittedDateTime(applicationKey)
     ).pipe(
       switchMap(([createdDateTime, submittedDateTime]: [string, string]) => {
@@ -118,7 +76,7 @@ export class ApplicationsService {
       return this._updateApplication(application, form, ApplicationStatus.Pending);
     }
 
-    return this._questionsStorageService.updateCreatedDateTime(applicationKey, application.patronApplication).pipe(
+    return this._updateCreatedDateTime(applicationKey, application.patronApplication).pipe(
       switchMap((createdDateTime: string) => {
         const applicationDetails: ApplicationDetails = this._createApplicationDetails(
           applicationKey,
@@ -136,17 +94,18 @@ export class ApplicationsService {
     const patronApplication: PatronApplication = applicationDetails.patronApplication;
     const status: ApplicationStatus = patronApplication && patronApplication.status;
 
-    return this._questionsStorageService.updateCreatedDateTime(applicationKey, patronApplication).pipe(
+    return this._updateCreatedDateTime(applicationKey, patronApplication).pipe(
       switchMap((createdDateTime: string) => {
         const updatedStatus: ApplicationStatus = status || ApplicationStatus.Pending;
         const updatedPatronApplication: PatronApplication = new PatronApplication({
           ...patronApplication,
+          applicationDefinitionKey: applicationKey,
           createdDateTime,
           status: updatedStatus,
         });
         const updatedApplicationDetails: ApplicationDetails = new ApplicationDetails({
           ...applicationDetails,
-          updatedPatronApplication,
+          patronApplication: updatedPatronApplication,
         });
 
         this._applicationsStateService.setApplication(applicationKey, updatedApplicationDetails);
@@ -156,8 +115,16 @@ export class ApplicationsService {
     );
   }
 
-  refreshApplications(): void {
-    this._refreshApplicationsSource.next();
+  patchApplicationsByStoredStatus(applications: ApplicationDetails[]): Observable<ApplicationDetails[]> {
+    return forkJoin(
+      applications.map((application: ApplicationDetails) => this._patchApplicationByStoredStatus(application))
+    );
+  }
+
+  private _updateCreatedDateTime(key: number, patronApplication: PatronApplication): Observable<string> {
+    const createdDateTime: string = patronApplication && patronApplication.createdDateTime;
+
+    return this._questionsStorageService.updateCreatedDateTime(key, createdDateTime);
   }
 
   private _updateApplication(
@@ -172,12 +139,12 @@ export class ApplicationsService {
       switchMap((storedApplication: StoredApplication) => {
         const parsedJson: any[] = parseJsonToArray(applicationDefinition.applicationFormJson);
         const questions = storedApplication.questions;
-        const patronAttributes: PatronAttribute[] = this._getAttributes(
+        const patronAttributes: PatronAttribute[] = this._attributesService.getAttributes(
           applicationDetails.patronAttributes,
           parsedJson,
           questions
         );
-        const patronPreferences: PatronPreference[] = this._getPreferences(
+        const patronPreferences: PatronPreference[] = this._preferencesService.getPreferences(
           applicationDetails.patronPreferences,
           parsedJson,
           questions
@@ -221,90 +188,7 @@ export class ApplicationsService {
     return new ApplicationDetails({ ...applicationDetails, patronApplication });
   }
 
-  private _getAttributes(
-    patronAttributes: PatronAttribute[],
-    parsedJson: any[],
-    questionEntries: QuestionsEntries
-  ): PatronAttribute[] {
-    const facilityControls: QuestionFormControl[] = parsedJson.filter(
-      (control: QuestionBase) => control && (control as QuestionFormControl).consumerKey
-    );
-    const questions: string[] = Object.keys(questionEntries);
-
-    if (!facilityControls.length || !questions.length) {
-      return [];
-    }
-
-    return questions
-      .filter((questionName: string) =>
-        facilityControls.find((control: QuestionFormControl) => control.name === questionName)
-      )
-      .map((questionName: string) => {
-        const value: any = questionEntries[questionName];
-        const foundFacility: QuestionFormControl = facilityControls.find(
-          (control: QuestionFormControl) => control.name === questionName
-        );
-        const attributeConsumerKey: number = foundFacility.consumerKey;
-        const foundAttribute: PatronAttribute = patronAttributes.find(
-          (attribute: PatronAttribute) => attribute.attributeConsumerKey === attributeConsumerKey
-        );
-
-        if (foundAttribute) {
-          const key: number = foundAttribute.key;
-          const patronKey: number = foundAttribute.patronKey;
-          const effectiveDate: string = foundAttribute.effectiveDate;
-          const endDate: string = foundAttribute.endDate;
-
-          return new PatronAttribute({
-            attributeConsumerKey,
-            value,
-            key,
-            patronKey,
-            effectiveDate,
-            endDate,
-          });
-        }
-
-        return new PatronAttribute({ attributeConsumerKey, value });
-      });
-  }
-
-  private _getPreferences(
-    patronPreferences: PatronPreference[],
-    parsedJson: any[],
-    questions: QuestionsEntries
-  ): PatronPreference[] {
-    const facilityPicker: QuestionReorder = parsedJson.filter(
-      (control: QuestionBase) => control && (control as QuestionReorder).facilityPicker
-    )[0];
-
-    if (!facilityPicker) {
-      return patronPreferences.filter((preference: PatronPreference) => preference.facilityKey);
-    }
-
-    const facilities: QuestionReorderValue[] = facilityPicker.values
-      ? facilityPicker.values.filter((facility: QuestionReorderValue) => facility.selected)
-      : [];
-    const foundQuestion: any = questions[facilityPicker.name];
-
-    return patronPreferences
-      .slice(0, facilityPicker.prefRank)
-      .map((preference: PatronPreference) => {
-        const rank: number = preference.rank - 1;
-        const foundFacility: QuestionReorderValue = foundQuestion ? foundQuestion[rank] : facilities[rank];
-
-        if (!foundFacility) {
-          return preference;
-        }
-
-        const facilityKey: number = foundFacility.facilityKey;
-
-        return new PatronPreference({ ...preference, facilityKey });
-      })
-      .filter((preference: PatronPreference) => preference.facilityKey);
-  }
-
-  private _setStoredApplicationStatus(applicationDetails: ApplicationDetails): Observable<ApplicationDetails> {
+  private _patchApplicationByStoredStatus(applicationDetails: ApplicationDetails): Observable<ApplicationDetails> {
     let patronApplication: PatronApplication = applicationDetails.patronApplication;
     const status: ApplicationStatus = patronApplication && patronApplication.status;
 

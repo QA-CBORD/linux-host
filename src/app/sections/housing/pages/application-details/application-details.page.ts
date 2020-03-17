@@ -17,6 +17,7 @@ import { catchError, tap } from 'rxjs/operators';
 import { QuestionsService } from '../../questions/questions.service';
 import { ApplicationsService } from '../../applications/applications.service';
 import { LoadingService } from '@core/service/loading/loading.service';
+import { HousingService } from '../../housing.service';
 
 import { StepperComponent } from '../../stepper/stepper.component';
 import { StepComponent } from '../../stepper/step/step.component';
@@ -53,7 +54,8 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
     private _applicationsService: ApplicationsService,
     private _router: Router,
     private _toastController: ToastController,
-    private _loadingService: LoadingService
+    private _loadingService: LoadingService,
+    private _housingService: HousingService
   ) {}
 
   ngOnInit(): void {
@@ -115,7 +117,7 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
   private _initApplicationDetailsObservable(): void {
     this._loadingService.showSpinner();
 
-    this.applicationDetails$ = this._applicationsService.getApplicationDetails(this.applicationKey).pipe(
+    this.applicationDetails$ = this._housingService.getApplicationDetails(this.applicationKey).pipe(
       tap((applicationDetails: ApplicationDetails) => {
         const patronApplication: PatronApplication = applicationDetails.patronApplication;
         const status: ApplicationStatus = patronApplication && patronApplication.status;
@@ -151,7 +153,7 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
 
   private _handleSuccess(): void {
     this._loadingService.closeSpinner();
-    this._router.navigate(['/housing/dashboard']).then(() => this._applicationsService.refreshApplications());
+    this._router.navigate(['/housing/dashboard']).then(() => this._housingService.refreshDefinitions());
   }
 
   private _handleErrors(error: any): void {

@@ -23,7 +23,7 @@ const routes: Routes = [
         loadChildren: './pages/facility-details/facility-details.module#FacilityDetailsPageModule',
       },
       {
-        path: `${LOCAL_ROUTING.contracts}/:contractId`,
+        path: `${LOCAL_ROUTING.contracts}/:contractKey`,
         loadChildren: './pages/contract-details/contract-details.module#ContractDetailsPageModule',
       },
       {

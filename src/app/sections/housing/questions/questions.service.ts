@@ -7,6 +7,7 @@ import { integerValidator, numericValidator, parseJsonToArray } from '../utils';
 
 import { QuestionsEntries, QuestionsStorageService } from './questions-storage.service';
 import { ApplicationsStateService } from '../applications/applications-state.service';
+import { ContractsStateService } from '../contracts/contracts-state.service';
 
 import {
   QuestionBase,
@@ -30,6 +31,7 @@ import {
   PatronAttribute,
   PatronPreference,
 } from '../applications/applications.model';
+import { ContractDetails } from '../contracts/contracts.model';
 
 export const QuestionConstructorsMap = {
   header: QuestionHeader,
@@ -53,11 +55,12 @@ export class QuestionsService {
 
   constructor(
     private _questionsStorageService: QuestionsStorageService,
-    private _applicationsStateService: ApplicationsStateService
+    private _applicationsStateService: ApplicationsStateService,
+    private _contractsStateService: ContractsStateService
   ) {}
 
-  getPages(applicationKey: number): Observable<QuestionsPage[]> {
-    return this._questionsStorageService.getQuestions(applicationKey).pipe(
+  getPages(key: number): Observable<QuestionsPage[]> {
+    return this._questionsStorageService.getQuestions(key).pipe(
       withLatestFrom(this._applicationsStateService.applicationDetails$),
       map(([storedQuestions, applicationDetails]: [QuestionsEntries, ApplicationDetails]) => {
         const questions: QuestionBase[] = this._parseQuestions(
@@ -74,6 +77,17 @@ export class QuestionsService {
           storedQuestions,
           isSubmitted
         );
+      })
+    );
+  }
+
+  getContractPages(key: number): Observable<QuestionsPage[]> {
+    return this._questionsStorageService.getQuestions(key).pipe(
+      withLatestFrom(this._contractsStateService.contractDetails$),
+      map(([storedQuestions, contractDetails]: [QuestionsEntries, ContractDetails]) => {
+        const questions: QuestionBase[] = this._parseQuestions(contractDetails.formJson);
+
+        return this._splitByContractPages(questions, contractDetails.patronAttributes, [], storedQuestions);
       })
     );
   }
@@ -126,6 +140,31 @@ export class QuestionsService {
     }));
   }
 
+  private _splitByContractPages(
+    questions: QuestionBase[],
+    attributes: PatronAttribute[],
+    preferences: PatronPreference[],
+    storedQuestions: QuestionsEntries
+  ): QuestionsPage[] {
+    const questionsByPages: QuestionBase[][] = questions.reduce(
+      (accumulator: QuestionBase[][], current: QuestionBase, index: number) => {
+        if (current && (current as QuestionParagraph).subtype === 'blockquote') {
+          return questions[index + 1] ? [...accumulator, []] : [...accumulator];
+        }
+
+        accumulator[accumulator.length - 1].push(current);
+
+        return accumulator;
+      },
+      [[]]
+    );
+
+    return questionsByPages.map((pageQuestions: QuestionBase[]) => ({
+      form: this._toContractFormGroup(pageQuestions, attributes, preferences, storedQuestions),
+      questions: pageQuestions,
+    }));
+  }
+
   private _toFormGroup(
     questions: QuestionBase[],
     attributes: PatronAttribute[],
@@ -147,6 +186,32 @@ export class QuestionsService {
           group[questionName] = this._toQuestionReorderControl(storedValue, question, preferences);
         } else {
           group[questionName] = this._toFormControl(storedValue, question, attributes, isSubmitted);
+        }
+      });
+
+    return new FormGroup(group);
+  }
+
+  private _toContractFormGroup(
+    questions: QuestionBase[],
+    attributes: PatronAttribute[],
+    preferences: PatronPreference[],
+    storedQuestions: QuestionsEntries
+  ): FormGroup {
+    let group: any = {};
+
+    questions
+      .filter((question: QuestionBase) => question && (question as QuestionFormControl).name)
+      .forEach((question: QuestionFormControl) => {
+        const questionName: string = question.name;
+        const storedValue: any = storedQuestions && storedQuestions[questionName];
+
+        if (question instanceof QuestionCheckboxGroup) {
+          group[questionName] = this._toQuestionCheckboxControl(storedValue, question);
+        } else if (question instanceof QuestionReorder) {
+          group[questionName] = this._toQuestionReorderControl(storedValue, question, preferences);
+        } else {
+          group[questionName] = this._toContractFormControl(storedValue, question, attributes);
         }
       });
 
@@ -180,6 +245,24 @@ export class QuestionsService {
     }
 
     return new FormControl({ value, disabled: isSubmitted }, validators);
+  }
+
+  private _toContractFormControl(
+    storedValue: any,
+    question: QuestionFormControl,
+    attributes: PatronAttribute[]
+  ): FormControl {
+    let value: any = storedValue;
+
+    if (value == null) {
+      const foundAttribute: PatronAttribute = attributes.find(
+        (attribute: PatronAttribute) => attribute.attributeConsumerKey === question.consumerKey
+      );
+
+      value = foundAttribute ? foundAttribute.value : '';
+    }
+
+    return new FormControl({ value, disabled: true });
   }
 
   private _addDataTypeValidator(question: QuestionTextbox, validators: ValidatorFn[]): void {

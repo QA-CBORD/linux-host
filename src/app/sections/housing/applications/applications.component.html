@@ -2,9 +2,5 @@
   *ngIf="(applicationsStateService.applications$ | async) as applications"
   class="ion-no-padding bg-transparent"
 >
-  <ion-list-header *ngIf="applications.length">
-    <h4 class="secondary-header secondary-header--m">Active Forms</h4>
-  </ion-list-header>
-
   <st-applications-list [applications]="applications"></st-applications-list>
 </ion-list>

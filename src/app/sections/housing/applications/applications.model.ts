@@ -1,4 +1,4 @@
-import { define, isDefined } from '../utils';
+import { isDefined } from '../utils';
 
 export enum ApplicationStatus {
   New = 1,
@@ -8,20 +8,27 @@ export enum ApplicationStatus {
   Canceled = 5,
 }
 
-export class ApplicationDefinition {
+export interface ApplicationDefinitionOptions {
+  key: number;
+  termKey: number;
+  applicationTitle: string;
+  applicationFormJson?: string;
+}
+
+export class ApplicationDefinition implements ApplicationDefinitionOptions {
   key: number;
   termKey: number;
   applicationTitle: string;
   applicationFormJson?: string;
 
-  constructor(options: any) {
+  constructor(options: ApplicationDefinitionOptions) {
     if (options == null || typeof options !== 'object') {
-      options = {};
+      options = {} as ApplicationDefinitionOptions;
     }
 
-    this.key = define(options.key, Number(options.key));
-    this.termKey = define(options.termKey, Number(options.termKey));
-    this.applicationTitle = define(options.applicationTitle, String(options.applicationTitle));
+    this.key = Number(options.key);
+    this.termKey = Number(options.termKey);
+    this.applicationTitle = String(options.applicationTitle);
 
     if (isDefined(options.applicationFormJson)) {
       this.applicationFormJson = String(options.applicationFormJson);
@@ -29,7 +36,22 @@ export class ApplicationDefinition {
   }
 }
 
-export class PatronApplication {
+export interface PatronApplicationOptions {
+  applicationDefinitionKey: number;
+  status: ApplicationStatus;
+  key?: number;
+  patronKey?: number;
+  createdDateTime?: string;
+  submittedDateTime?: string;
+  acceptedDateTime?: string;
+  cancelledDateTime?: string;
+  modifiedDate?: string;
+  isApplicationSubmitted?: boolean;
+  isApplicationAccepted?: boolean;
+  isApplicationCanceled?: boolean;
+}
+
+export class PatronApplication implements PatronApplicationOptions {
   applicationDefinitionKey: number;
   status: ApplicationStatus;
   key?: number;
@@ -43,13 +65,13 @@ export class PatronApplication {
   isApplicationAccepted?: boolean;
   isApplicationCanceled?: boolean;
 
-  constructor(options: any) {
+  constructor(options: PatronApplicationOptions) {
     if (options == null || typeof options !== 'object') {
-      options = {};
+      options = {} as PatronApplicationOptions;
     }
 
-    this.applicationDefinitionKey = define(options.applicationDefinitionKey, Number(options.applicationDefinitionKey));
-    this.status = define(options.status, ApplicationStatus.New);
+    this.applicationDefinitionKey = Number(options.applicationDefinitionKey);
+    this.status = options.status || ApplicationStatus.New;
 
     if (isDefined(options.key)) {
       this.key = Number(options.key);
@@ -93,6 +115,15 @@ export class PatronApplication {
   }
 }
 
+export interface PatronAttributeOptions {
+  attributeConsumerKey: number;
+  value: string;
+  key?: number;
+  patronKey?: number;
+  effectiveDate?: string;
+  endDate?: string;
+}
+
 export class PatronAttribute {
   attributeConsumerKey: number;
   value: string;
@@ -101,13 +132,13 @@ export class PatronAttribute {
   effectiveDate?: string;
   endDate?: string;
 
-  constructor(options: any) {
+  constructor(options: PatronAttributeOptions) {
     if (options == null || typeof options !== 'object') {
-      options = {};
+      options = {} as PatronAttributeOptions;
     }
 
-    this.attributeConsumerKey = define(options.attributeConsumerKey, Number(options.attributeConsumerKey));
-    this.value = define(options.value, String(options.value));
+    this.attributeConsumerKey = Number(options.attributeConsumerKey);
+    this.value = String(options.value);
 
     if (isDefined(options.key)) {
       this.key = Number(options.key);
@@ -127,19 +158,26 @@ export class PatronAttribute {
   }
 }
 
+export interface PatronPreferenceOptions {
+  rank: number;
+  facilityKey: number;
+  key?: number;
+  preferenceKey?: number;
+}
+
 export class PatronPreference {
   rank: number;
   facilityKey: number;
   key?: number;
   preferenceKey?: number;
 
-  constructor(options: any) {
+  constructor(options: PatronPreferenceOptions) {
     if (options == null || typeof options !== 'object') {
-      options = {};
+      options = {} as PatronPreferenceOptions;
     }
 
-    this.rank = define(options.rank, Number(options.rank));
-    this.facilityKey = define(options.facilityKey, Number(options.facilityKey));
+    this.rank = Number(options.rank);
+    this.facilityKey = Number(options.facilityKey);
 
     if (isDefined(options.key)) {
       this.key = Number(options.key);
@@ -151,58 +189,64 @@ export class PatronPreference {
   }
 }
 
+export interface ApplicationRequestOptions {
+  patronApplication: PatronApplication;
+  patronAttributes?: PatronAttribute[];
+  patronPreferences?: PatronPreference[];
+}
+
 export class ApplicationRequest {
   patronApplication: PatronApplication;
   patronAttributes?: PatronAttribute[];
   patronPreferences?: PatronPreference[];
 
-  constructor(options: any) {
+  constructor(options: ApplicationRequestOptions) {
     if (options == null || typeof options !== 'object') {
-      options = {};
+      options = {} as ApplicationRequestOptions;
     }
 
-    this.patronApplication = define(options.patronApplication, new PatronApplication(options.patronApplication));
+    this.patronApplication = new PatronApplication(options.patronApplication);
 
     if (Array.isArray(options.patronAttributes)) {
-      this.patronAttributes = options.patronAttributes.map((attribute: any) =>
-        define(attribute, new PatronAttribute(attribute))
-      );
+      this.patronAttributes = options.patronAttributes.map((attribute: any) => new PatronAttribute(attribute));
     }
 
     if (Array.isArray(options.patronPreferences)) {
-      this.patronPreferences = options.patronPreferences.map((preference: any) =>
-        define(preference, new PatronPreference(preference))
-      );
+      this.patronPreferences = options.patronPreferences.map((preference: any) => new PatronPreference(preference));
     }
   }
 }
 
-export class ApplicationDetails {
+export interface ApplicationDetailsOptions {
+  applicationDefinition: ApplicationDefinition;
+  patronApplication: PatronApplication;
+  patronAttributes?: PatronAttribute[];
+  patronPreferences?: PatronPreference[];
+}
+
+export class ApplicationDetails implements ApplicationDetailsOptions {
   applicationDefinition: ApplicationDefinition;
   patronApplication: PatronApplication;
   patronAttributes?: PatronAttribute[];
   patronPreferences?: PatronPreference[];
 
-  constructor(options: any) {
+  constructor(options: ApplicationDetailsOptions) {
     if (options == null || typeof options !== 'object') {
-      options = {};
+      options = {} as ApplicationDetailsOptions;
     }
 
-    this.applicationDefinition = define(options.applicationDefinition, new ApplicationDefinition(
-      options.applicationDefinition
-    ));
-    this.patronApplication = define(options.patronApplication, new PatronApplication(options.patronApplication));
+    this.applicationDefinition = new ApplicationDefinition(options.applicationDefinition);
+
+    if (isDefined(options.patronApplication)) {
+      this.patronApplication = new PatronApplication(options.patronApplication);
+    }
 
     if (Array.isArray(options.patronAttributes)) {
-      this.patronAttributes = options.patronAttributes.map((attribute: any) =>
-        define(attribute, new PatronAttribute(attribute))
-      );
+      this.patronAttributes = options.patronAttributes.map((attribute: any) => new PatronAttribute(attribute));
     }
 
     if (Array.isArray(options.patronPreferences)) {
-      this.patronPreferences = options.patronPreferences.map((preference: any) =>
-        define(preference, new PatronPreference(preference))
-      );
+      this.patronPreferences = options.patronPreferences.map((preference: any) => new PatronPreference(preference));
     }
   }
 

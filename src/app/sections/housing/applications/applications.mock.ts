@@ -26,9 +26,13 @@ export function generateApplicationDefinition(key: number): ApplicationDefinitio
 }
 
 export function generatePatronApplication(applicationDefinitionKey: number): PatronApplication {
+  const nowISO: string = new Date().toISOString();
+
   return new PatronApplication({
     applicationDefinitionKey,
-    status: ApplicationStatus.New,
+    status: ApplicationStatus.Submitted,
+    submittedDateTime: nowISO,
+    isApplicationSubmitted: true,
     key: 200,
     patronKey: 8000712,
   });
@@ -75,7 +79,7 @@ export function generatePatronPreferences(amount: number = 2): PatronPreference[
   return Array.apply(null, Array(amount)).map(generatePatronPreference);
 }
 
-export function generateApplicationDetails(key: number): ApplicationDetails {
+export function generateApplicationDetails(_: any, key: number): ApplicationDetails {
   const applicationDefinition: ApplicationDefinition = generateApplicationDefinition(key);
   const patronApplication: PatronApplication = generatePatronApplication(key);
   const patronAttributes: PatronAttribute[] = generatePatronAttributes();

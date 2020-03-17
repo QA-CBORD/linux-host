@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { ApplicationDetails, ApplicationStatus, PatronApplication } from './applications.model';
+import { ApplicationDetails } from './applications.model';
 
 export interface ApplicationsState {
   entities: ApplicationEntities;

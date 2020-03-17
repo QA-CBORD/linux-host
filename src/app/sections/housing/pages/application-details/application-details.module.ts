@@ -13,9 +13,9 @@ const imports = [
   CommonModule,
   ReactiveFormsModule,
   IonicModule,
-  ApplicationDetailsRoutingModule,
   QuestionsModule,
   StepperModule,
+  ApplicationDetailsRoutingModule,
 ];
 const declarations = [ApplicationDetailsPage];
 

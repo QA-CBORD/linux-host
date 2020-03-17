@@ -1,0 +1,5 @@
+@import 'tools';
+
+.sign-contract__datetime {
+  @include font-nunito-regular(16px);
+}

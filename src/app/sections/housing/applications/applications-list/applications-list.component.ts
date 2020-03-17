@@ -11,8 +11,6 @@ import { ApplicationStatus, ApplicationDetails, PatronApplication } from '../app
 export class ApplicationsListComponent {
   @Input() applications: ApplicationDetails[];
 
-  @Output() clear: EventEmitter<number> = new EventEmitter<number>();
-
   trackById(_: number, application: ApplicationDetails): number {
     return application.applicationDefinition.key;
   }

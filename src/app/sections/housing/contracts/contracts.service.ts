@@ -1,20 +1,30 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 
-import { generateContracts } from './contracts.mock';
+import { Environment } from '../../../environment';
 
-import { Contract } from './contracts.model';
+import { HousingProxyService } from '../housing-proxy.service';
+
+import { ResponseStatus } from '../housing.model';
+import { ContractRequest } from './contracts.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ContractsService {
-  constructor(private _http: HttpClient) {}
+  private readonly _patronContractsUrl: string = `${
+    Environment.currentEnvironment.housing_aws_url
+  }/patron-applications/v.1.0/patron-contracts`;
 
-  contracts: Contract[] = generateContracts(5);
+  constructor(private _housingProxyService: HousingProxyService) {}
 
-  getContracts(): Observable<Contract[]> {
-    return of(this.contracts);
+  submitContract(contractElementKey: number): Observable<ResponseStatus> {
+    const dateSigned: string = new Date().toISOString();
+    const body: ContractRequest = new ContractRequest({
+      contractElementKey,
+      dateSigned,
+    });
+
+    return this._housingProxyService.put(this._patronContractsUrl, body);
   }
 }

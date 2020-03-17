@@ -1,5 +1,30 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  OnInit,
+  QueryList,
+  ViewChild,
+  ViewChildren,
+} from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ToastController } from '@ionic/angular';
+import { Observable, Subscription, throwError } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
+
+import { QuestionsService } from '../../questions/questions.service';
+import { ContractsService } from '../../contracts/contracts.service';
+import { LoadingService } from '@core/service/loading/loading.service';
+import { HousingService } from '../../housing.service';
+
+import { StepperComponent } from '../../stepper/stepper.component';
+import { QuestionComponent } from '../../questions/question.component';
+
+import { Response } from '../../housing.model';
+import { QuestionsPage } from '../../questions/questions.model';
+import { SignContractEvent } from '@sections/housing/sign-contract/sign-contract.model';
+import { ContractDetails } from '../../contracts/contracts.model';
 
 @Component({
   selector: 'st-contract-details',
@@ -7,11 +32,118 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./contract-details.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ContractDetailsPage implements OnInit {
-  contractId = null;
-  constructor(private activatedRoute: ActivatedRoute) {}
+export class ContractDetailsPage implements OnInit, OnDestroy {
+  private _subscription: Subscription = new Subscription();
 
-  ngOnInit() {
-    this.contractId = this.activatedRoute.snapshot.paramMap.get('contractId');
+  @ViewChild(StepperComponent) stepper: StepperComponent;
+
+  @ViewChildren(QuestionComponent) questions: QueryList<QuestionComponent>;
+
+  contractDetails$: Observable<ContractDetails>;
+
+  pages$: Observable<QuestionsPage[]>;
+
+  contractKey: number;
+
+  isSubmitted: boolean;
+
+  isSigned: boolean = false;
+
+  constructor(
+    private _route: ActivatedRoute,
+    private _questionsService: QuestionsService,
+    private _contractsService: ContractsService,
+    private _router: Router,
+    private _toastController: ToastController,
+    private _loadingService: LoadingService,
+    private _housingService: HousingService
+  ) {}
+
+  ngOnInit(): void {
+    this.contractKey = parseInt(this._route.snapshot.paramMap.get('contractKey'), 10);
+
+    this._initContractDetailsObservable();
+    this._initPagesObservable();
+  }
+
+  ngOnDestroy(): void {
+    this._subscription.unsubscribe();
+  }
+
+  submit(isLastPage: boolean): void {
+    if (this.isSubmitted) {
+      return;
+    }
+
+    if (!isLastPage) {
+      this._next();
+    } else {
+      this._update(this.contractKey);
+    }
+  }
+
+  signContract(signContractEvent: SignContractEvent): void {
+    this.isSigned = signContractEvent.isSigned;
+  }
+
+  private _update(contractKey: number): void {
+    this._loadingService.showSpinner();
+
+    const subscription: Subscription = this._contractsService.submitContract(contractKey).subscribe({
+      next: () => this._handleSuccess(),
+      error: (error: any) => this._handleErrors(error),
+    });
+
+    this._subscription.add(subscription);
+  }
+
+  private _initContractDetailsObservable(): void {
+    this._loadingService.showSpinner();
+
+    this.contractDetails$ = this._housingService.getContractDetails(this.contractKey).pipe(
+      tap((contractDetails: ContractDetails) => {
+        this.isSubmitted = !!contractDetails.contractInfo.dateTimeSigned;
+        this._loadingService.closeSpinner();
+      }),
+      catchError((error: any) => {
+        this._loadingService.closeSpinner();
+
+        return throwError(error);
+      })
+    );
+  }
+
+  private _initPagesObservable(): void {
+    this.pages$ = this._questionsService.getContractPages(this.contractKey);
+  }
+
+  private _next(): void {
+    this.stepper.next();
+  }
+
+  private _handleSuccess(): void {
+    this._loadingService.closeSpinner();
+    this._router.navigate(['/housing/dashboard']).then(() => this._housingService.refreshDefinitions());
+  }
+
+  private _handleErrors(error: any): void {
+    let message = 'Something went wrong. Try again later';
+
+    this._loadingService.closeSpinner();
+
+    if (error instanceof HttpErrorResponse) {
+      const statusMessage: string = (error.error as Response).status.message;
+
+      message = statusMessage || message;
+    }
+
+    this._toastController
+      .create({
+        message,
+        position: 'top',
+        duration: 3000,
+        showCloseButton: true,
+      })
+      .then((toast: HTMLIonToastElement) => toast.present());
   }
 }

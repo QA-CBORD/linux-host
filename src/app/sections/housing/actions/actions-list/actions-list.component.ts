@@ -2,11 +2,15 @@ import { Component, Input } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 
 @Component({
-  selector: 'st-application-actions-list',
-  templateUrl: './application-actions-list.component.html',
+  selector: 'st-actions-list',
+  templateUrl: './actions-list.component.html',
 })
-export class ApplicationActionsListComponent {
-  @Input() applicationKey: number;
+export class ActionsListComponent {
+  @Input() key: number;
+
+  @Input() path: string;
+
+  @Input() edit: boolean;
 
   constructor(private _popoverController: PopoverController) {}
 

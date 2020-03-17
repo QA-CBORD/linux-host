@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
 import { STORAGE_KEY } from '../housing.config';
@@ -10,7 +10,7 @@ import {
   ObservableStorageService,
 } from '@shared/services/observable-storage/observable-storage.service';
 
-import { ApplicationStatus, PatronApplication } from '../applications/applications.model';
+import { ApplicationStatus } from '../applications/applications.model';
 import { ObservableSessionStorageService } from '@shared/services/observable-session-storage/observable-session-storage.service';
 
 export interface QuestionsEntries {
@@ -42,40 +42,36 @@ export class QuestionsStorageService {
       : this._observableStorageService;
   }
 
-  getApplication(applicationKey: number): Observable<StoredApplication> {
-    return this._observableStorage.get(`${this._key}-${applicationKey}`);
+  getApplication(key: number): Observable<StoredApplication> {
+    return this._observableStorage.get(`${this._key}-${key}`);
   }
 
-  getApplicationStatus(applicationKey: number): Observable<ApplicationStatus> {
-    return this.getApplication(applicationKey).pipe(
-      map((storedApplication: StoredApplication) => (storedApplication ? storedApplication.status : null))
+  getApplicationStatus(key: number): Observable<ApplicationStatus> {
+    return this.getApplication(key).pipe(
+      map((storedForm: StoredApplication) => (storedForm ? storedForm.status : null))
     );
   }
 
-  removeApplication(applicationKey: number): Observable<any> {
-    return this._observableStorage.remove(`${this._key}-${applicationKey}`);
+  removeApplication(key: number): Observable<any> {
+    return this._observableStorage.remove(`${this._key}-${key}`);
   }
 
-  getQuestions(applicationKey: number): Observable<QuestionsEntries> {
-    return this.getApplication(applicationKey).pipe(
-      map((application: StoredApplication) => (application ? application.questions : null))
+  getQuestions(key: number): Observable<QuestionsEntries> {
+    return this.getApplication(key).pipe(
+      map((storedForm: StoredApplication) => (storedForm ? storedForm.questions : null))
     );
   }
 
-  updateCreatedDateTime(applicationKey: number, patronApplication: PatronApplication): Observable<string> {
-    return this.getApplication(applicationKey).pipe(
-      switchMap((storedApplication: StoredApplication) => {
-        let createdDateTime: string = new Date().toISOString();
-
-        if (patronApplication && patronApplication.createdDateTime) {
-          createdDateTime = patronApplication.createdDateTime;
-        } else if (storedApplication && storedApplication.createdDateTime) {
-          createdDateTime = storedApplication.createdDateTime;
+  updateCreatedDateTime(key: number, createdDateTime: string = new Date().toISOString()): Observable<string> {
+    return this.getApplication(key).pipe(
+      switchMap((storedForm: StoredApplication) => {
+        if (storedForm && storedForm.createdDateTime) {
+          return of(storedForm.createdDateTime);
         }
 
         return this._observableStorage
-          .set(`${this._key}-${applicationKey}`, {
-            ...storedApplication,
+          .set(`${this._key}-${key}`, {
+            ...storedForm,
             createdDateTime,
           })
           .pipe(map(() => createdDateTime));
@@ -83,13 +79,13 @@ export class QuestionsStorageService {
     );
   }
 
-  updateSubmittedDateTime(applicationKey: number): Observable<string> {
+  updateSubmittedDateTime(key: number): Observable<string> {
     const submittedDateTime: string = new Date().toISOString();
 
-    return this.getApplication(applicationKey).pipe(
-      switchMap((storedApplication: StoredApplication) =>
-        this._observableStorage.set(`${this._key}-${applicationKey}`, {
-          ...storedApplication,
+    return this.getApplication(key).pipe(
+      switchMap((storedForm: StoredApplication) =>
+        this._observableStorage.set(`${this._key}-${key}`, {
+          ...storedForm,
           submittedDateTime,
         })
       ),
@@ -97,18 +93,17 @@ export class QuestionsStorageService {
     );
   }
 
-  updateQuestions(applicationKey: number, formValue: any, status: ApplicationStatus): Observable<any> {
-    return this.getApplication(applicationKey).pipe(
-      switchMap((storedApplication: StoredApplication) => {
-        let questions: QuestionsEntries =
-          storedApplication && storedApplication.questions ? storedApplication.questions : {};
+  updateQuestions(key: number, formValue: any, status: number): Observable<any> {
+    return this.getApplication(key).pipe(
+      switchMap((storedForm: StoredApplication) => {
+        let questions: QuestionsEntries = storedForm && storedForm.questions ? storedForm.questions : {};
 
         Object.keys(formValue).forEach(
           (formControlName: any) => (questions[formControlName] = formValue[formControlName])
         );
 
-        return this._observableStorage.set(`${this._key}-${applicationKey}`, {
-          ...storedApplication,
+        return this._observableStorage.set(`${this._key}-${key}`, {
+          ...storedForm,
           status,
           questions,
         });

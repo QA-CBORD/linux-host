@@ -1,26 +1,3 @@
-<ion-list>
-  <ion-list-header>
-    <h4>Contracts</h4>
-    <ion-button
-      class="button-clear"
-      style="margin: 0px; margin-top: 5px; padding: 0px; font-size: 13px; font-weight: normal"
-    >
-      <ion-label class="ion-text-capitalize">View All</ion-label>
-      <ion-icon class="float-right" slot="end" name="arrow-dropright"></ion-icon>
-    </ion-button>
-  </ion-list-header>
-
-  <ion-item
-    *ngFor="let contract of contracts; trackBy: trackById"
-    [routerLink]="['/housing/contracts', contract.id]"
-    routerDirection="forward"
-    detail
-  >
-    <ion-label>
-      <h2>Garage #{{ 10 + contract.id }} Contract</h2>
-      <p>Summer {{ 2019 + contract.id }}</p>
-      <p>Pending</p>
-    </ion-label>
-    <ion-icon name="create" slot="start"></ion-icon>
-  </ion-item>
+<ion-list *ngIf="(contractsStateService.contracts$ | async) as contracts" class="ion-no-padding bg-transparent">
+  <st-contracts-list [contracts]="contracts"></st-contracts-list>
 </ion-list>

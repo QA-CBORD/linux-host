@@ -143,7 +143,7 @@ export const testCredentials: { [key: string]: UserLogin } = {
   },
 
   housingQAOracle: {
-    userName: 'o18msg02@tpsmail.dev',
+    userName: 'o18msg03@tpsmail.dev',
     password: 'password1',
     domain: null,
     institutionId: '14916c0a-5dda-4725-9d71-b132192d7b23',

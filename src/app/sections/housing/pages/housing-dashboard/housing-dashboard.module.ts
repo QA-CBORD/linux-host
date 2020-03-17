@@ -6,20 +6,21 @@ import { IonicModule } from '@ionic/angular';
 import { TermsModule } from '../../terms/terms.module';
 import { HousingDashboardRoutingModule } from './housing-dashboard.routing.module';
 import { ApplicationsModule } from '../../applications/applications.module';
+import { ContractsModule } from '../../contracts/contracts.module';
 
 import { HousingDashboardPage } from './housing-dashboard.page';
-import { ContractsComponent } from '../../contracts/contracts.component';
 import { WorkOrdersComponent } from '../../work-orders/work-orders.component';
 
 const imports = [
   CommonModule,
   ReactiveFormsModule,
   IonicModule,
-  HousingDashboardRoutingModule,
   TermsModule,
   ApplicationsModule,
+  ContractsModule,
+  HousingDashboardRoutingModule,
 ];
-const declarations = [HousingDashboardPage, ContractsComponent, WorkOrdersComponent];
+const declarations = [HousingDashboardPage, WorkOrdersComponent];
 
 @NgModule({
   imports,

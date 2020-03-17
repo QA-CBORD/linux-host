@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { ApplicationsService } from './applications.service';
 
-describe('ApplicationlistService', () => {
+describe('ApplicationsService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   it('should be created', () => {

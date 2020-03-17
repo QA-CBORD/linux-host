@@ -1,22 +1,21 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ApplicationActionsListComponent } from './application-actions-list.component';
+import { ActionsListComponent } from './actions-list.component';
 
-describe('ApplicationActionsListComponent', () => {
-  let component: ApplicationActionsListComponent;
-  let fixture: ComponentFixture<ApplicationActionsListComponent>;
+describe('ActionsListComponent', () => {
+  let component: ActionsListComponent;
+  let fixture: ComponentFixture<ActionsListComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ApplicationActionsListComponent ],
+      declarations: [ActionsListComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ApplicationActionsListComponent);
+    fixture = TestBed.createComponent(ActionsListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

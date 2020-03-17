@@ -61,13 +61,7 @@
               Next
             </ion-button>
 
-            <ion-button
-              class="btn application-details__submit"
-              [class.stepper-footer__button--right]="isFirstPage"
-              mode="ios"
-              type="submit"
-              *ngIf="isLastPage"
-            >
+            <ion-button class="btn application-details__submit" mode="ios" type="submit" *ngIf="isLastPage">
               Submit
             </ion-button>
           </st-stepper-footer>

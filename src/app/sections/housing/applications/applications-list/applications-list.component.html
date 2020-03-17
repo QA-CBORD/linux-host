@@ -10,5 +10,9 @@
     <h2 class="applications-list__title">{{ application.applicationDefinition.applicationTitle }}</h2>
   </ion-label>
 
-  <st-application-actions [application]="application"></st-application-actions>
+  <st-actions
+    [edit]="!application.patronApplication?.isApplicationSubmitted"
+    [key]="application.applicationDefinition.key"
+    path="/housing/applications"
+  ></st-actions>
 </ion-item>
