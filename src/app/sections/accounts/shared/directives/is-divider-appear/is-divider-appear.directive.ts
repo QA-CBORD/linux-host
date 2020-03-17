@@ -29,6 +29,7 @@ export class IsDividerAppearDirective implements OnInit {
   }
 
   private formatDate(date) {
-    return date.replace(TIMEZONE_REGEXP, "$1:$2");
+    /// this is very unsafe.. as we've just experienced
+    return date.toString().replace(TIMEZONE_REGEXP, "$1:$2");
   }
 }
