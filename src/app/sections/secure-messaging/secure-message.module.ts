@@ -12,6 +12,7 @@ import { MessageDatePipe } from './pipes/message-date.pipe';
 import { ConversationDatePipe } from './pipes/conversation-date.pipe';
 import { StopPropagationModule } from '@shared/directives/stop-propogation/stop-propagation.module';
 import { StPopoverLayoutModule } from '@shared/ui-components/st-popover-layout/st-popover-layout.module';
+import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
 
 const declarations = [SecureMessagePage, SecureMessagePopoverComponent, MessageDatePipe, ConversationDatePipe];
 
@@ -23,7 +24,8 @@ const imports = [
   IonicModule,
   SecureMessageRoutingModule,
   StopPropagationModule,
-  StPopoverLayoutModule
+  StPopoverLayoutModule,
+  StHeaderModule
 ];
 
 const entryComponents = [SecureMessagePopoverComponent];

@@ -1,12 +1,13 @@
-<st-header
-  [title]="contentString[csNames.headerTitle]"
-  [isTitleShow]="false"
-  [backButtonTitle]="contentString[csNames.headerBackBtn]"
-  [isToolbarShow]="false"
-  class="shadow-header"
-></st-header>
 
+<st-header
+        [title]="contentString[csNames.headerTitle]"
+        [isTitleShow]="true"
+        [backButtonTitle]="contentString[csNames.headerBackBtn]"
+        [isToolbarShow]="true"
+        class="shadow-header"
+></st-header>
 <ion-split-pane when="md" class="accounts-pane">
+
   <ion-content main class="accounts-content-wrapper">
     <div class="accounts-content">
       <section class="accounts-content__main-page accounts-page">

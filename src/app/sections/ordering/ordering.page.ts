@@ -124,5 +124,9 @@ export class OrderingPage implements OnInit {
       this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelAddedToFavorites);
     this.contentStrings.labelRemovedFromFavorites =
       this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelRemovedFromFavorites);
+    this.contentStrings.buttonBack =
+    this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonBack);
+    this.contentStrings.labelOrder =
+      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelOrder);
   }
 }

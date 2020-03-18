@@ -11,6 +11,7 @@ export enum CONTENT_STRINGS {
   optInToast = 'toast_opt-in-success',
   cancelBtn = 'button_cancel',
   closeBtn = 'button_close',
+  backBtn = 'button_back',
   retryBtn = 'button_retry',
   retryTitle = 'dialog_header_retry',
   headerTitle = 'header_title',
@@ -41,7 +42,7 @@ export enum CONTENT_STRINGS {
   scanCodeDescription = 'dialog_description_scan-code',
   activeRewardsLabel = 'label_active-reward-plural',
   claimInstructionsLabel = 'label_claim-instructions',
-  emptyHistoryListMessage = '',
+  emptyHistoryListMessage = 'label_empty-history',
 }
 export const ContentStringsParams = {
   category: Globals.ContentString.CATEGORIES.rewards,

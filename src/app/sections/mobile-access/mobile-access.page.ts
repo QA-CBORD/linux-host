@@ -100,8 +100,9 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
     const header = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.headerTitle);
     const search = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.searchbarPlaceholder);
     const pullRefreshLabel = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.labelPullToRefresh);
+    const backBtn = this.mobileAccessService.getContentValueByName(CONTENT_STRINGS.backBtnHeader);
 
-    this.contentString = { header, search, pullRefreshLabel };
+    this.contentString = { header, search, pullRefreshLabel, backBtn };
   }
 
   private setUserInfo() {

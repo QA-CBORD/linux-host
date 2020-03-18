@@ -1,3 +1,10 @@
+<st-header
+        [title]="(contentStrings.labelOrder | async)"
+        [isTitleShow]="true"
+        [backButtonTitle]="(contentStrings.buttonBack | async)"
+        [isToolbarShow]="true"
+        class="shadow-header"
+></st-header>
 <ion-content main class="ordering-content-wrapper">
   <st-menu-ordering class="ordering-page__menu"></st-menu-ordering>
 

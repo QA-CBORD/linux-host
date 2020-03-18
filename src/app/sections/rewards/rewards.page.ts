@@ -52,7 +52,8 @@ export class RewardsPage implements OnInit, OnDestroy {
 
   private setContentStrings() {
     const header = this.rewardsService.getContentValueByName(CONTENT_STRINGS.headerTitle);
+    const backBtn = this.rewardsService.getContentValueByName(CONTENT_STRINGS.backBtn);
 
-    this.contentString = { header };
+    this.contentString = { header, backBtn };
   }
 }

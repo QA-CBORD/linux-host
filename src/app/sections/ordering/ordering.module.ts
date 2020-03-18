@@ -16,8 +16,9 @@ import { OrderDetailsModule } from './shared/ui-components/order-details/order-d
 import { CartService } from '@sections/ordering/services/cart.service';
 import { CartResolver } from '@sections/ordering/resolvers/cart.resolver';
 import { OrderingService } from '@sections/ordering/services/ordering.service';
+import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
 
-const imports = [CommonModule, OrderingRoutingModule, MerchantListModule, IonicModule, OrderDetailsModule];
+const imports = [CommonModule, OrderingRoutingModule, MerchantListModule, IonicModule, OrderDetailsModule, StHeaderModule];
 const declarations = [OrderingPage, MenuOrderingComponent];
 const providers = [OrderingResolver, MerchantService, OrderingApiService, CartService, CartResolver, OrderingService];
 

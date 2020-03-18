@@ -26,6 +26,7 @@ export enum ORDERING_CONTENT_STRINGS {
   buttonPlaceOrder = 'button_place-order',
   buttonReorder = 'button_reorder',
   buttonSave = 'button_save',
+  buttonBack = 'button_back',
   buttonSetDeliveryAddress = 'button_set-delivery-address',
   buttonSetPickupAddress = 'button_set-pickup-address',
   buttonViewCart = 'button_view-cart',
