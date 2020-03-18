@@ -11,6 +11,10 @@ import { ApplicationStatus, ApplicationDetails, PatronApplication } from '../app
 export class ApplicationsListComponent {
   @Input() applications: ApplicationDetails[];
 
+  getPath(key: number): string {
+    return `/housing/contracts/${key}`;
+  }
+
   trackById(_: number, application: ApplicationDetails): number {
     return application.applicationDefinition.key;
   }

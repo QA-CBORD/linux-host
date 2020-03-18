@@ -10,5 +10,5 @@
     <h2 class="applications-list__title">{{ contract.applicationTitle }}</h2>
   </ion-label>
 
-  <st-actions [edit]="!contract.acceptedDate" [key]="contract.id" path="/housing/contracts"></st-actions>
+  <st-actions [edit]="!contract.acceptedDate" [path]="getPath(contract.id, contract.contractElementId)"></st-actions>
 </ion-item>

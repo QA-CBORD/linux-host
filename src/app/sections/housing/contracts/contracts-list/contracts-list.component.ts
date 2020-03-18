@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
 
 import { ContractListDetails } from '../contracts.model';
 
@@ -10,6 +10,10 @@ import { ContractListDetails } from '../contracts.model';
 })
 export class ContractsListComponent {
   @Input() contracts: ContractListDetails[];
+
+  getPath(key: number, contractElementKey: number): string {
+    return `/housing/contracts/${key}/${contractElementKey}`;
+  }
 
   trackById(_: number, contract: ContractListDetails): number {
     return contract.id;

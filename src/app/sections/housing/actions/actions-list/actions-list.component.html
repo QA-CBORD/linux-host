@@ -1,8 +1,8 @@
 <ion-list mode="md">
-  <ion-item lines="none" mode="md" (click)="handleEdit()" [routerLink]="[path, key]" [disabled]="!edit">
+  <ion-item lines="none" mode="md" (click)="handleEdit()" [routerLink]="[path]" [disabled]="!edit">
     Edit
   </ion-item>
-  <ion-item lines="none" mode="md" (click)="handleEdit()" [routerLink]="[path, key]" [disabled]="edit">
+  <ion-item lines="none" mode="md" (click)="handleEdit()" [routerLink]="[path]" [disabled]="edit">
     View
   </ion-item>
 </ion-list>

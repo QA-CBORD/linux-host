@@ -10,8 +10,6 @@ import { ActionsListComponent } from './actions-list/actions-list.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ActionsComponent {
-  @Input() key: number;
-
   @Input() path: string;
 
   @Input() edit: boolean;
@@ -24,7 +22,6 @@ export class ActionsComponent {
         component: ActionsListComponent,
         componentProps: {
           path: this.path,
-          key: this.key,
           edit: this.edit,
         },
         cssClass: 'actions-popover',

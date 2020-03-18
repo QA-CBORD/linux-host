@@ -56,8 +56,9 @@ export class HousingService {
     this._refreshDefinitionsSource.next();
   }
 
-  getDetails(key: number): Observable<DetailsResponse> {
-    const apiUrl: string = `${this._applicationDefinitionUrl}/${key}/patron/self`;
+  getDetails(key: number, queryParams: string[] = []): Observable<DetailsResponse> {
+    const queryString: string = queryParams.length ? `?${queryParams.join('&')}` : '';
+    const apiUrl: string = `${this._applicationDefinitionUrl}/${key}/patron/self${queryString}`;
 
     return this._housingProxyService.get<DetailsResponse>(apiUrl).pipe(
       map((response: any) => new DetailsResponse(response)),
@@ -79,8 +80,8 @@ export class HousingService {
     return this.getDetails(key).pipe(map((response: DetailsResponse) => response.applicationDetails));
   }
 
-  getContractDetails(key: number): Observable<ContractDetails> {
-    return this.getDetails(key).pipe(map((response: DetailsResponse) => response.contractDetails));
+  getContractDetails(key: number, queryParams: string[] = []): Observable<ContractDetails> {
+    return this.getDetails(key, queryParams).pipe(map((response: DetailsResponse) => response.contractDetails));
   }
 
   private _patchDefinitionsByStore(response: DefinitionsResponse): Observable<DefinitionsResponse> {

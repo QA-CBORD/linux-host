@@ -45,6 +45,8 @@ export class ContractDetailsPage implements OnInit, OnDestroy {
 
   contractKey: number;
 
+  contractElementKey: number;
+
   isSubmitted: boolean;
 
   isSigned: boolean = false;
@@ -61,6 +63,7 @@ export class ContractDetailsPage implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.contractKey = parseInt(this._route.snapshot.paramMap.get('contractKey'), 10);
+    this.contractElementKey = parseInt(this._route.snapshot.paramMap.get('contractElementKey'), 10);
 
     this._initContractDetailsObservable();
     this._initPagesObservable();
@@ -100,7 +103,9 @@ export class ContractDetailsPage implements OnInit, OnDestroy {
   private _initContractDetailsObservable(): void {
     this._loadingService.showSpinner();
 
-    this.contractDetails$ = this._housingService.getContractDetails(this.contractKey).pipe(
+    const queryParams: string[] = [`contractKey=${this.contractElementKey}`];
+
+    this.contractDetails$ = this._housingService.getContractDetails(this.contractKey, queryParams).pipe(
       tap((contractDetails: ContractDetails) => {
         this.isSubmitted = !!contractDetails.contractInfo.dateTimeSigned;
         this._loadingService.closeSpinner();

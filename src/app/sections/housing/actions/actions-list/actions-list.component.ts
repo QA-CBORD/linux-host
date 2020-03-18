@@ -6,8 +6,6 @@ import { PopoverController } from '@ionic/angular';
   templateUrl: './actions-list.component.html',
 })
 export class ActionsListComponent {
-  @Input() key: number;
-
   @Input() path: string;
 
   @Input() edit: boolean;
