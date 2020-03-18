@@ -5,7 +5,7 @@ export interface TransactionHistory {
   readonly amount: number;
   readonly resultingBalance: number;
   readonly postedDate: Date;
-  readonly actualDate: Date;
+  readonly actualDate: string;
   readonly patronId: string;
   readonly planId: string;
   readonly tenderId: string;

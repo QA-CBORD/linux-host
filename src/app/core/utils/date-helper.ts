@@ -28,14 +28,28 @@ export const getDateTimeInGMT = (dueTime, locale, timeZone) => {
     month: '2-digit',
   });
   const arrOfDatetime = usaTime.split(',');
-  const splettedTime = arrOfDatetime[0].split('/');
-  return `${splettedTime[2]}-${splettedTime[0]}-${splettedTime[1]}T${arrOfDatetime[1].trim()}.000${timeZoneinGMT}00`;
+  const splittedTime = arrOfDatetime[0].split('/');
+  return `${splittedTime[2]}-${splittedTime[0]}-${splittedTime[1]}T${arrOfDatetime[1].trim()}.000${timeZoneinGMT}00`;
 };
 
-export const convertGMTintoLocalTime = (dueTime, locale, timeZone): Date => {
-  const localTimeInString: string = new Date(dueTime).toLocaleString(locale, { timeZone });
+export const convertGMTintoLocalTime = (dueTime, locale, timeZone): string => {
+  const idxOfTimezone = dueTime.indexOf('+');
+  const updatedDateFormat = `${dueTime.slice(0, idxOfTimezone)}Z`;
+  const localTimeInString: string = new Date(updatedDateFormat).toLocaleString(locale, { 
+    timeZone,
+    hour12: false,
+    hour: '2-digit',
+    day: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    year: 'numeric',
+    month: '2-digit'
+   });
 
-  return new Date(localTimeInString);
+  const arrOfDatetime = localTimeInString.split(',');
+  const splittedTime = arrOfDatetime[0].split('/');
+  
+  return `${splittedTime[2]}-${splittedTime[0]}-${splittedTime[1]}T${arrOfDatetime[1].trim()}.000`;
 };
 
 export const isSameDay = (c, n): boolean => {
