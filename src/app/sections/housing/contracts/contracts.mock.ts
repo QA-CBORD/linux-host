@@ -14,6 +14,7 @@ export function generateContractListDetails(_: any, index: number): ContractList
   const nowISO: string = new Date().toISOString();
   const id: number = index;
   const contractElementId: number = index + 100;
+  const state: string = `Contract Status ${index}`;
   const applicationDescription: string = `Description ${index}`;
   const applicationFormJson: string = JSON.stringify(generateQuestions());
   const applicationTitle: string = `Contract Title ${index}`;
@@ -25,12 +26,12 @@ export function generateContractListDetails(_: any, index: number): ContractList
   const expireWhenAssigned: number = 1;
   const numberOfDaysToExpire: number = index + 300;
   const termId: number = index + 400;
-  const status: string = `Contract Status ${index}`;
   // const acceptedDate: string = nowISO;
 
   return new ContractListDetails({
     id,
     contractElementId,
+    state,
     applicationDescription,
     applicationFormJson,
     applicationTitle,
@@ -42,7 +43,6 @@ export function generateContractListDetails(_: any, index: number): ContractList
     expireWhenAssigned,
     numberOfDaysToExpire,
     termId,
-    status,
     // acceptedDate,
   });
 }
