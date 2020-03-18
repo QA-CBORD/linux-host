@@ -1,7 +1,5 @@
 import { isDefined } from '../utils';
 
-import { generateQuestions } from '../questions/questions.mock';
-
 import { PatronAttribute } from '../applications/applications.model';
 
 export enum ContractStatus {
@@ -17,6 +15,7 @@ export enum ContractStatus {
 export interface ContractListDetailsOptions {
   id: number;
   contractElementId: number;
+  state: string;
   applicationDescription: string;
   applicationFormJson: any;
   applicationTitle: string;
@@ -28,13 +27,13 @@ export interface ContractListDetailsOptions {
   expireWhenAssigned: number;
   numberOfDaysToExpire: number;
   termId: number;
-  status: string;
   acceptedDate?: string;
 }
 
 export class ContractListDetails implements ContractListDetailsOptions {
   id: number;
   contractElementId: number;
+  state: string;
   applicationDescription: string;
   applicationFormJson: any;
   applicationTitle: string;
@@ -46,7 +45,6 @@ export class ContractListDetails implements ContractListDetailsOptions {
   expireWhenAssigned: number;
   numberOfDaysToExpire: number;
   termId: number;
-  status: string;
   acceptedDate?: string;
 
   constructor(options: ContractListDetailsOptions) {
@@ -56,8 +54,9 @@ export class ContractListDetails implements ContractListDetailsOptions {
 
     this.id = Number(options.id);
     this.contractElementId = Number(options.contractElementId);
+    this.state = String(options.state);
     this.applicationDescription = String(options.applicationDescription);
-    this.applicationDescription = options.applicationFormJson;
+    this.applicationFormJson = options.applicationFormJson;
     this.applicationTitle = String(options.applicationTitle);
     this.applicationTypeId = Number(options.applicationTypeId);
     this.applicationAvailableEndDateTime = String(options.applicationAvailableEndDateTime);
@@ -67,7 +66,6 @@ export class ContractListDetails implements ContractListDetailsOptions {
     this.expireWhenAssigned = Number(options.expireWhenAssigned);
     this.numberOfDaysToExpire = Number(options.numberOfDaysToExpire);
     this.termId = Number(options.termId);
-    this.status = String(options.status);
 
     if (isDefined(options.acceptedDate)) {
       this.acceptedDate = String(options.acceptedDate);
@@ -286,7 +284,7 @@ export class ContractDetails implements ContractDetailsOptions {
     }
 
     this.contractInfo = new ContractInfo(options.contractInfo);
-    this.formJson = JSON.stringify(generateQuestions());
+    this.formJson = options.formJson;
 
     this.chargeSchedules = Array.isArray(options.chargeSchedules)
       ? options.chargeSchedules.map((schedule: any) => new ChargeSchedule(schedule))

@@ -1,7 +1,7 @@
 <ion-item class="applications-list__item" *ngFor="let contract of contracts; trackBy: trackById">
   <ion-label class="applications-list__wrap">
     <div class="applications-list__info">
-      <h5 class="applications-list__status">Contract status</h5>
+      <h5 class="applications-list__status">{{ contract.state }}</h5>
       <div class="applications-list__date" *ngIf="contract.acceptedDate">
         Accepted {{ contract.acceptedDate | date: 'MM/dd/yyyy' }}
       </div>

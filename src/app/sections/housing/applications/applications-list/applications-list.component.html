@@ -2,7 +2,7 @@
   <ion-label class="applications-list__wrap">
     <div class="applications-list__info">
       <h5 class="applications-list__status">{{ getApplicationStatus(application.patronApplication) }}</h5>
-      <div class="applications-list__date" *ngIf="application?.patronApplication?.isApplicationSubmitted">
+      <div class="applications-list__date" *ngIf="application?.patronApplication.isApplicationSubmitted">
         Submitted {{ application?.patronApplication.submittedDateTime | date: 'MM/dd/yyyy' }}
       </div>
     </div>

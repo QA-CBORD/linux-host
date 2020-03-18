@@ -136,7 +136,7 @@ export const testCredentials: { [key: string]: UserLogin } = {
   },
 
   housingQAASA: {
-    userName: 'smsg11@tpsmail.dev',
+    userName: 'smsg12@tpsmail.dev',
     password: 'password1',
     domain: null,
     institutionId: '1e418ca8-7148-4956-b7c4-1f35db6d8a11',
