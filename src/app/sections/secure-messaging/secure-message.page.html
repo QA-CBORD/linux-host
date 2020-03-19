@@ -1,4 +1,5 @@
 <st-header
+        *ngIf="!showCreateNewConversationColumn() && !showSelectedConversationContentColumn()"
         title='Messages'
         [isTitleShow]="true"
         [isToolbarShow]="true"
