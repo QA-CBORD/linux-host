@@ -8,6 +8,7 @@ import { RewardsService } from './services';
 
 import { CONTENT_STRINGS, OPT_IN_STATUS } from './rewards.config';
 import { TabsConfig } from '../../core/model/tabs/tabs.model';
+import { NativeProvider } from '@core/provider/native-provider/native.provider';
 
 @Component({
   selector: 'st-rewards',
@@ -20,7 +21,7 @@ export class RewardsPage implements OnInit, OnDestroy {
   private readonly sourceSubscription: Subscription = new Subscription();
   contentString: { [key: string]: string };
 
-  constructor(private platform: Platform, private nav: NavController, private rewardsService: RewardsService) {
+  constructor(private platform: Platform, private nav: NavController, private rewardsService: RewardsService, private readonly nativeProvider: NativeProvider) {
     this.initComponent();
   }
 
@@ -30,6 +31,10 @@ export class RewardsPage implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.sourceSubscription.unsubscribe();
+  }
+
+  showToolbar(){
+    return !this.nativeProvider.isWeb();
   }
 
   private initComponent() {

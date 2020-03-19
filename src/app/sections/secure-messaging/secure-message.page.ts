@@ -11,6 +11,7 @@ import { BUTTON_TYPE } from '../../core/utils/buttons.config';
 import { SecureMessagePopoverComponent } from './secure-message-popover';
 import * as Globals from '../../app.global';
 import { SecureMessageConversation, SecureMessageGroupInfo, SecureMessageInfo, SecureMessageSendBody } from './models';
+import { NativeProvider } from '@core/provider/native-provider/native.provider';
 
 @Component({
   selector: 'st-secure-message',
@@ -38,7 +39,8 @@ export class SecureMessagePage implements OnDestroy, OnInit {
     private readonly secureMessagingService: SecureMessagingService,
     private readonly loading: LoadingService,
     private readonly popoverCtrl: PopoverController,
-    private readonly network: Network
+    private readonly network: Network,
+    private readonly nativeProvider: NativeProvider
   ) {
     this.platform.ready().then(this.initComponent.bind(this));
   }
@@ -268,6 +270,10 @@ export class SecureMessagePage implements OnDestroy, OnInit {
    */
   showCreateNewConversationColumn(): boolean {
     return this.bCreateNewConversation;
+  }
+
+  showToolbar(){
+    return !this.nativeProvider.isWeb() && !this.showSelectedConversationContentColumn() && !this.showCreateNewConversationColumn();
   }
 
   /**

@@ -82,6 +82,10 @@ export class NativeProvider {
     return this.platform.platforms().includes('ios') && typeof window['webkit'] !== 'undefined';
   }
 
+  isWeb(){
+    return !this.isAndroid() && !this.isIos()
+;  }
+
   sendAndroidData<T>(methodName: NativeData, data: T) {
     androidInterface[methodName](data);
   }
