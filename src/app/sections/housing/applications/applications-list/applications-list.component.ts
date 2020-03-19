@@ -12,7 +12,7 @@ export class ApplicationsListComponent {
   @Input() applications: ApplicationDetails[];
 
   getPath(key: number): string {
-    return `/housing/contracts/${key}`;
+    return `/housing/applications/${key}`;
   }
 
   trackById(_: number, application: ApplicationDetails): number {
