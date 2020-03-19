@@ -1,5 +1,5 @@
 <st-header
-  [title]="header$ | async"
+  [title]="contentStrings.headerTitle | async"
   [isTitleShow]="true"
   [backButtonIcon]="'ios-close'"
   [backButtonTitle]="''"
@@ -8,12 +8,12 @@
 ></st-header>
 <ion-content class="meals-donate__content" *ngIf="showContent">
   <div class="meals-donate__description-wrapper">
-    {{instructions$ | async}}
+    {{contentStrings.donationInstructions | async}}
   </div>
   <form class="request-funds__form" *ngIf="(formHasBeenPrepared | async)" [formGroup]="mealsForm">
     <div class="meals-donate__accounts">
       <st-select-floating-label
-        [label]="accountLabelControl$ | async"
+        [label]="contentStrings.fundingAccounts | async"
         [formControlName]="controlsNames.account"
         [control]="account"
         [interfaceOptions]="customActionSheetOptions"
@@ -85,6 +85,6 @@
 </ion-content>
 <ion-footer mode="ios" class="meals-donate__footer" *ngIf="(formHasBeenPrepared | async)">
   <st-button (onClick)="onSubmit()" [isDisabled]="!mealsForm.valid">
-    {{buttonDonate$ | async}} {{ amount.value && (amount.value | transactionUnits: account.value.accountType) }}
+    {{contentStrings.buttonDonate| async}} {{ amount.value && (amount.value | transactionUnits: account.value.accountType) }}
   </st-button>
 </ion-footer>

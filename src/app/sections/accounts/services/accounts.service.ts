@@ -16,7 +16,7 @@ import {
   PAYMENT_SYSTEM_TYPE,
   SYSTEM_SETTINGS_CONFIG,
 } from '../accounts.config';
-import { CONTENT_STRING_NAMES } from '@sections/accounts/pages/meal-donations/content-strings';
+import { MEAL_CONTENT_STRINGS } from '@sections/accounts/pages/meal-donations/meal-donation.config.ts';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { CONTENT_STINGS_CATEGORIES, CONTENT_STINGS_DOMAINS } from '../../../content-strings';
 
@@ -75,7 +75,7 @@ export class AccountsService {
       this.contentStringsFacadeService.fetchContentString$(
         CONTENT_STINGS_DOMAINS.patronUi,
         CONTENT_STINGS_CATEGORIES.mealDonation,
-        CONTENT_STRING_NAMES.dashboardTitle),
+        MEAL_CONTENT_STRINGS.dashboardTitle),
     ).pipe(
       map(([res, res0, res1]) => {
         const finalArray = [...res, ...res0];

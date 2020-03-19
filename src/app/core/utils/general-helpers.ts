@@ -49,11 +49,14 @@ export const validateGreaterOrEqualToZero = ({ value }: AbstractControl): Valida
 };
 
 export const validateCurrency = ({ value }: AbstractControl): ValidationErrors | null => {
+  if(!value) return null;
   const isCurrency = CURRENCY_REGEXP.test(value);
-  return value && !isCurrency ? { incorrect: true } : null;
+
+  return !isCurrency ? { incorrect: true } : null;
 };
 
 export const validateInteger = ({ value }: AbstractControl): ValidationErrors | null => {
+  if(!value) return null;
   const isStartedWithZero = ZERO_FIRST_REGEXP.test(value);
   const isInteger = INT_REGEXP.test(value);
 

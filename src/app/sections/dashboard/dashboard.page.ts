@@ -6,7 +6,7 @@ import { TileWrapperConfig } from '@sections/dashboard/models';
 import { TILES_ID } from './dashboard.config';
 import { Observable } from 'rxjs';
 import { TileConfigFacadeService } from '@sections/dashboard/tile-config-facade.service';
-import { CONTENT_STRING_NAMES } from '@sections/accounts/pages/meal-donations/content-strings';
+import { MEAL_CONTENT_STRINGS } from '@sections/accounts/pages/meal-donations/meal-donation.config.ts';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { CONTENT_STINGS_CATEGORIES, CONTENT_STINGS_DOMAINS } from '../../content-strings';
 import { AccessCardComponent } from './containers/access-card/access-card.component';
@@ -60,12 +60,12 @@ export class DashboardPage implements OnInit {
       title: this.contentStringsFacadeService.getContentStringValue$(
         CONTENT_STINGS_DOMAINS.patronUi,
         CONTENT_STINGS_CATEGORIES.mealDonation,
-        CONTENT_STRING_NAMES.dashboardTitle),
+        MEAL_CONTENT_STRINGS.dashboardTitle),
       buttonConfig: {
         title: this.contentStringsFacadeService.getContentStringValue$(
           CONTENT_STINGS_DOMAINS.patronUi,
           CONTENT_STINGS_CATEGORIES.mealDonation,
-          CONTENT_STRING_NAMES.buttonDonateAMeal),
+          MEAL_CONTENT_STRINGS.buttonDonateAMeal),
       },
     });
 

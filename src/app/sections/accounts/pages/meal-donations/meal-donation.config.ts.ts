@@ -1,4 +1,4 @@
-export enum CONTENT_STRING_NAMES {
+export enum MEAL_CONTENT_STRINGS {
   dashboardTitle = 'dashboard_title',
   headerTitle = 'header_title',
   buttonDonateAMeal = 'button_donate-a-meal',
@@ -17,4 +17,9 @@ export enum CONTENT_STRING_NAMES {
   labelAccount = 'label_account',
   buttonDone = 'button_done',
   buttonCancel = 'button_cancel',
+  formErrorMealsPositiveWhole = 'form-error_meals_positive-whole',
+  formErrorInvalideFormat = 'form-error_invalid-format',
+  formErrorEmpty = 'form-error_empty',
+  formErrorInsufficientFunds = 'form-error_insufficient-funds',
+  formErrorSelectedAccount = 'form-error_select-account',
 }

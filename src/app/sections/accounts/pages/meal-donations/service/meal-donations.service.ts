@@ -5,12 +5,12 @@ import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { CommerceApiService } from '@core/service/commerce/commerce-api.service';
 import { map, switchMap, tap } from 'rxjs/operators';
 import { ContentStringRequest } from '@core/model/content/content-string-request.model';
-import { SYSTEM_SETTINGS_CONFIG } from '../../../accounts.config';
+import { SYSTEM_SETTINGS_CONFIG } from '@sections/accounts/accounts.config';
 import { ConfigurationService } from '@core/service/config-service/configuration.service';
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
-import { CONTENT_STINGS_CATEGORIES, CONTENT_STINGS_DOMAINS } from '../../../../../content-strings';
-import { CONTENT_STRING_NAMES } from '@sections/accounts/pages/meal-donations/content-strings';
+import { CONTENT_STINGS_CATEGORIES, CONTENT_STINGS_DOMAINS } from 'src/app/content-strings';
+import { MEAL_CONTENT_STRINGS } from '@sections/accounts/pages/meal-donations/meal-donation.config.ts';
 
 @Injectable()
 export class MealDonationsService {
@@ -39,14 +39,14 @@ export class MealDonationsService {
     this._settings$.next([...value]);
   }
 
-  fetchMealsDonationContentStringByName$(name: CONTENT_STRING_NAMES): Observable<ContentStringInfo> {
+  fetchMealsDonationContentStringByName$(name: MEAL_CONTENT_STRINGS): Observable<ContentStringInfo> {
     return this.contentStringFacade.fetchContentString$(
       CONTENT_STINGS_DOMAINS.patronUi,
       CONTENT_STINGS_CATEGORIES.mealDonation,
       name);
   }
 
-  getMealsDonationContentStringByName$(name: CONTENT_STRING_NAMES): Observable<string> {
+  getMealsDonationContentStringByName$(name: MEAL_CONTENT_STRINGS): Observable<string> {
     return this.contentStringFacade.getContentStringValue$(
       CONTENT_STINGS_DOMAINS.patronUi,
       CONTENT_STINGS_CATEGORIES.mealDonation,
@@ -100,3 +100,5 @@ export class MealDonationsService {
     return accounts.filter(({ accountTender: tId }) => accountsId.includes(tId));
   }
 }
+
+export type MealComponentContentStrings = { -readonly [key in keyof typeof MEAL_CONTENT_STRINGS]: Observable<string> };

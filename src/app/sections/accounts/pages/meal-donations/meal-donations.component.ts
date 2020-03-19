@@ -4,13 +4,16 @@ import { ModalController, PopoverController, ToastController, NavController } fr
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { finalize, map, take } from 'rxjs/operators';
 
-import { MealDonationsService } from '@sections/accounts/pages/meal-donations/service/meal-donations.service';
+import {
+  MealDonationsService,
+  MealComponentContentStrings,
+} from '@sections/accounts/pages/meal-donations/service/meal-donations.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import {
   formControlErrorDecorator,
   parseArrayFromString,
-  validateInputAmount,
   validateInteger,
+  validateCurrency,
 } from '@core/utils/general-helpers';
 import { UserAccount } from '@core/model/account/account.model';
 import { SYSTEM_SETTINGS_CONFIG } from '@sections/accounts/accounts.config';
@@ -18,7 +21,7 @@ import { AccountType, NAVIGATE } from 'src/app/app.global';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
 import { ConfirmDonatePopoverComponent } from './components/confirm-donate-popover';
 import { DonateModalComponent } from './components/donate-modal';
-import { CONTENT_STRING_NAMES } from '@sections/accounts/pages/meal-donations/content-strings';
+import { MEAL_CONTENT_STRINGS } from '@sections/accounts/pages/meal-donations/meal-donation.config.ts';
 
 @Component({
   selector: 'st-meal-donations',
@@ -33,18 +36,12 @@ export class MealDonationsComponent implements OnInit {
   isFreeFormEnabled$: Observable<boolean>;
   fixedAmounts$: Observable<Array<number>>;
   mealsForm: FormGroup;
-  minAmount: number = 1;
   maxAmount: number;
   customActionSheetOptions: { [key: string]: string } = {
     cssClass: 'custom-deposit-actionSheet',
   };
 
-  //Content Strings
-  header$: Observable<string>;
-  instructions$: Observable<string>;
-  accountLabelControl$: Observable<string>;
-  buttonDonate$: Observable<string>;
-  buttonCancel$: Observable<string>;
+  contentStrings: MealComponentContentStrings = <MealComponentContentStrings>{};
 
   private readonly sourceSubscription: Subscription = new Subscription();
 
@@ -56,8 +53,12 @@ export class MealDonationsComponent implements OnInit {
     private readonly popoverCtrl: PopoverController,
     private readonly modalCtrl: ModalController,
     private readonly navCtrl: NavController,
-    private readonly cdRef: ChangeDetectorRef,
-  ) {
+    private readonly cdRef: ChangeDetectorRef
+  ) {}
+
+  ngOnInit() {
+    this.initContentStrings();
+    this.updateFormErrorsByContentStrings();
   }
 
   ionViewWillEnter() {
@@ -72,10 +73,6 @@ export class MealDonationsComponent implements OnInit {
     this.sourceSubscription.unsubscribe();
     this.deleteForm();
     this.showContent = false;
-  }
-
-  ngOnInit() {
-    this.initContentStrings();
   }
 
   get accountTypes() {
@@ -97,10 +94,7 @@ export class MealDonationsComponent implements OnInit {
   isFreeFormEnabled() {
     this.isFreeFormEnabled$ = this.mealDonationsService.settings$.pipe(
       map(settings => {
-        const settingInfo = this.mealDonationsService.getSettingByName(
-          settings,
-          SYSTEM_SETTINGS_CONFIG.mealsAllowFreeform.name,
-        );
+        const settingInfo = this.mealDonationsService.getSettingByName(settings, SYSTEM_SETTINGS_CONFIG.mealsAllowFreeform.name);
 
         return settingInfo && Boolean(Number(settingInfo.value));
       }),
@@ -125,13 +119,13 @@ export class MealDonationsComponent implements OnInit {
       component: ConfirmDonatePopoverComponent,
       componentProps: {
         data,
-        policyTitle$: this.mealDonationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.donationPolicyTitle),
-        policyContent$: this.mealDonationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.donationPolicyContent),
-        buttonDonate$: this.mealDonationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.buttonDonate),
-        buttonCancel$: this.mealDonationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.buttonCancel),
-        confirmationTitle$: this.mealDonationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.donationConfirmationTitle),
-        donateAmount$: this.mealDonationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.donateAmount),
-        account$: this.mealDonationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.labelAccount),
+        policyTitle$: this.contentStrings.donationPolicyTitle,
+        policyContent$: this.contentStrings.donationPolicyContent,
+        buttonDonate$: this.contentStrings.buttonDonate,
+        buttonCancel$: this.contentStrings.buttonCancel,
+        confirmationTitle$: this.contentStrings.donationConfirmationTitle,
+        donateAmount$: this.contentStrings.donateAmount,
+        account$: this.contentStrings.labelAccount,
       },
       animated: false,
       backdropDismiss: true,
@@ -158,7 +152,7 @@ export class MealDonationsComponent implements OnInit {
 
   isAccountSelected() {
     if (!this.account.value) {
-      this.onErrorRetrieve('Please select accounts');
+      this.onErrorRetrieve(CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES.account].required);
     }
   }
 
@@ -188,15 +182,13 @@ export class MealDonationsComponent implements OnInit {
   private setAmountValidators(accountType: number) {
     const amountError = [
       formControlErrorDecorator(Validators.required, CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES.amount].required),
-      formControlErrorDecorator(Validators.min(this.minAmount), CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES.amount].min),
       formControlErrorDecorator(
         (control: AbstractControl) => Validators.max(this.maxAmount)(control),
         CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES.amount].max,
       ),
-      formControlErrorDecorator(
-        accountType === AccountType.MEALS ? validateInteger : validateInputAmount,
-        CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES.amount].input,
-      ),
+      accountType === AccountType.MEALS
+        ? formControlErrorDecorator(validateInteger, CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES.amount].mealInput)
+        : formControlErrorDecorator(validateCurrency, CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES.amount].currency),
     ];
 
     this.amount.setValidators(amountError);
@@ -209,7 +201,7 @@ export class MealDonationsComponent implements OnInit {
           settings,
           accountType === AccountType.MEALS
             ? SYSTEM_SETTINGS_CONFIG.mealsFixedMealAmounts.name
-            : SYSTEM_SETTINGS_CONFIG.mealsFixedDollarAmounts.name,
+            : SYSTEM_SETTINGS_CONFIG.mealsFixedDollarAmounts.name
         );
         return settingInfo && parseArrayFromString(settingInfo.value);
       }),
@@ -222,12 +214,12 @@ export class MealDonationsComponent implements OnInit {
       animated: true,
       componentProps: {
         data,
-        headerTitle$: this.mealDonationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.headerTitle),
-        dialogLabelSuccess$: this.mealDonationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.dialogLabelSuccess),
-        completeMessage$: this.mealDonationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.completeMessage),
-        buttonDone$: this.mealDonationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.buttonDone),
-        donateAmount$: this.mealDonationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.donateAmount),
-        account$: this.mealDonationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.labelAccount),
+        headerTitle$: this.contentStrings.headerTitle,
+        dialogLabelSuccess$: this.contentStrings.dialogLabelSuccess,
+        completeMessage$: this.contentStrings.completeMessage,
+        buttonDone$: this.contentStrings.buttonDone,
+        donateAmount$: this.contentStrings.donateAmount,
+        account$: this.contentStrings.labelAccount,
       },
       backdropDismiss: true,
     });
@@ -252,11 +244,49 @@ export class MealDonationsComponent implements OnInit {
   }
 
   private initContentStrings() {
-    this.header$ = this.mealDonationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.headerTitle);
-    this.buttonDonate$ = this.mealDonationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.buttonDonate);
-    this.buttonCancel$ = this.mealDonationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.buttonCancel);
-    this.accountLabelControl$ = this.mealDonationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.fundingAccounts);
-    this.instructions$ = this.mealDonationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.donationInstructions);
+    this.contentStrings.headerTitle = this.getContentStringByName(MEAL_CONTENT_STRINGS.headerTitle);
+    this.contentStrings.buttonDonate = this.getContentStringByName(MEAL_CONTENT_STRINGS.buttonDonate);
+    this.contentStrings.buttonCancel = this.getContentStringByName(MEAL_CONTENT_STRINGS.buttonCancel);
+    this.contentStrings.fundingAccounts = this.getContentStringByName(MEAL_CONTENT_STRINGS.fundingAccounts);
+    this.contentStrings.donationInstructions = this.getContentStringByName(MEAL_CONTENT_STRINGS.donationInstructions);
+    this.contentStrings.donationPolicyTitle = this.getContentStringByName(MEAL_CONTENT_STRINGS.donationPolicyTitle);
+    this.contentStrings.donationPolicyContent = this.getContentStringByName(MEAL_CONTENT_STRINGS.donationPolicyContent);
+    this.contentStrings.buttonDonate = this.getContentStringByName(MEAL_CONTENT_STRINGS.buttonDonate);
+    this.contentStrings.donationConfirmationTitle = this.getContentStringByName(MEAL_CONTENT_STRINGS.donationConfirmationTitle);
+    this.contentStrings.donateAmount = this.getContentStringByName(MEAL_CONTENT_STRINGS.donateAmount);
+    this.contentStrings.labelAccount = this.getContentStringByName(MEAL_CONTENT_STRINGS.labelAccount);
+    this.contentStrings.buttonDone = this.getContentStringByName(MEAL_CONTENT_STRINGS.buttonDone);
+    this.contentStrings.completeMessage = this.getContentStringByName(MEAL_CONTENT_STRINGS.completeMessage);
+    this.contentStrings.dialogLabelSuccess = this.getContentStringByName(MEAL_CONTENT_STRINGS.dialogLabelSuccess);
+
+    //Form Error String
+    this.contentStrings.formErrorEmpty = this.getContentStringByName(MEAL_CONTENT_STRINGS.formErrorEmpty);
+    this.contentStrings.formErrorInsufficientFunds = this.getContentStringByName(MEAL_CONTENT_STRINGS.formErrorInsufficientFunds);
+    this.contentStrings.formErrorInvalideFormat = this.getContentStringByName(MEAL_CONTENT_STRINGS.formErrorInvalideFormat);
+    this.contentStrings.formErrorSelectedAccount = this.getContentStringByName(MEAL_CONTENT_STRINGS.formErrorSelectedAccount);
+    this.contentStrings.formErrorMealsPositiveWhole = this.getContentStringByName(MEAL_CONTENT_STRINGS.formErrorMealsPositiveWhole);
+  }
+
+  private getContentStringByName(name: MEAL_CONTENT_STRINGS): Observable<string> {
+    return this.mealDonationsService.getMealsDonationContentStringByName$(name);
+  }
+
+  private async updateFormErrorsByContentStrings(): Promise<void> {
+    CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES.account].required = await this.contentStrings.formErrorSelectedAccount
+      .pipe(take(1))
+      .toPromise();
+    CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES.amount].required = await this.contentStrings.formErrorEmpty
+      .pipe(take(1))
+      .toPromise();
+    CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES.amount].max = await this.contentStrings.formErrorInsufficientFunds
+      .pipe(take(1))
+      .toPromise();
+    CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES.amount].mealInput = await this.contentStrings.formErrorMealsPositiveWhole
+      .pipe(take(1))
+      .toPromise();
+    CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES.amount].currency = await this.contentStrings.formErrorInvalideFormat
+      .pipe(take(1))
+      .toPromise();
   }
 }
 
@@ -271,8 +301,8 @@ export const CONTROL_ERROR = {
   },
   [REQUEST_MEALS_CONTROL_NAMES.amount]: {
     required: 'Please enter an amount',
-    max: 'The amount should be less or equal to the balance',
-    min: 'The amount must be more than 0',
-    input: '',
+    max: 'There are not enough funds in the selected account',
+    mealInput: 'Please donate a whole, positive number of meals',
+    currency: 'Invalid format',
   },
 };

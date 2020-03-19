@@ -2,7 +2,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { MealDonationsService } from '@sections/accounts/pages/meal-donations/service/meal-donations.service';
 import { ACCOUNT_TYPES } from '@sections/accounts/accounts.config';
 import { iif, Observable } from 'rxjs';
-import { CONTENT_STRING_NAMES } from '@sections/accounts/pages/meal-donations/content-strings';
+import { MEAL_CONTENT_STRINGS } from '@sections/accounts/pages/meal-donations/meal-donation.config.ts';
 
 @Pipe({
   name: 'amountLabelControl',
@@ -13,9 +13,9 @@ export class AmountLabelControlPipe implements PipeTransform {
 
   constructor(private readonly donationsService: MealDonationsService) {
     this.amountLabelControl$ =
-      this.donationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.amountToDonate);
+      this.donationsService.getMealsDonationContentStringByName$(MEAL_CONTENT_STRINGS.amountToDonate);
     this.amountMealsLabelControl$ =
-      this.donationsService.getMealsDonationContentStringByName$(CONTENT_STRING_NAMES.labelMealsToDonate);
+      this.donationsService.getMealsDonationContentStringByName$(MEAL_CONTENT_STRINGS.labelMealsToDonate);
   }
 
   transform(value: ACCOUNT_TYPES): Observable<string> {
