@@ -17,8 +17,7 @@
   <ion-item-group>
     <ng-container *ngFor="let option of modifiedOptions; let i = index">
       <ion-item lines="none"
-                class="multi-list__toppings-items"
-                *ngIf="option.visible">
+                class="multi-list__toppings-items">
         <ion-checkbox (ionChange)="onItemsChecked($event)"
                       class="multi-list__toppings-item-checkbox"
                       [value]="option.menuItem"

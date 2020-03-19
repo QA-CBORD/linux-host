@@ -13,8 +13,7 @@
   <ion-radio-group lines="none" [value]="innerValue">
     <ng-container *ngFor="let option of options">
       <ion-item lines="none"
-                class="single-list__item-size"
-                *ngIf="option.visible">
+                class="single-list__item-size">
         <ion-label>
           <div class="single-list__size-title">{{ option.menuItem.name }}</div>
           <div *ngIf="option.menuItem.price"
