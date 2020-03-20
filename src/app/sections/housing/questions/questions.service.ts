@@ -3,7 +3,7 @@ import { FormArray, FormControl, FormGroup, ValidatorFn, Validators } from '@ang
 import { Observable } from 'rxjs';
 import { map, withLatestFrom } from 'rxjs/operators';
 
-import { integerValidator, numericValidator, parseJsonToArray } from '../utils';
+import { integerValidator, numericValidator, parseJsonToArray, isDefined } from '../utils';
 
 import { QuestionsEntries, QuestionsStorageService } from './questions-storage.service';
 import { ApplicationsStateService } from '../applications/applications-state.service';
@@ -21,6 +21,9 @@ import {
   QuestionRadioGroup,
   QuestionTextarea,
   QuestionTextbox,
+  QuestionChargeSchedule,
+  QuestionChargeScheduleValue,
+  QuestionContractDetails,
 } from './types';
 
 import { QuestionReorder, QuestionReorderValue, QuestionsPage } from './questions.model';
@@ -31,7 +34,7 @@ import {
   PatronAttribute,
   PatronPreference,
 } from '../applications/applications.model';
-import { ContractDetails } from '../contracts/contracts.model';
+import { CONTRACT_DETAIL_KEYS, ContractDetails, ContractInfo } from '../contracts/contracts.model';
 
 export const QuestionConstructorsMap = {
   header: QuestionHeader,
@@ -70,7 +73,7 @@ export class QuestionsService {
         const status: ApplicationStatus = patronApplication && patronApplication.status;
         const isSubmitted = status === ApplicationStatus.Submitted;
 
-        return this._splitByPages(
+        return this._splitByApplicationPages(
           questions,
           applicationDetails.patronAttributes,
           applicationDetails.patronPreferences,
@@ -87,7 +90,12 @@ export class QuestionsService {
       map(([storedQuestions, contractDetails]: [QuestionsEntries, ContractDetails]) => {
         const questions: QuestionBase[] = this._parseQuestions(contractDetails.formJson);
 
-        return this._splitByContractPages(questions, contractDetails.patronAttributes, [], storedQuestions);
+        return this._splitByContractPages(
+          questions,
+          contractDetails.patronAttributes,
+          contractDetails.contractInfo,
+          storedQuestions
+        );
       })
     );
   }
@@ -106,6 +114,13 @@ export class QuestionsService {
     if (QuestionConstructorsMap[question.type]) {
       if ((question as QuestionReorder).facilityPicker) {
         return new QuestionReorder(question);
+      } else if ((question as QuestionChargeSchedule).chargeSchedule) {
+        return new QuestionChargeSchedule(question);
+      } else if (
+        (question as QuestionContractDetails).source &&
+        (question as QuestionContractDetails).source === 'CONTRACT_DETAILS'
+      ) {
+        return new QuestionContractDetails(question);
       }
 
       return new QuestionConstructorsMap[question.type](question);
@@ -114,14 +129,8 @@ export class QuestionsService {
     return new QuestionBase(question);
   }
 
-  private _splitByPages(
-    questions: QuestionBase[],
-    attributes: PatronAttribute[],
-    preferences: PatronPreference[],
-    storedQuestions: QuestionsEntries,
-    isSubmitted: boolean
-  ): QuestionsPage[] {
-    const questionsByPages: QuestionBase[][] = questions.reduce(
+  private _splitByPages(questions: QuestionBase[]): QuestionBase[][] {
+    return questions.reduce(
       (accumulator: QuestionBase[][], current: QuestionBase, index: number) => {
         if (current && (current as QuestionParagraph).subtype === 'blockquote') {
           return questions[index + 1] ? [...accumulator, []] : [...accumulator];
@@ -133,6 +142,16 @@ export class QuestionsService {
       },
       [[]]
     );
+  }
+
+  private _splitByApplicationPages(
+    questions: QuestionBase[],
+    attributes: PatronAttribute[],
+    preferences: PatronPreference[],
+    storedQuestions: QuestionsEntries,
+    isSubmitted: boolean
+  ): QuestionsPage[] {
+    const questionsByPages: QuestionBase[][] = this._splitByPages(questions);
 
     return questionsByPages.map((pageQuestions: QuestionBase[]) => ({
       form: this._toFormGroup(pageQuestions, attributes, preferences, storedQuestions, isSubmitted),
@@ -143,24 +162,13 @@ export class QuestionsService {
   private _splitByContractPages(
     questions: QuestionBase[],
     attributes: PatronAttribute[],
-    preferences: PatronPreference[],
+    contractInfo: ContractInfo,
     storedQuestions: QuestionsEntries
   ): QuestionsPage[] {
-    const questionsByPages: QuestionBase[][] = questions.reduce(
-      (accumulator: QuestionBase[][], current: QuestionBase, index: number) => {
-        if (current && (current as QuestionParagraph).subtype === 'blockquote') {
-          return questions[index + 1] ? [...accumulator, []] : [...accumulator];
-        }
-
-        accumulator[accumulator.length - 1].push(current);
-
-        return accumulator;
-      },
-      [[]]
-    );
+    const questionsByPages: QuestionBase[][] = this._splitByPages(questions);
 
     return questionsByPages.map((pageQuestions: QuestionBase[]) => ({
-      form: this._toContractFormGroup(pageQuestions, attributes, preferences, storedQuestions),
+      form: this._toContractFormGroup(pageQuestions, attributes, contractInfo, storedQuestions),
       questions: pageQuestions,
     }));
   }
@@ -195,7 +203,7 @@ export class QuestionsService {
   private _toContractFormGroup(
     questions: QuestionBase[],
     attributes: PatronAttribute[],
-    preferences: PatronPreference[],
+    contractInfo: ContractInfo,
     storedQuestions: QuestionsEntries
   ): FormGroup {
     let group: any = {};
@@ -208,10 +216,10 @@ export class QuestionsService {
 
         if (question instanceof QuestionCheckboxGroup) {
           group[questionName] = this._toQuestionCheckboxControl(storedValue, question);
-        } else if (question instanceof QuestionReorder) {
-          group[questionName] = this._toQuestionReorderControl(storedValue, question, preferences);
+        } else if (question instanceof QuestionChargeSchedule) {
+          group[questionName] = this._toChargeScheduleControl(storedValue, question);
         } else {
-          group[questionName] = this._toContractFormControl(storedValue, question, attributes);
+          group[questionName] = this._toContractFormControl(storedValue, question, attributes, contractInfo);
         }
       });
 
@@ -226,7 +234,7 @@ export class QuestionsService {
   ): FormControl {
     let value: any = storedValue;
 
-    if (value == null) {
+    if (!isDefined(value)) {
       const foundAttribute: PatronAttribute = attributes.find(
         (attribute: PatronAttribute) => attribute.attributeConsumerKey === question.consumerKey
       );
@@ -250,16 +258,23 @@ export class QuestionsService {
   private _toContractFormControl(
     storedValue: any,
     question: QuestionFormControl,
-    attributes: PatronAttribute[]
+    attributes: PatronAttribute[],
+    contractInfo: ContractInfo
   ): FormControl {
     let value: any = storedValue;
 
-    if (value == null) {
-      const foundAttribute: PatronAttribute = attributes.find(
-        (attribute: PatronAttribute) => attribute.attributeConsumerKey === question.consumerKey
-      );
+    if (!isDefined(value)) {
+      if (question instanceof QuestionContractDetails) {
+        const contractKey: string = CONTRACT_DETAIL_KEYS[question.contractId];
 
-      value = foundAttribute ? foundAttribute.value : '';
+        value = contractInfo[contractKey] || '';
+      } else {
+        const foundAttribute: PatronAttribute = attributes.find(
+          (attribute: PatronAttribute) => attribute.attributeConsumerKey === question.consumerKey
+        );
+
+        value = foundAttribute ? foundAttribute.value : '';
+      }
     }
 
     return new FormControl({ value, disabled: true });
@@ -290,34 +305,19 @@ export class QuestionsService {
     const selectedValues: QuestionReorderValue[] = values.filter((value: QuestionReorderValue) => value.selected);
     const controls: FormControl[] = selectedValues
       .sort((current: QuestionReorderValue, next: QuestionReorderValue) =>
-        this._sortQuestionReorder(preferences, current, next, selectedValues.length)
+        QuestionReorder.sort(preferences, current, next, selectedValues.length)
       )
       .map((value: QuestionReorderValue) => new FormControl(value));
 
     return new FormArray(controls);
   }
 
-  private _sortQuestionReorder(
-    preferences: PatronPreference[],
-    current: QuestionReorderValue,
-    next: QuestionReorderValue,
-    length: number
-  ): number {
-    let currentIndex: number = preferences.findIndex(
-      (preference: PatronPreference) => preference.facilityKey === current.facilityKey
-    );
-    let nextIndex: number = preferences.findIndex(
-      (preference: PatronPreference) => preference.facilityKey === next.facilityKey
-    );
+  private _toChargeScheduleControl(storedValue: any, question: QuestionChargeSchedule): FormArray {
+    const values: QuestionChargeScheduleValue[] = storedValue || question.values;
+    const controls: FormControl[] = values
+      .filter((value: QuestionChargeScheduleValue) => !value.selected)
+      .map((chargeSchedule: QuestionChargeScheduleValue) => new FormControl({ value: chargeSchedule, disabled: true }));
 
-    if (currentIndex === -1) {
-      currentIndex = length;
-    }
-
-    if (nextIndex === -1) {
-      nextIndex = length;
-    }
-
-    return currentIndex - nextIndex;
+    return new FormArray(controls);
   }
 }

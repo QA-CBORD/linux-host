@@ -7,6 +7,7 @@ export interface QuestionFormControlOptions extends QuestionBaseOptions {
   preferenceKey?: number;
   facilityKey?: number;
   dataType?: string;
+  source?: string;
 }
 
 export class QuestionFormControl extends QuestionBase implements QuestionFormControlOptions {
@@ -16,6 +17,7 @@ export class QuestionFormControl extends QuestionBase implements QuestionFormCon
   preferenceKey: number;
   facilityKey: number;
   dataType?: string;
+  source?: string;
 
   constructor(options: QuestionFormControlOptions = {}) {
     super(options);
@@ -27,7 +29,11 @@ export class QuestionFormControl extends QuestionBase implements QuestionFormCon
     this.facilityKey = options.facilityKey >= 0 ? options.facilityKey : null;
 
     if (options.dataType) {
-      this.dataType = options.dataType;
+      this.dataType = String(options.dataType);
+    }
+
+    if (options.source) {
+      this.source = String(options.source);
     }
   }
 }

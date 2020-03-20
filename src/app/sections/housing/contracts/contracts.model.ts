@@ -12,6 +12,21 @@ export enum ContractStatus {
   Canceled = 7,
 }
 
+export enum CONTRACT_DETAIL_KEYS {
+  ACTUAL_START = 'actualStart',
+  ACTUAL_END = 'actualEnd',
+  EXPECTED_START = 'expectedStart',
+  EXPECTED_END = 'expectedEnd',
+  ASSET_TYPE = 'assetType',
+  CONTRACT_NUMBER = 'contractNumber',
+  CONTRACT_STATE = 'contractState',
+  CONTRACT_ID = 'contractId',
+  COST = 'cost',
+  DATE_SIGNED = 'dateSigned',
+  EXPIRATION_DATE = 'expirationDate',
+  SCHEDULE_COST = 'scheduleCost',
+}
+
 export interface ContractListDetailsOptions {
   id: number;
   contractElementId: number;

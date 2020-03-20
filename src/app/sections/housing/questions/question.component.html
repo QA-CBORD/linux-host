@@ -89,7 +89,15 @@
         *ngIf="question['facilityPicker']"
       ></st-facility-picker>
 
-      <div *ngIf="!question['facilityPicker']" class="question__section">
+      <st-charge-schedule
+        *ngIf="question['chargeSchedule']"
+        class="question__section"
+        [question]="question"
+        [parentForm]="parentGroup"
+      >
+      </st-charge-schedule>
+
+      <div *ngIf="!question['facilityPicker'] && !question['chargeSchedule']" class="question__section">
         <h3 class="form__secondary-header">{{ question.label }}</h3>
 
         <st-control-errors

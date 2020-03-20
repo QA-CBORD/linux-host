@@ -54,9 +54,7 @@ export class HousingDashboardPage implements OnInit, OnDestroy {
   }
 
   private _handleSuccess(response: DefinitionsResponse): void {
-    if (response.applicationDefinitions.length > 0 || response.contractDetails.length > 0) {
-      this.isHeaderVisible = true;
-    }
+    this.isHeaderVisible = response.applicationDefinitions.length > 0 || response.contractDetails.length > 0;
 
     this._loadingService.closeSpinner();
   }

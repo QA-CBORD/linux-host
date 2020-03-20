@@ -9,3 +9,5 @@ export * from './question-radio-group';
 export * from './question-reorder';
 export * from './question-textarea';
 export * from './question-textbox';
+export * from './question-charge-schedule';
+export * from './question-contract-details';
