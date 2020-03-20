@@ -24,15 +24,6 @@
     color: $color-matterhorn;
   }
 
-  &--border-only {
-    --ion-color-primary: #fff;
-    --box-shadow: none;
-
-    border: 2px solid $color-dodger-blue;
-    color: $color-dodger-blue;
-    border-radius: 25px;
-  }
-
   &--border-less {
     --ion-color-primary: #fff;
     --background-activated: #c4c4c4;
