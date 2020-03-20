@@ -7,7 +7,7 @@
   height: 280px;
 
   &__header {
-    height: 50px;
+    height: 45px;
     align-items: center;
 
     &-logo-wrapper {
@@ -92,9 +92,9 @@
   }
 
   &__student-container {
-    height: 80px;
+    height: 90px;
     align-items: flex-end;
-    padding: 0 15px;
+    padding: 0 10px;
   }
 
   &__student-name-wrapper {
@@ -102,21 +102,26 @@
   }
 
   &__student-name {
+    display: flex;
+    align-items: center;
     color: $color-white;
+    line-height: 20px;
+    height: 40px;
 
-    @include font-nunito-semibold(20px);
+    @include font-nunito-semibold(5.2vw);
   }
 
-  &__student-card-not-added {
+  &__student-wallet {
     color: $color-white;
     text-align: right;
-    padding: 0;
 
-    @include font-nunito-semibold(12px);
+    &-text {
+      @include font-nunito-semibold(12px);
+    }
   }
 
   &__quick-actions-container {
-    height: 64px;
+    height: 60px;
     border-top: 1px solid #ffffff1f;
     margin: 0 8px;
   }
