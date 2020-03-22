@@ -1,14 +1,9 @@
 import { generateQuestions } from '../questions/questions.mock';
-
-import {
-  ContractListDetails,
-  ChargeSchedule,
-  FacilityAttribute,
-  ContractDetails,
-  ContractInfo,
-} from './contracts.model';
 import { generatePatronAttributes } from '../applications/applications.mock';
+
+import { ContractListDetails, FacilityAttribute, ContractDetails, ContractInfo } from './contracts.model';
 import { PatronAttribute } from '../applications/applications.model';
+import { ChargeSchedule } from '@sections/housing/charge-schedules/charge-schedules.model';
 
 export function generateContractListDetails(_: any, index: number): ContractListDetails {
   const nowISO: string = new Date().toISOString();

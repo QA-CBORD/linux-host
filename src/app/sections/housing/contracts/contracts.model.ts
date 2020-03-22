@@ -1,6 +1,7 @@
 import { isDefined } from '../utils';
 
 import { PatronAttribute } from '../applications/applications.model';
+import { ChargeSchedule } from '@sections/housing/charge-schedules/charge-schedules.model';
 
 export enum ContractStatus {
   Preliminary = 1,
@@ -13,15 +14,15 @@ export enum ContractStatus {
 }
 
 export enum CONTRACT_DETAIL_KEYS {
-  ACTUAL_START = 'actualStart',
-  ACTUAL_END = 'actualEnd',
-  EXPECTED_START = 'expectedStart',
-  EXPECTED_END = 'expectedEnd',
-  ASSET_TYPE = 'assetType',
+  ACTUAL_START = 'actualStartDate',
+  ACTUAL_END = 'actualEndDate',
+  EXPECTED_START = 'expectedStartDate',
+  EXPECTED_END = 'expectedEndDate',
+  ASSET_TYPE = 'assetTypeName',
   CONTRACT_NUMBER = 'contractNumber',
   CONTRACT_STATE = 'contractState',
   CONTRACT_ID = 'contractId',
-  COST = 'cost',
+  COST = 'contractCost',
   DATE_SIGNED = 'dateSigned',
   EXPIRATION_DATE = 'expirationDate',
   SCHEDULE_COST = 'scheduleCost',
@@ -89,46 +90,6 @@ export class ContractListDetails implements ContractListDetailsOptions {
 
   static toContractListDetails(contracts: any): ContractListDetails[] {
     return Array.isArray(contracts) ? contracts.map((contract: any) => new ContractListDetails(contract)) : [];
-  }
-}
-
-export interface ChargeScheduleOptions {
-  chargeScheduleName: string;
-  linkedChargeScheduleStartDate: string;
-  linkedChargeScheduleEndDate: string;
-  active: boolean;
-  fullChargeEstimate: number;
-  remainingChargeEstimate: number;
-  estimateReason: string;
-  scheduleType: string;
-  chargeAmount: number;
-}
-
-export class ChargeSchedule implements ChargeScheduleOptions {
-  chargeScheduleName: string;
-  linkedChargeScheduleStartDate: string;
-  linkedChargeScheduleEndDate: string;
-  active: boolean;
-  fullChargeEstimate: number;
-  remainingChargeEstimate: number;
-  estimateReason: string;
-  scheduleType: string;
-  chargeAmount: number;
-
-  constructor(options: ChargeScheduleOptions) {
-    if (!isDefined(options) || typeof options !== 'object') {
-      options = {} as ChargeScheduleOptions;
-    }
-
-    this.chargeScheduleName = String(options.chargeScheduleName);
-    this.linkedChargeScheduleStartDate = String(options.linkedChargeScheduleStartDate);
-    this.linkedChargeScheduleEndDate = String(options.linkedChargeScheduleEndDate);
-    this.active = Boolean(options.active);
-    this.fullChargeEstimate = Number(options.fullChargeEstimate);
-    this.remainingChargeEstimate = Number(options.remainingChargeEstimate);
-    this.estimateReason = String(options.estimateReason);
-    this.scheduleType = String(options.scheduleType);
-    this.chargeAmount = Number(options.chargeAmount);
   }
 }
 

@@ -4,7 +4,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { SignContractComponent } from './sign-contract.component';
 import { SignContractEvent } from '@sections/housing/sign-contract/sign-contract.model';
 
-fdescribe('SignContractComponent', () => {
+describe('SignContractComponent', () => {
   let component: SignContractComponent;
   let fixture: ComponentFixture<SignContractComponent>;
 

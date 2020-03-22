@@ -1,6 +1,7 @@
 import { isDefined } from '../../utils';
 
 import { QuestionFormControl, QuestionFormControlOptions } from './question-form-control';
+import { ChargeScheduleValue } from '@sections/housing/charge-schedules/charge-schedules.model';
 
 export interface QuestionChargeScheduleValueOptions {
   label?: string;
@@ -8,7 +9,7 @@ export interface QuestionChargeScheduleValueOptions {
   selected?: boolean;
 }
 
-export class QuestionChargeScheduleValue implements QuestionChargeScheduleValueOptions {
+export class QuestionChargeScheduleValue implements ChargeScheduleValue {
   label: string;
   value: string;
   selected: boolean;
@@ -27,13 +28,13 @@ export class QuestionChargeScheduleValue implements QuestionChargeScheduleValueO
 export interface QuestionChargeScheduleOptions extends QuestionFormControlOptions {
   inline?: boolean;
   chargeSchedule?: boolean;
-  values?: QuestionChargeScheduleValue[];
+  values?: ChargeScheduleValue[];
 }
 
 export class QuestionChargeSchedule extends QuestionFormControl implements QuestionChargeScheduleOptions {
   inline: boolean;
   chargeSchedule: boolean;
-  values: QuestionChargeScheduleValue[];
+  values: ChargeScheduleValue[];
 
   constructor(options: QuestionChargeScheduleOptions) {
     if (!isDefined(options) || typeof options !== 'object') {
@@ -45,7 +46,7 @@ export class QuestionChargeSchedule extends QuestionFormControl implements Quest
     this.inline = Boolean(options.inline);
     this.chargeSchedule = Boolean(options.chargeSchedule);
     this.values = Array.isArray(options.values)
-      ? options.values.map((value: any) => new QuestionChargeScheduleValue(value))
+      ? options.values.map((value: any) => new ChargeScheduleValue(value))
       : [];
   }
 }

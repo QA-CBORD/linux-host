@@ -35,6 +35,8 @@ import {
   PatronPreference,
 } from '../applications/applications.model';
 import { CONTRACT_DETAIL_KEYS, ContractDetails, ContractInfo } from '../contracts/contracts.model';
+import { ChargeSchedulesService } from '@sections/housing/charge-schedules/charge-schedules.service';
+import { ChargeSchedule } from '@sections/housing/charge-schedules/charge-schedules.model';
 
 export const QuestionConstructorsMap = {
   header: QuestionHeader,
@@ -59,7 +61,8 @@ export class QuestionsService {
   constructor(
     private _questionsStorageService: QuestionsStorageService,
     private _applicationsStateService: ApplicationsStateService,
-    private _contractsStateService: ContractsStateService
+    private _contractsStateService: ContractsStateService,
+    private _chargeSchedulesService: ChargeSchedulesService
   ) {}
 
   getPages(key: number): Observable<QuestionsPage[]> {
@@ -94,7 +97,8 @@ export class QuestionsService {
           questions,
           contractDetails.patronAttributes,
           contractDetails.contractInfo,
-          storedQuestions
+          storedQuestions,
+          contractDetails.chargeSchedules
         );
       })
     );
@@ -163,12 +167,13 @@ export class QuestionsService {
     questions: QuestionBase[],
     attributes: PatronAttribute[],
     contractInfo: ContractInfo,
-    storedQuestions: QuestionsEntries
+    storedQuestions: QuestionsEntries,
+    chargeSchedules: ChargeSchedule[]
   ): QuestionsPage[] {
     const questionsByPages: QuestionBase[][] = this._splitByPages(questions);
 
     return questionsByPages.map((pageQuestions: QuestionBase[]) => ({
-      form: this._toContractFormGroup(pageQuestions, attributes, contractInfo, storedQuestions),
+      form: this._toContractFormGroup(pageQuestions, attributes, contractInfo, storedQuestions, chargeSchedules),
       questions: pageQuestions,
     }));
   }
@@ -204,7 +209,8 @@ export class QuestionsService {
     questions: QuestionBase[],
     attributes: PatronAttribute[],
     contractInfo: ContractInfo,
-    storedQuestions: QuestionsEntries
+    storedQuestions: QuestionsEntries,
+    chargeSchedules: ChargeSchedule[]
   ): FormGroup {
     let group: any = {};
 
@@ -217,7 +223,7 @@ export class QuestionsService {
         if (question instanceof QuestionCheckboxGroup) {
           group[questionName] = this._toQuestionCheckboxControl(storedValue, question);
         } else if (question instanceof QuestionChargeSchedule) {
-          group[questionName] = this._toChargeScheduleControl(storedValue, question);
+          group[questionName] = this._toChargeScheduleControl(chargeSchedules, storedValue, question);
         } else {
           group[questionName] = this._toContractFormControl(storedValue, question, attributes, contractInfo);
         }
@@ -312,7 +318,11 @@ export class QuestionsService {
     return new FormArray(controls);
   }
 
-  private _toChargeScheduleControl(storedValue: any, question: QuestionChargeSchedule): FormArray {
+  private _toChargeScheduleControl(
+    chargeSchedules: ChargeSchedule[],
+    storedValue: any,
+    question: QuestionChargeSchedule
+  ): FormArray {
     const values: QuestionChargeScheduleValue[] = storedValue || question.values;
     const controls: FormControl[] = values
       .filter((value: QuestionChargeScheduleValue) => !value.selected)
