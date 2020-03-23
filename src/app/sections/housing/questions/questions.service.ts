@@ -22,7 +22,6 @@ import {
   QuestionTextarea,
   QuestionTextbox,
   QuestionChargeSchedule,
-  QuestionChargeScheduleValue,
   QuestionContractDetails,
 } from './types';
 
@@ -91,26 +90,28 @@ export class QuestionsService {
     return this._questionsStorageService.getQuestions(key).pipe(
       withLatestFrom(this._contractsStateService.contractDetails$),
       map(([storedQuestions, contractDetails]: [QuestionsEntries, ContractDetails]) => {
-        const questions: QuestionBase[] = this._parseQuestions(contractDetails.formJson);
+        const questions: QuestionBase[] = this._parseQuestions(
+          contractDetails.formJson,
+          contractDetails.chargeSchedules
+        );
 
         return this._splitByContractPages(
           questions,
           contractDetails.patronAttributes,
           contractDetails.contractInfo,
-          storedQuestions,
-          contractDetails.chargeSchedules
+          storedQuestions
         );
       })
     );
   }
 
-  private _parseQuestions(json: string): QuestionBase[] {
+  private _parseQuestions(json: string, chargeSchedules?: ChargeSchedule[]): QuestionBase[] {
     const questions: any[] = parseJsonToArray(json);
 
-    return questions.map(this._toQuestionType);
+    return questions.map((question: any) => this._toQuestionType(question, chargeSchedules));
   }
 
-  private _toQuestionType(question: QuestionBase): QuestionBase {
+  private _toQuestionType(question: QuestionBase, chargeSchedules: ChargeSchedule[]): QuestionBase {
     if (!question || !question.type) {
       return new QuestionBase();
     }
@@ -119,7 +120,11 @@ export class QuestionsService {
       if ((question as QuestionReorder).facilityPicker) {
         return new QuestionReorder(question);
       } else if ((question as QuestionChargeSchedule).chargeSchedule) {
-        return new QuestionChargeSchedule(question);
+        const chargeSchedulesGroup: ChargeScheduleValue[][] = this._chargeSchedulesService.getChargeSchedules(
+          chargeSchedules,
+          (question as QuestionChargeSchedule).values
+        );
+        return new QuestionChargeSchedule(question, chargeSchedulesGroup);
       } else if (
         (question as QuestionContractDetails).source &&
         (question as QuestionContractDetails).source === 'CONTRACT_DETAILS'
@@ -167,13 +172,12 @@ export class QuestionsService {
     questions: QuestionBase[],
     attributes: PatronAttribute[],
     contractInfo: ContractInfo,
-    storedQuestions: QuestionsEntries,
-    chargeSchedules: ChargeSchedule[]
+    storedQuestions: QuestionsEntries
   ): QuestionsPage[] {
     const questionsByPages: QuestionBase[][] = this._splitByPages(questions);
 
     return questionsByPages.map((pageQuestions: QuestionBase[]) => ({
-      form: this._toContractFormGroup(pageQuestions, attributes, contractInfo, storedQuestions, chargeSchedules),
+      form: this._toContractFormGroup(pageQuestions, attributes, contractInfo, storedQuestions),
       questions: pageQuestions,
     }));
   }
@@ -209,8 +213,7 @@ export class QuestionsService {
     questions: QuestionBase[],
     attributes: PatronAttribute[],
     contractInfo: ContractInfo,
-    storedQuestions: QuestionsEntries,
-    chargeSchedules: ChargeSchedule[]
+    storedQuestions: QuestionsEntries
   ): FormGroup {
     let group: any = {};
 
@@ -222,8 +225,6 @@ export class QuestionsService {
 
         if (question instanceof QuestionCheckboxGroup) {
           group[questionName] = this._toQuestionCheckboxControl(storedValue, question);
-        } else if (question instanceof QuestionChargeSchedule) {
-          group[questionName] = this._toChargeScheduleControl(chargeSchedules, question);
         } else {
           group[questionName] = this._toContractFormControl(storedValue, question, attributes, contractInfo);
         }
@@ -314,22 +315,6 @@ export class QuestionsService {
         QuestionReorder.sort(preferences, current, next, selectedValues.length)
       )
       .map((value: QuestionReorderValue) => new FormControl(value));
-
-    return new FormArray(controls);
-  }
-
-  private _toChargeScheduleControl(chargeSchedules: ChargeSchedule[], question: QuestionChargeSchedule): FormArray {
-    const chargeScheduleValues: ChargeScheduleValue[][] = this._chargeSchedulesService.getChargeSchedules(
-      chargeSchedules,
-      question.values
-    );
-    const controls: FormArray[] = chargeScheduleValues.map((chargeScheduleValues: ChargeScheduleValue[]) => {
-      const controls: FormControl[] = chargeScheduleValues.map(
-        (chargeScheduleValue: ChargeScheduleValue) => new FormControl({ value: chargeScheduleValue, disabled: true })
-      );
-
-      return new FormArray(controls);
-    });
 
     return new FormArray(controls);
   }

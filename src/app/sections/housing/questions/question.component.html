@@ -1,7 +1,7 @@
 <div [formGroup]="parentGroup">
   <ng-container [ngSwitch]="question.type">
     <ng-container *ngSwitchCase="'header'">
-      <div [innerHTML]="createHeader(question)"></div>
+      <div [innerHTML]="createHeader($any(question))"></div>
     </ng-container>
 
     <p *ngSwitchCase="'paragraph'" class="question__paragraph" [innerHtml]="question.label">{{ question.label }}</p>
@@ -80,6 +80,9 @@
       </ng-container>
     </st-select-floating-label>
 
+    <st-charge-schedules class="question__section" *ngSwitchCase="'charge-schedules'" [question]="question">
+    </st-charge-schedules>
+
     <ng-container *ngSwitchCase="'checkbox-group'">
       <st-facility-picker
         class="question__section"
@@ -89,15 +92,7 @@
         *ngIf="question['facilityPicker']"
       ></st-facility-picker>
 
-      <st-charge-schedule
-        *ngIf="question['chargeSchedule']"
-        class="question__section"
-        [question]="question"
-        [parentForm]="parentGroup"
-      >
-      </st-charge-schedule>
-
-      <div *ngIf="!question['facilityPicker'] && !question['chargeSchedule']" class="question__section">
+      <div *ngIf="!question['facilityPicker']" class="question__section">
         <h3 class="form__secondary-header">{{ question.label }}</h3>
 
         <st-control-errors

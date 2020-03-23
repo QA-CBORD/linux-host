@@ -13,9 +13,7 @@ import { ApplicationsService } from './applications/applications.service';
 import { DefinitionsResponse, DetailsResponse } from './housing.model';
 import { ApplicationDetails } from './applications/applications.model';
 import { ContractListDetails, ContractDetails } from './contracts/contracts.model';
-// import { generateApplications } from './applications/applications.mock';
-// import { generateContractsList } from './contracts/contracts.mock';
-// import { generateDetailsResponse } from './housing.mock';
+// import { generateChargeSchedules } from '@sections/housing/charge-schedules/charge-schedules.mock';
 
 @Injectable({
   providedIn: 'root',
@@ -63,7 +61,13 @@ export class HousingService {
     return this._housingProxyService.get<DetailsResponse>(apiUrl).pipe(
       map((response: any) => new DetailsResponse(response)),
       // TODO: Remove mock data
-      // map(() => generateDetailsResponse(0)),
+      // map((response: DetailsResponse) => {
+      //   const detailsResponse: DetailsResponse = new DetailsResponse({
+      //     ...response,
+      //     contractDetails: { ...response.contractDetails, chargeSchedules: generateChargeSchedules(2) },
+      //   });
+      //   return new DetailsResponse(detailsResponse);
+      // }),
       tap((details: DetailsResponse) => {
         if (details.applicationDetails) {
           this._applicationsStateService.setApplicationDetails(details.applicationDetails);
@@ -111,8 +115,6 @@ export class HousingService {
   private _handleGetDefinitionsError(): Observable<DefinitionsResponse> {
     const applicationDefinitions: ApplicationDetails[] = [];
     const contractDetails: ContractListDetails[] = [];
-    // const applicationDefinitions: ApplicationDetails[] = generateApplications();
-    // const contractDetails: ContractListDetails[] = generateContractsList();
 
     this._setState(applicationDefinitions, contractDetails);
 

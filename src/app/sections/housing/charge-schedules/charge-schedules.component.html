@@ -1,13 +1,7 @@
-<ng-container [formGroup]="parentForm">
-  <h3 class="form__secondary-header" *ngIf="chargeSchedules.length">{{ question.label }}</h3>
+<h3 class="form__secondary-header" *ngIf="question.values.length">{{ question.label }}</h3>
 
-  <ion-item
-    *ngFor="let chargeSchedule of chargeSchedules; trackBy: trackByValue; index as idx"
-    class="ion-no-padding"
-    [formArrayName]="question.name"
-  >
-    <input type="hidden" [formControlName]="idx" [value]="chargeSchedule" />
-
-    <ion-label> {{ chargeSchedule.label }} {{ chargeSchedule.value }} </ion-label>
+<ion-list *ngFor="let chargeSchedule of question.chargeSchedulesGroup">
+  <ion-item *ngFor="let chargeSchedule of chargeSchedule; trackBy: trackByLabel" class="ion-no-padding">
+    <ion-label> {{ chargeSchedule.label }}: {{ chargeSchedule.value }} </ion-label>
   </ion-item>
-</ng-container>
+</ion-list>

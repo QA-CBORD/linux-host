@@ -1,5 +1,6 @@
 import { generateQuestions } from '../questions/questions.mock';
 import { generatePatronAttributes } from '../applications/applications.mock';
+import { generateChargeSchedules } from '@sections/housing/charge-schedules/charge-schedules.mock';
 
 import { ContractListDetails, FacilityAttribute, ContractDetails, ContractInfo } from './contracts.model';
 import { PatronAttribute } from '../applications/applications.model';
@@ -44,35 +45,6 @@ export function generateContractListDetails(_: any, index: number): ContractList
 
 export function generateContractsList(amount: number = 3): ContractListDetails[] {
   return Array.apply(null, Array(amount)).map(generateContractListDetails);
-}
-
-export function generateChargeSchedule(_: any, index: number): ChargeSchedule {
-  const nowISO: string = new Date().toISOString();
-  const chargeScheduleName: string = `Charge Schedule ${index}`;
-  const linkedChargeScheduleStartDate: string = nowISO;
-  const linkedChargeScheduleEndDate: string = nowISO;
-  const active: boolean = index % 2 === 0;
-  const fullChargeEstimate: number = index + 100;
-  const remainingChargeEstimate: number = index + 200;
-  const estimateReason: string = `Estimated ${index}`;
-  const scheduleType: string = `Schedule ${index}`;
-  const chargeAmount: number = index + 300;
-
-  return new ChargeSchedule({
-    chargeScheduleName,
-    linkedChargeScheduleStartDate,
-    linkedChargeScheduleEndDate,
-    active,
-    fullChargeEstimate,
-    remainingChargeEstimate,
-    estimateReason,
-    scheduleType,
-    chargeAmount,
-  });
-}
-
-export function generateChargeSchedules(amount: number = 3): ChargeSchedule[] {
-  return Array.apply(null, Array(amount)).map(generateChargeSchedule);
 }
 
 export function generateFacilityAttribute(_: any, index: number): FacilityAttribute {
