@@ -124,7 +124,8 @@
   </div>
   <div class="item-footer__add-btn-wrapper">
     <st-button (onClick)="onFormSubmit()" [isDisabled]="!itemOrderForm.valid">
-      {{contentStrings.buttonAdd | async}} {{ order.totalPrice | priceUnitsResolver: (menuInfo$ | async).mealBased }}
+      {{ (!routesData.queryParams.isItemExistsInCart ? contentStrings.buttonAdd : contentStrings.buttonUpdate) | async}} 
+      {{ order.totalPrice | priceUnitsResolver: (menuInfo$ | async).mealBased }}
     </st-button>
   </div>
 </ion-footer>

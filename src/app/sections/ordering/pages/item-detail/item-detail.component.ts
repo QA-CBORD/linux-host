@@ -36,6 +36,7 @@ export class ItemDetailComponent implements OnInit {
   cartOrderItemOptions: OrderItem[] = [];
   allowNotes: boolean;
   contentStrings:OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
+  routesData: RoutesData;
 
   constructor(
     private readonly router: Router,
@@ -51,6 +52,7 @@ export class ItemDetailComponent implements OnInit {
     this.initMenuItemOptions();
     this.menuInfo$ = this.cartService.menuInfo$;
     this.initContentStrings();
+    this.activatedRoute.data.pipe(take(1)).subscribe(({ data }) => this.routesData = data);
   }
 
   ngOnDestroy() {
@@ -58,9 +60,8 @@ export class ItemDetailComponent implements OnInit {
   }
 
   onClose() {
-    this.activatedRoute.data.pipe(take(1)).subscribe(({ data: { queryParams: { categoryId } } }) => {
-      this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.menuCategoryItems, categoryId], { skipLocationChange: true });
-    });
+    const { queryParams: { categoryId }} = this.routesData
+    this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.menuCategoryItems, categoryId], { skipLocationChange: true });
   }
 
   initForm() {
@@ -184,7 +185,7 @@ export class ItemDetailComponent implements OnInit {
   private async onSubmit(menuItem): Promise<void> {
     const orderItems = await this.cartService.orderItems$.pipe(first()).toPromise();
     if (orderItems.length) {
-      const { data: { queryParams: { orderItemId } } } = await this.activatedRoute.data.pipe(first()).toPromise();
+      const { queryParams: { orderItemId } } = this.routesData;
       await this.cartService.removeOrderItemFromOrderById(orderItemId);
     }
 
@@ -264,6 +265,7 @@ export class ItemDetailComponent implements OnInit {
 
   private initContentStrings() {
     this.contentStrings.buttonAdd = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonAdd);
+    this.contentStrings.buttonUpdate = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonUpdate);
     this.contentStrings.buttonClose = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonClose);
     this.contentStrings.labelItemNote = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelItemNote);
   }
@@ -283,4 +285,14 @@ export const validateMaxLengthOfArray = (max: number | undefined): ValidationErr
 
     return { maxLength: { valid: false } };
   };
+};
+
+export interface RoutesData {
+  menuItem: MenuItemInfo; 
+  queryParams: {
+    categoryId: string; 
+    menuItemId: string; 
+    orderItemId: string; 
+    isItemExistsInCart: boolean
+  }
 };

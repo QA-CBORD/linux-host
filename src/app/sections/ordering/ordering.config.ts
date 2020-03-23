@@ -15,6 +15,7 @@ export enum ORDERING_CONTENT_STRINGS {
   errorMessageTimeSlotCapacityReached = 'error_message_time-slot-capacity-reached',
   errorMessageInsufficientFunds = 'error_message_insufficient-funds',
   buttonAdd = 'button_add',
+  buttonUpdate = 'label_update',
   backToOrdering = 'button_back-to-ordering',
   buttonCancel = 'button_cancel',
   buttonClose = 'button_close',

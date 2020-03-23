@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Resolve, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
+import { Resolve, ActivatedRouteSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
-import { take, tap, map } from 'rxjs/operators';
+import { take, map } from 'rxjs/operators';
 import { CartService } from '@sections/ordering/services';
 import { MenuCategoryItemInfo } from '@sections/ordering/shared/models';
 
@@ -16,7 +16,7 @@ export class ItemDetailResolver
   > {
   constructor(private readonly cartService: CartService) { }
   resolve({
-    queryParams: { menuItemId, orderItemId },
+    queryParams: { menuItemId, orderItemId, isItemExistsInCart = false },
   }: ActivatedRouteSnapshot): Observable<{
     menuItem: MenuCategoryItemInfo;
     queryParams: QueryParamsModel;
@@ -35,7 +35,7 @@ export class ItemDetailResolver
         if (menuItem) {
           return {
             menuItem,
-            queryParams: { categoryId: menuItem.menuCategoryId, menuItemId: menuItem.id, orderItemId },
+            queryParams: { categoryId: menuItem.menuCategoryId, menuItemId: menuItem.id, orderItemId, isItemExistsInCart },
           };
         }
       }),

@@ -122,7 +122,7 @@ export class CartComponent implements OnInit {
   onOrderItemClicked({ menuItemId, id }) {
     this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.itemDetail], {
       skipLocationChange: true,
-      queryParams: { menuItemId: menuItemId, orderItemId: id },
+      queryParams: { menuItemId: menuItemId, orderItemId: id, isItemExistsInCart: true },
     });
   }
 
