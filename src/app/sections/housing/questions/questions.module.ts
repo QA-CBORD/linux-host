@@ -10,7 +10,7 @@ import { StDateSelectModule } from '@shared/ui-components/st-date-select/st-date
 import { ControlErrorsModule } from '@shared/ui-components/control-errors/control-errors.module';
 import { RadioGroupModule } from '@shared/ui-components/radio-group/radio-group.module';
 import { FacilityPickerModule } from './facility-picker/facility-picker.module';
-import { ChargeScheduleModule } from './charge-schedule/charge-schedule.module';
+import { ChargeSchedulesModule } from '../charge-schedules/charge-schedules.module';
 
 import { QuestionComponent } from './question.component';
 import { EmptyFormControlDirective } from '../empty-form-control/empty-form-control.directive';
@@ -26,7 +26,7 @@ const imports = [
   ControlErrorsModule,
   RadioGroupModule,
   FacilityPickerModule,
-  ChargeScheduleModule,
+  ChargeSchedulesModule,
 ];
 const exports = [QuestionComponent];
 const declarations = [QuestionComponent, EmptyFormControlDirective];
