@@ -1,22 +1,21 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ChargeScheduleComponent } from './charge-schedule.component';
+import { ChargeSchedulesComponent } from './charge-schedules.component';
 
-describe('ChargeScheduleComponent', () => {
-  let component: ChargeScheduleComponent;
-  let fixture: ComponentFixture<ChargeScheduleComponent>;
+describe('ChargeSchedulesComponent', () => {
+  let component: ChargeSchedulesComponent;
+  let fixture: ComponentFixture<ChargeSchedulesComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ChargeScheduleComponent ],
+      declarations: [ChargeSchedulesComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ChargeScheduleComponent);
+    fixture = TestBed.createComponent(ChargeSchedulesComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

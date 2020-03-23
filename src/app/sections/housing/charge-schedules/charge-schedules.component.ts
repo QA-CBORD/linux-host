@@ -2,15 +2,15 @@ import { Component, OnInit, Input, OnDestroy, ChangeDetectionStrategy, ChangeDet
 import { FormGroup, AbstractControl } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
-import { QuestionChargeSchedule } from '../types';
-import { ChargeScheduleValue } from '@sections/housing/charge-schedules/charge-schedules.model';
+import { QuestionChargeSchedule } from '../questions/types';
+import { ChargeScheduleValue } from './charge-schedules.model';
 
 @Component({
   selector: 'st-charge-schedule',
-  templateUrl: './charge-schedule.component.html',
+  templateUrl: './charge-schedules.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ChargeScheduleComponent implements OnInit, OnDestroy {
+export class ChargeSchedulesComponent implements OnInit, OnDestroy {
   private _subscription: Subscription = new Subscription();
 
   @Input() question: QuestionChargeSchedule;

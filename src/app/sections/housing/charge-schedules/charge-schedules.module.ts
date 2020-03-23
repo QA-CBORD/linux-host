@@ -3,10 +3,10 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 
-import { ChargeScheduleComponent } from '../questions/charge-schedule/charge-schedule.component';
+import { ChargeSchedulesComponent } from './charge-schedules.component';
 
 const imports = [CommonModule, ReactiveFormsModule, IonicModule];
-const declarations = [ChargeScheduleComponent];
+const declarations = [ChargeSchedulesComponent];
 
 @NgModule({
   imports,
