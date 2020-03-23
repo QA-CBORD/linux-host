@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ToastController } from '@ionic/angular';
 import { Observable, of, forkJoin, Subject } from 'rxjs';
 import { map, switchMap, tap, catchError } from 'rxjs/operators';
 
@@ -9,8 +11,9 @@ import { ApplicationsStateService } from './applications/applications-state.serv
 import { ContractsStateService } from './contracts/contracts-state.service';
 import { TermsService } from './terms/terms.service';
 import { ApplicationsService } from './applications/applications.service';
+import { LoadingService } from '@core/service/loading/loading.service';
 
-import { DefinitionsResponse, DetailsResponse } from './housing.model';
+import { DefinitionsResponse, DetailsResponse, Response } from './housing.model';
 import { ApplicationDetails } from './applications/applications.model';
 import { ContractListDetails, ContractDetails } from './contracts/contracts.model';
 
@@ -35,7 +38,9 @@ export class HousingService {
     private _applicationsStateService: ApplicationsStateService,
     private _contractsStateService: ContractsStateService,
     private _termsService: TermsService,
-    private _applicationsService: ApplicationsService
+    private _applicationsService: ApplicationsService,
+    private _loadingService: LoadingService,
+    private _toastController: ToastController
   ) {}
 
   getDefinitions(termId: number) {
@@ -77,6 +82,27 @@ export class HousingService {
 
   getContractDetails(key: number, queryParams: string[] = []): Observable<ContractDetails> {
     return this.getDetails(key, queryParams).pipe(map((response: DetailsResponse) => response.contractDetails));
+  }
+
+  handleErrors(error: any): void {
+    let message = 'Something went wrong. Try again later';
+
+    this._loadingService.closeSpinner();
+
+    if (error instanceof HttpErrorResponse) {
+      const statusMessage: string = (error.error as Response).status.message;
+
+      message = statusMessage || message;
+    }
+
+    this._toastController
+      .create({
+        message,
+        position: 'top',
+        duration: 3000,
+        showCloseButton: true,
+      })
+      .then((toast: HTMLIonToastElement) => toast.present());
   }
 
   private _patchDefinitionsByStore(response: DefinitionsResponse): Observable<DefinitionsResponse> {

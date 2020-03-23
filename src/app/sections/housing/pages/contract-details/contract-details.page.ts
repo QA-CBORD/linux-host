@@ -8,7 +8,6 @@ import {
   ViewChildren,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { HttpErrorResponse } from '@angular/common/http';
 import { ToastController } from '@ionic/angular';
 import { Observable, Subscription, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
@@ -132,23 +131,6 @@ export class ContractDetailsPage implements OnInit, OnDestroy {
   }
 
   private _handleErrors(error: any): void {
-    let message = 'Something went wrong. Try again later';
-
-    this._loadingService.closeSpinner();
-
-    if (error instanceof HttpErrorResponse) {
-      const statusMessage: string = (error.error as Response).status.message;
-
-      message = statusMessage || message;
-    }
-
-    this._toastController
-      .create({
-        message,
-        position: 'top',
-        duration: 3000,
-        showCloseButton: true,
-      })
-      .then((toast: HTMLIonToastElement) => toast.present());
+    this._housingService.handleErrors(error);
   }
 }
