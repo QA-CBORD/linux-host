@@ -36,7 +36,7 @@ import {
 } from '../applications/applications.model';
 import { CONTRACT_DETAIL_KEYS, ContractDetails, ContractInfo } from '../contracts/contracts.model';
 import { ChargeSchedulesService } from '@sections/housing/charge-schedules/charge-schedules.service';
-import { ChargeSchedule } from '@sections/housing/charge-schedules/charge-schedules.model';
+import { ChargeSchedule, ChargeScheduleValue } from '@sections/housing/charge-schedules/charge-schedules.model';
 
 export const QuestionConstructorsMap = {
   header: QuestionHeader,
@@ -223,7 +223,7 @@ export class QuestionsService {
         if (question instanceof QuestionCheckboxGroup) {
           group[questionName] = this._toQuestionCheckboxControl(storedValue, question);
         } else if (question instanceof QuestionChargeSchedule) {
-          group[questionName] = this._toChargeScheduleControl(chargeSchedules, storedValue, question);
+          group[questionName] = this._toChargeScheduleControl(chargeSchedules, question);
         } else {
           group[questionName] = this._toContractFormControl(storedValue, question, attributes, contractInfo);
         }
@@ -318,15 +318,18 @@ export class QuestionsService {
     return new FormArray(controls);
   }
 
-  private _toChargeScheduleControl(
-    chargeSchedules: ChargeSchedule[],
-    storedValue: any,
-    question: QuestionChargeSchedule
-  ): FormArray {
-    const values: QuestionChargeScheduleValue[] = storedValue || question.values;
-    const controls: FormControl[] = values
-      .filter((value: QuestionChargeScheduleValue) => !value.selected)
-      .map((chargeSchedule: QuestionChargeScheduleValue) => new FormControl({ value: chargeSchedule, disabled: true }));
+  private _toChargeScheduleControl(chargeSchedules: ChargeSchedule[], question: QuestionChargeSchedule): FormArray {
+    const chargeScheduleValues: ChargeScheduleValue[][] = this._chargeSchedulesService.getChargeSchedules(
+      chargeSchedules,
+      question.values
+    );
+    const controls: FormArray[] = chargeScheduleValues.map((chargeScheduleValues: ChargeScheduleValue[]) => {
+      const controls: FormControl[] = chargeScheduleValues.map(
+        (chargeScheduleValue: ChargeScheduleValue) => new FormControl({ value: chargeScheduleValue, disabled: true })
+      );
+
+      return new FormArray(controls);
+    });
 
     return new FormArray(controls);
   }

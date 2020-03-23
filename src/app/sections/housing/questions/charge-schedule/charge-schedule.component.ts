@@ -2,7 +2,8 @@ import { Component, OnInit, Input, OnDestroy, ChangeDetectionStrategy, ChangeDet
 import { FormGroup, AbstractControl } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
-import { QuestionChargeSchedule, QuestionChargeScheduleValue } from '../types';
+import { QuestionChargeSchedule } from '../types';
+import { ChargeScheduleValue } from '@sections/housing/charge-schedules/charge-schedules.model';
 
 @Component({
   selector: 'st-charge-schedule',
@@ -16,7 +17,7 @@ export class ChargeScheduleComponent implements OnInit, OnDestroy {
 
   @Input() parentForm: FormGroup;
 
-  chargeSchedules: QuestionChargeScheduleValue[] = [];
+  chargeSchedules: ChargeScheduleValue[] = [];
 
   constructor(private _changeDetector: ChangeDetectorRef) {}
 
@@ -24,7 +25,7 @@ export class ChargeScheduleComponent implements OnInit, OnDestroy {
     const chargeSchedulesControl: AbstractControl = this.parentForm.get(this.question.name);
 
     const valueChangesSubscription: Subscription = chargeSchedulesControl.valueChanges.subscribe(
-      (value: QuestionChargeScheduleValue[]) => {
+      (value: ChargeScheduleValue[]) => {
         this.chargeSchedules = value;
         this._changeDetector.markForCheck();
       }
@@ -39,7 +40,7 @@ export class ChargeScheduleComponent implements OnInit, OnDestroy {
     this._subscription.unsubscribe();
   }
 
-  trackByValue(_: number, chargeSchedule: QuestionChargeScheduleValue): string {
+  trackByValue(_: number, chargeSchedule: ChargeScheduleValue): string {
     return chargeSchedule.value;
   }
 }

@@ -12,10 +12,6 @@ export enum ChargeScheduleFields {
   chargeAmount,
 }
 
-export interface ChargeScheduleFieldsMap {
-  [key: string]: ChargeScheduleFields;
-}
-
 export interface ChargeScheduleValueOptions {
   label: string;
   value: string;
