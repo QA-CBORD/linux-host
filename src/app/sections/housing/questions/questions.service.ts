@@ -23,6 +23,7 @@ import {
   QuestionTextbox,
   QuestionChargeSchedule,
   QuestionContractDetails,
+  QuestionChargeScheduleBase,
 } from './types';
 
 import { QuestionReorder, QuestionReorderValue, QuestionsPage } from './questions.model';
@@ -119,12 +120,13 @@ export class QuestionsService {
     if (QuestionConstructorsMap[question.type]) {
       if ((question as QuestionReorder).facilityPicker) {
         return new QuestionReorder(question);
-      } else if ((question as QuestionChargeSchedule).chargeSchedule) {
+      } else if ((question as QuestionChargeScheduleBase).chargeSchedule) {
         const chargeSchedulesGroup: ChargeScheduleValue[][] = this._chargeSchedulesService.getChargeSchedules(
           chargeSchedules,
-          (question as QuestionChargeSchedule).values
+          (question as QuestionChargeScheduleBase).values
         );
-        return new QuestionChargeSchedule(question, chargeSchedulesGroup);
+
+        return new QuestionChargeSchedule({ label: question.label, chargeSchedulesGroup });
       } else if (
         (question as QuestionContractDetails).source &&
         (question as QuestionContractDetails).source === 'CONTRACT_DETAILS'
