@@ -8,7 +8,6 @@ import {
   ViewChildren,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { HttpErrorResponse } from '@angular/common/http';
 import { ToastController } from '@ionic/angular';
 import { FormGroup } from '@angular/forms';
 import { Observable, Subscription, throwError } from 'rxjs';
@@ -24,7 +23,6 @@ import { StepComponent } from '../../stepper/step/step.component';
 import { QuestionComponent } from '../../questions/question.component';
 
 import { ApplicationDetails, ApplicationStatus, PatronApplication } from '../../applications/applications.model';
-import { Response } from '../../housing.model';
 import { QuestionsPage } from '../../questions/questions.model';
 
 @Component({
@@ -50,7 +48,6 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
 
   constructor(
     private _route: ActivatedRoute,
-    private _questionsService: QuestionsService,
     private _applicationsService: ApplicationsService,
     private _router: Router,
     private _toastController: ToastController,
@@ -134,7 +131,7 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
   }
 
   private _initPagesObservable(): void {
-    this.pages$ = this._questionsService.getPages(this.applicationKey);
+    this.pages$ = this._applicationsService.getQuestions(this.applicationKey);
   }
 
   private _next(applicationDetails: ApplicationDetails, formValue: any): void {

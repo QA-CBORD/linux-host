@@ -46,7 +46,7 @@
   }
 }
 
-.question__section {
+.question__section:not(:empty) {
   border-top: 1px solid $color-white-smoke;
   display: block;
   margin: 16px -10px 0;

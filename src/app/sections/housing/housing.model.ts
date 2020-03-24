@@ -1,5 +1,5 @@
 import { ApplicationDetails } from './applications/applications.model';
-import { ContractListDetails, ContractDetails } from './contracts/contracts.model';
+import { ContractDetails, ContractListDetails } from './contracts/contracts.model';
 
 export interface ResponseStatusDetails {
   code: string;

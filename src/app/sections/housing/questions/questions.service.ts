@@ -1,13 +1,7 @@
 import { Injectable } from '@angular/core';
-import { FormArray, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
-import { Observable } from 'rxjs';
-import { map, withLatestFrom } from 'rxjs/operators';
+import { FormArray, FormControl, FormGroup, ValidatorFn } from '@angular/forms';
 
-import { integerValidator, numericValidator, parseJsonToArray, isDefined } from '../utils';
-
-import { QuestionsEntries, QuestionsStorageService } from './questions-storage.service';
-import { ApplicationsStateService } from '../applications/applications-state.service';
-import { ContractsStateService } from '../contracts/contracts-state.service';
+import { integerValidator, numericValidator, parseJsonToArray } from '../utils';
 
 import {
   QuestionBase,
@@ -21,22 +15,15 @@ import {
   QuestionRadioGroup,
   QuestionTextarea,
   QuestionTextbox,
-  QuestionChargeSchedule,
   QuestionContractDetails,
   QuestionChargeScheduleBase,
 } from './types';
 
-import { QuestionReorder, QuestionReorderValue, QuestionsPage } from './questions.model';
-import {
-  ApplicationDetails,
-  ApplicationStatus,
-  PatronApplication,
-  PatronAttribute,
-  PatronPreference,
-} from '../applications/applications.model';
-import { CONTRACT_DETAIL_KEYS, ContractDetails, ContractInfo } from '../contracts/contracts.model';
-import { ChargeSchedulesService } from '@sections/housing/charge-schedules/charge-schedules.service';
-import { ChargeSchedule, ChargeScheduleValue } from '@sections/housing/charge-schedules/charge-schedules.model';
+import { QuestionReorder } from './questions.model';
+import { QuestionFacilityAttributes } from '@sections/housing/questions/types/question-facility-attributes';
+import { QuestionBlockquote } from '@sections/housing/questions/types/question-blockquote';
+import { Attribute } from '@sections/housing/attributes/attributes.model';
+import { QuestionsEntries } from '@sections/housing/questions/questions-storage.service';
 
 export const QuestionConstructorsMap = {
   header: QuestionHeader,
@@ -58,92 +45,14 @@ export class QuestionsService {
     numeric: numericValidator(),
   };
 
-  constructor(
-    private _questionsStorageService: QuestionsStorageService,
-    private _applicationsStateService: ApplicationsStateService,
-    private _contractsStateService: ContractsStateService,
-    private _chargeSchedulesService: ChargeSchedulesService
-  ) {}
-
-  getPages(key: number): Observable<QuestionsPage[]> {
-    return this._questionsStorageService.getQuestions(key).pipe(
-      withLatestFrom(this._applicationsStateService.applicationDetails$),
-      map(([storedQuestions, applicationDetails]: [QuestionsEntries, ApplicationDetails]) => {
-        const questions: QuestionBase[] = this._parseQuestions(
-          applicationDetails.applicationDefinition.applicationFormJson
-        );
-        const patronApplication: PatronApplication = applicationDetails.patronApplication;
-        const status: ApplicationStatus = patronApplication && patronApplication.status;
-        const isSubmitted = status === ApplicationStatus.Submitted;
-
-        return this._splitByApplicationPages(
-          questions,
-          applicationDetails.patronAttributes,
-          applicationDetails.patronPreferences,
-          storedQuestions,
-          isSubmitted
-        );
-      })
-    );
+  getQuestions(json: string): QuestionBase[] {
+    return this._mapToQuestions(parseJsonToArray(json));
   }
 
-  getContractPages(key: number): Observable<QuestionsPage[]> {
-    return this._questionsStorageService.getQuestions(key).pipe(
-      withLatestFrom(this._contractsStateService.contractDetails$),
-      map(([storedQuestions, contractDetails]: [QuestionsEntries, ContractDetails]) => {
-        const questions: QuestionBase[] = this._parseQuestions(
-          contractDetails.formJson,
-          contractDetails.chargeSchedules
-        );
-
-        return this._splitByContractPages(
-          questions,
-          contractDetails.patronAttributes,
-          contractDetails.contractInfo,
-          storedQuestions
-        );
-      })
-    );
-  }
-
-  private _parseQuestions(json: string, chargeSchedules?: ChargeSchedule[]): QuestionBase[] {
-    const questions: any[] = parseJsonToArray(json);
-
-    return questions.map((question: any) => this._toQuestionType(question, chargeSchedules));
-  }
-
-  private _toQuestionType(question: QuestionBase, chargeSchedules: ChargeSchedule[]): QuestionBase {
-    if (!question || !question.type) {
-      return new QuestionBase();
-    }
-
-    if (QuestionConstructorsMap[question.type]) {
-      if ((question as QuestionReorder).facilityPicker) {
-        return new QuestionReorder(question);
-      } else if ((question as QuestionChargeScheduleBase).chargeSchedule) {
-        const chargeSchedulesGroup: ChargeScheduleValue[][] = this._chargeSchedulesService.getChargeSchedules(
-          chargeSchedules,
-          (question as QuestionChargeScheduleBase).values
-        );
-
-        return new QuestionChargeSchedule({ label: question.label, chargeSchedulesGroup });
-      } else if (
-        (question as QuestionContractDetails).source &&
-        (question as QuestionContractDetails).source === 'CONTRACT_DETAILS'
-      ) {
-        return new QuestionContractDetails(question);
-      }
-
-      return new QuestionConstructorsMap[question.type](question);
-    }
-
-    return new QuestionBase(question);
-  }
-
-  private _splitByPages(questions: QuestionBase[]): QuestionBase[][] {
+  splitByPages(questions: QuestionBase[]): QuestionBase[][] {
     return questions.reduce(
       (accumulator: QuestionBase[][], current: QuestionBase, index: number) => {
-        if (current && (current as QuestionParagraph).subtype === 'blockquote') {
+        if (current && current instanceof QuestionBlockquote) {
           return questions[index + 1] ? [...accumulator, []] : [...accumulator];
         }
 
@@ -155,41 +64,16 @@ export class QuestionsService {
     );
   }
 
-  private _splitByApplicationPages(
-    questions: QuestionBase[],
-    attributes: PatronAttribute[],
-    preferences: PatronPreference[],
-    storedQuestions: QuestionsEntries,
-    isSubmitted: boolean
-  ): QuestionsPage[] {
-    const questionsByPages: QuestionBase[][] = this._splitByPages(questions);
+  getQuestionsPages(json: string): QuestionBase[][] {
+    const questions: QuestionBase[] = this.getQuestions(json);
 
-    return questionsByPages.map((pageQuestions: QuestionBase[]) => ({
-      form: this._toFormGroup(pageQuestions, attributes, preferences, storedQuestions, isSubmitted),
-      questions: pageQuestions,
-    }));
+    return this.splitByPages(questions);
   }
 
-  private _splitByContractPages(
+  toFormGroup(
     questions: QuestionBase[],
-    attributes: PatronAttribute[],
-    contractInfo: ContractInfo,
-    storedQuestions: QuestionsEntries
-  ): QuestionsPage[] {
-    const questionsByPages: QuestionBase[][] = this._splitByPages(questions);
-
-    return questionsByPages.map((pageQuestions: QuestionBase[]) => ({
-      form: this._toContractFormGroup(pageQuestions, attributes, contractInfo, storedQuestions),
-      questions: pageQuestions,
-    }));
-  }
-
-  private _toFormGroup(
-    questions: QuestionBase[],
-    attributes: PatronAttribute[],
-    preferences: PatronPreference[],
     storedQuestions: QuestionsEntries,
-    isSubmitted: boolean
+    iteratee: (group: any, question: QuestionFormControl, questionName: string, storedValue: string) => void
   ): FormGroup {
     let group: any = {};
 
@@ -199,97 +83,28 @@ export class QuestionsService {
         const questionName: string = question.name;
         const storedValue: any = storedQuestions && storedQuestions[questionName];
 
-        if (question instanceof QuestionCheckboxGroup) {
-          group[questionName] = this._toQuestionCheckboxControl(storedValue, question);
-        } else if (question instanceof QuestionReorder) {
-          group[questionName] = this._toQuestionReorderControl(storedValue, question, preferences);
-        } else {
-          group[questionName] = this._toFormControl(storedValue, question, attributes, isSubmitted);
-        }
+        iteratee(group, question, questionName, storedValue);
       });
 
     return new FormGroup(group);
   }
 
-  private _toContractFormGroup(
-    questions: QuestionBase[],
-    attributes: PatronAttribute[],
-    contractInfo: ContractInfo,
-    storedQuestions: QuestionsEntries
-  ): FormGroup {
-    let group: any = {};
+  toQuestionCheckboxControl(storedValue: any, question: QuestionCheckboxGroup): FormArray {
+    const values: QuestionCheckboxGroupValue[] = storedValue || question.values;
+    const controls: FormControl[] = values.map((value: QuestionCheckboxGroupValue) => new FormControl(value.selected));
 
-    questions
-      .filter((question: QuestionBase) => question && (question as QuestionFormControl).name)
-      .forEach((question: QuestionFormControl) => {
-        const questionName: string = question.name;
-        const storedValue: any = storedQuestions && storedQuestions[questionName];
-
-        if (question instanceof QuestionCheckboxGroup) {
-          group[questionName] = this._toQuestionCheckboxControl(storedValue, question);
-        } else {
-          group[questionName] = this._toContractFormControl(storedValue, question, attributes, contractInfo);
-        }
-      });
-
-    return new FormGroup(group);
+    return new FormArray(controls);
   }
 
-  private _toFormControl(
-    storedValue: any,
-    question: QuestionFormControl,
-    attributes: PatronAttribute[],
-    isSubmitted: boolean
-  ): FormControl {
-    let value: any = storedValue;
+  getAttributeValue(attributes: Attribute[], question: QuestionFormControl): string {
+    const foundAttribute: Attribute = attributes.find(
+      (attribute: Attribute) => attribute.attributeConsumerKey === question.consumerKey
+    );
 
-    if (!isDefined(value)) {
-      const foundAttribute: PatronAttribute = attributes.find(
-        (attribute: PatronAttribute) => attribute.attributeConsumerKey === question.consumerKey
-      );
-
-      value = foundAttribute ? foundAttribute.value : '';
-    }
-
-    const validators: ValidatorFn[] = [];
-
-    if (question.required) {
-      validators.push(Validators.required);
-    }
-
-    if (question instanceof QuestionTextbox) {
-      this._addDataTypeValidator(question, validators);
-    }
-
-    return new FormControl({ value, disabled: isSubmitted }, validators);
+    return foundAttribute ? foundAttribute.value : '';
   }
 
-  private _toContractFormControl(
-    storedValue: any,
-    question: QuestionFormControl,
-    attributes: PatronAttribute[],
-    contractInfo: ContractInfo
-  ): FormControl {
-    let value: any = storedValue;
-
-    if (!isDefined(value)) {
-      if (question instanceof QuestionContractDetails) {
-        const contractKey: string = CONTRACT_DETAIL_KEYS[question.contractId];
-
-        value = contractInfo[contractKey] || '';
-      } else {
-        const foundAttribute: PatronAttribute = attributes.find(
-          (attribute: PatronAttribute) => attribute.attributeConsumerKey === question.consumerKey
-        );
-
-        value = foundAttribute ? foundAttribute.value : '';
-      }
-    }
-
-    return new FormControl({ value, disabled: true });
-  }
-
-  private _addDataTypeValidator(question: QuestionTextbox, validators: ValidatorFn[]): void {
+  addDataTypeValidator(question: QuestionTextbox, validators: ValidatorFn[]): void {
     const dataType: string = question.dataType ? question.dataType.toLowerCase() : null;
     const dataTypeValidator: ValidatorFn = this._dataTypesValidators[dataType];
 
@@ -298,26 +113,38 @@ export class QuestionsService {
     }
   }
 
-  private _toQuestionCheckboxControl(storedValue: any, question: QuestionCheckboxGroup): FormArray {
-    const values: QuestionCheckboxGroupValue[] = storedValue || question.values;
-    const controls: FormControl[] = values.map((value: QuestionCheckboxGroupValue) => new FormControl(value.selected));
+  private _mapToQuestions(questions: any[]): QuestionBase[] {
+    return questions.map((question: any) => {
+      if (!question || !question.type) {
+        return new QuestionBase();
+      }
 
-    return new FormArray(controls);
-  }
+      if (!QuestionConstructorsMap[question.type]) {
+        return new QuestionBase(question);
+      }
 
-  private _toQuestionReorderControl(
-    storedValue: any,
-    question: QuestionReorder,
-    preferences: PatronPreference[]
-  ): FormArray {
-    const values: QuestionReorderValue[] = storedValue || question.values;
-    const selectedValues: QuestionReorderValue[] = values.filter((value: QuestionReorderValue) => value.selected);
-    const controls: FormControl[] = selectedValues
-      .sort((current: QuestionReorderValue, next: QuestionReorderValue) =>
-        QuestionReorder.sort(preferences, current, next, selectedValues.length)
-      )
-      .map((value: QuestionReorderValue) => new FormControl(value));
+      if (
+        (question as QuestionBlockquote).type === 'text' &&
+        (question as QuestionBlockquote).subtype === 'blockquote'
+      ) {
+        return new QuestionBlockquote(question);
+      } else if ((question as QuestionReorder).facilityPicker) {
+        return new QuestionReorder(question);
+      } else if ((question as QuestionChargeScheduleBase).chargeSchedule) {
+        return new QuestionChargeScheduleBase(question);
+      } else if (
+        (question as QuestionContractDetails).source &&
+        (question as QuestionContractDetails).source === 'CONTRACT_DETAILS'
+      ) {
+        return new QuestionContractDetails(question);
+      } else if (
+        (question as QuestionFacilityAttributes).source &&
+        (question as QuestionFacilityAttributes).source === 'FACILITY'
+      ) {
+        return new QuestionFacilityAttributes(question);
+      }
 
-    return new FormArray(controls);
+      return new QuestionConstructorsMap[question.type](question);
+    });
   }
 }

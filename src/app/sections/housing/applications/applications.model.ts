@@ -1,4 +1,5 @@
 import { isDefined } from '../utils';
+import { Attribute, AttributeOptions } from '@sections/housing/attributes/attributes.model';
 
 export enum ApplicationStatus {
   New = 1,
@@ -115,30 +116,21 @@ export class PatronApplication implements PatronApplicationOptions {
   }
 }
 
-export interface PatronAttributeOptions {
-  attributeConsumerKey: number;
-  value: string;
+export interface PatronAttributeOptions extends AttributeOptions {
   key?: number;
   patronKey?: number;
-  effectiveDate?: string;
-  endDate?: string;
 }
 
-export class PatronAttribute {
-  attributeConsumerKey: number;
-  value: string;
+export class PatronAttribute extends Attribute implements PatronAttributeOptions {
   key?: number;
   patronKey?: number;
-  effectiveDate?: string;
-  endDate?: string;
 
   constructor(options: PatronAttributeOptions) {
     if (options == null || typeof options !== 'object') {
       options = {} as PatronAttributeOptions;
     }
 
-    this.attributeConsumerKey = Number(options.attributeConsumerKey);
-    this.value = String(options.value);
+    super(options);
 
     if (isDefined(options.key)) {
       this.key = Number(options.key);
@@ -146,14 +138,6 @@ export class PatronAttribute {
 
     if (isDefined(options.patronKey)) {
       this.patronKey = Number(options.patronKey);
-    }
-
-    if (isDefined(options.effectiveDate)) {
-      this.effectiveDate = String(options.effectiveDate);
-    }
-
-    if (isDefined(options.endDate)) {
-      this.endDate = String(options.endDate);
     }
   }
 }
@@ -248,11 +232,5 @@ export class ApplicationDetails implements ApplicationDetailsOptions {
     if (Array.isArray(options.patronPreferences)) {
       this.patronPreferences = options.patronPreferences.map((preference: any) => new PatronPreference(preference));
     }
-  }
-
-  static toApplicationsDetails(applications: any): ApplicationDetails[] {
-    return Array.isArray(applications)
-      ? applications.map((application: any) => new ApplicationDetails(application))
-      : [];
   }
 }

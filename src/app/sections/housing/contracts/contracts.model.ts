@@ -2,6 +2,7 @@ import { isDefined } from '../utils';
 
 import { PatronAttribute } from '../applications/applications.model';
 import { ChargeSchedule } from '@sections/housing/charge-schedules/charge-schedules.model';
+import { FacilityAttribute } from '@sections/housing/facility-attributes/facility-attributes.model';
 
 export enum ContractStatus {
   Preliminary = 1,
@@ -192,49 +193,6 @@ export class ContractInfo implements ContractInfoOptions {
 
     if (isDefined(options.dateTimeSigned)) {
       this.dateTimeSigned = String(options.dateTimeSigned);
-    }
-  }
-}
-
-export interface FacilityAttributeOptions {
-  attributeConsumerKey: number;
-  value: string;
-  facilityAttributeKey?: number;
-  facilityKey?: number;
-  effectiveDate?: string;
-  endDate?: string;
-}
-
-export class FacilityAttribute implements FacilityAttributeOptions {
-  attributeConsumerKey: number;
-  value: string;
-  facilityAttributeKey?: number;
-  facilityKey?: number;
-  effectiveDate?: string;
-  endDate?: string;
-
-  constructor(options: FacilityAttributeOptions) {
-    if (!isDefined(options) || typeof options !== 'object') {
-      options = {} as FacilityAttributeOptions;
-    }
-
-    this.attributeConsumerKey = Number(options.attributeConsumerKey);
-    this.value = String(options.value);
-
-    if (isDefined(options.facilityAttributeKey)) {
-      this.facilityAttributeKey = Number(options.facilityAttributeKey);
-    }
-
-    if (isDefined(options.facilityKey)) {
-      this.facilityKey = Number(options.facilityKey);
-    }
-
-    if (isDefined(options.effectiveDate)) {
-      this.effectiveDate = String(options.effectiveDate);
-    }
-
-    if (isDefined(options.endDate)) {
-      this.endDate = String(options.endDate);
     }
   }
 }

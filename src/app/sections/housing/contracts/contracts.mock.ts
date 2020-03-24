@@ -2,9 +2,10 @@ import { generateQuestions } from '../questions/questions.mock';
 import { generatePatronAttributes } from '../applications/applications.mock';
 import { generateChargeSchedules } from '@sections/housing/charge-schedules/charge-schedules.mock';
 
-import { ContractListDetails, FacilityAttribute, ContractDetails, ContractInfo } from './contracts.model';
+import { ContractListDetails, ContractDetails, ContractInfo } from './contracts.model';
 import { PatronAttribute } from '../applications/applications.model';
 import { ChargeSchedule } from '@sections/housing/charge-schedules/charge-schedules.model';
+import { FacilityAttribute } from '@sections/housing/facility-attributes/facility-attributes.model';
 
 export function generateContractListDetails(_: any, index: number): ContractListDetails {
   const nowISO: string = new Date().toISOString();

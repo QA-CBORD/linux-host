@@ -8,7 +8,7 @@ import { QuestionFormControl, QuestionBase } from '../questions/types';
 @Injectable({
   providedIn: 'root',
 })
-export class AttributesService {
+export class PatronAttributesService {
   getAttributes(
     patronAttributes: PatronAttribute[],
     parsedJson: any[],

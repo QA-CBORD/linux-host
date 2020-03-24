@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 
 import { QuestionsEntries } from '../questions/questions-storage.service';
 
-import { FacilityAttribute } from '../contracts/contracts.model';
 import { QuestionFormControl, QuestionBase } from '../questions/types';
+import { FacilityAttribute } from './facility-attributes.model';
 
 @Injectable({
   providedIn: 'root',

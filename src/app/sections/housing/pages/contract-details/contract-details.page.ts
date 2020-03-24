@@ -80,7 +80,7 @@ export class ContractDetailsPage implements OnInit, OnDestroy {
     if (!isLastPage) {
       this._next();
     } else {
-      this._update(this.contractKey);
+      this._update(this.contractElementKey);
     }
   }
 
@@ -118,7 +118,7 @@ export class ContractDetailsPage implements OnInit, OnDestroy {
   }
 
   private _initPagesObservable(): void {
-    this.pages$ = this._questionsService.getContractPages(this.contractKey);
+    this.pages$ = this._contractsService.getQuestions(this.contractKey);
   }
 
   private _next(): void {

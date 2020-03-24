@@ -1,15 +1,16 @@
 import { Injectable } from '@angular/core';
 import { Observable, forkJoin, of } from 'rxjs';
-import { map, tap, switchMap, mapTo } from 'rxjs/operators';
+import { map, tap, switchMap, mapTo, withLatestFrom } from 'rxjs/operators';
 
 import { Environment } from '../../../environment';
-import { parseJsonToArray } from '../utils';
+import { isDefined, parseJsonToArray } from '../utils';
 
 import { HousingProxyService } from '../housing-proxy.service';
-import { AttributesService } from '../attributes/attributes.service';
+import { PatronAttributesService } from '../patron-attributes/patron-attributes.service';
 import { PreferencesService } from '../preferences/preferences.service';
 import { ApplicationsStateService } from './applications-state.service';
-import { QuestionsStorageService, StoredApplication } from '../questions/questions-storage.service';
+import { QuestionsEntries, QuestionsStorageService, StoredApplication } from '../questions/questions-storage.service';
+import { QuestionsService } from '@sections/housing/questions/questions.service';
 
 import { ResponseStatus } from '../housing.model';
 import {
@@ -21,6 +22,16 @@ import {
   ApplicationRequest,
   ApplicationDefinition,
 } from './applications.model';
+import {
+  QuestionCheckboxGroup,
+  QuestionFormControl,
+  QuestionReorder,
+  QuestionReorderValue,
+  QuestionsPage,
+  QuestionTextbox,
+} from '@sections/housing/questions/questions.model';
+import { QuestionBase } from '@sections/housing/questions/types';
+import { FormArray, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 
 @Injectable({
   providedIn: 'root',
@@ -32,11 +43,28 @@ export class ApplicationsService {
 
   constructor(
     private _housingProxyService: HousingProxyService,
-    private _attributesService: AttributesService,
+    private _patronAttributesService: PatronAttributesService,
     private _preferencesService: PreferencesService,
     private _applicationsStateService: ApplicationsStateService,
-    private _questionsStorageService: QuestionsStorageService
+    private _questionsStorageService: QuestionsStorageService,
+    private _questionsService: QuestionsService
   ) {}
+
+  getQuestions(key: number): Observable<QuestionsPage[]> {
+    return this._questionsStorageService.getQuestions(key).pipe(
+      withLatestFrom(this._applicationsStateService.applicationDetails$),
+      map(([storedQuestions, applicationDetails]: [QuestionsEntries, ApplicationDetails]) => {
+        const pages: QuestionBase[][] = this._questionsService.getQuestionsPages(
+          applicationDetails.applicationDefinition.applicationFormJson
+        );
+        const patronApplication: PatronApplication = applicationDetails.patronApplication;
+        const status: ApplicationStatus = patronApplication && patronApplication.status;
+        const isSubmitted = status === ApplicationStatus.Submitted;
+
+        return this._getPages(pages, storedQuestions, applicationDetails, isSubmitted);
+      })
+    );
+  }
 
   submitApplication(
     applicationKey: number,
@@ -121,6 +149,89 @@ export class ApplicationsService {
     );
   }
 
+  private _getPages(
+    pages: QuestionBase[][],
+    storedQuestions: QuestionsEntries,
+    applicationDetails: ApplicationDetails,
+    isSubmitted: boolean
+  ): QuestionsPage[] {
+    return pages.map((page: QuestionBase[]) => ({
+      form: this._toFormGroup(page, storedQuestions, applicationDetails, isSubmitted),
+      questions: page,
+    }));
+  }
+
+  private _toFormGroup(
+    questions: QuestionBase[],
+    storedQuestions: QuestionsEntries,
+    applicationDetails: ApplicationDetails,
+    isSubmitted: boolean
+  ): FormGroup {
+    return this._questionsService.toFormGroup(
+      questions,
+      storedQuestions,
+      (group: any, question: QuestionFormControl, questionName: string, storedValue: string) => {
+        if (question instanceof QuestionCheckboxGroup) {
+          group[questionName] = this._questionsService.toQuestionCheckboxControl(storedValue, question);
+        } else if (question instanceof QuestionReorder) {
+          group[questionName] = this._toQuestionReorderControl(
+            storedValue,
+            question,
+            applicationDetails.patronPreferences
+          );
+        } else {
+          group[questionName] = this._toFormControl(
+            storedValue,
+            question,
+            applicationDetails.patronAttributes,
+            isSubmitted
+          );
+        }
+      }
+    );
+  }
+
+  private _toQuestionReorderControl(
+    storedValue: any,
+    question: QuestionReorder,
+    preferences: PatronPreference[]
+  ): FormArray {
+    const values: QuestionReorderValue[] = storedValue || question.values;
+    const selectedValues: QuestionReorderValue[] = values.filter((value: QuestionReorderValue) => value.selected);
+    const controls: FormControl[] = selectedValues
+      .sort((current: QuestionReorderValue, next: QuestionReorderValue) =>
+        QuestionReorder.sort(preferences, current, next, selectedValues.length)
+      )
+      .map((value: QuestionReorderValue) => new FormControl(value));
+
+    return new FormArray(controls);
+  }
+
+  private _toFormControl(
+    storedValue: any,
+    question: QuestionFormControl,
+    attributes: PatronAttribute[],
+    isSubmitted: boolean
+  ): FormControl {
+    let value: any = storedValue;
+
+    if (!isDefined(value)) {
+      value = this._questionsService.getAttributeValue(attributes, question);
+    }
+
+    const validators: ValidatorFn[] = [];
+
+    if (question.required) {
+      validators.push(Validators.required);
+    }
+
+    if (question instanceof QuestionTextbox) {
+      this._questionsService.addDataTypeValidator(question, validators);
+    }
+
+    return new FormControl({ value, disabled: isSubmitted }, validators);
+  }
+
   private _updateCreatedDateTime(key: number, patronApplication: PatronApplication): Observable<string> {
     const createdDateTime: string = patronApplication && patronApplication.createdDateTime;
 
@@ -139,7 +250,7 @@ export class ApplicationsService {
       switchMap((storedApplication: StoredApplication) => {
         const parsedJson: any[] = parseJsonToArray(applicationDefinition.applicationFormJson);
         const questions = storedApplication.questions;
-        const patronAttributes: PatronAttribute[] = this._attributesService.getAttributes(
+        const patronAttributes: PatronAttribute[] = this._patronAttributesService.getAttributes(
           applicationDetails.patronAttributes,
           parsedJson,
           questions
