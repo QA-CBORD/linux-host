@@ -1,6 +1,8 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
-import { SignContractEvent } from './sign-contract.model';
+import { ContractsService } from '@sections/housing/contracts/contracts.service';
+
+import { QuestionDateSigned } from '@sections/housing/questions/types';
 
 @Component({
   selector: 'st-sign-contract',
@@ -9,16 +11,11 @@ import { SignContractEvent } from './sign-contract.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SignContractComponent {
-  @Output() signed: EventEmitter<SignContractEvent> = new EventEmitter<SignContractEvent>();
+  @Input() question: QuestionDateSigned;
 
-  isSigned: boolean = false;
+  constructor(public contractsService: ContractsService) {}
 
-  dateTime: string;
-
-  signContract(): void {
-    this.isSigned = !this.isSigned;
-    this.dateTime = new Date().toISOString();
-
-    this.signed.emit(new SignContractEvent(this.isSigned, this.dateTime));
+  signContract(event: CustomEvent): void {
+    this.contractsService.sign(event.detail);
   }
 }

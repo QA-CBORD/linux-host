@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { map, withLatestFrom } from 'rxjs/operators';
 
 import { isDefined } from '@sections/housing/utils';
@@ -12,7 +12,7 @@ import { QuestionsEntries, QuestionsStorageService } from '@sections/housing/que
 import { ContractsStateService } from '@sections/housing/contracts/contracts-state.service';
 
 import { ResponseStatus } from '../housing.model';
-import { CONTRACT_DETAIL_KEYS, ContractDetails, ContractInfo, ContractRequest } from './contracts.model';
+import { CONTRACT_DETAIL_FIELDS, ContractDetails, ContractInfo, ContractRequest } from './contracts.model';
 import {
   QuestionBase,
   QuestionChargeSchedule,
@@ -33,6 +33,10 @@ export class ContractsService {
   private readonly _patronContractsUrl: string = `${
     Environment.currentEnvironment.housing_aws_url
   }/patron-applications/v.1.0/patron-contracts`;
+
+  private _isSigned: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+
+  isSigned$: Observable<boolean> = this._isSigned.asObservable();
 
   constructor(
     private _housingProxyService: HousingProxyService,
@@ -61,6 +65,10 @@ export class ContractsService {
     });
 
     return this._housingProxyService.put(this._patronContractsUrl, body);
+  }
+
+  sign(isSigned: boolean): void {
+    this._isSigned.next(isSigned);
   }
 
   private _getQuestionsPages(contractDetails: ContractDetails): QuestionBase[][] {
@@ -134,7 +142,7 @@ export class ContractsService {
   }
 
   private _getContractDetailValue(question: QuestionContractDetails, contractInfo: ContractInfo): string {
-    const contractKey: string = CONTRACT_DETAIL_KEYS[question.contractId];
+    const contractKey: string = CONTRACT_DETAIL_FIELDS[question.contractId];
 
     return contractInfo[contractKey] || '';
   }

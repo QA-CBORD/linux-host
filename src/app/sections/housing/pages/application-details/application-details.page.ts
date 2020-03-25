@@ -13,7 +13,6 @@ import { FormGroup } from '@angular/forms';
 import { Observable, Subscription, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 
-import { QuestionsService } from '../../questions/questions.service';
 import { ApplicationsService } from '../../applications/applications.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { HousingService } from '../../housing.service';
@@ -149,8 +148,7 @@ export class ApplicationDetailsPage implements OnInit, OnDestroy {
   }
 
   private _handleSuccess(): void {
-    this._loadingService.closeSpinner();
-    this._router.navigate(['/housing/dashboard']).then(() => this._housingService.refreshDefinitions());
+    this._housingService.handleSuccess();
   }
 
   private _handleErrors(error: any): void {

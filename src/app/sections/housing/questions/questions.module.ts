@@ -11,6 +11,7 @@ import { ControlErrorsModule } from '@shared/ui-components/control-errors/contro
 import { RadioGroupModule } from '@shared/ui-components/radio-group/radio-group.module';
 import { FacilityPickerModule } from './facility-picker/facility-picker.module';
 import { ChargeSchedulesModule } from '../charge-schedules/charge-schedules.module';
+import { SignContractModule } from '@sections/housing/sign-contract/sign-contract.module';
 
 import { QuestionComponent } from './question.component';
 import { EmptyFormControlDirective } from '../empty-form-control/empty-form-control.directive';
@@ -27,6 +28,7 @@ const imports = [
   RadioGroupModule,
   FacilityPickerModule,
   ChargeSchedulesModule,
+  SignContractModule,
 ];
 const exports = [QuestionComponent];
 const declarations = [QuestionComponent, EmptyFormControlDirective];

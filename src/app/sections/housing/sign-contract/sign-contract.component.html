@@ -1,8 +1,11 @@
 <ion-item class="ion-no-padding form-checkbox" lines="none">
-  <ion-checkbox class="form-checkbox__control" mode="md" slot="start" (ionChange)="signContract()"></ion-checkbox>
-  <ion-label class="form-label">I accept terms and conditions</ion-label>
-</ion-item>
+  <ion-checkbox
+    class="form-checkbox__control"
+    mode="md"
+    slot="start"
+    [checked]="contractsService.isSigned$ | async"
+    (ionChange)="signContract($event)"
+  ></ion-checkbox>
 
-<ion-item lines="none" class="ion-no-padding sign-contract__datetime" *ngIf="isSigned && dateTime">
-  Signed: {{ dateTime | date: 'MM/dd/yyyy HH:mm' }}
+  <ion-label class="form-label">{{ question.label }}</ion-label>
 </ion-item>

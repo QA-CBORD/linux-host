@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   OnDestroy,
   OnInit,
@@ -20,9 +21,7 @@ import { HousingService } from '../../housing.service';
 import { StepperComponent } from '../../stepper/stepper.component';
 import { QuestionComponent } from '../../questions/question.component';
 
-import { Response } from '../../housing.model';
 import { QuestionsPage } from '../../questions/questions.model';
-import { SignContractEvent } from '@sections/housing/sign-contract/sign-contract.model';
 import { ContractDetails } from '../../contracts/contracts.model';
 
 @Component({
@@ -46,9 +45,11 @@ export class ContractDetailsPage implements OnInit, OnDestroy {
 
   contractElementKey: number;
 
-  isSubmitted: boolean;
+  isSubmitted: boolean = false;
 
-  isSigned: boolean = false;
+  isSigned: boolean = true;
+
+  canSubmit: boolean = true;
 
   constructor(
     private _route: ActivatedRoute,
@@ -57,7 +58,8 @@ export class ContractDetailsPage implements OnInit, OnDestroy {
     private _router: Router,
     private _toastController: ToastController,
     private _loadingService: LoadingService,
-    private _housingService: HousingService
+    private _housingService: HousingService,
+    private _changeDetector: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -66,6 +68,7 @@ export class ContractDetailsPage implements OnInit, OnDestroy {
 
     this._initContractDetailsObservable();
     this._initPagesObservable();
+    this._initIsSignedObservable();
   }
 
   ngOnDestroy(): void {
@@ -82,10 +85,6 @@ export class ContractDetailsPage implements OnInit, OnDestroy {
     } else {
       this._update(this.contractElementKey);
     }
-  }
-
-  signContract(signContractEvent: SignContractEvent): void {
-    this.isSigned = signContractEvent.isSigned;
   }
 
   private _update(contractKey: number): void {
@@ -107,6 +106,7 @@ export class ContractDetailsPage implements OnInit, OnDestroy {
     this.contractDetails$ = this._housingService.getContractDetails(this.contractKey, queryParams).pipe(
       tap((contractDetails: ContractDetails) => {
         this.isSubmitted = !!contractDetails.contractInfo.dateTimeSigned;
+        this.canSubmit = !this.isSubmitted && this.isSigned;
         this._loadingService.closeSpinner();
       }),
       catchError((error: any) => {
@@ -126,11 +126,20 @@ export class ContractDetailsPage implements OnInit, OnDestroy {
   }
 
   private _handleSuccess(): void {
-    this._loadingService.closeSpinner();
-    this._router.navigate(['/housing/dashboard']).then(() => this._housingService.refreshDefinitions());
+    this._housingService.handleSuccess();
   }
 
   private _handleErrors(error: any): void {
     this._housingService.handleErrors(error);
+  }
+
+  private _initIsSignedObservable() {
+    const isSignedSubscription: Subscription = this._contractsService.isSigned$.subscribe((isSigned: boolean) => {
+      this.isSigned = isSigned;
+      this.canSubmit = !this.isSubmitted && isSigned;
+      this._changeDetector.markForCheck();
+    });
+
+    this._subscription.add(isSignedSubscription);
   }
 }

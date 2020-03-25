@@ -15,3 +15,13 @@ export interface QuestionsPage {
   form: FormGroup;
   questions: QuestionBase[];
 }
+
+export enum QUESTIONS_SOURCES {
+  PATRON = 'PATRON',
+  FACILITY = 'FACILITY',
+  CORE = 'CORE',
+  FACILITY_TYPE = 'FACILITY_TYPE',
+  ASSET_TYPE = 'ASSET_TYPE',
+  CELL_PROVIDER = 'CELL_PROVIDER',
+  CONTRACT_DETAILS = 'CONTRACT_DETAILS',
+}

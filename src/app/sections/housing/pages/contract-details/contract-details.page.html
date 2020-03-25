@@ -62,7 +62,7 @@
               class="btn contract-details__submit stepper-footer__button--right"
               mode="ios"
               type="submit"
-              [disabled]="isSigned"
+              [disabled]="!canSubmit"
               *ngIf="isLastPage"
             >
               Submit

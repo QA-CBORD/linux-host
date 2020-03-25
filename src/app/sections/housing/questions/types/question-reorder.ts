@@ -37,6 +37,7 @@ export class QuestionReorder extends QuestionFormControl implements QuestionReor
   constructor(options: QuestionReorderOptions = {}) {
     super(options);
 
+    this.type = 'facility-picker';
     this.inline = define(options.inline, Boolean(options.inline));
     this.facilityPicker = define(options.facilityPicker, Boolean(options.facilityPicker));
     this.values = options.values || [];

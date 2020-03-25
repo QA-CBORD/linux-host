@@ -83,42 +83,42 @@
     <st-charge-schedules class="question__section" *ngSwitchCase="'charge-schedules'" [question]="question">
     </st-charge-schedules>
 
+    <st-sign-contract *ngSwitchCase="'date-signed'" [question]="question"></st-sign-contract>
+
+    <st-facility-picker
+      class="question__section"
+      [question]="question"
+      [parentForm]="parentGroup"
+      [isDisabled]="isSubmitted"
+      *ngSwitchCase="'facility-picker'"
+    ></st-facility-picker>
+
     <ng-container *ngSwitchCase="'checkbox-group'">
-      <st-facility-picker
-        class="question__section"
-        [question]="question"
-        [parentForm]="parentGroup"
-        [isDisabled]="isSubmitted"
-        *ngIf="question['facilityPicker']"
-      ></st-facility-picker>
+      <h3 class="form__secondary-header">{{ question.label }}</h3>
 
-      <div *ngIf="!question['facilityPicker']" class="question__section">
-        <h3 class="form__secondary-header">{{ question.label }}</h3>
+      <st-control-errors
+        class="control-hint--no-indent"
+        [control]="parentGroup.get(question['name'])"
+        [errorMessages]="errorMessages"
+      ></st-control-errors>
 
-        <st-control-errors
-          class="control-hint--no-indent"
-          [control]="parentGroup.get(question['name'])"
-          [errorMessages]="errorMessages"
-        ></st-control-errors>
-
-        <ion-item
-          [formArrayName]="question['name']"
-          *ngFor="let item of question['values']; index as idx; trackBy: trackByLabel"
-          class="ion-no-padding form-checkbox"
-          lines="none"
-        >
-          <ion-checkbox
-            class="form-checkbox__control"
-            mode="md"
-            [checked]="item.selected"
-            [formControlName]="idx"
-            [value]="item.value"
-            [disabled]="isSubmitted"
-            slot="start"
-          ></ion-checkbox>
-          <ion-label class="form-label">{{ item.label }}</ion-label>
-        </ion-item>
-      </div>
+      <ion-item
+        [formArrayName]="question['name']"
+        *ngFor="let item of question['values']; index as idx; trackBy: trackByLabel"
+        class="ion-no-padding form-checkbox"
+        lines="none"
+      >
+        <ion-checkbox
+          class="form-checkbox__control"
+          mode="md"
+          [checked]="item.selected"
+          [formControlName]="idx"
+          [value]="item.value"
+          [disabled]="isSubmitted"
+          slot="start"
+        ></ion-checkbox>
+        <ion-label class="form-label">{{ item.label }}</ion-label>
+      </ion-item>
     </ng-container>
 
     <div *ngSwitchCase="'radio-group'" class="question__section">

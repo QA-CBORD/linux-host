@@ -17,13 +17,15 @@ import {
   QuestionTextbox,
   QuestionContractDetails,
   QuestionChargeScheduleBase,
+  QuestionDateSigned,
 } from './types';
 
-import { QuestionReorder } from './questions.model';
+import { QuestionReorder, QUESTIONS_SOURCES } from './questions.model';
 import { QuestionFacilityAttributes } from '@sections/housing/questions/types/question-facility-attributes';
 import { QuestionBlockquote } from '@sections/housing/questions/types/question-blockquote';
 import { Attribute } from '@sections/housing/attributes/attributes.model';
 import { QuestionsEntries } from '@sections/housing/questions/questions-storage.service';
+import { CONTRACT_DETAIL_KEYS } from '@sections/housing/contracts/contracts.model';
 
 export const QuestionConstructorsMap = {
   header: QuestionHeader,
@@ -114,37 +116,47 @@ export class QuestionsService {
   }
 
   private _mapToQuestions(questions: any[]): QuestionBase[] {
-    return questions.map((question: any) => {
-      if (!question || !question.type) {
-        return new QuestionBase();
-      }
+    return questions
+      .map((question: any) => {
+        if (!question || !question.type) {
+          return new QuestionBase();
+        }
 
-      if (!QuestionConstructorsMap[question.type]) {
-        return new QuestionBase(question);
-      }
+        if (!QuestionConstructorsMap[question.type]) {
+          return new QuestionBase(question);
+        }
 
-      if (
-        (question as QuestionBlockquote).type === 'text' &&
-        (question as QuestionBlockquote).subtype === 'blockquote'
-      ) {
-        return new QuestionBlockquote(question);
-      } else if ((question as QuestionReorder).facilityPicker) {
-        return new QuestionReorder(question);
-      } else if ((question as QuestionChargeScheduleBase).chargeSchedule) {
-        return new QuestionChargeScheduleBase(question);
-      } else if (
-        (question as QuestionContractDetails).source &&
-        (question as QuestionContractDetails).source === 'CONTRACT_DETAILS'
-      ) {
-        return new QuestionContractDetails(question);
-      } else if (
-        (question as QuestionFacilityAttributes).source &&
-        (question as QuestionFacilityAttributes).source === 'FACILITY'
-      ) {
-        return new QuestionFacilityAttributes(question);
-      }
+        if (
+          (question as QuestionBlockquote).type === 'paragraph' &&
+          (question as QuestionBlockquote).subtype === 'blockquote'
+        ) {
+          return new QuestionBlockquote(question);
+        } else if ((question as QuestionReorder).facilityPicker) {
+          return new QuestionReorder(question);
+        } else if ((question as QuestionChargeScheduleBase).chargeSchedule) {
+          return new QuestionChargeScheduleBase(question);
+        } else if ((question as QuestionContractDetails).source) {
+          if ((question as QuestionContractDetails).source === QUESTIONS_SOURCES.CONTRACT_DETAILS) {
+            if ((question as QuestionContractDetails).contractId === CONTRACT_DETAIL_KEYS.DATE_SIGNED) {
+              return new QuestionDateSigned(question);
+            } else {
+              return new QuestionContractDetails(question);
+            }
+          } else if ((question as QuestionFacilityAttributes).source === QUESTIONS_SOURCES.FACILITY) {
+            return new QuestionFacilityAttributes(question);
+          }
+        }
 
-      return new QuestionConstructorsMap[question.type](question);
-    });
+        return new QuestionConstructorsMap[question.type](question);
+      })
+      .sort(this._sortByQuestionDateSigned);
+  }
+
+  private _sortByQuestionDateSigned(current: QuestionBase, next: QuestionBase): number {
+    if (current instanceof QuestionDateSigned) {
+      return 1;
+    }
+
+    return 0;
   }
 }

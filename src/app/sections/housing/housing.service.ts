@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
 import { Observable, of, forkJoin, Subject } from 'rxjs';
 import { map, switchMap, tap, catchError } from 'rxjs/operators';
@@ -40,7 +41,8 @@ export class HousingService {
     private _termsService: TermsService,
     private _applicationsService: ApplicationsService,
     private _loadingService: LoadingService,
-    private _toastController: ToastController
+    private _toastController: ToastController,
+    private _router: Router
   ) {}
 
   getDefinitions(termId: number) {
@@ -82,6 +84,11 @@ export class HousingService {
 
   getContractDetails(key: number, queryParams: string[] = []): Observable<ContractDetails> {
     return this.getDetails(key, queryParams).pipe(map((response: DetailsResponse) => response.contractDetails));
+  }
+
+  handleSuccess(): void {
+    this._loadingService.closeSpinner();
+    this._router.navigate(['/housing/dashboard']).then(() => this.refreshDefinitions());
   }
 
   handleErrors(error: any): void {

@@ -1,18 +1,20 @@
-<ion-item class="ion-no-padding terms" *ngIf="(terms$ | async) as terms">
-  <ion-label class="ion-text-center">
-    <span class="terms-label">{{ label }}</span>
-  </ion-label>
+<ng-container *ngIf="(terms$ | async) as terms">
+  <ion-item class="ion-no-padding terms" *ngIf="terms.length">
+    <ion-label class="ion-text-center">
+      <span class="terms-label">{{ label }}</span>
+    </ion-label>
 
-  <ion-select
-    class="terms-select"
-    interface="popover"
-    mode="md"
-    #termsSelect
-    [interfaceOptions]="customPopoverOptions"
-    (ionChange)="handleSelectTerm(termsSelect.value)"
-  >
-    <ion-select-option [value]="term" *ngFor="let term of terms; trackBy: trackById">
-      {{ term.termName }}
-    </ion-select-option>
-  </ion-select>
-</ion-item>
+    <ion-select
+      class="terms-select"
+      interface="popover"
+      mode="md"
+      #termsSelect
+      [interfaceOptions]="customPopoverOptions"
+      (ionChange)="handleSelectTerm(termsSelect.value)"
+    >
+      <ion-select-option [value]="term" *ngFor="let term of terms; trackBy: trackById">
+        {{ term.termName }}
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+</ng-container>
