@@ -148,8 +148,10 @@ export class AccessCardComponent implements OnInit {
 
   private addToAppleWallet() {
     this.nativeProvider.getIosData(NativeData.ADD_TO_APPLE_WALLET).then(value => {
-      let result = JSON.parse(value);
-      /// added to Apple Wallet success?
+      this.nativeProvider.getIosData(NativeData.APPLE_WALLET_INFO).then(value => {
+        this.appleWalletInfo = JSON.parse(value);
+        this.setAppleWalletMessage();
+      });
     });
   }
 }
