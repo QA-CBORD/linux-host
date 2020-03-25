@@ -78,6 +78,12 @@ export class DashboardPage implements OnInit {
         CONTENT_STINGS_DOMAINS.patronUi,
         CONTENT_STINGS_CATEGORIES.ordering,
         ORDERING_CONTENT_STRINGS.labelDashboard),
+      buttonConfig: {
+        title: this.contentStringsFacadeService.getContentStringValue$(
+          CONTENT_STINGS_DOMAINS.patronUi,
+          CONTENT_STINGS_CATEGORIES.ordering,
+          ORDERING_CONTENT_STRINGS.buttonDashboardStartOrder),
+      }
     });
 
     await this.tileConfigFacadeService.updateConfigById(TILES_ID.order, res);

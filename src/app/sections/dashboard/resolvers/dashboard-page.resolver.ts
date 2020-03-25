@@ -51,6 +51,10 @@ export class DashboardPageResolver implements Resolve<Observable<SettingInfoList
         CONTENT_STINGS_DOMAINS.patronUi,
         CONTENT_STINGS_CATEGORIES.ordering,
         ORDERING_CONTENT_STRINGS.labelDashboard),
+      this.contentStringsFacadeService.fetchContentString$(
+        CONTENT_STINGS_DOMAINS.patronUi,
+        CONTENT_STINGS_CATEGORIES.ordering,
+        ORDERING_CONTENT_STRINGS.buttonDashboardStartOrder),
     ];
   }
 }
