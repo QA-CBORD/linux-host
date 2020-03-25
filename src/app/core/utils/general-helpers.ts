@@ -1,4 +1,4 @@
-import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { AbstractControl, ValidationErrors, ValidatorFn, FormGroup, FormControl } from '@angular/forms';
 import { ServerErrorsInfo } from '@core/model/server_error/server-error.model';
 import { MonoTypeOperatorFunction, Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -85,3 +85,12 @@ export const cvvValidationFn: ValidatorFn = function({ value }) {
 export const getUserFullName = ({ firstName: fn, lastName: ln, middleName: mn }: UserInfo): string => {
   return fn || ln || mn ? `${fn || ''} ${mn || ''} ${ln || ''}` : 'Unknown Name';
 };
+
+export const validateAllFormFields = (formGroup: FormGroup) => {
+  Object.keys(formGroup.controls).forEach(field => {
+    const control: AbstractControl = formGroup.get(field);
+    if (control instanceof FormControl) {
+      control.markAsTouched({ onlySelf: true });
+    }
+  });
+}

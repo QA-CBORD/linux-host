@@ -7,6 +7,7 @@ import { LoadingService } from 'src/app/core/service/loading/loading.service';
 import { WHITESPACE_REGEXP, FOUR_DIGITS_REGEXP } from '@core/utils/regexp-patterns';
 import { Subscription } from 'rxjs';
 import { take, finalize } from 'rxjs/operators';
+import { validateAllFormFields } from '@core/utils/general-helpers';
 
 @Component({
   selector: 'st-add-credit-card',
@@ -68,6 +69,11 @@ export class AddCreditCardComponent implements OnInit {
   }
 
   onFormSubmit() {
+    if (this.ccForm.invalid) {
+      validateAllFormFields(this.ccForm);
+      return;
+    }
+
     const { cardNumber, expDate, securityCode, nameOnCC, billingAddress, zip } = this.ccForm.value;
     const accountTender = this.cardType === 'Visa' ? '4' : '3';
     const mediaValue = cardNumber.replace(WHITESPACE_REGEXP, '');
