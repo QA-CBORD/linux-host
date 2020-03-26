@@ -83,7 +83,11 @@
     <st-charge-schedules class="question__section" *ngSwitchCase="'charge-schedules'" [question]="question">
     </st-charge-schedules>
 
-    <st-sign-contract *ngSwitchCase="'date-signed'" [question]="question"></st-sign-contract>
+    <st-sign-contract
+      *ngSwitchCase="'date-signed'"
+      [question]="question"
+      [isSubmitted]="isSubmitted"
+    ></st-sign-contract>
 
     <st-facility-picker
       class="question__section"

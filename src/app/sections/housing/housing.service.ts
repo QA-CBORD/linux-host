@@ -13,6 +13,7 @@ import { ContractsStateService } from './contracts/contracts-state.service';
 import { TermsService } from './terms/terms.service';
 import { ApplicationsService } from './applications/applications.service';
 import { LoadingService } from '@core/service/loading/loading.service';
+import { ContractsService } from '@sections/housing/contracts/contracts.service';
 
 import { DefinitionsResponse, DetailsResponse, Response } from './housing.model';
 import { ApplicationDetails } from './applications/applications.model';
@@ -42,7 +43,8 @@ export class HousingService {
     private _applicationsService: ApplicationsService,
     private _loadingService: LoadingService,
     private _toastController: ToastController,
-    private _router: Router
+    private _router: Router,
+    private _contractsService: ContractsService
   ) {}
 
   getDefinitions(termId: number) {
@@ -83,7 +85,15 @@ export class HousingService {
   }
 
   getContractDetails(key: number, queryParams: string[] = []): Observable<ContractDetails> {
-    return this.getDetails(key, queryParams).pipe(map((response: DetailsResponse) => response.contractDetails));
+    return this.getDetails(key, queryParams)
+      .pipe(map((response: DetailsResponse) => response.contractDetails))
+      .pipe(
+        tap((details: ContractDetails) => {
+          if (details.contractInfo.dateTimeSigned) {
+            this._contractsService.sign(true);
+          }
+        })
+      );
   }
 
   handleSuccess(): void {

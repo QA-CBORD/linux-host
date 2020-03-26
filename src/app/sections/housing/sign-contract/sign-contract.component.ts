@@ -13,9 +13,11 @@ import { QuestionDateSigned } from '@sections/housing/questions/types';
 export class SignContractComponent {
   @Input() question: QuestionDateSigned;
 
+  @Input() isSubmitted: boolean;
+
   constructor(public contractsService: ContractsService) {}
 
   signContract(event: CustomEvent): void {
-    this.contractsService.sign(event.detail);
+    this.contractsService.sign(event.detail.checked);
   }
 }
