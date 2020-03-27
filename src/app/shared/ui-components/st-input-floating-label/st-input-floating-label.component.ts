@@ -20,6 +20,7 @@ export class StInputFloatingLabelComponent implements OnInit, ControlValueAccess
   @Input() maxlength: string = '';
   @Input() idd: string;
   @Input() isError: boolean;
+  @Input() inputMode: string = 'text';
 
   @HostBinding('class.disabled')
   @Input()

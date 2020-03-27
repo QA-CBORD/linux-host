@@ -34,6 +34,7 @@ export const validateMonthRange = ({ value }: AbstractControl): ValidationErrors
 };
 
 export const validateInputAmount = ({ value }: AbstractControl): ValidationErrors | null => {
+  if(!value) return null;
   const isStartedWithZero = ZERO_FIRST_REGEXP.test(value);
   const isIntegerOrDecemals = INT_DEC_REGEXP.test(value);
 

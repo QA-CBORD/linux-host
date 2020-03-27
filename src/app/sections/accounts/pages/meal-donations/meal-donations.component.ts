@@ -14,6 +14,7 @@ import {
   parseArrayFromString,
   validateInteger,
   validateCurrency,
+  validateInputAmount,
 } from '@core/utils/general-helpers';
 import { UserAccount } from '@core/model/account/account.model';
 import { SYSTEM_SETTINGS_CONFIG } from '@sections/accounts/accounts.config';
@@ -188,7 +189,7 @@ export class MealDonationsComponent implements OnInit {
       ),
       accountType === AccountType.MEALS
         ? formControlErrorDecorator(validateInteger, CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES.amount].mealInput)
-        : formControlErrorDecorator(validateCurrency, CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES.amount].currency),
+        : formControlErrorDecorator(validateInputAmount, CONTROL_ERROR[REQUEST_MEALS_CONTROL_NAMES.amount].currency),
     ];
 
     this.amount.setValidators(amountError);

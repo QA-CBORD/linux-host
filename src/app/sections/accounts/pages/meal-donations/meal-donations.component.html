@@ -70,9 +70,8 @@
           [control]="amount"
           [formControlName]="controlsNames.amount"
           [isDisabled]="!account.value"
-          title="Enter amount"          
-          type="number"
-          inputmode="decimal"
+          type="text"
+          [inputMode]="'decimal'"
           idd="amount"
         >
           <p class="meals-donate__control-error-msg">
