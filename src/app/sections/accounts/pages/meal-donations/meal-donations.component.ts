@@ -13,7 +13,6 @@ import {
   formControlErrorDecorator,
   parseArrayFromString,
   validateInteger,
-  validateCurrency,
   validateInputAmount,
 } from '@core/utils/general-helpers';
 import { UserAccount } from '@core/model/account/account.model';
