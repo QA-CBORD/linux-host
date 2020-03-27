@@ -21,7 +21,7 @@ import { AccountType, NAVIGATE } from 'src/app/app.global';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
 import { ConfirmDonatePopoverComponent } from './components/confirm-donate-popover';
 import { DonateModalComponent } from './components/donate-modal';
-import { MEAL_CONTENT_STRINGS } from '@sections/accounts/pages/meal-donations/meal-donation.config.ts';
+import { MEAL_CONTENT_STRINGS } from '@sections/accounts/pages/meal-donations/meal-donation.config';
 
 @Component({
   selector: 'st-meal-donations',
