@@ -42,7 +42,7 @@ enum Demo {
   cbordstudent_url = 'https://student.demo.cbord.com',
   secmsg_api = 'https://secmsg.api.demo.cbord.com',
   image_url = 'https://object-store.api.demo.cbord.com/image/',
-  housing_aws_url = 'https://z4ffq7e1m9.execute-api.us-east-1.amazonaws.com/qa',
+  housing_aws_url = 'https://z4ffq7e1m9.execute-api.us-east-1.amazonaws.com/dev',
 }
 
 enum Production {
