@@ -11,7 +11,7 @@ export const getTime = (date?: string) => determineDate(date).getTime();
 
 export const getDateTimeInGMT = (dueTime, locale, timeZone) => {
   const localTimezone = new Date().toLocaleString(locale, { timeZone });
-  const greenwichTimezone = new Date().toLocaleString(locale, { timeZone: 'Europe/London' });
+  const greenwichTimezone = new Date().toLocaleString(locale, { timeZone: 'GMT' });
   let timeZoneinGMT: any = (<any>new Date(greenwichTimezone) - <any>new Date(localTimezone)) / 1000 / 60 / 60;
   timeZoneinGMT = timeZoneinGMT * -1;
   const toString = JSON.stringify(timeZoneinGMT);
