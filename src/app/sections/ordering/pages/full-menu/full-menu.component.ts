@@ -10,7 +10,7 @@ import {
   ORDER_VALIDATION_ERRORS,
   ORDERING_CONTENT_STRINGS,
 } from '@sections/ordering/ordering.config';
-import { first, map, take, tap } from 'rxjs/operators';
+import { first, map, take } from 'rxjs/operators';
 import { ModalController, ToastController, PopoverController } from '@ionic/angular';
 import { OrderOptionsActionSheetComponent } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -42,7 +42,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     private readonly loadingService: LoadingService,
     private readonly toastController: ToastController,
     private readonly popoverCtrl: PopoverController,
-    private readonly orderingService: OrderingService
+    private readonly orderingService: OrderingService,
   ) {
   }
 

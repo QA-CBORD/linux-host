@@ -218,7 +218,7 @@ export class CartComponent implements OnInit {
     await modal.present();
   }
 
-  async removeOrderItem(id: string) {
+  async removeOrderItem(id: string) {    
     this.cdRef.detach();
     const removedItem = this.cartService.removeOrderItemFromOrderById(id);
 
@@ -226,6 +226,13 @@ export class CartComponent implements OnInit {
       this.cdRef.reattach();
       return;
     }
+
+    const { orderItems } = await this.cartService.orderInfo$.pipe(first()).toPromise();
+    if(!orderItems.length)  {
+      this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.fullMenu], { skipLocationChange: true })
+      return;
+    }
+
     const onError = async message => {
       await this.onValidateErrorToast(message);
       this.cartService.addOrderItems(removedItem);

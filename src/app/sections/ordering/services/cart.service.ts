@@ -30,14 +30,13 @@ export class CartService {
 
   get orderInfo$(): Observable<Partial<OrderInfo>> {
     return this._cart$.asObservable().pipe(
-      map(({ order }) => order),
-      distinctUntilChanged()
+      map(({ order }) => order)
     );
   }
 
   get menuInfo$(): Observable<MenuInfo> {
     return this._cart$.asObservable().pipe(
-      map(cart => cart.menu),
+      map(({ menu }) => menu),
       distinctUntilChanged()
     );
   }
