@@ -1,0 +1,12 @@
+<st-header
+        [isTitleShow]="true"
+        [backButtonTitle]="'Back'"
+        [backButtonIcon]="'ios-arrow-back'"
+        [isToolbarShow]="true"
+>
+</st-header>
+<ion-content>
+  <st-merchant-list (onMerchantClicked)="onMerchantClicked($event)"
+                    [merchants]="merchant$ | async">
+  </st-merchant-list>
+</ion-content>

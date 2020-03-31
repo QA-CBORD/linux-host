@@ -1,0 +1,50 @@
+@import 'tools';
+
+:host {
+  display: block;
+  width: 100%;
+}
+.info-block p {
+  margin: 0;
+}
+.info-block {
+  flex-basis: 60%;
+  flex-grow: 1;
+
+  &__merchant-name {
+    @include ellipsis;
+    @include font-nunito-heavy(16px);
+  }
+
+  &__distance {
+    color: #00000099;
+
+    min-height: 20px;
+    @include ellipsis;
+    @include font-nunito-semibold(12px);
+  }
+
+  &__access-state {
+    @include font-nunito-heavy(12px);
+
+    &--open {
+      color: $color-deep-sea;
+    }
+
+    &--closed {
+      color: $color-cardinal;
+    }
+  }
+
+  &__order-type {
+    color: $color-dodger-blue;
+
+    @include font-nunito-semibold(12px);
+  }
+
+  &__main-info {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+}

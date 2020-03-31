@@ -16,6 +16,7 @@ import { AddressInfo } from '@core/model/address/address-info';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { MerchantSearchOptions } from '@sections/ordering';
 
+/** This service should be global */
 @Injectable()
 export class OrderingApiService extends BaseService {
   private readonly serviceUrlMerchant: string = '/json/merchant';

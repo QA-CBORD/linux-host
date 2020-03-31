@@ -1,0 +1,18 @@
+@import 'tools';
+
+.merchant-card {
+  --padding-end: 15px;
+
+  &__image {
+    flex-basis: 45%;
+    border-radius: 5%;
+    margin-right: 15px;
+    height: 70px;
+    object-fit: cover;
+  }
+
+  &__content {
+    display: flex;
+    align-items: center;
+  }
+}

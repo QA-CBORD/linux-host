@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MerchantDistancePipe } from './merchant-distance.pipe';
+import { MerchantDistancePipe } from '@shared/pipes/merchant-distance/merchant-distance.pipe';
 
 const declarations = [MerchantDistancePipe];
 
@@ -9,6 +9,9 @@ const declarations = [MerchantDistancePipe];
   imports: [
     CommonModule
   ],
-  exports: declarations
+  exports: [
+    declarations,
+    MerchantDistancePipe,
+  ],
 })
 export class MerchantDistanceModule { }

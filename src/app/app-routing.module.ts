@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 import { NAVIGATE } from './app.global';
 import { SelectivePreloadingStrategy } from '@core/preload-strategy/selective-preloading-strategy';
 
@@ -23,10 +23,12 @@ const routes: Routes = [
     loadChildren: './sections/ordering/ordering.module#OrderingPageModule',
   },
   { path: NAVIGATE.housing, loadChildren: './sections/housing/housing.module#HousingPageModule' },
+  { path: NAVIGATE.explore, loadChildren: './sections/explore/explore.module#ExploreModule' },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes, { preloadingStrategy: SelectivePreloadingStrategy })],
   exports: [RouterModule],
 })
-export class AppRoutingModule {}
+export class AppRoutingModule {
+}

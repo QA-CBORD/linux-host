@@ -7,7 +7,7 @@ export interface MerchantInfo {
   campusId: string;
   externalId: string;
   parentMerchantId: string;
-  name: string;
+  name: string; // name of card
   shortName: string;
   description: string;
   storeAddress: AddressInfo;
@@ -42,4 +42,5 @@ export interface MerchantInfo {
   emailNotificationActive: boolean;
   onCampus: boolean;
   isFavorite?: boolean;
+  isAbleToOrder?: boolean;
 }

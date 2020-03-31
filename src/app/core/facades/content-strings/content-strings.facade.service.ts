@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { ServiceStateFacade } from '@core/classes/service-state-facade';
 import { ContentStringsStateService } from '@core/states/content-strings/content-strings-state.service';
 import { ContentStringsApiService } from '@core/service/content-service/content-strings-api.service';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
-import { map, skipWhile, tap } from 'rxjs/operators';
+import { map, skipWhile, switchMap, tap } from 'rxjs/operators';
 import { CONTENT_STINGS_CATEGORIES, CONTENT_STINGS_DOMAINS, CONTENT_STINGS_LOCALES } from '../../../content-strings';
 
 @Injectable({
@@ -27,7 +27,7 @@ export class ContentStringsFacadeService extends ServiceStateFacade {
 
   getContentString$(domain: CONTENT_STINGS_DOMAINS,
                     category: CONTENT_STINGS_CATEGORIES,
-                    name: string): Observable<ContentStringInfo> {
+                    name: string): Observable<ContentStringInfo | null> {
     return this.stateService.getContentString$(domain, category, name);
   }
 
@@ -41,7 +41,7 @@ export class ContentStringsFacadeService extends ServiceStateFacade {
                          name: string): Observable<string> {
     return this.getContentString$(domain, category, name).pipe(
       skipWhile(value => !value),
-      map(({value}) => value)
+      map(({ value }) => value),
     );
   }
 
@@ -51,7 +51,7 @@ export class ContentStringsFacadeService extends ServiceStateFacade {
     const call = this.apiService.retrieveContentStringListByRequest({ domain, category, locale });
 
     return this.makeRequestWithUpdatingStateHandler<ContentStringInfo[]>(call, this.stateService).pipe(
-        tap((data: ContentStringInfo[]) => this.addContentStringsToState(data)),
+      tap((data: ContentStringInfo[]) => this.addContentStringsToState(data)),
     );
   }
 
@@ -62,7 +62,22 @@ export class ContentStringsFacadeService extends ServiceStateFacade {
     const call = this.apiService.retrieveContentStringByConfig({ domain, category, name, locale });
 
     return this.makeRequestWithUpdatingStateHandler<ContentStringInfo>(call, this.stateService).pipe(
-        tap((data: ContentStringInfo) => this.addContentStringsToState(data)),
+      tap((data: ContentStringInfo) => this.addContentStringsToState(data)),
+    );
+  }
+
+  resolveContentString$(domain: CONTENT_STINGS_DOMAINS,
+                        category: CONTENT_STINGS_CATEGORIES,
+                        name: string): Observable<ContentStringInfo> {
+    return this.getContentString$(domain, category, name).pipe(
+      switchMap((setting) => setting ? of(setting) : this.fetchContentString$(domain, category, name)),
+    );
+  }
+
+  resolveContentStrings$(domain: CONTENT_STINGS_DOMAINS,
+                         category: CONTENT_STINGS_CATEGORIES): Observable<ContentStringInfo[]> {
+    return this.getContentStrings$(domain, category).pipe(
+      switchMap((settings) => settings.length ? of(settings) : this.fetchContentStrings$(domain, category)),
     );
   }
 
@@ -70,7 +85,7 @@ export class ContentStringsFacadeService extends ServiceStateFacade {
     this.stateService.updateState(contentStrings);
   }
 
-  removeSetting(domain: CONTENT_STINGS_DOMAINS,
+  removeContentString(domain: CONTENT_STINGS_DOMAINS,
                 category: CONTENT_STINGS_CATEGORIES,
                 name: string) {
     this.stateService.removeContentString(domain, category, name);

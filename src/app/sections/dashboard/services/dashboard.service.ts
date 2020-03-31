@@ -5,12 +5,7 @@ import { map } from 'rxjs/operators';
 
 import { SettingInfoList } from 'src/app/core/model/configuration/setting-info-list.model';
 import { Settings } from 'src/app/app.global';
-import {
-  ACCOUNTS_SETTINGS_CONFIG,
-  DASHBOARD_SETTINGS_CONFIG,
-  TILES_BASE_CONFIG,
-  TILES_ID,
-} from '@sections/dashboard/dashboard.config';
+import { ACCOUNTS_SETTINGS_CONFIG, TILES_BASE_CONFIG, TILES_ID } from '@sections/dashboard/dashboard.config';
 import { parseArrayFromString } from '@core/utils/general-helpers';
 import { AccountsService } from '@sections/dashboard/services/accounts.service';
 import { TileWrapperConfig } from '@sections/dashboard/models';
@@ -57,8 +52,7 @@ export class DashboardService {
   getUpdatedTilesBaseConfig(settings: SettingInfoList): TileWrapperConfig[] {
     return TILES_BASE_CONFIG.map((setting) => {
       let s = settings.list.find(({ name }) => name === setting.id);
-      // temporary solution for skipping explore tab (s.name !== DASHBOARD_SETTINGS_CONFIG.enableExplore.name)
-      return s && s.name !== DASHBOARD_SETTINGS_CONFIG.enableExplore.name
+      return s
         ? { ...setting, isEnable: !!Number(s.value) }
         : setting;
     });

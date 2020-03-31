@@ -4,9 +4,9 @@ import { IonicModule } from '@ionic/angular';
 
 import { MerchantListComponent } from '@sections/ordering';
 import { MerchantItemComponent } from './merchant-item';
-import { MerchantDistanceModule } from '@sections/ordering/shared/pipes/merchant-distance/merchant-distance.module';
 import { OrderOptionsActionSheetModule } from '@sections/ordering/shared/ui-components/order-options.action-sheet';
 import { StopPropagationModule } from '@shared/directives/stop-propogation/stop-propagation.module';
+import { MerchantDistanceModule } from '@shared/pipes/merchant-distance/merchant-distance.module';
 import { OrderTypePipeModule } from '@sections/ordering/shared/pipes/order-type/order-type.module';
 
 const declarations = [MerchantListComponent, MerchantItemComponent];

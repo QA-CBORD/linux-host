@@ -1,0 +1,13 @@
+<article class="info-block">
+  <h3 class="info-block__merchant-name">{{merchant.name}}</h3>
+  <p class="info-block__distance">{{merchant.distanceFromUser | merchantDistance}}</p>
+  <div class="info-block__main-info">
+    <p class="info-block__access-state"
+       [ngClass]="{
+           'info-block__access-state--open': merchant.openNow,
+           'info-block__access-state--closed': !merchant.openNow
+            }"
+    >{{ merchant.openNow ? 'Open' : 'Closed' }}</p>
+    <p class="info-block__order-type">{{merchant | orderType}}</p>
+  </div>
+</article>

@@ -166,4 +166,5 @@ export enum NAVIGATE {
   secureMessage = 'securemessaging',
   accounts = 'accounts',
   ordering = 'ordering',
+  explore = 'explore',
 }

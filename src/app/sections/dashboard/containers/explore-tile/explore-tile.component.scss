@@ -1,73 +1,60 @@
 @import 'tools';
 
-.explore {
-  &__merchant-list {
-    margin: 0;
-    padding: 0;
+.merchant-card {
+  --padding-end: 15px;
+
+  &__image {
+    width: 90px;
+    border-radius: 5%;
+    margin-right: 10px;
+    height: 70px;
+    object-fit: cover;
   }
 
-  &__merchant-item {
-    --padding-start: 0;
-    --inner-padding-start: 0;
-    --inner-padding-end: 0;
-    --border-style: none;
+  &__content {
+    display: flex;
+    align-items: center;
+  }
+}
 
+.merchant-skeleton {
+  display: flex;
+  align-items: center;
+
+  &__img {
+    height: 70px;
+    width: 100px;
+    margin-right: 10px;
+    border-radius: 5%;
+  }
+
+  &__name {
+    height: 20px;
+    width: 70%;
+  }
+
+  &__distance {
+    height: 15px;
+    width: 35%;
+  }
+
+  &__open-status {
+    height: 15px;
+    width: 20%;
+  }
+
+  &__order-type {
+    height: 15px;
+    width: 40%;
+  }
+
+  &__bottom-info-block {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 0;
-    margin: 0 15px;
-
-    &:first-child {
-      border-bottom: 1px solid $color-white-smoke;
-    }
   }
 
-  &__merchant-info {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: flex-start;
-  }
-
-  &__merchant-photo-wrapper {
-    width: 125px;
-    height: 65px;
-  }
-
-  &__merchant-photo {
-    height: 100%;
-    width: 100%;
-    object-fit: cover;
-    border-radius: 8px;
-  }
-
-  &__merchant-info {
-    margin-left: 15px;
-  }
-
-  &__merchant-name {
-    @include ellipsis;
-    @include font-nunito-semibold(16px);
-  }
-
-  &__merchant-type {
-    color: #00000099;
-
-    @include ellipsis;
-    @include font-nunito-semibold(12px);
-  }
-
-  &__merchant-hours {
-    @include font-nunito-heavy(12px);
-
-    &--open {
-      color: $color-deep-sea;
-    }
-
-    &--closed {
-      color: $color-cardinal;
-    }
+  &__content {
+    flex-grow: 1;
   }
 }

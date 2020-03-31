@@ -1,0 +1,72 @@
+<st-header
+        [title]="'Explore'"
+        [isTitleShow]="true"
+        [backButtonTitle]="'Back'"
+        [backButtonIcon]="'ios-arrow-back'"
+        [isToolbarShow]="true"
+>
+</st-header>
+
+<ion-content class="explore" *ngIf="merchant$ | async as merchant">
+  <img *ngIf="merchant.imageFull as image"
+       [src]="awsImageUrl + image"
+       class="explore__merchant-image"
+       alt="merchant photo">
+  <div class="explore__content">
+    <st-merchant-main-info [merchant]="merchant$ | async"></st-merchant-main-info>
+    <div class="explore__controls">
+      <st-button *ngIf="merchant.isAbleToOrder"
+                 (onClick)="navigateToMerchant(merchant.id)"
+                 [isDisabled]="true"
+                 class="explore__start-order"
+                 buttonModifier="rectangle">start an order
+      </st-button>
+      <st-button (onClick)="onFavoriteTrigger(merchant)"
+                 [isDisabled]="true"
+                 class="explore__add-to-fav"
+                 buttonModifier="rectangle">
+        <img class="explore__fav-icon"
+             [src]="merchant.isFavorite ? filledStarPath : blankStarPath"
+             alt="star">
+      </st-button>
+    </div>
+    <ion-list>
+      <ion-item class="ion-no-padding" *ngIf="merchant.storeAddress as address">
+        <ion-title class="explore__merchant-address">{{ address | addressHeaderFormat }}</ion-title>
+      </ion-item>
+      <ng-container *ngIf="merchant.hoursOfOperation as hours">
+        <ion-item [lines]="isHoursHidden ? '' : 'none'"
+                  (click)="toggleHours()"
+                  class="ion-no-padding">
+          <ion-title class="explore__merchant-hours">
+          <span class="explore__merchant-hours-indicator"
+                [ngClass]="{
+           'explore__merchant-hours-indicator--open': merchant.openNow,
+           'explore__merchant-hours-indicator--closed': !merchant.openNow
+            }"
+          >
+            {{merchant.openNow ? 'Open' : 'Closed'}}</span>
+            <span class="explore__expand-hours-message"
+                  [ngClass]="{'explore__expand-hours-message--opened': !isHoursHidden}"
+            > - {{isHoursHidden ? 'View' : 'Hide'}} Hours</span>
+          </ion-title>
+        </ion-item>
+        <ion-item class="explore__expand-hours-description ion-no-padding"
+                  [ngClass]="{'explore__expand-hours-description--opened': !isHoursHidden}">
+          <ion-text>{{ hours }}</ion-text>
+        </ion-item>
+      </ng-container>
+      <ion-item class="ion-no-padding" *ngIf="merchant.emailCustomerService as email">
+        <ion-title class="explore__merchant-email">{{ email }}</ion-title>
+      </ion-item>
+      <ion-item class="ion-no-padding" *ngIf="merchant.phoneCustomerService as telephone">
+        <ion-title class="explore__merchant-telephone">{{ telephone }}</ion-title>
+      </ion-item>
+      <ion-item class="ion-no-padding" *ngIf="merchant.website as website">
+        <ion-title class="explore__merchant-website">{{ website }}</ion-title>
+      </ion-item>
+    </ion-list>
+    <p class="explore__merchant-description"
+       *ngIf="merchant.description as description">{{ description }}</p>
+  </div>
+</ion-content>

@@ -1,5 +1,5 @@
 import { Observable, of } from 'rxjs';
-import { finalize, switchMap, tap } from 'rxjs/operators';
+import { finalize, switchMap, take, tap } from 'rxjs/operators';
 
 import { StateManager } from '@core/classes/state-manager';
 
@@ -10,6 +10,7 @@ export abstract class ServiceStateFacade {
       tap(() => state.addUpdater()),
       switchMap(() => req),
       finalize(() => state.removeUpdater()),
+      take(1)
     );
   }
 }

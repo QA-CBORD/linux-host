@@ -99,4 +99,4 @@ export const validateAllFormFields = (formGroup: FormGroup) => {
       control.markAsTouched({ onlySelf: true });
     }
   });
-}
+};

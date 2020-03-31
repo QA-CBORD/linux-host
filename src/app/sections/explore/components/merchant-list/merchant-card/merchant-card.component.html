@@ -1,0 +1,11 @@
+<ion-item class="merchant-card" button>
+  <ion-label class="merchant-card__content">
+    <img class="merchant-card__image"
+         [src]="merchant.imageThumbnail
+         ? awsImageUrl + merchant.imageThumbnail
+          : 'assets/images/dashboard_merchant_image_placeholder.svg'"
+         alt="merchant image"/>
+    <st-merchant-main-info [merchant]="merchant"></st-merchant-main-info>
+  </ion-label>
+  <ion-ripple-effect type="bounded"></ion-ripple-effect>
+</ion-item>

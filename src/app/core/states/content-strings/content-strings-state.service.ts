@@ -13,26 +13,22 @@ export class ContentStringsStateService extends SingleEntityStateManager<Content
   protected readonly _state$: BehaviorSubject<ContentStringInfo[]> = new BehaviorSubject<ContentStringInfo[]>(this.state);
   protected readonly _isUpdating$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(!!this.activeUpdaters);
 
-  getContentString$(domain: string, category: string, name: string): Observable<ContentStringInfo> {
+  getContentString$(domain: string, category: string, name: string): Observable<ContentStringInfo | null> {
     return this.state$.pipe(
       map((settings) => {
-        if (!settings.length) return null;
-        return settings.find(
+        const setting = settings.find(
           ({ domain: d, category: c, name: n }) => domain === d && category === c && name === n,
         );
+        return !setting ? null : setting;
       }),
       distinctUntilChanged(),
     );
   }
 
-  getContentStrings$(domain: string, category: string): Observable<ContentStringInfo[]> {
+  getContentStrings$(domain: string, category: string): Observable<ContentStringInfo[] | []> {
     return this.state$.pipe(
-      map((settings) => {
-        if (!settings.length) return null;
-        return settings.filter(
-          ({ domain: d, category: c}) => domain === d && category === c,
-        );
-      }),
+      map((settings) => settings.filter(({ domain: d, category: c }) => domain === d && category === c),
+      ),
       distinctUntilChanged(),
     );
   }

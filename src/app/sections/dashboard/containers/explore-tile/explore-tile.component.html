@@ -1,23 +1,41 @@
-<div class="explore">
-  <ion-list class="explore__merchant-list">
-    <ion-item *ngFor="let merchant of exploreList"
-              class="explore__merchant-item">
-      <div class="explore__merchant-photo-wrapper">
-        <img class="explore__merchant-photo"
-             src="{{ merchant.img }}"
-             alt="{{merchant.name}}" />
-      </div>
-      <div class="explore__merchant-info">
-        <div class="explore__merchant-name">{{ merchant.name }}</div>
-        <div class="explore__merchant-type">{{ merchant.type }}</div>
-        <div class="explore__merchant-hours"
-             [ngClass]="{
-            'explore__merchant-hours--open': merchant.merchantInfo.openNow,
-            'explore__merchant-hours--closed': !merchant.merchantInfo.openNow
-          }">
-          {{ merchant.merchantInfo.openNow ? 'Open' : 'Closed' }}
+<div class="explore" *ngIf="favMerchants$ | async as merchants">
+  <ion-list>
+    <ion-item *ngFor="let merchant of merchants; let last = last"
+              [lines]="last ? 'none' : ''"
+              (click)="onMerchantClicked(merchant.id)"
+              class="merchant-card">
+      <ion-label class="merchant-card__content">
+        <img class="merchant-card__image"
+             [src]="merchant.imageThumbnail
+         ? awsImageUrl + merchant.imageThumbnail
+          : 'assets/images/dashboard_merchant_image_placeholder.svg'"
+             alt="merchant image"/>
+        <st-merchant-main-info [merchant]="merchant"></st-merchant-main-info>
+      </ion-label>
+      <ion-ripple-effect type="bounded"></ion-ripple-effect>
+    </ion-item>
+  </ion-list>
+</div>
+
+<div class="explore" *ngIf="isLoading">
+  <ion-list>
+    <ion-item *ngFor="let merchant of [0,1]; let last = last"
+              [lines]="last ? 'none' : ''">
+      <ion-label>
+        <div class="merchant-skeleton">
+          <p>
+            <ion-skeleton-text animated class="merchant-skeleton__img" slot="start"></ion-skeleton-text>
+          </p>
+          <div class="merchant-skeleton__content">
+            <ion-skeleton-text class="merchant-skeleton__name" animated></ion-skeleton-text>
+            <ion-skeleton-text class="merchant-skeleton__distance" animated></ion-skeleton-text>
+            <div class="merchant-skeleton__bottom-info-block">
+              <ion-skeleton-text class="merchant-skeleton__open-status" animated></ion-skeleton-text>
+              <ion-skeleton-text class="merchant-skeleton__order-type" animated></ion-skeleton-text>
+            </div>
+          </div>
         </div>
-      </div>
+      </ion-label>
     </ion-item>
   </ion-list>
 </div>
