@@ -75,6 +75,11 @@ export const handleServerError = <T>(serverError: ServerErrorsInfo): MonoTypeOpe
         if(+code === 9002 || +code === 9005) {
           return throwError(message);
         }
+
+        if(+code === 9006) {
+          return throwError(text);
+        }
+        
         return throwError(serverError[code] ? serverError[code] : text);
       })
     );
