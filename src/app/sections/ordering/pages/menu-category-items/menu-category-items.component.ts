@@ -7,7 +7,7 @@ import { Observable, zip } from 'rxjs';
 import { take, first } from 'rxjs/operators';
 import { MenuCategoryInfo, MenuCategoryItemInfo, MenuInfo } from '@sections/ordering/shared/models';
 import { handleServerError } from '@core/utils/general-helpers';
-import { ToastController } from '@ionic/angular';
+import { ToastController, AlertController } from '@ionic/angular';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 
@@ -32,7 +32,8 @@ export class MenuCategoryItemsComponent implements OnInit {
     private readonly cdRef: ChangeDetectorRef,
     private readonly loadingService: LoadingService,
     private readonly toastController: ToastController,
-    private readonly orderingService: OrderingService
+    private readonly orderingService: OrderingService,
+    private readonly alertController: AlertController
   ) {}
 
   ionViewWillEnter() {
@@ -83,6 +84,11 @@ export class MenuCategoryItemsComponent implements OnInit {
   }
 
   async redirectToCart() {
+    if(this.cartService.cartsErrorMessage !== null) {
+      this.presentPopup(this.cartService.cartsErrorMessage);
+      return;
+    }
+    
     await this.loadingService.showSpinner();
     await this.cartService
       .validateOrder()
@@ -94,6 +100,15 @@ export class MenuCategoryItemsComponent implements OnInit {
       .then(() => this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.cart], { skipLocationChange: true }))
       .catch(error => this.failedValidateOrder(error))
       .finally(() => this.loadingService.closeSpinner());
+  }
+
+  private async presentPopup(message) {
+    const alert = await this.alertController.create({
+      header: message,
+      buttons: [ {text: 'Ok'} ]
+    });
+
+    await alert.present();
   }
 
   private async failedValidateOrder(message: string): Promise<void> {

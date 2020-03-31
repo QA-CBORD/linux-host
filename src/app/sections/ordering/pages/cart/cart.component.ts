@@ -227,7 +227,7 @@ export class CartComponent implements OnInit {
       return;
     }
     const onError = async message => {
-      await this.onValidateErrorToast(message);
+      await this.onValidateErrorToast(typeof message === 'object' ? message[1] : message);
       this.cartService.addOrderItems(removedItem);
     };
     await this.validateOrder(onError);

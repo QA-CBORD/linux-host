@@ -183,9 +183,9 @@ export class ItemDetailComponent implements OnInit {
   }
 
   private async onSubmit(menuItem): Promise<void> {
+    const { queryParams: { orderItemId } } = this.routesData;
     const orderItems = await this.cartService.orderItems$.pipe(first()).toPromise();
-    if (orderItems.length) {
-      const { queryParams: { orderItemId } } = this.routesData;
+    if (orderItems.length && orderItemId) {
       await this.cartService.removeOrderItemFromOrderById(orderItemId);
     }
 
@@ -198,8 +198,18 @@ export class ItemDetailComponent implements OnInit {
         handleServerError(ORDER_VALIDATION_ERRORS)
       )
       .toPromise()
-      .then(() => this.onClose())
+      .then(() => {
+        this.cartService.cartsErrorMessage = null;
+        this.onClose()
+      })
       .catch(error => {
+        // Temporary solution:
+        if(typeof error === 'object') {
+          const [code, text] = error;
+          this.cartService.cartsErrorMessage = text;
+          this.onClose();
+          return;
+        }
         this.cartService.removeLastOrderItem();
         this.failedValidateOrder(error);
       })

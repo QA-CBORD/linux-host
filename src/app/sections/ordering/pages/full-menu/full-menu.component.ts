@@ -10,8 +10,8 @@ import {
   ORDER_VALIDATION_ERRORS,
   ORDERING_CONTENT_STRINGS,
 } from '@sections/ordering/ordering.config';
-import { first, map, take, tap } from 'rxjs/operators';
-import { ModalController, ToastController, PopoverController } from '@ionic/angular';
+import { first, map, take } from 'rxjs/operators';
+import { ModalController, ToastController, PopoverController, AlertController } from '@ionic/angular';
 import { OrderOptionsActionSheetComponent } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { handleServerError } from '@core/utils/general-helpers';
@@ -42,7 +42,8 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     private readonly loadingService: LoadingService,
     private readonly toastController: ToastController,
     private readonly popoverCtrl: PopoverController,
-    private readonly orderingService: OrderingService
+    private readonly orderingService: OrderingService,
+    private readonly alertController: AlertController
   ) {
   }
 
@@ -138,7 +139,20 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   redirectToCart() {
     const successCb = () => this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.cart], { skipLocationChange: true });
     const errorCB = error => this.failedValidateOrder(error);
+    if(this.cartService.cartsErrorMessage !== null) {
+      this.presentPopup(this.cartService.cartsErrorMessage);
+      return;
+    }
     this.validateOrder(successCb, errorCB);
+  }
+
+  private async presentPopup(message) {
+    const alert = await this.alertController.create({
+      header: message,
+      buttons: [ {text: 'Ok'} ]
+    });
+
+    await alert.present();
   }
 
   private async validateOrder(successCb, errorCB) {

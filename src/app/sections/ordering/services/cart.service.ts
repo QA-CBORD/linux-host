@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { distinctUntilChanged, first, map, switchMap, tap } from 'rxjs/operators';
+import { distinctUntilChanged, first, map, switchMap, tap, catchError } from 'rxjs/operators';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 import { ORDER_TYPE } from '@sections/ordering/ordering.config';
@@ -14,6 +14,8 @@ import { OrderingApiService } from '@sections/ordering/services/ordering.api.ser
 export class CartService {
   private readonly cart = { order: null, merchant: null, menu: null, orderDetailsOptions: null };
   private readonly _cart$: BehaviorSubject<CartState> = new BehaviorSubject<CartState>(<CartState>this.cart);
+  // temporary cachedError for the cart:
+  private _catchError: string | null = null;
 
   constructor(
     private readonly userService: UserService,
@@ -61,6 +63,14 @@ export class CartService {
 
   get orderItems$(): Observable<OrderItem[]> {
     return this.orderInfo$.pipe(map(({ orderItems }) => orderItems));
+  }
+
+  get cartsErrorMessage(): string | null {
+    return this._catchError;
+  }
+
+  set cartsErrorMessage(message) {
+    this._catchError = message;
   }
 
   set _order(orderInfo: OrderInfo) {
