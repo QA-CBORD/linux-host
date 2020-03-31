@@ -29,7 +29,7 @@ export class ChargeScheduleValue implements ChargeScheduleValueOptions {
     }
 
     this.label = String(options.label);
-    this.value = String(options.value);
+    this.value = isDefined(options.value) ? String(options.value) : null;
     this.selected = Boolean(options.selected);
   }
 }

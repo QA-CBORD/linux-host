@@ -19,7 +19,7 @@ export class Attribute implements AttributeOptions {
     }
 
     this.attributeConsumerKey = Number(options.attributeConsumerKey);
-    this.value = String(options.value);
+    this.value = isDefined(options.value) ? String(options.value) : null;
 
     if (isDefined(options.effectiveDate)) {
       this.effectiveDate = String(options.effectiveDate);
