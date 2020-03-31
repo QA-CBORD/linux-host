@@ -226,6 +226,13 @@ export class CartComponent implements OnInit {
       this.cdRef.reattach();
       return;
     }
+
+    const { orderItems } = await this.cartService.orderInfo$.pipe(first()).toPromise();
+    if(!orderItems.length)  {
+      this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.fullMenu], { skipLocationChange: true })
+      return;
+    }
+    
     const onError = async message => {
       await this.onValidateErrorToast(typeof message === 'object' ? message[1] : message);
       this.cartService.addOrderItems(removedItem);
