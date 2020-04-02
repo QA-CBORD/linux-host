@@ -1,12 +1,12 @@
 import { CartService, MerchantService } from '@sections/ordering/services';
-import { BuildingInfo } from './../../models/building-info.model';
+import { BuildingInfo } from '@sections/ordering';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
-import { MenuInfo, MerchantAccountInfoList, MerchantOrderTypesInfo } from '../../models';
+import { MenuInfo, MerchantAccountInfoList, MerchantInfo, MerchantOrderTypesInfo } from '../../models';
 import { ModalController, ToastController } from '@ionic/angular';
 import { DeliveryAddressesModalComponent } from '../delivery-addresses.modal/delivery-addresses.modal.component';
 import { AddressInfo } from '@core/model/address/address-info';
 import { Observable, of, throwError, zip } from 'rxjs';
-import { finalize, switchMap, take, tap, first } from 'rxjs/operators';
+import { finalize, first, map, switchMap, take, tap } from 'rxjs/operators';
 import { LoadingService } from '@core/service/loading/loading.service';
 import {
   ACCOUNT_TYPES,
@@ -32,16 +32,17 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   @Input() activeDeliveryAddressId: string;
   @Input() activeOrderType: ORDER_TYPE = null;
 
+  activeMerchant$: Observable<MerchantInfo>;
   isOrderTypePickup: boolean;
   orderOptionsData: OrderOptions;
   deliveryAddresses: AddressInfo[];
   defaultDeliveryAddress: string;
-  schedule: any;
+  schedule: Schedule;
   defaultPickupAddress: AddressInfo | '';
   pickupLocations: any;
   buildingsForNewAddressForm: BuildingInfo[];
   isTimeDisable: number;
-  dateTimePicker: Date | string = 'ASAP';
+  dateTimePicker: Date | string;
   orderType: number;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
 
@@ -59,10 +60,25 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   ngOnInit() {
     this.initData();
     this.initContentStrings();
+    this.activeMerchant$ = this.merchantService.menuMerchants$
+      .pipe(map((merchants) => merchants.find(({ id }) => id === this.merchantId)));
   }
 
   get enumOrderTypes() {
     return ORDER_TYPE;
+  }
+
+  private async setDefaultTimeSlot(): Promise<void> {
+    const { openNow } = await this.activeMerchant$.pipe(take(1)).toPromise();
+    if (openNow) {
+      this.dateTimePicker = 'ASAP';
+    } else {
+      const firstDay = this.schedule.days[0].date;
+      const [year, month, day] = firstDay.split('-');
+      const { hour } = this.schedule.days[0].hourBlocks[0];
+      const minutes = this.schedule.days[0].hourBlocks[0].minuteBlocks[0];
+      this.dateTimePicker = new Date(Number(year), Number(month) - 1, Number(day), hour, minutes);
+    }
   }
 
   initData() {
@@ -101,7 +117,8 @@ export class OrderOptionsActionSheetComponent implements OnInit {
           this.defaultDeliveryAddress = this.activeDeliveryAddressId
             ? this.activeDeliveryAddressId
             : deliveryAddress.defaultAddress;
-          this.schedule = schedule;
+          this.schedule = <unknown>schedule as Schedule;
+          this.setDefaultTimeSlot();
           this.defaultPickupAddress = defaultPickupAddress;
           this.pickupLocations = pickupLocations;
           this.buildingsForNewAddressForm = buildingsForNewAddressForm;
@@ -165,7 +182,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     await this.loadingService.showSpinner();
     zip(isOutsideMerchantDeliveryArea, this.merchantService.getCurrentLocaleTime())
       .pipe(
-        tap(([isOtside, dueTime]) => (date = date.isASAP ? { ...date, dueTime } : { ...date })),
+        tap(([, dueTime]) => (date = date.isASAP ? { ...date, dueTime } : { ...date })),
         switchMap(([isOutside]): Observable<MerchantAccountInfoList> => this.getMerchantPaymentAccounts(isOutside)),
         switchMap(
           (paymentAccounts): Promise<MenuInfo | never> =>
@@ -273,31 +290,31 @@ export class OrderOptionsActionSheetComponent implements OnInit {
 
   private initContentStrings() {
     this.contentStrings.buttonDismiss = this.orderingService.getContentStringByName(
-      ORDERING_CONTENT_STRINGS.buttonDismiss
+      ORDERING_CONTENT_STRINGS.buttonDismiss,
     );
     this.contentStrings.formErrorChooseAddress = this.orderingService.getContentStringByName(
-      ORDERING_CONTENT_STRINGS.formErrorChooseAddress
+      ORDERING_CONTENT_STRINGS.formErrorChooseAddress,
     );
     this.contentStrings.labelPickupTime = this.orderingService.getContentStringByName(
-      ORDERING_CONTENT_STRINGS.labelPickupTime
+      ORDERING_CONTENT_STRINGS.labelPickupTime,
     );
     this.contentStrings.labelDeliveryTime = this.orderingService.getContentStringByName(
-      ORDERING_CONTENT_STRINGS.labelDeliveryTime
+      ORDERING_CONTENT_STRINGS.labelDeliveryTime,
     );
     this.contentStrings.labelDeliveryAddress = this.orderingService.getContentStringByName(
-      ORDERING_CONTENT_STRINGS.labelDeliveryAddress
+      ORDERING_CONTENT_STRINGS.labelDeliveryAddress,
     );
     this.contentStrings.labelPickupAddress = this.orderingService.getContentStringByName(
-      ORDERING_CONTENT_STRINGS.labelPickupAddress
+      ORDERING_CONTENT_STRINGS.labelPickupAddress,
     );
     this.contentStrings.labelPickup = this.orderingService.getContentStringByName(
-      ORDERING_CONTENT_STRINGS.labelPickup
+      ORDERING_CONTENT_STRINGS.labelPickup,
     );
     this.contentStrings.labelDelivery = this.orderingService.getContentStringByName(
-      ORDERING_CONTENT_STRINGS.labelDelivery
+      ORDERING_CONTENT_STRINGS.labelDelivery,
     );
     this.contentStrings.labelOrderOptions = this.orderingService.getContentStringByName(
-      ORDERING_CONTENT_STRINGS.labelOrderOptions
+      ORDERING_CONTENT_STRINGS.labelOrderOptions,
     );
   }
 }
@@ -307,4 +324,26 @@ interface OrderOptions {
   labelAddress: string;
   address: any;
   isClickble: number;
+}
+
+export interface HourBlock {
+  hour: number;
+  minuteBlocks: number[];
+}
+
+export interface Day {
+  date: string;
+  dayOfWeek: number;
+  hourBlocks: HourBlock[];
+}
+
+export interface MenuScheduleEntity {
+  day: number;
+  time: string;
+  menuId: string;
+}
+
+export interface Schedule {
+  days: Day[];
+  menuSchedule: MenuScheduleEntity[];
 }

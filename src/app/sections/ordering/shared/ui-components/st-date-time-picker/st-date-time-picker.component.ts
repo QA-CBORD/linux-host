@@ -7,6 +7,8 @@ import { ContentStringsFacadeService } from '@core/facades/content-strings/conte
 import { CONTENT_STINGS_CATEGORIES, CONTENT_STINGS_DOMAINS } from '../../../../../content-strings';
 import { formatDateByContentStrings } from '@core/utils/date-helper';
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
+import { MerchantInfo } from '@sections/ordering';
+import { Schedule } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 
 @Component({
   selector: 'st-date-time-picker',
@@ -15,9 +17,10 @@ import { ContentStringInfo } from '@core/model/content/content-string-info.model
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StDateTimePickerComponent implements OnInit {
-  @Input() schedule: any;
+  @Input() schedule: Schedule;
   @Input() data: { labelTime: string; address: any; isClickble: number };
   @Input() isTimeDisable: number;
+  @Input() merchantInfo: MerchantInfo;
   @Input() dateTimePicker: Date | string;
   @Output() onTimeSelected: EventEmitter<Date | string> = new EventEmitter<Date | string>();
 
@@ -34,7 +37,7 @@ export class StDateTimePickerComponent implements OnInit {
               private readonly contentStringsFacadeService: ContentStringsFacadeService) {
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.initContentStrings();
   }
 
@@ -163,7 +166,7 @@ export class StDateTimePickerComponent implements OnInit {
     };
 
     for (let i = 0; i < total; i++) {
-      if (columnIndex === 1 && i === 0 && isToday) {
+      if (columnIndex === 1 && i === 0 && isToday && this.merchantInfo.openNow) {
         pickerColumns.push({
           text: 'ASAP',
           value: 'asap',
