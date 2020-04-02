@@ -5,12 +5,13 @@ import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { CommerceApiService } from '@core/service/commerce/commerce-api.service';
 import { map, switchMap, tap } from 'rxjs/operators';
 import { ContentStringRequest } from '@core/model/content/content-string-request.model';
-import { SYSTEM_SETTINGS_CONFIG } from '@sections/accounts/accounts.config';
+import { SYSTEM_SETTINGS_CONFIG, ACCOUNT_TYPES } from '@sections/accounts/accounts.config';
 import { ConfigurationService } from '@core/service/config-service/configuration.service';
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { CONTENT_STINGS_CATEGORIES, CONTENT_STINGS_DOMAINS } from 'src/app/content-strings';
 import { MEAL_CONTENT_STRINGS } from '@sections/accounts/pages/meal-donations/meal-donation.config.ts';
+import { isCashlessAccount } from '@core/utils/general-helpers';
 
 @Injectable()
 export class MealDonationsService {
@@ -97,7 +98,7 @@ export class MealDonationsService {
   }
 
   private filterAccountsByTenders(accountsId: Array<string>, accounts: Array<UserAccount>): Array<UserAccount> {
-    return accounts.filter(({ accountTender: tId }) => accountsId.includes(tId));
+    return accounts.filter(account => accountsId.includes(account.accountTender) && isCashlessAccount(account));
   }
 }
 

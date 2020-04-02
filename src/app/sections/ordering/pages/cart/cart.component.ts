@@ -13,7 +13,6 @@ import {
 import { LOCAL_ROUTING as ACCOUNT_LOCAL_ROUTING } from '@sections/accounts/accounts.config';
 import { finalize, first, map, switchMap, tap } from 'rxjs/operators';
 import {
-  ACCOUNT_TYPES,
   LOCAL_ROUTING,
   MerchantSettings,
   ORDER_TYPE,
@@ -24,7 +23,7 @@ import {
 import { LoadingService } from '@core/service/loading/loading.service';
 import { SettingService } from '@core/service/settings/setting.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { handleServerError } from '@core/utils/general-helpers';
+import { handleServerError, isCreditCardAccount, isCashlessAccount, isMealsAccount } from '@core/utils/general-helpers';
 import { UserAccount } from '@core/model/account/account.model';
 import { ModalController, PopoverController, ToastController } from '@ionic/angular';
 import { AccountType, NAVIGATE } from '../../../../app.global';
@@ -304,22 +303,15 @@ export class CartComponent implements OnInit {
   }
 
   private filterCashlessAccounts(sourceAccounts: UserAccount[]): UserAccount[] {
-    return sourceAccounts.filter(
-      ({ paymentSystemType, id }) =>
-        id === 'rollup' ||
-        (paymentSystemType === PAYMENT_SYSTEM_TYPE.OPCS || paymentSystemType === PAYMENT_SYSTEM_TYPE.CSGOLD),
-    );
+    return sourceAccounts.filter((account: UserAccount) => account.id === 'rollup' || isCashlessAccount(account));
   }
 
   private filterCreditAccounts(sourceAccounts: UserAccount[]): UserAccount[] {
-    return sourceAccounts.filter(
-      ({ paymentSystemType }) =>
-        paymentSystemType === PAYMENT_SYSTEM_TYPE.MONETRA || paymentSystemType === PAYMENT_SYSTEM_TYPE.USAEPAY,
-    );
+    return sourceAccounts.filter((account: UserAccount) => isCreditCardAccount(account));
   }
 
   private filterMealBasedAccounts(sourceAccounts: UserAccount[]): UserAccount[] {
-    return sourceAccounts.filter(({ accountType }: UserAccount) => accountType === ACCOUNT_TYPES.meals);
+    return sourceAccounts.filter((account: UserAccount) => isMealsAccount(account));
   }
 
   private async getAvailableAccounts(): Promise<UserAccount[]> {
@@ -344,7 +336,7 @@ export class CartComponent implements OnInit {
   }
 
   private filterNoneMealsAccounts(sourceAccounts): UserAccount[] {
-    return sourceAccounts.filter(({ accountType }: UserAccount) => accountType !== ACCOUNT_TYPES.meals);
+    return sourceAccounts.filter((sourceAccount: UserAccount) => !isMealsAccount(sourceAccount));
   }
 
   private addUSAePayCreditCard() {
