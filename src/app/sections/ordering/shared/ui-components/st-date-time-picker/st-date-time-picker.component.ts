@@ -179,8 +179,9 @@ export class StDateTimePickerComponent implements OnInit {
     const selectedTime = new Date(date);
     const today = getDateTimeInGMT(new Date, locale, timeZone);
     const someDate = getDateTimeInGMT(selectedTime, locale, timeZone);
+    const idxForSlice = today.lastIndexOf('-');
 
-    return isSameDay(today, someDate, Number(!isToday));
+    return isSameDay(today.slice(0, idxForSlice), someDate.slice(0, idxForSlice), Number(!isToday));
   }
 
   private async initContentStrings() {
