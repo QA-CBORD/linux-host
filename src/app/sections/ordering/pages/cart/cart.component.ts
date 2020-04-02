@@ -217,7 +217,7 @@ export class CartComponent implements OnInit {
     await modal.present();
   }
 
-  async removeOrderItem(id: string) {    
+  async removeOrderItem(id: string) {
     this.cdRef.detach();
     const removedItem = this.cartService.removeOrderItemFromOrderById(id);
 
