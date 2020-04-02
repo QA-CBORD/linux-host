@@ -9,11 +9,15 @@
 		color: #7e7e7e;
 	
 		@include font-nunito-semibold(14px);
-	  }
+	}
 	
-	  &__value {
+	&__value {
 		@include font-nunito-heavy(16px);
-	  }
+	}
+
+	&__time-label {
+		margin-left: 5px;
+	}
 
 	&__container {
 		padding: 10px 0;

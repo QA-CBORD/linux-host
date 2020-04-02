@@ -16,6 +16,8 @@ import {
 } from '@sections/ordering/ordering.config';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
+import { UserService } from '@core/service/user-service/user.service';
+import { UserInfo } from '@core/model/user/user-info.model';
 
 @Component({
   selector: 'st-order-options.action-sheet',
@@ -53,6 +55,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     private readonly toastController: ToastController,
     private readonly cartService: CartService,
     private readonly orderingService: OrderingService,
+    private readonly userService: UserService,
   ) {
   }
 
@@ -63,6 +66,10 @@ export class OrderOptionsActionSheetComponent implements OnInit {
 
   get enumOrderTypes() {
     return ORDER_TYPE;
+  }
+
+  get userData$() : Observable<UserInfo>{
+    return this.userService.userData;
   }
 
   initData() {

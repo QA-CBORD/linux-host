@@ -5,8 +5,9 @@ import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { take } from 'rxjs/operators';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { CONTENT_STINGS_CATEGORIES, CONTENT_STINGS_DOMAINS } from '../../../../../content-strings';
-import { formatDateByContentStrings } from '@core/utils/date-helper';
+import { formatDateByContentStrings, getDateTimeInGMT, isSameDay } from '@core/utils/date-helper';
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
+import { UserInfo } from '@core/model/user/user-info.model';
 
 @Component({
   selector: 'st-date-time-picker',
@@ -19,6 +20,7 @@ export class StDateTimePickerComponent implements OnInit {
   @Input() data: { labelTime: string; address: any; isClickble: number };
   @Input() isTimeDisable: number;
   @Input() dateTimePicker: Date | string;
+  @Input() userData: UserInfo;
   @Output() onTimeSelected: EventEmitter<Date | string> = new EventEmitter<Date | string>();
 
   private prevSelectedTimeInfo: TimeInfo = { prevIdx: 0, currentIdx: 0, maxValue: false };
@@ -56,14 +58,8 @@ export class StDateTimePickerComponent implements OnInit {
       mode: 'ios',
       cssClass: 'picker-time-picker',
       buttons: [
-        {
-          text: cancel,
-          role: 'cancel',
-        },
-        {
-          text: title,
-          role: 'title',
-        },
+        { text: cancel, role: 'cancel' },
+        { text: title, role: 'title' },
         {
           text: confirm,
           handler: ([date, time]) => {
@@ -164,10 +160,7 @@ export class StDateTimePickerComponent implements OnInit {
 
     for (let i = 0; i < total; i++) {
       if (columnIndex === 1 && i === 0 && isToday) {
-        pickerColumns.push({
-          text: 'ASAP',
-          value: 'asap',
-        });
+        pickerColumns.push({ text: 'ASAP', value: 'asap' });
       }
 
       pickerColumns.push({
@@ -179,21 +172,12 @@ export class StDateTimePickerComponent implements OnInit {
   }
 
   private isTodayOrTomorrow(date, isToday) {
-    const getUtc = date => {
-      return new Date(date.getTime() + date.getTimezoneOffset() * 60000);
-    };
-
-    const now = new Date();
+    const { locale, timeZone } = this.userData
     const selectedTime = new Date(date);
-    const today = getUtc(now);
-    const someDate = getUtc(selectedTime);
+    const today = getDateTimeInGMT(new Date, locale, timeZone);
+    const someDate = getDateTimeInGMT(selectedTime, locale, timeZone);
 
-    const index = isToday ? 0 : 1;
-    return (
-      someDate.getDate() == today.getDate() + index &&
-      someDate.getMonth() == today.getMonth() &&
-      someDate.getFullYear() == today.getFullYear()
-    );
+    return isSameDay(today, someDate, Number(!isToday));
   }
 
   private async initContentStrings() {
