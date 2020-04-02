@@ -16,6 +16,8 @@ import {
 } from '@sections/ordering/ordering.config';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
+import { UserService } from '@core/service/user-service/user.service';
+import { UserInfo } from '@core/model/user/user-info.model';
 
 @Component({
   selector: 'st-order-options.action-sheet',
@@ -54,6 +56,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     private readonly toastController: ToastController,
     private readonly cartService: CartService,
     private readonly orderingService: OrderingService,
+    private readonly userService: UserService,
   ) {
   }
 
@@ -68,17 +71,8 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     return ORDER_TYPE;
   }
 
-  private async setDefaultTimeSlot(): Promise<void> {
-    const { openNow } = await this.activeMerchant$.pipe(take(1)).toPromise();
-    if (openNow) {
-      this.dateTimePicker = 'ASAP';
-    } else {
-      const firstDay = this.schedule.days[0].date;
-      const [year, month, day] = firstDay.split('-');
-      const { hour } = this.schedule.days[0].hourBlocks[0];
-      const minutes = this.schedule.days[0].hourBlocks[0].minuteBlocks[0];
-      this.dateTimePicker = new Date(Number(year), Number(month) - 1, Number(day), hour, minutes);
-    }
+  get userData$() : Observable<UserInfo>{
+    return this.userService.userData;
   }
 
   initData() {
@@ -246,6 +240,19 @@ export class OrderOptionsActionSheetComponent implements OnInit {
         },
       ),
     );
+  }
+
+  private async setDefaultTimeSlot(): Promise<void> {
+    const { openNow } = await this.activeMerchant$.pipe(take(1)).toPromise();
+    if (openNow) {
+      this.dateTimePicker = 'ASAP';
+    } else {
+      const firstDay = this.schedule.days[0].date;
+      const [year, month, day] = firstDay.split('-');
+      const { hour } = this.schedule.days[0].hourBlocks[0];
+      const minutes = this.schedule.days[0].hourBlocks[0].minuteBlocks[0];
+      this.dateTimePicker = new Date(Number(year), Number(month) - 1, Number(day), hour, minutes);
+    }
   }
 
   private async onToastDisplayed(message: string): Promise<void> {

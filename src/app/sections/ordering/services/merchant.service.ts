@@ -18,7 +18,6 @@ import { OrderingApiService } from './ordering.api.service';
 import { MerchantSearchOptions } from '../utils';
 import {
   MerchantSearchOptionName,
-  PAYMENT_SYSTEM_TYPE,
   SYSTEM_SETTINGS_CONFIG,
   MerchantSettings,
 } from '../ordering.config';
@@ -28,6 +27,7 @@ import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { CommerceApiService } from '@core/service/commerce/commerce-api.service';
 import { UserAccount } from '@core/model/account/account.model';
 import { UserSettingInfo } from '@core/model/user';
+import { isCashlessAccount } from '@core/utils/general-helpers';
 
 @Injectable()
 export class MerchantService {
@@ -243,9 +243,7 @@ export class MerchantService {
   }
 
   private filterAccountsByPaymentSystem(accounts: UserAccount[]): UserAccount[] {
-    return accounts.filter(
-      ({ paymentSystemType: type }) => type === PAYMENT_SYSTEM_TYPE.OPCS || type === PAYMENT_SYSTEM_TYPE.CSGOLD
-    );
+    return accounts.filter((account: UserAccount) => isCashlessAccount(account));
   }
 
   filterDeliveryAddresses(merchantId, addresses): Observable<AddressInfo[]> {

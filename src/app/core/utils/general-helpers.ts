@@ -4,6 +4,8 @@ import { MonoTypeOperatorFunction, Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { ZERO_FIRST_REGEXP, INT_REGEXP, INT_DEC_REGEXP, EMAIL_REGEXP, CURRENCY_REGEXP } from './regexp-patterns';
 import { UserInfo } from '@core/model/user';
+import { UserAccount } from '@core/model/account/account.model';
+import { PAYMENT_SYSTEM_TYPE, ACCOUNT_TYPES } from '@sections/accounts/accounts.config';
 
 export function parseArrayFromString<T>(value: string): Array<T> {
   if (value && !value.length) return [];
@@ -105,3 +107,15 @@ export const validateAllFormFields = (formGroup: FormGroup) => {
     }
   });
 };
+
+export const isCreditCardAccount = ({ paymentSystemType }: UserAccount): boolean => {
+  return paymentSystemType === PAYMENT_SYSTEM_TYPE.MONETRA || paymentSystemType === PAYMENT_SYSTEM_TYPE.USAEPAY;
+}
+
+export const isCashlessAccount = ({ paymentSystemType }: UserAccount): boolean => {
+  return paymentSystemType === PAYMENT_SYSTEM_TYPE.OPCS || paymentSystemType === PAYMENT_SYSTEM_TYPE.CSGOLD;
+}
+
+export const isMealsAccount = ({ accountType }: UserAccount): boolean => {
+  return accountType === ACCOUNT_TYPES.meals;
+}

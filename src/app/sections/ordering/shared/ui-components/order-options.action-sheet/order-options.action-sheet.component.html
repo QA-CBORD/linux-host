@@ -57,6 +57,7 @@
                              [data]="orderOptionsData"
                              [dateTimePicker]="dateTimePicker"
                              [merchantInfo]="activeMerchant$ | async"
+                             [userData]="userData$ | async"
                              (onTimeSelected)="onDateTimeSelected($event)"
                              ></st-date-time-picker>
       </ion-item>

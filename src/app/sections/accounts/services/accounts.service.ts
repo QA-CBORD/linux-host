@@ -13,12 +13,12 @@ import { ConfigurationService } from '@core/service/config-service/configuration
 import {
   ContentStringsParamsAccounts,
   GenericContentStringsParams,
-  PAYMENT_SYSTEM_TYPE,
   SYSTEM_SETTINGS_CONFIG,
 } from '../accounts.config';
 import { MEAL_CONTENT_STRINGS } from '@sections/accounts/pages/meal-donations/meal-donation.config.ts';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { CONTENT_STINGS_CATEGORIES, CONTENT_STINGS_DOMAINS } from '../../../content-strings';
+import { isCashlessAccount } from '@core/utils/general-helpers';
 
 @Injectable()
 export class AccountsService {
@@ -141,8 +141,6 @@ export class AccountsService {
   }
 
   private filterAccountsByPaymentSystem(accounts: UserAccount[]): UserAccount[] {
-    return accounts.filter(
-      ({ paymentSystemType: type }) => type === PAYMENT_SYSTEM_TYPE.OPCS || type === PAYMENT_SYSTEM_TYPE.CSGOLD,
-    );
+    return accounts.filter((account: UserAccount) => isCashlessAccount(account));
   }
 }

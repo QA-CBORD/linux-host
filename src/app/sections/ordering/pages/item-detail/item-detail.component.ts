@@ -53,6 +53,7 @@ export class ItemDetailComponent implements OnInit {
     this.menuInfo$ = this.cartService.menuInfo$;
     this.initContentStrings();
     this.activatedRoute.data.pipe(take(1)).subscribe(({ data }) => this.routesData = data);
+    this.calculateTotalPrice();
   }
 
   ngOnDestroy() {

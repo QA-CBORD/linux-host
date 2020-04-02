@@ -52,13 +52,13 @@ export const convertGMTintoLocalTime = (dueTime, locale, timeZone): string => {
   return `${splittedTime[2]}-${splittedTime[0]}-${splittedTime[1]}T${arrOfDatetime[1].trim()}.000`;
 };
 
-export const isSameDay = (c, n): boolean => {
+export const isSameDay = (c, n, index = 0): boolean => {
   const current = new Date(c);
   const next = new Date(n);
 
   return (
     current.getFullYear() === next.getFullYear() &&
-    current.getDate() === next.getDate() &&
+    current.getDate() + index === next.getDate() &&
     current.getMonth() === next.getMonth()
   );
 };
