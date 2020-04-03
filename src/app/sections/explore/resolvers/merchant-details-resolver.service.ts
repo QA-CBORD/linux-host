@@ -12,11 +12,10 @@ export class MerchantDetailsResolverService implements Resolve<boolean> {
     private readonly exploreService: ExploreService,
     private readonly router: Router,
     private readonly loadingService: LoadingService
-  ) {
-    this.loadingService.showSpinner();
-  }
+  ) {}
 
   resolve(): Observable<boolean> {
+    this.loadingService.showSpinner();
     return this.router.routerState.snapshot.url.includes(NAVIGATE.explore)
       ? of(true)
       : this.exploreService.getInitialMerchantData$().pipe(
