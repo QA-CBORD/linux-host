@@ -3,6 +3,7 @@
 :host {
   display: block;
   width: 100%;
+  min-width: 0;
 }
 .info-block p {
   margin: 0;
@@ -13,7 +14,7 @@
 
   &__merchant-name {
     @include ellipsis;
-    @include font-nunito-heavy(16px);
+    @include font-nunito-semibold(16px);
   }
 
   &__distance {

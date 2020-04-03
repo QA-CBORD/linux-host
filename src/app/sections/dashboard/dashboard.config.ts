@@ -93,16 +93,6 @@ export enum TILES_TITLE {
 
 export const TILES_BASE_CONFIG: TileWrapperConfig[] = [
   {
-    id: TILES_ID.explore,
-    title: 'Explore',
-    iconPath: '/assets/icon/accounts.svg',
-    isEnable: false,
-    navigate: NAVIGATE.explore,
-    buttonConfig: {
-      show: false,
-    },
-  },
-  {
     id: TILES_ID.accounts,
     title: 'Accounts',
     iconPath: '/assets/icon/accounts.svg',
@@ -177,11 +167,11 @@ export const TILES_BASE_CONFIG: TileWrapperConfig[] = [
     title: 'Explore',
     iconPath: '/assets/icon/map.svg',
     isEnable: false,
-    navigate: NAVIGATE.accounts,
+    navigate: NAVIGATE.explore,
     buttonConfig: {
       show: true,
       title: 'Explore All',
-      navigate: NAVIGATE.accounts,
+      navigate: NAVIGATE.explore,
     },
   },
   {

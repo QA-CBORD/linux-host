@@ -1,7 +1,7 @@
 <div class="explore" *ngIf="favMerchants$ | async as merchants">
-  <ion-list>
+  <ion-list class="ion-no-margin ion-no-padding">
     <ion-item *ngFor="let merchant of merchants; let last = last"
-              [lines]="last ? 'none' : ''"
+              lines="none"
               (click)="onMerchantClicked(merchant.id)"
               class="merchant-card">
       <ion-label class="merchant-card__content">
@@ -18,9 +18,9 @@
 </div>
 
 <div class="explore" *ngIf="isLoading">
-  <ion-list>
+  <ion-list class="ion-no-margin">
     <ion-item *ngFor="let merchant of [0,1]; let last = last"
-              [lines]="last ? 'none' : ''">
+              lines="none">
       <ion-label>
         <div class="merchant-skeleton">
           <p>

@@ -1,19 +1,28 @@
 @import 'tools';
 
 .merchant-card {
-  --padding-end: 15px;
+  --padding-start: 0;
+  --inner-padding-end: 0;
+
+  padding: 15px 0;
+  margin: 0 15px;
+
+  &:first-child {
+    border-bottom: 1px solid $color-white-smoke;
+  }
 
   &__image {
-    width: 90px;
+    min-width: 125px;
     border-radius: 5%;
     margin-right: 10px;
-    height: 70px;
+    height: 65px;
     object-fit: cover;
   }
 
   &__content {
     display: flex;
     align-items: center;
+    margin: 0;
   }
 }
 
@@ -22,8 +31,8 @@
   align-items: center;
 
   &__img {
-    height: 70px;
-    width: 100px;
+    width: 125px;
+    height: 65px;
     margin-right: 10px;
     border-radius: 5%;
   }
