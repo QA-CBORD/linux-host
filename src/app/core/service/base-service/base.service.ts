@@ -111,7 +111,7 @@ export class BaseService {
         break;
       case '6113':
         newError.name = 'PaymentSystemBusinessLogicException';
-        newError.message = message;
+        newError.message = 'There was an issue with the transaction';
         break;
     }
     throw newError;
