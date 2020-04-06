@@ -241,7 +241,10 @@ export class ItemDetailComponent implements OnInit {
         this.cartSelectedItem = orderItems.find(({ id }) => id === orderItemId);
         if (this.cartSelectedItem) {
           this.cartOrderItemOptions = this.cartSelectedItem.orderItemOptions;
-          this.order = { ...this.order, counter: this.cartSelectedItem.quantity };
+          const optionsPrice = this.cartOrderItemOptions.reduce(
+            (total, item) => (!item ? total : item.salePrice + total), 0);
+          
+          this.order = { ...this.order, counter: this.cartSelectedItem.quantity, optionsPrice };
         }
         this.initForm();
       });
