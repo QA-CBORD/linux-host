@@ -176,6 +176,26 @@ export enum INSTITUTION_ADDRESS_RESTRICTIONS {
   offCampus = 2
 }
 
+export const ORDER_ERROR_CODES = {
+  DELIVERY_ADDRESS_COORDS: '9001',
+  ORDER_DELIVERY_ITEM_MIN: '9002',
+  ORDER_TYPE: '9003',
+  CONTACT_INFO: '9004',
+  ORDER_ITEM_MIN: '9005',
+  ORDER_ITEM_MAX: '9006',
+  ITEM_OPTION_MIN: '9007',
+  ITEM_OPTION_MAX: '9008',
+  ORDER_PAYMENT: '9009',
+  INVALID_ORDER: '9010',
+  MERCHANT_CLOSED: '9011',
+  MENU_UNAVAILABLE: '9012',
+  ORDER_STATUS: '9013',
+  ORDER_TIP: '9014',
+  ORDER_CAPACITY: '9017',
+  INSUFFICIENT_FUNDS: '6112',
+  TIMEOUT: '9997',
+}
+
 export const ORDER_VALIDATION_ERRORS: ServerErrorsInfo = {
   9001: 'The selected delivery address could not be mapped to valid coordinates.',
   9003: 'Merchant does not support the requested order type',
@@ -186,6 +206,7 @@ export const ORDER_VALIDATION_ERRORS: ServerErrorsInfo = {
   9005: 'Items in order couldn\'t be lower than merchant supports',
   9006: 'Items in order  couldn\'t be more than merchant supports',
   9002: 'Order minimum total for delivery wasn\'t met',
+  9012: 'Menu is not available at this time',
   9014: 'Tip amount is negative or greater than the order subtotal',
   9013: 'Order cannot be canceled due to it has been completed',
   6112: 'You dont have enough money',

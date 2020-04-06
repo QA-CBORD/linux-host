@@ -9,6 +9,7 @@ import {
   ORDER_TYPE,
   ORDER_VALIDATION_ERRORS,
   ORDERING_CONTENT_STRINGS,
+  ORDER_ERROR_CODES
 } from '@sections/ordering/ordering.config';
 import { first, map, take } from 'rxjs/operators';
 import { ModalController, ToastController, PopoverController, AlertController } from '@ionic/angular';
@@ -115,26 +116,32 @@ export class FullMenuComponent implements OnInit, OnDestroy {
       },
     });
 
-    modal.onDidDismiss().then(async ({ data }) => {
-      if (!data) return;
+    /// order details screen close
+  modal.onDidDismiss().then(async ({ data }) => {
+  if (!data) return;
 
-      const cachedData = await this.cartService.orderDetailsOptions$.pipe(first()).toPromise();
-      await this.cartService.setActiveMerchantsMenuByOrderOptions(
-        data.dueTime,
-        data.orderType,
-        data.address,
-        data.isASAP
-      );
-      this.cartService.orderItems$.pipe(first()).subscribe(items => {
-        if (items.length) {
-          const errorCB = () => this.modalHandler(cachedData);
-          this.validateOrder(null, errorCB);
-        }
-      });
-    });
+  const cachedData = await this.cartService.orderDetailsOptions$.pipe(first()).toPromise();
+  await this.cartService.setActiveMerchantsMenuByOrderOptions(
+    data.dueTime,
+    data.orderType,
+    data.address,
+    data.isASAP
+  );
+  this.cartService.orderItems$.pipe(first()).subscribe(items => {
+    if (items.length) {
+      const ignoreErrors = [
+        ORDER_ERROR_CODES.ORDER_DELIVERY_ITEM_MIN,
+        ORDER_ERROR_CODES.ORDER_ITEM_MIN,
+        ORDER_ERROR_CODES.ORDER_ITEM_MAX
+      ];
+      const errorCB = () => this.modalHandler(cachedData);
+      this.validateOrder(null, errorCB, ignoreErrors);
+    }
+  });
+});
 
-    await modal.present();
-  }
+await modal.present();
+}
 
   redirectToCart() {
     const successCb = () => this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.cart], { skipLocationChange: true });
@@ -155,13 +162,13 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     await alert.present();
   }
 
-  private async validateOrder(successCb, errorCB) {
+  private async validateOrder(successCb, errorCB, ignoreCodes?:string[]) {
     this.loadingService.showSpinner();
     await this.cartService
       .validateOrder()
       .pipe(
         first(),
-        handleServerError(ORDER_VALIDATION_ERRORS),
+        handleServerError(ORDER_VALIDATION_ERRORS, ignoreCodes),
       )
       .toPromise()
       .then(successCb)

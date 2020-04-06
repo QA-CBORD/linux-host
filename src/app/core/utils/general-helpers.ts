@@ -1,6 +1,6 @@
 import { AbstractControl, ValidationErrors, ValidatorFn, FormGroup, FormControl } from '@angular/forms';
 import { ServerErrorsInfo } from '@core/model/server_error/server-error.model';
-import { MonoTypeOperatorFunction, Observable, throwError } from 'rxjs';
+import { MonoTypeOperatorFunction, Observable, of, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { ZERO_FIRST_REGEXP, INT_REGEXP, INT_DEC_REGEXP, EMAIL_REGEXP, CURRENCY_REGEXP } from './regexp-patterns';
 import { UserInfo } from '@core/model/user';
@@ -66,13 +66,17 @@ export const validateInteger = ({ value }: AbstractControl): ValidationErrors | 
   return !isInteger || isStartedWithZero ? { incorrect: true } : null;
 };
 
-export const handleServerError = <T>(serverError: ServerErrorsInfo): MonoTypeOperatorFunction<T> => {
+export const handleServerError = <T>(serverError: ServerErrorsInfo, ignoreCodes?: string[]): MonoTypeOperatorFunction<T> => {
   return (source: Observable<T>) =>
     source.pipe(
       catchError(({ message }) => {
         message = message.split('|');
         if (message.length <= 1) throw new Error(message);
         const [code, text] = message;
+
+        if(ignoreCodes && ignoreCodes.includes(code)){
+          return of<T>();
+        }
 
         // Temprorary solution for these codes:
         if(+code === 9002 || +code === 9005) {
