@@ -39,7 +39,8 @@ export class OrderOptionsActionSheetComponent implements OnInit {
   orderOptionsData: OrderOptions;
   deliveryAddresses: AddressInfo[];
   defaultDeliveryAddress: string;
-  schedule: Schedule;
+  schedulePickup: Schedule;
+  scheduleDelivery: Schedule;
   defaultPickupAddress: AddressInfo | '';
   pickupLocations: any;
   buildingsForNewAddressForm: BuildingInfo[];
@@ -85,7 +86,8 @@ export class OrderOptionsActionSheetComponent implements OnInit {
 
     this.loadingService.showSpinner();
     zip(
-      this.merchantService.getMerchantOrderSchedule(this.merchantId, this.orderType),
+      this.merchantService.getMerchantOrderSchedule(this.merchantId,  ORDER_TYPE.PICKUP),
+      this.merchantService.getMerchantOrderSchedule(this.merchantId, ORDER_TYPE.DELIVERY),
       this.retrieveDeliveryAddresses(this.merchantId),
       this.merchantService.retrievePickupLocations(
         this.storeAddress,
@@ -96,7 +98,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     )
       .pipe(take(1))
       .subscribe(
-        ([schedule, [deliveryAddress, deliveryLocations], pickupLocations, buildingsForNewAddressForm, orderDetailsOptions]) => {
+        ([schedulePickup, scheduleDelivery, [deliveryAddress, deliveryLocations], pickupLocations, buildingsForNewAddressForm, orderDetailsOptions]) => {
           const isTimeDisable = parseInt(this.settings.map[MerchantSettings.orderAheadEnabled].value);
           let defaultPickupAddress;
           if (orderDetailsOptions === null) {
@@ -111,7 +113,8 @@ export class OrderOptionsActionSheetComponent implements OnInit {
           this.defaultDeliveryAddress = this.activeDeliveryAddressId
             ? this.activeDeliveryAddressId
             : deliveryAddress.defaultAddress;
-          this.schedule = <unknown>schedule as Schedule;
+          this.schedulePickup = <unknown>schedulePickup as Schedule;
+          this.scheduleDelivery = <unknown>scheduleDelivery as Schedule;
           this.setDefaultTimeSlot();
           this.defaultPickupAddress = defaultPickupAddress;
           this.pickupLocations = pickupLocations;
@@ -247,10 +250,11 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     if (openNow) {
       this.dateTimePicker = 'ASAP';
     } else {
-      const firstDay = this.schedule.days[0].date;
+      const schedule = this.activeOrderType === ORDER_TYPE.PICKUP ? this.schedulePickup : this.scheduleDelivery;
+      const firstDay = schedule.days[0].date;
       const [year, month, day] = firstDay.split('-');
-      const { hour } = this.schedule.days[0].hourBlocks[0];
-      const minutes = this.schedule.days[0].hourBlocks[0].minuteBlocks[0];
+      const { hour } = schedule.days[0].hourBlocks[0];
+      const minutes = schedule.days[0].hourBlocks[0].minuteBlocks[0];
       this.dateTimePicker = new Date(Number(year), Number(month) - 1, Number(day), hour, minutes);
     }
   }

@@ -52,7 +52,7 @@
       </ion-item>
       <ion-item [detail]="isTimeDisable"
                 lines="full">
-        <st-date-time-picker [schedule]="schedule"
+        <st-date-time-picker [schedule]="orderType === enumOrderTypes.PICKUP ? schedulePickup : scheduleDelivery"
                              [isTimeDisable]="isTimeDisable"
                              [data]="orderOptionsData"
                              [dateTimePicker]="dateTimePicker"
