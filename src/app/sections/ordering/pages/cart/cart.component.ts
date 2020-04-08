@@ -231,7 +231,7 @@ export class CartComponent implements OnInit {
 
     const { orderItems } = await this.cartService.orderInfo$.pipe(first()).toPromise();
     if (!orderItems.length) {
-      await this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.fullMenu], { skipLocationChange: true });
+      this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.fullMenu], { skipLocationChange: true });
       return;
     }
 
@@ -290,7 +290,7 @@ export class CartComponent implements OnInit {
       .pipe(handleServerError(ORDER_VALIDATION_ERRORS))
       .toPromise()
       .then(async order => await this.showModal(order))
-      .catch(async error => {
+      .catch(async (error: string | [string, string]) => {
         if (Array.isArray(error) && +error[0] === +ORDER_ERROR_CODES.ORDER_CAPACITY) {
           await this.onErrorModal(error[1], this.navigateToFullMenu.bind(this));
         } else if (typeof error === 'string') {
