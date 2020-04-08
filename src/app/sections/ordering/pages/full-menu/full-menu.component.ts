@@ -181,8 +181,7 @@ await modal.present();
       .catch((error: Array<string> | string) => {
         if(Array.isArray(error) && IGNORE_ERRORS.includes(error[0])) {
           this.cartService.cartsErrorMessage = error[1];
-          return errorCB(error);
-        } 
+        }
        return errorCB(error);
       })
       .finally(() => this.loadingService.closeSpinner());
