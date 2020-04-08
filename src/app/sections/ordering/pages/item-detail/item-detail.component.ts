@@ -1,6 +1,6 @@
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { ToastController } from '@ionic/angular';
+import { PopoverController, ToastController } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subscription, zip } from 'rxjs';
 import { first, take } from 'rxjs/operators';
@@ -8,6 +8,7 @@ import { first, take } from 'rxjs/operators';
 import {
   LOCAL_ROUTING,
   MerchantSettings,
+  ORDER_ERROR_CODES,
   ORDER_VALIDATION_ERRORS,
   ORDERING_CONTENT_STRINGS,
 } from '@sections/ordering/ordering.config';
@@ -17,6 +18,7 @@ import { handleServerError } from '@core/utils/general-helpers';
 import { NAVIGATE } from 'src/app/app.global';
 import { Environment } from 'src/app/environment';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
+import { ItemDetailModalComponent } from '@sections/ordering/pages/item-detail/components/item-detail-modal/item-detail-modal.component';
 
 @Component({
   selector: 'st-item-detail',
@@ -35,7 +37,7 @@ export class ItemDetailComponent implements OnInit {
   cartSelectedItem: OrderItem;
   cartOrderItemOptions: OrderItem[] = [];
   allowNotes: boolean;
-  contentStrings:OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
+  contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
   routesData: RoutesData;
 
   constructor(
@@ -45,8 +47,10 @@ export class ItemDetailComponent implements OnInit {
     private readonly cartService: CartService,
     private readonly loadingService: LoadingService,
     private readonly toastController: ToastController,
-    private readonly orderingService: OrderingService
-  ) {}
+    private readonly orderingService: OrderingService,
+    private readonly popoverController: PopoverController,
+  ) {
+  }
 
   ngOnInit() {
     this.initMenuItemOptions();
@@ -56,13 +60,32 @@ export class ItemDetailComponent implements OnInit {
     this.calculateTotalPrice();
   }
 
+  private async initInfoModal(message: string, cb: () => void): Promise<void> {
+    const modal = await this.popoverController.create({
+      component: ItemDetailModalComponent,
+      componentProps: { message },
+    });
+
+    modal.onDidDismiss().then(cb);
+    await modal.present();
+  }
+
   ngOnDestroy() {
     this.sourceSubscription.unsubscribe();
   }
 
+  navigateToFullMenu() {
+    this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.fullMenu], {
+      queryParams: { openTimeSlot: true }, skipLocationChange: true,
+    });
+  }
+
   onClose() {
-    const { queryParams: { categoryId }} = this.routesData
-    this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.menuCategoryItems, categoryId], { skipLocationChange: true });
+    const { queryParams: { categoryId } } = this.routesData;
+    this.router.navigate(
+      [NAVIGATE.ordering, LOCAL_ROUTING.menuCategoryItems, categoryId],
+      { skipLocationChange: true },
+    );
   }
 
   initForm() {
@@ -108,7 +131,12 @@ export class ItemDetailComponent implements OnInit {
 
     this.itemOrderForm = this.fb.group({
       ...formGroup,
-      message: [this.cartSelectedItem && this.cartSelectedItem.specialInstructions ? this.cartSelectedItem.specialInstructions : '', [Validators.minLength(1), Validators.maxLength(255)]],
+      message: [
+        this.cartSelectedItem && this.cartSelectedItem.specialInstructions
+          ? this.cartSelectedItem.specialInstructions
+          : '',
+        [Validators.minLength(1), Validators.maxLength(255)],
+      ],
     });
 
     this.valueChanges();
@@ -179,8 +207,8 @@ export class ItemDetailComponent implements OnInit {
     await this.onSubmit(menuItem);
   }
 
-  private configureMenuItem(id, quantity): Partial<OrderItem> {
-    return { menuItemId: id, orderItemOptions: [], quantity: quantity };
+  private configureMenuItem(menuItemId: string, quantity: number): Partial<OrderItem> {
+    return { menuItemId, orderItemOptions: [], quantity };
   }
 
   private async onSubmit(menuItem): Promise<void> {
@@ -196,20 +224,26 @@ export class ItemDetailComponent implements OnInit {
       .validateOrder()
       .pipe(
         first(),
-        handleServerError(ORDER_VALIDATION_ERRORS)
+        handleServerError(ORDER_VALIDATION_ERRORS),
       )
       .toPromise()
       .then(() => {
         this.cartService.cartsErrorMessage = null;
-        this.onClose()
+        this.onClose();
       })
-      .catch(error => {
+      .catch(async error => {
         // Temporary solution:
-        if(typeof error === 'object') {
+
+        if (Array.isArray(error)) {
           const [code, text] = error;
-          this.cartService.cartsErrorMessage = text;
-          this.onClose();
-          return;
+          if (+code === +ORDER_ERROR_CODES.ORDER_CAPACITY) {
+            await this.initInfoModal(text, this.navigateToFullMenu.bind(this));
+            return;
+          } else {
+            this.cartService.cartsErrorMessage = text;
+            this.onClose();
+            return;
+          }
         }
         this.cartService.removeLastOrderItem();
         this.failedValidateOrder(error);
@@ -243,7 +277,7 @@ export class ItemDetailComponent implements OnInit {
           this.cartOrderItemOptions = this.cartSelectedItem.orderItemOptions;
           const optionsPrice = this.cartOrderItemOptions.reduce(
             (total, item) => (!item ? total : item.salePrice + total), 0);
-          
+
           this.order = { ...this.order, counter: this.cartSelectedItem.quantity, optionsPrice };
         }
         this.initForm();
@@ -302,11 +336,11 @@ export const validateMaxLengthOfArray = (max: number | undefined): ValidationErr
 };
 
 export interface RoutesData {
-  menuItem: MenuItemInfo; 
+  menuItem: MenuItemInfo;
   queryParams: {
-    categoryId: string; 
-    menuItemId: string; 
-    orderItemId: string; 
+    categoryId: string;
+    menuItemId: string;
+    orderItemId: string;
     isItemExistsInCart: boolean
   }
 };

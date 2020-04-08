@@ -16,6 +16,6 @@ export class TestProvider {
    *  Environment Institutions
    */
   getTestUser(): Observable<string> {
-    return this.authService.authenticateUser(testCredentials.gold7);
+    return this.authService.authenticateUser(testCredentials.odysseyPreview);
   }
 }
