@@ -11,7 +11,7 @@ import {
   ORDERING_CONTENT_STRINGS,
 } from '@sections/ordering/ordering.config';
 import { NAVIGATE } from '../../../../../../app.global';
-import { ModalController, PopoverController, ToastController } from '@ionic/angular';
+import { ModalController, PopoverController, ToastController, AlertController } from '@ionic/angular';
 import { ORDERING_STATUS } from '@sections/ordering/shared/ui-components/recent-oders-list/recent-orders-list-item/recent-orders.config';
 import { BUTTON_TYPE, buttons } from '@core/utils/buttons.config';
 import { OrderOptionsActionSheetComponent } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
@@ -46,7 +46,8 @@ export class RecentOrderComponent implements OnInit {
     private readonly loadingService: LoadingService,
     private readonly toastController: ToastController,
     private readonly userService: UserService,
-    private readonly orderingService: OrderingService
+    private readonly orderingService: OrderingService,
+    private readonly alertController: AlertController
   ) {
   }
 
@@ -167,9 +168,31 @@ export class RecentOrderComponent implements OnInit {
         handleServerError(ORDER_VALIDATION_ERRORS),
       )
       .toPromise()
-      .catch(this.onValidateErrorToast.bind(this))
+      .catch(async (error) => {
+        // Temporary solution:
+        if(typeof error === 'object') {
+          this.loadingService.closeSpinner();
+          const [code, text] = error;
+          await this.presentPopup(text);
+          throw text;
+        }
+        this.onValidateErrorToast.bind(this)
+      })
       .then(this.redirectToCart.bind(this))
       .finally(await this.loadingService.closeSpinner.bind(this.loadingService));
+  }
+
+  private async presentPopup(message) {
+    const alert = await this.alertController.create({
+      header: message,
+      buttons: [ {
+        text: 'Ok', 
+        handler: () => 
+          this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.fullMenu], { skipLocationChange: true })} 
+      ]
+    });
+
+    await alert.present();
   }
 
   private async redirectToCart(): Promise<void> {

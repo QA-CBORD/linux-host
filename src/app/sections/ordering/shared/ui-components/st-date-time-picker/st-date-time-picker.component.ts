@@ -36,7 +36,8 @@ export class StDateTimePickerComponent implements OnInit {
 
   constructor(private readonly pickerController: PickerController,
               private readonly orderingService: OrderingService,
-              private readonly contentStringsFacadeService: ContentStringsFacadeService) {
+              private readonly contentStringsFacadeService: ContentStringsFacadeService,
+              ) {
   }
 
   async ngOnInit(): Promise<void> {
@@ -63,44 +64,44 @@ export class StDateTimePickerComponent implements OnInit {
       buttons: [
         { text: cancel, role: 'cancel' },
         { text: title, role: 'title' },
-        {
-          text: confirm,
-          handler: ([date, time]) => {
-            const [year, month, day] = date.value.split('-');
-            if (time.value === 'asap') {
-              this.dateTimePicker = 'ASAP';
-            } else {
-              let [hours, mins] = time.value.split(':');
-              this.dateTimePicker = new Date(year, month - 1, day, hours, mins);
-            }
-
-            this.onTimeSelected.emit(this.dateTimePicker);
-          },
-        },
+        { text: confirm, handler: this.pickerClickHandler.bind(this) },
       ],
     });
 
     picker.addEventListener('ionPickerColChange', async (event: any) => {
       const { detail: data } = event;
       if (data.name === 1) {
-        if (!data.options[data.selectedIndex].text) {
-          this.prevSelectedTimeInfo = { ...this.prevSelectedTimeInfo, maxValue: true };
-        } else {
-          this.prevSelectedTimeInfo = { ...this.prevSelectedTimeInfo, currentIdx: data.selectedIndex, maxValue: false };
-        }
+        const isValueExist = !data.options[data.selectedIndex].text;
+        const extraProps = isValueExist ? { maxValue: true } : { currentIdx: data.selectedIndex, maxValue: false };
+
+        this.prevSelectedTimeInfo = { ...this.prevSelectedTimeInfo, ...extraProps };
       } else {
+        if (data.options[data.selectedIndex].text === 'Today') {
+          this.prevSelectedTimeInfo = { ...this.prevSelectedTimeInfo, maxValue: true };
+        }
         this.selectedDayIdx = data.selectedIndex;
       }
 
       picker.columns = this.createColumns();
       picker.forceUpdate();
-      if (data.options[data.selectedIndex].text) {
-        this.prevSelectedTimeInfo = { ...this.prevSelectedTimeInfo, prevIdx: data.selectedIndex };
-      }
     });
     this.picker = picker;
     await this.updateAsapOption();
     await picker.present();
+  }
+
+  private pickerClickHandler([date, { value }]) {
+    const [year, month, day] = date.value.split('-');
+    let dateValue;
+    if (value === 'asap') {
+      dateValue = 'ASAP';
+    } else {
+      let [hours, mins] = value.split(':');
+      dateValue = new Date(year, month - 1, day, hours, mins);
+    }
+
+    this.dateTimePicker = dateValue;
+    this.onTimeSelected.emit(this.dateTimePicker);
   }
 
   private preparePickerArr(i: number = 0): any[] {
