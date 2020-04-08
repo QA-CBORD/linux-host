@@ -12,7 +12,7 @@ import {
   ORDER_ERROR_CODES
 } from '@sections/ordering/ordering.config';
 import { first, map, take } from 'rxjs/operators';
-import { ModalController, PopoverController, AlertController } from '@ionic/angular';
+import { ModalController, PopoverController, AlertController, ToastController } from '@ionic/angular';
 import { OrderOptionsActionSheetComponent } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { handleServerError } from '@core/utils/general-helpers';
@@ -41,6 +41,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     private readonly modalController: ModalController,
     private readonly merchantService: MerchantService,
     private readonly loadingService: LoadingService,
+    private readonly toastController: ToastController,
     private readonly popoverCtrl: PopoverController,
     private readonly orderingService: OrderingService,
     private readonly alertController: AlertController
@@ -128,13 +129,8 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   );
   this.cartService.orderItems$.pipe(first()).subscribe(items => {
     if (items.length) {
-      const ignoreErrors = [
-        ORDER_ERROR_CODES.ORDER_DELIVERY_ITEM_MIN,
-        ORDER_ERROR_CODES.ORDER_ITEM_MIN,
-        ORDER_ERROR_CODES.ORDER_ITEM_MAX
-      ];
       const errorCB = () => this.modalHandler(cachedData);
-      this.validateOrder(null, errorCB, ignoreErrors);
+      this.validateOrder(null, errorCB, IGNORE_ERRORS);
     }
   });
 });
@@ -148,7 +144,14 @@ await modal.present();
       return;
     }
     const successCb = () => this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.cart], { skipLocationChange: true });
-    const errorCB = error => this.presentPopup(error);
+    const errorCB = (error: Array<string> | string) => {
+      if(Array.isArray(error)) {
+        const [code, message] = error;
+        if(IGNORE_ERRORS.includes(code)) return this.presentPopup(message);
+        error = message;
+      }
+      return this.failedValidateOrder(error);
+    };
     this.validateOrder(successCb, errorCB);
   }
 
@@ -175,17 +178,23 @@ await modal.present();
           this.cartService.cartsErrorMessage = null;
           return successCb && successCb();
         })
-      .catch((error) => {
-        if(typeof error === 'object') {
-          console.log(error);
-          
-          const [code, text] = error;
-          this.cartService.cartsErrorMessage = text;
-          return errorCB(text);
+      .catch((error: Array<string> | string) => {
+        if(Array.isArray(error) && IGNORE_ERRORS.includes(error[0])) {
+          this.cartService.cartsErrorMessage = error[1];
+          return errorCB(error);
         } 
        return errorCB(error);
       })
       .finally(() => this.loadingService.closeSpinner());
+  }
+
+  private async failedValidateOrder(message: string): Promise<void> {
+    const toast = await this.toastController.create({
+      message,
+      duration: 3000,
+      position: 'top',
+    });
+      toast.present();
   }
 
   private async modalHandler({ dueTime, orderType, address, isASAP }) {
@@ -223,3 +232,9 @@ await modal.present();
     );
   }
 }
+
+export const IGNORE_ERRORS = [
+  ORDER_ERROR_CODES.ORDER_DELIVERY_ITEM_MIN,
+  ORDER_ERROR_CODES.ORDER_ITEM_MIN,
+  ORDER_ERROR_CODES.ORDER_ITEM_MAX
+];
