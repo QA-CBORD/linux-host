@@ -12,7 +12,7 @@ import {
   ORDER_ERROR_CODES
 } from '@sections/ordering/ordering.config';
 import { first, map, take } from 'rxjs/operators';
-import { ModalController, ToastController, PopoverController, AlertController } from '@ionic/angular';
+import { ModalController, PopoverController, AlertController } from '@ionic/angular';
 import { OrderOptionsActionSheetComponent } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { handleServerError } from '@core/utils/general-helpers';
@@ -41,7 +41,6 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     private readonly modalController: ModalController,
     private readonly merchantService: MerchantService,
     private readonly loadingService: LoadingService,
-    private readonly toastController: ToastController,
     private readonly popoverCtrl: PopoverController,
     private readonly orderingService: OrderingService,
     private readonly alertController: AlertController
@@ -144,12 +143,12 @@ await modal.present();
 }
 
   redirectToCart() {
-    const successCb = () => this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.cart], { skipLocationChange: true });
-    const errorCB = error => this.failedValidateOrder(error);
     if(this.cartService.cartsErrorMessage !== null) {
       this.presentPopup(this.cartService.cartsErrorMessage);
       return;
     }
+    const successCb = () => this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.cart], { skipLocationChange: true });
+    const errorCB = error => this.presentPopup(error);
     this.validateOrder(successCb, errorCB);
   }
 
@@ -171,18 +170,22 @@ await modal.present();
         handleServerError(ORDER_VALIDATION_ERRORS, ignoreCodes),
       )
       .toPromise()
-      .then(successCb)
-      .catch(errorCB)
+      .then( 
+        () => {
+          this.cartService.cartsErrorMessage = null;
+          return successCb && successCb();
+        })
+      .catch((error) => {
+        if(typeof error === 'object') {
+          console.log(error);
+          
+          const [code, text] = error;
+          this.cartService.cartsErrorMessage = text;
+          return errorCB(text);
+        } 
+       return errorCB(error);
+      })
       .finally(() => this.loadingService.closeSpinner());
-  }
-
-  private async failedValidateOrder(message: string): Promise<void> {
-    const toast = await this.toastController.create({
-      message,
-      duration: 3000,
-      position: 'top',
-    });
-    toast.present();
   }
 
   private async modalHandler({ dueTime, orderType, address, isASAP }) {
