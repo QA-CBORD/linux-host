@@ -411,8 +411,6 @@ export class CartComponent implements OnInit {
   }
 
   private initContentStrings() {
-    this.contentStrings.buttonClose =
-      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonClose);
     this.contentStrings.buttonPlaceOrder =
       this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonPlaceOrder);
     this.contentStrings.labelCart =
