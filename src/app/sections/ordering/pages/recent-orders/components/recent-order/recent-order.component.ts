@@ -143,11 +143,11 @@ export class RecentOrderComponent implements OnInit {
     });
   }
 
-  private async initOrder({ address, dueTime, orderType }): Promise<void> {
+  private async initOrder({ address, dueTime, orderType, isASAP }): Promise<void> {
     const merchant = await this.merchant$.pipe(first()).toPromise();
     this.cart.clearCart();
     await this.cart.setActiveMerchant(merchant);
-    await this.cart.setActiveMerchantsMenuByOrderOptions(dueTime, orderType, address);
+    await this.cart.setActiveMerchantsMenuByOrderOptions(dueTime, orderType, address, isASAP);
     let [availableItems, hasMissedItems] = await this.resolveMenuItemsInOrder()
       .pipe(first())
       .toPromise();

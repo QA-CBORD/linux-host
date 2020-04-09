@@ -113,10 +113,12 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   get timeWithoutTimezone() {
-    if (this.orderDetailOptions.dueTime instanceof Date) {
-      return this.orderDetailOptions;
+    if(Object.keys(this.orderDetailOptions).length) {
+      if (this.orderDetailOptions.dueTime instanceof Date) {
+        return this.orderDetailOptions;
+      }
+      return { ...this.orderDetailOptions, dueTime: new Date((<string>this.orderDetailOptions.dueTime).slice(0, 19)) };
     }
-    return { ...this.orderDetailOptions, dueTime: new Date((<string>this.orderDetailOptions.dueTime).slice(0, 19)) };
   }
 
   get isTipEnabled() {
@@ -307,4 +309,3 @@ export interface OrderDetailsFormData {
   };
   valid: boolean;
 }
-

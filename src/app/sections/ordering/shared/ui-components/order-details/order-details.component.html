@@ -4,7 +4,9 @@
     <div class="order-details">
       <ion-label class="order-details__label">{{orderDetailOptions.orderType | typeMessage:'dueTime'}}</ion-label>
 
-      <p class="order-details__value">{{timeWithoutTimezone | modifyPrepTime: orderTypes}}</p>
+      <p class="order-details__value" *ngIf="timeWithoutTimezone && timeWithoutTimezone.dueTime">
+        {{timeWithoutTimezone | modifyPrepTime: orderTypes}}
+      </p>
     </div>
 
     <div class="order-details" *ngIf="orderDetailOptions.address">
