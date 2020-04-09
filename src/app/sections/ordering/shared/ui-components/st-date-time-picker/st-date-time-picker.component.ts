@@ -76,9 +76,7 @@ export class StDateTimePickerComponent implements OnInit {
 
         this.prevSelectedTimeInfo = { ...this.prevSelectedTimeInfo, ...extraProps };
       } else {
-        if (data.options[data.selectedIndex].text === 'Today') {
-          this.prevSelectedTimeInfo = { ...this.prevSelectedTimeInfo, maxValue: true };
-        }
+        this.prevSelectedTimeInfo = { ...this.prevSelectedTimeInfo, maxValue: true };
         this.selectedDayIdx = data.selectedIndex;
       }
 
