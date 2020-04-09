@@ -7,25 +7,32 @@ import { MerchantOrderTypesInfo } from '@sections/ordering';
   name: 'modifyPrepTime',
 })
 export class ModifyPrepTimePipe implements PipeTransform {
-  constructor(private readonly datePipe: DatePipe) {}
-  transform(value: any, orderTypes?: MerchantOrderTypesInfo): string {
-    const { dueTime, orderType, isASAP } = value;
-    const { pickupPrepTime, deliveryPrepTime } = orderTypes;
+
+  constructor(private readonly datePipe: DatePipe) {
+  }
+
+  transform(
+    { dueTime, orderType, isASAP }: any = {},
+    { pickupPrepTime, deliveryPrepTime }: MerchantOrderTypesInfo,
+    isShowTime: boolean = true): string {
+
+    if (isASAP && !isShowTime) return 'ASAP';
     const minute = 60000;
     const time = new Date(dueTime);
-    const timeInMiliseconds = time.getTime();
-    let finalTime = timeInMiliseconds;
+    const timeInMilliseconds = time.getTime();
+    let finalTime = timeInMilliseconds;
 
     if (isASAP) {
       switch (orderType) {
         case ORDER_TYPE.PICKUP:
-          finalTime = timeInMiliseconds + pickupPrepTime * minute;
+          finalTime = timeInMilliseconds + pickupPrepTime * minute;
           break;
         case ORDER_TYPE.DELIVERY:
-          finalTime = timeInMiliseconds + deliveryPrepTime * minute;
+          finalTime = timeInMilliseconds + deliveryPrepTime * minute;
           break;
       }
     }
+
     return this.datePipe.transform(new Date(finalTime), 'EE, MMM d, h:mm a');
   }
 }

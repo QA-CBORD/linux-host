@@ -194,7 +194,7 @@ export const ORDER_ERROR_CODES = {
   ORDER_CAPACITY: '9017',
   INSUFFICIENT_FUNDS: '6112',
   TIMEOUT: '9997',
-}
+};
 
 export const ORDER_VALIDATION_ERRORS: ServerErrorsInfo = {
   9001: 'The selected delivery address could not be mapped to valid coordinates.',

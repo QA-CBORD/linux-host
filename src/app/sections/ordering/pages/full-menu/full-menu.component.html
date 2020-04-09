@@ -39,7 +39,7 @@
           <div class="full-menu__date-time-value">{{ orderType | async }}</div>
           <div class="full-menu__date-time-helper">{{contentStrings.labelFor | async}}</div>
           <div class="full-menu__date-time-value" *ngIf="orderDetails$ | async">
-            {{ (orderDetails$ | async).orderInfo | modifyPrepTime: (orderDetails$ | async).orderTypes }}
+            {{ (orderDetails$ | async).orderInfo | modifyPrepTime: (orderDetails$ | async).orderTypes: false }}
           </div>
         </div>
         <div class="full-menu__arrow-wrapper">

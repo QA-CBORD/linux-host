@@ -1,30 +1,32 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
-import { CartService, OrderDetailOptions, MerchantService } from '@sections/ordering';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import { CartService, MerchantService, OrderDetailOptions } from '@sections/ordering';
 import { Observable, Subscription, zip } from 'rxjs';
 import { MenuInfo, MerchantInfo, MerchantOrderTypesInfo } from '@sections/ordering/shared/models';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NAVIGATE } from 'src/app/app.global';
 import {
   LOCAL_ROUTING,
+  ORDER_ERROR_CODES,
   ORDER_TYPE,
   ORDER_VALIDATION_ERRORS,
   ORDERING_CONTENT_STRINGS,
-  ORDER_ERROR_CODES
 } from '@sections/ordering/ordering.config';
 import { first, map, take } from 'rxjs/operators';
-import { ModalController, PopoverController, AlertController, ToastController } from '@ionic/angular';
+import { AlertController, ModalController, PopoverController, ToastController } from '@ionic/angular';
 import { OrderOptionsActionSheetComponent } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { handleServerError } from '@core/utils/general-helpers';
 import { FullMenuPopoverComponent } from './full-menu-popover';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
+import { OverlayEventDetail } from '@ionic/core';
+
 
 @Component({
   selector: 'st-full-menu',
   templateUrl: './full-menu.component.html',
   styleUrls: ['./full-menu.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FullMenuComponent implements OnInit, OnDestroy {
   private readonly sourceSubscription: Subscription = new Subscription();
@@ -44,7 +46,8 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     private readonly toastController: ToastController,
     private readonly popoverCtrl: PopoverController,
     private readonly orderingService: OrderingService,
-    private readonly alertController: AlertController
+    private readonly alertController: AlertController,
+    private readonly activatedRoute: ActivatedRoute,
   ) {
   }
 
@@ -69,7 +72,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
           default:
             return 'DineIn';
         }
-      })
+      }),
     );
   }
 
@@ -85,18 +88,23 @@ export class FullMenuComponent implements OnInit, OnDestroy {
 
   ionViewWillEnter() {
     this.menuItems$ = this.cartService.menuItems$;
+    const { openTimeSlot } = this.activatedRoute.snapshot.queryParams;
+    openTimeSlot && this.openOrderOptions();
   }
 
-  onCategoryClicked({ id }) {
-    this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.menuCategoryItems, id], { skipLocationChange: true });
+  async onCategoryClicked({ id }): Promise<void> {
+    await this.router.navigate(
+      [NAVIGATE.ordering, LOCAL_ROUTING.menuCategoryItems, id],
+      { skipLocationChange: true },
+    );
   }
 
-  async openOrderOptions() {
+  async openOrderOptions(): Promise<void> {
     const { orderTypes, id, storeAddress, settings } = await this.merchantInfo$.pipe(take(1)).toPromise();
     await this.actionSheet(orderTypes, id, storeAddress, settings);
   }
 
-  private async actionSheet(orderTypes: MerchantOrderTypesInfo, merchantId, storeAddress, settings) {
+  private async actionSheet(orderTypes: MerchantOrderTypesInfo, merchantId, storeAddress, settings): Promise<void> {
     const footerButtonName = 'set order options';
     const cssClass = `order-options-action-sheet ${
       orderTypes.delivery && orderTypes.pickup ? ' order-options-action-sheet-p-d' : ''
@@ -115,35 +123,36 @@ export class FullMenuComponent implements OnInit, OnDestroy {
         activeOrderType: orderType === ORDER_TYPE.DELIVERY ? ORDER_TYPE.DELIVERY : null,
       },
     });
+    modal.onDidDismiss().then(this.onDismissOrderDetails.bind(this));
+    await modal.present();
+  }
 
-    /// order details screen close
-  modal.onDidDismiss().then(async ({ data }) => {
-  if (!data) return;
+  private async onDismissOrderDetails({ data }: OverlayEventDetail): Promise<void> {
+    if (!data) return;
 
-  const cachedData = await this.cartService.orderDetailsOptions$.pipe(first()).toPromise();
-  await this.cartService.setActiveMerchantsMenuByOrderOptions(
-    data.dueTime,
-    data.orderType,
-    data.address,
-    data.isASAP
-  );
-  this.cartService.orderItems$.pipe(first()).subscribe(items => {
-    if (items.length) {
-      const errorCB = () => this.modalHandler(cachedData);
-      this.validateOrder(null, errorCB, IGNORE_ERRORS);
-    }
-  });
-});
+    const cachedData = await this.cartService.orderDetailsOptions$.pipe(first()).toPromise();
+    await this.cartService.setActiveMerchantsMenuByOrderOptions(
+      data.dueTime,
+      data.orderType,
+      data.address,
+      data.isASAP,
+    );
+    this.cartService.orderItems$.pipe(first()).subscribe(items => {
+      if (items.length) {
+        const errorCB = () => this.modalHandler(cachedData);
+        this.validateOrder(null, errorCB, IGNORE_ERRORS);
+      }
+    });
+  }
 
-await modal.present();
-}
-
-  redirectToCart() {
-    if(this.cartService.cartsErrorMessage !== null) {
-      this.presentPopup(this.cartService.cartsErrorMessage);
-      return;
-    }
-    const successCb = () => this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.cart], { skipLocationChange: true });
+  async redirectToCart(): Promise<void> {
+    if (this.cartService.cartsErrorMessage !== null) {
+      return this.presentPopup(this.cartService.cartsErrorMessage);
+    };
+    const successCb = () => this.router.navigate(
+      [NAVIGATE.ordering, LOCAL_ROUTING.cart],
+      { skipLocationChange: true },
+    );
     const errorCB = (error: Array<string> | string) => {
       if(Array.isArray(error)) {
         const [code, message] = error;
@@ -152,20 +161,20 @@ await modal.present();
       }
       return this.failedValidateOrder(error);
     };
-    this.validateOrder(successCb, errorCB);
+   await this.validateOrder(successCb, errorCB);
   }
 
   private async presentPopup(message) {
     const alert = await this.alertController.create({
       header: message,
-      buttons: [ {text: 'Ok'} ]
+      buttons: [{ text: 'Ok' }],
     });
 
     await alert.present();
   }
 
-  private async validateOrder(successCb, errorCB, ignoreCodes?:string[]) {
-    this.loadingService.showSpinner();
+  private async validateOrder(successCb, errorCB, ignoreCodes?: string[]): Promise<void> {
+    await this.loadingService.showSpinner();
     await this.cartService
       .validateOrder()
       .pipe(
@@ -193,7 +202,7 @@ await modal.present();
       duration: 3000,
       position: 'top',
     });
-      toast.present();
+    await toast.present();
   }
 
   private async modalHandler({ dueTime, orderType, address, isASAP }) {
@@ -227,7 +236,7 @@ await modal.present();
       = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelFullMenu);
     this.contentStrings.labelPickup = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelPickup);
     this.contentStrings.labelDelivery = this.orderingService.getContentStringByName(
-      ORDERING_CONTENT_STRINGS.labelDelivery
+      ORDERING_CONTENT_STRINGS.labelDelivery,
     );
   }
 }
