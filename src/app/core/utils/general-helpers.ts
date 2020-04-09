@@ -1,11 +1,11 @@
-import { AbstractControl, ValidationErrors, ValidatorFn, FormGroup, FormControl } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { ServerErrorsInfo } from '@core/model/server_error/server-error.model';
 import { MonoTypeOperatorFunction, Observable, of, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { ZERO_FIRST_REGEXP, INT_REGEXP, INT_DEC_REGEXP, EMAIL_REGEXP, CURRENCY_REGEXP } from './regexp-patterns';
+import { CURRENCY_REGEXP, EMAIL_REGEXP, INT_DEC_REGEXP, INT_REGEXP, ZERO_FIRST_REGEXP } from './regexp-patterns';
 import { UserInfo } from '@core/model/user';
 import { UserAccount } from '@core/model/account/account.model';
-import { PAYMENT_SYSTEM_TYPE, ACCOUNT_TYPES } from '@sections/accounts/accounts.config';
+import { ACCOUNT_TYPES, PAYMENT_SYSTEM_TYPE } from '@sections/accounts/accounts.config';
 
 export function parseArrayFromString<T>(value: string): Array<T> {
   if (value && !value.length) return [];
@@ -16,7 +16,7 @@ export function parseArrayFromString<T>(value: string): Array<T> {
 
 export const formControlErrorDecorator = (
   fn: ValidatorFn,
-  errorMsg: string
+  errorMsg: string,
 ): ((control: AbstractControl) => ValidationErrors | null) => {
   return control => {
     return fn(control) === null ? null : { errorMsg };
@@ -36,7 +36,7 @@ export const validateMonthRange = ({ value }: AbstractControl): ValidationErrors
 };
 
 export const validateInputAmount = ({ value }: AbstractControl): ValidationErrors | null => {
-  if(!value) return null;
+  if (!value) return null;
   const isStartedWithZero = ZERO_FIRST_REGEXP.test(value);
   const isIntegerOrDecemals = INT_DEC_REGEXP.test(value);
 
@@ -52,14 +52,14 @@ export const validateGreaterOrEqualToZero = ({ value }: AbstractControl): Valida
 };
 
 export const validateCurrency = ({ value }: AbstractControl): ValidationErrors | null => {
-  if(!value) return null;
+  if (!value) return null;
   const isCurrency = CURRENCY_REGEXP.test(value);
 
   return !isCurrency ? { incorrect: true } : null;
 };
 
 export const validateInteger = ({ value }: AbstractControl): ValidationErrors | null => {
-  if(!value) return null;
+  if (!value) return null;
   const isStartedWithZero = ZERO_FIRST_REGEXP.test(value);
   const isInteger = INT_REGEXP.test(value);
 
@@ -74,21 +74,26 @@ export const handleServerError = <T>(serverError: ServerErrorsInfo, ignoreCodes?
         if (message.length <= 1) throw new Error(message);
         const [code, text] = message;
 
-        if(ignoreCodes && ignoreCodes.includes(code)){
+        if (ignoreCodes && ignoreCodes.includes(code)) {
           return of<T>();
         }
 
         // Temprorary solution for these codes:
-        if(+code === 9002 || +code === 9005) {
+        if (+code === 9002 || +code === 9005) {
           return throwError(message);
         }
 
-        if(+code === 9006) {
+        if (+code === 9017) {
+          message[1] = serverError[code] ? serverError[code] : text;
+          return throwError(message);
+        }
+
+        if (+code === 9006) {
           return throwError(text);
         }
-        
+
         return throwError(serverError[code] ? serverError[code] : text);
-      })
+      }),
     );
 };
 
@@ -114,12 +119,12 @@ export const validateAllFormFields = (formGroup: FormGroup) => {
 
 export const isCreditCardAccount = ({ paymentSystemType }: UserAccount): boolean => {
   return paymentSystemType === PAYMENT_SYSTEM_TYPE.MONETRA || paymentSystemType === PAYMENT_SYSTEM_TYPE.USAEPAY;
-}
+};
 
 export const isCashlessAccount = ({ paymentSystemType }: UserAccount): boolean => {
   return paymentSystemType === PAYMENT_SYSTEM_TYPE.OPCS || paymentSystemType === PAYMENT_SYSTEM_TYPE.CSGOLD;
-}
+};
 
 export const isMealsAccount = ({ accountType }: UserAccount): boolean => {
   return accountType === ACCOUNT_TYPES.meals;
-}
+};

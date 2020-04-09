@@ -15,21 +15,23 @@ import { finalize, first, map, switchMap, tap } from 'rxjs/operators';
 import {
   LOCAL_ROUTING,
   MerchantSettings,
+  ORDER_ERROR_CODES,
   ORDER_TYPE,
-  ORDER_VALIDATION_ERRORS, ORDERING_CONTENT_STRINGS,
+  ORDER_VALIDATION_ERRORS,
+  ORDERING_CONTENT_STRINGS,
   PAYMENT_SYSTEM_TYPE,
   SYSTEM_SETTINGS_CONFIG,
 } from '@sections/ordering/ordering.config';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { SettingService } from '@core/service/settings/setting.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { handleServerError, isCreditCardAccount, isCashlessAccount, isMealsAccount } from '@core/utils/general-helpers';
+import { handleServerError, isCashlessAccount, isCreditCardAccount, isMealsAccount } from '@core/utils/general-helpers';
 import { UserAccount } from '@core/model/account/account.model';
 import { ModalController, PopoverController, ToastController } from '@ionic/angular';
 import { AccountType, NAVIGATE } from '../../../../app.global';
 import { SuccessModalComponent } from '@sections/ordering/pages/cart/components/success-modal';
 import { StGlobalPopoverComponent } from '@shared/ui-components';
-import { MerchantOrderTypesInfo, MerchantInfo } from '@sections/ordering/shared/models';
+import { MerchantInfo, MerchantOrderTypesInfo } from '@sections/ordering/shared/models';
 import { NativeData, NativeProvider } from '@core/provider/native-provider/native.provider';
 import { UserService } from '@core/service/user-service/user.service';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
@@ -65,7 +67,7 @@ export class CartComponent implements OnInit {
     private readonly modalController: ModalController,
     private readonly userService: UserService,
     private readonly nativeProvider: NativeProvider,
-    private readonly orderingService: OrderingService
+    private readonly orderingService: OrderingService,
   ) {
   }
 
@@ -130,7 +132,7 @@ export class CartComponent implements OnInit {
     this.cartFormState = state;
   }
 
-  onOrderTipChanged(amount: number){
+  onOrderTipChanged(amount: number) {
     this.cartService.setOrderTip(amount);
   }
 
@@ -201,7 +203,7 @@ export class CartComponent implements OnInit {
     await modal.present();
   }
 
-  private async onErrorModal(message) {
+  private async onErrorModal(message: string, cb?: () => void) {
     const modal = await this.popoverController.create({
       component: StGlobalPopoverComponent,
       componentProps: {
@@ -213,6 +215,7 @@ export class CartComponent implements OnInit {
       animated: false,
       backdropDismiss: true,
     });
+    cb && modal.onDidDismiss().then(cb);
 
     await modal.present();
   }
@@ -227,8 +230,8 @@ export class CartComponent implements OnInit {
     }
 
     const { orderItems } = await this.cartService.orderInfo$.pipe(first()).toPromise();
-    if(!orderItems.length)  {
-      this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.fullMenu], { skipLocationChange: true })
+    if (!orderItems.length) {
+      this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.fullMenu], { skipLocationChange: true });
       return;
     }
 
@@ -238,6 +241,13 @@ export class CartComponent implements OnInit {
     };
     await this.validateOrder(onError);
     this.cdRef.reattach();
+  }
+
+  private async navigateToFullMenu(): Promise<void> {
+    await this.router.navigate(
+      [NAVIGATE.ordering, LOCAL_ROUTING.fullMenu],
+      { queryParams: { openTimeSlot: true }, skipLocationChange: true },
+    );
   }
 
   private async isDeliveryAddressOutOfRange(): Promise<boolean> {
@@ -280,7 +290,13 @@ export class CartComponent implements OnInit {
       .pipe(handleServerError(ORDER_VALIDATION_ERRORS))
       .toPromise()
       .then(async order => await this.showModal(order))
-      .catch(async error => await this.onErrorModal(error))
+      .catch(async (error: string | [string, string]) => {
+        if (Array.isArray(error) && +error[0] === +ORDER_ERROR_CODES.ORDER_CAPACITY) {
+          await this.onErrorModal(error[1], this.navigateToFullMenu.bind(this));
+        } else if (typeof error === 'string') {
+          await this.onErrorModal(error);
+        }
+      })
       .finally(this.loadingService.closeSpinner.bind(this.loadingService));
   }
 

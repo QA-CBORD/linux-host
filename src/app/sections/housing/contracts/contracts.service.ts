@@ -134,7 +134,7 @@ export class ContractsService {
       } else if (question instanceof QuestionFacilityAttributes) {
         value = this._questionsService.getAttributeValue(contractDetails.facilityAttributes, question);
       } else {
-        value = this._questionsService.getAttributeValue(contractDetails.patronAttributes, question);
+        value = this._questionsService.getAttributeValue(contractDetails.patronAttributes, question) || '';
       }
     }
 

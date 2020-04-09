@@ -14,7 +14,7 @@
       [label]="question.label"
       [idd]="question['name']"
       [formControlName]="question['name']"
-      [isError]="!parentGroup.get(question['name']).valid && parentGroup.get(question['name']).touched"
+      [isError]="!parentGroup.get(question['name']).valid && parentGroup.get(question['name']).touched && !isSubmitted"
       [stEmptyFormControl]="parentGroup.get(question['name'])"
     >
       <st-control-errors
@@ -26,7 +26,7 @@
     <st-textarea-floating-label
       *ngSwitchCase="'textarea'"
       [control]="parentGroup.get(question['name'])"
-      [isError]="!parentGroup.get(question['name']).valid && parentGroup.get(question['name']).touched"
+      [isError]="!parentGroup.get(question['name']).valid && parentGroup.get(question['name']).touched && !isSubmitted"
       [formControlName]="question['name']"
       class="question__item question__control"
       [idd]="question['name']"
@@ -58,7 +58,7 @@
       *ngSwitchCase="'select'"
       [formControlName]="question['name']"
       [control]="parentGroup.get(question['name'])"
-      [isError]="!parentGroup.get(question['name']).valid && parentGroup.get(question['name']).touched"
+      [isError]="!parentGroup.get(question['name']).valid && parentGroup.get(question['name']).touched && !isSubmitted"
       class="question__item question__control"
       interface="action-sheet"
       [interfaceOptions]="customActionSheetOptions"
