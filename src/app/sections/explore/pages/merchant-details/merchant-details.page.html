@@ -61,7 +61,7 @@
         <ion-item [lines]="isNotesHidden ? '' : 'none'"
                   (click)="toggleNotes()"
                   class="ion-no-padding">
-          <ion-title class="explore__merchant-hours">
+          <ion-title class="explore__merchant-payment-notes">
             <span class="explore__expand-panel-message"
                   [ngClass]="{'explore__expand-panel-message--opened': !isNotesHidden}"
             >{{isNotesHidden ? 'View' : 'Hide'}} Payment</span>
@@ -80,7 +80,7 @@
         <ion-title class="explore__merchant-telephone">{{ telephone }}</ion-title>
       </ion-item>
       <ion-item class="ion-no-padding" *ngIf="merchant.faxNumber as fax">
-        <ion-title class="explore__merchant-telephone">{{ fax }}</ion-title>
+        <ion-title class="explore__merchant-fax">{{ fax }}</ion-title>
       </ion-item>
       <ion-item class="ion-no-padding" *ngIf="merchant.website as website">
         <ion-title class="explore__merchant-website">{{ website }}</ion-title>

@@ -87,6 +87,22 @@
     @include font-nunito-regular(14px);
   }
 
+  &__merchant-payment-notes {
+    @extend .merchant-item;
+
+    &:before {
+      background-position-x: -145px;
+    }
+  }
+
+  &__merchant-fax {
+    @extend .merchant-item;
+
+    &:before {
+      background-position-x: -122px;
+    }
+  }
+
   &__expand-panel-message {
     position: relative;
 
