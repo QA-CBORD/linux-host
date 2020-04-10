@@ -61,8 +61,6 @@ export class RecentOrdersComponent implements OnInit {
   }
 
   private initContentStrings() {
-    this.contentStrings.buttonClose
-      = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonClose);
     this.contentStrings.buttonDashboardStartOrder
       = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonDashboardStartOrder);
     this.contentStrings.labelRecentOrders =

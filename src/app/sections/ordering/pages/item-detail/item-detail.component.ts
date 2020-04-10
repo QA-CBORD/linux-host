@@ -314,7 +314,6 @@ export class ItemDetailComponent implements OnInit {
   private initContentStrings() {
     this.contentStrings.buttonAdd = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonAdd);
     this.contentStrings.buttonUpdate = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonUpdate);
-    this.contentStrings.buttonClose = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonClose);
     this.contentStrings.labelItemNote = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelItemNote);
   }
 }

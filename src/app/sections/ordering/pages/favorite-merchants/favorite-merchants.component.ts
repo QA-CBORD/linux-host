@@ -112,7 +112,6 @@ export class FavoriteMerchantsComponent implements OnInit {
 
   private initContentStrings() {
     this.contentStrings.backToOrdering = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.backToOrdering);
-    this.contentStrings.buttonClose = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonClose);
     this.contentStrings.labelEmptyFavorites =
       this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelEmptyFavorites);
     this.contentStrings.labelFavorites = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelFavorites);

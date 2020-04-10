@@ -133,7 +133,6 @@ export class SavedAddressesComponent implements OnInit {
 
   private initContentStrings() {
     this.contentStrings.buttonCancel = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonCancel);
-    this.contentStrings.buttonClose = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonClose);
     this.contentStrings.buttonSave = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonSave);
     this.contentStrings.labelAddNewAddress =
       this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelAddNewAddress);
