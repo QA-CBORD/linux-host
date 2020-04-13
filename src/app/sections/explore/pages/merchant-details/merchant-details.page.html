@@ -13,7 +13,9 @@
        class="explore__merchant-image"
        alt="merchant photo">
   <div class="explore__content">
-    <st-merchant-main-info [merchant]="merchant$ | async"></st-merchant-main-info>
+    <st-merchant-main-info [isShowMerchantStatus]="merchant.isAbleToOrder"
+                           [isShowOrderType]="merchant.isAbleToOrder"
+                           [merchant]="merchant"></st-merchant-main-info>
     <div class="explore__controls">
       <st-button *ngIf="merchant.isAbleToOrder"
                  (onClick)="navigateToMerchant(merchant.id)"
