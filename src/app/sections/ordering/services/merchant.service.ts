@@ -136,10 +136,15 @@ export class MerchantService {
           this.orderingApiService.getSuccessfulOrdersList(id, institutionId),
           this.getMenuMerchants(),
           (orders, merchants) =>
-            orders.map(order => ({
-              ...order,
-              merchantName: merchants.find(({ id }) => id === order.merchantId).name,
-            }))
+            orders.filter(order => {
+              const merchant = merchants.find(({ id }) => id === order.merchantId);
+              if(!merchant) return;
+                return {
+                  ...order,
+                  merchantName: merchant.name,
+                }
+              
+            })
         )
       ),
       tap(recentOrders => (this._recentOrders = recentOrders))
