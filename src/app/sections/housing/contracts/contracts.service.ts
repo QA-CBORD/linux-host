@@ -118,7 +118,8 @@ export class ContractsService {
       question.values
     );
 
-    new QuestionChargeSchedule({ ...question, chargeSchedulesGroup });
+    question = new QuestionChargeSchedule({ ...question, chargeSchedulesGroup });
+    return question;
   }
 
   private _toFormControl(

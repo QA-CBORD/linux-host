@@ -18,21 +18,25 @@ fdescribe('ChargeSchedulesService', () => {
         label: 'Name',
         value: '0',
         selected: false,
+        type: 'string',
       }),
       new ChargeScheduleValue({
         label: 'Start Date',
         value: '1',
         selected: true,
+        type: 'date',
       }),
       new ChargeScheduleValue({
         label: 'End Date',
         value: '2',
         selected: true,
+        type: 'date',
       }),
       new ChargeScheduleValue({
         label: 'Full Estimate',
         value: '3',
         selected: false,
+        type: 'currency',
       }),
     ];
   });
@@ -49,8 +53,8 @@ fdescribe('ChargeSchedulesService', () => {
     });
 
     it('should return an array of arrays of ChargeScheduleValue', () => {
-      const startDate: string = date.future();
-      const endDate: string = date.future();
+      const startDate: string = date.future().toString();
+      const endDate: string = date.future().toString();
       const chargeSchedules: ChargeSchedule[] = [
         new ChargeSchedule({
           chargeScheduleName: '',
@@ -66,8 +70,8 @@ fdescribe('ChargeSchedulesService', () => {
       ];
       const expected: ChargeScheduleValue[][] = [
         [
-          new ChargeScheduleValue({ label: 'Start Date', value: startDate }),
-          new ChargeScheduleValue({ label: 'End Date', value: endDate }),
+          new ChargeScheduleValue({ label: 'Start Date', value: startDate, type: 'date' }),
+          new ChargeScheduleValue({ label: 'End Date', value: endDate, type: 'date' }),
         ],
       ];
 
@@ -80,8 +84,8 @@ fdescribe('ChargeSchedulesService', () => {
   describe('getAvailableChargeScheduleValues method', () => {
     it('should return available fields', () => {
       const expected: ChargeScheduleValue[] = [
-        new ChargeScheduleValue({ label: 'Start Date', value: 'linkedChargeScheduleStartDate' }),
-        new ChargeScheduleValue({ label: 'End Date', value: 'linkedChargeScheduleEndDate' }),
+        new ChargeScheduleValue({ label: 'Start Date', value: 'linkedChargeScheduleStartDate', type: 'date' }),
+        new ChargeScheduleValue({ label: 'End Date', value: 'linkedChargeScheduleEndDate', type: 'date' }),
       ];
 
       const result: ChargeScheduleValue[] = service.getAvailableChargeScheduleValues(chargeScheduleValues);

@@ -4,7 +4,6 @@ export enum ChargeScheduleFields {
   chargeScheduleName,
   linkedChargeScheduleStartDate,
   linkedChargeScheduleEndDate,
-  active,
   fullChargeEstimate,
   remainingChargeEstimate,
   estimateReason,
@@ -16,12 +15,14 @@ export interface ChargeScheduleValueOptions {
   label: string;
   value: string;
   selected?: boolean;
+  type: string;
 }
 
 export class ChargeScheduleValue implements ChargeScheduleValueOptions {
   label: string;
   value: string;
   selected?: boolean;
+  type: string;
 
   constructor(options: ChargeScheduleValueOptions) {
     if (!isDefined(options) || typeof options !== 'object') {
@@ -31,6 +32,7 @@ export class ChargeScheduleValue implements ChargeScheduleValueOptions {
     this.label = String(options.label);
     this.value = isDefined(options.value) ? String(options.value) : null;
     this.selected = Boolean(options.selected);
+    this.type = options.type;
   }
 }
 

@@ -73,6 +73,25 @@
   }
 }
 
+.charge_schedule_item {
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-top: 8px;
+  margin-bottom: 30px;
+  padding-left: initial;
+  padding-right: initial;
+  padding-top: initial;
+  padding-bottom: -3px;
+}
+
+.charge_schedule_item_header {
+  padding: 16px 16px 8px;
+}
+
+.charge_schedule_item_content {
+  padding: 16px 16px 0px;
+}
+
 .question__paragraph {
   margin-top: 0;
   margin-bottom: 16px;

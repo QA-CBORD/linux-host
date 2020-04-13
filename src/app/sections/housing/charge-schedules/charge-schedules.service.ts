@@ -26,7 +26,7 @@ export class ChargeSchedulesService {
 
     return chargeSchedules.map((chargeSchedule: ChargeSchedule) =>
       availableChargeScheduleValues.map((value: ChargeScheduleValue) => {
-        return new ChargeScheduleValue({ label: value.label, value: chargeSchedule[value.value] });
+        return new ChargeScheduleValue({ label: value.label, value: chargeSchedule[value.value], type: value.type });
       })
     );
   }
@@ -35,9 +35,27 @@ export class ChargeSchedulesService {
     return chargeScheduleValues
       .filter((value: ChargeScheduleValue) => value.selected)
       .map((value: ChargeScheduleValue) => {
-        const chargeScheduleField: string = ChargeScheduleFields[parseInt(value.value, 10)];
-
-        return new ChargeScheduleValue({ label: value.label, value: chargeScheduleField });
+        const chargeScheduleFieldEnum = parseInt(value.value, 10);
+        const chargeScheduleField: string = ChargeScheduleFields[chargeScheduleFieldEnum];
+        const type = this.getChargeScheduleFieldType(chargeScheduleFieldEnum);
+        let csValue = new ChargeScheduleValue({ label: value.label, value: chargeScheduleField, type: type });
+        return csValue;
       });
+  }
+
+  getChargeScheduleFieldType(chargeScheduleField): string{
+    switch(chargeScheduleField){
+      case ChargeScheduleFields.chargeAmount:
+      case ChargeScheduleFields.fullChargeEstimate:
+      case ChargeScheduleFields.remainingChargeEstimate:
+        return "currency";
+      case ChargeScheduleFields.chargeScheduleName:
+      case ChargeScheduleFields.estimateReason:
+      case ChargeScheduleFields.scheduleType:
+        return "string";
+      case ChargeScheduleFields.linkedChargeScheduleEndDate:
+      case ChargeScheduleFields.linkedChargeScheduleStartDate:
+        return "date";
+    }
   }
 }
