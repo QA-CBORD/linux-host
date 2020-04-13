@@ -121,7 +121,7 @@
               class="order-details__value"
               type="tel"
               inputmode="decimal"
-              [disabled]="!paymentFormControl.value"
+              [attr.disabled]="!paymentFormControl.value"
               [maxlength]="'6'"
               [value]="tip"
               [placeholder]="mealBased ? '0': '0.00'"
