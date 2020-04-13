@@ -136,14 +136,9 @@ export class MerchantService {
           this.orderingApiService.getSuccessfulOrdersList(id, institutionId),
           this.getMenuMerchants(),
           (orders, merchants) =>
-            orders.filter(order => {
+            orders.map(order => {
               const merchant = merchants.find(({ id }) => id === order.merchantId);
-              if(!merchant) return;
-                return {
-                  ...order,
-                  merchantName: merchant.name,
-                }
-              
+              return merchant && { ...order, merchantName: merchant.name } 
             })
         )
       ),
