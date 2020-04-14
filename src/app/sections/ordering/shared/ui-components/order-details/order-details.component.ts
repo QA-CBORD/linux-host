@@ -178,6 +178,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
 
     if (paymentSystemType === PAYMENT_SYSTEM_TYPE.MONETRA) {
       this.addCvvControl();
+      if(this.cvvFormControl.value) this.cvvFormControl.reset();
     } else {
       this.removeCvvControl();
     }
