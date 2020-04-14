@@ -5,13 +5,18 @@ import { MenuMerchantFacadeService } from '@core/facades/menu-merchant/menu-merc
 import { combineLatest, Observable, zip } from 'rxjs';
 import { MerchantInfo } from '@sections/ordering';
 import { map } from 'rxjs/operators';
+import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
+import { SettingInfo } from '@core/model/configuration/setting-info.model';
+import { Settings } from '../../../app.global';
+import Setting = Settings.Setting;
 
 @Injectable()
 export class ExploreService {
 
   constructor(private readonly merchantFacadeService: MerchantFacadeService,
               private readonly favoriteMerchantsFacadeService: FavoriteMerchantsFacadeService,
-              private readonly menuMerchantFacadeService: MenuMerchantFacadeService) {
+              private readonly menuMerchantFacadeService: MenuMerchantFacadeService,
+              private readonly settingsFacadeService: SettingsFacadeService) {
   }
 
   get merchants$(): Observable<MerchantInfo[]> {
@@ -19,9 +24,10 @@ export class ExploreService {
       this.merchantFacadeService.merchants$,
       this.favoriteMerchantsFacadeService.favoriteMerchants$,
       this.menuMerchantFacadeService.menuMerchants$,
+      this.getFoodSetting(),
     ).pipe(
-      map(([merchants, favMerchants, menuMerchants]) =>
-        this.updateMerchantInfo(merchants, favMerchants, menuMerchants)),
+      map(([merchants, favMerchants, menuMerchants, enableFoodSetting]) =>
+        this.updateMerchantInfo(merchants, favMerchants, menuMerchants, enableFoodSetting)),
     );
   }
 
@@ -33,6 +39,11 @@ export class ExploreService {
         return ExploreService.sortBy(sortedByRange, 'openNow');
       }),
     );
+  }
+
+  getFoodSetting(): Observable<SettingInfo> {
+    const setting = Settings.Setting.FOOD_ENABLED.split('.');
+    return this.settingsFacadeService.fetchSettingByConfig$({domain: setting[0], category: setting[1], name: setting[2]})
   }
 
   getMerchantById$(id: string): Observable<MerchantInfo> {
@@ -52,14 +63,16 @@ export class ExploreService {
   private updateMerchantInfo(
     merchants: MerchantInfo[] = [],
     favMerchants: MerchantInfo[] = [],
-    menuMerchants: MerchantInfo[] = []): MerchantInfo[] {
+    menuMerchants: MerchantInfo[] = [],
+    foodEnabledSetting: SettingInfo): MerchantInfo[] {
+    const isFoodEnabled = foodEnabledSetting && Boolean(Number(foodEnabledSetting.value));
     const menuIds = menuMerchants.map(({ id }) => id);
     const favIds = favMerchants.map(({ id }) => id);
 
     return merchants.map(merchant => ({
       ...merchant,
       isFavorite: favIds.includes(merchant.id),
-      isAbleToOrder: menuIds.includes(merchant.id),
+      isAbleToOrder: menuIds.includes(merchant.id) && isFoodEnabled,
     }));
   }
 

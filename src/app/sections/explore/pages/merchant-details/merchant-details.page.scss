@@ -87,7 +87,23 @@
     @include font-nunito-regular(14px);
   }
 
-  &__expand-hours-message {
+  &__merchant-payment-notes {
+    @extend .merchant-item;
+
+    &:before {
+      background-position-x: -145px;
+    }
+  }
+
+  &__merchant-fax {
+    @extend .merchant-item;
+
+    &:before {
+      background-position-x: -122px;
+    }
+  }
+
+  &__expand-panel-message {
     position: relative;
 
     &:after {
@@ -110,7 +126,7 @@
     }
   }
 
-  &__expand-hours-description {
+  &__expand-panel-description {
     max-height: 0;
     transition: max-height .2s linear;
 

@@ -310,7 +310,6 @@ export class RecentOrderComponent implements OnInit {
     const footerButtonName = 'continue';
     const cssClass = 'order-options-action-sheet order-options-action-sheet-p-d';
     this.merchantService.orderTypes = orderTypes;
-
     const { deliveryAddressId, type } = await this.order$.pipe(first()).toPromise();
 
     const modal = await this.modalController.create({
