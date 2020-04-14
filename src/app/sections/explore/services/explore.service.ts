@@ -8,7 +8,7 @@ import { map } from 'rxjs/operators';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { Settings } from '../../../app.global';
-import Setting = Settings.Setting;
+import { exploreMerchantSorting } from '@core/utils/general-helpers';
 
 @Injectable()
 export class ExploreService {
@@ -32,18 +32,14 @@ export class ExploreService {
   }
 
   get sortedMerchants$(): Observable<MerchantInfo[]> {
-    return this.merchants$.pipe(
-      map((merchants) => {
-        const sortedByFavorite = ExploreService.sortBy(merchants, 'isFavorite');
-        const sortedByRange = ExploreService.sortBy(sortedByFavorite, 'distanceFromUser');
-        return ExploreService.sortBy(sortedByRange, 'openNow');
-      }),
-    );
+    return this.merchants$.pipe(map(exploreMerchantSorting));
   }
 
   getFoodSetting(): Observable<SettingInfo> {
     const setting = Settings.Setting.FOOD_ENABLED.split('.');
-    return this.settingsFacadeService.fetchSettingByConfig$({domain: setting[0], category: setting[1], name: setting[2]})
+    return this.settingsFacadeService.fetchSettingByConfig$(
+      { domain: setting[0], category: setting[1], name: setting[2] },
+    );
   }
 
   getMerchantById$(id: string): Observable<MerchantInfo> {
@@ -74,11 +70,5 @@ export class ExploreService {
       isFavorite: favIds.includes(merchant.id),
       isAbleToOrder: menuIds.includes(merchant.id) && isFoodEnabled,
     }));
-  }
-
-  private static sortBy(merchants: MerchantInfo[], fieldName: keyof MerchantInfo): MerchantInfo[] {
-    return merchants.sort(
-      (merchant1, merchant2) => Number(merchant2[fieldName]) - Number(merchant1[fieldName]),
-    );
   }
 }

@@ -6,6 +6,7 @@ import { CURRENCY_REGEXP, EMAIL_REGEXP, INT_DEC_REGEXP, INT_REGEXP, ZERO_FIRST_R
 import { UserInfo } from '@core/model/user';
 import { UserAccount } from '@core/model/account/account.model';
 import { ACCOUNT_TYPES, PAYMENT_SYSTEM_TYPE } from '@sections/accounts/accounts.config';
+import { MerchantInfo } from '@sections/ordering';
 
 export function parseArrayFromString<T>(value: string): Array<T> {
   if (value && !value.length) return [];
@@ -128,3 +129,26 @@ export const isCashlessAccount = ({ paymentSystemType }: UserAccount): boolean =
 export const isMealsAccount = ({ accountType }: UserAccount): boolean => {
   return accountType === ACCOUNT_TYPES.meals;
 };
+
+export function exploreMerchantSorting(sourceArray: MerchantInfo[]): MerchantInfo[] {
+  return sourceArray.sort((
+    { isFavorite: fav1, distanceFromUser: dist1, openNow: open1, name: name1 },
+    { isFavorite: fav2, distanceFromUser: dist2, openNow: open2, name: name2 },
+  ) => {
+    const compareFav = compareFieldsSkipEmptyToEnd<boolean>(fav2, fav1);
+    if (compareFav !== 0) return compareFav;
+    const compareOpenStatus = compareFieldsSkipEmptyToEnd<boolean>(open2, open1);
+    if (compareOpenStatus !== 0) return compareOpenStatus;
+    const compareDistance = compareFieldsSkipEmptyToEnd<number>(dist1, dist2);
+    if (compareDistance !== 0) return compareDistance;
+    if (typeof name1 !== 'string') name1 = '';
+    if (typeof name2 !== 'string') name1 = '';
+    return name2.localeCompare(name1);
+  });
+}
+
+export function compareFieldsSkipEmptyToEnd<T>(a: T = null, b: T = null): number {
+  if (a === null) return 1;
+  if (b === null) return -1;
+  return Number(a) - Number(b);
+}

@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { FavoriteMerchantsFacadeService } from '@core/facades/favourite-merchant/favorite-merchants-facade.service';
 import { MerchantInfo } from '@sections/ordering';
-import { Observable } from 'rxjs';
+import { combineLatest, Observable, zip } from 'rxjs';
 import { MerchantFacadeService } from '@core/facades/merchant/merchant-facade.service';
 import { Environment } from '../../../../environment';
-import { finalize, map } from 'rxjs/operators';
 import { NAVIGATE } from '../../../../app.global';
 import { EXPLORE_ROUTING } from '@sections/explore/explore.config';
 import { Router } from '@angular/router';
+import { finalize, map, take } from 'rxjs/operators';
+import { exploreMerchantSorting } from '@core/utils/general-helpers';
 
 @Component({
   selector: 'st-explore-tile',
@@ -25,9 +26,22 @@ export class ExploreTileComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.favMerchants$ = this.merchantFacadeService.fetchMerchants$().pipe(
-      map(merchants => merchants.slice(0, 2)),
+    zip(
+      this.merchantFacadeService.fetchMerchants$(),
+      this.favMerchantFacadeService.fetchFavoritesMerchants$(),
+    ).pipe(
+      take(1),
       finalize(() => this.isLoading = false),
+    ).subscribe();
+
+    this.favMerchants$ = combineLatest(
+      this.merchantFacadeService.merchants$,
+      this.favMerchantFacadeService.favoriteMerchants$,
+    ).pipe(
+      map(([merchant, fav]) => {
+        const updated = this.updateMerchantFavoriteInfo(merchant, fav);
+        return exploreMerchantSorting(updated).slice(0, 2);
+      }),
     );
   }
 
@@ -36,5 +50,17 @@ export class ExploreTileComponent implements OnInit {
       [NAVIGATE.explore, EXPLORE_ROUTING.merchantDetails, id],
       { skipLocationChange: true },
     );
+  }
+
+  private updateMerchantFavoriteInfo(
+    merchants: MerchantInfo[] = [],
+    favMerchants: MerchantInfo[] = [],
+  ): MerchantInfo[] {
+    const favIds = favMerchants.map(({ id }) => id);
+
+    return merchants.map(merchant => ({
+      ...merchant,
+      isFavorite: favIds.includes(merchant.id),
+    }));
   }
 }
