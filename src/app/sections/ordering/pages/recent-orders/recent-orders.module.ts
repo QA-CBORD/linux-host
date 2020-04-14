@@ -11,6 +11,7 @@ import { OrderOptionsActionSheetModule } from '@sections/ordering/shared/ui-comp
 import { ConfirmPopoverModule } from '@sections/ordering/shared/ui-components/confirm-popover/confirm-popover.module';
 import { StSpinnerModule } from '@shared/ui-components/st-spinner/st-spinner.module';
 import { StButtonModule } from '@shared/ui-components/st-button';
+import { ItemDetailModalModule } from '@sections/ordering/shared';
 
 
 const imports = [
@@ -24,7 +25,8 @@ const imports = [
     ConfirmPopoverModule,
     OrderOptionsActionSheetModule,
     StButtonModule,
-    StSpinnerModule
+    StSpinnerModule,
+    ItemDetailModalModule
 ];
 const declarations = [RecentOrdersComponent, RecentOrderComponent];
 
