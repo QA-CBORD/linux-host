@@ -175,12 +175,12 @@ export class StDateTimePickerComponent implements OnInit {
 
   private isTodayOrTomorrow(date, isToday) {
     const { locale, timeZone } = this.userData
-    const selectedTime = new Date(date);
-    const today = getDateTimeInGMT(new Date, locale, timeZone);
-    const someDate = getDateTimeInGMT(selectedTime, locale, timeZone);
-    const idxForSlice = today.lastIndexOf('-');
+    const today = new Date().toLocaleString(locale, { timeZone });
+    const idxForSlice = today.indexOf(',');
+    const splittedDate = date.split('-');
+    const selectedTime = `${splittedDate[1]}/${splittedDate[2]}/${splittedDate[0]}`;
 
-    return isSameDay(today.slice(0, idxForSlice), someDate.slice(0, idxForSlice), Number(!isToday));
+    return isSameDay(today.slice(0, idxForSlice), selectedTime, Number(!isToday));
   }
 
   private async initContentStrings() {
