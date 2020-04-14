@@ -129,7 +129,9 @@ export class StDateTimePickerComponent implements OnInit {
     }
     for (let i = 0; i < numberOfColumns; i++) {
       if (i === 1 && columns[0].selectedIndex === 0) {
-        isToday = this.isTodayOrTomorrow(columns[columns[0].selectedIndex].options[0].value, true);
+        const splittedDate = (columns[columns[0].selectedIndex].options[0].value).split('-');
+        const selectedTime = `${splittedDate[1]}/${splittedDate[2]}/${splittedDate[0]}`;
+        isToday = this.isTodayOrTomorrow(selectedTime, true);
       }
 
       columns.push({
@@ -148,16 +150,18 @@ export class StDateTimePickerComponent implements OnInit {
       if (columnIndex === 1) {
         return columnOptions[columnIndex][i % total];
       }
+      const splittedDate = (columnOptions[columnIndex][i % total]).split('-');
+      const selectedTime = `${splittedDate[1]}/${splittedDate[2]}/${splittedDate[0]}`;
 
-      if (this.isTodayOrTomorrow(columnOptions[columnIndex][i % total], true)) {
+      if (this.isTodayOrTomorrow(selectedTime, true)) {
         return 'Today';
       }
 
-      if (this.isTodayOrTomorrow(columnOptions[columnIndex][i % total], false)) {
+      if (this.isTodayOrTomorrow(selectedTime, false)) {
         return this.tomorrowString;
       }
 
-      return formatDateByContentStrings(new Date(columnOptions[columnIndex][i % total]), this.weekArray, this.monthArray);
+      return formatDateByContentStrings(new Date(selectedTime), this.weekArray, this.monthArray);
     };
 
     for (let i = 0; i < total; i++) {
@@ -177,10 +181,8 @@ export class StDateTimePickerComponent implements OnInit {
     const { locale, timeZone } = this.userData
     const today = new Date().toLocaleString(locale, { timeZone });
     const idxForSlice = today.indexOf(',');
-    const splittedDate = date.split('-');
-    const selectedTime = `${splittedDate[1]}/${splittedDate[2]}/${splittedDate[0]}`;
 
-    return isSameDay(today.slice(0, idxForSlice), selectedTime, Number(!isToday));
+    return isSameDay(today.slice(0, idxForSlice), date, Number(!isToday));
   }
 
   private async initContentStrings() {
