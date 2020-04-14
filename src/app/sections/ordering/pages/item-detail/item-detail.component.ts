@@ -18,7 +18,7 @@ import { handleServerError } from '@core/utils/general-helpers';
 import { NAVIGATE } from 'src/app/app.global';
 import { Environment } from 'src/app/environment';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
-import { ItemDetailModalComponent } from '@sections/ordering/pages/item-detail/components/item-detail-modal/item-detail-modal.component';
+import { ItemDetailModalComponent } from '@sections/ordering/shared/ui-components/item-detail-modal/item-detail-modal.component';
 
 @Component({
   selector: 'st-item-detail',
@@ -342,4 +342,4 @@ export interface RoutesData {
     orderItemId: string;
     isItemExistsInCart: boolean
   }
-};
+}

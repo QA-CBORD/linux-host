@@ -10,6 +10,7 @@ import { FullMenuPopoverComponent } from './full-menu-popover';
 import { StPopoverLayoutModule } from '@shared/ui-components/st-popover-layout/st-popover-layout.module';
 import { AddressHeaderFormatPipeModule } from '@shared/pipes/address-header-format-pipe/address-header-format-pipe.module';
 import { MerchantDistanceModule } from '@shared/pipes/merchant-distance/merchant-distance.module';
+import { ItemDetailModalModule } from '@sections/ordering';
 
 const imports = [
   CommonModule,
@@ -20,7 +21,8 @@ const imports = [
   ViewCartModule,
   ModifyPrepTimeModule,
   StPopoverLayoutModule,
-  AddressHeaderFormatPipeModule
+  AddressHeaderFormatPipeModule,
+  ItemDetailModalModule
 ];
 const declarations = [FullMenuComponent, FullMenuPopoverComponent];
 

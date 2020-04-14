@@ -8,11 +8,9 @@ import { buttons } from '@core/utils/buttons.config';
   templateUrl: './item-detail-modal.component.html',
   styleUrls: ['./item-detail-modal.component.scss'],
 })
-export class ItemDetailModalComponent implements OnInit {
+export class ItemDetailModalComponent {
   @Input() message: string;
   config: PopoverConfig<string>;
-
-  constructor() {}
 
   ngOnInit() {
     this.config = {
