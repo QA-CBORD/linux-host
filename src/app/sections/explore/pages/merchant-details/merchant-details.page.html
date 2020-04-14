@@ -13,7 +13,8 @@
        class="explore__merchant-image"
        alt="merchant photo">
   <div class="explore__content">
-    <st-merchant-main-info [isShowOrderType]="merchant.isAbleToOrder"
+    <st-merchant-main-info [isShowMerchantStatus]="merchant.isAbleToOrder"
+                           [isShowOrderType]="merchant.isAbleToOrder"
                            [merchant]="merchant"></st-merchant-main-info>
     <div class="explore__controls">
       <st-button *ngIf="merchant.isAbleToOrder"
@@ -40,16 +41,17 @@
                   (click)="toggleHours()"
                   class="ion-no-padding">
           <ion-title class="explore__merchant-hours">
-          <span class="explore__merchant-hours-indicator"
+          <span *ngIf="merchant.isAbleToOrder"
+                class="explore__merchant-hours-indicator"
                 [ngClass]="{
            'explore__merchant-hours-indicator--open': merchant.openNow,
            'explore__merchant-hours-indicator--closed': !merchant.openNow
             }"
           >
-            {{merchant.openNow ? 'Open' : 'Closed'}}</span>
+            {{merchant.openNow ? 'Open -' : 'Closed -'}}</span>
             <span class="explore__expand-panel-message"
                   [ngClass]="{'explore__expand-panel-message--opened': !isHoursHidden}"
-            > - {{isHoursHidden ? 'View' : 'Hide'}} Hours</span>
+            >{{isHoursHidden ? 'View' : 'Hide'}} Hours</span>
           </ion-title>
         </ion-item>
         <ion-item class="explore__expand-panel-description ion-no-padding"
