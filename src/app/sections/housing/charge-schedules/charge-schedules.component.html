@@ -2,7 +2,7 @@
 
 
 <ion-card *ngFor="let chargeSchedule of question.chargeSchedulesGroup" class="charge_schedule_item">
-  <ion-card-header class="charge_schedule_item_header">
+  <ion-card-header class="charge_schedule_item_header" *ngIf="chargeSchedule[0].label=='Name'">
     <ion-card-subtitle color="primary" class="ion-text-uppercase">{{ chargeSchedule[0].value }}</ion-card-subtitle>
   </ion-card-header>
   <ion-card-content class="ion-no-margin charge_schedule_item_content">
