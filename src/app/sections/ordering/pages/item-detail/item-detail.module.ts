@@ -12,32 +12,31 @@ import { MultiListComponent } from './components/multi-list';
 import { ItemDetailResolver } from './resolvers/item-detail.resolver';
 import { PriceUnitsResolverModule } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.module';
 import { StButtonModule } from '@shared/ui-components/st-button/st-button.module';
-import { ItemDetailModalComponent } from '@sections/ordering/pages/item-detail/components/item-detail-modal/item-detail-modal.component';
 import { StPopoverLayoutModule } from '@shared/ui-components/st-popover-layout/st-popover-layout.module';
+import { ItemDetailModalModule } from '@sections/ordering';
 
-const declarations = [ItemDetailComponent, SingleListComponent, MultiListComponent, ItemDetailModalComponent];
+const declarations = [ItemDetailComponent, SingleListComponent, MultiListComponent];
 const imports = [
   CommonModule,
   IonicModule.forRoot({
     scrollPadding: false,
     scrollAssist: true,
   }),
+  ItemDetailModalModule,
   ReactiveFormsModule,
   StTextareaFloatingLabelModule,
   ItemDetailRoutingModule,
   StHeaderModule,
   PriceUnitsResolverModule,
   StButtonModule,
+  StPopoverLayoutModule
 ];
 
 @NgModule({
   declarations,
-  imports: [
-    imports,
-    StPopoverLayoutModule,
-  ],
+  imports,
   exports: [ItemDetailComponent],
-  entryComponents: [ItemDetailComponent, ItemDetailModalComponent],
+  entryComponents: [ItemDetailComponent],
   providers: [ItemDetailResolver],
 })
 export class ItemDetailModule {}

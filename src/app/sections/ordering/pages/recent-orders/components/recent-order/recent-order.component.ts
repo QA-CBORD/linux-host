@@ -11,7 +11,7 @@ import {
   ORDERING_CONTENT_STRINGS,
 } from '@sections/ordering/ordering.config';
 import { NAVIGATE } from '../../../../../../app.global';
-import { ModalController, PopoverController, ToastController, AlertController } from '@ionic/angular';
+import { ModalController, PopoverController, ToastController } from '@ionic/angular';
 import { ORDERING_STATUS } from '@sections/ordering/shared/ui-components/recent-oders-list/recent-orders-list-item/recent-orders.config';
 import { BUTTON_TYPE, buttons } from '@core/utils/buttons.config';
 import { OrderOptionsActionSheetComponent } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
@@ -23,6 +23,7 @@ import { ConfirmPopoverComponent } from '@sections/ordering/shared/ui-components
 import { UserService } from '@core/service/user-service/user.service';
 import { TIMEZONE_REGEXP } from '@core/utils/regexp-patterns';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
+import { ItemDetailModalComponent } from '@sections/ordering/shared/ui-components/item-detail-modal/item-detail-modal.component';
 
 @Component({
   selector: 'st-recent-order',
@@ -47,7 +48,6 @@ export class RecentOrderComponent implements OnInit {
     private readonly toastController: ToastController,
     private readonly userService: UserService,
     private readonly orderingService: OrderingService,
-    private readonly alertController: AlertController
   ) {
   }
 
@@ -173,7 +173,7 @@ export class RecentOrderComponent implements OnInit {
         if(typeof error === 'object') {
           this.loadingService.closeSpinner();
           const [code, text] = error;
-          await this.presentPopup(text);
+          await this.initInfoModal(text, this.navigateToFullMenu.bind(this));
           throw text;
         }
         this.onValidateErrorToast.bind(this)
@@ -182,17 +182,18 @@ export class RecentOrderComponent implements OnInit {
       .finally(await this.loadingService.closeSpinner.bind(this.loadingService));
   }
 
-  private async presentPopup(message) {
-    const alert = await this.alertController.create({
-      header: message,
-      buttons: [ {
-        text: 'Ok', 
-        handler: () => 
-          this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.fullMenu], { skipLocationChange: true })} 
-      ]
+  private async initInfoModal(message: string, cb: () => void): Promise<void> {
+    const modal = await this.popoverController.create({
+      component: ItemDetailModalComponent,
+      componentProps: { message },
     });
 
-    await alert.present();
+    modal.onDidDismiss().then(cb);
+    await modal.present();
+  }
+
+  private navigateToFullMenu() {
+    this.router.navigate([NAVIGATE.ordering, LOCAL_ROUTING.fullMenu], { skipLocationChange: true });
   }
 
   private async redirectToCart(): Promise<void> {

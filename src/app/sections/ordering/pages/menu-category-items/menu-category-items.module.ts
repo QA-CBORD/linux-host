@@ -8,12 +8,22 @@ import { CategoryListComponent } from './category-list/category-list.component';
 import { IonicModule } from '@ionic/angular';
 import { ViewCartModule } from '@sections/ordering/shared/ui-components/view-cart';
 import { PriceUnitsResolverModule } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.module';
+import { ItemDetailModalModule } from '@sections/ordering';
 
-const imports = [CommonModule, IonicModule, MenuCategoryItemsRoutingModule, StHeaderModule, ViewCartModule, PriceUnitsResolverModule];
+const imports = [
+  CommonModule,
+  IonicModule,
+  MenuCategoryItemsRoutingModule,
+  StHeaderModule,
+  ViewCartModule,
+  PriceUnitsResolverModule,
+  ItemDetailModalModule
+];
 const declarations = [MenuCategoryItemsComponent, CategoryListComponent, CategoryListComponent];
 
 @NgModule({
   declarations,
   imports,
 })
-export class MenuCategoryItemsModule {}
+export class MenuCategoryItemsModule {
+}

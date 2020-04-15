@@ -12,7 +12,7 @@ import {
   ORDERING_CONTENT_STRINGS,
 } from '@sections/ordering/ordering.config';
 import { first, map, take } from 'rxjs/operators';
-import { AlertController, ModalController, PopoverController, ToastController } from '@ionic/angular';
+import { ModalController, PopoverController, ToastController } from '@ionic/angular';
 import { OrderOptionsActionSheetComponent } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { handleServerError } from '@core/utils/general-helpers';
@@ -20,6 +20,7 @@ import { FullMenuPopoverComponent } from './full-menu-popover';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { OverlayEventDetail } from '@ionic/core';
+import { ItemDetailModalComponent } from '@sections/ordering/shared/ui-components/item-detail-modal/item-detail-modal.component';
 
 
 @Component({
@@ -46,7 +47,6 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     private readonly toastController: ToastController,
     private readonly popoverCtrl: PopoverController,
     private readonly orderingService: OrderingService,
-    private readonly alertController: AlertController,
     private readonly activatedRoute: ActivatedRoute,
   ) {
   }
@@ -148,11 +148,13 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   async redirectToCart(): Promise<void> {
     if (this.cartService.cartsErrorMessage !== null) {
       return this.presentPopup(this.cartService.cartsErrorMessage);
-    };
+    }
+
     const successCb = () => this.router.navigate(
       [NAVIGATE.ordering, LOCAL_ROUTING.cart],
       { skipLocationChange: true },
     );
+
     const errorCB = (error: Array<string> | string) => {
       if(Array.isArray(error)) {
         const [code, message] = error;
@@ -164,13 +166,13 @@ export class FullMenuComponent implements OnInit, OnDestroy {
    await this.validateOrder(successCb, errorCB);
   }
 
-  private async presentPopup(message) {
-    const alert = await this.alertController.create({
-      header: message,
-      buttons: [{ text: 'Ok' }],
+  private async presentPopup(message: string): Promise<void> {
+    const modal = await this.popoverCtrl.create({
+      component: ItemDetailModalComponent,
+      componentProps: { message },
     });
 
-    await alert.present();
+    await modal.present();
   }
 
   private async validateOrder(successCb, errorCB, ignoreCodes?: string[]): Promise<void> {
@@ -182,7 +184,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
         handleServerError(ORDER_VALIDATION_ERRORS, ignoreCodes),
       )
       .toPromise()
-      .then( 
+      .then(
         () => {
           this.cartService.cartsErrorMessage = null;
           return successCb && successCb();

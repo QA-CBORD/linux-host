@@ -1,4 +1,4 @@
-import { NgModule, ErrorHandler } from '@angular/core';
+import { ErrorHandler, NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -17,7 +17,8 @@ import { GlobalErrorHandler } from '@core/utils/global-error-handler';
     IonicStorageModule.forRoot(),
     AppRoutingModule,
   ],
-  providers: [{provide: ErrorHandler, useClass: GlobalErrorHandler}],
+  providers: [{ provide: ErrorHandler, useClass: GlobalErrorHandler }],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule {
+}

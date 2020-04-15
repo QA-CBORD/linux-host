@@ -7,9 +7,10 @@ import { Observable, zip } from 'rxjs';
 import { take, first } from 'rxjs/operators';
 import { MenuCategoryInfo, MenuCategoryItemInfo, MenuInfo } from '@sections/ordering/shared/models';
 import { handleServerError } from '@core/utils/general-helpers';
-import { ToastController, AlertController } from '@ionic/angular';
+import { ToastController, PopoverController } from '@ionic/angular';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
+import { ItemDetailModalComponent } from '@sections/ordering/shared/ui-components/item-detail-modal/item-detail-modal.component';
 
 @Component({
   selector: 'st-menu-category-items',
@@ -33,7 +34,7 @@ export class MenuCategoryItemsComponent implements OnInit {
     private readonly loadingService: LoadingService,
     private readonly toastController: ToastController,
     private readonly orderingService: OrderingService,
-    private readonly alertController: AlertController
+    private readonly popoverCtrl: PopoverController,
   ) {}
 
   ionViewWillEnter() {
@@ -88,7 +89,7 @@ export class MenuCategoryItemsComponent implements OnInit {
       this.presentPopup(this.cartService.cartsErrorMessage);
       return;
     }
-    
+
     await this.loadingService.showSpinner();
     await this.cartService
       .validateOrder()
@@ -103,12 +104,12 @@ export class MenuCategoryItemsComponent implements OnInit {
   }
 
   private async presentPopup(message) {
-    const alert = await this.alertController.create({
-      header: message,
-      buttons: [ {text: 'Ok'} ]
+    const modal = await this.popoverCtrl.create({
+      component: ItemDetailModalComponent,
+      componentProps: { message },
     });
 
-    await alert.present();
+    await modal.present();
   }
 
   private async failedValidateOrder(message: string): Promise<void> {
