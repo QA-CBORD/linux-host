@@ -5,7 +5,7 @@ import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { take } from 'rxjs/operators';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { CONTENT_STINGS_CATEGORIES, CONTENT_STINGS_DOMAINS } from '../../../../../content-strings';
-import { formatDateByContentStrings, getDateTimeInGMT, isSameDay } from '@core/utils/date-helper';
+import { formatDateByContentStrings, isSameDay } from '@core/utils/date-helper';
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
 import { MerchantInfo } from '@sections/ordering';
 import { Schedule } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
@@ -42,6 +42,10 @@ export class StDateTimePickerComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     this.initContentStrings();
+  }
+
+  ionViewWillLeave(){
+    this.picker.dismiss();
   }
 
   get isDefaultState(): boolean {
