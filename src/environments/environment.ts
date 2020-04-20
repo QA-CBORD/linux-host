@@ -149,10 +149,10 @@ export const testCredentials: { [key: string]: UserLogin } = {
     institutionId: '14916c0a-5dda-4725-9d71-b132192d7b23',
   },
   housingQAOracle19c: {
-    userName: 'R19c02@tpsmail.com',
+    userName: 'R19c10@tpsmail.com',
     password: 'password1',
     domain: null,
-    institutionId: '3e23f0a0-c628-459c-8b88-65ad3c79f0db',
+    institutionId: '7b651444-2531-4e77-9daa-0a44087b3472',
   }
 };
 
