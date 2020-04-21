@@ -1,5 +1,4 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
-import { Events, Platform } from '@ionic/angular';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
 
 import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';
@@ -26,9 +25,7 @@ export class MobileAccessPage implements OnDestroy, OnInit, AfterViewInit {
   userInfo$: Observable<UserInfo>;
 
   constructor(
-    private readonly platform: Platform,
     private readonly userService: UserService,
-    private readonly events: Events,
     private readonly keyboard: Keyboard,
     private readonly mobileAccessService: MobileAccessService,
     private readonly institutionService: InstitutionService

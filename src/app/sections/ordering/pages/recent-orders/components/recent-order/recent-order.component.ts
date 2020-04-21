@@ -20,10 +20,10 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { handleServerError } from '@core/utils/general-helpers';
 import { StGlobalPopoverComponent } from '@shared/ui-components';
 import { ConfirmPopoverComponent } from '@sections/ordering/shared/ui-components/confirm-popover/confirm-popover.component';
-import { UserService } from '@core/service/user-service/user.service';
 import { TIMEZONE_REGEXP } from '@core/utils/regexp-patterns';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { ItemDetailModalComponent } from '@sections/ordering/shared/ui-components/item-detail-modal/item-detail-modal.component';
+import { InstitutionService } from '@core/service/institution/institution.service';
 
 @Component({
   selector: 'st-recent-order',
@@ -46,8 +46,8 @@ export class RecentOrderComponent implements OnInit {
     private readonly cart: CartService,
     private readonly loadingService: LoadingService,
     private readonly toastController: ToastController,
-    private readonly userService: UserService,
     private readonly orderingService: OrderingService,
+    private readonly institutionService: InstitutionService
   ) {
   }
 
@@ -219,7 +219,7 @@ export class RecentOrderComponent implements OnInit {
         this.getDeliveryAddress(deliveryAddressId),
         this.getPickupAddress())),
     );
-    this.orderDetailsOptions$ = zip(address, this.order$, this.userService.userData)
+    this.orderDetailsOptions$ = zip(address, this.order$, this.institutionService.institutionData)
       .pipe(map(([address, { type, dueTime }, { locale, timeZone }]) => {
         //Formated timezone from +0000 to +00:00 for Safari date format
         const date = new Date(dueTime.replace(TIMEZONE_REGEXP, '$1:$2'));

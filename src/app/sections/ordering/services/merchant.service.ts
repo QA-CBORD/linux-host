@@ -28,6 +28,7 @@ import { CommerceApiService } from '@core/service/commerce/commerce-api.service'
 import { UserAccount } from '@core/model/account/account.model';
 import { UserSettingInfo } from '@core/model/user';
 import { isCashlessAccount } from '@core/utils/general-helpers';
+import { InstitutionService } from '@core/service/institution/institution.service';
 
 @Injectable()
 export class MerchantService {
@@ -44,7 +45,8 @@ export class MerchantService {
   constructor(
     private readonly orderingApiService: OrderingApiService,
     private readonly userService: UserService,
-    private readonly commerceApiService: CommerceApiService
+    private readonly commerceApiService: CommerceApiService,
+    private readonly institutionService: InstitutionService
   ) {}
 
   get menuMerchants$(): Observable<MerchantInfo[]> {
@@ -283,7 +285,7 @@ export class MerchantService {
   }
 
   getCurrentLocaleTime(): Observable<Date> {
-    return this.userService.userData.pipe(
+    return this.institutionService.institutionData.pipe(
       map(({ timeZone, locale }) => {
         const date = new Date();
         const dueTime = date.toLocaleString(locale, { hour12: false, timeZone });

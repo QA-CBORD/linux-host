@@ -9,7 +9,7 @@ import { formatDateByContentStrings, isSameDay } from '@core/utils/date-helper';
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
 import { MerchantInfo } from '@sections/ordering';
 import { Schedule } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
-import { UserInfo } from '@core/model/user/user-info.model';
+import { Institution } from '@core/model/institution/institution.model';
 
 @Component({
   selector: 'st-date-time-picker',
@@ -23,7 +23,7 @@ export class StDateTimePickerComponent implements OnInit {
   @Input() isTimeDisable: number;
   @Input() merchantInfo: MerchantInfo;
   @Input() dateTimePicker: Date | string;
-  @Input() userData: UserInfo;
+  @Input() institutionData: Institution;
   @Output() onTimeSelected: EventEmitter<Date | string> = new EventEmitter<Date | string>();
 
   private prevSelectedTimeInfo: TimeInfo = { prevIdx: 0, currentIdx: 0, maxValue: false };
@@ -182,7 +182,7 @@ export class StDateTimePickerComponent implements OnInit {
   }
 
   private isTodayOrTomorrow(date, isToday) {
-    const { locale, timeZone } = this.userData
+    const { locale, timeZone } = this.institutionData
     const today = new Date().toLocaleString(locale, { timeZone });
     const idxForSlice = today.indexOf(',');
 

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { distinctUntilChanged, first, map, switchMap, tap, catchError } from 'rxjs/operators';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, zip } from 'rxjs';
 
 import { ORDER_TYPE } from '@sections/ordering/ordering.config';
 import { MerchantService } from './merchant.service';
@@ -9,6 +9,7 @@ import { UserService } from '@core/service/user-service/user.service';
 import { AddressInfo } from '@core/model/address/address-info';
 import { getDateTimeInGMT } from '@core/utils/date-helper';
 import { OrderingApiService } from '@sections/ordering/services/ordering.api.service';
+import { InstitutionService } from '@core/service/institution/institution.service';
 
 @Injectable()
 export class CartService {
@@ -20,7 +21,8 @@ export class CartService {
   constructor(
     private readonly userService: UserService,
     private readonly merchantService: MerchantService,
-    private readonly api: OrderingApiService
+    private readonly api: OrderingApiService,
+    private readonly institutionService: InstitutionService
   ) { }
 
   get merchant$(): Observable<MerchantInfo> {
@@ -149,9 +151,9 @@ export class CartService {
       address = type === ORDER_TYPE.DELIVERY ? { deliveryAddressId: addr.id } : { pickupAddressId: addr.id };
     }
 
-    return this.userService.userData.pipe(
+    return zip(this.userService.userData, this.institutionService.institutionData).pipe(
       first(),
-      switchMap(({ phone: userPhone, timeZone, locale }) => {
+      switchMap(([{ phone: userPhone }, {timeZone, locale}]) => {
         this.cart.order = {
           ...this.cart.order,
           ...address,
@@ -200,7 +202,7 @@ export class CartService {
   }
 
   async getMerchantMenu(id: string, dueTime: string | Date, type: number): Promise<MenuInfo> {
-    const { timeZone, locale } = await this.userService.userData.pipe(first()).toPromise();
+    const { timeZone, locale } = await this.institutionService.institutionData.pipe(first()).toPromise();
     const timeInGMT = await getDateTimeInGMT(dueTime, locale, timeZone);
 
     return this.merchantService

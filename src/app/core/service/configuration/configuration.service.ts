@@ -11,7 +11,6 @@ import { MessageResponse } from './../../model/service/message-response.model';
 import { ServiceParameters } from './../base-service/base.service';
 import { SettingInfo } from '../../model/configuration/setting-info.model';
 import { Settings } from 'src/app/app.global';
-import { UserService } from '../user-service/user.service';
 
 @Injectable({
   providedIn: 'root',

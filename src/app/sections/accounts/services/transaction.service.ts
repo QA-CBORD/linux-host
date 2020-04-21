@@ -21,8 +21,8 @@ import {
 import { DateUtilObject, getTimeRangeOfDate, getUniquePeriodName } from '../shared/ui-components/filter/date-util';
 import { QueryTransactionHistoryCriteriaDateRange } from '@core/model/account/transaction-query-date-range.model';
 import { TIMEZONE_REGEXP } from '@core/utils/regexp-patterns';
-import { UserService } from '@core/service/user-service/user.service';
 import { convertGMTintoLocalTime } from '@core/utils/date-helper';
+import { InstitutionService } from '@core/service/institution/institution.service';
 
 @Injectable()
 export class TransactionService {
@@ -42,7 +42,7 @@ export class TransactionService {
     private readonly accountsService: AccountsService,
     private readonly commerceApiService: CommerceApiService,
     private readonly contentService: ContentStringsApiService,
-    private readonly userService: UserService,
+    private readonly institutionService: InstitutionService
   ) { }
 
   get transactions$(): Observable<TransactionHistory[]> {
@@ -128,7 +128,7 @@ export class TransactionService {
           map(({ transactions }) => this.filterByTenderIds(tendersId, transactions))
         )
       ),
-      switchMap(transactions => zip(of(transactions), this.userService.userData)),
+      switchMap(transactions => zip(of(transactions), this.institutionService.institutionData)),
       map(([transactions, { timeZone, locale }]) =>
         transactions.map(item => ({ ...item, actualDate: convertGMTintoLocalTime(item.actualDate, locale, timeZone) }))),
       tap(transactions => (this._transactions = transactions))

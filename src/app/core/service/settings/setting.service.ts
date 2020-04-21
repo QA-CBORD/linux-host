@@ -15,7 +15,6 @@ export class SettingService extends BaseService {
   private settings: SettingInfo[] = [];
   private readonly _settings$: BehaviorSubject<SettingInfo[]> = new BehaviorSubject<SettingInfo[]>(this.settings);
   private readonly configurationsUrl: string = '/json/configuration';
-  private readonly userSettingsUrl: string = '/json/user';
 
   constructor(private readonly userService: UserService,
               protected readonly http: HttpClient) {

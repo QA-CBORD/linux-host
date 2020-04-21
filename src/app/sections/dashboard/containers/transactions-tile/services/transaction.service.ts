@@ -21,6 +21,7 @@ import {
   TIME_PERIOD,
 } from '@sections/accounts/accounts.config';
 import { convertGMTintoLocalTime } from '@core/utils/date-helper';
+import { InstitutionService } from '@core/service/institution/institution.service';
 
 @Injectable()
 export class TransactionService {
@@ -39,7 +40,8 @@ export class TransactionService {
     private readonly accountsService: AccountsService,
     private readonly commerceApiService: CommerceApiService,
     private readonly userService: UserService,
-    private readonly configService: ConfigurationService
+    private readonly configService: ConfigurationService,
+    private readonly institutionService: InstitutionService
   ) { }
 
   get transactions$(): Observable<TransactionHistory[]> {
@@ -106,7 +108,7 @@ export class TransactionService {
           map(({ transactions }) => this.filterByTenderIds(tendersId, transactions))
         )
       ),
-      switchMap(transactions => zip(of(transactions), this.userService.userData)),
+      switchMap(transactions => zip(of(transactions), this.institutionService.institutionData)),
       map(([transactions, { timeZone, locale }]) =>
         transactions.map(item => ({ ...item, actualDate: convertGMTintoLocalTime(item.actualDate, locale, timeZone) }))),
       tap(transactions => (this._transactions = transactions))

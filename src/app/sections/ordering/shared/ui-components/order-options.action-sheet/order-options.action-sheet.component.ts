@@ -6,7 +6,7 @@ import { ModalController, ToastController } from '@ionic/angular';
 import { DeliveryAddressesModalComponent } from '../delivery-addresses.modal/delivery-addresses.modal.component';
 import { AddressInfo } from '@core/model/address/address-info';
 import { Observable, of, throwError, zip } from 'rxjs';
-import { finalize, first, map, switchMap, take, tap } from 'rxjs/operators';
+import { finalize, first, map, switchMap, take, tap, pluck } from 'rxjs/operators';
 import { LoadingService } from '@core/service/loading/loading.service';
 import {
   ACCOUNT_TYPES,
@@ -16,8 +16,8 @@ import {
 } from '@sections/ordering/ordering.config';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
-import { UserService } from '@core/service/user-service/user.service';
-import { UserInfo } from '@core/model/user/user-info.model';
+import { InstitutionService } from '@core/service/institution/institution.service';
+import { Institution } from '@core/model/institution/institution.model';
 
 @Component({
   selector: 'st-order-options.action-sheet',
@@ -57,7 +57,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     private readonly toastController: ToastController,
     private readonly cartService: CartService,
     private readonly orderingService: OrderingService,
-    private readonly userService: UserService,
+    private readonly institutionService: InstitutionService
   ) {
   }
 
@@ -72,8 +72,8 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     return ORDER_TYPE;
   }
 
-  get userData$() : Observable<UserInfo>{
-    return this.userService.userData;
+  get institutionData$() : Observable<Institution>{
+    return this.institutionService.institutionData;
   }
 
   initData() {

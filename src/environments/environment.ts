@@ -65,6 +65,13 @@ export const testCredentials: { [key: string]: UserLogin } = {
     institutionId: '1e418ca8-7148-4956-b7c4-1f35db6d8a11',
   },
 
+  odysseyPreviewNoCC: {
+    userName: 'getaws301@tpsmail.dev',
+    password: 'password1',
+    domain: null,
+    institutionId: 'be777c60-0e04-46a7-9096-63b527e419a6',
+  },
+
   odysseyPreview222: {
     userName: 'testuser701',
     password: 'testpassword701',
