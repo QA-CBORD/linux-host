@@ -79,6 +79,7 @@ export class ContractDetailsPage implements OnInit, OnDestroy {
     if (this.isSubmitted) {
       if (!isLastPage) {
         this._next();
+        return;
       } else {
         return;
       }
