@@ -39,8 +39,8 @@
     }
 
     &__footer-btn {
-      width: 50%;
       flex-grow: 1;
+      text-transform: uppercase;
 
       @include font-nunito-heavy(16px);
 
