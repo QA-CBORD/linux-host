@@ -11,7 +11,7 @@ export enum BUTTON_TYPE {
 }
 
 const CANCEL = {
-  class: 'clear',
+  class: 'clear-with-shadow',
   shape: 'round',
   strong: true,
   fill: 'clear',
