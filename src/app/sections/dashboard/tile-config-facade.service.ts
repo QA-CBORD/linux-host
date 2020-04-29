@@ -97,4 +97,9 @@ export class TileConfigFacadeService extends ServiceStateFacade {
   updateConfigState(value: TileWrapperConfig[]) {
     this.localStorageStateService.updateStateByKey(this.key, value);
   }
+
+  deleteConfigState() {
+    this.localStorageStateService.deleteStateEntityByKey(this.key);
+  }
+
 }

@@ -12,6 +12,7 @@ import { ContentStringsFacadeService } from '@core/facades/content-strings/conte
 import { CONTENT_STINGS_CATEGORIES, CONTENT_STINGS_DOMAINS } from '../../../content-strings';
 import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
+import { NativeData, NativeProvider } from '@core/provider/native-provider/native.provider';
 
 @Injectable()
 export class DashboardPageResolver implements Resolve<Observable<SettingInfoList>> {
@@ -20,6 +21,7 @@ export class DashboardPageResolver implements Resolve<Observable<SettingInfoList
     private readonly loadingService: LoadingService,
     private readonly tileConfigFacadeService: TileConfigFacadeService,
     private readonly contentStringsFacadeService: ContentStringsFacadeService,
+    private readonly nativeProviderService: NativeProvider,
   ) {
   }
 
@@ -28,6 +30,12 @@ export class DashboardPageResolver implements Resolve<Observable<SettingInfoList
     const strings = this.loadContentStrings();
 
     const accountContentStrings = this.accountsService.initContentStringsList();
+    try {
+      if (this.nativeProviderService.getAndroidData(NativeData.IS_SAME_USER) != true) {
+        this.tileConfigFacadeService.deleteConfigState();
+      }
+    } catch (e){
+    }
     return zip(
       this.tileConfigFacadeService.updateTilesConfigBySystemSettings().pipe(first()),
       accountContentStrings,

@@ -19,7 +19,8 @@ export enum NativeData {
   UPDATE_ROUTE = 'updateNativeWithRoute',
   ORDERS_WITH_APPLE_PAY = 'ordersApplePay',
   DEPOSITS_WITH_APPLE_PAY = 'depositsApplePay',
-  BARCODE = 'getPatronBarcode'
+  BARCODE = 'getPatronBarcode',
+  IS_SAME_USER = 'isSameUser'
 }
 
 export enum AppleWalletCredentialStatus {
