@@ -106,7 +106,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
               ? ''
               : this.storeAddress;
           } else {
-            defaultPickupAddress = orderDetailsOptions.address;
+            defaultPickupAddress = orderDetailsOptions.orderType === ORDER_TYPE.PICKUP ? orderDetailsOptions.address : '';
           }
 
           this.deliveryAddresses = deliveryLocations;
