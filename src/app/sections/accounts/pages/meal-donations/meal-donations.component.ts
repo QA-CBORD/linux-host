@@ -225,7 +225,7 @@ export class MealDonationsComponent implements OnInit {
     });
     modal
       .onDidDismiss()
-      .then(async () => await this.navCtrl.navigateBack([NAVIGATE.accounts], {skipLocationChange: true}));
+      .then(async () => await this.navCtrl.navigateForward([NAVIGATE.accounts], {skipLocationChange: true, replaceUrl: true}))
     await modal.present();
   }
 
