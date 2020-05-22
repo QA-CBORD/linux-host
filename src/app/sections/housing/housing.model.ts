@@ -1,5 +1,6 @@
 import { ApplicationDetails } from './applications/applications.model';
 import { ContractDetails, ContractListDetails } from './contracts/contracts.model';
+import { RoomSelect } from './rooms/rooms.model';
 
 export interface ResponseStatusDetails {
   code: string;
@@ -61,6 +62,23 @@ export class DetailsResponse implements DetailsResponseOptions {
 
     this.applicationDetails = new ApplicationDetails(options.applicationDetails);
     this.contractDetails = new ContractDetails(options.contractDetails);
+  }
+}
+
+export interface RoomSelectResponseOptions{
+  roomSelects: RoomSelect[];
+}
+
+export class RoomSelectResponse implements RoomSelectResponseOptions{
+  roomSelects: RoomSelect[];
+
+  constructor(options: RoomSelectResponseOptions){
+    if (options == null || typeof options !== 'object') {
+      options = {} as RoomSelectResponseOptions;
+    }
+    this.roomSelects = Array.isArray(options)
+      ? options.map((detail : any) => new RoomSelect(detail))
+      : [];
   }
 }
 

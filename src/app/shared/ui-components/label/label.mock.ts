@@ -1,10 +1,10 @@
-import { generateApplications, generateApplicationDetails } from './applications/applications.mock';
-import { generateContractsList, generateContractDetails } from './contracts/contracts.mock';
+import { generateApplications, generateApplicationDetails } from '../../../sections/housing/applications/applications.mock';
+import { generateContractsList, generateContractDetails } from '../../../sections/housing/contracts/contracts.mock';
 
-import { DefinitionsResponse, DetailsResponse } from './housing.model';
-import { ApplicationDetails } from './applications/applications.model';
-import { ContractListDetails, ContractDetails } from './contracts/contracts.model';
-import { Label } from './housing.model';
+import { DefinitionsResponse, DetailsResponse } from '../../../sections/housing/housing.model';
+import { ApplicationDetails } from '../../../sections/housing/applications/applications.model';
+import { ContractListDetails, ContractDetails } from '../../../sections/housing/contracts/contracts.model';
+import { Label } from '../../../sections/housing/housing.model';
 
 export function generateDefinitionsResponse(): DefinitionsResponse {
   const applicationDefinitions: ApplicationDetails[] = generateApplications();
@@ -24,6 +24,7 @@ export function generateDetailsResponse(key: number): DetailsResponse {
     applicationDetails,
     contractDetails,
   });
+}
 
 export function generateLabel(_: any, index: number): Label {
   return new Label(`Honors Unit ${index}`);

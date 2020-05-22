@@ -14,8 +14,10 @@ import { TermsService } from './terms/terms.service';
 import { ApplicationsService } from './applications/applications.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ContractsService } from '@sections/housing/contracts/contracts.service';
+import { RoomsStateService } from '@sections/housing/rooms/rooms-state.service';
+import {RoomSelect} from '@sections/housing/rooms/rooms.model';
 
-import { DefinitionsResponse, DetailsResponse, Response } from './housing.model';
+import { DefinitionsResponse, DetailsResponse, Response, RoomSelectResponse } from './housing.model';
 import { ApplicationDetails } from './applications/applications.model';
 import { ContractListDetails, ContractDetails } from './contracts/contracts.model';
 
@@ -44,7 +46,8 @@ export class HousingService {
     private _loadingService: LoadingService,
     private _toastController: ToastController,
     private _router: Router,
-    private _contractsService: ContractsService
+    private _contractsService: ContractsService,
+    private _roomsStateService: RoomsStateService
   ) {}
 
   getDefinitions(termId: number) {
@@ -95,6 +98,27 @@ export class HousingService {
         })
       );
   }
+
+  getRoomSelects(termId: number){
+    const apiUrl: string = `${Environment.currentEnvironment.housing_aws_url}/roomselectproxy/v.1.0/room-selects-proxy/patron/${termId}`;
+    return this._housingProxyService.get<RoomSelectResponse>(apiUrl).pipe(
+      map((response: any) => new RoomSelectResponse(response)),
+      tap((response: RoomSelectResponse) => this._setRoomsState(response.roomSelects)),
+      catchError(() => this._handleGetRoomSelectsError())
+    );
+  }
+
+  _handleGetRoomSelectsError(): Observable<RoomSelectResponse> {
+    const roomSelects: RoomSelect[] = [];
+    this._setRoomsState(roomSelects);
+
+    return of(new RoomSelectResponse({roomSelects}));
+  }
+
+  _setRoomsState(roomSelects: RoomSelect[]): void {
+    this._roomsStateService.setRoomSelects(of(roomSelects));
+  }
+
 
   handleSuccess(): void {
     this._loadingService.closeSpinner();
