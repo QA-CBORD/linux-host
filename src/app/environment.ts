@@ -5,7 +5,7 @@ enum Development {
   secmsg_api = 'https://secmsg.api.dev.cbord.com',
   image_url = 'https://3bulchr7pb.execute-api.us-east-1.amazonaws.com/dev/image/',
   // image_url = 'https://object-store.api.dev.cbord.com/image/', once DNS entry is entered
-  housing_aws_url = 'https://z6u8er70s9.execute-api.us-east-1.amazonaws.com/dev',
+  housing_aws_url = 'https://housing.api.dev.cbord.com',
 }
 
 enum Feature1 {
@@ -15,7 +15,7 @@ enum Feature1 {
   secmsg_api = 'https://secmsg.api.dev.cbord.com',
   image_url = 'https://3bulchr7pb.execute-api.us-east-1.amazonaws.com/dev/image/',
   // image_url = 'https://object-store.api.feature1.cbord.com/image/', once DNS entry is entered
-  housing_aws_url = 'https://z6u8er70s9.execute-api.us-east-1.amazonaws.com/dev',
+  housing_aws_url = 'https://housing.api.dev.cbord.com',
 }
 
 enum Qa {
@@ -24,7 +24,7 @@ enum Qa {
   cbordstudent_url = 'https://student.qa.cbord.com',
   secmsg_api = 'https://secmsg.api.qa.cbord.com',
   image_url = 'https://object-store.api.qa.cbord.com/image/',
-  housing_aws_url = 'https://z4ffq7e1m9.execute-api.us-east-1.amazonaws.com/qa',
+  housing_aws_url = 'https://housing.api.qa.cbord.com',
 }
 
 enum Pat {
@@ -33,7 +33,7 @@ enum Pat {
   cbordstudent_url = 'https://student.pat.cbord.com',
   secmsg_api = 'https://secmsg.api.pat.cbord.com',
   image_url = 'https://object-store.api.pat.cbord.com/image/',
-  housing_aws_url = 'https://z6u8er70s9.execute-api.us-east-1.amazonaws.com/dev',
+  housing_aws_url = 'https://housing.api.pat.cbord.com',
 }
 
 enum Demo {
@@ -42,7 +42,7 @@ enum Demo {
   cbordstudent_url = 'https://student.demo.cbord.com',
   secmsg_api = 'https://secmsg.api.demo.cbord.com',
   image_url = 'https://object-store.api.demo.cbord.com/image/',
-  housing_aws_url = 'https://z4ffq7e1m9.execute-api.us-east-1.amazonaws.com/dev',
+  housing_aws_url = 'https://housing.api.demo.cbord.com',
 }
 
 enum Production {
@@ -51,7 +51,7 @@ enum Production {
   cbordstudent_url = 'https://student.cbord.com',
   secmsg_api = 'https://secmsg.api.cbord.com',
   image_url = 'https://object-store.api.cbord.com/image/',
-  housing_aws_url = 'https://z6u8er70s9.execute-api.us-east-1.amazonaws.com',
+  housing_aws_url = 'https://housing.api.cbord.com',
 }
 
 export class Environment {
