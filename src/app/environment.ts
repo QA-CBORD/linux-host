@@ -15,7 +15,7 @@ enum Feature1 {
   secmsg_api = 'https://secmsg.api.dev.cbord.com',
   image_url = 'https://3bulchr7pb.execute-api.us-east-1.amazonaws.com/dev/image/',
   // image_url = 'https://object-store.api.feature1.cbord.com/image/', once DNS entry is entered
-  housing_aws_url = 'https://housing.api.dev.cbord.com',
+  housing_aws_url = 'https://z6u8er70s9.execute-api.us-east-1.amazonaws.com/dev',
 }
 
 enum Qa {
