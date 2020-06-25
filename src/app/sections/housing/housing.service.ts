@@ -15,19 +15,20 @@ import { ApplicationsService } from './applications/applications.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ContractsService } from '@sections/housing/contracts/contracts.service';
 import { RoomsStateService } from '@sections/housing/rooms/rooms-state.service';
-import {RoomSelect} from '@sections/housing/rooms/rooms.model';
+import { RoomSelect } from '@sections/housing/rooms/rooms.model';
 
-import { DefinitionsResponse, DetailsResponse, Response, RoomSelectResponse } from './housing.model';
+import { DefinitionsResponse, DetailsResponse, Response, RoomSelectResponse, FacilityDetailsResponse } from './housing.model';
 import { ApplicationDetails } from './applications/applications.model';
+import { FacilityDetails } from './facilities/facilities.model';
 import { ContractListDetails, ContractDetails } from './contracts/contracts.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class HousingService {
-  private readonly _patronApplicationsUrl: string = `${
-    Environment.currentEnvironment.housing_aws_url
-  }/patron-applications/v.1.0/patron-applications`;
+  private readonly _baseUrl = Environment.currentEnvironment.housing_aws_url;
+  private readonly _patronApplicationsUrl: string = `${this._baseUrl}
+      }/patron-applications/v.1.0/patron-applications`;
 
   private readonly _applicationDefinitionUrl: string = `${this._patronApplicationsUrl}/application-definition`;
 
@@ -99,26 +100,33 @@ export class HousingService {
       );
   }
 
-  getRoomSelects(termId: number){
-    const apiUrl: string = `${Environment.currentEnvironment.housing_aws_url}/roomselectproxy/v.1.0/room-selects-proxy/patron/${termId}`;
+  getRoomSelects(termId: number) {
+    const apiUrl: string = `${this._baseUrl}/roomselectproxy/v.1.0/room-selects-proxy/patron/${termId}`;
     return this._housingProxyService.get<RoomSelectResponse>(apiUrl).pipe(
       map((response: any) => new RoomSelectResponse(response)),
       tap((response: RoomSelectResponse) => this._setRoomsState(response.roomSelects)),
       catchError(() => this._handleGetRoomSelectsError())
     );
   }
-
+  getFacilities(roomSelectKey: number): Observable<FacilityDetailsResponse> {
+    const apiUrl = `${
+      this._baseUrl
+    }/roomselectproxy/v.1.0/room-selects-proxy/facilities/detailstwo/{roomselectkeytwo}${roomSelectKey}`;
+    return this._housingProxyService.get<FacilityDetailsResponse[]>(apiUrl).pipe(
+      map((response: any) => new FacilityDetailsResponse(response)),
+      catchError((e) =>{ throw e})
+    );
+  }
   _handleGetRoomSelectsError(): Observable<RoomSelectResponse> {
     const roomSelects: RoomSelect[] = [];
     this._setRoomsState(roomSelects);
 
-    return of(new RoomSelectResponse({roomSelects}));
+    return of(new RoomSelectResponse({ roomSelects }));
   }
 
   _setRoomsState(roomSelects: RoomSelect[]): void {
     this._roomsStateService.setRoomSelects(of(roomSelects));
   }
-
 
   handleSuccess(): void {
     this._loadingService.closeSpinner();

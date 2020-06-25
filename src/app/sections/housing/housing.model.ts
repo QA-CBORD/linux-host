@@ -1,6 +1,7 @@
 import { ApplicationDetails } from './applications/applications.model';
 import { ContractDetails, ContractListDetails } from './contracts/contracts.model';
 import { RoomSelect } from './rooms/rooms.model';
+import { FacilityDetails } from './facilities/facilities.model';
 
 export interface ResponseStatusDetails {
   code: string;
@@ -84,4 +85,16 @@ export class RoomSelectResponse implements RoomSelectResponseOptions{
 
 export class Label {
   constructor(public name: string) {}
+}
+
+export interface FacilityDetailsResponseOptions {
+  facilityDetails: FacilityDetails[];
+}
+export class FacilityDetailsResponse implements FacilityDetailsResponseOptions {
+  facilityDetails: FacilityDetails[];
+  constructor(options: FacilityDetailsResponseOptions) {
+    if (options == null || typeof options !== 'object') {
+      options = {} as FacilityDetailsResponseOptions;
+    }
+  }
 }
