@@ -11,15 +11,21 @@ export class Facility {
     public availableUnits: number,
     public isExpanded: boolean = false,
     public iconName: string = 'arrow-down',
-  ) {}
+    public assetTypeKey: number = null,
+    public attributes: FacilityAttribute[] = null,
+    public isTopLevel: boolean = false,
+    public topLevelKey: number = null,
+    public currentOccupancy: number = 0,
+    public occupancyKeys: number[] = [],
+) {}
 }
-export class FacilityAttribute { //can we use existing attriute dto?
-  facilityAttributeKey: number;
-  facilityKey: number;
-  attributeConsumerKey: number;
-  value: string;
-  effectiveDate: Date;
-  endDate: Date;
+export class FacilityAttribute {
+  constructor(public facilityAttributeKey: number,
+              public facilityKey: number,
+              public attributeConsumerKey: number,
+              public value: string,
+              public effectiveDate: Date,
+              public endDate: Date) {}
 }
 export interface FacilityDetailsOptions {
   facilityKey: number;
@@ -30,24 +36,16 @@ export interface FacilityDetailsOptions {
   currentOccupancy: number //currentOccupancyCount?
   attributes: FacilityAttribute[];
   occupancyKeys: number[];
-} 
-{
-  "facilityKey": 0,
-  "assetTypeKey": 0,
-  "name": "string",
-  "isTopLevel": true,
-  "topLevelKey": 0,
-  "currentOccupancy": 0,
-  "attributes": [
-    {
-      "facilityAttributeKey": 0,
-      "facilityKey": 0,
-      "attributeConsumerKey": 0,
-      "value": "string",
-      "effectiveDate": "2020-06-24T19:31:28.843Z",
-      "endDate": "2020-06-24T19:31:28.843Z"
-    }
-  ],
-  "occupantKeys": [
-    0
-  ]
+}
+
+export class FacilityDetails {
+  facilityKey: number;
+  assetTypeKey: number;
+  name: string;
+  isTopLevel: boolean;
+  topLevelKey: number;
+  currentOccupancy: number //currentOccupancyCount?
+  attributes: FacilityAttribute[];
+  occupancyKeys: number[];
+  constructor(options: FacilityDetailsOptions){}
+}
