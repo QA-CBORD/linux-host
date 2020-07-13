@@ -1,0 +1,12 @@
+<ion-item class="ion-no-padding form-checkbox" lines="none">
+  <ion-checkbox
+    class="form-checkbox__control"
+    mode="md"
+    slot="start"
+    [checked]="contractsService.isSigned$ | async"
+    [disabled]="isSubmitted"
+    (ionChange)="signContract($event)"
+  ></ion-checkbox>
+
+  <ion-label class="form-label">{{ question.label }}</ion-label>
+</ion-item>

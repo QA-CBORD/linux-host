@@ -1,0 +1,121 @@
+@import 'tools';
+
+.global-navigation {
+
+  &__vertical-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    & .global-navigation__icon {
+      margin: 0 10px;
+    }
+
+    & .global-navigation__list-item {
+      font-size: 18px;
+      border-left: 3px solid transparent;
+      height: $bottom-navigation-bar-height;
+      align-items: center;
+      flex-direction: row;
+      justify-content: flex-start;
+
+      &--active {
+        border-top: none;
+        border-left: 3px solid $color-dodger-blue;
+      }
+    }
+  }
+
+  &__main {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: $bottom-navigation-bar-height;
+    background: $color-white;
+  }
+
+  &__list {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+  }
+
+  &__list-item {
+    flex-grow: 1;
+    border-top: 2px solid transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    @include font-nunito-regular(10px);
+
+    &--active {
+      border-top: 2px solid $color-dodger-blue;
+      background: $color-solitude;
+      color: $color-dodger-blue;
+      outline: none;
+    }
+  }
+
+  &__icon {
+    height: 27px;
+    width: 27px;
+    background-image: url("/assets/icon/bottom_navigation_icons.png");
+
+    .global-navigation__list-item--active & {
+      background-position-y: 27px;
+    }
+
+    .global-navigation__list-item--active &--close {
+      background-position-y: 0;
+    }
+
+    &--home {
+      background-position-x: 0;
+    }
+
+    &--accounts {
+      background-position-x: -28px;
+    }
+
+    &--access {
+      background-position-x: -56px;
+    }
+
+    &--order {
+      background-position-x: -84px;
+    }
+
+    &--more {
+      background-position-x: -252px;
+    }
+
+    &--housing {
+      background-position-x: -112px;
+    }
+
+    &--rewards {
+      background-position-x: -140px;;
+    }
+
+    &--explore {
+      background-position-x: -196px;
+    }
+
+    &--conversations {
+      background-position-x: -168px;
+    }
+
+    &--settings {
+      background-position-x: -224px;
+    }
+
+    &--close {
+      background-position-x: -280px;
+    }
+  }
+}

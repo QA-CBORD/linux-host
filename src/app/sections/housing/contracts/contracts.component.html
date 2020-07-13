@@ -1,0 +1,3 @@
+<ion-list *ngIf="(contractsStateService.contracts$ | async) as contracts" class="ion-no-padding bg-transparent">
+  <st-contracts-list [contracts]="contracts"></st-contracts-list>
+</ion-list>

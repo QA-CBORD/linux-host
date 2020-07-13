@@ -1,0 +1,10 @@
+@import 'src/styles/tools';
+
+.radio-control {
+  --color: #{$color-silver};
+  --color-checked: #{$color-dodger-blue};
+
+  width: 24px;
+  height: 24px;
+  margin: 0 8px 0 0;
+}

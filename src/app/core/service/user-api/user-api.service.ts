@@ -1,0 +1,94 @@
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { UserInfo } from '@core/model/user/user-info.model';
+import { UserSettingInfo, UserPhotoInfo, UserPhotoList, AddressInfoList } from '@core/model/user';
+import { map, switchMap } from 'rxjs/operators';
+import { MessageResponse } from '@core/model/service/message-response.model';
+import { AddressInfo } from '@core/model/address/address-info';
+import { HttpClient } from '@angular/common/http';
+import { RPCQueryConfig } from '@core/interceptors/query-config.model';
+import { Settings } from '../../../app.global';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class UserApiService {
+  private readonly serviceUrl = '/json/user';
+
+  constructor(private readonly http: HttpClient) {}
+
+  getUser(): Observable<UserInfo> {
+    const queryConfig = new RPCQueryConfig('retrieve', {}, true);
+
+    return this.http
+      .post<MessageResponse<UserInfo>>(this.serviceUrl, queryConfig)
+      .pipe(map(({ response }) => response));
+  }
+
+  getUserSettings(settingName: Settings.Setting): Observable<UserSettingInfo> {
+    const queryConfig = new RPCQueryConfig('retrieveSetting', { settingName: settingName.toString() }, true);
+
+    return this.http
+      .post<MessageResponse<UserSettingInfo>>(this.serviceUrl, queryConfig)
+      .pipe(map(({ response }) => response));
+  }
+
+  saveUserSetting(settingName: Settings.Setting, settingValue: string): Observable<MessageResponse<boolean>> {
+    const queryConfig = new RPCQueryConfig(
+      'saveSetting',
+      {
+        settingName: settingName.toString(),
+        settingValue,
+      },
+      true
+    );
+
+    return this.http.post<MessageResponse<boolean>>(this.serviceUrl, queryConfig);
+  }
+
+  getUserPhoto(userId: string): Observable<MessageResponse<UserPhotoInfo>> {
+    const queryConfig = new RPCQueryConfig('retrieveUserPhoto', { userId }, true);
+
+    return this.http.post<MessageResponse<UserPhotoInfo>>(this.serviceUrl, queryConfig);
+  }
+
+  createUserPin(PIN: string, deviceId: string): Observable<MessageResponse<boolean>> {
+    const queryConfig = new RPCQueryConfig('createPIN', { PIN, deviceId }, true, false);
+
+    return this.http.post<MessageResponse<boolean>>(this.serviceUrl, queryConfig);
+  }
+
+  getUserAddresses(): Observable<AddressInfo[]> {
+    const queryConfig = id => new RPCQueryConfig('retrieveUserAddressList', { userId: id, addressId: '' }, true);
+
+    return this.getUser().pipe(
+      switchMap(({ id }) => this.http.post<MessageResponse<AddressInfoList>>(this.serviceUrl, queryConfig(id))),
+      map(({ response: { addresses } }) => addresses)
+    );
+  }
+
+  requestDeposit(
+    recipientName: string,
+    recipientEmail: string,
+    message: string,
+    depositToAccountId: string,
+    requestAmount: string
+  ) {
+    const params = { recipientName, recipientEmail, message, depositToAccountId, requestAmount };
+    const queryConfig = new RPCQueryConfig('requestDeposit', params, true);
+
+    return this.http.post<MessageResponse<any>>(this.serviceUrl, queryConfig);
+  }
+
+  getPhotoListByUserId(userId: string): Observable<MessageResponse<UserPhotoList>> {
+    const queryConfig = new RPCQueryConfig('retrieveUserPhotoList', { userId }, true);
+
+    return this.http.post<MessageResponse<UserPhotoList>>(this.serviceUrl, queryConfig);
+  }
+
+  getPhotoById(photoId: string): Observable<MessageResponse<UserPhotoInfo>> {
+    const queryConfig = new RPCQueryConfig('retrieveUserPhoto', { photoId }, true);
+
+    return this.http.post<MessageResponse<UserPhotoInfo>>(this.serviceUrl, queryConfig);
+  }
+}

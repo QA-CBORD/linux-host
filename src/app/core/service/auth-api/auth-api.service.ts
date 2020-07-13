@@ -1,0 +1,161 @@
+import { Injectable } from '@angular/core';
+import { Observable, ReplaySubject } from 'rxjs';
+import { map, switchMap, tap } from 'rxjs/operators';
+
+import { DataCache } from '../../utils/data-cache';
+
+import { UserLogin } from '@core/model/user';
+import { HttpClient } from '@angular/common/http';
+import { RPCQueryConfig } from '@core/interceptors/query-config.model';
+import { ServiceParameters } from '@core/model/service/message-response.model';
+import {Device} from '@capacitor/core';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class AuthApiService {
+  private serviceUrl = '/json/authentication';
+
+  private sessionIdSource: ReplaySubject<string> = new ReplaySubject<string>(1);
+  sessionId$: Observable<string> = this.sessionIdSource.asObservable();
+
+  constructor(private readonly http: HttpClient) {}
+
+  /**
+   *  Authenticate the device/system to get a device session
+   */
+  authenticateSystem(): Observable<string> {
+    const postParams: ServiceParameters = {
+      systemCredentials: {
+        domain: '',
+        userName: 'get_mobile',
+        password: 'NOTUSED',
+      },
+    };
+
+    const queryConfig = new RPCQueryConfig('authenticateSystem', postParams);
+
+    return this.http.post<any>(this.serviceUrl, queryConfig).pipe(map(({ response }) => response));
+  }
+
+  /**
+   * Authenticate a User to get a User Session
+   *
+   * @param userCredentials User Login credentials
+   */
+  authenticateUser(userCredentials: UserLogin): Observable<string> {
+    const postParams = {
+      systemCredentials: {
+        domain: '',
+        userName: 'get_mobile',
+        password: 'NOTUSED',
+      },
+      userCredentials: {
+        userName: userCredentials.userName,
+        password: userCredentials.password,
+        domain: userCredentials.domain,
+        institutionId: userCredentials.institutionId,
+      },
+    };
+
+    const queryConfig = new RPCQueryConfig('authenticateUser', postParams);
+
+    return this.http.post<any>(this.serviceUrl, queryConfig).pipe(
+      map(({ response }) => response),
+      tap((sessionId: string) => this.setSessionId(sessionId))
+    );
+  }
+
+  authenticatePin(pin: string, deviceId: string): Observable<string> {
+    const postParams = {
+      systemCredentials: {
+        domain: '',
+        userName: 'get_mobile',
+        password: 'NOTUSED',
+      },
+      deviceId,
+      pin
+    };
+
+    const queryConfig = new RPCQueryConfig('authenticatePIN', postParams);
+
+    return this.http.post<any>(this.serviceUrl, queryConfig).pipe(
+      map(({ response }) => response),
+      tap((sessionId: string) => this.setSessionId(sessionId))
+    );
+  }
+
+  /**
+   * Retrieve authenticationToken passing in a sessionId
+   *
+   * @param sessionId String
+   */
+  getAuthenticationToken(): Observable<string> {
+    let params: ServiceParameters = { };
+    const queryConfig = new RPCQueryConfig('getAuthenticationToken', params, true);
+    
+    // MARK: Remove the token setting from the service
+    return this.http.post<any>(this.serviceUrl, queryConfig).pipe(
+      map(({ response }) => response )
+    );
+  }
+
+  /**
+   * Authenticate a Session Token (session sharing) to get a new User Session
+   *
+   * @param sessionToken Session Token passed to device/system
+   */
+  authenticateSessionToken(sessionToken: string): Observable<string> {
+    const postParams = {
+      systemCredentials: {
+        domain: '',
+        userName: 'get_mobile',
+        password: 'NOTUSED',
+      },
+      sessionToken: sessionToken,
+    };
+
+    const queryConfig = new RPCQueryConfig('authenticateSessionToken', postParams);
+
+    return this.http.post<any>(this.serviceUrl, queryConfig).pipe(
+      map(({ response }) => response),
+      tap((sessionId: string) => this.setSessionId(sessionId))
+    );
+  }
+
+  /**
+   * Retrieve a JWT from GET using a currently active session to use as an Access token for calling AWS services
+   *
+   */
+  getExternalAuthenticationToken(): Observable<string> {
+    const postParams = {
+      tokenType: null,
+      externalSystem: null,
+      claimSet: null,
+    };
+
+    const queryConfig = new RPCQueryConfig('retrieveExternalAuthenticationToken', postParams, true);
+
+    return this.http.post<any>(this.serviceUrl, queryConfig).pipe(map(({ response }) => response));
+  }
+
+  setSessionId(sessionId: string): void {
+    DataCache.setSessionId(sessionId);
+    this.sessionIdSource.next(sessionId);
+  }
+
+  retrieveAuthorizationBlob(deviceModel: string, deviceOSVersion: string): Observable<string> {
+      const postParams = {
+        deviceModel,
+        deviceOSVersion,
+      };
+    const queryConfig = new RPCQueryConfig('retrieveAuthorizationBlob', postParams, true, false);
+    return this.http.post<any>(this.serviceUrl, queryConfig);
+  }
+}
+
+export interface SystemCredentials {
+  userName: string;
+  password: string;
+  domain: string;
+}

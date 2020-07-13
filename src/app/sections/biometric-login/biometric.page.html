@@ -1,0 +1,28 @@
+<ion-content class="biometric" scrollY="false">
+  <div class="biometric__content">
+    <div class="biometric__header">
+      <div class="biometric__image-wrapper">
+        <img
+          src="/assets/icon/{{biometricConfig.type === 'fingerprint'? 'fingerprint' : 'faceid'}}.svg"
+          alt="{{biometricConfig.type === 'fingerprint'? 'fingerprint' : 'faceid'}}"
+        />
+      </div>
+      <div class="biometric__title">Use {{biometricConfig.name}}?</div>
+      <ion-label class="biometric__info">
+        Short and sweet explanation goes here that says user has logged in, but can enable biometric for
+        convenience/security?
+      </ion-label>
+    </div>
+  </div>
+  <div class="biometric__buttons">
+    <ion-button class="biometric__button biometric__primary" mode="md" (click)="actForBiometric('turnon')">
+      Turn on {{biometricConfig.name}}
+    </ion-button>
+    <ion-button class="biometric__button biometric__grey" mode="md" (click)="actForBiometric('later')">
+      I'll do it later
+    </ion-button>
+    <ion-button class="biometric__button biometric__transparent" mode="md" (click)="actForBiometric('disable')">
+      Don't show me this again
+    </ion-button>
+  </div>
+</ion-content>

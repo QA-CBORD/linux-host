@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">GET CBORD Student</string>
+    <string name="title_activity_main">GET CBORD Student</string>
+    <string name="package_name">com.cbord.get</string>
+    <string name="custom_url_scheme">com.cbord.get</string>
+</resources>

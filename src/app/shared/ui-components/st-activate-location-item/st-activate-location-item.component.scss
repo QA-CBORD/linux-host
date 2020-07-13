@@ -1,0 +1,107 @@
+@import 'tools';
+
+.user-data {
+  max-width: 400px;
+  max-height: 800px;
+  min-height: 400px;
+  margin: 0 auto;
+  background: $color-navy-blue;
+  border-radius: 15px;
+  box-shadow: 0 0 10px 3px $color-night-rider;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+
+    &-logo-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0;
+      margin-right: 15px;
+    }
+
+    &-logo {
+      height: 35px;
+      width: 35px;
+    }
+  }
+  
+  &__content {
+    min-height: 600px;
+    padding: 0 15px 10px;
+  }
+
+  &__card {
+    max-height: 550px;
+    min-height: 200px;
+    border-radius: 15px;
+    margin-top: 0;
+  }
+  
+  &__university-photo {
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+  }
+
+  &__university {
+    color: $color-white;
+    margin: 0;
+
+    @include ellipsis;
+    @include font-nunito-semibold(24px);
+  }
+
+  &__university-bg {
+    height: 100px;
+    position: absolute;
+    left: 0;
+    right: 0;
+  }
+
+  &__photo-container {
+    display: block;
+    overflow: hidden;
+    height: 420px;
+    margin-top: 15px;
+    border-radius: 15px;
+    background: $color-very-light-gray url('/assets/images/no_photo.svg') no-repeat center;
+  }
+
+  &__photo {
+    height: 100%;
+    object-fit: cover;
+  }
+
+
+  &__info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 10px 15px;
+    max-height: 150px;
+  }
+
+  &__name {
+    color: $color-white;
+
+    @include ellipsis;
+    @include font-nunito-semibold(24px);
+  }
+
+  &__id {
+    color: $color-white;
+
+    @include ellipsis;
+    @include font-nunito-heavy(14px);
+
+    &-number {
+      @include font-nunito-regular(14px);
+    }
+  }
+}

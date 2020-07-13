@@ -1,0 +1,9 @@
+@import 'tools';
+
+.housing-title {
+  @include font-nunito-heavy(28px);
+}
+
+.housing-content {
+  --background: #{$color-alabaster};
+}

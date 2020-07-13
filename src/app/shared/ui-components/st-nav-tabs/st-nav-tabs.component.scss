@@ -1,0 +1,29 @@
+@import 'tools';
+
+.st-nav-tabs {
+  .tabs-wrapper {
+    &__bar {
+      box-shadow: 0px 20px 30px -18px #00000040;
+    }
+
+    &__tab {
+      --color-selected: #3c3c3c !important;
+
+      &--active {
+        border-bottom: 2px solid $color-dodger-blue;
+
+        .tabs-wrapper__label {
+          @include font-nunito-heavy(14px);
+        }
+      }
+    }
+
+    &__label {
+      text-transform: uppercase;
+      line-height: 18px;
+      color: $color-dim-gray;
+
+      @include font-nunito-semibold(14px);
+    }
+  }
+}

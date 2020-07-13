@@ -1,0 +1,15 @@
+@import 'tools';
+
+.stepper__footer {
+  border-top: 1px solid $color-white-smoke;
+  display: flex;
+  justify-content: space-between;
+  margin: 16px -10px 0;
+  padding: 16px 10px 0;
+}
+
+.stepper-footer__button--right {
+  :host ::ng-deep & {
+    margin-left: auto;
+  }
+}

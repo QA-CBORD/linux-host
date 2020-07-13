@@ -1,0 +1,58 @@
+<ion-item class="merchant" lines="none" (click)="triggerMerchantClick(merchantInfo)">
+  <ion-grid class="ion-no-padding" fixed>
+    <ion-row>
+      <ion-col class="ion-no-padding align-self-center">
+        <img *ngIf="merchantInfo.imageFull"
+             src="{{awsImageUrl + merchantInfo.imageFull}}"
+          class="merchant__merchant-photo"
+          alt="merchant image"/>
+      </ion-col>
+    </ion-row>
+
+    <ion-row nowrap>
+      <!-- NAME and ICONS -->
+      <ion-col size="9" class="ion-no-padding">
+        <h2 class="merchant__merchant-name">{{ merchantInfo.name }}</h2>
+      </ion-col>
+      <ion-col class="merchant__merchant-buttons ion-no-padding">
+        <img
+          class="merchant__merchant-button"
+          src="./assets/icon/location-pin.svg"
+          alt="Saved Address"
+          appClickStopPropagation
+          (click)="triggerLocationPin($event, merchantInfo.id)"
+        />
+        <img
+          class="merchant__merchant-button"
+          [src]="starClass"
+          alt="Favorite"
+          appClickStopPropagation
+          (click)="triggerFavourite($event, merchantInfo)"
+        />
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <!-- Distance Info -->
+      <ion-col class="ion-no-padding">
+        <p class="merchant__merchant-distance">{{ merchantInfo.distanceFromUser | merchantDistance }}</p>
+      </ion-col>
+    </ion-row>
+    <ion-row class="ion-no-padding">
+      <!-- Times and order options -->
+      <ion-col class="align-self-start ion-no-padding">
+        <p
+          class="merchant__merchant-hours"
+          [ngClass]="{
+            'merchant__merchant-hours--open': merchantInfo.openNow,
+            'merchant__merchant-hours--closed': !merchantInfo.openNow}"
+        >
+          {{ merchantInfo.openNow ? (contentStrings.labelOpen | async) : (contentStrings.labelClosed | async) }}
+        </p>
+      </ion-col>
+      <ion-col class="ion-align-self-end ion-no-padding">
+        <p class="merchant__merchant-order-types">{{ merchantInfo.orderTypes | orderTypePipe}}</p>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-item>

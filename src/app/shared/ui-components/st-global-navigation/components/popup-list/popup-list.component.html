@@ -1,0 +1,7 @@
+<div class="pop-up">
+  <div (click)="onBackdropClicked.emit(true)" class="pop-up__backdrop">
+    <div appClickStopPropagation class="pop-up__content">
+      <ng-content></ng-content>
+    </div>
+  </div>
+</div>

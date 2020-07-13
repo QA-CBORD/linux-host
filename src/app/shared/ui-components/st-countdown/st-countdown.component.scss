@@ -1,0 +1,47 @@
+@import 'tools';
+svg {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 40px;
+  height: 40px;
+  transform: rotateY(-180deg) rotateZ(-90deg);
+}
+
+svg circle {
+  stroke-dasharray: 113px;
+  stroke-dashoffset: 0;
+  stroke-linecap: round;
+  stroke-width: 4px;
+  stroke: $color-navy-blue;
+  fill: none;
+  animation: countdown linear forwards;
+}
+
+svg circle.countdown__static-circle {
+  animation: none;
+  stroke: $color-very-light-gray;
+}
+
+.countdown {
+  position: relative;
+  height: 40px;
+  width: 40px;
+  text-align: center;
+
+  &__number {
+    color: $color-black;
+    display: inline-block;
+    line-height: 40px;
+  }
+}
+
+
+@keyframes countdown {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: 113px;
+  }
+}

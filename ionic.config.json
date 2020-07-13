@@ -1,0 +1,17 @@
+{
+  "name": "cbord-student-v4",
+  "integrations": {
+    "cordova": {},
+    "capacitor": {},
+    "enterprise": {
+      "keyId": 250,
+      "productKey": "key_ecab26b4f2fc4068865024ab10a77ac2",
+      "appId": "ce5a556b",
+      "orgId": "0fb84f93-02a5-4d68-8a6d-443b206dd3e4",
+      "registries": [
+        "@ionic-enterprise;https://registry.ionicframework.com/"
+      ]
+    }
+  },
+  "type": "angular"
+}

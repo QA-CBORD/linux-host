@@ -1,0 +1,25 @@
+<ng-template #infoBlock>
+  <div class="rewards-popover__title">{{ popoverConfig.message['title'] }}</div>
+  <div class="rewards-popover__description">{{ popoverConfig.message['description'] }}</div>
+</ng-template>
+
+<ng-template #qrCodeBlock>
+  <ng-container [ngTemplateOutlet]="infoBlock"></ng-container>
+  <div class="rewards-popover__qrcode">
+    <canvas id="barcodeCanvas"></canvas>
+    <div class="rewards-popover__qrcode-text">
+      {{contentString.scanCodeDescription}}
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #successBlock>
+  <img class="rewards-popover__success" src="/assets/images/big-check-reward.svg" alt="success tick indicator" />
+  <ng-container [ngTemplateOutlet]="infoBlock"></ng-container>
+</ng-template>
+
+<st-popover-layout [popoverConfig]="popoverConfig">
+  <ng-container *ngIf="success; then successBlock"></ng-container>
+  <ng-container *ngIf="scan; then qrCodeBlock"></ng-container>
+  <ng-container *ngIf="redeem || claim || optIn; then infoBlock"></ng-container>
+</st-popover-layout>

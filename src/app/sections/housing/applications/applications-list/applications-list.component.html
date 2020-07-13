@@ -1,0 +1,17 @@
+<ion-item class="applications-list__item" *ngFor="let application of applications; trackBy: trackById">
+  <ion-label class="applications-list__wrap">
+    <div class="applications-list__info">
+      <h5 class="applications-list__status">{{ getApplicationStatus(application.patronApplication) }}</h5>
+      <div class="applications-list__date" *ngIf="application?.patronApplication?.isApplicationSubmitted">
+        Submitted {{ application?.patronApplication?.submittedDateTime | date: 'MM/dd/yyyy' }}
+      </div>
+    </div>
+
+    <h2 class="applications-list__title">{{ application.applicationDefinition.applicationTitle }}</h2>
+  </ion-label>
+
+  <st-actions
+    [edit]="!application?.patronApplication?.isApplicationSubmitted"
+    [path]="getPath(application.applicationDefinition.key)"
+  ></st-actions>
+</ion-item>

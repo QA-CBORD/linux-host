@@ -1,0 +1,80 @@
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { MerchantInfo, MerchantSearchOptions } from '@sections/ordering';
+import { Observable } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
+import { MerchantSearchOptionName } from '@sections/ordering/ordering.config';
+import { MessageResponse, ServiceParameters } from '@core/model/service/message-response.model';
+import { CoordsService } from '@core/service/coords/coords.service';
+import { GeolocationPosition } from '@capacitor/core';
+import { RPCQueryConfig } from '@core/interceptors/query-config.model';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class MerchantApiService {
+  private readonly serviceUrlMerchant: string = '/json/merchant';
+
+  constructor(
+    private readonly http: HttpClient,
+    private readonly coords: CoordsService,
+  ) {
+  }
+
+  getMerchants(searchOptions: MerchantSearchOptions): Observable<MerchantInfo[]> {
+    return this.coords.getCoords().pipe(
+      switchMap(({ coords }: GeolocationPosition) => {
+        if (coords && coords.latitude !== null && coords.longitude !== null) {
+          searchOptions.addSearchOption({ key: MerchantSearchOptionName.LATITUDE, value: coords.latitude });
+          searchOptions.addSearchOption({ key: MerchantSearchOptionName.LONGITUDE, value: coords.longitude });
+        }
+        const queryConfig = new RPCQueryConfig('getMerchants', { searchOptions }, true, true);
+
+        return this.http.post(this.serviceUrlMerchant, queryConfig);
+      }),
+      map(({ response: { list } }: MessageResponse<any>) => list),
+    );
+  }
+
+  getMenuMerchants(searchOptions: MerchantSearchOptions): Observable<MerchantInfo[]> {
+    return this.coords.getCoords().pipe(
+      switchMap(({ coords }: GeolocationPosition) => {
+        if (coords && coords.latitude !== null && coords.longitude !== null) {
+          searchOptions.addSearchOption({ key: MerchantSearchOptionName.LATITUDE, value: coords.latitude });
+          searchOptions.addSearchOption({ key: MerchantSearchOptionName.LONGITUDE, value: coords.longitude });
+        }
+        const queryConfig = new RPCQueryConfig('getMenuMerchants', { searchOptions }, true, true);
+
+        return this.http.post(this.serviceUrlMerchant, queryConfig);
+      }),
+      map(({ response: { list } }: MessageResponse<any>) => list),
+    );
+  }
+
+  addFavoriteMerchant(merchantId: string): Observable<string> {
+    const postParams: ServiceParameters = { merchantId, notes: '' };
+    const queryConfig = new RPCQueryConfig('addFavoriteMerchant', postParams, true);
+
+    return this.http.post<MessageResponse<string>>(this.serviceUrlMerchant, queryConfig).pipe(
+      map(({ response }) => response),
+    );
+  }
+
+  removeFavoriteMerchant(merchantId: string): Observable<boolean> {
+    const postParams: ServiceParameters = { merchantId };
+    const queryConfig = new RPCQueryConfig('removeFavoriteMerchant', postParams, true);
+
+    return this.http.post<MessageResponse<boolean>>(this.serviceUrlMerchant, queryConfig).pipe(
+      map(({ response }) => response),
+    );
+  }
+
+  getFavoriteMerchants(): Observable<MerchantInfo[]> {
+    const postParams: ServiceParameters = { excludeNonOrdering: false };
+    const queryConfig = new RPCQueryConfig('getFavoriteMerchants', postParams, true);
+
+    return this.http.post(this.serviceUrlMerchant, queryConfig).pipe(
+      map(({ response: { list } }: MessageResponse<any>) => list),
+    );
+  }
+}

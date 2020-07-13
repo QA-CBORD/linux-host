@@ -1,0 +1,17 @@
+<div class="input__wrapper">
+  <input
+    [id]="idd"
+    class="input__control"
+    #input
+    (change)="onChangeHandler(input.value)"
+    (keyup)="onChangeHandler(input.value)"
+    type="{{ type }}"
+    (blur)="onBlur()"
+    [attr.maxlength]="maxlength"
+    [ngClass]="{ 'input__control--error': isError }"
+    [disabled] = "isDisabled"
+    [attr.inputmode] = "inputmode"
+  />
+  <label class="input__placeholder" [attr.for]="idd">{{ label }}</label>
+  <ng-content *ngIf="isError"></ng-content>
+</div>

@@ -1,0 +1,12 @@
+<st-header
+        *ngIf="isShowToolbar()"
+        [title]="contentString.header"
+        [backButtonTitle]="contentString.backBtn"
+        [isTitleShow]="true"
+        [isBackButtonShow]="false"
+        [isToolbarShow]="true">
+</st-header>
+
+<ion-content>
+    <st-nav-tabs [tabsConfig]="tabsConfig"></st-nav-tabs>
+</ion-content>

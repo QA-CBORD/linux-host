@@ -1,0 +1,33 @@
+<ion-content class="dashboard">
+  <ion-button (click)="logout()">Logout</ion-button>
+  <st-access-card></st-access-card>
+
+  <ng-container *ngFor="let tile of tiles$ | async; trackBy: trackFn">
+    <st-tile-wrapper *ngIf="tile.isEnable"
+                     [wrapperConfig]="tile">
+      <ng-container [ngSwitch]="tile.id">
+        <st-accounts-tile *ngSwitchCase="tilesIds.accounts"></st-accounts-tile>
+        <st-transactions-tile *ngSwitchCase="tilesIds.transactions"></st-transactions-tile>
+        <st-rewards-tile *ngSwitchCase="tilesIds.rewards"></st-rewards-tile>
+        <st-mobile-access-tile *ngSwitchCase="tilesIds.mobileAccess"></st-mobile-access-tile>
+        <st-meal-donations-tile *ngSwitchCase="tilesIds.mealDonations"></st-meal-donations-tile>
+        <st-order-tile *ngSwitchCase="tilesIds.order"></st-order-tile>
+        <st-explore-tile *ngSwitchCase="tilesIds.explore"></st-explore-tile>
+        <st-conversations-tile *ngSwitchCase="tilesIds.conversations"></st-conversations-tile>
+        <st-housing-tile *ngSwitchCase="tilesIds.housing"></st-housing-tile>
+      </ng-container>
+    </st-tile-wrapper>
+  </ng-container>
+
+  <ion-button class="dashboard__bottom-btn-wrapper"
+              mode="ios"
+              (click)="presentEditHomePageModal()">
+    <div class="dashboard__bottom-icon-wrapper">
+      <img src="/assets/icon/dashboard.svg" />
+    </div>
+    <div class="dashboard__bottom-title-wrapper">
+      <div class="dashboard__bottom-title">Edit Home Page</div>
+      <!-- <div class="dashboard__bottom-subtitle">Rearrange and show or hide cards</div> -->
+    </div>
+  </ion-button>
+</ion-content>

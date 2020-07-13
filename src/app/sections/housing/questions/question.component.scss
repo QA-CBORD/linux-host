@@ -1,0 +1,144 @@
+@import 'tools';
+
+:host(.question--first) {
+  .question__item,
+  .question__section {
+    margin-top: 0;
+  }
+
+  .question__section {
+    border: none;
+  }
+}
+
+@mixin empty-control($control, $placeholder) {
+  &:not(:focus):not(:focus-within):not(#{$control}--error) {
+    border: 1px solid $color-light-gray !important;
+
+    & + #{$placeholder} {
+      background-color: transparent !important;
+      color: inherit !important;
+      font-size: 100% !important;
+      opacity: 0.5 !important;
+      padding: 15px 0 0 10px !important;
+      transform: translate3d(0, 0, 0) !important;
+      z-index: 1 !important;
+    }
+  }
+}
+
+@mixin placeholder-transform() {
+  background-color: $color-white;
+  color: $color-dim-gray;
+  font-size: 75%;
+  opacity: 1;
+  padding: 0 3px;
+  margin: 0;
+  transform: translate3d(10px, -50%, 0) !important;
+  z-index: 2;
+}
+
+@mixin placeholder-transform-focus() {
+  &:focus,
+  &:focus-within,
+  &--error {
+    @content;
+  }
+}
+
+.question__section:not(:empty) {
+  border-top: 1px solid $color-white-smoke;
+  display: block;
+  margin: 16px -10px 0;
+  padding: 16px 10px 0;
+}
+
+.question__item {
+  display: block;
+  margin-top: 16px;
+  margin-bottom: 30px;
+
+  &.form-control--empty ::ng-deep {
+    .input__control {
+      @include empty-control('.input__control', '.input__placeholder');
+    }
+
+    .select__control {
+      @include empty-control('.select__control', '.select__placeholder');
+    }
+
+    .textarea__control {
+      @include empty-control('.textarea__control', '.textarea__placeholder');
+    }
+  }
+}
+
+.charge_schedule_item {
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-top: 8px;
+  margin-bottom: 30px;
+  padding-left: initial;
+  padding-right: initial;
+  padding-top: initial;
+  padding-bottom: -3px;
+}
+
+.charge_schedule_item_header {
+  padding: 16px 16px 8px;
+}
+
+.charge_schedule_item_content {
+  padding: 16px 16px 0px;
+}
+
+.question__paragraph {
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.question__control {
+  & ::ng-deep {
+    .input__control {
+      @include placeholder-transform-focus() {
+        & + .input__placeholder {
+          @include placeholder-transform();
+        }
+      }
+    }
+
+    .select__control {
+      @include placeholder-transform-focus() {
+        & + .select__placeholder {
+          @include placeholder-transform();
+        }
+      }
+    }
+
+    .textarea__control {
+      @include placeholder-transform-focus() {
+        & + .textarea__placeholder {
+          @include placeholder-transform();
+        }
+      }
+    }
+
+    .input__placeholder,
+    .select__placeholder,
+    .textarea__placeholder {
+      max-width: calc(100% - 30px);
+
+      @include ellipsis();
+    }
+  }
+}
+
+.form-control--filled {
+  & ::ng-deep {
+    .input__placeholder,
+    .select__placeholder,
+    .textarea__placeholder {
+      @include placeholder-transform();
+    }
+  }
+}

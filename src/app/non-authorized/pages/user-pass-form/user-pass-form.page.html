@@ -1,0 +1,73 @@
+<ion-header class="login-header" no-border>
+  <ion-toolbar mode="ios" class="ion-color" [style.background-color]="nativeHeaderBg$ | async">
+    <ion-buttons slot="start">
+      <ion-back-button
+        class="login-header__back-btn"
+        color="light"
+        text="Back"
+        icon="ios-arrow-back"
+        mode="ios"
+      ></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="login" scrollY="false">
+  <div class="login__institution" [ngStyle]="{ backgroundColor: nativeHeaderBg$ | async}">
+    <div class="login__institution-logo-wrapper">
+      <img
+        *ngIf="institutionPhoto$ | async"
+        class="login__institution-logo"
+        [src]="institutionPhoto$ | async"
+        alt="institution logo"
+      />
+    </div>
+    <div class="login__institution-name-wrapper">
+      <div *ngIf="institutionName$ | async" class="login__institution-name">
+        {{ institutionName$ | async}}
+      </div>
+    </div>
+  </div>
+  <div class="login__form-wrapper">
+    <form class="login__form" [formGroup]="loginForm">
+      <st-input-floating-label
+        [label]="placeholderOfUsername$ | async"
+        [formControlName]="controlsNames.username"
+        [control]="username"
+        [isError]="username.invalid && username.touched"
+        type="email"
+        idd="username"
+      >
+      </st-input-floating-label>
+      <br />
+      <st-input-floating-label
+        [label]="'Password'"
+        [formControlName]="controlsNames.password"
+        [control]="password"
+        [isError]="password.invalid && password.touched"
+        type="password"
+        idd="password"
+      >
+      </st-input-floating-label>
+      <div class="login__form-password">
+        <a class="login__form-password-forgot" (click)="redirectToForgotPassword()">Forgot password?</a>
+      </div>
+      <div class="login__form-btns">
+        <st-button
+          buttonModifier="border-only-rectangle"
+          class="login__form-btns--odd"
+          (click)="redirectToWebPage('register.php')"
+        >
+          Sign up
+        </st-button>
+        <st-button buttonModifier="rectangle" (click)="authenticateUser(loginForm)">
+          Log in
+        </st-button>
+      </div>
+    </form>
+  </div>
+</ion-content>
+<ion-footer mode="ios" class="login__footer">
+  <div class="login__footer-version" *ngIf="(deviceInfo$ | async)?.platform !== 'web'">
+    Version {{ (deviceInfo$ | async)?.appVersion }}
+  </div>
+</ion-footer>

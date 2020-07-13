@@ -1,0 +1,92 @@
+@import 'tools';
+
+.transaction {
+  margin: 0 15px;
+  overflow: hidden;
+  min-height: 180px;
+  max-height: 220px;
+  transition: 1s ease-out;
+  
+  &--auto-height {
+    min-height: 0;
+  }
+
+  &__list {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  &__item {
+    --padding-start: 0;
+    --inner-padding-end: 0;
+    --border-style: none;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    border-bottom: 1px solid $color-white-smoke;
+
+    &:last-child {
+      border-style: none;
+    }
+  }
+
+  &__label-container {
+    margin-top: 15px;
+    width: 65%;
+    text-align: left;
+  }
+
+  &__label {
+    @include ellipsis;
+    @include font-nunito-semibold(16px);
+  }
+
+  &__date {
+    margin: 5px 0 15px;
+    @include font-nunito-regular(10px);
+  }
+
+  &__type-container {
+    margin-top: 15px;
+    width: 35%;
+    text-align: right;
+  }
+
+  &__type-entity {
+    @include font-nunito-semibold(16px);
+  }
+
+  &__type-label {
+    margin: 5px 0 13px;
+
+    @include font-nunito-regular(10px);
+  }
+
+  &__skeleton-string {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &__skeleton-name {
+    width: 50%;
+    height: 18px;
+  }
+
+  &__skeleton-amount {
+    width: 30%;
+    height: 20px;
+  }
+
+  &__skeleton-date {
+    width: 30%;
+    height: 12px;
+  }
+
+  &__skeleton-account {
+    width: 20%;
+    height: 12px;
+  }
+}

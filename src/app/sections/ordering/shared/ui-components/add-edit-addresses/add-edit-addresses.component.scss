@@ -1,0 +1,53 @@
+@import 'tools';
+
+.addresses {
+  &__control {
+    display: block;
+    margin-bottom: 40px;
+  }
+
+  &__control-optional-wrapper {
+    position: relative;
+  }
+
+  &__control-optional {
+    color: $color-dim-gray;
+    position: absolute;
+    left: 15px;
+    top: 55px;
+
+    @include font-nunito-semibold(12px);
+  }
+
+  &__nickname-control {
+    margin-bottom: 20px;
+  }
+
+  &__checkbox {
+    --background-checked: #166dff;
+    --border-color-checked: #166dff;
+
+    margin: 0 10px 0 0;
+  }
+
+  &__control-error-msg {
+    margin: 0;
+    color: $color-flame-red;
+    letter-spacing: 0;
+    min-height: 16px;
+    line-height: 16px;
+
+    @include font-nunito-heavy(12px);
+  }
+
+  &__radio {
+    --color-checked: #166dff;
+    --color: #c4c4c4;
+    
+    margin-right: 10px;
+  }
+
+  &__radio-label {
+    @include font-nunito-semibold(16px);
+  }
+}

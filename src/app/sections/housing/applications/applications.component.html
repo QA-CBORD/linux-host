@@ -1,0 +1,6 @@
+<ion-list
+  *ngIf="(applicationsStateService.applications$ | async) as applications"
+  class="ion-no-padding bg-transparent"
+>
+  <st-applications-list [applications]="applications"></st-applications-list>
+</ion-list>

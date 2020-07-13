@@ -1,0 +1,10 @@
+<ion-card class="order-card" (click)="onClicked.emit(orderInfo)">
+    <ion-card-content class="ion-no-padding">
+        <header class="order-card__header">
+            <h6 class="order-card__name">{{ orderInfo.merchantName }}</h6>
+            <p class="order-card__number">{{ contentStrings.labelOrder | async }} #{{ orderInfo.checkNumber }}</p>
+        </header>
+        <p class="order-card__description">{{ orderInfo.orderItems | orderItemsSummary }}</p>
+        <p class="order-card__date">{{orderInfo.dueTime | date:'MM/dd/yyyy'}}</p>
+    </ion-card-content>
+</ion-card>

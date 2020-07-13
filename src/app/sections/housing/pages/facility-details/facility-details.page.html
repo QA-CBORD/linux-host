@@ -1,0 +1,128 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button routerDirection="root"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Facilities</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-card *ngFor="let facility of facilities; trackBy: trackById">
+    <img
+      src="http://via.placeholder.com/500x350"
+      style="align-content: right; justify-content: center; max-height: 350px; max-width: 500px; background-size: cover"
+    />
+    <ion-list inset class="ion-no-padding" style="margin-left: 5px; margin-right: 5px">
+      <ion-item class="ion-no-padding">
+        <ion-grid class="ion-no-padding" style="margin: 3px">
+          <ion-row class="ion-no-padding" style="padding-bottom: 8px">
+            <ion-col class="ion-no-padding col-sm-4 col-md-3 col-lg-3" style="padding: 0px;padding-top: 5px">
+              <!-- <ion-grid class="ion-no-padding">
+                <ion-row class="ion-no-padding"> -->
+              <ion-label class="facilityNameDisplay" style="padding-bottom: 3px">{{ facility.facilityName }}</ion-label>
+              <ion-label style="font-size: 14px; color: gray"
+                ><b>{{ facility.bedCount }}</b> Beds | <b>{{ facility.bathCount }}</b> Baths</ion-label
+              >
+              <!-- </ion-row> -->
+              <!-- <ion-row class="ion-padding-top">
+                   <ion-label class="bedAndBathCount">{{facility.bedCount}}</ion-label>&nbsp;
+                  <ion-label style="font-size: 14px">Beds </ion-label>&nbsp;
+                  <ion-label>|</ion-label>&nbsp;
+                  <ion-label class="bedAndBathCount">{{facility.bathCount}}</ion-label>&nbsp;
+                  <ion-label style="font-size: 14px">Baths</ion-label>
+                </ion-row> -->
+              <!-- </ion-grid> -->
+            </ion-col>
+            <ion-col class="ion-no-padding col-sm-7 col-md-8 col-lg-8 ion-text-right">
+              <!-- <ion-grid class="ion-no-padding">
+                <ion-row style="column-span: 5" class="ion-text-right">
+                  <ion-col class="ion-text-right"> -->
+              <ion-note>Starting At</ion-note>
+              <p style="font-size: 18px; font-weight: bold; margin: 0px; margin-top: 7px; margin-bottom: 3px">
+                $600/mo
+              </p>
+              <!-- </ion-col>
+                </ion-row> -->
+              <!-- <ion-row style="column-span: 5">
+                  <ion-col class="ion-text-right">
+                    <ion-label style="font-size: 18px; font-weight: bold">$600/mo</ion-label>
+                  </ion-col>
+                </ion-row> -->
+              <!-- </ion-grid> -->
+            </ion-col>
+            <!-- <ion-col class="ion-text-right col-sm-1 col-md-1 col-lg-1 ion-no-padding"> -->
+            <ion-col style="margin-left:-70px">
+              <ion-button
+                class="col-sm-1 button-small button-clear ion-float-right ion-no-margin ion-no-padding"
+                (click)="toggle(facility)"
+              >
+                <ion-icon [name]="facility.iconName"></ion-icon>
+              </ion-button>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-item>
+      <ion-item lines="none" [class.collapseItemClass]="!facility.isExpanded" class="ion-no-padding">
+        <st-expandable expandHeight="400px" style="width: 100%" [isExpanded]="facility.isExpanded">
+          <ion-grid class="ion-no-padding">
+            <ion-row style="column-span: 12">
+              <ion-col class="ion-text-left">
+                <ion-note>
+                  Floors
+                </ion-note>
+                <p class="pExpandable">
+                  {{ facility.floors }}
+                </p>
+              </ion-col>
+              <ion-col class="ion-text-right">
+                <ion-note>
+                  Year Built
+                </ion-note>
+                <p class="pExpandable">
+                  {{ facility.builtYear }}
+                </p>
+              </ion-col>
+            </ion-row>
+            <ion-row style="column-span: 12">
+              <ion-col class="ion-text-left">
+                <ion-note>
+                  Campus
+                </ion-note>
+                <p class="pExpandable">
+                  {{ facility.campus }}
+                </p>
+              </ion-col>
+              <ion-col class="ion-text-right">
+                <ion-note>
+                  Parking
+                </ion-note>
+                <p class="pExpandable">
+                  {{ facility.parking }}
+                </p>
+              </ion-col>
+            </ion-row>
+            <ion-row style="column-span: 12">
+              <ion-col class="ion-text-left">
+                <ion-note>
+                  # of available units
+                </ion-note>
+                <p class="pExpandable">
+                  {{ facility.availableUnits }}
+                </p>
+              </ion-col>
+              <ion-col class="ion-text-right"> </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col style="column-width: 12" class="ion-text-center">
+                <ion-button class="button-outline button-block" [routerLink]="['units', facility.facilityId]"
+                  >View Units</ion-button
+                >
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </st-expandable>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+</ion-content>

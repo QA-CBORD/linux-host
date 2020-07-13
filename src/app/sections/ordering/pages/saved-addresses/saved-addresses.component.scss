@@ -1,0 +1,40 @@
+@import 'tools';
+
+.saved-addresses {
+  &__header {
+    border-bottom: 1px solid $color-whisper;
+  }
+
+  &__add-address-container {
+    padding: 0 20px;
+  }
+
+  &__add-address-wrapper {
+    margin-bottom: 20px;
+
+    @include font-nunito-semibold(16px);
+  }
+
+  &__add-address-sign {
+    position: relative;
+    bottom: 2px;
+    left: 4px;
+
+    @include font-nunito-semibold(24px);
+  }
+
+  &__add-address-text {
+    margin-left: 15px;
+  }
+
+  &__add-address-divider {
+    background: $color-white-smoke;
+    height: 20px;
+    margin-top: 20px;
+  }
+
+  &__add-address-btn-container {
+    display: flex;
+    justify-content: space-evenly;
+  }
+}

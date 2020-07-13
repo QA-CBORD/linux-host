@@ -1,0 +1,33 @@
+@import 'tools';
+
+:host {
+  .balance {
+    margin: 15px 25px 0;
+    min-height: 70px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-image: url('/assets/icon/background-shapes.svg');
+    background-size: contain;
+
+    &__title {
+      text-transform: uppercase;
+      color: $color-dim-gray;
+
+      @include font-nunito-regular(12px);
+    }
+
+    &__content {
+      color: #3c3c3c;
+
+      @include font-nunito-heavy(24px);
+    }
+
+    &__unit {
+      color: $color-matterhorn;
+
+      @include font-nunito-semibold(24px);
+    }
+  }
+}

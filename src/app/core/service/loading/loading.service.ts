@@ -1,0 +1,28 @@
+import { Injectable } from '@angular/core';
+import { LoadingController } from '@ionic/angular';
+
+import { LoadingOptions } from '@ionic/core';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class LoadingService {
+  private readonly maxDuration: number = 30000;
+  private loader: HTMLIonLoadingElement = null;
+
+  constructor(private loadingController: LoadingController) {}
+
+  async showSpinner(config: LoadingOptions | string = {}): Promise<void> {
+    config = typeof config === 'string' ? { message: config } : config;
+    config = config.duration ? config : { ...config, duration: this.maxDuration };
+
+    if (this.loader !== null) await this.closeSpinner();
+    this.loader = await this.loadingController.create(config);
+    await this.loader.present();
+  }
+
+  async closeSpinner(): Promise<void> {
+    this.loader && await this.loader.dismiss();
+    this.loader = null;
+  }
+}

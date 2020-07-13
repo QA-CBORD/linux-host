@@ -1,0 +1,30 @@
+@import "tools";
+
+:root {
+  display: block;
+  height: 100%;
+}
+
+.pop-up {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+
+  &__backdrop {
+    height: 100%;
+    background: rgba(0, 0, 0, .5);
+  }
+
+  &__content {
+    overflow-y: scroll;
+    max-height: 80%;
+    padding-top: 20px;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+    position: absolute;
+    background: #fff;
+    bottom: $bottom-navigation-bar-height;
+    left: 0;
+    right: 0;
+  }
+}

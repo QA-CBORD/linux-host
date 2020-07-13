@@ -1,0 +1,20 @@
+<ion-list class="transactions__list">
+  <ng-container *ngFor="let transaction of transactions; let i = index;">
+    <ion-item-divider
+      [sticky]="true"
+      class="transactions__divider"
+      stIsDividerAppear
+      [actualDate]="transaction.actualDate"
+      [index]="i"
+      [transactions]="transactions"
+      *ngIf="dividers"
+    >
+      <ion-label position="'fixed'" class="transactions__label">
+        {{ transaction.actualDate | date: 'EEEE, MMMM d' }}
+      </ion-label>
+    </ion-item-divider>
+    <ion-item [button]="true" lines="full" class="transactions__item">
+      <st-transaction-item [transaction]="transaction"></st-transaction-item>
+    </ion-item>
+  </ng-container>
+</ion-list>

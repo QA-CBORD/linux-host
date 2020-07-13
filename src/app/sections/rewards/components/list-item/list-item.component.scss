@@ -1,0 +1,120 @@
+@import 'tools';
+
+:host {
+  width: 100%;
+
+  .list-item {
+    display: flex;
+    flex-basis: 100%;
+
+    &__content {
+      flex-basis: 80%;
+    }
+
+    &__store-content {
+      flex-basis: 70%;
+    }
+
+    &__actions {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      flex-basis: 20%;
+      align-items: flex-end;
+
+      &--store {
+        flex-basis: 30%;
+      }
+
+      &--levels {
+        justify-content: center;
+      }
+    }
+
+    &__actions-wrapper {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    &__checkmark {
+      color: $color-dodger-blue;
+      align-self: center;
+    }
+
+    &__locked {
+      width: 25px;
+    }
+
+    &__title {
+      color: $color-matterhorn;
+
+      //@include ellipsis;
+      @include font-nunito-semibold(20px);
+
+      &--levels {
+        font-size: 16px;
+      }
+    }
+
+    &__description {
+      color: $color-dim-gray;
+      margin-bottom: 5px;
+
+      @include font-nunito-regular(12px);
+    }
+
+    &__time,
+    &__score {
+      color: #7e7e7e;
+
+      @include font-nunito-regular(10px);
+    }
+
+    &__score-container {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+
+      &--disabled {
+        .list-item {
+          &__score {
+            color: #464646;
+          }
+
+          &__button {
+            color: #d8d8d8;
+            border-color: #d8d8d8;
+          }
+        }
+      }
+    }
+
+    &__button {
+      border: 1px solid $color-dodger-blue;
+      border-radius: 4px 4px 4px 4px;
+      color: $color-dodger-blue;
+      text-align: center;
+      max-width: 80px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 2px 10px;
+      margin: 10px 0 0;
+
+      @include font-nunito-semibold(12px);
+
+      &--without-border {
+        border: none;
+        letter-spacing: 0;
+        margin: 0;
+        padding: 0;
+      }
+    }
+
+    &__score--semibold {
+      color: $color-black;
+
+      @include font-nunito-semibold(16px);
+    }
+  }
+}

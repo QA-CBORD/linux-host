@@ -1,0 +1,115 @@
+@import 'tools';
+
+.institutions-header {
+  &.header-md:after {
+    background-image: none;
+  }
+
+  &__nav-toolbar {
+    --min-height: 27px;
+    --padding-bottom: 0;
+    --padding-top: 0;
+
+    @include bp-grid-desktop {
+      display: none;
+    }
+  }
+
+  &__toolbar {
+    --padding-bottom: 0;
+    --padding-top: 0;
+
+    &:last-child {
+      --border-width: 0;
+    }
+  }
+
+  &__back-btn {
+    --icon-font-size: 18px;
+    --margin-start: 10px;
+    --icon-padding-end: 5px;
+
+    @include font-nunito-regular(16px);
+  }
+
+  &__title {
+    width: 100%;
+
+    @include font-nunito-heavy(20px);
+  }
+
+  ion-back-button {
+    display: block;
+    --icon-font-size: 25px;
+  }
+
+  position: relative;
+  &__nav-toolbar {
+    box-shadow: 0px 2px 26px rgba(0, 0, 0, 0.12), 0px 0px 12px rgba(0, 0, 0, 0.04);
+    z-index: 99;
+    --min-height: 90px;
+    margin-bottom: 25px;
+  }
+
+  &__toolbar {
+    position: absolute;
+    top: 65px;
+    z-index: 99;
+    width: 90%;
+    border-radius: 8px;
+    border: 1px solid #e3e3e3;
+    height: 50px;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  &__searchbar {
+    --background: $color-white;
+    padding: 0 0 5px 0;
+  }
+}
+.search-institutions {
+  &__list {
+    margin: 0 0 40px 0;
+  }
+
+  &__item {
+    --padding-start: 0;
+    --inner-padding-end: 0;
+
+    display: flex;
+    height: 60px;
+    margin: 0 15px;
+    border-bottom: 1px solid $color-white-smoke;
+  }
+
+  &__name {
+    @include font-nunito-semibold(16px);
+  }
+
+  &__footer {
+    position: absolute;
+    bottom: 0px;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    min-height: 60px;
+    background: linear-gradient(to bottom, #ffffff00, $color-white);
+  }
+
+  &__skeleton {
+    &-item {
+      display: flex;
+      align-items: center;
+      margin-left: 15px;
+      height: 60px;
+    }
+
+    &-text {
+      height: 20px;
+      width: 220px;
+    }
+  }
+}
