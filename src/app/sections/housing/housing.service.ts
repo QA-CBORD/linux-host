@@ -27,8 +27,7 @@ import { ContractListDetails, ContractDetails } from './contracts/contracts.mode
 })
 export class HousingService {
   private readonly _baseUrl = Environment.currentEnvironment.housing_aws_url;
-  private readonly _patronApplicationsUrl: string = `${this._baseUrl}
-      }/patron-applications/v.1.0/patron-applications`;
+  private readonly _patronApplicationsUrl: string = `${this._baseUrl}/patron-applications/v.1.0/patron-applications`;
 
   private readonly _applicationDefinitionUrl: string = `${this._patronApplicationsUrl}/application-definition`;
 
