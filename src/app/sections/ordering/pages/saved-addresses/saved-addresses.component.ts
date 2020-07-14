@@ -13,7 +13,6 @@ import { OrderingComponentContentStrings, OrderingService } from '@sections/orde
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Settings, User } from '../../../../app.global';
-import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 
 @Component({
   selector: 'st-saved-addresses',
@@ -33,17 +32,11 @@ export class SavedAddressesComponent implements OnInit {
     private readonly merchantService: MerchantService,
     private readonly orderingService: OrderingService,
     private readonly userFacadeService: UserFacadeService,
-    private readonly settingsFacadeService: SettingsFacadeService,
-    private readonly globalNav: GlobalNavService,
+    private readonly settingsFacadeService: SettingsFacadeService
   ) {}
 
   ngOnInit() {
     this.initContentStrings();
-    this.globalNav.hideNavBar();
-  }
-
-  ngOnDestroy() {
-    this.globalNav.showNavBar();
   }
 
   ionViewWillEnter() {

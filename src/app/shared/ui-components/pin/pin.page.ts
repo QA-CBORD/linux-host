@@ -1,13 +1,14 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { ModalController } from '@ionic/angular';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
+import { BUTTON_TYPE } from '@core/utils/buttons.config';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Settings } from '../../../app.global';
-import { take } from 'rxjs/operators';
-import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import Setting = Settings.Setting;
+import { take, tap } from 'rxjs/operators';
+import { SettingInfo } from '@core/model/configuration/setting-info.model';
 
 export enum PinCloseStatus {
   SET_SUCCESS = 'set_success',
@@ -32,7 +33,7 @@ export enum PinAction {
 })
 export class PinPage implements OnInit {
   private readonly sourceSubscription: Subscription = new Subscription();
-  readonly setNumbers: ReadonlyArray<number> = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
+
   pinNumber: number[] = [];
   pinNumberCopy: number[] = [];
   arePINsMatch: boolean = true;
@@ -61,9 +62,8 @@ export class PinPage implements OnInit {
     private modalController: ModalController,
     private readonly userFacadeService: UserFacadeService,
     private readonly authFacadeService: AuthFacadeService,
-    private readonly settingsFacadeService: SettingsFacadeService,
-  ) {
-  }
+    private readonly settingsFacadeService: SettingsFacadeService
+  ) {}
 
   @Input() pinAction: PinAction;
 
@@ -98,16 +98,16 @@ export class PinPage implements OnInit {
   /// on pin login, the UI needs to be different
   /// only enter pin once, the description will be different, etc
 
-  async append(number: number) {
+  append(number): void | undefined {
     this.setErrorText(null);
     if (this.pinAction === PinAction.SET_PIN_ONLY || this.pinAction === PinAction.SET_BIOMETRIC) {
-      await this.setPinLogic(number);
+      this.setPinLogic(number);
     } else if (this.pinAction === PinAction.LOGIN_PIN) {
       this.loginPinLogic(number);
     }
   }
 
-  private async setPinLogic(number: number) {
+  private setPinLogic(number: number) {
     if (this.pinNumber.length === 4) {
       return;
     }
@@ -121,22 +121,15 @@ export class PinPage implements OnInit {
         if (!this.arePINsMatch) {
           this.setErrorText(this.pinsDoNotMatchText);
           this.cleanLocalState();
-          this.instructionText = this.setPinNoBiometricsText;
           return;
         }
-        this.instructionText = this.setPinNoBiometricsText;
         /// if setting pin, call service to set and then send to 'on dismiss' for vault to use pin
         this.setPin();
       } else {
         /// first pin entry complete, start second entry
         /// animate, delay a half second, then start pin confirm
-        this.pinNumberCopy = this.pinNumber;
-        this.disableInput = true;
-        setTimeout(() => {
-          this.instructionText = this.confirmNewPinText;
-          this.pinNumber = [];
-          this.disableInput = false;
-        }, 300);
+        this.pinNumberCopy = this.pinNumber.concat();
+        this.pinNumber = [];
       }
     }
   }
@@ -204,7 +197,7 @@ export class PinPage implements OnInit {
         this.cleanLocalState();
         this.setErrorText('Error setting your PIN - please try again');
       },
-      () => console.log('Pin Set Complete'),
+      () => console.log('Pin Set Complete')
     );
   }
 
@@ -232,7 +225,7 @@ export class PinPage implements OnInit {
           this.setErrorText('Incorrect PIN - please try again');
         }
       },
-      () => console.log('Pin Login Complete'),
+      () => console.log('Pin Login Complete')
     );
     // on success, return the pin so the vault can be unlocked
   }

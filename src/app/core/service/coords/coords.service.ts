@@ -4,6 +4,7 @@ import { BehaviorSubject, from, Observable, of } from 'rxjs';
 import { catchError, skipWhile, take } from 'rxjs/operators';
 
 import { GeolocationPosition, Plugins } from '@capacitor/core';
+import { error } from 'util';
 
 const { Geolocation } = Plugins;
 
@@ -54,6 +55,7 @@ export class CoordsService {
   }
 
   private requestLocationFromDevice() {
+    this.timestamp = new Date().getTime();
     const options = {
       enableHighAccuracy: true,
       timeout: 5,

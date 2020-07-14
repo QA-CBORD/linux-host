@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NavigationFacadeSettingsService } from '@shared/ui-components/st-global-navigation/services/navigation-facade-settings.service';
 import { NavigationBottomBarElement } from '@core/model/navigation/navigation-bottom-bar-element';
 import { Router } from '@angular/router';
@@ -10,7 +10,6 @@ import { PopoverController } from '@ionic/angular';
   selector: 'st-global-navigation',
   templateUrl: './st-global-navigation.component.html',
   styleUrls: ['./st-global-navigation.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class StGlobalNavigationComponent implements OnInit {
   isListShown: boolean = false;

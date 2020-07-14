@@ -186,6 +186,7 @@ export enum PATRON_NAVIGATION {
   ordering = 'patron/ordering',
   explore = 'patron/explore',
   biometric = 'patron/biometric',
+  settings = 'patron/settings',
 }
 
 export enum LoginType {

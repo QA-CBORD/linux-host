@@ -53,6 +53,14 @@ export class UserFacadeService extends ServiceStateFacade {
     return this.userApiService.getUserPhoto(userId);
   }
 
+  addUserPhoto(photo: UserPhotoInfo): Observable<boolean> {
+    return this.getUser$().pipe(switchMap(({id}) => this.userApiService.addUserPhoto(id, photo)),
+    map(({ response }) => response), 
+    take(1)
+    );
+  }
+
+
   getUserAddresses$(): Observable<AddressInfo[]> {
     return this.userApiService
       .getUserAddresses()

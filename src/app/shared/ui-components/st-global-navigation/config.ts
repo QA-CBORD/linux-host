@@ -52,11 +52,11 @@ export const NAVIGATION_BASE_CONFIG: ReadonlyArray<NavigationBottomBarElement> =
     name: TILES_TITLE.conversations,
     url: PATRON_NAVIGATION.secureMessage,
   },
-  // {
-  //   id: TILES_ID.settings,
-  //   iconCssPostfix: 'settings',
-  //   isEnable: true,
-  //   name: TILES_TITLE.settings,
-  //   url: '',
-  // },
+  {
+    id: TILES_ID.settings,
+    iconCssPostfix: 'settings',
+    isEnable: true,
+    name: TILES_TITLE.settings,
+    url: PATRON_NAVIGATION.settings,
+  },
 ];

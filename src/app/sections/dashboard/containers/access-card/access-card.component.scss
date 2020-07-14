@@ -111,6 +111,16 @@
     @include font-nunito-semibold(5.2vw);
   }
 
+  &__photo-icon{
+    background-color: white;
+    border-radius: 5px 5px;
+    height: 21px;
+    width: 21px;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+  }
+
   &__student-wallet {
     color: $color-white;
     text-align: right;

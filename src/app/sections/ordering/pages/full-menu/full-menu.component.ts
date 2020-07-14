@@ -127,7 +127,6 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   }
 
   private async onDismissOrderDetails({ data }: OverlayEventDetail): Promise<void> {
-    this.globalNav.hideNavBar();
     if (!data) return;
 
     const cachedData = await this.cartService.orderDetailsOptions$.pipe(first()).toPromise();

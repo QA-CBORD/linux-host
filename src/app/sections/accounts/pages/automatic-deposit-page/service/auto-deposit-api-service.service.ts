@@ -41,7 +41,7 @@ export class AutoDepositApiService {
   updateAutoDepositSettings(userAutoDepositSettingInfo: UserAutoDepositSettingInfo): Observable<boolean> {
     const url = '/json/user';
 
-    const queryConfig = new RPCQueryConfig('updateAutoDepositSettings', { userAutoDepositSettingInfo }, true);
+    const queryConfig = new RPCQueryConfig('retrieveAutoDepositAccountList', { userAutoDepositSettingInfo }, true);
 
     return this.http.post(url, queryConfig).pipe(map(({ response }: MessageResponse<boolean>) => response));
   }

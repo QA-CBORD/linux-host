@@ -25,7 +25,6 @@ const { Keyboard, IOSDevice } = Plugins;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InstitutionsPage implements OnInit {
-
   private sessionId: string = null;
   searchString: string = '';
 
@@ -43,7 +42,7 @@ export class InstitutionsPage implements OnInit {
     private readonly cdRef: ChangeDetectorRef,
   ) {}
 
-  async ngOnInit() {
+  ngOnInit() {
     this.authFacadeService
       .getAuthSessionToken$()
       .pipe(
@@ -57,9 +56,8 @@ export class InstitutionsPage implements OnInit {
         this.cdRef.markForCheck();
       });
 
-
        this.setNativeEnvironment();
-    }
+  }
 
   onEnterKeyClicked() {
     Keyboard.hide();
@@ -150,8 +148,8 @@ export class InstitutionsPage implements OnInit {
         console.log('Inst Page - error redirecting to app store', reason);
       });
   }
-  async setNativeEnvironment() {
-    if (Capacitor.platform === 'ios') {
+  private async setNativeEnvironment() {
+    if (Capacitor.platform == 'ios') {
       await IOSDevice.setEnvironment({ env: Environment.currentEnvironment });
     }
   }

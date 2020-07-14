@@ -33,7 +33,7 @@ export class OrderingApiService {
   getMenuMerchants(searchOptions: MerchantSearchOptions): Observable<MerchantInfo[]> {
     return this.coords.getCoords().pipe(
       switchMap((geoData: GeolocationPosition) => {
-        if (geoData && geoData.coords && geoData.coords.latitude !== null && geoData.coords.longitude !== null) {
+        if (geoData && geoData.coords.latitude !== null && geoData.coords.longitude !== null) {
           searchOptions.addSearchOption({ key: MerchantSearchOptionName.LATITUDE, value: geoData.coords.latitude });
           searchOptions.addSearchOption({ key: MerchantSearchOptionName.LONGITUDE, value: geoData.coords.longitude });
         }
