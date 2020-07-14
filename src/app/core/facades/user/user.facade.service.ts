@@ -26,11 +26,12 @@ export class UserFacadeService extends ServiceStateFacade {
     private readonly userApiService: UserApiService,
     private readonly storageStateService: StorageStateService,
     private readonly nativeProvider: NativeProvider,
-    private readonly settingsFacadeService: SettingsFacadeService,
+    private readonly settingsFacadeService: SettingsFacadeService
   ) {
     super();
   }
 
+  /// get user data from cache or fetch if not cached
   getUserData$(): Observable<UserInfo> {
     return this.storageStateService.getStateEntityByKey$<UserInfo>(this.userKey).pipe(
       switchMap(data => {
@@ -43,6 +44,7 @@ export class UserFacadeService extends ServiceStateFacade {
     );
   }
 
+  /// fetch user data
   getUser$(): Observable<UserInfo> {
     return this.userApiService
       .getUser()
@@ -54,12 +56,12 @@ export class UserFacadeService extends ServiceStateFacade {
   }
 
   addUserPhoto(photo: UserPhotoInfo): Observable<boolean> {
-    return this.getUser$().pipe(switchMap(({id}) => this.userApiService.addUserPhoto(id, photo)),
-    map(({ response }) => response), 
-    take(1)
+    return this.getUserData$().pipe(
+      switchMap(({ id }) => this.userApiService.addUserPhoto(id, photo)),
+      map(({ response }) => response),
+      take(1)
     );
   }
-
 
   getUserAddresses$(): Observable<AddressInfo[]> {
     return this.userApiService
@@ -68,12 +70,11 @@ export class UserFacadeService extends ServiceStateFacade {
   }
 
   createUserPin(pin: string): Observable<boolean> {
-    return from(Device.getInfo())
-      .pipe(
-        switchMap(({uuid}) => this.userApiService.createUserPin(pin, uuid)),
-        map(({ response }) => response),
-        take(1)
-      );
+    return from(Device.getInfo()).pipe(
+      switchMap(({ uuid }) => this.userApiService.createUserPin(pin, uuid)),
+      map(({ response }) => response),
+      take(1)
+    );
   }
 
   requestDeposit$(
