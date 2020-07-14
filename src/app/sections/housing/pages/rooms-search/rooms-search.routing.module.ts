@@ -17,12 +17,7 @@ const routes: Routes = [
       {
         path: 'units',
         component: UnitsPage,
-      },
-      {
-        path: '',
-        redirectTo: 'buildings',
-        pathMatch: 'full',
-      },
+      }
     ],
   },
 ];

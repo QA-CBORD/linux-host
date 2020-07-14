@@ -67,7 +67,7 @@ export class FacilityDetails {
 }
 
 
-interface IMapper {
+export interface IMapper {
   map(details): any;
 }
 
