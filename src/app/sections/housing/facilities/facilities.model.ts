@@ -16,8 +16,9 @@ export class Facility {
     public isTopLevel: boolean = false,
     public topLevelKey: number = null,
     public currentOccupancy: number = 0,
-    public occupancyKeys: number[] = [],
-  ) {}
+    public occupantKeys: number[] = [],
+  ) {
+  }
 }
 
 export class FacilityAttribute {
@@ -49,7 +50,8 @@ export class FacilityDetails {
   topLevelKey: number;
   currentOccupancy: number; //currentOccupancyCount?
   attributes: FacilityAttribute[];
-  occupancyKeys: number[];
+  occupantKeys: number[];
+
   constructor(options: FacilityDetailsOptions) {
     this.facilityKey = options.facilityKey;
     this.assetTypeKey = options.assetTypeKey;
@@ -60,7 +62,7 @@ export class FacilityDetails {
     if (Array.isArray(options.attributes)) {
       this.attributes = options.attributes.map(x => new FacilityAttribute(x.facilityAttributeKey, x.facilityKey, x.attributeConsumerKey, x.value, x.effectiveDate, x.endDate));
     }
-    this.occupancyKeys = this.occupancyKeys || [];
+    this.occupantKeys = this.occupantKeys || [];
   }
 }
 
@@ -72,9 +74,11 @@ interface IMapper {
 export class FacilityDetailsToFacilityMapper implements  IMapper{
 
   map(items: FacilityDetails[]): Facility[] {
-    return items.map(x => new Facility( x.name, x.facilityKey, "2", "3",
-        3, 2000, "xyz", "12Block Parking", x.currentOccupancy, false,
-        'arrow-down', x.assetTypeKey, x.attributes, x.isTopLevel, x.topLevelKey, x.currentOccupancy,
-        x.occupancyKeys));
+    return items.map(x => new Facility(x.name, x.facilityKey,
+      '2', '2', 3, 1990,
+      'xyz', 'A', x.currentOccupancy,
+      false, 'arrow-down', x.assetTypeKey,
+      x.attributes, x.isTopLevel, x.topLevelKey, x.currentOccupancy,
+      x.occupantKeys));
   }
 }
