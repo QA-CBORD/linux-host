@@ -38,10 +38,10 @@
   }
 
   &__add-address-divider {
-		background: $color-white-smoke;
-		height: 20px;
-		margin-top: 20px;
-	}
+    background: $color-white-smoke;
+    height: 20px;
+    margin-top: 20px;
+  }
 
   &__add-address-img {
     position: absolute;
@@ -50,7 +50,8 @@
 
   &__back-btn {
     --color: #000 !important;
-    font-size: 20px;
+    // font-size: 20px;
+    font-size: 15px; //GCS-1928 #4, Unified design for button.  22px->15px;
   }
 
   &__radio-label-header {

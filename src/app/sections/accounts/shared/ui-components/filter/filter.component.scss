@@ -1,16 +1,16 @@
-@import "tools";
+@import 'tools';
 
 .filter {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between; //BugFix/GCS-1928 #8 Title is not properly aligned on the Transactions page:
 
   &__header {
     align-self: center;
-    margin: 0 10%;
+    // margin: 0 10%;   //BugFix/GCS-1928 #8 Title is not properly aligned on the Transactions page:
   }
 
   @include bp-before-tablet {
-    padding:10px;
+    padding: 10px;
     position: relative;
   }
 
@@ -18,7 +18,7 @@
     margin: 20px 50px 0 0;
   }
 
-  &__account{
+  &__account {
     color: $color-black;
     letter-spacing: 0;
     line-height: 18px;
@@ -31,7 +31,7 @@
     }
   }
 
-  &__period{
+  &__period {
     color: $color-black;
     letter-spacing: 0;
     line-height: 18px;
@@ -43,14 +43,17 @@
     }
   }
 
+  //Bugfix/GCS-1928#3
+  //Change from 28px to 22px and add right margin 5px.
   &__icon-image {
-    width: 28px;
-    height: 28px;
+    width: 22px;
+    height: 22px;
+    margin-right: 5px;
   }
 
-  &__icon{
+  &__icon {
     display: flex;
-    flex-direction: column;
+    // flex-direction: column; //Bugfix/GCS-1928#3
     justify-content: center;
     align-items: center;
     margin: 0;

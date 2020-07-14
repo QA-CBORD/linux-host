@@ -17,27 +17,49 @@
   }
 
   &__back-btn {
-    --icon-font-size: 18px;
     --margin-start: 10px;
     --icon-padding-end: 5px;
+    --icon-font-size: 15px; //GCS-1928 #4, Unified design for button.  22px->15px;
 
     @include font-nunito-regular(16px);
   }
 
   ion-back-button {
     display: block;
-    --icon-font-size: 25px;
+    --icon-font-size: 15px; //GCS-1928 #4, Unified design for button.  22px->15px;
   }
 
   position: relative;
 }
 
 .pin {
+  display: flex;
+  flex-direction: column;
+  height: 96vh;
+
   &__header {
     background-color: $color-white-smoke;
     display: flex;
     flex-direction: column;
     align-items: center;
+  }
+
+  &__number-block {
+    flex-grow: 2;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    align-content: space-around;
+    flex-wrap: wrap;
+    position: relative;
+  }
+
+  &__number {
+    flex: 1 0 30%;
+
+    &:last-of-type {
+      flex-grow: 0;
+    }
   }
 
   &__image-wrapper {
@@ -47,7 +69,7 @@
     background-color: #fff;
     display: flex;
     justify-content: center;
-    margin: 8% auto 15%;
+    margin: 5% auto 10%;
   }
 
   &__buttons {
@@ -65,6 +87,12 @@
 
     margin: 0;
     color: rgba(0, 0, 0, 0.87);
+
+    &--left-bottom {
+      position: absolute;
+      bottom: 8%;
+      right: 4%;
+    }
   }
 
   &__info {
@@ -76,6 +104,7 @@
 
   &__error-info {
     color: #c42c3c;
+    min-height: 2em;
   }
 
   &__error-info-img {
@@ -85,7 +114,7 @@
 
   &__indicator-wrapper {
     display: flex;
-    margin: 13% auto 21%;
+    margin: 10% auto 15%;
   }
 
   &__indicator {
@@ -95,6 +124,8 @@
     box-sizing: border-box;
     border-radius: 50%;
     margin-right: 15px;
+    transition: 0.5s all ease-out;
+
     &:last-child {
       margin: 0;
     }
