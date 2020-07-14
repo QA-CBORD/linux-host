@@ -19,7 +19,7 @@ import { RoomSelect } from '@sections/housing/rooms/rooms.model';
 
 import { DefinitionsResponse, DetailsResponse, Response, RoomSelectResponse, FacilityDetailsResponse } from './housing.model';
 import { ApplicationDetails } from './applications/applications.model';
-import { FacilityDetails } from './facilities/facilities.model';
+import { Facility, FacilityDetails, } from './facilities/facilities.model';
 import { ContractListDetails, ContractDetails } from './contracts/contracts.model';
 
 @Injectable({
@@ -47,7 +47,7 @@ export class HousingService {
     private _toastController: ToastController,
     private _router: Router,
     private _contractsService: ContractsService,
-    private _roomsStateService: RoomsStateService
+    private _roomsStateService: RoomsStateService,
   ) {}
 
   getDefinitions(termId: number) {
@@ -107,12 +107,16 @@ export class HousingService {
       catchError(() => this._handleGetRoomSelectsError())
     );
   }
-  getFacilities(roomSelectKey: number): Observable<FacilityDetailsResponse> {
+  getFacilities(roomSelectKey: number): Observable<Facility[]> {
     const apiUrl = `${
       this._baseUrl
-    }/roomselectproxy/v.1.0/room-selects-proxy/facilities/detailstwo/{roomselectkeytwo}${roomSelectKey}`;
-    return this._housingProxyService.get<FacilityDetailsResponse[]>(apiUrl).pipe(
-      map((response: any) => new FacilityDetailsResponse(response)),
+    }/roomselectproxy/v.1.0/room-selects-proxy/facilities/detailstwo/${roomSelectKey}`;
+    return this._housingProxyService.get<FacilityDetailsResponse>(apiUrl).pipe(
+      map((response: any) => {
+        let facilities: Facility[]
+        const details = new  FacilityDetailsResponse(response);
+        return facilities;
+      }),
       catchError((e) =>{ throw e})
     );
   }

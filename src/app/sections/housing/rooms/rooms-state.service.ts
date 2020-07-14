@@ -2,12 +2,11 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { RoomSelect } from './rooms.model';
-import { Interface } from 'readline';
 
 export interface Entity <K,V> {
     key: K,
     value: V
-} 
+}
 export interface StateService<K,V> {
     entities: Array<Entity<K,V>>
 }

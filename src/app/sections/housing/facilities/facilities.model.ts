@@ -49,3 +49,17 @@ export class FacilityDetails {
   occupancyKeys: number[];
   constructor(options: FacilityDetailsOptions){}
 }
+
+export class FacilityDetailsToFacilityMapper {
+
+  constructor() {}
+
+  map(items: FacilityDetails[]): Facility[] {
+    return items.map(x => new Facility(x.name, x.facilityKey,
+      '2', '2', 3, 1990,
+      'xyz', 'A', x.currentOccupancy,
+      false, 'arrow-down', x.assetTypeKey,
+      x.attributes, x.isTopLevel, x.topLevelKey, x.currentOccupancy,
+      x.occupancyKeys));
+  }
+}

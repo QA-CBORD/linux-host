@@ -35,7 +35,7 @@ const routes: Routes = [
         loadChildren: './pages/unit-details/unit-details.module#UnitDetailsPageModule',
       },
       {
-        path: LOCAL_ROUTING.roomsSearch,
+        path: `${LOCAL_ROUTING.roomsSearch}/:roomSelectKey`,
         loadChildren: './pages/rooms-search/rooms-search.module#RoomsSearchPageModule',
       },
       {

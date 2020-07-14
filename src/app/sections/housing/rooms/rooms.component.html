@@ -4,7 +4,8 @@
       <h3 class="secondary-header secondary-header--m">Rooms</h3>
     </ion-list-header>
     <ng-container *ngFor="let room of roomSelects">
-      <ion-item [routerLink]="['/housing/rooms-search/']">{{room.name}}</ion-item>
+      <ion-item button (click)="test(room.key)">{{room.name}}</ion-item>
+      <!--      <ion-item [routerLink]="['/housing/rooms-search/']">{{room.name}}</ion-item>-->
     </ng-container>
   </ion-list>
   <!-- <h3 class="rooms__title">Rooms</h3>

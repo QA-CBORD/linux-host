@@ -92,9 +92,15 @@ export interface FacilityDetailsResponseOptions {
 }
 export class FacilityDetailsResponse implements FacilityDetailsResponseOptions {
   facilityDetails: FacilityDetails[];
-  constructor(options: FacilityDetailsResponseOptions) {
+  constructor(options: any) {
     if (options == null || typeof options !== 'object') {
       options = {} as FacilityDetailsResponseOptions;
     }
+    console.log('Im here');
+    let sample = options.map(x => "123");
+    this.facilityDetails = options.map(x => {
+      console.log(x);
+      return new FacilityDetails(x);
+    });
   }
 }
