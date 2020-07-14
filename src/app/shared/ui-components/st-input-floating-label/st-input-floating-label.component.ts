@@ -21,6 +21,7 @@ export class StInputFloatingLabelComponent implements OnInit, ControlValueAccess
   @Input() idd: string;
   @Input() isError: boolean;
   @Input() inputmode: string;
+  @Input() enterkeyhint: string;
 
   @HostBinding('class.disabled')
   @Input()
@@ -57,7 +58,9 @@ export class StInputFloatingLabelComponent implements OnInit, ControlValueAccess
 
   //From ControlValueAccessor interface
   writeValue(value: any) {
-    this.inputRef.nativeElement.value = value;
+    if (this.inputRef.nativeElement.value !== value) {
+      this.inputRef.nativeElement.value = value;
+    }
     this.innerValue = value;
   }
 
@@ -83,5 +86,9 @@ export class StInputFloatingLabelComponent implements OnInit, ControlValueAccess
   onChangeHandler(value: string | number) {
     this.value = value;
     this.onChange(value);
+  }
+
+  public focus() {
+    this.inputRef.nativeElement.focus();
   }
 }
