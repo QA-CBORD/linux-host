@@ -1,26 +1,66 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
 
 import { RoomSelect } from './rooms.model';
+import { Facility } from '@sections/housing/facilities/facilities.model';
+import { Observable } from 'rxjs';
 
-export interface Entity <K,V> {
-    key: K,
-    value: V
+
+export interface StateService<K, V> {
+  entityDictionary: Map<K, V>
 }
-export interface StateService<K,V> {
-    entities: Array<Entity<K,V>>
-}
+
 @Injectable({
-    providedIn: 'root',
+  providedIn: 'root',
 })
-export class RoomsStateService implements StateService<number, RoomSelect>{
-    entities: Entity<number, RoomSelect>[];
-    private roomSelects: Observable<RoomSelect[]>;
-    setRoomSelects(value: Observable<RoomSelect[]>){
-        this.roomSelects = value;
-    }
+export class RoomsStateService implements StateService<number, Facility[]> {
+  entityDictionary: Map<number, Facility[]>;
+  private roomSelects: Observable<RoomSelect[]>;
+  private _parentFacilities: Facility[];
 
-    getRoomSelects(){
-        return this.roomSelects;
-    }
+  setRoomSelects(value: Observable<RoomSelect[]>) {
+    this.roomSelects = value;
+  }
+
+  getRoomSelects() {
+    return this.roomSelects;
+  }
+
+  storeParentFacilities(facilities: Facility[]) {
+    this._parentFacilities = facilities;
+  }
+
+  getParentFacilities() {
+    return this._parentFacilities;
+  }
+
+  getParentFacilityChildren(facilityId: number) {
+    return this.entityDictionary.get(facilityId);
+  }
+
+  createFacilityDictionary(facilities: Facility[]): void {
+    this._parentFacilities = RoomsStateService._findParents(facilities);
+    this._addChildrenToDictionary(facilities);
+  }
+
+  private static _findParents(facilities: Facility[]): Facility[] {
+    return facilities.map(facility => {
+      if (facility.isTopLevel) {
+        return facility;
+      }
+    });
+  }
+
+  private _addChildrenToDictionary(facilities: Facility[]): void {
+    this._parentFacilities.forEach(parent => {
+      const children = facilities.filter(facility =>
+        (
+          facility.topLevelKey === parent.facilityId &&
+          !facility.isTopLevel
+        ),
+      );
+      if (children.length > 0) {
+        this.entityDictionary.set(parent.facilityId, children);
+      }
+    });
+  }
 }

@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
 
 import { generateBuildings } from '@sections/housing/building/building.mock';
 
@@ -9,4 +9,8 @@ import { generateBuildings } from '@sections/housing/building/building.mock';
 })
 export class BuildingsPage {
   buildings = generateBuildings();
+
+  ngOnInit() {
+    console.log('buildings loaded');
+  }
 }

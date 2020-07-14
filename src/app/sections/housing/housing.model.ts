@@ -66,30 +66,32 @@ export class DetailsResponse implements DetailsResponseOptions {
   }
 }
 
-export interface RoomSelectResponseOptions{
+export interface RoomSelectResponseOptions {
   roomSelects: RoomSelect[];
 }
 
-export class RoomSelectResponse implements RoomSelectResponseOptions{
+export class RoomSelectResponse implements RoomSelectResponseOptions {
   roomSelects: RoomSelect[];
 
-  constructor(options: RoomSelectResponseOptions){
+  constructor(options: RoomSelectResponseOptions) {
     if (options == null || typeof options !== 'object') {
       options = {} as RoomSelectResponseOptions;
     }
     this.roomSelects = Array.isArray(options)
-      ? options.map((detail : any) => new RoomSelect(detail))
+      ? options.map((detail: any) => new RoomSelect(detail))
       : [];
   }
 }
 
 export class Label {
-  constructor(public name: string) {}
+  constructor(public name: string) {
+  }
 }
 
 export interface FacilityDetailsResponseOptions {
   facilityDetails: FacilityDetails[];
 }
+
 export class FacilityDetailsResponse implements FacilityDetailsResponseOptions {
   facilityDetails: FacilityDetails[];
   constructor(options: any) {

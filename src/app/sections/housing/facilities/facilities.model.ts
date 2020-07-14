@@ -19,14 +19,17 @@ export class Facility {
     public occupancyKeys: number[] = [],
   ) {}
 }
+
 export class FacilityAttribute {
   constructor(public facilityAttributeKey: number,
               public facilityKey: number,
               public attributeConsumerKey: number,
               public value: string,
               public effectiveDate: Date,
-              public endDate: Date) {}
+              public endDate: Date) {
+  }
 }
+
 export interface FacilityDetailsOptions {
   facilityKey: number;
   assetTypeKey: number;
@@ -44,7 +47,7 @@ export class FacilityDetails {
   name: string;
   isTopLevel: boolean;
   topLevelKey: number;
-  currentOccupancy: number //currentOccupancyCount?
+  currentOccupancy: number; //currentOccupancyCount?
   attributes: FacilityAttribute[];
   occupancyKeys: number[];
   constructor(options: FacilityDetailsOptions) {
