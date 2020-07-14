@@ -1,151 +1,169 @@
-<st-header title="Add a Credit Card"
-           [isTitleShow]="true"
-           [backButtonTitle]="'Back'"
-           [backButtonIcon]="'ios-arrow-back'"
-           [isToolbarShow]="true"
-           class="cc__header"></st-header>
+<st-header
+  title="Add a Credit Card"
+  [isTitleShow]="true"
+  [backButtonTitle]="'Back'"
+  [backButtonIcon]="'ios-arrow-back'"
+  [isToolbarShow]="true"
+  class="cc__header"
+></st-header>
 
 <ion-content class="cc__content">
   <form [formGroup]="ccForm">
     <div class="cc__input-wrapper cc__card-number-container">
-      <img class="cc__card-visa"
-           [ngStyle]="{ right: cardType === 'Visa' ? '20px' : '60px' }"
-           src="/assets/icon/cc-visa.svg"
-           alt="visa"
-           *ngIf="cardType === 'Visa' || cardType === ''" />
-      <img class="cc__card-mastercard"
-           src="/assets/icon/cc-mastercard.svg"
-           alt="master card"
-           *ngIf="cardType === 'MasterCard' || cardType === ''" />
+      <img
+        class="cc__card-visa"
+        [ngStyle]="{ right: cardType === 'Visa' ? '20px' : '60px' }"
+        src="/assets/icon/cc-visa.svg"
+        alt="visa"
+        *ngIf="cardType === 'Visa' || cardType === ''"
+      />
+      <img
+        class="cc__card-mastercard"
+        src="/assets/icon/cc-mastercard.svg"
+        alt="master card"
+        *ngIf="cardType === 'MasterCard' || cardType === ''"
+      />
 
-      <st-input-floating-label [control]="cardNumberControl"
-                               label="Card number"
-                               type="tel"
-                               idd="cardNumber"
-                               maxlength="19"
-                               [formControlName]="controlsNames.cardNumber"
-                               [isError]="
-        cardNumberControl.errors && 
-        (cardNumberControl.dirty || cardNumberControl.touched)"
-                               (keydown)="onInputFieldClicked($event)">
-        <div class="cc__input-error"
-             *ngIf="
-             cardNumberControl.errors &&
-             cardNumberControl.errors['required'] &&
+      <st-input-floating-label
+        [control]="cardNumberControl"
+        label="Card number"
+        type="tel"
+        idd="cardNumber"
+        maxlength="19"
+        [formControlName]="controlsNames.cardNumber"
+        [isError]="cardNumberControl.errors && (cardNumberControl.dirty || cardNumberControl.touched)"
+        (keydown)="onInputFieldClicked($event)"
+      >
+        <div
+          class="cc__input-error"
+          *ngIf="
+            cardNumberControl.errors &&
+            cardNumberControl.errors['required'] &&
             (cardNumberControl.dirty || cardNumberControl.touched)
-          ">
+          "
+        >
           This field is required.
         </div>
-        <div *ngIf="cardNumberControl.errors && cardNumberControl.errors['pattern']"
-             class="cc__input-error">
+        <div *ngIf="cardNumberControl.errors && cardNumberControl.errors['pattern']" class="cc__input-error">
           Please enter a valid credit card number.
         </div>
       </st-input-floating-label>
     </div>
     <div class="cc__security-info-wrapper">
       <div class="cc__exp-date">
-        <st-input-floating-label [control]="expDateControl"
-                                 label="Expiration Date (MM/YYYY)"
-                                 type="tel"
-                                 idd="expDate"
-                                 maxlength="7"
-                                 [formControlName]="controlsNames.expDate"
-                                 [isError]="expDateControl.errors && 
-                                 expDateControl.touched"
-                                 (keydown)="onInputFieldClicked($event)">
-          <div class="cc__input-error"
-               *ngIf="
-               expDateControl.errors &&
+        <st-input-floating-label
+          [control]="expDateControl"
+          label="Expiration Date (MM/YYYY)"
+          type="tel"
+          idd="expDate"
+          maxlength="7"
+          [formControlName]="controlsNames.expDate"
+          [isError]="expDateControl.errors && expDateControl.touched"
+          (keydown)="onInputFieldClicked($event)"
+        >
+          <div
+            class="cc__input-error"
+            *ngIf="
+              expDateControl.errors &&
               expDateControl.errors['required'] &&
               (expDateControl.dirty || expDateControl.touched)
-            ">
+            "
+          >
             This field is required.
           </div>
-          <div class="cc__input-error"
-               *ngIf="
-               expDateControl.errors &&
+          <div
+            class="cc__input-error"
+            *ngIf="
+              expDateControl.errors &&
               expDateControl.errors['minlength'] &&
               (expDateControl.dirty || expDateControl.touched)
-            ">
+            "
+          >
             Please enter a valid expiration date.
           </div>
         </st-input-floating-label>
-        
       </div>
 
       <div class="cc__cvv">
-        <st-input-floating-label [control]="securityCodeControl"
-                                 label="Security Code (CVV)"
-                                 type="tel"
-                                 idd="securityCode"
-                                 maxlength="4"
-                                 [formControlName]="controlsNames.securityCode"
-                                 [isError]="securityCodeControl.errors && 
-                                 (securityCodeControl.touched)">
-          <div class="cc__input-error"
-               *ngIf="
-               securityCodeControl.errors &&
+        <st-input-floating-label
+          [control]="securityCodeControl"
+          label="Security Code (CVV)"
+          type="tel"
+          idd="securityCode"
+          maxlength="4"
+          [formControlName]="controlsNames.securityCode"
+          [isError]="securityCodeControl.errors && securityCodeControl.touched"
+        >
+          <div
+            class="cc__input-error"
+            *ngIf="
+              securityCodeControl.errors &&
               (securityCodeControl.errors['required'] ||
-              securityCodeControl.errors['minlength'] ||
-              securityCodeControl.errors['pattern']) &&
-              (securityCodeControl.touched)
-            ">
+                securityCodeControl.errors['minlength'] ||
+                securityCodeControl.errors['pattern']) &&
+              securityCodeControl.touched
+            "
+          >
             Please enter a valid card security code.
           </div>
         </st-input-floating-label>
       </div>
     </div>
-    <st-input-floating-label class="cc__input-wrapper"
-                             [control]="nameOnCCControl"
-                             label="Name on Credit Card"
-                             type="text"
-                             idd="nameOnCC"
-                             [formControlName]="controlsNames.nameOnCC"
-                             [isError]="
-                             nameOnCCControl.errors && 
-                             (nameOnCCControl.dirty || nameOnCCControl.touched)">
-      <div class="cc__input-error"
-           *ngIf="
-           nameOnCCControl.errors &&
-           nameOnCCControl.errors['required'] &&
-          (nameOnCCControl.touched)
-        ">
+    <st-input-floating-label
+      class="cc__input-wrapper"
+      [control]="nameOnCCControl"
+      label="Name on Credit Card"
+      type="text"
+      idd="nameOnCC"
+      [formControlName]="controlsNames.nameOnCC"
+      [isError]="nameOnCCControl.errors && (nameOnCCControl.dirty || nameOnCCControl.touched)"
+    >
+      <div
+        class="cc__input-error"
+        *ngIf="nameOnCCControl.errors && nameOnCCControl.errors['required'] && nameOnCCControl.touched"
+      >
         Please enter the name as it appears on the credit card.
       </div>
     </st-input-floating-label>
 
-    <st-input-floating-label class="cc__input-wrapper"
-                             [control]="billingAddressControl"
-                             label="Billing Address"
-                             type="text"
-                             idd="billingAddress"
-                             [formControlName]="controlsNames.billingAddress"
-                             [isError]="billingAddressControl.errors && 
-                             billingAddressControl.touched">
-      <div class="cc__input-error"
-           *ngIf="
-           billingAddressControl.errors &&
-           billingAddressControl.errors['required'] &&
+    <st-input-floating-label
+      class="cc__input-wrapper"
+      [control]="billingAddressControl"
+      label="Billing Address"
+      type="text"
+      idd="billingAddress"
+      [formControlName]="controlsNames.billingAddress"
+      [isError]="billingAddressControl.errors && billingAddressControl.touched"
+    >
+      <div
+        class="cc__input-error"
+        *ngIf="
+          billingAddressControl.errors &&
+          billingAddressControl.errors['required'] &&
           (billingAddressControl.dirty || billingAddressControl.touched)
-        ">
+        "
+      >
         Please enter your billing address.
       </div>
     </st-input-floating-label>
 
-    <st-input-floating-label class="cc__input-wrapper"
-                             [control]="zipControl"
-                             label="ZIP code"
-                             type="tel"
-                             idd="zip"
-                             [formControlName]="controlsNames.zip"
-                             [isError]="zipControl.errors && 
-                             (zipControl.dirty || zipControl.touched)">
-      <div class="cc__input-error"
-           *ngIf="
-           zipControl.errors &&
+    <st-input-floating-label
+      class="cc__input-wrapper"
+      [control]="zipControl"
+      label="ZIP code"
+      type="tel"
+      idd="zip"
+      [formControlName]="controlsNames.zip"
+      [isError]="zipControl.errors && (zipControl.dirty || zipControl.touched)"
+    >
+      <div
+        class="cc__input-error"
+        *ngIf="
+          zipControl.errors &&
           (zipControl.errors['required'] || zipControl.errors['pattern']) &&
           (zipControl.dirty || zipControl.touched)
-        ">
+        "
+      >
         Please enter a valid postal code.
       </div>
     </st-input-floating-label>
@@ -153,8 +171,7 @@
       By saving this card, you consent for this card to be stored and used for purchases. You may remove this card at
       any time within Settings.
     </div>
-    <st-button [isDisabled]="!ccForm.valid"
-               (onClick)="onFormSubmit()">
+    <st-button [isDisabled]="!ccForm.valid" (onClick)="onFormSubmit()">
       save card
     </st-button>
   </form>
