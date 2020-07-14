@@ -97,9 +97,7 @@ export class FacilityDetailsResponse implements FacilityDetailsResponseOptions {
       options = {} as FacilityDetailsResponseOptions;
     }
     console.log('Im here');
-    let sample = options.map(x => "123");
     this.facilityDetails = options.map(x => {
-      console.log(x);
       return new FacilityDetails(x);
     });
   }

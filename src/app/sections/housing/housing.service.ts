@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
-import { Observable, of, forkJoin, Subject } from 'rxjs';
-import { map, switchMap, tap, catchError } from 'rxjs/operators';
+import { forkJoin, Observable, of, Subject } from 'rxjs';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 
 import { Environment } from '../../environment';
 
@@ -17,10 +17,16 @@ import { ContractsService } from '@sections/housing/contracts/contracts.service'
 import { RoomsStateService } from '@sections/housing/rooms/rooms-state.service';
 import { RoomSelect } from '@sections/housing/rooms/rooms.model';
 
-import { DefinitionsResponse, DetailsResponse, Response, RoomSelectResponse, FacilityDetailsResponse } from './housing.model';
+import {
+  DefinitionsResponse,
+  DetailsResponse,
+  FacilityDetailsResponse,
+  Response,
+  RoomSelectResponse,
+} from './housing.model';
 import { ApplicationDetails } from './applications/applications.model';
-import { Facility, FacilityDetails, } from './facilities/facilities.model';
-import { ContractListDetails, ContractDetails } from './contracts/contracts.model';
+import { Facility, FacilityDetailsToFacilityMapper } from './facilities/facilities.model';
+import { ContractDetails, ContractListDetails } from './contracts/contracts.model';
 
 @Injectable({
   providedIn: 'root',
@@ -30,7 +36,7 @@ export class HousingService {
   private readonly _patronApplicationsUrl: string = `${this._baseUrl}/patron-applications/v.1.0/patron-applications`;
 
   private readonly _applicationDefinitionUrl: string = `${this._patronApplicationsUrl}/application-definition`;
-
+  private readonly  _facilityMapper: FacilityDetailsToFacilityMapper;
   private _refreshDefinitionsSource: Subject<void> = new Subject<void>();
 
   refreshDefinitions$: Observable<number> = this._refreshDefinitionsSource
@@ -48,7 +54,9 @@ export class HousingService {
     private _router: Router,
     private _contractsService: ContractsService,
     private _roomsStateService: RoomsStateService,
-  ) {}
+  ) {
+    this._facilityMapper = new FacilityDetailsToFacilityMapper();
+  }
 
   getDefinitions(termId: number) {
     const apiUrl: string = `${this._patronApplicationsUrl}/term/${termId}/patron/self`;
@@ -113,9 +121,8 @@ export class HousingService {
     }/roomselectproxy/v.1.0/room-selects-proxy/facilities/detailstwo/${roomSelectKey}`;
     return this._housingProxyService.get<FacilityDetailsResponse>(apiUrl).pipe(
       map((response: any) => {
-        let facilities: Facility[]
-        const details = new  FacilityDetailsResponse(response);
-        return facilities;
+        const details = new  FacilityDetailsResponse(response)
+        return this._facilityMapper.map(details.facilityDetails);
       }),
       catchError((e) =>{ throw e})
     );

@@ -34,7 +34,7 @@ export class RoomsSearchPage {
     this.roomSelectKey = parseInt(this._route.snapshot.paramMap.get('roomSelectKey'), 10);
     console.log(this.roomSelectKey);
     this._housingService.getFacilities(this.roomSelectKey).subscribe(data => {
-      console.log(data);
+      console.log({ data });
     }, err => {
       console.log(err);
     });
