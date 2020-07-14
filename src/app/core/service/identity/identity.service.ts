@@ -44,10 +44,6 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
     private readonly authFacadeService: AuthFacadeService
   ) {
     super(plt, {
-      androidPromptTitle: 'Android Prompt Title',
-      androidPromptSubtitle: 'Android Prompt Subtitle',
-      androidPromptDescription: 'Android Prompt Description',
-      androidPromptNegativeButtonText: 'Use PIN',
       restoreSessionOnReady: false,
       unlockOnReady: false,
       unlockOnAccess: false,
