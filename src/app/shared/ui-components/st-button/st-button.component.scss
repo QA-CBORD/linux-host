@@ -17,6 +17,7 @@
   --ion-color-primary: #166dff;
   --border-radius: 25px;
   --background-activated: rgba(0, 0, 0, 0.14);
+  --box-shadow: none; //Bugfix/CGS-1928#4 No Box Shadow for All the buttons.
   width: 100%;
 
   height: 50px;
@@ -66,5 +67,28 @@
 
   &--danger {
     --background: #e22942;
+  }
+
+  &--entry-light {
+    --ion-color-primary: #fff;
+    --background-activated: #c4c4c4;
+    --background-color: $color-white;
+    --border-radius: 8px;
+
+    border-radius: 8px; //we need this second border-radius
+    color: $color-black;
+  }
+
+  &--entry-dark {
+    --ion-color-primary: $color-white;
+    --background-activated: #c4c4c4;
+    --bacgrkound-color: #166dff;
+    --border-radius: 8px;
+
+    background-color: #0043b3;
+    border-radius: 8px; //we need this second border-radius
+    color: $color-white;
+    border-color: $color-white;
+    border: 2px solid #fff;
   }
 }

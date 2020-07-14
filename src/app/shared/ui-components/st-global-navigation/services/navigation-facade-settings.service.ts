@@ -12,8 +12,10 @@ import { SettingsFacadeService } from '@core/facades/settings/settings-facade.se
 export class NavigationFacadeSettingsService extends ServiceStateFacade {
   private readonly key: string = 'NAVIGATION_SETTINGS';
 
-  constructor(private readonly storage: StorageStateService,
-              private readonly settingsFacadeService: SettingsFacadeService) {
+  constructor(
+    private readonly storage: StorageStateService,
+    private readonly settingsFacadeService: SettingsFacadeService
+  ) {
     super();
   }
 
@@ -23,13 +25,16 @@ export class NavigationFacadeSettingsService extends ServiceStateFacade {
   }
 
   private get config$(): Observable<NavigationBottomBarElement[]> {
-    return this.storage.getStateEntityByKey$<NavigationBottomBarElement[]>(this.key).pipe(
-      map((data) => !!data ? data.value : null),
-    );
+    return this.storage
+      .getStateEntityByKey$<NavigationBottomBarElement[]>(this.key)
+      .pipe(map(data => (!!data ? data.value : null)));
   }
 
   async update(settings: NavigationBottomBarElement[]): Promise<void> {
-    const state = await this.storage.getStateEntityByKey$(this.key).pipe(take(1)).toPromise();
+    const state = await this.storage
+      .getStateEntityByKey$(this.key)
+      .pipe(take(1))
+      .toPromise();
   }
 
   private isConfigInStorage(): boolean {
@@ -37,33 +42,33 @@ export class NavigationFacadeSettingsService extends ServiceStateFacade {
   }
 
   private getAllowedSettings(): Observable<NavigationBottomBarElement[]> {
-    return this.settingsFacadeService.getCachedSettings().pipe(
-      map((list) => this.getUpdatedConfig(list).filter(({ isEnable }) => isEnable)),
-    );
+    return this.settingsFacadeService
+      .getCachedSettings()
+      .pipe(map(list => this.getUpdatedConfig(list).filter(({ isEnable }) => isEnable)));
   }
 
   private initSettings(): Observable<NavigationBottomBarElement[]> {
     return zip(
       this.storage.getStateEntityByKey$<NavigationBottomBarElement[]>(this.key),
-      this.getAllowedSettings(),
+      this.getAllowedSettings()
     ).pipe(
       take(1),
       map(([{ value: cashedSettings }, settings]) => this.updateCachedSettings(cashedSettings, settings)),
-      tap((settings) => this.storage.updateStateEntity(this.key, settings)),
+      tap(settings => this.storage.updateStateEntity(this.key, settings))
     );
   }
 
   private getUpdatedConfig(settings: SettingInfo[]): NavigationBottomBarElement[] {
-    return NAVIGATION_BASE_CONFIG.map((setting) => {
+    return NAVIGATION_BASE_CONFIG.map(setting => {
       let s = settings.find(({ name }) => name === setting.id);
-      return s
-        ? { ...setting, isEnable: !!Number(s.value) }
-        : setting;
+      return s ? { ...setting, isEnable: !!Number(s.value) } : setting;
     });
   }
 
-  private updateCachedSettings(cashedSettings: NavigationBottomBarElement[],
-                               availableSettings: NavigationBottomBarElement[]): NavigationBottomBarElement[] {
+  private updateCachedSettings(
+    cashedSettings: NavigationBottomBarElement[],
+    availableSettings: NavigationBottomBarElement[]
+  ): NavigationBottomBarElement[] {
     const newConfig = [];
     const cached = [];
     for (let i = 0; i < availableSettings.length; i++) {

@@ -15,4 +15,8 @@
   />
   <label class="input__placeholder" [attr.for]="idd">{{ label }}</label>
   <ng-content *ngIf="isError"></ng-content>
+  <!-- ?BugFix/GCS-1928 #5 Sign  for all fields with an error (to comply with Accessibility standards): -->
+  <div class="input__accesibility_error" *ngIf="isError">
+    <img src="/assets/icon/input-error.svg" alt="input-accessibility-error" *ngIf="isError" />
+  </div>
 </div>

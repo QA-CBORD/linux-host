@@ -1,11 +1,16 @@
-@import "tools";
+@import 'tools';
 
 .dashboard {
   background: $color-white-smoke;
-  
+  --padding-top: 20px;
+
+  &__btn-logout {
+    margin-left: 10px;
+  }
+
   &__bottom-btn-wrapper {
-    --background:  #fff;
-    --background-activated: #D9D9D9;
+    --background: #fff;
+    --background-activated: #d9d9d9;
 
     display: flex;
     justify-content: center;
@@ -29,12 +34,11 @@
     flex-direction: column;
     color: $color-black;
   }
-  
+
   &__bottom-title {
-    @include font-nunito-semibold(16px) ;
+    @include font-nunito-semibold(16px);
   }
   &__bottom-subtitle {
-    @include font-nunito-regular(10px) ;
+    @include font-nunito-regular(10px);
   }
-
 }

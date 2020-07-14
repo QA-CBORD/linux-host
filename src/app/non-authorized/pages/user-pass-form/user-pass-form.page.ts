@@ -45,9 +45,8 @@ export class UserPassForm implements OnInit {
     private readonly identityFacadeService: IdentityFacadeService,
     private readonly fb: FormBuilder,
     private readonly cdRef: ChangeDetectorRef,
-    private readonly appBrowser: InAppBrowser,
-  ) {
-  }
+    private readonly appBrowser: InAppBrowser
+  ) {}
 
   get username(): AbstractControl {
     return this.loginForm.get(this.controlsNames.username);
@@ -75,6 +74,8 @@ export class UserPassForm implements OnInit {
     this.nativeHeaderBg$ = this.getNativeHeaderBg(id, sessionId);
     this.deviceInfo$ = this.fetchDeviceInfo();
     this.cdRef.markForCheck();
+
+    console.log('DeviceInfo', this.deviceInfo$);
   }
 
   redirectToWebPage(url) {
@@ -100,10 +101,9 @@ export class UserPassForm implements OnInit {
     const { username, password } = form.value;
     const { id } = this.institutionInfo;
     let sessionId: string;
-      await this.loadingService.showSpinner();
+    await this.loadingService.showSpinner();
     try {
       sessionId = await this.authenticateUsernamePassword(username, password, id);
-
     } catch (e) {
       console.log('authUser error', e);
       this.presentToast('Login failed, invalid user name and/or password');
@@ -111,29 +111,29 @@ export class UserPassForm implements OnInit {
     } finally {
       await this.loadingService.closeSpinner();
     }
-      const loginState: LoginState = await this.identityFacadeService.determinePostLoginState(sessionId, id);
+    const loginState: LoginState = await this.identityFacadeService.determinePostLoginState(sessionId, id);
 
-      console.log('UserPass - Login State:', loginState);
-      switch (loginState) {
-        case LoginState.PIN_SET:
-          try {
-            await this.identityFacadeService.pinOnlyLoginSetup();
-          } catch (e){
-            console.log('UPF - pin set error', e);
-            this.presentToast('Login failed, invalid user name and/or password');
-          } finally {
-            this.router.navigate([PATRON_NAVIGATION.dashboard]);
-          }
-          break;
-        case LoginState.BIOMETRIC_SET:
-            const supportedBiometricType = await this.identityFacadeService.getAvailableBiometricHardware();
-            const biometricConfig = this.configureBiometricsConfig(supportedBiometricType);
-            await this.router.navigate([PATRON_NAVIGATION.biometric], { state: { biometricConfig } });
-          break;
-        case LoginState.DONE:
+    console.log('UserPass - Login State:', loginState);
+    switch (loginState) {
+      case LoginState.PIN_SET:
+        try {
+          await this.identityFacadeService.pinOnlyLoginSetup();
+        } catch (e) {
+          console.log('UPF - pin set error', e);
+          this.presentToast('Login failed, invalid user name and/or password');
+        } finally {
           this.router.navigate([PATRON_NAVIGATION.dashboard]);
-          break;
-      }
+        }
+        break;
+      case LoginState.BIOMETRIC_SET:
+        const supportedBiometricType = await this.identityFacadeService.getAvailableBiometricHardware();
+        const biometricConfig = this.configureBiometricsConfig(supportedBiometricType);
+        await this.router.navigate([PATRON_NAVIGATION.biometric], { state: { biometricConfig } });
+        break;
+      case LoginState.DONE:
+        this.router.navigate([PATRON_NAVIGATION.dashboard]);
+        break;
+    }
   }
 
   private initForm() {
@@ -176,18 +176,18 @@ export class UserPassForm implements OnInit {
         CONTENT_STINGS_CATEGORIES.login_screen,
         'email_username',
         sessionId,
-        false,
+        false
       )
       .pipe(
         map(({ value }) => value),
-        take(1),
+        take(1)
       )
       .toPromise();
   }
 
   private configureBiometricsConfig(supportedBiometricType: string[]): { type: string; name: string } {
     if (supportedBiometricType.includes('fingerprint')) {
-      return { type: 'fingerprint', name: 'Figerprint' };
+      return { type: 'fingerprint', name: 'Fingerprint' };
     } else if (supportedBiometricType.includes('face')) {
       return { type: 'face', name: 'Face ID' };
     } else if (supportedBiometricType.includes('iris')) {
@@ -205,14 +205,13 @@ export class UserPassForm implements OnInit {
           const nativeHeaderBg = siteColors['native-header-bg'];
           return nativeHeaderBg ? '#' + nativeHeaderBg : '#166dff';
         }),
-        take(1),
+        take(1)
       )
       .toPromise();
   }
 
   private async setLocalInstitutionInfo(): Promise<any> {
-    return this.institutionFacadeService
-      .cachedInstitutionInfo$
+    return this.institutionFacadeService.cachedInstitutionInfo$
       .pipe(
         tap(institutionInfo => (this.institutionInfo = institutionInfo)),
         take(1)
@@ -225,8 +224,8 @@ export class UserPassForm implements OnInit {
       .getInstitutionDataById$(id, sessionId, false)
       .pipe(
         tap(institutionInfo => (this.institutionInfo = institutionInfo)),
-        map(({ name }) => `${name} university`),
-        take(1),
+        map(({ name }) => `${name}`),
+        take(1)
       )
       .toPromise();
   }
@@ -242,7 +241,7 @@ export class UserPassForm implements OnInit {
         }),
         map(response => this.sanitizer.bypassSecurityTrustResourceUrl(response)),
         tap(() => this.cdRef.markForCheck()),
-        take(1),
+        take(1)
       )
       .toPromise();
   }
@@ -260,7 +259,6 @@ export class UserPassForm implements OnInit {
     const { operatingSystem } = await Device.getInfo();
     return !(operatingSystem === 'ios' || operatingSystem === 'android');
   }
-
 }
 
 export enum USERFORM_CONTROL_NAMES {

@@ -17,16 +17,16 @@
   }
 
   &__back-btn {
-    --icon-font-size: 18px;
     --margin-start: 10px;
     --icon-padding-end: 5px;
+    --icon-font-size: 15px; //GCS-1928 #4, Unified design for button.  22px->15px;
 
     @include font-nunito-regular(16px);
   }
 
   ion-back-button {
     display: block;
-    --icon-font-size: 25px;
+    --icon-font-size: 15px; //GCS-1928 #4, Unified design for button.  22px->15px;
   }
 
   position: relative;
@@ -124,7 +124,7 @@
     box-sizing: border-box;
     border-radius: 50%;
     margin-right: 15px;
-    transition: .5s all ease-out;
+    transition: 0.5s all ease-out;
 
     &:last-child {
       margin: 0;
