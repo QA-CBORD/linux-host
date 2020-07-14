@@ -55,11 +55,7 @@
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Allow GET to use your location</string>
 	<key>NSLocationUsageDescription</key>
-<<<<<<< HEAD
 	<string>GET requires access to your locations to suggest nearby merchants</string>
-=======
-	<string>Get requires access to your locations to suggest nearby merchants</string>
->>>>>>> feature/GCS-1972
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>GET uses your location to find the nearest merchants</string>
 	<key>NSMicrophoneUsageDescription</key>
