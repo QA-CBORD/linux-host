@@ -16,7 +16,9 @@ export class RoomsStateService implements StateService<number, Facility[]> {
   entityDictionary: Map<number, Facility[]>;
   private roomSelects: Observable<RoomSelect[]>;
   private _parentFacilities: Facility[];
-
+  constructor() {
+    this.entityDictionary = new Map<number, Facility[]>()
+  }
   setRoomSelects(value: Observable<RoomSelect[]>) {
     this.roomSelects = value;
   }
@@ -26,7 +28,7 @@ export class RoomsStateService implements StateService<number, Facility[]> {
   }
 
   storeParentFacilities(facilities: Facility[]) {
-    this._parentFacilities = facilities;
+    this._parentFacilities = RoomsStateService._findParents(facilities);
   }
 
   getParentFacilities() {
@@ -43,7 +45,7 @@ export class RoomsStateService implements StateService<number, Facility[]> {
   }
 
   private static _findParents(facilities: Facility[]): Facility[] {
-    return facilities.map(facility => {
+    return facilities.filter(facility => {
       if (facility.isTopLevel) {
         return facility;
       }
