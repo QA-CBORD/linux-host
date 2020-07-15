@@ -20,7 +20,6 @@ const { Camera } = Plugins;
   styleUrls: ['./photo-upload.component.scss'],
 })
 export class PhotoUploadComponent implements OnInit {
-  userId: any;
   photoList: any;
   frontId: SafeResourceUrl = null;
   backId: SafeResourceUrl = null;
@@ -35,21 +34,13 @@ export class PhotoUploadComponent implements OnInit {
     private readonly domsanitizer: DomSanitizer,
     private readonly identityFacadeService: IdentityFacadeService,
     private readonly toastController: ToastController,
-    private readonly userFacadeService: UserFacadeService,
-  ) { }
+    private readonly userFacadeService: UserFacadeService
+  ) {}
 
   ngOnInit() {
-    //call institution settings for photos 
-    this.getUserData();
+    //call institution settings for photos
     this.setUserPhoto();
     this.getPhotoList();
-  }
-
-  //gets user data so we can use ID
-  getUserData() {
-    this.userFacadeService.getUserData$()
-      .pipe(take(1))
-      .subscribe(({ id }) => (this.userId = id));
   }
 
   //sets the user photo varibale if there is a photo
@@ -66,38 +57,36 @@ export class PhotoUploadComponent implements OnInit {
     console.log('user photo', this.userPhoto);
   }
 
-  private setIDPhotos() {
-
-  }
+  private setIDPhotos() {}
 
   //gets the photolist by user id
   getPhotoList() {
-    this.userFacadeService.getPhotoListByUserId(this.userId)
-      .pipe(take(1))
-      .subscribe((list) => (this.photoList = list));
+    this.userFacadeService
+      .getPhotoList()
+      .subscribe(list => (this.photoList = list));
     console.log('photoList', this.photoList);
   }
-
 
   //prompts to open camera or photos for front id pic
   async promptFrontPhoto() {
     this.getPhoto().subscribe(
       data => {
         console.log('PFC Data:', data);
-        this.frontId = this.domsanitizer.bypassSecurityTrustResourceUrl(`data:image/${data.format};base64, ${data.base64String}`);
+        this.frontId = this.domsanitizer.bypassSecurityTrustResourceUrl(
+          `data:image/${data.format};base64, ${data.base64String}`
+        );
       },
       error => {
         console.log('PFC Error:', error);
-        this.presentToast('There was an issue taking the picture - please try again')
+        this.presentToast('There was an issue taking the picture - please try again');
       },
       () => {
-        console.log('PFC Complete')
+        console.log('PFC Complete');
       }
-    )
+    );
 
     //   height: 80, //Test
     //   width: 132, //Test
-
   }
 
   //prompts to open camera or photos for front id pic
@@ -105,33 +94,35 @@ export class PhotoUploadComponent implements OnInit {
     this.getPhoto().subscribe(
       data => {
         console.log('PBC Data:', data);
-        this.backId = this.domsanitizer.bypassSecurityTrustResourceUrl(`data:image/${data.format};base64, ${data.base64String}`);
+        this.backId = this.domsanitizer.bypassSecurityTrustResourceUrl(
+          `data:image/${data.format};base64, ${data.base64String}`
+        );
       },
       error => {
         console.log('PBC Error:', error);
-        this.presentToast('There was an issue taking the picture - please try again')
+        this.presentToast('There was an issue taking the picture - please try again');
       },
       () => {
-        console.log('PBC Complete')
+        console.log('PBC Complete');
       }
-    )
+    );
 
     //     height: 80, //Test
     //     width: 132, //Test
-
   }
-
 
   //prompts to open camera or photos for selfie pic
   async promptSelfieCamera() {
     this.getPhoto().subscribe(
       data => {
         console.log('PSC Data:', data);
-        this.selfie = this.domsanitizer.bypassSecurityTrustResourceUrl(`data:image/${data.format};base64, ${data.base64String}`);
+        this.selfie = this.domsanitizer.bypassSecurityTrustResourceUrl(
+          `data:image/${data.format};base64, ${data.base64String}`
+        );
       },
       error => {
         console.log('PSC Error:', error);
-        this.presentToast('There was an issue taking the picture - please try again')
+        this.presentToast('There was an issue taking the picture - please try again');
       },
       () => {
         console.log('PSC Complete:');

@@ -87,6 +87,22 @@ export class AuthApiService {
   }
 
   /**
+   * Retrieve authenticationToken passing in a sessionId
+   *
+   * @param sessionId String
+   */
+  getAuthenticationToken(): Observable<string> {
+    let params: ServiceParameters = { };
+    const queryConfig = new RPCQueryConfig('getAuthenticationToken', params, true);
+
+    // MARK: Remove the token setting from the service
+    return this.http.post<any>(this.serviceUrl, queryConfig).pipe(
+      map(({ response }) => response )
+    );
+  }
+
+
+  /**
    * Authenticate a Session Token (session sharing) to get a new User Session
    *
    * @param sessionToken Session Token passed to device/system
