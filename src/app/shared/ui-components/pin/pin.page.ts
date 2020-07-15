@@ -61,9 +61,8 @@ export class PinPage implements OnInit {
     private modalController: ModalController,
     private readonly userFacadeService: UserFacadeService,
     private readonly authFacadeService: AuthFacadeService,
-    private readonly settingsFacadeService: SettingsFacadeService,
-  ) {
-  }
+    private readonly settingsFacadeService: SettingsFacadeService
+  ) {}
 
   @Input() pinAction: PinAction;
 
@@ -166,6 +165,7 @@ export class PinPage implements OnInit {
   back() {
     this.pinNumberCopy = [];
     this.pinNumber = [];
+    this.instructionText = this.newPinText; //bugfix/GCS-1998 #UI Back Button in Confirm New PIN is not returning to Enter Pin Screen.
   }
 
   removeNumber(): void | undefined {
@@ -204,7 +204,7 @@ export class PinPage implements OnInit {
         this.cleanLocalState();
         this.setErrorText('Error setting your PIN - please try again');
       },
-      () => console.log('Pin Set Complete'),
+      () => console.log('Pin Set Complete')
     );
   }
 
@@ -232,7 +232,7 @@ export class PinPage implements OnInit {
           this.setErrorText('Incorrect PIN - please try again');
         }
       },
-      () => console.log('Pin Login Complete'),
+      () => console.log('Pin Login Complete')
     );
     // on success, return the pin so the vault can be unlocked
   }

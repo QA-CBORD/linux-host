@@ -25,7 +25,6 @@ const { Keyboard, IOSDevice } = Plugins;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InstitutionsPage implements OnInit {
-
   private sessionId: string = null;
   searchString: string = '';
 
@@ -40,7 +39,7 @@ export class InstitutionsPage implements OnInit {
     private readonly identityFacadeService: IdentityFacadeService,
     private readonly popoverCtrl: PopoverController,
     private readonly nav: Router,
-    private readonly cdRef: ChangeDetectorRef,
+    private readonly cdRef: ChangeDetectorRef
   ) {}
 
   async ngOnInit() {
@@ -57,9 +56,8 @@ export class InstitutionsPage implements OnInit {
         this.cdRef.markForCheck();
       });
 
-
-       this.setNativeEnvironment();
-    }
+    this.setNativeEnvironment();
+  }
 
   onEnterKeyClicked() {
     Keyboard.hide();
@@ -73,6 +71,8 @@ export class InstitutionsPage implements OnInit {
     await this.loadingService.showSpinner();
     await this.identityFacadeService.logoutUser();
     this.settingsFacadeService.cleanCache();
+    this.authFacadeService.clearState(); //Bugfix/GCS-1998 Institution is saved and cleared.
+
     await zip(
       this.settingsFacadeService.fetchSettingList(Settings.SettingList.FEATURES, this.sessionId, id),
       this.settingsFacadeService.getSettings(
