@@ -33,20 +33,18 @@ export class RoomsSearchPage {
 
   ngOnInit(): void {
     this.roomSelectKey = parseInt(this._route.snapshot.paramMap.get('roomSelectKey'), 10);
-    console.log(this.roomSelectKey);
     this.units = [
       new Unit(`/housing/rooms-search/${this.roomSelectKey}/buildings`, 'Buildings'),
       new Unit(`/housing/rooms-search/${this.roomSelectKey}/units`, 'Units'),
     ];
     this._loadingService.showSpinner();
     this._housingService.getFacilities(this.roomSelectKey).subscribe(data => {
-      console.log({ data });
       this._facilityStateService.createFacilityDictionary(data);
       this.parentFacilities = this._facilityStateService.getParentFacilities();
       this._router.navigate(['buildings'], {relativeTo: this._route});
       this._loadingService.closeSpinner();
-      console.log(this.parentFacilities);
     }, err => {
+      this._loadingService.closeSpinner();
       console.log(err);
     });
   }

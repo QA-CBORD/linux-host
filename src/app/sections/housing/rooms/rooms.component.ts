@@ -13,9 +13,5 @@ export class RoomsComponent {
               private _router: Router,
               private _activeRoute: ActivatedRoute) { }
   goToRoomSelection(key: any): void {
-    this._router.navigate(['/housing/rooms-search', key]).then(nav => {
-      console.log(nav);
-    }, err => {
-      console.log(err);
-    })
+    this._router.navigate(['/housing/rooms-search', key]);
   }}

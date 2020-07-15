@@ -16,9 +16,6 @@ export class BuildingComponent {
   ) {}
 
   goToUnits(buildingKey: number) {
-    console.log('I happened!');
-    this._router.navigate(['../units', buildingKey ], { relativeTo: this._activeRoute }).then((data) => {
-      console.log(data);
-    }, err => console.log(err));
+    this._router.navigate(['../units', buildingKey ], { relativeTo: this._activeRoute });
   }
 }
