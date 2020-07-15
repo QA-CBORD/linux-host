@@ -56,6 +56,10 @@ export class AuthFacadeService extends ServiceStateFacade {
     return this.authApiService.authenticateSystem().pipe(tap(res => (this.systemSessionId = res)));
   }
 
+  getAuthenticationToken$(): Observable<string> {
+    return this.authApiService.getAuthenticationToken();
+  }
+
   getExternalAuthenticationToken$(): Observable<string> {
     return this.authApiService.getExternalAuthenticationToken();
   }

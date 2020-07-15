@@ -145,19 +145,19 @@ export class PhotoUploadComponent implements OnInit {
   //will submit all photos that have been uploaded
   submitPhotos() {
     console.log('front id pic', this.frontId, 'back id pic', this.backId, 'selfie pic', this.selfie);
- this.selfiePicSubmit();
- this.frontIDPicSubmit();
- this.backIDPicSubmit();
+ // this.selfiePicSubmit();
+ // this.frontIDPicSubmit();
+ // this.backIDPicSubmit();
       //trying to add the function for setting all the photos you have taken
       
     //changes the condition to submitted and removes the upload ability
     this.submitted = true;
     console.log('function for submitting photos to DB');
   }
-
-  this.selfiePicSubmit(){}
- this.frontIDPicSubmit(){}
- this.backIDPicSubmit(){}
+ //
+ //  this.selfiePicSubmit(){}
+ // this.frontIDPicSubmit(){}
+ // this.backIDPicSubmit(){}
 
   //will delete photos from DB
   deletePhoto() {

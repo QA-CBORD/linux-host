@@ -61,9 +61,9 @@ export class UserApiService {
     return this.http.post<MessageResponse<boolean>>(this.serviceUrl, queryConfig);
   }
     
-  updateUserPhotoStatus(String sessionId, String photoId, Integer status, String reason){
-    
-  }
+  // updateUserPhotoStatus(String sessionId, String photoId, Integer status, String reason){
+  //
+  // }
 
 
 
