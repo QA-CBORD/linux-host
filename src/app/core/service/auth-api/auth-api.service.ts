@@ -8,6 +8,7 @@ import { UserLogin } from '@core/model/user';
 import { HttpClient } from '@angular/common/http';
 import { RPCQueryConfig } from '@core/interceptors/query-config.model';
 import { ServiceParameters } from '@core/model/service/message-response.model';
+
 import {Device} from '@capacitor/core';
 
 @Injectable({
@@ -82,21 +83,6 @@ export class AuthApiService {
     return this.http.post<any>(this.serviceUrl, queryConfig).pipe(
       map(({ response }) => response),
       tap((sessionId: string) => this.setSessionId(sessionId))
-    );
-  }
-
-  /**
-   * Retrieve authenticationToken passing in a sessionId
-   *
-   * @param sessionId String
-   */
-  getAuthenticationToken(): Observable<string> {
-    let params: ServiceParameters = { };
-    const queryConfig = new RPCQueryConfig('getAuthenticationToken', params, true);
-    
-    // MARK: Remove the token setting from the service
-    return this.http.post<any>(this.serviceUrl, queryConfig).pipe(
-      map(({ response }) => response )
     );
   }
 

@@ -46,11 +46,26 @@ export class UserApiService {
     return this.http.post<MessageResponse<boolean>>(this.serviceUrl, queryConfig);
   }
 
-  getUserPhoto(userId: string): Observable<MessageResponse<UserPhotoInfo>> {
-    const queryConfig = new RPCQueryConfig('retrieveUserPhoto', { userId }, true);
+  //if you leave photoID null it will return you the accepted photo, if it exists
+  getUserPhoto(photoId: string): Observable<MessageResponse<UserPhotoInfo>> {
+    const queryConfig = new RPCQueryConfig('retrieveUserPhoto', { photoId }, true);
 
     return this.http.post<MessageResponse<UserPhotoInfo>>(this.serviceUrl, queryConfig);
   }
+
+  // Boolean addUserPhoto(String sessionId, String userId, UserPhotoInfo photo)
+  //setting front of ID photo with a type of 1 or 2 in the userPhotoInfo object
+  addUserPhoto(userId: string, photo: UserPhotoInfo): Observable<MessageResponse<boolean>> {
+    const queryConfig = new RPCQueryConfig('addUserPhoto', {userId, photo }, true);
+
+    return this.http.post<MessageResponse<boolean>>(this.serviceUrl, queryConfig);
+  }
+    
+  updateUserPhotoStatus(String sessionId, String photoId, Integer status, String reason){
+    
+  }
+
+
 
   createUserPin(PIN: string, deviceId: string): Observable<MessageResponse<boolean>> {
     const queryConfig = new RPCQueryConfig('createPIN', { PIN, deviceId }, true, false);
@@ -81,6 +96,12 @@ export class UserApiService {
   }
 
   getPhotoListByUserId(userId: string): Observable<MessageResponse<UserPhotoList>> {
+    const queryConfig = new RPCQueryConfig('retrieveUserPhotoList', { userId }, true);
+
+    return this.http.post<MessageResponse<UserPhotoList>>(this.serviceUrl, queryConfig);
+  }
+
+  getFullPhotoListByUserId(userId: string): Observable<MessageResponse<UserPhotoList>> {
     const queryConfig = new RPCQueryConfig('retrieveUserPhotoList', { userId }, true);
 
     return this.http.post<MessageResponse<UserPhotoList>>(this.serviceUrl, queryConfig);

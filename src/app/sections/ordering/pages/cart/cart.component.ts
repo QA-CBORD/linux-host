@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CartService, OrderDetailOptions } from '@sections/ordering/services/cart.service';
-import { combineLatest, Observable, from } from 'rxjs';
+import { combineLatest, Observable } from 'rxjs';
 import {
   AddressModalSettings,
   DETAILS_FORM_CONTROL_NAMES,
@@ -30,11 +30,10 @@ import { AccountType, PATRON_NAVIGATION, Settings } from '../../../../app.global
 import { SuccessModalComponent } from '@sections/ordering/pages/cart/components/success-modal';
 import { StGlobalPopoverComponent } from '@shared/ui-components';
 import { MerchantInfo, MerchantOrderTypesInfo } from '@sections/ordering/shared/models';
+import { NativeData, NativeProvider } from '@core/provider/native-provider/native.provider';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
-import { ExternalPaymentService } from '@core/service/external-payment/external-payment.service';
-import { ApplePay } from '@core/model/add-funds/applepay-response.model';
 
 @Component({
   selector: 'st-cart',
@@ -65,9 +64,9 @@ export class CartComponent implements OnInit {
     private readonly cdRef: ChangeDetectorRef,
     private readonly router: Router,
     private readonly modalController: ModalController,
+    private readonly nativeProvider: NativeProvider,
     private readonly orderingService: OrderingService,
-    private readonly userFacadeService: UserFacadeService,
-    private externalPaymentService: ExternalPaymentService
+    private readonly userFacadeService: UserFacadeService
   ) {}
 
   ionViewWillEnter() {
@@ -264,7 +263,9 @@ export class CartComponent implements OnInit {
     /// if Apple Pay Order
     if (this.cartFormState.data.paymentMethod.accountType === AccountType.APPLEPAY) {
       let orderData = await this.cartService.orderInfo$.pipe(first()).toPromise();
-        await this.externalPaymentService.payWithApplePay(ApplePay.ORDERS_WITH_APPLE_PAY, orderData)
+      await this.nativeProvider
+        .payWithApplePay(NativeData.ORDERS_WITH_APPLE_PAY, orderData)
+        .toPromise()
         .then(result => {
           if (result.success) {
             accountId = result.accountId;
@@ -273,7 +274,7 @@ export class CartComponent implements OnInit {
           }
         })
         .catch(async error => {
-          return await this.onErrorModal('Something went wrong, please try again...');
+          return await this.onErrorModal(error);
         });
     }
 
@@ -348,7 +349,8 @@ export class CartComponent implements OnInit {
   }
 
   private addUSAePayCreditCard() {
-    from(this.externalPaymentService.addUSAePayCreditCard())
+    this.nativeProvider
+      .addUSAePayCreditCard()
       .pipe(first())
       .subscribe(({ success, errorMessage }) => {
         if (!success) {
@@ -367,13 +369,11 @@ export class CartComponent implements OnInit {
   }
 
   private definePaymentSystemType(): Promise<number> {
-    return this.settingsFacadeService
-      .getSetting(Settings.Setting.CREDIT_PAYMENT_SYSTEM_TYPE)
+    return this.settingsFacadeService.getSetting(Settings.Setting.CREDIT_PAYMENT_SYSTEM_TYPE)
       .pipe(
-        map(({ value }) => parseInt(value)),
+        map(({value})=> parseInt(value)),
         first()
-      )
-      .toPromise();
+      ).toPromise();
   }
 
   private async validateOrder(onError): Promise<void> {

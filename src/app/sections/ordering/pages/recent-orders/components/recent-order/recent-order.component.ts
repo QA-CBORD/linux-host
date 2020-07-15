@@ -332,7 +332,6 @@ export class RecentOrderComponent implements OnInit {
     });
 
     modal.onDidDismiss().then(({ data, role }) => {
-      this.globalNav.hideNavBar();
       role === BUTTON_TYPE.CONTINUE && this.initOrder(data);
     });
 

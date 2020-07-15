@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { BehaviorSubject, iif, Observable, of, Subscription, zip, throwError, from } from 'rxjs';
+import { BehaviorSubject, iif, Observable, of, Subscription, zip, throwError } from 'rxjs';
 import {
   AUTO_DEPOSIT_PAYMENT_TYPES,
   AUTO_DEPOST_SUCCESS_MESSAGE_TITLE,
@@ -31,10 +31,10 @@ import {
 } from '@sections/accounts/accounts.config';
 import { DepositService } from '@sections/accounts/services/deposit.service';
 import { PATRON_NAVIGATION, Settings } from 'src/app/app.global';
+import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
-import { ExternalPaymentService } from '@core/service/external-payment/external-payment.service';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 
 @Component({
@@ -77,8 +77,8 @@ export class AutomaticDepositPageComponent {
     private readonly router: Router,
     private readonly toastController: ToastController,
     private readonly cdRef: ChangeDetectorRef,
+    private readonly nativeProvider: NativeProvider,
     private readonly loadingService: LoadingService,
-    private readonly externalPaymentService: ExternalPaymentService,
     private readonly userFacadeService: UserFacadeService,
     private readonly globalNav: GlobalNavService
   ) {}
@@ -644,7 +644,8 @@ export class AutomaticDepositPageComponent {
   }
 
   private addUSAePayCreditCard() {
-      from(this.externalPaymentService.addUSAePayCreditCard())
+    this.nativeProvider
+      .addUSAePayCreditCard()
       .pipe(
         switchMap(({ success, errorMessage }) => {
           if (!success) {

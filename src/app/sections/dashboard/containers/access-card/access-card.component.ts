@@ -1,19 +1,16 @@
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Observable, from } from 'rxjs';
-import { first, map, take, switchMap, tap } from 'rxjs/operators';
+import { first, map, take, switchMap } from 'rxjs/operators';
 import { AccessCardService } from './services/access-card.service';
 import { Router } from '@angular/router';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { DASHBOARD_NAVIGATE } from '@sections/dashboard/dashboard.config';
-import {
-  NativeProvider,
-  AppleWalletInfo,
-  AppleWalletCredentialStatus,
-} from '@core/provider/native-provider/native.provider';
+import { NativeProvider, AppleWalletInfo, AppleWalletCredentialStatus } from '@core/provider/native-provider/native.provider';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { Plugins } from '@capacitor/core';
+import { LOCAL_ROUTING } from '@sections/rewards/rewards.config';
 const { IOSDevice } = Plugins;
 
 @Component({
@@ -22,6 +19,7 @@ const { IOSDevice } = Plugins;
   styleUrls: ['./access-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
+
 export class AccessCardComponent implements OnInit {
   userName$: Observable<string>;
   institutionName$: Observable<string>;
@@ -60,10 +58,10 @@ export class AccessCardComponent implements OnInit {
 
   ionViewWillEnter() {
     if (this.nativeProvider.isIos() && this.userFacadeService.isAppleWalletEnabled$()) {
-      this.enableAppleWallet();
-      this.enableAppleWalletEvents();
+          this.enableAppleWallet();
     }
   }
+
   private getUserData() {
     this.userName$ = this.accessCardService.getUserName();
     this.accessCardService
@@ -153,36 +151,35 @@ export class AccessCardComponent implements OnInit {
 
   async addToAppleWallet() {
     if (this.userInfo) {
-      await IOSDevice.addToAppleWallet({ user: this.userInfo });
+       await IOSDevice.addToAppleWallet({ user: this.userInfo });
     }
   }
 
   private getUserName() {
     this.userFacadeService
-      .getUser$()
-      .pipe(take(1))
-      .subscribe(response => {
-        this.userInfo = JSON.stringify(response);
-      });
+            .getUser$()
+            .pipe(take(1))
+            .subscribe(response => {
+                this.userInfo = JSON.stringify(response);
+            });
   }
 
   private enableAppleWallet() {
-    this.authFacadeService.cachedAuthSessionToken$
-      .pipe(
-        switchMap(sessionId => from(IOSDevice.getAppleWalletInfo({ sessionId: sessionId }))),
-        take(1)
-      )
-      .subscribe(appleWalletInfo => {
-        if (appleWalletInfo) {
-          this.appleWalletInfo = appleWalletInfo;
-          this.setAppleWalletMessage();
-        }
-      });
-  }
+    this.authFacadeService
+        .cachedAuthSessionToken$
+        .pipe(
+          switchMap(sessionId => from(IOSDevice.getAppleWalletInfo({ sessionId: sessionId }))),
+          take(1)
+        )
+        .subscribe(appleWalletInfo => {
+          if (appleWalletInfo) {
+              this.appleWalletInfo = appleWalletInfo;
+              this.setAppleWalletMessage();
+          }
+       });
+    }
 
-  private enableAppleWalletEvents() {
-    IOSDevice.addListener('AppleWalletEvent', (info: any) => {
-      this.enableAppleWallet();
-    });
-  }
+    navigateToPhotoUpload(){
+      this.router.navigate([PATRON_NAVIGATION.settings, 'photo-upload'])
+    }
 }

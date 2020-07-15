@@ -16,7 +16,6 @@ import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Device } from '@capacitor/core';
 import { IdentityFacadeService, LoginState } from '@core/facades/identity/identity.facade.service';
-import { StInputFloatingLabelComponent } from '@shared/ui-components';
 
 @Component({
   selector: 'user-pass-form',
@@ -80,10 +79,6 @@ export class UserPassForm implements OnInit {
 
   redirectToWebPage(url) {
     window.open(`${Environment.getSitesURL()}/${this.institutionInfo.shortName}/full/${url}`);
-  }
-
-  focusNext(nextField: StInputFloatingLabelComponent) {
-    nextField.focus();
   }
 
   async redirectToForgotPassword(): Promise<void> {

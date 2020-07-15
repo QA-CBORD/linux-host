@@ -27,9 +27,9 @@ export class MenuReceivingFundsComponent implements OnInit {
 
   ngOnInit() {
     this.setContentStrings();
-    this.menuItems$ = this.accountsService.settings$.pipe(
-      map(settings => this.handleListItems(settings).filter(item => item),
-      ));
+    this.menuItems$ = this.accountsService.settings$.pipe(map(settings =>
+      this.handleListItems(settings).filter(item => item)
+    ));
   }
 
   //TODO: Add correct Desktop Settings for menu icons
@@ -48,7 +48,6 @@ export class MenuReceivingFundsComponent implements OnInit {
 
   private handleListItems(settings: SettingInfo[]): MenuReceivingFundsListItem[] {
     const navList = Array.from(MENU_LIST_ITEMS.keys());
-
     return navList.map((element) => {
       const setting = settings.find(setting => setting !== null && setting.name === element);
 
@@ -57,9 +56,6 @@ export class MenuReceivingFundsComponent implements OnInit {
 
       switch (setting.name) {
         case Settings.Setting.AUTO_DEPOSIT_ENABLED.split('.')[2]:
-          displayName = this.contentString[CONTENT_STRINGS.autoDepositBtn];
-          break;
-        case Settings.Setting.LOW_BALANCE_AUTO_DEPOSIT_ENABLED.split('.')[2]:
           displayName = this.contentString[CONTENT_STRINGS.autoDepositBtn];
           break;
         case Settings.Setting.ONETIME_DEPOSITS_ENABLED.split('.')[2]:
@@ -79,14 +75,7 @@ export class MenuReceivingFundsComponent implements OnInit {
         displayName: displayName,
         isShow: Boolean(Number(setting.value)),
       };
-    }).reduce((prev, current) => {
-      let elemIndex = prev.findIndex(({ displayName }) => displayName === current.displayName);
-      if (elemIndex !== -1) {
-        prev[elemIndex] = { ...prev[elemIndex], isShow: current.isShow ? current.isShow : prev[elemIndex].isShow };
-        return prev;
-      }
-      return [...prev, current];
-    }, []);
+    });
   }
 
   async setContentStrings() {

@@ -4,7 +4,7 @@ import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { Platform, PopoverController } from '@ionic/angular';
 
-import { App, AppState } from '@capacitor/core';
+import { App, AppRestoredResult, AppState } from '@capacitor/core';
 
 import { StGlobalPopoverComponent } from '@shared/ui-components';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
@@ -77,6 +77,10 @@ export class AppComponent implements OnInit {
       console.log('App state changed. Is active?', isActive);
 
       if (isActive) {
+        if(this.identityFacadeService.didNavigateToNativePlugin){
+          this.identityFacadeService.navigateToNativePlugin = false;
+          return;
+        }
         if (this.identityFacadeService.isVaultLocked) {
           this.router.navigate([ROLES.guest, GUEST_ROUTES.startup], { replaceUrl: true });
         }
