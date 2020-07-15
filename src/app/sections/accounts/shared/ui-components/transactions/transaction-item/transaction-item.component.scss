@@ -8,6 +8,12 @@
 
 .label-container {
   max-width: 80%;
+  //Bugfix/GCS-1928 #7 Margins and padding on Transactions page: from here
+  min-height: 70px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  //Bugfix/GCS-1928 #7 Margins and padding on Transactions page: until here
 
   .label {
     &__label {
@@ -23,6 +29,12 @@
 
 .type-container {
   min-width: 73px;
+  //Bugfix/GCS-1928 #7 Margins and padding on Transactions page: from here
+  min-height: 70px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  //Bugfix/GCS-1928 #7 Margins and padding on Transactions page: until here
 
   .type {
     &__entity {

@@ -38,32 +38,32 @@ export class AppComponent implements OnInit {
     private readonly identityFacadeService: IdentityFacadeService,
     private readonly router: Router,
     private readonly cdRef: ChangeDetectorRef,
-    private readonly globalNav: GlobalNavService,
-  ) {
-  }
+    private readonly globalNav: GlobalNavService
+  ) {}
 
   ngOnInit(): void {
     this.initEventListeners();
     this.initializeApp();
     this.setPatronsRouteIndicator();
-    this.isNavBarShown$ = combineLatest(this.globalNav.isNavBarShown$, this._isPatronRoute$, this._isKeyBoardShown$).pipe(
-      map(([isNavBarShown, isPatronRoute, isKeyBoardShown]) =>
-        isPatronRoute && isNavBarShown && !isKeyBoardShown,
-      ),
+    this.isNavBarShown$ = combineLatest(
+      this.globalNav.isNavBarShown$,
+      this._isPatronRoute$,
+      this._isKeyBoardShown$
+    ).pipe(
+      map(([isNavBarShown, isPatronRoute, isKeyBoardShown]) => isPatronRoute && isNavBarShown && !isKeyBoardShown)
     );
   }
 
   setPatronsRouteIndicator() {
     this._isPatronRoute$ = this.router.events.pipe(
       map(routerEvent => {
-          if (routerEvent instanceof NavigationEnd) {
-            const route = routerEvent.toString();
-            return route.includes(ROLES.patron) && !(route.includes(PATRON_ROUTES.biometric))
-          }
-        },
-      ),
+        if (routerEvent instanceof NavigationEnd) {
+          const route = routerEvent.toString();
+          return route.includes(ROLES.patron) && !route.includes(PATRON_ROUTES.biometric);
+        }
+      }),
       filter(val => val !== undefined),
-      distinctUntilChanged(),
+      distinctUntilChanged()
     );
   }
 
@@ -81,14 +81,11 @@ export class AppComponent implements OnInit {
           this.router.navigate([ROLES.guest, GUEST_ROUTES.startup], { replaceUrl: true });
         }
       }
-
     });
   }
 
   private initEventListeners() {
-    if (this.platform.is('android')
-      || this.platform.is('ios')
-      || this.platform.is('cordova')) {
+    if (this.platform.is('android') || this.platform.is('ios') || this.platform.is('cordova')) {
       this.initMobileListeners();
     }
   }
@@ -101,5 +98,4 @@ export class AppComponent implements OnInit {
       this._isKeyBoardShown$.next(false);
     });
   }
-
 }

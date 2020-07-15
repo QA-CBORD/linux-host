@@ -66,6 +66,13 @@
     opacity: 0.6;
     z-index: 2;
   }
+
+  //BugFix/GCS-1928 #5 sign  for all fields with an error (to comply with Accessibility standards).
+  &__accesibility_error {
+    position: absolute;
+    top: 25%;
+    right: 5%;
+  }
 }
 
 :host-context(.ng-valid.ng-dirty) .input__control {

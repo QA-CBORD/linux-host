@@ -4,15 +4,15 @@
   width: 100%;
   height: 100%;
   --background: #f0f3f5;
-  
+
   &__header-toolbar {
     padding: 5px 15px 5px 10px;
   }
 
   &__header-back-btn {
     display: block;
-    --icon-font-size: 20px;
     --icon-margin-end: 5px;
+    --icon-font-size: 15px; //GCS-1928 #4, Unified design for button.  20px->15px;
   }
 
   &__header-search-btn {
@@ -28,7 +28,7 @@
 
   &__header-title {
     padding-left: 105px;
-    
+
     @include font-nunito-heavy(20px);
   }
 

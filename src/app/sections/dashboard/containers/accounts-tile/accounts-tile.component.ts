@@ -23,11 +23,13 @@ export class AccountsTileComponent implements OnInit {
   itemsPerSlide: number = 4;
   slides: UserAccount[][] = [];
   isLoading: boolean = true;
+  pager: boolean = false;
 
-  constructor(private readonly accountsService: AccountsService,
-              private readonly router: Router,
-              private readonly cdRef: ChangeDetectorRef) {
-  }
+  constructor(
+    private readonly accountsService: AccountsService,
+    private readonly router: Router,
+    private readonly cdRef: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
     this.initUserAccounts();
@@ -36,12 +38,17 @@ export class AccountsTileComponent implements OnInit {
   private initUserAccounts() {
     this.accountsService
       .getAccountsFilteredByDisplayTenders()
-      .pipe(take(1),
-      finalize(()=> {
-        this.isLoading = false;
-        this.cdRef.detectChanges();
-      }))
+      .pipe(
+        take(1),
+        finalize(() => {
+          this.isLoading = false;
+          this.cdRef.detectChanges();
+        })
+      )
       .subscribe(accounts => {
+        //GCS-1928 Hide Pager Icon if only on slide.
+        this.pager = accounts.length > this.itemsPerSlide;
+
         while (accounts.length > 0) {
           this.slides.push(accounts.splice(0, this.itemsPerSlide));
         }

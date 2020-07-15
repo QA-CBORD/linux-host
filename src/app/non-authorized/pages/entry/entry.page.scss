@@ -1,5 +1,5 @@
 @import 'tools';
- 
+
 // Add this when location will implemented
 
 // ion-icon {
@@ -7,31 +7,35 @@
 //   margin-right: 10px;
 // }
 
+// st-button {
+//   //   background-color: greenyellow;
+// }
+
 .entry {
   &__content {
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-	width: 100%;
-	height: 100%;
-	background: no-repeat url('/assets/images/entry-bg.svg');
-	background-size: cover;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    height: 100%;
+    background: no-repeat url('/assets/images/entry-bg.svg');
+    background-size: cover;
   }
 
   &__info {
-	margin-top: 52%;
-	padding-left: 40px;
-	padding-right: 120px;
+    margin-top: 52%;
+    padding-left: 40px;
+    padding-right: 120px;
 
-	@include font-nunito-heavy(20px);
+    @include font-nunito-heavy(20px);
   }
 
   &__buttons {
-	height: 130px;
-	display: flex;
-	flex-direction: column;
-	justify-content: space-evenly;
-	padding: 0 20px;
-	margin-bottom: 10%;
+    height: 130px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    padding: 0 20px;
+    margin-bottom: 10%;
   }
 }

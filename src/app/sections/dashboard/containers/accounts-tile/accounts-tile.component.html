@@ -1,8 +1,11 @@
-<div class="accounts" [ngClass]="{'accounts--auto-height': !isLoading}">
-  <ion-slides *ngIf="!isLoading && slides.length"
-              class="accounts__slides"
-              [pager]="true" mode="ios"
-              [options]="slideOpts">
+<div class="accounts" [ngClass]="{ 'accounts--auto-height': !isLoading }">
+  <ion-slides
+    *ngIf="!isLoading && slides.length"
+    class="accounts__slides"
+    [pager]="pager"
+    mode="ios"
+    [options]="slideOpts"
+  >
     <ion-slide class="accounts__slide" *ngFor="let accountsByOneSlide of slides">
       <div class="accounts__item" *ngFor="let account of accountsByOneSlide" (click)="goToAccountHistory(account.id)">
         <div class="accounts__title">{{ account.accountDisplayName }}</div>
