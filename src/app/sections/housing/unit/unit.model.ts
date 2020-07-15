@@ -1,4 +1,5 @@
 import { Label } from '@shared/ui-components/label/label.model';
+import { Facility, IMapper } from '@sections/housing/facilities/facilities.model';
 
 export class Unit {
   title: string;
@@ -11,3 +12,11 @@ export class Unit {
     this.labels = Array.isArray(options.labels) ? options.labels : [];
   }
 }
+
+export class FacilityToUnitsMapper implements IMapper {
+  map(items: Facility[]): Unit[] {
+    return items.map(x => new Unit({title: x.facilityName, isFavorite: false,
+      labels: x.attributes.map(y => new Label(y.value))}));
+  }
+}
+

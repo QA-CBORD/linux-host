@@ -15,7 +15,11 @@ const routes: Routes = [
         component: BuildingsPage,
       },
       {
-        path: 'units',
+        path: 'units/:buildingKey',
+        component: UnitsPage,
+      },
+      {
+        path: 'units/',
         component: UnitsPage,
       }
     ],

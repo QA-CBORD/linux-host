@@ -2,8 +2,8 @@
   <img class="building__image" src="/assets/images/housing/building-mock.jpg" alt="Merion Hall" />
 </figure>
 
-<section class="building__details">
-  <header class="building__header">
+<section class="building__details" >
+  <header class="building__header" tappable (mousedown)="goToUnits(building.key)">
     <div class="building__description">
       <h3 class="building__title">{{ building.title }}</h3>
       <div class="building__facilities">1-4 Beds * 1-2 Baths</div>

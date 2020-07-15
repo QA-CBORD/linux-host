@@ -12,7 +12,7 @@ export class RoomsComponent {
   constructor(public roomsStateService: RoomsStateService,
               private _router: Router,
               private _activeRoute: ActivatedRoute) { }
-  test(key: any): void {
+  goToRoomSelection(key: any): void {
     this._router.navigate(['/housing/rooms-search', key]).then(nav => {
       console.log(nav);
     }, err => {
