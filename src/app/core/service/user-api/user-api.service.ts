@@ -62,7 +62,7 @@ export class UserApiService {
   }
     
   // updateUserPhotoStatus(String sessionId, String photoId, Integer status, String reason){
-  //
+
   // }
 
 

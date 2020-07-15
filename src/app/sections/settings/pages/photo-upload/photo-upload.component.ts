@@ -20,6 +20,7 @@ const { Camera } = Plugins;
   styleUrls: ['./photo-upload.component.scss'],
 })
 export class PhotoUploadComponent implements OnInit {
+  photoList: any;
   frontId: SafeResourceUrl = null;
   backId: SafeResourceUrl = null;
   selfie: SafeResourceUrl = null;
@@ -33,14 +34,16 @@ export class PhotoUploadComponent implements OnInit {
     private readonly domsanitizer: DomSanitizer,
     private readonly identityFacadeService: IdentityFacadeService,
     private readonly toastController: ToastController,
-    private readonly userFacadeService: UserFacadeService,
-  ) { }
+    private readonly userFacadeService: UserFacadeService
+  ) {}
 
   ngOnInit() {
-    //call institution settings for photos 
+    //call institution settings for photos
     this.setUserPhoto();
+    this.getPhotoList();
   }
 
+  //sets the user photo varibale if there is a photo
   private setUserPhoto() {
     this.userFacadeService
       .getAcceptedPhoto$()
@@ -51,44 +54,39 @@ export class PhotoUploadComponent implements OnInit {
       .subscribe((url: string) => {
         this.userPhoto = url;
       });
-      console.log('user photo', this.userPhoto);
+    console.log('user photo', this.userPhoto);
   }
 
-  private setIDPhotos(){
+  private setIDPhotos() {}
 
+  //gets the photolist by user id
+  getPhotoList() {
+    this.userFacadeService
+      .getPhotoList()
+      .subscribe(list => (this.photoList = list));
+    console.log('photoList', this.photoList);
   }
-
 
   //prompts to open camera or photos for front id pic
   async promptFrontPhoto() {
     this.getPhoto().subscribe(
       data => {
         console.log('PFC Data:', data);
-        this.frontId = this.domsanitizer.bypassSecurityTrustResourceUrl(`data:image/${data.format};base64, ${data.base64String}`);
+        this.frontId = this.domsanitizer.bypassSecurityTrustResourceUrl(
+          `data:image/${data.format};base64, ${data.base64String}`
+        );
       },
       error => {
         console.log('PFC Error:', error);
-        this.presentToast('There was an issue taking the picture - please try again')
+        this.presentToast('There was an issue taking the picture - please try again');
       },
       () => {
-        console.log('PFC Complete')
+        console.log('PFC Complete');
       }
-    )
+    );
 
-    //OLD function for getting front ID pic , can remove
-    // const image = await Camera.getPhoto({
-    //   quality: 85, //Test
-    //   correctOrientation: true,
-    //   allowEditing: false,
-    //   resultType: CameraResultType.Uri,
     //   height: 80, //Test
     //   width: 132, //Test
-    // });
-    // console.log('camera result', image);
-    // //sanitizes image show it can be shown, i can also get the base64 by adding the result type as an array
-    // var imageUrl = this.domsanitizer.bypassSecurityTrustResourceUrl(image && image.webPath);
-    // console.log('img', imageUrl);
-    // this.frontId = imageUrl;
   }
 
   //prompts to open camera or photos for front id pic
@@ -96,45 +94,35 @@ export class PhotoUploadComponent implements OnInit {
     this.getPhoto().subscribe(
       data => {
         console.log('PBC Data:', data);
-        this.backId = this.domsanitizer.bypassSecurityTrustResourceUrl(`data:image/${data.format};base64, ${data.base64String}`);
+        this.backId = this.domsanitizer.bypassSecurityTrustResourceUrl(
+          `data:image/${data.format};base64, ${data.base64String}`
+        );
       },
       error => {
         console.log('PBC Error:', error);
-        this.presentToast('There was an issue taking the picture - please try again')
+        this.presentToast('There was an issue taking the picture - please try again');
       },
       () => {
-        console.log('PBC Complete')
+        console.log('PBC Complete');
       }
-    )
+    );
 
-    //OLD Function for getting back id pic, left it here just in case, can remove
-    //   const image = await Camera.getPhoto({
-    //     quality: 85, //Test
-    //     correctOrientation: true,
-    //     allowEditing: false,
-    //     resultType: CameraResultType.Uri,
     //     height: 80, //Test
     //     width: 132, //Test
-    //   });
-    //   console.log('camera result', image);
-    //   //sanitizes image show it can be shown, i can also get the base64 by adding the result type as an array above
-    //   var imageUrl = this.domsanitizer.bypassSecurityTrustResourceUrl(image && image.webPath);
-    //   console.log('img', imageUrl);
-    //   this.backId = imageUrl;
-    // }
   }
-
 
   //prompts to open camera or photos for selfie pic
   async promptSelfieCamera() {
     this.getPhoto().subscribe(
       data => {
         console.log('PSC Data:', data);
-        this.selfie = this.domsanitizer.bypassSecurityTrustResourceUrl(`data:image/${data.format};base64, ${data.base64String}`);
+        this.selfie = this.domsanitizer.bypassSecurityTrustResourceUrl(
+          `data:image/${data.format};base64, ${data.base64String}`
+        );
       },
       error => {
         console.log('PSC Error:', error);
-        this.presentToast('There was an issue taking the picture - please try again')
+        this.presentToast('There was an issue taking the picture - please try again');
       },
       () => {
         console.log('PSC Complete:');
@@ -145,19 +133,27 @@ export class PhotoUploadComponent implements OnInit {
   //will submit all photos that have been uploaded
   submitPhotos() {
     console.log('front id pic', this.frontId, 'back id pic', this.backId, 'selfie pic', this.selfie);
- // this.selfiePicSubmit();
- // this.frontIDPicSubmit();
- // this.backIDPicSubmit();
-      //trying to add the function for setting all the photos you have taken
-      
+    this.selfiePicSubmit();
+    this.frontIDPicSubmit();
+    this.backIDPicSubmit();
+    //trying to add the function for setting all the photos you have taken
+
     //changes the condition to submitted and removes the upload ability
     this.submitted = true;
     console.log('function for submitting photos to DB');
   }
- //
- //  this.selfiePicSubmit(){}
- // this.frontIDPicSubmit(){}
- // this.backIDPicSubmit(){}
+
+  selfiePicSubmit() {
+    //this is where the add user photo code will go for selfie
+  }
+
+  frontIDPicSubmit() {
+    //this is where the add user photo code will go for selfie
+  }
+
+  backIDPicSubmit() {
+    //this is where the add user photo code will go for selfie
+  }
 
   //will delete photos from DB
   deletePhoto() {

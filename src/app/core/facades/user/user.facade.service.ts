@@ -51,8 +51,11 @@ export class UserFacadeService extends ServiceStateFacade {
       .pipe(tap(res => this.storageStateService.updateStateEntity(this.userKey, res, this.ttl)));
   }
 
-  getUserPhoto$(userId: string): Observable<MessageResponse<UserPhotoInfo>> {
-    return this.userApiService.getUserPhoto(userId);
+  getUserPhoto$(): Observable<MessageResponse<UserPhotoInfo>> {
+    return this.getUserData$().pipe(
+      switchMap(({ id }: UserInfo) => this.userApiService.getUserPhoto(id)),
+      take(1)
+    );
   }
 
   addUserPhoto(photo: UserPhotoInfo): Observable<boolean> {
@@ -93,12 +96,19 @@ export class UserFacadeService extends ServiceStateFacade {
     );
   }
 
-  getPhotoListByUserId(userId: string): Observable<MessageResponse<UserPhotoList>> {
-    return this.userApiService.getPhotoListByUserId(userId);
+  getPhotoList(): Observable<UserPhotoList> {
+    return this.getUserData$().pipe(
+      switchMap(({ id }: UserInfo) => this.userApiService.getPhotoListByUserId(id)),
+      map(({ response }) => response),
+      take(1)
+    );
   }
 
-  getPhotoById(photoId: string): Observable<MessageResponse<UserPhotoInfo>> {
-    return this.userApiService.getPhotoById(photoId);
+  getPhotoById(photoId: string): Observable<UserPhotoInfo> {
+    return this.userApiService.getPhotoById(photoId).pipe(
+      map(({ response }) => response),
+      take(1)
+    );
   }
 
   setAcceptedPhoto(acceptedPhoto: UserPhotoInfo) {
@@ -110,11 +120,10 @@ export class UserFacadeService extends ServiceStateFacade {
 
     let nativeProviderFunction: Observable<UserPhotoInfo>;
 
-    const userPhotoInfoObservable: Observable<UserPhotoInfo> = this.getUserData$().pipe(
-      switchMap(({ id }: UserInfo) => this.getPhotoListByUserId(id)),
-      map(({ response: { list } }) => this.getPhotoIdByStatus(list)),
+    const userPhotoInfoObservable: Observable<UserPhotoInfo> = this.getPhotoList().pipe(
+      map(({ list }) => this.getPhotoIdByStatus(list)),
       switchMap(({ id }: UserPhotoInfo) => this.getPhotoById(id)),
-      map(({ response }) => (this.userPhoto = response))
+      map(response => (this.userPhoto = response))
     );
 
     nativeProviderFunction = userPhotoInfoObservable;
