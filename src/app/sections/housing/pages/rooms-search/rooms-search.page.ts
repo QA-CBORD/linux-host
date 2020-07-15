@@ -18,10 +18,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RoomsSearchPage {
-  units: Unit[] = [
-    new Unit('/housing/rooms-search/buildings', 'Buildings'),
-    new Unit('/housing/rooms-search/units', 'Units'),
-  ];
+  units: Unit[];
   roomSelectKey: number;
   parentFacilities: Facility[];
 
@@ -37,6 +34,10 @@ export class RoomsSearchPage {
   ngOnInit(): void {
     this.roomSelectKey = parseInt(this._route.snapshot.paramMap.get('roomSelectKey'), 10);
     console.log(this.roomSelectKey);
+    this.units = [
+      new Unit(`/housing/rooms-search/${this.roomSelectKey}/buildings`, 'Buildings'),
+      new Unit(`/housing/rooms-search/${this.roomSelectKey}/units`, 'Units'),
+    ];
     this._loadingService.showSpinner();
     this._housingService.getFacilities(this.roomSelectKey).subscribe(data => {
       console.log({ data });
