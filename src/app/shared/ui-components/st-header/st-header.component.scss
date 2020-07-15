@@ -44,6 +44,8 @@
     --icon-padding-end: 5px;
     --icon-font-size: 15px; //GCS-1928 #4, Unified design for button.  18px->15px;
 
+    --icon-font-size: 15px; //GCS-1928 #4, Unified design for button.  22px->15px;
+
     @include font-nunito-regular(16px);
   }
 
