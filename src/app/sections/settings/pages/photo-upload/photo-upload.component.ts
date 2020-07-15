@@ -20,6 +20,8 @@ const { Camera } = Plugins;
   styleUrls: ['./photo-upload.component.scss'],
 })
 export class PhotoUploadComponent implements OnInit {
+  userId: any;
+  photoList: any;
   frontId: SafeResourceUrl = null;
   backId: SafeResourceUrl = null;
   selfie: SafeResourceUrl = null;
@@ -38,9 +40,19 @@ export class PhotoUploadComponent implements OnInit {
 
   ngOnInit() {
     //call institution settings for photos 
+    this.getUserData();
     this.setUserPhoto();
+    this.getPhotoList();
   }
 
+  //gets user data so we can use ID
+  getUserData() {
+    this.userFacadeService.getUserData$()
+      .pipe(take(1))
+      .subscribe(({ id }) => (this.userId = id));
+  }
+
+  //sets the user photo varibale if there is a photo
   private setUserPhoto() {
     this.userFacadeService
       .getAcceptedPhoto$()
@@ -51,11 +63,19 @@ export class PhotoUploadComponent implements OnInit {
       .subscribe((url: string) => {
         this.userPhoto = url;
       });
-      console.log('user photo', this.userPhoto);
+    console.log('user photo', this.userPhoto);
   }
 
-  private setIDPhotos(){
+  private setIDPhotos() {
 
+  }
+
+  //gets the photolist by user id
+  getPhotoList() {
+    this.userFacadeService.getPhotoListByUserId(this.userId)
+      .pipe(take(1))
+      .subscribe((list) => (this.photoList = list));
+    console.log('photoList', this.photoList);
   }
 
 
@@ -75,20 +95,9 @@ export class PhotoUploadComponent implements OnInit {
       }
     )
 
-    //OLD function for getting front ID pic , can remove
-    // const image = await Camera.getPhoto({
-    //   quality: 85, //Test
-    //   correctOrientation: true,
-    //   allowEditing: false,
-    //   resultType: CameraResultType.Uri,
     //   height: 80, //Test
     //   width: 132, //Test
-    // });
-    // console.log('camera result', image);
-    // //sanitizes image show it can be shown, i can also get the base64 by adding the result type as an array
-    // var imageUrl = this.domsanitizer.bypassSecurityTrustResourceUrl(image && image.webPath);
-    // console.log('img', imageUrl);
-    // this.frontId = imageUrl;
+
   }
 
   //prompts to open camera or photos for front id pic
@@ -107,21 +116,9 @@ export class PhotoUploadComponent implements OnInit {
       }
     )
 
-    //OLD Function for getting back id pic, left it here just in case, can remove
-    //   const image = await Camera.getPhoto({
-    //     quality: 85, //Test
-    //     correctOrientation: true,
-    //     allowEditing: false,
-    //     resultType: CameraResultType.Uri,
     //     height: 80, //Test
     //     width: 132, //Test
-    //   });
-    //   console.log('camera result', image);
-    //   //sanitizes image show it can be shown, i can also get the base64 by adding the result type as an array above
-    //   var imageUrl = this.domsanitizer.bypassSecurityTrustResourceUrl(image && image.webPath);
-    //   console.log('img', imageUrl);
-    //   this.backId = imageUrl;
-    // }
+
   }
 
 
@@ -145,19 +142,27 @@ export class PhotoUploadComponent implements OnInit {
   //will submit all photos that have been uploaded
   submitPhotos() {
     console.log('front id pic', this.frontId, 'back id pic', this.backId, 'selfie pic', this.selfie);
- this.selfiePicSubmit();
- this.frontIDPicSubmit();
- this.backIDPicSubmit();
-      //trying to add the function for setting all the photos you have taken
-      
+    this.selfiePicSubmit();
+    this.frontIDPicSubmit();
+    this.backIDPicSubmit();
+    //trying to add the function for setting all the photos you have taken
+
     //changes the condition to submitted and removes the upload ability
     this.submitted = true;
     console.log('function for submitting photos to DB');
   }
 
-  this.selfiePicSubmit(){}
- this.frontIDPicSubmit(){}
- this.backIDPicSubmit(){}
+  selfiePicSubmit() {
+    //this is where the add user photo code will go for selfie
+  }
+
+  frontIDPicSubmit() {
+    //this is where the add user photo code will go for selfie
+  }
+
+  backIDPicSubmit() {
+    //this is where the add user photo code will go for selfie
+  }
 
   //will delete photos from DB
   deletePhoto() {
