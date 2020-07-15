@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "1074778310372",
+    "firebase_url": "https://get-mobile-22ae8.firebaseio.com",
+    "project_id": "get-mobile-22ae8",
+    "storage_bucket": "get-mobile-22ae8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1074778310372:android:cd8bef7d70471c91",
+        "android_client_info": {
+          "package_name": "com.cbord.get"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1074778310372-guqn2unp1n0vp9o350ul926s1tb128ep.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDxpNPJADXg0Z4m_1j1OlWlbD1u8RzVLXI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
