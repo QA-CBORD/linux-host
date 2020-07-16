@@ -1,17 +1,18 @@
 import { Injectable } from '@angular/core';
 import { ServiceStateFacade } from '@core/classes/service-state-facade';
-import { Observable, of, from } from 'rxjs';
+import { Observable, of, from, iif, zip } from 'rxjs';
 import { UserApiService } from '@core/service/user-api/user-api.service';
 import { UserInfo } from '@core/model/user/user-info.model';
-import { UserPhotoInfo, UserPhotoList, UserSettingInfo } from '@core/model/user';
+import { UserPhotoInfo, UserPhotoList, UserNotificationInfo } from '@core/model/user';
 import { MessageResponse } from '@core/model/service/message-response.model';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { map, switchMap, tap, take, catchError } from 'rxjs/operators';
 import { AddressInfo } from '@core/model/address/address-info';
-import { NativeProvider, NativeData } from '@core/provider/native-provider/native.provider';
+import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { Settings } from 'src/app/app.global';
-import { Device } from '@capacitor/core';
+import { Plugins, Device, Capacitor, PushNotificationToken, PushNotification } from '@capacitor/core';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
+const { PushNotifications } = Plugins;
 
 @Injectable({
   providedIn: 'root',
@@ -21,12 +22,13 @@ export class UserFacadeService extends ServiceStateFacade {
   private userPhoto: UserPhotoInfo = null;
   private userKey = 'get_user';
   private userAddressKey = 'get_user_address';
+  private fcmTokenKey = 'fcm_token';
 
   constructor(
     private readonly userApiService: UserApiService,
     private readonly storageStateService: StorageStateService,
     private readonly nativeProvider: NativeProvider,
-    private readonly settingsFacadeService: SettingsFacadeService,
+    private readonly settingsFacadeService: SettingsFacadeService
   ) {
     super();
   }
@@ -60,12 +62,11 @@ export class UserFacadeService extends ServiceStateFacade {
   }
 
   createUserPin(pin: string): Observable<boolean> {
-    return from(Device.getInfo())
-      .pipe(
-        switchMap(({uuid}) => this.userApiService.createUserPin(pin, uuid)),
-        map(({ response }) => response),
-        take(1)
-      );
+    return from(Device.getInfo()).pipe(
+      switchMap(({ uuid }) => this.userApiService.createUserPin(pin, uuid)),
+      map(({ response }) => response),
+      take(1)
+    );
   }
 
   requestDeposit$(
@@ -144,5 +145,85 @@ export class UserFacadeService extends ServiceStateFacade {
 
   private getPhotoIdByStatus(photoList: UserPhotoInfo[], status: number = 1): UserPhotoInfo | undefined {
     return photoList.find((photo: UserPhotoInfo) => photo.status === status);
+  }
+
+  handlePushNotificationRegistration() {
+    zip(this.isPushNotificationEnabled$(), this.getFCMToken$())
+      .pipe(
+        switchMap(([pushNotificationsEnabled, fcmToken]) => {
+          return iif(
+            () => pushNotificationsEnabled && !fcmToken,
+            from(PushNotifications.requestPermission()),
+            of({ granted: false })
+          );
+        }),
+        take(1)
+      )
+      .subscribe(result => {
+        if (result.granted) {
+          PushNotifications.removeAllListeners();
+          PushNotifications.addListener('pushNotificationReceived', (notification: PushNotification) => {});
+          PushNotifications.addListener('registration', (token: PushNotificationToken) => {
+            this.saveNotification$(token.value).subscribe(
+              response => {
+                console.log('saveNotification: next', response);
+              },
+              error => {
+                console.log('saveNotification: error', error);
+              },
+              () => console.log('saveNotification: complete')
+            );
+          });
+          PushNotifications.register();
+        }
+      });
+  }
+
+  saveNotification$(fcmToken: string): Observable<string> {
+    this.setFCMToken(fcmToken);
+    const notification: UserNotificationInfo = {
+      type: 8,
+      value: fcmToken,
+      provider: Capacitor.platform,
+    };
+    return this.getUserData$().pipe(
+      switchMap(({ id }) => this.userApiService.saveNotification$(id, notification)),
+      take(1)
+    );
+  }
+
+  logoutAndRemoveUserNotification(): Observable<boolean> {
+    return zip(this.getUserData$(), this.getFCMToken$()).pipe(
+      switchMap(([{ id }, fcmToken]) => {
+        if (fcmToken) {
+          const notification: UserNotificationInfo = {
+            type: 8,
+            value: fcmToken,
+            provider: Capacitor.platform,
+          };
+          PushNotifications.removeAllDeliveredNotifications();
+          return this.userApiService.logoutAndRemoveUserNotification$(id, notification);
+        }
+        return of(false);
+      }),
+      take(1)
+    );
+  }
+
+  isPushNotificationEnabled$(): Observable<boolean> {
+    return this.settingsFacadeService.getSetting(Settings.Setting.PUSH_NOTIFICATION_ENABLED).pipe(
+      map(({ value }) => Boolean(Number(value))),
+      take(1)
+    );
+  }
+
+  private setFCMToken(value: string) {
+    this.storageStateService.updateStateEntity(this.fcmTokenKey, value, this.ttl);
+  }
+
+  getFCMToken$(): Observable<string> {
+    return this.storageStateService
+      .getStateEntityByKey$<string>(this.fcmTokenKey)
+      .pipe(map(data => (data && data.value ? data.value : null)));
   }
 }

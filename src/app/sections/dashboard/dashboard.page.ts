@@ -16,6 +16,7 @@ import { Router } from '@angular/router';
 import { ROLES } from 'src/app/app.global';
 import { GUEST_ROUTES } from 'src/app/non-authorized/non-authorized.config';
 import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
+import { UserFacadeService } from '@core/facades/user/user.facade.service';
 
 @Component({
   selector: 'st-dashboard',
@@ -33,7 +34,8 @@ export class DashboardPage implements OnInit {
     private readonly contentStringsFacadeService: ContentStringsFacadeService,
     private readonly authFacadeService: AuthFacadeService,
     private readonly identityFacadeService: IdentityFacadeService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly userFacadeService: UserFacadeService
   ) {}
 
   get tilesIds(): { [key: string]: string } {
@@ -44,11 +46,13 @@ export class DashboardPage implements OnInit {
     this.tiles$ = this.tileConfigFacadeService.tileSettings$;
     this.updateDonationMealsStrings();
     this.updateOrderingStrings();
+    this.userFacadeService.handlePushNotificationRegistration();
   }
 
   async logout(): Promise<void> {
-    this.authFacadeService.logoutUser();
+    await this.userFacadeService.logoutAndRemoveUserNotification().toPromise();
     this.identityFacadeService.logoutUser();
+    this.authFacadeService.logoutUser();
     this.router.navigate([ROLES.guest, GUEST_ROUTES.entry]);
   }
 
@@ -104,4 +108,5 @@ export class DashboardPage implements OnInit {
 
     await this.tileConfigFacadeService.updateConfigById(TILES_ID.order, res);
   }
+
 }
