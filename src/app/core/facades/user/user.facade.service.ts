@@ -58,6 +58,7 @@ export class UserFacadeService extends ServiceStateFacade {
     );
   }
 
+  //adds a photo and takes a UsrPhotoInfo object
   addUserPhoto(photo: UserPhotoInfo): Observable<boolean> {
     return this.getUserData$().pipe(
       switchMap(({ id }) => this.userApiService.addUserPhoto(id, photo)),

@@ -22,11 +22,16 @@ const { Camera } = Plugins;
 export class PhotoUploadComponent implements OnInit {
   frontId: SafeResourceUrl = null;
   frontIdPhotoInfo: UserPhotoInfo;
+  frontIdBase64: string;
   backId: SafeResourceUrl = null;
   backIdPhotoInfo: UserPhotoInfo;
+  backIdBase64: string;
   selfie: SafeResourceUrl = null;
   selfiePhotoInfo: UserPhotoInfo;
-  submitted: boolean = false;
+  selfieBase64: string;
+  frontIdSubmitted: boolean = false;
+  backIdSubmitted: boolean = false;
+  selfieSubmitted: boolean = false;
   userId: any;
   photoList: any;
   userPhoto: string;
@@ -48,7 +53,7 @@ export class PhotoUploadComponent implements OnInit {
     this.getPhotoList();
   }
 
-  //sets the user photo varibale if there is a photo
+  //sets the user photo varibale if there is a photo, keep getting a timeout error when i try to use this
   // private setUserPhoto() {
   //   this.userFacadeService
   //     .getAcceptedPhoto$()
@@ -68,7 +73,7 @@ export class PhotoUploadComponent implements OnInit {
   //     );
   // }
 
-  //gets the photolist by user id
+  //gets the photolist by user id, gives you a list of photoId but no photo base64 string
   getPhotoList() {
     this.userFacadeService.getPhotoList().subscribe(
       list => {
@@ -83,24 +88,25 @@ export class PhotoUploadComponent implements OnInit {
     );
   }
 
-  //sorts through the available photos and sets them appropriately
+  //sorts through the available photos and sets them appropriately, right now we dont know the format of the photo being returned so it is set to jpeg
   sortPhotos() {
     var index;
     for (index = 0; index < this.photoList.length; index++) {
       if (this.photoList[index].type === 0 && this.photoList[index].status === 1 && this.photoList[index].data !== null) {
         console.log('photo has a type of 0', this.photoList[index]);
         this.selfiePhotoInfo = this.photoList[index];
-        this.selfie = this.domsanitizer.bypassSecurityTrustResourceUrl(this.selfiePhotoInfo.data);
+        this.selfie = this.domsanitizer.bypassSecurityTrustResourceUrl(
+          `data:image/jpeg;base64, ${this.selfiePhotoInfo.data}`);
       }
       if (this.photoList[index].type === 1 && this.photoList[index].status === 1 && this.photoList[index].data !== null) {
         console.log('photo has a type of 1', this.photoList[index]);
-        this.frontIdPhotoInfo = this.photoList[index] ;
-        this.frontId = this.domsanitizer.bypassSecurityTrustResourceUrl(this.frontIdPhotoInfo.data);
+        this.frontIdPhotoInfo = this.photoList[index];
+        this.frontId = this.domsanitizer.bypassSecurityTrustResourceUrl(`data:image/jpeg;base64, ${this.frontIdPhotoInfo.data}`);
       }
       if (this.photoList[index].type === 2 && this.photoList[index].status === 1 && this.photoList[index].data !== null) {
         console.log('photo has a type of 2', this.photoList[index]);
         this.backIdPhotoInfo = this.photoList[index];
-        this.backId = this.domsanitizer.bypassSecurityTrustResourceUrl(this.backIdPhotoInfo.data);
+        this.backId = this.domsanitizer.bypassSecurityTrustResourceUrl(`data:image/jpeg;base64, ${this.backIdPhotoInfo.data}`);
       }
     }
   }
@@ -114,6 +120,7 @@ export class PhotoUploadComponent implements OnInit {
         this.frontId = this.domsanitizer.bypassSecurityTrustResourceUrl(
           `data:image/${data.format};base64, ${data.base64String}`
         );
+        this.frontIdBase64 = data.base64String;
       },
       error => {
         console.log('PFC Error:', error);
@@ -136,6 +143,7 @@ export class PhotoUploadComponent implements OnInit {
         this.backId = this.domsanitizer.bypassSecurityTrustResourceUrl(
           `data:image/${data.format};base64, ${data.base64String}`
         );
+        this.backIdBase64 = data.base64String;
       },
       error => {
         console.log('PBC Error:', error);
@@ -158,6 +166,7 @@ export class PhotoUploadComponent implements OnInit {
         this.selfie = this.domsanitizer.bypassSecurityTrustResourceUrl(
           `data:image/${data.format};base64, ${data.base64String}`
         );
+        this.selfieBase64 = data.base64String;
       },
       error => {
         console.log('PSC Error:', error);
@@ -173,36 +182,61 @@ export class PhotoUploadComponent implements OnInit {
   // this needs to be changed...i think it can add photos of each type just need to create the entire userPhotoInfo object for each
   submitPhotos() {
     console.log('front id pic', this.frontId, 'back id pic', this.backId, 'selfie pic', this.selfie);
-    var index;
-    for (index = 0; index < this.photoList.length; index++) {
-      if (this.photoList[index].type === 0) {
-        console.log('photo has a type of 0', this.photoList[index]);
-        this.photoList[index].data = this.selfie;
-        let selfiePhotoInfo = this.photoList[index];
-        this.selfiePicSubmit(selfiePhotoInfo);
-      }
-      if (this.photoList[index].type === 1) {
-        console.log('photo has a type of 1', this.photoList[index]);
-        this.photoList[index].data = this.frontId;
-        let frontIdPhotoInfo = this.photoList[index];
-        this.frontIDPicSubmit(frontIdPhotoInfo);
-      }
-      if (this.photoList[index].type === 2) {
-        console.log('photo has a type of 2', this.photoList[index]);
-        this.photoList[index].data = this.backId;
-        let backIdPhotoInfo = this.photoList[index];
-        this.backIDPicSubmit(backIdPhotoInfo);
-      }
-    }
-    // this.selfiePicSubmit();
-    // this.frontIDPicSubmit();
-    // this.backIDPicSubmit();
-    //trying to add the function for setting all the photos you have taken
+    var today = new Date();
+    var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+    var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+    var dateTime = date + ' ' + time;
 
-    //changes the condition to submitted and removes the upload ability, probably going to need to have something that is tied to each of the image repsonses 
-    //in the next parts of the individual subscriptions
-    this.submitted = true;
+    //formats the selfie photo for submission
+    let selfiePhotoInfo: UserPhotoInfo = {
+      'externalId': null,
+      'userId': '',
+      'mimeType': 'image/jpeg',
+      'status': 0,
+      'statusReason': null,
+      'data': this.frontIdBase64,
+      'id': null,
+      'insertTime': dateTime,
+      'lastUpdated': dateTime,
+      'version': 1,
+      'type': 0,
+    }
+    this.selfiePicSubmit(selfiePhotoInfo);
+
+    //formats the frontId pic for submission
+    let frontIdPhotoInfo: UserPhotoInfo = {
+      'externalId': null,
+      'userId': '',
+      'mimeType': 'image/jpeg',
+      'status': 0,
+      'statusReason': null,
+      'data': this.frontIdBase64,
+      'id': null,
+      'insertTime': dateTime,
+      'lastUpdated': dateTime,
+      'version': 1,
+      'type': 1,
+    }
+    this.frontIDPicSubmit(frontIdPhotoInfo);
+
+
+    //formats the backId photo for submission
+    let backIdPhotoInfo: UserPhotoInfo = {
+      'externalId': null,
+      'userId': '',
+      'mimeType': 'image/jpeg',
+      'status': 0,
+      'statusReason': null,
+      'data': this.frontIdBase64,
+      'id': null,
+      'insertTime': dateTime,
+      'lastUpdated': dateTime,
+      'version': 1,
+      'type': 2,
+    }
+    this.backIDPicSubmit(backIdPhotoInfo);
   }
+
 
   selfiePicSubmit(photo: UserPhotoInfo) {
     //this is where the add user photo code will go for selfie
@@ -216,6 +250,7 @@ export class PhotoUploadComponent implements OnInit {
           this.presentToast('There was an issue submitting the photo - please try again');
         },
         () => {
+          this.selfieSubmitted = true;
           console.log('selfie Photo submitted');
         }
       )
@@ -233,6 +268,7 @@ export class PhotoUploadComponent implements OnInit {
           this.presentToast('There was an issue submitting the photo - please try again');
         },
         () => {
+          this.frontIdSubmitted = true
           console.log('front id Photo submitted');
         }
       )
@@ -251,6 +287,7 @@ export class PhotoUploadComponent implements OnInit {
           this.presentToast('There was an issue submitting the photo - please try again');
         },
         () => {
+          this.backIdSubmitted = true;
           console.log('back id Photo submitted');
         }
       )
@@ -290,8 +327,11 @@ export class PhotoUploadComponent implements OnInit {
         'photoId': photoId,
       }
     });
-    const { data } = await modal.onWillDismiss();
-    console.log(data);
+    await modal.onWillDismiss()
+      .then((data) => {
+        console.log(data);
+      });;
+
     return await modal.present();
   }
 
