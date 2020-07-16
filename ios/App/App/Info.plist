@@ -39,8 +39,6 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
-	<key>ITSAppUsesNonExemptEncryption</key>
-	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -49,21 +47,19 @@
 		<true/>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>GET requires access to your camera to setup Profile Image</string>
+	<string>To Take Photos and Video</string>
 	<key>NSFaceIDUsageDescription</key>
-	<string>GET requires FACE ID access for authentication</string>
+	<string>Use Face ID to authenticate yourself and login</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Allow GET to use your location</string>
-	<key>NSLocationUsageDescription</key>
-	<string>GET requires access to your locations to suggest nearby merchants</string>
+	<string>Always allow Geolocation?</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>GET uses your location to find the nearest merchants</string>
+	<string>Allow Geolocation?</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Allow GET to Record Audio and Video</string>
+	<string>To Record Audio With Video</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>GET requires access to your library to save Profile Image</string>
+	<string>Store camera photos to camera</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>GET requires access to your Photo Library to setup Profile Image</string>
+	<string>To Pick Photos from Library</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>
@@ -72,8 +68,6 @@
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
-	<key>UIStatusBarHidden</key>
-	<false/>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>
@@ -85,6 +79,9 @@
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
