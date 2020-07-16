@@ -40,12 +40,11 @@ export class AuthFacadeService extends ServiceStateFacade {
   }
 
   authenticatePin$(pin: string): Observable<boolean> {
-    return from(Device.getInfo())
-      .pipe(
-        switchMap(({uuid}) => this.authApiService.authenticatePin(pin, uuid)),
-        tap(res => this.storageStateService.updateStateEntity(this.sessionIdKey, res, this.ttl)),
-        map(res => !!res)
-      );
+    return from(Device.getInfo()).pipe(
+      switchMap(({ uuid }) => this.authApiService.authenticatePin(pin, uuid)),
+      tap(res => this.storageStateService.updateStateEntity(this.sessionIdKey, res, this.ttl)),
+      map(res => !!res)
+    );
   }
 
   authenticateSessionToken$(sessionToken: string): Observable<string> {
@@ -65,13 +64,18 @@ export class AuthFacadeService extends ServiceStateFacade {
   }
 
   logoutUser() {
+    this.clearState(); //Bugfix/GCS-1998 Institution is saved and cleared.
+  }
+
+  //Bugfix/GCS-1998 Institution is saved and cleared.
+  clearState() {
     this.storageStateService.clearState();
   }
 
   retrieveAuthorizationBlob(deviceModel: string, deviceOSVersion: string): Observable<string> {
     return this.authApiService.retrieveAuthorizationBlob(deviceModel, deviceOSVersion);
   }
-  
+
   private isValidData(data: StorageEntity): boolean {
     return data !== null && data.lastModified + data.timeToLive >= Date.now();
   }
