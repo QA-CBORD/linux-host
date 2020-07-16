@@ -74,8 +74,6 @@ export class UserPassForm implements OnInit {
     this.nativeHeaderBg$ = this.getNativeHeaderBg(id, sessionId);
     this.deviceInfo$ = this.fetchDeviceInfo();
     this.cdRef.markForCheck();
-
-    console.log('DeviceInfo', this.deviceInfo$);
   }
 
   redirectToWebPage(url) {
@@ -224,7 +222,7 @@ export class UserPassForm implements OnInit {
       .getInstitutionDataById$(id, sessionId, false)
       .pipe(
         tap(institutionInfo => (this.institutionInfo = institutionInfo)),
-        map(({ name }) => `${name}`),
+        map(({ name }) => `${name}`), //GCS-1928 Remove University Label
         take(1)
       )
       .toPromise();

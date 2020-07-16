@@ -9,9 +9,9 @@
     (blur)="onBlur()"
     [attr.maxlength]="maxlength"
     [ngClass]="{ 'input__control--error': isError }"
-    [disabled] = "isDisabled"
-    [attr.inputmode] = "inputmode"
-    [attr.enterkeyhint] = "enterkeyhint"
+    [disabled]="isDisabled"
+    [attr.inputmode]="inputmode"
+    [attr.enterkeyhint]="enterkeyhint"
   />
   <label class="input__placeholder" [attr.for]="idd">{{ label }}</label>
   <ng-content *ngIf="isError"></ng-content>

@@ -1,7 +1,8 @@
 @import 'tools';
 
 .card {
-  margin: 5px 10px 5px;
+  // margin: 5px;
+  margin: 5px 10px 5px; //GCS-1928
   border-radius: 15px;
   background: $color-dodger-blue;
   height: 280px;
