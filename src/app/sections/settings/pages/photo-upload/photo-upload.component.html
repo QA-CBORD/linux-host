@@ -58,7 +58,7 @@
       </div>
       <div class="header-message">
         <div class="key-message">
-          New photo is subject to admin approval. Use the content string!
+          New photo is subject to admin approval!
         </div>
       </div>
     </div>
@@ -68,7 +68,7 @@
       </div>
       <div class="header-message">
         <div class="key-message-submitted">
-          Your photo has been submitted and is now pending admin approval.
+          Your photo has been submitted and is now pending admin approval. Use the content string!
         </div>
       </div>
     </div>
@@ -80,28 +80,28 @@
         Current Photo
       </div>
       <!-- NOT CURRENTLY GETTING SAVED PROFILE PHOTO -->
-      <img src="../../../assets/images/CAT-PLACEHOLDER.jpg" />
+      <img *ngIf="!selfieOld" src="../../../assets/images/CAT-PLACEHOLDER.jpg" alt="cat place holder if there is not selfie"/>
+      <img *ngIf="selfieOld" [src]="selfieOld" alt="selfie pic">
     </div>
     <div class="stored-img-cont">
       <div>
         New Photo
       </div>
-      <img *ngIf="!selfie" src="../../../assets/icon/Icon Color (1).png" class="selfie-placeholder-img"  alt="User photo icon placeholder" />
-      <img *ngIf="selfie" [src]="selfie" class="uploaded-user-photo" alt="User uploaded photo"/>
-      <ion-button *ngIf="!selfie && !submitted" class="upload-btn" (click)="promptSelfieCamera()">UPLOAD</ion-button>
-      <ion-button *ngIf="selfie && !submitted" color="light" class="reupload-btn" (click)="promptSelfieCamera()">
+      <img *ngIf="!selfieNew" src="../../../assets/icon/Icon Color (1).png" class="selfie-placeholder-img"  alt="User photo icon placeholder" />
+      <img *ngIf="selfieNew" [src]="selfieNew" class="uploaded-user-photo" alt="User uploaded photo"/>
+      <ion-button *ngIf="!selfieNew && !selfieSubmitted" class="upload-btn" (click)="promptSelfieCamera()">UPLOAD</ion-button>
+      <ion-button *ngIf="selfieNew && !selfieSubmitted" color="light" class="reupload-btn" (click)="promptSelfieCamera()">
         REUPLOAD</ion-button
       >
-      <ion-button *ngIf="submitted" color="danger" class="reupload-btn" (click)="deletePhoto()">DELETE</ion-button>
+      <ion-button *ngIf="selfieSubmitted" color="danger" class="reupload-btn" (click)="deletePhoto()">DELETE</ion-button>
     </div>
   </ion-card-content>
 </ion-card>
 
 <!-- BUTTON THAT SUBMITS ALL PHOTOS (NOT CURRENTLY CHECKING FOR PHOTO VALUES) -->
 <div class="action-btn-container">
-  <ion-button *ngIf="!submitted" class="submit-btn" (click)="submitPhotos()">SUBMIT PHOTOS FOR REVIEW</ion-button>
+  <ion-button *ngIf="(!selfieSubmitted || !backIdSubmitted || !frontIdSubmitted)" class="submit-btn" (click)="submitPhotos()">SUBMIT PHOTOS FOR REVIEW</ion-button>
 </div>
-
 <!-- BOTTOM OF WHAT WILL BE MOVED TO THE PHOTO UPLOAD HTML FILE -->
 
 </ion-content>

@@ -26,7 +26,8 @@ export class PhotoUploadComponent implements OnInit {
   backId: SafeResourceUrl = null;
   backIdPhotoInfo: UserPhotoInfo;
   backIdBase64: string;
-  selfie: SafeResourceUrl = null;
+  selfieNew: SafeResourceUrl = null;
+  selfieOld: SafeResourceUrl = null;
   selfiePhotoInfo: UserPhotoInfo;
   selfieBase64: string;
   frontIdSubmitted: boolean = false;
@@ -49,40 +50,40 @@ export class PhotoUploadComponent implements OnInit {
   ngOnInit() {
     //call institution settings for photos 
     //keeps throwing an error
-    // this.setUserPhoto();
+    this.setUserPhoto();
     this.getPhotoList();
   }
 
   //sets the user photo varibale if there is a photo, keep getting a timeout error when i try to use this
-  // private setUserPhoto() {
-  //   this.userFacadeService
-  //     .getAcceptedPhoto$()
-  //     .pipe(
-  //       map(({ data, mimeType }) => `data:${mimeType};base64,${data}`),
-  //       take(1)
-  //     )
-  //     .subscribe(
-  //       url => {
-  //         this.selfie = url;
-  //         console.log('userPhoto', this.selfie);
-  //       },
-  //       error => console.log('get User Photo error', error),
-  //       () => {
-  //         console.log('get User Photo Complete')
-  //       }
-  //     );
-  // }
+  private setUserPhoto() {
+    this.userFacadeService
+      .getAcceptedPhoto$()
+      .pipe(
+        map(({ data, mimeType }) => `data:${mimeType};base64,${data}`),
+        take(1)
+      )
+      .subscribe(
+        url => {
+          this.selfieOld = url;
+          console.log('userPhoto', this.selfieOld);
+        },
+        error => console.log('get User Photo error', error),
+        () => {
+          console.log('get User Photo Complete')
+        }
+      );
+  }
 
   //gets the photolist by user id, gives you a list of photoId but no photo base64 string
   getPhotoList() {
     this.userFacadeService.getPhotoList().subscribe(
       list => {
-        console.log('getPhotoList next', list);
-        this.photoList = list;
+        // console.log('getPhotoList next', list);
+        this.photoList = list.list;
       },
       error => console.log('getPhotoList error', error),
       () => {
-        console.log('getPhotoList complete')
+        console.log('getPhotoList complete', this.photoList);
         this.sortPhotos();
       }
     );
@@ -90,25 +91,51 @@ export class PhotoUploadComponent implements OnInit {
 
   //sorts through the available photos and sets them appropriately, right now we dont know the format of the photo being returned so it is set to jpeg
   sortPhotos() {
+    console.log('photo list', this.photoList);
     var index;
     for (index = 0; index < this.photoList.length; index++) {
-      if (this.photoList[index].type === 0 && this.photoList[index].status === 1 && this.photoList[index].data !== null) {
-        console.log('photo has a type of 0', this.photoList[index]);
-        this.selfiePhotoInfo = this.photoList[index];
-        this.selfieBase64 = this.selfiePhotoInfo.data;
-        this.selfie = this.domsanitizer.bypassSecurityTrustResourceUrl(`data:image/jpeg;base64, ${this.selfiePhotoInfo.data}`);
-      }
-      if (this.photoList[index].type === 1 && this.photoList[index].status === 1 && this.photoList[index].data !== null) {
-        console.log('photo has a type of 1', this.photoList[index]);
+      if (this.photoList[index].type === 1 && this.photoList[index].status === 1 && this.photoList[index].data === null) {
+
+        // console.log('photo has a type of 1', this.photoList[index]);
         this.frontIdPhotoInfo = this.photoList[index];
-        this.frontIdBase64 = this.frontIdPhotoInfo.data;
-        this.frontId = this.domsanitizer.bypassSecurityTrustResourceUrl(`data:image/jpeg;base64, ${this.frontIdPhotoInfo.data}`);
+
+        this.userFacadeService.getPhotoById(this.photoList[index].id)
+          .pipe(map(({ data, mimeType }) => `data:${mimeType};base64,${data}`),
+            take(1)
+          )
+          .subscribe(
+            url => {
+              this.frontId = url;
+              // console.log('front id', this.frontId)
+            },
+            error => console.log('get front id from db Photo error', error),
+            () => {
+              console.log('get front id from db Photo Complete')
+            });
+
+        // console.log('front id if there is one', this.frontId);
+        this.frontId = this.domsanitizer.bypassSecurityTrustResourceUrl(`${this.frontId}`);
       }
-      if (this.photoList[index].type === 2 && this.photoList[index].status === 1 && this.photoList[index].data !== null) {
-        console.log('photo has a type of 2', this.photoList[index]);
+      if (this.photoList[index].type === 2 && this.photoList[index].status === 1 && this.photoList[index].data === null) {
+
+        // console.log('photo has a type of 2', this.photoList[index]);
         this.backIdPhotoInfo = this.photoList[index];
-        this.backIdBase64 = this.backIdPhotoInfo.data;
-        this.backId = this.domsanitizer.bypassSecurityTrustResourceUrl(`data:image/jpeg;base64, ${this.backIdPhotoInfo.data}`);
+
+        this.userFacadeService.getPhotoById(this.photoList[index].id)
+        .pipe(map(({ data, mimeType }) => `data:${mimeType};base64,${data}`),
+          take(1)
+        )
+        .subscribe(
+          url => {
+            this.backId = url;
+            // console.log('back id', this.backId)
+          },
+          error => console.log('get back id from db Photo error', error),
+          () => {
+            console.log('get back id from db Photo Complete')
+          });
+
+        this.backId = this.domsanitizer.bypassSecurityTrustResourceUrl(`${this.backId}`);
       }
     }
   }
@@ -165,7 +192,7 @@ export class PhotoUploadComponent implements OnInit {
     this.getPhoto().subscribe(
       data => {
         console.log('PSC Data:', data);
-        this.selfie = this.domsanitizer.bypassSecurityTrustResourceUrl(
+        this.selfieNew = this.domsanitizer.bypassSecurityTrustResourceUrl(
           `data:image/${data.format};base64, ${data.base64String}`
         );
         this.selfieBase64 = data.base64String;
@@ -176,14 +203,13 @@ export class PhotoUploadComponent implements OnInit {
       },
       () => {
         console.log('PSC Complete:');
+        console.log('selfieNew', this.selfieNew);
       }
     );
   }
 
   //will submit all photos that have been uploaded
-  // this needs to be changed...i think it can add photos of each type just need to create the entire userPhotoInfo object for each
   submitPhotos() {
-    console.log('front id pic', this.frontId, 'back id pic', this.backId, 'selfie pic', this.selfie);
     var today = new Date();
     var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
     var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
@@ -193,14 +219,14 @@ export class PhotoUploadComponent implements OnInit {
     let selfiePhotoInfo: UserPhotoInfo = {
       'externalId': null,
       'userId': '',
-      'mimeType': 'image/jpeg',
+      'mimeType': 'image/jpg',
       'status': 0,
       'statusReason': null,
-      'data': this.frontIdBase64,
+      'data': this.selfieBase64,
       'id': null,
-      'insertTime': dateTime,
-      'lastUpdated': dateTime,
-      'version': 1,
+      'insertTime': null,
+      'lastUpdated': null,
+      'version': null,
       'type': 0,
     }
     this.selfiePicSubmit(selfiePhotoInfo);
@@ -209,14 +235,14 @@ export class PhotoUploadComponent implements OnInit {
     let frontIdPhotoInfo: UserPhotoInfo = {
       'externalId': null,
       'userId': '',
-      'mimeType': 'image/jpeg',
+      'mimeType': 'image/jpg',
       'status': 0,
       'statusReason': null,
       'data': this.frontIdBase64,
       'id': null,
-      'insertTime': dateTime,
-      'lastUpdated': dateTime,
-      'version': 1,
+      'insertTime': null,
+      'lastUpdated': null,
+      'version': null,
       'type': 1,
     }
     this.frontIDPicSubmit(frontIdPhotoInfo);
@@ -226,17 +252,19 @@ export class PhotoUploadComponent implements OnInit {
     let backIdPhotoInfo: UserPhotoInfo = {
       'externalId': null,
       'userId': '',
-      'mimeType': 'image/jpeg',
+      'mimeType': 'image/jpg',
       'status': 0,
       'statusReason': null,
-      'data': this.frontIdBase64,
+      'data': this.backIdBase64,
       'id': null,
-      'insertTime': dateTime,
-      'lastUpdated': dateTime,
-      'version': 1,
+      'insertTime': null,
+      'lastUpdated': null,
+      'version': null,
       'type': 2,
     }
     this.backIDPicSubmit(backIdPhotoInfo);
+
+    this.ngOnInit();
   }
 
 
