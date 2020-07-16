@@ -99,7 +99,7 @@
 
 <!-- BUTTON THAT SUBMITS ALL PHOTOS (NOT CURRENTLY CHECKING FOR PHOTO VALUES) -->
 <div class="action-btn-container">
-  <ion-button class="submit-btn" (click)="submitPhotos()">SUBMIT PHOTOS FOR REVIEW</ion-button>
+  <ion-button *ngIf="!submitted" class="submit-btn" (click)="submitPhotos()">SUBMIT PHOTOS FOR REVIEW</ion-button>
 </div>
 
 <!-- BOTTOM OF WHAT WILL BE MOVED TO THE PHOTO UPLOAD HTML FILE -->

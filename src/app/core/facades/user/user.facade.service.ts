@@ -145,22 +145,28 @@ export class UserFacadeService extends ServiceStateFacade {
   isApplePayEnabled$(): Observable<boolean> {
     return this.nativeProvider.isIos()
       ? this.settingsFacadeService.getSetting(Settings.Setting.APPLE_PAY_ENABLED).pipe(
-          map(({ value }) => Boolean(Number(value))),
-          take(1)
-        )
+        map(({ value }) => Boolean(Number(value))),
+        take(1)
+      )
       : of(false);
   }
 
   isAppleWalletEnabled$(): Observable<boolean> {
     return this.nativeProvider.isIos()
       ? this.settingsFacadeService.getSetting(Settings.Setting.APPLE_WALLET_ENABLED).pipe(
-          map(({ value }) => Boolean(Number(value))),
-          take(1)
-        )
+        map(({ value }) => Boolean(Number(value))),
+        take(1)
+      )
       : of(false);
   }
 
   private getPhotoIdByStatus(photoList: UserPhotoInfo[], status: number = 1): UserPhotoInfo | undefined {
     return photoList.find((photo: UserPhotoInfo) => photo.status === status);
+  }
+
+  updateUserPhotoStatus(photoId: string, status: number, reason: string): Observable<boolean> {
+    return this.userApiService.updateUserPhotoStatus(photoId, status, reason).
+      pipe((map(({ response }) => response)),
+      take(1))
   }
 }
