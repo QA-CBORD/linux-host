@@ -95,17 +95,19 @@ export class PhotoUploadComponent implements OnInit {
       if (this.photoList[index].type === 0 && this.photoList[index].status === 1 && this.photoList[index].data !== null) {
         console.log('photo has a type of 0', this.photoList[index]);
         this.selfiePhotoInfo = this.photoList[index];
-        this.selfie = this.domsanitizer.bypassSecurityTrustResourceUrl(
-          `data:image/jpeg;base64, ${this.selfiePhotoInfo.data}`);
+        this.selfieBase64 = this.selfiePhotoInfo.data;
+        this.selfie = this.domsanitizer.bypassSecurityTrustResourceUrl(`data:image/jpeg;base64, ${this.selfiePhotoInfo.data}`);
       }
       if (this.photoList[index].type === 1 && this.photoList[index].status === 1 && this.photoList[index].data !== null) {
         console.log('photo has a type of 1', this.photoList[index]);
         this.frontIdPhotoInfo = this.photoList[index];
+        this.frontIdBase64 = this.frontIdPhotoInfo.data;
         this.frontId = this.domsanitizer.bypassSecurityTrustResourceUrl(`data:image/jpeg;base64, ${this.frontIdPhotoInfo.data}`);
       }
       if (this.photoList[index].type === 2 && this.photoList[index].status === 1 && this.photoList[index].data !== null) {
         console.log('photo has a type of 2', this.photoList[index]);
         this.backIdPhotoInfo = this.photoList[index];
+        this.backIdBase64 = this.backIdPhotoInfo.data;
         this.backId = this.domsanitizer.bypassSecurityTrustResourceUrl(`data:image/jpeg;base64, ${this.backIdPhotoInfo.data}`);
       }
     }
