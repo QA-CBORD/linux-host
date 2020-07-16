@@ -11,13 +11,15 @@ export class DeleteModalComponent implements OnInit {
 
   ngOnInit() {}
 
-  async dismissModal(){
-    await this.modalController.dismiss();
+  async dismissModal(data: boolean){
+    await this.modalController.dismiss({
+      'delete': data
+    });
   }
 
   deletePhoto(){
     alert('This is where the api call will delete photo from DB and then eventually update the photo upload page accordingly');
-    this.dismissModal();
+    this.dismissModal(true);
   }
 
 }
