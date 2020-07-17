@@ -164,11 +164,11 @@ export class IdentityFacadeService extends ServiceStateFacade {
   }
 
   set _pinEnabledUserPreference(value: boolean) {
-    this.storageStateService.updateStateEntity(this.pinEnabledUserPreference, value);
+    this.storageStateService.updateStateEntity(this.pinEnabledUserPreference, value, undefined, true);
   }
 
   set _biometricsEnabledUserPreference(value: boolean) {
-    this.storageStateService.updateStateEntity(this.biometricsEnabledUserPreference, value);
+    this.storageStateService.updateStateEntity(this.biometricsEnabledUserPreference, value, undefined, true);
   }
 
   vaultLocked() {
