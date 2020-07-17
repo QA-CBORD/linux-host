@@ -30,7 +30,7 @@ $search-top: calc(env(safe-area-inset-top) + 65px);
   &__back-btn {
     --margin-start: 10px;
     --icon-padding-end: 5px;
-    --icon-font-size: 15px; //GCS-1928 #4, Unified design for button.  22px->15px;
+    --icon-font-size: 15px;
 
     @include font-nunito-regular(16px);
   }
@@ -43,7 +43,7 @@ $search-top: calc(env(safe-area-inset-top) + 65px);
 
   ion-back-button {
     display: block;
-    --icon-font-size: 15px; //GCS-1928 #4, Unified design for button.  22px->15px;
+    --icon-font-size: 15px;
   }
 
   position: relative;

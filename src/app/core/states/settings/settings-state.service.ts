@@ -20,23 +20,34 @@ export class SettingsStateService extends SingleEntityStateManager<SettingInfo[]
   }
 
   getSetting(setting: Settings.Setting): Observable<SettingInfo> {
+    console.log('SettingsStateService, getSetting, getSettingInfoObject');
     const { domain, category, name } = getSettingInfoObject(setting);
+
+    console.log('SettingsStateService, getSetting, domain: ', domain);
+    console.log('SettingsStateService, getSetting, category: ', category);
+    console.log('SettingsStateService, getSetting, name: ', name);
+
     return this.state$.pipe(
-      map((settings) => {
+      map(settings => {
+        // console.log('SettingsStateService, getSetting, map, settings: ', settings);
+
         if (!settings.length) return null;
-        return settings.find(
-          ({ domain: d, category: c, name: n }) => domain === d && category === c && name === n,
+
+        console.log(
+          'SettingsStateService, getSetting, settings.find',
+          settings.find(({ domain: d, category: c, name: n }) => domain === d && category === c && name === n)
         );
+        return settings.find(({ domain: d, category: c, name: n }) => domain === d && category === c && name === n);
       }),
       distinctUntilChanged(),
-      take(1), /// added take(1) to close stream
+      take(1) /// added take(1) to close stream
     );
   }
 
   removeSetting(setting: Settings.Setting): void {
     const { domain, category, name } = getSettingInfoObject(setting);
     const index = this.state.findIndex(
-      ({ category: c, name: n, domain: d }) => d === domain && c === category && n === name,
+      ({ category: c, name: n, domain: d }) => d === domain && c === category && n === name
     );
     if (index !== -1) {
       this.state.splice(index, 1);
@@ -52,7 +63,7 @@ export class SettingsStateService extends SingleEntityStateManager<SettingInfo[]
   updateState(settings: SettingInfo | SettingInfo[]): void {
     if (settings === null) return;
     if (settings instanceof Array) {
-      settings.forEach((s) => this.resolveAddingSettingToArray(this.state, s));
+      settings.forEach(s => this.resolveAddingSettingToArray(this.state, s));
     } else {
       this.resolveAddingSettingToArray(this.state, settings);
     }

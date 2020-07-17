@@ -224,7 +224,7 @@ export class UserPassForm implements OnInit {
       .getInstitutionDataById$(id, sessionId, false)
       .pipe(
         tap(institutionInfo => (this.institutionInfo = institutionInfo)),
-        map(({ name }) => `${name}`), //GCS-1928 Remove University Label
+        map(({ name }) => `${name}`),
         take(1)
       )
       .toPromise();
