@@ -39,104 +39,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
     super();
   }
 
-  async determinePostLoginState(sessionId: string, institutionId: string): Promise<LoginState> {
-    console.log('checkPostLoginState');
-    const isWeb: boolean = await this.getIsWeb();
-    console.log(0);
-    if (isWeb) {
-      console.log(1);
-      return LoginState.DONE;
-    } else {
-      console.log(2);
-      const isPinLoginEnabled = await this.isPinEnabled(sessionId, institutionId);
-      const isPinEnabledForUserPreference = await this.cachedPinEnabledUserPreference$;
-      if (isPinLoginEnabled && isPinEnabledForUserPreference) {
-        console.log(3);
-        const isBiometricsAvailable = await this.areBiometricsAvailable();
-        const isBiometricsEnabledForUserPreference = await this.cachedBiometricsEnabledUserPreference$;
-        if (isBiometricsAvailable && isBiometricsEnabledForUserPreference) {
-          return LoginState.BIOMETRIC_SET;
-          console.log(4);
-        } else {
-          console.log(5);
-          return LoginState.PIN_SET;
-        }
-      }
-      console.log(6);
-      return LoginState.DONE;
-    }
-  }
 
-  async determineInstitutionSelectionLoginState(): Promise<LoginState> {
-    console.log('determineInstSelectionLoginState');
-    const institutionInfo: Institution = await this.institutionFacadeService.cachedInstitutionInfo$
-      .pipe(take(1))
-      .toPromise();
-    console.log('determineInstSelectionLoginState - inst info', institutionInfo);
-
-    return this.isExternalLogin(institutionInfo) ? LoginState.EXTERNAL : LoginState.HOSTED;
-  }
-
-  async determineFromBackgroundLoginState(sessionId: string): Promise<LoginState> {
-    console.log('determineFromBackgroundLoginState');
-    const institutionInfo: Institution = await this.institutionFacadeService.cachedInstitutionInfo$
-      .pipe(take(1))
-      .toPromise();
-    console.log('determineFromBackgroundLoginState - inst info', institutionInfo);
-    const isInstitutionSelected: boolean = !!institutionInfo;
-    console.log(0);
-    if (!isInstitutionSelected) {
-      console.log(1);
-      return LoginState.SELECT_INSTITUTION;
-    }
-    console.log(2);
-
-    const isWeb: boolean = await this.getIsWeb();
-    console.log(3);
-    const usernamePasswordLoginType: LoginState = this.isExternalLogin(institutionInfo)
-      ? LoginState.EXTERNAL
-      : LoginState.HOSTED;
-
-    console.log(33);
-    if (isWeb) {
-      console.log(4);
-      return usernamePasswordLoginType;
-    }
-    console.log(5);
-    const isPinLoginEnabled = await this.isPinEnabled(sessionId, institutionInfo.id);
-    console.log(55);
-    const isPinEnabledForUserPreference = await this.cachedPinEnabledUserPreference$;
-    console.log(6);
-
-    if (isPinLoginEnabled && isPinEnabledForUserPreference) {
-      console.log(7);
-      const vaultLocked: boolean = await this.identityService.isVaultLocked();
-      console.log(8);
-      const vaultLoginSet: boolean = await this.identityService.hasStoredSession();
-      console.log(9);
-
-      /// pin not set but have logged in before, use normal login
-      if (!vaultLoginSet) {
-        return usernamePasswordLoginType;
-      }
-
-      if (!vaultLocked) {
-        return LoginState.DONE;
-      }
-
-      const isBiometricsAvailable = await this.areBiometricsAvailable();
-      console.log(10);
-      const isBiometricsEnabledForUserPreference = await this.cachedBiometricsEnabledUserPreference$;
-      console.log(11);
-      if (isBiometricsAvailable && isBiometricsEnabledForUserPreference) {
-        return LoginState.BIOMETRIC_LOGIN;
-      } else {
-        return LoginState.PIN_LOGIN;
-      }
-    }
-    console.log(12);
-    return usernamePasswordLoginType;
-  }
 
   async pinOnlyLoginSetup(): Promise<any> {
     console.log('Pin only login setup');
@@ -202,16 +105,11 @@ export class IdentityFacadeService extends ServiceStateFacade {
     this.identityService.logoutUser();
   }
 
-  async getIsWeb(): Promise<boolean> {
-    const { operatingSystem } = await Device.getInfo();
-    return !(operatingSystem === 'ios' || operatingSystem === 'android');
-  }
-
   get isVaultLocked(){
     return this.identityService.isVaultLocked();
   }
 
-  private isExternalLogin(institutionInfo: Institution): boolean {
+  isExternalLogin(institutionInfo: Institution): boolean {
     if (!institutionInfo.authenticationInfo || !institutionInfo.authenticationInfo.authenticationType) return false;
     const authType: string = institutionInfo.authenticationInfo.authenticationType;
     return (
@@ -221,7 +119,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
     );
   }
 
-  private async isPinEnabled(sessionId: string, institutionId: string): Promise<boolean> {
+  async isPinEnabled(sessionId: string, institutionId: string): Promise<boolean> {
     return this.settingsFacadeService
       .getSetting(Settings.Setting.PIN_ENABLED, sessionId, institutionId)
       .pipe(
@@ -231,7 +129,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
       .toPromise();
   }
 
-  private async areBiometricsAvailable(): Promise<boolean> {
+  async areBiometricsAvailable(): Promise<boolean> {
     return this.identityService
       .areBiometricsAvailable()
       .pipe(take(1))
@@ -271,6 +169,14 @@ export class IdentityFacadeService extends ServiceStateFacade {
 
   set _biometricsEnabledUserPreference(value: boolean) {
     this.storageStateService.updateStateEntity(this.biometricsEnabledUserPreference, value);
+  }
+
+  vaultLocked() {
+    return this.identityService.isVaultLocked();
+  }
+
+  storedSession(): Promise<boolean> {
+    return this.identityService.hasStoredSession();
   }
 
 }
