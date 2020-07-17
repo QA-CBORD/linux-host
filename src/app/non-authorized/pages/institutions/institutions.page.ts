@@ -16,6 +16,7 @@ import { Device, Plugins, Capacitor } from '@capacitor/core';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Environment } from '../../../environment';
 import { IdentityFacadeService, LoginState } from '@core/facades/identity/identity.facade.service';
+import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 const { Keyboard, IOSDevice } = Plugins;
 
 @Component({
@@ -36,7 +37,7 @@ export class InstitutionsPage implements OnInit {
     private readonly nativeStartupFacadeService: NativeStartupFacadeService,
     private readonly authFacadeService: AuthFacadeService,
     private readonly loadingService: LoadingService,
-    private readonly identityFacadeService: IdentityFacadeService,
+    private readonly sessionFacadeService: SessionFacadeService,
     private readonly popoverCtrl: PopoverController,
     private readonly nav: Router,
     private readonly cdRef: ChangeDetectorRef
@@ -69,10 +70,7 @@ export class InstitutionsPage implements OnInit {
 
   async selectInstitution(id: string) {
     await this.loadingService.showSpinner();
-    await this.identityFacadeService.logoutUser();
-    this.settingsFacadeService.cleanCache();
-    this.authFacadeService.clearState();
-
+    await this.sessionFacadeService.logoutUser();
     await zip(
       this.settingsFacadeService.fetchSettingList(Settings.SettingList.FEATURES, this.sessionId, id),
       this.settingsFacadeService.getSettings(
@@ -84,7 +82,7 @@ export class InstitutionsPage implements OnInit {
       this.settingsFacadeService.getSetting(Settings.Setting.PIN_ENABLED, this.sessionId, id)
     )
       .pipe(
-        switchMap(() => this.identityFacadeService.determineInstitutionSelectionLoginState()),
+        switchMap(() => this.sessionFacadeService.determineInstitutionSelectionLoginState()),
         switchMap(
           (loginState): any => {
             console.log('Login State:', loginState);

@@ -17,6 +17,7 @@ import { SettingsFacadeService } from '@core/facades/settings/settings-facade.se
 import { Device } from '@capacitor/core';
 import { IdentityFacadeService, LoginState } from '@core/facades/identity/identity.facade.service';
 import { StInputFloatingLabelComponent } from '@shared/ui-components';
+import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 
 @Component({
   selector: 'user-pass-form',
@@ -42,6 +43,7 @@ export class UserPassForm implements OnInit {
     private readonly router: Router,
     private readonly sanitizer: DomSanitizer,
     private readonly toastController: ToastController,
+    private readonly sessionFacadeService: SessionFacadeService,
     private readonly identityFacadeService: IdentityFacadeService,
     private readonly fb: FormBuilder,
     private readonly cdRef: ChangeDetectorRef,
@@ -109,7 +111,7 @@ export class UserPassForm implements OnInit {
     } finally {
       await this.loadingService.closeSpinner();
     }
-    const loginState: LoginState = await this.identityFacadeService.determinePostLoginState(sessionId, id);
+    const loginState: LoginState = await this.sessionFacadeService.determinePostLoginState(sessionId, id);
 
     console.log('UserPass - Login State:', loginState);
     switch (loginState) {

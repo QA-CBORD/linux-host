@@ -17,10 +17,11 @@ import {
 } from '@ionic-enterprise/identity-vault';
 
 import { BrowserAuthPlugin } from '../browser-auth/browser-auth.plugin';
-import { PinAction, PinPage } from '@shared/ui-components/pin/pin.page';
+import { PinAction, PinCloseStatus, PinPage } from '@shared/ui-components/pin/pin.page';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { switchMap, take } from 'rxjs/operators';
-import { PATRON_NAVIGATION } from '../../../app.global';
+import { PATRON_NAVIGATION, ROLES } from '../../../app.global';
+import { GUEST_ROUTES } from '../../../non-authorized/non-authorized.config';
 
 export class VaultSessionData implements DefaultSession {
   token: string; /// unused
@@ -152,11 +153,19 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
     } else {
       /// will happen on pin login
       const { data, role } = await this.presentPinModal(PinAction.LOGIN_PIN);
-      if (role === 'cancel')
-        throw {
-          code: VaultErrorCodes.UserCanceledInteraction,
-          message: 'User has canceled pin login',
-        };
+      switch (role) {
+        case 'cancel': /// identity vault cancel role
+          throw {
+            code: VaultErrorCodes.UserCanceledInteraction,
+            message: 'User has canceled pin login',
+          };
+        case PinCloseStatus.MAX_FAILURE:
+          this.router.navigate([ROLES.guest, GUEST_ROUTES.entry], { state: { logoutUser: true } });
+          throw {
+            code: VaultErrorCodes.TooManyFailedAttempts,
+            message: 'User has exceeded max pin attempts',
+          };
+      }
       return Promise.resolve(data);
     }
   }

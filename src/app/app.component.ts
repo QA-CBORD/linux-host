@@ -6,16 +6,14 @@ import { Platform, PopoverController } from '@ionic/angular';
 
 import { App, AppState } from '@capacitor/core';
 
-import { StGlobalPopoverComponent } from '@shared/ui-components';
-import { BUTTON_TYPE } from '@core/utils/buttons.config';
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { NavigationEnd, Router } from '@angular/router';
 import { ROLES } from './app.global';
-import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
 import { GUEST_ROUTES } from './non-authorized/non-authorized.config';
 import { Plugins } from '@capacitor/core';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { PATRON_ROUTES } from '@sections/section.config';
+import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 
 const { Keyboard } = Plugins;
 
@@ -35,35 +33,35 @@ export class AppComponent implements OnInit {
     private readonly splashScreen: SplashScreen,
     private readonly statusBar: StatusBar,
     private readonly popoverCtrl: PopoverController,
-    private readonly identityFacadeService: IdentityFacadeService,
+    private readonly sessionFacadeService: SessionFacadeService,
     private readonly router: Router,
     private readonly cdRef: ChangeDetectorRef,
-    private readonly globalNav: GlobalNavService,
-  ) {
-  }
+    private readonly globalNav: GlobalNavService
+  ) {}
 
   ngOnInit(): void {
     this.initEventListeners();
     this.initializeApp();
     this.setPatronsRouteIndicator();
-    this.isNavBarShown$ = combineLatest(this.globalNav.isNavBarShown$, this._isPatronRoute$, this._isKeyBoardShown$).pipe(
-      map(([isNavBarShown, isPatronRoute, isKeyBoardShown]) =>
-        isPatronRoute && isNavBarShown && !isKeyBoardShown,
-      ),
+    this.isNavBarShown$ = combineLatest(
+      this.globalNav.isNavBarShown$,
+      this._isPatronRoute$,
+      this._isKeyBoardShown$
+    ).pipe(
+      map(([isNavBarShown, isPatronRoute, isKeyBoardShown]) => isPatronRoute && isNavBarShown && !isKeyBoardShown)
     );
   }
 
   setPatronsRouteIndicator() {
     this._isPatronRoute$ = this.router.events.pipe(
       map(routerEvent => {
-          if (routerEvent instanceof NavigationEnd) {
-            const route = routerEvent.toString();
-            return route.includes(ROLES.patron) && !(route.includes(PATRON_ROUTES.biometric))
-          }
-        },
-      ),
+        if (routerEvent instanceof NavigationEnd) {
+          const route = routerEvent.toString();
+          return route.includes(ROLES.patron) && !route.includes(PATRON_ROUTES.biometric);
+        }
+      }),
       filter(val => val !== undefined),
-      distinctUntilChanged(),
+      distinctUntilChanged()
     );
   }
 
@@ -77,11 +75,10 @@ export class AppComponent implements OnInit {
       console.log('App state changed. Is active?', isActive);
 
       if (isActive) {
-        if (this.identityFacadeService.isVaultLocked) {
+        if (this.sessionFacadeService.isVaultLocked()) {
           this.router.navigate([ROLES.guest, GUEST_ROUTES.startup], { replaceUrl: true });
         }
       }
-
     });
   }
 
@@ -101,5 +98,4 @@ export class AppComponent implements OnInit {
       this._isKeyBoardShown$.next(false);
     });
   }
-
 }

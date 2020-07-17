@@ -86,7 +86,7 @@ export class BaseInterceptor implements HttpInterceptor {
   }
 
   private redirectToLogin() {
-    this.router.navigate([ROLES.guest, GUEST_ROUTES.entry]);
+    this.router.navigate([ROLES.guest, GUEST_ROUTES.entry], { state: { logoutUser: true } });
   }
 
   private getRequiredData({ body: { params } }: HttpRequest<any>): Observable<[string, string]> {

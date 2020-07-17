@@ -8,6 +8,7 @@ import { Settings } from '../../../app.global';
 import { take } from 'rxjs/operators';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import Setting = Settings.Setting;
+import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 
 export enum PinCloseStatus {
   SET_SUCCESS = 'set_success',
@@ -61,7 +62,7 @@ export class PinPage implements OnInit {
     private modalController: ModalController,
     private readonly userFacadeService: UserFacadeService,
     private readonly authFacadeService: AuthFacadeService,
-    private readonly settingsFacadeService: SettingsFacadeService
+    private readonly settingsFacadeService: SettingsFacadeService,
   ) {}
 
   @Input() pinAction: PinAction;
@@ -227,7 +228,9 @@ export class PinPage implements OnInit {
         this.cleanLocalState();
         if (this.currentLoginAttempts >= this.maxLoginAttempts) {
           this.setErrorText('Maximum login attempts reached - logging you out');
-          this;
+          setTimeout(() => {
+            this.closePage(null, PinCloseStatus.MAX_FAILURE);
+          }, 3000);
         } else {
           this.setErrorText('Incorrect PIN - please try again');
         }

@@ -17,6 +17,7 @@ import { ROLES } from 'src/app/app.global';
 import { GUEST_ROUTES } from 'src/app/non-authorized/non-authorized.config';
 import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
+import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 
 @Component({
   selector: 'st-dashboard',
@@ -32,10 +33,7 @@ export class DashboardPage implements OnInit {
     private readonly modalController: ModalController,
     private readonly tileConfigFacadeService: TileConfigFacadeService,
     private readonly contentStringsFacadeService: ContentStringsFacadeService,
-    private readonly authFacadeService: AuthFacadeService,
-    private readonly identityFacadeService: IdentityFacadeService,
-    private readonly router: Router,
-    private readonly userFacadeService: UserFacadeService
+    private readonly sessionFacadeService: SessionFacadeService,
   ) {}
 
   get tilesIds(): { [key: string]: string } {
@@ -46,14 +44,15 @@ export class DashboardPage implements OnInit {
     this.tiles$ = this.tileConfigFacadeService.tileSettings$;
     this.updateDonationMealsStrings();
     this.updateOrderingStrings();
-    this.userFacadeService.handlePushNotificationRegistration();
+    this.pushNotificationRegistration();
   }
 
-  async logout(): Promise<void> {
-    await this.userFacadeService.logoutAndRemoveUserNotification().toPromise();
-    this.identityFacadeService.logoutUser();
-    this.authFacadeService.logoutUser();
-    this.router.navigate([ROLES.guest, GUEST_ROUTES.entry]);
+  pushNotificationRegistration() {
+    this.sessionFacadeService.handlePushNotificationRegistration();
+  }
+
+  logout() {
+    this.sessionFacadeService.logoutUser();
   }
 
   ionViewWillEnter() {
