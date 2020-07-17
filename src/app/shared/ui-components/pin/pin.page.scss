@@ -19,14 +19,14 @@
   &__back-btn {
     --margin-start: 10px;
     --icon-padding-end: 5px;
-    --icon-font-size: 15px; //GCS-1928 #4, Unified design for button.  18px->15px;
+    --icon-font-size: 15px;
 
     @include font-nunito-regular(16px);
   }
 
   ion-back-button {
     display: block;
-    --icon-font-size: 15px; //GCS-1928 #4, Unified design for button.  22px->15px;
+    --icon-font-size: 15px;
   }
 
   position: relative;
@@ -42,11 +42,10 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 50%; //Bugfix/GCS-1998 #UI: Button Zero on PIN out of Screen.
+    height: 50%;
   }
 
   &__number-block {
-    // flex-grow: 2; //Bugfix/GCS-1998 #UI: Button Zero on PIN out of Screen.
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -92,8 +91,8 @@
 
     &--left-bottom {
       position: absolute;
-      bottom: 1%; //Bugfix/GCS-1998 #UI: Button Zero on PIN out of Screen.  8%->1%
-      right: 7%; //Bugfix/GCS-1998 #UI: Button Zero on PIN out of Screen. 4% -> 7%
+      bottom: 1%;
+      right: 7%;
     }
   }
 

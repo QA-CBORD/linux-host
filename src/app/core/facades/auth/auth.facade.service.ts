@@ -64,10 +64,9 @@ export class AuthFacadeService extends ServiceStateFacade {
   }
 
   logoutUser() {
-    this.clearState(); //Bugfix/GCS-1998 Institution is saved and cleared.
+    this.clearState();
   }
 
-  //Bugfix/GCS-1998 Institution is saved and cleared.
   clearState() {
     this.storageStateService.clearState();
   }

@@ -5,10 +5,7 @@ import { finalize, switchMap, take, tap } from 'rxjs/operators';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { MerchantService } from '@sections/ordering/services';
 import { BuildingInfo } from '@sections/ordering/shared/models';
-import {
-  INSTITUTION_ADDRESS_RESTRICTIONS,
-  ORDERING_CONTENT_STRINGS,
-} from '@sections/ordering/ordering.config';
+import { INSTITUTION_ADDRESS_RESTRICTIONS, ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
@@ -34,7 +31,7 @@ export class SavedAddressesComponent implements OnInit {
     private readonly orderingService: OrderingService,
     private readonly userFacadeService: UserFacadeService,
     private readonly settingsFacadeService: SettingsFacadeService,
-    private readonly globalNav: GlobalNavService,
+    private readonly globalNav: GlobalNavService
   ) {}
 
   ngOnInit() {
@@ -47,26 +44,50 @@ export class SavedAddressesComponent implements OnInit {
   }
 
   ionViewWillEnter() {
+    console.log('ionViewWillEnter, retrieveBuildings');
     this.buildings$ = this.merchantService.retrieveBuildings();
+    console.log('ionViewWillEnter, retrieveBuildings End');
     this.initAddresses();
+    console.log('ionViewWillEnter, InitAddresses End');
+  }
+
+  changeAddNewAdddressState() {
+    console.log('changeaddNewAdddressState');
+    this.addNewAdddressState = !this.addNewAdddressState;
   }
 
   onAddressFormChanged(event) {
+    console.log('onAddressFormChanged');
     this.addNewAddressForm = event;
     this.errorState = false;
   }
 
   addAddress() {
+    console.log('Add Adress');
     if (!this.addNewAddressForm.valid) {
       this.errorState = true;
+
+      console.log('Add Adress, Invalid Error State');
       return;
     }
+
+    console.log('Add Adress, Spinner');
+
     this.loader.showSpinner();
+
+    console.log('Add Adress, getBuildingData');
+
     this.getBuildingData$(parseInt(this.addNewAddressForm.value.campus))
       .pipe(
-        switchMap(() => this.merchantService.updateUserAddress(this.addNewAddressForm.value)),
+        switchMap(() => {
+          console.log('Add Adress, updateUserAddress');
+
+          return this.merchantService.updateUserAddress(this.addNewAddressForm.value);
+        }),
         switchMap(
-          (addedAddress): any =>
+          (addedAddress): any => {
+            console.log('Add Adress, saveUserSetting start Zip');
+
             zip(
               iif(
                 () => this.addNewAddressForm.value.default,
@@ -74,12 +95,16 @@ export class SavedAddressesComponent implements OnInit {
                 of(false)
               ),
               of(addedAddress)
-            )
+            );
+
+            console.log('Add Adress, saveUserSetting, endZip');
+          }
         ),
         take(1)
       )
       .subscribe(
         ([bool, addedAddress]) => {
+          console.log('Close Spinner');
           this.loader.closeSpinner();
           this.userAddresses = [...this.userAddresses, addedAddress];
           this.addNewAdddressState = !this.addNewAdddressState;
@@ -89,12 +114,19 @@ export class SavedAddressesComponent implements OnInit {
   }
 
   private getBuildingData$(isOncampus): Observable<any> {
+    console.log('getBuildingData, isOncampus:', isOncampus);
+
     if (isOncampus) {
       return zip(this.buildings$, this.contentStrings.labelRoom).pipe(
         tap(([buildings, labelRoom]) => {
+          console.log('getBuildingData, Tap:');
+
           const activeBuilding = buildings.find(
             ({ addressInfo: { building } }) => building === this.addNewAddressForm.value.building
           );
+
+          console.log('getBuildingData, activeBuilding:', activeBuilding);
+
           const {
             addressInfo: { address1, address2, city, state, latitude, longitude },
           } = activeBuilding;
@@ -116,6 +148,7 @@ export class SavedAddressesComponent implements OnInit {
   }
 
   private initAddresses() {
+    console.log('initAddresses, showSpinner');
     this.loader.showSpinner();
     zip(
       this.settingsFacadeService.getSetting(Settings.Setting.ADDRESS_RESTRICTION),
@@ -141,11 +174,16 @@ export class SavedAddressesComponent implements OnInit {
   }
 
   private initContentStrings() {
-    this.contentStrings.buttonCancel = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonCancel);
+    this.contentStrings.buttonCancel = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.buttonCancel
+    );
     this.contentStrings.buttonSave = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonSave);
-    this.contentStrings.labelAddNewAddress =
-      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelAddNewAddress);
-    this.contentStrings.labelSavedAddresses = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelSavedAddresses);
+    this.contentStrings.labelAddNewAddress = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.labelAddNewAddress
+    );
+    this.contentStrings.labelSavedAddresses = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.labelSavedAddresses
+    );
     this.contentStrings.labelRoom = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelRoom);
   }
 }

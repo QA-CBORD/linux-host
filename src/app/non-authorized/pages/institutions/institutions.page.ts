@@ -71,7 +71,7 @@ export class InstitutionsPage implements OnInit {
     await this.loadingService.showSpinner();
     await this.identityFacadeService.logoutUser();
     this.settingsFacadeService.cleanCache();
-    this.authFacadeService.clearState(); //Bugfix/GCS-1998 Institution is saved and cleared.
+    this.authFacadeService.clearState();
 
     await zip(
       this.settingsFacadeService.fetchSettingList(Settings.SettingList.FEATURES, this.sessionId, id),
