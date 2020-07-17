@@ -70,7 +70,7 @@ export class InstitutionsPage implements OnInit {
 
   async selectInstitution(id: string) {
     await this.loadingService.showSpinner();
-    await this.sessionFacadeService.logoutUser();
+    await this.sessionFacadeService.onNewInstitutionSelected();
     await zip(
       this.settingsFacadeService.fetchSettingList(Settings.SettingList.FEATURES, this.sessionId, id),
       this.settingsFacadeService.getSettings(
