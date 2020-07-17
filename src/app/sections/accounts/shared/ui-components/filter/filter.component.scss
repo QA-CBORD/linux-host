@@ -2,11 +2,10 @@
 
 .filter {
   display: flex;
-  justify-content: space-between; //BugFix/GCS-1928 #8 Title is not properly aligned on the Transactions page:
+  justify-content: space-between;
 
   &__header {
     align-self: center;
-    // margin: 0 10%;   //BugFix/GCS-1928 #8 Title is not properly aligned on the Transactions page:
   }
 
   @include bp-before-tablet {
@@ -43,8 +42,6 @@
     }
   }
 
-  //Bugfix/GCS-1928#3
-  //Change from 28px to 22px and add right margin 5px.
   &__icon-image {
     width: 22px;
     height: 22px;
@@ -53,7 +50,6 @@
 
   &__icon {
     display: flex;
-    // flex-direction: column; //Bugfix/GCS-1928#3
     justify-content: center;
     align-items: center;
     margin: 0;

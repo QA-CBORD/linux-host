@@ -168,7 +168,7 @@ export class PinPage implements OnInit {
   back() {
     this.pinNumberCopy = [];
     this.pinNumber = [];
-    this.instructionText = this.newPinText; //bugfix/GCS-1998 #UI Back Button in Confirm New PIN is not returning to Enter Pin Screen.
+    this.instructionText = this.newPinText;
   }
 
   removeNumber(): void | undefined {
