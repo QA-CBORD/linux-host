@@ -121,8 +121,6 @@ export class UserPassForm implements OnInit {
         } catch (e) {
           console.log('UPF - pin set error', e);
           this.presentToast('Login failed, invalid user name and/or password');
-        } finally {
-          this.router.navigate([PATRON_NAVIGATION.dashboard]);
         }
         break;
       case LoginState.BIOMETRIC_SET:

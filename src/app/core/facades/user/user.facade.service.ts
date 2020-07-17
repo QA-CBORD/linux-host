@@ -206,7 +206,10 @@ export class UserFacadeService extends ServiceStateFacade {
         }
         return of(false);
       }),
-      take(1)
+      take(1),
+      catchError(error => {
+        return of(false);
+      })
     );
   }
 
