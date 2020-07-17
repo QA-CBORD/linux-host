@@ -100,6 +100,10 @@ export class StorageStateService extends ExtendableStateManager<WebStorageStateE
     this._state$.next({ ...this.state });
   }
 
+  clearStorage() {
+    this.storage.clear();
+  }
+
   clearState() {
     this.state = {};
     this.dispatchStateChanges();

@@ -7,6 +7,11 @@ import { StorageStateService } from '@core/states/storage/storage-state.service'
 import { Observable, of, iif, from } from 'rxjs';
 import { StorageEntity } from '@core/classes/extendable-state-manager';
 import { Device } from '@capacitor/core';
+import { ROLES } from '../../../app.global';
+import { GUEST_ROUTES } from '../../../non-authorized/non-authorized.config';
+import { UserFacadeService } from '@core/facades/user/user.facade.service';
+import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +23,7 @@ export class AuthFacadeService extends ServiceStateFacade {
 
   constructor(
     private readonly authApiService: AuthApiService,
-    private readonly storageStateService: StorageStateService
+    private readonly storageStateService: StorageStateService,
   ) {
     super();
   }
@@ -40,11 +45,12 @@ export class AuthFacadeService extends ServiceStateFacade {
   }
 
   authenticatePin$(pin: string): Observable<boolean> {
-    return from(Device.getInfo()).pipe(
-      switchMap(({ uuid }) => this.authApiService.authenticatePin(pin, uuid)),
-      tap(res => this.storageStateService.updateStateEntity(this.sessionIdKey, res, this.ttl)),
-      map(res => !!res)
-    );
+    return from(Device.getInfo())
+      .pipe(
+        switchMap(({uuid}) => this.authApiService.authenticatePin(pin, uuid)),
+        tap(res => this.storageStateService.updateStateEntity(this.sessionIdKey, res, this.ttl)),
+        map(res => !!res)
+      );
   }
 
   authenticateSessionToken$(sessionToken: string): Observable<string> {
@@ -61,15 +67,6 @@ export class AuthFacadeService extends ServiceStateFacade {
 
   getExternalAuthenticationToken$(): Observable<string> {
     return this.authApiService.getExternalAuthenticationToken();
-  }
-
-  logoutUser() {
-    this.clearState(); //Bugfix/GCS-1998 Institution is saved and cleared.
-  }
-
-  //Bugfix/GCS-1998 Institution is saved and cleared.
-  clearState() {
-    this.storageStateService.clearState();
   }
 
   retrieveAuthorizationBlob(deviceModel: string, deviceOSVersion: string): Observable<string> {

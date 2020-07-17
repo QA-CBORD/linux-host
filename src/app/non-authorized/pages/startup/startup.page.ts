@@ -4,9 +4,10 @@ import { ROLES } from '../../../app.global';
 import { GUEST_ROUTES } from '../../non-authorized.config';
 import { PATRON_ROUTES } from '@sections/section.config';
 import { Router } from '@angular/router';
-import { switchMap, take, tap } from 'rxjs/operators';
+import { switchMap, take } from 'rxjs/operators';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { from } from 'rxjs';
+import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 
 @Component({
   selector: 'st-startup',
@@ -16,6 +17,7 @@ import { from } from 'rxjs';
 export class StartupPage implements OnInit {
   constructor(
     private readonly router: Router,
+    private readonly sessionFacadeService: SessionFacadeService,
     private readonly identityFacadeService: IdentityFacadeService,
     private readonly authFacadeService: AuthFacadeService
   ) {}
@@ -33,7 +35,7 @@ export class StartupPage implements OnInit {
       .getAuthSessionToken$()
       .pipe(
         switchMap(sessionId =>
-          from(this.identityFacadeService.determineFromBackgroundLoginState(sessionId))
+          from(this.sessionFacadeService.determineFromBackgroundLoginState(sessionId))
         ),
         take(1)
       )
@@ -41,8 +43,7 @@ export class StartupPage implements OnInit {
         console.log('StartupPage - login state:', state);
         switch (state) {
           case LoginState.SELECT_INSTITUTION:
-            this.identityFacadeService.logoutUser();
-            this.router.navigate([ROLES.guest, GUEST_ROUTES.entry], routeConfig);
+            this.router.navigate([ROLES.guest, GUEST_ROUTES.entry], { replaceUrl: true, state: { logoutUser: true }});
             break;
           case LoginState.BIOMETRIC_LOGIN:
             this.loginUser(true);
