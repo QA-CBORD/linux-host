@@ -10,9 +10,16 @@ import { map, switchMap, tap, take, catchError } from 'rxjs/operators';
 import { AddressInfo } from '@core/model/address/address-info';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { Settings } from 'src/app/app.global';
-import { Plugins, Device, Capacitor, PushNotificationToken, PushNotification } from '@capacitor/core';
+import {
+  Plugins,
+  Device,
+  Capacitor,
+  PushNotificationToken,
+  PushNotification,
+  PushNotificationActionPerformed,
+} from '@capacitor/core';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
-const { PushNotifications } = Plugins;
+const { PushNotifications, LocalNotifications, IOSDevice } = Plugins;
 
 @Injectable({
   providedIn: 'root',
@@ -151,6 +158,7 @@ export class UserFacadeService extends ServiceStateFacade {
     zip(this.isPushNotificationEnabled$(), this.getFCMToken$())
       .pipe(
         switchMap(([pushNotificationsEnabled, fcmToken]) => {
+          console.log('handlePush');
           return iif(
             () => pushNotificationsEnabled && !fcmToken,
             from(PushNotifications.requestPermission()),
@@ -160,9 +168,32 @@ export class UserFacadeService extends ServiceStateFacade {
         take(1)
       )
       .subscribe(result => {
+        console.log('Granted?');
         if (result.granted) {
-          PushNotifications.removeAllListeners();
-          PushNotifications.addListener('pushNotificationReceived', (notification: PushNotification) => {});
+          console.log('Granted!');
+          //PushNotifications.removeAllListeners();
+          PushNotifications.addListener(
+            'pushNotificationActionPerformed', (notification: PushNotificationActionPerformed) => {
+              console.log('Push action performed: ', JSON.stringify(notification));
+              // alert('Push action performed: ' + JSON.stringify(notification));
+            }
+          );
+          PushNotifications.addListener('pushNotificationReceived', async (notification: PushNotification) => {
+            console.log('Push received: ', JSON.stringify(notification));
+            // alert('Push received: ' + JSON.stringify(notification));
+            const notifs = await LocalNotifications.schedule({
+              notifications: [
+                {
+                  title: notification.title,
+                  body: notification.body,
+                  id: Date.now(),
+                  extra: notification.data,
+                  smallIcon: '@mipmap/ic_launcher',
+                },
+              ],
+            });
+            console.log('scheduled notifications', notifs);
+          });
           PushNotifications.addListener('registration', (token: PushNotificationToken) => {
             this.saveNotification$(token.value).subscribe(
               response => {
