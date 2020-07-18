@@ -158,7 +158,6 @@ export class UserFacadeService extends ServiceStateFacade {
     zip(this.isPushNotificationEnabled$(), this.getFCMToken$())
       .pipe(
         switchMap(([pushNotificationsEnabled, fcmToken]) => {
-          console.log('handlePush');
           return iif(
             () => pushNotificationsEnabled && !fcmToken,
             from(PushNotifications.requestPermission()),
@@ -168,31 +167,18 @@ export class UserFacadeService extends ServiceStateFacade {
         take(1)
       )
       .subscribe(result => {
-        console.log('Granted?');
         if (result.granted) {
-          console.log('Granted!');
-          //PushNotifications.removeAllListeners();
-          PushNotifications.addListener(
-            'pushNotificationActionPerformed', (notification: PushNotificationActionPerformed) => {
-              console.log('Push action performed: ', JSON.stringify(notification));
-              // alert('Push action performed: ' + JSON.stringify(notification));
-            }
-          );
-          PushNotifications.addListener('pushNotificationReceived', async (notification: PushNotification) => {
-            console.log('Push received: ', JSON.stringify(notification));
-            // alert('Push received: ' + JSON.stringify(notification));
-            const notifs = await LocalNotifications.schedule({
+          PushNotifications.removeAllListeners();
+          PushNotifications.addListener('pushNotificationReceived', (notification: PushNotification) => {
+            LocalNotifications.schedule({
               notifications: [
                 {
                   title: notification.title,
                   body: notification.body,
-                  id: Date.now(),
-                  extra: notification.data,
-                  smallIcon: '@mipmap/ic_launcher',
+                  id: Date.now()
                 },
               ],
             });
-            console.log('scheduled notifications', notifs);
           });
           PushNotifications.addListener('registration', (token: PushNotificationToken) => {
             this.saveNotification$(token.value).subscribe(
