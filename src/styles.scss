@@ -265,6 +265,15 @@
   background: transparent;
 }
 
+.custom-loading {
+  --background: none;
+  --spinner-color: white;
+  .loading-wrapper{
+    box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+  }
+}
+
 :root {
   .actions-popover {
     --min-width: 115px !important;

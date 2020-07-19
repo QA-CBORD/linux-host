@@ -107,9 +107,8 @@ export class UserPassForm implements OnInit {
     } catch (e) {
       console.log('authUser error', e);
       this.presentToast('Login failed, invalid user name and/or password');
+      this.loadingService.closeSpinner();
       return;
-    } finally {
-      await this.loadingService.closeSpinner();
     }
     const loginState: LoginState = await this.sessionFacadeService.determinePostLoginState(sessionId, id);
 
@@ -121,8 +120,6 @@ export class UserPassForm implements OnInit {
         } catch (e) {
           console.log('UPF - pin set error', e);
           this.presentToast('Login failed, invalid user name and/or password');
-        } finally {
-          this.router.navigate([PATRON_NAVIGATION.dashboard]);
         }
         break;
       case LoginState.BIOMETRIC_SET:
@@ -134,6 +131,7 @@ export class UserPassForm implements OnInit {
         this.router.navigate([PATRON_NAVIGATION.dashboard]);
         break;
     }
+    this.loadingService.closeSpinner();
   }
 
   private initForm() {
@@ -224,7 +222,7 @@ export class UserPassForm implements OnInit {
       .getInstitutionDataById$(id, sessionId, false)
       .pipe(
         tap(institutionInfo => (this.institutionInfo = institutionInfo)),
-        map(({ name }) => `${name}`), //GCS-1928 Remove University Label
+        map(({ name }) => `${name}`),
         take(1)
       )
       .toPromise();

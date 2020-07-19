@@ -12,7 +12,7 @@ export class StorageStateService extends ExtendableStateManager<WebStorageStateE
   protected activeUpdaters: number = 0;
   protected state: WebStorageStateEntity = {};
   protected readonly _state$: BehaviorSubject<WebStorageStateEntity> = new BehaviorSubject<WebStorageStateEntity>(
-    this.state,
+    this.state
   );
   protected readonly _isUpdating$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(!!this.activeUpdaters);
   private readonly storageKey: string = 'cbord';
@@ -28,8 +28,8 @@ export class StorageStateService extends ExtendableStateManager<WebStorageStateE
   getStateEntityByKey$<T>(key: string): Observable<StorageEntity<T>> {
     return this.state$.pipe(
       skipWhile(() => !this.isStateInitialized),
-      map((state) => (state[key] ? state[key] : null)),
-      distinctUntilChanged(),
+      map(state => (state[key] ? state[key] : null)),
+      distinctUntilChanged()
     );
   }
 
@@ -37,10 +37,13 @@ export class StorageStateService extends ExtendableStateManager<WebStorageStateE
     return key in this.state;
   }
 
-  updateStateEntity(key: string, value: any, timeToLive?: number) {
+  updateStateEntity(key: string, value: any, entityConfig: EntityConfig = {}) {
     this.isKeyExistInState(key)
-      ? this.updateStateByKey(key, value, timeToLive)
-      : this.registerStateEntity(key, value, timeToLive);
+      ? this.updateStateByKey(key, value, entityConfig.ttl)
+      : this.registerStateEntity(key, value, entityConfig.ttl);
+    if (entityConfig.highPriorityKey) {
+      this.setStateToStorage();
+    }
   }
 
   registerStateEntity(key: string, value = null, timeToLive = 0) {
@@ -73,7 +76,7 @@ export class StorageStateService extends ExtendableStateManager<WebStorageStateE
 
   protected async initState(): Promise<void> {
     await this.getStateFromStorage()
-      .then(() => this.isStateInitialized = true)
+      .then(() => (this.isStateInitialized = true))
       .then(() => this.setStateToStorage());
   }
 
@@ -153,4 +156,9 @@ export class StorageStateService extends ExtendableStateManager<WebStorageStateE
 
 export interface WebStorageStateEntity {
   [key: string]: StorageEntity;
+}
+
+interface EntityConfig {
+  ttl?: number;
+  highPriorityKey?: boolean;
 }

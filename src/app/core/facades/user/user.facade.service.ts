@@ -55,7 +55,7 @@ export class UserFacadeService extends ServiceStateFacade {
   getUser$(): Observable<UserInfo> {
     return this.userApiService
       .getUser()
-      .pipe(tap(res => this.storageStateService.updateStateEntity(this.userKey, res, this.ttl)));
+      .pipe(tap(res => this.storageStateService.updateStateEntity(this.userKey, res, {ttl: this.ttl})));
   }
 
   getUserPhoto$(userId: string): Observable<MessageResponse<UserPhotoInfo>> {
@@ -65,7 +65,7 @@ export class UserFacadeService extends ServiceStateFacade {
   getUserAddresses$(): Observable<AddressInfo[]> {
     return this.userApiService
       .getUserAddresses()
-      .pipe(tap(res => this.storageStateService.updateStateEntity(this.userAddressKey, res, this.ttl)));
+      .pipe(tap(res => this.storageStateService.updateStateEntity(this.userAddressKey, res, {ttl: this.ttl})));
   }
 
   createUserPin(pin: string): Observable<boolean> {
@@ -223,7 +223,10 @@ export class UserFacadeService extends ServiceStateFacade {
         }
         return of(false);
       }),
-      take(1)
+      take(1),
+      catchError(error => {
+        return of(false);
+      })
     );
   }
 
@@ -235,7 +238,7 @@ export class UserFacadeService extends ServiceStateFacade {
   }
 
   private setFCMToken(value: string) {
-    this.storageStateService.updateStateEntity(this.fcmTokenKey, value, this.ttl);
+    this.storageStateService.updateStateEntity(this.fcmTokenKey, value, {ttl: this.ttl});
   }
 
   getFCMToken$(): Observable<string> {
