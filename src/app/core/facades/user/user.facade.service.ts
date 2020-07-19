@@ -10,9 +10,16 @@ import { map, switchMap, tap, take, catchError } from 'rxjs/operators';
 import { AddressInfo } from '@core/model/address/address-info';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { Settings } from 'src/app/app.global';
-import { Plugins, Device, Capacitor, PushNotificationToken, PushNotification } from '@capacitor/core';
+import {
+  Plugins,
+  Device,
+  Capacitor,
+  PushNotificationToken,
+  PushNotification,
+  PushNotificationActionPerformed,
+} from '@capacitor/core';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
-const { PushNotifications } = Plugins;
+const { PushNotifications, LocalNotifications, IOSDevice } = Plugins;
 
 @Injectable({
   providedIn: 'root',
@@ -162,7 +169,17 @@ export class UserFacadeService extends ServiceStateFacade {
       .subscribe(result => {
         if (result.granted) {
           PushNotifications.removeAllListeners();
-          PushNotifications.addListener('pushNotificationReceived', (notification: PushNotification) => {});
+          PushNotifications.addListener('pushNotificationReceived', (notification: PushNotification) => {
+            LocalNotifications.schedule({
+              notifications: [
+                {
+                  title: notification.title,
+                  body: notification.body,
+                  id: Date.now()
+                },
+              ],
+            });
+          });
           PushNotifications.addListener('registration', (token: PushNotificationToken) => {
             this.saveNotification$(token.value).subscribe(
               response => {
