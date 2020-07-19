@@ -107,9 +107,8 @@ export class UserPassForm implements OnInit {
     } catch (e) {
       console.log('authUser error', e);
       this.presentToast('Login failed, invalid user name and/or password');
+      this.loadingService.closeSpinner();
       return;
-    } finally {
-      await this.loadingService.closeSpinner();
     }
     const loginState: LoginState = await this.sessionFacadeService.determinePostLoginState(sessionId, id);
 
@@ -132,6 +131,7 @@ export class UserPassForm implements OnInit {
         this.router.navigate([PATRON_NAVIGATION.dashboard]);
         break;
     }
+    this.loadingService.closeSpinner();
   }
 
   private initForm() {

@@ -4,12 +4,13 @@ import { StorageStateService } from '@core/states/storage/storage-state.service'
 import { IdentityService } from '@core/service/identity/identity.service';
 import { Device } from '@capacitor/core';
 import { Settings } from '../../../app.global';
-import { map, take } from 'rxjs/operators';
+import { finalize, map, take } from 'rxjs/operators';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Institution } from '@core/model/institution';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { AuthenticationType } from '@core/model/authentication/authentication-info.model';
 import { PinAction, PinCloseStatus } from '@shared/ui-components/pin/pin.page';
+import { LoadingService } from '@core/service/loading/loading.service';
 
 export enum LoginState {
   DONE,
@@ -34,17 +35,14 @@ export class IdentityFacadeService extends ServiceStateFacade {
     private readonly storageStateService: StorageStateService,
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly identityService: IdentityService,
-    private readonly institutionFacadeService: InstitutionFacadeService
   ) {
     super();
   }
 
-
-
   async pinOnlyLoginSetup(): Promise<any> {
     console.log('Pin only login setup');
     const { data, role } = await this.identityService.presentPinModal(PinAction.SET_PIN_ONLY);
-    console.log('Pin only login setup modal resp', data, role );
+    console.log('Pin only login setup modal resp', data, role);
     switch (role) {
       case PinCloseStatus.CANCELED:
         throw {
@@ -84,7 +82,9 @@ export class IdentityFacadeService extends ServiceStateFacade {
       case PinCloseStatus.SET_SUCCESS:
         await this.identityService
           .initAndUnlockBiometricAndPasscode({ username: undefined, token: undefined, pin: data })
-          .pipe(take(1))
+          .pipe(
+            take(1)
+          )
           .toPromise();
         return Promise.resolve();
     }
@@ -105,7 +105,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
     this.identityService.logoutUser();
   }
 
-  get isVaultLocked(){
+  get isVaultLocked() {
     return this.identityService.isVaultLocked();
   }
 
@@ -124,7 +124,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
       .getSetting(Settings.Setting.PIN_ENABLED, sessionId, institutionId)
       .pipe(
         map(({ value }) => parseInt(value) === 1),
-        take(1),
+        take(1)
       )
       .toPromise();
   }
@@ -178,5 +178,4 @@ export class IdentityFacadeService extends ServiceStateFacade {
   storedSession(): Promise<boolean> {
     return this.identityService.hasStoredSession();
   }
-
 }

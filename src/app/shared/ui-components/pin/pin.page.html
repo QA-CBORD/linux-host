@@ -1,22 +1,24 @@
+<!--HIDING THE HEADER UNTIL WE IMPLEMENT THE CHANGE PIN SETTINGS PAGE LOGIC-->
+
 <ion-header class="pin-header" no-border>
   <ion-toolbar mode="ios" class="ion-color" class="pin-header__nav-toolbar">
-    <ion-buttons slot="start">
-      <ion-button
-        mode="ios"
-        class="edit-home__header-done-btn"
-        color="dark"
-        (click)="back()"
-        *ngIf="pinNumber.length < 4 && pinNumberCopy.length === 4"
-      >
-        <img src="/assets/icon/chevron-left.svg" alt="back" />
-        Back
-      </ion-button>
-    </ion-buttons>
-    <ion-buttons slot="end" mode="ios">
-      <ion-button mode="ios" class="edit-home__header-done-btn" color="dark" (click)="closePage()">
-        Cancel
-      </ion-button>
-    </ion-buttons>
+<!--    <ion-buttons slot="start">-->
+<!--      <ion-button-->
+<!--        mode="ios"-->
+<!--        class="edit-home__header-done-btn"-->
+<!--        color="dark"-->
+<!--        (click)="back()"-->
+<!--        *ngIf="pinNumber.length < 4 && pinNumberCopy.length === 4"-->
+<!--      >-->
+<!--        <img src="/assets/icon/chevron-left.svg" alt="back" />-->
+<!--        Back-->
+<!--      </ion-button>-->
+<!--    </ion-buttons>-->
+<!--    <ion-buttons slot="end" mode="ios">-->
+<!--      <ion-button mode="ios" class="edit-home__header-done-btn" color="dark" (click)="closePage()">-->
+<!--        Cancel-->
+<!--      </ion-button>-->
+<!--    </ion-buttons>-->
   </ion-toolbar>
 </ion-header>
 <ion-content>

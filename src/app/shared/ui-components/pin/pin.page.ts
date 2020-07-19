@@ -71,6 +71,14 @@ export class PinPage implements OnInit {
 
   ngOnInit() {
     this.retrievePinRetrys();
+    this.setInstructionText();
+  }
+
+  private setInstructionText(text: string = null){
+    if(text !== null) {
+      this.instructionText = text;
+      return;
+    }
     switch (this.pinAction) {
       case PinAction.SET_BIOMETRIC:
         this.instructionText = this.setPinText;
@@ -79,7 +87,7 @@ export class PinPage implements OnInit {
         this.instructionText = this.setPinNoBiometricsText;
         break;
       case PinAction.LOGIN_PIN:
-        this.instructionText = this.currentPinText;
+        this.setInstructionText(this.currentPinText);
     }
   }
 
@@ -123,10 +131,10 @@ export class PinPage implements OnInit {
         if (!this.arePINsMatch) {
           this.setErrorText(this.pinsDoNotMatchText);
           this.cleanLocalState();
-          this.instructionText = this.setPinNoBiometricsText;
+          this.setInstructionText(this.setPinNoBiometricsText);
           return;
         }
-        this.instructionText = this.setPinNoBiometricsText;
+        this.setInstructionText(this.setPinNoBiometricsText);
         /// if setting pin, call service to set and then send to 'on dismiss' for vault to use pin
         this.setPin();
       } else {
@@ -135,7 +143,7 @@ export class PinPage implements OnInit {
         this.pinNumberCopy = this.pinNumber;
         this.disableInput = true;
         setTimeout(() => {
-          this.instructionText = this.confirmNewPinText;
+          this.setInstructionText(this.confirmNewPinText);
           this.pinNumber = [];
           this.disableInput = false;
         }, 300);
@@ -168,7 +176,7 @@ export class PinPage implements OnInit {
   back() {
     this.pinNumberCopy = [];
     this.pinNumber = [];
-    this.instructionText = this.newPinText;
+    this.setInstructionText(this.newPinText);
   }
 
   removeNumber(): void | undefined {
@@ -181,6 +189,7 @@ export class PinPage implements OnInit {
   }
 
   private cleanLocalState() {
+    this.setInstructionText();
     this.pinNumber = [];
     this.pinNumberCopy = [];
   }
@@ -190,11 +199,12 @@ export class PinPage implements OnInit {
   }
 
   private async setPin() {
+    this.setInstructionText('');
     await this.loadingService.showSpinner();
     /// set user pin in Database
     this.userFacadeService
       .createUserPin(this.pinNumber.join(''))
-      .pipe(finalize(() => this.loadingService.closeSpinner()))
+      .pipe(finalize(() => this.loadingService.closeSpinner()), take(1))
       .subscribe(
         success => {
           /// on success, dismiss with pin in data
@@ -216,12 +226,13 @@ export class PinPage implements OnInit {
   }
 
   private async loginPin() {
+    this.setInstructionText('');
     await this.loadingService.showSpinner();
     this.currentLoginAttempts++;
 
     this.authFacadeService
       .authenticatePin$(this.pinNumber.join(''))
-      .pipe(finalize(() => this.loadingService.closeSpinner()))
+      .pipe(finalize(() => this.loadingService.closeSpinner()), take(1))
       .subscribe(
         success => {
           /// on success, dismiss with pin in data
