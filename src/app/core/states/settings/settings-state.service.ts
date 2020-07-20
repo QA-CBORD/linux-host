@@ -20,23 +20,12 @@ export class SettingsStateService extends SingleEntityStateManager<SettingInfo[]
   }
 
   getSetting(setting: Settings.Setting): Observable<SettingInfo> {
-    console.log('SettingsStateService, getSetting, getSettingInfoObject');
     const { domain, category, name } = getSettingInfoObject(setting);
-
-    console.log('SettingsStateService, getSetting, domain: ', domain);
-    console.log('SettingsStateService, getSetting, category: ', category);
-    console.log('SettingsStateService, getSetting, name: ', name);
 
     return this.state$.pipe(
       map(settings => {
-        // console.log('SettingsStateService, getSetting, map, settings: ', settings);
-
         if (!settings.length) return null;
 
-        console.log(
-          'SettingsStateService, getSetting, settings.find',
-          settings.find(({ domain: d, category: c, name: n }) => domain === d && category === c && name === n)
-        );
         return settings.find(({ domain: d, category: c, name: n }) => domain === d && category === c && name === n);
       }),
       distinctUntilChanged(),
