@@ -11,7 +11,7 @@ export class GlobalErrorHandler implements ErrorHandler {
       this.presentAlertConfirm();
     }
 
-    console.error(err);
+    console.error('Error Handled Global: ', err);
   }
 
   private async presentAlertConfirm() {
