@@ -9,4 +9,5 @@ export interface UserPhotoInfo {
   readonly insertTime: string;
   readonly lastUpdated: string;
   readonly version: number;
+  readonly type: number;
 }
