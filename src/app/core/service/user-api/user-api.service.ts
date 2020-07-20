@@ -60,12 +60,6 @@ export class UserApiService {
 
     return this.http.post<MessageResponse<boolean>>(this.serviceUrl, queryConfig);
   }
-    
-  updateUserPhotoStatus(String sessionId, String photoId, Integer status, String reason){
-    
-  }
-
-
 
   createUserPin(PIN: string, deviceId: string): Observable<MessageResponse<boolean>> {
     const queryConfig = new RPCQueryConfig('createPIN', { PIN, deviceId }, true, false);

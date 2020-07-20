@@ -5,8 +5,8 @@ import { PATRON_NAVIGATION } from '../../app.global';
 
 @Component({
   selector: 'st-settings',
-  templateUrl: './settings.page.html',
-  styleUrls: ['./settings.page.scss'],
+  templateUrl: './settings.html',
+  styleUrls: ['./settings.scss'],
 })
 export class SettingsPage implements OnInit {
 

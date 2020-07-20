@@ -46,7 +46,7 @@ const routes: Route[] = [
   },
   {
     path: PATRON_ROUTES.settings,
-    loadChildren: './settings/settings.page.module#SettingsPageModule',
+    loadChildren: './settings/settings.module#SettingsModule',
   },
 ];
 

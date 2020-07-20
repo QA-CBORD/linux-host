@@ -18,7 +18,7 @@ const providers = [];
   entryComponents
 
 })
-export class SettingsPageModule {
+export class SettingsModule {
   constructor() {
   }
 }

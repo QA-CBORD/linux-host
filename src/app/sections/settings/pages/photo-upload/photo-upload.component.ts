@@ -145,9 +145,7 @@ export class PhotoUploadComponent implements OnInit {
   //will submit all photos that have been uploaded
   submitPhotos() {
     console.log('front id pic', this.frontId, 'back id pic', this.backId, 'selfie pic', this.selfie);
- this.selfiePicSubmit();
- this.frontIDPicSubmit();
- this.backIDPicSubmit();
+
       //trying to add the function for setting all the photos you have taken
       
     //changes the condition to submitted and removes the upload ability
@@ -155,9 +153,6 @@ export class PhotoUploadComponent implements OnInit {
     console.log('function for submitting photos to DB');
   }
 
-  this.selfiePicSubmit(){}
- this.frontIDPicSubmit(){}
- this.backIDPicSubmit(){}
 
   //will delete photos from DB
   deletePhoto() {
@@ -168,7 +163,7 @@ export class PhotoUploadComponent implements OnInit {
   /// Camera plugin control method
   private getPhoto(): Observable<CameraPhoto> {
     /// set identity state to allow user to return from camera without logging in again, this would disrupt the data transfer
-    this.identityFacadeService.navigateToNativePlugin = true;
+
     return from(
       Camera.getPhoto({
         quality: 85, //Test
