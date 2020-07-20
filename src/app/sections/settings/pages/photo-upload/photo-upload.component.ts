@@ -33,10 +33,11 @@ export class PhotoUploadComponent implements OnInit {
   frontIdSubmitted: boolean = false;
   backIdSubmitted: boolean = false;
   selfieSubmitted: boolean = false;
-  userId: any;
+  userId: string;
   photoList: any;
   userPhoto: string;
   photos: any;
+  hasPendingPhotos: boolean;
 
   constructor(
     private readonly router: Router,
@@ -48,10 +49,12 @@ export class PhotoUploadComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    //call institution settings for photos 
-    //keeps throwing an error
-    this.setUserPhoto();
+    //weve got to initially determine if they having pending photos or not
     this.getPhotoList();
+    //call institution settings for photos 
+    //we can keep this but we can also use the sort photo function to do it
+    this.setUserPhoto();
+
   }
 
   //sets the user photo varibale if there is a photo, keep getting a timeout error when i try to use this
@@ -94,48 +97,52 @@ export class PhotoUploadComponent implements OnInit {
     console.log('photo list', this.photoList);
     var index;
     for (index = 0; index < this.photoList.length; index++) {
-      if (this.photoList[index].type === 1 && this.photoList[index].status === 1 && this.photoList[index].data === null) {
+      if(this.photoList[index].type === 0 && this.photoList[index].status === 0){
+        this.hasPendingPhotos = true;
+      } else {
+        if (this.photoList[index].type === 1 && this.photoList[index].status === 1 && this.photoList[index].data === null) {
 
-        // console.log('photo has a type of 1', this.photoList[index]);
-        this.frontIdPhotoInfo = this.photoList[index];
-
-        this.userFacadeService.getPhotoById(this.photoList[index].id)
+          // console.log('photo has a type of 1', this.photoList[index]);
+          this.frontIdPhotoInfo = this.photoList[index];
+  
+          this.userFacadeService.getPhotoById(this.photoList[index].id)
+            .pipe(map(({ data, mimeType }) => `data:${mimeType};base64,${data}`),
+              take(1)
+            )
+            .subscribe(
+              url => {
+                this.frontId = url;
+                // console.log('front id', this.frontId)
+              },
+              error => console.log('get front id from db Photo error', error),
+              () => {
+                console.log('get front id from db Photo Complete')
+              });
+  
+          // console.log('front id if there is one', this.frontId);
+          this.frontId = this.domsanitizer.bypassSecurityTrustResourceUrl(`${this.frontId}`);
+        }
+        if (this.photoList[index].type === 2 && this.photoList[index].status === 1 && this.photoList[index].data === null) {
+  
+          // console.log('photo has a type of 2', this.photoList[index]);
+          this.backIdPhotoInfo = this.photoList[index];
+  
+          this.userFacadeService.getPhotoById(this.photoList[index].id)
           .pipe(map(({ data, mimeType }) => `data:${mimeType};base64,${data}`),
             take(1)
           )
           .subscribe(
             url => {
-              this.frontId = url;
-              // console.log('front id', this.frontId)
+              this.backId = url;
+              // console.log('back id', this.backId)
             },
-            error => console.log('get front id from db Photo error', error),
+            error => console.log('get back id from db Photo error', error),
             () => {
-              console.log('get front id from db Photo Complete')
+              console.log('get back id from db Photo Complete')
             });
-
-        // console.log('front id if there is one', this.frontId);
-        this.frontId = this.domsanitizer.bypassSecurityTrustResourceUrl(`${this.frontId}`);
-      }
-      if (this.photoList[index].type === 2 && this.photoList[index].status === 1 && this.photoList[index].data === null) {
-
-        // console.log('photo has a type of 2', this.photoList[index]);
-        this.backIdPhotoInfo = this.photoList[index];
-
-        this.userFacadeService.getPhotoById(this.photoList[index].id)
-        .pipe(map(({ data, mimeType }) => `data:${mimeType};base64,${data}`),
-          take(1)
-        )
-        .subscribe(
-          url => {
-            this.backId = url;
-            // console.log('back id', this.backId)
-          },
-          error => console.log('get back id from db Photo error', error),
-          () => {
-            console.log('get back id from db Photo Complete')
-          });
-
-        this.backId = this.domsanitizer.bypassSecurityTrustResourceUrl(`${this.backId}`);
+  
+          this.backId = this.domsanitizer.bypassSecurityTrustResourceUrl(`${this.backId}`);
+        }
       }
     }
   }
