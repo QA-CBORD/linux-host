@@ -12,6 +12,7 @@ import { Institution } from '@core/model/institution';
 import { take } from 'rxjs/operators';
 import { Device } from '@capacitor/core';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
+import { migrateLegacyGlobalConfig } from '@angular/cli/utilities/config';
 
 @Injectable({
   providedIn: 'root',
@@ -118,7 +119,8 @@ export class SessionFacadeService {
 
       const isBiometricsAvailable = await this.identityFacadeService.areBiometricsAvailable();
       console.log(10);
-      const isBiometricsEnabledForUserPreference = await this.identityFacadeService.cachedBiometricsEnabledUserPreference$;
+      const isBiometricsEnabledForUserPreference = await this.identityFacadeService
+        .cachedBiometricsEnabledUserPreference$;
       console.log(11);
       if (isBiometricsAvailable && isBiometricsEnabledForUserPreference) {
         return LoginState.BIOMETRIC_LOGIN;

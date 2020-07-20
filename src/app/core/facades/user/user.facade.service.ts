@@ -19,6 +19,7 @@ import {
   PushNotificationActionPerformed,
 } from '@capacitor/core';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
+const { PushNotifications, LocalNotifications, IOSDevice } = Plugins;
 
 @Injectable({
   providedIn: 'root',
@@ -34,7 +35,7 @@ export class UserFacadeService extends ServiceStateFacade {
     private readonly userApiService: UserApiService,
     private readonly storageStateService: StorageStateService,
     private readonly nativeProvider: NativeProvider,
-    private readonly settingsFacadeService: SettingsFacadeService,
+    private readonly settingsFacadeService: SettingsFacadeService
   ) {
     super();
   }
@@ -168,6 +169,7 @@ export class UserFacadeService extends ServiceStateFacade {
       .subscribe(result => {
         if (result.granted) {
           PushNotifications.removeAllListeners();
+
           PushNotifications.addListener('pushNotificationReceived', (notification: PushNotification) => {
             if (Capacitor.platform === 'android') {
               LocalNotifications.schedule({
