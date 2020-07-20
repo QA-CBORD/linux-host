@@ -41,14 +41,19 @@ export class AuthFacadeService extends ServiceStateFacade {
   authenticateUser$(userCredentials: UserLogin): Observable<string> {
     return this.authApiService
       .authenticateUser(userCredentials)
-      .pipe(tap(res => this.storageStateService.updateStateEntity(this.sessionIdKey, res, this.ttl)));
+      .pipe(
+        tap(res =>
+          this.storageStateService.updateStateEntity(this.sessionIdKey, res, { ttl: this.ttl, highPriorityKey: true })
+        )
+      );
   }
 
   authenticatePin$(pin: string): Observable<boolean> {
-    return from(Device.getInfo())
-      .pipe(
-        switchMap(({uuid}) => this.authApiService.authenticatePin(pin, uuid)),
-        tap(res => this.storageStateService.updateStateEntity(this.sessionIdKey, res, this.ttl)),
+    return from(Device.getInfo()).pipe(
+      switchMap(({ uuid }) => this.authApiService.authenticatePin(pin, uuid)),
+      tap(res =>
+        this.storageStateService.updateStateEntity(this.sessionIdKey, res, { ttl: this.ttl, highPriorityKey: true })
+      ),
         map(res => !!res)
       );
   }

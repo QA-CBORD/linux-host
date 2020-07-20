@@ -10,9 +10,16 @@ import { map, switchMap, tap, take, catchError } from 'rxjs/operators';
 import { AddressInfo } from '@core/model/address/address-info';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { Settings } from 'src/app/app.global';
-import { Plugins, Device, Capacitor, PushNotificationToken, PushNotification } from '@capacitor/core';
+import {
+  Plugins,
+  Device,
+  Capacitor,
+  PushNotificationToken,
+  PushNotification,
+  PushNotificationActionPerformed,
+} from '@capacitor/core';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
-const { PushNotifications } = Plugins;
+const { PushNotifications, LocalNotifications, IOSDevice } = Plugins;
 
 @Injectable({
   providedIn: 'root',
@@ -48,7 +55,7 @@ export class UserFacadeService extends ServiceStateFacade {
   getUser$(): Observable<UserInfo> {
     return this.userApiService
       .getUser()
-      .pipe(tap(res => this.storageStateService.updateStateEntity(this.userKey, res, this.ttl)));
+      .pipe(tap(res => this.storageStateService.updateStateEntity(this.userKey, res, {ttl: this.ttl})));
   }
 
   getUserPhoto$(userId: string): Observable<MessageResponse<UserPhotoInfo>> {
@@ -58,7 +65,7 @@ export class UserFacadeService extends ServiceStateFacade {
   getUserAddresses$(): Observable<AddressInfo[]> {
     return this.userApiService
       .getUserAddresses()
-      .pipe(tap(res => this.storageStateService.updateStateEntity(this.userAddressKey, res, this.ttl)));
+      .pipe(tap(res => this.storageStateService.updateStateEntity(this.userAddressKey, res, {ttl: this.ttl})));
   }
 
   createUserPin(pin: string): Observable<boolean> {
@@ -162,7 +169,17 @@ export class UserFacadeService extends ServiceStateFacade {
       .subscribe(result => {
         if (result.granted) {
           PushNotifications.removeAllListeners();
-          PushNotifications.addListener('pushNotificationReceived', (notification: PushNotification) => {});
+          PushNotifications.addListener('pushNotificationReceived', (notification: PushNotification) => {
+            LocalNotifications.schedule({
+              notifications: [
+                {
+                  title: notification.title,
+                  body: notification.body,
+                  id: Date.now()
+                },
+              ],
+            });
+          });
           PushNotifications.addListener('registration', (token: PushNotificationToken) => {
             this.saveNotification$(token.value).subscribe(
               response => {
@@ -206,7 +223,10 @@ export class UserFacadeService extends ServiceStateFacade {
         }
         return of(false);
       }),
-      take(1)
+      take(1),
+      catchError(error => {
+        return of(false);
+      })
     );
   }
 
@@ -218,7 +238,7 @@ export class UserFacadeService extends ServiceStateFacade {
   }
 
   private setFCMToken(value: string) {
-    this.storageStateService.updateStateEntity(this.fcmTokenKey, value, this.ttl);
+    this.storageStateService.updateStateEntity(this.fcmTokenKey, value, {ttl: this.ttl});
   }
 
   getFCMToken$(): Observable<string> {

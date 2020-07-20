@@ -13,7 +13,7 @@ import { SessionFacadeService } from '@core/facades/session/session.facade.servi
 })
 export class EntryPage implements OnInit {
   constructor(
-    private readonly nav: Router,
+    private readonly route: Router,
     private readonly authFacadeService: AuthFacadeService,
     private readonly sessionFacadeService: SessionFacadeService
   ) {}
@@ -23,10 +23,10 @@ export class EntryPage implements OnInit {
   }
 
   private async initialization(){
-    const logoutUser = this.nav.getCurrentNavigation().extras.state.logoutUser || false;
+    const logoutUser = this.route.getCurrentNavigation().extras.state.logoutUser || false;
 
     if(logoutUser){
-      await this.sessionFacadeService.logoutUser();
+      await this.sessionFacadeService.logoutUser(false);
     }
 
     this.authFacadeService
@@ -36,7 +36,7 @@ export class EntryPage implements OnInit {
   }
 
   redirectTo() {
-    this.nav.navigate([ROLES.guest, GUEST_ROUTES.institutions]);
+    this.route.navigate([ROLES.guest, GUEST_ROUTES.institutions]);
   }
 
   checkLocation() {
