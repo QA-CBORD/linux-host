@@ -72,6 +72,7 @@ export class InstitutionsPage implements OnInit {
 
   async selectInstitution(id: string) {
     await this.loadingService.showSpinner();
+    this.settingsFacadeService.cleanCache();
     await zip(
       this.settingsFacadeService.fetchSettingList(Settings.SettingList.FEATURES, this.sessionId, id),
       this.settingsFacadeService.getSettings(
@@ -79,8 +80,8 @@ export class InstitutionsPage implements OnInit {
         this.sessionId,
         id
       ),
-      this.institutionFacadeService.getInstitutionInfo$(id, this.sessionId, true),
-      this.settingsFacadeService.getSetting(Settings.Setting.PIN_ENABLED, this.sessionId, id)
+      this.settingsFacadeService.getSetting(Settings.Setting.PIN_ENABLED, this.sessionId, id),
+      this.institutionFacadeService.getInstitutionDataById$(id, this.sessionId, true),
     )
       .pipe(
         switchMap(() => this.sessionFacadeService.determineInstitutionSelectionLoginState()),
