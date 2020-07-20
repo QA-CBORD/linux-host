@@ -8,12 +8,10 @@ import { LoadingService } from '@core/service/loading/loading.service';
 
 @Injectable()
 export class MerchantResolverService implements Resolve<Observable<[MerchantInfo[], MerchantInfo[], MerchantInfo[]]>> {
-  constructor(private readonly exploreService: ExploreService,
-              private readonly loadingService: LoadingService) {
-  }
+  constructor(private readonly exploreService: ExploreService, private readonly loadingService: LoadingService) {}
 
   resolve(): Observable<[MerchantInfo[], MerchantInfo[], MerchantInfo[]]> {
-    this.loadingService.showSpinner();
+    this.loadingService.showSpinner({ duration: 3000 });
     return this.exploreService.getInitialMerchantData$().pipe(finalize(() => this.loadingService.closeSpinner()));
   }
 }

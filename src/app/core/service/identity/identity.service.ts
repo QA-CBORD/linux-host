@@ -191,7 +191,9 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
     await this.loadingService.showSpinner();
     this.getVaultData()
       .pipe(
-        switchMap(({ pin }) => this.authFacadeService.authenticatePin$(pin)),
+        switchMap(({ pin }) => {
+          return this.authFacadeService.authenticatePin$(pin);
+        }),
         take(1),
         finalize(() => this.loadingService.closeSpinner())
       )

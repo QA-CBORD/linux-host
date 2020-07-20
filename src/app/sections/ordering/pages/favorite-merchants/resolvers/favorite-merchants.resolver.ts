@@ -9,22 +9,24 @@ import { MerchantInfo } from '@sections/ordering';
 
 @Injectable()
 export class FavoriteMerchantsResolver implements Resolve<Observable<MerchantInfo[]>> {
-
   constructor(
     private readonly favoriteMerchantsService: FavoriteMerchantsService,
     private readonly loadingService: LoadingService,
     private readonly merchantService: MerchantService
-  ) { }
+  ) {}
 
   resolve(): Observable<MerchantInfo[]> {
     this.loadingService.showSpinner();
-    return zip(this.favoriteMerchantsService
-      .getFavoriteMerchants(), this.merchantService.menuMerchants$)
-      .pipe(
-        map(([favoriteMerchants, merchants]) =>
-          favoriteMerchants.map(merchant => merchants.find(({ id }) => id === merchant.id))),
-        tap(() => {
-          this.loadingService.closeSpinner()
-        }, () => this.loadingService.closeSpinner()));
+    return zip(this.favoriteMerchantsService.getFavoriteMerchants(), this.merchantService.menuMerchants$).pipe(
+      map(([favoriteMerchants, merchants]) =>
+        favoriteMerchants.map(merchant => merchants.find(({ id }) => id === merchant.id))
+      ),
+      tap(
+        () => {
+          this.loadingService.closeSpinner();
+        },
+        () => this.loadingService.closeSpinner()
+      )
+    );
   }
 }
