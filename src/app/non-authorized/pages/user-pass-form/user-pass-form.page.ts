@@ -18,6 +18,7 @@ import { Device } from '@capacitor/core';
 import { IdentityFacadeService, LoginState } from '@core/facades/identity/identity.facade.service';
 import { StInputFloatingLabelComponent } from '@shared/ui-components';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
+import { GUEST_ROUTES } from '../../non-authorized.config';
 
 @Component({
   selector: 'user-pass-form',
@@ -256,6 +257,10 @@ export class UserPassForm implements OnInit {
   private async getIsWeb(): Promise<boolean> {
     const { operatingSystem } = await Device.getInfo();
     return !(operatingSystem === 'ios' || operatingSystem === 'android');
+  }
+
+  public get defaultBackUrl() {
+    return [ROLES.guest, GUEST_ROUTES.entry];
   }
 }
 
