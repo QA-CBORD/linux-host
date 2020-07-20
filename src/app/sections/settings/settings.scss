@@ -1,80 +1,94 @@
-@import "tools";
+@import 'tools';
 
-.container{
-    background: #F1F1F1 !important;
+.container {
+  background: #f1f1f1 !important;
 }
 
-.title{
-@include font-nunito-heavy(20px);
-color: rgba(0, 0, 0, 0.87);
+.title {
+  @include font-nunito-heavy(20px);
+  color: rgba(0, 0, 0, 0.87);
 }
 
-.toolbar{
-    display: flex;
-    justify-content: flex-start;
-    background: #FFFFFF;
-    padding-top: 15px;
+.toolbar {
+  display: flex;
+  justify-content: flex-start;
+  background: #ffffff;
+  padding-top: 15px;
 }
 
-.student-card-container{
-    margin-left: 0px;
-    margin-right: 0px;
+.student-card-container {
+  margin-left: 0px;
+  margin-right: 0px;
 }
 
-.patron-img{
-    height:64px;
-    width:64px;
+.card-subtitle {
+  text-transform: uppercase;
+  @include font-nunito-regular(12px);
 }
 
-.item{
-    // NOT SURE IF THIS WILL WORK
-    &__avatar {
-            width:64px !important;
-            height : 100% !important;
-            max-width: 100px !important;  //any size
-            max-height: 100px !important; //any size
+.patron-img {
+  height: 64px;
+  width: 64px;
+}
 
+.item {
+  &__avatar {
+    width: 64px !important;
+    height: 100% !important;
+    max-width: 100px !important; //any size
+    max-height: 100px !important; //any size
+  }
+
+  &__label {
+    .h3 {
+      @include font-nunito-heavy(20px);
     }
-    //display: flex;
-    //justify-content: space-between;
+
+    .h4 {
+      @include font-nunito-semibold(14px);
+    }
+
+    .p {
+      @include font-nunito-regular(14px);
+    }
+  }
 }
 
-.thumbnail{
-    width: 22px;
-    height: 22px;
+.thumbnail {
+  object-fit: cover;
+  width: 64px;
+  height: 64px;
 }
 
-.thumbnail-card{
-    width: 23px;
-    height: 18px;
+.thumbnail-card {
+  width: 23px;
+  height: 23px;
+  .img {
+    object-fit: cover;
+  }
 }
 
-.item-native{
-    padding: 0px !important;
+.item-native {
+  padding: 0px !important;
 }
 
-.student-card{
-display: flex;
+.student-card {
+  display: flex;
 }
 
-.student-image{
-    width: 64px;
+.student-image {
+  width: 64px;
 }
 
-.student-card-options{
-display: flex;
-flex-flow: column;
+.student-card-options {
+  display: flex;
+  flex-flow: column;
 }
 
 .sc-ion-card-ios-s img {
-   width: unset;
+  width: unset;
 }
 
-.item-icon{
-    padding-right: 12.82px;
+.item-icon {
+  padding-right: 12.82px;
 }
-
-
-
-
-
