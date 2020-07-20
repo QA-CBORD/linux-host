@@ -170,15 +170,18 @@ export class UserFacadeService extends ServiceStateFacade {
         if (result.granted) {
           PushNotifications.removeAllListeners();
           PushNotifications.addListener('pushNotificationReceived', (notification: PushNotification) => {
-            LocalNotifications.schedule({
-              notifications: [
-                {
-                  title: notification.title,
-                  body: notification.body,
-                  id: Date.now()
-                },
-              ],
-            });
+            if (Capacitor.platform === 'android') {
+              LocalNotifications.schedule({
+                notifications: [
+                  {
+                    title: notification.title,
+                    body: notification.body,
+                    id: Date.now(),
+                    smallIcon: '@drawable/ic_launcher'
+                  },
+                ],
+              });
+            }
           });
           PushNotifications.addListener('registration', (token: PushNotificationToken) => {
             this.saveNotification$(token.value).subscribe(
