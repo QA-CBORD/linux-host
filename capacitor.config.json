@@ -18,7 +18,15 @@
   },
   "plugins": {
     "PushNotifications": {
-      "presentationOptions": ["badge", "sound", "alert"]
+      "presentationOptions": [
+        "badge",
+        "sound",
+        "alert"
+      ]
     }
+  },
+  "server": {
+    "url": "http://10.0.0.40:8100",
+    "originalUrl": "http://10.0.0.40:8100"
   }
 }
