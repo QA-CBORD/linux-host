@@ -26,11 +26,6 @@ export class SessionFacadeService {
     private readonly router: Router
   ) {}
 
-  onNewInstitutionSelected() {
-    this.storageStateService.clearState();
-    this.storageStateService.clearStorage();
-  }
-
   async determinePostLoginState(sessionId: string, institutionId: string): Promise<LoginState> {
     console.log('checkPostLoginState');
     const isWeb: boolean = await this.getIsWeb();

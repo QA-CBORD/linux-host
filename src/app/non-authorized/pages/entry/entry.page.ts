@@ -5,6 +5,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
+import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 
 @Component({
   selector: 'st-entry',
@@ -12,25 +13,30 @@ import { SessionFacadeService } from '@core/facades/session/session.facade.servi
   styleUrls: ['./entry.page.scss'],
 })
 export class EntryPage implements OnInit {
+  private changeEnvClicks: number = 0;
+
   constructor(
     private readonly route: Router,
     private readonly authFacadeService: AuthFacadeService,
-    private readonly sessionFacadeService: SessionFacadeService
+    private readonly sessionFacadeService: SessionFacadeService,
+    private readonly environmentFacadeService: EnvironmentFacadeService
   ) {}
 
   ngOnInit() {
     this.initialization();
   }
 
-  private async initialization(){
-    const logoutUser = this.route.getCurrentNavigation().extras.state.logoutUser || false;
+  private async initialization(logoutUser: boolean = false) {
+    try {
+      logoutUser = this.route.getCurrentNavigation().extras.state.logoutUser;
+    } catch (e) {}
 
-    if(logoutUser){
+    if (logoutUser) {
       await this.sessionFacadeService.logoutUser(false);
     }
 
     this.authFacadeService
-      .getAuthSessionToken$()
+      .authenticateSystem$()
       .pipe(take(1))
       .toPromise();
   }
@@ -43,4 +49,13 @@ export class EntryPage implements OnInit {
     console.log('checkLocation');
   }
 
+  async changeEnv() {
+    this.changeEnvClicks++;
+    if (this.changeEnvClicks > 4) {
+      this.changeEnvClicks = 0;
+      await this.sessionFacadeService.logoutUser(false);
+      await this.environmentFacadeService.changeEnvironment();
+      this.initialization();
+    }
+  }
 }

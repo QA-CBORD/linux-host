@@ -15,12 +15,16 @@ export class StorageStateService extends ExtendableStateManager<WebStorageStateE
     this.state
   );
   protected readonly _isUpdating$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(!!this.activeUpdaters);
-  private readonly storageKey: string = 'cbord';
+  private readonly storageKey: string = 'cbord_gcs';
   private readonly storage = Storage;
   private isStateInitialized: boolean = false;
 
   constructor(private readonly platform: Platform) {
     super();
+    this.initialization();
+  }
+
+  initialization(){
     this.initState();
     this.initSaveStorageListeners();
   }
@@ -72,9 +76,11 @@ export class StorageStateService extends ExtendableStateManager<WebStorageStateE
 
   protected async getStateFromStorage(): Promise<void> {
     this.state = await this.getStateFromLocalStorage();
+    console.log('restore state from storage', this.state);
   }
 
   protected async initState(): Promise<void> {
+    console.log('initState');
     await this.getStateFromStorage()
       .then(() => (this.isStateInitialized = true))
       .then(() => this.setStateToStorage());
@@ -83,6 +89,7 @@ export class StorageStateService extends ExtendableStateManager<WebStorageStateE
   protected async setStateToStorage(): Promise<void> {
     const storageObject = { key: this.storageKey, value: this.convertIntoStr(this.state) };
     await this.storage.set(storageObject);
+    console.log('Storage set complete', storageObject);
     this.dispatchStateChanges();
   }
 

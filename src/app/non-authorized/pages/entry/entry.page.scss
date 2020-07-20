@@ -37,4 +37,14 @@
     justify-content: space-evenly;
     padding: 0 20px;
   }
+
+  &__env-button {
+    --background: transparent;
+    --box-shadow:none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 50px;
+    width: 50px;
+  }
 }

@@ -17,6 +17,7 @@ import { SettingsFacadeService } from '@core/facades/settings/settings-facade.se
 import { Environment } from '../../../environment';
 import { IdentityFacadeService, LoginState } from '@core/facades/identity/identity.facade.service';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
+import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 const { Keyboard, IOSDevice } = Plugins;
 
 @Component({
@@ -35,6 +36,7 @@ export class InstitutionsPage implements OnInit {
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly nativeStartupFacadeService: NativeStartupFacadeService,
+    private readonly environmentFacadeService: EnvironmentFacadeService,
     private readonly authFacadeService: AuthFacadeService,
     private readonly loadingService: LoadingService,
     private readonly sessionFacadeService: SessionFacadeService,
@@ -70,7 +72,6 @@ export class InstitutionsPage implements OnInit {
 
   async selectInstitution(id: string) {
     await this.loadingService.showSpinner();
-    await this.sessionFacadeService.onNewInstitutionSelected();
     await zip(
       this.settingsFacadeService.fetchSettingList(Settings.SettingList.FEATURES, this.sessionId, id),
       this.settingsFacadeService.getSettings(
@@ -150,7 +151,7 @@ export class InstitutionsPage implements OnInit {
   }
   async setNativeEnvironment() {
     if (Capacitor.platform === 'ios') {
-      await IOSDevice.setEnvironment({ env: Environment.currentEnvironment });
+      await IOSDevice.setEnvironment({ env: this.environmentFacadeService.getEnvironmentObject() });
     }
   }
 }

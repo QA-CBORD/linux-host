@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 import { ROLES } from '../../app.global';
 import { GUEST_ROUTES } from '../../non-authorized/non-authorized.config';
 import { LoadingService } from '@core/service/loading/loading.service';
+import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 
 @Injectable()
 export class BaseInterceptor implements HttpInterceptor {
@@ -20,6 +21,7 @@ export class BaseInterceptor implements HttpInterceptor {
   constructor(
     private readonly authFacadeService: AuthFacadeService,
     private readonly institutionFacadeService: InstitutionFacadeService,
+    private readonly environmentFacadeService: EnvironmentFacadeService,
     private readonly router: Router,
     private readonly loading: LoadingService
   ) {}
@@ -44,7 +46,7 @@ export class BaseInterceptor implements HttpInterceptor {
     }
     const rpcConfig: RPCQueryConfig = req.body;
     const timeOut = rpcConfig.timeOut ? rpcConfig.timeOut : this.TIMEOUT_MS;
-    const url = Environment.getServicesURL().concat(req.url);
+    const url = this.environmentFacadeService.getServicesURL().concat(req.url);
     const clone = req.clone({ url, body: rpcConfig.requestBody, headers: this.baseHeaders });
     const request =
       rpcConfig.useSessionId || rpcConfig.useInstitutionId
