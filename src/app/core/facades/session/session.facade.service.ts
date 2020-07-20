@@ -20,12 +20,12 @@ export class SessionFacadeService {
   constructor(
     private readonly userFacadeService: UserFacadeService,
     private readonly identityFacadeService: IdentityFacadeService,
-    private readonly institutionFacadeService:InstitutionFacadeService,
+    private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly storageStateService: StorageStateService,
     private readonly router: Router
   ) {}
 
-  onNewInstitutionSelected(){
+  onNewInstitutionSelected() {
     this.storageStateService.clearState();
     this.storageStateService.clearStorage();
   }
@@ -44,7 +44,8 @@ export class SessionFacadeService {
       if (isPinLoginEnabled && isPinEnabledForUserPreference) {
         console.log(3);
         const isBiometricsAvailable = await this.identityFacadeService.areBiometricsAvailable();
-        const isBiometricsEnabledForUserPreference = await this.identityFacadeService.cachedBiometricsEnabledUserPreference$;
+        const isBiometricsEnabledForUserPreference = await this.identityFacadeService
+          .cachedBiometricsEnabledUserPreference$;
         if (isBiometricsAvailable && isBiometricsEnabledForUserPreference) {
           console.log(4);
           return LoginState.BIOMETRIC_SET;
@@ -129,27 +130,26 @@ export class SessionFacadeService {
     return usernamePasswordLoginType;
   }
 
-  isVaultLocked(){
+  isVaultLocked() {
     return this.identityFacadeService.isVaultLocked;
   }
 
-  handlePushNotificationRegistration(){
+  handlePushNotificationRegistration() {
     this.userFacadeService.handlePushNotificationRegistration();
   }
 
-  async logoutUser() {
+  async logoutUser(navigateToEntry: boolean = true) {
     await this.userFacadeService.logoutAndRemoveUserNotification().toPromise();
     this.identityFacadeService.logoutUser();
     this.storageStateService.clearState();
     this.storageStateService.clearStorage();
-    this.router.navigate([ROLES.guest, GUEST_ROUTES.entry]);
+    if (navigateToEntry) {
+      this.router.navigate([ROLES.guest, GUEST_ROUTES.entry]);
+    }
   }
-
 
   async getIsWeb(): Promise<boolean> {
     const { operatingSystem } = await Device.getInfo();
     return !(operatingSystem === 'ios' || operatingSystem === 'android');
   }
-
-
 }

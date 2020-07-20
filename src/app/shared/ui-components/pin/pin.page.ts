@@ -5,10 +5,11 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Settings } from '../../../app.global';
-import { take } from 'rxjs/operators';
+import { finalize, take } from 'rxjs/operators';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import Setting = Settings.Setting;
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
+import { LoadingService } from '@core/service/loading/loading.service';
 
 export enum PinCloseStatus {
   SET_SUCCESS = 'set_success',
@@ -63,12 +64,21 @@ export class PinPage implements OnInit {
     private readonly userFacadeService: UserFacadeService,
     private readonly authFacadeService: AuthFacadeService,
     private readonly settingsFacadeService: SettingsFacadeService,
+    private readonly loadingService: LoadingService
   ) {}
 
   @Input() pinAction: PinAction;
 
   ngOnInit() {
     this.retrievePinRetrys();
+    this.setInstructionText();
+  }
+
+  private setInstructionText(text: string = null){
+    if(text !== null) {
+      this.instructionText = text;
+      return;
+    }
     switch (this.pinAction) {
       case PinAction.SET_BIOMETRIC:
         this.instructionText = this.setPinText;
@@ -77,7 +87,7 @@ export class PinPage implements OnInit {
         this.instructionText = this.setPinNoBiometricsText;
         break;
       case PinAction.LOGIN_PIN:
-        this.instructionText = this.currentPinText;
+        this.setInstructionText(this.currentPinText);
     }
   }
 
@@ -121,10 +131,10 @@ export class PinPage implements OnInit {
         if (!this.arePINsMatch) {
           this.setErrorText(this.pinsDoNotMatchText);
           this.cleanLocalState();
-          this.instructionText = this.setPinNoBiometricsText;
+          this.setInstructionText(this.setPinNoBiometricsText);
           return;
         }
-        this.instructionText = this.setPinNoBiometricsText;
+        this.setInstructionText(this.setPinNoBiometricsText);
         /// if setting pin, call service to set and then send to 'on dismiss' for vault to use pin
         this.setPin();
       } else {
@@ -133,7 +143,7 @@ export class PinPage implements OnInit {
         this.pinNumberCopy = this.pinNumber;
         this.disableInput = true;
         setTimeout(() => {
-          this.instructionText = this.confirmNewPinText;
+          this.setInstructionText(this.confirmNewPinText);
           this.pinNumber = [];
           this.disableInput = false;
         }, 300);
@@ -166,7 +176,7 @@ export class PinPage implements OnInit {
   back() {
     this.pinNumberCopy = [];
     this.pinNumber = [];
-    this.instructionText = this.newPinText;
+    this.setInstructionText(this.newPinText);
   }
 
   removeNumber(): void | undefined {
@@ -179,6 +189,7 @@ export class PinPage implements OnInit {
   }
 
   private cleanLocalState() {
+    this.setInstructionText();
     this.pinNumber = [];
     this.pinNumberCopy = [];
   }
@@ -187,56 +198,66 @@ export class PinPage implements OnInit {
     this.errorText = value;
   }
 
-  private setPin() {
+  private async setPin() {
+    this.setInstructionText('');
+    await this.loadingService.showSpinner();
     /// set user pin in Database
-    this.userFacadeService.createUserPin(this.pinNumber.join('')).subscribe(
-      success => {
-        /// on success, dismiss with pin in data
-        if (success) {
-          this.closePage(this.pinNumber.join(''), PinCloseStatus.SET_SUCCESS);
-        } else {
-          /// handle error here
+    this.userFacadeService
+      .createUserPin(this.pinNumber.join(''))
+      .pipe(finalize(() => this.loadingService.closeSpinner()), take(1))
+      .subscribe(
+        success => {
+          /// on success, dismiss with pin in data
+          if (success) {
+            this.closePage(this.pinNumber.join(''), PinCloseStatus.SET_SUCCESS);
+          } else {
+            /// handle error here
+            this.cleanLocalState();
+            this.setErrorText('Error setting your PIN - please try again');
+          }
+        },
+        error => {
+          console.log('Pin Set Error', error);
           this.cleanLocalState();
           this.setErrorText('Error setting your PIN - please try again');
-        }
-      },
-      error => {
-        console.log('Pin Set Error', error);
-        this.cleanLocalState();
-        this.setErrorText('Error setting your PIN - please try again');
-      },
-      () => console.log('Pin Set Complete')
-    );
+        },
+        () => console.log('Pin Set Complete')
+      );
   }
 
-  private loginPin() {
+  private async loginPin() {
+    this.setInstructionText('');
+    await this.loadingService.showSpinner();
     this.currentLoginAttempts++;
 
-    this.authFacadeService.authenticatePin$(this.pinNumber.join('')).subscribe(
-      success => {
-        /// on success, dismiss with pin in data
-        if (success) {
-          this.closePage(this.pinNumber.join(''), PinCloseStatus.LOGIN_SUCCESS);
-        } else {
-          /// handle error here
+    this.authFacadeService
+      .authenticatePin$(this.pinNumber.join(''))
+      .pipe(finalize(() => this.loadingService.closeSpinner()), take(1))
+      .subscribe(
+        success => {
+          /// on success, dismiss with pin in data
+          if (success) {
+            this.closePage(this.pinNumber.join(''), PinCloseStatus.LOGIN_SUCCESS);
+          } else {
+            /// handle error here
+            this.cleanLocalState();
+            this.setErrorText('Error logging in - please try again');
+          }
+        },
+        error => {
+          console.log('Pin Login Error', error);
           this.cleanLocalState();
-          this.setErrorText('Error logging in - please try again');
-        }
-      },
-      error => {
-        console.log('Pin Login Error', error);
-        this.cleanLocalState();
-        if (this.currentLoginAttempts >= this.maxLoginAttempts) {
-          this.setErrorText('Maximum login attempts reached - logging you out');
-          setTimeout(() => {
-            this.closePage(null, PinCloseStatus.MAX_FAILURE);
-          }, 3000);
-        } else {
-          this.setErrorText('Incorrect PIN - please try again');
-        }
-      },
-      () => console.log('Pin Login Complete')
-    );
+          if (this.currentLoginAttempts >= this.maxLoginAttempts) {
+            this.setErrorText('Maximum login attempts reached - logging you out');
+            setTimeout(() => {
+              this.closePage(null, PinCloseStatus.MAX_FAILURE);
+            }, 3000);
+          } else {
+            this.setErrorText('Incorrect PIN - please try again');
+          }
+        },
+        () => console.log('Pin Login Complete')
+      );
     // on success, return the pin so the vault can be unlocked
   }
 }

@@ -14,7 +14,19 @@ export class LoadingService {
 
   async showSpinner(config: LoadingOptions | string = {}): Promise<void> {
     config = typeof config === 'string' ? { message: config } : config;
-    config = config.duration ? config : { ...config, duration: this.maxDuration };
+    config = {
+      ...config,
+      cssClass: 'custom-loading',
+      showBackdrop: true,
+      mode: 'md',
+      keyboardClose: true,
+    };
+    config = config.duration
+      ? config
+      : {
+          ...config,
+          duration: this.maxDuration,
+        };
 
     if (this.loader !== null) await this.closeSpinner();
     this.loader = await this.loadingController.create(config);
@@ -22,7 +34,7 @@ export class LoadingService {
   }
 
   async closeSpinner(): Promise<void> {
-    this.loader && await this.loader.dismiss();
+    this.loader && (await this.loader.dismiss());
     this.loader = null;
   }
 }
