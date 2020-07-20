@@ -6,7 +6,7 @@
     </ion-toolbar>
   </ion-header>
 <!-- TOP OF WHAT WILL GET MOVED TO THE PHOTO UPLOAD HTML FILE -->
-<ion-card *ngIf="!submitted" class="id-photo-upload-container">
+<ion-card *ngIf="!frontIdSubmitted && !backIdSubmitted && !hasPendingPhotos" class="id-photo-upload-container">
   <!-- HEADER MESSAGE FOR ID UPLOADS -->
   <ion-card-header>
     <div class="header-message-container-id">
@@ -52,7 +52,7 @@
 <ion-card class="selfie-photo-container">
   <!-- MESSAGE FOR SELFIE PHOTOS -->
   <ion-card-header>
-    <div *ngIf="(!selfieSubmitted || !backIdSubmitted || !frontIdSubmitted) || hasPendingPhotos" class="header-message-container-selfie">
+    <div *ngIf="!selfieSubmitted && !backIdSubmitted && !frontIdSubmitted && !hasPendingPhotos" class="header-message-container-selfie">
       <div class="icon-cont">
         <ion-icon name="information-circle-outline" class="icon"></ion-icon>
       </div>
@@ -62,7 +62,7 @@
         </div>
       </div>
     </div>
-    <div *ngIf="(selfieSubmitted && backIdSubmitted && frontIdSubmitted) && !hasPendingPhotos" class="header-message-container-selfie-submitted">
+    <div *ngIf="(selfieSubmitted && backIdSubmitted && frontIdSubmitted) || hasPendingPhotos" class="header-message-container-selfie-submitted">
       <div class="icon-cont">
         <ion-icon name="checkmark-circle" class="icon"></ion-icon>
       </div>
@@ -89,8 +89,8 @@
       </div>
       <img *ngIf="!selfieNew" src="../../../assets/icon/Icon Color (1).png" class="selfie-placeholder-img"  alt="User photo icon placeholder" />
       <img *ngIf="selfieNew" [src]="selfieNew" class="uploaded-user-photo" alt="User uploaded photo"/>
-      <ion-button *ngIf="!selfieNew && !selfieSubmitted" class="upload-btn" (click)="promptSelfieCamera()">UPLOAD</ion-button>
-      <ion-button *ngIf="selfieNew && !selfieSubmitted" color="light" class="reupload-btn" (click)="promptSelfieCamera()">
+      <ion-button *ngIf="!selfieNew && !selfieSubmitted && !hasPendingPhotos" class="upload-btn" (click)="promptSelfieCamera()">UPLOAD</ion-button>
+      <ion-button *ngIf="selfieNew && !selfieSubmitted && !hasPendingPhotos" color="light" class="reupload-btn" (click)="promptSelfieCamera()">
         REUPLOAD</ion-button
       >
       <ion-button *ngIf="selfieSubmitted || hasPendingPhotos" color="danger" class="reupload-btn" (click)="deletePhoto()">DELETE</ion-button>

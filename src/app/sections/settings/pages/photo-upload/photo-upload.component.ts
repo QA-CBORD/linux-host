@@ -38,6 +38,8 @@ export class PhotoUploadComponent implements OnInit {
   userPhoto: string;
   photos: any;
   hasPendingPhotos: boolean;
+  pendingPhoto: SafeResourceUrl = null;
+  pendingPhotoInfo: UserPhotoInfo;
 
   constructor(
     private readonly router: Router,
@@ -68,11 +70,11 @@ export class PhotoUploadComponent implements OnInit {
       .subscribe(
         url => {
           this.selfieOld = url;
-          console.log('userPhoto', this.selfieOld);
+          // console.log('userPhoto', this.selfieOld);
         },
         error => console.log('get User Photo error', error),
         () => {
-          console.log('get User Photo Complete')
+          // console.log('get User Photo Complete')
         }
       );
   }
@@ -86,7 +88,7 @@ export class PhotoUploadComponent implements OnInit {
       },
       error => console.log('getPhotoList error', error),
       () => {
-        console.log('getPhotoList complete', this.photoList);
+        // console.log('getPhotoList complete', this.photoList);
         this.sortPhotos();
       }
     );
@@ -97,14 +99,33 @@ export class PhotoUploadComponent implements OnInit {
     console.log('photo list', this.photoList);
     var index;
     for (index = 0; index < this.photoList.length; index++) {
-      if(this.photoList[index].type === 0 && this.photoList[index].status === 0){
+      if (this.photoList[index].type === 0 && this.photoList[index].status === 0) {
         this.hasPendingPhotos = true;
+        this.pendingPhotoInfo = this.photoList[index];
+
+        this.userFacadeService.getPhotoById(this.photoList[index].id)
+          .pipe(map(({ data, mimeType }) => `data:${mimeType};base64,${data}`),
+            take(1)
+          )
+          .subscribe(
+            url => {
+              this.pendingPhoto = url;
+              // console.log('front id', this.frontId)
+            },
+            error => console.log('get pending from db Photo error', error),
+            () => {
+              // console.log('get pending from db Photo Complete')
+            });
+
+        // console.log('front id if there is one', this.frontId);
+        this.pendingPhoto = this.domsanitizer.bypassSecurityTrustResourceUrl(`${this.pendingPhoto}`);
+        this.selfieNew = this.pendingPhoto;
       } else {
         if (this.photoList[index].type === 1 && this.photoList[index].status === 1 && this.photoList[index].data === null) {
 
           // console.log('photo has a type of 1', this.photoList[index]);
           this.frontIdPhotoInfo = this.photoList[index];
-  
+
           this.userFacadeService.getPhotoById(this.photoList[index].id)
             .pipe(map(({ data, mimeType }) => `data:${mimeType};base64,${data}`),
               take(1)
@@ -116,31 +137,31 @@ export class PhotoUploadComponent implements OnInit {
               },
               error => console.log('get front id from db Photo error', error),
               () => {
-                console.log('get front id from db Photo Complete')
+                // console.log('get front id from db Photo Complete')
               });
-  
+
           // console.log('front id if there is one', this.frontId);
           this.frontId = this.domsanitizer.bypassSecurityTrustResourceUrl(`${this.frontId}`);
         }
         if (this.photoList[index].type === 2 && this.photoList[index].status === 1 && this.photoList[index].data === null) {
-  
+
           // console.log('photo has a type of 2', this.photoList[index]);
           this.backIdPhotoInfo = this.photoList[index];
-  
+
           this.userFacadeService.getPhotoById(this.photoList[index].id)
-          .pipe(map(({ data, mimeType }) => `data:${mimeType};base64,${data}`),
-            take(1)
-          )
-          .subscribe(
-            url => {
-              this.backId = url;
-              // console.log('back id', this.backId)
-            },
-            error => console.log('get back id from db Photo error', error),
-            () => {
-              console.log('get back id from db Photo Complete')
-            });
-  
+            .pipe(map(({ data, mimeType }) => `data:${mimeType};base64,${data}`),
+              take(1)
+            )
+            .subscribe(
+              url => {
+                this.backId = url;
+                // console.log('back id', this.backId)
+              },
+              error => console.log('get back id from db Photo error', error),
+              () => {
+                // console.log('get back id from db Photo Complete')
+              });
+
           this.backId = this.domsanitizer.bypassSecurityTrustResourceUrl(`${this.backId}`);
         }
       }
@@ -333,7 +354,7 @@ export class PhotoUploadComponent implements OnInit {
   //opens modal for delete confirmation
   deletePhoto() {
     //passes in the photoId of the image being deleted, so far i am just asking them to delete the selfie, since that is what the design displayed
-    this.presentModal(this.selfiePhotoInfo.id);
+    this.presentModal(this.pendingPhotoInfo.id);
   }
 
   /// Camera plugin control method
@@ -359,15 +380,29 @@ export class PhotoUploadComponent implements OnInit {
   //presents the delete pic modal and will eventually catch the result on dimiss when the api call is succesfull and update the screen appropriately
   async presentModal(photoId) {
     const modal = await this.modalController.create({
-      component: DeleteModalComponent,
-      componentProps: {
-        'photoId': photoId,
-      }
+      component: DeleteModalComponent
     });
-    await modal.onWillDismiss()
+    modal.onDidDismiss()
       .then((data) => {
-        console.log(data);
-      });;
+        if (data.data === true) {
+          // console.log('data', data);
+          this.hasPendingPhotos = false;
+
+          //delete picture logic
+          this.userFacadeService.updateUserPhotoStatus(photoId, 5, 'Patron deleted photo')
+            .subscribe(
+              response => {
+                console.log('response from delete photo', response);
+              },
+              error => {
+                this.presentToast('There was an error deleting the photo - please try again');
+              },
+              () => {
+                console.log('Delete photo complete');
+              }
+            )
+        }
+      });
 
     return await modal.present();
   }
