@@ -6,14 +6,20 @@ import { ModalController, ToastController } from '@ionic/angular';
 import { DeleteModalComponent } from '../delete-modal/delete-modal.component';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { PATRON_NAVIGATION } from '../../../../app.global';
-import { from, Observable } from 'rxjs';
+import { from, iif, Observable, of } from 'rxjs';
 import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
-import { map, take } from 'rxjs/operators';
+import { map, switchMap, take } from 'rxjs/operators';
 import { UserPhotoInfo, UserPhotoList } from '@core/model/user';
 import { PhotoUploadService } from '@sections/settings/services/photo-upload.service';
 
 const { Camera } = Plugins;
+
+export interface PhotoDisplayInfo {
+  data: string | SafeResourceUrl;
+  isDefault: boolean;
+  isPending: boolean;
+}
 
 @Component({
   selector: 'st-photo-upload',
@@ -21,6 +27,9 @@ const { Camera } = Plugins;
   styleUrls: ['./photo-upload.component.scss'],
 })
 export class PhotoUploadComponent implements OnInit {
+  govIdFront$: Observable<PhotoDisplayInfo>;
+  govIdBack$: Observable<string | SafeResourceUrl>;
+
   frontId: SafeResourceUrl = null;
   frontIdPhotoInfo: UserPhotoInfo;
   frontIdBase64: string;
@@ -53,6 +62,7 @@ export class PhotoUploadComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.initialization();
     //weve got to initially determine if they having pending photos or not
     this.getPhotoList();
     //call institution settings for photos
@@ -89,6 +99,33 @@ export class PhotoUploadComponent implements OnInit {
       error => console.log('govtIdBackPending$ Error: ', error),
       () => console.log('govtIdBackPending$ Complete')
     );
+  }
+
+  private initialization() {
+    this.govIdFront$ = this.photoUploadService.govtIdFront$.pipe(
+      switchMap(photoInfo =>
+        iif(
+          () => photoInfo === null,
+          of({ data: this.domsanitizer.bypassSecurityTrustResourceUrl('/assets/images/govt-id-front.svg'), isDefault: true, isPending: false }),
+          of({ data: this.formatPhotoData(photoInfo), isDefault: false, isPending: false })
+        )
+      )
+    );
+
+    this.govIdBack$ = this.photoUploadService.govtIdBack$.pipe(
+      switchMap(photoInfo =>
+      iif(
+        () => photoInfo === null,
+        of({ data: this.domsanitizer.bypassSecurityTrustResourceUrl('/assets/images/govt-id-back.svg'), isDefault: true, isPending: false }),
+        of({ data: this.formatPhotoData(photoInfo), isDefault: false, isPending: false })
+      )
+    )
+    );
+  }
+
+  private formatPhotoData({ mimeType, data }: UserPhotoInfo): SafeResourceUrl {
+    console.log('Format Photo Data');
+    return this.domsanitizer.bypassSecurityTrustResourceUrl(`data:${mimeType};base64,${data}`);
   }
 
   //sets the user photo varibale if there is a photo, keep getting a timeout error when i try to use this
