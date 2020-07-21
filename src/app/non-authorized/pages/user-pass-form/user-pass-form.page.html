@@ -2,6 +2,7 @@
   <ion-toolbar mode="ios" class="ion-color" [style.background-color]="nativeHeaderBg$ | async">
     <ion-buttons slot="start">
       <ion-back-button
+        [defaultHref]='defaultBackUrl'
         class="login-header__back-btn"
         color="light"
         text="Back"

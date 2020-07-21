@@ -16,6 +16,9 @@ import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Device } from '@capacitor/core';
 import { IdentityFacadeService, LoginState } from '@core/facades/identity/identity.facade.service';
+import { StInputFloatingLabelComponent } from '@shared/ui-components';
+import { SessionFacadeService } from '@core/facades/session/session.facade.service';
+import { GUEST_ROUTES } from '../../non-authorized.config';
 
 @Component({
   selector: 'user-pass-form',
@@ -41,6 +44,7 @@ export class UserPassForm implements OnInit {
     private readonly router: Router,
     private readonly sanitizer: DomSanitizer,
     private readonly toastController: ToastController,
+    private readonly sessionFacadeService: SessionFacadeService,
     private readonly identityFacadeService: IdentityFacadeService,
     private readonly fb: FormBuilder,
     private readonly cdRef: ChangeDetectorRef,
@@ -73,12 +77,14 @@ export class UserPassForm implements OnInit {
     this.nativeHeaderBg$ = this.getNativeHeaderBg(id, sessionId);
     this.deviceInfo$ = this.fetchDeviceInfo();
     this.cdRef.markForCheck();
-
-    console.log('DeviceInfo', this.deviceInfo$);
   }
 
   redirectToWebPage(url) {
     window.open(`${Environment.getSitesURL()}/${this.institutionInfo.shortName}/full/${url}`);
+  }
+
+  focusNext(nextField: StInputFloatingLabelComponent) {
+    nextField.focus();
   }
 
   async redirectToForgotPassword(): Promise<void> {
@@ -102,11 +108,10 @@ export class UserPassForm implements OnInit {
     } catch (e) {
       console.log('authUser error', e);
       this.presentToast('Login failed, invalid user name and/or password');
+      this.loadingService.closeSpinner();
       return;
-    } finally {
-      await this.loadingService.closeSpinner();
     }
-    const loginState: LoginState = await this.identityFacadeService.determinePostLoginState(sessionId, id);
+    const loginState: LoginState = await this.sessionFacadeService.determinePostLoginState(sessionId, id);
 
     console.log('UserPass - Login State:', loginState);
     switch (loginState) {
@@ -116,8 +121,6 @@ export class UserPassForm implements OnInit {
         } catch (e) {
           console.log('UPF - pin set error', e);
           this.presentToast('Login failed, invalid user name and/or password');
-        } finally {
-          this.router.navigate([PATRON_NAVIGATION.dashboard]);
         }
         break;
       case LoginState.BIOMETRIC_SET:
@@ -129,6 +132,7 @@ export class UserPassForm implements OnInit {
         this.router.navigate([PATRON_NAVIGATION.dashboard]);
         break;
     }
+    this.loadingService.closeSpinner();
   }
 
   private initForm() {
@@ -253,6 +257,10 @@ export class UserPassForm implements OnInit {
   private async getIsWeb(): Promise<boolean> {
     const { operatingSystem } = await Device.getInfo();
     return !(operatingSystem === 'ios' || operatingSystem === 'android');
+  }
+
+  public get defaultBackUrl() {
+    return [ROLES.guest, GUEST_ROUTES.entry];
   }
 }
 

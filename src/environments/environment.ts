@@ -153,7 +153,7 @@ export const testCredentials: { [key: string]: UserLogin } = {
     password: 'password1',
     domain: null,
     institutionId: '3e23f0a0-c628-459c-8b88-65ad3c79f0db',
-  }
+  },
 };
 
 /*

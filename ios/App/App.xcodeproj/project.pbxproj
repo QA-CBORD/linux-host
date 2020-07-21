@@ -39,7 +39,7 @@
 		EE451C29247D4C1F00F00012 /* UIViewController+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE451C28247D4C1F00F00012 /* UIViewController+Ext.swift */; };
 		EE4B662F249905A0000F6878 /* Notification+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE4B662E249905A0000F6878 /* Notification+Ext.swift */; };
 		EE4B663124993E96000F6878 /* Plugin+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE4B663024993E96000F6878 /* Plugin+Ext.swift */; };
-		EE5251DC24BE417F008CD822 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = EE5251DB24BE417F008CD822 /* GoogleService-Info.plist */; };
+		EE5251DA24BE34D1008CD822 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = EE5251D924BE34D1008CD822 /* GoogleService-Info.plist */; };
 		EE7198E4249BD37C0018FDFB /* AppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE7198E3249BD37C0018FDFB /* AppUITests.swift */; };
 		EE7CE763246ECE9E002EF737 /* PassKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE7CE762246ECE9E002EF737 /* PassKit.framework */; };
 		EE7CE765246ED937002EF737 /* Data+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE7CE764246ED937002EF737 /* Data+Ext.swift */; };
@@ -110,7 +110,7 @@
 		EE451C28247D4C1F00F00012 /* UIViewController+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Ext.swift"; sourceTree = "<group>"; };
 		EE4B662E249905A0000F6878 /* Notification+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Notification+Ext.swift"; sourceTree = "<group>"; };
 		EE4B663024993E96000F6878 /* Plugin+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Plugin+Ext.swift"; sourceTree = "<group>"; };
-		EE5251DB24BE417F008CD822 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		EE5251D924BE34D1008CD822 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		EE7198E1249BD37C0018FDFB /* AppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE7198E3249BD37C0018FDFB /* AppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUITests.swift; sourceTree = "<group>"; };
 		EE7198E5249BD37C0018FDFB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -175,7 +175,7 @@
 		504EC3061FED79650016851F /* App */ = {
 			isa = PBXGroup;
 			children = (
-				EE5251DB24BE417F008CD822 /* GoogleService-Info.plist */,
+				EE5251D924BE34D1008CD822 /* GoogleService-Info.plist */,
 				EE7CE761246ECE9E002EF737 /* App.entitlements */,
 				EE2E6B0B246E398900D1AF97 /* Extensions */,
 				EE2E6B12246E398900D1AF97 /* Managers */,
@@ -384,7 +384,7 @@
 				50379B232058CBB4000EE86E /* capacitor.config.json in Resources */,
 				504EC30D1FED79650016851F /* Main.storyboard in Resources */,
 				2FAD9763203C412B000D30F8 /* config.xml in Resources */,
-				EE5251DC24BE417F008CD822 /* GoogleService-Info.plist in Resources */,
+				EE5251DA24BE34D1008CD822 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -642,7 +642,7 @@
 				CODE_SIGN_ENTITLEMENTS = App/App.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 3.5.0.7;
+				CURRENT_PROJECT_VERSION = 3.5.0.8;
 				DEVELOPMENT_TEAM = DKB7LNE85Z;
 				INFOPLIST_FILE = App/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -669,7 +669,7 @@
 				CODE_SIGN_ENTITLEMENTS = App/App.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 3.5.0.7;
+				CURRENT_PROJECT_VERSION = 3.5.0.8;
 				DEVELOPMENT_TEAM = DKB7LNE85Z;
 				INFOPLIST_FILE = App/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -836,7 +836,7 @@
 				CODE_SIGN_ENTITLEMENTS = App/App.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 3.5.0.7;
+				CURRENT_PROJECT_VERSION = 3.5.0.8;
 				DEVELOPMENT_TEAM = DKB7LNE85Z;
 				INFOPLIST_FILE = App/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -919,7 +919,7 @@
 				CODE_SIGN_ENTITLEMENTS = App/App.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 3.5.0.7;
+				CURRENT_PROJECT_VERSION = 3.5.0.8;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = App/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;

@@ -1,17 +1,25 @@
 import { Injectable } from '@angular/core';
 import { ServiceStateFacade } from '@core/classes/service-state-facade';
-import { Observable, of, from } from 'rxjs';
+import { Observable, of, from, iif, zip } from 'rxjs';
 import { UserApiService } from '@core/service/user-api/user-api.service';
 import { UserInfo } from '@core/model/user/user-info.model';
-import { UserPhotoInfo, UserPhotoList, UserSettingInfo } from '@core/model/user';
+import { UserPhotoInfo, UserPhotoList, UserNotificationInfo } from '@core/model/user';
 import { MessageResponse } from '@core/model/service/message-response.model';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { map, switchMap, tap, take, catchError } from 'rxjs/operators';
 import { AddressInfo } from '@core/model/address/address-info';
-import { NativeProvider, NativeData } from '@core/provider/native-provider/native.provider';
+import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { Settings } from 'src/app/app.global';
-import { Device } from '@capacitor/core';
+import {
+  Plugins,
+  Device,
+  Capacitor,
+  PushNotificationToken,
+  PushNotification,
+  PushNotificationActionPerformed,
+} from '@capacitor/core';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
+const { PushNotifications, LocalNotifications, IOSDevice } = Plugins;
 
 @Injectable({
   providedIn: 'root',
@@ -21,6 +29,7 @@ export class UserFacadeService extends ServiceStateFacade {
   private userPhoto: UserPhotoInfo = null;
   private userKey = 'get_user';
   private userAddressKey = 'get_user_address';
+  private fcmTokenKey = 'fcm_token';
 
   constructor(
     private readonly userApiService: UserApiService,
@@ -31,7 +40,6 @@ export class UserFacadeService extends ServiceStateFacade {
     super();
   }
 
-  /// get user data from cache or fetch if not cached
   getUserData$(): Observable<UserInfo> {
     return this.storageStateService.getStateEntityByKey$<UserInfo>(this.userKey).pipe(
       switchMap(data => {
@@ -44,11 +52,10 @@ export class UserFacadeService extends ServiceStateFacade {
     );
   }
 
-  /// fetch user data
   getUser$(): Observable<UserInfo> {
     return this.userApiService
       .getUser()
-      .pipe(tap(res => this.storageStateService.updateStateEntity(this.userKey, res, this.ttl)));
+      .pipe(tap(res => this.storageStateService.updateStateEntity(this.userKey, res, {ttl: this.ttl})));
   }
 
   getUserPhoto$(): Observable<MessageResponse<UserPhotoInfo>> {
@@ -70,7 +77,7 @@ export class UserFacadeService extends ServiceStateFacade {
   getUserAddresses$(): Observable<AddressInfo[]> {
     return this.userApiService
       .getUserAddresses()
-      .pipe(tap(res => this.storageStateService.updateStateEntity(this.userAddressKey, res, this.ttl)));
+      .pipe(tap(res => this.storageStateService.updateStateEntity(this.userAddressKey, res, {ttl: this.ttl})));
   }
 
   createUserPin(pin: string): Observable<boolean> {
@@ -103,6 +110,10 @@ export class UserFacadeService extends ServiceStateFacade {
       map(({ response }) => response),
       take(1)
     );
+  }
+
+  getPhotoListByUserId(userId: string): Observable<MessageResponse<UserPhotoList>> {
+    return this.userApiService.getPhotoListByUserId(userId);
   }
 
   getPhotoById(photoId: string): Observable<UserPhotoInfo> {
@@ -169,5 +180,101 @@ export class UserFacadeService extends ServiceStateFacade {
     return this.userApiService.updateUserPhotoStatus(photoId, status, reason).
       pipe((map(({ response }) => response)),
       take(1))
+  }
+
+  handlePushNotificationRegistration() {
+    zip(this.isPushNotificationEnabled$(), this.getFCMToken$())
+      .pipe(
+        switchMap(([pushNotificationsEnabled, fcmToken]) => {
+          return iif(
+            () => pushNotificationsEnabled && !fcmToken,
+            from(PushNotifications.requestPermission()),
+            of({ granted: false })
+          );
+        }),
+        take(1)
+      )
+      .subscribe(result => {
+        if (result.granted) {
+          PushNotifications.removeAllListeners();
+          PushNotifications.addListener('pushNotificationReceived', (notification: PushNotification) => {
+            if (Capacitor.platform === 'android') {
+              LocalNotifications.schedule({
+                notifications: [
+                  {
+                    title: notification.title,
+                    body: notification.body,
+                    id: Date.now(),
+                    smallIcon: '@drawable/ic_launcher'
+                  },
+                ],
+              });
+            }
+          });
+          PushNotifications.addListener('registration', (token: PushNotificationToken) => {
+            this.saveNotification$(token.value).subscribe(
+              response => {
+                console.log('saveNotification: next', response);
+              },
+              error => {
+                console.log('saveNotification: error', error);
+              },
+              () => console.log('saveNotification: complete')
+            );
+          });
+          PushNotifications.register();
+        }
+      });
+  }
+
+  saveNotification$(fcmToken: string): Observable<string> {
+    this.setFCMToken(fcmToken);
+    const notification: UserNotificationInfo = {
+      type: 8,
+      value: fcmToken,
+      provider: Capacitor.platform,
+    };
+    return this.getUserData$().pipe(
+      switchMap(({ id }) => this.userApiService.saveNotification$(id, notification)),
+      take(1)
+    );
+  }
+
+  logoutAndRemoveUserNotification(): Observable<boolean> {
+    return zip(this.getUserData$(), this.getFCMToken$()).pipe(
+      switchMap(([{ id }, fcmToken]) => {
+        if (fcmToken) {
+          const notification: UserNotificationInfo = {
+            type: 8,
+            value: fcmToken,
+            provider: Capacitor.platform,
+          };
+          PushNotifications.removeAllDeliveredNotifications();
+          return this.userApiService.logoutAndRemoveUserNotification$(id, notification);
+        }
+        return of(false);
+      }),
+      take(1),
+      catchError(error => {
+        return of(false);
+      })
+    );
+  }
+
+  isPushNotificationEnabled$(): Observable<boolean> {
+    return this.settingsFacadeService.getSetting(Settings.Setting.PUSH_NOTIFICATION_ENABLED).pipe(
+      map(({ value }) => Boolean(Number(value))),
+      take(1)
+    );
+  }
+
+  private setFCMToken(value: string) {
+    this.storageStateService.updateStateEntity(this.fcmTokenKey, value, {ttl: this.ttl});
+  }
+
+  getFCMToken$(): Observable<string> {
+    return this.storageStateService
+      .getStateEntityByKey$<string>(this.fcmTokenKey)
+      .pipe(map(data => (data && data.value ? data.value : null)));
   }
 }

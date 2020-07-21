@@ -49,7 +49,7 @@ export class NativeStartupFacadeService extends ServiceStateFacade {
                       this.storageStateService.updateStateEntity(
                         this.digestKey,
                         NativeStartupInfo.messageDigest,
-                        this.ttl
+                        { ttl: this.ttl }
                       );
                       return this.displayMessageToUser(
                         NativeStartupInfo.minSupportedVersionFailure,

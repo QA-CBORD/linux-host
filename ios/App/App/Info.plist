@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>GET</string>
+	<string>${PRODUCT_NAME}</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -59,7 +59,7 @@
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>GET uses your location to find the nearest merchants</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Allow GET to Record Audio and Video</string>
+	<string>Allow GET to Record Audio With Video</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>GET requires access to your library to save Profile Image</string>
 	<key>NSPhotoLibraryUsageDescription</key>
@@ -72,8 +72,6 @@
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
-	<key>UIStatusBarHidden</key>
-	<false/>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>

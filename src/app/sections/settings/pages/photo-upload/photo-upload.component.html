@@ -29,7 +29,7 @@
       <div>
         Front of ID
       </div>
-      <img *ngIf="!frontId" src="../../../assets/images/Front of ID.png" class="card-img"/>
+      <img *ngIf="!frontId" src="/assets/images/govt-id-front.svg" class="card-img"/>
       <img *ngIf="frontId" [src]="frontId" width="132" height="80" />
       <ion-button *ngIf="!frontId" class="upload-btn" (click)="promptFrontPhoto()">UPLOAD</ion-button>
       <ion-button *ngIf="frontId" color="light" class="reupload-btn" (click)="promptFrontPhoto()"
@@ -40,7 +40,7 @@
       <div>
         Back of ID
       </div>
-      <img *ngIf="!backId" src="../../../assets/images/Back of ID.png" class="card-img" />
+      <img *ngIf="!backId" src="/assets/images/govt-id-back.svg" class="card-img" />
       <img *ngIf="backId" [src]="backId" width="132" height="80" />
       <ion-button *ngIf="!backId" class="upload-btn" (click)="promptBackPhoto()">UPLOAD</ion-button>
       <ion-button *ngIf="backId" color="light" class="reupload-btn" (click)="promptBackPhoto()">REUPLOAD</ion-button>
@@ -80,14 +80,14 @@
         Current Photo
       </div>
       <!-- NOT CURRENTLY GETTING SAVED PROFILE PHOTO -->
-      <img *ngIf="!selfieOld" src="../../../assets/icon/Icon Color (1).png" alt="selfie place holder"/>
+      <img *ngIf="!selfieOld" src="/assets/images/user-profile-image-default.svg" alt="selfie place holder"/>
       <img *ngIf="selfieOld" [src]="selfieOld" alt="selfie pic">
     </div>
     <div class="stored-img-cont">
       <div>
         New Photo
       </div>
-      <img *ngIf="!selfieNew" src="../../../assets/icon/Icon Color (1).png" class="selfie-placeholder-img"  alt="User photo icon placeholder" />
+      <img *ngIf="!selfieNew" src="/assets/images/user-profile-image-default.svg" class="selfie-placeholder-img"  alt="User photo icon placeholder" />
       <img *ngIf="selfieNew" [src]="selfieNew" class="uploaded-user-photo" alt="User uploaded photo"/>
       <ion-button *ngIf="!selfieNew && !selfieSubmitted && !hasPendingPhotos" class="upload-btn" (click)="promptSelfieCamera()">UPLOAD</ion-button>
       <ion-button *ngIf="selfieNew && !selfieSubmitted && !hasPendingPhotos" color="light" class="reupload-btn" (click)="promptSelfieCamera()">

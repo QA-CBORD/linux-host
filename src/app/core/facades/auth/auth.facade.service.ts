@@ -7,6 +7,11 @@ import { StorageStateService } from '@core/states/storage/storage-state.service'
 import { Observable, of, iif, from } from 'rxjs';
 import { StorageEntity } from '@core/classes/extendable-state-manager';
 import { Device } from '@capacitor/core';
+import { ROLES } from '../../../app.global';
+import { GUEST_ROUTES } from '../../../non-authorized/non-authorized.config';
+import { UserFacadeService } from '@core/facades/user/user.facade.service';
+import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +23,7 @@ export class AuthFacadeService extends ServiceStateFacade {
 
   constructor(
     private readonly authApiService: AuthApiService,
-    private readonly storageStateService: StorageStateService
+    private readonly storageStateService: StorageStateService,
   ) {
     super();
   }
@@ -36,14 +41,19 @@ export class AuthFacadeService extends ServiceStateFacade {
   authenticateUser$(userCredentials: UserLogin): Observable<string> {
     return this.authApiService
       .authenticateUser(userCredentials)
-      .pipe(tap(res => this.storageStateService.updateStateEntity(this.sessionIdKey, res, this.ttl)));
+      .pipe(
+        tap(res =>
+          this.storageStateService.updateStateEntity(this.sessionIdKey, res, { ttl: this.ttl, highPriorityKey: true })
+        )
+      );
   }
 
   authenticatePin$(pin: string): Observable<boolean> {
-    return from(Device.getInfo())
-      .pipe(
-        switchMap(({uuid}) => this.authApiService.authenticatePin(pin, uuid)),
-        tap(res => this.storageStateService.updateStateEntity(this.sessionIdKey, res, this.ttl)),
+    return from(Device.getInfo()).pipe(
+      switchMap(({ uuid }) => this.authApiService.authenticatePin(pin, uuid)),
+      tap(res =>
+        this.storageStateService.updateStateEntity(this.sessionIdKey, res, { ttl: this.ttl, highPriorityKey: true })
+      ),
         map(res => !!res)
       );
   }
@@ -64,14 +74,10 @@ export class AuthFacadeService extends ServiceStateFacade {
     return this.authApiService.getExternalAuthenticationToken();
   }
 
-  logoutUser() {
-    this.storageStateService.clearState();
-  }
-
   retrieveAuthorizationBlob(deviceModel: string, deviceOSVersion: string): Observable<string> {
     return this.authApiService.retrieveAuthorizationBlob(deviceModel, deviceOSVersion);
   }
-  
+
   private isValidData(data: StorageEntity): boolean {
     return data !== null && data.lastModified + data.timeToLive >= Date.now();
   }

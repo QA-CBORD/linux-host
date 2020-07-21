@@ -4,10 +4,8 @@ import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { Platform, PopoverController } from '@ionic/angular';
 
-import { App, AppRestoredResult, AppState } from '@capacitor/core';
+import { App, AppState } from '@capacitor/core';
 
-import { StGlobalPopoverComponent } from '@shared/ui-components';
-import { BUTTON_TYPE } from '@core/utils/buttons.config';
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { NavigationEnd, Router } from '@angular/router';
 import { ROLES } from './app.global';
@@ -16,6 +14,7 @@ import { GUEST_ROUTES } from './non-authorized/non-authorized.config';
 import { Plugins } from '@capacitor/core';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { PATRON_ROUTES } from '@sections/section.config';
+import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 
 const { Keyboard } = Plugins;
 
@@ -36,6 +35,7 @@ export class AppComponent implements OnInit {
     private readonly statusBar: StatusBar,
     private readonly popoverCtrl: PopoverController,
     private readonly identityFacadeService: IdentityFacadeService,
+    private readonly sessionFacadeService: SessionFacadeService,
     private readonly router: Router,
     private readonly cdRef: ChangeDetectorRef,
     private readonly globalNav: GlobalNavService
@@ -77,11 +77,13 @@ export class AppComponent implements OnInit {
       console.log('App state changed. Is active?', isActive);
 
       if (isActive) {
+
         if(this.identityFacadeService.didNavigateToNativePlugin){
           this.identityFacadeService.navigateToNativePlugin = false;
           return;
         }
-        if (this.identityFacadeService.isVaultLocked) {
+
+        if (this.sessionFacadeService.isVaultLocked()) {
           this.router.navigate([ROLES.guest, GUEST_ROUTES.startup], { replaceUrl: true });
         }
       }
@@ -89,7 +91,9 @@ export class AppComponent implements OnInit {
   }
 
   private initEventListeners() {
-    if (this.platform.is('android') || this.platform.is('ios') || this.platform.is('cordova')) {
+    if (this.platform.is('android')
+      || this.platform.is('ios')
+      || this.platform.is('cordova')) {
       this.initMobileListeners();
     }
   }

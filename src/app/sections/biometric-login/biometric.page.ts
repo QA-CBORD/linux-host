@@ -30,6 +30,7 @@ export class BiometricPage implements OnInit {
       this.openPinModal(false);
     } else if (action === 'disable'){
       this.identityFacadeService._biometricsEnabledUserPreference = false;
+      this.openPinModal(false);
     }
   }
 

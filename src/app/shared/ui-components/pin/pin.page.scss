@@ -19,14 +19,14 @@
   &__back-btn {
     --margin-start: 10px;
     --icon-padding-end: 5px;
-    --icon-font-size: 15px; //GCS-1928 #4, Unified design for button.  22px->15px;
+    --icon-font-size: 15px;
 
     @include font-nunito-regular(16px);
   }
 
   ion-back-button {
     display: block;
-    --icon-font-size: 15px; //GCS-1928 #4, Unified design for button.  22px->15px;
+    --icon-font-size: 15px;
   }
 
   position: relative;
@@ -42,16 +42,17 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    height: 50%;
   }
 
   &__number-block {
-    flex-grow: 2;
     display: flex;
     justify-content: space-around;
     align-items: center;
     align-content: space-around;
     flex-wrap: wrap;
     position: relative;
+    height: 45%;
   }
 
   &__number {
@@ -90,8 +91,8 @@
 
     &--left-bottom {
       position: absolute;
-      bottom: 8%;
-      right: 4%;
+      bottom: 1%;
+      right: 7%;
     }
   }
 

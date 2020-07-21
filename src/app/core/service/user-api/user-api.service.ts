@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { UserInfo } from '@core/model/user/user-info.model';
-import { UserSettingInfo, UserPhotoInfo, UserPhotoList, AddressInfoList } from '@core/model/user';
+import { UserSettingInfo, UserPhotoInfo, UserPhotoList, AddressInfoList, UserNotificationInfo } from '@core/model/user';
 import { map, switchMap } from 'rxjs/operators';
 import { MessageResponse } from '@core/model/service/message-response.model';
 import { AddressInfo } from '@core/model/address/address-info';
@@ -115,5 +115,17 @@ export class UserApiService {
     const queryConfig = new RPCQueryConfig('retrieveUserPhoto', { photoId }, true);
 
     return this.http.post<MessageResponse<UserPhotoInfo>>(this.serviceUrl, queryConfig);
+  }
+
+  saveNotification$(userId: string, notification: UserNotificationInfo): Observable<string> {
+    const params = { userId, notification };
+    const queryConfig = new RPCQueryConfig('saveNotification', params, true, false);
+    return this.http.post<any>(this.serviceUrl, queryConfig);
+  }
+
+  logoutAndRemoveUserNotification$(userId: string, notification: UserNotificationInfo): Observable<boolean> {
+    const params = { userId, notification };
+    const queryConfig = new RPCQueryConfig('logoutAndRemoveUserNotification', params, true, false);
+    return this.http.post<any>(this.serviceUrl, queryConfig);
   }
 }

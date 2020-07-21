@@ -92,7 +92,8 @@ export namespace Settings {
     ADDRESS_RESTRICTION = 'get.feature.institution_address_restriction',
     DISPLAY_CREDIT_CARDS = 'get.feature.display_credit_cards',
     APPLE_PAY_ENABLED = 'get.feature.enable_apple_pay',
-    APPLE_WALLET_ENABLED = 'get.feature.enable_apple_wallet'
+    APPLE_WALLET_ENABLED = 'get.feature.enable_apple_wallet',
+    PUSH_NOTIFICATION_ENABLED = 'get.feature.enable_push_notification'
   }
 
 }

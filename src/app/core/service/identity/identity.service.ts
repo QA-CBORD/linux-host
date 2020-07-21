@@ -17,10 +17,12 @@ import {
 } from '@ionic-enterprise/identity-vault';
 
 import { BrowserAuthPlugin } from '../browser-auth/browser-auth.plugin';
-import { PinAction, PinPage } from '@shared/ui-components/pin/pin.page';
+import { PinAction, PinCloseStatus, PinPage } from '@shared/ui-components/pin/pin.page';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
-import { switchMap, take } from 'rxjs/operators';
-import { PATRON_NAVIGATION } from '../../../app.global';
+import { finalize, switchMap, take } from 'rxjs/operators';
+import { PATRON_NAVIGATION, ROLES } from '../../../app.global';
+import { GUEST_ROUTES } from '../../../non-authorized/non-authorized.config';
+import { LoadingService } from '@core/service/loading/loading.service';
 
 export class VaultSessionData implements DefaultSession {
   token: string; /// unused
@@ -33,6 +35,7 @@ export class VaultSessionData implements DefaultSession {
 })
 export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
   private temporaryPin: string = undefined;
+  private wasPinLogin: boolean = false;
   private isLocked: boolean = true;
 
   constructor(
@@ -41,13 +44,10 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
     private modalController: ModalController,
     private router: Router,
     private plt: Platform,
-    private readonly authFacadeService: AuthFacadeService
+    private readonly authFacadeService: AuthFacadeService,
+    private readonly loadingService: LoadingService
   ) {
     super(plt, {
-      androidPromptTitle: 'Android Prompt Title',
-      androidPromptSubtitle: 'Android Prompt Subtitle',
-      androidPromptDescription: 'Android Prompt Description',
-      androidPromptNegativeButtonText: 'Use PIN',
       restoreSessionOnReady: false,
       unlockOnReady: false,
       unlockOnAccess: false,
@@ -76,7 +76,7 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
     return this.isLocked;
   }
 
-  /// will attempt to use biometric and will fall back to passcode if needed
+  /// will attempt to use pin and will fall back to passcode if needed
   /// will require pin set
   initAndUnlockPasscodeOnly(session: VaultSessionData): Observable<void> {
     this.temporaryPin = session.pin;
@@ -156,11 +156,22 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
     } else {
       /// will happen on pin login
       const { data, role } = await this.presentPinModal(PinAction.LOGIN_PIN);
-      if (role === 'cancel')
-        throw {
-          code: VaultErrorCodes.UserCanceledInteraction,
-          message: 'User has canceled pin login',
-        };
+      switch (role) {
+        case 'cancel': /// identity vault cancel role
+          throw {
+            code: VaultErrorCodes.UserCanceledInteraction,
+            message: 'User has canceled pin login',
+          };
+        case PinCloseStatus.MAX_FAILURE:
+          this.router.navigate([ROLES.guest, GUEST_ROUTES.entry], { state: { logoutUser: true } });
+          throw {
+            code: VaultErrorCodes.TooManyFailedAttempts,
+            message: 'User has exceeded max pin attempts',
+          };
+        case PinCloseStatus.LOGIN_SUCCESS:
+          this.wasPinLogin = true;
+          break;
+      }
       return Promise.resolve(data);
     }
   }
@@ -176,17 +187,19 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
     return await pinModal.onDidDismiss();
   }
 
-  private loginUser() {
+  private async loginUser() {
+    await this.loadingService.showSpinner();
     this.getVaultData()
       .pipe(
         switchMap(({ pin }) => this.authFacadeService.authenticatePin$(pin)),
-        take(1)
+        take(1),
+        finalize(() => this.loadingService.closeSpinner())
       )
       .subscribe(
-        next => console.log('Pin Login Next', next),
-        error => console.log('Pin Login error', error),
+        next => console.log('Biometric => Pin Login Next', next),
+        error => console.log('Biometric => Pin Login error', error),
         () => {
-          console.log('Pin Login Success, nav to dashboard');
+          console.log('Biometric => Pin Login Success, nav to dashboard');
           this.navigateToDashboard();
         }
       );
@@ -229,8 +242,14 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
   onVaultUnlocked(config: VaultConfig): void {
     this.isLocked = false;
     console.log('The vault was unlocked with config: ', config);
-    console.log('The vault was unlocked LOGIN USER HERE');
-    this.loginUser();
+    if (this.wasPinLogin) {
+      this.wasPinLogin = false;
+      console.log('Vault unlocked with pin, navigate to dashboard');
+      this.navigateToDashboard();
+    } else {
+      console.log('Vault unlocked with biometrics, login using pin');
+      this.loginUser();
+    }
   }
 
   onVaultLocked(event: LockEvent): void {
