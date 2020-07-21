@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { UserPhotoUploadSettings } from '@core/model/user/user-photo-upload-settings.model';
-import { BehaviorSubject, from, iif, Observable, of, zip } from 'rxjs';
+import { BehaviorSubject, iif, Observable, of, zip } from 'rxjs';
 import { UserPhotoInfo, UserPhotoList } from '@core/model/user';
 import { Settings } from '../../../app.global';
 import SettingList = Settings.SettingList;
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
-import { filter, map, switchMap, take, tap } from 'rxjs/operators';
+import { switchMap, tap } from 'rxjs/operators';
 import { SettingInfoList } from '@core/model/configuration/setting-info-list.model';
 
 export enum PhotoStatus {
@@ -15,6 +15,7 @@ export enum PhotoStatus {
   REJECTED,
   REPLACED,
   DELETED,
+  LOCALLY_PENDING = 99,
 }
 
 export enum PhotoType {
@@ -28,9 +29,7 @@ export enum PhotoType {
 })
 export class PhotoUploadService {
   private readonly _govtIdFront$: BehaviorSubject<UserPhotoInfo> = new BehaviorSubject<UserPhotoInfo>(null);
-  private readonly _govtIdFrontPending$: BehaviorSubject<UserPhotoInfo> = new BehaviorSubject<UserPhotoInfo>(null);
   private readonly _govtIdBack$: BehaviorSubject<UserPhotoInfo> = new BehaviorSubject<UserPhotoInfo>(null);
-  private readonly _govtIdBackPending$: BehaviorSubject<UserPhotoInfo> = new BehaviorSubject<UserPhotoInfo>(null);
   private readonly _profileImage$: BehaviorSubject<UserPhotoInfo> = new BehaviorSubject<UserPhotoInfo>(null);
   private readonly _profileImagePending$: BehaviorSubject<UserPhotoInfo> = new BehaviorSubject<UserPhotoInfo>(null);
 
@@ -52,16 +51,8 @@ export class PhotoUploadService {
     return this._govtIdFront$.asObservable();
   }
 
-  get govtIdFrontPending$(): Observable<UserPhotoInfo> {
-    return this._govtIdFrontPending$.asObservable();
-  }
-
   get govtIdBack$(): Observable<UserPhotoInfo> {
     return this._govtIdBack$.asObservable();
-  }
-
-  get govtIdBackPending$(): Observable<UserPhotoInfo> {
-    return this._govtIdBackPending$.asObservable();
   }
 
   get profileImage$(): Observable<UserPhotoInfo> {
@@ -76,16 +67,8 @@ export class PhotoUploadService {
     this._govtIdFront$.next(value);
   }
 
-  private set _govtIdFrontPending(value: UserPhotoInfo) {
-    this._govtIdFrontPending$.next(value);
-  }
-
   private set _govtIdBack(value: UserPhotoInfo) {
     this._govtIdBack$.next(value);
-  }
-
-  private set _govtIdBackPending(value: UserPhotoInfo) {
-    this._govtIdBackPending$.next(value);
   }
 
   private set _profileImage(value: UserPhotoInfo) {
@@ -98,6 +81,7 @@ export class PhotoUploadService {
 
   /// get photo upload settings and fetch and handle photos
   getInitialPhotoData$(): Observable<UserPhotoInfo[]> {
+    console.log('getInitialPhotoData$');
     return zip(
       this.settingsFacadeService.fetchSettingList(SettingList.PHOTO_UPLOAD),
       this.userFacadeService.getPhotoList()
@@ -132,18 +116,10 @@ export class PhotoUploadService {
         }
         break;
       case PhotoType.GOVT_ID_FRONT:
-        if (photoInfo.status === PhotoStatus.ACCEPTED) {
-          this._govtIdFront = photoInfo;
-        } else if (photoInfo.status === PhotoStatus.PENDING) {
-          this._govtIdFrontPending = photoInfo;
-        }
+        this._govtIdFront = photoInfo;
         break;
       case PhotoType.GOVT_ID_BACK:
-        if (photoInfo.status === PhotoStatus.ACCEPTED) {
-          this._govtIdBack = photoInfo;
-        } else if (photoInfo.status === PhotoStatus.PENDING) {
-          this._govtIdBackPending = photoInfo;
-        }
+        this._govtIdBack = photoInfo;
         break;
     }
   }

@@ -9,16 +9,25 @@ import { PATRON_NAVIGATION } from '../../../../app.global';
 import { from, iif, Observable, of } from 'rxjs';
 import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
-import { map, switchMap, take } from 'rxjs/operators';
+import { map, switchMap, take, tap } from 'rxjs/operators';
 import { UserPhotoInfo, UserPhotoList } from '@core/model/user';
-import { PhotoUploadService } from '@sections/settings/services/photo-upload.service';
+import { PhotoStatus, PhotoType, PhotoUploadService } from '@sections/settings/services/photo-upload.service';
+import { Local } from 'protractor/built/driverProviders';
 
 const { Camera } = Plugins;
 
-export interface PhotoDisplayInfo {
-  data: string | SafeResourceUrl;
-  isDefault: boolean;
-  isPending: boolean;
+export enum LocalPhotoStatus {
+  NONE,
+  PENDING,
+  ACCEPTED,
+  NEW,
+  SUBMITTED,
+}
+
+export interface LocalPhotoUploadStatus {
+  govIdFront: LocalPhotoStatus;
+  govIdBack: LocalPhotoStatus;
+  profilePending: LocalPhotoStatus;
 }
 
 @Component({
@@ -27,8 +36,16 @@ export interface PhotoDisplayInfo {
   styleUrls: ['./photo-upload.component.scss'],
 })
 export class PhotoUploadComponent implements OnInit {
-  govIdFront$: Observable<PhotoDisplayInfo>;
-  govIdBack$: Observable<string | SafeResourceUrl>;
+  govIdFront$: Observable<SafeResourceUrl>;
+  govIdBack$: Observable<SafeResourceUrl>;
+  profileImage$: Observable<SafeResourceUrl>;
+  profileImagePending$: Observable<SafeResourceUrl>;
+
+  localPhotoUploadStatus: LocalPhotoUploadStatus = {
+    govIdBack: LocalPhotoStatus.NONE,
+    govIdFront: LocalPhotoStatus.NONE,
+    profilePending: LocalPhotoStatus.NONE,
+  };
 
   frontId: SafeResourceUrl = null;
   frontIdPhotoInfo: UserPhotoInfo;
@@ -62,71 +79,113 @@ export class PhotoUploadComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    console.log('PhotoUploadPage - onInit');
     this.initialization();
     //weve got to initially determine if they having pending photos or not
-    this.getPhotoList();
+    // this.getPhotoList();
     //call institution settings for photos
     //we can keep this but we can also use the sort photo function to do it
-    this.setUserPhoto();
-
-    this.photoUploadService.profileImage$.subscribe(
-      data => console.log('profileImage$: ', data),
-      error => console.log('profileImage$ Error: ', error),
-      () => console.log('profileImage$ Complete')
-    );
-    this.photoUploadService.profileImagePending$.subscribe(
-      data => console.log('profileImagePending$: ', data),
-      error => console.log('profileImagePending$ Error: ', error),
-      () => console.log('profileImagePending$ Complete')
-    );
-    this.photoUploadService.govtIdFront$.subscribe(
-      data => console.log('govtIdFront$: ', data),
-      error => console.log('govtIdFront$ Error: ', error),
-      () => console.log('govtIdFront$ Complete')
-    );
-    this.photoUploadService.govtIdFrontPending$.subscribe(
-      data => console.log('govtIdFrontPending$: ', data),
-      error => console.log('govtIdFrontPending$ Error: ', error),
-      () => console.log('govtIdFrontPending$ Complete')
-    );
-    this.photoUploadService.govtIdBack$.subscribe(
-      data => console.log('govtIdBack$: ', data),
-      error => console.log('govtIdBack$ Error: ', error),
-      () => console.log('govtIdBack$ Complete')
-    );
-    this.photoUploadService.govtIdBackPending$.subscribe(
-      data => console.log('govtIdBackPending$: ', data),
-      error => console.log('govtIdBackPending$ Error: ', error),
-      () => console.log('govtIdBackPending$ Complete')
-    );
+    // this.setUserPhoto();
+    //
+    // this.photoUploadService.profileImage$.subscribe(
+    //   data => console.log('profileImage$: ', data),
+    //   error => console.log('profileImage$ Error: ', error),
+    //   () => console.log('profileImage$ Complete')
+    // );
+    // this.photoUploadService.profileImagePending$.subscribe(
+    //   data => console.log('profileImagePending$: ', data),
+    //   error => console.log('profileImagePending$ Error: ', error),
+    //   () => console.log('profileImagePending$ Complete')
+    // );
+    // this.photoUploadService.govtIdFront$.subscribe(
+    //   data => console.log('govtIdFront$: ', data),
+    //   error => console.log('govtIdFront$ Error: ', error),
+    //   () => console.log('govtIdFront$ Complete')
+    // );
+    // this.photoUploadService.govtIdBack$.subscribe(
+    //   data => console.log('govtIdBack$: ', data),
+    //   error => console.log('govtIdBack$ Error: ', error),
+    //   () => console.log('govtIdBack$ Complete')
+    // );
   }
 
   private initialization() {
     this.govIdFront$ = this.photoUploadService.govtIdFront$.pipe(
-      switchMap(photoInfo =>
-        iif(
-          () => photoInfo === null,
-          of({ data: this.domsanitizer.bypassSecurityTrustResourceUrl('/assets/images/govt-id-front.svg'), isDefault: true, isPending: false }),
-          of({ data: this.formatPhotoData(photoInfo), isDefault: false, isPending: false })
-        )
-      )
+      tap(photoInfo => {
+        this.localPhotoUploadStatus.govIdFront = this.getLocalPhotoStatus(photoInfo);
+      }),
+      switchMap(photoInfo => this.handlePhotoResponse(photoInfo))
     );
-
     this.govIdBack$ = this.photoUploadService.govtIdBack$.pipe(
-      switchMap(photoInfo =>
-      iif(
-        () => photoInfo === null,
-        of({ data: this.domsanitizer.bypassSecurityTrustResourceUrl('/assets/images/govt-id-back.svg'), isDefault: true, isPending: false }),
-        of({ data: this.formatPhotoData(photoInfo), isDefault: false, isPending: false })
-      )
-    )
+      tap(photoInfo => {
+        this.localPhotoUploadStatus.govIdBack = this.getLocalPhotoStatus(photoInfo);
+      }),
+      switchMap(photoInfo => this.handlePhotoResponse(photoInfo))
     );
+    this.profileImage$ = this.photoUploadService.profileImage$.pipe(
+      switchMap(photoInfo => this.handlePhotoResponse(photoInfo))
+    );
+    this.profileImagePending$ = this.photoUploadService.profileImagePending$.pipe(
+      tap(photoInfo => {
+        this.localPhotoUploadStatus.profilePending = this.getLocalPhotoStatus(photoInfo);
+      }),
+      switchMap(photoInfo => this.handlePhotoResponse(photoInfo))
+    );
+  }
+
+  private getLocalPhotoStatus(photoInfo: UserPhotoInfo): LocalPhotoStatus {
+    if (photoInfo === null) {
+      return LocalPhotoStatus.NONE;
+    }
+
+    if (photoInfo.status === null) {
+      return LocalPhotoStatus.NEW;
+    }
+
+    switch (photoInfo.status) {
+      case PhotoStatus.PENDING:
+        return LocalPhotoStatus.PENDING;
+      case PhotoStatus.ACCEPTED:
+        return LocalPhotoStatus.ACCEPTED;
+    }
+  }
+
+  private handlePhotoResponse(photoInfo: UserPhotoInfo): Observable<SafeResourceUrl> {
+    // console.log(
+    //   'handlePhotoResponse',
+    //   photoInfo,
+    //   photoInfo === null,
+    //   photoInfo !== null,
+    //   !photoInfo,
+    //   photoInfo == null
+    // );
+    //
+    // if(photoInfo === null){
+    //   console.log('handlePhotoResponse', 'return null');
+    //   return of(null);
+    // } else {
+    //   console.log('handlePhotoResponse', 'return SafeResourceUrl');
+    //   return of(this.formatPhotoData(photoInfo));
+    // }
+
+    return iif(() => photoInfo === null, of(null), of(this.formatPhotoData(photoInfo)));
   }
 
   private formatPhotoData({ mimeType, data }: UserPhotoInfo): SafeResourceUrl {
-    console.log('Format Photo Data');
     return this.domsanitizer.bypassSecurityTrustResourceUrl(`data:${mimeType};base64,${data}`);
   }
+
+  get localPhotoStatus() {
+    return LocalPhotoStatus;
+  }
+
+  get photoType() {
+    return PhotoType;
+  }
+
+  onTakePhoto(photoType: PhotoType) {}
+
+  deletePendingProfileImage() {}
 
   //sets the user photo varibale if there is a photo, keep getting a timeout error when i try to use this
   private setUserPhoto() {

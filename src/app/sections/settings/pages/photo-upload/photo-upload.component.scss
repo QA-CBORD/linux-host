@@ -109,9 +109,7 @@
   left: 0px;
   top: 0px;
   justify-content: space-between;
-  border: 2px dashed #e2e2e2;
   box-sizing: border-box;
-  border-radius: 16px;
   align-items: center;
   flex: none;
   order: 0;
@@ -120,14 +118,12 @@
 }
 
 .upload-btn {
-  border-radius: 8px;
   width: 132px;
   height: 48px;
 }
 
 .reupload-btn {
   color: black;
-  border-radius: 8px;
   width: 132px;
   height: 48px;
 }
@@ -155,7 +151,22 @@
 
 .submit-btn {
   background-color: #166dff !important;
-  border-radius: 8px;
   width: 343px;
   height: 48px;
+}
+
+.grey-background {
+  background: #F1F1F1;
+}
+
+.round-corners {
+  border-radius: 8px;
+}
+
+.border-dashed {
+  border: 3px dashed #e2e2e2;
+}
+
+.border-solid {
+  border: 3px solid #e2e2e2;
 }

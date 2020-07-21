@@ -1,108 +1,139 @@
+<!--<ion-content class="container">-->
+<!--  <ion-header>-->
+<!--    <ion-toolbar class="toolbar">-->
+<!--      <ion-icon name="close-outline"></ion-icon>-->
+<!--      <ion-title class="title">Update Photo</ion-title>-->
+<!--    </ion-toolbar>-->
+<!--  </ion-header>-->
+
+  <st-header
+          [isTitleShow]="true"
+          [backButtonIcon]="'close-outline'"
+          [isBackButtonShow]="false"
+          [isToolbarShow]="true"
+          [title]="'Photo Upload'"
+  >
+  </st-header>
 <ion-content class="container">
-  <ion-header>
-    <ion-toolbar class="toolbar">
-      <ion-icon name="close-outline"></ion-icon>
-      <ion-title class="title">Update Photo</ion-title>
-    </ion-toolbar>
-  </ion-header>
-<!-- TOP OF WHAT WILL GET MOVED TO THE PHOTO UPLOAD HTML FILE -->
-<ion-card *ngIf="!frontIdSubmitted && !backIdSubmitted && !hasPendingPhotos" class="id-photo-upload-container">
-  <!-- HEADER MESSAGE FOR ID UPLOADS -->
-  <ion-card-header>
-    <div class="header-message-container-id">
-      <div class="icon-cont">
-        <ion-icon name="information-circle-outline" class="icon"></ion-icon>
-      </div>
-      <div class="header-message">
-        <div class="key-message">
-          A government issued ID is required to submit a new photo.
+  <!-- TOP OF WHAT WILL GET MOVED TO THE PHOTO UPLOAD HTML FILE -->
+  <ion-card class="id-photo-upload-container">
+    <!-- HEADER MESSAGE FOR ID UPLOADS -->
+    <ion-card-header>
+      <div class="header-message-container-id">
+        <div class="icon-cont">
+          <ion-icon name="information-circle-outline" class="icon"></ion-icon>
         </div>
-        <div class="secondary-message">
-          e.g., Passport, Driver’s License, State ID
+        <div class="header-message">
+          <div class="key-message">
+            A government issued ID is required to submit a new photo.
+          </div>
+          <div class="secondary-message">
+            e.g., Passport, Driver’s License, State ID
+          </div>
         </div>
       </div>
-    </div>
-  </ion-card-header>
-  <!-- CONTAINER FOR ID PHOTOS -->
-  <ion-card-content class="photo-upload-cont">
-    <div class="stored-img-cont">
-      <div>
-        Front of ID
+    </ion-card-header>
+    <!-- CONTAINER FOR ID PHOTOS -->
+    <ion-card-content class="photo-upload-cont">
+      <div class="stored-img-cont round-corners" [ngClass]="{'border-solid':(this.localPhotoUploadStatus.profilePending === localPhotoStatus.NEW), 'border-dashed':(this.localPhotoUploadStatus.profilePending !== localPhotoStatus.NEW)}">
+        <div>
+          Front of ID
+        </div>
+        <div *ngIf="(govIdFront$ | async); else defaultGovIdFront">
+          <img [src]="govIdFront$ | async" alt="Government Id Front" width="132" height="80" class="round-corners" />
+          <ion-button color="light" class="reupload-btn round-corners" (click)="onTakePhoto(photoType.GOVT_ID_FRONT)"
+            >REUPLOAD</ion-button
+          >
+        </div>
+        <ng-template #defaultGovIdFront>
+          <img src="/assets/images/govt-id-front.svg" alt="Government Id Front" class="card-img round-corners" />
+          <ion-button class="upload-btn round-corners" (click)="onTakePhoto(photoType.GOVT_ID_BACK)">UPLOAD</ion-button>
+        </ng-template>
       </div>
-      <img *ngIf="!frontId" src="/assets/images/govt-id-front.svg" class="card-img"/>
-      <img *ngIf="frontId" [src]="frontId" width="132" height="80" />
-      <ion-button *ngIf="!frontId" class="upload-btn" (click)="promptFrontPhoto()">UPLOAD</ion-button>
-      <ion-button *ngIf="frontId" color="light" class="reupload-btn" (click)="promptFrontPhoto()"
-        >REUPLOAD
-      </ion-button>
-    </div>
-    <div class="stored-img-cont">
-      <div>
-        Back of ID
+      <div class="stored-img-cont round-corners" [ngClass]="{'border-solid':(this.localPhotoUploadStatus.profilePending === localPhotoStatus.NEW), 'border-dashed':(this.localPhotoUploadStatus.profilePending !== localPhotoStatus.NEW)}">
+        <div>
+          Back of ID
+        </div>
+        <div *ngIf="(govIdBack$ | async); else defaultGovIdBack">
+          <img [src]="govIdBack$ | async" alt="Government Id Front" width="132" height="80" class="round-corners" />
+          <ion-button color="light" class="reupload-btn round-corners" (click)="promptFrontPhoto()"
+            >REUPLOAD</ion-button
+          >
+        </div>
+        <ng-template #defaultGovIdBack>
+          <img src="/assets/images/govt-id-back.svg" alt="Government Id Back" class="card-img round-corners" />
+          <ion-button class="upload-btn round-corners" (click)="promptFrontPhoto()">UPLOAD</ion-button>
+        </ng-template>
       </div>
-      <img *ngIf="!backId" src="/assets/images/govt-id-back.svg" class="card-img" />
-      <img *ngIf="backId" [src]="backId" width="132" height="80" />
-      <ion-button *ngIf="!backId" class="upload-btn" (click)="promptBackPhoto()">UPLOAD</ion-button>
-      <ion-button *ngIf="backId" color="light" class="reupload-btn" (click)="promptBackPhoto()">REUPLOAD</ion-button>
-    </div>
-  </ion-card-content>
-</ion-card>
+    </ion-card-content>
+  </ion-card>
 
-<!-- CARD FOR SELFIE PHOTOS -->
-<ion-card class="selfie-photo-container">
-  <!-- MESSAGE FOR SELFIE PHOTOS -->
-  <ion-card-header>
-    <div *ngIf="!selfieSubmitted && !backIdSubmitted && !frontIdSubmitted && !hasPendingPhotos" class="header-message-container-selfie">
-      <div class="icon-cont">
-        <ion-icon name="information-circle-outline" class="icon"></ion-icon>
-      </div>
-      <div class="header-message">
-        <div class="key-message">
-          New photo is subject to admin approval!
+  <!-- CARD FOR SELFIE PHOTOS -->
+  <ion-card class="selfie-photo-container">
+    <!-- MESSAGE FOR SELFIE PHOTOS -->
+    <ion-card-header>
+      <div class="header-message-container-selfie">
+        <div class="icon-cont">
+          <ion-icon name="information-circle-outline" class="icon"></ion-icon>
+        </div>
+        <div class="header-message">
+          <div class="key-message">
+            New photo is subject to admin approval!
+          </div>
         </div>
       </div>
-    </div>
-    <div *ngIf="(selfieSubmitted && backIdSubmitted && frontIdSubmitted) || hasPendingPhotos" class="header-message-container-selfie-submitted">
-      <div class="icon-cont">
-        <ion-icon name="checkmark-circle" class="icon"></ion-icon>
-      </div>
-      <div class="header-message">
-        <div class="key-message-submitted">
-          Your photo has been submitted and is now pending admin approval. Use the content string!
+      <div class="header-message-container-selfie-submitted">
+        <div class="icon-cont">
+          <ion-icon name="checkmark-circle" class="icon"></ion-icon>
+        </div>
+        <div class="header-message">
+          <div class="key-message-submitted">
+            Your photo has been submitted and is now pending admin approval. Use the content string!
+          </div>
         </div>
       </div>
-    </div>
-  </ion-card-header>
-  <!-- CONTAINER FOR SELFIE PHOTOS -->
-  <ion-card-content class="photo-upload-cont">
-    <div class="stored-img-cont">
-      <div>
-        Current Photo
+    </ion-card-header>
+    <!-- CONTAINER FOR SELFIE PHOTOS -->
+    <ion-card-content class="photo-upload-cont">
+      <div class="stored-img-cont round-corners grey-background">
+        <div>
+          Current Photo
+        </div>
+        <div *ngIf="(profileImage$ | async); else defaultProfileImage">
+          <img [src]="profileImage$ | async" alt="Profile Image" width="132" height="80" class="round-corners" />
+        </div>
+        <ng-template #defaultProfileImage>
+          <img src="/assets/images/profile-image-default.svg" alt="Profile Image" class="card-img round-corners" />
+        </ng-template>
       </div>
-      <!-- NOT CURRENTLY GETTING SAVED PROFILE PHOTO -->
-      <img *ngIf="!selfieOld" src="/assets/images/user-profile-image-default.svg" alt="selfie place holder"/>
-      <img *ngIf="selfieOld" [src]="selfieOld" alt="selfie pic">
-    </div>
-    <div class="stored-img-cont">
-      <div>
-        New Photo
+      <div class="stored-img-cont round-corners" [ngClass]="{'border-solid':(this.localPhotoUploadStatus.profilePending === localPhotoStatus.NEW), 'border-dashed':(this.localPhotoUploadStatus.profilePending !== localPhotoStatus.NEW)}">
+        <div>
+          New Photo
+        </div>
+        <div *ngIf="(profileImagePending$ | async); else defaultPendingProfileImage">
+          <img [src]="profileImagePending$ | async" alt="Pending Profile Image" width="132" height="80" class="round-corners" />
+        </div>
+        <ng-template #defaultPendingProfileImage>
+          <img src="/assets/images/profile-image-default.svg" alt="Pending Profile Image" class="card-img round-corners" />
+          <ion-button *ngIf="localPhotoUploadStatus.profilePending !== localPhotoStatus.NEW; else deleteProfileImage" class="upload-btn" (click)="onTakePhoto(photoType.PROFILE)">UPLOAD</ion-button>
+          <ng-template #deleteProfileImage>
+            <ion-button color="danger" class="reupload-btn" (click)="deletePendingProfileImage()">DELETE</ion-button>
+          </ng-template>
+        </ng-template>
+
+
       </div>
-      <img *ngIf="!selfieNew && !pendingPhoto" src="/assets/images/user-profile-image-default.svg" class="selfie-placeholder-img"  alt="User photo icon placeholder" />
-      <img *ngIf="selfieNew && pendingPhoto" [src]="selfieNew" class="uploaded-user-photo" alt="User uploaded photo"/>
-        <img *ngIf="!selfieNew && pendingPhoto" [src]="pendingPhoto" class="uploaded-user-photo" alt="pending User uploaded photo"/>
-        <ion-button *ngIf="!selfieNew && !selfieSubmitted && !hasPendingPhotos" class="upload-btn" (click)="promptSelfieCamera()">UPLOAD</ion-button>
-      <ion-button *ngIf="selfieNew && !selfieSubmitted && !hasPendingPhotos" color="light" class="reupload-btn" (click)="promptSelfieCamera()">
-        REUPLOAD</ion-button
-      >
-      <ion-button *ngIf="selfieSubmitted || hasPendingPhotos" color="danger" class="reupload-btn" (click)="deletePhoto()">DELETE</ion-button>
-    </div>
-  </ion-card-content>
-</ion-card>
+    </ion-card-content>
+  </ion-card>
 
-<!-- BUTTON THAT SUBMITS ALL PHOTOS (NOT CURRENTLY CHECKING FOR PHOTO VALUES) -->
-<div class="action-btn-container">
-  <ion-button *ngIf="(!selfieSubmitted || !backIdSubmitted || !frontIdSubmitted) && !hasPendingPhotos" class="submit-btn" (click)="submitPhotos()">SUBMIT PHOTOS FOR REVIEW</ion-button>
-</div>
-<!-- BOTTOM OF WHAT WILL BE MOVED TO THE PHOTO UPLOAD HTML FILE -->
-
+  <!-- BUTTON THAT SUBMITS ALL PHOTOS (NOT CURRENTLY CHECKING FOR PHOTO VALUES) -->
+  <div class="action-btn-container">
+    <ion-button
+      *ngIf="(!selfieSubmitted || !backIdSubmitted || !frontIdSubmitted) && !hasPendingPhotos"
+      class="submit-btn"
+      (click)="submitPhotos()"
+      >SUBMIT PHOTOS FOR REVIEW</ion-button
+    >
+  </div>
+  <!-- BOTTOM OF WHAT WILL BE MOVED TO THE PHOTO UPLOAD HTML FILE -->
 </ion-content>
