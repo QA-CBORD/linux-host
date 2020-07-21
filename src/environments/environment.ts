@@ -3,6 +3,7 @@
 // The list of file replacements can be found in `angular.json`.
 
 import { UserLogin } from '@core/model/user';
+import { Feature1 } from 'src/app/environment';
 
 export const environment = {
   production: false,
@@ -61,7 +62,7 @@ export const testCredentials: { [key: string]: UserLogin } = {
   odysseyPreview: {
     userName: 'getaws1@tpsmail.dev',
     password: 'password1',
-    domain: null,
+    domain: 'Feature1',
     institutionId: '1e418ca8-7148-4956-b7c4-1f35db6d8a11',
   },
 
