@@ -11,6 +11,7 @@ import { IdentityFacadeService } from '@core/facades/identity/identity.facade.se
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { map, take } from 'rxjs/operators';
 import { UserPhotoInfo, UserPhotoList } from '@core/model/user';
+import { PhotoUploadService } from '@sections/settings/services/photo-upload.service';
 
 const { Camera } = Plugins;
 
@@ -47,16 +48,47 @@ export class PhotoUploadComponent implements OnInit {
     private readonly domsanitizer: DomSanitizer,
     private readonly identityFacadeService: IdentityFacadeService,
     private readonly toastController: ToastController,
-    private readonly userFacadeService: UserFacadeService
-  ) { }
+    private readonly userFacadeService: UserFacadeService,
+    private readonly photoUploadService: PhotoUploadService
+  ) {}
 
   ngOnInit() {
     //weve got to initially determine if they having pending photos or not
     this.getPhotoList();
-    //call institution settings for photos 
+    //call institution settings for photos
     //we can keep this but we can also use the sort photo function to do it
     this.setUserPhoto();
 
+    this.photoUploadService.profileImage$.subscribe(
+      data => console.log('profileImage$: ', data),
+      error => console.log('profileImage$ Error: ', error),
+      () => console.log('profileImage$ Complete')
+    );
+    this.photoUploadService.profileImagePending$.subscribe(
+      data => console.log('profileImagePending$: ', data),
+      error => console.log('profileImagePending$ Error: ', error),
+      () => console.log('profileImagePending$ Complete')
+    );
+    this.photoUploadService.govtIdFront$.subscribe(
+      data => console.log('govtIdFront$: ', data),
+      error => console.log('govtIdFront$ Error: ', error),
+      () => console.log('govtIdFront$ Complete')
+    );
+    this.photoUploadService.govtIdFrontPending$.subscribe(
+      data => console.log('govtIdFrontPending$: ', data),
+      error => console.log('govtIdFrontPending$ Error: ', error),
+      () => console.log('govtIdFrontPending$ Complete')
+    );
+    this.photoUploadService.govtIdBack$.subscribe(
+      data => console.log('govtIdBack$: ', data),
+      error => console.log('govtIdBack$ Error: ', error),
+      () => console.log('govtIdBack$ Complete')
+    );
+    this.photoUploadService.govtIdBackPending$.subscribe(
+      data => console.log('govtIdBackPending$: ', data),
+      error => console.log('govtIdBackPending$ Error: ', error),
+      () => console.log('govtIdBackPending$ Complete')
+    );
   }
 
   //sets the user photo varibale if there is a photo, keep getting a timeout error when i try to use this
@@ -103,8 +135,10 @@ export class PhotoUploadComponent implements OnInit {
         this.hasPendingPhotos = true;
         this.pendingPhotoInfo = this.photoList[index];
 
-        this.userFacadeService.getPhotoById(this.photoList[index].id)
-          .pipe(map(({ data, mimeType }) => `data:${mimeType};base64,${data}`),
+        this.userFacadeService
+          .getPhotoById(this.photoList[index].id)
+          .pipe(
+            map(({ data, mimeType }) => `data:${mimeType};base64,${data}`),
             take(1)
           )
           .subscribe(
@@ -115,18 +149,24 @@ export class PhotoUploadComponent implements OnInit {
             error => console.log('get pending from db Photo error', error),
             () => {
               // console.log('get pending from db Photo Complete')
-            });
+            }
+          );
 
         // console.log('front id if there is one', this.frontId);
         this.pendingPhoto = this.domsanitizer.bypassSecurityTrustResourceUrl(`${this.pendingPhoto}`);
       } else {
-        if (this.photoList[index].type === 1 && this.photoList[index].status === 1 && this.photoList[index].data === null) {
-
+        if (
+          this.photoList[index].type === 1 &&
+          this.photoList[index].status === 1 &&
+          this.photoList[index].data === null
+        ) {
           // console.log('photo has a type of 1', this.photoList[index]);
           this.frontIdPhotoInfo = this.photoList[index];
 
-          this.userFacadeService.getPhotoById(this.photoList[index].id)
-            .pipe(map(({ data, mimeType }) => `data:${mimeType};base64,${data}`),
+          this.userFacadeService
+            .getPhotoById(this.photoList[index].id)
+            .pipe(
+              map(({ data, mimeType }) => `data:${mimeType};base64,${data}`),
               take(1)
             )
             .subscribe(
@@ -137,18 +177,24 @@ export class PhotoUploadComponent implements OnInit {
               error => console.log('get front id from db Photo error', error),
               () => {
                 // console.log('get front id from db Photo Complete')
-              });
+              }
+            );
 
           // console.log('front id if there is one', this.frontId);
           this.frontId = this.domsanitizer.bypassSecurityTrustResourceUrl(`${this.frontId}`);
         }
-        if (this.photoList[index].type === 2 && this.photoList[index].status === 1 && this.photoList[index].data === null) {
-
+        if (
+          this.photoList[index].type === 2 &&
+          this.photoList[index].status === 1 &&
+          this.photoList[index].data === null
+        ) {
           // console.log('photo has a type of 2', this.photoList[index]);
           this.backIdPhotoInfo = this.photoList[index];
 
-          this.userFacadeService.getPhotoById(this.photoList[index].id)
-            .pipe(map(({ data, mimeType }) => `data:${mimeType};base64,${data}`),
+          this.userFacadeService
+            .getPhotoById(this.photoList[index].id)
+            .pipe(
+              map(({ data, mimeType }) => `data:${mimeType};base64,${data}`),
               take(1)
             )
             .subscribe(
@@ -159,14 +205,14 @@ export class PhotoUploadComponent implements OnInit {
               error => console.log('get back id from db Photo error', error),
               () => {
                 // console.log('get back id from db Photo Complete')
-              });
+              }
+            );
 
           this.backId = this.domsanitizer.bypassSecurityTrustResourceUrl(`${this.backId}`);
         }
       }
     }
   }
-
 
   //prompts to open camera or photos for front id pic
   async promptFrontPhoto() {
@@ -239,115 +285,109 @@ export class PhotoUploadComponent implements OnInit {
   submitPhotos() {
     var today = new Date();
     var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
-    var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+    var time = today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds();
     var dateTime = date + ' ' + time;
 
     //formats the selfie photo for submission
     let selfiePhotoInfo: UserPhotoInfo = {
-      'externalId': null,
-      'userId': null,
-      'mimeType': 'image/jpg',
-      'status': 0,
-      'statusReason': null,
-      'data': this.selfieBase64,
-      'id': null,
-      'insertTime': null,
-      'lastUpdated': null,
-      'version': null,
-      'type': 0,
-    }
+      externalId: null,
+      userId: null,
+      mimeType: 'image/jpg',
+      status: 0,
+      statusReason: null,
+      data: this.selfieBase64,
+      id: null,
+      insertTime: null,
+      lastUpdated: null,
+      version: null,
+      type: 0,
+    };
     this.selfiePicSubmit(selfiePhotoInfo);
 
     //formats the frontId pic for submission
     let frontIdPhotoInfo: UserPhotoInfo = {
-      'externalId': null,
-      'userId': null,
-      'mimeType': 'image/jpg',
-      'status': 0,
-      'statusReason': null,
-      'data': this.frontIdBase64,
-      'id': null,
-      'insertTime': null,
-      'lastUpdated': null,
-      'version': null,
-      'type': 1,
-    }
+      externalId: null,
+      userId: null,
+      mimeType: 'image/jpg',
+      status: 0,
+      statusReason: null,
+      data: this.frontIdBase64,
+      id: null,
+      insertTime: null,
+      lastUpdated: null,
+      version: null,
+      type: 1,
+    };
     this.frontIDPicSubmit(frontIdPhotoInfo);
-
 
     //formats the backId photo for submission
     let backIdPhotoInfo: UserPhotoInfo = {
-      'externalId': null,
-      'userId': null,
-      'mimeType': 'image/jpg',
-      'status': 0,
-      'statusReason': null,
-      'data': this.backIdBase64,
-      'id': null,
-      'insertTime': null,
-      'lastUpdated': null,
-      'version': null,
-      'type': 2,
-    }
+      externalId: null,
+      userId: null,
+      mimeType: 'image/jpg',
+      status: 0,
+      statusReason: null,
+      data: this.backIdBase64,
+      id: null,
+      insertTime: null,
+      lastUpdated: null,
+      version: null,
+      type: 2,
+    };
     this.backIDPicSubmit(backIdPhotoInfo);
 
     this.ngOnInit();
   }
 
-
   selfiePicSubmit(photo: UserPhotoInfo) {
     //this is where the add user photo code will go for selfie
-    this.userFacadeService.addUserPhoto(photo)
-      .subscribe(
-        response => {
-          console.log('response from selfie upload', response);
-        },
-        error => {
-          console.log('selfie photo submit error', error);
-          this.presentToast('There was an issue submitting the photo - please try again');
-        },
-        () => {
-          this.selfieSubmitted = true;
-          console.log('selfie Photo submitted');
-        }
-      )
+    this.userFacadeService.addUserPhoto(photo).subscribe(
+      response => {
+        console.log('response from selfie upload', response);
+      },
+      error => {
+        console.log('selfie photo submit error', error);
+        this.presentToast('There was an issue submitting the photo - please try again');
+      },
+      () => {
+        this.selfieSubmitted = true;
+        console.log('selfie Photo submitted');
+      }
+    );
   }
 
   frontIDPicSubmit(photo: UserPhotoInfo) {
     //this is where the add user photo code will go for selfie
-    this.userFacadeService.addUserPhoto(photo)
-      .subscribe(
-        response => {
-          console.log('response from front id upload', response);
-        },
-        error => {
-          console.log('front id photo submit error', error);
-          this.presentToast('There was an issue submitting the photo - please try again');
-        },
-        () => {
-          this.frontIdSubmitted = true
-          console.log('front id Photo submitted');
-        }
-      )
-
+    this.userFacadeService.addUserPhoto(photo).subscribe(
+      response => {
+        console.log('response from front id upload', response);
+      },
+      error => {
+        console.log('front id photo submit error', error);
+        this.presentToast('There was an issue submitting the photo - please try again');
+      },
+      () => {
+        this.frontIdSubmitted = true;
+        console.log('front id Photo submitted');
+      }
+    );
   }
 
   backIDPicSubmit(photo: UserPhotoInfo) {
     //this is where the add user photo code will go for selfie
-    this.userFacadeService.addUserPhoto(photo)
-      .subscribe(
-        response => {
-          console.log('response from back id upload', response);
-        },
-        error => {
-          console.log('back id photo submit error', error);
-          this.presentToast('There was an issue submitting the photo - please try again');
-        },
-        () => {
-          this.backIdSubmitted = true;
-          console.log('back id Photo submitted');
-        }
-      )
+    this.userFacadeService.addUserPhoto(photo).subscribe(
+      response => {
+        console.log('response from back id upload', response);
+      },
+      error => {
+        console.log('back id photo submit error', error);
+        this.presentToast('There was an issue submitting the photo - please try again');
+      },
+      () => {
+        this.backIdSubmitted = true;
+        console.log('back id Photo submitted');
+      }
+    );
   }
 
   //opens modal for delete confirmation
@@ -379,31 +419,29 @@ export class PhotoUploadComponent implements OnInit {
   //presents the delete pic modal and will eventually catch the result on dimiss when the api call is succesfull and update the screen appropriately
   async presentModal(photoId) {
     const modal = await this.modalController.create({
-      component: DeleteModalComponent
+      component: DeleteModalComponent,
     });
-    modal.onDidDismiss()
-      .then((data) => {
-        if (data.data === true) {
-          // console.log('data', data);
-          //delete picture logic
-          this.userFacadeService.updateUserPhotoStatus(photoId, 4, 'Patron deleted photo')
-            .subscribe(
-              response => {
-                // console.log('response from delete photo', response);
-              },
-              error => {
-                console.log('error', error);
-                this.presentToast('There was an error deleting the photo - please try again');
-              },
-              () => {
-                console.log('Delete photo complete');
-                this.hasPendingPhotos = false;
-                this.selfieSubmitted = false;
-                this.ngOnInit();
-              }
-            )
-        }
-      });
+    modal.onDidDismiss().then(data => {
+      if (data.data === true) {
+        // console.log('data', data);
+        //delete picture logic
+        this.userFacadeService.updateUserPhotoStatus(photoId, 4, 'Patron deleted photo').subscribe(
+          response => {
+            // console.log('response from delete photo', response);
+          },
+          error => {
+            console.log('error', error);
+            this.presentToast('There was an error deleting the photo - please try again');
+          },
+          () => {
+            console.log('Delete photo complete');
+            this.hasPendingPhotos = false;
+            this.selfieSubmitted = false;
+            this.ngOnInit();
+          }
+        );
+      }
+    });
 
     return await modal.present();
   }
