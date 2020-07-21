@@ -6,14 +6,14 @@
 <!--    </ion-toolbar>-->
 <!--  </ion-header>-->
 
-  <st-header
-          [isTitleShow]="true"
-          [backButtonIcon]="'close-outline'"
-          [isBackButtonShow]="false"
-          [isToolbarShow]="true"
-          [title]="'Photo Upload'"
-  >
-  </st-header>
+<st-header
+  [isTitleShow]="true"
+  [backButtonIcon]="'close-outline'"
+  [isBackButtonShow]="false"
+  [isToolbarShow]="true"
+  [title]="'Photo Upload'"
+>
+</st-header>
 <ion-content class="container">
   <!-- TOP OF WHAT WILL GET MOVED TO THE PHOTO UPLOAD HTML FILE -->
   <ion-card class="id-photo-upload-container">
@@ -35,7 +35,14 @@
     </ion-card-header>
     <!-- CONTAINER FOR ID PHOTOS -->
     <ion-card-content class="photo-upload-cont">
-      <div class="stored-img-cont round-corners" [ngClass]="{'border-solid':(this.localPhotoUploadStatus.profilePending === localPhotoStatus.NEW), 'border-dashed':(this.localPhotoUploadStatus.profilePending !== localPhotoStatus.NEW)}">
+      <!--      FRONT OF ID -->
+      <div
+        class="stored-img-cont round-corners"
+        [ngClass]="{
+          'border-solid': this.localPhotoUploadStatus.govIdFront === localPhotoStatus.NEW,
+          'border-dashed': this.localPhotoUploadStatus.govIdFront !== localPhotoStatus.NEW
+        }"
+      >
         <div>
           Front of ID
         </div>
@@ -47,22 +54,31 @@
         </div>
         <ng-template #defaultGovIdFront>
           <img src="/assets/images/govt-id-front.svg" alt="Government Id Front" class="card-img round-corners" />
-          <ion-button class="upload-btn round-corners" (click)="onTakePhoto(photoType.GOVT_ID_BACK)">UPLOAD</ion-button>
+          <ion-button class="upload-btn round-corners" (click)="onTakePhoto(photoType.GOVT_ID_FRONT)"
+            >UPLOAD</ion-button
+          >
         </ng-template>
       </div>
-      <div class="stored-img-cont round-corners" [ngClass]="{'border-solid':(this.localPhotoUploadStatus.profilePending === localPhotoStatus.NEW), 'border-dashed':(this.localPhotoUploadStatus.profilePending !== localPhotoStatus.NEW)}">
+      <!--    BACK OF ID  -->
+      <div
+        class="stored-img-cont round-corners"
+        [ngClass]="{
+          'border-solid': this.localPhotoUploadStatus.govIdBack === localPhotoStatus.NEW,
+          'border-dashed': this.localPhotoUploadStatus.govIdBack !== localPhotoStatus.NEW
+        }"
+      >
         <div>
           Back of ID
         </div>
         <div *ngIf="(govIdBack$ | async); else defaultGovIdBack">
           <img [src]="govIdBack$ | async" alt="Government Id Front" width="132" height="80" class="round-corners" />
-          <ion-button color="light" class="reupload-btn round-corners" (click)="promptFrontPhoto()"
+          <ion-button color="light" class="reupload-btn round-corners" (click)="onTakePhoto(photoType.GOVT_ID_BACK)"
             >REUPLOAD</ion-button
           >
         </div>
         <ng-template #defaultGovIdBack>
           <img src="/assets/images/govt-id-back.svg" alt="Government Id Back" class="card-img round-corners" />
-          <ion-button class="upload-btn round-corners" (click)="promptFrontPhoto()">UPLOAD</ion-button>
+          <ion-button class="upload-btn round-corners" (click)="onTakePhoto(photoType.GOVT_ID_BACK)">UPLOAD</ion-button>
         </ng-template>
       </div>
     </ion-card-content>
@@ -72,7 +88,14 @@
   <ion-card class="selfie-photo-container">
     <!-- MESSAGE FOR SELFIE PHOTOS -->
     <ion-card-header>
-      <div class="header-message-container-selfie">
+      <div
+        *ngIf="
+          localPhotoUploadStatus.profilePending !== localPhotoStatus.PENDING ||
+            localPhotoUploadStatus.profilePending !== localPhotoStatus.SUBMITTED;
+          else profileImagePending
+        "
+        class="header-message-container-selfie"
+      >
         <div class="icon-cont">
           <ion-icon name="information-circle-outline" class="icon"></ion-icon>
         </div>
@@ -82,16 +105,18 @@
           </div>
         </div>
       </div>
-      <div class="header-message-container-selfie-submitted">
-        <div class="icon-cont">
-          <ion-icon name="checkmark-circle" class="icon"></ion-icon>
-        </div>
-        <div class="header-message">
-          <div class="key-message-submitted">
-            Your photo has been submitted and is now pending admin approval. Use the content string!
+      <ng-template #profileImagePending>
+        <div class="header-message-container-selfie-submitted">
+          <div class="icon-cont">
+            <ion-icon name="checkmark-circle" class="icon"></ion-icon>
+          </div>
+          <div class="header-message">
+            <div class="key-message-submitted">
+              Your photo has been submitted and is now pending admin approval. Use the content string!
+            </div>
           </div>
         </div>
-      </div>
+      </ng-template>
     </ion-card-header>
     <!-- CONTAINER FOR SELFIE PHOTOS -->
     <ion-card-content class="photo-upload-cont">
@@ -100,28 +125,51 @@
           Current Photo
         </div>
         <div *ngIf="(profileImage$ | async); else defaultProfileImage">
-          <img [src]="profileImage$ | async" alt="Profile Image" width="132" height="80" class="round-corners" />
+          <img [src]="profileImage$ | async" alt="Profile Image" width="132" height="178" class="round-corners" />
         </div>
         <ng-template #defaultProfileImage>
-          <img src="/assets/images/profile-image-default.svg" alt="Profile Image" class="card-img round-corners" />
+          <img
+            src="/assets/images/profile-image-default.svg"
+            alt="Profile Image"
+            class="profile-default-image round-corners"
+          />
         </ng-template>
       </div>
-      <div class="stored-img-cont round-corners" [ngClass]="{'border-solid':(this.localPhotoUploadStatus.profilePending === localPhotoStatus.NEW), 'border-dashed':(this.localPhotoUploadStatus.profilePending !== localPhotoStatus.NEW)}">
+      <div
+        class="stored-img-cont round-corners"
+        [ngClass]="{
+          'border-solid': this.localPhotoUploadStatus.profilePending === localPhotoStatus.NEW,
+          'border-dashed': this.localPhotoUploadStatus.profilePending !== localPhotoStatus.NEW
+        }"
+      >
         <div>
           New Photo
         </div>
         <div *ngIf="(profileImagePending$ | async); else defaultPendingProfileImage">
-          <img [src]="profileImagePending$ | async" alt="Pending Profile Image" width="132" height="80" class="round-corners" />
+          <img
+            [src]="profileImagePending$ | async"
+            alt="Pending Profile Image"
+            width="132"
+            height="178"
+            class="round-corners"
+          />
         </div>
         <ng-template #defaultPendingProfileImage>
-          <img src="/assets/images/profile-image-default.svg" alt="Pending Profile Image" class="card-img round-corners" />
-          <ion-button *ngIf="localPhotoUploadStatus.profilePending !== localPhotoStatus.NEW; else deleteProfileImage" class="upload-btn" (click)="onTakePhoto(photoType.PROFILE)">UPLOAD</ion-button>
+          <img
+            src="/assets/images/profile-image-default.svg"
+            alt="Pending Profile Image"
+            class="profile-default-image round-corners"
+          />
+          <ion-button
+            *ngIf="localPhotoUploadStatus.profilePending !== localPhotoStatus.NEW; else deleteProfileImage"
+            class="upload-btn"
+            (click)="onTakePhoto(photoType.PROFILE)"
+            >UPLOAD</ion-button
+          >
           <ng-template #deleteProfileImage>
             <ion-button color="danger" class="reupload-btn" (click)="deletePendingProfileImage()">DELETE</ion-button>
           </ng-template>
         </ng-template>
-
-
       </div>
     </ion-card-content>
   </ion-card>
@@ -129,7 +177,6 @@
   <!-- BUTTON THAT SUBMITS ALL PHOTOS (NOT CURRENTLY CHECKING FOR PHOTO VALUES) -->
   <div class="action-btn-container">
     <ion-button
-      *ngIf="(!selfieSubmitted || !backIdSubmitted || !frontIdSubmitted) && !hasPendingPhotos"
       class="submit-btn"
       (click)="submitPhotos()"
       >SUBMIT PHOTOS FOR REVIEW</ion-button

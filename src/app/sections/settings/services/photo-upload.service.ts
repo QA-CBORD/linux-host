@@ -47,6 +47,10 @@ export class PhotoUploadService {
     private readonly userFacadeService: UserFacadeService
   ) {}
 
+  get photoUploadSettings() {
+    return this.userPhotoUploadSettings;
+  }
+
   get govtIdFront$(): Observable<UserPhotoInfo> {
     return this._govtIdFront$.asObservable();
   }
@@ -111,7 +115,7 @@ export class PhotoUploadService {
       case PhotoType.PROFILE:
         if (photoInfo.status === PhotoStatus.ACCEPTED) {
           this._profileImage = photoInfo;
-        } else if (photoInfo.status === PhotoStatus.PENDING) {
+        } else {
           this._profileImagePending = photoInfo;
         }
         break;
@@ -142,5 +146,23 @@ export class PhotoUploadService {
         this.userPhotoUploadSettings[prop] = tempList[prop.toLowerCase()];
       }
     });
+  }
+
+  onNewPhoto(photoType: PhotoType, photoData: any) {
+    console.log('onNewPhoto', photoType, photoData);
+    let newPhotoInfo: UserPhotoInfo = {
+      externalId: null,
+      userId: null,
+      mimeType: 'image/jpg',
+      status: null,
+      statusReason: null,
+      data: photoData.base64String,
+      id: null,
+      insertTime: null,
+      lastUpdated: null,
+      version: null,
+      type: photoType,
+    };
+    this.setPhotoInfo(newPhotoInfo);
   }
 }
