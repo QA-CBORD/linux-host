@@ -119,7 +119,6 @@ export class PhotoUploadComponent implements OnInit {
 
         // console.log('front id if there is one', this.frontId);
         this.pendingPhoto = this.domsanitizer.bypassSecurityTrustResourceUrl(`${this.pendingPhoto}`);
-        this.selfieNew = this.pendingPhoto;
       } else {
         if (this.photoList[index].type === 1 && this.photoList[index].status === 1 && this.photoList[index].data === null) {
 
@@ -246,7 +245,7 @@ export class PhotoUploadComponent implements OnInit {
     //formats the selfie photo for submission
     let selfiePhotoInfo: UserPhotoInfo = {
       'externalId': null,
-      'userId': '',
+      'userId': null,
       'mimeType': 'image/jpg',
       'status': 0,
       'statusReason': null,
@@ -262,7 +261,7 @@ export class PhotoUploadComponent implements OnInit {
     //formats the frontId pic for submission
     let frontIdPhotoInfo: UserPhotoInfo = {
       'externalId': null,
-      'userId': '',
+      'userId': null,
       'mimeType': 'image/jpg',
       'status': 0,
       'statusReason': null,
@@ -279,7 +278,7 @@ export class PhotoUploadComponent implements OnInit {
     //formats the backId photo for submission
     let backIdPhotoInfo: UserPhotoInfo = {
       'externalId': null,
-      'userId': '',
+      'userId': null,
       'mimeType': 'image/jpg',
       'status': 0,
       'statusReason': null,
@@ -386,19 +385,21 @@ export class PhotoUploadComponent implements OnInit {
       .then((data) => {
         if (data.data === true) {
           // console.log('data', data);
-          this.hasPendingPhotos = false;
-
           //delete picture logic
-          this.userFacadeService.updateUserPhotoStatus(photoId, 5, 'Patron deleted photo')
+          this.userFacadeService.updateUserPhotoStatus(photoId, 4, 'Patron deleted photo')
             .subscribe(
               response => {
-                console.log('response from delete photo', response);
+                // console.log('response from delete photo', response);
               },
               error => {
+                console.log('error', error);
                 this.presentToast('There was an error deleting the photo - please try again');
               },
               () => {
                 console.log('Delete photo complete');
+                this.hasPendingPhotos = false;
+                this.selfieSubmitted = false;
+                this.ngOnInit();
               }
             )
         }

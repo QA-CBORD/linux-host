@@ -87,9 +87,10 @@
       <div>
         New Photo
       </div>
-      <img *ngIf="!selfieNew" src="/assets/images/user-profile-image-default.svg" class="selfie-placeholder-img"  alt="User photo icon placeholder" />
-      <img *ngIf="selfieNew" [src]="selfieNew" class="uploaded-user-photo" alt="User uploaded photo"/>
-      <ion-button *ngIf="!selfieNew && !selfieSubmitted && !hasPendingPhotos" class="upload-btn" (click)="promptSelfieCamera()">UPLOAD</ion-button>
+      <img *ngIf="!selfieNew && !pendingPhoto" src="/assets/images/user-profile-image-default.svg" class="selfie-placeholder-img"  alt="User photo icon placeholder" />
+      <img *ngIf="selfieNew && pendingPhoto" [src]="selfieNew" class="uploaded-user-photo" alt="User uploaded photo"/>
+        <img *ngIf="!selfieNew && pendingPhoto" [src]="pendingPhoto" class="uploaded-user-photo" alt="pending User uploaded photo"/>
+        <ion-button *ngIf="!selfieNew && !selfieSubmitted && !hasPendingPhotos" class="upload-btn" (click)="promptSelfieCamera()">UPLOAD</ion-button>
       <ion-button *ngIf="selfieNew && !selfieSubmitted && !hasPendingPhotos" color="light" class="reupload-btn" (click)="promptSelfieCamera()">
         REUPLOAD</ion-button
       >
