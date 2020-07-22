@@ -48,19 +48,8 @@ export class PhotoUploadComponent implements OnInit {
 
   submitButtonDisabled: boolean = true;
 
-  localPhotoUploadStatus: LocalPhotoUploadStatus = {
-    govIdBack: LocalPhotoStatus.NONE,
-    govIdFront: LocalPhotoStatus.NONE,
-    profile: LocalPhotoStatus.NONE,
-    profilePending: LocalPhotoStatus.NONE,
-  };
-
-  private localPhotoData: LocalPhotoData = {
-    govIdFront: null,
-    govIdBack: null,
-    profile: null,
-    profilePending: null,
-  };
+  localPhotoUploadStatus: LocalPhotoUploadStatus;
+  private localPhotoData: LocalPhotoData;
 
   constructor(
     private readonly router: Router,
@@ -70,14 +59,11 @@ export class PhotoUploadComponent implements OnInit {
     private readonly photoUploadService: PhotoUploadService,
     private readonly loadingService: LoadingService,
     private readonly cd: ChangeDetectorRef
-  ) {
-    console.log('PhotoUploadPage - constructor');
-  }
+  ) {}
 
   ngOnInit() {
-    console.log('PhotoUploadPage - onInit');
     this.initialization();
-
+    //
     // this.photoUploadService.profileImage$.subscribe(
     //   data => console.log('profileImage$: ', data),
     //   error => console.log('profileImage$ Error: ', error),
@@ -100,8 +86,38 @@ export class PhotoUploadComponent implements OnInit {
     // );
   }
 
+  private clearLocalStateData() {
+    this.localPhotoData = {
+      govIdFront: null,
+      govIdBack: null,
+      profile: null,
+      profilePending: null,
+    };
+    this.localPhotoUploadStatus = {
+      govIdBack: LocalPhotoStatus.NONE,
+      govIdFront: LocalPhotoStatus.NONE,
+      profile: LocalPhotoStatus.NONE,
+      profilePending: LocalPhotoStatus.NONE,
+    };
+  }
+
   /// initialize the observables for photo updating
   private initialization() {
+    this.clearLocalStateData();
+    this.loadingService.showSpinner();
+
+    this.photoUploadService
+      .getInitialPhotoData$()
+      .pipe(
+        finalize(() => this.loadingService.closeSpinner()),
+        first()
+      )
+      .subscribe(
+        data => console.log('getInitialPhotoData$: ', data),
+        error => console.log('getInitialPhotoData$ Error: ', error),
+        () => console.log('getInitialPhotoData$ Complete')
+      );
+
     this.govIdFront$ = this.photoUploadService.govtIdFront$.pipe(
       tap(photoInfo => {
         this.updateLocalPhotoState(photoInfo, PhotoType.GOVT_ID_FRONT);
@@ -130,21 +146,22 @@ export class PhotoUploadComponent implements OnInit {
 
   /// make local modifications to allow UI to auto-update
   private updateLocalPhotoState(photoInfo: UserPhotoInfo, photoType: PhotoType) {
-    this.setLocalPhotoData(photoInfo);
+    console.log('newPhotoDataToUI', photoInfo, photoType);
+    this.setLocalPhotoData(photoInfo, photoType);
     this.getLocalPhotoStatus(photoInfo, photoType);
     this.updateSubmitButtonStatus();
   }
 
-  private setLocalPhotoData(photoInfo: UserPhotoInfo) {
+  private setLocalPhotoData(photoInfo: UserPhotoInfo, photoType: PhotoType) {
     if (photoInfo === null) {
       return;
     }
 
-    switch (photoInfo.type) {
+    switch (photoType) {
       case PhotoType.PROFILE:
         this.localPhotoData.profile = photoInfo;
         break;
-      case PhotoType.PROFILE_PENDING: /// profile pending
+      case PhotoType.PROFILE_PENDING:
         this.localPhotoData.profilePending = photoInfo;
         break;
       case PhotoType.GOVT_ID_FRONT:
@@ -179,7 +196,7 @@ export class PhotoUploadComponent implements OnInit {
       case PhotoType.PROFILE:
         this.localPhotoUploadStatus.profile = status;
         break;
-      case PhotoType.PROFILE_PENDING: /// profile pending
+      case PhotoType.PROFILE_PENDING:
         this.localPhotoUploadStatus.profilePending = status;
         break;
       case PhotoType.GOVT_ID_FRONT:
@@ -252,7 +269,6 @@ export class PhotoUploadComponent implements OnInit {
         (this.localPhotoUploadStatus.profile === LocalPhotoStatus.NONE &&
           this.localPhotoUploadStatus.profilePending === LocalPhotoStatus.NEW))
     );
-    console.log('submitButtonDisabled - called', `disabled = ${this.submitButtonDisabled}`);
   }
 
   //will submit all photos that have been uploaded
@@ -282,7 +298,7 @@ export class PhotoUploadComponent implements OnInit {
     if (this.localPhotoUploadStatus.govIdBack === LocalPhotoStatus.NEW) {
       newPhotos.push(
         this.createPhotoSubmissionObservable(
-          PhotoType.GOVT_ID_FRONT,
+          PhotoType.GOVT_ID_BACK,
           'There was an issue submitting your government id photo (back) - please try again'
         )
       );
@@ -306,12 +322,15 @@ export class PhotoUploadComponent implements OnInit {
 
     switch (photoType) {
       case PhotoType.GOVT_ID_FRONT:
+        console.log('submitPhotos', 'GOVT_ID_FRONT', this.localPhotoData.govIdFront);
         photoObservable = of(this.localPhotoData.govIdFront);
         break;
       case PhotoType.GOVT_ID_BACK:
+        console.log('submitPhotos', 'GOVT_ID_BACK', this.localPhotoData.govIdBack);
         photoObservable = of(this.localPhotoData.govIdBack);
         break;
       case PhotoType.PROFILE:
+        console.log('submitPhotos', 'PROFILE', this.localPhotoData.profilePending);
         photoObservable = of(this.localPhotoData.profilePending);
         break;
     }

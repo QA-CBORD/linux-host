@@ -21,9 +21,9 @@ export enum PhotoStatus {
 
 export enum PhotoType {
   PROFILE_PENDING = -1,
-  PROFILE,
-  GOVT_ID_FRONT,
-  GOVT_ID_BACK,
+  PROFILE = 0,
+  GOVT_ID_FRONT = 1,
+  GOVT_ID_BACK = 2,
 }
 
 @Injectable({
@@ -88,7 +88,6 @@ export class PhotoUploadService {
 
   /// get photo upload settings and fetch and handle photos
   getInitialPhotoData$(): Observable<UserPhotoInfo[]> {
-    console.log('getInitialPhotoData$');
     return zip(
       this.settingsFacadeService.fetchSettingList(SettingList.PHOTO_UPLOAD),
       this.userFacadeService.getPhotoList()
@@ -96,7 +95,10 @@ export class PhotoUploadService {
       switchMap(([settings, photoInfoList]) => {
         /// populate upload settings if they exist
         this.populatePhotoUploadSettings(settings);
-        return iif(() => photoInfoList && !photoInfoList.empty, this.fetchUserPhotosInList(photoInfoList), of([]));
+        if(photoInfoList && !photoInfoList.empty){
+          return this.fetchUserPhotosInList(photoInfoList);
+        }
+        return of([]);
       })
     );
   }
@@ -176,7 +178,6 @@ export class PhotoUploadService {
         this.setPhotoInfo(newPhoto);
       }
     }), first());
-
   }
 
   async presentDeletePhotoModal() {

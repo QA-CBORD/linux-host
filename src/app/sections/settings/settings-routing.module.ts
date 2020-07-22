@@ -12,9 +12,6 @@ const routes: Route[] = [
     {
         path: LOCAL_ROUTING.photoUpload,
         loadChildren: './pages/photo-upload/photo-upload.module#PhotoUploadModule',
-        resolve: {
-            data: PhotoUploadResolver,
-        },
     },
 ];
 
