@@ -10,7 +10,6 @@ import { NativeProvider, AppleWalletInfo, AppleWalletCredentialStatus } from '@c
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { Plugins } from '@capacitor/core';
-import { LOCAL_ROUTING } from '@sections/rewards/rewards.config';
 const { IOSDevice } = Plugins;
 
 @Component({
@@ -177,9 +176,5 @@ export class AccessCardComponent implements OnInit {
               this.setAppleWalletMessage();
           }
        });
-    }
-
-    navigateToPhotoUpload(){
-      this.router.navigate([PATRON_NAVIGATION.settings, 'photo-upload'])
     }
 }

@@ -102,15 +102,12 @@ export class EnvironmentFacadeService extends ServiceStateFacade {
   }
 
   initialization() {
-    console.log('Environment Facade Service - initialization');
     this.getSavedEnvironmentInfo$()
       .pipe(take(1))
       .subscribe(env => {
-        console.log('Environment Facade Service - initialization - env set', 0, this.currentEnvironment);
         this.currentEnvironment = env;
-        console.log('Environment Facade Service - initialization - env set', 1, this.currentEnvironment);
       }, () => {},
-        () => console.log('Environment Facade Service - initialization - env set COMPLETE'));
+        () => {});
   }
 
   async changeEnvironment() {
@@ -118,17 +115,13 @@ export class EnvironmentFacadeService extends ServiceStateFacade {
   }
 
   private getSavedEnvironmentInfo$(): Observable<EnvironmentInfo> {
-    console.log('Environment Facade Service - getSavedEnvironmentInfo$');
     return this.storageStateService.getStateEntityByKey$<EnvironmentInfo>(this.currentEnvironmentKey).pipe(
       switchMap(data => {
-        console.log('Environment Facade Service - map - data', data);
         /// if no current environment is saved, default to production
         if (data === null) {
-          console.log('Environment Facade Service - data === null');
           this.setSavedEnvironmentInfo(this.production);
           return of(this.production);
         }
-        console.log('Environment Facade Service - return data');
         /// return saved environment data
         return of(data.value);
       })
@@ -136,7 +129,6 @@ export class EnvironmentFacadeService extends ServiceStateFacade {
   }
 
   private setSavedEnvironmentInfo(environment: EnvironmentInfo) {
-    console.log('Environment Facade Service - setSavedEnvironmentInfo', environment);
     this.currentEnvironment = environment;
     this.storageStateService.updateStateEntity(this.currentEnvironmentKey, environment, { highPriorityKey: true });
   }
@@ -150,7 +142,6 @@ export class EnvironmentFacadeService extends ServiceStateFacade {
   }
 
   getServicesURL(): string {
-    console.log('Environment Facade Service - getServicesURL', this.currentEnvironment.services_url);
     return this.currentEnvironment.services_url;
   }
 

@@ -31,8 +31,12 @@
       <div
         class="stored-img-cont round-corners"
         [ngClass]="{
-          'border-solid': this.localPhotoUploadStatus.govIdFront === localPhotoStatus.NEW || this.localPhotoUploadStatus.govIdFront === localPhotoStatus.ACCEPTED,
-          'border-dashed': this.localPhotoUploadStatus.govIdFront !== localPhotoStatus.NEW && this.localPhotoUploadStatus.govIdFront !== localPhotoStatus.ACCEPTED
+          'border-solid':
+            this.localPhotoUploadStatus.govIdFront === localPhotoStatus.NEW ||
+            this.localPhotoUploadStatus.govIdFront === localPhotoStatus.ACCEPTED,
+          'border-dashed':
+            this.localPhotoUploadStatus.govIdFront !== localPhotoStatus.NEW &&
+            this.localPhotoUploadStatus.govIdFront !== localPhotoStatus.ACCEPTED
         }"
       >
         <div>
@@ -55,8 +59,12 @@
       <div
         class="stored-img-cont round-corners"
         [ngClass]="{
-          'border-solid': this.localPhotoUploadStatus.govIdBack === localPhotoStatus.NEW || this.localPhotoUploadStatus.govIdBack === localPhotoStatus.ACCEPTED,
-          'border-dashed': this.localPhotoUploadStatus.govIdBack !== localPhotoStatus.NEW && this.localPhotoUploadStatus.govIdBack !== localPhotoStatus.ACCEPTED
+          'border-solid':
+            this.localPhotoUploadStatus.govIdBack === localPhotoStatus.NEW ||
+            this.localPhotoUploadStatus.govIdBack === localPhotoStatus.ACCEPTED,
+          'border-dashed':
+            this.localPhotoUploadStatus.govIdBack !== localPhotoStatus.NEW &&
+            this.localPhotoUploadStatus.govIdBack !== localPhotoStatus.ACCEPTED
         }"
       >
         <div>
@@ -65,7 +73,8 @@
         <div *ngIf="(govIdBack$ | async) as govIdBackUrl; else defaultGovIdBack">
           <img [src]="govIdBackUrl" alt="Government Id Front" width="132" height="80" class="round-corners" />
           <ion-button color="light" class="reupload-btn round-corners" (click)="onTakePhoto(photoType.GOVT_ID_BACK)"
-            >REUPLOAD</ion-button>
+            >REUPLOAD</ion-button
+          >
         </div>
         <ng-template #defaultGovIdBack>
           <img src="/assets/images/govt-id-back.svg" alt="Government Id Back" class="card-img round-corners" />
@@ -81,7 +90,8 @@
     <ion-card-header>
       <div
         *ngIf="
-          this.localPhotoUploadStatus.profilePending !== localPhotoStatus.NEW || this.localPhotoUploadStatus.profilePending !== localPhotoStatus.PENDING;
+          this.localPhotoUploadStatus.profilePending !== localPhotoStatus.NEW ||
+            this.localPhotoUploadStatus.profilePending !== localPhotoStatus.PENDING;
           else profileImagePending
         "
         class="header-message-container-selfie"
@@ -128,8 +138,12 @@
       <div
         class="stored-img-cont round-corners"
         [ngClass]="{
-          'border-solid': this.localPhotoUploadStatus.profilePending === localPhotoStatus.NEW || this.localPhotoUploadStatus.profilePending === localPhotoStatus.PENDING,
-          'border-dashed': this.localPhotoUploadStatus.profilePending !== localPhotoStatus.NEW && this.localPhotoUploadStatus.profilePending !== localPhotoStatus.PENDING
+          'border-solid':
+            this.localPhotoUploadStatus.profilePending === localPhotoStatus.NEW ||
+            this.localPhotoUploadStatus.profilePending === localPhotoStatus.PENDING,
+          'border-dashed':
+            this.localPhotoUploadStatus.profilePending !== localPhotoStatus.NEW &&
+            this.localPhotoUploadStatus.profilePending !== localPhotoStatus.PENDING
         }"
       >
         <div>
@@ -144,13 +158,18 @@
             class="round-corners"
           />
           <ion-button
-                  *ngIf="localPhotoUploadStatus.profilePending === localPhotoStatus.NEW; else resubmitProfileImage"
-                  class="upload-btn"
-                  (click)="onTakePhoto(photoType.PROFILE)"
-          >REUPLOAD</ion-button>
-          <ng-template #resubmitProfileImage>
-            <ion-button color="danger" class="reupload-btn" (click)="deletePendingProfileImage()">DELETE</ion-button>
-          </ng-template>
+            *ngIf="localPhotoUploadStatus.profilePending === localPhotoStatus.NEW"
+            class="upload-btn"
+            (click)="onTakePhoto(photoType.PROFILE)"
+            >REUPLOAD</ion-button
+          >
+          <ion-button
+            *ngIf="localPhotoUploadStatus.profilePending === localPhotoStatus.PENDING"
+            color="danger"
+            class="reupload-btn"
+            (click)="deletePendingProfileImage()"
+            >DELETE</ion-button
+          >
         </div>
         <ng-template #defaultPendingProfileImage>
           <img
@@ -158,9 +177,7 @@
             alt="Pending Profile Image"
             class="profile-default-image round-corners"
           />
-          <ion-button
-            class="upload-btn"
-            (click)="onTakePhoto(photoType.PROFILE)">UPLOAD</ion-button>
+          <ion-button class="upload-btn" (click)="onTakePhoto(photoType.PROFILE)">UPLOAD</ion-button>
         </ng-template>
       </div>
     </ion-card-content>
@@ -168,11 +185,7 @@
 
   <!-- BUTTON THAT SUBMITS ALL PHOTOS  -->
   <div class="action-btn-container">
-    <ion-button
-            color="primary"
-            [disabled]="submitButtonDisabled"
-      class="submit-btn"
-      (click)="submitPhotos()"
+    <ion-button color="primary" [disabled]="submitButtonDisabled" class="submit-btn" (click)="submitPhotos()"
       >SUBMIT PHOTOS FOR REVIEW</ion-button
     >
   </div>

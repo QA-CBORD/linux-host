@@ -62,28 +62,9 @@ export class PhotoUploadComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.initialization();
-    //
-    // this.photoUploadService.profileImage$.subscribe(
-    //   data => console.log('profileImage$: ', data),
-    //   error => console.log('profileImage$ Error: ', error),
-    //   () => console.log('profileImage$ Complete')
-    // );
-    // this.photoUploadService.profileImagePending$.subscribe(
-    //   data => console.log('profileImagePending$: ', data),
-    //   error => console.log('profileImagePending$ Error: ', error),
-    //   () => console.log('profileImagePending$ Complete')
-    // );
-    // this.photoUploadService.govtIdFront$.subscribe(
-    //   data => console.log('govtIdFront$: ', data),
-    //   error => console.log('govtIdFront$ Error: ', error),
-    //   () => console.log('govtIdFront$ Complete')
-    // );
-    // this.photoUploadService.govtIdBack$.subscribe(
-    //   data => console.log('govtIdBack$: ', data),
-    //   error => console.log('govtIdBack$ Error: ', error),
-    //   () => console.log('govtIdBack$ Complete')
-    // );
+    this.clearLocalStateData();
+    this.getPhotoData();
+    this.setupPhotoSubscriptions();
   }
 
   private clearLocalStateData() {
@@ -102,10 +83,8 @@ export class PhotoUploadComponent implements OnInit {
   }
 
   /// initialize the observables for photo updating
-  private initialization() {
-    this.clearLocalStateData();
+  private getPhotoData() {
     this.loadingService.showSpinner();
-
     this.photoUploadService
       .getInitialPhotoData$()
       .pipe(
@@ -114,10 +93,15 @@ export class PhotoUploadComponent implements OnInit {
       )
       .subscribe(
         data => console.log('getInitialPhotoData$: ', data),
-        error => console.log('getInitialPhotoData$ Error: ', error),
+        error => {
+          console.log('getInitialPhotoData$ Error: ', error);
+          this.photoDataFetchErrorToast();
+        },
         () => console.log('getInitialPhotoData$ Complete')
       );
+  }
 
+  private setupPhotoSubscriptions() {
     this.govIdFront$ = this.photoUploadService.govtIdFront$.pipe(
       tap(photoInfo => {
         this.updateLocalPhotoState(photoInfo, PhotoType.GOVT_ID_FRONT);
@@ -146,7 +130,7 @@ export class PhotoUploadComponent implements OnInit {
 
   /// make local modifications to allow UI to auto-update
   private updateLocalPhotoState(photoInfo: UserPhotoInfo, photoType: PhotoType) {
-    console.log('newPhotoDataToUI', photoInfo, photoType);
+    // console.log('newPhotoDataToUI', photoInfo, photoType);
     this.setLocalPhotoData(photoInfo, photoType);
     this.getLocalPhotoStatus(photoInfo, photoType);
     this.updateSubmitButtonStatus();
@@ -273,7 +257,6 @@ export class PhotoUploadComponent implements OnInit {
 
   //will submit all photos that have been uploaded
   async submitPhotos() {
-    console.log('Submit Photos');
     await this.loadingService.showSpinner();
     let newPhotos: Observable<boolean>[] = [];
 
@@ -310,9 +293,16 @@ export class PhotoUploadComponent implements OnInit {
         finalize(() => this.loadingService.closeSpinner())
       )
       .subscribe(
-        data => console.log('submitPhotos: ', data),
-        error => console.log('submitPhotos Error: ', error),
-        () => console.log('submitPhotos Complete')
+        data => {
+          console.log('submitPhotos: ', data);
+        },
+        error => {
+          console.log('submitPhotos Error: ', error);
+        },
+        () => {
+          this.clearLocalStateData();
+          this.getPhotoData();
+        }
       );
   }
 
@@ -322,15 +312,12 @@ export class PhotoUploadComponent implements OnInit {
 
     switch (photoType) {
       case PhotoType.GOVT_ID_FRONT:
-        console.log('submitPhotos', 'GOVT_ID_FRONT', this.localPhotoData.govIdFront);
         photoObservable = of(this.localPhotoData.govIdFront);
         break;
       case PhotoType.GOVT_ID_BACK:
-        console.log('submitPhotos', 'GOVT_ID_BACK', this.localPhotoData.govIdBack);
         photoObservable = of(this.localPhotoData.govIdBack);
         break;
       case PhotoType.PROFILE:
-        console.log('submitPhotos', 'PROFILE', this.localPhotoData.profilePending);
         photoObservable = of(this.localPhotoData.profilePending);
         break;
     }
@@ -358,7 +345,7 @@ export class PhotoUploadComponent implements OnInit {
         height: uploadSettings.saveHeight ? uploadSettings.saveHeight : null,
         direction: photoType === PhotoType.PROFILE ? CameraDirection.Front : CameraDirection.Rear,
         resultType: CameraResultType.Base64,
-        source: CameraSource.Prompt,
+        source: CameraSource.Camera,
         presentationStyle: 'popover',
         saveToGallery: false,
       })
@@ -374,6 +361,25 @@ export class PhotoUploadComponent implements OnInit {
       message,
       duration: 5000,
       position: 'top',
+    });
+    toast.present();
+  }
+
+  private async photoDataFetchErrorToast() {
+    const toast = await this.toastController.create({
+      message: 'There was an issue retrieving your photo information - please try again',
+      duration: 5000,
+      position: 'top',
+      buttons: [
+        {
+          side: 'end',
+          text: 'Retry',
+          handler: () => {
+            this.clearLocalStateData();
+            this.getPhotoData();
+          },
+        },
+      ],
     });
     toast.present();
   }
