@@ -8,7 +8,7 @@
 
 #import "GETServices.h"
 #import "GETAuthorizationBlobResponse.h"
-#import "App-Swift.h"
+#import "GET-Swift.h"
 
 @interface GETPartnerServices: GETServices
 
