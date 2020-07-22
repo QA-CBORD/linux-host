@@ -5,7 +5,7 @@ import { ToastController } from '@ionic/angular';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { PATRON_NAVIGATION } from '../../../../app.global';
 import { from, Observable, of, zip } from 'rxjs';
-import { catchError, finalize, first, switchMap, tap } from 'rxjs/operators';
+import { catchError, finalize, first, switchMap, take, tap } from 'rxjs/operators';
 import { UserPhotoInfo } from '@core/model/user';
 import { PhotoStatus, PhotoType, PhotoUploadService } from '@sections/settings/services/photo-upload.service';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -28,6 +28,13 @@ export interface LocalPhotoUploadStatus {
   profilePending: LocalPhotoStatus;
 }
 
+export interface LocalPhotoData {
+  govIdFront: UserPhotoInfo;
+  govIdBack: UserPhotoInfo;
+  profile: UserPhotoInfo;
+  profilePending: UserPhotoInfo;
+}
+
 @Component({
   selector: 'st-photo-upload',
   templateUrl: './photo-upload.component.html',
@@ -46,6 +53,13 @@ export class PhotoUploadComponent implements OnInit {
     govIdFront: LocalPhotoStatus.NONE,
     profile: LocalPhotoStatus.NONE,
     profilePending: LocalPhotoStatus.NONE,
+  };
+
+  private localPhotoData: LocalPhotoData = {
+    govIdFront: null,
+    govIdBack: null,
+    profile: null,
+    profilePending: null,
   };
 
   constructor(
@@ -116,8 +130,30 @@ export class PhotoUploadComponent implements OnInit {
 
   /// make local modifications to allow UI to auto-update
   private updateLocalPhotoState(photoInfo: UserPhotoInfo, photoType: PhotoType) {
+    this.setLocalPhotoData(photoInfo);
     this.getLocalPhotoStatus(photoInfo, photoType);
     this.updateSubmitButtonStatus();
+  }
+
+  private setLocalPhotoData(photoInfo: UserPhotoInfo) {
+    if (photoInfo === null) {
+      return;
+    }
+
+    switch (photoInfo.type) {
+      case PhotoType.PROFILE:
+        this.localPhotoData.profile = photoInfo;
+        break;
+      case PhotoType.PROFILE_PENDING: /// profile pending
+        this.localPhotoData.profilePending = photoInfo;
+        break;
+      case PhotoType.GOVT_ID_FRONT:
+        this.localPhotoData.govIdFront = photoInfo;
+        break;
+      case PhotoType.GOVT_ID_BACK:
+        this.localPhotoData.govIdBack = photoInfo;
+        break;
+    }
   }
 
   /// get 'status' of photo for local state management
@@ -254,7 +290,7 @@ export class PhotoUploadComponent implements OnInit {
 
     zip(...newPhotos)
       .pipe(
-        first(),
+        take(1),
         finalize(() => this.loadingService.closeSpinner())
       )
       .subscribe(
@@ -270,13 +306,13 @@ export class PhotoUploadComponent implements OnInit {
 
     switch (photoType) {
       case PhotoType.GOVT_ID_FRONT:
-        photoObservable = this.photoUploadService.govtIdFront$;
+        photoObservable = of(this.localPhotoData.govIdFront);
         break;
       case PhotoType.GOVT_ID_BACK:
-        photoObservable = this.photoUploadService.govtIdBack$;
+        photoObservable = of(this.localPhotoData.govIdBack);
         break;
       case PhotoType.PROFILE:
-        photoObservable = this.photoUploadService.profileImagePending$;
+        photoObservable = of(this.localPhotoData.profilePending);
         break;
     }
 
