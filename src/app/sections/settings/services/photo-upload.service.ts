@@ -154,7 +154,6 @@ export class PhotoUploadService {
   }
 
   onNewPhoto(photoType: PhotoType, photoData: any) {
-    console.log('onNewPhoto', photoType, photoData);
     let newPhotoInfo: UserPhotoInfo = {
       externalId: null,
       userId: null,

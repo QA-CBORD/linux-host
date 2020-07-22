@@ -106,20 +106,17 @@ export class UserPassForm implements OnInit {
     try {
       sessionId = await this.authenticateUsernamePassword(username, password, id);
     } catch (e) {
-      console.log('authUser error', e);
       this.presentToast('Login failed, invalid user name and/or password');
       this.loadingService.closeSpinner();
       return;
     }
     const loginState: LoginState = await this.sessionFacadeService.determinePostLoginState(sessionId, id);
 
-    console.log('UserPass - Login State:', loginState);
     switch (loginState) {
       case LoginState.PIN_SET:
         try {
           await this.identityFacadeService.pinOnlyLoginSetup();
         } catch (e) {
-          console.log('UPF - pin set error', e);
           this.presentToast('Login failed, invalid user name and/or password');
         }
         break;

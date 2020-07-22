@@ -61,7 +61,6 @@ export class OrderingPage implements OnInit {
 
   locationPinHandler(event: string) {
     // TODO location feature
-    // console.log(`Location Pin Clicked - Merch Id: ${event}`);
   }
 
   private openOrderOptions(merchant) {

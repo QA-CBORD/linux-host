@@ -160,11 +160,9 @@ export class PinPage implements OnInit {
   }
 
   enter() {
-    console.log('Enter pressed');
   }
 
   delete() {
-    console.log('Delete pressed');
     this.removeNumber();
   }
 
@@ -216,11 +214,9 @@ export class PinPage implements OnInit {
           }
         },
         error => {
-          console.log('Pin Set Error', error);
           this.cleanLocalState();
           this.setErrorText('Error setting your PIN - please try again');
-        },
-        () => console.log('Pin Set Complete')
+        }
       );
   }
 
@@ -244,7 +240,6 @@ export class PinPage implements OnInit {
           }
         },
         error => {
-          console.log('Pin Login Error', error);
           this.cleanLocalState();
           if (this.currentLoginAttempts >= this.maxLoginAttempts) {
             this.setErrorText('Maximum login attempts reached - logging you out');
@@ -254,8 +249,7 @@ export class PinPage implements OnInit {
           } else {
             this.setErrorText('Incorrect PIN - please try again');
           }
-        },
-        () => console.log('Pin Login Complete')
+        }
       );
     // on success, return the pin so the vault can be unlocked
   }

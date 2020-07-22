@@ -212,15 +212,7 @@ export class UserFacadeService extends ServiceStateFacade {
             }
           });
           PushNotifications.addListener('registration', (token: PushNotificationToken) => {
-            this.saveNotification$(token.value).subscribe(
-              response => {
-                console.log('saveNotification: next', response);
-              },
-              error => {
-                console.log('saveNotification: error', error);
-              },
-              () => console.log('saveNotification: complete')
-            );
+            this.saveNotification$(token.value).subscribe();
           });
           PushNotifications.register();
         }

@@ -87,7 +87,6 @@ export class InstitutionsPage implements OnInit {
         switchMap(() => this.sessionFacadeService.determineInstitutionSelectionLoginState()),
         switchMap(
           (loginState): any => {
-            console.log('Login State:', loginState);
             return this.nativeStartupFacadeService.fetchNativeStartupInfo(id, this.sessionId, false).pipe(
               map(startupInfoConfig => ({
                 loginState,
@@ -147,7 +146,6 @@ export class InstitutionsPage implements OnInit {
         }
       })
       .catch(reason => {
-        console.log('Inst Page - error redirecting to app store', reason);
       });
   }
   async setNativeEnvironment() {

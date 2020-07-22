@@ -73,8 +73,6 @@ export class AppComponent implements OnInit {
 
     App.addListener('appStateChange', ({ isActive }: AppState) => {
       // state.isActive contains the active state
-      console.log('App state changed. Is active?', isActive);
-
       if (isActive) {
 
         if(this.sessionFacadeService.navigatedToPlugin){

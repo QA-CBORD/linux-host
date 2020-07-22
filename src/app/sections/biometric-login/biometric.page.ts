@@ -42,7 +42,6 @@ export class BiometricPage implements OnInit {
         await this.identityFacadeService.pinOnlyLoginSetup();
       }
     } catch (e){
-      console.log('Bio page, setup error', e);
     }
   }
 }

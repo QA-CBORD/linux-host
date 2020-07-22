@@ -92,12 +92,10 @@ export class PhotoUploadComponent implements OnInit {
         first()
       )
       .subscribe(
-        data => console.log('getInitialPhotoData$: ', data),
+        data => {},
         error => {
-          console.log('getInitialPhotoData$ Error: ', error);
           this.photoDataFetchErrorToast();
-        },
-        () => console.log('getInitialPhotoData$ Complete')
+        }
       );
   }
 
@@ -294,10 +292,8 @@ export class PhotoUploadComponent implements OnInit {
       )
       .subscribe(
         data => {
-          console.log('submitPhotos: ', data);
         },
         error => {
-          console.log('submitPhotos Error: ', error);
         },
         () => {
           this.clearLocalStateData();

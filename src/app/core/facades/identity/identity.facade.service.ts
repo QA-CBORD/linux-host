@@ -37,9 +37,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
   }
 
   async pinOnlyLoginSetup(): Promise<any> {
-    console.log('Pin only login setup');
     const { data, role } = await this.identityService.presentPinModal(PinAction.SET_PIN_ONLY);
-    console.log('Pin only login setup modal resp', data, role);
     switch (role) {
       case PinCloseStatus.CANCELED:
         throw {
@@ -61,10 +59,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
   }
 
   async biometricLoginSetup(): Promise<any> {
-    console.log('Biometric login setup');
     const { data, role } = await this.identityService.presentPinModal(PinAction.SET_BIOMETRIC);
-    console.log('Biometric login setup modal resp', { data, role });
-
     switch (role) {
       case PinCloseStatus.CANCELED:
         throw {
@@ -88,7 +83,6 @@ export class IdentityFacadeService extends ServiceStateFacade {
   }
 
   loginUser(useBiometric: boolean) {
-    console.log('Login User - biometric =', useBiometric);
     if (useBiometric) {
       this.identityService.unlockVault();
     } else {
