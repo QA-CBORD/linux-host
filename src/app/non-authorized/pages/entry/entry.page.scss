@@ -20,6 +20,7 @@
     height: 100%;
     background: no-repeat url('/assets/images/entry-bg.svg');
     background-size: cover;
+    background-position-y: center;
   }
 
   &__info {
@@ -40,7 +41,7 @@
 
   &__env-button {
     --background: transparent;
-    --box-shadow:none;
+    --box-shadow: none;
     position: fixed;
     top: 0;
     left: 0;
