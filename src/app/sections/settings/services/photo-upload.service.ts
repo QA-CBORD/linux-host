@@ -180,19 +180,14 @@ export class PhotoUploadService {
     }), first());
   }
 
-  async presentDeletePhotoModal() {
-    const photoInfo = await this._profileImagePending$.toPromise();
-
-    if (photoInfo === null) {
-      return;
-    }
+  async presentDeletePhotoModal(photoId: string) {
 
     const modal = await this.modalController.create({
       component: DeleteModalComponent,
     });
     modal.onDidDismiss().then(data => {
       if (data.data === true) {
-        this.userFacadeService.updateUserPhotoStatus(photoInfo.id, PhotoStatus.DELETED, 'Patron deleted photo').pipe(take(1));
+        this.userFacadeService.updateUserPhotoStatus(photoId, PhotoStatus.DELETED, 'Patron deleted photo').pipe(take(1));
         this._profileImagePending = null;
       }
     });

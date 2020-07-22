@@ -366,7 +366,7 @@ export class PhotoUploadComponent implements OnInit {
   }
 
   deletePendingProfileImage() {
-    this.photoUploadService.presentDeletePhotoModal();
+    this.photoUploadService.presentDeletePhotoModal(this.localPhotoData.profilePending.id);
   }
 
   private async presentToast(message: string) {
