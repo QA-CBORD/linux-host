@@ -39,8 +39,8 @@
       <div
         class="stored-img-cont round-corners"
         [ngClass]="{
-          'border-solid': this.localPhotoUploadStatus.govIdFront === localPhotoStatus.NEW,
-          'border-dashed': this.localPhotoUploadStatus.govIdFront !== localPhotoStatus.NEW
+          'border-solid': this.localPhotoUploadStatus.govIdFront === localPhotoStatus.NEW || this.localPhotoUploadStatus.govIdFront === localPhotoStatus.ACCEPTED,
+          'border-dashed': this.localPhotoUploadStatus.govIdFront !== localPhotoStatus.NEW && this.localPhotoUploadStatus.govIdFront === localPhotoStatus.ACCEPTED
         }"
       >
         <div>
@@ -63,8 +63,8 @@
       <div
         class="stored-img-cont round-corners"
         [ngClass]="{
-          'border-solid': this.localPhotoUploadStatus.govIdBack === localPhotoStatus.NEW,
-          'border-dashed': this.localPhotoUploadStatus.govIdBack !== localPhotoStatus.NEW
+          'border-solid': this.localPhotoUploadStatus.govIdBack === localPhotoStatus.NEW || this.localPhotoUploadStatus.govIdBack === localPhotoStatus.ACCEPTED,
+          'border-dashed': this.localPhotoUploadStatus.govIdBack !== localPhotoStatus.NEW && this.localPhotoUploadStatus.govIdBack !== localPhotoStatus.ACCEPTED
         }"
       >
         <div>
@@ -84,14 +84,13 @@
     </ion-card-content>
   </ion-card>
 
-  <!-- CARD FOR SELFIE PHOTOS -->
+  <!-- CARD FOR PROFILE PHOTOS -->
   <ion-card class="selfie-photo-container">
-    <!-- MESSAGE FOR SELFIE PHOTOS -->
+    <!-- MESSAGE FOR PROFILE PHOTOS -->
     <ion-card-header>
       <div
         *ngIf="
-          localPhotoUploadStatus.profilePending !== localPhotoStatus.PENDING ||
-            localPhotoUploadStatus.profilePending !== localPhotoStatus.SUBMITTED;
+          this.localPhotoUploadStatus.profilePending !== localPhotoStatus.NEW || this.localPhotoUploadStatus.govIdFront !== localPhotoStatus.PENDING;
           else profileImagePending
         "
         class="header-message-container-selfie"
@@ -118,7 +117,7 @@
         </div>
       </ng-template>
     </ion-card-header>
-    <!-- CONTAINER FOR SELFIE PHOTOS -->
+    <!-- CONTAINER FOR PROFILE PHOTOS -->
     <ion-card-content class="photo-upload-cont">
       <div class="stored-img-cont round-corners grey-background">
         <div>
@@ -138,8 +137,8 @@
       <div
         class="stored-img-cont round-corners"
         [ngClass]="{
-          'border-solid': this.localPhotoUploadStatus.profilePending === localPhotoStatus.NEW,
-          'border-dashed': this.localPhotoUploadStatus.profilePending !== localPhotoStatus.NEW
+          'border-solid': this.localPhotoUploadStatus.profilePending === localPhotoStatus.NEW || this.localPhotoUploadStatus.govIdFront === localPhotoStatus.PENDING,
+          'border-dashed': this.localPhotoUploadStatus.profilePending !== localPhotoStatus.NEW && this.localPhotoUploadStatus.govIdFront !== localPhotoStatus.PENDING
         }"
       >
         <div>
@@ -174,13 +173,14 @@
     </ion-card-content>
   </ion-card>
 
-  <!-- BUTTON THAT SUBMITS ALL PHOTOS (NOT CURRENTLY CHECKING FOR PHOTO VALUES) -->
+  <!-- BUTTON THAT SUBMITS ALL PHOTOS  -->
   <div class="action-btn-container">
     <ion-button
+            color="primary"
+            [disabled]="submitButtonDisabled"
       class="submit-btn"
       (click)="submitPhotos()"
       >SUBMIT PHOTOS FOR REVIEW</ion-button
     >
   </div>
-  <!-- BOTTOM OF WHAT WILL BE MOVED TO THE PHOTO UPLOAD HTML FILE -->
 </ion-content>

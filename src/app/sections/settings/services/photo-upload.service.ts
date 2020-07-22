@@ -6,8 +6,10 @@ import { UserPhotoInfo, UserPhotoList } from '@core/model/user';
 import { Settings } from '../../../app.global';
 import SettingList = Settings.SettingList;
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
-import { switchMap, tap } from 'rxjs/operators';
+import { first, switchMap, take, tap } from 'rxjs/operators';
 import { SettingInfoList } from '@core/model/configuration/setting-info-list.model';
+import { DeleteModalComponent } from '@sections/settings/pages/delete-modal/delete-modal.component';
+import { ModalController } from '@ionic/angular';
 
 export enum PhotoStatus {
   PENDING,
@@ -15,10 +17,10 @@ export enum PhotoStatus {
   REJECTED,
   REPLACED,
   DELETED,
-  LOCALLY_PENDING = 99,
 }
 
 export enum PhotoType {
+  PROFILE_PENDING = -1,
   PROFILE,
   GOVT_ID_FRONT,
   GOVT_ID_BACK,
@@ -44,7 +46,8 @@ export class PhotoUploadService {
 
   constructor(
     private readonly settingsFacadeService: SettingsFacadeService,
-    private readonly userFacadeService: UserFacadeService
+    private readonly userFacadeService: UserFacadeService,
+    private readonly modalController: ModalController
   ) {}
 
   get photoUploadSettings() {
@@ -164,5 +167,35 @@ export class PhotoUploadService {
       type: photoType,
     };
     this.setPhotoInfo(newPhotoInfo);
+  }
+
+  submitPhoto(newPhoto: UserPhotoInfo): Observable<boolean> {
+    return this.userFacadeService.addUserPhoto(newPhoto).pipe(tap(success => {
+      if(success){
+        newPhoto.status = newPhoto.type === PhotoType.PROFILE ? PhotoStatus.PENDING : PhotoStatus.ACCEPTED;
+        this.setPhotoInfo(newPhoto);
+      }
+    }), first());
+
+  }
+
+  async presentDeletePhotoModal() {
+    const photoInfo = await this._profileImagePending$.toPromise();
+
+    if (photoInfo === null) {
+      return;
+    }
+
+    const modal = await this.modalController.create({
+      component: DeleteModalComponent,
+    });
+    modal.onDidDismiss().then(data => {
+      if (data.data === true) {
+        this.userFacadeService.updateUserPhotoStatus(photoInfo.id, PhotoStatus.DELETED, 'Patron deleted photo').pipe(take(1));
+        this._profileImagePending = null;
+      }
+    });
+
+    return await modal.present();
   }
 }

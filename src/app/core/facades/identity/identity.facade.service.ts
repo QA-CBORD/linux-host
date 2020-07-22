@@ -28,8 +28,6 @@ export class IdentityFacadeService extends ServiceStateFacade {
   private pinEnabledUserPreference = 'get_pinEnabledUserPreference';
   private biometricsEnabledUserPreference = 'get_biometricsEnabledUserPreference';
 
-  private navigatedToNativePlugin: boolean = false;
-
   constructor(
     private readonly storageStateService: StorageStateService,
     private readonly settingsFacadeService: SettingsFacadeService,
@@ -106,14 +104,6 @@ export class IdentityFacadeService extends ServiceStateFacade {
 
   get isVaultLocked() {
     return this.identityService.isVaultLocked();
-  }
-
-  set navigateToNativePlugin(value: boolean){
-    this.navigatedToNativePlugin = value
-  }
-
-  get didNavigateToNativePlugin(): boolean {
-    return this.navigatedToNativePlugin;
   }
 
   isExternalLogin(institutionInfo: Institution): boolean {

@@ -58,25 +58,23 @@
 }
 
 .key-message {
-  display: flex;
-  flex-flow: column;
-  font-style: normal;
-  font-weight: 600;
-  font-size: small;
   line-height: 22px;
-  padding-bottom: 10px;
+  @include font-nunito-regular(16px);
   color: rgba(0, 0, 0, 0.87);
+  padding: 0px;
+  margin: 0px;
+  top: 40%;
+  position: absolute;
 }
 
 .key-message-submitted {
-  display: flex;
-  flex-flow: column;
-  font-style: normal;
-  font-weight: 600;
-  font-size: small;
   line-height: 22px;
-  padding-bottom: 10px;
   color: #007b53;
+  @include font-nunito-regular(16px);
+  padding: 0px;
+  margin: 0px;
+  top: 40%;
+  position: absolute;
 }
 
 .secondary-message {
@@ -127,6 +125,11 @@
   height: 48px;
 }
 
+ion-button.button-disabled {
+  color: rgba(0, 0, 0, 0.38);
+  background-color: #E2E2E2;
+}
+
 .reupload-btn {
   color: black;
   width: 132px;
@@ -155,7 +158,6 @@
 }
 
 .submit-btn {
-  background-color: #166dff !important;
   width: 343px;
   height: 48px;
 }

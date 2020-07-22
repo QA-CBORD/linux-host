@@ -18,6 +18,9 @@ import { migrateLegacyGlobalConfig } from '@angular/cli/utilities/config';
   providedIn: 'root',
 })
 export class SessionFacadeService {
+  /// manages app to background status for plugins (camera, etc) that briefly leave the app and return
+  private navigateToNativePlugin: boolean = false;
+
   constructor(
     private readonly userFacadeService: UserFacadeService,
     private readonly identityFacadeService: IdentityFacadeService,
@@ -25,6 +28,14 @@ export class SessionFacadeService {
     private readonly storageStateService: StorageStateService,
     private readonly router: Router
   ) {}
+
+  get navigatedToPlugin() {
+    return this.navigateToNativePlugin;
+  }
+
+  set navigatedToPlugin(value: boolean) {
+    this.navigateToNativePlugin = value;
+  }
 
   async determinePostLoginState(sessionId: string, institutionId: string): Promise<LoginState> {
     console.log('checkPostLoginState');

@@ -1,13 +1,13 @@
 export interface UserPhotoInfo {
-  readonly externalId: string;
-  readonly userId: string;
-  readonly mimeType: string;
-  readonly status: number;
-  readonly statusReason: string;
-  readonly data: string;
-  readonly id: string;
-  readonly insertTime: string;
-  readonly lastUpdated: string;
-  readonly version: number;
-  readonly type: number;
+  externalId: string;
+  userId: string;
+  mimeType: string;
+  status: number;
+  statusReason: string;
+  data: string;
+  id: string;
+  insertTime: string;
+  lastUpdated: string;
+  version: number;
+  type: number;
 }

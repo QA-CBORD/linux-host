@@ -34,7 +34,6 @@ export class AppComponent implements OnInit {
     private readonly splashScreen: SplashScreen,
     private readonly statusBar: StatusBar,
     private readonly popoverCtrl: PopoverController,
-    private readonly identityFacadeService: IdentityFacadeService,
     private readonly sessionFacadeService: SessionFacadeService,
     private readonly router: Router,
     private readonly cdRef: ChangeDetectorRef,
@@ -78,8 +77,8 @@ export class AppComponent implements OnInit {
 
       if (isActive) {
 
-        if(this.identityFacadeService.didNavigateToNativePlugin){
-          this.identityFacadeService.navigateToNativePlugin = false;
+        if(this.sessionFacadeService.navigatedToPlugin){
+          this.sessionFacadeService.navigatedToPlugin = false;
           return;
         }
 
