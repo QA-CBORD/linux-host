@@ -2,7 +2,15 @@
   "images" : [
     {
       "extent" : "full-screen",
-      "filename" : "ios-retinaHD5.5@3x.png",
+      "filename" : "Splash@3x.png",
+      "idiom" : "iphone",
+      "minimum-system-version" : "11.0",
+      "orientation" : "portrait",
+      "scale" : "3x",
+      "subtype" : "2436h"
+    },
+    {
+      "extent" : "full-screen",
       "idiom" : "iphone",
       "minimum-system-version" : "8.0",
       "orientation" : "portrait",
@@ -11,7 +19,6 @@
     },
     {
       "extent" : "full-screen",
-      "filename" : "ios-retinaHD4.7@2x.png",
       "idiom" : "iphone",
       "minimum-system-version" : "8.0",
       "orientation" : "portrait",
@@ -20,7 +27,6 @@
     },
     {
       "extent" : "full-screen",
-      "filename" : "iOS_launch@2x.png",
       "idiom" : "iphone",
       "minimum-system-version" : "7.0",
       "orientation" : "portrait",
@@ -28,7 +34,6 @@
     },
     {
       "extent" : "full-screen",
-      "filename" : "iOS_launch@3x.png",
       "idiom" : "iphone",
       "minimum-system-version" : "7.0",
       "orientation" : "portrait",

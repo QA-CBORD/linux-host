@@ -25,7 +25,6 @@ export class StartupPage implements OnInit {
   ngOnInit() {}
 
   ionViewWillEnter() {
-    console.log('Startup Page - ViewWillEnter');
     this.doLoginChecks();
   }
 
@@ -40,7 +39,6 @@ export class StartupPage implements OnInit {
         take(1)
       )
       .subscribe(state => {
-        console.log('StartupPage - login state:', state);
         switch (state) {
           case LoginState.SELECT_INSTITUTION:
             this.router.navigate([ROLES.guest, GUEST_ROUTES.entry], { replaceUrl: true, state: { logoutUser: true }});
@@ -74,7 +72,6 @@ export class StartupPage implements OnInit {
     try {
       this.identityFacadeService.loginUser(useBiometric);
     } catch (e) {
-      console.log('loginUser error: ', e);
     }
   }
 }

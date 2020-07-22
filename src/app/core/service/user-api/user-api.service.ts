@@ -60,6 +60,15 @@ export class UserApiService {
 
     return this.http.post<MessageResponse<boolean>>(this.serviceUrl, queryConfig);
   }
+    
+  //used for deleting a photo right now, but just changes the status to 4
+  updateUserPhotoStatus(photoId: string, status: number, reason: string){
+    const queryConfig = new RPCQueryConfig('updateUserPhotoStatus', {photoId, status, reason}, true);
+
+    return this.http.post<MessageResponse<boolean>>(this.serviceUrl, queryConfig);
+  }
+
+
 
   createUserPin(PIN: string, deviceId: string): Observable<MessageResponse<boolean>> {
     const queryConfig = new RPCQueryConfig('createPIN', { PIN, deviceId }, true, false);
@@ -95,8 +104,9 @@ export class UserApiService {
     return this.http.post<MessageResponse<UserPhotoList>>(this.serviceUrl, queryConfig);
   }
 
+  //this is potentially going to become the new call Matt is making not sure 
   getFullPhotoListByUserId(userId: string): Observable<MessageResponse<UserPhotoList>> {
-    const queryConfig = new RPCQueryConfig('retrieveUserPhotoList', { userId }, true);
+    const queryConfig = new RPCQueryConfig('retrieveFullUserPhotoList', { userId }, true);
 
     return this.http.post<MessageResponse<UserPhotoList>>(this.serviceUrl, queryConfig);
   }

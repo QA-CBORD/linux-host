@@ -1,18 +1,39 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-//will be moved to photo upload component when i figure out routing issue
 import { CameraDirection, CameraPhoto, CameraResultType, CameraSource, Plugins } from '@capacitor/core';
-import { ModalController, ToastController } from '@ionic/angular';
-import { DeleteModalComponent } from '../delete-modal/delete-modal.component';
+import { ToastController } from '@ionic/angular';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { PATRON_NAVIGATION } from '../../../../app.global';
-import { from, Observable } from 'rxjs';
-import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
-import { UserFacadeService } from '@core/facades/user/user.facade.service';
-import { map, take } from 'rxjs/operators';
-import { UserPhotoInfo, UserPhotoList } from '@core/model/user';
+import { from, Observable, of, zip } from 'rxjs';
+import { catchError, finalize, first, switchMap, take, tap } from 'rxjs/operators';
+import { UserPhotoInfo } from '@core/model/user';
+import { PhotoStatus, PhotoType, PhotoUploadService } from '@sections/settings/services/photo-upload.service';
+import { LoadingService } from '@core/service/loading/loading.service';
+import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 
 const { Camera } = Plugins;
+
+export enum LocalPhotoStatus {
+  NONE,
+  PENDING,
+  ACCEPTED,
+  NEW,
+  SUBMITTED,
+}
+
+export interface LocalPhotoUploadStatus {
+  govIdFront: LocalPhotoStatus;
+  govIdBack: LocalPhotoStatus;
+  profile: LocalPhotoStatus;
+  profilePending: LocalPhotoStatus;
+}
+
+export interface LocalPhotoData {
+  govIdFront: UserPhotoInfo;
+  govIdBack: UserPhotoInfo;
+  profile: UserPhotoInfo;
+  profilePending: UserPhotoInfo;
+}
 
 @Component({
   selector: 'st-photo-upload',
@@ -20,158 +41,305 @@ const { Camera } = Plugins;
   styleUrls: ['./photo-upload.component.scss'],
 })
 export class PhotoUploadComponent implements OnInit {
-  frontId: SafeResourceUrl = null;
-  backId: SafeResourceUrl = null;
-  selfie: SafeResourceUrl = null;
-  //this will change according to if the have photos or not from DB api call
-  submitted: boolean = false;
-  userPhoto: string;
+  govIdFront$: Observable<SafeResourceUrl>;
+  govIdBack$: Observable<SafeResourceUrl>;
+  profileImage$: Observable<SafeResourceUrl>;
+  profileImagePending$: Observable<SafeResourceUrl>;
+
+  submitButtonDisabled: boolean = true;
+
+  localPhotoUploadStatus: LocalPhotoUploadStatus;
+  private localPhotoData: LocalPhotoData;
 
   constructor(
     private readonly router: Router,
-    private readonly modalController: ModalController,
     private readonly domsanitizer: DomSanitizer,
-    private readonly identityFacadeService: IdentityFacadeService,
+    private readonly sessionFacadeService: SessionFacadeService,
     private readonly toastController: ToastController,
-    private readonly userFacadeService: UserFacadeService,
-  ) { }
+    private readonly photoUploadService: PhotoUploadService,
+    private readonly loadingService: LoadingService,
+    private readonly cd: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
-    //call institution settings for photos 
-    this.setUserPhoto();
+    this.clearLocalStateData();
+    this.getPhotoData();
+    this.setupPhotoSubscriptions();
   }
 
-  private setUserPhoto() {
-    this.userFacadeService
-      .getAcceptedPhoto$()
+  private clearLocalStateData() {
+    this.localPhotoData = {
+      govIdFront: null,
+      govIdBack: null,
+      profile: null,
+      profilePending: null,
+    };
+    this.localPhotoUploadStatus = {
+      govIdBack: LocalPhotoStatus.NONE,
+      govIdFront: LocalPhotoStatus.NONE,
+      profile: LocalPhotoStatus.NONE,
+      profilePending: LocalPhotoStatus.NONE,
+    };
+  }
+
+  /// initialize the observables for photo updating
+  private getPhotoData() {
+    this.loadingService.showSpinner();
+    this.photoUploadService
+      .getInitialPhotoData$()
       .pipe(
-        map(({ data, mimeType }) => `data:${mimeType};base64,${data}`),
-        take(1)
+        finalize(() => this.loadingService.closeSpinner()),
+        first()
       )
-      .subscribe((url: string) => {
-        this.userPhoto = url;
-      });
-      console.log('user photo', this.userPhoto);
+      .subscribe(
+        data => {},
+        error => {
+          this.photoDataFetchErrorToast();
+        }
+      );
   }
 
-  private setIDPhotos(){
-
+  private setupPhotoSubscriptions() {
+    this.govIdFront$ = this.photoUploadService.govtIdFront$.pipe(
+      tap(photoInfo => {
+        this.updateLocalPhotoState(photoInfo, PhotoType.GOVT_ID_FRONT);
+      }),
+      switchMap(photoInfo => this.handlePhotoResponse(photoInfo))
+    );
+    this.govIdBack$ = this.photoUploadService.govtIdBack$.pipe(
+      tap(photoInfo => {
+        this.updateLocalPhotoState(photoInfo, PhotoType.GOVT_ID_BACK);
+      }),
+      switchMap(photoInfo => this.handlePhotoResponse(photoInfo))
+    );
+    this.profileImage$ = this.photoUploadService.profileImage$.pipe(
+      tap(photoInfo => {
+        this.updateLocalPhotoState(photoInfo, PhotoType.PROFILE);
+      }),
+      switchMap(photoInfo => this.handlePhotoResponse(photoInfo))
+    );
+    this.profileImagePending$ = this.photoUploadService.profileImagePending$.pipe(
+      tap(photoInfo => {
+        this.updateLocalPhotoState(photoInfo, PhotoType.PROFILE_PENDING);
+      }),
+      switchMap(photoInfo => this.handlePhotoResponse(photoInfo))
+    );
   }
 
+  /// make local modifications to allow UI to auto-update
+  private updateLocalPhotoState(photoInfo: UserPhotoInfo, photoType: PhotoType) {
+    // console.log('newPhotoDataToUI', photoInfo, photoType);
+    this.setLocalPhotoData(photoInfo, photoType);
+    this.getLocalPhotoStatus(photoInfo, photoType);
+    this.updateSubmitButtonStatus();
+  }
 
-  //prompts to open camera or photos for front id pic
-  async promptFrontPhoto() {
-    this.getPhoto().subscribe(
-      data => {
-        console.log('PFC Data:', data);
-        this.frontId = this.domsanitizer.bypassSecurityTrustResourceUrl(`data:image/${data.format};base64, ${data.base64String}`);
+  private setLocalPhotoData(photoInfo: UserPhotoInfo, photoType: PhotoType) {
+    if (photoInfo === null) {
+      return;
+    }
+
+    switch (photoType) {
+      case PhotoType.PROFILE:
+        this.localPhotoData.profile = photoInfo;
+        break;
+      case PhotoType.PROFILE_PENDING:
+        this.localPhotoData.profilePending = photoInfo;
+        break;
+      case PhotoType.GOVT_ID_FRONT:
+        this.localPhotoData.govIdFront = photoInfo;
+        break;
+      case PhotoType.GOVT_ID_BACK:
+        this.localPhotoData.govIdBack = photoInfo;
+        break;
+    }
+  }
+
+  /// get 'status' of photo for local state management
+  private getLocalPhotoStatus(photoInfo: UserPhotoInfo, photoType: PhotoType) {
+    let status: LocalPhotoStatus = LocalPhotoStatus.NONE;
+    /// no photo data, no status
+    if (photoInfo === null) {
+      status = LocalPhotoStatus.NONE;
+    } else if (photoInfo.status === null) {
+      /// photo has been locally updated, not yet submitted
+      status = LocalPhotoStatus.NEW;
+    } else {
+      /// photo has been fetched, use its status
+      switch (photoInfo.status) {
+        case PhotoStatus.PENDING:
+          status = LocalPhotoStatus.PENDING;
+        case PhotoStatus.ACCEPTED:
+          status = LocalPhotoStatus.ACCEPTED;
+      }
+    }
+
+    switch (photoType) {
+      case PhotoType.PROFILE:
+        this.localPhotoUploadStatus.profile = status;
+        break;
+      case PhotoType.PROFILE_PENDING:
+        this.localPhotoUploadStatus.profilePending = status;
+        break;
+      case PhotoType.GOVT_ID_FRONT:
+        this.localPhotoUploadStatus.govIdFront = status;
+        break;
+      case PhotoType.GOVT_ID_BACK:
+        this.localPhotoUploadStatus.govIdBack = status;
+        break;
+    }
+    this.cd.detectChanges();
+  }
+
+  /// manage photo data on response for display in html
+  private handlePhotoResponse(photoInfo: UserPhotoInfo): Observable<SafeResourceUrl> {
+    if (photoInfo === null) {
+      return of(null);
+    }
+    return of(this.formatPhotoData(photoInfo));
+  }
+
+  /// format the photo data for display
+  private formatPhotoData({ mimeType, data }: UserPhotoInfo): SafeResourceUrl {
+    return this.domsanitizer.bypassSecurityTrustResourceUrl(`data:${mimeType};base64,${data}`);
+  }
+
+  get localPhotoStatus() {
+    return LocalPhotoStatus;
+  }
+
+  get photoType() {
+    return PhotoType;
+  }
+
+  /// handle request to take new photo
+  onTakePhoto(photoType: PhotoType) {
+    this.getPhoto(photoType).subscribe(
+      response => {
+        this.photoUploadService.onNewPhoto(photoType, response);
       },
       error => {
-        console.log('PFC Error:', error);
-        this.presentToast('There was an issue taking the picture - please try again')
+        this.presentToast('There was an issue taking the picture - please try again');
       },
-      () => {
-        console.log('PFC Complete')
-      }
-    )
-
-    //OLD function for getting front ID pic , can remove
-    // const image = await Camera.getPhoto({
-    //   quality: 85, //Test
-    //   correctOrientation: true,
-    //   allowEditing: false,
-    //   resultType: CameraResultType.Uri,
-    //   height: 80, //Test
-    //   width: 132, //Test
-    // });
-    // console.log('camera result', image);
-    // //sanitizes image show it can be shown, i can also get the base64 by adding the result type as an array
-    // var imageUrl = this.domsanitizer.bypassSecurityTrustResourceUrl(image && image.webPath);
-    // console.log('img', imageUrl);
-    // this.frontId = imageUrl;
+      () => {}
+    );
   }
 
-  //prompts to open camera or photos for front id pic
-  async promptBackPhoto() {
-    this.getPhoto().subscribe(
-      data => {
-        console.log('PBC Data:', data);
-        this.backId = this.domsanitizer.bypassSecurityTrustResourceUrl(`data:image/${data.format};base64, ${data.base64String}`);
-      },
-      error => {
-        console.log('PBC Error:', error);
-        this.presentToast('There was an issue taking the picture - please try again')
-      },
-      () => {
-        console.log('PBC Complete')
-      }
-    )
-
-    //OLD Function for getting back id pic, left it here just in case, can remove
-    //   const image = await Camera.getPhoto({
-    //     quality: 85, //Test
-    //     correctOrientation: true,
-    //     allowEditing: false,
-    //     resultType: CameraResultType.Uri,
-    //     height: 80, //Test
-    //     width: 132, //Test
-    //   });
-    //   console.log('camera result', image);
-    //   //sanitizes image show it can be shown, i can also get the base64 by adding the result type as an array above
-    //   var imageUrl = this.domsanitizer.bypassSecurityTrustResourceUrl(image && image.webPath);
-    //   console.log('img', imageUrl);
-    //   this.backId = imageUrl;
-    // }
-  }
-
-
-  //prompts to open camera or photos for selfie pic
-  async promptSelfieCamera() {
-    this.getPhoto().subscribe(
-      data => {
-        console.log('PSC Data:', data);
-        this.selfie = this.domsanitizer.bypassSecurityTrustResourceUrl(`data:image/${data.format};base64, ${data.base64String}`);
-      },
-      error => {
-        console.log('PSC Error:', error);
-        this.presentToast('There was an issue taking the picture - please try again')
-      },
-      () => {
-        console.log('PSC Complete:');
-      }
+  private updateSubmitButtonStatus() {
+    /* oh boy...
+    {
+      if one of the two govt images is accepted and the other is new
+      OR
+      both govt images are new
+    }
+    AND
+    {
+      if the profile photo is accepted
+      OR
+      if the profile photo is none and the pending profile photo is new
+    }
+    THEN submit
+    */
+    this.submitButtonDisabled = !(
+      ((this.localPhotoUploadStatus.govIdFront === LocalPhotoStatus.NEW &&
+        this.localPhotoUploadStatus.govIdBack === LocalPhotoStatus.ACCEPTED) ||
+        (this.localPhotoUploadStatus.govIdFront === LocalPhotoStatus.ACCEPTED &&
+          this.localPhotoUploadStatus.govIdBack === LocalPhotoStatus.NEW) ||
+        (this.localPhotoUploadStatus.govIdFront === LocalPhotoStatus.NEW &&
+          this.localPhotoUploadStatus.govIdBack === LocalPhotoStatus.NEW)) &&
+      (this.localPhotoUploadStatus.profile === LocalPhotoStatus.ACCEPTED ||
+        (this.localPhotoUploadStatus.profile === LocalPhotoStatus.NONE &&
+          this.localPhotoUploadStatus.profilePending === LocalPhotoStatus.NEW))
     );
   }
 
   //will submit all photos that have been uploaded
-  submitPhotos() {
-    console.log('front id pic', this.frontId, 'back id pic', this.backId, 'selfie pic', this.selfie);
+  async submitPhotos() {
+    await this.loadingService.showSpinner();
+    let newPhotos: Observable<boolean>[] = [];
 
-      //trying to add the function for setting all the photos you have taken
-      
-    //changes the condition to submitted and removes the upload ability
-    this.submitted = true;
-    console.log('function for submitting photos to DB');
+    if (this.localPhotoUploadStatus.profilePending === LocalPhotoStatus.NEW) {
+      newPhotos.push(
+        this.createPhotoSubmissionObservable(
+          PhotoType.PROFILE,
+          'There was an issue submitting your profile photo - please try again'
+        )
+      );
+    }
+
+    if (this.localPhotoUploadStatus.govIdFront === LocalPhotoStatus.NEW) {
+      newPhotos.push(
+        this.createPhotoSubmissionObservable(
+          PhotoType.GOVT_ID_FRONT,
+          'There was an issue submitting your government id photo (front) - please try again'
+        )
+      );
+    }
+
+    if (this.localPhotoUploadStatus.govIdBack === LocalPhotoStatus.NEW) {
+      newPhotos.push(
+        this.createPhotoSubmissionObservable(
+          PhotoType.GOVT_ID_BACK,
+          'There was an issue submitting your government id photo (back) - please try again'
+        )
+      );
+    }
+
+    zip(...newPhotos)
+      .pipe(
+        take(1),
+        finalize(() => this.loadingService.closeSpinner())
+      )
+      .subscribe(
+        data => {
+        },
+        error => {
+        },
+        () => {
+          this.clearLocalStateData();
+          this.getPhotoData();
+        }
+      );
   }
 
+  /// create observable for submitting photo
+  private createPhotoSubmissionObservable(photoType: PhotoType, toastErrorMessage: string): Observable<boolean> {
+    let photoObservable: Observable<UserPhotoInfo>;
 
-  //will delete photos from DB
-  deletePhoto() {
-    this.presentModal();
-    console.log('function for deleteing photos from DB');
+    switch (photoType) {
+      case PhotoType.GOVT_ID_FRONT:
+        photoObservable = of(this.localPhotoData.govIdFront);
+        break;
+      case PhotoType.GOVT_ID_BACK:
+        photoObservable = of(this.localPhotoData.govIdBack);
+        break;
+      case PhotoType.PROFILE:
+        photoObservable = of(this.localPhotoData.profilePending);
+        break;
+    }
+
+    return photoObservable.pipe(
+      switchMap(photoInfo => this.photoUploadService.submitPhoto(photoInfo)),
+      catchError(error => {
+        this.presentToast(toastErrorMessage);
+        return of(false);
+      })
+    );
   }
 
-  /// Camera plugin control method
-  private getPhoto(): Observable<CameraPhoto> {
-    /// set identity state to allow user to return from camera without logging in again, this would disrupt the data transfer
-
+  /// Camera plugin control
+  private getPhoto(photoType: PhotoType): Observable<CameraPhoto> {
+    const uploadSettings = this.photoUploadService.photoUploadSettings;
+    /// set session state to allow user to return from camera without logging in again, this would disrupt the data transfer
+    this.sessionFacadeService.navigatedToPlugin = true;
     return from(
       Camera.getPhoto({
         quality: 85, //Test
         correctOrientation: true,
         allowEditing: false,
-        width: 74.06,
-        height: 90.4, //Test
-        direction: CameraDirection.Front,
+        width: uploadSettings.saveWidth ? uploadSettings.saveWidth : null,
+        height: uploadSettings.saveHeight ? uploadSettings.saveHeight : null,
+        direction: photoType === PhotoType.PROFILE ? CameraDirection.Front : CameraDirection.Rear,
         resultType: CameraResultType.Base64,
         source: CameraSource.Camera,
         presentationStyle: 'popover',
@@ -180,12 +348,8 @@ export class PhotoUploadComponent implements OnInit {
     );
   }
 
-  //presents the delete pic modal and will eventually catch the result on dimiss when the api call is succesfull and update the screen appropriately
-  async presentModal() {
-    const modal = await this.modalController.create({
-      component: DeleteModalComponent,
-    });
-    return await modal.present();
+  deletePendingProfileImage() {
+    this.photoUploadService.presentDeletePhotoModal(this.localPhotoData.profilePending.id);
   }
 
   private async presentToast(message: string) {
@@ -197,7 +361,26 @@ export class PhotoUploadComponent implements OnInit {
     toast.present();
   }
 
+  private async photoDataFetchErrorToast() {
+    const toast = await this.toastController.create({
+      message: 'There was an issue retrieving your photo information - please try again',
+      duration: 5000,
+      position: 'top',
+      buttons: [
+        {
+          side: 'end',
+          text: 'Retry',
+          handler: () => {
+            this.clearLocalStateData();
+            this.getPhotoData();
+          },
+        },
+      ],
+    });
+    toast.present();
+  }
+
   navigateBack() {
-    this.router.navigate([PATRON_NAVIGATION.settings]);
+    this.router.navigate([PATRON_NAVIGATION.settings], { replaceUrl: true });
   }
 }

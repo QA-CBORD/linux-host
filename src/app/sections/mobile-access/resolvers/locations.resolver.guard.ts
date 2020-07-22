@@ -41,7 +41,6 @@ export class LocationsResolverGuard implements Resolve<Observable<MMobileLocatio
 
           tap(() => {
             this.loader.closeSpinner();
-            console.log('An error occurred while trying to retrieve your information.');
           }),
           take(1)
         )

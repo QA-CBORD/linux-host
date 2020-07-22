@@ -47,6 +47,7 @@ export namespace Settings {
     FEATURES = 'get.feature',
     DEPOSITS = 'get.deposit',
     MEAL_PLAN = 'get.meal_plan',
+    PHOTO_UPLOAD = 'get.photo_upload',
   }
 
   export enum Setting {

@@ -149,7 +149,6 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
 
   /// used for pin set and validation
   async onPasscodeRequest(isPasscodeSetRequest: boolean): Promise<string> {
-    console.log('onPasscodeRequest - ', isPasscodeSetRequest ? 'Set the pin' : 'Authenticate with pin');
     if (isPasscodeSetRequest) {
       /// will happen on pin set
       return Promise.resolve(this.temporaryPin);
@@ -196,10 +195,9 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
         finalize(() => this.loadingService.closeSpinner())
       )
       .subscribe(
-        next => console.log('Biometric => Pin Login Next', next),
-        error => console.log('Biometric => Pin Login error', error),
+        next => {},
+        error => {},
         () => {
-          console.log('Biometric => Pin Login Success, nav to dashboard');
           this.navigateToDashboard();
         }
       );
@@ -221,39 +219,39 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
   }
 
   onSessionRestored(session: VaultSessionData) {
-    console.log('Session Restored: ', session);
+    // console.log('Session Restored: ', session);
   }
 
   onSetupError(error: VaultError): void {
-    console.error('Get error during setup', error);
+    // console.error('Get error during setup', error);
   }
 
   onConfigChange(config: VaultConfig): void {
-    console.log('Got a config update: ', config);
+    // console.log('Got a config update: ', config);
     if (!this.config.isPasscodeSetupNeeded) {
       this.temporaryPin = undefined;
     }
   }
 
   onVaultReady(config: VaultConfig): void {
-    console.log('The service is ready with config: ', config);
+    // console.log('The service is ready with config: ', config);
   }
 
   onVaultUnlocked(config: VaultConfig): void {
     this.isLocked = false;
-    console.log('The vault was unlocked with config: ', config);
+    // console.log('The vault was unlocked with config: ', config);
     if (this.wasPinLogin) {
       this.wasPinLogin = false;
-      console.log('Vault unlocked with pin, navigate to dashboard');
+      // console.log('Vault unlocked with pin, navigate to dashboard');
       this.navigateToDashboard();
     } else {
-      console.log('Vault unlocked with biometrics, login using pin');
+      // console.log('Vault unlocked with biometrics, login using pin');
       this.loginUser();
     }
   }
 
   onVaultLocked(event: LockEvent): void {
     this.isLocked = true;
-    console.log('The vault was locked by event: ', event);
+    // console.log('The vault was locked by event: ', event);
   }
 }
