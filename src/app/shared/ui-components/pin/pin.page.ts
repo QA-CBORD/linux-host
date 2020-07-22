@@ -8,7 +8,6 @@ import { Settings } from '../../../app.global';
 import { finalize, take } from 'rxjs/operators';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import Setting = Settings.Setting;
-import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 
 export enum PinCloseStatus {

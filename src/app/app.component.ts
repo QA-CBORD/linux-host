@@ -9,6 +9,7 @@ import { App, AppState } from '@capacitor/core';
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { NavigationEnd, Router } from '@angular/router';
 import { ROLES } from './app.global';
+import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
 import { GUEST_ROUTES } from './non-authorized/non-authorized.config';
 import { Plugins } from '@capacitor/core';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
@@ -75,6 +76,12 @@ export class AppComponent implements OnInit {
       console.log('App state changed. Is active?', isActive);
 
       if (isActive) {
+
+        if(this.sessionFacadeService.navigatedToPlugin){
+          this.sessionFacadeService.navigatedToPlugin = false;
+          return;
+        }
+
         if (this.sessionFacadeService.isVaultLocked()) {
           this.router.navigate([ROLES.guest, GUEST_ROUTES.startup], { replaceUrl: true });
         }

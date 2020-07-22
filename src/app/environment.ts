@@ -1,6 +1,6 @@
 export enum Development {
   services_url = 'https://services.get.dev.cbord.com/GETServices/services',
-  site_url = 'https://get.dev.cbord.com',
+  site_url = 'http://get.dev.cbord.com',
   cbordstudent_url = 'https://student.dev.cbord.com',
   secmsg_api = 'https://secmsg.api.dev.cbord.com',
   image_url = 'https://3bulchr7pb.execute-api.us-east-1.amazonaws.com/dev/image/',
@@ -11,7 +11,7 @@ export enum Development {
 
 export enum Feature1 {
   services_url = 'https://services.get.feature1.cbord.com/GETServices/services',
-  site_url = 'https://get.feature1.cbord.com',
+  site_url = 'http://get.feature1.cbord.com',
   cbordstudent_url = 'https://student.feature1.cbord.com',
   secmsg_api = 'https://secmsg.api.dev.cbord.com',
   image_url = 'https://3bulchr7pb.execute-api.us-east-1.amazonaws.com/dev/image/',
@@ -22,7 +22,7 @@ export enum Feature1 {
 
 export enum Qa {
   services_url = 'https://services.get.qa.cbord.com/GETServices/services',
-  site_url = 'https://get.qa.cbord.com',
+  site_url = 'http://get.qa.cbord.com',
   cbordstudent_url = 'https://student.qa.cbord.com',
   secmsg_api = 'https://secmsg.api.qa.cbord.com',
   image_url = 'https://object-store.api.qa.cbord.com/image/',
@@ -32,32 +32,32 @@ export enum Qa {
 
 export enum Pat {
   services_url = 'https://services.get.pat.cbord.com/GETServices/services',
-  site_url = 'https://get.pat.cbord.com',
+  site_url = 'http://get.pat.cbord.com',
   cbordstudent_url = 'https://student.pat.cbord.com',
   secmsg_api = 'https://secmsg.api.pat.cbord.com',
   image_url = 'https://object-store.api.pat.cbord.com/image/',
   housing_aws_url = 'https://z6u8er70s9.execute-api.us-east-1.amazonaws.com/dev',
-  partner_services_url = 'https://api.partnerpayments.pat.cbord.com',
+  partner_services_url = 'https://api.payments.pat.cbord.com',
 }
 
 export enum Demo {
   services_url = 'https://services.get.demo.cbord.com/GETServices/services',
-  site_url = 'https://get.demo.cbord.com',
+  site_url = 'http://get.demo.cbord.com',
   cbordstudent_url = 'https://student.demo.cbord.com',
   secmsg_api = 'https://secmsg.api.demo.cbord.com',
   image_url = 'https://object-store.api.demo.cbord.com/image/',
   housing_aws_url = 'https://z4ffq7e1m9.execute-api.us-east-1.amazonaws.com/dev',
-  partner_services_url = 'https://api.payments.demo.cbord.com',
+  partner_services_url = 'https://api.payments.pat.cbord.com',
 }
 
 export enum Production {
   services_url = 'https://services.get.cbord.com/GETServices/services',
-  site_url = 'https://get.cbord.com',
+  site_url = 'http://get.cbord.com',
   cbordstudent_url = 'https://student.cbord.com',
   secmsg_api = 'https://secmsg.api.cbord.com',
   image_url = 'https://object-store.api.cbord.com/image/',
   housing_aws_url = 'https://z6u8er70s9.execute-api.us-east-1.amazonaws.com',
-  partner_services_url = 'https://api.partnerpayments.cbord.com',
+  partner_services_url = 'https://api.payments.cbord.com',
 }
 
 export class Environment {

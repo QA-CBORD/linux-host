@@ -2,15 +2,12 @@ import { Injectable } from '@angular/core';
 import { ServiceStateFacade } from '@core/classes/service-state-facade';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { IdentityService } from '@core/service/identity/identity.service';
-import { Device } from '@capacitor/core';
 import { Settings } from '../../../app.global';
-import { finalize, map, take } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Institution } from '@core/model/institution';
-import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { AuthenticationType } from '@core/model/authentication/authentication-info.model';
 import { PinAction, PinCloseStatus } from '@shared/ui-components/pin/pin.page';
-import { LoadingService } from '@core/service/loading/loading.service';
 
 export enum LoginState {
   DONE,

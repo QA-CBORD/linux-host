@@ -10,8 +10,6 @@ import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 import { SelectivePreloadingStrategy } from './preload-strategy/selective-preloading-strategy';
 import { BaseInterceptor } from '@core/interceptors/base.interceptor';
 import { ServerError } from '@core/interceptors/server-error.interceptor';
-import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
-import { AccessCardService } from '@sections/dashboard/containers/access-card/services/access-card.service';
 
 const imports = [CommonModule, BrowserModule, HttpClientModule];
 
@@ -24,8 +22,6 @@ const providers = [
   { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
   DatePipe,
   BarcodeScanner,
-  InAppBrowser,
-  AccessCardService
 ];
 
 @NgModule({

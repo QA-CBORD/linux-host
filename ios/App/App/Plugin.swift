@@ -23,7 +23,7 @@ class Plugin: CAPPlugin {
         NotificationCenter.default.removeObserver(self)
         UserDefaults.standard.set(false, forKey: "custom_setting")
     }
-    
+
     @objc public func getAppleWalletInfo(_ call: CAPPluginCall) {
         DispatchQueue.global(qos: .background).async  {
             guard let sessionIdStr = call.options["sessionId"] as? String else {
@@ -91,7 +91,7 @@ class Plugin: CAPPlugin {
             }
         }
     }
-    
+    /// This function synchronizes the URLs from the Ionic side.
     @objc func setEnvironment(_ call: CAPPluginCall) {
         DispatchQueue.global(qos: .background).async  {
             guard let environmentURL = call.options["env"] as? [String: Any], let partnerURL = environmentURL["partner_services_url"],

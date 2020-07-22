@@ -1,0 +1,175 @@
+@import 'tools';
+
+.container {
+  background: #f1f1f1 !important;
+}
+
+.title {
+  @include font-nunito-heavy(20px);
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.toolbar {
+  display: flex;
+  justify-content: flex-start;
+  background: #ffffff;
+  padding-top: 15px;
+}
+
+.header-message-container-id {
+  display: flex;
+  padding: 16px;
+  position: static;
+  height: 102px;
+  background: #f1f1f1;
+  border-radius: 8px;
+}
+
+.header-message-container-selfie {
+  display: flex;
+  padding: 16px;
+  position: static;
+  height: 76px;
+  background: #f1f1f1;
+  border-radius: 8px;
+}
+
+.header-message-container-selfie-submitted {
+  display: flex;
+  padding: 16px;
+  position: static;
+  height: 76px;
+  background: #e7f3ef;
+  border-radius: 8px;
+  color: #007b53;
+}
+
+.icon-cont {
+  display: flex;
+  justify-content: center;
+  padding-right: 18.8px;
+  align-items: center;
+}
+
+.icon {
+  color: black;
+  height: 22.4px;
+  width: 22.4px;
+}
+
+.key-message {
+  line-height: 22px;
+  @include font-nunito-regular(16px);
+  color: rgba(0, 0, 0, 0.87);
+  padding: 0px;
+  margin: 0px;
+}
+
+.key-message-submitted {
+  line-height: 22px;
+  color: #007b53;
+  @include font-nunito-regular(16px);
+  padding: 0px;
+  margin: 0px;
+}
+
+.secondary-message {
+  font-size: x-small;
+}
+
+.id-photo-upload-container {
+  margin-left: 0px;
+  margin-right: 0px;
+}
+
+.photo-upload-cont {
+  display: flex;
+  padding-top: 0px;
+  justify-content: space-between;
+}
+
+.card-img {
+  height: 48px;
+  width: 85.33px;
+}
+
+.profile-default-image {
+  height: 90px;
+  width: 75px;
+}
+
+.stored-img-cont {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  position: static;
+  width: 164px;
+  min-height: 206px;
+  left: 0px;
+  top: 0px;
+  justify-content: space-between;
+  box-sizing: border-box;
+  align-items: center;
+  flex: none;
+  order: 0;
+  align-self: center;
+  margin: 16px 0px;
+}
+
+.upload-btn {
+  width: 132px;
+  height: 48px;
+}
+
+ion-button.button-disabled {
+  color: rgba(0, 0, 0, 0.38);
+  background-color: #E2E2E2;
+}
+
+.reupload-btn {
+  color: black;
+  width: 132px;
+  height: 48px;
+}
+
+.selfie-photo-container {
+  margin-left: 0px;
+  margin-right: 0px;
+}
+
+.selfie-placeholder-img {
+  width: 74.06px;
+  height: 90.4px;
+}
+
+.uploaded-user-photo {
+  width: 132px;
+  height: 178px;
+}
+
+.action-btn-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.submit-btn {
+  width: 343px;
+  height: 48px;
+}
+
+.grey-background {
+  background: #F1F1F1;
+}
+
+.round-corners {
+  border-radius: 8px;
+}
+
+.border-dashed {
+  border: 3px dashed #e2e2e2;
+}
+
+.border-solid {
+  border: 3px solid #e2e2e2;
+}

@@ -47,6 +47,7 @@ export namespace Settings {
     FEATURES = 'get.feature',
     DEPOSITS = 'get.deposit',
     MEAL_PLAN = 'get.meal_plan',
+    PHOTO_UPLOAD = 'get.photo_upload',
   }
 
   export enum Setting {
@@ -187,6 +188,7 @@ export enum PATRON_NAVIGATION {
   ordering = 'patron/ordering',
   explore = 'patron/explore',
   biometric = 'patron/biometric',
+  settings = 'patron/settings',
 }
 
 export enum LoginType {

@@ -58,8 +58,20 @@ export class UserFacadeService extends ServiceStateFacade {
       .pipe(tap(res => this.storageStateService.updateStateEntity(this.userKey, res, {ttl: this.ttl})));
   }
 
-  getUserPhoto$(userId: string): Observable<MessageResponse<UserPhotoInfo>> {
-    return this.userApiService.getUserPhoto(userId);
+  getUserPhoto$(): Observable<MessageResponse<UserPhotoInfo>> {
+    return this.getUserData$().pipe(
+      switchMap(({ id }: UserInfo) => this.userApiService.getUserPhoto(id)),
+      take(1)
+    );
+  }
+
+  //adds a photo and takes a UsrPhotoInfo object
+  addUserPhoto(photo: UserPhotoInfo): Observable<boolean> {
+    return this.getUserData$().pipe(
+      switchMap(({ id }) => this.userApiService.addUserPhoto(id, photo)),
+      map(({ response }) => response),
+      take(1)
+    );
   }
 
   getUserAddresses$(): Observable<AddressInfo[]> {
@@ -92,12 +104,23 @@ export class UserFacadeService extends ServiceStateFacade {
     );
   }
 
+  getPhotoList(): Observable<UserPhotoList> {
+    return this.getUserData$().pipe(
+      switchMap(({ id }: UserInfo) => this.userApiService.getPhotoListByUserId(id)),
+      map(({ response }) => response),
+      take(1)
+    );
+  }
+
   getPhotoListByUserId(userId: string): Observable<MessageResponse<UserPhotoList>> {
     return this.userApiService.getPhotoListByUserId(userId);
   }
 
-  getPhotoById(photoId: string): Observable<MessageResponse<UserPhotoInfo>> {
-    return this.userApiService.getPhotoById(photoId);
+  getPhotoById(photoId: string): Observable<UserPhotoInfo> {
+    return this.userApiService.getPhotoById(photoId).pipe(
+      map(({ response }) => response),
+      take(1)
+    );
   }
 
   setAcceptedPhoto(acceptedPhoto: UserPhotoInfo) {
@@ -109,11 +132,10 @@ export class UserFacadeService extends ServiceStateFacade {
 
     let nativeProviderFunction: Observable<UserPhotoInfo>;
 
-    const userPhotoInfoObservable: Observable<UserPhotoInfo> = this.getUserData$().pipe(
-      switchMap(({ id }: UserInfo) => this.getPhotoListByUserId(id)),
-      map(({ response: { list } }) => this.getPhotoIdByStatus(list)),
+    const userPhotoInfoObservable: Observable<UserPhotoInfo> = this.getPhotoList().pipe(
+      map(({ list }) => this.getPhotoIdByStatus(list)),
       switchMap(({ id }: UserPhotoInfo) => this.getPhotoById(id)),
-      map(({ response }) => (this.userPhoto = response))
+      map(response => (this.userPhoto = response))
     );
 
     nativeProviderFunction = userPhotoInfoObservable;
@@ -135,23 +157,29 @@ export class UserFacadeService extends ServiceStateFacade {
   isApplePayEnabled$(): Observable<boolean> {
     return this.nativeProvider.isIos()
       ? this.settingsFacadeService.getSetting(Settings.Setting.APPLE_PAY_ENABLED).pipe(
-          map(({ value }) => Boolean(Number(value))),
-          take(1)
-        )
+        map(({ value }) => Boolean(Number(value))),
+        take(1)
+      )
       : of(false);
   }
 
   isAppleWalletEnabled$(): Observable<boolean> {
     return this.nativeProvider.isIos()
       ? this.settingsFacadeService.getSetting(Settings.Setting.APPLE_WALLET_ENABLED).pipe(
-          map(({ value }) => Boolean(Number(value))),
-          take(1)
-        )
+        map(({ value }) => Boolean(Number(value))),
+        take(1)
+      )
       : of(false);
   }
 
   private getPhotoIdByStatus(photoList: UserPhotoInfo[], status: number = 1): UserPhotoInfo | undefined {
     return photoList.find((photo: UserPhotoInfo) => photo.status === status);
+  }
+
+  updateUserPhotoStatus(photoId: string, status: number, reason: string): Observable<boolean> {
+    return this.userApiService.updateUserPhotoStatus(photoId, status, reason).
+      pipe((map(({ response }) => response)),
+      take(1))
   }
 
   handlePushNotificationRegistration() {

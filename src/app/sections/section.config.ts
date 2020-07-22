@@ -10,7 +10,8 @@ export enum PATRON_ROUTES {
   accounts = 'accounts',
   ordering = 'ordering',
   explore = 'explore',
-  biometric = 'biometric'
+  biometric = 'biometric',
+  settings = 'settings',
 }
 
 
