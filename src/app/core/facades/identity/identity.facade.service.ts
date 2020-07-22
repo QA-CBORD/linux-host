@@ -2,15 +2,12 @@ import { Injectable } from '@angular/core';
 import { ServiceStateFacade } from '@core/classes/service-state-facade';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { IdentityService } from '@core/service/identity/identity.service';
-import { Device } from '@capacitor/core';
 import { Settings } from '../../../app.global';
-import { finalize, map, take } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Institution } from '@core/model/institution';
-import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { AuthenticationType } from '@core/model/authentication/authentication-info.model';
 import { PinAction, PinCloseStatus } from '@shared/ui-components/pin/pin.page';
-import { LoadingService } from '@core/service/loading/loading.service';
 
 export enum LoginState {
   DONE,
@@ -40,9 +37,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
   }
 
   async pinOnlyLoginSetup(): Promise<any> {
-    console.log('Pin only login setup');
     const { data, role } = await this.identityService.presentPinModal(PinAction.SET_PIN_ONLY);
-    console.log('Pin only login setup modal resp', data, role);
     switch (role) {
       case PinCloseStatus.CANCELED:
         throw {
@@ -64,10 +59,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
   }
 
   async biometricLoginSetup(): Promise<any> {
-    console.log('Biometric login setup');
     const { data, role } = await this.identityService.presentPinModal(PinAction.SET_BIOMETRIC);
-    console.log('Biometric login setup modal resp', { data, role });
-
     switch (role) {
       case PinCloseStatus.CANCELED:
         throw {
@@ -91,7 +83,6 @@ export class IdentityFacadeService extends ServiceStateFacade {
   }
 
   loginUser(useBiometric: boolean) {
-    console.log('Login User - biometric =', useBiometric);
     if (useBiometric) {
       this.identityService.unlockVault();
     } else {

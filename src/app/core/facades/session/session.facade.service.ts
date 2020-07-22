@@ -18,6 +18,9 @@ import { migrateLegacyGlobalConfig } from '@angular/cli/utilities/config';
   providedIn: 'root',
 })
 export class SessionFacadeService {
+  /// manages app to background status for plugins (camera, etc) that briefly leave the app and return
+  private navigateToNativePlugin: boolean = false;
+
   constructor(
     private readonly userFacadeService: UserFacadeService,
     private readonly identityFacadeService: IdentityFacadeService,
@@ -26,10 +29,16 @@ export class SessionFacadeService {
     private readonly router: Router
   ) {}
 
-  async determinePostLoginState(sessionId: string, institutionId: string): Promise<LoginState> {
-    console.log('checkPostLoginState');
-    const isWeb: boolean = await this.getIsWeb();
+  get navigatedToPlugin() {
+    return this.navigateToNativePlugin;
+  }
 
+  set navigatedToPlugin(value: boolean) {
+    this.navigateToNativePlugin = value;
+  }
+
+  async determinePostLoginState(sessionId: string, institutionId: string): Promise<LoginState> {
+    const isWeb: boolean = await this.getIsWeb();
     if (isWeb) {
       return LoginState.DONE;
     } else {
@@ -45,7 +54,6 @@ export class SessionFacadeService {
           return LoginState.PIN_SET;
         }
       }
-
       return LoginState.DONE;
     }
   }
@@ -59,13 +67,10 @@ export class SessionFacadeService {
   }
 
   async determineFromBackgroundLoginState(sessionId: string): Promise<LoginState> {
-    console.log('determineFromBackgroundLoginState');
     const institutionInfo: Institution = await this.institutionFacadeService.cachedInstitutionInfo$
       .pipe(take(1))
       .toPromise();
-    console.log('determineFromBackgroundLoginState - inst info', institutionInfo);
     const isInstitutionSelected: boolean = !!institutionInfo;
-
     if (!isInstitutionSelected) {
       return LoginState.SELECT_INSTITUTION;
     }
@@ -83,7 +88,6 @@ export class SessionFacadeService {
 
     if (isPinLoginEnabled && isPinEnabledForUserPreference) {
       const vaultLocked: boolean = await this.identityFacadeService.vaultLocked();
-
       const vaultLoginSet: boolean = await this.identityFacadeService.storedSession();
 
       /// pin not set but have logged in before, use normal login
@@ -96,7 +100,6 @@ export class SessionFacadeService {
       }
 
       const isBiometricsAvailable = await this.identityFacadeService.areBiometricsAvailable();
-
       const isBiometricsEnabledForUserPreference = await this.identityFacadeService
         .cachedBiometricsEnabledUserPreference$;
       if (isBiometricsAvailable && isBiometricsEnabledForUserPreference) {
