@@ -3,7 +3,7 @@ import { SettingsFacadeService } from '@core/facades/settings/settings-facade.se
 import { UserPhotoUploadSettings } from '@core/model/user/user-photo-upload-settings.model';
 import { BehaviorSubject, iif, Observable, of, zip } from 'rxjs';
 import { UserPhotoInfo, UserPhotoList } from '@core/model/user';
-import { Settings } from '../../../app.global';
+import { Settings } from '../../../../app.global';
 import SettingList = Settings.SettingList;
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { first, switchMap, take, tap } from 'rxjs/operators';

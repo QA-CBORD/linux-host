@@ -205,7 +205,7 @@ export class UserFacadeService extends ServiceStateFacade {
                     title: notification.title,
                     body: notification.body,
                     id: Date.now(),
-                    smallIcon: '@drawable/ic_launcher'
+                    smallIcon: '@drawable/ic_launcher_round'
                   },
                 ],
               });
