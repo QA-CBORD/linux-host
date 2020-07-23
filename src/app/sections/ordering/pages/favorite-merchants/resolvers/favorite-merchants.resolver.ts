@@ -2,7 +2,7 @@ import { MerchantService } from '@sections/ordering';
 import { Injectable } from '@angular/core';
 import { Resolve } from '@angular/router';
 import { Observable, zip } from 'rxjs';
-import { tap, map } from 'rxjs/operators';
+import { map, finalize } from 'rxjs/operators';
 import { FavoriteMerchantsService } from '../services/favorite-merchants.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { MerchantInfo } from '@sections/ordering';
@@ -21,12 +21,7 @@ export class FavoriteMerchantsResolver implements Resolve<Observable<MerchantInf
       map(([favoriteMerchants, merchants]) =>
         favoriteMerchants.map(merchant => merchants.find(({ id }) => id === merchant.id))
       ),
-      tap(
-        () => {
-          this.loadingService.closeSpinner();
-        },
-        () => this.loadingService.closeSpinner()
-      )
+      finalize(() => this.loadingService.closeSpinner())
     );
-  }
+  }S
 }

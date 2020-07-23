@@ -27,14 +27,22 @@ export class LoadingService {
           ...config,
           duration: this.maxDuration,
         };
-
     if (this.loader !== null) await this.closeSpinner();
     this.loader = await this.loadingController.create(config);
     await this.loader.present();
   }
 
   async closeSpinner(): Promise<void> {
+    /// check for all loaders and remove them
+    let topLoader = await this.loadingController.getTop();
+    while (topLoader) {
+      (await topLoader.dismiss()) ? (topLoader = await this.loadingController.getTop()) : (topLoader = null);
+    }
+
+    /// dismiss the local loader if it still exists
     this.loader && (await this.loader.dismiss());
+
+    /// reset loader state
     this.loader = null;
   }
 }

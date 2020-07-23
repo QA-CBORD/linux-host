@@ -112,27 +112,26 @@ export class UserPassForm implements OnInit {
     }
     const loginState: LoginState = await this.sessionFacadeService.determinePostLoginState(sessionId, id);
 
+
+    this.loadingService.closeSpinner();
+
     switch (loginState) {
       case LoginState.PIN_SET:
         try {
-          this.loadingService.closeSpinner();
           await this.identityFacadeService.pinOnlyLoginSetup();
         } catch (e) {
           this.presentToast('Login failed, invalid user name and/or password');
         }
         break;
       case LoginState.BIOMETRIC_SET:
-        this.loadingService.closeSpinner();
         const supportedBiometricType = await this.identityFacadeService.getAvailableBiometricHardware();
         const biometricConfig = this.configureBiometricsConfig(supportedBiometricType);
         await this.router.navigate([PATRON_NAVIGATION.biometric], { state: { biometricConfig } });
         break;
       case LoginState.DONE:
-        this.loadingService.closeSpinner();
         this.router.navigate([PATRON_NAVIGATION.dashboard]);
         break;
     }
-    this.loadingService.closeSpinner();
   }
 
   private initForm() {

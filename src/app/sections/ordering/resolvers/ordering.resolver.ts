@@ -41,7 +41,7 @@ export class OrderingResolver
       CONTENT_STINGS_CATEGORIES.monthAbbreviated
     );
 
-    this.loadingService.showSpinner({ duration: 3000 });
+    this.loadingService.showSpinner();
     return zip(dayMonthShortForm, weekDaysShortForm, orderingContentStrings, statesStrings, favouriteMerchant).pipe(
       first(),
       finalize(() => this.loadingService.closeSpinner())
