@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Resolve } from '@angular/router';
 import { Observable, zip } from 'rxjs';
-import { finalize, tap } from 'rxjs/operators';
+import { finalize, first, tap } from 'rxjs/operators';
 import { MerchantInfo } from '@sections/ordering/shared/models';
 
 import { LoadingService } from 'src/app/core/service/loading/loading.service';
@@ -43,12 +43,8 @@ export class OrderingResolver
 
     this.loadingService.showSpinner({ duration: 3000 });
     return zip(dayMonthShortForm, weekDaysShortForm, orderingContentStrings, statesStrings, favouriteMerchant).pipe(
-      tap(
-        () => this.loadingService.closeSpinner(),
-        () => {
-          this.loadingService.closeSpinner();
-        }
-      )
+      first(),
+      finalize(() => this.loadingService.closeSpinner())
     );
   }
 

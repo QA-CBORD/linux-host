@@ -3,7 +3,7 @@ import { Resolve } from '@angular/router';
 import { MerchantInfo } from '@sections/ordering';
 import { Observable } from 'rxjs';
 import { ExploreService } from '@sections/explore/services/explore.service';
-import { finalize } from 'rxjs/operators';
+import { finalize, first } from 'rxjs/operators';
 import { LoadingService } from '@core/service/loading/loading.service';
 
 @Injectable()
@@ -11,7 +11,10 @@ export class MerchantResolverService implements Resolve<Observable<[MerchantInfo
   constructor(private readonly exploreService: ExploreService, private readonly loadingService: LoadingService) {}
 
   resolve(): Observable<[MerchantInfo[], MerchantInfo[], MerchantInfo[]]> {
-    this.loadingService.showSpinner({ duration: 3000 });
-    return this.exploreService.getInitialMerchantData$().pipe(finalize(() => this.loadingService.closeSpinner()));
+    this.loadingService.showSpinner();
+    return this.exploreService.getInitialMerchantData$().pipe(
+      first(),
+      finalize(() => this.loadingService.closeSpinner())
+    );
   }
 }
