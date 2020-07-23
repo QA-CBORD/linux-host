@@ -5,7 +5,7 @@ import { IonicModule } from '@ionic/angular';
 import { SettingsPage } from './settings.page';
 import { DeleteModalComponent } from './pages/delete-modal/delete-modal.component';
 import { PhotoUploadModule } from '@sections/settings/pages/photo-upload/photo-upload.module';
-import { PhotoUploadResolver } from '@sections/settings/pages/photo-upload/resolvers/photo-upload.resolver';
+import { PhotoUploadResolver } from '@sections/settings/resolvers/photo-upload.resolver';
 
 
 const imports = [CommonModule, IonicModule, SettingsRoutingModule, PhotoUploadModule];
