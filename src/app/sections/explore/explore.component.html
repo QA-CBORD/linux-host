@@ -1,13 +1,11 @@
 <st-header
-        [isTitleShow]="true"
-        [backButtonTitle]="''"
-        [isBackButtonShow]="false"
-        [isToolbarShow]="true"
-        [title]="'Explore'"
+  [isTitleShow]="true"
+  [backButtonTitle]="''"
+  [isBackButtonShow]="false"
+  [isToolbarShow]="true"
+  [title]="'Explore'"
 >
 </st-header>
 <ion-content>
-  <st-merchant-list (onMerchantClicked)="onMerchantClicked($event)"
-                    [merchants]="merchant$ | async">
-  </st-merchant-list>
+  <st-merchant-list (onMerchantClicked)="onMerchantClicked($event)" [merchants]="merchant$ | async"> </st-merchant-list>
 </ion-content>
