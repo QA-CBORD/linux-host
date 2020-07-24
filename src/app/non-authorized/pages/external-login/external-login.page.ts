@@ -1,16 +1,17 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { InAppBrowser, InAppBrowserOptions } from '@ionic-native/in-app-browser/ngx';
+import { InAppBrowser, InAppBrowserObject, InAppBrowserOptions } from '@ionic-native/in-app-browser/ngx';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
-import { first } from 'rxjs/operators';
+import { first, map, take } from 'rxjs/operators';
 import { Institution } from '@core/model/institution';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { Router } from '@angular/router';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { IdentityFacadeService, LoginState } from '@core/facades/identity/identity.facade.service';
-import { PATRON_NAVIGATION } from '../../../app.global';
+import { PATRON_NAVIGATION, Settings } from '../../../app.global';
+import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 
 @Component({
   selector: 'st-external-login',
@@ -19,6 +20,10 @@ import { PATRON_NAVIGATION } from '../../../app.global';
 })
 export class ExternalLoginPage implements OnInit, OnDestroy {
   private subscriptions: Subscription = new Subscription();
+
+  nativeHeaderBg$: Promise<string>;
+
+  private browser: InAppBrowserObject;
   private sessionId: string;
   private institutionId: string;
 
@@ -30,6 +35,7 @@ export class ExternalLoginPage implements OnInit, OnDestroy {
     private readonly authFacadeService: AuthFacadeService,
     private readonly sessionFacadeService: SessionFacadeService,
     private readonly identityFacadeService: IdentityFacadeService,
+    private readonly settingsFacadeService: SettingsFacadeService,
     private readonly router: Router
   ) {}
 
@@ -39,6 +45,7 @@ export class ExternalLoginPage implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     if (this.subscriptions) this.subscriptions.unsubscribe();
+    if (this.browser) this.browser.close();
   }
 
   loadLoginContent() {
@@ -46,6 +53,7 @@ export class ExternalLoginPage implements OnInit, OnDestroy {
     const instSub = this.institutionFacadeService.cachedInstitutionInfo$.pipe(first()).subscribe(
       institutionInfo => {
         this.institutionId = institutionInfo.id;
+        this.nativeHeaderBg$ = this.getNativeHeaderBg(this.institutionId);
         this.initializeInAppBrowser(institutionInfo);
       },
       error => {
@@ -72,15 +80,15 @@ export class ExternalLoginPage implements OnInit, OnDestroy {
       toolbarcolor: '#ffffff',
     };
 
-    const browser = this.appBrowser.create(url, target, options);
-    const browserEventSub = browser.on('loadstart').subscribe(event => {
+    this.browser = this.appBrowser.create(url, target, options);
+    const browserEventSub = this.browser.on('loadstart').subscribe(event => {
       console.log('loadstart', event);
       if (event) {
         this.getAuthSessionFromUrl(event.url);
       }
     });
     this.subscriptions.add(browserEventSub);
-    browser.show();
+    this.browser.show();
     this.loadingService.closeSpinner();
   }
 
@@ -91,11 +99,15 @@ export class ExternalLoginPage implements OnInit, OnDestroy {
   private getAuthSessionFromUrl(urlString: string) {
     if (!urlString || !urlString.includes('mobileapp_login_validator.php')) return;
 
-    const params: URLSearchParams = new URL('/', urlString).searchParams;
-    if (params.has('sessionId')) {
-      this.sessionId = params.get('sessionId');
-      this.handlePostAuthentication();
+    try {
+      this.sessionId = urlString.split('?')[1].split('=')[1];
+    } catch (error){
+      /// show error about no session
     }
+
+      this.authFacadeService.cachedAuthSessionToken = this.sessionId;
+      this.handlePostAuthentication();
+
   }
 
   private async handlePostAuthentication() {
@@ -116,6 +128,7 @@ export class ExternalLoginPage implements OnInit, OnDestroy {
         this.router.navigate([PATRON_NAVIGATION.dashboard], { replaceUrl: true });
         break;
     }
+    this.browser.close();
   }
 
   private configureBiometricsConfig(supportedBiometricType: string[]): { type: string; name: string } {
@@ -127,4 +140,21 @@ export class ExternalLoginPage implements OnInit, OnDestroy {
       return { type: 'iris', name: 'Iris' };
     }
   }
+
+  private async getNativeHeaderBg(id): Promise<string> {
+    const sessionId = await this.authFacadeService.getAuthSessionToken$().pipe(first()).toPromise();
+    return this.settingsFacadeService
+      .getSetting(Settings.Setting.MOBILE_HEADER_COLOR, sessionId, id)
+      .pipe(
+        map(({ value }) => {
+          if (value === null) return;
+          const siteColors = JSON.parse(value);
+          const nativeHeaderBg = siteColors['native-header-bg'];
+          return nativeHeaderBg ? '#' + nativeHeaderBg : '#166dff';
+        }),
+        take(1)
+      )
+      .toPromise();
+  }
+
 }
