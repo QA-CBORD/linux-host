@@ -28,14 +28,14 @@ const routes: Routes = [
     path: GUEST_ROUTES.forgotPassword,
     loadChildren: './pages/forgot-password/forgot-password.module#ForgotPasswordPageModule',
   },
+  {
+    path: GUEST_ROUTES.external,
+    loadChildren: './pages/external-login/external-login.module#ExternalLoginPageModule',
+  },
 ];
 
 @NgModule({
-  imports: [
-    CommonModule,
-    RouterModule.forChild(routes),
-  ],
+  imports: [CommonModule, RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class NonAuthorizedRoutingModule {
-}
+export class NonAuthorizedRoutingModule {}

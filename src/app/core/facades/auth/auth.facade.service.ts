@@ -38,6 +38,10 @@ export class AuthFacadeService extends ServiceStateFacade {
       .pipe(map(data => (this.isValidData(data) ? data.value : null)));
   }
 
+  set cachedAuthSessionToken(sessionId: string){
+    this.storageStateService.updateStateEntity(this.sessionIdKey, sessionId, { ttl: this.ttl, highPriorityKey: true });
+  }
+
   authenticateUser$(userCredentials: UserLogin): Observable<string> {
     return this.authApiService
       .authenticateUser(userCredentials)
