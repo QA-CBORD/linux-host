@@ -112,6 +112,9 @@ export class UserPassForm implements OnInit {
     }
     const loginState: LoginState = await this.sessionFacadeService.determinePostLoginState(sessionId, id);
 
+
+    this.loadingService.closeSpinner();
+
     switch (loginState) {
       case LoginState.PIN_SET:
         try {
@@ -129,7 +132,6 @@ export class UserPassForm implements OnInit {
         this.router.navigate([PATRON_NAVIGATION.dashboard]);
         break;
     }
-    this.loadingService.closeSpinner();
   }
 
   private initForm() {

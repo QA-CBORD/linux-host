@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { LOCAL_ROUTING } from '@sections/settings/settings.config';
 import { PATRON_NAVIGATION } from '../../app.global';
+import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 
 @Component({
   selector: 'st-settings',
@@ -12,6 +13,7 @@ export class SettingsPage implements OnInit {
 
   constructor(
     private router: Router,
+    private readonly sessionFacadeService: SessionFacadeService,
   ) { }
 
   ngOnInit() { }
@@ -22,7 +24,9 @@ export class SettingsPage implements OnInit {
     this.router.navigate([PATRON_NAVIGATION.settings, LOCAL_ROUTING.photoUpload])
   }
 
-
+  logout() {
+    this.sessionFacadeService.logoutUser();
+  }
 
   
 }
