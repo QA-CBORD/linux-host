@@ -1,6 +1,4 @@
 <ion-content class="dashboard">
-  <!-- TODO Remove wheb Settings Screen includes this option. -->
-  <ion-button class="dashboard__btn-logout" (click)="logout()">Logout</ion-button>
   <st-access-card></st-access-card>
 
   <ng-container *ngFor="let tile of tiles$ | async; trackBy: trackFn">
