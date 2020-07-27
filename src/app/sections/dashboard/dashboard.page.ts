@@ -51,10 +51,6 @@ export class DashboardPage implements OnInit {
     this.sessionFacadeService.handlePushNotificationRegistration();
   }
 
-  logout() {
-    this.sessionFacadeService.logoutUser();
-  }
-
   ionViewWillEnter() {
     this.accessCard.ionViewWillEnter();
   }
