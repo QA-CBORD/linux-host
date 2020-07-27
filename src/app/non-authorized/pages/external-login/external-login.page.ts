@@ -5,20 +5,27 @@ import { InstitutionFacadeService } from '@core/facades/institution/institution.
 import { first, map, take } from 'rxjs/operators';
 import { Institution } from '@core/model/institution';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { Router } from '@angular/router';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { IdentityFacadeService, LoginState } from '@core/facades/identity/identity.facade.service';
-import { PATRON_NAVIGATION, Settings } from '../../../app.global';
+import { PATRON_NAVIGATION, ROLES, Settings } from '../../../app.global';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
+import { StGlobalPopoverComponent } from '@shared/ui-components';
+import { PopoverConfig } from '@core/model/popover/popover.model';
+import { PopupTypes } from '@sections/rewards/rewards.config';
+import { PopupButton } from '@core/model/button';
+import { PopoverController } from '@ionic/angular';
+import { BUTTON_TYPE, buttons } from '@core/utils/buttons.config';
+import { GUEST_ROUTES } from '../../non-authorized.config';
 
 @Component({
   selector: 'st-external-login',
   templateUrl: './external-login.page.html',
   styleUrls: ['./external-login.page.scss'],
 })
-export class ExternalLoginPage implements OnInit, OnDestroy {
+export class ExternalLoginPage implements  OnDestroy {
   private subscriptions: Subscription = new Subscription();
 
   nativeHeaderBg$: Promise<string>;
@@ -30,6 +37,7 @@ export class ExternalLoginPage implements OnInit, OnDestroy {
   constructor(
     private readonly appBrowser: InAppBrowser,
     private readonly loadingService: LoadingService,
+    private readonly popoverCtrl: PopoverController,
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly environmentFacadeService: EnvironmentFacadeService,
     private readonly authFacadeService: AuthFacadeService,
@@ -39,11 +47,15 @@ export class ExternalLoginPage implements OnInit, OnDestroy {
     private readonly router: Router
   ) {}
 
-  ngOnInit() {
+  ionViewWillEnter() {
     this.loadLoginContent();
   }
 
   ngOnDestroy() {
+    this.clearSubscriptions();
+  }
+
+  private clearSubscriptions() {
     if (this.subscriptions) this.subscriptions.unsubscribe();
     if (this.browser) this.browser.close();
   }
@@ -57,7 +69,7 @@ export class ExternalLoginPage implements OnInit, OnDestroy {
         this.initializeInAppBrowser(institutionInfo);
       },
       error => {
-        /// show error and option to retry
+        this.showModal('Oops!', 'There was an issue loading the login page - please try again');
       },
       () => {}
     );
@@ -65,7 +77,6 @@ export class ExternalLoginPage implements OnInit, OnDestroy {
   }
 
   initializeInAppBrowser(institutionInfo: Institution) {
-    console.log('initializeInAppBrowser', institutionInfo);
     const target = '_blank';
     const url = this.getLoginUrl(institutionInfo);
     const options: InAppBrowserOptions = {
@@ -101,13 +112,13 @@ export class ExternalLoginPage implements OnInit, OnDestroy {
 
     try {
       this.sessionId = urlString.split('?')[1].split('=')[1];
-    } catch (error){
-      /// show error about no session
+    } catch (error) {
+      this.showModal('Oops!', 'There was an issue finding your session - please try again');
+      return;
     }
 
-      this.authFacadeService.cachedAuthSessionToken = this.sessionId;
-      this.handlePostAuthentication();
-
+    this.authFacadeService.cachedAuthSessionToken = this.sessionId;
+    this.handlePostAuthentication();
   }
 
   private async handlePostAuthentication() {
@@ -142,7 +153,10 @@ export class ExternalLoginPage implements OnInit, OnDestroy {
   }
 
   private async getNativeHeaderBg(id): Promise<string> {
-    const sessionId = await this.authFacadeService.getAuthSessionToken$().pipe(first()).toPromise();
+    const sessionId = await this.authFacadeService
+      .getAuthSessionToken$()
+      .pipe(first())
+      .toPromise();
     return this.settingsFacadeService
       .getSetting(Settings.Setting.MOBILE_HEADER_COLOR, sessionId, id)
       .pipe(
@@ -157,4 +171,43 @@ export class ExternalLoginPage implements OnInit, OnDestroy {
       .toPromise();
   }
 
+  private async showModal(title: string, message: string): Promise<void> {
+    const popoverConfig: PopoverConfig<string> = {
+      type: PopupTypes.RETRY,
+      title,
+      message,
+      buttons: [{ ...buttons.RETRY, label: 'RETRY' }],
+      closeBtn: true,
+    };
+
+    const modal = await this.popoverCtrl.create({
+      component: StGlobalPopoverComponent,
+      componentProps: {
+        data: popoverConfig,
+      },
+      animated: false,
+      backdropDismiss: false,
+    });
+
+    modal.onDidDismiss().then(async data => {
+      if (!data || !data.role) {
+        await this.router.navigate([ROLES.guest, GUEST_ROUTES.entry], { skipLocationChange: true });
+        return;
+      }
+
+      switch (data.role) {
+        case BUTTON_TYPE.CLOSE:
+          await this.router.navigate([ROLES.guest, GUEST_ROUTES.entry], { skipLocationChange: true });
+          break;
+        case BUTTON_TYPE.RETRY:
+          this.clearSubscriptions();
+          this.loadLoginContent();
+          break;
+      }
+    });
+    if (this.browser) {
+      this.browser.hide();
+    }
+    await modal.present();
+  }
 }
