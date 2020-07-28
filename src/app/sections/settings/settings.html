@@ -25,7 +25,7 @@
         </ion-item>
         <ion-item class="item" (click)="navigateToPhotoUpload()">
           <ion-thumbnail slot="start" class="thumbnail-card">
-            <img src="../../../assets/icon/update-photo.svg" alt="Update Photo"/>
+            <img src="../../../assets/icon/update-photo.svg" alt="Update Photo" />
           </ion-thumbnail>
           <ion-label class="item__label"><h4>Update Photo</h4></ion-label>
           <ion-icon name="chevron-forward-outline" class="icon" slot="end"> </ion-icon>
@@ -42,8 +42,18 @@
       </ion-list>
     </ion-card-content>
   </ion-card>
+
+  <ion-list *ngFor="let section of sections">
+    <ion-list-header lines="inset">
+      <ion-label>{{section.label}}</ion-label>
+    </ion-list-header>
+    <ion-item [button]='setting.type' *ngFor="let setting of section.items">
+        <img src="../../../assets/icon/{{setting.icon}}.svg" alt="Update Photo" />
+      <ion-label class="item__label"><h4>{{setting.label}}</h4></ion-label>
+    </ion-item>
+  </ion-list>
   <ion-list>
-    <ion-item button (click)='logout()'>
+    <ion-item button (click)="logout()">
       <ion-label>Logout</ion-label>
     </ion-item>
   </ion-list>
