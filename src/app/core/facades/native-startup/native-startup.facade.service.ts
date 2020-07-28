@@ -29,7 +29,7 @@ export class NativeStartupFacadeService extends ServiceStateFacade {
           return of(null);
         }
         zip(
-          this.nativeStartupApiService.nativeStartup(institutionId, 'android', sessionId, useSessionId),
+          this.nativeStartupApiService.nativeStartup(institutionId, deviceInfo.platform, sessionId, useSessionId),
           this.storageStateService.getStateEntityByKey$(this.digestKey)
         ).pipe(
           map(([NativeStartupInfo, cachedDigest]) => {
