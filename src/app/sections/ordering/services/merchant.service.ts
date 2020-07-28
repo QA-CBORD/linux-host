@@ -16,10 +16,7 @@ import { tap, switchMap, map } from 'rxjs/operators';
 import { OrderingApiService } from './ordering.api.service';
 
 import { MerchantSearchOptions } from '../utils';
-import {
-  MerchantSearchOptionName,
-  MerchantSettings,
-} from '../ordering.config';
+import { MerchantSearchOptionName, MerchantSettings } from '../ordering.config';
 import { AddressInfo } from '@core/model/address/address-info';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { CommerceApiService } from '@core/service/commerce/commerce-api.service';
@@ -140,7 +137,7 @@ export class MerchantService {
           (orders, merchants) =>
             orders.map(order => {
               const merchant = merchants.find(({ id }) => id === order.merchantId);
-              return merchant && { ...order, merchantName: merchant.name } 
+              return merchant && { ...order, merchantName: merchant.name };
             })
         )
       ),
