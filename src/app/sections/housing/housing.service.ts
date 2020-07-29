@@ -118,7 +118,7 @@ export class HousingService {
   getFacilities(roomSelectKey: number): Observable<Facility[]> {
     const apiUrl = `${
       this._baseUrl
-    }/roomselectproxy/v.1.0/room-selects-proxy/facilities/detailstwo/${roomSelectKey}`;
+    }/roomselectproxy/v.1.0/room-selects-proxy/facilities/details/${roomSelectKey}`;
     return this._housingProxyService.get<FacilityDetailsResponse>(apiUrl).pipe(
       map((response: any) => {
         const details = new  FacilityDetailsResponse(response)
