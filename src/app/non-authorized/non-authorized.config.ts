@@ -3,6 +3,6 @@ export enum GUEST_ROUTES {
   entry = 'entry',
   institutions = 'institutions',
   login = 'login',
-  external = 'external',
+  external = 'external-login',
   forgotPassword = 'forgot-password',
 }
