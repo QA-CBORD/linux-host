@@ -23,4 +23,20 @@
   &__label-subtitle {
     @include font-nunito-regular(10px);
   }
+
+  &__label-default {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    top: 0;
+    right: 20px;
+    height: 100%;
+    color: #166dff;
+    background-color: white;
+    padding: 0 5px 0 5px;
+
+    @include font-nunito-heavy(10px);
+  }
 }

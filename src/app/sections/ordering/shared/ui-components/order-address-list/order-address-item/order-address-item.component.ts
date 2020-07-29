@@ -4,24 +4,30 @@ import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core
   selector: 'st-order-address-item',
   templateUrl: './order-address-item.component.html',
   styleUrls: ['./order-address-item.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OrderAddressItemComponent implements OnInit {
   @Input() item: any;
   @Input() iconAlt: string;
-  @Input() isDefault: boolean;
   @Input() isSelected: boolean;
   @Input() iconIsFile: boolean;
   @Input() iconNameDefault: string = 'star-outline.svg';
   @Input() iconNameSelected: string = 'star-filled.svg';
+  @Input() defaultAddress: string;
 
-  constructor() { }
+  isDefault: boolean = false;
+
+  constructor() {}
 
   ngOnInit() {
-    if (this.iconNameDefault.includes('.svg') && !this.isSelected
-      || this.iconNameSelected.includes('.svg') && this.isSelected) {
+    if (
+      (this.iconNameDefault.includes('.svg') && !this.isSelected) ||
+      (this.iconNameSelected.includes('.svg') && this.isSelected)
+    ) {
       this.iconIsFile = true;
     }
+
+    this.isDefault = this.item['id'] === this.defaultAddress;
   }
 
   get iconSrc(): string {
@@ -41,6 +47,6 @@ export class OrderAddressItemComponent implements OnInit {
   }
 
   private getIconName(): string {
-    return (this.isSelected && this.iconNameSelected) ? this.iconNameSelected : this.iconNameDefault;
+    return this.isSelected && this.iconNameSelected ? this.iconNameSelected : this.iconNameDefault;
   }
 }
