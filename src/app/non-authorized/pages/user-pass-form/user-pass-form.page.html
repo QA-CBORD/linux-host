@@ -2,7 +2,7 @@
   <ion-toolbar mode="ios" class="ion-color" [style.background-color]="nativeHeaderBg$ | async">
     <ion-buttons slot="start">
       <ion-back-button
-        [defaultHref]='defaultBackUrl'
+        [defaultHref]="defaultBackUrl"
         class="login-header__back-btn"
         color="light"
         text="Back"
@@ -37,8 +37,8 @@
         [isError]="username.invalid && username.touched"
         type="email"
         idd="username"
-        enterkeyhint='next'
-        (keyup.enter)='focusNext(inputPassword)'
+        enterkeyhint="next"
+        (keyup.enter)="focusNext(inputPassword)"
       >
       </st-input-floating-label>
       <br />
@@ -50,19 +50,15 @@
         [isError]="password.invalid && password.touched"
         type="password"
         idd="password"
-        enterkeyhint='go'
-        (keyup.enter)='authenticateUser(loginForm)'
+        enterkeyhint="go"
+        (keyup.enter)="authenticateUser(loginForm)"
       >
       </st-input-floating-label>
       <div class="login__form-password">
         <a class="login__form-password-forgot" (click)="redirectToForgotPassword()">Forgot password?</a>
       </div>
       <div class="login__form-btns">
-        <st-button
-          buttonModifier="border-only-rectangle"
-          class="login__form-btns--odd"
-          (click)="redirectToWebPage('register.php')"
-        >
+        <st-button buttonModifier="border-only-rectangle" class="login__form-btns--odd" (click)="redirectToSignup()">
           Sign up
         </st-button>
         <st-button buttonModifier="rectangle" (click)="authenticateUser(loginForm)">
