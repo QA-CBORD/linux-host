@@ -20,6 +20,7 @@ import { StInputFloatingLabelComponent } from '@shared/ui-components';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { GUEST_ROUTES } from '../../non-authorized.config';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
+
 @Component({
   selector: 'user-pass-form',
   templateUrl: './user-pass-form.page.html',
@@ -99,8 +100,10 @@ export class UserPassForm implements OnInit {
 
   async redirectToForgotPassword(): Promise<void> {
     const { shortName } = await this.institutionFacadeService.cachedInstitutionInfo$.pipe(take(1)).toPromise();
-    const url = `${Environment.getSitesURL()}/${shortName}/full/login.php?password=forgot`;
-    this.appBrowser.create(url);
+    const url = `${
+      this.environmentFacadeService.getSitesURL()
+    }/${shortName}/full/login.php?password=forgot`;
+    window.open(url, '_system');
   }
 
   async authenticateUser(form) {
