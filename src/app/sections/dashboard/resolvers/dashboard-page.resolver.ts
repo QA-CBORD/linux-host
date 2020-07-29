@@ -29,7 +29,7 @@ export class DashboardPageResolver implements Resolve<Observable<SettingInfoList
   }
 
   resolve(): Observable<any> {
-    this.loadingService.showSpinner({ duration: 3000 });
+    this.loadingService.showSpinner();
     const strings = this.loadContentStrings();
 
     const accountContentStrings = this.accountsService.initContentStringsList();
