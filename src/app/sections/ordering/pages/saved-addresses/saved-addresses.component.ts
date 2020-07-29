@@ -58,43 +58,43 @@ export class SavedAddressesComponent implements OnInit {
   }
 
   addAddress() {
-    if (!this.addNewAddressForm.valid) {
-      this.errorState = true;
-      return;
-    }
+    //Check if Address Form is Valid.
+    if ((this.errorState = !this.addNewAddressForm.valid)) return;
 
     this.loader.showSpinner();
 
+    //Structure Request Info
     this.getBuildingData$(parseInt(this.addNewAddressForm.value.campus))
       .pipe(
         switchMap(() => {
+          //Make the Add Request to Service
           return this.merchantService.updateUserAddress(this.addNewAddressForm.value);
         }),
-        switchMap(
-          (addedAddress): any => {
-            zip(
-              iif(
-                () => this.addNewAddressForm.value.default,
-                this.settingsFacadeService.saveUserSetting(User.Settings.DEFAULT_ADDRESS, addedAddress['id']),
-                of(false)
-              ),
-              of(addedAddress)
-            );
-          }
+        switchMap(addedAddress =>
+          zip(
+            iif(
+              () => this.addNewAddressForm.value.default,
+              this.settingsFacadeService.saveUserSetting(User.Settings.DEFAULT_ADDRESS, addedAddress['id']),
+              of(false)
+            ),
+            of(addedAddress)
+          )
         ),
-        take(1)
+        take(1),
+        finalize(() => this.loader.closeSpinner())
       )
       .subscribe(
-        ([bool, addedAddress]) => {
-          this.loader.closeSpinner();
-          this.userAddresses = [...this.userAddresses, addedAddress];
+        ([success, addedAddress]) => {
+          //Stack on Top the new Address.
+          this.userAddresses = [addedAddress, ...this.userAddresses];
+          //Change Status to Close Modal.
           this.addNewAdddressState = !this.addNewAdddressState;
-        },
-        () => this.loader.closeSpinner()
+        }
       );
   }
 
-  private getBuildingData$(isOncampus): Observable<any> {
+  //GetBuilding Data
+  private getBuildingData$(isOncampus: number): Observable<any> {
     if (isOncampus) {
       return zip(this.buildings$, this.contentStrings.labelRoom).pipe(
         tap(([buildings, labelRoom]) => {

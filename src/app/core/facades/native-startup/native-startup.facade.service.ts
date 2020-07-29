@@ -29,7 +29,7 @@ export class NativeStartupFacadeService extends ServiceStateFacade {
           return of(null);
         }
         zip(
-          this.nativeStartupApiService.nativeStartup(institutionId, 'android', sessionId, useSessionId),
+          this.nativeStartupApiService.nativeStartup(institutionId, deviceInfo.platform, sessionId, useSessionId),
           this.storageStateService.getStateEntityByKey$(this.digestKey)
         ).pipe(
           map(([NativeStartupInfo, cachedDigest]) => {
@@ -46,11 +46,9 @@ export class NativeStartupFacadeService extends ServiceStateFacade {
                 if (NativeStartupInfo.showMessage === 1) {
                   if (NativeStartupInfo.showOnce === 1) {
                     if (NativeStartupInfo.messageDigest != cachedDigest.value) {
-                      this.storageStateService.updateStateEntity(
-                        this.digestKey,
-                        NativeStartupInfo.messageDigest,
-                        { ttl: this.ttl }
-                      );
+                      this.storageStateService.updateStateEntity(this.digestKey, NativeStartupInfo.messageDigest, {
+                        ttl: this.ttl,
+                      });
                       return this.displayMessageToUser(
                         NativeStartupInfo.minSupportedVersionFailure,
                         NativeStartupInfo.action === 'block',

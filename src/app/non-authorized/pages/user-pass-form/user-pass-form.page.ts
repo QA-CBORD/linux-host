@@ -19,6 +19,7 @@ import { IdentityFacadeService, LoginState } from '@core/facades/identity/identi
 import { StInputFloatingLabelComponent } from '@shared/ui-components';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { GUEST_ROUTES } from '../../non-authorized.config';
+import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 
 @Component({
   selector: 'user-pass-form',
@@ -34,6 +35,7 @@ export class UserPassForm implements OnInit {
   deviceInfo$: Promise<any>;
   private institutionInfo: Institution;
   loginForm: FormGroup;
+
   constructor(
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly settingsFacadeService: SettingsFacadeService,
@@ -48,7 +50,8 @@ export class UserPassForm implements OnInit {
     private readonly identityFacadeService: IdentityFacadeService,
     private readonly fb: FormBuilder,
     private readonly cdRef: ChangeDetectorRef,
-    private readonly appBrowser: InAppBrowser
+    private readonly appBrowser: InAppBrowser,
+    private readonly environmentFacadeService: EnvironmentFacadeService
   ) {}
 
   get username(): AbstractControl {
@@ -80,7 +83,15 @@ export class UserPassForm implements OnInit {
   }
 
   redirectToWebPage(url) {
-    window.open(`${Environment.getSitesURL()}/${this.institutionInfo.shortName}/full/${url}`);
+    window.open(
+      `${this.environmentFacadeService.getSitesURL()}/${this.institutionInfo.shortName}/full/${url}`
+    );
+  }
+
+  async redirectToSignup() {
+    const { shortName } = await this.institutionFacadeService.cachedInstitutionInfo$.pipe(take(1)).toPromise();
+    const url = `${this.environmentFacadeService.getSitesURL()}/${shortName}/full/register.php`;
+    window.open(url, '_system');
   }
 
   focusNext(nextField: StInputFloatingLabelComponent) {
@@ -89,8 +100,10 @@ export class UserPassForm implements OnInit {
 
   async redirectToForgotPassword(): Promise<void> {
     const { shortName } = await this.institutionFacadeService.cachedInstitutionInfo$.pipe(take(1)).toPromise();
-    const url = `${Environment.getSitesURL()}/${shortName}/full/login.php?password=forgot`;
-    this.appBrowser.create(url);
+    const url = `${
+      this.environmentFacadeService.getSitesURL()
+    }/${shortName}/full/login.php?password=forgot`;
+    window.open(url, '_system');
   }
 
   async authenticateUser(form) {
@@ -111,7 +124,6 @@ export class UserPassForm implements OnInit {
       return;
     }
     const loginState: LoginState = await this.sessionFacadeService.determinePostLoginState(sessionId, id);
-
 
     this.loadingService.closeSpinner();
 
