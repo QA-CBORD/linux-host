@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { take } from 'rxjs/operators';
 import { InAppBrowser, InAppBrowserOptions } from '@ionic-native/in-app-browser/ngx';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
-import { Environment } from '../../../environment';
+import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { USAePayResponse } from '@core/model/add-funds/usaepay-response.model';
 import { ApplePayResponse, ApplePay } from '@core/model/add-funds/applepay-response.model';
@@ -18,7 +18,8 @@ export class ExternalPaymentService {
   constructor(
     private inAppBrowser: InAppBrowser,
     private readonly institutionFacadeService: InstitutionFacadeService,
-    private readonly authFacadeService: AuthFacadeService
+    private readonly authFacadeService: AuthFacadeService,
+    private readonly environmentFacadeService: EnvironmentFacadeService
   ) {}
 
   /* USAePay */
@@ -72,7 +73,7 @@ export class ExternalPaymentService {
 
   private openUSAePayPage(authToken: string, shortName: string) {
     const target = '_blank';
-    const url = `${Environment.getSitesURL()}/${shortName}/full/add_card_mobile.php?session_token=${authToken}`;
+    const url = `${this.environmentFacadeService.getSitesURL()}/${shortName}/full/add_card_mobile.php?session_token=${authToken}`;
     const options: InAppBrowserOptions = {
       usewkwebview: 'yes',
       toolbarposition: 'top',
@@ -88,7 +89,7 @@ export class ExternalPaymentService {
   private getApplePayURL(queryParams: Object, handleApplePay: ApplePay, authToken: string, shortName: string) {
     let fullURL = '';
     const params = JSON.parse(JSON.stringify(queryParams));
-    const applePayBaseURL = `${Environment.getSitesURL()}/${shortName}/full/applepay.php?`;
+    const applePayBaseURL = `${this.environmentFacadeService.getSitesURL()}/${shortName}/full/applepay.php?`;
     if (handleApplePay === ApplePay.ORDERS_WITH_APPLE_PAY) {
       fullURL = `${applePayBaseURL}order_total=${params.total || ''}&session_token=${authToken ||
         ''}&sub_total=${params.subTotal || ''}&fee=${params.useFee || ''}&tax=${params.tax ||
