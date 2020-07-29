@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { from, Observable, throwError } from 'rxjs';
@@ -45,7 +45,8 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
     private router: Router,
     private plt: Platform,
     private readonly authFacadeService: AuthFacadeService,
-    private readonly loadingService: LoadingService
+    private readonly loadingService: LoadingService,
+    private readonly ngZone: NgZone
   ) {
     super(plt, {
       restoreSessionOnReady: false,
@@ -205,7 +206,7 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
   }
 
   private navigateToDashboard() {
-    this.router.navigate([PATRON_NAVIGATION.dashboard]);
+    this.ngZone.run(() => this.router.navigate([PATRON_NAVIGATION.dashboard]));
   }
 
   /// used to determine storage method

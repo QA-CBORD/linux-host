@@ -8,7 +8,6 @@ import { LoadingOptions } from '@ionic/core';
 })
 export class LoadingService {
   private readonly maxDuration: number = 30000;
-  private loader: HTMLIonLoadingElement = null;
   private isLoading: Boolean = false;
 
   constructor(private loadingController: LoadingController) {}
@@ -31,37 +30,22 @@ export class LoadingService {
           duration: this.maxDuration,
         };
 
-    if (this.loader !== null) {
-      await this.closeSpinner();
-    }
-    this.loader = await this.loadingController.create(config);
-
-    await this.loader.present();
-
-    // TODO, When is not present yet, then wait until present spinner.
-    this.isLoading = false;
+    await this.loadingController.create(config).then(loader => {
+      loader.present().then(() => {
+        if (!this.isLoading) {
+          this.closeSpinner();
+        }
+      });
+    });
   }
 
   async closeSpinner(): Promise<void> {
-    // TODO, When is not present yet, then wait until present spinner.
-    //? Workaround: Set 500ms delay to give a chance to present spinner.
-    if (this.isLoading)
-      setTimeout(() => {
-        this.isLoading = false;
-      }, 500);
-
-    while (this.isLoading);
+    this.isLoading = false;
     /// check for all loaders and remove them
     let topLoader = await this.loadingController.getTop();
 
     while (topLoader) {
       (await topLoader.dismiss()) ? (topLoader = await this.loadingController.getTop()) : (topLoader = null);
     }
-
-    /// dismiss the local loader if it still exists
-    this.loader && (await this.loader.dismiss());
-
-    /// reset loader state
-    this.loader = null;
   }
 }
