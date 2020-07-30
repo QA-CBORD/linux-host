@@ -85,6 +85,8 @@ export class SavedAddressesComponent implements OnInit {
         finalize(() => this.loader.closeSpinner())
       )
       .subscribe(([success, addedAddress]) => {
+        //Set Default Address.
+        if (this.addNewAddressForm.value.default) this.defaultAddress = addedAddress['id'];
         //Stack on Top the new Address.
         this.userAddresses = [addedAddress, ...this.userAddresses];
         //Change Status to Close Modal.
