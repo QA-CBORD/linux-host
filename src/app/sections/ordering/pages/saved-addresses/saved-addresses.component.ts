@@ -24,6 +24,7 @@ export class SavedAddressesComponent implements OnInit {
   addNewAdddressState: boolean = false;
   addNewAddressForm: { value: any; valid: boolean } = { value: null, valid: false };
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
+  defaultAddress: string;
 
   constructor(
     private readonly loader: LoadingService,
@@ -83,14 +84,14 @@ export class SavedAddressesComponent implements OnInit {
         take(1),
         finalize(() => this.loader.closeSpinner())
       )
-      .subscribe(
-        ([success, addedAddress]) => {
-          //Stack on Top the new Address.
-          this.userAddresses = [addedAddress, ...this.userAddresses];
-          //Change Status to Close Modal.
-          this.addNewAdddressState = !this.addNewAdddressState;
-        }
-      );
+      .subscribe(([success, addedAddress]) => {
+        //Set Default Address.
+        if (this.addNewAddressForm.value.default) this.defaultAddress = addedAddress['id'];
+        //Stack on Top the new Address.
+        this.userAddresses = [addedAddress, ...this.userAddresses];
+        //Change Status to Close Modal.
+        this.addNewAdddressState = !this.addNewAdddressState;
+      });
   }
 
   //GetBuilding Data
@@ -125,13 +126,14 @@ export class SavedAddressesComponent implements OnInit {
     this.loader.showSpinner();
     zip(
       this.settingsFacadeService.getSetting(Settings.Setting.ADDRESS_RESTRICTION),
+      this.settingsFacadeService.getUserSetting(User.Settings.DEFAULT_ADDRESS),
       this.userFacadeService.getUserAddresses$()
     )
       .pipe(
         finalize(() => this.loader.closeSpinner()),
         take(1)
       )
-      .subscribe(([{ value }, addresses]) => {
+      .subscribe(([{ value }, defaultAddressId, addresses]) => {
         const institutionRestriction = parseInt(value);
         const filteredByInstitution = addresses.filter(({ onCampus }) => {
           if (institutionRestriction === INSTITUTION_ADDRESS_RESTRICTIONS.onCampus) {
@@ -143,6 +145,7 @@ export class SavedAddressesComponent implements OnInit {
         });
 
         this.userAddresses = !institutionRestriction ? addresses : filteredByInstitution;
+        this.defaultAddress = defaultAddressId.value;
       });
   }
 
