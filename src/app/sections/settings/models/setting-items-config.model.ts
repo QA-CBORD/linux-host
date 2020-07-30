@@ -8,5 +8,6 @@ export interface SettingItemConfig {
   label: string;
   type: string;
   icon: string;
-  callback?: () => void;
+  navigate?: string;
+  checked?: boolean;   
 }

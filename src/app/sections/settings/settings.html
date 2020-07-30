@@ -42,19 +42,16 @@
       </ion-list>
     </ion-card-content>
   </ion-card>
-
   <ion-list *ngFor="let section of sections">
     <ion-list-header lines="inset">
       <ion-label>{{section.label}}</ion-label>
     </ion-list-header>
-    <ion-item [button]='setting.type' *ngFor="let setting of section.items">
-        <img src="../../../assets/icon/{{setting.icon}}.svg" alt="Update Photo" />
-      <ion-label class="item__label"><h4>{{setting.label}}</h4></ion-label>
-    </ion-item>
+    <st-settings-item *ngFor="let setting of section.items" [setting]='setting' (settingTapped)="settingTap($event)"> </st-settings-item>
   </ion-list>
-  <ion-list>
-    <ion-item button (click)="logout()">
-      <ion-label>Logout</ion-label>
-    </ion-item>
-  </ion-list>
+  <ion-card>
+    <ion-card-content>
+      <ion-button expand="block" color="light" (click)="logout()">LOG OUT</ion-button>
+      <h3>GET v{{appVersion}}</h3>
+    </ion-card-content>
+  </ion-card>
 </ion-content>
