@@ -4,5 +4,6 @@
   <ion-label class="order-item__label-container">
     <div class="order-item__label-title">{{ item | addressHeaderFormat }}</div>
     <div class="order-item__label-subtitle">{{ item | addressSubHeaderFormat }}</div>
+    <div class="order-item__label-default" *ngIf="isDefault">DEFAULT</div>
   </ion-label>
 </ion-item>

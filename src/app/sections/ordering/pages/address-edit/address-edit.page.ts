@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MerchantService } from '@sections/ordering/services';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { map, take, tap } from 'rxjs/operators';
+import { map, take, tap, finalize } from 'rxjs/operators';
 import { iif, Observable, of, zip } from 'rxjs';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { PATRON_NAVIGATION, User } from 'src/app/app.global';
@@ -121,17 +121,14 @@ export class AddressEditPage implements OnInit {
               of(addedAddress)
             )
         ),
-        take(1)
+        take(1),
+        finalize(() => this.loadingService.closeSpinner())
       )
-      .subscribe(
-        () => {
-          this.merchantService.selectedAddress = null;
-          this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.savedAddresses]);
-          this.addNewAdddressState = !this.addNewAdddressState;
-        },
-        null,
-        () => this.loadingService.closeSpinner()
-      );
+      .subscribe(() => {
+        this.merchantService.selectedAddress = null;
+        this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.savedAddresses]);
+        this.addNewAdddressState = !this.addNewAdddressState;
+      });
   }
 
   private getBuildingData$(isOncampus): Observable<any> {
