@@ -8,7 +8,7 @@
 </st-header>
 <ion-content class="container">
   <!-- TOP OF WHAT WILL GET MOVED TO THE PHOTO UPLOAD HTML FILE -->
-  <ion-card class="id-photo-upload-container">
+  <ion-card *ngIf="govtIdRequired$ | async" class="id-photo-upload-container">
     <!-- HEADER MESSAGE FOR ID UPLOADS -->
     <ion-card-header>
       <div class="header-message-container-id">
