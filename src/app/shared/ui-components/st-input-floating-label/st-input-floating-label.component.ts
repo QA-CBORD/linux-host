@@ -22,6 +22,7 @@ export class StInputFloatingLabelComponent implements OnInit, ControlValueAccess
   @Input() isError: boolean;
   @Input() inputmode: string;
   @Input() enterkeyhint: string;
+  @Input() tabindex: string;
 
   @HostBinding('class.disabled')
   @Input()
