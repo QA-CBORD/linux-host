@@ -16,6 +16,7 @@
 		504EC3121FED79650016851F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 504EC3101FED79650016851F /* LaunchScreen.storyboard */; };
 		50B271D11FEDC1A000F3C39B /* public in Resources */ = {isa = PBXBuildFile; fileRef = 50B271D01FEDC1A000F3C39B /* public */; };
 		A084ECDBA7D38E1E42DFC39D /* Pods_App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AF277DCFFFF123FFC6DF26C7 /* Pods_App.framework */; };
+		EE0FF62924D4C9A5003E2257 /* WatchSessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0FF62824D4C9A5003E2257 /* WatchSessionManager.swift */; };
 		EE2E6B1B246E398900D1AF97 /* GETPartnerServicesCredStatus.m in Sources */ = {isa = PBXBuildFile; fileRef = EE2E6AEC246E398900D1AF97 /* GETPartnerServicesCredStatus.m */; };
 		EE2E6B1C246E398900D1AF97 /* GETProvisioningBundle.m in Sources */ = {isa = PBXBuildFile; fileRef = EE2E6AED246E398900D1AF97 /* GETProvisioningBundle.m */; };
 		EE2E6B1D246E398900D1AF97 /* GETProvisioningBundleResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = EE2E6AEF246E398900D1AF97 /* GETProvisioningBundleResponse.m */; };
@@ -72,6 +73,7 @@
 		AE8334ADCB1FBFD55F47006E /* Pods-App.vendor validation.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.vendor validation.xcconfig"; path = "Pods/Target Support Files/Pods-App/Pods-App.vendor validation.xcconfig"; sourceTree = "<group>"; };
 		AF277DCFFFF123FFC6DF26C7 /* Pods_App.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_App.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AF51FD2D460BCFE21FA515B2 /* Pods-App.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.release.xcconfig"; path = "Pods/Target Support Files/Pods-App/Pods-App.release.xcconfig"; sourceTree = "<group>"; };
+		EE0FF62824D4C9A5003E2257 /* WatchSessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSessionManager.swift; sourceTree = "<group>"; };
 		EE2E6AEB246E398900D1AF97 /* GETJSONModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GETJSONModel.h; sourceTree = "<group>"; };
 		EE2E6AEC246E398900D1AF97 /* GETPartnerServicesCredStatus.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GETPartnerServicesCredStatus.m; sourceTree = "<group>"; };
 		EE2E6AED246E398900D1AF97 /* GETProvisioningBundle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GETProvisioningBundle.m; sourceTree = "<group>"; };
@@ -279,6 +281,7 @@
 				EE2E6B16246E398900D1AF97 /* GETPartnerManager.m */,
 				EE2E6B15246E398900D1AF97 /* GETSecurityManager.h */,
 				EE2E6B1A246E398900D1AF97 /* GETSecurityManager.m */,
+				EE0FF62824D4C9A5003E2257 /* WatchSessionManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -461,6 +464,7 @@
 				EE2E6B25246E398900D1AF97 /* GETAuthorizationBlobResponse.m in Sources */,
 				EE2E6B2B246E398900D1AF97 /* GETUtilities+Ext.swift in Sources */,
 				EE2E6B21246E398900D1AF97 /* GETParterServicesPassesBundle.m in Sources */,
+				EE0FF62924D4C9A5003E2257 /* WatchSessionManager.swift in Sources */,
 				EE4B663124993E96000F6878 /* Plugin+Ext.swift in Sources */,
 				EE2E6B24246E398900D1AF97 /* GETPartnerServicesProvisioningBundle.m in Sources */,
 				EEBD6858246ACBFB00193F97 /* Plugin.m in Sources */,
@@ -642,7 +646,7 @@
 				CODE_SIGN_ENTITLEMENTS = App/App.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 3.5.1.1;
+				CURRENT_PROJECT_VERSION = 3.5.1.6;
 				DEVELOPMENT_TEAM = DKB7LNE85Z;
 				INFOPLIST_FILE = App/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -669,7 +673,7 @@
 				CODE_SIGN_ENTITLEMENTS = App/App.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 3.5.1.1;
+				CURRENT_PROJECT_VERSION = 3.5.1.6;
 				DEVELOPMENT_TEAM = DKB7LNE85Z;
 				INFOPLIST_FILE = App/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -836,7 +840,7 @@
 				CODE_SIGN_ENTITLEMENTS = App/App.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 3.5.1.1;
+				CURRENT_PROJECT_VERSION = 3.5.1.6;
 				DEVELOPMENT_TEAM = DKB7LNE85Z;
 				INFOPLIST_FILE = App/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -919,7 +923,7 @@
 				CODE_SIGN_ENTITLEMENTS = App/App.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 3.5.1.1;
+				CURRENT_PROJECT_VERSION = 3.5.1.6;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = App/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
