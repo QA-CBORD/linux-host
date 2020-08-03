@@ -158,7 +158,7 @@
             class="round-corners"
           />
           <ion-button
-            *ngIf="localPhotoUploadStatus.profilePending === localPhotoStatus.NEW"
+            *ngIf="localPhotoUploadStatus.profilePending === localPhotoStatus.NEW || localPhotoUploadStatus.profilePending === localPhotoStatus.PENDING"
             class="upload-btn"
             (click)="onTakePhoto(photoType.PROFILE)"
             >REUPLOAD</ion-button
