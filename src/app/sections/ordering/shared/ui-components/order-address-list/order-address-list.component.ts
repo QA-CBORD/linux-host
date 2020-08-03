@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { LOCAL_ROUTING, ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { Router } from '@angular/router';
 import { AddressInfo } from '@core/model/address/address-info';
@@ -13,6 +13,8 @@ import { OrderingComponentContentStrings, OrderingService } from '@sections/orde
 export class OrderAddressListComponent implements OnInit {
   @Input() addresses: AddressInfo[] = [];
   @Input() defaultAddress: string;
+  @Output() onAddNewAddress: EventEmitter<void> = new EventEmitter<void>();
+
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
 
   constructor(
@@ -30,5 +32,9 @@ export class OrderAddressListComponent implements OnInit {
   itemSelected(address: AddressInfo) {
     this.merchantService.selectedAddress = address;
     this.router.navigate([`ordering/${LOCAL_ROUTING.addressEdit}`]);
+  }
+
+  onAddNewAddressClick() {
+    this.onAddNewAddress.emit();
   }
 }
