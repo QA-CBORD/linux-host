@@ -170,6 +170,7 @@ export class AddEditAddressesComponent implements OnInit, OnChanges, OnDestroy {
       }
     }
     this.addEditAddressesForm = this.fb.group(campusBlock);
+
     this.cdRef.detectChanges();
 
     this.onChanges();

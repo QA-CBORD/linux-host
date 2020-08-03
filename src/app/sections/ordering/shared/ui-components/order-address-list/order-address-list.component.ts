@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { AddressInfo } from '@core/model/address/address-info';
 import { MerchantService } from '@sections/ordering/services';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
+import { PATRON_NAVIGATION, User } from 'src/app/app.global';
 
 @Component({
   selector: 'st-order-address-list',
@@ -31,7 +32,7 @@ export class OrderAddressListComponent implements OnInit {
 
   itemSelected(address: AddressInfo) {
     this.merchantService.selectedAddress = address;
-    this.router.navigate([`ordering/${LOCAL_ROUTING.addressEdit}`]);
+    this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.addressEdit]);
   }
 
   onAddNewAddressClick() {
