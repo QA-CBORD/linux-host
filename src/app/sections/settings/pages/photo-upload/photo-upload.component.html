@@ -8,7 +8,7 @@
 </st-header>
 <ion-content class="container">
   <!-- TOP OF WHAT WILL GET MOVED TO THE PHOTO UPLOAD HTML FILE -->
-  <ion-card class="id-photo-upload-container">
+  <ion-card *ngIf="govtIdRequired$ | async" class="id-photo-upload-container">
     <!-- HEADER MESSAGE FOR ID UPLOADS -->
     <ion-card-header>
       <div class="header-message-container-id">
@@ -89,11 +89,7 @@
     <!-- MESSAGE FOR PROFILE PHOTOS -->
     <ion-card-header>
       <div
-        *ngIf="
-          this.localPhotoUploadStatus.profilePending !== localPhotoStatus.NEW ||
-            this.localPhotoUploadStatus.profilePending !== localPhotoStatus.PENDING;
-          else profileImagePending
-        "
+        *ngIf="this.localPhotoUploadStatus.profilePending !== localPhotoStatus.PENDING; else profileImagePending"
         class="header-message-container-selfie"
       >
         <div class="icon-cont">
@@ -158,7 +154,7 @@
             class="round-corners"
           />
           <ion-button
-            *ngIf="localPhotoUploadStatus.profilePending === localPhotoStatus.NEW"
+            *ngIf="localPhotoUploadStatus.profilePending === localPhotoStatus.NEW || localPhotoUploadStatus.profilePending === localPhotoStatus.PENDING"
             class="upload-btn"
             (click)="onTakePhoto(photoType.PROFILE)"
             >REUPLOAD</ion-button

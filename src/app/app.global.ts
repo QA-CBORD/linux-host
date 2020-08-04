@@ -94,7 +94,8 @@ export namespace Settings {
     DISPLAY_CREDIT_CARDS = 'get.feature.display_credit_cards',
     APPLE_PAY_ENABLED = 'get.feature.enable_apple_pay',
     APPLE_WALLET_ENABLED = 'get.feature.enable_apple_wallet',
-    PUSH_NOTIFICATION_ENABLED = 'get.feature.enable_push_notification'
+    PUSH_NOTIFICATION_ENABLED = 'get.feature.enable_push_notification',
+    GOVT_PHOTO_ID_REQUIRED = 'get.feature.government_photo_id_required'
   }
 
 }
