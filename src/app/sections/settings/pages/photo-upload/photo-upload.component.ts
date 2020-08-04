@@ -142,6 +142,7 @@ export class PhotoUploadComponent implements OnInit {
     this.setLocalPhotoData(photoInfo, photoType);
     this.getLocalPhotoStatus(photoInfo, photoType);
     this.updateSubmitButtonStatus();
+    this.cd.detectChanges();
   }
 
   private setLocalPhotoData(photoInfo: UserPhotoInfo, photoType: PhotoType) {
@@ -181,8 +182,10 @@ export class PhotoUploadComponent implements OnInit {
       switch (photoInfo.status) {
         case PhotoStatus.PENDING:
           status = LocalPhotoStatus.PENDING;
+          break;
         case PhotoStatus.ACCEPTED:
           status = LocalPhotoStatus.ACCEPTED;
+          break;
       }
     }
 
@@ -200,7 +203,6 @@ export class PhotoUploadComponent implements OnInit {
         this.localPhotoUploadStatus.govIdBack = status;
         break;
     }
-    this.cd.detectChanges();
   }
 
   /// manage photo data on response for display in html

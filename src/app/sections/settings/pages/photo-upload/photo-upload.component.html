@@ -89,11 +89,7 @@
     <!-- MESSAGE FOR PROFILE PHOTOS -->
     <ion-card-header>
       <div
-        *ngIf="
-          this.localPhotoUploadStatus.profilePending !== localPhotoStatus.NEW ||
-            this.localPhotoUploadStatus.profilePending !== localPhotoStatus.PENDING;
-          else profileImagePending
-        "
+        *ngIf="this.localPhotoUploadStatus.profilePending !== localPhotoStatus.PENDING; else profileImagePending"
         class="header-message-container-selfie"
       >
         <div class="icon-cont">
