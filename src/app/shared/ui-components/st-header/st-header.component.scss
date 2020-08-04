@@ -7,7 +7,6 @@
 
   ion-back-button {
     display: block;
-    --icon-font-size: 15px;
   }
 
   &__nav-toolbar {
@@ -43,7 +42,9 @@
     --margin-start: 10px;
     --icon-padding-end: 5px;
     --icon-font-size: 15px;
-
+    &__icon-close {
+      --icon-font-size: 30px;
+    }
     @include font-nunito-regular(16px);
   }
 

@@ -5,7 +5,9 @@
   --inner-padding-end: 0;
 
   margin: 0 15px;
+  padding: 10px 0;
   border-bottom: 1px solid $color-light-gray;
+  --detail-icon-opacity: 0.55;
   &__icon {
     margin-right: 10px;
   }

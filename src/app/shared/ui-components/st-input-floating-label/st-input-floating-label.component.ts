@@ -1,5 +1,7 @@
 import { Component, OnInit, Input, forwardRef, ViewChild, ElementRef, HostBinding } from '@angular/core';
 import { FormControl, NG_VALUE_ACCESSOR, ControlValueAccessor, AbstractControl } from '@angular/forms';
+import { FocusableElement } from '@core/interfaces/focusable-element.interface';
+import { FocusNextDirective } from '@shared/directives/focus-next/focus-next.directive';
 
 export const CUSTOM_INPUT_CONTROL_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
@@ -13,7 +15,7 @@ export const CUSTOM_INPUT_CONTROL_VALUE_ACCESSOR: any = {
   styleUrls: ['./st-input-floating-label.component.scss'],
   providers: [CUSTOM_INPUT_CONTROL_VALUE_ACCESSOR],
 })
-export class StInputFloatingLabelComponent implements OnInit, ControlValueAccessor {
+export class StInputFloatingLabelComponent implements OnInit, ControlValueAccessor, FocusableElement {
   @Input() control: AbstractControl = new FormControl();
   @Input() label: string;
   @Input() type: string;
@@ -23,6 +25,10 @@ export class StInputFloatingLabelComponent implements OnInit, ControlValueAccess
   @Input() inputmode: string;
   @Input() enterkeyhint: string;
   @Input() tabindex: string;
+  @Input('stFocusNext')
+  set focusNextDr(value: FocusableElement) {
+    if (!this.enterkeyhint) this.enterkeyhint = 'next';
+  }
 
   @HostBinding('class.disabled')
   @Input()

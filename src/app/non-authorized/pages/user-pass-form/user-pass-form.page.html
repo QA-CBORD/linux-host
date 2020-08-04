@@ -37,8 +37,7 @@
         [isError]="username.invalid && username.touched"
         type="email"
         idd="username"
-        enterkeyhint="next"
-        (keyup.enter)="focusNext(inputPassword)"
+        [stFocusNext]='inputPassword'
         tabindex="0"
       >
       </st-input-floating-label>

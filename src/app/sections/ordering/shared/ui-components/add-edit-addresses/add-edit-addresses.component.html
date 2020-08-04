@@ -73,6 +73,7 @@
         maxlength="100"
         [formControlName]="controlsNames.address1"
         [isError]="address1.errors && (address1.dirty || address1.touched)"
+        [stFocusNext]='addressTwoInput' 
       >
         <p class="addresses__control-error-msg">
           {{ address1.errors?.errorMsg }}
@@ -80,6 +81,7 @@
       </st-input-floating-label>
       <div class="addresses__control-optional-wrapper">
         <st-input-floating-label
+          #addressTwoInput
           class="addresses__control"
           [control]="address2"
           [formControlName]="controlsNames.address2"
@@ -88,11 +90,13 @@
           idd="address2"
           maxlength="100"
           [isError]="address2.errors && (address2.dirty || address2.touched)"
+          [stFocusNext]='cityInput'
         >
         </st-input-floating-label>
         <ng-container [ngTemplateOutlet]="optionalPlaceholder"></ng-container>
       </div>
       <st-input-floating-label
+        #cityInput
         class="addresses__control"
         [control]="city"
         [formControlName]="controlsNames.city"
