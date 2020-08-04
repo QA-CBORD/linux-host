@@ -94,9 +94,6 @@ export class UserPassForm implements OnInit {
     window.open(url, '_system');
   }
 
-  focusNext(nextField: StInputFloatingLabelComponent) {
-    nextField.focus();
-  }
 
   async redirectToForgotPassword(): Promise<void> {
     const { shortName } = await this.institutionFacadeService.cachedInstitutionInfo$.pipe(take(1)).toPromise();

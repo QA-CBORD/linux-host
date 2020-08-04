@@ -28,6 +28,7 @@
     outline: none;
     border: 1px solid $color-light-gray;
     border-radius: 8px;
+    -webkit-appearance: none;
     padding-left: 10px;
 
     &:focus,

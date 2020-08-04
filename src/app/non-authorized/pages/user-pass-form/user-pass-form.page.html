@@ -37,8 +37,8 @@
         [isError]="username.invalid && username.touched"
         type="email"
         idd="username"
-        enterkeyhint="next"
-        (keyup.enter)="focusNext(inputPassword)"
+        [stFocusNext]='inputPassword'
+        tabindex="0"
       >
       </st-input-floating-label>
       <br />
@@ -52,16 +52,23 @@
         idd="password"
         enterkeyhint="go"
         (keyup.enter)="authenticateUser(loginForm)"
+        tabindex="1"
+        role="text"
       >
       </st-input-floating-label>
       <div class="login__form-password">
-        <a class="login__form-password-forgot" (click)="redirectToForgotPassword()">Forgot password?</a>
+        <a class="login__form-password-forgot" (click)="redirectToForgotPassword()" tabindex="2">Forgot password?</a>
       </div>
       <div class="login__form-btns">
-        <st-button buttonModifier="border-only-rectangle" class="login__form-btns--odd" (click)="redirectToSignup()">
+        <st-button
+          buttonModifier="border-only-rectangle"
+          class="login__form-btns--odd"
+          (click)="redirectToSignup()"
+          tabindex="4"
+        >
           Sign up
         </st-button>
-        <st-button buttonModifier="rectangle" (click)="authenticateUser(loginForm)">
+        <st-button buttonModifier="rectangle" (click)="authenticateUser(loginForm)" tabindex="3">
           Log in
         </st-button>
       </div>
@@ -69,7 +76,6 @@
   </div>
 </ion-content>
 <ion-footer mode="ios" class="login__footer">
-  <!-- <div class="login__footer-version" *ngIf="(deviceInfo$ | async)?.platform !== 'web'"> -->
   <div class="login__footer-version" *ngIf="(deviceInfo$ | async)?.appVersion">
     Version {{ (deviceInfo$ | async)?.appVersion }}
   </div>

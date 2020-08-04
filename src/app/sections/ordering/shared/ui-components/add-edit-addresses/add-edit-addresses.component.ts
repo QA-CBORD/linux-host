@@ -22,6 +22,7 @@ import { ContentStringsFacadeService } from '@core/facades/content-strings/conte
 import { CONTENT_STINGS_CATEGORIES, CONTENT_STINGS_DOMAINS } from '../../../../../content-strings';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Settings } from '../../../../../app.global';
+import { StInputFloatingLabelComponent } from '@shared/ui-components';
 
 @Component({
   selector: 'st-add-edit-addresses',
@@ -170,6 +171,7 @@ export class AddEditAddressesComponent implements OnInit, OnChanges, OnDestroy {
       }
     }
     this.addEditAddressesForm = this.fb.group(campusBlock);
+
     this.cdRef.detectChanges();
 
     this.onChanges();
