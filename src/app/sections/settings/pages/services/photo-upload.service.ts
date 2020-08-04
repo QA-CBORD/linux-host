@@ -108,7 +108,6 @@ export class PhotoUploadService {
     ).pipe(
       switchMap(([photoUploadSettings, govtIdRequired, photoInfoList]) => {
         /// populate upload settings if they exist
-        console.log('getInitialPhotoData$ - govtIdRequired', govtIdRequired);
         this.governmentIdRequired = !!govtIdRequired.value;
         this.populatePhotoUploadSettings(photoUploadSettings);
         if (photoInfoList && !photoInfoList.empty) {

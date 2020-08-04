@@ -138,7 +138,6 @@ export class PhotoUploadComponent implements OnInit {
 
   /// make local modifications to allow UI to auto-update
   private updateLocalPhotoState(photoInfo: UserPhotoInfo, photoType: PhotoType) {
-    // console.log('newPhotoDataToUI', photoInfo, photoType);
     this.setLocalPhotoData(photoInfo, photoType);
     this.getLocalPhotoStatus(photoInfo, photoType);
     this.updateSubmitButtonStatus();
