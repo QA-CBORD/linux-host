@@ -18,11 +18,9 @@ export class UserSettingsStateService extends SingleEntityStateManager<UserSetti
   getSetting(setting: User.Settings): Observable<UserSettingInfo> {
     const name = setting.toString();
     return this.state$.pipe(
-      map((settings) => {
+      map(settings => {
         if (!settings.length) return null;
-        return settings.find(
-          ({ name: n }) => name === n,
-        );
+        return settings.find(({ name: n }) => name === n);
       }),
       distinctUntilChanged(),
       take(1)
@@ -31,9 +29,7 @@ export class UserSettingsStateService extends SingleEntityStateManager<UserSetti
 
   removeSetting(setting: User.Settings): void {
     const name = setting.toString();
-    const index = this.state.findIndex(
-      ({ name: n}) => n === name,
-    );
+    const index = this.state.findIndex(({ name: n }) => n === name);
     if (index !== -1) {
       this.state.splice(index, 1);
     }
@@ -48,7 +44,7 @@ export class UserSettingsStateService extends SingleEntityStateManager<UserSetti
   updateState(settings: UserSettingInfo | UserSettingInfo[]): void {
     if (settings === null) return;
     if (settings instanceof Array) {
-      settings.forEach((s) => this.resolveAddingSettingToArray(this.state, s));
+      settings.forEach(s => this.resolveAddingSettingToArray(this.state, s));
     } else {
       this.resolveAddingSettingToArray(this.state, settings);
     }
@@ -56,7 +52,8 @@ export class UserSettingsStateService extends SingleEntityStateManager<UserSetti
   }
 
   private resolveAddingSettingToArray(settings: UserSettingInfo[], setting: UserSettingInfo): void {
-    const index = settings.findIndex((setting) => setting.toString() === name);
+    const index = settings.findIndex(_setting => _setting.name.toString() === setting.name);
+
     if (index !== -1) {
       settings[index] = setting;
     } else {
