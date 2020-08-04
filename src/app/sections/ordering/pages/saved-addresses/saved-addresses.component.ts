@@ -89,7 +89,9 @@ export class SavedAddressesComponent implements OnInit {
         if (this.addNewAddressForm.value.default) {
           this.defaultAddress = addedAddress['id'];
           this.initAddresses();
-        } else this.userAddresses = [addedAddress, ...this.userAddresses];
+        } else {
+          this.userAddresses = [addedAddress, ...this.userAddresses];
+        }
 
         this.addNewAdddressState = !this.addNewAdddressState;
       });
