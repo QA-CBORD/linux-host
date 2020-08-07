@@ -199,3 +199,7 @@ export enum LoginType {
   WEB = 'WEB',
   LOCAL = 'LOCAL',
 }
+
+export const PATRON_BACK_TEXT: { [key: string]: string } = {
+  [`/${PATRON_NAVIGATION.dashboard}`]: 'Home',
+};
