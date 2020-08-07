@@ -20,6 +20,11 @@
     font-family: $font-nunito-semibold;
 
     @include ellipsis;
+    white-space: normal;
+  }
+
+  &__label-title-default {
+    width: 80%;
   }
 
   &__label-subtitle {
