@@ -14,6 +14,7 @@ import { PATRON_NAVIGATION, User } from 'src/app/app.global';
 export class OrderAddressListComponent implements OnInit {
   @Input() addresses: AddressInfo[] = [];
   @Input() defaultAddress: string;
+  @Input() displayAddNewAddress: boolean;
   @Output() onAddNewAddress: EventEmitter<void> = new EventEmitter<void>();
 
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};

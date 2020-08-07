@@ -18,7 +18,12 @@
     />
     <p class="address-list__empty-block-text">You don't have any saved addresses.</p>
   </div>
-  <button (click)="onAddNewAddressClick()" class="address-list__empty-block-btn" expand="block">
+  <button
+    *ngIf="displayAddNewAddress"
+    (click)="onAddNewAddressClick()"
+    class="address-list__empty-block-btn"
+    expand="block"
+  >
     <span class="address-list__empty-block-btn-text">{{ contentStrings.labelAddNewAddress | async }}</span>
   </button>
 </div>
