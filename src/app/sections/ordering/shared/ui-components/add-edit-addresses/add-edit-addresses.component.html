@@ -52,7 +52,7 @@
         [formControlName]="controlsNames.room"
         [control]="room"
         label="{{ contentStrings.labelRoom | async }}"
-        type="number"
+        type="text"
         idd="room"
         maxlength="100"
         [isError]="room?.errors && (room?.dirty || room?.touched)"
@@ -73,7 +73,7 @@
         maxlength="100"
         [formControlName]="controlsNames.address1"
         [isError]="address1.errors && (address1.dirty || address1.touched)"
-        [stFocusNext]='addressTwoInput' 
+        [stFocusNext]="addressTwoInput"
       >
         <p class="addresses__control-error-msg">
           {{ address1.errors?.errorMsg }}
@@ -90,7 +90,7 @@
           idd="address2"
           maxlength="100"
           [isError]="address2.errors && (address2.dirty || address2.touched)"
-          [stFocusNext]='cityInput'
+          [stFocusNext]="cityInput"
         >
         </st-input-floating-label>
         <ng-container [ngTemplateOutlet]="optionalPlaceholder"></ng-container>
