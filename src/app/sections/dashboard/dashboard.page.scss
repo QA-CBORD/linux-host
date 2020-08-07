@@ -2,8 +2,11 @@
 
 .dashboard {
   background: $color-white-smoke;
-  // --padding-top: 20px;
-  --padding-top: env(safe-area-inset-top);
+
+  &__header-cover {
+    height: $notch-top;
+    --background: $color-white;
+  }
 
   &__btn-logout {
     margin-left: 10px;
