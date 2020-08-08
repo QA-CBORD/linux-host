@@ -29,6 +29,7 @@ export interface LocalPhotoUploadStatus {
 }
 
 export interface LocalPhotoData {
+  govtIdRequired: boolean;
   govIdFront: UserPhotoInfo;
   govIdBack: UserPhotoInfo;
   profile: UserPhotoInfo;
@@ -45,6 +46,7 @@ export class PhotoUploadComponent implements OnInit {
   govIdBack$: Observable<SafeResourceUrl>;
   profileImage$: Observable<SafeResourceUrl>;
   profileImagePending$: Observable<SafeResourceUrl>;
+  govtIdRequired$: Observable<boolean>;
 
   submitButtonDisabled: boolean = true;
 
@@ -69,6 +71,7 @@ export class PhotoUploadComponent implements OnInit {
 
   private clearLocalStateData() {
     this.localPhotoData = {
+      govtIdRequired: false,
       govIdFront: null,
       govIdBack: null,
       profile: null,
@@ -100,6 +103,13 @@ export class PhotoUploadComponent implements OnInit {
   }
 
   private setupPhotoSubscriptions() {
+    this.govtIdRequired$ = this.photoUploadService.governmentIdRequired$.pipe(
+      tap(govtIdRequired => {
+        this.localPhotoData.govtIdRequired = govtIdRequired;
+        this.updateSubmitButtonStatus();
+      })
+    );
+
     this.govIdFront$ = this.photoUploadService.govtIdFront$.pipe(
       tap(photoInfo => {
         this.updateLocalPhotoState(photoInfo, PhotoType.GOVT_ID_FRONT);
@@ -128,23 +138,25 @@ export class PhotoUploadComponent implements OnInit {
 
   /// make local modifications to allow UI to auto-update
   private updateLocalPhotoState(photoInfo: UserPhotoInfo, photoType: PhotoType) {
-    // console.log('newPhotoDataToUI', photoInfo, photoType);
     this.setLocalPhotoData(photoInfo, photoType);
     this.getLocalPhotoStatus(photoInfo, photoType);
     this.updateSubmitButtonStatus();
+    this.cd.detectChanges();
   }
 
   private setLocalPhotoData(photoInfo: UserPhotoInfo, photoType: PhotoType) {
-    if (photoInfo === null) {
-      return;
-    }
-
     switch (photoType) {
       case PhotoType.PROFILE:
         this.localPhotoData.profile = photoInfo;
         break;
       case PhotoType.PROFILE_PENDING:
         this.localPhotoData.profilePending = photoInfo;
+        if (
+          (this.localPhotoData.govIdFront && this.localPhotoData.govIdFront.status === PhotoStatus.PENDING) ||
+          (this.localPhotoData.govIdBack && this.localPhotoData.govIdBack.status === PhotoStatus.PENDING)
+        ) {
+          this.photoUploadService.clearLocalGovernmentIdPhotos();
+        }
         break;
       case PhotoType.GOVT_ID_FRONT:
         this.localPhotoData.govIdFront = photoInfo;
@@ -169,8 +181,10 @@ export class PhotoUploadComponent implements OnInit {
       switch (photoInfo.status) {
         case PhotoStatus.PENDING:
           status = LocalPhotoStatus.PENDING;
+          break;
         case PhotoStatus.ACCEPTED:
           status = LocalPhotoStatus.ACCEPTED;
+          break;
       }
     }
 
@@ -188,7 +202,6 @@ export class PhotoUploadComponent implements OnInit {
         this.localPhotoUploadStatus.govIdBack = status;
         break;
     }
-    this.cd.detectChanges();
   }
 
   /// manage photo data on response for display in html
@@ -226,30 +239,15 @@ export class PhotoUploadComponent implements OnInit {
   }
 
   private updateSubmitButtonStatus() {
-    /* oh boy...
-    {
-      if one of the two govt images is accepted and the other is new
-      OR
-      both govt images are new
-    }
-    AND
-    {
-      if the profile photo is accepted
-      OR
-      if the profile photo is none and the pending profile photo is new
-    }
-    THEN submit
-    */
+    /*
+    If we're uploading a new user profile photo check for government ID requirement.
+    If we require govt ids then ensure they are being uploaded too
+     */
     this.submitButtonDisabled = !(
-      ((this.localPhotoUploadStatus.govIdFront === LocalPhotoStatus.NEW &&
-        this.localPhotoUploadStatus.govIdBack === LocalPhotoStatus.ACCEPTED) ||
-        (this.localPhotoUploadStatus.govIdFront === LocalPhotoStatus.ACCEPTED &&
-          this.localPhotoUploadStatus.govIdBack === LocalPhotoStatus.NEW) ||
+      this.localPhotoUploadStatus.profilePending === LocalPhotoStatus.NEW &&
+      (!this.localPhotoData.govtIdRequired ||
         (this.localPhotoUploadStatus.govIdFront === LocalPhotoStatus.NEW &&
-          this.localPhotoUploadStatus.govIdBack === LocalPhotoStatus.NEW)) &&
-      (this.localPhotoUploadStatus.profile === LocalPhotoStatus.ACCEPTED ||
-        (this.localPhotoUploadStatus.profile === LocalPhotoStatus.NONE &&
-          this.localPhotoUploadStatus.profilePending === LocalPhotoStatus.NEW))
+          this.localPhotoUploadStatus.govIdBack === LocalPhotoStatus.NEW))
     );
   }
 
@@ -291,10 +289,8 @@ export class PhotoUploadComponent implements OnInit {
         finalize(() => this.loadingService.closeSpinner())
       )
       .subscribe(
-        data => {
-        },
-        error => {
-        },
+        data => {},
+        error => {},
         () => {
           this.clearLocalStateData();
           this.getPhotoData();

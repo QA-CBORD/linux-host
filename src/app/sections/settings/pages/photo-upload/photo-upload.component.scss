@@ -20,7 +20,7 @@
   display: flex;
   padding: 16px;
   position: static;
-  height: 102px;
+  height: auto;
   background: #f1f1f1;
   border-radius: 8px;
 }
@@ -29,7 +29,7 @@
   display: flex;
   padding: 16px;
   position: static;
-  height: 76px;
+  height: auto;
   background: #f1f1f1;
   border-radius: 8px;
 }
@@ -38,7 +38,7 @@
   display: flex;
   padding: 16px;
   position: static;
-  height: 76px;
+  height: auto;
   background: #e7f3ef;
   border-radius: 8px;
   color: #007b53;
@@ -96,6 +96,8 @@
 .profile-default-image {
   height: 90px;
   width: 75px;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
 }
 
 .stored-img-cont {
@@ -123,7 +125,7 @@
 
 ion-button.button-disabled {
   color: rgba(0, 0, 0, 0.38);
-  background-color: #E2E2E2;
+  background-color: #e2e2e2;
 }
 
 .reupload-btn {
@@ -159,7 +161,7 @@ ion-button.button-disabled {
 }
 
 .grey-background {
-  background: #F1F1F1;
+  background: #f1f1f1;
 }
 
 .round-corners {

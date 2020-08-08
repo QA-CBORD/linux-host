@@ -2,7 +2,9 @@
   <ion-icon class="order-item__icon" [attr.alt]="iconAlt" [src]="iconSrc" [name]="iconName"></ion-icon>
 
   <ion-label class="order-item__label-container">
-    <div class="order-item__label-title">{{ item | addressHeaderFormat }}</div>
+    <div class="order-item__label-title" [ngClass]="{ 'order-item__label-title-default': isDefault }">
+      {{ item | addressHeaderFormat }}
+    </div>
     <div class="order-item__label-subtitle">{{ item | addressSubHeaderFormat }}</div>
     <div class="order-item__label-default" *ngIf="isDefault">DEFAULT</div>
   </ion-label>

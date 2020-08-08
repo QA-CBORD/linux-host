@@ -15,7 +15,7 @@
       [button]="true"
       [detail]="true"
       detailIcon="/assets/icon/angle-{{ addNewAdddressState ? 'up' : 'down' }}-select.svg"
-      (click)="addNewAdddressState = !addNewAdddressState"
+      (click)="changeAddNewAdddressState()"
     >
       <span class="saved-addresses__add-address-sign">+</span>
       <span class="saved-addresses__add-address-text">{{ contentStrings.labelAddNewAddress | async }}</span>
@@ -38,5 +38,9 @@
     </ng-container>
   </div>
   <div class="saved-addresses__add-address-divider" *ngIf="addNewAdddressState"></div>
-  <st-order-address-list [addresses]="userAddresses" [defaultAddress]="defaultAddress"></st-order-address-list>
+  <st-order-address-list
+    [addresses]="userAddresses"
+    [defaultAddress]="defaultAddress"
+    (onAddNewAddress)="changeAddNewAdddressState()"
+  ></st-order-address-list>
 </ion-content>
