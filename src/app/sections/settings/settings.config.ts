@@ -5,6 +5,8 @@ export enum LOCAL_ROUTING {
 }
 export enum SETTINGS_NAVIGATE {
   personalData = 'email-pwd',
+  updatePhoto = 'photo-upload',
+  lostCard = 'lost-card',
   password = 'pwd-change',
   faceId = 'face-id',
   pin = 'pin-change',
@@ -23,6 +25,8 @@ export enum SETTINGS_NAVIGATE {
 }
 
 export enum SETTINGS_ID {
+  updatePhoto = 'update-photo',
+  lostCard = 'lost-card',
   personalData = 'email-pwd',
   password = 'pwd-change',
   faceId = 'face-id',
@@ -42,6 +46,25 @@ export enum SETTINGS_ID {
 }
 export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
   {
+    label: 'Your card',
+    items: [
+      {
+        id: SETTINGS_ID.personalData,
+        icon: 'update-photo',
+        label: 'Update photo',
+        type: 'button',
+        navigate: SETTINGS_NAVIGATE.personalData,
+      },
+      {
+        id: SETTINGS_ID.password,
+        icon: 'card-lost',
+        label: 'Report card as lost',
+        type: 'button',
+        navigate: SETTINGS_NAVIGATE.lostCard,
+      },
+    ],
+  },
+  {
     label: 'Account',
     items: [
       {
@@ -49,6 +72,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         icon: 'account-profile',
         label: 'Email & Phone Number',
         type: 'button',
+        navigate: SETTINGS_NAVIGATE.personalData,
       },
       {
         id: SETTINGS_ID.password,

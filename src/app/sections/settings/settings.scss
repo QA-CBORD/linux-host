@@ -40,15 +40,15 @@
   }
 
   &__label {
-    .h3 {
+    h3 {
       @include font-nunito-heavy(20px);
     }
 
-    .h4 {
+    h4 {
       @include font-nunito-semibold(14px);
     }
 
-    .p {
+    p {
       @include font-nunito-regular(14px);
     }
   }
