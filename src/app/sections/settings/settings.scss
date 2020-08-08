@@ -1,7 +1,7 @@
 @import 'tools';
 
 .container {
-  background: #f1f1f1 !important;
+  --background: #{$color-background-divider};
 }
 
 .title {
@@ -91,4 +91,20 @@
 
 .item-icon {
   padding-right: 12.82px;
+}
+
+.settings {
+  &__bottom-options {
+    ion-button {
+      @include font-nunito-heavy(14px);
+    }
+    background-color: #ffffff;
+  }
+  &__label-version {
+    color: rgba(0, 0, 0, 0.6);
+    @include font-nunito-regular(16px);
+  }
+  &__section-header {
+    @include font-nunito-semibold(12px);
+  }
 }

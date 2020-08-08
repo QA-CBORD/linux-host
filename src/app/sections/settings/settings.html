@@ -42,16 +42,28 @@
       </ion-list>
     </ion-card-content>
   </ion-card>
-  <ion-list *ngFor="let section of sections">
+  <ion-list class="ion-margin-bottom" *ngFor="let section of sections">
     <ion-list-header lines="inset">
-      <ion-label>{{section.label}}</ion-label>
+      <ion-label class="settings__section-header">{{section.label}}</ion-label>
     </ion-list-header>
-    <st-settings-item *ngFor="let setting of section.items" [setting]='setting' (settingTapped)="settingTap($event)"> </st-settings-item>
+    <st-settings-item
+      *ngFor="let setting of section.items; let last = last"
+      [setting]="setting"
+      (settingTapped)="settingTap($event)"
+      [lines]="last ? 'none' : 'inset'"
+    >
+    </st-settings-item>
   </ion-list>
-  <ion-card>
-    <ion-card-content>
-      <ion-button expand="block" color="light" (click)="logout()">LOG OUT</ion-button>
-      <h3>GET v{{appVersion}}</h3>
-    </ion-card-content>
-  </ion-card>
+  <ion-grid class="settings__bottom-options ion-padding-bottom">
+    <ion-row>
+      <ion-col>
+        <ion-button expand="block" color="light" (click)="logout()">LOG OUT</ion-button>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col class="ion-text-center">
+        <label class="settings__label-version">GET v{{appVersion}}</label>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>

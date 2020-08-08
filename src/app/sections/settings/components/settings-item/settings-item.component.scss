@@ -1,0 +1,12 @@
+@import 'tools';
+
+.item__label {
+  margin-left: 13px;
+  @include font-nunito-semibold(16px);
+}
+
+ion-toggle {
+  --handle-height: 20px;
+  height: 20px;
+  --handle-width: 20px;
+}

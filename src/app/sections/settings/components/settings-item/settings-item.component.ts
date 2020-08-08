@@ -7,6 +7,7 @@ import { SettingItemConfig } from '@sections/settings/models/setting-items-confi
   styleUrls: ['./settings-item.component.scss'],
 })
 export class SettingsItemComponent {
+  @Input() lines: string = 'inset';
 
   @Input() setting: SettingItemConfig;
 
@@ -17,6 +18,4 @@ export class SettingsItemComponent {
   settingTap(settingItem: SettingItemConfig) {
     this.settingTapped.next(settingItem);
   }
-
-  
 }
