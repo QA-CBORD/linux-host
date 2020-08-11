@@ -13,6 +13,7 @@ import { StSelectFloatingLabelModule } from '@shared/ui-components/st-select-flo
 import { StPopoverLayoutModule } from '@shared/ui-components/st-popover-layout/st-popover-layout.module';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
 import { StButtonModule } from '@shared/ui-components/st-button';
+import { FocusNextModule } from '@shared/directives/focus-next/focus-next.module';
 
 const declarations = [RequestFundsPageComponent, PopoverComponent];
 const imports = [
@@ -30,14 +31,13 @@ const imports = [
   }),
   ReactiveFormsModule,
   TransactionUnitsPipeModule,
-  StButtonModule
+  StButtonModule,
+  FocusNextModule,
 ];
 const entryComponents = [PopoverComponent];
 @NgModule({
   declarations,
-  imports: [
-    imports,
-  ],
+  imports: [imports],
   entryComponents,
 })
 export class RequestFundsModule {}
