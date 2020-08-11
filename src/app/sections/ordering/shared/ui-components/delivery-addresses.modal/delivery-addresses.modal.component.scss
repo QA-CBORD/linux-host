@@ -6,7 +6,7 @@
   }
 
   &__title {
-    @include font-nunito-heavy(20px);
+    @include font-family($font-nunito-heavy);
   }
 
   &__add-address-container {
