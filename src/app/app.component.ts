@@ -68,14 +68,14 @@ export class AppComponent implements OnInit {
 
   private async initializeApp(): Promise<void> {
     await this.platform.ready();
-    this.statusBar.styleDefault();
     this.splashScreen.hide();
+    this.statusBar.styleDefault();
+    this.statusBar.backgroundColorByHexString('#FFFFFF');
 
     App.addListener('appStateChange', ({ isActive }: AppState) => {
       // state.isActive contains the active state
       if (isActive) {
-
-        if(this.sessionFacadeService.navigatedToPlugin){
+        if (this.sessionFacadeService.navigatedToPlugin) {
           this.sessionFacadeService.navigatedToPlugin = false;
           return;
         }
@@ -88,9 +88,7 @@ export class AppComponent implements OnInit {
   }
 
   private initEventListeners() {
-    if (this.platform.is('android')
-      || this.platform.is('ios')
-      || this.platform.is('cordova')) {
+    if (this.platform.is('android') || this.platform.is('ios') || this.platform.is('cordova')) {
       this.initMobileListeners();
     }
   }
