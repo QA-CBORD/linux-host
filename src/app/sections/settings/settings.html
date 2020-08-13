@@ -4,7 +4,7 @@
       <ion-title class="title">Settings</ion-title>
     </ion-toolbar>
   </ion-header>
-  <ion-list class="ion-margin-vertical">
+  <!-- <ion-list class="ion-margin-vertical">
     <ion-list-header lines="inset">
       <ion-label class="settings__section-header">{{sections[0].label}}</ion-label>
     </ion-list-header>
@@ -24,19 +24,27 @@
       [lines]="last ? 'none' : 'inset'"
     >
     </st-settings-item>
-  </ion-list>
-  <ion-list class="ion-margin-bottom" *ngFor="let section of sections | slice:1">
-    <ion-list-header lines="inset">
-      <ion-label class="settings__section-header">{{section.label}}</ion-label>
-    </ion-list-header>
-    <st-settings-item
-      *ngFor="let setting of section.items; let last = last"
-      [setting]="setting"
-      (settingTapped)="settingTap($event)"
-      [lines]="last ? 'none' : 'inset'"
-    >
-    </st-settings-item>
-  </ion-list>
+  </ion-list> -->
+  <ng-container 
+  *ngFor="let section of settingSections$ | async | slice:1"
+  >
+  <ion-list
+  class="ion-margin-bottom"
+  *ngIf='section.visible'
+>
+  <ion-list-header lines="inset">
+    <ion-label class="settings__section-header">{{section.label}}</ion-label>
+  </ion-list-header>
+  <st-settings-item
+    *ngFor="let setting of section.items; let last = last"
+    [setting]="setting"
+    (settingTapped)="settingTap($event)"
+    [lines]="last ? 'none' : 'inset'"
+  >
+  </st-settings-item>
+</ion-list>
+  </ng-container>
+ 
   <ion-grid class="settings__bottom-options ion-padding-bottom">
     <ion-row>
       <ion-col>

@@ -5,12 +5,13 @@ import { IonicModule } from '@ionic/angular';
 import { SettingsPage } from './settings.page';
 import { PhotoUploadModule } from '@sections/settings/pages/photo-upload/photo-upload.module';
 import { SettingsItemComponent } from './components/settings-item/settings-item.component';
+import { SettingsFactoryService } from './services/settings-factory.service';
 
 
 const imports = [CommonModule, IonicModule, SettingsRoutingModule, PhotoUploadModule];
 const declarations = [SettingsPage, SettingsItemComponent ];
 const entryComponents = [];
-const providers = [];
+const providers = [SettingsFactoryService];
 @NgModule({
   declarations,
   imports,

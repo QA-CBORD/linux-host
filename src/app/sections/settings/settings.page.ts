@@ -3,8 +3,10 @@ import { Router } from '@angular/router';
 import { LOCAL_ROUTING, SETTINGS_CONFIG } from '@sections/settings/settings.config';
 import { PATRON_NAVIGATION } from '../../app.global';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
-import { SettingItemConfig } from './models/setting-items-config.model';
+import { SettingItemConfig, SettingsSectionConfig } from './models/setting-items-config.model';
 import { Plugins } from '@capacitor/core';
+import { SettingsFactoryService } from './services/settings-factory.service';
+import { Observable } from 'rxjs';
 const { Device } = Plugins;
 
 @Component({
@@ -13,11 +15,16 @@ const { Device } = Plugins;
   styleUrls: ['./settings.scss'],
 })
 export class SettingsPage implements OnInit {
-  sections = SETTINGS_CONFIG;
+  settingSections$: Observable<SettingsSectionConfig[]>;
   appVersion = '';
-  constructor(private router: Router, private readonly sessionFacadeService: SessionFacadeService) {}
+  constructor(
+    private router: Router,
+    private readonly sessionFacadeService: SessionFacadeService,
+    private settingsFactory: SettingsFactoryService
+  ) {}
 
   ngOnInit() {
+    this.settingSections$ = this.settingsFactory.getSettings();
     this.getAppVersion().then(appVersion => (this.appVersion = appVersion));
   }
 

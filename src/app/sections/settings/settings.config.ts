@@ -1,4 +1,5 @@
 import { SettingsSectionConfig } from './models/setting-items-config.model';
+import { Settings } from 'src/app/app.global';
 
 export enum LOCAL_ROUTING {
   photoUpload = 'photo-upload',
@@ -61,6 +62,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         label: 'Report card as lost',
         type: 'button',
         navigate: SETTINGS_NAVIGATE.lostCard,
+        settingKey: Settings.Setting.MEAL_DONATIONS_ENABLED,
       },
     ],
   },
@@ -88,6 +90,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         label: 'Change / Remove PIN',
         type: 'button',
         navigate: SETTINGS_NAVIGATE.pin,
+        settingKey: Settings.Setting.MEAL_DONATIONS_ENABLED,
       },
       {
         id: SETTINGS_ID.devices,
@@ -114,6 +117,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         label: 'Automatic deposits',
         type: 'button',
         navigate: SETTINGS_NAVIGATE.deposits,
+        settingKey: Settings.Setting.AUTO_DEPOSIT_ENABLED,
       },
     ],
   },
