@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
+import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { RouteReuseStrategy } from '@angular/router';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { IonicRouteStrategy } from '@ionic/angular';
@@ -17,6 +18,7 @@ const providers = [
   SelectivePreloadingStrategy,
   StatusBar,
   SplashScreen,
+  ScreenOrientation,
   { provide: HTTP_INTERCEPTORS, useClass: ServerError, multi: true },
   { provide: HTTP_INTERCEPTORS, useClass: BaseInterceptor, multi: true },
   { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
