@@ -25,7 +25,7 @@ import { GUEST_ROUTES } from '../../non-authorized.config';
   templateUrl: './external-login.page.html',
   styleUrls: ['./external-login.page.scss'],
 })
-export class ExternalLoginPage implements  OnDestroy {
+export class ExternalLoginPage implements OnDestroy {
   private subscriptions: Subscription = new Subscription();
 
   nativeHeaderBg$: Promise<string>;
@@ -89,17 +89,33 @@ export class ExternalLoginPage implements  OnDestroy {
       location: 'no',
       hidenavigationbuttons: 'yes',
       toolbarcolor: '#ffffff',
+      hidden: 'yes',
     };
 
     this.browser = this.appBrowser.create(url, target, options);
+
     const browserEventSub = this.browser.on('loadstart').subscribe(event => {
-      console.log('loadstart', event);
       if (event) {
         this.getAuthSessionFromUrl(event.url);
       }
     });
+
+    const browserEventShow = this.browser.on('loadstop').subscribe(event => {
+      this.browser.show();
+    });
+
+    const browserEventBack = this.browser.on('exit').subscribe(event => {
+      this.loadingService.showSpinner();
+      if (event) {
+        this.router.navigate([ROLES.guest, GUEST_ROUTES.entry]);
+        this.loadingService.closeSpinner();
+      }
+    });
+
     this.subscriptions.add(browserEventSub);
-    this.browser.show();
+    this.subscriptions.add(browserEventShow);
+    this.subscriptions.add(browserEventBack);
+
     this.loadingService.closeSpinner();
   }
 
