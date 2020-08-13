@@ -142,6 +142,9 @@ export class ExternalLoginPage implements OnDestroy {
       this.sessionId,
       this.institutionId
     );
+
+    this.browser.close();
+
     switch (loginState) {
       case LoginState.PIN_SET:
         await this.identityFacadeService.pinOnlyLoginSetup();
@@ -155,7 +158,6 @@ export class ExternalLoginPage implements OnDestroy {
         this.router.navigate([PATRON_NAVIGATION.dashboard], { replaceUrl: true });
         break;
     }
-    this.browser.close();
   }
 
   private configureBiometricsConfig(supportedBiometricType: string[]): { type: string; name: string } {
