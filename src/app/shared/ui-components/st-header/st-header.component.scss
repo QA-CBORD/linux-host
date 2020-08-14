@@ -44,6 +44,9 @@
     --margin-start: 10px;
     --icon-padding-end: 5px;
     --icon-font-size: 15px;
+    &__icon-ios-close {
+      --icon-font-size: 35px;
+    }
     &__icon-close {
       --icon-font-size: 30px;
     }
