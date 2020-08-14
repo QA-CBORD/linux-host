@@ -17,11 +17,12 @@ import { MerchantService } from '@sections/ordering/services';
 import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
-import { formControlErrorDecorator } from '@core/utils/general-helpers';
+import { formControlErrorDecorator, sortAlphabetically } from '@core/utils/general-helpers';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { CONTENT_STINGS_CATEGORIES, CONTENT_STINGS_DOMAINS } from '../../../../../content-strings';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Settings } from '../../../../../app.global';
+import { StInputFloatingLabelComponent } from '@shared/ui-components';
 
 @Component({
   selector: 'st-add-edit-addresses',
@@ -170,6 +171,7 @@ export class AddEditAddressesComponent implements OnInit, OnChanges, OnDestroy {
       }
     }
     this.addEditAddressesForm = this.fb.group(campusBlock);
+
     this.cdRef.detectChanges();
 
     this.onChanges();
@@ -311,7 +313,12 @@ export class AddEditAddressesComponent implements OnInit, OnChanges, OnDestroy {
     );
     this.arrOfStates$ = this.contentStringsFacadeService
       .getContentStrings$(CONTENT_STINGS_DOMAINS.patronUi, CONTENT_STINGS_CATEGORIES.usStates)
-      .pipe(map(stateStrings => stateStrings.map(({ value }) => value)));
+      .pipe(
+        map(stateStrings => {
+          const statesArray = stateStrings.map(({ value }) => value);
+          return statesArray.sort(sortAlphabetically);
+        })
+      );
   }
 
   private async updateFormErrorsByContentStrings(): Promise<void> {

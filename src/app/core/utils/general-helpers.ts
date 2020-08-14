@@ -152,3 +152,19 @@ export function compareFieldsSkipEmptyToEnd<T>(a: T = null, b: T = null): number
   if (b === null) return -1;
   return Number(a) - Number(b);
 }
+
+export function sortAlphabetically(a, b) {
+  if (a === null) {
+    return -1;
+  }
+  if (b === null) {
+    return 1;
+  }
+  if (a.toLowerCase() < b.toLowerCase()) {
+    return -1;
+  }
+  if (a.toLowerCase() > b.toLowerCase()) {
+    return 1;
+  }
+  return 0;
+}

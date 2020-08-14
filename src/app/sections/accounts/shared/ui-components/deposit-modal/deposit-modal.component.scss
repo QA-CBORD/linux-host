@@ -3,6 +3,7 @@
 .deposit-modal {
   &__header {
     border-bottom: 1px solid $color-whisper;
+    margin-top: $notch-top;
   }
 
   &__title {
@@ -54,7 +55,7 @@
     @include font-nunito-heavy(16px);
   }
 
-  &__footer{
+  &__footer {
     padding: 10px 10px 50px;
   }
 }

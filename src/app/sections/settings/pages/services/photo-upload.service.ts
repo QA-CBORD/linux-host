@@ -5,6 +5,7 @@ import { BehaviorSubject, iif, Observable, of, zip } from 'rxjs';
 import { UserPhotoInfo, UserPhotoList } from '@core/model/user';
 import { Settings } from '../../../../app.global';
 import SettingList = Settings.SettingList;
+import Setting = Settings.Setting;
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { first, switchMap, take, tap } from 'rxjs/operators';
 import { SettingInfoList } from '@core/model/configuration/setting-info-list.model';
@@ -34,6 +35,9 @@ export class PhotoUploadService {
   private readonly _govtIdBack$: BehaviorSubject<UserPhotoInfo> = new BehaviorSubject<UserPhotoInfo>(null);
   private readonly _profileImage$: BehaviorSubject<UserPhotoInfo> = new BehaviorSubject<UserPhotoInfo>(null);
   private readonly _profileImagePending$: BehaviorSubject<UserPhotoInfo> = new BehaviorSubject<UserPhotoInfo>(null);
+  private readonly _govtIdRequired$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+
+  private govtIdRequired: boolean = false;
 
   private userPhotoUploadSettings: UserPhotoUploadSettings = {
     cacheTimeoutMinutes: null,
@@ -70,6 +74,10 @@ export class PhotoUploadService {
     return this._profileImagePending$.asObservable();
   }
 
+  get governmentIdRequired$(): Observable<boolean> {
+    return this._govtIdRequired$.asObservable();
+  }
+
   private set _govtIdFront(value: UserPhotoInfo) {
     this._govtIdFront$.next(value);
   }
@@ -86,16 +94,23 @@ export class PhotoUploadService {
     this._profileImagePending$.next(value);
   }
 
+  private set governmentIdRequired(value: boolean) {
+    this.govtIdRequired = value;
+    this._govtIdRequired$.next(value);
+  }
+
   /// get photo upload settings and fetch and handle photos
   getInitialPhotoData$(): Observable<UserPhotoInfo[]> {
     return zip(
       this.settingsFacadeService.fetchSettingList(SettingList.PHOTO_UPLOAD),
+      this.settingsFacadeService.getSetting(Setting.GOVT_PHOTO_ID_REQUIRED),
       this.userFacadeService.getPhotoList()
     ).pipe(
-      switchMap(([settings, photoInfoList]) => {
+      switchMap(([photoUploadSettings, govtIdRequired, photoInfoList]) => {
         /// populate upload settings if they exist
-        this.populatePhotoUploadSettings(settings);
-        if(photoInfoList && !photoInfoList.empty){
+        this.governmentIdRequired = !!govtIdRequired.value;
+        this.populatePhotoUploadSettings(photoUploadSettings);
+        if (photoInfoList && !photoInfoList.empty) {
           return this.fetchUserPhotosInList(photoInfoList);
         }
         return of([]);
@@ -170,23 +185,32 @@ export class PhotoUploadService {
     this.setPhotoInfo(newPhotoInfo);
   }
 
+  clearLocalGovernmentIdPhotos() {
+    this._govtIdFront = null;
+    this._govtIdBack = null;
+  }
+
   submitPhoto(newPhoto: UserPhotoInfo): Observable<boolean> {
-    return this.userFacadeService.addUserPhoto(newPhoto).pipe(tap(success => {
-      if(success){
-        newPhoto.status = newPhoto.type === PhotoType.PROFILE ? PhotoStatus.PENDING : PhotoStatus.ACCEPTED;
-        this.setPhotoInfo(newPhoto);
-      }
-    }), first());
+    return this.userFacadeService.addUserPhoto(newPhoto).pipe(
+      tap(success => {
+        if (success) {
+          newPhoto.status = newPhoto.type === PhotoType.PROFILE ? PhotoStatus.PENDING : PhotoStatus.ACCEPTED;
+          this.setPhotoInfo(newPhoto);
+        }
+      }),
+      first()
+    );
   }
 
   async presentDeletePhotoModal(photoId: string) {
-
     const modal = await this.modalController.create({
       component: DeleteModalComponent,
     });
     modal.onDidDismiss().then(data => {
       if (data.data === true) {
-        this.userFacadeService.updateUserPhotoStatus(photoId, PhotoStatus.DELETED, 'Patron deleted photo').pipe(take(1));
+        this.userFacadeService
+          .updateUserPhotoStatus(photoId, PhotoStatus.DELETED, 'Patron deleted photo')
+          .pipe(take(1));
         this._profileImagePending = null;
       }
     });

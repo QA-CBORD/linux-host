@@ -26,6 +26,7 @@ class Plugin: CAPPlugin {
 
     @objc public func getAppleWalletInfo(_ call: CAPPluginCall) {
         DispatchQueue.global(qos: .background).async  {
+            WatchSessionManager.sharedManager.startSession()
             guard let sessionIdStr = call.options["sessionId"] as? String else {
                 return
             }
