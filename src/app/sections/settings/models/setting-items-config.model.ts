@@ -11,8 +11,17 @@ export interface SettingItemConfig {
   label: string;
   type: string;
   icon: string;
-  settingKey?: Settings.Setting;
   navigate?: string;
   checked?: boolean;   
-  visible?: boolean;   
+  validations?: SettingItemValidation[] 
+}
+
+export interface SettingItemValidation {
+  type: SETTINGS_VALIDATIONS | string;
+  value: Settings.Setting | string;
+}
+
+export enum SETTINGS_VALIDATIONS {
+  SettingEnable = 'setting-enable',
+  Biometric = 'biometric'
 }

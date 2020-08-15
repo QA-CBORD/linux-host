@@ -8,6 +8,7 @@ import { SettingsFacadeService } from '@core/facades/settings/settings-facade.se
 import { Institution } from '@core/model/institution';
 import { AuthenticationType } from '@core/model/authentication/authentication-info.model';
 import { PinAction, PinCloseStatus } from '@shared/ui-components/pin/pin.page';
+import { Observable } from 'rxjs';
 
 export enum LoginState {
   DONE,
@@ -132,6 +133,10 @@ export class IdentityFacadeService extends ServiceStateFacade {
       .getAvailableBiometricHardware()
       .pipe(take(1))
       .toPromise();
+  }
+
+  get availableBiometricHardware$(): Observable<string[]> {
+    return this.identityService.getAvailableBiometricHardware();
   }
 
   get cachedPinEnabledUserPreference$(): Promise<boolean> {

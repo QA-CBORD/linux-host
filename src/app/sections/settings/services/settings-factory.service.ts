@@ -1,42 +1,65 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { SettingsSectionConfig, SettingItemConfig } from '../models/setting-items-config.model';
+import { BehaviorSubject, of, merge } from 'rxjs';
+import { SettingsSectionConfig, SettingItemConfig, SETTINGS_VALIDATIONS } from '../models/setting-items-config.model';
 import { SETTINGS_CONFIG } from '../settings.config';
-import { take, map, tap } from 'rxjs/operators';
+import { take, map, tap, reduce } from 'rxjs/operators';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
+import { Settings } from 'src/app/app.global';
+import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
 
 @Injectable()
 export class SettingsFactoryService {
-  protected readonly _state$: BehaviorSubject<SettingsSectionConfig[]> = new BehaviorSubject<SettingsSectionConfig[]>([
-    ...SETTINGS_CONFIG,
-  ]);
+  constructor(
+    private settingsFacade: SettingsFacadeService,
+    private readonly identityFacadeService: IdentityFacadeService
+  ) {}
 
-  constructor(private settingsFacade: SettingsFacadeService) {}
+  async getSettings(): Promise<SettingsSectionConfig[]> {
+    const parsedSettings: SettingsSectionConfig[] = [];
+    for (const section of [...SETTINGS_CONFIG]) {
+      const promises = [];
+      const parsedSetting = { ...section };
+      parsedSetting.items = [];
 
-  getSettings() {
-    return this._state$.pipe(
-      map((settings: SettingsSectionConfig[]) => {
-        settings.forEach(section => {
-          section.items.forEach(setting => this.createSettingOption(setting));
-          section.visible = section.items.some(s => s.visible === true);
-        });
-        return settings;
-      }),
-      take(1)
-    );
+      for (const setting of section.items) {
+        promises.push(this.checkDisplayOption(setting).then(enabled => enabled && parsedSetting.items.push(setting)));
+      }
+
+      await Promise.all(promises);
+      if (parsedSetting.items.length) {
+        parsedSettings.push(parsedSetting);
+      }
+    }
+    return parsedSettings;
   }
 
-  private async createSettingOption(setting: SettingItemConfig) {
-    if (setting.settingKey) {
-      setting.visible = await this.settingsFacade
-        .getSetting(setting.settingKey)
+  private checkDisplayOption(setting: SettingItemConfig): Promise<boolean> {
+    if (setting.validations) {
+      const validations$ = [];
+      for (const validation of setting.validations) {
+        if (validation.type === SETTINGS_VALIDATIONS.SettingEnable) {
+          validations$.push(
+            this.settingsFacade.getSetting(validation.value as Settings.Setting).pipe(
+              map(({ value }): boolean => parseInt(value) === 1),
+              take(1)
+            )
+          );
+        } else if (validation.type === SETTINGS_VALIDATIONS.Biometric) {
+          validations$.push(
+            this.identityFacadeService.availableBiometricHardware$.pipe(
+              map((biometrics): boolean => biometrics && biometrics.some(cap => cap === validation.value)),
+              take(1)
+            )
+          );
+        }
+      }
+      return merge(...validations$)
         .pipe(
-          map(({ value }) => parseInt(value) === 1),
+          reduce((acc: boolean, val: boolean): boolean => acc && val),
           take(1)
         )
         .toPromise();
-    } else {
-      setting.visible = true;
     }
+    return of(true).toPromise();
   }
 }

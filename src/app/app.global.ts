@@ -85,6 +85,8 @@ export namespace Settings {
     MOBILE_HEADER_COLOR = 'get.style.custom_site_colors',
     HOUSING_ENABLED = 'get.feature.enable_housing',
     MEAL_DONATIONS_ENABLED = 'get.feature.meal_donations_enabled',
+    MEAL_CHANGE_PLAN_ENABLED = 'get.feature.enable_change_meal_plan',
+    MEAL_PURCHASE_PLAN_ENABLED = 'get.feature.enable_purchase_meal_plan',
     MEAL_DONATIONS_TENDERS = 'get.meal_donation.tenders',
     MEAL_DONATIONS_FREEFORM_ENABLED = 'get.meal_donation.allow_freeform',
     MEAL_DONATIONS_FIXED_MEAL_AMOUNTS = 'get.meal_donation.fixed_meal_amounts',
@@ -95,9 +97,10 @@ export namespace Settings {
     APPLE_PAY_ENABLED = 'get.feature.enable_apple_pay',
     APPLE_WALLET_ENABLED = 'get.feature.enable_apple_wallet',
     PUSH_NOTIFICATION_ENABLED = 'get.feature.enable_push_notification',
-    GOVT_PHOTO_ID_REQUIRED = 'get.feature.government_photo_id_required'
+    GOVT_PHOTO_ID_REQUIRED = 'get.feature.government_photo_id_required',
+    PHOTO_UPLOAD_ENABLED = 'get.feature.enable_photo_upload',
+    REPORT_LOST_CARD_ENABLED = 'get.feature.enable_lost_card',
   }
-
 }
 
 export enum AccountType {
