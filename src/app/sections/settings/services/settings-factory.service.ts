@@ -1,17 +1,23 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, of, merge } from 'rxjs';
 import { SettingsSectionConfig, SettingItemConfig, SETTINGS_VALIDATIONS } from '../models/setting-items-config.model';
-import { SETTINGS_CONFIG } from '../settings.config';
+import { SETTINGS_CONFIG, SETTINGS_ID } from '../settings.config';
 import { take, map, tap, reduce } from 'rxjs/operators';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Settings } from 'src/app/app.global';
 import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
+import { UserFacadeService } from '@core/facades/user/user.facade.service';
 
 @Injectable()
 export class SettingsFactoryService {
+  SETTINGS_TOGGLE_SERVICES = {
+    [SETTINGS_ID.lostCard]: this.userFacadeService,
+  };
+
   constructor(
     private settingsFacade: SettingsFacadeService,
-    private readonly identityFacadeService: IdentityFacadeService
+    private readonly identityFacadeService: IdentityFacadeService,
+    private readonly userFacadeService: UserFacadeService
   ) {}
 
   async getSettings(): Promise<SettingsSectionConfig[]> {
@@ -22,7 +28,11 @@ export class SettingsFactoryService {
       parsedSetting.items = [];
 
       for (const setting of section.items) {
-        promises.push(this.checkDisplayOption(setting).then(enabled => enabled && parsedSetting.items.push(setting)));
+        promises.push(
+          this.checkDisplayOption(setting).then(
+            enabled => enabled && parsedSetting.items.push(setting) && this.setToggleStatus(setting)
+          )
+        );
       }
 
       await Promise.all(promises);
@@ -61,5 +71,13 @@ export class SettingsFactoryService {
         .toPromise();
     }
     return of(true).toPromise();
+  }
+
+  private async setToggleStatus(setting: SettingItemConfig): Promise<boolean> {
+    if (setting.getToggleStatus) {
+      setting.checked = await setting.getToggleStatus(this.SETTINGS_TOGGLE_SERVICES[setting.id]);
+      setting.label = setting.checked ? setting.toggleLabel.checked : setting.toggleLabel.unchecked;
+    }
+    return true;
   }
 }

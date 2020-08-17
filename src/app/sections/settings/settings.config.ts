@@ -1,5 +1,6 @@
 import { SettingsSectionConfig, SETTINGS_VALIDATIONS } from './models/setting-items-config.model';
 import { Settings } from 'src/app/app.global';
+import { getCardStatus } from './helpers/setting-item.helper';
 
 export enum LOCAL_ROUTING {
   photoUpload = 'photo-upload',
@@ -55,15 +56,17 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         label: 'Update photo',
         type: 'button',
         navigate: SETTINGS_NAVIGATE.personalData,
-        validations: [{type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.PHOTO_UPLOAD_ENABLED}]
+        validations: [{ type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.PHOTO_UPLOAD_ENABLED }],
       },
       {
-        id: SETTINGS_ID.password,
+        id: SETTINGS_ID.lostCard,
+        label: '',
         icon: 'card-lost',
-        label: 'Report card as lost',
+        toggleLabel: { checked: 'Report card as found', unchecked: 'Report card as lost' },
         type: 'button',
+        getToggleStatus: getCardStatus,
         navigate: SETTINGS_NAVIGATE.lostCard,
-        validations: [{type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.REPORT_LOST_CARD_ENABLED}]
+        validations: [{ type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.REPORT_LOST_CARD_ENABLED }],
       },
     ],
   },
@@ -89,7 +92,10 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         icon: 'faceid',
         label: 'Face ID',
         type: 'toggle',
-        validations: [{type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.PIN_ENABLED}, {type: SETTINGS_VALIDATIONS.Biometric, value: 'faceid'}]
+        validations: [
+          { type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.PIN_ENABLED },
+          { type: SETTINGS_VALIDATIONS.Biometric, value: 'faceid' },
+        ],
       },
       {
         id: SETTINGS_ID.pin,
@@ -97,7 +103,6 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         label: 'Change / Remove PIN',
         type: 'button',
         navigate: SETTINGS_NAVIGATE.pin,
-        settingKey: Settings.Setting.PIN_ENABLED,
       },
       {
         id: SETTINGS_ID.devices,
@@ -124,7 +129,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         label: 'Automatic deposits',
         type: 'button',
         navigate: SETTINGS_NAVIGATE.deposits,
-        validations: [{type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.AUTO_DEPOSIT_ENABLED}]
+        validations: [{ type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.AUTO_DEPOSIT_ENABLED }],
       },
     ],
   },
@@ -137,8 +142,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         label: 'Change meal plan',
         type: 'button',
         navigate: SETTINGS_NAVIGATE.mealPlan,
-        settingKey: Settings.Setting.AUTO_DEPOSIT_ENABLED,
-        validations: [{type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.AUTO_DEPOSIT_ENABLED}]
+        validations: [{ type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.AUTO_DEPOSIT_ENABLED }],
       },
       {
         id: SETTINGS_ID.mealPurchase,
@@ -146,7 +150,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         label: 'Purchase meal plan',
         type: 'button',
         navigate: SETTINGS_NAVIGATE.mealPurchase,
-        validations: [{type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.MEAL_PURCHASE_PLAN_ENABLED}]
+        validations: [{ type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.MEAL_PURCHASE_PLAN_ENABLED }],
       },
     ],
   },

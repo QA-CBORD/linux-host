@@ -15,8 +15,9 @@ const { Device } = Plugins;
   styleUrls: ['./settings.scss'],
 })
 export class SettingsPage implements OnInit {
-  settingSections$: Observable<SettingsSectionConfig[]>;
+  settingSections: Promise<SettingsSectionConfig[]>;
   appVersion = '';
+
   constructor(
     private router: Router,
     private readonly sessionFacadeService: SessionFacadeService,
@@ -24,7 +25,7 @@ export class SettingsPage implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.settingSections$ = this.settingsFactory.getSettings();
+    this.settingSections = this.settingsFactory.getSettings();
     this.getAppVersion().then(appVersion => (this.appVersion = appVersion));
   }
 

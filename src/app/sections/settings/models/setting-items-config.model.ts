@@ -12,8 +12,10 @@ export interface SettingItemConfig {
   type: string;
   icon: string;
   navigate?: string;
-  checked?: boolean;   
-  validations?: SettingItemValidation[] 
+  checked?: boolean;
+  toggleLabel?: ToggleLabel;
+  validations?: SettingItemValidation[];
+  getToggleStatus?: (service: any) => Promise<boolean>;
 }
 
 export interface SettingItemValidation {
@@ -21,7 +23,12 @@ export interface SettingItemValidation {
   value: Settings.Setting | string;
 }
 
+export interface ToggleLabel {
+  checked: string;
+  unchecked: string;
+}
+
 export enum SETTINGS_VALIDATIONS {
   SettingEnable = 'setting-enable',
-  Biometric = 'biometric'
+  Biometric = 'biometric',
 }
