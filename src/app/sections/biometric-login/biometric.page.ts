@@ -1,9 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { IdentityService } from '@core/service/identity/identity.service';
-import { PATRON_NAVIGATION } from '../../app.global';
-import { take } from 'rxjs/operators';
-import { BUTTON_TYPE } from '@core/utils/buttons.config';
 import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
 
 @Component({
@@ -14,21 +10,18 @@ import { IdentityFacadeService } from '@core/facades/identity/identity.facade.se
 export class BiometricPage implements OnInit {
   biometricConfig: { type: string; name: string } = null;
   constructor(
-    private readonly nav: Router,
     private readonly identityFacadeService: IdentityFacadeService,
     private readonly router: Router
   ) {}
 
   ngOnInit() {
-    this.biometricConfig = this.nav.getCurrentNavigation().extras.state.biometricConfig;
+    this.biometricConfig = this.router.getCurrentNavigation().extras.state.biometricConfig;
   }
 
   actForBiometric(action) {
     if (action === 'turnon') {
       this.openPinModal(true);
-    } else if(action === 'later'){
-      this.openPinModal(false);
-    } else if (action === 'disable'){
+    } else if(action === 'later' || action === 'disable'){
       this.identityFacadeService._biometricsEnabledUserPreference = false;
       this.openPinModal(false);
     }

@@ -138,7 +138,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
     return this.storageStateService
       .getStateEntityByKey$<string>(this.pinEnabledUserPreference)
       .pipe(
-        map(data => (data && data.value ? Boolean(data.value) : true)),
+        map(data => (data  ? Boolean(data.value) : true)),
         take(1)
       )
       .toPromise();
@@ -148,7 +148,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
     return this.storageStateService
       .getStateEntityByKey$<string>(this.biometricsEnabledUserPreference)
       .pipe(
-        map(data => (data && data.value ? Boolean(data.value) : true)),
+        map(data => (data ? Boolean(data.value) : true)),
         take(1)
       )
       .toPromise();
