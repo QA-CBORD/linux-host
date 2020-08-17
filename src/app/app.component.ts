@@ -2,6 +2,7 @@ import { distinctUntilChanged, filter, map } from 'rxjs/operators';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
+import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { Platform, PopoverController } from '@ionic/angular';
 
 import { App, AppState } from '@capacitor/core';
@@ -33,6 +34,7 @@ export class AppComponent implements OnInit {
     private readonly platform: Platform,
     private readonly splashScreen: SplashScreen,
     private readonly statusBar: StatusBar,
+    private readonly screenOrientation: ScreenOrientation,
     private readonly popoverCtrl: PopoverController,
     private readonly sessionFacadeService: SessionFacadeService,
     private readonly router: Router,
@@ -68,14 +70,15 @@ export class AppComponent implements OnInit {
 
   private async initializeApp(): Promise<void> {
     await this.platform.ready();
-    this.statusBar.styleDefault();
     this.splashScreen.hide();
+    this.statusBar.styleDefault();
+    this.statusBar.backgroundColorByHexString('#FFFFFF');
+    this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
 
     App.addListener('appStateChange', ({ isActive }: AppState) => {
       // state.isActive contains the active state
       if (isActive) {
-
-        if(this.sessionFacadeService.navigatedToPlugin){
+        if (this.sessionFacadeService.navigatedToPlugin) {
           this.sessionFacadeService.navigatedToPlugin = false;
           return;
         }
@@ -88,9 +91,7 @@ export class AppComponent implements OnInit {
   }
 
   private initEventListeners() {
-    if (this.platform.is('android')
-      || this.platform.is('ios')
-      || this.platform.is('cordova')) {
+    if (this.platform.is('android') || this.platform.is('ios') || this.platform.is('cordova')) {
       this.initMobileListeners();
     }
   }

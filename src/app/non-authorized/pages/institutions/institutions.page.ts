@@ -7,7 +7,7 @@ import { GUEST_ROUTES } from '../../non-authorized.config';
 import { ROLES, Settings } from 'src/app/app.global';
 import { zip, of } from 'rxjs';
 import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
-import { PopoverController } from '@ionic/angular';
+import { PopoverController, ToastController } from '@ionic/angular';
 import { StGlobalPopoverComponent } from '@shared/ui-components';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -42,23 +42,13 @@ export class InstitutionsPage implements OnInit {
     private readonly sessionFacadeService: SessionFacadeService,
     private readonly popoverCtrl: PopoverController,
     private readonly nav: Router,
-    private readonly cdRef: ChangeDetectorRef
+    private readonly cdRef: ChangeDetectorRef,
+    private readonly toastController: ToastController,
+    private readonly route: Router
   ) {}
 
   async ngOnInit() {
-    this.authFacadeService
-      .getAuthSessionToken$()
-      .pipe(
-        tap(sessionId => (this.sessionId = sessionId)),
-        switchMap(sessionId => this.institutionFacadeService.retrieveLookupList$(sessionId)),
-        take(1)
-      )
-      .subscribe(institutions => {
-        this.institutions = institutions;
-        this.isLoading = false;
-        this.cdRef.markForCheck();
-      });
-
+    this.getInstitutions();
     this.setNativeEnvironment();
   }
 
@@ -68,6 +58,25 @@ export class InstitutionsPage implements OnInit {
 
   onSearchedValue({ target: { value } }: any) {
     this.searchString = value;
+  } 
+
+  async getInstitutions() {
+    this.authFacadeService
+    .getAuthSessionToken$()
+    .pipe(
+      tap(sessionId => (this.sessionId = sessionId)),
+      switchMap(sessionId => this.institutionFacadeService.retrieveLookupList$(sessionId)),
+      take(1)
+    )
+    .subscribe(institutions => {
+      this.institutions = institutions;
+      this.isLoading = false;
+      this.cdRef.markForCheck();
+    }, 
+    () => {
+      this.isLoading = false;
+      this.onErrorRetrieve('Something went wrong, please try again...');
+    });
   }
 
   async selectInstitution(id: string) {
@@ -148,6 +157,29 @@ export class InstitutionsPage implements OnInit {
       .catch(reason => {
       });
   }
+
+  private async onErrorRetrieve(message: string) {
+    const toast = await this.toastController.create({
+      message,
+      position: 'top',
+      buttons: [ 
+        {
+          text: 'Try again',
+          handler: () => {
+            this.getInstitutions();
+          }
+        },
+        {
+          text: 'Done',
+          handler: () => {
+            this.route.navigate([ROLES.guest, GUEST_ROUTES.entry]);
+          }
+        }
+      ]
+    });
+    toast.present();
+  }
+
   async setNativeEnvironment() {
     if (Capacitor.platform === 'ios') {
       await IOSDevice.setEnvironment({ env: this.environmentFacadeService.getEnvironmentObject() });

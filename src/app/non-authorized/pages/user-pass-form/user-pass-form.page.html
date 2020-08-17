@@ -13,20 +13,20 @@
   </ion-toolbar>
 </ion-header>
 <ion-content class="login" scrollY="false">
-  <div class="login__institution" [ngStyle]="{ backgroundColor: nativeHeaderBg$ | async}">
-    <div class="login__institution-logo-wrapper">
-      <img
-        *ngIf="institutionPhoto$ | async"
-        class="login__institution-logo"
-        [src]="institutionPhoto$ | async"
-        alt="institution logo"
-      />
-    </div>
-    <div class="login__institution-name-wrapper">
-      <div *ngIf="institutionName$ | async" class="login__institution-name">
-        {{ institutionName$ | async}}
-      </div>
-    </div>
+  <div
+    class="login__institution"
+    [ngStyle]="{ backgroundColor: nativeHeaderBg$ | async}"
+    *ngIf="{ photo: institutionPhoto$ | async, name: institutionName$ | async } as instutionValues"
+  >
+    <img
+      *ngIf="instutionValues.photo"
+      class="login__institution-logo"
+      [src]="instutionValues.photo"
+      alt="institution logo"
+    />
+    <ion-text *ngIf="instutionValues.name && !instutionValues.photo" class="login__institution-name">
+      {{ instutionValues.name }}
+    </ion-text>
   </div>
   <div class="login__form-wrapper">
     <form class="login__form" [formGroup]="loginForm">
@@ -37,7 +37,7 @@
         [isError]="username.invalid && username.touched"
         type="email"
         idd="username"
-        [stFocusNext]='inputPassword'
+        [stFocusNext]="inputPassword"
         tabindex="0"
       >
       </st-input-floating-label>

@@ -30,9 +30,12 @@
       color: $color-white;
 
       @include font-nunito-regular(20px);
+      @include ellipsis;
+      max-width: 90vw;
 
       &-left {
         margin-left: 10px;
+        max-width: 80vw;
       }
     }
 
