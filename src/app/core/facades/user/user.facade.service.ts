@@ -16,10 +16,9 @@ import {
   Capacitor,
   PushNotificationToken,
   PushNotification,
-  PushNotificationActionPerformed,
 } from '@capacitor/core';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
-const { PushNotifications, LocalNotifications, IOSDevice } = Plugins;
+const { PushNotifications, LocalNotifications } = Plugins;
 
 @Injectable({
   providedIn: 'root',
@@ -55,14 +54,7 @@ export class UserFacadeService extends ServiceStateFacade {
   getUser$(): Observable<UserInfo> {
     return this.userApiService
       .getUser()
-      .pipe(tap(res => this.storageStateService.updateStateEntity(this.userKey, res, {ttl: this.ttl})));
-  }
-
-  getUserPhoto$(): Observable<MessageResponse<UserPhotoInfo>> {
-    return this.getUserData$().pipe(
-      switchMap(({ id }: UserInfo) => this.userApiService.getUserPhoto(id)),
-      take(1)
-    );
+      .pipe(tap(res => this.storageStateService.updateStateEntity(this.userKey, res, { ttl: this.ttl })));
   }
 
   //adds a photo and takes a UsrPhotoInfo object
@@ -77,7 +69,7 @@ export class UserFacadeService extends ServiceStateFacade {
   getUserAddresses$(): Observable<AddressInfo[]> {
     return this.userApiService
       .getUserAddresses()
-      .pipe(tap(res => this.storageStateService.updateStateEntity(this.userAddressKey, res, {ttl: this.ttl})));
+      .pipe(tap(res => this.storageStateService.updateStateEntity(this.userAddressKey, res, { ttl: this.ttl })));
   }
 
   createUserPin(pin: string): Observable<boolean> {
@@ -128,47 +120,30 @@ export class UserFacadeService extends ServiceStateFacade {
   }
 
   getAcceptedPhoto$(): Observable<UserPhotoInfo> {
-    // if (this.userPhoto) return of(this.userPhoto);
-
-    let nativeProviderFunction: Observable<UserPhotoInfo>;
-
-    const userPhotoInfoObservable: Observable<UserPhotoInfo> = this.getPhotoList().pipe(
-      map(({ list }) => this.getPhotoIdByStatus(list)),
-      switchMap(({ id }: UserPhotoInfo) => this.getPhotoById(id)),
-      map(response => (this.userPhoto = response))
-    );
-
-    nativeProviderFunction = userPhotoInfoObservable;
-
-    return nativeProviderFunction.pipe(
-      catchError(e => {
-        return userPhotoInfoObservable;
-      }),
-      switchMap(userPhotoInfo => {
-        if (userPhotoInfo) {
-          return of(userPhotoInfo);
-        } else {
-          return userPhotoInfoObservable;
-        }
-      })
+    if (this.userPhoto) {
+      return of(this.userPhoto);
+    }
+    return this.userApiService.getUserPhoto(null).pipe(
+      map(response => response.response),
+      tap(userPhoto => this.setAcceptedPhoto(userPhoto))
     );
   }
 
   isApplePayEnabled$(): Observable<boolean> {
     return this.nativeProvider.isIos()
       ? this.settingsFacadeService.getSetting(Settings.Setting.APPLE_PAY_ENABLED).pipe(
-        map(({ value }) => Boolean(Number(value))),
-        take(1)
-      )
+          map(({ value }) => Boolean(Number(value))),
+          take(1)
+        )
       : of(false);
   }
 
   isAppleWalletEnabled$(): Observable<boolean> {
     return this.nativeProvider.isIos()
       ? this.settingsFacadeService.getSetting(Settings.Setting.APPLE_WALLET_ENABLED).pipe(
-        map(({ value }) => Boolean(Number(value))),
-        take(1)
-      )
+          map(({ value }) => Boolean(Number(value))),
+          take(1)
+        )
       : of(false);
   }
 
@@ -177,9 +152,10 @@ export class UserFacadeService extends ServiceStateFacade {
   }
 
   updateUserPhotoStatus(photoId: string, status: number, reason: string): Observable<boolean> {
-    return this.userApiService.updateUserPhotoStatus(photoId, status, reason).
-      pipe((map(({ response }) => response)),
-      take(1))
+    return this.userApiService.updateUserPhotoStatus(photoId, status, reason).pipe(
+      map(({ response }) => response),
+      take(1)
+    );
   }
 
   handlePushNotificationRegistration() {
@@ -205,7 +181,7 @@ export class UserFacadeService extends ServiceStateFacade {
                     title: notification.title,
                     body: notification.body,
                     id: Date.now(),
-                    smallIcon: '@drawable/ic_launcher_round'
+                    smallIcon: '@drawable/ic_launcher_round',
                   },
                 ],
               });
@@ -261,7 +237,7 @@ export class UserFacadeService extends ServiceStateFacade {
   }
 
   private setFCMToken(value: string) {
-    this.storageStateService.updateStateEntity(this.fcmTokenKey, value, {ttl: this.ttl});
+    this.storageStateService.updateStateEntity(this.fcmTokenKey, value, { ttl: this.ttl });
   }
 
   getFCMToken$(): Observable<string> {
