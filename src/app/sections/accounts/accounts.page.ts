@@ -42,8 +42,8 @@ export class AccountsPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.globalNav.isNavBarShown$.subscribe(show => {
-      if (!show) {
+    this.globalNav.isNavBarShown$.subscribe(isVisible => {
+      if (!isVisible) {
         this.globalNav.showNavBar();
       }
     });
