@@ -4,47 +4,29 @@
       <ion-title class="title">Settings</ion-title>
     </ion-toolbar>
   </ion-header>
-  <!-- <ion-list class="ion-margin-vertical">
+  <ion-list class="ion-margin-bottom" *ngFor="let section of settingSections | async; let first = first">
     <ion-list-header lines="inset">
-      <ion-label class="settings__section-header">{{sections[0].label}}</ion-label>
+      <ion-label class="settings__section-header">{{section.label}}</ion-label>
     </ion-list-header>
-    <ion-item (click)="navigateToPhotoUpload()">
-      <ion-avatar slot="start" class="patron-img">
-        <img src="../../../assets/icon/empty-photo.svg" alt="Patron Photo" />
-      </ion-avatar>
-      <ion-label class="item__label">
-        <h3>Student Name</h3>
-        <p>Institution Name</p>
-      </ion-label>
-    </ion-item>
+    <ng-container *ngIf="first">
+      <ion-item (click)="navigateToPhotoUpload()">
+        <ion-avatar slot="start" class="patron-img">
+          <img src="../../../assets/icon/empty-photo.svg" alt="Patron Photo" />
+        </ion-avatar>
+        <ion-label class="item__label">
+          <h3>Student Name</h3>
+          <p>Institution Name</p>
+        </ion-label>
+      </ion-item>
+    </ng-container>
     <st-settings-item
-      *ngFor="let setting of sections[0].items; let last = last"
+      *ngFor="let setting of section.items; let last = last"
       [setting]="setting"
       (settingTapped)="settingTap($event)"
       [lines]="last ? 'none' : 'inset'"
     >
     </st-settings-item>
-  </ion-list> -->
-  <ng-container 
-  *ngFor="let section of settingSections$ | async | slice:1"
-  >
-  <ion-list
-  class="ion-margin-bottom"
-  *ngIf='section.visible'
->
-  <ion-list-header lines="inset">
-    <ion-label class="settings__section-header">{{section.label}}</ion-label>
-  </ion-list-header>
-  <st-settings-item
-    *ngFor="let setting of section.items; let last = last"
-    [setting]="setting"
-    (settingTapped)="settingTap($event)"
-    [lines]="last ? 'none' : 'inset'"
-  >
-  </st-settings-item>
-</ion-list>
-  </ng-container>
- 
+  </ion-list>
   <ion-grid class="settings__bottom-options ion-padding-bottom">
     <ion-row>
       <ion-col>
