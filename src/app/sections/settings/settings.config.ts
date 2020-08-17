@@ -55,7 +55,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         icon: 'update-photo',
         label: 'Update photo',
         type: 'button',
-        navigate: SETTINGS_NAVIGATE.personalData,
+        navigate: SETTINGS_NAVIGATE.updatePhoto,
         validations: [{ type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.PHOTO_UPLOAD_ENABLED }],
       },
       {
@@ -105,13 +105,6 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         navigate: SETTINGS_NAVIGATE.pin,
       },
       {
-        id: SETTINGS_ID.devices,
-        icon: 'devices',
-        label: 'Report Device as Lost',
-        type: 'button',
-        navigate: SETTINGS_NAVIGATE.devices,
-      },
-      {
         id: SETTINGS_ID.address,
         icon: 'map-marker',
         label: 'Saved Address',
@@ -142,7 +135,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         label: 'Change meal plan',
         type: 'button',
         navigate: SETTINGS_NAVIGATE.mealPlan,
-        validations: [{ type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.AUTO_DEPOSIT_ENABLED }],
+        validations: [{ type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.MEAL_CHANGE_PLAN_ENABLED }],
       },
       {
         id: SETTINGS_ID.mealPurchase,
@@ -183,13 +176,6 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
   {
     label: 'Feedback & Support',
     items: [
-      {
-        id: SETTINGS_ID.feedback,
-        icon: 'none',
-        label: 'Send app feedback',
-        type: 'button',
-        navigate: SETTINGS_NAVIGATE.feedback,
-      },
       { id: SETTINGS_ID.help, icon: 'help', label: 'Help', type: 'button', navigate: SETTINGS_NAVIGATE.help },
       {
         id: SETTINGS_ID.support,
