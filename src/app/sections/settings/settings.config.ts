@@ -14,6 +14,7 @@ export enum SETTINGS_NAVIGATE {
   pin = 'pin-change',
   devices = 'report-lost',
   address = 'my-address',
+  paymentMethods = 'payment-methods',
   deposits = 'auto-deposits',
   mealPlan = 'meal-plan-change',
   mealPurchase = 'meal-plan-purchase',
@@ -35,6 +36,7 @@ export enum SETTINGS_ID {
   pin = 'pin-change',
   devices = 'report-lost',
   address = 'my-address',
+  paymentMethods = 'payment-methods',
   deposits = 'auto-deposits',
   mealPlan = 'meal-plan-change',
   mealPurchase = 'meal-plan-purchase',
@@ -94,7 +96,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         type: 'toggle',
         validations: [
           { type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.PIN_ENABLED },
-          { type: SETTINGS_VALIDATIONS.Biometric, value: 'faceid' },
+          { type: SETTINGS_VALIDATIONS.Biometric, value: 'face' },
         ],
       },
       {
@@ -116,6 +118,13 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
   {
     label: 'Payment',
     items: [
+      {
+        id: SETTINGS_ID.paymentMethods,
+        icon: 'credit-card',
+        label: 'Payment methods',
+        type: 'button',
+        navigate: SETTINGS_NAVIGATE.paymentMethods,
+      },
       {
         id: SETTINGS_ID.deposits,
         icon: 'calendar',
