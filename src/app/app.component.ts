@@ -75,19 +75,21 @@ export class AppComponent implements OnInit {
     this.statusBar.backgroundColorByHexString('#FFFFFF');
     this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
 
-    App.addListener('appStateChange', ({ isActive }: AppState) => {
-      // state.isActive contains the active state
-      if (isActive) {
-        if (this.sessionFacadeService.navigatedToPlugin) {
-          this.sessionFacadeService.navigatedToPlugin = false;
-          return;
-        }
+    App.addListener('appStateChange', ({ isActive }: AppState) => this.handleAppState(isActive));
+  }
 
-        if (this.sessionFacadeService.isVaultLocked()) {
-          this.router.navigate([ROLES.guest, GUEST_ROUTES.startup], { replaceUrl: true });
-        }
+  private async handleAppState(isActive: boolean){
+    // state.isActive contains the active state
+    if (isActive) {
+      if (this.sessionFacadeService.navigatedToPlugin) {
+        this.sessionFacadeService.navigatedToPlugin = false;
+        return;
       }
-    });
+
+      if (await this.sessionFacadeService.isVaultLocked()) {
+        this.router.navigate([ROLES.guest, GUEST_ROUTES.startup], { replaceUrl: true });
+      }
+    }
   }
 
   private initEventListeners() {
