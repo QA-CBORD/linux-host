@@ -87,7 +87,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         icon: 'key',
         label: 'Change password',
         type: 'button',
-        navigate: SETTINGS_NAVIGATE.password,
+        navigateExternal: { type: 'link', value: 'login.php?password=forgot' },
       },
       {
         id: SETTINGS_ID.faceId,
@@ -143,7 +143,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         icon: 'meal-change',
         label: 'Change meal plan',
         type: 'button',
-        navigate: SETTINGS_NAVIGATE.mealPlan,
+        navigateExternal: { type: 'link', value: 'change_meal_plan.php' },
         validations: [{ type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.MEAL_CHANGE_PLAN_ENABLED }],
       },
       {
@@ -151,7 +151,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         icon: 'meal-purchase',
         label: 'Purchase meal plan',
         type: 'button',
-        navigate: SETTINGS_NAVIGATE.mealPurchase,
+        navigateExternal: { type: 'link', value: 'purchase_meal_plan.php' },
         validations: [{ type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.MEAL_PURCHASE_PLAN_ENABLED }],
       },
     ],
@@ -191,7 +191,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         icon: 'mail',
         label: 'Email Support',
         type: 'button',
-        navigate: SETTINGS_NAVIGATE.support,
+        navigateExternal: { type: 'mail', value: Settings.Setting.SUPPORT_EMAIL },
       },
       {
         id: SETTINGS_ID.terms,

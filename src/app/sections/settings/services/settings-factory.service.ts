@@ -15,7 +15,7 @@ export class SettingsFactoryService {
   };
 
   constructor(
-    private settingsFacade: SettingsFacadeService,
+    private readonly settingsFacade: SettingsFacadeService,
     private readonly identityFacadeService: IdentityFacadeService,
     private readonly userFacadeService: UserFacadeService
   ) {}
