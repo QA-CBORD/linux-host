@@ -96,7 +96,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
     this.identityService.logoutUser();
   }
 
-  get isVaultLocked() {
+  async isVaultLocked() {
     return this.identityService.isVaultLocked();
   }
 

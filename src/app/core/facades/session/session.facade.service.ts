@@ -36,13 +36,13 @@ export class SessionFacadeService {
     });
   }
 
-  private appResumeLogic() {
+  private async appResumeLogic() {
     if (this.navigatedToPlugin) {
       this.navigatedToPlugin = false;
       return;
     }
 
-    if (this.isVaultLocked()) {
+    if (await this.isVaultLocked()) {
       this.router.navigate([ROLES.guest, GUEST_ROUTES.startup], { replaceUrl: true });
     }
   }
@@ -130,7 +130,7 @@ export class SessionFacadeService {
   }
 
   isVaultLocked() {
-    return this.identityFacadeService.isVaultLocked;
+    return this.identityFacadeService.isVaultLocked();
   }
 
   handlePushNotificationRegistration() {
