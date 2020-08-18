@@ -5,13 +5,10 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { Platform, PopoverController } from '@ionic/angular';
 
-import { App, AppState } from '@capacitor/core';
-
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { NavigationEnd, Router } from '@angular/router';
 import { ROLES } from './app.global';
-import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
-import { GUEST_ROUTES } from './non-authorized/non-authorized.config';
+
 import { Plugins } from '@capacitor/core';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { PATRON_ROUTES } from '@sections/section.config';
@@ -74,22 +71,6 @@ export class AppComponent implements OnInit {
     this.statusBar.styleDefault();
     this.statusBar.backgroundColorByHexString('#FFFFFF');
     this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
-
-    App.addListener('appStateChange', ({ isActive }: AppState) => this.handleAppState(isActive));
-  }
-
-  private async handleAppState(isActive: boolean){
-    // state.isActive contains the active state
-    if (isActive) {
-      if (this.sessionFacadeService.navigatedToPlugin) {
-        this.sessionFacadeService.navigatedToPlugin = false;
-        return;
-      }
-
-      if (await this.sessionFacadeService.isVaultLocked()) {
-        this.router.navigate([ROLES.guest, GUEST_ROUTES.startup], { replaceUrl: true });
-      }
-    }
   }
 
   private initEventListeners() {

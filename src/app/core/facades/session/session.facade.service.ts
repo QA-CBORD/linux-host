@@ -12,7 +12,7 @@ import { Institution } from '@core/model/institution';
 import { take } from 'rxjs/operators';
 import { Device } from '@capacitor/core';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
-import { migrateLegacyGlobalConfig } from '@angular/cli/utilities/config';
+import { Platform } from '@ionic/angular';
 
 @Injectable({
   providedIn: 'root',
@@ -22,12 +22,30 @@ export class SessionFacadeService {
   private navigateToNativePlugin: boolean = false;
 
   constructor(
+    private readonly platform: Platform,
     private readonly userFacadeService: UserFacadeService,
     private readonly identityFacadeService: IdentityFacadeService,
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly storageStateService: StorageStateService,
     private readonly router: Router
-  ) {}
+  ) {
+    this.platform.ready().then(() => {
+      this.platform.resume.subscribe(() => {
+        this.appResumeLogic();
+      });
+    });
+  }
+
+  private async appResumeLogic() {
+    if (this.navigatedToPlugin) {
+      this.navigatedToPlugin = false;
+      return;
+    }
+
+    if (await this.isVaultLocked()) {
+      this.router.navigate([ROLES.guest, GUEST_ROUTES.startup], { replaceUrl: true });
+    }
+  }
 
   get navigatedToPlugin() {
     return this.navigateToNativePlugin;
@@ -112,7 +130,7 @@ export class SessionFacadeService {
   }
 
   isVaultLocked() {
-    return this.identityFacadeService.isVaultLocked;
+    return this.identityFacadeService.isVaultLocked();
   }
 
   handlePushNotificationRegistration() {
