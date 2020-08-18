@@ -55,6 +55,7 @@ export namespace Settings {
     SOA_KEY = 'soa.general.key',
     PIN_ENTRY_MAX_FAILURES = 'get.login.pin_max_failed',
     FEEDBACK_EMAIL = 'soa.email.get_feedback_email',
+    SUPPORT_EMAIL = 'soa.email.get_support_email',
     PATRON_DISPLAY_MEDIA_TYPE = 'get.feature.mobile_patron_cashless_display_media_type',
     MY_CARD_ENABLED = 'get.feature.enable_get_my_card',
     MOBILE_ACCESS_ENABLED = 'get.feature.enable_open_my_door',
