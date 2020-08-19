@@ -73,8 +73,8 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
     super.logout();
   }
 
-  isVaultLocked() {
-    return this.isLocked;
+  async isVaultLocked() {
+    return this.isLocked && await this.hasStoredSession();
   }
 
   /// will attempt to use pin and will fall back to passcode if needed
