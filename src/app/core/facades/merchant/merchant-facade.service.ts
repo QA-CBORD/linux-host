@@ -10,7 +10,10 @@ import { MerchantStateService } from '@core/states/merchant/merchant-state.servi
   providedIn: 'root',
 })
 export class MerchantFacadeService extends ServiceStateFacade {
-  constructor(private readonly apiService: MerchantApiService, private readonly stateManager: MerchantStateService) {
+
+  private readonly stateManager: MerchantStateService = new MerchantStateService();
+
+  constructor(private readonly apiService: MerchantApiService) {
     super();
   }
 
