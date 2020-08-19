@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, of, merge } from 'rxjs';
+import { of, merge } from 'rxjs';
 import { SettingsSectionConfig, SettingItemConfig, SETTINGS_VALIDATIONS } from '../models/setting-items-config.model';
 import { SETTINGS_CONFIG, SETTINGS_ID } from '../settings.config';
-import { take, map, tap, reduce } from 'rxjs/operators';
+import { take, map, reduce } from 'rxjs/operators';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Settings } from 'src/app/app.global';
 import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
+import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
+import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 
 @Injectable()
 export class SettingsFactoryService {
@@ -17,6 +19,8 @@ export class SettingsFactoryService {
   constructor(
     private readonly settingsFacade: SettingsFacadeService,
     private readonly identityFacadeService: IdentityFacadeService,
+    private readonly institutionFacadeService: InstitutionFacadeService,
+    private readonly environmentFacadeService: EnvironmentFacadeService,
     private readonly userFacadeService: UserFacadeService
   ) {}
 
@@ -29,9 +33,13 @@ export class SettingsFactoryService {
 
       for (const setting of section.items) {
         promises.push(
-          this.checkDisplayOption(setting).then(
-            enabled => enabled && parsedSetting.items.push(setting) && this.setToggleStatus(setting)
-          )
+          this.checkDisplayOption(setting).then(enabled => {
+            if (enabled) {
+              parsedSetting.items.push(setting);
+              this.setToggleStatus(setting);
+              setting.navigateExternal && this.setExternalURL(setting);
+            }
+          })
         );
       }
 
@@ -79,5 +87,28 @@ export class SettingsFactoryService {
       setting.label = setting.checked ? setting.toggleLabel.checked : setting.toggleLabel.unchecked;
     }
     return true;
+  }
+
+  private async setExternalURL(setting: SettingItemConfig) {
+    let linkPromise: Promise<string>;
+    const resource = setting.navigateExternal;
+    if (resource.type === 'email') {
+      linkPromise = this.settingsFacade
+        .getSetting(resource.value as Settings.Setting)
+        .pipe(
+          map(emailSetting => 'mailto:' + emailSetting.value),
+          take(1)
+        )
+        .toPromise();
+    }
+    if (resource.type === 'link') {
+      linkPromise = this.institutionFacadeService.cachedInstitutionInfo$
+        .pipe(
+          map(inst => `${this.environmentFacadeService.getSitesURL()}/${inst.shortName}/full/${resource.value}`),
+          take(1)
+        )
+        .toPromise();
+    }
+    setting.navigate = await linkPromise;
   }
 }

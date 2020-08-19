@@ -191,7 +191,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         icon: 'mail',
         label: 'Email Support',
         type: 'button',
-        navigateExternal: { type: 'mail', value: Settings.Setting.SUPPORT_EMAIL },
+        navigateExternal: { type: 'email', value: Settings.Setting.SUPPORT_EMAIL },
       },
       {
         id: SETTINGS_ID.terms,

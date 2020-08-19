@@ -30,9 +30,6 @@ export class SettingsPage implements OnInit {
   constructor(
     private router: Router,
     private readonly sessionFacadeService: SessionFacadeService,
-    private readonly institutionFacadeService: InstitutionFacadeService,
-    private readonly environmentFacadeService: EnvironmentFacadeService,
-    private readonly settingsFacade: SettingsFacadeService,
     private readonly settingsFactory: SettingsFactoryService
   ) {}
 
@@ -47,9 +44,11 @@ export class SettingsPage implements OnInit {
   }
 
   settingTap(setting: SettingItemConfig) {
-    setting.navigate && this.router.navigate([PATRON_NAVIGATION.settings, setting.navigate]);
+    !setting.navigateExternal &&
+      setting.navigate &&
+      this.router.navigate([PATRON_NAVIGATION.settings, setting.navigate]);
 
-    setting.navigateExternal && this.openSiteURL(setting.navigateExternal);
+    setting.navigateExternal && setting.navigate && this.openSiteURL(setting.navigate);
   }
   logout() {
     this.sessionFacadeService.logoutUser();
@@ -59,15 +58,7 @@ export class SettingsPage implements OnInit {
     return deviceInfo.appVersion;
   }
 
-  async openSiteURL(resource: SettingItemExternalResource): Promise<void> {
-    let url: string;
-    if (resource.type === 'email') {
-      url = 'mailto:' + this.settingsFacade.getSetting(resource.value as Settings.Setting);
-    }
-    if (resource.type === 'link') {
-      const { shortName } = await this.institutionFacadeService.cachedInstitutionInfo$.pipe(take(1)).toPromise();
-      url = `${this.environmentFacadeService.getSitesURL()}/${shortName}/full/${resource.value}`;
-      window.open(url, '_system');
-    }
+  async openSiteURL(url: string): Promise<void> {
+    window.open(url, '_system');
   }
 }
