@@ -14,6 +14,7 @@ export enum SETTINGS_NAVIGATE {
   pin = 'pin-change',
   devices = 'report-lost',
   address = 'my-address',
+  paymentMethods = 'payment-methods',
   deposits = 'auto-deposits',
   mealPlan = 'meal-plan-change',
   mealPurchase = 'meal-plan-purchase',
@@ -35,6 +36,7 @@ export enum SETTINGS_ID {
   pin = 'pin-change',
   devices = 'report-lost',
   address = 'my-address',
+  paymentMethods = 'payment-methods',
   deposits = 'auto-deposits',
   mealPlan = 'meal-plan-change',
   mealPurchase = 'meal-plan-purchase',
@@ -85,7 +87,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         icon: 'key',
         label: 'Change password',
         type: 'button',
-        navigate: SETTINGS_NAVIGATE.password,
+        navigateExternal: { type: 'link', value: 'login.php?password=forgot' },
       },
       {
         id: SETTINGS_ID.faceId,
@@ -94,7 +96,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         type: 'toggle',
         validations: [
           { type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.PIN_ENABLED },
-          { type: SETTINGS_VALIDATIONS.Biometric, value: 'faceid' },
+          { type: SETTINGS_VALIDATIONS.Biometric, value: 'face' },
         ],
       },
       {
@@ -117,6 +119,13 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
     label: 'Payment',
     items: [
       {
+        id: SETTINGS_ID.paymentMethods,
+        icon: 'credit-card',
+        label: 'Payment methods',
+        type: 'button',
+        navigate: SETTINGS_NAVIGATE.paymentMethods,
+      },
+      {
         id: SETTINGS_ID.deposits,
         icon: 'calendar',
         label: 'Automatic deposits',
@@ -134,7 +143,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         icon: 'meal-change',
         label: 'Change meal plan',
         type: 'button',
-        navigate: SETTINGS_NAVIGATE.mealPlan,
+        navigateExternal: { type: 'link', value: 'change_meal_plan.php' },
         validations: [{ type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.MEAL_CHANGE_PLAN_ENABLED }],
       },
       {
@@ -142,7 +151,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         icon: 'meal-purchase',
         label: 'Purchase meal plan',
         type: 'button',
-        navigate: SETTINGS_NAVIGATE.mealPurchase,
+        navigateExternal: { type: 'link', value: 'purchase_meal_plan.php' },
         validations: [{ type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.MEAL_PURCHASE_PLAN_ENABLED }],
       },
     ],
@@ -182,7 +191,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         icon: 'mail',
         label: 'Email Support',
         type: 'button',
-        navigate: SETTINGS_NAVIGATE.support,
+        navigateExternal: { type: 'email', value: Settings.Setting.SUPPORT_EMAIL },
       },
       {
         id: SETTINGS_ID.terms,

@@ -12,6 +12,7 @@ export interface SettingItemConfig {
   type: string;
   icon: string;
   navigate?: string;
+  navigateExternal?: SettingItemExternalResource;
   checked?: boolean;
   toggleLabel?: ToggleLabel;
   validations?: SettingItemValidation[];
@@ -22,7 +23,10 @@ export interface SettingItemValidation {
   type: SETTINGS_VALIDATIONS | string;
   value: Settings.Setting | string;
 }
-
+export interface SettingItemExternalResource {
+  type: string;
+  value: Settings.Setting | string;
+}
 export interface ToggleLabel {
   checked: string;
   unchecked: string;

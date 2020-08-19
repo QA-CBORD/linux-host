@@ -4,7 +4,7 @@
       <ion-title class="title">Settings</ion-title>
     </ion-toolbar>
   </ion-header>
-  <ion-list class="ion-margin-bottom" *ngFor="let section of settingSections | async; let first = first">
+  <ion-list class="ion-margin-bottom ion-padding-end" *ngFor="let section of settingSections | async; let first = first">
     <ion-list-header lines="inset">
       <ion-label class="settings__section-header">{{section.label}}</ion-label>
     </ion-list-header>
