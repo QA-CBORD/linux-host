@@ -36,14 +36,15 @@
     </div>
     <div class="cdp__label">
       Payment Method:
-      <span class="cdp__value" *ngIf="!popoverConfig.message['billme']; else billme">
-        {{ popoverConfig.message['sourceAcc'].accountTender | creditCardType }} ending in
+      <span class="cdp__value" *ngIf="popoverConfig.message['sourceAcc'].accountTender === 'Apple Pay'"> Apple Pay </span>
+      <span  #creditcard class="cdp__value" *ngIf="!popoverConfig.message['billme'] && popoverConfig.message['sourceAcc'].accountTender !== 'Apple Pay'; else billme">
+        {{ popoverConfig.message['sourceAcc'].accountTender | creditCardType }} ending in 
         {{ popoverConfig.message['sourceAcc'].lastFour }}
       </span>
     </div>
   </section>
 </st-popover-layout>
 
-<ng-template #billme>
+<ng-template #billme *ngIf="data['sourceAcc'].accountTender !== 'Apple Pay'">
   <span class="cdp__value">Bill me</span>
 </ng-template>
