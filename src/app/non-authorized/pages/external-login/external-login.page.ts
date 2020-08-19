@@ -147,7 +147,7 @@ export class ExternalLoginPage implements OnDestroy {
 
     switch (loginState) {
       case LoginState.PIN_SET:
-        await this.identityFacadeService.pinOnlyLoginSetup();
+        await this.identityFacadeService.pinLoginSetup(false);
         break;
       case LoginState.BIOMETRIC_SET:
         const supportedBiometricType = await this.identityFacadeService.getAvailableBiometricHardware();

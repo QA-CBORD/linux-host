@@ -53,7 +53,7 @@ export class StartupPage implements OnInit {
             this.loginUser(false);
             break;
           case LoginState.PIN_SET:
-            this.identityFacadeService.pinOnlyLoginSetup();
+            this.identityFacadeService.pinLoginSetup(false);
             break;
           case LoginState.HOSTED:
             this.router.navigate([ROLES.guest, GUEST_ROUTES.login], routeConfig);
