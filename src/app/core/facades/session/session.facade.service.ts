@@ -13,6 +13,7 @@ import { take } from 'rxjs/operators';
 import { Device } from '@capacitor/core';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { Platform } from '@ionic/angular';
+import { MerchantFacadeService } from '@core/facades/merchant/merchant-facade.service';
 
 @Injectable({
   providedIn: 'root',
@@ -27,6 +28,7 @@ export class SessionFacadeService {
     private readonly identityFacadeService: IdentityFacadeService,
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly storageStateService: StorageStateService,
+    private readonly merchantFacadeService: MerchantFacadeService,
     private readonly router: Router
   ) {
     this.platform.ready().then(() => {
@@ -142,6 +144,8 @@ export class SessionFacadeService {
     this.identityFacadeService.logoutUser();
     this.storageStateService.clearState();
     this.storageStateService.clearStorage();
+    this.merchantFacadeService.clearState();
+
     if (navigateToEntry) {
       this.router.navigate([ROLES.guest, GUEST_ROUTES.entry]);
     }

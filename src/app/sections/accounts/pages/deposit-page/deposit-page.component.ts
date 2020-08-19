@@ -411,7 +411,15 @@ export class DepositPageComponent implements OnInit, OnDestroy {
 
     this.resetControls(['mainSelect', 'mainInput', 'selectedAccount']);
     this.setFormValidators();
+    document.getElementById("depositBtnText").innerHTML = "Deposit";
   }
+
+  onAmountChanged( event ){
+    const { mainInput, mainSelect } = this.depositForm.value;
+    if( mainInput || mainSelect )
+       document.getElementById("depositBtnText").innerHTML = "Deposit $"+ (mainInput || mainSelect)
+    }
+
 
   async confirmationDepositPopover(data: any) {
     const popover = await this.popoverCtrl.create({
@@ -420,7 +428,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
         data,
       },
       animated: false,
-      backdropDismiss: true,
+      backdropDismiss: false,
     });
 
     popover.onDidDismiss().then(({ role }) => {

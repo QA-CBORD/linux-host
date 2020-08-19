@@ -164,13 +164,13 @@ export class InstitutionsPage implements OnInit {
       position: 'top',
       buttons: [ 
         {
-          text: 'Try again',
+          text: 'Retry',
           handler: () => {
             this.getInstitutions();
           }
         },
         {
-          text: 'Done',
+          text: 'Back',
           handler: () => {
             this.route.navigate([ROLES.guest, GUEST_ROUTES.entry]);
           }

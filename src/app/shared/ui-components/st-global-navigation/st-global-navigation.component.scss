@@ -40,6 +40,7 @@
     margin: 0;
     padding: 0;
     height: 100%;
+    box-shadow: 0px 0px 12px $bottom-navigation-box-shadow, 0px 2px 26px $top-navigation-box-shadow;
   }
 
   &__list-item {

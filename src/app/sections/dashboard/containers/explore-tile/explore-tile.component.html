@@ -1,17 +1,25 @@
-<div class="explore" *ngIf="favMerchants$ | async as merchants">
+<div class="explore" *ngIf="(favMerchants$ | async) as merchants">
   <ion-list class="ion-no-margin ion-no-padding">
-    <ion-item *ngFor="let merchant of merchants; let last = last"
-              lines="none"
-              (click)="onMerchantClicked(merchant.id)"
-              class="merchant-card">
+    <ion-item
+      *ngFor="let merchant of merchants; let last = last"
+      lines="none"
+      (click)="onMerchantClicked(merchant.id)"
+      class="merchant-card"
+    >
       <ion-label class="merchant-card__content">
-        <img class="merchant-card__image"
-             [src]="merchant.imageThumbnail
-         ? awsImageUrl + merchant.imageThumbnail
-          : 'assets/images/dashboard_merchant_image_placeholder.svg'"
-             alt="merchant image"/>
-        <st-merchant-main-info [isShowMerchantStatus]="merchant.isAbleToOrder"
-                               [merchant]="merchant"></st-merchant-main-info>
+        <img
+          class="merchant-card__image"
+          [src]="
+            merchant.imageThumbnail
+              ? awsImageUrl + merchant.imageThumbnail
+              : 'assets/images/dashboard_merchant_image_placeholder.svg'
+          "
+          alt="merchant image"
+        />
+        <st-merchant-main-info
+          [isShowMerchantStatus]="merchant.isAbleToOrder"
+          [merchant]="merchant"
+        ></st-merchant-main-info>
       </ion-label>
       <ion-ripple-effect type="bounded"></ion-ripple-effect>
     </ion-item>
@@ -20,8 +28,7 @@
 
 <div class="explore" *ngIf="isLoading">
   <ion-list class="ion-no-margin ion-no-padding">
-    <ion-item *ngFor="let merchant of [0,1]; let last = last"
-              lines="none">
+    <ion-item *ngFor="let merchant of [0, 1]; let last = last" lines="none">
       <ion-label>
         <div class="merchant-skeleton">
           <p>
