@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { Device } from '@capacitor/core';
 import { LoadingService } from '@core/service/loading/loading.service';
 
 @Component({
@@ -15,6 +16,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
 })
 export class EntryPage implements OnInit {
   private changeEnvClicks: number = 0;
+  deviceInfo$: Promise<any>;
 
   constructor(
     private readonly route: Router,
@@ -26,6 +28,7 @@ export class EntryPage implements OnInit {
 
   ngOnInit() {
     this.initialization();
+    this.deviceInfo$ = this.fetchDeviceInfo();
   }
 
   private async initialization(logoutUser: boolean = false) {
@@ -43,6 +46,10 @@ export class EntryPage implements OnInit {
       .pipe(take(1))
       .toPromise();
     this.loadingService.closeSpinner();
+  }
+
+  private async fetchDeviceInfo(): Promise<any> {
+    return Device.getInfo();
   }
 
   redirectTo() {
