@@ -117,8 +117,11 @@ export class IdentityFacadeService extends ServiceStateFacade {
       .toPromise();
   }
 
-  get availableBiometricHardware$(): Observable<string[]> {
-    return this.identityService.getAvailableBiometricHardware();
+  get availableBiometricHardware$(): Promise<string[]> {
+    return this.identityService
+      .getAvailableBiometricHardware()
+      .pipe(take(1))
+      .toPromise();
   }
 
   get cachedPinEnabledUserPreference$(): Promise<boolean> {

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { of, merge } from 'rxjs';
+import { of, merge, pipe } from 'rxjs';
 import { SettingsSectionConfig, SettingItemConfig, SETTINGS_VALIDATIONS } from '../models/setting-items-config.model';
 import { SETTINGS_CONFIG, SETTINGS_ID } from '../settings.config';
 import { take, map, reduce } from 'rxjs/operators';
@@ -63,10 +63,10 @@ export class SettingsFactoryService {
             )
           );
         } else if (validation.type === SETTINGS_VALIDATIONS.Biometric) {
+          // TODO: Implement observable.
           validations$.push(
-            this.identityFacadeService.availableBiometricHardware$.pipe(
-              map((biometrics): boolean => biometrics && biometrics.some(cap => cap === validation.value)),
-              take(1)
+            this.identityFacadeService.availableBiometricHardware$.then(
+              (biometrics): boolean => biometrics && biometrics.some(cap => cap === validation.value)
             )
           );
         }
