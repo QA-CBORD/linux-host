@@ -1,11 +1,10 @@
-import { LoginType } from './../../../app.global';
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { take, switchMap, tap, map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { GUEST_ROUTES } from '../../non-authorized.config';
 import { ROLES, Settings } from 'src/app/app.global';
-import { zip, of } from 'rxjs';
+import { zip } from 'rxjs';
 import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
 import { PopoverController, ToastController } from '@ionic/angular';
 import { StGlobalPopoverComponent } from '@shared/ui-components';
@@ -14,8 +13,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { Device, Plugins, Capacitor } from '@capacitor/core';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
-import { Environment } from '../../../environment';
-import { IdentityFacadeService, LoginState } from '@core/facades/identity/identity.facade.service';
+import { LoginState } from '@core/facades/identity/identity.facade.service';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 const { Keyboard, IOSDevice } = Plugins;
@@ -109,6 +107,7 @@ export class InstitutionsPage implements OnInit {
             const { title, message, arrOfBtns } = data['startupInfoConfig'];
             this.initModal(title, message, arrOfBtns, this.redirectToTheStore.bind(this));
           }
+          this.loadingService.closeSpinner();
           switch (data['loginState']) {
             case LoginState.HOSTED:
               this.nav.navigate([ROLES.guest, GUEST_ROUTES.login]);
@@ -121,7 +120,6 @@ export class InstitutionsPage implements OnInit {
         take(1)
       )
       .toPromise();
-    await this.loadingService.closeSpinner();
   }
 
   private async initModal(title, message, buttons, onSuccessCb): Promise<void> {

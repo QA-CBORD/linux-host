@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { LoadingService } from '@core/service/loading/loading.service';
 
 @Component({
   selector: 'st-entry',
@@ -19,7 +20,8 @@ export class EntryPage implements OnInit {
     private readonly route: Router,
     private readonly authFacadeService: AuthFacadeService,
     private readonly sessionFacadeService: SessionFacadeService,
-    private readonly environmentFacadeService: EnvironmentFacadeService
+    private readonly environmentFacadeService: EnvironmentFacadeService,
+    private readonly loadingService: LoadingService,
   ) {}
 
   ngOnInit() {
@@ -27,6 +29,7 @@ export class EntryPage implements OnInit {
   }
 
   private async initialization(logoutUser: boolean = false) {
+    await this.loadingService.showSpinner();
     try {
       logoutUser = this.route.getCurrentNavigation().extras.state.logoutUser;
     } catch (e) {}
@@ -35,10 +38,11 @@ export class EntryPage implements OnInit {
       await this.sessionFacadeService.logoutUser(false);
     }
 
-    this.authFacadeService
+    await this.authFacadeService
       .authenticateSystem$()
       .pipe(take(1))
       .toPromise();
+    this.loadingService.closeSpinner();
   }
 
   redirectTo() {

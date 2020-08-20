@@ -1,6 +1,6 @@
 import { Resolve } from '@angular/router';
 import { Injectable } from '@angular/core';
-import { Observable, zip } from 'rxjs';
+import { from, Observable, zip } from 'rxjs';
 import { finalize, first } from 'rxjs/operators';
 
 import { AccountsService } from '@sections/accounts/services/accounts.service';
@@ -20,13 +20,12 @@ import { SettingsFacadeService } from '@core/facades/settings/settings-facade.se
 export class DashboardPageResolver implements Resolve<Observable<SettingInfoList>> {
   constructor(
     private readonly accountsService: AccountsService,
-    private readonly loadingService: LoadingService,
     private readonly tileConfigFacadeService: TileConfigFacadeService,
     private readonly contentStringsFacadeService: ContentStringsFacadeService,
     private readonly institutionService: InstitutionFacadeService,
     private readonly settingsFacadeService: SettingsFacadeService,
-  ) {
-  }
+    private readonly loadingService: LoadingService
+  ) {}
 
   resolve(): Observable<any> {
     this.loadingService.showSpinner();
@@ -40,10 +39,8 @@ export class DashboardPageResolver implements Resolve<Observable<SettingInfoList
       call,
       this.tileConfigFacadeService.updateTilesConfigBySystemSettings().pipe(first()),
       accountContentStrings,
-      ...strings,
-    ).pipe(
-      finalize(() => this.loadingService.closeSpinner()),
-    );
+      ...strings
+    ).pipe(finalize(() => this.loadingService.closeSpinner()));
   }
 
   private loadContentStrings(): Observable<ContentStringInfo>[] {
@@ -51,19 +48,23 @@ export class DashboardPageResolver implements Resolve<Observable<SettingInfoList
       this.contentStringsFacadeService.fetchContentString$(
         CONTENT_STINGS_DOMAINS.patronUi,
         CONTENT_STINGS_CATEGORIES.mealDonation,
-        MEAL_CONTENT_STRINGS.dashboardTitle),
+        MEAL_CONTENT_STRINGS.dashboardTitle
+      ),
       this.contentStringsFacadeService.fetchContentString$(
         CONTENT_STINGS_DOMAINS.patronUi,
         CONTENT_STINGS_CATEGORIES.mealDonation,
-        MEAL_CONTENT_STRINGS.buttonDonateAMeal),
+        MEAL_CONTENT_STRINGS.buttonDonateAMeal
+      ),
       this.contentStringsFacadeService.fetchContentString$(
         CONTENT_STINGS_DOMAINS.patronUi,
         CONTENT_STINGS_CATEGORIES.ordering,
-        ORDERING_CONTENT_STRINGS.labelDashboard),
+        ORDERING_CONTENT_STRINGS.labelDashboard
+      ),
       this.contentStringsFacadeService.fetchContentString$(
         CONTENT_STINGS_DOMAINS.patronUi,
         CONTENT_STINGS_CATEGORIES.ordering,
-        ORDERING_CONTENT_STRINGS.buttonDashboardStartOrder),
+        ORDERING_CONTENT_STRINGS.buttonDashboardStartOrder
+      ),
     ];
   }
 }

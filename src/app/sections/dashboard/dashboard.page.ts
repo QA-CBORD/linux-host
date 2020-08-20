@@ -11,12 +11,6 @@ import { ContentStringsFacadeService } from '@core/facades/content-strings/conte
 import { CONTENT_STINGS_CATEGORIES, CONTENT_STINGS_DOMAINS } from '../../content-strings';
 import { AccessCardComponent } from './containers/access-card/access-card.component';
 import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
-import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
-import { Router } from '@angular/router';
-import { ROLES } from 'src/app/app.global';
-import { GUEST_ROUTES } from 'src/app/non-authorized/non-authorized.config';
-import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
-import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 
 @Component({

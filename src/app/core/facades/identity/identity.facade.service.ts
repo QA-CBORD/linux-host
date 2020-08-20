@@ -54,14 +54,11 @@ export class IdentityFacadeService extends ServiceStateFacade {
           message: 'There was an issue setting your pin',
         };
       case PinCloseStatus.SET_SUCCESS:
-        await this.loader.showSpinner();
-        await this.identityService
+        this.identityService
           .initAndUnlock({ username: undefined, token: undefined, pin: data }, biometricEnabled, navigateToDashboard)
           .pipe(take(1))
           .toPromise();
-        return Promise.resolve().finally(() => {
-          this.loader.closeSpinner();
-        });
+        return Promise.resolve();
     }
   }
 
