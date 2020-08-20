@@ -72,8 +72,8 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     private readonly cdRef: ChangeDetectorRef,
     private readonly userFacadeService: UserFacadeService,
     private externalPaymentService: ExternalPaymentService,
-    private readonly globalNav: GlobalNavService ) {
-  }
+    private readonly globalNav: GlobalNavService
+  ) {}
 
   ngOnInit() {
     this.depositService.settings$.pipe(take(1)).subscribe(depositSettings => (this.depositSettings = depositSettings));
@@ -250,7 +250,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     amount = amount.toString().replace(COMMA_REGEXP, '');
     if (isApplePay) {
       this.externalPaymentService
-        .payWithApplePay(ApplePay.DEPOSITS_WITH_APPLE_PAY, {  
+        .payWithApplePay(ApplePay.DEPOSITS_WITH_APPLE_PAY, {
           accountId: selectedAccount.id,
           depositAmount: amount,
         })
@@ -411,15 +411,13 @@ export class DepositPageComponent implements OnInit, OnDestroy {
 
     this.resetControls(['mainSelect', 'mainInput', 'selectedAccount']);
     this.setFormValidators();
-    document.getElementById("depositBtnText").innerHTML = "Deposit";
+    document.getElementById('depositBtnText').innerHTML = 'Deposit';
   }
 
-  onAmountChanged( event ){
-    const { mainInput, mainSelect } = this.depositForm.value;
-    if( mainInput || mainSelect )
-       document.getElementById("depositBtnText").innerHTML = "Deposit $"+ (mainInput || mainSelect)
-    }
-
+  onAmountChanged(event) {
+    const amount: string = event.target.value;
+    document.getElementById('depositBtnText').innerHTML = amount && amount.length ? 'Deposit $' + amount : 'Deposit';
+  }
 
   async confirmationDepositPopover(data: any) {
     const popover = await this.popoverCtrl.create({
