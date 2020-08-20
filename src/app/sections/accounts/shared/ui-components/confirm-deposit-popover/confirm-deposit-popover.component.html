@@ -45,6 +45,6 @@
   </section>
 </st-popover-layout>
 
-<ng-template #billme *ngIf="data['sourceAcc'].accountTender !== 'Apple Pay'">
-  <span class="cdp__value">Bill me</span>
+<ng-template #billme>
+  <span class="cdp__value" *ngIf="data['billme']"> Bill me </span>
 </ng-template>

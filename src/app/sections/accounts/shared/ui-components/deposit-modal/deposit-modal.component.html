@@ -26,7 +26,7 @@
       Payment Method:
       <span class="deposit-modal__value" *ngIf="data['sourceAcc'].accountTender === 'Apple Pay'"> Apple Pay </span>
       <span class="deposit-modal__value" *ngIf="!data['billme'] && data['sourceAcc'].accountTender !== 'Apple Pay'; else billme">
-        {{ data['sourceAcc'].accountTender | creditCardType }} ending in 
+        {{ data['sourceAcc'].accountTender | creditCardType }} ending in  
         {{ data['sourceAcc'].lastFour }}
       </span>
     </div>
@@ -36,6 +36,6 @@
   <st-button (onClick)="onClickedDone()">DONE</st-button>
 </ion-footer>
 
-<ng-template #billme *ngIf="data['sourceAcc'].accountTender !== 'Apple Pay'">
-  <span class="cdp__value">Bill me</span>
+<ng-template #billme >
+  <span class="cdp__value" *ngIf="data['billme']"> Bill me </span>
 </ng-template>
