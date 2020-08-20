@@ -24,11 +24,13 @@
     </div>
     <div class="deposit-modal__label">
       Payment Method:
-      <span class="deposit-modal__value" *ngIf="data['sourceAcc'].accountTender === 'Apple Pay'"> Apple Pay </span>
-      <span class="deposit-modal__value" *ngIf="!data['billme'] && data['sourceAcc'].accountTender !== 'Apple Pay'; else billme">
-        {{ data['sourceAcc'].accountTender | creditCardType }} ending in  
-        {{ data['sourceAcc'].lastFour }}
-      </span>
+      <span class="deposit-modal__value" *ngIf="data['sourceAcc'].accountTender === 'Apple Pay'; else creditcard"> Apple Pay </span>
+      <ng-template #creditcard >
+        <span class="deposit-modal__value" *ngIf="!data['billme']; else billme">
+          {{ data['sourceAcc'].accountTender | creditCardType }} ending in  
+          {{ data['sourceAcc'].lastFour }}
+        </span>
+      </ng-template>
     </div>
   </section>
 </ion-content>
