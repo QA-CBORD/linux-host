@@ -1,0 +1,6 @@
+<ion-content class="ion-padding">
+  <p [innerHTML]="htmlContent"></p>
+  <st-button *ngFor="let button of buttons" buttonModifier="rectangle" (click)="button.callback()">
+    {{ button.label }}
+  </st-button>
+</ion-content>

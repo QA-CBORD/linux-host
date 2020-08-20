@@ -6,21 +6,18 @@ import { SettingsPage } from './settings.page';
 import { PhotoUploadModule } from '@sections/settings/pages/photo-upload/photo-upload.module';
 import { SettingsItemComponent } from './components/settings-item/settings-item.component';
 import { SettingsFactoryService } from './services/settings-factory.service';
+import { HTMLRendererModule } from '@shared/ui-components/html-renderer/html-renderer.module';
 
-
-const imports = [CommonModule, IonicModule, SettingsRoutingModule, PhotoUploadModule];
-const declarations = [SettingsPage, SettingsItemComponent ];
+const imports = [CommonModule, IonicModule, SettingsRoutingModule, PhotoUploadModule, HTMLRendererModule];
+const declarations = [SettingsPage, SettingsItemComponent];
 const entryComponents = [];
 const providers = [SettingsFactoryService];
 @NgModule({
   declarations,
   imports,
   providers,
-  entryComponents
-
+  entryComponents,
 })
 export class SettingsModule {
-  constructor() {
-  }
+  constructor() {}
 }
-

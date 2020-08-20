@@ -1,21 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { LOCAL_ROUTING, SETTINGS_CONFIG, SETTINGS_ID } from '@sections/settings/settings.config';
+import { LOCAL_ROUTING } from '@sections/settings/settings.config';
 import { PATRON_NAVIGATION } from '../../app.global';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
-import {
-  SettingItemConfig,
-  SettingsSectionConfig,
-  SettingItemExternalResource,
-} from './models/setting-items-config.model';
+import { SettingItemConfig, SettingsSectionConfig, ModalContent } from './models/setting-items-config.model';
 import { Plugins } from '@capacitor/core';
 import { SettingsFactoryService } from './services/settings-factory.service';
-import { Observable } from 'rxjs';
-import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
-import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
-import { take } from 'rxjs/operators';
-import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
-import { Settings } from 'src/app/app.global';
+import { ModalController } from '@ionic/angular';
+import { map, take } from 'rxjs/operators';
+import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 const { Device } = Plugins;
 
 @Component({
@@ -30,6 +23,8 @@ export class SettingsPage implements OnInit {
   constructor(
     private router: Router,
     private readonly sessionFacadeService: SessionFacadeService,
+    private readonly modalController: ModalController,
+    private readonly contentStringFacadeService: ContentStringsFacadeService,
     private readonly settingsFactory: SettingsFactoryService
   ) {}
 
@@ -49,6 +44,8 @@ export class SettingsPage implements OnInit {
       this.router.navigate([PATRON_NAVIGATION.settings, setting.navigate]);
 
     setting.navigateExternal && setting.navigate && this.openSiteURL(setting.navigate);
+
+    setting.modalContent && this.openModal(setting.modalContent);
   }
   logout() {
     this.sessionFacadeService.logoutUser();
@@ -60,5 +57,24 @@ export class SettingsPage implements OnInit {
 
   async openSiteURL(url: string): Promise<void> {
     window.open(url, '_system');
+  }
+
+  async openModal(modalContent: ModalContent) {
+    const { domain, category, name } = modalContent;
+    const string = await this.contentStringFacadeService
+      .fetchContentString$(domain, category, name)
+      .pipe(
+        map(st => st.value),
+        take(1)
+      )
+      .toPromise();
+    const buttons = [{ label: 'Close', callback: () => this.modalController.dismiss() }];
+    const componentProps = { htmlContent: string, buttons };
+    const pinModal = await this.modalController.create({
+      backdropDismiss: false,
+      component: modalContent.component,
+      componentProps,
+    });
+    await pinModal.present();
   }
 }
