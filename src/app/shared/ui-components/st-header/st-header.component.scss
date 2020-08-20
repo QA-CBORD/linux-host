@@ -52,7 +52,11 @@
     }
     @include font-nunito-regular(16px);
   }
-
+  &__dissmiss-btn {
+    --margin-start: 10px;
+    --icon-padding-end: 5px;
+    @include font-nunito-regular(20px);
+  }
   &__title {
     width: 100%;
     font-weight: bold;

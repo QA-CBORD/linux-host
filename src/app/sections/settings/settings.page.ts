@@ -9,6 +9,7 @@ import { SettingsFactoryService } from './services/settings-factory.service';
 import { ModalController } from '@ionic/angular';
 import { map, take } from 'rxjs/operators';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
+import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 const { Device } = Plugins;
 
 @Component({
@@ -25,7 +26,8 @@ export class SettingsPage implements OnInit {
     private readonly sessionFacadeService: SessionFacadeService,
     private readonly modalController: ModalController,
     private readonly contentStringFacadeService: ContentStringsFacadeService,
-    private readonly settingsFactory: SettingsFactoryService
+    private readonly settingsFactory: SettingsFactoryService,
+    private readonly globalNav: GlobalNavService
   ) {}
 
   ngOnInit() {
@@ -68,13 +70,22 @@ export class SettingsPage implements OnInit {
         take(1)
       )
       .toPromise();
-    const buttons = [{ label: 'Close', callback: () => this.modalController.dismiss() }];
+    const buttons = [
+      {
+        label: 'Close',
+        callback: () => {
+          this.globalNav.showNavBar();
+          this.modalController.dismiss();
+        },
+      },
+    ];
     const componentProps = { htmlContent: string, buttons };
-    const pinModal = await this.modalController.create({
+    const settingModal = await this.modalController.create({
       backdropDismiss: false,
       component: modalContent.component,
       componentProps,
     });
-    await pinModal.present();
+    this.globalNav.hideNavBar();
+    await settingModal.present();
   }
 }

@@ -1,0 +1,14 @@
+@import 'tools';
+
+.container,
+ion-footer {
+  --background: #{$color-background-divider};
+  background-color: #{$color-background-divider};
+}
+
+.form {
+  background: #ffffff;
+  &__control {
+    margin-bottom: 10px;
+  }
+}
