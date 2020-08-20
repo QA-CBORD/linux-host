@@ -127,7 +127,7 @@ export class UserPassForm implements OnInit {
     switch (loginState) {
       case LoginState.PIN_SET:
         try {
-          await this.identityFacadeService.pinOnlyLoginSetup();
+          await this.identityFacadeService.pinLoginSetup(false);
         } catch (e) {
           this.presentToast('Login failed, invalid user name and/or password');
         }

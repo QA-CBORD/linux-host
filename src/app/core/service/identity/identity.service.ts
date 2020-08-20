@@ -74,30 +74,19 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
   }
 
   async isVaultLocked() {
-    return this.isLocked && await this.hasStoredSession();
+    return this.isLocked && (await this.hasStoredSession());
   }
 
-  /// will attempt to use pin and will fall back to passcode if needed
+  /// will attempt to use pin and/or biometric - will fall back to passcode if needed
   /// will require pin set
-  initAndUnlockPasscodeOnly(session: VaultSessionData): Observable<void> {
+  initAndUnlock(session: VaultSessionData, biometricEnabled: boolean, navigateToDashboard: boolean = true): Observable<void> {
     this.temporaryPin = session.pin;
     return from(
-      super.login(session, AuthMode.PasscodeOnly).then(res => {
+      super.login(session, biometricEnabled ? AuthMode.BiometricAndPasscode : AuthMode.PasscodeOnly).then(res => {
         this.isLocked = false;
-        this.navigateToDashboard();
-        return res;
-      })
-    );
-  }
-
-  /// will attempt to use biometric and will fall back to passcode if needed
-  /// will require pin set
-  initAndUnlockBiometricAndPasscode(session: VaultSessionData): Observable<void> {
-    this.temporaryPin = session.pin;
-    return from(
-      super.login(session, AuthMode.BiometricAndPasscode).then(res => {
-        this.isLocked = false;
-        this.navigateToDashboard();
+        if(navigateToDashboard) {
+          this.navigateToDashboard();
+        }
         return res;
       })
     );
@@ -191,8 +180,7 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
     await this.loadingService.showSpinner();
     this.getVaultData()
       .pipe(
-        switchMap(({ pin }) => this.authFacadeService.authenticatePin$(pin)
-        ),
+        switchMap(({ pin }) => this.authFacadeService.authenticatePin$(pin)),
         take(1),
         finalize(() => this.loadingService.closeSpinner())
       )
