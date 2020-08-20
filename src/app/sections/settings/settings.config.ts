@@ -1,6 +1,8 @@
 import { SettingsSectionConfig, SETTINGS_VALIDATIONS } from './models/setting-items-config.model';
 import { Settings } from 'src/app/app.global';
 import { getCardStatus } from './helpers/setting-item.helper';
+import { CONTENT_STINGS_DOMAINS, CONTENT_STINGS_CATEGORIES } from 'src/app/content-strings';
+import { HTMLRendererComponent } from '@shared/ui-components/html-renderer/html-renderer.component';
 
 export enum LOCAL_ROUTING {
   photoUpload = 'photo-upload',
@@ -198,7 +200,12 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         icon: 'none',
         label: 'Terms of Use & Privacy Policy',
         type: 'button',
-        navigate: SETTINGS_NAVIGATE.terms,
+        modalContent: {
+          domain: CONTENT_STINGS_DOMAINS.get_web_gui,
+          category: CONTENT_STINGS_CATEGORIES.termsScreen,
+          name: 'terms',
+          component: HTMLRendererComponent,
+        },
       },
     ],
   },

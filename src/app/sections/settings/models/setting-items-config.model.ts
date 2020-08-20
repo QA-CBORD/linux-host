@@ -1,4 +1,5 @@
 import { Settings } from 'src/app/app.global';
+import { CONTENT_STINGS_DOMAINS, CONTENT_STINGS_CATEGORIES } from 'src/app/content-strings';
 
 export interface SettingsSectionConfig {
   label: string;
@@ -16,6 +17,7 @@ export interface SettingItemConfig {
   checked?: boolean;
   toggleLabel?: ToggleLabel;
   validations?: SettingItemValidation[];
+  modalContent?: ModalContent;
   getToggleStatus?: (service: any) => Promise<boolean>;
 }
 
@@ -31,7 +33,12 @@ export interface ToggleLabel {
   checked: string;
   unchecked: string;
 }
-
+export interface ModalContent {
+  domain: CONTENT_STINGS_DOMAINS;
+  category: CONTENT_STINGS_CATEGORIES;
+  name: string;
+  component: any;
+}
 export enum SETTINGS_VALIDATIONS {
   SettingEnable = 'setting-enable',
   Biometric = 'biometric',
