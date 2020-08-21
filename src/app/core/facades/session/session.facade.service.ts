@@ -10,14 +10,14 @@ import { ROLES } from '../../../app.global';
 import { GUEST_ROUTES } from '../../../non-authorized/non-authorized.config';
 import { Institution } from '@core/model/institution';
 import { switchMap, take } from 'rxjs/operators';
-import { App, AppState, Device } from '@capacitor/core';
+import { AppState, Plugins } from '@capacitor/core';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { Platform } from '@ionic/angular';
 import { MerchantFacadeService } from '@core/facades/merchant/merchant-facade.service';
 import { from } from 'rxjs';
 import { PATRON_ROUTES } from '@sections/section.config';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
-import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
+const { App, Device } = Plugins;
 
 enum AppStatus {
   BACKGROUND,

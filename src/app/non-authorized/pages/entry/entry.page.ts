@@ -1,4 +1,4 @@
-import { take } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { ROLES } from './../../../app.global';
 import { GUEST_ROUTES } from './../../non-authorized.config';
 import { Component, OnInit } from '@angular/core';
@@ -6,8 +6,10 @@ import { Router } from '@angular/router';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
-import { Device } from '@capacitor/core';
+import { Plugins } from '@capacitor/core';
+const { Device } = Plugins;
 import { LoadingService } from '@core/service/loading/loading.service';
+import { from, Observable } from 'rxjs';
 
 @Component({
   selector: 'st-entry',
@@ -16,19 +18,19 @@ import { LoadingService } from '@core/service/loading/loading.service';
 })
 export class EntryPage implements OnInit {
   private changeEnvClicks: number = 0;
-  deviceInfo$: Promise<any>;
+  appVersion$: Observable<string>;
 
   constructor(
     private readonly route: Router,
     private readonly authFacadeService: AuthFacadeService,
     private readonly sessionFacadeService: SessionFacadeService,
     private readonly environmentFacadeService: EnvironmentFacadeService,
-    private readonly loadingService: LoadingService,
+    private readonly loadingService: LoadingService
   ) {}
 
   ngOnInit() {
     this.initialization();
-    this.deviceInfo$ = this.fetchDeviceInfo();
+    this.appVersion$ = this.fetchDeviceInfo();
   }
 
   private async initialization(logoutUser: boolean = false) {
@@ -48,8 +50,11 @@ export class EntryPage implements OnInit {
     this.loadingService.closeSpinner();
   }
 
-  private async fetchDeviceInfo(): Promise<any> {
-    return Device.getInfo();
+  private fetchDeviceInfo(): Observable<string> {
+    return from(Device.getInfo()).pipe(
+      map(({ appVersion }) => appVersion),
+      take(1)
+    );
   }
 
   redirectTo() {

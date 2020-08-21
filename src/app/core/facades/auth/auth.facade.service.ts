@@ -5,8 +5,8 @@ import { AuthApiService } from '@core/service/auth-api/auth-api.service';
 import { UserLogin } from '@core/model/user';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { Observable, of, iif, from } from 'rxjs';
-import { StorageEntity } from '@core/classes/extendable-state-manager';
-import { Device } from '@capacitor/core';
+import { Plugins } from '@capacitor/core';
+const { Device } = Plugins;
 
 @Injectable({
   providedIn: 'root',
