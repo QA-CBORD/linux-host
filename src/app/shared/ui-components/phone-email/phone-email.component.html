@@ -41,10 +41,10 @@
 <ion-footer class="ion-padding footer">
   <st-button
     buttonModifier="rectangle"
-    [isDisabled]="!phoneEmailForm?.valid"
+    [isDisabled]="!phoneEmailForm?.valid || isLoading"
     (click)="saveChanges()"
     tabindex="3"
   >
-    Save changes
+    {{ isLoading ? 'Saving...' : 'Save changes' }}
   </st-button>
 </ion-footer>

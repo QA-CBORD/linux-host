@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
-import { ModalController } from '@ionic/angular';
+import { ModalController, ToastController } from '@ionic/angular';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { take } from 'rxjs/operators';
 import { UserInfoSet } from '@sections/settings/models/setting-items-config.model';
@@ -15,11 +15,13 @@ import { UserNotificationInfo } from '@core/model/user';
 export class PhoneEmailComponent implements OnInit {
   phoneEmailForm: FormGroup;
   user: UserInfoSet;
+  isLoading: boolean;
 
   constructor(
     private readonly fb: FormBuilder,
     private readonly userFacadeService: UserFacadeService,
     private readonly modalController: ModalController,
+    private readonly toastController: ToastController,
     private readonly cdRef: ChangeDetectorRef
   ) {}
   ngOnInit() {
@@ -27,7 +29,18 @@ export class PhoneEmailComponent implements OnInit {
   }
 
   async saveChanges() {
-    await this.userFacadeService.saveUser$(this.updatedUserModel).toPromise();
+    this.isLoading = true;
+    this.userFacadeService.saveUser$(this.updatedUserModel).subscribe(
+      () => {
+        this.isLoading = false;
+        this.presentToast();
+      },
+      () => {
+        this.isLoading = false;
+        this.onErrorRetrieve('Something went wrong, please try again...');
+      },
+      () => this.cdRef.detectChanges()
+    );
   }
 
   close() {
@@ -98,6 +111,38 @@ export class PhoneEmailComponent implements OnInit {
   private createNotification(type: number, value: string): UserNotificationInfo {
     const notif: UserNotificationInfo = { type, value, status: DEFAULT_NOTIFICATION_STATUS, provider: null };
     return notif;
+  }
+  private async onErrorRetrieve(message: string) {
+    const toast = await this.toastController.create({
+      message,
+      position: 'top',
+      buttons: [
+        {
+          text: 'Retry',
+          handler: () => {
+            this.saveChanges();
+          },
+        },
+        {
+          text: 'Dismiss',
+          handler: () => {
+            toast.dismiss();
+          },
+        },
+      ],
+    });
+    toast.present();
+  }
+  private async presentToast(): Promise<void> {
+    const message = `Updated successfully.`;
+    const toast = await this.toastController.create({
+      message,
+      duration: 3000,
+      position: 'bottom',
+      closeButtonText: 'Dismiss',
+      showCloseButton: true,
+    });
+    await toast.present();
   }
 }
 

@@ -129,7 +129,6 @@ export class UserApiService {
 
   updateUserInfo$(user: UserInfo): Observable<string> {
     const params = { user, forceOverwrite: true };
-    debugger;
     const queryConfig = new RPCQueryConfig('update', params, true, false);
     return this.http.post<any>(this.serviceUrl, queryConfig);
   }
