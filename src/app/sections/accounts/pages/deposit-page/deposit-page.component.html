@@ -115,7 +115,7 @@
             }"
                        (ionFocus)="focusLine = true"
                        (ionBlur)="focusLine = false; onAmountChanged($event)"
-                       (keyup)="onAmountChanged($event)"
+                       (ionInput)="onAmountChanged($event)"
                        (keydown)="formatInput($event)"
                        formControlName="mainInput"></ion-input>
             <div *ngIf="mainFormInput.errors && mainFormInput.errors['maxLength']"

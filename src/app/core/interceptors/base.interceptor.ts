@@ -8,10 +8,6 @@ import { async } from 'rxjs/internal/scheduler/async';
 import { RPCQueryConfig } from '@core/interceptors/query-config.model';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
-import { Router } from '@angular/router';
-import { ROLES } from '../../app.global';
-import { GUEST_ROUTES } from '../../non-authorized/non-authorized.config';
-import { LoadingService } from '@core/service/loading/loading.service';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 
 @Injectable()
@@ -22,8 +18,6 @@ export class BaseInterceptor implements HttpInterceptor {
     private readonly authFacadeService: AuthFacadeService,
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly environmentFacadeService: EnvironmentFacadeService,
-    private readonly router: Router,
-    private readonly loading: LoadingService
   ) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -74,9 +68,8 @@ export class BaseInterceptor implements HttpInterceptor {
     let { params } = req.body;
     return this.getRequiredData(req).pipe(
       switchMap(([institutionId, sessionId]) => {
-        if ((useInstitutionId && institutionId === null) || (useSessionId && sessionId === null)) {
+         if ((useInstitutionId && institutionId === null) || (useSessionId && sessionId === null)) {
           this.redirectToLogin();
-          this.loading.closeSpinner();
         } else {
           if (useInstitutionId) params = { ...params, institutionId };
           if (useSessionId) params = { ...params, sessionId };
@@ -88,7 +81,8 @@ export class BaseInterceptor implements HttpInterceptor {
   }
 
   private redirectToLogin() {
-    this.router.navigate([ROLES.guest, GUEST_ROUTES.entry], { state: { logoutUser: true } });
+    /// the sessionId and institutionId timeouts have been removed, this is unused
+    /// we need to fix this later if we want dynamic session timout state management on frontend
   }
 
   private getRequiredData({ body: { params } }: HttpRequest<any>): Observable<[string, string]> {

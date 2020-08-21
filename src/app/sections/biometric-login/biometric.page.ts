@@ -9,10 +9,7 @@ import { IdentityFacadeService } from '@core/facades/identity/identity.facade.se
 })
 export class BiometricPage implements OnInit {
   biometricConfig: { type: string; name: string } = null;
-  constructor(
-    private readonly identityFacadeService: IdentityFacadeService,
-    private readonly router: Router
-  ) {}
+  constructor(private readonly identityFacadeService: IdentityFacadeService, private readonly router: Router) {}
 
   ngOnInit() {
     this.biometricConfig = this.router.getCurrentNavigation().extras.state.biometricConfig;
@@ -21,7 +18,7 @@ export class BiometricPage implements OnInit {
   actForBiometric(action) {
     if (action === 'turnon') {
       this.openPinModal(true);
-    } else if(action === 'later' || action === 'disable'){
+    } else if (action === 'later' || action === 'disable') {
       this.identityFacadeService._biometricsEnabledUserPreference = false;
       this.openPinModal(false);
     }
@@ -29,12 +26,7 @@ export class BiometricPage implements OnInit {
 
   private async openPinModal(isBiometric: boolean): Promise<void> {
     try {
-      if (isBiometric) {
-        await this.identityFacadeService.biometricLoginSetup();
-      } else {
-        await this.identityFacadeService.pinOnlyLoginSetup();
-      }
-    } catch (e){
-    }
+      this.identityFacadeService.pinLoginSetup(isBiometric);
+    } catch (e) {}
   }
 }

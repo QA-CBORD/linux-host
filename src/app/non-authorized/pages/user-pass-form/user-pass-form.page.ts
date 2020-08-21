@@ -32,7 +32,6 @@ export class UserPassForm implements OnInit {
   institutionPhoto$: Promise<SafeResourceUrl>;
   nativeHeaderBg$: Promise<string>;
   placeholderOfUsername$: Promise<string>;
-  deviceInfo$: Promise<any>;
   private institutionInfo: Institution;
   loginForm: FormGroup;
 
@@ -78,7 +77,6 @@ export class UserPassForm implements OnInit {
     this.institutionPhoto$ = this.getInstitutionPhoto(id, sessionId);
     this.institutionName$ = this.getInstitutionName(id, sessionId);
     this.nativeHeaderBg$ = this.getNativeHeaderBg(id, sessionId);
-    this.deviceInfo$ = this.fetchDeviceInfo();
     this.cdRef.markForCheck();
   }
 
@@ -127,7 +125,7 @@ export class UserPassForm implements OnInit {
     switch (loginState) {
       case LoginState.PIN_SET:
         try {
-          await this.identityFacadeService.pinOnlyLoginSetup();
+          await this.identityFacadeService.pinLoginSetup(false);
         } catch (e) {
           this.presentToast('Login failed, invalid user name and/or password');
         }
@@ -170,10 +168,6 @@ export class UserPassForm implements OnInit {
         take(1)
       )
       .toPromise();
-  }
-
-  private async fetchDeviceInfo(): Promise<any> {
-    return Device.getInfo();
   }
 
   private async getPlaceholderForUsername(sessionId): Promise<string> {

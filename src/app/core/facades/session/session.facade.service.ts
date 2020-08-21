@@ -9,11 +9,20 @@ import { Router } from '@angular/router';
 import { ROLES } from '../../../app.global';
 import { GUEST_ROUTES } from '../../../non-authorized/non-authorized.config';
 import { Institution } from '@core/model/institution';
-import { take } from 'rxjs/operators';
-import { Device } from '@capacitor/core';
+import { switchMap, take } from 'rxjs/operators';
+import { AppState, Plugins } from '@capacitor/core';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { Platform } from '@ionic/angular';
 import { MerchantFacadeService } from '@core/facades/merchant/merchant-facade.service';
+import { from } from 'rxjs';
+import { PATRON_ROUTES } from '@sections/section.config';
+import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
+const { App, Device } = Plugins;
+
+enum AppStatus {
+  BACKGROUND,
+  FOREGROUND,
+}
 
 @Injectable({
   providedIn: 'root',
@@ -21,9 +30,11 @@ import { MerchantFacadeService } from '@core/facades/merchant/merchant-facade.se
 export class SessionFacadeService {
   /// manages app to background status for plugins (camera, etc) that briefly leave the app and return
   private navigateToNativePlugin: boolean = false;
+  private appStatus: AppStatus = AppStatus.FOREGROUND;
 
   constructor(
     private readonly platform: Platform,
+    private readonly authFacadeService: AuthFacadeService,
     private readonly userFacadeService: UserFacadeService,
     private readonly identityFacadeService: IdentityFacadeService,
     private readonly institutionFacadeService: InstitutionFacadeService,
@@ -31,22 +42,46 @@ export class SessionFacadeService {
     private readonly merchantFacadeService: MerchantFacadeService,
     private readonly router: Router
   ) {
+    this.appStateListeners();
+  }
+
+  // handle app state changes
+  // must use Capacitor and Ionic Platform to ensure this is triggered on all devices/versions
+  private appStateListeners() {
+
+    App.addListener('appStateChange', ({ isActive }: AppState) => {
+      if (isActive) {
+        this.appResumeLogic();
+      } else {
+        this.appStatus = AppStatus.BACKGROUND;
+      }
+    });
+
     this.platform.ready().then(() => {
       this.platform.resume.subscribe(() => {
         this.appResumeLogic();
+      });
+
+      this.platform.pause.subscribe(() => {
+        this.appStatus = AppStatus.BACKGROUND;
       });
     });
   }
 
   private async appResumeLogic() {
+    /// use app status to prevent double calling
+    if (this.appStatus === AppStatus.FOREGROUND) return;
+    this.appStatus = AppStatus.FOREGROUND;
+
     if (this.navigatedToPlugin) {
       this.navigatedToPlugin = false;
       return;
     }
 
     if (await this.isVaultLocked()) {
-      this.router.navigate([ROLES.guest, GUEST_ROUTES.startup], { replaceUrl: true });
+      this.router.navigate([ROLES.guest, GUEST_ROUTES.startup], { skipLocationChange: true });
     }
+
   }
 
   get navigatedToPlugin() {
@@ -55,6 +90,50 @@ export class SessionFacadeService {
 
   set navigatedToPlugin(value: boolean) {
     this.navigateToNativePlugin = value;
+  }
+
+  doLoginChecks() {
+    const routeConfig = { replaceUrl: true };
+    this.authFacadeService
+      .getAuthSessionToken$()
+      .pipe(
+        switchMap(sessionId => from(this.determineFromBackgroundLoginState(sessionId))),
+        take(1)
+      )
+      .subscribe(state => {
+        switch (state) {
+          case LoginState.SELECT_INSTITUTION:
+            this.router.navigate([ROLES.guest, GUEST_ROUTES.entry], routeConfig);
+            break;
+          case LoginState.BIOMETRIC_LOGIN:
+            this.loginUser(true);
+            break;
+          case LoginState.BIOMETRIC_SET:
+            this.router.navigate([ROLES.patron, PATRON_ROUTES.dashboard], routeConfig);
+            break;
+          case LoginState.PIN_LOGIN:
+            this.loginUser(false);
+            break;
+          case LoginState.PIN_SET:
+            this.identityFacadeService.pinLoginSetup(false);
+            break;
+          case LoginState.HOSTED:
+            this.router.navigate([ROLES.guest, GUEST_ROUTES.login], routeConfig);
+            break;
+          case LoginState.EXTERNAL:
+            this.router.navigate([ROLES.guest, GUEST_ROUTES.external], routeConfig);
+            break;
+          case LoginState.DONE:
+            this.router.navigate([ROLES.patron, PATRON_ROUTES.dashboard], routeConfig);
+            break;
+        }
+      });
+  }
+
+  private loginUser(useBiometric: boolean) {
+    try {
+      this.identityFacadeService.loginUser(useBiometric);
+    } catch (e) {}
   }
 
   async determinePostLoginState(sessionId: string, institutionId: string): Promise<LoginState> {

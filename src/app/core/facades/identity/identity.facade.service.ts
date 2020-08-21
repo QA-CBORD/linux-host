@@ -8,6 +8,7 @@ import { SettingsFacadeService } from '@core/facades/settings/settings-facade.se
 import { Institution } from '@core/model/institution';
 import { AuthenticationType } from '@core/model/authentication/authentication-info.model';
 import { PinAction, PinCloseStatus } from '@shared/ui-components/pin/pin.page';
+import { LoadingService } from '@core/service/loading/loading.service';
 
 export enum LoginState {
   DONE,
@@ -32,12 +33,15 @@ export class IdentityFacadeService extends ServiceStateFacade {
     private readonly storageStateService: StorageStateService,
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly identityService: IdentityService,
+    private readonly loader: LoadingService
   ) {
     super();
   }
 
-  async pinOnlyLoginSetup(): Promise<any> {
-    const { data, role } = await this.identityService.presentPinModal(PinAction.SET_PIN_ONLY);
+  async pinLoginSetup(biometricEnabled: boolean, navigateToDashboard: boolean = true): Promise<any> {
+    const { data, role } = await this.identityService.presentPinModal(
+      biometricEnabled ? PinAction.SET_BIOMETRIC : PinAction.SET_PIN_ONLY
+    );
     switch (role) {
       case PinCloseStatus.CANCELED:
         throw {
@@ -50,33 +54,9 @@ export class IdentityFacadeService extends ServiceStateFacade {
           message: 'There was an issue setting your pin',
         };
       case PinCloseStatus.SET_SUCCESS:
-        await this.identityService
-          .initAndUnlockPasscodeOnly({ username: undefined, token: undefined, pin: data })
+        this.identityService
+          .initAndUnlock({ username: undefined, token: undefined, pin: data }, biometricEnabled, navigateToDashboard)
           .pipe(take(1))
-          .toPromise();
-        return Promise.resolve();
-    }
-  }
-
-  async biometricLoginSetup(): Promise<any> {
-    const { data, role } = await this.identityService.presentPinModal(PinAction.SET_BIOMETRIC);
-    switch (role) {
-      case PinCloseStatus.CANCELED:
-        throw {
-          code: PinCloseStatus.CANCELED,
-          message: 'Set pin cancelled',
-        };
-      case PinCloseStatus.ERROR:
-        throw {
-          code: PinCloseStatus.ERROR,
-          message: 'There was an issue setting your pin',
-        };
-      case PinCloseStatus.SET_SUCCESS:
-        await this.identityService
-          .initAndUnlockBiometricAndPasscode({ username: undefined, token: undefined, pin: data })
-          .pipe(
-            take(1)
-          )
           .toPromise();
         return Promise.resolve();
     }
@@ -138,7 +118,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
     return this.storageStateService
       .getStateEntityByKey$<string>(this.pinEnabledUserPreference)
       .pipe(
-        map(data => (data  ? Boolean(data.value) : true)),
+        map(data => (data ? Boolean(data.value) : true)),
         take(1)
       )
       .toPromise();

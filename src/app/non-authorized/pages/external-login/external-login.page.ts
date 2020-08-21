@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, NgZone } from '@angular/core';
 import { InAppBrowser, InAppBrowserObject, InAppBrowserOptions } from '@ionic-native/in-app-browser/ngx';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
@@ -25,7 +25,7 @@ import { GUEST_ROUTES } from '../../non-authorized.config';
   templateUrl: './external-login.page.html',
   styleUrls: ['./external-login.page.scss'],
 })
-export class ExternalLoginPage implements OnDestroy {
+export class ExternalLoginPage {
   private subscriptions: Subscription = new Subscription();
 
   nativeHeaderBg$: Promise<string>;
@@ -44,15 +44,19 @@ export class ExternalLoginPage implements OnDestroy {
     private readonly sessionFacadeService: SessionFacadeService,
     private readonly identityFacadeService: IdentityFacadeService,
     private readonly settingsFacadeService: SettingsFacadeService,
+    private readonly ngZone: NgZone,
+    private readonly elementRef: ElementRef,
     private readonly router: Router
   ) {}
 
-  ionViewWillEnter() {
+  ionViewDidEnter() {
     this.loadLoginContent();
   }
 
-  ngOnDestroy() {
+  /// clear the subscriptions and remove the page, we don't want to navigate back here
+  ionViewDidLeave() {
     this.clearSubscriptions();
+    this.elementRef.nativeElement.remove();
   }
 
   private clearSubscriptions() {
@@ -61,7 +65,6 @@ export class ExternalLoginPage implements OnDestroy {
   }
 
   loadLoginContent() {
-    this.loadingService.showSpinner();
     const instSub = this.institutionFacadeService.cachedInstitutionInfo$.pipe(first()).subscribe(
       institutionInfo => {
         this.institutionId = institutionInfo.id;
@@ -77,6 +80,7 @@ export class ExternalLoginPage implements OnDestroy {
   }
 
   initializeInAppBrowser(institutionInfo: Institution) {
+    this.loadingService.showSpinner();
     const target = '_blank';
     const url = this.getLoginUrl(institutionInfo);
     const options: InAppBrowserOptions = {
@@ -105,10 +109,8 @@ export class ExternalLoginPage implements OnDestroy {
     });
 
     const browserEventBack = this.browser.on('exit').subscribe(event => {
-      this.loadingService.showSpinner();
       if (event) {
-        this.router.navigate([ROLES.guest, GUEST_ROUTES.entry]);
-        this.loadingService.closeSpinner();
+        this.navigate([ROLES.guest, GUEST_ROUTES.entry]);
       }
     });
 
@@ -138,26 +140,29 @@ export class ExternalLoginPage implements OnDestroy {
   }
 
   private async handlePostAuthentication() {
+    this.clearSubscriptions();
     const loginState: LoginState = await this.sessionFacadeService.determinePostLoginState(
       this.sessionId,
       this.institutionId
     );
 
-    this.browser.close();
-
     switch (loginState) {
       case LoginState.PIN_SET:
-        await this.identityFacadeService.pinOnlyLoginSetup();
+        await this.identityFacadeService.pinLoginSetup(false);
         break;
       case LoginState.BIOMETRIC_SET:
         const supportedBiometricType = await this.identityFacadeService.getAvailableBiometricHardware();
         const biometricConfig = this.configureBiometricsConfig(supportedBiometricType);
-        await this.router.navigate([PATRON_NAVIGATION.biometric], { state: { biometricConfig } });
+        this.navigate([PATRON_NAVIGATION.biometric], { state: { biometricConfig } });
         break;
       case LoginState.DONE:
-        this.router.navigate([PATRON_NAVIGATION.dashboard], { replaceUrl: true });
+        this.navigateToDashboard();
         break;
     }
+  }
+
+  private async navigateToDashboard() {
+    await this.router.navigate([PATRON_NAVIGATION.dashboard], { replaceUrl: true });
   }
 
   private configureBiometricsConfig(supportedBiometricType: string[]): { type: string; name: string } {
@@ -190,6 +195,7 @@ export class ExternalLoginPage implements OnDestroy {
   }
 
   private async showModal(title: string, message: string): Promise<void> {
+    this.clearSubscriptions();
     const popoverConfig: PopoverConfig<string> = {
       type: PopupTypes.RETRY,
       title,
@@ -209,23 +215,25 @@ export class ExternalLoginPage implements OnDestroy {
 
     modal.onDidDismiss().then(async data => {
       if (!data || !data.role) {
-        await this.router.navigate([ROLES.guest, GUEST_ROUTES.entry], { skipLocationChange: true });
+        this.navigate([ROLES.guest, GUEST_ROUTES.entry]);
         return;
       }
 
       switch (data.role) {
         case BUTTON_TYPE.CLOSE:
-          await this.router.navigate([ROLES.guest, GUEST_ROUTES.entry], { skipLocationChange: true });
+          this.navigate([ROLES.guest, GUEST_ROUTES.entry]);
           break;
         case BUTTON_TYPE.RETRY:
-          this.clearSubscriptions();
           this.loadLoginContent();
           break;
       }
     });
-    if (this.browser) {
-      this.browser.hide();
-    }
     await modal.present();
+  }
+
+  private navigate(route: string[], extras: any = {}) {
+    this.ngZone.run(() => {
+      this.router.navigate(route, { ...extras, replaceUrl: true });
+    });
   }
 }
