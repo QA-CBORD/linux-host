@@ -9,8 +9,6 @@ import { HttpClient } from '@angular/common/http';
 import { RPCQueryConfig } from '@core/interceptors/query-config.model';
 import { ServiceParameters } from '@core/model/service/message-response.model';
 
-import {Device} from '@capacitor/core';
-
 @Injectable({
   providedIn: 'root',
 })

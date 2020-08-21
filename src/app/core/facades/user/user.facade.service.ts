@@ -10,9 +10,14 @@ import { map, switchMap, tap, take, catchError } from 'rxjs/operators';
 import { AddressInfo } from '@core/model/address/address-info';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { Settings } from 'src/app/app.global';
-import { Plugins, Device, Capacitor, PushNotificationToken, PushNotification } from '@capacitor/core';
+import {
+  Plugins,
+  Capacitor,
+  PushNotificationToken,
+  PushNotification,
+} from '@capacitor/core';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
-const { PushNotifications, LocalNotifications } = Plugins;
+const { PushNotifications, LocalNotifications, Device } = Plugins;
 
 @Injectable({
   providedIn: 'root',

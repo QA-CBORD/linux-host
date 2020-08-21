@@ -79,14 +79,18 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
 
   /// will attempt to use pin and/or biometric - will fall back to passcode if needed
   /// will require pin set
-  initAndUnlock(session: VaultSessionData, biometricEnabled: boolean, navigateToDashboard: boolean = true): Observable<void> {
+  initAndUnlock(
+    session: VaultSessionData,
+    biometricEnabled: boolean,
+    navigateToDashboard: boolean = true
+  ): Observable<void> {
+    if (navigateToDashboard) {
+      this.navigateToDashboard();
+    }
     this.temporaryPin = session.pin;
     return from(
       super.login(session, biometricEnabled ? AuthMode.BiometricAndPasscode : AuthMode.PasscodeOnly).then(res => {
         this.isLocked = false;
-        if(navigateToDashboard) {
-          this.navigateToDashboard();
-        }
         return res;
       })
     );
@@ -194,7 +198,9 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
   }
 
   private navigateToDashboard() {
-    this.ngZone.run(() => this.router.navigate([PATRON_NAVIGATION.dashboard]));
+    this.ngZone.run(() => {
+      this.router.navigate([PATRON_NAVIGATION.dashboard], { replaceUrl: true });
+    });
   }
 
   /// used to determine storage method

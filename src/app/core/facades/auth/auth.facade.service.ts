@@ -5,19 +5,13 @@ import { AuthApiService } from '@core/service/auth-api/auth-api.service';
 import { UserLogin } from '@core/model/user';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { Observable, of, iif, from } from 'rxjs';
-import { StorageEntity } from '@core/classes/extendable-state-manager';
-import { Device } from '@capacitor/core';
-import { ROLES } from '../../../app.global';
-import { GUEST_ROUTES } from '../../../non-authorized/non-authorized.config';
-import { UserFacadeService } from '@core/facades/user/user.facade.service';
-import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
-import { Router } from '@angular/router';
+import { Plugins } from '@capacitor/core';
+const { Device } = Plugins;
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthFacadeService extends ServiceStateFacade {
-  private ttl: number = 600000; // 10min
   private sessionIdKey = 'get_sessionId';
   private systemSessionId = null;
 
@@ -35,11 +29,11 @@ export class AuthFacadeService extends ServiceStateFacade {
   get cachedAuthSessionToken$(): Observable<string | null> {
     return this.storageStateService
       .getStateEntityByKey$<string>(this.sessionIdKey)
-      .pipe(map(data => (this.isValidData(data) ? data.value : null)));
+      .pipe(map(data => data ? data.value : null));
   }
 
   set cachedAuthSessionToken(sessionId: string){
-    this.storageStateService.updateStateEntity(this.sessionIdKey, sessionId, { ttl: this.ttl, highPriorityKey: true });
+    this.storageStateService.updateStateEntity(this.sessionIdKey, sessionId, { highPriorityKey: true });
   }
 
   authenticateUser$(userCredentials: UserLogin): Observable<string> {
@@ -47,7 +41,7 @@ export class AuthFacadeService extends ServiceStateFacade {
       .authenticateUser(userCredentials)
       .pipe(
         tap(res =>
-          this.storageStateService.updateStateEntity(this.sessionIdKey, res, { ttl: this.ttl, highPriorityKey: true })
+          this.storageStateService.updateStateEntity(this.sessionIdKey, res, { highPriorityKey: true })
         )
       );
   }
@@ -56,7 +50,7 @@ export class AuthFacadeService extends ServiceStateFacade {
     return from(Device.getInfo()).pipe(
       switchMap(({ uuid }) => this.authApiService.authenticatePin(pin, uuid)),
       tap(res =>
-        this.storageStateService.updateStateEntity(this.sessionIdKey, res, { ttl: this.ttl, highPriorityKey: true })
+        this.storageStateService.updateStateEntity(this.sessionIdKey, res, { highPriorityKey: true })
       ),
         map(res => !!res)
       );
@@ -82,7 +76,4 @@ export class AuthFacadeService extends ServiceStateFacade {
     return this.authApiService.retrieveAuthorizationBlob(deviceModel, deviceOSVersion);
   }
 
-  private isValidData(data: StorageEntity): boolean {
-    return data !== null && data.lastModified + data.timeToLive >= Date.now();
-  }
 }

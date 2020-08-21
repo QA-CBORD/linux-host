@@ -73,8 +73,8 @@ export class PinPage implements OnInit {
     this.setInstructionText();
   }
 
-  private setInstructionText(text: string = null){
-    if(text !== null) {
+  private setInstructionText(text: string = null) {
+    if (text !== null) {
       this.instructionText = text;
       return;
     }
@@ -159,8 +159,7 @@ export class PinPage implements OnInit {
     }
   }
 
-  enter() {
-  }
+  enter() {}
 
   delete() {
     this.removeNumber();
@@ -186,6 +185,7 @@ export class PinPage implements OnInit {
   }
 
   private cleanLocalState() {
+    this.loadingService.closeSpinner();
     this.setInstructionText();
     this.pinNumber = [];
     this.pinNumberCopy = [];
@@ -201,7 +201,7 @@ export class PinPage implements OnInit {
     /// set user pin in Database
     this.userFacadeService
       .createUserPin(this.pinNumber.join(''))
-      .pipe(finalize(() => this.loadingService.closeSpinner()), take(1))
+      .pipe(take(1))
       .subscribe(
         success => {
           /// on success, dismiss with pin in data
@@ -227,7 +227,10 @@ export class PinPage implements OnInit {
 
     this.authFacadeService
       .authenticatePin$(this.pinNumber.join(''))
-      .pipe(finalize(() => this.loadingService.closeSpinner()), take(1))
+      .pipe(
+        finalize(() => this.loadingService.closeSpinner()),
+        take(1)
+      )
       .subscribe(
         success => {
           /// on success, dismiss with pin in data

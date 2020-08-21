@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { ServiceStateFacade } from '@core/classes/service-state-facade';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
-import { iif, Observable, of } from 'rxjs';
-import { map, switchMap, take, tap } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { switchMap, take } from 'rxjs/operators';
 import { AlertController } from '@ionic/angular';
 
 export enum EnvironmentType {
@@ -101,13 +101,10 @@ export class EnvironmentFacadeService extends ServiceStateFacade {
     this.initialization();
   }
 
-  initialization() {
-    this.getSavedEnvironmentInfo$()
+  async initialization() {
+    this.currentEnvironment = await this.getSavedEnvironmentInfo$()
       .pipe(take(1))
-      .subscribe(env => {
-        this.currentEnvironment = env;
-      }, () => {},
-        () => {});
+      .toPromise();
   }
 
   async changeEnvironment() {
@@ -115,29 +112,33 @@ export class EnvironmentFacadeService extends ServiceStateFacade {
   }
 
   private getSavedEnvironmentInfo$(): Observable<EnvironmentInfo> {
-    return this.storageStateService.getStateEntityByKey$<EnvironmentInfo>(this.currentEnvironmentKey).pipe(
-      switchMap(data => {
-        /// if no current environment is saved, default to production
-        if (data === null) {
-          this.setSavedEnvironmentInfo(this.production);
-          return of(this.production);
-        }
-        /// return saved environment data
-        return of(data.value);
-      })
-    );
+    return this.currentEnvironment !== null
+      ? of(this.currentEnvironment)
+      : this.storageStateService.getStateEntityByKey$<EnvironmentType>(this.currentEnvironmentKey).pipe(
+          switchMap(data => {
+            /// if no current environment is saved, default to production
+            if (data === null) {
+              this.setSavedEnvironmentInfo(EnvironmentType.production);
+              return of(this.production);
+            }
+            /// return saved environment data
+            this.currentEnvironment = this.getEnvironmentObjectFromType(data.value);
+            return of(this.currentEnvironment);
+          }),
+          take(1)
+        );
   }
 
-  private setSavedEnvironmentInfo(environment: EnvironmentInfo) {
-    this.currentEnvironment = environment;
-    this.storageStateService.updateStateEntity(this.currentEnvironmentKey, environment, { highPriorityKey: true });
+  private setSavedEnvironmentInfo(type: EnvironmentType) {
+    this.currentEnvironment = this.getEnvironmentObjectFromType(type);
+    this.storageStateService.updateStateEntity(this.currentEnvironmentKey, type, { highPriorityKey: true });
   }
 
   getPartnerServicesURL(): string {
     return this.currentEnvironment.partner_services_url;
   }
 
-  getEnvironmentObject(): EnvironmentInfo{
+  getEnvironmentObject(): EnvironmentInfo {
     return this.currentEnvironment;
   }
 
@@ -161,6 +162,7 @@ export class EnvironmentFacadeService extends ServiceStateFacade {
     const currentEnv = this.currentEnvironment.environment;
 
     const alert = await this.alertController.create({
+      backdropDismiss: false,
       header: 'Change Environment',
       inputs: [
         {
@@ -210,7 +212,7 @@ export class EnvironmentFacadeService extends ServiceStateFacade {
         {
           text: 'Ok',
           handler: data => {
-            this.setSavedEnvironmentInfo(this.getEnvironmentObjectFromType(data));
+            this.setSavedEnvironmentInfo(data);
           },
         },
       ],
