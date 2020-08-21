@@ -64,13 +64,11 @@ export class DashboardPage implements OnInit {
     this.nativeStartupFacadeService.fetchNativeStartupInfo().pipe(
       take(1)
     ).subscribe(nativeStartupConfig => {
-      console.log('DB 0', nativeStartupConfig);
       if (nativeStartupConfig) {
-        console.log('DB 1', nativeStartupConfig);
         const { title, message, arrOfBtns } = nativeStartupConfig;
         this.initModal(title, message, arrOfBtns, this.redirectToTheStore.bind(this));
       }
-    }, error => console.log('error', error));
+    });
     
   }
 

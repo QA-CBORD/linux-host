@@ -55,21 +55,9 @@ export class NativeStartupFacadeService extends ServiceStateFacade {
           this.storageStateService.getStateEntityByKey$(this.digestKey)
         ).pipe(
           map(([NativeStartupInfo, cachedDigest]) => {
-            console.log('NS', 0, NativeStartupInfo, cachedDigest);
             // the service call will return null if there is no Native Startup Message
-            NativeStartupInfo.message = 'Testing Message';
-            NativeStartupInfo.messageTitle = 'Testing Title';
-            NativeStartupInfo.action = 'block';
-            NativeStartupInfo.showOnce = 0;
-            NativeStartupInfo.minSupportedVersionFailure = 0;
-            NativeStartupInfo.minSupportedVersion = '4.0.0';
-            NativeStartupInfo.showMessage = 0;
-            NativeStartupInfo.messageDigest = '31';
-
             if (NativeStartupInfo != null) {
-              console.log('NS', 1);
               if (NativeStartupInfo.minSupportedVersionFailure === 1) {
-                console.log('NS', 2);
                 return this.displayMessageToUser(
                   NativeStartupInfo.minSupportedVersionFailure,
                   NativeStartupInfo.action === 'block',
@@ -77,15 +65,10 @@ export class NativeStartupFacadeService extends ServiceStateFacade {
                   NativeStartupInfo.message
                 );
               } else {
-                console.log('NS', 3);
                 if (NativeStartupInfo.showMessage === 1) {
-                  console.log('NS', 4);
                   if (NativeStartupInfo.showOnce === 1) {
-                    console.log('NS', 5);
                     if (!cachedDigest || NativeStartupInfo.messageDigest != cachedDigest.value) {
-                      console.log('NS', 6);
                       this.storageStateService.updateStateEntity(this.digestKey, NativeStartupInfo.messageDigest);
-                      console.log('NS', 7);
                       return this.displayMessageToUser(
                         NativeStartupInfo.minSupportedVersionFailure,
                         NativeStartupInfo.action === 'block',
@@ -94,7 +77,6 @@ export class NativeStartupFacadeService extends ServiceStateFacade {
                       );
                     }
                   } else {
-                    console.log('NS', 8);
                     return this.displayMessageToUser(
                       NativeStartupInfo.minSupportedVersionFailure,
                       NativeStartupInfo.action === 'block',
@@ -105,7 +87,6 @@ export class NativeStartupFacadeService extends ServiceStateFacade {
                 }
               }
             }
-            console.log('NS', 999);
             return null;
           })
         );
@@ -114,22 +95,16 @@ export class NativeStartupFacadeService extends ServiceStateFacade {
   }
 
   displayMessageToUser(isMinVersionFailure, isBlocking, title, message) {
-    console.log('Display 0 - ', isMinVersionFailure, isBlocking, title, message);
     const arrOfBtns = [];
-
     const positiveButtonText = isMinVersionFailure
       ? startupButtons['update']
       : isBlocking
       ? startupButtons['closeApp']
       : startupButtons['ok'];
-
     const isNegativeButtonVisible = isMinVersionFailure && !isBlocking;
-
     const negativeButtonText = startupButtons['notNow'];
     arrOfBtns.push(positiveButtonText);
     isNegativeButtonVisible && arrOfBtns.push(negativeButtonText);
-
-    console.log('Display 1 -', positiveButtonText, isNegativeButtonVisible, arrOfBtns);
     return {
       title,
       message,
