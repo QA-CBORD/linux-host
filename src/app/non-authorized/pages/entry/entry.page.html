@@ -14,9 +14,9 @@
         SEARCH ALL INSTITUTIONS
       </st-button>
     </div>
-    <div mode="ios" class="entry__footer">
-      <div class="entry__footer-version" *ngIf="deviceInfo$ | async as device">
-        Version {{ device.appVersion }}
+    <div mode="ios" class="entry__footer" *ngIf="(appVersion$ | async) as appVersion">
+      <div>
+        Version {{ appVersion }}
       </div>
     </div>
   </div>

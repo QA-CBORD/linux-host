@@ -5,7 +5,8 @@ import { ServiceStateFacade } from '@core/classes/service-state-facade';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { NativeStartupApiService } from '@core/service/native-startup-api/native-startup-api.service';
 import { buttons } from '@core/utils/buttons.config';
-import { Device } from '@capacitor/core';
+import { Plugins } from '@capacitor/core';
+const { Device } = Plugins;
 
 @Injectable({
   providedIn: 'root',

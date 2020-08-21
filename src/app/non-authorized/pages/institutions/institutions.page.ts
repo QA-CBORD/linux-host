@@ -11,12 +11,12 @@ import { StGlobalPopoverComponent } from '@shared/ui-components';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
-import { Device, Plugins, Capacitor } from '@capacitor/core';
+import {Plugins, Capacitor } from '@capacitor/core';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { LoginState } from '@core/facades/identity/identity.facade.service';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
-const { Keyboard, IOSDevice } = Plugins;
+const { Keyboard, IOSDevice, Device } = Plugins;
 
 @Component({
   selector: 'st-institutions',
