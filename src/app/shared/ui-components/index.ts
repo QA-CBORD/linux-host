@@ -1,5 +1,6 @@
 export * from './st-countdown';
 export * from './st-global-popover';
+export * from './st-native-startup-popover';
 export * from './st-header';
 export * from './st-input-floating-label';
 export * from './st-nav-tabs';

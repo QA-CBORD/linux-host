@@ -20,6 +20,7 @@ import { StInputFloatingLabelComponent } from '@shared/ui-components';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { GUEST_ROUTES } from '../../non-authorized.config';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
 
 @Component({
   selector: 'user-pass-form',
@@ -47,6 +48,7 @@ export class UserPassForm implements OnInit {
     private readonly toastController: ToastController,
     private readonly sessionFacadeService: SessionFacadeService,
     private readonly identityFacadeService: IdentityFacadeService,
+    private readonly nativeStartupFacadeService: NativeStartupFacadeService,
     private readonly fb: FormBuilder,
     private readonly cdRef: ChangeDetectorRef,
     private readonly appBrowser: InAppBrowser,
@@ -136,7 +138,8 @@ export class UserPassForm implements OnInit {
         await this.router.navigate([PATRON_NAVIGATION.biometric], { state: { biometricConfig } });
         break;
       case LoginState.DONE:
-        this.router.navigate([PATRON_NAVIGATION.dashboard]);
+        this.nativeStartupFacadeService.checkForStartupMessage = true;
+        this.router.navigate([PATRON_NAVIGATION.dashboard], { replaceUrl: true });
         break;
     }
   }

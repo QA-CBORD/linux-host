@@ -19,6 +19,7 @@ import { PopupButton } from '@core/model/button';
 import { PopoverController } from '@ionic/angular';
 import { BUTTON_TYPE, buttons } from '@core/utils/buttons.config';
 import { GUEST_ROUTES } from '../../non-authorized.config';
+import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
 
 @Component({
   selector: 'st-external-login',
@@ -41,6 +42,7 @@ export class ExternalLoginPage {
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly environmentFacadeService: EnvironmentFacadeService,
     private readonly authFacadeService: AuthFacadeService,
+    private readonly nativeStartupFacadeService: NativeStartupFacadeService,
     private readonly sessionFacadeService: SessionFacadeService,
     private readonly identityFacadeService: IdentityFacadeService,
     private readonly settingsFacadeService: SettingsFacadeService,
@@ -162,6 +164,7 @@ export class ExternalLoginPage {
   }
 
   private async navigateToDashboard() {
+    this.nativeStartupFacadeService.checkForStartupMessage = true;
     await this.router.navigate([PATRON_NAVIGATION.dashboard], { replaceUrl: true });
   }
 
