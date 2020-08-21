@@ -18,7 +18,7 @@ export interface SettingItemConfig {
   checked?: boolean;
   toggleLabel?: ToggleLabel;
   validations?: SettingItemValidation[];
-  modalContent?: ModalContent;
+  modalContent?: ModalContent | HTMLContentString;
   getToggleStatus?: (service: any) => Promise<boolean>;
 }
 
@@ -35,6 +35,9 @@ export interface ToggleLabel {
   unchecked: string;
 }
 export interface ModalContent {
+  component: any;
+}
+export interface HTMLContentString {
   domain: CONTENT_STINGS_DOMAINS;
   category: CONTENT_STINGS_CATEGORIES;
   name: string;

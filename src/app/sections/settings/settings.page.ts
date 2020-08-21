@@ -3,7 +3,12 @@ import { Router } from '@angular/router';
 import { LOCAL_ROUTING } from '@sections/settings/settings.config';
 import { PATRON_NAVIGATION } from '../../app.global';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
-import { SettingItemConfig, SettingsSectionConfig, ModalContent } from './models/setting-items-config.model';
+import {
+  SettingItemConfig,
+  SettingsSectionConfig,
+  ModalContent,
+  HTMLContentString,
+} from './models/setting-items-config.model';
 import { Plugins } from '@capacitor/core';
 import { SettingsFactoryService } from './services/settings-factory.service';
 import { ModalController } from '@ionic/angular';
@@ -61,25 +66,28 @@ export class SettingsPage implements OnInit {
     window.open(url, '_system');
   }
 
-  async openModal(modalContent: ModalContent) {
-    const { domain, category, name } = modalContent;
-    const string = await this.contentStringFacadeService
-      .fetchContentString$(domain, category, name)
-      .pipe(
-        map(st => st.value),
-        take(1)
-      )
-      .toPromise();
-    const buttons = [
-      {
-        label: 'Close',
-        callback: () => {
-          this.globalNav.showNavBar();
-          this.modalController.dismiss();
+  async openModal(modalContent: ModalContent | HTMLContentString) {
+    let componentProps: any;
+    if ((<HTMLContentString>modalContent).domain) {
+      const { domain, category, name } = modalContent as HTMLContentString;
+      const htmlContent = await this.contentStringFacadeService
+        .fetchContentString$(domain, category, name)
+        .pipe(
+          map(st => st.value),
+          take(1)
+        )
+        .toPromise();
+      const buttons = [
+        {
+          label: 'Close',
+          callback: () => {
+            this.globalNav.showNavBar();
+            this.modalController.dismiss();
+          },
         },
-      },
-    ];
-    const componentProps = { htmlContent: string, buttons };
+      ];
+      componentProps = { htmlContent, buttons };
+    }
     const settingModal = await this.modalController.create({
       backdropDismiss: false,
       component: modalContent.component,

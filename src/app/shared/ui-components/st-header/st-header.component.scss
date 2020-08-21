@@ -55,6 +55,7 @@
   &__dissmiss-btn {
     --margin-start: 10px;
     --icon-padding-end: 5px;
+    color: $color-black;
     @include font-nunito-regular(20px);
   }
   &__title {

@@ -35,6 +35,6 @@ export class StHeaderComponent implements OnInit {
   }
 
   onDissmissClicked() {
-    this.onDismiss.next();
+    this.onDismiss.emit();
   }
 }

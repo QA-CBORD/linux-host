@@ -3,6 +3,7 @@ import { Settings } from 'src/app/app.global';
 import { getCardStatus } from './helpers/setting-item.helper';
 import { CONTENT_STINGS_DOMAINS, CONTENT_STINGS_CATEGORIES } from 'src/app/content-strings';
 import { HTMLRendererComponent } from '@shared/ui-components/html-renderer/html-renderer.component';
+import { PhoneEmailComponent } from '@shared/ui-components/phone-email/phone-email.component';
 
 export enum LOCAL_ROUTING {
   photoUpload = 'photo-upload',
@@ -82,7 +83,9 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         icon: 'account-profile',
         label: 'Email & Phone Number',
         type: 'button',
-        navigate: SETTINGS_NAVIGATE.personalData,
+        modalContent: {
+          component: PhoneEmailComponent,
+        },
       },
       {
         id: SETTINGS_ID.password,
