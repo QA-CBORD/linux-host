@@ -61,12 +61,12 @@
         <div class="delivery-address__radio-label-content">
           <div
             class="delivery-address__radio-label-header"
-            [ngClass]="{ 'delivery-address__radio-label-header-default': defaultAddress.id === item.id }"
+            [ngClass]="{ 'delivery-address__radio-label-header-default': defaultAddress && defaultAddress.id === item.id }"
           >
             {{ item.displayHeader }}
           </div>
           <div class="delivery-address__radio-label-sub-header">{{ item.displaySubheader }}</div>
-          <div class="delivery-address__radio-label-default" *ngIf="defaultAddress.id === item.id">DEFAULT</div>
+          <div class="delivery-address__radio-label-default" *ngIf="defaultAddress && defaultAddress.id === item.id">DEFAULT</div>
         </div>
       </ion-label>
       <ion-radio
