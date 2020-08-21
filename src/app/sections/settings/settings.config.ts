@@ -4,6 +4,7 @@ import { getCardStatus } from './helpers/setting-item.helper';
 import { CONTENT_STINGS_DOMAINS, CONTENT_STINGS_CATEGORIES } from 'src/app/content-strings';
 import { HTMLRendererComponent } from '@shared/ui-components/html-renderer/html-renderer.component';
 import { PhoneEmailComponent } from '@shared/ui-components/phone-email/phone-email.component';
+import { PinPage } from '@shared/ui-components/pin/pin.page';
 
 export enum LOCAL_ROUTING {
   photoUpload = 'photo-upload',
@@ -109,7 +110,9 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         icon: 'pin-pad',
         label: 'Change / Remove PIN',
         type: 'button',
-        navigate: SETTINGS_NAVIGATE.pin,
+        modalContent: {
+          component: PinPage,
+        },
       },
       {
         id: SETTINGS_ID.address,
