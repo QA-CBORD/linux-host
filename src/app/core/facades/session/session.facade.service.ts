@@ -234,4 +234,8 @@ export class SessionFacadeService {
     const { operatingSystem } = await Device.getInfo();
     return !(operatingSystem === 'ios' || operatingSystem === 'android');
   }
+
+  lockVault(){
+    this.identityFacadeService.lockVault();
+  }
 }

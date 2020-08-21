@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { from, Observable, of, zip } from 'rxjs';
+import { BehaviorSubject, from, Observable, of, zip } from 'rxjs';
 import { map, switchMap, take } from 'rxjs/operators';
 import { ServiceStateFacade } from '@core/classes/service-state-facade';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
@@ -12,8 +12,10 @@ const { Device } = Plugins;
   providedIn: 'root',
 })
 export class NativeStartupFacadeService extends ServiceStateFacade {
-  private ttl: number = 600000; // 10min
+  protected readonly _blockGlobalNavigation$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  private blockGlobalNavigation: boolean = false;
   private digestKey = 'get_nativeStartupMessageDigest';
+  private checkForMessages: boolean = false;
 
   constructor(
     private readonly nativeStartupApiService: NativeStartupApiService,
@@ -22,21 +24,52 @@ export class NativeStartupFacadeService extends ServiceStateFacade {
     super();
   }
 
-  fetchNativeStartupInfo(institutionId: string, sessionId?: string, useSessionId?: boolean): Observable<any> {
+  set checkForStartupMessage(value: boolean){
+    this.checkForMessages = value;
+  }
+
+  set blockGlobalNavigationStatus(value: boolean) {
+    this.blockGlobalNavigation = value;
+    this._blockGlobalNavigation$.next(this.blockGlobalNavigation);
+  }
+
+  get blockGlobalNavigationStatus$(): Observable<boolean> {
+    return this._blockGlobalNavigation$;
+  }
+
+  fetchNativeStartupInfo(): Observable<any> {
+    if(!this.checkForMessages){
+      return of(null);
+    }
+    this.checkForMessages = false;
     return from(Device.getInfo()).pipe(
       take(1),
       switchMap(deviceInfo => {
         if (deviceInfo.platform === 'web') {
           return of(null);
         }
-        zip(
-          this.nativeStartupApiService.nativeStartup(institutionId, deviceInfo.platform, sessionId, useSessionId),
+        return zip(
+          this.nativeStartupApiService
+            .nativeStartup(deviceInfo.platform, deviceInfo.appVersion)
+            .pipe(map(response => response.response)),
           this.storageStateService.getStateEntityByKey$(this.digestKey)
         ).pipe(
           map(([NativeStartupInfo, cachedDigest]) => {
+            console.log('NS', 0, NativeStartupInfo, cachedDigest);
             // the service call will return null if there is no Native Startup Message
+            NativeStartupInfo.message = 'Testing Message';
+            NativeStartupInfo.messageTitle = 'Testing Title';
+            NativeStartupInfo.action = 'block';
+            NativeStartupInfo.showOnce = 0;
+            NativeStartupInfo.minSupportedVersionFailure = 0;
+            NativeStartupInfo.minSupportedVersion = '4.0.0';
+            NativeStartupInfo.showMessage = 0;
+            NativeStartupInfo.messageDigest = '31';
+
             if (NativeStartupInfo != null) {
+              console.log('NS', 1);
               if (NativeStartupInfo.minSupportedVersionFailure === 1) {
+                console.log('NS', 2);
                 return this.displayMessageToUser(
                   NativeStartupInfo.minSupportedVersionFailure,
                   NativeStartupInfo.action === 'block',
@@ -44,12 +77,15 @@ export class NativeStartupFacadeService extends ServiceStateFacade {
                   NativeStartupInfo.message
                 );
               } else {
+                console.log('NS', 3);
                 if (NativeStartupInfo.showMessage === 1) {
+                  console.log('NS', 4);
                   if (NativeStartupInfo.showOnce === 1) {
-                    if (NativeStartupInfo.messageDigest != cachedDigest.value) {
-                      this.storageStateService.updateStateEntity(this.digestKey, NativeStartupInfo.messageDigest, {
-                        ttl: this.ttl,
-                      });
+                    console.log('NS', 5);
+                    if (!cachedDigest || NativeStartupInfo.messageDigest != cachedDigest.value) {
+                      console.log('NS', 6);
+                      this.storageStateService.updateStateEntity(this.digestKey, NativeStartupInfo.messageDigest);
+                      console.log('NS', 7);
                       return this.displayMessageToUser(
                         NativeStartupInfo.minSupportedVersionFailure,
                         NativeStartupInfo.action === 'block',
@@ -58,6 +94,7 @@ export class NativeStartupFacadeService extends ServiceStateFacade {
                       );
                     }
                   } else {
+                    console.log('NS', 8);
                     return this.displayMessageToUser(
                       NativeStartupInfo.minSupportedVersionFailure,
                       NativeStartupInfo.action === 'block',
@@ -68,6 +105,8 @@ export class NativeStartupFacadeService extends ServiceStateFacade {
                 }
               }
             }
+            console.log('NS', 999);
+            return null;
           })
         );
       })
@@ -75,16 +114,22 @@ export class NativeStartupFacadeService extends ServiceStateFacade {
   }
 
   displayMessageToUser(isMinVersionFailure, isBlocking, title, message) {
+    console.log('Display 0 - ', isMinVersionFailure, isBlocking, title, message);
     const arrOfBtns = [];
+
     const positiveButtonText = isMinVersionFailure
       ? startupButtons['update']
       : isBlocking
       ? startupButtons['closeApp']
       : startupButtons['ok'];
+
     const isNegativeButtonVisible = isMinVersionFailure && !isBlocking;
+
     const negativeButtonText = startupButtons['notNow'];
     arrOfBtns.push(positiveButtonText);
     isNegativeButtonVisible && arrOfBtns.push(negativeButtonText);
+
+    console.log('Display 1 -', positiveButtonText, isNegativeButtonVisible, arrOfBtns);
     return {
       title,
       message,
@@ -95,7 +140,7 @@ export class NativeStartupFacadeService extends ServiceStateFacade {
 
 export const startupButtons = {
   update: { ...buttons.OKAY, label: 'Update' },
-  closeApp: { ...buttons.CANCEL, label: 'Close app' },
-  ok: { ...buttons.OKAY, label: 'Ok' },
+  closeApp: { ...buttons.CLOSE, label: 'Close app' },
+  ok: { ...buttons.CANCEL, label: 'Ok' },
   notNow: { ...buttons.CANCEL, label: 'Not now' },
 };
