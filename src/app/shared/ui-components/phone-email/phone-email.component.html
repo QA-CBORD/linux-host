@@ -17,19 +17,19 @@
         idd="email"
         [formControlName]="controlsNames.email"
         [isError]="email.errors && (email.dirty || email.touched)"
-        [stFocusNext]="phone"
+        [stFocusNext]="phoneField"
         tabindex="0"
       >
       </st-input-floating-label>
       <st-input-floating-label
-        #phone
+        #phoneField
         class="form__control"
         [control]="phone"
         label="Phone"
         type="tel"
         idd="phone"
-        [formControlName]="controlsNames.email"
-        [isError]="email.errors && (email.dirty || email.touched)"
+        [formControlName]="controlsNames.phone"
+        [isError]="phone.errors && (phone.dirty || phone.touched)"
         tabindex="1"
       >
       </st-input-floating-label>
@@ -40,7 +40,7 @@
   <st-button
     buttonModifier="rectangle"
     [isDisabled]="!phoneEmailForm?.valid"
-    (click)="saveChanges(phoneEmailForm)"
+    (click)="saveChanges()"
     tabindex="3"
   >
     Save changes
