@@ -24,7 +24,7 @@ export class NativeStartupFacadeService extends ServiceStateFacade {
     super();
   }
 
-  set checkForStartupMessage(value: boolean){
+  set checkForStartupMessage(value: boolean) {
     this.checkForMessages = value;
   }
 
@@ -38,7 +38,7 @@ export class NativeStartupFacadeService extends ServiceStateFacade {
   }
 
   fetchNativeStartupInfo(): Observable<any> {
-    if(!this.checkForMessages){
+    if (!this.checkForMessages) {
       return of(null);
     }
     this.checkForMessages = false;

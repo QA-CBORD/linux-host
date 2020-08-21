@@ -12,7 +12,6 @@ import { CONTENT_STINGS_CATEGORIES, CONTENT_STINGS_DOMAINS } from '../../content
 import { AccessCardComponent } from './containers/access-card/access-card.component';
 import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
-import { Router } from '@angular/router';
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
 
 import { Plugins } from '@capacitor/core';
@@ -37,8 +36,7 @@ export class DashboardPage implements OnInit {
     private readonly contentStringsFacadeService: ContentStringsFacadeService,
     private readonly sessionFacadeService: SessionFacadeService,
     private readonly nativeStartupFacadeService: NativeStartupFacadeService,
-    private readonly popoverCtrl: PopoverController,
-    private readonly router: Router,
+    private readonly popoverCtrl: PopoverController
   ) {}
 
   get tilesIds(): { [key: string]: string } {
@@ -56,20 +54,20 @@ export class DashboardPage implements OnInit {
     this.accessCard.ionViewWillEnter();
   }
 
-  ionViewDidEnter(){
+  ionViewDidEnter() {
     this.checkNativeStartup();
   }
-  
-  private async checkNativeStartup(){
-    this.nativeStartupFacadeService.fetchNativeStartupInfo().pipe(
-      take(1)
-    ).subscribe(nativeStartupConfig => {
-      if (nativeStartupConfig) {
-        const { title, message, arrOfBtns } = nativeStartupConfig;
-        this.initModal(title, message, arrOfBtns, this.redirectToTheStore.bind(this));
-      }
-    });
-    
+
+  private async checkNativeStartup() {
+    this.nativeStartupFacadeService
+      .fetchNativeStartupInfo()
+      .pipe(take(1))
+      .subscribe(nativeStartupConfig => {
+        if (nativeStartupConfig) {
+          const { title, message, arrOfBtns } = nativeStartupConfig;
+          this.initModal(title, message, arrOfBtns, this.redirectToTheStore.bind(this));
+        }
+      });
   }
 
   private async initModal(title, message, buttons, onSuccessCb): Promise<void> {
@@ -124,8 +122,6 @@ export class DashboardPage implements OnInit {
     this.sessionFacadeService.handlePushNotificationRegistration();
   }
 
-
-
   async presentEditHomePageModal(): Promise<void> {
     const modal = await this.modalController.create({
       component: EditHomePageModalComponent,
@@ -174,5 +170,4 @@ export class DashboardPage implements OnInit {
 
     await this.tileConfigFacadeService.updateConfigById(TILES_ID.order, res);
   }
-
 }
