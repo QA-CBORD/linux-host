@@ -244,4 +244,11 @@ export class UserFacadeService extends ServiceStateFacade {
       .getStateEntityByKey$<string>(this.fcmTokenKey)
       .pipe(map(data => (data && data.value ? data.value : null)));
   }
+
+  isStaleProfileEnabled$(): Observable<boolean> {
+    return this.getUserData$().pipe(
+      map(({ staleProfile }) => staleProfile ),
+      take(1)
+    );
+  }
 }
