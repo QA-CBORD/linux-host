@@ -18,6 +18,8 @@ import { Plugins } from '@capacitor/core';
 import { take } from 'rxjs/operators';
 import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
 import { StNativeStartupPopoverComponent } from '@shared/ui-components/st-native-startup-popover';
+import { UserFacadeService } from '@core/facades/user/user.facade.service';
+
 const { App, Device } = Plugins;
 
 @Component({
@@ -36,7 +38,8 @@ export class DashboardPage implements OnInit {
     private readonly contentStringsFacadeService: ContentStringsFacadeService,
     private readonly sessionFacadeService: SessionFacadeService,
     private readonly nativeStartupFacadeService: NativeStartupFacadeService,
-    private readonly popoverCtrl: PopoverController
+    private readonly popoverCtrl: PopoverController,
+    private readonly userFacadeService: UserFacadeService
   ) {}
 
   get tilesIds(): { [key: string]: string } {
@@ -52,6 +55,9 @@ export class DashboardPage implements OnInit {
 
   ionViewWillEnter() {
     this.accessCard.ionViewWillEnter();
+    if (this.getStaleProfileStatus()) {
+      this.presentUpdateContactInformaionModal();
+    }
   }
 
   ionViewDidEnter() {
@@ -169,5 +175,16 @@ export class DashboardPage implements OnInit {
     });
 
     await this.tileConfigFacadeService.updateConfigById(TILES_ID.order, res);
+  }
+
+  async getStaleProfileStatus(): Promise<boolean> {
+    return await this.userFacadeService.isStaleProfileEnabled$().toPromise();
+  }
+
+  async presentUpdateContactInformaionModal(): Promise<void> {
+    const modal = await this.modalController.create({
+      component: EditHomePageModalComponent,
+    });
+    return await modal.present();
   }
 }
