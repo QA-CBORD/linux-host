@@ -45,15 +45,17 @@ export class SettingsPage implements OnInit {
     this.router.navigate([PATRON_NAVIGATION.settings, LOCAL_ROUTING.photoUpload]);
   }
 
-  settingTap(setting: SettingItemConfig) {
-    !setting.navigateExternal &&
-      setting.navigate &&
-      this.router.navigate([PATRON_NAVIGATION.settings, setting.navigate]);
+  async settingTap(setting: SettingItemConfig) {
+    setting.callback && (await setting.callback());
+    // !setting.navigateExternal &&
+    //   setting.navigate &&
+    //   this.router.navigate([PATRON_NAVIGATION.settings, setting.navigate]);
 
-    setting.navigateExternal && setting.navigate && this.openSiteURL(setting.navigate);
+    // setting.navigateExternal && setting.navigate && this.openSiteURL(setting.navigate);
 
-    setting.modalContent && this.openModal(setting.modalContent);
+    // setting.modalContent && this.openModal(setting.modalContent);
   }
+
   logout() {
     this.sessionFacadeService.logoutUser();
   }

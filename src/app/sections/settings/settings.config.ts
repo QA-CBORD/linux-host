@@ -1,6 +1,6 @@
 import { SettingsSectionConfig, SETTINGS_VALIDATIONS } from './models/setting-items-config.model';
 import { Settings } from 'src/app/app.global';
-import { getCardStatus } from './helpers/setting-item.helper';
+import { getCardStatus, handleLoginAccess, handleOpenHTMLModal } from './helpers/setting-item.helper';
 import { CONTENT_STINGS_DOMAINS, CONTENT_STINGS_CATEGORIES } from 'src/app/content-strings';
 import { HTMLRendererComponent } from '@shared/ui-components/html-renderer/html-renderer.component';
 import { PhoneEmailComponent } from '@shared/ui-components/phone-email/phone-email.component';
@@ -99,6 +99,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         icon: 'faceid',
         label: 'Face ID',
         type: 'toggle',
+        setCallback: handleLoginAccess,
         validations: [
           { type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.PIN_ENABLED },
           { type: SETTINGS_VALIDATIONS.Biometric, value: 'face' },
@@ -109,7 +110,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         icon: 'pin-pad',
         label: 'Change / Remove PIN',
         type: 'button',
-        navigate: SETTINGS_NAVIGATE.pin,
+        setCallback: handleLoginAccess,
       },
       {
         id: SETTINGS_ID.address,
@@ -209,6 +210,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
           name: 'terms',
           component: HTMLRendererComponent,
         },
+        setCallback: handleOpenHTMLModal,
       },
     ],
   },

@@ -1,6 +1,11 @@
 import { Injectable } from '@angular/core';
-import { of, merge, pipe } from 'rxjs';
-import { SettingsSectionConfig, SettingItemConfig, SETTINGS_VALIDATIONS } from '../models/setting-items-config.model';
+import { of, merge, pipe, Observable } from 'rxjs';
+import {
+  SettingsSectionConfig,
+  SettingItemConfig,
+  SETTINGS_VALIDATIONS,
+  SettingsServices,
+} from '../models/setting-items-config.model';
 import { SETTINGS_CONFIG, SETTINGS_ID } from '../settings.config';
 import { take, map, reduce } from 'rxjs/operators';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
@@ -9,44 +14,53 @@ import { IdentityFacadeService } from '@core/facades/identity/identity.facade.se
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { IdentityService } from '@core/service/identity/identity.service';
+import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
+import { ModalController } from '@ionic/angular';
+import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 
 @Injectable()
 export class SettingsFactoryService {
-  SETTINGS_TOGGLE_SERVICES = {
-    [SETTINGS_ID.lostCard]: this.userFacadeService,
+  services: SettingsServices = {
+    identityService: this.identityFacadeService,
+    userService: this.userFacadeService,
+    globalNav: this.globalNav,
+    modalController: this.modalController,
+    contentStringService: this.contentStringFacadeService,
   };
 
   constructor(
     private readonly settingsFacade: SettingsFacadeService,
+    private readonly identityService: IdentityService,
     private readonly identityFacadeService: IdentityFacadeService,
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly environmentFacadeService: EnvironmentFacadeService,
-    private readonly userFacadeService: UserFacadeService
+    private readonly userFacadeService: UserFacadeService,
+    private readonly contentStringFacadeService: ContentStringsFacadeService,
+    private readonly globalNav: GlobalNavService,
+    private readonly modalController: ModalController
   ) {}
 
   async getSettings(): Promise<SettingsSectionConfig[]> {
-    const parsedSettings: SettingsSectionConfig[] = [];
-    for (const section of [...SETTINGS_CONFIG]) {
+    const parsedSettings: SettingsSectionConfig[] = [...SETTINGS_CONFIG];
+    for (let sectionIndex = 0; sectionIndex < parsedSettings.length; sectionIndex++) {
+      const section = parsedSettings[sectionIndex];
       const promises = [];
-      const parsedSetting = { ...section };
-      parsedSetting.items = [];
-
-      for (const setting of section.items) {
+      for (let settingIndex = 0; settingIndex < section.items.length; settingIndex++) {
+        const setting = section.items[settingIndex];
         promises.push(
           this.checkDisplayOption(setting).then(enabled => {
             if (enabled) {
-              parsedSetting.items.push(setting);
               this.setToggleStatus(setting);
+              setting.setCallback && setting.setCallback(this.services);
               setting.navigateExternal && this.setExternalURL(setting);
-            }
+            } else section.items.splice(settingIndex, 1);
           })
         );
       }
 
       await Promise.all(promises);
-      if (parsedSetting.items.length) {
-        parsedSettings.push(parsedSetting);
-      }
+      section.items.length === 0 && parsedSettings.splice(sectionIndex, 1);
     }
     return parsedSettings;
   }
@@ -63,10 +77,10 @@ export class SettingsFactoryService {
             )
           );
         } else if (validation.type === SETTINGS_VALIDATIONS.Biometric) {
-          // TODO: Implement observable.
           validations$.push(
-            this.identityFacadeService.availableBiometricHardware$.then(
-              (biometrics): boolean => biometrics && biometrics.some(cap => cap === validation.value)
+            this.availableBiometricHardware$.pipe(
+              map((biometrics): boolean => biometrics && biometrics.some(cap => cap === validation.value)),
+              take(1)
             )
           );
         }
@@ -83,7 +97,7 @@ export class SettingsFactoryService {
 
   private async setToggleStatus(setting: SettingItemConfig): Promise<boolean> {
     if (setting.getToggleStatus) {
-      setting.checked = await setting.getToggleStatus(this.SETTINGS_TOGGLE_SERVICES[setting.id]);
+      setting.checked = await setting.getToggleStatus(this.services);
       setting.label = setting.checked ? setting.toggleLabel.checked : setting.toggleLabel.unchecked;
     }
     return true;
@@ -110,5 +124,9 @@ export class SettingsFactoryService {
         .toPromise();
     }
     setting.navigate = await linkPromise;
+  }
+
+  get availableBiometricHardware$(): Observable<string[]> {
+    return this.identityService.getAvailableBiometricHardware().pipe(take(1));
   }
 }
