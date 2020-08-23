@@ -65,11 +65,11 @@ export class DashboardPage implements OnInit {
       console.log(`date1: ${date1}`);
       const lastChangedTerms = await this.institutionFacadeService.getlastChangedTerms$().toPromise();
       console.log(`dating: ${lastChangedTerms}`);
-      // const date2 = new Date(lastChangedTerms);
-      // console.log(`date2: ${date2}`);
-      // if (date1 > date2) {
-      //   console.log('IT WORKED!');
-      // }
+      const date2 = new Date(lastChangedTerms);
+      console.log(`date2: ${date2}`);
+      if (date1 > date2) {
+        console.log('IT WORKED!');
+      }
       //this.presentUpdateContactInformationModal();
     }
   }
