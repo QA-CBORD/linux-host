@@ -8,7 +8,8 @@ import { FormGroup, FormBuilder, AbstractControl, Validators } from '@angular/fo
 })
 export class UpdateContactInformationComponent implements OnInit {
  
-  placeholderOfUsername$: Promise<string>;
+  placeholderOfEmail$: Promise<string>;
+  placeholderOfPhone$: Promise<string>;
   loginForm: FormGroup;
 
   constructor() { }
@@ -21,7 +22,8 @@ export class UpdateContactInformationComponent implements OnInit {
     return USERFORM_CONTROL_NAMES;
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+  }
   
 }
 

@@ -6,7 +6,7 @@
 <div class="login__form-wrapper">
   <form class="login__form" [formGroup]="loginForm">
     <st-input-floating-label
-      [label]="placeholderOfUsername$ | async"
+      [label]="placeholderOfEmail$ | async"
       [formControlName]="controlsNames.username"
       [control]="username"
       [isError]="username.invalid && username.touched"
@@ -17,13 +17,13 @@
     </st-input-floating-label>
     <br />
     <st-input-floating-label
-      [label]="placeholderOfUsername$ | async"
+      [label]="placeholderOfPhone$ | async"
       [formControlName]="controlsNames.username"
       [control]="username"
       [isError]="username.invalid && username.touched"
       type="email"
       idd="username"
-      tabindex="0"
+      tabindex="1"
     >
     </st-input-floating-label>
     <div class="login__form-btns">
