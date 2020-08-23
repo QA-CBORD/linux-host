@@ -20,6 +20,7 @@ import { NativeStartupFacadeService } from '@core/facades/native-startup/native-
 import { StNativeStartupPopoverComponent } from '@shared/ui-components/st-native-startup-popover';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { UpdateContactInformationComponent } from './components/update-contact-information-modal/update-contact-information.component'
+import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 
 const { App, Device } = Plugins;
 
@@ -40,7 +41,8 @@ export class DashboardPage implements OnInit {
     private readonly sessionFacadeService: SessionFacadeService,
     private readonly nativeStartupFacadeService: NativeStartupFacadeService,
     private readonly popoverCtrl: PopoverController,
-    private readonly userFacadeService: UserFacadeService
+    private readonly userFacadeService: UserFacadeService,
+    private readonly institutionFacadeService: InstitutionFacadeService
   ) {}
 
   get tilesIds(): { [key: string]: string } {
@@ -54,10 +56,21 @@ export class DashboardPage implements OnInit {
     this.pushNotificationRegistration();
   }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     this.accessCard.ionViewWillEnter();
     if (this.getStaleProfileStatus()) {
-      this.presentUpdateContactInformaionModal();
+      const lastUpdatedProfile = await this.userFacadeService.getlastUpdatedProfile$().toPromise();
+      console.log(`dated: ${lastUpdatedProfile}`);
+      const date1 = new Date(lastUpdatedProfile);
+      console.log(`date1: ${date1}`);
+      const lastChangedTerms = await this.institutionFacadeService.getlastChangedTerms$().toPromise();
+      console.log(`dating: ${lastChangedTerms}`);
+      // const date2 = new Date(lastChangedTerms);
+      // console.log(`date2: ${date2}`);
+      // if (date1 > date2) {
+      //   console.log('IT WORKED!');
+      // }
+      //this.presentUpdateContactInformationModal();
     }
   }
 
@@ -182,10 +195,14 @@ export class DashboardPage implements OnInit {
     return await this.userFacadeService.isStaleProfileEnabled$().toPromise();
   }
 
-  async presentUpdateContactInformaionModal(): Promise<void> {
+  async presentUpdateContactInformationModal(): Promise<void> {
     const modal = await this.modalController.create({
       component: UpdateContactInformationComponent,
     });
     return await modal.present();
+  }
+
+  updatedAfterLastTermsChange() {
+    
   }
 }

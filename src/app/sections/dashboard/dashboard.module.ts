@@ -27,6 +27,7 @@ import { UpdateContactInformationComponent } from './components/update-contact-i
 import { StInputFloatingLabelModule } from '@shared/ui-components/st-input-floating-label/st-input-floating-label.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { StButtonModule } from '@shared/ui-components/st-button';
+import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 
 const imports = [
   CommonModule,
@@ -46,7 +47,7 @@ const imports = [
   HousingTileModule,
   StInputFloatingLabelModule,
   ReactiveFormsModule,
-  StButtonModule,
+  StButtonModule
 ];
 
 const declarations = [
@@ -61,6 +62,7 @@ const providers = [
   MobileAccessService,
   DashboardPageResolver,
   TileConfigFacadeService,
+  GlobalNavService
 ];
 
 @NgModule({

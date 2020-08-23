@@ -251,4 +251,10 @@ export class UserFacadeService extends ServiceStateFacade {
       take(1)
     );
   }
+  getlastUpdatedProfile$(): Observable<string> {
+    return this.getUserData$().pipe(
+      map(({ lastUpdatedProfile }) => lastUpdatedProfile ),
+      take(1)
+    );
+  }
 }

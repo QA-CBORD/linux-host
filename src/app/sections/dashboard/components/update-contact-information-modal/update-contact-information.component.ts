@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, AbstractControl, Validators } from '@angular/forms';
+import { FormGroup, AbstractControl } from '@angular/forms';
+import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 
 @Component({
   selector: 'st-update-contact-information',
@@ -12,7 +13,7 @@ export class UpdateContactInformationComponent implements OnInit {
   placeholderOfPhone$: string;  // Promise?
   loginForm: FormGroup;
 
-  constructor() { }
+  constructor( private readonly globalNavService: GlobalNavService) { }
    
   get username(): AbstractControl {
     return this.loginForm.get(this.controlsNames.username);
@@ -23,10 +24,12 @@ export class UpdateContactInformationComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.placeholderOfEmail$ = 'sample@email.com';
-    this.placeholderOfPhone$ = '12345';
+    this.globalNavService.hideNavBar();
   }
-  
+
+  ngOnDestroy() {
+    this.globalNavService.showNavBar();
+  }
 }
 
 export enum USERFORM_CONTROL_NAMES {

@@ -7,7 +7,8 @@
   <div class="login__form-wrapper">
     <form class="login__form" [formGroup]="loginForm">
       <st-input-floating-label
-        [label]="placeholderOfEmail$ | async"
+      [label]="placeholderOfEmail$ | async"
+        [label]="placeholderOfEmail$"
         [formControlName]="controlsNames.username"
         [control]="username"
         [isError]="username.invalid && username.touched"
@@ -18,7 +19,7 @@
       </st-input-floating-label>
       <br />
       <st-input-floating-label
-        [label]="placeholderOfPhone$ | async"
+      [label]="placeholderOfPhone$ | async"
         [formControlName]="controlsNames.username"
         [control]="username"
         [isError]="username.invalid && username.touched"
@@ -28,7 +29,7 @@
       >
       </st-input-floating-label>
       <div class="login__form-password">
-        <a class="login__form-password-forgot" (click)="true" tabindex="2">Forgot password?</a>
+        <a class="login__form-password-forgot" (click)="true" tabindex="2">Terms and Conditions</a>
       </div>
       <div class="login__form-btns">
         <st-button buttonModifier="rectangle" (click)="true" tabindex="3">
