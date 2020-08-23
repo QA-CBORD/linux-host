@@ -1,3 +1,35 @@
-<p>
-  update-contact-information works!
-</p>
+<ion-header class="edit-home__header" mode="ios">
+  <ion-toolbar mode="ios">
+    <ion-title mode="ios" class="edit-home__header-title">Update Contact</ion-title>
+  </ion-toolbar>
+</ion-header>
+<div class="login__form-wrapper">
+  <form class="login__form" [formGroup]="loginForm">
+    <st-input-floating-label
+      [label]="placeholderOfUsername$ | async"
+      [formControlName]="controlsNames.username"
+      [control]="username"
+      [isError]="username.invalid && username.touched"
+      type="email"
+      idd="username"
+      tabindex="0"
+    >
+    </st-input-floating-label>
+    <br />
+    <st-input-floating-label
+      [label]="placeholderOfUsername$ | async"
+      [formControlName]="controlsNames.username"
+      [control]="username"
+      [isError]="username.invalid && username.touched"
+      type="email"
+      idd="username"
+      tabindex="0"
+    >
+    </st-input-floating-label>
+    <div class="login__form-btns">
+      <st-button buttonModifier="rectangle" (click)="true" tabindex="3">
+        Submit
+      </st-button>
+    </div>
+  </form>
+</div>

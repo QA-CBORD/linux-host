@@ -24,6 +24,9 @@ import { MobileAccessService } from '@sections/mobile-access';
 import { TileConfigFacadeService } from '@sections/dashboard/tile-config-facade.service';
 import { HousingTileModule } from './containers/housing-tile/housing-tile.module';
 import { UpdateContactInformationComponent } from './components/update-contact-information-modal/update-contact-information.component'
+import { StInputFloatingLabelModule } from '@shared/ui-components/st-input-floating-label/st-input-floating-label.module';
+import { ReactiveFormsModule } from '@angular/forms';
+import { StButtonModule } from '@shared/ui-components/st-button';
 
 const imports = [
   CommonModule,
@@ -40,7 +43,10 @@ const imports = [
   TransactionsTileModule,
   RewardsTileModule,
   MealDonationsTileModule,
-  HousingTileModule
+  HousingTileModule,
+  StInputFloatingLabelModule,
+  ReactiveFormsModule,
+  StButtonModule,
 ];
 
 const declarations = [
