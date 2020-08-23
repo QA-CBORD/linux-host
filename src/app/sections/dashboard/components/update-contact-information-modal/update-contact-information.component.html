@@ -3,33 +3,38 @@
     <ion-title mode="ios" class="edit-home__header-title">Update Contact</ion-title>
   </ion-toolbar>
 </ion-header>
-<div class="login__form-wrapper">
-  <form class="login__form" [formGroup]="loginForm">
-    <st-input-floating-label
-      [label]="placeholderOfEmail$ | async"
-      [formControlName]="controlsNames.username"
-      [control]="username"
-      [isError]="username.invalid && username.touched"
-      type="email"
-      idd="username"
-      tabindex="0"
-    >
-    </st-input-floating-label>
-    <br />
-    <st-input-floating-label
-      [label]="placeholderOfPhone$ | async"
-      [formControlName]="controlsNames.username"
-      [control]="username"
-      [isError]="username.invalid && username.touched"
-      type="email"
-      idd="username"
-      tabindex="1"
-    >
-    </st-input-floating-label>
-    <div class="login__form-btns">
-      <st-button buttonModifier="rectangle" (click)="true" tabindex="3">
-        Submit
-      </st-button>
-    </div>
-  </form>
-</div>
+<ion-content class="login" scrollY="false">
+  <div class="login__form-wrapper">
+    <form class="login__form" [formGroup]="loginForm">
+      <st-input-floating-label
+        [label]="placeholderOfEmail$ | async"
+        [formControlName]="controlsNames.username"
+        [control]="username"
+        [isError]="username.invalid && username.touched"
+        type="email"
+        idd="username"
+        tabindex="0"
+      >
+      </st-input-floating-label>
+      <br />
+      <st-input-floating-label
+        [label]="placeholderOfPhone$ | async"
+        [formControlName]="controlsNames.username"
+        [control]="username"
+        [isError]="username.invalid && username.touched"
+        type="email"
+        idd="username"
+        tabindex="1"
+      >
+      </st-input-floating-label>
+      <div class="login__form-password">
+        <a class="login__form-password-forgot" (click)="true" tabindex="2">Forgot password?</a>
+      </div>
+      <div class="login__form-btns">
+        <st-button buttonModifier="rectangle" (click)="true" tabindex="3">
+          Submit
+        </st-button>
+      </div>
+    </form>
+  </div>
+</ion-content>

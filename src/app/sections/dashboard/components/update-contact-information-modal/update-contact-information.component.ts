@@ -8,8 +8,8 @@ import { FormGroup, FormBuilder, AbstractControl, Validators } from '@angular/fo
 })
 export class UpdateContactInformationComponent implements OnInit {
  
-  placeholderOfEmail$: Promise<string>;
-  placeholderOfPhone$: Promise<string>;
+  placeholderOfEmail$: string;  // Promise?
+  placeholderOfPhone$: string;  // Promise?
   loginForm: FormGroup;
 
   constructor() { }
@@ -23,6 +23,8 @@ export class UpdateContactInformationComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.placeholderOfEmail$ = 'sample@email.com';
+    this.placeholderOfPhone$ = '12345';
   }
   
 }
