@@ -23,6 +23,7 @@ import { MealDonationsTileModule } from './containers/meal-donations-tile/meal-d
 import { MobileAccessService } from '@sections/mobile-access';
 import { TileConfigFacadeService } from '@sections/dashboard/tile-config-facade.service';
 import { HousingTileModule } from './containers/housing-tile/housing-tile.module';
+import { UpdateContactInformationComponent } from './components/update-contact-information-modal/update-contact-information.component'
 
 const imports = [
   CommonModule,
@@ -45,6 +46,7 @@ const imports = [
 const declarations = [
   DashboardPage,
   EditHomePageModalComponent,
+  UpdateContactInformationComponent
 ];
 
 const providers = [
@@ -60,7 +62,8 @@ const providers = [
   declarations,
   providers,
   entryComponents: [
-    EditHomePageModalComponent
+    EditHomePageModalComponent,
+    UpdateContactInformationComponent
   ]
 })
 export class DashboardPageModule {

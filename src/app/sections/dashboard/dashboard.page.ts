@@ -19,6 +19,7 @@ import { take } from 'rxjs/operators';
 import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
 import { StNativeStartupPopoverComponent } from '@shared/ui-components/st-native-startup-popover';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
+import { UpdateContactInformationComponent } from './components/update-contact-information-modal/update-contact-information.component'
 
 const { App, Device } = Plugins;
 
@@ -183,7 +184,7 @@ export class DashboardPage implements OnInit {
 
   async presentUpdateContactInformaionModal(): Promise<void> {
     const modal = await this.modalController.create({
-      component: EditHomePageModalComponent,
+      component: UpdateContactInformationComponent,
     });
     return await modal.present();
   }
