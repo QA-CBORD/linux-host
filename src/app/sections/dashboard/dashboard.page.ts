@@ -21,7 +21,6 @@ import { StNativeStartupPopoverComponent } from '@shared/ui-components/st-native
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { PhoneEmailComponent } from '@shared/ui-components/phone-email/phone-email.component';
-import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 
 const { App, Device } = Plugins;
 
@@ -43,8 +42,7 @@ export class DashboardPage implements OnInit {
     private readonly nativeStartupFacadeService: NativeStartupFacadeService,
     private readonly popoverCtrl: PopoverController,
     private readonly userFacadeService: UserFacadeService,
-    private readonly institutionFacadeService: InstitutionFacadeService,
-    private readonly globalNavService: GlobalNavService,
+    private readonly institutionFacadeService: InstitutionFacadeService
   ) {}
 
   get tilesIds(): { [key: string]: string } {
@@ -202,7 +200,6 @@ export class DashboardPage implements OnInit {
     const modal = await this.modalController.create({
       component: PhoneEmailComponent,
     });
-    this.globalNavService.hideNavBar();
     return await modal.present();
   }
 }

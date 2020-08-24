@@ -5,7 +5,7 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { take } from 'rxjs/operators';
 import { UserInfoSet } from '@sections/settings/models/setting-items-config.model';
 import { UserNotificationInfo } from '@core/model/user';
-
+import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
 @Component({
   selector: 'st-phone-email',
   templateUrl: './phone-email.component.html',
@@ -16,8 +16,7 @@ export class PhoneEmailComponent implements OnInit {
   phoneEmailForm: FormGroup;
   user: UserInfoSet;
   isLoading: boolean;
-
-  title = "Update Contact";
+  title: string = "Email & Phone Number";
   termsAndConditions = true;
 
   constructor(
@@ -25,10 +24,19 @@ export class PhoneEmailComponent implements OnInit {
     private readonly userFacadeService: UserFacadeService,
     private readonly modalController: ModalController,
     private readonly toastController: ToastController,
-    private readonly cdRef: ChangeDetectorRef
+    private readonly cdRef: ChangeDetectorRef,
+    private readonly nativeStartupFacadeService: NativeStartupFacadeService
   ) {}
+
   ngOnInit() {
     this.initForm();
+  }
+
+  ionViewWillEnter() {
+    if (this.termsAndConditions) {
+      this.nativeStartupFacadeService.blockGlobalNavigationStatus = true;
+      this.title = "Update Contact Information";
+    }
   }
 
   async saveChanges() {
@@ -44,6 +52,10 @@ export class PhoneEmailComponent implements OnInit {
       },
       () => this.cdRef.detectChanges()
     );
+    if (this.termsAndConditions) {
+      this.close();
+      this.nativeStartupFacadeService.blockGlobalNavigationStatus = false;
+    }
   }
 
   close() {
