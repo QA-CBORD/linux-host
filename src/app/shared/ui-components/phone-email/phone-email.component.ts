@@ -17,7 +17,7 @@ export class PhoneEmailComponent implements OnInit {
   user: UserInfoSet;
   isLoading: boolean;
   title: string = "Email & Phone Number";
-  termsAndConditions = true;
+  staleProfile = true;
 
   constructor(
     private readonly fb: FormBuilder,
@@ -33,7 +33,7 @@ export class PhoneEmailComponent implements OnInit {
   }
 
   ionViewWillEnter() {
-    if (this.termsAndConditions) {
+    if (this.staleProfile) {
       this.nativeStartupFacadeService.blockGlobalNavigationStatus = true;
       this.title = "Update Contact Information";
     }
@@ -52,7 +52,7 @@ export class PhoneEmailComponent implements OnInit {
       },
       () => this.cdRef.detectChanges()
     );
-    if (this.termsAndConditions) {
+    if (this.staleProfile) {
       this.close();
       this.nativeStartupFacadeService.blockGlobalNavigationStatus = false;
     }
@@ -92,7 +92,7 @@ export class PhoneEmailComponent implements OnInit {
     const user: any = { ...this.user };
     user.phone = this.phone.value;
     user.email = this.email.value;
-    if (this.termsAndConditions) {
+    if (this.staleProfile) {
       user.staleProfile = false;
     }
     const notifications = user.userNotificationInfoList.reduce((r, a: UserNotificationInfo, i) => {

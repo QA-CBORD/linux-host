@@ -5,7 +5,7 @@
   [backButtonTitle]="''"
   [isToolbarShow]="true"
   [isBackButtonShow]="false"
-  [isDismissButtonShow]="!termsAndConditions"
+  [isDismissButtonShow]="!staleProfile"
   (onDismiss)="close()"
 ></st-header>
 <ion-content class="container">
@@ -36,12 +36,12 @@
       >
       </st-input-floating-label>
     </form>
-    <ion-label class="ion-text-center" *ngIf="termsAndConditions">
+    <ion-label class="ion-text-center" *ngIf="staleProfile">
       <span class="terms-label"> By clicking on 'Save changes' you agree you have read the GET Terms of User and Privacy Policy. </span>
     </ion-label>
   </div>
 </ion-content>
-<ion-label class="ion-text-center" *ngIf="termsAndConditions">
+<ion-label class="ion-text-center" *ngIf="staleProfile">
   Terms and Conditions
 </ion-label>
 <ion-footer class="ion-padding footer">
