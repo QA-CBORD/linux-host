@@ -1,0 +1,7 @@
+<ion-item [lines]="lines" (click)="settingTap(setting)" [button]="setting.type !== 'toggle'">
+  <img src="../../../assets/icon/{{ setting.icon }}.svg" alt="Update Photo" />
+  <ion-label class="item__label"
+    ><h4>{{ setting.label }}</h4></ion-label
+  >
+  <ion-toggle *ngIf="setting.type === 'toggle'" [checked]="setting.checked"></ion-toggle>
+</ion-item>

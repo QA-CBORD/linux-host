@@ -1,0 +1,110 @@
+@import 'tools';
+
+.container {
+  --background: #{$color-background-divider};
+}
+
+.title {
+  @include font-nunito-heavy(20px);
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.toolbar {
+  display: flex;
+  justify-content: flex-start;
+  background: #ffffff;
+  padding-top: 15px;
+}
+
+.student-card-container {
+  margin-left: 0px;
+  margin-right: 0px;
+}
+
+.card-subtitle {
+  text-transform: uppercase;
+  @include font-nunito-regular(12px);
+}
+
+.patron-img {
+  height: 64px;
+  width: 64px;
+}
+
+.item {
+  &__avatar {
+    width: 64px !important;
+    height: 100% !important;
+    max-width: 100px !important; //any size
+    max-height: 100px !important; //any size
+  }
+
+  &__label {
+    h3 {
+      @include font-nunito-heavy(20px);
+    }
+
+    h4 {
+      @include font-nunito-semibold(14px);
+    }
+
+    p {
+      @include font-nunito-regular(14px);
+    }
+  }
+}
+
+.thumbnail {
+  object-fit: cover;
+  width: 64px;
+  height: 64px;
+}
+
+.thumbnail-card {
+  width: 23px;
+  height: 23px;
+  .img {
+    object-fit: cover;
+  }
+}
+
+.item-native {
+  padding: 0px !important;
+}
+
+.student-card {
+  display: flex;
+}
+
+.student-image {
+  width: 64px;
+}
+
+.student-card-options {
+  display: flex;
+  flex-flow: column;
+}
+
+.sc-ion-card-ios-s img {
+  width: unset;
+}
+
+.item-icon {
+  padding-right: 12.82px;
+}
+
+.settings {
+  &__bottom-options {
+    ion-button {
+      @include font-nunito-heavy(14px);
+    }
+    background-color: #ffffff;
+  }
+  &__label-version {
+    color: rgba(0, 0, 0, 0.6);
+    @include font-nunito-regular(16px);
+  }
+  &__section-header {
+    @include font-nunito-semibold(12px);
+  }
+}

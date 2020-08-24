@@ -59,6 +59,7 @@ export const TILES_BASE_CONFIG: TileWrapperConfig[] = [
       title: 'All Transactions',
       navigate: `${PATRON_NAVIGATION.accounts}/${ACCOUNT_ROUTING.accountDetailsM}/${ALL_ACCOUNTS}`,
     },
+    navigateBack: PATRON_NAVIGATION.accounts,
   },
   {
     id: TILES_ID.rewards,

@@ -10,12 +10,7 @@ import { map, switchMap, tap, take, catchError } from 'rxjs/operators';
 import { AddressInfo } from '@core/model/address/address-info';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { Settings } from 'src/app/app.global';
-import {
-  Plugins,
-  Capacitor,
-  PushNotificationToken,
-  PushNotification,
-} from '@capacitor/core';
+import { Plugins, Capacitor, PushNotificationToken, PushNotification } from '@capacitor/core';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 const { PushNotifications, LocalNotifications, Device } = Plugins;
 
@@ -243,5 +238,12 @@ export class UserFacadeService extends ServiceStateFacade {
     return this.storageStateService
       .getStateEntityByKey$<string>(this.fcmTokenKey)
       .pipe(map(data => (data && data.value ? data.value : null)));
+  }
+
+  saveUser$(user: UserInfo): Observable<string> {
+    return this.userApiService.updateUserInfo$(user).pipe(
+      tap(res => this.storageStateService.updateStateEntity(this.userKey, user, { ttl: this.ttl })),
+      take(1)
+    );
   }
 }

@@ -37,7 +37,7 @@ export enum Pat {
   secmsg_api = 'https://secmsg.api.pat.cbord.com',
   image_url = 'https://object-store.api.pat.cbord.com/image/',
   housing_aws_url = 'https://z6u8er70s9.execute-api.us-east-1.amazonaws.com/dev',
-  partner_services_url = 'https://api.payments.pat.cbord.com',
+  partner_services_url = 'https://api.partnerpayments.pat.cbord.com',
 }
 
 export enum Demo {
@@ -47,7 +47,7 @@ export enum Demo {
   secmsg_api = 'https://secmsg.api.demo.cbord.com',
   image_url = 'https://object-store.api.demo.cbord.com/image/',
   housing_aws_url = 'https://z4ffq7e1m9.execute-api.us-east-1.amazonaws.com/dev',
-  partner_services_url = 'https://api.payments.pat.cbord.com',
+  partner_services_url = 'https://api.payments.demo.cbord.com',
 }
 
 export enum Production {
@@ -57,7 +57,7 @@ export enum Production {
   secmsg_api = 'https://secmsg.api.cbord.com',
   image_url = 'https://object-store.api.cbord.com/image/',
   housing_aws_url = 'https://z6u8er70s9.execute-api.us-east-1.amazonaws.com',
-  partner_services_url = 'https://api.payments.cbord.com',
+  partner_services_url = 'https://api.partnerpayments.cbord.com',
 }
 
 export class Environment {

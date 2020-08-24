@@ -1,0 +1,7 @@
+@import 'tools';
+
+.item__label {
+  margin-left: 13px;
+  @include font-nunito-semibold(16px);
+}
+

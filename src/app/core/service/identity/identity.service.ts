@@ -178,7 +178,7 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
       component: PinPage,
       componentProps,
     });
-    pinModal.present();
+    await pinModal.present();
     return await pinModal.onDidDismiss();
   }
 
