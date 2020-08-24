@@ -4,18 +4,27 @@
       <ion-title class="title">Settings</ion-title>
     </ion-toolbar>
   </ion-header>
-  <ion-list class="ion-margin-bottom ion-padding-end" *ngFor="let section of settingSections | async; let first = first">
+  <ion-list
+    class="ion-margin-bottom ion-padding-end"
+    *ngFor="let section of settingSections | async; let first = first"
+  >
     <ion-list-header lines="inset">
       <ion-label class="settings__section-header">{{section.label}}</ion-label>
     </ion-list-header>
     <ng-container *ngIf="first">
       <ion-item (click)="navigateToPhotoUpload()">
         <ion-avatar slot="start" class="patron-img">
-          <img src="../../../assets/icon/empty-photo.svg" alt="Patron Photo" />
+          <img *ngIf="!isLoadingPhoto" [src]="userPhoto" alt="Patron photo" />
+          <img
+            *ngIf="isLoadingPhoto || !userPhoto"
+            class="card__campus-empty-photo"
+            src="../../../assets/images/no_photo.svg"
+            alt="no Patron Photo"
+          />
         </ion-avatar>
         <ion-label class="item__label">
-          <h3>Student Name</h3>
-          <p>Institution Name</p>
+          <h3 *ngIf="(userName$ | async)">{{ userName$ | async }}</h3>
+          <p *ngIf="institutionName$ | async">{{ institutionName$ | async }}</p>
         </ion-label>
       </ion-item>
     </ng-container>
