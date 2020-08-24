@@ -12,3 +12,16 @@ ion-footer {
     margin-bottom: 10px;
   }
 }
+
+.terms-label {
+  @include font-nunito-heavy(10px);
+
+  color: rgba($color-black, 0.6);
+  padding-right: 20px;
+  position: relative;
+
+  &::before {
+    background-color: transparent;
+    right: 0;
+  }
+}

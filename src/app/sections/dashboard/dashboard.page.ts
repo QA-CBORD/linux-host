@@ -21,6 +21,7 @@ import { StNativeStartupPopoverComponent } from '@shared/ui-components/st-native
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { PhoneEmailComponent } from '@shared/ui-components/phone-email/phone-email.component';
+import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 
 const { App, Device } = Plugins;
 
@@ -42,7 +43,8 @@ export class DashboardPage implements OnInit {
     private readonly nativeStartupFacadeService: NativeStartupFacadeService,
     private readonly popoverCtrl: PopoverController,
     private readonly userFacadeService: UserFacadeService,
-    private readonly institutionFacadeService: InstitutionFacadeService
+    private readonly institutionFacadeService: InstitutionFacadeService,
+    private readonly globalNavService: GlobalNavService,
   ) {}
 
   get tilesIds(): { [key: string]: string } {
@@ -59,11 +61,8 @@ export class DashboardPage implements OnInit {
   async ionViewWillEnter() {
     this.accessCard.ionViewWillEnter();
     const staleProfile = await this.getStaleProfileStatus$();
-    //const contactInformation = await this.isContactInformationUpToDate$();
-    console.log(`stale 1: ${staleProfile}`);
-    // console.log(`upToDate 1: ${contactInformation}`);
-    if (staleProfile ) { //|| contactInformation
-      console.log(`stale 2: ${staleProfile}`); // , upToDate 2: ${contactInformation}
+    const contactInformation = await this.isContactInformationUpToDate$();
+    if (staleProfile || contactInformation) { 
       this.presentUpdateContactInformationModal();
     }
   }
@@ -190,16 +189,12 @@ export class DashboardPage implements OnInit {
   }
 
   private async isContactInformationUpToDate$(): Promise<boolean> {
-    return new Promise<boolean>(async (resolve, reject) => {
+    return new Promise<boolean>(async (resolve) => {
       const lastUpdatedProfile = await this.userFacadeService.getlastUpdatedProfile$().toPromise();
-      const lastChangedTerms = await this.institutionFacadeService.getlastChangedTerms$().toPromise();
       const profileDate = new Date(lastUpdatedProfile);
+      const lastChangedTerms = await this.institutionFacadeService.getlastChangedTerms$().toPromise();
       const termDate = new Date(lastChangedTerms);
-      if (termDate > profileDate) {
-        resolve(true);
-      } else {
-        //reject(false);
-      }
+      return  termDate > profileDate ? resolve(true) : resolve(false);
     });
   }
 
@@ -207,6 +202,7 @@ export class DashboardPage implements OnInit {
     const modal = await this.modalController.create({
       component: PhoneEmailComponent,
     });
+    this.globalNavService.hideNavBar();
     return await modal.present();
   }
 }

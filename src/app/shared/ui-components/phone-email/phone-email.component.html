@@ -1,11 +1,11 @@
 <st-header
-  title="Email & Phone Number"
+  [title]="title"
   [isTitleShow]="true"
   [backButtonIcon]="'ios-close'"
   [backButtonTitle]="''"
   [isToolbarShow]="true"
   [isBackButtonShow]="false"
-  [isDismissButtonShow]="true"
+  [isDismissButtonShow]="!termsAndConditions"
   (onDismiss)="close()"
 ></st-header>
 <ion-content class="container">
@@ -36,8 +36,14 @@
       >
       </st-input-floating-label>
     </form>
+    <ion-label class="ion-text-center" *ngIf="termsAndConditions">
+      <span class="terms-label"> By clicking on 'Save changes' you agree you have read the GET Terms of User and Privacy Policy. </span>
+    </ion-label>
   </div>
 </ion-content>
+<ion-label class="ion-text-center" *ngIf="termsAndConditions">
+  Terms and Conditions
+</ion-label>
 <ion-footer class="ion-padding footer">
   <st-button
     buttonModifier="rectangle"

@@ -17,6 +17,9 @@ export class PhoneEmailComponent implements OnInit {
   user: UserInfoSet;
   isLoading: boolean;
 
+  title = "Update Contact";
+  termsAndConditions = true;
+
   constructor(
     private readonly fb: FormBuilder,
     private readonly userFacadeService: UserFacadeService,
@@ -77,7 +80,9 @@ export class PhoneEmailComponent implements OnInit {
     const user: any = { ...this.user };
     user.phone = this.phone.value;
     user.email = this.email.value;
-
+    if (this.termsAndConditions) {
+      user.staleProfile = false;
+    }
     const notifications = user.userNotificationInfoList.reduce((r, a: UserNotificationInfo, i) => {
       r[a.type] = [...(r[a.type] || []), i];
       return r;
