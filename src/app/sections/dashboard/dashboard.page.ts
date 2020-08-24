@@ -19,8 +19,8 @@ import { take } from 'rxjs/operators';
 import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
 import { StNativeStartupPopoverComponent } from '@shared/ui-components/st-native-startup-popover';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
-import { UpdateContactInformationComponent } from './components/update-contact-information-modal/update-contact-information.component';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
+import { PhoneEmailComponent } from '@shared/ui-components/phone-email/phone-email.component';
 
 const { App, Device } = Plugins;
 
@@ -58,7 +58,14 @@ export class DashboardPage implements OnInit {
 
   async ionViewWillEnter() {
     this.accessCard.ionViewWillEnter();
-    await this.updateContactIfNeccesary();
+    const staleProfile = await this.getStaleProfileStatus$();
+    //const contactInformation = await this.isContactInformationUpToDate$();
+    console.log(`stale 1: ${staleProfile}`);
+    // console.log(`upToDate 1: ${contactInformation}`);
+    if (staleProfile ) { //|| contactInformation
+      console.log(`stale 2: ${staleProfile}`); // , upToDate 2: ${contactInformation}
+      this.presentUpdateContactInformationModal();
+    }
   }
 
   ionViewDidEnter() {
@@ -191,23 +198,15 @@ export class DashboardPage implements OnInit {
       if (termDate > profileDate) {
         resolve(true);
       } else {
-        reject(false);
+        //reject(false);
       }
     });
   }
 
   async presentUpdateContactInformationModal(): Promise<void> {
     const modal = await this.modalController.create({
-      component: UpdateContactInformationComponent,
+      component: PhoneEmailComponent,
     });
     return await modal.present();
-  }
-
-  private async updateContactIfNeccesary() {
-    const staleProfile = await this.getStaleProfileStatus$();
-    const contactInformation = await this.isContactInformationUpToDate$();
-    if (staleProfile || contactInformation) {
-      this.presentUpdateContactInformationModal();
-    }
   }
 }
