@@ -6,6 +6,9 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { ModalController } from '@ionic/angular';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
+import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
+import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 
 export interface SettingsSectionConfig {
   label: string;
@@ -25,7 +28,7 @@ export interface SettingItemConfig {
   validations?: SettingItemValidation[];
   modalContent?: ModalContent | HTMLContentString;
   getToggleStatus?: (services: SettingsServices) => Promise<boolean>;
-  setCallback?: (services: SettingsServices) => void;
+  setCallback?: (services: SettingsServices | undefined) => void;
   callback?: () => Promise<any>;
 }
 
@@ -61,9 +64,12 @@ export interface UserInfoSet extends UserInfo {
 }
 
 export interface SettingsServices {
-  identityService?: IdentityFacadeService;
+  identity: IdentityFacadeService;
   userService: UserFacadeService;
   globalNav: GlobalNavService;
   modalController: ModalController;
-  contentStringService: ContentStringsFacadeService;
+  contentString: ContentStringsFacadeService;
+  settings: SettingsFacadeService
+  institution: InstitutionFacadeService;
+  environment: EnvironmentFacadeService;
 }

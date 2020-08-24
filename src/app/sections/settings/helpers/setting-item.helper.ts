@@ -1,7 +1,7 @@
 import { map, take } from 'rxjs/operators';
 import { UserInfo } from '@core/model/user';
 import { SettingsServices, SettingItemConfig, HTMLContentString } from '../models/setting-items-config.model';
-import { SETTINGS_ID } from '../settings.config';
+import { Settings } from 'src/app/app.global';
 
 export function getCardStatus(services: SettingsServices): Promise<boolean> {
   return services.userService
@@ -13,7 +13,7 @@ export function getCardStatus(services: SettingsServices): Promise<boolean> {
 export function handleLoginAccess(services: SettingsServices) {
   const setting: SettingItemConfig = this;
   setting.callback = function() {
-    return services.identityService.pinLoginSetup(setting.id === SETTINGS_ID.faceId, false);
+    return services.identity.pinLoginSetup(setting.validations.some(validation => validation.value === 'face'), false);
   };
 }
 
@@ -21,7 +21,7 @@ export function handleOpenHTMLModal(services: SettingsServices) {
   const setting: SettingItemConfig = this;
   setting.callback = async function() {
     const { domain, category, name } = setting.modalContent as HTMLContentString;
-    const htmlContent = await services.contentStringService
+    const htmlContent = await services.contentString
       .fetchContentString$(domain, category, name)
       .pipe(
         map(st => st.value),
@@ -57,5 +57,34 @@ export async function openModal(services: SettingsServices) {
     });
     services.globalNav.hideNavBar();
     return settingModal.present();
+  };
+}
+
+export async function openSiteURL(services: SettingsServices): Promise<void> {
+  const setting: SettingItemConfig = this;
+  const resource = setting.navigateExternal;
+  let linkPromise: Promise<string>;
+
+  if (resource.type === 'email') {
+    linkPromise = services.settings
+      .getSetting(resource.value as Settings.Setting)
+      .pipe(
+        map(emailSetting => 'mailto:' + emailSetting.value),
+        take(1)
+      )
+      .toPromise();
+  }
+  if (resource.type === 'link') {
+    linkPromise = services.institution.cachedInstitutionInfo$
+      .pipe(
+        map(inst => `${services.environment.getSitesURL()}/${inst.shortName}/full/${resource.value}`),
+        take(1)
+      )
+      .toPromise();
+  }
+  const link = await linkPromise;
+
+  setting.callback = async function() {
+    window.open(link, '_system');
   };
 }

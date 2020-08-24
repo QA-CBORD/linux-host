@@ -47,13 +47,7 @@ export class SettingsPage implements OnInit {
 
   async settingTap(setting: SettingItemConfig) {
     setting.callback && (await setting.callback());
-    // !setting.navigateExternal &&
-    //   setting.navigate &&
-    //   this.router.navigate([PATRON_NAVIGATION.settings, setting.navigate]);
-
-    // setting.navigateExternal && setting.navigate && this.openSiteURL(setting.navigate);
-
-    // setting.modalContent && this.openModal(setting.modalContent);
+    setting.navigate && this.router.navigate([PATRON_NAVIGATION.settings, setting.navigate]);
   }
 
   logout() {
@@ -64,38 +58,4 @@ export class SettingsPage implements OnInit {
     return deviceInfo.appVersion;
   }
 
-  async openSiteURL(url: string): Promise<void> {
-    window.open(url, '_system');
-  }
-
-  async openModal(modalContent: ModalContent | HTMLContentString) {
-    let componentProps: any;
-    if ((<HTMLContentString>modalContent).domain) {
-      const { domain, category, name } = modalContent as HTMLContentString;
-      const htmlContent = await this.contentStringFacadeService
-        .fetchContentString$(domain, category, name)
-        .pipe(
-          map(st => st.value),
-          take(1)
-        )
-        .toPromise();
-      const buttons = [
-        {
-          label: 'Close',
-          callback: () => {
-            this.globalNav.showNavBar();
-            this.modalController.dismiss();
-          },
-        },
-      ];
-      componentProps = { htmlContent, buttons };
-    }
-    const settingModal = await this.modalController.create({
-      backdropDismiss: false,
-      component: modalContent.component,
-      componentProps,
-    });
-    this.globalNav.hideNavBar();
-    await settingModal.present();
-  }
 }

@@ -1,6 +1,6 @@
 import { SettingsSectionConfig, SETTINGS_VALIDATIONS } from './models/setting-items-config.model';
 import { Settings } from 'src/app/app.global';
-import { getCardStatus, handleLoginAccess, handleOpenHTMLModal } from './helpers/setting-item.helper';
+import { handleLoginAccess, handleOpenHTMLModal, openSiteURL } from './helpers/setting-item.helper';
 import { CONTENT_STINGS_DOMAINS, CONTENT_STINGS_CATEGORIES } from 'src/app/content-strings';
 import { HTMLRendererComponent } from '@shared/ui-components/html-renderer/html-renderer.component';
 import { PhoneEmailComponent } from '@shared/ui-components/phone-email/phone-email.component';
@@ -63,16 +63,16 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         navigate: SETTINGS_NAVIGATE.updatePhoto,
         validations: [{ type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.PHOTO_UPLOAD_ENABLED }],
       },
-      {
-        id: SETTINGS_ID.lostCard,
-        label: '',
-        icon: 'card-lost',
-        toggleLabel: { checked: 'Report card as found', unchecked: 'Report card as lost' },
-        type: 'button',
-        getToggleStatus: getCardStatus,
-        navigate: SETTINGS_NAVIGATE.lostCard,
-        validations: [{ type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.REPORT_LOST_CARD_ENABLED }],
-      },
+      // {
+      //   id: SETTINGS_ID.lostCard,
+      //   label: '',
+      //   icon: 'card-lost',
+      //   toggleLabel: { checked: 'Report card as found', unchecked: 'Report card as lost' },
+      //   type: 'button',
+      //   getToggleStatus: getCardStatus,
+      //   navigate: SETTINGS_NAVIGATE.lostCard,
+      //   validations: [{ type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.REPORT_LOST_CARD_ENABLED }],
+      // },
     ],
   },
   {
@@ -92,6 +92,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         icon: 'key',
         label: 'Change password',
         type: 'button',
+        setCallback: openSiteURL,
         navigateExternal: { type: 'link', value: 'login.php?password=forgot' },
       },
       {
@@ -111,36 +112,37 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         label: 'Change / Remove PIN',
         type: 'button',
         setCallback: handleLoginAccess,
+        validations: [{ type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.PIN_ENABLED }],
       },
-      {
-        id: SETTINGS_ID.address,
-        icon: 'map-marker',
-        label: 'Saved Address',
-        type: 'button',
-        navigate: SETTINGS_NAVIGATE.address,
-      },
+      // {
+      //   id: SETTINGS_ID.address,
+      //   icon: 'map-marker',
+      //   label: 'Saved Address',
+      //   type: 'button',
+      //   navigate: SETTINGS_NAVIGATE.address,
+      // },
     ],
   },
-  {
-    label: 'Payment',
-    items: [
-      {
-        id: SETTINGS_ID.paymentMethods,
-        icon: 'credit-card',
-        label: 'Payment methods',
-        type: 'button',
-        navigate: SETTINGS_NAVIGATE.paymentMethods,
-      },
-      {
-        id: SETTINGS_ID.deposits,
-        icon: 'calendar',
-        label: 'Automatic deposits',
-        type: 'button',
-        navigate: SETTINGS_NAVIGATE.deposits,
-        validations: [{ type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.AUTO_DEPOSIT_ENABLED }],
-      },
-    ],
-  },
+  // {
+  //   label: 'Payment',
+  //   items: [
+  //     {
+  //       id: SETTINGS_ID.paymentMethods,
+  //       icon: 'credit-card',
+  //       label: 'Payment methods',
+  //       type: 'button',
+  //       navigate: SETTINGS_NAVIGATE.paymentMethods,
+  //     },
+  //     {
+  //       id: SETTINGS_ID.deposits,
+  //       icon: 'calendar',
+  //       label: 'Automatic deposits',
+  //       type: 'button',
+  //       navigate: SETTINGS_NAVIGATE.deposits,
+  //       validations: [{ type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.AUTO_DEPOSIT_ENABLED }],
+  //     },
+  //   ],
+  // },
   {
     label: 'Meal Plans',
     items: [
@@ -149,6 +151,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         icon: 'meal-change',
         label: 'Change meal plan',
         type: 'button',
+        setCallback: openSiteURL,
         navigateExternal: { type: 'link', value: 'change_meal_plan.php' },
         validations: [{ type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.MEAL_CHANGE_PLAN_ENABLED }],
       },
@@ -157,46 +160,48 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         icon: 'meal-purchase',
         label: 'Purchase meal plan',
         type: 'button',
+        setCallback: openSiteURL,
         navigateExternal: { type: 'link', value: 'purchase_meal_plan.php' },
         validations: [{ type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.MEAL_PURCHASE_PLAN_ENABLED }],
       },
     ],
   },
-  {
-    label: 'Preferences',
-    items: [
-      {
-        id: SETTINGS_ID.theme,
-        icon: 'theme-dark-light-mode',
-        label: 'Theme',
-        type: 'button',
-        navigate: SETTINGS_NAVIGATE.theme,
-      },
-      {
-        id: SETTINGS_ID.home,
-        icon: 'home-edit',
-        label: 'Edit Home',
-        type: 'button',
-        navigate: SETTINGS_NAVIGATE.home,
-      },
-      {
-        id: SETTINGS_ID.navigate,
-        icon: 'more-menu',
-        label: 'Edit navigate',
-        type: 'button',
-        navigate: SETTINGS_NAVIGATE.navigate,
-      },
-    ],
-  },
+  // {
+  //   label: 'Preferences',
+  //   items: [
+  //     {
+  //       id: SETTINGS_ID.theme,
+  //       icon: 'theme-dark-light-mode',
+  //       label: 'Theme',
+  //       type: 'button',
+  //       navigate: SETTINGS_NAVIGATE.theme,
+  //     },
+  //     {
+  //       id: SETTINGS_ID.home,
+  //       icon: 'home-edit',
+  //       label: 'Edit Home',
+  //       type: 'button',
+  //       navigate: SETTINGS_NAVIGATE.home,
+  //     },
+  //     {
+  //       id: SETTINGS_ID.navigate,
+  //       icon: 'more-menu',
+  //       label: 'Edit navigate',
+  //       type: 'button',
+  //       navigate: SETTINGS_NAVIGATE.navigate,
+  //     },
+  //   ],
+  // },
   {
     label: 'Feedback & Support',
     items: [
-      { id: SETTINGS_ID.help, icon: 'help', label: 'Help', type: 'button', navigate: SETTINGS_NAVIGATE.help },
+      // { id: SETTINGS_ID.help, icon: 'help', label: 'Help', type: 'button', navigate: SETTINGS_NAVIGATE.help },
       {
         id: SETTINGS_ID.support,
         icon: 'mail',
         label: 'Email Support',
         type: 'button',
+        setCallback: openSiteURL,
         navigateExternal: { type: 'email', value: Settings.Setting.SUPPORT_EMAIL },
       },
       {
