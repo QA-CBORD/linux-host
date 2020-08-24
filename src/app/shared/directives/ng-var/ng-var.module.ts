@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NgVarDirective } from '@shared/directives';
+import { VarDirective } from '@shared/directives';
 
-const declarations = [NgVarDirective];
+const declarations = [VarDirective];
 
 @NgModule({
   declarations,
