@@ -19,7 +19,7 @@ import { take } from 'rxjs/operators';
 import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
 import { StNativeStartupPopoverComponent } from '@shared/ui-components/st-native-startup-popover';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
-import { UpdateContactInformationComponent } from './components/update-contact-information-modal/update-contact-information.component'
+import { UpdateContactInformationComponent } from './components/update-contact-information-modal/update-contact-information.component';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 
 const { App, Device } = Plugins;
@@ -58,19 +58,10 @@ export class DashboardPage implements OnInit {
 
   async ionViewWillEnter() {
     this.accessCard.ionViewWillEnter();
-    if (this.getStaleProfileStatus()) {
-      const lastUpdatedProfile = await this.userFacadeService.getlastUpdatedProfile$().toPromise();
-      console.log(`dated: ${lastUpdatedProfile}`);
-      const date1 = new Date(lastUpdatedProfile);
-      console.log(`date1: ${date1}`);
-      const lastChangedTerms = await this.institutionFacadeService.getlastChangedTerms$().toPromise();
-      console.log(`dating: ${lastChangedTerms}`);
-      const date2 = new Date(lastChangedTerms);
-      console.log(`date2: ${date2}`);
-      if (date1 > date2) {
-        console.log('IT WORKED!');
-      }
-      //this.presentUpdateContactInformationModal();
+    const staleProfile = await this.getStaleProfileStatus();
+    const contactInformation = await this.isContactInformationUpToDate();
+    if (staleProfile || contactInformation) { 
+      this.presentUpdateContactInformationModal();
     }
   }
 
@@ -192,7 +183,7 @@ export class DashboardPage implements OnInit {
   }
 
   async getStaleProfileStatus(): Promise<boolean> {
-    return await this.userFacadeService.isStaleProfileEnabled$().toPromise();
+  return await this.userFacadeService.isStaleProfileEnabled$().toPromise();
   }
 
   async presentUpdateContactInformationModal(): Promise<void> {
@@ -202,7 +193,17 @@ export class DashboardPage implements OnInit {
     return await modal.present();
   }
 
-  updatedAfterLastTermsChange() {
-    
+  private async isContactInformationUpToDate(): Promise<boolean> {
+    return new Promise<boolean>(async (resolve, reject) => {
+      const lastUpdatedProfile = await this.userFacadeService.getlastUpdatedProfile$().toPromise();
+      const profileDate = new Date(lastUpdatedProfile);
+      const lastChangedTerms = await this.institutionFacadeService.getlastChangedTerms$().toPromise();
+      const termDate = new Date(lastChangedTerms);
+      if (profileDate > termDate) {
+        resolve(true);
+      } else {
+        reject(false);
+      }
+    });
   }
 }
