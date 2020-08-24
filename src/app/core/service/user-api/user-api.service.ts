@@ -128,4 +128,10 @@ export class UserApiService {
     const queryConfig = new RPCQueryConfig('logoutAndRemoveUserNotification', params, true, false);
     return this.http.post<any>(this.serviceUrl, queryConfig);
   }
+
+  updateUserInfo$(user: UserInfo): Observable<string> {
+    const params = { user, forceOverwrite: true };
+    const queryConfig = new RPCQueryConfig('update', params, true, false);
+    return this.http.post<any>(this.serviceUrl, queryConfig);
+  }
 }

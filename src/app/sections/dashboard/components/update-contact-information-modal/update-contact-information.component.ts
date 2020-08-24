@@ -9,8 +9,8 @@ import { GlobalNavService } from '@shared/ui-components/st-global-navigation/ser
 })
 export class UpdateContactInformationComponent implements OnInit {
  
-  placeholderOfEmail$: string;  // Promise?
-  placeholderOfPhone$: string;  // Promise?
+  placeholderOfEmail$: Promise<string>; 
+  placeholderOfPhone$: Promise<string>;
   loginForm: FormGroup;
 
   constructor( private readonly globalNavService: GlobalNavService) { }
