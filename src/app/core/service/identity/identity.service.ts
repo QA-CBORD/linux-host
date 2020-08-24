@@ -23,6 +23,7 @@ import { finalize, switchMap, take } from 'rxjs/operators';
 import { PATRON_NAVIGATION, ROLES } from '../../../app.global';
 import { GUEST_ROUTES } from '../../../non-authorized/non-authorized.config';
 import { LoadingService } from '@core/service/loading/loading.service';
+import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
 
 export class VaultSessionData implements DefaultSession {
   token: string; /// unused
@@ -44,6 +45,7 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
     private modalController: ModalController,
     private router: Router,
     private plt: Platform,
+    private readonly nativeStartupFacadeService: NativeStartupFacadeService,
     private readonly authFacadeService: AuthFacadeService,
     private readonly loadingService: LoadingService,
     private readonly ngZone: NgZone
@@ -199,6 +201,7 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
 
   private navigateToDashboard() {
     this.ngZone.run(() => {
+      this.nativeStartupFacadeService.checkForStartupMessage = true;
       this.router.navigate([PATRON_NAVIGATION.dashboard], { replaceUrl: true });
     });
   }

@@ -11,10 +11,12 @@ import { PinModule } from './shared';
 import { StGlobalNavigationModule } from '@shared/ui-components/st-global-navigation/st-global-navigation.module';
 import { CommonModule } from '@angular/common';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
+import { StNativeStartupPopoverModule } from '@shared/ui-components/st-native-startup-popover/st-native-startup-popover.module';
 
 @NgModule({
   declarations: [AppComponent],
   imports: [
+    StNativeStartupPopoverModule,
     StGlobalPopoverModule,
     StGlobalNavigationModule,
     CoreModule,
