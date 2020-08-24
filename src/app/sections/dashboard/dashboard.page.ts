@@ -18,6 +18,10 @@ import { Plugins } from '@capacitor/core';
 import { take } from 'rxjs/operators';
 import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
 import { StNativeStartupPopoverComponent } from '@shared/ui-components/st-native-startup-popover';
+import { UserFacadeService } from '@core/facades/user/user.facade.service';
+import { UpdateContactInformationComponent } from './components/update-contact-information-modal/update-contact-information.component';
+import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
+
 const { App, Device } = Plugins;
 
 @Component({
@@ -36,7 +40,9 @@ export class DashboardPage implements OnInit {
     private readonly contentStringsFacadeService: ContentStringsFacadeService,
     private readonly sessionFacadeService: SessionFacadeService,
     private readonly nativeStartupFacadeService: NativeStartupFacadeService,
-    private readonly popoverCtrl: PopoverController
+    private readonly popoverCtrl: PopoverController,
+    private readonly userFacadeService: UserFacadeService,
+    private readonly institutionFacadeService: InstitutionFacadeService
   ) {}
 
   get tilesIds(): { [key: string]: string } {
@@ -50,8 +56,9 @@ export class DashboardPage implements OnInit {
     this.pushNotificationRegistration();
   }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     this.accessCard.ionViewWillEnter();
+    await this.updateContactIfNeccesary();
   }
 
   ionViewDidEnter() {
@@ -169,5 +176,38 @@ export class DashboardPage implements OnInit {
     });
 
     await this.tileConfigFacadeService.updateConfigById(TILES_ID.order, res);
+  }
+
+  async getStaleProfileStatus$(): Promise<boolean> {
+    return await this.userFacadeService.isStaleProfileEnabled$().toPromise();
+  }
+
+  private async isContactInformationUpToDate$(): Promise<boolean> {
+    return new Promise<boolean>(async (resolve, reject) => {
+      const lastUpdatedProfile = await this.userFacadeService.getlastUpdatedProfile$().toPromise();
+      const lastChangedTerms = await this.institutionFacadeService.getlastChangedTerms$().toPromise();
+      const profileDate = new Date(lastUpdatedProfile);
+      const termDate = new Date(lastChangedTerms);
+      if (termDate > profileDate) {
+        resolve(true);
+      } else {
+        reject(false);
+      }
+    });
+  }
+
+  async presentUpdateContactInformationModal(): Promise<void> {
+    const modal = await this.modalController.create({
+      component: UpdateContactInformationComponent,
+    });
+    return await modal.present();
+  }
+
+  private async updateContactIfNeccesary() {
+    const staleProfile = await this.getStaleProfileStatus$();
+    const contactInformation = await this.isContactInformationUpToDate$();
+    if (staleProfile || contactInformation) {
+      this.presentUpdateContactInformationModal();
+    }
   }
 }
