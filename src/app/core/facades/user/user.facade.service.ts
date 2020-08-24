@@ -6,7 +6,7 @@ import { UserInfo } from '@core/model/user/user-info.model';
 import { UserPhotoInfo, UserPhotoList, UserNotificationInfo } from '@core/model/user';
 import { MessageResponse } from '@core/model/service/message-response.model';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
-import { map, switchMap, tap, take, catchError } from 'rxjs/operators';
+import { map, switchMap, tap, take, catchError, finalize } from 'rxjs/operators';
 import { AddressInfo } from '@core/model/address/address-info';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { Settings } from 'src/app/app.global';
@@ -219,6 +219,8 @@ export class UserFacadeService extends ServiceStateFacade {
       take(1),
       catchError(error => {
         return of(false);
+      }), finalize(() =>{
+        this.clearData();
       })
     );
   }
@@ -246,4 +248,11 @@ export class UserFacadeService extends ServiceStateFacade {
       take(1)
     );
   }
+
+  private clearData(){
+    this.userPhoto = null;
+    this.storageStateService.clearStorage();
+    this.storageStateService.clearState();
+  }
+
 }
