@@ -22,11 +22,14 @@ import { ContentStringsFacadeService } from '@core/facades/content-strings/conte
 @Injectable()
 export class SettingsFactoryService {
   services: SettingsServices = {
-    identityService: this.identityFacadeService,
+    identity: this.identityFacadeService,
     userService: this.userFacadeService,
     globalNav: this.globalNav,
     modalController: this.modalController,
-    contentStringService: this.contentStringFacadeService,
+    contentString: this.contentStringFacadeService,
+    settings: this.settingsFacade,
+    institution: this.institutionFacadeService,
+    environment: this.environmentFacadeService,
   };
 
   constructor(
@@ -46,6 +49,7 @@ export class SettingsFactoryService {
     for (let sectionIndex = 0; sectionIndex < parsedSettings.length; sectionIndex++) {
       const section = parsedSettings[sectionIndex];
       const promises = [];
+      const hiddenSettings: { [key: string]: Boolean } = {};
       for (let settingIndex = 0; settingIndex < section.items.length; settingIndex++) {
         const setting = section.items[settingIndex];
         promises.push(
@@ -54,12 +58,13 @@ export class SettingsFactoryService {
               this.setToggleStatus(setting);
               setting.setCallback && setting.setCallback(this.services);
               setting.navigateExternal && this.setExternalURL(setting);
-            } else section.items.splice(settingIndex, 1);
+            } else hiddenSettings[setting.id] = true;
           })
         );
       }
 
       await Promise.all(promises);
+      section.items = section.items.filter(setting => !hiddenSettings[setting.id]);
       section.items.length === 0 && parsedSettings.splice(sectionIndex, 1);
     }
     return parsedSettings;
