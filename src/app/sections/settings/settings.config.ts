@@ -4,6 +4,7 @@ import { handleLoginAccess, handleOpenHTMLModal, openSiteURL } from './helpers/s
 import { CONTENT_STINGS_DOMAINS, CONTENT_STINGS_CATEGORIES } from 'src/app/content-strings';
 import { HTMLRendererComponent } from '@shared/ui-components/html-renderer/html-renderer.component';
 import { PhoneEmailComponent } from '@shared/ui-components/phone-email/phone-email.component';
+import { AuthTypes } from '@core/utils/auth-types.enum';
 
 export enum LOCAL_ROUTING {
   photoUpload = 'photo-upload',
@@ -103,7 +104,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         setCallback: handleLoginAccess,
         validations: [
           { type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.PIN_ENABLED },
-          { type: SETTINGS_VALIDATIONS.Biometric, value: 'face' },
+          { type: SETTINGS_VALIDATIONS.Biometric, value: AuthTypes.FACE },
         ],
       },
       {

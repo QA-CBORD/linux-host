@@ -2,6 +2,7 @@ import { map, take } from 'rxjs/operators';
 import { UserInfo } from '@core/model/user';
 import { SettingsServices, SettingItemConfig, HTMLContentString } from '../models/setting-items-config.model';
 import { Settings } from 'src/app/app.global';
+import { AuthTypes } from '@core/utils/auth-types.enum';
 
 export function getCardStatus(services: SettingsServices): Promise<boolean> {
   return services.userService
@@ -13,7 +14,10 @@ export function getCardStatus(services: SettingsServices): Promise<boolean> {
 export function handleLoginAccess(services: SettingsServices) {
   const setting: SettingItemConfig = this;
   setting.callback = function() {
-    return services.identity.pinLoginSetup(setting.validations.some(validation => validation.value === 'face'), false);
+    return services.identity.pinLoginSetup(
+      setting.validations.some(validation => validation.value === AuthTypes.FACE),
+      false
+    );
   };
 }
 
