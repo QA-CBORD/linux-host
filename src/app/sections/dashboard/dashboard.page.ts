@@ -58,11 +58,7 @@ export class DashboardPage implements OnInit {
 
   async ionViewWillEnter() {
     this.accessCard.ionViewWillEnter();
-    const staleProfile = await this.getStaleProfileStatus();
-    const contactInformation = await this.isContactInformationUpToDate();
-    if (staleProfile || contactInformation) { 
-      this.presentUpdateContactInformationModal();
-    }
+    await this.updateContactIfNeccesary();
   }
 
   ionViewDidEnter() {
@@ -182,8 +178,22 @@ export class DashboardPage implements OnInit {
     await this.tileConfigFacadeService.updateConfigById(TILES_ID.order, res);
   }
 
-  async getStaleProfileStatus(): Promise<boolean> {
-  return await this.userFacadeService.isStaleProfileEnabled$().toPromise();
+  async getStaleProfileStatus$(): Promise<boolean> {
+    return await this.userFacadeService.isStaleProfileEnabled$().toPromise();
+  }
+
+  private async isContactInformationUpToDate$(): Promise<boolean> {
+    return new Promise<boolean>(async (resolve, reject) => {
+      const lastUpdatedProfile = await this.userFacadeService.getlastUpdatedProfile$().toPromise();
+      const lastChangedTerms = await this.institutionFacadeService.getlastChangedTerms$().toPromise();
+      const profileDate = new Date(lastUpdatedProfile);
+      const termDate = new Date(lastChangedTerms);
+      if (termDate > profileDate) {
+        resolve(true);
+      } else {
+        reject(false);
+      }
+    });
   }
 
   async presentUpdateContactInformationModal(): Promise<void> {
@@ -193,17 +203,11 @@ export class DashboardPage implements OnInit {
     return await modal.present();
   }
 
-  private async isContactInformationUpToDate(): Promise<boolean> {
-    return new Promise<boolean>(async (resolve, reject) => {
-      const lastUpdatedProfile = await this.userFacadeService.getlastUpdatedProfile$().toPromise();
-      const profileDate = new Date(lastUpdatedProfile);
-      const lastChangedTerms = await this.institutionFacadeService.getlastChangedTerms$().toPromise();
-      const termDate = new Date(lastChangedTerms);
-      if (profileDate > termDate) {
-        resolve(true);
-      } else {
-        reject(false);
-      }
-    });
+  private async updateContactIfNeccesary() {
+    const staleProfile = await this.getStaleProfileStatus$();
+    const contactInformation = await this.isContactInformationUpToDate$();
+    if (staleProfile || contactInformation) {
+      this.presentUpdateContactInformationModal();
+    }
   }
 }
