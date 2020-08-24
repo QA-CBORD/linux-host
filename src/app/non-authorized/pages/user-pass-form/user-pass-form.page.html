@@ -56,12 +56,13 @@
         role="text"
       >
       </st-input-floating-label>
-      <div class="login__form-password">
+      <ng-container *stNgVar="authTypeHosted$ | async as isHosted">
+      <div *ngIf="isHosted" class="login__form-password">
         <a class="login__form-password-forgot" (click)="redirectToForgotPassword()" tabindex="2">Forgot password?</a>
       </div>
       <div class="login__form-btns">
-        <st-button
-          buttonModifier="border-only-rectangle"
+        <st-button *ngIf="isHosted"
+        buttonModifier="border-only-rectangle"
           class="login__form-btns--odd"
           (click)="redirectToSignup()"
           tabindex="4"
@@ -72,6 +73,7 @@
           Log in
         </st-button>
       </div>
+      </ng-container>
     </form>
   </div>
 </ion-content>

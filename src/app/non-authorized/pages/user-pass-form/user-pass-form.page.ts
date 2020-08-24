@@ -18,9 +18,10 @@ import { Device } from '@capacitor/core';
 import { IdentityFacadeService, LoginState } from '@core/facades/identity/identity.facade.service';
 import { StInputFloatingLabelComponent } from '@shared/ui-components';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
-import { GUEST_ROUTES } from '../../non-authorized.config';
+import { AUTHENTICATION_SYSTEM_TYPE, GUEST_ROUTES } from '../../non-authorized.config';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'user-pass-form',
@@ -33,6 +34,7 @@ export class UserPassForm implements OnInit {
   institutionPhoto$: Promise<SafeResourceUrl>;
   nativeHeaderBg$: Promise<string>;
   placeholderOfUsername$: Promise<string>;
+  authTypeHosted$: Observable<boolean>;
   private institutionInfo: Institution;
   loginForm: FormGroup;
 
@@ -75,6 +77,7 @@ export class UserPassForm implements OnInit {
       .getAuthSessionToken$()
       .pipe(take(1))
       .toPromise();
+    this.authTypeHosted$ = this.getAuthenticationTypeHosted(id, sessionId);
     this.placeholderOfUsername$ = this.getPlaceholderForUsername(sessionId);
     this.institutionPhoto$ = this.getInstitutionPhoto(id, sessionId);
     this.institutionName$ = this.getInstitutionName(id, sessionId);
@@ -83,9 +86,7 @@ export class UserPassForm implements OnInit {
   }
 
   redirectToWebPage(url) {
-    window.open(
-      `${this.environmentFacadeService.getSitesURL()}/${this.institutionInfo.shortName}/full/${url}`
-    );
+    window.open(`${this.environmentFacadeService.getSitesURL()}/${this.institutionInfo.shortName}/full/${url}`);
   }
 
   async redirectToSignup() {
@@ -94,12 +95,9 @@ export class UserPassForm implements OnInit {
     window.open(url, '_system');
   }
 
-
   async redirectToForgotPassword(): Promise<void> {
     const { shortName } = await this.institutionFacadeService.cachedInstitutionInfo$.pipe(take(1)).toPromise();
-    const url = `${
-      this.environmentFacadeService.getSitesURL()
-    }/${shortName}/full/login.php?password=forgot`;
+    const url = `${this.environmentFacadeService.getSitesURL()}/${shortName}/full/login.php?password=forgot`;
     window.open(url, '_system');
   }
 
@@ -171,6 +169,13 @@ export class UserPassForm implements OnInit {
         take(1)
       )
       .toPromise();
+  }
+
+  private getAuthenticationTypeHosted(institutionId: string, sessionId: string): Observable<boolean> {
+    return this.institutionFacadeService.getInstitutionInfo$(institutionId, sessionId, true).pipe(
+      map(({ authenticationSystemType }) => authenticationSystemType === AUTHENTICATION_SYSTEM_TYPE.HOSTED),
+      take(1)
+    );
   }
 
   private async getPlaceholderForUsername(sessionId): Promise<string> {
