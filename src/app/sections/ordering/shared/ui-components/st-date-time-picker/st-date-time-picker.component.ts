@@ -95,7 +95,10 @@ export class StDateTimePickerComponent implements OnInit {
       dateValue = 'ASAP';
     } else {
       let [hours, mins] = value.split(':');
-      dateValue = new Date(year, month - 1, day, hours, mins);
+      let [minutes, period] = mins.split(" ");
+      if(period.trim() == 'PM' && hours != 12)
+          hours = +hours + 12;
+      dateValue = new Date(year, month - 1, day, hours, minutes);
     }
 
     this.dateTimePicker = dateValue;
@@ -107,7 +110,9 @@ export class StDateTimePickerComponent implements OnInit {
     const arr2 = this.schedule.days[i].hourBlocks.reduce(
       (total, block) => [
         ...total,
-        ...block.minuteBlocks.map(minuteBlock => `${block.hour}:${minuteBlock === 0 ? '00' : minuteBlock}`),
+        ...block.minuteBlocks.map(minuteBlock => {
+          return `${block.hour}:${minuteBlock === 0 ? '00' : minuteBlock} ${block['period']}`;
+        }),
       ],
       [],
     );
