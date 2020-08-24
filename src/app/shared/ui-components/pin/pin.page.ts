@@ -153,7 +153,7 @@ export class PinPage implements OnInit {
   private loginPinLogic(number: number) {
     if (this.pinNumber.length >= 4) {
       return;
-    console.log('PinLogin ---', number);
+    }
     /// add new pin value to array
     this.pinNumber.push(number);
     /// check if confirming pin
