@@ -203,6 +203,7 @@ export class UserFacadeService extends ServiceStateFacade {
   }
 
   logoutAndRemoveUserNotification(): Observable<boolean> {
+    this.userPhoto = null;
     return zip(this.getUserData$(), this.getFCMToken$()).pipe(
       switchMap(([{ id }, fcmToken]) => {
         if (fcmToken) {
