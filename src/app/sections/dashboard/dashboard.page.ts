@@ -199,6 +199,7 @@ export class DashboardPage implements OnInit {
   async presentUpdateContactInformationModal(): Promise<void> {
     const modal = await this.modalController.create({
       component: PhoneEmailComponent,
+      componentProps: { staleProfile: true }
     });
     return await modal.present();
   }

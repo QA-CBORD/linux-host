@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, Input } from '@angular/core';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { ModalController, ToastController } from '@ionic/angular';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
@@ -17,7 +17,7 @@ export class PhoneEmailComponent implements OnInit {
   user: UserInfoSet;
   isLoading: boolean;
   title: string = 'Email & Phone Number';
-  staleProfile = true;
+  @Input() staleProfile = false;
 
   constructor(
     private readonly fb: FormBuilder,
@@ -52,7 +52,7 @@ export class PhoneEmailComponent implements OnInit {
       },
       () => this.cdRef.detectChanges()
     );
-    if (this.staleProfile) {
+    if (this.staleProfile) { // Check, this needs to be improved
       this.close();
       this.nativeStartupFacadeService.blockGlobalNavigationStatus = false;
     }
