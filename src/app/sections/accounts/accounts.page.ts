@@ -42,11 +42,7 @@ export class AccountsPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.globalNav.isNavBarShown$.subscribe(isVisible => {
-      if (!isVisible) {
-        this.globalNav.showNavBar();
-      }
-    });
+    this.globalNav.showNavBar();
   }
 
   defineInitRoute() {
