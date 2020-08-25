@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { LOCAL_ROUTING } from '@sections/settings/settings.config';
 import { PATRON_NAVIGATION } from '../../app.global';
@@ -12,9 +12,8 @@ import {
 import { Plugins } from '@capacitor/core';
 import { SettingsFactoryService } from './services/settings-factory.service';
 import { ModalController } from '@ionic/angular';
-import { map, take, first, switchMap, catchError } from 'rxjs/operators';
+import { map, take, switchMap, catchError } from 'rxjs/operators';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
-import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { from, Observable, of } from 'rxjs';
 import { getUserFullName } from '@core/utils/general-helpers';
 import { UserInfo } from '@core/model/user';
