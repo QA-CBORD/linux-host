@@ -8,8 +8,6 @@ import { InstitutionFacadeService } from '@core/facades/institution/institution.
 import {
   SettingItemConfig,
   SettingsSectionConfig,
-  ModalContent,
-  HTMLContentString,
 } from './models/setting-items-config.model';
 import { Plugins } from '@capacitor/core';
 import { SettingsFactoryService } from './services/settings-factory.service';
@@ -42,8 +40,6 @@ export class SettingsPage implements OnInit {
     private readonly modalController: ModalController,
     private readonly contentStringFacadeService: ContentStringsFacadeService,
     private readonly settingsFactory: SettingsFactoryService,
-    private readonly globalNav: GlobalNavService,
-    private readonly changeRef: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
