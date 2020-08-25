@@ -145,8 +145,33 @@ export class MerchantService {
     );
   }
 
-  getMerchantOrderSchedule(merchantId: string, orderType: number): Observable<any[]> {
-    return this.orderingApiService.getMerchantOrderSchedule(merchantId, orderType);
+
+  getMerchantOrderSchedule(merchantId: string, orderType: number): Observable<any> {
+    return this.orderingApiService.getMerchantOrderSchedule(merchantId, orderType).pipe(
+      map( (response) => { 
+        var { days } = response;
+        this.datemap(days); 
+        return response; 
+      })
+    );
+  }
+
+  private datemap(dates: any[]){
+    return dates.map(date => {
+      const { hourBlocks } = date;
+      date.hourBlocks  = hourBlocks.map(hourBlock => {
+         if(hourBlock.hour > 12 ){
+             hourBlock['period'] = 'PM';
+             hourBlock.hour = +hourBlock.hour - 12; 
+          } else if(hourBlock.hour < 12) { 
+           hourBlock['period'] = 'AM'; 
+         } else{
+          hourBlock['period'] = 'PM';
+        }
+        return hourBlock;
+      });
+      return date;
+    });
   }
 
   retrieveUserAddressList(): Observable<AddressInfo[]> {

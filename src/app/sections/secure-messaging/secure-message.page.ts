@@ -12,6 +12,8 @@ import * as Globals from '../../app.global';
 import { SecureMessageConversation, SecureMessageGroupInfo, SecureMessageInfo, SecureMessageSendBody } from './models';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
+import { UserFacadeService } from '@core/facades/user/user.facade.service';
+import { UserInfo } from '@core/model/user';
 
 @Component({
   selector: 'st-secure-message',
@@ -40,7 +42,8 @@ export class SecureMessagePage implements OnDestroy, OnInit {
     private readonly loading: LoadingService,
     private readonly popoverCtrl: PopoverController,
     private readonly nativeProvider: NativeProvider,
-    private readonly globalNav: GlobalNavService
+    private readonly globalNav: GlobalNavService,
+    private readonly userService: UserFacadeService
   ) {
     this.platform.ready().then(this.initComponent.bind(this));
   }
@@ -319,7 +322,11 @@ export class SecureMessagePage implements OnDestroy, OnInit {
    */
   onClickSendButton() {
     if (this.newMessageText && this.newMessageText.trim().length) {
-      this.sendMessage(this.createNewMessageSendBody(this.newMessageText));
+        this.userService.getUserData$().subscribe(
+          (userInfo) => { this.sendMessage(this.createNewMessageSendBody(this.newMessageText, userInfo)); },
+        () => { const error = { message: 'Unable to verify your user information', title: Globals.Exception.Strings.TITLE };
+                this.modalHandler(error, this.sendMessage.bind(this, ''));
+        });
     }
   }
 
@@ -341,14 +348,14 @@ export class SecureMessagePage implements OnDestroy, OnInit {
    * Create message body object for sending a new message to a group
    * @param messageBody body of new message
    */
-  private createNewMessageSendBody(messageBody: string): SecureMessageSendBody {
+  private createNewMessageSendBody(messageBody: string, userInfo: UserInfo): SecureMessageSendBody {
     return {
       institution_id: SecureMessagingService.GetSecureMessagesAuthInfo().institution_id,
       sender: {
         type: 'patron',
         id_field: SecureMessagingService.GetSecureMessagesAuthInfo().id_field,
         id_value: SecureMessagingService.GetSecureMessagesAuthInfo().id_value,
-        name: DataCache.getUserInfo().firstName + ' ' + DataCache.getUserInfo().lastName,
+        name: userInfo.firstName + ' ' + userInfo.lastName,
       },
       recipient: {
         type: 'group',
@@ -382,7 +389,7 @@ export class SecureMessagePage implements OnDestroy, OnInit {
   /**
    * Add sent message to local conversation
    */
-  private addMessageToLocalConversation({ body }: SecureMessageSendBody) {
+  private addMessageToLocalConversation({ body, sender }: SecureMessageSendBody) {
     const message: SecureMessageInfo = {
       body,
       created_date: new Date().toLocaleString(),
@@ -409,7 +416,7 @@ export class SecureMessagePage implements OnDestroy, OnInit {
         type: 'patron',
         id_field: SecureMessagingService.GetSecureMessagesAuthInfo().id_field,
         id_value: SecureMessagingService.GetSecureMessagesAuthInfo().id_value,
-        name: DataCache.getUserInfo().firstName + ' ' + DataCache.getUserInfo().lastName,
+        name: sender.name,
         aux_user_id: null,
         version: 1,
       },

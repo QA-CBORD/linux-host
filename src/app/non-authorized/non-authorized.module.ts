@@ -5,7 +5,7 @@ import { NonAuthorizedRoutingModule } from './non-authorized-routing.module';
 @NgModule({
   imports: [
     CommonModule,
-    NonAuthorizedRoutingModule
+    NonAuthorizedRoutingModule,
   ]
 })
 export class NonAuthorizedModule { }

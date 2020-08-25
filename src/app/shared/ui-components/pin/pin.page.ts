@@ -117,7 +117,7 @@ export class PinPage implements OnInit {
   }
 
   private async setPinLogic(number: number) {
-    if (this.pinNumber.length === 4) {
+    if (this.pinNumber.length >= 4) {
       return;
     }
     /// add new pin value to array
@@ -151,6 +151,9 @@ export class PinPage implements OnInit {
   }
 
   private loginPinLogic(number: number) {
+    if (this.pinNumber.length >= 4) {
+      return;
+    }
     /// add new pin value to array
     this.pinNumber.push(number);
     /// check if confirming pin
