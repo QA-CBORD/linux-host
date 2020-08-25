@@ -14,10 +14,10 @@ import {
 import { Plugins } from '@capacitor/core';
 import { SettingsFactoryService } from './services/settings-factory.service';
 import { ModalController } from '@ionic/angular';
-import { map, take, first, switchMap } from 'rxjs/operators';
+import { map, take, first, switchMap, catchError } from 'rxjs/operators';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
-import { Observable } from 'rxjs';
+import { from, Observable, of } from 'rxjs';
 import { getUserFullName } from '@core/utils/general-helpers';
 import { UserInfo } from '@core/model/user';
 const { Device } = Plugins;
@@ -29,11 +29,10 @@ const { Device } = Plugins;
 })
 export class SettingsPage implements OnInit {
   settingSections: Promise<SettingsSectionConfig[]>;
-  appVersion = '';
-  userPhoto: string;
-  isLoadingPhoto: boolean = true;
+  appVersion$: Observable<string>;
   userName$: Observable<string>;
   institutionName$: Observable<string>;
+  userPhoto$: Observable<string>;
 
   constructor(
     private router: Router,
@@ -49,9 +48,10 @@ export class SettingsPage implements OnInit {
 
   ngOnInit() {
     this.settingSections = this.settingsFactory.getSettings();
-    this.getUserData();
+    this.userName$ = this.getUserName();
     this.institutionName$ = this.getInstitutionName();
-    this.getAppVersion().then(appVersion => (this.appVersion = appVersion));
+    this.userPhoto$ = this.getUserPhoto$();
+    this.appVersion$ = this.getAppVersion();
   }
 
   //couldnt get photo upload route to work correctly, still trying to fix
@@ -68,19 +68,23 @@ export class SettingsPage implements OnInit {
     this.sessionFacadeService.logoutUser();
   }
 
-  async getAppVersion(): Promise<string> {
-    const deviceInfo = await Device.getInfo();
-    return deviceInfo.appVersion;
+  getAppVersion(): Observable<string> {
+    return from(Device.getInfo()).pipe(
+      map(({ appVersion }) => appVersion),
+      take(1),
+      catchError(() => of(''))
+    );
   }
 
   getUserName(): Observable<string> {
     return this.userFacadeService.getUserData$().pipe(map((userInfo: UserInfo) => getUserFullName(userInfo)));
   }
 
-  getUserPhoto(): Observable<string> {
+  getUserPhoto$(): Observable<string> {
     return this.userFacadeService.getAcceptedPhoto$().pipe(
       map(({ data, mimeType }) => `data:${mimeType};base64,${data}`),
-      take(1)
+      take(1),
+      catchError(() => of('../../../assets/images/no_photo.svg'))
     );
   }
 
@@ -89,16 +93,5 @@ export class SettingsPage implements OnInit {
       switchMap(({ institutionId }) => this.institutionFacadeService.getInstitutionInfo$(institutionId)),
       map(({ name }) => name)
     );
-  }
-
-  private getUserData() {
-    this.userName$ = this.getUserName();
-    this.getUserPhoto()
-      .pipe(first())
-      .subscribe(photo => {
-        this.isLoadingPhoto = false;
-        this.userPhoto = photo;
-        this.changeRef.detectChanges();
-      });
   }
 }

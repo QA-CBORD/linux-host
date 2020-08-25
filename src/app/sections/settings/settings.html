@@ -14,17 +14,14 @@
     <ng-container *ngIf="first">
       <ion-item (click)="navigateToPhotoUpload()">
         <ion-avatar slot="start" class="patron-img">
-          <img *ngIf="!isLoadingPhoto" [src]="userPhoto" alt="Patron photo" />
-          <img
-            *ngIf="isLoadingPhoto || !userPhoto"
-            class="card__campus-empty-photo"
-            src="../../../assets/images/no_photo.svg"
-            alt="no Patron Photo"
-          />
+          <img *ngIf="userPhoto$ | async as photo; else tempPhoto" [src]="photo" alt="patron photo" />
+          <ng-template #tempPhoto>
+            <img class="card__campus-empty-photo" src="../../../assets/images/no_photo.svg" alt="no patron photo" />
+          </ng-template>
         </ion-avatar>
         <ion-label class="item__label">
-          <h3 *ngIf="(userName$ | async)">{{ userName$ | async }}</h3>
-          <p *ngIf="institutionName$ | async">{{ institutionName$ | async }}</p>
+          <h3 *ngIf="(userName$ | async) as userName">{{ userName }}</h3>
+          <p *ngIf="(institutionName$ | async) as institutionName">{{ institutionName }}</p>
         </ion-label>
       </ion-item>
     </ng-container>
@@ -44,7 +41,7 @@
     </ion-row>
     <ion-row>
       <ion-col class="ion-text-center">
-        <label class="settings__label-version">GET v{{appVersion}}</label>
+        <label class="settings__label-version">GET v{{appVersion$ | async}}</label>
       </ion-col>
     </ion-row>
   </ion-grid>
