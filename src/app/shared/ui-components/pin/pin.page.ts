@@ -140,10 +140,10 @@ export class PinPage implements OnInit {
         /// first pin entry complete, start second entry
         /// animate, delay a half second, then start pin confirm
         this.pinNumberCopy = this.pinNumber;
-        this.pinNumber = [];
         this.disableInput = true;
         setTimeout(() => {
           this.setInstructionText(this.confirmNewPinText);
+          this.pinNumber = [];
           this.disableInput = false;
         }, 300);
       }
