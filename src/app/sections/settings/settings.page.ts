@@ -3,18 +3,20 @@ import { Router } from '@angular/router';
 import { LOCAL_ROUTING } from '@sections/settings/settings.config';
 import { PATRON_NAVIGATION } from '../../app.global';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
+import { UserFacadeService } from '@core/facades/user/user.facade.service';
+import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import {
   SettingItemConfig,
   SettingsSectionConfig,
-  ModalContent,
-  HTMLContentString,
 } from './models/setting-items-config.model';
 import { Plugins } from '@capacitor/core';
 import { SettingsFactoryService } from './services/settings-factory.service';
 import { ModalController } from '@ionic/angular';
-import { map, take } from 'rxjs/operators';
+import { map, take, switchMap, catchError } from 'rxjs/operators';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
-import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
+import { from, Observable, of } from 'rxjs';
+import { getUserFullName } from '@core/utils/general-helpers';
+import { UserInfo } from '@core/model/user';
 const { Device } = Plugins;
 
 @Component({
@@ -24,20 +26,27 @@ const { Device } = Plugins;
 })
 export class SettingsPage implements OnInit {
   settingSections: Promise<SettingsSectionConfig[]>;
-  appVersion = '';
+  appVersion$: Observable<string>;
+  userName$: Observable<string>;
+  institutionName$: Observable<string>;
+  userPhoto$: Observable<string>;
 
   constructor(
     private router: Router,
     private readonly sessionFacadeService: SessionFacadeService,
+    private readonly userFacadeService: UserFacadeService,
+    private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly modalController: ModalController,
     private readonly contentStringFacadeService: ContentStringsFacadeService,
     private readonly settingsFactory: SettingsFactoryService,
-    private readonly globalNav: GlobalNavService
   ) {}
 
   ngOnInit() {
     this.settingSections = this.settingsFactory.getSettings();
-    this.getAppVersion().then(appVersion => (this.appVersion = appVersion));
+    this.userName$ = this.getUserName$();
+    this.institutionName$ = this.getInstitutionName$();
+    this.userPhoto$ = this.getUserPhoto$();
+    this.appVersion$ = this.getAppVersion$();
   }
 
   //couldnt get photo upload route to work correctly, still trying to fix
@@ -45,55 +54,39 @@ export class SettingsPage implements OnInit {
     this.router.navigate([PATRON_NAVIGATION.settings, LOCAL_ROUTING.photoUpload]);
   }
 
-  settingTap(setting: SettingItemConfig) {
-    !setting.navigateExternal &&
-      setting.navigate &&
-      this.router.navigate([PATRON_NAVIGATION.settings, setting.navigate]);
-
-    setting.navigateExternal && setting.navigate && this.openSiteURL(setting.navigate);
-
-    setting.modalContent && this.openModal(setting.modalContent);
+  async settingTap(setting: SettingItemConfig) {
+    setting.callback && (await setting.callback());
+    setting.navigate && this.router.navigate([PATRON_NAVIGATION.settings, setting.navigate]);
   }
+
   logout() {
     this.sessionFacadeService.logoutUser();
   }
-  async getAppVersion(): Promise<string> {
-    const deviceInfo = await Device.getInfo();
-    return deviceInfo.appVersion;
+
+  getAppVersion$(): Observable<string> {
+    return from(Device.getInfo()).pipe(
+      map(({ appVersion }) => appVersion),
+      take(1),
+      catchError(() => of(''))
+    );
   }
 
-  async openSiteURL(url: string): Promise<void> {
-    window.open(url, '_system');
+  getUserName$(): Observable<string> {
+    return this.userFacadeService.getUserData$().pipe(map((userInfo: UserInfo) => getUserFullName(userInfo)));
   }
 
-  async openModal(modalContent: ModalContent | HTMLContentString) {
-    let componentProps: any;
-    if ((<HTMLContentString>modalContent).domain) {
-      const { domain, category, name } = modalContent as HTMLContentString;
-      const htmlContent = await this.contentStringFacadeService
-        .fetchContentString$(domain, category, name)
-        .pipe(
-          map(st => st.value),
-          take(1)
-        )
-        .toPromise();
-      const buttons = [
-        {
-          label: 'Close',
-          callback: () => {
-            this.globalNav.showNavBar();
-            this.modalController.dismiss();
-          },
-        },
-      ];
-      componentProps = { htmlContent, buttons };
-    }
-    const settingModal = await this.modalController.create({
-      backdropDismiss: false,
-      component: modalContent.component,
-      componentProps,
-    });
-    this.globalNav.hideNavBar();
-    await settingModal.present();
+  getUserPhoto$(): Observable<string> {
+    return this.userFacadeService.getAcceptedPhoto$().pipe(
+      map(({ data, mimeType }) => `data:${mimeType};base64,${data}`),
+      take(1),
+      catchError(() => of('../../../assets/images/no_photo.svg'))
+    );
+  }
+
+  getInstitutionName$(): Observable<string> {
+    return this.userFacadeService.getUserData$().pipe(
+      switchMap(({ institutionId }) => this.institutionFacadeService.getInstitutionInfo$(institutionId)),
+      map(({ name }) => name)
+    );
   }
 }

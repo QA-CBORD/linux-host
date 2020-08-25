@@ -24,7 +24,7 @@ export class MCache {
 
   bIsPINSet = false;
 
-  userInfo: UserInfo;
+  userInfo: UserInfo | any = {};
   userMediaValue: string;
   userPhotoInfo: UserPhotoInfo;
   userSettings: UserSettingInfo[] = new Array<UserSettingInfo>();

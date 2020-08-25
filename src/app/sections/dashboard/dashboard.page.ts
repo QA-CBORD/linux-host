@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController, PopoverController } from '@ionic/angular';
 
 import { EditHomePageModalComponent } from './components/edit-home-page-modal';
 import { TileWrapperConfig } from '@sections/dashboard/models';
@@ -12,6 +12,13 @@ import { CONTENT_STINGS_CATEGORIES, CONTENT_STINGS_DOMAINS } from '../../content
 import { AccessCardComponent } from './containers/access-card/access-card.component';
 import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
+import { BUTTON_TYPE } from '@core/utils/buttons.config';
+
+import { Plugins } from '@capacitor/core';
+import { take } from 'rxjs/operators';
+import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
+import { StNativeStartupPopoverComponent } from '@shared/ui-components/st-native-startup-popover';
+const { App, Device } = Plugins;
 
 @Component({
   selector: 'st-dashboard',
@@ -28,6 +35,8 @@ export class DashboardPage implements OnInit {
     private readonly tileConfigFacadeService: TileConfigFacadeService,
     private readonly contentStringsFacadeService: ContentStringsFacadeService,
     private readonly sessionFacadeService: SessionFacadeService,
+    private readonly nativeStartupFacadeService: NativeStartupFacadeService,
+    private readonly popoverCtrl: PopoverController
   ) {}
 
   get tilesIds(): { [key: string]: string } {
@@ -41,12 +50,76 @@ export class DashboardPage implements OnInit {
     this.pushNotificationRegistration();
   }
 
-  pushNotificationRegistration() {
-    this.sessionFacadeService.handlePushNotificationRegistration();
-  }
-
   ionViewWillEnter() {
     this.accessCard.ionViewWillEnter();
+  }
+
+  ionViewDidEnter() {
+    this.checkNativeStartup();
+  }
+
+  private async checkNativeStartup() {
+    this.nativeStartupFacadeService
+      .fetchNativeStartupInfo()
+      .pipe(take(1))
+      .subscribe(nativeStartupConfig => {
+        if (nativeStartupConfig) {
+          const { title, message, arrOfBtns } = nativeStartupConfig;
+          this.initModal(title, message, arrOfBtns, this.redirectToTheStore.bind(this));
+        }
+      });
+  }
+
+  private async initModal(title, message, buttons, onSuccessCb): Promise<void> {
+    this.nativeStartupFacadeService.blockGlobalNavigationStatus = true;
+    const modal = await this.popoverCtrl.create({
+      component: StNativeStartupPopoverComponent,
+      componentProps: {
+        data: {
+          title,
+          message,
+          buttons,
+        },
+      },
+      animated: false,
+      backdropDismiss: false,
+    });
+
+    modal.onDidDismiss().then(({ role }) => {
+      this.nativeStartupFacadeService.blockGlobalNavigationStatus = false;
+      switch (role) {
+        case BUTTON_TYPE.OKAY:
+          onSuccessCb();
+          this.sessionFacadeService.lockVault();
+          App.exitApp();
+          break;
+        case BUTTON_TYPE.CLOSE:
+          this.sessionFacadeService.lockVault();
+          App.exitApp();
+          break;
+        case BUTTON_TYPE.CANCEL:
+          /// do nothing
+          break;
+      }
+    });
+
+    await modal.present();
+  }
+
+  private redirectToTheStore() {
+    Device.getInfo()
+      .then(deviceInfo => {
+        if (deviceInfo.platform === 'ios') {
+          window.open('itms-apps://itunes.apple.com/app/id844091049');
+        } else if (deviceInfo.platform === 'android') {
+          window.open('https://play.google.com/store/apps/details?id=com.cbord.get');
+        }
+      })
+      .catch(reason => {});
+  }
+
+  pushNotificationRegistration() {
+    this.sessionFacadeService.handlePushNotificationRegistration();
   }
 
   async presentEditHomePageModal(): Promise<void> {
@@ -97,5 +170,4 @@ export class DashboardPage implements OnInit {
 
     await this.tileConfigFacadeService.updateConfigById(TILES_ID.order, res);
   }
-
 }

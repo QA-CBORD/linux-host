@@ -156,4 +156,8 @@ export class IdentityFacadeService extends ServiceStateFacade {
   storedSession(): Promise<boolean> {
     return this.identityService.hasStoredSession();
   }
+
+  lockVault(){
+    this.identityService.lockVault();
+  }
 }

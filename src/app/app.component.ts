@@ -13,6 +13,7 @@ import { Plugins } from '@capacitor/core';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { PATRON_ROUTES } from '@sections/section.config';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
+import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
 
 const { Keyboard } = Plugins;
 
@@ -34,6 +35,7 @@ export class AppComponent implements OnInit {
     private readonly screenOrientation: ScreenOrientation,
     private readonly popoverCtrl: PopoverController,
     private readonly sessionFacadeService: SessionFacadeService,
+    private readonly nativeStartupFacadeService: NativeStartupFacadeService,
     private readonly router: Router,
     private readonly cdRef: ChangeDetectorRef,
     private readonly globalNav: GlobalNavService
@@ -46,9 +48,10 @@ export class AppComponent implements OnInit {
     this.isNavBarShown$ = combineLatest(
       this.globalNav.isNavBarShown$,
       this._isPatronRoute$,
-      this._isKeyBoardShown$
+      this._isKeyBoardShown$,
+      this.nativeStartupFacadeService.blockGlobalNavigationStatus$
     ).pipe(
-      map(([isNavBarShown, isPatronRoute, isKeyBoardShown]) => isPatronRoute && isNavBarShown && !isKeyBoardShown)
+      map(([isNavBarShown, isPatronRoute, isKeyBoardShown, isNativeStartupMessageShown]) => isPatronRoute && isNavBarShown && !isKeyBoardShown && !isNativeStartupMessageShown)
     );
   }
 
