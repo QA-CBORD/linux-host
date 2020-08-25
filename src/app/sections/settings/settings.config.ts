@@ -1,6 +1,6 @@
 import { SettingsSectionConfig, SETTINGS_VALIDATIONS } from './models/setting-items-config.model';
 import { Settings } from 'src/app/app.global';
-import { handleLoginAccess, handleOpenHTMLModal, openSiteURL } from './helpers/setting-item.helper';
+import { handleLoginAccess, handleOpenHTMLModal, openSiteURL, openModal } from './helpers/setting-item.helper';
 import { CONTENT_STINGS_DOMAINS, CONTENT_STINGS_CATEGORIES } from 'src/app/content-strings';
 import { HTMLRendererComponent } from '@shared/ui-components/html-renderer/html-renderer.component';
 import { PhoneEmailComponent } from '@shared/ui-components/phone-email/phone-email.component';
@@ -57,7 +57,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
     label: 'Your card',
     items: [
       {
-        id: SETTINGS_ID.personalData,
+        id: SETTINGS_ID.updatePhoto,
         icon: 'update-photo',
         label: 'Update photo',
         type: 'button',
@@ -84,6 +84,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         icon: 'account-profile',
         label: 'Email & Phone Number',
         type: 'button',
+        setCallback: openModal,
         modalContent: {
           component: PhoneEmailComponent,
         },

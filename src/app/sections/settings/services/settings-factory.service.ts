@@ -65,7 +65,7 @@ export class SettingsFactoryService {
 
       await Promise.all(promises);
       section.items = section.items.filter(setting => !hiddenSettings[setting.id]);
-      section.items.length === 0 && parsedSettings.splice(sectionIndex, 1);
+      section.items.length === 0 && parsedSettings.splice(sectionIndex, 1) && sectionIndex--;
     }
     return parsedSettings;
   }
