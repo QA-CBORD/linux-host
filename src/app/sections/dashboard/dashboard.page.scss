@@ -2,6 +2,7 @@
 
 .dashboard {
   background: $color-white-smoke;
+  --padding-bottom: $notch-bottom !important;
 
   &__header-cover {
     height: $notch-top;
