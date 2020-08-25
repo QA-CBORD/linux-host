@@ -16,7 +16,7 @@ export class PhoneEmailComponent implements OnInit {
   phoneEmailForm: FormGroup;
   user: UserInfoSet;
   isLoading: boolean;
-  title: string = "Email & Phone Number";
+  title: string = 'Email & Phone Number';
   staleProfile = true;
 
   constructor(
@@ -35,7 +35,7 @@ export class PhoneEmailComponent implements OnInit {
   ionViewWillEnter() {
     if (this.staleProfile) {
       this.nativeStartupFacadeService.blockGlobalNavigationStatus = true;
-      this.title = "Update Contact Information";
+      this.title = 'Update Contact Information';
     }
   }
 
