@@ -48,10 +48,10 @@ export class SettingsPage implements OnInit {
 
   ngOnInit() {
     this.settingSections = this.settingsFactory.getSettings();
-    this.userName$ = this.getUserName();
-    this.institutionName$ = this.getInstitutionName();
+    this.userName$ = this.getUserName$();
+    this.institutionName$ = this.getInstitutionName$();
     this.userPhoto$ = this.getUserPhoto$();
-    this.appVersion$ = this.getAppVersion();
+    this.appVersion$ = this.getAppVersion$();
   }
 
   //couldnt get photo upload route to work correctly, still trying to fix
@@ -68,7 +68,7 @@ export class SettingsPage implements OnInit {
     this.sessionFacadeService.logoutUser();
   }
 
-  getAppVersion(): Observable<string> {
+  getAppVersion$(): Observable<string> {
     return from(Device.getInfo()).pipe(
       map(({ appVersion }) => appVersion),
       take(1),
@@ -76,7 +76,7 @@ export class SettingsPage implements OnInit {
     );
   }
 
-  getUserName(): Observable<string> {
+  getUserName$(): Observable<string> {
     return this.userFacadeService.getUserData$().pipe(map((userInfo: UserInfo) => getUserFullName(userInfo)));
   }
 
@@ -88,7 +88,7 @@ export class SettingsPage implements OnInit {
     );
   }
 
-  getInstitutionName(): Observable<string> {
+  getInstitutionName$(): Observable<string> {
     return this.userFacadeService.getUserData$().pipe(
       switchMap(({ institutionId }) => this.institutionFacadeService.getInstitutionInfo$(institutionId)),
       map(({ name }) => name)
