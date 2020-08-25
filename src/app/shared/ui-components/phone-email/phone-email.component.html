@@ -36,14 +36,15 @@
       >
       </st-input-floating-label>
     </form>
-    <ion-label class="ion-text-center" *ngIf="staleProfile">
-      <span class="terms-label"> By clicking on 'Save changes' you agree you have read the GET Terms of User and Privacy Policy. </span>
+    <ion-label class="terms-label" *ngIf="staleProfile">
+      By clicking on 'Save changes' you agree you have read the GET Terms of User and Privacy Policy.
     </ion-label>
+    <st-button *ngIf="staleProfile" buttonModifier="rectangle" fill="clear" tabindex="2" (click)="showTOS()">
+      Terms and Conditions
+    </st-button>
+    <p *ngIf="(htmlContent$ | async) as htmlContent" [innerHTML]="htmlContent"></p>
   </div>
 </ion-content>
-<ion-label class="ion-text-center" *ngIf="staleProfile">
-  Terms and Conditions
-</ion-label>
 <ion-footer class="ion-padding footer">
   <st-button
     buttonModifier="rectangle"
