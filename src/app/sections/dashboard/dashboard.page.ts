@@ -4,7 +4,7 @@ import { ModalController, PopoverController } from '@ionic/angular';
 import { EditHomePageModalComponent } from './components/edit-home-page-modal';
 import { TileWrapperConfig } from '@sections/dashboard/models';
 import { TILES_ID } from './dashboard.config';
-import { Observable } from 'rxjs';
+import { Observable, zip } from 'rxjs';
 import { TileConfigFacadeService } from '@sections/dashboard/tile-config-facade.service';
 import { MEAL_CONTENT_STRINGS } from '@sections/accounts/pages/meal-donations/meal-donation.config.ts';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
@@ -15,12 +15,12 @@ import { SessionFacadeService } from '@core/facades/session/session.facade.servi
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
 
 import { Plugins } from '@capacitor/core';
-import { take } from 'rxjs/operators';
+import { last, map, take } from 'rxjs/operators';
 import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
 import { StNativeStartupPopoverComponent } from '@shared/ui-components/st-native-startup-popover';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
-import { UpdateContactInformationComponent } from './components/update-contact-information-modal/update-contact-information.component';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
+import { PhoneEmailComponent } from '@shared/ui-components/phone-email/phone-email.component';
 
 const { App, Device } = Plugins;
 
@@ -58,7 +58,6 @@ export class DashboardPage implements OnInit {
 
   async ionViewWillEnter() {
     this.accessCard.ionViewWillEnter();
-    await this.updateContactIfNeccesary();
   }
 
   ionViewDidEnter() {
@@ -73,6 +72,43 @@ export class DashboardPage implements OnInit {
         if (nativeStartupConfig) {
           const { title, message, arrOfBtns } = nativeStartupConfig;
           this.initModal(title, message, arrOfBtns, this.redirectToTheStore.bind(this));
+        } else {
+          this.checkStaleProfile();
+        }
+      });
+  }
+
+  private async checkStaleProfile() {
+    zip(this.userFacadeService.getUserData$(), this.institutionFacadeService.getlastChangedTerms$())
+      .pipe(
+        map(([{ staleProfile, lastUpdatedProfile }, lastChangedTerms]) => {
+
+
+          if (staleProfile) {
+            return true;
+          }
+
+          /// if institution does not have a TOS changed date
+          if (!lastChangedTerms) {
+            return false;
+          }
+
+          /// if user has not TOS seen / profile update date value
+          if (!lastUpdatedProfile) {
+            return true;
+          }
+
+          const profileUpdated: Date = new Date(lastUpdatedProfile);
+          const instChangedTerms: Date = new Date(lastChangedTerms);
+
+          /// if user hasn't seen new TOS for the institution
+          return profileUpdated < instChangedTerms;
+        }),
+        take(1)
+      )
+      .subscribe(showUpdateProfile => {
+        if (showUpdateProfile) {
+          this.showUpdateProfileModal();
         }
       });
   }
@@ -105,7 +141,7 @@ export class DashboardPage implements OnInit {
           App.exitApp();
           break;
         case BUTTON_TYPE.CANCEL:
-          /// do nothing
+          this.checkStaleProfile();
           break;
       }
     });
@@ -178,36 +214,12 @@ export class DashboardPage implements OnInit {
     await this.tileConfigFacadeService.updateConfigById(TILES_ID.order, res);
   }
 
-  async getStaleProfileStatus$(): Promise<boolean> {
-    return await this.userFacadeService.isStaleProfileEnabled$().toPromise();
-  }
-
-  private async isContactInformationUpToDate$(): Promise<boolean> {
-    return new Promise<boolean>(async (resolve, reject) => {
-      const lastUpdatedProfile = await this.userFacadeService.getlastUpdatedProfile$().toPromise();
-      const lastChangedTerms = await this.institutionFacadeService.getlastChangedTerms$().toPromise();
-      const profileDate = new Date(lastUpdatedProfile);
-      const termDate = new Date(lastChangedTerms);
-      if (termDate > profileDate) {
-        resolve(true);
-      } else {
-        reject(false);
-      }
-    });
-  }
-
-  async presentUpdateContactInformationModal(): Promise<void> {
+  async showUpdateProfileModal(): Promise<void> {
     const modal = await this.modalController.create({
-      component: UpdateContactInformationComponent,
+      component: PhoneEmailComponent,
+      componentProps: { staleProfile: true },
+      backdropDismiss: false,
     });
     return await modal.present();
-  }
-
-  private async updateContactIfNeccesary() {
-    const staleProfile = await this.getStaleProfileStatus$();
-    const contactInformation = await this.isContactInformationUpToDate$();
-    if (staleProfile || contactInformation) {
-      this.presentUpdateContactInformationModal();
-    }
   }
 }

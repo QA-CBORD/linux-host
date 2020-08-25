@@ -646,7 +646,11 @@
 				CODE_SIGN_ENTITLEMENTS = App/App.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
+<<<<<<< HEAD
 				CURRENT_PROJECT_VERSION = 4.0.0.3;
+=======
+				CURRENT_PROJECT_VERSION = 4.0.0.1;
+>>>>>>> feature/GCS-1995-get-ionic-implement-stale-user-
 				DEVELOPMENT_TEAM = DKB7LNE85Z;
 				INFOPLIST_FILE = App/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -673,7 +677,11 @@
 				CODE_SIGN_ENTITLEMENTS = App/App.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
+<<<<<<< HEAD
 				CURRENT_PROJECT_VERSION = 4.0.0.3;
+=======
+				CURRENT_PROJECT_VERSION = 4.0.0.1;
+>>>>>>> feature/GCS-1995-get-ionic-implement-stale-user-
 				DEVELOPMENT_TEAM = DKB7LNE85Z;
 				INFOPLIST_FILE = App/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -840,7 +848,11 @@
 				CODE_SIGN_ENTITLEMENTS = App/App.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
+<<<<<<< HEAD
 				CURRENT_PROJECT_VERSION = 4.0.0.3;
+=======
+				CURRENT_PROJECT_VERSION = 4.0.0.1;
+>>>>>>> feature/GCS-1995-get-ionic-implement-stale-user-
 				DEVELOPMENT_TEAM = DKB7LNE85Z;
 				INFOPLIST_FILE = App/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -923,7 +935,11 @@
 				CODE_SIGN_ENTITLEMENTS = App/App.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
+<<<<<<< HEAD
 				CURRENT_PROJECT_VERSION = 4.0.0.3;
+=======
+				CURRENT_PROJECT_VERSION = 4.0.0.1;
+>>>>>>> feature/GCS-1995-get-ionic-implement-stale-user-
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = App/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;

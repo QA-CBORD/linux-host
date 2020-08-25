@@ -248,19 +248,6 @@ export class UserFacadeService extends ServiceStateFacade {
       take(1)
     );
   }
-  
-  isStaleProfileEnabled$(): Observable<boolean> {
-    return this.getUserData$().pipe(
-      map(({ staleProfile }) => staleProfile ),
-      take(1)
-    );
-  }
-  getlastUpdatedProfile$(): Observable<string> {
-    return this.getUserData$().pipe(
-      map(({ lastUpdatedProfile }) => lastUpdatedProfile ),
-      take(1)
-    );
-  }
   private clearData(){
     this.userPhoto = null;
     this.storageStateService.clearStorage();

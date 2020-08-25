@@ -24,10 +24,11 @@ import { MealDonationsTileModule } from './containers/meal-donations-tile/meal-d
 import { MobileAccessService } from '@sections/mobile-access';
 import { TileConfigFacadeService } from '@sections/dashboard/tile-config-facade.service';
 import { HousingTileModule } from './containers/housing-tile/housing-tile.module';
-import { UpdateContactInformationComponent } from './components/update-contact-information-modal/update-contact-information.component'
 import { StInputFloatingLabelModule } from '@shared/ui-components/st-input-floating-label/st-input-floating-label.module';
 import { StButtonModule } from '@shared/ui-components/st-button';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
+import { PhoneEmailComponent } from '@shared/ui-components/phone-email/phone-email.component';
+import { PhoneEmailModule } from '@shared/ui-components/phone-email/phone-email.module';
 
 const imports = [
   CommonModule,
@@ -47,13 +48,13 @@ const imports = [
   HousingTileModule,
   StInputFloatingLabelModule,
   ReactiveFormsModule,
-  StButtonModule
+  StButtonModule,
+  PhoneEmailModule
 ];
 
 const declarations = [
   DashboardPage,
-  EditHomePageModalComponent,
-  UpdateContactInformationComponent
+  EditHomePageModalComponent
 ];
 
 const providers = [
@@ -71,7 +72,7 @@ const providers = [
   providers,
   entryComponents: [
     EditHomePageModalComponent,
-    UpdateContactInformationComponent
+    PhoneEmailComponent
   ]
 })
 export class DashboardPageModule {
