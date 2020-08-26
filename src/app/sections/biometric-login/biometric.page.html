@@ -9,8 +9,7 @@
       </div>
       <div class="biometric__title">Use {{biometricConfig.name}}?</div>
       <ion-label class="biometric__info">
-        Short and sweet explanation goes here that says user has logged in, but can enable biometric for
-        convenience/security?
+        You are now logged in. To make logging in faster and more secure, enable {{biometricConfig.name}}.
       </ion-label>
     </div>
   </div>
@@ -24,5 +23,8 @@
     <ion-button class="biometric__button biometric__transparent" mode="md" (click)="actForBiometric('disable')">
       Don't show me this again
     </ion-button>
+  </div>
+  <div [hidden]="!loading" class="biometric__background">
+    <img class="biometric__image" src="/assets/images/splash_icon_get.svg" alt="GET CBORD Student Icon" />
   </div>
 </ion-content>

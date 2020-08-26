@@ -8,6 +8,7 @@ import { IdentityFacadeService } from '@core/facades/identity/identity.facade.se
   styleUrls: ['./biometric.page.scss'],
 })
 export class BiometricPage implements OnInit {
+  loading: boolean = false;
   biometricConfig: { type: string; name: string } = null;
   constructor(private readonly identityFacadeService: IdentityFacadeService, private readonly router: Router) {}
 
@@ -16,17 +17,20 @@ export class BiometricPage implements OnInit {
   }
 
   actForBiometric(action) {
+    let biometricsEnabled = false;
     if (action === 'turnon') {
-      this.openPinModal(true);
+      biometricsEnabled = true;
     } else if (action === 'later' || action === 'disable') {
       this.identityFacadeService._biometricsEnabledUserPreference = false;
-      this.openPinModal(false);
     }
+    this.openPinModal(biometricsEnabled);
   }
 
   private async openPinModal(isBiometric: boolean): Promise<void> {
     try {
       this.identityFacadeService.pinLoginSetup(isBiometric);
-    } catch (e) {}
+      this.loading = true;
+    } catch (e) {
+    }
   }
 }
