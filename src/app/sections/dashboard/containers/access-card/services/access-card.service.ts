@@ -62,7 +62,7 @@ export class AccessCardService {
 
   isGETMyCardEnabled(): Observable<boolean> {
     return this.settingsFacadeService.getSetting(Settings.Setting.MY_CARD_ENABLED).pipe(
-      map(({ value }) => !!value)
+      map(({ value }) => !!parseInt(value))
     );
   }
 
