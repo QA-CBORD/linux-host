@@ -169,6 +169,7 @@ export class PinPage implements OnInit {
   }
 
   closePage(pin: string, status: PinCloseStatus) {
+    this.loadingService.closeSpinner();
     this.modalController.dismiss(pin, status);
   }
 

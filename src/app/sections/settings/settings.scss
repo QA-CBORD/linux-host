@@ -2,6 +2,8 @@
 
 .container {
   --background: #{$color-background-divider};
+  --padding-top: env(safe-area-inset-top) !important;
+  --padding-bottom: env(safe-area-inset-bottom) !important;
 }
 
 .title {
@@ -13,7 +15,7 @@
   display: flex;
   justify-content: flex-start;
   background: #ffffff;
-  padding-top: 15px;
+  padding-top: 0;
 }
 
 .student-card-container {
