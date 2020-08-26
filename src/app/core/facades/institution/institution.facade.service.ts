@@ -76,4 +76,11 @@ export class InstitutionFacadeService extends ServiceStateFacade {
   retrieveLookupList$(systemSessionId): Observable<any> {
     return this.institutionApiService.retrieveLookupList(systemSessionId);
   }
+
+  getlastChangedTerms$(): Observable<Date>  {
+    return this.cachedInstitutionInfo$.pipe(
+      map(({ lastChangedTerms }) => lastChangedTerms ),
+      take(1)
+    );
+  }
 }

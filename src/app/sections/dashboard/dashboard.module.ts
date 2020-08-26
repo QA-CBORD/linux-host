@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
+import { ReactiveFormsModule } from '@angular/forms';
 
 import { StHeaderModule } from 'src/app/shared/ui-components/st-header/st-header.module';
 import { DashboardRoutingModule } from './dashboard.routing.module';
@@ -23,6 +24,11 @@ import { MealDonationsTileModule } from './containers/meal-donations-tile/meal-d
 import { MobileAccessService } from '@sections/mobile-access';
 import { TileConfigFacadeService } from '@sections/dashboard/tile-config-facade.service';
 import { HousingTileModule } from './containers/housing-tile/housing-tile.module';
+import { StInputFloatingLabelModule } from '@shared/ui-components/st-input-floating-label/st-input-floating-label.module';
+import { StButtonModule } from '@shared/ui-components/st-button';
+import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
+import { PhoneEmailComponent } from '@shared/ui-components/phone-email/phone-email.component';
+import { PhoneEmailModule } from '@shared/ui-components/phone-email/phone-email.module';
 
 const imports = [
   CommonModule,
@@ -39,12 +45,16 @@ const imports = [
   TransactionsTileModule,
   RewardsTileModule,
   MealDonationsTileModule,
-  HousingTileModule
+  HousingTileModule,
+  StInputFloatingLabelModule,
+  ReactiveFormsModule,
+  StButtonModule,
+  PhoneEmailModule
 ];
 
 const declarations = [
   DashboardPage,
-  EditHomePageModalComponent,
+  EditHomePageModalComponent
 ];
 
 const providers = [
@@ -53,6 +63,7 @@ const providers = [
   MobileAccessService,
   DashboardPageResolver,
   TileConfigFacadeService,
+  GlobalNavService
 ];
 
 @NgModule({
@@ -60,7 +71,8 @@ const providers = [
   declarations,
   providers,
   entryComponents: [
-    EditHomePageModalComponent
+    EditHomePageModalComponent,
+    PhoneEmailComponent
   ]
 })
 export class DashboardPageModule {

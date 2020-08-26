@@ -12,3 +12,8 @@ ion-footer {
     margin-bottom: 10px;
   }
 }
+
+.terms-label {
+  @include font-nunito-regular(14px);
+  color: rgba($color-black, 0.6);
+}

@@ -106,7 +106,7 @@ export class PhotoUploadService {
     ).pipe(
       switchMap(([photoUploadSettings, govtIdRequired, photoInfoList]) => {
         /// populate upload settings if they exist
-        this.governmentIdRequired = !!govtIdRequired.value;
+        this.governmentIdRequired = Boolean(JSON.parse(govtIdRequired.value));
         this.populatePhotoUploadSettings(photoUploadSettings);
         if (photoInfoList && !photoInfoList.empty) {
           return this.fetchUserPhotosInList(photoInfoList);
@@ -186,6 +186,11 @@ export class PhotoUploadService {
   clearLocalGovernmentIdPhotos() {
     this._govtIdFront = null;
     this._govtIdBack = null;
+  }
+
+  clearLocalProfilePhoto() {
+    this._profileImage = null;
+    this._profileImagePending = null;
   }
 
   submitPhoto(newPhoto: UserPhotoInfo): Observable<boolean> {
