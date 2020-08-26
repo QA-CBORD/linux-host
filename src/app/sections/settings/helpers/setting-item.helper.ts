@@ -73,6 +73,7 @@ export async function openModal(services: SettingsServices) {
       component: setting.modalContent.component,
     });
     services.globalNav.hideNavBar();
+    settingModal.onDidDismiss().then(() => services.globalNav.showNavBar());
     return settingModal.present();
   };
 }

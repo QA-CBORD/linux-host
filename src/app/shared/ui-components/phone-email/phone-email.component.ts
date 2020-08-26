@@ -8,7 +8,6 @@ import { UserNotificationInfo } from '@core/model/user';
 import { CONTENT_STINGS_CATEGORIES, CONTENT_STINGS_DOMAINS } from '../../../content-strings';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { Observable } from 'rxjs';
-import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
 
 @Component({
   selector: 'st-phone-email',
@@ -34,7 +33,6 @@ export class PhoneEmailComponent implements OnInit {
     private readonly userFacadeService: UserFacadeService,
     private readonly modalController: ModalController,
     private readonly toastController: ToastController,
-    private readonly nativeStartupFacadeService: NativeStartupFacadeService,
     private readonly cdRef: ChangeDetectorRef
   ) {}
 
@@ -43,7 +41,6 @@ export class PhoneEmailComponent implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.nativeStartupFacadeService.blockGlobalNavigationStatus = true;
     this.title = this.staleProfile ? this.titleStaleProfile : this.titleUpdateContact;
     this.cdRef.detectChanges();
   }
@@ -80,7 +77,6 @@ export class PhoneEmailComponent implements OnInit {
   }
 
   close() {
-    this.nativeStartupFacadeService.blockGlobalNavigationStatus = false;
     this.modalController.dismiss();
   }
 
