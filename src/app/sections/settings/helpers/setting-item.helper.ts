@@ -26,12 +26,11 @@ export function toggleFaceIdStatus(services: SettingsServices) {
   };
 }
 
-export function handleLoginAccess(services: SettingsServices) {
+export function handlePinAccess(services: SettingsServices) {
   const setting: SettingItemConfig = this;
   setting.callback = function() {
-    return services.identity
-      .pinLoginSetup(setting.validations.some(validation => validation.value === AuthTypes.FACE), false)
-      .then(async () => await setting.setToggleStatus(services));
+    services.globalNav.hideNavBar();
+    return services.identity.pinLoginSetup(false, false).then(() => services.globalNav.showNavBar());
   };
 }
 

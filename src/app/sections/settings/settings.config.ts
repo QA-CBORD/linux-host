@@ -1,12 +1,12 @@
 import { SettingsSectionConfig, SETTINGS_VALIDATIONS } from './models/setting-items-config.model';
 import { Settings } from 'src/app/app.global';
 import {
-  handleLoginAccess,
   handleOpenHTMLModal,
   openSiteURL,
   openModal,
   toggleFaceIdStatus,
   setFaceIdStatus,
+  handlePinAccess,
 } from './helpers/setting-item.helper';
 import { CONTENT_STINGS_DOMAINS, CONTENT_STINGS_CATEGORIES } from 'src/app/content-strings';
 import { HTMLRendererComponent } from '@shared/ui-components/html-renderer/html-renderer.component';
@@ -121,7 +121,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         icon: 'pin-pad',
         label: 'Change PIN',
         type: 'button',
-        setCallback: handleLoginAccess,
+        setCallback: handlePinAccess,
         validations: [{ type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.PIN_ENABLED }],
       },
       // {
