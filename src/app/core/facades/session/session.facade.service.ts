@@ -17,6 +17,7 @@ import { MerchantFacadeService } from '@core/facades/merchant/merchant-facade.se
 import { from } from 'rxjs';
 import { PATRON_ROUTES } from '@sections/section.config';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
+import { SettingsFacadeService } from '../settings/settings-facade.service';
 const { App, Device } = Plugins;
 
 enum AppStatus {
@@ -40,6 +41,7 @@ export class SessionFacadeService {
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly storageStateService: StorageStateService,
     private readonly merchantFacadeService: MerchantFacadeService,
+    private readonly settingsFacadeService: SettingsFacadeService,
     private readonly router: Router
   ) {
     this.appStateListeners();
@@ -48,7 +50,6 @@ export class SessionFacadeService {
   // handle app state changes
   // must use Capacitor and Ionic Platform to ensure this is triggered on all devices/versions
   private appStateListeners() {
-
     App.addListener('appStateChange', ({ isActive }: AppState) => {
       if (isActive) {
         this.appResumeLogic();
@@ -81,7 +82,6 @@ export class SessionFacadeService {
     if (await this.isVaultLocked()) {
       this.router.navigate([ROLES.guest, GUEST_ROUTES.startup], { skipLocationChange: true });
     }
-
   }
 
   get navigatedToPlugin() {
@@ -224,6 +224,7 @@ export class SessionFacadeService {
     this.storageStateService.clearState();
     this.storageStateService.clearStorage();
     this.merchantFacadeService.clearState();
+    this.settingsFacadeService.cleanCache();
 
     if (navigateToEntry) {
       this.router.navigate([ROLES.guest, GUEST_ROUTES.entry]);
@@ -235,7 +236,7 @@ export class SessionFacadeService {
     return !(operatingSystem === 'ios' || operatingSystem === 'android');
   }
 
-  lockVault(){
+  lockVault() {
     this.identityFacadeService.lockVault();
   }
 }

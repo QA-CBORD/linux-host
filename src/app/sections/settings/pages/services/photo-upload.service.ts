@@ -188,6 +188,11 @@ export class PhotoUploadService {
     this._govtIdBack = null;
   }
 
+  clearLocalProfilePhoto() {
+    this._profileImage = null;
+    this._profileImagePending = null;
+  }
+
   submitPhoto(newPhoto: UserPhotoInfo): Observable<boolean> {
     return this.userFacadeService.addUserPhoto(newPhoto).pipe(
       tap(success => {
