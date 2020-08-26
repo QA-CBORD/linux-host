@@ -8,6 +8,7 @@ import { USAePayResponse } from '@core/model/add-funds/usaepay-response.model';
 import { ApplePayResponse, ApplePay } from '@core/model/add-funds/applepay-response.model';
 import { Plugins } from '@capacitor/core';
 import { zip } from 'rxjs';
+import { ToastController } from '@ionic/angular';
 const { Browser, IOSDevice } = Plugins;
 
 @Injectable({
@@ -19,7 +20,8 @@ export class ExternalPaymentService {
     private inAppBrowser: InAppBrowser,
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly authFacadeService: AuthFacadeService,
-    private readonly environmentFacadeService: EnvironmentFacadeService
+    private readonly environmentFacadeService: EnvironmentFacadeService,
+    private readonly toastController: ToastController,
   ) {}
 
   /* USAePay */
@@ -115,6 +117,7 @@ export class ExternalPaymentService {
           resolve(<USAePayResponse>{ success: true });
         } else if (url.includes('error=')) {
           const errorMessage = new URLSearchParams(url).get('error');
+          this.onUSAePayCallBackRetrieve(`Your request failed: ${errorMessage}. Please try again.`);
           reject(`Your request failed: ${errorMessage}. Please try again.`);
         }
         browser.close();
@@ -131,7 +134,7 @@ export class ExternalPaymentService {
           const amount = new URLSearchParams(info.url).get('amount') || '';
           resolve(<ApplePayResponse>{
             success: true,
-            amount: amount,
+            amount: amount, 
             selectedAccount: { accountDisplayName: accountName },
             accountId: accountId,
             sourceAcc: { accountTender: 'Apple Pay' },
@@ -146,5 +149,14 @@ export class ExternalPaymentService {
         applePayEvent.remove();
       })
     });
+  }
+
+  private async onUSAePayCallBackRetrieve(message: string) {
+    const toast = await this.toastController.create({
+      message,
+      position: 'top',
+      duration: 3000,
+    });
+    toast.present();
   }
 }
