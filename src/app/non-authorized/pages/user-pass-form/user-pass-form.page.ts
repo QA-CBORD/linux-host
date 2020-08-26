@@ -35,6 +35,7 @@ export class UserPassForm implements OnInit {
   authTypeHosted$: Observable<boolean>;
   private institutionInfo: Institution;
   loginForm: FormGroup;
+  signupEnabled$: Observable<boolean>;
 
   constructor(
     private readonly institutionFacadeService: InstitutionFacadeService,
@@ -80,6 +81,7 @@ export class UserPassForm implements OnInit {
     this.institutionPhoto$ = this.getInstitutionPhoto(id, sessionId);
     this.institutionName$ = this.getInstitutionName(id, sessionId);
     this.nativeHeaderBg$ = this.getNativeHeaderBg(id, sessionId);
+    this.signupEnabled$ = this.isSignupEnabled$();
     this.cdRef.markForCheck();
   }
 
@@ -97,6 +99,13 @@ export class UserPassForm implements OnInit {
     const { shortName } = await this.institutionFacadeService.cachedInstitutionInfo$.pipe(take(1)).toPromise();
     const url = `${this.environmentFacadeService.getSitesURL()}/${shortName}/full/login.php?password=forgot`;
     window.open(url, '_system');
+  }
+
+  isSignupEnabled$(): Observable<boolean> {
+    return this.settingsFacadeService.getSetting(Settings.Setting.STANDARD_REGISTRATION_LINK).pipe(
+      map(({ value }) => Boolean(Number(value))),
+      take(1)
+    );
   }
 
   async authenticateUser(form) {
