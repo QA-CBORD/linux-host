@@ -5,10 +5,7 @@ import { PATRON_NAVIGATION } from '../../app.global';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
-import {
-  SettingItemConfig,
-  SettingsSectionConfig,
-} from './models/setting-items-config.model';
+import { SettingItemConfig, SettingsSectionConfig } from './models/setting-items-config.model';
 import { Plugins } from '@capacitor/core';
 import { SettingsFactoryService } from './services/settings-factory.service';
 import { ModalController } from '@ionic/angular';
@@ -38,7 +35,7 @@ export class SettingsPage implements OnInit {
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly modalController: ModalController,
     private readonly contentStringFacadeService: ContentStringsFacadeService,
-    private readonly settingsFactory: SettingsFactoryService,
+    private readonly settingsFactory: SettingsFactoryService
   ) {}
 
   ngOnInit() {
@@ -50,7 +47,10 @@ export class SettingsPage implements OnInit {
   }
 
   //couldnt get photo upload route to work correctly, still trying to fix
-  navigateToPhotoUpload() {
+  async navigateToPhotoUpload() {
+    if (!(await this.settingsFactory.photoUploadEnabled$.toPromise())) {
+      return;
+    }
     this.router.navigate([PATRON_NAVIGATION.settings, LOCAL_ROUTING.photoUpload]);
   }
 

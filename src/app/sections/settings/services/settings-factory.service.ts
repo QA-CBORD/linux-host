@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
-import { of, merge, pipe, Observable } from 'rxjs';
+import { merge, Observable, of } from 'rxjs';
 import {
-  SettingsSectionConfig,
   SettingItemConfig,
   SETTINGS_VALIDATIONS,
+  SettingsSectionConfig,
   SettingsServices,
 } from '../models/setting-items-config.model';
-import { SETTINGS_CONFIG, SETTINGS_ID } from '../settings.config';
-import { take, map, reduce } from 'rxjs/operators';
+import { SETTINGS_CONFIG } from '../settings.config';
+import { catchError, map, reduce, take } from 'rxjs/operators';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Settings } from 'src/app/app.global';
 import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
@@ -18,6 +18,7 @@ import { IdentityService } from '@core/service/identity/identity.service';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { ModalController } from '@ionic/angular';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
+import Setting = Settings.Setting;
 
 @Injectable()
 export class SettingsFactoryService {
@@ -133,5 +134,13 @@ export class SettingsFactoryService {
 
   get availableBiometricHardware$(): Observable<string[]> {
     return this.identityService.getAvailableBiometricHardware().pipe(take(1));
+  }
+
+  get photoUploadEnabled$(): Observable<boolean> {
+    return this.settingsFacade.getSetting(Setting.PHOTO_UPLOAD_ENABLED).pipe(
+      map(setting => Boolean(JSON.parse(setting.value))),
+      take(1),
+      catchError(() => of(false))
+    );
   }
 }
