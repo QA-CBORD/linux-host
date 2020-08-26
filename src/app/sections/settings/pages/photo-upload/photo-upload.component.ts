@@ -69,6 +69,10 @@ export class PhotoUploadComponent implements OnInit {
     this.setupPhotoSubscriptions();
   }
 
+  ngOnDestroy() {
+    this.photoUploadService.clearLocalProfilePhoto();
+  }
+
   private clearLocalStateData() {
     this.localPhotoData = {
       govtIdRequired: false,
