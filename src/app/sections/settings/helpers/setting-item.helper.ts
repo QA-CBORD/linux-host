@@ -28,9 +28,9 @@ export function toggleFaceIdStatus(services: SettingsServices) {
 
 export function handlePinAccess(services: SettingsServices) {
   const setting: SettingItemConfig = this;
-  setting.callback = function() {
-    services.globalNav.hideNavBar();
-    return services.identity.pinLoginSetup(false, false).then(() => services.globalNav.showNavBar());
+  setting.callback = async function() {
+    const biometricsEnabled = await services.identity.cachedBiometricsEnabledUserPreference$;
+    return services.identity.pinLoginSetup(biometricsEnabled, false);
   };
 }
 
