@@ -15,7 +15,7 @@ import { SessionFacadeService } from '@core/facades/session/session.facade.servi
 import { BUTTON_TYPE } from '@core/utils/buttons.config';
 
 import { Plugins } from '@capacitor/core';
-import { last, map, take } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
 import { StNativeStartupPopoverComponent } from '@shared/ui-components/st-native-startup-popover';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
@@ -114,7 +114,7 @@ export class DashboardPage implements OnInit {
   }
 
   private async initModal(title, message, buttons, onSuccessCb): Promise<void> {
-    this.nativeStartupFacadeService.blockGlobalNavigationStatus = true;
+    this.hideGlobalNavBar(true);
     const modal = await this.popoverCtrl.create({
       component: StNativeStartupPopoverComponent,
       componentProps: {
@@ -129,7 +129,7 @@ export class DashboardPage implements OnInit {
     });
 
     modal.onDidDismiss().then(({ role }) => {
-      this.nativeStartupFacadeService.blockGlobalNavigationStatus = false;
+      this.hideGlobalNavBar(false);
       switch (role) {
         case BUTTON_TYPE.OKAY:
           onSuccessCb();
@@ -220,6 +220,13 @@ export class DashboardPage implements OnInit {
       componentProps: { staleProfile: true },
       backdropDismiss: false,
     });
+
+    modal.onDidDismiss().then(() => this.hideGlobalNavBar(false));
+    this.hideGlobalNavBar(true);
     return await modal.present();
+  }
+
+  private hideGlobalNavBar(hide: boolean) {
+    this.nativeStartupFacadeService.blockGlobalNavigationStatus = hide;
   }
 }
