@@ -1,10 +1,14 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ModalController, ToastController } from '@ionic/angular';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
-import { take } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { UserInfoSet } from '@sections/settings/models/setting-items-config.model';
 import { UserNotificationInfo } from '@core/model/user';
+import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
+import { CONTENT_STINGS_CATEGORIES, CONTENT_STINGS_DOMAINS } from '../../../content-strings';
+import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'st-phone-email',
@@ -16,16 +20,31 @@ export class PhoneEmailComponent implements OnInit {
   phoneEmailForm: FormGroup;
   user: UserInfoSet;
   isLoading: boolean;
+  title: string = '';
+  private readonly titleUpdateContact: string = 'Email & Phone Number';
+  private readonly titleStaleProfile: string = 'Update Contact Information';
+
+  htmlContent$: Observable<string>;
+
+  @Input() staleProfile = false;
 
   constructor(
     private readonly fb: FormBuilder,
+    private readonly contentStringFacadeService: ContentStringsFacadeService,
     private readonly userFacadeService: UserFacadeService,
     private readonly modalController: ModalController,
     private readonly toastController: ToastController,
+    private readonly globalNavService: GlobalNavService,
     private readonly cdRef: ChangeDetectorRef
   ) {}
+
   ngOnInit() {
+    this.globalNavService.hideNavBar();
     this.initForm();
+  }
+
+  ionViewWillEnter() {
+    this.title = this.staleProfile ? this.titleStaleProfile : this.titleUpdateContact;
   }
 
   async saveChanges() {
@@ -34,6 +53,9 @@ export class PhoneEmailComponent implements OnInit {
       () => {
         this.isLoading = false;
         this.presentToast();
+        if (this.staleProfile) {
+          this.close();
+        }
       },
       () => {
         this.isLoading = false;
@@ -43,7 +65,21 @@ export class PhoneEmailComponent implements OnInit {
     );
   }
 
+  async showTOS() {
+    if (this.htmlContent$) {
+      return;
+    }
+
+    this.htmlContent$ = this.contentStringFacadeService
+      .fetchContentString$(CONTENT_STINGS_DOMAINS.get_web_gui, CONTENT_STINGS_CATEGORIES.termsScreen, 'terms')
+      .pipe(
+        map(contentString => contentString.value),
+        take(1)
+      );
+  }
+
   close() {
+    this.globalNavService.showNavBar();
     this.modalController.dismiss();
   }
 
@@ -57,10 +93,11 @@ export class PhoneEmailComponent implements OnInit {
       .pipe(take(1))
       .toPromise();
     this.user = { ...user };
-    this.email.setValue(this.user.email);
-    this.phone.setValue(this.user.phone);
+    this.email.setValue(this.user.email || '');
+    this.phone.setValue(this.user.phone || '1234567890');
     this.cdRef.detectChanges();
   }
+
   get controlsNames() {
     return PHONE_EMAIL_CONTROL_NAMES;
   }
@@ -77,6 +114,7 @@ export class PhoneEmailComponent implements OnInit {
     const user: any = { ...this.user };
     user.phone = this.phone.value;
     user.email = this.email.value;
+    user.staleProfile = false;
 
     const notifications = user.userNotificationInfoList.reduce((r, a: UserNotificationInfo, i) => {
       r[a.type] = [...(r[a.type] || []), i];
@@ -112,6 +150,7 @@ export class PhoneEmailComponent implements OnInit {
     const notif: UserNotificationInfo = { type, value, status: DEFAULT_NOTIFICATION_STATUS, provider: null };
     return notif;
   }
+
   private async onErrorRetrieve(message: string) {
     const toast = await this.toastController.create({
       message,
@@ -133,6 +172,7 @@ export class PhoneEmailComponent implements OnInit {
     });
     toast.present();
   }
+
   private async presentToast(): Promise<void> {
     const message = `Updated successfully.`;
     const toast = await this.toastController.create({

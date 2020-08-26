@@ -248,11 +248,10 @@ export class UserFacadeService extends ServiceStateFacade {
       take(1)
     );
   }
-
+  
   private clearData(){
     this.userPhoto = null;
     this.storageStateService.clearStorage();
     this.storageStateService.clearState();
   }
-
 }
