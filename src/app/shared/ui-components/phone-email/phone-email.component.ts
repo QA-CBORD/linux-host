@@ -5,10 +5,10 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { map, take } from 'rxjs/operators';
 import { UserInfoSet } from '@sections/settings/models/setting-items-config.model';
 import { UserNotificationInfo } from '@core/model/user';
-import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { CONTENT_STINGS_CATEGORIES, CONTENT_STINGS_DOMAINS } from '../../../content-strings';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { Observable } from 'rxjs';
+import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
 
 @Component({
   selector: 'st-phone-email',
@@ -34,17 +34,18 @@ export class PhoneEmailComponent implements OnInit {
     private readonly userFacadeService: UserFacadeService,
     private readonly modalController: ModalController,
     private readonly toastController: ToastController,
-    private readonly globalNavService: GlobalNavService,
+    private readonly nativeStartupFacadeService: NativeStartupFacadeService,
     private readonly cdRef: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
-    this.globalNavService.hideNavBar();
     this.initForm();
   }
 
   ionViewWillEnter() {
+    this.nativeStartupFacadeService.blockGlobalNavigationStatus = true;
     this.title = this.staleProfile ? this.titleStaleProfile : this.titleUpdateContact;
+    this.cdRef.detectChanges();
   }
 
   async saveChanges() {
@@ -79,7 +80,7 @@ export class PhoneEmailComponent implements OnInit {
   }
 
   close() {
-    this.globalNavService.showNavBar();
+    this.nativeStartupFacadeService.blockGlobalNavigationStatus = false;
     this.modalController.dismiss();
   }
 
@@ -94,7 +95,7 @@ export class PhoneEmailComponent implements OnInit {
       .toPromise();
     this.user = { ...user };
     this.email.setValue(this.user.email || '');
-    this.phone.setValue(this.user.phone || '1234567890');
+    this.phone.setValue(this.user.phone || '');
     this.cdRef.detectChanges();
   }
 
@@ -115,6 +116,7 @@ export class PhoneEmailComponent implements OnInit {
     user.phone = this.phone.value;
     user.email = this.email.value;
     user.staleProfile = false;
+    user.lastUpdatedProfile = new Date().toISOString();
 
     const notifications = user.userNotificationInfoList.reduce((r, a: UserNotificationInfo, i) => {
       r[a.type] = [...(r[a.type] || []), i];
