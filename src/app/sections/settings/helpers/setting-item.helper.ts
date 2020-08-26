@@ -11,13 +11,27 @@ export function getCardStatus(services: SettingsServices): Promise<boolean> {
     .toPromise();
 }
 
+export async function setFaceIdStatus(services: SettingsServices): Promise<void> {
+  const setting: SettingItemConfig = this;
+  setting.checked = await services.identity.cachedBiometricsEnabledUserPreference$;
+}
+
+export function toggleFaceIdStatus(services: SettingsServices) {
+  const setting: SettingItemConfig = this;
+  setting.callback = function() {
+    return new Promise<boolean>(resolve => {
+      services.identity._biometricsEnabledUserPreference = !setting.checked;
+      resolve(true);
+    }).then(async () => await setting.setToggleStatus(services));
+  };
+}
+
 export function handleLoginAccess(services: SettingsServices) {
   const setting: SettingItemConfig = this;
   setting.callback = function() {
-    return services.identity.pinLoginSetup(
-      setting.validations.some(validation => validation.value === AuthTypes.FACE),
-      false
-    );
+    return services.identity
+      .pinLoginSetup(setting.validations.some(validation => validation.value === AuthTypes.FACE), false)
+      .then(async () => await setting.setToggleStatus(services));
   };
 }
 

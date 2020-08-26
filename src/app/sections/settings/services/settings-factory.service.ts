@@ -55,7 +55,7 @@ export class SettingsFactoryService {
         promises.push(
           this.checkDisplayOption(setting).then(enabled => {
             if (enabled) {
-              this.setToggleStatus(setting);
+              setting.setToggleStatus && setting.setToggleStatus(this.services);
               setting.setCallback && setting.setCallback(this.services);
               setting.navigateExternal && this.setExternalURL(setting);
             } else hiddenSettings[setting.id] = true;
@@ -98,14 +98,6 @@ export class SettingsFactoryService {
         .toPromise();
     }
     return of(true).toPromise();
-  }
-
-  private async setToggleStatus(setting: SettingItemConfig): Promise<boolean> {
-    if (setting.getToggleStatus) {
-      setting.checked = await setting.getToggleStatus(this.services);
-      setting.label = setting.checked ? setting.toggleLabel.checked : setting.toggleLabel.unchecked;
-    }
-    return true;
   }
 
   private async setExternalURL(setting: SettingItemConfig) {
