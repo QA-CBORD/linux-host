@@ -11,13 +11,26 @@ export function getCardStatus(services: SettingsServices): Promise<boolean> {
     .toPromise();
 }
 
-export function handleLoginAccess(services: SettingsServices) {
+export async function setFaceIdStatus(services: SettingsServices): Promise<void> {
+  const setting: SettingItemConfig = this;
+  setting.checked = await services.identity.cachedBiometricsEnabledUserPreference$;
+}
+
+export function toggleFaceIdStatus(services: SettingsServices) {
   const setting: SettingItemConfig = this;
   setting.callback = function() {
-    return services.identity.pinLoginSetup(
-      setting.validations.some(validation => validation.value === AuthTypes.FACE),
-      false
-    );
+    return new Promise<boolean>(resolve => {
+      services.identity._biometricsEnabledUserPreference = !setting.checked;
+      resolve(true);
+    }).then(async () => await setting.setToggleStatus(services));
+  };
+}
+
+export function handlePinAccess(services: SettingsServices) {
+  const setting: SettingItemConfig = this;
+  setting.callback = async function() {
+    const biometricsEnabled = await services.identity.cachedBiometricsEnabledUserPreference$;
+    return services.identity.pinLoginSetup(biometricsEnabled, false);
   };
 }
 
@@ -60,6 +73,7 @@ export async function openModal(services: SettingsServices) {
       component: setting.modalContent.component,
     });
     services.globalNav.hideNavBar();
+    settingModal.onDidDismiss().then(() => services.globalNav.showNavBar());
     return settingModal.present();
   };
 }

@@ -27,7 +27,7 @@ export interface SettingItemConfig {
   toggleLabel?: ToggleLabel;
   validations?: SettingItemValidation[];
   modalContent?: ModalContent | HTMLContentString;
-  getToggleStatus?: (services: SettingsServices) => Promise<boolean>;
+  setToggleStatus?: (services: SettingsServices) => void;
   setCallback?: (services: SettingsServices | undefined) => void;
   callback?: () => Promise<any>;
 }
@@ -69,7 +69,7 @@ export interface SettingsServices {
   globalNav: GlobalNavService;
   modalController: ModalController;
   contentString: ContentStringsFacadeService;
-  settings: SettingsFacadeService
+  settings: SettingsFacadeService;
   institution: InstitutionFacadeService;
   environment: EnvironmentFacadeService;
 }

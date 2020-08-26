@@ -9,7 +9,14 @@ import { SettingsFactoryService } from './services/settings-factory.service';
 import { HTMLRendererModule } from '@shared/ui-components/html-renderer/html-renderer.module';
 import { PhoneEmailModule } from '@shared/ui-components/phone-email/phone-email.module';
 
-const imports = [CommonModule, IonicModule, SettingsRoutingModule, PhotoUploadModule, HTMLRendererModule, PhoneEmailModule];
+const imports = [
+  CommonModule,
+  IonicModule,
+  SettingsRoutingModule,
+  PhotoUploadModule,
+  HTMLRendererModule,
+  PhoneEmailModule,
+];
 const declarations = [SettingsPage, SettingsItemComponent];
 const entryComponents = [];
 const providers = [SettingsFactoryService];
