@@ -49,10 +49,14 @@ export interface ModalContent {
   biometric?: string;
 }
 export interface HTMLContentString {
+  contentStrings: DomainContentString[];
+  appendStrings?: string[];
+  component: any;
+}
+export interface DomainContentString {
   domain: CONTENT_STINGS_DOMAINS;
   category: CONTENT_STINGS_CATEGORIES;
   name: string;
-  component: any;
 }
 export enum SETTINGS_VALIDATIONS {
   SettingEnable = 'setting-enable',

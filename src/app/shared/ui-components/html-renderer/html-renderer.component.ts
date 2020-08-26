@@ -7,8 +7,10 @@ import { Component, OnInit, Input, ChangeDetectionStrategy, ChangeDetectorRef } 
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HTMLRendererComponent implements OnInit {
-  @Input() htmlContent: string;
+  @Input() title: string;
+  @Input() htmlContent: Promise<string>;
   @Input() buttons: any[];
+  @Input() onClose: () => void;
 
   constructor(private readonly cdRef: ChangeDetectorRef) {}
 

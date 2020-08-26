@@ -205,7 +205,46 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
   {
     label: 'Feedback & Support',
     items: [
-      // { id: SETTINGS_ID.help, icon: 'help', label: 'Help', type: 'button', navigate: SETTINGS_NAVIGATE.help },
+      {
+        id: SETTINGS_ID.help,
+        icon: 'help',
+        label: 'Help',
+        type: 'button',
+        modalContent: {
+          contentStrings: [
+            {
+              domain: CONTENT_STINGS_DOMAINS.get_web_gui,
+              category: CONTENT_STINGS_CATEGORIES.aboutScreen,
+              name: 'about_getfunds',
+            },
+            {
+              domain: CONTENT_STINGS_DOMAINS.get_web_gui,
+              category: CONTENT_STINGS_CATEGORIES.aboutScreen,
+              name: 'contact_info',
+            },
+            {
+              domain: CONTENT_STINGS_DOMAINS.get_web_gui,
+              category: CONTENT_STINGS_CATEGORIES.termsScreen,
+              name: 'terms',
+            },
+            {
+              domain: CONTENT_STINGS_DOMAINS.get_web_gui,
+              category: CONTENT_STINGS_CATEGORIES.aboutScreen,
+              name: 'patent',
+            },
+            {
+              domain: CONTENT_STINGS_DOMAINS.get_web_gui,
+              category: CONTENT_STINGS_CATEGORIES.aboutScreen,
+              name: 'org',
+            },
+          ],
+          appendStrings: [
+            '<br><br>Address geocoding and reverse geocoding is &copy; OpenStreetMap contributors. <a href="http://www.openstreetmap.org/copyright">Copyright and License</a>\r\n',
+          ],
+          component: HTMLRendererComponent,
+        },
+        setCallback: handleOpenHTMLModal,
+      },
       {
         id: SETTINGS_ID.support,
         icon: 'mail',
@@ -220,9 +259,13 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         label: 'Terms of Use & Privacy Policy',
         type: 'button',
         modalContent: {
+          contentStrings: [
+            {
           domain: CONTENT_STINGS_DOMAINS.get_web_gui,
           category: CONTENT_STINGS_CATEGORIES.termsScreen,
           name: 'terms',
+            },
+          ],
           component: HTMLRendererComponent,
         },
         setCallback: handleOpenHTMLModal,
