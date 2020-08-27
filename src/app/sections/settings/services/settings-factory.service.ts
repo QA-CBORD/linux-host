@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { merge, Observable, of } from 'rxjs';
+import { merge, Observable, of, zip } from 'rxjs';
 import {
   SettingItemConfig,
   SETTINGS_VALIDATIONS,
@@ -19,10 +19,12 @@ import { GlobalNavService } from '@shared/ui-components/st-global-navigation/ser
 import { ModalController } from '@ionic/angular';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import Setting = Settings.Setting;
+import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 
 @Injectable()
 export class SettingsFactoryService {
   services: SettingsServices = {
+    authService: this.authFacadeService,
     identity: this.identityFacadeService,
     userService: this.userFacadeService,
     globalNav: this.globalNav,
@@ -34,6 +36,7 @@ export class SettingsFactoryService {
   };
 
   constructor(
+    private readonly authFacadeService: AuthFacadeService,
     private readonly settingsFacade: SettingsFacadeService,
     private readonly identityService: IdentityService,
     private readonly identityFacadeService: IdentityFacadeService,
@@ -58,7 +61,6 @@ export class SettingsFactoryService {
             if (enabled) {
               setting.setToggleStatus && setting.setToggleStatus(this.services);
               setting.setCallback && setting.setCallback(this.services);
-              setting.navigateExternal && this.setExternalURL(setting);
             } else hiddenSettings[setting.id] = true;
           })
         );
@@ -114,9 +116,9 @@ export class SettingsFactoryService {
         .toPromise();
     }
     if (resource.type === 'link') {
-      linkPromise = this.institutionFacadeService.cachedInstitutionInfo$
+      linkPromise = zip(this.institutionFacadeService.cachedInstitutionInfo$, this.authFacadeService.getAuthenticationToken$())
         .pipe(
-          map(inst => `${this.environmentFacadeService.getSitesURL()}/${inst.shortName}/full/${resource.value}`),
+          map(([inst, token]) => `${this.environmentFacadeService.getSitesURL()}/${inst.shortName}/full/${resource.value}?session_token=${token}`),
           take(1)
         )
         .toPromise();

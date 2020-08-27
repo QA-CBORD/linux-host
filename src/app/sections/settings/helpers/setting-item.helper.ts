@@ -7,7 +7,7 @@ import {
   DomainContentString,
 } from '../models/setting-items-config.model';
 import { Settings } from 'src/app/app.global';
-import { from, concat } from 'rxjs';
+import { from, concat, zip } from 'rxjs';
 
 export function getCardStatus(services: SettingsServices): Promise<boolean> {
   return services.userService
@@ -106,18 +106,25 @@ export async function openSiteURL(services: SettingsServices): Promise<void> {
         take(1)
       )
       .toPromise();
+
+    const link = await linkPromise;
+    setting.callback = async function() {
+      window.open(link, '_system');
+    };
   }
   if (resource.type === 'link') {
-    linkPromise = services.institution.cachedInstitutionInfo$
-      .pipe(
-        map(inst => `${services.environment.getSitesURL()}/${inst.shortName}/full/${resource.value}`),
-        take(1)
-      )
-      .toPromise();
+    setting.callback = async function() {
+      linkPromise = zip(services.institution.cachedInstitutionInfo$, services.authService.getAuthenticationToken$())
+        .pipe(
+          map(
+            ([inst, token]) =>
+              `${services.environment.getSitesURL()}/${inst.shortName}/full/${resource.value}?session_token=${token}`
+          ),
+          take(1)
+        )
+        .toPromise();
+      const link = await linkPromise;
+      window.open(link, '_system');
+    };
   }
-  const link = await linkPromise;
-
-  setting.callback = async function() {
-    window.open(link, '_system');
-  };
 }
