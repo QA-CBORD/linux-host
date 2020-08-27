@@ -171,8 +171,8 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
     }
   }
 
-  async presentPinModal(pinAction: PinAction): Promise<any> {
-    let componentProps = { pinAction };
+  async presentPinModal(pinAction: PinAction, pinModalProps?: any): Promise<any> {
+    let componentProps = { pinAction, ...pinModalProps };
     const pinModal = await this.modalController.create({
       backdropDismiss: false,
       component: PinPage,
