@@ -255,11 +255,12 @@ export class ApplicationsService {
           parsedJson,
           questions
         );
-        const patronPreferences: PatronPreference[] = this._preferencesService.getPreferences(
+        const patronPreferences: PatronPreference[] = applicationDetails.patronPreferences != null?
+          this._preferencesService.getPreferences(
           applicationDetails.patronPreferences,
           parsedJson,
           questions
-        );
+        ): null;
         const body: ApplicationRequest = new ApplicationRequest({
           patronApplication: applicationDetails.patronApplication,
           patronAttributes,

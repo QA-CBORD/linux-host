@@ -144,6 +144,7 @@ export class HousingService {
   }
 
   handleErrors(error: any): void {
+    console.log(error);
     let message = 'Something went wrong. Try again later';
 
     this._loadingService.closeSpinner();
