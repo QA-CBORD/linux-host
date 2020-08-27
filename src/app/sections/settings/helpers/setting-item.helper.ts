@@ -1,8 +1,13 @@
-import { map, take } from 'rxjs/operators';
+import { map, take, concatMap, reduce } from 'rxjs/operators';
 import { UserInfo } from '@core/model/user';
-import { SettingsServices, SettingItemConfig, HTMLContentString } from '../models/setting-items-config.model';
+import {
+  SettingsServices,
+  SettingItemConfig,
+  HTMLContentString,
+  DomainContentString,
+} from '../models/setting-items-config.model';
 import { Settings } from 'src/app/app.global';
-import { AuthTypes } from '@core/utils/auth-types.enum';
+import { from, concat } from 'rxjs';
 
 export function getCardStatus(services: SettingsServices): Promise<boolean> {
   return services.userService
@@ -37,24 +42,34 @@ export function handlePinAccess(services: SettingsServices) {
 export function handleOpenHTMLModal(services: SettingsServices) {
   const setting: SettingItemConfig = this;
   setting.callback = async function() {
-    const { domain, category, name } = setting.modalContent as HTMLContentString;
-    const htmlContent = await services.contentString
-      .fetchContentString$(domain, category, name)
+    const content = setting.modalContent as HTMLContentString;
+    content.appendStrings = content.appendStrings || [];
+    const htmlContent = concat(
+      from(content.contentStrings).pipe(
+        concatMap((contenString: DomainContentString) => {
+          const { domain, category, name } = contenString;
+          return services.contentString.fetchContentString$(domain, category, name).pipe(
+            map(st => st.value),
+            take(1)
+          );
+        })
+      ),
+      from(content.appendStrings)
+    )
       .pipe(
-        map(st => st.value),
-        take(1)
+        take(content.contentStrings.length + content.appendStrings.length),
+        reduce((htmlString, content) => htmlString + content)
       )
       .toPromise();
-    const buttons = [
-      {
-        label: 'Close',
-        callback: () => {
-          services.globalNav.showNavBar();
-          services.modalController.dismiss();
-        },
+
+    const componentProps = {
+      htmlContent,
+      title: setting.label,
+      onClose: () => {
+        services.globalNav.showNavBar();
+        services.modalController.dismiss();
       },
-    ];
-    const componentProps = { htmlContent, buttons };
+    };
     const settingModal = await services.modalController.create({
       backdropDismiss: false,
       component: setting.modalContent.component,
