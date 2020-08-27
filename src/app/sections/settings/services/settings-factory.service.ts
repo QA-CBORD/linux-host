@@ -102,30 +102,7 @@ export class SettingsFactoryService {
     }
     return of(true).toPromise();
   }
-
-  private async setExternalURL(setting: SettingItemConfig) {
-    let linkPromise: Promise<string>;
-    const resource = setting.navigateExternal;
-    if (resource.type === 'email') {
-      linkPromise = this.settingsFacade
-        .getSetting(resource.value as Settings.Setting)
-        .pipe(
-          map(emailSetting => 'mailto:' + emailSetting.value),
-          take(1)
-        )
-        .toPromise();
-    }
-    if (resource.type === 'link') {
-      linkPromise = zip(this.institutionFacadeService.cachedInstitutionInfo$, this.authFacadeService.getAuthenticationToken$())
-        .pipe(
-          map(([inst, token]) => `${this.environmentFacadeService.getSitesURL()}/${inst.shortName}/full/${resource.value}?session_token=${token}`),
-          take(1)
-        )
-        .toPromise();
-    }
-    setting.navigate = await linkPromise;
-  }
-
+  
   get availableBiometricHardware$(): Observable<string[]> {
     return this.identityService.getAvailableBiometricHardware().pipe(take(1));
   }
