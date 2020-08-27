@@ -8,7 +8,7 @@
 
 #import "GETServices.h"
 #import "GETAuthorizationBlobResponse.h"
-#import "GET-Swift.h"
+#import "GET__x2009_Mobile-Swift.h"
 
 @interface GETPartnerServices: GETServices
 
