@@ -13,6 +13,7 @@ import { HTMLRendererComponent } from '@shared/ui-components/html-renderer/html-
 import { PhoneEmailComponent } from '@shared/ui-components/phone-email/phone-email.component';
 import { AuthTypes } from '@core/utils/auth-types.enum';
 import { EditHomePageModalComponent } from '@shared/ui-components/edit-home-page-modal/edit-home-page-modal.component';
+import { SETTINGS_ID } from './models/settings-id.enum';
 
 export enum LOCAL_ROUTING {
   photoUpload = 'photo-upload',
@@ -39,27 +40,6 @@ export enum SETTINGS_NAVIGATE {
   terms = 'terms-privacy',
 }
 
-export enum SETTINGS_ID {
-  updatePhoto = 'update-photo',
-  lostCard = 'lost-card',
-  personalData = 'email-pwd',
-  password = 'pwd-change',
-  faceId = 'face-id',
-  pin = 'pin-change',
-  devices = 'report-lost',
-  address = 'my-address',
-  paymentMethods = 'payment-methods',
-  deposits = 'auto-deposits',
-  mealPlan = 'meal-plan-change',
-  mealPurchase = 'meal-plan-purchase',
-  theme = 'theme-change',
-  home = 'home-edit',
-  navigate = 'nav-edit',
-  feedback = 'feedback-sending',
-  help = 'help',
-  support = 'email-support',
-  terms = 'terms-privacy',
-}
 export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
   {
     label: 'Your card',
