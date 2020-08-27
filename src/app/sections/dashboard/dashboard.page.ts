@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
 import { ModalController, PopoverController } from '@ionic/angular';
 
-import { EditHomePageModalComponent } from './components/edit-home-page-modal';
 import { TileWrapperConfig } from '@sections/dashboard/models';
 import { TILES_ID } from './dashboard.config';
 import { Observable, zip } from 'rxjs';
@@ -21,6 +20,7 @@ import { StNativeStartupPopoverComponent } from '@shared/ui-components/st-native
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { PhoneEmailComponent } from '@shared/ui-components/phone-email/phone-email.component';
+import { EditHomePageModalComponent } from '@shared/ui-components/edit-home-page-modal/edit-home-page-modal.component';
 
 const { App, Device } = Plugins;
 
@@ -82,8 +82,6 @@ export class DashboardPage implements OnInit {
     zip(this.userFacadeService.getUserData$(), this.institutionFacadeService.getlastChangedTerms$())
       .pipe(
         map(([{ staleProfile, lastUpdatedProfile }, lastChangedTerms]) => {
-
-
           if (staleProfile) {
             return true;
           }

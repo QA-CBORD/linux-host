@@ -12,6 +12,7 @@ import { CONTENT_STINGS_DOMAINS, CONTENT_STINGS_CATEGORIES } from 'src/app/conte
 import { HTMLRendererComponent } from '@shared/ui-components/html-renderer/html-renderer.component';
 import { PhoneEmailComponent } from '@shared/ui-components/phone-email/phone-email.component';
 import { AuthTypes } from '@core/utils/auth-types.enum';
+import { EditHomePageModalComponent } from '@shared/ui-components/edit-home-page-modal/edit-home-page-modal.component';
 
 export enum LOCAL_ROUTING {
   photoUpload = 'photo-upload',
@@ -176,32 +177,35 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
       },
     ],
   },
-  // {
-  //   label: 'Preferences',
-  //   items: [
-  //     {
-  //       id: SETTINGS_ID.theme,
-  //       icon: 'theme-dark-light-mode',
-  //       label: 'Theme',
-  //       type: 'button',
-  //       navigate: SETTINGS_NAVIGATE.theme,
-  //     },
-  //     {
-  //       id: SETTINGS_ID.home,
-  //       icon: 'home-edit',
-  //       label: 'Edit Home',
-  //       type: 'button',
-  //       navigate: SETTINGS_NAVIGATE.home,
-  //     },
-  //     {
-  //       id: SETTINGS_ID.navigate,
-  //       icon: 'more-menu',
-  //       label: 'Edit navigate',
-  //       type: 'button',
-  //       navigate: SETTINGS_NAVIGATE.navigate,
-  //     },
-  //   ],
-  // },
+  {
+    label: 'Preferences',
+    items: [
+      // {
+      //   id: SETTINGS_ID.theme,
+      //   icon: 'theme-dark-light-mode',
+      //   label: 'Theme',
+      //   type: 'button',
+      //   navigate: SETTINGS_NAVIGATE.theme,
+      // },
+      {
+        id: SETTINGS_ID.home,
+        icon: 'home-edit',
+        label: 'Edit Home',
+        type: 'button',
+        setCallback: openModal,
+        modalContent: {
+          component: EditHomePageModalComponent,
+        },
+      },
+      // {
+      //   id: SETTINGS_ID.navigate,
+      //   icon: 'more-menu',
+      //   label: 'Edit navigate',
+      //   type: 'button',
+      //   navigate: SETTINGS_NAVIGATE.navigate,
+      // },
+    ],
+  },
   {
     label: 'Feedback & Support',
     items: [
@@ -261,9 +265,9 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         modalContent: {
           contentStrings: [
             {
-          domain: CONTENT_STINGS_DOMAINS.get_web_gui,
-          category: CONTENT_STINGS_CATEGORIES.termsScreen,
-          name: 'terms',
+              domain: CONTENT_STINGS_DOMAINS.get_web_gui,
+              category: CONTENT_STINGS_CATEGORIES.termsScreen,
+              name: 'terms',
             },
           ],
           component: HTMLRendererComponent,

@@ -19,7 +19,6 @@ import { TileWrapperModule } from './containers/tile-wrapper';
 import { TransactionsTileModule } from './containers/transactions-tile';
 import { RewardsTileModule } from './containers/rewards-tile';
 import { DashboardPageResolver } from './resolvers/dashboard-page.resolver';
-import { EditHomePageModalComponent } from './components/edit-home-page-modal';
 import { MealDonationsTileModule } from './containers/meal-donations-tile/meal-donations-tile.module';
 import { MobileAccessService } from '@sections/mobile-access';
 import { TileConfigFacadeService } from '@sections/dashboard/tile-config-facade.service';
@@ -29,6 +28,7 @@ import { StButtonModule } from '@shared/ui-components/st-button';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { PhoneEmailComponent } from '@shared/ui-components/phone-email/phone-email.component';
 import { PhoneEmailModule } from '@shared/ui-components/phone-email/phone-email.module';
+import { EditHomePageModalModule } from '@shared/ui-components/edit-home-page-modal/edit-home-page-modal.module';
 
 const imports = [
   CommonModule,
@@ -49,13 +49,11 @@ const imports = [
   StInputFloatingLabelModule,
   ReactiveFormsModule,
   StButtonModule,
-  PhoneEmailModule
+  PhoneEmailModule,
+  EditHomePageModalModule,
 ];
 
-const declarations = [
-  DashboardPage,
-  EditHomePageModalComponent
-];
+const declarations = [DashboardPage];
 
 const providers = [
   AccountsService,
@@ -63,19 +61,15 @@ const providers = [
   MobileAccessService,
   DashboardPageResolver,
   TileConfigFacadeService,
-  GlobalNavService
+  GlobalNavService,
 ];
 
 @NgModule({
   imports,
   declarations,
   providers,
-  entryComponents: [
-    EditHomePageModalComponent,
-    PhoneEmailComponent
-  ]
+  entryComponents: [PhoneEmailComponent],
 })
 export class DashboardPageModule {
-  constructor() {
-  }
+  constructor() {}
 }
