@@ -9,6 +9,7 @@ import { ContentStringsFacadeService } from '@core/facades/content-strings/conte
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
+import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 
 export interface SettingsSectionConfig {
   label: string;
@@ -68,6 +69,7 @@ export interface UserInfoSet extends UserInfo {
 }
 
 export interface SettingsServices {
+  authService: AuthFacadeService;
   identity: IdentityFacadeService;
   userService: UserFacadeService;
   globalNav: GlobalNavService;
