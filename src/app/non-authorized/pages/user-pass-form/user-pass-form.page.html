@@ -56,26 +56,28 @@
         role="text"
       >
       </st-input-floating-label>
-      <ng-container *ngVar="(authTypeHosted$ | async) as isHosted">
-      <!--using visibility instead of ngIf to maintain UI formatting-->
-      <div [style.visibility]="isHosted ? 'visible' : 'hidden'" class="login__form-password">
-        <a class="login__form-password-forgot" (click)="redirectToForgotPassword()" tabindex="2">Forgot password?</a>
-      </div>
-      <div class="login__form-btns">
-        <st-button *ngIf="isHosted"
-        buttonModifier="border-only-rectangle"
-          class="login__form-btns--odd"
-          (click)="redirectToSignup()"
-          tabindex="4"
-        >
-          Sign up
-        </st-button>
-        <st-button buttonModifier="rectangle" (click)="authenticateUser(loginForm)" tabindex="3">
-          Log in
-        </st-button>
-      </div>
+      <ng-container
+        *ngVar="{ isHosted: authTypeHosted$ | async, isSignupEnabled: signupEnabled$ | async } as authValues"
+      >
+        <!--using visibility instead of ngIf to maintain UI formatting-->
+        <div [style.visibility]="authValues.isHosted ? 'visible' : 'hidden'" class="login__form-password">
+          <a class="login__form-password-forgot" (click)="redirectToForgotPassword()" tabindex="2">Forgot password?</a>
+        </div>
+        <div class="login__form-btns">
+          <st-button
+            *ngIf="authValues.isHosted && authValues.isSignupEnabled"
+            buttonModifier="border-only-rectangle"
+            class="login__form-btns--odd"
+            (click)="redirectToSignup()"
+            tabindex="4"
+          >
+            Sign up
+          </st-button>
+          <st-button buttonModifier="rectangle" (click)="authenticateUser(loginForm)" tabindex="3">
+            Log in
+          </st-button>
+        </div>
       </ng-container>
     </form>
   </div>
 </ion-content>
-
