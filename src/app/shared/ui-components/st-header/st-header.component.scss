@@ -63,6 +63,8 @@
     font-weight: bold;
 
     @include font-nunito-regular(20px);
+    padding-inline-start: 40px;
+    padding-inline-end: 40px;
   }
 }
 
