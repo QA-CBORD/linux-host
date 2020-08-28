@@ -3,7 +3,7 @@ export enum SETTINGS_ID {
   lostCard = 'lost-card',
   personalData = 'email-pwd',
   password = 'pwd-change',
-  faceId = 'face-id',
+  biometrics = 'biometrics',
   pin = 'pin-change',
   devices = 'report-lost',
   address = 'my-address',
