@@ -21,6 +21,7 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { PhoneEmailComponent } from '@shared/ui-components/phone-email/phone-email.component';
 import { EditHomePageModalComponent } from '@shared/ui-components/edit-home-page-modal/edit-home-page-modal.component';
+import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 
 const { App, Device } = Plugins;
 
@@ -42,7 +43,8 @@ export class DashboardPage implements OnInit {
     private readonly nativeStartupFacadeService: NativeStartupFacadeService,
     private readonly popoverCtrl: PopoverController,
     private readonly userFacadeService: UserFacadeService,
-    private readonly institutionFacadeService: InstitutionFacadeService
+    private readonly institutionFacadeService: InstitutionFacadeService,
+    private readonly appBrowser: InAppBrowser,
   ) {}
 
   get tilesIds(): { [key: string]: string } {
@@ -150,10 +152,11 @@ export class DashboardPage implements OnInit {
   private redirectToTheStore() {
     Device.getInfo()
       .then(deviceInfo => {
+
         if (deviceInfo.platform === 'ios') {
-          window.open('itms-apps://itunes.apple.com/app/id844091049');
+          this.appBrowser.create('itms-apps://itunes.apple.com/app/id844091049', '_system');
         } else if (deviceInfo.platform === 'android') {
-          window.open('https://play.google.com/store/apps/details?id=com.cbord.get');
+          this.appBrowser.create('https://play.google.com/store/apps/details?id=com.cbord.get', '_system');
         }
       })
       .catch(reason => {});
