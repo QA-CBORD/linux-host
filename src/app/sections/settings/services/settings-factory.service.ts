@@ -20,6 +20,7 @@ import { ModalController } from '@ionic/angular';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import Setting = Settings.Setting;
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
+import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 
 @Injectable()
 export class SettingsFactoryService {
@@ -33,6 +34,7 @@ export class SettingsFactoryService {
     settings: this.settingsFacade,
     institution: this.institutionFacadeService,
     environment: this.environmentFacadeService,
+    appBrowser: this.appBrowser,
   };
 
   constructor(
@@ -45,6 +47,7 @@ export class SettingsFactoryService {
     private readonly userFacadeService: UserFacadeService,
     private readonly contentStringFacadeService: ContentStringsFacadeService,
     private readonly globalNav: GlobalNavService,
+    private readonly appBrowser: InAppBrowser,
     private readonly modalController: ModalController
   ) {}
 
