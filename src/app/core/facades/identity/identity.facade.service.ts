@@ -118,7 +118,8 @@ export class IdentityFacadeService extends ServiceStateFacade {
       .pipe(take(1))
       .toPromise();
   }
-  async setBiometricsEnabled(isBiometricsEnabled: boolean): Promise<void> {
+
+  setBiometricsEnabled(isBiometricsEnabled: boolean): Promise<void> {
     return this.identityService.setBiometricsEnabled(isBiometricsEnabled).then(() => {
       this._biometricsEnabledUserPreference = isBiometricsEnabled;
     });
