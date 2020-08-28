@@ -1,7 +1,11 @@
 @import 'tools';
 
-.item__label {
-  margin-left: 13px;
-  @include font-nunito-semibold(16px);
+.item {
+  &__label {
+    margin-left: 13px;
+    @include font-nunito-semibold(16px);
+  }
+  &__icon {
+    max-height: 28px;
+  }
 }
-

@@ -168,3 +168,15 @@ export function sortAlphabetically(a, b) {
   }
   return 0;
 }
+
+export function configureBiometricsConfig(
+  supportedBiometricType: string[]
+): { type: string; name: string; icon: string } {
+  if (supportedBiometricType.includes('fingerprint')) {
+    return { type: 'fingerprint', name: 'Fingerprint', icon: 'fingerprint' };
+  } else if (supportedBiometricType.includes('face')) {
+    return { type: 'face', name: 'Face ID', icon: 'faceid' };
+  } else if (supportedBiometricType.includes('iris')) {
+    return { type: 'iris', name: 'Iris', icon: 'iris' };
+  }
+}

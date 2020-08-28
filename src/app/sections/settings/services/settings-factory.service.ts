@@ -7,7 +7,7 @@ import {
   SettingsServices,
 } from '../models/setting-items-config.model';
 import { SETTINGS_CONFIG } from '../settings.config';
-import { catchError, map, reduce, take } from 'rxjs/operators';
+import { catchError, map, reduce, take, tap } from 'rxjs/operators';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Settings } from 'src/app/app.global';
 import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
@@ -20,6 +20,7 @@ import { ModalController } from '@ionic/angular';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import Setting = Settings.Setting;
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
+import { configureBiometricsConfig } from '@core/utils/general-helpers';
 
 @Injectable()
 export class SettingsFactoryService {
@@ -86,8 +87,15 @@ export class SettingsFactoryService {
           );
         } else if (validation.type === SETTINGS_VALIDATIONS.Biometric) {
           validations$.push(
-            this.availableBiometricHardware$.pipe(
-              map((biometrics): boolean => biometrics && biometrics.some(cap => cap === validation.value)),
+            this.identityService.areBiometricsAvailable().pipe(
+              tap(async biometricsEnabled => {
+                if (biometricsEnabled) {
+                  const biometrics = await this.identityFacadeService.getAvailableBiometricHardware();
+                  const biometric = configureBiometricsConfig(biometrics);
+                  setting.label = biometric.name;
+                  setting.icon = biometric.icon;
+                }
+              }),
               take(1)
             )
           );
@@ -101,10 +109,6 @@ export class SettingsFactoryService {
         .toPromise();
     }
     return of(true).toPromise();
-  }
-  
-  get availableBiometricHardware$(): Observable<string[]> {
-    return this.identityService.getAvailableBiometricHardware().pipe(take(1));
   }
 
   get photoUploadEnabled$(): Observable<boolean> {

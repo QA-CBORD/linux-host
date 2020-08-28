@@ -4,8 +4,8 @@ import {
   handleOpenHTMLModal,
   openSiteURL,
   openModal,
-  toggleFaceIdStatus,
-  setFaceIdStatus,
+  toggleBiometricStatus,
+  setBiometricStatus,
   handlePinAccess,
 } from './helpers/setting-item.helper';
 import { CONTENT_STINGS_DOMAINS, CONTENT_STINGS_CATEGORIES } from 'src/app/content-strings';
@@ -86,15 +86,15 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         navigateExternal: { type: 'link', value: 'login.php?password=forgot' },
       },
       {
-        id: SETTINGS_ID.faceId,
-        icon: 'faceid',
-        label: 'Face ID',
+        id: SETTINGS_ID.biometrics,
+        icon: '',
+        label: '',
         type: 'toggle',
-        setCallback: toggleFaceIdStatus,
-        setToggleStatus: setFaceIdStatus,
+        setCallback: toggleBiometricStatus,
+        setToggleStatus: setBiometricStatus,
         validations: [
           { type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.PIN_ENABLED },
-          { type: SETTINGS_VALIDATIONS.Biometric, value: AuthTypes.FACE },
+          { type: SETTINGS_VALIDATIONS.Biometric, value: 'biometric' },
         ],
       },
       {

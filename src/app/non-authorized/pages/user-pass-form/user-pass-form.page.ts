@@ -20,6 +20,7 @@ import { AUTHENTICATION_SYSTEM_TYPE, GUEST_ROUTES } from '../../non-authorized.c
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
 import { Observable } from 'rxjs';
+import { configureBiometricsConfig } from '@core/utils/general-helpers';
 
 @Component({
   selector: 'user-pass-form',
@@ -139,7 +140,7 @@ export class UserPassForm implements OnInit {
         break;
       case LoginState.BIOMETRIC_SET:
         const supportedBiometricType = await this.identityFacadeService.getAvailableBiometricHardware();
-        const biometricConfig = this.configureBiometricsConfig(supportedBiometricType);
+        const biometricConfig = configureBiometricsConfig(supportedBiometricType);
         await this.router.navigate([PATRON_NAVIGATION.biometric], { state: { biometricConfig } });
         break;
       case LoginState.DONE:

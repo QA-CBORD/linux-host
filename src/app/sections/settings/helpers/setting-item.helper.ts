@@ -17,18 +17,17 @@ export function getCardStatus(services: SettingsServices): Promise<boolean> {
     .toPromise();
 }
 
-export async function setFaceIdStatus(services: SettingsServices): Promise<void> {
+export async function setBiometricStatus(services: SettingsServices): Promise<void> {
   const setting: SettingItemConfig = this;
   setting.checked = await services.identity.cachedBiometricsEnabledUserPreference$;
 }
 
-export function toggleFaceIdStatus(services: SettingsServices) {
+export function toggleBiometricStatus(services: SettingsServices) {
   const setting: SettingItemConfig = this;
   setting.callback = function() {
-    return new Promise<boolean>(resolve => {
-      services.identity._biometricsEnabledUserPreference = !setting.checked;
-      resolve(true);
-    }).then(async () => await setting.setToggleStatus(services));
+    return services.identity
+      .setBiometricsEnabled(!setting.checked)
+      .then(async () => await setting.setToggleStatus(services));
   };
 }
 
@@ -39,7 +38,7 @@ export function handlePinAccess(services: SettingsServices) {
     services.globalNav.hideNavBar();
     return services.identity
       .pinLoginSetup(biometricsEnabled, false, { showDismiss: true })
-      .then(() => services.globalNav.showNavBar());
+      .finally(() => services.globalNav.showNavBar());
   };
 }
 
