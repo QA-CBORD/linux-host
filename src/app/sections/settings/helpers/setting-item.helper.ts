@@ -112,7 +112,7 @@ export async function openSiteURL(services: SettingsServices): Promise<void> {
 
     const link = await linkPromise;
     setting.callback = async function() {
-      window.open(link, '_system');
+      services.appBrowser.create(link, '_system');
     };
   }
   if (resource.type === 'link') {
@@ -137,7 +137,7 @@ export async function openSiteURL(services: SettingsServices): Promise<void> {
         )
         .toPromise();
       const link = await linkPromise;
-      window.open(link, '_system');
+      services.appBrowser.create(link, '_system');
     };
   }
 }

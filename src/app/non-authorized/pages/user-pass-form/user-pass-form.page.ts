@@ -87,19 +87,20 @@ export class UserPassForm implements OnInit {
   }
 
   redirectToWebPage(url) {
-    window.open(`${this.environmentFacadeService.getSitesURL()}/${this.institutionInfo.shortName}/full/${url}`);
+    const link = `${this.environmentFacadeService.getSitesURL()}/${this.institutionInfo.shortName}/full/${url}`;
+    this.appBrowser.create(link, '_system');
   }
 
   async redirectToSignup() {
     const { shortName } = await this.institutionFacadeService.cachedInstitutionInfo$.pipe(take(1)).toPromise();
     const url = `${this.environmentFacadeService.getSitesURL()}/${shortName}/full/register.php`;
-    window.open(url, '_system');
+    this.appBrowser.create(url, '_system');
   }
 
   async redirectToForgotPassword(): Promise<void> {
     const { shortName } = await this.institutionFacadeService.cachedInstitutionInfo$.pipe(take(1)).toPromise();
     const url = `${this.environmentFacadeService.getSitesURL()}/${shortName}/full/login.php?password=forgot`;
-    window.open(url, '_system');
+    this.appBrowser.create(url, '_system');
   }
 
   isSignupEnabled$(): Observable<boolean> {
