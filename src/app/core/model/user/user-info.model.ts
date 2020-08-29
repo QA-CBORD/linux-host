@@ -1,20 +1,24 @@
 export interface UserInfo {
-  readonly id: string;
-  readonly userName: string;
-  readonly firstName: string;
-  readonly lastName: string;
-  readonly staleProfile: boolean;
-  readonly active: boolean;
-  readonly cashlessMediaStatus: number;
-  readonly email: string;
-  readonly guestUser: boolean;
-  readonly hasCashlessCard: boolean;
-  readonly institutionId: string;
-  readonly lastUpdatedProfile: string;
-  readonly locale: string;
-  readonly middleName: string;
-  readonly objectRevision: number;
-  readonly phone: string;
-  readonly status: number;
-  readonly timeZone: string;
+  id: string;
+  userName: string;
+  firstName: string;
+  lastName: string;
+  staleProfile: boolean;
+  active: boolean;
+  cashlessMediaStatus: number;
+  email: string;
+  guestUser: boolean;
+  hasCashlessCard: boolean;
+  institutionId: string;
+  lastUpdatedProfile: string;
+  locale: string;
+  middleName: string;
+  objectRevision: number;
+  phone: string;
+  status: number;
+  timeZone: string;
+  lastUpdatedCashless: Date;
+  emailBounceMessage: string;
+  emailBounceStatus: string;
+  
 }
