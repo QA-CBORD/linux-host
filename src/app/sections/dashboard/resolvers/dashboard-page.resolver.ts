@@ -1,7 +1,7 @@
 import { Resolve } from '@angular/router';
 import { Injectable } from '@angular/core';
 import { from, Observable, zip } from 'rxjs';
-import { finalize, first } from 'rxjs/operators';
+import { finalize, first, map, switchMap, take } from 'rxjs/operators';
 
 import { AccountsService } from '@sections/accounts/services/accounts.service';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -15,11 +15,13 @@ import { ContentStringInfo } from '@core/model/content/content-string-info.model
 import { Settings } from '../../../app.global';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
+import { UserFacadeService } from '@core/facades/user/user.facade.service';
 
 @Injectable()
 export class DashboardPageResolver implements Resolve<Observable<SettingInfoList>> {
   constructor(
     private readonly accountsService: AccountsService,
+    private readonly userFacadeService: UserFacadeService,
     private readonly tileConfigFacadeService: TileConfigFacadeService,
     private readonly contentStringsFacadeService: ContentStringsFacadeService,
     private readonly institutionService: InstitutionFacadeService,
@@ -27,20 +29,31 @@ export class DashboardPageResolver implements Resolve<Observable<SettingInfoList
     private readonly loadingService: LoadingService
   ) {}
 
-  resolve(): Observable<any> {
+  resolve(): Observable<SettingInfoList> {
     this.loadingService.showSpinner();
-    const strings = this.loadContentStrings();
 
+    /// get fresh data on dashboard load
+    const strings = this.loadContentStrings();
+    const user = this.userFacadeService.getUser$();
+    const inst = this.institutionService.fetchInstitutionData();
+    const call = this.settingsFacadeService.fetchSettingList(Settings.SettingList.FEATURES);
     const accountContentStrings = this.accountsService.initContentStringsList();
 
-    const call = this.settingsFacadeService.fetchSettingList(Settings.SettingList.FEATURES);
-
     return zip(
+      user,
+      inst,
       call,
       this.tileConfigFacadeService.updateTilesConfigBySystemSettings().pipe(first()),
       accountContentStrings,
       ...strings
-    ).pipe(finalize(() => this.loadingService.closeSpinner()));
+    ).pipe(
+      map(
+        ([userInfo, institutionInfo, featureSettingsList, tilesConfig, accountsContentStrings, otherContentStrings]) =>
+          featureSettingsList
+      ),
+      take(1),
+      finalize(() => this.loadingService.closeSpinner())
+    );
   }
 
   private loadContentStrings(): Observable<ContentStringInfo>[] {

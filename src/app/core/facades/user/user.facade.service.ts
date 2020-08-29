@@ -9,7 +9,7 @@ import { StorageStateService } from '@core/states/storage/storage-state.service'
 import { map, switchMap, tap, take, catchError, finalize } from 'rxjs/operators';
 import { AddressInfo } from '@core/model/address/address-info';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
-import { Settings } from 'src/app/app.global';
+import { Settings, User } from 'src/app/app.global';
 import { Plugins, Capacitor, PushNotificationToken, PushNotification } from '@capacitor/core';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 const { PushNotifications, LocalNotifications, Device } = Plugins;
@@ -48,7 +48,11 @@ export class UserFacadeService extends ServiceStateFacade {
   getUser$(): Observable<UserInfo> {
     return this.userApiService
       .getUser()
-      .pipe(tap(res => this.storageStateService.updateStateEntity(this.userKey, res, { ttl: this.ttl })));
+      .pipe(
+        tap(res =>
+          this.storageStateService.updateStateEntity(this.userKey, res, { ttl: this.ttl, highPriorityKey: true })
+        )
+      );
   }
 
   //adds a photo and takes a UsrPhotoInfo object
@@ -191,38 +195,45 @@ export class UserFacadeService extends ServiceStateFacade {
 
   saveNotification$(fcmToken: string): Observable<string> {
     this.setFCMToken(fcmToken);
-    const notification: UserNotificationInfo = {
-      type: 8,
-      value: fcmToken,
-      provider: Capacitor.platform,
-    };
     return this.getUserData$().pipe(
-      switchMap(({ id }) => this.userApiService.saveNotification$(id, notification)),
+      switchMap(userInfo => {
+        return this.userApiService.saveNotification$(userInfo.id, this.getPushNotificationInfo(userInfo, fcmToken));
+      }),
       take(1)
     );
   }
 
   logoutAndRemoveUserNotification(): Observable<boolean> {
     return zip(this.getUserData$(), this.getFCMToken$()).pipe(
-      switchMap(([{ id }, fcmToken]) => {
+      switchMap(([userInfo, fcmToken]) => {
         if (fcmToken) {
-          const notification: UserNotificationInfo = {
-            type: 8,
-            value: fcmToken,
-            provider: Capacitor.platform,
-          };
           PushNotifications.removeAllDeliveredNotifications();
-          return this.userApiService.logoutAndRemoveUserNotification$(id, notification);
+          return this.userApiService.logoutAndRemoveUserNotification$(userInfo.id, this.getPushNotificationInfo(userInfo, fcmToken));
         }
         return of(false);
       }),
       take(1),
       catchError(error => {
         return of(false);
-      }), finalize(() =>{
+      }),
+      finalize(() => {
         this.clearData();
       })
     );
+  }
+
+  /// get notification id for update if it already exists in the user notification array
+  private getPushNotificationInfo(userInfo: any, fcmToken: string): UserNotificationInfo{
+    const user: any = { ...userInfo };
+    const pNotifications = user.userNotificationInfoList.filter(
+      notif => notif.type === User.NotificationType.PUSH_NOTIFICATION
+    );
+    return {
+      id: pNotifications.length > 0 ? pNotifications[0].id : null,
+      type: User.NotificationType.PUSH_NOTIFICATION,
+      value: fcmToken,
+      provider: Capacitor.platform,
+    };
   }
 
   isPushNotificationEnabled$(): Observable<boolean> {
@@ -248,8 +259,8 @@ export class UserFacadeService extends ServiceStateFacade {
       take(1)
     );
   }
-  
-  private clearData(){
+
+  private clearData() {
     this.userPhoto = null;
     this.storageStateService.clearStorage();
     this.storageStateService.clearState();
