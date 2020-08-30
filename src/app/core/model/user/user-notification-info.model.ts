@@ -1,4 +1,5 @@
 export interface UserNotificationInfo {
+  readonly id?: string;
   readonly type: number;
   readonly value: string;
   readonly provider: string;
