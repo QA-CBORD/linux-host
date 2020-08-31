@@ -2,12 +2,12 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } 
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ModalController, ToastController } from '@ionic/angular';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
-import { map, take } from 'rxjs/operators';
+import { map, switchMap, take } from 'rxjs/operators';
 import { UserInfoSet } from '@sections/settings/models/setting-items-config.model';
 import { UserNotificationInfo } from '@core/model/user';
 import { CONTENT_STINGS_CATEGORIES, CONTENT_STINGS_DOMAINS } from '../../../content-strings';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
 @Component({
   selector: 'st-phone-email',
@@ -47,7 +47,13 @@ export class PhoneEmailComponent implements OnInit {
 
   async saveChanges() {
     this.isLoading = true;
-    this.userFacadeService.saveUser$(this.updatedUserModel).subscribe(
+    const user: UserInfoSet = await this.userFacadeService
+      .getUser$()
+      .pipe(
+        switchMap( userInfoSet => of(this.updatedUserModel(<UserInfoSet>userInfoSet))),
+        take(1))
+      .toPromise();
+    this.userFacadeService.saveUser$(user).subscribe(
       () => {
         this.isLoading = false;
         this.presentToast();
@@ -58,6 +64,7 @@ export class PhoneEmailComponent implements OnInit {
       () => {
         this.isLoading = false;
         this.onErrorRetrieve('Something went wrong, please try again...');
+        this.cdRef.detectChanges();
       },
       () => this.cdRef.detectChanges()
     );
@@ -107,8 +114,7 @@ export class PhoneEmailComponent implements OnInit {
     return this.phoneEmailForm.get(this.controlsNames.phone);
   }
 
-  get updatedUserModel(): UserInfoSet {
-    const user: any = { ...this.user };
+  updatedUserModel(user: UserInfoSet): UserInfoSet {
     user.phone = this.phone.value;
     user.email = this.email.value;
     user.staleProfile = false;
@@ -134,7 +140,7 @@ export class PhoneEmailComponent implements OnInit {
     return user;
   }
 
-  private setUpdateNotification(type: number, value: string, groupedNotifications: any[], notifications: any[]) {
+  private setUpdateNotification(type: number, value: string, groupedNotifications: any, notifications: any[]) {
     const notif = groupedNotifications[type];
     if (notif) {
       notif.value = value;

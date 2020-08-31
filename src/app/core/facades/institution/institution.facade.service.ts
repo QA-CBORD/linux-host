@@ -55,6 +55,12 @@ export class InstitutionFacadeService extends ServiceStateFacade {
     );
   }
 
+  fetchInstitutionData(): Observable<Institution> {
+    return this.institutionApiService
+      .getInstitutionData()
+      .pipe(tap(res => this.storageStateService.updateStateEntity(this.institutionKey, res, { highPriorityKey: true })));
+  }
+
   getInstitutionDataById$(institutionId: string, sessionId?: string, useSessionId?: boolean): Observable<Institution> {
     return this.institutionApiService
       .getInstitutionDataById(institutionId, sessionId, useSessionId)
