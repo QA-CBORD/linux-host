@@ -16,7 +16,7 @@ export class TileConfigFacadeService extends ServiceStateFacade {
   }
 
   get tileSettings$(): Observable<TileWrapperConfig[]> {
-    if (!this.isTileConfigInStorage()) this.storage.updateStateEntity(this.key, [], Number.MAX_SAFE_INTEGER);
+    if (!this.isTileConfigInStorage()) this.storage.updateStateEntity(this.key, [], {ttl: Number.MAX_SAFE_INTEGER});
     return this.config$;
   }
 

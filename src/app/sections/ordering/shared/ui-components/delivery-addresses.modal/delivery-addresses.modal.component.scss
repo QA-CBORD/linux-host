@@ -6,7 +6,7 @@
   }
 
   &__title {
-    @include font-nunito-heavy(20px);
+    @include font-family($font-nunito-heavy);
   }
 
   &__add-address-container {
@@ -38,10 +38,10 @@
   }
 
   &__add-address-divider {
-		background: $color-white-smoke;
-		height: 20px;
-		margin-top: 20px;
-	}
+    background: $color-white-smoke;
+    height: 20px;
+    margin-top: 20px;
+  }
 
   &__add-address-img {
     position: absolute;
@@ -50,21 +50,40 @@
 
   &__back-btn {
     --color: #000 !important;
-    font-size: 20px;
+    font-size: 15px;
   }
 
   &__radio-label-header {
     @include font-nunito-semibold(16px);
   }
 
+  &__radio-label-header-default {
+    width: 80%;
+  }
+
   &__radio-label-sub-header {
     @include font-nunito-regular(12px);
+  }
+
+  &__radio-label-default {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    top: 0;
+    right: 20px;
+    height: 100%;
+    color: #166dff;
+    background-color: white;
+    padding: 0 5px 0 5px;
+    @include font-nunito-heavy(10px);
   }
 
   &__radio-container {
     &.item-radio-checked {
       .delivery-address__radio-label {
         color: #000;
+        white-space: normal;
       }
     }
   }
@@ -77,6 +96,7 @@
 
   &__radio-label {
     @include font-nunito-semibold(16px);
+    white-space: normal;
   }
 
   &__radio-label-sub-header {

@@ -11,12 +11,16 @@ import { ToastController } from '@ionic/angular';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { CONTENT_STINGS_CATEGORIES, CONTENT_STINGS_DOMAINS } from 'src/app/content-strings';
-import { Environment } from '../../../environment';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Device } from '@capacitor/core';
 import { IdentityFacadeService, LoginState } from '@core/facades/identity/identity.facade.service';
-import { StInputFloatingLabelComponent } from '@shared/ui-components';
+import { SessionFacadeService } from '@core/facades/session/session.facade.service';
+import { AUTHENTICATION_SYSTEM_TYPE, GUEST_ROUTES } from '../../non-authorized.config';
+import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
+import { Observable } from 'rxjs';
+import { configureBiometricsConfig } from '@core/utils/general-helpers';
 
 @Component({
   selector: 'user-pass-form',
@@ -29,9 +33,11 @@ export class UserPassForm implements OnInit {
   institutionPhoto$: Promise<SafeResourceUrl>;
   nativeHeaderBg$: Promise<string>;
   placeholderOfUsername$: Promise<string>;
-  deviceInfo$: Promise<any>;
+  authTypeHosted$: Observable<boolean>;
   private institutionInfo: Institution;
   loginForm: FormGroup;
+  signupEnabled$: Observable<boolean>;
+
   constructor(
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly settingsFacadeService: SettingsFacadeService,
@@ -42,12 +48,14 @@ export class UserPassForm implements OnInit {
     private readonly router: Router,
     private readonly sanitizer: DomSanitizer,
     private readonly toastController: ToastController,
+    private readonly sessionFacadeService: SessionFacadeService,
     private readonly identityFacadeService: IdentityFacadeService,
+    private readonly nativeStartupFacadeService: NativeStartupFacadeService,
     private readonly fb: FormBuilder,
     private readonly cdRef: ChangeDetectorRef,
     private readonly appBrowser: InAppBrowser,
-  ) {
-  }
+    private readonly environmentFacadeService: EnvironmentFacadeService
+  ) {}
 
   get username(): AbstractControl {
     return this.loginForm.get(this.controlsNames.username);
@@ -69,26 +77,37 @@ export class UserPassForm implements OnInit {
       .getAuthSessionToken$()
       .pipe(take(1))
       .toPromise();
+    this.authTypeHosted$ = this.getAuthenticationTypeHosted$(id, sessionId);
     this.placeholderOfUsername$ = this.getPlaceholderForUsername(sessionId);
     this.institutionPhoto$ = this.getInstitutionPhoto(id, sessionId);
     this.institutionName$ = this.getInstitutionName(id, sessionId);
     this.nativeHeaderBg$ = this.getNativeHeaderBg(id, sessionId);
-    this.deviceInfo$ = this.fetchDeviceInfo();
+    this.signupEnabled$ = this.isSignupEnabled$();
     this.cdRef.markForCheck();
   }
 
   redirectToWebPage(url) {
-    window.open(`${Environment.getSitesURL()}/${this.institutionInfo.shortName}/full/${url}`);
+    const link = `${this.environmentFacadeService.getSitesURL()}/${this.institutionInfo.shortName}/full/${url}`;
+    this.appBrowser.create(link, '_system');
   }
 
-  focusNext(nextField: StInputFloatingLabelComponent) {
-    nextField.focus();
+  async redirectToSignup() {
+    const { shortName } = await this.institutionFacadeService.cachedInstitutionInfo$.pipe(take(1)).toPromise();
+    const url = `${this.environmentFacadeService.getSitesURL()}/${shortName}/full/register.php`;
+    this.appBrowser.create(url, '_system');
   }
 
   async redirectToForgotPassword(): Promise<void> {
     const { shortName } = await this.institutionFacadeService.cachedInstitutionInfo$.pipe(take(1)).toPromise();
-    const url = `${Environment.getSitesURL()}/${shortName}/full/login.php?password=forgot`;
-    this.appBrowser.create(url);
+    const url = `${this.environmentFacadeService.getSitesURL()}/${shortName}/full/login.php?password=forgot`;
+    this.appBrowser.create(url, '_system');
+  }
+
+  isSignupEnabled$(): Observable<boolean> {
+    return this.settingsFacadeService.getSetting(Settings.Setting.STANDARD_REGISTRATION_LINK).pipe(
+      map(({ value }) => Boolean(Number(value))),
+      take(1)
+    );
   }
 
   async authenticateUser(form) {
@@ -100,40 +119,36 @@ export class UserPassForm implements OnInit {
     const { username, password } = form.value;
     const { id } = this.institutionInfo;
     let sessionId: string;
-      await this.loadingService.showSpinner();
+    await this.loadingService.showSpinner();
     try {
       sessionId = await this.authenticateUsernamePassword(username, password, id);
-
     } catch (e) {
-      console.log('authUser error', e);
       this.presentToast('Login failed, invalid user name and/or password');
+      this.loadingService.closeSpinner();
       return;
-    } finally {
-      await this.loadingService.closeSpinner();
     }
-      const loginState: LoginState = await this.identityFacadeService.determinePostLoginState(sessionId, id);
+    const loginState: LoginState = await this.sessionFacadeService.determinePostLoginState(sessionId, id);
 
-      console.log('UserPass - Login State:', loginState);
-      switch (loginState) {
-        case LoginState.PIN_SET:
-          try {
-            await this.identityFacadeService.pinOnlyLoginSetup();
-          } catch (e){
-            console.log('UPF - pin set error', e);
-            this.presentToast('Login failed, invalid user name and/or password');
-          } finally {
-            this.router.navigate([PATRON_NAVIGATION.dashboard]);
-          }
-          break;
-        case LoginState.BIOMETRIC_SET:
-            const supportedBiometricType = await this.identityFacadeService.getAvailableBiometricHardware();
-            const biometricConfig = this.configureBiometricsConfig(supportedBiometricType);
-            await this.router.navigate([PATRON_NAVIGATION.biometric], { state: { biometricConfig } });
-          break;
-        case LoginState.DONE:
-          this.router.navigate([PATRON_NAVIGATION.dashboard]);
-          break;
-      }
+    this.loadingService.closeSpinner();
+
+    switch (loginState) {
+      case LoginState.PIN_SET:
+        try {
+          await this.identityFacadeService.pinLoginSetup(false);
+        } catch (e) {
+          this.presentToast('Login failed, invalid user name and/or password');
+        }
+        break;
+      case LoginState.BIOMETRIC_SET:
+        const supportedBiometricType = await this.identityFacadeService.getAvailableBiometricHardware();
+        const biometricConfig = configureBiometricsConfig(supportedBiometricType);
+        await this.router.navigate([PATRON_NAVIGATION.biometric], { state: { biometricConfig } });
+        break;
+      case LoginState.DONE:
+        this.nativeStartupFacadeService.checkForStartupMessage = true;
+        this.router.navigate([PATRON_NAVIGATION.dashboard], { replaceUrl: true });
+        break;
+    }
   }
 
   private initForm() {
@@ -165,8 +180,11 @@ export class UserPassForm implements OnInit {
       .toPromise();
   }
 
-  private async fetchDeviceInfo(): Promise<any> {
-    return Device.getInfo();
+  private getAuthenticationTypeHosted$(institutionId: string, sessionId: string): Observable<boolean> {
+    return this.institutionFacadeService.getInstitutionInfo$(institutionId, sessionId, true).pipe(
+      map(({ authenticationSystemType }) => authenticationSystemType === AUTHENTICATION_SYSTEM_TYPE.HOSTED),
+      take(1)
+    );
   }
 
   private async getPlaceholderForUsername(sessionId): Promise<string> {
@@ -176,18 +194,18 @@ export class UserPassForm implements OnInit {
         CONTENT_STINGS_CATEGORIES.login_screen,
         'email_username',
         sessionId,
-        false,
+        false
       )
       .pipe(
         map(({ value }) => value),
-        take(1),
+        take(1)
       )
       .toPromise();
   }
 
   private configureBiometricsConfig(supportedBiometricType: string[]): { type: string; name: string } {
     if (supportedBiometricType.includes('fingerprint')) {
-      return { type: 'fingerprint', name: 'Figerprint' };
+      return { type: 'fingerprint', name: 'Fingerprint' };
     } else if (supportedBiometricType.includes('face')) {
       return { type: 'face', name: 'Face ID' };
     } else if (supportedBiometricType.includes('iris')) {
@@ -205,14 +223,13 @@ export class UserPassForm implements OnInit {
           const nativeHeaderBg = siteColors['native-header-bg'];
           return nativeHeaderBg ? '#' + nativeHeaderBg : '#166dff';
         }),
-        take(1),
+        take(1)
       )
       .toPromise();
   }
 
   private async setLocalInstitutionInfo(): Promise<any> {
-    return this.institutionFacadeService
-      .cachedInstitutionInfo$
+    return this.institutionFacadeService.cachedInstitutionInfo$
       .pipe(
         tap(institutionInfo => (this.institutionInfo = institutionInfo)),
         take(1)
@@ -225,8 +242,8 @@ export class UserPassForm implements OnInit {
       .getInstitutionDataById$(id, sessionId, false)
       .pipe(
         tap(institutionInfo => (this.institutionInfo = institutionInfo)),
-        map(({ name }) => `${name} university`),
-        take(1),
+        map(({ name }) => `${name}`),
+        take(1)
       )
       .toPromise();
   }
@@ -242,7 +259,7 @@ export class UserPassForm implements OnInit {
         }),
         map(response => this.sanitizer.bypassSecurityTrustResourceUrl(response)),
         tap(() => this.cdRef.markForCheck()),
-        take(1),
+        take(1)
       )
       .toPromise();
   }
@@ -261,6 +278,9 @@ export class UserPassForm implements OnInit {
     return !(operatingSystem === 'ios' || operatingSystem === 'android');
   }
 
+  public get defaultBackUrl() {
+    return [ROLES.guest, GUEST_ROUTES.entry];
+  }
 }
 
 export enum USERFORM_CONTROL_NAMES {

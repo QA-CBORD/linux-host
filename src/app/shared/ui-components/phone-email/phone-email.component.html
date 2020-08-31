@@ -1,0 +1,57 @@
+<st-header
+  [title]="title"
+  [isTitleShow]="true"
+  [backButtonIcon]="'ios-close'"
+  [backButtonTitle]="''"
+  [isToolbarShow]="true"
+  [isBackButtonShow]="false"
+  [isDismissButtonShow]="!staleProfile"
+  (onDismiss)="close()"
+></st-header>
+<ion-content class="container">
+  <div class="form ion-padding ion-margin-top">
+    <form [formGroup]="phoneEmailForm">
+      <st-input-floating-label
+        class="form__control"
+        [control]="email"
+        label="Email"
+        type="email"
+        idd="email"
+        [formControlName]="controlsNames.email"
+        [isError]="email.errors && (email.dirty || email.touched)"
+        [stFocusNext]="phoneField"
+        tabindex="0"
+      >
+      </st-input-floating-label>
+      <st-input-floating-label
+        #phoneField
+        class="form__control"
+        [control]="phone"
+        label="Phone"
+        type="tel"
+        idd="phone"
+        [formControlName]="controlsNames.phone"
+        [isError]="phone.errors && (phone.dirty || phone.touched)"
+        tabindex="1"
+      >
+      </st-input-floating-label>
+    </form>
+    <ion-label class="terms-label" *ngIf="staleProfile">
+      By clicking on 'Save changes' you agree you have read the GET Terms of User and Privacy Policy.
+    </ion-label>
+    <st-button *ngIf="staleProfile" buttonModifier="rectangle" fill="clear" tabindex="2" (click)="showTOS()">
+      Terms and Conditions
+    </st-button>
+    <p *ngIf="(htmlContent$ | async) as htmlContent" [innerHTML]="htmlContent"></p>
+  </div>
+</ion-content>
+<ion-footer class="ion-padding footer">
+  <st-button
+    buttonModifier="rectangle"
+    [isDisabled]="!phoneEmailForm?.valid || isLoading"
+    (click)="saveChanges()"
+    tabindex="3"
+  >
+    {{ isLoading ? 'Saving...' : 'Save changes' }}
+  </st-button>
+</ion-footer>

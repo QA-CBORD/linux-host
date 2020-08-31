@@ -1,4 +1,4 @@
-@import "tools";
+@import 'tools';
 
 .content {
   min-height: calc(100vh - 35px);
@@ -113,15 +113,14 @@
 
   &__ingredient {
     border-radius: 10px;
-    box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.04),
-    0 2px 14px 0 rgba(0, 0, 0, 0.12);
+    box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.04), 0 2px 14px 0 rgba(0, 0, 0, 0.12);
     margin: 10px auto;
     width: 95%;
   }
 
   &__item {
-     border-radius: 10px;
-   }
+    border-radius: 10px;
+  }
 
   &__ingredient-header {
     display: flex;

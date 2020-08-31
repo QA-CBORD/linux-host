@@ -11,6 +11,7 @@ import { PATRON_NAVIGATION } from '../../app.global';
 import { Platform } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { TransactionService } from './services/transaction.service';
+import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 
 @Component({
   selector: 'st-accounts.page',
@@ -29,6 +30,7 @@ export class AccountsPage implements OnInit {
     private readonly platform: Platform,
     private readonly router: Router,
     private readonly transactionsService: TransactionService,
+    private readonly globalNav: GlobalNavService
   ) {}
 
   ngOnInit() {
@@ -37,6 +39,10 @@ export class AccountsPage implements OnInit {
     this.transactions$ = this.transactionsService.transactions$.pipe(map(arr => arr.slice(0, 4)));
 
     this.defineInitRoute();
+  }
+
+  ionViewWillEnter() {
+    this.globalNav.showNavBar();
   }
 
   defineInitRoute() {

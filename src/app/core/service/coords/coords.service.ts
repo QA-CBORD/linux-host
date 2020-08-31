@@ -45,7 +45,10 @@ export class CoordsService {
     this._location$.next(this.latestPosition);
   }
 
+  /// get device coordinates
   getCoords(): Observable<GeolocationPosition> {
+    /// use time delay to request location from device every 5 seconds, otherwise subscribe to behavior subject
+    /// this prevents several simultaneous requests to the device
     const timeDiff = new Date().getTime() - this.timestamp;
     if (timeDiff > this.fetchInterval) {
       this.requestLocationFromDevice();
@@ -54,6 +57,9 @@ export class CoordsService {
   }
 
   private requestLocationFromDevice() {
+
+    this.timestamp = new Date().getTime();
+
     const options = {
       enableHighAccuracy: true,
       timeout: 5,
@@ -66,8 +72,7 @@ export class CoordsService {
       )
       .subscribe(
         resp => {
-          /// set timestamp and set location
-          this.timestamp = new Date().getTime();
+
           this._latestLocation = resp;
         },
         error => {

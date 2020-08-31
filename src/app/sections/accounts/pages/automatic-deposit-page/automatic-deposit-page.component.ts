@@ -24,11 +24,7 @@ import { UserAccount } from 'src/app/core/model/account/account.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AutoDepositService } from './service/auto-deposit.service';
 import { BillMeMapping } from '@core/model/settings/billme-mapping.model';
-import {
-  LOCAL_ROUTING,
-  PAYMENT_TYPE,
-  PAYMENT_SYSTEM_TYPE,
-} from '@sections/accounts/accounts.config';
+import { LOCAL_ROUTING, PAYMENT_TYPE, PAYMENT_SYSTEM_TYPE } from '@sections/accounts/accounts.config';
 import { DepositService } from '@sections/accounts/services/deposit.service';
 import { PATRON_NAVIGATION, Settings } from 'src/app/app.global';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -644,13 +640,12 @@ export class AutomaticDepositPageComponent {
   }
 
   private addUSAePayCreditCard() {
-      from(this.externalPaymentService.addUSAePayCreditCard())
+    from(this.externalPaymentService.addUSAePayCreditCard())
       .pipe(
         switchMap(({ success, errorMessage }) => {
           if (!success) {
             return throwError(errorMessage);
           }
-
           this.loadingService.showSpinner();
           // Update user accounts for refreshing Credit Card dropdown list
           return zip(this.depositService.getUserAccounts(), this.isBillMePaymentTypesEnabled$);

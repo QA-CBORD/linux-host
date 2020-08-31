@@ -8,6 +8,10 @@
 
 .label-container {
   max-width: 80%;
+  min-height: 70px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 
   .label {
     &__label {
@@ -23,6 +27,10 @@
 
 .type-container {
   min-width: 73px;
+  min-height: 70px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 
   .type {
     &__entity {

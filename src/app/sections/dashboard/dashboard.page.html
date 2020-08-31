@@ -1,10 +1,9 @@
+<div class="dashboard__header-cover"></div>
 <ion-content class="dashboard">
-  <ion-button (click)="logout()">Logout</ion-button>
   <st-access-card></st-access-card>
 
   <ng-container *ngFor="let tile of tiles$ | async; trackBy: trackFn">
-    <st-tile-wrapper *ngIf="tile.isEnable"
-                     [wrapperConfig]="tile">
+    <st-tile-wrapper *ngIf="tile.isEnable" [wrapperConfig]="tile">
       <ng-container [ngSwitch]="tile.id">
         <st-accounts-tile *ngSwitchCase="tilesIds.accounts"></st-accounts-tile>
         <st-transactions-tile *ngSwitchCase="tilesIds.transactions"></st-transactions-tile>
@@ -19,9 +18,7 @@
     </st-tile-wrapper>
   </ng-container>
 
-  <ion-button class="dashboard__bottom-btn-wrapper"
-              mode="ios"
-              (click)="presentEditHomePageModal()">
+  <ion-button class="dashboard__bottom-btn-wrapper" mode="ios" (click)="presentEditHomePageModal()">
     <div class="dashboard__bottom-icon-wrapper">
       <img src="/assets/icon/dashboard.svg" />
     </div>

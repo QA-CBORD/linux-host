@@ -1,7 +1,7 @@
 @import 'tools';
 
 .card {
-  margin: 5px;
+  margin: 5px 10px 5px;
   border-radius: 15px;
   background: $color-dodger-blue;
   height: 280px;
@@ -30,6 +30,13 @@
       color: $color-white;
 
       @include font-nunito-regular(20px);
+      @include ellipsis;
+      max-width: 90vw;
+
+      &-left {
+        margin-left: 10px;
+        max-width: 80vw;
+      }
     }
 
     &-dots-btn-wrapper {

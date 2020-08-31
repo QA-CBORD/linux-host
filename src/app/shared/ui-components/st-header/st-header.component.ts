@@ -19,12 +19,12 @@ export class StHeaderComponent implements OnInit {
   @Input() isTitleShow: boolean = false;
   @Output() onSearchedValue = new EventEmitter<string>();
   @Input() isBackButtonShow: boolean = true;
+  @Input() isDismissButtonShow: boolean;
+  @Output() onDismiss = new EventEmitter<void>();
 
-  constructor() {
-  }
+  constructor() {}
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   onInputChanged(event) {
     this.onSearchedValue.emit(event.target.value);
@@ -32,5 +32,9 @@ export class StHeaderComponent implements OnInit {
 
   onEnterKeyClicked() {
     Keyboard.hide();
+  }
+
+  onDissmissClicked() {
+    this.onDismiss.emit();
   }
 }

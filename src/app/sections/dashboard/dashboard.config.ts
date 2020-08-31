@@ -22,8 +22,8 @@ export const TILES_ID = {
 };
 
 export enum TILES_TITLE {
-  home = 'home',
-  settings = 'settings',
+  home = 'Home',
+  settings = 'Settings',
   accounts = 'Accounts',
   transactions = 'Transactions',
   rewards = 'Rewards',
@@ -59,6 +59,7 @@ export const TILES_BASE_CONFIG: TileWrapperConfig[] = [
       title: 'All Transactions',
       navigate: `${PATRON_NAVIGATION.accounts}/${ACCOUNT_ROUTING.accountDetailsM}/${ALL_ACCOUNTS}`,
     },
+    navigateBack: PATRON_NAVIGATION.accounts,
   },
   {
     id: TILES_ID.rewards,
@@ -140,6 +141,18 @@ export const TILES_BASE_CONFIG: TileWrapperConfig[] = [
       show: true,
       title: 'Go to Housing',
       navigate: PATRON_NAVIGATION.housing,
+    },
+  },
+  {
+    id: TILES_ID.settings,
+    title: 'Settings',
+    iconPath: '/assets/icon/trophy.svg',
+    isEnable: true,
+    navigate: PATRON_NAVIGATION.settings,
+    buttonConfig: {
+      show: true,
+      title: 'Go to Settings',
+      navigate: PATRON_NAVIGATION.settings,
     },
   },
 ];

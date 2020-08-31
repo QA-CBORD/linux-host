@@ -83,7 +83,7 @@ export class OrderingApiService {
       .pipe(map(({ response }: MessageResponse<any>) => response.list));
   }
 
-  getMerchantOrderSchedule(merchantId: string, orderType: number): Observable<any[]> {
+  getMerchantOrderSchedule(merchantId: string, orderType: number): Observable<any> {
     const postParams: ServiceParameters = { merchantId, orderType, startDate: null, endDate: null };
     const queryConfig = new RPCQueryConfig('getMerchantOrderSchedule', postParams, true);
 

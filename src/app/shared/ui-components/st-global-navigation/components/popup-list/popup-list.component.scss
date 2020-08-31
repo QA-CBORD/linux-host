@@ -16,6 +16,7 @@
   }
 
   &__content {
+    margin-bottom: $notch-bottom;
     overflow-y: scroll;
     max-height: 80%;
     padding-top: 20px;

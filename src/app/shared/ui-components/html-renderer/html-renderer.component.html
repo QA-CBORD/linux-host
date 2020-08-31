@@ -1,0 +1,19 @@
+<st-header
+  [title]="title"
+  [isTitleShow]="true"
+  [backButtonIcon]="'ios-close'"
+  [backButtonTitle]="''"
+  [isToolbarShow]="true"
+  [isBackButtonShow]="false"
+  [isDismissButtonShow]="true"
+  (onDismiss)="onClose()"
+></st-header>
+<ion-content class="ion-padding">
+  <ng-container *ngIf="(htmlContent | async) as content; else loading">
+    <p [innerHTML]="content"></p>
+    <st-button *ngFor="let button of buttons" buttonModifier="rectangle" (click)="button.callback()">
+      {{ button.label }}
+    </st-button>
+  </ng-container>
+  <ng-template #loading> Please wait... </ng-template>
+</ion-content>

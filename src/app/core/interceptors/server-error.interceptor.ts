@@ -23,7 +23,7 @@ export class ServerError implements HttpInterceptor {
     return next.handle(req).pipe(
       tap(
         (res: HttpEvent<any>) => {
-          if (res instanceof HttpResponse && 'exception' in res.body && res.body.exception !== null) {
+          if (res instanceof HttpResponse &&  res.body instanceof Object && 'exception' in res.body && res.body.exception !== null) {
             this.handleServerException(res.body.exception);
           }
         },

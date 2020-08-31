@@ -1,21 +1,29 @@
 <ion-list *ngIf="addresses && addresses.length">
-  <st-order-address-item *ngFor="let item of addresses"
-                         (click)="itemSelected(item)"
-                         [item]="item"
-                         iconNameDefault="address-marker.svg"
-                         iconNameSelected="location-pin.svg"></st-order-address-item>
+  <st-order-address-item
+    *ngFor="let item of addresses"
+    (click)="itemSelected(item)"
+    [item]="item"
+    [defaultAddress]="defaultAddress"
+    iconNameDefault="address-marker.svg"
+    iconNameSelected="location-pin.svg"
+  ></st-order-address-item>
 </ion-list>
 
-<div class="address-list__empty-block-wrapper"
-     *ngIf="addresses && !addresses.length">
+<div class="address-list__empty-block-wrapper" *ngIf="addresses && !addresses.length">
   <div class="address-list__empty-block-message">
-    <img class="address-list__empty-block-img"
-         src="/assets/images/addresses_empty_state.svg"
-         alt="girl with map locations">
+    <img
+      class="address-list__empty-block-img"
+      src="/assets/images/addresses_empty_state.svg"
+      alt="girl with map locations"
+    />
     <p class="address-list__empty-block-text">You don't have any saved addresses.</p>
   </div>
-  <button class="address-list__empty-block-btn"
-          expand="block">
-    <span class="address-list__empty-block-btn-text">{{contentStrings.labelAddNewAddress | async}}</span>
+  <button
+    *ngIf="displayAddNewAddress"
+    (click)="onAddNewAddressClick()"
+    class="address-list__empty-block-btn"
+    expand="block"
+  >
+    <span class="address-list__empty-block-btn-text">{{ contentStrings.labelAddNewAddress | async }}</span>
   </button>
 </div>

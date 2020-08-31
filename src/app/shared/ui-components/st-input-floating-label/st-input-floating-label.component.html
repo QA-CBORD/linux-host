@@ -9,10 +9,14 @@
     (blur)="onBlur()"
     [attr.maxlength]="maxlength"
     [ngClass]="{ 'input__control--error': isError }"
-    [disabled] = "isDisabled"
-    [attr.inputmode] = "inputmode"
-    [attr.enterkeyhint] = "enterkeyhint"
+    [disabled]="isDisabled"
+    [attr.inputmode]="inputmode"
+    [attr.enterkeyhint]="enterkeyhint"
+    tabindex="tabindex"
   />
   <label class="input__placeholder" [attr.for]="idd">{{ label }}</label>
   <ng-content *ngIf="isError"></ng-content>
+  <div class="input__accesibility_error" *ngIf="isError">
+    <img src="/assets/icon/input-error.svg" alt="input-accessibility-error" *ngIf="isError" />
+  </div>
 </div>

@@ -59,7 +59,7 @@
 
 @mixin floating-label($color) {
   font-size: 75%;
-  transform: translate3d(15%, -50%, 0);
+  transform: translate3d(10px, -50%, 0);
   opacity: 1;
   background: $color-white;
   padding: 0 3px;

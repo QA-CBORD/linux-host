@@ -1,34 +1,38 @@
+<!--HIDING THE HEADER UNTIL WE IMPLEMENT THE CHANGE PIN SETTINGS PAGE LOGIC-->
+
 <ion-header class="pin-header" no-border>
   <ion-toolbar mode="ios" class="ion-color" class="pin-header__nav-toolbar">
-    <!--    <ion-buttons slot="start">-->
-    <!--      <ion-button-->
-    <!--        mode="ios"-->
-    <!--        class="edit-home__header-done-btn"-->
-    <!--        color="dark"-->
-    <!--        (click)="back()"-->
-    <!--        *ngIf="pinNumber.length < 4 && pinNumberCopy.length === 4"-->
-    <!--      >-->
-    <!--        <img src="/assets/icon/chevron-left.svg" alt="back" />-->
-    <!--        Back-->
-    <!--      </ion-button>-->
-    <!--    </ion-buttons>-->
-    <!--    <ion-buttons slot="end" mode="ios">-->
-    <!--      <ion-button mode="ios" class="edit-home__header-done-btn" color="dark" (click)="closePage()">-->
-    <!--        Cancel-->
-    <!--      </ion-button>-->
-    <!--    </ion-buttons>-->
+    <ion-buttons slot="start">
+      <ion-button mode="ios" class="edit-home__header-done-btn" color="dark" (click)="back()" *ngIf="showReset">
+        <img src="/assets/icon/chevron-left.svg" alt="back" />
+        Back
+      </ion-button>
+      <ion-button
+        mode="ios"
+        class="edit-home__header-done-btn"
+        color="dark"
+        (click)="closePage(null, null)"
+        *ngIf="showDismiss && !showReset"
+      >
+        <ion-icon icon="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
-<ion-content>
+<ion-content [scrollY]="false">
   <div class="pin">
     <div class="pin__header">
       <div class="pin__image-wrapper">
-        <img src="/assets/icon/pin.svg" alt="pin"/>
+        <img src="/assets/icon/pin.svg" alt="pin" />
       </div>
       <ion-label *ngIf="instructionText" class="pin__info">{{instructionText}}</ion-label>
       <ion-label [ngStyle]="{'visibility': errorText ? 'visible' : 'hidden'}">
         <div class="pin__error-info">
-          <img src="/assets/icon/exclamation-mark.svg" alt="exclamation-mark" class="pin__error-info-img"/>{{errorText}}
+          <img
+            src="/assets/icon/exclamation-mark.svg"
+            alt="exclamation-mark"
+            class="pin__error-info-img"
+          />{{errorText}}
         </div>
       </ion-label>
 
@@ -43,56 +47,18 @@
     <div class="pin__number-block">
       <div class="pin__number" *ngFor="let i of setNumbers">
         <ion-button class="pin__button" expand="full" fill="clear" (click)="append(i)" [disabled]="disableInput">
-          {{ i }}</ion-button>
+          {{ i }}</ion-button
+        >
       </div>
-      <ion-button class="pin__button pin__button--left-bottom" fill="clear" expand="full" (click)="delete()"
-                  [disabled]="disableDelete">
-        <img src="/assets/icon/backspace.svg" alt="backspace"/>
+      <ion-button
+        class="pin__button pin__button--left-bottom"
+        fill="clear"
+        expand="full"
+        (click)="delete()"
+        [disabled]="disableDelete"
+      >
+        <img src="/assets/icon/backspace.svg" alt="backspace" />
       </ion-button>
     </div>
   </div>
-
-  <!--  <ion-grid>-->
-  <!--    <ion-row>-->
-  <!--      <ion-col *ngFor="let n of [1, 2, 3]">-->
-  <!--        <ion-button class="pin__button" expand="full" fill="clear" (click)="append(n)" [disabled]="disableInput"-->
-  <!--          >{{ n }}</ion-button-->
-  <!--        >-->
-  <!--      </ion-col>-->
-  <!--    </ion-row>-->
-  <!--    <ion-row>-->
-  <!--      <ion-col *ngFor="let n of [4, 5, 6]">-->
-  <!--        <ion-button class="pin__button" expand="full" fill="clear" (click)="append(n)" [disabled]="disableInput"-->
-  <!--          >{{ n }}</ion-button-->
-  <!--        >-->
-  <!--      </ion-col>-->
-  <!--    </ion-row>-->
-  <!--    <ion-row>-->
-  <!--      <ion-col *ngFor="let n of [7, 8, 9]">-->
-  <!--        <ion-button class="pin__button" expand="full" fill="clear" (click)="append(n)" [disabled]="disableInput"-->
-  <!--          >{{ n }}</ion-button-->
-  <!--        >-->
-  <!--      </ion-col>-->
-  <!--    </ion-row>-->
-  <!--    <ion-row>-->
-  <!--      <ion-col>-->
-  <!--          <ion-button-->
-  <!--            class="pin__button"-->
-  <!--            fill="clear"-->
-  <!--            expand="full"-->
-  <!--            (click)="enter()"-->
-  <!--            [disabled]="disableEnter"-->
-  <!--          ></ion-button>-->
-  <!--      </ion-col>-->
-  <!--      <ion-col>-->
-  <!--        <ion-button class="pin__button" expand="block" fill="clear" (click)="append(0)" [disabled]="disableInput"-->
-  <!--          >0</ion-button>-->
-  <!--      </ion-col>-->
-  <!--      <ion-col>-->
-  <!--          <ion-button class="pin__button" fill="clear" expand="full" (click)="delete()" [disabled]="disableDelete">-->
-  <!--            <img src="/assets/icon/backspace.svg" alt="backspace" />-->
-  <!--          </ion-button>-->
-  <!--      </ion-col>-->
-  <!--    </ion-row>-->
-  <!--  </ion-grid>-->
 </ion-content>

@@ -1,17 +1,18 @@
 import { Injectable } from '@angular/core';
 import { ServiceStateFacade } from '@core/classes/service-state-facade';
-import { Observable, of, from } from 'rxjs';
+import { Observable, of, from, iif, zip } from 'rxjs';
 import { UserApiService } from '@core/service/user-api/user-api.service';
 import { UserInfo } from '@core/model/user/user-info.model';
-import { UserPhotoInfo, UserPhotoList, UserSettingInfo } from '@core/model/user';
+import { UserPhotoInfo, UserPhotoList, UserNotificationInfo } from '@core/model/user';
 import { MessageResponse } from '@core/model/service/message-response.model';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
-import { map, switchMap, tap, take, catchError } from 'rxjs/operators';
+import { map, switchMap, tap, take, catchError, finalize } from 'rxjs/operators';
 import { AddressInfo } from '@core/model/address/address-info';
-import { NativeProvider, NativeData } from '@core/provider/native-provider/native.provider';
-import { Settings } from 'src/app/app.global';
-import { Device } from '@capacitor/core';
+import { NativeProvider } from '@core/provider/native-provider/native.provider';
+import { Settings, User } from 'src/app/app.global';
+import { Plugins, Capacitor, PushNotificationToken, PushNotification } from '@capacitor/core';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
+const { PushNotifications, LocalNotifications, Device } = Plugins;
 
 @Injectable({
   providedIn: 'root',
@@ -21,12 +22,13 @@ export class UserFacadeService extends ServiceStateFacade {
   private userPhoto: UserPhotoInfo = null;
   private userKey = 'get_user';
   private userAddressKey = 'get_user_address';
+  private fcmTokenKey = 'fcm_token';
 
   constructor(
     private readonly userApiService: UserApiService,
     private readonly storageStateService: StorageStateService,
     private readonly nativeProvider: NativeProvider,
-    private readonly settingsFacadeService: SettingsFacadeService,
+    private readonly settingsFacadeService: SettingsFacadeService
   ) {
     super();
   }
@@ -46,26 +48,34 @@ export class UserFacadeService extends ServiceStateFacade {
   getUser$(): Observable<UserInfo> {
     return this.userApiService
       .getUser()
-      .pipe(tap(res => this.storageStateService.updateStateEntity(this.userKey, res, this.ttl)));
+      .pipe(
+        tap(res =>
+          this.storageStateService.updateStateEntity(this.userKey, res, { ttl: this.ttl, highPriorityKey: true })
+        )
+      );
   }
 
-  getUserPhoto$(userId: string): Observable<MessageResponse<UserPhotoInfo>> {
-    return this.userApiService.getUserPhoto(userId);
+  //adds a photo and takes a UsrPhotoInfo object
+  addUserPhoto(photo: UserPhotoInfo): Observable<boolean> {
+    return this.getUserData$().pipe(
+      switchMap(({ id }) => this.userApiService.addUserPhoto(id, photo)),
+      map(({ response }) => response),
+      take(1)
+    );
   }
 
   getUserAddresses$(): Observable<AddressInfo[]> {
     return this.userApiService
       .getUserAddresses()
-      .pipe(tap(res => this.storageStateService.updateStateEntity(this.userAddressKey, res, this.ttl)));
+      .pipe(tap(res => this.storageStateService.updateStateEntity(this.userAddressKey, res, { ttl: this.ttl })));
   }
 
   createUserPin(pin: string): Observable<boolean> {
-    return from(Device.getInfo())
-      .pipe(
-        switchMap(({uuid}) => this.userApiService.createUserPin(pin, uuid)),
-        map(({ response }) => response),
-        take(1)
-      );
+    return from(Device.getInfo()).pipe(
+      switchMap(({ uuid }) => this.userApiService.createUserPin(pin, uuid)),
+      map(({ response }) => response),
+      take(1)
+    );
   }
 
   requestDeposit$(
@@ -84,12 +94,23 @@ export class UserFacadeService extends ServiceStateFacade {
     );
   }
 
+  getPhotoList(): Observable<UserPhotoList> {
+    return this.getUserData$().pipe(
+      switchMap(({ id }: UserInfo) => this.userApiService.getPhotoListByUserId(id)),
+      map(({ response }) => response),
+      take(1)
+    );
+  }
+
   getPhotoListByUserId(userId: string): Observable<MessageResponse<UserPhotoList>> {
     return this.userApiService.getPhotoListByUserId(userId);
   }
 
-  getPhotoById(photoId: string): Observable<MessageResponse<UserPhotoInfo>> {
-    return this.userApiService.getPhotoById(photoId);
+  getPhotoById(photoId: string): Observable<UserPhotoInfo> {
+    return this.userApiService.getPhotoById(photoId).pipe(
+      map(({ response }) => response),
+      take(1)
+    );
   }
 
   setAcceptedPhoto(acceptedPhoto: UserPhotoInfo) {
@@ -97,30 +118,12 @@ export class UserFacadeService extends ServiceStateFacade {
   }
 
   getAcceptedPhoto$(): Observable<UserPhotoInfo> {
-    // if (this.userPhoto) return of(this.userPhoto);
-
-    let nativeProviderFunction: Observable<UserPhotoInfo>;
-
-    const userPhotoInfoObservable: Observable<UserPhotoInfo> = this.getUserData$().pipe(
-      switchMap(({ id }: UserInfo) => this.getPhotoListByUserId(id)),
-      map(({ response: { list } }) => this.getPhotoIdByStatus(list)),
-      switchMap(({ id }: UserPhotoInfo) => this.getPhotoById(id)),
-      map(({ response }) => (this.userPhoto = response))
-    );
-
-    nativeProviderFunction = userPhotoInfoObservable;
-
-    return nativeProviderFunction.pipe(
-      catchError(e => {
-        return userPhotoInfoObservable;
-      }),
-      switchMap(userPhotoInfo => {
-        if (userPhotoInfo) {
-          return of(userPhotoInfo);
-        } else {
-          return userPhotoInfoObservable;
-        }
-      })
+    if (this.userPhoto) {
+      return of(this.userPhoto);
+    }
+    return this.userApiService.getUserPhoto(null).pipe(
+      map(response => response.response),
+      tap(userPhoto => this.setAcceptedPhoto(userPhoto))
     );
   }
 
@@ -144,5 +147,122 @@ export class UserFacadeService extends ServiceStateFacade {
 
   private getPhotoIdByStatus(photoList: UserPhotoInfo[], status: number = 1): UserPhotoInfo | undefined {
     return photoList.find((photo: UserPhotoInfo) => photo.status === status);
+  }
+
+  updateUserPhotoStatus(photoId: string, status: number, reason: string): Observable<boolean> {
+    return this.userApiService.updateUserPhotoStatus(photoId, status, reason).pipe(
+      map(({ response }) => response),
+      take(1)
+    );
+  }
+
+  handlePushNotificationRegistration() {
+    zip(this.isPushNotificationEnabled$(), this.getFCMToken$())
+      .pipe(
+        switchMap(([pushNotificationsEnabled, fcmToken]) => {
+          return iif(
+            () => pushNotificationsEnabled && !fcmToken,
+            from(PushNotifications.requestPermission()),
+            of({ granted: false })
+          );
+        }),
+        take(1)
+      )
+      .subscribe(result => {
+        if (result.granted) {
+          PushNotifications.removeAllListeners();
+          PushNotifications.addListener('pushNotificationReceived', (notification: PushNotification) => {
+            if (Capacitor.platform === 'android') {
+              LocalNotifications.schedule({
+                notifications: [
+                  {
+                    title: notification.title,
+                    body: notification.body,
+                    id: Date.now(),
+                    smallIcon: '@drawable/ic_launcher_round',
+                  },
+                ],
+              });
+            }
+          });
+          PushNotifications.addListener('registration', (token: PushNotificationToken) => {
+            this.saveNotification$(token.value).subscribe();
+          });
+          PushNotifications.register();
+        }
+      });
+  }
+
+  saveNotification$(fcmToken: string): Observable<string> {
+    this.setFCMToken(fcmToken);
+    return this.getUserData$().pipe(
+      switchMap(userInfo => {
+        return this.userApiService.saveNotification$(userInfo.id, this.getPushNotificationInfo(userInfo, fcmToken));
+      }),
+      take(1)
+    );
+  }
+
+  logoutAndRemoveUserNotification(): Observable<boolean> {
+    return zip(this.getUserData$(), this.getFCMToken$()).pipe(
+      switchMap(([userInfo, fcmToken]) => {
+        if (fcmToken) {
+          PushNotifications.removeAllDeliveredNotifications();
+          return this.userApiService.logoutAndRemoveUserNotification$(userInfo.id, this.getPushNotificationInfo(userInfo, fcmToken));
+        }
+        return of(false);
+      }),
+      take(1),
+      catchError(error => {
+        return of(false);
+      }),
+      finalize(() => {
+        this.clearData();
+      })
+    );
+  }
+
+  /// get notification id for update if it already exists in the user notification array
+  private getPushNotificationInfo(userInfo: any, fcmToken: string): UserNotificationInfo{
+    const user: any = { ...userInfo };
+    const pNotifications = user.userNotificationInfoList.filter(
+      notif => notif.type === User.NotificationType.PUSH_NOTIFICATION
+    );
+    return {
+      id: pNotifications.length > 0 ? pNotifications[0].id : null,
+      type: User.NotificationType.PUSH_NOTIFICATION,
+      value: fcmToken,
+      provider: Capacitor.platform,
+    };
+  }
+
+  isPushNotificationEnabled$(): Observable<boolean> {
+    return this.settingsFacadeService.getSetting(Settings.Setting.PUSH_NOTIFICATION_ENABLED).pipe(
+      map(({ value }) => Boolean(Number(value))),
+      take(1)
+    );
+  }
+
+  private setFCMToken(value: string) {
+    this.storageStateService.updateStateEntity(this.fcmTokenKey, value, { ttl: this.ttl });
+  }
+
+  getFCMToken$(): Observable<string> {
+    return this.storageStateService
+      .getStateEntityByKey$<string>(this.fcmTokenKey)
+      .pipe(map(data => (data && data.value ? data.value : null)));
+  }
+
+  saveUser$(user: UserInfo): Observable<string> {
+    return this.userApiService.updateUserInfo$(user).pipe(
+      tap(res => this.storageStateService.updateStateEntity(this.userKey, user, { ttl: this.ttl })),
+      take(1)
+    );
+  }
+
+  private clearData() {
+    this.userPhoto = null;
+    this.storageStateService.clearStorage();
+    this.storageStateService.clearState();
   }
 }

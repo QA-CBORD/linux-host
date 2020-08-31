@@ -3,6 +3,15 @@ export enum GUEST_ROUTES {
   entry = 'entry',
   institutions = 'institutions',
   login = 'login',
-  external = 'external',
+  external = 'external-login',
   forgotPassword = 'forgot-password',
+}
+
+export enum AUTHENTICATION_SYSTEM_TYPE {
+  HOSTED = 1,
+  LDAP,
+  SSO_GENERIC, // generic external SSO that passes-through user id (e.g. shibboelth, kerberos)
+  CAS,
+  OKTA,
+  OKTA_EXT,
 }

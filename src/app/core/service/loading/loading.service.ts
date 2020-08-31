@@ -8,21 +8,44 @@ import { LoadingOptions } from '@ionic/core';
 })
 export class LoadingService {
   private readonly maxDuration: number = 30000;
-  private loader: HTMLIonLoadingElement = null;
+  private isLoading: Boolean = false;
 
   constructor(private loadingController: LoadingController) {}
 
   async showSpinner(config: LoadingOptions | string = {}): Promise<void> {
-    config = typeof config === 'string' ? { message: config } : config;
-    config = config.duration ? config : { ...config, duration: this.maxDuration };
+    this.isLoading = true;
 
-    if (this.loader !== null) await this.closeSpinner();
-    this.loader = await this.loadingController.create(config);
-    await this.loader.present();
+    config = typeof config === 'string' ? { message: config } : config;
+    config = {
+      ...config,
+      cssClass: 'custom-loading',
+      showBackdrop: true,
+      mode: 'md',
+      keyboardClose: true,
+    };
+    config = config.duration
+      ? config
+      : {
+          ...config,
+          duration: this.maxDuration,
+        };
+
+    await this.loadingController.create(config).then(loader => {
+      loader.present().then(() => {
+        if (!this.isLoading) {
+          this.closeSpinner();
+        }
+      });
+    });
   }
 
   async closeSpinner(): Promise<void> {
-    this.loader && await this.loader.dismiss();
-    this.loader = null;
+    this.isLoading = false;
+    /// check for all loaders and remove them
+    let topLoader = await this.loadingController.getTop();
+
+    while (topLoader) {
+      (await topLoader.dismiss()) ? (topLoader = await this.loadingController.getTop()) : (topLoader = null);
+    }
   }
 }

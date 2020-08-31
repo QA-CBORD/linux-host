@@ -2,20 +2,18 @@ import { distinctUntilChanged, filter, map } from 'rxjs/operators';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
+import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { Platform, PopoverController } from '@ionic/angular';
 
-import { App, AppState } from '@capacitor/core';
-
-import { StGlobalPopoverComponent } from '@shared/ui-components';
-import { BUTTON_TYPE } from '@core/utils/buttons.config';
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { NavigationEnd, Router } from '@angular/router';
 import { ROLES } from './app.global';
-import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
-import { GUEST_ROUTES } from './non-authorized/non-authorized.config';
+
 import { Plugins } from '@capacitor/core';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { PATRON_ROUTES } from '@sections/section.config';
+import { SessionFacadeService } from '@core/facades/session/session.facade.service';
+import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
 
 const { Keyboard } = Plugins;
 
@@ -34,61 +32,52 @@ export class AppComponent implements OnInit {
     private readonly platform: Platform,
     private readonly splashScreen: SplashScreen,
     private readonly statusBar: StatusBar,
+    private readonly screenOrientation: ScreenOrientation,
     private readonly popoverCtrl: PopoverController,
-    private readonly identityFacadeService: IdentityFacadeService,
+    private readonly sessionFacadeService: SessionFacadeService,
+    private readonly nativeStartupFacadeService: NativeStartupFacadeService,
     private readonly router: Router,
     private readonly cdRef: ChangeDetectorRef,
-    private readonly globalNav: GlobalNavService,
-  ) {
-  }
+    private readonly globalNav: GlobalNavService
+  ) {}
 
   ngOnInit(): void {
     this.initEventListeners();
     this.initializeApp();
     this.setPatronsRouteIndicator();
-    this.isNavBarShown$ = combineLatest(this.globalNav.isNavBarShown$, this._isPatronRoute$, this._isKeyBoardShown$).pipe(
-      map(([isNavBarShown, isPatronRoute, isKeyBoardShown]) =>
-        isPatronRoute && isNavBarShown && !isKeyBoardShown,
-      ),
+    this.isNavBarShown$ = combineLatest(
+      this.globalNav.isNavBarShown$,
+      this._isPatronRoute$,
+      this._isKeyBoardShown$,
+      this.nativeStartupFacadeService.blockGlobalNavigationStatus$
+    ).pipe(
+      map(([isNavBarShown, isPatronRoute, isKeyBoardShown, isNativeStartupMessageShown]) => isPatronRoute && isNavBarShown && !isKeyBoardShown && !isNativeStartupMessageShown)
     );
   }
 
   setPatronsRouteIndicator() {
     this._isPatronRoute$ = this.router.events.pipe(
       map(routerEvent => {
-          if (routerEvent instanceof NavigationEnd) {
-            const route = routerEvent.toString();
-            return route.includes(ROLES.patron) && !(route.includes(PATRON_ROUTES.biometric))
-          }
-        },
-      ),
+        if (routerEvent instanceof NavigationEnd) {
+          const route = routerEvent.toString();
+          return route.includes(ROLES.patron) && !route.includes(PATRON_ROUTES.biometric);
+        }
+      }),
       filter(val => val !== undefined),
-      distinctUntilChanged(),
+      distinctUntilChanged()
     );
   }
 
   private async initializeApp(): Promise<void> {
     await this.platform.ready();
-    this.statusBar.styleDefault();
     this.splashScreen.hide();
-
-    App.addListener('appStateChange', ({ isActive }: AppState) => {
-      // state.isActive contains the active state
-      console.log('App state changed. Is active?', isActive);
-
-      if (isActive) {
-        if (this.identityFacadeService.isVaultLocked) {
-          this.router.navigate([ROLES.guest, GUEST_ROUTES.startup], { replaceUrl: true });
-        }
-      }
-
-    });
+    this.statusBar.styleDefault();
+    this.statusBar.backgroundColorByHexString('#FFFFFF');
+    this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
   }
 
   private initEventListeners() {
-    if (this.platform.is('android')
-      || this.platform.is('ios')
-      || this.platform.is('cordova')) {
+    if (this.platform.is('android') || this.platform.is('ios') || this.platform.is('cordova')) {
       this.initMobileListeners();
     }
   }
@@ -101,5 +90,4 @@ export class AppComponent implements OnInit {
       this._isKeyBoardShown$.next(false);
     });
   }
-
 }
