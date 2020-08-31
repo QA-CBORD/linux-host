@@ -10,7 +10,7 @@ export interface UserInfo {
   guestUser: boolean;
   hasCashlessCard: boolean;
   institutionId: string;
-  lastUpdatedProfile: string;
+  lastUpdatedProfile: Date;
   locale: string;
   middleName: string;
   objectRevision: number;

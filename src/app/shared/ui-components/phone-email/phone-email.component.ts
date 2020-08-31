@@ -118,7 +118,7 @@ export class PhoneEmailComponent implements OnInit {
     user.phone = this.phone.value;
     user.email = this.email.value;
     user.staleProfile = false;
-    user.lastUpdatedProfile = new Date().toISOString();
+    user.lastUpdatedProfile = new Date();
 
     const notifications = user.userNotificationInfoList.reduce((r, a: UserNotificationInfo, i) => {
       r[a.type] = [...(r[a.type] || []), i];
