@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { take } from 'rxjs/operators';
 import { InAppBrowser, InAppBrowserOptions } from '@ionic-native/in-app-browser/ngx';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
-import { Environment } from '../../../environment';
+import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { USAePayResponse } from '@core/model/add-funds/usaepay-response.model';
 import { ApplePayResponse, ApplePay } from '@core/model/add-funds/applepay-response.model';
 import { Plugins } from '@capacitor/core';
 import { zip } from 'rxjs';
+import { ToastController } from '@ionic/angular';
 const { Browser, IOSDevice } = Plugins;
 
 @Injectable({
@@ -18,7 +19,9 @@ export class ExternalPaymentService {
   constructor(
     private inAppBrowser: InAppBrowser,
     private readonly institutionFacadeService: InstitutionFacadeService,
-    private readonly authFacadeService: AuthFacadeService
+    private readonly authFacadeService: AuthFacadeService,
+    private readonly environmentFacadeService: EnvironmentFacadeService,
+    private readonly toastController: ToastController,
   ) {}
 
   /* USAePay */
@@ -72,7 +75,7 @@ export class ExternalPaymentService {
 
   private openUSAePayPage(authToken: string, shortName: string) {
     const target = '_blank';
-    const url = `${Environment.getSitesURL()}/${shortName}/full/add_card_mobile.php?session_token=${authToken}`;
+    const url = `${this.environmentFacadeService.getSitesURL()}/${shortName}/full/add_card_mobile.php?session_token=${authToken}`;
     const options: InAppBrowserOptions = {
       usewkwebview: 'yes',
       toolbarposition: 'top',
@@ -88,7 +91,7 @@ export class ExternalPaymentService {
   private getApplePayURL(queryParams: Object, handleApplePay: ApplePay, authToken: string, shortName: string) {
     let fullURL = '';
     const params = JSON.parse(JSON.stringify(queryParams));
-    const applePayBaseURL = `${Environment.getSitesURL()}/${shortName}/full/applepay.php?`;
+    const applePayBaseURL = `${this.environmentFacadeService.getSitesURL()}/${shortName}/full/applepay.php?`;
     if (handleApplePay === ApplePay.ORDERS_WITH_APPLE_PAY) {
       fullURL = `${applePayBaseURL}order_total=${params.total || ''}&session_token=${authToken ||
         ''}&sub_total=${params.subTotal || ''}&fee=${params.useFee || ''}&tax=${params.tax ||
@@ -114,6 +117,7 @@ export class ExternalPaymentService {
           resolve(<USAePayResponse>{ success: true });
         } else if (url.includes('error=')) {
           const errorMessage = new URLSearchParams(url).get('error');
+          this.onUSAePayCallBackRetrieve(`Your request failed: ${errorMessage}. Please try again.`);
           reject(`Your request failed: ${errorMessage}. Please try again.`);
         }
         browser.close();
@@ -130,7 +134,7 @@ export class ExternalPaymentService {
           const amount = new URLSearchParams(info.url).get('amount') || '';
           resolve(<ApplePayResponse>{
             success: true,
-            amount: amount,
+            amount: amount, 
             selectedAccount: { accountDisplayName: accountName },
             accountId: accountId,
             sourceAcc: { accountTender: 'Apple Pay' },
@@ -145,5 +149,14 @@ export class ExternalPaymentService {
         applePayEvent.remove();
       })
     });
+  }
+
+  private async onUSAePayCallBackRetrieve(message: string) {
+    const toast = await this.toastController.create({
+      message,
+      position: 'top',
+      duration: 3000,
+    });
+    toast.present();
   }
 }

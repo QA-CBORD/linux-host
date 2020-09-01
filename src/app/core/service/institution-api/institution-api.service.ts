@@ -15,6 +15,16 @@ export class InstitutionApiService {
 
   constructor(private readonly http: HttpClient) {}
 
+  getInstitutionData(): Observable<Institution> {
+    let params = {};
+
+    const queryConfig = new RPCQueryConfig('retrieve', params, true, true);
+
+    return this.http
+      .post<MessageResponse<Institution>>(this.serviceUrl, queryConfig)
+      .pipe(map(({ response }) => response));
+  }
+
   getInstitutionDataById(institutionId: string, sessionId?: string, useSessionId?: boolean): Observable<Institution> {
     let params = { institutionId } as { institutionId: string; sessionId?: string };
     const useSession = useSessionId === false ? useSessionId : true;

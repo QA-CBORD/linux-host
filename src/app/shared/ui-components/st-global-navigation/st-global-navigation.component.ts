@@ -4,7 +4,7 @@ import { NavigationBottomBarElement } from '@core/model/navigation/navigation-bo
 import { Router } from '@angular/router';
 import { PATRON_NAVIGATION } from '../../../app.global';
 import { Observable } from 'rxjs';
-import { PopoverController } from '@ionic/angular';
+import { ModalController, PopoverController } from '@ionic/angular';
 
 @Component({
   selector: 'st-global-navigation',
@@ -19,7 +19,7 @@ export class StGlobalNavigationComponent implements OnInit {
 
   constructor(private readonly navigationSettingsService: NavigationFacadeSettingsService,
               private readonly router: Router,
-              private readonly popoverController: PopoverController) {
+              private readonly popoverController: PopoverController, private readonly modalController: ModalController) {
   }
 
   ngOnInit() {
@@ -34,8 +34,15 @@ export class StGlobalNavigationComponent implements OnInit {
     try {
       await this.popoverController.dismiss();
     } catch (e) {
-      console.log('there is no active overlay at the moment')
+      console.log('Global Navigation - No active popover')
     }
+
+    try {
+      await this.modalController.dismiss();
+    } catch (e){
+      console.log('Global Navigation - No active modal')
+    }
+
     this.isListShown = false;
     await this.router.navigate([url]);
   }

@@ -2,7 +2,12 @@
 
 .dashboard {
   background: $color-white-smoke;
-  --padding-top: 20px;
+  --padding-bottom: $notch-bottom !important;
+
+  &__header-cover {
+    height: $notch-top;
+    --background: $color-white;
+  }
 
   &__btn-logout {
     margin-left: 10px;

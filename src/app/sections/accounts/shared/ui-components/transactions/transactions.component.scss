@@ -14,7 +14,7 @@
     width: 100%;
     text-align: center;
     color: $color-black;
-    margin: 2px 0 2px; //Bugfix/CGS-1928 #7 Title is not properly aligned on the Transactions page
+    margin: 2px 0 2px;
 
     @include font-nunito-regular(12px);
   }

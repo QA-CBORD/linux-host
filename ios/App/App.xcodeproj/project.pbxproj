@@ -16,6 +16,7 @@
 		504EC3121FED79650016851F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 504EC3101FED79650016851F /* LaunchScreen.storyboard */; };
 		50B271D11FEDC1A000F3C39B /* public in Resources */ = {isa = PBXBuildFile; fileRef = 50B271D01FEDC1A000F3C39B /* public */; };
 		A084ECDBA7D38E1E42DFC39D /* Pods_App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AF277DCFFFF123FFC6DF26C7 /* Pods_App.framework */; };
+		EE0FF62924D4C9A5003E2257 /* WatchSessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0FF62824D4C9A5003E2257 /* WatchSessionManager.swift */; };
 		EE2E6B1B246E398900D1AF97 /* GETPartnerServicesCredStatus.m in Sources */ = {isa = PBXBuildFile; fileRef = EE2E6AEC246E398900D1AF97 /* GETPartnerServicesCredStatus.m */; };
 		EE2E6B1C246E398900D1AF97 /* GETProvisioningBundle.m in Sources */ = {isa = PBXBuildFile; fileRef = EE2E6AED246E398900D1AF97 /* GETProvisioningBundle.m */; };
 		EE2E6B1D246E398900D1AF97 /* GETProvisioningBundleResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = EE2E6AEF246E398900D1AF97 /* GETProvisioningBundleResponse.m */; };
@@ -39,7 +40,7 @@
 		EE451C29247D4C1F00F00012 /* UIViewController+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE451C28247D4C1F00F00012 /* UIViewController+Ext.swift */; };
 		EE4B662F249905A0000F6878 /* Notification+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE4B662E249905A0000F6878 /* Notification+Ext.swift */; };
 		EE4B663124993E96000F6878 /* Plugin+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE4B663024993E96000F6878 /* Plugin+Ext.swift */; };
-		EE5251DC24BE417F008CD822 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = EE5251DB24BE417F008CD822 /* GoogleService-Info.plist */; };
+		EE5251DA24BE34D1008CD822 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = EE5251D924BE34D1008CD822 /* GoogleService-Info.plist */; };
 		EE7198E4249BD37C0018FDFB /* AppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE7198E3249BD37C0018FDFB /* AppUITests.swift */; };
 		EE7CE763246ECE9E002EF737 /* PassKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE7CE762246ECE9E002EF737 /* PassKit.framework */; };
 		EE7CE765246ED937002EF737 /* Data+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE7CE764246ED937002EF737 /* Data+Ext.swift */; };
@@ -62,7 +63,7 @@
 		2FAD9762203C412B000D30F8 /* config.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = config.xml; sourceTree = "<group>"; };
 		4DABAFBA498B9A00C8E7533F /* Pods-App.development.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.development.xcconfig"; path = "Pods/Target Support Files/Pods-App/Pods-App.development.xcconfig"; sourceTree = "<group>"; };
 		50379B222058CBB4000EE86E /* capacitor.config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = capacitor.config.json; sourceTree = "<group>"; };
-		504EC3041FED79650016851F /* App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = App.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		504EC3041FED79650016851F /* GET&#x2009;Mobile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "GET&#x2009;Mobile.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		504EC3071FED79650016851F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		504EC30C1FED79650016851F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		504EC30E1FED79650016851F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -72,6 +73,7 @@
 		AE8334ADCB1FBFD55F47006E /* Pods-App.vendor validation.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.vendor validation.xcconfig"; path = "Pods/Target Support Files/Pods-App/Pods-App.vendor validation.xcconfig"; sourceTree = "<group>"; };
 		AF277DCFFFF123FFC6DF26C7 /* Pods_App.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_App.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AF51FD2D460BCFE21FA515B2 /* Pods-App.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.release.xcconfig"; path = "Pods/Target Support Files/Pods-App/Pods-App.release.xcconfig"; sourceTree = "<group>"; };
+		EE0FF62824D4C9A5003E2257 /* WatchSessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSessionManager.swift; sourceTree = "<group>"; };
 		EE2E6AEB246E398900D1AF97 /* GETJSONModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GETJSONModel.h; sourceTree = "<group>"; };
 		EE2E6AEC246E398900D1AF97 /* GETPartnerServicesCredStatus.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GETPartnerServicesCredStatus.m; sourceTree = "<group>"; };
 		EE2E6AED246E398900D1AF97 /* GETProvisioningBundle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GETProvisioningBundle.m; sourceTree = "<group>"; };
@@ -110,7 +112,7 @@
 		EE451C28247D4C1F00F00012 /* UIViewController+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Ext.swift"; sourceTree = "<group>"; };
 		EE4B662E249905A0000F6878 /* Notification+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Notification+Ext.swift"; sourceTree = "<group>"; };
 		EE4B663024993E96000F6878 /* Plugin+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Plugin+Ext.swift"; sourceTree = "<group>"; };
-		EE5251DB24BE417F008CD822 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		EE5251D924BE34D1008CD822 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		EE7198E1249BD37C0018FDFB /* AppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE7198E3249BD37C0018FDFB /* AppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUITests.swift; sourceTree = "<group>"; };
 		EE7198E5249BD37C0018FDFB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -166,7 +168,7 @@
 		504EC3051FED79650016851F /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				504EC3041FED79650016851F /* App.app */,
+				504EC3041FED79650016851F /* GET&#x2009;Mobile.app */,
 				EE7198E1249BD37C0018FDFB /* AppUITests.xctest */,
 			);
 			name = Products;
@@ -175,7 +177,7 @@
 		504EC3061FED79650016851F /* App */ = {
 			isa = PBXGroup;
 			children = (
-				EE5251DB24BE417F008CD822 /* GoogleService-Info.plist */,
+				EE5251D924BE34D1008CD822 /* GoogleService-Info.plist */,
 				EE7CE761246ECE9E002EF737 /* App.entitlements */,
 				EE2E6B0B246E398900D1AF97 /* Extensions */,
 				EE2E6B12246E398900D1AF97 /* Managers */,
@@ -279,6 +281,7 @@
 				EE2E6B16246E398900D1AF97 /* GETPartnerManager.m */,
 				EE2E6B15246E398900D1AF97 /* GETSecurityManager.h */,
 				EE2E6B1A246E398900D1AF97 /* GETSecurityManager.m */,
+				EE0FF62824D4C9A5003E2257 /* WatchSessionManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -312,7 +315,7 @@
 			);
 			name = App;
 			productName = App;
-			productReference = 504EC3041FED79650016851F /* App.app */;
+			productReference = 504EC3041FED79650016851F /* GET&#x2009;Mobile.app */;
 			productType = "com.apple.product-type.application";
 		};
 		EE7198E0249BD37C0018FDFB /* AppUITests */ = {
@@ -384,7 +387,7 @@
 				50379B232058CBB4000EE86E /* capacitor.config.json in Resources */,
 				504EC30D1FED79650016851F /* Main.storyboard in Resources */,
 				2FAD9763203C412B000D30F8 /* config.xml in Resources */,
-				EE5251DC24BE417F008CD822 /* GoogleService-Info.plist in Resources */,
+				EE5251DA24BE34D1008CD822 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -461,6 +464,7 @@
 				EE2E6B25246E398900D1AF97 /* GETAuthorizationBlobResponse.m in Sources */,
 				EE2E6B2B246E398900D1AF97 /* GETUtilities+Ext.swift in Sources */,
 				EE2E6B21246E398900D1AF97 /* GETParterServicesPassesBundle.m in Sources */,
+				EE0FF62924D4C9A5003E2257 /* WatchSessionManager.swift in Sources */,
 				EE4B663124993E96000F6878 /* Plugin+Ext.swift in Sources */,
 				EE2E6B24246E398900D1AF97 /* GETPartnerServicesProvisioningBundle.m in Sources */,
 				EEBD6858246ACBFB00193F97 /* Plugin.m in Sources */,
@@ -642,15 +646,15 @@
 				CODE_SIGN_ENTITLEMENTS = App/App.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 3.5.0.7;
+				CURRENT_PROJECT_VERSION = 4.0.0.5;
 				DEVELOPMENT_TEAM = DKB7LNE85Z;
 				INFOPLIST_FILE = App/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 3.5;
+				MARKETING_VERSION = 4.0.0;
 				OTHER_SWIFT_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.cbord.getmobile;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "GET&#x2009;Mobile";
 				PROVISIONING_PROFILE_SPECIFIER = "GET Distribution Provisioning Profile -";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OBJC_BRIDGING_HEADER = "App/App-Bridging-Header.h";
@@ -669,15 +673,15 @@
 				CODE_SIGN_ENTITLEMENTS = App/App.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 3.5.0.7;
+				CURRENT_PROJECT_VERSION = 4.0.0.5;
 				DEVELOPMENT_TEAM = DKB7LNE85Z;
 				INFOPLIST_FILE = App/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 3.5;
+				MARKETING_VERSION = 4.0.0;
 				OTHER_SWIFT_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.cbord.getmobile;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "GET&#x2009;Mobile";
 				PROVISIONING_PROFILE_SPECIFIER = "GET Distribution Provisioning Profile -";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = USE_PUSH;
 				SWIFT_OBJC_BRIDGING_HEADER = "App/App-Bridging-Header.h";
@@ -836,15 +840,15 @@
 				CODE_SIGN_ENTITLEMENTS = App/App.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 3.5.0.7;
+				CURRENT_PROJECT_VERSION = 4.0.0.5;
 				DEVELOPMENT_TEAM = DKB7LNE85Z;
 				INFOPLIST_FILE = App/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 3.5;
+				MARKETING_VERSION = 4.0.0;
 				OTHER_SWIFT_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.cbord.getmobile;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "GET&#x2009;Mobile";
 				PROVISIONING_PROFILE_SPECIFIER = "GET Development Provisioning Profile";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG USE_PUSH";
 				SWIFT_OBJC_BRIDGING_HEADER = "App/App-Bridging-Header.h";
@@ -919,15 +923,15 @@
 				CODE_SIGN_ENTITLEMENTS = App/App.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 3.5.0.7;
+				CURRENT_PROJECT_VERSION = 4.0.0.5;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = App/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 3.5;
+				MARKETING_VERSION = 4.0.0;
 				OTHER_SWIFT_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.cbord.getmobile;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "GET&#x2009;Mobile";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "App/App-Bridging-Header.h";

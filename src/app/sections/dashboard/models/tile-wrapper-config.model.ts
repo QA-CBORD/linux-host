@@ -8,6 +8,7 @@ export interface TileWrapperConfig {
     iconName?: string;
     iconPath?: string;
     buttonConfig: ButtonConfig
+    navigateBack?: PATRON_NAVIGATION | string;
 }
 
 export interface ButtonConfig {

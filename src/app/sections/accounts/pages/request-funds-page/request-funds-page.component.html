@@ -18,13 +18,16 @@
                                class="request-funds__control"
                                type="text"
                                idd="name"
-                               label="Name">
-        <p class="request-funds__control-error-msg">
+                               label="Name"
+                               [stFocusNext]="emailInput"
+                               >
+          <p class="request-funds__control-error-msg">
           {{ name.errors?.errorMsg }}
         </p>
       </st-input-floating-label>
 
-      <st-input-floating-label [isError]="email.invalid && email.touched"
+      <st-input-floating-label #emailInput
+                               [isError]="email.invalid && email.touched"
                                [control]="email"
                                [formControlName]="controlsNames.email"
                                title="Enter email"

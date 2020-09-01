@@ -89,7 +89,8 @@
                         placeholder="Please Choose"
                         interface="action-sheet"
                         [interfaceOptions]="customActionSheetOptions"
-                        formControlName="mainSelect">
+                        formControlName="mainSelect"
+                        (ionChange)="onAmountChanged($event)">
               <ion-select-option [value]="amount"
                                  *ngFor="let amount of amountsForSelect$ | async">
                 {{ amount | transactionUnits }}
@@ -113,7 +114,8 @@
               'deposit__main-input-container--decrease-font': inputText.value && inputText.value.length >= 7
             }"
                        (ionFocus)="focusLine = true"
-                       (ionBlur)="focusLine = false"
+                       (ionBlur)="focusLine = false; onAmountChanged($event)"
+                       (ionInput)="onAmountChanged($event)"
                        (keydown)="formatInput($event)"
                        formControlName="mainInput"></ion-input>
             <div *ngIf="mainFormInput.errors && mainFormInput.errors['maxLength']"
@@ -141,6 +143,6 @@
             mode="ios">
   <st-button (onClick)="onFormSubmit()"
              [isDisabled]="!depositForm.valid">
-    Deposit
+             <div id="depositBtnText">Deposit</div>
   </st-button>
 </ion-footer>

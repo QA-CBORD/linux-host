@@ -44,6 +44,10 @@ const routes: Route[] = [
     path: PATRON_ROUTES.biometric,
     loadChildren: './biometric-login/biometric.module#BiometricModule',
   },
+  {
+    path: PATRON_ROUTES.settings,
+    loadChildren: './settings/settings.module#SettingsModule',
+  },
 ];
 
 

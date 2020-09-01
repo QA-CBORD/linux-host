@@ -55,10 +55,16 @@ export class InstitutionFacadeService extends ServiceStateFacade {
     );
   }
 
+  fetchInstitutionData(): Observable<Institution> {
+    return this.institutionApiService
+      .getInstitutionData()
+      .pipe(tap(res => this.storageStateService.updateStateEntity(this.institutionKey, res, { highPriorityKey: true })));
+  }
+
   getInstitutionDataById$(institutionId: string, sessionId?: string, useSessionId?: boolean): Observable<Institution> {
     return this.institutionApiService
       .getInstitutionDataById(institutionId, sessionId, useSessionId)
-      .pipe(tap(res => this.storageStateService.updateStateEntity(this.institutionKey, res)));
+      .pipe(tap(res => this.storageStateService.updateStateEntity(this.institutionKey, res, { highPriorityKey: true })));
   }
 
   getInstitutionPhotoById$(
@@ -68,12 +74,19 @@ export class InstitutionFacadeService extends ServiceStateFacade {
   ): Observable<InstitutionPhotoInfo> {
     return this.institutionApiService.getInstitutionPhotoById(institutionId, sessionId, useSessionId).pipe(
       tap(photoInfo => {
-        this.storageStateService.updateStateEntity(this.institutionPhotoKey, photoInfo);
-      }),
+        this.storageStateService.updateStateEntity(this.institutionPhotoKey, photoInfo, { highPriorityKey: true });
+      })
     );
   }
 
   retrieveLookupList$(systemSessionId): Observable<any> {
     return this.institutionApiService.retrieveLookupList(systemSessionId);
+  }
+
+  getlastChangedTerms$(): Observable<Date>  {
+    return this.cachedInstitutionInfo$.pipe(
+      map(({ lastChangedTerms }) => lastChangedTerms ),
+      take(1)
+    );
   }
 }

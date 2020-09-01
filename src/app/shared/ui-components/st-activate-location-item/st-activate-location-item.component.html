@@ -1,19 +1,19 @@
-<ion-card [ngStyle]="{'background-color': institutionColor ? institutionColor : ''}" class="user-data">
+<ion-card [ngStyle]="{ 'background-color': institutionColor ? institutionColor : '' }" class="user-data">
   <ion-card-header class="user-data__header">
     <div *ngIf="institutionPhoto" class="user-data__header-logo-wrapper">
-      <img class="user-data__header-logo" [src]="institutionPhoto" alt="institution logo"/>
+      <img class="user-data__header-logo" [src]="institutionPhoto" alt="institution logo" />
     </div>
     <ion-card-title class="user-data__university">{{ institutionName }}</ion-card-title>
   </ion-card-header>
   <ion-card-content class="user-data__content">
     <img
-            class="user-data__university-bg"
-            src="/assets/images/card_background_illustration.svg"
-            alt="nature background"
+      class="user-data__university-bg"
+      src="/assets/images/card_background_illustration.svg"
+      alt="nature background"
     />
     <ion-card class="user-data__card">
       <div class="user-data__photo-container">
-        <img class="user-data__photo" *ngIf="userPhoto" [src]="userPhoto" alt="user photo"/>
+        <img class="user-data__photo" *ngIf="userPhoto" [src]="userPhoto" alt="user photo" />
       </div>
       <div class="user-data__info">
         <p class="user-data__name">{{ userFullName }}</p>

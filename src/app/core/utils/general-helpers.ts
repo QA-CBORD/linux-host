@@ -152,3 +152,31 @@ export function compareFieldsSkipEmptyToEnd<T>(a: T = null, b: T = null): number
   if (b === null) return -1;
   return Number(a) - Number(b);
 }
+
+export function sortAlphabetically(a, b) {
+  if (a === null) {
+    return -1;
+  }
+  if (b === null) {
+    return 1;
+  }
+  if (a.toLowerCase() < b.toLowerCase()) {
+    return -1;
+  }
+  if (a.toLowerCase() > b.toLowerCase()) {
+    return 1;
+  }
+  return 0;
+}
+
+export function configureBiometricsConfig(
+  supportedBiometricType: string[]
+): { type: string; name: string; icon: string } {
+  if (supportedBiometricType.includes('fingerprint')) {
+    return { type: 'fingerprint', name: 'Fingerprint', icon: 'fingerprint' };
+  } else if (supportedBiometricType.includes('face')) {
+    return { type: 'face', name: 'Face ID', icon: 'faceid' };
+  } else if (supportedBiometricType.includes('iris')) {
+    return { type: 'iris', name: 'Iris', icon: 'iris' };
+  }
+}

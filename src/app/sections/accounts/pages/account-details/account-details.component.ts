@@ -1,5 +1,5 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { IonContent, IonInfiniteScroll, ToastController } from '@ionic/angular';
 
 import { Observable } from 'rxjs';
@@ -8,6 +8,7 @@ import { take } from 'rxjs/operators';
 import { TransactionHistory } from '../../models/transaction-history.model';
 import { CONTENT_STRINGS, TIME_PERIOD } from '../../accounts.config';
 import { TransactionService } from '../../services/transaction.service';
+import { NavigationState } from '@sections/dashboard/models/navigation-state.model';
 
 @Component({
   selector: 'st-account-details',
@@ -21,17 +22,21 @@ export class AccountDetailsComponent implements OnInit, AfterViewInit {
   private currentAccountId: string;
   transactions$: Observable<TransactionHistory[]>;
   contentString: { [key: string]: string };
+  backButtonText: string;
 
   constructor(
     private readonly activatedRoute: ActivatedRoute,
     private readonly toastController: ToastController,
-    private readonly transactionsService: TransactionService
+    private readonly transactionsService: TransactionService,
+    private readonly router: Router
   ) {}
 
   ngOnInit() {
     this.setContentStrings();
     this.currentAccountId = this.activatedRoute.snapshot.params.id;
     this.transactions$ = this.transactionsService.transactions$;
+    const navState = this.router.getCurrentNavigation().extras.state as NavigationState;
+    this.backButtonText = (navState && navState.backButtonText) || 'Accounts';
   }
 
   ngAfterViewInit() {
@@ -43,7 +48,7 @@ export class AccountDetailsComponent implements OnInit, AfterViewInit {
       .getNextTransactionsByAccountId(this.currentAccountId)
       .pipe(take(1))
       .subscribe(
-        async data => this.lazy.disabled = !data.length,
+        async data => (this.lazy.disabled = !data.length),
         async () => {
           await this.onErrorRetrieveTransactions('Something went wrong, please try again...');
           await this.content.scrollByPoint(null, -100, 700);

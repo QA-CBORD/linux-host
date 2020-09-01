@@ -1,0 +1,9 @@
+@import 'tools';
+
+:host {
+	.st-popover {
+		&__content {
+			margin-bottom: 10px;
+		}
+	}
+}

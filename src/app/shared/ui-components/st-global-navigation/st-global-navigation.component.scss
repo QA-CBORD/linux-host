@@ -1,7 +1,6 @@
 @import 'tools';
 
 .global-navigation {
-
   &__vertical-list {
     list-style: none;
     margin: 0;
@@ -28,7 +27,7 @@
 
   &__main {
     position: fixed;
-    bottom: 0;
+    bottom: env(safe-area-inset-bottom);
     left: 0;
     right: 0;
     height: $bottom-navigation-bar-height;
@@ -41,6 +40,7 @@
     margin: 0;
     padding: 0;
     height: 100%;
+    box-shadow: 0px 0px 12px $bottom-navigation-box-shadow, 0px 2px 26px $top-navigation-box-shadow;
   }
 
   &__list-item {
@@ -64,7 +64,7 @@
   &__icon {
     height: 27px;
     width: 27px;
-    background-image: url("/assets/icon/bottom_navigation_icons.png");
+    background-image: url('/assets/icon/bottom_navigation_icons.png');
 
     .global-navigation__list-item--active & {
       background-position-y: 27px;
@@ -99,7 +99,7 @@
     }
 
     &--rewards {
-      background-position-x: -140px;;
+      background-position-x: -140px;
     }
 
     &--explore {

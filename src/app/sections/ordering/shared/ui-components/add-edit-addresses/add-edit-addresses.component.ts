@@ -17,11 +17,12 @@ import { MerchantService } from '@sections/ordering/services';
 import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
-import { formControlErrorDecorator } from '@core/utils/general-helpers';
-import { ContentStringsFacadeService } from "@core/facades/content-strings/content-strings.facade.service";
-import { CONTENT_STINGS_CATEGORIES, CONTENT_STINGS_DOMAINS } from "../../../../../content-strings";
+import { formControlErrorDecorator, sortAlphabetically } from '@core/utils/general-helpers';
+import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
+import { CONTENT_STINGS_CATEGORIES, CONTENT_STINGS_DOMAINS } from '../../../../../content-strings';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Settings } from '../../../../../app.global';
+import { StInputFloatingLabelComponent } from '@shared/ui-components';
 
 @Component({
   selector: 'st-add-edit-addresses',
@@ -47,15 +48,14 @@ export class AddEditAddressesComponent implements OnInit, OnChanges, OnDestroy {
   private readonly sourceSubscription: Subscription = new Subscription();
 
   constructor(
-      private readonly fb: FormBuilder,
-      private readonly merchantService: MerchantService,
-      private readonly cdRef: ChangeDetectorRef,
-      private readonly loader: LoadingService,
-      private readonly orderingService: OrderingService,
-      private readonly contentStringsFacadeService: ContentStringsFacadeService,
-      private readonly settingsFacadeService: SettingsFacadeService,
-  ) {
-  }
+    private readonly fb: FormBuilder,
+    private readonly merchantService: MerchantService,
+    private readonly cdRef: ChangeDetectorRef,
+    private readonly loader: LoadingService,
+    private readonly orderingService: OrderingService,
+    private readonly contentStringsFacadeService: ContentStringsFacadeService,
+    private readonly settingsFacadeService: SettingsFacadeService
+  ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.addEditAddressesForm) {
@@ -133,17 +133,21 @@ export class AddEditAddressesComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private getSetting(setting: Settings.Setting) {
-    this.loader.showSpinner();
     this.settingsFacadeService
-        .getSetting(setting)
-        .pipe(take(1))
-        .subscribe(
-            ({ value }) => {
-              this.initForm(parseInt(value), this.editAddress && this.editAddress.address);
-            },
-            null,
-            () => this.loader.closeSpinner(),
-        );
+      .getSetting(setting)
+      .pipe(take(1))
+      .subscribe(
+        ({ value }) => {
+          this.initForm(parseInt(value), this.editAddress && this.editAddress.address);
+        },
+        ({ error }) => {
+          this.loader.closeSpinner();
+        },
+
+        () => {
+          this.loader.closeSpinner();
+        }
+      );
   }
 
   private initForm(addressRestriction, selectedAddress) {
@@ -167,6 +171,7 @@ export class AddEditAddressesComponent implements OnInit, OnChanges, OnDestroy {
       }
     }
     this.addEditAddressesForm = this.fb.group(campusBlock);
+
     this.cdRef.detectChanges();
 
     this.onChanges();
@@ -220,9 +225,7 @@ export class AddEditAddressesComponent implements OnInit, OnChanges, OnDestroy {
 
   private onCampusFormBlock(selectedAddress) {
     const { buildings, room } = ADD_EDIT_ADDRESS_CONTROL_NAMES;
-    const buildingsErrors = [
-      formControlErrorDecorator(Validators.required, CONTROL_ERROR[buildings].required),
-    ];
+    const buildingsErrors = [formControlErrorDecorator(Validators.required, CONTROL_ERROR[buildings].required)];
 
     const roomErrors = [formControlErrorDecorator(Validators.required, CONTROL_ERROR[room].required)];
     let campus;
@@ -234,8 +237,8 @@ export class AddEditAddressesComponent implements OnInit, OnChanges, OnDestroy {
       [this.controlsNames.campus]: [campus || 'oncampus'],
       [this.controlsNames.buildings]: [
         selectedAddress && selectedAddress.building !== null
-            ? this.editAddress.activeBuilding.addressInfo.building
-            : '',
+          ? this.editAddress.activeBuilding.addressInfo.building
+          : '',
         buildingsErrors,
       ],
       [this.controlsNames.room]: [
@@ -256,67 +259,84 @@ export class AddEditAddressesComponent implements OnInit, OnChanges, OnDestroy {
     const modifedControls = Object.entries(controls);
     for (let i = 0; i < modifedControls.length; i++) {
       this.addEditAddressesForm.addControl(
-          modifedControls[i][0],
-          this.fb.control(modifedControls[i][1][0], modifedControls[i][1][1]),
+        modifedControls[i][0],
+        this.fb.control(modifedControls[i][1][0], modifedControls[i][1][1])
       );
     }
   }
 
   private initContentStrings() {
-    this.contentStrings.formErrorAddress =
-        this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.formErrorAddress);
-    this.contentStrings.formErrorBuilding =
-        this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.formErrorBuilding);
-    this.contentStrings.formErrorCity =
-        this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.formErrorCity);
-    this.contentStrings.formErrorRoom =
-        this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.formErrorRoom);
-    this.contentStrings.formErrorState =
-        this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.formErrorState);
-    this.contentStrings.labelState =
-        this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelState);
-    this.contentStrings.labelSetAsDefault =
-        this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelSetAsDefault);
-    this.contentStrings.labelOffCampus =
-        this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelOffCampus);
-    this.contentStrings.labelOnCampus =
-        this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelOnCampus);
-    this.contentStrings.labelRoom =
-        this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelRoom);
-    this.contentStrings.labelAddressLine1 =
-        this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelAddressLine1);
-    this.contentStrings.labelAddressLine2 =
-        this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelAddressLine2);
-    this.contentStrings.labelBuildings =
-        this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelBuildings);
-    this.contentStrings.labelCity =
-        this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelCity);
-    this.contentStrings.labelNickname =
-        this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelNickname);
-    this.contentStrings.labelOptional =
-        this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelOptional);
-    this.contentStrings.selectAccount =
-        this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.selectAccount);
-    this.arrOfStates$ =
-        this.contentStringsFacadeService.getContentStrings$(
-            CONTENT_STINGS_DOMAINS.patronUi,
-            CONTENT_STINGS_CATEGORIES.usStates)
-            .pipe(map(stateStrings =>
-                stateStrings.map(({ value }) => value))
-            );
+    this.contentStrings.formErrorAddress = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.formErrorAddress
+    );
+    this.contentStrings.formErrorBuilding = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.formErrorBuilding
+    );
+    this.contentStrings.formErrorCity = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.formErrorCity
+    );
+    this.contentStrings.formErrorRoom = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.formErrorRoom
+    );
+    this.contentStrings.formErrorState = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.formErrorState
+    );
+    this.contentStrings.labelState = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelState);
+    this.contentStrings.labelSetAsDefault = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.labelSetAsDefault
+    );
+    this.contentStrings.labelOffCampus = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.labelOffCampus
+    );
+    this.contentStrings.labelOnCampus = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.labelOnCampus
+    );
+    this.contentStrings.labelRoom = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelRoom);
+    this.contentStrings.labelAddressLine1 = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.labelAddressLine1
+    );
+    this.contentStrings.labelAddressLine2 = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.labelAddressLine2
+    );
+    this.contentStrings.labelBuildings = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.labelBuildings
+    );
+    this.contentStrings.labelCity = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelCity);
+    this.contentStrings.labelNickname = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.labelNickname
+    );
+    this.contentStrings.labelOptional = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.labelOptional
+    );
+    this.contentStrings.selectAccount = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.selectAccount
+    );
+    this.arrOfStates$ = this.contentStringsFacadeService
+      .getContentStrings$(CONTENT_STINGS_DOMAINS.patronUi, CONTENT_STINGS_CATEGORIES.usStates)
+      .pipe(
+        map(stateStrings => {
+          const statesArray = stateStrings.map(({ value }) => value);
+          return statesArray.sort(sortAlphabetically);
+        })
+      );
   }
 
   private async updateFormErrorsByContentStrings(): Promise<void> {
-    CONTROL_ERROR[ADD_EDIT_ADDRESS_CONTROL_NAMES.address1].required
-        = await this.contentStrings.formErrorAddress.pipe(take(1)).toPromise();
-    CONTROL_ERROR[ADD_EDIT_ADDRESS_CONTROL_NAMES.buildings].required
-        = await this.contentStrings.formErrorBuilding.pipe(take(1)).toPromise();
-    CONTROL_ERROR[ADD_EDIT_ADDRESS_CONTROL_NAMES.room].required
-        = await this.contentStrings.formErrorRoom.pipe(take(1)).toPromise();
-    CONTROL_ERROR[ADD_EDIT_ADDRESS_CONTROL_NAMES.city].required
-        = await this.contentStrings.formErrorCity.pipe(take(1)).toPromise();
-    CONTROL_ERROR[ADD_EDIT_ADDRESS_CONTROL_NAMES.state].required
-        = await this.contentStrings.formErrorState.pipe(take(1)).toPromise();
+    CONTROL_ERROR[ADD_EDIT_ADDRESS_CONTROL_NAMES.address1].required = await this.contentStrings.formErrorAddress
+      .pipe(take(1))
+      .toPromise();
+    CONTROL_ERROR[ADD_EDIT_ADDRESS_CONTROL_NAMES.buildings].required = await this.contentStrings.formErrorBuilding
+      .pipe(take(1))
+      .toPromise();
+    CONTROL_ERROR[ADD_EDIT_ADDRESS_CONTROL_NAMES.room].required = await this.contentStrings.formErrorRoom
+      .pipe(take(1))
+      .toPromise();
+    CONTROL_ERROR[ADD_EDIT_ADDRESS_CONTROL_NAMES.city].required = await this.contentStrings.formErrorCity
+      .pipe(take(1))
+      .toPromise();
+    CONTROL_ERROR[ADD_EDIT_ADDRESS_CONTROL_NAMES.state].required = await this.contentStrings.formErrorState
+      .pipe(take(1))
+      .toPromise();
   }
 }
 

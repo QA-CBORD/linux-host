@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { UserInfo } from '@core/model/user/user-info.model';
-import { UserSettingInfo, UserPhotoInfo, UserPhotoList, AddressInfoList } from '@core/model/user';
+import { UserSettingInfo, UserPhotoInfo, UserPhotoList, AddressInfoList, UserNotificationInfo } from '@core/model/user';
 import { map, switchMap } from 'rxjs/operators';
 import { MessageResponse } from '@core/model/service/message-response.model';
 import { AddressInfo } from '@core/model/address/address-info';
@@ -46,10 +46,26 @@ export class UserApiService {
     return this.http.post<MessageResponse<boolean>>(this.serviceUrl, queryConfig);
   }
 
-  getUserPhoto(userId: string): Observable<MessageResponse<UserPhotoInfo>> {
-    const queryConfig = new RPCQueryConfig('retrieveUserPhoto', { userId }, true);
+  //if you leave photoID null it will return you the accepted photo, if it exists
+  getUserPhoto(photoId: string): Observable<MessageResponse<UserPhotoInfo>> {
+    const queryConfig = new RPCQueryConfig('retrieveUserPhoto', { photoId }, true);
 
     return this.http.post<MessageResponse<UserPhotoInfo>>(this.serviceUrl, queryConfig);
+  }
+
+  // Boolean addUserPhoto(String sessionId, String userId, UserPhotoInfo photo)
+  //setting front of ID photo with a type of 1 or 2 in the userPhotoInfo object
+  addUserPhoto(userId: string, photo: UserPhotoInfo): Observable<MessageResponse<boolean>> {
+    const queryConfig = new RPCQueryConfig('addUserPhoto', { userId, photo }, true);
+
+    return this.http.post<MessageResponse<boolean>>(this.serviceUrl, queryConfig);
+  }
+
+  //used for deleting a photo right now, but just changes the status to 4
+  updateUserPhotoStatus(photoId: string, status: number, reason: string) {
+    const queryConfig = new RPCQueryConfig('updateUserPhotoStatus', { photoId, status, reason }, true);
+
+    return this.http.post<MessageResponse<boolean>>(this.serviceUrl, queryConfig);
   }
 
   createUserPin(PIN: string, deviceId: string): Observable<MessageResponse<boolean>> {
@@ -86,9 +102,34 @@ export class UserApiService {
     return this.http.post<MessageResponse<UserPhotoList>>(this.serviceUrl, queryConfig);
   }
 
+  //this is potentially going to become the new call Matt is making not sure
+  getFullPhotoListByUserId(userId: string): Observable<MessageResponse<UserPhotoList>> {
+    const queryConfig = new RPCQueryConfig('retrieveFullUserPhotoList', { userId }, true);
+
+    return this.http.post<MessageResponse<UserPhotoList>>(this.serviceUrl, queryConfig);
+  }
+
   getPhotoById(photoId: string): Observable<MessageResponse<UserPhotoInfo>> {
     const queryConfig = new RPCQueryConfig('retrieveUserPhoto', { photoId }, true);
 
     return this.http.post<MessageResponse<UserPhotoInfo>>(this.serviceUrl, queryConfig);
+  }
+
+  saveNotification$(userId: string, notification: UserNotificationInfo): Observable<string> {
+    const params = { userId, notification };
+    const queryConfig = new RPCQueryConfig('saveNotification', params, true, false);
+    return this.http.post<any>(this.serviceUrl, queryConfig);
+  }
+
+  logoutAndRemoveUserNotification$(userId: string, notification: UserNotificationInfo): Observable<boolean> {
+    const params = { userId, notification };
+    const queryConfig = new RPCQueryConfig('logoutAndRemoveUserNotification', params, true, false);
+    return this.http.post<any>(this.serviceUrl, queryConfig);
+  }
+
+  updateUserInfo$(user: UserInfo): Observable<string> {
+    const params = { user, forceOverwrite: true };
+    const queryConfig = new RPCQueryConfig('update', params, true, false);
+    return this.http.post<any>(this.serviceUrl, queryConfig);
   }
 }

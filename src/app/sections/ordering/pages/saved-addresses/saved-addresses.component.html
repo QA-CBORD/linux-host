@@ -1,42 +1,46 @@
 <st-header
-        title="{{contentStrings.labelSavedAddresses | async}}"
-        [isTitleShow]="true"
-        [backButtonTitle]="''"
-        [backButtonIcon]="'close'"
-        [isToolbarShow]="true"
-        class="saved-addresses__header"
+  title="{{ contentStrings.labelSavedAddresses | async }}"
+  [isTitleShow]="true"
+  [backButtonTitle]="''"
+  [backButtonIcon]="'close'"
+  [isToolbarShow]="true"
+  class="saved-addresses__header"
 ></st-header>
 
 <ion-content>
   <div class="saved-addresses__add-address-container">
     <ion-item
-            class="saved-addresses__add-address-wrapper"
-            lines="full"
-            [button]="true"
-            [detail]="true"
-            detailIcon="/assets/icon/angle-{{ addNewAdddressState ? 'up' : 'down' }}-select.svg"
-            (click)="addNewAdddressState = !addNewAdddressState"
+      class="saved-addresses__add-address-wrapper"
+      lines="full"
+      [button]="true"
+      [detail]="true"
+      detailIcon="/assets/icon/angle-{{ addNewAdddressState ? 'up' : 'down' }}-select.svg"
+      (click)="changeAddNewAdddressState()"
     >
       <span class="saved-addresses__add-address-sign">+</span>
-      <span class="saved-addresses__add-address-text">{{contentStrings.labelAddNewAddress | async}}</span>
+      <span class="saved-addresses__add-address-text">{{ contentStrings.labelAddNewAddress | async }}</span>
     </ion-item>
     <ng-container *ngIf="addNewAdddressState">
       <st-add-edit-addresses
-              [buildingsOnCampus]="buildings$ | async"
-              [isError]="errorState"
-              (onFormChanged)="onAddressFormChanged($event)"
+        [buildingsOnCampus]="buildings$ | async"
+        [isError]="errorState"
+        (onFormChanged)="onAddressFormChanged($event)"
       ></st-add-edit-addresses>
 
       <div class="saved-addresses__add-address-btn-container">
         <st-button [fill]="'clear'" (onClick)="addNewAdddressState = !addNewAdddressState">
-          {{contentStrings.buttonCancel | async}}
+          {{ contentStrings.buttonCancel | async }}
         </st-button>
         <st-button (onClick)="addAddress()" [isDisabled]="addNewAddressForm && !addNewAddressForm.valid">
-          {{contentStrings.buttonSave | async}}
+          {{ contentStrings.buttonSave | async }}
         </st-button>
       </div>
     </ng-container>
   </div>
   <div class="saved-addresses__add-address-divider" *ngIf="addNewAdddressState"></div>
-  <st-order-address-list [addresses]="userAddresses"></st-order-address-list>
+  <st-order-address-list
+    [addresses]="userAddresses"
+    [defaultAddress]="defaultAddress"
+    (onAddNewAddress)="changeAddNewAdddressState()"
+  ></st-order-address-list>
 </ion-content>

@@ -47,6 +47,7 @@ export namespace Settings {
     FEATURES = 'get.feature',
     DEPOSITS = 'get.deposit',
     MEAL_PLAN = 'get.meal_plan',
+    PHOTO_UPLOAD = 'get.photo_upload',
   }
 
   export enum Setting {
@@ -54,6 +55,7 @@ export namespace Settings {
     SOA_KEY = 'soa.general.key',
     PIN_ENTRY_MAX_FAILURES = 'get.login.pin_max_failed',
     FEEDBACK_EMAIL = 'soa.email.get_feedback_email',
+    SUPPORT_EMAIL = 'soa.email.get_support_email',
     PATRON_DISPLAY_MEDIA_TYPE = 'get.feature.mobile_patron_cashless_display_media_type',
     MY_CARD_ENABLED = 'get.feature.enable_get_my_card',
     MOBILE_ACCESS_ENABLED = 'get.feature.enable_open_my_door',
@@ -84,6 +86,8 @@ export namespace Settings {
     MOBILE_HEADER_COLOR = 'get.style.custom_site_colors',
     HOUSING_ENABLED = 'get.feature.enable_housing',
     MEAL_DONATIONS_ENABLED = 'get.feature.meal_donations_enabled',
+    MEAL_CHANGE_PLAN_ENABLED = 'get.feature.enable_change_meal_plan',
+    MEAL_PURCHASE_PLAN_ENABLED = 'get.feature.enable_purchase_meal_plan',
     MEAL_DONATIONS_TENDERS = 'get.meal_donation.tenders',
     MEAL_DONATIONS_FREEFORM_ENABLED = 'get.meal_donation.allow_freeform',
     MEAL_DONATIONS_FIXED_MEAL_AMOUNTS = 'get.meal_donation.fixed_meal_amounts',
@@ -92,9 +96,13 @@ export namespace Settings {
     ADDRESS_RESTRICTION = 'get.feature.institution_address_restriction',
     DISPLAY_CREDIT_CARDS = 'get.feature.display_credit_cards',
     APPLE_PAY_ENABLED = 'get.feature.enable_apple_pay',
-    APPLE_WALLET_ENABLED = 'get.feature.enable_apple_wallet'
+    APPLE_WALLET_ENABLED = 'get.feature.enable_apple_wallet',
+    PUSH_NOTIFICATION_ENABLED = 'get.feature.enable_push_notification',
+    GOVT_PHOTO_ID_REQUIRED = 'get.feature.government_photo_id_required',
+    PHOTO_UPLOAD_ENABLED = 'get.feature.enable_photo_upload',
+    REPORT_LOST_CARD_ENABLED = 'get.feature.enable_lost_card',
+    STANDARD_REGISTRATION_LINK = 'get.feature.standard_registration_link',
   }
-
 }
 
 export enum AccountType {
@@ -163,6 +171,12 @@ export namespace User {
     DELETED = 4,
   }
 
+  export enum NotificationType {
+    EMAIL = 1,
+    PHONE ,
+    PUSH_NOTIFICATION = 8
+  }
+
   export enum Settings {
     CASHLESS_KEY = 'CashlessKey',
     QUICK_AMOUNT = 'quick_amount',
@@ -186,6 +200,7 @@ export enum PATRON_NAVIGATION {
   ordering = 'patron/ordering',
   explore = 'patron/explore',
   biometric = 'patron/biometric',
+  settings = 'patron/settings',
 }
 
 export enum LoginType {
@@ -195,3 +210,7 @@ export enum LoginType {
   WEB = 'WEB',
   LOCAL = 'LOCAL',
 }
+
+export const PATRON_BACK_TEXT: { [key: string]: string } = {
+  [`/${PATRON_NAVIGATION.dashboard}`]: 'Home',
+};

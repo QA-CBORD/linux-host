@@ -8,7 +8,6 @@ import { UserLogin } from '@core/model/user';
 import { HttpClient } from '@angular/common/http';
 import { RPCQueryConfig } from '@core/interceptors/query-config.model';
 import { ServiceParameters } from '@core/model/service/message-response.model';
-import {Device} from '@capacitor/core';
 
 @Injectable({
   providedIn: 'root',
@@ -93,12 +92,13 @@ export class AuthApiService {
   getAuthenticationToken(): Observable<string> {
     let params: ServiceParameters = { };
     const queryConfig = new RPCQueryConfig('getAuthenticationToken', params, true);
-    
+
     // MARK: Remove the token setting from the service
     return this.http.post<any>(this.serviceUrl, queryConfig).pipe(
       map(({ response }) => response )
     );
   }
+
 
   /**
    * Authenticate a Session Token (session sharing) to get a new User Session

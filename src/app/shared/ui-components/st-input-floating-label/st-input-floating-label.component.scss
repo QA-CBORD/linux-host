@@ -28,6 +28,7 @@
     outline: none;
     border: 1px solid $color-light-gray;
     border-radius: 8px;
+    -webkit-appearance: none;
     padding-left: 10px;
 
     &:focus,
@@ -67,7 +68,6 @@
     z-index: 2;
   }
 
-  //BugFix/GCS-1928 #5 sign  for all fields with an error (to comply with Accessibility standards).
   &__accesibility_error {
     position: absolute;
     top: 25%;

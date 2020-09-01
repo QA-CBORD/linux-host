@@ -1,21 +1,29 @@
 import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController, PopoverController } from '@ionic/angular';
 
-import { EditHomePageModalComponent } from './components/edit-home-page-modal';
 import { TileWrapperConfig } from '@sections/dashboard/models';
 import { TILES_ID } from './dashboard.config';
-import { Observable } from 'rxjs';
+import { Observable, zip } from 'rxjs';
 import { TileConfigFacadeService } from '@sections/dashboard/tile-config-facade.service';
 import { MEAL_CONTENT_STRINGS } from '@sections/accounts/pages/meal-donations/meal-donation.config.ts';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { CONTENT_STINGS_CATEGORIES, CONTENT_STINGS_DOMAINS } from '../../content-strings';
 import { AccessCardComponent } from './containers/access-card/access-card.component';
 import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
-import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
-import { Router } from '@angular/router';
-import { ROLES } from 'src/app/app.global';
-import { GUEST_ROUTES } from 'src/app/non-authorized/non-authorized.config';
-import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
+import { SessionFacadeService } from '@core/facades/session/session.facade.service';
+import { BUTTON_TYPE } from '@core/utils/buttons.config';
+
+import { Plugins } from '@capacitor/core';
+import { map, take } from 'rxjs/operators';
+import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
+import { StNativeStartupPopoverComponent } from '@shared/ui-components/st-native-startup-popover';
+import { UserFacadeService } from '@core/facades/user/user.facade.service';
+import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
+import { PhoneEmailComponent } from '@shared/ui-components/phone-email/phone-email.component';
+import { EditHomePageModalComponent } from '@shared/ui-components/edit-home-page-modal/edit-home-page-modal.component';
+import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
+
+const { App, Device } = Plugins;
 
 @Component({
   selector: 'st-dashboard',
@@ -31,9 +39,12 @@ export class DashboardPage implements OnInit {
     private readonly modalController: ModalController,
     private readonly tileConfigFacadeService: TileConfigFacadeService,
     private readonly contentStringsFacadeService: ContentStringsFacadeService,
-    private readonly authFacadeService: AuthFacadeService,
-    private readonly identityFacadeService: IdentityFacadeService,
-    private readonly router: Router
+    private readonly sessionFacadeService: SessionFacadeService,
+    private readonly nativeStartupFacadeService: NativeStartupFacadeService,
+    private readonly popoverCtrl: PopoverController,
+    private readonly userFacadeService: UserFacadeService,
+    private readonly institutionFacadeService: InstitutionFacadeService,
+    private readonly appBrowser: InAppBrowser,
   ) {}
 
   get tilesIds(): { [key: string]: string } {
@@ -44,16 +55,111 @@ export class DashboardPage implements OnInit {
     this.tiles$ = this.tileConfigFacadeService.tileSettings$;
     this.updateDonationMealsStrings();
     this.updateOrderingStrings();
+    this.pushNotificationRegistration();
   }
 
-  async logout(): Promise<void> {
-    this.authFacadeService.logoutUser();
-    this.identityFacadeService.logoutUser();
-    this.router.navigate([ROLES.guest, GUEST_ROUTES.entry]);
-  }
-
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     this.accessCard.ionViewWillEnter();
+  }
+
+  ionViewDidEnter() {
+    this.checkNativeStartup();
+  }
+
+  private async checkNativeStartup() {
+    this.nativeStartupFacadeService
+      .fetchNativeStartupInfo()
+      .pipe(take(1))
+      .subscribe(nativeStartupConfig => {
+        if (nativeStartupConfig) {
+          const { title, message, arrOfBtns } = nativeStartupConfig;
+          this.initModal(title, message, arrOfBtns, this.redirectToTheStore.bind(this));
+        } else {
+          this.checkStaleProfile();
+        }
+      });
+  }
+
+  private async checkStaleProfile() {
+    zip(this.userFacadeService.getUserData$(), this.institutionFacadeService.getlastChangedTerms$())
+      .pipe(
+        map(([{ staleProfile, lastUpdatedProfile }, lastChangedTerms]) => {
+          if (staleProfile) {
+            return true;
+          }
+
+          /// if institution does not have a TOS changed date
+          if (!lastChangedTerms) {
+            return false;
+          }
+
+          /// if user has not TOS seen / profile update date value
+          if (!lastUpdatedProfile) {
+            return true;
+          }
+          /// if user hasn't seen new TOS for the institution
+          return lastUpdatedProfile < lastChangedTerms;
+        }),
+        take(1)
+      )
+      .subscribe(showUpdateProfile => {
+        if (showUpdateProfile) {
+          this.showUpdateProfileModal();
+        }
+      });
+  }
+
+  private async initModal(title, message, buttons, onSuccessCb): Promise<void> {
+    this.hideGlobalNavBar(true);
+    const modal = await this.popoverCtrl.create({
+      component: StNativeStartupPopoverComponent,
+      componentProps: {
+        data: {
+          title,
+          message,
+          buttons,
+        },
+      },
+      animated: false,
+      backdropDismiss: false,
+    });
+
+    modal.onDidDismiss().then(({ role }) => {
+      this.hideGlobalNavBar(false);
+      switch (role) {
+        case BUTTON_TYPE.OKAY:
+          onSuccessCb();
+          this.sessionFacadeService.lockVault();
+          App.exitApp();
+          break;
+        case BUTTON_TYPE.CLOSE:
+          this.sessionFacadeService.lockVault();
+          App.exitApp();
+          break;
+        case BUTTON_TYPE.CANCEL:
+          this.checkStaleProfile();
+          break;
+      }
+    });
+
+    await modal.present();
+  }
+
+  private redirectToTheStore() {
+    Device.getInfo()
+      .then(deviceInfo => {
+
+        if (deviceInfo.platform === 'ios') {
+          this.appBrowser.create('itms-apps://itunes.apple.com/app/id844091049', '_system');
+        } else if (deviceInfo.platform === 'android') {
+          this.appBrowser.create('https://play.google.com/store/apps/details?id=com.cbord.get', '_system');
+        }
+      })
+      .catch(reason => {});
+  }
+
+  pushNotificationRegistration() {
+    this.sessionFacadeService.handlePushNotificationRegistration();
   }
 
   async presentEditHomePageModal(): Promise<void> {
@@ -103,5 +209,21 @@ export class DashboardPage implements OnInit {
     });
 
     await this.tileConfigFacadeService.updateConfigById(TILES_ID.order, res);
+  }
+
+  async showUpdateProfileModal(): Promise<void> {
+    const modal = await this.modalController.create({
+      component: PhoneEmailComponent,
+      componentProps: { staleProfile: true },
+      backdropDismiss: false,
+    });
+
+    modal.onDidDismiss().then(() => this.hideGlobalNavBar(false));
+    this.hideGlobalNavBar(true);
+    return await modal.present();
+  }
+
+  private hideGlobalNavBar(hide: boolean) {
+    this.nativeStartupFacadeService.blockGlobalNavigationStatus = hide;
   }
 }

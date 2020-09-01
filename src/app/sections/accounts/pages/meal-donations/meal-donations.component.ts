@@ -134,7 +134,7 @@ export class MealDonationsComponent implements OnInit, OnDestroy {
         account$: this.contentStrings.labelAccount,
       },
       animated: false,
-      backdropDismiss: true,
+      backdropDismiss: false,
     });
 
     popover.onDidDismiss().then(({ role }) => {

@@ -46,7 +46,6 @@ export class AccountsTileComponent implements OnInit {
         })
       )
       .subscribe(accounts => {
-        //*Hide Pager Icon if only one slide (bugfix/GCS-1928)
         this.pager = accounts.length > this.itemsPerSlide;
 
         while (accounts.length > 0) {
