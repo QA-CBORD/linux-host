@@ -97,12 +97,8 @@ export class DashboardPage implements OnInit {
           if (!lastUpdatedProfile) {
             return true;
           }
-
-          const profileUpdated: Date = new Date(lastUpdatedProfile);
-          const instChangedTerms: Date = new Date(lastChangedTerms);
-
           /// if user hasn't seen new TOS for the institution
-          return profileUpdated < instChangedTerms;
+          return lastUpdatedProfile < lastChangedTerms;
         }),
         take(1)
       )
