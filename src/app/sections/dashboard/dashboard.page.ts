@@ -22,6 +22,7 @@ import { InstitutionFacadeService } from '@core/facades/institution/institution.
 import { PhoneEmailComponent } from '@shared/ui-components/phone-email/phone-email.component';
 import { EditHomePageModalComponent } from '@shared/ui-components/edit-home-page-modal/edit-home-page-modal.component';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
+import { EMAIL_REGEXP } from '@core/utils/regexp-patterns';
 
 const { App, Device } = Plugins;
 
@@ -83,8 +84,9 @@ export class DashboardPage implements OnInit {
   private async checkStaleProfile() {
     zip(this.userFacadeService.getUserData$(), this.institutionFacadeService.getlastChangedTerms$())
       .pipe(
-        map(([{ staleProfile, lastUpdatedProfile }, lastChangedTerms]) => {
-          if (staleProfile) {
+        map(([{ email, staleProfile, lastUpdatedProfile }, lastChangedTerms]) => {
+          /// if stale profile or user email is not defined or malformed
+          if (staleProfile || !EMAIL_REGEXP.test(email)) {
             return true;
           }
 
