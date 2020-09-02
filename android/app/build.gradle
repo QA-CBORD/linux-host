@@ -4,6 +4,10 @@ apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
     defaultConfig {
         applicationId "com.cbord.get"
         minSdkVersion rootProject.ext.minSdkVersion
@@ -11,6 +15,13 @@ android {
         versionCode 1000
         versionName "4.0.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
+
+        //Mobile keys build configurations @see gradle.properties
+        buildConfigField "String", "AAMK_APP_ID", AAMK_APP_ID
+        buildConfigField "String", "AAMK_APP_ID_DESCRIPTION", AAMK_APP_ID_DESCRIPTION
+        buildConfigField "int", "AAMK_LOCK_SERVICE_CODE", AAMK_LOCK_SERVICE_CODE
+        buildConfigField "String", "AAMK_EMAIL_LOGS_MAIL", AAMK_EMAIL_LOGS_MAIL
     }
     buildTypes {
         release {
@@ -42,8 +53,8 @@ dependencies {
     // Origo and mobile keys SDK
     // uncomment to build app without origo sdk as a submodule
     releaseImplementation name: 'origo-sdk-release', version: '1.6.0', ext: 'aar'
-        //    debugImplementation name: 'origo-sdk-debug', version: '1.6.0', ext: 'aar'
-        //    debugImplementation name: 'mobilekeys-android-sdk-debug', version: '7.4.6', ext: 'aar'
+    debugImplementation name: 'origo-sdk-debug', version: '1.6.0', ext: 'aar'
+    debugImplementation name: 'mobilekeys-android-sdk-debug', version: '7.4.6', ext: 'aar'
     releaseImplementation name: 'mobilekeys-android-sdk-release', version: '7.4.6', ext: 'aar'
 
     // Origo transitive dependencies
