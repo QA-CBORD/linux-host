@@ -9,7 +9,7 @@ import { MerchantInfo, MerchantOrderTypesInfo } from './shared/models';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { OrderOptionsActionSheetComponent } from './shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LOCAL_ROUTING, ORDERING_CONTENT_STRINGS } from './ordering.config';
+import { LOCAL_ROUTING, MerchantSettings, ORDERING_CONTENT_STRINGS } from './ordering.config';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 
@@ -41,6 +41,10 @@ export class OrderingPage implements OnInit {
   }
 
   merchantClickHandler(merchantInfo: MerchantInfo) {
+    if (!this.orderAheadEnabled(merchantInfo)) {
+      this.onToastDisplayed(`${merchantInfo.name} is currently closed, please try again during operating hours`, 4000);
+      return;
+    }
     this.openOrderOptions(merchantInfo);
   }
 
@@ -104,17 +108,30 @@ export class OrderingPage implements OnInit {
           first()
         )
         .toPromise();
+
+      if (!merchant) {
+        this.onToastDisplayed('We were unable to find your merchant - Please try again', 4000);
+        return;
+      }
+      if (!this.orderAheadEnabled(merchant)) {
+        this.onToastDisplayed(`${merchant.name} is currently closed, please try again during operating hours`, 4000);
+        return;
+      }
       this.openOrderOptions(merchant);
     }
   }
 
-  private async onToastDisplayed(message: string): Promise<void> {
+  private async onToastDisplayed(message: string, duration: number = 1000): Promise<void> {
     const toast = await this.toastController.create({
       message,
-      duration: 1000,
+      duration: duration,
       position: 'bottom',
     });
     await toast.present();
+  }
+
+  private orderAheadEnabled(merchant: MerchantInfo): boolean {
+    return merchant.openNow && parseInt(merchant.settings.map[MerchantSettings.orderAheadEnabled].value) === 1;
   }
 
   private initContentStrings() {
