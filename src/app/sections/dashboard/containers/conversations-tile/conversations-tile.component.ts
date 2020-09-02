@@ -3,7 +3,7 @@ import { SecureMessagingService } from './services/secure-messaging.service';
 import { SecureMessageConversation, SecureMessageInfo } from '@core/model/secure-messaging/secure-messaging.model';
 import { take, finalize } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
-import { getRandomColorExtendedPallete } from '@core/utils/general-helpers';
+import { getRandomColorExtendedPalette } from '@core/utils/general-helpers';
 
 @Component({
   selector: 'st-conversations-tile',
@@ -136,6 +136,6 @@ export class ConversationsTileComponent implements OnInit, OnDestroy {
   }
 
   getAvatarBackgroundColor() {
-    return getRandomColorExtendedPallete();
+    return getRandomColorExtendedPalette();
   }
 }

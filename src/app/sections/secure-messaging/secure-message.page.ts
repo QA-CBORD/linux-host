@@ -14,7 +14,7 @@ import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { UserInfo } from '@core/model/user';
-import { getRandomColorExtendedPallete } from '@core/utils/general-helpers';
+import { getRandomColorExtendedPalette } from '@core/utils/general-helpers';
 
 @Component({
   selector: 'st-secure-message',
@@ -649,6 +649,6 @@ export class SecureMessagePage implements OnDestroy, OnInit {
   }
 
   getAvatarBackgroundColor() {
-    return getRandomColorExtendedPallete();
+    return getRandomColorExtendedPalette();
   }
 }
