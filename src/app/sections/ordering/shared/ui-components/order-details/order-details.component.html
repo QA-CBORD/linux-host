@@ -1,89 +1,112 @@
-<div class="content" *ngIf="detailsForm" [ngClass]="{'content--disabled': readonly}">
+<div class="content" *ngIf="detailsForm" [ngClass]="{ 'content--disabled': readonly }">
   <form novalidate [formGroup]="detailsForm">
-
     <div class="order-details">
-      <ion-label class="order-details__label">{{orderDetailOptions.orderType | typeMessage:'dueTime'}}</ion-label>
+      <ion-label class="order-details__label">{{ orderDetailOptions.orderType | typeMessage: 'dueTime' }}</ion-label>
 
       <p class="order-details__value" *ngIf="timeWithoutTimezone && timeWithoutTimezone.dueTime">
-        {{timeWithoutTimezone | modifyPrepTime: orderTypes}}
+        {{ timeWithoutTimezone | modifyPrepTime: orderTypes }}
       </p>
     </div>
 
     <div class="order-details" *ngIf="orderDetailOptions.address">
-      <ion-label class="order-details__label">{{orderDetailOptions.orderType | typeMessage:'address'}}</ion-label>
+      <ion-label class="order-details__label">{{ orderDetailOptions.orderType | typeMessage: 'address' }}</ion-label>
 
-      <p *ngIf="readonly && orderDetailOptions.address; else addressEditable"
-         class="order-details__value">{{ orderDetailOptions.address | addressHeaderFormat }}</p>
+      <p *ngIf="readonly && orderDetailOptions.address; else addressEditable" class="order-details__value">
+        {{ orderDetailOptions.address | addressHeaderFormat }}
+      </p>
 
       <ng-template #addressEditable>
-        <p class="order-details__value"
-           [ngClass]="{'order-details__value--editable': isAddressClickable}"
-           (click)="isAddressClickable && showAddressListModal()">{{orderDetailOptions.address | addressHeaderFormat}}</p>
+        <p
+          class="order-details__value"
+          [ngClass]="{ 'order-details__value--editable': isAddressClickable }"
+          (click)="isAddressClickable && showAddressListModal()"
+        >
+          {{ orderDetailOptions.address | addressHeaderFormat }}
+        </p>
       </ng-template>
-
     </div>
 
     <ion-list class="order-ingredient-list">
       <ion-item-sliding
-              [disabled]="readonly"
-              *ngFor="let orderItem of orderItems"
-              class="order-ingredient-list__ingredient">
-        <ion-item class="order-ingredient-list__item" lines="none"(click)="goToItemDetails(orderItem)">
+        [disabled]="readonly"
+        *ngFor="let orderItem of orderItems"
+        class="order-ingredient-list__ingredient"
+      >
+        <ion-item class="order-ingredient-list__item" lines="none" (click)="goToItemDetails(orderItem)">
           <ion-label>
             <div class="order-ingredient-list__ingredient-header">
-              <div class="order-ingredient-list__ingredient-number">{{orderItem.quantity}}</div>
-              <div class="order-ingredient-list__ingredient-name">{{orderItem.name}}</div>
-              <div class="order-ingredient-list__ingredient-price">{{orderItem.salePrice | priceUnitsResolver: mealBased}}</div>
+              <div class="order-ingredient-list__ingredient-number">{{ orderItem.quantity }}</div>
+              <div class="order-ingredient-list__ingredient-name">{{ orderItem.name }}</div>
+              <div class="order-ingredient-list__ingredient-price">
+                {{ orderItem.salePrice | priceUnitsResolver: mealBased }}
+              </div>
             </div>
             <ng-container *ngIf="orderItem.orderItemOptions">
-              <p *ngFor="let subIngredient of orderItem.orderItemOptions"
-                 class="order-ingredient-list__ingredient-description">
-                {{subIngredient.name}} ({{subIngredient.salePrice | priceUnitsResolver: mealBased}})
+              <p
+                *ngFor="let subIngredient of orderItem.orderItemOptions"
+                class="order-ingredient-list__ingredient-description"
+              >
+                {{ subIngredient.name }} ({{ subIngredient.salePrice | priceUnitsResolver: mealBased }})
               </p>
             </ng-container>
           </ion-label>
         </ion-item>
 
         <ion-item-options side="end">
-          <ion-item-option (click)="onRemoveOrderItem(orderItem.id)" color="danger">{{contentStrings.labelRemoveItem | async}}
+          <ion-item-option (click)="onRemoveOrderItem(orderItem.id)" color="danger"
+            >{{ contentStrings.labelRemoveItem | async }}
           </ion-item-option>
         </ion-item-options>
       </ion-item-sliding>
     </ion-list>
 
     <div class="total">
-      <div *ngIf="subTotal" class="total__item">{{contentStrings.labelSubtotal | async}}<span
-              class="total__item-sum">{{subTotal | priceUnitsResolver: mealBased}}</span></div>
-      <div *ngIf="tax" class="total__item">{{contentStrings.labelTax | async}}<span
-              class="total__item-sum">{{tax | priceUnitsResolver: mealBased}}</span></div>
-      <div *ngIf="discount" class="total__item">{{ contentStrings.labelDiscount | async }}<span
-              class="total__item-sum">{{discount | priceUnitsResolver: mealBased}}</span></div>
-      <div *ngIf="isTipEnabled" class="total__item">{{contentStrings.labelTip | async}}<span
-              class="total__item-sum">{{tip | priceUnitsResolver: mealBased}}</span></div>
-      <div *ngIf="deliveryFee" class="total__item">{{ contentStrings.labelDeliveryFee | async }}<span
-              class="total__item-sum">{{deliveryFee | priceUnitsResolver: mealBased}}</span></div>
-      <div *ngIf="pickupFee" class="total__item">{{contentStrings.labelPickupFee | async}}<span
-              class="total__item-sum">{{pickupFee | priceUnitsResolver: mealBased}}</span></div>
-      <div *ngIf="total" class="total__item total__item--bold">{{contentStrings.labelTotal | async}}<span
-              class="total__item-sum">{{total | priceUnitsResolver: mealBased}}</span></div>
+      <div *ngIf="subTotal" class="total__item">
+        {{ contentStrings.labelSubtotal | async
+        }}<span class="total__item-sum">{{ subTotal | priceUnitsResolver: mealBased }}</span>
+      </div>
+      <div *ngIf="tax" class="total__item">
+        {{ contentStrings.labelTax | async
+        }}<span class="total__item-sum">{{ tax | priceUnitsResolver: mealBased }}</span>
+      </div>
+      <div *ngIf="discount" class="total__item">
+        {{ contentStrings.labelDiscount | async
+        }}<span class="total__item-sum">{{ discount | priceUnitsResolver: mealBased }}</span>
+      </div>
+      <div *ngIf="isTipEnabled" class="total__item">
+        {{ contentStrings.labelTip | async
+        }}<span class="total__item-sum">{{ tip | priceUnitsResolver: mealBased }}</span>
+      </div>
+      <div *ngIf="deliveryFee" class="total__item">
+        {{ contentStrings.labelDeliveryFee | async
+        }}<span class="total__item-sum">{{ deliveryFee | priceUnitsResolver: mealBased }}</span>
+      </div>
+      <div *ngIf="pickupFee" class="total__item">
+        {{ contentStrings.labelPickupFee | async
+        }}<span class="total__item-sum">{{ pickupFee | priceUnitsResolver: mealBased }}</span>
+      </div>
+      <div *ngIf="total" class="total__item total__item--bold">
+        {{ contentStrings.labelTotal | async
+        }}<span class="total__item-sum">{{ total | priceUnitsResolver: mealBased }}</span>
+      </div>
     </div>
 
     <div class="order-details__payment-method" *ngIf="readonly; else paymentSelect">
-      {{contentStrings.labelPaymentMethod | async}}<span>{{orderPaymentName}}</span>
+      {{ contentStrings.labelPaymentMethod | async }}<span>{{ orderPaymentName }}</span>
     </div>
 
     <ng-template #paymentSelect>
       <div class="order-details">
-        <ion-label class="order-details__label">{{contentStrings.labelPaymentMethod | async}}</ion-label>
+        <ion-label class="order-details__label">{{ contentStrings.labelPaymentMethod | async }}</ion-label>
         <ion-select
-                [formControlName]="controlsNames.paymentMethod"
-                class="order-details__value"
-                [cancelText]="contentStrings.buttonCancel | async"
-                mode="md"
-                [placeholder]="contentStrings.selectAccount | async"
-                interface="action-sheet"
-                (ionChange)="onPaymentChanged($event)"
-                [interfaceOptions]="{cssClass: 'custom-deposit-actionSheet'}"
+          [formControlName]="controlsNames.paymentMethod"
+          class="order-details__value"
+          [cancelText]="contentStrings.buttonCancel | async"
+          mode="md"
+          [placeholder]="contentStrings.selectAccount | async"
+          interface="action-sheet"
+          (ionChange)="onPaymentChanged($event)"
+          [interfaceOptions]="{ cssClass: 'custom-deposit-actionSheet' }"
         >
           <ion-select-option *ngIf="applePayEnabled && accInfoList?.creditAccepted" [value]="applePayAccountType">
             Apple Pay
@@ -94,7 +117,6 @@
           <ion-select-option *ngIf="accInfoList?.creditAccepted" [value]="'addCC'">
             Add a Credit Card
           </ion-select-option>
-
         </ion-select>
       </div>
     </ng-template>
@@ -102,49 +124,46 @@
     <div class="order-details" *ngIf="showCVVControl">
       <ion-label class="order-details__label">Card Security Code:</ion-label>
       <ion-input
-              class="order-details__value"
-              type="tel"
-              placeholder="Enter card security code"
-              [formControlName]="controlsNames.cvv"
+        class="order-details__value"
+        type="tel"
+        inputmode="tel"
+        placeholder="Enter card security code"
+        [formControlName]="controlsNames.cvv"
       ></ion-input>
-      <div
-              class="order-details--error"
-              *ngIf="cvvFormControl.touched && cvvFormControl.invalid"
-      >
+      <div class="order-details--error" *ngIf="cvvFormControl.touched && cvvFormControl.invalid">
         Please enter a valid card security code.
       </div>
     </div>
 
     <div class="order-details" *ngIf="isTipEnabled">
-      <ion-label class="order-details__label">{{contentStrings.labelTipAmount | async}}:</ion-label>
+      <ion-label class="order-details__label">{{ contentStrings.labelTipAmount | async }}:</ion-label>
       <ion-input
-              class="order-details__value"
-              type="tel"
-              inputmode="decimal"
-              [attr.disabled]="!paymentFormControl.value"
-              [maxlength]="'6'"
-              [value]="tip"
-              [placeholder]="mealBased ? '0': '0.00'"
-              [formControlName]="controlsNames.tip"
-              (ionChange)="onTipChanged($event)"
+        class="order-details__value"
+        type="tel"
+        inputmode="decimal"
+        [attr.disabled]="!paymentFormControl.value"
+        [maxlength]="'6'"
+        [value]="tip"
+        [placeholder]="mealBased ? '0' : '0.00'"
+        [formControlName]="controlsNames.tip"
+        (ionChange)="onTipChanged($event)"
       ></ion-input>
-      <div
-              class="order-details--error"
-      >
-        {{tipFormControl.errors?.errorMsg}}
+      <div class="order-details--error">
+        {{ tipFormControl.errors?.errorMsg }}
       </div>
     </div>
-      <div class="order-details" *ngIf="!readonly">
-          <st-textarea-floating-label
-                  [control]="detailsForm.get(controlsNames.note)"
-                  [isError]="false"
-                  class="order-details__order-note"
-                  [formControlName]="controlsNames.note"
-                  [idd]="controlsNames.note"
-                  [label]="contentStrings.labelOrderNotes | async"
-                  rows="3">
-          </st-textarea-floating-label>
-      </div>
+    <div class="order-details" *ngIf="!readonly">
+      <st-textarea-floating-label
+        [control]="detailsForm.get(controlsNames.note)"
+        [isError]="false"
+        class="order-details__order-note"
+        [formControlName]="controlsNames.note"
+        [idd]="controlsNames.note"
+        [label]="contentStrings.labelOrderNotes | async"
+        rows="3"
+      >
+      </st-textarea-floating-label>
+    </div>
   </form>
 
   <div class="order-details__buttons">
