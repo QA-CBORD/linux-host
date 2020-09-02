@@ -1,19 +1,16 @@
-<div class="conversations" [ngClass]="{'conversations--auto-height': !isLoading}">
+<div class="conversations" [ngClass]="{ 'conversations--auto-height': !isLoading }">
   <ion-list class="conversations__sender-list" *ngIf="lastTwoMessagesArray.length && !isLoading">
-    <ion-item
-            *ngFor="let message of lastTwoMessagesArray"
-            class="conversations__sender-item"
-            lines="none">
+    <ion-item *ngFor="let message of lastTwoMessagesArray" class="conversations__sender-item" lines="none">
       <ion-avatar *ngIf="showTextAvatar" class="conversations__sender-avatar-wrapper">
-        <div class="conversations__sender-avatar-text">
+        <div class="conversations__sender-avatar-text" [ngStyle]="{ background: getAvatarBackgroundColor() }">
           {{ getConversationGroupInitial(message.recipient.name) }}
         </div>
       </ion-avatar>
       <div class="conversations__sender-info">
         <div class="conversations__sender-name-time-wrapper">
           <div
-                  class="conversations__sender-name"
-                  [ngClass]="{
+            class="conversations__sender-name"
+            [ngClass]="{
               'conversations__sender-name--unread': !message.read_date && message.sender.type !== 'patron'
             }"
           >
@@ -25,11 +22,10 @@
           <span *ngIf="message.sender.type === 'patron'">You: </span>{{ message.body }}
         </div>
       </div>
-      <ng-container *ngIf="!message.read_date && message.sender.type !== 'patron'"
-      >
+      <ng-container *ngIf="!message.read_date && message.sender.type !== 'patron'">
         <div class="conversations__sender-message-indicator-wrapper">
-          <span class="indicator"></span></div
-        >
+          <span class="indicator"></span>
+        </div>
       </ng-container>
     </ion-item>
   </ion-list>
@@ -50,5 +46,4 @@
       </ion-label>
     </ion-item>
   </ion-list>
-
 </div>

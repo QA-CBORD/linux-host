@@ -3,6 +3,7 @@ import { SecureMessagingService } from './services/secure-messaging.service';
 import { SecureMessageConversation, SecureMessageInfo } from '@core/model/secure-messaging/secure-messaging.model';
 import { take, finalize } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
+import { getRandomColorExtendedPallete } from '@core/utils/general-helpers';
 
 @Component({
   selector: 'st-conversations-tile',
@@ -132,5 +133,9 @@ export class ConversationsTileComponent implements OnInit, OnDestroy {
       }
     }
     this.lastTwoMessagesArray = tempConversations.map(conversation => conversation.messages.pop()).slice(0, 2);
+  }
+
+  getAvatarBackgroundColor() {
+    return getRandomColorExtendedPallete();
   }
 }

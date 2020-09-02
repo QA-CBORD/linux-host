@@ -180,3 +180,8 @@ export function configureBiometricsConfig(
     return { type: 'iris', name: 'Iris', icon: 'iris' };
   }
 }
+
+export function getRandomColorExtendedPallete() : string {
+    const colors = ['#9A39D2', '#C564FC', '#AE4F07', '#D67A12', '#505AE3', '#807FFF', '#F254A6', '#C7246F', '#377914', '#4AA40D'];
+    return colors[Math.floor(Math.random() * colors.length)];
+}
