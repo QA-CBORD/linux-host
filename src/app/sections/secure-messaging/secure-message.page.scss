@@ -70,7 +70,7 @@
 
       &__chat {
         top: 56px;
-        height: calc(100vh - 150px);
+        height: calc(100vh - 150px - env(safe-area-inset-bottom));
         overflow: auto;
       }
 
