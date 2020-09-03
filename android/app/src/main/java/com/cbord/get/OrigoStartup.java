@@ -26,12 +26,15 @@ public class OrigoStartup implements OrigoMobileKeysCallback, OrigoKeysApiFacade
     private OrigoKeysApiFacade mobileKeysApiFacade;
     private OrigoKeysApiFactory mobileKeysApiFactory;
     private OrigoEndpointSetup endpointSetup;
+    private OrigoKeys origoKeys;
+
     public OrigoStartup(Context context) {
 
         this.mobileKeysApiFacade = this;
         this.mobileKeysApiFactory = (OrigoKeysApiFactory) context;
         mobileKeys = mobileKeysApiFactory.getMobileKeys();
         endpointSetup = new OrigoEndpointSetup(this);
+        origoKeys = new OrigoKeys(this, context);
 
         OrigoReaderConnectionCallback readerConnectionCallback = new OrigoReaderConnectionCallback(context);
         readerConnectionCallback.registerReceiver(this);
@@ -87,7 +90,7 @@ public class OrigoStartup implements OrigoMobileKeysCallback, OrigoKeysApiFacade
     @Override
     public void onEndpointSetUpComplete() {
         Log.e("TAG", "Application onEndpointSetUpComplete()");
-        //replaceFragment(KeysFragment.class.getName(), "mobileKeys");
+        origoKeys.onResume();
     }
 
     @Override
@@ -130,7 +133,7 @@ public class OrigoStartup implements OrigoMobileKeysCallback, OrigoKeysApiFacade
                 onEndpointSetUpComplete();
             }
             else {
-                endpointSetup.onStart(); //To do: verify proper way to trigger endpoint setup 
+                endpointSetup.onStart(); // To do: verify proper way to trigger endpoint setup
             }
         }
         catch (OrigoMobileKeysException exception)
@@ -149,29 +152,29 @@ public class OrigoStartup implements OrigoMobileKeysCallback, OrigoKeysApiFacade
 
     @Override
     public void onReaderConnectionClosed(OrigoReader origoReader, OrigoOpeningResult origoOpeningResult) {
-        //Callback method when a reader session has finished.
+        // Callback method when a reader session has finished.
     }
 
     @Override
     public void onReaderConnectionFailed(OrigoReader origoReader, OrigoOpeningType origoOpeningType, OrigoOpeningStatus origoOpeningStatus) {
-        //Callback when a connection could not be initialized.
+        // Callback when a connection could not be initialized.
     }
 
     @Override
     public void onHceSessionOpened() {
-        //Callback to the implementing service when a HCE session with a reader has been initialized.
+        // Callback to the implementing service when a HCE session with a reader has been initialized.
 
     }
 
     @Override
     public void onHceSessionClosed(int var1) {
-        //Callback to the implementing service when a HCE session with a reader has been closed.
+        // Callback to the implementing service when a HCE session with a reader has been closed.
 
     }
 
     @Override
     public void onHceSessionInfo(OrigoReaderConnectionInfoType readerConnectionInfoType) {
-        //Callback when a potentially interesting event happens on the connection, that is not sessionOpened or sessionClosed.
+        // Callback when a potentially interesting event happens on the connection, that is not sessionOpened or sessionClosed.
 
     }
 }

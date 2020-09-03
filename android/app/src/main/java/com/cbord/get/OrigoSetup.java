@@ -17,30 +17,15 @@ import com.hid.origo.api.hce.OrigoNfcConfiguration;
 public class OrigoSetup extends Application implements OrigoKeysApiFactory {
 
     private static final int LOCK_SERVICE_CODE = 2;
-    public static final String APPLICATION_ID = "A0000004400001010001"; // TO DO: verify if this is the correct AID
+    public static final String APPLICATION_ID = "A0000004400001010001"; // To do: verify if this is the correct AID
     private static final byte TRANSACTIONS_NO = 2;
     private static final int TRANSACTIONS_BACKOFF = 2000;
 
     private OrigoMobileKeysApi mobileKeysFactory;
 
-    @Override
-    public OrigoMobileKeys getMobileKeys() {
-        return mobileKeysFactory.getMobileKeys();
-    }
-
-    @Override
-    public OrigoReaderConnectionController getReaderConnectionController() {
-        return mobileKeysFactory.getOrigiReaderConnectionController();
-    }
-
-    @Override
-    public OrigoScanConfiguration getOrigoScanConfiguration() {
-        return getReaderConnectionController().getScanConfiguration();
-    }
-
     void initializeOrigo() {
         OrigoScanConfiguration origoScanConfiguration = new OrigoScanConfiguration.Builder(
-                new OrigoOpeningTrigger[]{new OrigoTapOpeningTrigger(this),  // TO DO: is the context needed and correct?
+                new OrigoOpeningTrigger[]{new OrigoTapOpeningTrigger(this),  // To do: is the context needed and correct?
                         new OrigoTwistAndGoOpeningTrigger(this),
                         new OrigoSeamlessOpeningTrigger()}, LOCK_SERVICE_CODE)
                 .setAllowBackgroundScanning(true)
@@ -61,5 +46,20 @@ public class OrigoSetup extends Application implements OrigoKeysApiFactory {
         if(!mobileKeysFactory.isInitialized()) {
             throw new IllegalStateException();
         }
+    }
+
+    @Override
+    public OrigoMobileKeys getMobileKeys() {
+        return mobileKeysFactory.getMobileKeys();
+    }
+
+    @Override
+    public OrigoReaderConnectionController getReaderConnectionController() {
+        return mobileKeysFactory.getOrigiReaderConnectionController();
+    }
+
+    @Override
+    public OrigoScanConfiguration getOrigoScanConfiguration() {
+        return getReaderConnectionController().getScanConfiguration();
     }
 }
