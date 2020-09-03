@@ -14,6 +14,7 @@ import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { UserInfo } from '@core/model/user';
+import { getRandomColorExtendedPalette } from '@core/utils/general-helpers';
 
 @Component({
   selector: 'st-secure-message',
@@ -48,8 +49,7 @@ export class SecureMessagePage implements OnDestroy, OnInit {
     this.platform.ready().then(this.initComponent.bind(this));
   }
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   ngOnDestroy() {
     this.sourceSubscription.unsubscribe();
@@ -265,8 +265,12 @@ export class SecureMessagePage implements OnDestroy, OnInit {
     return this.bCreateNewConversation;
   }
 
-  showToolbar(){
-    return !this.nativeProvider.isWeb() && !this.showSelectedConversationContentColumn() && !this.showCreateNewConversationColumn();
+  showToolbar() {
+    return (
+      !this.nativeProvider.isWeb() &&
+      !this.showSelectedConversationContentColumn() &&
+      !this.showCreateNewConversationColumn()
+    );
   }
 
   /**
@@ -322,11 +326,15 @@ export class SecureMessagePage implements OnDestroy, OnInit {
    */
   onClickSendButton() {
     if (this.newMessageText && this.newMessageText.trim().length) {
-        this.userService.getUserData$().subscribe(
-          (userInfo) => { this.sendMessage(this.createNewMessageSendBody(this.newMessageText, userInfo)); },
-        () => { const error = { message: 'Unable to verify your user information', title: Globals.Exception.Strings.TITLE };
-                this.modalHandler(error, this.sendMessage.bind(this, ''));
-        });
+      this.userService.getUserData$().subscribe(
+        userInfo => {
+          this.sendMessage(this.createNewMessageSendBody(this.newMessageText, userInfo));
+        },
+        () => {
+          const error = { message: 'Unable to verify your user information', title: Globals.Exception.Strings.TITLE };
+          this.modalHandler(error, this.sendMessage.bind(this, ''));
+        }
+      );
     }
   }
 
@@ -632,11 +640,15 @@ export class SecureMessagePage implements OnDestroy, OnInit {
 
   checkIfOpen(): boolean {
     this.globalNav.hideNavBar();
-    return true
+    return true;
   }
 
   isMainPage() {
     this.globalNav.showNavBar();
-    return true
+    return true;
+  }
+
+  getAvatarBackgroundColor() {
+    return getRandomColorExtendedPalette();
   }
 }
