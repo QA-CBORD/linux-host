@@ -17,7 +17,7 @@ import com.hid.origo.api.hce.OrigoNfcConfiguration;
 public class OrigoInitializer extends Application implements OrigoKeysApiFactory {
 
     private static final int LOCK_SERVICE_CODE = 2;
-    public static final String APPLICATION_ID = "Example";
+    public static final String APPLICATION_ID = "A0000004400001010001"; // TO DO: verify if this is the correct AID
     private static final byte TRANSACTIONS_NO = 2;
     private static final int TRANSACTIONS_BACKOFF = 2000;
 
@@ -40,7 +40,7 @@ public class OrigoInitializer extends Application implements OrigoKeysApiFactory
 
     void initializeOrigo() {
         OrigoScanConfiguration origoScanConfiguration = new OrigoScanConfiguration.Builder(
-                new OrigoOpeningTrigger[]{new OrigoTapOpeningTrigger(this),
+                new OrigoOpeningTrigger[]{new OrigoTapOpeningTrigger(this),  // TO DO: is the context needed and correct?
                         new OrigoTwistAndGoOpeningTrigger(this),
                         new OrigoSeamlessOpeningTrigger()}, LOCK_SERVICE_CODE)
                 .setAllowBackgroundScanning(true)
