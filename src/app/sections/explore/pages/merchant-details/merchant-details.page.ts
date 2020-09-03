@@ -2,13 +2,13 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MerchantInfo } from '@sections/ordering';
 import { Observable } from 'rxjs';
-import { Environment } from '../../../../environment';
 import { PATRON_NAVIGATION } from '../../../../app.global';
 import { take } from 'rxjs/operators';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { FavoriteMerchantsFacadeService } from '@core/facades/favourite-merchant/favorite-merchants-facade.service';
 import { ExploreService } from '@sections/explore/services/explore.service';
 import { ToastController } from '@ionic/angular';
+import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 
 @Component({
   selector: 'st-merchant-details',
@@ -18,13 +18,14 @@ import { ToastController } from '@ionic/angular';
 })
 export class MerchantDetailsPage implements OnInit {
   merchant$: Observable<MerchantInfo>;
-  awsImageUrl: string = Environment.getImageURL();
+  awsImageUrl: string = this.environmentFacadeService.getImageURL();
   isHoursHidden: boolean = true;
   isNotesHidden: boolean = true;
   filledStarPath: string = '/assets/icon/star-filled.svg';
   blankStarPath: string = '/assets/icon/star-outline.svg';
 
   constructor(
+    private readonly environmentFacadeService: EnvironmentFacadeService,
     private readonly activatedRoute: ActivatedRoute,
     private readonly exploreService: ExploreService,
     private readonly router: Router,
