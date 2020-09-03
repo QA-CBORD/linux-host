@@ -1,5 +1,10 @@
 @import 'tools';
 
+.notch-header {
+    height: $notch-top;
+    --background: $color-white;
+}
+
 .container {
   --background: #{$color-background-divider};
   --padding-top: env(safe-area-inset-top) !important;
