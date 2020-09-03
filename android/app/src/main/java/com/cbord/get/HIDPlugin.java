@@ -1,4 +1,5 @@
 package com.cbord.get;
+import android.content.Context;
 import android.util.Log;
 
 import com.getcapacitor.NativePlugin;
@@ -20,15 +21,22 @@ import com.hid.origo.api.hce.OrigoNfcConfiguration;
 @NativePlugin()
 public class HIDPlugin extends Plugin  {
 
+    private static Context context;
+
     @PluginMethod()
     public void initializeOrigo(PluginCall call) {
         Log.d("TAG", "initializeOrigo method was called.");
         OrigoInitializer origo = new OrigoInitializer();
         origo.initializeOrigo();
+        context = origo;
     }
 
     @PluginMethod()
     public void startupOrigo(PluginCall call) {
         Log.d("TAG", "startupOrigo method was called.");
+        if (context != null) {
+            OrigoStartup origo = new OrigoStartup(this.context);
+            origo.mobileKeysStartup();
+        }
     }
 }

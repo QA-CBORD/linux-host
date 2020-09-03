@@ -25,17 +25,17 @@ public class OrigoInitializer extends Application implements OrigoKeysApiFactory
 
     @Override
     public OrigoMobileKeys getMobileKeys() {
-        return null;
+        return mobileKeysFactory.getMobileKeys();
     }
 
     @Override
     public OrigoReaderConnectionController getReaderConnectionController() {
-        return null;
+        return mobileKeysFactory.getOrigiReaderConnectionController();
     }
 
     @Override
     public OrigoScanConfiguration getOrigoScanConfiguration() {
-        return null;
+        return getReaderConnectionController().getScanConfiguration();
     }
 
     void initializeOrigo() {
