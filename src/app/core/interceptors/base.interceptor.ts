@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpEvent, HttpHandler, HttpHeaders, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Observable, of, zip } from 'rxjs';
-import { Environment } from '../../environment';
 import { map, observeOn, subscribeOn, switchMap, take, timeout } from 'rxjs/operators';
 import { queue } from 'rxjs/internal/scheduler/queue';
 import { async } from 'rxjs/internal/scheduler/async';

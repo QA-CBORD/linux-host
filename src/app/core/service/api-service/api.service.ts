@@ -5,8 +5,7 @@ import { Observable, throwError } from 'rxjs';
 import { subscribeOn, observeOn, timeout, catchError } from 'rxjs/operators';
 import { async } from 'rxjs/internal/scheduler/async';
 import { queue } from 'rxjs/internal/scheduler/queue';
-
-import { Environment } from 'src/app/environment';
+import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 
 export enum RestCallType {
   get,
@@ -25,7 +24,7 @@ export enum HttpResponseType {
 export class APIService {
   private TIMEOUT_MS = 45000;
 
-  constructor(private http: HttpClient) {}
+  constructor(private readonly environmentFacadeService: EnvironmentFacadeService, private http: HttpClient) {}
 
   /**
    *  GET call to AWS API Gateway
@@ -116,7 +115,7 @@ export class APIService {
     params?: HttpParams,
     headers?: HttpHeaders
   ): Observable<any> {
-    const finalURL = Environment.getSecureMessagingAPIURL().concat(resourceURL);
+    const finalURL = this.environmentFacadeService.getSecureMessagingAPIURL().concat(resourceURL);
     let httpCall$;
     switch (callType) {
       case RestCallType.get:
@@ -151,7 +150,7 @@ export class APIService {
     params?: HttpParams,
     headers?: HttpHeaders
   ): Observable<any> {
-    const finalURL = Environment.getPartnerServicesURL().concat(resourceURL);
+    const finalURL = this.environmentFacadeService.getPartnerServicesURL().concat(resourceURL);
     let httpCall$;
     switch (callType) {
       case RestCallType.get:

@@ -16,9 +16,9 @@ import { CartService, MenuInfo, MenuItemInfo, OrderItem } from '@sections/orderi
 import { LoadingService } from '@core/service/loading/loading.service';
 import { handleServerError } from '@core/utils/general-helpers';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
-import { Environment } from 'src/app/environment';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { ItemDetailModalComponent } from '@sections/ordering/pages/item-detail/components/item-detail-modal/item-detail-modal.component';
+import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 
 @Component({
   selector: 'st-item-detail',
@@ -41,6 +41,7 @@ export class ItemDetailComponent implements OnInit {
   routesData: RoutesData;
 
   constructor(
+    private readonly environmentFacadeService: EnvironmentFacadeService,
     private readonly router: Router,
     private readonly fb: FormBuilder,
     private readonly activatedRoute: ActivatedRoute,
@@ -264,7 +265,7 @@ export class ItemDetailComponent implements OnInit {
     zip(this.activatedRoute.data, this.cartService.orderItems$, this.cartService.merchant$)
       .pipe(take(1))
       .subscribe(([{ data: { menuItem, queryParams: { orderItemId } } }, orderItems, { settings }]) => {
-        const imageBaseUrl = Environment.getImageURL();
+        const imageBaseUrl = this.environmentFacadeService.getImageURL();
         this.menuItem = menuItem.menuItem;
         this.menuItemImg = this.menuItem.imageReference ? `${imageBaseUrl}${this.menuItem.imageReference}` : '';
         this.order = { ...this.order, totalPrice: this.menuItem.price };

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MenuCategoryItemInfo } from '@sections/ordering';
-import { Environment } from '../../../../../environment';
+import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 
 @Component({
   selector: 'st-category-list',
@@ -12,7 +12,9 @@ export class CategoryListComponent {
   @Input() menuCategoryItems: MenuCategoryItemInfo[];
   @Input() mealBased: boolean;
   @Output() onItemClicked: EventEmitter<string> = new EventEmitter<string>();
-  awsImageUrl: string = Environment.getImageURL();
+  awsImageUrl: string = this.environmentFacadeService.getImageURL();
+
+  constructor(private readonly environmentFacadeService: EnvironmentFacadeService){}
 
   triggerMenuItemClick({ menuItem: { id } }) {
     this.onItemClicked.emit(id);
