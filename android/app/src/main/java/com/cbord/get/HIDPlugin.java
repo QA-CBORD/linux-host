@@ -1,20 +1,14 @@
 package com.cbord.get;
 
-import android.Manifest;
 import android.content.Context;
 import android.util.Log;
 
-import com.getcapacitor.JSObject;
 import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 
-@NativePlugin(  permissions={
-        Manifest.permission.ACCESS_NETWORK_STATE,
-        Manifest.permission.INTERNET,
-        Manifest.permission.NFC,
-})
+@NativePlugin()
 public class HIDPlugin extends Plugin  {
 
     public static Context context;

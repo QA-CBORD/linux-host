@@ -1,6 +1,5 @@
 package com.cbord.get;
 
-import android.app.Application;
 import android.content.Context;
 
 import com.hid.origo.OrigoKeysApiFactory;
@@ -10,9 +9,7 @@ import com.hid.origo.api.OrigoMobileKeysApi;
 import com.hid.origo.api.OrigoReaderConnectionController;
 import com.hid.origo.api.ble.OrigoOpeningTrigger;
 import com.hid.origo.api.ble.OrigoScanConfiguration;
-import com.hid.origo.api.ble.OrigoSeamlessOpeningTrigger;
 import com.hid.origo.api.ble.OrigoTapOpeningTrigger;
-import com.hid.origo.api.ble.OrigoTwistAndGoOpeningTrigger;
 import com.hid.origo.api.hce.OrigoNfcConfiguration;
 
 //To do: verify if we can extends from Application
