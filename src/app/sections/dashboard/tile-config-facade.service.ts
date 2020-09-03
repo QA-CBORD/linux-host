@@ -99,6 +99,6 @@ export class TileConfigFacadeService extends ServiceStateFacade {
   }
 
   updateConfigState(value: TileWrapperConfig[]) {
-    this.storage.updateStateEntity(this.key, value);
+    this.storage.updateStateEntity(this.key, value, { highPriorityKey: true });
   }
 }
