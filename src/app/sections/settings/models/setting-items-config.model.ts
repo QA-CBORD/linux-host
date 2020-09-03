@@ -23,7 +23,7 @@ export interface SettingItemConfig {
   label: string;
   type: string;
   icon: string;
-  navigate?: string;
+  navigate?: string[];
   navigateExternal?: SettingItemExternalResource;
   checked?: boolean;
   toggleLabel?: ToggleLabel;

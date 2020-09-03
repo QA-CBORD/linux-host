@@ -11,7 +11,7 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Settings, User, PATRON_NAVIGATION } from '../../../../app.global';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'st-saved-addresses',
@@ -26,6 +26,7 @@ export class SavedAddressesComponent implements OnInit {
   addNewAddressForm: { value: any; valid: boolean } = { value: null, valid: false };
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
   defaultAddress: string;
+  relativeRoute: string;
 
   constructor(
     private readonly loader: LoadingService,
@@ -35,12 +36,14 @@ export class SavedAddressesComponent implements OnInit {
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly globalNav: GlobalNavService,
     private readonly router: Router,
+    private readonly route: ActivatedRoute,
 
   ) {}
 
   ngOnInit() {
     this.initContentStrings();
     this.globalNav.hideNavBar();
+    this.initRelativeRoute();
   }
 
   ngOnDestroy() {
@@ -63,7 +66,7 @@ export class SavedAddressesComponent implements OnInit {
 
   onAddressSelected(address: AddressInfo) {
     this.merchantService.selectedAddress = address;
-    this.router.navigate([PATRON_NAVIGATION.ordering, LOCAL_ROUTING.addressEdit]);
+    this.router.navigate([this.relativeRoute, LOCAL_ROUTING.addressEdit]);
   }
   addAddress() {
     //Check if Address Form is Valid.
@@ -171,5 +174,10 @@ export class SavedAddressesComponent implements OnInit {
       ORDERING_CONTENT_STRINGS.labelSavedAddresses
     );
     this.contentStrings.labelRoom = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelRoom);
+  }
+
+  private async initRelativeRoute() {
+    const routeData = await this.route.data.pipe(take(1)).toPromise();
+    this.relativeRoute = routeData.relativeRoute;
   }
 }
