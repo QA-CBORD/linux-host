@@ -90,7 +90,7 @@ public class OrigoStartup implements OrigoMobileKeysCallback, OrigoKeysApiFacade
 
     @Override
     public void endpointNotPersonalized() {
-        //replaceFragment(EndpointSetupFragment.class.getName(), "endpointSetup");
+        OrigoEndpointSetup endpointSetup = new OrigoEndpointSetup(this);
     }
 
     @Override
@@ -132,7 +132,7 @@ public class OrigoStartup implements OrigoMobileKeysCallback, OrigoKeysApiFacade
             }
             else
             {
-                // replaceFragment(EndpointSetupFragment.class.getName(), "endpointSetup");
+                OrigoEndpointSetup endpointSetup = new OrigoEndpointSetup(this);
             }
         }
         catch (OrigoMobileKeysException exception)
