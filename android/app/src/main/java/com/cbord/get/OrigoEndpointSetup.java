@@ -1,6 +1,5 @@
 package com.cbord.get;
 
-import android.app.Activity;
 import android.util.Log;
 
 import com.hid.origo.OrigoKeysApiFacade;

@@ -28,10 +28,10 @@ public class OrigoStartup implements OrigoMobileKeysCallback, OrigoKeysApiFacade
     private OrigoEndpointSetup endpointSetup;
     private OrigoKeys origoKeys;
 
-    public OrigoStartup(Context context) {
+    public OrigoStartup(Context context, OrigoKeysApiFactory setup) {
 
         this.mobileKeysApiFacade = this;
-        this.mobileKeysApiFactory = (OrigoKeysApiFactory) context;
+        this.mobileKeysApiFactory = setup;
         mobileKeys = mobileKeysApiFactory.getMobileKeys();
         endpointSetup = new OrigoEndpointSetup(this);
         origoKeys = new OrigoKeys(this, context);
