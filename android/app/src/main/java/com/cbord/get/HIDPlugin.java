@@ -18,7 +18,7 @@ public class HIDPlugin extends Plugin  {
     @PluginMethod()
     public void initializeOrigo(PluginCall call) {
         Log.d("TAG", "initializeOrigo method was called.");
-        if (this.setup == null) {
+        if (setup == null) {
             setup = new OrigoSetup(this.context);
             setup.initializeOrigo();
             call.resolve();
@@ -28,7 +28,7 @@ public class HIDPlugin extends Plugin  {
     @PluginMethod()
     public void startupOrigo(PluginCall call) {
         Log.d("TAG", "startupOrigo method was called.");
-        if (startup == null) {
+        if (startup == null && this.setup != null) {
             startup = new OrigoStartup(this.context, this.setup);
             startup.mobileKeysStartup();
             call.resolve();
