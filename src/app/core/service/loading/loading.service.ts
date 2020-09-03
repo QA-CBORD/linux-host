@@ -15,10 +15,12 @@ export class LoadingService {
   async showSpinner(config: LoadingOptions | string = {}): Promise<void> {
     this.isLoading = true;
 
+    const _class = typeof config === 'string' ? 'white-loading' : 'custom-loading';
     config = typeof config === 'string' ? { message: config } : config;
+
     config = {
       ...config,
-      cssClass: 'custom-loading',
+      cssClass: _class, 
       showBackdrop: true,
       mode: 'md',
       keyboardClose: true,
