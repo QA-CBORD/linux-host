@@ -6,8 +6,9 @@ import { MerchantService } from '@sections/ordering';
 import { OrderingService } from '@sections/ordering/services/ordering.service';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
 import { SettingsSavedAddressesResolver } from './resolvers/settings-saved-addresses.resolver';
+import { OrderingApiService } from '@sections/ordering/services/ordering.api.service';
 
-const providers = [SettingsSavedAddressesResolver, MerchantService, OrderingService];
+const providers = [SettingsSavedAddressesResolver,OrderingApiService, MerchantService, OrderingService];
 
 @NgModule({
   declarations: [],
