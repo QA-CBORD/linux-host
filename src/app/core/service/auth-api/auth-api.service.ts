@@ -127,10 +127,10 @@ export class AuthApiService {
    * Retrieve a JWT from GET using a currently active session to use as an Access token for calling AWS services
    *
    */
-  getExternalAuthenticationToken(): Observable<string> {
+  getExternalAuthenticationToken(externalSystem:string = null): Observable<string> {
     const postParams = {
       tokenType: null,
-      externalSystem: null,
+      externalSystem: externalSystem,
       claimSet: null,
     };
 
