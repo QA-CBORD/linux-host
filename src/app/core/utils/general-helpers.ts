@@ -199,5 +199,5 @@ export function getRandomColorExtendedPalette(): string {
     '#377914',
     '#4AA40D',
   ];
-  return colors[Math.floor(Math.random() * colors.length)];
+  return colors[Math.floor(Math.random() * (colors.length - 1))];
 }
