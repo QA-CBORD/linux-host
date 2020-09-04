@@ -36,7 +36,7 @@ public class OrigoConfig implements OrigoKeysApiFactory {
                 .build();
 
         OrigoScanConfiguration origoScanConfiguration = new OrigoScanConfiguration.Builder(
-                new OrigoOpeningTrigger[]{new OrigoTapOpeningTrigger(this.context)
+                new OrigoOpeningTrigger[] { new OrigoTapOpeningTrigger(this.context)
                 }, LOCK_SERVICE_CODE)
                 .setAllowBackgroundScanning(true)
                 .build();

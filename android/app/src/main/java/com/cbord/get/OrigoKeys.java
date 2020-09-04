@@ -67,7 +67,6 @@ public class OrigoKeys implements OrigoMobileKeysCallback, OrigoMobileKeysProgre
             data = Collections.emptyList();
         }
         // TODO: Check if update adapter.setItems(data);
-
         // Update scanning based if we have keys
         if (data.isEmpty()) {
             stopScanning();

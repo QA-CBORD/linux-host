@@ -89,7 +89,7 @@ public class OrigoStartup implements OrigoMobileKeysCallback, OrigoKeysApiFacade
 
     @Override
     public void onEndpointSetUpComplete() {
-        Log.e("TAG", "Application onEndpointSetUpComplete()");
+        Log.d("TAG", "Application onEndpointSetUpComplete()");
         origoKeys.onRegistered();
     }
 
