@@ -16,11 +16,11 @@ public class MainActivity extends BridgeActivity {
         this.init(savedInstanceState, new ArrayList<Class<? extends Plugin>>() {{
             // Additional plugins you've installed go here
             add(HIDPlugin.class);
-            setupPlugin();
+            setPluginContext();
         }});
     }
 
-    private void setupPlugin() {
+    private void setPluginContext() {
         HIDPlugin.context = getApplicationContext();
     }
 }

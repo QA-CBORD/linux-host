@@ -11,7 +11,7 @@ import com.getcapacitor.PluginCall;
 @NativePlugin()
 public class HIDPlugin extends Plugin {
 
-    public static Context context;
+    protected static Context context;
     private OrigoConfig setup;
     private OrigoStartup startup;
 
