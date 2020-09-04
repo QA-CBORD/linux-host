@@ -5,12 +5,13 @@ import { finalize, switchMap, take, tap } from 'rxjs/operators';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { MerchantService } from '@sections/ordering/services';
 import { BuildingInfo } from '@sections/ordering/shared/models';
-import { INSTITUTION_ADDRESS_RESTRICTIONS, ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
+import { INSTITUTION_ADDRESS_RESTRICTIONS, ORDERING_CONTENT_STRINGS, LOCAL_ROUTING } from '@sections/ordering/ordering.config';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
-import { Settings, User } from '../../../../app.global';
+import { Settings, User, PATRON_NAVIGATION } from '../../../../app.global';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'st-saved-addresses',
@@ -25,6 +26,7 @@ export class SavedAddressesComponent implements OnInit {
   addNewAddressForm: { value: any; valid: boolean } = { value: null, valid: false };
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
   defaultAddress: string;
+  relativeRoute: string;
 
   constructor(
     private readonly loader: LoadingService,
@@ -32,12 +34,16 @@ export class SavedAddressesComponent implements OnInit {
     private readonly orderingService: OrderingService,
     private readonly userFacadeService: UserFacadeService,
     private readonly settingsFacadeService: SettingsFacadeService,
-    private readonly globalNav: GlobalNavService
+    private readonly globalNav: GlobalNavService,
+    private readonly router: Router,
+    private readonly route: ActivatedRoute,
+
   ) {}
 
   ngOnInit() {
     this.initContentStrings();
     this.globalNav.hideNavBar();
+    this.initRelativeRoute();
   }
 
   ngOnDestroy() {
@@ -58,6 +64,10 @@ export class SavedAddressesComponent implements OnInit {
     this.errorState = false;
   }
 
+  onAddressSelected(address: AddressInfo) {
+    this.merchantService.selectedAddress = address;
+    this.router.navigate([this.relativeRoute, LOCAL_ROUTING.addressEdit]);
+  }
   addAddress() {
     //Check if Address Form is Valid.
     if ((this.errorState = !this.addNewAddressForm.valid)) return;
@@ -164,5 +174,10 @@ export class SavedAddressesComponent implements OnInit {
       ORDERING_CONTENT_STRINGS.labelSavedAddresses
     );
     this.contentStrings.labelRoom = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelRoom);
+  }
+
+  private async initRelativeRoute() {
+    const routeData = await this.route.data.pipe(take(1)).toPromise();
+    this.relativeRoute = routeData.relativeRoute;
   }
 }
