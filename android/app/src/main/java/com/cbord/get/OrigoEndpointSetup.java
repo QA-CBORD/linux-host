@@ -15,7 +15,7 @@ public class OrigoEndpointSetup implements OrigoMobileKeysCallback {
     }
 
     public void onStart() {
-        // To do: Call GET Services and retrieve invitation code
+        // TODO: Set invitation code retrieved from Ionic
         submitInvitationCode("0000-0000-0000-0000");
 
         if (mobileKeysApiFacade.isEndpointSetUpComplete()) {

@@ -34,7 +34,7 @@ public class OrigoKeys implements OrigoMobileKeysCallback, OrigoMobileKeysProgre
         Log.d("TAG", "onResume()");
         // Listen to lock changes
         loadKeys();
-        // To do: mobileKeysApiFacade.getOrigoScanConfiguration().getRootOpeningTrigger().add(closestLockTrigger);
+        // TODO: mobileKeysApiFacade.getOrigoScanConfiguration().getRootOpeningTrigger().add(closestLockTrigger); ?
     }
 
     public static boolean shouldRetry(OrigoMobileKeysException exception) {
@@ -65,7 +65,7 @@ public class OrigoKeys implements OrigoMobileKeysCallback, OrigoMobileKeysProgre
         if (data == null) {
             data = Collections.emptyList();
         }
-            // To do: Update adapter.setItems(data);
+            // TODO: Check if update adapter.setItems(data);
 
         // Update scanning based if we have keys
         if (data.isEmpty()) {

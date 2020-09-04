@@ -95,7 +95,7 @@ public class OrigoStartup implements OrigoMobileKeysCallback, OrigoKeysApiFacade
 
     @Override
     public void endpointNotPersonalized() {
-       endpointSetup.onStart();
+        endpointSetup.onStart();
     }
 
     @Override
@@ -133,7 +133,7 @@ public class OrigoStartup implements OrigoMobileKeysCallback, OrigoKeysApiFacade
                 onEndpointSetUpComplete();
             }
             else {
-                endpointSetup.onStart(); // To do: verify proper way to trigger endpoint setup
+                endpointSetup.onStart(); // TODO: verify proper way to trigger endpoint setup
             }
         }
         catch (OrigoMobileKeysException exception)
@@ -175,6 +175,5 @@ public class OrigoStartup implements OrigoMobileKeysCallback, OrigoKeysApiFacade
     @Override
     public void onHceSessionInfo(OrigoReaderConnectionInfoType readerConnectionInfoType) {
         // Callback when a potentially interesting event happens on the connection, that is not sessionOpened or sessionClosed.
-
     }
 }

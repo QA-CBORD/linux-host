@@ -22,6 +22,7 @@ public class HIDPlugin extends Plugin  {
             setup = new OrigoSetup(this.context);
             setup.initializeOrigo();
             call.resolve();
+            // TODO: resolve how to handle invitacion code from Ionic
         }
     }
 
