@@ -26,9 +26,9 @@ public class OrigoKeys implements OrigoMobileKeysCallback, OrigoMobileKeysProgre
     private List<OrigoMobileKey> data = null;
     private Context context;
 
-    public OrigoKeys(OrigoStartup origoStartup, Context context) {
-        this.mobileKeysApiFacade = (OrigoKeysApiFacade) origoStartup;
+    public OrigoKeys(Context context, OrigoStartup origoStartup) {
         this.context = context;
+        mobileKeysApiFacade = (OrigoKeysApiFacade) origoStartup;
     }
 
     public void onRegistered() {

@@ -11,12 +11,12 @@ public class OrigoEndpointSetup implements OrigoMobileKeysCallback {
     private OrigoKeysApiFacade mobileKeysApiFacade;
 
     public OrigoEndpointSetup(OrigoStartup origoStartup) {
-        this.mobileKeysApiFacade = (OrigoKeysApiFacade) origoStartup;
+        mobileKeysApiFacade = (OrigoKeysApiFacade) origoStartup;
     }
 
     public void onStart() {
-        // TODO: Set invitation code retrieved from Ionic
-        submitInvitationCode("0000-0000-0000-0000");
+        // TODO: Submit invitation code retrieved from Ionic
+          submitInvitationCode("0000-0000-0000-0000");
 
         if (mobileKeysApiFacade.isEndpointSetUpComplete()) {
             mobileKeysApiFacade.onEndpointSetUpComplete();

@@ -12,27 +12,31 @@ import com.getcapacitor.PluginCall;
 public class HIDPlugin extends Plugin {
 
     public static Context context;
-    private OrigoSetup setup;
+    private OrigoConfig setup;
     private OrigoStartup startup;
 
     @PluginMethod()
     public void initializeOrigo(PluginCall call) {
         Log.d("TAG", "initializeOrigo method was called.");
         if (setup == null) {
-            setup = new OrigoSetup(this.context);
+            setup = new OrigoConfig(context);
         }
         setup.initializeOrigo();
         call.resolve();
-        // TODO: resolve how to handle invitation code from Ionic
+        // TODO: Handle invitation code from Ionic
     }
 
     @PluginMethod()
     public void startupOrigo(PluginCall call) {
         Log.d("TAG", "startupOrigo method was called.");
-        if (startup == null && this.setup != null) {
-            startup = new OrigoStartup(this.context, this.setup);
-            startup.mobileKeysStartup();
-            call.resolve();
+        if (setup == null) {
+            call.reject("initializeOrigo() needs to be called.");
+            return;
         }
+        if (startup == null) {
+            startup = new OrigoStartup(context, setup);
+        }
+        startup.mobileKeysStartup();
+        call.resolve();
     }
 }

@@ -28,13 +28,13 @@ public class OrigoStartup implements OrigoMobileKeysCallback, OrigoKeysApiFacade
     private OrigoEndpointSetup endpointSetup;
     private OrigoKeys origoKeys;
 
-    public OrigoStartup(Context context, OrigoKeysApiFactory setup) {
+    public OrigoStartup(Context context, OrigoKeysApiFactory config) {
 
-        this.mobileKeysApiFacade = this;
-        this.mobileKeysApiFactory = setup;
-        mobileKeys = mobileKeysApiFactory.getMobileKeys();
+        mobileKeysApiFacade = this;
+        mobileKeysApiFactory = config;
+        mobileKeys = config.getMobileKeys();
         endpointSetup = new OrigoEndpointSetup(this);
-        origoKeys = new OrigoKeys(this, context);
+        origoKeys = new OrigoKeys(context, this);
 
         OrigoReaderConnectionCallback readerConnectionCallback = new OrigoReaderConnectionCallback(context);
         readerConnectionCallback.registerReceiver(this);
@@ -129,7 +129,7 @@ public class OrigoStartup implements OrigoMobileKeysCallback, OrigoKeysApiFacade
             if (mobileKeys.isEndpointSetupComplete()) {
                 onEndpointSetUpComplete();
             } else {
-                endpointSetup.onStart(); // TODO: verify proper way to trigger endpoint setup
+                endpointSetup.onStart(); // TODO: Check best way to trigger endpoint setup
             }
         } catch (OrigoMobileKeysException exception) {
             Log.e("TAG", "Application startup failed", exception);

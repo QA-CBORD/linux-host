@@ -4,7 +4,7 @@ apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
-    compileOptions {   // TODO: Investigate if these compileOptions still valid
+    compileOptions {   // TODO: Investigate if these compileOptions are valid
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
