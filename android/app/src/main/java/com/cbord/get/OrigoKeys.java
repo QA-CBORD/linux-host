@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.util.Log;
+
 import androidx.core.content.ContextCompat;
 
 import com.hid.origo.OrigoKeysApiFacade;
@@ -30,8 +31,8 @@ public class OrigoKeys implements OrigoMobileKeysCallback, OrigoMobileKeysProgre
         this.context = context;
     }
 
-    public void onResume() {
-        Log.d("TAG", "onResume()");
+    public void onRegistered() {
+        Log.d("TAG", "onRegistered()");
         // Listen to lock changes
         loadKeys();
         // TODO: mobileKeysApiFacade.getOrigoScanConfiguration().getRootOpeningTrigger().add(closestLockTrigger); ?
@@ -65,7 +66,7 @@ public class OrigoKeys implements OrigoMobileKeysCallback, OrigoMobileKeysProgre
         if (data == null) {
             data = Collections.emptyList();
         }
-            // TODO: Check if update adapter.setItems(data);
+        // TODO: Check if update adapter.setItems(data);
 
         // Update scanning based if we have keys
         if (data.isEmpty()) {
@@ -74,6 +75,7 @@ public class OrigoKeys implements OrigoMobileKeysCallback, OrigoMobileKeysProgre
             startScanning();
         }
     }
+
     // Start BLE scanning or request permission
     private void startScanning() {
         if (hasLocationPermissions()) {
@@ -107,7 +109,7 @@ public class OrigoKeys implements OrigoMobileKeysCallback, OrigoMobileKeysProgre
 
     @Override
     public void handleMobileKeysTransactionFailed(OrigoMobileKeysException mobileKeysException) {
-        if(shouldRetry(mobileKeysException)) {
+        if (shouldRetry(mobileKeysException)) {
             loadKeys();
             if (mobileKeysException.getErrorCode() == OrigoMobileKeysApiErrorCode.ENDPOINT_NOT_SETUP) {
                 mobileKeysApiFacade.endpointNotPersonalized();

@@ -8,19 +8,19 @@ import com.getcapacitor.Plugin;
 import java.util.ArrayList;
 
 public class MainActivity extends BridgeActivity {
-  @Override
-  public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-    // Initializes the Bridge
-    this.init(savedInstanceState, new ArrayList<Class<? extends Plugin>>() {{
-      // Additional plugins you've installed go here
-      add(HIDPlugin.class);
-      setupPlugin();
-    }});
-  }
+        // Initializes the Bridge
+        this.init(savedInstanceState, new ArrayList<Class<? extends Plugin>>() {{
+            // Additional plugins you've installed go here
+            add(HIDPlugin.class);
+            setupPlugin();
+        }});
+    }
 
-  private void setupPlugin() {
-    HIDPlugin.context = getApplicationContext();
-  }
+    private void setupPlugin() {
+        HIDPlugin.context = getApplicationContext();
+    }
 }

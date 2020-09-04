@@ -90,7 +90,7 @@ public class OrigoStartup implements OrigoMobileKeysCallback, OrigoKeysApiFacade
     @Override
     public void onEndpointSetUpComplete() {
         Log.e("TAG", "Application onEndpointSetUpComplete()");
-        origoKeys.onResume();
+        origoKeys.onRegistered();
     }
 
     @Override
@@ -101,12 +101,9 @@ public class OrigoStartup implements OrigoMobileKeysCallback, OrigoKeysApiFacade
     @Override
     public boolean isEndpointSetUpComplete() {
         boolean isEndpointSetup = false;
-        try
-        {
+        try {
             isEndpointSetup = mobileKeys.isEndpointSetupComplete();
-        }
-        catch (OrigoMobileKeysException e)
-        {
+        } catch (OrigoMobileKeysException e) {
             Log.e("TAG", "isEndpointSetUpComplete() error", e);
         }
         return isEndpointSetup;
@@ -131,15 +128,12 @@ public class OrigoStartup implements OrigoMobileKeysCallback, OrigoKeysApiFacade
         try {
             if (mobileKeys.isEndpointSetupComplete()) {
                 onEndpointSetUpComplete();
-            }
-            else {
+            } else {
                 endpointSetup.onStart(); // TODO: verify proper way to trigger endpoint setup
             }
-        }
-        catch (OrigoMobileKeysException exception)
-        {
+        } catch (OrigoMobileKeysException exception) {
             Log.e("TAG", "Application startup failed", exception);
-            if(shouldRetry(exception)) {
+            if (shouldRetry(exception)) {
                 onStartUpComplete();
             }
         }
@@ -163,13 +157,11 @@ public class OrigoStartup implements OrigoMobileKeysCallback, OrigoKeysApiFacade
     @Override
     public void onHceSessionOpened() {
         // Callback to the implementing service when a HCE session with a reader has been initialized.
-
     }
 
     @Override
     public void onHceSessionClosed(int var1) {
         // Callback to the implementing service when a HCE session with a reader has been closed.
-
     }
 
     @Override

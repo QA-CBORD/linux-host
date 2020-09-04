@@ -55,8 +55,8 @@ public class OrigoEndpointSetup implements OrigoMobileKeysCallback {
     @Override
     public void handleMobileKeysTransactionFailed(OrigoMobileKeysException origomobileKeysException) {
         Log.e("TAG", "Endpoint setup failed: " + origomobileKeysException.getErrorCode(), origomobileKeysException);
-         if(shouldRetry(origomobileKeysException)) {
-             onStart();
-         }
+        if (shouldRetry(origomobileKeysException)) {
+            onStart();
+        }
     }
 }

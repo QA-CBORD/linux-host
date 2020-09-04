@@ -9,7 +9,7 @@ import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 
 @NativePlugin()
-public class HIDPlugin extends Plugin  {
+public class HIDPlugin extends Plugin {
 
     public static Context context;
     private OrigoSetup setup;
@@ -20,10 +20,10 @@ public class HIDPlugin extends Plugin  {
         Log.d("TAG", "initializeOrigo method was called.");
         if (setup == null) {
             setup = new OrigoSetup(this.context);
-            setup.initializeOrigo();
-            call.resolve();
-            // TODO: resolve how to handle invitacion code from Ionic
         }
+        setup.initializeOrigo();
+        call.resolve();
+        // TODO: resolve how to handle invitation code from Ionic
     }
 
     @PluginMethod()
