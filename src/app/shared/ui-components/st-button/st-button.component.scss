@@ -91,4 +91,8 @@
     border-color: $color-white;
     border: 2px solid #fff;
   }
+
+  &--submit-button {
+    --border-radius: 8px;
+  }
 }
