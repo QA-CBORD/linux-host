@@ -16,7 +16,7 @@ public class OrigoConfig implements OrigoKeysApiFactory {
 
     private final int LOCK_SERVICE_CODE = 2, TRANSACTIONS_BACKOFF = 2000;
     private final String APPLICATION_ID = "A0000004400001010001"; // TODO: "This is the real aid" - seos_hce_service.xml
-    private final byte TRANSACTIONS_NO = 2;
+    private final byte TRANSACTIONS = 2;
     private OrigoMobileKeysApi mobileKeysFactory;
     private Context context;
 
@@ -30,7 +30,7 @@ public class OrigoConfig implements OrigoKeysApiFactory {
                 .setApplicationDescription(BuildConfig.AAMK_APP_ID_DESCRIPTION)
                 .setNfcParameters(new OrigoNfcConfiguration.Builder()
                         .unsafe_setAttemptNfcWithScreenOff(true)
-                        .setNumberOfNfcTransactionsNeeded(TRANSACTIONS_NO)
+                        .setNumberOfNfcTransactionsNeeded(TRANSACTIONS)
                         .setTransactionBackOff(TRANSACTIONS_BACKOFF)
                         .build())
                 .build();
