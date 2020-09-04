@@ -14,12 +14,11 @@ import com.hid.origo.api.hce.OrigoNfcConfiguration;
 
 public class OrigoSetup implements OrigoKeysApiFactory {
 
-    private static final int LOCK_SERVICE_CODE = 2;
-    public static final String APPLICATION_ID = "A0000004400001010001"; // TODO: verify correct AID A0000004400001010001
-    private static final byte TRANSACTIONS_NO = 2;
-    private static final int TRANSACTIONS_BACKOFF = 2000;
-    private Context context;
+    private final int LOCK_SERVICE_CODE = 2, TRANSACTIONS_BACKOFF = 2000;
+    private final String APPLICATION_ID = "A0000004400001010001"; // TODO: verify correct AID A0000004400001010001
+    private final byte TRANSACTIONS_NO = 2;
     private OrigoMobileKeysApi mobileKeysFactory;
+    private Context context;
 
     public OrigoSetup(Context context) {
         this.context = context;

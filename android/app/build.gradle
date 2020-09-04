@@ -4,7 +4,7 @@ apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
-    compileOptions {
+    compileOptions {   // TODO: Investigate if these compileOptions still valid
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
@@ -17,7 +17,7 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
 
-        //Mobile keys build configurations @see gradle.properties
+        // Mobile keys build configurations @see gradle.properties
         buildConfigField "String", "AAMK_APP_ID", AAMK_APP_ID
         buildConfigField "String", "AAMK_APP_ID_DESCRIPTION", AAMK_APP_ID_DESCRIPTION
         buildConfigField "int", "AAMK_LOCK_SERVICE_CODE", AAMK_LOCK_SERVICE_CODE

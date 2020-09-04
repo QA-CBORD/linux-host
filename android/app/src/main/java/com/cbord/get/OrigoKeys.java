@@ -22,8 +22,8 @@ import java.util.List;
 public class OrigoKeys implements OrigoMobileKeysCallback, OrigoMobileKeysProgressCallback {
 
     private OrigoKeysApiFacade mobileKeysApiFacade;
-    List<OrigoMobileKey> data = null;
-    Context context;
+    private List<OrigoMobileKey> data = null;
+    private Context context;
 
     public OrigoKeys(OrigoStartup origoStartup, Context context) {
         this.mobileKeysApiFacade = (OrigoKeysApiFacade) origoStartup;

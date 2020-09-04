@@ -4,9 +4,9 @@ import android.content.Context;
 import android.util.Log;
 
 import com.getcapacitor.NativePlugin;
+import com.getcapacitor.PluginMethod;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
-import com.getcapacitor.PluginMethod;
 
 @NativePlugin()
 public class HIDPlugin extends Plugin  {
