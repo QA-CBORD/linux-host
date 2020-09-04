@@ -84,7 +84,7 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
   }
 
   async activateLocation() {
-    await this.loading.showSpinner(this.contentString.activateLocationLoader);
+    await this.loading.showSpinner({message: this.contentString.activateLocationLoader });
     const subscription = this.mobileAccessService.activateMobileLocation(this.locationId).pipe(
       take(1),
     ).subscribe(

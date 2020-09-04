@@ -83,7 +83,7 @@ export class SecureMessagePage implements OnDestroy, OnInit {
    * Initial data gathering for messages and groups
    */
   private initializePage() {
-    this.loading.showSpinner('Retrieving conversations...');
+    this.loading.showSpinner({ message: 'Retrieving conversations...'});
     const subscription = this.secureMessagingService
       .getInitialData()
       .pipe(finalize(() => this.loading.closeSpinner()))
