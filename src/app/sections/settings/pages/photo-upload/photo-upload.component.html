@@ -154,7 +154,10 @@
             class="round-corners"
           />
           <ion-button
-            *ngIf="localPhotoUploadStatus.profilePending === localPhotoStatus.NEW || localPhotoUploadStatus.profilePending === localPhotoStatus.PENDING"
+            *ngIf="
+              localPhotoUploadStatus.profilePending === localPhotoStatus.NEW ||
+              localPhotoUploadStatus.profilePending === localPhotoStatus.PENDING
+            "
             class="upload-btn"
             (click)="onTakePhoto(photoType.PROFILE)"
             >REUPLOAD</ion-button
@@ -182,7 +185,7 @@
   <!-- BUTTON THAT SUBMITS ALL PHOTOS  -->
   <div class="action-btn-container">
     <ion-button color="primary" [disabled]="submitButtonDisabled" class="submit-btn" (click)="submitPhotos()"
-      >SUBMIT PHOTOS FOR REVIEW</ion-button
+      >SUBMIT PHOTO FOR REVIEW</ion-button
     >
   </div>
 </ion-content>
