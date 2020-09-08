@@ -131,7 +131,7 @@ export class OrderingPage implements OnInit {
   }
 
   private orderAheadEnabled(merchant: MerchantInfo): boolean {
-    return merchant.openNow && parseInt(merchant.settings.map[MerchantSettings.orderAheadEnabled].value) === 1;
+    return merchant.openNow || parseInt(merchant.settings.map[MerchantSettings.orderAheadEnabled].value) === 1;
   }
 
   private initContentStrings() {
