@@ -35,6 +35,8 @@ import {
 import { AccountType } from 'src/app/app.global';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { take } from 'rxjs/operators';
+import { Plugins } from '@capacitor/core';
+const { Keyboard } = Plugins;
 
 @Component({
   selector: 'st-order-details',
@@ -81,17 +83,19 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
 
   constructor(private readonly fb: FormBuilder,
               private readonly modalController: ModalController,
-              private readonly orderingService: OrderingService) {
+              private readonly orderingService: OrderingService) {           
   }
 
   ngOnInit() {
     this.initForm();
     this.initContentStrings();
     this.updateFormErrorsByContentStrings();
+    this.setAccessoryBarVisible(true);
   }
 
   ngOnDestroy() {
     this.sourceSub.unsubscribe();
+    this.setAccessoryBarVisible(false);
   }
 
   ngOnChanges({ orderDetailOptions }: SimpleChanges): void {
@@ -138,6 +142,10 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
 
   onRemoveOrderItem(id: string) {
     this.onOrderItemRemovedId.emit(id);
+  }
+
+  setAccessoryBarVisible(isVisible: boolean) {
+    Keyboard.setAccessoryBarVisible({isVisible: isVisible});
   }
 
   initForm() {
