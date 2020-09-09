@@ -10,6 +10,7 @@ import { SettingsFacadeService } from '@core/facades/settings/settings-facade.se
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
+import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 
 export interface SettingsSectionConfig {
   label: string;
@@ -22,7 +23,7 @@ export interface SettingItemConfig {
   label: string;
   type: string;
   icon: string;
-  navigate?: string;
+  navigate?: string[];
   navigateExternal?: SettingItemExternalResource;
   checked?: boolean;
   toggleLabel?: ToggleLabel;
@@ -78,4 +79,5 @@ export interface SettingsServices {
   settings: SettingsFacadeService;
   institution: InstitutionFacadeService;
   environment: EnvironmentFacadeService;
+  appBrowser: InAppBrowser;
 }

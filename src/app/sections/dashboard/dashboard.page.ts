@@ -21,6 +21,8 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { PhoneEmailComponent } from '@shared/ui-components/phone-email/phone-email.component';
 import { EditHomePageModalComponent } from '@shared/ui-components/edit-home-page-modal/edit-home-page-modal.component';
+import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
+import { EMAIL_REGEXP } from '@core/utils/regexp-patterns';
 
 const { App, Device } = Plugins;
 
@@ -42,7 +44,8 @@ export class DashboardPage implements OnInit {
     private readonly nativeStartupFacadeService: NativeStartupFacadeService,
     private readonly popoverCtrl: PopoverController,
     private readonly userFacadeService: UserFacadeService,
-    private readonly institutionFacadeService: InstitutionFacadeService
+    private readonly institutionFacadeService: InstitutionFacadeService,
+    private readonly appBrowser: InAppBrowser,
   ) {}
 
   get tilesIds(): { [key: string]: string } {
@@ -81,8 +84,9 @@ export class DashboardPage implements OnInit {
   private async checkStaleProfile() {
     zip(this.userFacadeService.getUserData$(), this.institutionFacadeService.getlastChangedTerms$())
       .pipe(
-        map(([{ staleProfile, lastUpdatedProfile }, lastChangedTerms]) => {
-          if (staleProfile) {
+        map(([{ email, staleProfile, lastUpdatedProfile }, lastChangedTerms]) => {
+          /// if stale profile or user email is not defined or malformed
+          if (staleProfile || !EMAIL_REGEXP.test(email)) {
             return true;
           }
 
@@ -95,12 +99,8 @@ export class DashboardPage implements OnInit {
           if (!lastUpdatedProfile) {
             return true;
           }
-
-          const profileUpdated: Date = new Date(lastUpdatedProfile);
-          const instChangedTerms: Date = new Date(lastChangedTerms);
-
           /// if user hasn't seen new TOS for the institution
-          return profileUpdated < instChangedTerms;
+          return lastUpdatedProfile < lastChangedTerms;
         }),
         take(1)
       )
@@ -150,10 +150,11 @@ export class DashboardPage implements OnInit {
   private redirectToTheStore() {
     Device.getInfo()
       .then(deviceInfo => {
+
         if (deviceInfo.platform === 'ios') {
-          window.open('itms-apps://itunes.apple.com/app/id844091049');
+          this.appBrowser.create('itms-apps://itunes.apple.com/app/id844091049', '_system');
         } else if (deviceInfo.platform === 'android') {
-          window.open('https://play.google.com/store/apps/details?id=com.cbord.get');
+          this.appBrowser.create('https://play.google.com/store/apps/details?id=com.cbord.get', '_system');
         }
       })
       .catch(reason => {});

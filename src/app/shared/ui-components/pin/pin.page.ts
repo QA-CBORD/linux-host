@@ -67,6 +67,7 @@ export class PinPage implements OnInit {
   ) {}
 
   @Input() pinAction: PinAction;
+  @Input() showDismiss: boolean;
 
   ngOnInit() {
     this.retrievePinRetrys();
@@ -259,5 +260,9 @@ export class PinPage implements OnInit {
         }
       );
     // on success, return the pin so the vault can be unlocked
+  }
+
+  get showReset() {
+    return this.pinNumber.length < 4 && this.pinNumberCopy.length === 4;
   }
 }

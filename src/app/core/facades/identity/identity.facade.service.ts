@@ -38,9 +38,14 @@ export class IdentityFacadeService extends ServiceStateFacade {
     super();
   }
 
-  async pinLoginSetup(biometricEnabled: boolean, navigateToDashboard: boolean = true): Promise<any> {
+  async pinLoginSetup(
+    biometricEnabled: boolean,
+    navigateToDashboard: boolean = true,
+    pinModalProps?: any
+  ): Promise<any> {
     const { data, role } = await this.identityService.presentPinModal(
-      biometricEnabled ? PinAction.SET_BIOMETRIC : PinAction.SET_PIN_ONLY
+      biometricEnabled ? PinAction.SET_BIOMETRIC : PinAction.SET_PIN_ONLY,
+      pinModalProps
     );
     switch (role) {
       case PinCloseStatus.CANCELED:
@@ -114,11 +119,10 @@ export class IdentityFacadeService extends ServiceStateFacade {
       .toPromise();
   }
 
-  get availableBiometricHardware$(): Promise<string[]> {
-    return this.identityService
-      .getAvailableBiometricHardware()
-      .pipe(take(1))
-      .toPromise();
+  setBiometricsEnabled(isBiometricsEnabled: boolean): Promise<void> {
+    return this.identityService.setBiometricsEnabled(isBiometricsEnabled).then(() => {
+      this._biometricsEnabledUserPreference = isBiometricsEnabled;
+    });
   }
 
   get cachedPinEnabledUserPreference$(): Promise<boolean> {
@@ -157,7 +161,7 @@ export class IdentityFacadeService extends ServiceStateFacade {
     return this.identityService.hasStoredSession();
   }
 
-  lockVault(){
+  lockVault() {
     this.identityService.lockVault();
   }
 }

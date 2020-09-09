@@ -8,7 +8,7 @@ import {
 } from '../models/setting-items-config.model';
 import { Settings } from 'src/app/app.global';
 import { from, concat, zip } from 'rxjs';
-import { SETTINGS_ID } from '@sections/settings/settings.config';
+import { SETTINGS_ID } from '../models/settings-id.enum';
 
 export function getCardStatus(services: SettingsServices): Promise<boolean> {
   return services.userService
@@ -17,18 +17,17 @@ export function getCardStatus(services: SettingsServices): Promise<boolean> {
     .toPromise();
 }
 
-export async function setFaceIdStatus(services: SettingsServices): Promise<void> {
+export async function setBiometricStatus(services: SettingsServices): Promise<void> {
   const setting: SettingItemConfig = this;
   setting.checked = await services.identity.cachedBiometricsEnabledUserPreference$;
 }
 
-export function toggleFaceIdStatus(services: SettingsServices) {
+export function toggleBiometricStatus(services: SettingsServices) {
   const setting: SettingItemConfig = this;
   setting.callback = function() {
-    return new Promise<boolean>(resolve => {
-      services.identity._biometricsEnabledUserPreference = !setting.checked;
-      resolve(true);
-    }).then(async () => await setting.setToggleStatus(services));
+    return services.identity
+      .setBiometricsEnabled(!setting.checked)
+      .then(async () => await setting.setToggleStatus(services));
   };
 }
 
@@ -36,7 +35,10 @@ export function handlePinAccess(services: SettingsServices) {
   const setting: SettingItemConfig = this;
   setting.callback = async function() {
     const biometricsEnabled = await services.identity.cachedBiometricsEnabledUserPreference$;
-    return services.identity.pinLoginSetup(biometricsEnabled, false);
+    services.globalNav.hideNavBar();
+    return services.identity
+      .pinLoginSetup(biometricsEnabled, false, { showDismiss: true })
+      .finally(() => services.globalNav.showNavBar());
   };
 }
 
@@ -110,7 +112,7 @@ export async function openSiteURL(services: SettingsServices): Promise<void> {
 
     const link = await linkPromise;
     setting.callback = async function() {
-      window.open(link, '_system');
+      services.appBrowser.create(link, '_system');
     };
   }
   if (resource.type === 'link') {
@@ -135,7 +137,7 @@ export async function openSiteURL(services: SettingsServices): Promise<void> {
         )
         .toPromise();
       const link = await linkPromise;
-      window.open(link, '_system');
+      services.appBrowser.create(link, '_system');
     };
   }
 }

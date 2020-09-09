@@ -4,8 +4,8 @@ import {
   handleOpenHTMLModal,
   openSiteURL,
   openModal,
-  toggleFaceIdStatus,
-  setFaceIdStatus,
+  toggleBiometricStatus,
+  setBiometricStatus,
   handlePinAccess,
 } from './helpers/setting-item.helper';
 import { CONTENT_STINGS_DOMAINS, CONTENT_STINGS_CATEGORIES } from 'src/app/content-strings';
@@ -13,7 +13,8 @@ import { HTMLRendererComponent } from '@shared/ui-components/html-renderer/html-
 import { PhoneEmailComponent } from '@shared/ui-components/phone-email/phone-email.component';
 import { AuthTypes } from '@core/utils/auth-types.enum';
 import { EditHomePageModalComponent } from '@shared/ui-components/edit-home-page-modal/edit-home-page-modal.component';
-
+import { SETTINGS_ID } from './models/settings-id.enum';
+import { LOCAL_ROUTING as ORDERING_ROUTING } from '@sections/ordering/ordering.config'
 export enum LOCAL_ROUTING {
   photoUpload = 'photo-upload',
 }
@@ -25,7 +26,7 @@ export enum SETTINGS_NAVIGATE {
   faceId = 'face-id',
   pin = 'pin-change',
   devices = 'report-lost',
-  address = 'my-address',
+  address = 'my-addresses',
   paymentMethods = 'payment-methods',
   deposits = 'auto-deposits',
   mealPlan = 'meal-plan-change',
@@ -39,27 +40,6 @@ export enum SETTINGS_NAVIGATE {
   terms = 'terms-privacy',
 }
 
-export enum SETTINGS_ID {
-  updatePhoto = 'update-photo',
-  lostCard = 'lost-card',
-  personalData = 'email-pwd',
-  password = 'pwd-change',
-  faceId = 'face-id',
-  pin = 'pin-change',
-  devices = 'report-lost',
-  address = 'my-address',
-  paymentMethods = 'payment-methods',
-  deposits = 'auto-deposits',
-  mealPlan = 'meal-plan-change',
-  mealPurchase = 'meal-plan-purchase',
-  theme = 'theme-change',
-  home = 'home-edit',
-  navigate = 'nav-edit',
-  feedback = 'feedback-sending',
-  help = 'help',
-  support = 'email-support',
-  terms = 'terms-privacy',
-}
 export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
   {
     label: 'Your card',
@@ -69,7 +49,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         icon: 'update-photo',
         label: 'Update photo',
         type: 'button',
-        navigate: SETTINGS_NAVIGATE.updatePhoto,
+        navigate: [SETTINGS_NAVIGATE.updatePhoto],
         validations: [{ type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.PHOTO_UPLOAD_ENABLED }],
       },
       // {
@@ -97,24 +77,24 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
           component: PhoneEmailComponent,
         },
       },
+      // {
+      //   id: SETTINGS_ID.password,
+      //   icon: 'key',
+      //   label: 'Change password',
+      //   type: 'button',
+      //   setCallback: openSiteURL,
+      //   navigateExternal: { type: 'link', value: 'login.php?password=forgot' },
+      // },
       {
-        id: SETTINGS_ID.password,
-        icon: 'key',
-        label: 'Change password',
-        type: 'button',
-        setCallback: openSiteURL,
-        navigateExternal: { type: 'link', value: 'login.php?password=forgot' },
-      },
-      {
-        id: SETTINGS_ID.faceId,
-        icon: 'faceid',
-        label: 'Face ID',
+        id: SETTINGS_ID.biometrics,
+        icon: '',
+        label: '',
         type: 'toggle',
-        setCallback: toggleFaceIdStatus,
-        setToggleStatus: setFaceIdStatus,
+        setCallback: toggleBiometricStatus,
+        setToggleStatus: setBiometricStatus,
         validations: [
           { type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.PIN_ENABLED },
-          { type: SETTINGS_VALIDATIONS.Biometric, value: AuthTypes.FACE },
+          { type: SETTINGS_VALIDATIONS.Biometric, value: 'biometric' },
         ],
       },
       {
@@ -125,13 +105,13 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         setCallback: handlePinAccess,
         validations: [{ type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.PIN_ENABLED }],
       },
-      // {
-      //   id: SETTINGS_ID.address,
-      //   icon: 'map-marker',
-      //   label: 'Saved Address',
-      //   type: 'button',
-      //   navigate: SETTINGS_NAVIGATE.address,
-      // },
+      {
+        id: SETTINGS_ID.address,
+        icon: 'map-marker',
+        label: 'Saved Address',
+        type: 'button',
+        navigate: [SETTINGS_NAVIGATE.address],
+      },
     ],
   },
   // {
@@ -243,7 +223,8 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
             },
           ],
           appendStrings: [
-            '<br><br>Address geocoding and reverse geocoding is &copy; OpenStreetMap contributors. <a href="http://www.openstreetmap.org/copyright">Copyright and License</a>\r\n',
+            '<br><br>Address geocoding and reverse geocoding is &copy; OpenStreetMap contributors. <a href="http://www.openstreetmap.org/copyright">Copyright and License</a>',
+            '<br><br>Copyright © 2012- 2020 The CBORD Group, Inc.\r\n',
           ],
           component: HTMLRendererComponent,
         },
@@ -277,3 +258,4 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
     ],
   },
 ];
+
