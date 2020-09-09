@@ -171,6 +171,12 @@ export namespace User {
     DELETED = 4,
   }
 
+  export enum NotificationType {
+    EMAIL = 1,
+    PHONE ,
+    PUSH_NOTIFICATION = 8
+  }
+
   export enum Settings {
     CASHLESS_KEY = 'CashlessKey',
     QUICK_AMOUNT = 'quick_amount',

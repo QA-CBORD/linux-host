@@ -3,7 +3,6 @@ import { FavoriteMerchantsFacadeService } from '@core/facades/favourite-merchant
 import { MerchantInfo } from '@sections/ordering';
 import { combineLatest, Observable, zip } from 'rxjs';
 import { MerchantFacadeService } from '@core/facades/merchant/merchant-facade.service';
-import { Environment } from '../../../../environment';
 import { PATRON_NAVIGATION, Settings } from '../../../../app.global';
 import { EXPLORE_ROUTING } from '@sections/explore/explore.config';
 import { Router } from '@angular/router';
@@ -12,6 +11,7 @@ import { exploreMerchantSorting } from '@core/utils/general-helpers';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { MenuMerchantFacadeService } from '@core/facades/menu-merchant/menu-merchant-facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
+import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 
 @Component({
   selector: 'st-explore-tile',
@@ -20,10 +20,11 @@ import { SettingsFacadeService } from '@core/facades/settings/settings-facade.se
 })
 export class ExploreTileComponent implements OnInit {
   favMerchants$: Observable<MerchantInfo[]>;
-  awsImageUrl: string = Environment.getImageURL();
+  awsImageUrl: string = this.environmentFacadeService.getImageURL();
   isLoading: boolean = true;
 
   constructor(
+    private readonly environmentFacadeService: EnvironmentFacadeService,
     private readonly merchantFacadeService: MerchantFacadeService,
     private readonly favMerchantFacadeService: FavoriteMerchantsFacadeService,
     private readonly menuMerchantFacadeService: MenuMerchantFacadeService,

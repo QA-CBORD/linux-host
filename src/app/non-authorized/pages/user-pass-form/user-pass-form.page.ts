@@ -20,6 +20,7 @@ import { AUTHENTICATION_SYSTEM_TYPE, GUEST_ROUTES } from '../../non-authorized.c
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
 import { Observable } from 'rxjs';
+import { configureBiometricsConfig } from '@core/utils/general-helpers';
 
 @Component({
   selector: 'user-pass-form',
@@ -86,19 +87,20 @@ export class UserPassForm implements OnInit {
   }
 
   redirectToWebPage(url) {
-    window.open(`${this.environmentFacadeService.getSitesURL()}/${this.institutionInfo.shortName}/full/${url}`);
+    const link = `${this.environmentFacadeService.getSitesURL()}/${this.institutionInfo.shortName}/full/${url}`;
+    this.appBrowser.create(link, '_system');
   }
 
   async redirectToSignup() {
     const { shortName } = await this.institutionFacadeService.cachedInstitutionInfo$.pipe(take(1)).toPromise();
     const url = `${this.environmentFacadeService.getSitesURL()}/${shortName}/full/register.php`;
-    window.open(url, '_system');
+    this.appBrowser.create(url, '_system');
   }
 
   async redirectToForgotPassword(): Promise<void> {
     const { shortName } = await this.institutionFacadeService.cachedInstitutionInfo$.pipe(take(1)).toPromise();
     const url = `${this.environmentFacadeService.getSitesURL()}/${shortName}/full/login.php?password=forgot`;
-    window.open(url, '_system');
+    this.appBrowser.create(url, '_system');
   }
 
   isSignupEnabled$(): Observable<boolean> {
@@ -139,7 +141,7 @@ export class UserPassForm implements OnInit {
         break;
       case LoginState.BIOMETRIC_SET:
         const supportedBiometricType = await this.identityFacadeService.getAvailableBiometricHardware();
-        const biometricConfig = this.configureBiometricsConfig(supportedBiometricType);
+        const biometricConfig = configureBiometricsConfig(supportedBiometricType);
         await this.router.navigate([PATRON_NAVIGATION.biometric], { state: { biometricConfig } });
         break;
       case LoginState.DONE:

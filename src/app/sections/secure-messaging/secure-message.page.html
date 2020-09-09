@@ -1,10 +1,10 @@
 <st-header
-        *ngIf="showToolbar()"
-        title='Messages'
-        [isTitleShow]="true"
-        [isToolbarShow]="true"
-        [isBackButtonShow]="false"
-        class="shadow-header"
+  *ngIf="showToolbar()"
+  title="Messages"
+  [isTitleShow]="true"
+  [isToolbarShow]="true"
+  [isBackButtonShow]="false"
+  class="shadow-header"
 ></st-header>
 
 <ion-grid class="secure-message ion-no-padding">
@@ -41,7 +41,7 @@
           class="conversations-container__group"
           [ngClass]="{ 'conversations-container__group--selected' : conversation.selected }"
         >
-          <ion-avatar slot="start" class="purple-background">
+          <ion-avatar slot="start" class="purple-background" [ngStyle]="{ background: getAvatarBackgroundColor() }">
             <h3 class="conversations-container__avatar-text">{{getConversationGroupInitial(conversation)}}</h3>
           </ion-avatar>
           <ion-label>
@@ -66,11 +66,13 @@
       <ion-header no-border *ngIf="checkIfOpen()">
         <ion-toolbar>
           <ion-buttons class="btn-wrapper" *ngIf="!bIsLargeScreen" slot="start">
-              <ion-back-button (click)="onClickBackConversation()"
-                               class="btn"
-                               color="dark"
-                               [icon]="'ios-arrow-back'"
-                               mode="ios"></ion-back-button>
+            <ion-back-button
+              (click)="onClickBackConversation()"
+              class="btn"
+              color="dark"
+              [icon]="'ios-arrow-back'"
+              mode="ios"
+            ></ion-back-button>
           </ion-buttons>
           <ion-title>{{getConversationGroupName(selectedConversation)}}</ion-title>
         </ion-toolbar>
@@ -93,7 +95,8 @@
                   <ion-avatar
                     *ngIf="messageShowAvatar(selectedConversation, i, 'group')"
                     slot="end"
-                    class="purple-background conversation-container__chat-avatar"
+                    class="conversation-container__chat-avatar"
+                    [ngStyle]="{ background: getAvatarBackgroundColor() }"
                   >
                     <h3 class="conversation-container__avatar-text">
                       {{getConversationGroupInitial(selectedConversation)}}
@@ -203,7 +206,7 @@
           *ngFor="let group of groupsArray"
           (click)="onClickMakeNewConversation(group)"
         >
-          <ion-avatar slot="start" class="purple-background">
+          <ion-avatar slot="start" class="purple-background" [ngStyle]="{ background: getAvatarBackgroundColor() }">
             <h3 class="conversation-creation-container__avatar-text">{{getGroupInitial(group)}}</h3>
           </ion-avatar>
           <ion-label>

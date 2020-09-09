@@ -42,5 +42,6 @@
     [addresses]="userAddresses"
     [defaultAddress]="defaultAddress"
     (onAddNewAddress)="changeAddNewAdddressState()"
+    (onAddressSelected)='onAddressSelected($event)'
   ></st-order-address-list>
 </ion-content>

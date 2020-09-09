@@ -17,7 +17,7 @@ export function parseArrayFromString<T>(value: string): Array<T> {
 
 export const formControlErrorDecorator = (
   fn: ValidatorFn,
-  errorMsg: string,
+  errorMsg: string
 ): ((control: AbstractControl) => ValidationErrors | null) => {
   return control => {
     return fn(control) === null ? null : { errorMsg };
@@ -67,7 +67,10 @@ export const validateInteger = ({ value }: AbstractControl): ValidationErrors | 
   return !isInteger || isStartedWithZero ? { incorrect: true } : null;
 };
 
-export const handleServerError = <T>(serverError: ServerErrorsInfo, ignoreCodes?: string[]): MonoTypeOperatorFunction<T> => {
+export const handleServerError = <T>(
+  serverError: ServerErrorsInfo,
+  ignoreCodes?: string[]
+): MonoTypeOperatorFunction<T> => {
   return (source: Observable<T>) =>
     source.pipe(
       catchError(({ message }) => {
@@ -94,7 +97,7 @@ export const handleServerError = <T>(serverError: ServerErrorsInfo, ignoreCodes?
         }
 
         return throwError(serverError[code] ? serverError[code] : text);
-      }),
+      })
     );
 };
 
@@ -131,20 +134,22 @@ export const isMealsAccount = ({ accountType }: UserAccount): boolean => {
 };
 
 export function exploreMerchantSorting(sourceArray: MerchantInfo[]): MerchantInfo[] {
-  return sourceArray.sort((
-    { isFavorite: fav1, distanceFromUser: dist1, openNow: open1, name: name1 },
-    { isFavorite: fav2, distanceFromUser: dist2, openNow: open2, name: name2 },
-  ) => {
-    const compareFav = compareFieldsSkipEmptyToEnd<boolean>(fav2, fav1);
-    if (compareFav !== 0) return compareFav;
-    const compareOpenStatus = compareFieldsSkipEmptyToEnd<boolean>(open2, open1);
-    if (compareOpenStatus !== 0) return compareOpenStatus;
-    const compareDistance = compareFieldsSkipEmptyToEnd<number>(dist1, dist2);
-    if (compareDistance !== 0) return compareDistance;
-    if (typeof name1 !== 'string') name1 = '';
-    if (typeof name2 !== 'string') name1 = '';
-    return name2.localeCompare(name1);
-  });
+  return sourceArray.sort(
+    (
+      { isFavorite: fav1, distanceFromUser: dist1, openNow: open1, name: name1 },
+      { isFavorite: fav2, distanceFromUser: dist2, openNow: open2, name: name2 }
+    ) => {
+      const compareFav = compareFieldsSkipEmptyToEnd<boolean>(fav2, fav1);
+      if (compareFav !== 0) return compareFav;
+      const compareOpenStatus = compareFieldsSkipEmptyToEnd<boolean>(open2, open1);
+      if (compareOpenStatus !== 0) return compareOpenStatus;
+      const compareDistance = compareFieldsSkipEmptyToEnd<number>(dist1, dist2);
+      if (compareDistance !== 0) return compareDistance;
+      if (typeof name1 !== 'string') name1 = '';
+      if (typeof name2 !== 'string') name1 = '';
+      return name2.localeCompare(name1);
+    }
+  );
 }
 
 export function compareFieldsSkipEmptyToEnd<T>(a: T = null, b: T = null): number {
@@ -167,4 +172,32 @@ export function sortAlphabetically(a, b) {
     return 1;
   }
   return 0;
+}
+
+export function configureBiometricsConfig(
+  supportedBiometricType: string[]
+): { type: string; name: string; icon: string } {
+  if (supportedBiometricType.includes('fingerprint')) {
+    return { type: 'fingerprint', name: 'Fingerprint', icon: 'fingerprint' };
+  } else if (supportedBiometricType.includes('face')) {
+    return { type: 'face', name: 'Face ID', icon: 'faceid' };
+  } else if (supportedBiometricType.includes('iris')) {
+    return { type: 'iris', name: 'Iris', icon: 'iris' };
+  }
+}
+
+export function getRandomColorExtendedPalette(): string {
+  const colors = [
+    '#9A39D2',
+    '#C564FC',
+    '#AE4F07',
+    '#D67A12',
+    '#505AE3',
+    '#807FFF',
+    '#F254A6',
+    '#C7246F',
+    '#377914',
+    '#4AA40D',
+  ];
+  return colors[Math.floor(Math.random() * (colors.length - 1))];
 }
