@@ -41,7 +41,7 @@ export class OrderingPage implements OnInit {
   }
 
   merchantClickHandler(merchantInfo: MerchantInfo) {
-    if (!this.orderAheadEnabled(merchantInfo)) {
+    if (!this.canOrderFromMerchant(merchantInfo)) {
       this.onToastDisplayed(`${merchantInfo.name} is currently closed, please try again during operating hours`, 4000);
       return;
     }
@@ -113,7 +113,7 @@ export class OrderingPage implements OnInit {
         this.onToastDisplayed('We were unable to find your merchant - Please try again', 4000);
         return;
       }
-      if (!this.orderAheadEnabled(merchant)) {
+      if (!this.canOrderFromMerchant(merchant)) {
         this.onToastDisplayed(`${merchant.name} is currently closed, please try again during operating hours`, 4000);
         return;
       }
@@ -130,7 +130,7 @@ export class OrderingPage implements OnInit {
     await toast.present();
   }
 
-  private orderAheadEnabled(merchant: MerchantInfo): boolean {
+  private canOrderFromMerchant(merchant: MerchantInfo): boolean {
     return merchant.openNow || parseInt(merchant.settings.map[MerchantSettings.orderAheadEnabled].value) === 1;
   }
 
