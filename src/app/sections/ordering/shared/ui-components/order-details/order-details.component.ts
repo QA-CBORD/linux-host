@@ -229,7 +229,6 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private removeCvvControl() {
-    console.log('removeCvvControl');
     this.showCVVControl = false;
     this.detailsForm.removeControl(DETAILS_FORM_CONTROL_NAMES.cvv);
   }
@@ -242,7 +241,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     modal.onDidDismiss().then(({ data }) => {
       data && this.addressInfoFormControl.setValue(data);
     });
-    await modal.present();
+    await modal.present();l
   }
 
   private initContentStrings() {
