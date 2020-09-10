@@ -241,7 +241,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     modal.onDidDismiss().then(({ data }) => {
       data && this.addressInfoFormControl.setValue(data);
     });
-    await modal.present();l
+    await modal.present();
   }
 
   private initContentStrings() {
