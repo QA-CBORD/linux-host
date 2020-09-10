@@ -30,6 +30,13 @@
   </div>
   <div class="login__form-wrapper">
     <form class="login__form" [formGroup]="loginForm">
+      <div *ngVar="{ isLDAP: authTypeLDAP$ | async, isInstructions: loginInstructions$ | async } as authInfo">
+        <ion-card *ngIf="authInfo.isLDAP && authInfo.isInstructions" class="login__LDAP-message">
+          <ion-card-content>
+            <div [innerHTML]="authInfo.isInstructions"></div>
+          </ion-card-content>
+        </ion-card>
+      </div>
       <st-input-floating-label
         [label]="placeholderOfUsername$ | async"
         [formControlName]="controlsNames.username"

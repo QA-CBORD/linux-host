@@ -33,7 +33,9 @@ export class UserPassForm implements OnInit {
   institutionPhoto$: Promise<SafeResourceUrl>;
   nativeHeaderBg$: Promise<string>;
   placeholderOfUsername$: Promise<string>;
+  loginInstructions$: Promise<string>;
   authTypeHosted$: Observable<boolean>;
+  authTypeLDAP$: Observable<boolean>;
   private institutionInfo: Institution;
   loginForm: FormGroup;
   signupEnabled$: Observable<boolean>;
@@ -78,12 +80,15 @@ export class UserPassForm implements OnInit {
       .pipe(take(1))
       .toPromise();
     this.authTypeHosted$ = this.getAuthenticationTypeHosted$(id, sessionId);
-    this.placeholderOfUsername$ = this.getPlaceholderForUsername(sessionId);
+    this.authTypeLDAP$ = this.getAuthenticationTypeLDAP$(id, sessionId);
+    this.placeholderOfUsername$ = this.getContentStringByName(sessionId, 'email_username');
+    this.loginInstructions$ = this.getContentStringByName(sessionId, 'instructions');
     this.institutionPhoto$ = this.getInstitutionPhoto(id, sessionId);
     this.institutionName$ = this.getInstitutionName(id, sessionId);
     this.nativeHeaderBg$ = this.getNativeHeaderBg(id, sessionId);
+    
     this.signupEnabled$ = this.isSignupEnabled$();
-    this.cdRef.markForCheck();
+    this.cdRef.detectChanges();
   }
 
   redirectToWebPage(url) {
@@ -187,20 +192,28 @@ export class UserPassForm implements OnInit {
     );
   }
 
-  private async getPlaceholderForUsername(sessionId): Promise<string> {
-    return this.contentStringsFacadeService
-      .resolveContentString$(
-        CONTENT_STINGS_DOMAINS.get_web_gui,
-        CONTENT_STINGS_CATEGORIES.login_screen,
-        'email_username',
-        sessionId,
-        false
-      )
-      .pipe(
-        map(({ value }) => value),
-        take(1)
-      )
-      .toPromise();
+  private getAuthenticationTypeLDAP$(institutionId: string, sessionId: string): Observable<boolean> {
+    return this.institutionFacadeService.getInstitutionInfo$(institutionId, sessionId, true).pipe(
+      map(({ authenticationSystemType }) => authenticationSystemType === AUTHENTICATION_SYSTEM_TYPE.LDAP),
+      take(1)
+    );
+  }
+
+  private async getContentStringByName(sessionId, name): Promise<string> {
+   return this.contentStringsFacadeService
+    .fetchContentString$(
+      CONTENT_STINGS_DOMAINS.get_web_gui, 
+      CONTENT_STINGS_CATEGORIES.login_screen, 
+      name,
+      null,
+      sessionId,
+      false,
+    )
+    .pipe(
+      map(({ value }) => value),
+      take(1)
+    )
+    .toPromise();
   }
 
   private configureBiometricsConfig(supportedBiometricType: string[]): { type: string; name: string } {
@@ -215,7 +228,7 @@ export class UserPassForm implements OnInit {
 
   private async getNativeHeaderBg(id, sessionId): Promise<string> {
     return this.settingsFacadeService
-      .getSetting(Settings.Setting.MOBILE_HEADER_COLOR, sessionId, id)
+      .fetchSetting(Settings.Setting.MOBILE_HEADER_COLOR, sessionId, id)
       .pipe(
         map(({ value }) => {
           if (value === null) return;
