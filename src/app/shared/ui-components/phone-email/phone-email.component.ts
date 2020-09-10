@@ -97,12 +97,13 @@ export class PhoneEmailComponent implements OnInit {
       ],
     });
     const user: any = await this.userFacadeService
-      .getUserData$()
+      .getUser$()
       .pipe(take(1))
       .toPromise();
     this.user = { ...user };
     this.checkFieldValue(this.email, this.user.email);
     this.checkFieldValue(this.phone, this.user.phone);
+    this.cdRef.detectChanges();
   }
 
   get controlsNames() {
