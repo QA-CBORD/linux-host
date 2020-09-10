@@ -103,7 +103,9 @@ export const handleServerError = <T>(
 
 export const cvvValidationFn: ValidatorFn = function({ value }) {
   if (isNaN(value)) return { error: true };
-  if (!Number.isInteger(value)) return { error: true };
+  if (!Number.isInteger(Number(value))) return { error: true };
+
+  // Length 3 VISA/MC ; Length 4 Amex;
   if (String(value).length < 3 || String(value).length > 4) return { error: true };
   return null;
 };
