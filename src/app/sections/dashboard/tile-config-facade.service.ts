@@ -47,7 +47,7 @@ export class TileConfigFacadeService extends ServiceStateFacade {
     return this.makeRequestWithUpdatingStateHandler(configData, this.storage).pipe(
       map(([config, settings]) => {
         const updatedBaseConfigs = this.dashboardService.getUpdatedTilesBaseConfig(settings);
-        const allowedConfigFromBE = updatedBaseConfigs.filter(({ id, isEnable }) => isEnable && id !== 'settings' );
+        const allowedConfigFromBE = updatedBaseConfigs.filter(({ isEnable }) => isEnable);
 
         return this.isValidConfig(config)
           ? this.dashboardService.updateConfigByCashedConfig(allowedConfigFromBE, config)
