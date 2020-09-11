@@ -156,7 +156,7 @@ export class SecureMessagePage implements OnDestroy, OnInit {
 
     /// create 'conversations' out of message array
     for (const message of this.messagesArray) {
-      message.sent_date = new Date(message.sent_date).toDateString();
+      message.sent_date = new Date(message.sent_date).toString();
 
       let bNewConversation = true;
 
