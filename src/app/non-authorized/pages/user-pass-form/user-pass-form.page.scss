@@ -61,7 +61,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    height: 270px;
+    height: auto;
     padding: 15px;
     border-radius: 16px;
     background: white;
@@ -93,6 +93,15 @@
         margin-right: 10px;
       }
     }
+  }
+  
+  &__LDAP-message {
+    color: $color-black;
+    background-color: $color-background-divider;
+    margin-top: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-bottom: 15px;
   }
 
   &__footer {
