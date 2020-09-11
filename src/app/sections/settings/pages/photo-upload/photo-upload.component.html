@@ -6,9 +6,9 @@
   [title]="'Photo Upload'"
 >
 </st-header>
-<ion-content class="container">
+<ion-content class="container" >
   <!-- TOP OF WHAT WILL GET MOVED TO THE PHOTO UPLOAD HTML FILE -->
-  <ion-card *ngIf="(govtIdRequired$ | async)" class="id-photo-upload-container">
+  <ion-card *ngIf="localPhotoData.govtIdRequired" class="id-photo-upload-container">
     <!-- HEADER MESSAGE FOR ID UPLOADS -->
     <ion-card-header>
       <div class="header-message-container-id">
@@ -185,7 +185,7 @@
   <!-- BUTTON THAT SUBMITS ALL PHOTOS  -->
   <div class="action-btn-container">
     <ion-button color="primary" [disabled]="submitButtonDisabled" class="submit-btn" (click)="submitPhotos()"
-      >SUBMIT PHOTO FOR REVIEW</ion-button
+    >SUBMIT {{ localPhotoData.govtIdRequired ? 'PHOTOS' : 'PHOTO' }} FOR REVIEW</ion-button
     >
   </div>
 </ion-content>
