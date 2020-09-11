@@ -143,16 +143,16 @@ export const TILES_BASE_CONFIG: TileWrapperConfig[] = [
       navigate: PATRON_NAVIGATION.housing,
     },
   },
-  {
-    id: TILES_ID.settings,
-    title: 'Settings',
-    iconPath: '/assets/icon/trophy.svg',
-    isEnable: true,
-    navigate: PATRON_NAVIGATION.settings,
-    buttonConfig: {
-      show: true,
-      title: 'Go to Settings',
-      navigate: PATRON_NAVIGATION.settings,
-    },
-  },
+  // {
+  //   id: TILES_ID.settings,
+  //   title: 'Settings',
+  //   iconPath: '/assets/icon/trophy.svg',
+  //   isEnable: true,
+  //   navigate: PATRON_NAVIGATION.settings,
+  //   buttonConfig: {
+  //     show: true,
+  //     title: 'Go to Settings',
+  //     navigate: PATRON_NAVIGATION.settings,
+  //   },
+  // },
 ];
