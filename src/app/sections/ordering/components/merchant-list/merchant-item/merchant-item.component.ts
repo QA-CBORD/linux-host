@@ -1,9 +1,8 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
-import { MerchantInfo, MerchantOrderTypesInfo } from '@sections/ordering/shared/models';
-import { Environment } from '../../../../../environment';
+import { MerchantInfo } from '@sections/ordering/shared/models';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
-import { take } from 'rxjs/operators';
+import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 
 @Component({
   selector: 'st-merchant-item',
@@ -19,10 +18,10 @@ export class MerchantItemComponent {
     id: string;
   }>();
   @Output() locationPin: EventEmitter<string> = new EventEmitter<string>();
-  awsImageUrl: string = Environment.getImageURL();
+  awsImageUrl: string = this.environmentFacadeService.getImageURL();
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
 
-  constructor(private readonly orderingService: OrderingService) {
+  constructor(private readonly environmentFacadeService: EnvironmentFacadeService, private readonly orderingService: OrderingService) {
   }
 
   ngOnInit() {

@@ -3,7 +3,7 @@ import { MerchantInfo, MerchantService } from '@sections/ordering';
 import { take, finalize } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { PATRON_NAVIGATION } from '../../../../app.global';
-import { Environment } from 'src/app/environment';
+import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 
 @Component({
   selector: 'st-order-tile',
@@ -20,13 +20,14 @@ export class OrderTileComponent implements OnInit {
     autoHeight: true,
   };
 
-  awsImageUrl: string = Environment.getImageURL();
+  awsImageUrl: string = this.environmentFacadeService.getImageURL();
   amountPerSlide: number = 2;
   slides: MerchantInfo[][] = [];
   skeletonArray: any[] = new Array(this.amountPerSlide);
   isLoading: boolean = true;
 
   constructor(
+    private readonly environmentFacadeService: EnvironmentFacadeService,
     private readonly merchantService: MerchantService,
     private readonly cdRef: ChangeDetectorRef,
     private readonly router: Router

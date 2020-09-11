@@ -10,7 +10,7 @@
       }
 
       .searchbar-input.sc-ion-searchbar-ios {
-        border-radius: 20px 20px 20px 20px;
+        border-radius: 7px;
         border: 1px solid rgb(212, 214, 216);
         &::placeholder {
           @include font-family($font-nunito-regular);

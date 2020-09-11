@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Route, RouterModule } from '@angular/router';
 import { SettingsPage } from '@sections/settings/settings.page';
-import { LOCAL_ROUTING } from '@sections/settings/settings.config';
+import { LOCAL_ROUTING, SETTINGS_NAVIGATE } from '@sections/settings/settings.config';
 import { PhotoUploadResolver } from './resolvers/photo-upload.resolver';
 
 const routes: Route[] = [
@@ -12,6 +12,10 @@ const routes: Route[] = [
     {
         path: LOCAL_ROUTING.photoUpload,
         loadChildren: './pages/photo-upload/photo-upload.module#PhotoUploadModule',
+    },
+    {
+        path: SETTINGS_NAVIGATE.address,
+        loadChildren: './sections/settings-saved-addresses/settings-saved-addresses.module#SettingsSavedAddressesModule',
     },
 ];
 
