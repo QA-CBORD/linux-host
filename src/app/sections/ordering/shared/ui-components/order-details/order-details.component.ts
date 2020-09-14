@@ -35,6 +35,8 @@ import {
 import { AccountType } from 'src/app/app.global';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { take } from 'rxjs/operators';
+import { Plugins } from '@capacitor/core';
+const { Keyboard } = Plugins;
 
 @Component({
   selector: 'st-order-details',
@@ -66,7 +68,9 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   @Output() onFormChange: EventEmitter<OrderDetailsFormData> = new EventEmitter<OrderDetailsFormData>();
   @Output() onOrderItemRemovedId: EventEmitter<string> = new EventEmitter<string>();
   @Output() onOrderItemClicked: EventEmitter<OrderItem> = new EventEmitter<OrderItem>();
-  @Output() onOrderPaymentInfoChanged: EventEmitter<Partial<OrderPayment> | string> = new EventEmitter<Partial<OrderPayment> | string>();
+  @Output() onOrderPaymentInfoChanged: EventEmitter<Partial<OrderPayment> | string> = new EventEmitter<
+    Partial<OrderPayment> | string
+  >();
   @Output() onOrderTipChanged: EventEmitter<number> = new EventEmitter<number>();
 
   private readonly sourceSub = new Subscription();
@@ -79,19 +83,22 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     isActive: true,
   };
 
-  constructor(private readonly fb: FormBuilder,
-              private readonly modalController: ModalController,
-              private readonly orderingService: OrderingService) {
-  }
+  constructor(
+    private readonly fb: FormBuilder,
+    private readonly modalController: ModalController,
+    private readonly orderingService: OrderingService
+  ) {}
 
   ngOnInit() {
     this.initForm();
     this.initContentStrings();
     this.updateFormErrorsByContentStrings();
+    this.setAccessoryBarVisible(true);
   }
 
   ngOnDestroy() {
     this.sourceSub.unsubscribe();
+    this.setAccessoryBarVisible(false);
   }
 
   ngOnChanges({ orderDetailOptions }: SimpleChanges): void {
@@ -113,7 +120,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   get timeWithoutTimezone() {
-    if(Object.keys(this.orderDetailOptions).length) {
+    if (Object.keys(this.orderDetailOptions).length) {
       if (this.orderDetailOptions.dueTime instanceof Date) {
         return this.orderDetailOptions;
       }
@@ -124,7 +131,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   get isTipEnabled() {
     return !!this.merchantSettingsList.filter(
       ({ domain, category, name, value }) =>
-        `${domain}.${category}.${name}` === MerchantSettings.tipEnabled && !!Number(value),
+        `${domain}.${category}.${name}` === MerchantSettings.tipEnabled && !!Number(value)
     ).length;
   }
 
@@ -140,6 +147,10 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     this.onOrderItemRemovedId.emit(id);
   }
 
+  setAccessoryBarVisible(isVisible: boolean) {
+    Keyboard.setAccessoryBarVisible({ isVisible: isVisible });
+  }
+
   initForm() {
     this.detailsForm = this.fb.group({
       [DETAILS_FORM_CONTROL_NAMES.address]: [this.orderDetailOptions.address],
@@ -147,10 +158,12 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
       [DETAILS_FORM_CONTROL_NAMES.note]: [''],
     });
 
-
     if (this.isTipEnabled) {
       const tipErrors = [
-        formControlErrorDecorator(validateLessThanOther(this.subTotal), CONTROL_ERROR[DETAILS_FORM_CONTROL_NAMES.tip].subtotal),
+        formControlErrorDecorator(
+          validateLessThanOther(this.subTotal),
+          CONTROL_ERROR[DETAILS_FORM_CONTROL_NAMES.tip].subtotal
+        ),
         formControlErrorDecorator(validateCurrency, CONTROL_ERROR[DETAILS_FORM_CONTROL_NAMES.tip].currency),
         formControlErrorDecorator(validateGreaterOrEqualToZero, CONTROL_ERROR[DETAILS_FORM_CONTROL_NAMES.tip].min),
       ];
@@ -178,7 +191,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
 
     if (paymentSystemType === PAYMENT_SYSTEM_TYPE.MONETRA) {
       this.addCvvControl();
-      if(this.cvvFormControl.value) this.cvvFormControl.reset();
+      if (this.cvvFormControl.value) this.cvvFormControl.reset();
     } else {
       this.removeCvvControl();
     }
@@ -211,7 +224,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     this.showCVVControl = true;
     this.detailsForm.addControl(
       DETAILS_FORM_CONTROL_NAMES.cvv,
-      this.fb.control('', [Validators.required, cvvValidationFn]),
+      this.fb.control('', [Validators.required, cvvValidationFn])
     );
   }
 
@@ -232,47 +245,60 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private initContentStrings() {
-    this.contentStrings.buttonCancel =
-      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonCancel);
-    this.contentStrings.formErrorTipInvalidFormat =
-      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.formErrorTipInvalidFormat);
-    this.contentStrings.formErrorTipMinimum =
-      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.formErrorTipMinimum);
-    this.contentStrings.formErrorTipSubtotal =
-      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.formErrorTipSubtotal);
-    this.contentStrings.labelTotal =
-      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelTotal);
-    this.contentStrings.labelTip =
-      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelTip);
-    this.contentStrings.labelTipAmount =
-      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelTipAmount);
-    this.contentStrings.labelTax =
-      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelTax);
-    this.contentStrings.labelSubtotal =
-      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelSubtotal);
-    this.contentStrings.labelRemoveItem =
-      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelRemoveItem);
-    this.contentStrings.labelPickupFee =
-      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelPickupFee);
-    this.contentStrings.labelPaymentMethod =
-      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelPaymentMethod);
-    this.contentStrings.labelDeliveryFee =
-      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelDeliveryFee);
-    this.contentStrings.labelDiscount =
-      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelDiscount);
-    this.contentStrings.labelOrderNotes =
-      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelOrderNotes);
-    this.contentStrings.selectAccount =
-      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.selectAccount);
+    this.contentStrings.buttonCancel = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.buttonCancel
+    );
+    this.contentStrings.formErrorTipInvalidFormat = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.formErrorTipInvalidFormat
+    );
+    this.contentStrings.formErrorTipMinimum = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.formErrorTipMinimum
+    );
+    this.contentStrings.formErrorTipSubtotal = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.formErrorTipSubtotal
+    );
+    this.contentStrings.labelTotal = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelTotal);
+    this.contentStrings.labelTip = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelTip);
+    this.contentStrings.labelTipAmount = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.labelTipAmount
+    );
+    this.contentStrings.labelTax = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelTax);
+    this.contentStrings.labelSubtotal = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.labelSubtotal
+    );
+    this.contentStrings.labelRemoveItem = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.labelRemoveItem
+    );
+    this.contentStrings.labelPickupFee = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.labelPickupFee
+    );
+    this.contentStrings.labelPaymentMethod = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.labelPaymentMethod
+    );
+    this.contentStrings.labelDeliveryFee = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.labelDeliveryFee
+    );
+    this.contentStrings.labelDiscount = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.labelDiscount
+    );
+    this.contentStrings.labelOrderNotes = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.labelOrderNotes
+    );
+    this.contentStrings.selectAccount = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.selectAccount
+    );
   }
 
   private async updateFormErrorsByContentStrings(): Promise<void> {
-    CONTROL_ERROR[DETAILS_FORM_CONTROL_NAMES.tip].currency =
-      await this.contentStrings.formErrorTipInvalidFormat.pipe(take(1)).toPromise();
-    CONTROL_ERROR[DETAILS_FORM_CONTROL_NAMES.tip].min =
-      await this.contentStrings.formErrorTipMinimum.pipe(take(1)).toPromise();
-    CONTROL_ERROR[DETAILS_FORM_CONTROL_NAMES.tip].subtotal =
-      await this.contentStrings.formErrorTipSubtotal.pipe(take(1)).toPromise();
+    CONTROL_ERROR[DETAILS_FORM_CONTROL_NAMES.tip].currency = await this.contentStrings.formErrorTipInvalidFormat
+      .pipe(take(1))
+      .toPromise();
+    CONTROL_ERROR[DETAILS_FORM_CONTROL_NAMES.tip].min = await this.contentStrings.formErrorTipMinimum
+      .pipe(take(1))
+      .toPromise();
+    CONTROL_ERROR[DETAILS_FORM_CONTROL_NAMES.tip].subtotal = await this.contentStrings.formErrorTipSubtotal
+      .pipe(take(1))
+      .toPromise();
   }
 }
 
@@ -281,7 +307,7 @@ export enum DETAILS_FORM_CONTROL_NAMES {
   paymentMethod = 'paymentMethod',
   cvv = 'cvv',
   tip = 'tip',
-  note = 'note'
+  note = 'note',
 }
 
 export const CONTROL_ERROR = {
@@ -290,7 +316,6 @@ export const CONTROL_ERROR = {
     currency: 'Invalid format',
     subtotal: 'Tip must be less than the Subtotal amount',
   },
-
 };
 
 export interface AddressModalSettings {
