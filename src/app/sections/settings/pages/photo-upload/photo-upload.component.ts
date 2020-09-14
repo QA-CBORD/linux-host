@@ -46,12 +46,17 @@ export class PhotoUploadComponent implements OnInit {
   govIdBack$: Observable<SafeResourceUrl>;
   profileImage$: Observable<SafeResourceUrl>;
   profileImagePending$: Observable<SafeResourceUrl>;
-  govtIdRequired$: Observable<boolean>;
 
   submitButtonDisabled: boolean = true;
 
   localPhotoUploadStatus: LocalPhotoUploadStatus;
-  private localPhotoData: LocalPhotoData;
+  private localPhotoData: LocalPhotoData ={
+    govtIdRequired: false,
+    profile: null,
+    profilePending: null,
+    govIdBack: null,
+    govIdFront: null,
+  };
 
   constructor(
     private readonly router: Router,
@@ -107,11 +112,11 @@ export class PhotoUploadComponent implements OnInit {
   }
 
   private setupPhotoSubscriptions() {
-    this.govtIdRequired$ = this.photoUploadService.governmentIdRequired$.pipe(
-      tap(govtIdRequired => {
+    this.photoUploadService.governmentIdRequired$.pipe(take(1)).subscribe(
+      govtIdRequired => {
         this.localPhotoData.govtIdRequired = govtIdRequired;
         this.updateSubmitButtonStatus();
-      })
+      }
     );
 
     this.govIdFront$ = this.photoUploadService.govtIdFront$.pipe(

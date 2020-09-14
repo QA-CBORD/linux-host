@@ -1,5 +1,5 @@
 // Email template pattern
-export const EMAIL_REGEXP = /^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z]+(\.[a-z]+)*\.[a-z]{2,6}$/;
+export const EMAIL_REGEXP = /^([a-zA-Z0-9_-]+\.)*[a-zA-Z0-9_-]+@[a-z]+(\.[a-z]+)*\.[a-z]{2,6}$/;
 
 // Integer pattern
 export const INT_REGEXP = /(?:\s|^)\d+(?=\s|$)/;
