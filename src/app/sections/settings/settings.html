@@ -3,11 +3,10 @@
   [isTitleShow]="true"
   [isToolbarShow]="true"
   [backButtonTitle]="''"
-    [isBackButtonShow]="false"
-
+  [isBackButtonShow]="false"
 >
 </st-header>
-<ion-content class="container">
+<ion-content class="container ion-padding-top">
   <ion-list
     class="ion-margin-bottom ion-padding-end"
     *ngFor="let section of settingSections | async; let first = first"
