@@ -347,7 +347,6 @@ export class PhotoUploadComponent implements OnInit {
         direction: photoType === PhotoType.PROFILE ? CameraDirection.Front : CameraDirection.Rear,
         resultType: CameraResultType.Base64,
         source: CameraSource.Camera,
-        presentationStyle: 'popover',
         saveToGallery: false,
       })
     );
