@@ -75,16 +75,20 @@ export class PinPage implements OnInit {
   }
 
   private setInstructionText(text: string = null) {
-    if (text !== null) {
-      this.instructionText = text;
-      return;
+    if(text !== null) {
+        this.instructionText = text;
+        return;
     }
+
     switch (this.pinAction) {
       case PinAction.SET_BIOMETRIC:
         this.instructionText = this.setPinText;
         break;
       case PinAction.SET_PIN_ONLY:
         this.instructionText = this.setPinNoBiometricsText;
+        break;
+      case PinAction.CHANGE_PIN_ONLY:
+        this.instructionText = this.currentPinText;
         break;
       case PinAction.LOGIN_PIN:
         this.setInstructionText(this.currentPinText);
@@ -111,9 +115,9 @@ export class PinPage implements OnInit {
   async append(number: number) {
     this.setErrorText(null);
     if (this.pinAction === PinAction.SET_PIN_ONLY || this.pinAction === PinAction.SET_BIOMETRIC) {
-      await this.setPinLogic(number);
-    } else if (this.pinAction === PinAction.LOGIN_PIN) {
-      this.loginPinLogic(number);
+        await this.setPinLogic(number);
+      } else if(this.pinAction === PinAction.LOGIN_PIN || this.pinAction === PinAction.CHANGE_PIN_ONLY) {
+        this.loginPinLogic(number);
     }
   }
 
@@ -152,15 +156,12 @@ export class PinPage implements OnInit {
   }
 
   private loginPinLogic(number: number) {
-    if (this.pinNumber.length >= 4) {
-      return;
-    }
-    /// add new pin value to array
-    this.pinNumber.push(number);
-    /// check if confirming pin
-    if (this.pinNumber.length === 4) {
-      this.loginPin();
-    }
+    if(this.pinNumber.length >= 4)
+        return;
+    this.pinNumber.push(number); // add new pin value to array
+
+    if(this.pinNumber.length === 4) // check if confirming pin
+        this.loginPin();
   }
 
   enter() {}
@@ -239,9 +240,14 @@ export class PinPage implements OnInit {
       .subscribe(
         success => {
           /// on success, dismiss with pin in data
-          if (success) {
-            this.closePage(this.pinNumber.join(''), PinCloseStatus.LOGIN_SUCCESS);
-          } else {
+         if(success && this.pinAction === PinAction.CHANGE_PIN_ONLY)
+           {
+             this.pinAction = PinAction.SET_BIOMETRIC;
+             this.cleanLocalState();
+           }
+            else if (success) {
+              this.closePage(this.pinNumber.join(''), PinCloseStatus.LOGIN_SUCCESS);
+           } else {
             /// handle error here
             this.cleanLocalState();
             this.setErrorText('Error logging in - please try again');

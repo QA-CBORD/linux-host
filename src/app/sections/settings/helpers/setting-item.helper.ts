@@ -37,7 +37,7 @@ export function handlePinAccess(services: SettingsServices) {
     const biometricsEnabled = await services.identity.cachedBiometricsEnabledUserPreference$;
     services.globalNav.hideNavBar();
     return services.identity
-      .pinLoginSetup(biometricsEnabled, false, { showDismiss: true })
+      .pinLoginSetup(biometricsEnabled, false, { showDismiss: true }, true)
       .finally(() => services.globalNav.showNavBar());
   };
 }
