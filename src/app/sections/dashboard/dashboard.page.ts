@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, ViewChild, QueryList, ViewChildren } from '@angular/core';
 import { ModalController, PopoverController } from '@ionic/angular';
 
 import { TileWrapperConfig } from '@sections/dashboard/models';
@@ -23,6 +23,7 @@ import { PhoneEmailComponent } from '@shared/ui-components/phone-email/phone-ema
 import { EditHomePageModalComponent } from '@shared/ui-components/edit-home-page-modal/edit-home-page-modal.component';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { EMAIL_REGEXP } from '@core/utils/regexp-patterns';
+import { AccountsTileComponent } from './containers/accounts-tile/accounts-tile.component';
 
 const { App, Device } = Plugins;
 
@@ -34,7 +35,9 @@ const { App, Device } = Plugins;
 })
 export class DashboardPage implements OnInit {
   @ViewChild(AccessCardComponent) accessCard: AccessCardComponent;
+  @ViewChildren('accountsTile') accountsChild: QueryList<AccountsTileComponent>
   tiles$: Observable<TileWrapperConfig[]>;
+  accountsTile: AccountsTileComponent;
 
   constructor(
     private readonly modalController: ModalController,
@@ -59,12 +62,17 @@ export class DashboardPage implements OnInit {
     this.pushNotificationRegistration();
   }
 
+  ngAfterViewInit(){
+    this.accountsChild.forEach((child) => this.accountsTile = child);
+  }
+
   async ionViewWillEnter() {
     this.accessCard.ionViewWillEnter();
   }
 
   ionViewDidEnter() {
     this.checkNativeStartup();
+    this.updateAccountsTile();
   }
 
   private async checkNativeStartup() {
@@ -223,6 +231,10 @@ export class DashboardPage implements OnInit {
     modal.onDidDismiss().then(() => this.hideGlobalNavBar(false));
     this.hideGlobalNavBar(true);
     return await modal.present();
+  }
+
+  updateAccountsTile() {
+    this.accountsTile.getUserAccounts();
   }
 
   private hideGlobalNavBar(hide: boolean) {
