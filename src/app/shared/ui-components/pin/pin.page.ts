@@ -90,6 +90,9 @@ export class PinPage implements OnInit {
       case PinAction.CHANGE_PIN_ONLY:
         this.instructionText = this.currentPinText;
         break;
+      case PinAction.CHANGE_PIN_BIOMETRIC:
+        this.instructionText = this.currentPinText;
+        break;
       case PinAction.LOGIN_PIN:
         this.setInstructionText(this.currentPinText);
     }
@@ -114,9 +117,11 @@ export class PinPage implements OnInit {
 
   async append(number: number) {
     this.setErrorText(null);
-    if (this.pinAction === PinAction.SET_PIN_ONLY || this.pinAction === PinAction.SET_BIOMETRIC) {
+    let executeSetPinLogic = this.pinAction === PinAction.SET_PIN_ONLY || this.pinAction === PinAction.SET_BIOMETRIC;
+    let executeLoginPinLogic = this.pinAction === PinAction.LOGIN_PIN || this.pinAction === PinAction.CHANGE_PIN_ONLY || this.pinAction === PinAction.CHANGE_PIN_BIOMETRIC;
+    if (executeSetPinLogic) {
         await this.setPinLogic(number);
-      } else if(this.pinAction === PinAction.LOGIN_PIN || this.pinAction === PinAction.CHANGE_PIN_ONLY) {
+      } else if(executeLoginPinLogic) {
         this.loginPinLogic(number);
     }
   }
@@ -240,13 +245,16 @@ export class PinPage implements OnInit {
       .subscribe(
         success => {
           /// on success, dismiss with pin in data
-         if(success && this.pinAction === PinAction.CHANGE_PIN_ONLY)
-           {
-             this.pinAction = PinAction.SET_BIOMETRIC;
-             this.cleanLocalState();
-           }
-            else if (success) {
-              this.closePage(this.pinNumber.join(''), PinCloseStatus.LOGIN_SUCCESS);
+          if (success) {
+              if(this.pinAction===PinAction.CHANGE_PIN_BIOMETRIC){
+                  this.pinAction = PinAction.SET_BIOMETRIC;
+                  this.cleanLocalState();
+              }else if(this.pinAction===PinAction.CHANGE_PIN_ONLY){
+                  this.pinAction = PinAction.SET_PIN_ONLY;
+                  this.cleanLocalState();
+              }else{
+                  this.closePage(this.pinNumber.join(''), PinCloseStatus.LOGIN_SUCCESS);
+              }
            } else {
             /// handle error here
             this.cleanLocalState();
