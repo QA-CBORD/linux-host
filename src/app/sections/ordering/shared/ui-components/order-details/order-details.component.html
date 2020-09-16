@@ -73,7 +73,7 @@
         {{ contentStrings.labelDiscount | async
         }}<span class="total__item-sum">{{ discount | priceUnitsResolver: mealBased }}</span>
       </div>
-      <div *ngIf="isTipEnabled" class="total__item">
+      <div *ngIf="!mealBased && isTipEnabled" class="total__item">
         {{ contentStrings.labelTip | async
         }}<span class="total__item-sum">{{ tip | priceUnitsResolver: mealBased }}</span>
       </div>
@@ -135,7 +135,7 @@
       </div>
     </div>
 
-    <div class="order-details" *ngIf="isTipEnabled">
+    <div class="order-details" *ngIf="!mealBased && isTipEnabled">
       <ion-label class="order-details__label">{{ contentStrings.labelTipAmount | async }}:</ion-label>
       <ion-input
         class="order-details__value"
