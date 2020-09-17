@@ -9,7 +9,9 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
 export class StButtonComponent {
   @Input() buttonModifier: string = '';
   @Input() type: string = 'button';
+  // TODO: Refactor areas that expect the button to emit even when disabled.
   @Input() isDisabled: boolean = false;
+  @Input() disabled: boolean = false;
   @Input() expand: string = 'block';
   @Input() fill: string = 'solid';
   @Output() onClick: EventEmitter<Event> = new EventEmitter<Event>();

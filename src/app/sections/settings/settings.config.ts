@@ -108,7 +108,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
       {
         id: SETTINGS_ID.address,
         icon: 'map-marker',
-        label: 'Saved Address',
+        label: 'Saved Addresses',
         type: 'button',
         navigate: [SETTINGS_NAVIGATE.address],
       },

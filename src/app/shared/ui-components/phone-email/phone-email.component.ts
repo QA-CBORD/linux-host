@@ -90,22 +90,19 @@ export class PhoneEmailComponent implements OnInit {
 
   private async initForm() {
     this.phoneEmailForm = this.fb.group({
-      [this.controlsNames.email]: ['', Validators.required, Validators.pattern(EMAIL_REGEXP)],
+      [this.controlsNames.email]: ['', [Validators.required, Validators.pattern(EMAIL_REGEXP)]],
       [this.controlsNames.phone]: [
         '',
-        Validators.required,
-        Validators.pattern(INT_REGEXP),
-        Validators.minLength(10),
-        Validators.maxLength(10),
+        [Validators.required, Validators.pattern(INT_REGEXP), Validators.minLength(10), Validators.maxLength(10)],
       ],
     });
     const user: any = await this.userFacadeService
-      .getUserData$()
+      .getUser$()
       .pipe(take(1))
       .toPromise();
     this.user = { ...user };
-    this.email.setValue(this.user.email || '');
-    this.phone.setValue(this.user.phone || '');
+    this.checkFieldValue(this.email, this.user.email);
+    this.checkFieldValue(this.phone, this.user.phone);
     this.cdRef.detectChanges();
   }
 
@@ -194,6 +191,13 @@ export class PhoneEmailComponent implements OnInit {
       showCloseButton: true,
     });
     await toast.present();
+  }
+
+  private checkFieldValue(field: AbstractControl, value: string) {
+    if (value) {
+      field.setValue(value);
+      field.markAsDirty();
+    }
   }
 }
 
