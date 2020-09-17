@@ -156,9 +156,11 @@ export class CartComponent implements OnInit {
 
   async onSubmit() {
     if (!this.cartFormState.valid || this.placingOrder) return;
+    this.placingOrder = true;
     const { type } = await this.cartService.orderInfo$.pipe(first()).toPromise();
     if (type === ORDER_TYPE.DELIVERY && (await this.isDeliveryAddressOutOfRange())) {
       await this.onValidateErrorToast('Delivery location is out of delivery range, please choose another location');
+      this.placingOrder = false;
       return;
     }
 
@@ -258,7 +260,6 @@ export class CartComponent implements OnInit {
   }
 
   private async submitOrder(): Promise<void> {
-    this.placingOrder = true;
     await this.loadingService.showSpinner();
     let accountId = this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.paymentMethod].id;
     this.cartService.updateOrderNote(this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.note]);
