@@ -294,7 +294,7 @@ export class CartComponent implements OnInit {
         }
       })
       .finally(() => {
-        this.loadingService.closeSpinner.bind(this.loadingService);
+        this.loadingService.closeSpinner();
         this.placingOrder = false;
       });
   }
