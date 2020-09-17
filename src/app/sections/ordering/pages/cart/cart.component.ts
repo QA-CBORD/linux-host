@@ -53,6 +53,7 @@ export class CartComponent implements OnInit {
   accountInfoList$: Observable<MerchantAccountInfoList>;
   cartFormState: OrderDetailsFormData = {} as OrderDetailsFormData;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
+  placingOrder: boolean = false;
 
   constructor(
     private readonly cartService: CartService,
@@ -154,7 +155,7 @@ export class CartComponent implements OnInit {
   }
 
   async onSubmit() {
-    if (!this.cartFormState.valid) return;
+    if (!this.cartFormState.valid || this.placingOrder) return;
     const { type } = await this.cartService.orderInfo$.pipe(first()).toPromise();
     if (type === ORDER_TYPE.DELIVERY && (await this.isDeliveryAddressOutOfRange())) {
       await this.onValidateErrorToast('Delivery location is out of delivery range, please choose another location');
@@ -257,6 +258,7 @@ export class CartComponent implements OnInit {
   }
 
   private async submitOrder(): Promise<void> {
+    this.placingOrder = true;
     await this.loadingService.showSpinner();
     let accountId = this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.paymentMethod].id;
     this.cartService.updateOrderNote(this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.note]);
@@ -264,7 +266,8 @@ export class CartComponent implements OnInit {
     /// if Apple Pay Order
     if (this.cartFormState.data.paymentMethod.accountType === AccountType.APPLEPAY) {
       let orderData = await this.cartService.orderInfo$.pipe(first()).toPromise();
-        await this.externalPaymentService.payWithApplePay(ApplePay.ORDERS_WITH_APPLE_PAY, orderData)
+      await this.externalPaymentService
+        .payWithApplePay(ApplePay.ORDERS_WITH_APPLE_PAY, orderData)
         .then(result => {
           if (result.success) {
             accountId = result.accountId;
@@ -273,23 +276,29 @@ export class CartComponent implements OnInit {
           }
         })
         .catch(async error => {
+          this.placingOrder = false;
           return await this.onErrorModal('Something went wrong, please try again...');
         });
     }
 
-    this.cartService
-      .submitOrder(accountId, this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.cvv] || null)
-      .pipe(handleServerError(ORDER_VALIDATION_ERRORS))
-      .toPromise()
-      .then(async order => await this.showModal(order))
-      .catch(async (error: string | [string, string]) => {
-        if (Array.isArray(error) && +error[0] === +ORDER_ERROR_CODES.ORDER_CAPACITY) {
-          await this.onErrorModal(error[1], this.navigateToFullMenu.bind(this));
-        } else if (typeof error === 'string') {
-          await this.onErrorModal(error);
-        }
-      })
-      .finally(this.loadingService.closeSpinner.bind(this.loadingService));
+    if (!this.placingOrder) {
+      this.cartService
+        .submitOrder(accountId, this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.cvv] || null)
+        .pipe(handleServerError(ORDER_VALIDATION_ERRORS))
+        .toPromise()
+        .then(async order => await this.showModal(order))
+        .catch(async (error: string | [string, string]) => {
+          if (Array.isArray(error) && +error[0] === +ORDER_ERROR_CODES.ORDER_CAPACITY) {
+            await this.onErrorModal(error[1], this.navigateToFullMenu.bind(this));
+          } else if (typeof error === 'string') {
+            await this.onErrorModal(error);
+          }
+        })
+        .finally(() => {
+          this.loadingService.closeSpinner.bind(this.loadingService);
+          this.placingOrder = false;
+        });
+    }
   }
 
   private getDeliveryLocations(): Observable<any> {
