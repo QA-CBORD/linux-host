@@ -206,14 +206,14 @@ export class PhotoUploadService {
   }
 
   async presentDeletePhotoModal(photoId: string) {
-    const modal = await this.modalController.create({
+    const modal = await this.modalController.create({ 
       component: DeleteModalComponent,
     });
     modal.onDidDismiss().then(data => {
       if (data.data === true) {
         this.userFacadeService
           .updateUserPhotoStatus(photoId, PhotoStatus.DELETED, 'Patron deleted photo')
-          .pipe(take(1));
+          .pipe(take(1)).subscribe();
         this._profileImagePending = null;
       }
     });
