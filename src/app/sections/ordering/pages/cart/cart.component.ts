@@ -281,24 +281,22 @@ export class CartComponent implements OnInit {
         });
     }
 
-    if (!this.placingOrder) {
-      this.cartService
-        .submitOrder(accountId, this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.cvv] || null)
-        .pipe(handleServerError(ORDER_VALIDATION_ERRORS))
-        .toPromise()
-        .then(async order => await this.showModal(order))
-        .catch(async (error: string | [string, string]) => {
-          if (Array.isArray(error) && +error[0] === +ORDER_ERROR_CODES.ORDER_CAPACITY) {
-            await this.onErrorModal(error[1], this.navigateToFullMenu.bind(this));
-          } else if (typeof error === 'string') {
-            await this.onErrorModal(error);
-          }
-        })
-        .finally(() => {
-          this.loadingService.closeSpinner.bind(this.loadingService);
-          this.placingOrder = false;
-        });
-    }
+    this.cartService
+      .submitOrder(accountId, this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.cvv] || null)
+      .pipe(handleServerError(ORDER_VALIDATION_ERRORS))
+      .toPromise()
+      .then(async order => await this.showModal(order))
+      .catch(async (error: string | [string, string]) => {
+        if (Array.isArray(error) && +error[0] === +ORDER_ERROR_CODES.ORDER_CAPACITY) {
+          await this.onErrorModal(error[1], this.navigateToFullMenu.bind(this));
+        } else if (typeof error === 'string') {
+          await this.onErrorModal(error);
+        }
+      })
+      .finally(() => {
+        this.loadingService.closeSpinner.bind(this.loadingService);
+        this.placingOrder = false;
+      });
   }
 
   private getDeliveryLocations(): Observable<any> {
