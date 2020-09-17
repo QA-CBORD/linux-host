@@ -7,7 +7,7 @@ import { SettingInfo } from 'src/app/core/model/configuration/setting-info.model
 import { CONTENT_STRINGS, PAYMENT_SYSTEM_TYPE } from '@sections/accounts/accounts.config';
 import { BillMeMapping } from '@core/model/settings/billme-mapping.model';
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
-import { CONTENT_STINGS_CATEGORIES, CONTENT_STINGS_DOMAINS } from '../../../content-strings';
+import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from '../../../content-strings';
 import { ContentStringsApiService } from '@core/service/content-service/content-strings-api.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Settings } from '../../../app.global';
@@ -125,13 +125,13 @@ export class DepositService {
   initContentStringsList(): Observable<ContentStringInfo[]> {
     return combineLatest(
       this.contentService.retrieveContentStringByConfig({
-        domain: CONTENT_STINGS_DOMAINS.patronUi,
-        category: CONTENT_STINGS_CATEGORIES.accounts,
+        domain: CONTENT_STRINGS_DOMAINS.patronUi,
+        category: CONTENT_STRINGS_CATEGORIES.accounts,
         name: CONTENT_STRINGS.creditDepositReviewInstructions,
       }),
       this.contentService.retrieveContentStringByConfig({
-        domain: CONTENT_STINGS_DOMAINS.patronUi,
-        category: CONTENT_STINGS_CATEGORIES.accounts,
+        domain: CONTENT_STRINGS_DOMAINS.patronUi,
+        category: CONTENT_STRINGS_CATEGORIES.accounts,
         name: CONTENT_STRINGS.billMeDepositReviewInstructions,
       })
     ).pipe(
