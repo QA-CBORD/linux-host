@@ -5,7 +5,7 @@ import { ContentStringsApiService } from '@core/service/content-service/content-
 import { Observable, of } from 'rxjs';
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
 import { map, skipWhile, switchMap, tap } from 'rxjs/operators';
-import { CONTENT_STINGS_CATEGORIES, CONTENT_STINGS_DOMAINS, CONTENT_STINGS_LOCALES } from '../../../content-strings';
+import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_LOCALES } from '../../../content-strings';
 
 @Injectable({
   providedIn: 'root',
@@ -27,23 +27,23 @@ export class ContentStringsFacadeService extends ServiceStateFacade {
   }
 
   getContentString$(
-    domain: CONTENT_STINGS_DOMAINS,
-    category: CONTENT_STINGS_CATEGORIES,
+    domain: CONTENT_STRINGS_DOMAINS,
+    category: CONTENT_STRINGS_CATEGORIES,
     name: string
   ): Observable<ContentStringInfo | null> {
     return this.stateService.getContentString$(domain, category, name);
   }
 
   getContentStrings$(
-    domain: CONTENT_STINGS_DOMAINS,
-    category: CONTENT_STINGS_CATEGORIES
+    domain: CONTENT_STRINGS_DOMAINS,
+    category: CONTENT_STRINGS_CATEGORIES
   ): Observable<ContentStringInfo[]> {
     return this.stateService.getContentStrings$(domain, category);
   }
 
   getContentStringValue$(
-    domain: CONTENT_STINGS_DOMAINS,
-    category: CONTENT_STINGS_CATEGORIES,
+    domain: CONTENT_STRINGS_DOMAINS,
+    category: CONTENT_STRINGS_CATEGORIES,
     name: string
   ): Observable<string> {
     return this.getContentString$(domain, category, name).pipe(
@@ -53,9 +53,9 @@ export class ContentStringsFacadeService extends ServiceStateFacade {
   }
 
   fetchContentStrings$(
-    domain: CONTENT_STINGS_DOMAINS,
-    category: CONTENT_STINGS_CATEGORIES,
-    locale: CONTENT_STINGS_LOCALES | null = null
+    domain: CONTENT_STRINGS_DOMAINS,
+    category: CONTENT_STRINGS_CATEGORIES,
+    locale: CONTENT_STRINGS_LOCALES | null = null
   ): Observable<ContentStringInfo[]> {
     const call = this.apiService.retrieveContentStringListByRequest({ domain, category, locale });
 
@@ -65,10 +65,10 @@ export class ContentStringsFacadeService extends ServiceStateFacade {
   }
 
   fetchContentString$(
-    domain: CONTENT_STINGS_DOMAINS,
-    category: CONTENT_STINGS_CATEGORIES,
+    domain: CONTENT_STRINGS_DOMAINS,
+    category: CONTENT_STRINGS_CATEGORIES,
     name: string,
-    locale: CONTENT_STINGS_LOCALES | null = null,
+    locale: CONTENT_STRINGS_LOCALES | null = null,
     sessionId?: string,
     useSessionId?: boolean
   ): Observable<ContentStringInfo> {
@@ -80,8 +80,8 @@ export class ContentStringsFacadeService extends ServiceStateFacade {
   }
 
   resolveContentString$(
-    domain: CONTENT_STINGS_DOMAINS,
-    category: CONTENT_STINGS_CATEGORIES,
+    domain: CONTENT_STRINGS_DOMAINS,
+    category: CONTENT_STRINGS_CATEGORIES,
     name: string,
     sessionId?: string,
     useSessionId?: boolean
@@ -94,8 +94,8 @@ export class ContentStringsFacadeService extends ServiceStateFacade {
   }
 
   resolveContentStrings$(
-    domain: CONTENT_STINGS_DOMAINS,
-    category: CONTENT_STINGS_CATEGORIES
+    domain: CONTENT_STRINGS_DOMAINS,
+    category: CONTENT_STRINGS_CATEGORIES
   ): Observable<ContentStringInfo[]> {
     return this.getContentStrings$(domain, category).pipe(
       switchMap(settings =>
@@ -108,7 +108,7 @@ export class ContentStringsFacadeService extends ServiceStateFacade {
     this.stateService.updateState(contentStrings);
   }
 
-  removeContentString(domain: CONTENT_STINGS_DOMAINS, category: CONTENT_STINGS_CATEGORIES, name: string) {
+  removeContentString(domain: CONTENT_STRINGS_DOMAINS, category: CONTENT_STRINGS_CATEGORIES, name: string) {
     this.stateService.removeContentString(domain, category, name);
   }
 }

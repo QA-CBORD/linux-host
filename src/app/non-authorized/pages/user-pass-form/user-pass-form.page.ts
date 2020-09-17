@@ -10,7 +10,7 @@ import { FormGroup, FormBuilder, AbstractControl, Validators } from '@angular/fo
 import { ToastController } from '@ionic/angular';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
-import { CONTENT_STINGS_CATEGORIES, CONTENT_STINGS_DOMAINS } from 'src/app/content-strings';
+import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Device } from '@capacitor/core';
@@ -202,8 +202,8 @@ export class UserPassForm implements OnInit {
   private async getContentStringByName(sessionId, name): Promise<string> {
    return this.contentStringsFacadeService
     .fetchContentString$(
-      CONTENT_STINGS_DOMAINS.get_web_gui, 
-      CONTENT_STINGS_CATEGORIES.login_screen, 
+      CONTENT_STRINGS_DOMAINS.get_web_gui, 
+      CONTENT_STRINGS_CATEGORIES.login_screen, 
       name,
       null,
       sessionId,

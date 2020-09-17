@@ -6,7 +6,7 @@ import { CommerceApiService } from '@core/service/commerce/commerce-api.service'
 import { map, switchMap, tap } from 'rxjs/operators';
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
-import { CONTENT_STINGS_CATEGORIES, CONTENT_STINGS_DOMAINS } from 'src/app/content-strings';
+import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
 import { MEAL_CONTENT_STRINGS } from '@sections/accounts/pages/meal-donations/meal-donation.config.ts';
 import { isCashlessAccount } from '@core/utils/general-helpers';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
@@ -41,22 +41,22 @@ export class MealDonationsService {
 
   fetchMealsDonationContentStringByName$(name: MEAL_CONTENT_STRINGS): Observable<ContentStringInfo> {
     return this.contentStringFacade.fetchContentString$(
-      CONTENT_STINGS_DOMAINS.patronUi,
-      CONTENT_STINGS_CATEGORIES.mealDonation,
+      CONTENT_STRINGS_DOMAINS.patronUi,
+      CONTENT_STRINGS_CATEGORIES.mealDonation,
       name);
   }
 
   getMealsDonationContentStringByName$(name: MEAL_CONTENT_STRINGS): Observable<string> {
     return this.contentStringFacade.getContentStringValue$(
-      CONTENT_STINGS_DOMAINS.patronUi,
-      CONTENT_STINGS_CATEGORIES.mealDonation,
+      CONTENT_STRINGS_DOMAINS.patronUi,
+      CONTENT_STRINGS_CATEGORIES.mealDonation,
       name);
   }
 
   fetchMealsDonationContentStrings$(): Observable<ContentStringInfo[]> {
     return this.contentStringFacade.fetchContentStrings$(
-      CONTENT_STINGS_DOMAINS.patronUi,
-      CONTENT_STINGS_CATEGORIES.mealDonation);
+      CONTENT_STRINGS_DOMAINS.patronUi,
+      CONTENT_STRINGS_CATEGORIES.mealDonation);
   }
 
   getUserAccounts(): Observable<UserAccount[]> {

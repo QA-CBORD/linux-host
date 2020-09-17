@@ -1,9 +1,9 @@
-export enum CONTENT_STINGS_DOMAINS {
+export enum CONTENT_STRINGS_DOMAINS {
   patronUi = 'patron-ui',
   get_web_gui = 'get_web_gui',
 }
 
-export enum CONTENT_STINGS_CATEGORIES {
+export enum CONTENT_STRINGS_CATEGORIES {
   mealDonation = 'meal_donation',
   ordering = 'ordering',
   usStates = 'us-state_full',
@@ -15,6 +15,6 @@ export enum CONTENT_STINGS_CATEGORIES {
   termsScreen = 'terms_screen',
 }
 
-export enum CONTENT_STINGS_LOCALES {
+export enum CONTENT_STRINGS_LOCALES {
   usa = 'en_US',
 }
