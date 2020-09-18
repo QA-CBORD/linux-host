@@ -47,6 +47,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   destinationAccounts: Array<UserAccount>;
   billmeMappingArr: any[];
   isMaxCharLength: boolean = false;
+  isDepositing: boolean = false;
   applePayAccountType: Partial<UserAccount> = {
     accountType: AccountType.APPLEPAY,
     accountDisplayName: 'Apple Pay',
@@ -232,7 +233,8 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   }
 
   onFormSubmit() {
-    if (this.depositForm && this.depositForm.invalid) return;
+    if ((this.depositForm && this.depositForm.invalid) || this.isDepositing) return;
+    this.isDepositing = true;
     const { sourceAccount, selectedAccount, mainInput, mainSelect } = this.depositForm.value;
     const isBillme: boolean = sourceAccount === PAYMENT_TYPE.BILLME;
     const isApplePay: boolean = sourceAccount.accountType === AccountType.APPLEPAY;
@@ -263,6 +265,9 @@ export class DepositPageComponent implements OnInit, OnDestroy {
         })
         .catch(async error => {
           this.onErrorRetrieve('Something went wrong, please try again...');
+        })
+        .finally(() => {
+          this.isDepositing = false;
         });
     } else {
       iif(() => isBillme, sourceAccForBillmeDeposit, of(sourceAccount))
@@ -287,6 +292,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
           () => {
             this.loadingService.closeSpinner();
             this.onErrorRetrieve('Something went wrong, please try again...');
+            this.isDepositing = false;
           }
         );
     }
@@ -437,12 +443,19 @@ export class DepositPageComponent implements OnInit, OnDestroy {
           .pipe(
             handleServerError<string>(ACCOUNTS_VALIDATION_ERRORS),
             take(1),
-            finalize(() => this.loadingService.closeSpinner())
+            finalize(() => {
+              this.loadingService.closeSpinner();
+              this.isDepositing = false;
+            })
           )
           .subscribe(
             () => this.finalizeDepositModal(data),
             error => this.onErrorRetrieve(error || 'Your information could not be verified.')
           );
+      } 
+      if (role === BUTTON_TYPE.CANCEL) {
+        this.isDepositing = false;
+        this.cdRef.detectChanges();
       }
     });
 
