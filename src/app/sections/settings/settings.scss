@@ -7,7 +7,6 @@
 
 .container {
   --background: #{$color-background-divider};
-  --padding-top: env(safe-area-inset-top) !important;
   --padding-bottom: env(safe-area-inset-bottom) !important;
 }
 

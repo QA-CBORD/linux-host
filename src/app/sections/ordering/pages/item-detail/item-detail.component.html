@@ -10,9 +10,9 @@
 
 <ng-template #staticHeader>
   <ion-header class="order-detail__static-header">
-    <img [src]="menuItemImg"
+    <ion-img [src]="menuItemImg"
          alt="{{ menuItem.name }}"
-         class="order-detail__appetizer-photo"/>
+         class="order-detail__appetizer-photo"></ion-img>
     <ion-buttons class="order-detail__header-buttons"
                  slot="start">
       <ion-button (click)="onClose()"

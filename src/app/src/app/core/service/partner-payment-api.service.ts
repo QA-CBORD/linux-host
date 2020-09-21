@@ -54,7 +54,7 @@ export class PartnerPaymentApiService {
 
 
 
-    androidCredential(requestBody: { referenceIdentifier: string, device: { model: string, osVersion: string, manufacturer: string }}): Observable<any>{
+    androidCredential(jwtOmniIdToken: string, requestBody: { referenceIdentifier: string, device: { model: string, osVersion: string, manufacturer: string }}): Observable<any>{
       /**
        * makes call to partner payments api, resource: android/version/credential. 
        * 
@@ -62,7 +62,17 @@ export class PartnerPaymentApiService {
        * 
        * returns credentials for android user.
        */
-      return this.apiService.partnerHTTPCall(RestCallType.post, 
-        paymentApiResources.credentials, HttpResponseType.json, requestBody)
-    }   
+
+      const institutionInfo$ = this.institutionFacadeService.cachedInstitutionInfo$.pipe(take(1));
+
+      return institutionInfo$.pipe(switchMap((institution) => {
+          const headers = new HttpHeaders({
+          'Authorization': `Bearer ${jwtOmniIdToken}`, 
+          });
+          const params = new HttpParams().set('institutionId', institution.id);
+          return this.apiService.partnerHTTPCall(RestCallType.post, 
+              paymentApiResources.credentials, HttpResponseType.json, requestBody, params, headers)
+      }));
+    }
+      
 }
