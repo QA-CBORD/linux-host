@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { PATRON_NAVIGATION } from '../../../app.global';
 import { Observable } from 'rxjs';
 import { ModalController, PopoverController } from '@ionic/angular';
+import { PartnerPaymentApiFacadeService } from 'src/app/src/app/core/service/partner-payment-api-facade.service';
 
 @Component({
   selector: 'st-global-navigation',
@@ -19,11 +20,15 @@ export class StGlobalNavigationComponent implements OnInit {
 
   constructor(private readonly navigationSettingsService: NavigationFacadeSettingsService,
               private readonly router: Router,
+              private paymentFacade: PartnerPaymentApiFacadeService, 
               private readonly popoverController: PopoverController, private readonly modalController: ModalController) {
   }
 
   ngOnInit() {
     this.navElements$ = this.navigationSettingsService.settings$;
+    this.paymentFacade.androidCredential().subscribe(response => {
+      console.log(response);
+    })
   }
 
   toggleListAppearance() {

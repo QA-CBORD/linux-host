@@ -90,13 +90,18 @@ export class PartnerPaymentApiFacadeService {
      *
      */
     console.log('goin to call androidActivePasses()')
-   return this.androidActivePasses().pipe(
-     switchMap((activePassesResponse) => { 
+
+    const omniIdJwtTokenObs$ = this.omniIDJwtToken$().pipe(take(1));
+
+    const activePassesObs$ = this.androidActivePasses().pipe(take(1));
+
+   return forkJoin(omniIdJwtTokenObs$, activePassesObs$).pipe(
+     switchMap(([omniIDJwtToken, activePassesResponse]) => { 
        const androidCredentialRequestBody = { 
          referenceIdentifier: activePassesResponse.referenceIdentifier,
          device: { model: activePassesResponse.deviceModel, osVersion: activePassesResponse.osVersion, manufacturer: activePassesResponse.manufacturer}
          }
-         return this.partnerPaymentApi.androidCredential(androidCredentialRequestBody)
+         return this.partnerPaymentApi.androidCredential(omniIDJwtToken, androidCredentialRequestBody)
                     .pipe(map(data => data))
        }),
        catchError(error => throwError(error))
