@@ -5,7 +5,7 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { map, switchMap, take } from 'rxjs/operators';
 import { UserInfoSet } from '@sections/settings/models/setting-items-config.model';
 import { UserNotificationInfo } from '@core/model/user';
-import { CONTENT_STINGS_CATEGORIES, CONTENT_STINGS_DOMAINS } from '../../../content-strings';
+import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from '../../../content-strings';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { Observable, of } from 'rxjs';
 import { EMAIL_REGEXP, INT_REGEXP } from '@core/utils/regexp-patterns';
@@ -77,7 +77,7 @@ export class PhoneEmailComponent implements OnInit {
     }
 
     this.htmlContent$ = this.contentStringFacadeService
-      .fetchContentString$(CONTENT_STINGS_DOMAINS.get_web_gui, CONTENT_STINGS_CATEGORIES.termsScreen, 'terms')
+      .fetchContentString$(CONTENT_STRINGS_DOMAINS.get_web_gui, CONTENT_STRINGS_CATEGORIES.termsScreen, 'terms')
       .pipe(
         map(contentString => contentString.value),
         take(1)
