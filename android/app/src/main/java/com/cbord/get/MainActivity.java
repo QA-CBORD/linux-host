@@ -20,6 +20,6 @@ public class MainActivity extends BridgeActivity {
     }
 
     private void setPluginContext() {
-        HIDPlugin.context = getApplicationContext();
+        HIDPlugin.context = this.getApplicationContext();
     }
 }
