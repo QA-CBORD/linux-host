@@ -8,7 +8,7 @@ import {
   setBiometricStatus,
   handlePinAccess,
 } from './helpers/setting-item.helper';
-import { CONTENT_STINGS_DOMAINS, CONTENT_STINGS_CATEGORIES } from 'src/app/content-strings';
+import { CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_CATEGORIES } from 'src/app/content-strings';
 import { HTMLRendererComponent } from '@shared/ui-components/html-renderer/html-renderer.component';
 import { PhoneEmailComponent } from '@shared/ui-components/phone-email/phone-email.component';
 import { AuthTypes } from '@core/utils/auth-types.enum';
@@ -197,28 +197,28 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         modalContent: {
           contentStrings: [
             {
-              domain: CONTENT_STINGS_DOMAINS.get_web_gui,
-              category: CONTENT_STINGS_CATEGORIES.aboutScreen,
+              domain: CONTENT_STRINGS_DOMAINS.get_web_gui,
+              category: CONTENT_STRINGS_CATEGORIES.aboutScreen,
               name: 'about_getfunds',
             },
             {
-              domain: CONTENT_STINGS_DOMAINS.get_web_gui,
-              category: CONTENT_STINGS_CATEGORIES.aboutScreen,
+              domain: CONTENT_STRINGS_DOMAINS.get_web_gui,
+              category: CONTENT_STRINGS_CATEGORIES.aboutScreen,
               name: 'contact_info',
             },
             {
-              domain: CONTENT_STINGS_DOMAINS.get_web_gui,
-              category: CONTENT_STINGS_CATEGORIES.termsScreen,
+              domain: CONTENT_STRINGS_DOMAINS.get_web_gui,
+              category: CONTENT_STRINGS_CATEGORIES.termsScreen,
               name: 'terms',
             },
             {
-              domain: CONTENT_STINGS_DOMAINS.get_web_gui,
-              category: CONTENT_STINGS_CATEGORIES.aboutScreen,
+              domain: CONTENT_STRINGS_DOMAINS.get_web_gui,
+              category: CONTENT_STRINGS_CATEGORIES.aboutScreen,
               name: 'patent',
             },
             {
-              domain: CONTENT_STINGS_DOMAINS.get_web_gui,
-              category: CONTENT_STINGS_CATEGORIES.aboutScreen,
+              domain: CONTENT_STRINGS_DOMAINS.get_web_gui,
+              category: CONTENT_STRINGS_CATEGORIES.aboutScreen,
               name: 'org',
             },
           ],
@@ -246,8 +246,8 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         modalContent: {
           contentStrings: [
             {
-              domain: CONTENT_STINGS_DOMAINS.get_web_gui,
-              category: CONTENT_STINGS_CATEGORIES.termsScreen,
+              domain: CONTENT_STRINGS_DOMAINS.get_web_gui,
+              category: CONTENT_STRINGS_CATEGORIES.termsScreen,
               name: 'terms',
             },
           ],
