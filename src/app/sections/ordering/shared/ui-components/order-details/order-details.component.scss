@@ -101,6 +101,7 @@
   &__buttons {
     display: flex;
     padding: 10px 10px 30px;
+    margin-bottom: $notch-bottom;
 
     & > * {
       flex-grow: 1;

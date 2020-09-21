@@ -158,7 +158,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
       [DETAILS_FORM_CONTROL_NAMES.note]: [''],
     });
 
-    if (this.isTipEnabled) {
+    if (!this.mealBased && this.isTipEnabled) {
       const tipErrors = [
         formControlErrorDecorator(
           validateLessThanOther(this.subTotal),

@@ -7,7 +7,7 @@ import { MerchantInfo } from '@sections/ordering/shared/models';
 import { LoadingService } from 'src/app/core/service/loading/loading.service';
 import { MerchantService } from '../services';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
-import { CONTENT_STINGS_CATEGORIES, CONTENT_STINGS_DOMAINS } from '../../../content-strings';
+import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from '../../../content-strings';
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
 import { ORDER_VALIDATION_ERRORS, ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 
@@ -29,16 +29,16 @@ export class OrderingResolver
     const orderingContentStrings = this.updateOrderValidationErrorObject();
     const favouriteMerchant = this.merchantService.getMerchantsWithFavoriteInfo();
     const statesStrings = this.contentStringsFacadeService.fetchContentStrings$(
-      CONTENT_STINGS_DOMAINS.patronUi,
-      CONTENT_STINGS_CATEGORIES.usStates
+      CONTENT_STRINGS_DOMAINS.patronUi,
+      CONTENT_STRINGS_CATEGORIES.usStates
     );
     const weekDaysShortForm = this.contentStringsFacadeService.fetchContentStrings$(
-      CONTENT_STINGS_DOMAINS.patronUi,
-      CONTENT_STINGS_CATEGORIES.dayOfWeekAbbreviated
+      CONTENT_STRINGS_DOMAINS.patronUi,
+      CONTENT_STRINGS_CATEGORIES.dayOfWeekAbbreviated
     );
     const dayMonthShortForm = this.contentStringsFacadeService.fetchContentStrings$(
-      CONTENT_STINGS_DOMAINS.patronUi,
-      CONTENT_STINGS_CATEGORIES.monthAbbreviated
+      CONTENT_STRINGS_DOMAINS.patronUi,
+      CONTENT_STRINGS_CATEGORIES.monthAbbreviated
     );
 
     this.loadingService.showSpinner();
@@ -54,7 +54,7 @@ export class OrderingResolver
       { key: 6112, value: ORDERING_CONTENT_STRINGS.errorMessageInsufficientFunds },
     ];
     return this.contentStringsFacadeService
-      .fetchContentStrings$(CONTENT_STINGS_DOMAINS.patronUi, CONTENT_STINGS_CATEGORIES.ordering)
+      .fetchContentStrings$(CONTENT_STRINGS_DOMAINS.patronUi, CONTENT_STRINGS_CATEGORIES.ordering)
       .pipe(
         tap(strings => strings && this.updateOrderValidationErrors(updatingConfigs, strings, ORDER_VALIDATION_ERRORS))
       );

@@ -7,7 +7,7 @@ import { Observable, zip } from 'rxjs';
 import { TileConfigFacadeService } from '@sections/dashboard/tile-config-facade.service';
 import { MEAL_CONTENT_STRINGS } from '@sections/accounts/pages/meal-donations/meal-donation.config.ts';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
-import { CONTENT_STINGS_CATEGORIES, CONTENT_STINGS_DOMAINS } from '../../content-strings';
+import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from '../../content-strings';
 import { AccessCardComponent } from './containers/access-card/access-card.component';
 import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
@@ -186,14 +186,14 @@ export class DashboardPage implements OnInit {
   private async updateDonationMealsStrings(): Promise<void> {
     const res = await this.tileConfigFacadeService.resolveAsyncUpdatingConfig({
       title: this.contentStringsFacadeService.getContentStringValue$(
-        CONTENT_STINGS_DOMAINS.patronUi,
-        CONTENT_STINGS_CATEGORIES.mealDonation,
+        CONTENT_STRINGS_DOMAINS.patronUi,
+        CONTENT_STRINGS_CATEGORIES.mealDonation,
         MEAL_CONTENT_STRINGS.dashboardTitle
       ),
       buttonConfig: {
         title: this.contentStringsFacadeService.getContentStringValue$(
-          CONTENT_STINGS_DOMAINS.patronUi,
-          CONTENT_STINGS_CATEGORIES.mealDonation,
+          CONTENT_STRINGS_DOMAINS.patronUi,
+          CONTENT_STRINGS_CATEGORIES.mealDonation,
           MEAL_CONTENT_STRINGS.buttonDonateAMeal
         ),
       },
@@ -205,14 +205,14 @@ export class DashboardPage implements OnInit {
   private async updateOrderingStrings(): Promise<void> {
     const res = await this.tileConfigFacadeService.resolveAsyncUpdatingConfig({
       title: this.contentStringsFacadeService.getContentStringValue$(
-        CONTENT_STINGS_DOMAINS.patronUi,
-        CONTENT_STINGS_CATEGORIES.ordering,
+        CONTENT_STRINGS_DOMAINS.patronUi,
+        CONTENT_STRINGS_CATEGORIES.ordering,
         ORDERING_CONTENT_STRINGS.labelDashboard
       ),
       buttonConfig: {
         title: this.contentStringsFacadeService.getContentStringValue$(
-          CONTENT_STINGS_DOMAINS.patronUi,
-          CONTENT_STINGS_CATEGORIES.ordering,
+          CONTENT_STRINGS_DOMAINS.patronUi,
+          CONTENT_STRINGS_CATEGORIES.ordering,
           ORDERING_CONTENT_STRINGS.buttonDashboardStartOrder
         ),
       },
