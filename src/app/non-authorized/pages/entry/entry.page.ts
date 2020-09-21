@@ -7,7 +7,7 @@ import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { Plugins } from '@capacitor/core';
-const { Device, HIDPlugin } = Plugins;
+const { Device } = Plugins;
 import { LoadingService } from '@core/service/loading/loading.service';
 import { from, Observable } from 'rxjs';
 
@@ -58,9 +58,9 @@ export class EntryPage implements OnInit {
   }
 
   async redirectTo() {
-    // this.route.navigate([ROLES.guest, GUEST_ROUTES.institutions]);
-    const init = await HIDPlugin.initializeOrigo();
-    const start = await HIDPlugin.startupOrigo();
+    this.route.navigate([ROLES.guest, GUEST_ROUTES.institutions]);
+   // const init = await HIDPlugin.initializeOrigo();
+   // const start = await HIDPlugin.startupOrigo();
   }
 
   checkLocation() {

@@ -1,3 +1,4 @@
+
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Observable, from } from 'rxjs';
@@ -13,8 +14,9 @@ import {
 } from '@core/provider/native-provider/native.provider';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
+import { PartnerPaymentApiFacadeService } from 'src/app/src/app/core/service/partner-payment-api-facade.service';
 import { Plugins } from '@capacitor/core';
-const { IOSDevice } = Plugins;
+const { IOSDevice, HIDPlugin } = Plugins;
 
 @Component({
   selector: 'st-access-card',
@@ -48,7 +50,8 @@ export class AccessCardComponent implements OnInit {
     private readonly changeRef: ChangeDetectorRef,
     private readonly nativeProvider: NativeProvider,
     private readonly userFacadeService: UserFacadeService,
-    private readonly authFacadeService: AuthFacadeService
+    private readonly authFacadeService: AuthFacadeService,
+    private paymentFacade: PartnerPaymentApiFacadeService, 
   ) {}
 
   ngOnInit() {
@@ -63,6 +66,15 @@ export class AccessCardComponent implements OnInit {
       this.enableAppleWallet();
       this.enableAppleWalletEvents();
     }
+    // TODO: Call Active passes to verify if HID is enabled (if phone is not paired and status is enabled)
+    // TODO: Call Android Credential method to get Invitation code
+    // TODO: Send invitation code to Android plugin
+    // TODO: Handle invitation code on Android side
+    
+    console.log('Before getting the invitation code');
+    this.paymentFacade.androidCredential().subscribe(response => {
+      console.log(`Invitation code: ${response}`);
+    })
   }
   private getUserData() {
     this.userName$ = this.accessCardService.getUserName();
