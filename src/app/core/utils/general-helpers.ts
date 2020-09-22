@@ -135,6 +135,10 @@ export const isMealsAccount = ({ accountType }: UserAccount): boolean => {
   return accountType === ACCOUNT_TYPES.meals;
 };
 
+export const isAppleAccount = ({ accountType }: UserAccount): boolean => {
+  return accountType === ACCOUNT_TYPES.applePay;
+};
+
 export function exploreMerchantSorting(sourceArray: MerchantInfo[]): MerchantInfo[] {
   return sourceArray.sort(
     (
