@@ -28,6 +28,8 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { ExternalPaymentService } from '@core/service/external-payment/external-payment.service';
 import { ApplePayResponse, ApplePay } from '@core/model/add-funds/applepay-response.model';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
+import { Plugins } from '@capacitor/core';
+const { Browser } = Plugins;
 
 @Component({
   selector: 'st-deposit-page',
@@ -251,6 +253,12 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     let amount = mainInput || mainSelect;
     amount = amount.toString().replace(COMMA_REGEXP, '');
     if (isApplePay) {
+      Browser.addListener('browserFinished', (info: any) => {
+        this.isDepositing = false;
+        this.cdRef.detectChanges();
+        Browser.removeAllListeners();
+      });
+
       this.externalPaymentService
         .payWithApplePay(ApplePay.DEPOSITS_WITH_APPLE_PAY, {
           accountId: selectedAccount.id,
