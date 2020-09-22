@@ -2,7 +2,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { UserAccount } from '@core/model/account/account.model';
 import { PriceUnitsResolverPipe } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.pipe';
 import { CreditCardTypePipe } from '@sections/accounts/shared/pipes/credit-card-type/credit-card-type.pipe';
-import { isCreditCardAccount } from '@core/utils/general-helpers';
+import { isCreditCardAccount, isAppleAccount } from '@core/utils/general-helpers';
 
 @Pipe({
   name: 'accountTypeResolver',
@@ -14,7 +14,7 @@ export class AccountTypeResolverPipe implements PipeTransform {
   ) {}
 
   transform(acc: UserAccount, mealBased: boolean): string {
-    if (acc.id === 'rollup') {
+    if (acc.id === 'rollup' || isAppleAccount(acc)) {
       return `${acc.accountDisplayName}`;
     }
     if (isCreditCardAccount(acc)) {
