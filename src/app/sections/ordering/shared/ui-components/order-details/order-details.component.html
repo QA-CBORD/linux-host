@@ -107,7 +107,9 @@
           interface="action-sheet"
           (ionChange)="onPaymentChanged($event)"
           [interfaceOptions]="{ cssClass: 'custom-deposit-actionSheet' }"
-          [attr.aria-label]="paymentMethod.value | accountTypeResolver: mealBased"
+          [attr.aria-label]="
+            paymentMethod.value ? (paymentMethod.value | accountTypeResolver: mealBased) : paymentMethod.placeholder
+          "
           #paymentMethod
         >
           <ion-select-option [value]="applePayAccountType">
