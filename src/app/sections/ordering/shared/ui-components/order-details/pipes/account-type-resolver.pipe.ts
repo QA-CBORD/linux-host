@@ -14,6 +14,7 @@ export class AccountTypeResolverPipe implements PipeTransform {
   ) {}
 
   transform(acc: UserAccount, mealBased: boolean): string {
+    if (!acc) return '';
     if (acc.id === 'rollup' || isAppleAccount(acc)) {
       return `${acc.accountDisplayName}`;
     }

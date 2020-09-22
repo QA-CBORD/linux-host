@@ -107,12 +107,10 @@
           interface="action-sheet"
           (ionChange)="onPaymentChanged($event)"
           [interfaceOptions]="{ cssClass: 'custom-deposit-actionSheet' }"
-          [attr.aria-label]="
-            paymentMethod.value ? (paymentMethod.value | accountTypeResolver: mealBased) : paymentMethod.placeholder
-          "
+          [stAccessibleSelect]="paymentMethod.value | accountTypeResolver: mealBased"
           #paymentMethod
         >
-          <ion-select-option [value]="applePayAccountType">
+          <ion-select-option *ngIf="applePayEnabled && accInfoList?.creditAccepted" [value]="applePayAccountType">
             Apple Pay
           </ion-select-option>
           <ion-select-option [value]="account" *ngFor="let account of accounts; trackBy: trackByAccountId">
