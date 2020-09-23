@@ -35,6 +35,8 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { ExternalPaymentService } from '@core/service/external-payment/external-payment.service';
 import { ApplePay } from '@core/model/add-funds/applepay-response.model';
+import { Plugins } from '@capacitor/core';
+const { Browser } = Plugins;
 
 @Component({
   selector: 'st-cart',
@@ -267,6 +269,13 @@ export class CartComponent implements OnInit {
     /// if Apple Pay Order
     if (this.cartFormState.data.paymentMethod.accountType === AccountType.APPLEPAY) {
       let orderData = await this.cartService.orderInfo$.pipe(first()).toPromise();
+
+      Browser.addListener('browserFinished', (info: any) => {
+        this.placingOrder = false;
+        this.cdRef.detectChanges();
+        Browser.removeAllListeners();
+      });
+
       await this.externalPaymentService
         .payWithApplePay(ApplePay.ORDERS_WITH_APPLE_PAY, orderData)
         .then(result => {
@@ -279,6 +288,9 @@ export class CartComponent implements OnInit {
         .catch(async error => {
           this.placingOrder = false;
           return await this.onErrorModal('Something went wrong, please try again...');
+        })
+        .finally(() => {
+          this.placingOrder = false;
         });
     }
 
