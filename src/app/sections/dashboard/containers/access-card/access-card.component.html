@@ -78,9 +78,10 @@
           </div>
         </ion-button>
       </ion-col>
-      <ion-col *ngIf="!appleWalletButtonHidden" class="card__quick-actions-wrapper">
-        <ion-button mode="ios" class="card__apple-wallet-btn" (click)="addToAppleWallet()"
-          ><img src="/assets/icon/Add_to_Apple_Wallet_rgb_US-UK.svg" />
+      <ion-col *ngIf="!appleWalletButtonHidden || androidMobileCredentialAvailable" class="card__quick-actions-wrapper">
+        <ion-button mode="ios" class="card__apple-wallet-btn" (click)="addMobileCredential()"
+          ><img *ngIf="!appleWalletButtonHidden" src="/assets/icon/Add_to_Apple_Wallet_rgb_US-UK.svg" />
+          <img *ngIf="androidMobileCredentialAvailable" src="/assets/icon/icon_cloud-key-lock.png" />
         </ion-button>
       </ion-col>
     </ion-row>

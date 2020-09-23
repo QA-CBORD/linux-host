@@ -14,6 +14,7 @@ import {
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { Plugins } from '@capacitor/core';
+import { PartnerPaymentApiFacadeService } from '@core/service/payments-api/partner-payment-api-facade.service';
 const { IOSDevice } = Plugins;
 
 @Component({
@@ -30,7 +31,6 @@ export class AccessCardComponent implements OnInit {
   institutionBackgroundImage$: Observable<string>;
   getMyCardEnabled$: Observable<boolean>;
   isMobileAccessButtonEnabled$: Observable<boolean>;
-
   appleWalletEnabled: boolean = false;
   appleWalletInfo: AppleWalletInfo;
   appleWalletMessage: string;
@@ -41,6 +41,8 @@ export class AccessCardComponent implements OnInit {
   isLoadingPhoto: boolean = true;
   userInfo: string;
 
+  androidMobileCredentialAvailable: boolean;
+
   constructor(
     private readonly accessCardService: AccessCardService,
     private readonly sanitizer: DomSanitizer,
@@ -48,7 +50,8 @@ export class AccessCardComponent implements OnInit {
     private readonly changeRef: ChangeDetectorRef,
     private readonly nativeProvider: NativeProvider,
     private readonly userFacadeService: UserFacadeService,
-    private readonly authFacadeService: AuthFacadeService
+    private readonly authFacadeService: AuthFacadeService,
+    private readonly paymentServiceFacade: PartnerPaymentApiFacadeService
   ) {}
 
   ngOnInit() {
@@ -59,10 +62,16 @@ export class AccessCardComponent implements OnInit {
   }
 
   ionViewWillEnter() {
-    if (this.nativeProvider.isIos() && this.userFacadeService.isAppleWalletEnabled$()) {
-      this.enableAppleWallet();
-      this.enableAppleWalletEvents();
-    }
+    this.userFacadeService.mobileCredentialSettings().subscribe(resp => {
+      if(resp.isAppleWalletEnabled()){
+         this.enableAppleWallet();
+         this.enableAppleWalletEvents();
+       }
+      else if(resp.isAndroidCredEnabled()){
+        this.androidMobileCredentialAvailable = true;
+        // lo que vayamos a hacer para android.
+      }
+    });
   }
   private getUserData() {
     this.userName$ = this.accessCardService.getUserName();
@@ -153,7 +162,7 @@ export class AccessCardComponent implements OnInit {
 
   async addToAppleWallet() {
     if (this.userInfo) {
-      await IOSDevice.addToAppleWallet({ user: this.userInfo });
+        await IOSDevice.addToAppleWallet({ user: this.userInfo });
     }
   }
 
@@ -164,6 +173,33 @@ export class AccessCardComponent implements OnInit {
       .subscribe(response => {
         this.userInfo = JSON.stringify(response);
       });
+  }
+
+  private addAndroidCredentials(){
+    // if patron has an active passes, then we should call hid plugging, 
+    // if credential already install, then this should open a popover with cred status.
+    this.paymentServiceFacade.androidActivePasses(true) 
+        .subscribe(mCredentials => { 
+          if(mCredentials.isAvailable()) { 
+            // available...not yet installed, we need to call androidCredentials, get activationCode and call HID Plugin.
+            // console.log("active passed Response: ", response)
+            this.paymentServiceFacade.androidCredential(true).subscribe(resp => {
+              console.log("active passed Response: ", resp)
+            });
+          }if(mCredentials.isProvisioned()){
+            // provisioned means it's already installed on device.
+            // need to show popup with credential status. call HID Plugin to get whatever status we'll show.
+          } 
+      });
+  }
+
+  public addMobileCredential()
+  {
+    if(this.androidMobileCredentialAvailable){
+       this.addAndroidCredentials();
+     } else if(!this.appleWalletButtonHidden){
+       this.addToAppleWallet();
+    }
   }
 
   private enableAppleWallet() {
