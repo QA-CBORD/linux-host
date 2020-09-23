@@ -14,7 +14,7 @@ import {
 } from '../accounts.config';
 import { MEAL_CONTENT_STRINGS } from '@sections/accounts/pages/meal-donations/meal-donation.config.ts';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
-import { CONTENT_STINGS_CATEGORIES, CONTENT_STINGS_DOMAINS } from '../../../content-strings';
+import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from '../../../content-strings';
 import { isCashlessAccount } from '@core/utils/general-helpers';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Settings } from '../../../app.global';
@@ -70,8 +70,8 @@ export class AccountsService {
       this.contentService.retrieveContentStringListByRequest(ContentStringsParamsAccounts),
       this.contentService.retrieveContentStringListByRequest(GenericContentStringsParams),
       this.contentStringsFacadeService.fetchContentString$(
-        CONTENT_STINGS_DOMAINS.patronUi,
-        CONTENT_STINGS_CATEGORIES.mealDonation,
+        CONTENT_STRINGS_DOMAINS.patronUi,
+        CONTENT_STRINGS_CATEGORIES.mealDonation,
         MEAL_CONTENT_STRINGS.dashboardTitle),
     ).pipe(
       map(([res, res0, res1]) => {

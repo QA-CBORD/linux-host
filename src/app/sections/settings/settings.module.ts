@@ -9,6 +9,7 @@ import { SettingsFactoryService } from './services/settings-factory.service';
 import { HTMLRendererModule } from '@shared/ui-components/html-renderer/html-renderer.module';
 import { PhoneEmailModule } from '@shared/ui-components/phone-email/phone-email.module';
 import { EditHomePageModalModule } from '@shared/ui-components/edit-home-page-modal/edit-home-page-modal.module';
+import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module'
 
 const imports = [
   CommonModule,
@@ -17,6 +18,7 @@ const imports = [
   PhotoUploadModule,
   HTMLRendererModule,
   PhoneEmailModule,
+  StHeaderModule, 
   EditHomePageModalModule,
 ];
 const declarations = [SettingsPage, SettingsItemComponent];

@@ -19,8 +19,8 @@
 
   &__header-buttons {
     position: absolute;
-    top: 43px;
-    left: 16px;
+    top: 10px;
+    left: 10px;
   }
 
   &__close-button {
@@ -142,7 +142,7 @@
     height: 48px;
     min-width: 134px;
     background: $color-white;
-    border-radius: 24px;
+    border-radius: 8px;
     box-shadow: 0px 0px 24px 0px #0000000a, 0px 12px 44px 0px #0000001f;
     justify-content: space-between;
     align-items: center;

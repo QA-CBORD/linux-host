@@ -5,9 +5,10 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { map, switchMap, take } from 'rxjs/operators';
 import { UserInfoSet } from '@sections/settings/models/setting-items-config.model';
 import { UserNotificationInfo } from '@core/model/user';
-import { CONTENT_STINGS_CATEGORIES, CONTENT_STINGS_DOMAINS } from '../../../content-strings';
+import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from '../../../content-strings';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { Observable, of } from 'rxjs';
+import { EMAIL_REGEXP, INT_REGEXP } from '@core/utils/regexp-patterns';
 
 @Component({
   selector: 'st-phone-email',
@@ -76,7 +77,7 @@ export class PhoneEmailComponent implements OnInit {
     }
 
     this.htmlContent$ = this.contentStringFacadeService
-      .fetchContentString$(CONTENT_STINGS_DOMAINS.get_web_gui, CONTENT_STINGS_CATEGORIES.termsScreen, 'terms')
+      .fetchContentString$(CONTENT_STRINGS_DOMAINS.get_web_gui, CONTENT_STRINGS_CATEGORIES.termsScreen, 'terms')
       .pipe(
         map(contentString => contentString.value),
         take(1)
@@ -89,16 +90,19 @@ export class PhoneEmailComponent implements OnInit {
 
   private async initForm() {
     this.phoneEmailForm = this.fb.group({
-      [this.controlsNames.email]: ['', Validators.required],
-      [this.controlsNames.phone]: ['', Validators.required],
+      [this.controlsNames.email]: ['', [Validators.required, Validators.pattern(EMAIL_REGEXP)]],
+      [this.controlsNames.phone]: [
+        '',
+        [Validators.required, Validators.pattern(INT_REGEXP), Validators.minLength(10), Validators.maxLength(10)],
+      ],
     });
     const user: any = await this.userFacadeService
-      .getUserData$()
+      .getUser$()
       .pipe(take(1))
       .toPromise();
     this.user = { ...user };
-    this.email.setValue(this.user.email || '');
-    this.phone.setValue(this.user.phone || '');
+    this.checkFieldValue(this.email, this.user.email);
+    this.checkFieldValue(this.phone, this.user.phone);
     this.cdRef.detectChanges();
   }
 
@@ -187,6 +191,13 @@ export class PhoneEmailComponent implements OnInit {
       showCloseButton: true,
     });
     await toast.present();
+  }
+
+  private checkFieldValue(field: AbstractControl, value: string) {
+    if (value) {
+      field.setValue(value);
+      field.markAsDirty();
+    }
   }
 }
 
