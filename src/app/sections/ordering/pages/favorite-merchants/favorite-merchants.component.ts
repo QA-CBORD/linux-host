@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ModalController, ToastController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { FavoriteMerchantsService } from './services/favorite-merchants.service';
 import { switchMap, take, first } from 'rxjs/operators';
@@ -10,6 +10,7 @@ import { CartService, MerchantService } from '../../services';
 import { OrderOptionsActionSheetComponent } from '../../shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 import { LOCAL_ROUTING, ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
+import { ToastService } from '@core/service/toast/toast.service';
 
 @Component({
   selector: 'st-favorite-merchants',
@@ -27,7 +28,7 @@ export class FavoriteMerchantsComponent implements OnInit {
     private readonly modalController: ModalController,
     private readonly merchantService: MerchantService,
     private readonly loadingService: LoadingService,
-    private readonly toastController: ToastController,
+    private readonly toastService: ToastService,
     private readonly favoriteMerchantsService: FavoriteMerchantsService,
     private readonly cartService: CartService,
     private readonly cdRef: ChangeDetectorRef,
@@ -102,13 +103,7 @@ export class FavoriteMerchantsComponent implements OnInit {
   }
 
   private async onToastDisplayed(message: string): Promise<void> {
-    const toast = await this.toastController.create({
-      message,
-      duration: 1000,
-      position: 'bottom',
-    });
-
-    await toast.present();
+    await this.toastService.showToast({ message });
   }
 
   private initContentStrings() {

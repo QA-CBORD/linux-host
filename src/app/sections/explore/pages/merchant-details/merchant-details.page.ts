@@ -7,8 +7,8 @@ import { take } from 'rxjs/operators';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { FavoriteMerchantsFacadeService } from '@core/facades/favourite-merchant/favorite-merchants-facade.service';
 import { ExploreService } from '@sections/explore/services/explore.service';
-import { ToastController } from '@ionic/angular';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { ToastService } from '@core/service/toast/toast.service';
 
 @Component({
   selector: 'st-merchant-details',
@@ -31,7 +31,7 @@ export class MerchantDetailsPage implements OnInit {
     private readonly router: Router,
     private readonly loadingService: LoadingService,
     private readonly merchantIdsFacadeService: FavoriteMerchantsFacadeService,
-    private readonly toastController: ToastController
+    private readonly toastService: ToastService
   ) {}
 
   ngOnInit() {
@@ -70,11 +70,6 @@ export class MerchantDetailsPage implements OnInit {
   }
 
   private async onToastDisplayed(message: string): Promise<void> {
-    const toast = await this.toastController.create({
-      message,
-      duration: 1000,
-      position: 'bottom',
-    });
-    await toast.present();
+    await this.toastService.showToast({ message, position: 'bottom' });
   }
 }

@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { GUEST_ROUTES } from '../../non-authorized.config';
 import { ROLES, Settings } from 'src/app/app.global';
 import { zip } from 'rxjs';
-import { PopoverController, ToastController } from '@ionic/angular';
+import { PopoverController } from '@ionic/angular';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { Plugins, Capacitor } from '@capacitor/core';
@@ -13,6 +13,7 @@ import { SettingsFacadeService } from '@core/facades/settings/settings-facade.se
 import { LoginState } from '@core/facades/identity/identity.facade.service';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { ToastService } from '@core/service/toast/toast.service';
 const { Keyboard, IOSDevice } = Plugins;
 
 @Component({
@@ -37,7 +38,7 @@ export class InstitutionsPage implements OnInit {
     private readonly popoverCtrl: PopoverController,
     private readonly nav: Router,
     private readonly cdRef: ChangeDetectorRef,
-    private readonly toastController: ToastController,
+    private readonly toastService: ToastService,
     private readonly route: Router
   ) {}
 
@@ -111,25 +112,20 @@ export class InstitutionsPage implements OnInit {
   }
 
   private async onErrorRetrieve(message: string) {
-    const toast = await this.toastController.create({
-      message,
-      position: 'top',
-      buttons: [
-        {
-          text: 'Retry',
-          handler: () => {
-            this.getInstitutions();
-          },
+    await this.toastService.showToast(message, [
+      {
+        text: 'Retry',
+        handler: () => {
+          this.getInstitutions();
         },
-        {
-          text: 'Back',
-          handler: () => {
-            this.route.navigate([ROLES.guest, GUEST_ROUTES.entry]);
-          },
+      },
+      {
+        text: 'Back',
+        handler: () => {
+          this.route.navigate([ROLES.guest, GUEST_ROUTES.entry]);
         },
-      ],
-    });
-    toast.present();
+      },
+    ]);
   }
 
   async setNativeEnvironment() {

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ChangeDetectorRef } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ModalController, PopoverController, ToastController } from '@ionic/angular';
+import { ModalController, PopoverController } from '@ionic/angular';
 import { map, switchMap, take, tap, finalize } from 'rxjs/operators';
 import {
   ACCOUNTS_VALIDATION_ERRORS,
@@ -29,6 +29,7 @@ import { ExternalPaymentService } from '@core/service/external-payment/external-
 import { ApplePayResponse, ApplePay } from '@core/model/add-funds/applepay-response.model';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { Plugins } from '@capacitor/core';
+import { ToastService } from '@core/service/toast/toast.service';
 const { Browser } = Plugins;
 
 @Component({
@@ -69,7 +70,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     private readonly fb: FormBuilder,
     private readonly popoverCtrl: PopoverController,
     private readonly modalController: ModalController,
-    private readonly toastController: ToastController,
+    private readonly toastService: ToastService,
     private readonly router: Router,
     private readonly loadingService: LoadingService,
     private readonly cdRef: ChangeDetectorRef,
@@ -504,12 +505,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   }
 
   private async onErrorRetrieve(message: string) {
-    const toast = await this.toastController.create({
-      message,
-      duration: 5000,
-      position: 'top',
-    });
-    toast.present();
+    await this.toastService.showToast({ message, duration: 5000 });
   }
 
   private filterAccountsByPaymentSystem(accounts): Array<UserAccount> {
