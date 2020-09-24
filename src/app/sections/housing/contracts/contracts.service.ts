@@ -1,9 +1,11 @@
+import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { Injectable } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, withLatestFrom } from 'rxjs/operators';
 
 import { isDefined } from '@sections/housing/utils';
+import { Environment } from '../../../environment';
 
 import { HousingProxyService } from '../housing-proxy.service';
 import { QuestionsService } from '@sections/housing/questions/questions.service';
@@ -24,14 +26,13 @@ import { QuestionsPage } from '@sections/housing/questions/questions.model';
 import { QuestionFacilityAttributes } from '@sections/housing/questions/types/question-facility-attributes';
 import { ChargeScheduleValue } from '@sections/housing/charge-schedules/charge-schedules.model';
 import { ChargeSchedulesService } from '@sections/housing/charge-schedules/charge-schedules.service';
-import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ContractsService {
   private readonly _patronContractsUrl: string = `${
-    this._environmentFacadeService.getEnvironmentObject().housing_aws_url
+        this._environmentFacadeService.getEnvironmentObject().housing_aws_url
   }/patron-applications/v.1.0/patron-contracts`;
 
   private _isSigned: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
@@ -149,3 +150,5 @@ export class ContractsService {
     return contractInfo[contractKey] || '';
   }
 }
+
+

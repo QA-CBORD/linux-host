@@ -1,11 +1,13 @@
+import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { Injectable } from '@angular/core';
 import { Observable, ReplaySubject, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 
+import { Environment } from '../../../environment';
+
 import { HousingProxyService } from '../housing-proxy.service';
 
 import { Term } from './terms.model';
-import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 
 @Injectable({
   providedIn: 'root',
@@ -16,13 +18,13 @@ export class TermsService {
   termId$: Observable<number> = this._termIdSource.asObservable();
 
   constructor(
-    private _environmentFacadeService: EnvironmentFacadeService,
-    private _housingProxyService: HousingProxyService
-  ) {}
+      private _environmentFacadeService: EnvironmentFacadeService,
+      private _housingProxyService: HousingProxyService
+      ) {}
 
   getTerms(): Observable<Term[]> {
     const apiUrl: string = `${
-      this._environmentFacadeService.getEnvironmentObject().housing_aws_url
+        this._environmentFacadeService.getEnvironmentObject().housing_aws_url
     }/patron-applications/v.1.0/patron-terms/patrons/self`;
 
     return this._housingProxyService.get<Term[]>(apiUrl).pipe(
@@ -35,3 +37,4 @@ export class TermsService {
     this._termIdSource.next(termId);
   }
 }
+

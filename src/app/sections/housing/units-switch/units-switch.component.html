@@ -1,0 +1,13 @@
+<ion-toolbar class="units-switch__toolbar" mode="ios">
+  <ion-buttons mode="md">
+    <ion-button
+      class="ion-no-padding ion-no-margin btn units-switch__tab"
+      mode="md"
+      [routerLink]="unit.href"
+      routerLinkActive="active"
+      *ngFor="let unit of units"
+    >
+      {{ unit.title }}
+    </ion-button>
+  </ion-buttons>
+</ion-toolbar>

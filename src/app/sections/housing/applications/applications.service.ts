@@ -1,3 +1,4 @@
+import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { Injectable } from '@angular/core';
 import { Observable, forkJoin, of } from 'rxjs';
 import { map, tap, switchMap, mapTo, withLatestFrom } from 'rxjs/operators';
@@ -31,18 +32,16 @@ import {
 } from '@sections/housing/questions/questions.model';
 import { QuestionBase } from '@sections/housing/questions/types';
 import { FormArray, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
-import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ApplicationsService {
   private readonly _patronApplicationsUrl: string = `${
-    this._environmentFacadeService.getEnvironmentObject().housing_aws_url
+        this._environmentFacadeService.getEnvironmentObject().housing_aws_url
   }/patron-applications/v.1.0/patron-applications`;
 
   constructor(
-    private _environmentFacadeService: EnvironmentFacadeService,
     private _housingProxyService: HousingProxyService,
     private _patronAttributesService: PatronAttributesService,
     private _preferencesService: PreferencesService,
@@ -256,11 +255,12 @@ export class ApplicationsService {
           parsedJson,
           questions
         );
-        const patronPreferences: PatronPreference[] = this._preferencesService.getPreferences(
+        const patronPreferences: PatronPreference[] = applicationDetails.patronPreferences != null?
+          this._preferencesService.getPreferences(
           applicationDetails.patronPreferences,
           parsedJson,
           questions
-        );
+        ): null;
         const body: ApplicationRequest = new ApplicationRequest({
           patronApplication: applicationDetails.patronApplication,
           patronAttributes,
@@ -324,3 +324,4 @@ export class ApplicationsService {
     );
   }
 }
+
