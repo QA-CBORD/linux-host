@@ -112,7 +112,7 @@ export class InstitutionsPage implements OnInit {
   }
 
   private async onErrorRetrieve(message: string) {
-    await this.toastService.showToast(message, [
+    await this.toastService.showToast({ message, toastButtons: [
       {
         text: 'Retry',
         handler: () => {
@@ -125,7 +125,7 @@ export class InstitutionsPage implements OnInit {
           this.route.navigate([ROLES.guest, GUEST_ROUTES.entry]);
         },
       },
-    ]);
+    ] });
   }
 
   async setNativeEnvironment() {

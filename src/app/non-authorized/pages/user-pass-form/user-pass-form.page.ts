@@ -278,7 +278,7 @@ export class UserPassForm implements OnInit {
   }
 
   private async presentToast(message: string): Promise<void> {
-    await this.toastService.showToast(message);
+    await this.toastService.showToast({ message });
   }
 
   private async getIsWeb(): Promise<boolean> {
