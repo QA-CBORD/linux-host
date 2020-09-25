@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { NavController, PopoverController, ToastController } from '@ionic/angular';
+import { NavController, PopoverController } from '@ionic/angular';
 
 import { map, take, skipWhile } from 'rxjs/operators';
 import { Observable, Subscription } from 'rxjs';
@@ -19,6 +19,7 @@ import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { CommerceApiService } from '@core/service/commerce/commerce-api.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
+import { ToastService } from '@core/service/toast/toast.service';
 
 @Component({
   selector: 'st-activate-location',
@@ -44,7 +45,7 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
     private readonly routerLink: ActivatedRoute,
     private readonly mobileAccessService: MobileAccessService,
     private readonly popoverCtrl: PopoverController,
-    private readonly toastController: ToastController,
+    private readonly toastService: ToastService,
     private readonly nav2: NavController,
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly loading: LoadingService,
@@ -128,11 +129,7 @@ export class ActivateLocationComponent implements OnInit, OnDestroy {
   }
 
   async presentToast(message: string) {
-    const toast = await this.toastController.create({
-      message,
-      duration: this.toastDuration,
-    });
-    toast.present();
+    await this.toastService.showToast({ message, duration: this.toastDuration });
   }
 
   private setInstitutionPhoto() {
