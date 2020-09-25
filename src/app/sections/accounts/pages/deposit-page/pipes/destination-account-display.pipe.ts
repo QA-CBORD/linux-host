@@ -7,7 +7,6 @@ import { TransactionUnitsPipe } from '@shared/pipes/transaction-units/transactio
 export class DestinationAccountDisplayPipe implements PipeTransform {
   constructor(private readonly transactionUnitsPipe: TransactionUnitsPipe) {}
   transform(account: any): any {
-    // {{ account.accountDisplayName }} ({{ account.balance | transactionUnits: account.accountType }})
     if (!account) return '';
 
     return `${account.accountDisplayName} (${this.transactionUnitsPipe.transform(
