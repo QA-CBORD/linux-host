@@ -9,13 +9,13 @@ import {
 } from '@angular/common/http';
 import { Observable, throwError, TimeoutError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import { ToastController } from '@ionic/angular';
 import { NUM_DSCRPTN_REGEXP } from '@core/utils/regexp-patterns';
+import { ToastService } from '@core/service/toast/toast.service';
 
 @Injectable()
 export class ServerError implements HttpInterceptor {
 
-  constructor(private readonly toastController: ToastController) {
+  constructor(private readonly toastService: ToastService) {
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -43,11 +43,7 @@ export class ServerError implements HttpInterceptor {
   }
 
   private async presentToast(message: string): Promise<void> {
-    const toast = await this.toastController.create({
-      message,
-      duration: 3000,
-    });
-    await toast.present();
+    await this.toastService.showToast({ message });
   }
 
   private handleServerException(exceptionString: string = ''): never {

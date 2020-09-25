@@ -12,7 +12,7 @@ import {
   ORDERING_CONTENT_STRINGS,
 } from '@sections/ordering/ordering.config';
 import { first, map, take } from 'rxjs/operators';
-import { AlertController, ModalController, PopoverController, ToastController } from '@ionic/angular';
+import { AlertController, ModalController, PopoverController } from '@ionic/angular';
 import { OrderOptionsActionSheetComponent } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { handleServerError } from '@core/utils/general-helpers';
@@ -21,6 +21,7 @@ import { BUTTON_TYPE } from '@core/utils/buttons.config';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { OverlayEventDetail } from '@ionic/core';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
+import { ToastService } from '@core/service/toast/toast.service';
 
 @Component({
   selector: 'st-full-menu',
@@ -43,7 +44,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
     private readonly modalController: ModalController,
     private readonly merchantService: MerchantService,
     private readonly loadingService: LoadingService,
-    private readonly toastController: ToastController,
+    private readonly toastService: ToastService,
     private readonly popoverCtrl: PopoverController,
     private readonly orderingService: OrderingService,
     private readonly alertController: AlertController,
@@ -193,12 +194,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   }
 
   private async failedValidateOrder(message: string): Promise<void> {
-    const toast = await this.toastController.create({
-      message,
-      duration: 3000,
-      position: 'top',
-    });
-    await toast.present();
+    await this.toastService.showToast({ message });
   }
 
   private async modalHandler({ dueTime, orderType, address, isASAP }) {
