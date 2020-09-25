@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { PopoverController, ToastController } from '@ionic/angular';
+import { PopoverController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, switchMap, take } from 'rxjs/operators';
@@ -16,6 +16,7 @@ import { Plugins } from '@capacitor/core';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
+import { ToastService } from '@core/service/toast/toast.service';
 const { Keyboard } = Plugins;
 
 @Component({
@@ -35,7 +36,7 @@ export class RequestFundsPageComponent implements OnInit {
     private readonly fb: FormBuilder,
     private readonly accountService: AccountsService,
     private readonly loadingService: LoadingService,
-    private readonly toastController: ToastController,
+    private readonly toastService: ToastService,
     private readonly popoverCtrl: PopoverController,
     private readonly userFacadeService: UserFacadeService,
     private readonly settingsFacadeService: SettingsFacadeService,
@@ -142,12 +143,7 @@ export class RequestFundsPageComponent implements OnInit {
   }
 
   private async showToast(): Promise<void> {
-    const toast = await this.toastController.create({
-      message: 'Something went wrong...',
-      duration: 3000,
-      position: 'top',
-    });
-    await toast.present();
+    await this.toastService.showToast({ message: 'Something went wrong...' });
   }
 
   private async showModal(): Promise<void> {
