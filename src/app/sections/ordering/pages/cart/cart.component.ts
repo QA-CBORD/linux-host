@@ -35,6 +35,8 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { ExternalPaymentService } from '@core/service/external-payment/external-payment.service';
 import { ApplePay } from '@core/model/add-funds/applepay-response.model';
+import { Plugins } from '@capacitor/core';
+const { Browser } = Plugins;
 
 @Component({
   selector: 'st-cart',
@@ -53,6 +55,7 @@ export class CartComponent implements OnInit {
   accountInfoList$: Observable<MerchantAccountInfoList>;
   cartFormState: OrderDetailsFormData = {} as OrderDetailsFormData;
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
+  placingOrder: boolean = false;
 
   constructor(
     private readonly cartService: CartService,
@@ -154,10 +157,12 @@ export class CartComponent implements OnInit {
   }
 
   async onSubmit() {
-    if (!this.cartFormState.valid) return;
+    if (!this.cartFormState.valid || this.placingOrder) return;
+    this.placingOrder = true;
     const { type } = await this.cartService.orderInfo$.pipe(first()).toPromise();
     if (type === ORDER_TYPE.DELIVERY && (await this.isDeliveryAddressOutOfRange())) {
       await this.onValidateErrorToast('Delivery location is out of delivery range, please choose another location');
+      this.placingOrder = false;
       return;
     }
 
@@ -264,7 +269,15 @@ export class CartComponent implements OnInit {
     /// if Apple Pay Order
     if (this.cartFormState.data.paymentMethod.accountType === AccountType.APPLEPAY) {
       let orderData = await this.cartService.orderInfo$.pipe(first()).toPromise();
-        await this.externalPaymentService.payWithApplePay(ApplePay.ORDERS_WITH_APPLE_PAY, orderData)
+
+      Browser.addListener('browserFinished', (info: any) => {
+        this.placingOrder = false;
+        this.cdRef.detectChanges();
+        Browser.removeAllListeners();
+      });
+
+      await this.externalPaymentService
+        .payWithApplePay(ApplePay.ORDERS_WITH_APPLE_PAY, orderData)
         .then(result => {
           if (result.success) {
             accountId = result.accountId;
@@ -273,7 +286,11 @@ export class CartComponent implements OnInit {
           }
         })
         .catch(async error => {
+          this.placingOrder = false;
           return await this.onErrorModal('Something went wrong, please try again...');
+        })
+        .finally(() => {
+          this.placingOrder = false;
         });
     }
 
@@ -289,7 +306,10 @@ export class CartComponent implements OnInit {
           await this.onErrorModal(error);
         }
       })
-      .finally(this.loadingService.closeSpinner.bind(this.loadingService));
+      .finally(() => {
+        this.loadingService.closeSpinner();
+        this.placingOrder = false;
+      });
   }
 
   private getDeliveryLocations(): Observable<any> {

@@ -5,8 +5,6 @@ import { ToastController } from '@ionic/angular';
 import { Observable, of, forkJoin, Subject } from 'rxjs';
 import { map, switchMap, tap, catchError } from 'rxjs/operators';
 
-import { Environment } from '../../environment';
-
 import { HousingProxyService } from './housing-proxy.service';
 import { ApplicationsStateService } from './applications/applications-state.service';
 import { ContractsStateService } from './contracts/contracts-state.service';
@@ -18,13 +16,14 @@ import { ContractsService } from '@sections/housing/contracts/contracts.service'
 import { DefinitionsResponse, DetailsResponse, Response } from './housing.model';
 import { ApplicationDetails } from './applications/applications.model';
 import { ContractListDetails, ContractDetails } from './contracts/contracts.model';
+import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class HousingService {
   private readonly _patronApplicationsUrl: string = `${
-    Environment.currentEnvironment.housing_aws_url
+    this._environmentFacadeService.getEnvironmentObject().housing_aws_url
   }/patron-applications/v.1.0/patron-applications`;
 
   private readonly _applicationDefinitionUrl: string = `${this._patronApplicationsUrl}/application-definition`;
@@ -36,6 +35,7 @@ export class HousingService {
     .pipe(switchMap(() => this._termsService.termId$));
 
   constructor(
+    private _environmentFacadeService: EnvironmentFacadeService,
     private _housingProxyService: HousingProxyService,
     private _applicationsStateService: ApplicationsStateService,
     private _contractsStateService: ContractsStateService,

@@ -4,7 +4,7 @@ import { OrderingComponentContentStrings, OrderingService } from '@sections/orde
 import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { take } from 'rxjs/operators';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
-import { CONTENT_STINGS_CATEGORIES, CONTENT_STINGS_DOMAINS } from '../../../../../content-strings';
+import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from '../../../../../content-strings';
 import { formatDateByContentStrings, getDateTimeInGMT, isSameDay } from '@core/utils/date-helper';
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
 import { MerchantInfo } from '@sections/ordering';
@@ -52,10 +52,10 @@ export class StDateTimePickerComponent implements OnInit {
     const confirm = await this.contentStrings.buttonConfirm.pipe(take(1)).toPromise();
     const cancel = await this.contentStrings.buttonCancel.pipe(take(1)).toPromise();
     const title = await this.contentStrings.labelSelectTime.pipe(take(1)).toPromise();
-    this.monthArray = await this.contentStringsFacadeService.getContentStrings$(CONTENT_STINGS_DOMAINS.patronUi,
-      CONTENT_STINGS_CATEGORIES.monthAbbreviated).pipe(take(1)).toPromise();
-    this.weekArray = await this.contentStringsFacadeService.getContentStrings$(CONTENT_STINGS_DOMAINS.patronUi,
-      CONTENT_STINGS_CATEGORIES.dayOfWeekAbbreviated).pipe(take(1)).toPromise();
+    this.monthArray = await this.contentStringsFacadeService.getContentStrings$(CONTENT_STRINGS_DOMAINS.patronUi,
+      CONTENT_STRINGS_CATEGORIES.monthAbbreviated).pipe(take(1)).toPromise();
+    this.weekArray = await this.contentStringsFacadeService.getContentStrings$(CONTENT_STRINGS_DOMAINS.patronUi,
+      CONTENT_STRINGS_CATEGORIES.dayOfWeekAbbreviated).pipe(take(1)).toPromise();
 
     const picker: HTMLIonPickerElement = await this.pickerController.create({
       columns: this.createColumns(),

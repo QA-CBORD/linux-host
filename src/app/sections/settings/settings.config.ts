@@ -8,13 +8,13 @@ import {
   setBiometricStatus,
   handlePinAccess,
 } from './helpers/setting-item.helper';
-import { CONTENT_STINGS_DOMAINS, CONTENT_STINGS_CATEGORIES } from 'src/app/content-strings';
+import { CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_CATEGORIES } from 'src/app/content-strings';
 import { HTMLRendererComponent } from '@shared/ui-components/html-renderer/html-renderer.component';
 import { PhoneEmailComponent } from '@shared/ui-components/phone-email/phone-email.component';
 import { AuthTypes } from '@core/utils/auth-types.enum';
 import { EditHomePageModalComponent } from '@shared/ui-components/edit-home-page-modal/edit-home-page-modal.component';
 import { SETTINGS_ID } from './models/settings-id.enum';
-
+import { LOCAL_ROUTING as ORDERING_ROUTING } from '@sections/ordering/ordering.config'
 export enum LOCAL_ROUTING {
   photoUpload = 'photo-upload',
 }
@@ -26,7 +26,7 @@ export enum SETTINGS_NAVIGATE {
   faceId = 'face-id',
   pin = 'pin-change',
   devices = 'report-lost',
-  address = 'my-address',
+  address = 'my-addresses',
   paymentMethods = 'payment-methods',
   deposits = 'auto-deposits',
   mealPlan = 'meal-plan-change',
@@ -49,7 +49,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         icon: 'update-photo',
         label: 'Update photo',
         type: 'button',
-        navigate: SETTINGS_NAVIGATE.updatePhoto,
+        navigate: [SETTINGS_NAVIGATE.updatePhoto],
         validations: [{ type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.PHOTO_UPLOAD_ENABLED }],
       },
       // {
@@ -105,13 +105,13 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         setCallback: handlePinAccess,
         validations: [{ type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.PIN_ENABLED }],
       },
-      // {
-      //   id: SETTINGS_ID.address,
-      //   icon: 'map-marker',
-      //   label: 'Saved Address',
-      //   type: 'button',
-      //   navigate: SETTINGS_NAVIGATE.address,
-      // },
+      {
+        id: SETTINGS_ID.address,
+        icon: 'map-marker',
+        label: 'Saved Addresses',
+        type: 'button',
+        navigate: [SETTINGS_NAVIGATE.address],
+      },
     ],
   },
   // {
@@ -197,28 +197,28 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         modalContent: {
           contentStrings: [
             {
-              domain: CONTENT_STINGS_DOMAINS.get_web_gui,
-              category: CONTENT_STINGS_CATEGORIES.aboutScreen,
+              domain: CONTENT_STRINGS_DOMAINS.get_web_gui,
+              category: CONTENT_STRINGS_CATEGORIES.aboutScreen,
               name: 'about_getfunds',
             },
             {
-              domain: CONTENT_STINGS_DOMAINS.get_web_gui,
-              category: CONTENT_STINGS_CATEGORIES.aboutScreen,
+              domain: CONTENT_STRINGS_DOMAINS.get_web_gui,
+              category: CONTENT_STRINGS_CATEGORIES.aboutScreen,
               name: 'contact_info',
             },
             {
-              domain: CONTENT_STINGS_DOMAINS.get_web_gui,
-              category: CONTENT_STINGS_CATEGORIES.termsScreen,
+              domain: CONTENT_STRINGS_DOMAINS.get_web_gui,
+              category: CONTENT_STRINGS_CATEGORIES.termsScreen,
               name: 'terms',
             },
             {
-              domain: CONTENT_STINGS_DOMAINS.get_web_gui,
-              category: CONTENT_STINGS_CATEGORIES.aboutScreen,
+              domain: CONTENT_STRINGS_DOMAINS.get_web_gui,
+              category: CONTENT_STRINGS_CATEGORIES.aboutScreen,
               name: 'patent',
             },
             {
-              domain: CONTENT_STINGS_DOMAINS.get_web_gui,
-              category: CONTENT_STINGS_CATEGORIES.aboutScreen,
+              domain: CONTENT_STRINGS_DOMAINS.get_web_gui,
+              category: CONTENT_STRINGS_CATEGORIES.aboutScreen,
               name: 'org',
             },
           ],
@@ -246,8 +246,8 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         modalContent: {
           contentStrings: [
             {
-              domain: CONTENT_STINGS_DOMAINS.get_web_gui,
-              category: CONTENT_STINGS_CATEGORIES.termsScreen,
+              domain: CONTENT_STRINGS_DOMAINS.get_web_gui,
+              category: CONTENT_STRINGS_CATEGORIES.termsScreen,
               name: 'terms',
             },
           ],
@@ -258,3 +258,4 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
     ],
   },
 ];
+

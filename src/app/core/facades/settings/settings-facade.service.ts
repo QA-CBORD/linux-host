@@ -36,7 +36,7 @@ export class SettingsFacadeService extends ServiceStateFacade {
     return zip(...settings.map(setting => this.getSetting(setting, sessionId, institutionId)));
   }
 
-  private fetchSetting(setting: Settings.Setting, sessionId?: string, institutionId?: string): Observable<SettingInfo> {
+  fetchSetting(setting: Settings.Setting, sessionId?: string, institutionId?: string): Observable<SettingInfo> {
     const call = this.settingsApiService.getSetting(setting, sessionId, institutionId);
     return this.makeRequestWithUpdatingStateHandler<SettingInfo>(call, this.settingsStateService).pipe(
       tap(setting => this.settingsStateService.updateState(setting))

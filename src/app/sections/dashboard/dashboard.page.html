@@ -5,7 +5,7 @@
   <ng-container *ngFor="let tile of tiles$ | async; trackBy: trackFn">
     <st-tile-wrapper *ngIf="tile.isEnable" [wrapperConfig]="tile">
       <ng-container [ngSwitch]="tile.id">
-        <st-accounts-tile *ngSwitchCase="tilesIds.accounts"></st-accounts-tile>
+        <st-accounts-tile #accountsTile *ngSwitchCase="tilesIds.accounts"></st-accounts-tile>
         <st-transactions-tile *ngSwitchCase="tilesIds.transactions"></st-transactions-tile>
         <st-rewards-tile *ngSwitchCase="tilesIds.rewards"></st-rewards-tile>
         <st-mobile-access-tile *ngSwitchCase="tilesIds.mobileAccess"></st-mobile-access-tile>

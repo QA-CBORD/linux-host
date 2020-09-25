@@ -1,5 +1,5 @@
 import { Settings } from 'src/app/app.global';
-import { CONTENT_STINGS_DOMAINS, CONTENT_STINGS_CATEGORIES } from 'src/app/content-strings';
+import { CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_CATEGORIES } from 'src/app/content-strings';
 import { UserInfo, UserNotificationInfo } from '@core/model/user';
 import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
@@ -23,7 +23,7 @@ export interface SettingItemConfig {
   label: string;
   type: string;
   icon: string;
-  navigate?: string;
+  navigate?: string[];
   navigateExternal?: SettingItemExternalResource;
   checked?: boolean;
   toggleLabel?: ToggleLabel;
@@ -56,8 +56,8 @@ export interface HTMLContentString {
   component: any;
 }
 export interface DomainContentString {
-  domain: CONTENT_STINGS_DOMAINS;
-  category: CONTENT_STINGS_CATEGORIES;
+  domain: CONTENT_STRINGS_DOMAINS;
+  category: CONTENT_STRINGS_CATEGORIES;
   name: string;
 }
 export enum SETTINGS_VALIDATIONS {

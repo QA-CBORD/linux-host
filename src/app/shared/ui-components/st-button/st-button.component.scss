@@ -15,13 +15,13 @@
 
 .st-button {
   --ion-color-primary: #166dff;
-  --border-radius: 25px;
+  --border-radius: 8px;
   --background-activated: rgba(0, 0, 0, 0.14);
   --box-shadow: none;
   width: 100%;
 
   height: 50px;
-  border-radius: 25px;
+  border-radius: 8px;
 
   @include font-nunito-heavy(15px);
 
@@ -37,7 +37,7 @@
   &--border-only {
     @include border-only();
 
-    border-radius: 25px;
+    border-radius: 8px;
   }
 
   &--border-only-rectangle {
@@ -53,15 +53,15 @@
   &--border-less {
     --ion-color-primary: #fff;
     --background-activated: #c4c4c4;
-    --border-radius: 25px;
+    --border-radius: 8px;
 
-    border-radius: 25px; //we need this second border-radius
+    border-radius: 8px; //we need this second border-radius
     color: $color-black;
   }
 
   &--black {
     color: $color-black;
-    border-radius: 25px;
+    border-radius: 8px;
     box-shadow: 0 0 24px 0 #0000000a, 0 12px 44px 0 #0000001f;
   }
 
@@ -90,5 +90,9 @@
     color: $color-white;
     border-color: $color-white;
     border: 2px solid #fff;
+  }
+
+  &--submit-button {
+    --border-radius: 8px;
   }
 }

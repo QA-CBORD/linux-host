@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { LOCAL_ROUTING } from '@sections/settings/settings.config';
 import { PATRON_NAVIGATION } from '../../app.global';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
@@ -33,9 +33,8 @@ export class SettingsPage implements OnInit {
     private readonly sessionFacadeService: SessionFacadeService,
     private readonly userFacadeService: UserFacadeService,
     private readonly institutionFacadeService: InstitutionFacadeService,
-    private readonly modalController: ModalController,
-    private readonly contentStringFacadeService: ContentStringsFacadeService,
-    private readonly settingsFactory: SettingsFactoryService
+    private readonly settingsFactory: SettingsFactoryService,
+    private readonly route: ActivatedRoute
   ) {}
 
   ngOnInit() {
@@ -56,7 +55,7 @@ export class SettingsPage implements OnInit {
 
   async settingTap(setting: SettingItemConfig) {
     setting.callback && (await setting.callback());
-    setting.navigate && this.router.navigate([PATRON_NAVIGATION.settings, setting.navigate]);
+    setting.navigate && this.router.navigate(setting.navigate, { relativeTo: this.route });
   }
 
   logout() {

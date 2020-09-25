@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, ViewChild, QueryList, ViewChildren } from '@angular/core';
 import { ModalController, PopoverController } from '@ionic/angular';
 
 import { TileWrapperConfig } from '@sections/dashboard/models';
@@ -7,7 +7,7 @@ import { Observable, zip } from 'rxjs';
 import { TileConfigFacadeService } from '@sections/dashboard/tile-config-facade.service';
 import { MEAL_CONTENT_STRINGS } from '@sections/accounts/pages/meal-donations/meal-donation.config.ts';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
-import { CONTENT_STINGS_CATEGORIES, CONTENT_STINGS_DOMAINS } from '../../content-strings';
+import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from '../../content-strings';
 import { AccessCardComponent } from './containers/access-card/access-card.component';
 import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
@@ -22,6 +22,8 @@ import { InstitutionFacadeService } from '@core/facades/institution/institution.
 import { PhoneEmailComponent } from '@shared/ui-components/phone-email/phone-email.component';
 import { EditHomePageModalComponent } from '@shared/ui-components/edit-home-page-modal/edit-home-page-modal.component';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
+import { EMAIL_REGEXP } from '@core/utils/regexp-patterns';
+import { AccountsTileComponent } from './containers/accounts-tile/accounts-tile.component';
 
 const { App, Device } = Plugins;
 
@@ -33,7 +35,9 @@ const { App, Device } = Plugins;
 })
 export class DashboardPage implements OnInit {
   @ViewChild(AccessCardComponent) accessCard: AccessCardComponent;
+  @ViewChildren('accountsTile') accountsChild: QueryList<AccountsTileComponent>
   tiles$: Observable<TileWrapperConfig[]>;
+  accountsTile: AccountsTileComponent;
 
   constructor(
     private readonly modalController: ModalController,
@@ -58,12 +62,17 @@ export class DashboardPage implements OnInit {
     this.pushNotificationRegistration();
   }
 
+  ngAfterViewInit(){
+    this.accountsChild.forEach((child) => this.accountsTile = child);
+  }
+
   async ionViewWillEnter() {
     this.accessCard.ionViewWillEnter();
   }
 
   ionViewDidEnter() {
     this.checkNativeStartup();
+    this.updateAccountsTile();
   }
 
   private async checkNativeStartup() {
@@ -83,8 +92,9 @@ export class DashboardPage implements OnInit {
   private async checkStaleProfile() {
     zip(this.userFacadeService.getUserData$(), this.institutionFacadeService.getlastChangedTerms$())
       .pipe(
-        map(([{ staleProfile, lastUpdatedProfile }, lastChangedTerms]) => {
-          if (staleProfile) {
+        map(([{ email, staleProfile, lastUpdatedProfile }, lastChangedTerms]) => {
+          /// if stale profile or user email is not defined or malformed
+          if (staleProfile || !EMAIL_REGEXP.test(email)) {
             return true;
           }
 
@@ -176,14 +186,14 @@ export class DashboardPage implements OnInit {
   private async updateDonationMealsStrings(): Promise<void> {
     const res = await this.tileConfigFacadeService.resolveAsyncUpdatingConfig({
       title: this.contentStringsFacadeService.getContentStringValue$(
-        CONTENT_STINGS_DOMAINS.patronUi,
-        CONTENT_STINGS_CATEGORIES.mealDonation,
+        CONTENT_STRINGS_DOMAINS.patronUi,
+        CONTENT_STRINGS_CATEGORIES.mealDonation,
         MEAL_CONTENT_STRINGS.dashboardTitle
       ),
       buttonConfig: {
         title: this.contentStringsFacadeService.getContentStringValue$(
-          CONTENT_STINGS_DOMAINS.patronUi,
-          CONTENT_STINGS_CATEGORIES.mealDonation,
+          CONTENT_STRINGS_DOMAINS.patronUi,
+          CONTENT_STRINGS_CATEGORIES.mealDonation,
           MEAL_CONTENT_STRINGS.buttonDonateAMeal
         ),
       },
@@ -195,14 +205,14 @@ export class DashboardPage implements OnInit {
   private async updateOrderingStrings(): Promise<void> {
     const res = await this.tileConfigFacadeService.resolveAsyncUpdatingConfig({
       title: this.contentStringsFacadeService.getContentStringValue$(
-        CONTENT_STINGS_DOMAINS.patronUi,
-        CONTENT_STINGS_CATEGORIES.ordering,
+        CONTENT_STRINGS_DOMAINS.patronUi,
+        CONTENT_STRINGS_CATEGORIES.ordering,
         ORDERING_CONTENT_STRINGS.labelDashboard
       ),
       buttonConfig: {
         title: this.contentStringsFacadeService.getContentStringValue$(
-          CONTENT_STINGS_DOMAINS.patronUi,
-          CONTENT_STINGS_CATEGORIES.ordering,
+          CONTENT_STRINGS_DOMAINS.patronUi,
+          CONTENT_STRINGS_CATEGORIES.ordering,
           ORDERING_CONTENT_STRINGS.buttonDashboardStartOrder
         ),
       },
@@ -221,6 +231,10 @@ export class DashboardPage implements OnInit {
     modal.onDidDismiss().then(() => this.hideGlobalNavBar(false));
     this.hideGlobalNavBar(true);
     return await modal.present();
+  }
+
+  updateAccountsTile() {
+    this.accountsTile.getUserAccounts();
   }
 
   private hideGlobalNavBar(hide: boolean) {

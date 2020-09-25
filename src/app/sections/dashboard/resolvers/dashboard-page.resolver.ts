@@ -9,7 +9,7 @@ import { SettingInfoList } from '@core/model/configuration/setting-info-list.mod
 import { TileConfigFacadeService } from '@sections/dashboard/tile-config-facade.service';
 import { MEAL_CONTENT_STRINGS } from '@sections/accounts/pages/meal-donations/meal-donation.config.ts';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
-import { CONTENT_STINGS_CATEGORIES, CONTENT_STINGS_DOMAINS } from '../../../content-strings';
+import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from '../../../content-strings';
 import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
 import { Settings } from '../../../app.global';
@@ -59,23 +59,23 @@ export class DashboardPageResolver implements Resolve<Observable<SettingInfoList
   private loadContentStrings(): Observable<ContentStringInfo>[] {
     return [
       this.contentStringsFacadeService.fetchContentString$(
-        CONTENT_STINGS_DOMAINS.patronUi,
-        CONTENT_STINGS_CATEGORIES.mealDonation,
+        CONTENT_STRINGS_DOMAINS.patronUi,
+        CONTENT_STRINGS_CATEGORIES.mealDonation,
         MEAL_CONTENT_STRINGS.dashboardTitle
       ),
       this.contentStringsFacadeService.fetchContentString$(
-        CONTENT_STINGS_DOMAINS.patronUi,
-        CONTENT_STINGS_CATEGORIES.mealDonation,
+        CONTENT_STRINGS_DOMAINS.patronUi,
+        CONTENT_STRINGS_CATEGORIES.mealDonation,
         MEAL_CONTENT_STRINGS.buttonDonateAMeal
       ),
       this.contentStringsFacadeService.fetchContentString$(
-        CONTENT_STINGS_DOMAINS.patronUi,
-        CONTENT_STINGS_CATEGORIES.ordering,
+        CONTENT_STRINGS_DOMAINS.patronUi,
+        CONTENT_STRINGS_CATEGORIES.ordering,
         ORDERING_CONTENT_STRINGS.labelDashboard
       ),
       this.contentStringsFacadeService.fetchContentString$(
-        CONTENT_STINGS_DOMAINS.patronUi,
-        CONTENT_STINGS_CATEGORIES.ordering,
+        CONTENT_STRINGS_DOMAINS.patronUi,
+        CONTENT_STRINGS_CATEGORIES.ordering,
         ORDERING_CONTENT_STRINGS.buttonDashboardStartOrder
       ),
     ];

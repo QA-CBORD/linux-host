@@ -12,7 +12,7 @@ import { LOCAL_ROUTING } from '@sections/accounts/accounts.config';
   styleUrls: ['./accounts-tile.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AccountsTileComponent implements OnInit {
+export class AccountsTileComponent {
   slideOpts = {
     initialSlide: 0,
     spaceBetween: 0,
@@ -31,11 +31,7 @@ export class AccountsTileComponent implements OnInit {
     private readonly cdRef: ChangeDetectorRef
   ) {}
 
-  ngOnInit() {
-    this.initUserAccounts();
-  }
-
-  private initUserAccounts() {
+  getUserAccounts() {
     this.accountsService
       .getAccountsFilteredByDisplayTenders()
       .pipe(
@@ -47,7 +43,7 @@ export class AccountsTileComponent implements OnInit {
       )
       .subscribe(accounts => {
         this.pager = accounts.length > this.itemsPerSlide;
-
+        this.slides = [];
         while (accounts.length > 0) {
           this.slides.push(accounts.splice(0, this.itemsPerSlide));
         }

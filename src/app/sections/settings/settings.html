@@ -1,9 +1,12 @@
-<ion-content class="container">
-  <ion-header>
-    <ion-toolbar class="toolbar">
-      <ion-title class="title">Settings</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<st-header
+  [title]="'Settings'"
+  [isTitleShow]="true"
+  [isToolbarShow]="true"
+  [backButtonTitle]="''"
+  [isBackButtonShow]="false"
+>
+</st-header>
+<ion-content class="container ion-padding-top">
   <ion-list
     class="ion-margin-bottom ion-padding-end"
     *ngFor="let section of settingSections | async; let first = first"
