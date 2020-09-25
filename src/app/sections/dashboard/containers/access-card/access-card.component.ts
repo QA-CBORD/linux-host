@@ -23,6 +23,7 @@ const { IOSDevice } = Plugins;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccessCardComponent implements OnInit {
+  
   userName$: Observable<string>;
   institutionName$: Observable<string>;
   institutionColor$: Observable<string>;
