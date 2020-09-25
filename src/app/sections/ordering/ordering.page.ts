@@ -1,6 +1,6 @@
 import { CartService, MerchantService } from './services';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { ModalController, ToastController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular';
 
 import { iif, Observable } from 'rxjs';
 import { first, map, switchMap, take } from 'rxjs/operators';
@@ -12,6 +12,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { LOCAL_ROUTING, MerchantSettings, ORDERING_CONTENT_STRINGS } from './ordering.config';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
+import { ToastService } from '@core/service/toast/toast.service';
 
 @Component({
   selector: 'st-ordering.page',
@@ -27,7 +28,7 @@ export class OrderingPage implements OnInit {
     private readonly modalController: ModalController,
     private readonly merchantService: MerchantService,
     private readonly loadingService: LoadingService,
-    private readonly toastController: ToastController,
+    private readonly toastService: ToastService,
     private readonly router: Router,
     private readonly cartService: CartService,
     private readonly activatedRoute: ActivatedRoute,
@@ -42,7 +43,7 @@ export class OrderingPage implements OnInit {
 
   merchantClickHandler(merchantInfo: MerchantInfo) {
     if (!this.canOrderFromMerchant(merchantInfo)) {
-      this.onToastDisplayed(`${merchantInfo.name} is currently closed, please try again during operating hours`, 4000);
+      this.onToastDisplayed(`${merchantInfo.name} is currently closed, please try again during operating hours`);
       return;
     }
     this.openOrderOptions(merchantInfo);
@@ -110,24 +111,19 @@ export class OrderingPage implements OnInit {
         .toPromise();
 
       if (!merchant) {
-        this.onToastDisplayed('We were unable to find your merchant - Please try again', 4000);
+        this.onToastDisplayed('We were unable to find your merchant - Please try again');
         return;
       }
       if (!this.canOrderFromMerchant(merchant)) {
-        this.onToastDisplayed(`${merchant.name} is currently closed, please try again during operating hours`, 4000);
+        this.onToastDisplayed(`${merchant.name} is currently closed, please try again during operating hours`);
         return;
       }
       this.openOrderOptions(merchant);
     }
   }
 
-  private async onToastDisplayed(message: string, duration: number = 1000): Promise<void> {
-    const toast = await this.toastController.create({
-      message,
-      duration: duration,
-      position: 'bottom',
-    });
-    await toast.present();
+  private async onToastDisplayed(message: string): Promise<void> {
+    await this.toastService.showToast({ message, position: 'bottom', duration: 4000 });
   }
 
   private canOrderFromMerchant(merchant: MerchantInfo): boolean {

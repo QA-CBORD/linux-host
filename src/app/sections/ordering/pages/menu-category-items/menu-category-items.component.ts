@@ -7,9 +7,10 @@ import { Observable, zip } from 'rxjs';
 import { take, first } from 'rxjs/operators';
 import { MenuCategoryInfo, MenuCategoryItemInfo, MenuInfo } from '@sections/ordering/shared/models';
 import { handleServerError } from '@core/utils/general-helpers';
-import { ToastController, AlertController } from '@ionic/angular';
+import { AlertController } from '@ionic/angular';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
+import { ToastService } from '@core/service/toast/toast.service';
 
 @Component({
   selector: 'st-menu-category-items',
@@ -31,7 +32,7 @@ export class MenuCategoryItemsComponent implements OnInit {
     private readonly activatedRoute: ActivatedRoute,
     private readonly cdRef: ChangeDetectorRef,
     private readonly loadingService: LoadingService,
-    private readonly toastController: ToastController,
+    private readonly toastService: ToastService,
     private readonly orderingService: OrderingService,
     private readonly alertController: AlertController
   ) {}
@@ -111,12 +112,7 @@ export class MenuCategoryItemsComponent implements OnInit {
   }
 
   private async failedValidateOrder(message: string): Promise<void> {
-    const toast = await this.toastController.create({
-      message,
-      duration: 3000,
-      position: 'top',
-    });
-    await toast.present();
+    await this.toastService.showToast({ message });
   }
 
   private initContentStrings() {

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ModalController, ToastController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { map, switchMap, take } from 'rxjs/operators';
 import { UserInfoSet } from '@sections/settings/models/setting-items-config.model';
@@ -9,6 +9,7 @@ import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from '../../../co
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { Observable, of } from 'rxjs';
 import { EMAIL_REGEXP, INT_REGEXP } from '@core/utils/regexp-patterns';
+import { ToastService } from '@core/service/toast/toast.service';
 
 @Component({
   selector: 'st-phone-email',
@@ -33,7 +34,7 @@ export class PhoneEmailComponent implements OnInit {
     private readonly contentStringFacadeService: ContentStringsFacadeService,
     private readonly userFacadeService: UserFacadeService,
     private readonly modalController: ModalController,
-    private readonly toastController: ToastController,
+    private readonly toastService: ToastService,
     private readonly cdRef: ChangeDetectorRef
   ) {}
 
@@ -160,10 +161,7 @@ export class PhoneEmailComponent implements OnInit {
   }
 
   private async onErrorRetrieve(message: string) {
-    const toast = await this.toastController.create({
-      message,
-      position: 'top',
-      buttons: [
+    await this.toastService.showToast({ message, toastButtons: [
         {
           text: 'Retry',
           handler: () => {
@@ -171,26 +169,14 @@ export class PhoneEmailComponent implements OnInit {
           },
         },
         {
-          text: 'Dismiss',
-          handler: () => {
-            toast.dismiss();
-          },
+          text: 'Dismiss'
         },
-      ],
-    });
-    toast.present();
+      ]});
   }
 
   private async presentToast(): Promise<void> {
     const message = `Updated successfully.`;
-    const toast = await this.toastController.create({
-      message,
-      duration: 3000,
-      position: 'bottom',
-      closeButtonText: 'Dismiss',
-      showCloseButton: true,
-    });
-    await toast.present();
+    await this.toastService.showToast({ message, toastButtons: [{ text: 'Dismiss' }]});
   }
 
   private checkFieldValue(field: AbstractControl, value: string) {
