@@ -42,6 +42,7 @@ export class ApplicationsService {
   }/patron-applications/v.1.0/patron-applications`;
 
   constructor(
+    private _environmentFacadeService: EnvironmentFacadeService,
     private _housingProxyService: HousingProxyService,
     private _patronAttributesService: PatronAttributesService,
     private _preferencesService: PreferencesService,

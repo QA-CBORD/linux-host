@@ -2,9 +2,6 @@ import { EnvironmentFacadeService } from '@core/facades/environment/environment.
 import { Injectable } from '@angular/core';
 import { Observable, ReplaySubject, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
-
-import { Environment } from '../../../environment';
-
 import { HousingProxyService } from '../housing-proxy.service';
 
 import { Term } from './terms.model';
