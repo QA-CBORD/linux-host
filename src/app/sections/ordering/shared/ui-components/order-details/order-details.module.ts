@@ -14,6 +14,7 @@ import { PriceUnitsResolverPipe } from '@sections/ordering/shared/pipes/price-un
 import { AddressHeaderFormatPipeModule } from '@shared/pipes/address-header-format-pipe/address-header-format-pipe.module';
 import { StTextareaFloatingLabelModule } from '@shared/ui-components/st-textarea-floating-label/st-textarea-floating-label.module';
 import { AccessibleSelectModule } from '@shared/accessibility/directives/accessible-select.module';
+import { AccountDisplayPipe } from '@sections/accounts/shared/pipes/account-display/account-display.pipe';
 
 const declarations = [OrderDetailsComponent, TypeMessagePipe, AccountTypeResolverPipe];
 
@@ -32,6 +33,6 @@ const declarations = [OrderDetailsComponent, TypeMessagePipe, AccountTypeResolve
     AccessibleSelectModule
   ],
   exports: [OrderDetailsComponent],
-  providers: [CreditCardTypePipe, PriceUnitsResolverPipe],
+  providers: [CreditCardTypePipe, PriceUnitsResolverPipe, AccountDisplayPipe],
 })
 export class OrderDetailsModule {}
