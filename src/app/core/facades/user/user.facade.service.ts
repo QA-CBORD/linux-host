@@ -151,21 +151,19 @@ export class UserFacadeService extends ServiceStateFacade {
   mobileCredentialSettings(): Observable<{isAppleWalletEnabled: Function, isAndroidCredEnabled: Function}>{
     return forkJoin(this.isAppleWalletEnabled$(), this.isAndroidMobileCredEnabled$())
                .pipe(switchMap(([AppleWalletEnabled, androidCredEnabled]) => {
-                 let result = AppleWalletEnabled ? UserFacadeService.APPLE_WALLET_ENABLED : androidCredEnabled ? UserFacadeService.ANDROID_CREDENTAILS_ENABLED : null;
                  return of({
                    isAppleWalletEnabled: () => {
-                     return result === UserFacadeService.APPLE_WALLET_ENABLED;
+                     return  AppleWalletEnabled;
                     },
                    isAndroidCredEnabled: () => {
-                    return result === UserFacadeService.ANDROID_CREDENTAILS_ENABLED;
+                    return androidCredEnabled;
                   }
                   });
           }));
-
   }
 
   isAndroidMobileCredEnabled$(): Observable<boolean>{
-    return of(true)
+    return of(true);
     if(!this.nativeProvider.isAndroid()){
        return of(false);
      }

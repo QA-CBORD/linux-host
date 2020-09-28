@@ -49,15 +49,15 @@
       <ion-col class="card__student-name-wrapper" [size]="appleWalletEnabled ? 8 : 'auto'">
         <div *ngIf="(userName$ | async)" class="card__student-name">{{ userName$ | async }}</div>
       </ion-col>
-      <ion-col *ngIf="appleWalletEnabled" size="4">
+      <ion-col *ngIf="appleWalletEnabled || androidMobileCredentialAvailable" size="4">
         <div class="card__student-wallet">
           <img
             *ngIf="appleWalletMessageImage"
             class="card__wallet-icon"
             src="/assets/images/{{ appleWalletMessageImage }}.png"
-            alt="{{ appleWalletMessage }}"
+            alt="{{ cardStatusMessage }}"
           />
-          <div class="card__student-wallet-text">{{ appleWalletMessage }}</div>
+          <div class="card__student-wallet-text">{{ cardStatusMessage }}</div>
         </div>
       </ion-col>
     </ion-row>
