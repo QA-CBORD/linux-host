@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
-
+import { ROLES } from 'src/app/app.global'
 import { ApplicationStatus, ApplicationDetails, PatronApplication } from '../applications.model';
 
 @Component({
@@ -12,7 +12,7 @@ export class ApplicationsListComponent {
   @Input() applications: ApplicationDetails[];
 
   getPath(key: number): string {
-    return `/housing/applications/${key}`;
+    return `${ROLES.patron}/housing/applications/${key}`;
   }
 
   trackById(_: number, application: ApplicationDetails): number {
