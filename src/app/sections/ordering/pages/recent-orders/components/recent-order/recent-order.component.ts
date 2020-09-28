@@ -11,7 +11,7 @@ import {
   ORDERING_CONTENT_STRINGS,
 } from '@sections/ordering/ordering.config';
 import { PATRON_NAVIGATION } from '../../../../../../app.global';
-import { ModalController, PopoverController, ToastController, AlertController } from '@ionic/angular';
+import { ModalController, PopoverController, AlertController } from '@ionic/angular';
 import { ORDERING_STATUS } from '@sections/ordering/shared/ui-components/recent-oders-list/recent-orders-list-item/recent-orders.config';
 import { BUTTON_TYPE, buttons } from '@core/utils/buttons.config';
 import { OrderOptionsActionSheetComponent } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
@@ -24,6 +24,7 @@ import { TIMEZONE_REGEXP } from '@core/utils/regexp-patterns';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
+import { ToastService } from '@core/service/toast/toast.service';
 
 @Component({
   selector: 'st-recent-order',
@@ -45,7 +46,7 @@ export class RecentOrderComponent implements OnInit {
     private readonly modalController: ModalController,
     private readonly cart: CartService,
     private readonly loadingService: LoadingService,
-    private readonly toastController: ToastController,
+    private readonly toastService: ToastService,
     private readonly userFacadeService: UserFacadeService,
     private readonly orderingService: OrderingService,
     private readonly alertController: AlertController,
@@ -207,14 +208,7 @@ export class RecentOrderComponent implements OnInit {
   }
 
   private async onValidateErrorToast(message: string, onDismiss: () => {}) {
-    const toast = await this.toastController.create({
-      message,
-      showCloseButton: true,
-      position: 'top',
-    });
-
-    toast.onDidDismiss().then(() => onDismiss && onDismiss());
-    await toast.present();
+    await this.toastService.showToast({ message, toastButtons: [{ text: 'Close' }], onDismiss: onDismiss });
   }
 
   private setActiveAddress() {

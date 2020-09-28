@@ -16,8 +16,8 @@ import {
   validateInputAmount,
 } from '@core/utils/general-helpers';
 import { PopoverComponent } from './components/popover/popover.component';
-import { PopoverController, ToastController } from '@ionic/angular';
-import { first, map, switchMap, take, tap, finalize } from 'rxjs/operators';
+import { PopoverController } from '@ionic/angular';
+import { first, map, switchMap, take, tap } from 'rxjs/operators';
 import { WEEK } from '@core/utils/date-helper';
 import { UserAutoDepositSettingInfo } from './models/auto-deposit-settings';
 import { UserAccount } from 'src/app/core/model/account/account.model';
@@ -32,6 +32,7 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { ExternalPaymentService } from '@core/service/external-payment/external-payment.service';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
+import { ToastService } from '@core/service/toast/toast.service';
 
 @Component({
   selector: 'st-automatic-deposit-page',
@@ -71,7 +72,7 @@ export class AutomaticDepositPageComponent {
     private readonly autoDepositService: AutoDepositService,
     private readonly popoverCtrl: PopoverController,
     private readonly router: Router,
-    private readonly toastController: ToastController,
+    private readonly toastService: ToastService,
     private readonly cdRef: ChangeDetectorRef,
     private readonly loadingService: LoadingService,
     private readonly externalPaymentService: ExternalPaymentService,
@@ -680,12 +681,7 @@ export class AutomaticDepositPageComponent {
   }
 
   private async showToast(message: string) {
-    const toast = await this.toastController.create({
-      message,
-      duration: 3000,
-      position: 'top',
-    });
-    await toast.present();
+    await this.toastService.showToast({ message });
   }
 
   @HostListener('window:beforeunload', ['$event'])

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ModalController, PopoverController, ToastController, NavController } from '@ionic/angular';
+import { ModalController, PopoverController, NavController } from '@ionic/angular';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { finalize, map, take } from 'rxjs/operators';
 
@@ -22,6 +22,7 @@ import { ConfirmDonatePopoverComponent } from './components/confirm-donate-popov
 import { DonateModalComponent } from './components/donate-modal';
 import { MEAL_CONTENT_STRINGS } from '@sections/accounts/pages/meal-donations/meal-donation.config';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
+import { ToastService } from '@core/service/toast/toast.service';
 
 @Component({
   selector: 'st-meal-donations',
@@ -49,7 +50,7 @@ export class MealDonationsComponent implements OnInit, OnDestroy {
     private readonly fb: FormBuilder,
     private readonly mealDonationsService: MealDonationsService,
     private readonly loadingService: LoadingService,
-    private readonly toastController: ToastController,
+    private readonly toastService: ToastService,
     private readonly popoverCtrl: PopoverController,
     private readonly modalCtrl: ModalController,
     private readonly navCtrl: NavController,
@@ -236,12 +237,7 @@ export class MealDonationsComponent implements OnInit, OnDestroy {
   }
 
   private async onErrorRetrieve(message: string) {
-    const toast = await this.toastController.create({
-      message,
-      duration: 5000,
-      position: 'top',
-    });
-    toast.present();
+    await this.toastService.showToast({ message });
   }
 
   private deleteForm() {

@@ -25,7 +25,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { handleServerError, isCashlessAccount, isCreditCardAccount, isMealsAccount } from '@core/utils/general-helpers';
 import { UserAccount } from '@core/model/account/account.model';
-import { ModalController, PopoverController, ToastController } from '@ionic/angular';
+import { ModalController, PopoverController } from '@ionic/angular';
 import { AccountType, PATRON_NAVIGATION, Settings } from '../../../../app.global';
 import { SuccessModalComponent } from '@sections/ordering/pages/cart/components/success-modal';
 import { StGlobalPopoverComponent } from '@shared/ui-components';
@@ -36,6 +36,7 @@ import { SettingsFacadeService } from '@core/facades/settings/settings-facade.se
 import { ExternalPaymentService } from '@core/service/external-payment/external-payment.service';
 import { ApplePay } from '@core/model/add-funds/applepay-response.model';
 import { Plugins } from '@capacitor/core';
+import { ToastService } from '@core/service/toast/toast.service';
 const { Browser } = Plugins;
 
 @Component({
@@ -63,7 +64,7 @@ export class CartComponent implements OnInit {
     private readonly loadingService: LoadingService,
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly activatedRoute: ActivatedRoute,
-    private readonly toastController: ToastController,
+    private readonly toastService: ToastService,
     private readonly popoverController: PopoverController,
     private readonly cdRef: ChangeDetectorRef,
     private readonly router: Router,
@@ -410,12 +411,7 @@ export class CartComponent implements OnInit {
   }
 
   private async onValidateErrorToast(message: string) {
-    const toast = await this.toastController.create({
-      message,
-      showCloseButton: true,
-      position: 'top',
-    });
-    await toast.present();
+    await this.toastService.showToast({ message, toastButtons: [{ text: 'Close' }] });
   }
 
   private initContentStrings() {
