@@ -66,7 +66,7 @@ export class AccessCardComponent implements OnInit {
         this.enableAppleWallet();
         this.enableAppleWalletEvents();
       } else if (resp.isAndroidCredEnabled()) {
-        this.paymentServiceFacade.androidActivePasses(true).subscribe(activePasses => {
+        this.paymentServiceFacade.androidActivePasses(false).subscribe(activePasses => {
           // active passes tells us what the credential status/state is: available, provisioned, etc.
           this.credentialState = CredentialState.from(activePasses);
           this.androidMobileCredentialAvailable = this.credentialState.isEnabled();
@@ -180,17 +180,17 @@ export class AccessCardComponent implements OnInit {
   }
 
   private addAndroidCredentials() {
-/**
- * 
- * 
- * 
- */
+    /**
+     *
+     *
+     *
+     */
 
-    this.paymentServiceFacade.androidActivePasses(true).subscribe(activePasses => {
-        this.paymentServiceFacade.androidCredential(true, activePasses).subscribe(credential => {
-          console.log('active passed Response: ', credential);
-           credential.showModal(this.modalController);
-        });
+    this.paymentServiceFacade.androidActivePasses(false).subscribe(activePasses => {
+      this.paymentServiceFacade.androidCredential(false, activePasses).subscribe(credential => {
+        console.log('active passed Response: ', credential);
+        credential.showModal(this.modalController);
+      });
     });
   }
 
