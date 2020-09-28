@@ -214,6 +214,7 @@ export class PhotoUploadService {
         this.userFacadeService
           .updateUserPhotoStatus(photoId, PhotoStatus.DELETED, 'Patron deleted photo')
           .pipe(take(1)).subscribe();
+          this.clearLocalGovernmentIdPhotos();
         this._profileImagePending = null;
       }
     });
