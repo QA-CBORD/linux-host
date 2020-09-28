@@ -1,0 +1,52 @@
+@import 'tools';
+
+:host {
+  --ion-color-primary: #{$color-dodger-blue};
+  --ion-color-primary-rgb: 22, 109, 255;
+  --ion-color-primary-shade: #{$color-royal-blue};
+  --ion-color-primary-tint: #{$color-royal-blue-lighter};
+
+  background-color: $color-alabaster;
+}
+
+.search-filter-modal__clear {
+  @include font-nunito-semibold(16px);
+
+  @include disabled() {
+    opacity: 0.3;
+  }
+}
+
+.search-filter-model__content,
+.search-filter-model__footer-toolbar {
+  --background: #{$color-alabaster};
+}
+
+.search-filter-model__sorting {
+  background-color: #{$color-white};
+  padding: 30px 0;
+}
+
+.search-filter-model__row {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.search-filter-model__col {
+  --background: transparent;
+
+  flex-basis: 50%;
+}
+
+.search-filter-model__footer-toolbar {
+  --padding-start: 20px;
+  --padding-end: 20px;
+  --padding-top: 30px;
+  --padding-bottom: 30px;
+}
+
+.search-filter-model__submit {
+  @include font-nunito-heavy(14px);
+
+  text-transform: uppercase;
+}

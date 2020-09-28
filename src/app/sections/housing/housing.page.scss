@@ -1,0 +1,8 @@
+@import 'tools';
+
+:host {
+  --ion-color-primary: #{$color-dodger-blue};
+  --ion-color-primary-rgb: 22, 109, 255;
+  --ion-color-primary-shade: #{$color-royal-blue};
+  --ion-color-primary-tint: #{$color-royal-blue-lighter};
+}
