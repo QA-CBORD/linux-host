@@ -1,6 +1,4 @@
-import { ModalController, PopoverController } from '@ionic/angular';
 import { DomainContentString } from '@sections/settings/models/setting-items-config.model';
-import { MobileCredentialsComponent } from '@shared/ui-components/mobile-credentials/mobile-credentials.component';
 import { CredentialStateInterface, MobileCredential } from './credential-utils';
 
 export abstract class AndroidCredential implements MobileCredential {
@@ -31,15 +29,4 @@ export abstract class AndroidCredential implements MobileCredential {
   }
 
   abstract getId(): string;
-
-  async showModal(controller: ModalController|PopoverController): Promise<any> {
-    let componentProps = { credential: this };
-    const credentialModal = await controller.create({
-      backdropDismiss: false,
-      component: MobileCredentialsComponent,
-      componentProps,
-    });
-    await credentialModal.present();
-    return await credentialModal.onDidDismiss();
-  }
 }

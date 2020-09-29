@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { MobileCredential } from '@core/service/payments-api/model/credential-utils';
+import { HidCredential } from '@core/service/payments-api/model/mobile-credential';
 import { ModalController, PopoverController } from '@ionic/angular';
 import { map, take } from 'rxjs/operators';
 
@@ -56,12 +57,15 @@ export class MobileCredentialsComponent implements OnInit {
   }
 
   onBtnClicked(): void {
-    console.log('btn clicked');
     this.loadingService.showSpinner({ message: 'Processing... Please wait...' });
     if (this.credential.isProvisioned()) {
       // confirm here that the patron/user really wants to uninstall the mobile credential.
     } else {
-      // remove text on screen, call HID plugin to complete installation.
+      if (this.credential instanceof HidCredential) {
+        // remove text on screen, call HID plugin to complete installation.
+        const invitationCode = (<HidCredential>this.credential).getInvitationCode();
+        console.log('invitationCode: ', invitationCode);
+      }
     }
   }
 

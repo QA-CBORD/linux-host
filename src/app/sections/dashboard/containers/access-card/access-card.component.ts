@@ -15,6 +15,8 @@ import { CredentialState } from '@core/service/payments-api/model/credential-sta
 import { CredentialStateInterface } from '@core/service/payments-api/model/credential-utils';
 import { ModalController, PopoverController } from '@ionic/angular';
 import { LoadingService } from '@core/service/loading/loading.service';
+import { MobileCredentialsComponent } from '@shared/ui-components/mobile-credentials/mobile-credentials.component';
+import { AndroidCredential } from '@core/service/payments-api/model/android-credentials';
 const { IOSDevice } = Plugins;
 
 @Component({
@@ -190,14 +192,31 @@ export class AccessCardComponent implements OnInit {
      *
      */
 
+    const showModal = async (credential: AndroidCredential) => {
+      let componentProps = { credential: credential };
+      const controller = credential.isProvisioned() ? this.popoverCtrl : this.modalCtrl;
+      const credentialModal = await controller.create({
+        backdropDismiss: false,
+        component: MobileCredentialsComponent,
+        componentProps,
+      });
+      await credentialModal.present();
+      return await credentialModal.onDidDismiss();
+    };
+
     this.paymentServiceFacade.androidActivePasses(false).subscribe(activePasses => {
       this.loadingService.showSpinner({ message: 'processing.. please wait...' });
-      this.paymentServiceFacade.androidCredential(false, activePasses).subscribe(credential => {
-        const controller = credential.isProvisioned() ? this.popoverCtrl : this.modalCtrl;
-        credential.showModal(controller).then(action => {
-          console.log('userAction: ', action);
-        });
-      });
+      this.paymentServiceFacade.androidCredential(false, activePasses).subscribe(
+        credential => {
+          showModal(credential).then(action => {
+            console.log('userAction: ', action);
+          });
+        },
+        error => {
+          console.log('Error: ', error);
+          this.loadingService.closeSpinner();
+        }
+      );
     });
   }
 

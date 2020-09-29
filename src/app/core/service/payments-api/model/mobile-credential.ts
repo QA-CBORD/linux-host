@@ -30,7 +30,7 @@ export class CredentialFactory {
   }
 }
 
-class GoogleCredential extends AndroidCredential {
+export class GoogleCredential extends AndroidCredential {
 
   private digitizationReference: string;
   private virtualCardUid: string;
@@ -59,7 +59,7 @@ class GoogleCredential extends AndroidCredential {
 
 }
 
-class HidCredential extends AndroidCredential {
+export class HidCredential extends AndroidCredential {
   private issuerToken: string;
   private invitationCode: string;
   private invitationId: number;
