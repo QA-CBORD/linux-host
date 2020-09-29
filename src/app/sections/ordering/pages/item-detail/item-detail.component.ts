@@ -1,6 +1,6 @@
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { PopoverController, ToastController } from '@ionic/angular';
+import { PopoverController } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subscription, zip } from 'rxjs';
 import { first, take } from 'rxjs/operators';
@@ -19,6 +19,7 @@ import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { ItemDetailModalComponent } from '@sections/ordering/pages/item-detail/components/item-detail-modal/item-detail-modal.component';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { ToastService } from '@core/service/toast/toast.service';
 
 @Component({
   selector: 'st-item-detail',
@@ -47,7 +48,7 @@ export class ItemDetailComponent implements OnInit {
     private readonly activatedRoute: ActivatedRoute,
     private readonly cartService: CartService,
     private readonly loadingService: LoadingService,
-    private readonly toastController: ToastController,
+    private readonly toastService: ToastService,
     private readonly orderingService: OrderingService,
     private readonly popoverController: PopoverController
   ) {}
@@ -253,12 +254,7 @@ export class ItemDetailComponent implements OnInit {
   }
 
   private async failedValidateOrder(message: string) {
-    const toast = await this.toastController.create({
-      message,
-      duration: 3000,
-      position: 'top',
-    });
-    toast.present();
+    await this.toastService.showToast({ message });
   }
 
   private initMenuItemOptions() {

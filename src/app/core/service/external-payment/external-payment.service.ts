@@ -8,7 +8,7 @@ import { USAePayResponse } from '@core/model/add-funds/usaepay-response.model';
 import { ApplePayResponse, ApplePay } from '@core/model/add-funds/applepay-response.model';
 import { Plugins } from '@capacitor/core';
 import { zip } from 'rxjs';
-import { ToastController } from '@ionic/angular';
+import { ToastService } from '@core/service/toast/toast.service';
 const { Browser, IOSDevice } = Plugins;
 
 @Injectable({
@@ -21,7 +21,7 @@ export class ExternalPaymentService {
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly authFacadeService: AuthFacadeService,
     private readonly environmentFacadeService: EnvironmentFacadeService,
-    private readonly toastController: ToastController,
+    private readonly toastService: ToastService,
   ) {}
 
   /* USAePay */
@@ -152,11 +152,6 @@ export class ExternalPaymentService {
   }
 
   private async onUSAePayCallBackRetrieve(message: string) {
-    const toast = await this.toastController.create({
-      message,
-      position: 'top',
-      duration: 3000,
-    });
-    toast.present();
+    await this.toastService.showToast({ message });
   }
 }

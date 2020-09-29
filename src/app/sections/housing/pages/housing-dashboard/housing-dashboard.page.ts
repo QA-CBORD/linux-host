@@ -6,7 +6,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { TermsService } from '../../terms/terms.service';
 import { HousingService } from '../../housing.service';
 
-import { DefinitionsResponse } from '../../housing.model';
+import { DefinitionsResponse, RoomSelectResponse } from '../../housing.model';
 
 @Component({
   selector: 'st-housing-dashboard',
@@ -27,10 +27,24 @@ export class HousingDashboardPage implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this._initApplicationsSubscription();
+    this._initRoomSelectsSubscription();
   }
 
   ngOnDestroy(): void {
     this._subscription.unsubscribe();
+  }
+
+  private _initRoomSelectsSubscription(): void {
+    const roomSelectSubscription: Subscription = this._termsService.termId$.pipe(
+      switchMap((termId: number) => {
+        return this._housingService.getRoomSelects(termId);
+      })
+    ).subscribe({
+      next: (response: RoomSelectResponse) => this._handleSuccess(response),
+      error: () => this._loadingService.closeSpinner(),
+    });
+
+    this._subscription.add(roomSelectSubscription);
   }
 
   private _initApplicationsSubscription(): void {
@@ -53,9 +67,13 @@ export class HousingDashboardPage implements OnInit, OnDestroy {
     this._subscription.add(applicationsSubscription);
   }
 
-  private _handleSuccess(response: DefinitionsResponse): void {
-    this.isHeaderVisible = response.applicationDefinitions.length > 0 || response.contractDetails.length > 0;
-
+  private _handleSuccess(response: any): void {
+    if(response instanceof DefinitionsResponse){
+      this.isHeaderVisible = this.isHeaderVisible || response.applicationDefinitions.length > 0 || response.contractDetails.length > 0;
+    }
+    if(response instanceof RoomSelectResponse){
+      this.isHeaderVisible = this.isHeaderVisible || response.roomSelects.length > 0;
+    }
     this._loadingService.closeSpinner();
   }
 }

@@ -8,12 +8,14 @@ export interface QuestionContractDetailsOptions extends QuestionFormControlOptio
   subtype?: string;
   source?: string;
   contractId?: string;
+  values?: Object[];
 }
 
 export class QuestionFacilityAttributes extends QuestionFormControl implements QuestionContractDetailsOptions {
   subtype: string;
   source: string;
   contractId?: string;
+  values: Object[];
 
   constructor(options: QuestionContractDetailsOptions) {
     if (!isDefined(options) || typeof options !== 'object') {
@@ -27,5 +29,6 @@ export class QuestionFacilityAttributes extends QuestionFormControl implements Q
     this.subtype = options.subtype || 'text';
     this.source = String(options.source);
     this.contractId = String(options.contractId);
+    this.values = options.values || []; 
   }
 }

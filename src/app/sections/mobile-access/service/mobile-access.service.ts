@@ -1,6 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ToastController } from '@ionic/angular';
 
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import { catchError, map, retry, switchMap, take, tap } from 'rxjs/operators';
@@ -15,8 +14,8 @@ import { MessageResponse, ServiceParameters } from '@core/model/service/message-
 import { GeolocationPosition } from '@capacitor/core';
 import { GeoLocationInfo } from '@core/model/geolocation/geoLocationInfo.model';
 import { RPCQueryConfig } from '@core/interceptors/query-config.model';
-import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
+import { ToastService } from '@core/service/toast/toast.service';
 
 @Injectable()
 export class MobileAccessService {
@@ -32,9 +31,8 @@ export class MobileAccessService {
     private readonly http: HttpClient,
     private readonly coords: CoordsService,
     private readonly contentService: ContentStringsApiService,
-    private readonly toastController: ToastController,
+    private readonly toastService: ToastService,
     private readonly settingsFacadeService: SettingsFacadeService,
-    private readonly userFacadeService: UserFacadeService
   ) {}
 
   get locations(): Observable<MMobileLocationInfo[]> {
@@ -256,18 +254,10 @@ export class MobileAccessService {
   }
 
   private async presentToast(message: string): Promise<void> {
-    const toast = await this.toastController.create({
-      message,
-      duration: this.toastDuration,
-    });
-    await toast.present();
+    await this.toastService.showToast( { message, duration: this.toastDuration } );
   }
 
   private async errorSavingFavourites(message: string): Promise<void> {
-    const toast = await this.toastController.create({
-      message,
-      duration: this.toastDuration,
-    });
-    await toast.present();
+    await this.toastService.showToast({ message, duration: this.toastDuration } );
   }
 }

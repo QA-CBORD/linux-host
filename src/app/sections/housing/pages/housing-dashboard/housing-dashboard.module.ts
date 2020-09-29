@@ -7,6 +7,7 @@ import { TermsModule } from '../../terms/terms.module';
 import { HousingDashboardRoutingModule } from './housing-dashboard.routing.module';
 import { ApplicationsModule } from '../../applications/applications.module';
 import { ContractsModule } from '../../contracts/contracts.module';
+import { RoomsModule } from '../../rooms/rooms.module';
 
 import { HousingDashboardPage } from './housing-dashboard.page';
 import { WorkOrdersComponent } from '../../work-orders/work-orders.component';
@@ -19,6 +20,7 @@ const imports = [
   ApplicationsModule,
   ContractsModule,
   HousingDashboardRoutingModule,
+  RoomsModule
 ];
 const declarations = [HousingDashboardPage, WorkOrdersComponent];
 

@@ -7,7 +7,6 @@ import { InstitutionPhotoInfo, Institution } from '@core/model/institution';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { FormGroup, FormBuilder, AbstractControl, Validators } from '@angular/forms';
-import { ToastController } from '@ionic/angular';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
@@ -21,6 +20,7 @@ import { EnvironmentFacadeService } from '@core/facades/environment/environment.
 import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
 import { Observable } from 'rxjs';
 import { configureBiometricsConfig } from '@core/utils/general-helpers';
+import { ToastService } from '@core/service/toast/toast.service';
 
 @Component({
   selector: 'user-pass-form',
@@ -49,7 +49,7 @@ export class UserPassForm implements OnInit {
     private readonly activatedRoute: ActivatedRoute,
     private readonly router: Router,
     private readonly sanitizer: DomSanitizer,
-    private readonly toastController: ToastController,
+    private readonly toastService: ToastService,
     private readonly sessionFacadeService: SessionFacadeService,
     private readonly identityFacadeService: IdentityFacadeService,
     private readonly nativeStartupFacadeService: NativeStartupFacadeService,
@@ -278,12 +278,7 @@ export class UserPassForm implements OnInit {
   }
 
   private async presentToast(message: string): Promise<void> {
-    const toast = await this.toastController.create({
-      message,
-      duration: 3000,
-      position: 'top',
-    });
-    await toast.present();
+    await this.toastService.showToast({ message });
   }
 
   private async getIsWeb(): Promise<boolean> {

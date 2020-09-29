@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { PopoverController, ToastController } from '@ionic/angular';
+import { PopoverController } from '@ionic/angular';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 
 import { Observable, Subject } from 'rxjs';
@@ -11,6 +11,7 @@ import { CONTENT_STRINGS, OPT_IN_STATUS, PopupTypes } from '../rewards.config';
 import { UserRewardTrackInfo } from '../models';
 import { UserInfo } from '../../../core/model/user';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
+import { ToastService } from '@core/service/toast/toast.service';
 
 @Injectable()
 export class OptInGuard implements CanActivate {
@@ -19,7 +20,7 @@ export class OptInGuard implements CanActivate {
     private readonly popoverCtrl: PopoverController,
     private readonly apiService: RewardsApiService,
     private readonly userFacadeService: UserFacadeService,
-    private readonly toastController: ToastController
+    private readonly toastService: ToastService
   ) {}
 
   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
@@ -77,10 +78,6 @@ export class OptInGuard implements CanActivate {
 
   private async presentToast() {
     const message = this.rewardsService.getContentValueByName(CONTENT_STRINGS.optInToast);
-    const toast = await this.toastController.create({
-      message,
-      duration: 3000,
-    });
-    toast.present();
+    await this.toastService.showToast({ message });
   }
 }
