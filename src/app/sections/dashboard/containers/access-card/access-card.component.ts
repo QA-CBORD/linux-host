@@ -13,7 +13,7 @@ import { Plugins } from '@capacitor/core';
 import { PartnerPaymentApiFacadeService } from '@core/service/payments-api/partner-payment-api-facade.service';
 import { CredentialState } from '@core/service/payments-api/model/credential-state';
 import { CredentialStateInterface } from '@core/service/payments-api/model/credential-utils';
-import { ModalController } from '@ionic/angular';
+import { ModalController, PopoverController } from '@ionic/angular';
 const { IOSDevice } = Plugins;
 
 @Component({
@@ -46,7 +46,8 @@ export class AccessCardComponent implements OnInit {
     private readonly accessCardService: AccessCardService,
     private readonly sanitizer: DomSanitizer,
     private readonly router: Router,
-    private readonly modalController: ModalController,
+    private readonly modalCtrl: ModalController,
+    private readonly popoverCtrl: PopoverController,
     private readonly changeRef: ChangeDetectorRef,
     private readonly userFacadeService: UserFacadeService,
     private readonly authFacadeService: AuthFacadeService,
@@ -188,7 +189,8 @@ export class AccessCardComponent implements OnInit {
 
     this.paymentServiceFacade.androidActivePasses(true).subscribe(activePasses => {
       this.paymentServiceFacade.androidCredential(true, activePasses).subscribe(credential => {
-          credential.showModal(this.modalController).then(action => {
+          const controller = credential.isProvisioned() ? this.popoverCtrl: this.modalCtrl;
+          credential.showModal(controller).then(action => {
              console.log('userAction: ', action);
           });
       });
