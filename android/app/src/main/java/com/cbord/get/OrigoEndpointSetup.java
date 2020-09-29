@@ -15,8 +15,7 @@ public class OrigoEndpointSetup implements OrigoMobileKeysCallback {
 
     public void onStart() {
         // TODO: Submit invitation code retrieved from Ionic
-          String invitationCode = "";
-          submitInvitationCode("0000-0000-0000-0000");
+          submitInvitationCode(HIDPlugin.invitationCode);
 
         if (mobileKeysApiFacade.isEndpointSetUpComplete()) {
             mobileKeysApiFacade.onEndpointSetUpComplete();

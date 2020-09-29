@@ -59,8 +59,6 @@ export class EntryPage implements OnInit {
 
   async redirectTo() {
     this.route.navigate([ROLES.guest, GUEST_ROUTES.institutions]);
-   // const init = await HIDPlugin.initializeOrigo();
-   // const start = await HIDPlugin.startupOrigo();
   }
 
   checkLocation() {

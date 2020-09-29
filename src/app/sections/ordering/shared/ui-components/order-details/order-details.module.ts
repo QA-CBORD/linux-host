@@ -13,6 +13,7 @@ import { AccountTypeResolverPipe } from './pipes/account-type-resolver.pipe';
 import { PriceUnitsResolverPipe } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.pipe';
 import { AddressHeaderFormatPipeModule } from '@shared/pipes/address-header-format-pipe/address-header-format-pipe.module';
 import { StTextareaFloatingLabelModule } from '@shared/ui-components/st-textarea-floating-label/st-textarea-floating-label.module';
+import { AccessibleSelectModule } from '@shared/accessibility/directives/accessible-select.module';
 
 const declarations = [OrderDetailsComponent, TypeMessagePipe, AccountTypeResolverPipe];
 
@@ -27,7 +28,8 @@ const declarations = [OrderDetailsComponent, TypeMessagePipe, AccountTypeResolve
     PriceUnitsResolverModule,
     ModifyPrepTimeModule,
     AddressHeaderFormatPipeModule,
-    StTextareaFloatingLabelModule
+    StTextareaFloatingLabelModule,
+    AccessibleSelectModule
   ],
   exports: [OrderDetailsComponent],
   providers: [CreditCardTypePipe, PriceUnitsResolverPipe],

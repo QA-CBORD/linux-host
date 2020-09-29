@@ -7,15 +7,14 @@ import { AccessCardService } from './services/access-card.service';
 import { Router } from '@angular/router';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { DASHBOARD_NAVIGATE } from '@sections/dashboard/dashboard.config';
-import {
-  NativeProvider,
-  AppleWalletInfo,
-  AppleWalletCredentialStatus,
-} from '@core/provider/native-provider/native.provider';
+import { AppleWalletInfo, AppleWalletCredentialStatus } from '@core/provider/native-provider/native.provider';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
-import { PartnerPaymentApiFacadeService } from 'src/app/src/app/core/service/partner-payment-api-facade.service';
 import { Plugins } from '@capacitor/core';
+import { PartnerPaymentApiFacadeService } from '@core/service/payments-api/partner-payment-api-facade.service';
+import { CredentialState } from '@core/service/payments-api/model/credential-state';
+import { CredentialStateInterface } from '@core/service/payments-api/model/credential-utils';
+import { ModalController } from '@ionic/angular';
 const { IOSDevice, HIDPlugin } = Plugins;
 
 @Component({
@@ -32,26 +31,27 @@ export class AccessCardComponent implements OnInit {
   institutionBackgroundImage$: Observable<string>;
   getMyCardEnabled$: Observable<boolean>;
   isMobileAccessButtonEnabled$: Observable<boolean>;
-
   appleWalletEnabled: boolean = false;
   appleWalletInfo: AppleWalletInfo;
-  appleWalletMessage: string;
+  cardStatusMessage: string;
   appleWalletMessageImage: string;
   appleWalletMessageImageHidden: boolean;
   appleWalletButtonHidden: boolean = true;
   userPhoto: string;
   isLoadingPhoto: boolean = true;
   userInfo: string;
+  androidMobileCredentialAvailable: boolean = false;
+  credentialState: CredentialStateInterface;
 
   constructor(
     private readonly accessCardService: AccessCardService,
     private readonly sanitizer: DomSanitizer,
     private readonly router: Router,
+    private readonly modalController: ModalController,
     private readonly changeRef: ChangeDetectorRef,
-    private readonly nativeProvider: NativeProvider,
     private readonly userFacadeService: UserFacadeService,
     private readonly authFacadeService: AuthFacadeService,
-    private paymentFacade: PartnerPaymentApiFacadeService, 
+    private readonly paymentServiceFacade: PartnerPaymentApiFacadeService
   ) {}
 
   ngOnInit() {
@@ -62,20 +62,28 @@ export class AccessCardComponent implements OnInit {
   }
 
   ionViewWillEnter() {
-    if (this.nativeProvider.isIos() && this.userFacadeService.isAppleWalletEnabled$()) {
-      this.enableAppleWallet();
-      this.enableAppleWalletEvents();
-    }
-    // TODO: Call Active passes to verify if HID is enabled (if phone is not paired and status is enabled)
-    // TODO: Call Android Credential method to get Invitation code
-    // TODO: Send invitation code to Android plugin
-    // TODO: Handle invitation code on Android side
-    
-    console.log('Before getting the invitation code');
-    this.paymentFacade.androidCredential().subscribe(response => {
-      console.log(`Invitation code: ${response}`);
-    })
+    this.userFacadeService.mobileCredentialSettings().subscribe(resp => {
+      if (resp.isAppleWalletEnabled()) {
+        this.enableAppleWallet();
+        this.enableAppleWalletEvents();
+      } else if (resp.isAndroidCredEnabled()) {
+        this.paymentServiceFacade.androidActivePasses(true).subscribe(activePasses => {
+          // active passes tells us what the credential status/state is: available, provisioned, etc.
+          this.credentialState = CredentialState.from(activePasses);
+          this.androidMobileCredentialAvailable = this.credentialState.isEnabled();
+          if (this.androidMobileCredentialAvailable) {
+            console.log("initializeOrigo started");
+            HIDPlugin.initializeOrigo().then(() => {
+              console.log("initializeOrigo completed");
+            });
+          }
+          this.cardStatusMessage = this.credentialState.statusMsg();
+          console.log(this.credentialState, this.androidMobileCredentialAvailable);
+        });
+      }
+    });
   }
+
   private getUserData() {
     this.userName$ = this.accessCardService.getUserName();
     this.accessCardService
@@ -129,32 +137,32 @@ export class AccessCardComponent implements OnInit {
       if (isIPhoneAlreadyProvisioned && !isWatchPaired) {
         //no watch, only phone
         this.appleWalletMessageImage = 'iphonex';
-        this.appleWalletMessage = 'Added to iPhone';
+        this.cardStatusMessage = 'Added to iPhone';
         // this.appleWalletMessageImageHidden = false;
         this.appleWalletButtonHidden = true;
       } else if (isIPhoneAlreadyProvisioned && isWatchPaired && !isIWatchAlreadyProvisioned) {
         this.appleWalletMessageImage = 'iphonex';
-        this.appleWalletMessage = 'Added to iPhone';
+        this.cardStatusMessage = 'Added to iPhone';
         // this.appleWalletMessageImageHidden =  false;
         this.appleWalletButtonHidden = watchCredStatus == AppleWalletCredentialStatus.Disabled;
       } else if (isWatchPaired && isIWatchAlreadyProvisioned && !isIPhoneAlreadyProvisioned) {
         this.appleWalletMessageImage = 'applewatch';
-        this.appleWalletMessage = 'Added to Watch';
+        this.cardStatusMessage = 'Added to Watch';
         // this.appleWalletMessageImageHidden = false;
         this.appleWalletButtonHidden = iPhoneCredStatus == AppleWalletCredentialStatus.Disabled;
       } else if (isIPhoneAlreadyProvisioned && isIWatchAlreadyProvisioned && isWatchPaired) {
-        this.appleWalletMessage = 'Added to iPhone and Watch';
+        this.cardStatusMessage = 'Added to iPhone and Watch';
         this.appleWalletMessageImage = 'iphonex_applewatch';
         // this.appleWalletMessageImageHidden = false;
         this.appleWalletButtonHidden = true;
       } else {
-        this.appleWalletMessage = 'Card not added to Wallet';
+        this.cardStatusMessage = 'Card not added to Wallet';
         this.appleWalletMessageImage = null;
         // this.appleWalletMessageImageHidden = true;
         this.appleWalletButtonHidden = false;
       }
     } else {
-      this.appleWalletMessage = null;
+      this.cardStatusMessage = null;
       this.appleWalletMessageImage = null;
       // this.appleWalletMessageImageHidden = true;
       this.appleWalletButtonHidden = true;
@@ -176,6 +184,30 @@ export class AccessCardComponent implements OnInit {
       .subscribe(response => {
         this.userInfo = JSON.stringify(response);
       });
+  }
+
+  private addAndroidCredentials() {
+    /**
+     *
+     *
+     *
+     */
+
+    this.paymentServiceFacade.androidActivePasses(true).subscribe(activePasses => {
+      this.paymentServiceFacade.androidCredential(true, activePasses).subscribe(credential => {
+          credential.showModal(this.modalController).then(action => {
+             console.log('userAction: ', action);
+          });
+      });
+    });
+  }
+
+  public addMobileCredential() {
+    if (this.androidMobileCredentialAvailable) {
+      this.addAndroidCredentials();
+    } else if (!this.appleWalletButtonHidden) {
+      this.addToAppleWallet();
+    }
   }
 
   private enableAppleWallet() {

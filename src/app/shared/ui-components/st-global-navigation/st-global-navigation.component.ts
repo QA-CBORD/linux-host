@@ -18,7 +18,7 @@ export class StGlobalNavigationComponent implements OnInit {
   visibleAmountOfElements: number = 5;
 
   constructor(private readonly navigationSettingsService: NavigationFacadeSettingsService,
-              private readonly router: Router,
+              private readonly router: Router, 
               private readonly popoverController: PopoverController, private readonly modalController: ModalController) {
   }
 

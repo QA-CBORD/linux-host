@@ -11,6 +11,7 @@ export enum RestCallType {
   get,
   post,
   put,
+  delete,
 }
 
 export enum HttpResponseType {
@@ -98,6 +99,29 @@ export class APIService {
   }
 
   /**
+   *  DELETE call to AWS API Gateway
+   *
+   * @param url           URL of REST call
+   * @param body
+   * @param responseType  Http response type included in options (text / json)
+   * @param params        Parameters of REST call
+   * @param headers       Http header information
+   */
+  delete(
+    url: string,
+    responseType: HttpResponseType = HttpResponseType.json,
+    params?: HttpParams,
+    headers?: HttpHeaders
+  ): Observable<any> {
+    const options = this.getOptions(responseType, params, headers);
+    return this.http.delete(url, options).pipe(
+      subscribeOn(async),
+      observeOn(queue),
+      timeout(this.TIMEOUT_MS)
+    );
+  }
+
+  /**
    * Call to REST backend (AWS API Gateway)
    *
    * @param callType      REST call type (post, put, get, etc)
@@ -131,8 +155,8 @@ export class APIService {
 
     return httpCall$.pipe(catchError(error => throwError({ message: 'There was an issue with the request' })));
   }
-  
-    /**
+
+  /**
    * Call to REST backend (Partner API Gateway)
    *
    * @param callType      REST call type (post, put, get, etc)
@@ -161,6 +185,9 @@ export class APIService {
         break;
       case RestCallType.put:
         httpCall$ = this.put(finalURL, body, responseType, params, headers);
+        break;
+      case RestCallType.delete:
+        httpCall$ = this.delete(finalURL, responseType, params, headers);
         break;
     }
     return httpCall$.pipe(catchError(error => throwError({ message: 'There was an issue with the request' })));

@@ -1,0 +1,19 @@
+{
+    "credStatus": {
+        "android_hid": 1, 
+        "android_nxp": 0,
+        "iPhone": 0,
+        "iWatch": 0
+    },
+    "passes": {
+        "android_hid": 0,
+        "android_nxp": 0,
+        "iPhone": 0,
+        "iWatch": 0
+    },
+    "referenceIdentifier": "FAPLOSe9a40c9a-3b37-4299-a3dd-11843b7522dd_00000007753",
+    "responseHeader":{
+        "statusCode": "200",
+        "statusMessage": "Successfully retrieved passes"
+    }
+}

@@ -102,6 +102,7 @@ export namespace Settings {
     PHOTO_UPLOAD_ENABLED = 'get.feature.enable_photo_upload',
     REPORT_LOST_CARD_ENABLED = 'get.feature.enable_lost_card',
     STANDARD_REGISTRATION_LINK = 'get.feature.standard_registration_link',
+    ANDROID_MOBILE_CREDENTIAL_ENABLED = 'get.feature.enable_android_mobile_credentials',
   }
 }
 

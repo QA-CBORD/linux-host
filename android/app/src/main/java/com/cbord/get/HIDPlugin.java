@@ -14,6 +14,7 @@ public class HIDPlugin extends Plugin {
     protected static Context context;
     private OrigoConfig setup;
     private OrigoStartup startup;
+    public static String invitationCode;
 
     @PluginMethod()
     public void initializeOrigo(PluginCall call) {
@@ -36,6 +37,7 @@ public class HIDPlugin extends Plugin {
         if (startup == null) {
             startup = new OrigoStartup(context, setup);
         }
+        HIDPlugin.invitationCode = call.getString("token");
         startup.mobileKeysStartup();
         call.resolve();
     }
