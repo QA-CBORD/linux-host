@@ -1,3 +1,5 @@
+import { DomainContentString } from '@sections/settings/models/setting-items-config.model';
+import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
 import { AndroidCredential } from './android-credentials';
 import { CredentialState } from './credential-state';
 import { ActivePasses, CredentialProviders, CredentialStateInterface } from './credential-utils';
@@ -29,6 +31,7 @@ export class CredentialFactory {
 }
 
 class GoogleCredential extends AndroidCredential {
+
   private digitizationReference: string;
   private virtualCardUid: string;
 
@@ -49,6 +52,11 @@ class GoogleCredential extends AndroidCredential {
   getVirtualCardUid(): string {
     return this.virtualCardUid;
   }
+
+  getTermsConditionConfig(): DomainContentString {
+    return null; // not sure if terms and conditions will be needed for nxp.
+  }
+
 }
 
 class HidCredential extends AndroidCredential {
@@ -78,5 +86,13 @@ class HidCredential extends AndroidCredential {
 
   getInvitationId(): number {
     return this.invitationId;
+  }
+
+  getTermsConditionConfig(): DomainContentString {
+    return {
+      domain: CONTENT_STRINGS_DOMAINS.get_web_gui, 
+      category: CONTENT_STRINGS_CATEGORIES.termsScreen,
+      name: "terms"
+    }; // currently using main terms and condition text, since we don't one for HID yet.
   }
 }

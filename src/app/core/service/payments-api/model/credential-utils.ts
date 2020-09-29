@@ -1,4 +1,5 @@
 import { ModalController } from '@ionic/angular';
+import { DomainContentString } from '@sections/settings/models/setting-items-config.model';
 
 
 export interface ActivePasses {
@@ -28,6 +29,7 @@ export enum AndroidCredentialStateMsg {
   export interface MobileCredential extends ICredential {
     getId(): string;
     showModal(controller: ModalController): Promise<any>;
+    getTermsConditionConfig(): DomainContentString | any;
   }
 
   
