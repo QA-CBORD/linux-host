@@ -1,3 +1,4 @@
+
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Observable, from } from 'rxjs';
@@ -17,7 +18,7 @@ import { ModalController, PopoverController } from '@ionic/angular';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { MobileCredentialsComponent } from '@shared/ui-components/mobile-credentials/mobile-credentials.component';
 import { AndroidCredential } from '@core/service/payments-api/model/android-credentials';
-const { IOSDevice } = Plugins;
+const { IOSDevice, HIDPlugin } = Plugins;
 
 @Component({
   selector: 'st-access-card',
@@ -75,6 +76,12 @@ export class AccessCardComponent implements OnInit {
           // active passes tells us what the credential status/state is: available, provisioned, etc.
           this.credentialState = CredentialState.from(activePasses);
           this.androidMobileCredentialAvailable = this.credentialState.isEnabled();
+          if (this.androidMobileCredentialAvailable) {
+            console.log("initializeOrigo started");
+            HIDPlugin.initializeOrigo().then(() => {
+              console.log("initializeOrigo completed");
+            });
+          }
           this.cardStatusMessage = this.credentialState.statusMsg();
           console.log(this.credentialState, this.androidMobileCredentialAvailable);
           this.changeRef.detectChanges();

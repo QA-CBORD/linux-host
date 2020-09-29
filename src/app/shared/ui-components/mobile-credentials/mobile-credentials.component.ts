@@ -5,6 +5,8 @@ import { MobileCredential } from '@core/service/payments-api/model/credential-ut
 import { HidCredential } from '@core/service/payments-api/model/mobile-credential';
 import { ModalController, PopoverController } from '@ionic/angular';
 import { map, take } from 'rxjs/operators';
+import { Plugins } from '@capacitor/core';
+const { HIDPlugin } = Plugins;
 
 @Component({
   selector: 'st-mobile-credentials',
