@@ -38,8 +38,8 @@ export class PartnerPaymentApiFacadeService {
     }
 
     return this.partnerPaymentApi.androidCredential(activePasses).pipe(
-      map(credentialData => {
-        return CredentialFactory.toCredential(activePasses, credentialData);
+      map(data => {
+        return CredentialFactory.toCredential(activePasses, data[0]);
       })
     );
   }

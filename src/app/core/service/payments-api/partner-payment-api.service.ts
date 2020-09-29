@@ -7,6 +7,7 @@ import { InstitutionFacadeService } from '@core/facades/institution/institution.
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { Device } from '@capacitor/core';
+import { ActivePasses } from './model/credential-utils';
 
 const api_version = 'v1';
 
@@ -171,7 +172,7 @@ export class PartnerPaymentApiService {
     );
   }
 
-  androidCredential(activePasses: any): Observable<any> {
+  androidCredential(activePasses: ActivePasses): Observable<any> {
     /**
      * makes call to partner payments api, resource: android/version/credential.
      *
@@ -194,15 +195,20 @@ export class PartnerPaymentApiService {
             switchMap(([deviceInfo, institution, jwtToken]) => {
               const headers = new HttpHeaders({ Authorization: `Bearer ${jwtToken}` });
               const params = new HttpParams().set('institutionId', institution.id);
-              activePasses.deviceModel = deviceInfo.model;
-              activePasses.osVersion = deviceInfo.osVersion;
-              activePasses.manufacturer = deviceInfo.manufacturer;
+              const requestBody = {
+                referenceIdentifier: activePasses.referenceIdentifier,
+                device: {
+                  manufacturer: deviceInfo.manufacturer,
+                  model: deviceInfo.model,
+                  osVersion: deviceInfo.osVersion,
+                },
+              };
 
               return this.apiService.partnerHTTPCall(
                 RestCallType.post,
                 paymentApiResources.credentials,
                 HttpResponseType.json,
-                activePasses,
+                requestBody,
                 params,
                 headers
               );

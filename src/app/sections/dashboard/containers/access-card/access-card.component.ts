@@ -14,6 +14,7 @@ import { PartnerPaymentApiFacadeService } from '@core/service/payments-api/partn
 import { CredentialState } from '@core/service/payments-api/model/credential-state';
 import { CredentialStateInterface } from '@core/service/payments-api/model/credential-utils';
 import { ModalController, PopoverController } from '@ionic/angular';
+import { LoadingService } from '@core/service/loading/loading.service';
 const { IOSDevice } = Plugins;
 
 @Component({
@@ -49,6 +50,7 @@ export class AccessCardComponent implements OnInit {
     private readonly modalCtrl: ModalController,
     private readonly popoverCtrl: PopoverController,
     private readonly changeRef: ChangeDetectorRef,
+    private readonly loadingService: LoadingService,
     private readonly userFacadeService: UserFacadeService,
     private readonly authFacadeService: AuthFacadeService,
     private readonly paymentServiceFacade: PartnerPaymentApiFacadeService
@@ -67,12 +69,13 @@ export class AccessCardComponent implements OnInit {
         this.enableAppleWallet();
         this.enableAppleWalletEvents();
       } else if (resp.isAndroidCredEnabled()) {
-        this.paymentServiceFacade.androidActivePasses(true).subscribe(activePasses => {
+        this.paymentServiceFacade.androidActivePasses(false).subscribe(activePasses => {
           // active passes tells us what the credential status/state is: available, provisioned, etc.
           this.credentialState = CredentialState.from(activePasses);
           this.androidMobileCredentialAvailable = this.credentialState.isEnabled();
           this.cardStatusMessage = this.credentialState.statusMsg();
           console.log(this.credentialState, this.androidMobileCredentialAvailable);
+          this.changeRef.detectChanges();
         });
       }
     });
@@ -187,12 +190,13 @@ export class AccessCardComponent implements OnInit {
      *
      */
 
-    this.paymentServiceFacade.androidActivePasses(true).subscribe(activePasses => {
-      this.paymentServiceFacade.androidCredential(true, activePasses).subscribe(credential => {
-          const controller = credential.isProvisioned() ? this.popoverCtrl: this.modalCtrl;
-          credential.showModal(controller).then(action => {
-             console.log('userAction: ', action);
-          });
+    this.paymentServiceFacade.androidActivePasses(false).subscribe(activePasses => {
+      this.loadingService.showSpinner({ message: 'processing.. please wait...' });
+      this.paymentServiceFacade.androidCredential(false, activePasses).subscribe(credential => {
+        const controller = credential.isProvisioned() ? this.popoverCtrl : this.modalCtrl;
+        credential.showModal(controller).then(action => {
+          console.log('userAction: ', action);
+        });
       });
     });
   }

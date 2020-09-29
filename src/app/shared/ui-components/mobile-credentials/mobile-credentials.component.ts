@@ -30,6 +30,7 @@ export class MobileCredentialsComponent implements OnInit {
 
   ngOnInit() {
     console.log('input data: ', this.credential);
+    this.loadingService.closeSpinner();
     if (this.credential.isProvisioned()) {
       this.btnText = 'Uninstall Credential';
       this.titleText = 'Credential Status';
@@ -43,7 +44,6 @@ export class MobileCredentialsComponent implements OnInit {
   }
 
   closePage(): void {
-    this.loadingService.closeSpinner();
     if (this.credential.isProvisioned()) {
       this.popoverCtrl.dismiss();
     } else {
