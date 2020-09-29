@@ -32,7 +32,7 @@ public class OrigoKeys implements OrigoMobileKeysCallback, OrigoMobileKeysProgre
     }
 
     public void onRegistered() {
-        Log.d("TAG", "onRegistered()");
+        Log.d("TAG", "onRegistered() called");
         // Listen to lock changes
         loadKeys();
         // TODO: mobileKeysApiFacade.getOrigoScanConfiguration().getRootOpeningTrigger().add(closestLockTrigger); ?
@@ -58,13 +58,20 @@ public class OrigoKeys implements OrigoMobileKeysCallback, OrigoMobileKeysProgre
     }
 
     private void loadKeys() {
+        Log.d("Load keys", "the method was called");
         try {
             data = mobileKeysApiFacade.getMobileKeys().listMobileKeys();
-        } catch (OrigoMobileKeysException e) {
+            Log.d("Data size", String.valueOf(data.size()));
+            for ( Object d: data ) {
+                Log.d("Keyx", d.toString());
+            }
+
+        } catch (Exception e) {
             Log.e("TAG", "Failed to list keys", e);
         }
         if (data == null) {
             data = Collections.emptyList();
+            Log.d("Empty", "data is null");
         }
         // TODO: Check if update adapter.setItems(data);
         // Update scanning based if we have keys

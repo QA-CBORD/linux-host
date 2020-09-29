@@ -58,7 +58,7 @@ export class MobileCredentialsComponent implements OnInit {
     if (this.credential.isProvisioned()) {
       // confirm here that the patron/user really wants to uninstall the mobile credential.
     } else {
-      HIDPlugin.startupOrigo({ token: "LMHM-BH3F-TPN4-2SS5" }).then( () => {
+      HIDPlugin.startupOrigo({ token: "KXYS-AHBD-AGKV-QHUN" }).then( () => {
         console.log("The token was sent");
       });
       // remove text on screen, call HID plugin to complete installation.

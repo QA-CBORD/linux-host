@@ -21,9 +21,11 @@ public class HIDPlugin extends Plugin {
         Log.d("TAG", "initializeOrigo method was called.");
         if (setup == null) {
             setup = new OrigoConfig(context);
+            setup.initializeOrigo();
+            call.resolve();
+        } else {
+            Log.d("TAG", "initializeOrigo method was called before.");
         }
-        setup.initializeOrigo();
-        call.resolve();
         // TODO: Handle invitation code from Ionic
     }
 
