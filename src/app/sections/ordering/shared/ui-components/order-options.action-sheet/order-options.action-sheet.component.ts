@@ -2,7 +2,7 @@ import { CartService, MerchantService } from '@sections/ordering/services';
 import { BuildingInfo } from '@sections/ordering';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { MenuInfo, MerchantAccountInfoList, MerchantInfo, MerchantOrderTypesInfo } from '../../models';
-import { ModalController, ToastController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular';
 import { DeliveryAddressesModalComponent } from '../delivery-addresses.modal/delivery-addresses.modal.component';
 import { AddressInfo } from '@core/model/address/address-info';
 import { Observable, of, throwError, zip } from 'rxjs';
@@ -20,6 +20,7 @@ import { UserInfo } from '@core/model/user/user-info.model';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { StDateTimePickerComponent } from '../st-date-time-picker/st-date-time-picker.component';
+import { ToastService } from '@core/service/toast/toast.service';
 
 @Component({
   selector: 'st-order-options.action-sheet',
@@ -57,7 +58,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     private readonly merchantService: MerchantService,
     private readonly cdRef: ChangeDetectorRef,
     private readonly loadingService: LoadingService,
-    private readonly toastController: ToastController,
+    private readonly toastService: ToastService,
     private readonly cartService: CartService,
     private readonly orderingService: OrderingService,
     private readonly userFacadeService: UserFacadeService,
@@ -276,15 +277,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
 
   private async onToastDisplayed(message: string): Promise<void> {
     const dismiss = await this.contentStrings.buttonDismiss.pipe(take(1)).toPromise();
-
-    const toast = await this.toastController.create({
-      message,
-      duration: 3000,
-      position: 'bottom',
-      closeButtonText: dismiss.toUpperCase(),
-      showCloseButton: true,
-    });
-    await toast.present();
+    await this.toastService.showToast({ message, toastButtons: [ { text: dismiss.toUpperCase() } ], position: 'bottom' });
   }
 
   private retrieveDeliveryAddresses(merchantId: string) {

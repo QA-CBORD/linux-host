@@ -1,0 +1,95 @@
+<ion-header mode="ios">
+  <ion-toolbar mode="ios">
+    <ion-buttons slot="start" mode="ios">
+      <ion-button mode="ios" fill="clear" color="dark" class="ion-no-padding" (click)="close()">
+        <ion-icon name="close" slot="icon-only" mode="ios"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <st-page-title>Filters</st-page-title>
+
+    <ion-buttons slot="end" mode="ios">
+      <ion-button
+        mode="ios"
+        slot="end"
+        fill="clear"
+        color="dark"
+        class="btn search-filter-modal__clear"
+        (click)="clearFilters()"
+      >
+        Clear All
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="search-filter-model__content">
+  <section class="search-filter-model__sorting">
+    <st-filter-sort [categories]="categories" (sorted)="sort($event)"></st-filter-sort>
+  </section>
+
+  <form [formGroup]="filtersForm">
+    <st-search-filter-section title="Price" subtitle="per month" [toggled]="true">
+      <st-range [min]="0" [max]="1000" [parentGroup]="filtersForm" name="monthRange"></st-range>
+    </st-search-filter-section>
+
+    <st-search-filter-section title="Price" subtitle="per term" [toggled]="true">
+      <st-range [min]="0" [max]="1000" [parentGroup]="filtersForm" name="termRange"></st-range>
+    </st-search-filter-section>
+
+    <st-search-filter-section title="Beds" [toggled]="true">
+      <div class="search-filter-model__row" formArrayName="beds">
+        <ion-item
+          class="ion-no-padding form-checkbox search-filter-model__col"
+          lines="none"
+          *ngFor="let bed of beds; index as idx"
+        >
+          <ion-checkbox
+            class="form-checkbox__control"
+            mode="md"
+            slot="start"
+            [formControlName]="idx"
+            [checked]="bed"
+          ></ion-checkbox>
+          <ion-label class="form-label">{{ idx + 1 }} bed</ion-label>
+        </ion-item>
+      </div>
+    </st-search-filter-section>
+
+    <st-show-more>
+      <st-search-filter-section title="Floor" [toggled]="true">
+        <div class="search-filter-model__row" formArrayName="floors">
+          <ion-item
+            class="ion-no-padding form-checkbox search-filter-model__col"
+            lines="none"
+            *ngFor="let floor of floors; index as idx"
+          >
+            <ion-checkbox
+              class="form-checkbox__control"
+              mode="md"
+              slot="start"
+              [formControlName]="idx"
+              [checked]="floor"
+            ></ion-checkbox>
+            <ion-label class="form-label">{{ idx + 1 }} Floor</ion-label>
+          </ion-item>
+        </div>
+      </st-search-filter-section>
+    </st-show-more>
+  </form>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar class="search-filter-model__footer-toolbar">
+    <ion-button
+      class="btn search-filter-model__submit"
+      shape="round"
+      expand="block"
+      type="submit"
+      mode="md"
+      (click)="close()"
+    >
+      Show 21 Buildings
+    </ion-button>
+  </ion-toolbar>
+</ion-footer>

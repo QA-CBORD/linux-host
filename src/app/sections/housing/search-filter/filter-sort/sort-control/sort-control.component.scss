@@ -1,0 +1,41 @@
+@import 'tools';
+
+:host(.selected) {
+  .sort-control {
+    --color: #{$color-night-rider};
+    --background: #{$color-white};
+    --padding-start: 35px;
+    --ripple-color: #{$color-white};
+
+    &::before {
+      display: block;
+    }
+  }
+}
+
+.sort-control {
+  @include font-nunito-semibold(16px);
+
+  --color: #{$color-dim-gray};
+  --background: #{$color-alice-blue};
+  --border-radius: 0;
+  --padding-start: 20px;
+  --padding-end: 20px;
+  --box-shadow: none;
+
+  height: 56px;
+  margin: 0;
+
+  &::before {
+    display: none;
+    left: 12px;
+  }
+
+  &.ascend {
+    @include arrow-up-active();
+  }
+
+  &.descend {
+    @include arrow-down-active();
+  }
+}

@@ -1,0 +1,5 @@
+<h4 class="search-filter-section__title" (click)="toggle()" [class.toggled]="toggled">
+  {{ title }} <span class="search-filter-section__subtitle" *ngIf="subtitle">{{ subtitle }}</span>
+</h4>
+
+<ng-content *ngIf="toggled"></ng-content>

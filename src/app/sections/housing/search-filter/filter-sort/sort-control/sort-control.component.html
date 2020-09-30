@@ -1,0 +1,11 @@
+<ion-button
+  class="sort-control"
+  [ngClass]="{
+    ascend: isAscend(),
+    descend: isDescend()
+  }"
+  (click)="sort()"
+  mode="md"
+>
+  {{ category.name }}
+</ion-button>
