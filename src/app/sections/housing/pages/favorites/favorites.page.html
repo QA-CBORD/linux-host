@@ -1,0 +1,19 @@
+<ion-header>
+  <ion-toolbar class="favorites__toolbar">
+    <ion-buttons slot="start">
+      <st-back-button defaultHref="/housing/rooms-search" text="Rooms"></st-back-button>
+    </ion-buttons>
+
+    <st-page-title>Favorites</st-page-title>
+  </ion-toolbar>
+
+  <st-units-switch [units]="units"></st-units-switch>
+
+  <ion-toolbar class="favorites__toolbar favorites__filters">
+    <st-search-filter slot="end"></st-search-filter>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-router-outlet></ion-router-outlet>
+</ion-content>

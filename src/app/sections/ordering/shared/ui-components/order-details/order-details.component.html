@@ -107,7 +107,7 @@
           interface="action-sheet"
           (ionChange)="onPaymentChanged($event)"
           [interfaceOptions]="{ cssClass: 'custom-deposit-actionSheet' }"
-          [stAccessibleSelect]="paymentMethod.value | accountTypeResolver: mealBased"
+          [selectedText]="paymentMethod.value | accountTypeResolver: mealBased"
           #paymentMethod
         >
           <ion-select-option *ngIf="applePayEnabled && accInfoList?.creditAccepted" [value]="applePayAccountType">

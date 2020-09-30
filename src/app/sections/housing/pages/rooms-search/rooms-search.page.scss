@@ -1,0 +1,17 @@
+@import 'tools';
+
+.rooms-search__toolbar {
+  --padding-top: 0;
+  --padding-bottom: 0;
+  --padding-start: 16px;
+  --border-width: 1px;
+  --border-color: #{$color-whisper};
+}
+
+.rooms-search__filters {
+  --min-height: 55px;
+}
+
+.rooms-search__favorite {
+  @include font-nunito-heavy(16px);
+}

@@ -1,0 +1,21 @@
+@import 'tools';
+
+:host {
+  --background: #{$color-polar};
+  --border-radius: 4px;
+  --color: #{$color-deep-sea};
+  --padding-top: 6px;
+  --padding-bottom: 6px;
+  --padding-start: 10px;
+  --padding-end: 10px;
+
+  @include font-nunito-heavy(12px);
+
+  background-color: var(--background);
+  border-radius: var(--border-radius);
+  color: var(--color);
+  flex-shrink: 0;
+  display: inline-block;
+  line-height: 16px;
+  padding: var(--padding-top) var(--padding-end) var(--padding-bottom) var(--padding-start);
+}

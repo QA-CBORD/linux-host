@@ -13,10 +13,10 @@ export class FacilitiesService {
   facilities: Facility[] = generateFacilities(4);
 
   getFacilities(applicationKey: number): Observable<Facility[]> {
-    return of(this.facilities).pipe(map((facilities: Facility[]) => facilities.map(this._toModel)));
+    return of(this.facilities).pipe(map((facilities: Facility[]) => facilities.map(FacilitiesService._toModel)));
   }
 
-  private _toModel(facility: Facility): Facility {
+  private static _toModel(facility: Facility): Facility {
     return new Facility(
       facility.facilityName,
       facility.facilityId,

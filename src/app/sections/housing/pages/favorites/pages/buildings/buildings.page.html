@@ -1,0 +1,11 @@
+<ion-content>
+  <st-empty-placeholder
+    *ngIf="!buildings.length"
+    src="/assets/images/housing/empty-buildings.svg"
+    text="Your favorited buildings will appear here."
+  ></st-empty-placeholder>
+
+  <ng-container *ngIf="buildings.length">
+    <st-building *ngFor="let building of buildings" [building]="building"></st-building>
+  </ng-container>
+</ion-content>

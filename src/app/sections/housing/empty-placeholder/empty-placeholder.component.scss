@@ -1,0 +1,28 @@
+@import 'tools';
+
+:host {
+  --indent-top: -30%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.empty-placeholder__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translateY(var(--indent-top));
+}
+
+.empty-placeholder__text {
+  @include font-nunito-semibold(16px);
+
+  color: rgba($color-black, 0.6);
+  margin-top: 16px;
+  margin-bottom: 0;
+  line-height: 22px;
+  max-width: 235px;
+  text-align: center;
+}

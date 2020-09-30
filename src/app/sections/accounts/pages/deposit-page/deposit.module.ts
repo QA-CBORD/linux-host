@@ -15,6 +15,8 @@ import { TransactionUnitsPipeModule } from '@shared/pipes';
 import { StButtonModule } from '@shared/ui-components/st-button/st-button.module';
 import { AccountDisplayPipeModule } from '@sections/accounts/shared/pipes/account-display/account-display.module';
 import { AccessibleSelectModule } from '@shared/accessibility/directives/accessible-select.module';
+import { DestinationAccountDisplayPipe } from './pipes/destination-account-display.pipe';
+import { TransactionUnitsPipe } from '@shared/pipes/transaction-units/transaction-units.pipe';
 
 const imports = [
   CommonModule,
@@ -32,8 +34,8 @@ const imports = [
   StButtonModule,
   AccessibleSelectModule
 ];
-const declarations = [DepositPageComponent];
-const providers = [DepositResolver, DepositService];
+const declarations = [DepositPageComponent, DestinationAccountDisplayPipe];
+const providers = [DepositResolver, DepositService, TransactionUnitsPipe];
 const entryComponents = [ConfirmDepositPopoverComponent, DepositModalComponent];
 
 @NgModule({

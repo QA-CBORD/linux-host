@@ -1,0 +1,16 @@
+<ng-container [formGroup]="parentGroup">
+  <ion-range
+    dual-knobs
+    pin
+    [min]="min"
+    [max]="max"
+    mode="ios"
+    [value]="value"
+    class="range"
+    #range
+    [formControlName]="name"
+    (ionChange)="handleRangeChange(range.value)"
+  ></ion-range>
+
+  <div class="range__price">{{ price }}</div>
+</ng-container>
