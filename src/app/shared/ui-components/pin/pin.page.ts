@@ -75,9 +75,9 @@ export class PinPage implements OnInit {
   }
 
   private setInstructionText(text: string = null) {
-    if(text !== null) {
-        this.instructionText = text;
-        return;
+    if (text !== null) {
+      this.instructionText = text;
+      return;
     }
 
     switch (this.pinAction) {
@@ -118,11 +118,14 @@ export class PinPage implements OnInit {
   async append(number: number) {
     this.setErrorText(null);
     let executeSetPinLogic = this.pinAction === PinAction.SET_PIN_ONLY || this.pinAction === PinAction.SET_BIOMETRIC;
-    let executeLoginPinLogic = this.pinAction === PinAction.LOGIN_PIN || this.pinAction === PinAction.CHANGE_PIN_ONLY || this.pinAction === PinAction.CHANGE_PIN_BIOMETRIC;
+    let executeLoginPinLogic =
+      this.pinAction === PinAction.LOGIN_PIN ||
+      this.pinAction === PinAction.CHANGE_PIN_ONLY ||
+      this.pinAction === PinAction.CHANGE_PIN_BIOMETRIC;
     if (executeSetPinLogic) {
-        await this.setPinLogic(number);
-      } else if(executeLoginPinLogic) {
-        this.loginPinLogic(number);
+      await this.setPinLogic(number);
+    } else if (executeLoginPinLogic) {
+      this.loginPinLogic(number);
     }
   }
 
@@ -161,12 +164,15 @@ export class PinPage implements OnInit {
   }
 
   private loginPinLogic(number: number) {
-    if(this.pinNumber.length >= 4)
-        return;
-    this.pinNumber.push(number); // add new pin value to array
+    if (this.pinNumber.length >= 4) return;
 
-    if(this.pinNumber.length === 4) // check if confirming pin
-        this.loginPin();
+    // add new pin value to array
+    this.pinNumber.push(number);
+
+    if (this.pinNumber.length === 4) {
+      // check if confirming pin
+      this.loginPin();
+    }
   }
 
   enter() {}
@@ -246,16 +252,16 @@ export class PinPage implements OnInit {
         success => {
           /// on success, dismiss with pin in data
           if (success) {
-              if(this.pinAction===PinAction.CHANGE_PIN_BIOMETRIC){
-                  this.pinAction = PinAction.SET_BIOMETRIC;
-                  this.cleanLocalState();
-              }else if(this.pinAction===PinAction.CHANGE_PIN_ONLY){
-                  this.pinAction = PinAction.SET_PIN_ONLY;
-                  this.cleanLocalState();
-              }else{
-                  this.closePage(this.pinNumber.join(''), PinCloseStatus.LOGIN_SUCCESS);
-              }
-           } else {
+            if (this.pinAction === PinAction.CHANGE_PIN_BIOMETRIC) {
+              this.pinAction = PinAction.SET_BIOMETRIC;
+              this.cleanLocalState();
+            } else if (this.pinAction === PinAction.CHANGE_PIN_ONLY) {
+              this.pinAction = PinAction.SET_PIN_ONLY;
+              this.cleanLocalState();
+            } else {
+              this.closePage(this.pinNumber.join(''), PinCloseStatus.LOGIN_SUCCESS);
+            }
+          } else {
             /// handle error here
             this.cleanLocalState();
             this.setErrorText('Error logging in - please try again');

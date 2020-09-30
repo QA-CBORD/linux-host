@@ -41,10 +41,12 @@ export class IdentityFacadeService extends ServiceStateFacade {
   async pinLoginSetup(
     biometricEnabled: boolean,
     navigateToDashboard: boolean = true,
-    pinModalProps?: any,
+    pinModalProps?: any
   ): Promise<any> {
-    const { data, role } = await this.identityService.presentPinModal( 
-      biometricEnabled? PinAction.SET_BIOMETRIC: PinAction.SET_PIN_ONLY, pinModalProps);
+    const { data, role } = await this.identityService.presentPinModal(
+      biometricEnabled ? PinAction.SET_BIOMETRIC : PinAction.SET_PIN_ONLY,
+      pinModalProps
+    );
     switch (role) {
       case PinCloseStatus.CANCELED:
         throw {
