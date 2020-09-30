@@ -153,7 +153,8 @@
 <ion-footer class="deposit__footer"
             mode="ios">
   <st-button (onClick)="onFormSubmit()"
-             [isDisabled]="!depositForm.valid">
+             [isDisabled]="!depositForm.valid"
+             [disabled]="isDepositing">
              <div id="depositBtnText">Deposit</div>
   </st-button>
 </ion-footer>
