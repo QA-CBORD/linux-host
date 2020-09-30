@@ -1,4 +1,3 @@
-
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Observable, from } from 'rxjs';
@@ -77,9 +76,8 @@ export class AccessCardComponent implements OnInit {
           this.credentialState = CredentialState.from(activePasses);
           this.androidMobileCredentialAvailable = this.credentialState.isEnabled();
           if (this.androidMobileCredentialAvailable) {
-            console.log("initializeOrigo started");
-            HIDPlugin.initializeOrigo().then(() => {
-              console.log("initializeOrigo completed");
+              HIDPlugin.initializeOrigo().then(() => {
+              console.log('initializeOrigo completed');
             });
           }
           this.cardStatusMessage = this.credentialState.statusMsg();
@@ -88,6 +86,16 @@ export class AccessCardComponent implements OnInit {
         });
       }
     });
+    this.setupHIDEvents();
+  }
+
+
+  private setupHIDEvents(){
+
+   HIDPlugin.addEventListener("hidMainEvent", (data)=> {
+    console.log('hidMainEvent event fired: ', data);
+   });
+
   }
 
   private getUserData() {

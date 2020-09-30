@@ -6,6 +6,7 @@ import { HidCredential } from '@core/service/payments-api/model/mobile-credentia
 import { ModalController, PopoverController } from '@ionic/angular';
 import { map, take } from 'rxjs/operators';
 import { Plugins } from '@capacitor/core';
+import { PartnerPaymentApiFacadeService } from '@core/service/payments-api/partner-payment-api-facade.service';
 const { HIDPlugin } = Plugins;
 
 @Component({
@@ -28,7 +29,8 @@ export class MobileCredentialsComponent implements OnInit {
     private readonly loadingService: LoadingService,
     private readonly modalController: ModalController,
     private readonly popoverCtrl: PopoverController,
-    private contentStringFacade: ContentStringsFacadeService
+    private contentStringFacade: ContentStringsFacadeService,
+    private paymentApiFacade: PartnerPaymentApiFacadeService
   ) {}
 
   ngOnInit() {
@@ -60,13 +62,19 @@ export class MobileCredentialsComponent implements OnInit {
 
   onBtnClicked(): void {
     this.loadingService.showSpinner({ message: 'Processing... Please wait...' });
-    if (this.credential.isProvisioned()) {
+    if(this.credential.isProvisioned()) {
+       this.paymentApiFacade.deleteCredential().subscribe(
+         result => {
+           console.log('deletion result: ', result);
+         }
+       );
       // confirm here that the patron/user really wants to uninstall the mobile credential.
-    } else {
+     } else {
       if (this.credential instanceof HidCredential) {
         // remove text on screen, call HID plugin to complete installation.
         const invitationCode = (<HidCredential>this.credential).getInvitationCode();
         console.log('invitationCode: ', invitationCode);
+        HIDPlugin.startupOrigo({token: invitationCode})
       }
     }
   }
