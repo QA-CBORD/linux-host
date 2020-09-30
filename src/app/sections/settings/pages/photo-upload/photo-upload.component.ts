@@ -100,7 +100,12 @@ export class PhotoUploadComponent implements OnInit {
     this.photoUploadService
       .getInitialPhotoData$()
       .pipe(
-        finalize(() => this.loadingService.closeSpinner()),
+        finalize(() => {
+          this.loadingService.closeSpinner()
+          if (this.localPhotoUploadStatus.profile === LocalPhotoStatus.NONE) {
+            this.photoUploadService.clearLocalGovernmentIdPhotos();
+          }
+        }),
         first()
       )
       .subscribe(
