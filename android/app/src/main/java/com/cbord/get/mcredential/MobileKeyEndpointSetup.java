@@ -1,8 +1,6 @@
 package com.cbord.get.mcredential;
 
 import android.util.Log;
-
-import com.cbord.get.HIDPlugin;
 import com.hid.origo.OrigoKeysApiFacade;
 import com.hid.origo.api.OrigoMobileKeysCallback;
 import com.hid.origo.api.OrigoMobileKeysException;
@@ -21,22 +19,21 @@ public class MobileKeyEndpointSetup implements OrigoMobileKeysCallback {
         this.mobileKeysApiFacade = origoKeysApiFacade;
     }
 
-    private void submitInvitationCode()
+    private void submitInvitationCode(String invitationCode)
     {
-        String invitationCode = HIDPlugin.getActivationCode();
         Log.d(TAG, "Endpoint setup started with invitationCode: " + invitationCode);
         mobileKeysApiFacade.getMobileKeys().endpointSetup(this, invitationCode);
     }
 
 
-    public void doSetup(){
-        this.submitInvitationCode();
+    public void doSetup(String invitationCode){
+        this.submitInvitationCode(invitationCode);
     }
 
 
     @Override
     public void handleMobileKeysTransactionCompleted() {
-        ((OrigoMobileKeysCallback)this.mobileKeysApiFacade).handleMobileKeysTransactionCompleted();
+        mobileKeysApiFacade.onEndpointSetUpComplete();
     }
 
     @Override

@@ -9,6 +9,8 @@ import { finalize, take } from 'rxjs/operators';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import Setting = Settings.Setting;
 import { LoadingService } from '@core/service/loading/loading.service';
+import { Plugins } from '@capacitor/core';
+const { HIDPlugin } = Plugins;
 
 export enum PinCloseStatus {
   SET_SUCCESS = 'set_success',
@@ -72,6 +74,9 @@ export class PinPage implements OnInit {
   ngOnInit() {
     this.retrievePinRetrys();
     this.setInstructionText();
+    HIDPlugin.initializeOrigo().then(() => {
+      console.log('initializeOrigo completed');
+    });
   }
 
   private setInstructionText(text: string = null) {

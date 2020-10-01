@@ -1,7 +1,12 @@
 package com.cbord.get.mcredential;
 
 
+import com.hid.origo.api.OrigoMobileKeysApiErrorCode;
+
 public interface EndpointSetupListener {
-    void onSuccess(Object someObject);
-    void onFailure(int errorCode);
+    void onInstallationSuccess(Object someObject);
+    void onInstallationFailure(OrigoMobileKeysApiErrorCode errorCode);
+    void operationFailure(PluginErrors errorCode);
+    void onStartupSuccessful();
+    void onStartupFailure(OrigoMobileKeysApiErrorCode errorCode);
 }

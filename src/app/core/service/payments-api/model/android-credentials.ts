@@ -28,5 +28,9 @@ export abstract class AndroidCredential implements MobileCredential {
     return this.state.issuer();
   }
 
+  getState(): CredentialStateInterface{
+   return this.state;
+  }
+
   abstract getId(): string;
 }

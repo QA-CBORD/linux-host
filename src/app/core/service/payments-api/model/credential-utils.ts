@@ -2,20 +2,25 @@ import { DomainContentString } from '@sections/settings/models/setting-items-con
 
 
 export interface ActivePasses {
-    passes: { android_hid: number; android_nxp: number };
+    passes: CredentialStatus;
     referenceIdentifier: string;
-    credStatus: { android_hid: number; android_nxp: number };
-    deviceModel: string;
-    osVersion: string;
-    manufacturer: string;
+    credStatus: CredentialStatus;
+    deviceModel?: string;
+    osVersion?: string;
+    manufacturer?: string;
   }
 
   
+export interface CredentialStatus{
+  android_hid: number; 
+  android_nxp: number;
+  statusMsg?: string;
+  issuer?: string;
+}
 
-  
 export enum AndroidCredentialStateMsg {
     AVAILABLE = 'Enable Mobile Credential',
-    PROVISIONED = 'Mobile Credential Enabled',
+    PROVISIONED = 'Start scan whoohoo',
   }
 
 
@@ -34,6 +39,7 @@ export enum AndroidCredentialStateMsg {
   export interface CredentialStateInterface extends ICredential {
     isHID(): boolean;
     isGoogle(): boolean;
+    referenceIdentifier:string
   }
 
   export interface ICredential{
@@ -42,6 +48,14 @@ export enum AndroidCredentialStateMsg {
     isEnabled(): boolean;
     canProvision(): boolean;
     issuer(): string;
+  }
+
+
+  export enum HIDPluginEvents{
+    INSTALL_SUCCESS = "installation_successful",
+    INSTALL_FAILURE = "installation_failure",
+    STARTUP_SUCCESS = "startup_successful",
+    STARTUP_FAILURE = "startup_failure",
   }
 
 

@@ -9,28 +9,29 @@ export class CredentialState implements CredentialStateInterface {
   static IS_AVAILABLE = 1;
   static IS_PROVISIONED = 20;
   static IS_DISABLED = 0;
-  private credential: any = {};
+  public credential: any = {};
+  public referenceIdentifier: string;
 
   constructor(activePasses: ActivePasses) {
     this.checkState(activePasses);
+    this.referenceIdentifier = activePasses.referenceIdentifier;
+    this.updateStatusMsg();
   }
 
-  private checkState(activePasses: ActivePasses) {
-    if (this.hasHidCredential(activePasses)) {
+  private checkState(state: ActivePasses) {
+    if (this.hasHidCredential(state)) {
       this.credential = {
-        credStatus: activePasses.credStatus.android_hid,
-        passes: activePasses.passes.android_hid,
+        credStatus: state.credStatus.android_hid,
+        passes: state.passes.android_hid,
         issuer: CredentialProviders.HID,
       };
-    } else if (this.hasGoogleCredential(activePasses)) {
+    } else if (this.hasGoogleCredential(state)) {
       this.credential = {
-        credStatus: activePasses.credStatus.android_nxp,
-        passes: activePasses.passes.android_nxp,
+        credStatus: state.credStatus.android_nxp,
+        passes: state.passes.android_nxp,
         issuer: CredentialProviders.GOOGLE,
       };
     }
-    console.log(this.credential);
-    this.setStatusMsg();
   }
 
   getCredential(): { credStatus: number; passes: number; issuer: string; statusMsg: string } {
@@ -39,6 +40,39 @@ export class CredentialState implements CredentialStateInterface {
 
   static from(activePasses: ActivePasses): CredentialState {
     return new CredentialState(activePasses);
+  }
+
+  static buildFrom(state: {
+    credential: { credStatus: number; passes: number; issuer: string; statusMsg: string };
+    referenceIdentifier: string;
+  }): CredentialState {
+    if (state.credential.issuer == CredentialProviders.HID) {
+      return CredentialState.from({
+        credStatus: {
+          android_hid: state.credential.credStatus,
+          android_nxp: 0,
+        },
+        passes: {
+          android_hid: state.credential.passes,
+          android_nxp: 0,
+        },
+        referenceIdentifier: state.referenceIdentifier,
+      });
+    } else if (state.credential.issuer == CredentialProviders.GOOGLE) {
+      return CredentialState.from({
+        credStatus: {
+          android_hid: 0,
+          android_nxp: state.credential.credStatus,
+        },
+        passes: {
+          android_hid: 0,
+          android_nxp: state.credential.passes,
+        },
+        referenceIdentifier: state.referenceIdentifier,
+      });
+    } else {
+      throw new Error('Unable to parse into ');
+    }
   }
 
   private hasGoogleCredential(activePasses: ActivePasses): boolean {
@@ -55,7 +89,7 @@ export class CredentialState implements CredentialStateInterface {
     );
   }
 
-  protected setStatusMsg(): void {
+  updateStatusMsg(): void {
     this.getCredential().statusMsg = this.isProvisioned()
       ? AndroidCredentialStateMsg.PROVISIONED
       : this.canProvision()

@@ -1,6 +1,6 @@
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { Observable, from } from 'rxjs';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { Observable, from, pipe } from 'rxjs';
 import { first, map, take, switchMap, tap } from 'rxjs/operators';
 import { AccessCardService } from './services/access-card.service';
 import { Router } from '@angular/router';
@@ -10,13 +10,16 @@ import { AppleWalletInfo, AppleWalletCredentialStatus } from '@core/provider/nat
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { Plugins } from '@capacitor/core';
-import { PartnerPaymentApiFacadeService } from '@core/service/payments-api/partner-payment-api-facade.service';
 import { CredentialState } from '@core/service/payments-api/model/credential-state';
-import { CredentialStateInterface } from '@core/service/payments-api/model/credential-utils';
+import { CredentialStateInterface, HIDPluginEvents } from '@core/service/payments-api/model/credential-utils';
 import { ModalController, PopoverController } from '@ionic/angular';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { MobileCredentialsComponent } from '@shared/ui-components/mobile-credentials/mobile-credentials.component';
 import { AndroidCredential } from '@core/service/payments-api/model/android-credentials';
+import { MobileCredentialService } from '@core/service/mobile-credentials/mobile-credential.service';
+import { HidCredential } from '@core/service/payments-api/model/mobile-credential';
+import { ToastService } from '@core/service/toast/toast.service';
+
 const { IOSDevice, HIDPlugin } = Plugins;
 
 @Component({
@@ -25,7 +28,7 @@ const { IOSDevice, HIDPlugin } = Plugins;
   styleUrls: ['./access-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AccessCardComponent implements OnInit {
+export class AccessCardComponent implements OnInit, OnDestroy {
   userName$: Observable<string>;
   institutionName$: Observable<string>;
   institutionColor$: Observable<string>;
@@ -44,6 +47,7 @@ export class AccessCardComponent implements OnInit {
   userInfo: string;
   androidMobileCredentialAvailable: boolean = false;
   credentialState: CredentialStateInterface;
+  HIDPluginEventListener: any;
 
   constructor(
     private readonly accessCardService: AccessCardService,
@@ -55,7 +59,8 @@ export class AccessCardComponent implements OnInit {
     private readonly loadingService: LoadingService,
     private readonly userFacadeService: UserFacadeService,
     private readonly authFacadeService: AuthFacadeService,
-    private readonly paymentServiceFacade: PartnerPaymentApiFacadeService
+    private readonly mobileCredentialService: MobileCredentialService,
+    private readonly toastService: ToastService
   ) {}
 
   ngOnInit() {
@@ -71,31 +76,50 @@ export class AccessCardComponent implements OnInit {
         this.enableAppleWallet();
         this.enableAppleWalletEvents();
       } else if (resp.isAndroidCredEnabled()) {
-        this.paymentServiceFacade.androidActivePasses(false).subscribe(activePasses => {
-          // active passes tells us what the credential status/state is: available, provisioned, etc.
-          this.credentialState = CredentialState.from(activePasses);
-          this.androidMobileCredentialAvailable = this.credentialState.isEnabled();
-          if (this.androidMobileCredentialAvailable) {
-              HIDPlugin.initializeOrigo().then(() => {
-              console.log('initializeOrigo completed');
-            });
-          }
-          this.cardStatusMessage = this.credentialState.statusMsg();
-          console.log(this.credentialState, this.androidMobileCredentialAvailable);
-          this.changeRef.detectChanges();
-        });
+        this.mobileCredentialService
+          .androidActivePasses()
+          .pipe(take(1))
+          .subscribe(credentialState => {
+            // active passes tells us what the credential status/state is: available, provisioned, etc.
+            this.credentialState = credentialState;
+            console.log('this.credentialState :: ', this.credentialState);
+            this.androidMobileCredentialAvailable = this.credentialState.isEnabled();
+            if (this.androidMobileCredentialAvailable) {
+              HIDPlugin.startupOrigo().then(() => {
+                console.log('startupOrigo completed');
+                this.setupHIDEvents();
+                this.cardStatusMessage = this.credentialState.statusMsg();
+                console.log(this.credentialState, this.androidMobileCredentialAvailable);
+                this.changeRef.detectChanges();
+              });
+            }
+          });
       }
     });
-    this.setupHIDEvents();
   }
 
+  private setupHIDEvents() {
+    this.HIDPluginEventListener = HIDPlugin.addListener(
+      'HIDPluginEvents',
+      (event: { type: string; errorCode?: number }) => {
+        if (event.type == HIDPluginEvents.INSTALL_SUCCESS) {
+          this.onInstallSuccess();
+        } else if (event.type == HIDPluginEvents.INSTALL_FAILURE) {
+          this.onInstallFailure(event.errorCode);
+        } else if (event.type == HIDPluginEvents.STARTUP_SUCCESS) {
+          this.onStartupSuccess();
+        } else if (event.type == HIDPluginEvents.OPERATION_FAILURE) {
+          this.onOperationFailed(event.errorCode);
+        } else {
+          this.onStartupFailure(event.errorCode);
+        }
+      }
+    );
+  }
 
-  private setupHIDEvents(){
-
-   HIDPlugin.addEventListener("hidMainEvent", (data)=> {
-    console.log('hidMainEvent event fired: ', data);
-   });
-
+  ngOnDestroy(): void {
+    console.log('remove HID plugin listener');
+    this.HIDPluginEventListener.remove();
   }
 
   private getUserData() {
@@ -200,6 +224,39 @@ export class AccessCardComponent implements OnInit {
       });
   }
 
+  private onInstallSuccess = () => {
+    console.log('onInstallSuccess()*****');
+    this.loadingService.closeSpinner();
+    this.mobileCredentialService
+      .updateCredential({ status: CredentialState.IS_PROVISIONED })
+      .pipe(take(1))
+      .subscribe(
+        state => {
+          console.log('new cred state: ', state);
+          this.cardStatusMessage = state.statusMsg();
+        },
+        error => {
+          console.log(error);
+        }
+      );
+  };
+
+  private onInstallFailure = (errorCode: number) => {
+    console.log('onInstallFailure()*****: ', errorCode);
+  };
+
+  private onStartupSuccess = () => {
+    console.log('onStartupSuccess()*****');
+  };
+
+  private onStartupFailure = (errorCode: number) => {
+    console.log('onStartupFailure()*****: ', errorCode);
+  };
+
+  private onOperationFailed = errorCode => {
+    console.log('onCredentialStartupFailure()*****: ', errorCode);
+  };
+
   private addAndroidCredentials() {
     /**
      *
@@ -219,16 +276,22 @@ export class AccessCardComponent implements OnInit {
       return await credentialModal.onDidDismiss();
     };
 
-    this.paymentServiceFacade.androidActivePasses(false).subscribe(activePasses => {
-      this.loadingService.showSpinner({ message: 'processing.. please wait...' });
-      this.paymentServiceFacade.androidCredential(false, activePasses).subscribe(
+    const activePasses$ = this.mobileCredentialService.androidActivePasses().pipe(take(1));
+    this.loadingService.showSpinner({ message: 'processing.. please wait...' });
+    activePasses$.subscribe(state => {
+      const androidCredentials$ = this.mobileCredentialService.androidCredential(state).pipe(take(1));
+      androidCredentials$.subscribe(
         credential => {
-          showModal(credential).then(action => {
-            console.log('userAction: ', action);
+          showModal(credential).then(data => {
+            console.log('user action: ', data);
           });
         },
         error => {
           console.log('Error: ', error);
+          this.toastService.showToast({
+            message: 'ooops! Unexpected error!, please try again later!',
+            position: 'bottom',
+          });
           this.loadingService.closeSpinner();
         }
       );

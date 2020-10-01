@@ -6,7 +6,8 @@ import { HidCredential } from '@core/service/payments-api/model/mobile-credentia
 import { ModalController, PopoverController } from '@ionic/angular';
 import { map, take } from 'rxjs/operators';
 import { Plugins } from '@capacitor/core';
-import { PartnerPaymentApiFacadeService } from '@core/service/payments-api/partner-payment-api-facade.service';
+import { MobileCredentialService } from '@core/service/mobile-credentials/mobile-credential.service';
+import { Subscription } from 'rxjs';
 const { HIDPlugin } = Plugins;
 
 @Component({
@@ -25,20 +26,26 @@ export class MobileCredentialsComponent implements OnInit {
 
   termsAndCondition$: Promise<any>;
 
+  private deleteCredentialSubscription: Subscription;
+
   constructor(
     private readonly loadingService: LoadingService,
     private readonly modalController: ModalController,
     private readonly popoverCtrl: PopoverController,
     private contentStringFacade: ContentStringsFacadeService,
-    private paymentApiFacade: PartnerPaymentApiFacadeService
+    private mobileCredentialService: MobileCredentialService
   ) {}
 
   ngOnInit() {
     console.log('input data: ', this.credential);
     this.loadingService.closeSpinner();
-    if (this.credential.isProvisioned()) {
-      this.btnText = 'Uninstall Credential';
-      this.titleText = 'Credential Status';
+    if(this.credential.isProvisioned()) {
+        this.btnText = 'Uninstall Credential';
+        this.titleText = 'Credential Status';
+        HIDPlugin.loadCredentialData().then((data: { mobileKeys: any}) => {
+          const mobileKeys = data.mobileKeys;
+          console.log('found keys are: ', mobileKeys);
+        });
     } else {
       this.termsAndCondition$ = this.termsAndCondition();
     }
@@ -48,11 +55,11 @@ export class MobileCredentialsComponent implements OnInit {
     console.log('ionViewWillEnter().....');
   }
 
-  closePage(): void {
+  closePage(data=null): void {
     if (this.credential.isProvisioned()) {
-      this.popoverCtrl.dismiss();
+      this.popoverCtrl.dismiss(data);
     } else {
-      this.modalController.dismiss();
+      this.modalController.dismiss(data);
     }
   }
 
@@ -63,9 +70,17 @@ export class MobileCredentialsComponent implements OnInit {
   onBtnClicked(): void {
     this.loadingService.showSpinner({ message: 'Processing... Please wait...' });
     if(this.credential.isProvisioned()) {
-       this.paymentApiFacade.deleteCredential().subscribe(
+       this.deleteCredentialSubscription = this.mobileCredentialService.deleteCredential().subscribe(
          result => {
            console.log('deletion result: ', result);
+           // deletion was successfull in server...// now what ? need to update app state.
+           this.loadingService.closeSpinner();
+           this.closePage({message: 'delete_success'});
+         },
+         (error) => {
+           console.log('error{} : ', error);
+           this.loadingService.closeSpinner();
+           this.closePage({message: 'error', error: error})
          }
        );
       // confirm here that the patron/user really wants to uninstall the mobile credential.
@@ -74,7 +89,8 @@ export class MobileCredentialsComponent implements OnInit {
         // remove text on screen, call HID plugin to complete installation.
         const invitationCode = (<HidCredential>this.credential).getInvitationCode();
         console.log('invitationCode: ', invitationCode);
-        HIDPlugin.startupOrigo({token: invitationCode})
+        HIDPlugin.addCredential({token: invitationCode}).then();
+        this.closePage();
       }
     }
   }
@@ -88,5 +104,9 @@ export class MobileCredentialsComponent implements OnInit {
         take(1)
       )
       .toPromise();
+  }
+
+   ngOnDestroy():void{
+     this.deleteCredentialSubscription ? this.deleteCredentialSubscription.unsubscribe() : void 0;
   }
 }

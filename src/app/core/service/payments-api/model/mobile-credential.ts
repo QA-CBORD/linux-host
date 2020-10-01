@@ -5,12 +5,13 @@ import { CredentialState } from './credential-state';
 import { ActivePasses, CredentialProviders, CredentialStateInterface } from './credential-utils';
 
 export class CredentialFactory {
-  static toCredential(activePasses: ActivePasses, credentialData: any): AndroidCredential {
-    let credentialState = CredentialState.from(activePasses);
-    if (credentialState.isHID()) {
-      return new HidCredential(credentialState, credentialData);
+  static toCredential(data: ActivePasses | CredentialState, credentialData: any): AndroidCredential {
+    let credentialState = data instanceof CredentialState ? data : CredentialState.from((<ActivePasses>data));
+    console.log('before credential: ', credentialState)
+    if( credentialState.isHID()) {
+       return new HidCredential(credentialState, credentialData);
     } else if (credentialState.isGoogle()) {
-      return new GoogleCredential(credentialState, credentialData);
+       return new GoogleCredential(credentialState, credentialData);
     }
     throw new Error('There is a conflict with your mobile credentials');
   }
