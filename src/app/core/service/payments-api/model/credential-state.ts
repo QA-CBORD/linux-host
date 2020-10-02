@@ -101,15 +101,15 @@ export class CredentialState implements CredentialStateInterface {
     return this.getCredential().statusMsg;
   }
   isProvisioned(): boolean {
-    return this.getCredential().credStatus === CredentialState.IS_PROVISIONED;
+    return this.getCredential().credStatus == CredentialState.IS_PROVISIONED;
   }
 
   isEnabled(): boolean {
-    return this.getCredential().credStatus && !(this.getCredential().credStatus === CredentialState.IS_DISABLED);
+    return this.getCredential().credStatus && !(this.getCredential().credStatus == CredentialState.IS_DISABLED);
   }
 
   canProvision(): boolean {
-    return this.getCredential().credStatus === CredentialState.IS_AVAILABLE;
+    return this.getCredential().credStatus == CredentialState.IS_AVAILABLE;
   }
 
   issuer(): string {
@@ -117,9 +117,9 @@ export class CredentialState implements CredentialStateInterface {
   }
 
   isHID(): boolean {
-    return this.issuer() === CredentialProviders.HID;
+    return this.issuer() == CredentialProviders.HID;
   }
   isGoogle(): boolean {
-    return this.issuer() === CredentialProviders.GOOGLE;
+    return this.issuer() == CredentialProviders.GOOGLE;
   }
 }

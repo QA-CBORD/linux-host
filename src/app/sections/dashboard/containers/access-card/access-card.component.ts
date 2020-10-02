@@ -68,9 +68,12 @@ export class AccessCardComponent implements OnInit, OnDestroy {
     this.getFeaturesEnabled();
     this.getUserData();
     this.getUserName();
+    this.setupMobileCredentials();
   }
 
-  ionViewWillEnter() {
+  ionViewWillEnter() {}
+
+  setupMobileCredentials(): void {
     this.userFacadeService.mobileCredentialSettings().subscribe(resp => {
       if (resp.isAppleWalletEnabled()) {
         this.enableAppleWallet();
@@ -85,9 +88,11 @@ export class AccessCardComponent implements OnInit, OnDestroy {
             console.log('this.credentialState :: ', this.credentialState);
             this.androidMobileCredentialAvailable = this.credentialState.isEnabled();
             if (this.androidMobileCredentialAvailable) {
+              if (this.HIDPluginEventListener == null) {
+                this.registerHIDPluginEventListener();
+              }
               HIDPlugin.startupOrigo().then(() => {
                 console.log('startupOrigo completed');
-                this.setupHIDEvents();
                 this.cardStatusMessage = this.credentialState.statusMsg();
                 console.log(this.credentialState, this.androidMobileCredentialAvailable);
                 this.changeRef.detectChanges();
@@ -98,23 +103,26 @@ export class AccessCardComponent implements OnInit, OnDestroy {
     });
   }
 
-  private setupHIDEvents() {
-    this.HIDPluginEventListener = HIDPlugin.addListener(
-      'HIDPluginEvents',
-      (event: { type: string; errorCode?: number }) => {
-        if (event.type == HIDPluginEvents.INSTALL_SUCCESS) {
-          this.onInstallSuccess();
-        } else if (event.type == HIDPluginEvents.INSTALL_FAILURE) {
-          this.onInstallFailure(event.errorCode);
-        } else if (event.type == HIDPluginEvents.STARTUP_SUCCESS) {
-          this.onStartupSuccess();
-        } else if (event.type == HIDPluginEvents.OPERATION_FAILURE) {
-          this.onOperationFailed(event.errorCode);
-        } else {
-          this.onStartupFailure(event.errorCode);
-        }
+  private registerHIDPluginEventListener() {
+    this.HIDPluginEventListener = HIDPlugin.addListener('HIDPluginEvents', (event: { eventType: HIDPluginEvents }) => {
+      switch (event.eventType) {
+        case HIDPluginEvents.INSTALL_SUCCESS:
+        case HIDPluginEvents.INSTALL_FAILURE:
+        case HIDPluginEvents.DUPLICATED_CREDENTIAL:
+          this.onInstall(event.eventType);
+          break;
+        case HIDPluginEvents.STARTUP_SUCCESS:
+        case HIDPluginEvents.STARTUP_FAILURE:
+          this.onStartup(event.eventType);
+          break;
+        case HIDPluginEvents.ENDPOINT_DELETE_SUCCESS:
+        case HIDPluginEvents.ENDPOINT_DELETE_FAILURE:
+          this.onCredentialDelete(event.eventType);
+          break;
+        default:
+          void 0;
       }
-    );
+    });
   }
 
   ngOnDestroy(): void {
@@ -224,37 +232,72 @@ export class AccessCardComponent implements OnInit, OnDestroy {
       });
   }
 
-  private onInstallSuccess = () => {
-    console.log('onInstallSuccess()*****');
+  private onInstall = (eventType: HIDPluginEvents) => {
     this.loadingService.closeSpinner();
-    this.mobileCredentialService
-      .updateCredential({ status: CredentialState.IS_PROVISIONED })
-      .pipe(take(1))
-      .subscribe(
-        state => {
-          console.log('new cred state: ', state);
-          this.cardStatusMessage = state.statusMsg();
-        },
-        error => {
-          console.log(error);
-        }
-      );
+    if (eventType == HIDPluginEvents.INSTALL_SUCCESS) {
+      console.log('onINSTALL_SUCCESS()*****');
+      this.mobileCredentialService
+        .updateCredential({ status: CredentialState.IS_PROVISIONED })
+        .pipe(take(1))
+        .subscribe(
+          state => {
+            console.log('new cred state: ', state);
+            this.cardStatusMessage = state.statusMsg();
+            this.changeRef.detectChanges();
+            this.loadingService.closeSpinner();
+          },
+          error => {
+            console.log(error);
+            this.toastService.showToast({
+              message: 'An Unexpected error Occurred, try again later',
+              position: 'bottom',
+            });
+            this.loadingService.closeSpinner();
+          }
+        );
+    } else if (eventType == HIDPluginEvents.INSTALL_FAILURE) {
+      this.toastService.showToast({ message: 'Installation failed, please try again later', position: 'bottom' });
+      console.log('onInstallFailure()*****: ', eventType);
+    } else if (eventType == HIDPluginEvents.DUPLICATED_CREDENTIAL) {
+      this.toastService.showToast({ message: 'Error, Mobile credential already installed.', position: 'bottom' });
+      console.log('onInstallFailure()*****: ', eventType);
+    }
   };
 
-  private onInstallFailure = (errorCode: number) => {
-    console.log('onInstallFailure()*****: ', errorCode);
+  private onStartup = (eventType: HIDPluginEvents) => {
+    if (eventType == HIDPluginEvents.STARTUP_SUCCESS) {
+      console.log('onStartupSuccess()*****');
+    } else {
+      console.log('onStartupFailure()*****');
+    }
   };
 
-  private onStartupSuccess = () => {
-    console.log('onStartupSuccess()*****');
-  };
-
-  private onStartupFailure = (errorCode: number) => {
-    console.log('onStartupFailure()*****: ', errorCode);
-  };
-
-  private onOperationFailed = errorCode => {
-    console.log('onCredentialStartupFailure()*****: ', errorCode);
+  private onCredentialDelete = (eventType: HIDPluginEvents) => {
+    if (eventType == HIDPluginEvents.ENDPOINT_DELETE_SUCCESS) {
+      console.log('ENDPOINT_DELETE_SUCCESS()*****');
+      this.mobileCredentialService
+        .deleteCredential()
+        .pipe(take(1))
+        .subscribe(
+          result => {
+            console.log('deletion result: ', result);
+            this.mobileCredentialService.updateLocalCache({ status: 1 }).subscribe(state => {
+              this.cardStatusMessage = state.statusMsg();
+              this.loadingService.closeSpinner();
+            });
+          },
+          error => {
+            console.log('error{} : ', error);
+            this.loadingService.closeSpinner();
+          }
+        );
+    } else {
+      this.toastService.showToast({
+        message: 'Failed to delete mobile credential, please try again later',
+        position: 'bottom',
+      });
+      console.log('onENDPOINTDELETEFailure()*****');
+    }
   };
 
   private addAndroidCredentials() {

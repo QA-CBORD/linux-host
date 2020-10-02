@@ -1,3 +1,4 @@
+import { AccessCardComponent } from '@sections/dashboard/containers/access-card/access-card.component';
 import { DomainContentString } from '@sections/settings/models/setting-items-config.model';
 
 
@@ -52,10 +53,49 @@ export enum AndroidCredentialStateMsg {
 
 
   export enum HIDPluginEvents{
-    INSTALL_SUCCESS = "installation_successful",
-    INSTALL_FAILURE = "installation_failure",
-    STARTUP_SUCCESS = "startup_successful",
-    STARTUP_FAILURE = "startup_failure",
+     INSTALL_SUCCESS="INSTALL_SUCCESS",
+     INSTALL_FAILURE="INSTALL_FAILURE",
+     STARTUP_SUCCESS="STARTUP_SUCCESS",
+     STARTUP_FAILURE="STARTUP_FAILURE",
+     DUPLICATED_CREDENTIAL="DUPLICATED_CREDENTIAL",
+     INACTIVE_CREDENTIAL="INACTIVE_CREDENTIAL",
+     ENDPOINT_NOT_SETUP="ENDPOINT_NOT_SETUP",
+     ENDPOINT_DELETE_FAILURE="ENDPOINT_DELETE_FAILURE",
+     ENDPOINT_DELETE_SUCCESS="ENDPOINT_DELETE_SUCCESS"
+  }
+
+  const event = HIDPluginEvents;
+
+
+  export class HandlerUtil{
+
+    constructor(){
+      
+    }
+  }
+
+
+  export class HIDPlugginEventHandler {
+    
+
+
+    constructor(private client: AccessCardComponent)
+    {
+      
+    }
+   
+    handle(pluginEvent: HIDPluginEvents)
+    { 
+      pluginEvent == HIDPluginEvents.DUPLICATED_CREDENTIAL
+    }
+    
+
+    handleInstallSuccess(): void {
+      
+
+
+    }
+
   }
 
 

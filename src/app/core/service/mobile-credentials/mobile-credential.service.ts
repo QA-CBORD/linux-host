@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
-import { forkJoin, Observable, of } from 'rxjs';
+import { forkJoin, from, Observable, of } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
 import { AndroidCredential } from '../payments-api/model/android-credentials';
 import { CredentialState } from '../payments-api/model/credential-state';
@@ -88,53 +88,45 @@ export class MobileCredentialService extends MobileCredentialFacade {
     );
   }
 
-  // public updateCredentialState(newState: {
-  //   credStatus: number;
-  //   passes: number;
-  //   statusMsg: string;
-  // }): Observable<CredentialState> {
-  //   return this.storageStateService.getStateEntityByKey$<CredentialState>(this.credential_state).pipe(
-  //     map(({ value }) => {
-  //       value.getCredential().credStatus = newState.credStatus;
-  //       value.getCredential().passes = newState.passes;
-  //       value.getCredential().statusMsg = newState.statusMsg;
-  //       this.storageStateService.updateStateByKey(this.credential_state, value);
-  //       return value;
-  //     })
-  //   );
-  // }
+  updateLocalCache(newState: { status: number }): Observable<CredentialState>{
+    return this.storageStateService.getStateEntityByKey$<any>(this.credential_state).pipe(
+      map(data => {
+         if( data ){
+            const state = CredentialState.buildFrom(data.value);
+            console.log('const state:: ', state);
+            state.credential.credStatus = newState.status;
+            state.updateStatusMsg();
+            return state;
+         }
+         return null;
+      }),
+      tap(state =>  this.storageStateService.updateStateByKey(this.credential_state, state)),
+      take(1)
+    )
+
+  }
+
 
   updateCredential(newState: { status: number }): Observable<CredentialState> {
     console.log("inside updateCredential():");
     const omniIDJwtToken$ = this.omniIDJwtToken$().pipe(take(1));
     const savedCredential$ = this.getSavedCredential().pipe(take(1));
-
     return forkJoin(omniIDJwtToken$, savedCredential$).pipe(
-
       switchMap(([omniIDJwtToken, credential]) => {
-
         const reqBody = {
           referenceIdenfier: credential.getState().referenceIdentifier,
           credentialID: credential.getId(),
           ...newState,
+          omniIDJwtToken
         };
-        console.log("inside updateCredential(): ", reqBody);
-        return this.partnerPaymentApi.updateCredential(omniIDJwtToken, reqBody).pipe(
-          switchMap(() => {
-            // return this.storageStateService.updateStateByKey(this.credential_state, )
-            console.log("partnerPaymentApi.updateCredential responded: ");
-            return this.androidActivePasses().pipe(
-              take(1),
-              map(state => {
-                console.log("Currently saved state: ", state);
-                state.credential.credStatus = newState.status;
-                state.updateStatusMsg();
-                this.storageStateService.updateStateByKey(this.credential_state, state);
-                return state;
-              })
-            );
-          })
-        );
+        return of(reqBody)
+      }),
+      switchMap(({ omniIDJwtToken, credentialID, status, referenceIdenfier }) => {
+        return this.partnerPaymentApi.updateCredential(omniIDJwtToken, {credentialID, status, referenceIdenfier })
+      }),
+      switchMap(resp => {
+        console.log("partnerPaymentApi.updateCredential responded: ", resp);
+        return this.updateLocalCache(newState);
       })
     );
   }

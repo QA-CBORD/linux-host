@@ -70,19 +70,8 @@ export class MobileCredentialsComponent implements OnInit {
   onBtnClicked(): void {
     this.loadingService.showSpinner({ message: 'Processing... Please wait...' });
     if(this.credential.isProvisioned()) {
-       this.deleteCredentialSubscription = this.mobileCredentialService.deleteCredential().subscribe(
-         result => {
-           console.log('deletion result: ', result);
-           // deletion was successfull in server...// now what ? need to update app state.
-           this.loadingService.closeSpinner();
-           this.closePage({message: 'delete_success'});
-         },
-         (error) => {
-           console.log('error{} : ', error);
-           this.loadingService.closeSpinner();
-           this.closePage({message: 'error', error: error})
-         }
-       );
+
+      HIDPlugin.deleteCredential().then();
       // confirm here that the patron/user really wants to uninstall the mobile credential.
      } else {
       if (this.credential instanceof HidCredential) {
