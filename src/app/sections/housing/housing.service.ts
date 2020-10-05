@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
+import { ROLES } from '../../app.global';
 import { forkJoin, Observable, of, Subject } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 
@@ -141,7 +142,7 @@ export class HousingService {
 
   handleSuccess(): void {
     this._loadingService.closeSpinner();
-    this._router.navigate(['/housing/dashboard']).then(() => this.refreshDefinitions());
+    this._router.navigate([`${ROLES.patron}/housing/dashboard`]).then(() => this.refreshDefinitions());
   }
 
   handleErrors(error: any): void {
@@ -206,4 +207,4 @@ export class HousingService {
 }
 
 
-    
+
