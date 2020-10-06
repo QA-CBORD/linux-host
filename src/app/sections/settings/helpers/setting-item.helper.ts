@@ -9,6 +9,7 @@ import {
 import { Settings } from 'src/app/app.global';
 import { from, concat, zip } from 'rxjs';
 import { SETTINGS_ID } from '../models/settings-id.enum';
+import { PinAction } from '@shared/ui-components/pin/pin.page';
 
 export function getCardStatus(services: SettingsServices): Promise<boolean> {
   return services.userService
@@ -37,7 +38,10 @@ export function handlePinAccess(services: SettingsServices) {
     const biometricsEnabled = await services.identity.cachedBiometricsEnabledUserPreference$;
     services.globalNav.hideNavBar();
     return services.identity
-      .pinLoginSetup(biometricsEnabled, false, { showDismiss: true })
+      .pinLoginSetup(biometricsEnabled, false, {
+        showDismiss: true,
+        pinAction: biometricsEnabled ? PinAction.CHANGE_PIN_BIOMETRIC : PinAction.CHANGE_PIN_ONLY,
+      })
       .finally(() => services.globalNav.showNavBar());
   };
 }
