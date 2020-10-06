@@ -16,6 +16,7 @@ import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { Plugins } from '@capacitor/core';
 const { IOSDevice } = Plugins;
 
+
 @Component({
   selector: 'st-access-card',
   templateUrl: './access-card.component.html',
