@@ -10,6 +10,7 @@ import { PhotoStatus, PhotoType, PhotoUploadService } from '../services/photo-up
 import { LoadingService } from '@core/service/loading/loading.service';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { ToastService } from '@core/service/toast/toast.service';
+import { ActionSheetController } from '@ionic/angular';
 
 const { Camera } = Plugins;
 
@@ -65,6 +66,7 @@ export class PhotoUploadComponent implements OnInit {
     private readonly toastService: ToastService,
     private readonly photoUploadService: PhotoUploadService,
     private readonly loadingService: LoadingService,
+    private readonly actionSheetCtrl: ActionSheetController,
     private readonly cd: ChangeDetectorRef
   ) {}
 
@@ -237,14 +239,58 @@ export class PhotoUploadComponent implements OnInit {
     return PhotoType;
   }
 
+
+  async presentPhotoTypeSelection(photoType: PhotoType) {
+
+    const photoSourceAS = await this.actionSheetCtrl.create({
+      keyboardClose: true,
+      backdropDismiss: true,
+      buttons: [{
+        text: 'Take photo',
+        role: 'take-photo',
+        icon: '/assets/icon/camera-outline.svg'
+      }, {
+        text: 'Choose existing photo',
+        role: 'select-photo',
+        icon: '/assets/icon/select-photo.svg'
+
+      }, {
+        text: 'Cancel',
+        icon: 'close',
+        role: 'cancel'
+      }]
+    });
+
+    await photoSourceAS.present();
+
+    let cameraSource: CameraSource = null;
+
+    await photoSourceAS.onWillDismiss().then(result => {
+      if(result.role === 'take-photo'){
+        cameraSource = CameraSource.Camera;
+      } else if (result.role === 'select-photo'){
+        cameraSource = CameraSource.Photos;
+      }
+    });
+
+    if(!cameraSource){
+      return;
+    }
+
+    this.onGetPhoto(photoType, cameraSource);
+  }
+
+
   /// handle request to take new photo
-  onTakePhoto(photoType: PhotoType) {
-    this.getPhoto(photoType).subscribe(
+  onGetPhoto(photoType: PhotoType, cameraSource: CameraSource) {
+    this.getPhoto(photoType, cameraSource).subscribe(
       response => {
+        this.sessionFacadeService.navigatedToPlugin = false;
         this.photoUploadService.onNewPhoto(photoType, response);
       },
       error => {
-        this.presentToast('There was an issue taking the picture - please try again');
+        this.sessionFacadeService.navigatedToPlugin = false;
+        this.presentToast('There was an issue with the picture - please try again');
       },
       () => {}
     );
@@ -336,7 +382,7 @@ export class PhotoUploadComponent implements OnInit {
   }
 
   /// Camera plugin control
-  private getPhoto(photoType: PhotoType): Observable<CameraPhoto> {
+  private getPhoto(photoType: PhotoType, cameraSource: CameraSource): Observable<CameraPhoto> {
     const uploadSettings = this.photoUploadService.photoUploadSettings;
     /// set session state to allow user to return from camera without logging in again, this would disrupt the data transfer
     this.sessionFacadeService.navigatedToPlugin = true;
@@ -344,12 +390,13 @@ export class PhotoUploadComponent implements OnInit {
       Camera.getPhoto({
         quality: 85, //Test
         correctOrientation: true,
-        allowEditing: false,
+        presentationStyle: 'popover',
+        allowEditing: true,
         width: uploadSettings.saveWidth ? uploadSettings.saveWidth : null,
         height: uploadSettings.saveHeight ? uploadSettings.saveHeight : null,
         direction: photoType === PhotoType.PROFILE ? CameraDirection.Front : CameraDirection.Rear,
         resultType: CameraResultType.Base64,
-        source: CameraSource.Camera,
+        source: cameraSource,
         saveToGallery: false,
       })
     );
