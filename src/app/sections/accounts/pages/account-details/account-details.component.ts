@@ -1,6 +1,6 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IonContent, IonInfiniteScroll, ToastController } from '@ionic/angular';
+import { IonContent, IonInfiniteScroll } from '@ionic/angular';
 
 import { Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
@@ -9,6 +9,7 @@ import { TransactionHistory } from '../../models/transaction-history.model';
 import { CONTENT_STRINGS, TIME_PERIOD } from '../../accounts.config';
 import { TransactionService } from '../../services/transaction.service';
 import { NavigationState } from '@sections/dashboard/models/navigation-state.model';
+import { ToastService } from '@core/service/toast/toast.service';
 
 @Component({
   selector: 'st-account-details',
@@ -26,7 +27,7 @@ export class AccountDetailsComponent implements OnInit, AfterViewInit {
 
   constructor(
     private readonly activatedRoute: ActivatedRoute,
-    private readonly toastController: ToastController,
+    private readonly toastService: ToastService,
     private readonly transactionsService: TransactionService,
     private readonly router: Router
   ) {}
@@ -70,11 +71,7 @@ export class AccountDetailsComponent implements OnInit, AfterViewInit {
   }
 
   private async onErrorRetrieveTransactions(message: string): Promise<void> {
-    const toast = await this.toastController.create({
-      message,
-      duration: 1000,
-    });
-    await toast.present();
+    await this.toastService.showToast({ message });
   }
 
   get csNames() {

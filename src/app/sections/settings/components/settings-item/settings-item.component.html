@@ -1,5 +1,10 @@
-<ion-item [lines]="lines" (click)="settingTap(setting)" [button]="setting.type !== 'toggle'">
-  <img class="item__icon" src="../../../assets/icon/{{ setting.icon }}.svg" alt="Update Photo" />
+<ion-item
+  [lines]="lines"
+  (click)="settingTap(setting)"
+  [button]="setting.type !== 'toggle'"
+  tabindex="0"
+>
+  <img class="item__icon" src="../../../assets/icon/{{ setting.icon }}.svg" alt="option icon" />
   <ion-label class="item__label"
     ><h4>{{ setting.label }}</h4></ion-label
   >

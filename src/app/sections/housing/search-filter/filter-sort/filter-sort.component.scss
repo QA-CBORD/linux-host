@@ -1,0 +1,26 @@
+@import 'tools';
+
+:host {
+  display: block;
+}
+
+.filter-sort__container {
+  display: flex;
+  padding: 0 16px;
+}
+
+.filter-sort__control {
+  border-top: 1px solid #{$color-light-gray};
+  border-bottom: 1px solid #{$color-light-gray};
+  border-right: 1px solid #{$color-light-gray};
+  overflow: hidden;
+
+  &:first-child {
+    border-left: 1px solid #{$color-light-gray};
+    border-radius: 4px 0 0 4px;
+  }
+
+  &:last-child {
+    border-radius: 0 4px 4px 0;
+  }
+}

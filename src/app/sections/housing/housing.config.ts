@@ -5,6 +5,8 @@ export enum LOCAL_ROUTING {
   contracts = 'contracts',
   workOrders = 'work-orders',
   units = 'units',
+  roomsSearch = 'rooms-search',
+  favorites = 'favorites'
 }
 
 export const STORAGE_KEY: string = 'housing';

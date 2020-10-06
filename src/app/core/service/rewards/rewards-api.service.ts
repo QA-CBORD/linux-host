@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Platform, ToastController } from '@ionic/angular';
+import { Platform } from '@ionic/angular';
 
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
@@ -9,6 +9,7 @@ import { catchError, map } from 'rxjs/operators';
 import { UserRewardTrackInfo } from '../../model/rewards/rewards.model';
 import { MessageResponse, ServiceParameters } from '../../../core/model/service/message-response.model';
 import { RPCQueryConfig } from '@core/interceptors/query-config.model';
+import { ToastService } from '@core/service/toast/toast.service';
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +19,7 @@ export class RewardsApiService {
 
   constructor(
     private readonly http: HttpClient,
-    private readonly toastController: ToastController,
+    private readonly toastService: ToastService,
     private platform: Platform,
   ) {
   }
@@ -58,14 +59,6 @@ export class RewardsApiService {
   private async presentToast(): Promise<void> {
     const message = `something went wrong, try again later`;
     const isNativeDevicesEnv = this.isPlatform('android') || this.isPlatform('ios');
-    const toast = await this.toastController.create({
-      message,
-      duration: 3000,
-      cssClass: 'exception-toast',
-      position: isNativeDevicesEnv ? 'bottom' : 'top',
-      closeButtonText: 'DISMISS',
-      showCloseButton: true,
-    });
-    await toast.present();
+    await this.toastService.showToast({ message, toastButtons: [{ text: 'Dismiss' }], position: isNativeDevicesEnv ? 'bottom' : 'top'});
   }
 }

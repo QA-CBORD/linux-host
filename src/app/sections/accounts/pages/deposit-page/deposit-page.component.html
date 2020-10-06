@@ -13,27 +13,35 @@
           class="deposit__select"
           cancelText="Cancel"
           mode="md"
-          placeholder="Please Choose"
           tabindex="0"
           interface="action-sheet"
           [interfaceOptions]="customActionSheetPaymentOptions"
           formControlName="sourceAccount"
           (ionChange)="onPaymentMethodChanged($event)"
+          placeholder="Please Choose"
+          [selectedText]="paymentMethod.value | accountDisplay"
+          #paymentMethod
         >
-          <ion-select-option *ngIf="isCreditCardPaymentTypesEnabled && applePayEnabled$ | async" [value]="applePayAccountType">
-            Apple Pay
+          <ion-select-option
+            *ngIf="(isCreditCardPaymentTypesEnabled && applePayEnabled$ | async)"
+            [value]="applePayAccountType"
+          >
+            {{ applePayAccountType | accountDisplay }}
           </ion-select-option>
           <ng-container *ngIf="isCreditCardPaymentTypesEnabled">
-            <ion-select-option [value]="account"
-                               *ngFor="let account of creditCardSourceAccounts; trackBy: trackByAccountId"
-                               class="test-class">{{ account.accountTender | creditCardType }} ending in
-              {{ account.lastFour }}
+            <ion-select-option
+              [value]="account"
+              *ngFor="let account of creditCardSourceAccounts; trackBy: trackByAccountId"
+              class="test-class"
+              >{{ account | accountDisplay }}
             </ion-select-option>
           </ng-container>
-          <ion-select-option [value]="paymentTypes.BILLME"
-                             *ngIf="isBillMePaymentTypesEnabled">Bill Me</ion-select-option>
-          <ion-select-option value="newCreditCard"
-                             *ngIf="isCreditCardPaymentTypesEnabled"> Add a Credit Card </ion-select-option>
+          <ion-select-option [value]="paymentTypes.BILLME" *ngIf="isBillMePaymentTypesEnabled">{{
+            paymentTypes.BILLME | accountDisplay
+          }}</ion-select-option>
+          <ion-select-option value="newCreditCard" *ngIf="isCreditCardPaymentTypesEnabled">
+            Add a Credit Card
+          </ion-select-option>
         </ion-select>
       </div>
 
@@ -63,17 +71,20 @@
 
       <div class="deposit__select-wrapper">
         <ion-label class="deposit__label-select">To Account</ion-label>
-        <ion-select class="deposit__select deposit__select-account"
-                    cancelText="Cancel"
-                    mode="md"
-                    tabindex="0"
-                    placeholder="Please Choose"
-                    interface="action-sheet"
-                    [interfaceOptions]="customActionSheetOptions"
-                    formControlName="selectedAccount">
-          <ion-select-option [value]="account"
-                             *ngFor="let account of destinationAccounts; trackBy: trackByAccountId">
-            {{ account.accountDisplayName }} ({{ account.balance | transactionUnits: account.accountType }})
+        <ion-select
+          class="deposit__select deposit__select-account"
+          cancelText="Cancel"
+          mode="md"
+          tabindex="0"
+          interface="action-sheet"
+          [interfaceOptions]="customActionSheetOptions"
+          formControlName="selectedAccount"
+          placeholder="Please Choose"
+          [selectedText]="toAccount.value | destinationAccountDisplay"
+          #toAccount
+        >
+          <ion-select-option [value]="account" *ngFor="let account of destinationAccounts; trackBy: trackByAccountId">
+            {{ account | destinationAccountDisplay }}
           </ion-select-option>
         </ion-select>
       </div>

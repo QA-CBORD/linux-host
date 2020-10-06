@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
-import { NavController, PopoverController, ToastController } from '@ionic/angular';
+import { NavController, PopoverController } from '@ionic/angular';
 import { AddCreditCardService } from './services/add-credit-card.service';
 import { SuccessPopoverComponent } from './components/success-popover/success-popover.component';
 import { LoadingService } from 'src/app/core/service/loading/loading.service';
@@ -8,6 +8,7 @@ import { WHITESPACE_REGEXP, FOUR_DIGITS_REGEXP } from '@core/utils/regexp-patter
 import { Subscription } from 'rxjs';
 import { take, finalize } from 'rxjs/operators';
 import { validateAllFormFields } from '@core/utils/general-helpers';
+import { ToastService } from '@core/service/toast/toast.service';
 
 @Component({
   selector: 'st-add-credit-card',
@@ -25,7 +26,7 @@ export class AddCreditCardComponent implements OnInit {
     private readonly fb: FormBuilder,
     private readonly addCreditCardService: AddCreditCardService,
     private readonly popoverCtrl: PopoverController,
-    private readonly toastController: ToastController,
+    private readonly toastService: ToastService,
     private readonly loadingService: LoadingService,
     private readonly nav: NavController,
   ) { }
@@ -129,12 +130,7 @@ export class AddCreditCardComponent implements OnInit {
   }
 
   private async failedCriationAccount(message: string) {
-    const toast = await this.toastController.create({
-      message,
-      duration: 3000,
-      position: 'top',
-    });
-    toast.present();
+    await this.toastService.showToast({ message });
   }
 
   private cardTypeControlSubscribtion() {

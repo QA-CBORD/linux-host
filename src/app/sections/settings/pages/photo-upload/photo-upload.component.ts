@@ -1,7 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CameraDirection, CameraPhoto, CameraResultType, CameraSource, Plugins } from '@capacitor/core';
-import { ToastController } from '@ionic/angular';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { PATRON_NAVIGATION } from '../../../../app.global';
 import { from, Observable, of, zip } from 'rxjs';
@@ -10,6 +9,7 @@ import { UserPhotoInfo } from '@core/model/user';
 import { PhotoStatus, PhotoType, PhotoUploadService } from '../services/photo-upload.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
+import { ToastService } from '@core/service/toast/toast.service';
 
 const { Camera } = Plugins;
 
@@ -50,7 +50,7 @@ export class PhotoUploadComponent implements OnInit {
   submitButtonDisabled: boolean = true;
 
   localPhotoUploadStatus: LocalPhotoUploadStatus;
-  private localPhotoData: LocalPhotoData ={
+  private localPhotoData: LocalPhotoData = {
     govtIdRequired: false,
     profile: null,
     profilePending: null,
@@ -62,7 +62,7 @@ export class PhotoUploadComponent implements OnInit {
     private readonly router: Router,
     private readonly domsanitizer: DomSanitizer,
     private readonly sessionFacadeService: SessionFacadeService,
-    private readonly toastController: ToastController,
+    private readonly toastService: ToastService,
     private readonly photoUploadService: PhotoUploadService,
     private readonly loadingService: LoadingService,
     private readonly cd: ChangeDetectorRef
@@ -100,7 +100,12 @@ export class PhotoUploadComponent implements OnInit {
     this.photoUploadService
       .getInitialPhotoData$()
       .pipe(
-        finalize(() => this.loadingService.closeSpinner()),
+        finalize(() => {
+          this.loadingService.closeSpinner()
+          if (this.localPhotoUploadStatus.profile === LocalPhotoStatus.NONE) {
+            this.photoUploadService.clearLocalGovernmentIdPhotos();
+          }
+        }),
         first()
       )
       .subscribe(
@@ -112,12 +117,10 @@ export class PhotoUploadComponent implements OnInit {
   }
 
   private setupPhotoSubscriptions() {
-    this.photoUploadService.governmentIdRequired$.pipe(take(1)).subscribe(
-      govtIdRequired => {
-        this.localPhotoData.govtIdRequired = govtIdRequired;
-        this.updateSubmitButtonStatus();
-      }
-    );
+    this.photoUploadService.governmentIdRequired$.pipe(take(1)).subscribe(govtIdRequired => {
+      this.localPhotoData.govtIdRequired = govtIdRequired;
+      this.updateSubmitButtonStatus();
+    });
 
     this.govIdFront$ = this.photoUploadService.govtIdFront$.pipe(
       tap(photoInfo => {
@@ -357,20 +360,14 @@ export class PhotoUploadComponent implements OnInit {
   }
 
   private async presentToast(message: string) {
-    const toast = await this.toastController.create({
-      message,
-      duration: 5000,
-      position: 'top',
-    });
-    toast.present();
+    await this.toastService.showToast({ message, duration: 5000 });
   }
 
   private async photoDataFetchErrorToast() {
-    const toast = await this.toastController.create({
+    await this.toastService.showToast({
       message: 'There was an issue retrieving your photo information - please try again',
       duration: 5000,
-      position: 'top',
-      buttons: [
+      toastButtons: [
         {
           side: 'end',
           text: 'Retry',
@@ -381,7 +378,6 @@ export class PhotoUploadComponent implements OnInit {
         },
       ],
     });
-    toast.present();
   }
 
   navigateBack() {
