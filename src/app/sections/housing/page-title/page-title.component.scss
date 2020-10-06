@@ -1,0 +1,5 @@
+@import 'tools';
+
+.page-title {
+  @include font-nunito-heavy(20px);
+}

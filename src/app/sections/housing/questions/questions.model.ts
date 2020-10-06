@@ -19,6 +19,7 @@ export interface QuestionsPage {
 export enum QUESTIONS_SOURCES {
   PATRON = 'PATRON',
   FACILITY = 'FACILITY',
+  FACILITY_CORE = 'FACILITY_CORE',
   CORE = 'CORE',
   FACILITY_TYPE = 'FACILITY_TYPE',
   ASSET_TYPE = 'ASSET_TYPE',

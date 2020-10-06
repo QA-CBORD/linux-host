@@ -5,9 +5,12 @@ import { integerValidator, numericValidator, parseJsonToArray } from '../utils';
 
 import {
   QuestionBase,
+  QuestionChargeScheduleBase,
   QuestionCheckboxGroup,
   QuestionCheckboxGroupValue,
+  QuestionContractDetails,
   QuestionDate,
+  QuestionDateSigned,
   QuestionDropdown,
   QuestionFormControl,
   QuestionHeader,
@@ -15,9 +18,6 @@ import {
   QuestionRadioGroup,
   QuestionTextarea,
   QuestionTextbox,
-  QuestionContractDetails,
-  QuestionChargeScheduleBase,
-  QuestionDateSigned,
 } from './types';
 
 import { QuestionReorder, QUESTIONS_SOURCES } from './questions.model';
@@ -142,7 +142,7 @@ export class QuestionsService {
             } else {
               return new QuestionContractDetails(question);
             }
-          } else if ((question as QuestionFacilityAttributes).source === QUESTIONS_SOURCES.FACILITY) {
+          } else if (this._isSourceFacility(question as QuestionFacilityAttributes)) {
             return new QuestionFacilityAttributes(question);
           }
         }
@@ -151,7 +151,15 @@ export class QuestionsService {
       })
       .sort(this._sortByQuestionDateSigned);
   }
-
+  private _isSourceFacility(question: QuestionFacilityAttributes): boolean {
+    const facilitySources = Object.keys(QUESTIONS_SOURCES).filter(x =>  x.includes("FACILITY"));
+    for (let i=0; i < facilitySources.length; i++) {
+      if(question.source === facilitySources[i]) {
+        return true;
+      }
+    }
+    return false;
+  }
   private _sortByQuestionDateSigned(current: QuestionBase, next: QuestionBase): number {
     if (current instanceof QuestionDateSigned) {
       return 1;

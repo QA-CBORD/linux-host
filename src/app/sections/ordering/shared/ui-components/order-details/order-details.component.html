@@ -103,11 +103,11 @@
           class="order-details__value"
           [cancelText]="contentStrings.buttonCancel | async"
           mode="md"
-          [attr.aria-placeholder]="contentStrings.selectAccount | async"
+          [placeholder]="contentStrings.selectAccount | async"
           interface="action-sheet"
           (ionChange)="onPaymentChanged($event)"
           [interfaceOptions]="{ cssClass: 'custom-deposit-actionSheet' }"
-          [stAccessibleSelect]="paymentMethod.value | accountTypeResolver: mealBased"
+          [selectedText]="paymentMethod.value | accountTypeResolver: mealBased"
           #paymentMethod
         >
           <ion-select-option *ngIf="applePayEnabled && accInfoList?.creditAccepted" [value]="applePayAccountType">

@@ -1,0 +1,19 @@
+@import 'tools';
+
+.range {
+  --bar-background: #{$color-silver};
+  --bar-background-active: #{$color-dodger-blue};
+  --knob-size: 26px;
+  --knob-box-shadow: 0px 0px 0px 2px #{$color-dodger-blue};
+  --pin-background: #{$color-dodger-blue};
+  --pin-color: #{$color-white};
+
+  margin: 0 8px;
+}
+
+.range__price {
+  @include font-nunito-semibold(16px);
+
+  color: $color-dim-gray;
+  text-align: center;
+}

@@ -12,17 +12,15 @@
 
 .terms-label {
   @include font-nunito-heavy(16px);
+  @include chevron-down(0);
 
   color: rgba($color-black, 0.6);
   padding-right: 20px;
   position: relative;
 
-  @include chevron-down();
-
   &::before {
     background-color: transparent;
-    right: 0;
-    transform: translateY(-40%);
+    transform: translateY(-45%);
   }
 }
 

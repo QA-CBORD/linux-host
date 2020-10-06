@@ -1,22 +1,38 @@
-import { Directive, Input, HostBinding } from '@angular/core';
+import { Directive, Input, HostBinding, OnDestroy } from '@angular/core';
 import { IonSelect } from '@ionic/angular';
+import { Subscription } from 'rxjs';
+import { Plugins } from '@capacitor/core';
+
+const { Accessibility } = Plugins;
+const READ_ALOUD_DELAY = 2000;
 
 @Directive({
-  selector: '[stAccessibleSelect]',
+  selector: 'ion-select',
 })
-export class AccessibleSelectDirective {
-  @Input('stAccessibleSelect')
-  selectedText: string;
-
-  @Input('attr.aria-placeholder')
-  ariaPlaceholder: string;
-
-  @HostBinding('attr.aria-label') get ariaLabel() {
-    return this.selectedText || '';
+export class AccessibleSelectDirective implements OnDestroy {
+  ngOnDestroy(): void {
+    this.subs && this.subs.unsubscribe();
   }
 
-  @HostBinding('attr.placeholder') get placeholder() {
-    // To prevent Screen readers from read both value and placeholder text.
-    return this.selectedText ? '' : this.ariaPlaceholder;
+  @Input('attr.aria-placeholder') get ariaPlaceholder() {
+    return this.host.placeholder;
+  }
+
+  @HostBinding('attr.aria-label') get ariaLabel() {
+    return this.host.selectedText || '';
+  }
+
+  subs: Subscription;
+
+  constructor(private readonly host: IonSelect) {
+    this.subs = this.host.ionChange.subscribe(() =>
+      Accessibility.isScreenReaderEnabled().then(isRunning => {
+        if (isRunning.value) {
+          setTimeout(() => {
+            Accessibility.speak({ value: this.host.selectedText });
+          }, READ_ALOUD_DELAY);
+        }
+      })
+    );
   }
 }

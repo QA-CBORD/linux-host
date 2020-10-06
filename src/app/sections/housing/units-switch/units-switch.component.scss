@@ -1,0 +1,26 @@
+@import 'tools';
+
+.units-switch__toolbar {
+  --padding-top: 0;
+  --padding-bottom: 0;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --border-width: 1px;
+  --border-color: #{$color-whisper};
+}
+
+.units-switch__tab {
+  @include font-nunito-semibold(16px);
+
+  --border-radius: 4px 4px 0 0;
+  --color: #{rgba($color-black, 0.6)};
+
+  border-bottom: 2px solid transparent;
+  flex-grow: 1;
+  flex-basis: 0;
+
+  &.active {
+    --color: #{rgba($color-black, 0.9)};
+    border-bottom-color: $color-dodger-blue;
+  }
+}

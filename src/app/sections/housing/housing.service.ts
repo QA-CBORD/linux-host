@@ -1,9 +1,12 @@
+import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { Injectable } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
-import { Observable, of, forkJoin, Subject } from 'rxjs';
-import { map, switchMap, tap, catchError } from 'rxjs/operators';
+import { ROLES } from '../../app.global';
+import { forkJoin, Observable, of, Subject } from 'rxjs';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
+
 
 import { HousingProxyService } from './housing-proxy.service';
 import { ApplicationsStateService } from './applications/applications-state.service';
@@ -12,22 +15,29 @@ import { TermsService } from './terms/terms.service';
 import { ApplicationsService } from './applications/applications.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ContractsService } from '@sections/housing/contracts/contracts.service';
+import { RoomsStateService } from '@sections/housing/rooms/rooms-state.service';
+import { RoomSelect } from '@sections/housing/rooms/rooms.model';
 
-import { DefinitionsResponse, DetailsResponse, Response } from './housing.model';
+import {
+  DefinitionsResponse,
+  DetailsResponse,
+  FacilityDetailsResponse,
+  Response,
+  RoomSelectResponse,
+} from './housing.model';
 import { ApplicationDetails } from './applications/applications.model';
-import { ContractListDetails, ContractDetails } from './contracts/contracts.model';
-import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
+import { Facility, FacilityDetailsToFacilityMapper } from './facilities/facilities.model';
+import { ContractDetails, ContractListDetails } from './contracts/contracts.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class HousingService {
-  private readonly _patronApplicationsUrl: string = `${
-    this._environmentFacadeService.getEnvironmentObject().housing_aws_url
-  }/patron-applications/v.1.0/patron-applications`;
+  private readonly _baseUrl = this._environmentFacadeService.getEnvironmentObject().housing_aws_url
+  private readonly _patronApplicationsUrl: string = `${this._baseUrl}/patron-applications/v.1.0/patron-applications`;
 
   private readonly _applicationDefinitionUrl: string = `${this._patronApplicationsUrl}/application-definition`;
-
+  private readonly  _facilityMapper: FacilityDetailsToFacilityMapper;
   private _refreshDefinitionsSource: Subject<void> = new Subject<void>();
 
   refreshDefinitions$: Observable<number> = this._refreshDefinitionsSource
@@ -44,8 +54,11 @@ export class HousingService {
     private _loadingService: LoadingService,
     private _toastController: ToastController,
     private _router: Router,
-    private _contractsService: ContractsService
-  ) {}
+    private _contractsService: ContractsService,
+    private _roomsStateService: RoomsStateService,
+  ) {
+    this._facilityMapper = new FacilityDetailsToFacilityMapper();
+  }
 
   getDefinitions(termId: number) {
     const apiUrl: string = `${this._patronApplicationsUrl}/term/${termId}/patron/self`;
@@ -96,12 +109,44 @@ export class HousingService {
       );
   }
 
+  getRoomSelects(termId: number) {
+    const apiUrl: string = `${this._baseUrl}/roomselectproxy/v.1.0/room-selects-proxy/patron/${termId}`;
+    return this._housingProxyService.get<RoomSelectResponse>(apiUrl).pipe(
+      map((response: any) => new RoomSelectResponse(response)),
+      tap((response: RoomSelectResponse) => this._setRoomsState(response.roomSelects)),
+      catchError(() => this._handleGetRoomSelectsError())
+    );
+  }
+  getFacilities(roomSelectKey: number): Observable<Facility[]> {
+    const apiUrl = `${
+      this._baseUrl
+    }/roomselectproxy/v.1.0/room-selects-proxy/facilities/details/${roomSelectKey}`;
+    return this._housingProxyService.get<FacilityDetailsResponse>(apiUrl).pipe(
+      map((response: any) => {
+        const details = new  FacilityDetailsResponse(response)
+        return this._facilityMapper.map(details.facilityDetails);
+      }),
+      catchError((e) =>{ throw e})
+    );
+  }
+  _handleGetRoomSelectsError(): Observable<RoomSelectResponse> {
+    const roomSelects: RoomSelect[] = [];
+    this._setRoomsState(roomSelects);
+
+    return of(new RoomSelectResponse({ roomSelects }));
+  }
+
+  _setRoomsState(roomSelects: RoomSelect[]): void {
+    this._roomsStateService.setRoomSelects(of(roomSelects));
+  }
+
   handleSuccess(): void {
     this._loadingService.closeSpinner();
-    this._router.navigate(['/housing/dashboard']).then(() => this.refreshDefinitions());
+    this._router.navigate([`${ROLES.patron}/housing/dashboard`]).then(() => this.refreshDefinitions());
   }
 
   handleErrors(error: any): void {
+    console.log(error);
     let message = 'Something went wrong. Try again later';
 
     this._loadingService.closeSpinner();
@@ -160,3 +205,6 @@ export class HousingService {
     );
   }
 }
+
+
+
