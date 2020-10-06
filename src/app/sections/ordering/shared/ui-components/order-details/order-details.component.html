@@ -103,7 +103,7 @@
           class="order-details__value"
           [cancelText]="contentStrings.buttonCancel | async"
           mode="md"
-          [attr.aria-placeholder]="contentStrings.selectAccount | async"
+          [placeholder]="contentStrings.selectAccount | async"
           interface="action-sheet"
           (ionChange)="onPaymentChanged($event)"
           [interfaceOptions]="{ cssClass: 'custom-deposit-actionSheet' }"

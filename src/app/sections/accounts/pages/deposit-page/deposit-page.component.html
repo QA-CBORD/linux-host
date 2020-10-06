@@ -18,7 +18,7 @@
           [interfaceOptions]="customActionSheetPaymentOptions"
           formControlName="sourceAccount"
           (ionChange)="onPaymentMethodChanged($event)"
-          attr.aria-placeholder="Please Choose"
+          placeholder="Please Choose"
           [selectedText]="paymentMethod.value | accountDisplay"
           #paymentMethod
         >
@@ -79,7 +79,7 @@
           interface="action-sheet"
           [interfaceOptions]="customActionSheetOptions"
           formControlName="selectedAccount"
-          attr.aria-placeholder="Please Choose"
+          placeholder="Please Choose"
           [selectedText]="toAccount.value | destinationAccountDisplay"
           #toAccount
         >
