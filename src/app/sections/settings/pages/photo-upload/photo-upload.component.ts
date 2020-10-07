@@ -390,7 +390,7 @@ export class PhotoUploadComponent implements OnInit {
       Camera.getPhoto({
         quality: 85, //Test
         correctOrientation: true,
-        presentationStyle: 'popover',
+        presentationStyle: 'fullscreen',
         allowEditing: true,
         width: uploadSettings.saveWidth ? uploadSettings.saveWidth : null,
         height: uploadSettings.saveHeight ? uploadSettings.saveHeight : null,
