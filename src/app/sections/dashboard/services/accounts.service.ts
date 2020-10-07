@@ -26,7 +26,7 @@ export class AccountsService {
   }
 
   transformStringToArray(value: string): Array<unknown> {
-    if (!value.length) return [];
+    if(!value || !value.length) return [];
     const result = JSON.parse(value);
     return Array.isArray(result) ? result : [];
   }

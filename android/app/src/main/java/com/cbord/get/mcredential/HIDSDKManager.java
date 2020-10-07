@@ -30,38 +30,28 @@ import com.hid.origo.api.hce.OrigoHceConnectionListener;
 
 import java.util.List;
 
-public class HIDMobileCredentialSetup implements OrigoKeysApiFacade, OrigoMobileKeysProgressCallback, OrigoMobileKeysCallback, OrigoReaderConnectionListener, OrigoHceConnectionListener {
+public class HIDSDKManager implements OrigoKeysApiFacade, OrigoMobileKeysProgressCallback, OrigoMobileKeysCallback, OrigoReaderConnectionListener, OrigoHceConnectionListener {
 
-    private static final String TAG = HIDMobileCredentialSetup.class.getSimpleName();
-
+    private static final String TAG = HIDSDKManager.class.getSimpleName();
+    public static  String TRANSACTION_RESULT = "Success";
     private OrigoMobileKeys mobileKeys;
     private OrigoKeysApiFactory mobileKeysApiFactory;
     private MobileKeyEndpointSetup endpointSetup;
     private OrigoMobileKeyStartup mobileKeyStartup;
-    private EndpointSetupListener pluggingListener;
-    private static HIDMobileCredentialSetup instance;
+    private static HIDSDKManager instance;
     private Context applicationContext;
-
-    private HIDMobileCredentialSetup(Application application, EndpointSetupListener listener){
+    private HIDSDKManager(Application application){
         onInit(application);
-        this.pluggingListener = listener;
     }
 
-    synchronized public static HIDMobileCredentialSetup create(final Application application, EndpointSetupListener listener){
+    synchronized public static HIDSDKManager getInstance(final Application application){
         if(instance == null)
         {
-            instance = new HIDMobileCredentialSetup(application, listener);
+            instance = new HIDSDKManager(application);
         }
         return instance;
     }
 
-    synchronized public static HIDMobileCredentialSetup getInstance(){
-        return instance;
-    }
-
-//    public void startup(){
-//       this.mobileKeyStartup.applicationStarted();
-//    }
 
     private void onInit(final Application application){
         Log.d(TAG, "initializing HIDMobileCredentialSetup");
@@ -77,7 +67,7 @@ public class HIDMobileCredentialSetup implements OrigoKeysApiFacade, OrigoMobile
     }
 
 
-    public void onStart(){
+    public void onApplicationStarted(){
         Log.d(TAG, "HIDMobileCredentialSetup onStart()");
         this.mobileKeyStartup.applicationStarted();
     }
@@ -98,23 +88,9 @@ public class HIDMobileCredentialSetup implements OrigoKeysApiFacade, OrigoMobile
     {
         if(isEndpointSetUpComplete())
         {
-            mobileKeys.unregisterEndpoint(new OrigoMobileKeysProgressCallback(){
-
-                @Override
-                public void handleMobileKeysTransactionCompleted() {
-                  pluggingListener.onEvent(EventTypes.ENDPOINT_DELETE_SUCCESS);
-                }
-
-                @Override
-                public void handleMobileKeysTransactionFailed(OrigoMobileKeysException e) {
-                  pluggingListener.onEvent(EventTypes.ENDPOINT_DELETE_FAILURE);
-                }
-
-                @Override
-                public void handleMobileKeysTransactionProgress(OrigoProgressEvent origoProgressEvent) {}
-            });
-        }else {
-            pluggingListener.onEvent(EventTypes.ENDPOINT_NOT_SETUP);
+            mobileKeys.unregisterEndpoint(this);
+        }else{
+            TRANSACTION_RESULT = "NO_KEY_INSTALLED";
         }
     }
 
@@ -123,8 +99,13 @@ public class HIDMobileCredentialSetup implements OrigoKeysApiFacade, OrigoMobile
     {
         List<OrigoMobileKey> installedKeys = null;
         try{
+            Log.d(TAG, "GOING TO UPDATE ENDPOINT");
+            updateEndpoint();
            installedKeys = mobileKeys.listMobileKeys();
+           Log.d(TAG, String.valueOf(installedKeys.size()));
         }catch(OrigoMobileKeysException ex){
+            Log.d(TAG, "Failed to load any mobile key");
+            TRANSACTION_RESULT = "NO_KEY_INSTALLED";
             return null;
         }
 
@@ -140,7 +121,9 @@ public class HIDMobileCredentialSetup implements OrigoKeysApiFacade, OrigoMobile
      * Update mobile keys api
      */
     private void updateEndpoint() {
-        getMobileKeys().endpointUpdate(this);
+        if(isEndpointSetUpComplete()){
+            getMobileKeys().endpointUpdate(this);
+        }
     }
 
 
@@ -150,17 +133,9 @@ public class HIDMobileCredentialSetup implements OrigoKeysApiFacade, OrigoMobile
                 // call back ionic to tell it everything is setup.
                 Log.d(TAG, "isEndpointSetupComplete(): TRUE");
                 endpointSetup.doSetup(invitationCode);
-            }else{
                 updateEndpoint();
-                OrigoMobileKey installedEndpoint = getCurrentEndpoint();
-                if(installedEndpoint == null){
-                    // that's ridiculous.
-                    endpointSetup.doSetup(invitationCode);
-                 }else if(!installedEndpoint.isActivated()){
-                    pluggingListener.onEvent(EventTypes.INACTIVE_CREDENTIAL);
-                } else{
-                    pluggingListener.onEvent(EventTypes.DUPLICATED_CREDENTIAL);
-                }
+            }else{
+              TRANSACTION_RESULT = "ENDPOING_ALREADY_SETUP";
             }
         }catch(OrigoMobileKeysException exception) {
             exception.printStackTrace();
@@ -171,25 +146,17 @@ public class HIDMobileCredentialSetup implements OrigoKeysApiFacade, OrigoMobile
     public void onStartUpComplete() {
         //
         Log.d(TAG, "onStartUpComplete()");
+        updateEndpoint();
         if(isEndpointSetUpComplete()){
-            updateEndpoint();
             startScanning();
           } else {
             stopScanning();
         }
-        this.pluggingListener.onEvent(EventTypes.STARTUP_SUCCESS);
     }
 
 
     @Override
-    public void onEndpointSetUpComplete() {
-        // we need to notify ionic of this event.
-        Log.d(TAG, "onEndpointSetUpComplete()");
-        if(isEndpointSetUpComplete()) {
-            updateEndpoint();
-            this.pluggingListener.onEvent(EventTypes.INSTALL_SUCCESS);
-        }
-    }
+    public void onEndpointSetUpComplete() {}
 
     @Override
     public void endpointNotPersonalized() {
@@ -260,13 +227,11 @@ public class HIDMobileCredentialSetup implements OrigoKeysApiFacade, OrigoMobile
     }
 
     @Override
-    public void handleMobileKeysTransactionCompleted() {
-
-    }
+    public void handleMobileKeysTransactionCompleted() {}
 
     @Override
     public void handleMobileKeysTransactionFailed(OrigoMobileKeysException e) {
-        this.pluggingListener.operationFailure(e.getErrorCode());
+        TRANSACTION_RESULT = e.getErrorCode().toString();
     }
 
     private void stopScanning() {
@@ -284,7 +249,6 @@ public class HIDMobileCredentialSetup implements OrigoKeysApiFacade, OrigoMobile
                 Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(applicationContext,
                         Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED);
-
     }
 
 
@@ -298,13 +262,11 @@ public class HIDMobileCredentialSetup implements OrigoKeysApiFacade, OrigoMobile
             controller.enableHce();
         } else {
             Log.e(TAG, "You have no location permisison");
-           // requestLocationPermission();
         }
     }
 
     @Override
     public void handleMobileKeysTransactionProgress(OrigoProgressEvent origoProgressEvent) {
         Log.d(TAG, "handleMobileKeysTransactionProgress: " + origoProgressEvent.progressType());
-
     }
 }

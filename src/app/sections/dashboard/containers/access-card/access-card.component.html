@@ -46,18 +46,23 @@
       </ion-col>
     </ion-row>
     <ion-row class="card__student-container">
-      <ion-col class="card__student-name-wrapper" [size]="appleWalletEnabled ? 8 : 'auto'">
+      <ion-col class="card__student-name-wrapper" [size]="mobileCredentialEnabled ? 7 : 'auto'">
         <div *ngIf="(userName$ | async)" class="card__student-name">{{ userName$ | async }}</div>
       </ion-col>
-      <ion-col *ngIf="appleWalletEnabled || androidMobileCredentialAvailable" size="4">
+      <ion-col *ngIf="mobileCredentialEnabled" size="5">
         <div class="card__student-wallet">
           <img
-            *ngIf="appleWalletMessageImage"
+            *ngIf="{
+              imageUrl: credentialManager.uiIconUrl$ | async,
+              cardStatusMsg: credentialManager.uiText$ | async
+            } as data"
+            mode="ios"
+            (click)="credentialManager.onUiIconClicked()"
             class="card__wallet-icon"
-            src="/assets/images/{{ appleWalletMessageImage }}.png"
-            alt="{{ cardStatusMessage }}"
+            src="{{ data.imageUrl }}"
+            alt="{{ data.cardStatusMsg }}"
           />
-          <div class="card__student-wallet-text">{{ cardStatusMessage }}</div>
+          <div class="card__student-wallet-text">{{ credentialManager.uiText$ | async }}</div>
         </div>
       </ion-col>
     </ion-row>
@@ -78,12 +83,21 @@
           </div>
         </ion-button>
       </ion-col>
-      <ion-col *ngIf="!appleWalletButtonHidden || androidMobileCredentialAvailable" class="card__quick-actions-wrapper">
-        <ion-button mode="ios" class="card__apple-wallet-btn" (click)="addMobileCredential()"
-          ><img *ngIf="!appleWalletButtonHidden" src="/assets/icon/Add_to_Apple_Wallet_rgb_US-UK.svg" />
-          <img *ngIf="androidMobileCredentialAvailable" src="/assets/icon/icon_cloud-key-lock.png" />
+      <ion-col *ngIf="(credentialManager.mobileCredentialAvailable$ | async)" class="card__quick-actions-wrapper">
+        <ion-button
+          *ngIf="(credentialManager.uiImageUrl$ | async) as image"
+          mode="ios"
+          class="card__apple-wallet-btn"
+          (click)="credentialManager.onImageClick()"
+        >
+          <img src="{{ image }}" />
         </ion-button>
       </ion-col>
     </ion-row>
   </ion-grid>
 </div>
+
+<!--
+  <img *ngIf="!appleWalletButtonHidden" src="/assets/icon/Add_to_Apple_Wallet_rgb_US-UK.svg" />
+          <img *ngIf="mobileCredentialEnabled" src={{mobileCredentialService.getCredentialUiImageUrl()}} />
+-->

@@ -1,14 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
-import { LoadingService } from '@core/service/loading/loading.service';
-import { MobileCredential } from '@core/service/payments-api/model/credential-utils';
-import { HidCredential } from '@core/service/payments-api/model/mobile-credential';
-import { ModalController, PopoverController } from '@ionic/angular';
-import { map, take } from 'rxjs/operators';
-import { Plugins } from '@capacitor/core';
-import { MobileCredentialService } from '@core/service/mobile-credentials/mobile-credential.service';
-import { Subscription } from 'rxjs';
-const { HIDPlugin } = Plugins;
+import { AbstractAndroidCredentialManager } from './model/android/abstract-android-credential.management';
+import { GlobalNavService } from '../st-global-navigation/services/global-nav.service';
+import { PopoverController } from '@ionic/angular';
 
 @Component({
   selector: 'st-mobile-credentials',
@@ -16,86 +9,46 @@ const { HIDPlugin } = Plugins;
   styleUrls: ['./mobile-credentials.component.scss'],
 })
 export class MobileCredentialsComponent implements OnInit {
-  @Input() credential: MobileCredential;
-
-  showDismiss: boolean = true;
-
-  btnText: string = 'Accept and Install';
-
-  titleText: string = 'Terms of Use & Privacy Policy';
-
-  termsAndCondition$: Promise<any>;
-
-  private deleteCredentialSubscription: Subscription;
-
-  constructor(
-    private readonly loadingService: LoadingService,
-    private readonly modalController: ModalController,
-    private readonly popoverCtrl: PopoverController,
-    private contentStringFacade: ContentStringsFacadeService,
-    private mobileCredentialService: MobileCredentialService
-  ) {}
+  @Input() credentialManager: AbstractAndroidCredentialManager;
+  @Input() title: string = 'Terms and Conditions';
+  @Input() termsAndConditions$: Promise<string>;
+  @Input() hidSdkStatus: Promise<any>;
+  @Input() credentialUsageContentString$: Promise<string>;
+  @Input() btnText: string;
+  
+  constructor(private globalNav: GlobalNavService, private popoverCtrl: PopoverController) {}
 
   ngOnInit() {
-    console.log('input data: ', this.credential);
-    this.loadingService.closeSpinner();
-    if(this.credential.isProvisioned()) {
-        this.btnText = 'Uninstall Credential';
-        this.titleText = 'Credential Status';
-        HIDPlugin.loadCredentialData().then((data: { mobileKeys: any}) => {
-          const mobileKeys = data.mobileKeys;
-          console.log('found keys are: ', mobileKeys);
-        });
-    } else {
-      this.termsAndCondition$ = this.termsAndCondition();
+   if(this.hidSdkStatus){
+      this.hidSdkStatus.then((result =>{
+        console.log('hidSdkStatus : ', result);
+      }))
     }
-  }
-
-  ionViewWillEnter() {
-    console.log('ionViewWillEnter().....');
-  }
-
-  closePage(data=null): void {
-    if (this.credential.isProvisioned()) {
-      this.popoverCtrl.dismiss(data);
-    } else {
-      this.modalController.dismiss(data);
-    }
-  }
-
-  back() {
-    console.log('back called....');
-  }
-
-  onBtnClicked(): void {
-    this.loadingService.showSpinner({ message: 'Processing... Please wait...' });
-    if(this.credential.isProvisioned()) {
-
-      HIDPlugin.deleteCredential().then();
-      // confirm here that the patron/user really wants to uninstall the mobile credential.
-     } else {
-      if (this.credential instanceof HidCredential) {
-        // remove text on screen, call HID plugin to complete installation.
-        const invitationCode = (<HidCredential>this.credential).getInvitationCode();
-        console.log('invitationCode: ', invitationCode);
-        HIDPlugin.addCredential({token: invitationCode}).then();
-        this.closePage();
+    setTimeout(() => {
+      if(this.termsAndConditions$){
+        this.globalNav.hideNavBar()
       }
+    })
+  }
+
+  onAccept(): void {
+    this.credentialManager.onTermsAndConditionsAccepted();
+  }
+
+  onDecline(): void {
+    if(this.termsAndConditions$){
+      this.credentialManager.onTermsAndConditionsDeclined();
+    } else{
+      this.popoverCtrl.dismiss();
     }
   }
 
-  private async termsAndCondition(): Promise<any> {
-    const { domain, category, name } = this.credential.getTermsConditionConfig();
-    return this.contentStringFacade
-      .fetchContentString$(domain, category, name)
-      .pipe(
-        map(data => data.value),
-        take(1)
-      )
-      .toPromise();
+  ngOnDestroy(): void {
+    this.globalNav.showNavBar();
   }
 
-   ngOnDestroy():void{
-     this.deleteCredentialSubscription ? this.deleteCredentialSubscription.unsubscribe() : void 0;
+  onButtonClicked():void{
+    this.credentialManager.onDeleteCredential(this.btnText);
   }
+
 }

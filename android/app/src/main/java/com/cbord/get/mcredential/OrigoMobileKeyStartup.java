@@ -10,9 +10,9 @@ public class OrigoMobileKeyStartup implements OrigoMobileKeysCallback {
 
     private static final String TAG = OrigoMobileKeyStartup.class.getName();
 
-    private final HIDMobileCredentialSetup hidMobileCredentialSetup;
+    private final HIDSDKManager hidMobileCredentialSetup;
 
-    public OrigoMobileKeyStartup(final HIDMobileCredentialSetup setup){
+    public OrigoMobileKeyStartup(final HIDSDKManager setup){
         this.hidMobileCredentialSetup = setup;
     }
 

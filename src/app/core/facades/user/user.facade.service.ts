@@ -163,7 +163,6 @@ export class UserFacadeService extends ServiceStateFacade {
   }
 
   isAndroidMobileCredEnabled$(): Observable<boolean>{
-    return of(true);
     if(!this.nativeProvider.isAndroid()){
        return of(false);
      }
