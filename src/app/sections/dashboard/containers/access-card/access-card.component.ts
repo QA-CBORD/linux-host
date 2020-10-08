@@ -16,7 +16,6 @@ import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { Plugins } from '@capacitor/core';
 const { IOSDevice } = Plugins;
 
-
 @Component({
   selector: 'st-access-card',
   templateUrl: './access-card.component.html',
@@ -24,7 +23,6 @@ const { IOSDevice } = Plugins;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccessCardComponent implements OnInit {
-  
   userName$: Observable<string>;
   institutionName$: Observable<string>;
   institutionColor$: Observable<string>;
@@ -42,6 +40,7 @@ export class AccessCardComponent implements OnInit {
   userPhoto: string;
   isLoadingPhoto: boolean = true;
   userInfo: string;
+  appleWalletListener: any;
 
   constructor(
     private readonly accessCardService: AccessCardService,
@@ -183,7 +182,10 @@ export class AccessCardComponent implements OnInit {
   }
 
   private enableAppleWalletEvents() {
-    IOSDevice.addListener('AppleWalletEvent', (info: any) => {
+    if (this.appleWalletListener) {
+      return;
+    }
+    this.appleWalletListener = IOSDevice.addListener('AppleWalletEvent', (info: any) => {
       this.enableAppleWallet();
     });
   }
