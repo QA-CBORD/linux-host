@@ -25,8 +25,10 @@ export class IOSCredentialManager implements MobileCredentialManager {
 
   refresh(): void {
     this.loadCredentials().then(freshCredentials => {
-       this.mCredential = freshCredentials;
-       this.credentialStateChangeSubscription ? this.credentialStateChangeSubscription.onCredentialStateChanged(): undefined;
+      this.mCredential = freshCredentials;
+      this.credentialStateChangeSubscription
+        ? this.credentialStateChangeSubscription.onCredentialStateChanged()
+        : undefined;
     });
   }
 
@@ -100,11 +102,10 @@ export class IOSCredentialManager implements MobileCredentialManager {
       .toPromise();
   }
 
-
   private enableAppleWalletEvents() {
     if (!this.myPluginEventListener) {
       this.myPluginEventListener = IOSDevice.addListener('AppleWalletEvent', () => {
-         this.refresh();
+        this.refresh();
       });
     }
   }

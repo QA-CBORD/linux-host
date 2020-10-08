@@ -88,7 +88,7 @@ export class MobileCredentialService {
     );
   }
 
-  refreshCredentials(): void{
+  refreshCredentials(): void {
     this.mCredentialManager ? this.mCredentialManager.refresh() : undefined;
   }
 
@@ -103,6 +103,4 @@ export class MobileCredentialService {
   setCredentialStateChangeCallback(callback: CredentialStateChangeSubscription): void {
     this.mCredentialManager.setCredentialStateChangeSubscrption(callback);
   }
-  
-
 }

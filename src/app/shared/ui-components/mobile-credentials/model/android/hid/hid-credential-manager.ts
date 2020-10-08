@@ -18,9 +18,6 @@ import { HIDSdkManager } from './hid-plugin.adapter';
 export class HIDCredentialManager extends AbstractAndroidCredentialManager {
   private static instance: HIDCredentialManager;
   private static TRANSACTION_SUCCESS_FULL = 'TRANSACTION_SUCCESS';
-  private static NO_KEY_INSTALLED = 'NO_KEY_INSTALLED';
-  private static MOBILE_KEY_ALREADY_INSTALLED = 'KEY_ALREADY_INSTALLED';
-  private static MOBILE_KEY_INSTALLED_ON_THIS_DEVICE = 'MOBILE_KEY_INSTALLED_ON_THIS_DEVICE';
   private custom_loading_message = 'Processing ... Please wait';
 
   private constructor(
@@ -231,23 +228,25 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
 
   private uninstallCredential(): void {
     if (this.mCredential.isProvisioned()) {
-      this.deleteCredential().subscribe(
-        () => {
-          this.getHidSdkManager()
-            .deleteCurrentCredential()
-            .then(() => {
-              this.mCredential.setStatus(MobileCredentialStateEnum.IS_AVAILABLE);
-              this.credentialStateChangeSubscription.onCredentialStateChanged();
-            }).finally(()=> {
-              this.loadingService.closeSpinner();
-              this.alertCtrl.dismiss();
-            });
-        },
-        error => {
-          this.loadingService.closeSpinner();
-          this.showInstallationErrorAlert('uninstall');
-        }
-      );
+      this.deleteCredential()
+        .pipe(take(1))
+        .subscribe(
+          () => {
+            this.getHidSdkManager()
+              .deleteCurrentCredential()
+              .then(() => {
+                this.mCredential.setStatus(MobileCredentialStateEnum.IS_AVAILABLE);
+                this.credentialStateChangeSubscription.onCredentialStateChanged();
+              })
+              .finally(() => {
+                this.loadingService.closeSpinner();
+              });
+          },
+          error => {
+            this.loadingService.closeSpinner();
+            this.showInstallationErrorAlert('uninstall');
+          }
+        );
     }
   }
 

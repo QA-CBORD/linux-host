@@ -15,13 +15,10 @@ import { HIDCredentialManager } from '../model/android/hid/hid-credential-manage
 import { MobileCredential } from '../model/shared/mobile-credential';
 import { CredentialStateChangeSubscription, MobileCredentialManager } from '../model/shared/mobile-credential-manager';
 
-
-
 @Injectable({
   providedIn: 'root',
 })
-export class AndroidCredentialManager extends AbstractAndroidCredentialDataService
-  implements MobileCredentialManager {
+export class AndroidCredentialManager extends AbstractAndroidCredentialDataService implements MobileCredentialManager {
   private mCredentialManager: MobileCredentialManager;
 
   constructor(
@@ -39,7 +36,6 @@ export class AndroidCredentialManager extends AbstractAndroidCredentialDataServi
     super(partnerPaymentApi, storageStateService, authFacadeService, institutionFacadeService, httpClient);
   }
 
-
   refresh(): void {}
 
   setCredentialStateChangeSubscrption(credentialStateChangeSubscription: CredentialStateChangeSubscription): void {
@@ -50,7 +46,6 @@ export class AndroidCredentialManager extends AbstractAndroidCredentialDataServi
     this.mCredentialManager.onUiIconClicked();
   }
 
-
   getCredential(): MobileCredential {
     return this.mCredentialManager.getCredential();
   }
@@ -60,7 +55,7 @@ export class AndroidCredentialManager extends AbstractAndroidCredentialDataServi
       map(mCredential => {
         let androidCredential = <AndroidCredential<any>>mCredential;
         if (androidCredential.isHID()) {
-            this.mCredentialManager = HIDCredentialManager.getInstance(
+          this.mCredentialManager = HIDCredentialManager.getInstance(
             this.modalCtrl,
             this.alertCtrl,
             this.popoverCtrl,
@@ -84,21 +79,20 @@ export class AndroidCredentialManager extends AbstractAndroidCredentialDataServi
     );
   }
 
-setCredential(mobileCredential: MobileCredential): void {
+  setCredential(mobileCredential: MobileCredential): void {
     this.mCredentialManager.setCredential(mobileCredential);
-}
+  }
 
   credentialEnabled$(): Observable<boolean> {
     return this.initManager().pipe(
-        switchMap(userIsEntittled => {
-          if(this.mCredentialManager && userIsEntittled) {
-             return this.mCredentialManager.credentialEnabled$();
-          }
-          return of(false);
-        })
-      );
+      switchMap(userIsEntittled => {
+        if (this.mCredentialManager && userIsEntittled) {
+          return this.mCredentialManager.credentialEnabled$();
+        }
+        return of(false);
+      })
+    );
   }
-
 
   initialize(): Promise<any> {
     return this.mCredentialManager.initialize();
@@ -108,6 +102,6 @@ setCredential(mobileCredential: MobileCredential): void {
   }
 
   credentialAvailable$(): Observable<boolean> {
-    return this.mCredentialManager ? this.mCredentialManager.credentialAvailable$(): of(false);
+    return this.mCredentialManager ? this.mCredentialManager.credentialAvailable$() : of(false);
   }
 }

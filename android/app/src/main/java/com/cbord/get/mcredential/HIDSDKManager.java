@@ -81,7 +81,7 @@ public class HIDSDKManager implements OrigoKeysApiFacade, OrigoMobileKeysProgres
     public void deleteCredential()
     {
         if(isEndpointSetUpComplete())
-        {
+        {   updateEndpoint();
             mobileKeys.unregisterEndpoint(this);
         }else{
             TRANSACTION_RESULT = NO_KEY_INSTALLED;
@@ -94,7 +94,6 @@ public class HIDSDKManager implements OrigoKeysApiFacade, OrigoMobileKeysProgres
         List<OrigoMobileKey> installedKeys = null;
         try{
             Log.d(TAG, "GOING TO UPDATE ENDPOINT");
-            updateEndpoint();
            installedKeys = mobileKeys.listMobileKeys();
            Log.d(TAG, String.valueOf(installedKeys.size()));
             TRANSACTION_RESULT = MOBILE_KEY_INSTALLED_ON_THIS_DEVICE;
@@ -151,6 +150,7 @@ public class HIDSDKManager implements OrigoKeysApiFacade, OrigoMobileKeysProgres
 
     @Override
     public void onEndpointSetUpComplete() {
+        updateEndpoint();
         TRANSACTION_RESULT = TRANSACTION_SUCCESS_FULL;
     }
 
