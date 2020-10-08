@@ -77,12 +77,10 @@ export class MobileCredentialService {
   }
 
   get mobileCredentialAvailable$(): Observable<boolean> {
-    console.log("mobileCredentialAvailable$ called....")
     return this.mCredentialManager ? this.mCredentialManager.credentialAvailable$() : of(false);
   }
 
   get mobileCredentialEnabled$(): Observable<boolean> {
-    console.log("mobileCredentialEnabled$ called....")
     return this.mobileCredentialSettingsEnabled$().pipe(
       switchMap(mobileCredentialSettingsEnabled => {
         return mobileCredentialSettingsEnabled ? this.mCredentialManager.credentialEnabled$() : of(false);

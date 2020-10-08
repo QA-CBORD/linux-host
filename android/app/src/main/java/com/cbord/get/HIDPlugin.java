@@ -14,7 +14,7 @@ import com.hid.origo.api.OrigoMobileKey;
 public class HIDPlugin extends Plugin {
 
     private HIDSDKManager hidsdkManager;
-    private static final String TRANSACTION_RESULT = "transactionResult";
+    private static final String HID_SDK_TRANSACTION_RESULT = "hidSdkTransactionResult";
 
     @PluginMethod()
     public void initializeOrigo(PluginCall call) {
@@ -28,7 +28,6 @@ public class HIDPlugin extends Plugin {
         hidsdkManager.onApplicationStarted();
         call.resolve(toJson(hidsdkManager.TRANSACTION_RESULT));
     }
-
 
     @PluginMethod()
     public void addCredential(PluginCall call){
@@ -54,7 +53,7 @@ public class HIDPlugin extends Plugin {
             jsonObject.put("identifier", currentKey.getIdentifier().oid().dataAsHex());
             jsonObject.put("externalId", currentKey.getExternalId());
             jsonObject.put("cardNumber", currentKey.getCardNumber());
-            jsonObject.put(TRANSACTION_RESULT, hidsdkManager.TRANSACTION_RESULT);
+            jsonObject.put(HID_SDK_TRANSACTION_RESULT, hidsdkManager.TRANSACTION_RESULT);
         }else{
             call.resolve(toJson(hidsdkManager.TRANSACTION_RESULT));
             return;
@@ -62,9 +61,16 @@ public class HIDPlugin extends Plugin {
         call.resolve(toJson(jsonObject));
     }
 
+    @PluginMethod
+    public void checkIfEndpointIsSetup(PluginCall call){
+        boolean isEndpointSetup = hidsdkManager.isEndpointSetUpComplete();
+        call.resolve(toJson(isEndpointSetup));
+    }
+
+
     private JSObject toJson(Object transactionResult){
         JSObject jsonObject = new JSObject();
-        jsonObject.put(TRANSACTION_RESULT, transactionResult);
+        jsonObject.put(HID_SDK_TRANSACTION_RESULT, transactionResult);
         return jsonObject;
     }
 

@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { ChangeDetectorRef, Injectable } from '@angular/core';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
@@ -33,8 +34,9 @@ export class AndroidCredentialManager extends AbstractAndroidCredentialDataServi
     protected readonly authFacadeService: AuthFacadeService,
     protected readonly institutionFacadeService: InstitutionFacadeService,
     protected readonly contentStringFacade: ContentStringsFacadeService,
+    protected readonly httpClient: HttpClient
   ) {
-    super(partnerPaymentApi, storageStateService, authFacadeService, institutionFacadeService);
+    super(partnerPaymentApi, storageStateService, authFacadeService, institutionFacadeService, httpClient);
   }
 
   setCredentialStateChangeSubscrption(credentialStateChangeSubscription: CredentialStateChangeSubscription): void {
@@ -51,7 +53,7 @@ export class AndroidCredentialManager extends AbstractAndroidCredentialDataServi
   }
 
   private initManager(): Observable<boolean> {
-    return this.androidActivePasses().pipe(
+    return this.androidActivePassesFromServer().pipe(
       map(mCredential => {
         let androidCredential = <AndroidCredential<any>>mCredential;
         if (androidCredential.isHID()) {
@@ -64,7 +66,8 @@ export class AndroidCredentialManager extends AbstractAndroidCredentialDataServi
             this.storageStateService,
             this.authFacadeService,
             this.institutionFacadeService,
-            this.contentStringFacade
+            this.contentStringFacade,
+            this.httpClient
           );
           this.mCredentialManager.setCredential(androidCredential);
           return true;
@@ -83,12 +86,10 @@ setCredential(mobileCredential: MobileCredential): void {
 }
 
   credentialEnabled$(): Observable<boolean> {
-    return this.initManager()
-      .pipe(
+    return this.initManager().pipe(
         switchMap(userIsEntittled => {
           if(this.mCredentialManager && userIsEntittled) {
-              this.initialize();
-              return from(this.mCredentialManager.credentialEnabled$());
+             return this.mCredentialManager.credentialEnabled$();
           }
           return of(false);
         })

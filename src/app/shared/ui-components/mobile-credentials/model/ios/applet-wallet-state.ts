@@ -13,6 +13,10 @@ export class AppleWalletCredentialState implements MobileCredentialState {
     this.setAppleWalletMessage();
   }
 
+  setStatus(status: number): void {
+    
+  }
+
   getUiIconUrl(): string {
     return `/assets/images/${this.appleWalletMessageImage}.png`;
   }

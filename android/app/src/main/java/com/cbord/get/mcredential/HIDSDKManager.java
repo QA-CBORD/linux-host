@@ -33,7 +33,11 @@ import java.util.List;
 public class HIDSDKManager implements OrigoKeysApiFacade, OrigoMobileKeysProgressCallback, OrigoMobileKeysCallback, OrigoReaderConnectionListener, OrigoHceConnectionListener {
 
     private static final String TAG = HIDSDKManager.class.getSimpleName();
-    public static  String TRANSACTION_RESULT = "Success";
+    private static final String TRANSACTION_SUCCESS_FULL = "TRANSACTION_SUCCESS";
+    public  static  String TRANSACTION_RESULT = TRANSACTION_SUCCESS_FULL;
+    private final String NO_KEY_INSTALLED = "NO_KEY_INSTALLED";
+    private final String MOBILE_KEY_ALREADY_INSTALLED = "KEY_ALREADY_INSTALLED";
+    private final String MOBILE_KEY_INSTALLED_ON_THIS_DEVICE = "MOBILE_KEY_INSTALLED_ON_THIS_DEVICE";
     private OrigoMobileKeys mobileKeys;
     private OrigoKeysApiFactory mobileKeysApiFactory;
     private MobileKeyEndpointSetup endpointSetup;
@@ -49,12 +53,13 @@ public class HIDSDKManager implements OrigoKeysApiFacade, OrigoMobileKeysProgres
         {
             instance = new HIDSDKManager(application);
         }
+        TRANSACTION_RESULT = TRANSACTION_SUCCESS_FULL;
         return instance;
     }
 
 
     private void onInit(final Application application){
-        Log.d(TAG, "initializing HIDMobileCredentialSetup");
+        Log.d(TAG, "initializing HIDSDKManager");
         this.applicationContext = application.getApplicationContext();
         this.mobileKeysApiFactory = (OrigoKeysApiFactory) application;
         this.mobileKeys = mobileKeysApiFactory.getMobileKeys();
@@ -68,19 +73,8 @@ public class HIDSDKManager implements OrigoKeysApiFacade, OrigoMobileKeysProgres
 
 
     public void onApplicationStarted(){
-        Log.d(TAG, "HIDMobileCredentialSetup onStart()");
+        Log.d(TAG, "HIDSDKManager onApplicationStarted()");
         this.mobileKeyStartup.applicationStarted();
-    }
-
-    private void doInitialEndpointSetupIfNotDoneAlready(){
-        try{
-            if(!mobileKeys.isEndpointSetupComplete()){
-               // call back ionic to tell it everything is setup.
-                Log.d(TAG, "isEndpointSetupComplete(): TRUE");
-             }
-           }catch(OrigoMobileKeysException exception){
-            exception.printStackTrace();
-        }
     }
 
 
@@ -90,7 +84,7 @@ public class HIDSDKManager implements OrigoKeysApiFacade, OrigoMobileKeysProgres
         {
             mobileKeys.unregisterEndpoint(this);
         }else{
-            TRANSACTION_RESULT = "NO_KEY_INSTALLED";
+            TRANSACTION_RESULT = NO_KEY_INSTALLED;
         }
     }
 
@@ -103,9 +97,10 @@ public class HIDSDKManager implements OrigoKeysApiFacade, OrigoMobileKeysProgres
             updateEndpoint();
            installedKeys = mobileKeys.listMobileKeys();
            Log.d(TAG, String.valueOf(installedKeys.size()));
+            TRANSACTION_RESULT = MOBILE_KEY_INSTALLED_ON_THIS_DEVICE;
         }catch(OrigoMobileKeysException ex){
             Log.d(TAG, "Failed to load any mobile key");
-            TRANSACTION_RESULT = "NO_KEY_INSTALLED";
+            TRANSACTION_RESULT = NO_KEY_INSTALLED;
             return null;
         }
 
@@ -133,9 +128,8 @@ public class HIDSDKManager implements OrigoKeysApiFacade, OrigoMobileKeysProgres
                 // call back ionic to tell it everything is setup.
                 Log.d(TAG, "isEndpointSetupComplete(): TRUE");
                 endpointSetup.doSetup(invitationCode);
-                updateEndpoint();
             }else{
-              TRANSACTION_RESULT = "ENDPOING_ALREADY_SETUP";
+              TRANSACTION_RESULT = MOBILE_KEY_ALREADY_INSTALLED;
             }
         }catch(OrigoMobileKeysException exception) {
             exception.printStackTrace();
@@ -144,19 +138,21 @@ public class HIDSDKManager implements OrigoKeysApiFacade, OrigoMobileKeysProgres
 
     @Override
     public void onStartUpComplete() {
-        //
         Log.d(TAG, "onStartUpComplete()");
-        updateEndpoint();
         if(isEndpointSetUpComplete()){
+            updateEndpoint();
             startScanning();
           } else {
             stopScanning();
         }
+        TRANSACTION_RESULT = TRANSACTION_SUCCESS_FULL;
     }
 
 
     @Override
-    public void onEndpointSetUpComplete() {}
+    public void onEndpointSetUpComplete() {
+        TRANSACTION_RESULT = TRANSACTION_SUCCESS_FULL;
+    }
 
     @Override
     public void endpointNotPersonalized() {
@@ -227,7 +223,9 @@ public class HIDSDKManager implements OrigoKeysApiFacade, OrigoMobileKeysProgres
     }
 
     @Override
-    public void handleMobileKeysTransactionCompleted() {}
+    public void handleMobileKeysTransactionCompleted() {
+        TRANSACTION_RESULT = TRANSACTION_SUCCESS_FULL;
+    }
 
     @Override
     public void handleMobileKeysTransactionFailed(OrigoMobileKeysException e) {

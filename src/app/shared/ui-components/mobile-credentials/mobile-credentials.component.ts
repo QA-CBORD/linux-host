@@ -19,11 +19,6 @@ export class MobileCredentialsComponent implements OnInit {
   constructor(private globalNav: GlobalNavService, private popoverCtrl: PopoverController) {}
 
   ngOnInit() {
-   if(this.hidSdkStatus){
-      this.hidSdkStatus.then((result =>{
-        console.log('hidSdkStatus : ', result);
-      }))
-    }
     setTimeout(() => {
       if(this.termsAndConditions$){
         this.globalNav.hideNavBar()

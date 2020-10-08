@@ -20,7 +20,7 @@ const { IOSDevice } = Plugins;
   styleUrls: ['./access-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AccessCardComponent implements OnInit, OnDestroy {
+export class AccessCardComponent implements OnInit {
   userName$: Observable<string>;
   institutionName$: Observable<string>;
   institutionColor$: Observable<string>;
@@ -55,10 +55,10 @@ export class AccessCardComponent implements OnInit, OnDestroy {
     this.getUserData();
     this.getUserName();
     this.credentialManager.mobileCredentialEnabled$.pipe(take(1)).subscribe(mobileCredentialEnabled => {
-      if (mobileCredentialEnabled) {
-        this.mobileCredentialEnabled = mobileCredentialEnabled;
-        this.credentialManager.setCredentialStateChangeCallback(this);
-        this.changeRef.detectChanges();
+      if(mobileCredentialEnabled) {
+         this.mobileCredentialEnabled = mobileCredentialEnabled;
+         this.credentialManager.setCredentialStateChangeCallback(this);
+         this.changeRef.detectChanges();
       }
     });
   }
@@ -76,10 +76,6 @@ export class AccessCardComponent implements OnInit, OnDestroy {
         this.enableAppleWalletEvents();
       }
     });
-  }
-
-  ngOnDestroy(): void {
-    console.log('remove HID plugin listener');
   }
 
   private getUserData() {

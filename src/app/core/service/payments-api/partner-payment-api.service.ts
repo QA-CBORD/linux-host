@@ -85,7 +85,6 @@ export class PartnerPaymentApiService {
                 )
                 .pipe(
                   map(response => {
-                    console.log('response from delete Credentials: ', response);
                     of(true);
                   })
                 );
@@ -110,7 +109,6 @@ export class PartnerPaymentApiService {
               osVersion
             },
           }
-          console.log("inside switch map: ", reqBody)
           return this.apiService.partnerHTTPCall(
             RestCallType.put,
             `${paymentApiResources.credentials}/${body.credentialID}`,

@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Device } from '@capacitor/core';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
@@ -5,7 +6,7 @@ import { PartnerPaymentApiService } from '@core/service/payments-api/partner-pay
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { forkJoin, from, Observable, of } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
-import { AndroidCredentialAttrs } from '../android/android-credentials';
+import { Persistable } from '../android/android-credentials';
 import { ActivePasses } from './credential-utils';
 import { MobileCredential } from './mobile-credential';
 import { MobileCredentialFactory } from './mobile-credential-factory';
@@ -20,7 +21,8 @@ export abstract class MobileCredentialSharedDataService {
     protected partnerPaymentApi: PartnerPaymentApiService,
     protected readonly storageStateService: StorageStateService,
     protected readonly authFacadeService: AuthFacadeService,
-    protected readonly institutionFacadeService: InstitutionFacadeService
+    protected readonly institutionFacadeService: InstitutionFacadeService,
+    protected readonly httpClient: HttpClient
   ) {}
 
   protected retrieveAuthorizationBlob$(deviceModel: string, osVersion: string): Observable<string> {
@@ -62,7 +64,7 @@ export abstract class MobileCredentialSharedDataService {
     );
   }
 
-  protected getPasses(): Observable<any> {
+  protected getPasses(): Observable<ActivePasses> {
     /**
      * calls api gw android/version/actipasses to obtain activaPasses info for current patron/user.
      * this data is then used to get a credential for the patron/user.
@@ -70,6 +72,7 @@ export abstract class MobileCredentialSharedDataService {
     // doing a forkJoin to ensure all requests actually complete, if one of these fails, the others are useless, just return error
     let omniIDJwtToken$ = this.omniIDJwtToken$().pipe(take(1));
     let authorizationBlob$ = this.authorizationBlob$().pipe(take(1));
+
     return forkJoin(omniIDJwtToken$, authorizationBlob$).pipe(
       switchMap(([omniIDJwtToken, authBlob]) => {
         const requestBody = { authorizationBlob: authBlob };
@@ -80,26 +83,15 @@ export abstract class MobileCredentialSharedDataService {
 
   androidActivePassesFromServer(): Observable<MobileCredential> {
     return this.getPasses().pipe(
-      take(1),
-      map(activePasses => {
-        const androidCredentials = MobileCredentialFactory.androidCredentialFrom(<ActivePasses>activePasses);
-        console.log('retrieved passes From server ', androidCredentials);
-        return androidCredentials;
-      })
-    );
-  }
-
-  protected androidActivePasses(): Observable<MobileCredential> {
-    console.log('androidActivePasses called...');
-    return this.storageStateService.getStateEntityByKey$<AndroidCredentialAttrs>(this.credential_key).pipe(
-      switchMap(data => {
-        if (data) {
-          console.log('retrieved androidActivePasses From local Store: ', data);
-          const androidCredentials = MobileCredentialFactory.androidCredentialFrom(data.value);
-          return of(androidCredentials);
-        }
-        return this.androidActivePassesFromServer().pipe(
-          tap(activePassesResp => this.storageStateService.updateStateEntity(this.credential_key, activePassesResp, { highPriorityKey: true }))
+      switchMap(activePasses => {
+        const androidCredentials = MobileCredentialFactory.fromActivePasses(activePasses);
+        return this.storageStateService.getStateEntityByKey$<Persistable>(this.credential_key).pipe(
+          map(data => {
+            if (data) {
+              androidCredentials.setCredentialData(data.value);
+            }
+            return androidCredentials;
+          })
         );
       })
     );

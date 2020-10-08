@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { ChangeDetectorRef } from '@angular/core';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
@@ -9,14 +10,18 @@ import { AlertController, ModalController, PopoverController } from '@ionic/angu
 import { MobileCredentialsComponent } from '@shared/ui-components/mobile-credentials/mobile-credentials.component';
 import { from, Observable, of } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
+import { MobileCredentialState, MobileCredentialStateEnum } from '../../shared/credential-state';
 import { AbstractAndroidCredentialManager } from '../abstract-android-credential.management';
 import { AndroidCredentialStateEntity, HID } from '../android-credentials';
-import { HIDSdkAdapter } from './hid-plugin.adapter';
+import { HIDSdkManager } from './hid-plugin.adapter';
 
 export class HIDCredentialManager extends AbstractAndroidCredentialManager {
   private static instance: HIDCredentialManager;
-  private static NOT_INSTALLED_ON_DEVICE = 'NO_KEY_INSTALLED';
-  private credentialAlreadyInstalledOnOtherDevice: boolean = false;
+  private static TRANSACTION_SUCCESS_FULL = 'TRANSACTION_SUCCESS';
+  private static NO_KEY_INSTALLED = 'NO_KEY_INSTALLED';
+  private static MOBILE_KEY_ALREADY_INSTALLED = 'KEY_ALREADY_INSTALLED';
+  private static MOBILE_KEY_INSTALLED_ON_THIS_DEVICE = 'MOBILE_KEY_INSTALLED_ON_THIS_DEVICE';
+  private custom_loading_message = 'Processing ... Please wait';
 
   private constructor(
     private readonly modalCtrl: ModalController,
@@ -27,63 +32,52 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     protected readonly storageStateService: StorageStateService,
     protected readonly authFacadeService: AuthFacadeService,
     protected readonly institutionFacadeService: InstitutionFacadeService,
-    protected readonly contentStringFacade: ContentStringsFacadeService
+    protected readonly contentStringFacade: ContentStringsFacadeService,
+    protected readonly httpClient: HttpClient
   ) {
-    super(partnerPaymentApi, storageStateService, authFacadeService, institutionFacadeService);
+    super(partnerPaymentApi, storageStateService, authFacadeService, institutionFacadeService, httpClient);
   }
 
   onUiImageClicked(event?: any): void {
-    const verifyCanInstallCredential$ = () =>
-      this.androidActivePassesFromServer().pipe(map(androidCredential => androidCredential.isAvailable()));
-
     const doCredentialFirstInstallation = async () => {
-      this.loadingService.showSpinner({ message: 'Processing... Please wait...' });
       let componentProps = {
         termsAndConditions$: this.termsAndConditions$,
         credentialManager: this,
       };
       const modal = await this.modalCtrl.create({
         backdropDismiss: false,
+        mode: 'ios',
         component: MobileCredentialsComponent,
         componentProps,
       });
       return await modal.present();
     };
 
-    if (this.credentialAlreadyInstalledOnOtherDevice) {
-      this.loadingService.showSpinner({message: 'Processing... Please wait...'})
-      verifyCanInstallCredential$()
-        .pipe(take(1))
-        .subscribe(itHasBeenRemovedFromPreviousDevice => {
-          if(itHasBeenRemovedFromPreviousDevice) {
-             doCredentialFirstInstallation();
-          } else {
-            // notify user he needs to uninstall from previous device first.
-            let showNotifyAlert = async () => {
-              let notifyAlert = await this.alertCtrl.create({
-                backdropDismiss: true,
-                message:
-                  'Your Mobile ID is already installed on another device. Pleasa uninstall it from previous device and try again or contact your system administrator.',
-                animated: true,
-                header: 'Notification',
-                mode: 'ios',
-                buttons: [
-                  {
-                    text: 'OK',
-                    role: 'cancel',
-                  },
-                ],
-              });
-              return await notifyAlert.present();
-            };
-
-            showNotifyAlert();
-          }
+    this.loadingService.showSpinner({ message: this.custom_loading_message });
+    this.checkCredentialAvailability()
+      .pipe(take(1))
+      .subscribe(credentialAvailableForInstallation => {
+        if (credentialAvailableForInstallation) {
+          doCredentialFirstInstallation();
+        } else {
+          this.showCredentialAlreadyInstalledAlert();
           this.loadingService.closeSpinner();
-        });
-    } else {
-      doCredentialFirstInstallation();
-    }
+        }
+      });
+  }
+
+  private showCredentialAlreadyInstalledAlert(): void {
+    // notify user he needs to uninstall from previous device first.
+    let header = 'Notification';
+    let message =
+      'Your Mobile ID is already installed on another device. Please uninstall it from previous device and try again or contact your system administrator.';
+    let buttons = [{ text: 'OK', role: 'cancel' }];
+
+    this.createAlertDialog(header, message, buttons).then(alert => alert.present());
+  }
+
+  private checkCredentialAvailability(): Observable<boolean> {
+    return this.androidActivePassesFromServer().pipe(map(androidCredential => androidCredential.isAvailable()));
   }
 
   // handles when HID question mark is clicked, should show instructions and an uninstall option if already installed.
@@ -92,7 +86,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
       let hidSdkStatus = null;
       let btnText = 'OK';
       if (this.mCredential.isProvisioned()) {
-        hidSdkStatus = this.getSdkAdapter().installedCredentialInfo$;
+        hidSdkStatus = this.getHidSdkManager().installedCredentialInfo$;
         btnText = 'Uninstall';
       }
 
@@ -113,95 +107,122 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     showCredentialUsageContentString();
   }
 
+  private async createAlertDialog(header: string, msg: string, buttons: Array<any>): Promise<HTMLIonAlertElement> {
+    const alertDialog = await this.alertCtrl.create({
+      backdropDismiss: false,
+      mode: 'ios',
+      animated: true,
+      message: msg,
+      buttons: buttons,
+      header: header,
+    });
+    return await alertDialog;
+  }
+
   onDeleteCredential(event?: string): void {
     if (event != 'Uninstall') {
       this.popoverCtrl.dismiss();
       return;
     }
-    const confirmDelete = async () => {
-      let confirmAlert = await this.alertCtrl.create({
-        backdropDismiss: false,
-        mode: 'ios',
-        animated: true,
-        message: 'Are you sure you want to uninstall your mobile ID ?',
-        buttons: [
-          {
-            text: 'Cancel',
-            role: 'cancel',
-          },
-          {
-            text: 'Confirm',
-            handler: () => {
-              this.loadingService.showSpinner({ message: 'Processing... Please wait...' });
-              confirmAlert.dismiss();
-              this.uninstallCredential();
-            },
-          },
-        ],
-      });
+
+    const header = 'Please confirm';
+    const message = 'Are you sure you want to uninstall your mobile ID ?';
+
+    let buttons = [
+      { text: 'Cancel', role: 'cancel' },
+      {
+        text: 'Confirm',
+        handler: () => {
+          this.loadingService.showSpinner({ message: this.custom_loading_message });
+          this.alertCtrl.dismiss();
+          this.uninstallCredential();
+        },
+      },
+    ];
+    this.createAlertDialog(header, message, buttons).then(confirmAlert => {
+      confirmAlert.present();
       this.popoverCtrl.dismiss();
-      await confirmAlert.present();
-    };
-    confirmDelete();
+    });
   }
 
   credentialAvailable$(): Observable<boolean> {
     return of(this.mCredential.isAvailable());
   }
 
+  private checkIfItsBeenProvisionedOnThisDevice$(): Observable<boolean> {
+    return from(this.getHidSdkManager().checkIfEndpointSetup$).pipe(map(hidEndpointIsSetup => hidEndpointIsSetup));
+  }
+
   credentialEnabled$(): Observable<boolean> {
-    if (!this.mCredential) {
-      return this.androidActivePasses().pipe(map(mCredential => mCredential.isEnabled()));
-    }
-    if (this.mCredential.isProvisioned()) {
-      return from(this.getSdkAdapter().installedCredentialInfo$).pipe(
-        map(hidSdkResponse => {
-          let { transactionResult } = hidSdkResponse;
-          console.log('transactionResult ====>>> ', transactionResult, hidSdkResponse);
-          return transactionResult == HIDCredentialManager.NOT_INSTALLED_ON_DEVICE;
-        }),
-        switchMap(credentialAlreadyInstalledOnOtherDevice => {
-          console.log('isNotInstalledOnDevice ====>>> ', credentialAlreadyInstalledOnOtherDevice);
-          if (credentialAlreadyInstalledOnOtherDevice) {
-            this.credentialAlreadyInstalledOnOtherDevice = true;
-            return this.updateLocalCache({ status: AndroidCredentialStateEntity.IS_AVAILABLE }).pipe(
-              take(1),
-              map(updatedCredential => {
-                this.mCredential = updatedCredential;
-                return true;
-              })
-            );
-          }
-          return of(true);
-        })
-      );
-    }
-    return of(this.mCredential.isEnabled());
+    return of(this.mCredential.isEnabled()).pipe(
+      switchMap(mobileCredentialEnabled => {
+        if (!mobileCredentialEnabled) {
+          return of(false);
+        }
+        return from(this.getHidSdkManager().initializeSdk()).pipe(
+          map(hidSdkInitializationStatus => {
+            return hidSdkInitializationStatus == HIDCredentialManager.TRANSACTION_SUCCESS_FULL;
+          })
+        );
+      }),
+      switchMap(mobileCredentialEnabled => {
+        if (!mobileCredentialEnabled) {
+          return of(false);
+        }
+        if (this.mCredential.isProvisioned()) {
+          return this.checkIfItsBeenProvisionedOnThisDevice$().pipe(
+            switchMap(credentialProvisioneddOnThisDevice => {
+              if (credentialProvisioneddOnThisDevice) {
+                return of(true);
+              }
+              this.mCredential.setStatus(MobileCredentialStateEnum.IS_AVAILABLE);
+              return of(true);
+            })
+          );
+        }
+        return of(true);
+      })
+    );
   }
 
   onTermsAndConditionsAccepted(): void {
     this.modalCtrl.dismiss();
-    this.loadingService.showSpinner({ message: 'Processing... Please wait...' });
-    this.androidCredential()
+    this.loadingService.showSpinner({ message: this.custom_loading_message });
+    this.createCredentialFor$(this.mCredential)
       .pipe(take(1))
-      .subscribe(credential => {
-        this.mCredential = credential;
-        console.log('credential received: ', this.mCredential, credential);
-        this.getSdkAdapter()
-          .installCredential(this.mCredential.getCredentialData<HID>().invitationCode)
-          .then(result => {
-            console.log('installation on process, stand by: ', result);
-            this.updateCredential({ status: AndroidCredentialStateEntity.IS_PROVISIONED })
-              .pipe(take(1))
-              .subscribe(updatedCredential => {
-                console.log('The credential Updated: ', updatedCredential);
-                this.mCredential = updatedCredential;
-                this.credentialStateChangeSubscription.onCredentialStateChanged();
-                this.loadingService.closeSpinner();
-              });
-            // if successfull, need to call update credential.
-          });
-      });
+      .subscribe(
+        credential => {
+          this.mCredential = credential;
+          this.getHidSdkManager()
+            .installCredential(this.mCredential.getCredentialData<HID>().invitationCode)
+            .then(hidSdkInstallCredentialTransactionResult => {
+              if (hidSdkInstallCredentialTransactionResult == HIDCredentialManager.TRANSACTION_SUCCESS_FULL) {
+                this.mCredential.setStatus(MobileCredentialStateEnum.IS_PROVISIONED);
+                this.updateCredential(this.mCredential)
+                  .pipe(take(1))
+                  .subscribe(() => {
+                    this.credentialStateChangeSubscription.onCredentialStateChanged();
+                    this.loadingService.closeSpinner();
+                  });
+              } else {
+                this.showInstallationErrorAlert('installation');
+              }
+            });
+        },
+        error => {
+          this.showInstallationErrorAlert('installation');
+        }
+      );
+  }
+
+  private showInstallationErrorAlert(operation: string): void {
+    let header = 'Unexpected error';
+    let message = `An unexpected error occurred during mobile ID ${operation}, please try again later.`;
+    let buttons = [{ text: 'OK', role: 'cancel' }];
+    this.createAlertDialog(header, message, buttons).then(errorAlert => {
+      this.loadingService.closeSpinner();
+      errorAlert.present();
+    });
   }
 
   onTermsAndConditionsDeclined(): void {
@@ -209,37 +230,32 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
   }
 
   private uninstallCredential(): void {
-    this.getSdkAdapter()
-      .deleteCurrentCredential()
-      .then(sdkResponse => {
-        console.log('Credential uninstall sdkResponse: ', sdkResponse);
-        let { transactionResult } = sdkResponse;
-        if(transactionResult == HIDCredentialManager.NOT_INSTALLED_ON_DEVICE) {
+    if (this.mCredential.isProvisioned()) {
+      this.deleteCredential().subscribe(
+        () => {
+          this.getHidSdkManager()
+            .deleteCurrentCredential()
+            .then(() => {
+              this.mCredential.setStatus(MobileCredentialStateEnum.IS_AVAILABLE);
+              this.credentialStateChangeSubscription.onCredentialStateChanged();
+            }).finally(()=> {
+              this.loadingService.closeSpinner();
+            });
+        },
+        error => {
           this.loadingService.closeSpinner();
-          return;
+          this.showInstallationErrorAlert('uninstall');
         }
-        this.deleteCredential()
-          .pipe(take(1))
-          .subscribe(operationResult => {
-            console.log('OperationSuccess?, ', operationResult);
-            this.mCredential = operationResult.current;
-            this.credentialStateChangeSubscription.onCredentialStateChanged();
-            this.loadingService.closeSpinner();
-          });
-      });
+      );
+    }
   }
 
-  private getSdkAdapter(): HIDSdkAdapter {
-    return HIDSdkAdapter.getInstance();
+  private getHidSdkManager(): HIDSdkManager {
+    return HIDSdkManager.getInstance();
   }
 
-  protected onInstallationFinished(): void {
-    console.log('install finished successfully');
-    // update credential states, local and on server.
-  }
-
-  initialize(): Promise<any> {
-    return this.getSdkAdapter().initializeSdk();
+  initialize(): Promise<boolean> {
+    return null; // no one calls you.
   }
 
   static getInstance(
@@ -251,7 +267,8 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     storageStateService: StorageStateService,
     authFacadeService: AuthFacadeService,
     institutionFacadeService: InstitutionFacadeService,
-    contentStringFacade: ContentStringsFacadeService
+    contentStringFacade: ContentStringsFacadeService,
+    httpClient: HttpClient
   ): HIDCredentialManager {
     if (!this.instance) {
       this.instance = new HIDCredentialManager(
@@ -263,7 +280,8 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
         storageStateService,
         authFacadeService,
         institutionFacadeService,
-        contentStringFacade
+        contentStringFacade,
+        httpClient
       );
     }
     return this.instance;

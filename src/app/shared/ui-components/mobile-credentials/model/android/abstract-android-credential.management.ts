@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { PartnerPaymentApiService } from '@core/service/payments-api/partner-payment-api.service';
@@ -18,9 +19,10 @@ export abstract class AbstractAndroidCredentialManager extends AbstractAndroidCr
     protected partnerPaymentApi: PartnerPaymentApiService,
     protected readonly storageStateService: StorageStateService,
     protected readonly authFacadeService: AuthFacadeService,
-    protected readonly institutionFacadeService: InstitutionFacadeService
+    protected readonly institutionFacadeService: InstitutionFacadeService,
+    protected readonly httpClient: HttpClient
   ) {
-    super(partnerPaymentApi, storageStateService, authFacadeService, institutionFacadeService);
+    super(partnerPaymentApi, storageStateService, authFacadeService, institutionFacadeService, httpClient);
   }
 
   setCredentialStateChangeSubscrption(credentialStateChangeSubscription: CredentialStateChangeSubscription): void {

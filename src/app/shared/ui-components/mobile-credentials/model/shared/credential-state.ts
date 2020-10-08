@@ -11,4 +11,12 @@ export interface MobileCredentialState {
   getIssuer(): string;
   getConfig(): MobileCredentialConfig;
   getUiIconUrl(): string;
+  setStatus(status: number):void;
+}
+
+
+export enum MobileCredentialStateEnum{
+  IS_AVAILABLE = 1,
+  IS_PROVISIONED = 20,
+  IS_DISABLED = 0,
 }

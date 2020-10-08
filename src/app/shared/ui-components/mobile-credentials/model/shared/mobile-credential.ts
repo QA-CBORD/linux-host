@@ -9,6 +9,11 @@ export abstract class MobileCredential implements MobileCredentialState {
     return this.credentialState.getUiIconUrl();
   }
 
+  setStatus(status: number): void{
+    this.credentialState.setStatus(status);
+    this.updateStatusMsg()
+  }
+
   updateStatusMsg(): void {
     return this.credentialState.updateStatusMsg();
   }
