@@ -79,12 +79,19 @@ export class PinPage implements OnInit {
       this.instructionText = text;
       return;
     }
+
     switch (this.pinAction) {
       case PinAction.SET_BIOMETRIC:
         this.instructionText = this.setPinText;
         break;
       case PinAction.SET_PIN_ONLY:
         this.instructionText = this.setPinNoBiometricsText;
+        break;
+      case PinAction.CHANGE_PIN_ONLY:
+        this.instructionText = this.currentPinText;
+        break;
+      case PinAction.CHANGE_PIN_BIOMETRIC:
+        this.instructionText = this.currentPinText;
         break;
       case PinAction.LOGIN_PIN:
         this.setInstructionText(this.currentPinText);
@@ -110,9 +117,14 @@ export class PinPage implements OnInit {
 
   async append(number: number) {
     this.setErrorText(null);
-    if (this.pinAction === PinAction.SET_PIN_ONLY || this.pinAction === PinAction.SET_BIOMETRIC) {
+    let executeSetPinLogic = this.pinAction === PinAction.SET_PIN_ONLY || this.pinAction === PinAction.SET_BIOMETRIC;
+    let executeLoginPinLogic =
+      this.pinAction === PinAction.LOGIN_PIN ||
+      this.pinAction === PinAction.CHANGE_PIN_ONLY ||
+      this.pinAction === PinAction.CHANGE_PIN_BIOMETRIC;
+    if (executeSetPinLogic) {
       await this.setPinLogic(number);
-    } else if (this.pinAction === PinAction.LOGIN_PIN) {
+    } else if (executeLoginPinLogic) {
       this.loginPinLogic(number);
     }
   }
@@ -152,13 +164,13 @@ export class PinPage implements OnInit {
   }
 
   private loginPinLogic(number: number) {
-    if (this.pinNumber.length >= 4) {
-      return;
-    }
-    /// add new pin value to array
+    if (this.pinNumber.length >= 4) return;
+
+    // add new pin value to array
     this.pinNumber.push(number);
-    /// check if confirming pin
+
     if (this.pinNumber.length === 4) {
+      // check if confirming pin
       this.loginPin();
     }
   }
@@ -240,7 +252,15 @@ export class PinPage implements OnInit {
         success => {
           /// on success, dismiss with pin in data
           if (success) {
-            this.closePage(this.pinNumber.join(''), PinCloseStatus.LOGIN_SUCCESS);
+            if (this.pinAction === PinAction.CHANGE_PIN_BIOMETRIC) {
+              this.pinAction = PinAction.SET_BIOMETRIC;
+              this.cleanLocalState();
+            } else if (this.pinAction === PinAction.CHANGE_PIN_ONLY) {
+              this.pinAction = PinAction.SET_PIN_ONLY;
+              this.cleanLocalState();
+            } else {
+              this.closePage(this.pinNumber.join(''), PinCloseStatus.LOGIN_SUCCESS);
+            }
           } else {
             /// handle error here
             this.cleanLocalState();
