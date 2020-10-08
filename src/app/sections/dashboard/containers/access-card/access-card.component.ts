@@ -67,15 +67,8 @@ export class AccessCardComponent implements OnInit {
     this.changeRef.detectChanges();
   }
 
-  ionViewWillEnter() {}
-
-  setupMobileCredentials(): void {
-    this.userFacadeService.mobileCredentialSettings().subscribe(resp => {
-      if (resp.isAppleWalletEnabled()) {
-        this.enableAppleWallet();
-        this.enableAppleWalletEvents();
-      }
-    });
+  ionViewWillEnter() {
+    this.credentialManager.refreshCredentials();
   }
 
   private getUserData() {
@@ -118,53 +111,6 @@ export class AccessCardComponent implements OnInit {
     });
   }
 
-  private setAppleWalletMessage() {
-    if (this.appleWalletInfo && this.appleWalletInfo.isAppleWalletEnabled && this.appleWalletInfo.canAddPass) {
-      this.appleWalletEnabled = this.appleWalletInfo.isAppleWalletEnabled;
-      let isIPhoneAlreadyProvisioned = this.appleWalletInfo.iPhoneProvisioned;
-      let isWatchPaired = this.appleWalletInfo.watchPaired;
-      let isIWatchAlreadyProvisioned = this.appleWalletInfo.watchProvisioned;
-      let watchCredStatus = this.appleWalletInfo.watchCredStatus;
-      let iPhoneCredStatus = this.appleWalletInfo.iPhoneCredStatus;
-
-      /// code ported from iOS with some unused parts left commented out, which we might use later
-      if (isIPhoneAlreadyProvisioned && !isWatchPaired) {
-        //no watch, only phone
-        this.appleWalletMessageImage = 'iphonex';
-        this.cardStatusMessage = 'Added to iPhone';
-        this.appleWalletButtonHidden = true;
-      } else if (isIPhoneAlreadyProvisioned && isWatchPaired && !isIWatchAlreadyProvisioned) {
-        this.appleWalletMessageImage = 'iphonex';
-        this.cardStatusMessage = 'Added to iPhone';
-        this.appleWalletButtonHidden = watchCredStatus == AppleWalletCredentialStatus.Disabled;
-      } else if (isWatchPaired && isIWatchAlreadyProvisioned && !isIPhoneAlreadyProvisioned) {
-        this.appleWalletMessageImage = 'applewatch';
-        this.cardStatusMessage = 'Added to Watch';
-        this.appleWalletButtonHidden = iPhoneCredStatus == AppleWalletCredentialStatus.Disabled;
-      } else if (isIPhoneAlreadyProvisioned && isIWatchAlreadyProvisioned && isWatchPaired) {
-        this.cardStatusMessage = 'Added to iPhone and Watch';
-        this.appleWalletMessageImage = 'iphonex_applewatch';
-        this.appleWalletButtonHidden = true;
-      } else {
-        this.cardStatusMessage = 'Card not added to Wallet';
-        this.appleWalletMessageImage = null;
-        this.appleWalletButtonHidden = false;
-      }
-    } else {
-      this.cardStatusMessage = null;
-      this.appleWalletMessageImage = null;
-      this.appleWalletButtonHidden = true;
-      this.appleWalletEnabled = false;
-    }
-    this.changeRef.detectChanges();
-  }
-
-  async addToAppleWallet() {
-    if (this.userInfo) {
-      await IOSDevice.addToAppleWallet({ user: this.userInfo });
-    }
-  }
-
   private getUserName() {
     this.userFacadeService
       .getUser$()
@@ -174,27 +120,4 @@ export class AccessCardComponent implements OnInit {
       });
   }
 
-  public addMobileCredential() {
-    this.addToAppleWallet();
-  }
-
-  private enableAppleWallet() {
-    this.authFacadeService.cachedAuthSessionToken$
-      .pipe(
-        switchMap(sessionId => from(IOSDevice.getAppleWalletInfo({ sessionId: sessionId }))),
-        take(1)
-      )
-      .subscribe(appleWalletInfo => {
-        if (appleWalletInfo) {
-          this.appleWalletInfo = appleWalletInfo;
-          this.setAppleWalletMessage();
-        }
-      });
-  }
-
-  private enableAppleWalletEvents() {
-    IOSDevice.addListener('AppleWalletEvent', (info: any) => {
-      this.enableAppleWallet();
-    });
-  }
 }

@@ -240,6 +240,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
               this.credentialStateChangeSubscription.onCredentialStateChanged();
             }).finally(()=> {
               this.loadingService.closeSpinner();
+              this.alertCtrl.dismiss();
             });
         },
         error => {

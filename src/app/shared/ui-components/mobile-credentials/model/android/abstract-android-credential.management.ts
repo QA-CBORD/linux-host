@@ -25,6 +25,11 @@ export abstract class AbstractAndroidCredentialManager extends AbstractAndroidCr
     super(partnerPaymentApi, storageStateService, authFacadeService, institutionFacadeService, httpClient);
   }
 
+
+  refresh(): void {
+   // do nothing
+  }
+
   setCredentialStateChangeSubscrption(credentialStateChangeSubscription: CredentialStateChangeSubscription): void {
     this.credentialStateChangeSubscription = credentialStateChangeSubscription;
   }

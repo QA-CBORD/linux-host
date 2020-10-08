@@ -39,6 +39,9 @@ export class AndroidCredentialManager extends AbstractAndroidCredentialDataServi
     super(partnerPaymentApi, storageStateService, authFacadeService, institutionFacadeService, httpClient);
   }
 
+
+  refresh(): void {}
+
   setCredentialStateChangeSubscrption(credentialStateChangeSubscription: CredentialStateChangeSubscription): void {
     this.mCredentialManager.setCredentialStateChangeSubscrption(credentialStateChangeSubscription);
   }

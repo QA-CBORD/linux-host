@@ -18,7 +18,7 @@ export class AppleWalletCredentialState implements MobileCredentialState {
   }
 
   getUiIconUrl(): string {
-    return `/assets/images/${this.appleWalletMessageImage}.png`;
+    return this.appleWalletMessageImage ?  `/assets/images/${this.appleWalletMessageImage}.png` : null;
   }
 
   updateStatusMsg(): void {
@@ -48,6 +48,7 @@ export class AppleWalletCredentialState implements MobileCredentialState {
   getConfig(): MobileCredentialConfig {
     return MOBILE_CREDENTIAL_CONFIGS[this.getIssuer()];
   }
+
 
   private setAppleWalletMessage() {
     if (this.appleWalletInfo && this.appleWalletInfo.isAppleWalletEnabled && this.appleWalletInfo.canAddPass) {

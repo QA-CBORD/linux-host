@@ -19,4 +19,5 @@ export interface MobileCredentialManager extends MobileCredentialManagerAdapter{
     getCredential(): MobileCredential;
     onUiIconClicked(): void;
     setCredentialStateChangeSubscrption(credentialStateChangeSubscription: CredentialStateChangeSubscription): void;
+    refresh(): void;
 }

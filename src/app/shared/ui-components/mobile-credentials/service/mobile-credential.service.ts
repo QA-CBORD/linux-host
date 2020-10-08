@@ -88,6 +88,10 @@ export class MobileCredentialService {
     );
   }
 
+  refreshCredentials(): void{
+    this.mCredentialManager ? this.mCredentialManager.refresh() : undefined;
+  }
+
   onImageClick(): void {
     this.mCredentialManager.onUiImageClicked();
   }
