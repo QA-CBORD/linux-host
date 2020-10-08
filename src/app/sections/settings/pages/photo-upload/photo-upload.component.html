@@ -44,13 +44,13 @@
         </div>
         <div *ngIf="(govIdFront$ | async) as govidFrontUrl; else defaultGovIdFront">
           <img [src]="govidFrontUrl" alt="Government Id Front" width="132" height="80" class="round-corners" />
-          <ion-button color="light" class="reupload-btn round-corners" (click)="onTakePhoto(photoType.GOVT_ID_FRONT)"
+          <ion-button color="light" class="reupload-btn round-corners" (click)="presentPhotoTypeSelection(photoType.GOVT_ID_FRONT)"
             >REUPLOAD</ion-button
           >
         </div>
         <ng-template #defaultGovIdFront>
           <img src="/assets/images/govt-id-front.svg" alt="Government Id Front" class="card-img round-corners" />
-          <ion-button class="upload-btn round-corners" (click)="onTakePhoto(photoType.GOVT_ID_FRONT)"
+          <ion-button class="upload-btn round-corners" (click)="presentPhotoTypeSelection(photoType.GOVT_ID_FRONT)"
             >UPLOAD</ion-button
           >
         </ng-template>
@@ -72,13 +72,13 @@
         </div>
         <div *ngIf="(govIdBack$ | async) as govIdBackUrl; else defaultGovIdBack">
           <img [src]="govIdBackUrl" alt="Government Id Front" width="132" height="80" class="round-corners" />
-          <ion-button color="light" class="reupload-btn round-corners" (click)="onTakePhoto(photoType.GOVT_ID_BACK)"
+          <ion-button color="light" class="reupload-btn round-corners" (click)="presentPhotoTypeSelection(photoType.GOVT_ID_BACK)"
             >REUPLOAD</ion-button
           >
         </div>
         <ng-template #defaultGovIdBack>
           <img src="/assets/images/govt-id-back.svg" alt="Government Id Back" class="card-img round-corners" />
-          <ion-button class="upload-btn round-corners" (click)="onTakePhoto(photoType.GOVT_ID_BACK)">UPLOAD</ion-button>
+          <ion-button class="upload-btn round-corners" (click)="presentPhotoTypeSelection(photoType.GOVT_ID_BACK)">UPLOAD</ion-button>
         </ng-template>
       </div>
     </ion-card-content>
@@ -159,7 +159,7 @@
               localPhotoUploadStatus.profilePending === localPhotoStatus.PENDING
             "
             class="upload-btn"
-            (click)="onTakePhoto(photoType.PROFILE)"
+            (click)="presentPhotoTypeSelection(photoType.PROFILE)"
             >REUPLOAD</ion-button
           >
           <ion-button
@@ -176,7 +176,7 @@
             alt="Pending Profile Image"
             class="profile-default-image round-corners"
           />
-          <ion-button class="upload-btn" (click)="onTakePhoto(photoType.PROFILE)">UPLOAD</ion-button>
+          <ion-button class="upload-btn" (click)="presentPhotoTypeSelection(photoType.PROFILE)">UPLOAD</ion-button>
         </ng-template>
       </div>
     </ion-card-content>
