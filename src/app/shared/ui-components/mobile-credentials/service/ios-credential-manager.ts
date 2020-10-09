@@ -91,6 +91,7 @@ export class IOSCredentialManager implements MobileCredentialManager {
     );
   }
 
+
   private loadCredentials(): Promise<AppleWalletCredential> {
     return this.authFacadeService.cachedAuthSessionToken$
       .pipe(
