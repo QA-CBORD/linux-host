@@ -14,7 +14,7 @@ import { PhoneEmailComponent } from '@shared/ui-components/phone-email/phone-ema
 import { AuthTypes } from '@core/utils/auth-types.enum';
 import { EditHomePageModalComponent } from '@shared/ui-components/edit-home-page-modal/edit-home-page-modal.component';
 import { SETTINGS_ID } from './models/settings-id.enum';
-import { LOCAL_ROUTING as ORDERING_ROUTING } from '@sections/ordering/ordering.config'
+import { LOCAL_ROUTING as ORDERING_ROUTING } from '@sections/ordering/ordering.config';
 export enum LOCAL_ROUTING {
   photoUpload = 'photo-upload',
 }
@@ -52,16 +52,16 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         navigate: [SETTINGS_NAVIGATE.updatePhoto],
         validations: [{ type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.PHOTO_UPLOAD_ENABLED }],
       },
-      // {
-      //   id: SETTINGS_ID.lostCard,
-      //   label: '',
-      //   icon: 'card-lost',
-      //   toggleLabel: { checked: 'Report card as found', unchecked: 'Report card as lost' },
-      //   type: 'button',
-      //   getToggleStatus: getCardStatus,
-      //   navigate: SETTINGS_NAVIGATE.lostCard,
-      //   validations: [{ type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.REPORT_LOST_CARD_ENABLED }],
-      // },
+      {
+        id: SETTINGS_ID.lostCard,
+        label: '',
+        icon: 'card-lost',
+        toggleLabel: { checked: 'Report card as found', unchecked: 'Report card as lost' },
+        type: 'button',
+        // getToggleStatus: getCardStatus,
+        navigate: [SETTINGS_NAVIGATE.lostCard],
+        validations: [{ type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.REPORT_LOST_CARD_ENABLED }],
+      },
     ],
   },
   {
@@ -258,4 +258,3 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
     ],
   },
 ];
-

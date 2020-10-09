@@ -1,0 +1,31 @@
+@import 'tools';
+:host {
+  background: white;
+}
+.report-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  min-height: 90%;
+  --padding-bottom: env(safe-area-inset-bottom) !important;
+  &__img {
+    img {
+      height: 143px;
+    }
+    padding: 0 10%;
+  }
+  &__description {
+    text-align: center;
+    line-height: 24px;
+  }
+  &__label {
+    color: $color-black;
+
+    @include font-nunito-heavy(20px);
+  }
+}
+
+.divider {
+  background-color: #{$color-background-divider};
+}
