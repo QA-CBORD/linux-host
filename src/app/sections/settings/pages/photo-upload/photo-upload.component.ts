@@ -119,7 +119,7 @@ export class PhotoUploadComponent implements OnInit {
   }
 
   private setupPhotoSubscriptions() {
-    this.photoUploadService.governmentIdRequired$.pipe(take(1)).subscribe(govtIdRequired => {
+    this.photoUploadService.governmentIdRequired$.subscribe(govtIdRequired => {
       this.localPhotoData.govtIdRequired = govtIdRequired;
       this.updateSubmitButtonStatus();
     });
