@@ -6,7 +6,7 @@
 >
   <img class="item__icon" src="../../../assets/icon/{{ setting.icon }}.svg" />
   <ion-label class="item__label"
-    ><h4>{{ setting.label }}</h4></ion-label
+    ><h4>{{ settingLabel$ | async }}</h4></ion-label
   >
   <ion-toggle *ngIf="setting.type === 'toggle'" [checked]="setting.checked"></ion-toggle>
 </ion-item>

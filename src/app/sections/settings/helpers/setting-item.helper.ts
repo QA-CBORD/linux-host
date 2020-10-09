@@ -23,6 +23,13 @@ export async function setBiometricStatus(services: SettingsServices): Promise<vo
   setting.checked = await services.identity.cachedBiometricsEnabledUserPreference$;
 }
 
+export async function setReportCardLabel(services: SettingsServices): Promise<void> {
+  const setting: SettingItemConfig = this;
+  setting.label = await services.userService
+    .getUserState$()
+    .pipe(map(user => (user.cashlessMediaStatus === 2 ? setting.toggleLabel.checked : setting.toggleLabel.unchecked)));
+}
+
 export function toggleBiometricStatus(services: SettingsServices) {
   const setting: SettingItemConfig = this;
   setting.callback = function() {

@@ -11,6 +11,7 @@ import { EnvironmentFacadeService } from '@core/facades/environment/environment.
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
+import { Observable } from 'rxjs';
 
 export interface SettingsSectionConfig {
   label: string;
@@ -20,7 +21,7 @@ export interface SettingsSectionConfig {
 
 export interface SettingItemConfig {
   id: string;
-  label: string;
+  label: string | Observable<string>;
   type: string;
   icon: string;
   navigate?: string[];

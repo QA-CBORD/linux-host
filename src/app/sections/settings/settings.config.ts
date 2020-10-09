@@ -7,6 +7,7 @@ import {
   toggleBiometricStatus,
   setBiometricStatus,
   handlePinAccess,
+  setReportCardLabel,
 } from './helpers/setting-item.helper';
 import { CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_CATEGORIES } from 'src/app/content-strings';
 import { HTMLRendererComponent } from '@shared/ui-components/html-renderer/html-renderer.component';
@@ -58,6 +59,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         icon: 'card-lost',
         toggleLabel: { checked: 'Report card as found', unchecked: 'Report card as lost' },
         type: 'button',
+        setToggleStatus: setReportCardLabel,
         // getToggleStatus: getCardStatus,
         navigate: [SETTINGS_NAVIGATE.lostCard],
         validations: [{ type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.REPORT_LOST_CARD_ENABLED }],
