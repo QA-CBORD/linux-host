@@ -75,7 +75,7 @@ export abstract class AbstractAndroidCredentialDataService extends MobileCredent
     );
   }
 
-  createCredentialFor$(credential: AndroidCredential<any>): Observable<AndroidCredential<any>> {
+  getCredentialFromServer$(credential: AndroidCredential<any>): Observable<AndroidCredential<any>> {
     return this.getAndroidCredentialFor(credential.getCredentialState().referenceIdentifier).pipe(
       take(1),
       map((credentialData: any) => {

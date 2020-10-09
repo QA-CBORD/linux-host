@@ -6,7 +6,7 @@ import { InstitutionFacadeService } from '@core/facades/institution/institution.
 import { LoadingService } from '@core/service/loading/loading.service';
 import { PartnerPaymentApiService } from '@core/service/payments-api/partner-payment-api.service';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
-import { AlertController, ModalController, PopoverController } from '@ionic/angular';
+import { AlertController, ModalController, PopoverController, ToastController } from '@ionic/angular';
 import { MobileCredentialsComponent } from '@shared/ui-components/mobile-credentials/mobile-credentials.component';
 import { from, Observable, of } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
@@ -19,11 +19,13 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
   private static instance: HIDCredentialManager;
   private static TRANSACTION_SUCCESS_FULL = 'TRANSACTION_SUCCESS';
   private custom_loading_message = 'Processing ... Please wait';
-
+  private endpointSetupRetryCount: number = 1;
+  private endpointSetupMaxRetryCount: number = 3;
   private constructor(
     private readonly modalCtrl: ModalController,
     private readonly alertCtrl: AlertController,
     private readonly popoverCtrl: PopoverController,
+    private readonly toastService: ToastController,
     private readonly loadingService: LoadingService,
     protected partnerPaymentApi: PartnerPaymentApiService,
     protected readonly storageStateService: StorageStateService,
@@ -185,31 +187,90 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
   onTermsAndConditionsAccepted(): void {
     this.modalCtrl.dismiss();
     this.loadingService.showSpinner({ message: this.custom_loading_message });
-    this.createCredentialFor$(this.mCredential)
+    if (this.mCredential.credentialData && this.mCredential.getCredentialData<HID>().invitationCode) {
+      // this will not be undefined only if we had called android credential already and have the activation code.
+      this.installCredentialOnDevice();
+      return;
+    }
+    this.getCredentialFromServer$(this.mCredential)
       .pipe(take(1))
       .subscribe(
         credential => {
           this.mCredential = credential;
-          this.getHidSdkManager()
-            .installCredential(this.mCredential.getCredentialData<HID>().invitationCode)
-            .then(hidSdkInstallCredentialTransactionResult => {
-              if (hidSdkInstallCredentialTransactionResult == HIDCredentialManager.TRANSACTION_SUCCESS_FULL) {
-                this.mCredential.setStatus(MobileCredentialStateEnum.IS_PROVISIONED);
-                this.updateCredential(this.mCredential)
-                  .pipe(take(1))
-                  .subscribe(() => {
-                    this.credentialStateChangeSubscription.onCredentialStateChanged();
-                    this.loadingService.closeSpinner();
-                  });
-              } else {
-                this.showInstallationErrorAlert('installation');
-              }
-            });
+          this.installCredentialOnDevice();
         },
         error => {
           this.showInstallationErrorAlert('installation');
         }
       );
+  }
+
+  private installCredentialOnDevice(): void {
+    this.getHidSdkManager()
+      .installCredential(this.mCredential.getCredentialData<HID>().invitationCode)
+      .then(hidSdkInstallCredentialResult => {
+        if (hidSdkInstallCredentialResult == HIDCredentialManager.TRANSACTION_SUCCESS_FULL) {
+          this.mCredential.setStatus(MobileCredentialStateEnum.IS_PROVISIONED);
+          this.updateCredential(this.mCredential)
+            .pipe(take(1))
+            .subscribe(() => {
+              this.credentialStateChangeSubscription.onCredentialStateChanged();
+              this.loadingService.closeSpinner();
+            });
+        } else {
+          if (this.canRetry(hidSdkInstallCredentialResult)) {
+            this.loadingService.closeSpinner();
+            this.showRetryToast();
+            this.endpointSetupRetryCount++;
+          } else {
+            // either this device is not eligible for hid use. or some other crazy reason.
+            this.showInstallationErrorAlert('installation');
+          }
+        }
+      });
+  }
+
+  canRetry(exceptionType): boolean {
+    return this.shouldRetry(exceptionType) && this.endpointSetupRetryCount < this.endpointSetupMaxRetryCount;
+  }
+
+  private showRetryToast(): void {
+    let toastShow = this.toastService.create({
+      message: 'Mobile credential installation error',
+      duration: 10000,
+      position: 'bottom',
+      animated: true,
+      mode: 'md',
+      buttons: [
+        {
+          text: 'retry',
+          handler: () => {
+            this.loadingService.showSpinner({ message: this.custom_loading_message });
+            this.installCredentialOnDevice();
+          },
+        },
+      ],
+    });
+    toastShow.then(toast => toast.present());
+  }
+
+  private shouldRetry(exceptionCode): boolean {
+    let shouldRetry = false;
+    switch (exceptionCode) {
+      case 'INTERNAL_ERROR':
+      case 'SERVER_UNREACHABLE':
+      case 'SDK_BUSY':
+        shouldRetry = true;
+        break;
+      case 'INVALID_INVITATION_CODE':
+      case 'DEVICE_SETUP_FAILED':
+      case 'SDK_INCOMPATIBLE':
+      case 'DEVICE_NOT_ELIGIBLE':
+      case 'ENDPOINT_NOT_SETUP':
+      default:
+        break;
+    }
+    return shouldRetry;
   }
 
   private showInstallationErrorAlert(operation: string): void {
@@ -262,6 +323,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     modalCtrl: ModalController,
     alertCtrl: AlertController,
     popoverCtrl: PopoverController,
+    toastService: ToastController,
     loadingService: LoadingService,
     partnerPaymentApi: PartnerPaymentApiService,
     storageStateService: StorageStateService,
@@ -275,6 +337,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
         modalCtrl,
         alertCtrl,
         popoverCtrl,
+        toastService,
         loadingService,
         partnerPaymentApi,
         storageStateService,

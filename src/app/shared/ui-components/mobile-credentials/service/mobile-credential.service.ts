@@ -33,7 +33,6 @@ export class MobileCredentialService {
     const androidCredentialSettings$ = this.androidMobileCredentialSettingsEnabled$().pipe(take(1));
     return forkJoin(appleCredentialSettings$, androidCredentialSettings$).pipe(
       switchMap(([appleWalletSettingsEnabled, androidCredentialSettingsEnabled]) => {
-        console.log('appleWalletSettingsEnabled: ', appleWalletSettingsEnabled);
         if (appleWalletSettingsEnabled) {
           this.mCredentialManager = this.injector.get(IOSCredentialManager);
           return of(true);

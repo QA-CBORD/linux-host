@@ -18,14 +18,11 @@ public class OrigoMobileKeyStartup implements OrigoMobileKeysCallback {
 
     @Override
     public void handleMobileKeysTransactionCompleted() {
-        Log.d(TAG, "handleMobileKeysTransactionCompleted()");
         hidMobileCredentialSetup.onStartUpComplete();
     }
 
     @Override
     public void handleMobileKeysTransactionFailed(OrigoMobileKeysException mobileKeysException) {
-        Log.e(TAG, "Application startup failed: " + mobileKeysException.getErrorCode(), mobileKeysException);
-        // we want to be able to notify ionic that this transaction has failed, maybe it wants to try ?.
         hidMobileCredentialSetup.handleMobileKeysTransactionFailed(mobileKeysException);
     }
 
@@ -36,27 +33,5 @@ public class OrigoMobileKeyStartup implements OrigoMobileKeysCallback {
     {
         OrigoMobileKeys mobileKeys = hidMobileCredentialSetup.getMobileKeys();
         mobileKeys.applicationStartup(this);
-    }
-
-
-    public static boolean shouldRetry(OrigoMobileKeysException exception)
-    {
-        boolean shouldRetry = false;
-        switch (exception.getErrorCode())
-        {
-            case INTERNAL_ERROR:
-            case SERVER_UNREACHABLE:
-            case SDK_BUSY:
-                shouldRetry = true;
-                break;
-            case INVALID_INVITATION_CODE:
-            case DEVICE_SETUP_FAILED:
-            case SDK_INCOMPATIBLE:
-            case DEVICE_NOT_ELIGIBLE:
-            case ENDPOINT_NOT_SETUP:
-            default:
-                break;
-        }
-        return shouldRetry;
     }
 }

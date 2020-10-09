@@ -6,7 +6,7 @@ import { InstitutionFacadeService } from '@core/facades/institution/institution.
 import { LoadingService } from '@core/service/loading/loading.service';
 import { PartnerPaymentApiService } from '@core/service/payments-api/partner-payment-api.service';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
-import { AlertController, ModalController, PopoverController } from '@ionic/angular';
+import { AlertController, ModalController, PopoverController, ToastController } from '@ionic/angular';
 import { from, Observable, of } from 'rxjs';
 import { map, switchMap, take } from 'rxjs/operators';
 import { AbstractAndroidCredentialDataService } from '../model/android/abstract-android-credential-data.service';
@@ -26,6 +26,7 @@ export class AndroidCredentialManager extends AbstractAndroidCredentialDataServi
     private readonly alertCtrl: AlertController,
     private readonly popoverCtrl: PopoverController,
     private readonly loadingService: LoadingService,
+    private readonly toastService: ToastController,
     protected partnerPaymentApi: PartnerPaymentApiService,
     protected readonly storageStateService: StorageStateService,
     protected readonly authFacadeService: AuthFacadeService,
@@ -59,6 +60,7 @@ export class AndroidCredentialManager extends AbstractAndroidCredentialDataServi
             this.modalCtrl,
             this.alertCtrl,
             this.popoverCtrl,
+            this.toastService,
             this.loadingService,
             this.partnerPaymentApi,
             this.storageStateService,
