@@ -55,7 +55,6 @@ export class AccessCardComponent implements OnInit {
     this.getUserData();
     this.getUserName();
     this.credentialManager.mobileCredentialEnabled$.pipe(take(1)).subscribe(mobileCredentialEnabled => {
-      console.log('mobileCredentialEnabled: ', mobileCredentialEnabled);
       if (mobileCredentialEnabled) {
         this.mobileCredentialEnabled = mobileCredentialEnabled;
         this.credentialManager.setCredentialStateChangeCallback(this);
