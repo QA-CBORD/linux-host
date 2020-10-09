@@ -85,6 +85,7 @@ export class IOSCredentialManager implements MobileCredentialManager {
   credentialEnabled$(): Observable<boolean> {
     return from(this.loadCredentials()).pipe(
       map(appleWalletCredential => {
+        console.log('mobileCredentialEnabled: ', appleWalletCredential)
         this.mCredential = appleWalletCredential;
         return this.mCredential.isEnabled();
       })
