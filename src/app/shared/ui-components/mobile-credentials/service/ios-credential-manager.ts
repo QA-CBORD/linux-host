@@ -83,28 +83,25 @@ export class IOSCredentialManager implements MobileCredentialManager {
 
   // if this user has mobile credential access...
   credentialEnabled$(): Observable<boolean> {
-    console.log('mobileCredentialEnabled: 0');
     return from(this.loadCredentials()).pipe(
       take(1),
       map(appleWalletCredential => {
-        console.log('mobileCredentialEnabled: ', appleWalletCredential);
         this.mCredential = appleWalletCredential;
-        if (this.mCredential.isEnabled()) {
+        let appleWalletEnabled = this.mCredential.isEnabled();
+        if (appleWalletEnabled) {
           this.enableAppleWalletEvents();
         }
-        return this.mCredential.isEnabled();
+        return appleWalletEnabled;
       })
     );
   }
 
   private loadCredentials(): Promise<AppleWalletCredential> {
-    console.log('loadCredentials');
     return this.authFacadeService.cachedAuthSessionToken$
       .pipe(
         take(1),
         switchMap(sessionId => from(IOSDevice.getAppleWalletInfo({ sessionId: sessionId }))),
         map(appleWalletInfo => {
-          console.log('appleWalletInfo: ', appleWalletInfo);
           return new AppleWalletCredential(new AppleWalletCredentialState(appleWalletInfo));
         })
       )
@@ -113,9 +110,7 @@ export class IOSCredentialManager implements MobileCredentialManager {
 
   private enableAppleWalletEvents() {
     if (!this.myPluginEventListener) {
-      console.log('enableAppleWalletEvents: 0');
       this.myPluginEventListener = IOSDevice.addListener('AppleWalletEvent', () => {
-        console.log('enableAppleWalletEvents');
         this.refresh();
       });
     }
