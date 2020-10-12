@@ -1,12 +1,12 @@
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { Observable, from, pipe, of } from 'rxjs';
-import { first, map, take, switchMap, tap } from 'rxjs/operators';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
+import { first, map, take } from 'rxjs/operators';
 import { AccessCardService } from './services/access-card.service';
 import { Router } from '@angular/router';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { DASHBOARD_NAVIGATE } from '@sections/dashboard/dashboard.config';
-import { AppleWalletInfo, AppleWalletCredentialStatus } from '@core/provider/native-provider/native.provider';
+import { AppleWalletInfo } from '@core/provider/native-provider/native.provider';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { Plugins } from '@capacitor/core';
@@ -55,7 +55,6 @@ export class AccessCardComponent implements OnInit {
     this.getUserData();
     this.getUserName();
     this.credentialManager.mobileCredentialEnabled$.pipe(take(1)).subscribe(mobileCredentialEnabled => {
-      console.log('mobileCredentialEnabled: ', mobileCredentialEnabled);
       if (mobileCredentialEnabled) {
         this.mobileCredentialEnabled = mobileCredentialEnabled;
         this.credentialManager.setCredentialStateChangeCallback(this);

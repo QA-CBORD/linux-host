@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { ChangeDetectorRef, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
@@ -7,13 +7,14 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { PartnerPaymentApiService } from '@core/service/payments-api/partner-payment-api.service';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { AlertController, ModalController, PopoverController } from '@ionic/angular';
-import { from, Observable, of } from 'rxjs';
-import { map, switchMap, take } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 import { AbstractAndroidCredentialDataService } from '../model/android/abstract-android-credential-data.service';
 import { AndroidCredential } from '../model/android/android-credentials';
 import { HIDCredentialManager } from '../model/android/hid/hid-credential-manager';
 import { MobileCredential } from '../model/shared/mobile-credential';
 import { CredentialStateChangeSubscription, MobileCredentialManager } from '../model/shared/mobile-credential-manager';
+import { GooglePayCredentialManager } from '../model/android/google-pay/google-pay-credential-manager';
 
 @Injectable({
   providedIn: 'root',
@@ -54,6 +55,7 @@ export class AndroidCredentialManager extends AbstractAndroidCredentialDataServi
     return this.androidActivePassesFromServer().pipe(
       map(mCredential => {
         let androidCredential = <AndroidCredential<any>>mCredential;
+        console.log("androidCredential: ", androidCredential)
         if (androidCredential.isHID()) {
           this.mCredentialManager = HIDCredentialManager.getInstance(
             this.modalCtrl,
@@ -69,8 +71,8 @@ export class AndroidCredentialManager extends AbstractAndroidCredentialDataServi
           );
           this.mCredentialManager.setCredential(androidCredential);
           return true;
-        } else if (androidCredential.isGOOGLE()) {
-          this.mCredentialManager = null; // google/nxp credential manager not implemented yet
+        } else if (androidCredential.isGoogle()) {
+          this.mCredentialManager = new  GooglePayCredentialManager(); // google/nxp credential manager not implemented yet
           this.mCredentialManager.setCredential(androidCredential);
           return true;
         }

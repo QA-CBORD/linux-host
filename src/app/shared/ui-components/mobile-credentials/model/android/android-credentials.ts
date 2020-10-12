@@ -141,7 +141,7 @@ export abstract class AndroidCredential<T> extends MobileCredential implements A
     return this.credentialState.isHID();
   }
 
-  isGOOGLE(): boolean {
+  isGoogle(): boolean {
     return this.credentialState.isGOOGLE();
   }
   abstract getPersistable<T>(): T;

@@ -1,5 +1,4 @@
 import { HttpClient } from '@angular/common/http';
-import { ChangeDetectorRef } from '@angular/core';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
@@ -10,9 +9,9 @@ import { AlertController, ModalController, PopoverController } from '@ionic/angu
 import { MobileCredentialsComponent } from '@shared/ui-components/mobile-credentials/mobile-credentials.component';
 import { from, Observable, of } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
-import { MobileCredentialState, MobileCredentialStateEnum } from '../../shared/credential-state';
+import { MobileCredentialStateEnum } from '../../shared/credential-state';
 import { AbstractAndroidCredentialManager } from '../abstract-android-credential.management';
-import { AndroidCredentialStateEntity, HID } from '../android-credentials';
+import { HID } from '../android-credentials';
 import { HIDSdkManager } from './hid-plugin.adapter';
 
 export class HIDCredentialManager extends AbstractAndroidCredentialManager {
