@@ -60,7 +60,6 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         toggleLabel: { checked: 'Report card as found', unchecked: 'Report card as lost' },
         type: 'button',
         setToggleStatus: setReportCardLabel,
-        // getToggleStatus: getCardStatus,
         navigate: [SETTINGS_NAVIGATE.lostCard],
         validations: [{ type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.REPORT_LOST_CARD_ENABLED }],
       },

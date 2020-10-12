@@ -132,4 +132,9 @@ export class UserApiService {
     const queryConfig = new RPCQueryConfig('update', params, true, false);
     return this.http.post<any>(this.serviceUrl, queryConfig);
   }
+
+  reportCard$(isReportAsLost: boolean): Observable<MessageResponse<string>> {
+    const queryConfig = new RPCQueryConfig(isReportAsLost ? 'reportCardLost' : 'reportCardFound', {}, true, false);
+    return this.http.post<any>(this.serviceUrl, queryConfig);
+  }
 }

@@ -10,6 +10,7 @@ import { Settings } from 'src/app/app.global';
 import { from, concat, zip } from 'rxjs';
 import { SETTINGS_ID } from '../models/settings-id.enum';
 import { PinAction } from '@shared/ui-components/pin/pin.page';
+import { ReportCardStatus } from '../models/report-card-status.enum';
 
 export function getCardStatus(services: SettingsServices): Promise<boolean> {
   return services.userService
@@ -27,7 +28,7 @@ export async function setReportCardLabel(services: SettingsServices): Promise<vo
   const setting: SettingItemConfig = this;
   setting.label = await services.userService
     .getUserState$()
-    .pipe(map(user => (user.cashlessMediaStatus === 2 ? setting.toggleLabel.checked : setting.toggleLabel.unchecked)));
+    .pipe(map(user => (user.cashlessMediaStatus === ReportCardStatus.LOST ? setting.toggleLabel.checked : setting.toggleLabel.unchecked)));
 }
 
 export function toggleBiometricStatus(services: SettingsServices) {
