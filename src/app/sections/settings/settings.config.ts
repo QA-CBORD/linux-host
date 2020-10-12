@@ -8,6 +8,7 @@ import {
   setBiometricStatus,
   handlePinAccess,
   setReportCardLabel,
+  getCardStatusValidation,
 } from './helpers/setting-item.helper';
 import { CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_CATEGORIES } from 'src/app/content-strings';
 import { HTMLRendererComponent } from '@shared/ui-components/html-renderer/html-renderer.component';
@@ -16,6 +17,7 @@ import { AuthTypes } from '@core/utils/auth-types.enum';
 import { EditHomePageModalComponent } from '@shared/ui-components/edit-home-page-modal/edit-home-page-modal.component';
 import { SETTINGS_ID } from './models/settings-id.enum';
 import { LOCAL_ROUTING as ORDERING_ROUTING } from '@sections/ordering/ordering.config';
+import { ReportCardStatusSetting } from './models/report-card-status.config';
 export enum LOCAL_ROUTING {
   photoUpload = 'photo-upload',
 }
@@ -61,7 +63,12 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         type: 'button',
         setToggleStatus: setReportCardLabel,
         navigate: [SETTINGS_NAVIGATE.lostCard],
-        validations: [{ type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.REPORT_LOST_CARD_ENABLED }],
+        validations: [
+          {
+            type: SETTINGS_VALIDATIONS.StatusSettingEnable,
+            value: { getStatusValidation: getCardStatusValidation, validation: ReportCardStatusSetting },
+          },
+        ],
       },
     ],
   },

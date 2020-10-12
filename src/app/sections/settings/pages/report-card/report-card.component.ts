@@ -2,9 +2,9 @@ import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { UserInfo } from '@core/model/user';
 import { take, switchMap } from 'rxjs/operators';
-import { ReportCardStatus } from '@sections/settings/models/report-card-status.enum';
 import { getCashlessStatus } from '@core/utils/general-helpers';
 import { ToastService } from '@core/service/toast/toast.service';
+import { ReportCardStatus } from '@sections/settings/models/report-card-status.config';
 
 @Component({
   selector: 'st-report-card',
@@ -40,7 +40,7 @@ export class ReportCardComponent implements OnInit {
       .pipe(
         switchMap(trans => {
           if (trans.response) this.user.cashlessMediaStatus = getCashlessStatus(newStatus);
-          return this.userFacadeService.saveUser$(this.user);
+          return this.userFacadeService.getUser$();
         })
       )
       .toPromise()

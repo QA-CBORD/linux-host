@@ -37,7 +37,7 @@ export interface SettingItemConfig {
 
 export interface SettingItemValidation {
   type: SETTINGS_VALIDATIONS | string;
-  value: Settings.Setting | string;
+  value: Settings.Setting | string | StatusSettingValidation;
 }
 export interface SettingItemExternalResource {
   type: string;
@@ -64,6 +64,7 @@ export interface DomainContentString {
 export enum SETTINGS_VALIDATIONS {
   SettingEnable = 'setting-enable',
   Biometric = 'biometric',
+  StatusSettingEnable = 'status-enable',
 }
 
 export interface UserInfoSet extends UserInfo {
@@ -81,4 +82,9 @@ export interface SettingsServices {
   institution: InstitutionFacadeService;
   environment: EnvironmentFacadeService;
   appBrowser: InAppBrowser;
+}
+
+export interface StatusSettingValidation {
+  getStatusValidation: (services: SettingsServices) => Observable<string>;
+  validation: { [key: number]: Settings.Setting | string };
 }

@@ -7,7 +7,7 @@ import { UserInfo } from '@core/model/user';
 import { UserAccount } from '@core/model/account/account.model';
 import { ACCOUNT_TYPES, PAYMENT_SYSTEM_TYPE } from '@sections/accounts/accounts.config';
 import { MerchantInfo } from '@sections/ordering';
-import { ReportCardStatus } from '@sections/settings/models/report-card-status.enum';
+import { ReportCardStatus } from '@sections/settings/models/report-card-status.config';
 
 export function parseArrayFromString<T>(value: string): Array<T> {
   if (value && !value.length) return [];
@@ -210,5 +210,5 @@ export function getRandomColorExtendedPalette(): string {
 }
 
 export function getCashlessStatus(isLost: boolean): number {
-return isLost ?  ReportCardStatus.LOST : ReportCardStatus.NOT_LOST;
+  return isLost ? ReportCardStatus.LOST : ReportCardStatus.NOT_LOST;
 }
