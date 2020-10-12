@@ -23,8 +23,10 @@ export class ReportCardComponent implements OnInit {
 
   isReporting: boolean;
 
-  constructor(private readonly userFacadeService: UserFacadeService, private readonly cdRef: ChangeDetectorRef,
-    private readonly toastService: ToastService,
+  constructor(
+    private readonly userFacadeService: UserFacadeService,
+    private readonly cdRef: ChangeDetectorRef,
+    private readonly toastService: ToastService
     ) {}
 
   ngOnInit() {
@@ -33,7 +35,6 @@ export class ReportCardComponent implements OnInit {
 
   toggleStatus() {
     this.isReporting = true;
-    this.user.cashlessMediaStatus = this.isLost ? ReportCardStatus.LOST : ReportCardStatus.NOT_LOST;
     const newStatus = !this.isLost;
     this.userFacadeService
       .reportCard$(newStatus)
@@ -44,8 +45,8 @@ export class ReportCardComponent implements OnInit {
         })
       )
       .toPromise()
-      .then(()=>this.presentToast())
-      .catch((e)=> this.onErrorRetrieve('Something went wrong, please try again...'))
+      .then(() => this.presentToast())
+      .catch(() => this.onErrorRetrieve('Something went wrong, please try again...'))
       .finally(() => {
         this.isReporting = false;
         this.setReportCardStatus();
@@ -66,7 +67,9 @@ export class ReportCardComponent implements OnInit {
   }
 
   private async onErrorRetrieve(message: string) {
-    await this.toastService.showToast({ message, toastButtons: [
+    await this.toastService.showToast({
+      message,
+      toastButtons: [
         {
           text: 'Retry',
           handler: () => {
@@ -74,13 +77,14 @@ export class ReportCardComponent implements OnInit {
           },
         },
         {
-          text: 'Dismiss'
+          text: 'Dismiss',
         },
-      ]});
+      ],
+    });
   }
 
   private async presentToast(): Promise<void> {
     const message = `Reported successfully.`;
-    await this.toastService.showToast({ message, toastButtons: [{ text: 'Dismiss' }]});
+    await this.toastService.showToast({ message, toastButtons: [{ text: 'Dismiss' }] });
   }
 }
