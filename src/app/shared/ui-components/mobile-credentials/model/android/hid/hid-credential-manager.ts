@@ -1,18 +1,13 @@
-import { HttpClient } from '@angular/common/http';
-import { ChangeDetectorRef } from '@angular/core';
-import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
-import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
-import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { PartnerPaymentApiService } from '@core/service/payments-api/partner-payment-api.service';
-import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { AlertController, ModalController, PopoverController, ToastController } from '@ionic/angular';
 import { MobileCredentialsComponent } from '@shared/ui-components/mobile-credentials/mobile-credentials.component';
 import { from, Observable, of } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
-import { MobileCredentialState, MobileCredentialStateEnum } from '../../shared/credential-state';
+import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
+import { MobileCredentialStatuses } from '../../shared/credential-state';
+import { AndroidCredentialDataService } from '../android-credential-data.service';
 import { AbstractAndroidCredentialManager } from '../abstract-android-credential.management';
-import { AndroidCredentialStateEntity, HID } from '../android-credentials';
+import { HID } from '../android-credentials';
 import { HIDSdkManager } from './hid-plugin.adapter';
 
 export class HIDCredentialManager extends AbstractAndroidCredentialManager {
@@ -21,20 +16,16 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
   private custom_loading_message = 'Processing ... Please wait';
   private endpointSetupRetryCount: number = 1;
   private endpointSetupMaxRetryCount: number = 3;
+
   private constructor(
     private readonly modalCtrl: ModalController,
     private readonly alertCtrl: AlertController,
     private readonly popoverCtrl: PopoverController,
     private readonly toastService: ToastController,
     private readonly loadingService: LoadingService,
-    protected partnerPaymentApi: PartnerPaymentApiService,
-    protected readonly storageStateService: StorageStateService,
-    protected readonly authFacadeService: AuthFacadeService,
-    protected readonly institutionFacadeService: InstitutionFacadeService,
-    protected readonly contentStringFacade: ContentStringsFacadeService,
-    protected readonly httpClient: HttpClient
+    protected readonly androidCredentialDataService: AndroidCredentialDataService
   ) {
-    super(partnerPaymentApi, storageStateService, authFacadeService, institutionFacadeService, httpClient);
+    super();
   }
 
   onUiImageClicked(event?: any): void {
@@ -76,7 +67,9 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
   }
 
   private checkCredentialAvailability(): Observable<boolean> {
-    return this.androidActivePassesFromServer().pipe(map(androidCredential => androidCredential.isAvailable()));
+    return this.androidCredentialDataService
+      .androidActivePassesFromServer()
+      .pipe(map(androidCredential => androidCredential.isAvailable()));
   }
 
   // handles when HID question mark is clicked, should show instructions and an uninstall option if already installed.
@@ -104,6 +97,15 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
       await popover.present();
     };
     showCredentialUsageContentString();
+  }
+
+  get credentialUsageContentString$(): Promise<string> {
+    let credentialUsagecontentStringConfig = {
+      domain: CONTENT_STRINGS_DOMAINS.patronUi,
+      category: CONTENT_STRINGS_CATEGORIES.mobileCredential,
+      name: 'usage-instructions',
+    };
+    return this.androidCredentialDataService.loadContentString$(credentialUsagecontentStringConfig).toPromise();
   }
 
   private async createAlertDialog(header: string, msg: string, buttons: Array<any>): Promise<HTMLIonAlertElement> {
@@ -174,7 +176,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
               if (credentialProvisioneddOnThisDevice) {
                 return of(true);
               }
-              this.mCredential.setStatus(MobileCredentialStateEnum.IS_AVAILABLE);
+              this.mCredential.setStatus(MobileCredentialStatuses.IS_AVAILABLE);
               return of(true);
             })
           );
@@ -192,14 +194,15 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
       this.installCredentialOnDevice();
       return;
     }
-    this.getCredentialFromServer$(this.mCredential)
+    this.androidCredentialDataService
+      .getCredentialFromServer$(this.mCredential)
       .pipe(take(1))
       .subscribe(
         credential => {
           this.mCredential = credential;
           this.installCredentialOnDevice();
         },
-        error => {
+        () => {
           this.showInstallationErrorAlert('installation');
         }
       );
@@ -210,9 +213,15 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
       .installCredential(this.mCredential.getCredentialData<HID>().invitationCode)
       .then(hidSdkInstallCredentialResult => {
         if (hidSdkInstallCredentialResult == HIDCredentialManager.TRANSACTION_SUCCESS_FULL) {
-          this.mCredential.setStatus(MobileCredentialStateEnum.IS_PROVISIONED);
-          this.updateCredential(this.mCredential)
-            .pipe(take(1))
+          this.mCredential.setStatus(MobileCredentialStatuses.IS_PROVISIONED);
+          this.androidCredentialDataService
+            .updateCredential(this.mCredential)
+            .pipe(
+              take(1),
+              switchMap(credential => {
+                return this.androidCredentialDataService.saveCredentialAsUserSetting$(credential);
+              })
+            )
             .subscribe(() => {
               this.credentialStateChangeSubscription.onCredentialStateChanged();
               this.loadingService.closeSpinner();
@@ -223,7 +232,6 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
             this.showRetryToast();
             this.endpointSetupRetryCount++;
           } else {
-            // either this device is not eligible for hid use. or some other crazy reason.
             this.showInstallationErrorAlert('installation');
           }
         }
@@ -288,35 +296,30 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
   }
 
   private uninstallCredential(): void {
-    if (this.mCredential.isProvisioned()) {
-      this.deleteCredential()
-        .pipe(take(1))
-        .subscribe(
-          () => {
-            this.getHidSdkManager()
-              .deleteCurrentCredential()
-              .then(() => {
-                this.mCredential.setStatus(MobileCredentialStateEnum.IS_AVAILABLE);
-                this.credentialStateChangeSubscription.onCredentialStateChanged();
-              })
-              .finally(() => {
-                this.loadingService.closeSpinner();
-              });
-          },
-          error => {
-            this.loadingService.closeSpinner();
-            this.showInstallationErrorAlert('uninstall');
-          }
-        );
-    }
+    this.androidCredentialDataService
+      .deleteCredential()
+      .pipe(take(1))
+      .subscribe(
+        () => {
+          this.getHidSdkManager()
+            .deleteCurrentCredential()
+            .then(() => {
+              this.mCredential.setStatus(MobileCredentialStatuses.IS_AVAILABLE);
+              this.credentialStateChangeSubscription.onCredentialStateChanged();
+            })
+            .finally(() => {
+              this.loadingService.closeSpinner();
+            });
+        },
+        () => {
+          this.loadingService.closeSpinner();
+          this.showInstallationErrorAlert('uninstall');
+        }
+      );
   }
 
   private getHidSdkManager(): HIDSdkManager {
     return HIDSdkManager.getInstance();
-  }
-
-  initialize(): Promise<boolean> {
-    return null; // no one calls you.
   }
 
   static getInstance(
@@ -325,12 +328,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     popoverCtrl: PopoverController,
     toastService: ToastController,
     loadingService: LoadingService,
-    partnerPaymentApi: PartnerPaymentApiService,
-    storageStateService: StorageStateService,
-    authFacadeService: AuthFacadeService,
-    institutionFacadeService: InstitutionFacadeService,
-    contentStringFacade: ContentStringsFacadeService,
-    httpClient: HttpClient
+    androidCredentialDataService: AndroidCredentialDataService
   ): HIDCredentialManager {
     if (!this.instance) {
       this.instance = new HIDCredentialManager(
@@ -339,27 +337,25 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
         popoverCtrl,
         toastService,
         loadingService,
-        partnerPaymentApi,
-        storageStateService,
-        authFacadeService,
-        institutionFacadeService,
-        contentStringFacade,
-        httpClient
+        androidCredentialDataService
       );
     }
     return this.instance;
   }
 
   get termsAndConditions$(): Promise<string> {
-    const { domain, category, name } = this.mCredential.getConfig().terms;
-    return this.contentStringFacade
-      .fetchContentString$(domain, category, name)
+    const termsNConditionsConfig = {
+      domain: CONTENT_STRINGS_DOMAINS.get_web_gui,
+      category: CONTENT_STRINGS_CATEGORIES.termsScreen,
+      name: 'terms',
+    };
+    return this.androidCredentialDataService
+      .loadContentString$(termsNConditionsConfig)
       .pipe(
-        map(data => {
-          return data.value;
-        }),
-        take(1),
-        tap(resp => this.loadingService.closeSpinner())
+        map(contentString => {
+          this.loadingService.closeSpinner();
+          return contentString;
+        })
       )
       .toPromise();
   }

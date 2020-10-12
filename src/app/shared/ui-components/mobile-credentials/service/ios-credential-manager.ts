@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { from, Observable, of } from 'rxjs';
 import { map, switchMap, take } from 'rxjs/operators';
@@ -8,7 +8,6 @@ import { MobileCredential } from '../model/shared/mobile-credential';
 import { AppleWalletCredential } from '../model/ios/apple-wallet-credential';
 import { AppleWalletCredentialState } from '../model/ios/applet-wallet-state';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
-import { AppleWalletInfo } from '@core/provider/native-provider/native.provider';
 const { IOSDevice } = Plugins;
 
 @Injectable({
@@ -16,7 +15,7 @@ const { IOSDevice } = Plugins;
 })
 export class IOSCredentialManager implements MobileCredentialManager {
   private mCredential: AppleWalletCredential;
-  private myPluginEventListener: any;
+  private appletWalletEventListener: any;
   private credentialStateChangeSubscription: CredentialStateChangeSubscription;
   constructor(
     private readonly userFacadeService: UserFacadeService,
@@ -46,10 +45,6 @@ export class IOSCredentialManager implements MobileCredentialManager {
 
   uiImageUrl(): string {
     return this.mCredential.getUiImageUrl();
-  }
-
-  initialize(): Promise<any> {
-    return of(this.enableAppleWalletEvents()).toPromise();
   }
 
   setCredential(mobileCredential: MobileCredential): void {
@@ -89,7 +84,7 @@ export class IOSCredentialManager implements MobileCredentialManager {
         this.mCredential = appleWalletCredential;
         let appleWalletEnabled = this.mCredential.isEnabled();
         if (appleWalletEnabled) {
-          this.enableAppleWalletEvents();
+          this.registerAppletWalletEvent();
         }
         return appleWalletEnabled;
       })
@@ -108,9 +103,9 @@ export class IOSCredentialManager implements MobileCredentialManager {
       .toPromise();
   }
 
-  private enableAppleWalletEvents() {
-    if (!this.myPluginEventListener) {
-      this.myPluginEventListener = IOSDevice.addListener('AppleWalletEvent', () => {
+  private registerAppletWalletEvent() {
+    if (!this.appletWalletEventListener) {
+      this.appletWalletEventListener = IOSDevice.addListener('AppleWalletEvent', () => {
         this.refresh();
       });
     }

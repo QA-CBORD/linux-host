@@ -1,5 +1,5 @@
-import { MobileCredentialState, MobileCredentialStateEnum } from '../shared/credential-state';
-import { ActivePasses, CredentialProviderEnum } from '../shared/credential-utils';
+import { MobileCredentialState, MobileCredentialStatuses } from '../shared/credential-state';
+import { ActivePasses, CredentialProviders } from '../shared/credential-utils';
 import { MobileCredential } from '../shared/mobile-credential';
 import { MobileCredentialConfig, MOBILE_CREDENTIAL_CONFIGS } from '../shared/mobile-credential-configs';
 
@@ -27,14 +27,14 @@ export class AndroidCredentialStateResolver {
       return new AndroidCredentialStateEntity(
         activePasses.credStatus.android_hid,
         activePasses.passes.android_hid,
-        CredentialProviderEnum.HID,
+        CredentialProviders.HID,
         activePasses.referenceIdentifier
       );
     } else if (me.hasGoogleCredential(activePasses)) {
       return new AndroidCredentialStateEntity(
         activePasses.credStatus.android_nxp,
         activePasses.passes.android_nxp,
-        CredentialProviderEnum.GOOGLE,
+        CredentialProviders.GOOGLE,
         activePasses.referenceIdentifier
       );
     }
@@ -42,15 +42,15 @@ export class AndroidCredentialStateResolver {
 
   private static hasGoogleCredential(activePasses: ActivePasses): boolean {
     return (
-      activePasses.credStatus.android_nxp == MobileCredentialStateEnum.IS_AVAILABLE ||
-      activePasses.credStatus.android_nxp == MobileCredentialStateEnum.IS_PROVISIONED
+      activePasses.credStatus.android_nxp == MobileCredentialStatuses.IS_AVAILABLE ||
+      activePasses.credStatus.android_nxp == MobileCredentialStatuses.IS_PROVISIONED
     );
   }
 
   private static hasHidCredential(activePasses: ActivePasses): boolean {
     return (
-      activePasses.credStatus.android_hid == MobileCredentialStateEnum.IS_AVAILABLE ||
-      activePasses.credStatus.android_hid == MobileCredentialStateEnum.IS_PROVISIONED
+      activePasses.credStatus.android_hid == MobileCredentialStatuses.IS_AVAILABLE ||
+      activePasses.credStatus.android_hid == MobileCredentialStatuses.IS_PROVISIONED
     );
   }
 }
@@ -75,10 +75,10 @@ export class AndroidCredentialStateEntity implements AndroidCredentialState {
   }
 
   isHID(): boolean {
-    return this.getIssuer() == CredentialProviderEnum.HID;
+    return this.getIssuer() == CredentialProviders.HID;
   }
   isGOOGLE(): boolean {
-    return this.getIssuer() == CredentialProviderEnum.GOOGLE;
+    return this.getIssuer() == CredentialProviders.GOOGLE;
   }
 
   getConfig(): MobileCredentialConfig {
@@ -89,15 +89,15 @@ export class AndroidCredentialStateEntity implements AndroidCredentialState {
     return this.statusMsg;
   }
   isProvisioned(): boolean {
-    return this.credStatus == MobileCredentialStateEnum.IS_PROVISIONED;
+    return this.credStatus == MobileCredentialStatuses.IS_PROVISIONED;
   }
 
   isEnabled(): boolean {
-    return this.credStatus != MobileCredentialStateEnum.IS_DISABLED;
+    return this.credStatus != MobileCredentialStatuses.IS_DISABLED;
   }
 
   isAvailable(): boolean {
-    return this.credStatus == MobileCredentialStateEnum.IS_AVAILABLE;
+    return this.credStatus == MobileCredentialStatuses.IS_AVAILABLE;
   }
 
   getIssuer(): string {

@@ -1,6 +1,6 @@
 import { AppleWalletCredentialStatus, AppleWalletInfo } from '@core/provider/native-provider/native.provider';
 import { MobileCredentialState } from '../shared/credential-state';
-import { CredentialProviderEnum } from '../shared/credential-utils';
+import { CredentialProviders } from '../shared/credential-utils';
 import { MOBILE_CREDENTIAL_CONFIGS, MobileCredentialConfig } from '../shared/mobile-credential-configs';
 
 export class AppleWalletCredentialState implements MobileCredentialState {
@@ -40,7 +40,7 @@ export class AppleWalletCredentialState implements MobileCredentialState {
   }
 
   getIssuer(): string {
-    return CredentialProviderEnum.APPLE;
+    return CredentialProviders.APPLE;
   }
 
   getConfig(): MobileCredentialConfig {

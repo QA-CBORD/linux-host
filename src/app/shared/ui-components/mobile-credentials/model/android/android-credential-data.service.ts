@@ -1,26 +1,36 @@
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
+import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
+import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { PartnerPaymentApiService } from '@core/service/payments-api/partner-payment-api.service';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { from, Observable, of } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
+import { User } from 'src/app/app.global';
+import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
 import { MobileCredentialSharedDataService } from '../shared/mobile-credential-shared-data.service';
 import { AndroidCredential, Persistable } from './android-credentials';
 
-export abstract class AbstractAndroidCredentialDataService extends MobileCredentialSharedDataService {
+@Injectable({
+  providedIn: 'root',
+})
+export class AndroidCredentialDataService extends MobileCredentialSharedDataService {
   constructor(
     protected partnerPaymentApi: PartnerPaymentApiService,
     protected readonly storageStateService: StorageStateService,
     protected readonly authFacadeService: AuthFacadeService,
     protected readonly institutionFacadeService: InstitutionFacadeService,
-    protected readonly httpClient: HttpClient
+    protected readonly httpClient: HttpClient,
+    protected readonly settingsFacadeService: SettingsFacadeService,
+    protected readonly contentStringFacade: ContentStringsFacadeService
   ) {
     super(partnerPaymentApi, storageStateService, authFacadeService, institutionFacadeService, httpClient);
   }
 
   deleteCredential(): Observable<boolean> {
-    return this.getCredentialFromCache$().pipe(
+    return this.getCredentialFromCacheOrUserSettings$().pipe(
       switchMap(credential => {
         if (credential) {
           return this.omniIDJwtToken$().pipe(
@@ -37,23 +47,33 @@ export abstract class AbstractAndroidCredentialDataService extends MobileCredent
     );
   }
 
+  loadContentString$(contentStringSettings: {
+    domain: CONTENT_STRINGS_DOMAINS;
+    category: CONTENT_STRINGS_CATEGORIES;
+    name: string;
+  }): Observable<string> {
+    let { domain, category, name } = contentStringSettings;
+    return this.contentStringFacade.fetchContentString$(domain, category, name).pipe(
+      map(data => {
+        return data.value;
+      }),
+      take(1)
+    );
+  }
+
   updateCredential(credential: AndroidCredential<any>): Observable<AndroidCredential<any>> {
-    let requestBody = {
-      referenceIdentifier: credential.getCredentialState().referenceIdentifier,
-      status: credential.getCredentialState().credStatus,
-      credentialID: credential.getCredentialData<any>().id,
-    };
-
-    // this.saveCredentialInLocalStorage(credential.getPersistable());
-    // return of(credential);
-
     return this.omniIDJwtToken$().pipe(
       switchMap(omniIDJwtToken => {
+        let requestBody = {
+          referenceIdentifier: credential.getCredentialState().referenceIdentifier,
+          status: credential.getCredentialState().credStatus,
+          credentialID: credential.getCredentialData<any>().id,
+        };
         return this.partnerPaymentApi.updateCredential(omniIDJwtToken, requestBody).pipe(map(() => credential));
       }),
-      tap(resp => {
-        const data = credential.getPersistable<Persistable>();
-        this.saveCredentialInLocalStorage(data);
+      tap(() => {
+        const persistable = credential.getPersistable<Persistable>();
+        this.saveCredentialInLocalStorage(persistable);
       })
     );
   }
@@ -64,7 +84,7 @@ export abstract class AbstractAndroidCredentialDataService extends MobileCredent
      *
      */
 
-   // return this.httpClient.get('/assets/mock/android_credentials.json').pipe(map(data => data[0]));
+    // return this.httpClient.get('/assets/mock/android_credentials.json').pipe(map(data => data[0]));
     const omniIDJwtToken$ = this.omniIDJwtToken$();
     return omniIDJwtToken$.pipe(
       switchMap(omniIDJwtToken => {
@@ -89,14 +109,28 @@ export abstract class AbstractAndroidCredentialDataService extends MobileCredent
     this.storageStateService.updateStateEntity(this.credential_key, data, { highPriorityKey: true });
   }
 
-  private getCredentialFromCache$(): Observable<Persistable> {
+  public saveCredentialAsUserSetting$(credential: AndroidCredential<any>): Observable<boolean> {
+    return this.settingsFacadeService
+      .saveUserSetting(User.Settings.MOBILE_CREDENTIAL_ID, credential.getCredentialData<any>().id)
+      .pipe(take(1));
+  }
+
+  private getCredentialFromCacheOrUserSettings$(): Observable<Persistable> {
     return this.storageStateService.getStateEntityByKey$<Persistable>(this.credential_key).pipe(
       take(1),
-      map(data => {
+      switchMap(data => {
         if (data) {
-          return data.value;
+          return of(data.value);
         }
-        return null;
+        return this.settingsFacadeService.getUserSetting(User.Settings.MOBILE_CREDENTIAL_ID).pipe(
+          take(1),
+          map(settingInfo => {
+            return {
+              id: settingInfo.value,
+              referenceIdentifier: null,
+            };
+          })
+        );
       })
     );
   }

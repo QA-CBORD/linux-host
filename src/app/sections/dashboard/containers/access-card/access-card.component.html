@@ -51,13 +51,13 @@
       </ion-col>
       <ion-col *ngIf="mobileCredentialEnabled" size="6">
         <div class="card__student-wallet">
-          <img *ngIf="( credentialManager.uiIconUrl$ | async ) as imageUrl"
+          <img *ngIf="( mobileCredentialFacade.uiIconUrl$ | async ) as imageUrl"
             mode="ios"
-            (click)="credentialManager.onUiIconClicked()"
+            (click)="mobileCredentialFacade.onUiIconClicked()"
             class="card__wallet-icon"
             src="{{ imageUrl }}"
           />
-          <div class="card__student-wallet-text">{{ credentialManager.uiText$ | async }}</div>
+          <div class="card__student-wallet-text">{{ mobileCredentialFacade.uiText$ | async }}</div>
         </div>
       </ion-col>
     </ion-row>
@@ -78,12 +78,12 @@
           </div>
         </ion-button>
       </ion-col>
-      <ion-col *ngIf="(credentialManager.mobileCredentialAvailable$ | async)" class="card__quick-actions-wrapper">
+      <ion-col *ngIf="(mobileCredentialFacade.mobileCredentialAvailable$ | async)" class="card__quick-actions-wrapper">
         <ion-button
-          *ngIf="(credentialManager.uiImageUrl$ | async) as image"
+          *ngIf="(mobileCredentialFacade.uiImageUrl$ | async) as image"
           mode="ios"
           class="card__apple-wallet-btn"
-          (click)="credentialManager.onImageClick()"
+          (click)="mobileCredentialFacade.onImageClick()"
         >
           <img src="{{ image }}" />
         </ion-button>
