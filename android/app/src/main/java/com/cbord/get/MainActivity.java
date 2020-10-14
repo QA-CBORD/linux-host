@@ -20,6 +20,5 @@ public class MainActivity extends BridgeActivity {
             add(HIDPlugin.class);
             add(GooglePayPlugin.class);
         }});
-        GooglePayPlugin.tapAndPayClient = TapAndPayClient.getClient(getApplicationContext());
     }
 }

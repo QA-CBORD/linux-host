@@ -31,30 +31,29 @@ public class GooglePayPlugin extends Plugin {
 
     @PluginMethod()
     public void getGooglePayNonce(PluginCall call) {
-       //tapAndPayClient = TapAndPayClient.getClient(getActivity());
+        tapAndPayClient = TapAndPayClient.getClient(getActivity());
     }
 
     @PluginMethod()
     public void openGooglePay(PluginCall call) {
-        Log.d("handleOnStart", "tapAndPayClient");
-        tapAndPayClient.getLinkingToken("CBORD").addOnSuccessListener(new OnSuccessListener<String>() {
+        final Task<String> nonce = tapAndPayClient.getLinkingToken("CBORD")
+                .addOnSuccessListener(new OnSuccessListener<String>() {
+                    @Override
+                    public void onSuccess(String result) {
+                        Log.d("onComplete", "success: " + result);
+                    }
+                });
+
+        nonce.addOnFailureListener(new OnFailureListener() {
             @Override
-            public void onSuccess(String result) {
-                Log.d("onComplete", "success: " + result);
-                call.resolve(toJSON(result));
+            public void onFailure(@NonNull Exception error) {
+                ApiException apiException = (ApiException) error;
+                Log.d("onFailure", "error: " + apiException.getMessage());
+                if (apiException.getStatusCode() == TAP_AND_PAY_NO_ACTIVE_WALLET) {
+                    tapAndPayClient.createWallet(getActivity(), REQUEST_CREATE_WALLET);
+                }
             }
         });
-
-//        tapAndPayClient.addOnFailureListener(new OnFailureListener() {
-//            @Override
-//            public void onFailure(@NonNull Exception error) {
-//                ApiException apiException = (ApiException) error;
-//                Log.d("onFailure", "error: " + apiException.getMessage());
-//                if (apiException.getStatusCode() == TAP_AND_PAY_NO_ACTIVE_WALLET) {
-//                    tapAndPayClient.createWallet(getActivity(), REQUEST_CREATE_WALLET);
-//                }
-//            }
-//        });
     }
 
     private JSObject toJSON(String transactionResult) {
