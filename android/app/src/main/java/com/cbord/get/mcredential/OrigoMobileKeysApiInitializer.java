@@ -3,7 +3,7 @@ package com.cbord.get.mcredential;
 import android.app.Application;
 import android.content.Context;
 
-import com.cbord.get.BuildConfig;
+import com.google.android.gms.tapandpay.issuer.devapp.littlebear.BuildConfig;
 import com.hid.origo.OrigoKeysApiFactory;
 import com.hid.origo.api.OrigoApiConfiguration;
 import com.hid.origo.api.OrigoMobileKeys;

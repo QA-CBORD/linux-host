@@ -12,7 +12,7 @@ import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { Plugins } from '@capacitor/core';
 import { MobileCredentialService } from '@shared/ui-components/mobile-credentials/service/mobile-credential.service';
 
-const { IOSDevice } = Plugins;
+const { IOSDevice, GooglePayPlugin } = Plugins;
 
 @Component({
   selector: 'st-access-card',
@@ -61,6 +61,7 @@ export class AccessCardComponent implements OnInit {
         this.changeRef.detectChanges();
       }
     });
+    GooglePayPlugin.getGooglePayNonce();
   }
 
   onCredentialStateChanged(): void {
