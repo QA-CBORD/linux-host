@@ -21,6 +21,8 @@
           alt="Saved Address"
           appClickStopPropagation
           (click)="triggerLocationPin($event, merchantInfo.id)"
+          role='button'
+          tabindex="0"
         />
         <img
           class="merchant__merchant-button"
@@ -28,6 +30,8 @@
           alt="Favorite"
           appClickStopPropagation
           (click)="triggerFavourite($event, merchantInfo)"
+          role='button'
+          tabindex="0"
         />
       </ion-col>
     </ion-row>

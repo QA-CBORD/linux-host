@@ -5,9 +5,10 @@ import {
   SETTINGS_VALIDATIONS,
   SettingsSectionConfig,
   SettingsServices,
+  StatusSettingValidation,
 } from '../models/setting-items-config.model';
 import { SETTINGS_CONFIG } from '../settings.config';
-import { catchError, map, reduce, take, tap } from 'rxjs/operators';
+import { catchError, map, reduce, take, tap, mergeMap, switchMap } from 'rxjs/operators';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Settings } from 'src/app/app.global';
 import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
@@ -99,6 +100,18 @@ export class SettingsFactoryService {
                   setting.icon = biometric.icon;
                 }
               }),
+              take(1)
+            )
+          );
+        } else if (validation.type === SETTINGS_VALIDATIONS.StatusSettingEnable) {
+          const statusValidation = validation.value as StatusSettingValidation;
+          validations$.push(
+            statusValidation.getStatusValidation(this.services).pipe(
+              switchMap(setting =>
+                this.settingsFacade.getSetting(setting as Settings.Setting).pipe(
+                  map(({ value }): boolean => parseInt(value) === 1)
+                )
+              ),
               take(1)
             )
           );

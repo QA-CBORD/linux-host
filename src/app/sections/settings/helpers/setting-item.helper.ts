@@ -5,22 +5,35 @@ import {
   SettingItemConfig,
   HTMLContentString,
   DomainContentString,
+  StatusSettingValidation,
 } from '../models/setting-items-config.model';
 import { Settings } from 'src/app/app.global';
-import { from, concat, zip } from 'rxjs';
+import { from, concat, zip, Observable } from 'rxjs';
 import { SETTINGS_ID } from '../models/settings-id.enum';
 import { PinAction } from '@shared/ui-components/pin/pin.page';
+import { ReportCardStatus } from '../models/report-card-status.config';
 
-export function getCardStatus(services: SettingsServices): Promise<boolean> {
+export function getCardStatusValidation(services: SettingsServices): Observable<string> {
+  const statusValidation = this as StatusSettingValidation;
   return services.userService
     .getUserData$()
-    .pipe(map((userInfo: UserInfo) => userInfo.hasCashlessCard && userInfo.cashlessMediaStatus === 2))
-    .toPromise();
+    .pipe(map((userInfo: UserInfo) => statusValidation.validation[userInfo.cashlessMediaStatus]));
 }
 
 export async function setBiometricStatus(services: SettingsServices): Promise<void> {
   const setting: SettingItemConfig = this;
   setting.checked = await services.identity.cachedBiometricsEnabledUserPreference$;
+}
+
+export function setReportCardLabel(services: SettingsServices) {
+  const setting: SettingItemConfig = this;
+  setting.label = services.userService
+    .getUserState$()
+    .pipe(
+      map(user =>
+        user.cashlessMediaStatus === ReportCardStatus.LOST ? setting.toggleLabel.checked : setting.toggleLabel.unchecked
+      )
+    );
 }
 
 export function toggleBiometricStatus(services: SettingsServices) {

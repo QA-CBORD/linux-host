@@ -103,7 +103,7 @@ export class PhotoUploadComponent implements OnInit {
       .getInitialPhotoData$()
       .pipe(
         finalize(() => {
-          this.loadingService.closeSpinner()
+          this.loadingService.closeSpinner();
           if (this.localPhotoUploadStatus.profile === LocalPhotoStatus.NONE) {
             this.photoUploadService.clearLocalGovernmentIdPhotos();
           }
@@ -119,7 +119,7 @@ export class PhotoUploadComponent implements OnInit {
   }
 
   private setupPhotoSubscriptions() {
-    this.photoUploadService.governmentIdRequired$.pipe(take(1)).subscribe(govtIdRequired => {
+    this.photoUploadService.governmentIdRequired$.subscribe(govtIdRequired => {
       this.localPhotoData.govtIdRequired = govtIdRequired;
       this.updateSubmitButtonStatus();
     });
@@ -239,26 +239,27 @@ export class PhotoUploadComponent implements OnInit {
     return PhotoType;
   }
 
-
   async presentPhotoTypeSelection(photoType: PhotoType) {
-
     const photoSourceAS = await this.actionSheetCtrl.create({
       keyboardClose: true,
       backdropDismiss: true,
-      buttons: [{
-        text: 'Take photo',
-        role: 'take-photo',
-        icon: '/assets/icon/camera-outline.svg'
-      }, {
-        text: 'Choose existing photo',
-        role: 'select-photo',
-        icon: '/assets/icon/select-photo.svg'
-
-      }, {
-        text: 'Cancel',
-        icon: 'close',
-        role: 'cancel'
-      }]
+      buttons: [
+        {
+          text: 'Take photo',
+          role: 'take-photo',
+          icon: '/assets/icon/camera-outline.svg',
+        },
+        {
+          text: 'Choose existing photo',
+          role: 'select-photo',
+          icon: '/assets/icon/select-photo.svg',
+        },
+        {
+          text: 'Cancel',
+          icon: 'close',
+          role: 'cancel',
+        },
+      ],
     });
 
     await photoSourceAS.present();
@@ -266,34 +267,34 @@ export class PhotoUploadComponent implements OnInit {
     let cameraSource: CameraSource = null;
 
     await photoSourceAS.onWillDismiss().then(result => {
-      if(result.role === 'take-photo'){
+      if (result.role === 'take-photo') {
         cameraSource = CameraSource.Camera;
-      } else if (result.role === 'select-photo'){
+      } else if (result.role === 'select-photo') {
         cameraSource = CameraSource.Photos;
       }
     });
 
-    if(!cameraSource){
+    if (!cameraSource) {
       return;
     }
 
     this.onGetPhoto(photoType, cameraSource);
   }
 
-
   /// handle request to take new photo
   onGetPhoto(photoType: PhotoType, cameraSource: CameraSource) {
-    this.getPhoto(photoType, cameraSource).subscribe(
-      response => {
-        this.sessionFacadeService.navigatedToPlugin = false;
-        this.photoUploadService.onNewPhoto(photoType, response);
-      },
-      error => {
-        this.sessionFacadeService.navigatedToPlugin = false;
-        this.presentToast('There was an issue with the picture - please try again');
-      },
-      () => {}
-    );
+    this.getPhoto(photoType, cameraSource)
+      .pipe(take(1))
+      .subscribe(
+        response => {
+          this.sessionFacadeService.navigatedToPlugin = true;
+          this.photoUploadService.onNewPhoto(photoType, response);
+        },
+        error => {
+          this.presentToast('There was an issue with the picture - please try again');
+        },
+        () => {}
+      );
   }
 
   private updateSubmitButtonStatus() {
@@ -390,7 +391,6 @@ export class PhotoUploadComponent implements OnInit {
       Camera.getPhoto({
         quality: 85, //Test
         correctOrientation: true,
-        presentationStyle: 'fullscreen',
         allowEditing: true,
         width: uploadSettings.saveWidth ? uploadSettings.saveWidth : null,
         height: uploadSettings.saveHeight ? uploadSettings.saveHeight : null,

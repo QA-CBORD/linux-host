@@ -11,6 +11,7 @@ import { EnvironmentFacadeService } from '@core/facades/environment/environment.
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
+import { Observable } from 'rxjs';
 
 export interface SettingsSectionConfig {
   label: string;
@@ -20,7 +21,7 @@ export interface SettingsSectionConfig {
 
 export interface SettingItemConfig {
   id: string;
-  label: string;
+  label: string | Observable<string>;
   type: string;
   icon: string;
   navigate?: string[];
@@ -36,7 +37,7 @@ export interface SettingItemConfig {
 
 export interface SettingItemValidation {
   type: SETTINGS_VALIDATIONS | string;
-  value: Settings.Setting | string;
+  value: Settings.Setting | string | StatusSettingValidation;
 }
 export interface SettingItemExternalResource {
   type: string;
@@ -63,6 +64,7 @@ export interface DomainContentString {
 export enum SETTINGS_VALIDATIONS {
   SettingEnable = 'setting-enable',
   Biometric = 'biometric',
+  StatusSettingEnable = 'status-enable',
 }
 
 export interface UserInfoSet extends UserInfo {
@@ -80,4 +82,9 @@ export interface SettingsServices {
   institution: InstitutionFacadeService;
   environment: EnvironmentFacadeService;
   appBrowser: InAppBrowser;
+}
+
+export interface StatusSettingValidation {
+  getStatusValidation: (services: SettingsServices) => Observable<string>;
+  validation: { [key: number]: Settings.Setting | string };
 }

@@ -75,6 +75,7 @@ export class SessionFacadeService {
     this.appStatus = AppStatus.FOREGROUND;
 
     if (this.navigatedToPlugin) {
+      this.navigateToNativePlugin = false;
       return;
     }
 
