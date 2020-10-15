@@ -5,9 +5,9 @@ import { from, Observable, of } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
 import { MobileCredentialStatuses } from '../../shared/credential-state';
-import { AndroidCredentialDataService } from '../android-credential-data.service';
 import { AbstractAndroidCredentialManager } from '../abstract-android-credential.management';
 import { AndroidCredential, HID } from '../android-credentials';
+import { HidCredentialDataService } from '../hid-credential-data.service';
 import { HIDSdkManager } from './hid-plugin.adapter';
 
 export class HIDCredentialManager extends AbstractAndroidCredentialManager {
@@ -23,7 +23,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     private readonly popoverCtrl: PopoverController,
     private readonly toastService: ToastController,
     private readonly loadingService: LoadingService,
-    protected readonly androidCredentialDataService: AndroidCredentialDataService
+    protected readonly androidCredentialDataService: HidCredentialDataService
   ) {
     super();
   }
@@ -431,7 +431,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     popoverCtrl: PopoverController,
     toastService: ToastController,
     loadingService: LoadingService,
-    androidCredentialDataService: AndroidCredentialDataService
+    androidCredentialDataService: HidCredentialDataService
   ): HIDCredentialManager {
     if (!this.instance) {
       this.instance = new HIDCredentialManager(

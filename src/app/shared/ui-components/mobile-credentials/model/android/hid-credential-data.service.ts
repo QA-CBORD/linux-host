@@ -16,7 +16,7 @@ import { AndroidCredential, Persistable } from './android-credentials';
 @Injectable({
   providedIn: 'root',
 })
-export class AndroidCredentialDataService extends MobileCredentialSharedDataService {
+export class HidCredentialDataService extends MobileCredentialSharedDataService {
   constructor(
     protected partnerPaymentApi: PartnerPaymentApiService,
     protected readonly storageStateService: StorageStateService,
