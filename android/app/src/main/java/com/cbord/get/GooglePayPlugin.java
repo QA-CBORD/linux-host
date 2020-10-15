@@ -1,9 +1,4 @@
 package com.cbord.get;
-
-import android.content.ComponentName;
-import android.nfc.NfcAdapter;
-import android.nfc.NfcManager;
-import android.nfc.cardemulation.CardEmulation;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -13,10 +8,8 @@ import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
-import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tapandpay.TapAndPayClient;
-import com.google.android.gms.tapandpay.issuer.TokenStatus;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -31,7 +24,7 @@ public class GooglePayPlugin extends Plugin {
 
     @PluginMethod()
     public void getGooglePayNonce(PluginCall call) {
-        tapAndPayClient = TapAndPayClient.getClient(getActivity());
+        tapAndPayClient = TapAndPayClient.getClient(getActivity().getApplicationContext());
     }
 
     @PluginMethod()
