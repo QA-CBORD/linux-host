@@ -8,8 +8,7 @@ import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { DASHBOARD_NAVIGATE } from '@sections/dashboard/dashboard.config';
 import { AppleWalletInfo } from '@core/provider/native-provider/native.provider';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
-import { Plugins } from '@capacitor/core';
-import { MobileCredentialFacade } from '@shared/ui-components/mobile-credentials/service/mobile-credential.service';
+import { MobileCredentialFacade } from '@shared/ui-components/mobile-credentials/service/mobile-credential-facade.service';
 
 
 @Component({
