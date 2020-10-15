@@ -3,8 +3,8 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { AlertController, ModalController, PopoverController, ToastController } from '@ionic/angular';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { AndroidCredentialDataService } from '../model/android/android-credential-data.service';
 import { AndroidCredential } from '../model/android/android-credentials';
+import { HidCredentialDataService } from '../model/android/hid-credential-data.service';
 import { HIDCredentialManager } from '../model/android/hid/hid-credential-manager';
 import { MobileCredentialManager } from '../model/shared/mobile-credential-manager';
 
@@ -18,11 +18,11 @@ export class AndroidCredentialManagerFactory {
     private readonly popoverCtrl: PopoverController,
     private readonly loadingService: LoadingService,
     private readonly toastService: ToastController,
-    protected readonly androidCredentialDataService: AndroidCredentialDataService
+    protected readonly hidCredentialDataService: HidCredentialDataService
   ) {}
 
   getCredentialManager(): Observable<MobileCredentialManager> {
-    return this.androidCredentialDataService.androidActivePassesFromServer().pipe(
+    return this.hidCredentialDataService.androidActivePassesFromServer().pipe(
       map((mobileCredential: AndroidCredential<any>) => {
         let androidCredentialManager = null;
         if (mobileCredential.isHID()) {
@@ -44,7 +44,7 @@ export class AndroidCredentialManagerFactory {
       this.popoverCtrl,
       this.toastService,
       this.loadingService,
-      this.androidCredentialDataService
+      this.hidCredentialDataService
     );
   }
 
