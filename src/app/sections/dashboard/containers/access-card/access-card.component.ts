@@ -9,10 +9,7 @@ import { DASHBOARD_NAVIGATE } from '@sections/dashboard/dashboard.config';
 import { AppleWalletInfo } from '@core/provider/native-provider/native.provider';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
-import { Plugins } from '@capacitor/core';
 import { MobileCredentialService } from '@shared/ui-components/mobile-credentials/service/mobile-credential.service';
-
-const { IOSDevice, GooglePayPlugin } = Plugins;
 
 @Component({
   selector: 'st-access-card',
@@ -61,7 +58,6 @@ export class AccessCardComponent implements OnInit {
         this.changeRef.detectChanges();
       }
     });
-    GooglePayPlugin.getGoogleClient();
   }
 
   onCredentialStateChanged(): void {
