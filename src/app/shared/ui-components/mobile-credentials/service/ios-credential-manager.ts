@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { from, Observable, of } from 'rxjs';
 import { map, switchMap, take } from 'rxjs/operators';
@@ -8,7 +8,6 @@ import { MobileCredential } from '../model/shared/mobile-credential';
 import { AppleWalletCredential } from '../model/ios/apple-wallet-credential';
 import { AppleWalletCredentialState } from '../model/ios/applet-wallet-state';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
-import { AppleWalletInfo } from '@core/provider/native-provider/native.provider';
 const { IOSDevice } = Plugins;
 
 @Injectable({
@@ -16,7 +15,7 @@ const { IOSDevice } = Plugins;
 })
 export class IOSCredentialManager implements MobileCredentialManager {
   private mCredential: AppleWalletCredential;
-  private myPluginEventListener: any;
+  private appletWalletEventListener: any;
   private credentialStateChangeSubscription: CredentialStateChangeSubscription;
   constructor(
     private readonly userFacadeService: UserFacadeService,
@@ -46,10 +45,6 @@ export class IOSCredentialManager implements MobileCredentialManager {
 
   uiImageUrl(): string {
     return this.mCredential.getUiImageUrl();
-  }
-
-  initialize(): Promise<any> {
-    return of(this.enableAppleWalletEvents()).toPromise();
   }
 
   setCredential(mobileCredential: MobileCredential): void {
@@ -83,39 +78,34 @@ export class IOSCredentialManager implements MobileCredentialManager {
 
   // if this user has mobile credential access...
   credentialEnabled$(): Observable<boolean> {
-    console.log('mobileCredentialEnabled: 0');
     return from(this.loadCredentials()).pipe(
       take(1),
       map(appleWalletCredential => {
-        console.log('mobileCredentialEnabled: ', appleWalletCredential);
         this.mCredential = appleWalletCredential;
-        if (this.mCredential.isEnabled()) {
-          this.enableAppleWalletEvents();
+        let appleWalletEnabled = this.mCredential.isEnabled();
+        if (appleWalletEnabled) {
+          this.registerAppletWalletEvent();
         }
-        return this.mCredential.isEnabled();
+        return appleWalletEnabled;
       })
     );
   }
 
   private loadCredentials(): Promise<AppleWalletCredential> {
-    console.log('loadCredentials');
     return this.authFacadeService.cachedAuthSessionToken$
       .pipe(
         take(1),
         switchMap(sessionId => from(IOSDevice.getAppleWalletInfo({ sessionId: sessionId }))),
         map(appleWalletInfo => {
-          console.log('appleWalletInfo: ', appleWalletInfo);
           return new AppleWalletCredential(new AppleWalletCredentialState(appleWalletInfo));
         })
       )
       .toPromise();
   }
 
-  private enableAppleWalletEvents() {
-    if (!this.myPluginEventListener) {
-      console.log('enableAppleWalletEvents: 0');
-      this.myPluginEventListener = IOSDevice.addListener('AppleWalletEvent', () => {
-        console.log('enableAppleWalletEvents');
+  private registerAppletWalletEvent() {
+    if (!this.appletWalletEventListener) {
+      this.appletWalletEventListener = IOSDevice.addListener('AppleWalletEvent', () => {
         this.refresh();
       });
     }

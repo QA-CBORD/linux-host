@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { AbstractAndroidCredentialManager } from './model/android/abstract-android-credential.management';
 import { GlobalNavService } from '../st-global-navigation/services/global-nav.service';
-import { PopoverController } from '@ionic/angular';
+import { ModalController, PopoverController } from '@ionic/angular';
 
 @Component({
   selector: 'st-mobile-credentials',
@@ -9,41 +8,38 @@ import { PopoverController } from '@ionic/angular';
   styleUrls: ['./mobile-credentials.component.scss'],
 })
 export class MobileCredentialsComponent implements OnInit {
-  @Input() credentialManager: AbstractAndroidCredentialManager;
   @Input() title: string = 'Terms and Conditions';
   @Input() termsAndConditions$: Promise<string>;
-  @Input() hidSdkStatus: Promise<any>;
   @Input() credentialUsageContentString$: Promise<string>;
   @Input() btnText: string;
-  
-  constructor(private globalNav: GlobalNavService, private popoverCtrl: PopoverController) {}
+
+  constructor(
+    private globalNav: GlobalNavService,
+    private readonly modalCtrl: ModalController,
+    private popoverCtrl: PopoverController
+  ) {}
 
   ngOnInit() {
     setTimeout(() => {
-      if(this.termsAndConditions$){
-        this.globalNav.hideNavBar()
+      if (this.termsAndConditions$) {
+        this.globalNav.hideNavBar();
       }
-    })
+    });
   }
 
   onAccept(): void {
-    this.credentialManager.onTermsAndConditionsAccepted();
+    this.modalCtrl.dismiss({ termsAccepted: true });
   }
 
   onDecline(): void {
-    if(this.termsAndConditions$){
-      this.credentialManager.onTermsAndConditionsDeclined();
-    } else{
-      this.popoverCtrl.dismiss();
-    }
+    this.termsAndConditions$ ? this.modalCtrl.dismiss({ termsAccepted: false }) : this.popoverCtrl.dismiss({ action: this.btnText });
   }
 
   ngOnDestroy(): void {
     this.globalNav.showNavBar();
   }
 
-  onButtonClicked():void{
-    this.credentialManager.onDeleteCredential(this.btnText);
+  onButtonClicked(): void {
+    this.popoverCtrl.dismiss({ action: this.btnText });
   }
-
 }

@@ -15,7 +15,7 @@ export interface MobileCredentialState {
 }
 
 
-export enum MobileCredentialStateEnum{
+export enum MobileCredentialStatuses{
   IS_AVAILABLE = 1,
   IS_PROVISIONED = 20,
   IS_DISABLED = 0,
