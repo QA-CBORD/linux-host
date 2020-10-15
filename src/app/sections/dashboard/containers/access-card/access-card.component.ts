@@ -61,7 +61,7 @@ export class AccessCardComponent implements OnInit {
         this.changeRef.detectChanges();
       }
     });
-    GooglePayPlugin.getGooglePayNonce();
+    GooglePayPlugin.getGoogleClient();
   }
 
   onCredentialStateChanged(): void {

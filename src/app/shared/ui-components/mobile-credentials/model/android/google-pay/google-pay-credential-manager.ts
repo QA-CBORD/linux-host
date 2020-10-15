@@ -20,7 +20,9 @@ export class GooglePayCredentialManager implements MobileCredentialManager {
   onUiImageClicked(event?: any): void {
     // will execute
     console.log('onUiImageClicked')
-    GooglePayPlugin.openGooglePay();
+    GooglePayPlugin.getGooglePayNonce().then((nonce) => {
+      console.log("getGooglePayNonce: ", nonce.googlePayNonce);
+    });
 
     // TODO: call android credential
     // TODO: call openGooglePay from Android plugin

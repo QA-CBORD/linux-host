@@ -18,35 +18,45 @@ import com.google.android.gms.tasks.Task;
 @NativePlugin()
 public class GooglePayPlugin extends Plugin {
 
-    protected static TapAndPayClient tapAndPayClient;
+    private TapAndPayClient tapAndPayClient;
     private final int REQUEST_CREATE_WALLET = 4;
-    public static final int TAP_AND_PAY_NO_ACTIVE_WALLET = 15002;
+    private final int TAP_AND_PAY_NO_ACTIVE_WALLET = 15002;
 
     @PluginMethod()
-    public void getGooglePayNonce(PluginCall call) {
+    public void getGoogleClient(PluginCall call) {
         tapAndPayClient = TapAndPayClient.getClient(getActivity().getApplicationContext());
     }
 
     @PluginMethod()
-    public void openGooglePay(PluginCall call) {
-        final Task<String> nonce = tapAndPayClient.getLinkingToken("CBORD")
+    public void getGooglePayNonce(PluginCall call) {
+        final Task<String> response = tapAndPayClient.getLinkingToken("CBORD")
                 .addOnSuccessListener(new OnSuccessListener<String>() {
                     @Override
-                    public void onSuccess(String result) {
-                        Log.d("onComplete", "success: " + result);
+                    public void onSuccess(String token) {
+                        Log.d("onSuccess: ", token);
+                        call.resolve(toJSON(token));
                     }
                 });
 
-        nonce.addOnFailureListener(new OnFailureListener() {
+        response.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception error) {
                 ApiException apiException = (ApiException) error;
-                Log.d("onFailure", "error: " + apiException.getMessage());
+                Log.d("onFailure: ", apiException.getMessage());
                 if (apiException.getStatusCode() == TAP_AND_PAY_NO_ACTIVE_WALLET) {
                     tapAndPayClient.createWallet(getActivity(), REQUEST_CREATE_WALLET);
+                } else {
+                    call.reject(apiException.getMessage());
                 }
             }
         });
+    }
+
+    @PluginMethod()
+    public void openGooglePay(PluginCall call) {
+         // TODO: Get URI from call
+         // TODO: Send Intent with URI
+         // TODO: Update active passes?
     }
 
     private JSObject toJSON(String transactionResult) {
