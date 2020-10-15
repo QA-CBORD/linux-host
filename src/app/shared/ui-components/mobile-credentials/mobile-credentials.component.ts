@@ -32,7 +32,7 @@ export class MobileCredentialsComponent implements OnInit {
   }
 
   onDecline(): void {
-    this.termsAndConditions$ ? this.modalCtrl.dismiss({ termsAccepted: false }) : this.popoverCtrl.dismiss({ action: this.btnText });
+    this.termsAndConditions$ ? this.modalCtrl.dismiss({ termsAccepted: false }) : this.popoverCtrl.dismiss({ action: null });
   }
 
   ngOnDestroy(): void {
