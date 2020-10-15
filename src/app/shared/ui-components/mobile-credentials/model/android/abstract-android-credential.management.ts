@@ -18,13 +18,11 @@ export abstract class AbstractAndroidCredentialManager implements MobileCredenti
     this.credentialStateChangeSubscription = credentialStateChangeSubscription;
   }
 
-  get credentialUsageContentString$(): Promise<string> {
+  protected credentialUsageContentString$(): Promise<string> {
     let text =
-      'This is a generic content string describing how to use android mobile credentials; This is a generic content string describing how to use android mobile credentials; This is a generic content string describing how to use android mobile credentials';
+      'This is a generic content string describing how to use android mobile credentials; This is a generic content string describing how to use android mobile credentials';
     return of(text).toPromise();
   }
-
-  abstract onDeleteCredential(event?: any): void;
 
   abstract onUiIconClicked(): void;
 
@@ -42,13 +40,5 @@ export abstract class AbstractAndroidCredentialManager implements MobileCredenti
 
   abstract credentialEnabled$(): Observable<boolean>;
 
-  isMobileCredentialEnabled(): boolean {
-    return this.mCredential.isEnabled();
-  }
-  
   abstract onUiImageClicked(event?: any): void;
-
-  abstract onTermsAndConditionsAccepted(): void;
-  abstract onTermsAndConditionsDeclined(): void;
-  abstract get termsAndConditions$(): Promise<string>;
 }

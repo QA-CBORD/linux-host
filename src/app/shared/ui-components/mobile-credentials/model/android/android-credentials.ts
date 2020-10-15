@@ -176,9 +176,9 @@ export class HIDCredential extends AndroidCredential<HID> {
   }
 
   getPersistable<T>(): T {
-    let { id, invitationCode, issuer } = this.credentialData;
+    let { id, issuer } = this.credentialData;
     let { referenceIdentifier } = this.credentialState;
-    return <any>{ id, invitationCode, issuer, referenceIdentifier };
+    return <any>{ id, issuer, referenceIdentifier };
   }
 }
 

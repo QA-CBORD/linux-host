@@ -7,7 +7,7 @@ import { SettingsFacadeService } from '@core/facades/settings/settings-facade.se
 import { PartnerPaymentApiService } from '@core/service/payments-api/partner-payment-api.service';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { from, Observable, of } from 'rxjs';
-import { map, switchMap, take, tap } from 'rxjs/operators';
+import { catchError, map, switchMap, take, tap } from 'rxjs/operators';
 import { User } from 'src/app/app.global';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
 import { MobileCredentialSharedDataService } from '../shared/mobile-credential-shared-data.service';
@@ -31,19 +31,17 @@ export class AndroidCredentialDataService extends MobileCredentialSharedDataServ
 
   deleteCredential(): Observable<boolean> {
     return this.getCredentialFromCacheOrUserSettings$().pipe(
-      switchMap(credential => {
-        if (credential) {
+      switchMap(cachedCredentials => {
+        if (cachedCredentials) {
           return this.omniIDJwtToken$().pipe(
-            switchMap(jwt => {
-              return this.partnerPaymentApi.deleteCredentials(jwt, credential.id);
-            }),
-            switchMap(() => {
-              return from(this.storageStateService.deleteStateEntityByKey(this.credential_key)).pipe(map(() => true));
-            })
+            switchMap(jwt => this.partnerPaymentApi.deleteCredentials(jwt, cachedCredentials.id).pipe(map(() => true))),
+            tap(() => this.storageStateService.deleteStateEntityByKey(this.credential_key)),
+            catchError(err => of(false))
           );
         }
         return of(false);
-      })
+      }),
+      catchError(err => of(false))
     );
   }
 
@@ -61,7 +59,7 @@ export class AndroidCredentialDataService extends MobileCredentialSharedDataServ
     );
   }
 
-  updateCredential(credential: AndroidCredential<any>): Observable<AndroidCredential<any>> {
+  updateCredential(credential: AndroidCredential<any>): Observable<boolean> {
     return this.omniIDJwtToken$().pipe(
       switchMap(omniIDJwtToken => {
         let requestBody = {
@@ -69,12 +67,13 @@ export class AndroidCredentialDataService extends MobileCredentialSharedDataServ
           status: credential.getCredentialState().credStatus,
           credentialID: credential.getCredentialData<any>().id,
         };
-        return this.partnerPaymentApi.updateCredential(omniIDJwtToken, requestBody).pipe(map(() => credential));
+        return this.partnerPaymentApi.updateCredential(omniIDJwtToken, requestBody).pipe(map(() => true));
       }),
       tap(() => {
         const persistable = credential.getPersistable<Persistable>();
         this.saveCredentialInLocalStorage(persistable);
-      })
+      }),
+      catchError(err => of(false))
     );
   }
 
