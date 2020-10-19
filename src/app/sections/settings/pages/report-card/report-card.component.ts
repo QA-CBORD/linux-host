@@ -5,6 +5,7 @@ import { take, switchMap } from 'rxjs/operators';
 import { getCashlessStatus } from '@core/utils/general-helpers';
 import { ToastService } from '@core/service/toast/toast.service';
 import { ReportCardStatus } from '@sections/settings/models/report-card-status.config';
+import { ModalController } from '@ionic/angular';
 
 @Component({
   selector: 'st-report-card',
@@ -26,7 +27,8 @@ export class ReportCardComponent implements OnInit {
   constructor(
     private readonly userFacadeService: UserFacadeService,
     private readonly cdRef: ChangeDetectorRef,
-    private readonly toastService: ToastService
+    private readonly toastService: ToastService,
+    private readonly modalController: ModalController,
     ) {}
 
   ngOnInit() {
@@ -86,5 +88,9 @@ export class ReportCardComponent implements OnInit {
   private async presentToast(): Promise<void> {
     const message = `Reported successfully.`;
     await this.toastService.showToast({ message, toastButtons: [{ text: 'Dismiss' }] });
+  }
+
+  close() {
+    this.modalController.dismiss();
   }
 }

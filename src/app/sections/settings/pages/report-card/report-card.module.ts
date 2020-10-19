@@ -6,15 +6,10 @@ import { IonicModule } from '@ionic/angular';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
 import { StButtonModule } from '@shared/ui-components/st-button/st-button.module';
 
-
+const declarations = [ReportCardComponent];
 @NgModule({
-  declarations: [ReportCardComponent],
-  imports: [
-    CommonModule,
-    IonicModule,
-    StHeaderModule,
-    StButtonModule,
-    ReportCardRoutingModule,
-  ]
+  declarations,
+  entryComponents: declarations,
+  imports: [CommonModule, IonicModule, StHeaderModule, StButtonModule, ReportCardRoutingModule],
 })
-export class ReportCardModule { }
+export class ReportCardModule {}

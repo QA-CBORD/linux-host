@@ -1,9 +1,11 @@
 <st-header
   [isTitleShow]="true"
   [backButtonIcon]="'close'"
-  [isBackButtonShow]="true"
+  [isBackButtonShow]="false"
   [isToolbarShow]="true"
   [backButtonTitle]="''"
+  [isDismissButtonShow]="true"
+  (onDismiss)="close()"
 >
 </st-header>
 <div class="divider ion-padding-top"></div>
@@ -17,7 +19,7 @@
       <ng-container *ngIf="user">
           {{
             isLost
-              ? 'This will unfreeze your card.'
+              ? 'This will unfreeze your card.  Are you sure you want to report it as found?'
               : 'This will freeze your card and you won’t be able to use it until you contact your card office. Are you sure you want to report it as lost?'
           }}
       </ng-container>
