@@ -18,6 +18,8 @@ import { EditHomePageModalComponent } from '@shared/ui-components/edit-home-page
 import { SETTINGS_ID } from './models/settings-id.enum';
 import { LOCAL_ROUTING as ORDERING_ROUTING } from '@sections/ordering/ordering.config';
 import { ReportCardStatusSetting } from './models/report-card-status.config';
+import { ReportCardComponent } from './pages/report-card/report-card.component';
+
 export enum LOCAL_ROUTING {
   photoUpload = 'photo-upload',
 }
@@ -62,7 +64,10 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         toggleLabel: { checked: 'Report card as found', unchecked: 'Report card as lost' },
         type: 'button',
         setToggleStatus: setReportCardLabel,
-        navigate: [SETTINGS_NAVIGATE.lostCard],
+        setCallback: openModal,
+        modalContent: {
+          component: ReportCardComponent,
+        },
         validations: [
           {
             type: SETTINGS_VALIDATIONS.StatusSettingEnable,

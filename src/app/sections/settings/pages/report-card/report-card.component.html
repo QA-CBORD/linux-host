@@ -1,9 +1,11 @@
 <st-header
   [isTitleShow]="true"
   [backButtonIcon]="'close'"
-  [isBackButtonShow]="true"
+  [isBackButtonShow]="false"
   [isToolbarShow]="true"
   [backButtonTitle]="''"
+  [isDismissButtonShow]="true"
+  (onDismiss)="close()"
 >
 </st-header>
 <div class="divider ion-padding-top"></div>
