@@ -6,6 +6,7 @@ import { map, finalize } from 'rxjs/operators';
 import { FavoriteMerchantsService } from '../services/favorite-merchants.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { MerchantInfo } from '@sections/ordering';
+import { mergeMatchArrayById } from '@core/utils/general-helpers';
 
 @Injectable()
 export class FavoriteMerchantsResolver implements Resolve<Observable<MerchantInfo[]>> {
@@ -18,10 +19,10 @@ export class FavoriteMerchantsResolver implements Resolve<Observable<MerchantInf
   resolve(): Observable<MerchantInfo[]> {
     this.loadingService.showSpinner();
     return zip(this.favoriteMerchantsService.getFavoriteMerchants(), this.merchantService.menuMerchants$).pipe(
-      map(([favoriteMerchants, merchants]) =>
-        favoriteMerchants.map(merchant => merchants.find(({ id }) => id === merchant.id))
+      map(
+        ([favoriteMerchants, merchants]) => mergeMatchArrayById(merchants, favoriteMerchants.map(fav => fav.id))
       ),
       finalize(() => this.loadingService.closeSpinner())
     );
-  }S
+  }
 }
