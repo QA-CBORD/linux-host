@@ -1,4 +1,4 @@
-import { HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpHeaders, HttpParams, HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Device } from '@capacitor/core';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
@@ -13,7 +13,7 @@ import { MobileCredentialFactory } from './mobile-credential-factory';
 
 const api_version = 'v1';
 const resourceUrls = {
-  activePasses: `/android/${api_version}/activePasses`,
+  activePasses: `/android/${api_version}/activePasses`
 };
 
 @Injectable()
@@ -27,7 +27,8 @@ export class MobileCredentialDataService {
     protected readonly storageStateService: StorageStateService,
     protected readonly authFacadeService: AuthFacadeService,
     protected readonly institutionFacadeService: InstitutionFacadeService,
-    protected readonly apiService: APIService
+    protected readonly apiService: APIService,
+    protected readonly http: HttpClient
   ) {}
 
   protected retrieveAuthorizationBlob$(deviceModel: string, osVersion: string): Observable<string> {

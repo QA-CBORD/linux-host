@@ -1,4 +1,8 @@
 package com.cbord.get;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -14,6 +18,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+
+import java.util.List;
 
 @NativePlugin()
 public class GooglePayPlugin extends Plugin {
@@ -54,9 +60,17 @@ public class GooglePayPlugin extends Plugin {
 
     @PluginMethod()
     public void openGooglePay(PluginCall call) {
-         // TODO: Get URI from call
-         // TODO: Send Intent with URI
-         // TODO: Update active passes?
+        String uri = call.getString("uri");
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(uri));
+
+        PackageManager packageManager = getActivity().getPackageManager();
+        List<ResolveInfo> activities = packageManager.queryIntentActivities(intent, 0);
+        if (activities.size() > 0) {
+           getActivity().startActivity(intent);
+        }
+        // TODO: OnActivityResult return the response to Ionic
+        // TODO: call.resolve / call.reject
     }
 
     private JSObject toJSON(String transactionResult) {
