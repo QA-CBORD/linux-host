@@ -8,9 +8,7 @@ import { CredentialStateChangeSubscription, MobileCredentialManager } from '../m
 import { AndroidCredentialManagerFactory } from './android-credential-manager.factory';
 import { IOSCredentialManager } from './ios-credential-manager';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class MobileCredentialFacade {
   private mobileCredentialManager: MobileCredentialManager;
 
@@ -25,22 +23,23 @@ export class MobileCredentialFacade {
     const androidCredentialSettings$ = this.androidMobileCredentialSettingsEnabled$().pipe(take(1));
     return forkJoin(appleCredentialSettings$, androidCredentialSettings$).pipe(
       switchMap(([appleWalletSettingsEnabled, androidCredentialSettingsEnabled]) => {
+        let mobileCredentialSettingsEnabled = false;
         if (appleWalletSettingsEnabled) {
           this.mobileCredentialManager = this.injector.get(IOSCredentialManager);
-          return of(true);
+          mobileCredentialSettingsEnabled = true;
         } else if (androidCredentialSettingsEnabled) {
-          let androidCredentialManagerFactory = this.injector.get(AndroidCredentialManagerFactory);
-          return androidCredentialManagerFactory.getCredentialManager().pipe(
+          const credentialManagerFactory = this.injector.get(AndroidCredentialManagerFactory);
+          credentialManagerFactory.getCredentialManager().pipe(
             map(androidCredentialManager => {
+              console.log('androidCredentialManager:L ', androidCredentialManager);
               if (androidCredentialManager) {
                 this.mobileCredentialManager = androidCredentialManager;
-                return true;
+                mobileCredentialSettingsEnabled = true;
               }
-              return false;
             })
           );
         }
-        return of(false);
+        return of(mobileCredentialSettingsEnabled);
       })
     );
   }
@@ -86,7 +85,10 @@ export class MobileCredentialFacade {
   get mobileCredentialEnabled$(): Observable<boolean> {
     return this.mobileCredentialSettingsEnabled$().pipe(
       switchMap(mobileCredentialSettingsEnabled => {
-        return mobileCredentialSettingsEnabled ? this.mobileCredentialManager.credentialEnabled$() : of(false);
+        if (mobileCredentialSettingsEnabled) {
+          return this.mobileCredentialManager.credentialEnabled$();
+        }
+        return of(false);
       })
     );
   }

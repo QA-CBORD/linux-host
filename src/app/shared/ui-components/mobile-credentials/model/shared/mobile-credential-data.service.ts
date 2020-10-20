@@ -1,28 +1,33 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpHeaders, HttpParams } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Device } from '@capacitor/core';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
-import { PartnerPaymentApiService } from '@core/service/payments-api/partner-payment-api.service';
+import { APIService, HttpResponseType, RestCallType } from '@core/service/api-service/api.service';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { forkJoin, from, Observable, of } from 'rxjs';
-import { map, switchMap, take, tap } from 'rxjs/operators';
-import { Persistable } from '../android/android-credentials';
+import { catchError, map, switchMap, take, tap } from 'rxjs/operators';
 import { ActivePasses } from './credential-utils';
 import { MobileCredential } from './mobile-credential';
 import { MobileCredentialFactory } from './mobile-credential-factory';
 
-export abstract class MobileCredentialSharedDataService {
+const api_version = 'v1';
+const resourceUrls = {
+  activePasses: `/android/${api_version}/activePasses`,
+};
+
+@Injectable()
+export class MobileCredentialDataService {
   protected ttl: number = 600000; // 10min
   protected jwtToken_key: string = 'jwt_token';
   protected authBlob_key: string = 'auth_blob';
   protected credential_key: string = 'mobile_credential';
 
   constructor(
-    protected partnerPaymentApi: PartnerPaymentApiService,
     protected readonly storageStateService: StorageStateService,
     protected readonly authFacadeService: AuthFacadeService,
     protected readonly institutionFacadeService: InstitutionFacadeService,
-    protected readonly httpClient: HttpClient
+    protected readonly apiService: APIService
   ) {}
 
   protected retrieveAuthorizationBlob$(deviceModel: string, osVersion: string): Observable<string> {
@@ -64,34 +69,57 @@ export abstract class MobileCredentialSharedDataService {
     );
   }
 
-  protected getPasses(): Observable<ActivePasses> {
+  activePasses$(): Observable<MobileCredential> {
+    console.log('activePasses ===== ')
+    return this.getActivePasses().pipe(
+      map((activePasses) => {
+        console.log('activePasses ****: ', activePasses)
+        return  MobileCredentialFactory.fromActivePasses(activePasses);
+      })
+    );
+  }
+
+  private getActivePasses(): Observable<ActivePasses> {
     /**
      * calls api gw android/version/actipasses to obtain activaPasses info for current patron/user.
      * this data is then used to get a credential for the patron/user.
      */
     // doing a forkJoin to ensure all requests actually complete, if one of these fails, the others are useless, just return error
+    console.log('getActivePasses ****: ')
     let omniIDJwtToken$ = this.omniIDJwtToken$().pipe(take(1));
     let authorizationBlob$ = this.authorizationBlob$().pipe(take(1));
-
     return forkJoin(omniIDJwtToken$, authorizationBlob$).pipe(
       switchMap(([omniIDJwtToken, authBlob]) => {
+        console.log('getActivePasses ****: ', omniIDJwtToken)
         const requestBody = { authorizationBlob: authBlob };
-        return this.partnerPaymentApi.androidActivePasses(omniIDJwtToken, requestBody);
+        return this.getPasses(omniIDJwtToken, requestBody);
       })
     );
   }
 
-  androidActivePassesFromServer(): Observable<MobileCredential> {
-    return this.getPasses().pipe(
-      switchMap(activePasses => {
-        const androidCredentials = MobileCredentialFactory.fromActivePasses(activePasses);
-        return this.storageStateService.getStateEntityByKey$<Persistable>(this.credential_key).pipe(
-          map(data => {
-            if (data) {
-              androidCredentials.setCredentialData(data.value);
-            }
-            return androidCredentials;
-          })
+  private getPasses(omniIDToken: string, requestBody: { authorizationBlob: any }): Observable<any> {
+    /**
+     * @params omniIDToken -> jwt token needed to authenticate with partner payments api on aws.
+     * @params authBlob  -> authorization blob that contains ..... ???
+     * calls api gw android/version/actipasses to obtain activaPasses info for current patron/user.
+     * this data is then used to get a credential for the patron/user.
+     */
+    // we need to send the institution id to activaPasses resource.
+    const institutionInfo$ = this.institutionFacadeService.cachedInstitutionInfo$;
+    // doing a forkJoin to ensure all requests actually complete, if one of these fails, the others are useless, just return error
+    return institutionInfo$.pipe(
+      switchMap(({ id }) => {
+        const headers = new HttpHeaders({ Authorization: `Bearer ${omniIDToken}` });
+        // the institution id is required for this request.
+        const params = new HttpParams().set('institutionId', id);
+        // authBlob needs to be sent in request body.
+        return this.apiService.partnerHTTPCall(
+          RestCallType.post,
+          resourceUrls.activePasses,
+          HttpResponseType.json,
+          requestBody,
+          params,
+          headers
         );
       })
     );

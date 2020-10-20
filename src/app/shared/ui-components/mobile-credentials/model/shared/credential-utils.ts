@@ -1,8 +1,8 @@
 import { AccessCardComponent } from '@sections/dashboard/containers/access-card/access-card.component';
 
 export interface ActivePasses {
-  passes: { android_hid: number; android_nxp: number };
-  credStatus: { android_hid: number; android_nxp: number };
+  passes: { android_hid: number; android_nxp: number, iPhone: number, iWatch: number };
+  credStatus: { android_hid: number; android_nxp: number, iPhone: number, iWatch: number };
   referenceIdentifier: string;
 }
 

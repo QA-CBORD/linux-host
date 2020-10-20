@@ -6,24 +6,26 @@ import { map, switchMap, take, tap } from 'rxjs/operators';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
 import { MobileCredentialStatuses } from '../../shared/credential-state';
 import { AbstractAndroidCredentialManager } from '../abstract-android-credential.management';
-import { AndroidCredential, HID } from '../android-credentials';
-import { HidCredentialDataService } from '../hid-credential-data.service';
-import { HIDSdkManager } from './hid-plugin.adapter';
+import { AndroidCredential, HID } from '../android-credential.model';
+import { HidCredentialDataService } from '../../../service/hid-credential.data.service';
+import { HIDSdkManager } from './hid-plugin.wrapper';
+import { Injectable } from '@angular/core';
 
+@Injectable()
 export class HIDCredentialManager extends AbstractAndroidCredentialManager {
   private static instance: HIDCredentialManager;
   private static TRANSACTION_SUCCESS_FULL = 'TRANSACTION_SUCCESS';
-  private customLoadingOptions = { message: 'Processing ... Please wait', duration: 60000 };
+  private customLoadingOptions = { message: 'Processing ... Please wait', duration: 100000 };
   private transactionRetryCount: number = 1;
   private transactionMaxRetryCount: number = 2;
 
-  private constructor(
+  constructor(
     private readonly modalCtrl: ModalController,
     private readonly alertCtrl: AlertController,
     private readonly popoverCtrl: PopoverController,
     private readonly toastService: ToastController,
     private readonly loadingService: LoadingService,
-    protected readonly androidCredentialDataService: HidCredentialDataService
+    private readonly credentialService: HidCredentialDataService
   ) {
     super();
   }
@@ -48,7 +50,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
       }
     };
 
-    this.loadingService.showSpinner(this.customLoadingOptions);
+    this.showLoading();
     this.checkCredentialAvailability()
       .pipe(take(1))
       .subscribe(credentialAvailableForInstallation => {
@@ -72,9 +74,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
   }
 
   private checkCredentialAvailability(): Observable<boolean> {
-    return this.androidCredentialDataService
-      .androidActivePassesFromServer()
-      .pipe(map(androidCredential => androidCredential.isAvailable()));
+    return this.credentialService.activePasses$().pipe(map(androidCredential => androidCredential.isAvailable()));
   }
 
   // handles when HID question mark is clicked, should show instructions and an uninstall option if already installed.
@@ -107,8 +107,8 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
       category: CONTENT_STRINGS_CATEGORIES.mobileCredential,
       name: 'usage-instructions',
     };
-    return this.androidCredentialDataService
-      .loadContentString$(credentialUsagecontentStringConfig)
+    return this.credentialService
+      .contentString$(credentialUsagecontentStringConfig)
       .pipe(
         switchMap(contentString => {
           if (contentString) {
@@ -204,33 +204,33 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
           if (currentCredentialStillValid) {
             return of(this.mCredential);
           }
-          return this.androidCredentialDataService.getCredentialFromServer$(this.mCredential).pipe(take(1));
+          return this.credentialService.androidCredential$(this.mCredential).pipe(take(1));
         })
       )
       .toPromise();
   }
 
   private onTermsAndConditionsAccepted(): void {
-    this.loadingService.showSpinner(this.customLoadingOptions);
+    this.showLoading();
     this.getCredentialFromServer$()
       .then(newCredential => {
         this.mCredential = newCredential;
         this.installCredentialOnDevice();
       })
-      .catch(err => {
+      .catch(() => {
         this.loadingService.closeSpinner();
         this.showInstallationErrorAlert();
       });
   }
 
   private updateCredentialOnServer$(): Promise<boolean> {
-    return this.androidCredentialDataService
-      .updateCredential(this.mCredential)
+    return this.credentialService
+      .updateCredential$(this.mCredential)
       .pipe(
         take(1),
         switchMap(serverUpdateSuccess => {
           if (serverUpdateSuccess) {
-            return this.androidCredentialDataService.saveCredentialAsUserSetting$(this.mCredential);
+            return this.credentialService.saveCredentialAsUserSetting$(this.mCredential);
           }
           throw new Error('Failed to update credential on server$');
         })
@@ -238,103 +238,110 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
       .toPromise();
   }
 
-  private get doNativeCredentialInstall$(): Promise<string> {
-    return this.hidSdkManager().installCredential(this.mCredential.getCredentialData<HID>().invitationCode);
+  private get doNativeCredentialInstall$(): Promise<boolean> {
+    return this.hidSdkManager()
+      .installCredential(this.mCredential.getCredentialData<HID>().invitationCode)
+      .then(transactionResult => {
+        let transactionSucceeded = transactionResult == HIDCredentialManager.TRANSACTION_SUCCESS_FULL;
+        if (transactionSucceeded) {
+          return true;
+        }
+        throw new Error(transactionResult);
+      });
   }
 
   private installCredentialOnDevice(): void {
-    this.doNativeCredentialInstall$.then(deviceInstallResult => {
-      let mobileCredentialInstallSuccess = deviceInstallResult == HIDCredentialManager.TRANSACTION_SUCCESS_FULL;
-      if (mobileCredentialInstallSuccess) {
+    this.doNativeCredentialInstall$
+      .then(() => {
         this.mCredential.setStatus(MobileCredentialStatuses.IS_PROVISIONED);
         this.updateCredentialOnServer$()
           .then(() => {
+            this.resetRetryCount();
             this.loadingService.closeSpinner();
             delete this.mCredential.credentialData.invitationCode;
             this.credentialStateChangeSubscription.onCredentialStateChanged();
           })
-          .catch(err => {
-            console.log('error ==> ', err);
-            this.retry(this.updateCredentialOnServer$)
-              .then(retrySucceeded => {
-                if (!retrySucceeded) {
-                  this.deleteCredentialFromDevice$().then(() => this.showInstallationErrorAlert());
-                  this.credentialStateChangeSubscription.onCredentialStateChanged();
-                }
+          .catch(() => {
+            this.handleRetry(this.updateCredentialOnServer$)
+              .then(() => {
+                this.deleteCredentialFromDevice$().then(() => this.showInstallationErrorAlert());
+                this.credentialStateChangeSubscription.onCredentialStateChanged();
               })
               .finally(() => {
-                this.transactionRetryCount = 1;
+                this.resetRetryCount();
                 this.loadingService.closeSpinner();
               });
           });
-      } else {
-        if (this.canRetry(deviceInstallResult)) {
-          (async () => await this.showRetryToast())().then(shoudRetryInstallation => {
+      })
+      .catch(error => {
+        console.log('got error ==> ', error.message);
+        if (this.canRetry(error.message)) {
+          this.loadingService.closeSpinner();
+          this.showRetryToast().then(shoudRetryInstallation => {
             console.log('shoudRetryInstallation: ', shoudRetryInstallation);
             if (shoudRetryInstallation) {
+              this.showLoading();
               this.installCredentialOnDevice();
             }
           });
         } else {
           this.showInstallationErrorAlert();
         }
+      });
+  }
+
+  private canRetry(error?: string): boolean {
+    if (this.transactionRetryCount <= this.transactionMaxRetryCount) {
+      if (error && !this.shouldRetry(error)) {
+        this.resetRetryCount();
+        return false;
       }
-    });
+      this.transactionRetryCount++;
+      return true;
+    }
+    this.resetRetryCount();
+    return false;
   }
 
-  private canRetry(exceptionType = null): boolean {
-    let anotherRetryAllowed = this.transactionRetryCount <= this.transactionMaxRetryCount;
-    const retryAllowed = exceptionType ? this.shouldRetry(exceptionType) && anotherRetryAllowed : anotherRetryAllowed;
-    this.transactionRetryCount = retryAllowed ? this.transactionRetryCount + 1 : 1;
-    return retryAllowed;
-  }
-
-  private async retry(fn: () => Promise<boolean>): Promise<boolean> {
-    while (this.canRetry()) {
+  private async handleRetry(fn: () => Promise<boolean>, error?: string): Promise<boolean> {
+    while (this.canRetry(error)) {
       try {
         if (await fn()) {
           return true;
         }
       } catch (err) {
-        console.log('Attempt ', this.transactionRetryCount, ' failed with ', err);
+        error = err.message;
       }
     }
     throw new Error('Failed all attempts');
   }
 
   private async showRetryToast(): Promise<boolean> {
-    let myToast = this.toastService
-      .create({
-        message: 'Mobile credential installation error',
-        duration: 10000,
-        position: 'bottom',
-        animated: true,
-        mode: 'md',
-        buttons: [
-          {
-            text: 'retry',
-            role: 'cancel',
-            handler: () => {
-              this.alertCtrl.dismiss(true);
-            },
+    let myToast = await this.toastService.create({
+      message: 'Mobile credential installation error',
+      duration: 15000,
+      position: 'bottom',
+      buttons: [
+        {
+          text: 'retry',
+          handler: () => {
+            myToast.dismiss(true);
           },
-        ],
-      })
-      .then(async toast => {
-        await toast.present();
-        const { data } = await toast.onDidDismiss();
-        let retryHit = data ? true : false;
-        return retryHit;
-      });
-    return await myToast;
+        },
+      ],
+    });
+    myToast.setAttribute('role', 'alert');
+    await myToast.present();
+    const { data } = await myToast.onDidDismiss();
+    return data ? true : false;
   }
 
-  private shouldRetry(exceptionCode): boolean {
-    if (!exceptionCode) {
+  private shouldRetry(error): boolean {
+    if (!error) {
       return false;
     }
     let shouldRetry = false;
-    switch (exceptionCode) {
+    switch (error) {
       case 'INTERNAL_ERROR':
       case 'SERVER_UNREACHABLE':
       case 'SDK_BUSY':
@@ -361,12 +368,20 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     });
   }
 
-  private get deleteCredentialFromServer$(): Promise<boolean> {
-    return this.androidCredentialDataService
-      .deleteCredential()
-      .pipe(take(1))
+  private deleteCredentialFromServer$ = (): Promise<boolean> => {
+    return this.credentialService
+      .deleteCredential$()
+      .pipe(
+        take(1),
+        map(deletionSucceeded => {
+          if (deletionSucceeded) {
+            return deletionSucceeded;
+          }
+          throw new Error('Credential Delete failed');
+        })
+      )
       .toPromise();
-  }
+  };
 
   private deleteCredentialFromDevice$ = async (): Promise<boolean> => {
     console.log('deleteCredentialFromDevice executed..');
@@ -377,73 +392,52 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
       this.credentialStateChangeSubscription.onCredentialStateChanged();
       return true;
     }
-    throw new Error(`Failed with error: ${transactionResultCode}`);
+    throw new Error(transactionResultCode);
   };
 
+  private resetRetryCount(): void {
+    this.transactionRetryCount = 1;
+  }
+
+  private showLoading(): void {
+    if (this.loadingService.notLoading()) {
+      this.loadingService.showSpinner(this.customLoadingOptions);
+    }
+  }
+
   private onDeleteConfirmed(): void {
-    this.loadingService.showSpinner(this.customLoadingOptions);
-    this.deleteCredentialFromServer$
-      .then(serverDeleteSuccess => {
-        console.log('serverDeleteSuccess: ', serverDeleteSuccess);
-        if (serverDeleteSuccess) {
-          this.deleteCredentialFromDevice$()
-            .then(deviceDeleteSuccess => {
-              console.log('deviceDeleteSuccess: ', deviceDeleteSuccess);
-              this.transactionRetryCount = 1;
-              this.loadingService.closeSpinner();
-            })
-            .catch(err => {
-              console.log('error ==> ', err);
-              this.retry(this.deleteCredentialFromDevice$)
-                .then(() => this.credentialStateChangeSubscription.onCredentialStateChanged())
-                .catch(err => {
-                  console.log('retry failed with ', err);
-                  this.loadingService.closeSpinner();
-                })
-                .finally(() => {
-                  console.log('finally !!!!!!!!!!!!!!! ');
-                  this.transactionRetryCount = 1;
-                });
-            });
-        } else {
-          if (this.canRetry()) {
-            this.onDeleteConfirmed();
-          } else {
+    this.showLoading();
+    this.deleteCredentialFromServer$()
+      .then(() => {
+        this.resetRetryCount();
+        this.deleteCredentialFromDevice$()
+          .catch(error => {
+            this.showLoading();
+            this.handleRetry(this.deleteCredentialFromDevice$, error.message)
+              .then(() => this.credentialStateChangeSubscription.onCredentialStateChanged())
+              .catch(() => this.showInstallationErrorAlert('uninstall'))
+              .finally(() => {
+                this.loadingService.closeSpinner();
+                this.resetRetryCount();
+              });
+          })
+          .finally(() => {
+            this.resetRetryCount();
             this.loadingService.closeSpinner();
-            this.showInstallationErrorAlert('uninstall');
-          }
-        }
+          });
       })
-      .catch(reason => {
-        console.log('error reason ==>: ', reason);
-        this.loadingService.closeSpinner();
-        this.showInstallationErrorAlert('uninstall');
+      .catch(() => {
+        if (this.canRetry()) {
+          this.onDeleteConfirmed();
+        } else {
+          this.loadingService.closeSpinner();
+          this.showInstallationErrorAlert('uninstall');
+        }
       });
   }
 
   private hidSdkManager(): HIDSdkManager {
     return HIDSdkManager.getInstance();
-  }
-
-  static getInstance(
-    modalCtrl: ModalController,
-    alertCtrl: AlertController,
-    popoverCtrl: PopoverController,
-    toastService: ToastController,
-    loadingService: LoadingService,
-    androidCredentialDataService: HidCredentialDataService
-  ): HIDCredentialManager {
-    if (!this.instance) {
-      this.instance = new HIDCredentialManager(
-        modalCtrl,
-        alertCtrl,
-        popoverCtrl,
-        toastService,
-        loadingService,
-        androidCredentialDataService
-      );
-    }
-    return this.instance;
   }
 
   get termsAndConditions$(): Promise<string> {
@@ -452,8 +446,8 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
       category: CONTENT_STRINGS_CATEGORIES.termsScreen,
       name: 'terms',
     };
-    return this.androidCredentialDataService
-      .loadContentString$(termsNConditionsConfig)
+    return this.credentialService
+      .contentString$(termsNConditionsConfig)
       .pipe(
         map(contentString => {
           this.loadingService.closeSpinner();

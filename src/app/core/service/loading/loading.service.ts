@@ -50,6 +50,10 @@ export class LoadingService {
     });
   }
 
+  notLoading(): Boolean{
+    return this.isLoading == false;
+  }
+
   async closeSpinner(): Promise<void> {
     this.isLoading = false;
     /// check for all loaders and remove them

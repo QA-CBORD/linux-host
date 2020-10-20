@@ -1,7 +1,7 @@
 import { Observable, of } from 'rxjs';
 import { MobileCredential } from '../shared/mobile-credential';
 import { CredentialStateChangeSubscription, MobileCredentialManager } from '../shared/mobile-credential-manager';
-import { AndroidCredential } from './android-credentials';
+import { AndroidCredential } from './android-credential.model';
 
 export abstract class AbstractAndroidCredentialManager implements MobileCredentialManager {
   protected mCredential: AndroidCredential<any>;

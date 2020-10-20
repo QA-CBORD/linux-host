@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { from, Observable, of } from 'rxjs';
 import { map, switchMap, take } from 'rxjs/operators';
@@ -6,13 +6,12 @@ import { Plugins } from '@capacitor/core';
 import { CredentialStateChangeSubscription, MobileCredentialManager } from '../model/shared/mobile-credential-manager';
 import { MobileCredential } from '../model/shared/mobile-credential';
 import { AppleWalletCredential } from '../model/ios/apple-wallet-credential';
-import { AppleWalletCredentialState } from '../model/ios/applet-wallet-state';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
+import { AppleWalletCredentialState } from '../model/ios/applet-wallet-credential.state';
+import { Injectable } from '@angular/core';
 const { IOSDevice } = Plugins;
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class IOSCredentialManager implements MobileCredentialManager {
   private mCredential: AppleWalletCredential;
   private appletWalletEventListener: any;
