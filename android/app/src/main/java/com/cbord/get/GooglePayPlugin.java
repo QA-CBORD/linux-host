@@ -31,45 +31,34 @@ public class GooglePayPlugin extends Plugin {
     @PluginMethod()
     public void getGoogleClient(PluginCall call) {
         tapAndPayClient = TapAndPayClient.getClient(getActivity().getApplicationContext());
+
     }
 
     @PluginMethod()
     public void getGooglePayNonce(PluginCall call) {
         final Task<String> response = tapAndPayClient.getLinkingToken("CBORD")
-                .addOnSuccessListener(new OnSuccessListener<String>() {
-                    @Override
-                    public void onSuccess(String token) {
-                        Log.d("onSuccess: ", token);
-                        call.resolve(toJSON(token));
-                    }
-                });
+                .addOnSuccessListener(token -> call.resolve(toJSON(token)));
 
-        response.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception error) {
-                ApiException apiException = (ApiException) error;
-                Log.d("onFailure: ", apiException.getMessage());
-                if (apiException.getStatusCode() == TAP_AND_PAY_NO_ACTIVE_WALLET) {
-                    tapAndPayClient.createWallet(getActivity(), REQUEST_CREATE_WALLET);
-                } else {
-                    call.reject(apiException.getMessage());
-                }
+        response.addOnFailureListener(error -> {
+             if (isGoogleWalletInactive((ApiException) error)) {
+                 tapAndPayClient.createWallet(getActivity(), REQUEST_CREATE_WALLET);
+             } else {
+                call.reject(error.getMessage());
             }
         });
     }
 
     @PluginMethod()
     public void openGooglePay(PluginCall call) {
-        String uri = call.getString("uri");
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse(uri));
+        intent.setData(Uri.parse(call.getString("uri")));
 
         PackageManager packageManager = getActivity().getPackageManager();
         List<ResolveInfo> activities = packageManager.queryIntentActivities(intent, 0);
         if (activities.size() > 0) {
            getActivity().startActivity(intent);
         }
-        // TODO: OnActivityResult return the response to Ionic
+        // TODO: onActivityResult to return the response to Ionic
         // TODO: call.resolve / call.reject
     }
 
@@ -77,5 +66,12 @@ public class GooglePayPlugin extends Plugin {
         JSObject jsonObject = new JSObject();
         jsonObject.put("googlePayNonce", transactionResult);
         return jsonObject;
+    }
+
+    private boolean isGoogleWalletInactive(ApiException error) {
+        if (error.getStatusCode() == TAP_AND_PAY_NO_ACTIVE_WALLET) {
+            return true;
+        }
+        return false;
     }
 }
