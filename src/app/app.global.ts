@@ -183,6 +183,7 @@ export namespace User {
     QUICK_AMOUNT = 'quick_amount',
     MOBILE_ACCESS_FAVORITES = 'mobileaccess_favorites',
     DEFAULT_ADDRESS = 'defaultaddress',
+    MOBILE_CREDENTIAL_ID = 'mobileCredentialID'
   }
 }
 

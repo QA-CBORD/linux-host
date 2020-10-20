@@ -7,7 +7,7 @@ export interface ActivePasses {
 }
 
 
-export enum CredentialProviderEnum{
+export enum CredentialProviders{
   HID = "HID",
   GOOGLE = "ALLEGION",
   APPLE= "APPLE"
@@ -17,7 +17,7 @@ export class MobileCredentialProvider {
 
   name: string
 
-  constructor(public provider: CredentialProviderEnum) {
+  constructor(public provider: CredentialProviders) {
     this.name = provider.valueOf();
   }
 

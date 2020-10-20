@@ -1,6 +1,8 @@
 package com.cbord.get;
 
 import android.app.Application;
+import android.util.Log;
+
 import com.cbord.get.mcredential.HIDSDKManager;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.NativePlugin;
@@ -15,50 +17,58 @@ public class HIDPlugin extends Plugin {
 
     private HIDSDKManager hidsdkManager;
     private static final String HID_SDK_TRANSACTION_RESULT = "hidSdkTransactionResult";
+    private static final String TRANSACTION_SUCCESS_FULL = "TRANSACTION_SUCCESS";
+    private static final String TAG = HIDPlugin.class.getSimpleName();
 
     @PluginMethod()
     public void initializeOrigo(PluginCall call) {
-        Application application = getActivity().getApplication();
-        hidsdkManager = HIDSDKManager.getInstance(application);
-        call.resolve(toJson(hidsdkManager.TRANSACTION_RESULT));
+        hidsdkManager = HIDSDKManager.getInstance(getActivity());
+        call.resolve(toJson(TRANSACTION_SUCCESS_FULL));
     }
 
     @PluginMethod()
     public void startupOrigo(PluginCall call) {
-        hidsdkManager.onApplicationStarted();
-        call.resolve(toJson(hidsdkManager.TRANSACTION_RESULT));
+        hidsdkManager.onApplicationStarted((transactionResult -> {
+            call.resolve(toJson(transactionResult));
+        }));
     }
 
     @PluginMethod()
     public void addCredential(PluginCall call){
         String invitationCode = call.getString("invitationCode");
-        hidsdkManager.doHidCredentialFirstInstall(invitationCode);
-        call.resolve(toJson(hidsdkManager.TRANSACTION_RESULT));
+        hidsdkManager.doHidCredentialFirstInstall(invitationCode, (transactionResult) -> {
+            call.resolve(toJson(transactionResult));
+        });
     }
 
     @PluginMethod()
     public void deleteCredential(PluginCall call){
-
-        hidsdkManager.deleteCredential();
-        call.resolve(toJson(hidsdkManager.TRANSACTION_RESULT));
+        hidsdkManager.deleteCredential(transactionResult -> {
+            call.resolve(toJson((transactionResult)));
+        });
     }
 
     @PluginMethod()
     public void loadCredentialData(PluginCall call){
-        OrigoMobileKey currentKey = hidsdkManager.getCurrentEndpoint();
-        JSObject jsonObject = new JSObject();
-        if(currentKey != null ){
-            jsonObject.put("isActive", currentKey.isActivated());
-            jsonObject.put("startDate", currentKey.getBeginDate());
-            jsonObject.put("identifier", currentKey.getIdentifier().oid().dataAsHex());
-            jsonObject.put("externalId", currentKey.getExternalId());
-            jsonObject.put("cardNumber", currentKey.getCardNumber());
-            jsonObject.put(HID_SDK_TRANSACTION_RESULT, hidsdkManager.TRANSACTION_RESULT);
-        }else{
-            call.resolve(toJson(hidsdkManager.TRANSACTION_RESULT));
-            return;
-        }
-        call.resolve(toJson(jsonObject));
+        hidsdkManager.getCurrentEndpoint((resultObject) -> {
+            OrigoMobileKey origoMobileKey = null;
+            if(resultObject != null){
+                JSObject jsonObject = new JSObject();
+                if(resultObject instanceof OrigoMobileKey){
+                    origoMobileKey =  (OrigoMobileKey)resultObject;
+                    jsonObject.put("isActive", origoMobileKey.isActivated());
+                    jsonObject.put("startDate", origoMobileKey.getBeginDate());
+                    jsonObject.put("identifier", origoMobileKey.getIdentifier().oid().dataAsHex());
+                    jsonObject.put("externalId", origoMobileKey.getExternalId());
+                    jsonObject.put("cardNumber", origoMobileKey.getCardNumber());
+                    call.resolve(toJson(jsonObject));
+                }else{
+                  call.resolve(toJson(resultObject));
+                }
+            }else{
+                call.resolve(toJson("null"));
+            }
+        });
     }
 
     @PluginMethod

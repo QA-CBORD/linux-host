@@ -1,4 +1,3 @@
-import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
 
 export const MOBILE_CREDENTIAL_CONFIGS = {
   HID: {
@@ -9,11 +8,6 @@ export const MOBILE_CREDENTIAL_CONFIGS = {
     },
     uiImageUrl: '/assets/icon/mobile_credential_btn.png',
     uiHelpIcon: '/assets/icon/mobile_credentila_quest_mark.png',
-    terms: {
-      domain: CONTENT_STRINGS_DOMAINS.get_web_gui,
-      category: CONTENT_STRINGS_CATEGORIES.termsScreen,
-      name: 'terms',
-    }
   },
   ALLEGION: {
     UI_MSG: {
@@ -43,5 +37,4 @@ export interface MobileCredentialConfig {
   };
   uiImageUrl: string;
   uiHelpIcon: string;
-  terms: any;
 }

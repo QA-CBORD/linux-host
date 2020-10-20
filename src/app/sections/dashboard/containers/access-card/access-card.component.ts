@@ -8,8 +8,8 @@ import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { DASHBOARD_NAVIGATE } from '@sections/dashboard/dashboard.config';
 import { AppleWalletInfo } from '@core/provider/native-provider/native.provider';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
-import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
-import { MobileCredentialService } from '@shared/ui-components/mobile-credentials/service/mobile-credential.service';
+import { MobileCredentialFacade } from '@shared/ui-components/mobile-credentials/service/mobile-credential-facade.service';
+
 
 @Component({
   selector: 'st-access-card',
@@ -42,8 +42,7 @@ export class AccessCardComponent implements OnInit {
     private readonly router: Router,
     private readonly changeRef: ChangeDetectorRef,
     private readonly userFacadeService: UserFacadeService,
-    private readonly authFacadeService: AuthFacadeService,
-    public readonly credentialManager: MobileCredentialService
+    public readonly mobileCredentialFacade: MobileCredentialFacade
   ) {}
 
   ngOnInit() {
@@ -51,10 +50,10 @@ export class AccessCardComponent implements OnInit {
     this.getFeaturesEnabled();
     this.getUserData();
     this.getUserName();
-    this.credentialManager.mobileCredentialEnabled$.pipe(take(1)).subscribe(mobileCredentialEnabled => {
+    this.mobileCredentialFacade.mobileCredentialEnabled$.pipe(take(1)).subscribe(mobileCredentialEnabled => {
       if (mobileCredentialEnabled) {
         this.mobileCredentialEnabled = mobileCredentialEnabled;
-        this.credentialManager.setCredentialStateChangeCallback(this);
+        this.mobileCredentialFacade.setCredentialStateChangeCallback(this);
         this.changeRef.detectChanges();
       }
     });
@@ -65,7 +64,7 @@ export class AccessCardComponent implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.credentialManager.refreshCredentials();
+    this.mobileCredentialFacade.refreshCredentials();
   }
 
   private getUserData() {

@@ -8,7 +8,6 @@ export interface CredentialStateChangeSubscription {
 }
 
 export interface MobileCredentialManager extends MobileCredentialManagerAdapter {
-  initialize(): Promise<any>;
   setCredential(mobileCredential: MobileCredential): void;
   onUiImageClicked(event?: any): void;
   credentialEnabled$(): Observable<boolean>;

@@ -34,7 +34,7 @@ export class PartnerPaymentApiService {
      * this data is then used to get a credential for the patron/user.
      */
     // we need to send the institution id to activaPasses resource.
-    console.log('androidActivePasses()');
+    console.log('mockActivePasses()');
     return this.mockActivePasses();
 
     const institutionInfo$ = this.institutionFacadeService.cachedInstitutionInfo$;

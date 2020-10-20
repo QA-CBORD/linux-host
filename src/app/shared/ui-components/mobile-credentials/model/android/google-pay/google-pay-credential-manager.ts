@@ -3,6 +3,7 @@ import { MobileCredential } from '../../shared/mobile-credential';
 import { Observable, of } from 'rxjs';
 import { GoogleCredential } from '../android-credentials';
 import { Plugins } from '@capacitor/core';
+import { map } from 'rxjs/operators';
 const { GooglePayPlugin } = Plugins;
 
 export class GooglePayCredentialManager implements MobileCredentialManager {
@@ -28,7 +29,14 @@ export class GooglePayCredentialManager implements MobileCredentialManager {
     // TODO: call openGooglePay from Android plugin
   }
   credentialEnabled$(): Observable<boolean> {
-    return of(this.mCredential.isEnabled());
+    return of(this.mCredential.isEnabled()).pipe(
+      map(googleCredentialEnabled => {
+         if(googleCredentialEnabled) {
+            GooglePayPlugin.getGoogleClient();
+         }
+         return googleCredentialEnabled;
+      })
+    );
   }
   credentialAvailable$(): Observable<boolean> {
     return of(this.mCredential.isAvailable());

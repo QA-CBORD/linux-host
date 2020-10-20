@@ -65,6 +65,7 @@ export abstract class MobileCredentialSharedDataService {
   }
 
   protected getPasses(): Observable<ActivePasses> {
+  console.log('getPasses()');
     /**
      * calls api gw android/version/actipasses to obtain activaPasses info for current patron/user.
      * this data is then used to get a credential for the patron/user.
