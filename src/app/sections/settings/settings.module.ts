@@ -10,6 +10,7 @@ import { HTMLRendererModule } from '@shared/ui-components/html-renderer/html-ren
 import { PhoneEmailModule } from '@shared/ui-components/phone-email/phone-email.module';
 import { EditHomePageModalModule } from '@shared/ui-components/edit-home-page-modal/edit-home-page-modal.module';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module'
+import { ReportCardModule } from '@sections/settings/pages/report-card/report-card.module';
 
 const imports = [
   CommonModule,
@@ -20,6 +21,7 @@ const imports = [
   PhoneEmailModule,
   StHeaderModule, 
   EditHomePageModalModule,
+  ReportCardModule,
 ];
 const declarations = [SettingsPage, SettingsItemComponent];
 const entryComponents = [];

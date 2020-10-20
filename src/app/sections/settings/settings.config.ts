@@ -7,6 +7,8 @@ import {
   toggleBiometricStatus,
   setBiometricStatus,
   handlePinAccess,
+  setReportCardLabel,
+  getCardStatusValidation,
 } from './helpers/setting-item.helper';
 import { CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_CATEGORIES } from 'src/app/content-strings';
 import { HTMLRendererComponent } from '@shared/ui-components/html-renderer/html-renderer.component';
@@ -14,7 +16,10 @@ import { PhoneEmailComponent } from '@shared/ui-components/phone-email/phone-ema
 import { AuthTypes } from '@core/utils/auth-types.enum';
 import { EditHomePageModalComponent } from '@shared/ui-components/edit-home-page-modal/edit-home-page-modal.component';
 import { SETTINGS_ID } from './models/settings-id.enum';
-import { LOCAL_ROUTING as ORDERING_ROUTING } from '@sections/ordering/ordering.config'
+import { LOCAL_ROUTING as ORDERING_ROUTING } from '@sections/ordering/ordering.config';
+import { ReportCardStatusSetting } from './models/report-card-status.config';
+import { ReportCardComponent } from './pages/report-card/report-card.component';
+
 export enum LOCAL_ROUTING {
   photoUpload = 'photo-upload',
 }
@@ -52,16 +57,24 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         navigate: [SETTINGS_NAVIGATE.updatePhoto],
         validations: [{ type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.PHOTO_UPLOAD_ENABLED }],
       },
-      // {
-      //   id: SETTINGS_ID.lostCard,
-      //   label: '',
-      //   icon: 'card-lost',
-      //   toggleLabel: { checked: 'Report card as found', unchecked: 'Report card as lost' },
-      //   type: 'button',
-      //   getToggleStatus: getCardStatus,
-      //   navigate: SETTINGS_NAVIGATE.lostCard,
-      //   validations: [{ type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.REPORT_LOST_CARD_ENABLED }],
-      // },
+      {
+        id: SETTINGS_ID.lostCard,
+        label: '',
+        icon: 'card-lost',
+        toggleLabel: { checked: 'Report card as found', unchecked: 'Report card as lost' },
+        type: 'button',
+        setToggleStatus: setReportCardLabel,
+        setCallback: openModal,
+        modalContent: {
+          component: ReportCardComponent,
+        },
+        validations: [
+          {
+            type: SETTINGS_VALIDATIONS.StatusSettingEnable,
+            value: { getStatusValidation: getCardStatusValidation, validation: ReportCardStatusSetting },
+          },
+        ],
+      },
     ],
   },
   {
@@ -258,4 +271,3 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
     ],
   },
 ];
-
