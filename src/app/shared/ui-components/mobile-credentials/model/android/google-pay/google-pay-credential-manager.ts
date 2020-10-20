@@ -1,9 +1,9 @@
 import { MobileCredentialManager, CredentialStateChangeSubscription } from '../../shared/mobile-credential-manager';
 import { MobileCredential } from '../../shared/mobile-credential';
 import { Observable, of } from 'rxjs';
-import { GoogleCredential } from '../android-credentials';
 import { Plugins } from '@capacitor/core';
 import { map } from 'rxjs/operators';
+import { GoogleCredential } from '../android-credential.model';
 const { GooglePayPlugin } = Plugins;
 
 export class GooglePayCredentialManager implements MobileCredentialManager {

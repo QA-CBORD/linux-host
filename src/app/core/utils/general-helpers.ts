@@ -7,6 +7,7 @@ import { UserInfo } from '@core/model/user';
 import { UserAccount } from '@core/model/account/account.model';
 import { ACCOUNT_TYPES, PAYMENT_SYSTEM_TYPE } from '@sections/accounts/accounts.config';
 import { MerchantInfo } from '@sections/ordering';
+import { ReportCardStatus } from '@sections/settings/models/report-card-status.config';
 
 export function parseArrayFromString<T>(value: string): Array<T> {
   if (value && !value.length) return [];
@@ -206,4 +207,22 @@ export function getRandomColorExtendedPalette(): string {
     '#4AA40D',
   ];
   return colors[Math.floor(Math.random() * (colors.length - 1))];
+}
+
+export function getCashlessStatus(isLost: boolean): number {
+  return isLost ? ReportCardStatus.LOST : ReportCardStatus.NOT_LOST;
+}
+
+export function mergeMatchArrayById(sourceArray: any[], matchIds: any[]): any[] {
+  const result = [];
+  const sourceDict: { [key: string]: any } = {};
+
+  for (const sourceItem of sourceArray) {
+    sourceDict[`${sourceItem.id}`] = sourceItem;
+  }
+  for (const matchItem of matchIds) {
+    if (sourceDict[matchItem]) result.push(sourceDict[matchItem]);
+  }
+
+  return result;
 }

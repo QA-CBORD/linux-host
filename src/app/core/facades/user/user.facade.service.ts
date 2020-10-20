@@ -37,14 +37,17 @@ export class UserFacadeService extends ServiceStateFacade {
   }
 
   getUserData$(): Observable<UserInfo> {
+    return this.getUserState$().pipe(take(1));
+  }
+
+  getUserState$(): Observable<UserInfo> {
     return this.storageStateService.getStateEntityByKey$<UserInfo>(this.userKey).pipe(
       switchMap(data => {
         if (data !== null && data.lastModified + data.timeToLive >= Date.now()) {
           return this.storageStateService.getStateEntityByKey$<UserInfo>(this.userKey).pipe(map(({ value }) => value));
         }
         return this.getUser$();
-      }),
-      take(1)
+      })
     );
   }
 
@@ -282,6 +285,12 @@ export class UserFacadeService extends ServiceStateFacade {
   saveUser$(user: UserInfo): Observable<string> {
     return this.userApiService.updateUserInfo$(user).pipe(
       tap(res => this.storageStateService.updateStateEntity(this.userKey, user, { ttl: this.ttl })),
+      take(1)
+    );
+  }
+
+  reportCard$(isReportAsLost: boolean): Observable<MessageResponse<string>> {
+    return this.userApiService.reportCard$(isReportAsLost).pipe(
       take(1)
     );
   }

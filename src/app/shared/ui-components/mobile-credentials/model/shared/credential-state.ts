@@ -1,4 +1,4 @@
-import { MobileCredentialProvider } from './credential-utils';
+import { CredentialProviders, MobileCredentialProvider } from './credential-utils';
 import { MobileCredentialConfig} from './mobile-credential-configs';
 
 
@@ -12,6 +12,7 @@ export interface MobileCredentialState {
   getConfig(): MobileCredentialConfig;
   getUiIconUrl(): string;
   setStatus(status: number):void;
+  providedBy(provider: CredentialProviders): boolean;
 }
 
 

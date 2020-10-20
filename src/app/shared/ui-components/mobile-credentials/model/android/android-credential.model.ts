@@ -1,3 +1,5 @@
+import { AppleWalletCredentialState } from '../ios/applet-wallet-credential.state';
+import { AppleWalletState } from '../ios/applet-wallet.state';
 import { MobileCredentialState, MobileCredentialStatuses } from '../shared/credential-state';
 import { ActivePasses, CredentialProviders } from '../shared/credential-utils';
 import { MobileCredential } from '../shared/mobile-credential';
@@ -14,30 +16,38 @@ export interface AndroidCredentialState extends MobileCredentialState {
   credStatus: number;
   passes: number;
   issuer: string;
-  isHID(): boolean;
-  isGOOGLE(): boolean;
 }
 
-export class AndroidCredentialStateResolver {
-  private constructor(s) {}
+export class CredentialStateResolver {
+  private constructor() {}
 
-  static resolveStateFromActivePasses(activePasses: ActivePasses): AndroidCredentialStateEntity {
-    const me = AndroidCredentialStateResolver;
-    if (me.hasHidCredential(activePasses)) {
+  static fromActivePasses(activePasses: ActivePasses): MobileCredentialState {
+    if (CredentialStateResolver.hasHidCredential(activePasses)) {
       return new AndroidCredentialStateEntity(
         activePasses.credStatus.android_hid,
         activePasses.passes.android_hid,
         CredentialProviders.HID,
         activePasses.referenceIdentifier
       );
-    } else if (me.hasGoogleCredential(activePasses)) {
+    } else if (CredentialStateResolver.hasGoogleCredential(activePasses)) {
       return new AndroidCredentialStateEntity(
         activePasses.credStatus.android_nxp,
         activePasses.passes.android_nxp,
         CredentialProviders.GOOGLE,
         activePasses.referenceIdentifier
       );
+    } else if (CredentialStateResolver.hasAppleWallet(activePasses)) {
+      return new AppleWalletState(activePasses);
     }
+  }
+
+  private static hasAppleWallet(activePasses: ActivePasses): boolean {
+    return (
+      activePasses.credStatus.iPhone == MobileCredentialStatuses.IS_AVAILABLE ||
+      activePasses.credStatus.iPhone == MobileCredentialStatuses.IS_PROVISIONED ||
+      (activePasses.credStatus.iWatch == MobileCredentialStatuses.IS_AVAILABLE ||
+        activePasses.credStatus.iWatch == MobileCredentialStatuses.IS_PROVISIONED)
+    );
   }
 
   private static hasGoogleCredential(activePasses: ActivePasses): boolean {
@@ -65,6 +75,10 @@ export class AndroidCredentialStateEntity implements AndroidCredentialState {
     public referenceIdentifier: string
   ) {
     this.updateStatusMsg();
+  }
+
+  providedBy(provider: CredentialProviders): boolean {
+    return this.getIssuer() == provider.toString();
   }
   setStatus(status: number): void {
     this.credStatus = status;
@@ -115,15 +129,11 @@ export class AndroidCredentialStateEntity implements AndroidCredentialState {
 
 // android credentials implementations.
 
-
-
 export abstract class AndroidCredential<T> extends MobileCredential implements AndroidCredentialAttrs {
   public credentialData: T;
   constructor(public credentialState: AndroidCredentialState) {
     super(credentialState);
   }
-
-  
 
   getCredentialData<T>(): T {
     return this.credentialData as any;
@@ -137,35 +147,27 @@ export abstract class AndroidCredential<T> extends MobileCredential implements A
     return this.credentialState;
   }
 
-  isHID(): boolean {
-    return this.credentialState.isHID();
+  providedBy(credentialProvider: CredentialProviders){
+    return this.credentialState.providedBy(credentialProvider);
   }
 
-  isGoogle(): boolean {
-    return this.credentialState.isGOOGLE();
-  }
   abstract getPersistable<T>(): T;
 }
 
-export interface HIDPersistable extends Persistable {
+export interface HID extends Persistable {
+  invitationId: number;
+  issuerToken: string;
   invitationCode: string;
   issuer: string;
 }
 
-export interface HID extends HIDPersistable{
-  invitationId: number;
-  issuerToken: string;
-}
-
-export interface GOOGLEPersistable extends Persistable{
+export interface GOOGLE extends Persistable {
   virtualCardUid: string;
   digitizationReference: string;
   issuer: string;
 }
 
-export interface GOOGLE extends GOOGLEPersistable{}
-
-export interface Persistable{
+export interface Persistable {
   id: string;
   referenceIdentifier: string;
 }

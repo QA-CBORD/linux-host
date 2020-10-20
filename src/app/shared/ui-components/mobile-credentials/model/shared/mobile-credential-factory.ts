@@ -1,15 +1,22 @@
-import { AndroidCredentialStateResolver, HIDCredential, GoogleCredential } from '../android/android-credentials';
-import { ActivePasses } from './credential-utils';
+import {
+  AndroidCredentialState,
+  CredentialStateResolver,
+  GoogleCredential,
+  HIDCredential,
+} from '../android/android-credential.model';
+import { AppleWalletCredential } from '../ios/apple-wallet-credential';
+import { ActivePasses, CredentialProviders } from './credential-utils';
 import { MobileCredential } from './mobile-credential';
 
 export class MobileCredentialFactory {
   static fromActivePasses(data: ActivePasses): MobileCredential {
-    const credentialState = AndroidCredentialStateResolver.resolveStateFromActivePasses(data);
-    console.log(credentialState)
-    if (credentialState.isHID()) {
-      return new HIDCredential(credentialState);
-    }else if(credentialState.isGOOGLE()){
-      return new GoogleCredential(credentialState);
+    const credentialState = CredentialStateResolver.fromActivePasses(data);
+    if (credentialState.providedBy(CredentialProviders.HID)) {
+      return new HIDCredential(credentialState as AndroidCredentialState);
+    } else if (credentialState.providedBy(CredentialProviders.GOOGLE)) {
+      return new GoogleCredential(credentialState as AndroidCredentialState);
+    } else if (credentialState.providedBy(CredentialProviders.APPLE)) {
+      return new AppleWalletCredential(credentialState);
     }
   }
 }

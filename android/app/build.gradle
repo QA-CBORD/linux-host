@@ -13,7 +13,7 @@ android {
         applicationId "com.google.android.gms.tapandpay.issuer.devapp.littlebear"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1063
+        versionCode 1064
         versionName "4.0.3"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true

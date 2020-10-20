@@ -1,9 +1,14 @@
 import { MobileCredentialState } from './credential-state';
+import { CredentialProviders } from './credential-utils';
 import { MobileCredentialConfig } from './mobile-credential-configs';
 
 export abstract class MobileCredential implements MobileCredentialState {
 
   constructor(public credentialState: MobileCredentialState) {}
+
+  providedBy(provider: CredentialProviders): boolean {
+    return  this.credentialState.providedBy(provider);
+  }
 
   getUiIconUrl(): string {
     return this.credentialState.getUiIconUrl();
