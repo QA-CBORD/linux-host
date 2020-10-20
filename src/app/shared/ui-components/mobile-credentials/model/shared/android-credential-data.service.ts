@@ -1,11 +1,10 @@
 import { HttpHeaders, HttpParams } from '@angular/common/http';
-import { Device } from '@capacitor/core';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { APIService, HttpResponseType, RestCallType } from '@core/service/api-service/api.service';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
-import { forkJoin, from, Observable, of } from 'rxjs';
+import { forkJoin, Observable, of } from 'rxjs';
 import { map, switchMap, take } from 'rxjs/operators';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
 import { AndroidCredential, Persistable } from '../android/android-credential.model';
@@ -13,12 +12,12 @@ import { MobileCredentialDataService } from './mobile-credential-data.service';
 
 export class AndroidCredentialDataService extends MobileCredentialDataService {
   constructor(
-    private readonly resources: { credentialUrl: string },
-    protected readonly storageStateService: StorageStateService,
-    protected readonly authFacadeService: AuthFacadeService,
-    protected readonly contentStringFacade: ContentStringsFacadeService,
-    protected readonly institutionFacadeService: InstitutionFacadeService,
-    protected readonly apiService: APIService
+    private resources: { credentialUrl: string },
+    protected storageStateService: StorageStateService,
+    protected authFacadeService: AuthFacadeService,
+    protected contentStringFacade: ContentStringsFacadeService,
+    protected institutionFacadeService: InstitutionFacadeService,
+    protected apiService: APIService
   ) {
     super(storageStateService, authFacadeService, institutionFacadeService, apiService);
   }
@@ -71,7 +70,7 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
      * returns credentials for android user.
      */
     const institutionInfo$ = this.institutionFacadeService.cachedInstitutionInfo$.pipe(take(1));
-    const deviceInfo$ = from(Device.getInfo()).pipe(take(1));
+    const deviceInfo$ = this.deviceInfo$.pipe(take(1));
     const omniIDJwtToken$ = this.omniIDJwtToken$().pipe(take(1));
 
     return forkJoin(omniIDJwtToken$, deviceInfo$, institutionInfo$).pipe(
@@ -100,7 +99,7 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
 
   protected updateCredential$(reqBody: any): Observable<any> {
     const institutionInfo$ = this.institutionFacadeService.cachedInstitutionInfo$.pipe(take(1));
-    const deviceInfo$ = from(Device.getInfo()).pipe(take(1));
+    const deviceInfo$ = this.deviceInfo$.pipe(take(1));
     const omniIDJwtToken$ = this.omniIDJwtToken$().pipe(take(1));
     return forkJoin(omniIDJwtToken$, institutionInfo$, deviceInfo$).pipe(
       switchMap(([jwtOmniIDToken, { id }, { manufacturer, model, osVersion }]) => {

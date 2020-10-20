@@ -11,7 +11,9 @@ import { HidCredentialDataService } from '../../../service/hid-credential.data.s
 import { HIDSdkManager } from './hid-plugin.wrapper';
 import { Injectable } from '@angular/core';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class HIDCredentialManager extends AbstractAndroidCredentialManager {
   private static instance: HIDCredentialManager;
   private static TRANSACTION_SUCCESS_FULL = 'TRANSACTION_SUCCESS';

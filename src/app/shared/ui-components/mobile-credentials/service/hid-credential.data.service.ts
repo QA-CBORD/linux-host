@@ -18,7 +18,9 @@ const resourceUrls = {
   credentialUrl: `/android/${api_version}/credential`,
 };
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class HidCredentialDataService extends AndroidCredentialDataService {
   constructor(
     protected readonly storageStateService: StorageStateService,

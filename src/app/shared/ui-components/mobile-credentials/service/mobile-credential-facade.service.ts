@@ -2,13 +2,15 @@ import { Injectable, Injector } from '@angular/core';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { forkJoin, Observable, of } from 'rxjs';
-import { map, switchMap, take } from 'rxjs/operators';
+import { catchError, map, switchMap, take } from 'rxjs/operators';
 import { Settings } from 'src/app/app.global';
-import { CredentialStateChangeSubscription, MobileCredentialManager } from '../model/shared/mobile-credential-manager';
+import { CredentialStateChangeListener, MobileCredentialManager } from '../model/shared/mobile-credential-manager';
 import { AndroidCredentialManagerFactory } from './android-credential-manager.factory';
 import { IOSCredentialManager } from './ios-credential-manager';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class MobileCredentialFacade {
   private mobileCredentialManager: MobileCredentialManager;
 
@@ -26,20 +28,20 @@ export class MobileCredentialFacade {
         let mobileCredentialSettingsEnabled = false;
         if (appleWalletSettingsEnabled) {
           this.mobileCredentialManager = this.injector.get(IOSCredentialManager);
-          mobileCredentialSettingsEnabled = true;
+          return of(true);
         } else if (androidCredentialSettingsEnabled) {
           const credentialManagerFactory = this.injector.get(AndroidCredentialManagerFactory);
-          credentialManagerFactory.getCredentialManager().pipe(
+          return credentialManagerFactory.getCredentialManager().pipe(
             map(androidCredentialManager => {
-              console.log('androidCredentialManager:L ', androidCredentialManager);
               if (androidCredentialManager) {
                 this.mobileCredentialManager = androidCredentialManager;
                 mobileCredentialSettingsEnabled = true;
               }
-            })
+              return mobileCredentialSettingsEnabled;
+            }),
+            catchError(() => of(false))
           );
         }
-        return of(mobileCredentialSettingsEnabled);
       })
     );
   }
@@ -107,7 +109,9 @@ export class MobileCredentialFacade {
     this.mobileCredentialManager.onUiIconClicked();
   }
 
-  setCredentialStateChangeCallback(callback: CredentialStateChangeSubscription): void {
-    this.mobileCredentialManager.setCredentialStateChangeSubscrption(callback);
+  setCredentialStateChangeListener(listener: CredentialStateChangeListener): void {
+    if(this.mobileCredentialManager){
+      this.mobileCredentialManager.setCredentialStateChangeListener(listener);
+    }
   }
 }

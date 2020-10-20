@@ -15,7 +15,9 @@ const resourceUrls = {
   ping: `/mf2go/testing/${major_version}/${minor_version}/ping`,
 };
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class GooglePayCredentialDataService extends AndroidCredentialDataService {
   constructor(
     protected readonly storageStateService: StorageStateService,

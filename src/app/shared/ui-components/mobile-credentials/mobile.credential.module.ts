@@ -24,15 +24,15 @@ const routes: Routes = [
   imports: [CommonModule, FormsModule, IonicModule, RouterModule.forChild(routes), StButtonModule],
   declarations: [MobileCredentialsComponent],
   exports: [MobileCredentialsComponent],
-  providers: [
-    MobileCredentialDataService,
-    AndroidCredentialManagerFactory,
-    MobileCredentialFacade,
-    HidCredentialDataService,
-    HIDCredentialManager,
-    GooglePayCredentialDataService,
-    IOSCredentialManager
-  ],
+  // providers: [
+  //   MobileCredentialDataService,
+  //   AndroidCredentialManagerFactory,
+  //   MobileCredentialFacade,
+  //   HidCredentialDataService,
+  //   HIDCredentialManager,
+  //   GooglePayCredentialDataService,
+  //   IOSCredentialManager
+  // ],
   entryComponents: [MobileCredentialsComponent],
 })
 export class MobileCredentialModule {}
