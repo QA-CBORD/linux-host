@@ -60,6 +60,6 @@ public class GooglePayPlugin extends Plugin {
     }
 
     private boolean isGoogleWalletInactive(ApiException error) {
-        return error.getStatusCode() == TAP_AND_PAY_NO_ACTIVE_WALLET ? true : false;
+        return error.getStatusCode() == TAP_AND_PAY_NO_ACTIVE_WALLET;
     }
 }
