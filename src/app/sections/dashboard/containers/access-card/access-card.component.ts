@@ -10,7 +10,6 @@ import { AppleWalletInfo } from '@core/provider/native-provider/native.provider'
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { MobileCredentialFacade } from '@shared/ui-components/mobile-credentials/service/mobile-credential-facade.service';
 
-
 @Component({
   selector: 'st-access-card',
   templateUrl: './access-card.component.html',
@@ -50,13 +49,13 @@ export class AccessCardComponent implements OnInit {
     this.getFeaturesEnabled();
     this.getUserData();
     this.getUserName();
-    this.mobileCredentialFacade.mobileCredentialEnabled$.pipe(take(1)).subscribe(mobileCredentialEnabled => {
-      if (mobileCredentialEnabled) {
-        this.mobileCredentialEnabled = mobileCredentialEnabled;
-        this.mobileCredentialFacade.setCredentialStateChangeCallback(this);
-        this.changeRef.detectChanges();
-      }
-    });
+    this.initMobileCredential();
+  }
+
+  private async initMobileCredential(): Promise<void> {
+    this.mobileCredentialEnabled = await this.mobileCredentialFacade.mobileCredentialEnabled$.toPromise();
+    this.mobileCredentialFacade.setCredentialStateChangeListener(this);
+    this.changeRef.detectChanges();
   }
 
   onCredentialStateChanged(): void {

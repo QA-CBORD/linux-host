@@ -1,6 +1,6 @@
 import { Injectable, Injector } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { HIDCredentialManager } from '../model/android/hid/hid-credential-manager';
 import { MobileCredentialManager } from '../model/shared/mobile-credential-manager';
 import { CredentialProviders } from '../model/shared/credential-utils';
@@ -9,13 +9,17 @@ import { MobileCredential } from '../model/shared/mobile-credential';
 import { HIDCredential, GoogleCredential } from '../model/android/android-credential.model';
 import { GooglePayCredentialManager } from '../model/android/google-pay/google-pay-credential-manager';
 
-@Injectable()
+
+@Injectable({
+  providedIn: 'root'
+})
 export class AndroidCredentialManagerFactory {
-  constructor(private mobileCredentialDataService: MobileCredentialDataService, private injector: Injector) {}
+  constructor(private injector: Injector) {}
 
   getCredentialManager(): Observable<MobileCredentialManager> {
     let credentialManager = null;
-    return this.mobileCredentialDataService.activePasses$().pipe(
+    const mCredentialDataService = this.injector.get(MobileCredentialDataService);
+    return mCredentialDataService.activePasses$().pipe(
       map((mobileCredential: MobileCredential) => {
         if (mobileCredential.providedBy(CredentialProviders.HID)) {
           credentialManager = this.createHidCredentialManagerFor(<HIDCredential>mobileCredential);
@@ -24,7 +28,6 @@ export class AndroidCredentialManagerFactory {
         }
         return credentialManager;
       }),
-      catchError(() => of(null))
     );
   }
 

@@ -1,8 +1,5 @@
 package com.cbord.get;
 
-import android.app.Application;
-import android.util.Log;
-
 import com.cbord.get.mcredential.HIDSDKManager;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.NativePlugin;
@@ -19,7 +16,7 @@ public class HIDPlugin extends Plugin {
     private static final String HID_SDK_TRANSACTION_RESULT = "hidSdkTransactionResult";
     private static final String TRANSACTION_SUCCESS_FULL = "TRANSACTION_SUCCESS";
     private static final String TAG = HIDPlugin.class.getSimpleName();
-    private int count =1;
+ 
     @PluginMethod()
     public void initializeOrigo(PluginCall call) {
         hidsdkManager = HIDSDKManager.getInstance(getActivity());
@@ -35,12 +32,7 @@ public class HIDPlugin extends Plugin {
 
     @PluginMethod()
     public void addCredential(PluginCall call){
-        if(count < 3){
-            call.resolve(toJson(("SDK_BUSY")));
-            count++;
-            return;
-        }
-        count = 1;
+ 
         String invitationCode = call.getString("invitationCode");
         hidsdkManager.doHidCredentialFirstInstall(invitationCode, (transactionResult) -> {
             call.resolve(toJson(transactionResult));
@@ -49,12 +41,6 @@ public class HIDPlugin extends Plugin {
 
     @PluginMethod()
     public void deleteCredential(PluginCall call){
-        if(count < 3){
-            call.resolve(toJson(("SERVER_UNREACHABLE")));
-            count++;
-            return;
-        }
-        count = 1;
         hidsdkManager.deleteCredential(transactionResult -> {
             call.resolve(toJson((transactionResult)));
         });

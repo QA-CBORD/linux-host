@@ -1,12 +1,12 @@
 import { Observable, of } from 'rxjs';
 import { MobileCredential } from '../shared/mobile-credential';
-import { CredentialStateChangeSubscription, MobileCredentialManager } from '../shared/mobile-credential-manager';
+import { CredentialStateChangeListener, MobileCredentialManager } from '../shared/mobile-credential-manager';
 import { AndroidCredential } from './android-credential.model';
 
 export abstract class AbstractAndroidCredentialManager implements MobileCredentialManager {
   protected mCredential: AndroidCredential<any>;
 
-  protected credentialStateChangeSubscription: CredentialStateChangeSubscription;
+  protected credentialStateChangeSubscription: CredentialStateChangeListener;
 
   constructor() {}
 
@@ -14,7 +14,7 @@ export abstract class AbstractAndroidCredentialManager implements MobileCredenti
     // do nothing
   }
 
-  setCredentialStateChangeSubscrption(credentialStateChangeSubscription: CredentialStateChangeSubscription): void {
+  setCredentialStateChangeListener(credentialStateChangeSubscription: CredentialStateChangeListener): void {
     this.credentialStateChangeSubscription = credentialStateChangeSubscription;
   }
 

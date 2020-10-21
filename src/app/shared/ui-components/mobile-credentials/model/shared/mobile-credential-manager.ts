@@ -3,7 +3,7 @@ import { MobileCredential } from './mobile-credential';
 
 export interface MobileCredentialManagerAdapter {}
 
-export interface CredentialStateChangeSubscription {
+export interface CredentialStateChangeListener {
   onCredentialStateChanged(): void;
 }
 
@@ -14,6 +14,6 @@ export interface MobileCredentialManager extends MobileCredentialManagerAdapter 
   credentialAvailable$(): Observable<boolean>;
   getCredential(): MobileCredential;
   onUiIconClicked(): void;
-  setCredentialStateChangeSubscrption(credentialStateChangeSubscription: CredentialStateChangeSubscription): void;
+  setCredentialStateChangeListener(CredentialStateChangeListener: CredentialStateChangeListener): void;
   refresh(): void;
 }

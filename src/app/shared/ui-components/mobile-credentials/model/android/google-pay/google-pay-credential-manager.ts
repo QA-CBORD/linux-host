@@ -1,4 +1,4 @@
-import { MobileCredentialManager, CredentialStateChangeSubscription } from '../../shared/mobile-credential-manager';
+import { MobileCredentialManager, CredentialStateChangeListener } from '../../shared/mobile-credential-manager';
 import { MobileCredential } from '../../shared/mobile-credential';
 import { Observable, of } from 'rxjs';
 import { Plugins } from '@capacitor/core';
@@ -12,7 +12,7 @@ const { GooglePayPlugin } = Plugins;
 @Injectable()
 export class GooglePayCredentialManager implements MobileCredentialManager {
   private mCredential: GoogleCredential;
-  private credentialStateChangeSubscription: CredentialStateChangeSubscription;
+  private credentialStateChangeSubscription: CredentialStateChangeListener;
 
   constructor(private googlePayCrendential: GooglePayCredentialDataService) {}
 
@@ -55,7 +55,7 @@ export class GooglePayCredentialManager implements MobileCredentialManager {
   onUiIconClicked(): void {
     //
   }
-  setCredentialStateChangeSubscrption(credentialStateChangeSubscription: CredentialStateChangeSubscription): void {
+  setCredentialStateChangeListener(credentialStateChangeSubscription: CredentialStateChangeListener): void {
     this.credentialStateChangeSubscription = credentialStateChangeSubscription;
   }
   refresh(): void {

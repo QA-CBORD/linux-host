@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, ReplaySubject } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 
 import { DataCache } from '../../utils/data-cache';
 
@@ -73,7 +73,7 @@ export class AuthApiService {
         password: 'NOTUSED',
       },
       deviceId,
-      pin
+      pin,
     };
 
     const queryConfig = new RPCQueryConfig('authenticatePIN', postParams);
@@ -90,15 +90,12 @@ export class AuthApiService {
    * @param sessionId String
    */
   getAuthenticationToken(): Observable<string> {
-    let params: ServiceParameters = { };
+    let params: ServiceParameters = {};
     const queryConfig = new RPCQueryConfig('getAuthenticationToken', params, true);
 
     // MARK: Remove the token setting from the service
-    return this.http.post<any>(this.serviceUrl, queryConfig).pipe(
-      map(({ response }) => response )
-    );
+    return this.http.post<any>(this.serviceUrl, queryConfig).pipe(map(({ response }) => response));
   }
-
 
   /**
    * Authenticate a Session Token (session sharing) to get a new User Session
@@ -127,7 +124,7 @@ export class AuthApiService {
    * Retrieve a JWT from GET using a currently active session to use as an Access token for calling AWS services
    *
    */
-  getExternalAuthenticationToken(externalSystem:string = null): Observable<string> {
+  getExternalAuthenticationToken(externalSystem: string = null): Observable<string> {
     const postParams = {
       tokenType: null,
       externalSystem: externalSystem,
@@ -145,10 +142,10 @@ export class AuthApiService {
   }
 
   retrieveAuthorizationBlob(deviceModel: string, deviceOSVersion: string): Observable<string> {
-      const postParams = {
-        deviceModel,
-        deviceOSVersion,
-      };
+    const postParams = {
+      deviceModel,
+      deviceOSVersion,
+    };
     const queryConfig = new RPCQueryConfig('retrieveAuthorizationBlob', postParams, true, false);
     return this.http.post<any>(this.serviceUrl, queryConfig);
   }

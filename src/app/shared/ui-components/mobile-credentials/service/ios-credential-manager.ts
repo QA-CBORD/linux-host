@@ -3,7 +3,7 @@ import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { from, Observable, of } from 'rxjs';
 import { map, switchMap, take } from 'rxjs/operators';
 import { Plugins } from '@capacitor/core';
-import { CredentialStateChangeSubscription, MobileCredentialManager } from '../model/shared/mobile-credential-manager';
+import { CredentialStateChangeListener, MobileCredentialManager } from '../model/shared/mobile-credential-manager';
 import { MobileCredential } from '../model/shared/mobile-credential';
 import { AppleWalletCredential } from '../model/ios/apple-wallet-credential';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
@@ -11,11 +11,13 @@ import { AppleWalletCredentialState } from '../model/ios/applet-wallet-credentia
 import { Injectable } from '@angular/core';
 const { IOSDevice } = Plugins;
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class IOSCredentialManager implements MobileCredentialManager {
   private mCredential: AppleWalletCredential;
   private appletWalletEventListener: any;
-  private credentialStateChangeSubscription: CredentialStateChangeSubscription;
+  private credentialStateChangeSubscription: CredentialStateChangeListener;
   constructor(
     private readonly userFacadeService: UserFacadeService,
     private readonly authFacadeService: AuthFacadeService
@@ -30,7 +32,7 @@ export class IOSCredentialManager implements MobileCredentialManager {
     });
   }
 
-  setCredentialStateChangeSubscrption(credentialStateChangeSubscription: CredentialStateChangeSubscription): void {
+  setCredentialStateChangeListener(credentialStateChangeSubscription: CredentialStateChangeListener): void {
     this.credentialStateChangeSubscription = credentialStateChangeSubscription;
   }
 
