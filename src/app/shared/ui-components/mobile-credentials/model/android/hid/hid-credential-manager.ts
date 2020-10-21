@@ -6,7 +6,7 @@ import { map, switchMap, take, tap } from 'rxjs/operators';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
 import { MobileCredentialStatuses } from '../../shared/credential-state';
 import { AbstractAndroidCredentialManager } from '../abstract-android-credential.management';
-import { AndroidCredential, HID } from '../android-credential.model';
+import { AndroidCredential, HID, HIDCredential } from '../android-credential.model';
 import { HidCredentialDataService } from '../../../service/hid-credential.data.service';
 import { HIDSdkManager } from './hid-plugin.wrapper';
 import { Injectable } from '@angular/core';
@@ -185,16 +185,17 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
         }
         if (this.mCredential.isProvisioned()) {
           return this.checkIfItsBeenProvisionedOnThisDevice$().pipe(
-            switchMap(credentialProvisioneddOnThisDevice => {
+            map(credentialProvisioneddOnThisDevice => {
               if (credentialProvisioneddOnThisDevice) {
-                return of(true);
+                return true;
               }
               this.mCredential.setStatus(MobileCredentialStatuses.IS_AVAILABLE);
-              return of(true);
+              return true;
             })
           );
+        } else {
+          return of(true);
         }
-        return of(true);
       })
     );
   }
@@ -202,17 +203,15 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
   private getCredentialFromServer$(): Promise<AndroidCredential<any>> {
     return of(this.mCredential)
       .pipe(
-        map(currentCredential => {
-          console.log('currentCredential: ', currentCredential);
-          const credentialStillValid =
-            currentCredential.credentialData && currentCredential.credentialData.invitationCode ? true : false;
-          return credentialStillValid;
+        map((currentCredential: HIDCredential) => {
+          return currentCredential.getInvitationCode() ? true : false;
         }),
-        switchMap(currentCredentialStillValid => {
-          if (currentCredentialStillValid) {
+        switchMap(invitationCodeValid => {
+          if (invitationCodeValid) {
             return of(this.mCredential);
+          } else {
+            return this.credentialService.androidCredential$(this.mCredential);
           }
-          return this.credentialService.androidCredential$(this.mCredential).pipe(take(1));
         })
       )
       .toPromise();
@@ -225,7 +224,8 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
         this.mCredential = newCredential;
         this.installCredentialOnDevice();
       })
-      .catch(() => {
+      .catch(err => {
+        console.log('errir: ', err);
         this.loadingService.closeSpinner();
         this.showInstallationErrorAlert();
       });
@@ -248,7 +248,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
 
   private get doNativeCredentialInstall$(): Promise<boolean> {
     return this.hidSdkManager()
-      .installCredential(this.mCredential.getCredentialData<HID>().invitationCode)
+      .installCredential((this.mCredential as HIDCredential).getInvitationCode())
       .then(transactionResult => {
         let transactionSucceeded = transactionResult == HIDCredentialManager.TRANSACTION_SUCCESS_FULL;
         if (transactionSucceeded) {

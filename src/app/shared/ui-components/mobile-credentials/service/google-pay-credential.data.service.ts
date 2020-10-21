@@ -50,9 +50,9 @@ export class GooglePayCredentialDataService extends AndroidCredentialDataService
 
   updateCredential$(mCredential: GoogleCredential):Observable<any>{
     let requestBody = {
-      referenceIdentifier: mCredential.getCredentialState().referenceIdentifier,
-      status: mCredential.getCredentialState().credStatus,
-      credentialID: mCredential.getCredentialData<any>().id,
+      referenceIdentifier: mCredential.getReferenceIdentifier(),
+      status: mCredential.getCredStatus(),
+      credentialID: mCredential.getId(),
     };
    return super.updateCredential$(requestBody)
   }

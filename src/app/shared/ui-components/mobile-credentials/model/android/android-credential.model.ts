@@ -152,6 +152,19 @@ export abstract class AndroidCredential<T> extends MobileCredential implements A
   }
 
   abstract getPersistable<T>(): T;
+
+  getReferenceIdentifier(): string{
+    return this.credentialState.referenceIdentifier;
+  }
+
+  getId(): string{
+    return this.credentialData ? this.getCredentialData<any>().id : null;
+  }
+
+  getCredStatus(): number{
+    return this.credentialState.credStatus;
+  }
+
 }
 
 export interface HID extends Persistable {
@@ -181,6 +194,10 @@ export class HIDCredential extends AndroidCredential<HID> {
     let { id, issuer } = this.credentialData;
     let { referenceIdentifier } = this.credentialState;
     return <any>{ id, issuer, referenceIdentifier };
+  }
+
+  getInvitationCode():string{
+    return this.credentialData ? this.credentialData.invitationCode : null;
   }
 }
 

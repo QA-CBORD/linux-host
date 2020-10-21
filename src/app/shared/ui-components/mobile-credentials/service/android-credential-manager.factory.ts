@@ -21,6 +21,7 @@ export class AndroidCredentialManagerFactory {
     const mCredentialDataService = this.injector.get(MobileCredentialDataService);
     return mCredentialDataService.activePasses$().pipe(
       map((mobileCredential: MobileCredential) => {
+        console.log('mobileCredential: ', mobileCredential);
         if (mobileCredential.providedBy(CredentialProviders.HID)) {
           credentialManager = this.createHidCredentialManagerFor(<HIDCredential>mobileCredential);
         } else if (mobileCredential.providedBy(CredentialProviders.GOOGLE)) {

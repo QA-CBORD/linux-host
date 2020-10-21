@@ -61,7 +61,7 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
 
   androidCredential$(credential: AndroidCredential<any>): Observable<AndroidCredential<HID>> {
     let body = {
-      referenceIdentifier: credential.credentialData.referenceIdentifier,
+      referenceIdentifier: credential.getReferenceIdentifier(),
     };
     return super.androidCredential$(body).pipe(
       map(credentialData => {
@@ -73,9 +73,9 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
 
   updateCredential$(credential: AndroidCredential<any>): Observable<boolean> {
     let requestBody = {
-      referenceIdentifier: credential.getCredentialState().referenceIdentifier,
-      status: credential.getCredentialState().credStatus,
-      credentialID: credential.getCredentialData<any>().id,
+      referenceIdentifier: credential.getReferenceIdentifier(),
+      status: credential.getCredStatus(),
+      credentialID: credential.getId(),
     };
     return super.updateCredential$(requestBody).pipe(
       map(() => true),
@@ -93,7 +93,7 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
 
   public saveCredentialAsUserSetting$(credential: AndroidCredential<any>): Observable<boolean> {
     return this.settingsFacadeService
-      .saveUserSetting(User.Settings.MOBILE_CREDENTIAL_ID, credential.getCredentialData<any>().id)
+      .saveUserSetting(User.Settings.MOBILE_CREDENTIAL_ID, credential.getId())
       .pipe(take(1));
   }
 

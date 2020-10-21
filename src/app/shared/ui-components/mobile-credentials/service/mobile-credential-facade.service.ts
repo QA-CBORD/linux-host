@@ -87,10 +87,7 @@ export class MobileCredentialFacade {
   get mobileCredentialEnabled$(): Observable<boolean> {
     return this.mobileCredentialSettingsEnabled$().pipe(
       switchMap(mobileCredentialSettingsEnabled => {
-        if (mobileCredentialSettingsEnabled) {
-          return this.mobileCredentialManager.credentialEnabled$();
-        }
-        return of(false);
+        return mobileCredentialSettingsEnabled ? this.mobileCredentialManager.credentialEnabled$(): of(false);
       })
     );
   }
@@ -110,7 +107,7 @@ export class MobileCredentialFacade {
   }
 
   setCredentialStateChangeListener(listener: CredentialStateChangeListener): void {
-    if(this.mobileCredentialManager){
+    if (this.mobileCredentialManager) {
       this.mobileCredentialManager.setCredentialStateChangeListener(listener);
     }
   }

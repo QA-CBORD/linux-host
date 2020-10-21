@@ -52,10 +52,13 @@ export class AccessCardComponent implements OnInit {
     this.initMobileCredential();
   }
 
-  private async initMobileCredential(): Promise<void> {
-    this.mobileCredentialEnabled = await this.mobileCredentialFacade.mobileCredentialEnabled$.toPromise();
-    this.mobileCredentialFacade.setCredentialStateChangeListener(this);
-    this.changeRef.detectChanges();
+  private initMobileCredential(): void {
+    this.mobileCredentialFacade.mobileCredentialEnabled$.subscribe(mobileCredentialEnabled => {
+      this.mobileCredentialEnabled = mobileCredentialEnabled;
+      console.log('awaited results: ', this.mobileCredentialEnabled);
+      this.mobileCredentialFacade.setCredentialStateChangeListener(this);
+      this.changeRef.detectChanges();
+    });
   }
 
   onCredentialStateChanged(): void {

@@ -13,14 +13,14 @@ import { MobileCredentialFactory } from './mobile-credential-factory';
 
 const api_version = 'v1';
 const resourceUrls = {
-  activePasses: `/android/${api_version}/activePasses`
+  activePasses: `/android/${api_version}/activePasses`,
 };
 
 @Injectable({
   providedIn: 'root',
 })
 export class MobileCredentialDataService {
-  protected ttl: number = 3600000;
+  protected ttl: number = 600000;
   protected jwtToken_key: string = 'jwt_token';
   protected authBlob_key: string = 'auth_blob';
   protected credential_key: string = 'mobile_credential';
@@ -41,17 +41,17 @@ export class MobileCredentialDataService {
 
   protected omniIDJwtToken$(): Observable<string> {
     return this.storageStateService.getStateEntityByKey$<string>(this.jwtToken_key).pipe(
-      take(1),
       switchMap(data => {
-        if(data && data.lastModified + data.timeToLive >= Date.now()) {
+        if (data && data.lastModified + data.timeToLive >= Date.now()) {
+          console.log('data:: ', data.value);
           return of(data.value);
         }
-        return this.retrieveOmniIDJwtToken$();
+        return this.retrieveOmniIDJwtTokenFromServer$();
       })
     );
   }
 
-  protected retrieveOmniIDJwtToken$(): Observable<string> {
+  protected retrieveOmniIDJwtTokenFromServer$(): Observable<string> {
     return this.authFacadeService.getExternalAuthenticationToken$('OmniID').pipe(
       tap(jwtToken => this.storageStateService.updateStateEntity(this.jwtToken_key, jwtToken, { ttl: this.ttl }))
     );

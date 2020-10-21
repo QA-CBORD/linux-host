@@ -31,7 +31,6 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
   }
 
   activePasses$(): Observable<AndroidCredential<any>> {
-    return this.mockActivePasses();
     return super.activePasses$().pipe(
       switchMap(mobileCredential => {
         const androidCredentials = mobileCredential as AndroidCredential<any>;
@@ -48,7 +47,6 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
   }
 
   protected androidCredential$(requestBody: any): Observable<any> {
-    return this.mockAndroidCredentials();
     return this.getCredentialFor(requestBody).pipe(
       take(1),
       map((credentialData: any[]) => {
@@ -139,7 +137,6 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
     // get the mobile credential id that we want to delete.
     const institutionInfo$ = this.institutionFacadeService.cachedInstitutionInfo$;
     const omniIDJwtToken$ = this.omniIDJwtToken$().pipe(take(1));
-
     return forkJoin(institutionInfo$, omniIDJwtToken$).pipe(
       switchMap(([{ id }, jwtOmniIDToken]) => {
         const headers = new HttpHeaders({ Authorization: `Bearer ${jwtOmniIDToken}` });

@@ -1,4 +1,4 @@
-import { CredentialProviders, MobileCredentialProvider } from './credential-utils';
+import { CredentialProviders } from './credential-utils';
 import { MobileCredentialConfig} from './mobile-credential-configs';
 
 

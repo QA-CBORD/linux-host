@@ -3,6 +3,10 @@ import { MobileCredential } from '../shared/mobile-credential';
 
 export class AppleWalletCredential extends MobileCredential {
 
+    getId(): string {
+        return this.credentialState.getIssuer(); // not well implemented
+    }
+
     constructor(credentialState: MobileCredentialState){
         super(credentialState);
     }

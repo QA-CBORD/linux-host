@@ -53,6 +53,8 @@ export abstract class MobileCredential implements MobileCredentialState {
     return this.getIssuer();
   }
 
+  abstract getId():string;
+
   abstract getCredentialData<T>(): T;
   abstract setCredentialData<T>(data: T): void;
 }
