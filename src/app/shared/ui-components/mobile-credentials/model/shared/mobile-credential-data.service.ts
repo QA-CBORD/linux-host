@@ -20,7 +20,7 @@ const resourceUrls = {
   providedIn: 'root',
 })
 export class MobileCredentialDataService {
-  protected ttl: number = 800000;
+  protected ttl: number = 3600000;
   protected jwtToken_key: string = 'jwt_token';
   protected authBlob_key: string = 'auth_blob';
   protected credential_key: string = 'mobile_credential';
@@ -43,8 +43,8 @@ export class MobileCredentialDataService {
     return this.storageStateService.getStateEntityByKey$<string>(this.jwtToken_key).pipe(
       take(1),
       switchMap(data => {
-        if (data && data.lastModified + data.timeToLive >= Date.now()) {
-          return data.value;
+        if(data && data.lastModified + data.timeToLive >= Date.now()) {
+          return of(data.value);
         }
         return this.retrieveOmniIDJwtToken$();
       })
@@ -52,9 +52,9 @@ export class MobileCredentialDataService {
   }
 
   protected retrieveOmniIDJwtToken$(): Observable<string> {
-    return this.authFacadeService
-      .getExternalAuthenticationToken$('OmniID')
-      .pipe(tap(data => this.storageStateService.updateStateEntity(this.jwtToken_key, data, { ttl: this.ttl })));
+    return this.authFacadeService.getExternalAuthenticationToken$('OmniID').pipe(
+      tap(jwtToken => this.storageStateService.updateStateEntity(this.jwtToken_key, jwtToken, { ttl: this.ttl }))
+    );
   }
 
   protected get deviceInfo$(): Observable<DeviceInfo> {
@@ -72,7 +72,6 @@ export class MobileCredentialDataService {
 
   protected authorizationBlob$(): Observable<object> {
     return this.storageStateService.getStateEntityByKey$<object>(this.authBlob_key).pipe(
-      take(1),
       switchMap(data => {
         if (data && data.lastModified + data.timeToLive >= Date.now()) {
           return of(data.value);

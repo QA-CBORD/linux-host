@@ -12,7 +12,7 @@ import { HIDSdkManager } from './hid-plugin.wrapper';
 import { Injectable } from '@angular/core';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class HIDCredentialManager extends AbstractAndroidCredentialManager {
   private static instance: HIDCredentialManager;
@@ -55,14 +55,20 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     this.showLoading();
     this.checkCredentialAvailability()
       .pipe(take(1))
-      .subscribe(credentialAvailableForInstallation => {
-        if (credentialAvailableForInstallation) {
-          doCredentialFirstInstallation();
-        } else {
-          this.showCredentialAlreadyInstalledAlert();
+      .subscribe(
+        credentialAvailableForInstallation => {
+          if (credentialAvailableForInstallation) {
+            doCredentialFirstInstallation();
+          } else {
+            this.showCredentialAlreadyInstalledAlert();
+            this.loadingService.closeSpinner();
+          }
+        },
+        () => {
           this.loadingService.closeSpinner();
+          this.showInstallationErrorAlert();
         }
-      });
+      );
   }
 
   private showCredentialAlreadyInstalledAlert(): void {
