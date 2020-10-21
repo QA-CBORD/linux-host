@@ -1,4 +1,4 @@
-import { HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpHeaders, HttpParams, HttpClient } from '@angular/common/http';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
@@ -10,6 +10,13 @@ import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/con
 import { AndroidCredential, Persistable } from '../android/android-credential.model';
 import { MobileCredentialDataService } from './mobile-credential-data.service';
 
+const api_version = 'v1';
+const resourceUrls = {
+  activePasses: `/android/${api_version}/activePasses`,
+  activePassesDebug: '../../../../../assets/mock/activepasses.json',
+  credentialsDebug: '../../../../../assets/mock/android_credentials.json'
+};
+
 export class AndroidCredentialDataService extends MobileCredentialDataService {
   constructor(
     private resources: { credentialUrl: string },
@@ -17,12 +24,14 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
     protected authFacadeService: AuthFacadeService,
     protected contentStringFacade: ContentStringsFacadeService,
     protected institutionFacadeService: InstitutionFacadeService,
-    protected apiService: APIService
+    protected apiService: APIService,
+    protected http: HttpClient
   ) {
     super(storageStateService, authFacadeService, institutionFacadeService, apiService);
   }
 
   activePasses$(): Observable<AndroidCredential<any>> {
+    return this.mockActivePasses();
     return super.activePasses$().pipe(
       switchMap(mobileCredential => {
         const androidCredentials = mobileCredential as AndroidCredential<any>;
@@ -39,6 +48,7 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
   }
 
   protected androidCredential$(requestBody: any): Observable<any> {
+    return this.mockAndroidCredentials();
     return this.getCredentialFor(requestBody).pipe(
       take(1),
       map((credentialData: any[]) => {
@@ -148,6 +158,19 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
               of(true);
             })
           );
+      })
+    );
+  }
+
+  mockAndroidCredentials(): Observable<any> {
+    return this.http
+      .get<any>(resourceUrls.credentialsDebug)
+  }
+  
+  mockActivePasses(): Observable<any> {
+    return this.http.get<any>(resourceUrls.activePassesDebug).pipe(
+      map(({ credStatus, passes, referenceIdentifier }) => {
+        return { credStatus, passes, referenceIdentifier };
       })
     );
   }

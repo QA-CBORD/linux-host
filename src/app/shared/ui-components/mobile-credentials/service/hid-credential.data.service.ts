@@ -29,7 +29,8 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
     protected readonly httpClient: HttpClient,
     protected readonly settingsFacadeService: SettingsFacadeService,
     protected readonly contentStringFacade: ContentStringsFacadeService,
-    protected readonly apiService: APIService
+    protected readonly apiService: APIService,
+    protected readonly http: HttpClient
   ) {
     super(
       resourceUrls,
@@ -37,7 +38,8 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
       authFacadeService,
       contentStringFacade,
       institutionFacadeService,
-      apiService
+      apiService,
+      http
     );
   }
 

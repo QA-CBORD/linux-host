@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:1074778310372:android:cd8bef7d70471c91",
         "android_client_info": {
-          "package_name": "com.cbord.get"
+          "package_name": "com.google.android.gms.tapandpay.issuer.devapp.littlebear"
         }
       },
       "oauth_client": [

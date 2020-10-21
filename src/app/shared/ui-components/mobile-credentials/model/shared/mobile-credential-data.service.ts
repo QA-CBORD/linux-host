@@ -1,4 +1,4 @@
-import { HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpHeaders, HttpParams, HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Device, DeviceInfo } from '@capacitor/core';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
@@ -13,7 +13,7 @@ import { MobileCredentialFactory } from './mobile-credential-factory';
 
 const api_version = 'v1';
 const resourceUrls = {
-  activePasses: `/android/${api_version}/activePasses`,
+  activePasses: `/android/${api_version}/activePasses`
 };
 
 @Injectable({

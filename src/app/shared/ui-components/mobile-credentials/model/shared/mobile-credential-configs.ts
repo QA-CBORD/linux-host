@@ -15,7 +15,7 @@ export const MOBILE_CREDENTIAL_CONFIGS = {
       WHEN_PROVISIONED: '',
       WHEN_SUSPENDED: '',
     },
-    uiImageUrl: '',
+    uiImageUrl: '/assets/icon/mobile_credential_google_pay.png',
     uiHelpIcon: ''
   },
   APPLE: {

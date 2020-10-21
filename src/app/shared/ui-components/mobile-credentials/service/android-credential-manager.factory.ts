@@ -6,7 +6,8 @@ import { MobileCredentialManager } from '../model/shared/mobile-credential-manag
 import { CredentialProviders } from '../model/shared/credential-utils';
 import { MobileCredentialDataService } from '../model/shared/mobile-credential-data.service';
 import { MobileCredential } from '../model/shared/mobile-credential';
-import { HIDCredential } from '../model/android/android-credential.model';
+import { HIDCredential, GoogleCredential } from '../model/android/android-credential.model';
+import { GooglePayCredentialManager } from '../model/android/google-pay/google-pay-credential-manager';
 
 
 @Injectable({
@@ -23,7 +24,7 @@ export class AndroidCredentialManagerFactory {
         if (mobileCredential.providedBy(CredentialProviders.HID)) {
           credentialManager = this.createHidCredentialManagerFor(<HIDCredential>mobileCredential);
         } else if (mobileCredential.providedBy(CredentialProviders.GOOGLE)) {
-          credentialManager = this.createGoogleCredentialManagerFor(); // google/nxp credential manager not implemented yet
+          credentialManager = this.createGoogleCredentialManagerFor(<GoogleCredential>mobileCredential); // google/nxp credential manager not implemented yet
         }
         return credentialManager;
       }),
@@ -36,7 +37,9 @@ export class AndroidCredentialManagerFactory {
     return credentialManager;
   }
 
-  private createGoogleCredentialManagerFor(): any {
-    return null;
+  private createGoogleCredentialManagerFor(mCredential: GoogleCredential): any {
+    let credentialManager = this.injector.get(GooglePayCredentialManager);
+    credentialManager.setCredential(mCredential);
+    return credentialManager;
   }
 }

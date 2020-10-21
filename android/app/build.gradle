@@ -1,15 +1,16 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'maven'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
-    compileOptions {   // TODO: Investigate if these compileOptions are valid
+    compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
     defaultConfig {
-        applicationId "com.cbord.get"
+        applicationId "com.google.android.gms.tapandpay.issuer.devapp.littlebear"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1064
@@ -36,6 +37,7 @@ repositories {
         dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'
     }
     mavenCentral()
+    google()
 }
 
 dependencies {
@@ -80,15 +82,23 @@ dependencies {
     implementation 'com.google.android.material:material:1.1.0'
     implementation 'androidx.legacy:legacy-support-v13:1.0.0'
     implementation 'androidx.multidex:multidex:2.0.1'
+    implementation 'androidx.multidex:multidex:2.0.1'
 
     // For Dagger2 - Dependency Injection design pattern
     implementation "com.google.dagger:dagger:2.22"
     kapt "com.google.dagger:dagger-compiler:2.8"
     compileOnly 'javax.annotation:jsr250-api:1.0'
     implementation 'javax.inject:javax.inject:1'
+
+    // Import the Google Pay Push Provisioning SDK from the app/libs directory
+    implementation(name: 'play-services-tapandpay', ext: 'aar', version: '17.0.0')
+    implementation 'com.google.android.gms:play-services-oss-licenses:17.0.0'
+    implementation 'androidx.preference:preference:1.1.1'
+    implementation 'com.google.android.gms:play-services-wallet:18.1.1'
 }
 
 apply from: 'capacitor.build.gradle'
+apply plugin: 'com.google.android.gms.strict-version-matcher-plugin'
 
 try {
     def servicesJSON = file('google-services.json')

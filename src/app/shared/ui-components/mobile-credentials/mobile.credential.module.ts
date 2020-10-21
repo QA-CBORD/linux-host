@@ -12,6 +12,7 @@ import { HidCredentialDataService } from './service/hid-credential.data.service'
 import { IOSCredentialManager } from './service/ios-credential-manager';
 import { MobileCredentialFacade } from './service/mobile-credential-facade.service';
 import { AndroidCredentialManagerFactory } from './service/android-credential-manager.factory';
+import { GooglePayCredentialManager } from './model/android/google-pay/google-pay-credential-manager';
 
 const routes: Routes = [
   {

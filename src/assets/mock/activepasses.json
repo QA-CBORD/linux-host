@@ -1,7 +1,7 @@
 {
     "credStatus": {
-        "android_hid": 1, 
-        "android_nxp": 0,
+        "android_hid": 0, 
+        "android_nxp": 1,
         "iPhone": 0,
         "iWatch": 0
     },
