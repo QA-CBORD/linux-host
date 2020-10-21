@@ -3,6 +3,7 @@ import { generateFacilities } from './facilities.mock';
 import { Facility } from '../facilities/facilities.model';
 
 import { RoomsStateService } from './rooms-state.service';
+import { Unit } from '@sections/housing/unit/unit.model';
 
 describe('RoomsStateService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
@@ -25,4 +26,24 @@ describe('RoomsStateService', () => {
     const childrenFacilities = service.getParentFacilityChildren(9000485);
     expect(childrenFacilities.length).toEqual(4);
   });
+  it('should get unit representation of facility', () => {
+    let facilities: Facility[] = generateFacilities();
+    const service: RoomsStateService = TestBed.get(RoomsStateService);
+    const parentKey: number = 9000487;
+    const unitKey: number =  9000493;
+    const facility = facilities.find(x => x.facilityId == unitKey);
+    const EXPECTED_UNIT_DETAILS = new Unit({
+      facilityKey: facility.facilityId,
+      parentKey: facility.topLevelKey,
+      title: facility.facilityName,
+      isFavorite: false,
+      labels: facility.attributes.map(x => x.value),
+      occupantKeys: facility.occupantKeys
+    });
+    service.createFacilityDictionary(facilities);
+
+    let details: Unit = service.getUnitDetails(parentKey, unitKey);
+
+    expect(details).toEqual(EXPECTED_UNIT_DETAILS)
+    })
 });

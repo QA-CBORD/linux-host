@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { RoomSelect } from './rooms.model';
 import { Facility } from '@sections/housing/facilities/facilities.model';
 import { Observable } from 'rxjs';
+import { FacilityToUnitsMapper, Unit } from '@sections/housing/unit/unit.model';
 
 
 export interface StateService<K, V> {
@@ -33,6 +34,20 @@ export class RoomsStateService implements StateService<number, Facility[]> {
 
   getParentFacilities() {
     return this._parentFacilities;
+  }
+
+  getUnitDetails(parentFacilityKey: number, unitKey: number) {
+    const childrenFacilities = this.entityDictionary.get(parentFacilityKey);
+    const facility = childrenFacilities.find(child => child.facilityId == unitKey);
+
+    return new Unit({
+      facilityKey: facility.facilityId,
+      parentKey: facility.topLevelKey,
+      title: facility.facilityName,
+      isFavorite: false,
+      labels: facility.attributes.map(x => x.value),
+      occupantKeys: facility.occupantKeys
+    });
   }
 
   getParentFacilityChildren(facilityId: number) {
