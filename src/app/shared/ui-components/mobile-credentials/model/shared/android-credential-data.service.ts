@@ -46,8 +46,8 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
     );
   }
 
-  protected androidCredential$(requestBody: any): Observable<any> {
-    return this.getCredentialFor(requestBody).pipe(
+  protected androidCredential$(requestBody: any, extraHeaders?: object): Observable<any> {
+    return this.getCredentialFor(requestBody, extraHeaders).pipe(
       take(1),
       map((credentialData: any[]) => {
         return credentialData[0];
@@ -69,7 +69,17 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
     );
   }
 
-  private getCredentialFor(body: object): Observable<any> {
+  protected getDefaultHeaders(): Observable<HttpHeaders>{
+    return this.omniIDJwtToken$().pipe(
+      map(omniIDJwtToken => {
+        return new HttpHeaders({ 
+          Authorization: `Bearer ${omniIDJwtToken}` 
+        });
+      })
+    )
+  } 
+
+  private getCredentialFor(body: object, extraHeaders?: object): Observable<any> {
     /**
      * makes call to partner payments api, resource: android/version/credential.
      *
@@ -79,11 +89,10 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
      */
     const institutionInfo$ = this.institutionFacadeService.cachedInstitutionInfo$.pipe(take(1));
     const deviceInfo$ = this.deviceInfo$.pipe(take(1));
-    const omniIDJwtToken$ = this.omniIDJwtToken$().pipe(take(1));
+    const requestHeader$ = this.getDefaultHeaders().pipe(take(1));
 
-    return forkJoin(omniIDJwtToken$, deviceInfo$, institutionInfo$).pipe(
-      switchMap(([jwtOmniIDToken, deviceInfo, { id }]) => {
-        const headers = new HttpHeaders({ Authorization: `Bearer ${jwtOmniIDToken}` });
+    return forkJoin(requestHeader$, deviceInfo$, institutionInfo$).pipe(
+      switchMap(([requestHeader, deviceInfo, { id }]) => {
         const params = new HttpParams().set('institutionId', id);
         const requestBody = {
           ...body,
@@ -99,7 +108,7 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
           HttpResponseType.json,
           requestBody,
           params,
-          headers
+          requestHeader
         );
       })
     );
@@ -108,10 +117,9 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
   protected updateCredential$(reqBody: any): Observable<any> {
     const institutionInfo$ = this.institutionFacadeService.cachedInstitutionInfo$.pipe(take(1));
     const deviceInfo$ = this.deviceInfo$.pipe(take(1));
-    const omniIDJwtToken$ = this.omniIDJwtToken$().pipe(take(1));
-    return forkJoin(omniIDJwtToken$, institutionInfo$, deviceInfo$).pipe(
-      switchMap(([jwtOmniIDToken, { id }, { manufacturer, model, osVersion }]) => {
-        const headers = new HttpHeaders({ Authorization: `Bearer ${jwtOmniIDToken}` });
+    const defaultHeader$ = this.getDefaultHeaders().pipe(take(1));
+    return forkJoin(defaultHeader$, institutionInfo$, deviceInfo$).pipe(
+      switchMap(([requestHeaders, { id }, { manufacturer, model, osVersion }]) => {
         const params = new HttpParams().set('institutionId', id);
         const body = {
           ...reqBody,
@@ -127,7 +135,7 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
           HttpResponseType.json,
           body,
           params,
-          headers
+          requestHeaders
         );
       })
     );
@@ -136,10 +144,9 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
   protected deleteCredential$(credentialId: string): Observable<any> {
     // get the mobile credential id that we want to delete.
     const institutionInfo$ = this.institutionFacadeService.cachedInstitutionInfo$;
-    const omniIDJwtToken$ = this.omniIDJwtToken$().pipe(take(1));
-    return forkJoin(institutionInfo$, omniIDJwtToken$).pipe(
-      switchMap(([{ id }, jwtOmniIDToken]) => {
-        const headers = new HttpHeaders({ Authorization: `Bearer ${jwtOmniIDToken}` });
+    const defaultHeader$ = this.getDefaultHeaders().pipe(take(1));
+    return forkJoin(institutionInfo$, defaultHeader$).pipe(
+      switchMap(([{ id }, requestHeaders]) => {
         const params = new HttpParams().set('institutionId', id);
         return this.apiService
           .partnerHTTPCall(
@@ -148,7 +155,7 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
             HttpResponseType.json,
             null,
             params,
-            headers
+            requestHeaders
           )
           .pipe(
             map(() => {

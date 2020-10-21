@@ -39,7 +39,10 @@ export class MobileCredentialFacade {
               }
               return mobileCredentialSettingsEnabled;
             }),
-            catchError(() => of(false))
+            catchError((err) => {
+              console.log('error: ', err)
+              return of(false);
+            })
           );
         }
       })

@@ -9,7 +9,9 @@ import { Injectable } from '@angular/core';
 import { MobileCredentialStatuses } from '../../shared/credential-state';
 const { GooglePayPlugin } = Plugins;
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class GooglePayCredentialManager implements MobileCredentialManager {
   private mCredential: GoogleCredential;
   private credentialStateChangeSubscription: CredentialStateChangeListener;
@@ -37,10 +39,11 @@ export class GooglePayCredentialManager implements MobileCredentialManager {
     })();
   }
   credentialEnabled$(): Observable<boolean> {
+    console.log('credentialEnabled: ', this.mCredential.isEnabled())
     return of(this.mCredential.isEnabled()).pipe(
       map(googleCredentialEnabled => {
         if (googleCredentialEnabled) {
-          GooglePayPlugin.getGoogleClient();
+           GooglePayPlugin.getGoogleClient();
         }
         return googleCredentialEnabled;
       })
