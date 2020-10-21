@@ -1,4 +1,5 @@
 package com.cbord.get;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -16,5 +17,14 @@ public class MainActivity extends BridgeActivity {
             add(HIDPlugin.class);
             add(GooglePayPlugin.class);
         }});
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d("onActivityResult: ", Integer.toString(resultCode));
+        if (resultCode == RESULT_OK) {
+            Log.d("RESULT_OK: ", Integer.toString(resultCode));
+        }
     }
 }

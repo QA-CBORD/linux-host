@@ -28,10 +28,10 @@ public class GooglePayPlugin extends Plugin {
     private final int REQUEST_CREATE_WALLET = 4;
     private final int TAP_AND_PAY_NO_ACTIVE_WALLET = 15002;
 
+
     @PluginMethod()
     public void getGoogleClient(PluginCall call) {
         tapAndPayClient = TapAndPayClient.getClient(getActivity().getApplicationContext());
-
     }
 
     @PluginMethod()
@@ -56,10 +56,11 @@ public class GooglePayPlugin extends Plugin {
         PackageManager packageManager = getActivity().getPackageManager();
         List<ResolveInfo> activities = packageManager.queryIntentActivities(intent, 0);
         if (activities.size() > 0) {
-           getActivity().startActivity(intent);
+           getActivity().startActivityForResult(intent, 212);
+        } else {
+            call.reject("Activity could not be resolved");
         }
-        // TODO: onActivityResult to return the response to Ionic
-        // TODO: call.resolve / call.reject
+        // TODO: return the response to Ionic
     }
 
     private JSObject toJSON(String transactionResult) {
@@ -69,9 +70,6 @@ public class GooglePayPlugin extends Plugin {
     }
 
     private boolean isGoogleWalletInactive(ApiException error) {
-        if (error.getStatusCode() == TAP_AND_PAY_NO_ACTIVE_WALLET) {
-            return true;
-        }
-        return false;
+        return error.getStatusCode() == TAP_AND_PAY_NO_ACTIVE_WALLET ? true : false;
     }
 }
