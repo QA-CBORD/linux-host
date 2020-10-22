@@ -50,7 +50,6 @@ public class GooglePayPlugin extends Plugin {
         } else {
             call.reject("Activity could not be resolved");
         }
-        // TODO: return the response to Ionic
     }
 
     private JSObject toJSON(String transactionResult) {
