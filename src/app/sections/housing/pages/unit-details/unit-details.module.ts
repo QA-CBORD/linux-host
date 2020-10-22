@@ -6,12 +6,16 @@ import { IonicModule } from '@ionic/angular';
 import { UnitDetailsRoutingModule } from './unit-details.routing.module';
 
 import { UnitDetailsPage } from './unit-details.page';
+import { LabelModule } from '@shared/ui-components/label/label.module';
 
 const imports = [CommonModule, FormsModule, IonicModule, UnitDetailsRoutingModule];
 const declarations = [UnitDetailsPage];
 
 @NgModule({
-  imports,
+  imports: [
+    imports,
+    LabelModule,
+  ],
   declarations,
 })
 export class UnitDetailsPageModule {}

@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { NativeStartupFacadeService } from '../auth/auth.facade.service';
+import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
 
 describe('NativeStartup.FacadeService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
