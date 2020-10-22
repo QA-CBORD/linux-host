@@ -20,45 +20,23 @@
             <st-label class="unit__labels-item" *ngFor="let label of unit.labels">{{ label }}</st-label>
           </div>
         </ion-row>
-          <ion-item-divider></ion-item-divider>
-          <ion-row>
-            <div class="unit__description">
-              Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical
-              Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at
-              Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a
-              Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the
-              undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum"
-            </div>
-          </ion-row>
-          <ion-row></ion-row>
-          <ion-row>
-            <div
-              class="roommate__info"
-              [class.hide]="!isExpanded"
-            >
-              Hello from dom
-            </div>
-          </ion-row>
-        <ion-row text-center>
-          <div (click)="adjustExpander()" class="unit__extaInfo">
-            Read More <div class="info__expander"></div>
-          </div>
-        </ion-row>
       </ion-grid>
     </ion-card-content>
   </ion-card>
 
   <ion-card>
-    <ion-card-header>Unit Information</ion-card-header>
+    <ion-card-header class="information__header">UNIT INFORMATION</ion-card-header>
     <ion-card-content>
-      Coming Soon...
-    </ion-card-content>
-  </ion-card>
-
-  <ion-card>
-    <ion-card-header>Features</ion-card-header>
-    <ion-card-content>
-      Coming Soon...
+      <div class="information__container">
+          <ion-item lines="none" *ngFor="let attribute of unit.attributes">
+            <ion-label class="information__label"  position="floating">
+              {{attribute.name | uppercase }}
+            </ion-label>
+            <ion-text class="information__value">
+              {{ attribute.value }}
+            </ion-text>
+          </ion-item>
+      </div>
     </ion-card-content>
   </ion-card>
 

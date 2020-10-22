@@ -23,22 +23,6 @@ unit__header {
 }
 
 
-.info__expander {
-  background-image: url("/assets/icon/angle-down.svg");
-  min-height: 20px;
-  max-height: 25px;
-  min-width: 25px;
-  max-width: 25px;
-  background-size: contain;
-  display: inline-flex;
-}
-.unit__extaInfo{
-  color: blue;
-  height: 25px;
-  min-width: 70px;
-  margin-top: 15px;
-
-}
 .unit__title {
   @include font-nunito-heavy(20px);
 
@@ -48,6 +32,26 @@ unit__header {
 
 .unit__description {
   margin-top: 5px;
+}
+.information__header {
+  @include font-nunito-heavy(14px);
+}
+
+information__container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.information__label {
+  @include font-nunito-regular(12px);
+  color: $color-dusty-gray;
+  text-align: left;
+}
+
+.information__value {
+  @include font-nunito-semibold(16px);
+  margin-top: 30px;
 }
 
 .hide {

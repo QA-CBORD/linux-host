@@ -29,15 +29,16 @@ describe('RoomsStateService', () => {
   it('should get unit representation of facility', () => {
     let facilities: Facility[] = generateFacilities();
     const service: RoomsStateService = TestBed.get(RoomsStateService);
-    const parentKey: number = 9000487;
-    const unitKey: number =  9000493;
+    const parentKey: number = 9000316;
+    const unitKey: number =  9000639;
     const facility = facilities.find(x => x.facilityId == unitKey);
     const EXPECTED_UNIT_DETAILS = new Unit({
       facilityKey: facility.facilityId,
       parentKey: facility.topLevelKey,
-      title: `${facility.facilityName} \u{2014} Charles`,
+      title: `${facility.facilityName} \u{2014} Anderson Hall`,
       isFavorite: false,
       labels: facility.attributes.map(x => x.value),
+      attributes: facility.attributes,
       occupantKeys: facility.occupantKeys
     });
     service.createFacilityDictionary(facilities);

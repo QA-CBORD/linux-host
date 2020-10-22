@@ -47,6 +47,7 @@ export class RoomsStateService implements StateService<number, Facility[]> {
       title: `${facility.facilityName} \u{2014} ${parentFacility.facilityName}`,
       isFavorite: false,
       labels: facility.attributes.map(x => x.value),
+      attributes: facility.attributes,
       occupantKeys: facility.occupantKeys
     });
   }
