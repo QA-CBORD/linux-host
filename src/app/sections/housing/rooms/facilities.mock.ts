@@ -116,7 +116,7 @@ function createFacilities(): FacilityDetails[] {
     {
       "facilityKey": 9000493,
       "assetTypeKey": 0,
-      "name": "101",
+        "name": "101",
       "isTopLevel": false,
       "topLevelKey": 9000487,
       "currentOccupancy": 0,
