@@ -1,0 +1,55 @@
+@import 'tools';
+
+.unit__labels-item {
+  margin-right: 8px;
+}
+
+unit__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.unit__type {
+  margin: 0px 18px;
+}
+
+.unit__select {
+  margin-top: 70px;
+  &:hover {
+    background: darken($color-royal-blue, 10%)
+  }
+}
+
+
+.info__expander {
+  background-image: url("/assets/icon/angle-down.svg");
+  min-height: 20px;
+  max-height: 25px;
+  min-width: 25px;
+  max-width: 25px;
+  background-size: contain;
+  display: inline-flex;
+}
+.unit__extaInfo{
+  color: blue;
+  height: 25px;
+  min-width: 70px;
+  margin-top: 15px;
+
+}
+.unit__title {
+  @include font-nunito-heavy(20px);
+
+  line-height: 24px;
+  margin: 0;
+}
+
+.unit__description {
+  margin-top: 5px;
+}
+
+.hide {
+  display: none;
+}

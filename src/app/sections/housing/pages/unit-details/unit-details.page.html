@@ -8,38 +8,63 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <ion-card *ngFor="let unit of units">
-    <ion-grid class="ion-no-margin ion-no-padding">
-      <ion-row>
-        <ion-col class="col-sm-8 col-md-8 col-lg-8">
-          <ion-grid>
-            <ion-row>
-              <ion-col>
-                <ion-label style="font-size: 18px; font-weight: bold" class="ion-text-capitalize">{{
-                  unit.unitName
-                }}</ion-label>
-                <p style="font-size: 14px; color: gray; margin: 0px; margin-top:5px">
-                  <b>{{ unit.unitBeds }}</b> Beds | <b>{{ unit.unitBaths }}</b> Baths
-                </p>
-              </ion-col>
-            </ion-row>
-          </ion-grid>
-        </ion-col>
-        <ion-col
-          class="col-sm-3 col-md-3 col-lg-3 ion-text-right"
-          style="margin:0px; margin-left:10px; padding: 0px; padding-top: 25px"
-        >
-          <ion-label style="font-size: 18px; font-weight: bolder">${{ unit.unitRate }}</ion-label>
-        </ion-col>
-        <ion-col
-          class="col-sm-1 col-md-1 col-lg-1"
-          style="margin: 0px; margin-left: -70px; padding: 0px; padding-top: 13px;"
-        >
-          <ion-button class="button-clear ion-no-margin ion-float-right ion-text-center">
-            <ion-icon name="star-outline"></ion-icon>
-          </ion-button>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
+  <ion-card>
+    <header class="unit__header">
+      <ion-card-header class="unit__title">{{unit.title}}</ion-card-header>
+      <ion-card-subtitle class="unit__type">2 bedroom</ion-card-subtitle>
+    </header>
+    <ion-card-content>
+      <ion-grid>
+        <ion-row>
+          <div class="d-flex scroll-horizontal-hidden__inner">
+            <st-label class="unit__labels-item" *ngFor="let label of unit.labels">{{ label }}</st-label>
+          </div>
+        </ion-row>
+          <ion-item-divider></ion-item-divider>
+          <ion-row>
+            <div class="unit__description">
+              Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical
+              Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at
+              Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a
+              Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the
+              undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum"
+            </div>
+          </ion-row>
+          <ion-row></ion-row>
+          <ion-row>
+            <div
+              class="roommate__info"
+              [class.hide]="!isExpanded"
+            >
+              Hello from dom
+            </div>
+          </ion-row>
+        <ion-row text-center>
+          <div (click)="adjustExpander()" class="unit__extaInfo">
+            Read More <div class="info__expander"></div>
+          </div>
+        </ion-row>
+      </ion-grid>
+    </ion-card-content>
   </ion-card>
+
+  <ion-card>
+    <ion-card-header>Unit Information</ion-card-header>
+    <ion-card-content>
+      Coming Soon...
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>Features</ion-card-header>
+    <ion-card-content>
+      Coming Soon...
+    </ion-card-content>
+  </ion-card>
+
+  <div class="unit__select">
+    <ion-button expand="block" color="primary">
+      SELECT UNIT
+    </ion-button>
+  </div>
 </ion-content>

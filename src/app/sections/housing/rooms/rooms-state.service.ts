@@ -39,11 +39,12 @@ export class RoomsStateService implements StateService<number, Facility[]> {
   getUnitDetails(parentFacilityKey: number, unitKey: number) {
     const childrenFacilities = this.entityDictionary.get(parentFacilityKey);
     const facility = childrenFacilities.find(child => child.facilityId == unitKey);
+    const parentFacility = this._parentFacilities.find(parent => parent.facilityId == parentFacilityKey);
 
     return new Unit({
       facilityKey: facility.facilityId,
       parentKey: facility.topLevelKey,
-      title: facility.facilityName,
+      title: `${facility.facilityName} \u{2014} ${parentFacility.facilityName}`,
       isFavorite: false,
       labels: facility.attributes.map(x => x.value),
       occupantKeys: facility.occupantKeys

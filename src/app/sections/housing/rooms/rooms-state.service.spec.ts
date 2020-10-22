@@ -35,7 +35,7 @@ describe('RoomsStateService', () => {
     const EXPECTED_UNIT_DETAILS = new Unit({
       facilityKey: facility.facilityId,
       parentKey: facility.topLevelKey,
-      title: facility.facilityName,
+      title: `${facility.facilityName} \u{2014} Charles`,
       isFavorite: false,
       labels: facility.attributes.map(x => x.value),
       occupantKeys: facility.occupantKeys
