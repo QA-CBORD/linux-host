@@ -26,6 +26,7 @@ export class FacilityAttribute {
               public facilityKey: number,
               public attributeConsumerKey: number,
               public value: string,
+              public name: string,
               public effectiveDate: Date,
               public endDate: Date) {
   }
@@ -60,7 +61,8 @@ export class FacilityDetails {
     this.topLevelKey = options.topLevelKey;
     this.currentOccupancy = options.currentOccupancy;
     if (Array.isArray(options.attributes)) {
-      this.attributes = options.attributes.map(x => new FacilityAttribute(x.facilityAttributeKey, x.facilityKey, x.attributeConsumerKey, x.value, x.effectiveDate, x.endDate));
+      this.attributes = options.attributes.map(x => new FacilityAttribute(x.facilityAttributeKey, x.facilityKey,
+        x.attributeConsumerKey, x.value,x.name , x.effectiveDate, x.endDate));
     }
     this.occupantKeys = this.occupantKeys || [];
   }
