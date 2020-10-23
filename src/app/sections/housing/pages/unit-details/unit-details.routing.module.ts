@@ -3,7 +3,13 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { UnitDetailsPage } from './unit-details.page';
 
-const routes: Routes = [{ path: '', component: UnitDetailsPage }];
+const routes: Routes = [
+  {
+    path: ':unitKey/building/:buildingKey',
+    component: UnitDetailsPage,
+
+  },
+];
 
 const imports = [RouterModule.forChild(routes)];
 const exports = [RouterModule];
