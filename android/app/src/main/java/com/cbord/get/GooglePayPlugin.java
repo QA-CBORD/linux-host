@@ -12,6 +12,8 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tapandpay.TapAndPayClient;
 import com.google.android.gms.tasks.Task;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 @NativePlugin()
@@ -43,13 +45,19 @@ public class GooglePayPlugin extends Plugin {
     public void openGooglePay(PluginCall call) {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.parse(call.getString("uri")));
-        PackageManager packageManager = getActivity().getPackageManager();
-        List<ResolveInfo> activities = packageManager.queryIntentActivities(intent, 0);
-        if (activities.size() > 0) {
-            getActivity().startActivityForResult(intent, 212);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        if (isGooglePaySafeToLaunch(intent)) {
+            getActivity().startActivityForResult(intent, 400);
         } else {
             call.reject("Activity could not be resolved");
         }
+    }
+
+    @NotNull
+    private boolean isGooglePaySafeToLaunch(Intent intent) {
+        PackageManager packageManager = getActivity().getPackageManager();
+        List<ResolveInfo> activities = packageManager.queryIntentActivities(intent, 0);
+        return activities.size() > 0;
     }
 
     private JSObject toJSON(String transactionResult) {
