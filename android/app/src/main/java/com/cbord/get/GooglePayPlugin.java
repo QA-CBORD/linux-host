@@ -3,6 +3,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
+import android.util.Log;
+
 import com.getcapacitor.JSObject;
 import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
@@ -31,8 +33,12 @@ public class GooglePayPlugin extends Plugin {
     @PluginMethod()
     public void getGooglePayNonce(PluginCall call) {
         final Task<String> response = tapAndPayClient.getLinkingToken("CBORD");
-        response.addOnSuccessListener(token -> call.resolve(toJSON(token)));
+        response.addOnSuccessListener(token -> {
+            call.resolve(toJSON(token));
+            Log.d("Success: ", token);
+        });
         response.addOnFailureListener(error -> {
+            Log.d("Failed", error.getMessage());
              if (isGoogleWalletInactive((ApiException) error)) {
                  tapAndPayClient.createWallet(getActivity(), REQUEST_CREATE_WALLET);
              } else {
@@ -54,6 +60,7 @@ public class GooglePayPlugin extends Plugin {
     @NotNull
     private Intent getGooglePayIntent(PluginCall call) {
         Intent intent = new Intent(Intent.ACTION_VIEW);
+        Log.d("digitationReference", call.getString("uri"));
         intent.setData(Uri.parse(call.getString("uri")));
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         return intent;
@@ -66,9 +73,9 @@ public class GooglePayPlugin extends Plugin {
         return activities.size() > 0;
     }
 
-    private JSObject toJSON(String transactionResult) {
+    private JSObject toJSON(String value) {
         JSObject jsonObject = new JSObject();
-        jsonObject.put("googlePayNonce", transactionResult);
+        jsonObject.put("googlePayNonce", value);
         return jsonObject;
     }
 
