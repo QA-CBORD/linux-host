@@ -39,7 +39,21 @@
       </div>
     </ion-card-content>
   </ion-card>
-
+  <ion-card>
+    <ion-card-header class="information__header">POTENTIAL ROOMMATES</ion-card-header>
+    <ion-card-content>
+      <ion-row [class.hide]="isExpanded">
+        <div *ngFor="let occupant of occupants" class="roommates__info">
+          <st-roommate [patron]="occupant"></st-roommate>
+        </div>
+      </ion-row>
+      <ion-row text-center>
+        <div (click)="adjustExpander()" class="unit__extaInfo">
+          Read More <div class="info__expander"></div>
+        </div>
+      </ion-row>
+    </ion-card-content>
+  </ion-card>
   <div class="unit__select">
     <ion-button expand="block" color="primary">
       SELECT UNIT

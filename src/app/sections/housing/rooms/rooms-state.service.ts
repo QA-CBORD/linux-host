@@ -16,12 +16,21 @@ export interface StateService<K, V> {
 export class RoomsStateService implements StateService<number, Facility[]> {
   entityDictionary: Map<number, Facility[]>;
   private roomSelects: Observable<RoomSelect[]>;
+  private _currentlySelectedRoomSelect: RoomSelect;
   private _parentFacilities: Facility[];
   constructor() {
     this.entityDictionary = new Map<number, Facility[]>()
   }
   setRoomSelects(value: Observable<RoomSelect[]>) {
     this.roomSelects = value;
+  }
+  setActiveRoomSelect(roomSelectKey: number): void {
+    this.roomSelects.subscribe(arr => {
+      this._currentlySelectedRoomSelect = arr.find(roomSelect => roomSelect.key == roomSelectKey);
+    });
+  }
+  getActiveRoomSelect(): RoomSelect {
+    return this._currentlySelectedRoomSelect;
   }
 
   getRoomSelects() {

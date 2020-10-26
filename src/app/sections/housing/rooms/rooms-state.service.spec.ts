@@ -4,6 +4,8 @@ import { Facility } from '../facilities/facilities.model';
 
 import { RoomsStateService } from './rooms-state.service';
 import { Unit } from '@sections/housing/unit/unit.model';
+import { generateRoomSelects } from '@sections/housing/rooms/rooms.mock';
+import { RoomSelect } from '@sections/housing/rooms/rooms.model';
 
 describe('RoomsStateService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
@@ -47,4 +49,21 @@ describe('RoomsStateService', () => {
 
     expect(details).toEqual(EXPECTED_UNIT_DETAILS)
     })
+
+  // test setting active roomSelect
+  it('should update the active roomSelection', () => {
+    const service:RoomsStateService = TestBed.get(RoomsStateService);
+    const EXPECTED_ROOM_SELECT: RoomSelect = {
+      key: 3,
+      name: 'Mocked RoomSelect 2'
+    };
+
+    service.setRoomSelects(generateRoomSelects());
+    service.setActiveRoomSelect(3);
+
+    const roomSelect = service.getActiveRoomSelect();
+
+    expect(roomSelect).toEqual(EXPECTED_ROOM_SELECT);
+
+  })
 });

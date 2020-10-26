@@ -1,0 +1,13 @@
+@import 'tools';
+
+
+.roommate__name {
+  @include font-nunito-semibold(14px);
+}
+
+.roommate__core-values {
+  padding: 5px;
+  border: #1e2023;
+  margin-top: 5px;
+  border-radius: 7px;
+}

@@ -21,7 +21,7 @@ import { RoomSelect } from '@sections/housing/rooms/rooms.model';
 import {
   DefinitionsResponse,
   DetailsResponse,
-  FacilityDetailsResponse,
+  FacilityDetailsResponse, OccupantDetailsResponse,
   Response,
   RoomSelectResponse,
 } from './housing.model';
@@ -129,6 +129,16 @@ export class HousingService {
       catchError((e) =>{ throw e})
     );
   }
+
+  getOccupantDetails(roomSelectKey:number, facilityKey: number): Observable<any> {
+    const apiUrl = `${this._baseUrl}/roomselectproxy/v.1.0/occupant-details/${roomSelectKey}/facilities/${facilityKey}`;
+    return this._housingProxyService.get<any>(apiUrl).pipe(
+      map((response) => {
+        const details = new OccupantDetailsResponse(response);
+      })
+    )
+  }
+
   _handleGetRoomSelectsError(): Observable<RoomSelectResponse> {
     const roomSelects: RoomSelect[] = [];
     this._setRoomsState(roomSelects);

@@ -2,6 +2,7 @@ import { ApplicationDetails } from './applications/applications.model';
 import { ContractDetails, ContractListDetails } from './contracts/contracts.model';
 import { RoomSelect } from './rooms/rooms.model';
 import { FacilityDetails } from './facilities/facilities.model';
+import { FacilityOccupantDetails } from '@sections/housing/roommate/rooomate.model';
 
 export interface ResponseStatusDetails {
   code: string;
@@ -98,9 +99,23 @@ export class FacilityDetailsResponse implements FacilityDetailsResponseOptions {
     if (options == null || typeof options !== 'object') {
       options = {} as FacilityDetailsResponseOptions;
     }
-    console.log('Im here');
     this.facilityDetails = options.map(x => {
       return new FacilityDetails(x);
     });
+  }
+}
+
+export interface OccupantDetailsResponseOptions {
+  occupants: FacilityOccupantDetails[]
+}
+
+export class OccupantDetailsResponse implements OccupantDetailsResponseOptions {
+  occupants: FacilityOccupantDetails[];
+
+  constructor(options: any) {
+    if(options ==null || typeof options !== 'object') {
+      options = {} as OccupantDetailsResponseOptions;
+    }
+    this.occupants = options.occupants;
   }
 }
