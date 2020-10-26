@@ -12,7 +12,7 @@ import { Institution } from '@core/model/institution';
 import { switchMap, take } from 'rxjs/operators';
 import { AppState, Plugins } from '@capacitor/core';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
-import { Platform } from '@ionic/angular';
+import { NavController, Platform } from '@ionic/angular';
 import { MerchantFacadeService } from '@core/facades/merchant/merchant-facade.service';
 import { from } from 'rxjs';
 import { PATRON_ROUTES } from '@sections/section.config';
@@ -42,7 +42,8 @@ export class SessionFacadeService {
     private readonly storageStateService: StorageStateService,
     private readonly merchantFacadeService: MerchantFacadeService,
     private readonly settingsFacadeService: SettingsFacadeService,
-    private readonly router: Router
+    private readonly router: Router,
+    public navCtrl: NavController
   ) {
     this.appStateListeners();
   }
@@ -225,9 +226,9 @@ export class SessionFacadeService {
     this.storageStateService.clearStorage();
     this.merchantFacadeService.clearState();
     this.settingsFacadeService.cleanCache();
-
+    //this.navCtrl.navigateRoot([ROLES.guest, GUEST_ROUTES.entry])
     if (navigateToEntry) {
-      this.router.navigate([ROLES.guest, GUEST_ROUTES.entry]);
+      this.router.navigate([ROLES.guest, GUEST_ROUTES.entry], { replaceUrl: true });
     }
   }
 
