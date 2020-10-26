@@ -33,7 +33,7 @@ import { ContractDetails, ContractListDetails } from './contracts/contracts.mode
   providedIn: 'root',
 })
 export class HousingService {
-  private readonly _baseUrl = this._environmentFacadeService.getEnvironmentObject().housing_aws_url
+  private readonly _baseUrl = this._environmentFacadeService.getEnvironmentObject().housing_aws_url;
   private readonly _patronApplicationsUrl: string = `${this._baseUrl}/patron-applications/v.1.0/patron-applications`;
 
   private readonly _applicationDefinitionUrl: string = `${this._patronApplicationsUrl}/application-definition`;

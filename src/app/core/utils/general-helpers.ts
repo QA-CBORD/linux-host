@@ -226,3 +226,22 @@ export function mergeMatchArrayById(sourceArray: any[], matchIds: any[]): any[] 
 
   return result;
 }
+
+export function hasRequiredField(abstractControl: AbstractControl): boolean {
+  if (abstractControl.validator) {
+    const validator = abstractControl.validator({} as AbstractControl);
+    if (validator && validator.required) {
+      return true;
+    }
+  }
+  if (abstractControl['controls']) {
+    for (const controlName in abstractControl['controls']) {
+      if (abstractControl['controls'][controlName]) {
+        if (hasRequiredField(abstractControl['controls'][controlName])) {
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+}

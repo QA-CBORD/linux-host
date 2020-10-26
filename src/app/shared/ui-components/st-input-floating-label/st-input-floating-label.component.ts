@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, forwardRef, ViewChild, ElementRef, HostBinding } from '@angular/core';
 import { FormControl, NG_VALUE_ACCESSOR, ControlValueAccessor, AbstractControl } from '@angular/forms';
 import { FocusableElement } from '@core/interfaces/focusable-element.interface';
-import { FocusNextDirective } from '@shared/directives/focus-next/focus-next.directive';
+import { hasRequiredField } from '@core/utils/general-helpers';
 
 export const CUSTOM_INPUT_CONTROL_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
@@ -97,5 +97,9 @@ export class StInputFloatingLabelComponent implements OnInit, ControlValueAccess
 
   public focus() {
     this.inputRef.nativeElement.focus();
+  }
+
+  get isRequired(): boolean {
+    return hasRequiredField(this.control);
   }
 }

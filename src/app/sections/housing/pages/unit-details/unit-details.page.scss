@@ -1,0 +1,59 @@
+@import 'tools';
+
+.unit__labels-item {
+  margin-right: 8px;
+}
+
+unit__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.unit__type {
+  margin: 0px 18px;
+}
+
+.unit__select {
+  margin-top: 70px;
+  &:hover {
+    background: darken($color-royal-blue, 10%)
+  }
+}
+
+
+.unit__title {
+  @include font-nunito-heavy(20px);
+
+  line-height: 24px;
+  margin: 0;
+}
+
+.unit__description {
+  margin-top: 5px;
+}
+.information__header {
+  @include font-nunito-heavy(14px);
+}
+
+information__container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.information__label {
+  @include font-nunito-regular(12px);
+  color: $color-dusty-gray;
+  text-align: left;
+}
+
+.information__value {
+  @include font-nunito-semibold(16px);
+  margin-top: 30px;
+}
+
+.hide {
+  display: none;
+}
