@@ -10,7 +10,6 @@ import { IOSCredentialManager } from './ios-credential-manager';
 
 @Injectable()
 export class MobileCredentialFacade {
-
   private mobileCredentialManager: MobileCredentialManager;
 
   constructor(
@@ -111,5 +110,9 @@ export class MobileCredentialFacade {
     if (this.mobileCredentialManager) {
       this.mobileCredentialManager.setCredentialStateChangeListener(listener);
     }
+  }
+
+  onDestroy() {
+    this.mobileCredentialManager = null;
   }
 }
