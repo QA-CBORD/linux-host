@@ -1,5 +1,5 @@
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { first, map, take } from 'rxjs/operators';
 import { AccessCardService } from './services/access-card.service';
@@ -16,7 +16,7 @@ import { MobileCredentialFacade } from '@shared/ui-components/mobile-credentials
   styleUrls: ['./access-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AccessCardComponent implements OnInit {
+export class AccessCardComponent implements OnInit, OnDestroy {
   userName$: Observable<string>;
   institutionName$: Observable<string>;
   institutionColor$: Observable<string>;
@@ -44,6 +44,10 @@ export class AccessCardComponent implements OnInit {
     public readonly mobileCredentialFacade: MobileCredentialFacade
   ) {}
 
+  ngOnDestroy(): void {
+    console.log('AccessCardComponent ngOnDestroy called .....');
+  }
+
   ngOnInit() {
     this.setInstitutionData();
     this.getFeaturesEnabled();
@@ -53,9 +57,8 @@ export class AccessCardComponent implements OnInit {
   }
 
   private initMobileCredential(): void {
-    this.mobileCredentialFacade.mobileCredentialEnabled$.subscribe(mobileCredentialEnabled => {
+    this.mobileCredentialFacade.mobileCredentialEnabled$.pipe(take(1)).subscribe(mobileCredentialEnabled => {
       this.mobileCredentialEnabled = mobileCredentialEnabled;
-      console.log('awaited results: ', this.mobileCredentialEnabled);
       this.mobileCredentialFacade.setCredentialStateChangeListener(this);
       this.changeRef.detectChanges();
     });

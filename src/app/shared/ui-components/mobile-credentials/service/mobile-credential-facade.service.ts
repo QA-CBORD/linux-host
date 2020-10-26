@@ -8,10 +8,9 @@ import { CredentialStateChangeListener, MobileCredentialManager } from '../model
 import { AndroidCredentialManagerFactory } from './android-credential-manager.factory';
 import { IOSCredentialManager } from './ios-credential-manager';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class MobileCredentialFacade {
+
   private mobileCredentialManager: MobileCredentialManager;
 
   constructor(
@@ -39,11 +38,10 @@ export class MobileCredentialFacade {
               }
               return mobileCredentialSettingsEnabled;
             }),
-            catchError((err) => {
-              console.log('error: ', err)
-              return of(false);
-            })
+            catchError(() => of(false))
           );
+        } else {
+          return of(false);
         }
       })
     );
@@ -90,7 +88,7 @@ export class MobileCredentialFacade {
   get mobileCredentialEnabled$(): Observable<boolean> {
     return this.mobileCredentialSettingsEnabled$().pipe(
       switchMap(mobileCredentialSettingsEnabled => {
-        return mobileCredentialSettingsEnabled ? this.mobileCredentialManager.credentialEnabled$(): of(false);
+        return mobileCredentialSettingsEnabled ? this.mobileCredentialManager.credentialEnabled$() : of(false);
       })
     );
   }

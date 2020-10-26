@@ -11,9 +11,7 @@ import { HidCredentialDataService } from '../../../service/hid-credential.data.s
 import { HIDSdkManager } from './hid-plugin.wrapper';
 import { Injectable } from '@angular/core';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class HIDCredentialManager extends AbstractAndroidCredentialManager {
   private static instance: HIDCredentialManager;
   private static TRANSACTION_SUCCESS_FULL = 'TRANSACTION_SUCCESS';
@@ -299,13 +297,14 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
   }
 
   private canRetry(error?: string): boolean {
-    if (this.transactionRetryCount <= this.transactionMaxRetryCount) {
-      if (error && !this.shouldRetry(error)) {
+    const anotherRetryAllowed = this.transactionRetryCount <= this.transactionMaxRetryCount;
+    if (anotherRetryAllowed) {
+      if (error && !this.shouldRetryBecauseOf(error)) {
         this.resetRetryCount();
         return false;
       }
       this.transactionRetryCount++;
-      return true;
+      return anotherRetryAllowed;
     }
     this.resetRetryCount();
     return false;
@@ -344,7 +343,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     return data ? true : false;
   }
 
-  private shouldRetry(error): boolean {
+  private shouldRetryBecauseOf(error: string): boolean {
     if (!error) {
       return false;
     }
@@ -377,10 +376,10 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
   }
 
   private deleteCredentialFromServer$ = (): Promise<boolean> => {
+    console.log('deleteCredentialFromServer calle....');
     return this.credentialService
       .deleteCredential$()
       .pipe(
-        take(1),
         map(deletionSucceeded => {
           if (deletionSucceeded) {
             return deletionSucceeded;
@@ -434,7 +433,8 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
             this.loadingService.closeSpinner();
           });
       })
-      .catch(() => {
+      .catch(error => {
+        console.log('getting error: ', error);
         if (this.canRetry()) {
           this.onDeleteConfirmed();
         } else {

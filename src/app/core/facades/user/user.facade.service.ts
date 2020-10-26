@@ -238,13 +238,12 @@ export class UserFacadeService extends ServiceStateFacade {
         if (fcmToken) {
           PushNotifications.removeAllDeliveredNotifications();
           return this.userApiService.logoutAndRemoveUserNotification$(userInfo.id, this.getPushNotificationInfo(userInfo, fcmToken));
+        }else{
+          return of(false);
         }
-        return of(false);
       }),
       take(1),
-      catchError(error => {
-        return of(false);
-      }),
+      catchError((error) => of(false)),
       finalize(() => {
         this.clearData();
       })

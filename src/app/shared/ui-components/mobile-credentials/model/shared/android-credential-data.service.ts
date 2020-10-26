@@ -143,7 +143,7 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
 
   protected deleteCredential$(credentialId: string): Observable<any> {
     // get the mobile credential id that we want to delete.
-    const institutionInfo$ = this.institutionFacadeService.cachedInstitutionInfo$;
+    const institutionInfo$ = this.institutionFacadeService.cachedInstitutionInfo$.pipe(take(1));
     const defaultHeader$ = this.getDefaultHeaders().pipe(take(1));
     return forkJoin(institutionInfo$, defaultHeader$).pipe(
       switchMap(([{ id }, requestHeaders]) => {

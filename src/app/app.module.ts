@@ -12,7 +12,6 @@ import { StGlobalNavigationModule } from '@shared/ui-components/st-global-naviga
 import { CommonModule } from '@angular/common';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { StNativeStartupPopoverModule } from '@shared/ui-components/st-native-startup-popover/st-native-startup-popover.module';
-import { MobileCredentialModule } from '@shared/ui-components/mobile-credentials/mobile.credential.module';
 
 @NgModule({
   declarations: [AppComponent],
@@ -25,10 +24,13 @@ import { MobileCredentialModule } from '@shared/ui-components/mobile-credentials
     IonicModule.forRoot({ swipeBackEnabled: false }),
     IonicStorageModule.forRoot(),
     CommonModule,
-    PinModule,
-    MobileCredentialModule
+    PinModule
   ],
   providers: [{provide: ErrorHandler, useClass: GlobalErrorHandler}, InAppBrowser],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule {
+  constructor(){
+    console.log('AppModule created.....')
+  }
+}

@@ -9,9 +9,7 @@ import { Injectable } from '@angular/core';
 import { MobileCredentialStatuses } from '../../shared/credential-state';
 const { GooglePayPlugin } = Plugins;
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class GooglePayCredentialManager implements MobileCredentialManager {
   private mCredential: GoogleCredential;
   private credentialStateChangeSubscription: CredentialStateChangeListener;

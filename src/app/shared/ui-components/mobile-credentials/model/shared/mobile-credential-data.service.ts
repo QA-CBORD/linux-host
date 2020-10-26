@@ -16,9 +16,7 @@ const resourceUrls = {
   activePasses: `/android/${api_version}/activePasses`,
 };
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class MobileCredentialDataService {
   protected ttl: number = 600000;
   protected jwtToken_key: string = 'jwt_token';

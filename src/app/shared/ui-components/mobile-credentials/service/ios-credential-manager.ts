@@ -11,9 +11,7 @@ import { AppleWalletCredentialState } from '../model/ios/applet-wallet-credentia
 import { Injectable } from '@angular/core';
 const { IOSDevice } = Plugins;
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class IOSCredentialManager implements MobileCredentialManager {
   private mCredential: AppleWalletCredential;
   private appletWalletEventListener: any;
