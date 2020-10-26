@@ -16,9 +16,7 @@ const resourceUrls = {
   activePasses: `/android/${api_version}/activePasses`,
 };
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class MobileCredentialDataService {
   protected ttl: number = 600000;
   protected jwtToken_key: string = 'jwt_token';
@@ -43,18 +41,20 @@ export class MobileCredentialDataService {
     return this.storageStateService.getStateEntityByKey$<string>(this.jwtToken_key).pipe(
       switchMap(data => {
         if (data && data.lastModified + data.timeToLive >= Date.now()) {
-          console.log('data:: ', data.value);
           return of(data.value);
+        } else {
+          return this.retrieveOmniIDJwtTokenFromServer$();
         }
-        return this.retrieveOmniIDJwtTokenFromServer$();
       })
     );
   }
 
   protected retrieveOmniIDJwtTokenFromServer$(): Observable<string> {
-    return this.authFacadeService.getExternalAuthenticationToken$('OmniID').pipe(
-      tap(jwtToken => this.storageStateService.updateStateEntity(this.jwtToken_key, jwtToken, { ttl: this.ttl }))
-    );
+    return this.authFacadeService
+      .getExternalAuthenticationToken$('OmniID')
+      .pipe(
+        tap(jwtToken => this.storageStateService.updateStateEntity(this.jwtToken_key, jwtToken, { ttl: this.ttl }))
+      );
   }
 
   protected get deviceInfo$(): Observable<DeviceInfo> {

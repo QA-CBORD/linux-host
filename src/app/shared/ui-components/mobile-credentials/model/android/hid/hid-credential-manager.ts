@@ -2,7 +2,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { AlertController, ModalController, PopoverController, ToastController } from '@ionic/angular';
 import { MobileCredentialsComponent } from '@shared/ui-components/mobile-credentials/mobile-credentials.component';
 import { from, Observable, of } from 'rxjs';
-import { map, switchMap, take, tap } from 'rxjs/operators';
+import { catchError, first, map, switchMap, take, tap } from 'rxjs/operators';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
 import { MobileCredentialStatuses } from '../../shared/credential-state';
 import { AbstractAndroidCredentialManager } from '../abstract-android-credential.management';
@@ -11,9 +11,7 @@ import { HidCredentialDataService } from '../../../service/hid-credential.data.s
 import { HIDSdkManager } from './hid-plugin.wrapper';
 import { Injectable } from '@angular/core';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class HIDCredentialManager extends AbstractAndroidCredentialManager {
   private static instance: HIDCredentialManager;
   private static TRANSACTION_SUCCESS_FULL = 'TRANSACTION_SUCCESS';
@@ -46,7 +44,6 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
       await modal.present();
       const { data } = await modal.onDidDismiss();
       // check that this is not executed until popup is dismissed.
-      console.log('waited for popup dismiss before executing....: ', data);
       if (data.termsAccepted) {
         this.onTermsAndConditionsAccepted();
       }
@@ -224,22 +221,25 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
         this.mCredential = newCredential;
         this.installCredentialOnDevice();
       })
-      .catch(err => {
-        console.log('errir: ', err);
+      .catch(() => {
         this.loadingService.closeSpinner();
         this.showInstallationErrorAlert();
       });
   }
 
-  private updateCredentialOnServer$(): Promise<boolean> {
-    return this.credentialService
+  private updateCredentialOnServer$ = async (): Promise<boolean> => {
+    return await this.credentialService
       .updateCredential$(this.mCredential)
       .pipe(
-        take(1),
+        first(),
         switchMap(serverUpdateSuccess => {
           if (serverUpdateSuccess) {
             return this.credentialService.saveCredentialAsUserSetting$(this.mCredential);
+          } else {
+            throw new Error('Failed to update credential on server$');
           }
+        }),
+        catchError(() => {
           throw new Error('Failed to update credential on server$');
         })
       )
@@ -275,18 +275,22 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
                 this.deleteCredentialFromDevice$().then(() => this.showInstallationErrorAlert());
                 this.credentialStateChangeSubscription.onCredentialStateChanged();
               })
+              .catch(() => {
+                // still failed after 3 retry..then we want to undo the installation on device and ask user to try again later.
+                this.deleteCredentialFromDevice$().then(() => {
+                  this.showInstallationErrorAlert();
+                });
+              })
               .finally(() => {
                 this.resetRetryCount();
                 this.loadingService.closeSpinner();
               });
           });
       })
-      .catch(error => {
-        console.log('got error ==> ', error.message);
+      .catch((error) => {
         if (this.canRetry(error.message)) {
           this.loadingService.closeSpinner();
           this.showRetryToast().then(shoudRetryInstallation => {
-            console.log('shoudRetryInstallation: ', shoudRetryInstallation);
             if (shoudRetryInstallation) {
               this.showLoading();
               this.installCredentialOnDevice();
@@ -299,13 +303,14 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
   }
 
   private canRetry(error?: string): boolean {
-    if (this.transactionRetryCount <= this.transactionMaxRetryCount) {
-      if (error && !this.shouldRetry(error)) {
+    const anotherRetryAllowed = this.transactionRetryCount <= this.transactionMaxRetryCount;
+    if (anotherRetryAllowed) {
+      if (error && !this.shouldRetryBecauseOf(error)) {
         this.resetRetryCount();
         return false;
       }
       this.transactionRetryCount++;
-      return true;
+      return anotherRetryAllowed;
     }
     this.resetRetryCount();
     return false;
@@ -318,7 +323,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
           return true;
         }
       } catch (err) {
-        error = err.message;
+        error = error ? err.message : error;
       }
     }
     throw new Error('Failed all attempts');
@@ -344,7 +349,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     return data ? true : false;
   }
 
-  private shouldRetry(error): boolean {
+  private shouldRetryBecauseOf(error: string): boolean {
     if (!error) {
       return false;
     }
@@ -380,7 +385,6 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     return this.credentialService
       .deleteCredential$()
       .pipe(
-        take(1),
         map(deletionSucceeded => {
           if (deletionSucceeded) {
             return deletionSucceeded;
@@ -392,9 +396,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
   };
 
   private deleteCredentialFromDevice$ = async (): Promise<boolean> => {
-    console.log('deleteCredentialFromDevice executed..');
     let transactionResultCode = await this.hidSdkManager().deleteCurrentCredential();
-    console.log('transactionResultCode : ==>> ', transactionResultCode);
     if (transactionResultCode == HIDCredentialManager.TRANSACTION_SUCCESS_FULL) {
       this.mCredential.setStatus(MobileCredentialStatuses.IS_AVAILABLE);
       this.credentialStateChangeSubscription.onCredentialStateChanged();
@@ -434,7 +436,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
             this.loadingService.closeSpinner();
           });
       })
-      .catch(() => {
+      .catch(error => {
         if (this.canRetry()) {
           this.onDeleteConfirmed();
         } else {

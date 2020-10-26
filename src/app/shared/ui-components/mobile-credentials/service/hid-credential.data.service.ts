@@ -18,9 +18,7 @@ const resourceUrls = {
   credentialUrl: `/android/${api_version}/credential`,
 };
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class HidCredentialDataService extends AndroidCredentialDataService {
   constructor(
     protected readonly storageStateService: StorageStateService,
@@ -45,15 +43,18 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
 
   deleteCredential$(): Observable<boolean> {
     return this.getCredentialFromCacheOrUserSettings$().pipe(
+      take(1),
       switchMap(cachedCredentials => {
         if (cachedCredentials) {
+          console.log('deleteCredential$ called...: ', cachedCredentials);
           return super.deleteCredential$(cachedCredentials.id).pipe(
             map(() => true),
             tap(() => this.storageStateService.deleteStateEntityByKey(this.credential_key)),
             catchError(() => of(false))
           );
+        } else {
+          return of(false);
         }
-        return of(false);
       }),
       catchError(() => of(false))
     );
@@ -99,17 +100,14 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
 
   private getCredentialFromCacheOrUserSettings$(): Observable<Persistable> {
     return this.storageStateService.getStateEntityByKey$<Persistable>(this.credential_key).pipe(
-      take(1),
       switchMap(data => {
         if (data) {
           return of(data.value);
         }
         return this.settingsFacadeService.getUserSetting(User.Settings.MOBILE_CREDENTIAL_ID).pipe(
-          take(1),
           map(settingInfo => {
             return {
               id: settingInfo.value,
-              referenceIdentifier: null,
             };
           })
         );

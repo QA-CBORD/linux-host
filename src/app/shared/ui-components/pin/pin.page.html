@@ -3,10 +3,6 @@
 <ion-header class="pin-header" no-border>
   <ion-toolbar mode="ios" class="ion-color" class="pin-header__nav-toolbar">
     <ion-buttons slot="start">
-      <ion-button mode="ios" class="edit-home__header-done-btn" color="dark" (click)="back()" *ngIf="showReset">
-        <img src="/assets/icon/chevron-left.svg" alt="back" />
-        Back
-      </ion-button>
       <ion-button
         mode="ios"
         class="edit-home__header-done-btn"
@@ -15,6 +11,10 @@
         *ngIf="showDismiss && !showReset"
       >
         <ion-icon icon="close"></ion-icon>
+      </ion-button>
+      <ion-button mode="ios" class="edit-home__header-done-btn" color="dark" (click)="back()" *ngIf="showReset">
+        <img src="/assets/icon/chevron-left.svg" />
+        Back
       </ion-button>
     </ion-buttons>
   </ion-toolbar>

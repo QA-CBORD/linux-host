@@ -182,7 +182,7 @@ export interface GOOGLE extends Persistable {
 
 export interface Persistable {
   id: string;
-  referenceIdentifier: string;
+  referenceIdentifier?: string;
 }
 
 export class HIDCredential extends AndroidCredential<HID> {

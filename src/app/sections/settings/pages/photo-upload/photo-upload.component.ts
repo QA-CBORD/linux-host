@@ -1,6 +1,13 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { CameraDirection, CameraPhoto, CameraResultType, CameraSource, Plugins } from '@capacitor/core';
+import {
+  CameraDirection,
+  CameraPhoto,
+  CameraResultType,
+  CameraSource,
+  Plugins,
+  PermissionType,
+} from '@capacitor/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { PATRON_NAVIGATION } from '../../../../app.global';
 import { from, Observable, of, zip } from 'rxjs';
@@ -10,9 +17,9 @@ import { PhotoStatus, PhotoType, PhotoUploadService } from '../services/photo-up
 import { LoadingService } from '@core/service/loading/loading.service';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { ToastService } from '@core/service/toast/toast.service';
-import { ActionSheetController } from '@ionic/angular';
+import { ActionSheetController, Platform } from '@ionic/angular';
 
-const { Camera } = Plugins;
+const { Camera, Permissions } = Plugins;
 
 export enum LocalPhotoStatus {
   NONE,
@@ -67,13 +74,15 @@ export class PhotoUploadComponent implements OnInit {
     private readonly photoUploadService: PhotoUploadService,
     private readonly loadingService: LoadingService,
     private readonly actionSheetCtrl: ActionSheetController,
-    private readonly cd: ChangeDetectorRef
+    private readonly cd: ChangeDetectorRef,
+    private readonly platform: Platform
   ) {}
 
   ngOnInit() {
     this.clearLocalStateData();
     this.getPhotoData();
     this.setupPhotoSubscriptions();
+    this.checkCameraPermissions();
   }
 
   ngOnDestroy() {
@@ -429,5 +438,31 @@ export class PhotoUploadComponent implements OnInit {
 
   navigateBack() {
     this.router.navigate([PATRON_NAVIGATION.settings], { replaceUrl: true });
+  }
+
+  async checkCameraPermissions() {
+    if (this.platform.is('ios')) {
+      const checks = [];
+      const cameraPermission = await Permissions.query({ name: PermissionType.Camera });
+      const photosPermission = await Permissions.query({ name: PermissionType.Photos });
+      // This is a workaround for iOS where the promise breaks when prompting for permissions.
+      if (cameraPermission.state === 'prompt') {
+        checks.push(
+          Camera.getPhoto({
+            resultType: CameraResultType.Uri,
+            source: CameraSource.Camera,
+          })
+        );
+      }
+      if (photosPermission.state === 'prompt') {
+        checks.push(
+          Camera.getPhoto({
+            resultType: CameraResultType.Uri,
+            source: CameraSource.Photos,
+          })
+        );
+      }
+      await Promise.all(checks);
+    }
   }
 }

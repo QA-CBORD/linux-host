@@ -2,9 +2,10 @@ import { Component, OnInit, ChangeDetectionStrategy, OnDestroy } from '@angular/
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 
-import { UnitsService } from '../../units/units.service';
 
-import { Unit } from '../../units/units.model';
+import { Unit } from '@sections/housing/unit/unit.model';
+import {  RoomsStateService } from '@sections/housing/rooms/rooms-state.service';
+
 
 @Component({
   selector: 'st-unit-details',
@@ -12,24 +13,28 @@ import { Unit } from '../../units/units.model';
   styleUrls: ['./unit-details.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UnitDetailsPage implements OnInit, OnDestroy {
-  private _subscription: Subscription = new Subscription();
+export class UnitDetailsPage implements OnInit {
 
-  constructor(private _route: ActivatedRoute, private _unitsService: UnitsService) {}
+  private isExpanded = false;
+  constructor(
+    private _route: ActivatedRoute,
+    private _stateService: RoomsStateService
+  ) {}
 
-  units: Unit[];
+  unit: Unit;
 
   ngOnInit() {
-    const facilityId = parseInt(this._route.snapshot.paramMap.get('facilityId'), 10);
-
-    const unitsSubscription: Subscription = this._unitsService
-      .getUnits(facilityId)
-      .subscribe((units: Unit[]) => (this.units = units));
-
-    this._subscription.add(unitsSubscription);
+    const facilityKey = parseInt(this._route.snapshot.paramMap.get('buildingKey'), 10);
+    const unitKey = parseInt(this._route.snapshot.paramMap.get('unitKey'), 10);
+    this.unit = this._stateService.getUnitDetails(facilityKey, unitKey);
+    console.log(this.unit);
   }
 
-  ngOnDestroy(): void {
-    this._subscription.unsubscribe();
+  adjustExpander(): void {
+      if (this.isExpanded) {
+        this.isExpanded = false;
+      } else {
+        this.isExpanded = true;
+      }
   }
 }

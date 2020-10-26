@@ -21,9 +21,7 @@ const extraHeaders = {
   'x-api-key': 'uIBXQVw9ATQlkn1t0hk91xUvulJo9xS5PjRsU6lh',
 };
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class GooglePayCredentialDataService extends AndroidCredentialDataService {
   constructor(
     protected readonly storageStateService: StorageStateService,
