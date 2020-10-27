@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { PATRON_NAVIGATION } from '../../../app.global';
 import { Observable } from 'rxjs';
 import { ModalController, PopoverController } from '@ionic/angular';
+import { GlobalNavService } from './services/global-nav.service';
 
 @Component({
   selector: 'st-global-navigation',
@@ -13,14 +14,28 @@ import { ModalController, PopoverController } from '@ionic/angular';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class StGlobalNavigationComponent implements OnInit {
-  isListShown: boolean = false;
+ 
+  _isListShown: boolean = false;
+
+  set isListShown(value: boolean) {
+    this._isListShown = value;
+    this._isListShown ? this.globalNav.expandNavBarMenu() : this.globalNav.collapseNavBarMenu();
+  }
+
+  get isListShown(): boolean {
+    return this._isListShown;
+  }
+
   navElements$: Observable<NavigationBottomBarElement[]>;
   visibleAmountOfElements: number = 5;
 
-  constructor(private readonly navigationSettingsService: NavigationFacadeSettingsService,
+  constructor(
+    private readonly navigationSettingsService: NavigationFacadeSettingsService,
               private readonly router: Router,
-              private readonly popoverController: PopoverController, private readonly modalController: ModalController) {
-  }
+    private readonly popoverController: PopoverController,
+    private readonly modalController: ModalController,
+    private readonly globalNav: GlobalNavService
+  ) {}
 
   ngOnInit() {
     this.navElements$ = this.navigationSettingsService.settings$;
