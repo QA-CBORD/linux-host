@@ -67,7 +67,7 @@ export class PinPage implements OnInit {
   ) {}
 
   @Input() pinAction: PinAction;
-  @Input() showDismiss: boolean;
+  @Input() showDismiss: boolean = true;
 
   ngOnInit() {
     this.retrievePinRetrys();
