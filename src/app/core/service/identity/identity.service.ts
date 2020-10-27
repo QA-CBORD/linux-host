@@ -71,8 +71,8 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
     return from(super.isBiometricsAvailable());
   }
 
-  logoutUser() {
-    super.logout();
+  logoutUser(): Promise<void> {
+    return super.logout();
   }
 
   async isVaultLocked() {
