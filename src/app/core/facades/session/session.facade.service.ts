@@ -19,6 +19,7 @@ import { PATRON_ROUTES } from '@sections/section.config';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { SettingsFacadeService } from '../settings/settings-facade.service';
 import { ToastService } from '@core/service/toast/toast.service';
+import { LoadingService } from '@core/service/loading/loading.service';
 const { App, Device } = Plugins;
 
 enum AppStatus {
@@ -45,7 +46,8 @@ export class SessionFacadeService {
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly router: Router,
     private navCtrl: NavController,
-    private readonly toastService: ToastService
+    private readonly toastService: ToastService,
+    private readonly loadingService: LoadingService
   ) {
     this.appStateListeners();
   }
@@ -96,6 +98,7 @@ export class SessionFacadeService {
   }
 
   doLoginChecks() {
+    this.loadingService.showSpinner();
     const routeConfig = { replaceUrl: true };
     this.authFacadeService
       .getAuthSessionToken$()
@@ -105,6 +108,7 @@ export class SessionFacadeService {
       )
       .subscribe(
         state => {
+          this.loadingService.closeSpinner();
           switch (state) {
             case LoginState.SELECT_INSTITUTION:
               this.router.navigate([ROLES.guest, GUEST_ROUTES.entry], routeConfig);
@@ -132,7 +136,9 @@ export class SessionFacadeService {
               break;
           }
         },
-        () => {
+        (error) => {
+          console.log('The error => ', error);
+          this.loadingService.closeSpinner();
           (async () => {
             await this.router.navigate([ROLES.guest, GUEST_ROUTES.entry], routeConfig);
             await this.toastService.showToast({ message: 'Internal server error' });
@@ -228,8 +234,15 @@ export class SessionFacadeService {
 
   async logoutUser(navigateToEntry: boolean = true) {
     if (navigateToEntry) {
-      await this.navCtrl.navigateRoot([ROLES.guest, GUEST_ROUTES.entry]);
+      this.navCtrl.navigateRoot([ROLES.guest, GUEST_ROUTES.entry]).then(() => {
+        this.resetAll();
+      });
+    } else {
+      this.resetAll();
     }
+  }
+
+  private async resetAll(): Promise<void> {
     await this.userFacadeService.logoutAndRemoveUserNotification().toPromise();
     await this.identityFacadeService.logoutUser();
     await this.storageStateService.clearStorage();
