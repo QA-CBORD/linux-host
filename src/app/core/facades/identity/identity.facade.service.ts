@@ -69,16 +69,16 @@ export class IdentityFacadeService extends ServiceStateFacade {
 
   loginUser(useBiometric: boolean) {
     if (useBiometric) {
-      this.identityService.unlockVault();
+      return this.identityService.unlockVault();
     } else {
-      this.identityService.unlockVaultPin();
+      return this.identityService.unlockVaultPin();
     }
   }
 
-  logoutUser() {
+  logoutUser(): Promise<void> {
     this._pinEnabledUserPreference = true;
     this._biometricsEnabledUserPreference = true;
-    this.identityService.logoutUser();
+    return this.identityService.logoutUser();
   }
 
   async isVaultLocked() {

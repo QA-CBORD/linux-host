@@ -12,12 +12,13 @@ import { Institution } from '@core/model/institution';
 import { switchMap, take } from 'rxjs/operators';
 import { AppState, Plugins } from '@capacitor/core';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
-import { Platform } from '@ionic/angular';
+import { NavController, Platform } from '@ionic/angular';
 import { MerchantFacadeService } from '@core/facades/merchant/merchant-facade.service';
 import { from } from 'rxjs';
 import { PATRON_ROUTES } from '@sections/section.config';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { SettingsFacadeService } from '../settings/settings-facade.service';
+import { ToastService } from '@core/service/toast/toast.service';
 const { App, Device } = Plugins;
 
 enum AppStatus {
@@ -42,7 +43,9 @@ export class SessionFacadeService {
     private readonly storageStateService: StorageStateService,
     private readonly merchantFacadeService: MerchantFacadeService,
     private readonly settingsFacadeService: SettingsFacadeService,
-    private readonly router: Router
+    private readonly router: Router,
+    private navCtrl: NavController,
+    private readonly toastService: ToastService
   ) {
     this.appStateListeners();
   }
@@ -97,43 +100,49 @@ export class SessionFacadeService {
     this.authFacadeService
       .getAuthSessionToken$()
       .pipe(
-        switchMap(sessionId => from(this.determineFromBackgroundLoginState(sessionId))),
-        take(1)
+        take(1),
+        switchMap(sessionId => from(this.determineFromBackgroundLoginState(sessionId)))
       )
-      .subscribe(state => {
-        switch (state) {
-          case LoginState.SELECT_INSTITUTION:
-            this.router.navigate([ROLES.guest, GUEST_ROUTES.entry], routeConfig);
-            break;
-          case LoginState.BIOMETRIC_LOGIN:
-            this.loginUser(true);
-            break;
-          case LoginState.BIOMETRIC_SET:
-            this.router.navigate([ROLES.patron, PATRON_ROUTES.dashboard], routeConfig);
-            break;
-          case LoginState.PIN_LOGIN:
-            this.loginUser(false);
-            break;
-          case LoginState.PIN_SET:
-            this.identityFacadeService.pinLoginSetup(false);
-            break;
-          case LoginState.HOSTED:
-            this.router.navigate([ROLES.guest, GUEST_ROUTES.login], routeConfig);
-            break;
-          case LoginState.EXTERNAL:
-            this.router.navigate([ROLES.guest, GUEST_ROUTES.external], routeConfig);
-            break;
-          case LoginState.DONE:
-            this.router.navigate([ROLES.patron, PATRON_ROUTES.dashboard], routeConfig);
-            break;
+      .subscribe(
+        state => {
+          switch (state) {
+            case LoginState.SELECT_INSTITUTION:
+              this.router.navigate([ROLES.guest, GUEST_ROUTES.entry], routeConfig);
+              break;
+            case LoginState.BIOMETRIC_LOGIN:
+              this.loginUser(true);
+              break;
+            case LoginState.BIOMETRIC_SET:
+              this.router.navigate([ROLES.patron, PATRON_ROUTES.dashboard], routeConfig);
+              break;
+            case LoginState.PIN_LOGIN:
+              this.loginUser(false);
+              break;
+            case LoginState.PIN_SET:
+              this.identityFacadeService.pinLoginSetup(false);
+              break;
+            case LoginState.HOSTED:
+              this.router.navigate([ROLES.guest, GUEST_ROUTES.login], routeConfig);
+              break;
+            case LoginState.EXTERNAL:
+              this.router.navigate([ROLES.guest, GUEST_ROUTES.external], routeConfig);
+              break;
+            case LoginState.DONE:
+              this.router.navigate([ROLES.patron, PATRON_ROUTES.dashboard], routeConfig);
+              break;
+          }
+        },
+        () => {
+          (async () => {
+            await this.router.navigate([ROLES.guest, GUEST_ROUTES.entry], routeConfig);
+            await this.toastService.showToast({ message: 'Internal server error' });
+          })();
         }
-      });
+      );
   }
 
   private loginUser(useBiometric: boolean) {
-    try {
-      this.identityFacadeService.loginUser(useBiometric);
-    } catch (e) {}
+    this.identityFacadeService.loginUser(useBiometric).subscribe();
   }
 
   async determinePostLoginState(sessionId: string, institutionId: string): Promise<LoginState> {
@@ -184,7 +193,6 @@ export class SessionFacadeService {
     }
     const isPinLoginEnabled = await this.identityFacadeService.isPinEnabled(sessionId, institutionInfo.id);
     const isPinEnabledForUserPreference = await this.identityFacadeService.cachedPinEnabledUserPreference$;
-
     if (isPinLoginEnabled && isPinEnabledForUserPreference) {
       const vaultLocked: boolean = await this.identityFacadeService.vaultLocked();
       const vaultLoginSet: boolean = await this.identityFacadeService.storedSession();
@@ -219,16 +227,15 @@ export class SessionFacadeService {
   }
 
   async logoutUser(navigateToEntry: boolean = true) {
+    if (navigateToEntry) {
+      await this.navCtrl.navigateRoot([ROLES.guest, GUEST_ROUTES.entry]);
+    }
     await this.userFacadeService.logoutAndRemoveUserNotification().toPromise();
-    this.identityFacadeService.logoutUser();
+    await this.identityFacadeService.logoutUser();
+    await this.storageStateService.clearStorage();
     this.storageStateService.clearState();
-    this.storageStateService.clearStorage();
     this.merchantFacadeService.clearState();
     this.settingsFacadeService.cleanCache();
-
-    if (navigateToEntry) {
-      this.router.navigate([ROLES.guest, GUEST_ROUTES.entry]);
-    }
   }
 
   async getIsWeb(): Promise<boolean> {
