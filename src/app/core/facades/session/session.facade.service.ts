@@ -136,7 +136,7 @@ export class SessionFacadeService {
               break;
           }
         },
-        (error) => {
+        error => {
           console.log('The error => ', error);
           this.loadingService.closeSpinner();
           (async () => {
@@ -148,7 +148,15 @@ export class SessionFacadeService {
   }
 
   private loginUser(useBiometric: boolean) {
-    this.identityFacadeService.loginUser(useBiometric).subscribe();
+    this.identityFacadeService.loginUser(useBiometric).subscribe(
+      () => {},
+      () => {
+        if (!useBiometric) {
+          this.loadingService.closeSpinner();
+          this.router.navigate([ROLES.guest, GUEST_ROUTES.entry], { replaceUrl: true });
+        }
+      }
+    );
   }
 
   async determinePostLoginState(sessionId: string, institutionId: string): Promise<LoginState> {
