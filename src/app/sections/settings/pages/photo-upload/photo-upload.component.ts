@@ -6,7 +6,6 @@ import {
   CameraResultType,
   CameraSource,
   Plugins,
-  PermissionType,
 } from '@capacitor/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { PATRON_NAVIGATION } from '../../../../app.global';
@@ -19,7 +18,7 @@ import { SessionFacadeService } from '@core/facades/session/session.facade.servi
 import { ToastService } from '@core/service/toast/toast.service';
 import { ActionSheetController, Platform } from '@ionic/angular';
 
-const { Camera, Permissions } = Plugins;
+const { Camera } = Plugins;
 
 export enum LocalPhotoStatus {
   NONE,
@@ -74,15 +73,13 @@ export class PhotoUploadComponent implements OnInit {
     private readonly photoUploadService: PhotoUploadService,
     private readonly loadingService: LoadingService,
     private readonly actionSheetCtrl: ActionSheetController,
-    private readonly cd: ChangeDetectorRef,
-    private readonly platform: Platform
+    private readonly cd: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
     this.clearLocalStateData();
     this.getPhotoData();
     this.setupPhotoSubscriptions();
-    this.checkCameraPermissions();
   }
 
   ngOnDestroy() {
@@ -440,29 +437,4 @@ export class PhotoUploadComponent implements OnInit {
     this.router.navigate([PATRON_NAVIGATION.settings], { replaceUrl: true });
   }
 
-  async checkCameraPermissions() {
-    if (this.platform.is('ios')) {
-      const checks = [];
-      const cameraPermission = await Permissions.query({ name: PermissionType.Camera });
-      const photosPermission = await Permissions.query({ name: PermissionType.Photos });
-      // This is a workaround for iOS where the promise breaks when prompting for permissions.
-      if (cameraPermission.state === 'prompt') {
-        checks.push(
-          Camera.getPhoto({
-            resultType: CameraResultType.Uri,
-            source: CameraSource.Camera,
-          })
-        );
-      }
-      if (photosPermission.state === 'prompt') {
-        checks.push(
-          Camera.getPhoto({
-            resultType: CameraResultType.Uri,
-            source: CameraSource.Photos,
-          })
-        );
-      }
-      await Promise.all(checks);
-    }
-  }
 }

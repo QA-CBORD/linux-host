@@ -50,12 +50,14 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
     private readonly loadingService: LoadingService,
     private readonly ngZone: NgZone
   ) {
+    // TODO: hideScreenOnBackground hangs promises on permissions prompt.
+    // if this is needed have to find a fix/workaround.
     super(plt, {
       restoreSessionOnReady: false,
       unlockOnReady: false,
       unlockOnAccess: false,
       lockAfter: 5000,
-      hideScreenOnBackground: true,
+      hideScreenOnBackground: false,
       allowSystemPinFallback: false,
       shouldClearVaultAfterTooManyFailedAttempts: false,
     });
