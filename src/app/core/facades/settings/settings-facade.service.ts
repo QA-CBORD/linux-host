@@ -5,7 +5,7 @@ import { SettingsStateService } from '@core/states/settings/settings-state.servi
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { SettingsApiService } from '@core/service/settings-api-service/settings-api.service';
 import { UserSettingInfo } from '@core/model/user';
-import { switchMap, tap } from 'rxjs/operators';
+import { first, switchMap, tap } from 'rxjs/operators';
 import { UserSettingsStateService } from '@core/states/user-settings/user-settings-state.service';
 import { Settings, User } from '../../../app.global';
 import { SettingInfoList } from '@core/model/configuration/setting-info-list.model';
@@ -82,6 +82,11 @@ export class SettingsFacadeService extends ServiceStateFacade {
         this.userSettingsStateService.updateState(setting);
       })
     );
+  }
+
+  deleteUserSetting(setting: User.Settings): Observable<boolean> {
+    const call = this.settingsApiService.deleteUserSetting(setting);
+    return this.makeRequestWithUpdatingStateHandler<boolean>(call, this.userSettingsStateService).pipe(first());
   }
 
   saveUserSetting(setting: User.Settings, value: string): Observable<boolean> {

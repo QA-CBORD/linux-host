@@ -147,24 +147,23 @@ export abstract class AndroidCredential<T> extends MobileCredential implements A
     return this.credentialState;
   }
 
-  providedBy(credentialProvider: CredentialProviders){
+  providedBy(credentialProvider: CredentialProviders) {
     return this.credentialState.providedBy(credentialProvider);
   }
 
-  abstract getPersistable(): T;
+  abstract getPersistable(): any;
 
-  getReferenceIdentifier(): string{
+  getReferenceIdentifier(): string {
     return this.credentialState.referenceIdentifier;
   }
 
-  getId(): string{
+  getId(): string {
     return this.credentialBundle ? this.getCredentialBundle<any>().id : null;
   }
 
-  getCredStatus(): number{
+  getCredStatus(): number {
     return this.credentialState.credStatus;
   }
-
 }
 
 export interface HID extends Persistable {
@@ -190,13 +189,12 @@ export class HIDCredential extends AndroidCredential<HID> {
     super(credentialState);
   }
 
-  getPersistable<T>(): T {
-    let { id, issuer } = this.credentialBundle;
-    let { referenceIdentifier } = this.credentialState;
-    return <any>{ id, issuer, referenceIdentifier };
+  getPersistable(): Persistable {
+    let { id } = this.credentialBundle;
+    return { id };
   }
 
-  getInvitationCode():string{
+  getInvitationCode(): string {
     return this.credentialBundle ? this.credentialBundle.invitationCode : null;
   }
 }
@@ -206,9 +204,8 @@ export class GoogleCredential extends AndroidCredential<GOOGLE> {
     super(credentialState);
   }
 
-  getPersistable<T>(): T {
-    let { id, virtualCardUid, digitizationReference, issuer } = this.credentialBundle;
-    let { referenceIdentifier } = this.credentialState;
-    return <any>{ id, virtualCardUid, digitizationReference, issuer, referenceIdentifier };
+  getPersistable(): Persistable {
+    let { id } = this.credentialBundle;
+    return { id };
   }
 }

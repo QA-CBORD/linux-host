@@ -6,7 +6,7 @@ import { InstitutionFacadeService } from '@core/facades/institution/institution.
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { Observable, of } from 'rxjs';
-import { catchError, map, switchMap, take, tap } from 'rxjs/operators';
+import { catchError, first, map, switchMap, take, tap } from 'rxjs/operators';
 import { User } from 'src/app/app.global';
 import { AndroidCredential, HID, Persistable } from '../model/android/android-credential.model';
 import { AndroidCredentialDataService } from '../model/shared/android-credential-data.service';
@@ -43,12 +43,15 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
 
   deleteCredential$(): Observable<boolean> {
     return this.getCredentialFromCacheOrUserSettings$().pipe(
-      take(1),
+      first(),
       switchMap((cachedCredential: Persistable) => {
         if (cachedCredential) {
           return super.deleteCredential$(cachedCredential.id).pipe(
             map(() => true),
-            tap(() => this.storageStateService.deleteStateEntityByKey(this.credential_key)),
+            tap(() => {
+              this.storageStateService.deleteStateEntityByKey(this.credential_key).catch(() => {}); // just fail silently if err
+              this.deleteCredentialFromUserSetting$().catch(() => {}); // just fail silently if err
+            }),
             catchError(() => of(false))
           );
         } else {
@@ -89,10 +92,15 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
     this.storageStateService.updateStateEntity(this.credential_key, data, { highPriorityKey: true });
   }
 
+  private deleteCredentialFromUserSetting$(): Promise<boolean> {
+    return this.settingsFacadeService.deleteUserSetting(User.Settings.MOBILE_CREDENTIAL_ID).toPromise();
+  }
+
   private saveCredentialAsUserSetting$(credential: AndroidCredential<any>): Promise<boolean> {
     return this.settingsFacadeService
       .saveUserSetting(User.Settings.MOBILE_CREDENTIAL_ID, credential.getId())
-      .pipe(take(1)).toPromise();
+      .pipe(take(1))
+      .toPromise();
   }
 
   private getCredentialFromCacheOrUserSettings$(): Observable<Persistable> {
