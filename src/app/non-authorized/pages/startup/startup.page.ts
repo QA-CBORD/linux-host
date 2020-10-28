@@ -1,12 +1,4 @@
-import { Component, ElementRef, OnDestroy, OnInit } from '@angular/core';
-import { IdentityFacadeService, LoginState } from '@core/facades/identity/identity.facade.service';
-import { ROLES } from '../../../app.global';
-import { GUEST_ROUTES } from '../../non-authorized.config';
-import { PATRON_ROUTES } from '@sections/section.config';
-import { Router } from '@angular/router';
-import { switchMap, take } from 'rxjs/operators';
-import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
-import { from } from 'rxjs';
+import { Component, ElementRef, OnInit } from '@angular/core';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 
@@ -15,7 +7,7 @@ import { EnvironmentFacadeService } from '@core/facades/environment/environment.
   templateUrl: './startup.page.html',
   styleUrls: ['./startup.page.scss'],
 })
-export class StartupPage {
+export class StartupPage implements OnInit {
   /// startup page used as a backdrop for login, it ensures global navbar is hidden by url route checking
 
   constructor(
@@ -23,6 +15,8 @@ export class StartupPage {
     private readonly environmentFacadeService: EnvironmentFacadeService,
     private readonly sessionFacadeService: SessionFacadeService
   ) {}
+
+  ngOnInit(): void {}
 
   /// check login on enter
   ionViewDidEnter() {

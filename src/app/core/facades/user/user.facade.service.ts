@@ -211,22 +211,21 @@ export class UserFacadeService extends ServiceStateFacade {
       switchMap(([userInfo, fcmToken]) => {
         if (fcmToken) {
           PushNotifications.removeAllDeliveredNotifications();
-          return this.userApiService.logoutAndRemoveUserNotification$(userInfo.id, this.getPushNotificationInfo(userInfo, fcmToken));
+          return this.userApiService.logoutAndRemoveUserNotification$(
+            userInfo.id,
+            this.getPushNotificationInfo(userInfo, fcmToken)
+          );
         }
         return of(false);
       }),
       take(1),
-      catchError(error => {
-        return of(false);
-      }),
-      finalize(() => {
-        this.clearData();
-      })
+      catchError(() => of(false)),
+      finalize(() => this.clearData())
     );
   }
 
   /// get notification id for update if it already exists in the user notification array
-  private getPushNotificationInfo(userInfo: any, fcmToken: string): UserNotificationInfo{
+  private getPushNotificationInfo(userInfo: any, fcmToken: string): UserNotificationInfo {
     const user: any = { ...userInfo };
     const pNotifications = user.userNotificationInfoList.filter(
       notif => notif.type === User.NotificationType.PUSH_NOTIFICATION
@@ -264,9 +263,7 @@ export class UserFacadeService extends ServiceStateFacade {
   }
 
   reportCard$(isReportAsLost: boolean): Observable<MessageResponse<string>> {
-    return this.userApiService.reportCard$(isReportAsLost).pipe(
-      take(1)
-    );
+    return this.userApiService.reportCard$(isReportAsLost).pipe(take(1));
   }
 
   private clearData() {

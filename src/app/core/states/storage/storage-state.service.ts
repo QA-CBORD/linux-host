@@ -25,7 +25,7 @@ export class StorageStateService extends ExtendableStateManager<WebStorageStateE
     this.initialization();
   }
 
-  initialization(){
+  initialization() {
     this.initState();
     this.initSaveStorageListeners();
   }
@@ -108,8 +108,8 @@ export class StorageStateService extends ExtendableStateManager<WebStorageStateE
     this._state$.next({ ...this.state });
   }
 
-  clearStorage() {
-    this.storage.clear();
+  clearStorage(): Promise<void> {
+    return this.storage.clear();
   }
 
   clearState() {
