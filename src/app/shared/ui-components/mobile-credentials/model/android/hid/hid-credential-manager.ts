@@ -231,20 +231,13 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     return await this.credentialService
       .updateCredential$(this.mCredential)
       .pipe(
-        first(),
-        switchMap(serverUpdateSuccess => {
-          if (serverUpdateSuccess) {
-            return this.credentialService.saveCredentialAsUserSetting$(this.mCredential);
-          } else {
-            throw new Error('Failed to update credential on server$');
-          }
-        }),
         catchError(() => {
           throw new Error('Failed to update credential on server$');
-        })
+        }),
+        first()
       )
       .toPromise();
-  }
+  };
 
   private get doNativeCredentialInstall$(): Promise<boolean> {
     return this.hidSdkManager()
@@ -266,7 +259,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
           .then(() => {
             this.resetRetryCount();
             this.loadingService.closeSpinner();
-            delete this.mCredential.credentialData.invitationCode;
+            delete this.mCredential.credentialBundle.invitationCode;
             this.credentialStateChangeSubscription.onCredentialStateChanged();
           })
           .catch(() => {
@@ -277,9 +270,9 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
               })
               .catch(() => {
                 // still failed after 3 retry..then we want to undo the installation on device and ask user to try again later.
-                this.deleteCredentialFromDevice$().then(() => {
-                  this.showInstallationErrorAlert();
-                });
+                this.showInstallationErrorAlert();
+                this.deleteCredentialFromDevice$();
+                this.deleteCredentialFromServer$();
               })
               .finally(() => {
                 this.resetRetryCount();
@@ -287,7 +280,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
               });
           });
       })
-      .catch((error) => {
+      .catch(error => {
         if (this.canRetry(error.message)) {
           this.loadingService.closeSpinner();
           this.showRetryToast().then(shoudRetryInstallation => {

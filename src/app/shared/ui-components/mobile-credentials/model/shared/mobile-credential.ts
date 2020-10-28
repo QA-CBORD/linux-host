@@ -55,6 +55,6 @@ export abstract class MobileCredential implements MobileCredentialState {
 
   abstract getId():string;
 
-  abstract getCredentialData<T>(): T;
-  abstract setCredentialData<T>(data: T): void;
+  abstract getCredentialBundle<T>(): T;
+  abstract setCredentialBundle<T>(data: T): void;
 }

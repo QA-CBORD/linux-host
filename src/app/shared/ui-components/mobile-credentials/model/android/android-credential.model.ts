@@ -6,7 +6,7 @@ import { MobileCredential } from '../shared/mobile-credential';
 import { MobileCredentialConfig, MOBILE_CREDENTIAL_CONFIGS } from '../shared/mobile-credential-configs';
 
 export interface AndroidCredentialAttrs {
-  credentialData: any;
+  credentialBundle: any;
   credentialState: AndroidCredentialState;
 }
 
@@ -130,17 +130,17 @@ export class AndroidCredentialStateEntity implements AndroidCredentialState {
 // android credentials implementations.
 
 export abstract class AndroidCredential<T> extends MobileCredential implements AndroidCredentialAttrs {
-  public credentialData: T;
+  public credentialBundle: T;
   constructor(public credentialState: AndroidCredentialState) {
     super(credentialState);
   }
 
-  getCredentialData<T>(): T {
-    return this.credentialData as any;
+  getCredentialBundle<T>(): T {
+    return this.credentialBundle as any;
   }
 
-  setCredentialData<T>(data: T): void {
-    this.credentialData = <any>data;
+  setCredentialBundle<T>(data: T): void {
+    this.credentialBundle = <any>data;
   }
 
   getCredentialState(): AndroidCredentialState {
@@ -151,14 +151,14 @@ export abstract class AndroidCredential<T> extends MobileCredential implements A
     return this.credentialState.providedBy(credentialProvider);
   }
 
-  abstract getPersistable<T>(): T;
+  abstract getPersistable(): T;
 
   getReferenceIdentifier(): string{
     return this.credentialState.referenceIdentifier;
   }
 
   getId(): string{
-    return this.credentialData ? this.getCredentialData<any>().id : null;
+    return this.credentialBundle ? this.getCredentialBundle<any>().id : null;
   }
 
   getCredStatus(): number{
@@ -191,13 +191,13 @@ export class HIDCredential extends AndroidCredential<HID> {
   }
 
   getPersistable<T>(): T {
-    let { id, issuer } = this.credentialData;
+    let { id, issuer } = this.credentialBundle;
     let { referenceIdentifier } = this.credentialState;
     return <any>{ id, issuer, referenceIdentifier };
   }
 
   getInvitationCode():string{
-    return this.credentialData ? this.credentialData.invitationCode : null;
+    return this.credentialBundle ? this.credentialBundle.invitationCode : null;
   }
 }
 
@@ -207,7 +207,7 @@ export class GoogleCredential extends AndroidCredential<GOOGLE> {
   }
 
   getPersistable<T>(): T {
-    let { id, virtualCardUid, digitizationReference, issuer } = this.credentialData;
+    let { id, virtualCardUid, digitizationReference, issuer } = this.credentialBundle;
     let { referenceIdentifier } = this.credentialState;
     return <any>{ id, virtualCardUid, digitizationReference, issuer, referenceIdentifier };
   }

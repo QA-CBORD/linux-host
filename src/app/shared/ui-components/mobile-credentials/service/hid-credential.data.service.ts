@@ -44,10 +44,9 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
   deleteCredential$(): Observable<boolean> {
     return this.getCredentialFromCacheOrUserSettings$().pipe(
       take(1),
-      switchMap(cachedCredentials => {
-        if (cachedCredentials) {
-          console.log('deleteCredential$ called...: ', cachedCredentials);
-          return super.deleteCredential$(cachedCredentials.id).pipe(
+      switchMap((cachedCredential: Persistable) => {
+        if (cachedCredential) {
+          return super.deleteCredential$(cachedCredential.id).pipe(
             map(() => true),
             tap(() => this.storageStateService.deleteStateEntityByKey(this.credential_key)),
             catchError(() => of(false))
@@ -60,15 +59,16 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
     );
   }
 
-  androidCredential$(credential: AndroidCredential<any>): Observable<AndroidCredential<HID>> {
+  androidCredential$(androidCredential: AndroidCredential<any>): Observable<AndroidCredential<HID>> {
     let body = {
-      referenceIdentifier: credential.getReferenceIdentifier(),
+      referenceIdentifier: androidCredential.getReferenceIdentifier(),
     };
     return super.androidCredential$(body).pipe(
-      map(credentialData => {
-        credential.setCredentialData(credentialData);
-        return credential;
-      })
+      map(credentialBundle => {
+        androidCredential.setCredentialBundle(credentialBundle);
+        return androidCredential;
+      }),
+      tap(credential => this.saveCredentialInLocalStorage(credential.getPersistable()))
     );
   }
 
@@ -80,10 +80,7 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
     };
     return super.updateCredential$(requestBody).pipe(
       map(() => true),
-      tap(() => {
-        const persistable = credential.getPersistable<Persistable>();
-        this.saveCredentialInLocalStorage(persistable);
-      }),
+      tap(() => this.saveCredentialAsUserSetting$(credential)),
       catchError(() => of(false))
     );
   }
@@ -92,10 +89,10 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
     this.storageStateService.updateStateEntity(this.credential_key, data, { highPriorityKey: true });
   }
 
-  public saveCredentialAsUserSetting$(credential: AndroidCredential<any>): Observable<boolean> {
+  private saveCredentialAsUserSetting$(credential: AndroidCredential<any>): Promise<boolean> {
     return this.settingsFacadeService
       .saveUserSetting(User.Settings.MOBILE_CREDENTIAL_ID, credential.getId())
-      .pipe(take(1));
+      .pipe(take(1)).toPromise();
   }
 
   private getCredentialFromCacheOrUserSettings$(): Observable<Persistable> {

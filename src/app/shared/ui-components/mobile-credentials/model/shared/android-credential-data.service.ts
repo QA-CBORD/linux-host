@@ -37,7 +37,7 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
         return this.storageStateService.getStateEntityByKey$<Persistable>(this.credential_key).pipe(
           map(data => {
             if (data) {
-              androidCredentials.setCredentialData(data.value);
+              androidCredentials.setCredentialBundle(data.value);
             }
             return androidCredentials;
           })
