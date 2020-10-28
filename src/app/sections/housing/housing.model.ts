@@ -113,9 +113,11 @@ export class OccupantDetailsResponse implements OccupantDetailsResponseOptions {
   occupants: FacilityOccupantDetails[];
 
   constructor(options: any) {
-    if(options ==null || typeof options !== 'object') {
-      options = {} as OccupantDetailsResponseOptions;
+    if(options ==null || !Array.isArray(options)) {
+      options = [] as OccupantDetailsResponseOptions[];
     }
-    this.occupants = options.occupants;
+    this.occupants = Array.isArray(options)? options.map(x => {
+      return   new FacilityOccupantDetails(x)
+    }): options as FacilityOccupantDetails[];
   }
 }

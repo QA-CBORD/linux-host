@@ -32,7 +32,11 @@ export class UnitDetailsPage implements OnInit {
     this.unit = this._stateService.getUnitDetails(facilityKey, unitKey);
     if (this.roommatesExists()) {
       const activeRoomSelect = this._stateService.getActiveRoomSelect();
-      this._housingService.getOccupantDetails(activeRoomSelect.key, facilityKey);
+      this._housingService.getOccupantDetails(activeRoomSelect.key, unitKey).subscribe(
+        (occupantDetails) => {
+          this.occupants = occupantDetails;
+
+      });
     }
     console.log(this.unit);
   }
