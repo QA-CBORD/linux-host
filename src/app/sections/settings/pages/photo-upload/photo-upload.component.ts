@@ -73,8 +73,7 @@ export class PhotoUploadComponent implements OnInit {
     private readonly photoUploadService: PhotoUploadService,
     private readonly loadingService: LoadingService,
     private readonly actionSheetCtrl: ActionSheetController,
-    private readonly cd: ChangeDetectorRef,
-    private readonly platform: Platform
+    private readonly cd: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
