@@ -24,8 +24,8 @@ export class UserFacadeService extends ServiceStateFacade {
   private userKey = 'get_user';
   private userAddressKey = 'get_user_address';
   private fcmTokenKey = 'fcm_token';
-  public static APPLE_WALLET_ENABLED = "appleWalletEnabled";
-  public static ANDROID_CREDENTAILS_ENABLED = "androidMobileCredEnabled";
+  public static APPLE_WALLET_ENABLED = 'appleWalletEnabled';
+  public static ANDROID_CREDENTAILS_ENABLED = 'androidMobileCredEnabled';
 
   constructor(
     private readonly userApiService: UserApiService,
@@ -151,27 +151,29 @@ export class UserFacadeService extends ServiceStateFacade {
       : of(false);
   }
 
-  mobileCredentialSettings(): Observable<{isAppleWalletEnabled: Function, isAndroidCredEnabled: Function}>{
-    return forkJoin(this.isAppleWalletEnabled$(), this.isAndroidMobileCredEnabled$())
-               .pipe(switchMap(([AppleWalletEnabled, androidCredEnabled]) => {
-                 return of({
-                   isAppleWalletEnabled: () => {
-                     return  AppleWalletEnabled;
-                    },
-                   isAndroidCredEnabled: () => {
-                    return androidCredEnabled;
-                  }
-                  });
-          }));
+  mobileCredentialSettings(): Observable<{ isAppleWalletEnabled: Function; isAndroidCredEnabled: Function }> {
+    return forkJoin(this.isAppleWalletEnabled$(), this.isAndroidMobileCredEnabled$()).pipe(
+      switchMap(([AppleWalletEnabled, androidCredEnabled]) => {
+        return of({
+          isAppleWalletEnabled: () => {
+            return AppleWalletEnabled;
+          },
+          isAndroidCredEnabled: () => {
+            return androidCredEnabled;
+          },
+        });
+      })
+    );
   }
 
-  isAndroidMobileCredEnabled$(): Observable<boolean>{
-    if(!this.nativeProvider.isAndroid()){
-       return of(false);
-     }
-    return this.settingsFacadeService.getSetting(Settings.Setting.ANDROID_MOBILE_CREDENTIAL_ENABLED)
-                 .pipe(map(({value}) => Boolean(Number(value))),
-                 take(1));
+  isAndroidMobileCredEnabled$(): Observable<boolean> {
+    if (!this.nativeProvider.isAndroid()) {
+      return of(false);
+    }
+    return this.settingsFacadeService.getSetting(Settings.Setting.ANDROID_MOBILE_CREDENTIAL_ENABLED).pipe(
+      map(({ value }) => Boolean(Number(value))),
+      take(1)
+    );
   }
 
   private getPhotoIdByStatus(photoList: UserPhotoInfo[], status: number = 1): UserPhotoInfo | undefined {
