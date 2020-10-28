@@ -8,10 +8,10 @@ import { FacilityOccupantDetails } from '@sections/housing/roommate/rooomate.mod
 })
 export class RoommateComponent implements OnInit {
   @Input() patron : FacilityOccupantDetails;
+  @Input() roommateNumber: number;
   constructor() { }
 
   ngOnInit() {
-    console.log(this.patron);
   }
 
 }
