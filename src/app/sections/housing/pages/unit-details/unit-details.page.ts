@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 
 
 import { Unit } from '@sections/housing/unit/unit.model';
@@ -25,18 +25,14 @@ export class UnitDetailsPage implements OnInit {
   ) {}
 
   unit: Unit;
-  occupants: FacilityOccupantDetails[];
+  occupants$: Observable<FacilityOccupantDetails[]>;
   ngOnInit() {
     const facilityKey = parseInt(this._route.snapshot.paramMap.get('buildingKey'), 10);
     const unitKey = parseInt(this._route.snapshot.paramMap.get('unitKey'), 10);
     this.unit = this._stateService.getUnitDetails(facilityKey, unitKey);
     if (this.roommatesExists()) {
       const activeRoomSelect = this._stateService.getActiveRoomSelect();
-      this._housingService.getOccupantDetails(activeRoomSelect.key, unitKey).subscribe(
-        (occupantDetails) => {
-          this.occupants = occupantDetails;
-
-      });
+      this.occupants$ = this._housingService.getOccupantDetails(activeRoomSelect.key, unitKey)
     }
     console.log(this.unit);
   }

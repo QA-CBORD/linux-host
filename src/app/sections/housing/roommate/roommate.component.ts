@@ -10,6 +10,8 @@ export class RoommateComponent implements OnInit {
   @Input() patron : FacilityOccupantDetails;
   constructor() { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    console.log(this.patron);
+  }
 
 }
