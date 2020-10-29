@@ -28,7 +28,7 @@ import {
 import { ApplicationDetails } from './applications/applications.model';
 import { Facility, FacilityDetailsToFacilityMapper } from './facilities/facilities.model';
 import { ContractDetails, ContractListDetails } from './contracts/contracts.model';
-import { FacilityOccupantDetails } from '@sections/housing/roommate/rooomate.model';
+import { FacilityOccupantDetails } from '@sections/housing/roommate/roomate.model';
 
 @Injectable({
   providedIn: 'root',

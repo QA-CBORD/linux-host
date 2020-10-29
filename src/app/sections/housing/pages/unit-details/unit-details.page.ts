@@ -5,7 +5,7 @@ import { Observable, Subscription } from 'rxjs';
 
 import { Unit } from '@sections/housing/unit/unit.model';
 import {  RoomsStateService } from '@sections/housing/rooms/rooms-state.service';
-import { FacilityOccupantDetails } from '@sections/housing/roommate/rooomate.model';
+import { FacilityOccupantDetails } from '@sections/housing/roommate/roomate.model';
 import { HousingService } from '@sections/housing/housing.service';
 
 

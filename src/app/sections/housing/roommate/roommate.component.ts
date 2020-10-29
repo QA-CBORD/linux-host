@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FacilityOccupantDetails } from '@sections/housing/roommate/rooomate.model';
+import { FacilityOccupantDetails } from '@sections/housing/roommate/roomate.model';
 
 @Component({
   selector: 'st-roommate',
