@@ -40,7 +40,7 @@ export interface FacilityDetailsOptions {
   topLevelKey: number;
   currentOccupancy: number //currentOccupancyCount?
   attributes: FacilityAttribute[];
-  occupancyKeys: number[];
+  occupantKeys: number[];
 }
 
 export class FacilityDetails {
@@ -64,7 +64,7 @@ export class FacilityDetails {
       this.attributes = options.attributes.map(x => new FacilityAttribute(x.facilityAttributeKey, x.facilityKey,
         x.attributeConsumerKey, x.value,x.name , x.effectiveDate, x.endDate));
     }
-    this.occupantKeys = this.occupantKeys || [];
+    this.occupantKeys = options.occupantKeys || [];
   }
 }
 

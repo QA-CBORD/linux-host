@@ -86,7 +86,7 @@ export class EnvironmentFacadeService extends ServiceStateFacade {
     site_url: 'https://get.cbord.com',
     secmsg_api: 'https://secmsg.api.cbord.com',
     image_url: 'https://object-store.api.cbord.com/image/',
-    housing_aws_url: 'https://z6u8er70s9.execute-api.us-east-1.amazonaws.com',
+    housing_aws_url: 'https://housing.api.cbord.com',
     partner_services_url: 'https://api.partnerpayments.cbord.com',
   };
 
