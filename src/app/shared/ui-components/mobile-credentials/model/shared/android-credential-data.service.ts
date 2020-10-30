@@ -14,7 +14,7 @@ const api_version = 'v1';
 const resourceUrls = {
   activePasses: `/android/${api_version}/activePasses`,
   activePassesDebug: '../../../../../assets/mock/activepasses.json',
-  credentialsDebug: '../../../../../assets/mock/android_credentials.json'
+  credentialsDebug: '../../../../../assets/mock/android_credentials.json',
 };
 
 export class AndroidCredentialDataService extends MobileCredentialDataService {
@@ -50,7 +50,8 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
     return this.getCredentialFor(requestBody, extraHeaders).pipe(
       take(1),
       map((credentialData: any[]) => {
-        return credentialData[0];
+        let [credentialBundle] = credentialData;
+        return credentialBundle;
       })
     );
   }
@@ -69,15 +70,15 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
     );
   }
 
-  protected getDefaultHeaders(): Observable<HttpHeaders>{
+  protected getDefaultHeaders(): Observable<HttpHeaders> {
     return this.omniIDJwtToken$().pipe(
       map(omniIDJwtToken => {
-        return new HttpHeaders({ 
-          Authorization: `Bearer ${omniIDJwtToken}` 
+        return new HttpHeaders({
+          Authorization: `Bearer ${omniIDJwtToken}`,
         });
       })
-    )
-  } 
+    );
+  }
 
   private getCredentialFor(body: object, extraHeaders?: object): Observable<any> {
     /**
@@ -167,10 +168,9 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
   }
 
   mockAndroidCredentials(): Observable<any> {
-    return this.http
-      .get<any>(resourceUrls.credentialsDebug)
+    return this.http.get<any>(resourceUrls.credentialsDebug);
   }
-  
+
   mockActivePasses(): Observable<any> {
     return this.http.get<any>(resourceUrls.activePassesDebug).pipe(
       map(({ credStatus, passes, referenceIdentifier }) => {

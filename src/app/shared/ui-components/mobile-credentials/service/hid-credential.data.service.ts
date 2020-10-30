@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
@@ -17,6 +17,8 @@ const api_version = 'v1';
 const resourceUrls = {
   credentialUrl: `/android/${api_version}/credential`,
 };
+
+const CREDENTIAL_ALREADY_DELETED_ERROR = 'Credential has already been deleted';
 
 @Injectable()
 export class HidCredentialDataService extends AndroidCredentialDataService {
@@ -52,7 +54,13 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
               this.storageStateService.deleteStateEntityByKey(this.credential_key).catch(() => {}); // just fail silently if err
               this.deleteCredentialFromUserSetting$().catch(() => {}); // just fail silently if err
             }),
-            catchError(() => of(false))
+            catchError((serverErrorResponse: HttpErrorResponse) => {
+              let credentialAlreadyDeletedError = false;
+              if (serverErrorResponse.error.detail) {
+                credentialAlreadyDeletedError = serverErrorResponse.error.detail.includes(CREDENTIAL_ALREADY_DELETED_ERROR);
+              }
+              return of(credentialAlreadyDeletedError);
+            })
           );
         } else {
           return of(false);

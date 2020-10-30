@@ -6,15 +6,13 @@ import { catchError, first, map, switchMap, take, tap } from 'rxjs/operators';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
 import { MobileCredentialStatuses } from '../../shared/credential-state';
 import { AbstractAndroidCredentialManager } from '../abstract-android-credential.management';
-import { AndroidCredential, HID, HIDCredential } from '../android-credential.model';
+import { AndroidCredential, HIDCredential } from '../android-credential.model';
 import { HidCredentialDataService } from '../../../service/hid-credential.data.service';
 import { HIDSdkManager } from './hid-plugin.wrapper';
 import { Injectable } from '@angular/core';
 
 @Injectable()
 export class HIDCredentialManager extends AbstractAndroidCredentialManager {
-  private static instance: HIDCredentialManager;
-  private static TRANSACTION_SUCCESS_FULL = 'TRANSACTION_SUCCESS';
   private customLoadingOptions = { message: 'Processing ... Please wait', duration: 100000 };
   private transactionRetryCount: number = 1;
   private transactionMaxRetryCount: number = 2;
@@ -161,7 +159,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
   }
 
   private checkIfItsBeenProvisionedOnThisDevice$(): Observable<boolean> {
-    return from(this.hidSdkManager().checkIfEndpointSetup$).pipe(map(hidEndpointIsSetup => hidEndpointIsSetup));
+    return from(this.hidSdkManager().isEndpointActive()).pipe(map(hidEndpointIsSetup => hidEndpointIsSetup));
   }
 
   credentialEnabled$(): Observable<boolean> {
@@ -172,7 +170,11 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
         }
         return from(this.hidSdkManager().initializeSdk()).pipe(
           map(hidSdkInitializationStatus => {
-            return hidSdkInitializationStatus == HIDCredentialManager.TRANSACTION_SUCCESS_FULL;
+            return hidSdkInitializationStatus == HIDSdkManager.TRANSACTION_SUCCESS;
+          }),
+          catchError(error => {
+            console.log('Error Initializing HID sdk: ', error);
+            return of(false);
           })
         );
       }),
@@ -184,6 +186,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
           return this.checkIfItsBeenProvisionedOnThisDevice$().pipe(
             map(credentialProvisioneddOnThisDevice => {
               if (credentialProvisioneddOnThisDevice) {
+                this.hidSdkManager().doPostInitWork();
                 return true;
               }
               this.mCredential.setStatus(MobileCredentialStatuses.IS_AVAILABLE);
@@ -191,6 +194,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
             })
           );
         } else {
+          this.hidSdkManager().refreshEndpoint();
           return of(true);
         }
       })
@@ -241,9 +245,9 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
 
   private get doNativeCredentialInstall$(): Promise<boolean> {
     return this.hidSdkManager()
-      .installCredential((this.mCredential as HIDCredential).getInvitationCode())
+      .setupEndpoint((this.mCredential as HIDCredential).getInvitationCode())
       .then(transactionResult => {
-        let transactionSucceeded = transactionResult == HIDCredentialManager.TRANSACTION_SUCCESS_FULL;
+        let transactionSucceeded = transactionResult == HIDSdkManager.TRANSACTION_SUCCESS;
         if (transactionSucceeded) {
           return true;
         }
@@ -257,16 +261,17 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
         this.mCredential.setStatus(MobileCredentialStatuses.IS_PROVISIONED);
         this.updateCredentialOnServer$()
           .then(() => {
+            this.hidSdkManager().doPostInstallWork();
+            delete this.mCredential.credentialBundle.invitationCode;
+            this.credentialStateChangeListener.onCredentialStateChanged();
             this.resetRetryCount();
             this.loadingService.closeSpinner();
-            delete this.mCredential.credentialBundle.invitationCode;
-            this.credentialStateChangeSubscription.onCredentialStateChanged();
           })
           .catch(() => {
             this.handleRetry(this.updateCredentialOnServer$)
               .then(() => {
-                this.deleteCredentialFromDevice$().then(() => this.showInstallationErrorAlert());
-                this.credentialStateChangeSubscription.onCredentialStateChanged();
+                this.hidSdkManager().doPostInstallWork();
+                this.credentialStateChangeListener.onCredentialStateChanged();
               })
               .catch(() => {
                 // still failed after 3 retry..then we want to undo the installation on device and ask user to try again later.
@@ -389,10 +394,10 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
   };
 
   private deleteCredentialFromDevice$ = async (): Promise<boolean> => {
-    let transactionResultCode = await this.hidSdkManager().deleteCurrentCredential();
-    if (transactionResultCode == HIDCredentialManager.TRANSACTION_SUCCESS_FULL) {
+    let transactionResultCode = await this.hidSdkManager().deleteEndpoint();
+    if (transactionResultCode == HIDSdkManager.TRANSACTION_SUCCESS) {
       this.mCredential.setStatus(MobileCredentialStatuses.IS_AVAILABLE);
-      this.credentialStateChangeSubscription.onCredentialStateChanged();
+      this.credentialStateChangeListener.onCredentialStateChanged();
       return true;
     }
     throw new Error(transactionResultCode);
@@ -417,7 +422,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
           .catch(error => {
             this.showLoading();
             this.handleRetry(this.deleteCredentialFromDevice$, error.message)
-              .then(() => this.credentialStateChangeSubscription.onCredentialStateChanged())
+              .then(() => this.credentialStateChangeListener.onCredentialStateChanged())
               .catch(() => this.showInstallationErrorAlert('uninstall'))
               .finally(() => {
                 this.loadingService.closeSpinner();
