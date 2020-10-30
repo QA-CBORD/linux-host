@@ -1,0 +1,18 @@
+<div class="roommate__info">
+  <h4 class="roommate__name">Roommate {{roommateNumber + 1}}</h4>
+  <ion-grid>
+    <ion-col>
+      <div *ngFor="let attribute of patron.attributes" class="roommate__core-values">
+        <ion-item lines="none">
+          <ion-label class="information__label" position="floating">
+            ATTRIBUTE NAME
+          </ion-label>
+          <ion-text class="information__value ion-text-center">
+            <p>{{attribute.value}}</p>
+          </ion-text>
+        </ion-item>
+      </div>
+    </ion-col>
+  </ion-grid>
+
+</div>

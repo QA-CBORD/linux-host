@@ -11,6 +11,23 @@ unit__header {
   margin-bottom: 8px;
 }
 
+.unit__extaInfo{
+  color: blue;
+  height: 25px;
+  min-width: 70px;
+  margin-top: 15px;
+}
+
+.info__expander {
+  background-image: url("/assets/icon/angle-down.svg");
+  min-height: 20px;
+  max-height: 25px;
+  min-width: 20px;
+  max-width: 20px;
+  background-size: contain;
+  display: inline-flex;
+}
+
 .unit__type {
   margin: 0px 18px;
 }

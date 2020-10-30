@@ -9,11 +9,9 @@ export function generateFacilities(): any[] {
 function createFacilities(): FacilityDetails[] {
   return [{
     "facilityKey": 9000324,
-    "assetTypeKey": 0,
     "name": "205",
     "isTopLevel": false,
     "topLevelKey": 9000485,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000324,
@@ -50,11 +48,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000761,
-    "assetTypeKey": 0,
     "name": "105",
     "isTopLevel": false,
     "topLevelKey": 9000485,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000761,
@@ -91,11 +87,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000762,
-    "assetTypeKey": 0,
     "name": "106",
     "isTopLevel": false,
     "topLevelKey": 9000485,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000762,
@@ -132,11 +126,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000763,
-    "assetTypeKey": 0,
     "name": "107",
     "isTopLevel": false,
     "topLevelKey": 9000485,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000763,
@@ -173,11 +165,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000764,
-    "assetTypeKey": 0,
     "name": "108",
     "isTopLevel": false,
     "topLevelKey": 9000485,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000764,
@@ -214,11 +204,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000765,
-    "assetTypeKey": 0,
     "name": "109",
     "isTopLevel": false,
     "topLevelKey": 9000485,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000765,
@@ -255,11 +243,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000766,
-    "assetTypeKey": 0,
     "name": "110",
     "isTopLevel": false,
     "topLevelKey": 9000485,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000766,
@@ -296,11 +282,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000767,
-    "assetTypeKey": 0,
     "name": "111",
     "isTopLevel": false,
     "topLevelKey": 9000485,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000767,
@@ -337,11 +321,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000768,
-    "assetTypeKey": 0,
     "name": "112",
     "isTopLevel": false,
     "topLevelKey": 9000485,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000768,
@@ -378,11 +360,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000598,
-    "assetTypeKey": 0,
     "name": "200",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000598,
@@ -427,11 +407,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000325,
-    "assetTypeKey": 0,
     "name": "207",
     "isTopLevel": false,
     "topLevelKey": 9000485,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000325,
@@ -468,11 +446,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000323,
-    "assetTypeKey": 0,
     "name": "204",
     "isTopLevel": false,
     "topLevelKey": 9000485,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000323,
@@ -509,11 +485,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000321,
-    "assetTypeKey": 0,
     "name": "202",
     "isTopLevel": false,
     "topLevelKey": 9000485,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000321,
@@ -550,11 +524,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000485,
-    "assetTypeKey": 0,
     "name": "Able",
     "isTopLevel": true,
     "topLevelKey": 9000485,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000485,
@@ -591,11 +563,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000493,
-    "assetTypeKey": 0,
     "name": "101",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000493,
@@ -632,11 +602,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000573,
-    "assetTypeKey": 0,
     "name": "102",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000573,
@@ -681,11 +649,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000574,
-    "assetTypeKey": 0,
     "name": "103",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000574,
@@ -730,11 +696,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000599,
-    "assetTypeKey": 0,
     "name": "201",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000599,
@@ -771,11 +735,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000600,
-    "assetTypeKey": 0,
     "name": "202",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000600,
@@ -812,11 +774,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000601,
-    "assetTypeKey": 0,
     "name": "203",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000601,
@@ -853,11 +813,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000602,
-    "assetTypeKey": 0,
     "name": "204",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000602,
@@ -894,11 +852,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000603,
-    "assetTypeKey": 0,
     "name": "205",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000603,
@@ -935,11 +891,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000604,
-    "assetTypeKey": 0,
     "name": "206",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000604,
@@ -976,11 +930,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000605,
-    "assetTypeKey": 0,
     "name": "207",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000605,
@@ -1017,11 +969,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000606,
-    "assetTypeKey": 0,
     "name": "208",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000606,
@@ -1058,11 +1008,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000607,
-    "assetTypeKey": 0,
     "name": "209",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000607,
@@ -1099,11 +1047,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000608,
-    "assetTypeKey": 0,
     "name": "210",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000608,
@@ -1140,11 +1086,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000609,
-    "assetTypeKey": 0,
     "name": "211",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000609,
@@ -1181,11 +1125,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000610,
-    "assetTypeKey": 0,
     "name": "212",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000610,
@@ -1222,11 +1164,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000611,
-    "assetTypeKey": 0,
     "name": "213",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000611,
@@ -1263,11 +1203,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000612,
-    "assetTypeKey": 0,
     "name": "214",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000612,
@@ -1304,11 +1242,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000613,
-    "assetTypeKey": 0,
     "name": "215",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000613,
@@ -1345,11 +1281,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000614,
-    "assetTypeKey": 0,
     "name": "216",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000614,
@@ -1386,11 +1320,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000615,
-    "assetTypeKey": 0,
     "name": "217",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000615,
@@ -1427,11 +1359,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000616,
-    "assetTypeKey": 0,
     "name": "218",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000616,
@@ -1468,11 +1398,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000617,
-    "assetTypeKey": 0,
     "name": "219",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000617,
@@ -1509,11 +1437,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000618,
-    "assetTypeKey": 0,
     "name": "220",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000618,
@@ -1550,11 +1476,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000619,
-    "assetTypeKey": 0,
     "name": "221",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000619,
@@ -1591,11 +1515,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000620,
-    "assetTypeKey": 0,
     "name": "222",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000620,
@@ -1632,11 +1554,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000621,
-    "assetTypeKey": 0,
     "name": "223",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000621,
@@ -1673,11 +1593,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000622,
-    "assetTypeKey": 0,
     "name": "224",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000622,
@@ -1714,11 +1632,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000623,
-    "assetTypeKey": 0,
     "name": "225",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000623,
@@ -1755,11 +1671,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000624,
-    "assetTypeKey": 0,
     "name": "226",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000624,
@@ -1796,11 +1710,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000654,
-    "assetTypeKey": 0,
     "name": "256",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000654,
@@ -1837,11 +1749,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000655,
-    "assetTypeKey": 0,
     "name": "257",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000655,
@@ -1878,11 +1788,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000656,
-    "assetTypeKey": 0,
     "name": "258",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000656,
@@ -1919,11 +1827,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000657,
-    "assetTypeKey": 0,
     "name": "259",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000657,
@@ -1960,11 +1866,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000658,
-    "assetTypeKey": 0,
     "name": "260",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000658,
@@ -2001,11 +1905,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000659,
-    "assetTypeKey": 0,
     "name": "261",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000659,
@@ -2042,11 +1944,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000660,
-    "assetTypeKey": 0,
     "name": "262",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000660,
@@ -2083,11 +1983,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000661,
-    "assetTypeKey": 0,
     "name": "263",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000661,
@@ -2124,11 +2022,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000662,
-    "assetTypeKey": 0,
     "name": "264",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000662,
@@ -2165,11 +2061,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000663,
-    "assetTypeKey": 0,
     "name": "265",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000663,
@@ -2206,11 +2100,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000664,
-    "assetTypeKey": 0,
     "name": "266",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000664,
@@ -2247,11 +2139,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000665,
-    "assetTypeKey": 0,
     "name": "267",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000665,
@@ -2288,11 +2178,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000666,
-    "assetTypeKey": 0,
     "name": "268",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000666,
@@ -2329,11 +2217,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000667,
-    "assetTypeKey": 0,
     "name": "269",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000667,
@@ -2370,11 +2256,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000668,
-    "assetTypeKey": 0,
     "name": "270",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000668,
@@ -2411,11 +2295,10 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000669,
-    "assetTypeKey": 0,
+
     "name": "271",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000669,
@@ -2452,11 +2335,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000670,
-    "assetTypeKey": 0,
     "name": "272",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000670,
@@ -2493,11 +2374,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000671,
-    "assetTypeKey": 0,
     "name": "273",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000671,
@@ -2534,11 +2413,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000672,
-    "assetTypeKey": 0,
     "name": "274",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000672,
@@ -2575,11 +2452,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000673,
-    "assetTypeKey": 0,
     "name": "275",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000673,
@@ -2616,11 +2491,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000674,
-    "assetTypeKey": 0,
     "name": "276",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000674,
@@ -2657,11 +2530,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000675,
-    "assetTypeKey": 0,
     "name": "277",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000675,
@@ -2698,11 +2569,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000676,
-    "assetTypeKey": 0,
     "name": "278",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000676,
@@ -2739,11 +2608,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000677,
-    "assetTypeKey": 0,
     "name": "279",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000677,
@@ -2780,11 +2647,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000678,
-    "assetTypeKey": 0,
     "name": "280",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000678,
@@ -2821,11 +2686,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000679,
-    "assetTypeKey": 0,
     "name": "281",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000679,
@@ -2862,11 +2725,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000680,
-    "assetTypeKey": 0,
     "name": "282",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000680,
@@ -2903,11 +2764,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000681,
-    "assetTypeKey": 0,
     "name": "283",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000681,
@@ -2944,11 +2803,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000682,
-    "assetTypeKey": 0,
     "name": "284",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000682,
@@ -2985,11 +2842,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000683,
-    "assetTypeKey": 0,
     "name": "285",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000683,
@@ -3026,11 +2881,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000684,
-    "assetTypeKey": 0,
     "name": "286",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000684,
@@ -3067,11 +2920,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000685,
-    "assetTypeKey": 0,
     "name": "287",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000685,
@@ -3108,11 +2959,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000686,
-    "assetTypeKey": 0,
     "name": "288",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000686,
@@ -3149,11 +2998,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000687,
-    "assetTypeKey": 0,
     "name": "289",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000687,
@@ -3190,11 +3037,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000688,
-    "assetTypeKey": 0,
     "name": "290",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000688,
@@ -3231,11 +3076,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000689,
-    "assetTypeKey": 0,
     "name": "291",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000689,
@@ -3272,11 +3115,10 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000690,
-    "assetTypeKey": 0,
+
     "name": "292",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000690,
@@ -3313,11 +3155,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000691,
-    "assetTypeKey": 0,
     "name": "293",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000691,
@@ -3354,11 +3194,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000692,
-    "assetTypeKey": 0,
     "name": "294",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000692,
@@ -3395,11 +3233,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000693,
-    "assetTypeKey": 0,
     "name": "295",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000693,
@@ -3436,11 +3272,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000694,
-    "assetTypeKey": 0,
     "name": "296",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000694,
@@ -3477,11 +3311,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000695,
-    "assetTypeKey": 0,
     "name": "297",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000695,
@@ -3518,11 +3350,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000696,
-    "assetTypeKey": 0,
     "name": "298",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000696,
@@ -3559,11 +3389,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000326,
-    "assetTypeKey": 0,
     "name": "208",
     "isTopLevel": false,
     "topLevelKey": 9000485,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000326,
@@ -3600,11 +3428,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000322,
-    "assetTypeKey": 0,
     "name": "203",
     "isTopLevel": false,
     "topLevelKey": 9000485,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000322,
@@ -3641,11 +3467,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000330,
-    "assetTypeKey": 0,
     "name": "213",
     "isTopLevel": false,
     "topLevelKey": 9000485,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000330,
@@ -3682,11 +3506,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000625,
-    "assetTypeKey": 0,
     "name": "227",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000625,
@@ -3723,11 +3545,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000316,
-    "assetTypeKey": 0,
     "name": "Anderson Hall",
     "isTopLevel": true,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000316,
@@ -3764,11 +3584,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000626,
-    "assetTypeKey": 0,
     "name": "228",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000626,
@@ -3805,11 +3623,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000627,
-    "assetTypeKey": 0,
     "name": "229",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000627,
@@ -3846,11 +3662,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000628,
-    "assetTypeKey": 0,
     "name": "230",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000628,
@@ -3887,11 +3701,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000629,
-    "assetTypeKey": 0,
     "name": "231",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000629,
@@ -3928,11 +3740,10 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000630,
-    "assetTypeKey": 0,
+
     "name": "232",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000630,
@@ -3969,11 +3780,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000631,
-    "assetTypeKey": 0,
     "name": "233",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000631,
@@ -4010,11 +3819,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000327,
-    "assetTypeKey": 0,
     "name": "209",
     "isTopLevel": false,
     "topLevelKey": 9000485,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000327,
@@ -4051,11 +3858,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000328,
-    "assetTypeKey": 0,
     "name": "210",
     "isTopLevel": false,
     "topLevelKey": 9000485,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000328,
@@ -4092,11 +3897,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000329,
-    "assetTypeKey": 0,
     "name": "212",
     "isTopLevel": false,
     "topLevelKey": 9000485,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000329,
@@ -4133,11 +3936,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000331,
-    "assetTypeKey": 0,
     "name": "214",
     "isTopLevel": false,
     "topLevelKey": 9000485,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000331,
@@ -4174,11 +3975,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000332,
-    "assetTypeKey": 0,
     "name": "215",
     "isTopLevel": false,
     "topLevelKey": 9000485,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000332,
@@ -4215,11 +4014,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000333,
-    "assetTypeKey": 0,
     "name": "217",
     "isTopLevel": false,
     "topLevelKey": 9000485,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000333,
@@ -4264,11 +4061,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000334,
-    "assetTypeKey": 0,
     "name": "218",
     "isTopLevel": false,
     "topLevelKey": 9000485,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000334,
@@ -4313,11 +4108,10 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000335,
-    "assetTypeKey": 0,
+
     "name": "219",
     "isTopLevel": false,
     "topLevelKey": 9000485,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000335,
@@ -4354,11 +4148,10 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000336,
-    "assetTypeKey": 0,
+
     "name": "352-354",
     "isTopLevel": false,
     "topLevelKey": 9000485,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000336,
@@ -4395,11 +4188,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000338,
-    "assetTypeKey": 0,
     "name": "356",
     "isTopLevel": false,
     "topLevelKey": 9000485,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000338,
@@ -4436,11 +4227,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000339,
-    "assetTypeKey": 0,
     "name": "358",
     "isTopLevel": false,
     "topLevelKey": 9000485,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000339,
@@ -4477,11 +4266,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000340,
-    "assetTypeKey": 0,
     "name": "360-362",
     "isTopLevel": false,
     "topLevelKey": 9000485,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000340,
@@ -4518,11 +4305,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000632,
-    "assetTypeKey": 0,
     "name": "234",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000632,
@@ -4559,11 +4344,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000633,
-    "assetTypeKey": 0,
     "name": "235",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000633,
@@ -4600,11 +4383,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000634,
-    "assetTypeKey": 0,
     "name": "236",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000634,
@@ -4641,11 +4422,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000635,
-    "assetTypeKey": 0,
     "name": "237",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000635,
@@ -4682,11 +4461,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000636,
-    "assetTypeKey": 0,
     "name": "238",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000636,
@@ -4723,11 +4500,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000637,
-    "assetTypeKey": 0,
     "name": "239",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000637,
@@ -4764,11 +4539,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000638,
-    "assetTypeKey": 0,
     "name": "240",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000638,
@@ -4805,11 +4578,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000639,
-    "assetTypeKey": 0,
     "name": "241",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000639,
@@ -4846,11 +4617,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000640,
-    "assetTypeKey": 0,
     "name": "242",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000640,
@@ -4887,11 +4656,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000641,
-    "assetTypeKey": 0,
     "name": "243",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000641,
@@ -4928,11 +4695,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000642,
-    "assetTypeKey": 0,
     "name": "244",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000642,
@@ -4969,11 +4734,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000643,
-    "assetTypeKey": 0,
     "name": "245",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000643,
@@ -5010,11 +4773,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000644,
-    "assetTypeKey": 0,
     "name": "246",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000644,
@@ -5051,11 +4812,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000645,
-    "assetTypeKey": 0,
     "name": "247",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000645,
@@ -5092,11 +4851,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000646,
-    "assetTypeKey": 0,
     "name": "248",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000646,
@@ -5133,11 +4890,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000647,
-    "assetTypeKey": 0,
     "name": "249",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000647,
@@ -5174,11 +4929,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000648,
-    "assetTypeKey": 0,
     "name": "250",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000648,
@@ -5215,11 +4968,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000649,
-    "assetTypeKey": 0,
     "name": "251",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000649,
@@ -5256,11 +5007,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000650,
-    "assetTypeKey": 0,
     "name": "252",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000650,
@@ -5297,11 +5046,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000651,
-    "assetTypeKey": 0,
     "name": "253",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000651,
@@ -5338,11 +5085,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000652,
-    "assetTypeKey": 0,
     "name": "254",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000652,
@@ -5379,11 +5124,9 @@ function createFacilities(): FacilityDetails[] {
     "occupantKeys": null
   }, {
     "facilityKey": 9000653,
-    "assetTypeKey": 0,
     "name": "255",
     "isTopLevel": false,
     "topLevelKey": 9000316,
-    "currentOccupancy": 0,
     "attributes": [{
       "facilityAttributeKey": 0,
       "facilityKey": 9000653,
