@@ -18,3 +18,32 @@ export class RoomSelect implements RoomSelectOptions{
         this.name = options.name;
     }
 }
+
+export interface CreateContractRequestOptions {
+  facilityKey: number;
+  assetKey: number;
+  facilityOrAsset: number;
+  StartDate: Date;
+  EndDate: Date;
+}
+
+
+export  class CreateContractRequest implements  CreateContractRequestOptions {
+
+  EndDate: Date;
+  StartDate: Date;
+  assetKey: number;
+  facilityKey: number;
+  facilityOrAsset: number;
+
+  constructor(options: CreateContractRequestOptions) {
+    if(!isDefined(options) || typeof options !== 'object')  {
+      options = {} as CreateContractRequestOptions;
+    }
+    this.assetKey = options.assetKey;
+    this.facilityKey = options.facilityKey;
+    this.facilityOrAsset = options.facilityOrAsset;
+    this.StartDate = options.StartDate;
+    this.EndDate = options.EndDate;
+  }
+}

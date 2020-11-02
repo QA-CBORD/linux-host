@@ -7,6 +7,8 @@ import { Unit } from '@sections/housing/unit/unit.model';
 import {  RoomsStateService } from '@sections/housing/rooms/rooms-state.service';
 import { FacilityOccupantDetails } from '@sections/housing/roommate/roomate.model';
 import { HousingService } from '@sections/housing/housing.service';
+import { RoomsService } from '@sections/housing/rooms/rooms.service';
+import { ToastService } from '@core/service/toast/toast.service';
 
 
 @Component({
@@ -21,7 +23,9 @@ export class UnitDetailsPage implements OnInit {
   constructor(
     private _route: ActivatedRoute,
     private _stateService: RoomsStateService,
-    private _housingService: HousingService
+    private _roomsService: RoomsService,
+    private _housingService: HousingService,
+    private _toastService: ToastService
   ) {}
 
   unit: Unit;
@@ -46,5 +50,28 @@ export class UnitDetailsPage implements OnInit {
       } else {
         this.isExpanded = true;
       }
+  }
+
+  requestRoom(): void {
+    try {
+      const request = {
+        facilityKey: this.unit.key,
+        assetKey: null,
+        facilityOrAsset: 0,
+        StartDate: null,
+        EndDate: null,
+      }
+      this._roomsService.postContractRequest(request).subscribe(successfullyCreated => {
+        if (successfullyCreated) {
+          //route back to housing dashboard
+          console.log('success');
+        }
+      });
+    }
+    catch (e) {
+      this._toastService.showToast({
+        message: e.message
+      });
+    }
   }
 }
