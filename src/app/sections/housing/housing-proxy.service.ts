@@ -11,7 +11,8 @@ import { Response, ResponseStatus } from './housing.model';
   providedIn: 'root',
 })
 export class HousingProxyService {
-  constructor(private _http: HttpClient, private _housingAuthService: HousingAuthService) {}
+  constructor(private _http: HttpClient, private _housingAuthService: HousingAuthService) {
+  }
 
   request<T>(apiUrl: string, callback: (headers: HttpHeaders, apiUrl: string) => Observable<T>): Observable<T> {
     return this._housingAuthService.token$.pipe(
@@ -21,7 +22,7 @@ export class HousingProxyService {
         });
 
         return callback(headers, apiUrl);
-      })
+      }),
     );
   }
 
@@ -31,7 +32,7 @@ export class HousingProxyService {
         .get(apiUrl, {
           headers,
         })
-        .pipe(map((response: Response) => response.data))
+        .pipe(map((response: Response) => response.data)),
     );
   }
 
@@ -39,7 +40,15 @@ export class HousingProxyService {
     return this.request<ResponseStatus>(apiUrl, (headers: HttpHeaders, apiUrl: string) =>
       this._http.put<ResponseStatus>(apiUrl, body, {
         headers: headers.set('Content-Type', 'application/json'),
-      })
+      }),
+    );
+  }
+
+  post(apiUrl: string, body: any): Observable<ResponseStatus> {
+    return this.request<ResponseStatus>(apiUrl, (headers: HttpHeaders, apiUrl: string) =>
+      this._http.post<ResponseStatus>(apiUrl, body, {
+        headers: headers.set('Content-Type', 'application/json'),
+      }),
     );
   }
 }

@@ -143,6 +143,7 @@ export class HousingService {
     )
   }
 
+
   _handleGetRoomSelectsError(): Observable<RoomSelectResponse> {
     const roomSelects: RoomSelect[] = [];
     this._setRoomsState(roomSelects);
