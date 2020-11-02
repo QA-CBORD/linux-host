@@ -10,31 +10,29 @@ import { CreateContractRequestOptions } from '@sections/housing/rooms/rooms.mode
   providedIn: 'root',
 })
 export class RoomsService {
+  private _roomSelectUrl = `${
+    this._environment.getEnvironmentObject().housing_aws_url
+  }/roomselectproxy/v.1.0/room-selects-proxy`;
 
-  private _roomSelectUrl = `
-  ${this._environment.getEnvironmentObject().housing_aws_url}/room-selects-proxy/v.1.0/room-selects-proxy/contracts/self`;
-
-  constructor(
-    private _proxy: HousingProxyService,
-    private _environment: EnvironmentFacadeService,
-  ) {
-  }
+  constructor(private _proxy: HousingProxyService, private _environment: EnvironmentFacadeService) {}
 
   postContractRequest(request: CreateContractRequestOptions): Observable<boolean> {
     const url = `${this._roomSelectUrl}/contracts/self`;
 
     return this._proxy.post(url, request).pipe(
       map(responseStatus => {
-          if(isSuccessful(responseStatus)) {
-            return true;
-          } else {
-            console.log(responseStatus);
-            throw new Error(responseStatus.message);
-          }
+        if (isSuccessful(responseStatus)) {
+          return true;
+        } else {
+          console.log(responseStatus);
+          throw new Error(responseStatus.message);
+        }
 
-          return false;
+        return false;
       }),
-      catchError(err => { throw  err})
-    )
+      catchError(err => {
+        throw err;
+      })
+    );
   }
 }
