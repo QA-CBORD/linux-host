@@ -132,10 +132,10 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
   public updateEndpointStateInfo$(endpointActive: boolean = true): Promise<void> {
     return this.getCredentialFromCacheOrUserSettings$()
       .pipe(
+        first(),
         map(endpointInfo => {
           endpointInfo.endpointActive = endpointActive;
           this.saveCredentialInLocalStorage(endpointInfo);
-          return void 0;
         })
       )
       .toPromise();
