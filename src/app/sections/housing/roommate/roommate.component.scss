@@ -1,0 +1,34 @@
+@import 'tools';
+
+
+.roommate__name {
+  @include font-nunito-semibold(14px);
+}
+
+.roommate__core-values {
+  padding: 5px;
+  border: #1e2023;
+  margin-top: 5px;
+  border-radius: 7px;
+}
+
+.roommate__info {
+  padding: 5px;
+  border: 1px solid #E8E8E8;
+  border-radius: 7px;
+  -webkit-box-shadow: 0 10px 6px -5px #777;
+  -moz-box-shadow: 0 10px 6px -5px #777;
+  box-shadow: 0 10px 6px -5px #777;
+  margin-right: 10px;
+}
+
+.information__label {
+  @include font-nunito-regular(12px);
+  color: $color-dusty-gray;
+  text-align: left;
+}
+
+.information__value {
+  @include font-nunito-semibold(16px);
+  margin-top: 30px;
+}

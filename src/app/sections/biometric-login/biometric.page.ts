@@ -28,9 +28,10 @@ export class BiometricPage implements OnInit {
 
   private async openPinModal(isBiometric: boolean): Promise<void> {
     try {
-      this.identityFacadeService.pinLoginSetup(isBiometric);
       this.loading = true;
+      this.loading = !!(await this.identityFacadeService.pinLoginSetup(isBiometric));
     } catch (e) {
+      this.loading = false;
     }
   }
 }

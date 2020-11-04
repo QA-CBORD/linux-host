@@ -30,3 +30,9 @@ export class Attribute implements AttributeOptions {
     }
   }
 }
+
+export class OccupantAttribute extends Attribute {
+  Name: string = 'Some Attribute'
+}
+
+

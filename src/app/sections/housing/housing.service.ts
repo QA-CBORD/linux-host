@@ -4,7 +4,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
 import { ROLES } from '../../app.global';
-import { forkJoin, Observable, of, Subject } from 'rxjs';
+import { forkJoin, Observable, of, pipe, Subject, throwError } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 
 
@@ -21,13 +21,14 @@ import { RoomSelect } from '@sections/housing/rooms/rooms.model';
 import {
   DefinitionsResponse,
   DetailsResponse,
-  FacilityDetailsResponse,
+  FacilityDetailsResponse, OccupantDetailsResponse, OccupantDetailsResponseOptions,
   Response,
   RoomSelectResponse,
 } from './housing.model';
 import { ApplicationDetails } from './applications/applications.model';
 import { Facility, FacilityDetailsToFacilityMapper } from './facilities/facilities.model';
 import { ContractDetails, ContractListDetails } from './contracts/contracts.model';
+import { FacilityOccupantDetails } from '@sections/housing/roommate/roomate.model';
 
 @Injectable({
   providedIn: 'root',
@@ -129,6 +130,19 @@ export class HousingService {
       catchError((e) =>{ throw e})
     );
   }
+
+  getOccupantDetails(roomSelectKey:number, facilityKey: number): Observable<FacilityOccupantDetails[]> {
+    const apiUrl = `${this._baseUrl}/roomselectproxy/v.1.0/room-selects-proxy/occupant-details/${roomSelectKey}/facilities/${facilityKey}`;
+    return this._housingProxyService.get<OccupantDetailsResponse>(apiUrl).pipe(
+      map(response => {
+        console.log(response);
+        const details = new OccupantDetailsResponse(response);
+        return details.occupants;
+      }),
+      catchError(err => {throw err})
+    )
+  }
+
   _handleGetRoomSelectsError(): Observable<RoomSelectResponse> {
     const roomSelects: RoomSelect[] = [];
     this._setRoomsState(roomSelects);
