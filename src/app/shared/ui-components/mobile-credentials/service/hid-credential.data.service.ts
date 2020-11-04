@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
@@ -6,7 +6,7 @@ import { InstitutionFacadeService } from '@core/facades/institution/institution.
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { Observable, of } from 'rxjs';
-import { catchError, map, switchMap, take, tap } from 'rxjs/operators';
+import { catchError, first, map, switchMap, take, tap } from 'rxjs/operators';
 import { User } from 'src/app/app.global';
 import { AndroidCredential, HID, Persistable } from '../model/android/android-credential.model';
 import { AndroidCredentialDataService } from '../model/shared/android-credential-data.service';
@@ -17,6 +17,8 @@ const api_version = 'v1';
 const resourceUrls = {
   credentialUrl: `/android/${api_version}/credential`,
 };
+
+const CREDENTIAL_ALREADY_DELETED_ERROR = 'Credential has already been deleted';
 
 @Injectable()
 export class HidCredentialDataService extends AndroidCredentialDataService {
@@ -43,14 +45,24 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
 
   deleteCredential$(): Observable<boolean> {
     return this.getCredentialFromCacheOrUserSettings$().pipe(
-      take(1),
-      switchMap(cachedCredentials => {
-        if (cachedCredentials) {
-          console.log('deleteCredential$ called...: ', cachedCredentials);
-          return super.deleteCredential$(cachedCredentials.id).pipe(
+      first(),
+      switchMap((cachedCredential: Persistable) => {
+        if (cachedCredential) {
+          return super.deleteCredential$(cachedCredential.id).pipe(
             map(() => true),
-            tap(() => this.storageStateService.deleteStateEntityByKey(this.credential_key)),
-            catchError(() => of(false))
+            tap(() => {
+              this.storageStateService.deleteStateEntityByKey(this.credential_key).catch(() => {}); // just fail silently if err
+              this.deleteCredentialFromUserSetting$().catch(() => {}); // just fail silently if err
+            }),
+            catchError((serverErrorResponse: HttpErrorResponse) => {
+              let credentialAlreadyDeletedError = false;
+              if (serverErrorResponse.error.detail) {
+                credentialAlreadyDeletedError = serverErrorResponse.error.detail.includes(
+                  CREDENTIAL_ALREADY_DELETED_ERROR
+                );
+              }
+              return of(credentialAlreadyDeletedError);
+            })
           );
         } else {
           return of(false);
@@ -60,15 +72,16 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
     );
   }
 
-  androidCredential$(credential: AndroidCredential<any>): Observable<AndroidCredential<HID>> {
+  androidCredential$(androidCredential: AndroidCredential<any>): Observable<AndroidCredential<HID>> {
     let body = {
-      referenceIdentifier: credential.getReferenceIdentifier(),
+      referenceIdentifier: androidCredential.getReferenceIdentifier(),
     };
     return super.androidCredential$(body).pipe(
-      map(credentialData => {
-        credential.setCredentialData(credentialData);
-        return credential;
-      })
+      map(credentialBundle => {
+        androidCredential.setCredentialBundle(credentialBundle);
+        return androidCredential;
+      }),
+      tap(credential => this.saveCredentialInLocalStorage(credential.getPersistable()))
     );
   }
 
@@ -81,8 +94,11 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
     return super.updateCredential$(requestBody).pipe(
       map(() => true),
       tap(() => {
-        const persistable = credential.getPersistable<Persistable>();
-        this.saveCredentialInLocalStorage(persistable);
+        if (credential.isProvisioned()) {
+          this.saveCredentialInUserSetting$(credential);
+        } else if (credential.revoked()) {
+          this.deleteCredentialFromUserSetting$().catch(() => {});
+        }
       }),
       catchError(() => of(false))
     );
@@ -92,10 +108,37 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
     this.storageStateService.updateStateEntity(this.credential_key, data, { highPriorityKey: true });
   }
 
-  public saveCredentialAsUserSetting$(credential: AndroidCredential<any>): Observable<boolean> {
+  private deleteCredentialFromUserSetting$(): Promise<boolean> {
+    return this.settingsFacadeService.deleteUserSetting(User.Settings.MOBILE_CREDENTIAL_ID).toPromise();
+  }
+
+  private saveCredentialInUserSetting$(credential: AndroidCredential<any>): Promise<boolean> {
     return this.settingsFacadeService
       .saveUserSetting(User.Settings.MOBILE_CREDENTIAL_ID, credential.getId())
-      .pipe(take(1));
+      .pipe(take(1))
+      .toPromise();
+  }
+
+  public getEndpointStateInfo$(): Promise<Persistable> {
+    return this.storageStateService
+      .getStateEntityByKey$<Persistable>(this.credential_key)
+      .pipe(
+        first(),
+        map(data => (data ? data.value : null))
+      )
+      .toPromise();
+  }
+
+  public updateEndpointStateInfo$(endpointActive: boolean = true): Promise<void> {
+    return this.getCredentialFromCacheOrUserSettings$()
+      .pipe(
+        first(),
+        map(endpointInfo => {
+          endpointInfo.endpointActive = endpointActive;
+          this.saveCredentialInLocalStorage(endpointInfo);
+        })
+      )
+      .toPromise();
   }
 
   private getCredentialFromCacheOrUserSettings$(): Observable<Persistable> {

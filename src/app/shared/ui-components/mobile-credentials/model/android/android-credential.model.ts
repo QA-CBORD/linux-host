@@ -6,7 +6,7 @@ import { MobileCredential } from '../shared/mobile-credential';
 import { MobileCredentialConfig, MOBILE_CREDENTIAL_CONFIGS } from '../shared/mobile-credential-configs';
 
 export interface AndroidCredentialAttrs {
-  credentialData: any;
+  credentialBundle: any;
   credentialState: AndroidCredentialState;
 }
 
@@ -16,6 +16,7 @@ export interface AndroidCredentialState extends MobileCredentialState {
   credStatus: number;
   passes: number;
   issuer: string;
+  updateUiMsg(msg: string);
 }
 
 export class CredentialStateResolver {
@@ -43,25 +44,17 @@ export class CredentialStateResolver {
 
   private static hasAppleWallet(activePasses: ActivePasses): boolean {
     return (
-      activePasses.credStatus.iPhone == MobileCredentialStatuses.IS_AVAILABLE ||
-      activePasses.credStatus.iPhone == MobileCredentialStatuses.IS_PROVISIONED ||
-      (activePasses.credStatus.iWatch == MobileCredentialStatuses.IS_AVAILABLE ||
-        activePasses.credStatus.iWatch == MobileCredentialStatuses.IS_PROVISIONED)
+      activePasses.credStatus.iPhone != MobileCredentialStatuses.IS_DISABLED ||
+      activePasses.credStatus.iWatch != MobileCredentialStatuses.IS_DISABLED
     );
   }
 
   private static hasGoogleCredential(activePasses: ActivePasses): boolean {
-    return (
-      activePasses.credStatus.android_nxp == MobileCredentialStatuses.IS_AVAILABLE ||
-      activePasses.credStatus.android_nxp == MobileCredentialStatuses.IS_PROVISIONED
-    );
+    return activePasses.credStatus.android_nxp != MobileCredentialStatuses.IS_DISABLED;
   }
 
   private static hasHidCredential(activePasses: ActivePasses): boolean {
-    return (
-      activePasses.credStatus.android_hid == MobileCredentialStatuses.IS_AVAILABLE ||
-      activePasses.credStatus.android_hid == MobileCredentialStatuses.IS_PROVISIONED
-    );
+    return activePasses.credStatus.android_hid != MobileCredentialStatuses.IS_DISABLED;
   }
 }
 
@@ -88,6 +81,10 @@ export class AndroidCredentialStateEntity implements AndroidCredentialState {
     return this.getConfig().uiHelpIcon;
   }
 
+  updateUiMsg(msg: string) {
+    this.statusMsg = msg;
+  }
+
   isHID(): boolean {
     return this.getIssuer() == CredentialProviders.HID;
   }
@@ -106,8 +103,13 @@ export class AndroidCredentialStateEntity implements AndroidCredentialState {
     return this.credStatus == MobileCredentialStatuses.IS_PROVISIONED;
   }
 
+  revoked(): Boolean {
+    return this.credStatus == MobileCredentialStatuses.IS_REVOKED;
+  }
+
   isEnabled(): boolean {
-    return this.credStatus != MobileCredentialStatuses.IS_DISABLED;
+    console.log('Credential status: ' + this.credStatus);
+    return this.credStatus !== MobileCredentialStatuses.IS_DISABLED;
   }
 
   isAvailable(): boolean {
@@ -119,52 +121,59 @@ export class AndroidCredentialStateEntity implements AndroidCredentialState {
   }
 
   updateStatusMsg(): void {
-    this.statusMsg = this.isProvisioned()
-      ? this.getConfig().UI_MSG.WHEN_PROVISIONED
-      : this.isAvailable()
-      ? this.getConfig().UI_MSG.WHEN_AVAILABLE
-      : null;
+    if (this.isProvisioned()) {
+      this.statusMsg = this.getConfig().UI_MSG.WHEN_PROVISIONED;
+    } else if (this.isAvailable()) {
+      this.statusMsg = this.getConfig().UI_MSG.WHEN_AVAILABLE;
+    } else if (this.revoked()) {
+      this.statusMsg = this.getConfig().UI_MSG.WHEN_REVOKED;
+    } else {
+      this.statusMsg = null;
+    }
   }
 }
 
 // android credentials implementations.
 
 export abstract class AndroidCredential<T> extends MobileCredential implements AndroidCredentialAttrs {
-  public credentialData: T;
+  public credentialBundle: T;
   constructor(public credentialState: AndroidCredentialState) {
     super(credentialState);
   }
 
-  getCredentialData<T>(): T {
-    return this.credentialData as any;
+  getCredentialBundle<T>(): T {
+    return this.credentialBundle as any;
   }
 
-  setCredentialData<T>(data: T): void {
-    this.credentialData = <any>data;
+  setCredentialBundle<T>(data: T): void {
+    this.credentialBundle = <any>data;
   }
 
   getCredentialState(): AndroidCredentialState {
     return this.credentialState;
   }
 
-  providedBy(credentialProvider: CredentialProviders){
+  updateUiMsg(msg: string) {
+    this.credentialState.updateUiMsg(msg);
+  }
+
+  providedBy(credentialProvider: CredentialProviders) {
     return this.credentialState.providedBy(credentialProvider);
   }
 
-  abstract getPersistable<T>(): T;
+  abstract getPersistable(): Persistable;
 
-  getReferenceIdentifier(): string{
+  getReferenceIdentifier(): string {
     return this.credentialState.referenceIdentifier;
   }
 
-  getId(): string{
-    return this.credentialData ? this.getCredentialData<any>().id : null;
+  getId(): string {
+    return this.credentialBundle ? this.getCredentialBundle<any>().id : null;
   }
 
-  getCredStatus(): number{
+  getCredStatus(): number {
     return this.credentialState.credStatus;
   }
-
 }
 
 export interface HID extends Persistable {
@@ -182,6 +191,7 @@ export interface GOOGLE extends Persistable {
 
 export interface Persistable {
   id: string;
+  endpointActive?: boolean;
   referenceIdentifier?: string;
 }
 
@@ -190,14 +200,14 @@ export class HIDCredential extends AndroidCredential<HID> {
     super(credentialState);
   }
 
-  getPersistable<T>(): T {
-    let { id, issuer } = this.credentialData;
-    let { referenceIdentifier } = this.credentialState;
-    return <any>{ id, issuer, referenceIdentifier };
+  getPersistable(): Persistable {
+    let { id } = this.credentialBundle;
+    let endpointActive = false;
+    return { id, endpointActive };
   }
 
-  getInvitationCode():string{
-    return this.credentialData ? this.credentialData.invitationCode : null;
+  getInvitationCode(): string {
+    return this.credentialBundle ? this.credentialBundle.invitationCode : null;
   }
 }
 
@@ -206,9 +216,8 @@ export class GoogleCredential extends AndroidCredential<GOOGLE> {
     super(credentialState);
   }
 
-  getPersistable<T>(): T {
-    let { id, virtualCardUid, digitizationReference, issuer } = this.credentialData;
-    let { referenceIdentifier } = this.credentialState;
-    return <any>{ id, virtualCardUid, digitizationReference, issuer, referenceIdentifier };
+  getPersistable(): Persistable {
+    let { id } = this.credentialBundle;
+    return { id };
   }
 }

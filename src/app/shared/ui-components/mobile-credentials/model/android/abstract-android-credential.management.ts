@@ -6,7 +6,7 @@ import { AndroidCredential } from './android-credential.model';
 export abstract class AbstractAndroidCredentialManager implements MobileCredentialManager {
   protected mCredential: AndroidCredential<any>;
 
-  protected credentialStateChangeSubscription: CredentialStateChangeListener;
+  protected credentialStateChangeListener: CredentialStateChangeListener;
 
   constructor() {}
 
@@ -15,7 +15,7 @@ export abstract class AbstractAndroidCredentialManager implements MobileCredenti
   }
 
   setCredentialStateChangeListener(credentialStateChangeSubscription: CredentialStateChangeListener): void {
-    this.credentialStateChangeSubscription = credentialStateChangeSubscription;
+    this.credentialStateChangeListener = credentialStateChangeSubscription;
   }
 
   protected credentialUsageContentString$(): Promise<string> {

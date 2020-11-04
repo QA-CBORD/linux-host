@@ -12,6 +12,11 @@ export class AppleWalletCredentialState implements MobileCredentialState {
   constructor(private appleWalletInfo: AppleWalletInfo) {
     this.setAppleWalletMessage();
   }
+
+  revoked(): Boolean {
+    return false;
+  }
+
   providedBy(provider: CredentialProviders): boolean {
      return provider == CredentialProviders.APPLE;
   }

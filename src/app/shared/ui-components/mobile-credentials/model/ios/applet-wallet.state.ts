@@ -5,6 +5,12 @@ import { MobileCredentialConfig, MOBILE_CREDENTIAL_CONFIGS } from '../shared/mob
 export class AppleWalletState implements MobileCredentialState {
   constructor(private activePasses: ActivePasses) {}
 
+
+
+  revoked(): Boolean {
+    return false;
+  }
+
   providedBy(provider: CredentialProviders): boolean {
     return provider == CredentialProviders.APPLE;
   }

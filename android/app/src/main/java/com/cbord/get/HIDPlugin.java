@@ -13,47 +13,58 @@ import com.hid.origo.api.OrigoMobileKey;
 public class HIDPlugin extends Plugin {
 
     private HIDSDKManager hidsdkManager;
-    private static final String HID_SDK_TRANSACTION_RESULT = "hidSdkTransactionResult";
-    private static final String TRANSACTION_SUCCESS_FULL = "TRANSACTION_SUCCESS";
-    private static final String TAG = HIDPlugin.class.getSimpleName();
+    private static final String HID_SDK_TRANSACTION_RESULT = "transactionStatus";
+    private static  final String invitationCodeKey = "invitationCode";
  
     @PluginMethod()
-    public void initializeOrigo(PluginCall call) {
-        hidsdkManager = HIDSDKManager.getInstance(getActivity());
-        call.resolve(toJson(TRANSACTION_SUCCESS_FULL));
-    }
-
-    @PluginMethod()
-    public void startupOrigo(PluginCall call) {
-        hidsdkManager.onApplicationStarted((transactionResult -> {
+    public void initializeSdk(PluginCall call) {
+        try{
+            hidsdkManager = HIDSDKManager.getInstance(getActivity());
+        }catch (IllegalStateException ex) {
+            call.reject("failed");
+            return;
+        }
+        hidsdkManager.applicationStartup(transactionResult -> {
             call.resolve(toJson(transactionResult));
-        }));
+        });
     }
 
     @PluginMethod()
-    public void addCredential(PluginCall call){
- 
-        String invitationCode = call.getString("invitationCode");
+    public void setupEndpoint(PluginCall call){
+        String invitationCode = call.getString(invitationCodeKey);
         hidsdkManager.doHidCredentialFirstInstall(invitationCode, (transactionResult) -> {
             call.resolve(toJson(transactionResult));
         });
     }
 
+    @PluginMethod
+    public void refreshEndpoint(PluginCall call){
+       hidsdkManager.refreshEndpoint(transactionResult -> {
+            call.resolve(toJson(transactionResult));
+        });
+    }
+
+    @PluginMethod
+    public void startScanning(PluginCall call){
+        hidsdkManager.startScanning(transactionResult -> {
+            call.resolve(toJson(transactionResult));
+        });
+    }
+
     @PluginMethod()
-    public void deleteCredential(PluginCall call){
-        hidsdkManager.deleteCredential(transactionResult -> {
+    public void deleteEndpoint(PluginCall call){
+        hidsdkManager.deleteEndpoint(transactionResult -> {
             call.resolve(toJson((transactionResult)));
         });
     }
 
     @PluginMethod()
-    public void loadCredentialData(PluginCall call){
+    public void getEndpointInfo(PluginCall call){
         hidsdkManager.getCurrentEndpoint((resultObject) -> {
-            OrigoMobileKey origoMobileKey = null;
             if(resultObject != null){
                 JSObject jsonObject = new JSObject();
                 if(resultObject instanceof OrigoMobileKey){
-                    origoMobileKey =  (OrigoMobileKey)resultObject;
+                    OrigoMobileKey origoMobileKey =  (OrigoMobileKey)resultObject;
                     jsonObject.put("isActive", origoMobileKey.isActivated());
                     jsonObject.put("startDate", origoMobileKey.getBeginDate());
                     jsonObject.put("identifier", origoMobileKey.getIdentifier().oid().dataAsHex());
@@ -63,22 +74,31 @@ public class HIDPlugin extends Plugin {
                 }else{
                   call.resolve(toJson(resultObject));
                 }
-            }else{
+            } else{
                 call.resolve(toJson("null"));
             }
         });
     }
 
     @PluginMethod
-    public void checkIfEndpointIsSetup(PluginCall call){
-        boolean isEndpointSetup = hidsdkManager.isEndpointSetUpComplete();
-        call.resolve(toJson(isEndpointSetup));
+    public void isEndpointSetup(PluginCall call){
+        call.resolve(toJson(hidsdkManager.isEndpointSetup()));
     }
 
+    @PluginMethod
+    public void isEndpointActive(PluginCall call){
+        call.resolve(toJson(hidsdkManager.isEndpointActive()));
+    }
 
     private JSObject toJson(Object transactionResult){
         JSObject jsonObject = new JSObject();
         jsonObject.put(HID_SDK_TRANSACTION_RESULT, transactionResult);
+        return jsonObject;
+    }
+
+    private JSObject toJson(String key, Object transactionResult){
+        JSObject jsonObject = new JSObject();
+        jsonObject.put(key, transactionResult);
         return jsonObject;
     }
 

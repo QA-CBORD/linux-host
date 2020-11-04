@@ -45,6 +45,7 @@ export class AccessCardComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnDestroy(): void {
+    console.log("AccessCardComponent onDestroy called....");
     this.mobileCredentialFacade.onDestroy();
   }
 

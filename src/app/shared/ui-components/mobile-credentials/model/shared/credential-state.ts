@@ -8,6 +8,7 @@ export interface MobileCredentialState {
   isProvisioned(): boolean;
   isEnabled(): boolean;
   isAvailable(): boolean;
+  revoked(): Boolean;
   getIssuer(): string;
   getConfig(): MobileCredentialConfig;
   getUiIconUrl(): string;
@@ -20,4 +21,5 @@ export enum MobileCredentialStatuses{
   IS_AVAILABLE = 1,
   IS_PROVISIONED = 20,
   IS_DISABLED = 0,
+  IS_REVOKED = 5
 }
