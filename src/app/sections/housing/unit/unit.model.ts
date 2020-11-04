@@ -27,6 +27,6 @@ export class FacilityToUnitsMapper implements IMapper {
     return items.map(x => new Unit({title: x.facilityName, isFavorite: false, parentKey: x.topLevelKey,
       facilityKey: x.facilityId, occupantKeys:  Array.isArray(x.occupantKeys)? x.occupantKeys.map(y => y) : [],
       attributes: x.attributes,
-      labels: Array.isArray(x.attributes) ? x.attributes.map(y => new Label(y.value)) : []}));
+      labels: Array.isArray(x.attributes) ? x.attributes.map(y => new Label(y.name)) : []}));
     }
   }

@@ -44,7 +44,6 @@ export class RoomsStateService implements StateService<number, Facility[]> {
   getParentFacilities() {
     return this._parentFacilities;
   }
-
   getUnitDetails(parentFacilityKey: number, unitKey: number) {
     const childrenFacilities = this.entityDictionary.get(parentFacilityKey);
     const facility = childrenFacilities.find(child => child.facilityId == unitKey);

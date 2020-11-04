@@ -1,10 +1,10 @@
 import { TestBed } from '@angular/core/testing';
-import { generateFacilities } from './facilities.mock';
+import { generateFacilities } from './mocks/facilities.mock';
 import { Facility } from '../facilities/facilities.model';
 
 import { RoomsStateService } from './rooms-state.service';
 import { Unit } from '@sections/housing/unit/unit.model';
-import { generateRoomSelects } from '@sections/housing/rooms/rooms.mock';
+import { generateRoomSelects } from '@sections/housing/rooms/mocks/rooms.mock';
 import { RoomSelect } from '@sections/housing/rooms/rooms.model';
 
 describe('RoomsStateService', () => {

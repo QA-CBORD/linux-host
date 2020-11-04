@@ -4,5 +4,5 @@ export enum SortDirection {
 }
 
 export class Category {
-  constructor(public name: string) {}
+  constructor(public name: string, public value: number) {}
 }
