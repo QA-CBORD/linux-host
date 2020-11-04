@@ -27,7 +27,6 @@ export class UnitDetailsPage implements OnInit {
     private _termsService: TermsService,
     private _toastService: ToastService,
     private _alertController: AlertController,
-    private _router: Router
   ) {}
 
   unit: Unit;
@@ -55,7 +54,7 @@ export class UnitDetailsPage implements OnInit {
 
   async requestRoom() {
     try {
-      this._termsService.termId$.subscribe(termKey => {
+        this._termsService.termId$.subscribe(termKey => {
         const request = {
           facilityKey: this.unit.key,
           assetKey: null,
@@ -85,7 +84,7 @@ export class UnitDetailsPage implements OnInit {
                 this._roomsService.postContractRequest(request).subscribe(successfullyCreated => {
                       if (successfullyCreated) {
                         //route back to housing dashboard
-                        this._router.navigateByUrl('patron/housing/dashboard');
+                        this._housingService.handleSuccess();
                   }
                 });
               },
@@ -96,7 +95,7 @@ export class UnitDetailsPage implements OnInit {
       });
     } catch (e) {
       this._toastService.showToast({
-        message: e.message,
+        message: "Oops this unit is not available",
       });
     }
   }

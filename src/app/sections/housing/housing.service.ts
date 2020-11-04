@@ -155,11 +155,27 @@ export class HousingService {
     this._roomsStateService.setRoomSelects(of(roomSelects));
   }
 
+  /**
+   *  Handles navigation back to dashboard and updates all subscribers w/ new information
+   */
   handleSuccess(): void {
     this._loadingService.closeSpinner();
     this._router.navigate([`${ROLES.patron}/housing/dashboard`]).then(() => this.refreshDefinitions());
   }
 
+  /**
+   * Returns navigation back to dashboard as an observable
+   */
+  handleSuccess$(): Observable<any> {
+    this._loadingService.closeSpinner();
+    return of(this._router.navigate([`${ROLES.patron}/housing/dashboard`]).then(() => this.refreshDefinitions()));
+  }
+
+  handleSuccessfulAssignment(contractKey: number): void {
+    this.handleSuccess$().subscribe(() => {
+      // TODO goes to contract form based on contract element key & contract form key
+    });
+  }
   handleErrors(error: any): void {
     console.log(error);
     let message = 'Something went wrong. Try again later';
