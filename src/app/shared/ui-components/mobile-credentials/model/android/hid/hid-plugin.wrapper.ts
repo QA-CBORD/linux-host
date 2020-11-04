@@ -1,8 +1,9 @@
 import { Plugins } from '@capacitor/core';
+import { Subject } from 'rxjs';
 const { HIDPlugin } = Plugins;
 
 interface HIDSdkTransactionResponse {
-  sdkTransactionResult: string | any;
+  transactionStatus: string | any;
 }
 
 interface ExecutionOptions {
@@ -15,7 +16,7 @@ class ExecutionController {
   constructor(
     private config: {
       execOptions: ExecutionOptions;
-      onCompleteCallback: () => void;
+      onCompleteCallback: (data?: any) => void;
     }
   ) {
     config.execOptions.executionTrace = 0;
@@ -40,16 +41,25 @@ class ExecutionController {
     return this.config.execOptions.executionTrace == this.config.execOptions.maxExecutionCount;
   }
   stopTaskExecution(result?: any): void {
-    this.config.onCompleteCallback();
+    this.config.onCompleteCallback(result);
     this.config.execOptions.executionTrace = 0;
   }
 }
 
+export enum EndpointStatuses {
+  SETUP_ACTIVE = 1,
+  SETUP_INACTIVE = 0,
+  NOT_SETUP = -1,
+  LOCATION_PERMISSION_REQUIRED = 2,
+}
+
 export class HIDSdkManager {
-  static TRANSACTION_SUCCESS = 'TRANSACTION_SUCCESS';
-  static TRANSACTION_FAILED = 'TRANSACTION_FAILED';
+  static TRANSACTION_SUCCESS = 'success';
+  static TRANSACTION_FAILED = 'failed';
   static LOCATION_PERMISSION_REQUIRED = 'LOCATION_PERMISSION_REQUIRED';
   private static instance: HIDSdkManager;
+  public subject: Subject<EndpointStatuses> = new Subject<EndpointStatuses>();
+
   private constructor() {}
 
   static getInstance(): HIDSdkManager {
@@ -59,8 +69,21 @@ export class HIDSdkManager {
     return this.instance;
   }
 
-  async initializeSdk(): Promise<string> {
-    return await this.executeCall(HIDPlugin.initializeSdk);
+  async initializeSdk(): Promise<boolean> {
+    const initializationStatus = await this.executeCall<string>(HIDPlugin.initializeSdk);
+    return initializationStatus == HIDSdkManager.TRANSACTION_SUCCESS || Promise.reject(initializationStatus);
+  }
+
+  async endpointStatus(): Promise<EndpointStatuses> {
+    if (await this.isEndpointSetup$()) {
+      if (await this.isEndpointActive()) {
+        return EndpointStatuses.SETUP_ACTIVE;
+      } else {
+        return EndpointStatuses.SETUP_ACTIVE;
+      }
+    } else {
+      return EndpointStatuses.NOT_SETUP;
+    }
   }
 
   async setupEndpoint(invitationCode: string): Promise<string> {
@@ -89,7 +112,7 @@ export class HIDSdkManager {
 
   private async executeCall<T>(pluginCall: (param?) => Promise<HIDSdkTransactionResponse>, args?: any): Promise<T> {
     let transactionResponse: HIDSdkTransactionResponse = await pluginCall(args);
-    return transactionResponse.sdkTransactionResult;
+    return transactionResponse.transactionStatus;
   }
 
   async refreshEndpoint(): Promise<boolean> {
@@ -101,7 +124,7 @@ export class HIDSdkManager {
     let locationPermissionRequired: boolean = false;
     let executeCall = async (pluginCall: (param?) => Promise<HIDSdkTransactionResponse>, args?: any): Promise<any> => {
       let transactionResponse: HIDSdkTransactionResponse = await pluginCall(args);
-      return transactionResponse.sdkTransactionResult;
+      return transactionResponse.transactionStatus;
     };
 
     let endpointRefreshSuccess = async (): Promise<boolean> => {
@@ -119,15 +142,15 @@ export class HIDSdkManager {
     if ((await endpointRefreshSuccess()) && !controller.maxExecutionReached()) {
       if (await isEndpointActiveNow()) {
         if (await startScanningSuccess()) {
-          controller.stopTaskExecution(); // mobile credential is in a "fine state", whoohoo!!!
+          controller.stopTaskExecution(EndpointStatuses.SETUP_ACTIVE); // mobile credential is in a "fine state", whoohoo!!!
         } else if (locationPermissionRequired && controller.remainingExecCount == 1) {
-          controller.stopTaskExecution();
-          // notify user that location needs to be turned on for mobile credential to work.
+          controller.stopTaskExecution(EndpointStatuses.LOCATION_PERMISSION_REQUIRED);
         }
       }
     } else if (controller.maxExecutionReached()) {
-      controller.stopTaskExecution();
-      // notify user that something went wrong with his mobile credential.
+      controller.stopTaskExecution(EndpointStatuses.SETUP_INACTIVE);
+    } else {
+      controller.stopTaskExecution(EndpointStatuses.NOT_SETUP);
     }
   }
 
@@ -137,22 +160,25 @@ export class HIDSdkManager {
       execOptions.executionInterval,
       new ExecutionController({
         execOptions,
-        onCompleteCallback: () => clearInterval(intervalId),
+        onCompleteCallback: data => {
+          clearInterval(intervalId);
+          this.subject.next(data);
+        },
       })
     );
   }
 
   async doPostInstallWork(): Promise<void> {
     this.startTaskExecution({
-      maxExecutionCount: 10,
-      executionInterval: 3000,
+      maxExecutionCount: 25,
+      executionInterval: 5000,
     });
   }
 
   async doPostInitWork(): Promise<void> {
     this.startTaskExecution({
-      maxExecutionCount: 15,
-      executionInterval: 3500,
+      maxExecutionCount: 25,
+      executionInterval: 5000,
     });
   }
 }

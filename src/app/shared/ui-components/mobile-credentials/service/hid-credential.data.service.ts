@@ -57,7 +57,9 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
             catchError((serverErrorResponse: HttpErrorResponse) => {
               let credentialAlreadyDeletedError = false;
               if (serverErrorResponse.error.detail) {
-                credentialAlreadyDeletedError = serverErrorResponse.error.detail.includes(CREDENTIAL_ALREADY_DELETED_ERROR);
+                credentialAlreadyDeletedError = serverErrorResponse.error.detail.includes(
+                  CREDENTIAL_ALREADY_DELETED_ERROR
+                );
               }
               return of(credentialAlreadyDeletedError);
             })
@@ -91,7 +93,13 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
     };
     return super.updateCredential$(requestBody).pipe(
       map(() => true),
-      tap(() => this.saveCredentialAsUserSetting$(credential)),
+      tap(() => {
+        if (credential.isProvisioned()) {
+          this.saveCredentialInUserSetting$(credential);
+        } else if (credential.revoked()) {
+          this.deleteCredentialFromUserSetting$().catch(() => {});
+        }
+      }),
       catchError(() => of(false))
     );
   }
@@ -104,10 +112,32 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
     return this.settingsFacadeService.deleteUserSetting(User.Settings.MOBILE_CREDENTIAL_ID).toPromise();
   }
 
-  private saveCredentialAsUserSetting$(credential: AndroidCredential<any>): Promise<boolean> {
+  private saveCredentialInUserSetting$(credential: AndroidCredential<any>): Promise<boolean> {
     return this.settingsFacadeService
       .saveUserSetting(User.Settings.MOBILE_CREDENTIAL_ID, credential.getId())
       .pipe(take(1))
+      .toPromise();
+  }
+
+  public getEndpointStateInfo$(): Promise<Persistable> {
+    return this.storageStateService
+      .getStateEntityByKey$<Persistable>(this.credential_key)
+      .pipe(
+        first(),
+        map(data => (data ? data.value : null))
+      )
+      .toPromise();
+  }
+
+  public updateEndpointStateInfo$(endpointActive: boolean = true): Promise<void> {
+    return this.getCredentialFromCacheOrUserSettings$()
+      .pipe(
+        map(endpointInfo => {
+          endpointInfo.endpointActive = endpointActive;
+          this.saveCredentialInLocalStorage(endpointInfo);
+          return void 0;
+        })
+      )
       .toPromise();
   }
 

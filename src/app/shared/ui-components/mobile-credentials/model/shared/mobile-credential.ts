@@ -6,6 +6,10 @@ export abstract class MobileCredential implements MobileCredentialState {
 
   constructor(public credentialState: MobileCredentialState) {}
 
+  revoked(): Boolean {
+    return this.credentialState.revoked();
+  }
+
   providedBy(provider: CredentialProviders): boolean {
     return  this.credentialState.providedBy(provider);
   }

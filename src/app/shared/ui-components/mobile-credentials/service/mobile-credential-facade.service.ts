@@ -1,68 +1,60 @@
-import { Injectable, Injector } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
-import { forkJoin, Observable, of } from 'rxjs';
+import { iif, Observable, of } from 'rxjs';
 import { catchError, map, switchMap, take } from 'rxjs/operators';
 import { Settings } from 'src/app/app.global';
 import { CredentialStateChangeListener, MobileCredentialManager } from '../model/shared/mobile-credential-manager';
-import { AndroidCredentialManagerFactory } from './android-credential-manager.factory';
-import { IOSCredentialManager } from './ios-credential-manager';
+import { CredentialManagerType, MobileCredentialManagerFactory } from './mobile-credential-manager.factory';
+
 
 @Injectable()
 export class MobileCredentialFacade {
   private mobileCredentialManager: MobileCredentialManager;
 
   constructor(
-    private injector: Injector,
+    private readonly mobileCredentialManagerFactory: MobileCredentialManagerFactory,
     private readonly nativeProvider: NativeProvider,
     private readonly settingsFacadeService: SettingsFacadeService
   ) {}
 
-  private mobileCredentialSettingsEnabled$(): Observable<boolean> {
-    const appleCredentialSettings$ = this.appleWalletSettingsEnabled$().pipe(take(1));
-    const androidCredentialSettings$ = this.androidMobileCredentialSettingsEnabled$().pipe(take(1));
-    return forkJoin(appleCredentialSettings$, androidCredentialSettings$).pipe(
-      switchMap(([appleWalletSettingsEnabled, androidCredentialSettingsEnabled]) => {
-        let mobileCredentialSettingsEnabled = false;
-        if (appleWalletSettingsEnabled) {
-          this.mobileCredentialManager = this.injector.get(IOSCredentialManager);
-          return of(true);
-        } else if (androidCredentialSettingsEnabled) {
-          const credentialManagerFactory = this.injector.get(AndroidCredentialManagerFactory);
-          return credentialManagerFactory.getCredentialManager().pipe(
-            map(androidCredentialManager => {
-              if (androidCredentialManager) {
-                this.mobileCredentialManager = androidCredentialManager;
-                mobileCredentialSettingsEnabled = true;
-              }
-              return mobileCredentialSettingsEnabled;
-            }),
-            catchError(() => of(false))
-          );
+  iifCredentialSettingsEnabled(): Observable<boolean> {
+    return this.enabledCredentialsSettings().pipe(
+      switchMap(credentialSettingsType => {
+        if (credentialSettingsType) {
+          return this.mobileCredentialManagerFactory
+            .createCredentialManager(credentialSettingsType)
+            .pipe(
+              map(credentialManager => {
+                if (credentialManager) {
+                  this.mobileCredentialManager = credentialManager;
+                  return true;
+                } else {
+                  return false;
+                }
+              })
+            );
         } else {
           return of(false);
         }
-      })
+      }),
+      catchError(() => of(false))
     );
   }
 
-  private appleWalletSettingsEnabled$(): Observable<boolean> {
-    return this.nativeProvider.isIos()
-      ? this.settingsFacadeService.getSetting(Settings.Setting.APPLE_WALLET_ENABLED).pipe(
-          map(({ value }) => Boolean(Number(value))),
-          take(1)
-        )
-      : of(false);
-  }
-
-  private androidMobileCredentialSettingsEnabled$(): Observable<boolean> {
-    if (!this.nativeProvider.isAndroid()) {
-      return of(false);
-    }
-    return this.settingsFacadeService.getSetting(Settings.Setting.ANDROID_MOBILE_CREDENTIAL_ENABLED).pipe(
-      map(({ value }) => Boolean(Number(value))),
+  enabledCredentialsSettings(): Observable<any> {
+    const iosCredentialSettings = this.settingsFacadeService.getSetting(Settings.Setting.APPLE_WALLET_ENABLED).pipe(
+      map(({ value }) => (Boolean(Number(value)) ? CredentialManagerType.IosCredential : false)),
       take(1)
     );
+    const androidCredentialSettings = this.settingsFacadeService
+      .getSetting(Settings.Setting.ANDROID_MOBILE_CREDENTIAL_ENABLED)
+      .pipe(
+        map(({ value }) => (Boolean(Number(value)) ? CredentialManagerType.AndroidCredential : false)),
+        take(1)
+      );
+
+    return iif(() => this.nativeProvider.isIos(), iosCredentialSettings, androidCredentialSettings);
   }
 
   get uiIconUrl$(): Observable<string> {
@@ -85,7 +77,7 @@ export class MobileCredentialFacade {
   }
 
   get mobileCredentialEnabled$(): Observable<boolean> {
-    return this.mobileCredentialSettingsEnabled$().pipe(
+    return this.iifCredentialSettingsEnabled().pipe(
       switchMap(mobileCredentialSettingsEnabled => {
         return mobileCredentialSettingsEnabled ? this.mobileCredentialManager.credentialEnabled$() : of(false);
       })

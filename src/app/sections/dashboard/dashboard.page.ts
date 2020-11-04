@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, ViewChild, QueryList, ViewChildren } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, ViewChild, QueryList, ViewChildren, OnDestroy } from '@angular/core';
 import { ModalController, PopoverController } from '@ionic/angular';
 
 import { TileWrapperConfig } from '@sections/dashboard/models';
@@ -33,7 +33,7 @@ const { App, Device } = Plugins;
   styleUrls: ['./dashboard.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DashboardPage implements OnInit {
+export class DashboardPage implements OnInit, OnDestroy {
   @ViewChild(AccessCardComponent) accessCard: AccessCardComponent;
   @ViewChildren('accountsTile') accountsChild: QueryList<AccountsTileComponent>
   tiles$: Observable<TileWrapperConfig[]>;
@@ -50,6 +50,11 @@ export class DashboardPage implements OnInit {
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly appBrowser: InAppBrowser,
   ) {}
+
+
+  ngOnDestroy(): void {
+    console.log("DashboardPage onDestroy called....");
+  }
 
   get tilesIds(): { [key: string]: string } {
     return TILES_ID;

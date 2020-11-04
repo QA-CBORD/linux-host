@@ -28,8 +28,8 @@ import com.hid.origo.api.hce.OrigoHceConnectionListener;
 
 public class HIDSDKManager implements OrigoReaderConnectionListener, OrigoHceConnectionListener {
     private static final String TAG = HIDSDKManager.class.getSimpleName();
-    private static final String TRANSACTION_SUCCESS = "TRANSACTION_SUCCESS";
-    private static final String TRANSACTION_FAILED = "TRANSACTION_FAILED";
+    private static final String TRANSACTION_SUCCESS = "success";
+    private static final String TRANSACTION_FAILED = "failed";
     private static final String ENDPOINT_NOT_SETUP = "ENDPOINT_NOT_SETUP";
     private final String NO_KEY_INSTALLED = "NO_KEY_INSTALLED";
     private final String MOBILE_KEY_ALREADY_INSTALLED = "KEY_ALREADY_INSTALLED";
@@ -39,11 +39,11 @@ public class HIDSDKManager implements OrigoReaderConnectionListener, OrigoHceCon
     private static HIDSDKManager instance;
     private Context applicationContext;
 
-    private HIDSDKManager(Application application){
+    private HIDSDKManager(Application application) throws IllegalStateException{
         initializeMobileKeysApi(application);
     }
 
-    synchronized public static HIDSDKManager getInstance(AppCompatActivity activity){
+    synchronized public static HIDSDKManager getInstance(AppCompatActivity activity) throws IllegalStateException{
         if(instance == null)
         {
             instance = new HIDSDKManager(activity.getApplication());
@@ -52,10 +52,10 @@ public class HIDSDKManager implements OrigoReaderConnectionListener, OrigoHceCon
     }
 
 
-    private void initializeMobileKeysApi(final Application application){
+    private void initializeMobileKeysApi(final Application application) throws IllegalStateException{
         this.applicationContext = application.getApplicationContext();
-        OrigoMobileKeysApiInitializer initializer = ((OrigoMobileKeysApiInitializer) application);
-        this.origoMobileKeysApi = initializer.initializeMobileKeysApi();
+        MobileKeysApiConfig mobileKeysApiConfig = ((MobileKeysApiConfig) application);
+        this.origoMobileKeysApi = mobileKeysApiConfig.configureMobileKeysApi();
         this.mobileKeys = origoMobileKeysApi.getMobileKeys();
         OrigoReaderConnectionCallback readerConnectionCallback = new OrigoReaderConnectionCallback(applicationContext);
         readerConnectionCallback.registerReceiver(this);

@@ -13,12 +13,17 @@ import com.hid.origo.api.OrigoMobileKey;
 public class HIDPlugin extends Plugin {
 
     private HIDSDKManager hidsdkManager;
-    private static final String HID_SDK_TRANSACTION_RESULT = "sdkTransactionResult";
+    private static final String HID_SDK_TRANSACTION_RESULT = "transactionStatus";
     private static  final String invitationCodeKey = "invitationCode";
  
     @PluginMethod()
     public void initializeSdk(PluginCall call) {
-        hidsdkManager = HIDSDKManager.getInstance(getActivity());
+        try{
+            hidsdkManager = HIDSDKManager.getInstance(getActivity());
+        }catch (IllegalStateException ex) {
+            call.reject("failed");
+            return;
+        }
         hidsdkManager.applicationStartup(transactionResult -> {
             call.resolve(toJson(transactionResult));
         });
@@ -88,6 +93,12 @@ public class HIDPlugin extends Plugin {
     private JSObject toJson(Object transactionResult){
         JSObject jsonObject = new JSObject();
         jsonObject.put(HID_SDK_TRANSACTION_RESULT, transactionResult);
+        return jsonObject;
+    }
+
+    private JSObject toJson(String key, Object transactionResult){
+        JSObject jsonObject = new JSObject();
+        jsonObject.put(key, transactionResult);
         return jsonObject;
     }
 
