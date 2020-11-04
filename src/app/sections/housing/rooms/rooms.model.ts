@@ -22,19 +22,23 @@ export class RoomSelect implements RoomSelectOptions{
 export interface CreateContractRequestOptions {
   facilityKey: number;
   assetKey: number;
-  facilityOrAsset: number;
-  StartDate: Date;
-  EndDate: Date;
+  isFacility: boolean;
+  isAssetType: boolean;
+  termKey: number;
+  startDate: Date;
+  endDate: Date;
 }
 
 
 export  class CreateContractRequest implements  CreateContractRequestOptions {
 
-  EndDate: Date;
-  StartDate: Date;
+  endDate: Date;
+  startDate: Date;
   assetKey: number;
   facilityKey: number;
-  facilityOrAsset: number;
+  isFacility: boolean;
+  isAssetType: boolean;
+  termKey: number;
 
   constructor(options: CreateContractRequestOptions) {
     if(!isDefined(options) || typeof options !== 'object')  {
@@ -42,8 +46,10 @@ export  class CreateContractRequest implements  CreateContractRequestOptions {
     }
     this.assetKey = options.assetKey;
     this.facilityKey = options.facilityKey;
-    this.facilityOrAsset = options.facilityOrAsset;
-    this.StartDate = options.StartDate;
-    this.EndDate = options.EndDate;
+    this.isFacility = options.isFacility;
+    this.isAssetType = options.isAssetType;
+    this.startDate = options.startDate;
+    this.endDate = options.endDate;
+    this.termKey = options.termKey;
   }
 }

@@ -5,6 +5,7 @@ import { isSuccessful } from '@sections/housing/utils/is-successful';
 import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { CreateContractRequestOptions } from '@sections/housing/rooms/rooms.model';
+import { TermsService } from '@sections/housing/terms/terms.service';
 
 @Injectable({
   providedIn: 'root',
@@ -14,18 +15,19 @@ export class RoomsService {
     this._environment.getEnvironmentObject().housing_aws_url
   }/roomselectproxy/v.1.0/room-selects-proxy`;
 
-  constructor(private _proxy: HousingProxyService, private _environment: EnvironmentFacadeService) {}
+  constructor(private _proxy: HousingProxyService,
+              private _environment: EnvironmentFacadeService) {}
 
   postContractRequest(request: CreateContractRequestOptions): Observable<boolean> {
     const url = `${this._roomSelectUrl}/contracts/self`;
 
     return this._proxy.post(url, request).pipe(
-      map(responseStatus => {
-        if (isSuccessful(responseStatus)) {
+      map(response => {
+        if (isSuccessful(response.status)) {
           return true;
         } else {
-          console.log(responseStatus);
-          throw new Error(responseStatus.message);
+          console.log(response);
+          throw new Error(response.status.message);
         }
 
         return false;
