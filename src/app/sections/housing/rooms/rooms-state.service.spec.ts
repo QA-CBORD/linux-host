@@ -4,7 +4,7 @@ import { Facility } from '../facilities/facilities.model';
 
 import { RoomsStateService } from './rooms-state.service';
 import { Unit } from '@sections/housing/unit/unit.model';
-import { generateRoomSelects } from '@sections/housing/rooms/mocks/rooms.mock';
+import { generateRoomSelects } from './mocks/rooms.mock';
 import { RoomSelect } from '@sections/housing/rooms/rooms.model';
 
 describe('RoomsStateService', () => {
