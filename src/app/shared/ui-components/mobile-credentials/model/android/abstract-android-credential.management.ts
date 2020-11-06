@@ -10,6 +10,10 @@ export abstract class AbstractAndroidCredentialManager implements MobileCredenti
 
   constructor() {}
 
+
+
+  async onWillLogout(): Promise<void> {}
+
   refresh(): void {
     // do nothing
   }

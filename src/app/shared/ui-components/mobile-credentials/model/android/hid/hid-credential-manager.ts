@@ -2,7 +2,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { AlertController, ModalController, PopoverController, ToastController } from '@ionic/angular';
 import { MobileCredentialsComponent } from '@shared/ui-components/mobile-credentials/mobile-credentials.component';
 import { from, Observable, of } from 'rxjs';
-import { catchError, first, map, switchMap, take, tap } from 'rxjs/operators';
+import { catchError, finalize, first, map, switchMap, tap } from 'rxjs/operators';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
 import { MobileCredentialStatuses } from '../../shared/credential-state';
 import { AbstractAndroidCredentialManager } from '../abstract-android-credential.management';
@@ -11,13 +11,21 @@ import { HidCredentialDataService } from '../../../service/hid-credential.data.s
 import { EndpointStatuses, HIDSdkManager } from './hid-plugin.wrapper';
 import { Injectable } from '@angular/core';
 
+const CREDENTIAL_ENABLED_MESSAGE = 'Mobile ID enabled';
+const CREDENITAL_REVOKED_MESSAGE = 'Mobile ID revoked';
+
+interface ExecutionParameters {
+  fn: () => Promise<boolean>;
+  retryCount?: number;
+  showLoading: boolean;
+  checkErrors?: boolean;
+  userDecides?: boolean;
+}
+
 @Injectable()
 export class HIDCredentialManager extends AbstractAndroidCredentialManager {
-  private customLoadingOptions = { message: 'Processing ... Please wait', duration: 100000 };
-  private transactionRetryCount: number = 1;
-  private transactionMaxRetryCount: number = 3;
-  private notReadyStateOn = false;
-
+  private customLoadingOptions = { message: 'Processing ... Please wait', duration: 150000 };
+  private endpointAlreadyInstalledFlag = false;
   constructor(
     private readonly modalCtrl: ModalController,
     private readonly alertCtrl: AlertController,
@@ -31,73 +39,144 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
   }
 
   private async credentialReadyStateSubscribe(): Promise<void> {
-    this.hidSdkManager().subject.subscribe(endpointStatus => {
-      const uiMsg = this.mCredential.getStatusMsg().replace('[not ready]', '');
+    this.hidSdkManager().taskExecutionObs$.subscribe(endpointStatus => {
       if (endpointStatus == EndpointStatuses.SETUP_ACTIVE) {
-        this.mCredential.updateUiMsg(uiMsg);
+        this.mCredential.updateUiMsg(CREDENTIAL_ENABLED_MESSAGE);
         this.credentialStateChangeListener.onCredentialStateChanged();
-        this.credentialService.updateEndpointStateInfo$(true);
+        this.credentialService.updateCachedCredential$();
       } else if (endpointStatus == EndpointStatuses.SETUP_INACTIVE) {
         setTimeout(() => {
           this.hidSdkManager().doPostInitWork();
-        }, 200000); // start again in 5 minutes.
+        }, 200000); // start again in 3. minutes.
       }
     });
   }
 
-  onUiImageClicked(event?: any): void {
-    const showTermsAndConditions = async () => {
-      let componentProps = {
-        termsAndConditions$: this.termsAndConditionsSource$,
+  async onWillLogout(): Promise<void> {
+    console.log('onWillLogout called...HID');
+    this.hidSdkManager().stopTaskExecution();
+    if (this.mCredential.isProvisioned()) {
+      const endpointInfo = await this.credentialService.getEndpointStateInfo$();
+      setTimeout(() => {
+        console.log('endpointInfo: ', endpointInfo);
+        if (endpointInfo && endpointInfo.id) {
+          this.credentialService.saveCredentialInLocalStorage(endpointInfo);
+        }
+      }, 3000);
+    }
+  }
+
+  onUiIconClicked(): void {
+    this.showLoading();
+    const showCredentialUsageContentString = async () => {
+      const btnText = this.mCredential.isProvisioned() ? 'Uninstall' : 'OK';
+      const componentProps = {
+        usageInstructions: await this.credentialUsageContentString$(),
+        title: 'Usage Instructions',
+        btnText: btnText,
       };
-      const modal = await this.modalCtrl.create({
+      const popover = await this.popoverCtrl.create({
         backdropDismiss: false,
-        mode: 'ios',
+        cssClass: 'credential-usage-popover',
         component: MobileCredentialsComponent,
         componentProps,
       });
+      this.loadingService.closeSpinner();
+      await popover.present();
+      const { data } = await popover.onDidDismiss();
+      const shouldUninstall = data.action == 'Uninstall';
+      if (shouldUninstall) {
+        this.showConfirmUninstallDialog();
+      }
+    };
+    showCredentialUsageContentString();
+  }
+
+  onUiImageClicked(event = { shouldCheckCredentialAvailability: true }): void {
+    const showTermsAndConditions = async () => {
+      let componentProps = {
+        termsAndConditions: await this.termsAndConditionsSource$,
+      };
+      const modal = await this.modalCtrl.create({
+        backdropDismiss: false,
+        component: MobileCredentialsComponent,
+        componentProps,
+      });
+      this.showLoading();
       await modal.present();
+      this.loadingService.closeSpinner();
       const { data } = await modal.onDidDismiss();
       if (data.termsAccepted) {
         this.onTermsAndConditionsAccepted();
       }
     };
-
-    this.showLoading();
-    this.checkCredentialAvailability()
-      .then(androidCredential => {
-        if (androidCredential.isAvailable()) {
-          showTermsAndConditions();
-        } else {
-          this.loadingService.closeSpinner();
-
-          this.showCredentialAlreadyInstalledAlert();
-        }
-      })
-      .catch(() => {
-        this.loadingService.closeSpinner();
+    const checkCredentialAvailability = async () => {
+      const freshCredentials = await this.checkCredentialAvailability();
+      if (freshCredentials.isAvailable()) {
+        showTermsAndConditions();
+      } else if (freshCredentials.isProvisioned()) {
+        this.showCredentialAlreadyProvisionedAlert();
+      } else {
         this.showInstallationErrorAlert();
-      });
+      }
+    };
+
+    if (event.shouldCheckCredentialAvailability) {
+      checkCredentialAvailability();
+    } else {
+      showTermsAndConditions();
+    }
+  }
+
+  private async showCredentialAlreadyProvisionedAlert(): Promise<void> {
+    // notify user he needs to uninstall from previous device first.
+    let header = 'Notification';
+    let message =
+      'We have detected that you provisioned a Mobile Credential but it is not on this Phone. You may have uninstalled GET Mobile, or it is on another phone? Would you like to install a new Mobile Credential on this phone? Note: if it is installed on another phone, it will no longer work on that phone.';
+    const buttons = [
+      { text: 'cancel', role: 'cancel' },
+      {
+        text: 'Install here',
+        handler: async () => {
+          const deleteSuccessfull = await this.handRetriableOperation({
+            fn: this.deleteCredentialFromServer$,
+            showLoading: true,
+          });
+          if (deleteSuccessfull) {
+            const freshCredentials = await this.checkCredentialAvailability();
+            if (freshCredentials.isAvailable()) {
+              this.onUiImageClicked({ shouldCheckCredentialAvailability: false });
+            } else {
+              this.showInstallationErrorAlert();
+            }
+          } else {
+            this.showInstallationErrorAlert();
+          }
+        },
+      },
+    ];
+    this.createAlertDialog(header, message, buttons).then(alert => alert.present());
   }
 
   private async showCredentialAlreadyInstalledAlert(): Promise<void> {
     // notify user he needs to uninstall from previous device first.
     let header = 'Notification';
     let message =
-      'We have detected that you provisioned a Mobile Credential but it is not on this Phone. You may have uninstalled GET Mobile, or it is on another phone ?. Would you like to install a new Mobile Credential on this phone? Note: if it is installed on another phone, it will no longer work on that phone.';
+      'we have detected that there is an active mobile ID installed on this device. if you proceed with this installation the previous one will be deleted.';
     const buttons = [
       { text: 'cancel', role: 'cancel' },
       {
-        text: 'Install here',
+        text: 'accept and Install',
         handler: async () => {
-          this.showLoading();
-          let operationSuccessfull = await this.handRetriableOperation(this.deleteCredentialFromServer$).catch(
-            () => false
-          );
-          if (operationSuccessfull) {
-            this.onUiImageClicked();
+          await this.handRetriableOperation({ fn: this.deleteCredentialFromServer$, showLoading: true, retryCount: 6 });
+          const credentialDeviceDeleteSuccess = await this.handRetriableOperation({
+            fn: this.deleteCredentialFromDevice$,
+            showLoading: true,
+          });
+
+          if (credentialDeviceDeleteSuccess) {
+            this.onTermsAndConditionsAccepted();
           } else {
-            this.loadingService.closeSpinner();
             this.showInstallationErrorAlert();
           }
         },
@@ -107,63 +186,59 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
   }
 
   private async checkCredentialAvailability(): Promise<AndroidCredential<any>> {
+    this.showLoading();
     return await this.credentialService
       .activePasses$()
-      .pipe(first())
+      .pipe(
+        first(),
+        catchError(() => of(this.mCredential)),
+        finalize(() => this.loadingService.closeSpinner())
+      )
       .toPromise();
   }
 
   // handles when HID question mark is clicked, should show instructions and an uninstall option if already installed.
 
   // is considered revoked when it was active at some point but now is not.
-  private async endpointRevoked(): Promise<boolean> {
+  private async isEndpointRevoked(): Promise<boolean> {
     const endpointStateInfo = await this.credentialService.getEndpointStateInfo$();
     const endpointHidStatus = await this.hidSdkManager().endpointStatus();
-    return endpointStateInfo.endpointActive && endpointHidStatus == EndpointStatuses.SETUP_INACTIVE;
+    return (
+      endpointStateInfo && endpointStateInfo.endpointStatus && endpointHidStatus == EndpointStatuses.SETUP_INACTIVE
+    );
+  }
+
+  private async onEndpointRevoked(timeToUpdate: number = 10000): Promise<void> {
+    // change ui message here.. and refresh.
+    this.mCredential.updateUiMsg(CREDENITAL_REVOKED_MESSAGE);
+    this.credentialStateChangeListener.onCredentialStateChanged();
+    setTimeout(async () => {
+      let credentialDeletionSuccess = await this.handRetriableOperation({
+        fn: this.deleteCredentialFromServer$,
+        retryCount: 6,
+        showLoading: false,
+      });
+      if (credentialDeletionSuccess) {
+        this.mCredential.setStatus(MobileCredentialStatuses.IS_REVOKED);
+        await this.hidSdkManager().deleteEndpoint();
+        this.mCredential = await this.checkCredentialAvailability();
+        this.credentialStateChangeListener.onCredentialStateChanged();
+      } else {
+        // try it again sometimes later.
+      }
+    }, timeToUpdate);
   }
 
   refresh(): void {
     // we'll check if mobile keys hasn't been revoked, if true, should refresh accordingly.
     const asyncRefresh = async () => {
       if (this.mCredential.isProvisioned()) {
-        if (await this.endpointRevoked()) {
-          this.mCredential.setStatus(MobileCredentialStatuses.IS_REVOKED);
-          this.credentialStateChangeListener.onCredentialStateChanged();
-          this.hidSdkManager().deleteEndpoint();
-          await this.handRetriableOperation(this.deleteCredentialFromServer$).catch(() =>
-            this.showInstallationErrorAlert('deletion')
-          );
-          setTimeout(async () => {
-            this.mCredential = await this.checkCredentialAvailability();
-            this.credentialStateChangeListener.onCredentialStateChanged();
-          }, 5000);
+        if (await this.isEndpointRevoked()) {
+          this.onEndpointRevoked();
         }
       }
     };
     asyncRefresh();
-  }
-
-  onUiIconClicked(): void {
-    const showCredentialUsageContentString = async () => {
-      let btnText = this.mCredential.isProvisioned() ? 'Uninstall' : 'OK';
-      let componentProps = {
-        credentialUsageContentString$: this.credentialUsageContentString$(),
-        title: 'Usage Instructions',
-        btnText: btnText,
-      };
-      const popover = await this.popoverCtrl.create({
-        backdropDismiss: false,
-        component: MobileCredentialsComponent,
-        componentProps,
-      });
-      await popover.present();
-      const { data } = await popover.onDidDismiss();
-      let shouldUninstall = data.action == 'Uninstall';
-      if (shouldUninstall) {
-        this.showConfirmUninstallDialog();
-      }
-    };
-    showCredentialUsageContentString();
   }
 
   protected credentialUsageContentString$(): Promise<string> {
@@ -180,7 +255,8 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
             return of(contentString);
           }
           return from(super.credentialUsageContentString$());
-        })
+        }),
+        catchError(() => 'No content')
       )
       .toPromise();
   }
@@ -217,17 +293,24 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     return of(this.mCredential.isAvailable());
   }
 
-  private checkIfItsBeenProvisionedOnThisDevice$(): Observable<boolean> {
-    const checkEndpointStatus = async () => {
-      let endpointStatus = await this.hidSdkManager().endpointStatus();
-      if (endpointStatus == EndpointStatuses.SETUP_ACTIVE) {
-        const uiMsg = this.mCredential.getStatusMsg().replace('[not ready]', '');
-        this.mCredential.updateUiMsg(uiMsg);
-        return true;
+  private async provisionedOnCurrentDevice$(): Promise<boolean> {
+    const deviceEndpointStatus = await this.hidSdkManager().endpointStatus();
+    const deviceEndpointActive = deviceEndpointStatus == EndpointStatuses.SETUP_ACTIVE;
+    const deviceEndpointSetup = deviceEndpointStatus == EndpointStatuses.SETUP_INACTIVE;
+    if (deviceEndpointActive) {
+      this.mCredential.updateUiMsg(CREDENTIAL_ENABLED_MESSAGE);
+      this.hidSdkManager().doPostInitWork();
+    } else if (deviceEndpointSetup) {
+      const endpointStateCaches: any = (await this.credentialService.getEndpointStateInfo$()) || {};
+      if (endpointStateCaches.endpointStatus == EndpointStatuses.SETUP_ACTIVE) {
+        if (await this.isEndpointRevoked()) {
+          this.onEndpointRevoked();
+        }
+      } else if (endpointStateCaches.endpointStatus == EndpointStatuses.SETUP_INACTIVE) {
+        this.hidSdkManager().doPostInitWork();
       }
-      return endpointStatus == EndpointStatuses.SETUP_INACTIVE;
-    };
-    return from(checkEndpointStatus());
+    }
+    return deviceEndpointActive || deviceEndpointSetup;
   }
 
   credentialEnabled$(): Observable<boolean> {
@@ -243,13 +326,12 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
           return of(false);
         }
         if (this.mCredential.isProvisioned()) {
-          return this.checkIfItsBeenProvisionedOnThisDevice$().pipe(
-            map(credentialProvisioneddOnThisDevice => {
-              if (credentialProvisioneddOnThisDevice) {
-                this.hidSdkManager().doPostInitWork();
-                return true;
+          return from(this.provisionedOnCurrentDevice$()).pipe(
+            first(),
+            map(provisionedOnThisDevice => {
+              if (!provisionedOnThisDevice) {
+                this.mCredential.setStatus(MobileCredentialStatuses.IS_AVAILABLE);
               }
-              this.mCredential.setStatus(MobileCredentialStatuses.IS_AVAILABLE);
               return true;
             })
           );
@@ -285,110 +367,137 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
         this.mCredential = newCredential;
         this.installCredentialOnDevice();
       })
-      .catch(() => {
-        this.loadingService.closeSpinner();
-        this.showInstallationErrorAlert();
-      });
+      .catch(() => this.showInstallationErrorAlert());
   }
 
   private updateCredentialOnServer$ = async (): Promise<boolean> => {
     return await this.credentialService
       .updateCredential$(this.mCredential)
-      .pipe(
-        catchError(() => {
-          throw new Error('Failed to update credential on server$');
-        }),
-        first()
-      )
+      .pipe(first())
       .toPromise();
   };
 
-  private get doNativeInstall$(): Promise<boolean> {
-    return this.hidSdkManager()
+  private doNativeInstall$ = async (): Promise<boolean> => {
+    return await this.hidSdkManager()
       .setupEndpoint((this.mCredential as HIDCredential).getInvitationCode())
       .then(transactionResult => {
-        let transactionSucceeded = transactionResult == HIDSdkManager.TRANSACTION_SUCCESS;
+        const transactionSucceeded = transactionResult == HIDSdkManager.TRANSACTION_SUCCESS;
+        this.endpointAlreadyInstalledFlag = transactionResult == HIDSdkManager.KEY_ALREADY_INSTALLED;
         if (transactionSucceeded) {
-          return true;
+          return transactionSucceeded;
         }
         throw new Error(transactionResult);
       });
-  }
+  };
 
-  private installCredentialOnDevice(): void {
-    this.doNativeInstall$
-      .then(() => {
-        this.mCredential.setStatus(MobileCredentialStatuses.IS_PROVISIONED);
-        this.updateCredentialOnServer$()
-          .then(() => {
-            this.hidSdkManager().doPostInstallWork();
-            delete this.mCredential.credentialBundle.invitationCode;
-            this.credentialStateChangeListener.onCredentialStateChanged();
-            this.resetRetryCount();
-            this.loadingService.closeSpinner();
-          })
-          .catch(() => {
-            this.handleRetry(this.updateCredentialOnServer$)
-              .then(() => {
-                this.hidSdkManager().doPostInstallWork();
-                this.credentialStateChangeListener.onCredentialStateChanged();
-              })
-              .catch(() => {
-                // still failed after 3 retry..then we want to undo the installation on device and ask user to try again later.
-                this.showInstallationErrorAlert();
-                this.deleteCredentialFromDevice$();
-                this.deleteCredentialFromServer$();
-              })
-              .finally(() => {
-                this.resetRetryCount();
-                this.loadingService.closeSpinner();
-              });
-          });
-      })
-      .catch(error => {
-        if (this.canRetry(error.message)) {
-          this.loadingService.closeSpinner();
-          this.showRetryToast().then(shoudRetryInstallation => {
-            if (shoudRetryInstallation) {
-              this.showLoading();
-              this.installCredentialOnDevice();
-            }
-          });
-        } else {
-          this.showInstallationErrorAlert();
-        }
+  private async installCredentialOnDevice(): Promise<void> {
+    const credentialDeviceInstallSuccess = await this.handRetriableOperation({
+      fn: this.doNativeInstall$,
+      showLoading: false,
+      checkErrors: true,
+      userDecides: true,
+    });
+
+    if (credentialDeviceInstallSuccess) {
+      this.mCredential.setStatus(MobileCredentialStatuses.IS_PROVISIONED);
+      const credentialServerUpdateSuccess = await this.handRetriableOperation({
+        fn: this.updateCredentialOnServer$,
+        showLoading: false,
       });
+
+      if (credentialServerUpdateSuccess) {
+        delete this.mCredential.credentialBundle.invitationCode;
+        this.credentialStateChangeListener.onCredentialStateChanged();
+        this.hidSdkManager().doPostInstallWork();
+      } else {
+        this.showInstallationErrorAlert();
+        this.deleteCredentialFromDevice$();
+        this.handRetriableOperation({
+          fn: this.deleteCredentialFromServer$,
+          retryCount: 6,
+          showLoading: false,
+        });
+      }
+      this.loadingService.closeSpinner();
+    } else {
+      this.loadingService.closeSpinner();
+      if (this.endpointAlreadyInstalledFlag) {
+        this.showCredentialAlreadyInstalledAlert();
+        this.endpointAlreadyInstalledFlag = false;
+      } else {
+        this.showInstallationErrorAlert();
+      }
+    }
   }
 
-  private canRetry(error?: string): boolean {
-    const anotherRetryAllowed = this.transactionRetryCount <= this.transactionMaxRetryCount;
+  private canRetry(retryCount: number, error?: string): boolean {
+    const anotherRetryAllowed = retryCount > 0; // this.transactionRetryCount <= this.transactionMaxRetryCount;
     if (anotherRetryAllowed) {
-      if (error && !this.shouldRetryBecauseOf(error)) {
-        this.resetRetryCount();
+      if (error && !this.shouldRetryBecauseOfError(error)) {
         return false;
       }
-      this.transactionRetryCount++;
       return anotherRetryAllowed;
     }
-    this.resetRetryCount();
     return false;
   }
 
-  private async handRetriableOperation(fn: () => Promise<boolean>): Promise<boolean> {
-    return await this.handleRetry(fn);
+  private async handRetriableOperation(params: ExecutionParameters): Promise<boolean> {
+    const options = {
+      fn: params.fn,
+      retryCount: params.retryCount || 4,
+      showLoading: params.showLoading || false,
+      checkErrors: params.checkErrors || false,
+      userDecides: params.userDecides || false,
+    };
+
+    if (options.showLoading) {
+      this.showLoading();
+    }
+    const operationResult = await this.handleRetry(options).catch(() => false);
+
+    if (options.showLoading) {
+      this.loadingService.closeSpinner();
+    }
+    return operationResult;
   }
 
-  private async handleRetry(fn: () => Promise<boolean>, error?: string): Promise<boolean> {
-    while (this.canRetry(error)) {
+  private async handleRetry(options: ExecutionParameters): Promise<boolean> {
+    let error = null;
+    let retryNum = options.retryCount;
+    const weCareAboutErrorTypes = options.checkErrors;
+    const userShouldDecideRetrying = options.userDecides;
+    const fn = options.fn;
+    while (this.canRetry(retryNum, error)) {
+      retryNum--;
       try {
         if (await fn()) {
           return true;
         }
-      } catch (err) {
-        error = error ? err.message : error;
+      } catch (exception) {
+        let canStillRetry = retryNum > 0;
+        if (weCareAboutErrorTypes) {
+          error = exception.message;
+          if (canStillRetry && userShouldDecideRetrying && this.shouldRetryBecauseOfError(exception.message)) {
+            this.loadingService.closeSpinner();
+            const userWantsRetry = await this.showRetryToast();
+            if (userWantsRetry) {
+              this.showLoading();
+            } else {
+              break;
+            }
+          }
+        } else if (userShouldDecideRetrying && canStillRetry) {
+          this.loadingService.closeSpinner();
+          const userWantsRetry = await this.showRetryToast();
+          if (userWantsRetry) {
+            this.showLoading();
+          } else {
+            break;
+          }
+        }
       }
     }
-    throw new Error('Failed all attempts');
+    return false;
   }
 
   private async showRetryToast(): Promise<boolean> {
@@ -411,7 +520,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     return data ? true : false;
   }
 
-  private shouldRetryBecauseOf(error: string): boolean {
+  private shouldRetryBecauseOfError(error: string): boolean {
     if (!error) {
       return false;
     }
@@ -433,14 +542,12 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     return shouldRetry;
   }
 
-  private showInstallationErrorAlert(operation = 'installation'): void {
-    let header = 'Unexpected error';
-    let message = `An unexpected error occurred during mobile ID ${operation}, please try again later.`;
-    let buttons = [{ text: 'OK', role: 'cancel' }];
-    this.createAlertDialog(header, message, buttons).then(errorAlert => {
-      this.loadingService.closeSpinner();
-      errorAlert.present();
-    });
+  private async showInstallationErrorAlert(operation = 'installation'): Promise<void> {
+    const header = 'Unexpected error';
+    const message = `An unexpected error occurred during mobile ID ${operation}, please try again later.`;
+    const buttons = [{ text: 'OK', role: 'cancel' }];
+    const alertDialog = await this.createAlertDialog(header, message, buttons);
+    await alertDialog.present();
   }
 
   private deleteCredentialFromServer$ = async (): Promise<boolean> => {
@@ -467,10 +574,6 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     throw new Error(transactionResultCode);
   };
 
-  private resetRetryCount(): void {
-    this.transactionRetryCount = 1;
-  }
-
   private showLoading(): void {
     if (this.loadingService.notLoading()) {
       this.loadingService.showSpinner(this.customLoadingOptions);
@@ -479,18 +582,21 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
 
   private async onDeleteConfirmed(): Promise<void> {
     this.showLoading();
-    let credentialDeleteSuccess = await this.handRetriableOperation(this.deleteCredentialFromServer$).catch(() => {
-      this.loadingService.closeSpinner();
-      this.showInstallationErrorAlert('uninstall');
-      return false;
+    let credentialDeleteOnServerSuccess = await this.handRetriableOperation({
+      fn: this.deleteCredentialFromServer$,
+      showLoading: false,
     });
-    if (credentialDeleteSuccess) {
-      credentialDeleteSuccess = await this.handRetriableOperation(this.deleteCredentialFromDevice$).catch(() => false);
-      if (!credentialDeleteSuccess) {
-        this.showInstallationErrorAlert('uninstall');
-      }
-      this.loadingService.closeSpinner();
+    let credentialDeleteOnDeviceSuccess = false;
+    if (credentialDeleteOnServerSuccess) {
+      credentialDeleteOnDeviceSuccess = await this.handRetriableOperation({
+        fn: this.deleteCredentialFromDevice$,
+        showLoading: false,
+      });
     }
+    if (!credentialDeleteOnDeviceSuccess) {
+      this.showInstallationErrorAlert('uninstall');
+    }
+    this.loadingService.closeSpinner();
   }
 
   private hidSdkManager(): HIDSdkManager {
@@ -498,24 +604,14 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
   }
 
   get termsAndConditionsSource$(): Promise<string> {
-    this.showLoading();
     const termsNConditionsConfig = {
-      domain: CONTENT_STRINGS_DOMAINS.get_web_gui,
-      category: CONTENT_STRINGS_CATEGORIES.termsScreen,
+      domain: CONTENT_STRINGS_DOMAINS.patronUi,
+      category: CONTENT_STRINGS_CATEGORIES.mobileCredential,
       name: 'terms',
     };
     return this.credentialService
       .contentString$(termsNConditionsConfig)
-      .pipe(
-        map(contentString => {
-          this.loadingService.closeSpinner();
-          return contentString;
-        }),
-        catchError(() => {
-          this.loadingService.closeSpinner();
-          throw new Error('Error loading content');
-        })
-      )
+      .pipe(catchError(() => 'No content'))
       .toPromise();
   }
 }

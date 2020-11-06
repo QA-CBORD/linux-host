@@ -3,7 +3,7 @@ export const MOBILE_CREDENTIAL_CONFIGS = {
   HID: {
     UI_MSG: {
       WHEN_AVAILABLE: 'ID not added to Phone',
-      WHEN_PROVISIONED: 'Mobile ID enabled[not ready]',
+      WHEN_PROVISIONED: 'Mobile ID installed [not ready]',
       WHEN_SUSPENDED: '',
       WHEN_REVOKED: 'Mobile ID revoked'
     },

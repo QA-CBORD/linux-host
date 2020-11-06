@@ -11,23 +11,24 @@ interface ExecutionOptions {
   executionInterval: number;
   executionTrace?: number;
 }
-
-class ExecutionController {
+class Task {
   constructor(
-    private config: {
-      execOptions: ExecutionOptions;
-      onCompleteCallback: (data?: any) => void;
-    }
-  ) {
-    config.execOptions.executionTrace = 0;
+    public executor: (controller: TaskExecutionController) => Promise<unknown>,
+    public execOptions: ExecutionOptions
+  ) {}
+}
+
+class TaskExecutionController {
+  constructor(private execOptions: ExecutionOptions, private taskCompletionCallback: (result?: any) => void) {
+    execOptions.executionTrace = 0;
   }
 
   get currentExecCount(): number {
-    return this.config.execOptions.executionTrace;
+    return this.execOptions.executionTrace;
   }
 
   get maxExecutionCount(): number {
-    return this.config.execOptions.maxExecutionCount;
+    return this.execOptions.maxExecutionCount;
   }
 
   get remainingExecCount(): number {
@@ -35,14 +36,14 @@ class ExecutionController {
   }
 
   incrementExecCount(): void {
-    this.config.execOptions.executionTrace++;
+    this.execOptions.executionTrace++;
   }
   maxExecutionReached(): boolean {
-    return this.config.execOptions.executionTrace == this.config.execOptions.maxExecutionCount;
+    return this.execOptions.executionTrace == this.execOptions.maxExecutionCount;
   }
   stopTaskExecution(result?: any): void {
-    this.config.onCompleteCallback(result);
-    this.config.execOptions.executionTrace = 0;
+    this.taskCompletionCallback(result);
+    this.execOptions.executionTrace = 0;
   }
 }
 
@@ -53,13 +54,38 @@ export enum EndpointStatuses {
   LOCATION_PERMISSION_REQUIRED = 2,
 }
 
+class TaskExecutor {
+  private intervalId: any;
+  constructor(private task: Task, private taskCompletionCallback: (result) => void) {}
+
+  initTask(): void {
+    const task = this.task;
+    const taskCompletionCallback = this.taskCompletionCallback;
+    this.intervalId = setInterval(
+      task.executor,
+      task.execOptions.executionInterval,
+      new TaskExecutionController(task.execOptions, result => {
+        clearInterval(this.intervalId);
+        taskCompletionCallback(result);
+      })
+    );
+  }
+
+  stopExecution(): void {
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+    }
+  }
+}
+
 export class HIDSdkManager {
   static TRANSACTION_SUCCESS = 'success';
   static TRANSACTION_FAILED = 'failed';
   static LOCATION_PERMISSION_REQUIRED = 'LOCATION_PERMISSION_REQUIRED';
+  static KEY_ALREADY_INSTALLED = 'KEY_ALREADY_INSTALLED';
   private static instance: HIDSdkManager;
-  public subject: Subject<EndpointStatuses> = new Subject<EndpointStatuses>();
-
+  taskExecutionObs$: Subject<EndpointStatuses> = new Subject<EndpointStatuses>();
+  private taskExecutor: TaskExecutor;
   private constructor() {}
 
   static getInstance(): HIDSdkManager {
@@ -79,7 +105,7 @@ export class HIDSdkManager {
       if (await this.isEndpointActive()) {
         return EndpointStatuses.SETUP_ACTIVE;
       } else {
-        return EndpointStatuses.SETUP_ACTIVE;
+        return EndpointStatuses.SETUP_INACTIVE;
       }
     } else {
       return EndpointStatuses.NOT_SETUP;
@@ -119,7 +145,7 @@ export class HIDSdkManager {
     return (await this.executeCall(HIDPlugin.refreshEndpoint)) == HIDSdkManager.TRANSACTION_SUCCESS;
   }
 
-  private async taskExecutor(controller: ExecutionController): Promise<void> {
+  private async startScanning(controller: TaskExecutionController): Promise<void> {
     controller.incrementExecCount();
     let locationPermissionRequired: boolean = false;
     let executeCall = async (pluginCall: (param?) => Promise<HIDSdkTransactionResponse>, args?: any): Promise<any> => {
@@ -154,31 +180,33 @@ export class HIDSdkManager {
     }
   }
 
-  private async startTaskExecution(execOptions: ExecutionOptions): Promise<void> {
-    let intervalId = setInterval(
-      this.taskExecutor,
-      execOptions.executionInterval,
-      new ExecutionController({
-        execOptions,
-        onCompleteCallback: data => {
-          clearInterval(intervalId);
-          this.subject.next(data);
-        },
-      })
-    );
+  async doPostInstallWork(): Promise<void> {
+    const task = new Task(this.startScanning, {
+      maxExecutionCount: 30,
+      executionInterval: 6000,
+    });
+
+    this.taskExecutor = new TaskExecutor(task, result => {
+      this.taskExecutionObs$.next(result);
+    });
+    this.taskExecutor.initTask();
   }
 
-  async doPostInstallWork(): Promise<void> {
-    this.startTaskExecution({
-      maxExecutionCount: 25,
-      executionInterval: 5000,
-    });
+  async stopTaskExecution(): Promise<void> {
+    if (this.taskExecutor) {
+      this.taskExecutor.stopExecution();
+    }
   }
 
   async doPostInitWork(): Promise<void> {
-    this.startTaskExecution({
-      maxExecutionCount: 25,
-      executionInterval: 5000,
+    const task = new Task(this.startScanning, {
+      maxExecutionCount: 10,
+      executionInterval: 15000,
     });
+
+    this.taskExecutor = new TaskExecutor(task, result => {
+      this.taskExecutionObs$.next(result);
+    });
+    this.taskExecutor.initTask();
   }
 }

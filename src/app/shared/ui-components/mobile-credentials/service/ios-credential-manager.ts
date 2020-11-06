@@ -1,4 +1,3 @@
-
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { from, Observable, of } from 'rxjs';
 import { map, switchMap, take } from 'rxjs/operators';
@@ -20,6 +19,8 @@ export class IOSCredentialManager implements MobileCredentialManager {
     private readonly userFacadeService: UserFacadeService,
     private readonly authFacadeService: AuthFacadeService
   ) {}
+
+  async onWillLogout(): Promise<void> {}
 
   refresh(): void {
     this.loadCredentials().then(freshCredentials => {
