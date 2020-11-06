@@ -64,7 +64,7 @@ export class NativeProvider {
     private readonly platform: Platform,
     private readonly router: Router,
     private readonly zone: NgZone,
-    private readonly modalController: ModalController,
+    private readonly modalController: ModalController ,
     private readonly popoverController: PopoverController,
     private readonly actionSheetController: ActionSheetController,
   ) {
