@@ -4,4 +4,78 @@
     <string name="title_activity_main">GET Mobile</string>
     <string name="package_name">com.cbord.get</string>
     <string name="custom_url_scheme">com.cbord.get</string>
+
+    <!-- Endpoint setup -->
+    <string name="endpoint_setup_title">Registration</string>
+    <string name="invitation_code_hint">Invitation code (16 characters)</string>
+    <string name="personalization_btn">Register</string>
+
+    <!-- Mobile keys -->
+    <string name="keys_title">Mobile Keys</string>
+    <string name="key_item_image_desc">Key</string>
+    <string name="open_closest_reader_btn">Open closest lock in range</string>
+    <string name="unlock_notification_title">Mobile Access is running</string>
+    <string name="notification_channel_name_informative">Running foreground scan service</string>
+
+    <!-- Startup -->
+    <string name="app_startup_title">Loading</string>
+
+    <!-- NFC/HCE String to display when multiple apps has hid credentials. -->
+    <string name="hceServiceDescription">Get Mobile</string>
+    <string name="hceServiceAidGroupDescription">AID group description</string>
+
+    <!-- Menu actions -->
+    <string name="action_update">Update</string>
+    <string name="action_enable">allow</string>
+    <string name="action_endpoint_details">Endpoint details</string>
+
+    <!--Key info -->
+    <string name="key_info">Key info</string>
+    <string name="key_info_identifier">Identifier:</string>
+    <string name="key_info_external_id">ExternalID:</string>
+    <string name="key_info_label">Label:</string>
+    <string name="key_info_type">Type:</string>
+    <string name="key_info_issuer">Issuer:</string>
+    <string name="key_info_card_number">Card number:</string>
+    <string name="key_info_valid_from">Valid from:</string>
+    <string name="key_info_valid_to">Valid to:</string>
+    <string name="key_info_configuration_url">Configuration URL:</string>
+    <string name="key_info_readback_url">Readback URL:</string>
+
+    <!-- Error messages -->
+    <string name="error_generic_error">An error occurred</string>
+    <string name="error_api_is_busy">API is busy</string>
+    <string name="error_endpoint_not_personalize">Endpoint is not personalized</string>
+    <string name="error_server_communication_failed">Server communication failed. Check internet connectivity or try again later.</string>
+    <string name="error_device_not_eligible">Device not eligible for this service. Contact key administrator.</string>
+    <string name="error_device_api_incompatible">Mobile Access SDK incompatible. Upgrade your application in the Play Store</string>
+    <string name="error_setup_failed_retry">Invalid registration code. Retype or contact key administrator.</string>
+    <string name="error_internal_error">Internal error. Retry or contact key administrator if the problem persists.</string>
+    <string name="error_device_setup_failed">Device setup failed. Contact key administrator.</string>
+    <string name="warning_location_permission_not_granted">Warning BLE requires location permission</string>
+    <string name="location_services_request">Location access is required to open locks over bluetooth</string>
+    <string name="no_lock_in_range">No lock in range</string>
+    <string name="lock_in_range">Lock in range</string>
+
+    <!-- Licenses -->
+    <string name="third_party_privacy_title">Third-party licenses</string>
+    <string name="action_licenses">Licenses</string>
+
+    <!--Endpoint details -->
+    <string name="endpoint_info_item_seos_id">Seos ID: </string>
+    <string name="endpoint_info_item_environment">Environment: </string>
+    <string name="endpoint_info_item_last_sync">Last server sync: </string>
+    <string name="endpoint_info_item_sdk_version">SDK version: </string>
+    <string name="endpoint_info_item_seos_version">Seos version: </string>
+    <string name="endpoint_info_never_synced">never</string>
+    <string name="neutral_button_action">OK</string>
+    <string name="none">None</string>
+    <string name="send_email_intent">Send log files</string>
+    <string name="email_text_field">Please view attached .log files</string>
+    <string name="email_subject">Log files from ASSA ABLOY Mobile Keys SDK</string>
+    <string name="unregister_button_title">Unregister endpoint</string>
+    <string name="unregister_verification_message">Do you really want to unregister this endpoint?</string>
+    <string name="unregister_failed_message">Unregister failed. Please try again.</string>
+    <string name="unregister_succesful_message">Unregister successful</string>
+    <string name="unregister_progress_message">Unregistering...</string>
 </resources>

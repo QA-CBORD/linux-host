@@ -26,6 +26,19 @@ export class SettingsApiService {
       .pipe(map(({ response }) => response));
   }
 
+  deleteUserSetting(settingName: User.Settings): Observable<boolean> {
+    const queryConfig = new RPCQueryConfig(
+      'deleteSetting',
+      {
+        settingName,
+      },
+      true
+    );
+    return this.http
+      .post<MessageResponse<boolean>>(this.userSettingsUrl, queryConfig)
+      .pipe(map(({ response }) => response));
+  }
+
   saveUserSetting(settingName: User.Settings, settingValue: string): Observable<boolean> {
     const queryConfig = new RPCQueryConfig(
       'saveSetting',
@@ -35,7 +48,9 @@ export class SettingsApiService {
       },
       true
     );
-    return this.http.post<MessageResponse<boolean>>(this.userSettingsUrl, queryConfig).pipe(map(({ response }) => response));
+    return this.http
+      .post<MessageResponse<boolean>>(this.userSettingsUrl, queryConfig)
+      .pipe(map(({ response }) => response));
   }
 
   getSetting(setting: Settings.Setting, sessionId?: string, institutionId?: string): Observable<SettingInfo> {
@@ -52,9 +67,7 @@ export class SettingsApiService {
   }
 
   getSettings(settings: Settings.Setting[], sessionId?: string, institutionId?: string): Observable<SettingInfo[]> {
-    const requestArray = settings.map(setting =>
-      this.getSetting(setting, sessionId, institutionId)
-    );
+    const requestArray = settings.map(setting => this.getSetting(setting, sessionId, institutionId));
     return zip(...requestArray);
   }
 
@@ -74,5 +87,4 @@ export class SettingsApiService {
       .post(this.configurationsUrl, queryConfig)
       .pipe(map(({ response }: MessageResponse<SettingInfoList>) => response));
   }
-
 }

@@ -13,6 +13,7 @@ export enum CONTENT_STRINGS_CATEGORIES {
   login_screen = 'login_screen',
   aboutScreen = 'about_screen',
   termsScreen = 'terms_screen',
+  mobileCredential = 'mobile-credential'
 }
 
 export enum CONTENT_STRINGS_LOCALES {

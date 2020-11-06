@@ -26,7 +26,12 @@ export class AccessCardService {
 
   getUserPhoto(): Observable<string> {
     return this.userFacadeService.getAcceptedPhoto$().pipe(
-      map(({ data, mimeType }) => `data:${mimeType};base64,${data}`),
+      map((photoInfo) => {
+        if(photoInfo){
+          return `data:${photoInfo.mimeType};base64,${photoInfo.data}`;
+        }
+        return null;
+      }),
       take(1)
     );
   }
