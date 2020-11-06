@@ -18,7 +18,7 @@ export class LoadingService {
     /// create config
     config = {
       ...config,
-      //showBackdrop: true,
+      showBackdrop: true,
       mode: 'md',
       keyboardClose: true,
       backdropDismiss: false,

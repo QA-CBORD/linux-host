@@ -142,40 +142,6 @@ export class UserFacadeService extends ServiceStateFacade {
       : of(false);
   }
 
-  isAppleWalletEnabled$(): Observable<boolean> {
-    return this.nativeProvider.isIos()
-      ? this.settingsFacadeService.getSetting(Settings.Setting.APPLE_WALLET_ENABLED).pipe(
-          map(({ value }) => Boolean(Number(value))),
-          take(1)
-        )
-      : of(false);
-  }
-
-  mobileCredentialSettings(): Observable<{ isAppleWalletEnabled: Function; isAndroidCredEnabled: Function }> {
-    return forkJoin(this.isAppleWalletEnabled$(), this.isAndroidMobileCredEnabled$()).pipe(
-      switchMap(([AppleWalletEnabled, androidCredEnabled]) => {
-        return of({
-          isAppleWalletEnabled: () => {
-            return AppleWalletEnabled;
-          },
-          isAndroidCredEnabled: () => {
-            return androidCredEnabled;
-          },
-        });
-      })
-    );
-  }
-
-  isAndroidMobileCredEnabled$(): Observable<boolean> {
-    if (!this.nativeProvider.isAndroid()) {
-      return of(false);
-    }
-    return this.settingsFacadeService.getSetting(Settings.Setting.ANDROID_MOBILE_CREDENTIAL_ENABLED).pipe(
-      map(({ value }) => Boolean(Number(value))),
-      take(1)
-    );
-  }
-
   private getPhotoIdByStatus(photoList: UserPhotoInfo[], status: number = 1): UserPhotoInfo | undefined {
     return photoList.find((photo: UserPhotoInfo) => photo.status === status);
   }
@@ -243,6 +209,8 @@ export class UserFacadeService extends ServiceStateFacade {
             userInfo.id,
             this.getPushNotificationInfo(userInfo, fcmToken)
           );
+        } else {
+          return of(false);
         }
       }),
       take(1),
