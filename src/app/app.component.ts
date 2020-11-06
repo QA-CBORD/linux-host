@@ -27,6 +27,7 @@ export class AppComponent implements OnInit {
   private _isPatronRoute$: Observable<boolean>;
   private _isKeyBoardShown$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   isNavBarShown$: Observable<boolean>;
+  isMenuNavBarExpanded$: Observable<boolean>;
 
   constructor(
     private readonly platform: Platform,
@@ -53,6 +54,7 @@ export class AppComponent implements OnInit {
     ).pipe(
       map(([isNavBarShown, isPatronRoute, isKeyBoardShown, isNativeStartupMessageShown]) => isPatronRoute && isNavBarShown && !isKeyBoardShown && !isNativeStartupMessageShown)
     );
+    this.isMenuNavBarExpanded$ = this.globalNav.isNavBarMenuExpanded$;
   }
 
   setPatronsRouteIndicator() {
