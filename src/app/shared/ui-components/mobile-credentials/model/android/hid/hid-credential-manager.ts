@@ -185,14 +185,20 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     this.createAlertDialog(header, message, buttons).then(alert => alert.present());
   }
 
-  private async checkCredentialAvailability(): Promise<AndroidCredential<any>> {
-    this.showLoading();
+  private async checkCredentialAvailability(showLoading: boolean = true): Promise<AndroidCredential<any>> {
+    if (showLoading) {
+      this.showLoading();
+    }
     return await this.credentialService
       .activePasses$()
       .pipe(
         first(),
         catchError(() => of(this.mCredential)),
-        finalize(() => this.loadingService.closeSpinner())
+        finalize(() => {
+          if (showLoading) {
+            this.loadingService.closeSpinner();
+          }
+        })
       )
       .toPromise();
   }
@@ -208,10 +214,9 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     );
   }
 
-  private async onEndpointRevoked(timeToUpdate: number = 10000): Promise<void> {
+  private async onEndpointRevoked(timeToUpdate: number = 60000): Promise<void> {
     // change ui message here.. and refresh.
     this.mCredential.updateUiMsg(CREDENITAL_REVOKED_MESSAGE);
-    this.credentialStateChangeListener.onCredentialStateChanged();
     setTimeout(async () => {
       let credentialDeletionSuccess = await this.handRetriableOperation({
         fn: this.deleteCredentialFromServer$,
@@ -221,7 +226,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
       if (credentialDeletionSuccess) {
         this.mCredential.setStatus(MobileCredentialStatuses.IS_REVOKED);
         await this.hidSdkManager().deleteEndpoint();
-        this.mCredential = await this.checkCredentialAvailability();
+        this.mCredential = await this.checkCredentialAvailability(false);
         this.credentialStateChangeListener.onCredentialStateChanged();
       } else {
         // try it again sometimes later.
