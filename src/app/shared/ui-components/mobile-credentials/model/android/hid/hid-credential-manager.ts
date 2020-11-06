@@ -132,11 +132,11 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     // notify user he needs to uninstall from previous device first.
     let header = 'Notification';
     let message =
-      'We have detected that you provisioned a Mobile Credential but it is not on this Phone. You may have uninstalled GET Mobile, or it is on another phone? Would you like to install a new Mobile Credential on this phone? Note: if it is installed on another phone, it will no longer work on that phone.';
+      'We have detected that you provisioned a mobile credential but it is not on this device. You may have uninstalled GET Mobile, or it is on another device ? Would you like to install your mobile credential on this phone ? Note that if you have installed it on another device, it will be revoked.';
     const buttons = [
       { text: 'cancel', role: 'cancel' },
       {
-        text: 'Install here',
+        text: 'Accept and Install',
         handler: async () => {
           const deleteSuccessfull = await this.handRetriableOperation({
             fn: this.deleteCredentialFromServer$,
@@ -162,11 +162,11 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     // notify user he needs to uninstall from previous device first.
     let header = 'Notification';
     let message =
-      'we have detected that there is an active mobile ID installed on this device. if you proceed with this installation the previous one will be deleted.';
+      'We have detected that there is an active mobile credential installed on this device. if you proceed with this installation, any previously installed mobile credential will be revoked.';
     const buttons = [
       { text: 'cancel', role: 'cancel' },
       {
-        text: 'accept and Install',
+        text: 'Accept and Install',
         handler: async () => {
           await this.handRetriableOperation({ fn: this.deleteCredentialFromServer$, showLoading: true, retryCount: 6 });
           const credentialDeviceDeleteSuccess = await this.handRetriableOperation({
@@ -268,6 +268,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
 
   private async createAlertDialog(header: string, msg: string, buttons: Array<any>): Promise<HTMLIonAlertElement> {
     return await this.alertCtrl.create({
+      cssClass: 'alert-dialog',
       backdropDismiss: false,
       mode: 'ios',
       animated: true,
