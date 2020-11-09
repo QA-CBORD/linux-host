@@ -7,7 +7,8 @@ import { SortControlComponent } from '../filter-sort/sort-control/sort-control.c
 
 import { generateCategories } from '../filter-sort/filter-sort.mock';
 
-import { Category } from '../filter-sort/filter-sort.model';
+import { Category, CategoryOptions } from '../filter-sort/filter-sort.model';
+import { RoomsService } from '@sections/housing/rooms/rooms.service';
 
 @Component({
   selector: 'st-search-filter-modal',
@@ -18,7 +19,9 @@ import { Category } from '../filter-sort/filter-sort.model';
 export class SearchFilterModalComponent implements OnInit {
   @ViewChild(FilterSortComponent) filterSort: FilterSortComponent;
 
-  categories: Category[] = generateCategories();
+  categories: Category[] = [];
+
+  categoryOptions: {[key: string]: string[]}
 
   filtersForm: FormGroup;
 
@@ -26,19 +29,28 @@ export class SearchFilterModalComponent implements OnInit {
 
   floors: boolean[] = [false, false, false, false, false, false];
 
-  constructor(private _modalController: ModalController, private _formBuilder: FormBuilder) {}
+  constructor(private _roomsService: RoomsService,
+              private _modalController: ModalController,
+              private _formBuilder: FormBuilder,) {}
 
   ngOnInit(): void {
-    this.filtersForm = this._formBuilder.group({
-      monthRange: 1000,
-      termRange: 1000,
-      beds: this._formBuilder.array(this.beds),
-      floors: this._formBuilder.array(this.floors),
-    });
+    this.categories = this._roomsService.getFilterCategories();
+    this.categoryOptions =  this._roomsService.getFilterOptions(this.categories);
+    console.log(this.categories);
+    console.log(this.categoryOptions)
+    const builderOptions = {};
+    for (let item in this.categoryOptions) {
+      builderOptions[item] = this._formBuilder.array(this.categoryOptions[item]);
+    }
+    console.log(builderOptions);
+    this.filtersForm = this._formBuilder.group(builderOptions);
+
+    console.log(this.filtersForm.controls)
   }
 
   close(): void {
     this._modalController.dismiss();
+    // make call to update facilities with new options
   }
 
   clearFilters(): void {
@@ -50,6 +62,11 @@ export class SearchFilterModalComponent implements OnInit {
       monthRange: 1000,
       termRange: 1000,
     });
+  }
+
+  getArrayName(property: string): string {
+    const name = property.replace('Facility ', '');
+    return name;
   }
 
   sort(control: SortControlComponent): void {}

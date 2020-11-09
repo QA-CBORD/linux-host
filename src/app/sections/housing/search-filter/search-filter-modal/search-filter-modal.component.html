@@ -29,53 +29,72 @@
   </section>
 
   <form [formGroup]="filtersForm">
-    <st-search-filter-section title="Price" subtitle="per month" [toggled]="true">
-      <st-range [min]="0" [max]="1000" [parentGroup]="filtersForm" name="monthRange"></st-range>
-    </st-search-filter-section>
-
-    <st-search-filter-section title="Price" subtitle="per term" [toggled]="true">
-      <st-range [min]="0" [max]="1000" [parentGroup]="filtersForm" name="termRange"></st-range>
-    </st-search-filter-section>
-
-    <st-search-filter-section title="Beds" [toggled]="true">
-      <div class="search-filter-model__row" formArrayName="beds">
-        <ion-item
-          class="ion-no-padding form-checkbox search-filter-model__col"
-          lines="none"
-          *ngFor="let bed of beds; index as idx"
-        >
-          <ion-checkbox
-            class="form-checkbox__control"
-            mode="md"
-            slot="start"
-            [formControlName]="idx"
-            [checked]="bed"
-          ></ion-checkbox>
-          <ion-label class="form-label">{{ idx + 1 }} bed</ion-label>
-        </ion-item>
-      </div>
-    </st-search-filter-section>
-
-    <st-show-more>
-      <st-search-filter-section title="Floor" [toggled]="true">
-        <div class="search-filter-model__row" formArrayName="floors">
+    <div *ngFor="let item of categoryOptions | keyvalue ">
+      <st-search-filter-section [title]="item.key" [toggled]="true">
+        <div class="search-filter-model__row" formArrayName="{{item.key}}">
           <ion-item
             class="ion-no-padding form-checkbox search-filter-model__col"
             lines="none"
-            *ngFor="let floor of floors; index as idx"
+            *ngFor="let option of filtersForm.controls[item.key].controls"
           >
             <ion-checkbox
               class="form-checkbox__control"
               mode="md"
               slot="start"
-              [formControlName]="idx"
-              [checked]="floor"
+              [checked]="false"
             ></ion-checkbox>
-            <ion-label class="form-label">{{ idx + 1 }} Floor</ion-label>
+            <ion-label class="form-label">{{option.value}}</ion-label>
           </ion-item>
         </div>
       </st-search-filter-section>
-    </st-show-more>
+    </div>
+<!--    <st-search-filter-section title="Price" subtitle="per month" [toggled]="true">-->
+<!--      <st-range [min]="0" [max]="1000" [parentGroup]="filtersForm" name="monthRange"></st-range>-->
+<!--    </st-search-filter-section>-->
+
+<!--    <st-search-filter-section title="Price" subtitle="per term" [toggled]="true">-->
+<!--      <st-range [min]="0" [max]="1000" [parentGroup]="filtersForm" name="termRange"></st-range>-->
+<!--    </st-search-filter-section>-->
+
+<!--    <st-search-filter-section title="Beds" [toggled]="true">-->
+<!--      <div class="search-filter-model__row" formArrayName="beds">-->
+<!--        <ion-item-->
+<!--          class="ion-no-padding form-checkbox search-filter-model__col"-->
+<!--          lines="none"-->
+<!--          *ngFor="let bed of beds; index as idx"-->
+<!--        >-->
+<!--          <ion-checkbox-->
+<!--            class="form-checkbox__control"-->
+<!--            mode="md"-->
+<!--            slot="start"-->
+<!--            [formControlName]="idx"-->
+<!--            [checked]="bed"-->
+<!--          ></ion-checkbox>-->
+<!--          <ion-label class="form-label">{{ idx + 1 }} bed</ion-label>-->
+<!--        </ion-item>-->
+<!--      </div>-->
+<!--    </st-search-filter-section>-->
+
+<!--    <st-show-more>-->
+<!--      <st-search-filter-section title="Floor" [toggled]="true">-->
+<!--        <div class="search-filter-model__row" formArrayName="floors">-->
+<!--          <ion-item-->
+<!--            class="ion-no-padding form-checkbox search-filter-model__col"-->
+<!--            lines="none"-->
+<!--            *ngFor="let floor of floors; index as idx"-->
+<!--          >-->
+<!--            <ion-checkbox-->
+<!--              class="form-checkbox__control"-->
+<!--              mode="md"-->
+<!--              slot="start"-->
+<!--              [formControlName]="idx"-->
+<!--              [checked]="floor"-->
+<!--            ></ion-checkbox>-->
+<!--            <ion-label class="form-label">{{ idx + 1 }} Floor</ion-label>-->
+<!--          </ion-item>-->
+<!--        </div>-->
+<!--      </st-search-filter-section>-->
+<!--    </st-show-more>-->
   </form>
 </ion-content>
 
@@ -89,7 +108,7 @@
       mode="md"
       (click)="close()"
     >
-      Show 21 Buildings
+      Show Units
     </ion-button>
   </ion-toolbar>
 </ion-footer>
