@@ -18,7 +18,7 @@ export class Unit {
     this.isFavorite = !!options.isFavorite;
     this.labels = Array.isArray(options.labels) ? options.labels : [];
     this.attributes = Array.isArray(options.attributes)? options.attributes.map(x => x): [];
-    this.occupantKeys = options.occupancyKeys;
+    this.occupantKeys = options.occupantKeys || [];
   }
 }
 
