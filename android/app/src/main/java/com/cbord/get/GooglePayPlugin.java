@@ -35,10 +35,8 @@ public class GooglePayPlugin extends Plugin {
         final Task<String> response = tapAndPayClient.getLinkingToken("CBORD");
         response.addOnSuccessListener(token -> {
             call.resolve(toJSON(token));
-            Log.d("Success: ", token);
         });
         response.addOnFailureListener(error -> {
-            Log.d("Failed: ", error.getMessage());
              if (isGoogleWalletInactive((ApiException) error)) {
                  tapAndPayClient.createWallet(getActivity(), REQUEST_CREATE_WALLET);
              } else {

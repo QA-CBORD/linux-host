@@ -31,33 +31,33 @@ export class GooglePayCredentialManager implements MobileCredentialManager {
   onUiImageClicked(event?: any): void {
     // console.log('onTermsAndConditionsAccepted');
     // this.showLoading();
-    // (async () => {
-    //   const nonce = await GooglePayPlugin.getGooglePayNonce();
-    //   const refObj = await this.getAndroidCredential(
-    //     nonce.googlePayNonce,
-    //     this.mCredential.getCredentialState().referenceIdentifier
-    //   );
-    //   const plugin = await GooglePayPlugin.openGooglePay({ uri: refObj.digitizationReference });
-    //   // Update active passes / Update credential
-    //   this.mCredential.setStatus(MobileCredentialStatuses.IS_PROVISIONED);
-    //   this.googlePayCrendential.updateCredential$(this.mCredential);
-    // })();
-    const showTermsAndConditions = async () => {
-      let componentProps = {
-        termsAndConditions$: this.termsAndConditionsSource$,
-      };
-      const modal = await this.modalCtrl.create({
-        backdropDismiss: false,
-        mode: 'ios',
-        component: MobileCredentialsComponent,
-        componentProps,
-      });
-      await modal.present();
-      const { data } = await modal.onDidDismiss();
-      if (data.termsAccepted) {
-        this.onTermsAndConditionsAccepted();
-      }
-    }
+    (async () => {
+      const nonce = await GooglePayPlugin.getGooglePayNonce();
+      const refObj = await this.getAndroidCredential(
+        nonce.googlePayNonce,
+        this.mCredential.getCredentialState().referenceIdentifier
+      );
+      const plugin = await GooglePayPlugin.openGooglePay({ uri: refObj.digitizationReference });
+      // Update active passes / Update credential
+      this.mCredential.setStatus(MobileCredentialStatuses.IS_PROVISIONED);
+      this.googlePayCrendential.updateCredential$(this.mCredential);
+    })();
+    // const showTermsAndConditions = async () => {
+    //   let componentProps = {
+    //     termsAndConditions$: this.termsAndConditionsSource$,
+    //   };
+    //   const modal = await this.modalCtrl.create({
+    //     backdropDismiss: false,
+    //     mode: 'ios',
+    //     component: MobileCredentialsComponent,
+    //     componentProps,
+    //   });
+    //   await modal.present();
+    //   const { data } = await modal.onDidDismiss();
+    //   if (data.termsAccepted) {
+    //     this.onTermsAndConditionsAccepted();
+    //   }
+    // }
   }
   credentialEnabled$(): Observable<boolean> {
     console.log('credentialEnabled: ', this.mCredential.isEnabled())
