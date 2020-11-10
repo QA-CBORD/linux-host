@@ -4,6 +4,9 @@ import { RoomSelect } from './rooms.model';
 import { Facility } from '@sections/housing/facilities/facilities.model';
 import { Observable } from 'rxjs';
 import { FacilityToUnitsMapper, Unit } from '@sections/housing/unit/unit.model';
+import { FacilityOccupantDetails } from '@sections/housing/roommate/roomate.model';
+import { OccupantAttribute } from '@sections/housing/attributes/attributes.model';
+import { hasValue, isDefined } from '@sections/housing/utils';
 
 
 export interface StateService<K, V> {
@@ -15,14 +18,77 @@ export interface StateService<K, V> {
 })
 export class RoomsStateService implements StateService<number, Facility[]> {
   entityDictionary: Map<number, Facility[]>;
+  private _occupantDictionary: Map<number, FacilityOccupantDetails[]>;
   private roomSelects: Observable<RoomSelect[]>;
   private _currentlySelectedRoomSelect: RoomSelect;
   private _parentFacilities: Facility[];
   constructor() {
-    this.entityDictionary = new Map<number, Facility[]>()
+    this.entityDictionary = new Map<number, Facility[]>();
+    this._occupantDictionary = new Map<number, FacilityOccupantDetails[]>();
   }
   setRoomSelects(value: Observable<RoomSelect[]>) {
     this.roomSelects = value;
+  }
+  setOccupantDetails(facilityOccupants: FacilityOccupantDetails[]): void {
+    const occupantFacilities = this._findOccupantFacilities();
+    occupantFacilities.forEach(facility => {
+      const occupantKeys: number[] = facilityOccupants.map(x => x.patronKey);
+      const facilityOccupantKeys = facility.occupantKeys;
+      let occupantDetails: FacilityOccupantDetails[] = [];
+      facilityOccupantKeys.forEach(occupantKey => {
+        const index = occupantKeys.indexOf(occupantKey);
+        if (index >= 0) {
+          occupantDetails.push(facilityOccupants[index]);
+        }
+      })
+      this._occupantDictionary.set(facility.facilityId, occupantDetails);
+    });
+  }
+
+  getOccupantDetails(facilityKey: number): FacilityOccupantDetails[] {
+    return  this._occupantDictionary.get(facilityKey);
+  }
+
+  getAllOccupantAttributes(): OccupantAttribute[] {
+    let attributes: OccupantAttribute[] = [];
+    this._occupantDictionary.forEach(occupantDetails => {
+      occupantDetails.forEach(occupant => {
+        occupant.attributes.forEach(attribute => {
+          if(!this._hasAttribute(attributes, attribute)) {
+              attributes.push(attribute)
+          } else {
+            if(this._isNewAttributeValue(attributes, attribute)) {
+              attributes.push(attribute);
+            }
+          }
+        })
+      })
+    });
+
+    return  attributes;
+  }
+  private _isNewAttributeValue(attributes: OccupantAttribute[], attribute: OccupantAttribute): boolean {
+    const matchedAttributes = attributes.filter(x => x.attributeConsumerKey === attribute.attributeConsumerKey);
+    const currentValues = matchedAttributes.map(x => x.value);
+    return (isDefined(attribute.value) && hasValue(attribute.value)
+      && !currentValues.includes(attribute.value));
+  }
+  private  _hasAttribute(attributes: OccupantAttribute[], attribute: OccupantAttribute): boolean {
+    return !!(attributes.find(x => x.name === attribute.name ))
+  }
+  private _findOccupantFacilities(): Facility[] {
+    let occupantFacilities: Facility[] = [];
+
+    const parentFacilities = this.getParentFacilities();
+    parentFacilities.forEach(parent => {
+        const children =  this.getParentFacilityChildren(parent.facilityId);
+        children.forEach(facility => {
+          if(facility.occupantKeys) {
+            occupantFacilities.push(facility);
+          }
+        })
+    })
+    return occupantFacilities;
   }
   setActiveRoomSelect(roomSelectKey: number): void {
     this.roomSelects.subscribe(arr => {

@@ -9,6 +9,8 @@ import { Category, CategoryOptions } from '@sections/housing/search-filter/filte
 import { Facility, FacilityAttribute } from '@sections/housing/facilities/facilities.model';
 import { RoomsStateService } from '@sections/housing/rooms/rooms-state.service';
 import { isDefined } from '@sections/housing/utils';
+import { Response } from '@sections/housing/housing.model';
+import { OccupantAttribute } from '@sections/housing/attributes/attributes.model';
 
 @Injectable({
   providedIn: 'root',
@@ -31,7 +33,7 @@ export class RoomsService {
   public postContractRequest(request: CreateContractRequestOptions): Observable<boolean> {
     const url = `${this._roomSelectUrl}/contracts/self`;
 
-    return this._proxy.post(url, request).pipe(
+    return this._proxy.post<Response>(url, request).pipe(
       map(response => {
         if (isSuccessful(response.status)) {
           return true;
@@ -50,6 +52,21 @@ export class RoomsService {
 
   private _createFilterCategory(name: string, attributeKey: number): Category {
     return new Category(name, attributeKey);
+  }
+
+  private _getPatronAttributeCategories(): Category[] {
+    const patronAttributes: OccupantAttribute[] = this._stateService.getAllOccupantAttributes();
+    const patronOptions: Category[] = [];
+    const encounteredOptions: Category[] = [];
+    patronAttributes.forEach(attribute => {
+      if(!this._attributeExists(encounteredOptions, attribute)) {
+        const newCategory = this._createFilterCategory(`Patron ${attribute.name}`,
+          attribute.attributeConsumerKey);
+        encounteredOptions.push(newCategory);
+        patronOptions.push(newCategory);
+      }
+    });
+    return  patronOptions;
   }
 
   private _getFacilityAttributeCategories(): Category[] {
@@ -73,19 +90,33 @@ export class RoomsService {
     });
     return facilityOptions;
   }
-  private _attributeExists(encounteredOptions: Category[], attribute: FacilityAttribute): boolean {
+  private _attributeExists(encounteredOptions: Category[], attribute: FacilityAttribute | OccupantAttribute): boolean {
     return !!encounteredOptions.find(x => x.attributeKey === attribute.attributeConsumerKey);
   }
 
   public getFilterOptions(categories: Category[]): {[key: string]: string[]} {
+    this._createFacilityFilterOptions(categories);
+    this._createPatronFilterOptions(categories);
+
+    return this._filterOptions.getCategoryOptions();
+  }
+
+  private _createPatronFilterOptions(categories: Category[]): void {
+      const patronAttributes = this._stateService.getAllOccupantAttributes();
+      patronAttributes.forEach(attrib => {
+        this._filterOptions.addOption(`Patron ${attrib.name}`, attrib.value);
+      })
+  }
+
+  private _createFacilityFilterOptions(categories: Category[]): void {
     const parentFacilities = this._stateService.getParentFacilities();
     let facilityChildren = [];
     parentFacilities.forEach(parent => {
       facilityChildren = facilityChildren.concat(this._stateService.getParentFacilityChildren(parent.facilityId));
     });
     this._filterOptions.addBuildingOptions(parentFacilities);
-    facilityChildren.forEach(child => {
-      const filteredAttributes = this._filterAttributeCategories(categories, child.attributes);
+    facilityChildren.forEach((child: Facility) => {
+      const filteredAttributes: FacilityAttribute[] = this._filterAttributeCategories(categories, child.attributes);
       if(filteredAttributes) {
         filteredAttributes.forEach(attrib => {
           if (isDefined(attrib.value)) {
@@ -94,11 +125,8 @@ export class RoomsService {
         });
       }
     });
-
-    return this._filterOptions.getCategoryOptions();
   }
-
-  private _filterAttributeCategories(categories:Category[], attributes: FacilityAttribute[]) {
+  private _filterAttributeCategories(categories:Category[], attributes: FacilityAttribute[]): FacilityAttribute[] {
     const filteredAttributes = attributes.filter(
       attrib => categories.find(
         (x) => x.attributeKey === attrib.attributeConsumerKey));
@@ -110,6 +138,8 @@ export class RoomsService {
     filterCategories.push(this._createFilterCategory('Buildings', -777));
     filterCategories = filterCategories.concat(this._getFacilityAttributeCategories());
     // #TODO  implement grabbing patron attributes and creating categories based on occupant attributes.
+    filterCategories.concat(this._getPatronAttributeCategories());
+
     return filterCategories;
   }
 }

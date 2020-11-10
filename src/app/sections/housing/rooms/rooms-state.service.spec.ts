@@ -1,11 +1,13 @@
 import { TestBed } from '@angular/core/testing';
-import { generateFacilities } from './mocks/facilities.mock';
+import { generateFacilities, generateOccupantDetails } from './mocks/facilities.mock';
 import { Facility } from '../facilities/facilities.model';
 
 import { RoomsStateService } from './rooms-state.service';
 import { Unit } from '@sections/housing/unit/unit.model';
 import { generateRoomSelects } from './mocks/rooms.mock';
 import { RoomSelect } from '@sections/housing/rooms/rooms.model';
+import { FacilityOccupantDetails } from '@sections/housing/roommate/roomate.model';
+import { OccupantAttribute } from '@sections/housing/attributes/attributes.model';
 
 describe('RoomsStateService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
@@ -66,4 +68,46 @@ describe('RoomsStateService', () => {
     expect(roomSelect).toEqual(EXPECTED_ROOM_SELECT);
 
   })
+
+  it('should return all occupant attributes and values', function() {
+    const service: RoomsStateService = TestBed.get(RoomsStateService);
+    const EXPECTED_ATTRIBUTES: OccupantAttribute[] = [
+      new OccupantAttribute({
+        attributeConsumerKey: 2384,
+        value: "test 1",
+        name: "gender"
+      }),
+      new OccupantAttribute({
+        attributeConsumerKey: 2387,
+        value: "test 2",
+        name: "age"
+      }),
+      new OccupantAttribute({
+        attributeConsumerKey: 2381,
+        value: "yes",
+        name: "smoking"
+      }),
+      new OccupantAttribute({
+        attributeConsumerKey: 2384,
+        value: "test 22",
+        name: "gender"
+      }),
+      new OccupantAttribute({
+        attributeConsumerKey: 2387,
+        value: "test 44",
+        name: "age"
+      }),
+      new OccupantAttribute({
+        attributeConsumerKey: 2381,
+        value: "no",
+        name: "smoking"
+      })
+    ];
+    service.createFacilityDictionary(generateFacilities());
+    const occupants: FacilityOccupantDetails[] = generateOccupantDetails()
+    service.setOccupantDetails(occupants);
+
+    expect(service.getAllOccupantAttributes()).toEqual(EXPECTED_ATTRIBUTES);
+
+  });
 });

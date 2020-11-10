@@ -132,8 +132,11 @@ export class HousingService {
   }
 
   getOccupantDetails(roomSelectKey:number, facilityKey: number): Observable<FacilityOccupantDetails[]> {
-    const apiUrl = `${this._baseUrl}/roomselectproxy/v.1.0/room-selects-proxy/occupant-details/${roomSelectKey}/facilities/${facilityKey}`;
-    return this._housingProxyService.get<OccupantDetailsResponse>(apiUrl).pipe(
+    const apiUrl = `${this._baseUrl}/roomselectproxy/v.1.0/room-selects-proxy/occupant-details/facilities/`;
+    return this._housingProxyService.post<OccupantDetailsResponse>(apiUrl, {
+      roomSelectKey: roomSelectKey,
+      facilityKeys: [facilityKey]
+    }).pipe(
       map(response => {
         console.log(response);
         const details = new OccupantDetailsResponse(response);
@@ -143,6 +146,20 @@ export class HousingService {
     )
   }
 
+  getAllOccupantDetails(roomSelectKey: number, facilityKeys: number[]): Observable<FacilityOccupantDetails[]> {
+    const apiUrl = `${this._baseUrl}/roomselectproxy/v.1.0/room-selects-proxy/occupant-details/facilities/`;
+    return this._housingProxyService.post<OccupantDetailsResponse>(apiUrl, {
+      roomSelectKey: roomSelectKey,
+      facilityKeys: facilityKeys
+    }).pipe(
+      map(response => {
+        console.log(response);
+        const details = new OccupantDetailsResponse(response);
+        return details.occupants;
+      }),
+      catchError(err => {throw err})
+    )
+  }
 
   _handleGetRoomSelectsError(): Observable<RoomSelectResponse> {
     const roomSelects: RoomSelect[] = [];
