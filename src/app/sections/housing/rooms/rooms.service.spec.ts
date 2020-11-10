@@ -4,12 +4,16 @@ import { RoomsService } from './rooms.service';
 import { RoomsStateService } from '@sections/housing/rooms/rooms-state.service';
 import { RoomsStateServiceMock } from '@sections/housing/rooms/mocks/rooms-state.service.mock';
 import { Category } from '@sections/housing/search-filter/filter-sort/filter-sort.model';
+import { HousingProxyService } from '@sections/housing/housing-proxy.service';
+import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 
 describe('RoomsService', () => {
   beforeEach(() => TestBed.configureTestingModule({
-    providers: [RoomsService, {
-      provide: RoomsStateService, useClass: RoomsStateServiceMock
-    }]
+    providers: [RoomsService,
+      {provide: RoomsStateService, useClass: RoomsStateServiceMock},
+      {provide: HousingProxyService, useValue: jasmine.createSpyObj('HousingProxyService', ['post'])},
+      {provide: EnvironmentFacadeService, useValue: jasmine.createSpyObj('EnvironmentFacadeService', ['getHousingAPIURL'])}
+    ]
   }));
 
   it('should be created', () => {
@@ -29,14 +33,18 @@ describe('RoomsService', () => {
     ];
     expect(service.getFilterCategories()).toEqual(EXPECTED_CATEGORIES);
   }));
-  it('should  get category options', inject([RoomsService, RoomsStateService],(service: RoomsService, stateService: RoomsStateServiceMock) => {
+it('should  get category options', inject([RoomsService, RoomsStateService, HousingProxyService, EnvironmentFacadeService],
+  (service: RoomsService, stateService: RoomsStateServiceMock) => {
     const EXPECTED_CATEGORY_OPTIONS = {
       Buildings: ['Able'],
       "Facility Max Legal Occupancy": ["2", "0", "6", "3"],
       "Facility Assignment_Level": ["This", "Below"],
       "Facility Smoking": ['No'],
       "Facility Assignment_Limit": ["1","2","4"],
-      "Facility Gender": ["Female"]
+      "Facility Gender": ["Female"],
+      "Patron gender": ["test 1", "test 22"],
+      "Patron age": ["test 2", "test 44"],
+      "Patron smoking": ["yes", "no"]
     };
     const categories: Category[] = [
       new Category("Buildings",-777),
@@ -49,4 +57,9 @@ describe('RoomsService', () => {
 
     expect(service.getFilterOptions(categories)).toEqual(EXPECTED_CATEGORY_OPTIONS);
   }));
+
+  // it('should  get patron category options', inject([RoomsService, RoomsStateService],(service: RoomsService, stateService: RoomsStateServiceMock) => {
+  //
+  //
+  // }));
 });

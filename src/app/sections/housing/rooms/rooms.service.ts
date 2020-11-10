@@ -11,13 +11,14 @@ import { RoomsStateService } from '@sections/housing/rooms/rooms-state.service';
 import { isDefined } from '@sections/housing/utils';
 import { Response } from '@sections/housing/housing.model';
 import { OccupantAttribute } from '@sections/housing/attributes/attributes.model';
+import { FormGroup } from '@angular/forms';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RoomsService {
   private _roomSelectUrl = `${
-    this._environment.getEnvironmentObject().housing_aws_url
+    this._environment.getHousingAPIURL()
   }/roomselectproxy/v.1.0/room-selects-proxy`;
 
   private _filterOptions: CategoryOptions
@@ -96,12 +97,12 @@ export class RoomsService {
 
   public getFilterOptions(categories: Category[]): {[key: string]: string[]} {
     this._createFacilityFilterOptions(categories);
-    this._createPatronFilterOptions(categories);
+    this._createPatronFilterOptions();
 
     return this._filterOptions.getCategoryOptions();
   }
 
-  private _createPatronFilterOptions(categories: Category[]): void {
+  private _createPatronFilterOptions(): void {
       const patronAttributes = this._stateService.getAllOccupantAttributes();
       patronAttributes.forEach(attrib => {
         this._filterOptions.addOption(`Patron ${attrib.name}`, attrib.value);
@@ -138,7 +139,7 @@ export class RoomsService {
     filterCategories.push(this._createFilterCategory('Buildings', -777));
     filterCategories = filterCategories.concat(this._getFacilityAttributeCategories());
     // #TODO  implement grabbing patron attributes and creating categories based on occupant attributes.
-    filterCategories.concat(this._getPatronAttributeCategories());
+    filterCategories = filterCategories.concat(this._getPatronAttributeCategories());
 
     return filterCategories;
   }

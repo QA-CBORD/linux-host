@@ -48,7 +48,9 @@ export class RoomsStateService implements StateService<number, Facility[]> {
   getOccupantDetails(facilityKey: number): FacilityOccupantDetails[] {
     return  this._occupantDictionary.get(facilityKey);
   }
-
+  getOccupiedFacilities(): Facility[] {
+    return  this._findOccupantFacilities();
+  }
   getAllOccupantAttributes(): OccupantAttribute[] {
     let attributes: OccupantAttribute[] = [];
     this._occupantDictionary.forEach(occupantDetails => {
@@ -83,7 +85,7 @@ export class RoomsStateService implements StateService<number, Facility[]> {
     parentFacilities.forEach(parent => {
         const children =  this.getParentFacilityChildren(parent.facilityId);
         children.forEach(facility => {
-          if(facility.occupantKeys) {
+          if(facility.occupantKeys && facility.occupantKeys.length > 0) {
             occupantFacilities.push(facility);
           }
         })

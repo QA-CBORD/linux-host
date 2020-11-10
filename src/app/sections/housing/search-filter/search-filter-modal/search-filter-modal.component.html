@@ -1,3 +1,4 @@
+
 <ion-header mode="ios">
   <ion-toolbar mode="ios">
     <ion-buttons slot="start" mode="ios">
@@ -5,7 +6,6 @@
         <ion-icon name="close" slot="icon-only" mode="ios"></ion-icon>
       </ion-button>
     </ion-buttons>
-
     <st-page-title>Filters</st-page-title>
 
     <ion-buttons slot="end" mode="ios">
@@ -20,83 +20,93 @@
         Clear All
       </ion-button>
     </ion-buttons>
+
+
   </ion-toolbar>
 </ion-header>
+  <ion-content class="search-filter-model__content">
+    <div *ngIf="( occupants$ | async) as sample">
+      <h3>Working fine</h3>
 
-<ion-content class="search-filter-model__content">
-  <section class="search-filter-model__sorting">
-    <st-filter-sort [categories]="categories" (sorted)="sort($event)"></st-filter-sort>
-  </section>
-
-  <form [formGroup]="filtersForm">
-    <div *ngFor="let item of categoryOptions | keyvalue ">
-      <st-search-filter-section [title]="item.key" [toggled]="true">
-        <div class="search-filter-model__row" formArrayName="{{item.key}}">
-          <ion-item
-            class="ion-no-padding form-checkbox search-filter-model__col"
-            lines="none"
-            *ngFor="let option of filtersForm.controls[item.key].controls"
-          >
-            <ion-checkbox
-              class="form-checkbox__control"
-              mode="md"
-              slot="start"
-              [checked]="false"
-            ></ion-checkbox>
-            <ion-label class="form-label">{{option.value}}</ion-label>
-          </ion-item>
-        </div>
-      </st-search-filter-section>
+    <section class="search-filter-model__sorting">
+          <st-filter-sort [categories]="categories" (sorted)="sort($event)"></st-filter-sort>
+    </section>
+          <form [formGroup]="filtersForm">
+            <div *ngFor="let item of categoryOptions | keyvalue ">
+              <st-search-filter-section [title]="item.key" [toggled]="true">
+                <div class="search-filter-model__row" formArrayName="{{item.key}}">
+                  <ion-item
+                    class="ion-no-padding form-checkbox search-filter-model__col"
+                    lines="none"
+                    *ngFor="let option of filtersForm.controls[item.key].controls"
+                  >
+                    <ion-checkbox
+                      class="form-checkbox__control"
+                      mode="md"
+                      slot="start"
+                      [checked]="false"
+                    ></ion-checkbox>
+                    <ion-label class="form-label">{{option.value}}</ion-label>
+                  </ion-item>
+                </div>
+              </st-search-filter-section>
+            </div>
+          </form>
     </div>
-<!--    <st-search-filter-section title="Price" subtitle="per month" [toggled]="true">-->
-<!--      <st-range [min]="0" [max]="1000" [parentGroup]="filtersForm" name="monthRange"></st-range>-->
-<!--    </st-search-filter-section>-->
 
-<!--    <st-search-filter-section title="Price" subtitle="per term" [toggled]="true">-->
-<!--      <st-range [min]="0" [max]="1000" [parentGroup]="filtersForm" name="termRange"></st-range>-->
-<!--    </st-search-filter-section>-->
 
-<!--    <st-search-filter-section title="Beds" [toggled]="true">-->
-<!--      <div class="search-filter-model__row" formArrayName="beds">-->
-<!--        <ion-item-->
-<!--          class="ion-no-padding form-checkbox search-filter-model__col"-->
-<!--          lines="none"-->
-<!--          *ngFor="let bed of beds; index as idx"-->
-<!--        >-->
-<!--          <ion-checkbox-->
-<!--            class="form-checkbox__control"-->
-<!--            mode="md"-->
-<!--            slot="start"-->
-<!--            [formControlName]="idx"-->
-<!--            [checked]="bed"-->
-<!--          ></ion-checkbox>-->
-<!--          <ion-label class="form-label">{{ idx + 1 }} bed</ion-label>-->
-<!--        </ion-item>-->
-<!--      </div>-->
-<!--    </st-search-filter-section>-->
+<!--      &lt;!&ndash;    <st-search-filter-section title="Price" subtitle="per month" [toggled]="true">&ndash;&gt;-->
+<!--      &lt;!&ndash;      <st-range [min]="0" [max]="1000" [parentGroup]="filtersForm" name="monthRange"></st-range>&ndash;&gt;-->
+<!--      &lt;!&ndash;    </st-search-filter-section>&ndash;&gt;-->
 
-<!--    <st-show-more>-->
-<!--      <st-search-filter-section title="Floor" [toggled]="true">-->
-<!--        <div class="search-filter-model__row" formArrayName="floors">-->
-<!--          <ion-item-->
-<!--            class="ion-no-padding form-checkbox search-filter-model__col"-->
-<!--            lines="none"-->
-<!--            *ngFor="let floor of floors; index as idx"-->
-<!--          >-->
-<!--            <ion-checkbox-->
-<!--              class="form-checkbox__control"-->
-<!--              mode="md"-->
-<!--              slot="start"-->
-<!--              [formControlName]="idx"-->
-<!--              [checked]="floor"-->
-<!--            ></ion-checkbox>-->
-<!--            <ion-label class="form-label">{{ idx + 1 }} Floor</ion-label>-->
-<!--          </ion-item>-->
-<!--        </div>-->
-<!--      </st-search-filter-section>-->
-<!--    </st-show-more>-->
-  </form>
-</ion-content>
+<!--      &lt;!&ndash;    <st-search-filter-section title="Price" subtitle="per term" [toggled]="true">&ndash;&gt;-->
+<!--      &lt;!&ndash;      <st-range [min]="0" [max]="1000" [parentGroup]="filtersForm" name="termRange"></st-range>&ndash;&gt;-->
+<!--      &lt;!&ndash;    </st-search-filter-section>&ndash;&gt;-->
+
+<!--      &lt;!&ndash;    <st-search-filter-section title="Beds" [toggled]="true">&ndash;&gt;-->
+<!--      &lt;!&ndash;      <div class="search-filter-model__row" formArrayName="beds">&ndash;&gt;-->
+<!--      &lt;!&ndash;        <ion-item&ndash;&gt;-->
+<!--      &lt;!&ndash;          class="ion-no-padding form-checkbox search-filter-model__col"&ndash;&gt;-->
+<!--      &lt;!&ndash;          lines="none"&ndash;&gt;-->
+<!--      &lt;!&ndash;          *ngFor="let bed of beds; index as idx"&ndash;&gt;-->
+<!--      &lt;!&ndash;        >&ndash;&gt;-->
+<!--      &lt;!&ndash;          <ion-checkbox&ndash;&gt;-->
+<!--      &lt;!&ndash;            class="form-checkbox__control"&ndash;&gt;-->
+<!--      &lt;!&ndash;            mode="md"&ndash;&gt;-->
+<!--      &lt;!&ndash;            slot="start"&ndash;&gt;-->
+<!--      &lt;!&ndash;            [formControlName]="idx"&ndash;&gt;-->
+<!--      &lt;!&ndash;            [checked]="bed"&ndash;&gt;-->
+<!--      &lt;!&ndash;          ></ion-checkbox>&ndash;&gt;-->
+<!--      &lt;!&ndash;          <ion-label class="form-label">{{ idx + 1 }} bed</ion-label>&ndash;&gt;-->
+<!--      &lt;!&ndash;        </ion-item>&ndash;&gt;-->
+<!--      &lt;!&ndash;      </div>&ndash;&gt;-->
+<!--      &lt;!&ndash;    </st-search-filter-section>&ndash;&gt;-->
+
+<!--      &lt;!&ndash;    <st-show-more>&ndash;&gt;-->
+<!--      &lt;!&ndash;      <st-search-filter-section title="Floor" [toggled]="true">&ndash;&gt;-->
+<!--      &lt;!&ndash;        <div class="search-filter-model__row" formArrayName="floors">&ndash;&gt;-->
+<!--      &lt;!&ndash;          <ion-item&ndash;&gt;-->
+<!--      &lt;!&ndash;            class="ion-no-padding form-checkbox search-filter-model__col"&ndash;&gt;-->
+<!--      &lt;!&ndash;            lines="none"&ndash;&gt;-->
+<!--      &lt;!&ndash;            *ngFor="let floor of floors; index as idx"&ndash;&gt;-->
+<!--      &lt;!&ndash;          >&ndash;&gt;-->
+<!--      &lt;!&ndash;            <ion-checkbox&ndash;&gt;-->
+<!--      &lt;!&ndash;              class="form-checkbox__control"&ndash;&gt;-->
+<!--      &lt;!&ndash;              mode="md"&ndash;&gt;-->
+<!--      &lt;!&ndash;              slot="start"&ndash;&gt;-->
+<!--      &lt;!&ndash;              [formControlName]="idx"&ndash;&gt;-->
+<!--      &lt;!&ndash;              [checked]="floor"&ndash;&gt;-->
+<!--      &lt;!&ndash;            ></ion-checkbox>&ndash;&gt;-->
+<!--      &lt;!&ndash;            <ion-label class="form-label">{{ idx + 1 }} Floor</ion-label>&ndash;&gt;-->
+<!--      &lt;!&ndash;          </ion-item>&ndash;&gt;-->
+<!--      &lt;!&ndash;        </div>&ndash;&gt;-->
+<!--      &lt;!&ndash;      </st-search-filter-section>&ndash;&gt;-->
+<!--      &lt;!&ndash;    </st-show-more>&ndash;&gt;-->
+<!--    </form>-->
+<!--    </div>-->
+
+  </ion-content>
+
 
 <ion-footer>
   <ion-toolbar class="search-filter-model__footer-toolbar">

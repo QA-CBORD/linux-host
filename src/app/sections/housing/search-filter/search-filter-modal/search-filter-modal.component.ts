@@ -9,6 +9,11 @@ import { generateCategories } from '../filter-sort/filter-sort.mock';
 
 import { Category, CategoryOptions } from '../filter-sort/filter-sort.model';
 import { RoomsService } from '@sections/housing/rooms/rooms.service';
+import { HousingService } from '@sections/housing/housing.service';
+import { RoomsStateService } from '@sections/housing/rooms/rooms-state.service';
+import { observable, Observable, of } from 'rxjs';
+import { delay, map, tap } from 'rxjs/operators';
+import { OccupantAttribute } from '@sections/housing/attributes/attributes.model';
 
 @Component({
   selector: 'st-search-filter-modal',
@@ -24,30 +29,37 @@ export class SearchFilterModalComponent implements OnInit {
   categoryOptions: {[key: string]: string[]}
 
   filtersForm: FormGroup;
-
-  beds: boolean[] = [false, false, false, false, false, false];
-
-  floors: boolean[] = [false, false, false, false, false, false];
-
+  occupants$: Observable<any>
   constructor(private _roomsService: RoomsService,
+              private _roomStateService: RoomsStateService,
               private _modalController: ModalController,
-              private _formBuilder: FormBuilder,) {}
+              private _housingService: HousingService,
+              private _formBuilder: FormBuilder) {}
 
   ngOnInit(): void {
-    this.categories = this._roomsService.getFilterCategories();
-    this.categoryOptions =  this._roomsService.getFilterOptions(this.categories);
-    console.log(this.categories);
-    console.log(this.categoryOptions)
-    const builderOptions = {};
-    for (let item in this.categoryOptions) {
-      builderOptions[item] = this._formBuilder.array(this.categoryOptions[item]);
-    }
-    console.log(builderOptions);
-    this.filtersForm = this._formBuilder.group(builderOptions);
 
-    console.log(this.filtersForm.controls)
+    const facilityKeys: number[] = this._roomStateService.getOccupiedFacilities().map(x => x.facilityId);
+    this.occupants$ =  this._initFilter(facilityKeys);
   }
-
+  private _initFilter(facilityKeys): Observable<any> {
+    return this._housingService.getAllOccupantDetails(this._roomStateService.getActiveRoomSelect().key, facilityKeys)
+      .pipe(
+        tap(data => {
+          this.categories = this._roomsService.getFilterCategories();
+          this.categoryOptions =  this._roomsService.getFilterOptions(this.categories);
+          console.log(this.categories);
+          console.log(this.categoryOptions)
+          const builderOptions = {};
+          for (let item in this.categoryOptions) {
+            builderOptions[item] = this._formBuilder.array(this.categoryOptions[item]);
+          }
+          this.filtersForm = this._formBuilder.group(builderOptions);
+        }),
+        map(data => {
+          return data;
+        })
+      )
+  }
   close(): void {
     this._modalController.dismiss();
     // make call to update facilities with new options
@@ -57,15 +69,15 @@ export class SearchFilterModalComponent implements OnInit {
     if (this.filterSort) {
       this.filterSort.unselectAll();
     }
-
-    this.filtersForm.reset({
-      monthRange: 1000,
-      termRange: 1000,
-    });
   }
 
   getArrayName(property: string): string {
-    const name = property.replace('Facility ', '');
+    let name = '';
+    if(property.includes('Facility')) {
+      name = property.replace('Facility ', '');
+    } else {
+      name = property.replace('Patron ', '');
+    }
     return name;
   }
 

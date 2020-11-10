@@ -1,7 +1,9 @@
 import { StateService } from '@sections/housing/rooms/rooms-state.service';
 import { Facility, FacilityDetailsToFacilityMapper } from '@sections/housing/facilities/facilities.model';
+import { OccupantAttribute } from '@sections/housing/attributes/attributes.model';
 
 export class RoomsStateServiceMock implements StateService<number, Facility[]>{
+
   private _parentFacilities: Facility[] = [{
     "facilityId": 9000485,
     "facilityName": "Able",
@@ -1351,5 +1353,40 @@ export class RoomsStateServiceMock implements StateService<number, Facility[]>{
 
   public getParentFacilityChildren(parentKey: number): Facility[] {
     return this.entityDictionary.get(parentKey);
+  }
+
+  public getAllOccupantAttributes(): OccupantAttribute[] {
+    return [
+      new OccupantAttribute({
+        attributeConsumerKey: 2384,
+        value: "test 1",
+        name: "gender"
+      }),
+      new OccupantAttribute({
+        attributeConsumerKey: 2387,
+        value: "test 2",
+        name: "age"
+      }),
+      new OccupantAttribute({
+        attributeConsumerKey: 2381,
+        value: "yes",
+        name: "smoking"
+      }),
+      new OccupantAttribute({
+        attributeConsumerKey: 2384,
+        value: "test 22",
+        name: "gender"
+      }),
+      new OccupantAttribute({
+        attributeConsumerKey: 2387,
+        value: "test 44",
+        name: "age"
+      }),
+      new OccupantAttribute({
+        attributeConsumerKey: 2381,
+        value: "no",
+        name: "smoking"
+      })
+    ];
   }
 }
