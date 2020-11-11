@@ -5,7 +5,11 @@ import { isSuccessful } from '@sections/housing/utils/is-successful';
 import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { CreateContractRequestOptions } from '@sections/housing/rooms/rooms.model';
-import { Category, CategoryOptions } from '@sections/housing/search-filter/filter-sort/filter-sort.model';
+import {
+  Category,
+  CategoryOptionDetail,
+  CategoryOptions,
+} from '@sections/housing/search-filter/filter-sort/filter-sort.model';
 import { Facility, FacilityAttribute } from '@sections/housing/facilities/facilities.model';
 import { RoomsStateService } from '@sections/housing/rooms/rooms-state.service';
 import { isDefined } from '@sections/housing/utils';
@@ -142,5 +146,13 @@ export class RoomsService {
     filterCategories = filterCategories.concat(this._getPatronAttributeCategories());
 
     return filterCategories;
+  }
+
+  public getAttributeOptionsInfo(category, options: string[]): CategoryOptionDetail[] {
+    return options.map(x => this._filterOptions.getOptionDetails(category, x));
+  }
+
+  public getAttributeOptionInfo(category: string, option: string): CategoryOptionDetail {
+    return this._filterOptions.getOptionDetails(category, option);
   }
 }

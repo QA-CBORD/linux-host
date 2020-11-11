@@ -25,7 +25,7 @@ export class SearchFilterModalComponent implements OnInit {
   @ViewChild(FilterSortComponent) filterSort: FilterSortComponent;
 
   categories: Category[] = [];
-
+  categoryOptionsDetails
   categoryOptions: {[key: string]: string[]}
 
   filtersForm: FormGroup;
@@ -51,9 +51,11 @@ export class SearchFilterModalComponent implements OnInit {
           console.log(this.categoryOptions)
           const builderOptions = {};
           for (let item in this.categoryOptions) {
-            builderOptions[item] = this._formBuilder.array(this.categoryOptions[item]);
+            const optionsInfo = this._roomsService.getAttributeOptionsInfo(item, this.categoryOptions[item]);
+            builderOptions[item] = this._formBuilder.array(optionsInfo.map(x => x.selected));
           }
           this.filtersForm = this._formBuilder.group(builderOptions);
+          console.log(this.filtersForm)
         }),
         map(data => {
           return data;
@@ -65,9 +67,22 @@ export class SearchFilterModalComponent implements OnInit {
     // make call to update facilities with new options
   }
 
+  filter(data: any) {
+    console.log(data);
+
+  }
+
   clearFilters(): void {
     if (this.filterSort) {
       this.filterSort.unselectAll();
+    }
+  }
+
+  getLabelInfo(key: string, index: number): string {
+    for(const prop in this.categoryOptions) {
+      if(prop === key) {
+        return this.categoryOptions[prop][index];
+      }
     }
   }
 
