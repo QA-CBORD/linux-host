@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { RoomSelect } from './rooms.model';
 import { Facility } from '@sections/housing/facilities/facilities.model';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { Unit } from '@sections/housing/unit/unit.model';
 import { FacilityOccupantDetails } from '@sections/housing/roommate/roomate.model';
 import { OccupantAttribute } from '@sections/housing/attributes/attributes.model';
@@ -23,6 +23,7 @@ export class RoomsStateService implements StateService<number, Facility[]> {
   private _currentlySelectedRoomSelect: RoomSelect;
   private _parentFacilities: Facility[];
   private _activeFilterFacilities: Facility[] = null;
+  private _activeFacilities$: BehaviorSubject<Facility[]> = new BehaviorSubject<Facility[]>([]);
   constructor() {
     this.entityDictionary = new Map<number, Facility[]>();
     this._occupantDictionary = new Map<number, FacilityOccupantDetails[]>();
@@ -44,6 +45,17 @@ export class RoomsStateService implements StateService<number, Facility[]> {
       })
       this._occupantDictionary.set(facility.facilityId, occupantDetails);
     });
+  }
+  getFacilities$(): Observable<Facility[]> {
+    return this._activeFacilities$.asObservable();
+  }
+
+  setFacilities$(parentKey?: number ): void {
+    if(!parentKey) {
+      this._activeFacilities$.next(this.getActiveFilterFacilities());
+    } else {
+      this._activeFacilities$.next(this.getParentFacilityChildren(parentKey));
+    }
   }
 
   getOccupantDetails(facilityKey: number): FacilityOccupantDetails[] {
@@ -70,15 +82,18 @@ export class RoomsStateService implements StateService<number, Facility[]> {
 
     return  attributes;
   }
+
   private _isNewAttributeValue(attributes: OccupantAttribute[], attribute: OccupantAttribute): boolean {
     const matchedAttributes = attributes.filter(x => x.attributeConsumerKey === attribute.attributeConsumerKey);
     const currentValues = matchedAttributes.map(x => x.value);
     return (isDefined(attribute.value) && hasValue(attribute.value)
       && !currentValues.includes(attribute.value));
   }
+
   private  _hasAttribute(attributes: OccupantAttribute[], attribute: OccupantAttribute): boolean {
     return !!(attributes.find(x => x.name === attribute.name ))
   }
+
   private _findOccupantFacilities(): Facility[] {
     let occupantFacilities: Facility[] = [];
 
@@ -93,20 +108,24 @@ export class RoomsStateService implements StateService<number, Facility[]> {
     })
     return occupantFacilities;
   }
+
   setActiveRoomSelect(roomSelectKey: number): void {
     this.roomSelects.subscribe(arr => {
       this._currentlySelectedRoomSelect = arr.find(roomSelect => roomSelect.key == roomSelectKey);
     });
   }
+
   getActiveRoomSelect(): RoomSelect {
     return this._currentlySelectedRoomSelect;
   }
+
   isFilterActive(): boolean {
     return  (this._activeFilterFacilities && this._activeFilterFacilities.length > 0);
   }
 
   updateActiveFilterFacilities(facilities: Facility[]) {
     this._activeFilterFacilities = facilities;
+    this.setFacilities$();
     }
 
   getActiveFilterFacilities(): Facility[] {
@@ -124,6 +143,7 @@ export class RoomsStateService implements StateService<number, Facility[]> {
   getParentFacilities() {
     return this._parentFacilities;
   }
+
   getUnitDetails(parentFacilityKey: number, unitKey: number) {
     const childrenFacilities = this.entityDictionary.get(parentFacilityKey);
     const facility = childrenFacilities.find(child => child.facilityId == unitKey);

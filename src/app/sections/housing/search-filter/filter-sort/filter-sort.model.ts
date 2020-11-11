@@ -13,11 +13,11 @@ export class CategoryOptionDetail {
   key: string;
   category: string;
   value: string;
-  selected: boolean = false;
+  isSelected: boolean = false;
 
   constructor(category: string,option: string , selected: false) {
     this.key = `${category}${option}`.trim();
-    this.selected = selected;
+    this.isSelected = selected;
     this.category = category;
     this.value = option;
   }
@@ -50,6 +50,35 @@ export class CategoryOptions {
   public getOptionDetails(category: string, option: string): CategoryOptionDetail {
     return this._optionDetails.find(x => x.key === `${category}${option}`.trim());
   }
+
+  public deselectOptionDetails(excludedCategories: string[]): void {
+    for(let i = 0; i < this._optionDetails.length; i++) {
+      if(!excludedCategories.includes(this._optionDetails[i].category)) {
+        this._optionDetails[i].isSelected = false;
+      }
+    }
+  }
+  public updateOptionDetails(category: string, options: string[]): void {
+    if(category.length > 0) {
+      options.forEach(option => {
+        const index = this._optionDetails.map(x => x.key).indexOf(`${category}${option}`);
+        if(index !== -1) {
+          this._optionDetails[index].isSelected = true;
+        }
+      })
+      const otherCategoryOptions = this._optionDetails.filter(x => x.category === category &&
+        !options.includes(x.value)).map(y => y.key);
+      otherCategoryOptions.forEach(key => {
+        const index = this._optionDetails.map(x => x.key).indexOf(key);
+        this._optionDetails[index].isSelected = false;
+      })
+    } else {
+      for(let i = 0;i < this._optionDetails.length; i++) {
+        this._optionDetails[i].isSelected  = false;
+      }
+    }
+  }
+
 
    private addOptionDetails(category, option, isSelected) {
     this._optionDetails.push(new CategoryOptionDetail(category, option, isSelected));

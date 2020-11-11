@@ -42,7 +42,6 @@ export class SearchFilterModalComponent implements OnInit {
     this._loadingService.showSpinner();
     const facilityKeys: number[] = this._roomStateService.getOccupiedFacilities().map(x => x.facilityId);
     this.occupants$ =  this._initFilter(facilityKeys);
-    this._loadingService.closeSpinner();
   }
   private _initFilter(facilityKeys): Observable<any> {
     return this._housingService.getAllOccupantDetails(this._roomStateService.getActiveRoomSelect().key, facilityKeys)
@@ -55,8 +54,9 @@ export class SearchFilterModalComponent implements OnInit {
           const builderOptions = {};
           for (let item in this.categoryOptions) {
             const optionsInfo = this._roomsService.getAttributeOptionsInfo(item, this.categoryOptions[item]);
-            builderOptions[item] = this._formBuilder.array(optionsInfo.map(x => x.selected));
+            builderOptions[item] = this._formBuilder.array(optionsInfo.map(x => x.isSelected));
           }
+          this._loadingService.closeSpinner();
           this.filtersForm = this._formBuilder.group(builderOptions);
           console.log(this.filtersForm)
         }),
@@ -74,47 +74,67 @@ export class SearchFilterModalComponent implements OnInit {
   }
 
   filter(data: any) {
-    let  categoriesToFilter = new Map<string, boolean[]>();
-    const dataMap = convertObjectToMap(data);
-    dataMap.forEach((values, key) => {
-      const selected = values.find(x => x);
-      if(selected) {
-        categoriesToFilter.set(key, values);
-      }
-    });
-    const filterOptions: Map<string, string[]> = new Map<string, string[]>();
-    let hasPatronAttribute: boolean = false;
-    categoriesToFilter.forEach((options, category)  => {
-      const selectedOptions: number[] = [];
-      let lastFound = 0;
-      while(lastFound !== -1) {
-        const index: number = options.indexOf( true, lastFound);
-        if(category.includes('Patron ')) {
-          hasPatronAttribute = true;
-        }
-        lastFound = index + 1;
-        if(index !== -1) {
-          selectedOptions.push(index);
-        } else {
-          break;
-        }
-      }
-      if(selectedOptions.length > 0) {
-        const values = selectedOptions.map(x => this.categoryOptions[category][x]);
-        filterOptions.set(category, values);
-      }
-    });
+      this._loadingService.showSpinner();
 
-    this._roomsService.filterBuildings(filterOptions, hasPatronAttribute);
+      let  categoriesToFilter = new Map<string, boolean[]>();
+      const dataMap = convertObjectToMap(data);
+      dataMap.forEach((values, key) => {
+        const selected = values.find(x => x);
+        if(selected) {
+          categoriesToFilter.set(key, values);
+        }
+      });
+      const filterOptions: Map<string, string[]> = new Map<string, string[]>();
+      let hasPatronAttribute: boolean = false;
+      categoriesToFilter.forEach((options, category)  => {
+        const selectedOptions: number[] = [];
+        let lastFound = 0;
+        while(lastFound !== -1) {
+          const index: number = options.indexOf( true, lastFound);
+          if(category.includes('Patron ')) {
+            hasPatronAttribute = true;
+          }
+          lastFound = index + 1;
+          if(index !== -1) {
+            selectedOptions.push(index);
+          } else {
+            break;
+          }
+        }
+        if(selectedOptions.length > 0) {
+          const values = selectedOptions.map(x => this.categoryOptions[category][x]);
+          filterOptions.set(category, values);
+        }
+      });
+      if(filterOptions.size === 0) {
+        this._roomsService.clearFilter();
+        this._goToBuildingsTab()
+      } else {
+        this._roomsService.filterBuildings(filterOptions, hasPatronAttribute);
+       this.goToUnitsTab();
+    }
+  }
+  private goToUnitsTab(): void {
     this.close().then(x => {
-      this._router.navigateByUrl(`patron/housing/rooms-search/${this._roomStateService.getActiveRoomSelect().key}/units`);
+      this._loadingService.closeSpinner();
+      this._router.navigateByUrl(`patron/housing/rooms-search/${
+        this._roomStateService.getActiveRoomSelect().key}/units`).catch(err => console.log(err));
+    })
+  }
+
+  private _goToBuildingsTab(): void {
+    this.close().then(x=> {
+      this._loadingService.closeSpinner();
+      this._router.navigateByUrl(`patron/housing/rooms-search/${
+        this._roomStateService.getActiveRoomSelect().key}/buildings`)
     })
   }
 
   clearFilters(): void {
-    if (this.filterSort) {
-      this.filterSort.unselectAll();
-    }
+    this.filtersForm.reset();
+    // if (this.filterSort) {
+    //   this.filterSort.unselectAll();
+    // }
   }
 
   getLabelInfo(key: string, index: number): string {

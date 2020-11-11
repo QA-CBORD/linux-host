@@ -27,8 +27,8 @@ export class FacilityOccupantDetails {
 
   public getAttributeValue(name: string): string {
     if (this.hasAttribute(name)) {
-      return this.attributes.find(x => x.name === name)
-        .value;
+      const attribute = this.attributes.find(x => x.name === name)
+      return attribute? attribute.value: "";
     }
   }
 

@@ -27,7 +27,7 @@
   <ion-content class="search-filter-model__content">
     <div *ngIf="( occupants$ | async) as sample">
     <section class="search-filter-model__sorting">
-          <st-filter-sort [categories]="categories" (sorted)="sort($event)"></st-filter-sort>
+<!--          <st-filter-sort [categories]="categories" (sorted)="sort($event)"></st-filter-sort>-->
     </section>
           <form [formGroup]="filtersForm" (ngSubmit)="filter($event)" #filterForm="ngForm">
             <div *ngFor="let item of categoryOptions | keyvalue ">

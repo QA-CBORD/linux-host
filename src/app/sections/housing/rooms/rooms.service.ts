@@ -131,11 +131,9 @@ export class RoomsService {
     });
   }
   private _filterAttributeCategories(categories:Category[], attributes: FacilityAttribute[]): FacilityAttribute[] {
-    const filteredAttributes = attributes.filter(
+    return attributes.filter(
       attrib => categories.find(
         (x) => x.attributeKey === attrib.attributeConsumerKey));
-
-    return filteredAttributes;
   }
   public getFilterCategories(): Category[] {
     let filterCategories: Category[] = [];
@@ -155,32 +153,64 @@ export class RoomsService {
   public getAttributeOptionInfo(category: string, option: string): CategoryOptionDetail {
     return this._filterOptions.getOptionDetails(category, option);
   }
-
+  public clearFilter(): void {
+    this._stateService.updateActiveFilterFacilities([]);
+    this._filterOptions.updateOptionDetails('', []);
+  }
   public filterBuildings(filterOptions: Map<string, string[]>, wasOccupantOptionSelected: boolean): void {
       const facilities = this._stateService.getAllFacilityChildren();
       const filteredFacilities = [];
+      let parentKeys = [];
+      if(this._isBuildingFiltered(filterOptions)) {
+        const parenFacilities = this._stateService.getParentFacilities();
+        parentKeys = parenFacilities.filter(x =>
+          filterOptions.get('Buildings')
+            .includes(x.facilityName))
+          .map(y => y.facilityId);
+      }
       filterOptions.forEach((options, category) => {
+        if(category === 'Buildings') {
+          return true;
+        }
         facilities.forEach(facility => {
           if(this._matchedFacilityAttributes(category, options, facility) &&
-          !this._hasBuilding(filteredFacilities, facility)) {
+          !this._hasBuilding(filteredFacilities, facility) &&
+          this._matchedBuildingRequirements(facility, parentKeys)) {
             filteredFacilities.push(facility);
           }
           if(wasOccupantOptionSelected && facility.occupantKeys.length > 0) {
 
             if (this._matchedOccupantsAttributes(category, options, facility.facilityId) &&
-            !this._hasBuilding(filteredFacilities, facility)) {
+            !this._hasBuilding(filteredFacilities, facility) &&
+            this._matchedBuildingRequirements(facility, parentKeys)) {
               filteredFacilities.push(facility);
             }
           }
         });
       });
-
+      this._updateFilter(filterOptions);
       this._stateService.updateActiveFilterFacilities(filteredFacilities);
   }
+
+  private _isBuildingFiltered(filterOptions: Map<string, string[]>): boolean {
+    return filterOptions.has('Buildings');
+  }
+
   private _hasBuilding(listOfFacilities: Facility[], building: Facility ): boolean {
     return !!listOfFacilities.find(x => x.facilityId === building.facilityId);
   }
 
+  private _updateFilter(filterOptions: Map<string, string[]>): void {
+    const includedCategories: string[] = [];
+    filterOptions.forEach((options, category) => {
+      includedCategories.push(category);
+      this._filterOptions.updateOptionDetails(category, options);
+    })
+    this._filterOptions.deselectOptionDetails(includedCategories);
+  }
+private _matchedBuildingRequirements(facility: Facility, parentKeys: number[]): boolean {
+    return parentKeys.length > 0? parentKeys.includes(facility.topLevelKey): true;
+}
   private _matchedFacilityAttributes(category: string, options: string[], facility: Facility) {
     return (facility.hasAttribute(category.replace("Facility ", "")) &&
       this._valueMatches(options, facility.getAttributeValue(
@@ -191,7 +221,7 @@ export class RoomsService {
     const occupantDetails = this._stateService.getOccupantDetails(facilityId);
     const occupant = occupantDetails.find(x => x.hasAttribute(category.replace("Patron ", "")));
 
-    return (this._valueMatches(options, occupant.getAttributeValue(category)));
+    return (this._valueMatches(options, occupant.getAttributeValue(category.replace("Patron ", ""))));
   }
   private _valueMatches(options: string[], value: string): boolean {
       return options.includes(value);
