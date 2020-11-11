@@ -15,6 +15,7 @@ export class Facility {
     public isTopLevel: boolean = false,
     public topLevelKey: number = null,
     public occupantKeys: number[] = [],
+    public topLevelName: string = '',
   ) {
   }
 
@@ -26,7 +27,7 @@ export class Facility {
 
   public getAttributeValue(attribute: string): FacilityAttribute {
     if (this.hasAttribute(attribute)) {
-      return this.attributes.find(x => x.name === name);
+      return this.attributes.find(x => x.name === attribute);
     }
   }
 }

@@ -13,6 +13,7 @@ import { Observable } from 'rxjs';
 import {  map, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { LoadingService } from '@core/service/loading/loading.service';
+import { convertObjectToMap } from '@sections/housing/utils/convert-object-to-map';
 
 @Component({
   selector: 'st-search-filter-modal',
@@ -64,26 +65,38 @@ export class SearchFilterModalComponent implements OnInit {
         })
       )
   }
-  close(): void {
-    this._modalController.dismiss();
+  close(): Promise<boolean> {
+    return this._modalController.dismiss();
     // make call to update facilities with new options
+  }
+  test(): boolean {
+    return true;
   }
 
   filter(data: any) {
-    const categoriesToFilter = data.filter(x => x.inclues(true));
+    let  categoriesToFilter = new Map<string, boolean[]>();
+    const dataMap = convertObjectToMap(data);
+    dataMap.forEach((values, key) => {
+      const selected = values.find(x => x);
+      if(selected) {
+        categoriesToFilter.set(key, values);
+      }
+    });
     const filterOptions: Map<string, string[]> = new Map<string, string[]>();
     let hasPatronAttribute: boolean = false;
     categoriesToFilter.forEach((options, category)  => {
       const selectedOptions: number[] = [];
       let lastFound = 0;
       while(lastFound !== -1) {
-        const index: number = category.indexOf((option) => option, lastFound);
-        if(category.find(x => x.name.include('Patron '))) {
+        const index: number = options.indexOf( true, lastFound);
+        if(category.includes('Patron ')) {
           hasPatronAttribute = true;
         }
-        lastFound = index;
-        if(index >= 0) {
+        lastFound = index + 1;
+        if(index !== -1) {
           selectedOptions.push(index);
+        } else {
+          break;
         }
       }
       if(selectedOptions.length > 0) {
@@ -93,8 +106,9 @@ export class SearchFilterModalComponent implements OnInit {
     });
 
     this._roomsService.filterBuildings(filterOptions, hasPatronAttribute);
-    this._router.navigateByUrl("patron/housing/rooms-search/units/");
-    close();
+    this.close().then(x => {
+      this._router.navigateByUrl(`patron/housing/rooms-search/${this._roomStateService.getActiveRoomSelect().key}/units`);
+    })
   }
 
   clearFilters(): void {

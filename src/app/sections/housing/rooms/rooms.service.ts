@@ -161,27 +161,35 @@ export class RoomsService {
       const filteredFacilities = [];
       filterOptions.forEach((options, category) => {
         facilities.forEach(facility => {
-          if(this._matchedFacilityAttributes(category, options, facility)) {
+          if(this._matchedFacilityAttributes(category, options, facility) &&
+          !this._hasBuilding(filteredFacilities, facility)) {
             filteredFacilities.push(facility);
           }
           if(wasOccupantOptionSelected && facility.occupantKeys.length > 0) {
 
-            if (this._matchedOccupantsAttributes(category, options, facility.facilityId)) {
+            if (this._matchedOccupantsAttributes(category, options, facility.facilityId) &&
+            !this._hasBuilding(filteredFacilities, facility)) {
               filteredFacilities.push(facility);
             }
           }
         });
       });
 
+      this._stateService.updateActiveFilterFacilities(filteredFacilities);
   }
+  private _hasBuilding(listOfFacilities: Facility[], building: Facility ): boolean {
+    return !!listOfFacilities.find(x => x.facilityId === building.facilityId);
+  }
+
   private _matchedFacilityAttributes(category: string, options: string[], facility: Facility) {
-    return (facility.hasAttribute(category) &&
-      this._valueMatches(options, facility.getAttributeValue(category).value));
+    return (facility.hasAttribute(category.replace("Facility ", "")) &&
+      this._valueMatches(options, facility.getAttributeValue(
+        category.replace("Facility ", "")).value));
   }
 
   private _matchedOccupantsAttributes(category: string, options: string[], facilityId: number): boolean {
     const occupantDetails = this._stateService.getOccupantDetails(facilityId);
-    const occupant = occupantDetails.find(x => x.hasAttribute(category));
+    const occupant = occupantDetails.find(x => x.hasAttribute(category.replace("Patron ", "")));
 
     return (this._valueMatches(options, occupant.getAttributeValue(category)));
   }

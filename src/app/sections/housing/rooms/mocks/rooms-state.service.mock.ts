@@ -1,63 +1,26 @@
 import { StateService } from '@sections/housing/rooms/rooms-state.service';
-import { Facility, FacilityDetailsToFacilityMapper } from '@sections/housing/facilities/facilities.model';
+import {
+  Facility,
+  FacilityAttribute,
+  FacilityDetailsToFacilityMapper,
+} from '@sections/housing/facilities/facilities.model';
 import { OccupantAttribute } from '@sections/housing/attributes/attributes.model';
 
 export class RoomsStateServiceMock implements StateService<number, Facility[]>{
 
-  private _parentFacilities: Facility[] = [{
-    "facilityId": 9000485,
-    "facilityName": "Able",
-    "isTopLevel": true,
-    "topLevelKey": 9000485,
-    "bedCount": "",
-    "bathCount": "",
-    "floors": 2,
-    "builtYear": null,
-    "campus": "",
-    "parking": "",
-    "isExpanded": false,
-    "iconName": 'arrow-down',
-    'availableUnits': 2,
-    "attributes": [
-      {
-        "facilityAttributeKey": 0,
-        "facilityKey": 9000485,
-        "attributeConsumerKey": 2317,
-        "value": "0",
-        "effectiveDate": new Date ("0001-01-01T00:00:00"),
-        "endDate": null,
-        "name": "Max Legal Occupancy"
-      },
-      {
-        "facilityAttributeKey": 9028000,
-        "facilityKey": 9000485,
-        "attributeConsumerKey": 2308,
-        "value": "2",
-        "effectiveDate": new Date ("0001-01-01T00:00:00"),
-        "endDate": null,
-        "name": "Assignment_Limit"
-      },
-      {
-        "facilityAttributeKey": 9027451,
-        "facilityKey": 9000485,
-        "attributeConsumerKey": 2312,
-        "value": "Below",
-        "effectiveDate": new Date ("0001-01-01T00:00:00"),
-        "endDate": null,
-        "name": "Assignment_Level"
-      },
-      {
-        "facilityAttributeKey": 9030649,
-        "facilityKey": 9000485,
-        "attributeConsumerKey": 2302,
-        "value": "No",
-        "effectiveDate": new Date ("0001-01-01T00:00:00"),
-        "endDate": null,
-        "name": "Smoking"
-      }
-    ],
-    "occupantKeys": null
-  }];
+  private _parentFacilities: Facility[] = [
+    new Facility("Able", 9000485,"","",2,null,
+      "","", 2, false, 'arrow-down',[
+        new FacilityAttribute(0,9000485, 2317, "0",
+          "Max Legal Occupancy", new Date ("0001-01-01T00:00:00"), null),
+        new FacilityAttribute(9028000,9000485, 2308, "2",
+          "Assignment_Limit", new Date ("0001-01-01T00:00:00"), null),
+        new FacilityAttribute(9027451,9000485, 2312, "Below",
+          "Assignment_Level", new Date ("0001-01-01T00:00:00"), null),
+        new FacilityAttribute(9030649,9000485, 2302, "No",
+          "Smoking", new Date ("0001-01-01T00:00:00"), null)
+      ],true,9000485,[])
+  ];
   entityDictionary: Map<number, Facility[]> = new Map<number, Facility[]>([
       [9000485, RoomsStateServiceMock.getFacilitiesData() ]
     ]
@@ -108,7 +71,7 @@ export class RoomsStateServiceMock implements StateService<number, Facility[]>{
             "name": "Assignment_Limit"
           }
         ],
-        "occupantKeys": null
+        "occupantKeys": []
       },
       {
         "facilityKey": 9000761,
@@ -153,7 +116,7 @@ export class RoomsStateServiceMock implements StateService<number, Facility[]>{
             "name": "Smoking"
           }
         ],
-        "occupantKeys": null
+        "occupantKeys": []
       },
       {
         "facilityKey": 9000762,
@@ -198,7 +161,7 @@ export class RoomsStateServiceMock implements StateService<number, Facility[]>{
             "name": "Smoking"
           }
         ],
-        "occupantKeys": null
+        "occupantKeys": []
       },
       {
         "facilityKey": 9000763,
@@ -243,7 +206,7 @@ export class RoomsStateServiceMock implements StateService<number, Facility[]>{
             "name": "Smoking"
           }
         ],
-        "occupantKeys": null
+        "occupantKeys": []
       },
       {
         "facilityKey": 9000764,
@@ -288,7 +251,7 @@ export class RoomsStateServiceMock implements StateService<number, Facility[]>{
             "name": "Smoking"
           }
         ],
-        "occupantKeys": null
+        "occupantKeys": []
       },
       {
         "facilityKey": 9000765,
@@ -333,7 +296,7 @@ export class RoomsStateServiceMock implements StateService<number, Facility[]>{
             "name": "Smoking"
           }
         ],
-        "occupantKeys": null
+        "occupantKeys": []
       },
       {
         "facilityKey": 9000766,
@@ -378,7 +341,7 @@ export class RoomsStateServiceMock implements StateService<number, Facility[]>{
             "name": "Smoking"
           }
         ],
-        "occupantKeys": null
+        "occupantKeys": []
       },
       {
         "facilityKey": 9000767,
@@ -423,7 +386,7 @@ export class RoomsStateServiceMock implements StateService<number, Facility[]>{
             "name": "Smoking"
           }
         ],
-        "occupantKeys": null
+        "occupantKeys": []
       },
       {
         "facilityKey": 9000768,
@@ -468,7 +431,7 @@ export class RoomsStateServiceMock implements StateService<number, Facility[]>{
             "name": "Smoking"
           }
         ],
-        "occupantKeys": null
+        "occupantKeys": []
       },
       {
         "facilityKey": 9000325,
@@ -513,7 +476,7 @@ export class RoomsStateServiceMock implements StateService<number, Facility[]>{
             "name": "Assignment_Limit"
           }
         ],
-        "occupantKeys": null
+        "occupantKeys": []
       },
       {
         "facilityKey": 9000323,
@@ -558,7 +521,7 @@ export class RoomsStateServiceMock implements StateService<number, Facility[]>{
             "name": "Assignment_Limit"
           }
         ],
-        "occupantKeys": null
+        "occupantKeys": []
       },
       {
         "facilityKey": 9000321,
@@ -603,7 +566,7 @@ export class RoomsStateServiceMock implements StateService<number, Facility[]>{
             "name": "Assignment_Limit"
           }
         ],
-        "occupantKeys": null
+        "occupantKeys": []
       },
       {
         "facilityKey": 9000485,
@@ -648,7 +611,7 @@ export class RoomsStateServiceMock implements StateService<number, Facility[]>{
             "name": "Smoking"
           }
         ],
-        "occupantKeys": null
+        "occupantKeys": []
       },
       {
         "facilityKey": 9000326,
@@ -693,7 +656,7 @@ export class RoomsStateServiceMock implements StateService<number, Facility[]>{
             "name": "Smoking"
           }
         ],
-        "occupantKeys": null
+        "occupantKeys": []
       },
       {
         "facilityKey": 9000322,
@@ -738,7 +701,7 @@ export class RoomsStateServiceMock implements StateService<number, Facility[]>{
             "name": "Assignment_Limit"
           }
         ],
-        "occupantKeys": null
+        "occupantKeys": []
       },
       {
         "facilityKey": 9000330,
@@ -783,7 +746,7 @@ export class RoomsStateServiceMock implements StateService<number, Facility[]>{
             "name": "Smoking"
           }
         ],
-        "occupantKeys": null
+        "occupantKeys": []
       },
       {
         "facilityKey": 9000327,
@@ -828,7 +791,7 @@ export class RoomsStateServiceMock implements StateService<number, Facility[]>{
             "name": "Smoking"
           }
         ],
-        "occupantKeys": null
+        "occupantKeys": []
       },
       {
         "facilityKey": 9000328,
@@ -873,7 +836,7 @@ export class RoomsStateServiceMock implements StateService<number, Facility[]>{
             "name": "Smoking"
           }
         ],
-        "occupantKeys": null
+        "occupantKeys": []
       },
       {
         "facilityKey": 9000329,
@@ -918,7 +881,7 @@ export class RoomsStateServiceMock implements StateService<number, Facility[]>{
             "name": "Smoking"
           }
         ],
-        "occupantKeys": null
+        "occupantKeys": []
       },
       {
         "facilityKey": 9000331,
@@ -963,7 +926,7 @@ export class RoomsStateServiceMock implements StateService<number, Facility[]>{
             "name": "Smoking"
           }
         ],
-        "occupantKeys": null
+        "occupantKeys": []
       },
       {
         "facilityKey": 9000332,
@@ -1008,7 +971,7 @@ export class RoomsStateServiceMock implements StateService<number, Facility[]>{
             "name": "Smoking"
           }
         ],
-        "occupantKeys": null
+        "occupantKeys": []
       },
       {
         "facilityKey": 9000333,
@@ -1062,7 +1025,7 @@ export class RoomsStateServiceMock implements StateService<number, Facility[]>{
             "name": "Gender"
           }
         ],
-        "occupantKeys": null
+        "occupantKeys": []
       },
       {
         "facilityKey": 9000334,
@@ -1116,7 +1079,7 @@ export class RoomsStateServiceMock implements StateService<number, Facility[]>{
             "name": "Gender"
           }
         ],
-        "occupantKeys": null
+        "occupantKeys": []
       },
       {
         "facilityKey": 9000335,
@@ -1161,7 +1124,7 @@ export class RoomsStateServiceMock implements StateService<number, Facility[]>{
             "name": "Smoking"
           }
         ],
-        "occupantKeys": null
+        "occupantKeys": []
       },
       {
         "facilityKey": 9000336,
@@ -1206,7 +1169,7 @@ export class RoomsStateServiceMock implements StateService<number, Facility[]>{
             "name": "Smoking"
           }
         ],
-        "occupantKeys": null
+        "occupantKeys": []
       },
       {
         "facilityKey": 9000338,
@@ -1251,7 +1214,7 @@ export class RoomsStateServiceMock implements StateService<number, Facility[]>{
             "name": "Smoking"
           }
         ],
-        "occupantKeys": null
+        "occupantKeys": []
       },
       {
         "facilityKey": 9000339,
@@ -1296,7 +1259,7 @@ export class RoomsStateServiceMock implements StateService<number, Facility[]>{
             "name": "Smoking"
           }
         ],
-        "occupantKeys": null
+        "occupantKeys": []
       },
       {
         "facilityKey": 9000340,
@@ -1341,7 +1304,7 @@ export class RoomsStateServiceMock implements StateService<number, Facility[]>{
             "name": "Smoking"
           }
         ],
-        "occupantKeys": null
+        "occupantKeys": []
       }
     ];
     const mapper = new FacilityDetailsToFacilityMapper()

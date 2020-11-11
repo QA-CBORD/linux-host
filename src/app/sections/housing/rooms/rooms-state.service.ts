@@ -107,7 +107,7 @@ export class RoomsStateService implements StateService<number, Facility[]> {
 
   updateActiveFilterFacilities(facilities: Facility[]) {
     this._activeFilterFacilities = facilities;
-  }
+    }
 
   getActiveFilterFacilities(): Facility[] {
     return this._activeFilterFacilities;
@@ -132,7 +132,7 @@ export class RoomsStateService implements StateService<number, Facility[]> {
     return new Unit({
       facilityKey: facility.facilityId,
       parentKey: facility.topLevelKey,
-      title: `${facility.facilityName} \u{2014} ${parentFacility.facilityName}`,
+      title: `${facility.facilityName}`,
       isFavorite: false,
       labels: facility.attributes.map(x => x.value),
       attributes: facility.attributes,
@@ -167,15 +167,25 @@ export class RoomsStateService implements StateService<number, Facility[]> {
 
   private _addChildrenToDictionary(facilities: Facility[]): void {
     this._parentFacilities.forEach(parent => {
-      const children = facilities.filter(facility =>
+      let children = facilities.filter(facility =>
         (
           facility.topLevelKey === parent.facilityId &&
           !facility.isTopLevel
         ),
       );
+      children = this._updateTopLevelName(children, parent.facilityName);
+
       if (children.length > 0) {
         this.entityDictionary.set(parent.facilityId, children);
       }
     });
+  }
+
+  private _updateTopLevelName(children: Facility[] , parentName): Facility[] {
+    return children.map(x => {
+      x.facilityName = `${parentName} \u{2014} ${x.facilityName}`;
+      x.topLevelName = parentName;
+      return x;
+    })
   }
 }
