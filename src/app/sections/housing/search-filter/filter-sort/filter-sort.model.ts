@@ -48,8 +48,7 @@ export class CategoryOptions {
     }
   }
   public getOptionDetails(category: string, option: string): CategoryOptionDetail {
-    const item = this._optionDetails.find(x => x.key === `${category}${option}`.trim())
-    return item;
+    return this._optionDetails.find(x => x.key === `${category}${option}`.trim());
   }
 
    private addOptionDetails(category, option, isSelected) {

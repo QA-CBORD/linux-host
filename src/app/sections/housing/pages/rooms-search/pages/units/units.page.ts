@@ -23,5 +23,8 @@ export class UnitsPage {
       if(Number.isInteger(facilityId)) {
         this.units = this._unitMapper.map(this._facilityStateService.getParentFacilityChildren(facilityId));
       }
+      else if (this._facilityStateService.isFilterActive()) {
+        this.units = this._unitMapper.map(this._facilityStateService.getActiveFilterFacilities());
+      }
   }
 }

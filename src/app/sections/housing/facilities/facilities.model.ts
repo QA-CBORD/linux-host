@@ -17,6 +17,18 @@ export class Facility {
     public occupantKeys: number[] = [],
   ) {
   }
+
+  public hasAttribute(name: string): boolean {
+    if(this.attributes && this.attributes.length > 0) {
+      return !!this.attributes.find(x => x.name === name);
+    }
+  }
+
+  public getAttributeValue(attribute: string): FacilityAttribute {
+    if (this.hasAttribute(attribute)) {
+      return this.attributes.find(x => x.name === name);
+    }
+  }
 }
 
 export class FacilityAttribute {

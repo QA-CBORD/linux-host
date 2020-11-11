@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { RoomSelect } from './rooms.model';
 import { Facility } from '@sections/housing/facilities/facilities.model';
 import { Observable } from 'rxjs';
-import { FacilityToUnitsMapper, Unit } from '@sections/housing/unit/unit.model';
+import { Unit } from '@sections/housing/unit/unit.model';
 import { FacilityOccupantDetails } from '@sections/housing/roommate/roomate.model';
 import { OccupantAttribute } from '@sections/housing/attributes/attributes.model';
 import { hasValue, isDefined } from '@sections/housing/utils';
@@ -22,6 +22,7 @@ export class RoomsStateService implements StateService<number, Facility[]> {
   private roomSelects: Observable<RoomSelect[]>;
   private _currentlySelectedRoomSelect: RoomSelect;
   private _parentFacilities: Facility[];
+  private _activeFilterFacilities: Facility[] = null;
   constructor() {
     this.entityDictionary = new Map<number, Facility[]>();
     this._occupantDictionary = new Map<number, FacilityOccupantDetails[]>();
@@ -100,6 +101,17 @@ export class RoomsStateService implements StateService<number, Facility[]> {
   getActiveRoomSelect(): RoomSelect {
     return this._currentlySelectedRoomSelect;
   }
+  isFilterActive(): boolean {
+    return  (this._activeFilterFacilities && this._activeFilterFacilities.length > 0);
+  }
+
+  updateActiveFilterFacilities(facilities: Facility[]) {
+    this._activeFilterFacilities = facilities;
+  }
+
+  getActiveFilterFacilities(): Facility[] {
+    return this._activeFilterFacilities;
+  }
 
   getRoomSelects() {
     return this.roomSelects;
@@ -130,6 +142,14 @@ export class RoomsStateService implements StateService<number, Facility[]> {
 
   getParentFacilityChildren(facilityId: number) {
     return this.entityDictionary.get(facilityId);
+  }
+
+  getAllFacilityChildren(): Facility[] {
+    let childrenFacilities: Facility[] = [];
+    this._parentFacilities.forEach(parent => {
+      childrenFacilities = childrenFacilities.concat(this.entityDictionary.get(parent.facilityId));
+    });
+    return childrenFacilities;
   }
 
   createFacilityDictionary(facilities: Facility[]): void {

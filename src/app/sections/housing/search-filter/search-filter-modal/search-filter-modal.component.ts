@@ -5,15 +5,14 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { FilterSortComponent } from '../filter-sort/filter-sort.component';
 import { SortControlComponent } from '../filter-sort/sort-control/sort-control.component';
 
-import { generateCategories } from '../filter-sort/filter-sort.mock';
-
-import { Category, CategoryOptions } from '../filter-sort/filter-sort.model';
+import { Category } from '../filter-sort/filter-sort.model';
 import { RoomsService } from '@sections/housing/rooms/rooms.service';
 import { HousingService } from '@sections/housing/housing.service';
 import { RoomsStateService } from '@sections/housing/rooms/rooms-state.service';
-import { observable, Observable, of } from 'rxjs';
-import { delay, map, tap } from 'rxjs/operators';
-import { OccupantAttribute } from '@sections/housing/attributes/attributes.model';
+import { Observable } from 'rxjs';
+import {  map, tap } from 'rxjs/operators';
+import { Router } from '@angular/router';
+import { LoadingService } from '@core/service/loading/loading.service';
 
 @Component({
   selector: 'st-search-filter-modal',
@@ -34,12 +33,15 @@ export class SearchFilterModalComponent implements OnInit {
               private _roomStateService: RoomsStateService,
               private _modalController: ModalController,
               private _housingService: HousingService,
+              private _loadingService: LoadingService,
+              private _router: Router,
               private _formBuilder: FormBuilder) {}
 
   ngOnInit(): void {
-
+    this._loadingService.showSpinner();
     const facilityKeys: number[] = this._roomStateService.getOccupiedFacilities().map(x => x.facilityId);
     this.occupants$ =  this._initFilter(facilityKeys);
+    this._loadingService.closeSpinner();
   }
   private _initFilter(facilityKeys): Observable<any> {
     return this._housingService.getAllOccupantDetails(this._roomStateService.getActiveRoomSelect().key, facilityKeys)
@@ -68,8 +70,31 @@ export class SearchFilterModalComponent implements OnInit {
   }
 
   filter(data: any) {
-    console.log(data);
+    const categoriesToFilter = data.filter(x => x.inclues(true));
+    const filterOptions: Map<string, string[]> = new Map<string, string[]>();
+    let hasPatronAttribute: boolean = false;
+    categoriesToFilter.forEach((options, category)  => {
+      const selectedOptions: number[] = [];
+      let lastFound = 0;
+      while(lastFound !== -1) {
+        const index: number = category.indexOf((option) => option, lastFound);
+        if(category.find(x => x.name.include('Patron '))) {
+          hasPatronAttribute = true;
+        }
+        lastFound = index;
+        if(index >= 0) {
+          selectedOptions.push(index);
+        }
+      }
+      if(selectedOptions.length > 0) {
+        const values = selectedOptions.map(x => this.categoryOptions[category][x]);
+        filterOptions.set(category, values);
+      }
+    });
 
+    this._roomsService.filterBuildings(filterOptions, hasPatronAttribute);
+    this._router.navigateByUrl("patron/housing/rooms-search/units/");
+    close();
   }
 
   clearFilters(): void {
@@ -87,7 +112,7 @@ export class SearchFilterModalComponent implements OnInit {
   }
 
   getArrayName(property: string): string {
-    let name = '';
+    let name: string;
     if(property.includes('Facility')) {
       name = property.replace('Facility ', '');
     } else {

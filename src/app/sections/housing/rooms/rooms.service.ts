@@ -15,7 +15,6 @@ import { RoomsStateService } from '@sections/housing/rooms/rooms-state.service';
 import { isDefined } from '@sections/housing/utils';
 import { Response } from '@sections/housing/housing.model';
 import { OccupantAttribute } from '@sections/housing/attributes/attributes.model';
-import { FormGroup } from '@angular/forms';
 
 @Injectable({
   providedIn: 'root',
@@ -141,8 +140,9 @@ export class RoomsService {
   public getFilterCategories(): Category[] {
     let filterCategories: Category[] = [];
     filterCategories.push(this._createFilterCategory('Buildings', -777));
+
     filterCategories = filterCategories.concat(this._getFacilityAttributeCategories());
-    // #TODO  implement grabbing patron attributes and creating categories based on occupant attributes.
+
     filterCategories = filterCategories.concat(this._getPatronAttributeCategories());
 
     return filterCategories;
@@ -154,5 +154,38 @@ export class RoomsService {
 
   public getAttributeOptionInfo(category: string, option: string): CategoryOptionDetail {
     return this._filterOptions.getOptionDetails(category, option);
+  }
+
+  public filterBuildings(filterOptions: Map<string, string[]>, wasOccupantOptionSelected: boolean): void {
+      const facilities = this._stateService.getAllFacilityChildren();
+      const filteredFacilities = [];
+      filterOptions.forEach((options, category) => {
+        facilities.forEach(facility => {
+          if(this._matchedFacilityAttributes(category, options, facility)) {
+            filteredFacilities.push(facility);
+          }
+          if(wasOccupantOptionSelected && facility.occupantKeys.length > 0) {
+
+            if (this._matchedOccupantsAttributes(category, options, facility.facilityId)) {
+              filteredFacilities.push(facility);
+            }
+          }
+        });
+      });
+
+  }
+  private _matchedFacilityAttributes(category: string, options: string[], facility: Facility) {
+    return (facility.hasAttribute(category) &&
+      this._valueMatches(options, facility.getAttributeValue(category).value));
+  }
+
+  private _matchedOccupantsAttributes(category: string, options: string[], facilityId: number): boolean {
+    const occupantDetails = this._stateService.getOccupantDetails(facilityId);
+    const occupant = occupantDetails.find(x => x.hasAttribute(category));
+
+    return (this._valueMatches(options, occupant.getAttributeValue(category)));
+  }
+  private _valueMatches(options: string[], value: string): boolean {
+      return options.includes(value);
   }
 }
