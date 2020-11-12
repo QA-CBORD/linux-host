@@ -1,3 +1,5 @@
 <ion-content>
-  <st-unit *ngFor="let unit of units" [unit]="unit"></st-unit>
+  <div *ngIf="(units$ | async) as units">
+    <st-unit *ngFor="let unit of units" [unit]="unit"></st-unit>
+  </div>
 </ion-content>
