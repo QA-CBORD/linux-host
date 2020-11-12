@@ -154,7 +154,9 @@ export class EnvironmentFacadeService extends ServiceStateFacade {
   getSecureMessagingAPIURL(): string {
     return this.currentEnvironment.secmsg_api;
   }
-
+  public getHousingAPIURL(): string {
+    return this.currentEnvironment.housing_aws_url;
+  }
   getImageURL(): string {
     return this.currentEnvironment.image_url;
   }
