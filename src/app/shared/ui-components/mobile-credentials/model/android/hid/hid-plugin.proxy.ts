@@ -78,26 +78,27 @@ class TaskExecutor {
   }
 }
 
-export class HIDSdkManager {
+export class HIDPlugginProxy {
+  
   static TRANSACTION_SUCCESS = 'success';
   static TRANSACTION_FAILED = 'failed';
   static LOCATION_PERMISSION_REQUIRED = 'LOCATION_PERMISSION_REQUIRED';
   static KEY_ALREADY_INSTALLED = 'KEY_ALREADY_INSTALLED';
-  private static instance: HIDSdkManager;
+  private static instance: HIDPlugginProxy;
   taskExecutionObs$: Subject<EndpointStatuses> = new Subject<EndpointStatuses>();
   private taskExecutor: TaskExecutor;
   private constructor() {}
 
-  static getInstance(): HIDSdkManager {
+  static getInstance(): HIDPlugginProxy {
     if (!this.instance) {
-      this.instance = new HIDSdkManager();
+      this.instance = new HIDPlugginProxy();
     }
     return this.instance;
   }
 
   async initializeSdk(): Promise<boolean> {
     const initializationStatus = await this.executeCall<string>(HIDPlugin.initializeSdk);
-    return initializationStatus == HIDSdkManager.TRANSACTION_SUCCESS || Promise.reject(initializationStatus);
+    return initializationStatus == HIDPlugginProxy.TRANSACTION_SUCCESS || Promise.reject(initializationStatus);
   }
 
   async endpointStatus(): Promise<EndpointStatuses> {
@@ -142,7 +143,7 @@ export class HIDSdkManager {
   }
 
   async refreshEndpoint(): Promise<boolean> {
-    return (await this.executeCall(HIDPlugin.refreshEndpoint)) == HIDSdkManager.TRANSACTION_SUCCESS;
+    return (await this.executeCall(HIDPlugin.refreshEndpoint)) == HIDPlugginProxy.TRANSACTION_SUCCESS;
   }
 
   private async startScanning(controller: TaskExecutionController): Promise<void> {
@@ -155,15 +156,15 @@ export class HIDSdkManager {
 
     let endpointRefreshSuccess = async (): Promise<boolean> => {
       let endpointRefreshResult = await executeCall(HIDPlugin.refreshEndpoint);
-      return endpointRefreshResult == HIDSdkManager.TRANSACTION_SUCCESS;
+      return endpointRefreshResult == HIDPlugginProxy.TRANSACTION_SUCCESS;
     };
     let isEndpointActiveNow = async (): Promise<boolean> => {
       return await executeCall(HIDPlugin.isEndpointActive);
     };
     let startScanningSuccess = async (): Promise<boolean> => {
       let startScanTransactionResult = await executeCall(HIDPlugin.startScanning);
-      locationPermissionRequired = startScanTransactionResult == HIDSdkManager.LOCATION_PERMISSION_REQUIRED;
-      return startScanTransactionResult == HIDSdkManager.TRANSACTION_SUCCESS;
+      locationPermissionRequired = startScanTransactionResult == HIDPlugginProxy.LOCATION_PERMISSION_REQUIRED;
+      return startScanTransactionResult == HIDPlugginProxy.TRANSACTION_SUCCESS;
     };
     if ((await endpointRefreshSuccess()) && !controller.maxExecutionReached()) {
       if (await isEndpointActiveNow()) {

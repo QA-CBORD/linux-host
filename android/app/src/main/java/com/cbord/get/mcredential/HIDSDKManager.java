@@ -102,11 +102,11 @@ public class HIDSDKManager implements OrigoReaderConnectionListener, OrigoHceCon
     public void getCurrentEndpoint(TransactionCompleteCallback transactionCompleteCallback)
     {
         try{
-             if(isEndpointSetup()){
-                 transactionCompleteCallback.onCompleted(getMobileKey());
-             } else{
-                 transactionCompleteCallback.onCompleted(ENDPOINT_NOT_SETUP);
-             }
+            if(isEndpointSetup()){
+                transactionCompleteCallback.onCompleted(getMobileKey());
+            } else{
+                transactionCompleteCallback.onCompleted(ENDPOINT_NOT_SETUP);
+            }
         }catch(Exception ex){
             transactionCompleteCallback.onCompleted(NO_KEY_INSTALLED);
         }

@@ -8,7 +8,7 @@ import { MobileCredentialStatuses } from '../../shared/credential-state';
 import { AbstractAndroidCredentialManager } from '../abstract-android-credential.management';
 import { AndroidCredential, HIDCredential } from '../android-credential.model';
 import { HidCredentialDataService } from '../../../service/hid-credential.data.service';
-import { EndpointStatuses, HIDSdkManager } from './hid-plugin.wrapper';
+import { EndpointStatuses, HIDPlugginProxy } from './hid-plugin.proxy';
 import { Injectable } from '@angular/core';
 
 const CREDENTIAL_ENABLED_MESSAGE = 'Mobile ID enabled';
@@ -387,8 +387,8 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     return await this.hidSdkManager()
       .setupEndpoint((this.mCredential as HIDCredential).getInvitationCode())
       .then(transactionResult => {
-        const transactionSucceeded = transactionResult == HIDSdkManager.TRANSACTION_SUCCESS;
-        this.endpointAlreadyInstalledFlag = transactionResult == HIDSdkManager.KEY_ALREADY_INSTALLED;
+        const transactionSucceeded = transactionResult == HIDPlugginProxy.TRANSACTION_SUCCESS;
+        this.endpointAlreadyInstalledFlag = transactionResult == HIDPlugginProxy.KEY_ALREADY_INSTALLED;
         if (transactionSucceeded) {
           return transactionSucceeded;
         }
@@ -572,7 +572,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
 
   private deleteCredentialFromDevice$ = async (): Promise<boolean> => {
     let transactionResultCode = await this.hidSdkManager().deleteEndpoint();
-    if (transactionResultCode == HIDSdkManager.TRANSACTION_SUCCESS) {
+    if (transactionResultCode == HIDPlugginProxy.TRANSACTION_SUCCESS) {
       this.mCredential.setStatus(MobileCredentialStatuses.IS_AVAILABLE);
       this.credentialStateChangeListener.onCredentialStateChanged();
       return true;
@@ -605,8 +605,8 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     this.loadingService.closeSpinner();
   }
 
-  private hidSdkManager(): HIDSdkManager {
-    return HIDSdkManager.getInstance();
+  private hidSdkManager(): HIDPlugginProxy {
+    return HIDPlugginProxy.getInstance();
   }
 
   get termsAndConditionsSource$(): Promise<string> {

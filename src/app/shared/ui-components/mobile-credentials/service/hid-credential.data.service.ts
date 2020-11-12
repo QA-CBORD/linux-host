@@ -11,7 +11,7 @@ import { User } from 'src/app/app.global';
 import { AndroidCredential, HID, Persistable } from '../model/android/android-credential.model';
 import { AndroidCredentialDataService } from '../model/shared/android-credential-data.service';
 import { APIService } from '@core/service/api-service/api.service';
-import { EndpointStatuses } from '../model/android/hid/hid-plugin.wrapper';
+import { EndpointStatuses } from '../model/android/hid/hid-plugin.proxy';
 
 const api_version = 'v1';
 
