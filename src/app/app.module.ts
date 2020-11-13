@@ -29,4 +29,8 @@ import { StNativeStartupPopoverModule } from '@shared/ui-components/st-native-st
   providers: [{provide: ErrorHandler, useClass: GlobalErrorHandler}, InAppBrowser],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule {
+  constructor(){
+    console.log('AppModule created.....')
+  }
+}

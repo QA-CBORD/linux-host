@@ -1,9 +1,10 @@
 import { Component, ChangeDetectionStrategy, OnInit} from '@angular/core';
 
-import { generateUnits } from '@sections/housing/unit/unit.mock';
 import { RoomsStateService } from '@sections/housing/rooms/rooms-state.service';
 import { FacilityToUnitsMapper, Unit } from '@sections/housing/unit/unit.model';
 import { ActivatedRoute } from '@angular/router';
+import { Observable, of, Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'st-units',
@@ -11,7 +12,7 @@ import { ActivatedRoute } from '@angular/router';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UnitsPage {
-  units: Unit[];
+  units$: Observable<Unit[]>;
   private _unitMapper: FacilityToUnitsMapper;
   constructor(private _facilityStateService: RoomsStateService,
               private  _activeRoute: ActivatedRoute) {
@@ -19,9 +20,14 @@ export class UnitsPage {
   }
 
   ngOnInit() {
-      const facilityId = parseInt(this._activeRoute.snapshot.paramMap.get('buildingKey'), 10);
-      if(Number.isInteger(facilityId)) {
-        this.units = this._unitMapper.map(this._facilityStateService.getParentFacilityChildren(facilityId));
-      }
+    console.log('I made it');
+    const facilityId = parseInt(this._activeRoute.snapshot.paramMap.get('buildingKey'), 10);
+    if(facilityId) {
+      this._facilityStateService.setFacilities$(facilityId);
+    }
+      this.units$ = this._facilityStateService.getFacilities$().pipe(map(data => {
+        return  this._unitMapper.map(data);
+      }));
   }
+
 }

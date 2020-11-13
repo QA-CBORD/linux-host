@@ -1,11 +1,97 @@
 import { FacilityDetails, FacilityDetailsToFacilityMapper } from '@sections/housing/facilities/facilities.model';
+import { FacilityOccupantDetails } from '@sections/housing/roommate/roomate.model';
+import { OccupantAttribute } from '@sections/housing/attributes/attributes.model';
 
 export function generateFacilities(): any[] {
   const facilities = createFacilities();
   const facilityMapper = new FacilityDetailsToFacilityMapper();
   return facilityMapper.map(facilities);
 }
-
+export function generateOccupantDetails(): FacilityOccupantDetails[] {
+  return [
+    new FacilityOccupantDetails({
+    name: 'ccc',
+    patronKey: 333298,
+      patronAttributes: [
+      new OccupantAttribute({
+        name: 'gender',
+        attributeConsumerKey: 2384,
+        value: 'test 1',
+        effectiveDate: null,
+        endDate: null
+      }),
+      new OccupantAttribute({
+        name: 'age',
+        attributeConsumerKey: 2387,
+        value: 'test 2',
+        effectiveDate: null,
+        endDate: null
+      }),
+      new OccupantAttribute({
+        name: 'smoking',
+        attributeConsumerKey: 2381,
+        value: 'yes',
+        effectiveDate: null,
+        endDate: null
+      })
+    ]
+  }),
+    new FacilityOccupantDetails({
+      name: 'bbb',
+      patronKey: 332099,
+      patronAttributes: [
+        new OccupantAttribute({
+          name: 'gender',
+          attributeConsumerKey: 2384,
+          value: 'test 22',
+          effectiveDate: null,
+          endDate: null
+        }),
+        new OccupantAttribute({
+          name: 'age',
+          attributeConsumerKey: 2387,
+          value: 'test 44',
+          effectiveDate: null,
+          endDate: null
+        }),
+        new OccupantAttribute({
+          name: 'smoking',
+          attributeConsumerKey: 2381,
+          value: '',
+          effectiveDate: null,
+          endDate: null
+        })
+      ]
+    }),
+    new FacilityOccupantDetails({
+      name: 'aaa',
+      patronKey: 333001,
+      patronAttributes: [
+        new OccupantAttribute({
+          name: 'gender',
+          attributeConsumerKey: 2384,
+          value: 'test 22',
+          effectiveDate: null,
+          endDate: null
+        }),
+        new OccupantAttribute({
+          name: 'age',
+          attributeConsumerKey: 2387,
+          value: 'test 44',
+          effectiveDate: null,
+          endDate: null
+        }),
+        new OccupantAttribute({
+          name: 'smoking',
+          attributeConsumerKey: 2381,
+          value: 'no',
+          effectiveDate: null,
+          endDate: null
+        })
+      ]
+    })
+  ]
+}
 function createFacilities(): FacilityDetails[] {
   return [{
     "facilityKey": 9000324,
@@ -45,7 +131,7 @@ function createFacilities(): FacilityDetails[] {
       "endDate": null,
       "name": "Assignment_Limit"
     }],
-    "occupantKeys": null
+    "occupantKeys": [333298]
   }, {
     "facilityKey": 9000761,
     "name": "105",
@@ -162,7 +248,7 @@ function createFacilities(): FacilityDetails[] {
       "endDate": null,
       "name": "Smoking"
     }],
-    "occupantKeys": null
+    "occupantKeys": [332099]
   }, {
     "facilityKey": 9000764,
     "name": "108",
@@ -443,7 +529,7 @@ function createFacilities(): FacilityDetails[] {
       "endDate": null,
       "name": "Assignment_Limit"
     }],
-    "occupantKeys": null
+    "occupantKeys": [333001]
   }, {
     "facilityKey": 9000323,
     "name": "204",

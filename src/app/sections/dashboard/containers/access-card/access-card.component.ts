@@ -60,10 +60,15 @@ export class AccessCardComponent implements OnInit {
   }
 
   ionViewWillEnter() {
-    if (this.nativeProvider.isIos() && this.userFacadeService.isAppleWalletEnabled$()) {
-      this.enableAppleWallet();
-      this.enableAppleWalletEvents();
-    }
+    this.userFacadeService
+      .isAppleWalletEnabled$()
+      .toPromise()
+      .then(enabled => {
+        if (enabled) {
+          this.enableAppleWallet();
+          this.enableAppleWalletEvents();
+        }
+      });
   }
   private getUserData() {
     this.userName$ = this.accessCardService.getUserName();

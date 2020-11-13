@@ -70,7 +70,7 @@ export class StorageStateService extends ExtendableStateManager<WebStorageStateE
   }
 
   async deleteStateEntityByKey(key: string) {
-    if (!this.isKeyExistInState(key)) return;
+    if(!this.isKeyExistInState(key)) return;
     delete this.state[key];
     this.dispatchStateChanges();
   }

@@ -103,6 +103,7 @@ export namespace Settings {
     REPORT_LOST_CARD_ENABLED = 'get.feature.enable_lost_card',
     REPORT_FOUND_CARD_ENABLED = 'get.feature.enable_found_card',
     STANDARD_REGISTRATION_LINK = 'get.feature.standard_registration_link',
+    ANDROID_MOBILE_CREDENTIAL_ENABLED = 'get.feature.enable_android_mobile_credentials',
   }
 }
 
@@ -183,6 +184,7 @@ export namespace User {
     QUICK_AMOUNT = 'quick_amount',
     MOBILE_ACCESS_FAVORITES = 'mobileaccess_favorites',
     DEFAULT_ADDRESS = 'defaultaddress',
+    MOBILE_CREDENTIAL_ID = 'mobileCredentialID'
   }
 }
 
