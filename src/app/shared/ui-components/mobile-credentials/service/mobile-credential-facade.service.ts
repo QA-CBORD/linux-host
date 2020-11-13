@@ -49,8 +49,8 @@ export class MobileCredentialFacade {
   private appleWalletSettingsEnabled$(): Observable<boolean> {
     return this.nativeProvider.isIos()
       ? this.settingsFacadeService.getSetting(Settings.Setting.APPLE_WALLET_ENABLED).pipe(
+        take(1),
           map(({ value }) => Boolean(Number(value))),
-          take(1)
         )
       : of(false);
   }
