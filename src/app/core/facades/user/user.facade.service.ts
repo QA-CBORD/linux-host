@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ServiceStateFacade } from '@core/classes/service-state-facade';
-import { Observable, of, from, iif, zip, forkJoin } from 'rxjs';
+import { Observable, of, from, iif, zip } from 'rxjs';
 import { UserApiService } from '@core/service/user-api/user-api.service';
 import { UserInfo } from '@core/model/user/user-info.model';
 import { UserPhotoInfo, UserPhotoList, UserNotificationInfo } from '@core/model/user';
@@ -12,7 +12,6 @@ import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { Settings, User } from 'src/app/app.global';
 import { Plugins, Capacitor, PushNotificationToken, PushNotification } from '@capacitor/core';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
-import { ApplePay } from '@core/model/add-funds/applepay-response.model';
 const { PushNotifications, LocalNotifications, Device } = Plugins;
 
 @Injectable({
@@ -24,8 +23,6 @@ export class UserFacadeService extends ServiceStateFacade {
   private userKey = 'get_user';
   private userAddressKey = 'get_user_address';
   private fcmTokenKey = 'fcm_token';
-  public static APPLE_WALLET_ENABLED = "appleWalletEnabled";
-  public static ANDROID_CREDENTAILS_ENABLED = "androidMobileCredEnabled";
 
   constructor(
     private readonly userApiService: UserApiService,
@@ -151,29 +148,6 @@ export class UserFacadeService extends ServiceStateFacade {
       : of(false);
   }
 
-  mobileCredentialSettings(): Observable<{isAppleWalletEnabled: Function, isAndroidCredEnabled: Function}>{
-    return forkJoin(this.isAppleWalletEnabled$(), this.isAndroidMobileCredEnabled$())
-               .pipe(switchMap(([AppleWalletEnabled, androidCredEnabled]) => {
-                 return of({
-                   isAppleWalletEnabled: () => {
-                     return  AppleWalletEnabled;
-                    },
-                   isAndroidCredEnabled: () => {
-                    return androidCredEnabled;
-                  }
-                  });
-          }));
-  }
-
-  isAndroidMobileCredEnabled$(): Observable<boolean>{
-    if(!this.nativeProvider.isAndroid()){
-       return of(false);
-     }
-    return this.settingsFacadeService.getSetting(Settings.Setting.ANDROID_MOBILE_CREDENTIAL_ENABLED)
-                 .pipe(map(({value}) => Boolean(Number(value))),
-                 take(1));
-  }
-
   private getPhotoIdByStatus(photoList: UserPhotoInfo[], status: number = 1): UserPhotoInfo | undefined {
     return photoList.find((photo: UserPhotoInfo) => photo.status === status);
   }
@@ -242,6 +216,7 @@ export class UserFacadeService extends ServiceStateFacade {
             this.getPushNotificationInfo(userInfo, fcmToken)
           );
         }
+        return of(false);
       }),
       take(1),
       catchError(() => of(false)),
