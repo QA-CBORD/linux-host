@@ -103,4 +103,36 @@ it('should  get category options', inject([RoomsService, RoomsStateService, Hous
       service.filterBuildings(_map, WAS_OCCUPANT_SELECTED)
       expect(stateService.getActiveFilterFacilities()).toEqual(EXPECTED_ROOMS)
     }));
+
+  it('should filter rooms successfully for two Categories', inject([RoomsService, RoomsStateService, HousingProxyService, EnvironmentFacadeService],
+    (service: RoomsService, stateService: RoomsStateServiceMock) => {
+      let EXPECTED_ROOMS: Facility[];
+      EXPECTED_ROOMS = [
+        new Facility(
+          '217', 9000333, '2', '2', 3, 1990, 'xyz',
+          'A', 4, false, 'arrow-down',
+          [
+            new FacilityAttribute(0, 9000333, 2317, '3',
+              'Max Legal Occupancy', new Date('0001-01-01T00:00:00'), null),
+            new FacilityAttribute(9025127, 9000333, 2312, 'This',
+              'Assignment_Level', new Date('0001-01-01T00:00:00'), null),
+            new FacilityAttribute(9025129, 9000333, 2308, '2',
+              'Assignment_Limit', new Date('0001-01-01T00:00:00'), null),
+            new FacilityAttribute(9025132, 9000333, 2302, 'No',
+              'Smoking', new Date('0001-01-01T00:00:00'), null),
+            new FacilityAttribute(9030343, 9000333, 2306, 'Female',
+              'Gender', new Date('0001-01-01T00:00:00'), null),
+          ], false, 9000485, [], ''),
+      ];
+      const WAS_OCCUPANT_SELECTED = false;
+
+      const CATEGORY_OPTIONS = {
+        "Facility Max Legal Occupancy": ["3"],
+        "Facility Gender": ["Female"],
+      };
+      const optionsMap = convertObjectToMap(CATEGORY_OPTIONS);
+      service.filterBuildings(optionsMap, WAS_OCCUPANT_SELECTED);
+
+      expect(stateService.getActiveFilterFacilities()).toEqual(EXPECTED_ROOMS);
+    }));
 });

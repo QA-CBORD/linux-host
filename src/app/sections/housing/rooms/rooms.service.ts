@@ -159,7 +159,7 @@ export class RoomsService {
   }
   public filterBuildings(filterOptions: Map<string, string[]>, wasOccupantOptionSelected: boolean): void {
       const facilities = this._stateService.getAllFacilityChildren();
-      const filteredFacilities = [];
+      let filteredFacilities = [];
       let parentKeys = [];
       if(this._isBuildingFiltered(filterOptions)) {
         const parenFacilities = this._stateService.getParentFacilities();
@@ -188,8 +188,16 @@ export class RoomsService {
           }
         });
       });
+
+      if(this._isMultipleCategories(filterOptions)) {
+        filteredFacilities = filteredFacilities.filter(x => this._matchAllAttributes(filterOptions, x));
+      }
+
       this._updateFilter(filterOptions);
       this._stateService.updateActiveFilterFacilities(filteredFacilities);
+  }
+  private _isMultipleCategories(filterOptions: Map<string, string[]>): boolean {
+    return filterOptions.size > 1;
   }
 
   private _isBuildingFiltered(filterOptions: Map<string, string[]>): boolean {
@@ -208,10 +216,39 @@ export class RoomsService {
     })
     this._filterOptions.deselectOptionDetails(includedCategories);
   }
-private _matchedBuildingRequirements(facility: Facility, parentKeys: number[]): boolean {
+  private _matchedBuildingRequirements(facility: Facility, parentKeys: number[]): boolean {
     return parentKeys.length > 0? parentKeys.includes(facility.topLevelKey): true;
-}
-  private _matchedFacilityAttributes(category: string, options: string[], facility: Facility) {
+  }
+
+  private _matchAllAttributes(filterOptions: Map<string, string[]>, facility: Facility): boolean {
+
+    let matchesAll = true;
+    for(let [category, options] of filterOptions) {
+      if(category === 'Buildings') {
+        continue;
+      }
+      if(category.includes('Facility ')) {
+
+        if(this._matchedFacilityAttributes(category, options, facility)) {
+          continue;
+        } else {
+          matchesAll = false;
+          break;
+        }
+      } else {
+        if(this._matchedOccupantsAttributes(category,options,facility.facilityId)) {
+          continue;
+        } else {
+          matchesAll = false;
+          break;
+        }
+      }
+    }
+
+    return matchesAll;
+      }
+
+  private _matchedFacilityAttributes(category: string, options: string[], facility: Facility): boolean {
     return (facility.hasAttribute(category.replace("Facility ", "")) &&
       this._valueMatches(options, facility.getAttributeValue(
         category.replace("Facility ", "")).value));
