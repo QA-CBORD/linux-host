@@ -35,7 +35,11 @@ export class HousingDashboardPage implements OnInit, OnDestroy {
   }
 
   private _initRoomSelectsSubscription(): void {
-    const roomSelectSubscription: Subscription = this._termsService.termId$.pipe(
+    const roomSelectSubscription: Subscription = merge(
+      this._housingService.refreshDefinitions$,
+      this._termsService.termId$
+    )
+      .pipe(
       switchMap((termId: number) => {
         return this._housingService.getRoomSelects(termId);
       })

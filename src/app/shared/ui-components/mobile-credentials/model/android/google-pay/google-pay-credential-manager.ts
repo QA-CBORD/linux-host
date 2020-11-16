@@ -22,6 +22,8 @@ export class GooglePayCredentialManager implements MobileCredentialManager {
 
   constructor(private googlePayCrendential: GooglePayCredentialDataService, private readonly modalCtrl: ModalController, private readonly loadingService: LoadingService, private readonly credentialService: HidCredentialDataService) {}
 
+  async onWillLogout(): Promise<void> {}
+
   initialize(): Promise<any> {
     throw new Error('Method not implemented.');
   }
@@ -60,11 +62,11 @@ export class GooglePayCredentialManager implements MobileCredentialManager {
     // }
   }
   credentialEnabled$(): Observable<boolean> {
-    console.log('credentialEnabled: ', this.mCredential.isEnabled())
+    console.log('credentialEnabled: ', this.mCredential.isEnabled());
     return of(this.mCredential.isEnabled()).pipe(
       map(googleCredentialEnabled => {
         if (googleCredentialEnabled) {
-           GooglePayPlugin.getGoogleClient();
+          GooglePayPlugin.getGoogleClient();
         }
         return googleCredentialEnabled;
       })

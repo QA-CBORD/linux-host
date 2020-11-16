@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { iif, Observable, of } from 'rxjs';
@@ -15,8 +16,22 @@ export class MobileCredentialFacade {
   constructor(
     private readonly mobileCredentialManagerFactory: MobileCredentialManagerFactory,
     private readonly nativeProvider: NativeProvider,
-    private readonly settingsFacadeService: SettingsFacadeService
-  ) {}
+    private readonly settingsFacadeService: SettingsFacadeService,
+    private readonly sessionFacade: SessionFacadeService
+  ) {
+    this.onWillLogoutSubscription();
+  }
+
+
+
+  onWillLogoutSubscription(): void {
+    this.sessionFacade.onWillLogoutSubject.subscribe(() => {
+      if(this.mobileCredentialManager) {
+         this.mobileCredentialManager.onWillLogout();
+      }
+    });
+  }
+
 
   iifCredentialSettingsEnabled(): Observable<boolean> {
     return this.enabledCredentialsSettings().pipe(

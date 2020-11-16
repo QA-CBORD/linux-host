@@ -189,10 +189,8 @@ export interface GOOGLE extends Persistable {
   issuer: string;
 }
 
-export interface Persistable {
-  id: string;
-  endpointActive?: boolean;
-  referenceIdentifier?: string;
+export class Persistable {
+ constructor(public id: string, public endpointStatus?: number, public referenceIdentifier?: string){}
 }
 
 export class HIDCredential extends AndroidCredential<HID> {
@@ -202,8 +200,7 @@ export class HIDCredential extends AndroidCredential<HID> {
 
   getPersistable(): Persistable {
     let { id } = this.credentialBundle;
-    let endpointActive = false;
-    return { id, endpointActive };
+    return new Persistable(id, 0);
   }
 
   getInvitationCode(): string {
