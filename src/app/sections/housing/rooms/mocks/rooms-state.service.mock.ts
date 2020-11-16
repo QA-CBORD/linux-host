@@ -5,6 +5,8 @@ import {
   FacilityDetailsToFacilityMapper,
 } from '@sections/housing/facilities/facilities.model';
 import { OccupantAttribute } from '@sections/housing/attributes/attributes.model';
+import { BehaviorSubject } from 'rxjs';
+import { FacilityOccupantDetails } from '@sections/housing/roommate/roomate.model';
 
 export class RoomsStateServiceMock implements StateService<number, Facility[]>{
 
@@ -25,6 +27,29 @@ export class RoomsStateServiceMock implements StateService<number, Facility[]>{
       [9000485, RoomsStateServiceMock.getFacilitiesData() ]
     ]
   )
+  private _activeFilterFacilities: Facility[] = null;
+  private _activeFacilities$: BehaviorSubject<Facility[]> = new BehaviorSubject<Facility[]>([]);
+  private _occupantDictionary: Map<number, FacilityOccupantDetails[]>;
+
+
+  getActiveFilterFacilities(): Facility[] {
+    return this._activeFilterFacilities.map(x => new Facility(x.facilityName,x.facilityId, x.bedCount,
+      x.bathCount, x.floors, x.builtYear, x.campus, x.parking, x.availableUnits, x.isExpanded, 'arrow-down',
+      x.attributes.map(y => new FacilityAttribute(y.facilityAttributeKey, y.facilityKey, y.attributeConsumerKey,
+        y.value, y.name, y.effectiveDate, y.endDate)), x.isTopLevel, x.topLevelKey, x.occupantKeys));
+  }
+
+  updateActiveFilterFacilities(facilities: Facility[]) {
+    this._activeFilterFacilities = facilities;
+  }
+
+  getOccupantDetails(facilityKey: number): FacilityOccupantDetails[] {
+    return  this._occupantDictionary.get(facilityKey);
+  }
+
+  public getAllFacilityChildren(): Facility[] {
+    return  RoomsStateServiceMock.getFacilitiesData() as Facility[];
+}
 
   private static getFacilitiesData(): Facility[] {
     const facilities = [
@@ -983,7 +1008,7 @@ export class RoomsStateServiceMock implements StateService<number, Facility[]>{
             "facilityAttributeKey": 0,
             "facilityKey": 9000333,
             "attributeConsumerKey": 2317,
-            "value": "2",
+            "value": "3",
             "effectiveDate": new Date ("0001-01-01T00:00:00"),
             "endDate": null,
             "name": "Max Legal Occupancy"

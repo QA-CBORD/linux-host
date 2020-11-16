@@ -133,13 +133,13 @@ export class HousingService {
 
   getOccupantDetails(roomSelectKey:number, facilityKey: number): Observable<FacilityOccupantDetails[]> {
     const apiUrl = `${this._baseUrl}/roomselectproxy/v.1.0/room-selects-proxy/occupant-details/facilities/`;
-    return this._housingProxyService.post<OccupantDetailsResponse>(apiUrl, {
+    return this._housingProxyService.post<Response>(apiUrl, {
       roomSelectKey: roomSelectKey,
       facilityKeys: [facilityKey]
     }).pipe(
-      map(response => {
+      map((response: Response) => {
         console.log(response);
-        const details = new OccupantDetailsResponse(response);
+        const details = new OccupantDetailsResponse(response.data);
         return details.occupants;
       }),
       catchError(err => {throw err})
@@ -147,7 +147,7 @@ export class HousingService {
   }
 
   getAllOccupantDetails(roomSelectKey: number, facilityKeys: number[]): Observable<FacilityOccupantDetails[]> {
-    const apiUrl = `${this._baseUrl}/roomselectproxy/v.1.0/room-selects-proxy/occupant-details/facilities/`;
+    const apiUrl = `${this._baseUrl}/roomselectproxy/v.1.0/room-selects-proxy/occupant-details/facilities`;
     return this._housingProxyService.post<Response>(apiUrl, {
       roomSelectKey: roomSelectKey,
       facilityKeys: facilityKeys
