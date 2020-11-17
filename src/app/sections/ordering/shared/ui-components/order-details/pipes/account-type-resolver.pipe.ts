@@ -16,7 +16,10 @@ export class AccountTypeResolverPipe implements PipeTransform {
     if (!acc) return '';
     let result = this.accountDisplayPipe.transform(acc);
     if (!result) {
-      result = `${acc.accountDisplayName} (${this.priceUnitsResolverPipe.transform(acc.balance, mealBased)})`;
+      result =
+        acc.balance === null || acc.balance === undefined
+          ? acc.accountDisplayName
+          : `${acc.accountDisplayName} (${this.priceUnitsResolverPipe.transform(acc.balance, mealBased)})`;
     }
     return result;
   }
