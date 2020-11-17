@@ -72,6 +72,7 @@ export class ContractDetailsPage implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this._contractsService.sign(false);
     this._subscription.unsubscribe();
   }
 
