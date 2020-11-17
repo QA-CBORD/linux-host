@@ -8,7 +8,6 @@ export interface MobileCredentialState {
   isProvisioned(): boolean;
   isEnabled(): boolean;
   isAvailable(): boolean;
-  revoked(): Boolean;
   getIssuer(): string;
   getConfig(): MobileCredentialConfig;
   getUiIconUrl(): string;
@@ -18,8 +17,9 @@ export interface MobileCredentialState {
 
 
 export enum MobileCredentialStatuses{
-  IS_AVAILABLE = 1,
-  IS_PROVISIONED = 20,
-  IS_DISABLED = 0,
-  IS_REVOKED = 5
+  AVAILABLE = 1,
+  PROVISIONED = 20,
+  DISABLED = 0,
+  REVOKED = 5, // only know by this app, only HID gets to that state so far.
+  PROCESSING = 26
 }

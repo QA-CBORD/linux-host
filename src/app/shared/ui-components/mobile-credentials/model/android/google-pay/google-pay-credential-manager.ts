@@ -1,68 +1,66 @@
-import { MobileCredentialManager, CredentialStateChangeListener } from '../../shared/mobile-credential-manager';
-import { MobileCredential } from '../../shared/mobile-credential';
 import { Observable, of } from 'rxjs';
 import { Plugins } from '@capacitor/core';
-import { map, catchError } from 'rxjs/operators';
-import { GoogleCredential, AndroidCredentialState, GOOGLE } from '../android-credential.model';
+import { map, catchError, switchMap } from 'rxjs/operators';
+import { AndroidCredential } from '../android-credential.model';
 import { GooglePayCredentialDataService } from '@shared/ui-components/mobile-credentials/service/google-pay-credential.data.service';
 import { Injectable } from '@angular/core';
-import { MobileCredentialStatuses } from '../../shared/credential-state';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { HidCredentialDataService } from '@shared/ui-components/mobile-credentials/service/hid-credential.data.service';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
-import { MobileCredentialsComponent } from '@shared/ui-components/mobile-credentials/mobile-credentials.component';
 import { ModalController } from '@ionic/angular';
+import { MobileCredentialsComponent } from '@shared/ui-components/mobile-credentials/mobile-credentials.component';
+import { AbstractAndroidCredentialManager } from '../abstract-android-credential.management';
+import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 const { GooglePayPlugin } = Plugins;
 
 @Injectable()
-export class GooglePayCredentialManager implements MobileCredentialManager {
-  private mCredential: GoogleCredential;
-  private credentialStateChangeSubscription: CredentialStateChangeListener;
-  private customLoadingOptions = { message: 'Processing ... Please wait', duration: 100000 };
-
-  constructor(private googlePayCrendential: GooglePayCredentialDataService, private readonly modalCtrl: ModalController, private readonly loadingService: LoadingService, private readonly credentialService: HidCredentialDataService) {}
-
-  async onWillLogout(): Promise<void> {}
-
-  initialize(): Promise<any> {
-    throw new Error('Method not implemented.');
+export class GooglePayCredentialManager extends AbstractAndroidCredentialManager {
+  constructor(
+    private googlePayCrendential: GooglePayCredentialDataService,
+    private readonly modalCtrl: ModalController,
+    protected readonly loadingService: LoadingService,
+    private readonly credentialService: GooglePayCredentialDataService,
+    private readonly sessionFacadeService: SessionFacadeService
+  ) {
+    super(loadingService, credentialService);
   }
-  setCredential(mobileCredential: MobileCredential): void {
-    this.mCredential = mobileCredential as GoogleCredential;
-  }
+
   onUiImageClicked(event?: any): void {
-    // console.log('onTermsAndConditionsAccepted');
-    // this.showLoading();
-    (async () => {
-      const nonce = await GooglePayPlugin.getGooglePayNonce();
-      const refObj = await this.getAndroidCredential(
-        nonce.googlePayNonce,
-        this.mCredential.getCredentialState().referenceIdentifier
-      );
-      const plugin = await GooglePayPlugin.openGooglePay({ uri: refObj.digitizationReference });
-      // Update active passes / Update credential
-      this.mCredential.setStatus(MobileCredentialStatuses.IS_PROVISIONED);
-      this.googlePayCrendential.updateCredential$(this.mCredential);
-    })();
-    // const showTermsAndConditions = async () => {
-    //   let componentProps = {
-    //     termsAndConditions$: this.termsAndConditionsSource$,
-    //   };
-    //   const modal = await this.modalCtrl.create({
-    //     backdropDismiss: false,
-    //     mode: 'ios',
-    //     component: MobileCredentialsComponent,
-    //     componentProps,
-    //   });
-    //   await modal.present();
-    //   const { data } = await modal.onDidDismiss();
-    //   if (data.termsAccepted) {
-    //     this.onTermsAndConditionsAccepted();
-    //   }
-    // }
+    const showTermsAndConditions = async () => {
+      let componentProps = {
+        termsAndConditions: await this.termsAndConditionsSource$,
+      };
+      const modal = await this.modalCtrl.create({
+        backdropDismiss: false,
+        mode: 'ios',
+        component: MobileCredentialsComponent,
+        componentProps,
+      });
+      await modal.present();
+      const { data } = await modal.onDidDismiss();
+      if (data.termsAccepted) {
+        this.onTermsAndConditionsAccepted();
+      }
+    };
+    showTermsAndConditions();
   }
+
+  private async watchOnResume(): Promise<void> {
+    const appResumedEventListener = GooglePayPlugin.addListener('appResumed', () => {
+      appResumedEventListener.remove();
+      this.checkCredentialAvailability().then(({ credentialState }) => {
+        this.mCredential.setCredentialState(credentialState);
+        this.credentialStateChangeListener.onCredentialStateChanged();
+        if(credentialState.isProcessing()){
+           // if true, then set interval to check in background for possible update.
+        }
+      });
+      setTimeout(() => {
+        this.sessionFacadeService.navigatedFromGpay = false;
+      }, 2000);
+    });
+  }
+
   credentialEnabled$(): Observable<boolean> {
-    console.log('credentialEnabled: ', this.mCredential.isEnabled());
     return of(this.mCredential.isEnabled()).pipe(
       map(googleCredentialEnabled => {
         if (googleCredentialEnabled) {
@@ -72,73 +70,59 @@ export class GooglePayCredentialManager implements MobileCredentialManager {
       })
     );
   }
+
   credentialAvailable$(): Observable<boolean> {
     return of(this.mCredential.isAvailable());
   }
-  getCredential(): MobileCredential {
-    return this.mCredential;
-  }
-  onUiIconClicked(): void {
-    //
-  }
-  setCredentialStateChangeListener(credentialStateChangeSubscription: CredentialStateChangeListener): void {
-    this.credentialStateChangeSubscription = credentialStateChangeSubscription;
-  }
-  refresh(): void {
-    //
-  }
 
-  private async getAndroidCredential(googlePayNonce: string, referenceIdentifier: string): Promise<GOOGLE> {
-    return this.googlePayCrendential
-      .androidCredential$({
-        referenceIdentifier,
-        googlePayNonce,
-      })
-      .toPromise();
-  }
-
-  private onTermsAndConditionsAccepted(): void {
-
-    console.log('onTermsAndConditionsAccepted');
-    this.showLoading();
-    (async () => {
-      const nonce = await GooglePayPlugin.getGooglePayNonce();
-      const refObj = await this.getAndroidCredential(
-        nonce.googlePayNonce,
-        this.mCredential.getCredentialState().referenceIdentifier
-      );
-      const plugin = await GooglePayPlugin.openGooglePay({ uri: refObj.digitizationReference });
-      // Update active passes / Update credential
-      this.mCredential.setStatus(MobileCredentialStatuses.IS_PROVISIONED);
-      this.googlePayCrendential.updateCredential$(this.mCredential);
-    })();
-  }
-
-  get termsAndConditionsSource$(): Promise<string> {
-    this.showLoading();
-    const termsNConditionsConfig = {
-      domain: CONTENT_STRINGS_DOMAINS.get_web_gui,
-      category: CONTENT_STRINGS_CATEGORIES.termsScreen,
-      name: 'terms',
-    };
-    return this.credentialService
-      .contentString$(termsNConditionsConfig)
+  private async getAndroidCredential(
+    googlePayNonce: string,
+    referenceIdentifier: string
+  ): Promise<AndroidCredential<any>> {
+    return of(this.mCredential)
       .pipe(
-        map(contentString => {
-          this.loadingService.closeSpinner();
-          return contentString;
-        }),
-        catchError(() => {
-          this.loadingService.closeSpinner();
-          throw new Error('Error loading content');
+        switchMap(credential => {
+          if (credential.getCredentialBundle()) {
+            return of(credential);
+          } else {
+            return this.googlePayCrendential
+              .androidCredential$({
+                referenceIdentifier,
+                googlePayNonce,
+              })
+              .pipe(
+                map(credentialBundle => {
+                  this.mCredential.setCredentialBundle(credentialBundle);
+                  return this.mCredential;
+                })
+              );
+          }
         })
       )
       .toPromise();
   }
 
-  private showLoading(): void {
-    if (this.loadingService.notLoading()) {
-      this.loadingService.showSpinner(this.customLoadingOptions);
-    }
+  private async onTermsAndConditionsAccepted(): Promise<void> {
+    this.showLoading();
+    const { googlePayNonce } = await GooglePayPlugin.getGooglePayNonce();
+    const { referenceIdentifier } = this.mCredential.getCredentialState();
+    this.mCredential = await this.getAndroidCredential(googlePayNonce, referenceIdentifier);
+    this.loadingService.closeSpinner();
+    let { digitizationReference } = this.mCredential.getCredentialBundle();
+    this.sessionFacadeService.navigatedFromGpay = true;
+    GooglePayPlugin.openGooglePay({ uri: digitizationReference });
+    setTimeout(() => this.watchOnResume(), 2000);
+  }
+
+  get termsAndConditionsSource$(): Promise<string> {
+    const termsNConditionsConfig = {
+      domain: CONTENT_STRINGS_DOMAINS.patronUi,
+      category: CONTENT_STRINGS_CATEGORIES.mobileCredential,
+      name: 'terms',
+    };
+    return this.credentialService
+      .contentString$(termsNConditionsConfig)
+      .pipe(catchError(() => 'No content'))
+      .toPromise();
   }
 }

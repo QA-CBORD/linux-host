@@ -55,6 +55,14 @@ public class GooglePayPlugin extends Plugin {
         }
     }
 
+
+    @Override
+    protected void handleOnResume() {
+        Log.d("googlePayAppWasOpened",  "handleOnResume");
+            super.handleOnResume();
+            notifyListeners("appResumed", new JSObject());
+    }
+
     @NotNull
     private Intent getGooglePayIntent(PluginCall call) {
         Intent intent = new Intent(Intent.ACTION_VIEW);

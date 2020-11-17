@@ -34,6 +34,7 @@ export class SessionFacadeService {
   /// manages app to background status for plugins (camera, etc) that briefly leave the app and return
   private navigateToNativePlugin: boolean = false;
   private appStatus: AppStatus = AppStatus.FOREGROUND;
+  navigatedFromGpay: boolean = false;
   onWillLogoutSubject = new Subject<void>();
   constructor(
     private readonly platform: Platform,
@@ -81,6 +82,10 @@ export class SessionFacadeService {
 
     if (this.navigatedToPlugin) {
       this.navigateToNativePlugin = false;
+      return;
+    }
+
+    if(this.navigatedFromGpay){
       return;
     }
 
