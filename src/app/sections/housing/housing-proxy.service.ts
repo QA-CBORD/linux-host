@@ -32,7 +32,10 @@ export class HousingProxyService {
         .get(apiUrl, {
           headers,
         })
-        .pipe(map((response: Response) => response.data)),
+        .pipe(map((response: Response) => {
+          console.log(response);
+          return response.data
+        })),
     );
   }
 
@@ -44,9 +47,17 @@ export class HousingProxyService {
     );
   }
 
-  post(apiUrl: string, body: any): Observable<Response> {
-    return this.request<Response>(apiUrl, (headers: HttpHeaders, apiUrl: string) =>
-      this._http.post<Response>(apiUrl, body, {
+  // post(apiUrl: string, body: any): Observable<Response> {
+  //   return this.request<Response>(apiUrl, (headers: HttpHeaders, apiUrl: string) =>
+  //     this._http.post<Response>(apiUrl, body, {
+  //       headers: headers.set('Content-Type', 'application/json'),
+  //     }),
+  //   );
+  // }
+
+  post<T>(apiUrl: string, body: any): Observable<T> {
+    return this.request<T>(apiUrl, (headers: HttpHeaders, apiUrl: string) =>
+      this._http.post<T>(apiUrl, body, {
         headers: headers.set('Content-Type', 'application/json'),
       }),
     );

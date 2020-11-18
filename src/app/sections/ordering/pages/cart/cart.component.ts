@@ -304,7 +304,7 @@ export class CartComponent implements OnInit {
         if (Array.isArray(error) && +error[0] === +ORDER_ERROR_CODES.ORDER_CAPACITY) {
           await this.onErrorModal(error[1], this.navigateToFullMenu.bind(this));
         } else if (typeof error === 'string') {
-          await this.onErrorModal(error);
+          await this.onErrorModal('There was an issue with the transaction, you may have insufficient funds available.');
         }
       })
       .finally(() => {

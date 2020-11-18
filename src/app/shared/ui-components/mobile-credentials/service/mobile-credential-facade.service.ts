@@ -8,7 +8,6 @@ import { Settings } from 'src/app/app.global';
 import { CredentialStateChangeListener, MobileCredentialManager } from '../model/shared/mobile-credential-manager';
 import { CredentialManagerType, MobileCredentialManagerFactory } from './mobile-credential-manager.factory';
 
-
 @Injectable()
 export class MobileCredentialFacade {
   private mobileCredentialManager: MobileCredentialManager;
@@ -22,33 +21,28 @@ export class MobileCredentialFacade {
     this.onWillLogoutSubscription();
   }
 
-
-
   onWillLogoutSubscription(): void {
     this.sessionFacade.onWillLogoutSubject.subscribe(() => {
-      if(this.mobileCredentialManager) {
-         this.mobileCredentialManager.onWillLogout();
+      if (this.mobileCredentialManager) {
+        this.mobileCredentialManager.onWillLogout();
       }
     });
   }
-
 
   iifCredentialSettingsEnabled(): Observable<boolean> {
     return this.enabledCredentialsSettings().pipe(
       switchMap(credentialSettingsType => {
         if (credentialSettingsType) {
-          return this.mobileCredentialManagerFactory
-            .createCredentialManager(credentialSettingsType)
-            .pipe(
-              map(credentialManager => {
-                if (credentialManager) {
-                  this.mobileCredentialManager = credentialManager;
-                  return true;
-                } else {
-                  return false;
-                }
-              })
-            );
+          return this.mobileCredentialManagerFactory.createCredentialManager(credentialSettingsType).pipe(
+            map(credentialManager => {
+              if (credentialManager) {
+                this.mobileCredentialManager = credentialManager;
+                return true;
+              } else {
+                return false;
+              }
+            })
+          );
         } else {
           return of(false);
         }

@@ -9,7 +9,6 @@ interface FacilityOccupantDetailsOptions {
 
 export class FacilityOccupantDetails {
   public patronKey: number;
-  public name: string;
   public attributes: OccupantAttribute[] = null;
 
   constructor(options: any) {
@@ -17,7 +16,18 @@ export class FacilityOccupantDetails {
       options = {} as FacilityOccupantDetailsOptions;
     }
     this.patronKey = options.patronKey;
-    this.name = options.name;
     this.attributes = options.patronAttributes || [];
   }
+
+  public hasAttribute(name: string): boolean {
+    return !!this.attributes.filter(x => x.name === name);
+  }
+
+  public getAttributeValue(name: string): string {
+    if (this.hasAttribute(name)) {
+      const attribute = this.attributes.find(x => x.name === name)
+      return attribute? attribute.value: "";
+    }
+  }
+
 }
