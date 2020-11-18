@@ -213,8 +213,8 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     const asyncRefresh = async () => {
       if (this.mCredential.isProvisioned()) {
         if (await this.isEndpointRevoked()) {
-            await this.onEndpointRevoked();
-            this.credentialStateChangeListener.onCredentialStateChanged();
+          await this.onEndpointRevoked();
+          this.credentialStateChangeListener.onCredentialStateChanged();
         }
       }
     };
@@ -246,7 +246,6 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
       cssClass: 'alert-dialog',
       backdropDismiss: false,
       mode: 'ios',
-      animated: true,
       message: msg,
       buttons: buttons,
       header: header,
