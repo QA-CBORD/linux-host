@@ -50,8 +50,8 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
       this.checkCredentialAvailability().then(({ credentialState }) => {
         this.mCredential.setCredentialState(credentialState);
         this.credentialStateChangeListener.onCredentialStateChanged();
-        if(credentialState.isProcessing()){
-           // if true, then set interval to check in background for possible update.
+        if (credentialState.isProcessing()) {
+          // if true, then set interval to check in background for possible update.
         }
       });
       setTimeout(() => {
@@ -73,6 +73,14 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
 
   credentialAvailable$(): Observable<boolean> {
     return of(this.mCredential.isAvailable());
+  }
+
+  refresh(): void {
+    console.log('refreshing google pay credentials')
+    this.checkCredentialAvailability().then(({ credentialState }) => {
+      this.mCredential.setCredentialState(credentialState);
+      this.credentialStateChangeListener.onCredentialStateChanged();
+    });
   }
 
   private async getAndroidCredential(

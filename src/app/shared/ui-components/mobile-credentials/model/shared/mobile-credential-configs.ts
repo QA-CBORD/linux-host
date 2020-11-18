@@ -14,10 +14,10 @@ export const MOBILE_CREDENTIAL_CONFIGS = {
   ALLEGION: {
     UI_MSG: {
       WHEN_AVAILABLE: '',
-      WHEN_PROVISIONED: 'Mobile ID added to Gpay',
+      WHEN_PROVISIONED: 'ID added to Gpay',
       WHEN_SUSPENDED: '',
       WHEN_REVOKED: 'Mobile ID revoked',
-      WHEN_PROCESSING: 'Added to G-pay wallet [not ready]'
+      WHEN_PROCESSING: 'ID added to Gpay [not ready]'
     },
     uiImageUrl: '/assets/icon/mobile_credential_google_pay.png',
     uiHelpIcon: ''

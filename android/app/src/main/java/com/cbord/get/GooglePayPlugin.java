@@ -28,6 +28,7 @@ public class GooglePayPlugin extends Plugin {
     @PluginMethod()
     public void getGoogleClient(PluginCall call) {
         tapAndPayClient = TapAndPayClient.getClient(getActivity().getApplicationContext());
+        call.resolve();
     }
 
     @PluginMethod()
@@ -58,7 +59,6 @@ public class GooglePayPlugin extends Plugin {
 
     @Override
     protected void handleOnResume() {
-        Log.d("googlePayAppWasOpened",  "handleOnResume");
             super.handleOnResume();
             notifyListeners("appResumed", new JSObject());
     }
