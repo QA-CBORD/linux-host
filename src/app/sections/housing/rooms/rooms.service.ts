@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HousingProxyService } from '@sections/housing/housing-proxy.service';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { isSuccessful } from '@sections/housing/utils/is-successful';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { CreateContractRequestOptions } from '@sections/housing/rooms/rooms.model';
 import {
@@ -48,9 +48,7 @@ export class RoomsService {
 
         return false;
       }),
-      catchError(err => {
-        throw err;
-      })
+      catchError(err => of(false))
     );
   }
 
