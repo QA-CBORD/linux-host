@@ -42,7 +42,7 @@ it('should  get category options', inject([RoomsService, RoomsStateService, Hous
   (service: RoomsService, stateService: RoomsStateServiceMock) => {
     const EXPECTED_CATEGORY_OPTIONS = {
       Buildings: ['Able'],
-      "Facility Max Legal Occupancy": ["2", "0", "6", "3"],
+      "Facility Max Legal Occupancy": ["2", "0", "3", "6"],
       "Facility Assignment_Level": ["This", "Below"],
       "Facility Smoking": ['No'],
       "Facility Assignment_Limit": ["1","2","4"],
