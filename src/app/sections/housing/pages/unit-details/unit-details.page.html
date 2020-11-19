@@ -43,14 +43,12 @@
     <ion-card-header class="information__header">POTENTIAL ROOMMATES</ion-card-header>
     <ion-card-content>
       <ion-row [class.hide]="!isExpanded">
-        <div *ngIf="(occupants$ | async) as occupants; else noRoommates" >
+        <div *ngIf="(occupants$ | async) as occupants;" >
           <div *ngFor="let occupant of occupants; index as i" class="roommates__info">
             <st-roommate [roommateNumber]="i" [patron]="occupant"></st-roommate>
           </div>
         </div>
-        <ng-template #noRoommates>
-          <ion-text>There are no assigned roommates at this time.</ion-text>
-        </ng-template>
+          <ion-text *ngIf="!occupants$">There are no assigned roommates at this time.</ion-text>
       </ion-row>
       <ion-row text-center>
         <div (click)="adjustExpander()" class="unit__extaInfo">

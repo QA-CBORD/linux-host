@@ -18,7 +18,7 @@ export class PreferencesService {
       (control: QuestionBase) => control && (control as QuestionReorder).facilityPicker
     )[0];
 
-    if (patronPreferences != null || !facilityPicker) {
+    if (patronPreferences != null && !facilityPicker) {
       return patronPreferences.filter((preference: PatronPreference) => preference.facilityKey);
     }
 
