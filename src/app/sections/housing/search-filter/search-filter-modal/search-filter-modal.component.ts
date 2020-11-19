@@ -48,15 +48,7 @@ export class SearchFilterModalComponent implements OnInit {
       return this._housingService.getAllOccupantDetails(this._roomStateService.getActiveRoomSelect().key, facilityKeys)
         .pipe(
           tap(data => {
-            return this._housingService.getAllOccupantDetails(this._roomStateService.getActiveRoomSelect().key, facilityKeys)
-              .pipe(
-                tap(data => {
-                  this._handleFilters();
-                }),
-                map(data => {
-                  return data;
-                })
-              )
+            this._handleFilters()
           }),
           map(data => {
             return data;
