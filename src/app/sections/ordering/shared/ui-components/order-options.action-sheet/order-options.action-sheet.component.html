@@ -30,6 +30,7 @@
         </ion-radio-group>
       </div>
       <ion-item lines="full"
+                attr.tabindex="0"
                 [detail]="orderOptionsData?.isClickble"
                 (click)="orderOptionsData?.isClickble && openDeliveryAddressesModal()">
         <div class="order-options__select-container">
@@ -52,7 +53,8 @@
       </ion-item>
       <ion-item [detail]="isTimeDisable"
                 lines="full"
-                (click)="callChildPicker()">
+                (click)="callChildPicker()"
+                attr.tabindex="0">
         <st-date-time-picker [schedule]="orderType === enumOrderTypes.PICKUP ? schedulePickup : scheduleDelivery"
                              [isTimeDisable]="isTimeDisable"
                              [data]="orderOptionsData"
