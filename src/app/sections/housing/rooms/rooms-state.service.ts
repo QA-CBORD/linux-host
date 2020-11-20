@@ -59,7 +59,7 @@ export class RoomsStateService implements StateService<number, Facility[]> {
   }
 
   getOccupantDetails(facilityKey: number): FacilityOccupantDetails[] {
-    return  this._occupantDictionary.get(facilityKey);
+    return  this._occupantDictionary.get(facilityKey) || [];
   }
   getOccupiedFacilities(): Facility[] {
     return  this._findOccupantFacilities();
