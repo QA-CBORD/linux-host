@@ -144,6 +144,10 @@ export class RoomsService {
     return filterCategories;
   }
 
+  public clearFilterCategories(): void {
+    this._filterOptions.removeAll();
+  }
+
   public getAttributeOptionsInfo(category, options: string[]): CategoryOptionDetail[] {
     return options.map(x => this._filterOptions.getOptionDetails(category, x));
   }
