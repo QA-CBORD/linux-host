@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HousingProxyService } from '@sections/housing/housing-proxy.service';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { isSuccessful } from '@sections/housing/utils/is-successful';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { CreateContractRequestOptions } from '@sections/housing/rooms/rooms.model';
 import {
@@ -48,9 +48,7 @@ export class RoomsService {
 
         return false;
       }),
-      catchError(err => {
-        throw err;
-      })
+      catchError(err => of(false))
     );
   }
 
@@ -236,7 +234,7 @@ export class RoomsService {
           break;
         }
       } else {
-        if(this._matchedOccupantsAttributes(category,options,facility.facilityId)) {
+        if(this._hasOccupants(facility) && this._matchedOccupantsAttributes(category,options,facility.facilityId)) {
           continue;
         } else {
           matchesAll = false;
@@ -256,10 +254,18 @@ export class RoomsService {
 
   private _matchedOccupantsAttributes(category: string, options: string[], facilityId: number): boolean {
     const occupantDetails = this._stateService.getOccupantDetails(facilityId);
-    const occupant = occupantDetails.find(x => x.hasAttribute(category.replace("Patron ", "")));
+    const occupant = occupantDetails.find(
+      x => x.hasAttribute(category.replace("Patron ", "")));
 
-    return (this._valueMatches(options, occupant.getAttributeValue(category.replace("Patron ", ""))));
+    return (occupant? this._valueMatches(
+      options, occupant.getAttributeValue(category.replace("Patron ", ""))) :
+      false);
   }
+
+  private _hasOccupants(facility: Facility): boolean {
+    return (facility.occupantKeys && facility.occupantKeys.length > 0);
+  }
+
   private _valueMatches(options: string[], value: string): boolean {
       return options.includes(value);
   }

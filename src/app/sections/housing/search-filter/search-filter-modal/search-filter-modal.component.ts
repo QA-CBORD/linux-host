@@ -9,7 +9,7 @@ import { Category } from '../filter-sort/filter-sort.model';
 import { RoomsService } from '@sections/housing/rooms/rooms.service';
 import { HousingService } from '@sections/housing/housing.service';
 import { RoomsStateService } from '@sections/housing/rooms/rooms-state.service';
-import { Observable } from 'rxjs';
+import { Observable, of, pipe } from 'rxjs';
 import {  map, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -43,36 +43,43 @@ export class SearchFilterModalComponent implements OnInit {
     const facilityKeys: number[] = this._roomStateService.getOccupiedFacilities().map(x => x.facilityId);
     this.occupants$ =  this._initFilter(facilityKeys);
   }
-  private _initFilter(facilityKeys): Observable<any> {
-    return this._housingService.getAllOccupantDetails(this._roomStateService.getActiveRoomSelect().key, facilityKeys)
-      .pipe(
-        tap(data => {
-          this.categories = this._roomsService.getFilterCategories();
-          this.categoryOptions =  this._roomsService.getFilterOptions(this.categories);
-          console.log(this.categories);
-          console.log(this.categoryOptions)
-          const builderOptions = {};
-          for (let item in this.categoryOptions) {
-            const optionsInfo = this._roomsService.getAttributeOptionsInfo(item, this.categoryOptions[item]);
-            builderOptions[item] = this._formBuilder.array(optionsInfo.map(x => x.isSelected));
-          }
-          this._loadingService.closeSpinner();
-          this.filtersForm = this._formBuilder.group(builderOptions);
-          console.log(this.filtersForm)
-        }),
-        map(data => {
-          return data;
-        })
-      )
+  private _initFilter(facilityKeys: number[]): Observable<any> {
+    if (facilityKeys && facilityKeys.length > 0) {
+      return this._housingService.getAllOccupantDetails(this._roomStateService.getActiveRoomSelect().key, facilityKeys)
+        .pipe(
+          tap(data => {
+            this._handleFilters()
+          }),
+          map(data => {
+            return data;
+          })
+        )
+    } else {
+      return of(true).pipe(
+        tap(() => this._handleFilters()),
+        map((data) => data)
+      );
+    }
+
   }
   close(): Promise<boolean> {
     return this._modalController.dismiss();
     // make call to update facilities with new options
   }
-  test(): boolean {
-    return true;
+  private _handleFilters() {
+    this.categories = this._roomsService.getFilterCategories();
+    this.categoryOptions =  this._roomsService.getFilterOptions(this.categories);
+    console.log(this.categories);
+    console.log(this.categoryOptions)
+    const builderOptions = {};
+    for (let item in this.categoryOptions) {
+      const optionsInfo = this._roomsService.getAttributeOptionsInfo(item, this.categoryOptions[item]);
+      builderOptions[item] = this._formBuilder.array(optionsInfo.map(x => x.isSelected));
+    }
+    this._loadingService.closeSpinner();
+    this.filtersForm = this._formBuilder.group(builderOptions);
+    console.log(this.filtersForm)
   }
-
   filter(data: any) {
       this._loadingService.showSpinner();
 

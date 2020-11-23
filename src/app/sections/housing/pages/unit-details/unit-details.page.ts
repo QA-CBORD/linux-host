@@ -53,7 +53,7 @@ export class UnitDetailsPage implements OnInit {
   }
 
   async requestRoom() {
-    try {
+
         this._termsService.termId$.subscribe(termKey => {
         const request = {
           facilityKey: this.unit.key,
@@ -71,7 +71,7 @@ export class UnitDetailsPage implements OnInit {
             {
               text: 'NO',
               role: 'cancel',
-              cssClass: 'secondary',
+              cssClass: 'button__option_cancel',
               handler: () => {
                 console.log('Confirm Cancel');
               },
@@ -79,13 +79,18 @@ export class UnitDetailsPage implements OnInit {
             {
               text: 'YES',
               role: 'confirm',
-              cssClass: 'primary',
+              cssClass: 'button__option_confirm',
               handler: () => {
                 this._roomsService.postContractRequest(request).subscribe(successfullyCreated => {
                       if (successfullyCreated) {
                         //route back to housing dashboard
                         this._housingService.handleSuccess();
-                  }
+                  } else {
+                        console.log('Assignment for patron was not successful. This unit might be full.')
+                        this._toastService.showToast({
+                          message: "Oops this unit is not available",
+                        });
+                      }
                 });
               },
             },
@@ -93,10 +98,5 @@ export class UnitDetailsPage implements OnInit {
         });
         alert.then(alert => alert.present());
       });
-    } catch (e) {
-      this._toastService.showToast({
-        message: "Oops this unit is not available",
-      });
-    }
   }
 }
