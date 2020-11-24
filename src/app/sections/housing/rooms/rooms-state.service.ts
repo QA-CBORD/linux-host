@@ -134,7 +134,6 @@ export class RoomsStateService implements StateService<number, Facility[]> {
   }
 
   getRoomSelects(): Observable<RoomSelect[]> {
-    console.log(this.roomSelects);
     return this.roomSelects.pipe(
       map((data) => data.map(
         x => x))

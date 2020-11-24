@@ -138,7 +138,6 @@ export class HousingService {
       facilityKeys: [facilityKey]
     }).pipe(
       map((response: Response) => {
-        console.log(response);
         const details = new OccupantDetailsResponse(response.data);
         return details.occupants;
       }),
@@ -153,7 +152,6 @@ export class HousingService {
       facilityKeys: facilityKeys
     }).pipe(
       map((response: Response) => {
-        console.log(response);
         const details = new OccupantDetailsResponse(response.data);
         return details.occupants;
       }),

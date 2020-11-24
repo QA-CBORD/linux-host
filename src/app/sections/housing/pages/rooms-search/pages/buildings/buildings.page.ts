@@ -16,7 +16,6 @@ export class BuildingsPage {
     this._buildingMapper = new FacilityToBuildingMapper();
   }
   ngOnInit() {
-    console.log(this._facilityStateService.getParentFacilities());
     this.buildings = this._buildingMapper.map(this._facilityStateService.getParentFacilities())
   }
 }

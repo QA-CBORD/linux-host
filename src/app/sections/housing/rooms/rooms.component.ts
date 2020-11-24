@@ -21,7 +21,6 @@ export class RoomsComponent implements OnInit{
 
 
   ngOnInit() {
-    console.log('in rs');
     this.hasLoaded$ = this.roomsStateService.getRoomSelects().pipe(
       tap((data) => {
         this.selections = data;
@@ -30,7 +29,6 @@ export class RoomsComponent implements OnInit{
         return true;
       })
     )
-    console.log(this.selections);
   }
   goToRoomSelection(key: any): void {
     this._router.navigate(['patron/housing/rooms-search', key]).then(() => {
