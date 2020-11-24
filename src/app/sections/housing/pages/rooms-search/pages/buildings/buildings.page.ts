@@ -1,6 +1,5 @@
 import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
 
-import { generateBuildings } from '@sections/housing/building/building.mock';
 import { RoomsStateService } from '@sections/housing/rooms/rooms-state.service';
 import { Building, FacilityToBuildingMapper } from '@sections/housing/building/building.model';
 

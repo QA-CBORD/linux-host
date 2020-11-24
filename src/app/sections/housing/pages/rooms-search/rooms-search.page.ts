@@ -1,9 +1,6 @@
-import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
-import { Observable, Subscription, throwError } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { HousingService } from '../../housing.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FacilitiesService } from '@sections/housing/facilities/facilities.service';
 
 
 import { Unit } from '../../units-switch/units-switch.model';
@@ -34,8 +31,8 @@ export class RoomsSearchPage {
   ngOnInit(): void {
     this.roomSelectKey = parseInt(this._route.snapshot.paramMap.get('roomSelectKey'), 10);
     this.units = [
-      new Unit(`/housing/rooms-search/${this.roomSelectKey}/buildings`, 'Buildings'),
-      new Unit(`/housing/rooms-search/${this.roomSelectKey}/units`, 'Units'),
+      new Unit('buildings', 'Buildings'),
+      new Unit(`units`, 'Units'),
     ];
     this._loadingService.showSpinner();
     this._housingService.getFacilities(this.roomSelectKey).subscribe(data => {
