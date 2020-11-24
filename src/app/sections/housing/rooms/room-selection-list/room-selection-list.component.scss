@@ -1,0 +1,65 @@
+@import 'tools';
+
+:host {
+  background-color: #f7f7f7;
+  display: block;
+  padding: 15px 0px;
+}
+
+.rooms__title {
+  @include font-nunito-heavy(20px);
+
+  line-height: 27px;
+  margin-top: 0;
+  margin-bottom: 14px;
+}
+
+.rooms__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.rooms__empty {
+  @include font-nunito-semibold(16px);
+
+  background: url('/assets/images/housing/empty-rooms.svg') no-repeat 50% 0;
+  padding-top: 215px;
+  line-height: 22px;
+  margin-bottom: 40px;
+}
+
+.roomSelect-list__item {
+  margin-bottom: 10px;
+  --border-width: 1px;
+  --border-radius: 7px;
+  --border-color: #{$color-link-water};
+  --padding-top: 10px;
+  --padding-bottom: 10px;
+  --padding-start: 16px;
+  --padding-end: 5px;
+  --min-height: auto;
+
+  &::before {
+    background-color: $color-strong-blue;
+    border-radius: 0 0 2px 2px;
+    width: 32px;
+    height: 4px;
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 16px;
+    z-index: 1;
+  }
+
+}
+.roomSelect-list__item-name {
+  font-weight: bolder;
+}
+.rooms__search {
+  @include font-nunito-heavy(14px);
+
+  line-height: 19px;
+  text-transform: uppercase;
+  width: 100%;
+}

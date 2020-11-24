@@ -242,6 +242,8 @@ export class HousingService {
     this._contractsStateService.setContracts(contracts);
   }
 
+
+
   private _handleGetDefinitionsError(): Observable<DefinitionsResponse> {
     const applicationDefinitions: ApplicationDetails[] = [];
     const contractDetails: ContractListDetails[] = [];

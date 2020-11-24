@@ -1,13 +1,8 @@
-<ng-container *ngIf="(roomsStateService.getRoomSelects() | async) as roomSelects">
-  <ion-list  *ngIf="roomSelects.length" class="ion-no-margin bg-transparent">
+  <ion-list *ngIf="(hasLoaded$  | async)" class="ion-no-margin bg-transparent">
     <ion-list-header class="ion-no-padding">
       <h2 class="secondary-header secondary-header--m">Rooms</h2>
     </ion-list-header>
-    <ng-container *ngFor="let room of roomSelects">
-        <ion-item lines="none" class="roomSelect-list__item"  button (click)="goToRoomSelection(room.key)">
-          <ion-text  class="roomSelect-list__item-name">{{room.name}}</ion-text>
-        </ion-item>
-    </ng-container>
+    <st-room-selection-list [roomSelects]="selections"></st-room-selection-list>
   </ion-list>
   <!-- <h3 class="rooms__title">Rooms</h3>
 
@@ -18,4 +13,3 @@
       Search Rooms
     </ion-button>
   </div> -->
-</ng-container>
