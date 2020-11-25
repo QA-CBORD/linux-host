@@ -18,6 +18,7 @@ export class HousingDashboardPage implements OnInit, OnDestroy {
   private _subscription: Subscription = new Subscription();
 
   isHeaderVisible: boolean = false;
+  hasRoomSelections: boolean = false;
 
   constructor(
     private _termsService: TermsService,
@@ -77,6 +78,7 @@ export class HousingDashboardPage implements OnInit, OnDestroy {
     }
     if(response instanceof RoomSelectResponse){
       this.isHeaderVisible = this.isHeaderVisible || response.roomSelects.length > 0;
+      this.hasRoomSelections = response.roomSelects.length > 0 ? true:false;
     }
     this._loadingService.closeSpinner();
   }

@@ -20,7 +20,6 @@ export class UnitsPage {
   }
 
   ngOnInit() {
-    console.log('I made it');
     const facilityId = parseInt(this._activeRoute.snapshot.paramMap.get('buildingKey'), 10);
     if(facilityId) {
       this._facilityStateService.setFacilities$(facilityId);

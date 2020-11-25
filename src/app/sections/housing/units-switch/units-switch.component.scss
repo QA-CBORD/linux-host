@@ -24,3 +24,8 @@
     border-bottom-color: $color-dodger-blue;
   }
 }
+.switcher {
+  display: inline-flex;
+  width: 100%;
+  justify-content: space-between;
+}
