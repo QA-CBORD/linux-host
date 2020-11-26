@@ -85,7 +85,7 @@ export class SessionFacadeService {
       return;
     }
 
-    if(this.navigatedFromGpay){
+    if (this.navigatedFromGpay) {
       return;
     }
 
@@ -246,21 +246,15 @@ export class SessionFacadeService {
   }
 
   async logoutUser(navigateToEntry: boolean = true) {
-    this.onWillLogoutSubject.next();
     if (navigateToEntry) {
       await this.navCtrl.navigateRoot([ROLES.guest, GUEST_ROUTES.entry]);
-      await this.resetAll();
-    } else {
-      this.resetAll();
     }
+    this.resetAll();
   }
 
   private async resetAll(): Promise<void> {
-
     await this.userFacadeService.logoutAndRemoveUserNotification().toPromise();
     await this.identityFacadeService.logoutUser();
-    await this.storageStateService.clearStorage();
-    this.storageStateService.clearState();
     this.merchantFacadeService.clearState();
     this.settingsFacadeService.cleanCache();
   }

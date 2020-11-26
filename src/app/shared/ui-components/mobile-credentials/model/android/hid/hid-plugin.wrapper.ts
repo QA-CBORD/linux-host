@@ -112,8 +112,8 @@ export class HIDSdkManager {
     }
   }
 
-  async setupEndpoint(invitationCode: string): Promise<string> {
-    return await this.executeCall(HIDPlugin.setupEndpoint, { invitationCode });
+  async setupEndpoint(params): Promise<string> {
+    return await this.executeCall(HIDPlugin.setupEndpoint, { ...params });
   }
 
   async deleteEndpoint(): Promise<string> {

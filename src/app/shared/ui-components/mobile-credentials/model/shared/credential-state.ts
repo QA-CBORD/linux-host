@@ -11,7 +11,7 @@ export interface MobileCredentialState {
   getIssuer(): string;
   getConfig(): MobileCredentialConfig;
   getUiIconUrl(): string;
-  setStatus(status: number):void;
+  setStatus(status: MobileCredentialStatuses):void;
   providedBy(provider: CredentialProviders): boolean;
 }
 

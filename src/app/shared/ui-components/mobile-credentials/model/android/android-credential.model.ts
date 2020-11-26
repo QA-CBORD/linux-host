@@ -16,8 +16,8 @@ export interface AndroidCredentialState extends MobileCredentialState {
   credStatus: number;
   passes: number;
   issuer: string;
-  revoked(): Boolean;
-  isProcessing(): Boolean;
+  revoked(): boolean;
+  isProcessing(): boolean;
   updateUiMsg(msg: string);
 }
 
@@ -64,22 +64,22 @@ export class AndroidCredentialStateEntity implements AndroidCredentialState {
   statusMsg: string;
 
   constructor(
-    public credStatus: number,
-    public passes: number,
+    public credStatus: MobileCredentialStatuses,
+    public passes: MobileCredentialStatuses,
     public issuer: string,
     public referenceIdentifier: string
   ) {
     this.updateStatusMsg();
   }
 
-  isProcessing(): Boolean {
+  isProcessing(): boolean {
     return this.credStatus == MobileCredentialStatuses.PROCESSING;
   }
 
   providedBy(provider: CredentialProviders): boolean {
     return this.getIssuer() == provider.toString();
   }
-  setStatus(status: number): void {
+  setStatus(status: MobileCredentialStatuses): void {
     this.credStatus = status;
   }
 
@@ -109,7 +109,7 @@ export class AndroidCredentialStateEntity implements AndroidCredentialState {
     return this.credStatus == MobileCredentialStatuses.PROVISIONED;
   }
 
-  revoked(): Boolean {
+  revoked(): boolean {
     return this.credStatus == MobileCredentialStatuses.REVOKED;
   }
 
@@ -149,7 +149,7 @@ export abstract class AndroidCredential<T> extends MobileCredential implements A
     super(credentialState);
   }
 
-  getCredentialBundle(): any{
+  getCredentialBundle(): any {
     return this.credentialBundle;
   }
 
@@ -157,7 +157,7 @@ export abstract class AndroidCredential<T> extends MobileCredential implements A
     this.credentialBundle = data as any;
   }
 
-  setCredentialState(credentialState: AndroidCredentialState){
+  setCredentialState(credentialState: AndroidCredentialState) {
     this.credentialState = credentialState;
   }
 
@@ -175,6 +175,10 @@ export abstract class AndroidCredential<T> extends MobileCredential implements A
 
   providedBy(credentialProvider: CredentialProviders) {
     return this.credentialState.providedBy(credentialProvider);
+  }
+
+  isProcessing(): boolean {
+    return this.credentialState.isProcessing();
   }
 
   abstract getPersistable(): Persistable;
@@ -206,7 +210,12 @@ export interface GOOGLE extends Persistable {
 }
 
 export class Persistable {
-  constructor(public id: string, public endpointStatus?: number, public referenceIdentifier?: string) {}
+  constructor(
+    public id?: string,
+    public endpointStatus?: number,
+    public referenceIdentifier?: string,
+    public userId?: string
+  ) {}
 }
 
 export class HIDCredential extends AndroidCredential<HID> {

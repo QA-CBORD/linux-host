@@ -12,6 +12,7 @@ import { AndroidCredential, HID, Persistable } from '../model/android/android-cr
 import { AndroidCredentialDataService } from '../model/shared/android-credential-data.service';
 import { APIService } from '@core/service/api-service/api.service';
 import { EndpointStatuses } from '../model/android/hid/hid-plugin.wrapper';
+import { UserFacadeService } from '@core/facades/user/user.facade.service';
 
 const api_version = 'v1';
 
@@ -31,7 +32,8 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
     protected readonly settingsFacadeService: SettingsFacadeService,
     protected readonly contentStringFacade: ContentStringsFacadeService,
     protected readonly apiService: APIService,
-    protected readonly http: HttpClient
+    protected readonly http: HttpClient,
+    protected readonly userFacade: UserFacadeService
   ) {
     super(
       resourceUrls,
@@ -45,9 +47,9 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
   }
 
   deleteCredential$(): Observable<boolean> {
-    return this.getCachedCredential$().pipe(
+    return from(this.getCachedEndpointState$()).pipe(
       switchMap((cachedCredential: Persistable) => {
-        if (cachedCredential) {
+        if (cachedCredential.id) {
           return super.deleteCredential$(cachedCredential.id).pipe(
             map(() => true),
             tap(() => this.deleteCachedCredential$()),
@@ -63,7 +65,8 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
             })
           );
         } else {
-          return of(false);
+          // no credential id found to delete, so will assume it's been deleted in payment system and proceed.
+          return of(true);
         }
       }),
       catchError(() => of(false))
@@ -90,13 +93,21 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
     };
     return super.updateCredential$(requestBody).pipe(
       map(() => true),
-      tap(() => this.saveUserSetting(credential.getPersistable())),
+      tap(() => this.saveEnpointStateInUserSetting(credential.getPersistable())),
       catchError(() => of(false))
     );
   }
 
-  saveCredentialInLocalStorage(data: Persistable): void {
-    this.storageStateService.updateStateEntity(this.credential_key, data, { highPriorityKey: true });
+  async saveEndpointStateInLocalStorage(data: Persistable): Promise<void> {
+    let { id } = await this.userFacade
+      .getUserData$()
+      .pipe(first())
+      .toPromise();
+    data.userId = id;
+    this.storageStateService.updateStateEntity(this.credential_key, data, {
+      highPriorityKey: true,
+      keepOnLogout: true,
+    });
   }
 
   private async deleteCachedCredential$(): Promise<boolean> {
@@ -104,67 +115,77 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
       .deleteUserSetting(User.Settings.MOBILE_CREDENTIAL_ID)
       .pipe(
         switchMap(() =>
-          from(this.storageStateService.deleteStateEntityByKey(this.credential_key)).pipe(map(() => true))
+          from(this.storageStateService.deleteStateEntityByKey(this.credential_key, true)).pipe(map(() => true))
         ),
         catchError(() =>
-          from(this.storageStateService.deleteStateEntityByKey(this.credential_key)).pipe(map(() => false))
+          from(this.storageStateService.deleteStateEntityByKey(this.credential_key, true)).pipe(map(() => false))
         )
       )
       .toPromise()
       .catch(() => false);
   }
 
-  private saveUserSetting(data: Persistable): Promise<boolean> {
+  private saveEnpointStateInUserSetting(data: Persistable): Promise<boolean> {
     const credentialData = `${data.id}||${data.endpointStatus}`;
     return this.settingsFacadeService
       .saveUserSetting(User.Settings.MOBILE_CREDENTIAL_ID, credentialData)
-      .pipe(tap(() => this.saveCredentialInLocalStorage(data)))
+      .pipe(tap(() => this.saveEndpointStateInLocalStorage(data)))
       .toPromise()
       .catch(() => false);
   }
 
-  public updateCachedCredential$(): Promise<boolean> {
-    return this.getCachedCredential$()
+  async updateCachedCredential$(newEndpointStatus: EndpointStatuses = EndpointStatuses.SETUP_ACTIVE): Promise<boolean> {
+    const credentialState = await this.getCachedEndpointState$();
+    if (credentialState.endpointStatus != newEndpointStatus) {
+      credentialState.endpointStatus = newEndpointStatus;
+      return this.saveEnpointStateInUserSetting(credentialState);
+    }
+    return true;
+  }
+
+  getEndpointStateFromLocalCache(): Promise<Persistable> {
+    return this.storageStateService
+      .getStateEntityByKey$<Persistable>(this.credential_key)
       .pipe(
-        switchMap(credentialStateInfo => {
-          if (credentialStateInfo.endpointStatus == EndpointStatuses.SETUP_INACTIVE) {
-            credentialStateInfo.endpointStatus = 1;
-            return this.saveUserSetting(credentialStateInfo);
+        first(),
+        switchMap(data => {
+          if (data && data.value) {
+            return this.userFacade.getUserData$().pipe(
+              first(),
+              map(({ id }) => (data.value.userId === id ? data.value : null))
+            );
           } else {
-            return of(true);
+            return of(null);
           }
         })
       )
       .toPromise();
   }
 
-  public getEndpointStateInfo$(): Promise<Persistable> {
-    return this.getCachedCredential$().toPromise();
+  getEndpointStateFromUserSettings(): Promise<Persistable> {
+    return this.settingsFacadeService
+      .getUserSetting(User.Settings.MOBILE_CREDENTIAL_ID)
+      .pipe(
+        map(settingInfo => {
+          if (settingInfo.value) {
+            const [credentialId, endpointStatusString] = settingInfo.value.split('||');
+            let id = credentialId;
+            let endpointStatus = Number(endpointStatusString || -1);
+            this.saveEndpointStateInLocalStorage({ id, endpointStatus });
+            return { id, endpointStatus };
+          } else {
+            return {
+              id: null,
+              endpointStatus: -1,
+            };
+          }
+        })
+      )
+      .toPromise();
   }
 
-  private getCachedCredential$(): Observable<Persistable> {
-    return this.storageStateService.getStateEntityByKey$<Persistable>(this.credential_key).pipe(
-      first(),
-      switchMap(data => {
-        if (data && data.value) {
-          return of(data.value);
-        }
-        return this.settingsFacadeService.getUserSetting(User.Settings.MOBILE_CREDENTIAL_ID).pipe(
-          map(settingInfo => {
-            if (settingInfo.value) {
-              const [credentialId, endpointStatusString] = settingInfo.value.split('||');
-              let id = credentialId;
-              let endpointStatus = Number(endpointStatusString || -1);
-              this.saveCredentialInLocalStorage({ id, endpointStatus });
-              return { id, endpointStatus };
-            } else {
-              return {
-                id: null,
-              };
-            }
-          })
-        );
-      })
-    );
+  async getCachedEndpointState$(): Promise<Persistable> {
+    const cachedEndpointState = await this.getEndpointStateFromLocalCache();
+    return cachedEndpointState || (await this.getEndpointStateFromUserSettings());
   }
 }

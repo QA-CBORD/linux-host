@@ -32,7 +32,8 @@ public class HIDPlugin extends Plugin {
     @PluginMethod()
     public void setupEndpoint(PluginCall call){
         String invitationCode = call.getString(invitationCodeKey);
-        hidsdkManager.doHidCredentialFirstInstall(invitationCode, (transactionResult) -> {
+        boolean forceInstall = call.getBoolean("forceInstall");
+        hidsdkManager.doHidCredentialFirstInstall(forceInstall, invitationCode, (transactionResult) -> {
             call.resolve(toJson(transactionResult));
         });
     }

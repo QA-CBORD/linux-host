@@ -7,12 +7,14 @@ import { CredentialStateChangeListener, MobileCredentialManager } from '../share
 import { AndroidCredential } from './android-credential.model';
 
 export abstract class AbstractAndroidCredentialManager implements MobileCredentialManager {
-
   protected customLoadingOptions = { message: 'Processing ... Please wait', duration: 150000 };
   protected mCredential: AndroidCredential<any>;
   protected credentialStateChangeListener: CredentialStateChangeListener;
 
-  constructor(protected readonly loadingService: LoadingService, protected readonly credentialSrvc: AndroidCredentialDataService) {}
+  constructor(
+    protected readonly loadingService: LoadingService,
+    protected readonly credentialSrvc: AndroidCredentialDataService
+  ) {}
 
   async onWillLogout(): Promise<void> {}
 
@@ -36,17 +38,25 @@ export abstract class AbstractAndroidCredentialManager implements MobileCredenti
     }
   }
 
-  protected async checkCredentialAvailability(showLoading: boolean = true): Promise<AndroidCredential<any>> {
-    if (showLoading) {
+  protected async checkCredentialAvailability(showLoading: boolean = true): Promise<boolean> {
+    const shouldRunInBackground = !showLoading;
+    return await this.fetchFromServer$(shouldRunInBackground).then(credential =>
+      credential ? credential.isAvailable() : false
+    );
+  }
+
+  protected async fetchFromServer$(runInBackground: boolean, nullOnErr?: boolean): Promise<AndroidCredential<any>> {
+    const shouldShowLoadingIndicator = !runInBackground;
+    if (shouldShowLoadingIndicator) {
       this.showLoading();
     }
     return await this.credentialSrvc
       .activePasses$()
       .pipe(
         first(),
-        catchError(() => of(this.mCredential)),
+        catchError(() => (nullOnErr ? of(null) : of(this.mCredential))),
         finalize(() => {
-          if (showLoading) {
+          if (shouldShowLoadingIndicator) {
             this.loadingService.closeSpinner();
           }
         })

@@ -1,6 +1,6 @@
 import { Observable, of } from 'rxjs';
 import { Plugins } from '@capacitor/core';
-import { map, catchError, switchMap } from 'rxjs/operators';
+import { map, catchError, switchMap, finalize } from 'rxjs/operators';
 import { AndroidCredential } from '../android-credential.model';
 import { GooglePayCredentialDataService } from '@shared/ui-components/mobile-credentials/service/google-pay-credential.data.service';
 import { Injectable } from '@angular/core';
@@ -45,18 +45,28 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
   }
 
   private async watchOnResume(): Promise<void> {
-    const appResumedEventListener = GooglePayPlugin.addListener('appResumed', () => {
+    const appResumedEventListener = GooglePayPlugin.addListener('appResumed', async () => {
       appResumedEventListener.remove();
-      this.checkCredentialAvailability().then(({ credentialState }) => {
-        this.mCredential.setCredentialState(credentialState);
-        this.credentialStateChangeListener.onCredentialStateChanged();
-        if (credentialState.isProcessing()) {
-          // if true, then set interval to check in background for possible update.
+      setTimeout(() => (this.sessionFacadeService.navigatedFromGpay = false), 2500);  // this is so we don't get the loggin screen, we're already logged in.
+      let counter = 0;
+      let timeOut = 3000;
+      const intervalId = setInterval(async () => {
+        const newCredential = await this.fetchFromServer$(true);
+        const credentialStatusChanged = !newCredential.isAvailable();
+        if (credentialStatusChanged) {
+          this.mCredential = newCredential;
+          this.credentialStateChangeListener.onCredentialStateChanged();
         }
-      });
-      setTimeout(() => {
-        this.sessionFacadeService.navigatedFromGpay = false;
-      }, 2000);
+        const shouldStopRefresh =
+          counter++ == 100 || newCredential.isProvisioned() || (newCredential.isAvailable() && counter == 3);
+        if (shouldStopRefresh) {
+          clearInterval(intervalId);
+        }
+        timeOut = 30000;
+        if (counter == 25) {
+          timeOut = 120000;
+        }
+      }, timeOut);
     });
   }
 
@@ -76,9 +86,8 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
   }
 
   refresh(): void {
-    console.log('refreshing google pay credentials')
-    this.checkCredentialAvailability().then(({ credentialState }) => {
-      this.mCredential.setCredentialState(credentialState);
+    this.fetchFromServer$(true).then(newCredential => {
+      this.mCredential = newCredential;
       this.credentialStateChangeListener.onCredentialStateChanged();
     });
   }
@@ -123,6 +132,7 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
   }
 
   get termsAndConditionsSource$(): Promise<string> {
+    this.showLoading();
     const termsNConditionsConfig = {
       domain: CONTENT_STRINGS_DOMAINS.patronUi,
       category: CONTENT_STRINGS_CATEGORIES.mobileCredential,
@@ -130,7 +140,10 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
     };
     return this.credentialService
       .contentString$(termsNConditionsConfig)
-      .pipe(catchError(() => 'No content'))
+      .pipe(
+        catchError(() => 'No content'),
+        finalize(() => this.loadingService.closeSpinner())
+      )
       .toPromise();
   }
 }
