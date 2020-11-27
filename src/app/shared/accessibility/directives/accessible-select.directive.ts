@@ -14,8 +14,10 @@ export class AccessibleSelectDirective implements OnDestroy {
     this.subs && this.subs.unsubscribe();
   }
 
-  @Input('attr.aria-placeholder') get ariaPlaceholder() {
-    return this.host.placeholder;
+  @Input('attr.a11y-placeholder') a11yPlaceholder: string
+
+  @HostBinding('attr.aria-placeholder') get ariaPlaceholder() {
+    return this.host.selectedText ? '' : this.host.placeholder || this.a11yPlaceholder;
   }
 
   @HostBinding('attr.aria-label') get ariaLabel() {
@@ -29,7 +31,7 @@ export class AccessibleSelectDirective implements OnDestroy {
       Accessibility.isScreenReaderEnabled().then(isRunning => {
         if (isRunning.value) {
           setTimeout(() => {
-            Accessibility.speak({ value: this.host.selectedText });
+            Accessibility.speak({ value: this.host.selectedText || this.host.value });
           }, READ_ALOUD_DELAY);
         }
       })

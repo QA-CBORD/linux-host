@@ -34,6 +34,9 @@
         [title]="contentStrings.selectAccount | async"
         label="{{ contentStrings.labelBuildings | async }}"
         idd="building"
+        [selectedText]="buildingSelect.value"
+        tabindex="0"
+        #buildingSelect
       >
         <ng-container role="options">
           <ion-select-option *ngFor="let item of buildingsOnCampus" [value]="item.addressInfo.building">
@@ -56,6 +59,7 @@
         idd="room"
         maxlength="100"
         [isError]="room?.errors && (room?.dirty || room?.touched)"
+        tabindex="0"
       >
         <p class="addresses__control-error-msg">
           {{ room?.errors?.errorMsg }}
@@ -74,6 +78,7 @@
         [formControlName]="controlsNames.address1"
         [isError]="address1.errors && (address1.dirty || address1.touched)"
         [stFocusNext]="addressTwoInput"
+        tabindex="0"
       >
         <p class="addresses__control-error-msg">
           {{ address1.errors?.errorMsg }}
@@ -105,6 +110,7 @@
         idd="city"
         maxlength="100"
         [isError]="city.errors && (city.dirty || city.touched)"
+        tabindex="0"
       >
         <p class="addresses__control-error-msg">
           {{ city.errors?.errorMsg }}
@@ -120,6 +126,9 @@
         [title]="contentStrings.selectAccount | async"
         label="{{ contentStrings.labelState | async }}"
         idd="state"
+        tabindex="0"
+        [selectedText]="stateSelects.value"
+        #stateSelects
       >
         <ng-container role="options">
           <ion-select-option *ngFor="let state of (arrOfStates$ | async)" [value]="state">
@@ -143,6 +152,7 @@
           idd="nickname"
           maxlength="50"
           [isError]="nickname.errors && (nickname.dirty || nickname.touched)"
+        tabindex="0"
         >
         </st-input-floating-label>
         <ng-container [ngTemplateOutlet]="optionalPlaceholder"></ng-container>
