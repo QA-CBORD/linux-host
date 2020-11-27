@@ -93,7 +93,7 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
     };
     return super.updateCredential$(requestBody).pipe(
       map(() => true),
-      tap(() => this.saveEnpointStateInUserSetting(credential.getPersistable())),
+      tap(() => this.saveEnpointStateInCache(credential.getPersistable())),
       catchError(() => of(false))
     );
   }
@@ -125,7 +125,7 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
       .catch(() => false);
   }
 
-  private saveEnpointStateInUserSetting(data: Persistable): Promise<boolean> {
+  private saveEnpointStateInCache(data: Persistable): Promise<boolean> {
     const credentialData = `${data.id}||${data.endpointStatus}`;
     return this.settingsFacadeService
       .saveUserSetting(User.Settings.MOBILE_CREDENTIAL_ID, credentialData)
@@ -138,7 +138,7 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
     const credentialState = await this.getCachedEndpointState$();
     if (credentialState.endpointStatus != newEndpointStatus) {
       credentialState.endpointStatus = newEndpointStatus;
-      return this.saveEnpointStateInUserSetting(credentialState);
+      return this.saveEnpointStateInCache(credentialState);
     }
     return true;
   }

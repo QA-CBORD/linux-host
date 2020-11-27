@@ -239,18 +239,26 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     this.mCredential.setStatus(MobileCredentialStatuses.REVOKED);
     this.hidSdkManager().deleteEndpoint();
     let counter = 0;
-    const refresh = async () => {
+    let maxRefreshAttempt = 11;
+    const refresh = async (isLastTry?: boolean) => {
       await this.handleRetriableOperation({ fn: this.deleteCredentialFromServer$ });
-      this.mCredential = await this.fetchFromServer$(true);
-      const updateSuccess = !this.mCredential.revoked() && !this.mCredential.isProvisioned();
+      const newCredential = await this.fetchFromServer$(true);
+      const updateSuccess = !newCredential.revoked();
       if (updateSuccess) {
+        this.mCredential = newCredential;
+        this.credentialStateChangeListener.onCredentialStateChanged();
+      }
+      if (isLastTry && !updateSuccess) {
+        this.mCredential.setStatus(MobileCredentialStatuses.AVAILABLE);
         this.credentialStateChangeListener.onCredentialStateChanged();
       }
       return updateSuccess;
     };
-
     const intervalId = setInterval(async () => {
-      if (counter++ == 5 || (await refresh())) {
+      if (counter++ == maxRefreshAttempt || (await refresh())) {
+        clearInterval(intervalId);
+      } else if (counter == maxRefreshAttempt - 1) {
+        refresh(true);
         clearInterval(intervalId);
       }
     }, timeToUpdate);
@@ -456,7 +464,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
         delete this.mCredential.credentialBundle.invitationCode;
         this.mCredential.setStatus(MobileCredentialStatuses.PROCESSING); // You want to show to user that it processing, HID normally takes a while to be active.
         this.credentialStateChangeListener.onCredentialStateChanged();
-        this.hidSdkManager().doPostInstallWork();
+        setTimeout(() => this.hidSdkManager().doPostInstallWork(), 15000);
       } else {
         this.showInstallationErrorAlert();
         this.deleteCredentialFromDevice$();
