@@ -229,25 +229,29 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     const savedEndpointState = await this.credentialService.getCachedEndpointState$();
     const deviceEndpointStatus = await this.getEndpointStatus();
     return (
-      savedEndpointState && savedEndpointState.endpointStatus && deviceEndpointStatus == EndpointStatuses.SETUP_INACTIVE
+      savedEndpointState.endpointStatus == EndpointStatuses.SETUP_ACTIVE &&
+      deviceEndpointStatus == EndpointStatuses.SETUP_INACTIVE
     );
   }
 
   private async onEndpointRevoked(timeToUpdate: number = 60000): Promise<void> {
     // change ui message here.. and refresh.
     this.mCredential.setStatus(MobileCredentialStatuses.REVOKED);
-    setTimeout(async () => {
-      let credentialDeleteOnServerSuccess = await this.handleRetriableOperation({
-        fn: this.deleteCredentialFromServer$,
-        retryCount: 6,
-        showLoading: false,
-      });
-      if (credentialDeleteOnServerSuccess) {
-        await this.hidSdkManager().deleteEndpoint();
-        this.mCredential = await this.fetchFromServer$(true);
+    this.hidSdkManager().deleteEndpoint();
+    let counter = 0;
+    const refresh = async () => {
+      await this.handleRetriableOperation({ fn: this.deleteCredentialFromServer$ });
+      this.mCredential = await this.fetchFromServer$(true);
+      const updateSuccess = !this.mCredential.revoked() && !this.mCredential.isProvisioned();
+      if (updateSuccess) {
         this.credentialStateChangeListener.onCredentialStateChanged();
-      } else {
-        // try it again sometimes later.
+      }
+      return updateSuccess;
+    };
+
+    const intervalId = setInterval(async () => {
+      if (counter++ == 5 || (await refresh())) {
+        clearInterval(intervalId);
       }
     }, timeToUpdate);
   }
@@ -326,7 +330,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
   }
 
   private async provisionedOnCurrentDevice$(): Promise<boolean> {
-    const deviceEndpointStatus = await this.getEndpointStatus();
+    const deviceEndpointStatus = await this.hidSdkManager().endpointStatus();
     const deviceEndpointActive = deviceEndpointStatus == EndpointStatuses.SETUP_ACTIVE;
     const deviceEndpointSetup = deviceEndpointStatus == EndpointStatuses.SETUP_INACTIVE;
     if (deviceEndpointActive) {
