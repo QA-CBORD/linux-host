@@ -20,8 +20,8 @@
     <!-- Startup -->
     <string name="app_startup_title">Loading</string>
 
-    <!-- NFC/HCE -->
-    <string name="hceServiceDescription">Mobile Keys HCE Example</string>
+    <!-- NFC/HCE String to display when multiple apps has hid credentials. -->
+    <string name="hceServiceDescription">Get Mobile</string>
     <string name="hceServiceAidGroupDescription">AID group description</string>
 
     <!-- Menu actions -->

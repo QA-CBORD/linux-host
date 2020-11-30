@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, OnInit, ViewChild, QueryList, ViewChildren } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  ViewChild,
+  QueryList,
+  ViewChildren,
+} from '@angular/core';
 import { ModalController, PopoverController } from '@ionic/angular';
 
 import { TileWrapperConfig } from '@sections/dashboard/models';
@@ -35,7 +42,7 @@ const { App, Device } = Plugins;
 })
 export class DashboardPage implements OnInit {
   @ViewChild(AccessCardComponent) accessCard: AccessCardComponent;
-  @ViewChildren('accountsTile') accountsChild: QueryList<AccountsTileComponent>
+  @ViewChildren('accountsTile') accountsChild: QueryList<AccountsTileComponent>;
   tiles$: Observable<TileWrapperConfig[]>;
   accountsTile: AccountsTileComponent;
 
@@ -48,7 +55,7 @@ export class DashboardPage implements OnInit {
     private readonly popoverCtrl: PopoverController,
     private readonly userFacadeService: UserFacadeService,
     private readonly institutionFacadeService: InstitutionFacadeService,
-    private readonly appBrowser: InAppBrowser,
+    private readonly appBrowser: InAppBrowser
   ) {}
 
   get tilesIds(): { [key: string]: string } {
@@ -62,8 +69,8 @@ export class DashboardPage implements OnInit {
     this.pushNotificationRegistration();
   }
 
-  ngAfterViewInit(){
-    this.accountsChild.forEach((child) => this.accountsTile = child);
+  ngAfterViewInit() {
+    this.accountsChild.forEach(child => (this.accountsTile = child));
   }
 
   async ionViewWillEnter() {
@@ -158,7 +165,6 @@ export class DashboardPage implements OnInit {
   private redirectToTheStore() {
     Device.getInfo()
       .then(deviceInfo => {
-
         if (deviceInfo.platform === 'ios') {
           this.appBrowser.create('itms-apps://itunes.apple.com/app/id844091049', '_system');
         } else if (deviceInfo.platform === 'android') {

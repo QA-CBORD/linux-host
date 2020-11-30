@@ -9,8 +9,8 @@ import { ModalController, PopoverController } from '@ionic/angular';
 })
 export class MobileCredentialsComponent implements OnInit {
   @Input() title: string = 'Terms and Conditions';
-  @Input() termsAndConditions$: Promise<string>;
-  @Input() credentialUsageContentString$: Promise<string>;
+  @Input() termsAndConditions: Promise<string>;
+  @Input() usageInstructions: Promise<string>;
   @Input() btnText: string;
 
   constructor(
@@ -21,7 +21,7 @@ export class MobileCredentialsComponent implements OnInit {
 
   ngOnInit() {
     setTimeout(() => {
-      if (this.termsAndConditions$) {
+      if (this.termsAndConditions) {
         this.globalNav.hideNavBar();
       }
     });
@@ -32,7 +32,7 @@ export class MobileCredentialsComponent implements OnInit {
   }
 
   onDecline(): void {
-    this.termsAndConditions$ ? this.modalCtrl.dismiss({ termsAccepted: false }) : this.popoverCtrl.dismiss({ action: null });
+    this.termsAndConditions ? this.modalCtrl.dismiss({ termsAccepted: false }) : this.popoverCtrl.dismiss({ action: null });
   }
 
   ngOnDestroy(): void {

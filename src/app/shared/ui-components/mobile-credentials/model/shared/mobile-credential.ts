@@ -1,4 +1,4 @@
-import { MobileCredentialState } from './credential-state';
+import { MobileCredentialState, MobileCredentialStatuses } from './credential-state';
 import { CredentialProviders } from './credential-utils';
 import { MobileCredentialConfig } from './mobile-credential-configs';
 
@@ -14,7 +14,7 @@ export abstract class MobileCredential implements MobileCredentialState {
     return this.credentialState.getUiIconUrl();
   }
 
-  setStatus(status: number): void{
+  setStatus(status: MobileCredentialStatuses): void{
     this.credentialState.setStatus(status);
     this.updateStatusMsg()
   }
@@ -55,6 +55,6 @@ export abstract class MobileCredential implements MobileCredentialState {
 
   abstract getId():string;
 
-  abstract getCredentialData<T>(): T;
-  abstract setCredentialData<T>(data: T): void;
+  abstract getCredentialBundle(): any;
+  abstract setCredentialBundle(data: any): void;
 }

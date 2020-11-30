@@ -11,13 +11,25 @@ export interface MobileCredentialState {
   getIssuer(): string;
   getConfig(): MobileCredentialConfig;
   getUiIconUrl(): string;
-  setStatus(status: number):void;
+  setStatus(status: MobileCredentialStatuses):void;
   providedBy(provider: CredentialProviders): boolean;
 }
 
 
 export enum MobileCredentialStatuses{
-  IS_AVAILABLE = 1,
-  IS_PROVISIONED = 20,
-  IS_DISABLED = 0,
+  AVAILABLE = 1,
+  PROVISIONED = 20,
+  DISABLED = 0,
+  REVOKED = 5, // only know by this app, only HID gets to that state so far.
+  PROCESSING = 26
+}
+
+
+export enum EndpointStatuses {
+  PROVISIONED_ACTIVE = 20,
+  PROVISIONED_INACTIVE = 0, //
+  PROVISIONED_PROCESSING = 26,
+  NOT_SETUP = -1,
+  REVOKED = 5,
+  LOCATION_PERMISSION_REQUIRED = 2,
 }

@@ -1,59 +1,222 @@
 import { Plugins } from '@capacitor/core';
-import { of } from 'rxjs';
+import { Subject } from 'rxjs';
+import { EndpointStatuses } from '../../shared/credential-state';
 const { HIDPlugin } = Plugins;
 
-export class HIDSdkManager {
-
-  private static instance: HIDSdkManager;
-
-  private constructor(){}
-
-  initializeSdk(): Promise<string> {
-    return HIDPlugin.initializeOrigo().then(() => {
-      return HIDPlugin.startupOrigo()
-        .then((hidSdkTransactionResponse) => {
-          let { hidSdkTransactionResult } = hidSdkTransactionResponse;
-          return hidSdkTransactionResult;
-        })
-        .catch((error) => {
-          return of('error').toPromise();
-        });
-    });
-  }
-
-
-static getInstance(): HIDSdkManager {
-    if(!this.instance){
-        this.instance =  new HIDSdkManager();
-    }
-    return this.instance;
+interface HIDSdkTransactionResponse {
+  transactionStatus: string | any;
 }
 
-  installCredential(invitationCode: string): Promise<string> {
-    return HIDPlugin.addCredential({invitationCode: invitationCode})
-    .then(hidSdkTransactionResponse => {
-      let { hidSdkTransactionResult } = hidSdkTransactionResponse;
-      return hidSdkTransactionResult
-    });
+interface ExecutionOptions {
+  maxExecutionCount: number;
+  executionInterval: number;
+  executionTrace?: number;
+}
+class Task {
+  constructor(
+    public executor: (controller: TaskExecutionController) => Promise<unknown>,
+    public execOptions: ExecutionOptions
+  ) {}
+}
+
+class TaskExecutionController {
+  constructor(private execOptions: ExecutionOptions, private taskCompletionCallback: (result?: any) => void) {
+    execOptions.executionTrace = 0;
   }
 
-  deleteCurrentCredential(): Promise<string> {
-    return HIDPlugin.deleteCredential().then(hidSdkTransactionResponse => {
-      let { hidSdkTransactionResult } = hidSdkTransactionResponse;
-      return hidSdkTransactionResult
-    });;
+  get currentExecCount(): number {
+    return this.execOptions.executionTrace;
   }
 
-  get installedCredentialInfo$(): Promise<any>{
-      return HIDPlugin.loadCredentialData();
+  get maxExecutionCount(): number {
+    return this.execOptions.maxExecutionCount;
   }
 
-  get checkIfEndpointSetup$(): Promise<boolean>{
-    return HIDPlugin.checkIfEndpointIsSetup().then((hidSdkTransactionResponse) => {
-        let { hidSdkTransactionResult } = hidSdkTransactionResponse;
-        return hidSdkTransactionResult;
-      }
+  get remainingExecCount(): number {
+    return this.maxExecutionCount - this.currentExecCount;
+  }
+
+  incrementExecCount(): void {
+    this.execOptions.executionTrace++;
+  }
+  maxExecutionReached(): boolean {
+    return this.execOptions.executionTrace == this.execOptions.maxExecutionCount;
+  }
+  stopTaskExecution(result?: any): void {
+    this.taskCompletionCallback(result);
+    this.execOptions.executionTrace = 0;
+  }
+}
+
+
+export enum HID_SDK_ERR {
+  INVALID_INVITATION_CODE = 'INVALID_INVITATION_CODE',
+  DEVICE_SETUP_FAILED = 'DEVICE_SETUP_FAILED',
+  SDK_INCOMPATIBLE = 'SDK_INCOMPATIBLE',
+  DEVICE_NOT_ELIGIBLE = 'DEVICE_NOT_ELIGIBLE',
+  ENDPOINT_NOT_SETUP = 'ENDPOINT_NOT_SETUP',
+  INTERNAL_ERROR = 'INTERNAL_ERROR',
+  SERVER_UNREACHABLE = 'SERVER_UNREACHABLE',
+  SDK_BUSY = 'SDK_BUSY',
+  KEY_ALREADY_INSTALLED = 'KEY_ALREADY_INSTALLED',
+  TRANSACTION_SUCCESS = 'success',
+  TRANSACTION_FAILED = 'failed',
+  LOCATION_PERMISSION_REQUIRED = 'LOCATION_PERMISSION_REQUIRED',
+}
+
+class TaskExecutor {
+  private intervalId: any;
+  constructor(private task: Task, private taskCompletionCallback: (result) => void) {}
+
+  initTask(): void {
+    const task = this.task;
+    const taskCompletionCallback = this.taskCompletionCallback;
+    this.intervalId = setInterval(
+      task.executor,
+      task.execOptions.executionInterval,
+      new TaskExecutionController(task.execOptions, result => {
+        clearInterval(this.intervalId);
+        taskCompletionCallback(result);
+      })
     );
   }
 
+  stopExecution(): void {
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+    }
+  }
+}
+
+export class HIDSdkManager {
+  private static instance: HIDSdkManager;
+  taskExecutionObs$: Subject<EndpointStatuses> = new Subject<EndpointStatuses>();
+  private taskExecutor: TaskExecutor;
+  private constructor() {}
+
+  static getInstance(): HIDSdkManager {
+    if (!this.instance) {
+      this.instance = new HIDSdkManager();
+    }
+    return this.instance;
+  }
+
+  async initializeSdk(): Promise<boolean> {
+    const initializationStatus = await this.executeCall<string>(HIDPlugin.initializeSdk);
+    return initializationStatus == HID_SDK_ERR.TRANSACTION_SUCCESS || Promise.reject(initializationStatus);
+  }
+
+  async endpointStatus(): Promise<EndpointStatuses> {
+    if (await this.isEndpointSetup$()) {
+      if (await this.isEndpointActive()) {
+        return EndpointStatuses.PROVISIONED_ACTIVE;
+      } else {
+        return EndpointStatuses.PROVISIONED_INACTIVE;
+      }
+    } else {
+      return EndpointStatuses.NOT_SETUP;
+    }
+  }
+
+  async setupEndpoint(params): Promise<boolean> {
+    let transactionResult = await this.executeCall<HID_SDK_ERR>(HIDPlugin.setupEndpoint, { ...params });
+    if (transactionResult == HID_SDK_ERR.TRANSACTION_SUCCESS) {
+      return true;
+    }
+    throw new Error(transactionResult);
+  }
+
+  async deleteEndpoint(): Promise<HID_SDK_ERR> {
+    return await this.executeCall(HIDPlugin.deleteEndpoint);
+  }
+
+  async getEndpointInfo(): Promise<object> {
+    return await this.executeCall(HIDPlugin.getEndpointInfo);
+  }
+
+  async isEndpointSetup$(): Promise<boolean> {
+    return await this.executeCall(HIDPlugin.isEndpointSetup);
+  }
+
+  async isEndpointActive(): Promise<boolean> {
+    if (await this.refreshEndpoint()) {
+      return await this.executeCall<boolean>(HIDPlugin.isEndpointActive);
+    } else {
+      return false;
+    }
+  }
+
+  private async executeCall<T>(pluginCall: (param?) => Promise<HIDSdkTransactionResponse>, args?: any): Promise<T> {
+    let transactionResponse: HIDSdkTransactionResponse = await pluginCall(args);
+    return transactionResponse.transactionStatus;
+  }
+
+  async refreshEndpoint(): Promise<boolean> {
+    return (await this.executeCall(HIDPlugin.refreshEndpoint)) == HID_SDK_ERR.TRANSACTION_SUCCESS;
+  }
+
+  private async startScanning(controller: TaskExecutionController): Promise<void> {
+    controller.incrementExecCount();
+    let locationPermissionRequired: boolean = false;
+    let executeCall = async (pluginCall: (param?) => Promise<HIDSdkTransactionResponse>, args?: any): Promise<any> => {
+      let transactionResponse: HIDSdkTransactionResponse = await pluginCall(args);
+      return transactionResponse.transactionStatus;
+    };
+
+    let endpointRefreshSuccess = async (): Promise<boolean> => {
+      let endpointRefreshResult = await executeCall(HIDPlugin.refreshEndpoint);
+      return endpointRefreshResult == HID_SDK_ERR.TRANSACTION_SUCCESS;
+    };
+    let isEndpointActiveNow = async (): Promise<boolean> => {
+      return await executeCall(HIDPlugin.isEndpointActive);
+    };
+    let startScanningSuccess = async (): Promise<boolean> => {
+      let startScanTransactionResult = await executeCall(HIDPlugin.startScanning);
+      locationPermissionRequired = startScanTransactionResult == HID_SDK_ERR.LOCATION_PERMISSION_REQUIRED;
+      return startScanTransactionResult == HID_SDK_ERR.TRANSACTION_SUCCESS;
+    };
+    if ((await endpointRefreshSuccess()) && !controller.maxExecutionReached()) {
+      if (await isEndpointActiveNow()) {
+        if (await startScanningSuccess()) {
+          controller.stopTaskExecution(EndpointStatuses.PROVISIONED_ACTIVE); // mobile credential is in a "fine state", whoohoo!!!
+        } else if (locationPermissionRequired && controller.remainingExecCount == 1) {
+          controller.stopTaskExecution(EndpointStatuses.LOCATION_PERMISSION_REQUIRED);
+        }
+      }
+    } else if (controller.maxExecutionReached()) {
+      controller.stopTaskExecution(EndpointStatuses.PROVISIONED_INACTIVE);
+    } else {
+      controller.stopTaskExecution(EndpointStatuses.NOT_SETUP);
+    }
+  }
+
+  async doPostInstallWork(): Promise<void> {
+    const task = new Task(this.startScanning, {
+      maxExecutionCount: 30,
+      executionInterval: 6000,
+    });
+
+    this.taskExecutor = new TaskExecutor(task, result => {
+      this.taskExecutionObs$.next(result);
+    });
+    this.taskExecutor.initTask();
+  }
+
+  async stopTaskExecution(): Promise<void> {
+    if (this.taskExecutor) {
+      this.taskExecutor.stopExecution();
+    }
+  }
+
+  async doPostInitWork(): Promise<void> {
+    const task = new Task(this.startScanning, {
+      maxExecutionCount: 10,
+      executionInterval: 15000,
+    });
+
+    this.taskExecutor = new TaskExecutor(task, result => {
+      this.taskExecutionObs$.next(result);
+    });
+    this.taskExecutor.initTask();
+  }
 }

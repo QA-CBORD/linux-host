@@ -11,12 +11,12 @@ export class AppleWalletCredential extends MobileCredential {
         super(credentialState);
     }
 
-    getCredentialData<T>(): any {
+    getCredentialBundle<T>(): any {
        return null;
     }
 
-    setCredentialData<T>(data: T): void {
-       this.getCredentialData = <any>data;
+    setCredentialBundle<T>(data: T): void {
+       this.getCredentialBundle = <any>data;
     }
 
 }
