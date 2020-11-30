@@ -1,6 +1,6 @@
 import { AppleWalletCredentialState } from '../ios/applet-wallet-credential.state';
 import { AppleWalletState } from '../ios/applet-wallet.state';
-import { MobileCredentialState, MobileCredentialStatuses } from '../shared/credential-state';
+import { EndpointStatuses, MobileCredentialState, MobileCredentialStatuses } from '../shared/credential-state';
 import { ActivePasses, CredentialProviders } from '../shared/credential-utils';
 import { MobileCredential } from '../shared/mobile-credential';
 import { MobileCredentialConfig, MOBILE_CREDENTIAL_CONFIGS } from '../shared/mobile-credential-configs';
@@ -16,6 +16,7 @@ export interface AndroidCredentialState extends MobileCredentialState {
   credStatus: number;
   passes: number;
   issuer: string;
+  endpointState: EndpointState;
   revoked(): boolean;
   isProcessing(): boolean;
   updateUiMsg(msg: string);
@@ -62,7 +63,7 @@ export class CredentialStateResolver {
 
 export class AndroidCredentialStateEntity implements AndroidCredentialState {
   statusMsg: string;
-
+  endpointState: EndpointState;
   constructor(
     public credStatus: MobileCredentialStatuses,
     public passes: MobileCredentialStatuses,
@@ -70,6 +71,10 @@ export class AndroidCredentialStateEntity implements AndroidCredentialState {
     public referenceIdentifier: string
   ) {
     this.updateStatusMsg();
+  }
+
+  setEndpointState(state: EndpointState): void {
+    this.endpointState = state;
   }
 
   isProcessing(): boolean {
@@ -145,6 +150,7 @@ export class AndroidCredentialStateEntity implements AndroidCredentialState {
 
 export abstract class AndroidCredential<T> extends MobileCredential implements AndroidCredentialAttrs {
   public credentialBundle: T;
+
   constructor(public credentialState: AndroidCredentialState) {
     super(credentialState);
   }
@@ -194,6 +200,14 @@ export abstract class AndroidCredential<T> extends MobileCredential implements A
   getCredStatus(): number {
     return this.credentialState.credStatus;
   }
+
+  endpointState(): EndpointState {
+    return this.credentialState.endpointState;
+  }
+
+  setEndpointState(endpointState: EndpointState): void {
+    this.credentialState.endpointState = endpointState;
+  }
 }
 
 export interface HID extends Persistable {
@@ -212,7 +226,7 @@ export interface GOOGLE extends Persistable {
 export class Persistable {
   constructor(
     public id?: string,
-    public endpointStatus?: number,
+    public status?: number,
     public referenceIdentifier?: string,
     public userId?: string
   ) {}
@@ -225,7 +239,7 @@ export class HIDCredential extends AndroidCredential<HID> {
 
   getPersistable(): Persistable {
     let { id } = this.credentialBundle;
-    return new Persistable(id, 0);
+    return new Persistable(id, MobileCredentialStatuses.PROCESSING);
   }
 
   getInvitationCode(): string {
@@ -241,5 +255,49 @@ export class GoogleCredential extends AndroidCredential<GOOGLE> {
   getPersistable(): Persistable {
     let { id } = this.credentialBundle;
     return { id };
+  }
+}
+
+export class EndpointState {
+  constructor(public status: EndpointStatuses, public id?: string, public userId?: string) {}
+
+  setStatus(status: EndpointStatuses): void {
+    this.status = status;
+  }
+
+  setUserId(userId: string) {
+    this.userId = userId;
+  }
+
+  static from(data: Persistable): EndpointState {
+    return new EndpointState(data.status, data.id, data.userId);
+  }
+
+  isRevoked(): boolean {
+    return this.status == EndpointStatuses.REVOKED;
+  }
+
+  isProvisioned(): boolean {
+    return this.status == EndpointStatuses.PROVISIONED_ACTIVE;
+  }
+
+  isInactive(): boolean {
+    return this.status == EndpointStatuses.PROVISIONED_INACTIVE;
+  }
+
+  isProcessing(): boolean {
+    return this.status == EndpointStatuses.PROVISIONED_PROCESSING;
+  }
+
+  notSetup(): boolean {
+    return this.status == EndpointStatuses.NOT_SETUP;
+  }
+
+  equal(other: EndpointState): boolean {
+    return this.status == other.status;
+  }
+
+  notEqual(other: EndpointState) {
+    return !this.equal(other);
   }
 }

@@ -8,11 +8,11 @@ import { StorageStateService } from '@core/states/storage/storage-state.service'
 import { from, Observable, of } from 'rxjs';
 import { catchError, first, map, switchMap, tap } from 'rxjs/operators';
 import { User } from 'src/app/app.global';
-import { AndroidCredential, HID, Persistable } from '../model/android/android-credential.model';
+import { AndroidCredential, EndpointState, HID, Persistable } from '../model/android/android-credential.model';
 import { AndroidCredentialDataService } from '../model/shared/android-credential-data.service';
 import { APIService } from '@core/service/api-service/api.service';
-import { EndpointStatuses } from '../model/android/hid/hid-plugin.wrapper';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
+import { EndpointStatuses, MobileCredentialStatuses } from '../model/shared/credential-state';
 
 const api_version = 'v1';
 
@@ -47,8 +47,8 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
   }
 
   deleteCredential$(): Observable<boolean> {
-    return from(this.getCachedEndpointState$()).pipe(
-      switchMap((cachedCredential: Persistable) => {
+    return from(this.getSavedEndpointState$()).pipe(
+      switchMap((cachedCredential: EndpointState) => {
         if (cachedCredential.id) {
           return super.deleteCredential$(cachedCredential.id).pipe(
             map(() => true),
@@ -88,22 +88,29 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
   updateCredential$(credential: AndroidCredential<any>): Observable<boolean> {
     let requestBody = {
       referenceIdentifier: credential.getReferenceIdentifier(),
-      status: credential.getCredStatus(),
+      status: credential.isProcessing() ? MobileCredentialStatuses.PROVISIONED : credential.getCredStatus(),
       credentialID: credential.getId(),
     };
     return super.updateCredential$(requestBody).pipe(
       map(() => true),
-      tap(() => this.saveEnpointStateInCache(credential.getPersistable())),
+      tap(() => {
+        this.userFacade
+          .getUserData$()
+          .pipe(
+            first(),
+            map(userData => {
+              const state = new EndpointState(credential.getCredStatus(), requestBody.credentialID, userData.id);
+              credential.setEndpointState(state);
+              this.saveEnpointStateInCache(state);
+            })
+          )
+          .toPromise();
+      }),
       catchError(() => of(false))
     );
   }
 
-  async saveEndpointStateInLocalStorage(data: Persistable): Promise<void> {
-    let { id } = await this.userFacade
-      .getUserData$()
-      .pipe(first())
-      .toPromise();
-    data.userId = id;
+  private async saveEndpointStateInLocalStorage(data: EndpointState): Promise<void> {
     this.storageStateService.updateStateEntity(this.credential_key, data, {
       highPriorityKey: true,
       keepOnLogout: true,
@@ -125,8 +132,8 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
       .catch(() => false);
   }
 
-  private saveEnpointStateInCache(data: Persistable): Promise<boolean> {
-    const credentialData = `${data.id}||${data.endpointStatus}`;
+  private saveEnpointStateInCache(data: EndpointState): Promise<boolean> {
+    const credentialData = `${data.id}||${data.status}`;
     return this.settingsFacadeService
       .saveUserSetting(User.Settings.MOBILE_CREDENTIAL_ID, credentialData)
       .pipe(tap(() => this.saveEndpointStateInLocalStorage(data)))
@@ -134,16 +141,16 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
       .catch(() => false);
   }
 
-  async updateCachedCredential$(newEndpointStatus: EndpointStatuses = EndpointStatuses.SETUP_ACTIVE): Promise<boolean> {
-    const credentialState = await this.getCachedEndpointState$();
-    if (credentialState.endpointStatus != newEndpointStatus) {
-      credentialState.endpointStatus = newEndpointStatus;
-      return this.saveEnpointStateInCache(credentialState);
+  async updateCachedCredential$(status: EndpointStatuses): Promise<boolean> {
+    const savedState = await this.getSavedEndpointState$();
+    const newState = new EndpointState(status, savedState.id, savedState.userId);
+    if (savedState.notEqual(newState)) {
+      return this.saveEnpointStateInCache(newState);
     }
     return true;
   }
 
-  getEndpointStateFromLocalCache(): Promise<Persistable> {
+  getEndpointStateFromLocalCache(): Promise<EndpointState> {
     return this.storageStateService
       .getStateEntityByKey$<Persistable>(this.credential_key)
       .pipe(
@@ -152,7 +159,7 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
           if (data && data.value) {
             return this.userFacade.getUserData$().pipe(
               first(),
-              map(({ id }) => (data.value.userId === id ? data.value : null))
+              map(({ id }) => (data.value.userId === id ? EndpointState.from(data.value) : null))
             );
           } else {
             return of(null);
@@ -162,7 +169,7 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
       .toPromise();
   }
 
-  getEndpointStateFromUserSettings(): Promise<Persistable> {
+  getEndpointStateFromUserSettings(): Promise<EndpointState> {
     return this.settingsFacadeService
       .getUserSetting(User.Settings.MOBILE_CREDENTIAL_ID)
       .pipe(
@@ -171,21 +178,18 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
             const [credentialId, endpointStatusString] = settingInfo.value.split('||');
             let id = credentialId;
             let endpointStatus = Number(endpointStatusString || -1);
-            this.saveEndpointStateInLocalStorage({ id, endpointStatus });
-            return { id, endpointStatus };
+            const endpointState = new EndpointState(endpointStatus, id, settingInfo.userId);
+            this.saveEndpointStateInLocalStorage(endpointState);
+            return endpointState;
           } else {
-            return {
-              id: null,
-              endpointStatus: -1,
-            };
+            return new EndpointState(EndpointStatuses.NOT_SETUP, null, null);
           }
         })
       )
       .toPromise();
   }
 
-  async getCachedEndpointState$(): Promise<Persistable> {
-    const cachedEndpointState = await this.getEndpointStateFromLocalCache();
-    return cachedEndpointState || (await this.getEndpointStateFromUserSettings());
+  async getSavedEndpointState$(): Promise<EndpointState> {
+    return (await this.getEndpointStateFromLocalCache()) || (await this.getEndpointStateFromUserSettings());
   }
 }

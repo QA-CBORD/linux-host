@@ -4,11 +4,11 @@ import { MobileCredentialsComponent } from '@shared/ui-components/mobile-credent
 import { from, Observable, of } from 'rxjs';
 import { catchError, first, map, switchMap } from 'rxjs/operators';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
-import { MobileCredentialStatuses } from '../../shared/credential-state';
+import { EndpointStatuses, MobileCredentialStatuses } from '../../shared/credential-state';
 import { AbstractAndroidCredentialManager } from '../abstract-android-credential.management';
-import { AndroidCredential, HIDCredential, Persistable } from '../android-credential.model';
+import { AndroidCredential, EndpointState, HIDCredential, Persistable } from '../android-credential.model';
 import { HidCredentialDataService } from '../../../service/hid-credential.data.service';
-import { EndpointStatuses, HIDSdkManager } from './hid-plugin.wrapper';
+import { HIDSdkManager, HID_SDK_ERR } from './hid-plugin.wrapper';
 import { Injectable } from '@angular/core';
 
 interface ExecutionParameters {
@@ -22,7 +22,8 @@ interface ExecutionParameters {
 
 @Injectable()
 export class HIDCredentialManager extends AbstractAndroidCredentialManager {
-  private endpointAlreadyInstalledFlag = false;
+  private hidSdkError: HID_SDK_ERR = null;
+
   constructor(
     private readonly modalCtrl: ModalController,
     private readonly alertCtrl: AlertController,
@@ -37,15 +38,13 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
 
   private async credentialStateChangedSubscription(): Promise<void> {
     this.hidSdkManager().taskExecutionObs$.subscribe(endpointStatus => {
-      if (endpointStatus == EndpointStatuses.SETUP_ACTIVE) {
+      if (endpointStatus == EndpointStatuses.PROVISIONED_ACTIVE) {
         this.mCredential.setStatus(MobileCredentialStatuses.PROVISIONED);
         this.credentialStateChangeListener.onCredentialStateChanged();
-        this.credentialService.updateCachedCredential$();
-      } else if (endpointStatus == EndpointStatuses.SETUP_INACTIVE) {
-        const time2Update = 200000;
-        setTimeout(() => {
-          this.hidSdkManager().doPostInitWork();
-        }, time2Update); // start again in 3. minutes.
+        this.credentialService.updateCachedCredential$(EndpointStatuses.PROVISIONED_ACTIVE);
+      } else if (endpointStatus == EndpointStatuses.PROVISIONED_INACTIVE) {
+        const time2Update = 300000;
+        setTimeout(() => this.hidSdkManager().doPostInitWork(), time2Update); // start again in 5. minutes.
       }
     });
   }
@@ -112,7 +111,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
       this.showInstallationErrorAlert();
       throw new Error('Failed to retrieve passes');
     }
-    const deviceEndpointActive = (await this.getEndpointStatus()) == EndpointStatuses.SETUP_ACTIVE;
+    const deviceEndpointActive = (await this.getDeviceEndpointState()).isProvisioned();
     if (credential.isAvailable()) {
       if (deviceEndpointActive) {
         this.showCredentialAlreadyInstalledAlert(async () => this.showTermsAndConditions(true));
@@ -224,41 +223,38 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     this.createAlertDialog(header, message, buttons).then(alert => alert.present());
   }
 
-  // is considered revoked when it was active at some point but now is not.
   private async isEndpointRevoked(): Promise<boolean> {
-    const savedEndpointState = await this.credentialService.getCachedEndpointState$();
-    const deviceEndpointStatus = await this.getEndpointStatus();
-    return (
-      savedEndpointState.endpointStatus == EndpointStatuses.SETUP_ACTIVE &&
-      deviceEndpointStatus == EndpointStatuses.SETUP_INACTIVE
-    );
+    const savedEndpointState = await this.credentialService.getEndpointStateFromLocalCache();
+    const deviceEndpointStatus = await this.getDeviceEndpointState();
+    return savedEndpointState.isRevoked() || (savedEndpointState.isProvisioned() && deviceEndpointStatus.isInactive());
   }
 
   private async onEndpointRevoked(timeToUpdate: number = 60000): Promise<void> {
-    // change ui message here.. and refresh.
     this.mCredential.setStatus(MobileCredentialStatuses.REVOKED);
-    this.hidSdkManager().deleteEndpoint();
+    this.credentialService.updateCachedCredential$(EndpointStatuses.REVOKED);
     let counter = 0;
     let maxRefreshAttempt = 11;
-    const refresh = async (isLastTry?: boolean) => {
+    const deleteEndpoint = async (isLastTry?: boolean) => {
       await this.handleRetriableOperation({ fn: this.deleteCredentialFromServer$ });
       const newCredential = await this.fetchFromServer$(true);
       const updateSuccess = !newCredential.revoked();
       if (updateSuccess) {
         this.mCredential = newCredential;
+        this.hidSdkManager().deleteEndpoint();
         this.credentialStateChangeListener.onCredentialStateChanged();
       }
       if (isLastTry && !updateSuccess) {
         this.mCredential.setStatus(MobileCredentialStatuses.AVAILABLE);
+        this.hidSdkManager().deleteEndpoint();
         this.credentialStateChangeListener.onCredentialStateChanged();
       }
       return updateSuccess;
     };
     const intervalId = setInterval(async () => {
-      if (counter++ == maxRefreshAttempt || (await refresh())) {
+      if (counter++ == maxRefreshAttempt || (await deleteEndpoint())) {
         clearInterval(intervalId);
       } else if (counter == maxRefreshAttempt - 1) {
-        refresh(true);
+        deleteEndpoint(true);
         clearInterval(intervalId);
       }
     }, timeToUpdate);
@@ -329,38 +325,34 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     return of(this.mCredential.isAvailable());
   }
 
-  private async getEndpointStatus(): Promise<EndpointStatuses> {
-    let endpointStatus = await this.hidSdkManager().endpointStatus();
-    if (endpointStatus == EndpointStatuses.SETUP_INACTIVE) {
-      this.credentialService.updateCachedCredential$(EndpointStatuses.SETUP_INACTIVE);
-    }
-    return endpointStatus;
+  private async getDeviceEndpointState(): Promise<EndpointState> {
+    return new EndpointState(await this.hidSdkManager().endpointStatus());
   }
 
-  private async provisionedOnCurrentDevice$(): Promise<boolean> {
-    const deviceEndpointStatus = await this.hidSdkManager().endpointStatus();
-    const deviceEndpointActive = deviceEndpointStatus == EndpointStatuses.SETUP_ACTIVE;
-    const deviceEndpointSetup = deviceEndpointStatus == EndpointStatuses.SETUP_INACTIVE;
-    if (deviceEndpointActive) {
-      const endpointState: Persistable = (await this.credentialService.getEndpointStateFromLocalCache()) || {};
-      if (endpointState.endpointStatus == EndpointStatuses.SETUP_ACTIVE) {
+  private async checkDeviceEndpointState$(): Promise<void> {
+    const deviceEndpointState = await this.getDeviceEndpointState();
+    const cachedEndpointState =
+      (await this.credentialService.getEndpointStateFromLocalCache()) || new EndpointState(-1);
+      console.log(cachedEndpointState)
+    if (deviceEndpointState.isProvisioned()) {
+      if (cachedEndpointState.isProvisioned()) {
+        this.hidSdkManager().doPostInitWork();
+      } else if (cachedEndpointState.isProcessing()) {
+        this.mCredential.setStatus(MobileCredentialStatuses.PROCESSING);
         this.hidSdkManager().doPostInitWork();
       } else {
-        // another user logged in to this device, he has provisioned credential on another device, but this device also has a credential provisioned. weird scenario.
         this.mCredential.setStatus(MobileCredentialStatuses.AVAILABLE);
       }
-    } else if (deviceEndpointSetup) {
-      const endpointState: Persistable = await this.credentialService.getCachedEndpointState$();
-      if (endpointState.endpointStatus == EndpointStatuses.SETUP_ACTIVE) {
-        if (await this.isEndpointRevoked()) {
-          this.onEndpointRevoked();
-        }
-      } else if (endpointState.endpointStatus == EndpointStatuses.SETUP_INACTIVE) {
+    } else if (deviceEndpointState.isInactive()) {
+      if (await this.isEndpointRevoked()) {
+        this.onEndpointRevoked();
+      } else if (cachedEndpointState.isProcessing()) {
         this.mCredential.setStatus(MobileCredentialStatuses.PROCESSING);
         this.hidSdkManager().doPostInitWork();
       }
+    } else {
+      this.mCredential.setStatus(MobileCredentialStatuses.AVAILABLE);
     }
-    return deviceEndpointActive || deviceEndpointSetup;
   }
 
   credentialEnabled$(): Observable<boolean> {
@@ -374,17 +366,8 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
       switchMap(sdkInitSuccess => {
         if (sdkInitSuccess == false) {
           return of(false);
-        }
-        if (this.mCredential.isProvisioned()) {
-          return from(this.provisionedOnCurrentDevice$()).pipe(
-            first(),
-            map(provisionedOnThisDevice => {
-              if (!provisionedOnThisDevice) {
-                this.mCredential.setStatus(MobileCredentialStatuses.AVAILABLE);
-              }
-              return true;
-            })
-          );
+        } else if (this.mCredential.isProvisioned()) {
+          return from(this.checkDeviceEndpointState$()).pipe(map(() => true));
         } else {
           this.hidSdkManager().refreshEndpoint();
           return of(true);
@@ -434,35 +417,24 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     const params = { forceInstall, invitationCode: (this.mCredential as HIDCredential).getInvitationCode() };
     return await this.hidSdkManager()
       .setupEndpoint(params)
-      .then(transactionResult => {
-        const transactionSucceeded = transactionResult == HIDSdkManager.TRANSACTION_SUCCESS;
-        this.endpointAlreadyInstalledFlag = transactionResult == HIDSdkManager.KEY_ALREADY_INSTALLED;
-        if (transactionSucceeded) {
-          return transactionSucceeded;
-        }
-        throw new Error(transactionResult);
+      .catch(error => {
+        this.hidSdkError == error;
+        throw new Error(error);
       });
   };
 
   private async installCredentialOnDevice(forceInstall: boolean = false): Promise<void> {
     const credentialDeviceInstallSuccess = await this.handleRetriableOperation({
       fn: this.doNativeInstall$,
-      showLoading: false,
       checkErrors: true,
       userDecides: true,
       args: forceInstall,
     });
-
     if (credentialDeviceInstallSuccess) {
-      this.mCredential.setStatus(MobileCredentialStatuses.PROVISIONED);
-      const credentialServerUpdateSuccess = await this.handleRetriableOperation({
-        fn: this.updateCredentialOnServer$,
-        showLoading: false,
-      });
-
+      this.mCredential.setStatus(MobileCredentialStatuses.PROCESSING); // You want to show to user that it processing, HID normally takes a while to be active.
+      const credentialServerUpdateSuccess = await this.handleRetriableOperation({ fn: this.updateCredentialOnServer$ });
       if (credentialServerUpdateSuccess) {
         delete this.mCredential.credentialBundle.invitationCode;
-        this.mCredential.setStatus(MobileCredentialStatuses.PROCESSING); // You want to show to user that it processing, HID normally takes a while to be active.
         this.credentialStateChangeListener.onCredentialStateChanged();
         setTimeout(() => this.hidSdkManager().doPostInstallWork(), 15000);
       } else {
@@ -471,18 +443,20 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
         this.handleRetriableOperation({
           fn: this.deleteCredentialFromServer$,
           retryCount: 6,
-          showLoading: false,
         });
       }
       this.loadingService.closeSpinner();
     } else {
       this.loadingService.closeSpinner();
-      if (this.endpointAlreadyInstalledFlag) {
+      if (this.hidSdkError == HID_SDK_ERR.KEY_ALREADY_INSTALLED) {
         this.showCredentialAlreadyInstalledAlert();
-        this.endpointAlreadyInstalledFlag = false;
+      } else if (this.hidSdkError == HID_SDK_ERR.INVALID_INVITATION_CODE) {
+        delete this.mCredential.credentialBundle;
+        this.showInstallationErrorAlert();
       } else {
         this.showInstallationErrorAlert();
       }
+      this.hidSdkError = null;
     }
   }
 
@@ -534,20 +508,12 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
         if (shouldCheckErrorTypes && this.shouldRetryBecauseOfError(exception.message)) {
           if (userShouldChoose) {
             this.loadingService.closeSpinner();
-            const userWantsRetry = await this.showRetryToast();
-            if (userWantsRetry) {
+            const userWants2Retry = await this.showRetryToast();
+            if (userWants2Retry) {
               this.showLoading();
             } else {
               break;
             }
-          }
-        } else if (userShouldChoose) {
-          this.loadingService.closeSpinner();
-          const userWantsRetry = await this.showRetryToast();
-          if (userWantsRetry) {
-            this.showLoading();
-          } else {
-            break;
           }
         }
       }
@@ -581,16 +547,16 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     }
     let shouldRetry = false;
     switch (error) {
-      case 'INTERNAL_ERROR':
-      case 'SERVER_UNREACHABLE':
-      case 'SDK_BUSY':
+      case HID_SDK_ERR.INTERNAL_ERROR:
+      case HID_SDK_ERR.SERVER_UNREACHABLE:
+      case HID_SDK_ERR.SDK_BUSY:
         shouldRetry = true;
         break;
-      case 'INVALID_INVITATION_CODE':
-      case 'DEVICE_SETUP_FAILED':
-      case 'SDK_INCOMPATIBLE':
-      case 'DEVICE_NOT_ELIGIBLE':
-      case 'ENDPOINT_NOT_SETUP':
+      case HID_SDK_ERR.INVALID_INVITATION_CODE:
+      case HID_SDK_ERR.DEVICE_SETUP_FAILED:
+      case HID_SDK_ERR.SDK_INCOMPATIBLE:
+      case HID_SDK_ERR.DEVICE_NOT_ELIGIBLE:
+      case HID_SDK_ERR.ENDPOINT_NOT_SETUP:
       default:
         break;
     }
@@ -621,7 +587,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
 
   private deleteCredentialFromDevice$ = async (force?: boolean): Promise<boolean> => {
     let transactionResultCode = await this.hidSdkManager().deleteEndpoint();
-    if (transactionResultCode == HIDSdkManager.TRANSACTION_SUCCESS) {
+    if (transactionResultCode == HID_SDK_ERR.TRANSACTION_SUCCESS) {
       this.mCredential.setStatus(MobileCredentialStatuses.AVAILABLE);
       this.credentialStateChangeListener.onCredentialStateChanged();
       return true;
