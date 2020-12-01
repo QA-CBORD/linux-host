@@ -1,5 +1,6 @@
 import { Label } from '@shared/ui-components/label/label.model';
 import { Facility, FacilityAttribute, IMapper } from '@sections/housing/facilities/facilities.model';
+import { LabelHelper } from '@sections/housing/rooms/labelHelper';
 
 export class Unit {
   key: number;
@@ -28,6 +29,6 @@ export class FacilityToUnitsMapper implements IMapper {
     return items.map(x => new Unit({title: x.facilityName, isFavorite: false, parentKey: x.topLevelKey,
       facilityKey: x.facilityId, topLevelName: x.topLevelName,
       occupantKeys:  Array.isArray(x.occupantKeys)? x.occupantKeys.map(y => y) : [], attributes: x.attributes,
-      labels: Array.isArray(x.attributes) ? x.attributes.map(y => new Label(y.name)) : []}));
+      labels: Array.isArray(x.attributes)? LabelHelper.getLabels(x.attributes) : []}));
     }
   }

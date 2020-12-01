@@ -33,7 +33,6 @@ export class HousingProxyService {
           headers,
         })
         .pipe(map((response: Response) => {
-          console.log(response);
           return response.data
         })),
     );

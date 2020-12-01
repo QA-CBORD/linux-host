@@ -39,7 +39,6 @@ export class UnitDetailsPage implements OnInit {
       const activeRoomSelect = this._stateService.getActiveRoomSelect();
       this.occupants$ = this._housingService.getOccupantDetails(activeRoomSelect.key, unitKey);
     }
-    console.log(this.unit);
   }
   private roommatesExists() {
     return Array.isArray(this.unit.occupantKeys) && this.unit.occupantKeys.length > 0;

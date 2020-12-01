@@ -7,6 +7,7 @@ import { Unit } from '@sections/housing/unit/unit.model';
 import { FacilityOccupantDetails } from '@sections/housing/roommate/roomate.model';
 import { OccupantAttribute } from '@sections/housing/attributes/attributes.model';
 import { hasValue, isDefined } from '@sections/housing/utils';
+import { map } from 'rxjs/operators';
 
 
 export interface StateService<K, V> {
@@ -132,8 +133,11 @@ export class RoomsStateService implements StateService<number, Facility[]> {
     return this._activeFilterFacilities;
   }
 
-  getRoomSelects() {
-    return this.roomSelects;
+  getRoomSelects(): Observable<RoomSelect[]> {
+    return this.roomSelects.pipe(
+      map((data) => data.map(
+        x => x))
+    );
   }
 
   storeParentFacilities(facilities: Facility[]) {
@@ -193,7 +197,7 @@ export class RoomsStateService implements StateService<number, Facility[]> {
           !facility.isTopLevel
         ),
       );
-      children = this._updateTopLevelName(children, parent.facilityName);
+      children = this._updateChildren(children, parent.facilityName);
 
       if (children.length > 0) {
         this.entityDictionary.set(parent.facilityId, children);
@@ -201,6 +205,19 @@ export class RoomsStateService implements StateService<number, Facility[]> {
     });
   }
 
+  private _updateChildren(children: Facility[], parentName: string):Facility[] {
+    const updatedChildren = this._updateTopLevelName(children, parentName);
+    const facilityChildren = this._updateFullName(updatedChildren);
+    return facilityChildren;
+  }
+
+  private _updateFullName(children: Facility[]): Facility[] {
+    children.map(x => {
+      const fullName = x.getAttributeValue('Full Name').value;
+      x.facilityName = fullName
+    })
+    return  children;
+  }
   private _updateTopLevelName(children: Facility[] , parentName): Facility[] {
     return children.map(x => {
       x.facilityName = `${parentName} \u{2014} ${x.facilityName}`;
