@@ -88,7 +88,8 @@ export class StDateTimePickerComponent implements OnInit {
     await picker.present();
   }
 
-  private pickerClickHandler([date, { value }]) {
+  private pickerClickHandler(dateInfo: any) {
+    const [date, { value }] = Object.values(dateInfo);
     const [year, month, day] = date.value.split('-');
     let dateValue;
     if (value === 'asap') {

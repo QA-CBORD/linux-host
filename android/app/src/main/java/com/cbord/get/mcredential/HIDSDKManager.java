@@ -26,6 +26,8 @@ import com.hid.origo.api.ble.OrigoReaderConnectionListener;
 import com.hid.origo.api.hce.OrigoHceConnectionCallback;
 import com.hid.origo.api.hce.OrigoHceConnectionListener;
 
+import java.util.function.Supplier;
+
 public class HIDSDKManager implements OrigoReaderConnectionListener, OrigoHceConnectionListener {
     private static final String TAG = HIDSDKManager.class.getSimpleName();
     private static final String TRANSACTION_SUCCESS = "success";
@@ -87,8 +89,9 @@ public class HIDSDKManager implements OrigoReaderConnectionListener, OrigoHceCon
     public boolean isEndpointActive(){
         try {
             OrigoMobileKey mobileKey = getMobileKey();
+
             boolean isEndpointActive = mobileKey == null ? false : mobileKey.isActivated();
-            Log.d(TAG, "isEndpointActive: " + isEndpointActive);
+            Log.d(TAG, "isEndpointActive: " + mobileKey.toString());
             return isEndpointActive;
         } catch (OrigoMobileKeysException ex){
             Log.d(TAG, ex.getErrorCode().toString());
@@ -129,21 +132,19 @@ public class HIDSDKManager implements OrigoReaderConnectionListener, OrigoHceCon
     }
 
 
-    public void doHidCredentialFirstInstall(final String invitationCode, TransactionCompleteCallback transactionCompleteCallback){
+    public void doHidCredentialFirstInstall(boolean forceInstall, final String invitationCode, TransactionCompleteCallback txCb){
         if(isEndpointActive()){
-            transactionCompleteCallback.onCompleted(MOBILE_KEY_ALREADY_INSTALLED);
+            if(forceInstall){
+                deleteEndpoint((r) -> mobileKeys.endpointSetup(new HIDTransactionProgressObserver(txCb), invitationCode));
+            } else{
+                txCb.onCompleted(MOBILE_KEY_ALREADY_INSTALLED);
+            }
          } else{
             if(isEndpointSetup()){
-                Log.d(TAG, "Deleting current endpoint first");
-                deleteEndpoint((transactionResult) -> {
-                    Log.d(TAG, "Current endpoint deletion result" + transactionResult);
-                    Log.d(TAG, "Endpoint setup started with invitationCode: " + invitationCode);
-                    mobileKeys.endpointSetup(new HIDTransactionProgressObserver(transactionCompleteCallback), invitationCode);
-                });
+                deleteEndpoint((r) -> mobileKeys.endpointSetup(new HIDTransactionProgressObserver(txCb), invitationCode));
             }
             else {
-                Log.d(TAG, "Endpoint setup started with invitationCode: " + invitationCode);
-                mobileKeys.endpointSetup(new HIDTransactionProgressObserver(transactionCompleteCallback), invitationCode);
+                mobileKeys.endpointSetup(new HIDTransactionProgressObserver(txCb), invitationCode);
             }
         }
     }

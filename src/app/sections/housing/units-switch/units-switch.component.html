@@ -1,13 +1,27 @@
 <ion-toolbar class="units-switch__toolbar" mode="ios">
-  <ion-buttons mode="md">
-    <ion-button
-      class="ion-no-padding ion-no-margin btn units-switch__tab"
-      mode="md"
-      [routerLink]="unit.href"
-      routerLinkActive="active"
-      *ngFor="let unit of units"
-    >
-      {{ unit.title }}
-    </ion-button>
+  <ion-buttons class="switcher" mode="md">
+    <div switcher__div *ngFor="let unit of units">
+      <ion-button slot="end"
+        class="ion-no-padding ion-no-margin btn units-switch__tab"
+        [class.active]="!isFacilityActive"
+        mode="md"
+        [disabled]="isUnits(unit)"
+        [routerLink]="unit.href"
+        *ngIf="isUnits(unit)"
+      >
+        {{ unit.title }}
+      </ion-button>
+        <ion-button
+          slot="start"
+          class="ion-no-padding ion-no-margin btn units-switch__tab"
+          [class.active]="isFacilityActive"
+          mode="md"
+          [routerLink]="unit.href"
+          *ngIf="!isUnits(unit)"
+        >
+          {{ unit.title }}
+        </ion-button>
+
+    </div>
   </ion-buttons>
 </ion-toolbar>

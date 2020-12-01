@@ -36,10 +36,8 @@ export class EnvironmentFacadeService extends ServiceStateFacade {
     image_url: 'https://3bulchr7pb.execute-api.us-east-1.amazonaws.com/dev/image/',
     // image_url :  'https://object-store.api.dev.cbord.com/image/', once DNS entry is entered
     housing_aws_url: 'https://z6u8er70s9.execute-api.us-east-1.amazonaws.com/dev',
-    partner_services_url: 'https://api.partnerpayments.dev.cbord.com',
-    //'https://ft45xg91ch.execute-api.us-east-1.amazonaws.com/dev';
-    //'https://3xn8m5q402.execute-api.us-east-1.amazonaws.com/devUnitTest'
-    //' //'https://api.payments.demo.cbord.com',
+    partner_services_url: 'https://ft45xg91ch.execute-api.us-east-1.amazonaws.com/dev'
+    //'https://ft45xg91ch.execute-api.us-east-1.amazonaws.com/dev' //'https://api.payments.demo.cbord.com',
   };
 
   private readonly feature1: EnvironmentInfo = {
@@ -89,7 +87,7 @@ export class EnvironmentFacadeService extends ServiceStateFacade {
     site_url: 'https://get.cbord.com',
     secmsg_api: 'https://secmsg.api.cbord.com',
     image_url: 'https://object-store.api.cbord.com/image/',
-    housing_aws_url: 'https://housing.api.cbord.com',
+    housing_aws_url: 'https://api.housing.cbord.com',
     partner_services_url: 'https://api.partnerpayments.cbord.com',
   };
 
@@ -156,7 +154,9 @@ export class EnvironmentFacadeService extends ServiceStateFacade {
   getSecureMessagingAPIURL(): string {
     return this.currentEnvironment.secmsg_api;
   }
-
+  public getHousingAPIURL(): string {
+    return this.currentEnvironment.housing_aws_url;
+  }
   getImageURL(): string {
     return this.currentEnvironment.image_url;
   }

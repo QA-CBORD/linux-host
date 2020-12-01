@@ -17,6 +17,7 @@ export class StorageStateService extends ExtendableStateManager<WebStorageStateE
   );
   protected readonly _isUpdating$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(!!this.activeUpdaters);
   private readonly storageKey: string = 'cbord_gcs';
+  private readonly permanents_key = 'permanent_keys';
   private readonly storage = Storage;
   private isStateInitialized: boolean = false;
 
@@ -44,34 +45,38 @@ export class StorageStateService extends ExtendableStateManager<WebStorageStateE
 
   updateStateEntity(key: string, value: any, entityConfig: EntityConfig = {}) {
     this.isKeyExistInState(key)
-      ? this.updateStateByKey(key, value, entityConfig.ttl)
-      : this.registerStateEntity(key, value, entityConfig.ttl);
+      ? this.updateStateByKey(key, value, entityConfig.ttl, entityConfig.keepOnLogout)
+      : this.registerStateEntity(key, value, entityConfig.ttl, entityConfig.keepOnLogout);
     if (entityConfig.highPriorityKey) {
       this.setStateToStorage();
     }
   }
 
-  registerStateEntity(key: string, value = null, timeToLive = 0) {
-    const storageEntity = { value, lastModified: Date.now(), timeToLive };
+  registerStateEntity(key: string, value = null, timeToLive = 0, permanent?: boolean) {
+    const storageEntity = { value, lastModified: Date.now(), timeToLive, permanent };
     this.state = { ...this.state, [key]: this.deepObjectCopy(storageEntity) };
     this.dispatchStateChanges();
   }
 
-  updateStateByKey(key: string, value: any, timeToLive?: number) {
+  updateStateByKey(key: string, value: any, timeToLive?: number, permanent?: boolean) {
     const entity = this.state[key];
     const ttl: number = timeToLive !== undefined ? timeToLive : 'timeToLive' in entity ? entity.timeToLive : 0;
     const storageEntity = {
       value,
       lastModified: Date.now(),
       timeToLive: ttl,
+      permanent: permanent,
     };
     this.state = { ...this.state, [key]: this.deepObjectCopy(storageEntity) };
     this.dispatchStateChanges();
   }
 
-  async deleteStateEntityByKey(key: string) {
-    if(!this.isKeyExistInState(key)) return;
+  async deleteStateEntityByKey(key: string, clearPermanent?: boolean) {
+    if (!this.isKeyExistInState(key)) return;
     delete this.state[key];
+    if (clearPermanent) {
+      this.setStateToStorage();
+    }
     this.dispatchStateChanges();
   }
 
@@ -108,8 +113,16 @@ export class StorageStateService extends ExtendableStateManager<WebStorageStateE
     this._state$.next({ ...this.state });
   }
 
-  clearStorage(): Promise<void> {
-    return this.storage.clear();
+  async clearStorage(): Promise<void> {
+    const state = await this.getStateFromLocalStorage();
+    const tempData: Array<{ key: string; data: StorageEntity }> = [];
+    Object.entries(state).forEach(([key, value]) =>
+      value.permanent ? tempData.push({ key: key, data: value }) : void 0
+    );
+    await this.storage.clear();
+    tempData.forEach(({ key, data }) =>
+      this.updateStateEntity(key, data.value, { highPriorityKey: true, ttl: data.timeToLive, keepOnLogout: true })
+    );
   }
 
   clearState() {
@@ -166,4 +179,5 @@ export interface WebStorageStateEntity {
 interface EntityConfig {
   ttl?: number;
   highPriorityKey?: boolean;
+  keepOnLogout?: boolean;
 }

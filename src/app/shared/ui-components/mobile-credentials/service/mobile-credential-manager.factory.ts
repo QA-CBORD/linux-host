@@ -34,7 +34,6 @@ export class MobileCredentialManagerFactory {
       .activePasses$()
       .pipe(
         map((mobileCredential: MobileCredential) => {
-          console.log('mCredential: ', mobileCredential)
           if (mobileCredential.providedBy(CredentialProviders.HID)) {
             credentialManager = this.createHidCredentialManagerFor(<HIDCredential>mobileCredential);
           } else if (mobileCredential.providedBy(CredentialProviders.GOOGLE)) {

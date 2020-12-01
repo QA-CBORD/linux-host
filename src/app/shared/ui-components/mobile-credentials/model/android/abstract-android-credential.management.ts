@@ -1,16 +1,20 @@
+import { LoadingService } from '@core/service/loading/loading.service';
 import { Observable, of } from 'rxjs';
+import { catchError, finalize, first } from 'rxjs/operators';
+import { AndroidCredentialDataService } from '../shared/android-credential-data.service';
 import { MobileCredential } from '../shared/mobile-credential';
 import { CredentialStateChangeListener, MobileCredentialManager } from '../shared/mobile-credential-manager';
 import { AndroidCredential } from './android-credential.model';
 
 export abstract class AbstractAndroidCredentialManager implements MobileCredentialManager {
+  protected customLoadingOptions = { message: 'Processing ... Please wait', duration: 150000 };
   protected mCredential: AndroidCredential<any>;
-
   protected credentialStateChangeListener: CredentialStateChangeListener;
 
-  constructor() {}
-
-
+  constructor(
+    protected readonly loadingService: LoadingService,
+    protected readonly credentialSrvc: AndroidCredentialDataService
+  ) {}
 
   async onWillLogout(): Promise<void> {}
 
@@ -28,7 +32,39 @@ export abstract class AbstractAndroidCredentialManager implements MobileCredenti
     return of(text).toPromise();
   }
 
-  abstract onUiIconClicked(): void;
+  protected showLoading(): void {
+    if (this.loadingService.notLoading()) {
+      this.loadingService.showSpinner(this.customLoadingOptions);
+    }
+  }
+
+  protected async checkCredentialAvailability(showLoading: boolean = true): Promise<boolean> {
+    const shouldRunInBackground = !showLoading;
+    return await this.fetchFromServer$(shouldRunInBackground).then(credential =>
+      credential ? credential.isAvailable() : false
+    );
+  }
+
+  protected async fetchFromServer$(runInBackground: boolean, nullOnErr?: boolean): Promise<AndroidCredential<any>> {
+    const shouldShowLoadingIndicator = !runInBackground;
+    if (shouldShowLoadingIndicator) {
+      this.showLoading();
+    }
+    return await this.credentialSrvc
+      .activePasses$()
+      .pipe(
+        first(),
+        catchError(() => (nullOnErr ? of(null) : of(this.mCredential))),
+        finalize(() => {
+          if (shouldShowLoadingIndicator) {
+            this.loadingService.closeSpinner();
+          }
+        })
+      )
+      .toPromise();
+  }
+
+  onUiIconClicked(): void {}
 
   getCredential(): MobileCredential {
     return this.mCredential;

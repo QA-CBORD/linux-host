@@ -5,7 +5,7 @@
       <div *ngFor="let attribute of patron.attributes" class="roommate__core-values">
         <ion-item lines="none">
           <ion-label class="information__label" position="floating">
-            ATTRIBUTE NAME
+            {{attribute.name}}
           </ion-label>
           <ion-text class="information__value ion-text-center">
             <p>{{attribute.value}}</p>

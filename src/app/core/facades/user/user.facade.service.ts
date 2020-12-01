@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ServiceStateFacade } from '@core/classes/service-state-facade';
-import { Observable, of, from, iif, zip, forkJoin } from 'rxjs';
+import { Observable, of, from, iif, zip } from 'rxjs';
 import { UserApiService } from '@core/service/user-api/user-api.service';
 import { UserInfo } from '@core/model/user/user-info.model';
 import { UserPhotoInfo, UserPhotoList, UserNotificationInfo } from '@core/model/user';
@@ -12,7 +12,7 @@ import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { Settings, User } from 'src/app/app.global';
 import { Plugins, Capacitor, PushNotificationToken, PushNotification } from '@capacitor/core';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
-import { ApplePay } from '@core/model/add-funds/applepay-response.model';
+import { UserSettingsStateService } from '@core/states/user-settings/user-settings-state.service';
 const { PushNotifications, LocalNotifications, Device } = Plugins;
 
 @Injectable({
@@ -24,14 +24,13 @@ export class UserFacadeService extends ServiceStateFacade {
   private userKey = 'get_user';
   private userAddressKey = 'get_user_address';
   private fcmTokenKey = 'fcm_token';
-  public static APPLE_WALLET_ENABLED = 'appleWalletEnabled';
-  public static ANDROID_CREDENTAILS_ENABLED = 'androidMobileCredEnabled';
 
   constructor(
     private readonly userApiService: UserApiService,
     private readonly storageStateService: StorageStateService,
     private readonly nativeProvider: NativeProvider,
-    private readonly settingsFacadeService: SettingsFacadeService
+    private readonly settingsFacadeService: SettingsFacadeService,
+    private readonly userSettingStateService:  UserSettingsStateService
   ) {
     super();
   }
@@ -142,6 +141,15 @@ export class UserFacadeService extends ServiceStateFacade {
       : of(false);
   }
 
+  isAppleWalletEnabled$(): Observable<boolean> {
+    return this.nativeProvider.isIos()
+      ? this.settingsFacadeService.getSetting(Settings.Setting.APPLE_WALLET_ENABLED).pipe(
+          map(({ value }) => Boolean(Number(value))),
+          take(1)
+        )
+      : of(false);
+  }
+
   private getPhotoIdByStatus(photoList: UserPhotoInfo[], status: number = 1): UserPhotoInfo | undefined {
     return photoList.find((photo: UserPhotoInfo) => photo.status === status);
   }
@@ -209,9 +217,8 @@ export class UserFacadeService extends ServiceStateFacade {
             userInfo.id,
             this.getPushNotificationInfo(userInfo, fcmToken)
           );
-        } else {
-          return of(false);
         }
+        return of(false);
       }),
       take(1),
       catchError(() => of(false)),
@@ -261,9 +268,10 @@ export class UserFacadeService extends ServiceStateFacade {
     return this.userApiService.reportCard$(isReportAsLost).pipe(take(1));
   }
 
-  private clearData() {
+  private async clearData(): Promise<void> {
     this.userPhoto = null;
-    this.storageStateService.clearStorage();
     this.storageStateService.clearState();
+    this.storageStateService.clearStorage();
+    this.userSettingStateService.clearState();
   }
 }

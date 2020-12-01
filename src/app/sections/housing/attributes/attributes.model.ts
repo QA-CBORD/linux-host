@@ -32,7 +32,24 @@ export class Attribute implements AttributeOptions {
 }
 
 export class OccupantAttribute extends Attribute {
-  Name: string = 'Some Attribute'
+  name: string = 'Some Attribute'
+
+  constructor(options: any) {
+    super(options);
+
+    if(options == null) {
+      options = {};
+    }
+    this.name = options.name;
+  }
 }
 
-
+export enum DataType {
+  Integer,
+  String,
+  Numeric,
+  Date,
+  YesNo,
+  Time,
+  Blob
+}

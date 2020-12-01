@@ -21,6 +21,8 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { StDateTimePickerComponent } from '../st-date-time-picker/st-date-time-picker.component';
 import { ToastService } from '@core/service/toast/toast.service';
+import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
+import { AddressHeaderFormatPipe } from '@shared/pipes/address-header-format-pipe';
 
 @Component({
   selector: 'st-order-options.action-sheet',
@@ -62,7 +64,9 @@ export class OrderOptionsActionSheetComponent implements OnInit {
     private readonly cartService: CartService,
     private readonly orderingService: OrderingService,
     private readonly userFacadeService: UserFacadeService,
-    private readonly globalNav: GlobalNavService
+    private readonly globalNav: GlobalNavService,
+    private readonly a11yService: AccessibilityService,
+    private readonly addressHeaderFormatPipe: AddressHeaderFormatPipe
   ) {
   }
 
@@ -302,6 +306,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
       if (data) {
         this.orderOptionsData = { ...this.orderOptionsData, address: data };
         this.cdRef.detectChanges();
+        this.a11yService.readAloud(this.addressHeaderFormatPipe.transform(this.orderOptionsData.address))
       }
     });
     await modal.present();

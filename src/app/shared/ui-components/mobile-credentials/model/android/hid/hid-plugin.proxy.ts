@@ -1,5 +1,6 @@
 import { Plugins } from '@capacitor/core';
 import { Subject } from 'rxjs';
+import { EndpointStatuses } from '../../shared/credential-state';
 const { HIDPlugin } = Plugins;
 
 interface HIDSdkTransactionResponse {
@@ -47,11 +48,20 @@ class TaskExecutionController {
   }
 }
 
-export enum EndpointStatuses {
-  SETUP_ACTIVE = 1,
-  SETUP_INACTIVE = 0,
-  NOT_SETUP = -1,
-  LOCATION_PERMISSION_REQUIRED = 2,
+
+export enum HID_SDK_ERR {
+  INVALID_INVITATION_CODE = 'INVALID_INVITATION_CODE',
+  DEVICE_SETUP_FAILED = 'DEVICE_SETUP_FAILED',
+  SDK_INCOMPATIBLE = 'SDK_INCOMPATIBLE',
+  DEVICE_NOT_ELIGIBLE = 'DEVICE_NOT_ELIGIBLE',
+  ENDPOINT_NOT_SETUP = 'ENDPOINT_NOT_SETUP',
+  INTERNAL_ERROR = 'INTERNAL_ERROR',
+  SERVER_UNREACHABLE = 'SERVER_UNREACHABLE',
+  SDK_BUSY = 'SDK_BUSY',
+  KEY_ALREADY_INSTALLED = 'KEY_ALREADY_INSTALLED',
+  TRANSACTION_SUCCESS = 'success',
+  TRANSACTION_FAILED = 'failed',
+  LOCATION_PERMISSION_REQUIRED = 'LOCATION_PERMISSION_REQUIRED',
 }
 
 class TaskExecutor {
@@ -79,11 +89,6 @@ class TaskExecutor {
 }
 
 export class HIDPlugginProxy {
-  
-  static TRANSACTION_SUCCESS = 'success';
-  static TRANSACTION_FAILED = 'failed';
-  static LOCATION_PERMISSION_REQUIRED = 'LOCATION_PERMISSION_REQUIRED';
-  static KEY_ALREADY_INSTALLED = 'KEY_ALREADY_INSTALLED';
   private static instance: HIDPlugginProxy;
   taskExecutionObs$: Subject<EndpointStatuses> = new Subject<EndpointStatuses>();
   private taskExecutor: TaskExecutor;
@@ -98,26 +103,30 @@ export class HIDPlugginProxy {
 
   async initializeSdk(): Promise<boolean> {
     const initializationStatus = await this.executeCall<string>(HIDPlugin.initializeSdk);
-    return initializationStatus == HIDPlugginProxy.TRANSACTION_SUCCESS || Promise.reject(initializationStatus);
+    return initializationStatus == HID_SDK_ERR.TRANSACTION_SUCCESS || Promise.reject(initializationStatus);
   }
 
   async endpointStatus(): Promise<EndpointStatuses> {
     if (await this.isEndpointSetup$()) {
       if (await this.isEndpointActive()) {
-        return EndpointStatuses.SETUP_ACTIVE;
+        return EndpointStatuses.PROVISIONED_ACTIVE;
       } else {
-        return EndpointStatuses.SETUP_INACTIVE;
+        return EndpointStatuses.PROVISIONED_INACTIVE;
       }
     } else {
       return EndpointStatuses.NOT_SETUP;
     }
   }
 
-  async setupEndpoint(invitationCode: string): Promise<string> {
-    return await this.executeCall(HIDPlugin.setupEndpoint, { invitationCode });
+  async setupEndpoint(params): Promise<boolean> {
+    let transactionResult = await this.executeCall<HID_SDK_ERR>(HIDPlugin.setupEndpoint, { ...params });
+    if (transactionResult == HID_SDK_ERR.TRANSACTION_SUCCESS) {
+      return true;
+    }
+    throw new Error(transactionResult);
   }
 
-  async deleteEndpoint(): Promise<string> {
+  async deleteEndpoint(): Promise<HID_SDK_ERR> {
     return await this.executeCall(HIDPlugin.deleteEndpoint);
   }
 
@@ -143,7 +152,7 @@ export class HIDPlugginProxy {
   }
 
   async refreshEndpoint(): Promise<boolean> {
-    return (await this.executeCall(HIDPlugin.refreshEndpoint)) == HIDPlugginProxy.TRANSACTION_SUCCESS;
+    return (await this.executeCall(HIDPlugin.refreshEndpoint)) == HID_SDK_ERR.TRANSACTION_SUCCESS;
   }
 
   private async startScanning(controller: TaskExecutionController): Promise<void> {
@@ -156,26 +165,26 @@ export class HIDPlugginProxy {
 
     let endpointRefreshSuccess = async (): Promise<boolean> => {
       let endpointRefreshResult = await executeCall(HIDPlugin.refreshEndpoint);
-      return endpointRefreshResult == HIDPlugginProxy.TRANSACTION_SUCCESS;
+      return endpointRefreshResult == HID_SDK_ERR.TRANSACTION_SUCCESS;
     };
     let isEndpointActiveNow = async (): Promise<boolean> => {
       return await executeCall(HIDPlugin.isEndpointActive);
     };
     let startScanningSuccess = async (): Promise<boolean> => {
       let startScanTransactionResult = await executeCall(HIDPlugin.startScanning);
-      locationPermissionRequired = startScanTransactionResult == HIDPlugginProxy.LOCATION_PERMISSION_REQUIRED;
-      return startScanTransactionResult == HIDPlugginProxy.TRANSACTION_SUCCESS;
+      locationPermissionRequired = startScanTransactionResult == HID_SDK_ERR.LOCATION_PERMISSION_REQUIRED;
+      return startScanTransactionResult == HID_SDK_ERR.TRANSACTION_SUCCESS;
     };
     if ((await endpointRefreshSuccess()) && !controller.maxExecutionReached()) {
       if (await isEndpointActiveNow()) {
         if (await startScanningSuccess()) {
-          controller.stopTaskExecution(EndpointStatuses.SETUP_ACTIVE); // mobile credential is in a "fine state", whoohoo!!!
+          controller.stopTaskExecution(EndpointStatuses.PROVISIONED_ACTIVE); // mobile credential is in a "fine state", whoohoo!!!
         } else if (locationPermissionRequired && controller.remainingExecCount == 1) {
           controller.stopTaskExecution(EndpointStatuses.LOCATION_PERMISSION_REQUIRED);
         }
       }
     } else if (controller.maxExecutionReached()) {
-      controller.stopTaskExecution(EndpointStatuses.SETUP_INACTIVE);
+      controller.stopTaskExecution(EndpointStatuses.PROVISIONED_INACTIVE);
     } else {
       controller.stopTaskExecution(EndpointStatuses.NOT_SETUP);
     }

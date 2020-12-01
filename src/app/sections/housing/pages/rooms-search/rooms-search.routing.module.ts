@@ -19,7 +19,7 @@ const routes: Routes = [
         component: UnitsPage,
       },
       {
-        path: 'units/',
+        path: 'units',
         component: UnitsPage,
       }
     ],

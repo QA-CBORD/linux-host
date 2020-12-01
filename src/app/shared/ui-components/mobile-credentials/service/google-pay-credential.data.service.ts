@@ -18,7 +18,7 @@ const resourceUrls = {
 };
 
 const extraHeaders = {
-  'x-api-key': 'uIBXQVw9ATQlkn1t0hk91xUvulJo9xS5PjRsU6lh',
+  'x-api-key': 'XF0B9a8eHJ6mTjpDUNlPO1Q6dJ30ZvbR4FYfuRM9', // 'uIBXQVw9ATQlkn1t0hk91xUvulJo9xS5PjRsU6lh',
 };
 
 @Injectable()

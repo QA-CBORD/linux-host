@@ -34,6 +34,7 @@ export class SessionFacadeService {
   /// manages app to background status for plugins (camera, etc) that briefly leave the app and return
   private navigateToNativePlugin: boolean = false;
   private appStatus: AppStatus = AppStatus.FOREGROUND;
+  navigatedFromGpay: boolean = false;
   onWillLogoutSubject = new Subject<void>();
   constructor(
     private readonly platform: Platform,
@@ -81,6 +82,10 @@ export class SessionFacadeService {
 
     if (this.navigatedToPlugin) {
       this.navigateToNativePlugin = false;
+      return;
+    }
+
+    if (this.navigatedFromGpay) {
       return;
     }
 
@@ -241,21 +246,15 @@ export class SessionFacadeService {
   }
 
   async logoutUser(navigateToEntry: boolean = true) {
-    this.onWillLogoutSubject.next();
     if (navigateToEntry) {
       await this.navCtrl.navigateRoot([ROLES.guest, GUEST_ROUTES.entry]);
-      await this.resetAll();
-    } else {
-      this.resetAll();
     }
+    this.resetAll();
   }
 
   private async resetAll(): Promise<void> {
-
     await this.userFacadeService.logoutAndRemoveUserNotification().toPromise();
     await this.identityFacadeService.logoutUser();
-    await this.storageStateService.clearStorage();
-    this.storageStateService.clearState();
     this.merchantFacadeService.clearState();
     this.settingsFacadeService.cleanCache();
   }
