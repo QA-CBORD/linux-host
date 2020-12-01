@@ -47,6 +47,9 @@ export class RoomsStateService implements StateService<number, Facility[]> {
       this._occupantDictionary.set(facility.facilityId, occupantDetails);
     });
   }
+  clearOccupantDetails(): void {
+    this._occupantDictionary.clear();
+  }
   getFacilities$(): Observable<Facility[]> {
     return this._activeFacilities$.asObservable();
   }
