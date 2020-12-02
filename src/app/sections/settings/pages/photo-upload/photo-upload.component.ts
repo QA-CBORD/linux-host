@@ -295,12 +295,11 @@ export class PhotoUploadComponent implements OnInit {
       .pipe(take(1))
       .subscribe(
         response => {
-          console.log('Cropped image: ', response.dataUrl);
           this.photoCropModalService.show(response.dataUrl)
-          .then(result => {
-            console.log('Cropped image i: ', result);
-            // this.sessionFacadeService.navigatedToPlugin = true;
-            // this.photoUploadService.onNewPhoto(photoType, result);
+          .then(dataUrl => {
+            const photoBase64 = dataUrl.split(',')[1];
+            this.sessionFacadeService.navigatedToPlugin = true;
+            this.photoUploadService.onNewPhoto(photoType, photoBase64);
           })
           .catch(error => {
             console.log(error);
