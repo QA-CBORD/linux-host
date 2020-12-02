@@ -8,8 +8,7 @@ import { DeleteModalComponent } from '@sections/settings/pages/delete-modal/dele
 import { PhotoUploadResolver } from '@sections/settings/resolvers/photo-upload.resolver';
 import { PhotoUploadService } from '@sections/settings/pages/services/photo-upload.service';
 
-
-const imports = [CommonModule, StHeaderModule, IonicModule, PhotoUploadRoutingModule];
+const imports = [CommonModule, StHeaderModule, IonicModule, PhotoUploadRoutingModule ];
 const declarations = [PhotoUploadComponent, DeleteModalComponent];
 const entryComponents = [DeleteModalComponent];
 const providers = [PhotoUploadResolver, PhotoUploadService];
@@ -19,4 +18,5 @@ const providers = [PhotoUploadResolver, PhotoUploadService];
   providers,
   entryComponents
 })
-export class PhotoUploadModule {}
+export class PhotoUploadModule {
+}
