@@ -30,7 +30,6 @@ export class RoomSelectionListComponent implements OnInit, AfterViewInit {
 
   goToRoomSelection(key: any): void {
     const roomSelection: RoomSelect = this.roomSelects.find(x => x.key === key);
-    console.log(roomSelection);
     if(hasDatePassed(roomSelection.accessTime) && !hasDatePassed(roomSelection.accessEnd)) {
     this._router.navigate(['patron/housing/rooms-search', key]).then(() => {
       this.roomsStateService.setActiveRoomSelect(key);
