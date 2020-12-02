@@ -95,7 +95,7 @@ export class RoomsService {
 
   private _isAttributeAllowedForCategory(attribute: FacilityAttribute):boolean {
     return hasValue(attribute.name)?
-      (attribute.name !== "Full Name" && attribute.name !== "Assignment_Level"): false;
+      (attribute.name !== "Full Name"): false;
   }
 
   private _attributeExists(encounteredOptions: Category[], attribute: FacilityAttribute | OccupantAttribute): boolean {
