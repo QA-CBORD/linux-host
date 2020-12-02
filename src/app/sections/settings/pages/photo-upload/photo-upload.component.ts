@@ -17,6 +17,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { ActionSheetController, Platform } from '@ionic/angular';
+import { PhotoCropModalService } from '../services/photo-crop.service';
 
 const { Camera } = Plugins;
 
@@ -73,7 +74,8 @@ export class PhotoUploadComponent implements OnInit {
     private readonly photoUploadService: PhotoUploadService,
     private readonly loadingService: LoadingService,
     private readonly actionSheetCtrl: ActionSheetController,
-    private readonly cd: ChangeDetectorRef
+    private readonly cd: ChangeDetectorRef,
+    private readonly photoCropModalService: PhotoCropModalService
   ) {}
 
   ngOnInit() {
@@ -293,8 +295,16 @@ export class PhotoUploadComponent implements OnInit {
       .pipe(take(1))
       .subscribe(
         response => {
-          this.sessionFacadeService.navigatedToPlugin = true;
-          this.photoUploadService.onNewPhoto(photoType, response);
+          console.log('Cropped image: ', response.dataUrl);
+          this.photoCropModalService.show(response.dataUrl)
+          .then(result => {
+            console.log('Cropped image i: ', result);
+            // this.sessionFacadeService.navigatedToPlugin = true;
+            // this.photoUploadService.onNewPhoto(photoType, result);
+          })
+          .catch(error => {
+            console.log(error);
+          });
         },
         error => {
           this.presentToast('There was an issue with the picture - please try again');
@@ -400,7 +410,7 @@ export class PhotoUploadComponent implements OnInit {
         width: uploadSettings.saveWidth ? uploadSettings.saveWidth : null,
         height: uploadSettings.saveHeight ? uploadSettings.saveHeight : null,
         direction: photoType === PhotoType.PROFILE ? CameraDirection.Front : CameraDirection.Rear,
-        resultType: CameraResultType.Base64,
+        resultType: CameraResultType.DataUrl,
         source: cameraSource,
         saveToGallery: false,
       })

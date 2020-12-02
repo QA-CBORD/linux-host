@@ -1,21 +1,16 @@
-import {ChangeDetectionStrategy, Component, Input, NgModule, OnInit} from '@angular/core';
-import {IonicModule, ModalController} from '@ionic/angular';
-import {ImageCroppedEvent, ImageCropperModule} from 'ngx-image-cropper';
-import {CommonModule} from '@angular/common';
+import { Component, Input, OnInit} from '@angular/core';
+import { ModalController } from '@ionic/angular';
+import { ImageCroppedEvent } from 'ngx-image-cropper';
 
 @Component({
   selector: 'app-image-crop-modal',
   templateUrl: './photo-crop-modal.component.html',
-  styleUrls: ['./photo-crop-modal.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrls: ['./photo-crop-modal.component.scss']
 })
 export class PhotoCropModalComponent implements OnInit {
 
   private croppedImageBase64 = '';
-  /**
-   * Image to be cropped as a base64 string.
-   * Should be passed in from the component calling this modal.
-   */
+
   @Input() imageBase64 = '';
 
   constructor(
@@ -33,16 +28,4 @@ export class PhotoCropModalComponent implements OnInit {
   dismissModal(croppedImageBase64?: string) {
     this.modalController.dismiss({croppedImageBase64});
   }
-
-}
-
-@NgModule({
-  imports: [
-    CommonModule,
-    IonicModule,
-    ImageCropperModule,
-  ],
-  declarations: [PhotoCropModalComponent]
-})
-class ImageCropModalModule {
 }

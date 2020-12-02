@@ -1,32 +1,26 @@
-import {Injectable} from '@angular/core';
-import {ModalController} from '@ionic/angular';
+import { Injectable } from '@angular/core';
+import { ModalController } from '@ionic/angular';
+import { PhotoCropModalComponent } from '../photo-crop-modal/photo-crop-modal.component';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class PhotoCropModalService {
-
-  constructor(
-      public modalController: ModalController,
-  ) { }
+  constructor(public modalController: ModalController) {}
 
   async show(imageBase64: string): Promise<string | null> {
-    // Lazy load the image crop modal (an Angular Ivy feature)
-    const { PhotoCropModalComponent } = await import(`../photo-crop-modal/photo-crop-modal.component`);
-
+    console.log('It entered');
     const modal: HTMLIonModalElement = await this.modalController.create({
       component: PhotoCropModalComponent,
       componentProps: {
-        imageBase64
+        imageBase64,
       },
     });
 
     await modal.present();
-
-    const result = await modal.onWillDismiss();
-
-    if (result.data && result.data.croppedImageBase64) {
-      return result.data.croppedImageBase64;
+    console.log('It presented');
+    const croppedImaged = await modal.onWillDismiss();
+    console.log('It was dismissed');
+    if (croppedImaged.data && croppedImaged.data.croppedImageBase64) {
+      return croppedImaged.data.croppedImageBase64;
     } else {
       return null;
     }
