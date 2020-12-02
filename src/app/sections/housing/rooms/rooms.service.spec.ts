@@ -28,7 +28,6 @@ describe('RoomsService', () => {
     const EXPECTED_CATEGORIES: Category[] = [
       new Category("Buildings",-777),
       new Category("Facility Max Legal Occupancy",2317),
-      new Category("Facility Assignment_Level",2312),
       new Category("Facility Smoking",2302),
       new Category("Facility Assignment_Limit",2308),
       new Category("Facility Gender",2306 ),
@@ -43,7 +42,6 @@ it('should  get category options', inject([RoomsService, RoomsStateService, Hous
     const EXPECTED_CATEGORY_OPTIONS = {
       Buildings: ['Able'],
       "Facility Max Legal Occupancy": ["2", "0", "3", "6"],
-      "Facility Assignment_Level": ["This", "Below"],
       "Facility Smoking": ['No'],
       "Facility Assignment_Limit": ["1","2","4"],
       "Facility Gender": ["Female"],
