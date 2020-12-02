@@ -2,6 +2,8 @@ import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, O
 import { RoomSelect } from '@sections/housing/rooms/rooms.model';
 import { RoomsStateService } from '@sections/housing/rooms/rooms-state.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { hasDatePassed } from '@sections/housing/utils/has-date-passed';
+import { ToastService } from '@core/service/toast/toast.service';
 
 @Component({
   selector: 'st-room-selection-list',
@@ -22,12 +24,20 @@ export class RoomSelectionListComponent implements OnInit, AfterViewInit {
 
   constructor(public roomsStateService: RoomsStateService,
               private _router: Router,
-              private _activeRoute: ActivatedRoute) {
+              private _activeRoute: ActivatedRoute,
+              private _toastService: ToastService) {
   }
 
   goToRoomSelection(key: any): void {
+    const roomSelection: RoomSelect = this.roomSelects.find(x => x.key === key);
+    if(hasDatePassed(roomSelection.accessTime) && !hasDatePassed(roomSelection.accessEnd)) {
     this._router.navigate(['patron/housing/rooms-search', key]).then(() => {
       this.roomsStateService.setActiveRoomSelect(key);
     });
+    }
+    else {
+      this._toastService.showToast({message: 'Your access time has not been reached yet.'});
+    }
+
   }
 }
