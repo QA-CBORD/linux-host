@@ -12,6 +12,8 @@ export class PhotoCropModalComponent {
   croppedImageBase64 = '';
   saveHeight = 0;
   saveWidth = 0;
+  defaultHeight = 176;
+  defaultWidth = 129;
 
   @Input() imageBase64 = '';
 
@@ -25,8 +27,8 @@ export class PhotoCropModalComponent {
   ionViewWillEnter() {
     this.loadingService.showSpinner();
     const uploadSettings = this.photoUploadService.photoUploadSettings;
-    this.saveHeight = uploadSettings.saveHeight ? uploadSettings.saveHeight : 176;
-    this.saveWidth = uploadSettings.saveWidth ? uploadSettings.saveWidth : 129;
+    this.saveHeight = uploadSettings.saveHeight ? uploadSettings.saveHeight : this.defaultHeight;
+    this.saveWidth = uploadSettings.saveWidth ? uploadSettings.saveWidth : this.defaultWidth;
   }
 
   cropperIsReady() {
@@ -42,7 +44,6 @@ export class PhotoCropModalComponent {
   }
 
   async showModal(): Promise<void>  {
-    console.log("Show modal called");
     const modal = await this.popoverCtrl.create({
       component: PopoverCropComponent
     });
