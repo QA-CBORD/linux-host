@@ -2,6 +2,7 @@
     <div #container *ngFor="let room of roomSelects">
       <ion-item lines="none" class="roomSelect-list__item"  button (click)="goToRoomSelection(room.key)">
         <ion-text  class="roomSelect-list__item-name">{{room.name}}</ion-text>
+        <ion-text slot="end" class="roomSelect-list__item-time">{{room.accessTime | date: 'medium'}}</ion-text>
       </ion-item>
     </div>
   </ng-container>
