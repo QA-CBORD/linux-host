@@ -297,11 +297,11 @@ export class PhotoUploadComponent implements OnInit {
               this.photoUploadService.onNewPhoto(photoType, photoBase64);
             })
             .catch(error => {
-              console.log(error);
+              this.presentToast('There was an issue with the picture. Please, try again.');
             });
         },
         error => {
-          this.presentToast('There was an issue with the picture - please try again');
+          this.presentToast('There was an issue with the picture. Please, try again.');
         },
         () => {}
       );
