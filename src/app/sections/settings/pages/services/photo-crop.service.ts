@@ -7,7 +7,7 @@ export class PhotoCropModalService {
   constructor(public modalController: ModalController) {}
 
   async show(imageBase64: string): Promise<string | null> {
-    const modal: HTMLIonModalElement = await this.modalController.create({
+    const modal = await this.modalController.create({
       component: PhotoCropModalComponent,
       componentProps: {
         imageBase64,
