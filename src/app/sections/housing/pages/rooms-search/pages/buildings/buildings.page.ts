@@ -20,6 +20,7 @@ export class BuildingsPage {
   ngOnInit() {
     this.buildings = this._buildingMapper.map(this._facilityStateService.getParentFacilities())
     this._roomsService.clearFilter();
+    this._roomsService.clearFilterCategories();
     this._facilityStateService.clearOccupantDetails();
   }
 }

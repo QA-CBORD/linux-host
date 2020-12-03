@@ -12,7 +12,7 @@ import {
 } from '@sections/housing/search-filter/filter-sort/filter-sort.model';
 import { Facility, FacilityAttribute } from '@sections/housing/facilities/facilities.model';
 import { RoomsStateService } from '@sections/housing/rooms/rooms-state.service';
-import { isDefined } from '@sections/housing/utils';
+import { hasValue, isDefined } from '@sections/housing/utils';
 import { Response } from '@sections/housing/housing.model';
 import { OccupantAttribute } from '@sections/housing/attributes/attributes.model';
 
@@ -82,7 +82,7 @@ export class RoomsService {
     });
     childrenFacilities.forEach(facility => {
       facility.attributes.forEach(attrib => {
-        if (!this._attributeExists(encounteredOptions, attrib)) {
+        if (!this._attributeExists(encounteredOptions, attrib) && this._isAttributeAllowedForCategory(attrib)) {
           const newCategory = this._createFilterCategory(`Facility ${attrib.name}`,
             attrib.attributeConsumerKey);
           encounteredOptions.push(newCategory);
@@ -92,6 +92,12 @@ export class RoomsService {
     });
     return facilityOptions;
   }
+
+  private _isAttributeAllowedForCategory(attribute: FacilityAttribute):boolean {
+    return hasValue(attribute.name)?
+      (attribute.name !== "Full Name"): false;
+  }
+
   private _attributeExists(encounteredOptions: Category[], attribute: FacilityAttribute | OccupantAttribute): boolean {
     return !!encounteredOptions.find(x => x.attributeKey === attribute.attributeConsumerKey);
   }

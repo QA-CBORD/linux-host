@@ -57,7 +57,9 @@ describe('RoomsStateService', () => {
     const service:RoomsStateService = TestBed.get(RoomsStateService);
     const EXPECTED_ROOM_SELECT: RoomSelect = {
       key: 3,
-      name: 'Mocked RoomSelect 2'
+      name: 'Mocked RoomSelect 2',
+      accessTime: new Date('2025-12-17T03:24:00'),
+      accessEnd: new Date('2025-12-20T03:24:00')
     };
 
     service.setRoomSelects(generateRoomSelects());

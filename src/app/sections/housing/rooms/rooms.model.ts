@@ -3,11 +3,15 @@ import { isDefined } from '../utils';
 export interface RoomSelectOptions{
     key: number;
     name: string;
+    accessTime: Date;
+    accessEnd: Date;
 }
 
 export class RoomSelect implements RoomSelectOptions{
     key: number;
     name: string;
+    accessTime: Date;
+    accessEnd: Date;
 
     constructor(options: RoomSelectOptions){
         if (options == null || typeof options !== 'object') {
@@ -16,6 +20,8 @@ export class RoomSelect implements RoomSelectOptions{
 
         this.key = options.key;
         this.name = options.name;
+        this.accessTime = new Date(options.accessTime);
+        this.accessEnd = new Date(options.accessEnd);
     }
 }
 
