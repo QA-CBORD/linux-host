@@ -1,10 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
 
 import { RoomsStateService } from './rooms-state.service';
-import { Observable } from 'rxjs';
-import { RoomSelect } from '@sections/housing/rooms/rooms.model';
-import { map, tap } from 'rxjs/operators';
+
 
 
 @Component({
@@ -14,22 +11,11 @@ import { map, tap } from 'rxjs/operators';
   styleUrls: ['./rooms.component.scss'],
 })
 export class RoomsComponent implements OnInit {
-  selections: RoomSelect[];
-  hasLoaded$: Observable<boolean>;
+
   constructor(
-    public roomsStateService: RoomsStateService,
-    private _router: Router,
-    private _activeRoute: ActivatedRoute
+    public roomsStateService: RoomsStateService
   ) {}
 
   ngOnInit() {
-    this.hasLoaded$ = this.roomsStateService.getRoomSelects().pipe(
-      tap(data => {
-        this.selections = data;
-      }),
-      map(data => {
-        return true;
-      })
-    );
   }
 }

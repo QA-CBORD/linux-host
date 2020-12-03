@@ -19,6 +19,7 @@ export class RoomSelectionListComponent implements OnInit, AfterViewInit {
   }
  ngAfterViewInit() {
     //helps load ionList that doesnt load unless an event is fired
+   if(this.roomSelects.length > 0)
     this.divContainer.nativeElement.click();
  }
 

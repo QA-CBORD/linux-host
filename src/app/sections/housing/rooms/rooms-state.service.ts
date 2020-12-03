@@ -7,7 +7,7 @@ import { Unit } from '@sections/housing/unit/unit.model';
 import { FacilityOccupantDetails } from '@sections/housing/roommate/roomate.model';
 import { OccupantAttribute } from '@sections/housing/attributes/attributes.model';
 import { hasValue, isDefined } from '@sections/housing/utils';
-import { map } from 'rxjs/operators';
+import { map, startWith } from 'rxjs/operators';
 
 
 export interface StateService<K, V> {
@@ -20,7 +20,7 @@ export interface StateService<K, V> {
 export class RoomsStateService implements StateService<number, Facility[]> {
   entityDictionary: Map<number, Facility[]>;
   private _occupantDictionary: Map<number, FacilityOccupantDetails[]>;
-  private roomSelects: Observable<RoomSelect[]>;
+  private roomSelects: BehaviorSubject<RoomSelect[]> = new BehaviorSubject<RoomSelect[]>([]);
   private _currentlySelectedRoomSelect: RoomSelect;
   private _parentFacilities: Facility[];
   private _activeFilterFacilities: Facility[] = null;
@@ -29,8 +29,10 @@ export class RoomsStateService implements StateService<number, Facility[]> {
     this.entityDictionary = new Map<number, Facility[]>();
     this._occupantDictionary = new Map<number, FacilityOccupantDetails[]>();
   }
-  setRoomSelects(value: Observable<RoomSelect[]>) {
-    this.roomSelects = value;
+
+
+  setRoomSelects(value: RoomSelect[]) {
+    this.roomSelects.next(value);
   }
   setOccupantDetails(facilityOccupants: FacilityOccupantDetails[]): void {
     const occupantFacilities = this._findOccupantFacilities();
@@ -61,6 +63,8 @@ export class RoomsStateService implements StateService<number, Facility[]> {
       this._activeFacilities$.next(this.getParentFacilityChildren(parentKey));
     }
   }
+  readonly roomSelects$: Observable<RoomSelect[]> = this.roomSelects.asObservable();
+
 
   getOccupantDetails(facilityKey: number): FacilityOccupantDetails[] {
     return  this._occupantDictionary.get(facilityKey) || [];
