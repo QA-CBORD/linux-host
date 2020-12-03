@@ -5,7 +5,7 @@
         <ion-icon slot="icon-only" name="close"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title>Resize Image</ion-title>
+    <ion-title>Crop Photo</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -13,18 +13,16 @@
   <ion-row>
     <ion-col>
       <image-cropper
-      [imageBase64]="imageBase64"
-      [maintainAspectRatio]="true"
-      [aspectRatio]="4 / 3"
-      [resizeToWidth]="0"
-      [imageQuality]="50"
-      [cropperMinWidth] = "2500"
-      [cropperMinHeight] = "2500"
-      [cropperMaxHeight] = "2500"
-      [cropperMaxWidth] = "2500"
-      format="jpeg"
-      (cropperReady)="cropperIsReady()"
-      (imageCropped)="imageCropped($event)">
+        [imageBase64]="imageBase64"
+        [imageQuality]="100"
+        [onlyScaleDown]="true"
+        [aspectRatio]="saveWidth / saveHeight"
+        [resizeToWidth]="saveWidth"
+        [resizeToHeight]="saveHeight"
+        format="jpeg"
+        (cropperReady)="cropperIsReady()"
+        (imageCropped)="imageCropped($event)"
+      >
       </image-cropper>
     </ion-col>
   </ion-row>
@@ -36,9 +34,7 @@
 <ion-footer>
   <ion-toolbar>
     <ion-buttons slot="end">
-      <ion-button color="primary"
-                  [disabled]="!imageBase64"
-                  (click)="dismissModal(croppedImageBase64)">
+      <ion-button color="primary" [disabled]="!imageBase64" (click)="dismissModal(croppedImageBase64)">
         Continue
       </ion-button>
     </ion-buttons>

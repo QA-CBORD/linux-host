@@ -1,12 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import {
-  CameraDirection,
-  CameraPhoto,
-  CameraResultType,
-  CameraSource,
-  Plugins,
-} from '@capacitor/core';
+import { CameraDirection, CameraPhoto, CameraResultType, CameraSource, Plugins } from '@capacitor/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { PATRON_NAVIGATION } from '../../../../app.global';
 import { from, Observable, of, zip } from 'rxjs';
@@ -295,15 +289,16 @@ export class PhotoUploadComponent implements OnInit {
       .pipe(take(1))
       .subscribe(
         response => {
-          this.photoCropModalService.show(response.dataUrl)
-          .then(dataUrl => {
-            const photoBase64 = dataUrl.split(',')[1];
-            this.sessionFacadeService.navigatedToPlugin = true;
-            this.photoUploadService.onNewPhoto(photoType, photoBase64);
-          })
-          .catch(error => {
-            console.log(error);
-          });
+          this.photoCropModalService
+            .show(response.dataUrl)
+            .then(dataUrl => {
+              const photoBase64 = dataUrl.split(',')[1];
+              this.sessionFacadeService.navigatedToPlugin = true;
+              this.photoUploadService.onNewPhoto(photoType, photoBase64);
+            })
+            .catch(error => {
+              console.log(error);
+            });
         },
         error => {
           this.presentToast('There was an issue with the picture - please try again');
@@ -404,8 +399,9 @@ export class PhotoUploadComponent implements OnInit {
     this.sessionFacadeService.navigatedToPlugin = true;
     return from(
       Camera.getPhoto({
-        quality: 85, //Test
+        quality: 100, 
         correctOrientation: true,
+        preserveAspectRatio: true,
         width: uploadSettings.saveWidth ? uploadSettings.saveWidth : null,
         height: uploadSettings.saveHeight ? uploadSettings.saveHeight : null,
         direction: photoType === PhotoType.PROFILE ? CameraDirection.Front : CameraDirection.Rear,
@@ -444,5 +440,4 @@ export class PhotoUploadComponent implements OnInit {
   navigateBack() {
     this.router.navigate([PATRON_NAVIGATION.settings], { replaceUrl: true });
   }
-
 }
