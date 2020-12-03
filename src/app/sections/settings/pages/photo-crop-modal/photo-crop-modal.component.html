@@ -12,6 +12,9 @@
 <ion-content padding>
   <ion-row>
     <ion-col>
+      <ion-button color="primary" (click)="showModal()">
+        Instructions
+      </ion-button>
       <image-cropper
         [imageBase64]="imageBase64"
         [imageQuality]="100"
@@ -35,7 +38,7 @@
   <ion-toolbar>
     <ion-buttons slot="end">
       <ion-button color="primary" [disabled]="!imageBase64" (click)="dismissModal(croppedImageBase64)">
-        Continue
+        Crop
       </ion-button>
     </ion-buttons>
   </ion-toolbar>

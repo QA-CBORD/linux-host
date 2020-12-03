@@ -1,11 +1,10 @@
 import { Component, Input } from '@angular/core';
-import { ModalController } from '@ionic/angular';
-import { ImageCroppedEvent, Dimensions } from 'ngx-image-cropper';
+import { ModalController, PopoverController } from '@ionic/angular';
+import { ImageCroppedEvent} from 'ngx-image-cropper';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { PhotoUploadService } from '../services/photo-upload.service';
-
+import { PopoverCropComponent } from '../popover-photo-crop/popover-photo-crop.component';
 @Component({
-  selector: 'app-image-crop-modal',
   templateUrl: './photo-crop-modal.component.html',
   styleUrls: ['./photo-crop-modal.component.scss'],
 })
@@ -19,7 +18,8 @@ export class PhotoCropModalComponent {
   constructor(
     private modalController: ModalController,
     private loadingService: LoadingService,
-    private photoUploadService: PhotoUploadService
+    private photoUploadService: PhotoUploadService,
+    private readonly popoverCtrl: PopoverController
   ) {}
 
   ionViewWillEnter() {
@@ -39,5 +39,14 @@ export class PhotoCropModalComponent {
 
   dismissModal(croppedImageBase64?: string) {
     this.modalController.dismiss({ croppedImageBase64 });
+  }
+
+  async showModal(): Promise<void>  {
+    console.log("Show modal called");
+    const modal = await this.popoverCtrl.create({
+      component: PopoverCropComponent
+    });
+    modal.onDidDismiss();
+    await modal.present();
   }
 }
