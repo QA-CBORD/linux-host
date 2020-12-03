@@ -7,7 +7,6 @@ export class PhotoCropModalService {
   constructor(public modalController: ModalController) {}
 
   async show(imageBase64: string): Promise<string | null> {
-    console.log('It entered');
     const modal: HTMLIonModalElement = await this.modalController.create({
       component: PhotoCropModalComponent,
       componentProps: {
@@ -16,9 +15,8 @@ export class PhotoCropModalService {
     });
 
     await modal.present();
-    console.log('It presented');
+    
     const croppedImaged = await modal.onWillDismiss();
-    console.log('It was dismissed');
     if (croppedImaged.data && croppedImaged.data.croppedImageBase64) {
       return croppedImaged.data.croppedImageBase64;
     } else {
