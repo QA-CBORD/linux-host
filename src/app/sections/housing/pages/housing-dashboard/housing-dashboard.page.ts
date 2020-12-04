@@ -27,41 +27,25 @@ export class HousingDashboardPage implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this._initApplicationsSubscription();
-    this._initRoomSelectsSubscription();
+    this._initSubscription()
   }
 
   ngOnDestroy(): void {
     this._subscription.unsubscribe();
   }
 
-  private _initRoomSelectsSubscription(): void {
-    const roomSelectSubscription: Subscription = merge(
-      this._housingService.refreshDefinitions$,
-      this._termsService.termId$
-    )
-      .pipe(
-      switchMap((termId: number) => {
-        return this._housingService.getRoomSelects(termId);
-      })
-    ).subscribe({
-      next: (response: RoomSelectResponse) => this._handleSuccess(response),
-      error: () => this._loadingService.closeSpinner(),
-    });
-
-    this._subscription.add(roomSelectSubscription);
-  }
-
-  private _initApplicationsSubscription(): void {
-    const applicationsSubscription: Subscription = merge(
+  private _initSubscription(): void {
+    const dashboardSubscription: Subscription = merge(
       this._housingService.refreshDefinitions$,
       this._termsService.termId$
     )
       .pipe(
         switchMap((termId: number) => {
           this._loadingService.showSpinner();
-
-          return this._housingService.getDefinitions(termId);
+          return merge(
+            this._housingService.getDefinitions(termId),
+            this._housingService.getRoomSelects(termId)
+          )
         })
       )
       .subscribe({
@@ -69,7 +53,7 @@ export class HousingDashboardPage implements OnInit, OnDestroy {
         error: () => this._loadingService.closeSpinner(),
       });
 
-    this._subscription.add(applicationsSubscription);
+    this._subscription.add(dashboardSubscription);
   }
 
   private _handleSuccess(response: any): void {
