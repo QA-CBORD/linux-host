@@ -40,6 +40,9 @@
   --padding-end: 5px;
   --min-height: auto;
 
+  .roomSelect-list__item-time {
+  color: $color-dusty-gray;
+}
   &::before {
     background-color: $color-strong-blue;
     border-radius: 0 0 2px 2px;

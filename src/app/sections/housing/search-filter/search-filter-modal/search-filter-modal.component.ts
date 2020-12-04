@@ -69,8 +69,6 @@ export class SearchFilterModalComponent implements OnInit {
   private _handleFilters() {
     this.categories = this._roomsService.getFilterCategories();
     this.categoryOptions =  this._roomsService.getFilterOptions(this.categories);
-    console.log(this.categories);
-    console.log(this.categoryOptions)
     const builderOptions = {};
     for (let item in this.categoryOptions) {
       const optionsInfo = this._roomsService.getAttributeOptionsInfo(item, this.categoryOptions[item]);
@@ -78,7 +76,6 @@ export class SearchFilterModalComponent implements OnInit {
     }
     this._loadingService.closeSpinner();
     this.filtersForm = this._formBuilder.group(builderOptions);
-    console.log(this.filtersForm)
   }
   filter(data: any) {
       this._loadingService.showSpinner();

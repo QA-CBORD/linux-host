@@ -138,7 +138,6 @@ export class HousingService {
       facilityKeys: [facilityKey]
     }).pipe(
       map((response: Response) => {
-        console.log(response);
         const details = new OccupantDetailsResponse(response.data);
         return details.occupants;
       }),
@@ -153,7 +152,6 @@ export class HousingService {
       facilityKeys: facilityKeys
     }).pipe(
       map((response: Response) => {
-        console.log(response);
         const details = new OccupantDetailsResponse(response.data);
         return details.occupants;
       }),
@@ -172,7 +170,7 @@ export class HousingService {
   }
 
   _setRoomsState(roomSelects: RoomSelect[]): void {
-    this._roomsStateService.setRoomSelects(of(roomSelects));
+    this._roomsStateService.setRoomSelects(roomSelects);
   }
 
   /**
@@ -241,6 +239,8 @@ export class HousingService {
     this._applicationsStateService.setApplications(applications);
     this._contractsStateService.setContracts(contracts);
   }
+
+
 
   private _handleGetDefinitionsError(): Observable<DefinitionsResponse> {
     const applicationDefinitions: ApplicationDetails[] = [];

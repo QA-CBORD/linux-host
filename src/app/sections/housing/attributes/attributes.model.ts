@@ -44,4 +44,12 @@ export class OccupantAttribute extends Attribute {
   }
 }
 
-
+export enum DataType {
+  Integer,
+  String,
+  Numeric,
+  Date,
+  YesNo,
+  Time,
+  Blob
+}
