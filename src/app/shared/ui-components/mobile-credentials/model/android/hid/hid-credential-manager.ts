@@ -64,7 +64,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
   onUiIconClicked(): void {
     this.showLoading();
     const showCredentialUsageContentString = async () => {
-      const btnText = this.mCredential.isProvisioned() ? 'Uninstall' : 'OK';
+      const btnText = this.mCredential.isProvisioned() || this.mCredential.isProcessing() ? 'Uninstall' : 'OK';
       const componentProps = {
         usageInstructions: await this.credentialUsageContentString$(),
         title: 'Usage Instructions',
@@ -105,45 +105,56 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     }
   }
 
-  private async verifyCredentialAvailable4Install(): Promise<void> {
+  private async validateAndInstall(): Promise<void> {
     const credential = await this.fetchFromServer$(false, true);
     if (credential == null) {
       this.showInstallationErrorAlert();
       throw new Error('Failed to retrieve passes');
     }
-    const deviceEndpointActive = (await this.getDeviceEndpointState()).isProvisioned();
-    if (credential.isAvailable()) {
-      if (deviceEndpointActive) {
-        this.showCredentialAlreadyInstalledAlert(async () => this.showTermsAndConditions(true));
-      } else {
-        this.showTermsAndConditions();
-      }
-    } else if (credential.isProvisioned()) {
-      if (deviceEndpointActive) {
-        this.showCredentialAlreadyInstalledAlert(async () => {
-          this.showLoading();
-          setTimeout(() => {
-            this.showCredentialAlreadyProvisionedAlert(async () => {
-              const deleteSuccessfull = await this.handleRetriableOperation({
-                fn: this.deleteCredentialFromServer$,
-                showLoading: true,
-              });
-              if (deleteSuccessfull) {
-                this.handleRetriableOperation({ fn: this.deleteCredentialFromDevice$ });
-                if (await this.checkCredentialAvailability()) {
-                  this.showTermsAndConditions(true);
-                } else {
-                  this.showInstallationErrorAlert();
-                }
+    const deviceEndpointActive =
+      (await this.getDeviceEndpointState()).isProvisioned() ||
+      (await this.getLocalCachedEndpointState(true)).isProvisioned() ||
+      (await this.getLocalCachedEndpointState(true)).isProcessing();
+
+    if (deviceEndpointActive) {
+      this.showCredentialAlreadyInstalledAlert(async () => {
+        // user agrees to delete previous user's active Mobile ID.
+        const deletedSucceed = await this.handleRetriableOperation({
+          fn: this.deleteCredentialFromServer$,
+          retryCount: 6,
+          showLoading: true,
+          args: await this.credentialService.getEndpointStateFromLocalCache(true),
+        });
+
+        if (!deletedSucceed) {
+          this.showInstallationErrorAlert();
+          return;
+        }
+        this.handleRetriableOperation({ fn: this.deleteCredentialFromDevice$ });
+        if (credential.isAvailable()) {
+          this.showTermsAndConditions(true);
+        } else if (credential.isProvisioned()) {
+          this.showCredentialAlreadyProvisionedAlert(async () => {
+            const deleteSuccessfull = await this.handleRetriableOperation({
+              fn: this.deleteCredentialFromServer$,
+              showLoading: true,
+            });
+            if (deleteSuccessfull) {
+              if (await this.checkCredentialAvailability()) {
+                this.showTermsAndConditions(true);
               } else {
                 this.showInstallationErrorAlert();
               }
-            });
-          }, 1000);
-        });
-      } else {
-        this.showCredentialAlreadyProvisionedAlert();
-      }
+            } else {
+              this.showInstallationErrorAlert();
+            }
+          });
+        }
+      });
+    } else if (credential.isProvisioned()) {
+      this.showCredentialAlreadyProvisionedAlert();
+    } else if (credential.isAvailable()) {
+      this.showTermsAndConditions();
     } else {
       this.showInstallationErrorAlert();
     }
@@ -151,7 +162,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
 
   onUiImageClicked(event = { shouldCheckCredentialAvailability: true }): void {
     if (event.shouldCheckCredentialAvailability) {
-      this.verifyCredentialAvailable4Install();
+      this.validateAndInstall();
     } else {
       this.showTermsAndConditions();
     }
@@ -224,7 +235,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
   }
 
   private async isEndpointRevoked(): Promise<boolean> {
-    const savedEndpointState = await this.credentialService.getEndpointStateFromLocalCache();
+    const savedEndpointState = await this.getLocalCachedEndpointState();
     const deviceEndpointStatus = await this.getDeviceEndpointState();
     return savedEndpointState.isRevoked() || (savedEndpointState.isProvisioned() && deviceEndpointStatus.isInactive());
   }
@@ -329,11 +340,15 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     return new EndpointState(await this.hidSdkManager().endpointStatus());
   }
 
+  private async getLocalCachedEndpointState(anyUser?: boolean): Promise<EndpointState> {
+    const endpointState = await this.credentialService.getEndpointStateFromLocalCache(anyUser);
+    return endpointState || new EndpointState(EndpointStatuses.NOT_SETUP);
+  }
+
   private async checkDeviceEndpointState$(): Promise<void> {
     const deviceEndpointState = await this.getDeviceEndpointState();
-    const cachedEndpointState =
-      (await this.credentialService.getEndpointStateFromLocalCache()) || new EndpointState(-1);
-      console.log(cachedEndpointState)
+    const cachedEndpointState = await this.getLocalCachedEndpointState();
+    console.log(cachedEndpointState);
     if (deviceEndpointState.isProvisioned()) {
       if (cachedEndpointState.isProvisioned()) {
         this.hidSdkManager().doPostInitWork();
@@ -349,6 +364,8 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
       } else if (cachedEndpointState.isProcessing()) {
         this.mCredential.setStatus(MobileCredentialStatuses.PROCESSING);
         this.hidSdkManager().doPostInitWork();
+      } else {
+        this.mCredential.setStatus(MobileCredentialStatuses.AVAILABLE);
       }
     } else {
       this.mCredential.setStatus(MobileCredentialStatuses.AVAILABLE);
@@ -436,7 +453,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
       if (credentialServerUpdateSuccess) {
         delete this.mCredential.credentialBundle.invitationCode;
         this.credentialStateChangeListener.onCredentialStateChanged();
-        setTimeout(() => this.hidSdkManager().doPostInstallWork(), 15000);
+        setTimeout(() => this.hidSdkManager().doPostInstallWork(), 10000);
       } else {
         this.showInstallationErrorAlert();
         this.deleteCredentialFromDevice$();
@@ -571,9 +588,9 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     await alertDialog.present();
   }
 
-  private deleteCredentialFromServer$ = async (): Promise<boolean> => {
+  private deleteCredentialFromServer$ = async (endpoint?: EndpointState): Promise<boolean> => {
     return await this.credentialService
-      .deleteCredential$()
+      .deleteCredential$(endpoint)
       .pipe(
         map(deletionSucceeded => {
           if (deletionSucceeded) {
@@ -585,7 +602,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
       .toPromise();
   };
 
-  private deleteCredentialFromDevice$ = async (force?: boolean): Promise<boolean> => {
+  private deleteCredentialFromDevice$ = async (): Promise<boolean> => {
     let transactionResultCode = await this.hidSdkManager().deleteEndpoint();
     if (transactionResultCode == HID_SDK_ERR.TRANSACTION_SUCCESS) {
       this.mCredential.setStatus(MobileCredentialStatuses.AVAILABLE);

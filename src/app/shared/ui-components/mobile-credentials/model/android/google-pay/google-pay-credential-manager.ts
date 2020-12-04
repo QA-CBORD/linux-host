@@ -1,7 +1,7 @@
 import { Observable, of } from 'rxjs';
 import { Plugins } from '@capacitor/core';
-import { map, catchError, switchMap, finalize } from 'rxjs/operators';
-import { AndroidCredential } from '../android-credential.model';
+import { map, catchError, switchMap, finalize, first } from 'rxjs/operators';
+import { AndroidCredential, EndpointState, GOOGLE } from '../android-credential.model';
 import { GooglePayCredentialDataService } from '@shared/ui-components/mobile-credentials/service/google-pay-credential.data.service';
 import { Injectable } from '@angular/core';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -47,15 +47,22 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
   private async watchOnResume(): Promise<void> {
     const appResumedEventListener = GooglePayPlugin.addListener('appResumed', async () => {
       appResumedEventListener.remove();
-      setTimeout(() => (this.sessionFacadeService.navigatedFromGpay = false), 2500);  // this is so we don't get the loggin screen, we're already logged in.
+      setTimeout(() => (this.sessionFacadeService.navigatedFromGpay = false), 2500); // this is so we don't get the loggin screen, we're already logged in.
       let counter = 0;
       let timeOut = 3000;
       const intervalId = setInterval(async () => {
         const newCredential = await this.fetchFromServer$(true);
         const credentialStatusChanged = !newCredential.isAvailable();
         if (credentialStatusChanged) {
+          const credentialBundle: GOOGLE = this.mCredential.getCredentialBundle();
+          credentialBundle.id
           this.mCredential = newCredential;
           this.credentialStateChangeListener.onCredentialStateChanged();
+          this.mCredential.setEndpointState(new EndpointState(this.mCredential.credentialState.credStatus));
+          this.credentialService
+            .updateCredential$(this.mCredential)
+            .pipe(first())
+            .subscribe();
         }
         const shouldStopRefresh =
           counter++ == 100 || newCredential.isProvisioned() || (newCredential.isAvailable() && counter == 3);
@@ -81,9 +88,6 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
     );
   }
 
-  credentialAvailable$(): Observable<boolean> {
-    return of(this.mCredential.isAvailable());
-  }
 
   refresh(): void {
     this.fetchFromServer$(true).then(newCredential => {

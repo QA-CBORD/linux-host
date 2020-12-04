@@ -24,9 +24,7 @@ public class HIDPlugin extends Plugin {
             call.reject("failed");
             return;
         }
-        hidsdkManager.applicationStartup(transactionResult -> {
-            call.resolve(toJson(transactionResult));
-        });
+        hidsdkManager.applicationStartup(result -> call.resolve(toJson(result)));
     }
 
     @PluginMethod()

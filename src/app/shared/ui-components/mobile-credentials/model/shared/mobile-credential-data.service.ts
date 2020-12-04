@@ -3,10 +3,11 @@ import { Injectable } from '@angular/core';
 import { Device, DeviceInfo } from '@capacitor/core';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
+import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { APIService, HttpResponseType, RestCallType } from '@core/service/api-service/api.service';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { forkJoin, from, Observable, of } from 'rxjs';
-import { catchError, map, switchMap, take, tap } from 'rxjs/operators';
+import { catchError, first, map, switchMap, take, tap } from 'rxjs/operators';
 import { ActivePasses } from './credential-utils';
 import { MobileCredential } from './mobile-credential';
 import { MobileCredentialFactory } from './mobile-credential-factory';
@@ -27,7 +28,8 @@ export class MobileCredentialDataService {
     protected storageStateService: StorageStateService,
     protected authFacadeService: AuthFacadeService,
     protected institutionFacadeService: InstitutionFacadeService,
-    protected apiService: APIService
+    protected apiService: APIService,
+    protected readonly userFacade: UserFacadeService
   ) {}
 
   protected retrieveAuthorizationBlob$(deviceModel: string, osVersion: string): Observable<object> {
@@ -46,6 +48,13 @@ export class MobileCredentialDataService {
           return this.retrieveOmniIDJwtTokenFromServer$();
         }
       })
+    );
+  }
+
+  protected getUserId(): Observable<string> {
+    return this.userFacade.getUserData$().pipe(
+      first(),
+      map(({ id }) => id)
     );
   }
 

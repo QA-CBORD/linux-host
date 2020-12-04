@@ -13,6 +13,7 @@ import com.hid.origo.api.OrigoReaderConnectionController;
 import com.hid.origo.api.ble.OrigoOpeningTrigger;
 import com.hid.origo.api.ble.OrigoScanConfiguration;
 import com.hid.origo.api.ble.OrigoTapOpeningTrigger;
+import com.hid.origo.api.hce.OrigoAttemptNfcPredicate;
 import com.hid.origo.api.hce.OrigoNfcConfiguration;
 
 /**
@@ -29,6 +30,7 @@ public class MobileKeysApiConfig extends Application {
                         .unsafe_setAttemptNfcWithScreenOff(true)
                         .setNumberOfNfcTransactionsNeeded(MobileKeysConfig.TRANSACTIONS)
                         .setTransactionBackOff(MobileKeysConfig.TRANSACTIONS_BACKOFF)
+                        .setOrigoAttemptNfcPredicate(() -> true)
                         .build())
                 .build();
         OrigoScanConfiguration origoScanConfiguration = new OrigoScanConfiguration.Builder(
@@ -37,6 +39,7 @@ public class MobileKeysApiConfig extends Application {
                 .setAllowBackgroundScanning(true)
                 .build();
         mobileKeysApi = OrigoMobileKeysApi.getInstance();
+
         mobileKeysApi.initialize(getApplicationContext(), origoApiConfiguration, origoScanConfiguration, BuildConfig.AAMK_APP_ID);
         if (Boolean.FALSE.equals(mobileKeysApi.isInitialized())) {
              throw new IllegalStateException();

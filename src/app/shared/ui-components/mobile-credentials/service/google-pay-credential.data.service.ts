@@ -5,10 +5,11 @@ import { InstitutionFacadeService } from '@core/facades/institution/institution.
 import { APIService } from '@core/service/api-service/api.service';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { Observable, of } from 'rxjs';
-import { GOOGLE, GoogleCredential } from '../model/android/android-credential.model';
+import { EndpointState, GOOGLE, GoogleCredential } from '../model/android/android-credential.model';
 import { AndroidCredentialDataService } from '../model/shared/android-credential-data.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { map } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
+import { UserFacadeService } from '@core/facades/user/user.facade.service';
 
 const major_version = 1,
   minor_version = 0;
@@ -23,13 +24,15 @@ const extraHeaders = {
 
 @Injectable()
 export class GooglePayCredentialDataService extends AndroidCredentialDataService {
+  private mCredential_key = 'nxp_credential';
   constructor(
     protected readonly storageStateService: StorageStateService,
     protected readonly authFacadeService: AuthFacadeService,
     protected readonly contentStringFacade: ContentStringsFacadeService,
     protected readonly institutionFacadeService: InstitutionFacadeService,
     protected readonly apiService: APIService,
-    protected readonly http: HttpClient
+    protected readonly http: HttpClient,
+    protected userFacade: UserFacadeService
   ) {
     super(
       resourceUrls,
@@ -38,7 +41,8 @@ export class GooglePayCredentialDataService extends AndroidCredentialDataService
       contentStringFacade,
       institutionFacadeService,
       apiService,
-      http
+      http,
+      userFacade
     );
   }
 
@@ -61,12 +65,25 @@ export class GooglePayCredentialDataService extends AndroidCredentialDataService
   }
 
   updateCredential$(mCredential: GoogleCredential): Observable<any> {
-    let requestBody = {
-      referenceIdentifier: mCredential.getReferenceIdentifier(),
-      status: mCredential.getCredStatus(),
-      credentialID: mCredential.getId(),
-    };
-
-    return super.updateCredential$(requestBody);
+    // let requestBody = {
+    //   referenceIdentifier: mCredential.getReferenceIdentifier(),
+    //   status: mCredential.getCredStatus(),
+    //   credentialID: mCredential.getId(),
+    // };
+    // return super.updateCredential$(requestBody);
+    return this.getUserId().pipe(
+      switchMap(userId => {
+        const { id } = mCredential.credentialBundle;
+        const { credStatus } = mCredential.credentialState;
+        const endpointState = new EndpointState(credStatus, id, userId);
+        mCredential.setEndpointState(endpointState);
+        return of(
+          this.storageStateService.updateStateEntity(this.mCredential_key, endpointState, {
+            highPriorityKey: true,
+            keepOnLogout: true,
+          })
+        );
+      })
+    );
   }
 }

@@ -221,7 +221,7 @@ public class HIDSDKManager implements OrigoReaderConnectionListener, OrigoHceCon
 
 
     /**
-     * Start BLE scanning or request permission
+     * Start Hce scanning or request permission
      */
     public void startScanning(TransactionCompleteCallback transactionCompleteCallback) {
         if(hasLocationPermissions()) {
@@ -248,7 +248,9 @@ public class HIDSDKManager implements OrigoReaderConnectionListener, OrigoHceCon
         }
 
         @Override
-        public void handleMobileKeysTransactionProgress(OrigoProgressEvent origoProgressEvent) {}
+        public void handleMobileKeysTransactionProgress(OrigoProgressEvent origoProgressEvent) {
+            // I'm not worried about this event
+        }
 
         @Override
         public void handleMobileKeysTransactionCompleted() {

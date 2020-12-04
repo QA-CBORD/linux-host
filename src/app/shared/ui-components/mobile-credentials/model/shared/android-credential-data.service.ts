@@ -2,6 +2,7 @@ import { HttpHeaders, HttpParams, HttpClient } from '@angular/common/http';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
+import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { APIService, HttpResponseType, RestCallType } from '@core/service/api-service/api.service';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { forkJoin, Observable, of } from 'rxjs';
@@ -25,9 +26,10 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
     protected contentStringFacade: ContentStringsFacadeService,
     protected institutionFacadeService: InstitutionFacadeService,
     protected apiService: APIService,
-    protected http: HttpClient
+    protected http: HttpClient,
+    protected userFacade: UserFacadeService
   ) {
-    super(storageStateService, authFacadeService, institutionFacadeService, apiService);
+    super(storageStateService, authFacadeService, institutionFacadeService, apiService, userFacade);
   }
 
   activePasses$(): Observable<AndroidCredential<any>> {
@@ -142,7 +144,7 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
     );
   }
 
-  protected deleteCredential$(credentialId: string): Observable<any> {
+  protected deleteCredential$(credentialId: string | any): Observable<any> {
     // get the mobile credential id that we want to delete.
     const institutionInfo$ = this.institutionFacadeService.cachedInstitutionInfo$.pipe(take(1));
     const defaultHeader$ = this.getDefaultHeaders().pipe(take(1));
