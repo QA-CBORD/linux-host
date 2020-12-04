@@ -5,6 +5,11 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { PhotoUploadService } from '../services/photo-upload.service';
 import { PopoverCropComponent } from '../popover-photo-crop/popover-photo-crop.component';
 import { ToastService } from '@core/service/toast/toast.service';
+
+const DEFAULT_HEIGHT = 170;
+const DEFAULT_WIDTH = 128;
+const PHOTO_CROP_DELAY = 2000;
+
 @Component({
   templateUrl: './photo-crop-modal.component.html',
   styleUrls: ['./photo-crop-modal.component.scss'],
@@ -13,8 +18,6 @@ export class PhotoCropModalComponent {
   @Input() imageBase64 = '';
   cropperPosition = { x1: 0, y1: 0, x2: 0, y2: 0 };
   croppedImageBase64 = '';
-  defaultHeight = 128;
-  defaultWidth = 128;
   saveHeight: number;
   saveWidth: number;
 
@@ -29,14 +32,14 @@ export class PhotoCropModalComponent {
   ionViewWillEnter() {
     this.loadingService.showSpinner();
     const uploadSettings = this.photoUploadService.photoUploadSettings;
-    this.saveHeight = uploadSettings.saveHeight ? uploadSettings.saveHeight : this.defaultHeight;
-    this.saveWidth = uploadSettings.saveWidth ? uploadSettings.saveWidth : this.defaultWidth;
+    this.saveHeight = uploadSettings.saveHeight ? uploadSettings.saveHeight : DEFAULT_HEIGHT;
+    this.saveWidth = uploadSettings.saveWidth ? uploadSettings.saveWidth : DEFAULT_WIDTH;
   }
 
   cropperIsReady(originalImage: Dimensions) {
     setTimeout(() => {
       this.cropperPosition = this.getCroppingPosition(originalImage);
-    }, 1000);
+    }, PHOTO_CROP_DELAY);
     this.loadingService.closeSpinner();
   }
 
