@@ -170,7 +170,7 @@ export class HousingService {
   }
 
   _setRoomsState(roomSelects: RoomSelect[]): void {
-    this._roomsStateService.setRoomSelects(of(roomSelects));
+    this._roomsStateService.setRoomSelects(roomSelects);
   }
 
   /**
