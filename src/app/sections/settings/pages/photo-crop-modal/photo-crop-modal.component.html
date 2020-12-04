@@ -19,12 +19,14 @@
         [imageBase64]="imageBase64"
         [imageQuality]="100"
         [onlyScaleDown]="true"
+        [cropper]="cropperPosition"
         [aspectRatio]="saveWidth / saveHeight"
         [resizeToWidth]="saveWidth"
         [resizeToHeight]="saveHeight"
         format="jpeg"
-        (cropperReady)="cropperIsReady()"
+        (cropperReady)="cropperIsReady($event)"
         (imageCropped)="imageCropped($event)"
+        (loadImageFailed)="loadImageFailed()"
       >
       </image-cropper>
     </ion-col>

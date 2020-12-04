@@ -296,9 +296,7 @@ export class PhotoUploadComponent implements OnInit {
               this.sessionFacadeService.navigatedToPlugin = true;
               this.photoUploadService.onNewPhoto(photoType, photoBase64);
             })
-            .catch(error => {
-              this.presentToast('There was an issue with the picture. Please, try again.');
-            });
+            .catch(error => {});
         },
         error => {
           this.presentToast('There was an issue with the picture. Please, try again.');
