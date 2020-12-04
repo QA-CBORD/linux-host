@@ -54,8 +54,6 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
         const newCredential = await this.fetchFromServer$(true);
         const credentialStatusChanged = !newCredential.isAvailable();
         if (credentialStatusChanged) {
-          const credentialBundle: GOOGLE = this.mCredential.getCredentialBundle();
-          credentialBundle.id
           this.mCredential = newCredential;
           this.credentialStateChangeListener.onCredentialStateChanged();
           // this.mCredential.setEndpointState(new EndpointState(this.mCredential.credentialState.credStatus));
