@@ -58,11 +58,11 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
           credentialBundle.id
           this.mCredential = newCredential;
           this.credentialStateChangeListener.onCredentialStateChanged();
-          this.mCredential.setEndpointState(new EndpointState(this.mCredential.credentialState.credStatus));
-          this.credentialService
-            .updateCredential$(this.mCredential)
-            .pipe(first())
-            .subscribe();
+          // this.mCredential.setEndpointState(new EndpointState(this.mCredential.credentialState.credStatus));
+          // this.credentialService
+          //   .updateCredential$(this.mCredential)
+          //   .pipe(first())
+          //   .subscribe();
         }
         const shouldStopRefresh =
           counter++ == 100 || newCredential.isProvisioned() || (newCredential.isAvailable() && counter == 3);
