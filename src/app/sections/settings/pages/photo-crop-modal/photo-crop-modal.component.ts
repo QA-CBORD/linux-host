@@ -38,7 +38,7 @@ export class PhotoCropModalComponent {
 
   cropperIsReady(originalImage: Dimensions) {
     setTimeout(() => {
-      this.cropperPosition = this.getCroppingPosition(originalImage);
+      this.cropperPosition = this.cropperInitialPosition(originalImage);
     }, PHOTO_CROP_DELAY);
     this.loadingService.closeSpinner();
   }
@@ -62,10 +62,11 @@ export class PhotoCropModalComponent {
     await modal.present();
   }
   
-  private getCroppingPosition(originalImage: Dimensions): any {
+  private cropperInitialPosition(originalImage: Dimensions): any {
+   const percentage = 0.1;
    const width = originalImage.width;
    const height = originalImage.height;
-   const padding = ((height + width) / 2 ) * 0.1; 
+   const padding = ((height + width) / 2 ) * percentage; 
    return { x1: (width-(width-padding)), y1: (height-(height-padding)), x2: (width-padding), y2: (height-padding) };
   }
 }
