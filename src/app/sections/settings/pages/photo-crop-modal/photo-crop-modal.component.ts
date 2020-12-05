@@ -8,7 +8,7 @@ import { ToastService } from '@core/service/toast/toast.service';
 
 const DEFAULT_HEIGHT = 170;
 const DEFAULT_WIDTH = 128;
-const PHOTO_CROP_DELAY = 2000;
+const PHOTO_CROP_DELAY = 100;
 
 @Component({
   templateUrl: './photo-crop-modal.component.html',
@@ -63,7 +63,9 @@ export class PhotoCropModalComponent {
   }
   
   private getCroppingPosition(originalImage: Dimensions): any {
-   const padding = 25;
-   return { x1: (originalImage.width-(originalImage.width-padding)), y1: (originalImage.height-(originalImage.height-padding)), x2: (originalImage.width-padding), y2: (originalImage.height-padding) };
+   const width = originalImage.width;
+   const height = originalImage.height;
+   const padding = ((height + width) / 2 ) * 0.1; 
+   return { x1: (width-(width-padding)), y1: (height-(height-padding)), x2: (width-padding), y2: (height-padding) };
   }
 }
