@@ -21,7 +21,7 @@ const imports = [
   PhoneEmailModule,
   StHeaderModule, 
   EditHomePageModalModule,
-  ReportCardModule,
+  ReportCardModule
 ];
 const declarations = [SettingsPage, SettingsItemComponent];
 const entryComponents = [];

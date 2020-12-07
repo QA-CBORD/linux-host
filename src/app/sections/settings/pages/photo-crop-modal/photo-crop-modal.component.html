@@ -1,0 +1,47 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="end">
+      <ion-button (click)="dismissModal()">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Crop Photo</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-row>
+    <ion-col>
+      <ion-button color="primary" (click)="showModal()">
+        Instructions
+      </ion-button>
+      <image-cropper
+        [imageBase64]="imageBase64"
+        [imageQuality]="100"
+        [onlyScaleDown]="true"
+        [cropper]="cropperPosition"
+        [aspectRatio]="saveWidth / saveHeight"
+        [resizeToWidth]="saveWidth"
+        [resizeToHeight]="saveHeight"
+        format="jpeg"
+        (cropperReady)="cropperIsReady($event)"
+        (imageCropped)="imageCropped($event)"
+        (loadImageFailed)="loadImageFailed()"
+      >
+      </image-cropper>
+    </ion-col>
+  </ion-row>
+  <ion-row>
+    <ion-col></ion-col>
+  </ion-row>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-buttons slot="end">
+      <ion-button color="primary" [disabled]="!imageBase64" (click)="dismissModal(croppedImageBase64)">
+        Crop
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-footer>

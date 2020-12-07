@@ -7,16 +7,18 @@ import { PhotoUploadRoutingModule } from '@sections/settings/pages/photo-upload/
 import { DeleteModalComponent } from '@sections/settings/pages/delete-modal/delete-modal.component';
 import { PhotoUploadResolver } from '@sections/settings/resolvers/photo-upload.resolver';
 import { PhotoUploadService } from '@sections/settings/pages/services/photo-upload.service';
+import { ImageCropModalModule } from '../photo-crop-modal/photo-crop.module';
 
-
-const imports = [CommonModule, StHeaderModule, IonicModule, PhotoUploadRoutingModule];
+const imports = [CommonModule, StHeaderModule, IonicModule, PhotoUploadRoutingModule, ImageCropModalModule];
 const declarations = [PhotoUploadComponent, DeleteModalComponent];
 const entryComponents = [DeleteModalComponent];
 const providers = [PhotoUploadResolver, PhotoUploadService];
+
 @NgModule({
   declarations,
   imports,
   providers,
   entryComponents
 })
-export class PhotoUploadModule {}
+export class PhotoUploadModule {
+}
