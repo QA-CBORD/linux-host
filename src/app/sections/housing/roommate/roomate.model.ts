@@ -9,7 +9,6 @@ interface FacilityOccupantDetailsOptions {
 
 export class FacilityOccupantDetails {
   public patronKey: number;
-  public name: string;
   public attributes: OccupantAttribute[] = null;
 
   constructor(options: any) {
@@ -17,7 +16,6 @@ export class FacilityOccupantDetails {
       options = {} as FacilityOccupantDetailsOptions;
     }
     this.patronKey = options.patronKey;
-    this.name = options.name;
     this.attributes = options.patronAttributes || [];
   }
 

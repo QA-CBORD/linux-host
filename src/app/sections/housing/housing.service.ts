@@ -133,13 +133,12 @@ export class HousingService {
 
   getOccupantDetails(roomSelectKey:number, facilityKey: number): Observable<FacilityOccupantDetails[]> {
     const apiUrl = `${this._baseUrl}/roomselectproxy/v.1.0/room-selects-proxy/occupant-details/facilities/`;
-    return this._housingProxyService.post<OccupantDetailsResponse>(apiUrl, {
+    return this._housingProxyService.post<Response>(apiUrl, {
       roomSelectKey: roomSelectKey,
       facilityKeys: [facilityKey]
     }).pipe(
-      map(response => {
-        console.log(response);
-        const details = new OccupantDetailsResponse(response);
+      map((response: Response) => {
+        const details = new OccupantDetailsResponse(response.data);
         return details.occupants;
       }),
       catchError(err => {throw err})
@@ -147,13 +146,12 @@ export class HousingService {
   }
 
   getAllOccupantDetails(roomSelectKey: number, facilityKeys: number[]): Observable<FacilityOccupantDetails[]> {
-    const apiUrl = `${this._baseUrl}/roomselectproxy/v.1.0/room-selects-proxy/occupant-details/facilities/`;
+    const apiUrl = `${this._baseUrl}/roomselectproxy/v.1.0/room-selects-proxy/occupant-details/facilities`;
     return this._housingProxyService.post<Response>(apiUrl, {
       roomSelectKey: roomSelectKey,
       facilityKeys: facilityKeys
     }).pipe(
       map((response: Response) => {
-        console.log(response);
         const details = new OccupantDetailsResponse(response.data);
         return details.occupants;
       }),
@@ -172,7 +170,7 @@ export class HousingService {
   }
 
   _setRoomsState(roomSelects: RoomSelect[]): void {
-    this._roomsStateService.setRoomSelects(of(roomSelects));
+    this._roomsStateService.setRoomSelects(roomSelects);
   }
 
   /**
@@ -241,6 +239,8 @@ export class HousingService {
     this._applicationsStateService.setApplications(applications);
     this._contractsStateService.setContracts(contracts);
   }
+
+
 
   private _handleGetDefinitionsError(): Observable<DefinitionsResponse> {
     const applicationDefinitions: ApplicationDetails[] = [];

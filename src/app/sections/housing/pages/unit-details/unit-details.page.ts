@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, Subscription } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
+import { Observable,  } from 'rxjs';
 
 import { Unit } from '@sections/housing/unit/unit.model';
 import { RoomsStateService } from '@sections/housing/rooms/rooms-state.service';
@@ -10,6 +10,7 @@ import { RoomsService } from '@sections/housing/rooms/rooms.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { TermsService } from '@sections/housing/terms/terms.service';
 import { AlertController } from '@ionic/angular';
+import { debounceTime, take } from 'rxjs/operators';
 
 @Component({
   selector: 'st-unit-details',
@@ -39,7 +40,6 @@ export class UnitDetailsPage implements OnInit {
       const activeRoomSelect = this._stateService.getActiveRoomSelect();
       this.occupants$ = this._housingService.getOccupantDetails(activeRoomSelect.key, unitKey);
     }
-    console.log(this.unit);
   }
   private roommatesExists() {
     return Array.isArray(this.unit.occupantKeys) && this.unit.occupantKeys.length > 0;
@@ -53,8 +53,12 @@ export class UnitDetailsPage implements OnInit {
   }
 
   async requestRoom() {
-    try {
-        this._termsService.termId$.subscribe(termKey => {
+
+        this._termsService.termId$.pipe(
+          debounceTime(800),
+          take(1)
+        ).subscribe(
+          async termKey => {
         const request = {
           facilityKey: this.unit.key,
           assetKey: null,
@@ -64,39 +68,42 @@ export class UnitDetailsPage implements OnInit {
           startDate: null,
           endDate: null,
         };
-        const alert = this._alertController.create({
+        const alert = await this._alertController.create({
           header: 'Confirm',
           message: 'Are you sure you want this room?',
           buttons: [
             {
               text: 'NO',
               role: 'cancel',
-              cssClass: 'secondary',
+              cssClass: 'button__option_cancel',
               handler: () => {
                 console.log('Confirm Cancel');
+                alert.dismiss();
               },
             },
             {
               text: 'YES',
               role: 'confirm',
-              cssClass: 'primary',
+              cssClass: 'button__option_confirm',
               handler: () => {
                 this._roomsService.postContractRequest(request).subscribe(successfullyCreated => {
                       if (successfullyCreated) {
                         //route back to housing dashboard
-                        this._housingService.handleSuccess();
-                  }
+                        alert.dismiss().then(() => this._housingService.handleSuccess());
+                  } else {
+                        alert.dismiss().then(() => {
+                          console.log('Assignment for patron was not successful. This unit might be full.')
+                          this._toastService.showToast({
+                            message: "Oops this unit is not available",
+                          });
+                        })
+                      }
                 });
               },
             },
           ],
         });
-        alert.then(alert => alert.present());
+        await alert.present();
       });
-    } catch (e) {
-      this._toastService.showToast({
-        message: "Oops this unit is not available",
-      });
-    }
   }
 }

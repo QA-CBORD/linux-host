@@ -1,0 +1,17 @@
+<ion-card class="delete-photo-card"> 
+  <ion-card-header class="header">
+    <div>
+      How to crop it?
+    </div>
+    <ion-icon (click)="dismissModal()" class="icon" name="close-outline"></ion-icon>
+  </ion-card-header>
+
+  <ion-card-content>
+    <div>
+      Slide the grayed box over the uploaded image so that it entirely includes your face and then click the Crop button.
+    </div>
+    <div class="actions">
+      <ion-button color="light" expand="block" (click)="dismissModal()">Close</ion-button>
+    </div>
+  </ion-card-content>
+</ion-card>

@@ -12,6 +12,9 @@
     [disabled]="isDisabled"
     id="{{ idd }}"
     [placeholder]="control.value"
+    [selectedText]="selectedText"
+    [attr.a11y-placeholder]="label"
+    tabindex="0"
   >
     <ng-content select="[role=options]"></ng-content>
   </ion-select>

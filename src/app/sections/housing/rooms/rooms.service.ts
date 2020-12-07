@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HousingProxyService } from '@sections/housing/housing-proxy.service';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { isSuccessful } from '@sections/housing/utils/is-successful';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { CreateContractRequestOptions } from '@sections/housing/rooms/rooms.model';
 import {
@@ -12,7 +12,7 @@ import {
 } from '@sections/housing/search-filter/filter-sort/filter-sort.model';
 import { Facility, FacilityAttribute } from '@sections/housing/facilities/facilities.model';
 import { RoomsStateService } from '@sections/housing/rooms/rooms-state.service';
-import { isDefined } from '@sections/housing/utils';
+import { hasValue, isDefined } from '@sections/housing/utils';
 import { Response } from '@sections/housing/housing.model';
 import { OccupantAttribute } from '@sections/housing/attributes/attributes.model';
 
@@ -48,9 +48,7 @@ export class RoomsService {
 
         return false;
       }),
-      catchError(err => {
-        throw err;
-      })
+      catchError(err => of(false))
     );
   }
 
@@ -84,7 +82,7 @@ export class RoomsService {
     });
     childrenFacilities.forEach(facility => {
       facility.attributes.forEach(attrib => {
-        if (!this._attributeExists(encounteredOptions, attrib)) {
+        if (!this._attributeExists(encounteredOptions, attrib) && this._isAttributeAllowedForCategory(attrib)) {
           const newCategory = this._createFilterCategory(`Facility ${attrib.name}`,
             attrib.attributeConsumerKey);
           encounteredOptions.push(newCategory);
@@ -94,6 +92,12 @@ export class RoomsService {
     });
     return facilityOptions;
   }
+
+  private _isAttributeAllowedForCategory(attribute: FacilityAttribute):boolean {
+    return hasValue(attribute.name)?
+      (attribute.name !== "Full Name"): false;
+  }
+
   private _attributeExists(encounteredOptions: Category[], attribute: FacilityAttribute | OccupantAttribute): boolean {
     return !!encounteredOptions.find(x => x.attributeKey === attribute.attributeConsumerKey);
   }
@@ -146,6 +150,10 @@ export class RoomsService {
     return filterCategories;
   }
 
+  public clearFilterCategories(): void {
+    this._filterOptions.removeAll();
+  }
+
   public getAttributeOptionsInfo(category, options: string[]): CategoryOptionDetail[] {
     return options.map(x => this._filterOptions.getOptionDetails(category, x));
   }
@@ -159,7 +167,7 @@ export class RoomsService {
   }
   public filterBuildings(filterOptions: Map<string, string[]>, wasOccupantOptionSelected: boolean): void {
       const facilities = this._stateService.getAllFacilityChildren();
-      const filteredFacilities = [];
+      let filteredFacilities = [];
       let parentKeys = [];
       if(this._isBuildingFiltered(filterOptions)) {
         const parenFacilities = this._stateService.getParentFacilities();
@@ -188,8 +196,16 @@ export class RoomsService {
           }
         });
       });
+
+      if(this._isMultipleCategories(filterOptions)) {
+        filteredFacilities = filteredFacilities.filter(x => this._matchAllAttributes(filterOptions, x));
+      }
+
       this._updateFilter(filterOptions);
       this._stateService.updateActiveFilterFacilities(filteredFacilities);
+  }
+  private _isMultipleCategories(filterOptions: Map<string, string[]>): boolean {
+    return filterOptions.size > 1;
   }
 
   private _isBuildingFiltered(filterOptions: Map<string, string[]>): boolean {
@@ -208,10 +224,39 @@ export class RoomsService {
     })
     this._filterOptions.deselectOptionDetails(includedCategories);
   }
-private _matchedBuildingRequirements(facility: Facility, parentKeys: number[]): boolean {
+  private _matchedBuildingRequirements(facility: Facility, parentKeys: number[]): boolean {
     return parentKeys.length > 0? parentKeys.includes(facility.topLevelKey): true;
-}
-  private _matchedFacilityAttributes(category: string, options: string[], facility: Facility) {
+  }
+
+  private _matchAllAttributes(filterOptions: Map<string, string[]>, facility: Facility): boolean {
+
+    let matchesAll = true;
+    for(let [category, options] of filterOptions) {
+      if(category === 'Buildings') {
+        continue;
+      }
+      if(category.includes('Facility ')) {
+
+        if(this._matchedFacilityAttributes(category, options, facility)) {
+          continue;
+        } else {
+          matchesAll = false;
+          break;
+        }
+      } else {
+        if(this._hasOccupants(facility) && this._matchedOccupantsAttributes(category,options,facility.facilityId)) {
+          continue;
+        } else {
+          matchesAll = false;
+          break;
+        }
+      }
+    }
+
+    return matchesAll;
+      }
+
+  private _matchedFacilityAttributes(category: string, options: string[], facility: Facility): boolean {
     return (facility.hasAttribute(category.replace("Facility ", "")) &&
       this._valueMatches(options, facility.getAttributeValue(
         category.replace("Facility ", "")).value));
@@ -219,10 +264,18 @@ private _matchedBuildingRequirements(facility: Facility, parentKeys: number[]): 
 
   private _matchedOccupantsAttributes(category: string, options: string[], facilityId: number): boolean {
     const occupantDetails = this._stateService.getOccupantDetails(facilityId);
-    const occupant = occupantDetails.find(x => x.hasAttribute(category.replace("Patron ", "")));
+    const occupant = occupantDetails.find(
+      x => x.hasAttribute(category.replace("Patron ", "")));
 
-    return (this._valueMatches(options, occupant.getAttributeValue(category.replace("Patron ", ""))));
+    return (occupant? this._valueMatches(
+      options, occupant.getAttributeValue(category.replace("Patron ", ""))) :
+      false);
   }
+
+  private _hasOccupants(facility: Facility): boolean {
+    return (facility.occupantKeys && facility.occupantKeys.length > 0);
+  }
+
   private _valueMatches(options: string[], value: string): boolean {
       return options.includes(value);
   }

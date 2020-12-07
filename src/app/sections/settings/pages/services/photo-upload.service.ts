@@ -173,7 +173,7 @@ export class PhotoUploadService {
       mimeType: 'image/jpg',
       status: null,
       statusReason: null,
-      data: photoData.base64String,
+      data: photoData,
       id: null,
       insertTime: null,
       lastUpdated: null,

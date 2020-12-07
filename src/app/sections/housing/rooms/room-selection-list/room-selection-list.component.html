@@ -1,0 +1,17 @@
+  <ng-container >
+    <div #container *ngFor="let room of roomSelects">
+      <ion-item lines="none" class="roomSelect-list__item"  button (click)="goToRoomSelection(room.key)">
+        <ion-text  class="roomSelect-list__item-name">{{room.name}}</ion-text>
+        <ion-text slot="end" class="roomSelect-list__item-time">{{room.accessTime | date: 'short'}}</ion-text>
+      </ion-item>
+    </div>
+  </ng-container>
+<!-- <h3 class="rooms__title">Rooms</h3>
+
+<div class="rooms__content">
+  <div class="rooms__empty">You haven't selected a room yet</div>
+
+  <ion-button class="btn btn--primary rooms__search" shape="round" [routerLink]="['/housing/rooms-search']" mode="ios">
+    Search Rooms
+  </ion-button>
+</div> -->
