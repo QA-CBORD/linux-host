@@ -33,6 +33,10 @@ export class ExploreTileComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.getMerchants();
+  }
+
+  getMerchants() {
     zip(
       this.merchantFacadeService.fetchMerchants$(),
       this.favMerchantFacadeService.fetchFavoritesMerchants$(),

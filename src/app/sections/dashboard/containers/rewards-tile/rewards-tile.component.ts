@@ -23,25 +23,25 @@ export class RewardsTileComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.getUserRewardTrackInfo();
+  }
+
+  getUserRewardTrackInfo() {
     this.rewardTrackInfo$ = this.rewardsService.getUserRewardTrackInfo().pipe(
       take(1),
-      finalize(() => this.isLoadingData = false),
-    );
+      finalize(() => this.isLoadingData = false));
 
     this.currentLvlInfo$ = this.rewardTrackInfo$.pipe(
-      map(({ trackLevels, userLevel }) => trackLevels.find(({ level }) => level === userLevel)),
-    );
+      map(({ trackLevels, userLevel }) => trackLevels.find(({ level }) => level === userLevel)));
 
     this.currentLvlInfo$ = this.rewardTrackInfo$.pipe(
-      map(({ trackLevels, userLevel }) => trackLevels.find(({ level }) => level === userLevel)),
-    );
+      map(({ trackLevels, userLevel }) => trackLevels.find(({ level }) => level === userLevel)));
 
     this.nextLvlRequirePoints$ = this.rewardTrackInfo$.pipe(
       map(({ trackLevels, userLevel }) => {
         const nextLevel = trackLevels.find(({ level }) => level === userLevel + 1);
         return nextLevel ? nextLevel.requiredPoints : null;
-      }),
-    );
+      }));
 
     this.userPointsSpent$ = this.rewardTrackInfo$.pipe(map(({ userExperiencePoints }) => userExperiencePoints));
   }

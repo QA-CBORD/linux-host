@@ -26,16 +26,19 @@ export class MobileAccessTileComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.accessList$ = this.mobileAccessService
-      .getLocations()
-      .pipe(
-        take(1),
-        map(locations => locations.slice(0, this.maxAmount)),
-        finalize(() => {
-          this.isLoadingData = false;
-          this.cdRef.detectChanges();
-        })
-      )
+    this.getLocations();
+  }
+
+  getLocations() {
+    this.accessList$ = this.mobileAccessService.getLocations().pipe(
+      take(1),
+      map(locations => locations.slice(0, this.maxAmount)),
+      finalize(() => {
+        this.isLoadingData = false;
+        this.cdRef.detectChanges();
+      })
+    )
+    this.accessList$.subscribe();
   }
 
   navigateTo(locationId) {

@@ -33,12 +33,10 @@ const routes: Routes = [
     HIDCredentialManager,
     GooglePayCredentialDataService,
     IOSCredentialManager,
-    GooglePayCredentialManager
+    GooglePayCredentialManager,
   ],
   entryComponents: [MobileCredentialsComponent],
 })
 export class MobileCredentialModule {
-  constructor(){
-    console.log('MobileCredentialModule called....')
-  }
+  constructor() {}
 }
