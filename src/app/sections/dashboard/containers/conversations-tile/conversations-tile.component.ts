@@ -39,7 +39,7 @@ export class ConversationsTileComponent implements OnInit, OnDestroy {
     return groupName == null || groupName.length < 1 ? 'U' : groupName[0];
   }
 
-  private initializePage() {
+  initializePage() {
     this.secureMessagingService
       .getInitialData()
       .pipe(

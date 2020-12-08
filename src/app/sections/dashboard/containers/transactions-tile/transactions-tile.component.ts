@@ -19,11 +19,14 @@ export class TransactionsTileComponent implements OnInit {
               private readonly cdRef: ChangeDetectorRef) { }
 
   ngOnInit() {
+    this.getRecentTransactions();
+  }
 
+  getRecentTransactions() {
     this.transactionService.getRecentTransactions(null, null, this.transactionsAmount)
       .pipe(
         take(1),
-        finalize(()=> {
+        finalize(() => {
           this.isLoading = false;
           this.cdRef.detectChanges();
         })
