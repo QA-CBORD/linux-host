@@ -24,6 +24,12 @@ import { EditHomePageModalComponent } from '@shared/ui-components/edit-home-page
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { EMAIL_REGEXP } from '@core/utils/regexp-patterns';
 import { AccountsTileComponent } from './containers/accounts-tile/accounts-tile.component';
+import { TransactionsTileComponent } from './containers/transactions-tile/transactions-tile.component';
+import { RewardsTileComponent } from './containers/rewards-tile/rewards-tile.component';
+import { OrderTileComponent } from './containers/order-tile/order-tile.component';
+import { ExploreTileComponent } from './containers/explore-tile/explore-tile.component';
+import { ConversationsTileComponent } from './containers/conversations-tile/conversations-tile.component';
+import { MobileAccessTileComponent } from './containers/mobile-access-tile/mobile-access-tile.component';
 
 const { App, Device } = Plugins;
 
@@ -35,9 +41,21 @@ const { App, Device } = Plugins;
 })
 export class DashboardPage implements OnInit {
   @ViewChild(AccessCardComponent) accessCard: AccessCardComponent;
-  @ViewChildren('accountsTile') accountsChild: QueryList<AccountsTileComponent>
+  @ViewChildren('accountsTile') accountsChild: QueryList<AccountsTileComponent>;
+  @ViewChildren('transactionsTile') transactionsChild: QueryList<TransactionsTileComponent>;
+  @ViewChildren('rewardsTile') rewardsChild: QueryList<RewardsTileComponent>;
+  @ViewChildren('orderTile') ordersChild: QueryList<OrderTileComponent>;
+  @ViewChildren('exploreTile') explorerChild: QueryList<ExploreTileComponent>;
+  @ViewChildren('mobileAccessTile') mobileAccessChild: QueryList<MobileAccessTileComponent>;
+  @ViewChildren('conversationsTile') conversationChild: QueryList<ConversationsTileComponent>;
   tiles$: Observable<TileWrapperConfig[]>;
   accountsTile: AccountsTileComponent;
+  transactionsTile: TransactionsTileComponent;
+  rewardsTile: RewardsTileComponent;
+  ordersTile: OrderTileComponent;
+  explorerTile: ExploreTileComponent;
+  mobileAccessTile: MobileAccessTileComponent;
+  conversationTile: ConversationsTileComponent;
 
   constructor(
     private readonly modalController: ModalController,
@@ -48,7 +66,7 @@ export class DashboardPage implements OnInit {
     private readonly popoverCtrl: PopoverController,
     private readonly userFacadeService: UserFacadeService,
     private readonly institutionFacadeService: InstitutionFacadeService,
-    private readonly appBrowser: InAppBrowser,
+    private readonly appBrowser: InAppBrowser
   ) {}
 
   get tilesIds(): { [key: string]: string } {
@@ -62,8 +80,14 @@ export class DashboardPage implements OnInit {
     this.pushNotificationRegistration();
   }
 
-  ngAfterViewInit(){
-    this.accountsChild.forEach((child) => this.accountsTile = child);
+  ngAfterViewInit() {
+    this.accountsChild.forEach(child => (this.accountsTile = child));
+    this.transactionsChild.forEach(child => (this.transactionsTile = child));
+    this.rewardsChild.forEach(child => (this.rewardsTile = child));
+    this.ordersChild.forEach(child => (this.ordersTile = child));
+    this.explorerChild.forEach(child => (this.explorerTile = child));
+    this.mobileAccessChild.forEach(child => (this.mobileAccessTile = child));
+    this.conversationChild.forEach(child => (this.conversationTile = child));
   }
 
   async ionViewWillEnter() {
@@ -72,7 +96,7 @@ export class DashboardPage implements OnInit {
 
   ionViewDidEnter() {
     this.checkNativeStartup();
-    this.updateAccountsTile();
+    this.updateTiles();
   }
 
   private async checkNativeStartup() {
@@ -158,7 +182,6 @@ export class DashboardPage implements OnInit {
   private redirectToTheStore() {
     Device.getInfo()
       .then(deviceInfo => {
-
         if (deviceInfo.platform === 'ios') {
           this.appBrowser.create('itms-apps://itunes.apple.com/app/id844091049', '_system');
         } else if (deviceInfo.platform === 'android') {
@@ -233,8 +256,28 @@ export class DashboardPage implements OnInit {
     return await modal.present();
   }
 
-  updateAccountsTile() {
-    this.accountsTile.getUserAccounts();
+  updateTiles() {
+    if (this.accountsTile) {
+      this.accountsTile.getUserAccounts();
+    }
+    if (this.transactionsTile) {
+      this.transactionsTile.getRecentTransactions();
+    }
+    if (this.rewardsTile) {
+      this.rewardsTile.getUserRewardTrackInfo();
+    }
+    if (this.ordersTile) {
+      this.ordersTile.initMerchantSlides();
+    }
+    if (this.explorerTile) {
+      this.explorerTile.getMerchants();
+    }
+    if (this.conversationTile) {
+      this.conversationTile.initializePage();
+    }
+    if (this.mobileAccessTile) {
+      this.mobileAccessTile.getLocations();
+    }
   }
 
   private hideGlobalNavBar(hide: boolean) {

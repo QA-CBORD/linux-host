@@ -37,7 +37,7 @@ export class OrderTileComponent implements OnInit {
     this.initMerchantSlides();
   }
 
-  private initMerchantSlides() {
+  initMerchantSlides() {
     this.merchantService
       .getMerchantsWithFavoriteInfo()
       .pipe(
