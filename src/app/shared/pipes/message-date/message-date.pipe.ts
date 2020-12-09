@@ -2,7 +2,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 
 import { DatePipe } from '@angular/common';
 import { SecureMessageInfo } from '@core/model/secure-messaging/secure-messaging.model';
-import { isYesterday } from '@core/utils/general-helpers';
+import { checkIsYesterday } from '@core/utils/general-helpers';
 
 @Pipe({
   name: 'messageDate',
@@ -32,7 +32,7 @@ export class MessageDatePipe implements PipeTransform {
     }
 
     /// > 1 day (Yesterday at xx:xx AM/PM)
-    if (timeDiff >= 86400000 || isYesterday(sentDate)) {
+    if (timeDiff >= 86400000 || checkIsYesterday(sentDate)) {
       return this.datePipe.transform(sentDate, "'Yesterday at ' h:mm a'");
     }
 
