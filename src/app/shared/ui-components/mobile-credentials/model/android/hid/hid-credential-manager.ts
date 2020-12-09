@@ -248,7 +248,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     const deleteEndpoint = async (isLastTry?: boolean) => {
       await this.handleRetriableOperation({ fn: this.deleteCredentialFromServer$ });
       const newCredential = await this.fetchFromServer$(true);
-      const updateSuccess = !newCredential.revoked();
+      const updateSuccess = !newCredential.revoked() && !newCredential.isProvisioned();
       if (updateSuccess) {
         this.mCredential = newCredential;
         this.hidSdkManager().deleteEndpoint();
@@ -453,7 +453,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
       if (credentialServerUpdateSuccess) {
         delete this.mCredential.credentialBundle.invitationCode;
         this.credentialStateChangeListener.onCredentialStateChanged();
-        setTimeout(() => this.hidSdkManager().doPostInstallWork(), 5000);
+        setTimeout(() => this.hidSdkManager().doPostInstallWork(), 3000);
       } else {
         this.showInstallationErrorAlert();
         this.deleteCredentialFromDevice$();
