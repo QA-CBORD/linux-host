@@ -240,7 +240,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     return savedEndpointState.isRevoked() || (savedEndpointState.isProvisioned() && deviceEndpointStatus.isInactive());
   }
 
-  private async onEndpointRevoked(timeToUpdate: number = 60000): Promise<void> {
+  private async onEndpointRevoked(timeToUpdate: number = 15000): Promise<void> {
     this.mCredential.setStatus(MobileCredentialStatuses.REVOKED);
     this.credentialService.updateCachedCredential$(EndpointStatuses.REVOKED);
     let counter = 0;
@@ -453,7 +453,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
       if (credentialServerUpdateSuccess) {
         delete this.mCredential.credentialBundle.invitationCode;
         this.credentialStateChangeListener.onCredentialStateChanged();
-        setTimeout(() => this.hidSdkManager().doPostInstallWork(), 3000);
+        setTimeout(() => this.hidSdkManager().doPostInstallWork(), 1000);
       } else {
         this.showInstallationErrorAlert();
         this.deleteCredentialFromDevice$();
