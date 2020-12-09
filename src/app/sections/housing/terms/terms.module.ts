@@ -3,8 +3,9 @@ import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 
 import { TermsComponent } from './terms.component';
+import { AccessibleSelectModule } from '@shared/accessibility/directives/accessible-select.module';
 
-const imports = [CommonModule, IonicModule];
+const imports = [CommonModule, IonicModule, AccessibleSelectModule];
 const declarations = [TermsComponent];
 
 @NgModule({
