@@ -22,6 +22,7 @@ export interface EnvironmentInfo {
   image_url: string;
   housing_aws_url: string;
   partner_services_url: string;
+  partner_services_api_key: string
 }
 
 @Injectable({
@@ -36,7 +37,8 @@ export class EnvironmentFacadeService extends ServiceStateFacade {
     image_url: 'https://3bulchr7pb.execute-api.us-east-1.amazonaws.com/dev/image/',
     // image_url :  'https://object-store.api.dev.cbord.com/image/', once DNS entry is entered
     housing_aws_url: 'https://z6u8er70s9.execute-api.us-east-1.amazonaws.com/dev',
-    partner_services_url: 'https://ft45xg91ch.execute-api.us-east-1.amazonaws.com/dev'
+    partner_services_url: 'https://ft45xg91ch.execute-api.us-east-1.amazonaws.com/dev',
+    partner_services_api_key: 'XF0B9a8eHJ6mTjpDUNlPO1Q6dJ30ZvbR4FYfuRM9'
     //'https://ft45xg91ch.execute-api.us-east-1.amazonaws.com/dev' //'https://api.payments.demo.cbord.com',
   };
 
@@ -49,6 +51,7 @@ export class EnvironmentFacadeService extends ServiceStateFacade {
     // image_url: 'https://object-store.api.feature1.cbord.com/image/', once DNS entry is entered
     housing_aws_url: 'https://z6u8er70s9.execute-api.us-east-1.amazonaws.com/dev',
     partner_services_url: 'https://api.payments.demo.cbord.com',
+    partner_services_api_key: 'XF0B9a8eHJ6mTjpDUNlPO1Q6dJ30ZvbR4FYfuRM9'
   };
 
   private readonly qa: EnvironmentInfo = {
@@ -59,6 +62,7 @@ export class EnvironmentFacadeService extends ServiceStateFacade {
     image_url: 'https://object-store.api.qa.cbord.com/image/',
     housing_aws_url: 'https://z4ffq7e1m9.execute-api.us-east-1.amazonaws.com/qa',
     partner_services_url: 'https://api.payments.qa.cbord.com',
+    partner_services_api_key: 'XF0B9a8eHJ6mTjpDUNlPO1Q6dJ30ZvbR4FYfuRM9'
   };
 
   private readonly pat: EnvironmentInfo = {
@@ -69,6 +73,7 @@ export class EnvironmentFacadeService extends ServiceStateFacade {
     image_url: 'https://object-store.api.pat.cbord.com/image/',
     housing_aws_url: 'https://z6u8er70s9.execute-api.us-east-1.amazonaws.com/dev',
     partner_services_url: 'https://api.partnerpayments.pat.cbord.com',
+    partner_services_api_key: 'XF0B9a8eHJ6mTjpDUNlPO1Q6dJ30ZvbR4FYfuRM9'
   };
 
   private readonly demo: EnvironmentInfo = {
@@ -79,6 +84,7 @@ export class EnvironmentFacadeService extends ServiceStateFacade {
     image_url: 'https://object-store.api.demo.cbord.com/image/',
     housing_aws_url: 'https://z4ffq7e1m9.execute-api.us-east-1.amazonaws.com/dev',
     partner_services_url: 'https://api.payments.demo.cbord.com',
+    partner_services_api_key: 'XF0B9a8eHJ6mTjpDUNlPO1Q6dJ30ZvbR4FYfuRM9'
   };
 
   private readonly production: EnvironmentInfo = {
@@ -89,6 +95,7 @@ export class EnvironmentFacadeService extends ServiceStateFacade {
     image_url: 'https://object-store.api.cbord.com/image/',
     housing_aws_url: 'https://api.housing.cbord.com',
     partner_services_url: 'https://api.partnerpayments.cbord.com',
+    partner_services_api_key: 'XF0B9a8eHJ6mTjpDUNlPO1Q6dJ30ZvbR4FYfuRM9'
   };
 
   private currentEnvironmentKey = 'current_environment';
@@ -137,6 +144,10 @@ export class EnvironmentFacadeService extends ServiceStateFacade {
 
   getPartnerServicesURL(): string {
     return this.currentEnvironment.partner_services_url;
+  }
+
+  getPartnerServicesApiKey(): string{
+    return this.currentEnvironment.partner_services_api_key;
   }
 
   getEnvironmentObject(): EnvironmentInfo {

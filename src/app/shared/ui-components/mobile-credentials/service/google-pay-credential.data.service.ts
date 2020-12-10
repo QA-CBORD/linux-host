@@ -10,16 +10,13 @@ import { AndroidCredentialDataService } from '../model/shared/android-credential
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { map, switchMap } from 'rxjs/operators';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
+import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 
 const major_version = 1,
   minor_version = 0;
 const resourceUrls = {
   credentialUrl: `/mf2go/cbord/${major_version}/${minor_version}/credential`,
   ping: `/mf2go/testing/${major_version}/${minor_version}/ping`,
-};
-
-const extraHeaders = {
-  'x-api-key': 'XF0B9a8eHJ6mTjpDUNlPO1Q6dJ30ZvbR4FYfuRM9', // 'uIBXQVw9ATQlkn1t0hk91xUvulJo9xS5PjRsU6lh',
 };
 
 @Injectable()
@@ -32,7 +29,8 @@ export class GooglePayCredentialDataService extends AndroidCredentialDataService
     protected readonly institutionFacadeService: InstitutionFacadeService,
     protected readonly apiService: APIService,
     protected readonly http: HttpClient,
-    protected userFacade: UserFacadeService
+    protected userFacade: UserFacadeService,
+    private readonly environmentFacadeService: EnvironmentFacadeService
   ) {
     super(
       resourceUrls,
@@ -46,16 +44,22 @@ export class GooglePayCredentialDataService extends AndroidCredentialDataService
     );
   }
 
+  private get extraHeaders(): object {
+    return {
+      'x-api-key': this.environmentFacadeService.getPartnerServicesApiKey(),
+    };
+  }
+
   androidCredential$(reqBody: {
     referenceIdentifier: string;
     googlePayNonce: string;
     otherOptions?: object;
   }): Observable<GOOGLE> {
-    return super.androidCredential$(reqBody, extraHeaders);
+    return super.androidCredential$(reqBody, this.extraHeaders);
   }
 
   protected getDefaultHeaders(): Observable<HttpHeaders> {
-    return of(extraHeaders).pipe(
+    return of(this.extraHeaders).pipe(
       map(headers => {
         return new HttpHeaders({
           ...headers,
