@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Observable,  } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 
 import { Unit } from '@sections/housing/unit/unit.model';
 import { RoomsStateService } from '@sections/housing/rooms/rooms-state.service';
@@ -9,8 +9,10 @@ import { HousingService } from '@sections/housing/housing.service';
 import { RoomsService } from '@sections/housing/rooms/rooms.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { TermsService } from '@sections/housing/terms/terms.service';
-import { AlertController } from '@ionic/angular';
+import { AlertController, Platform } from '@ionic/angular';
 import { debounceTime, take } from 'rxjs/operators';
+import { isMobile } from '@core/utils/platform-helper';
+import { LoadingService } from '@core/service/loading/loading.service';
 
 @Component({
   selector: 'st-unit-details',
@@ -18,8 +20,10 @@ import { debounceTime, take } from 'rxjs/operators';
   styleUrls: ['./unit-details.page.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UnitDetailsPage implements OnInit {
+export class UnitDetailsPage implements OnInit, OnDestroy {
   private isExpanded = false;
+  private subscriptions: Subscription;
+  private activeAlerts: HTMLIonAlertElement[] = [];
   constructor(
     private _route: ActivatedRoute,
     private _stateService: RoomsStateService,
@@ -28,6 +32,8 @@ export class UnitDetailsPage implements OnInit {
     private _termsService: TermsService,
     private _toastService: ToastService,
     private _alertController: AlertController,
+    private _loadingService: LoadingService,
+    private _platform: Platform
   ) {}
 
   unit: Unit;
@@ -40,7 +46,21 @@ export class UnitDetailsPage implements OnInit {
       const activeRoomSelect = this._stateService.getActiveRoomSelect();
       this.occupants$ = this._housingService.getOccupantDetails(activeRoomSelect.key, unitKey);
     }
+    console.log(isMobile(this._platform));
+    if (isMobile(this._platform)) {
+      this.subscriptions = this._platform.pause.subscribe(x => {
+        this.activeAlerts.forEach(alert => {
+          alert.dismiss();
+        });
+        this.activeAlerts = [];
+      });
+    }
   }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
+  }
+
   private roommatesExists() {
     return Array.isArray(this.unit.occupantKeys) && this.unit.occupantKeys.length > 0;
   }
@@ -53,12 +73,12 @@ export class UnitDetailsPage implements OnInit {
   }
 
   async requestRoom() {
-
-        this._termsService.termId$.pipe(
-          debounceTime(800),
-          take(1)
-        ).subscribe(
-          async termKey => {
+    const termSubscription = this._termsService.termId$
+      .pipe(
+        debounceTime(800),
+        take(1)
+      )
+      .subscribe(async termKey => {
         const request = {
           facilityKey: this.unit.key,
           assetKey: null,
@@ -77,7 +97,7 @@ export class UnitDetailsPage implements OnInit {
               role: 'cancel',
               cssClass: 'button__option_cancel',
               handler: () => {
-                console.log('Confirm Cancel');
+                this.activeAlerts = [];
                 alert.dismiss();
               },
             },
@@ -86,24 +106,31 @@ export class UnitDetailsPage implements OnInit {
               role: 'confirm',
               cssClass: 'button__option_confirm',
               handler: () => {
-                this._roomsService.postContractRequest(request).subscribe(successfullyCreated => {
-                      if (successfullyCreated) {
-                        //route back to housing dashboard
-                        alert.dismiss().then(() => this._housingService.handleSuccess());
+                this._loadingService.showSpinner();
+                this.activeAlerts = [];
+                const contractSubscription =
+                  this._roomsService.postContractRequest(request).subscribe(successfullyCreated => {
+                  if (successfullyCreated) {
+                    //route back to housing dashboard
+                    alert.dismiss().then(() => this._housingService.handleSuccess());
                   } else {
-                        alert.dismiss().then(() => {
-                          console.log('Assignment for patron was not successful. This unit might be full.')
-                          this._toastService.showToast({
-                            message: "Oops this unit is not available",
-                          });
-                        })
-                      }
+                    alert.dismiss().then(() => {
+                      this._loadingService.closeSpinner();
+                      console.log('Assignment for patron was not successful. This unit might be full.');
+                      this._toastService.showToast({
+                        message: 'Oops this unit is not available',
+                      });
+                    });
+                  }
                 });
+                this.subscriptions.add(contractSubscription);
               },
             },
           ],
         });
+        this.activeAlerts.push(alert);
         await alert.present();
       });
+    this.subscriptions.add(termSubscription);
   }
 }
