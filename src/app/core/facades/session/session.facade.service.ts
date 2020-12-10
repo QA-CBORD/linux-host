@@ -20,6 +20,7 @@ import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { SettingsFacadeService } from '../settings/settings-facade.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { LoadingService } from '@core/service/loading/loading.service';
+import { ContentStringsFacadeService } from '../content-strings/content-strings.facade.service';
 const { App, Device } = Plugins;
 
 enum AppStatus {
@@ -47,7 +48,8 @@ export class SessionFacadeService {
     private readonly router: Router,
     private navCtrl: NavController,
     private readonly toastService: ToastService,
-    private readonly loadingService: LoadingService
+    private readonly loadingService: LoadingService,
+    private readonly contentStringFacade: ContentStringsFacadeService
   ) {
     this.appStateListeners();
   }
@@ -257,6 +259,7 @@ export class SessionFacadeService {
     this.storageStateService.clearState();
     this.merchantFacadeService.clearState();
     this.settingsFacadeService.cleanCache();
+    this.contentStringFacade.clearState();
   }
 
   async getIsWeb(): Promise<boolean> {
