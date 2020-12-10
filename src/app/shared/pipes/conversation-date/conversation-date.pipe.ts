@@ -19,24 +19,26 @@ export class ConversationDatePipe implements PipeTransform {
       return this.datePipe.transform(sentDate, 'y');
     }
 
+    const timeDiff = today.getTime() - sentDate.getTime();
+
     /// > 5 days (<monthAbbv> <date>, xx:xx AM/PM)
-    if (today.getTime() - sentDate.getTime() > 432000000) {
+    if (timeDiff > 432000000) {
       return this.datePipe.transform(sentDate, 'MMM d');
     }
 
     /// > 2 days (<dayAbbv> xx:xx AM/PM)
-    if (today.getTime() - sentDate.getTime() >= 172800000) {
+    if (timeDiff >= 172800000) {
       return this.datePipe.transform(sentDate, 'E');
     }
 
     /// > 30 minutes (xx:xx AM/PM)
-    if (today.getTime() - sentDate.getTime() > 1800000) {
+    if (timeDiff > 1800000) {
       return this.datePipe.transform(sentDate, 'h:mm a');
     }
 
     /// > 1 minute (x minutes ago)
-    if (today.getTime() - sentDate.getTime() > 60000) {
-      const minutesAgo = Math.round((today.getTime() - sentDate.getTime()) / 60000);
+    if (timeDiff > 60000) {
+      const minutesAgo = Math.round((timeDiff) / 60000);
       return minutesAgo.toString() + ' min';
     }
 

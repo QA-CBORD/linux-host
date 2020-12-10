@@ -245,3 +245,9 @@ export function hasRequiredField(abstractControl: AbstractControl): boolean {
   }
   return false;
 }
+
+export function checkIsYesterday(currentDate: Date) {
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  return currentDate.toDateString() === yesterday.toDateString();
+}
