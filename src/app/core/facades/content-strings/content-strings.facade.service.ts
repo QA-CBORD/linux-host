@@ -60,10 +60,7 @@ export class ContentStringsFacadeService extends ServiceStateFacade {
     const call = this.apiService.retrieveContentStringListByRequest({ domain, category, locale });
 
     return this.makeRequestWithUpdatingStateHandler<ContentStringInfo[]>(call, this.stateService).pipe(
-      tap((data: ContentStringInfo[]) => {
-        console.log(`${domain}.${category}: `, data);
-        this.addContentStringsToState(data);
-      })
+      tap((data: ContentStringInfo[]) => this.addContentStringsToState(data))
     );
   }
 
@@ -79,7 +76,11 @@ export class ContentStringsFacadeService extends ServiceStateFacade {
     sessionId?: string,
     useSessionId?: boolean
   ): Observable<ContentStringInfo> {
-    const call = this.apiService.retrieveContentStringByConfig({ domain, category, name, locale }, sessionId, useSessionId);
+    const call = this.apiService.retrieveContentStringByConfig(
+      { domain, category, name, locale },
+      sessionId,
+      useSessionId
+    );
 
     return this.makeRequestWithUpdatingStateHandler<ContentStringInfo>(call, this.stateService).pipe(
       tap((data: ContentStringInfo) => this.addContentStringsToState(data))
