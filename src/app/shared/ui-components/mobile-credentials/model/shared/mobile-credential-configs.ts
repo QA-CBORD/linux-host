@@ -13,7 +13,7 @@ export const MOBILE_CREDENTIAL_CONFIGS = {
   },
   ALLEGION: {
     UI_MSG: {
-      WHEN_AVAILABLE: '',
+      WHEN_AVAILABLE: 'ID not added to Phone',
       WHEN_PROVISIONED: 'ID added to Gpay',
       WHEN_SUSPENDED: '',
       WHEN_REVOKED: 'Mobile ID revoked',

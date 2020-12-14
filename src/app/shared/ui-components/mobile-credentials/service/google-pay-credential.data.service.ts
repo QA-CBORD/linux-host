@@ -55,26 +55,20 @@ export class GooglePayCredentialDataService extends AndroidCredentialDataService
     googlePayNonce: string;
     otherOptions?: object;
   }): Observable<GOOGLE> {
-    return super.androidCredential$(reqBody, this.extraHeaders);
+    return super.androidCredential$(reqBody);
   }
 
-  protected getDefaultHeaders(): Observable<HttpHeaders> {
-    return of(this.extraHeaders).pipe(
-      map(headers => {
-        return new HttpHeaders({
-          ...headers,
-        });
-      })
-    );
-  }
+  // protected getDefaultHeaders(): Observable<HttpHeaders> {
+  //   return of(this.extraHeaders).pipe(
+  //     map(headers => {
+  //       return new HttpHeaders({
+  //         ...headers,
+  //       });
+  //     })
+  //   );
+  // }
 
   updateCredential$(mCredential: GoogleCredential): Observable<any> {
-    // let requestBody = {
-    //   referenceIdentifier: mCredential.getReferenceIdentifier(),
-    //   status: mCredential.getCredStatus(),
-    //   credentialID: mCredential.getId(),
-    // };
-    // return super.updateCredential$(requestBody);
     return this.getUserId().pipe(
       switchMap(userId => {
         const { id } = mCredential.credentialBundle;

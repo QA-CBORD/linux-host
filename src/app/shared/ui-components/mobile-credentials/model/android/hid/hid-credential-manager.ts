@@ -26,13 +26,13 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
 
   constructor(
     private readonly modalCtrl: ModalController,
-    private readonly alertCtrl: AlertController,
+    protected readonly alertCtrl: AlertController,
     private readonly popoverCtrl: PopoverController,
     private readonly toastService: ToastController,
     protected readonly loadingService: LoadingService,
     protected readonly credentialService: HidCredentialDataService
   ) {
-    super(loadingService, credentialService);
+    super(loadingService, credentialService, alertCtrl);
     this.credentialStateChangedSubscription();
   }
 
@@ -304,17 +304,6 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
       .toPromise();
   }
 
-  private async createAlertDialog(header: string, msg: string, buttons: Array<any>): Promise<HTMLIonAlertElement> {
-    return await this.alertCtrl.create({
-      cssClass: 'alert-dialog',
-      backdropDismiss: false,
-      mode: 'ios',
-      message: msg,
-      buttons: buttons,
-      header: header,
-    });
-  }
-
   private async showConfirmUninstallDialog(): Promise<void> {
     const header = 'Please confirm';
     const message = 'Are you sure you want to uninstall your mobile ID ?';
@@ -578,14 +567,6 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
         break;
     }
     return shouldRetry;
-  }
-
-  private async showInstallationErrorAlert(operation = 'installation'): Promise<void> {
-    const header = 'Unexpected error';
-    const message = `An unexpected error occurred during mobile ID ${operation}, please try again later.`;
-    const buttons = [{ text: 'OK', role: 'cancel' }];
-    const alertDialog = await this.createAlertDialog(header, message, buttons);
-    await alertDialog.present();
   }
 
   private deleteCredentialFromServer$ = async (endpoint?: EndpointState): Promise<boolean> => {

@@ -6,7 +6,7 @@ import { GooglePayCredentialDataService } from '@shared/ui-components/mobile-cre
 import { Injectable } from '@angular/core';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
-import { ModalController } from '@ionic/angular';
+import { AlertController, ModalController } from '@ionic/angular';
 import { MobileCredentialsComponent } from '@shared/ui-components/mobile-credentials/mobile-credentials.component';
 import { AbstractAndroidCredentialManager } from '../abstract-android-credential.management';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
@@ -19,9 +19,10 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
     private readonly modalCtrl: ModalController,
     protected readonly loadingService: LoadingService,
     private readonly credentialService: GooglePayCredentialDataService,
-    private readonly sessionFacadeService: SessionFacadeService
+    private readonly sessionFacadeService: SessionFacadeService,
+    protected readonly alertCtrl: AlertController
   ) {
-    super(loadingService, credentialService);
+    super(loadingService, credentialService, alertCtrl);
   }
 
   onUiImageClicked(event?: any): void {
@@ -86,7 +87,6 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
     );
   }
 
-
   refresh(): void {
     this.fetchFromServer$(true).then(newCredential => {
       this.mCredential = newCredential;
@@ -113,7 +113,8 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
                 map(credentialBundle => {
                   this.mCredential.setCredentialBundle(credentialBundle);
                   return this.mCredential;
-                })
+                }),
+                catchError(() => of(null))
               );
           }
         })
@@ -125,8 +126,13 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
     this.showLoading();
     const { googlePayNonce } = await GooglePayPlugin.getGooglePayNonce();
     const { referenceIdentifier } = this.mCredential.getCredentialState();
-    this.mCredential = await this.getAndroidCredential(googlePayNonce, referenceIdentifier);
+    const newCredential = await this.getAndroidCredential(googlePayNonce, referenceIdentifier);
     this.loadingService.closeSpinner();
+    if (!newCredential) {
+      this.showInstallationErrorAlert('installation');
+      return;
+    }
+    this.mCredential = newCredential;
     let { digitizationReference } = this.mCredential.getCredentialBundle();
     this.sessionFacadeService.navigatedFromGpay = true;
     GooglePayPlugin.openGooglePay({ uri: digitizationReference });

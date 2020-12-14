@@ -1,4 +1,5 @@
 import { LoadingService } from '@core/service/loading/loading.service';
+import { AlertController } from '@ionic/angular';
 import { Observable, of } from 'rxjs';
 import { catchError, finalize, first } from 'rxjs/operators';
 import { AndroidCredentialDataService } from '../shared/android-credential-data.service';
@@ -13,7 +14,8 @@ export abstract class AbstractAndroidCredentialManager implements MobileCredenti
 
   constructor(
     protected readonly loadingService: LoadingService,
-    protected readonly credentialSrvc: AndroidCredentialDataService
+    protected readonly credentialSrvc: AndroidCredentialDataService,
+    protected readonly alertCtrl: AlertController,
   ) {}
 
   async onWillLogout(): Promise<void> {}
@@ -30,6 +32,25 @@ export abstract class AbstractAndroidCredentialManager implements MobileCredenti
     let text =
       'This is a generic content string describing how to use android mobile credentials; This is a generic content string describing how to use android mobile credentials';
     return of(text).toPromise();
+  }
+
+  protected async createAlertDialog(header: string, msg: string, buttons: Array<any>): Promise<HTMLIonAlertElement> {
+    return await this.alertCtrl.create({
+      cssClass: 'alert-dialog',
+      backdropDismiss: false,
+      mode: 'ios',
+      message: msg,
+      buttons: buttons,
+      header: header,
+    });
+  }
+
+  protected async showInstallationErrorAlert(operation = 'installation'): Promise<void> {
+    const header = 'Unexpected error';
+    const message = `An unexpected error occurred during mobile ID ${operation}, please try again later.`;
+    const buttons = [{ text: 'OK', role: 'cancel' }];
+    const alertDialog = await this.createAlertDialog(header, message, buttons);
+    await alertDialog.present();
   }
 
   protected showLoading(): void {
