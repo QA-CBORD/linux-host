@@ -59,6 +59,7 @@ export class AccessCardComponent implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.getUserData();
     this.userFacadeService
       .isAppleWalletEnabled$()
       .toPromise()
