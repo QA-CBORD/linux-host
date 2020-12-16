@@ -7,7 +7,6 @@ import { Router } from '@angular/router';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { DASHBOARD_NAVIGATE } from '@sections/dashboard/dashboard.config';
 import {
-  NativeProvider,
   AppleWalletInfo,
   AppleWalletCredentialStatus,
 } from '@core/provider/native-provider/native.provider';
@@ -46,7 +45,6 @@ export class AccessCardComponent implements OnInit {
     private readonly sanitizer: DomSanitizer,
     private readonly router: Router,
     private readonly changeRef: ChangeDetectorRef,
-    private readonly nativeProvider: NativeProvider,
     private readonly userFacadeService: UserFacadeService,
     private readonly authFacadeService: AuthFacadeService
   ) {}
@@ -56,9 +54,10 @@ export class AccessCardComponent implements OnInit {
     this.getFeaturesEnabled();
     this.getUserData();
     this.getUserName();
+    this.refreshProfilePhoto();
   }
 
-  ionViewWillEnter() {
+ ionViewWillEnter() {
     this.userFacadeService
       .isAppleWalletEnabled$()
       .toPromise()
@@ -189,5 +188,14 @@ export class AccessCardComponent implements OnInit {
     IOSDevice.addListener('AppleWalletEvent', (info: any) => {
       this.enableAppleWallet();
     });
+  }
+
+  private refreshProfilePhoto() {
+    const timeInterval = 3600000;
+    (new Promise(() =>
+      setInterval(() => {
+        this.getUserData();
+      }, timeInterval)
+    )).then();
   }
 }

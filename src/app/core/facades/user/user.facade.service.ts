@@ -121,9 +121,6 @@ export class UserFacadeService extends ServiceStateFacade {
   }
 
   getAcceptedPhoto$(): Observable<UserPhotoInfo> {
-    if (this.userPhoto) {
-      return of(this.userPhoto);
-    }
     return this.userApiService.getUserPhoto(null).pipe(
       map(response => response.response),
       tap(userPhoto => this.setAcceptedPhoto(userPhoto))
