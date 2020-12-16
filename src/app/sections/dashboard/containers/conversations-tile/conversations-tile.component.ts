@@ -74,7 +74,6 @@ export class ConversationsTileComponent implements OnInit, OnDestroy {
 
     /// create 'conversations' out of message array
     for (const message of this.messagesArray) {
-      message.sent_date = new Date(message.sent_date).toDateString();
 
       let bNewConversation = true;
 
