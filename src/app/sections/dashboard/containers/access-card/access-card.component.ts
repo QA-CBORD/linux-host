@@ -55,10 +55,10 @@ export class AccessCardComponent implements OnInit {
     this.getFeaturesEnabled();
     this.getUserData();
     this.getUserName();
-    this.refreshProfilePhoto();
   }
 
  ionViewWillEnter() {
+    this.getUserData();
     this.userFacadeService
       .isAppleWalletEnabled$()
       .toPromise()
@@ -192,14 +192,5 @@ export class AccessCardComponent implements OnInit {
     this.appleWalletListener = IOSDevice.addListener('AppleWalletEvent', (info: any) => {
       this.enableAppleWallet();
     });
-  }
-
-  private refreshProfilePhoto() {
-    const timeInterval = 3600000;
-    (new Promise(() =>
-      setInterval(() => {
-        this.getUserData();
-      }, timeInterval)
-    )).then();
   }
 }
