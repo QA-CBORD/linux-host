@@ -52,6 +52,7 @@ export class AccessCardComponent implements OnInit {
   ngOnInit() {
     this.setInstitutionData();
     this.getFeaturesEnabled();
+    this.getUserData();
     this.getUserName();
   }
 
