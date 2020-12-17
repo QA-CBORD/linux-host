@@ -64,7 +64,10 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
   onUiIconClicked(): void {
     this.showLoading();
     const showCredentialUsageContentString = async () => {
-      const btnText = this.mCredential.isProvisioned() || this.mCredential.isProcessing() ? 'Uninstall' : 'OK';
+      const btnText =
+        this.mCredential.isProvisioned() || this.mCredential.isProcessing() || this.mCredential.revoked()
+          ? 'Uninstall'
+          : 'OK';
       const componentProps = {
         usageInstructions: await this.credentialUsageContentString$(),
         title: 'Usage Instructions',
@@ -240,9 +243,13 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     return savedEndpointState.isRevoked() || (savedEndpointState.isProvisioned() && deviceEndpointStatus.isInactive());
   }
 
-  private async onEndpointRevoked(timeToUpdate: number = 15000): Promise<void> {
+  private setCredentialRevoked(): void {
     this.mCredential.setStatus(MobileCredentialStatuses.REVOKED);
     this.credentialService.updateCachedCredential$(EndpointStatuses.REVOKED);
+  }
+
+  private async onEndpointRevoked(timeToUpdate?: 60000): Promise<void> {
+    this.setCredentialRevoked();
     let counter = 0;
     let maxRefreshAttempt = 11;
     const deleteEndpoint = async (isLastTry?: boolean) => {
