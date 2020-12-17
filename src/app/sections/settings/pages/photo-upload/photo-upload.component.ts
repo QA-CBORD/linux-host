@@ -397,7 +397,7 @@ export class PhotoUploadComponent implements OnInit {
     this.sessionFacadeService.navigatedToPlugin = true;
     return from(
       Camera.getPhoto({
-        quality: 100, 
+        quality: 20, 
         correctOrientation: true,
         preserveAspectRatio: true,
         width: uploadSettings.saveWidth ? uploadSettings.saveWidth : null,
