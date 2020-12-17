@@ -17,8 +17,8 @@ export class AppleWalletState implements MobileCredentialState {
   isProvisioned(): boolean {
     // is everything provisioned already, watch, iphone, etc.
     return (
-      this.activePasses.credStatus.iPhone == MobileCredentialStatuses.IS_PROVISIONED &&
-      this.activePasses.credStatus.iWatch == MobileCredentialStatuses.IS_PROVISIONED
+      this.activePasses.credStatus.iPhone == MobileCredentialStatuses.PROVISIONED &&
+      this.activePasses.credStatus.iWatch == MobileCredentialStatuses.PROVISIONED
     );
   }
 
@@ -28,8 +28,8 @@ export class AppleWalletState implements MobileCredentialState {
 
   isAvailable(): boolean {
     return (
-      this.activePasses.credStatus.iPhone == MobileCredentialStatuses.IS_AVAILABLE ||
-      this.activePasses.credStatus.iWatch == MobileCredentialStatuses.IS_AVAILABLE
+      this.activePasses.credStatus.iPhone == MobileCredentialStatuses.AVAILABLE ||
+      this.activePasses.credStatus.iWatch == MobileCredentialStatuses.AVAILABLE
     );
   }
 
@@ -46,10 +46,10 @@ export class AppleWalletState implements MobileCredentialState {
   setStatus(status: number): void {}
 
   iWatchPaired(): boolean {
-    return this.activePasses.credStatus.iWatch == MobileCredentialStatuses.IS_PROVISIONED;
+    return this.activePasses.credStatus.iWatch == MobileCredentialStatuses.PROVISIONED;
   }
 
   iPhoneProvisioned(): boolean {
-    return this.activePasses.credStatus.iPhone == MobileCredentialStatuses.IS_PROVISIONED;
+    return this.activePasses.credStatus.iPhone == MobileCredentialStatuses.PROVISIONED;
   }
 }

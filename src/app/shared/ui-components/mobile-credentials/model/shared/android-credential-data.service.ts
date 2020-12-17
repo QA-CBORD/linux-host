@@ -2,6 +2,7 @@ import { HttpHeaders, HttpParams, HttpClient } from '@angular/common/http';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
+import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { APIService, HttpResponseType, RestCallType } from '@core/service/api-service/api.service';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { forkJoin, Observable, of } from 'rxjs';
@@ -14,7 +15,7 @@ const api_version = 'v1';
 const resourceUrls = {
   activePasses: `/android/${api_version}/activePasses`,
   activePassesDebug: '../../../../../assets/mock/activepasses.json',
-  credentialsDebug: '../../../../../assets/mock/android_credentials.json'
+  credentialsDebug: '../../../../../assets/mock/android_credentials.json',
 };
 
 export class AndroidCredentialDataService extends MobileCredentialDataService {
@@ -25,9 +26,10 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
     protected contentStringFacade: ContentStringsFacadeService,
     protected institutionFacadeService: InstitutionFacadeService,
     protected apiService: APIService,
-    protected http: HttpClient
+    protected http: HttpClient,
+    protected userFacade: UserFacadeService
   ) {
-    super(storageStateService, authFacadeService, institutionFacadeService, apiService);
+    super(storageStateService, authFacadeService, institutionFacadeService, apiService, userFacade);
   }
 
   activePasses$(): Observable<AndroidCredential<any>> {
@@ -37,7 +39,7 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
         return this.storageStateService.getStateEntityByKey$<Persistable>(this.credential_key).pipe(
           map(data => {
             if (data) {
-              androidCredentials.setCredentialData(data.value);
+              androidCredentials.setCredentialBundle(data.value);
             }
             return androidCredentials;
           })
@@ -50,7 +52,8 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
     return this.getCredentialFor(requestBody, extraHeaders).pipe(
       take(1),
       map((credentialData: any[]) => {
-        return credentialData[0];
+        let [credentialBundle] = credentialData;
+        return credentialBundle;
       })
     );
   }
@@ -69,15 +72,15 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
     );
   }
 
-  protected getDefaultHeaders(): Observable<HttpHeaders>{
+  protected getDefaultHeaders(): Observable<HttpHeaders> {
     return this.omniIDJwtToken$().pipe(
       map(omniIDJwtToken => {
-        return new HttpHeaders({ 
-          Authorization: `Bearer ${omniIDJwtToken}` 
+        return new HttpHeaders({
+          Authorization: `Bearer ${omniIDJwtToken}`,
         });
       })
-    )
-  } 
+    );
+  }
 
   private getCredentialFor(body: object, extraHeaders?: object): Observable<any> {
     /**
@@ -141,7 +144,7 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
     );
   }
 
-  protected deleteCredential$(credentialId: string): Observable<any> {
+  protected deleteCredential$(credentialId: string | any): Observable<any> {
     // get the mobile credential id that we want to delete.
     const institutionInfo$ = this.institutionFacadeService.cachedInstitutionInfo$.pipe(take(1));
     const defaultHeader$ = this.getDefaultHeaders().pipe(take(1));
@@ -167,10 +170,9 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
   }
 
   mockAndroidCredentials(): Observable<any> {
-    return this.http
-      .get<any>(resourceUrls.credentialsDebug)
+    return this.http.get<any>(resourceUrls.credentialsDebug);
   }
-  
+
   mockActivePasses(): Observable<any> {
     return this.http.get<any>(resourceUrls.activePassesDebug).pipe(
       map(({ credStatus, passes, referenceIdentifier }) => {

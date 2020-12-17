@@ -14,7 +14,7 @@ import { AppState, Plugins } from '@capacitor/core';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { NavController, Platform } from '@ionic/angular';
 import { MerchantFacadeService } from '@core/facades/merchant/merchant-facade.service';
-import { from } from 'rxjs';
+import { from, Subject } from 'rxjs';
 import { PATRON_ROUTES } from '@sections/section.config';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { SettingsFacadeService } from '../settings/settings-facade.service';
@@ -35,7 +35,8 @@ export class SessionFacadeService {
   /// manages app to background status for plugins (camera, etc) that briefly leave the app and return
   private navigateToNativePlugin: boolean = false;
   private appStatus: AppStatus = AppStatus.FOREGROUND;
-
+  navigatedFromGpay: boolean = false;
+  onWillLogoutSubject = new Subject<void>();
   constructor(
     private readonly platform: Platform,
     private readonly authFacadeService: AuthFacadeService,
@@ -83,6 +84,10 @@ export class SessionFacadeService {
 
     if (this.navigatedToPlugin) {
       this.navigateToNativePlugin = false;
+      return;
+    }
+
+    if (this.navigatedFromGpay) {
       return;
     }
 
@@ -244,19 +249,14 @@ export class SessionFacadeService {
 
   async logoutUser(navigateToEntry: boolean = true) {
     if (navigateToEntry) {
-      this.navCtrl.navigateRoot([ROLES.guest, GUEST_ROUTES.entry]).then(() => {
-        this.resetAll();
-      });
-    } else {
-      this.resetAll();
+      await this.navCtrl.navigateRoot([ROLES.guest, GUEST_ROUTES.entry]);
     }
+    this.resetAll();
   }
 
   private async resetAll(): Promise<void> {
     await this.userFacadeService.logoutAndRemoveUserNotification().toPromise();
     await this.identityFacadeService.logoutUser();
-    await this.storageStateService.clearStorage();
-    this.storageStateService.clearState();
     this.merchantFacadeService.clearState();
     this.settingsFacadeService.cleanCache();
     this.contentStringFacade.clearState();
