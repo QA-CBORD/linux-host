@@ -70,6 +70,7 @@ export class AccessCardComponent implements OnInit, OnDestroy {
 
   ionViewWillEnter() {
     this.mobileCredentialFacade.refreshCredentials();
+    this.getUserData();
   }
 
   private getUserData() {
