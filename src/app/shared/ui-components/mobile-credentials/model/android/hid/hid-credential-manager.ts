@@ -446,7 +446,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     if (credentialDeviceInstallSuccess) {
       this.mCredential.setStatus(MobileCredentialStatuses.PROCESSING); // You want to show to user that it processing, HID normally takes a while to be active.
       const credentialServerUpdateSuccess = await this.handleRetriableOperation({ fn: this.updateCredentialOnServer$ });
-      if (credentialServerUpdateSuccess) {
+      if (credentialServerUpdateSuccess || (await this.fetchFromServer$()).isProvisioned()) {
         delete this.mCredential.credentialBundle.invitationCode;
         this.credentialStateChangeListener.onCredentialStateChanged();
         setTimeout(() => this.hidSdkManager().doPostInstallWork(), 1000);
@@ -455,7 +455,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
         this.deleteCredentialFromDevice$();
         this.handleRetriableOperation({
           fn: this.deleteCredentialFromServer$,
-          retryCount: 6,
+          args: new EndpointState(null, this.mCredential.getId()),
         });
       }
       this.loadingService.closeSpinner();

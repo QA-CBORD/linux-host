@@ -66,7 +66,7 @@ export abstract class AbstractAndroidCredentialManager implements MobileCredenti
     );
   }
 
-  protected async fetchFromServer$(runInBackground: boolean, nullOnErr?: boolean): Promise<AndroidCredential<any>> {
+  protected async fetchFromServer$(runInBackground?: boolean, nullOnErr?: boolean): Promise<AndroidCredential<any>> {
     const shouldShowLoadingIndicator = !runInBackground;
     if (shouldShowLoadingIndicator) {
       this.showLoading();
