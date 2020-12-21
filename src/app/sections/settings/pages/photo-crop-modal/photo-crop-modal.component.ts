@@ -19,7 +19,7 @@ export class PhotoCropModalComponent {
   @Input() imageBase64 = '';
   cropperPosition = { x1: 0, y1: 0, x2: 0, y2: 0 };
   croppedImageBase64 = '';
-  qualityPercentage: number = 30;
+  qualityPercentage: number;
   saveHeight: number;
   saveWidth: number;
 
