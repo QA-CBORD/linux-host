@@ -9,6 +9,7 @@ import { ToastService } from '@core/service/toast/toast.service';
 const DEFAULT_HEIGHT = 170;
 const DEFAULT_WIDTH = 128;
 const PHOTO_CROP_DELAY = 100;
+const IMAGE_LENGTH = 200000;
 
 @Component({
   templateUrl: './photo-crop-modal.component.html',
@@ -18,6 +19,7 @@ export class PhotoCropModalComponent {
   @Input() imageBase64 = '';
   cropperPosition = { x1: 0, y1: 0, x2: 0, y2: 0 };
   croppedImageBase64 = '';
+  qualityPercentage: number = 30;
   saveHeight: number;
   saveWidth: number;
 
@@ -37,6 +39,7 @@ export class PhotoCropModalComponent {
   }
 
   cropperIsReady(originalImage: Dimensions) {
+    this.qualityPercentage = this.imageBase64.length > IMAGE_LENGTH ? 30 : 50;
     setTimeout(() => {
       this.cropperPosition = this.cropperInitialPosition(originalImage);
     }, PHOTO_CROP_DELAY);
@@ -61,12 +64,17 @@ export class PhotoCropModalComponent {
     });
     await modal.present();
   }
-  
+
   private cropperInitialPosition(originalImage: Dimensions): any {
-   const percentage = 0.1;
-   const width = originalImage.width;
-   const height = originalImage.height;
-   const padding = ((height + width) / 2 ) * percentage; 
-   return { x1: (width-(width-padding)), y1: (height-(height-padding)), x2: (width-padding), y2: (height-padding) };
+    const percentage = 0.1;
+    const width = originalImage.width;
+    const height = originalImage.height;
+    const padding = ((height + width) / 2) * percentage;
+    return {
+      x1: width - (width - padding),
+      y1: height - (height - padding),
+      x2: width - padding,
+      y2: height - padding,
+    };
   }
 }
