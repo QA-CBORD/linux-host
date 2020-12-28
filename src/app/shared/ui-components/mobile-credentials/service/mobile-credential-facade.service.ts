@@ -3,14 +3,17 @@ import { SessionFacadeService } from '@core/facades/session/session.facade.servi
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { iif, Observable, of } from 'rxjs';
-import { catchError, map, switchMap, take } from 'rxjs/operators';
+import { catchError, map, switchMap, take, tap } from 'rxjs/operators';
 import { Settings } from 'src/app/app.global';
 import { CredentialStateChangeListener, MobileCredentialManager } from '../model/shared/mobile-credential-manager';
 import { CredentialManagerType, MobileCredentialManagerFactory } from './mobile-credential-manager.factory';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class MobileCredentialFacade {
   private mobileCredentialManager: MobileCredentialManager;
+  private mCredentialEnabled: boolean = false;
 
   constructor(
     private readonly mobileCredentialManagerFactory: MobileCredentialManagerFactory,
@@ -85,12 +88,17 @@ export class MobileCredentialFacade {
     return of(false);
   }
 
-  get mobileCredentialEnabled$(): Observable<boolean> {
+  mobileCredentialEnabled$(): Observable<boolean> {
     return this.iifCredentialSettingsEnabled().pipe(
       switchMap(mobileCredentialSettingsEnabled => {
         return mobileCredentialSettingsEnabled ? this.mobileCredentialManager.credentialEnabled$() : of(false);
-      })
+      }),
+      tap(isEnabled => (this.mCredentialEnabled = isEnabled))
     );
+  }
+
+  get isEnabled$(): Observable<boolean> {
+    return of(this.mCredentialEnabled);
   }
 
   refreshCredentials(): void {

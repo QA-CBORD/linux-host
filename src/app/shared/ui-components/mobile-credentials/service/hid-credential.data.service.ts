@@ -22,7 +22,7 @@ const resourceUrls = {
 
 const CREDENTIAL_ALREADY_DELETED_ERROR = 'Credential has already been deleted';
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class HidCredentialDataService extends AndroidCredentialDataService {
   constructor(
     protected readonly storageStateService: StorageStateService,

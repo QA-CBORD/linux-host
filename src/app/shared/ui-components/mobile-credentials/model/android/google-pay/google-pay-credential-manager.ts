@@ -12,7 +12,7 @@ import { AbstractAndroidCredentialManager } from '../abstract-android-credential
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 const { GooglePayPlugin } = Plugins;
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class GooglePayCredentialManager extends AbstractAndroidCredentialManager {
   constructor(
     private googlePayCrendential: GooglePayCredentialDataService,

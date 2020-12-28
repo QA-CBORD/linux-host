@@ -15,7 +15,7 @@ export abstract class AbstractAndroidCredentialManager implements MobileCredenti
   constructor(
     protected readonly loadingService: LoadingService,
     protected readonly credentialSrvc: AndroidCredentialDataService,
-    protected readonly alertCtrl: AlertController,
+    protected readonly alertCtrl: AlertController
   ) {}
 
   async onWillLogout(): Promise<void> {}
@@ -60,10 +60,7 @@ export abstract class AbstractAndroidCredentialManager implements MobileCredenti
   }
 
   protected async checkCredentialAvailability(showLoading: boolean = true): Promise<boolean> {
-    const shouldRunInBackground = !showLoading;
-    return await this.fetchFromServer$(shouldRunInBackground).then(credential =>
-      credential ? credential.isAvailable() : false
-    );
+    return (await this.fetchFromServer$(!showLoading)).isAvailable();
   }
 
   protected async fetchFromServer$(runInBackground?: boolean, nullOnErr?: boolean): Promise<AndroidCredential<any>> {

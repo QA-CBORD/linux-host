@@ -15,7 +15,9 @@ export enum CredentialManagerType {
   AndroidCredential = 'ANDROID_CREDENTIAL',
 }
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class MobileCredentialManagerFactory {
   constructor(private injector: Injector) {}
 

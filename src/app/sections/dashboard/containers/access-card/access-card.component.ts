@@ -32,7 +32,6 @@ export class AccessCardComponent implements OnInit, OnDestroy {
   userPhoto: string;
   isLoadingPhoto: boolean = true;
   userInfo: string;
-  mobileCredentialEnabled: boolean = false;
   mobileCredentialAvailable: boolean = false;
 
   constructor(
@@ -53,15 +52,10 @@ export class AccessCardComponent implements OnInit, OnDestroy {
     this.getFeaturesEnabled();
     this.getUserData();
     this.getUserName();
-    this.initMobileCredential();
   }
 
-  private initMobileCredential(): void {
-    this.mobileCredentialFacade.mobileCredentialEnabled$.pipe(take(1)).subscribe(mobileCredentialEnabled => {
-      this.mobileCredentialEnabled = mobileCredentialEnabled;
-      this.mobileCredentialFacade.setCredentialStateChangeListener(this);
-      this.changeRef.detectChanges();
-    });
+  ngAfterViewInit(): void {
+    this.mobileCredentialFacade.setCredentialStateChangeListener(this);
   }
 
   onCredentialStateChanged(): void {

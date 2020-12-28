@@ -18,9 +18,10 @@ interface ExecutionParameters {
   checkErrors?: boolean;
   userDecides?: boolean;
   args?: any;
+  onErrors?: (args?: any) => Promise<boolean>;
 }
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class HIDCredentialManager extends AbstractAndroidCredentialManager {
   private hidSdkError: HID_SDK_ERR = null;
 
@@ -122,18 +123,15 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     if (deviceEndpointActive) {
       this.showCredentialAlreadyInstalledAlert(async () => {
         // user agrees to delete previous user's active Mobile ID.
-        const deletedSucceed = await this.handleRetriableOperation({
+        await this.handleRetriableOperation({
           fn: this.deleteCredentialFromServer$,
           retryCount: 6,
           showLoading: true,
           args: await this.credentialService.getEndpointStateFromLocalCache(true),
         });
 
-        if (!deletedSucceed) {
-          this.showInstallationErrorAlert();
-          return;
-        }
         this.handleRetriableOperation({ fn: this.deleteCredentialFromDevice$ });
+
         if (credential.isAvailable()) {
           this.showTermsAndConditions(true);
         } else if (credential.isProvisioned()) {
@@ -141,6 +139,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
             const deleteSuccessfull = await this.handleRetriableOperation({
               fn: this.deleteCredentialFromServer$,
               showLoading: true,
+              onErrors: async () => await this.checkCredentialAvailability(),
             });
             if (deleteSuccessfull) {
               if (await this.checkCredentialAvailability()) {
@@ -182,6 +181,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
       const deleteSuccessfull = await this.handleRetriableOperation({
         fn: this.deleteCredentialFromServer$,
         showLoading: true,
+        onErrors: async () => await this.checkCredentialAvailability(),
       });
       if (deleteSuccessfull) {
         if (await this.checkCredentialAvailability()) {
@@ -214,6 +214,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
         fn: this.deleteCredentialFromServer$,
         showLoading: true,
         retryCount: 6,
+        onErrors: async () => await this.checkCredentialAvailability(),
       });
       const credentialDeviceDeleteSuccess = await this.handleRetriableOperation({
         fn: this.deleteCredentialFromDevice$,
@@ -253,7 +254,10 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     let counter = 0;
     let maxRefreshAttempt = 11;
     const deleteEndpoint = async (isLastTry?: boolean) => {
-      await this.handleRetriableOperation({ fn: this.deleteCredentialFromServer$ });
+      await this.handleRetriableOperation({
+        fn: this.deleteCredentialFromServer$,
+        onErrors: async () => await this.checkCredentialAvailability(),
+      });
       const newCredential = await this.fetchFromServer$(true);
       const updateSuccess = !newCredential.revoked() && !newCredential.isProvisioned();
       if (updateSuccess) {
@@ -445,8 +449,11 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     });
     if (credentialDeviceInstallSuccess) {
       this.mCredential.setStatus(MobileCredentialStatuses.PROCESSING); // You want to show to user that it processing, HID normally takes a while to be active.
-      const credentialServerUpdateSuccess = await this.handleRetriableOperation({ fn: this.updateCredentialOnServer$ });
-      if (credentialServerUpdateSuccess || (await this.fetchFromServer$()).isProvisioned()) {
+      const credentialServerUpdateSuccess = await this.handleRetriableOperation({
+        fn: this.updateCredentialOnServer$,
+        onErrors: async () => (await this.fetchFromServer$()).isProvisioned(),
+      });
+      if (credentialServerUpdateSuccess) {
         delete this.mCredential.credentialBundle.invitationCode;
         this.credentialStateChangeListener.onCredentialStateChanged();
         setTimeout(() => this.hidSdkManager().doPostInstallWork(), 1000);
@@ -456,6 +463,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
         this.handleRetriableOperation({
           fn: this.deleteCredentialFromServer$,
           args: new EndpointState(null, this.mCredential.getId()),
+          onErrors: async () => await this.checkCredentialAvailability(),
         });
       }
       this.loadingService.closeSpinner();
@@ -492,6 +500,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
       checkErrors: params.checkErrors || false,
       userDecides: params.userDecides || false,
       args: params.args,
+      onErrors: params.onErrors,
     };
 
     if (options.showLoading) {
@@ -511,6 +520,8 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     const userShouldChoose = options.userDecides;
     const fn = options.fn;
     const args = options.args;
+    const errorHandler = options.onErrors;
+
     while (this.canRetry(retryCount)) {
       retryCount--;
       try {
@@ -518,6 +529,14 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
           return true;
         }
       } catch (exception) {
+        if (errorHandler) {
+          console.log('Delegating to errorHandler');
+          const success = await errorHandler(args);
+          console.log('Handler result: ', success);
+          if (success) {
+            return true;
+          }
+        }
         if (shouldCheckErrorTypes && this.shouldRetryBecauseOfError(exception.message)) {
           if (userShouldChoose) {
             this.loadingService.closeSpinner();
@@ -605,6 +624,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     let credentialDeleteOnServerSuccess = await this.handleRetriableOperation({
       fn: this.deleteCredentialFromServer$,
       showLoading: false,
+      onErrors: this.checkCredentialAvailability,
     });
     let credentialDeleteOnDeviceSuccess = false;
     if (credentialDeleteOnServerSuccess) {
