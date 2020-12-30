@@ -18,13 +18,13 @@
     [ngStyle]="{ backgroundColor: nativeHeaderBg$ | async}"
     *ngIf="{ photo: institutionPhoto$ | async, name: institutionName$ | async } as instutionValues"
   >
-    <img
-      *ngIf="instutionValues.photo"
-      class="login__institution-logo"
-      [src]="instutionValues.photo"
-      alt="institution logo"
-    />
-    <ion-text *ngIf="instutionValues.name && !instutionValues.photo" class="login__institution-name">
+    <img *ngIf="instutionValues.photo" class="login__institution-logo" [src]="instutionValues.photo" alt="" />
+    <ion-text
+      autofocus
+      tabindex="0"
+      *ngIf="instutionValues.name && !instutionValues.photo"
+      class="login__institution-name"
+    >
       {{ instutionValues.name }}
     </ion-text>
   </div>
