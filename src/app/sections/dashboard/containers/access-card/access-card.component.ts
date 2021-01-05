@@ -29,7 +29,7 @@ export class AccessCardComponent implements OnInit, OnDestroy {
   cardStatusMessage: string;
   appleWalletMessageImage: string;
   appleWalletButtonHidden: boolean = true;
-  userPhoto: string;
+  userPhoto?: string;
   isLoadingPhoto: boolean = true;
   userInfo: string;
   mobileCredentialAvailable: boolean = false;

@@ -78,8 +78,13 @@ export class PhotoUploadComponent implements OnInit {
     this.setupPhotoSubscriptions();
   }
 
-  ngOnDestroy() {
-    this.photoUploadService.clearLocalProfilePhoto();
+  ionViewWillEnter() {
+    if (this.localPhotoUploadStatus.profile === LocalPhotoStatus.ACCEPTED) {
+      this.localPhotoUploadStatus.profile = LocalPhotoStatus.NONE;
+      this.photoUploadService.clearLocalGovernmentIdPhotos();
+      this.photoUploadService.clearLocalProfilePhoto();
+      this.getPhotoData();
+    }
   }
 
   private clearLocalStateData() {
@@ -397,7 +402,7 @@ export class PhotoUploadComponent implements OnInit {
     this.sessionFacadeService.navigatedToPlugin = true;
     return from(
       Camera.getPhoto({
-        quality: 20, 
+        quality: 50, 
         correctOrientation: true,
         preserveAspectRatio: true,
         width: uploadSettings.saveWidth ? uploadSettings.saveWidth : null,

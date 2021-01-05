@@ -43,7 +43,7 @@
           Front of ID
         </div>
         <div *ngIf="(govIdFront$ | async) as govidFrontUrl; else defaultGovIdFront">
-          <img [src]="govidFrontUrl" alt="Government Id Front" width="132" height="80" class="round-corners" />
+          <img [src]="govidFrontUrl" alt="Government Id Front" width="132" height="178" class="round-corners" />
           <ion-button color="light" class="reupload-btn round-corners" (click)="presentPhotoTypeSelection(photoType.GOVT_ID_FRONT)"
             >REUPLOAD</ion-button
           >
@@ -71,7 +71,7 @@
           Back of ID
         </div>
         <div *ngIf="(govIdBack$ | async) as govIdBackUrl; else defaultGovIdBack">
-          <img [src]="govIdBackUrl" alt="Government Id Front" width="132" height="80" class="round-corners" />
+          <img [src]="govIdBackUrl" alt="Government Id Front" width="132" height="178" class="round-corners" />
           <ion-button color="light" class="reupload-btn round-corners" (click)="presentPhotoTypeSelection(photoType.GOVT_ID_BACK)"
             >REUPLOAD</ion-button
           >
