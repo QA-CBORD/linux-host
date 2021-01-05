@@ -54,11 +54,22 @@ public class HIDSDKManager implements OrigoReaderConnectionListener, OrigoHceCon
     }
 
 
+    public String getEndpointLastServerSync(){
+        try {
+            return this.mobileKeys.getEndpointInfo().getLastServerSyncDate().toString();
+        } catch (OrigoMobileKeysException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
     private void initializeMobileKeysApi(final Application application) throws IllegalStateException{
         this.applicationContext = application.getApplicationContext();
         MobileKeysApiConfig mobileKeysApiConfig = ((MobileKeysApiConfig) application);
         this.origoMobileKeysApi = mobileKeysApiConfig.configureMobileKeysApi();
         this.mobileKeys = origoMobileKeysApi.getMobileKeys();
+
         OrigoReaderConnectionCallback readerConnectionCallback = new OrigoReaderConnectionCallback(applicationContext);
         readerConnectionCallback.registerReceiver(this);
         OrigoHceConnectionCallback hceConnectionCallback = new OrigoHceConnectionCallback(applicationContext);

@@ -7,6 +7,7 @@ export enum SETTINGS_ID {
   pin = 'pin-change',
   devices = 'report-lost',
   address = 'my-address',
+  mcredential = 'mobile-credential',
   paymentMethods = 'payment-methods',
   deposits = 'auto-deposits',
   mealPlan = 'meal-plan-change',

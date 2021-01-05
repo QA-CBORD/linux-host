@@ -19,6 +19,7 @@ import { SETTINGS_ID } from './models/settings-id.enum';
 import { LOCAL_ROUTING as ORDERING_ROUTING } from '@sections/ordering/ordering.config';
 import { ReportCardStatusSetting } from './models/report-card-status.config';
 import { ReportCardComponent } from './pages/report-card/report-card.component';
+import { MobileCredentialMetadata } from './pages/credential-metadata/mobile-cred-metadata';
 
 export enum LOCAL_ROUTING {
   photoUpload = 'photo-upload',
@@ -124,6 +125,17 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         label: 'Saved Addresses',
         type: 'button',
         navigate: [SETTINGS_NAVIGATE.address],
+      },
+      {
+        id: SETTINGS_ID.mcredential,
+        icon: 'mobile_credential',
+        label: 'Mobile Credential status',
+        type: 'button',
+        setCallback: openModal,
+        modalContent: {
+          component: MobileCredentialMetadata,
+        },
+        validations: [{ type: SETTINGS_VALIDATIONS.MobileCredentialEnabled, value: Settings.Setting.ANDROID_MOBILE_CREDENTIAL_ENABLED }],
       },
     ],
   },

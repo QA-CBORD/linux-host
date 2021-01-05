@@ -38,6 +38,7 @@ export class SettingsPage implements OnInit {
   ) {}
 
   ngOnInit() {
+    console.log('SETTING PAGE onINIT called')
     this.settingSections = this.settingsFactory.getSettings();
     this.userName$ = this.getUserName$();
     this.institutionName$ = this.getInstitutionName$();
