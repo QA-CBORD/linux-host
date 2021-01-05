@@ -139,7 +139,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
             const deleteSuccessfull = await this.handleRetriableOperation({
               fn: this.deleteCredentialFromServer$,
               showLoading: true,
-              onErrors: async () => await this.checkCredentialAvailability(),
+              onErrors: async () => await this.checkCredentialAvailability(false),
             });
             if (deleteSuccessfull) {
               if (await this.checkCredentialAvailability()) {
@@ -181,7 +181,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
       const deleteSuccessfull = await this.handleRetriableOperation({
         fn: this.deleteCredentialFromServer$,
         showLoading: true,
-        onErrors: async () => await this.checkCredentialAvailability(),
+        onErrors: async () => await this.checkCredentialAvailability(false),
       });
       if (deleteSuccessfull) {
         if (await this.checkCredentialAvailability()) {
@@ -214,7 +214,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
         fn: this.deleteCredentialFromServer$,
         showLoading: true,
         retryCount: 6,
-        onErrors: async () => await this.checkCredentialAvailability(),
+        onErrors: async () => await this.checkCredentialAvailability(false),
       });
       const credentialDeviceDeleteSuccess = await this.handleRetriableOperation({
         fn: this.deleteCredentialFromDevice$,
@@ -256,7 +256,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     const deleteEndpoint = async (isLastTry?: boolean) => {
       await this.handleRetriableOperation({
         fn: this.deleteCredentialFromServer$,
-        onErrors: async () => await this.checkCredentialAvailability(),
+        onErrors: async () => await this.checkCredentialAvailability(false),
       });
       const newCredential = await this.fetchFromServer$(true);
       const updateSuccess = !newCredential.revoked() && !newCredential.isProvisioned();
@@ -451,7 +451,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
       this.mCredential.setStatus(MobileCredentialStatuses.PROCESSING); // You want to show to user that it processing, HID normally takes a while to be active.
       const credentialServerUpdateSuccess = await this.handleRetriableOperation({
         fn: this.updateCredentialOnServer$,
-        onErrors: async () => (await this.fetchFromServer$()).isProvisioned(),
+        onErrors: async () => (await this.fetchFromServer$(true)).isProvisioned(),
       });
       if (credentialServerUpdateSuccess) {
         delete this.mCredential.credentialBundle.invitationCode;
@@ -463,7 +463,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
         this.handleRetriableOperation({
           fn: this.deleteCredentialFromServer$,
           args: new EndpointState(null, this.mCredential.getId()),
-          onErrors: async () => await this.checkCredentialAvailability(),
+          onErrors: async () => await this.checkCredentialAvailability(false),
         });
       }
       this.loadingService.closeSpinner();
@@ -624,7 +624,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     let credentialDeleteOnServerSuccess = await this.handleRetriableOperation({
       fn: this.deleteCredentialFromServer$,
       showLoading: false,
-      onErrors: this.checkCredentialAvailability,
+      onErrors: async () => await this.checkCredentialAvailability(false),
     });
     let credentialDeleteOnDeviceSuccess = false;
     if (credentialDeleteOnServerSuccess) {
