@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { CartService, OrderDetailOptions } from '@sections/ordering/services/cart.service';
 import { combineLatest, Observable, from } from 'rxjs';
 import {
@@ -37,6 +37,7 @@ import { ExternalPaymentService } from '@core/service/external-payment/external-
 import { ApplePay } from '@core/model/add-funds/applepay-response.model';
 import { Plugins } from '@capacitor/core';
 import { ToastService } from '@core/service/toast/toast.service';
+import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 const { Browser } = Plugins;
 
 @Component({
@@ -45,7 +46,7 @@ const { Browser } = Plugins;
   styleUrls: ['./cart.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CartComponent implements OnInit {
+export class CartComponent implements OnInit, OnDestroy {
   order$: Observable<Partial<OrderInfo>>;
   merchant$: Observable<MerchantInfo>;
   addressModalSettings$: Observable<AddressModalSettings>;
@@ -71,12 +72,17 @@ export class CartComponent implements OnInit {
     private readonly modalController: ModalController,
     private readonly orderingService: OrderingService,
     private readonly userFacadeService: UserFacadeService,
-    private externalPaymentService: ExternalPaymentService
+    private externalPaymentService: ExternalPaymentService,
+    private readonly globalNav: GlobalNavService
   ) {}
 
   ionViewWillEnter() {
     this.accounts$ = this.getAvailableAccounts();
     this.cdRef.detectChanges();
+  }
+
+  ngOnDestroy() {
+    this.globalNav.showNavBar();
   }
 
   ngOnInit() {
@@ -88,6 +94,7 @@ export class CartComponent implements OnInit {
     this.accountInfoList$ = this.activatedRoute.data.pipe(map(({ data: [, accInfo] }) => accInfo));
     this.applePayEnabled$ = this.userFacadeService.isApplePayEnabled$();
     this.initContentStrings();
+    this.globalNav.hideNavBar();
   }
 
   get isOrderASAP(): Observable<boolean> {
