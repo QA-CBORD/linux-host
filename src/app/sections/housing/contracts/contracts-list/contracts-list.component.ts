@@ -32,7 +32,9 @@ export class ContractsListComponent {
   getStatus(contract:ContractListDetails): string {
     const statusValue = this.__getFormStatus(ContractStatus[contract.state])
     // checks if accepted date exists for an active contract
-    const formStatus = isDefined(contract.acceptedDate)  && ContractStatus[contract.state] ==  ContractStatus.Active?
+    const isCompleted = ContractStatus[contract.state] ==  ContractStatus.Active ||
+      ContractStatus[contract.state] ==  ContractStatus.Preliminary;
+    const formStatus = isDefined(contract.acceptedDate)  && isCompleted?
       this.__getFormStatus(ContractStatus.Completed) : ContractFormStatus[statusValue];
     return formStatus;
   }
