@@ -35,7 +35,7 @@ export class ContractsListComponent {
     const isCompleted = ContractStatus[contract.state] ==  ContractStatus.Active ||
       ContractStatus[contract.state] ==  ContractStatus.Preliminary;
     const formStatus = isDefined(contract.acceptedDate)  && isCompleted?
-      this.__getFormStatus(ContractStatus.Completed) : ContractFormStatus[statusValue];
+      ContractFormStatus[ContractStatus.Completed] : ContractFormStatus[statusValue];
     return formStatus;
   }
 
