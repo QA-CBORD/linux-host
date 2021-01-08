@@ -36,7 +36,6 @@ export class SessionFacadeService {
   private navigateToNativePlugin: boolean = false;
   private appStatus: AppStatus = AppStatus.FOREGROUND;
   navigatedFromGpay: boolean = false;
-  onWillLogoutSubject = new Subject<void>();
   constructor(
     private readonly platform: Platform,
     private readonly authFacadeService: AuthFacadeService,

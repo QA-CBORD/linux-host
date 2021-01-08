@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcManager;
+import android.util.Log;
 
 import androidx.core.content.ContextCompat;
 
@@ -15,30 +16,36 @@ import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 
+import org.slf4j.Logger;
+
 @NativePlugin()
 public class MobileCredentialStatusPlugin extends Plugin {
 
     private final String DEVICE_STATE = "deviceState";
+    private final String HID_CREDENTIAL_TYPE = "HID";
+    private final String CREDENTIAL_TYPE = "credentialType";
+    private static final String TAG = MobileCredentialStatusPlugin.class.getSimpleName();
 
     @PluginMethod()
     public void deviceNativeState(PluginCall call){
-
-        JSObject json = new JSObject();
-
+        String mobileCredentialType = call.getString(CREDENTIAL_TYPE);
         DeviceState device = new DeviceState();
-
-        NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(getContext());
-        device.nfcSupported = nfcAdapter != null;
-        device.nfcOn = device.nfcSupported && nfcAdapter.isEnabled();
-        device.nfcPermissionGranted = device.nfcOn;
-
-        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        device.bluetoothSupported = mBluetoothAdapter != null;
-        device.bluetoothOn = device.bluetoothSupported && mBluetoothAdapter.isEnabled();
-
-        device.hasLocationPermission = hasLocationPermissions();
-
-        device.lastServerSync = HIDSDKManager.getInstance(getActivity()).getEndpointLastServerSync();
+        try{
+            NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(getContext());
+            device.nfcSupported = nfcAdapter != null;
+            device.nfcOn = device.nfcSupported && nfcAdapter.isEnabled();
+            device.nfcPermissionGranted = device.nfcOn;
+            BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+            device.bluetoothSupported = mBluetoothAdapter != null;
+            device.bluetoothOn = device.bluetoothSupported && mBluetoothAdapter.isEnabled();
+            device.hasLocationPermission = hasLocationPermissions();
+            if(HID_CREDENTIAL_TYPE.equals(mobileCredentialType)) {
+                device.lastServerSync = HIDSDKManager.getInstance(getActivity()).getEndpointLastServerSync();
+            }
+        }catch(Exception ex){
+            Log.d(TAG, ex.getMessage());
+        }
+        JSObject json = new JSObject();
         json.put("hasLocationPermission" , device.hasLocationPermission);
         json.put("bluetoothSupported", device.bluetoothSupported);
         json.put("bluetoothOn", device.bluetoothOn);
@@ -46,7 +53,6 @@ public class MobileCredentialStatusPlugin extends Plugin {
         json.put("nfcOn", device.nfcOn);
         json.put("nfcPermissionGranted", device.nfcPermissionGranted);
         json.put("lastServerSync", device.lastServerSync);
-
         call.resolve(new JSObject().put(DEVICE_STATE, json));
     }
 
