@@ -8,6 +8,7 @@ import { AppleWalletCredential } from '../model/ios/apple-wallet-credential';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { AppleWalletCredentialState } from '../model/ios/applet-wallet-credential.state';
 import { Injectable } from '@angular/core';
+import { MobileCredentialDataService } from '../model/shared/mobile-credential-data.service';
 const { IOSDevice } = Plugins;
 
 @Injectable({providedIn: 'root'})
@@ -19,6 +20,11 @@ export class IOSCredentialManager implements MobileCredentialManager {
     private readonly userFacadeService: UserFacadeService,
     private readonly authFacadeService: AuthFacadeService
   ) {}
+
+
+  getService(): MobileCredentialDataService {
+     return null; // is not in use for now.
+  }
 
   async onWillLogout(): Promise<void> {}
 

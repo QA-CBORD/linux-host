@@ -1,8 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  EnvironmentFacadeService,
-  EnvironmentType,
-} from '@core/facades/environment/environment.facade.service';
+import { EnvironmentFacadeService, EnvironmentType } from '@core/facades/environment/environment.facade.service';
 import { Device, Plugins } from '@capacitor/core';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
@@ -18,6 +15,7 @@ import {
 import { CredentialManagerType, MobileCredentialManagerFactory } from './mobile-credential-manager.factory';
 import { HIDCredentialManager } from '../model/android/hid/hid-credential-manager';
 import { GooglePayCredentialManager } from '../model/android/google-pay/google-pay-credential-manager';
+import { MobileCredentialDataService } from '../model/shared/mobile-credential-data.service';
 const { MobileCredentialStatusPlugin } = Plugins;
 
 @Injectable({
@@ -146,6 +144,10 @@ export class MobileCredentialFacade {
       return deviceState;
     };
     return readDeviceState();
+  }
+
+  get credentialService$(): MobileCredentialDataService {
+    return this.mobileCredentialManager && this.mobileCredentialManager.getService();
   }
 }
 

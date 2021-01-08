@@ -2,12 +2,14 @@ import { HttpHeaders, HttpParams, HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Device, DeviceInfo } from '@capacitor/core';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
+import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { APIService, HttpResponseType, RestCallType } from '@core/service/api-service/api.service';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { forkJoin, from, Observable, of } from 'rxjs';
 import { catchError, first, map, switchMap, take, tap } from 'rxjs/operators';
+import { CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_CATEGORIES } from 'src/app/content-strings';
 import { ActivePasses } from './credential-utils';
 import { MobileCredential } from './mobile-credential';
 import { MobileCredentialFactory } from './mobile-credential-factory';
@@ -31,7 +33,8 @@ export class MobileCredentialDataService {
     protected authFacadeService: AuthFacadeService,
     protected institutionFacadeService: InstitutionFacadeService,
     protected apiService: APIService,
-    protected readonly userFacade: UserFacadeService
+    protected readonly userFacade: UserFacadeService,
+    protected contentStringFacade: ContentStringsFacadeService,
   ) {}
 
   protected retrieveAuthorizationBlob$(deviceModel: string, osVersion: string): Observable<object> {
@@ -50,6 +53,20 @@ export class MobileCredentialDataService {
           return this.retrieveOmniIDJwtTokenFromServer$();
         }
       })
+    );
+  }
+
+  contentString$(contentStringSettings: {
+    domain: CONTENT_STRINGS_DOMAINS;
+    category: CONTENT_STRINGS_CATEGORIES;
+    name: string;
+  }): Observable<string> {
+    let { domain, category, name } = contentStringSettings;
+    return this.contentStringFacade.fetchContentString$(domain, category, name).pipe(
+      map(data => {
+        return data.value;
+      }),
+      take(1)
     );
   }
 

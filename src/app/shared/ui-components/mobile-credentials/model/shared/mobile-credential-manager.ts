@@ -1,5 +1,6 @@
 import { Observable } from 'rxjs';
 import { MobileCredential } from './mobile-credential';
+import { MobileCredentialDataService } from './mobile-credential-data.service';
 
 export interface MobileCredentialManagerAdapter {}
 
@@ -17,6 +18,7 @@ export interface MobileCredentialManager extends MobileCredentialManagerAdapter 
   setCredentialStateChangeListener(CredentialStateChangeListener: CredentialStateChangeListener): void;
   refresh(): void;
   onWillLogout(): Promise<void>;
+  getService(): MobileCredentialDataService
 }
 
 

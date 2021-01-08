@@ -3,10 +3,9 @@ import { AlertController, ModalController, PopoverController, ToastController } 
 import { MobileCredentialsComponent } from '@shared/ui-components/mobile-credentials/mobile-credentials.component';
 import { from, Observable, of } from 'rxjs';
 import { catchError, first, map, switchMap } from 'rxjs/operators';
-import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
 import { EndpointStatuses, MobileCredentialStatuses } from '../../shared/credential-state';
 import { AbstractAndroidCredentialManager } from '../abstract-android-credential.management';
-import { AndroidCredential, EndpointState, HIDCredential, Persistable } from '../android-credential.model';
+import { AndroidCredential, EndpointState, HIDCredential } from '../android-credential.model';
 import { HidCredentialDataService } from '../../../service/hid-credential.data.service';
 import { Injectable } from '@angular/core';
 import { HIDPlugginProxy, HID_SDK_ERR } from './hid-plugin.proxy';
@@ -50,17 +49,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     });
   }
 
-  async onWillLogout(): Promise<void> {
-    // this.hidSdkManager().stopTaskExecution();
-    // if (this.mCredential.isProvisioned()) {
-    //   const endpointInfo = await this.credentialService.getEndpointState$();
-    //   setTimeout(() => {
-    //     if (endpointInfo && endpointInfo.id) {
-    //       this.credentialService.saveCredentialInLocalStorage(endpointInfo);
-    //     }
-    //   }, 3000);
-    // }
-  }
+  async onWillLogout(): Promise<void> {}
 
   onUiIconClicked(): void {
     this.showLoading();
@@ -70,7 +59,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
           ? 'Uninstall'
           : 'OK';
       const componentProps = {
-        usageInstructions: await this.credentialUsageContentString$(),
+        usageInstructions: await this.credentialService.credentialUsageContentString$(),
         title: 'Usage Instructions',
         btnText: btnText,
       };
@@ -93,7 +82,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
 
   private async showTermsAndConditions(forceInstall?: boolean): Promise<void> {
     let componentProps = {
-      termsAndConditions: await this.termsAndConditionsSource$,
+      termsAndConditions: await this.credentialService.termsContentString$(),
     };
     const modal = await this.modalCtrl.create({
       backdropDismiss: false,
@@ -293,26 +282,6 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
       }
     };
     asyncRefresh();
-  }
-
-  protected credentialUsageContentString$(): Promise<string> {
-    let credentialUsagecontentStringConfig = {
-      domain: CONTENT_STRINGS_DOMAINS.patronUi,
-      category: CONTENT_STRINGS_CATEGORIES.mobileCredential,
-      name: 'usage-instructions',
-    };
-    return this.credentialService
-      .contentString$(credentialUsagecontentStringConfig)
-      .pipe(
-        switchMap(contentString => {
-          if (contentString) {
-            return of(contentString);
-          }
-          return from(super.credentialUsageContentString$());
-        }),
-        catchError(() => 'No content')
-      )
-      .toPromise();
   }
 
   private async showConfirmUninstallDialog(): Promise<void> {
@@ -618,7 +587,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     let credentialDeleteOnServerSuccess = await this.handleRetriableOperation({
       fn: this.deleteCredentialFromServer$,
       showLoading: false,
-      onErrors: async ()=> this.checkCredentialAvailability(false),
+      onErrors: async () => this.checkCredentialAvailability(false),
     });
     let credentialDeleteOnDeviceSuccess = false;
     if (credentialDeleteOnServerSuccess) {
@@ -635,17 +604,5 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
 
   private hidSdkManager(): HIDPlugginProxy {
     return HIDPlugginProxy.getInstance();
-  }
-
-  get termsAndConditionsSource$(): Promise<string> {
-    const termsNConditionsConfig = {
-      domain: CONTENT_STRINGS_DOMAINS.patronUi,
-      category: CONTENT_STRINGS_CATEGORIES.mobileCredential,
-      name: 'terms',
-    };
-    return this.credentialService
-      .contentString$(termsNConditionsConfig)
-      .pipe(catchError(() => 'No content'))
-      .toPromise();
   }
 }
