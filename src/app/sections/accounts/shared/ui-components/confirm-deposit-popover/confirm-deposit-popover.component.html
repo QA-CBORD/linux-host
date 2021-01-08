@@ -1,7 +1,7 @@
 <st-popover-layout [popoverConfig]="popoverConfig">
   <section class="cdp__policy-container" *ngIf="showDepositInstructions">
     <h5 class="cdp__policy-title">Refund Policy</h5>
-    <div class="cdp__policy-body multiline-content-type">
+    <div class="cdp__policy-body">
       {{ popoverConfig.message['billme'] ? data.depositReviewBillMe : data.depositReviewCredit }}
     </div>
   </section>
