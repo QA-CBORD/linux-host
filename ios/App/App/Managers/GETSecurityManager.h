@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 CBORD. All rights reserved.
 //
 //  Modified by Alan Nunez 
-//  Copyright © 2020 CBORD. All rights reserved.
+//  Copyright © 2021 CBORD. All rights reserved.
 
 #import <Foundation/Foundation.h>
 #import "GETAuthorizationBlobResponse.h"
