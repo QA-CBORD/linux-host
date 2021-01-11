@@ -20,17 +20,4 @@ public class MainActivity extends BridgeActivity {
             add(MobileCredentialStatusPlugin.class);
         }});
     }
-
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            Log.d("RESULT_OK: ", Integer.toString(resultCode));
-        } else if (resultCode == RESULT_CANCELED) {
-            Log.d("RESULT_CANCELED: ", Integer.toString(resultCode));
-        } else {
-            Log.d("RESULT_UNKNOWN: ", Integer.toString(resultCode));
-        }
-    }
 }
