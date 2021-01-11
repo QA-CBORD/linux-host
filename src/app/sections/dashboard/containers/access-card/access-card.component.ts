@@ -36,9 +36,10 @@ export class AccessCardComponent implements OnInit {
   appleWalletMessageImage: string;
   appleWalletMessageImageHidden: boolean;
   appleWalletButtonHidden: boolean = true;
-  userPhoto: string;
+  userPhoto?: string;
   isLoadingPhoto: boolean = true;
   userInfo: string;
+  appleWalletListener: any;
 
   constructor(
     private readonly accessCardService: AccessCardService,
@@ -185,7 +186,10 @@ export class AccessCardComponent implements OnInit {
   }
 
   private enableAppleWalletEvents() {
-    IOSDevice.addListener('AppleWalletEvent', (info: any) => {
+    if (this.appleWalletListener) {
+      return;
+    }
+    this.appleWalletListener = IOSDevice.addListener('AppleWalletEvent', (info: any) => {
       this.enableAppleWallet();
     });
   }
