@@ -138,10 +138,6 @@ export class EnvironmentFacadeService extends ServiceStateFacade {
     return this.currentEnvironment.partner_services_url;
   }
 
-  getPartnerServicesApiKey(): string{
-    return this.currentEnvironment.partner_services_api_key;
-  }
-
   getEnvironmentObject(): EnvironmentInfo {
     return this.currentEnvironment;
   }
