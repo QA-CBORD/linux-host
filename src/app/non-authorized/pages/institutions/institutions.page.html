@@ -41,8 +41,6 @@
 <ng-template #institutionsList>
   <ion-list class="search-institutions__list" mode="ios">
     <ion-item
-      detail
-      button="true"
       class="search-institutions__item"
       *ngFor="let item of institutions | search : searchString"
       lines="none"
@@ -51,6 +49,7 @@
       <ion-label class="search-institutions__name">
         {{ item.name }}
       </ion-label>
+      <ion-icon color='medium' src="/assets/icon/chevron-forward-outline.svg"></ion-icon>
     </ion-item>
   </ion-list>
 </ng-template>
