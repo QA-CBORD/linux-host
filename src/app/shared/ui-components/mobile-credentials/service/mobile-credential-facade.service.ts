@@ -1,9 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  EnvironmentFacadeService,
-  EnvironmentInfo,
-  EnvironmentType,
-} from '@core/facades/environment/environment.facade.service';
+import { EnvironmentFacadeService, EnvironmentType } from '@core/facades/environment/environment.facade.service';
 import { Device, Plugins } from '@capacitor/core';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
@@ -14,37 +10,27 @@ import { Settings } from 'src/app/app.global';
 import {
   CredentialStateChangeListener,
   DeviceState,
-  IDeviceState,
   MobileCredentialManager,
 } from '../model/shared/mobile-credential-manager';
 import { CredentialManagerType, MobileCredentialManagerFactory } from './mobile-credential-manager.factory';
 import { HIDCredentialManager } from '../model/android/hid/hid-credential-manager';
+import { GooglePayCredentialManager } from '../model/android/google-pay/google-pay-credential-manager';
+import { MobileCredentialDataService } from '../model/shared/mobile-credential-data.service';
 const { MobileCredentialStatusPlugin } = Plugins;
 
 @Injectable({
   providedIn: 'root',
 })
 export class MobileCredentialFacade {
-  private mobileCredentialManager: MobileCredentialManager;
+  private mobileCredentialManager: MobileCredentialManager = null;
   private mCredentialEnabled: boolean = false;
 
   constructor(
     private readonly mobileCredentialManagerFactory: MobileCredentialManagerFactory,
     private readonly nativeProvider: NativeProvider,
     private readonly settingsFacadeService: SettingsFacadeService,
-    private readonly sessionFacade: SessionFacadeService,
     public readonly environmentFacade: EnvironmentFacadeService
-  ) {
-    this.onWillLogoutSubscription();
-  }
-
-  onWillLogoutSubscription(): void {
-    this.sessionFacade.onWillLogoutSubject.subscribe(() => {
-      if (this.mobileCredentialManager) {
-        this.mobileCredentialManager.onWillLogout();
-      }
-    });
-  }
+  ) {}
 
   iifCredentialSettingsEnabled(): Observable<boolean> {
     return this.enabledCredentialsSettings().pipe(
@@ -103,7 +89,11 @@ export class MobileCredentialFacade {
   }
 
   showCredentialMetadata(): Observable<boolean> {
-    return of(this.mobileCredentialManager && this.mobileCredentialManager instanceof HIDCredentialManager);
+    return of(
+      this.mobileCredentialManager &&
+        (this.mobileCredentialManager instanceof HIDCredentialManager ||
+          this.mobileCredentialManager instanceof GooglePayCredentialManager)
+    );
   }
 
   mobileCredentialEnabled$(): Observable<boolean> {
@@ -145,8 +135,9 @@ export class MobileCredentialFacade {
 
   get deviceState$(): Promise<DeviceState> {
     const readDeviceState = async () => {
-      let response = await MobileCredentialStatusPlugin.deviceNativeState();
-      console.log('reading device state..........', response.deviceState);
+      let credentialType = 'HID';
+      if (this.mobileCredentialManager instanceof GooglePayCredentialManager) credentialType = 'NXP_GOOGLE';
+      let response = await MobileCredentialStatusPlugin.deviceNativeState({ credentialType });
       const deviceState = new DeviceState(response.deviceState);
       deviceState.env$ = envString(this.environmentFacade.getEnvironmentObject());
       deviceState.osVersion$ = (await Device.getInfo()).osVersion;
@@ -154,12 +145,16 @@ export class MobileCredentialFacade {
     };
     return readDeviceState();
   }
+
+  get credentialService$(): MobileCredentialDataService {
+    return this.mobileCredentialManager && this.mobileCredentialManager.getService();
+  }
 }
 
 const envString = ({ environment }) => {
   switch (environment) {
     case EnvironmentType.develop:
-      return 'Dev';
+      return 'Development';
     case EnvironmentType.feature1:
       return 'F1';
     case EnvironmentType.qa:
@@ -169,8 +164,8 @@ const envString = ({ environment }) => {
     case EnvironmentType.pat:
       return 'pat';
     case EnvironmentType.production:
-      return 'Prod';
+      return 'Production';
     default:
-      return 'Prod';
+      return 'Production';
   }
 };

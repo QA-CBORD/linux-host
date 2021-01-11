@@ -26,6 +26,7 @@ import com.hid.origo.api.ble.OrigoReaderConnectionListener;
 import com.hid.origo.api.hce.OrigoHceConnectionCallback;
 import com.hid.origo.api.hce.OrigoHceConnectionListener;
 
+import java.util.Date;
 import java.util.function.Supplier;
 
 public class HIDSDKManager implements OrigoReaderConnectionListener, OrigoHceConnectionListener {
@@ -57,8 +58,8 @@ public class HIDSDKManager implements OrigoReaderConnectionListener, OrigoHceCon
     public String getEndpointLastServerSync(){
         try {
             return this.mobileKeys.getEndpointInfo().getLastServerSyncDate().toString();
-        } catch (OrigoMobileKeysException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            Log.d(TAG, e.getMessage());
         }
         return null;
     }

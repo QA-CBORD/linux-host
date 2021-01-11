@@ -5,8 +5,8 @@ import { InstitutionFacadeService } from '@core/facades/institution/institution.
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { APIService, HttpResponseType, RestCallType } from '@core/service/api-service/api.service';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
-import { forkJoin, Observable, of } from 'rxjs';
-import { map, switchMap, take } from 'rxjs/operators';
+import { forkJoin, from, Observable, of } from 'rxjs';
+import { catchError, first, map, switchMap, take } from 'rxjs/operators';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
 import { AndroidCredential, Persistable } from '../android/android-credential.model';
 import { MobileCredentialDataService } from './mobile-credential-data.service';
@@ -29,21 +29,45 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
     protected http: HttpClient,
     protected userFacade: UserFacadeService
   ) {
-    super(storageStateService, authFacadeService, institutionFacadeService, apiService, userFacade);
+    super(
+      storageStateService,
+      authFacadeService,
+      institutionFacadeService,
+      apiService,
+      userFacade,
+      contentStringFacade
+    );
   }
 
   activePasses$(): Observable<AndroidCredential<any>> {
     return super.activePasses$().pipe(
       switchMap(mobileCredential => {
         const androidCredentials = mobileCredential as AndroidCredential<any>;
-        return this.storageStateService.getStateEntityByKey$<Persistable>(this.credential_key).pipe(
+        return this.getLocalStoredUserData<Persistable>(this.credential_key).pipe(
           map(data => {
-            if (data) {
-              androidCredentials.setCredentialBundle(data.value);
-            }
+            androidCredentials.setCredentialBundle(data);
             return androidCredentials;
           })
         );
+      })
+    );
+  }
+
+  protected getUserId(): Observable<string> {
+    return this.userFacade.getUserData$().pipe(
+      first(),
+      map(({ id }) => id)
+    );
+  }
+
+  getLocalStoredUserData<T>(dataKey: string, forAnyUser: boolean = false): Observable<T> {
+    return this.storageStateService.getStateEntityByKey$<T>(dataKey).pipe(
+      switchMap(data => {
+        if (data && data.value) {
+          return this.getUserId().pipe(map(id => (forAnyUser || (<any>data.value).userId === id ? data.value : null)));
+        } else {
+          return of(null);
+        }
       })
     );
   }
@@ -58,18 +82,45 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
     );
   }
 
-  contentString$(contentStringSettings: {
+  termsContentString$(termsContentString?: {
     domain: CONTENT_STRINGS_DOMAINS;
     category: CONTENT_STRINGS_CATEGORIES;
     name: string;
-  }): Observable<string> {
-    let { domain, category, name } = contentStringSettings;
-    return this.contentStringFacade.fetchContentString$(domain, category, name).pipe(
-      map(data => {
-        return data.value;
-      }),
-      take(1)
-    );
+  }): Promise<string> {
+    const contentStringSetting = termsContentString || {
+      domain: CONTENT_STRINGS_DOMAINS.patronUi,
+      category: CONTENT_STRINGS_CATEGORIES.mobileCredential,
+      name: 'terms',
+    };
+
+    return super
+      .contentString$(contentStringSetting)
+      .pipe(catchError(() => 'No content'))
+      .toPromise();
+  }
+
+  credentialUsageContentString$(usagecontentStringConfig?: {
+    domain: CONTENT_STRINGS_DOMAINS;
+    category: CONTENT_STRINGS_CATEGORIES;
+    name: string;
+  }): Promise<string> {
+    const contentStringSettings = usagecontentStringConfig || {
+      domain: CONTENT_STRINGS_DOMAINS.patronUi,
+      category: CONTENT_STRINGS_CATEGORIES.mobileCredential,
+      name: 'usage-instructions',
+    };
+    return super
+      .contentString$(contentStringSettings)
+      .pipe(
+        switchMap(contentString => {
+          if (contentString) {
+            return of(contentString);
+          }
+          return from('No content');
+        }),
+        catchError(() => 'No content')
+      )
+      .toPromise();
   }
 
   protected getDefaultHeaders(): Observable<HttpHeaders> {

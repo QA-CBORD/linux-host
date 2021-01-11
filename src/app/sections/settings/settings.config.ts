@@ -129,7 +129,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
       {
         id: SETTINGS_ID.mcredential,
         icon: 'mobile_credential',
-        label: 'Mobile Credential status',
+        label: 'Mobile Credential Status',
         type: 'button',
         setCallback: openModal,
         modalContent: {

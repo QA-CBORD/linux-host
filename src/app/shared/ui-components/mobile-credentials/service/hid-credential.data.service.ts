@@ -22,7 +22,7 @@ const resourceUrls = {
 
 const CREDENTIAL_ALREADY_DELETED_ERROR = 'Credential has already been deleted';
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class HidCredentialDataService extends AndroidCredentialDataService {
   constructor(
     protected readonly storageStateService: StorageStateService,
@@ -126,7 +126,7 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
     });
   }
 
-  private async deleteAllCachedEndpoint$(): Promise<boolean> {
+  async deleteAllCachedEndpoint$(): Promise<boolean> {
     return this.settingsFacadeService
       .deleteUserSetting(User.Settings.MOBILE_CREDENTIAL_ID)
       .pipe(
@@ -156,18 +156,14 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
   }
 
   getEndpointStateFromLocalCache(forAnyUser?: boolean): Promise<EndpointState> {
-    return this.storageStateService
-      .getStateEntityByKey$<Persistable>(this.credential_key)
+    return this.getLocalStoredUserData<Persistable>(this.credential_key, forAnyUser)
       .pipe(
         first(),
-        switchMap(data => {
-          if (data && data.value) {
-            return this.getUserId().pipe(
-              map(id => (forAnyUser || data.value.userId === id ? EndpointState.from(data.value) : null))
-            );
-          } else {
-            return of(null);
+        map(data => {
+          if (data) {
+            return EndpointState.from(data);
           }
+          return null;
         })
       )
       .toPromise();

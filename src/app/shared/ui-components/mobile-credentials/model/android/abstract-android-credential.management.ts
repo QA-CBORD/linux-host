@@ -4,6 +4,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, finalize, first } from 'rxjs/operators';
 import { AndroidCredentialDataService } from '../shared/android-credential-data.service';
 import { MobileCredential } from '../shared/mobile-credential';
+import { MobileCredentialDataService } from '../shared/mobile-credential-data.service';
 import { CredentialStateChangeListener, MobileCredentialManager } from '../shared/mobile-credential-manager';
 import { AndroidCredential } from './android-credential.model';
 
@@ -18,6 +19,10 @@ export abstract class AbstractAndroidCredentialManager implements MobileCredenti
     protected readonly alertCtrl: AlertController
   ) {}
 
+  getService(): MobileCredentialDataService {
+    return this.credentialSrvc;
+  }
+
   async onWillLogout(): Promise<void> {}
 
   refresh(): void {
@@ -26,12 +31,6 @@ export abstract class AbstractAndroidCredentialManager implements MobileCredenti
 
   setCredentialStateChangeListener(credentialStateChangeSubscription: CredentialStateChangeListener): void {
     this.credentialStateChangeListener = credentialStateChangeSubscription;
-  }
-
-  protected credentialUsageContentString$(): Promise<string> {
-    let text =
-      'This is a generic content string describing how to use android mobile credentials; This is a generic content string describing how to use android mobile credentials';
-    return of(text).toPromise();
   }
 
   protected async createAlertDialog(header: string, msg: string, buttons: Array<any>): Promise<HTMLIonAlertElement> {

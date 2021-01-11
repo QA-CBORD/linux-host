@@ -32,4 +32,5 @@ export enum EndpointStatuses {
   NOT_SETUP = -1,
   REVOKED = 5,
   LOCATION_PERMISSION_REQUIRED = 2,
+  DELETE_CONFIRMED = -3
 }
