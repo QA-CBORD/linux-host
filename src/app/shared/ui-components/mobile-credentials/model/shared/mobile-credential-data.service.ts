@@ -70,13 +70,6 @@ export class MobileCredentialDataService {
     );
   }
 
-  protected getUserId(): Observable<string> {
-    return this.userFacade.getUserData$().pipe(
-      first(),
-      map(({ id }) => id)
-    );
-  }
-
   protected retrieveOmniIDJwtTokenFromServer$(): Observable<string> {
     return this.authFacadeService
       .getExternalAuthenticationToken$('OmniID')

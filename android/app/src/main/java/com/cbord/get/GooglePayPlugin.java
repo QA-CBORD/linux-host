@@ -48,12 +48,16 @@ public class GooglePayPlugin extends Plugin {
 
     @PluginMethod()
     public void openGooglePay(PluginCall call) {
-        Intent intent = getGooglePayIntent(call);
-        if (isGooglePaySafeToLaunch(intent)) {
-            getActivity().startActivityForResult(intent, 400);
-        } else {
-            call.reject("Activity could not be resolved");
-        }
+       try{
+           Intent intent = getGooglePayIntent(call);
+           if (isGooglePaySafeToLaunch(intent)) {
+               getActivity().startActivityForResult(intent, 400);
+           } else {
+               call.reject("Activity could not be resolved");
+           }
+       }catch (Exception ex){
+           call.reject("Activity could not be resolved");
+       }
     }
 
 

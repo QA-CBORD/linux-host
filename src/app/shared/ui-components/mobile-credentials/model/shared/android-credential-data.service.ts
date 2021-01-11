@@ -6,7 +6,7 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { APIService, HttpResponseType, RestCallType } from '@core/service/api-service/api.service';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { forkJoin, from, Observable, of } from 'rxjs';
-import { catchError, map, switchMap, take } from 'rxjs/operators';
+import { catchError, first, map, switchMap, take } from 'rxjs/operators';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
 import { AndroidCredential, Persistable } from '../android/android-credential.model';
 import { MobileCredentialDataService } from './mobile-credential-data.service';
@@ -43,14 +43,31 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
     return super.activePasses$().pipe(
       switchMap(mobileCredential => {
         const androidCredentials = mobileCredential as AndroidCredential<any>;
-        return this.storageStateService.getStateEntityByKey$<Persistable>(this.credential_key).pipe(
+        return this.getLocalStoredUserData<Persistable>(this.credential_key).pipe(
           map(data => {
-            if (data) {
-              androidCredentials.setCredentialBundle(data.value);
-            }
+            androidCredentials.setCredentialBundle(data);
             return androidCredentials;
           })
         );
+      })
+    );
+  }
+
+  protected getUserId(): Observable<string> {
+    return this.userFacade.getUserData$().pipe(
+      first(),
+      map(({ id }) => id)
+    );
+  }
+
+  getLocalStoredUserData<T>(dataKey: string, forAnyUser: boolean = false): Observable<T> {
+    return this.storageStateService.getStateEntityByKey$<T>(dataKey).pipe(
+      switchMap(data => {
+        if (data && data.value) {
+          return this.getUserId().pipe(map(id => (forAnyUser || (<any>data.value).userId === id ? data.value : null)));
+        } else {
+          return of(null);
+        }
       })
     );
   }

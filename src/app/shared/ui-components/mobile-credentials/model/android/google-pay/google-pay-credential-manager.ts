@@ -1,6 +1,6 @@
 import { Observable, of } from 'rxjs';
 import { Plugins } from '@capacitor/core';
-import { map, catchError, switchMap, finalize, first } from 'rxjs/operators';
+import { map, catchError, switchMap } from 'rxjs/operators';
 import { AndroidCredential } from '../android-credential.model';
 import { GooglePayCredentialDataService } from '@shared/ui-components/mobile-credentials/service/google-pay-credential.data.service';
 import { Injectable } from '@angular/core';
@@ -16,11 +16,11 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
   constructor(
     private readonly modalCtrl: ModalController,
     protected readonly loadingService: LoadingService,
-    private readonly credentialService: GooglePayCredentialDataService,
+    private readonly credentialServ: GooglePayCredentialDataService,
     private readonly sessionFacadeService: SessionFacadeService,
     protected readonly alertCtrl: AlertController
   ) {
-    super(loadingService, credentialService, alertCtrl);
+    super(loadingService, credentialServ, alertCtrl);
   }
 
   onUiImageClicked(event?: any): void {
@@ -91,13 +91,13 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
     googlePayNonce: string,
     referenceIdentifier: string
   ): Promise<AndroidCredential<any>> {
-    return of(this.mCredential)
+    return await of(this.mCredential)
       .pipe(
         switchMap(credential => {
           if (credential.getCredentialBundle()) {
             return of(credential);
           } else {
-            return this.credentialService
+            return this.credentialServ
               .androidCredential$({
                 referenceIdentifier,
                 googlePayNonce,
@@ -125,16 +125,19 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
       this.showInstallationErrorAlert('installation');
       return;
     }
+    console.log(newCredential);
     this.mCredential = newCredential;
     let { digitizationReference } = this.mCredential.getCredentialBundle();
     this.sessionFacadeService.navigatedFromGpay = true;
-    GooglePayPlugin.openGooglePay({ uri: digitizationReference });
+    GooglePayPlugin.openGooglePay({ uri: digitizationReference }).catch(() => {
+      this.showInstallationErrorAlert();
+    });
     setTimeout(() => this.watchOnResume(), 2000);
   }
 
   async termsAndConditionsSource$(): Promise<string> {
     this.showLoading();
-    const terms = await this.credentialService.termsContentString$();
+    const terms = await this.credentialServ.termsContentString$();
     this.loadingService.closeSpinner();
     return terms;
   }

@@ -18,9 +18,8 @@ export interface MobileCredentialManager extends MobileCredentialManagerAdapter 
   setCredentialStateChangeListener(CredentialStateChangeListener: CredentialStateChangeListener): void;
   refresh(): void;
   onWillLogout(): Promise<void>;
-  getService(): MobileCredentialDataService
+  getService(): MobileCredentialDataService;
 }
-
 
 export interface IDeviceState {
   bluetoothSupported: boolean;
@@ -39,9 +38,9 @@ export class DeviceState {
   constructor(public state: IDeviceState) {}
 
   get bluetoothState(): string {
-    let text = 'BLE supported and On';
+    let text = 'Bluetooth supported and ON';
     if (this.state.bluetoothSupported) {
-      if (!this.state.bluetoothOn) text = 'BLE supported and Off';
+      if (!this.state.bluetoothOn) text = 'Bluetooth supported and OFF';
     } else text = 'Bluetooth not supported';
     return text;
   }
@@ -84,5 +83,10 @@ export class DeviceState {
 
   get lastServerSyncState(): string {
     return this.state.lastServerSync;
+  }
+
+  get deviceCompatibility$(): string {
+    if (this.state.nfcSupported) return 'Device Compatible';
+    return 'Not Compatible';
   }
 }

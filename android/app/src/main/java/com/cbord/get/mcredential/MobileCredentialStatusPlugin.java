@@ -16,8 +16,6 @@ import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 
-import org.slf4j.Logger;
-
 @NativePlugin()
 public class MobileCredentialStatusPlugin extends Plugin {
 
@@ -63,8 +61,6 @@ public class MobileCredentialStatusPlugin extends Plugin {
                 ContextCompat.checkSelfPermission(getContext(),
                         Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED);
     }
-
-
 }
 
 

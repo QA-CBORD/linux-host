@@ -3,6 +3,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { ModalController } from '@ionic/angular';
 import { MobileCredentialsComponent } from '@shared/ui-components/mobile-credentials/mobile-credentials.component';
 import { AndroidCredentialDataService } from '@shared/ui-components/mobile-credentials/model/shared/android-credential-data.service';
+import { HidCredentialDataService } from '@shared/ui-components/mobile-credentials/service/hid-credential.data.service';
 import { MobileCredentialFacade } from '@shared/ui-components/mobile-credentials/service/mobile-credential-facade.service';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 
@@ -13,6 +14,7 @@ import { GlobalNavService } from '@shared/ui-components/st-global-navigation/ser
 })
 export class MobileCredentialMetadata implements OnInit {
   deviceState: any = {};
+  isHid: boolean = true;
 
   constructor(
     public readonly mobileCredentialFacade: MobileCredentialFacade,
@@ -25,6 +27,7 @@ export class MobileCredentialMetadata implements OnInit {
     (async () => {
       this.deviceState = await this.mobileCredentialFacade.deviceState$;
       this.globalNav.hideNavBar();
+      this.isHid = this.mobileCredentialFacade.credentialService$ instanceof HidCredentialDataService;
     })();
   }
 

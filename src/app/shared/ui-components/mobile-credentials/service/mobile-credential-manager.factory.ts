@@ -54,6 +54,7 @@ export class MobileCredentialManagerFactory {
   }
 
   private createGoogleCredentialManagerFor(mCredential: GoogleCredential): GooglePayCredentialManager {
+    console.log('createGoogleCredentialManagerFor ==> ', mCredential)
     let credentialManager = this.injector.get(GooglePayCredentialManager);
     credentialManager.setCredential(mCredential);
     return credentialManager;

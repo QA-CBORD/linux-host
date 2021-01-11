@@ -58,16 +58,6 @@ export class GooglePayCredentialDataService extends AndroidCredentialDataService
     return super.androidCredential$(reqBody);
   }
 
-  // protected getDefaultHeaders(): Observable<HttpHeaders> {
-  //   return of(this.extraHeaders).pipe(
-  //     map(headers => {
-  //       return new HttpHeaders({
-  //         ...headers,
-  //       });
-  //     })
-  //   );
-  // }
-
   updateCredential$(mCredential: GoogleCredential): Observable<any> {
     return this.getUserId().pipe(
       switchMap(userId => {

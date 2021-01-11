@@ -156,18 +156,14 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
   }
 
   getEndpointStateFromLocalCache(forAnyUser?: boolean): Promise<EndpointState> {
-    return this.storageStateService
-      .getStateEntityByKey$<Persistable>(this.credential_key)
+    return this.getLocalStoredUserData<Persistable>(this.credential_key, forAnyUser)
       .pipe(
         first(),
-        switchMap(data => {
-          if (data && data.value) {
-            return this.getUserId().pipe(
-              map(id => (forAnyUser || data.value.userId === id ? EndpointState.from(data.value) : null))
-            );
-          } else {
-            return of(null);
+        map(data => {
+          if (data) {
+            return EndpointState.from(data);
           }
+          return null;
         })
       )
       .toPromise();
