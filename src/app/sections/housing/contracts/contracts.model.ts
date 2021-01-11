@@ -7,11 +7,20 @@ import { FacilityAttribute } from '@sections/housing/facility-attributes/facilit
 export enum ContractStatus {
   Preliminary = 1,
   Active = 2,
-  Suspended = 3,
   Completed = 4,
   Expired = 5,
   Terminated = 6,
   Canceled = 7,
+  Suspended = 8, // changed for bitwise math
+
+}
+
+export enum ContractFormStatus {
+  New = ContractStatus.Preliminary | ContractStatus.Active,
+  Submitted =  ContractStatus.Completed,
+  Expired = ContractStatus.Expired,
+  Suspended = ContractStatus.Suspended,
+  Canceled = ContractStatus.Terminated | ContractStatus.Canceled,
 }
 
 export enum CONTRACT_DETAIL_KEYS {
