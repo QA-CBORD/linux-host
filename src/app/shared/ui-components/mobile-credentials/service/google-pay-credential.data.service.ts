@@ -7,10 +7,9 @@ import { StorageStateService } from '@core/states/storage/storage-state.service'
 import { Observable, of } from 'rxjs';
 import { EndpointState, GOOGLE, GoogleCredential } from '../model/android/android-credential.model';
 import { AndroidCredentialDataService } from '../model/shared/android-credential-data.service';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { map, switchMap } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { switchMap } from 'rxjs/operators';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
-import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 
 const major_version = 1,
   minor_version = 0;
@@ -30,7 +29,6 @@ export class GooglePayCredentialDataService extends AndroidCredentialDataService
     protected readonly apiService: APIService,
     protected readonly http: HttpClient,
     protected userFacade: UserFacadeService,
-    private readonly environmentFacadeService: EnvironmentFacadeService
   ) {
     super(
       resourceUrls,
@@ -42,12 +40,6 @@ export class GooglePayCredentialDataService extends AndroidCredentialDataService
       http,
       userFacade
     );
-  }
-
-  private get extraHeaders(): object {
-    return {
-      'x-api-key': this.environmentFacadeService.getPartnerServicesApiKey(),
-    };
   }
 
   androidCredential$(reqBody: {
