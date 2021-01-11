@@ -1,4 +1,3 @@
-
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { from, Observable, of } from 'rxjs';
 import { map, switchMap, take } from 'rxjs/operators';
@@ -9,9 +8,10 @@ import { AppleWalletCredential } from '../model/ios/apple-wallet-credential';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { AppleWalletCredentialState } from '../model/ios/applet-wallet-credential.state';
 import { Injectable } from '@angular/core';
+import { MobileCredentialDataService } from '../model/shared/mobile-credential-data.service';
 const { IOSDevice } = Plugins;
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class IOSCredentialManager implements MobileCredentialManager {
   private mCredential: AppleWalletCredential;
   private appletWalletEventListener: any;
@@ -20,6 +20,13 @@ export class IOSCredentialManager implements MobileCredentialManager {
     private readonly userFacadeService: UserFacadeService,
     private readonly authFacadeService: AuthFacadeService
   ) {}
+
+
+  getService(): MobileCredentialDataService {
+     return null; // is not in use for now.
+  }
+
+  async onWillLogout(): Promise<void> {}
 
   refresh(): void {
     this.loadCredentials().then(freshCredentials => {

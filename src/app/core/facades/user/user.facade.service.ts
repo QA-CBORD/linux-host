@@ -12,6 +12,7 @@ import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { Settings, User } from 'src/app/app.global';
 import { Plugins, Capacitor, PushNotificationToken, PushNotification } from '@capacitor/core';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
+import { UserSettingsStateService } from '@core/states/user-settings/user-settings-state.service';
 const { PushNotifications, LocalNotifications, Device } = Plugins;
 
 @Injectable({
@@ -28,7 +29,8 @@ export class UserFacadeService extends ServiceStateFacade {
     private readonly userApiService: UserApiService,
     private readonly storageStateService: StorageStateService,
     private readonly nativeProvider: NativeProvider,
-    private readonly settingsFacadeService: SettingsFacadeService
+    private readonly settingsFacadeService: SettingsFacadeService,
+    private readonly userSettingStateService:  UserSettingsStateService
   ) {
     super();
   }
@@ -263,9 +265,10 @@ export class UserFacadeService extends ServiceStateFacade {
     return this.userApiService.reportCard$(isReportAsLost).pipe(take(1));
   }
 
-  private clearData() {
+  private async clearData(): Promise<void> {
     this.userPhoto = null;
-    this.storageStateService.clearStorage();
     this.storageStateService.clearState();
+    this.storageStateService.clearStorage();
+    this.userSettingStateService.clearState();
   }
 }

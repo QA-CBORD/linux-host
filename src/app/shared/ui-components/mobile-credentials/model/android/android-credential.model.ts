@@ -1,12 +1,12 @@
 import { AppleWalletCredentialState } from '../ios/applet-wallet-credential.state';
 import { AppleWalletState } from '../ios/applet-wallet.state';
-import { MobileCredentialState, MobileCredentialStatuses } from '../shared/credential-state';
+import { EndpointStatuses, MobileCredentialState, MobileCredentialStatuses } from '../shared/credential-state';
 import { ActivePasses, CredentialProviders } from '../shared/credential-utils';
 import { MobileCredential } from '../shared/mobile-credential';
 import { MobileCredentialConfig, MOBILE_CREDENTIAL_CONFIGS } from '../shared/mobile-credential-configs';
 
 export interface AndroidCredentialAttrs {
-  credentialData: any;
+  credentialBundle: any;
   credentialState: AndroidCredentialState;
 }
 
@@ -16,6 +16,10 @@ export interface AndroidCredentialState extends MobileCredentialState {
   credStatus: number;
   passes: number;
   issuer: string;
+  endpointState: EndpointState;
+  revoked(): boolean;
+  isProcessing(): boolean;
+  updateUiMsg(msg: string);
 }
 
 export class CredentialStateResolver {
@@ -43,49 +47,53 @@ export class CredentialStateResolver {
 
   private static hasAppleWallet(activePasses: ActivePasses): boolean {
     return (
-      activePasses.credStatus.iPhone == MobileCredentialStatuses.IS_AVAILABLE ||
-      activePasses.credStatus.iPhone == MobileCredentialStatuses.IS_PROVISIONED ||
-      (activePasses.credStatus.iWatch == MobileCredentialStatuses.IS_AVAILABLE ||
-        activePasses.credStatus.iWatch == MobileCredentialStatuses.IS_PROVISIONED)
+      activePasses.credStatus.iPhone != MobileCredentialStatuses.DISABLED ||
+      activePasses.credStatus.iWatch != MobileCredentialStatuses.DISABLED
     );
   }
 
   private static hasGoogleCredential(activePasses: ActivePasses): boolean {
-    return (
-      activePasses.credStatus.android_nxp == MobileCredentialStatuses.IS_AVAILABLE ||
-      activePasses.credStatus.android_nxp == MobileCredentialStatuses.IS_PROVISIONED
-    );
+    return activePasses.credStatus.android_nxp != MobileCredentialStatuses.DISABLED;
   }
 
   private static hasHidCredential(activePasses: ActivePasses): boolean {
-    return (
-      activePasses.credStatus.android_hid == MobileCredentialStatuses.IS_AVAILABLE ||
-      activePasses.credStatus.android_hid == MobileCredentialStatuses.IS_PROVISIONED
-    );
+    return activePasses.credStatus.android_hid != MobileCredentialStatuses.DISABLED;
   }
 }
 
 export class AndroidCredentialStateEntity implements AndroidCredentialState {
   statusMsg: string;
-
+  endpointState: EndpointState;
   constructor(
-    public credStatus: number,
-    public passes: number,
+    public credStatus: MobileCredentialStatuses,
+    public passes: MobileCredentialStatuses,
     public issuer: string,
     public referenceIdentifier: string
   ) {
     this.updateStatusMsg();
   }
 
+  setEndpointState(state: EndpointState): void {
+    this.endpointState = state;
+  }
+
+  isProcessing(): boolean {
+    return this.credStatus == MobileCredentialStatuses.PROCESSING;
+  }
+
   providedBy(provider: CredentialProviders): boolean {
     return this.getIssuer() == provider.toString();
   }
-  setStatus(status: number): void {
+  setStatus(status: MobileCredentialStatuses): void {
     this.credStatus = status;
   }
 
   getUiIconUrl(): string {
     return this.getConfig().uiHelpIcon;
+  }
+
+  updateUiMsg(msg: string) {
+    this.statusMsg = msg;
   }
 
   isHID(): boolean {
@@ -103,15 +111,20 @@ export class AndroidCredentialStateEntity implements AndroidCredentialState {
     return this.statusMsg;
   }
   isProvisioned(): boolean {
-    return this.credStatus == MobileCredentialStatuses.IS_PROVISIONED;
+    return this.credStatus == MobileCredentialStatuses.PROVISIONED;
+  }
+
+  revoked(): boolean {
+    return this.credStatus == MobileCredentialStatuses.REVOKED;
   }
 
   isEnabled(): boolean {
-    return this.credStatus != MobileCredentialStatuses.IS_DISABLED;
+    console.log('Credential status: ' + this.credStatus);
+    return this.credStatus !== MobileCredentialStatuses.DISABLED;
   }
 
   isAvailable(): boolean {
-    return this.credStatus == MobileCredentialStatuses.IS_AVAILABLE;
+    return this.credStatus == MobileCredentialStatuses.AVAILABLE;
   }
 
   getIssuer(): string {
@@ -119,52 +132,82 @@ export class AndroidCredentialStateEntity implements AndroidCredentialState {
   }
 
   updateStatusMsg(): void {
-    this.statusMsg = this.isProvisioned()
-      ? this.getConfig().UI_MSG.WHEN_PROVISIONED
-      : this.isAvailable()
-      ? this.getConfig().UI_MSG.WHEN_AVAILABLE
-      : null;
+    if (this.isProvisioned()) {
+      this.statusMsg = this.getConfig().UI_MSG.WHEN_PROVISIONED;
+    } else if (this.isAvailable()) {
+      this.statusMsg = this.getConfig().UI_MSG.WHEN_AVAILABLE;
+    } else if (this.revoked()) {
+      this.statusMsg = this.getConfig().UI_MSG.WHEN_REVOKED;
+    } else if (this.isProcessing()) {
+      this.statusMsg = this.getConfig().UI_MSG.WHEN_PROCESSING;
+    } else {
+      this.statusMsg = null;
+    }
   }
 }
 
 // android credentials implementations.
 
 export abstract class AndroidCredential<T> extends MobileCredential implements AndroidCredentialAttrs {
-  public credentialData: T;
+  public credentialBundle: T;
+
   constructor(public credentialState: AndroidCredentialState) {
     super(credentialState);
   }
 
-  getCredentialData<T>(): T {
-    return this.credentialData as any;
+  getCredentialBundle(): any {
+    return this.credentialBundle;
   }
 
-  setCredentialData<T>(data: T): void {
-    this.credentialData = <any>data;
+  setCredentialBundle(data: T): void {
+    this.credentialBundle = data as any;
+  }
+
+  setCredentialState(credentialState: AndroidCredentialState) {
+    this.credentialState = credentialState;
   }
 
   getCredentialState(): AndroidCredentialState {
     return this.credentialState;
   }
 
-  providedBy(credentialProvider: CredentialProviders){
+  revoked(): Boolean {
+    return this.credentialState.revoked();
+  }
+
+  updateUiMsg(msg: string) {
+    this.credentialState.updateUiMsg(msg);
+  }
+
+  providedBy(credentialProvider: CredentialProviders) {
     return this.credentialState.providedBy(credentialProvider);
   }
 
-  abstract getPersistable<T>(): T;
+  isProcessing(): boolean {
+    return this.credentialState.isProcessing();
+  }
 
-  getReferenceIdentifier(): string{
+  abstract getPersistable(): Persistable;
+
+  getReferenceIdentifier(): string {
     return this.credentialState.referenceIdentifier;
   }
 
-  getId(): string{
-    return this.credentialData ? this.getCredentialData<any>().id : null;
+  getId(): string {
+    return this.credentialBundle ? this.getCredentialBundle().id : null;
   }
 
-  getCredStatus(): number{
+  getCredStatus(): number {
     return this.credentialState.credStatus;
   }
 
+  endpointState(): EndpointState {
+    return this.credentialState.endpointState;
+  }
+
+  setEndpointState(endpointState: EndpointState): void {
+    this.credentialState.endpointState = endpointState;
+  }
 }
 
 export interface HID extends Persistable {
@@ -180,9 +223,13 @@ export interface GOOGLE extends Persistable {
   issuer: string;
 }
 
-export interface Persistable {
-  id: string;
-  referenceIdentifier?: string;
+export class Persistable {
+  constructor(
+    public id?: string,
+    public status?: number,
+    public referenceIdentifier?: string,
+    public userId?: string
+  ) {}
 }
 
 export class HIDCredential extends AndroidCredential<HID> {
@@ -190,14 +237,13 @@ export class HIDCredential extends AndroidCredential<HID> {
     super(credentialState);
   }
 
-  getPersistable<T>(): T {
-    let { id, issuer } = this.credentialData;
-    let { referenceIdentifier } = this.credentialState;
-    return <any>{ id, issuer, referenceIdentifier };
+  getPersistable(): Persistable {
+    let { id } = this.credentialBundle;
+    return new Persistable(id, MobileCredentialStatuses.PROCESSING);
   }
 
-  getInvitationCode():string{
-    return this.credentialData ? this.credentialData.invitationCode : null;
+  getInvitationCode(): string {
+    return this.credentialBundle ? this.credentialBundle.invitationCode : null;
   }
 }
 
@@ -206,9 +252,56 @@ export class GoogleCredential extends AndroidCredential<GOOGLE> {
     super(credentialState);
   }
 
-  getPersistable<T>(): T {
-    let { id, virtualCardUid, digitizationReference, issuer } = this.credentialData;
-    let { referenceIdentifier } = this.credentialState;
-    return <any>{ id, virtualCardUid, digitizationReference, issuer, referenceIdentifier };
+  getPersistable(): Persistable {
+    let { id } = this.credentialBundle;
+    return { id };
+  }
+}
+
+export class EndpointState {
+  constructor(public status: EndpointStatuses, public id?: string, public userId?: string) {}
+
+  setStatus(status: EndpointStatuses): void {
+    this.status = status;
+  }
+
+  setUserId(userId: string) {
+    this.userId = userId;
+  }
+
+  static from(data: Persistable): EndpointState {
+    return new EndpointState(data.status, data.id, data.userId);
+  }
+
+  isRevoked(): boolean {
+    return this.status == EndpointStatuses.REVOKED;
+  }
+
+  isProvisioned(): boolean {
+    return this.status == EndpointStatuses.PROVISIONED_ACTIVE;
+  }
+
+  isInactive(): boolean {
+    return this.status == EndpointStatuses.PROVISIONED_INACTIVE;
+  }
+
+  isProcessing(): boolean {
+    return this.status == EndpointStatuses.PROVISIONED_PROCESSING;
+  }
+
+  notSetup(): boolean {
+    return this.status == EndpointStatuses.NOT_SETUP;
+  }
+
+  equal(other: EndpointState): boolean {
+    return this.status == other.status;
+  }
+
+  deletionPermissionGranted(): boolean{
+    return this.status == EndpointStatuses.DELETE_CONFIRMED;
+  }
+
+  notEqual(other: EndpointState) {
+    return !this.equal(other);
   }
 }

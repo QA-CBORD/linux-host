@@ -16,5 +16,6 @@ export abstract class ExtendableStateManager<T = { [key: string]: any }> extends
 export interface StorageEntity<T = any> {
   lastModified: number;
   timeToLive: number;
+  permanent?: boolean;
   value: T;
 }

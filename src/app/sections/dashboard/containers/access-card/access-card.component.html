@@ -46,18 +46,18 @@
       </ion-col>
     </ion-row>
     <ion-row class="card__student-container">
-      <ion-col class="card__student-name-wrapper" [size]="appleWalletEnabled ? 8 : 'auto'">
+      <ion-col class="card__student-name-wrapper" [size]="(mobileCredentialFacade.isEnabled$ | async ) ? 6 : 'auto'">
         <div *ngIf="(userName$ | async)" class="card__student-name">{{ userName$ | async }}</div>
       </ion-col>
-      <ion-col *ngIf="appleWalletEnabled" size="4">
+      <ion-col *ngIf="(mobileCredentialFacade.isEnabled$ | async)" size="6">
         <div class="card__student-wallet">
-          <img
-            *ngIf="appleWalletMessageImage"
+          <img *ngIf="( mobileCredentialFacade.uiIconUrl$ | async ) as imageUrl"
+            mode="ios"
+            (click)="mobileCredentialFacade.onUiIconClicked()"
             class="card__wallet-icon"
-            src="/assets/images/{{ appleWalletMessageImage }}.png"
-            alt="{{ appleWalletMessage }}"
+            src="{{ imageUrl }}"
           />
-          <div class="card__student-wallet-text">{{ appleWalletMessage }}</div>
+          <div class="card__student-wallet-text">{{ mobileCredentialFacade.uiText$ | async }}</div>
         </div>
       </ion-col>
     </ion-row>
@@ -78,12 +78,16 @@
           </div>
         </ion-button>
       </ion-col>
-      <ion-col *ngIf="!appleWalletButtonHidden" class="card__quick-actions-wrapper">
-        <ion-button mode="ios" class="card__apple-wallet-btn" (click)="addToAppleWallet()"
-          ><img src="/assets/icon/Add_to_Apple_Wallet_rgb_US-UK.svg" />
+      <ion-col *ngIf="(mobileCredentialFacade.mobileCredentialAvailable$ | async)" class="card__quick-actions-wrapper">
+        <ion-button
+          *ngIf="(mobileCredentialFacade.uiImageUrl$ | async) as image"
+          mode="ios"
+          class="card__apple-wallet-btn"
+          (click)="mobileCredentialFacade.onImageClick()"
+        >
+          <img src="{{ image }}" style="height: fit-content"/>
         </ion-button>
       </ion-col>
     </ion-row>
   </ion-grid>
 </div>
-

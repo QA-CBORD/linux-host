@@ -16,6 +16,7 @@ import { Settings } from '../../../app.global';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
+import { MobileCredentialFacade } from '@shared/ui-components/mobile-credentials/service/mobile-credential-facade.service';
 
 @Injectable()
 export class DashboardPageResolver implements Resolve<Observable<SettingInfoList>> {
@@ -26,7 +27,8 @@ export class DashboardPageResolver implements Resolve<Observable<SettingInfoList
     private readonly contentStringsFacadeService: ContentStringsFacadeService,
     private readonly institutionService: InstitutionFacadeService,
     private readonly settingsFacadeService: SettingsFacadeService,
-    private readonly loadingService: LoadingService
+    private readonly loadingService: LoadingService,
+    private readonly mobileCredentialFacade: MobileCredentialFacade
   ) {}
 
   resolve(): Observable<SettingInfoList> {
@@ -38,18 +40,27 @@ export class DashboardPageResolver implements Resolve<Observable<SettingInfoList
     const inst = this.institutionService.fetchInstitutionData();
     const call = this.settingsFacadeService.fetchSettingList(Settings.SettingList.FEATURES);
     const accountContentStrings = this.accountsService.initContentStringsList();
+    const mCredential$ = this.mobileCredentialFacade.mobileCredentialEnabled$();
 
     return zip(
       user,
       inst,
       call,
       this.tileConfigFacadeService.updateTilesConfigBySystemSettings().pipe(first()),
+      mCredential$,
       accountContentStrings,
       ...strings
     ).pipe(
       map(
-        ([userInfo, institutionInfo, featureSettingsList, tilesConfig, accountsContentStrings, otherContentStrings]) =>
-          featureSettingsList
+        ([
+          userInfo,
+          institutionInfo,
+          featureSettingsList,
+          tilesConfig,
+          credentialEnabled,
+          accountsContentStrings,
+          otherContentStrings,
+        ]) => featureSettingsList
       ),
       take(1),
       finalize(() => this.loadingService.closeSpinner())
