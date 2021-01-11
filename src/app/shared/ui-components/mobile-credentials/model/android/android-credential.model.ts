@@ -297,6 +297,10 @@ export class EndpointState {
     return this.status == other.status;
   }
 
+  deletionPermissionGranted(): boolean{
+    return this.status == EndpointStatuses.DELETE_CONFIRMED;
+  }
+
   notEqual(other: EndpointState) {
     return !this.equal(other);
   }

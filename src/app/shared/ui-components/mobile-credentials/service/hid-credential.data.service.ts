@@ -126,7 +126,7 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
     });
   }
 
-  private async deleteAllCachedEndpoint$(): Promise<boolean> {
+  async deleteAllCachedEndpoint$(): Promise<boolean> {
     return this.settingsFacadeService
       .deleteUserSetting(User.Settings.MOBILE_CREDENTIAL_ID)
       .pipe(
