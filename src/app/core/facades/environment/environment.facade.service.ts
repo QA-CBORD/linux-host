@@ -35,7 +35,7 @@ export class EnvironmentFacadeService extends ServiceStateFacade {
     secmsg_api: 'https://secmsg.api.dev.cbord.com',
     image_url: 'https://3bulchr7pb.execute-api.us-east-1.amazonaws.com/dev/image/',
     // image_url :  'https://object-store.api.dev.cbord.com/image/', once DNS entry is entered
-    housing_aws_url: 'https://z6u8er70s9.execute-api.us-east-1.amazonaws.com/dev',
+    housing_aws_url: 'https://5yu7v7hrq2.execute-api.us-east-1.amazonaws.com/dev',
     partner_services_url: 'https://ft45xg91ch.execute-api.us-east-1.amazonaws.com/dev',
   };
 
