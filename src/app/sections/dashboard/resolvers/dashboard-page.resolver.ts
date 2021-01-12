@@ -1,7 +1,7 @@
 import { Resolve } from '@angular/router';
 import { Injectable } from '@angular/core';
-import { from, Observable, zip } from 'rxjs';
-import { finalize, first, map, switchMap, take } from 'rxjs/operators';
+import { Observable, zip } from 'rxjs';
+import { finalize, first, map, take } from 'rxjs/operators';
 
 import { AccountsService } from '@sections/accounts/services/accounts.service';
 import { LoadingService } from '@core/service/loading/loading.service';

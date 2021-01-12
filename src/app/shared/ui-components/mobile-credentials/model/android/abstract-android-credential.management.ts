@@ -49,6 +49,7 @@ export abstract class AbstractAndroidCredentialManager implements MobileCredenti
     const message = `An unexpected error occurred during mobile ID ${operation}, please try again later.`;
     const buttons = [{ text: 'OK', role: 'cancel' }];
     const alertDialog = await this.createAlertDialog(header, message, buttons);
+    this.loadingService.closeSpinner();
     await alertDialog.present();
   }
 

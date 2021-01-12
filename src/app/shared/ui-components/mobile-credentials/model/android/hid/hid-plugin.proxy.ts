@@ -48,7 +48,6 @@ class TaskExecutionController {
   }
 }
 
-
 export enum HID_SDK_ERR {
   INVALID_INVITATION_CODE = 'INVALID_INVITATION_CODE',
   DEVICE_SETUP_FAILED = 'DEVICE_SETUP_FAILED',

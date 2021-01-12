@@ -125,7 +125,6 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
       this.showInstallationErrorAlert('installation');
       return;
     }
-    console.log(newCredential);
     this.mCredential = newCredential;
     let { digitizationReference } = this.mCredential.getCredentialBundle();
     this.sessionFacadeService.navigatedFromGpay = true;
