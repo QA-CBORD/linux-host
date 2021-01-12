@@ -49,7 +49,9 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     });
   }
 
-  async onWillLogout(): Promise<void> {}
+  async onWillLogout(): Promise<void> {
+    this.hidSdkManager().stopTaskExecution();
+  }
 
   onUiIconClicked(): void {
     this.showLoading();
@@ -99,7 +101,8 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
   }
 
   private async validateAndInstall(): Promise<void> {
-    const credential = await this.fetchFromServer$(false, true);
+    this.showLoading();
+    const credential = await this.fetchFromServer$(true, true);
     if (credential == null) {
       this.showInstallationErrorAlert();
       throw new Error('Failed to retrieve passes');
@@ -107,7 +110,8 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     const deviceEndpointActive =
       (await this.getDeviceEndpointState()).isProvisioned() ||
       (await this.getLocalCachedEndpointState(true)).isProvisioned() ||
-      (await this.getLocalCachedEndpointState(true)).isProcessing();
+      (await this.getLocalCachedEndpointState(true)).isProcessing() ||
+      (await this.getLocalCachedEndpointState(true)).isRevoked();
 
     if (deviceEndpointActive) {
       this.showCredentialAlreadyInstalledAlert(async () => {
@@ -159,24 +163,24 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     }
   }
 
-  private async doCheckCredentialAvailability(): Promise<boolean> {
+  private doCheckCredentialAvailability = async (): Promise<boolean> => {
     const credentialAvailable = await this.checkCredentialAvailability(false);
     if (credentialAvailable) {
       this.credentialService.deleteAllCachedEndpoint$();
     }
     return credentialAvailable;
-  }
+  };
 
-  private async showCredentialAlreadyProvisionedAlert(callerHandler?: () => Promise<void>): Promise<void> {
+  private async showCredentialAlreadyProvisionedAlert(callerOnAcceptHandler?: () => Promise<void>): Promise<void> {
     // notify user he needs to uninstall from previous device first.
     let header = 'Notification';
     let message =
       'We have detected that you already provisioned a mobile ID, but it is not on this device. You may have uninstalled GET Mobile, deleted the app cache data, or your mobile ID is still installed on another device. If you proceed with this new installation, any previously installed mobile ID will be revoked. Would you like to proceed ?';
 
-    const defaultHandler = async () => {
-      this.showLoading();
+    const defaultOnAcceptHandler = async () => {
       const deleteSuccessfull = await this.handleRetriableOperation({
         fn: this.deleteCredentialFromServer$,
+        showLoading: true,
         onErrors: this.doCheckCredentialAvailability,
       });
       if (deleteSuccessfull) {
@@ -190,24 +194,23 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
         // user already accepted to delete, so make sure if he tries to delete again, don't ask to confirm again.
         this.showInstallationErrorAlert();
       }
-      this.loadingService.closeSpinner();
     };
-    const actualHandler = async () => {
+    const actualOnAcceptHandler = async () => {
       this.credentialService.updateCachedCredential$(EndpointStatuses.DELETE_CONFIRMED);
-      if (callerHandler) await callerHandler();
-      else await defaultHandler();
+      if (callerOnAcceptHandler) await callerOnAcceptHandler();
+      else await defaultOnAcceptHandler();
     };
 
     const buttons = [
       { text: 'cancel', role: 'cancel' },
       {
         text: 'Accept and Install',
-        handler: actualHandler,
+        handler: actualOnAcceptHandler,
       },
     ];
     const state = await this.getLocalCachedEndpointState();
     if (state.deletionPermissionGranted()) {
-      await actualHandler();
+      await actualOnAcceptHandler();
     } else {
       await this.loadingService.closeSpinner();
       const alert = await this.createAlertDialog(header, message, buttons);
@@ -215,12 +218,12 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     }
   }
 
-  private async showCredentialAlreadyInstalledAlert(callerHandler?: () => Promise<any>): Promise<void> {
+  private async showCredentialAlreadyInstalledAlert(callerOnAcceptHandler?: () => Promise<any>): Promise<void> {
     // notify user he needs to uninstall from previous device first.
-    let header = 'Notification';
-    let message =
+    const header = 'Notification';
+    const message =
       'We have detected there is an active mobile ID installed on this device. if you proceed with this new installation, any previously installed ID will be revoked.';
-    const defaultHandler = async () => {
+    const defaultOnAcceptHandler = async () => {
       this.showLoading();
       await this.handleRetriableOperation({
         fn: this.deleteCredentialFromServer$,
@@ -238,25 +241,25 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
       }
     };
 
-    const actualHandler = async () => {
+    const actualOnAcceptHandler = async () => {
       this.credentialService.updateCachedCredential$(EndpointStatuses.DELETE_CONFIRMED);
-      if (callerHandler) await callerHandler();
-      else await defaultHandler();
+      if (callerOnAcceptHandler) await callerOnAcceptHandler();
+      else await defaultOnAcceptHandler();
     };
 
     const buttons = [
       { text: 'cancel', role: 'cancel' },
       {
         text: 'Accept and Install',
-        handler: actualHandler,
+        handler: actualOnAcceptHandler,
       },
     ];
 
     const state = await this.getLocalCachedEndpointState();
+    await this.loadingService.closeSpinner();
     if (state.deletionPermissionGranted()) {
-      await actualHandler();
+      await actualOnAcceptHandler();
     } else {
-      await this.loadingService.closeSpinner();
       const alert = await this.createAlertDialog(header, message, buttons);
       alert.present();
     }
@@ -273,7 +276,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     this.credentialService.updateCachedCredential$(EndpointStatuses.REVOKED);
   }
 
-  private async onEndpointRevoked(timeToUpdate?: 60000): Promise<void> {
+  private async onEndpointRevoked(timeToUpdate: number = 60000): Promise<void> {
     this.setCredentialRevoked();
     let counter = 0;
     let maxRefreshAttempt = 11;
@@ -307,6 +310,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
   }
 
   refresh(): void {
+    console.log('refresh credentials called ====>>>');
     // we'll check if mobile keys hasn't been revoked, if true, should refresh accordingly.
     const asyncRefresh = async () => {
       if (this.mCredential.isProvisioned()) {
@@ -491,22 +495,12 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
   }
 
   private async handleRetriableOperation(params: ExecutionParameters): Promise<boolean> {
-    const options = {
-      fn: params.fn,
-      retryCount: params.retryCount || 4,
-      showLoading: params.showLoading || false,
-      checkErrors: params.checkErrors || false,
-      userDecides: params.userDecides || false,
-      args: params.args,
-      onErrors: params.onErrors,
-    };
-
-    if (options.showLoading) {
+    params.retryCount = params.retryCount || 4;
+    if (params.showLoading) {
       this.showLoading();
     }
-    const operationResult = await this.handleRetry(options).catch(() => false);
-
-    if (options.showLoading) {
+    const operationResult = await this.handleRetry(params).catch(() => false);
+    if (params.showLoading) {
       this.loadingService.closeSpinner();
     }
     return operationResult;
@@ -619,7 +613,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     this.showLoading();
     let credentialDeleteOnServerSuccess = await this.handleRetriableOperation({
       fn: this.deleteCredentialFromServer$,
-      onErrors: this.doCheckCredentialAvailability
+      onErrors: this.doCheckCredentialAvailability,
     });
     let credentialDeleteOnDeviceSuccess = false;
     if (credentialDeleteOnServerSuccess) {

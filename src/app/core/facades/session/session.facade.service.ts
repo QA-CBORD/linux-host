@@ -36,20 +36,23 @@ export class SessionFacadeService {
   private navigateToNativePlugin: boolean = false;
   private appStatus: AppStatus = AppStatus.FOREGROUND;
   navigatedFromGpay: boolean = false;
+  onLogOutObservable$: Subject<any> = new Subject<any>();
+
+
+
   constructor(
     private readonly platform: Platform,
     private readonly authFacadeService: AuthFacadeService,
     private readonly userFacadeService: UserFacadeService,
     private readonly identityFacadeService: IdentityFacadeService,
     private readonly institutionFacadeService: InstitutionFacadeService,
-    private readonly storageStateService: StorageStateService,
     private readonly merchantFacadeService: MerchantFacadeService,
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly router: Router,
     private navCtrl: NavController,
     private readonly toastService: ToastService,
     private readonly loadingService: LoadingService,
-    private readonly contentStringFacade: ContentStringsFacadeService
+    private readonly contentStringFacade: ContentStringsFacadeService,
   ) {
     this.appStateListeners();
   }
@@ -248,6 +251,7 @@ export class SessionFacadeService {
 
   async logoutUser(navigateToEntry: boolean = true) {
     if (navigateToEntry) {
+      this.onLogOutObservable$.next();
       await this.navCtrl.navigateRoot([ROLES.guest, GUEST_ROUTES.entry]);
     }
     this.resetAll();

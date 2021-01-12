@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
 import { EnvironmentFacadeService, EnvironmentType } from '@core/facades/environment/environment.facade.service';
 import { Device, Plugins } from '@capacitor/core';
-import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { iif, Observable, of } from 'rxjs';
-import { catchError, map, switchMap, take, tap } from 'rxjs/operators';
+import { catchError, first, map, switchMap, take, tap } from 'rxjs/operators';
 import { Settings } from 'src/app/app.global';
 import {
   CredentialStateChangeListener,
@@ -16,6 +15,7 @@ import { CredentialManagerType, MobileCredentialManagerFactory } from './mobile-
 import { HIDCredentialManager } from '../model/android/hid/hid-credential-manager';
 import { GooglePayCredentialManager } from '../model/android/google-pay/google-pay-credential-manager';
 import { MobileCredentialDataService } from '../model/shared/mobile-credential-data.service';
+import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 const { MobileCredentialStatusPlugin } = Plugins;
 
 @Injectable({
@@ -29,8 +29,17 @@ export class MobileCredentialFacade {
     private readonly mobileCredentialManagerFactory: MobileCredentialManagerFactory,
     private readonly nativeProvider: NativeProvider,
     private readonly settingsFacadeService: SettingsFacadeService,
-    public readonly environmentFacade: EnvironmentFacadeService
-  ) {}
+    public readonly environmentFacade: EnvironmentFacadeService,
+    private readonly sessionFacadeService: SessionFacadeService
+  ) {
+    this.onLogoutSubscription();
+  }
+
+  onLogoutSubscription(): void {
+    this.sessionFacadeService.onLogOutObservable$.subscribe(() => {
+      this.onLogout();
+    });
+  }
 
   iifCredentialSettingsEnabled(): Observable<boolean> {
     return this.enabledCredentialsSettings().pipe(
@@ -97,7 +106,12 @@ export class MobileCredentialFacade {
   }
 
   mobileCredentialEnabled$(): Observable<boolean> {
+    if (this.mobileCredentialManager) {
+      return of(true).pipe(first());
+    }
+
     return this.iifCredentialSettingsEnabled().pipe(
+      first(),
       switchMap(mobileCredentialSettingsEnabled => {
         return mobileCredentialSettingsEnabled ? this.mobileCredentialManager.credentialEnabled$() : of(false);
       }),
@@ -144,6 +158,11 @@ export class MobileCredentialFacade {
       return deviceState;
     };
     return readDeviceState();
+  }
+
+  async onLogout(): Promise<void> {
+    await this.mobileCredentialManager && this.mobileCredentialManager.onWillLogout();
+    this.mobileCredentialManager = null;
   }
 
   get credentialService$(): MobileCredentialDataService {
