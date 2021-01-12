@@ -1,7 +1,5 @@
 package com.cbord.get;
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.cbord.get.mcredential.MobileCredentialStatusPlugin;
 import com.getcapacitor.BridgeActivity;
