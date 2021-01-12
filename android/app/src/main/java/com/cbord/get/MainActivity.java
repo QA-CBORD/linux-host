@@ -1,8 +1,7 @@
 package com.cbord.get;
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
+import com.cbord.get.mcredential.MobileCredentialStatusPlugin;
 import com.getcapacitor.BridgeActivity;
 import com.getcapacitor.Plugin;
 
@@ -16,16 +15,7 @@ public class MainActivity extends BridgeActivity {
         this.init(savedInstanceState, new ArrayList<Class<? extends Plugin>>() {{
             add(HIDPlugin.class);
             add(GooglePayPlugin.class);
+            add(MobileCredentialStatusPlugin.class);
         }});
-    }
-
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Log.d("onActivityResult: ", Integer.toString(resultCode));
-        if (resultCode == RESULT_OK) {
-            Log.d("RESULT_OK: ", Integer.toString(resultCode));
-        }
     }
 }

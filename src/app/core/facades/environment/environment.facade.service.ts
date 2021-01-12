@@ -36,8 +36,7 @@ export class EnvironmentFacadeService extends ServiceStateFacade {
     image_url: 'https://3bulchr7pb.execute-api.us-east-1.amazonaws.com/dev/image/',
     // image_url :  'https://object-store.api.dev.cbord.com/image/', once DNS entry is entered
     housing_aws_url: 'https://5yu7v7hrq2.execute-api.us-east-1.amazonaws.com/dev',
-    partner_services_url: 'https://ft45xg91ch.execute-api.us-east-1.amazonaws.com/dev'
-    //'https://ft45xg91ch.execute-api.us-east-1.amazonaws.com/dev' //'https://api.payments.demo.cbord.com',
+    partner_services_url: 'https://ft45xg91ch.execute-api.us-east-1.amazonaws.com/dev',
   };
 
   private readonly feature1: EnvironmentInfo = {

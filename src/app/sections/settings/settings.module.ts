@@ -11,6 +11,7 @@ import { PhoneEmailModule } from '@shared/ui-components/phone-email/phone-email.
 import { EditHomePageModalModule } from '@shared/ui-components/edit-home-page-modal/edit-home-page-modal.module';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module'
 import { ReportCardModule } from '@sections/settings/pages/report-card/report-card.module';
+import { MobileCredentialModule } from '@shared/ui-components/mobile-credentials/mobile.credential.module';
 
 const imports = [
   CommonModule,
@@ -21,7 +22,8 @@ const imports = [
   PhoneEmailModule,
   StHeaderModule, 
   EditHomePageModalModule,
-  ReportCardModule
+  ReportCardModule,
+  MobileCredentialModule
 ];
 const declarations = [SettingsPage, SettingsItemComponent];
 const entryComponents = [];
@@ -35,3 +37,4 @@ const providers = [SettingsFactoryService];
 export class SettingsModule {
   constructor() {}
 }
+

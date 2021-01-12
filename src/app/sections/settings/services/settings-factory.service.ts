@@ -23,6 +23,7 @@ import Setting = Settings.Setting;
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { configureBiometricsConfig } from '@core/utils/general-helpers';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
+import { MobileCredentialFacade } from '@shared/ui-components/mobile-credentials/service/mobile-credential-facade.service';
 
 @Injectable()
 export class SettingsFactoryService {
@@ -37,6 +38,7 @@ export class SettingsFactoryService {
     institution: this.institutionFacadeService,
     environment: this.environmentFacadeService,
     appBrowser: this.appBrowser,
+    mobileCredentialFacade: this.mobileCredentialFacade,
   };
 
   constructor(
@@ -50,11 +52,16 @@ export class SettingsFactoryService {
     private readonly contentStringFacadeService: ContentStringsFacadeService,
     private readonly globalNav: GlobalNavService,
     private readonly appBrowser: InAppBrowser,
-    private readonly modalController: ModalController
+    private readonly modalController: ModalController,
+    private readonly mobileCredentialFacade: MobileCredentialFacade
   ) {}
 
   async getSettings(): Promise<SettingsSectionConfig[]> {
-    const parsedSettings: SettingsSectionConfig[] = [...SETTINGS_CONFIG];
+    const parsedSettings: SettingsSectionConfig[] = SETTINGS_CONFIG.map(settingSection => {
+      const settingSectionCopy = { ...settingSection };
+      settingSectionCopy.items = [...settingSectionCopy.items];
+      return settingSectionCopy;
+    });
     for (let sectionIndex = 0; sectionIndex < parsedSettings.length; sectionIndex++) {
       const section = parsedSettings[sectionIndex];
       const promises = [];
@@ -108,13 +115,15 @@ export class SettingsFactoryService {
           validations$.push(
             statusValidation.getStatusValidation(this.services).pipe(
               switchMap(setting =>
-                this.settingsFacade.getSetting(setting as Settings.Setting).pipe(
-                  map(({ value }): boolean => parseInt(value) === 1)
-                )
+                this.settingsFacade
+                  .getSetting(setting as Settings.Setting)
+                  .pipe(map(({ value }): boolean => parseInt(value) === 1))
               ),
               take(1)
             )
           );
+        } else if (validation.type === SETTINGS_VALIDATIONS.MobileCredentialEnabled) {
+          validations$.push(this.mobileCredentialFacade.showCredentialMetadata().pipe(take(1)));
         }
       }
       return merge(...validations$)

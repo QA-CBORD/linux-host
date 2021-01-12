@@ -12,6 +12,7 @@ import { InstitutionFacadeService } from '@core/facades/institution/institution.
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { Observable } from 'rxjs';
+import { MobileCredentialFacade } from '@shared/ui-components/mobile-credentials/service/mobile-credential-facade.service';
 
 export interface SettingsSectionConfig {
   label: string;
@@ -65,6 +66,7 @@ export enum SETTINGS_VALIDATIONS {
   SettingEnable = 'setting-enable',
   Biometric = 'biometric',
   StatusSettingEnable = 'status-enable',
+  MobileCredentialEnabled = 'mobile-credential'
 }
 
 export interface UserInfoSet extends UserInfo {
@@ -82,6 +84,7 @@ export interface SettingsServices {
   institution: InstitutionFacadeService;
   environment: EnvironmentFacadeService;
   appBrowser: InAppBrowser;
+  mobileCredentialFacade: MobileCredentialFacade
 }
 
 export interface StatusSettingValidation {

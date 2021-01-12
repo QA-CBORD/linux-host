@@ -269,7 +269,7 @@
 .custom-loading {
   --background: none;
   --spinner-color: white;
-  .loading-wrapper{
+  .loading-wrapper {
     box-shadow: none !important;
     -webkit-box-shadow: none !important;
   }
@@ -287,4 +287,9 @@
       }
     }
   }
+}
+// Multiline content media type:
+section,
+article {
+  white-space: pre-wrap;
 }

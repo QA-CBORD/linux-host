@@ -40,8 +40,26 @@
   --padding-end: 5px;
   --min-height: auto;
 
-  .roomSelect-list__item-time {
-  color: $color-dusty-gray;
+  .roomSelect-item-order {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .roomSelect-list__wrap {
+    margin: 0;
+  }
+
+  .roomSelect-list__item-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .roomSelect-list__item-start-time, .roomSelect-list__item-end-time {
+    display: block;
+    color: $color-dusty-gray;
+
 }
   &::before {
     background-color: $color-strong-blue;
@@ -57,7 +75,7 @@
 
 }
 .roomSelect-list__item-name {
-  font-weight: bolder;
+  @include font-nunito-heavy(18px);
 }
 .rooms__search {
   @include font-nunito-heavy(14px);

@@ -3,6 +3,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
+import android.util.Log;
+
 import com.getcapacitor.JSObject;
 import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
@@ -11,6 +13,8 @@ import com.getcapacitor.PluginMethod;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tapandpay.TapAndPayClient;
 import com.google.android.gms.tasks.Task;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -24,12 +28,15 @@ public class GooglePayPlugin extends Plugin {
     @PluginMethod()
     public void getGoogleClient(PluginCall call) {
         tapAndPayClient = TapAndPayClient.getClient(getActivity().getApplicationContext());
+        call.resolve();
     }
 
     @PluginMethod()
     public void getGooglePayNonce(PluginCall call) {
         final Task<String> response = tapAndPayClient.getLinkingToken("CBORD");
-        response.addOnSuccessListener(token -> call.resolve(toJSON(token)));
+        response.addOnSuccessListener(token -> {
+            call.resolve(toJSON(token));
+        });
         response.addOnFailureListener(error -> {
              if (isGoogleWalletInactive((ApiException) error)) {
                  tapAndPayClient.createWallet(getActivity(), REQUEST_CREATE_WALLET);
@@ -41,21 +48,44 @@ public class GooglePayPlugin extends Plugin {
 
     @PluginMethod()
     public void openGooglePay(PluginCall call) {
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse(call.getString("uri")));
-        PackageManager packageManager = getActivity().getPackageManager();
-        List<ResolveInfo> activities = packageManager.queryIntentActivities(intent, 0);
-        if (activities.size() > 0) {
-            getActivity().startActivityForResult(intent, 212);
-        } else {
-            call.reject("Activity could not be resolved");
-        }
-        // TODO: return the response to Ionic
+       try{
+           Intent intent = getGooglePayIntent(call);
+           if (isGooglePaySafeToLaunch(intent)) {
+               getActivity().startActivityForResult(intent, 400);
+           } else {
+               call.reject("Activity could not be resolved");
+           }
+       }catch (Exception ex){
+           call.reject("Activity could not be resolved");
+       }
     }
 
-    private JSObject toJSON(String transactionResult) {
+
+    @Override
+    protected void handleOnResume() {
+            super.handleOnResume();
+            notifyListeners("appResumed", new JSObject());
+    }
+
+    @NotNull
+    private Intent getGooglePayIntent(PluginCall call) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        Log.d("digitationReference", call.getString("uri"));
+        intent.setData(Uri.parse(call.getString("uri")));
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        return intent;
+    }
+
+    @NotNull
+    private boolean isGooglePaySafeToLaunch(Intent intent) {
+        PackageManager packageManager = getActivity().getPackageManager();
+        List<ResolveInfo> activities = packageManager.queryIntentActivities(intent, 0);
+        return activities.size() > 0;
+    }
+
+    private JSObject toJSON(String value) {
         JSObject jsonObject = new JSObject();
-        jsonObject.put("googlePayNonce", transactionResult);
+        jsonObject.put("googlePayNonce", value);
         return jsonObject;
     }
 

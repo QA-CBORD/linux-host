@@ -175,7 +175,7 @@ export class APIService {
     headers?: HttpHeaders
   ): Observable<any> {
     const finalURL = this.environmentFacadeService.getPartnerServicesURL().concat(resourceURL);
-    let httpCall$;
+    let httpCall$: Observable<any>;
     switch (callType) {
       case RestCallType.get:
         httpCall$ = this.get<any>(finalURL, responseType, params, headers);
@@ -190,7 +190,7 @@ export class APIService {
         httpCall$ = this.delete(finalURL, responseType, params, headers);
         break;
     }
-    return httpCall$.pipe(catchError(error => throwError({ message: 'There was an issue with the request' })));
+    return httpCall$;
   }
   /**
    * Create options object for Rest http call

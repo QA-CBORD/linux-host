@@ -73,7 +73,7 @@ export class ContractsStateService {
     return contracts.reduce((entities: ContractEntities, contract: ContractListDetails) => {
       return {
         ...entities,
-        [contract.id]: contract,
+        [contract.contractElementId]: contract,
       };
     }, {});
   }
