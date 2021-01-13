@@ -23,6 +23,7 @@
         [aspectRatio]="aspectRatio"
         [resizeToWidth]="saveWidth"
         [resizeToHeight]="saveHeight"
+        [containWithinAspectRatio]="true"
         format="jpeg"
         (cropperReady)="cropperIsReady($event)"
         (imageCropped)="imageCropped($event)"

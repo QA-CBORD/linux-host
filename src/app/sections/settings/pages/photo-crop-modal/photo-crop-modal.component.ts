@@ -9,7 +9,6 @@ import { ToastService } from '@core/service/toast/toast.service';
 const defaultHeight = 170;
 const defaultWidth = 128;
 const photoCropDelay = 100;
-const imageLength = 200000;
 
 @Component({
   templateUrl: './photo-crop-modal.component.html',
@@ -41,15 +40,15 @@ export class PhotoCropModalComponent {
       this.saveWidth = uploadSettings.saveWidth ? uploadSettings.saveWidth : defaultWidth;
       this.aspectRatio = this.saveWidth / this.saveHeight;
     } else {
-      this.aspectRatio = defaultWidth / defaultHeight;
+      this.aspectRatio = 3 / 2;
     }
   }
 
   cropperIsReady(originalImage: Dimensions) {
     this.qualityPercentage = 100;
-    setTimeout(() => {
-      this.cropperPosition = this.cropperInitialPosition(originalImage);
-    }, photoCropDelay);
+      setTimeout(() => {
+        this.cropperPosition = this.cropperInitialPosition(originalImage);
+      }, photoCropDelay);
     this.loadingService.closeSpinner();
   }
 
