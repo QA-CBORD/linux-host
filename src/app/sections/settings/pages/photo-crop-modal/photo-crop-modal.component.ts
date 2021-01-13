@@ -6,22 +6,23 @@ import { PhotoUploadService } from '../services/photo-upload.service';
 import { PopoverCropComponent } from '../popover-photo-crop/popover-photo-crop.component';
 import { ToastService } from '@core/service/toast/toast.service';
 
-const DEFAULT_HEIGHT = 170;
-const DEFAULT_WIDTH = 128;
-const PHOTO_CROP_DELAY = 100;
-const IMAGE_LENGTH = 200000;
+const defaultHeight = 170;
+const defaultWidth = 128;
+const photoCropDelay = 100;
 
 @Component({
   templateUrl: './photo-crop-modal.component.html',
   styleUrls: ['./photo-crop-modal.component.scss'],
 })
 export class PhotoCropModalComponent {
-  @Input() imageBase64 = '';
   cropperPosition = { x1: 0, y1: 0, x2: 0, y2: 0 };
-  croppedImageBase64 = '';
+  @Input() enableResizing: boolean;
+  @Input() imageBase64: string;
+  croppedImageBase64: string;
   qualityPercentage: number;
   saveHeight: number;
   saveWidth: number;
+  aspectRatio: number;
 
   constructor(
     private readonly modalController: ModalController,
@@ -33,16 +34,21 @@ export class PhotoCropModalComponent {
 
   ionViewWillEnter() {
     this.loadingService.showSpinner();
-    const uploadSettings = this.photoUploadService.photoUploadSettings;
-    this.saveHeight = uploadSettings.saveHeight ? uploadSettings.saveHeight : DEFAULT_HEIGHT;
-    this.saveWidth = uploadSettings.saveWidth ? uploadSettings.saveWidth : DEFAULT_WIDTH;
+    if (this.enableResizing) {
+      const uploadSettings = this.photoUploadService.photoUploadSettings;
+      this.saveHeight = uploadSettings.saveHeight ? uploadSettings.saveHeight : defaultHeight;
+      this.saveWidth = uploadSettings.saveWidth ? uploadSettings.saveWidth : defaultWidth;
+      this.aspectRatio = this.saveWidth / this.saveHeight;
+    } else {
+      this.aspectRatio = 3 / 2;
+    }
   }
 
   cropperIsReady(originalImage: Dimensions) {
-    this.qualityPercentage = this.imageBase64.length > IMAGE_LENGTH ? 30 : 50;
-    setTimeout(() => {
-      this.cropperPosition = this.cropperInitialPosition(originalImage);
-    }, PHOTO_CROP_DELAY);
+    this.qualityPercentage = 100;
+      setTimeout(() => {
+        this.cropperPosition = this.cropperInitialPosition(originalImage);
+      }, photoCropDelay);
     this.loadingService.closeSpinner();
   }
 
