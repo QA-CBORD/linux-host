@@ -9,6 +9,9 @@ import { ToastService } from '@core/service/toast/toast.service';
 const defaultHeight = 170;
 const defaultWidth = 128;
 const photoCropDelay = 100;
+const maximumQuality = 100;
+const reducedQuality = 85;
+const landscapeRatio = 3 / 2;
 
 @Component({
   templateUrl: './photo-crop-modal.component.html',
@@ -39,10 +42,10 @@ export class PhotoCropModalComponent {
       this.saveHeight = uploadSettings.saveHeight ? uploadSettings.saveHeight : defaultHeight;
       this.saveWidth = uploadSettings.saveWidth ? uploadSettings.saveWidth : defaultWidth;
       this.aspectRatio = this.saveWidth / this.saveHeight;
-      this.qualityPercentage = 100;
+      this.qualityPercentage = maximumQuality;
     } else {
-      this.aspectRatio = 3 / 2;
-      this.qualityPercentage = 85;
+      this.aspectRatio = landscapeRatio;
+      this.qualityPercentage = reducedQuality;
     }
   }
 
