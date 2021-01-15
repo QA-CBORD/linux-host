@@ -12,6 +12,7 @@ const photoCropDelay = 100;
 const maximumQuality = 100;
 const reducedQuality = 85;
 const landscapeRatio = 3 / 2;
+const sixPart = 6;
 
 @Component({
   templateUrl: './photo-crop-modal.component.html',
@@ -50,9 +51,9 @@ export class PhotoCropModalComponent {
   }
 
   cropperIsReady(originalImage: Dimensions) {
-      setTimeout(() => {
-        this.cropperPosition = this.cropperInitialPosition(originalImage);
-      }, photoCropDelay);
+    setTimeout(() => {
+      this.cropperPosition = this.cropperInitialPosition(originalImage);
+    }, photoCropDelay);
     this.loadingService.closeSpinner();
   }
 
@@ -76,15 +77,12 @@ export class PhotoCropModalComponent {
   }
 
   private cropperInitialPosition(originalImage: Dimensions): any {
-    const percentage = 0.1;
-    const width = originalImage.width;
-    const height = originalImage.height;
-    const padding = ((height + width) / 2) * percentage;
+    const length = (originalImage.width + originalImage.height) / sixPart;
     return {
-      x1: width - (width - padding),
-      y1: height - (height - padding),
-      x2: width - padding,
-      y2: height - padding,
+      x1: 0,
+      y1: 0,
+      x2: length,
+      y2: length,
     };
   }
 }
