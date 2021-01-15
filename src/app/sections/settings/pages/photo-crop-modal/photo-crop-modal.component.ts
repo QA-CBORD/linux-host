@@ -39,13 +39,14 @@ export class PhotoCropModalComponent {
       this.saveHeight = uploadSettings.saveHeight ? uploadSettings.saveHeight : defaultHeight;
       this.saveWidth = uploadSettings.saveWidth ? uploadSettings.saveWidth : defaultWidth;
       this.aspectRatio = this.saveWidth / this.saveHeight;
+      this.qualityPercentage = 100;
     } else {
       this.aspectRatio = 3 / 2;
+      this.qualityPercentage = 85;
     }
   }
 
   cropperIsReady(originalImage: Dimensions) {
-    this.qualityPercentage = 100;
       setTimeout(() => {
         this.cropperPosition = this.cropperInitialPosition(originalImage);
       }, photoCropDelay);
