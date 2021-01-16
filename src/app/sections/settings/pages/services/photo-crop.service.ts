@@ -8,12 +8,12 @@ export class PhotoCropModalService {
   constructor(public modalController: ModalController) {}
 
   async show(imageBase64: string, photoType: PhotoType): Promise<string | null> {
-    const enableResizing = photoType === PhotoType.GOVT_ID_FRONT || photoType === PhotoType.GOVT_ID_BACK ? false : true; 
+    const profilePhoto = photoType === PhotoType.GOVT_ID_FRONT || photoType === PhotoType.GOVT_ID_BACK ? false : true; 
     const modal = await this.modalController.create({
       component: PhotoCropModalComponent,
       componentProps: {
         imageBase64,
-        enableResizing
+        profilePhoto
       },
     });
 

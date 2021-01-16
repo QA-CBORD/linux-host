@@ -11,8 +11,8 @@ const defaultWidth = 128;
 const photoCropDelay = 100;
 const maximumQuality = 100;
 const reducedQuality = 85;
-const landscapeRatio = 3 / 2;
 const sixPart = 6;
+const defaultLandscape = 3 / 2;
 
 @Component({
   templateUrl: './photo-crop-modal.component.html',
@@ -20,7 +20,7 @@ const sixPart = 6;
 })
 export class PhotoCropModalComponent {
   cropperPosition = { x1: 0, y1: 0, x2: 0, y2: 0 };
-  @Input() enableResizing: boolean;
+  @Input() profilePhoto: boolean;
   @Input() imageBase64: string;
   croppedImageBase64: string;
   qualityPercentage: number;
@@ -38,21 +38,24 @@ export class PhotoCropModalComponent {
 
   ionViewWillEnter() {
     this.loadingService.showSpinner();
-    if (this.enableResizing) {
+    if (this.profilePhoto) {
       const uploadSettings = this.photoUploadService.photoUploadSettings;
       this.saveHeight = uploadSettings.saveHeight ? uploadSettings.saveHeight : defaultHeight;
       this.saveWidth = uploadSettings.saveWidth ? uploadSettings.saveWidth : defaultWidth;
-      this.aspectRatio = this.saveWidth / this.saveHeight;
       this.qualityPercentage = maximumQuality;
-    } else {
-      this.aspectRatio = landscapeRatio;
+      this.aspectRatio = this.saveWidth / this.saveHeight;
+    } else {    
       this.qualityPercentage = reducedQuality;
+      this.aspectRatio = defaultLandscape;
     }
   }
 
   cropperIsReady(originalImage: Dimensions) {
+    if (!this.profilePhoto) {
+      this.aspectRatio = originalImage.width / originalImage.height;
+    } 
     setTimeout(() => {
-      this.cropperPosition = this.cropperInitialPosition(originalImage);
+      this.cropperPosition = this.createCroppingBox(originalImage, this.profilePhoto);
     }, photoCropDelay);
     this.loadingService.closeSpinner();
   }
@@ -76,7 +79,7 @@ export class PhotoCropModalComponent {
     await modal.present();
   }
 
-  private cropperInitialPosition(originalImage: Dimensions): any {
+  private createCroppingBox(originalImage: Dimensions, profilePhoto: boolean): any {
     const length = (originalImage.width + originalImage.height) / sixPart;
     return {
       x1: 0,
