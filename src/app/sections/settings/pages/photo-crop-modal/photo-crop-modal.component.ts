@@ -27,6 +27,7 @@ export class PhotoCropModalComponent {
   saveHeight: number;
   saveWidth: number;
   aspectRatio: number;
+  maintainAspectRatio: boolean;
 
   constructor(
     private readonly modalController: ModalController,
@@ -42,18 +43,16 @@ export class PhotoCropModalComponent {
       const uploadSettings = this.photoUploadService.photoUploadSettings;
       this.saveHeight = uploadSettings.saveHeight ? uploadSettings.saveHeight : defaultHeight;
       this.saveWidth = uploadSettings.saveWidth ? uploadSettings.saveWidth : defaultWidth;
-      this.qualityPercentage = maximumQuality;
-      this.aspectRatio = this.saveWidth / this.saveHeight;
-    } else {    
-      this.qualityPercentage = reducedQuality;
-      this.aspectRatio = defaultLandscape;
+      this.setCroppingParameters(maximumQuality, (this.saveWidth / this.saveHeight), true);
+    } else {
+      this.setCroppingParameters(reducedQuality, defaultLandscape, false);
     }
   }
 
   cropperIsReady(originalImage: Dimensions) {
     if (!this.profilePhoto) {
       this.aspectRatio = originalImage.width / originalImage.height;
-    } 
+    }
     setTimeout(() => {
       this.cropperPosition = this.createCroppingBox(originalImage, this.profilePhoto);
     }, photoCropDelay);
@@ -87,5 +86,11 @@ export class PhotoCropModalComponent {
       x2: length,
       y2: length,
     };
+  }
+
+  private setCroppingParameters(quality: number, aspectRatio: number, maintainAspectRatio: boolean) {
+    this.qualityPercentage = quality;
+    this.aspectRatio = aspectRatio;
+    this.maintainAspectRatio = maintainAspectRatio;
   }
 }
