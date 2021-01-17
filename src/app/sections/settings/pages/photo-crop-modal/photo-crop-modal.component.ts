@@ -6,22 +6,27 @@ import { PhotoUploadService } from '../services/photo-upload.service';
 import { PopoverCropComponent } from '../popover-photo-crop/popover-photo-crop.component';
 import { ToastService } from '@core/service/toast/toast.service';
 
-const DEFAULT_HEIGHT = 170;
-const DEFAULT_WIDTH = 128;
-const PHOTO_CROP_DELAY = 100;
-const IMAGE_LENGTH = 200000;
+const defaultHeight = 170;
+const defaultWidth = 128;
+const photoCropDelay = 100;
+const maximumQuality = 100;
+const reducedQuality = 85;
+const sixPart = 6;
+const defaultLandscape = 3 / 2;
 
 @Component({
   templateUrl: './photo-crop-modal.component.html',
   styleUrls: ['./photo-crop-modal.component.scss'],
 })
 export class PhotoCropModalComponent {
-  @Input() imageBase64 = '';
   cropperPosition = { x1: 0, y1: 0, x2: 0, y2: 0 };
-  croppedImageBase64 = '';
+  @Input() profilePhoto: boolean;
+  @Input() imageBase64: string;
+  croppedImageBase64: string;
   qualityPercentage: number;
   saveHeight: number;
   saveWidth: number;
+  aspectRatio: number;
 
   constructor(
     private readonly modalController: ModalController,
@@ -33,16 +38,25 @@ export class PhotoCropModalComponent {
 
   ionViewWillEnter() {
     this.loadingService.showSpinner();
-    const uploadSettings = this.photoUploadService.photoUploadSettings;
-    this.saveHeight = uploadSettings.saveHeight ? uploadSettings.saveHeight : DEFAULT_HEIGHT;
-    this.saveWidth = uploadSettings.saveWidth ? uploadSettings.saveWidth : DEFAULT_WIDTH;
+    if (this.profilePhoto) {
+      const uploadSettings = this.photoUploadService.photoUploadSettings;
+      this.saveHeight = uploadSettings.saveHeight ? uploadSettings.saveHeight : defaultHeight;
+      this.saveWidth = uploadSettings.saveWidth ? uploadSettings.saveWidth : defaultWidth;
+      this.qualityPercentage = maximumQuality;
+      this.aspectRatio = this.saveWidth / this.saveHeight;
+    } else {    
+      this.qualityPercentage = reducedQuality;
+      this.aspectRatio = defaultLandscape;
+    }
   }
 
   cropperIsReady(originalImage: Dimensions) {
-    this.qualityPercentage = this.imageBase64.length > IMAGE_LENGTH ? 30 : 50;
+    if (!this.profilePhoto) {
+      this.aspectRatio = originalImage.width / originalImage.height;
+    } 
     setTimeout(() => {
-      this.cropperPosition = this.cropperInitialPosition(originalImage);
-    }, PHOTO_CROP_DELAY);
+      this.cropperPosition = this.createCroppingBox(originalImage, this.profilePhoto);
+    }, photoCropDelay);
     this.loadingService.closeSpinner();
   }
 
@@ -65,16 +79,13 @@ export class PhotoCropModalComponent {
     await modal.present();
   }
 
-  private cropperInitialPosition(originalImage: Dimensions): any {
-    const percentage = 0.1;
-    const width = originalImage.width;
-    const height = originalImage.height;
-    const padding = ((height + width) / 2) * percentage;
+  private createCroppingBox(originalImage: Dimensions, profilePhoto: boolean): any {
+    const length = (originalImage.width + originalImage.height) / sixPart;
     return {
-      x1: width - (width - padding),
-      y1: height - (height - padding),
-      x2: width - padding,
-      y2: height - padding,
+      x1: 0,
+      y1: 0,
+      x2: length,
+      y2: length,
     };
   }
 }

@@ -295,7 +295,7 @@ export class PhotoUploadComponent implements OnInit {
       .subscribe(
         response => {
           this.photoCropModalService
-            .show(response.dataUrl)
+            .show(response.dataUrl, photoType)
             .then(dataUrl => {
               const photoBase64 = dataUrl.split(',')[1];
               this.sessionFacadeService.navigatedToPlugin = true;
@@ -402,7 +402,7 @@ export class PhotoUploadComponent implements OnInit {
     this.sessionFacadeService.navigatedToPlugin = true;
     return from(
       Camera.getPhoto({
-        quality: 50, 
+        quality: 100,
         correctOrientation: true,
         preserveAspectRatio: true,
         width: uploadSettings.saveWidth ? uploadSettings.saveWidth : null,
