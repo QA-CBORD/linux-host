@@ -28,7 +28,7 @@ export class ServerError implements HttpInterceptor {
           }
         },
         async ({ error, message, status, statusText }: HttpErrorResponse) => {
-          if (status >= 500) await this.presentToast('Internal server error');
+          // if (status >= 500) await this.presentToast('Internal server error');
           if (status === 404) await this.presentToast('Page was not found');
           return throwError(message);
         },
