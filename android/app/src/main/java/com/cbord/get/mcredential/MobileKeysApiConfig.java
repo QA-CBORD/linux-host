@@ -17,10 +17,10 @@ import com.hid.origo.api.hce.OrigoNfcConfiguration;
 public class MobileKeysApiConfig extends Application {
     private OrigoMobileKeysApi mobileKeysApi;
     private static final String TAG = MobileKeysApiConfig.class.getName();
-    private static final int LOCK_SERVICE_CODE = 2; // default
-    private static final int TRANSACTIONS_BACKOFF = 2000; // default
+    private static final int LOCK_SERVICE_CODE = 2;
+    private static final int TRANSACTIONS_BACKOFF = 2000;
     private static final String APPLICATION_ID = "com.cbord.get";
-    private static final byte TRANSACTIONS = 2; // default
+    private static final byte TRANSACTIONS = 2;
 
     private void configure(){
         try {
@@ -39,9 +39,10 @@ public class MobileKeysApiConfig extends Application {
                     .setAllowBackgroundScanning(true)
                     .build();
             mobileKeysApi = OrigoMobileKeysApi.getInstance();
-
-            mobileKeysApi.initialize(this, origoApiConfiguration, origoScanConfiguration, APPLICATION_ID);
-        }catch (IllegalStateException ex){
+            if(Boolean.FALSE.equals(mobileKeysApi.isInitialized())) {
+                mobileKeysApi.initialize(this, origoApiConfiguration, origoScanConfiguration, APPLICATION_ID);
+            }
+          } catch (IllegalStateException ex){
             Log.d(TAG, ex.getMessage());
         }
     }
