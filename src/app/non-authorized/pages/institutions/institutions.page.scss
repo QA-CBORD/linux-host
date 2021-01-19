@@ -87,6 +87,10 @@ $search-top: calc(env(safe-area-inset-top) + 65px);
     height: 60px;
     margin: 0 15px;
     border-bottom: 1px solid $color-white-smoke;
+
+    &-continue {
+      @include angle-right-arrow-icon();
+    }
   }
 
   &__name {

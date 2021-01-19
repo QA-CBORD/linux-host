@@ -50,14 +50,20 @@
     </ion-item>
   </ion-list>
   <ion-list>
-    <ion-item detail
+    <ion-item
               lines="full"
               *ngFor="let category of (menu$ | async)?.menuCategories"
-              (click)="onCategoryClicked(category)">
+      (click)="onCategoryClicked(category)"
+    >
       <div class="full-menu__menu-item">
         <div>{{ category.name }}</div>
         <div class="full-menu__item-size">{{ category.menuCategoryItems.length }}</div>
       </div>
+      <ion-icon
+        class="full-menu__menu-item-icon"
+        src="/assets/icon/angle-down-select.svg"
+        aria-label="continue"
+      ></ion-icon>
     </ion-item>
   </ion-list>
 </ion-content>
