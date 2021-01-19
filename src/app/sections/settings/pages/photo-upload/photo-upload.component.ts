@@ -10,8 +10,9 @@ import { PhotoStatus, PhotoType, PhotoUploadService } from '../services/photo-up
 import { LoadingService } from '@core/service/loading/loading.service';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { ToastService } from '@core/service/toast/toast.service';
-import { ActionSheetController, Platform } from '@ionic/angular';
+import { ActionSheetController} from '@ionic/angular';
 import { PhotoCropModalService } from '../services/photo-crop.service';
+import { Orientation } from '../photo-crop-modal/photo-crop-modal.component';
 
 const { Camera } = Plugins;
 
@@ -21,11 +22,6 @@ export enum LocalPhotoStatus {
   ACCEPTED,
   NEW,
   SUBMITTED,
-}
-
-export enum Orientation {
-  PORTRAIT,
-  LANDSCAPE, 
 }
 
 export interface LocalPhotoUploadStatus {
@@ -456,6 +452,7 @@ export class PhotoUploadComponent implements OnInit {
 
   navigateBack() {
     this.router.navigate([PATRON_NAVIGATION.settings], { replaceUrl: true });
+
   }
 
   private frontIdOrientation(orientation: Orientation) {

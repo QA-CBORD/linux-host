@@ -5,7 +5,6 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { PhotoUploadService } from '../services/photo-upload.service';
 import { PopoverCropComponent } from '../popover-photo-crop/popover-photo-crop.component';
 import { ToastService } from '@core/service/toast/toast.service';
-import { Orientation } from '../photo-upload/photo-upload.component';
 
 enum Default {
   HEIGHT = 170,
@@ -17,7 +16,12 @@ enum Default {
 
 enum Quality {
   MAXIMUM = 100,
-  MINIMUM = 85,
+  REGULAR = 85,
+}
+
+export enum Orientation {
+  PORTRAIT,
+  LANDSCAPE, 
 }
 
 @Component({
@@ -53,7 +57,7 @@ export class PhotoCropModalComponent {
       this.qualityPercentage = Quality.MAXIMUM;
       this.aspectRatio = this.saveWidth / this.saveHeight;
     } else {
-      this.qualityPercentage = Quality.MINIMUM;
+      this.qualityPercentage = Quality.REGULAR;
       this.aspectRatio = Default.LANDSCAPE;
     }
   }
