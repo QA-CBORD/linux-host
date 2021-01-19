@@ -2,15 +2,16 @@ import { Component, Input } from '@angular/core';
 import { ModalController, PopoverController } from '@ionic/angular';
 import { ImageCroppedEvent, Dimensions } from 'ngx-image-cropper';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { PhotoUploadService, Orientation } from '../services/photo-upload.service';
+import { PhotoUploadService } from '../services/photo-upload.service';
 import { PopoverCropComponent } from '../popover-photo-crop/popover-photo-crop.component';
 import { ToastService } from '@core/service/toast/toast.service';
+import { Orientation } from '../photo-upload/photo-upload.component';
 
 enum Default {
   HEIGHT = 170,
   WIDTH = 128,
   DELAY = 100,
-  DIVIDER = 6,
+  DIVIDER = 3,
   LANDSCAPE = 3 / 2,
 }
 
@@ -23,6 +24,7 @@ enum Quality {
   templateUrl: './photo-crop-modal.component.html',
   styleUrls: ['./photo-crop-modal.component.scss'],
 })
+
 export class PhotoCropModalComponent {
   cropperPosition = { x1: 0, y1: 0, x2: 0, y2: 0 };
   @Input() profilePhoto: boolean;
@@ -50,32 +52,36 @@ export class PhotoCropModalComponent {
       this.saveWidth = uploadSettings.saveWidth ? uploadSettings.saveWidth : Default.WIDTH;
       this.qualityPercentage = Quality.MAXIMUM;
       this.aspectRatio = this.saveWidth / this.saveHeight;
-    } else {    
+    } else {
       this.qualityPercentage = Quality.MINIMUM;
       this.aspectRatio = Default.LANDSCAPE;
     }
   }
 
   cropperIsReady(originalImage: Dimensions) {
-    if (!this.profilePhoto) {
-      this.aspectRatio = originalImage.width / originalImage.height;
+    let width = originalImage.width;
+    let height = originalImage.height;
+    if (this.profilePhoto) {
+      this.maintainAspectRatio = true;
+      width = this.saveWidth;
+      height = this.saveHeight;
+    } else {
+      this.aspectRatio = Default.LANDSCAPE;
       this.maintainAspectRatio = false;
-    } 
+    }
     setTimeout(() => {
-      this.cropperPosition = this.getCroppingCoordinates(originalImage);
+      this.cropperPosition = this.croppingCoordinates(width, height);
     }, Default.DELAY);
     this.loadingService.closeSpinner();
   }
 
   imageCropped(croppedImage: ImageCroppedEvent) {
     this.croppedImageBase64 = croppedImage.base64;
-    if (!this.profilePhoto) {
-      if (croppedImage.width > croppedImage.height) {
-        this.photoUploadService.orientation = Orientation.LANDSCAPE;
-      } else {
-        this.photoUploadService.orientation = Orientation.PORTRAIT;
-      }
-    } 
+    if (croppedImage.width > croppedImage.height) {
+      this.photoUploadService.orientation = Orientation.LANDSCAPE;
+    } else {
+      this.photoUploadService.orientation = Orientation.PORTRAIT;
+    }
   }
 
   async loadImageFailed() {
@@ -93,13 +99,12 @@ export class PhotoCropModalComponent {
     await modal.present();
   }
 
-  private getCroppingCoordinates(originalImage: Dimensions): any {
-    const length = (originalImage.width + originalImage.height) / Default.DIVIDER;
+  private croppingCoordinates(width: number, height: number) {
     return {
       x1: 0,
       y1: 0,
-      x2: length,
-      y2: length,
+      x2: width / Default.DIVIDER,
+      y2: height / Default.DIVIDER,
     };
   }
 }

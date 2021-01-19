@@ -11,6 +11,7 @@ import { first, switchMap, take, tap } from 'rxjs/operators';
 import { SettingInfoList } from '@core/model/configuration/setting-info-list.model';
 import { DeleteModalComponent } from '@sections/settings/pages/delete-modal/delete-modal.component';
 import { ModalController } from '@ionic/angular';
+import { Orientation } from '../photo-upload/photo-upload.component';
 
 export enum PhotoStatus {
   PENDING,
@@ -25,11 +26,6 @@ export enum PhotoType {
   PROFILE = 0,
   GOVT_ID_FRONT = 1,
   GOVT_ID_BACK = 2,
-}
-
-export enum Orientation {
-  PORTRAIT,
-  LANDSCAPE, 
 }
 
 @Injectable()

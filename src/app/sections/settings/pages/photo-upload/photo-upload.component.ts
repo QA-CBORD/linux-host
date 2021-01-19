@@ -6,7 +6,7 @@ import { PATRON_NAVIGATION } from '../../../../app.global';
 import { from, Observable, of, zip } from 'rxjs';
 import { catchError, finalize, first, switchMap, take, tap } from 'rxjs/operators';
 import { UserPhotoInfo } from '@core/model/user';
-import { PhotoStatus, PhotoType, PhotoUploadService, Orientation } from '../services/photo-upload.service';
+import { PhotoStatus, PhotoType, PhotoUploadService } from '../services/photo-upload.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { ToastService } from '@core/service/toast/toast.service';
@@ -21,6 +21,11 @@ export enum LocalPhotoStatus {
   ACCEPTED,
   NEW,
   SUBMITTED,
+}
+
+export enum Orientation {
+  PORTRAIT,
+  LANDSCAPE, 
 }
 
 export interface LocalPhotoUploadStatus {
