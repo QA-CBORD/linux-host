@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { ModalController, PopoverController } from '@ionic/angular';
 import { ImageCroppedEvent, Dimensions } from 'ngx-image-cropper';
 import { LoadingService } from '@core/service/loading/loading.service';
-import { PhotoUploadService } from '../services/photo-upload.service';
+import { PhotoUploadService, Orientation } from '../services/photo-upload.service';
 import { PopoverCropComponent } from '../popover-photo-crop/popover-photo-crop.component';
 import { ToastService } from '@core/service/toast/toast.service';
 
@@ -55,13 +55,20 @@ export class PhotoCropModalComponent {
       this.aspectRatio = originalImage.width / originalImage.height;
     } 
     setTimeout(() => {
-      this.cropperPosition = this.createCroppingBox(originalImage, this.profilePhoto);
+      this.cropperPosition = this.getCroppingCoordinates(originalImage);
     }, photoCropDelay);
     this.loadingService.closeSpinner();
   }
 
   imageCropped(event: ImageCroppedEvent) {
     this.croppedImageBase64 = event.base64;
+    if (!this.profilePhoto) {
+      if (event.width > event.height) {
+        this.photoUploadService.orientation = Orientation.LANDSCAPE;
+      } else {
+        this.photoUploadService.orientation = Orientation.PORTRAIT;
+      }
+    } 
   }
 
   async loadImageFailed() {
@@ -79,7 +86,7 @@ export class PhotoCropModalComponent {
     await modal.present();
   }
 
-  private createCroppingBox(originalImage: Dimensions, profilePhoto: boolean): any {
+  private getCroppingCoordinates(originalImage: Dimensions): any {
     const length = (originalImage.width + originalImage.height) / sixPart;
     return {
       x1: 0,

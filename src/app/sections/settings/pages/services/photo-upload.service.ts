@@ -27,6 +27,11 @@ export enum PhotoType {
   GOVT_ID_BACK = 2,
 }
 
+export enum Orientation {
+  PORTRAIT,
+  LANDSCAPE, 
+}
+
 @Injectable()
 export class PhotoUploadService {
   private readonly _govtIdFront$: BehaviorSubject<UserPhotoInfo> = new BehaviorSubject<UserPhotoInfo>(null);
@@ -36,7 +41,8 @@ export class PhotoUploadService {
   private readonly _govtIdRequired$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   private govtIdRequired: boolean = false;
-
+  orientation: Orientation;
+  
   private userPhotoUploadSettings: UserPhotoUploadSettings = {
     cacheTimeoutMinutes: null,
     displayHeight: null,

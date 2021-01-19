@@ -6,7 +6,7 @@ import { PATRON_NAVIGATION } from '../../../../app.global';
 import { from, Observable, of, zip } from 'rxjs';
 import { catchError, finalize, first, switchMap, take, tap } from 'rxjs/operators';
 import { UserPhotoInfo } from '@core/model/user';
-import { PhotoStatus, PhotoType, PhotoUploadService } from '../services/photo-upload.service';
+import { PhotoStatus, PhotoType, PhotoUploadService, Orientation } from '../services/photo-upload.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { ToastService } from '@core/service/toast/toast.service';
@@ -50,6 +50,10 @@ export class PhotoUploadComponent implements OnInit {
   profileImagePending$: Observable<SafeResourceUrl>;
 
   submitButtonDisabled: boolean = true;
+  frontIdWidth: number;
+  frontIdHeight: number;
+  backIdWidth: number;
+  backIdHeight: number;
 
   localPhotoUploadStatus: LocalPhotoUploadStatus;
   private localPhotoData: LocalPhotoData = {
@@ -103,6 +107,9 @@ export class PhotoUploadComponent implements OnInit {
     };
   }
 
+  ionViewDidEnter() {
+    console.log('This get called');
+  }
   /// initialize the observables for photo updating
   private getPhotoData() {
     this.loadingService.showSpinner();
@@ -181,9 +188,11 @@ export class PhotoUploadComponent implements OnInit {
         break;
       case PhotoType.GOVT_ID_FRONT:
         this.localPhotoData.govIdFront = photoInfo;
+        this.frontIdOrientation(this.photoUploadService.orientation);
         break;
       case PhotoType.GOVT_ID_BACK:
         this.localPhotoData.govIdBack = photoInfo;
+        this.backIdOrientation(this.photoUploadService.orientation);
         break;
     }
   }
@@ -442,5 +451,25 @@ export class PhotoUploadComponent implements OnInit {
 
   navigateBack() {
     this.router.navigate([PATRON_NAVIGATION.settings], { replaceUrl: true });
+  }
+
+  private frontIdOrientation(orientation: Orientation) {
+    if (orientation === Orientation.PORTRAIT) {
+      this.frontIdWidth = 126;
+      this.frontIdHeight = 178;
+    } else {
+      this.frontIdWidth = 132;
+      this.frontIdHeight = 80;
+    }
+  }
+
+  private backIdOrientation(orientation: Orientation) {
+    if (orientation === Orientation.PORTRAIT) {
+      this.backIdWidth = 126;
+      this.backIdHeight = 178;
+    } else {
+      this.backIdWidth = 132;
+      this.backIdHeight = 80;
+    }
   }
 }
