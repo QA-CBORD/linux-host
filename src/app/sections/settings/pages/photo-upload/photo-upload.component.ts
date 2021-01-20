@@ -39,7 +39,7 @@ export interface LocalPhotoData {
   profilePending: UserPhotoInfo;
 }
 
-export interface GovIdDimension {
+export interface Dimensions {
   height: number;
   width: number;
 }
@@ -56,8 +56,8 @@ export class PhotoUploadComponent implements OnInit {
   profileImagePending$: Observable<SafeResourceUrl>;
 
   submitButtonDisabled: boolean = true;
-  frontId: GovIdDimension;
-  backId: GovIdDimension;
+  frontId: Dimensions;
+  backId: Dimensions;
 
   localPhotoUploadStatus: LocalPhotoUploadStatus;
   private localPhotoData: LocalPhotoData = {
@@ -189,11 +189,11 @@ export class PhotoUploadComponent implements OnInit {
         break;
       case PhotoType.GOVT_ID_FRONT:
         this.localPhotoData.govIdFront = photoInfo;
-        this.frontId = this.govIdOrientation(this.photoUploadService.orientation);
+        this.frontId = this.getGovIdDimension(this.photoUploadService.orientation);
         break;
       case PhotoType.GOVT_ID_BACK:
         this.localPhotoData.govIdBack = photoInfo;
-        this.backId = this.govIdOrientation(this.photoUploadService.orientation);
+        this.backId = this.getGovIdDimension(this.photoUploadService.orientation);
         break;
     }
   }
@@ -454,7 +454,7 @@ export class PhotoUploadComponent implements OnInit {
     this.router.navigate([PATRON_NAVIGATION.settings], { replaceUrl: true });
   }
 
-  private govIdOrientation(orientation: Orientation) {
+  private getGovIdDimension(orientation: Orientation): Dimensions {
     if (orientation === Orientation.PORTRAIT) {
       return { height: 178, width: 126 };
     } else if (orientation === Orientation.LANDSCAPE) {
