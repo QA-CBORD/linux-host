@@ -19,17 +19,21 @@ enum Quality {
   REGULAR = 85,
 }
 
+enum Tolerance {
+  UPPER = 1.1,
+  LOWER = 0.9,
+}
+
 export enum Orientation {
   PORTRAIT,
   LANDSCAPE,
-  NONE 
+  NONE,
 }
 
 @Component({
   templateUrl: './photo-crop-modal.component.html',
   styleUrls: ['./photo-crop-modal.component.scss'],
 })
-
 export class PhotoCropModalComponent {
   cropperPosition = { x1: 0, y1: 0, x2: 0, y2: 0 };
   @Input() profilePhoto: boolean;
@@ -64,9 +68,9 @@ export class PhotoCropModalComponent {
   }
 
   cropperIsReady(originalImage: Dimensions) {
-    let width = originalImage.height;
+    let width = originalImage.width;
     let height = originalImage.height;
-    let divisor = 2;
+    let divisor = null;
     if (this.profilePhoto) {
       this.maintainAspectRatio = true;
       width = this.saveWidth;
@@ -111,17 +115,12 @@ export class PhotoCropModalComponent {
   }
 
   private setOrientation(croppedImage: ImageCroppedEvent) {
-    if (croppedImage.width> croppedImage.height) {
+    if (croppedImage.width > croppedImage.height * Tolerance.UPPER) {
       this.photoUploadService.orientation = Orientation.LANDSCAPE;
-      console.log('Orientation.LANDSCAPE');
-    }
-    else if (croppedImage.width < croppedImage.height) {
+    } else if (croppedImage.width < croppedImage.height * Tolerance.LOWER) {
       this.photoUploadService.orientation = Orientation.PORTRAIT;
-      console.log('Orientation.PORTRAIT');
-    }
-    else {
+    } else {
       this.photoUploadService.orientation = Orientation.NONE;
-      console.log('Orientation.NONE');
     }
   }
 }

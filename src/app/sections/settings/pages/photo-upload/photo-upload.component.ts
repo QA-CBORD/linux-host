@@ -10,7 +10,7 @@ import { PhotoStatus, PhotoType, PhotoUploadService } from '../services/photo-up
 import { LoadingService } from '@core/service/loading/loading.service';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { ToastService } from '@core/service/toast/toast.service';
-import { ActionSheetController} from '@ionic/angular';
+import { ActionSheetController } from '@ionic/angular';
 import { PhotoCropModalService } from '../services/photo-crop.service';
 import { Orientation } from '../photo-crop-modal/photo-crop-modal.component';
 
@@ -39,6 +39,11 @@ export interface LocalPhotoData {
   profilePending: UserPhotoInfo;
 }
 
+export interface GovIdDimension {
+  height: number;
+  width: number;
+}
+
 @Component({
   selector: 'st-photo-upload',
   templateUrl: './photo-upload.component.html',
@@ -51,10 +56,8 @@ export class PhotoUploadComponent implements OnInit {
   profileImagePending$: Observable<SafeResourceUrl>;
 
   submitButtonDisabled: boolean = true;
-  frontIdWidth: number;
-  frontIdHeight: number;
-  backIdWidth: number;
-  backIdHeight: number;
+  frontId: GovIdDimension;
+  backId: GovIdDimension;
 
   localPhotoUploadStatus: LocalPhotoUploadStatus;
   private localPhotoData: LocalPhotoData = {
@@ -108,9 +111,6 @@ export class PhotoUploadComponent implements OnInit {
     };
   }
 
-  ionViewDidEnter() {
-    console.log('This get called');
-  }
   /// initialize the observables for photo updating
   private getPhotoData() {
     this.loadingService.showSpinner();
@@ -189,11 +189,11 @@ export class PhotoUploadComponent implements OnInit {
         break;
       case PhotoType.GOVT_ID_FRONT:
         this.localPhotoData.govIdFront = photoInfo;
-        this.frontIdOrientation(this.photoUploadService.orientation);
+        this.frontId = this.govIdOrientation(this.photoUploadService.orientation);
         break;
       case PhotoType.GOVT_ID_BACK:
         this.localPhotoData.govIdBack = photoInfo;
-        this.backIdOrientation(this.photoUploadService.orientation);
+        this.backId = this.govIdOrientation(this.photoUploadService.orientation);
         break;
     }
   }
@@ -452,35 +452,15 @@ export class PhotoUploadComponent implements OnInit {
 
   navigateBack() {
     this.router.navigate([PATRON_NAVIGATION.settings], { replaceUrl: true });
-
   }
 
-  private frontIdOrientation(orientation: Orientation) {
+  private govIdOrientation(orientation: Orientation) {
     if (orientation === Orientation.PORTRAIT) {
-      this.frontIdWidth = 126;
-      this.frontIdHeight = 178;
+      return { height: 178, width: 126 };
     } else if (orientation === Orientation.LANDSCAPE) {
-      this.frontIdWidth = 132;
-      this.frontIdHeight = 80;
+      return { height: 80, width: 132 };
     } else {
-      this.frontIdWidth = 132;
-      this.frontIdHeight = 132;
-    }
-  }
-
-  private backIdOrientation(orientation: Orientation) {
-    if (orientation === Orientation.PORTRAIT) {
-      console.log('backIdOrientation Orientation.PORTRAIT');
-      this.backIdWidth = 126;
-      this.backIdHeight = 178;
-    } else if (orientation === Orientation.LANDSCAPE) {
-      console.log('backIdOrientation Orientation.LANDSCAPE');
-      this.backIdWidth = 132;
-      this.backIdHeight = 80;
-    } else {
-      console.log('backIdOrientation Orientation.NONE');
-      this.backIdWidth = 132;
-      this.backIdHeight = 132;
+      return { height: 132, width: 132 };
     }
   }
 }
