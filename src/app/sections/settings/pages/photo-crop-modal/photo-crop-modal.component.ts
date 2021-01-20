@@ -21,7 +21,8 @@ enum Quality {
 
 export enum Orientation {
   PORTRAIT,
-  LANDSCAPE, 
+  LANDSCAPE,
+  NONE 
 }
 
 @Component({
@@ -63,37 +64,34 @@ export class PhotoCropModalComponent {
   }
 
   cropperIsReady(originalImage: Dimensions) {
-    let width = originalImage.width;
+    let width = originalImage.height;
     let height = originalImage.height;
+    let divisor = 2;
     if (this.profilePhoto) {
       this.maintainAspectRatio = true;
       width = this.saveWidth;
       height = this.saveHeight;
+      divisor = Default.DIVIDER;
     } else {
-      this.aspectRatio = Default.LANDSCAPE;
       this.maintainAspectRatio = false;
     }
     setTimeout(() => {
-      this.cropperPosition = this.croppingCoordinates(width, height);
+      this.cropperPosition = this.croppingCoordinates(width, height, divisor);
     }, Default.DELAY);
     this.loadingService.closeSpinner();
   }
 
   imageCropped(croppedImage: ImageCroppedEvent) {
     this.croppedImageBase64 = croppedImage.base64;
-    if (croppedImage.width > croppedImage.height) {
-      this.photoUploadService.orientation = Orientation.LANDSCAPE;
-    } else {
-      this.photoUploadService.orientation = Orientation.PORTRAIT;
-    }
-  }
-
-  async loadImageFailed() {
-    await this.toastService.showToast({ message: 'There was an issue loading your photo. Please try again' });
+    this.setOrientation(croppedImage);
   }
 
   dismissModal(croppedImageBase64?: string) {
     this.modalController.dismiss({ croppedImageBase64 });
+  }
+
+  async loadImageFailed() {
+    await this.toastService.showToast({ message: 'There was an issue loading your photo. Please try again' });
   }
 
   async showModal() {
@@ -103,12 +101,27 @@ export class PhotoCropModalComponent {
     await modal.present();
   }
 
-  private croppingCoordinates(width: number, height: number) {
+  private croppingCoordinates(width: number, height: number, divisor = 1) {
     return {
       x1: 0,
       y1: 0,
-      x2: width / Default.DIVIDER,
-      y2: height / Default.DIVIDER,
+      x2: width / divisor,
+      y2: height / divisor,
     };
+  }
+
+  private setOrientation(croppedImage: ImageCroppedEvent) {
+    if (croppedImage.width> croppedImage.height) {
+      this.photoUploadService.orientation = Orientation.LANDSCAPE;
+      console.log('Orientation.LANDSCAPE');
+    }
+    else if (croppedImage.width < croppedImage.height) {
+      this.photoUploadService.orientation = Orientation.PORTRAIT;
+      console.log('Orientation.PORTRAIT');
+    }
+    else {
+      this.photoUploadService.orientation = Orientation.NONE;
+      console.log('Orientation.NONE');
+    }
   }
 }

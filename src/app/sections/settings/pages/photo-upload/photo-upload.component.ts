@@ -459,19 +459,28 @@ export class PhotoUploadComponent implements OnInit {
     if (orientation === Orientation.PORTRAIT) {
       this.frontIdWidth = 126;
       this.frontIdHeight = 178;
-    } else {
+    } else if (orientation === Orientation.LANDSCAPE) {
       this.frontIdWidth = 132;
       this.frontIdHeight = 80;
+    } else {
+      this.frontIdWidth = 132;
+      this.frontIdHeight = 132;
     }
   }
 
   private backIdOrientation(orientation: Orientation) {
     if (orientation === Orientation.PORTRAIT) {
+      console.log('backIdOrientation Orientation.PORTRAIT');
       this.backIdWidth = 126;
       this.backIdHeight = 178;
-    } else {
+    } else if (orientation === Orientation.LANDSCAPE) {
+      console.log('backIdOrientation Orientation.LANDSCAPE');
       this.backIdWidth = 132;
       this.backIdHeight = 80;
+    } else {
+      console.log('backIdOrientation Orientation.NONE');
+      this.backIdWidth = 132;
+      this.backIdHeight = 132;
     }
   }
 }
