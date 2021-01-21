@@ -74,6 +74,9 @@
     width: 100%;
 
     @include font-nunito-semibold(16px);
+    &-icon {
+      @include angle-right-arrow-icon();
+    }
   }
 
   &__item-size {
