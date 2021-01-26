@@ -377,6 +377,7 @@ export class PhotoUploadComponent implements OnInit {
         data => {},
         error => {},
         () => {
+          this.photoUploadService.clearLocalGovernmentIdPhotos();
           this.clearLocalStateData();
           this.getPhotoData();
         }
@@ -465,5 +466,5 @@ export class PhotoUploadComponent implements OnInit {
     } else {
       return { height: 132, width: 132 };
     }
-  }  
+  }
 }
