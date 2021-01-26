@@ -293,3 +293,7 @@ section,
 article {
   white-space: pre-wrap;
 }
+
+.no-focus-outline:focus {
+  outline: none;
+}

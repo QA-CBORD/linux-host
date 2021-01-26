@@ -310,8 +310,6 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
   }
 
   refresh(): void {
-    console.log('refresh credentials called ====>>>');
-    // we'll check if mobile keys hasn't been revoked, if true, should refresh accordingly.
     const asyncRefresh = async () => {
       if (this.mCredential.isProvisioned()) {
         if (await this.isEndpointRevoked()) {

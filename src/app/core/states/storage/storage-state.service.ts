@@ -17,7 +17,6 @@ export class StorageStateService extends ExtendableStateManager<WebStorageStateE
   );
   protected readonly _isUpdating$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(!!this.activeUpdaters);
   private readonly storageKey: string = 'cbord_gcs';
-  private readonly permanents_key = 'permanent_keys';
   private readonly storage = Storage;
   private isStateInitialized: boolean = false;
 

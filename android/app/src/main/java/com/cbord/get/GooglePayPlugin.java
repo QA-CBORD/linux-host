@@ -24,6 +24,11 @@ public class GooglePayPlugin extends Plugin {
     private TapAndPayClient tapAndPayClient;
     private final int REQUEST_CREATE_WALLET = 4;
     private final int TAP_AND_PAY_NO_ACTIVE_WALLET = 15002;
+    private final String APP_RESUME_EVENT = "appResumed";
+    private final String DIGITIZATION_REFERENCE_URI = "uri";
+    private final String GOOGLE_PAY_NONCE = "googlePayNonce";
+    private final String EXCEPTION_MESSAGE = "Activity could not be resolved";
+    private final String CLIENT_NAME = "CBORD";
 
     @PluginMethod()
     public void getGoogleClient(PluginCall call) {
@@ -33,7 +38,7 @@ public class GooglePayPlugin extends Plugin {
 
     @PluginMethod()
     public void getGooglePayNonce(PluginCall call) {
-        final Task<String> response = tapAndPayClient.getLinkingToken("CBORD");
+        final Task<String> response = tapAndPayClient.getLinkingToken(CLIENT_NAME);
         response.addOnSuccessListener(token -> {
             call.resolve(toJSON(token));
         });
@@ -53,10 +58,10 @@ public class GooglePayPlugin extends Plugin {
            if (isGooglePaySafeToLaunch(intent)) {
                getActivity().startActivityForResult(intent, 400);
            } else {
-               call.reject("Activity could not be resolved");
+               call.reject(EXCEPTION_MESSAGE);
            }
        }catch (Exception ex){
-           call.reject("Activity could not be resolved");
+           call.reject(EXCEPTION_MESSAGE);
        }
     }
 
@@ -64,14 +69,13 @@ public class GooglePayPlugin extends Plugin {
     @Override
     protected void handleOnResume() {
             super.handleOnResume();
-            notifyListeners("appResumed", new JSObject());
+            notifyListeners(APP_RESUME_EVENT, new JSObject());
     }
 
     @NotNull
     private Intent getGooglePayIntent(PluginCall call) {
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        Log.d("digitationReference", call.getString("uri"));
-        intent.setData(Uri.parse(call.getString("uri")));
+        intent.setData(Uri.parse(call.getString(DIGITIZATION_REFERENCE_URI)));
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         return intent;
     }
@@ -85,7 +89,7 @@ public class GooglePayPlugin extends Plugin {
 
     private JSObject toJSON(String value) {
         JSObject jsonObject = new JSObject();
-        jsonObject.put("googlePayNonce", value);
+        jsonObject.put(GOOGLE_PAY_NONCE, value);
         return jsonObject;
     }
 

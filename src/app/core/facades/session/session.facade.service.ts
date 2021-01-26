@@ -1,11 +1,7 @@
 import { Injectable } from '@angular/core';
-
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { IdentityFacadeService, LoginState } from '@core/facades/identity/identity.facade.service';
-import { StorageStateService } from '@core/states/storage/storage-state.service';
-
 import { Router } from '@angular/router';
-
 import { ROLES } from '../../../app.global';
 import { GUEST_ROUTES } from '../../../non-authorized/non-authorized.config';
 import { Institution } from '@core/model/institution';
@@ -18,7 +14,6 @@ import { from, Subject } from 'rxjs';
 import { PATRON_ROUTES } from '@sections/section.config';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { SettingsFacadeService } from '../settings/settings-facade.service';
-import { ToastService } from '@core/service/toast/toast.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ContentStringsFacadeService } from '../content-strings/content-strings.facade.service';
 const { App, Device } = Plugins;
@@ -38,8 +33,6 @@ export class SessionFacadeService {
   navigatedFromGpay: boolean = false;
   onLogOutObservable$: Subject<any> = new Subject<any>();
 
-
-
   constructor(
     private readonly platform: Platform,
     private readonly authFacadeService: AuthFacadeService,
@@ -50,9 +43,8 @@ export class SessionFacadeService {
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly router: Router,
     private navCtrl: NavController,
-    private readonly toastService: ToastService,
     private readonly loadingService: LoadingService,
-    private readonly contentStringFacade: ContentStringsFacadeService,
+    private readonly contentStringFacade: ContentStringsFacadeService
   ) {
     this.appStateListeners();
   }
@@ -150,7 +142,6 @@ export class SessionFacadeService {
           this.loadingService.closeSpinner();
           (async () => {
             await this.router.navigate([ROLES.guest, GUEST_ROUTES.entry], routeConfig);
-            await this.toastService.showToast({ message: 'Internal server error' });
           })();
         }
       );
