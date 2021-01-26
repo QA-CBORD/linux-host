@@ -58,6 +58,7 @@ export class PhotoUploadComponent implements OnInit {
   submitButtonDisabled: boolean = true;
   frontId: Dimensions;
   backId: Dimensions;
+  isLandscape: boolean;
 
   localPhotoUploadStatus: LocalPhotoUploadStatus;
   private localPhotoData: LocalPhotoData = {
@@ -190,10 +191,12 @@ export class PhotoUploadComponent implements OnInit {
       case PhotoType.GOVT_ID_FRONT:
         this.localPhotoData.govIdFront = photoInfo;
         this.frontId = this.getGovIdDimension(this.photoUploadService.orientation);
+        this.isLandscape = this.photoUploadService.orientation === Orientation.LANDSCAPE ? true : false;
         break;
       case PhotoType.GOVT_ID_BACK:
         this.localPhotoData.govIdBack = photoInfo;
         this.backId = this.getGovIdDimension(this.photoUploadService.orientation);
+        this.isLandscape = this.photoUploadService.orientation === Orientation.LANDSCAPE ? true : false;
         break;
     }
   }
@@ -462,5 +465,5 @@ export class PhotoUploadComponent implements OnInit {
     } else {
       return { height: 132, width: 132 };
     }
-  }
+  }  
 }

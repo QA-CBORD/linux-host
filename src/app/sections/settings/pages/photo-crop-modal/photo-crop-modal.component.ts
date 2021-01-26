@@ -10,7 +10,7 @@ enum Default {
   HEIGHT = 170,
   WIDTH = 128,
   DELAY = 100,
-  DIVIDER = 3,
+  DIVIDER = 2,
   LANDSCAPE = 3 / 2,
 }
 
@@ -30,12 +30,14 @@ export enum Orientation {
   NONE,
 }
 
+const ORIGIN = 0;
+
 @Component({
   templateUrl: './photo-crop-modal.component.html',
   styleUrls: ['./photo-crop-modal.component.scss'],
 })
 export class PhotoCropModalComponent {
-  cropperPosition = { x1: 0, y1: 0, x2: 0, y2: 0 };
+  cropperPosition = { x1: ORIGIN, y1: ORIGIN, x2: ORIGIN, y2: ORIGIN };
   @Input() profilePhoto: boolean;
   @Input() imageBase64: string;
   croppedImageBase64: string;
@@ -55,7 +57,7 @@ export class PhotoCropModalComponent {
 
   ionViewWillEnter() {
     this.loadingService.showSpinner();
-    if (this.profilePhoto) {
+    if (this.isProfilePhoto()) {
       const uploadSettings = this.photoUploadService.photoUploadSettings;
       this.saveHeight = uploadSettings.saveHeight ? uploadSettings.saveHeight : Default.HEIGHT;
       this.saveWidth = uploadSettings.saveWidth ? uploadSettings.saveWidth : Default.WIDTH;
@@ -71,7 +73,7 @@ export class PhotoCropModalComponent {
     let width = originalImage.width;
     let height = originalImage.height;
     let divisor = null;
-    if (this.profilePhoto) {
+    if (this.isProfilePhoto()) {
       this.maintainAspectRatio = true;
       width = this.saveWidth;
       height = this.saveHeight;
@@ -107,8 +109,8 @@ export class PhotoCropModalComponent {
 
   private croppingCoordinates(width: number, height: number, divisor = 1) {
     return {
-      x1: 0,
-      y1: 0,
+      x1: ORIGIN,
+      y1: ORIGIN,
       x2: width / divisor,
       y2: height / divisor,
     };
@@ -122,5 +124,9 @@ export class PhotoCropModalComponent {
     } else {
       this.photoUploadService.orientation = Orientation.NONE;
     }
+  }
+
+  private isProfilePhoto() {
+    return this.profilePhoto;
   }
 }

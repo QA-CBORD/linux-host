@@ -48,7 +48,8 @@
             alt="Government Id Front"
             width="{{ this.frontId.width }}"
             height="{{ this.frontId.height }}"
-            class="round-corners gov-photo"
+            class="round-corners"
+            [ngStyle]="{ 'object-fit': isLandscape ? 'cover' : 'fill' }"
           />
           <ion-button
             color="light"
@@ -85,7 +86,8 @@
             alt="Government Id Front"
             width="{{ this.backId.width }}"
             height="{{ this.backId.height }}"
-            class="round-corners gov-photo"
+            class="round-corners"
+            [ngStyle]="{ 'object-fit': isLandscape ? 'cover' : 'fill' }"
           />
           <ion-button
             color="light"
