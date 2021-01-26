@@ -129,10 +129,6 @@ export class HIDPlugginProxy {
     return await this.executeCall(HIDPlugin.deleteEndpoint);
   }
 
-  async getEndpointInfo(): Promise<object> {
-    return await this.executeCall(HIDPlugin.getEndpointInfo);
-  }
-
   async isEndpointSetup$(): Promise<boolean> {
     return await this.executeCall(HIDPlugin.isEndpointSetup);
   }

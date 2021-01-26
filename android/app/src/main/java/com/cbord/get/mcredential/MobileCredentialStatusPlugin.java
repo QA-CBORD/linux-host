@@ -2,14 +2,9 @@ package com.cbord.get.mcredential;
 
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.nfc.NfcAdapter;
-import android.nfc.NfcManager;
-import android.util.Log;
-
 import androidx.core.content.ContextCompat;
-
 import com.getcapacitor.JSObject;
 import com.getcapacitor.NativePlugin;
 import com.getcapacitor.Plugin;
@@ -37,12 +32,11 @@ public class MobileCredentialStatusPlugin extends Plugin {
             device.bluetoothSupported = mBluetoothAdapter != null;
             device.bluetoothOn = device.bluetoothSupported && mBluetoothAdapter.isEnabled();
             device.hasLocationPermission = hasLocationPermissions();
-            if(HID_CREDENTIAL_TYPE.equals(mobileCredentialType)) {
-                device.lastServerSync = HIDSDKManager.getInstance(getActivity()).getEndpointLastServerSync();
-            }
-        }catch(Exception ex){
-            Log.d(TAG, ex.getMessage());
-        }
+            if(HID_CREDENTIAL_TYPE.equals(mobileCredentialType))
+                device.lastServerSync = HIDSDKManager.getInstance(getActivity().getApplication()).getEndpointLastServerSync();
+        } catch(Exception ex){}
+
+
         JSObject json = new JSObject();
         json.put("hasLocationPermission" , device.hasLocationPermission);
         json.put("bluetoothSupported", device.bluetoothSupported);

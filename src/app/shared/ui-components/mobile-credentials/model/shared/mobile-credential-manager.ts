@@ -38,9 +38,9 @@ export class DeviceState {
   constructor(public state: IDeviceState) {}
 
   get bluetoothState(): string {
-    let text = 'Bluetooth supported and ON';
+    let text = 'Bluetooth On';
     if (this.state.bluetoothSupported) {
-      if (!this.state.bluetoothOn) text = 'Bluetooth supported and OFF';
+      if (!this.state.bluetoothOn) text = 'Bluetooth Off';
     } else text = 'Bluetooth not supported';
     return text;
   }
@@ -50,7 +50,7 @@ export class DeviceState {
   }
 
   get locationServiceSate(): string {
-    return this.state.hasLocationPermission ? 'Location services supported and ON' : 'Location services Off';
+    return this.state.hasLocationPermission ? 'Location services On' : 'Location services Off';
   }
 
   get locationPermissionState(): string {
@@ -58,19 +58,19 @@ export class DeviceState {
   }
 
   get nfcState(): string {
-    let text = 'NFC supported and On';
+    let text = 'Nfc On';
     if (this.state.nfcSupported) {
       if (!this.state.nfcOn) {
-        text = 'NFC supported and Off';
+        text = 'Nfc Off';
       }
     } else {
-      text = 'NFC not supported';
+      text = 'Nfc not supported';
     }
     return text;
   }
 
   get nfcPermissionState(): string {
-    return this.state.nfcPermissionGranted ? 'NFC permission granted' : 'NFC not enabled';
+    return this.state.nfcPermissionGranted ? 'Permission granted' : 'Permission not granted';
   }
 
   get env(): string {
