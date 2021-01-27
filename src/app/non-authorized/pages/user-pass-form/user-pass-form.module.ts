@@ -11,6 +11,7 @@ import { StInputFloatingLabelModule } from '@shared/ui-components/st-input-float
 import { UserPassForm } from './user-pass-form.page';
 import { FocusNextModule } from '@shared/directives/focus-next/focus-next.module';
 import { NgVarModule } from '@shared/directives/ng-var/ng-var.module';
+import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 
 const routes: Routes = [
   {
@@ -32,5 +33,6 @@ const routes: Routes = [
     RouterModule.forChild(routes),
   ],
   declarations: [UserPassForm],
+  providers: [AccessibilityService]
 })
 export class UserPassFormPageModule {}
