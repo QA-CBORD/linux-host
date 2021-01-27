@@ -4,7 +4,7 @@ import { Device, Plugins } from '@capacitor/core';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { NativeProvider } from '@core/provider/native-provider/native.provider';
 import { iif, Observable, of } from 'rxjs';
-import { catchError, first, map, switchMap, take, tap } from 'rxjs/operators';
+import { catchError, map, switchMap, take } from 'rxjs/operators';
 import { Settings } from 'src/app/app.global';
 import {
   CredentialStateChangeListener,
@@ -24,7 +24,7 @@ const { MobileCredentialStatusPlugin } = Plugins;
 export class MobileCredentialFacade {
   private mobileCredentialManager: MobileCredentialManager = null;
   private mCredentialEnabled: boolean = false;
-
+  private mobileCredentialSettingsAlreadyChecked = false;
   constructor(
     private readonly mobileCredentialManagerFactory: MobileCredentialManagerFactory,
     private readonly nativeProvider: NativeProvider,
@@ -37,15 +37,19 @@ export class MobileCredentialFacade {
 
   onLogoutSubscription(): void {
     this.sessionFacadeService.onLogOutObservable$.subscribe(() => {
+      this.mobileCredentialSettingsAlreadyChecked = false;
+      this.mCredentialEnabled = false;
       this.onLogout();
     });
   }
 
   iifCredentialSettingsEnabled(): Observable<boolean> {
     return this.enabledCredentialsSettings().pipe(
+      take(1),
       switchMap(credentialSettingsType => {
         if (credentialSettingsType) {
           return this.mobileCredentialManagerFactory.createCredentialManager(credentialSettingsType).pipe(
+            take(1),
             map(credentialManager => {
               if (credentialManager) {
                 this.mobileCredentialManager = credentialManager;
@@ -65,14 +69,14 @@ export class MobileCredentialFacade {
 
   enabledCredentialsSettings(): Observable<any> {
     const iosCredentialSettings = this.settingsFacadeService.getSetting(Settings.Setting.APPLE_WALLET_ENABLED).pipe(
-      map(({ value }) => (Boolean(Number(value)) ? CredentialManagerType.IosCredential : false)),
-      take(1)
+      take(1),
+      map(({ value }) => (Boolean(Number(value)) ? CredentialManagerType.IosCredential : false))
     );
     const androidCredentialSettings = this.settingsFacadeService
       .getSetting(Settings.Setting.ANDROID_MOBILE_CREDENTIAL_ENABLED)
       .pipe(
-        map(({ value }) => (Boolean(Number(value)) ? CredentialManagerType.AndroidCredential : false)),
-        take(1)
+        take(1),
+        map(({ value }) => (Boolean(Number(value)) ? CredentialManagerType.AndroidCredential : false))
       );
 
     return iif(() => this.nativeProvider.isIos(), iosCredentialSettings, androidCredentialSettings);
@@ -106,16 +110,21 @@ export class MobileCredentialFacade {
   }
 
   mobileCredentialEnabled$(): Observable<boolean> {
-    if (this.mobileCredentialManager) {
-      return of(true).pipe(first());
+    if (this.mobileCredentialSettingsAlreadyChecked) {
+      return of(this.mCredentialEnabled);
     }
 
     return this.iifCredentialSettingsEnabled().pipe(
-      first(),
       switchMap(mobileCredentialSettingsEnabled => {
-        return mobileCredentialSettingsEnabled ? this.mobileCredentialManager.credentialEnabled$() : of(false);
+        this.mCredentialEnabled = mobileCredentialSettingsEnabled;
+        this.mobileCredentialSettingsAlreadyChecked = true;
+        if (mobileCredentialSettingsEnabled) {
+          return this.mobileCredentialManager.credentialEnabled$();
+        } else {
+          return of(false);
+        }
       }),
-      tap(isEnabled => (this.mCredentialEnabled = isEnabled))
+      take(1)
     );
   }
 
@@ -161,7 +170,7 @@ export class MobileCredentialFacade {
   }
 
   async onLogout(): Promise<void> {
-    await this.mobileCredentialManager && this.mobileCredentialManager.onWillLogout();
+    (await this.mobileCredentialManager) && this.mobileCredentialManager.onWillLogout();
     this.mobileCredentialManager = null;
   }
 

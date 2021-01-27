@@ -21,6 +21,7 @@ import { NativeStartupFacadeService } from '@core/facades/native-startup/native-
 import { Observable } from 'rxjs';
 import { configureBiometricsConfig } from '@core/utils/general-helpers';
 import { ToastService } from '@core/service/toast/toast.service';
+import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 
 @Component({
   selector: 'user-pass-form',
@@ -56,7 +57,8 @@ export class UserPassForm implements OnInit {
     private readonly fb: FormBuilder,
     private readonly cdRef: ChangeDetectorRef,
     private readonly appBrowser: InAppBrowser,
-    private readonly environmentFacadeService: EnvironmentFacadeService
+    private readonly environmentFacadeService: EnvironmentFacadeService,
+    private readonly accessibilityService: AccessibilityService
   ) {}
 
   get username(): AbstractControl {
@@ -74,6 +76,8 @@ export class UserPassForm implements OnInit {
   async ngOnInit() {
     this.initForm();
     await this.setLocalInstitutionInfo();
+    // Announcing navigation meanwhile we find a generic way to do so.
+    this.accessibilityService.readAloud(`Login page for ${this.institutionInfo.name}`); 
     const { id } = this.institutionInfo;
     const sessionId = await this.authFacadeService
       .getAuthSessionToken$()
