@@ -376,8 +376,8 @@ export class PhotoUploadComponent implements OnInit {
         () => {
           this.photoUploadService.clearLocalGovernmentIdPhotos();
           this.clearLocalStateData();
-          this.getPhotoData();
           this.loadingService.closeSpinner();
+          this.getPhotoData();
         }
       );
   }
