@@ -20,8 +20,8 @@ enum Quality {
 }
 
 enum Tolerance {
-  UPPER = 1.25,
-  LOWER = 0.75,
+  UPPER = 1.2,
+  LOWER = 0.8,
 }
 
 export enum Orientation {
