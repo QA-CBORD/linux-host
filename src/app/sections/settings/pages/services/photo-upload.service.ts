@@ -11,6 +11,7 @@ import { first, switchMap, take, tap } from 'rxjs/operators';
 import { SettingInfoList } from '@core/model/configuration/setting-info-list.model';
 import { DeleteModalComponent } from '@sections/settings/pages/delete-modal/delete-modal.component';
 import { ModalController } from '@ionic/angular';
+import { Orientation } from '../photo-crop-modal/photo-crop-modal.component';
 
 export enum PhotoStatus {
   PENDING,
@@ -36,7 +37,8 @@ export class PhotoUploadService {
   private readonly _govtIdRequired$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   private govtIdRequired: boolean = false;
-
+  orientation: Orientation;
+  
   private userPhotoUploadSettings: UserPhotoUploadSettings = {
     cacheTimeoutMinutes: null,
     displayHeight: null,
@@ -46,6 +48,7 @@ export class PhotoUploadService {
     saveWidth: null,
   };
 
+  
   constructor(
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly userFacadeService: UserFacadeService,
