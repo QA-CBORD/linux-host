@@ -6,20 +6,38 @@ import { PhotoUploadService } from '../services/photo-upload.service';
 import { PopoverCropComponent } from '../popover-photo-crop/popover-photo-crop.component';
 import { ToastService } from '@core/service/toast/toast.service';
 
-const defaultHeight = 170;
-const defaultWidth = 128;
-const photoCropDelay = 100;
-const maximumQuality = 100;
-const reducedQuality = 85;
-const sixPart = 6;
-const defaultLandscape = 3 / 2;
+enum Default {
+  HEIGHT = 170,
+  WIDTH = 128,
+  DELAY = 100,
+  DIVIDER = 2,
+  LANDSCAPE = 3 / 2,
+}
+
+enum Quality {
+  MAXIMUM = 100,
+  REGULAR = 85,
+}
+
+enum Tolerance {
+  UPPER = 1.2,
+  LOWER = 0.8,
+}
+
+export enum Orientation {
+  PORTRAIT,
+  LANDSCAPE,
+  NONE,
+}
+
+const ORIGIN = 0;
 
 @Component({
   templateUrl: './photo-crop-modal.component.html',
   styleUrls: ['./photo-crop-modal.component.scss'],
 })
 export class PhotoCropModalComponent {
-  cropperPosition = { x1: 0, y1: 0, x2: 0, y2: 0 };
+  cropperPosition = { x1: ORIGIN, y1: ORIGIN, x2: ORIGIN, y2: ORIGIN };
   @Input() profilePhoto: boolean;
   @Input() imageBase64: string;
   croppedImageBase64: string;
@@ -27,6 +45,7 @@ export class PhotoCropModalComponent {
   saveHeight: number;
   saveWidth: number;
   aspectRatio: number;
+  maintainAspectRatio: boolean;
 
   constructor(
     private readonly modalController: ModalController,
@@ -38,38 +57,47 @@ export class PhotoCropModalComponent {
 
   ionViewWillEnter() {
     this.loadingService.showSpinner();
-    if (this.profilePhoto) {
+    if (this.isProfilePhoto()) {
       const uploadSettings = this.photoUploadService.photoUploadSettings;
-      this.saveHeight = uploadSettings.saveHeight ? uploadSettings.saveHeight : defaultHeight;
-      this.saveWidth = uploadSettings.saveWidth ? uploadSettings.saveWidth : defaultWidth;
-      this.qualityPercentage = maximumQuality;
+      this.saveHeight = uploadSettings.saveHeight ? uploadSettings.saveHeight : Default.HEIGHT;
+      this.saveWidth = uploadSettings.saveWidth ? uploadSettings.saveWidth : Default.WIDTH;
+      this.qualityPercentage = Quality.MAXIMUM;
       this.aspectRatio = this.saveWidth / this.saveHeight;
-    } else {    
-      this.qualityPercentage = reducedQuality;
-      this.aspectRatio = defaultLandscape;
+    } else {
+      this.qualityPercentage = Quality.REGULAR;
+      this.aspectRatio = Default.LANDSCAPE;
     }
   }
 
   cropperIsReady(originalImage: Dimensions) {
-    if (!this.profilePhoto) {
-      this.aspectRatio = originalImage.width / originalImage.height;
-    } 
+    let width = originalImage.width;
+    let height = originalImage.height;
+    let divisor = null;
+    if (this.isProfilePhoto()) {
+      this.maintainAspectRatio = true;
+      width = this.saveWidth;
+      height = this.saveHeight;
+      divisor = Default.DIVIDER;
+    } else {
+      this.maintainAspectRatio = false;
+    }
     setTimeout(() => {
-      this.cropperPosition = this.createCroppingBox(originalImage, this.profilePhoto);
-    }, photoCropDelay);
+      this.cropperPosition = this.croppingCoordinates(width, height, divisor);
+    }, Default.DELAY);
     this.loadingService.closeSpinner();
   }
 
-  imageCropped(event: ImageCroppedEvent) {
-    this.croppedImageBase64 = event.base64;
-  }
-
-  async loadImageFailed() {
-    await this.toastService.showToast({ message: 'There was an issue loading your photo. Please try again' });
+  imageCropped(croppedImage: ImageCroppedEvent) {
+    this.croppedImageBase64 = croppedImage.base64;
+    this.setOrientation(croppedImage);
   }
 
   dismissModal(croppedImageBase64?: string) {
     this.modalController.dismiss({ croppedImageBase64 });
+  }
+
+  async loadImageFailed() {
+    await this.toastService.showToast({ message: 'There was an issue loading your photo. Please try again' });
   }
 
   async showModal() {
@@ -79,13 +107,26 @@ export class PhotoCropModalComponent {
     await modal.present();
   }
 
-  private createCroppingBox(originalImage: Dimensions, profilePhoto: boolean): any {
-    const length = (originalImage.width + originalImage.height) / sixPart;
+  private croppingCoordinates(width: number, height: number, divisor = 1) {
     return {
-      x1: 0,
-      y1: 0,
-      x2: length,
-      y2: length,
+      x1: ORIGIN,
+      y1: ORIGIN,
+      x2: width / divisor,
+      y2: height / divisor,
     };
+  }
+
+  private setOrientation(croppedImage: ImageCroppedEvent) {
+    if (croppedImage.width > croppedImage.height * Tolerance.UPPER) {
+      this.photoUploadService.orientation = Orientation.LANDSCAPE;
+    } else if (croppedImage.width < croppedImage.height * Tolerance.LOWER) {
+      this.photoUploadService.orientation = Orientation.PORTRAIT;
+    } else {
+      this.photoUploadService.orientation = Orientation.NONE;
+    }
+  }
+
+  private isProfilePhoto() {
+    return this.profilePhoto;
   }
 }

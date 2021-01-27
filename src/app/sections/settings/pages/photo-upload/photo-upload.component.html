@@ -6,7 +6,7 @@
   [title]="'Photo Upload'"
 >
 </st-header>
-<ion-content class="container" >
+<ion-content class="container">
   <!-- TOP OF WHAT WILL GET MOVED TO THE PHOTO UPLOAD HTML FILE -->
   <ion-card *ngIf="localPhotoData.govtIdRequired" class="id-photo-upload-container">
     <!-- HEADER MESSAGE FOR ID UPLOADS -->
@@ -43,8 +43,18 @@
           Front of ID
         </div>
         <div *ngIf="(govIdFront$ | async) as govidFrontUrl; else defaultGovIdFront">
-          <img [src]="govidFrontUrl" alt="Government Id Front" width="132" height="80" class="round-corners" />
-          <ion-button color="light" class="reupload-btn round-corners" (click)="presentPhotoTypeSelection(photoType.GOVT_ID_FRONT)"
+          <img
+            [src]="govidFrontUrl"
+            alt="Government Id Front"
+            width="{{ this.frontId.width }}"
+            height="{{ this.frontId.height }}"
+            class="round-corners"
+            [ngStyle]="{ 'object-fit': fitCover ? 'cover' : 'fill' }"
+          />
+          <ion-button
+            color="light"
+            class="reupload-btn round-corners"
+            (click)="presentPhotoTypeSelection(photoType.GOVT_ID_FRONT)"
             >REUPLOAD</ion-button
           >
         </div>
@@ -71,14 +81,26 @@
           Back of ID
         </div>
         <div *ngIf="(govIdBack$ | async) as govIdBackUrl; else defaultGovIdBack">
-          <img [src]="govIdBackUrl" alt="Government Id Front" width="132" height="80" class="round-corners" />
-          <ion-button color="light" class="reupload-btn round-corners" (click)="presentPhotoTypeSelection(photoType.GOVT_ID_BACK)"
+          <img
+            [src]="govIdBackUrl"
+            alt="Government Id Front"
+            width="{{ this.backId.width }}"
+            height="{{ this.backId.height }}"
+            class="round-corners"
+            [ngStyle]="{ 'object-fit': fitCover ? 'cover' : 'fill' }"
+          />
+          <ion-button
+            color="light"
+            class="reupload-btn round-corners"
+            (click)="presentPhotoTypeSelection(photoType.GOVT_ID_BACK)"
             >REUPLOAD</ion-button
           >
         </div>
         <ng-template #defaultGovIdBack>
           <img src="/assets/images/govt-id-back.svg" alt="Government Id Back" class="card-img round-corners" />
-          <ion-button class="upload-btn round-corners" (click)="presentPhotoTypeSelection(photoType.GOVT_ID_BACK)">UPLOAD</ion-button>
+          <ion-button class="upload-btn round-corners" (click)="presentPhotoTypeSelection(photoType.GOVT_ID_BACK)"
+            >UPLOAD</ion-button
+          >
         </ng-template>
       </div>
     </ion-card-content>
@@ -185,7 +207,7 @@
   <!-- BUTTON THAT SUBMITS ALL PHOTOS  -->
   <div class="action-btn-container">
     <ion-button color="primary" [disabled]="submitButtonDisabled" class="submit-btn" (click)="submitPhotos()"
-    >SUBMIT {{ localPhotoData.govtIdRequired ? 'PHOTOS' : 'PHOTO' }} FOR REVIEW</ion-button
+      >SUBMIT {{ localPhotoData.govtIdRequired ? 'PHOTOS' : 'PHOTO' }} FOR REVIEW</ion-button
     >
   </div>
 </ion-content>

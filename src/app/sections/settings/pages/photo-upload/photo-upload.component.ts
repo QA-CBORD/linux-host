@@ -10,8 +10,9 @@ import { PhotoStatus, PhotoType, PhotoUploadService } from '../services/photo-up
 import { LoadingService } from '@core/service/loading/loading.service';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { ToastService } from '@core/service/toast/toast.service';
-import { ActionSheetController, Platform } from '@ionic/angular';
+import { ActionSheetController } from '@ionic/angular';
 import { PhotoCropModalService } from '../services/photo-crop.service';
+import { Orientation } from '../photo-crop-modal/photo-crop-modal.component';
 
 const { Camera } = Plugins;
 
@@ -38,6 +39,11 @@ export interface LocalPhotoData {
   profilePending: UserPhotoInfo;
 }
 
+export interface Dimensions {
+  height: number;
+  width: number;
+}
+
 @Component({
   selector: 'st-photo-upload',
   templateUrl: './photo-upload.component.html',
@@ -50,6 +56,9 @@ export class PhotoUploadComponent implements OnInit {
   profileImagePending$: Observable<SafeResourceUrl>;
 
   submitButtonDisabled: boolean = true;
+  frontId: Dimensions;
+  backId: Dimensions;
+  fitCover: boolean;
 
   localPhotoUploadStatus: LocalPhotoUploadStatus;
   private localPhotoData: LocalPhotoData = {
@@ -181,9 +190,13 @@ export class PhotoUploadComponent implements OnInit {
         break;
       case PhotoType.GOVT_ID_FRONT:
         this.localPhotoData.govIdFront = photoInfo;
+        this.frontId = this.getGovIdDimension(this.photoUploadService.orientation);
+        this.fitCover = this.coverBorderFit(this.photoUploadService.orientation);
         break;
       case PhotoType.GOVT_ID_BACK:
         this.localPhotoData.govIdBack = photoInfo;
+        this.backId = this.getGovIdDimension(this.photoUploadService.orientation);
+        this.fitCover = this.coverBorderFit(this.photoUploadService.orientation);
         break;
     }
   }
@@ -356,15 +369,14 @@ export class PhotoUploadComponent implements OnInit {
     }
 
     zip(...newPhotos)
-      .pipe(
-        take(1),
-        finalize(() => this.loadingService.closeSpinner())
-      )
+      .pipe(take(1))
       .subscribe(
         data => {},
         error => {},
         () => {
+          this.photoUploadService.clearLocalGovernmentIdPhotos();
           this.clearLocalStateData();
+          this.loadingService.closeSpinner();
           this.getPhotoData();
         }
       );
@@ -442,5 +454,19 @@ export class PhotoUploadComponent implements OnInit {
 
   navigateBack() {
     this.router.navigate([PATRON_NAVIGATION.settings], { replaceUrl: true });
+  }
+
+  private getGovIdDimension(orientation: Orientation): Dimensions {
+    if (orientation === Orientation.PORTRAIT) {
+      return { height: 178, width: 126 };
+    } else if (orientation === Orientation.LANDSCAPE) {
+      return { height: 80, width: 132 };
+    } else {
+      return { height: 132, width: 132 };
+    }
+  }
+
+  private coverBorderFit(orientation: Orientation): boolean {
+    return orientation === Orientation.PORTRAIT ? false : true;
   }
 }
