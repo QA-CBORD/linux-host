@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { RegistrationPageResolver } from '@sections/dashboard/resolvers/registration-page.resolver';
 import { ROLES } from './app.global';
+import { GUEST_ROUTES } from './non-authorized/non-authorized.config';
 
 const routes: Routes = [
   {
@@ -16,8 +18,26 @@ const routes: Routes = [
     path: ROLES.guest,
     loadChildren: './non-authorized/non-authorized.module#NonAuthorizedModule',
   },
-  { path: '**', redirectTo: ROLES.guest },
 
+  {
+    path: GUEST_ROUTES.patronRegistration,
+    loadChildren: './non-authorized/pages/registration/registration.module#RegistrationModule',
+    data: { isGuest: false },
+    resolve: {
+      data: RegistrationPageResolver,
+    },
+  },
+
+  {
+    path: GUEST_ROUTES.guestRegistration,
+    loadChildren: './non-authorized/pages/registration/registration.module#RegistrationModule',
+    data: { isGuest: true },
+    resolve: {
+      data: RegistrationPageResolver,
+    },
+  },
+
+  { path: '**', redirectTo: ROLES.guest },
 ];
 
 @NgModule({

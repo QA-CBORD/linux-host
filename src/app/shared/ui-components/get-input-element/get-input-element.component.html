@@ -1,0 +1,16 @@
+<div class="getInput">
+  <div class="getInput__wrapper">
+    <div class="getInput__wrapper__inputLabel">
+      {{ inputLable }}
+    </div>
+    <div class="getInput__wrapper__inputElems">
+      <div class="getInput__wrapper__inputElems__image">
+        <img *ngIf="(iconSource$ | async) as image" class="icon" [src]="image" alt="icon_url" />
+      </div>
+      <div class="getInput__wrapper__inputElems__input">
+        <input type="text" required [(ngModel)]="model.value"/>
+      </div>
+      <div [ngStyle]="{ 'background-color': bgColor }" class="getInput__wrapper__inputElems__bottomBorder"></div>
+    </div>
+  </div>
+</div>

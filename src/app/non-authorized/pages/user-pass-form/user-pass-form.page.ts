@@ -101,6 +101,10 @@ export class UserPassForm implements OnInit {
   }
 
   async redirectToSignup() {
+
+    this.router.navigate([GUEST_ROUTES.patronRegistration], { replaceUrl: true })
+    return;
+
     const { shortName } = await this.institutionFacadeService.cachedInstitutionInfo$.pipe(take(1)).toPromise();
     const url = `${this.environmentFacadeService.getSitesURL()}/${shortName}/full/register.php`;
     this.appBrowser.create(url, '_system');
@@ -120,6 +124,11 @@ export class UserPassForm implements OnInit {
   }
 
   async authenticateUser(form) {
+
+    this.router.navigate([GUEST_ROUTES.guestRegistration], {replaceUrl: true});
+
+    return ;
+
     if (form.invalid) {
       this.presentToast('Login failed, invalid user name and/or password');
       return;

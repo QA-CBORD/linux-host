@@ -1,0 +1,11 @@
+.guest__body {
+    &__formItem{
+      margin-bottom: 15px;
+    }
+    &__submitOrcancel{
+        margin-top: 30px;
+    }
+    .term_notice{
+      font-size: 5px;
+    }
+}

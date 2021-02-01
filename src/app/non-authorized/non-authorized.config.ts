@@ -5,6 +5,8 @@ export enum GUEST_ROUTES {
   login = 'login',
   external = 'external-login',
   forgotPassword = 'forgot-password',
+  patronRegistration = 'patron-registration',
+  guestRegistration = 'guest-registration',
 }
 
 export enum AUTHENTICATION_SYSTEM_TYPE {
