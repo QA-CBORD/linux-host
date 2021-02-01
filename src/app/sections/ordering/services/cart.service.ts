@@ -150,6 +150,7 @@ export class CartService {
     return this.userFacadeService.getUserData$().pipe(
       first(),
       switchMap(({ phone: userPhone, timeZone, locale }) => {
+        userPhone = userPhone || '';
         this.cart.order = {
           ...this.cart.order,
           ...address,
