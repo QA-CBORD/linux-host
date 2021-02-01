@@ -147,10 +147,11 @@ export class CartService {
       address = type === ORDER_TYPE.DELIVERY ? { deliveryAddressId: addr.id } : { pickupAddressId: addr.id };
     }
 
+  
     return this.userFacadeService.getUserData$().pipe(
       first(),
       switchMap(({ phone: userPhone, timeZone, locale }) => {
-        userPhone = userPhone || '';
+        userPhone = userPhone || " ";
         this.cart.order = {
           ...this.cart.order,
           ...address,
