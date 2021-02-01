@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { RegistrationServiceFacade } from 'src/app/non-authorized/pages/registration/services/registration-service-facade';
-import { forkJoin, iif, Observable } from 'rxjs';
-import { finalize, first, map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',

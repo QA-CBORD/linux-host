@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { RPCQueryConfig } from '@core/interceptors/query-config.model';
-import { Observable, throwError, forkJoin, zip, of } from 'rxjs';
+import { Observable, throwError, zip, of } from 'rxjs';
 import { take } from 'rxjs/internal/operators/take';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import {
@@ -37,13 +37,6 @@ export class RegistrationService {
       catchError(() =>
         of([
           {
-            lookupFieldId: 'Parent_phone',
-            displayName: 'Parent phone',
-            displayOrder: 2,
-            type: LookupFieldType.STRING_FUZZY,
-            value: '',
-          },
-          {
             lookupFieldId: 'student_compus_id',
             displayName: 'Campus ID',
             displayOrder: 1,
@@ -63,30 +56,35 @@ export class RegistrationService {
   }
 
   callBackend(
-    method: RegistrationApiMethods, 
+    method: RegistrationApiMethods,
     params: any = {},
     useSessionId = true,
     useInstitutionId = false
-    ): Observable<any> {
+  ): Observable<any> {
     return this.makeRPCRequest(method, params, useSessionId, useInstitutionId);
   }
 
-  private makeRPCRequest(method: RegistrationApiMethods, params: any = {}, useSessionId, useInstitutionId): Observable<any> {
+  private makeRPCRequest(
+    method: RegistrationApiMethods,
+    params: any = {},
+    useSessionId,
+    useInstitutionId
+  ): Observable<any> {
     return this.paramsObs$().pipe(
-      switchMap(([sessionId, { id: institutionId }]) => {
-        const queryConfig = new RPCQueryConfig(method, { ...params }, useSessionId, useInstitutionId);
-        return this.http.post(this.endpoints.user, queryConfig).pipe(catchError(err => {
-           console.log('error ==>> ', err);
-          return throwError(err);
-        }));
+      switchMap(([sessionId]) => {
+        const queryConfig = new RPCQueryConfig(method, { sessionId, ...params }, useSessionId, useInstitutionId);
+        return this.http.post(this.endpoints.user, queryConfig).pipe(
+          catchError(err => {
+            console.log('error ==>> ', err);
+            return throwError(err);
+          })
+        );
       })
     );
   }
 
   institition$(): Observable<Institution> {
-    return this.institutionFacadeService.cachedInstitutionInfo$.pipe(
-      take(1)
-    );
+    return this.institutionFacadeService.cachedInstitutionInfo$.pipe(take(1));
   }
 
   private paramsObs$(): Observable<[string, Institution]> {

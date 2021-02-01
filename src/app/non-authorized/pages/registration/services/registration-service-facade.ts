@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { forkJoin, iif, Observable, of } from 'rxjs';
+import { forkJoin, iif, Observable, of, zip } from 'rxjs';
 import { first, map, tap } from 'rxjs/operators';
 import {
   formField,
@@ -41,7 +41,7 @@ export class RegistrationServiceFacade {
       }))
     );
     const dynamicFormFields$ = this.loadRegistrationFormDynamicFields().pipe(first());
-    const combine$ = forkJoin(pageSettingsObs$, dynamicFormFields$)
+    const combine$ = zip(pageSettingsObs$, dynamicFormFields$)
       .pipe(
         map(([settings, dynamicFields]) => ({
           ...settings,
