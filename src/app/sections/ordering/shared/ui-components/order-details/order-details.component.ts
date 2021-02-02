@@ -36,6 +36,9 @@ import { AccountType } from 'src/app/app.global';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { take } from 'rxjs/operators';
 import { Plugins } from '@capacitor/core';
+import { INT_REGEXP } from '@core/utils/regexp-patterns';
+import { UserFacadeService } from '@core/facades/user/user.facade.service';
+import { UserInfoSet } from '@sections/settings/models/setting-items-config.model';
 const { Keyboard } = Plugins;
 
 @Component({
@@ -82,18 +85,26 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     accountDisplayName: 'Apple Pay',
     isActive: true,
   };
+  user: UserInfoSet;
 
   constructor(
     private readonly fb: FormBuilder,
     private readonly modalController: ModalController,
-    private readonly orderingService: OrderingService
+    private readonly orderingService: OrderingService,
+    private readonly userFacadeService: UserFacadeService,
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     this.initForm();
     this.initContentStrings();
     this.updateFormErrorsByContentStrings();
     this.setAccessoryBarVisible(true);
+    const user: any = await this.userFacadeService
+    .getUser$()
+    .pipe(take(1))
+    .toPromise();
+     this.user = { ...user };
+     this.checkFieldValue(this.phone, this.user.phone);
   }
 
   ngOnDestroy() {
@@ -156,6 +167,9 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
       [DETAILS_FORM_CONTROL_NAMES.address]: [this.orderDetailOptions.address],
       [DETAILS_FORM_CONTROL_NAMES.paymentMethod]: ['', Validators.required],
       [DETAILS_FORM_CONTROL_NAMES.note]: [''],
+      [DETAILS_FORM_CONTROL_NAMES.phone]: ['',
+        [Validators.required, Validators.pattern(INT_REGEXP), Validators.minLength(3), Validators.maxLength(10)],
+      ],
     });
 
     if (!this.mealBased && this.isTipEnabled) {
@@ -207,6 +221,10 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
 
   get cvvFormControl(): AbstractControl {
     return this.detailsForm.get(DETAILS_FORM_CONTROL_NAMES.cvv);
+  }
+  
+  get phone(): AbstractControl {
+    return this.detailsForm.get(DETAILS_FORM_CONTROL_NAMES.phone);
   }
 
   private get addressInfoFormControl(): AbstractControl {
@@ -300,6 +318,13 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
       .pipe(take(1))
       .toPromise();
   }
+
+  private checkFieldValue(field: AbstractControl, value: string) {
+    if (value) {
+      field.setValue(value);
+      field.markAsDirty();
+    }
+  }
 }
 
 export enum DETAILS_FORM_CONTROL_NAMES {
@@ -308,6 +333,7 @@ export enum DETAILS_FORM_CONTROL_NAMES {
   cvv = 'cvv',
   tip = 'tip',
   note = 'note',
+  phone = 'phone',
 }
 
 export const CONTROL_ERROR = {
@@ -335,3 +361,4 @@ export interface OrderDetailsFormData {
   };
   valid: boolean;
 }
+
