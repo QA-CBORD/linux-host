@@ -146,7 +146,6 @@ export class CartService {
     if (addr) {
       address = type === ORDER_TYPE.DELIVERY ? { deliveryAddressId: addr.id } : { pickupAddressId: addr.id };
     }
-
   
     return this.userFacadeService.getUserData$().pipe(
       first(),
@@ -165,8 +164,8 @@ export class CartService {
     );
   }
 
-  submitOrder(accId: string, cvv: string, phone: string): Observable<OrderInfo> {
-    return this.api.submitOrder(this.cart.order, accId, cvv, phone);
+  submitOrder(accId: string, cvv: string): Observable<OrderInfo> {
+    return this.api.submitOrder(this.cart.order, accId, cvv);
   }
 
   updateOrderAddress(address: AddressInfo) {

@@ -303,7 +303,7 @@ export class CartComponent implements OnInit, OnDestroy {
     }
 
     this.cartService
-      .submitOrder(accountId, this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.cvv] || null, "123501"
+      .submitOrder(accountId, this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.cvv] || null
         )
       .pipe(handleServerError(ORDER_VALIDATION_ERRORS))
       .toPromise()
