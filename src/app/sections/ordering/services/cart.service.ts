@@ -163,8 +163,8 @@ export class CartService {
     );
   }
 
-  submitOrder(accId: string, cvv: string): Observable<OrderInfo> {
-    return this.api.submitOrder(this.cart.order, accId, cvv);
+  submitOrder(accId: string, cvv: string, phone: string): Observable<OrderInfo> {
+    return this.api.submitOrder(this.cart.order, accId, cvv, phone);
   }
 
   updateOrderAddress(address: AddressInfo) {

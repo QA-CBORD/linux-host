@@ -39,6 +39,7 @@ import { Plugins } from '@capacitor/core';
 import { INT_REGEXP } from '@core/utils/regexp-patterns';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { UserInfoSet } from '@sections/settings/models/setting-items-config.model';
+import { nullSafeIsEquivalent } from '@angular/compiler/src/output/output_ast';
 const { Keyboard } = Plugins;
 
 @Component({
@@ -167,8 +168,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
       [DETAILS_FORM_CONTROL_NAMES.address]: [this.orderDetailOptions.address],
       [DETAILS_FORM_CONTROL_NAMES.paymentMethod]: ['', Validators.required],
       [DETAILS_FORM_CONTROL_NAMES.note]: [''],
-      [DETAILS_FORM_CONTROL_NAMES.phone]: ['',
-        [Validators.required, Validators.pattern(INT_REGEXP), Validators.minLength(3), Validators.maxLength(10)],
+      [DETAILS_FORM_CONTROL_NAMES.phone]: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(32)],
       ],
     });
 
