@@ -36,10 +36,8 @@ import { AccountType } from 'src/app/app.global';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { take } from 'rxjs/operators';
 import { Plugins } from '@capacitor/core';
-import { INT_REGEXP } from '@core/utils/regexp-patterns';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { UserInfoSet } from '@sections/settings/models/setting-items-config.model';
-import { nullSafeIsEquivalent } from '@angular/compiler/src/output/output_ast';
 const { Keyboard } = Plugins;
 
 @Component({
@@ -76,6 +74,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     Partial<OrderPayment> | string
   >();
   @Output() onOrderTipChanged: EventEmitter<number> = new EventEmitter<number>();
+  @Output() onPhoneNumberChanged: EventEmitter<string> = new EventEmitter<string>();
 
   private readonly sourceSub = new Subscription();
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
