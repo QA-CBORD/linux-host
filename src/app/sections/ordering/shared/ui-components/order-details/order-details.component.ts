@@ -74,7 +74,6 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     Partial<OrderPayment> | string
   >();
   @Output() onOrderTipChanged: EventEmitter<number> = new EventEmitter<number>();
-  @Output() onPhoneNumberChanged: EventEmitter<string> = new EventEmitter<string>();
 
   private readonly sourceSub = new Subscription();
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
@@ -94,17 +93,12 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     private readonly userFacadeService: UserFacadeService,
   ) {}
 
-  async ngOnInit() {
+  ngOnInit() {
     this.initForm();
     this.initContentStrings();
     this.updateFormErrorsByContentStrings();
     this.setAccessoryBarVisible(true);
-    const user: any = await this.userFacadeService
-    .getUser$()
-    .pipe(take(1))
-    .toPromise();
-     this.user = { ...user };
-     this.checkFieldValue(this.phone, this.user.phone);
+    this.getUserPhone();
   }
 
   ngOnDestroy() {
@@ -324,6 +318,15 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
       field.markAsDirty();
     }
   }
+
+  private getUserPhone() {
+    this.userFacadeService
+      .getUser$()
+      .pipe(take(1))
+      .toPromise().then((user) => {
+        this.checkFieldValue(this.phone, user.phone);
+      });
+  }
 }
 
 export enum DETAILS_FORM_CONTROL_NAMES {
@@ -357,6 +360,7 @@ export interface OrderDetailsFormData {
     [DETAILS_FORM_CONTROL_NAMES.address]: BuildingInfo;
     [DETAILS_FORM_CONTROL_NAMES.paymentMethod]: UserAccount;
     [DETAILS_FORM_CONTROL_NAMES.note]: string;
+    [DETAILS_FORM_CONTROL_NAMES.phone]: string;
   };
   valid: boolean;
 }

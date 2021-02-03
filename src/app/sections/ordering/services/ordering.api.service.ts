@@ -239,7 +239,7 @@ export class OrderingApiService {
     return this.http.post(this.serviceUrlUser, queryConfig).pipe(map(({ response }: MessageResponse<any>) => response));
   }
 
-  submitOrder(orderInfo: OrderInfo, accountId: string, cvv: string, phone: string = ''): Observable<OrderInfo> {
+  submitOrder(orderInfo: OrderInfo, accountId: string, cvv: string): Observable<OrderInfo> {
     accountId = accountId === 'rollup' ? null : accountId;
     const postParams: ServiceParameters = { order: this.adjustOrderIfRollUp(orderInfo), accountId, cvv };
     const queryConfig = new RPCQueryConfig('submitOrder', postParams, true);

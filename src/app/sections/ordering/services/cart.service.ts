@@ -149,12 +149,10 @@ export class CartService {
   
     return this.userFacadeService.getUserData$().pipe(
       first(),
-      switchMap(({ phone: userPhone, timeZone, locale }) => {
-        userPhone = userPhone || " ";
+      switchMap(({ timeZone, locale }) => {
         this.cart.order = {
           ...this.cart.order,
           ...address,
-          userPhone,
           type,
           dueTime: getDateTimeInGMT(dueTime, locale, timeZone),
         };
@@ -192,6 +190,10 @@ export class CartService {
 
   addPaymentInfoToOrder(peymentInfo: Partial<OrderPayment>) {
     this.cart.order.orderPayment = [peymentInfo];
+  }
+  
+  updateOrderPhone(phone: string) {
+    this.cart.order.userPhone = phone;
   }
 
   async clearActiveOrder(): Promise<void> {

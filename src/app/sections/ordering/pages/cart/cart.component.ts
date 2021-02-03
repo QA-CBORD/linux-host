@@ -273,7 +273,7 @@ export class CartComponent implements OnInit, OnDestroy {
     await this.loadingService.showSpinner();
     let accountId = this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.paymentMethod].id;
     this.cartService.updateOrderNote(this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.note]);
-
+    this.cartService.updateOrderPhone(this.cartFormState.data[DETAILS_FORM_CONTROL_NAMES.phone]);
     /// if Apple Pay Order
     if (this.cartFormState.data.paymentMethod.accountType === AccountType.APPLEPAY) {
       let orderData = await this.cartService.orderInfo$.pipe(first()).toPromise();
