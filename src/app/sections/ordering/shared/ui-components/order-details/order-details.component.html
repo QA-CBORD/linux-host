@@ -154,6 +154,25 @@
         {{ tipFormControl.errors?.errorMsg }}
       </div>
     </div>
+
+    <div class="order-details" *ngIf="!readonly">
+      <br />
+      <st-input-floating-label
+        #phoneField
+        class="form__control"
+        [control]="phone"
+        label="Phone"
+        type="tel"
+        inputmode="tel"
+        idd="phone"
+        [formControlName]="controlsNames.phone"
+        [isError]="phone.errors"
+        tabindex="1"
+      >
+      </st-input-floating-label>
+      <br />
+    </div>
+
     <div class="order-details" *ngIf="!readonly">
       <st-textarea-floating-label
         [control]="detailsForm.get(controlsNames.note)"

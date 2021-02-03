@@ -15,6 +15,7 @@ import { AddressHeaderFormatPipeModule } from '@shared/pipes/address-header-form
 import { StTextareaFloatingLabelModule } from '@shared/ui-components/st-textarea-floating-label/st-textarea-floating-label.module';
 import { AccessibleSelectModule } from '@shared/accessibility/directives/accessible-select.module';
 import { AccountDisplayPipe } from '@sections/accounts/shared/pipes/account-display/account-display.pipe';
+import { StInputFloatingLabelModule } from '@shared/ui-components/st-input-floating-label/st-input-floating-label.module';
 
 const declarations = [OrderDetailsComponent, TypeMessagePipe, AccountTypeResolverPipe];
 
@@ -30,7 +31,8 @@ const declarations = [OrderDetailsComponent, TypeMessagePipe, AccountTypeResolve
     ModifyPrepTimeModule,
     AddressHeaderFormatPipeModule,
     StTextareaFloatingLabelModule,
-    AccessibleSelectModule
+    AccessibleSelectModule,
+    StInputFloatingLabelModule,
   ],
   exports: [OrderDetailsComponent],
   providers: [CreditCardTypePipe, PriceUnitsResolverPipe, AccountDisplayPipe],
