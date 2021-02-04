@@ -161,7 +161,7 @@
         #phoneField
         class="form__control"
         [control]="phone"
-        label="{{phoneLabel}}"
+        label="Phone"
         type="tel"
         inputmode="tel"
         idd="phone"
@@ -171,6 +171,9 @@
       >
       </st-input-floating-label>
       <br />
+      <div class="order-details--error">
+        {{ phone.errors?.errorMsg }}
+      </div>
     </div>
 
     <div class="order-details" *ngIf="!readonly">

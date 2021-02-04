@@ -85,7 +85,6 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     isActive: true,
   };
   user: UserInfoSet;
-  phoneLabel: string;
 
   constructor(
     private readonly fb: FormBuilder,
@@ -162,10 +161,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
       [DETAILS_FORM_CONTROL_NAMES.address]: [this.orderDetailOptions.address],
       [DETAILS_FORM_CONTROL_NAMES.paymentMethod]: ['', Validators.required],
       [DETAILS_FORM_CONTROL_NAMES.note]: [''],
-      [DETAILS_FORM_CONTROL_NAMES.phone]: [
-        '',
-        [Validators.required, Validators.minLength(3), Validators.maxLength(32)],
-      ],
+      [DETAILS_FORM_CONTROL_NAMES.phone]: [''],
     });
 
     if (!this.mealBased && this.isTipEnabled) {
@@ -181,6 +177,19 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
       this.detailsForm.addControl(DETAILS_FORM_CONTROL_NAMES.tip, this.fb.control(this.tip ? this.tip : ''));
       this.detailsForm.controls[DETAILS_FORM_CONTROL_NAMES.tip].setValidators(tipErrors);
     }
+    const phoneErrors = [
+        formControlErrorDecorator(
+        Validators.required,
+        CONTROL_ERROR[DETAILS_FORM_CONTROL_NAMES.phone].zero
+      ),
+      formControlErrorDecorator(
+        Validators.minLength(3),
+        CONTROL_ERROR[DETAILS_FORM_CONTROL_NAMES.phone].min
+      ),
+      formControlErrorDecorator(Validators.maxLength(32), 
+      CONTROL_ERROR[DETAILS_FORM_CONTROL_NAMES.phone].max),
+    ];
+    this.detailsForm.controls[DETAILS_FORM_CONTROL_NAMES.phone].setValidators(phoneErrors);
     this.subscribeOnFormChanges();
   }
 
@@ -328,17 +337,8 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
       .pipe(take(1))
       .toPromise()
       .then(user => {
-        this.setPhoneLabel(user.phone);
         this.checkFieldValue(this.phone, user.phone);
       });
-  }
-
-  private setPhoneLabel(phone: string) {
-    if (phone) {
-      this.phoneLabel = 'Phone';
-    } else {
-      this.phoneLabel = 'Enter a phone number';
-    }
   }
 }
 
@@ -356,6 +356,11 @@ export const CONTROL_ERROR = {
     min: 'Tip must be greater than zero',
     currency: 'Invalid format',
     subtotal: 'Tip must be less than the Subtotal amount',
+  },
+  [DETAILS_FORM_CONTROL_NAMES.phone]: {
+    zero: 'Enter a valid phone number',
+    min: 'Phone number must have at least three digits',
+    max: 'Phone number is too long',
   },
 };
 
