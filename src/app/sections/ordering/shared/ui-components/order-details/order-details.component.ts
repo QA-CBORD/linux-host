@@ -85,12 +85,13 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     isActive: true,
   };
   user: UserInfoSet;
+  phoneLabel: string;
 
   constructor(
     private readonly fb: FormBuilder,
     private readonly modalController: ModalController,
     private readonly orderingService: OrderingService,
-    private readonly userFacadeService: UserFacadeService,
+    private readonly userFacadeService: UserFacadeService
   ) {}
 
   ngOnInit() {
@@ -98,7 +99,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     this.initContentStrings();
     this.updateFormErrorsByContentStrings();
     this.setAccessoryBarVisible(true);
-    this.getUserPhone();
+    this.setPhoneField();
   }
 
   ngOnDestroy() {
@@ -161,7 +162,9 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
       [DETAILS_FORM_CONTROL_NAMES.address]: [this.orderDetailOptions.address],
       [DETAILS_FORM_CONTROL_NAMES.paymentMethod]: ['', Validators.required],
       [DETAILS_FORM_CONTROL_NAMES.note]: [''],
-      [DETAILS_FORM_CONTROL_NAMES.phone]: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(32)],
+      [DETAILS_FORM_CONTROL_NAMES.phone]: [
+        '',
+        [Validators.required, Validators.minLength(3), Validators.maxLength(32)],
       ],
     });
 
@@ -215,7 +218,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   get cvvFormControl(): AbstractControl {
     return this.detailsForm.get(DETAILS_FORM_CONTROL_NAMES.cvv);
   }
-  
+
   get phone(): AbstractControl {
     return this.detailsForm.get(DETAILS_FORM_CONTROL_NAMES.phone);
   }
@@ -319,13 +322,23 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  private getUserPhone() {
+  private setPhoneField() {
     this.userFacadeService
       .getUser$()
       .pipe(take(1))
-      .toPromise().then((user) => {
+      .toPromise()
+      .then(user => {
+        this.setPhoneLabel(user.phone);
         this.checkFieldValue(this.phone, user.phone);
       });
+  }
+
+  private setPhoneLabel(phone: string) {
+    if (phone) {
+      this.phoneLabel = 'Phone';
+    } else {
+      this.phoneLabel = 'Enter a phone number';
+    }
   }
 }
 
@@ -364,4 +377,3 @@ export interface OrderDetailsFormData {
   };
   valid: boolean;
 }
-
