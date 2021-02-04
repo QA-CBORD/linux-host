@@ -146,14 +146,13 @@ export class CartService {
     if (addr) {
       address = type === ORDER_TYPE.DELIVERY ? { deliveryAddressId: addr.id } : { pickupAddressId: addr.id };
     }
-
+  
     return this.userFacadeService.getUserData$().pipe(
       first(),
-      switchMap(({ phone: userPhone, timeZone, locale }) => {
+      switchMap(({ timeZone, locale }) => {
         this.cart.order = {
           ...this.cart.order,
           ...address,
-          userPhone,
           type,
           dueTime: getDateTimeInGMT(dueTime, locale, timeZone),
         };
@@ -191,6 +190,10 @@ export class CartService {
 
   addPaymentInfoToOrder(peymentInfo: Partial<OrderPayment>) {
     this.cart.order.orderPayment = [peymentInfo];
+  }
+  
+  updateOrderPhone(phone: string) {
+    this.cart.order.userPhone = phone;
   }
 
   async clearActiveOrder(): Promise<void> {
