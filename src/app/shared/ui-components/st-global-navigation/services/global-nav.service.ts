@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { mergeMap, map } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
+import { mergeMap, map, distinctUntilChanged } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -8,6 +8,9 @@ import { mergeMap, map } from 'rxjs/operators';
 export class GlobalNavService {
   private readonly _isNavBarShown$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
   private readonly _isNavBarMenuExpanded$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  private readonly _isBackdropShown$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+
+  private modalStack: number = 0;
 
   constructor() {}
 
@@ -19,6 +22,13 @@ export class GlobalNavService {
 
   get isNavBarShown$(): Observable<boolean> {
     return this._isNavBarShown$.asObservable();
+  }
+
+  get isBackdropShown$(): Observable<boolean> {
+    return combineLatest(this._isBackdropShown$, this.isNavBarMenuExpanded$).pipe(
+      map(([isBackdropShown, isNavBarMenuExpanded]) => isBackdropShown || isNavBarMenuExpanded),
+      distinctUntilChanged()
+    );
   }
 
   hideNavBar(): void {
@@ -36,4 +46,16 @@ export class GlobalNavService {
   collapseNavBarMenu() {
     this._isNavBarMenuExpanded$.next(false);
   }
+
+  notifyBackdropShown() {
+    this.modalStack++;
+    this.notifyBackdropState();
+  }
+
+  notifyBackdropHidden() {
+    this.modalStack > 0 && this.modalStack--;
+    this.notifyBackdropState();
+  }
+
+  private notifyBackdropState = () => this._isBackdropShown$.next(this.modalStack > 0);
 }

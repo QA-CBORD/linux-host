@@ -1,6 +1,5 @@
 import { CartService, MerchantService } from './services';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
 
 import { iif, Observable } from 'rxjs';
 import { first, map, switchMap, take } from 'rxjs/operators';
@@ -13,6 +12,7 @@ import { LOCAL_ROUTING, MerchantSettings, ORDERING_CONTENT_STRINGS } from './ord
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { ToastService } from '@core/service/toast/toast.service';
+import { ModalsService } from '@core/service/modals/modals.service';
 
 @Component({
   selector: 'st-ordering.page',
@@ -25,14 +25,14 @@ export class OrderingPage implements OnInit {
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
 
   constructor(
-    private readonly modalController: ModalController,
+    private readonly modalController: ModalsService,
     private readonly merchantService: MerchantService,
     private readonly loadingService: LoadingService,
     private readonly toastService: ToastService,
     private readonly router: Router,
     private readonly cartService: CartService,
     private readonly activatedRoute: ActivatedRoute,
-    private readonly orderingService: OrderingService
+    private readonly orderingService: OrderingService,
   ) {}
 
   ngOnInit() {
@@ -78,7 +78,7 @@ export class OrderingPage implements OnInit {
     let cssClass = 'order-options-action-sheet';
     cssClass += orderTypes.delivery && orderTypes.pickup ? ' order-options-action-sheet-p-d' : '';
     this.merchantService.orderTypes = orderTypes;
-
+  
     const modal = await this.modalController.create({
       component: OrderOptionsActionSheetComponent,
       cssClass,
@@ -90,7 +90,9 @@ export class OrderingPage implements OnInit {
         settings,
       },
     });
-    modal.onDidDismiss().then(({ data }) => {
+
+    modal.onDidDismiss()
+    .then(({ data }) => {
       if (data) {
         this.cartService.clearActiveOrder();
         this.cartService.setActiveMerchantsMenuByOrderOptions(data.dueTime, data.orderType, data.address, data.isASAP);
