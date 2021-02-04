@@ -90,7 +90,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     private readonly fb: FormBuilder,
     private readonly modalController: ModalController,
     private readonly orderingService: OrderingService,
-    private readonly userFacadeService: UserFacadeService,
+    private readonly userFacadeService: UserFacadeService
   ) {}
 
   ngOnInit() {
@@ -98,7 +98,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     this.initContentStrings();
     this.updateFormErrorsByContentStrings();
     this.setAccessoryBarVisible(true);
-    this.getUserPhone();
+    this.setPhoneField();
   }
 
   ngOnDestroy() {
@@ -161,8 +161,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
       [DETAILS_FORM_CONTROL_NAMES.address]: [this.orderDetailOptions.address],
       [DETAILS_FORM_CONTROL_NAMES.paymentMethod]: ['', Validators.required],
       [DETAILS_FORM_CONTROL_NAMES.note]: [''],
-      [DETAILS_FORM_CONTROL_NAMES.phone]: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(32)],
-      ],
+      [DETAILS_FORM_CONTROL_NAMES.phone]: [''],
     });
 
     if (!this.mealBased && this.isTipEnabled) {
@@ -178,6 +177,19 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
       this.detailsForm.addControl(DETAILS_FORM_CONTROL_NAMES.tip, this.fb.control(this.tip ? this.tip : ''));
       this.detailsForm.controls[DETAILS_FORM_CONTROL_NAMES.tip].setValidators(tipErrors);
     }
+    const phoneErrors = [
+        formControlErrorDecorator(
+        Validators.required,
+        CONTROL_ERROR[DETAILS_FORM_CONTROL_NAMES.phone].zero
+      ),
+      formControlErrorDecorator(
+        Validators.minLength(3),
+        CONTROL_ERROR[DETAILS_FORM_CONTROL_NAMES.phone].min
+      ),
+      formControlErrorDecorator(Validators.maxLength(32), 
+      CONTROL_ERROR[DETAILS_FORM_CONTROL_NAMES.phone].max),
+    ];
+    this.detailsForm.controls[DETAILS_FORM_CONTROL_NAMES.phone].setValidators(phoneErrors);
     this.subscribeOnFormChanges();
   }
 
@@ -215,7 +227,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   get cvvFormControl(): AbstractControl {
     return this.detailsForm.get(DETAILS_FORM_CONTROL_NAMES.cvv);
   }
-  
+
   get phone(): AbstractControl {
     return this.detailsForm.get(DETAILS_FORM_CONTROL_NAMES.phone);
   }
@@ -319,11 +331,12 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  private getUserPhone() {
+  private setPhoneField() {
     this.userFacadeService
       .getUser$()
       .pipe(take(1))
-      .toPromise().then((user) => {
+      .toPromise()
+      .then(user => {
         this.checkFieldValue(this.phone, user.phone);
       });
   }
@@ -343,6 +356,11 @@ export const CONTROL_ERROR = {
     min: 'Tip must be greater than zero',
     currency: 'Invalid format',
     subtotal: 'Tip must be less than the Subtotal amount',
+  },
+  [DETAILS_FORM_CONTROL_NAMES.phone]: {
+    zero: 'Enter a valid phone number',
+    min: 'Phone number must have at least three digits',
+    max: 'Phone number is too long',
   },
 };
 
@@ -364,4 +382,3 @@ export interface OrderDetailsFormData {
   };
   valid: boolean;
 }
-

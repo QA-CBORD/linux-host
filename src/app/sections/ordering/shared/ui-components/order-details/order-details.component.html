@@ -166,11 +166,14 @@
         inputmode="tel"
         idd="phone"
         [formControlName]="controlsNames.phone"
-        [isError]="phone.errors"
+        [isError]="phone.errors && (phone.dirty || phone.touched)"
         tabindex="1"
       >
       </st-input-floating-label>
       <br />
+      <div class="order-details--error">
+        {{ phone.errors?.errorMsg }}
+      </div>
     </div>
 
     <div class="order-details" *ngIf="!readonly">
