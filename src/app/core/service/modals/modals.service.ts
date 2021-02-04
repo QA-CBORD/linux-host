@@ -10,7 +10,10 @@ export class ModalsService {
   async create(opts: ModalOptions): Promise<HTMLIonModalElement> {
     const modal = await this.modalController.create(opts);
 
-    modal.addEventListener('ionModalDidPresent', () => this.globalNav.notifyBackdropHidden());
+    modal.addEventListener('ionModalDidPresent', () => {
+      this.globalNav.notifyBackdropShown();
+      document.getElementById('modal-mainTitle').focus();
+    });
     modal.addEventListener('ionModalDidDismiss', () => this.globalNav.notifyBackdropHidden());
 
     return modal;
