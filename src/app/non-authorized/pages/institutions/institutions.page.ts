@@ -76,7 +76,7 @@ export class InstitutionsPage implements OnInit {
       );
   }
 
-  onInstitutionSelected(item): boolean {
+  shouldOpenContextMenu(item): boolean {
     const guestRegistrationEnabled = true; //await this.expandAccordion(id);
     if (guestRegistrationEnabled) {
       if (this.previousExpandedInst) {
@@ -98,11 +98,11 @@ export class InstitutionsPage implements OnInit {
     return false;
   }
 
-  async selectInstitution(item, check = true, asGuest = false) {
+  async selectInstitution(item, contextMenuClosed = true, asGuest = false) {
     const id = item.id;
-    if (check) {
+    if (contextMenuClosed) {
       // loading indicator here, cuz a call will be made to backend to check if this institution has the Guest-registration settings enabled
-      if (this.onInstitutionSelected(item)) {
+      if (this.shouldOpenContextMenu(item)) {
         return;
       }
     }
