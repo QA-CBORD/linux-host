@@ -2,7 +2,9 @@
   [attr.aria-hidden]="isMenuNavBarExpanded$ | async"
   [ngClass]="{ 'navigation-bottom-offset': isNavBarShown$ | async }"
 >
+<div [attr.aria-hidden]="isBackdropShown$ | async">
   <ion-router-outlet [swipeGesture]="false"></ion-router-outlet>
+</div>
 </ion-app>
 <ion-footer>
   <st-global-navigation *ngIf="(isNavBarShown$ | async)"></st-global-navigation>

@@ -4,6 +4,7 @@ import { StorageStateService } from '@core/states/storage/storage-state.service'
 import { Observable, of } from 'rxjs';
 import { switchMap, take } from 'rxjs/operators';
 import { AlertController } from '@ionic/angular';
+import { Capacitor } from '@capacitor/core';
 
 export enum EnvironmentType {
   develop,
@@ -36,7 +37,7 @@ export class EnvironmentFacadeService extends ServiceStateFacade {
     image_url: 'https://3bulchr7pb.execute-api.us-east-1.amazonaws.com/dev/image/',
     // image_url :  'https://object-store.api.dev.cbord.com/image/', once DNS entry is entered
     housing_aws_url: 'https://5yu7v7hrq2.execute-api.us-east-1.amazonaws.com/dev',
-    partner_services_url: 'https://ft45xg91ch.execute-api.us-east-1.amazonaws.com/dev',
+    partner_services_url: this.getURLbasedOnPlatform(),
   };
 
   private readonly feature1: EnvironmentInfo = {
@@ -47,7 +48,7 @@ export class EnvironmentFacadeService extends ServiceStateFacade {
     image_url: 'https://3bulchr7pb.execute-api.us-east-1.amazonaws.com/dev/image/',
     // image_url: 'https://object-store.api.feature1.cbord.com/image/', once DNS entry is entered
     housing_aws_url: 'https://z6u8er70s9.execute-api.us-east-1.amazonaws.com/dev',
-    partner_services_url: 'https://api.payments.demo.cbord.com',
+    partner_services_url: this.getURLbasedOnPlatform(),
   };
 
   private readonly qa: EnvironmentInfo = {
@@ -238,6 +239,14 @@ export class EnvironmentFacadeService extends ServiceStateFacade {
         return this.production;
       case EnvironmentType.qa:
         return this.qa;
+    }
+  }
+
+  private getURLbasedOnPlatform(): string {
+    if (Capacitor.platform === 'android') {
+      return 'https://ft45xg91ch.execute-api.us-east-1.amazonaws.com/dev';
+    } else {
+      return 'https://api.payments.demo.cbord.com';
     }
   }
 }
