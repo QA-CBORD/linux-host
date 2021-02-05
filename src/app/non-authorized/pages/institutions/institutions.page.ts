@@ -25,9 +25,10 @@ const { Keyboard, IOSDevice } = Plugins;
 export class InstitutionsPage implements OnInit {
   private sessionId: string = null;
   searchString: string = '';
-
   isLoading: boolean = true;
   institutions: any[];
+  guestRegistrationEnabled: boolean = false;
+  previousExpandedInst: any;
   constructor(
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly settingsFacadeService: SettingsFacadeService,
@@ -35,7 +36,6 @@ export class InstitutionsPage implements OnInit {
     private readonly authFacadeService: AuthFacadeService,
     private readonly loadingService: LoadingService,
     private readonly sessionFacadeService: SessionFacadeService,
-    private readonly popoverCtrl: PopoverController,
     private readonly nav: Router,
     private readonly cdRef: ChangeDetectorRef,
     private readonly toastService: ToastService,
@@ -76,7 +76,37 @@ export class InstitutionsPage implements OnInit {
       );
   }
 
-  async selectInstitution(id: string) {
+  onInstitutionSelected(item): boolean {
+    const guestRegistrationEnabled = true; //await this.expandAccordion(id);
+    if (guestRegistrationEnabled) {
+      if (this.previousExpandedInst) {
+        if (item.id != this.previousExpandedInst.id) {
+          item.show = true;
+          this.previousExpandedInst.show = false;
+          this.previousExpandedInst = item;
+        } else {
+          item.show = false;
+          this.previousExpandedInst = null;
+        }
+      } else {
+        item.show = true;
+        this.previousExpandedInst = item;
+      }
+      this.cdRef.detectChanges();
+      return true;
+    }
+    return false;
+  }
+
+  async selectInstitution(item, check = true, asGuest = false) {
+    const id = item.id;
+    if (check) {
+      // loading indicator here, cuz a call will be made to backend to check if this institution has the Guest-registration settings enabled
+      if (this.onInstitutionSelected(item)) {
+        return;
+      }
+    }
+
     await this.loadingService.showSpinner();
     this.settingsFacadeService.cleanCache();
     await zip(
@@ -93,17 +123,22 @@ export class InstitutionsPage implements OnInit {
         switchMap(() => this.sessionFacadeService.determineInstitutionSelectionLoginState()),
         tap(loginType => {
           this.loadingService.closeSpinner();
-          this.navigateToLogin(loginType);
+          this.navigateToLogin(loginType, asGuest);
         }),
         take(1)
       )
       .toPromise();
   }
 
-  private navigateToLogin(loginState: number) {
+  onContextMenuButton(item, isGuest): void {
+    this.selectInstitution(item, false, isGuest);
+    item.show = false;
+  }
+
+  private navigateToLogin(loginState: number, asGuest: boolean = false) {
     switch (loginState) {
       case LoginState.HOSTED:
-        this.nav.navigate([ROLES.guest, GUEST_ROUTES.login]);
+        this.nav.navigate([ROLES.guest, GUEST_ROUTES.login], { state: { asGuest } });
         break;
       case LoginState.EXTERNAL:
         this.nav.navigate([ROLES.guest, GUEST_ROUTES.external]);
@@ -112,25 +147,32 @@ export class InstitutionsPage implements OnInit {
   }
 
   private async onErrorRetrieve(message: string) {
-    await this.toastService.showToast({ message, toastButtons: [
-      {
-        text: 'Retry',
-        handler: () => {
-          this.getInstitutions();
+    await this.toastService.showToast({
+      message,
+      toastButtons: [
+        {
+          text: 'Retry',
+          handler: () => {
+            this.getInstitutions();
+          },
         },
-      },
-      {
-        text: 'Back',
-        handler: () => {
-          this.route.navigate([ROLES.guest, GUEST_ROUTES.entry]);
+        {
+          text: 'Back',
+          handler: () => {
+            this.route.navigate([ROLES.guest, GUEST_ROUTES.entry]);
+          },
         },
-      },
-    ] });
+      ],
+    });
   }
 
   async setNativeEnvironment() {
     if (Capacitor.platform === 'ios') {
       await IOSDevice.setEnvironment({ env: this.environmentFacadeService.getEnvironmentObject() });
     }
+  }
+
+  async expandAccordion(id): Promise<boolean> {
+    return await this.institutionFacadeService.guestRegistrationEnabled(id);
   }
 }

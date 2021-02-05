@@ -1,21 +1,69 @@
 <ion-header class="login-header" no-border>
-  <ion-toolbar mode="ios" class="ion-color" [style.background-color]="settings.backgroundColor">
+  <ion-toolbar mode="ios" class="ion-color" class="mobile-credential-header__nav-toolbar">
     <ion-buttons slot="start">
-      <ion-back-button
-        [defaultHref]="defaultBackUrl"
-        class="login-header__back-btn"
-        color="light"
-        text="Back"
-        icon="ios-arrow-back"
-        mode="ios"
-      ></ion-back-button>
+      <ion-button mode="ios" class="edit-home__header-done-btn" color="dark" (click)="onDecline()">
+        <ion-icon icon="close"></ion-icon>
+      </ion-button>
     </ion-buttons>
+    <ion-title class="mc-header__title">
+      {{ title$ | async }}
+    </ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content [scrollY]="false">
-  <div class="registration-body">
-    <st-registration-modal [settings]="settings">
-      <st-user-registration [settings]="settings" [formFields]="formFields" (submit)="submitRegistration($event)"></st-user-registration>
-    </st-registration-modal>
+  <div class="form-container">
+    <form [formGroup]="registrationFormGroup" class="reg-form">
+      <div class="fields-container">
+        <div class="firstRow">
+          <table class="htable">
+            <tr *ngIf="firstNameField && lastNameField">
+              <td>
+                <st-input-floating-label
+                  [label]="firstNameField.label"
+                  [formControlName]="firstNameField.controlName"
+                  [control]="firstNameField.control"
+                  [isError]="firstNameField.control.invalid && firstNameField.control.touched"
+                  [type]="firstNameField.type"
+                  [idd]="firstNameField.idd"
+                  enterkeyhint="go"
+                  tabindex="0"
+                ></st-input-floating-label>
+              </td>
+              <td>
+                <st-input-floating-label
+                  [label]="lastNameField.label"
+                  [formControlName]="lastNameField.controlName"
+                  [control]="lastNameField.control"
+                  [isError]="lastNameField.control.invalid && lastNameField.control.touched"
+                  [type]="lastNameField.type"
+                  [idd]="lastNameField.idd"
+                  enterkeyhint="go"
+                  tabindex="0"
+                ></st-input-floating-label>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div *ngFor="let field of formFields" class="formItem" [ngClass]="{ 'separator-up': field.separatorUp }">
+          <st-input-floating-label
+            #inputPassword
+            [label]="field.label"
+            [formControlName]="field.controlName"
+            [control]="field.control"
+            [isError]="field.control.invalid && field.control.touched"
+            [type]="field.type"
+            [idd]="field.idd"
+            enterkeyhint="go"
+            tabindex="0"
+          >
+          </st-input-floating-label>
+        </div>
+      </div>
+      <div class="guest__body__submitOrcancel">
+        <st-button [isDisabled]="registrationFormGroup.invalid" buttonModifier="rectangular"  (click)="submitRegistration(registrationFormGroup)">
+          Create Account
+        </st-button>
+      </div>
+    </form>
   </div>
 </ion-content>

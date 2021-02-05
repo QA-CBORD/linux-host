@@ -5,31 +5,37 @@
   height: 100%;
 }
 
-.pop-up {
-  position: fixed;
-  width: 100%;
+.form-container {
   height: 100%;
-
-  &__backdrop {
+  overflow-y: scroll;
+  background-color: #86888f21;
+  padding: 25px 0px 10px 0px;
+  .reg-form {
     height: 100%;
-    &__institution {
-      font-size: 25px;
-      margin: 10px;
+    .separator-up {
+      margin-top: 25px;
+      padding-top: 10px !important;
     }
-  }
+    .firstRow {
+      padding-bottom: 25px;
+      background-color: #ffffff;
+      padding-top: 10px;
+      table.htable td {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+    }
+    .formItem {
+      padding: 0px 10px 20px 10px;
+      background-color: #ffffff;
+    }
 
-  &__content {
-    margin-bottom: $notch-bottom;
-    overflow-y: scroll;
-    max-height: 88%;
-    min-height: 80%;
-    padding: 38px 10px 10px 10px;
-    border-top-right-radius: 45px;
-    border-top-left-radius: 45px;
-    position: absolute;
-    background: #fff;
-    bottom: 4%; //$bottom-navigation-bar-height;
-    left: 0;
-    right: 0;
+    .guest__body__submitOrcancel {
+      padding: 35px 10px 5px 10px;
+    }
+
+    .fields-container {
+      min-height: 86%;
+    }
   }
 }

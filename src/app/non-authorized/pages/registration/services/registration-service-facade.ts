@@ -32,7 +32,7 @@ export class RegistrationServiceFacade {
     return this.registrationService.getPageSettings();
   }
 
-  onBeforePageLoad(isGuest: boolean): Observable<any> {
+  onBeforePageLoad(isGuest: boolean): Promise<any> {
     const pageSettingsObs$ = this.getPageSettings().pipe(
       first(),
       map(data => ({
@@ -50,15 +50,21 @@ export class RegistrationServiceFacade {
       )
       .pipe(first());
 
-    return iif(() => isGuest, pageSettingsObs$, combine$).pipe(
-      tap(setting => {
-        if (isGuest) {
-          this.registrationManager = new GuestRegistrationManager(setting);
-        } else {
-          this.registrationManager = new PatronRegistrationManager(setting, setting.dynamicFields);
-        }
-      })
-    );
+    return iif(() => isGuest, pageSettingsObs$, combine$)
+      .pipe(
+        tap((setting: any) => {
+          if (isGuest) {
+            this.registrationManager = new GuestRegistrationManager(setting, this.registrationService);
+          } else {
+            this.registrationManager = new PatronRegistrationManager(
+              setting,
+              setting.dynamicFields,
+              this.registrationService
+            );
+          }
+        })
+      )
+      .toPromise();
   }
 
   getSetting(): PageSetting {
@@ -69,7 +75,7 @@ export class RegistrationServiceFacade {
     return this.registrationManager.formFields;
   }
 
-  register(): Observable<boolean> {
-    return this.registrationManager.register(this.registrationService);
+  register(data): Observable<boolean> {
+    return this.registrationManager.register(data);
   }
 }

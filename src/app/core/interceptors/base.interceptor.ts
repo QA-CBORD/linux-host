@@ -67,9 +67,7 @@ export class BaseInterceptor implements HttpInterceptor {
     let { params } = req.body;
     return this.getRequiredData(req).pipe(
       switchMap(([institutionId, sessionId]) => {
-        console.log('institutionId, ', institutionId, ' ==>', sessionId)
          if ((useInstitutionId && institutionId === null) || (useSessionId && sessionId === null)) {
-           console.log('redirectToLogin')
           this.redirectToLogin();
         } else {
           if (useInstitutionId) params = { ...params, institutionId };

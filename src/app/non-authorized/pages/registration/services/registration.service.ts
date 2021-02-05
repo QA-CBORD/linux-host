@@ -33,7 +33,7 @@ export class RegistrationService {
 
   retrieveRegistrationFields(): Observable<LookupFieldInfo[]> {
     return this.makeRPCRequest(RegistrationApiMethods.retrieveRegistrationFields, {}, true, true).pipe(
-      map(data => data || []),
+      map(({ lookupFields }) => lookupFields || []),
       catchError(() =>
         of([
           {
@@ -46,6 +46,27 @@ export class RegistrationService {
           {
             lookupFieldId: 'Media_value',
             displayName: 'Media value',
+            displayOrder: 0,
+            type: LookupFieldType.MEDIA_VALUE,
+            value: '',
+          },
+          {
+            lookupFieldId: 'Parent_phone',
+            displayName: 'Parent phone',
+            displayOrder: 3,
+            type: LookupFieldType.STRING_IGNORECASE,
+            value: '',
+          },
+          {
+            lookupFieldId: 'Nickname',
+            displayName: 'Nickname',
+            displayOrder: 2,
+            type: LookupFieldType.STRING_FUZZY,
+            value: '',
+          },
+          {
+            lookupFieldId: 'Instagram_user',
+            displayName: 'Instagram user',
             displayOrder: 0,
             type: LookupFieldType.MEDIA_VALUE,
             value: '',

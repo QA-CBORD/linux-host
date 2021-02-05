@@ -1,8 +1,9 @@
-import { Observable } from 'rxjs';
+import { AbstractControl, Validators } from '@angular/forms';
+import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { RegistrationService } from '../services/registration.service';
-import { guestRegistrationFormFields, LookupFieldIds } from './guest-registration.config';
-import { registrationStaticFormFields } from './registration-static.fields';
+import { registrationFormStaticFields } from './form-config';
+import { LookupFieldIds } from './guest-registration.config';
 
 export class UserInfo {
   email?: string;
@@ -29,6 +30,8 @@ export enum LookupFieldType {
   MMID_USID = 6,
 }
 
+const lookupFieldMapper = () => {};
+
 export class LookupFieldInfo {
   lookupFieldId: string;
   displayName: string;
@@ -48,17 +51,8 @@ export interface PageSetting {
   institutionName?: string;
 }
 
-export interface formField {
-  label: string;
-  fieldName?: string;
-  assetIcon?: string;
-  value?: any;
-  lookupFieldId?: string;
-}
-
 export interface UserRegistrationManager {
   register(backendService: RegistrationService): Observable<any>;
-  user: UserInfo;
   setting: PageSetting;
   formFields: formField[];
 }
@@ -72,43 +66,78 @@ export interface UserRegistrationManager {
  *
  */
 
+export interface registrationConfig {
+  settings?: PageSetting;
+  dynamicFields?: LookupFieldInfo[];
+}
+
 export class PatronRegistrationManager implements UserRegistrationManager {
-  public user = new PatronInfo();
   private __formFields: formField[] = [];
-  constructor(public setting: PageSetting, public dynamicFields: LookupFieldInfo[] = []) {
-    this.__formFields = dynamicFields.map(field => ({ label: field.displayName, lookupFieldId: field.lookupFieldId }));
+
+  constructor(
+    public setting: PageSetting,
+    public dynamicFields: LookupFieldInfo[] = [],
+    private backendService: RegistrationService
+  ) {
+    this.initFields(dynamicFields);
+  }
+
+  private initFields(fields: LookupFieldInfo[]): void {
+    const dynamicFields = fields.map(field => ({
+      label: field.displayName,
+      lookupFieldId: field.lookupFieldId,
+      controlName: field.lookupFieldId,
+      idd: field.lookupFieldId,
+      type: 'text',
+      validator: ['', Validators.required],
+    }));
+    this.__formFields = [...dynamicFields, ...registrationFormStaticFields];
   }
 
   get formFields(): formField[] {
-    return [...this.__formFields, ...registrationStaticFormFields];
+    return this.__formFields;
   }
 
-  register(backendService: RegistrationService): Observable<any> {
-    const lookupFields = this.dynamicFields;
+  register(data): Observable<any> {
+    const FIRST_NAME = 'firstName';
+    const LAST_NAME = 'lastName';
 
-    lookupFields.forEach(df => {
-      this.__formFields.forEach(ff => {
-        if (df.lookupFieldId == ff.lookupFieldId) {
-          df.value = ff.value;
-        }
-      });
+    const dynamicLookupFields = this.dynamicFields;
+    dynamicLookupFields.map(field => {
+      field.value = data[field.lookupFieldId];
+      delete data[field.lookupFieldId];
     });
 
-    const params = {};
-    this.formFields.forEach(item => {
-      if (item.fieldName) {
-        params[item.fieldName] = item.value;
-      }
-    });
+    const extraLookupFields = [
+      {
+        lookupFieldId: LookupFieldIds.patronRegistration,
+        ...commonLookupFields,
+        value: '1',
+      },
+      {
+        lookupFieldId: LookupFieldIds.patronFirstName,
+        ...commonLookupFields,
+        value: getFieldValue(data, FIRST_NAME),
+      },
+      {
+        lookupFieldId: LookupFieldIds.patronLastName,
+        ...commonLookupFields,
+        value: getFieldValue(data, LAST_NAME),
+      },
+    ];
 
-    const registrationFields = { lookupFields };
-    return backendService.institition$().pipe(
+
+    return this.backendService.institition$().pipe(
       switchMap(({ id: institutionId }) => {
-        return backendService.callBackend(RegistrationApiMethods.register, {
+        return this.backendService.callBackend(RegistrationApiMethods.register, {
           registrationInfo: {
             institutionId,
-            ...params,
-            registrationFields,
+            ...data,
+            registrationFields: {
+              lookupFields: [
+                ...dynamicLookupFields, ...extraLookupFields
+              ],
+            },
           },
         });
       })
@@ -122,59 +151,41 @@ export class PatronRegistrationManager implements UserRegistrationManager {
  */
 
 export class GuestRegistrationManager implements UserRegistrationManager {
-  public user = new GuestInfo();
-  private __formFields: formField[] = [...guestRegistrationFormFields, ...registrationStaticFormFields];
-  constructor(public setting: PageSetting) {}
+  private __formFields: formField[] = registrationFormStaticFields;
+  constructor(public setting: PageSetting, private backendService: RegistrationService) {}
 
   get formFields(): formField[] {
     return this.__formFields;
   }
 
-  register(backendService: RegistrationService): Observable<any> {
-    const get = fieldName => {
-      const formField = this.__formFields.find(field => field.fieldName == fieldName) || {};
-      const response = formField['value'];
-      return response;
-    };
-
-    const lookupField = {
-      displayName: '',
-      displayOrder: 99,
-      type: 0,
-    };
-
+  register(data): Observable<any> {
+    const FIRST_NAME = 'firstName';
+    const LAST_NAME = 'lastName';
     const registrationFields = {
       lookupFields: [
         {
           lookupFieldId: LookupFieldIds.guestRegistration,
-          ...lookupField,
+          ...commonLookupFields,
           value: '1',
         },
         {
           lookupFieldId: LookupFieldIds.guestFirstname,
-          ...lookupField,
-          value: get(LookupFieldIds.guestFirstname),
+          ...commonLookupFields,
+          value: getFieldValue(data, FIRST_NAME),
         },
         {
           lookupFieldId: LookupFieldIds.guestLastname,
-          ...lookupField,
-          value: get(LookupFieldIds.guestLastname),
+          ...commonLookupFields,
+          value: getFieldValue(data, LAST_NAME),
         },
       ],
     };
-
-    let params = {};
-    this.__formFields.forEach(item => (params = { ...params, [item.fieldName]: item.value }));
-
-    delete params[LookupFieldIds.guestFirstname];
-    delete params[LookupFieldIds.guestLastname];
-    
-    return backendService.institition$().pipe(
+    return this.backendService.institition$().pipe(
       switchMap(({ id: institutionId }) => {
-        return backendService.callBackend(RegistrationApiMethods.register, {
+        return this.backendService.callBackend(RegistrationApiMethods.register, {
           registrationInfo: {
             institutionId,
-            ...params,
+            ...data,
             registrationFields,
           },
         });
@@ -182,3 +193,27 @@ export class GuestRegistrationManager implements UserRegistrationManager {
     );
   }
 }
+
+export interface formField {
+  alignHorizontal?: boolean;
+  label: string;
+  controlName: string;
+  type: string;
+  idd: string;
+  validator?: any[];
+  control?: AbstractControl;
+  lookupFieldId?: string;
+  separatorUp?: boolean;
+}
+
+const commonLookupFields = {
+  displayName: '',
+  displayOrder: 99,
+  type: 0,
+};
+
+const getFieldValue = (from, fieldName) => {
+  const result = from[fieldName];
+  delete from[fieldName];
+  return result;
+};

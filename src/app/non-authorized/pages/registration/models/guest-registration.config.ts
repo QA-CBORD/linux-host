@@ -5,17 +5,7 @@ export enum LookupFieldIds {
     guestRegistration = 'guestRegistration',
     guestFirstname = 'guestFirstName',
     guestLastname = 'guestLastName',
+    patronRegistration = 'patronRegistration',
+    patronFirstName = 'patronFirstName',
+    patronLastName = 'patronLastName'
 }
-
-export const guestRegistrationFormFields: formField[] = [
-  {
-    label: 'First name',
-    assetIcon: 'user',
-    fieldName: LookupFieldIds.guestFirstname,
-  },
-  {
-    label: 'Last name',
-    assetIcon: 'user',
-    fieldName: LookupFieldIds.guestLastname,
-  },
-];
