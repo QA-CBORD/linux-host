@@ -158,7 +158,7 @@
     <div class="order-details" *ngIf="!readonly">
       <br />
       <st-input-floating-label
-        #phoneField
+        maxlength="33"
         class="form__control"
         [control]="phone"
         label="Phone"
@@ -167,7 +167,6 @@
         idd="phone"
         [formControlName]="controlsNames.phone"
         [isError]="phone.errors && (phone.dirty || phone.touched)"
-        tabindex="1"
       >
       </st-input-floating-label>
       <br />
