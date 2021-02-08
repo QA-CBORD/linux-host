@@ -359,7 +359,7 @@ export const CONTROL_ERROR = {
   },
   [DETAILS_FORM_CONTROL_NAMES.phone]: {
     zero: 'Enter a valid phone number',
-    min: 'Phone number must have at least three values',
+    min: 'Phone number must have at least three characters',
     max: 'Phone number is too long',
   },
 };
