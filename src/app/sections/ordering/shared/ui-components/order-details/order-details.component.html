@@ -98,7 +98,7 @@
     <ng-template #paymentSelect>
       <div class="order-details">
         <ion-label class="order-details__label">{{ contentStrings.labelPaymentMethod | async }}</ion-label>
-        <ion-select
+        <ion-select aria-required="true"
           [formControlName]="controlsNames.paymentMethod"
           class="order-details__value"
           [cancelText]="contentStrings.buttonCancel | async"
@@ -125,7 +125,7 @@
 
     <div class="order-details" *ngIf="showCVVControl">
       <ion-label class="order-details__label">Card Security Code:</ion-label>
-      <ion-input
+      <ion-input aria-required="true"
         class="order-details__value"
         type="tel"
         inputmode="tel"
@@ -138,7 +138,7 @@
     </div>
 
     <div class="order-details" *ngIf="!mealBased && isTipEnabled">
-      <ion-label class="order-details__label">{{ contentStrings.labelTipAmount | async }}:</ion-label>
+      <ion-label aria-describedby="tipMessage" class="order-details__label">{{ contentStrings.labelTipAmount | async }}:</ion-label>
       <ion-input
         class="order-details__value"
         type="tel"
@@ -150,14 +150,14 @@
         [formControlName]="controlsNames.tip"
         (ionChange)="onTipChanged($event)"
       ></ion-input>
-      <div class="order-details--error">
+      <div id="tipMessage" class="order-details--error">
         {{ tipFormControl.errors?.errorMsg }}
       </div>
     </div>
 
     <div class="order-details" *ngIf="!readonly">
       <br />
-      <st-input-floating-label
+      <st-input-floating-label aria-describedby="phoneMessage" aria-required="true"
         maxlength="33"
         class="form__control"
         [control]="phone"
@@ -170,13 +170,13 @@
       >
       </st-input-floating-label>
       <br />
-      <div class="order-details--error">
+      <div id="phoneMessage" class="order-details--error">
         {{ phone.errors?.errorMsg }}
       </div>
     </div>
 
     <div class="order-details" *ngIf="!readonly">
-      <st-textarea-floating-label
+      <st-textarea-floating-label 
         [control]="detailsForm.get(controlsNames.note)"
         [isError]="false"
         class="order-details__order-note"
