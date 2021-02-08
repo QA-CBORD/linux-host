@@ -125,7 +125,8 @@
 
     <div class="order-details" *ngIf="showCVVControl">
       <ion-label class="order-details__label">Card Security Code:</ion-label>
-      <ion-input aria-required="true"
+      <ion-input 
+        required
         class="order-details__value"
         type="tel"
         inputmode="tel"
@@ -139,7 +140,8 @@
 
     <div class="order-details" *ngIf="!mealBased && isTipEnabled">
       <ion-label class="order-details__label">{{ contentStrings.labelTipAmount | async }}:</ion-label>
-      <ion-input aria-describedby="tipMessage"
+      <ion-input 
+        aria-describedby="tipMessage"
         class="order-details__value"
         type="tel"
         inputmode="decimal"
@@ -157,7 +159,9 @@
 
     <div class="order-details" *ngIf="!readonly">
       <br />
-      <st-input-floating-label aria-describedby="phoneMessage"
+      <st-input-floating-label 
+        aria-describedby="phoneMessage" 
+        required
         maxlength="33"
         class="form__control"
         [control]="phone"

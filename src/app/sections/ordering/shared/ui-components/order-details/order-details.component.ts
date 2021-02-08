@@ -358,7 +358,7 @@ export const CONTROL_ERROR = {
     subtotal: 'Tip must be less than the Subtotal amount',
   },
   [DETAILS_FORM_CONTROL_NAMES.phone]: {
-    zero: 'Enter a valid phone number',
+    zero: 'Phone number is required',
     min: 'Phone number must have at least three characters',
     max: 'Phone number is too long',
   },
