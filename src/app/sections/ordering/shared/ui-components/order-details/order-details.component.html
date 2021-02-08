@@ -98,7 +98,7 @@
     <ng-template #paymentSelect>
       <div class="order-details">
         <ion-label class="order-details__label">{{ contentStrings.labelPaymentMethod | async }}</ion-label>
-        <ion-select
+        <ion-select aria-required="true"
           [formControlName]="controlsNames.paymentMethod"
           class="order-details__value"
           [cancelText]="contentStrings.buttonCancel | async"
@@ -125,7 +125,8 @@
 
     <div class="order-details" *ngIf="showCVVControl">
       <ion-label class="order-details__label">Card Security Code:</ion-label>
-      <ion-input
+      <ion-input 
+        required
         class="order-details__value"
         type="tel"
         inputmode="tel"
@@ -139,7 +140,8 @@
 
     <div class="order-details" *ngIf="!mealBased && isTipEnabled">
       <ion-label class="order-details__label">{{ contentStrings.labelTipAmount | async }}:</ion-label>
-      <ion-input
+      <ion-input 
+        aria-describedby="tipMessage"
         class="order-details__value"
         type="tel"
         inputmode="decimal"
@@ -150,15 +152,17 @@
         [formControlName]="controlsNames.tip"
         (ionChange)="onTipChanged($event)"
       ></ion-input>
-      <div class="order-details--error">
+      <div id="tipMessage" aria-live="assertive" class="order-details--error">
         {{ tipFormControl.errors?.errorMsg }}
       </div>
     </div>
 
     <div class="order-details" *ngIf="!readonly">
       <br />
-      <st-input-floating-label
-        #phoneField
+      <st-input-floating-label 
+        aria-describedby="phoneMessage" 
+        required
+        maxlength="33"
         class="form__control"
         [control]="phone"
         label="Phone"
@@ -167,17 +171,16 @@
         idd="phone"
         [formControlName]="controlsNames.phone"
         [isError]="phone.errors && (phone.dirty || phone.touched)"
-        tabindex="1"
       >
       </st-input-floating-label>
       <br />
-      <div class="order-details--error">
+      <div id="phoneMessage" aria-live="assertive" class="order-details--error">
         {{ phone.errors?.errorMsg }}
       </div>
     </div>
 
     <div class="order-details" *ngIf="!readonly">
-      <st-textarea-floating-label
+      <st-textarea-floating-label 
         [control]="detailsForm.get(controlsNames.note)"
         [isError]="false"
         class="order-details__order-note"
