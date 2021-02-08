@@ -138,8 +138,8 @@
     </div>
 
     <div class="order-details" *ngIf="!mealBased && isTipEnabled">
-      <ion-label aria-describedby="tipMessage" class="order-details__label">{{ contentStrings.labelTipAmount | async }}:</ion-label>
-      <ion-input
+      <ion-label class="order-details__label">{{ contentStrings.labelTipAmount | async }}:</ion-label>
+      <ion-input aria-describedby="tipMessage"
         class="order-details__value"
         type="tel"
         inputmode="decimal"
@@ -150,7 +150,7 @@
         [formControlName]="controlsNames.tip"
         (ionChange)="onTipChanged($event)"
       ></ion-input>
-      <div id="tipMessage" class="order-details--error">
+      <div id="tipMessage" aria-live="assertive" class="order-details--error">
         {{ tipFormControl.errors?.errorMsg }}
       </div>
     </div>
@@ -170,7 +170,7 @@
       >
       </st-input-floating-label>
       <br />
-      <div id="phoneMessage" class="order-details--error">
+      <div id="phoneMessage" aria-live="assertive" class="order-details--error">
         {{ phone.errors?.errorMsg }}
       </div>
     </div>
