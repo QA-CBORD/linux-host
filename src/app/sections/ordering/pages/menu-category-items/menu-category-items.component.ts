@@ -4,7 +4,7 @@ import { PATRON_NAVIGATION } from 'src/app/app.global';
 import { LOCAL_ROUTING, ORDER_VALIDATION_ERRORS, ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { CartService } from '@sections/ordering/services';
 import { Observable, zip } from 'rxjs';
-import { take, first } from 'rxjs/operators';
+import { take, first, tap, distinctUntilChanged, filter } from 'rxjs/operators';
 import { MenuCategoryInfo, MenuCategoryItemInfo, MenuInfo } from '@sections/ordering/shared/models';
 import { handleServerError } from '@core/utils/general-helpers';
 import { AlertController } from '@ionic/angular';
@@ -38,14 +38,20 @@ export class MenuCategoryItemsComponent implements OnInit {
   ) {}
 
   ionViewWillEnter() {
-    this.menuItems$ = this.cartService.menuItems$;
     this.initContentStrings();
     this.cdRef.detectChanges();
   }
 
   ngOnInit() {
     this.menuInfo$ = this.cartService.menuInfo$;
-
+    this.menuItems$ = this.cartService.menuItems$.pipe(
+      // If is not first emission from an empty cart
+      filter((val, index) => val !== 0 || index > 1),
+      distinctUntilChanged(),
+      tap(items =>
+        this.toastService.showToast({ message: `${items} ${items > 1 ? 'items' : 'item'} currently in your cart.` })
+      )
+    );
     zip(this.cartService.menuInfo$, this.activatedRoute.params)
       .pipe(take(1))
       .subscribe(([menu, { id }]) => {

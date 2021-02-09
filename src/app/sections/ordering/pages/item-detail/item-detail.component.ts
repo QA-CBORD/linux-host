@@ -20,7 +20,6 @@ import { OrderingComponentContentStrings, OrderingService } from '@sections/orde
 import { ItemDetailModalComponent } from '@sections/ordering/pages/item-detail/components/item-detail-modal/item-detail-modal.component';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { ToastService } from '@core/service/toast/toast.service';
-import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 
 @Component({
   selector: 'st-item-detail',
@@ -52,7 +51,6 @@ export class ItemDetailComponent implements OnInit {
     private readonly toastService: ToastService,
     private readonly orderingService: OrderingService,
     private readonly popoverController: PopoverController,
-    private readonly a11yService: AccessibilityService
   ) {}
 
   ngOnInit() {
@@ -232,7 +230,6 @@ export class ItemDetailComponent implements OnInit {
       )
       .toPromise()
       .then(() => {
-        this.a11yService.readAloud('Item added to cart.');
         this.cartService.cartsErrorMessage = null;
         this.onClose();
       })
