@@ -12,7 +12,7 @@ import {
   ORDERING_CONTENT_STRINGS,
 } from '@sections/ordering/ordering.config';
 import { first, map, take } from 'rxjs/operators';
-import { AlertController, ModalController, PopoverController } from '@ionic/angular';
+import { AlertController, PopoverController } from '@ionic/angular';
 import { OrderOptionsActionSheetComponent } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { handleServerError } from '@core/utils/general-helpers';
@@ -22,6 +22,7 @@ import { OrderingComponentContentStrings, OrderingService } from '@sections/orde
 import { OverlayEventDetail } from '@ionic/core';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { ToastService } from '@core/service/toast/toast.service';
+import { ModalsService } from '@core/service/modals/modals.service';
 
 @Component({
   selector: 'st-full-menu',
@@ -41,7 +42,7 @@ export class FullMenuComponent implements OnInit, OnDestroy {
   constructor(
     private readonly cartService: CartService,
     private readonly router: Router,
-    private readonly modalController: ModalController,
+    private readonly modalController: ModalsService,
     private readonly merchantService: MerchantService,
     private readonly loadingService: LoadingService,
     private readonly toastService: ToastService,
