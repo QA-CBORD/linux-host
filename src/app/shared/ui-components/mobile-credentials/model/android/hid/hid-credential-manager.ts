@@ -9,6 +9,8 @@ import { AndroidCredential, EndpointState, HIDCredential } from '../android-cred
 import { HidCredentialDataService } from '../../../service/hid-credential.data.service';
 import { Injectable } from '@angular/core';
 import { HIDPlugginProxy, HID_SDK_ERR } from './hid-plugin.proxy';
+import { Plugins } from '@capacitor/core';
+const { MobileCredentialStatusPlugin } = Plugins;
 
 interface ExecutionParameters {
   fn: (args?: any) => Promise<boolean>;
@@ -157,7 +159,16 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
 
   onUiImageClicked(event = { shouldCheckCredentialAvailability: true }): void {
     if (event.shouldCheckCredentialAvailability) {
-      this.validateAndInstall();
+      (async () => {
+        const response = await MobileCredentialStatusPlugin.deviceNativeState({ credentialType: '' });
+        if (response.deviceState.nfcOn) {
+          this.validateAndInstall();
+        } else {
+          this.showNFCOffAlert(async () => {
+            this.validateAndInstall();
+          });
+        }
+      })();
     } else {
       this.showTermsAndConditions();
     }
@@ -628,5 +639,20 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
 
   private hidSdkManager(): HIDPlugginProxy {
     return HIDPlugginProxy.getInstance();
+  }
+
+  private async showNFCOffAlert(callerOnAcceptHandler?: () => Promise<any>): Promise<void> {
+    const header = 'Alert';
+    const message =
+      'Your NFC setting is turned off for your phone. You can proceed and provision your credential, but it will not work when presented to a NFC reader to open a door or pay for a purchase until you turn on your NFC setting.';
+    const buttons = [
+      { text: 'Cancel', role: 'cancel' },
+      {
+        text: 'Accept',
+        handler: callerOnAcceptHandler,
+      },
+    ];
+    const alert = await this.createAlertDialog(header, message, buttons);
+    alert.present();
   }
 }
