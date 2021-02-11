@@ -8,6 +8,7 @@ import { IonicModule } from '@ionic/angular';
 import { SuccessModalComponent } from '@sections/ordering/pages/cart/components/success-modal/success-modal.component';
 import { PriceUnitsResolverModule } from '@sections/ordering/shared/pipes/price-units-resolver/price-units-resolver.module';
 import { StButtonModule } from '@shared/ui-components/st-button/st-button.module';
+import { ModalsService } from '@core/service/modals/modals.service';
 
 @NgModule({
   declarations: [CartComponent, SuccessModalComponent],
@@ -20,6 +21,7 @@ import { StButtonModule } from '@shared/ui-components/st-button/st-button.module
     PriceUnitsResolverModule,
     StButtonModule
   ],
-   entryComponents: [SuccessModalComponent]
+   entryComponents: [SuccessModalComponent],
+   providers: [ModalsService]
 })
 export class CartModule { }
