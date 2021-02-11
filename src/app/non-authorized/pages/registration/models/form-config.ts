@@ -1,53 +1,68 @@
 import { Validators } from '@angular/forms';
-import { LookupFieldIds } from './guest-registration.config';
 import { formField } from './registration.shared.model';
 
-export const registrationFormStaticFields: formField[] = [
-  {
-    alignHorizontal: true,
-    label: 'First name',
+
+export const STATICFIELDS = {
+  firstName: {
+    fieldName: 'firstName',
     idd: 'first_name',
-    controlName: 'firstName',
-    type: 'text',
-    validator: ['', Validators.required],
   },
-  {
-    alignHorizontal: true,
-    label: 'Last name',
+  lastName: {
+    fieldName: 'lastName',
     idd: 'last_name',
-    controlName: 'lastName',
+  },
+  userName: 'userName',
+  phone: 'phone',
+  password: 'password',
+  confirmPassword: 'confirmPassword',
+};
+
+export const registrationFormStaticFields: { [key: string]: formField } = {
+  first_name: {
+    alignHorizontal: true,
+    value: 'First Name',
+    idd: STATICFIELDS.firstName.idd,
+    name: STATICFIELDS.firstName.fieldName,
     type: 'text',
-    validator: ['', Validators.required],
+    validator: ['', Validators.compose([Validators.min(2), Validators.required])],
+    guestOnly: true,
   },
-  {
-    label: 'Email',
+  last_name: {
+    alignHorizontal: true,
+    value: 'Last Name',
+    idd: STATICFIELDS.lastName.idd,
+    name: STATICFIELDS.lastName.fieldName,
+    type: 'text',
+    validator: ['', Validators.compose([Validators.min(2), Validators.required])],
+    guestOnly: true,
+  },
+  user_name: {
+    value: 'Email',
     idd: 'email_address',
-    controlName: 'userName',
+    name: STATICFIELDS.userName,
     type: 'email',
-    validator: ['', Validators.email],
+    validator: ['', Validators.compose([Validators.required, Validators.email])],
   },
-  {
-    label: 'Phone Number',
+  phone: {
+    value: 'Phone Number',
     idd: 'phone_number',
-    controlName: 'phone',
+    name: STATICFIELDS.phone,
     type: 'text',
     validator: ['', Validators.nullValidator],
   },
-
-  {
-    label: 'Create Password',
+  password: {
+    value: 'Create Password',
     idd: 'pass_word',
-    controlName: 'password',
+    name: STATICFIELDS.password,
     type: 'password',
-    validator: ['', Validators.required],
+    validator: ['', Validators.compose([Validators.min(6), Validators.required])],
     separatorUp: true,
   },
-
-  {
-    label: 'Confirm Password',
+  confirm_password: {
+    value: 'Confirm Password',
     idd: 'confirm_pass_word',
-    controlName: 'passwordConfirm',
+    name: STATICFIELDS.confirmPassword,
     type: 'password',
-    validator: ['', Validators.required],
+    validator: ['', Validators.compose([Validators.min(6), Validators.required])],
   },
-];
+};

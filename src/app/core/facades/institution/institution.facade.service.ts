@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ServiceStateFacade } from '@core/classes/service-state-facade';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
-import { Institution } from '@core/model/institution/institution.model';
+import { Institution, InstitutionBuilder, InstitutionLookupListItem } from '@core/model/institution/institution.model';
 import { InstitutionApiService } from '@core/service/institution-api/institution-api.service';
 import { Observable, of } from 'rxjs';
 import { catchError, map, switchMap, take, tap } from 'rxjs/operators';
@@ -105,8 +105,22 @@ export class InstitutionFacadeService extends ServiceStateFacade {
     );
   }
 
-  retrieveLookupList$(systemSessionId): Observable<any> {
-    return this.institutionApiService.retrieveLookupList(systemSessionId);
+  retrieveLookupList$(systemSessionId): Observable<InstitutionLookupListItem[]> {
+    return this.institutionApiService.retrieveLookupList(systemSessionId).pipe(
+      map(institutionList =>
+        institutionList.map(item =>
+          new InstitutionBuilder()
+            .id(item.id)
+            .name(item.name)
+            .shortName(item.shortName)
+            .type(item.type)
+            .guestDeposit(item.guestDeposit)
+            .guestLogin(item.guestLogin)
+            .guestLoginNotRequired(item.guestLoginNotRequired)
+            .build()
+        )
+      )
+    );
   }
 
   getlastChangedTerms$(): Observable<Date> {

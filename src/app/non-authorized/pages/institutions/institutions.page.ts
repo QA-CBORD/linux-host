@@ -1,11 +1,10 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
-import { take, switchMap, tap } from 'rxjs/operators';
+import { take, switchMap, tap, map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { GUEST_ROUTES } from '../../non-authorized.config';
 import { ROLES, Settings } from 'src/app/app.global';
-import { zip } from 'rxjs';
-import { PopoverController } from '@ionic/angular';
+import { Observable, of, zip } from 'rxjs';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { Plugins, Capacitor } from '@capacitor/core';
@@ -14,6 +13,8 @@ import { LoginState } from '@core/facades/identity/identity.facade.service';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { ToastService } from '@core/service/toast/toast.service';
+import { RegistrationServiceFacade } from '../registration/services/registration-service-facade';
+import { InstitutionLookupListItem } from '@core/model/institution';
 const { Keyboard, IOSDevice } = Plugins;
 
 @Component({
@@ -26,9 +27,12 @@ export class InstitutionsPage implements OnInit {
   private sessionId: string = null;
   searchString: string = '';
   isLoading: boolean = true;
-  institutions: any[];
+  institutions: InstitutionLookupListItem[];
   guestRegistrationEnabled: boolean = false;
-  previousExpandedInst: any;
+  expandedItem: any;
+  asGuestBtnText$: Observable<string>;
+  asPatronBtnText$: Observable<string>;
+
   constructor(
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly settingsFacadeService: SettingsFacadeService,
@@ -39,12 +43,16 @@ export class InstitutionsPage implements OnInit {
     private readonly nav: Router,
     private readonly cdRef: ChangeDetectorRef,
     private readonly toastService: ToastService,
-    private readonly route: Router
+    private readonly route: Router,
+    private readonly registrationServiceFacade: RegistrationServiceFacade
   ) {}
 
   async ngOnInit() {
     this.getInstitutions();
     this.setNativeEnvironment();
+    const data = await this.registrationServiceFacade.registrationContent();
+    this.asGuestBtnText$ = of(data.as_guest_btn_text);
+    this.asPatronBtnText$ = of(data.as_patron_btn_text);
   }
 
   onEnterKeyClicked() {
@@ -76,37 +84,32 @@ export class InstitutionsPage implements OnInit {
       );
   }
 
-  shouldOpenContextMenu(item): boolean {
-    const guestRegistrationEnabled = true; //await this.expandAccordion(id);
-    if (guestRegistrationEnabled) {
-      if (this.previousExpandedInst) {
-        if (item.id != this.previousExpandedInst.id) {
-          item.show = true;
-          this.previousExpandedInst.show = false;
-          this.previousExpandedInst = item;
-        } else {
-          item.show = false;
-          this.previousExpandedInst = null;
-        }
-      } else {
+  private toggleContextMenuPanel(item): void {
+    if (this.expandedItem) {
+      if (item.id != this.expandedItem.id) {
         item.show = true;
-        this.previousExpandedInst = item;
+        this.expandedItem.show = false;
+        this.expandedItem = item;
+      } else {
+        item.show = false;
+        this.expandedItem = null;
       }
-      this.cdRef.detectChanges();
-      return true;
+    } else {
+      item.show = true;
+      this.expandedItem = item;
     }
-    return false;
   }
 
-  async selectInstitution(item, contextMenuClosed = true, asGuest = false) {
-    const id = item.id;
-    if (contextMenuClosed) {
-      // loading indicator here, cuz a call will be made to backend to check if this institution has the Guest-registration settings enabled
-      if (this.shouldOpenContextMenu(item)) {
-        return;
-      }
+  onInstitutionSelected(institution): void {
+    if (institution.guestAllowed) {
+      this.toggleContextMenuPanel(institution);
+      this.cdRef.detectChanges();
+    } else {
+      this.navigate(institution);
     }
+  }
 
+  private async navigate({ id }, navigateAsGuest = false) {
     await this.loadingService.showSpinner();
     this.settingsFacadeService.cleanCache();
     await zip(
@@ -123,15 +126,15 @@ export class InstitutionsPage implements OnInit {
         switchMap(() => this.sessionFacadeService.determineInstitutionSelectionLoginState()),
         tap(loginType => {
           this.loadingService.closeSpinner();
-          this.navigateToLogin(loginType, asGuest);
+          this.navigateToLogin(loginType, navigateAsGuest);
         }),
         take(1)
       )
       .toPromise();
   }
 
-  onContextMenuButton(item, isGuest): void {
-    this.selectInstitution(item, false, isGuest);
+  onContextMenuButton(item, navigateAsGuest): void {
+    this.navigate(item, navigateAsGuest);
     item.show = false;
   }
 

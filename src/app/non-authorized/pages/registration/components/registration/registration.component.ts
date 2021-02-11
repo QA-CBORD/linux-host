@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { LoadingService } from '@core/service/loading/loading.service';
+import { ToastService } from '@core/service/toast/toast.service';
 import { ModalController } from '@ionic/angular';
-import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { Observable, of } from 'rxjs';
-import { formField, PageSetting } from '../../models/registration.shared.model';
+import { STATICFIELDS } from '../../models/form-config';
+import { formField } from '../../models/registration.shared.model';
 import { RegistrationServiceFacade } from '../../services/registration-service-facade';
 
 @Component({
@@ -12,55 +14,71 @@ import { RegistrationServiceFacade } from '../../services/registration-service-f
   styleUrls: ['./registration.component.scss'],
 })
 export class RegistrationComponent implements OnInit {
-  settings: PageSetting;
-  staticFields: formField[] = [];
+  horizontalFields: formField[] = [];
   formFields: formField[] = [];
   registrationFormGroup: FormGroup;
   title$: Observable<string>;
+  btnText$: Observable<string>;
+  protected customLoadingOptions = { message: 'Processing... Please wait', duration: 150000 };
 
   constructor(
-    private readonly registrationServiceFacade: RegistrationServiceFacade,
+    private readonly registrationFacade: RegistrationServiceFacade,
     private readonly fb: FormBuilder,
-    private globalNav: GlobalNavService,
-    private readonly modalCtrl: ModalController
+    private readonly loadingService: LoadingService,
+    private readonly modalCtrl: ModalController,
+    private readonly toastService: ToastService
   ) {}
 
-  ngOnInit() {
-    this.title$ = of('Create An Account');
-    this.setup();
+  async ngOnInit() {
+    await this.formFieldsetup();
+    const data = await this.registrationFacade.registrationContent();
+    this.title$ = of(data.screen_title);
+    this.btnText$ = of(data.submit_btn_text);
   }
 
-  private setup(): void {
-    this.settings = this.registrationServiceFacade.getSetting();
-    const fields = this.registrationServiceFacade.getFormFields();
-    this.globalNav.hideNavBar();
-    const controlsConfig = {};
-    fields.map(field => (controlsConfig[field.controlName] = field.validator));
-    this.registrationFormGroup = this.fb.group(controlsConfig);
-    fields.forEach(field => (field.control = this.registrationFormGroup.get(field.controlName)));
-    fields.forEach(field => {
-      if (field.alignHorizontal) {
-        this.staticFields.push(field);
-      } else {
-        this.formFields.push(field);
-      }
-    });
+  private async formFieldsetup(): Promise<void> {
+    const formFieldList = await this.registrationFacade.getFormFields();
+    const fields = [...formFieldList.horizontalAlignedFields, ...formFieldList.verticalAlignedFields];
+    this.registrationFormGroup = this.fb.group(formFieldList.controls);
+    fields.forEach(field => (field.control = this.registrationFormGroup.get(field.name)));
+    this.horizontalFields = formFieldList.horizontalAlignedFields;
+    this.formFields = formFieldList.verticalAlignedFields;
   }
 
   get firstNameField(): formField {
-    return this.staticFields[0];
+    const { firstName } = STATICFIELDS;
+    return this.horizontalFields.find(({ idd: fieldName }) => fieldName == firstName.idd);
   }
 
   get lastNameField(): formField {
-    return this.staticFields[1];
+    const { lastName } = STATICFIELDS;
+    return this.horizontalFields.find(({ idd: fieldName }) => fieldName == lastName.idd);
   }
 
   onDecline() {
     this.modalCtrl.dismiss(false);
   }
 
-  submitRegistration(formGroup: FormGroup): void {
-    console.log('submitted data: ', formGroup.value);
-    this.registrationServiceFacade.register(formGroup.value).subscribe();
+  async submitRegistration(formGroup: FormGroup): Promise<void> {
+    // do validation here before submit.
+
+    await this.loadingService.showSpinner(this.customLoadingOptions);
+    this.registrationFacade.register(formGroup.value).subscribe(
+      () => {
+        const message = 'Registration Success. please sign in.';
+        this.modalCtrl.dismiss();
+        this.loadingService.closeSpinner();
+        this.toastService.showToast({ message });
+      },
+      () => {
+        const message = 'Registration failed. Please try again later.';
+        this.toastService.showToast({ message });
+        this.loadingService.closeSpinner();
+      },
+      () => {
+        console.log('completed ===>>> ');
+        this.loadingService.closeSpinner();
+      }
+    );
   }
 }

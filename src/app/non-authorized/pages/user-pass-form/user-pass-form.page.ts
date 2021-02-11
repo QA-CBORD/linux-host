@@ -59,7 +59,7 @@ export class UserPassForm implements OnInit {
     private readonly fb: FormBuilder,
     private readonly cdRef: ChangeDetectorRef,
     private readonly modalCtrl: ModalController,
-    private readonly registrationServiceFacade: RegistrationServiceFacade,
+    private readonly registrationFacade: RegistrationServiceFacade,
     private readonly appBrowser: InAppBrowser,
     private readonly environmentFacadeService: EnvironmentFacadeService,
     private readonly accessibilityService: AccessibilityService
@@ -109,7 +109,7 @@ export class UserPassForm implements OnInit {
     const { asGuest: isGuestRegistration } = history.state;
     console.log('history.state.data ==> ', history.state);
     this.loadingService.showSpinner();
-    await this.registrationServiceFacade.onBeforePageLoad(isGuestRegistration);
+    await this.registrationFacade.configure(isGuestRegistration);
     const modal = await this.modalCtrl.create({
       backdropDismiss: false,
       component: RegistrationComponent,

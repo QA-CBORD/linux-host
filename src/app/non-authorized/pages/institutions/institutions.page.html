@@ -41,7 +41,7 @@
 <ng-template #institutionsList>
   <ion-list class="search-institutions__list" mode="ios">
     <div *ngFor="let item of institutions | search : searchString">
-      <ion-item class="search-institutions__item item-stable" lines="none" (click)="selectInstitution(item)">
+      <ion-item class="search-institutions__item item-stable" lines="none" (click)="onInstitutionSelected(item)">
         <ion-label class="search-institutions__name">
           {{ item.name }}
         </ion-label>
@@ -53,7 +53,7 @@
       </ion-item>
       <ion-item class="item-accordion" *ngIf="item.show" lines="none">
         <st-button (click)="onContextMenuButton(item, false)" buttonModifier="rectangular" style="text-transform:none;">
-          Continue as Student
+          {{ asPatronBtnText$ | async }}
         </st-button>
       </ion-item>
       <ion-item class="item-accordion" *ngIf="item.show" lines="none">
@@ -63,7 +63,7 @@
           buttonModifier="rectangular"
           style="text-transform: none;"
         >
-          Continue as Guest
+          {{ asGuestBtnText$ | async }}
         </st-button>
       </ion-item>
     </div>

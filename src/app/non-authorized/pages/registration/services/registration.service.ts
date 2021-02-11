@@ -6,8 +6,6 @@ import { take } from 'rxjs/internal/operators/take';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import {
   LookupFieldInfo,
-  LookupFieldType,
-  PageSetting,
   RegistrationApiMethods,
 } from '../models/registration.shared.model';
 import { HttpClient } from '@angular/common/http';
@@ -15,6 +13,9 @@ import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Settings } from 'src/app/app.global';
 import { Institution } from '@core/model/institution/institution.model';
+import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
+import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_LOCALES } from 'src/app/content-strings';
+import { ContentStringInfo } from '@core/model/content/content-string-info.model';
 
 @Injectable({
   providedIn: 'root',
@@ -28,51 +29,13 @@ export class RegistrationService {
     protected readonly institutionFacadeService: InstitutionFacadeService,
     private readonly http: HttpClient,
     private readonly authFacadeService: AuthFacadeService,
-    private readonly settingsFacadeService: SettingsFacadeService
+    private readonly contentStringFacade: ContentStringsFacadeService
   ) {}
 
   retrieveRegistrationFields(): Observable<LookupFieldInfo[]> {
     return this.makeRPCRequest(RegistrationApiMethods.retrieveRegistrationFields, {}, true, true).pipe(
-      map(({ lookupFields }) => lookupFields || []),
-      catchError(() =>
-        of([
-          {
-            lookupFieldId: 'student_compus_id',
-            displayName: 'Campus ID',
-            displayOrder: 1,
-            type: LookupFieldType.STRING_IGNORECASE,
-            value: '',
-          },
-          {
-            lookupFieldId: 'Media_value',
-            displayName: 'Media value',
-            displayOrder: 0,
-            type: LookupFieldType.MEDIA_VALUE,
-            value: '',
-          },
-          {
-            lookupFieldId: 'Parent_phone',
-            displayName: 'Parent phone',
-            displayOrder: 3,
-            type: LookupFieldType.STRING_IGNORECASE,
-            value: '',
-          },
-          {
-            lookupFieldId: 'Nickname',
-            displayName: 'Nickname',
-            displayOrder: 2,
-            type: LookupFieldType.STRING_FUZZY,
-            value: '',
-          },
-          {
-            lookupFieldId: 'Instagram_user',
-            displayName: 'Instagram user',
-            displayOrder: 0,
-            type: LookupFieldType.MEDIA_VALUE,
-            value: '',
-          },
-        ])
-      )
+      map(({ response }) => response.lookupFields || []),
+      catchError(() => of([]))
     );
   }
 
@@ -104,6 +67,18 @@ export class RegistrationService {
     );
   }
 
+  getAllRegistrationContentString(): Observable<ContentStringInfo[]> {
+    return this.contentStringFacade
+      .fetchContentStrings$(CONTENT_STRINGS_DOMAINS.patronUi, CONTENT_STRINGS_CATEGORIES.mobileRegistration)
+      .pipe(
+        take(1),
+        catchError(err => {
+          console.log('big ass error ==> ', err);
+          return of([]);
+        })
+      );
+  }
+
   institition$(): Observable<Institution> {
     return this.institutionFacadeService.cachedInstitutionInfo$.pipe(take(1));
   }
@@ -112,22 +87,5 @@ export class RegistrationService {
     const sessionId$ = this.authFacadeService.getAuthSessionToken$().pipe(take(1));
     const institutionId$ = this.institition$();
     return zip(sessionId$, institutionId$);
-  }
-
-  getPageSettings(): Observable<PageSetting> {
-    return this.paramsObs$().pipe(
-      switchMap(([sessionId, { id, name: institutionName }]) => {
-        return this.settingsFacadeService.fetchSetting(Settings.Setting.MOBILE_HEADER_COLOR, sessionId, id).pipe(
-          map(({ value }) => {
-            const siteColors = value ? JSON.parse(value)['native-header-bg'] : '166dff';
-            const backgroundColor = `#${siteColors || '166dff'}`;
-            return {
-              backgroundColor,
-              institutionName,
-            };
-          })
-        );
-      })
-    );
   }
 }

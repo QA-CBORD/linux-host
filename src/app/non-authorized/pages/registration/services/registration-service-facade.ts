@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
-import { forkJoin, iif, Observable, of, zip } from 'rxjs';
-import { first, map, tap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 import {
-  formField,
+  FormFieldList,
   GuestRegistrationManager,
-  LookupFieldInfo,
-  PageSetting,
   PatronRegistrationManager,
+  RegistrationContent,
   UserRegistrationManager,
+  UserRegistrationManagerBase,
 } from '../models/registration.shared.model';
 import { RegistrationService } from './registration.service';
 
@@ -15,67 +14,28 @@ import { RegistrationService } from './registration.service';
   providedIn: 'root',
 })
 export class RegistrationServiceFacade {
-  private registrationManager: UserRegistrationManager;
-
+  private _registrationManager: UserRegistrationManager;
   constructor(private readonly registrationService: RegistrationService) {}
 
-  private loadRegistrationFormDynamicFields(): Observable<LookupFieldInfo[]> {
-    return this.registrationService.retrieveRegistrationFields().pipe(
-      map(unSortedList => {
-        unSortedList.sort((a, b) => +a.displayOrder - +b.displayOrder);
-        return unSortedList;
-      })
-    );
+  async configure(isGuest: boolean): Promise<void> {
+    const serviceComponent = this.registrationService;
+    const registrationController =
+      (isGuest && new GuestRegistrationManager(serviceComponent)) || new PatronRegistrationManager(serviceComponent);
+    await registrationController.getFormFields().toPromise();
+    this._registrationManager = registrationController;
   }
 
-  private getPageSettings(): Observable<PageSetting> {
-    return this.registrationService.getPageSettings();
+  async registrationContent(): Promise<RegistrationContent> {
+    const serviceComponent = this.registrationService;
+    const registrationController = new UserRegistrationManagerBase(serviceComponent);
+    return await registrationController.contents.toPromise();
   }
 
-  onBeforePageLoad(isGuest: boolean): Promise<any> {
-    const pageSettingsObs$ = this.getPageSettings().pipe(
-      first(),
-      map(data => ({
-        ...data,
-        isGuest,
-      }))
-    );
-    const dynamicFormFields$ = this.loadRegistrationFormDynamicFields().pipe(first());
-    const combine$ = zip(pageSettingsObs$, dynamicFormFields$)
-      .pipe(
-        map(([settings, dynamicFields]) => ({
-          ...settings,
-          dynamicFields,
-        }))
-      )
-      .pipe(first());
-
-    return iif(() => isGuest, pageSettingsObs$, combine$)
-      .pipe(
-        tap((setting: any) => {
-          if (isGuest) {
-            this.registrationManager = new GuestRegistrationManager(setting, this.registrationService);
-          } else {
-            this.registrationManager = new PatronRegistrationManager(
-              setting,
-              setting.dynamicFields,
-              this.registrationService
-            );
-          }
-        })
-      )
-      .toPromise();
+  async getFormFields(): Promise<FormFieldList> {
+    return await this._registrationManager.getFormFields().toPromise();
   }
 
-  getSetting(): PageSetting {
-    return this.registrationManager.setting;
-  }
-
-  getFormFields(): formField[] {
-    return this.registrationManager.formFields;
-  }
-
-  register(data): Observable<boolean> {
-    return this.registrationManager.register(data);
+  register(data): Observable<any> {
+    return this._registrationManager.register(data);
   }
 }

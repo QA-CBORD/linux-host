@@ -89,7 +89,4 @@ const GENERAL_ERRORS = {
   6113: {
     default: 'There was an issue with the transaction',
   },
-  9004: {
-    default: 'User phone number is required to process this transaction'
-  }
 };
