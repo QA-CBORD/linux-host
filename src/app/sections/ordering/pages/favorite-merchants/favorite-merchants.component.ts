@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ModalController } from '@ionic/angular';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { FavoriteMerchantsService } from './services/favorite-merchants.service';
 import { switchMap, take, first } from 'rxjs/operators';
@@ -11,6 +10,7 @@ import { OrderOptionsActionSheetComponent } from '../../shared/ui-components/ord
 import { LOCAL_ROUTING, ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { ToastService } from '@core/service/toast/toast.service';
+import { ModalsService } from '@core/service/modals/modals.service';
 
 @Component({
   selector: 'st-favorite-merchants',
@@ -25,7 +25,7 @@ export class FavoriteMerchantsComponent implements OnInit {
   constructor(
     private readonly activatedRoute: ActivatedRoute,
     private readonly router: Router,
-    private readonly modalController: ModalController,
+    private readonly modalController: ModalsService,
     private readonly merchantService: MerchantService,
     private readonly loadingService: LoadingService,
     private readonly toastService: ToastService,

@@ -11,7 +11,7 @@ import {
   ORDERING_CONTENT_STRINGS,
 } from '@sections/ordering/ordering.config';
 import { PATRON_NAVIGATION } from '../../../../../../app.global';
-import { ModalController, PopoverController, AlertController } from '@ionic/angular';
+import { PopoverController, AlertController } from '@ionic/angular';
 import { ORDERING_STATUS } from '@sections/ordering/shared/ui-components/recent-oders-list/recent-orders-list-item/recent-orders.config';
 import { BUTTON_TYPE, buttons } from '@core/utils/buttons.config';
 import { OrderOptionsActionSheetComponent } from '@sections/ordering/shared/ui-components/order-options.action-sheet/order-options.action-sheet.component';
@@ -25,6 +25,7 @@ import { OrderingComponentContentStrings, OrderingService } from '@sections/orde
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { ToastService } from '@core/service/toast/toast.service';
+import { ModalsService } from '@core/service/modals/modals.service';
 
 @Component({
   selector: 'st-recent-order',
@@ -43,7 +44,7 @@ export class RecentOrderComponent implements OnInit {
     private readonly merchantService: MerchantService,
     private readonly router: Router,
     private readonly popoverController: PopoverController,
-    private readonly modalController: ModalController,
+    private readonly modalController: ModalsService,
     private readonly cart: CartService,
     private readonly loadingService: LoadingService,
     private readonly toastService: ToastService,
