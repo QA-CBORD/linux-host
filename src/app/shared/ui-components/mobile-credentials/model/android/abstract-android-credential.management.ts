@@ -7,6 +7,8 @@ import { MobileCredential } from '../shared/mobile-credential';
 import { MobileCredentialDataService } from '../shared/mobile-credential-data.service';
 import { CredentialStateChangeListener, MobileCredentialManager } from '../shared/mobile-credential-manager';
 import { AndroidCredential } from './android-credential.model';
+import { Plugins } from '@capacitor/core';
+const { MobileCredentialStatusPlugin } = Plugins;
 
 export abstract class AbstractAndroidCredentialManager implements MobileCredentialManager {
   protected customLoadingOptions = { message: 'Processing ... Please wait', duration: 150000 };
@@ -51,6 +53,24 @@ export abstract class AbstractAndroidCredentialManager implements MobileCredenti
     const alertDialog = await this.createAlertDialog(header, message, buttons);
     this.loadingService.closeSpinner();
     await alertDialog.present();
+  }
+
+  protected async nfcOffAlert(callerOnPreceedHandler?: () => Promise<any>): Promise<void> {
+    this.showLoading();
+    const header = 'NFC is turned off';
+    const message = 'Your NFC setting is turned off for your phone. You can proceed and provision your credential, but it will not work when presented to an NFC reader to open a door or pay for a purchase until you turn on your NFC setting.';
+    const buttons = [
+      { text: 'Cancel', role: 'cancel' },
+      { text: 'Proceed', handler: callerOnPreceedHandler },
+    ];
+    const alert = await this.createAlertDialog(header, message, buttons);
+    this.loadingService.closeSpinner();
+    alert.present();
+  }
+  
+  protected async nfcIsOn(): Promise<boolean> {
+    const response = await MobileCredentialStatusPlugin.deviceNativeState({ credentialType: '' });
+    return response.deviceState.nfcOn;
   }
 
   protected showLoading(): void {

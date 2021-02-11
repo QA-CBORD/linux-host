@@ -9,7 +9,7 @@ import { AlertController, ModalController } from '@ionic/angular';
 import { MobileCredentialsComponent } from '@shared/ui-components/mobile-credentials/mobile-credentials.component';
 import { AbstractAndroidCredentialManager } from '../abstract-android-credential.management';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
-const { GooglePayPlugin, MobileCredentialStatusPlugin } = Plugins;
+const { GooglePayPlugin } = Plugins;
 
 @Injectable({ providedIn: 'root' })
 export class GooglePayCredentialManager extends AbstractAndroidCredentialManager {
@@ -41,11 +41,10 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
       }
     };
     (async () => {
-      const response = await MobileCredentialStatusPlugin.deviceNativeState({ credentialType: '' });
-      if (response.deviceState.nfcOn) {
-        showTermsAndConditions();;
+      if (this.nfcIsOn()) {
+        showTermsAndConditions();
       } else {
-        this.showNFCOffAlert(async () => {
+        this.nfcOffAlert(async () => {
           showTermsAndConditions();
         });
       }
@@ -148,20 +147,5 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
     const terms = await this.credentialServ.termsContentString$();
     this.loadingService.closeSpinner();
     return terms;
-  }
-
-  private async showNFCOffAlert(callerOnAcceptHandler?: () => Promise<any>): Promise<void> {
-    const header = 'Alert';
-    const message =
-      'Your NFC setting is turned off for your phone. You can proceed and provision your credential, but it will not work when presented to a NFC reader to open a door or pay for a purchase until you turn on your NFC setting.';
-    const buttons = [
-      { text: 'Cancel', role: 'cancel' },
-      {
-        text: 'Accept',
-        handler: callerOnAcceptHandler,
-      },
-    ];
-    const alert = await this.createAlertDialog(header, message, buttons);
-    alert.present();
   }
 }
