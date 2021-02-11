@@ -41,7 +41,7 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
       }
     };
     (async () => {
-      if (this.nfcIsOn()) {
+      if (await this.nfcIsOn()) {
         showTermsAndConditions();
       } else {
         this.nfcOffAlert(async () => {
