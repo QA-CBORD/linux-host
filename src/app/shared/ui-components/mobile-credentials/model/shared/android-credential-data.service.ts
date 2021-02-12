@@ -18,6 +18,20 @@ const resourceUrls = {
   credentialsDebug: '../../../../../assets/mock/android_credentials.json',
 };
 
+enum NFCDialogContentStringName {
+  TITLE = 'nfc_off_dialog_title',
+  TEXT = 'nfc_off_dialog_text',
+  ACCEPT_BUTTON = 'nfc_off_dialog_accept',
+  CANCEL_BUTTON = 'nfc_off_dialog_cancel',
+};
+
+export interface NFCDialogContentString {
+  title: string,
+  text: string,
+  acceptButton: string,
+  cancelButton: string,
+};
+
 export class AndroidCredentialDataService extends MobileCredentialDataService {
   constructor(
     private resources: { credentialUrl: string },
@@ -230,5 +244,35 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
         return { credStatus, passes, referenceIdentifier };
       })
     );
+  }
+  
+  async nfcOffContentStrings$(): Promise<NFCDialogContentString> {
+    const contentString = {
+      text: await this.nfcOffContentString$(NFCDialogContentStringName.TEXT),
+      title: await this.nfcOffContentString$(NFCDialogContentStringName.TITLE),
+      acceptButton: await this.nfcOffContentString$(NFCDialogContentStringName.ACCEPT_BUTTON),
+      cancelButton: await this.nfcOffContentString$(NFCDialogContentStringName.CANCEL_BUTTON),
+    }
+     return contentString;
+  }
+
+  private nfcOffContentString$(contentStringName: string = 'nfc_off_dialog_title'): Promise<string> {
+    const contentStringSettings = {
+      domain: CONTENT_STRINGS_DOMAINS.patronUi,
+      category: CONTENT_STRINGS_CATEGORIES.mobileCredential,
+      name: contentStringName,
+    };
+    return super
+      .contentString$(contentStringSettings)
+      .pipe(
+        switchMap(contentString => {
+          if (contentString) {
+            return of(contentString);
+          }
+          return from('No content');
+        }),
+        catchError(() => 'No content')
+      )
+      .toPromise();
   }
 }

@@ -2,7 +2,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { AlertController } from '@ionic/angular';
 import { Observable, of } from 'rxjs';
 import { catchError, finalize, first } from 'rxjs/operators';
-import { AndroidCredentialDataService } from '../shared/android-credential-data.service';
+import { AndroidCredentialDataService, NFCDialogContentString } from '../shared/android-credential-data.service';
 import { MobileCredential } from '../shared/mobile-credential';
 import { MobileCredentialDataService } from '../shared/mobile-credential-data.service';
 import { CredentialStateChangeListener, MobileCredentialManager } from '../shared/mobile-credential-manager';
@@ -55,19 +55,28 @@ export abstract class AbstractAndroidCredentialManager implements MobileCredenti
     await alertDialog.present();
   }
 
-  protected async nfcOffAlert(callerOnPreceedHandler?: () => Promise<any>): Promise<void> {
-    this.showLoading();
-    const header = 'NFC is turned off';
-    const message = 'Your NFC setting is turned off for your phone. You can proceed and provision your credential, but it will not work when presented to an NFC reader to open a door or pay for a purchase until you turn on your NFC setting.';
+  protected async nfcOffAlert(
+    contentString: NFCDialogContentString,
+    callerOnPreceedHandler?: () => Promise<any>
+  ): Promise<void> {
+    const noContent = 'No content';
+    const header = contentString.title != noContent ? contentString.title : 'NFC is turned off';
+    const message =
+      contentString.text != noContent
+        ? contentString.text
+        : 'The NFC setting is turned off for your phone. You can proceed and provision your credential, but it will not work when presented to an NFC reader to open a door or pay for a purchase until you turn on your NFC setting.';
     const buttons = [
-      { text: 'Cancel', role: 'cancel' },
-      { text: 'Proceed', handler: callerOnPreceedHandler },
+      { text: contentString.cancelButton != noContent ? contentString.cancelButton : 'Cancel', role: 'cancel' },
+      {
+        text: contentString.acceptButton != noContent ? contentString.acceptButton : 'Proceed',
+        handler: callerOnPreceedHandler,
+      },
     ];
     const alert = await this.createAlertDialog(header, message, buttons);
     this.loadingService.closeSpinner();
     alert.present();
   }
-  
+
   protected async nfcIsOn(): Promise<boolean> {
     const response = await MobileCredentialStatusPlugin.deviceNativeState({ credentialType: '' });
     return response.deviceState.nfcOn;
