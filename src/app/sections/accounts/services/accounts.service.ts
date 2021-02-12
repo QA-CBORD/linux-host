@@ -95,7 +95,7 @@ export class AccountsService {
   }
 
   getContentValueByName(name: string): string {
-    return this.contentString[name] || '';
+    return this.contentString && this.contentString[name] || '';
   }
 
   getSettingByName(settings: SettingInfo[], name: string): SettingInfo | undefined {

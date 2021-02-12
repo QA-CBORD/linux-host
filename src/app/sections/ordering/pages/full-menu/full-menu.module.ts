@@ -10,6 +10,7 @@ import { FullMenuPopoverComponent } from './full-menu-popover';
 import { StPopoverLayoutModule } from '@shared/ui-components/st-popover-layout/st-popover-layout.module';
 import { AddressHeaderFormatPipeModule } from '@shared/pipes/address-header-format-pipe/address-header-format-pipe.module';
 import { MerchantDistanceModule } from '@shared/pipes/merchant-distance/merchant-distance.module';
+import { ModalsService } from '@core/service/modals/modals.service';
 
 const imports = [
   CommonModule,
@@ -27,6 +28,7 @@ const declarations = [FullMenuComponent, FullMenuPopoverComponent];
 @NgModule({
   declarations,
   imports,
-  entryComponents: [FullMenuPopoverComponent]
+  entryComponents: [FullMenuPopoverComponent],
+  providers: [ModalsService]
 })
 export class FullMenuModule {}
