@@ -256,7 +256,7 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
      return contentString;
   }
 
-  private nfcOffContentString$(contentStringName: string = 'nfc_off_dialog_title'): Promise<string> {
+  private nfcOffContentString$(contentStringName: string): Promise<string> {
     const contentStringSettings = {
       domain: CONTENT_STRINGS_DOMAINS.patronUi,
       category: CONTENT_STRINGS_CATEGORIES.mobileCredential,
