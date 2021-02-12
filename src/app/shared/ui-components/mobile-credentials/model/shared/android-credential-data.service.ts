@@ -10,26 +10,13 @@ import { catchError, first, map, switchMap, take } from 'rxjs/operators';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
 import { AndroidCredential, Persistable } from '../android/android-credential.model';
 import { MobileCredentialDataService } from './mobile-credential-data.service';
+import { NFCDialogContentString, NFCDialogContentStringName } from './credential-content-string';
 
 const api_version = 'v1';
 const resourceUrls = {
   activePasses: `/android/${api_version}/activePasses`,
   activePassesDebug: '../../../../../assets/mock/activepasses.json',
   credentialsDebug: '../../../../../assets/mock/android_credentials.json',
-};
-
-enum NFCDialogContentStringName {
-  TITLE = 'nfc_off_dialog_title',
-  TEXT = 'nfc_off_dialog_text',
-  ACCEPT_BUTTON = 'nfc_off_dialog_accept',
-  CANCEL_BUTTON = 'nfc_off_dialog_cancel',
-};
-
-export interface NFCDialogContentString {
-  title: string,
-  text: string,
-  acceptButton: string,
-  cancelButton: string,
 };
 
 export class AndroidCredentialDataService extends MobileCredentialDataService {
