@@ -21,7 +21,6 @@ import {
 } from '@sections/ordering';
 import { MerchantSettings, ORDERING_CONTENT_STRINGS, PAYMENT_SYSTEM_TYPE } from '@sections/ordering/ordering.config';
 import { AddressInfo } from '@core/model/address/address-info';
-import { ModalController } from '@ionic/angular';
 import { DeliveryAddressesModalComponent } from '@sections/ordering/shared/ui-components/delivery-addresses.modal/delivery-addresses.modal.component';
 import { UserAccount } from '@core/model/account/account.model';
 import { Subscription } from 'rxjs';
@@ -36,6 +35,9 @@ import { AccountType } from 'src/app/app.global';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { take } from 'rxjs/operators';
 import { Plugins } from '@capacitor/core';
+import { UserFacadeService } from '@core/facades/user/user.facade.service';
+import { UserInfoSet } from '@sections/settings/models/setting-items-config.model';
+import { ModalsService } from '@core/service/modals/modals.service';
 const { Keyboard } = Plugins;
 
 @Component({
@@ -82,11 +84,13 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     accountDisplayName: 'Apple Pay',
     isActive: true,
   };
+  user: UserInfoSet;
 
   constructor(
     private readonly fb: FormBuilder,
-    private readonly modalController: ModalController,
-    private readonly orderingService: OrderingService
+    private readonly modalController: ModalsService,
+    private readonly orderingService: OrderingService,
+    private readonly userFacadeService: UserFacadeService
   ) {}
 
   ngOnInit() {
@@ -94,6 +98,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     this.initContentStrings();
     this.updateFormErrorsByContentStrings();
     this.setAccessoryBarVisible(true);
+    this.setPhoneField();
   }
 
   ngOnDestroy() {
@@ -156,6 +161,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
       [DETAILS_FORM_CONTROL_NAMES.address]: [this.orderDetailOptions.address],
       [DETAILS_FORM_CONTROL_NAMES.paymentMethod]: ['', Validators.required],
       [DETAILS_FORM_CONTROL_NAMES.note]: [''],
+      [DETAILS_FORM_CONTROL_NAMES.phone]: [''],
     });
 
     if (!this.mealBased && this.isTipEnabled) {
@@ -171,6 +177,19 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
       this.detailsForm.addControl(DETAILS_FORM_CONTROL_NAMES.tip, this.fb.control(this.tip ? this.tip : ''));
       this.detailsForm.controls[DETAILS_FORM_CONTROL_NAMES.tip].setValidators(tipErrors);
     }
+    const phoneErrors = [
+        formControlErrorDecorator(
+        Validators.required,
+        CONTROL_ERROR[DETAILS_FORM_CONTROL_NAMES.phone].zero
+      ),
+      formControlErrorDecorator(
+        Validators.minLength(3),
+        CONTROL_ERROR[DETAILS_FORM_CONTROL_NAMES.phone].min
+      ),
+      formControlErrorDecorator(Validators.maxLength(32), 
+      CONTROL_ERROR[DETAILS_FORM_CONTROL_NAMES.phone].max),
+    ];
+    this.detailsForm.controls[DETAILS_FORM_CONTROL_NAMES.phone].setValidators(phoneErrors);
     this.subscribeOnFormChanges();
   }
 
@@ -207,6 +226,10 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
 
   get cvvFormControl(): AbstractControl {
     return this.detailsForm.get(DETAILS_FORM_CONTROL_NAMES.cvv);
+  }
+
+  get phone(): AbstractControl {
+    return this.detailsForm.get(DETAILS_FORM_CONTROL_NAMES.phone);
   }
 
   private get addressInfoFormControl(): AbstractControl {
@@ -300,6 +323,23 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
       .pipe(take(1))
       .toPromise();
   }
+
+  private checkFieldValue(field: AbstractControl, value: string) {
+    if (value) {
+      field.setValue(value);
+      field.markAsDirty();
+    }
+  }
+
+  private setPhoneField() {
+    this.userFacadeService
+      .getUser$()
+      .pipe(take(1))
+      .toPromise()
+      .then(user => {
+        this.checkFieldValue(this.phone, user.phone);
+      });
+  }
 }
 
 export enum DETAILS_FORM_CONTROL_NAMES {
@@ -308,6 +348,7 @@ export enum DETAILS_FORM_CONTROL_NAMES {
   cvv = 'cvv',
   tip = 'tip',
   note = 'note',
+  phone = 'phone',
 }
 
 export const CONTROL_ERROR = {
@@ -315,6 +356,11 @@ export const CONTROL_ERROR = {
     min: 'Tip must be greater than zero',
     currency: 'Invalid format',
     subtotal: 'Tip must be less than the Subtotal amount',
+  },
+  [DETAILS_FORM_CONTROL_NAMES.phone]: {
+    zero: 'Phone number is required',
+    min: 'Phone number must have at least three characters',
+    max: 'Phone number is too long',
   },
 };
 
@@ -332,6 +378,7 @@ export interface OrderDetailsFormData {
     [DETAILS_FORM_CONTROL_NAMES.address]: BuildingInfo;
     [DETAILS_FORM_CONTROL_NAMES.paymentMethod]: UserAccount;
     [DETAILS_FORM_CONTROL_NAMES.note]: string;
+    [DETAILS_FORM_CONTROL_NAMES.phone]: string;
   };
   valid: boolean;
 }

@@ -50,7 +50,7 @@ export class ItemDetailComponent implements OnInit {
     private readonly loadingService: LoadingService,
     private readonly toastService: ToastService,
     private readonly orderingService: OrderingService,
-    private readonly popoverController: PopoverController
+    private readonly popoverController: PopoverController,
   ) {}
 
   ngOnInit() {

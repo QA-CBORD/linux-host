@@ -6,6 +6,7 @@
   [fill]="fill"
   (click)="onClickButton($event)"
   [disabled]='disabled'
+  [attr.aria-disabled]='disabled'
   mode="md"
 >
   <ng-content></ng-content>

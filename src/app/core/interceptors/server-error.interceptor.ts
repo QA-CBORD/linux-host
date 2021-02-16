@@ -67,6 +67,9 @@ export class ServerError implements HttpInterceptor {
 }
 
 const GENERAL_ERRORS = {
+  9004: {
+   default: 'There was an issue with the transaction, user phone number missing and required'
+  },
   9999: {
     default: 'Unable to parse response',
   },
