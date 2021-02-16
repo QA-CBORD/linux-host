@@ -84,6 +84,7 @@
   <ng-container *ngIf="(accounts$ | async).length; else emptyFooterBtn">
     <st-button (onClick)="onSubmit()"
                [isDisabled]="requestFundsForm.invalid"
+               [disabled]="requestFundsForm.invalid || isRequesting"
                buttonModifier="submit-button">
       send request
     </st-button>
