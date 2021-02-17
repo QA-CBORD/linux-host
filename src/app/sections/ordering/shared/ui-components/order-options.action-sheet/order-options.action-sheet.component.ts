@@ -275,7 +275,7 @@ export class OrderOptionsActionSheetComponent implements OnInit {
       const [year, month, day] = firstDay.split('-');
       let { hour, period } = schedule.days[0].hourBlocks[0] as any;
       const minutes = schedule.days[0].hourBlocks[0].minuteBlocks[0];
-      hour = period.trim() == 'PM' && hour != 12 ? +hour + 12 : hour;
+      hour = period == 'PM' && hour != 12 ? +hour + 12 : hour;
       this.dateTimePicker = new Date(Number(year), Number(month) - 1, Number(day), hour, minutes);
     }
   }
