@@ -3,6 +3,7 @@
            [backButtonIcon]="'ios-close'"
            [backButtonTitle]="''"
            [isToolbarShow]="true"
+           tabindex="0"
            class="deposit__header"></st-header>
 <ion-content>
   <form [formGroup]="depositForm">
@@ -10,15 +11,15 @@
       <div class="deposit__select-wrapper">
         <ion-label class="deposit__label-select">Payment Method</ion-label>
         <ion-select
-          class="deposit__select"
+          class="deposit__select double-tap"
           cancelText="Cancel"
           mode="md"
-          tabindex="0"
           interface="action-sheet"
           [interfaceOptions]="customActionSheetPaymentOptions"
           formControlName="sourceAccount"
           (ionChange)="onPaymentMethodChanged($event)"
           placeholder="Please Choose"
+          tabindex="0"
           [selectedText]="paymentMethod.value | accountDisplay"
           #paymentMethod
         >
@@ -54,6 +55,7 @@
                      type="tel"
                      maxlength="4"
                      placeholder="CVV"
+                     tabindex="0"
                      formControlName="fromAccountCvv"></ion-input>
           <div class="deposit__input-cvv--error"
                *ngIf="
@@ -72,14 +74,14 @@
       <div class="deposit__select-wrapper">
         <ion-label class="deposit__label-select">To Account</ion-label>
         <ion-select
-          class="deposit__select deposit__select-account"
+          class="deposit__select deposit__select-account double-tap"
           cancelText="Cancel"
           mode="md"
-          tabindex="0"
           interface="action-sheet"
           [interfaceOptions]="customActionSheetOptions"
           formControlName="selectedAccount"
           placeholder="Please Choose"
+          tabindex="0"
           [selectedText]="toAccount.value | destinationAccountDisplay"
           #toAccount
         >
@@ -98,6 +100,7 @@
                         cancelText="Cancel"
                         mode="md"
                         placeholder="Please Choose"
+                        tabindex="0"
                         interface="action-sheet"
                         [interfaceOptions]="customActionSheetOptions"
                         formControlName="mainSelect"
@@ -118,6 +121,7 @@
                        maxlength="10"
                        #inputText
                        placeholder="0"
+                       tabindex="0"
                        [ngStyle]="{ width: inputText.value ? inputText.value.length + 1 + 'ch' : '2ch' }"
                        [ngClass]="{
               'deposit__main-input--focus': focusLine,
@@ -145,14 +149,14 @@
             </div>
           </div>
         </ng-template>
-
-      </div>
+      </div> 
     </section>
   </form>
 </ion-content>
 <ion-footer class="deposit__footer"
             mode="ios">
   <st-button (onClick)="onFormSubmit()"
+             tabindex="0"
              [isDisabled]="!depositForm.valid"
              [disabled]="isDepositing">
              <div id="depositBtnText">Deposit</div>

@@ -39,6 +39,7 @@ const { Browser } = Plugins;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DepositPageComponent implements OnInit, OnDestroy {
+
   private readonly sourceSubscription: Subscription = new Subscription();
   private activePaymentType: PAYMENT_TYPE;
   focusLine: boolean = false;
@@ -65,6 +66,10 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     cssClass: 'custom-deposit-actionSheet custom-deposit-actionSheet-last-btn',
   };
 
+  dissmiss: boolean = false;
+  doubleTapped: boolean = false;
+  facts: any;
+
   constructor(
     private readonly depositService: DepositService,
     private readonly fb: FormBuilder,
@@ -86,10 +91,51 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     this.getAccounts();
     this.applePayEnabled$ = this.userFacadeService.isApplePayEnabled$();
   }
+   
+  async ionViewWillEnter() {
+    let clickEvent = new Event('touchstart');
+    this.facts = document.getElementsByClassName("double-tap");
+    for (var i = 0; i < this.facts.length; i++) {
+      this.facts[i].addEventListener("touchstart", this.tapHandler);
+      this.facts[i].dispatchEvent(clickEvent);
+      this.facts[i].dispatchEvent(clickEvent);
+    }
+  
+  }
+
+   async tapHandler() {
+    if(!this.doubleTapped) {
+        this.doubleTapped = true;
+        setTimeout(function() {  this.doubleTapped = false; }, 300 );
+        return false;
+    }
+    setTimeout(function() {}, 300 );
+    // await this.toastService.showToast({ message: "N/A", duration: 500 });
+    // await this.toastService.showToast.bind(this.toastService);
+    try {
+      // await this.toastService.showToast.bind(this.toastService);
+      await this.toastService.showToast({ message: "N/A", duration: 500 });
+    } catch(error) {
+     // await this.toastService.showToast.bind(this.toastService);
+     await this.toastService.showToast({ message: "N/A", duration: 500 });
+    }
+    // setTimeout(function() {
+    //   this.loadingService.closeSpinner();
+    // }, 500 );
+ }
 
   ngOnDestroy() {
     this.sourceSubscription.unsubscribe();
     this.globalNav.showNavBar();
+  }
+  
+  dismissNav() {
+    // console.log('dismissNav', true)
+    // this.dissmiss = true;
+    // setTimeout(async () => {
+    //   this.dissmiss = false;
+    //   console.log('dismissNav', false)
+    // }, 2000);
   }
 
   get isFreeFromDepositEnabled$(): Observable<boolean> {
