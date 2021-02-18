@@ -30,6 +30,7 @@ import { ApplePayResponse, ApplePay } from '@core/model/add-funds/applepay-respo
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { Plugins } from '@capacitor/core';
 import { ToastService } from '@core/service/toast/toast.service';
+import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 const { Browser } = Plugins;
 
 @Component({
@@ -66,10 +67,6 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     cssClass: 'custom-deposit-actionSheet custom-deposit-actionSheet-last-btn',
   };
 
-  dissmiss: boolean = false;
-  doubleTapped: boolean = false;
-  facts: any;
-
   constructor(
     private readonly depositService: DepositService,
     private readonly fb: FormBuilder,
@@ -81,7 +78,8 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     private readonly cdRef: ChangeDetectorRef,
     private readonly userFacadeService: UserFacadeService,
     private externalPaymentService: ExternalPaymentService,
-    private readonly globalNav: GlobalNavService
+    private readonly globalNav: GlobalNavService,
+    private readonly a11yService: AccessibilityService, 
   ) {}
 
   ngOnInit() {
@@ -90,23 +88,11 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     this.initForm();
     this.getAccounts();
     this.applePayEnabled$ = this.userFacadeService.isApplePayEnabled$();
-    let touchEvent = new Event('touchstart');
-    this.facts = document.getElementsByClassName("double-tap");
-    for (let i = 0; i < this.facts.length; i++) {
-      this.facts[i].addEventListener("touchstart", this.tapHandler);
-      this.facts[i].dispatchEvent(touchEvent);
-      this.facts[i].dispatchEvent(touchEvent);
-    }
   }
 
-   async tapHandler() {
-    if(!this.doubleTapped) {
-        this.doubleTapped = true;
-        setTimeout(function() {  this.doubleTapped = false; }, 300 );
-        return;
-    }
-    await this.toastService.showToast.bind(this.toastService);
- }
+  ionViewWillEnter() {
+   this.a11yService.voiceoverTapOnDirective(document.getElementsByTagName('ion-select'));
+  }
 
   ngOnDestroy() {
     this.sourceSubscription.unsubscribe();
