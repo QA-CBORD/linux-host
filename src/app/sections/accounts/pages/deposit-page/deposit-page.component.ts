@@ -90,52 +90,27 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     this.initForm();
     this.getAccounts();
     this.applePayEnabled$ = this.userFacadeService.isApplePayEnabled$();
-  }
-   
-  async ionViewWillEnter() {
-    let clickEvent = new Event('touchstart');
+    let touchEvent = new Event('touchstart');
     this.facts = document.getElementsByClassName("double-tap");
-    for (var i = 0; i < this.facts.length; i++) {
+    for (let i = 0; i < this.facts.length; i++) {
       this.facts[i].addEventListener("touchstart", this.tapHandler);
-      this.facts[i].dispatchEvent(clickEvent);
-      this.facts[i].dispatchEvent(clickEvent);
+      this.facts[i].dispatchEvent(touchEvent);
+      this.facts[i].dispatchEvent(touchEvent);
     }
-  
   }
 
    async tapHandler() {
     if(!this.doubleTapped) {
         this.doubleTapped = true;
         setTimeout(function() {  this.doubleTapped = false; }, 300 );
-        return false;
+        return;
     }
-    setTimeout(function() {}, 300 );
-    // await this.toastService.showToast({ message: "N/A", duration: 500 });
-    // await this.toastService.showToast.bind(this.toastService);
-    try {
-      // await this.toastService.showToast.bind(this.toastService);
-      await this.toastService.showToast({ message: "N/A", duration: 500 });
-    } catch(error) {
-     // await this.toastService.showToast.bind(this.toastService);
-     await this.toastService.showToast({ message: "N/A", duration: 500 });
-    }
-    // setTimeout(function() {
-    //   this.loadingService.closeSpinner();
-    // }, 500 );
+    await this.toastService.showToast.bind(this.toastService);
  }
 
   ngOnDestroy() {
     this.sourceSubscription.unsubscribe();
     this.globalNav.showNavBar();
-  }
-  
-  dismissNav() {
-    // console.log('dismissNav', true)
-    // this.dissmiss = true;
-    // setTimeout(async () => {
-    //   this.dissmiss = false;
-    //   console.log('dismissNav', false)
-    // }, 2000);
   }
 
   get isFreeFromDepositEnabled$(): Observable<boolean> {
