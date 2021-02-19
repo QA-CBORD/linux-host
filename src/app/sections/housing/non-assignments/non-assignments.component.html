@@ -1,3 +1,5 @@
-<p>
-  non-assignments works!
-</p>
+<ion-list 
+  *ngIf="(nonAssignmentsStateService.nonAssignments$ | async) as nonAssignments" 
+  class="ion-no-padding bg-transparent">
+  <st-non-assignments-list [nonAssignments]="nonAssignments"></st-non-assignments-list>
+</ion-list>
