@@ -10,6 +10,7 @@ import { catchError, first, map, switchMap, take } from 'rxjs/operators';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
 import { AndroidCredential, Persistable } from '../android/android-credential.model';
 import { MobileCredentialDataService } from './mobile-credential-data.service';
+import { NFCDialogContentString, NFCDialogContentStringName } from './credential-content-string';
 
 const api_version = 'v1';
 const resourceUrls = {
@@ -230,5 +231,35 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
         return { credStatus, passes, referenceIdentifier };
       })
     );
+  }
+  
+  async nfcOffContentStrings$(): Promise<NFCDialogContentString> {
+    const contentString = {
+      text: await this.nfcOffContentString$(NFCDialogContentStringName.TEXT),
+      title: await this.nfcOffContentString$(NFCDialogContentStringName.TITLE),
+      acceptButton: await this.nfcOffContentString$(NFCDialogContentStringName.ACCEPT_BUTTON),
+      cancelButton: await this.nfcOffContentString$(NFCDialogContentStringName.CANCEL_BUTTON),
+    }
+     return contentString;
+  }
+
+  private nfcOffContentString$(contentStringName: string): Promise<string> {
+    const contentStringSettings = {
+      domain: CONTENT_STRINGS_DOMAINS.patronUi,
+      category: CONTENT_STRINGS_CATEGORIES.mobileCredential,
+      name: contentStringName,
+    };
+    return super
+      .contentString$(contentStringSettings)
+      .pipe(
+        switchMap(contentString => {
+          if (contentString) {
+            return of(contentString);
+          }
+          return from('No content');
+        }),
+        catchError(() => 'No content')
+      )
+      .toPromise();
   }
 }

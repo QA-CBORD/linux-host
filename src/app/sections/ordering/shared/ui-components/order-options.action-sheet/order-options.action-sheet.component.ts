@@ -273,8 +273,9 @@ export class OrderOptionsActionSheetComponent implements OnInit {
       const schedule = this.activeOrderType === ORDER_TYPE.PICKUP ? this.schedulePickup : this.scheduleDelivery;
       const firstDay = schedule.days[0].date;
       const [year, month, day] = firstDay.split('-');
-      const { hour } = schedule.days[0].hourBlocks[0];
+      let { hour, period } = schedule.days[0].hourBlocks[0] as any;
       const minutes = schedule.days[0].hourBlocks[0].minuteBlocks[0];
+      hour = period.trim() == 'PM' && hour != 12 ? +hour + 12 : hour;
       this.dateTimePicker = new Date(Number(year), Number(month) - 1, Number(day), hour, minutes);
     }
   }

@@ -14,7 +14,6 @@ import { PriceUnitsResolverModule } from '@sections/ordering/shared/pipes/price-
 import { StButtonModule } from '@shared/ui-components/st-button/st-button.module';
 import { ItemDetailModalComponent } from '@sections/ordering/pages/item-detail/components/item-detail-modal/item-detail-modal.component';
 import { StPopoverLayoutModule } from '@shared/ui-components/st-popover-layout/st-popover-layout.module';
-import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 
 const declarations = [ItemDetailComponent, SingleListComponent, MultiListComponent, ItemDetailModalComponent];
 const imports = [
@@ -39,6 +38,6 @@ const imports = [
   ],
   exports: [ItemDetailComponent],
   entryComponents: [ItemDetailComponent, ItemDetailModalComponent],
-  providers: [ItemDetailResolver, AccessibilityService],
+  providers: [ItemDetailResolver],
 })
 export class ItemDetailModule {}

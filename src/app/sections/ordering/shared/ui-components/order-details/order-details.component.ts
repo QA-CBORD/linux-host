@@ -21,7 +21,6 @@ import {
 } from '@sections/ordering';
 import { MerchantSettings, ORDERING_CONTENT_STRINGS, PAYMENT_SYSTEM_TYPE } from '@sections/ordering/ordering.config';
 import { AddressInfo } from '@core/model/address/address-info';
-import { ModalController } from '@ionic/angular';
 import { DeliveryAddressesModalComponent } from '@sections/ordering/shared/ui-components/delivery-addresses.modal/delivery-addresses.modal.component';
 import { UserAccount } from '@core/model/account/account.model';
 import { Subscription } from 'rxjs';
@@ -38,6 +37,7 @@ import { take } from 'rxjs/operators';
 import { Plugins } from '@capacitor/core';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { UserInfoSet } from '@sections/settings/models/setting-items-config.model';
+import { ModalsService } from '@core/service/modals/modals.service';
 const { Keyboard } = Plugins;
 
 @Component({
@@ -88,7 +88,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
 
   constructor(
     private readonly fb: FormBuilder,
-    private readonly modalController: ModalController,
+    private readonly modalController: ModalsService,
     private readonly orderingService: OrderingService,
     private readonly userFacadeService: UserFacadeService
   ) {}
@@ -358,8 +358,8 @@ export const CONTROL_ERROR = {
     subtotal: 'Tip must be less than the Subtotal amount',
   },
   [DETAILS_FORM_CONTROL_NAMES.phone]: {
-    zero: 'Enter a valid phone number',
-    min: 'Phone number must have at least three digits',
+    zero: 'Phone number is required',
+    min: 'Phone number must have at least three characters',
     max: 'Phone number is too long',
   },
 };
