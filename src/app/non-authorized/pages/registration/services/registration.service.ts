@@ -4,23 +4,20 @@ import { RPCQueryConfig } from '@core/interceptors/query-config.model';
 import { Observable, throwError, zip, of } from 'rxjs';
 import { take } from 'rxjs/internal/operators/take';
 import { catchError, map, switchMap } from 'rxjs/operators';
-import {
-  LookupFieldInfo,
-  RegistrationApiMethods,
-} from '../models/registration.shared.model';
+import { LookupFieldInfo, RegistrationApiMethods } from '../models/registration.shared.model';
 import { HttpClient } from '@angular/common/http';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
-import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
-import { Settings } from 'src/app/app.global';
 import { Institution } from '@core/model/institution/institution.model';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
-import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_LOCALES } from 'src/app/content-strings';
+import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RegistrationService {
+  private institutionPage_key = '';
+
   private readonly endpoints = {
     user: '/json/user',
   };
@@ -67,16 +64,11 @@ export class RegistrationService {
     );
   }
 
-  getAllRegistrationContentString(): Observable<ContentStringInfo[]> {
-    return this.contentStringFacade
-      .fetchContentStrings$(CONTENT_STRINGS_DOMAINS.patronUi, CONTENT_STRINGS_CATEGORIES.mobileRegistration)
-      .pipe(
-        take(1),
-        catchError(err => {
-          console.log('big ass error ==> ', err);
-          return of([]);
-        })
-      );
+  getContentStringByCategory$(category: CONTENT_STRINGS_CATEGORIES): Observable<ContentStringInfo[]> {
+    return this.contentStringFacade.fetchContentStrings$(CONTENT_STRINGS_DOMAINS.patronUi, category).pipe(
+      take(1),
+      catchError(() => of([]))
+    );
   }
 
   institition$(): Observable<Institution> {

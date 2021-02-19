@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { GUEST_ROUTES } from './non-authorized.config';
+import { PreLoginDataResolverService } from './pages/pre-login/service/pre-login-data-resolver.service';
 
 const routes: Routes = [
   {
@@ -23,6 +24,13 @@ const routes: Routes = [
   {
     path: GUEST_ROUTES.login,
     loadChildren: './pages/user-pass-form/user-pass-form.module#UserPassFormPageModule',
+  },
+  {
+    path: GUEST_ROUTES.pre_login,
+    loadChildren: './pages/pre-login/pre-login.module#PreLoginModule',
+    resolve: {
+      data: PreLoginDataResolverService,
+    },
   },
   {
     path: GUEST_ROUTES.forgotPassword,

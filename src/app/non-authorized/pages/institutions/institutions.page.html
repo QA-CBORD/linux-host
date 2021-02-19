@@ -46,25 +46,10 @@
           {{ item.name }}
         </ion-label>
         <ion-icon
-          [ngClass]="{'search-institutions__item-continue': !item.show}"
+          class="search-institutions__item-continue"
           src="/assets/icon/angle-down-select.svg"
           aria-label="continue"
         ></ion-icon>
-      </ion-item>
-      <ion-item class="item-accordion" *ngIf="item.show" lines="none">
-        <st-button (click)="onContextMenuButton(item, false)" buttonModifier="rectangular" style="text-transform:none;">
-          {{ asPatronBtnText$ | async }}
-        </st-button>
-      </ion-item>
-      <ion-item class="item-accordion" *ngIf="item.show" lines="none">
-        <st-button
-          [isDisabled]="true"
-          (click)="onContextMenuButton(item, true)"
-          buttonModifier="rectangular"
-          style="text-transform: none;"
-        >
-          {{ asGuestBtnText$ | async }}
-        </st-button>
       </ion-item>
     </div>
   </ion-list>

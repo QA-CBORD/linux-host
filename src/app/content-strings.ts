@@ -14,7 +14,8 @@ export enum CONTENT_STRINGS_CATEGORIES {
   aboutScreen = 'about_screen',
   termsScreen = 'terms_screen',
   mobileCredential = 'mobile-credential',
-  mobileRegistration = 'mobile-registration'
+  mobileRegistration = 'mobile-registration',
+  pre_login = 'pre_login'
 }
 
 export enum CONTENT_STRINGS_LOCALES {

@@ -2,7 +2,7 @@ import { Settings, PATRON_NAVIGATION, ROLES } from './../../../app.global';
 import { map, skipWhile, tap, take } from 'rxjs/operators';
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { InstitutionPhotoInfo, Institution } from '@core/model/institution';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
@@ -105,11 +105,10 @@ export class UserPassForm implements OnInit {
     this.appBrowser.create(link, '_system');
   }
 
-  async redirectToSignup(): Promise<void> {
-    const { asGuest: isGuestRegistration } = history.state;
+  async doHostedSignup({ asGuest: isGuestRegistration }): Promise<void> {
     console.log('history.state.data ==> ', history.state);
     this.loadingService.showSpinner();
-    await this.registrationFacade.configure(isGuestRegistration);
+    await this.registrationFacade.registrationConfig(isGuestRegistration);
     const modal = await this.modalCtrl.create({
       backdropDismiss: false,
       component: RegistrationComponent,
@@ -117,13 +116,22 @@ export class UserPassForm implements OnInit {
     await modal.present();
     this.loadingService.closeSpinner();
     const { data } = await modal.onDidDismiss();
-    console.log('registration results: ==> ', data);
-    // this.router.navigate([GUEST_ROUTES.patronRegistration], { replaceUrl: true });
-    // return;
+    console.log('Registration Results: => ', data);
+  }
 
-    // const { shortName } = await this.institutionFacadeService.cachedInstitutionInfo$.pipe(take(1)).toPromise();
-    // const url = `${this.environmentFacadeService.getSitesURL()}/${shortName}/full/register.php`;
-    // this.appBrowser.create(url, '_system');
+  onSignup(): void {
+    const { navParams } = history.state;
+    if(navParams && this.registrationFacade.guestLoginSupportedInEnv) {
+      this.doHostedSignup(navParams);
+    } else {
+      this.redirectToSignup();
+    }
+  }
+
+  async redirectToSignup(): Promise<void> {
+    const { shortName } = await this.institutionFacadeService.cachedInstitutionInfo$.pipe(take(1)).toPromise();
+    const url = `${this.environmentFacadeService.getSitesURL()}/${shortName}/full/register.php`;
+    this.appBrowser.create(url, '_system');
   }
 
   async redirectToForgotPassword(): Promise<void> {

@@ -47,6 +47,10 @@ export class InstitutionLookupListItem {
     return this._shortName;
   }
 
+  get acuteCare(): boolean {
+    return this.type == 1;
+  }
+
   get type(): number {
     return this._type;
   }
@@ -63,7 +67,7 @@ export class InstitutionLookupListItem {
     return this._guestLoginNotRequired;
   }
 
-  get guestAllowed(): boolean {
+  get guestRegSupported(): boolean {
     return this._guestLogin || this._guestDeposit || this._guestLoginNotRequired;
   }
 }

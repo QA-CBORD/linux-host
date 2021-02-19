@@ -31,7 +31,7 @@ export class RegistrationComponent implements OnInit {
 
   async ngOnInit() {
     await this.formFieldsetup();
-    const data = await this.registrationFacade.registrationContent();
+    const data = await this.registrationFacade.pageContentStrings();
     this.title$ = of(data.screen_title);
     this.btnText$ = of(data.submit_btn_text);
   }
