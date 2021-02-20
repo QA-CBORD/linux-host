@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ModalController, PopoverController } from '@ionic/angular';
+import { IonSelect, ModalController, PopoverController } from '@ionic/angular';
 import { map, switchMap, take, tap, finalize } from 'rxjs/operators';
 import {
   ACCOUNTS_VALIDATION_ERRORS,
@@ -40,7 +40,6 @@ const { Browser } = Plugins;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DepositPageComponent implements OnInit, OnDestroy {
-
   private readonly sourceSubscription: Subscription = new Subscription();
   private activePaymentType: PAYMENT_TYPE;
   focusLine: boolean = false;
@@ -67,6 +66,9 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     cssClass: 'custom-deposit-actionSheet custom-deposit-actionSheet-last-btn',
   };
 
+  @ViewChild('paymentMethod') selectRef: IonSelect;
+  handleTaps: boolean;
+
   constructor(
     private readonly depositService: DepositService,
     private readonly fb: FormBuilder,
@@ -79,7 +81,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     private readonly userFacadeService: UserFacadeService,
     private externalPaymentService: ExternalPaymentService,
     private readonly globalNav: GlobalNavService,
-    private readonly a11yService: AccessibilityService, 
+    private readonly a11yService: AccessibilityService
   ) {}
 
   ngOnInit() {
@@ -90,8 +92,8 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     this.applePayEnabled$ = this.userFacadeService.isApplePayEnabled$();
   }
 
-  ionViewWillEnter() {
-   this.a11yService.voiceoverTapOnDirective(document.getElementsByTagName('ion-select'));
+  async ionViewWillEnter() {
+    this.handleTaps = await this.a11yService.isVoiceOverEnabled();
   }
 
   ngOnDestroy() {
@@ -468,7 +470,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
             () => this.finalizeDepositModal(data),
             error => this.onErrorRetrieve(error || 'Your information could not be verified.')
           );
-      } 
+      }
       if (role === BUTTON_TYPE.CANCEL) {
         this.isDepositing = false;
         this.cdRef.detectChanges();
@@ -541,5 +543,13 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     const depositSetting = this.depositService.getSettingByName(settings, property);
 
     return depositSetting.value;
+  }
+
+  openActionSheet() {
+    if (this.handleTaps) {
+      if (this.a11yService.doubleTapSequence()) {
+        this.selectRef.open(); 
+      }
+    }
   }
 }

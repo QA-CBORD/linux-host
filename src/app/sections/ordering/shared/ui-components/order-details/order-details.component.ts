@@ -8,6 +8,7 @@ import {
   OnInit,
   Output,
   SimpleChanges,
+  ViewChild,
 } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
@@ -38,6 +39,9 @@ import { Plugins } from '@capacitor/core';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { UserInfoSet } from '@sections/settings/models/setting-items-config.model';
 import { ModalsService } from '@core/service/modals/modals.service';
+import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
+import { IonSelect } from '@ionic/angular';
+
 const { Keyboard } = Plugins;
 
 @Component({
@@ -74,6 +78,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     Partial<OrderPayment> | string
   >();
   @Output() onOrderTipChanged: EventEmitter<number> = new EventEmitter<number>();
+  @ViewChild('paymentMethod') selectRef: IonSelect;
 
   private readonly sourceSub = new Subscription();
   contentStrings: OrderingComponentContentStrings = <OrderingComponentContentStrings>{};
@@ -85,12 +90,14 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     isActive: true,
   };
   user: UserInfoSet;
+  handleTaps: boolean;
 
   constructor(
     private readonly fb: FormBuilder,
     private readonly modalController: ModalsService,
     private readonly orderingService: OrderingService,
-    private readonly userFacadeService: UserFacadeService
+    private readonly userFacadeService: UserFacadeService,
+    private readonly a11yService: AccessibilityService, 
   ) {}
 
   ngOnInit() {
@@ -100,7 +107,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     this.setAccessoryBarVisible(true);
     this.setPhoneField();
   }
-
+ 
   ngOnDestroy() {
     this.sourceSub.unsubscribe();
     this.setAccessoryBarVisible(false);
@@ -110,6 +117,9 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     if (orderDetailOptions && orderDetailOptions.currentValue === null) {
       this.orderDetailOptions = {} as OrderDetailOptions;
     }
+    this.a11yService.isVoiceOverEnabled().then((value) =>{
+      this.handleTaps = value;
+    });
   }
 
   get controlsNames() {
@@ -340,6 +350,14 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
         this.checkFieldValue(this.phone, user.phone);
       });
   }
+
+  openActionSheet() {
+    if (this.handleTaps) {
+      if (this.a11yService.doubleTapSequence()) {
+        this.selectRef.open(); 
+      }
+    }
+  } 
 }
 
 export enum DETAILS_FORM_CONTROL_NAMES {

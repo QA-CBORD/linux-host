@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Capacitor, Plugins } from '@capacitor/core';
-import { ToastService } from '@core/service/toast/toast.service';
 
 const { Accessibility } = Plugins;
 const READ_ALOUD_DELAY = 2000;
@@ -8,8 +7,8 @@ const TAP_TIME_LAPSE = 300;
 
 @Injectable()
 export class AccessibilityService {
-  constructor(private readonly toastService: ToastService) {}
-  private doubleTapped: boolean = false;
+  constructor() {}
+  private toggle = false;
 
   readAloud(text: string) {
     return Accessibility.isScreenReaderEnabled().then(isRunning => {
@@ -21,25 +20,25 @@ export class AccessibilityService {
     });
   }
 
-  voiceoverTapOnDirective(elements: HTMLCollectionOf<Element>) {
+  isVoiceOverEnabled(): Promise<boolean> {
+    return Accessibility.isScreenReaderEnabled().then(isRunning => {
+      if (isRunning.value) {
         if (Capacitor.platform === 'ios') {
-          const eventName = 'touchstart';
-          const touchEvent = new Event(eventName);
-          for (let i = 0; i < elements.length; i++) {
-            elements[i].addEventListener(eventName, this.tapHandler);
-            elements[i].dispatchEvent(touchEvent);
-          }
+          return true;
+        }
       }
+      return false;
+    });
   }
 
-  private async tapHandler(event) {
-    if (!this.doubleTapped) {
-      this.doubleTapped = true;
-      setTimeout(function() {
-        this.doubleTapped = false;
+  doubleTapSequence() {
+    if (!this.toggle) {
+      this.toggle = true;
+      setTimeout(() => {
+        this.toggle = false;
       }, TAP_TIME_LAPSE);
-      return;
+      return false;
     }
-    await this.toastService.showToast.bind(this.toastService);
+    return true;
   }
 }

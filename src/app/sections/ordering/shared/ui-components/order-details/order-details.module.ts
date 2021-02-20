@@ -17,6 +17,7 @@ import { AccessibleSelectModule } from '@shared/accessibility/directives/accessi
 import { AccountDisplayPipe } from '@sections/accounts/shared/pipes/account-display/account-display.pipe';
 import { StInputFloatingLabelModule } from '@shared/ui-components/st-input-floating-label/st-input-floating-label.module';
 import { ModalsService } from '@core/service/modals/modals.service';
+import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 
 const declarations = [OrderDetailsComponent, TypeMessagePipe, AccountTypeResolverPipe];
 
@@ -36,6 +37,6 @@ const declarations = [OrderDetailsComponent, TypeMessagePipe, AccountTypeResolve
     StInputFloatingLabelModule,
   ],
   exports: [OrderDetailsComponent],
-  providers: [CreditCardTypePipe, PriceUnitsResolverPipe, AccountDisplayPipe, ModalsService],
+  providers: [CreditCardTypePipe, PriceUnitsResolverPipe, AccountDisplayPipe, ModalsService, AccessibilityService],
 })
 export class OrderDetailsModule {}
