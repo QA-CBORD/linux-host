@@ -353,7 +353,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
 
   openActionSheet() {
     if (this.handleTaps) {
-      if (this.a11yService.doubleTapSequence()) {
+      if (this.a11yService.isDoubleTapSequence()) {
         this.selectRef.open(); 
       }
     }

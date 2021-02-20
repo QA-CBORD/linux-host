@@ -547,7 +547,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
 
   openActionSheet() {
     if (this.handleTaps) {
-      if (this.a11yService.doubleTapSequence()) {
+      if (this.a11yService.isDoubleTapSequence()) {
         this.selectRef.open(); 
       }
     }

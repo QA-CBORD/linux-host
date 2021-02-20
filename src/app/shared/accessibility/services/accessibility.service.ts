@@ -31,7 +31,7 @@ export class AccessibilityService {
     });
   }
 
-  doubleTapSequence() {
+  isDoubleTapSequence() {
     if (!this.toggle) {
       this.toggle = true;
       setTimeout(() => {
