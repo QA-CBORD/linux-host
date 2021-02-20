@@ -20,7 +20,7 @@ export class AccessibilityService {
     });
   }
 
-  isVoiceOverEnabled(): Promise<boolean> {
+  get isVoiceOverEnabled$(): Promise<boolean> {
     return Accessibility.isScreenReaderEnabled().then(isRunning => {
       if (isRunning.value) {
         if (Capacitor.platform === 'ios') {
@@ -31,7 +31,18 @@ export class AccessibilityService {
     });
   }
 
-  isDoubleTapSequence() {
+  get isVoiceOverClick$(): Promise<boolean> {
+    return this.isVoiceOverEnabled$.then(enabled => {
+      if (enabled) {
+        if (this.isDoubleTapSequence()) {
+          return true;
+        }
+      }
+      return false;
+    });
+  }
+
+  private isDoubleTapSequence() {
     if (!this.toggle) {
       this.toggle = true;
       setTimeout(() => {

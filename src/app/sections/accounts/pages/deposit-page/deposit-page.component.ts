@@ -67,7 +67,6 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   };
 
   @ViewChild('paymentMethod') selectRef: IonSelect;
-  handleTaps: boolean;
 
   constructor(
     private readonly depositService: DepositService,
@@ -90,10 +89,6 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     this.initForm();
     this.getAccounts();
     this.applePayEnabled$ = this.userFacadeService.isApplePayEnabled$();
-  }
-
-  async ionViewWillEnter() {
-    this.handleTaps = await this.a11yService.isVoiceOverEnabled();
   }
 
   ngOnDestroy() {
@@ -484,6 +479,14 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     return `${i}-${Math.random()}`;
   }
 
+  openActionSheet() {
+    this.a11yService.isVoiceOverClick$.then((value) => {
+      if(value) {
+        this.selectRef.open(); 
+      }   
+     });
+    }
+
   private resetControls(controlNames: string[]) {
     controlNames.forEach(
       controlName => this.depositForm.contains(controlName) && this.depositForm.get(controlName).reset()
@@ -543,13 +546,5 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     const depositSetting = this.depositService.getSettingByName(settings, property);
 
     return depositSetting.value;
-  }
-
-  openActionSheet() {
-    if (this.handleTaps) {
-      if (this.a11yService.isDoubleTapSequence()) {
-        this.selectRef.open(); 
-      }
-    }
   }
 }

@@ -90,7 +90,6 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     isActive: true,
   };
   user: UserInfoSet;
-  handleTaps: boolean;
 
   constructor(
     private readonly fb: FormBuilder,
@@ -117,9 +116,6 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
     if (orderDetailOptions && orderDetailOptions.currentValue === null) {
       this.orderDetailOptions = {} as OrderDetailOptions;
     }
-    this.a11yService.isVoiceOverEnabled().then((value) =>{
-      this.handleTaps = value;
-    });
   }
 
   get controlsNames() {
@@ -241,6 +237,14 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   get phone(): AbstractControl {
     return this.detailsForm.get(DETAILS_FORM_CONTROL_NAMES.phone);
   }
+  
+  openActionSheet() {
+    this.a11yService.isVoiceOverClick$.then((value) => {
+      if(value) {
+        this.selectRef.open(); 
+      }   
+    });
+  } 
 
   private get addressInfoFormControl(): AbstractControl {
     return this.detailsForm.get(DETAILS_FORM_CONTROL_NAMES.address);
@@ -350,14 +354,6 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
         this.checkFieldValue(this.phone, user.phone);
       });
   }
-
-  openActionSheet() {
-    if (this.handleTaps) {
-      if (this.a11yService.isDoubleTapSequence()) {
-        this.selectRef.open(); 
-      }
-    }
-  } 
 }
 
 export enum DETAILS_FORM_CONTROL_NAMES {
