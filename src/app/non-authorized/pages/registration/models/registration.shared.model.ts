@@ -68,6 +68,7 @@ export interface RegFormStringModel {
 export interface PreLoginStringModel {
   continue_as_guest: string;
   continue_as_nonguest: string;
+  pre_login_instruction: string;
 }
 
 /**
