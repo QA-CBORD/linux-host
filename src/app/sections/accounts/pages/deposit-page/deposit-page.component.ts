@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ModalController, PopoverController } from '@ionic/angular';
+import { IonSelect, ModalController, PopoverController } from '@ionic/angular';
 import { map, switchMap, take, tap, finalize } from 'rxjs/operators';
 import {
   ACCOUNTS_VALIDATION_ERRORS,
@@ -30,6 +30,7 @@ import { ApplePayResponse, ApplePay } from '@core/model/add-funds/applepay-respo
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 import { Plugins } from '@capacitor/core';
 import { ToastService } from '@core/service/toast/toast.service';
+import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 const { Browser } = Plugins;
 
 @Component({
@@ -65,6 +66,8 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     cssClass: 'custom-deposit-actionSheet custom-deposit-actionSheet-last-btn',
   };
 
+  @ViewChild('paymentMethod') selectRef: IonSelect;
+
   constructor(
     private readonly depositService: DepositService,
     private readonly fb: FormBuilder,
@@ -76,7 +79,8 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     private readonly cdRef: ChangeDetectorRef,
     private readonly userFacadeService: UserFacadeService,
     private externalPaymentService: ExternalPaymentService,
-    private readonly globalNav: GlobalNavService
+    private readonly globalNav: GlobalNavService,
+    private readonly a11yService: AccessibilityService
   ) {}
 
   ngOnInit() {
@@ -461,7 +465,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
             () => this.finalizeDepositModal(data),
             error => this.onErrorRetrieve(error || 'Your information could not be verified.')
           );
-      } 
+      }
       if (role === BUTTON_TYPE.CANCEL) {
         this.isDepositing = false;
         this.cdRef.detectChanges();
@@ -474,6 +478,14 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   trackByAccountId(i: number): string {
     return `${i}-${Math.random()}`;
   }
+
+  openActionSheet() {
+    this.a11yService.isVoiceOverClick$.then((value) => {
+      if(value) {
+        this.selectRef.open(); 
+      }   
+     });
+    }
 
   private resetControls(controlNames: string[]) {
     controlNames.forEach(
