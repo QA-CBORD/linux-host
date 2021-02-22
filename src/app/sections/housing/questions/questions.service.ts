@@ -106,11 +106,7 @@ export class QuestionsService {
     let groups: any = {};
 
     assetTypeGroup.forEach((at: AssetTypeDetailValue[], index: number) => {
-      const controls: FormControl[] = at.map((detail: AssetTypeDetailValue) => new FormControl({
-        label: detail.label,
-        value: detail.value,
-        disable: true
-      }));
+      const controls: FormControl[] = at.map((detail: AssetTypeDetailValue) => new FormControl(detail.value));
       groups[`aaa-${index}`] = new FormArray(controls);
     });
 

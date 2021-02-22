@@ -122,7 +122,7 @@ export class NonAssignmentsService {
           assetTypeValue = new AssetTypeDetailValue({
             label: nameLabel,
             value: assetType.name,
-            selected: true
+            selected: false,
           });
           // Number of Meals
         } else if (e.value === '1') {

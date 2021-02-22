@@ -1,5 +1,13 @@
-<ion-card *ngFor="let assetType of question.assetTypes">
-  <ion-card-header class="item_header">
-    <ion-card-subtitle>The subtitle</ion-card-subtitle>
-  </ion-card-header>
+<ion-card class="ion-no-padding" *ngFor="let assetType of question.assetTypes">
+  <div *ngFor="let field of assetType; index as idx">
+    <ion-card-header class="item_header" *ngIf="field.selected === false">
+      <ion-card-subtitle>{{ field.value }}</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content class="ion-no-padding ion-no-margin" *ngIf="field.selected === true">
+      <ion-item>
+        <ion-label position="floating">{{ field.label }}</ion-label>
+        <ion-input value="{{ field.value }}" readonly></ion-input>
+      </ion-item>
+    </ion-card-content>
+  </div>
 </ion-card>

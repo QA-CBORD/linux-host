@@ -4,6 +4,7 @@ import {
   Input,
   OnInit
 } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { AssetTypeDetailValue } from '../non-assignments/non-assignments.model';
 import { QuestionAssetTypeDetails } from '../questions/types';
 
@@ -15,6 +16,7 @@ import { QuestionAssetTypeDetails } from '../questions/types';
 })
 export class AssetTypeDetailsComponent implements OnInit {
   @Input() question: QuestionAssetTypeDetails;
+  @Input() parentGroup: FormGroup;
 
   constructor() { }
 
