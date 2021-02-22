@@ -7,7 +7,7 @@
     [ngClass]="{ 'select__control--error': isError }"
     (ionChange)="onChangeHandler($event)"
     (ionBlur)="onBlur()"
-    (ionFocus)="onFocus()"
+    (ionFocus)="onFocus(); onDoubleTap()"
     interface="{{ interface }}"
     [disabled]="isDisabled"
     id="{{ idd }}"
@@ -15,6 +15,7 @@
     [selectedText]="selectedText"
     [attr.a11y-placeholder]="label"
     tabindex="0"
+    #selector
   >
     <ng-content select="[role=options]"></ng-content>
   </ion-select>
