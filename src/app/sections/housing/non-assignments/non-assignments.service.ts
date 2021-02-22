@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormArray, FormControl, FormGroup } from '@angular/forms';
 
 import { Observable } from 'rxjs';
+import { map, withLatestFrom } from 'rxjs/operators';
 
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import {
@@ -9,24 +10,27 @@ import {
   QuestionsStorageService
 } from '@sections/housing/questions/questions-storage.service';
 import {
+  QuestionAssetTypeDetails,
+  QuestionAssetTypeDetailsBase,
   QuestionBase,
-  QuestionChargeSchedule,
-  QuestionChargeScheduleBase,
   QuestionCheckboxGroup,
   QuestionFormControl,
-  QuestionNonAssignmentDetails
+  QuestionNonAssignmentAssetTypeDetails
 } from '@sections/housing/questions/types';
 import { isDefined } from '@sections/housing/utils';
-import { ChargeScheduleValue } from '@sections/housing/charge-schedules/charge-schedules.model';
 import { ChargeSchedulesService } from '@sections/housing/charge-schedules/charge-schedules.service';
 import { QuestionsPage } from '@sections/housing/questions/questions.model';
 import { QuestionsService } from '@sections/housing/questions/questions.service';
-import { QuestionFacilityAttributes } from '@sections/housing/questions/types/question-facility-attributes';
 import { HousingProxyService } from '../housing-proxy.service';
 
 import { NonAssignmentsStateService } from './non-assignments-state.service';
-import { NonAssignmentDetails, NonAssignmentInfo, NON_ASSIGNMENT_DETAIL_FIELDS } from './non-assignments.model';
-import { map, withLatestFrom } from 'rxjs/operators';
+import {
+  AssetType,
+  AssetTypeDetailValue,
+  NonAssignmentDetails,
+  NonAssignmentInfo,
+  NON_ASSIGNMENT_DETAIL_FIELDS
+} from './non-assignments.model';
 
 @Injectable({
   providedIn: 'root'
@@ -60,7 +64,7 @@ export class NonAssignmentsService {
     const questions: QuestionBase[] = this._questionsService
       .getQuestions(nonAssignmentDetails.formJson)
       .map((question: QuestionBase) =>
-        this._toChargeSchedulesGroup(question, nonAssignmentDetails));
+        this._mapToAssetTypeDetailsGroup(question, nonAssignmentDetails));
 
     return this._questionsService.splitByPages(questions);
   }
@@ -76,20 +80,78 @@ export class NonAssignmentsService {
     }));
   }
 
-  private _toChargeSchedulesGroup(question: QuestionBase, nonAssignmentDetails: NonAssignmentDetails): QuestionBase {
-    if (!(question instanceof QuestionChargeScheduleBase)) {
+  private _mapToAssetTypeDetailsGroup(question: QuestionBase, nonAssignmentDetails: NonAssignmentDetails): QuestionBase {
+    if (!(question instanceof QuestionAssetTypeDetailsBase)) {
       return question;
     }
-
-    const chargeSchedulesGroup: ChargeScheduleValue[][] = this._chargeSchedulesService.getChargeSchedules(
-      nonAssignmentDetails.chargeSchedules,
-      question.values
-    );
-
-    return new QuestionChargeSchedule({
+  
+    const assetTypes =
+      this._toAssetTypeDetails(question, nonAssignmentDetails.assetTypes);
+    
+    return new QuestionAssetTypeDetails({
       ...question,
-      chargeSchedulesGroup
+      assetTypes
     });
+  }
+
+  private _toAssetTypeDetails(question: QuestionAssetTypeDetailsBase, assetTypes: AssetType[]): AssetTypeDetailValue[][] {
+   if (!isDefined(assetTypes) || assetTypes.length === 0) {
+     return [];
+   }
+
+    var selectedValues = question.values.filter(p => p.selected);
+    
+    const nameLabel = isDefined(question.customName) && selectedValues.some(p => p.value === '0') 
+      ? question.customName
+      : selectedValues.find(v => v.value === '0').label;
+    const mealsLabel = isDefined(question.customMeals) && selectedValues.some(p => p.value === '1')
+      ? question.customMeals
+      : selectedValues.find(v => v.value === '1').label;
+    const diningDollarsLabel = isDefined(question.customDining) && selectedValues.some(p => p.value === '2')
+      ? question.customDining
+      : selectedValues.find(v => v.value === '2').label;
+    const costLabel = isDefined(question.customCost) && selectedValues.some(p => p.value === '3')
+      ? question.customCost
+      : selectedValues.find(v => v.value === '3').label;
+
+    const availableAssetTypes = assetTypes.map((assetType: AssetType) => 
+      selectedValues.map(e => {
+        let assetTypeValue: AssetTypeDetailValue;
+        // Name
+        if (e.value === '0') {
+          assetTypeValue = new AssetTypeDetailValue({
+            label: nameLabel,
+            value: assetType.name,
+            selected: true
+          });
+          // Number of Meals
+        } else if (e.value === '1') {
+          assetTypeValue = new AssetTypeDetailValue({
+            label: mealsLabel,
+            value: `${assetType.numberOfUnits}`,
+            selected: true
+          });
+          // Dining Dollars
+        } else if (e.value === '2') {
+          assetTypeValue = new AssetTypeDetailValue({
+            label: diningDollarsLabel,
+            value: `${assetType.diningDollars}`,
+            selected: true
+          });
+          // Cost
+        } else {
+          assetTypeValue = new AssetTypeDetailValue({
+            label: costLabel,
+            value: `${assetType.cost}`,
+            selected: true
+          });
+        }
+
+        return assetTypeValue;
+
+      }));
+
+    return availableAssetTypes;
   }
 
   private _toFormGroup(
@@ -101,8 +163,8 @@ export class NonAssignmentsService {
       questions,
       storedQuestions,
       (group, question: QuestionFormControl, questionName: string, storedValue: string) => {
-        if (question instanceof QuestionCheckboxGroup) {
-          group[questionName] = this._questionsService.toQuestionCheckboxControl(storedValue, question);
+        if (question instanceof QuestionAssetTypeDetails) {
+          group[questionName] = this._questionsService.toQuestionAssetTypeDetailsGroup(storedValue, question);
         } else {
           group[questionName] = this._toFormControl(storedValue, question, nonAssignmentDetails);
         }
@@ -118,21 +180,9 @@ export class NonAssignmentsService {
     let value: any = storedValue;
 
     if (!isDefined(value)) {
-      if (question instanceof QuestionNonAssignmentDetails) {
-        value = this._getNonAssignmentDetailValue(question, nonAssignmentDetails.nonAssignmentInfo);
-      //} else if (question instanceof QuestionAssetTypeRequirements) {
-        //value = this._questionsService.getAttributeValue(nonAssignmentDetails.facilityAttributes, question);
-      } else {
         value = this._questionsService.getAttributeValue(nonAssignmentDetails.patronAttributes, question) || '';
-      }
     }
 
     return new FormControl({ value, disabled: true });
-  }
-
-  private _getNonAssignmentDetailValue(question: QuestionNonAssignmentDetails, nonAssignmentInfo: NonAssignmentInfo): string {
-    const nonAssignmentKey: string = NON_ASSIGNMENT_DETAIL_FIELDS[question.assetTypeId];
-
-    return nonAssignmentInfo[nonAssignmentKey] || '';
   }
 }
