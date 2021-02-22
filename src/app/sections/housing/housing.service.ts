@@ -98,6 +98,10 @@ export class HousingService {
         if (details.contractDetails) {
           this._contractsStateService.setContractDetails(details.contractDetails);
         }
+
+        if (details.nonAssignmentDetails) {
+          this._nonAssignmentsStateService.setNonAssignmentDetails(details.nonAssignmentDetails);
+        }
       })
     );
   }

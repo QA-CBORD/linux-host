@@ -88,12 +88,53 @@ export class NonAssignmentInfo implements NonAssignmentInfoOptions
     }
 }
 
+export interface AssetTypeOptions {
+    assetTypeKey: number;
+    elementSpecificationKey: number;
+    name: string;
+    active: boolean;
+    facilityTypeName: string;
+    canAppearOnContract: number;
+    assetGroupKey: number;
+    numberOfUnits: number;
+    cost: number;
+    diningDollars: number;
+}
+
+export class AssetType implements AssetTypeOptions {
+    assetTypeKey: number;
+    elementSpecificationKey: number;
+    name: string;
+    active: boolean;
+    facilityTypeName: string;
+    canAppearOnContract: number;
+    assetGroupKey: number;
+    numberOfUnits: number;
+    cost: number;
+    diningDollars: number;
+
+    constructor(options: AssetTypeOptions) {
+        if (isDefined(options)) {
+            this.assetTypeKey = Number(options.assetTypeKey);
+            this.elementSpecificationKey = Number(options.elementSpecificationKey);
+            this.name = String(options.name);
+            this.active = Boolean(options.active);
+            this.facilityTypeName = String(options.facilityTypeName);
+            this.assetGroupKey = Number(options.assetGroupKey);
+            this.canAppearOnContract = Number(options.canAppearOnContract);
+            this.numberOfUnits = Number(options.numberOfUnits);
+            this.cost = Number(options.cost);
+            this.diningDollars = Number(options.diningDollars);
+        }
+    }
+}
+
 export interface NonAssignmentDetailsOptions {
     nonAssignmentInfo: NonAssignmentInfo;
     formJson: any;
     chargeSchedules: ChargeSchedule[];
     patronAttributes: PatronAttribute[];
-    assetRequirements:any[];
+    assetTypes: AssetType[];
 }
 
 export class NonAssignmentDetails implements NonAssignmentDetailsOptions {
@@ -101,7 +142,7 @@ export class NonAssignmentDetails implements NonAssignmentDetailsOptions {
     formJson: any;
     chargeSchedules: ChargeSchedule[];
     patronAttributes: PatronAttribute[];
-    assetRequirements: any[];
+    assetTypes: AssetType[];
 
     constructor(options: NonAssignmentDetailsOptions) {
         if (!isDefined(options) || typeof options !== 'object') {
@@ -119,9 +160,31 @@ export class NonAssignmentDetails implements NonAssignmentDetailsOptions {
             ? options.patronAttributes.map((attribute: any) => new PatronAttribute(attribute))
             : [];
 
-        this.assetRequirements = Array.isArray(options.assetRequirements)
-            ? options.assetRequirements.map((asset: any) => null) // new AssetRequirement(asset)
+        this.assetTypes = Array.isArray(options.assetTypes)
+            ? options.assetTypes.map((asset: any) => new AssetType(asset))
             : [];
         
+    }
+}
+
+export interface AssetTypeDetailValueOptions {
+    label: string;
+    value: string;
+    selected?: boolean;
+}
+
+export class AssetTypeDetailValue implements AssetTypeDetailValueOptions {
+    label: string;
+    value: string;
+    selected?: boolean;
+
+    constructor(options: AssetTypeDetailValueOptions) {
+        if (!isDefined(options) || typeof options !== 'object') {
+            options = {} as AssetTypeDetailValueOptions;
+        }
+
+        this.label = String(options.label);
+        this.value = isDefined(options.value) ? String(options.value) : null;
+        this.selected = Boolean(options.selected);
     }
 }

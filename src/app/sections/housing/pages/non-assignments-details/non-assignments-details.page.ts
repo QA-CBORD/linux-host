@@ -11,6 +11,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ToastController } from '@ionic/angular';
+import { FormTypes } from '@sections/housing/housing.model';
 import { HousingService } from '@sections/housing/housing.service';
 import { NonAssignmentDetails } from '@sections/housing/non-assignments/non-assignments.model';
 import { NonAssignmentsService } from '@sections/housing/non-assignments/non-assignments.service';
@@ -62,14 +63,31 @@ export class NonAssignmentsDetailsPage implements OnInit, OnDestroy {
     this._subscription.unsubscribe();
   }
 
+  submit(isLastPage: boolean): void {
+    if (this.isSubmitted) {
+      if (!isLastPage) {
+        this._next();
+        return;
+      } else {
+        return;
+      }
+    }
+
+    if (!isLastPage) {
+      this._next();
+    } else {
+      //update maybe?
+    }
+  }
+
   private _initPagesObservable(): void {
     this.pages$ = this._nonAssignmentsService.getQuestions(this.nonAssignmentKey);
   }
 
   private _initNonAssignmentDetailsObservable(): void {
     this._loadingService.showSpinner();
-    //const formTypeKey = 
-    const queryParams: string[] = [`formTypeKey=${this.nonAssignmentKey}`];
+    
+    const queryParams: string[] = [`formTypeKey=${FormTypes.NON_ASSIGNMENTS}`];
 
     this.nonAssignmentDetails$ = this._housingService.getNonAssignmentDetails(this.nonAssignmentKey, queryParams)
       .pipe(
