@@ -5,6 +5,19 @@ import { FacilityDetails } from './facilities/facilities.model';
 import { FacilityOccupantDetails } from '@sections/housing/roommate/roomate.model';
 import { NonAssignmentDetails, NonAssignmentListDetails } from './non-assignments/non-assignments.model';
 
+export enum FormTypes {
+  APPLICATIONS = 1,
+  CONTRACTS = 2,
+  WORK_ORDERS = 3,
+  INSPECTIONS = 4,
+  FAMILIY_MEMBERS = 5,
+  ROOM_SWAPS = 6,
+  STUDENT_REQUESTS = 7,
+  ATTACHMENTS = 8,
+  WAITING_LISTS = 9,
+  NON_ASSIGNMENTS = 10
+}
+
 export interface ResponseStatusDetails {
   code: string;
   member: string;
