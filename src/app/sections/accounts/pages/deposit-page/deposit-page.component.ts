@@ -57,6 +57,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     accountDisplayName: 'Apple Pay',
     isActive: true,
   };
+
   applePayEnabled$: Observable<boolean>;
   customActionSheetOptions: any = {
     cssClass: 'custom-deposit-actionSheet',
@@ -66,7 +67,9 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     cssClass: 'custom-deposit-actionSheet custom-deposit-actionSheet-last-btn',
   };
 
-  @ViewChild('paymentMethod') selectRef: IonSelect;
+  @ViewChild('paymentMethod') selectPayment: IonSelect;
+  @ViewChild('toAccount') selectAccount: IonSelect;
+  @ViewChild('toDeposit') selectDeposit: IonSelect;
 
   constructor(
     private readonly depositService: DepositService,
@@ -479,13 +482,19 @@ export class DepositPageComponent implements OnInit, OnDestroy {
     return `${i}-${Math.random()}`;
   }
 
-  openActionSheet() {
-    this.a11yService.isVoiceOverClick$.then((value) => {
-      if(value) {
-        this.selectRef.open(); 
-      }   
-     });
-    }
+  openActionSheet(ref: string) {
+    this.a11yService.isVoiceOverClick$.then(value => {
+      if (value) {
+        if (ref === 'payment') {
+          this.selectPayment.open();
+        } else if (ref === 'account') {
+          this.selectAccount.open();
+        } else if (ref === 'deposit') {
+          this.selectDeposit.open();
+        }
+      }
+    });
+  }
 
   private resetControls(controlNames: string[]) {
     controlNames.forEach(
