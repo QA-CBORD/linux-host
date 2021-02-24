@@ -91,14 +91,16 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
           component: PhoneEmailComponent,
         },
       },
-      // {
-      //   id: SETTINGS_ID.password,
-      //   icon: 'key',
-      //   label: 'Change password',
-      //   type: 'button',
-      //   setCallback: openSiteURL,
-      //   navigateExternal: { type: 'link', value: 'login.php?password=forgot' },
-      // },
+      {
+        id: SETTINGS_ID.password,
+        icon: 'key',
+        label: 'Change password',
+        type: 'button',
+        setCallback: openModal,
+        modalContent: {
+          component: PhoneEmailComponent,
+        },
+      },
       {
         id: SETTINGS_ID.biometrics,
         icon: '',
