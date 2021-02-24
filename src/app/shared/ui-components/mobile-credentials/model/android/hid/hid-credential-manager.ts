@@ -157,7 +157,17 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
 
   onUiImageClicked(event = { shouldCheckCredentialAvailability: true }): void {
     if (event.shouldCheckCredentialAvailability) {
-      this.validateAndInstall();
+      (async () => {
+        if (await this.nfcIsOn()) {
+          this.validateAndInstall();
+        } else {
+          this.showLoading();
+          const contentStrings = await this.credentialService.nfcOffContentStrings$();
+          this.nfcOffAlert(contentStrings, async () => {
+            this.validateAndInstall();
+          });
+        }
+      })();
     } else {
       this.showTermsAndConditions();
     }

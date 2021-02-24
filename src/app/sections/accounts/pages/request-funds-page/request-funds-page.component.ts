@@ -28,6 +28,8 @@ const { Keyboard } = Plugins;
 export class RequestFundsPageComponent implements OnInit {
   accounts$: Observable<UserAccount[]>;
   requestFundsForm: FormGroup;
+  isRequesting: boolean;
+
   customActionSheetOptions: { [key: string]: string } = {
     cssClass: 'custom-deposit-actionSheet',
   };
@@ -81,9 +83,10 @@ export class RequestFundsPageComponent implements OnInit {
   }
 
   async onSubmit() {
-    if (this.requestFundsForm.invalid) {
+    if (this.requestFundsForm.invalid || this.isRequesting) {
       return;
     }
+    this.isRequesting = true;
 
     const {
       [this.controlsNames.name]: n,
@@ -105,7 +108,10 @@ export class RequestFundsPageComponent implements OnInit {
           await this.loadingService.closeSpinner();
           response ? this.showModal() : this.showToast();
         },
-        async () => await this.loadingService.closeSpinner()
+        async () => {
+          await this.loadingService.closeSpinner();
+          this.isRequesting = false;
+        }
       );
   }
 
