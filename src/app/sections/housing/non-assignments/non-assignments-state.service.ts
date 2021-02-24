@@ -11,6 +11,7 @@ import {
 export interface NonAssignmentsState {
   entities: NonAssignmentEntities;
   nonAssignmentDetails: NonAssignmentDetails;
+  selectedAssetType?: number;
 }
 
 export interface NonAssignmentEntities {
@@ -23,7 +24,8 @@ export interface NonAssignmentEntities {
 export class NonAssignmentsStateService {
   private readonly _defaultState: NonAssignmentsState = {
     entities: {},
-    nonAssignmentDetails: null
+    nonAssignmentDetails: null,
+    selectedAssetType: 0
   };
 
   private readonly _nonAssignmentsStateSource: BehaviorSubject<NonAssignmentsState>
@@ -38,6 +40,11 @@ export class NonAssignmentsStateService {
     this.nonAssignmentEntities$.pipe(
       map(this._getNonAssignments.bind(this))
     );
+
+  readonly selectedAssetType$: Observable<number> =
+      this._nonAssignmentsStateSource.pipe(
+        map(this._getSelectedAssetType)
+      );
 
   readonly nonAssignmentDetails$: Observable<NonAssignmentDetails> =
     this._nonAssignmentsStateSource.pipe(
@@ -80,6 +87,13 @@ export class NonAssignmentsStateService {
     };
   }
 
+  setSelectedAsset(assetTypeKey: number): void {
+    this.nonAssignmentsState = {
+      ...this.nonAssignmentsState,
+      selectedAssetType: assetTypeKey
+    };
+  }
+
   private _getEntities(state: NonAssignmentsState): NonAssignmentEntities {
     return state.entities;
   }
@@ -90,6 +104,10 @@ export class NonAssignmentsStateService {
 
   private _getNonAssignments(entities: NonAssignmentEntities): NonAssignmentListDetails[] {
     return Object.keys(entities).map((key: string) => entities[parseInt(key, 10)]);
+  }
+
+  private _getSelectedAssetType(state: NonAssignmentsState): number {
+    return state.selectedAssetType;
   }
 
   private _toNonAssignmentEntities(nonAssignments: NonAssignmentListDetails[]): NonAssignmentEntities {
