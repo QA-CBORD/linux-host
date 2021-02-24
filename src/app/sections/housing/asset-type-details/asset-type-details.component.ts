@@ -5,6 +5,7 @@ import {
   OnInit
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { NonAssignmentsStateService } from '../non-assignments/non-assignments-state.service';
 import { AssetTypeDetailValue } from '../non-assignments/non-assignments.model';
 import { QuestionAssetTypeDetails } from '../questions/types';
 
@@ -17,13 +18,19 @@ import { QuestionAssetTypeDetails } from '../questions/types';
 export class AssetTypeDetailsComponent implements OnInit {
   @Input() question: QuestionAssetTypeDetails;
   @Input() parentGroup: FormGroup;
+  @Input() isSubmitted: boolean;
 
-  constructor() { }
+  constructor(private _nonAssignmentStateService: NonAssignmentsStateService) { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   trackByLabel(_: number, assetTypeDetail: AssetTypeDetailValue): string {
     return assetTypeDetail.label;
   }
 
+  markItemAsSelected(assetType: number): void {
+    this._nonAssignmentStateService.setSelectedAsset(assetType);
+
+    console.log('item selected', assetType);
+  }
 }

@@ -1,13 +1,16 @@
-<ion-card class="ion-no-padding" *ngFor="let assetType of question.assetTypes">
+<ion-card class="ion-no-padding assset_type_details_item" *ngFor="let assetType of question.assetTypes; index as i">
   <div *ngFor="let field of assetType; index as idx">
-    <ion-card-header class="item_header" *ngIf="field.selected === false">
-      <ion-card-subtitle>{{ field.value }}</ion-card-subtitle>
+    <ion-card-header class="assset_type_details_item__header" *ngIf="field.selected === false">
+      <ion-card-subtitle color="primary">{{ field.value }}</ion-card-subtitle>
     </ion-card-header>
-    <ion-card-content class="ion-no-padding ion-no-margin" *ngIf="field.selected === true">
-      <ion-item>
-        <ion-label position="floating">{{ field.label }}</ion-label>
+    <ion-card-content class="assset_type_details_item__content" *ngIf="field.selected === true">
+      <ion-item class="ion-no-padding">
+        <ion-label class="ion-text-wrap" position="floating">{{ field.label }}</ion-label>
         <ion-input value="{{ field.value }}" readonly></ion-input>
       </ion-item>
     </ion-card-content>
+  </div>
+  <div>
+    <ion-button (click)="markItemAsSelected(assetType[i].assetTypeKey)">Select this item</ion-button>
   </div>
 </ion-card>

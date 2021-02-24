@@ -9,8 +9,18 @@ import {
   ViewChildren
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LoadingService } from '@core/service/loading/loading.service';
 import { ToastController } from '@ionic/angular';
+
+import {
+  Observable,
+  Subscription,
+  throwError
+} from 'rxjs';
+import {
+  catchError,
+  tap
+} from 'rxjs/operators';
+import { LoadingService } from '@core/service/loading/loading.service';
 import { FormTypes } from '@sections/housing/housing.model';
 import { HousingService } from '@sections/housing/housing.service';
 import { NonAssignmentDetails } from '@sections/housing/non-assignments/non-assignments.model';
@@ -19,9 +29,7 @@ import { QuestionComponent } from '@sections/housing/questions/question.componen
 import { QuestionsPage } from '@sections/housing/questions/questions.model';
 import { QuestionsService } from '@sections/housing/questions/questions.service';
 import { StepperComponent } from '@sections/housing/stepper/stepper.component';
-import { Observable, Subscription, throwError } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
-
+import { TermsService } from '@sections/housing/terms/terms.service';
 
 @Component({
   selector: 'st-non-assignments-details',
@@ -37,11 +45,16 @@ export class NonAssignmentsDetailsPage implements OnInit, OnDestroy {
 
   nonAssignmentDetails$: Observable<NonAssignmentDetails>;
   pages$: Observable<QuestionsPage[]>;
+  
   nonAssignmentKey: number;
+  termKey: number = 0;
+  selectedAssetType: number = 0;
+
   isSubmitted: boolean = false;
   canSubmit: boolean = true;
   
   constructor(
+    private _termsService: TermsService,
     private _route: ActivatedRoute,
     private _questionsService: QuestionsService,
     private _nonAssignmentsService: NonAssignmentsService,
@@ -54,9 +67,10 @@ export class NonAssignmentsDetailsPage implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.nonAssignmentKey = parseInt(this._route.snapshot.paramMap.get('nonAssignmentKey'), 10);
-
     this._initNonAssignmentDetailsObservable();
     this._initPagesObservable();
+    this._initTermSubscription();
+    this._initSelectedAssetSubscription();
   }
 
   ngOnDestroy(): void {
@@ -76,12 +90,24 @@ export class NonAssignmentsDetailsPage implements OnInit, OnDestroy {
     if (!isLastPage) {
       this._next();
     } else {
-      //update maybe?
+      this._update();
     }
   }
 
   private _initPagesObservable(): void {
     this.pages$ = this._nonAssignmentsService.getQuestions(this.nonAssignmentKey);
+  }
+
+  private _initSelectedAssetSubscription(): void {
+    const subscription = this._nonAssignmentsService.getSelectedAssetType()
+      .subscribe(assetType => this.selectedAssetType = assetType);
+    
+      this._subscription.add(subscription);
+  }
+
+  private _initTermSubscription() {
+    const termSubs = this._termsService.termId$.subscribe(termId => this.termKey = termId);
+    this._subscription.add(termSubs);
   }
 
   private _initNonAssignmentDetailsObservable(): void {
@@ -93,7 +119,6 @@ export class NonAssignmentsDetailsPage implements OnInit, OnDestroy {
       .pipe(
         tap((nonAssignmentDetails: NonAssignmentDetails) => {
           this.isSubmitted = false; //!!nonAssignmentDetails.nonAssignmentInfo.dateTimeSigned;
-          this.canSubmit = !this.isSubmitted;
           this._loadingService.closeSpinner();
         }),
         catchError((error: any) => {
@@ -113,5 +138,18 @@ export class NonAssignmentsDetailsPage implements OnInit, OnDestroy {
 
   private _handleErrors(error: any): void {
     this._housingService.handleErrors(error);
+  }
+
+  private _update(): void {
+    this._loadingService.showSpinner();
+    
+    const subscription: Subscription = 
+      this._nonAssignmentsService.submitContract(this.selectedAssetType, this.termKey)
+        .subscribe({
+          next: () => this._handleSuccess(),
+          error: (error: any) => this._handleErrors(error),
+        });
+
+    this._subscription.add(subscription);
   }
 }

@@ -2,13 +2,13 @@
   *ngFor="let nonAssignment of nonAssignments; trackBy: trackById"  
   class="applications-list__item">
   <ion-label class="applications-list__wrap">
-    <div class="applications-list__info">
+    <div class="applications-list__info" *ngIf="nonAssignment.status">
       <h5 class="applications-list__status">{{ getStatus(nonAssignment) }}</h5>
-      <!-- <div
+      <div
         *ngIf="nonAssignment.acceptedDate"
         class="applications-list__date">
           {{ nonAssignment.acceptedDate | date: 'MM/dd/yyyy' }}
-      </div> -->
+      </div>
     </div>
 
     <h2 class="applications-list__title">{{ nonAssignment.applicationTitle }}</h2>

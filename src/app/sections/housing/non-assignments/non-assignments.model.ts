@@ -3,18 +3,28 @@ import { ChargeSchedule } from "@sections/housing/charge-schedules/charge-schedu
 
 import { isDefined } from "../utils";
 
-export enum NON_ASSIGNMENT_DETAIL_KEYS {
-
+export enum NonAssignmentStatus {
+    Preliminary = 1,
+    Active = 2,
+    Completed = 4,
+    Expired = 5,
+    Terminated = 6,
+    Canceled = 7,
+    Suspended = 8,
 }
 
-export enum NON_ASSIGNMENT_DETAIL_FIELDS {
-
+export enum NonAssignmentFormStatus {
+    New = NonAssignmentStatus.Preliminary | NonAssignmentStatus.Active,
+    Submitted =  NonAssignmentStatus.Completed,
+    Expired = NonAssignmentStatus.Expired,
+    Suspended = NonAssignmentStatus.Suspended,
+    Canceled = NonAssignmentStatus.Terminated | NonAssignmentStatus.Canceled,
 }
 
 export interface NonAssignmentListDetailsOptions {
     id: number;
     // contractElementId: number;
-    // state: string;
+    status?: string;
     applicationDescription: string;
     applicationFormJson: any;
     applicationTitle: string;
@@ -42,7 +52,8 @@ export class NonAssignmentListDetails implements NonAssignmentListDetailsOptions
     expireWhenAssigned: number;
     numberOfDaysToExpire: number;
     termId: number;
-    // acceptedDate?: string;
+    status?: string;
+    acceptedDate?: string;
 
     constructor(options: NonAssignmentListDetailsOptions) {
         if (!isDefined(options) || typeof options !== 'object') {
@@ -168,12 +179,14 @@ export class NonAssignmentDetails implements NonAssignmentDetailsOptions {
 }
 
 export interface AssetTypeDetailValueOptions {
+    assetTypeKey: number;
     label: string;
     value: string;
     selected?: boolean;
 }
 
 export class AssetTypeDetailValue implements AssetTypeDetailValueOptions {
+    assetTypeKey: number;
     label: string;
     value: string;
     selected?: boolean;
@@ -183,8 +196,38 @@ export class AssetTypeDetailValue implements AssetTypeDetailValueOptions {
             options = {} as AssetTypeDetailValueOptions;
         }
 
+        this.assetTypeKey = Number(options.assetTypeKey);
         this.label = String(options.label);
         this.value = isDefined(options.value) ? String(options.value) : null;
         this.selected = Boolean(options.selected);
+    }
+}
+
+export interface ContractRequestOptions {
+    assetKey: number;
+    isFacility?: boolean;
+    isAsset?: boolean;
+    termKey: number;
+    startDate?: string;
+    endDate?: string;
+}
+
+export class ContractRequest {
+    assetKey: number;
+    isFacility?: boolean;
+    isAsset?: boolean;
+    termKey: number;
+
+    constructor(options: ContractRequestOptions) {
+        if (options == null || typeof options !== 'object') {
+            options = {} as ContractRequestOptions;
+        }
+
+        this.assetKey = Number(options.assetKey);
+        this.isAsset = isDefined(options.isAsset)
+            ? options.isAsset : true;
+        this.isFacility = isDefined(options.isFacility)
+            ? options.isFacility : false;
+        this.termKey = Number(options.termKey);
     }
 }

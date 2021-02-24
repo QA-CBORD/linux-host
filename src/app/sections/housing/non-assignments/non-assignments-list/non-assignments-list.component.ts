@@ -8,7 +8,11 @@ import {
 import { isDefined } from '@sections/housing/utils';
 import { PATRON_NAVIGATION } from 'src/app/app.global';
 
-import { NonAssignmentListDetails } from '../non-assignments.model';
+import {
+  NonAssignmentFormStatus,
+  NonAssignmentListDetails,
+  NonAssignmentStatus
+} from '../non-assignments.model';
 
 @Component({
   selector: 'st-non-assignments-list',
@@ -32,18 +36,52 @@ export class NonAssignmentsListComponent implements OnInit {
   }
 
   canEdit(nonAssignment: NonAssignmentListDetails): boolean {
-    const allowedStates = [];
-    return false;
-    // return !isDefined(nonAssignment.acceptedDate);
-      //&& allowedStates.includes(Status[nonAssignment.state]);
+    const allowedStates = [
+      NonAssignmentStatus.Active,
+      NonAssignmentStatus.Preliminary
+    ];
+    return !isDefined(nonAssignment.acceptedDate)
+      && allowedStates.includes(NonAssignmentStatus[nonAssignment.status]);
   }
 
   getStatus(nonAssignment: NonAssignmentListDetails): string {
-    //const statusValue = this._getFormStatus();
+    const statusValue = this._getFormStatus(NonAssignmentStatus[nonAssignment.status]);
 
-    //const isCompleted = 
+    const isCompleted =
+      NonAssignmentStatus[nonAssignment.status] == NonAssignmentStatus.Active ||
+      NonAssignmentStatus[nonAssignment.status] == NonAssignmentStatus.Preliminary;
 
-    // const formStatus = isDefined(nonAssignment)
-    return "TODO";
+    const formStatus = isDefined(nonAssignment.acceptedDate) && isCompleted
+      ? NonAssignmentFormStatus[NonAssignmentStatus.Completed]
+      : NonAssignmentFormStatus[statusValue];
+
+    return formStatus;
+  }
+
+  private _getFormStatus(state: NonAssignmentStatus): string {
+    let formStatus;
+    switch (state) {
+      case NonAssignmentStatus.Active:
+      case NonAssignmentStatus.Preliminary:
+        formStatus = NonAssignmentStatus.Active | NonAssignmentStatus.Preliminary;
+        break;
+      case NonAssignmentStatus.Completed:
+        formStatus = NonAssignmentStatus.Completed;
+        break;
+      case NonAssignmentStatus.Suspended:
+        formStatus = NonAssignmentStatus.Suspended;
+        break;
+      case NonAssignmentStatus.Canceled:
+      case NonAssignmentStatus.Terminated:
+        formStatus = NonAssignmentStatus.Terminated | NonAssignmentStatus.Canceled;
+        break;
+      case NonAssignmentStatus.Expired:
+        formStatus = NonAssignmentStatus.Expired
+        break;
+      default:
+        formStatus = NonAssignmentStatus.Active | NonAssignmentStatus.Preliminary;
+    }
+
+    return formStatus;
   }
 }
