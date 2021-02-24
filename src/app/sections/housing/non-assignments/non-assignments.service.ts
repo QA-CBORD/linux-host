@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
-import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup
+} from '@angular/forms';
 
 import { Observable } from 'rxjs';
 import { map, withLatestFrom } from 'rxjs/operators';
@@ -13,9 +16,7 @@ import {
   QuestionAssetTypeDetails,
   QuestionAssetTypeDetailsBase,
   QuestionBase,
-  QuestionCheckboxGroup,
-  QuestionFormControl,
-  QuestionNonAssignmentAssetTypeDetails
+  QuestionFormControl
 } from '@sections/housing/questions/types';
 import { isDefined } from '@sections/housing/utils';
 import { ChargeSchedulesService } from '@sections/housing/charge-schedules/charge-schedules.service';
@@ -27,10 +28,10 @@ import { NonAssignmentsStateService } from './non-assignments-state.service';
 import {
   AssetType,
   AssetTypeDetailValue,
-  NonAssignmentDetails,
-  NonAssignmentInfo,
-  NON_ASSIGNMENT_DETAIL_FIELDS
+  ContractRequest,
+  NonAssignmentDetails
 } from './non-assignments.model';
+import { ResponseStatus } from '../housing.model';
 
 @Injectable({
   providedIn: 'root'
@@ -38,7 +39,7 @@ import {
 export class NonAssignmentsService {
   private readonly _patronNonAssignmentsUrl: string = `${
     this._environmentFacadeService.getEnvironmentObject().housing_aws_url
-  }/patron-applications/v.1.0/patron-non-assignments`;
+  }/patron-applications/v.1.0/patron-contracts/contracts/self`;
 
   constructor(
     private _environmentFacadeService: EnvironmentFacadeService,
@@ -58,6 +59,21 @@ export class NonAssignmentsService {
         return this._getPages(pages, storedQuestions, nonAssignmentDetails);
       })
     );
+  }
+
+  getSelectedAssetType(): Observable<number> {
+    return this._nonAssignmentsStateService.selectedAssetType$;
+  }
+
+  submitContract(assetTypeKey: number, termKey: number): Observable<ResponseStatus> {
+    const body: ContractRequest = new ContractRequest({
+      assetKey: assetTypeKey,
+      isAsset: true,
+      isFacility: false,
+      termKey
+    });
+
+    return this._housingProxyService.post(this._patronNonAssignmentsUrl, body);
   }
 
   private _getQuestionsPages(nonAssignmentDetails: NonAssignmentDetails): QuestionBase[][] {
@@ -120,6 +136,7 @@ export class NonAssignmentsService {
         // Name
         if (e.value === '0') {
           assetTypeValue = new AssetTypeDetailValue({
+            assetTypeKey: assetType.assetTypeKey,
             label: nameLabel,
             value: assetType.name,
             selected: false,
@@ -127,6 +144,7 @@ export class NonAssignmentsService {
           // Number of Meals
         } else if (e.value === '1') {
           assetTypeValue = new AssetTypeDetailValue({
+            assetTypeKey: assetType.assetTypeKey,
             label: mealsLabel,
             value: `${assetType.numberOfUnits}`,
             selected: true
@@ -134,6 +152,7 @@ export class NonAssignmentsService {
           // Dining Dollars
         } else if (e.value === '2') {
           assetTypeValue = new AssetTypeDetailValue({
+            assetTypeKey: assetType.assetTypeKey,
             label: diningDollarsLabel,
             value: `${assetType.diningDollars}`,
             selected: true
@@ -141,6 +160,7 @@ export class NonAssignmentsService {
           // Cost
         } else {
           assetTypeValue = new AssetTypeDetailValue({
+            assetTypeKey: assetType.assetTypeKey,
             label: costLabel,
             value: `${assetType.cost}`,
             selected: true
