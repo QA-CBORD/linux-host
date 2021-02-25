@@ -37,6 +37,7 @@ export const NUM_COMMA_DOT_REGEXP = /^[0-9.,]+$/;
 // Mastercard tamplate pattern
 export const MASTERCARD_REGEXP = /^(5[1-5][0-9]{14}|2(22[1-9][0-9]{12}|2[3-9][0-9]{13}|[3-6][0-9]{14}|7[0-1][0-9]{13}|720[0-9]{12}))$/;
 
+export const PASS_CHANGE_REGEXP = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{7,}$/;
 
 //------------- Expiration date card tamplate patterns -------------------//
 
