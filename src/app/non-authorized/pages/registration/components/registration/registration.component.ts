@@ -114,13 +114,21 @@ export class RegistrationComponent implements OnInit {
     this.modalCtrl.dismiss(false);
   }
 
-  async submitRegistration(formGroup: FormGroup): Promise<void> {
+  get formInvalid(): boolean{
     const formInvalid = this.disabled;
-    if (formInvalid) {
-      console.log(this.horizontalFields);
-      const allFields = [...this.horizontalFields, ...this.formFields];
-      allFields.forEach(field => (field.hasError = field.control.invalid || field.hasError));
-      return;
+    const allFields = [...this.horizontalFields, ...this.formFields];
+    let isFormInvalid = false;
+    allFields.forEach(field => {
+      field.hasError = field.control.invalid || field.hasError;
+      isFormInvalid = field.hasError;
+    });
+    return formInvalid || isFormInvalid;
+  }
+
+
+  async submitRegistration(formGroup: FormGroup): Promise<void> {
+    if (this.formInvalid) {
+        return;
     }
 
     await this.loadingService.showSpinner(this.customLoadingOptions);
