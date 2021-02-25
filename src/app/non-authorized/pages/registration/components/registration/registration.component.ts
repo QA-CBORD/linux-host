@@ -68,7 +68,7 @@ export class RegistrationComponent implements OnInit {
         if (field.name == STATICFIELDS.phone) {
           const fieldValue: string = formGroup.get(STATICFIELDS.phone).value;
           if (fieldValue) {
-            field.hasError = !/^[0-9]*$/.test(fieldValue);
+            field.hasError = !/^[0-9]*$/.test(fieldValue) || !(fieldValue.length > 9 && fieldValue.length < 12)
           } else {
             field.hasError = false;
           }
