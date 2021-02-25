@@ -62,6 +62,7 @@ export class RegistrationComponent implements OnInit {
 
   onBlur(field: formField): Handler {
     const formGroup = this.registrationFormGroup;
+    const confirmPasswordComplete = this.confirmPasswordComplete;
     return {
       handle: function(data) {
         field.hasError = field.control.invalid;
@@ -72,6 +73,9 @@ export class RegistrationComponent implements OnInit {
           } else {
             field.hasError = false;
           }
+        }
+        if(field.name == STATICFIELDS.password || field.name == STATICFIELDS.passwordConfirm){
+           field.hasError = !confirmPasswordComplete || this.passwordsNotMatching;
         }
       },
     };
@@ -89,14 +93,14 @@ export class RegistrationComponent implements OnInit {
     password.valueChanges.subscribe(value => {
       if (passwordConfirmControl.value) {
         this.passwordsNotMatching = !passwordConfirmControl.value.startsWith(value);
-        this.confirmPasswordComplete = passwordConfirmControl.value === value;
+        this.confirmPasswordComplete = passwordConfirmControl.touched && passwordConfirmControl.value === value;
         passwordField.hasError = this.passwordsNotMatching;
       }
     });
 
     passwordConfirmControl.valueChanges.subscribe(value => {
       this.passwordsNotMatching = !password.value.startsWith(value);
-      this.confirmPasswordComplete = password.value === value;
+      this.confirmPasswordComplete = password.touched && password.value === value;
       confirmPasswordField.hasError = this.passwordsNotMatching;
     });
   }
@@ -115,7 +119,7 @@ export class RegistrationComponent implements OnInit {
     if (formInvalid) {
       console.log(this.horizontalFields);
       const allFields = [...this.horizontalFields, ...this.formFields];
-      allFields.forEach(field => (field.hasError = field.control.invalid));
+      allFields.forEach(field => (field.hasError = field.control.invalid || field.hasError));
       return;
     }
 

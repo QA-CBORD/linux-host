@@ -26,7 +26,7 @@ export class StInputFloatingLabelComponent implements OnInit, AfterViewInit, Con
   @Input() inputmode: string;
   @Input() enterkeyhint: string;
   @Input() tabindex: string;
-  showOrHide: string = "Show";
+  showOrHide: string = 'Show';
   @Input('stFocusNext')
   set focusNextDr(value: FocusableElement) {
     if (!this.enterkeyhint) this.enterkeyhint = 'next';
@@ -70,7 +70,7 @@ export class StInputFloatingLabelComponent implements OnInit, AfterViewInit, Con
       setTimeout(() => {
         this.inputRef.nativeElement.type = 'password';
         this.showOrHide = 'Show';
-      }, 2000);
+      }, 3000);
     } else {
       this.inputRef.nativeElement.type = 'password';
       this.showOrHide = 'Show';
