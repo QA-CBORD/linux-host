@@ -22,7 +22,7 @@ export class RegistrationServiceFacade {
   constructor(
     private readonly registrationService: RegistrationService,
     private readonly environmentFacadeService: EnvironmentFacadeService,
-    private readonly institutionFacadeService: InstitutionFacadeService,
+    private readonly institutionFacadeService: InstitutionFacadeService
   ) {}
 
   async registrationConfig(isGuestSignup: boolean): Promise<void> {
@@ -34,36 +34,34 @@ export class RegistrationServiceFacade {
     this._registrationManager = registrationController;
   }
 
-  async pageContentStrings(){
+  async pageContentStrings() {
     return await this._registrationManager.getFormStrings().toPromise();
   }
 
-  preloginContents(): Observable<PreLoginStringModel> {
-    const cachedInstitution = this.institutionFacadeService.cachedInstitutionInfo$.pipe(take(1));
-    return cachedInstitution.pipe(
-      switchMap(cachedInstitution => this.getPreloginContents(cachedInstitution))
+  preloginContents(acuteCare): Observable<PreLoginStringModel> {
+    return this.getPreloginContents(acuteCare).pipe(
+      take(1)
     );
   }
 
-  private getPreloginContents(institution): Observable<PreLoginStringModel>{
-    return this.registrationService
-      .getContentStringByCategory$(CONTENT_STRINGS_CATEGORIES.pre_login)
-      .pipe(
-        map(contents => {
-          const preLoginContentString: any = {};
-          contents.forEach(({ name: ContentStringKey, value }) => {
-            if (ContentStringKey == PreLoginStringKeys.continueAsNonGuest) {
-              const [first, second] = value.split('|');
-              value = first.trim();
-              if (institution.acuteCare) {
-                value = second.trim();
-              }
+  private getPreloginContents(acuteCare): Observable<PreLoginStringModel> {
+    console.log('cached ==> ', acuteCare);
+    return this.registrationService.getContentStringByCategory$(CONTENT_STRINGS_CATEGORIES.pre_login).pipe(
+      map(contents => {
+        const preLoginContentString: any = {};
+        contents.forEach(({ name: ContentStringKey, value }) => {
+          if (ContentStringKey == PreLoginStringKeys.continueAsNonGuest) {
+            const [first, second] = value.split('|');
+            value = first.trim();
+            if (acuteCare) {
+              value = second.trim();
             }
-            preLoginContentString[ContentStringKey] = value;
-          });
-          return preLoginContentString;
-        })
-      );
+          }
+          preLoginContentString[ContentStringKey] = value;
+        });
+        return preLoginContentString;
+      })
+    );
   }
 
   async getFormFields(): Promise<FormFieldList> {

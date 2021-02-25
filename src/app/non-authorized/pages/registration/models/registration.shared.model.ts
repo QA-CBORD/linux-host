@@ -45,7 +45,7 @@ export enum RegFormStringKeys {
   lastName = 'last_name',
   userName = 'user_name',
   password = 'password',
-  confirmPassword = 'confirm_password',
+  passwordConfirm = 'confirm_password',
 }
 
 // names of content strings for preLogin page
@@ -87,4 +87,5 @@ export interface formField {
   lookupFieldId?: string;
   separatorUp?: boolean;
   guestOnly?: boolean;
+  hasError?: boolean
 }

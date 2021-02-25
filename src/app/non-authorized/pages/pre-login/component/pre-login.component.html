@@ -31,15 +31,19 @@
   </div>
   <div class="login__form-wrapper">
     <div class="login__form">
-      <div>
+      <div *ngIf="pageContent">
         <p [innerHTML]="pageContent.pre_login_instruction"></p>
       </div>
       <div>
         <st-button buttonModifier="rectangle" class="login__form-btns--odd" tabindex="4" (click)="continueAsNonGuest()">
-          {{ pageContent.continue_as_nonguest }}
+          <span autocapitalize="words">
+            {{ pageContent.continue_as_nonguest }}
+          </span>
         </st-button>
         <st-button buttonModifier="rectangle" [isDisabled]="true" tabindex="3" (click)="continueAsGuest()">
-          {{ pageContent.continue_as_guest }}
+          <span autocapitalize="words">
+            {{ pageContent.continue_as_guest }}
+          </span>
         </st-button>
       </div>
     </div>

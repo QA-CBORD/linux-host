@@ -10,6 +10,7 @@ import {
   RegistrationApiMethods,
   UserRegistrationManager,
   RegFormStringModel,
+  LookupFieldType,
 } from '../models/registration.shared.model';
 import { RegistrationService } from './registration.service';
 
@@ -22,10 +23,10 @@ export enum LookupFieldIds {
   patronLastName = 'patronLastName',
 }
 
-const commonLookupFields = {
+const GuestRegistrationLookupFields = {
   displayName: '',
   displayOrder: 99,
-  type: 0,
+  type: LookupFieldType.STRING_IGNORECASE,
 };
 
 const getFieldValue = (from, fieldName) => {
@@ -190,17 +191,17 @@ export class GuestRegistrationManager extends UserRegistrationManagerBase implem
       lookupFields: [
         {
           lookupFieldId: LookupFieldIds.guestRegistration,
-          ...commonLookupFields,
+          ...GuestRegistrationLookupFields,
           value: '1',
         },
         {
           lookupFieldId: LookupFieldIds.guestFirstname,
-          ...commonLookupFields,
+          ...GuestRegistrationLookupFields,
           value: getFieldValue(data, FIRST_NAME),
         },
         {
           lookupFieldId: LookupFieldIds.guestLastname,
-          ...commonLookupFields,
+          ...GuestRegistrationLookupFields,
           value: getFieldValue(data, LAST_NAME),
         },
       ],

@@ -14,7 +14,7 @@ export const STATICFIELDS = {
   userName: 'userName',
   phone: 'phone',
   password: 'password',
-  confirmPassword: 'confirmPassword',
+  passwordConfirm: 'passwordConfirm',
 };
 
 export const registrationFormStaticFields: { [key: string]: formField } = {
@@ -24,7 +24,7 @@ export const registrationFormStaticFields: { [key: string]: formField } = {
     idd: STATICFIELDS.firstName.idd,
     name: STATICFIELDS.firstName.fieldName,
     type: 'text',
-    validator: ['', Validators.compose([Validators.min(2), Validators.required])],
+    validator: ['', Validators.compose([Validators.minLength(1), Validators.required])],
     guestOnly: true,
   },
   last_name: {
@@ -33,7 +33,7 @@ export const registrationFormStaticFields: { [key: string]: formField } = {
     idd: STATICFIELDS.lastName.idd,
     name: STATICFIELDS.lastName.fieldName,
     type: 'text',
-    validator: ['', Validators.compose([Validators.min(2), Validators.required])],
+    validator: ['', Validators.compose([Validators.minLength(1), Validators.required])],
     guestOnly: true,
   },
   user_name: {
@@ -48,21 +48,21 @@ export const registrationFormStaticFields: { [key: string]: formField } = {
     idd: 'phone_number',
     name: STATICFIELDS.phone,
     type: 'text',
-    validator: ['', Validators.nullValidator],
+    validator: ['',  Validators.nullValidator],
   },
   password: {
     value: 'Create Password',
     idd: 'pass_word',
     name: STATICFIELDS.password,
     type: 'password',
-    validator: ['', Validators.compose([Validators.min(6), Validators.required])],
+    validator: ['', Validators.compose([Validators.minLength(8), Validators.required])],
     separatorUp: true,
   },
   confirm_password: {
     value: 'Confirm Password',
     idd: 'confirm_pass_word',
-    name: STATICFIELDS.confirmPassword,
+    name: STATICFIELDS.passwordConfirm,
     type: 'password',
-    validator: ['', Validators.compose([Validators.min(6), Validators.required])],
+    validator: ['', Validators.compose([Validators.minLength(8), Validators.required])],
   },
 };

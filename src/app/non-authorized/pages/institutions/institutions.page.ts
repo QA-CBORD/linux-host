@@ -83,10 +83,12 @@ export class InstitutionsPage implements OnInit {
 
   async onInstitutionSelected(institution: InstitutionLookupListItem): Promise<void> {
     const canNavigate2Prelogin = this.registrationServiceFacade.guestLoginSupportedInEnv;
+    console.log('before routing ==> ', institution);
     this.navigate(institution, institution.guestRegSupported && canNavigate2Prelogin);
   }
 
-  private async navigate({ id: institutionId }, shouldNavigate2Prelogin: boolean) {
+  private async navigate(institution, shouldNavigate2Prelogin: boolean) {
+    const { id: institutionId } = institution;
     await this.loadingService.showSpinner();
     this.settingsFacadeService.cleanCache();
     await zip(
@@ -103,7 +105,7 @@ export class InstitutionsPage implements OnInit {
         switchMap(() => this.sessionFacadeService.determineInstitutionSelectionLoginState()),
         tap(loginType => {
           if (shouldNavigate2Prelogin) {
-            this.navigateToPreLogin(loginType);
+            this.navigateToPreLogin(institution);
           } else {
             this.loadingService.closeSpinner();
             this.navigateToLogin(loginType);
@@ -114,8 +116,13 @@ export class InstitutionsPage implements OnInit {
       .toPromise();
   }
 
-  private async navigateToPreLogin(loginState): Promise<void> {
-    this.nav.navigate([ROLES.guest, GUEST_ROUTES.pre_login], { state: { loginState }});
+  private async navigateToPreLogin({ acuteCare }): Promise<void> {
+    const data = await this.registrationServiceFacade
+      .preloginContents(acuteCare)
+      .pipe(tap(() => this.loadingService.closeSpinner()))
+      .toPromise();
+
+    this.nav.navigate([ROLES.guest, GUEST_ROUTES.pre_login], { state: { data } });
   }
 
   private navigateToLogin(loginState: number) {

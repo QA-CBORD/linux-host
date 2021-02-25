@@ -20,9 +20,10 @@
               <td>
                 <st-input-floating-label
                   [label]="firstNameField.value"
+                  [blurHandler]="onBlur(firstNameField)"
                   [formControlName]="firstNameField.name"
                   [control]="firstNameField.control"
-                  [isError]="firstNameField.control.invalid && firstNameField.control.touched"
+                  [isError]="firstNameField.control.invalid && firstNameField.control.touched || firstNameField.hasError"
                   [type]="firstNameField.type"
                   [idd]="firstNameField.idd"
                   enterkeyhint="go"
@@ -32,9 +33,10 @@
               <td>
                 <st-input-floating-label
                   [label]="lastNameField.value"
+                  [blurHandler]="onBlur(lastNameField)"
                   [formControlName]="lastNameField.name"
                   [control]="lastNameField.control"
-                  [isError]="lastNameField.control.invalid && lastNameField.control.touched"
+                  [isError]="lastNameField.control.invalid && lastNameField.control.touched || lastNameField.hasError"
                   [type]="lastNameField.type"
                   [idd]="lastNameField.idd"
                   enterkeyhint="go"
@@ -45,12 +47,15 @@
           </table>
         </div>
         <div *ngFor="let field of formFields" class="formItem" [ngClass]="{ 'separator-up': field.separatorUp }">
+          <div *ngIf="field.separatorUp && passwordsNotMatching" class="password-errors">
+            <small>password and confirm password not matching</small>
+          </div>
           <st-input-floating-label
-            #inputPassword
             [label]="field.value"
             [formControlName]="field.name"
             [control]="field.control"
-            [isError]="field.control.invalid && field.control.touched"
+            [blurHandler]="onBlur(field)"
+            [isError]="field.control.invalid && field.control.touched || field.hasError"
             [type]="field.type"
             [idd]="field.idd"
             enterkeyhint="go"
@@ -61,11 +66,14 @@
       </div>
       <div class="guest__body__submitOrcancel">
         <st-button
-          [isDisabled]="registrationFormGroup && registrationFormGroup.invalid"
+          [type]="submit"
+          [isDisabled]="disabled"
           buttonModifier="rectangular"
           (click)="submitRegistration(registrationFormGroup)"
         >
-          {{ btnText$ | async }}
+          <span autocapitalize="words">
+            {{ btnText$ | async }}
+          </span>
         </st-button>
       </div>
     </form>

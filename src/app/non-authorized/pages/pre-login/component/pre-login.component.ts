@@ -1,6 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { LoginState } from '@core/facades/identity/identity.facade.service';
+import { Router } from '@angular/router';
 import { ROLES, Settings } from 'src/app/app.global';
 import { GUEST_ROUTES } from 'src/app/non-authorized/non-authorized.config';
 import { PreLoginStringModel } from '../../registration/models/registration.shared.model';
@@ -24,7 +23,6 @@ export class PreLoginComponent implements OnInit {
   pageContent: PreLoginStringModel = {} as any;
 
   constructor(
-    private readonly route: ActivatedRoute,
     private readonly nav: Router,
     private readonly sanitizer: DomSanitizer,
     private readonly institutionFacadeService: InstitutionFacadeService,
@@ -35,7 +33,7 @@ export class PreLoginComponent implements OnInit {
   ) {}
   ngOnInit() {
     this.getInstitutionInfo();
-    this.pageContent = this.route.snapshot.data.data;
+    this.pageContent = history.state.data;
   }
 
   private async getInstitutionInfo(): Promise<void> {

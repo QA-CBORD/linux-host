@@ -15,6 +15,11 @@
     .separator-up {
       margin-top: 25px;
       padding-top: 10px !important;
+      .password-errors{
+        color: rgb(233, 60, 34);
+        margin-left: 4px;
+        margin-bottom: 12px
+      }
     }
     .firstRow {
       padding-bottom: 25px;
