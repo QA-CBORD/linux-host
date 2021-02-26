@@ -37,34 +37,21 @@ export class ChangePasswordComponent implements OnInit {
   }
 
   private initForm() {
-    this.changePasswordForm = this.fb.group({
-      [PASSWORD_FORM_CONTROL_NAMES.currentPassword]: ['', Validators.required],
-      [PASSWORD_FORM_CONTROL_NAMES.newPassword]: [''],
-      [PASSWORD_FORM_CONTROL_NAMES.confirmPassword]: [''],
-    });
 
-    const passwordErrors = [
+    const passwordValidations = [
       Validators.required,
       formControlErrorDecorator(
         Validators.pattern(PASS_CHANGE_REGEXP),
-        CONTROL_ERROR[PASSWORD_FORM_CONTROL_NAMES.confirmPassword].pattern
+        CONTROL_ERROR[PASSWORD_FORM_CONTROL_NAMES.newPassword].pattern
       ),
-      formControlErrorDecorator(
-        Validators.minLength(7),
-        CONTROL_ERROR[PASSWORD_FORM_CONTROL_NAMES.confirmPassword].length
-      ),
-      formControlErrorDecorator(
-        Validators.maxLength(12),
-        CONTROL_ERROR[PASSWORD_FORM_CONTROL_NAMES.confirmPassword].length
-      ),
-      formControlErrorDecorator(
-        this.checkPasswords(),
-        CONTROL_ERROR[PASSWORD_FORM_CONTROL_NAMES.confirmPassword].match
-      ),
+      formControlErrorDecorator(Validators.minLength(8), CONTROL_ERROR[PASSWORD_FORM_CONTROL_NAMES.newPassword].min),
     ];
+    
+    this.changePasswordForm = this.fb.group({
+      [PASSWORD_FORM_CONTROL_NAMES.currentPassword]: ['', Validators.required],
+      [PASSWORD_FORM_CONTROL_NAMES.newPassword]: ['', passwordValidations],
+    });
 
-    this.changePasswordForm.controls[PASSWORD_FORM_CONTROL_NAMES.newPassword].setValidators(passwordErrors);
-    this.changePasswordForm.controls[PASSWORD_FORM_CONTROL_NAMES.confirmPassword].setValidators(passwordErrors);
     this.cdRef.detectChanges();
   }
 
@@ -76,30 +63,20 @@ export class ChangePasswordComponent implements OnInit {
     return this.changePasswordForm.get(this.controlsNames.newPassword);
   }
 
-  get confirmPassword(): AbstractControl {
-    return this.changePasswordForm.get(this.controlsNames.confirmPassword);
-  }
-
   get controlsNames() {
     return PASSWORD_FORM_CONTROL_NAMES;
-  }
-
-  checkPasswords(): ValidatorFn {
-    return (control: AbstractControl): { [key: string]: any } | null =>
-      this.newPassword.value === this.confirmPassword.value ? null : { incorrect: true };
   }
 }
 
 export enum PASSWORD_FORM_CONTROL_NAMES {
   currentPassword = 'currentPassword',
   newPassword = 'newPassword',
-  confirmPassword = 'confirmPassword',
 }
 
 export const CONTROL_ERROR = {
-  [PASSWORD_FORM_CONTROL_NAMES.confirmPassword]: {
-    length: 'Passwords must be between 7-12 characters in length',
-    match: `The password didn't match. Try again.`,
-    pattern: 'Passwords must contain at least one letter and one number',
+  [PASSWORD_FORM_CONTROL_NAMES.newPassword]: {
+    min: 'Passwords must have at least eight characters in length.',
+    pattern: 'Passwords must contain at least one letter and one number.',
+    required: 'Password field is required.',
   },
 };
