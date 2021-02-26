@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { formControlErrorDecorator } from '@core/utils/general-helpers';
 import { PASS_CHANGE_REGEXP } from '@core/utils/regexp-patterns';
@@ -31,35 +31,41 @@ export class ChangePasswordComponent implements OnInit {
     this.modalController.dismiss();
   }
 
-  saveChanges() {
+  async saveChanges() {
     console.log('Save changes called!');
+    //const await this.userFacadeService.changePassword$(this.newPassword.value, this.confirmPassword.value);
   }
 
   private initForm() {
+    this.changePasswordForm = this.fb.group({
+      [PASSWORD_FORM_CONTROL_NAMES.currentPassword]: ['', Validators.required],
+      [PASSWORD_FORM_CONTROL_NAMES.newPassword]: [''],
+      [PASSWORD_FORM_CONTROL_NAMES.confirmPassword]: [''],
+    });
+
     const passwordErrors = [
+      Validators.required,
       formControlErrorDecorator(
         Validators.pattern(PASS_CHANGE_REGEXP),
-        'Passwords must contain at least one letter and one number'
+        CONTROL_ERROR[PASSWORD_FORM_CONTROL_NAMES.confirmPassword].pattern
       ),
-      formControlErrorDecorator(Validators.minLength(7), 'Passwords must be between 7-12 characters in length'),
-      formControlErrorDecorator(Validators.maxLength(12), 'Passwords must be between 7-12 characters in length'),
-      ///formControlErrorDecorator(this.checkPasswords(), 'The password does not match')
+      formControlErrorDecorator(
+        Validators.minLength(7),
+        CONTROL_ERROR[PASSWORD_FORM_CONTROL_NAMES.confirmPassword].length
+      ),
+      formControlErrorDecorator(
+        Validators.maxLength(12),
+        CONTROL_ERROR[PASSWORD_FORM_CONTROL_NAMES.confirmPassword].length
+      ),
+      formControlErrorDecorator(
+        this.checkPasswords(),
+        CONTROL_ERROR[PASSWORD_FORM_CONTROL_NAMES.confirmPassword].match
+      ),
     ];
 
-    const passwordValidations = [Validators.required, ...passwordErrors];
-
-    this.changePasswordForm = this.fb.group(
-      {
-        [PASSWORD_FORM_CONTROL_NAMES.currentPassword]: ['', Validators.required],
-        [PASSWORD_FORM_CONTROL_NAMES.newPassword]: ['', passwordValidations],
-        [PASSWORD_FORM_CONTROL_NAMES.confirmPassword]: ['', passwordValidations],
-      }
-    );
-
+    this.changePasswordForm.controls[PASSWORD_FORM_CONTROL_NAMES.newPassword].setValidators(passwordErrors);
+    this.changePasswordForm.controls[PASSWORD_FORM_CONTROL_NAMES.confirmPassword].setValidators(passwordErrors);
     this.cdRef.detectChanges();
-    this.changePasswordForm.valueChanges.subscribe(data => {
-      console.log('data: ', data);
-    });
   }
 
   get currentPassword(): AbstractControl {
@@ -78,10 +84,10 @@ export class ChangePasswordComponent implements OnInit {
     return PASSWORD_FORM_CONTROL_NAMES;
   }
 
-  // checkPasswords(): ValidatorFn {
-  //   return (control: AbstractControl): { [key: string]: any } | null =>
-  //     this.newPassword.value === this.confirmPassword.value ? null : { incorrect: true };
-  // }
+  checkPasswords(): ValidatorFn {
+    return (control: AbstractControl): { [key: string]: any } | null =>
+      this.newPassword.value === this.confirmPassword.value ? null : { incorrect: true };
+  }
 }
 
 export enum PASSWORD_FORM_CONTROL_NAMES {
@@ -89,3 +95,11 @@ export enum PASSWORD_FORM_CONTROL_NAMES {
   newPassword = 'newPassword',
   confirmPassword = 'confirmPassword',
 }
+
+export const CONTROL_ERROR = {
+  [PASSWORD_FORM_CONTROL_NAMES.confirmPassword]: {
+    length: 'Passwords must be between 7-12 characters in length',
+    match: `The password didn't match. Try again.`,
+    pattern: 'Passwords must contain at least one letter and one number',
+  },
+};

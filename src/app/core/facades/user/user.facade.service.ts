@@ -265,6 +265,12 @@ export class UserFacadeService extends ServiceStateFacade {
     return this.userApiService.reportCard$(isReportAsLost).pipe(take(1));
   }
 
+  changePassword$(oldPassword: string, newPassword: string): Observable<boolean> {
+    return this.userApiService.changePassword$(oldPassword, newPassword).pipe(
+      take(1)
+    );
+  }
+
   private async clearData(): Promise<void> {
     this.userPhoto = null;
     this.storageStateService.clearState();
