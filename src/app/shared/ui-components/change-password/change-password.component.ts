@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { formControlErrorDecorator, validatePasswordDecorator } from '@core/utils/general-helpers';
 import { PASS_CHANGE_REGEXP } from '@core/utils/regexp-patterns';
 import { ModalController } from '@ionic/angular';
-import { take } from 'rxjs/operators';
+import { of } from 'rxjs';
+import { catchError, take } from 'rxjs/operators';
 
 @Component({
   selector: 'st-change-password',
@@ -15,8 +16,7 @@ import { take } from 'rxjs/operators';
 })
 export class ChangePasswordComponent implements OnInit {
   changePasswordForm: FormGroup;
-  validOne = 'invalid';
-  validTwo = 'invalid';
+  isLoading = false;
 
   constructor(
     private readonly modalController: ModalController,
@@ -34,9 +34,9 @@ export class ChangePasswordComponent implements OnInit {
    
   private initForm() {
     const passwordValidations = [
-      formControlErrorDecorator(Validators.required, CONTROL_ERROR[PASSWORD_FORM_CONTROL_NAMES.newPassword].required),
-      formControlErrorDecorator(Validators.minLength(8), CONTROL_ERROR[PASSWORD_FORM_CONTROL_NAMES.newPassword].min),
-      formControlErrorDecorator(Validators.pattern(PASS_CHANGE_REGEXP), CONTROL_ERROR[PASSWORD_FORM_CONTROL_NAMES.newPassword].pattern),
+      validatePasswordDecorator(Validators.required, { required: true }),
+      validatePasswordDecorator(Validators.pattern(PASS_CHANGE_REGEXP), { pattern: true }),
+      validatePasswordDecorator(Validators.minLength(8), { min: true }),
     ];
 
     this.changePasswordForm = this.fb.group({
@@ -52,15 +52,21 @@ export class ChangePasswordComponent implements OnInit {
   }
 
   async changePassword() {
-    console.log('Create account');
+    this.isLoading = true;
     this.userFacadeService
       .changePassword$(this.currentPassword.value, this.newPassword.value)
-      .pipe(take(1))
+      .pipe(take(1),
+      catchError(err => {
+        console.log('error', err);
+        return of(false);
+      })
+      )
       .subscribe(response => {
+        this.isLoading = false;
         if (response) {
-          this.toast.showToast({ message: 'Succesful' });
+          this.toast.showToast({ message: 'The password changed successfully!' });
         } else {
-          this.toast.showToast({ message: 'Failed' });
+          this.toast.showToast({ message: 'The current password does not match. Please try again.' });
         }
       });
   }
@@ -83,10 +89,10 @@ export enum PASSWORD_FORM_CONTROL_NAMES {
   newPassword = 'newPassword',
 }
 
-export const CONTROL_ERROR = {
-  [PASSWORD_FORM_CONTROL_NAMES.newPassword]: {
-    min: 'Passwords must have at least eight characters in length.',
-    pattern: 'Passwords must contain at least one letter and one number.',
-    required: 'Password field is required.',
-  },
-};
+// export const CONTROL_ERROR = {
+//   [PASSWORD_FORM_CONTROL_NAMES.newPassword]: {
+//     min: 'min',
+//     pattern: 'pattern',
+//     required: 'required',
+//   },
+// };

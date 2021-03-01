@@ -253,10 +253,10 @@ export function checkIsYesterday(currentDate: Date) {
 }
 
 export const validatePasswordDecorator = (
-  fn: ValidatorFn
+  fn: ValidatorFn, error: ValidationErrors
 ): ((control: AbstractControl) => ValidationErrors | null) => {
   return control => {
     console.log('control: ', fn(control) === null);
-    return fn(control) === null ? null : { valid: 'valid' };
+    return fn(control) === null ? null : error;
   };
 };
