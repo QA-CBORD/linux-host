@@ -15,6 +15,8 @@ import { take } from 'rxjs/operators';
 })
 export class ChangePasswordComponent implements OnInit {
   changePasswordForm: FormGroup;
+  validOne = 'invalid';
+  validTwo = 'invalid';
 
   constructor(
     private readonly modalController: ModalController,
@@ -27,9 +29,22 @@ export class ChangePasswordComponent implements OnInit {
   ngOnInit() {
     this.initForm();
   }
+  
+  ngOnDestroy() {}
+   
+  private initForm() {
+    const passwordValidations = [
+      formControlErrorDecorator(Validators.required, CONTROL_ERROR[PASSWORD_FORM_CONTROL_NAMES.newPassword].required),
+      formControlErrorDecorator(Validators.minLength(8), CONTROL_ERROR[PASSWORD_FORM_CONTROL_NAMES.newPassword].min),
+      formControlErrorDecorator(Validators.pattern(PASS_CHANGE_REGEXP), CONTROL_ERROR[PASSWORD_FORM_CONTROL_NAMES.newPassword].pattern),
+    ];
 
-  ngOnDestroy() {
-    this.changePasswordForm.valueChanges
+    this.changePasswordForm = this.fb.group({
+      [PASSWORD_FORM_CONTROL_NAMES.currentPassword]: ['', Validators.required],
+      [PASSWORD_FORM_CONTROL_NAMES.newPassword]: ['', passwordValidations],
+    });
+
+    this.cdRef.detectChanges();
   }
 
   close() {
@@ -50,28 +65,6 @@ export class ChangePasswordComponent implements OnInit {
       });
   }
 
-  private initForm() {
-    const passwordValidations = [
-      Validators.required,
-      validatePasswordDecorator(
-        Validators.pattern(PASS_CHANGE_REGEXP)
-      ),
-      formControlErrorDecorator(Validators.minLength(8), CONTROL_ERROR[PASSWORD_FORM_CONTROL_NAMES.newPassword].min),
-    ];
-
-    this.changePasswordForm = this.fb.group({
-      [PASSWORD_FORM_CONTROL_NAMES.currentPassword]: ['', Validators.required],
-      [PASSWORD_FORM_CONTROL_NAMES.newPassword]: ['', passwordValidations],
-    });
-
-    this.cdRef.detectChanges();
-
-    // this.changePasswordForm.valueChanges.subscribe((value) => {
-    //      this.cdRef.detectChanges();
-    //      console.log('Detec changes');
-    // });
-  }
-
   get currentPassword(): AbstractControl {
     return this.changePasswordForm.get(this.controlsNames.currentPassword);
   }
@@ -82,11 +75,6 @@ export class ChangePasswordComponent implements OnInit {
 
   get controlsNames() {
     return PASSWORD_FORM_CONTROL_NAMES;
-  }
-
-  checkPasswords(): ValidatorFn {
-    return (control: AbstractControl): { [key: string]: any } | null =>
-      this.newPassword.value === this.currentPassword.value ? null : { incorrect: true };
   }
 }
 
