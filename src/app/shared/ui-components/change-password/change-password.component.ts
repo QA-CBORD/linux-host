@@ -1,9 +1,11 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
-import { formControlErrorDecorator } from '@core/utils/general-helpers';
+import { ToastService } from '@core/service/toast/toast.service';
+import { formControlErrorDecorator, validatePasswordDecorator } from '@core/utils/general-helpers';
 import { PASS_CHANGE_REGEXP } from '@core/utils/regexp-patterns';
 import { ModalController } from '@ionic/angular';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'st-change-password',
@@ -18,41 +20,56 @@ export class ChangePasswordComponent implements OnInit {
     private readonly modalController: ModalController,
     private readonly fb: FormBuilder,
     private readonly userFacadeService: UserFacadeService,
-    private readonly cdRef: ChangeDetectorRef
+    private readonly cdRef: ChangeDetectorRef,
+    private readonly toast: ToastService
   ) {}
 
   ngOnInit() {
     this.initForm();
   }
 
-  ngOnDestroy() {}
+  ngOnDestroy() {
+    this.changePasswordForm.valueChanges
+  }
 
   close() {
     this.modalController.dismiss();
   }
 
-  async saveChanges() {
-    console.log('Save changes called!');
-    //const await this.userFacadeService.changePassword$(this.newPassword.value, this.confirmPassword.value);
+  async changePassword() {
+    console.log('Create account');
+    this.userFacadeService
+      .changePassword$(this.currentPassword.value, this.newPassword.value)
+      .pipe(take(1))
+      .subscribe(response => {
+        if (response) {
+          this.toast.showToast({ message: 'Succesful' });
+        } else {
+          this.toast.showToast({ message: 'Failed' });
+        }
+      });
   }
 
   private initForm() {
-
     const passwordValidations = [
       Validators.required,
-      formControlErrorDecorator(
-        Validators.pattern(PASS_CHANGE_REGEXP),
-        CONTROL_ERROR[PASSWORD_FORM_CONTROL_NAMES.newPassword].pattern
+      validatePasswordDecorator(
+        Validators.pattern(PASS_CHANGE_REGEXP)
       ),
       formControlErrorDecorator(Validators.minLength(8), CONTROL_ERROR[PASSWORD_FORM_CONTROL_NAMES.newPassword].min),
     ];
-    
+
     this.changePasswordForm = this.fb.group({
       [PASSWORD_FORM_CONTROL_NAMES.currentPassword]: ['', Validators.required],
       [PASSWORD_FORM_CONTROL_NAMES.newPassword]: ['', passwordValidations],
     });
 
     this.cdRef.detectChanges();
+
+    // this.changePasswordForm.valueChanges.subscribe((value) => {
+    //      this.cdRef.detectChanges();
+    //      console.log('Detec changes');
+    // });
   }
 
   get currentPassword(): AbstractControl {
@@ -65,6 +82,11 @@ export class ChangePasswordComponent implements OnInit {
 
   get controlsNames() {
     return PASSWORD_FORM_CONTROL_NAMES;
+  }
+
+  checkPasswords(): ValidatorFn {
+    return (control: AbstractControl): { [key: string]: any } | null =>
+      this.newPassword.value === this.currentPassword.value ? null : { incorrect: true };
   }
 }
 
