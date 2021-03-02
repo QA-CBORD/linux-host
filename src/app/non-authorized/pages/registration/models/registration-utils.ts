@@ -156,7 +156,7 @@ export class Field implements formField {
     if (this.touched && this.formField.cValidator.length) {
       let errorCounter = 0;
       this.formField.cValidator.forEach(validator => {
-        !validator.test(this.value) && errorCounter++;
+        validator.test(this.value) == false && errorCounter++;
       });
       this.hasError = errorCounter > 0;
       return this.hasError;
