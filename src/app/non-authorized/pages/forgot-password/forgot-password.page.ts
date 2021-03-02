@@ -7,6 +7,7 @@ import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/fo
 import { EMAIL_REGEXP } from '@core/utils/regexp-patterns';
 import { NotificationFacadeService } from '@core/facades/notification/notification-facade.service';
 import { NavController } from '@ionic/angular';
+import { ToastService } from '@core/service/toast/toast.service';
 
 @Component({
   selector: 'st-forgot-password',
@@ -31,7 +32,8 @@ export class ForgotPasswordPage implements OnInit {
     private readonly router: Router,
     private readonly fb: FormBuilder,
     private readonly notificationFacadeService: NotificationFacadeService,
-    private readonly navController: NavController
+    private readonly navController: NavController,
+    private readonly toastService: ToastService
   ) {}
 
   ngOnInit() {
@@ -50,8 +52,23 @@ export class ForgotPasswordPage implements OnInit {
     this.navController.back();
   }
 
-  async submit() {
-    await this.notificationFacadeService.resetPasswordRequest(this.email.value);
+  submit() {
+    const errorMessage = 'Could not sent the reset email. Please try again in a few minutes.';
+    this.notificationFacadeService
+      .resetPasswordRequest(this.email.value)
+      .then(result => {
+        if (result) {
+          this.resetSent = true;
+          setTimeout(() => {
+            document.getElementById('confirmation-container__info').focus();
+          }, 1000);
+        } else {
+          return this.toastService.showToast({
+            message: errorMessage,
+          });
+        }
+      })
+      .catch(() => this.toastService.showToast({ message: errorMessage }));
   }
 
   setSendEmailState() {
