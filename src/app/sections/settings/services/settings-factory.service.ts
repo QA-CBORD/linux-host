@@ -127,19 +127,16 @@ export class SettingsFactoryService {
         } else if (validation.type === SETTINGS_VALIDATIONS.MobileCredentialEnabled) {
           validations$.push(this.mobileCredentialFacade.showCredentialMetadata().pipe(take(1)));
         } else if (validation.type === SETTINGS_VALIDATIONS.ChangePasswordEnabled) {
-          validations$.push(from(this.sessionFacadeService.determineInstitutionSelectionLoginState()).pipe(switchMap((login) => {
-            if (login === LoginState.HOSTED) {
-              return of(true);
-            }
-            return of(false);
-          })));
-          // if (loginType === LoginState.HOSTED) {
-          //   validations$.push(of(true));
-          // }
-          // const loginType = await this.sessionFacadeService.determineInstitutionSelectionLoginState();
-          // if (loginType === LoginState.HOSTED) {
-          //   validations$.push(of(true));
-          // }
+          validations$.push(
+            from(this.sessionFacadeService.determineInstitutionSelectionLoginState()).pipe(
+              switchMap(login => {
+                if (login === LoginState.HOSTED) {
+                  return of(true);
+                }
+                return of(false);
+              })
+            )
+          );
         }
       }
       return merge(...validations$)

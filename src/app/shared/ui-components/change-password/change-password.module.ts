@@ -7,6 +7,7 @@ import { StInputFloatingLabelModule } from '@shared/ui-components/st-input-float
 import { FocusNextModule } from '@shared/directives/focus-next/focus-next.module';
 import { StHeaderModule } from '../st-header/st-header.module';
 import { ChangePasswordComponent } from './change-password.component';
+import { PasswordValidationModule } from 'src/app/password-validation/password-validation.module';
 
 const imports = [
   CommonModule,
@@ -17,6 +18,7 @@ const imports = [
   StInputFloatingLabelModule,
   StHeaderModule,
   FocusNextModule,
+  PasswordValidationModule
 ];
 const declarations = [ChangePasswordComponent];
 const entryComponents = [ChangePasswordComponent];

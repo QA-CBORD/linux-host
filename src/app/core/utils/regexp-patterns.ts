@@ -39,10 +39,6 @@ export const MASTERCARD_REGEXP = /^(5[1-5][0-9]{14}|2(22[1-9][0-9]{12}|2[3-9][0-
 
 export const PASS_CHANGE_REGEXP = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{7,}$/;
 
-export const ONE_LETTER_REGEXP = /^(?=.*[A-Za-z])[A-Za-z]{1,}$/;
-
-export const ONE_NUMBER_REGEXP = /^(?=.*\d)[\d]{1,}$/;
-
 //------------- Expiration date card tamplate patterns -------------------//
 
 // 1-9/ | 2-9

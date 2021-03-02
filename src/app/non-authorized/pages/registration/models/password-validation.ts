@@ -81,7 +81,7 @@ export class Cvalidators {
 
   static minOneSpecialChar: CustomValidator = {
     test: value => {
-      return /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(value);
+      return value && /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(value);
     },
   };
 }
