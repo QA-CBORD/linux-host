@@ -107,6 +107,7 @@
           interface="action-sheet"
           (ionChange)="onPaymentChanged($event)"
           [interfaceOptions]="{ cssClass: 'custom-deposit-actionSheet' }"
+          (ionFocus)="openActionSheet()"
           [selectedText]="paymentMethod.value | accountTypeResolver: mealBased"
           #paymentMethod
         >
