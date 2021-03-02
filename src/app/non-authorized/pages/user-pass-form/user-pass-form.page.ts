@@ -2,7 +2,7 @@ import { Settings, PATRON_NAVIGATION, ROLES } from './../../../app.global';
 import { map, skipWhile, tap, take } from 'rxjs/operators';
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { InstitutionPhotoInfo, Institution } from '@core/model/institution';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
@@ -22,6 +22,9 @@ import { Observable } from 'rxjs';
 import { configureBiometricsConfig } from '@core/utils/general-helpers';
 import { ToastService } from '@core/service/toast/toast.service';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
+import { RegistrationServiceFacade } from '../registration/services/registration-service-facade';
+import { RegistrationComponent } from '../registration/components/registration/registration.component';
+import { ModalController } from '@ionic/angular';
 
 @Component({
   selector: 'user-pass-form',
@@ -47,7 +50,6 @@ export class UserPassForm implements OnInit {
     private readonly contentStringsFacadeService: ContentStringsFacadeService,
     private readonly authFacadeService: AuthFacadeService,
     private readonly loadingService: LoadingService,
-    private readonly activatedRoute: ActivatedRoute,
     private readonly router: Router,
     private readonly sanitizer: DomSanitizer,
     private readonly toastService: ToastService,
@@ -56,6 +58,8 @@ export class UserPassForm implements OnInit {
     private readonly nativeStartupFacadeService: NativeStartupFacadeService,
     private readonly fb: FormBuilder,
     private readonly cdRef: ChangeDetectorRef,
+    private readonly modalCtrl: ModalController,
+    private readonly registrationFacade: RegistrationServiceFacade,
     private readonly appBrowser: InAppBrowser,
     private readonly environmentFacadeService: EnvironmentFacadeService,
     private readonly accessibilityService: AccessibilityService
@@ -77,8 +81,9 @@ export class UserPassForm implements OnInit {
     this.initForm();
     await this.setLocalInstitutionInfo();
     // Announcing navigation meanwhile we find a generic way to do so.
-    this.accessibilityService.readAloud(`Login page for ${this.institutionInfo.name}`); 
+    this.accessibilityService.readAloud(`Login page for ${this.institutionInfo.name}`);
     const { id } = this.institutionInfo;
+    (this.institutionInfo as any).show = false;
     const sessionId = await this.authFacadeService
       .getAuthSessionToken$()
       .pipe(take(1))
@@ -89,8 +94,8 @@ export class UserPassForm implements OnInit {
     this.loginInstructions$ = this.getContentStringByName(sessionId, 'instructions');
     this.institutionPhoto$ = this.getInstitutionPhoto(id, sessionId);
     this.institutionName$ = this.getInstitutionName(id, sessionId);
-    this.nativeHeaderBg$ = this.getNativeHeaderBg(id, sessionId);
-    
+    const { backgroundColor } = history.state;
+    this.nativeHeaderBg$ = Promise.resolve(backgroundColor);
     this.signupEnabled$ = this.isSignupEnabled$();
     this.cdRef.detectChanges();
   }
@@ -100,7 +105,28 @@ export class UserPassForm implements OnInit {
     this.appBrowser.create(link, '_system');
   }
 
-  async redirectToSignup() {
+  async doHostedSignup({ asGuest: isGuestRegistration }): Promise<void> {
+    this.loadingService.showSpinner();
+    await this.registrationFacade.registrationConfig(isGuestRegistration);
+    const modal = await this.modalCtrl.create({
+      backdropDismiss: false,
+      component: RegistrationComponent,
+    });
+    await modal.present();
+    this.loadingService.closeSpinner();
+    await modal.onDidDismiss();
+  }
+
+  onSignup(): void {
+    const { navParams } = history.state;
+    if(navParams && this.registrationFacade.guestLoginSupportedInEnv) {
+      this.doHostedSignup(navParams);
+    } else {
+      this.redirectToSignup();
+    }
+  }
+
+  async redirectToSignup(): Promise<void> {
     const { shortName } = await this.institutionFacadeService.cachedInstitutionInfo$.pipe(take(1)).toPromise();
     const url = `${this.environmentFacadeService.getSitesURL()}/${shortName}/full/register.php`;
     this.appBrowser.create(url, '_system');
@@ -124,7 +150,6 @@ export class UserPassForm implements OnInit {
       this.presentToast('Login failed, invalid user name and/or password');
       return;
     }
-
     const { username, password } = form.value;
     const { id } = this.institutionInfo;
     let sessionId: string;
@@ -204,20 +229,20 @@ export class UserPassForm implements OnInit {
   }
 
   private async getContentStringByName(sessionId, name): Promise<string> {
-   return this.contentStringsFacadeService
-    .fetchContentString$(
-      CONTENT_STRINGS_DOMAINS.get_web_gui, 
-      CONTENT_STRINGS_CATEGORIES.login_screen, 
-      name,
-      null,
-      sessionId,
-      false,
-    )
-    .pipe(
-      map(({ value }) => value),
-      take(1)
-    )
-    .toPromise();
+    return this.contentStringsFacadeService
+      .fetchContentString$(
+        CONTENT_STRINGS_DOMAINS.get_web_gui,
+        CONTENT_STRINGS_CATEGORIES.login_screen,
+        name,
+        null,
+        sessionId,
+        false
+      )
+      .pipe(
+        map(({ value }) => value),
+        take(1)
+      )
+      .toPromise();
   }
 
   private configureBiometricsConfig(supportedBiometricType: string[]): { type: string; name: string } {

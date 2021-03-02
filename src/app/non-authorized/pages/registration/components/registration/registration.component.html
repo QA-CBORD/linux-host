@@ -1,0 +1,84 @@
+<ion-header class="login-header" no-border>
+  <ion-toolbar mode="ios" class="ion-color" class="mobile-credential-header__nav-toolbar">
+    <ion-buttons slot="start">
+      <ion-button mode="ios" class="edit-home__header-done-btn" color="dark" (click)="onDecline()">
+        <ion-icon icon="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="mc-header__title">
+      {{ title$ | async }}
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content [scrollY]="true">
+  <div class="form-container" *ngIf="registrationFormGroup">
+    <form [formGroup]="registrationFormGroup" class="reg-form">
+      <div class="fields-container">
+        <div class="firstRow" *ngIf="firstNameField && lastNameField">
+          <table class="htable">
+            <tr>
+              <td>
+                <st-input-floating-label
+                  [label]="firstNameField.label"
+                  [blurHandler]="onBlur(firstNameField)"
+                  [formControlName]="firstNameField.name"
+                  [control]="firstNameField.control"
+                  [isError]="firstNameField.hasError"
+                  [type]="firstNameField.type"
+                  [idd]="firstNameField.idd"
+                  enterkeyhint="go"
+                  tabindex="0"
+                ></st-input-floating-label>
+              </td>
+              <td>
+                <st-input-floating-label
+                  [label]="lastNameField.label"
+                  [blurHandler]="onBlur(lastNameField)"
+                  [formControlName]="lastNameField.name"
+                  [control]="lastNameField.control"
+                  [isError]="lastNameField.hasError"
+                  [type]="lastNameField.type"
+                  [idd]="lastNameField.idd"
+                  enterkeyhint="go"
+                  tabindex="0"
+                ></st-input-floating-label>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div *ngFor="let field of formFields" class="formItem" [ngClass]="{ 'separator-up': field.separatorUp }">
+          <!-- <div *ngIf="field.separatorUp && passwordsNotMatching" class="password-errors">
+            <small>Passwords not matching</small>
+          </div> -->
+          <st-input-floating-label
+            [label]="field.label"
+            [formControlName]="field.name"
+            [control]="field.control"
+            [blurHandler]="onBlur(field)"
+            [isError]="field.hasError"
+            [type]="field.type"
+            [idd]="field.idd"
+            enterkeyhint="go"
+            tabindex="0"
+          >
+          </st-input-floating-label>
+        </div>
+        <div class="password-hints">
+          <st-input-validator [control]="password" ></st-input-validator>
+        </div>
+      </div>
+      <div class="guest__body__submitOrcancel">
+        <st-button
+          [type]="submit"
+          [isDisabled]="disabled"
+          buttonModifier="rectangular"
+          (click)="submitRegistration(registrationFormGroup)"
+        >
+          <span class="ion-text-capitalize">
+            {{ btnText$ | async }}
+          </span>
+        </st-button>
+      </div>
+    </form>
+  </div>
+</ion-content>
