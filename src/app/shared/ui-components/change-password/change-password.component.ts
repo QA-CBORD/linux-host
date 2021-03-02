@@ -35,9 +35,9 @@ export class ChangePasswordComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.getValidators();
     this.initForm();
     this.initControl();
-    this.getValidators();
   }
 
   close() {
@@ -45,21 +45,23 @@ export class ChangePasswordComponent implements OnInit {
   }
 
   async changePassword() {
+    let resultMessage = 'Your password was changed successfully.';
     this.isLoading = true;
     this.userFacadeService
       .changePassword$(this.currentPassword.value, this.newPassword.value)
       .pipe(
         take(1),
         catchError(() => {
+          resultMessage = 'Your current password is incorrect, please try again.';
           return of(false);
         })
       )
-      .subscribe(response => {
+      .subscribe(async response => {
+        await this.toast.showToast({ message:  resultMessage });
         this.isLoading = false;
-        if (response) {
-          this.toast.showToast({ message: 'The password was changed successfully!' });
-        } else {
-          this.toast.showToast({ message: 'The current password does not match. Please try again.' });
+        this.cdRef.detectChanges();
+        if(response) {
+          this.close();
         }
       });
   }
