@@ -36,12 +36,12 @@
       </div>
       <div>
         <st-button buttonModifier="rectangle" class="login__form-btns--odd" tabindex="4" (click)="continueAsNonGuest()">
-          <span autocapitalize="words">
+          <span text-capitalize>
             {{ pageContent.continue_as_nonguest }}
           </span>
         </st-button>
         <st-button buttonModifier="rectangle" [isDisabled]="true" tabindex="3" (click)="continueAsGuest()">
-          <span autocapitalize="words">
+          <span text-capitalize>
             {{ pageContent.continue_as_guest }}
           </span>
         </st-button>

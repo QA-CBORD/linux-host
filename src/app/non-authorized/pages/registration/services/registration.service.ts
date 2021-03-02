@@ -4,7 +4,7 @@ import { RPCQueryConfig } from '@core/interceptors/query-config.model';
 import { Observable, throwError, zip, of } from 'rxjs';
 import { take } from 'rxjs/internal/operators/take';
 import { catchError, map, switchMap } from 'rxjs/operators';
-import { LookupFieldInfo, RegistrationApiMethods } from '../models/registration.shared.model';
+import { LookupFieldInfo, RegistrationApiMethods } from '../models/registration-utils';
 import { HttpClient } from '@angular/common/http';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { Institution } from '@core/model/institution/institution.model';
@@ -64,7 +64,7 @@ export class RegistrationService {
     );
   }
 
-  getContentStringByCategory$(category: CONTENT_STRINGS_CATEGORIES): Observable<ContentStringInfo[]> {
+  getString$(category: CONTENT_STRINGS_CATEGORIES): Observable<ContentStringInfo[]> {
     return this.contentStringFacade.fetchContentStrings$(CONTENT_STRINGS_DOMAINS.patronUi, category).pipe(
       take(1),
       catchError(() => of([]))

@@ -20,8 +20,9 @@
   <div class="input__accesibility_error" *ngIf="isError && !passwordFieldDirty">
     <img src="/assets/icon/input-error.svg" alt="input-accessibility-error" *ngIf="isError" />
   </div>
-  <div class="input__accesibility_error" *ngIf="passwordFieldDirty">
-    <small (click)="toggleText()" class="showOrHide">{{ showOrHide }}</small>
+  <div class="input__transparent_btn" *ngIf="passwordFieldDirty">
+    <ion-button (click)="toggleText()" fill="clear">
+      <span text-capitalize> {{ showOrHide }} </span>
+    </ion-button>
   </div>
-
 </div>

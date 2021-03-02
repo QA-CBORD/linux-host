@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ROLES, Settings } from 'src/app/app.global';
 import { GUEST_ROUTES } from 'src/app/non-authorized/non-authorized.config';
-import { PreLoginStringModel } from '../../registration/models/registration.shared.model';
+import { PreLoginStringModel } from '../../registration/models/registration-utils';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { InstitutionPhotoInfo } from '@core/model/institution';
@@ -33,18 +33,19 @@ export class PreLoginComponent implements OnInit {
   ) {}
   ngOnInit() {
     this.getInstitutionInfo();
-    this.pageContent = history.state.data;
+    const { contentStrings, backgroundColor } = history.state;
+    this.pageContent = contentStrings;
+    this.nativeHeaderBg$ = Promise.resolve(backgroundColor);
   }
 
   private async getInstitutionInfo(): Promise<void> {
-    const { id } = await this.institutionFacadeService.cachedInstitutionInfo$.pipe(take(1)).toPromise();
+    const { id: institutionId } = await this.institutionFacadeService.cachedInstitutionInfo$.pipe(take(1)).toPromise();
     const sessionId = await this.authFacadeService
       .getAuthSessionToken$()
       .pipe(take(1))
       .toPromise();
-    this.institutionPhoto$ = this.getInstitutionPhoto(id, sessionId);
-    this.institutionName$ = this.getInstitutionName(id, sessionId);
-    this.nativeHeaderBg$ = this.getNativeHeaderBg(id, sessionId);
+    this.institutionPhoto$ = this.getInstitutionPhoto(institutionId, sessionId);
+    this.institutionName$ = this.getInstitutionName(institutionId, sessionId);
   }
 
   private async getInstitutionName(id, sessionId): Promise<string> {
@@ -92,8 +93,10 @@ export class PreLoginComponent implements OnInit {
       .toPromise();
   }
 
-  private navigateToLogin(asGuest) {
-    this.nav.navigate([ROLES.guest, GUEST_ROUTES.login], { state: { navParams: { asGuest } } });
+  private async navigateToLogin(asGuest) {
+    const backgroundColor = await this.nativeHeaderBg$;
+    const navParams = { asGuest }
+    this.nav.navigate([ROLES.guest, GUEST_ROUTES.login], { state: { backgroundColor,  navParams } });
   }
 
   async continueAsNonGuest(): Promise<void> {

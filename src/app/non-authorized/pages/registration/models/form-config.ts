@@ -1,68 +1,51 @@
 import { Validators } from '@angular/forms';
-import { formField } from './registration.shared.model';
+import { Cvalidators, getDefaultPasswordValidators } from './password-validation';
+import { Field, STATICFIELDS } from './registration-utils';
 
-
-export const STATICFIELDS = {
-  firstName: {
-    fieldName: 'firstName',
-    idd: 'first_name',
-  },
-  lastName: {
-    fieldName: 'lastName',
-    idd: 'last_name',
-  },
-  userName: 'userName',
-  phone: 'phone',
-  password: 'password',
-  passwordConfirm: 'passwordConfirm',
-};
-
-export const registrationFormStaticFields: { [key: string]: formField } = {
-  first_name: {
+export const registrationFormStaticFields: { [key: string]: Field } = {
+  first_name: new Field({
     alignHorizontal: true,
-    value: 'First Name',
+    label: 'First Name',
     idd: STATICFIELDS.firstName.idd,
     name: STATICFIELDS.firstName.fieldName,
     type: 'text',
-    validator: ['', Validators.compose([Validators.minLength(1), Validators.required])],
+    cValidator: [Cvalidators.min(1)],
     guestOnly: true,
-  },
-  last_name: {
+    validators: ['', Validators.minLength(1)],
+  }),
+  last_name: new Field({
     alignHorizontal: true,
-    value: 'Last Name',
+    label: 'Last Name',
     idd: STATICFIELDS.lastName.idd,
     name: STATICFIELDS.lastName.fieldName,
     type: 'text',
-    validator: ['', Validators.compose([Validators.minLength(1), Validators.required])],
+    cValidator: [Cvalidators.min(1)],
     guestOnly: true,
-  },
-  user_name: {
-    value: 'Email',
+    validators: ['', Validators.minLength(1)],
+  }),
+  user_name: new Field({
+    label: 'Email',
     idd: 'email_address',
     name: STATICFIELDS.userName,
     type: 'email',
-    validator: ['', Validators.compose([Validators.required, Validators.email])],
-  },
-  phone: {
-    value: 'Phone Number',
+    cValidator: [Cvalidators.email()],
+    validators: ['', Validators.email],
+  }),
+  phone: new Field({
+    label: 'Phone Number',
     idd: 'phone_number',
     name: STATICFIELDS.phone,
     type: 'text',
-    validator: ['',  Validators.nullValidator],
-  },
-  password: {
-    value: 'Create Password',
+    cValidator: [Cvalidators.nullablePhone()],
+    validators: ['', Validators.nullValidator],
+  }),
+  password: new Field({
+    label: 'Create Password',
     idd: 'pass_word',
     name: STATICFIELDS.password,
     type: 'password',
-    validator: ['', Validators.compose([Validators.minLength(8), Validators.required])],
+    cValidator: getDefaultPasswordValidators(),
+    validators: ['', Validators.minLength(8)],
     separatorUp: true,
-  },
-  confirm_password: {
-    value: 'Confirm Password',
-    idd: 'confirm_pass_word',
-    name: STATICFIELDS.passwordConfirm,
-    type: 'password',
-    validator: ['', Validators.compose([Validators.minLength(8), Validators.required])],
-  },
+  }),
 };

@@ -72,10 +72,12 @@
     position: absolute;
     top: 25%;
     right: 5%;
-    .showOrHide{
-      font-weight: bold;
-      color: rgb(32, 32, 223);
-    }
+  }
+
+  &__transparent_btn{
+    position: absolute;
+    top: 8%;
+    right: 1%;
   }
 }
 

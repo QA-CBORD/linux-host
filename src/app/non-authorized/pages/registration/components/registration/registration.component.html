@@ -10,7 +10,7 @@
     </ion-title>
   </ion-toolbar>
 </ion-header>
-<ion-content [scrollY]="false">
+<ion-content [scrollY]="true">
   <div class="form-container" *ngIf="registrationFormGroup">
     <form [formGroup]="registrationFormGroup" class="reg-form">
       <div class="fields-container">
@@ -19,11 +19,11 @@
             <tr>
               <td>
                 <st-input-floating-label
-                  [label]="firstNameField.value"
+                  [label]="firstNameField.label"
                   [blurHandler]="onBlur(firstNameField)"
                   [formControlName]="firstNameField.name"
                   [control]="firstNameField.control"
-                  [isError]="firstNameField.control.invalid && firstNameField.control.touched || firstNameField.hasError"
+                  [isError]="firstNameField.hasError"
                   [type]="firstNameField.type"
                   [idd]="firstNameField.idd"
                   enterkeyhint="go"
@@ -32,11 +32,11 @@
               </td>
               <td>
                 <st-input-floating-label
-                  [label]="lastNameField.value"
+                  [label]="lastNameField.label"
                   [blurHandler]="onBlur(lastNameField)"
                   [formControlName]="lastNameField.name"
                   [control]="lastNameField.control"
-                  [isError]="lastNameField.control.invalid && lastNameField.control.touched || lastNameField.hasError"
+                  [isError]="lastNameField.hasError"
                   [type]="lastNameField.type"
                   [idd]="lastNameField.idd"
                   enterkeyhint="go"
@@ -47,21 +47,24 @@
           </table>
         </div>
         <div *ngFor="let field of formFields" class="formItem" [ngClass]="{ 'separator-up': field.separatorUp }">
-          <div *ngIf="field.separatorUp && passwordsNotMatching" class="password-errors">
-            <small>password and confirm password not matching</small>
-          </div>
+          <!-- <div *ngIf="field.separatorUp && passwordsNotMatching" class="password-errors">
+            <small>Passwords not matching</small>
+          </div> -->
           <st-input-floating-label
-            [label]="field.value"
+            [label]="field.label"
             [formControlName]="field.name"
             [control]="field.control"
             [blurHandler]="onBlur(field)"
-            [isError]="field.control.invalid && field.control.touched || field.hasError"
+            [isError]="field.hasError"
             [type]="field.type"
             [idd]="field.idd"
             enterkeyhint="go"
             tabindex="0"
           >
           </st-input-floating-label>
+        </div>
+        <div class="password-hints">
+          <st-input-validator [control]="password" ></st-input-validator>
         </div>
       </div>
       <div class="guest__body__submitOrcancel">
@@ -71,7 +74,7 @@
           buttonModifier="rectangular"
           (click)="submitRegistration(registrationFormGroup)"
         >
-          <span autocapitalize="words">
+          <span class="ion-text-capitalize">
             {{ btnText$ | async }}
           </span>
         </st-button>

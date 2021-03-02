@@ -1,52 +1,49 @@
 import { Injectable } from '@angular/core';
 import { EnvironmentFacadeService, EnvironmentType } from '@core/facades/environment/environment.facade.service';
-import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
-import { InstitutionLookupListItem } from '@core/model/institution';
 import { Observable } from 'rxjs';
-import { map, switchMap, take } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { CONTENT_STRINGS_CATEGORIES } from 'src/app/content-strings';
+import { GuestRegistration } from '../models/guest-registration';
+import { PatronRegistration } from '../models/patron-registration';
 import {
   FormFieldList,
   PreLoginStringKeys,
   PreLoginStringModel,
+  RegistrationFormData,
   UserRegistrationManager,
-} from '../models/registration.shared.model';
-import { GuestRegistrationManager, PatronRegistrationManager } from './registration-manager';
+} from '../models/registration-utils';
 import { RegistrationService } from './registration.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RegistrationServiceFacade {
-  private _registrationManager: UserRegistrationManager;
+  private data: { fieldList?: FormFieldList; formData?: RegistrationFormData } = {};
+
+  private _registration: UserRegistrationManager;
   constructor(
     private readonly registrationService: RegistrationService,
-    private readonly environmentFacadeService: EnvironmentFacadeService,
-    private readonly institutionFacadeService: InstitutionFacadeService
+    private readonly environmentFacadeService: EnvironmentFacadeService
   ) {}
 
   async registrationConfig(isGuestSignup: boolean): Promise<void> {
     const serviceComponent = this.registrationService;
-    let registrationController;
-    if (isGuestSignup) registrationController = new GuestRegistrationManager(serviceComponent);
-    else registrationController = new PatronRegistrationManager(serviceComponent);
-    await registrationController.getFormFields().toPromise();
-    this._registrationManager = registrationController;
-  }
-
-  async pageContentStrings() {
-    return await this._registrationManager.getFormStrings().toPromise();
+    let registration =
+      (isGuestSignup && new GuestRegistration(serviceComponent)) || new PatronRegistration(serviceComponent);
+    this.data = await registration.getData();
+    this._registration = registration;
   }
 
   preloginContents(acuteCare): Observable<PreLoginStringModel> {
-    return this.getPreloginContents(acuteCare).pipe(
-      take(1)
-    );
+    return this.getPreloginContents(acuteCare).pipe(take(1));
+  }
+
+  getData(): Promise<{ fieldList?: FormFieldList; formData?: RegistrationFormData }> {
+    return Promise.resolve(this.data);
   }
 
   private getPreloginContents(acuteCare): Observable<PreLoginStringModel> {
-    console.log('cached ==> ', acuteCare);
-    return this.registrationService.getContentStringByCategory$(CONTENT_STRINGS_CATEGORIES.pre_login).pipe(
+    return this.registrationService.getString$(CONTENT_STRINGS_CATEGORIES.pre_login).pipe(
       map(contents => {
         const preLoginContentString: any = {};
         contents.forEach(({ name: ContentStringKey, value }) => {
@@ -64,12 +61,8 @@ export class RegistrationServiceFacade {
     );
   }
 
-  async getFormFields(): Promise<FormFieldList> {
-    return await this._registrationManager.getFormFields().toPromise();
-  }
-
-  register(data): Observable<any> {
-    return this._registrationManager.register(data);
+  submit(data): Observable<any> {
+    return this._registration.register(data);
   }
 
   get guestLoginSupportedInEnv(): boolean {

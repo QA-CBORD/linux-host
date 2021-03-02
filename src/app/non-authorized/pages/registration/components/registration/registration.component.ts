@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup } from '@angular/forms';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { ModalController } from '@ionic/angular';
 import { Handler } from '@shared/model/shared-api';
 import { Observable, of } from 'rxjs';
-import { STATICFIELDS } from '../../models/form-config';
-import { formField } from '../../models/registration.shared.model';
+import { InputValidator } from '../../models/password-validation';
+import { formField, STATICFIELDS } from '../../models/registration-utils';
 import { RegistrationServiceFacade } from '../../services/registration-service-facade';
+import { RegistrationSuccessComponent } from '../registration-success/registration-success.component';
 
 @Component({
   selector: 'st-registration',
@@ -20,8 +21,7 @@ export class RegistrationComponent implements OnInit {
   registrationFormGroup: FormGroup;
   title$: Observable<string>;
   btnText$: Observable<string>;
-  passwordsNotMatching: boolean;
-  confirmPasswordComplete: boolean = false;
+  passwordValidators: InputValidator[] = [];
 
   protected customLoadingOptions = { message: 'Processing... Please wait', duration: 150000 };
 
@@ -35,19 +35,26 @@ export class RegistrationComponent implements OnInit {
 
   async ngOnInit() {
     await this.formFieldsetup();
-    const data = await this.registrationFacade.pageContentStrings();
-    this.title$ = of(data.screen_title);
-    this.btnText$ = of(data.submit_btn_text.toLowerCase());
+    const { formData } = await this.registrationFacade.getData();
+    this.title$ = of(formData.screen_title);
+    this.btnText$ = of(formData.submit_btn_text);
+    this.passwordValidators = formData.passwordValidators;
   }
 
   private async formFieldsetup(): Promise<void> {
-    const formFieldList = await this.registrationFacade.getFormFields();
+    const { fieldList: formFieldList } = await this.registrationFacade.getData();
     const fields = [...formFieldList.horizontalAlignedFields, ...formFieldList.verticalAlignedFields];
     this.registrationFormGroup = this.fb.group(formFieldList.controls);
-    fields.forEach(field => (field.control = this.registrationFormGroup.get(field.name)));
+    fields.forEach(field => {
+      field.control = this.registrationFormGroup.get(field.name);
+      field.control.valueChanges.subscribe(value => {
+        field.touched = true;
+        field.value = value;
+        field.validate();
+      });
+    });
     this.horizontalFields = formFieldList.horizontalAlignedFields;
     this.formFields = formFieldList.verticalAlignedFields;
-    this.observePasswordChangeEvents();
   }
 
   get firstNameField(): formField {
@@ -61,91 +68,63 @@ export class RegistrationComponent implements OnInit {
   }
 
   onBlur(field: formField): Handler {
-    const formGroup = this.registrationFormGroup;
-    const confirmPasswordComplete = this.confirmPasswordComplete;
     return {
-      handle: function(data) {
-        field.hasError = field.control.invalid;
-        if (field.name == STATICFIELDS.phone) {
-          const fieldValue: string = formGroup.get(STATICFIELDS.phone).value;
-          if (fieldValue) {
-            field.hasError = !/^[0-9]*$/.test(fieldValue) || !(fieldValue.length > 9 && fieldValue.length < 12)
-          } else {
-            field.hasError = false;
-          }
-        }
-        if(field.name == STATICFIELDS.password || field.name == STATICFIELDS.passwordConfirm){
-           field.hasError = !confirmPasswordComplete || this.passwordsNotMatching;
-        }
-      },
+      handle: data => field.validate(),
     };
   }
 
-  observePasswordChangeEvents(): void {
-    const passwordConfirmControl = this.registrationFormGroup.get(STATICFIELDS.passwordConfirm);
-    const password = this.registrationFormGroup.get(STATICFIELDS.password);
-    const confirmPasswordField = this.formFields.find(
-      ({ name: fieldName }) => fieldName == STATICFIELDS.passwordConfirm
-    );
-
-    const passwordField = this.formFields.find(({ name: fieldName }) => fieldName == STATICFIELDS.password);
-
-    password.valueChanges.subscribe(value => {
-      if (passwordConfirmControl.value) {
-        this.passwordsNotMatching = !passwordConfirmControl.value.startsWith(value);
-        this.confirmPasswordComplete = passwordConfirmControl.touched && passwordConfirmControl.value === value;
-        passwordField.hasError = this.passwordsNotMatching;
-      }
-    });
-
-    passwordConfirmControl.valueChanges.subscribe(value => {
-      this.passwordsNotMatching = !password.value.startsWith(value);
-      this.confirmPasswordComplete = password.touched && password.value === value;
-      confirmPasswordField.hasError = this.passwordsNotMatching;
-    });
+  get password(): AbstractControl {
+    return this.registrationFormGroup && this.registrationFormGroup.get(STATICFIELDS.password);
   }
 
   get disabled(): boolean {
     if (!this.registrationFormGroup) return true;
-    return this.registrationFormGroup.invalid || !this.confirmPasswordComplete || this.passwordsNotMatching;
+    return this.formInvalid;
   }
 
   onDecline() {
     this.modalCtrl.dismiss(false);
   }
 
-  get formInvalid(): boolean{
-    const formInvalid = this.disabled;
+  private get formInvalid(): boolean {
     const allFields = [...this.horizontalFields, ...this.formFields];
-    let isFormInvalid = false;
-    allFields.forEach(field => {
-      field.hasError = field.control.invalid || field.hasError;
-      isFormInvalid = field.hasError;
-    });
-    return formInvalid || isFormInvalid;
+    let errorCounter = 0;
+    allFields.forEach(field => field.validate() && errorCounter++);
+    return errorCounter > 0;
   }
 
+  private async onRegistrationSuccess(response): Promise<void> {
+    const { success_dismiss_btn, success_resend_email } = await (await this.registrationFacade.getData()).formData;
+
+    const modal = await this.modalCtrl.create({
+      backdropDismiss: false,
+      componentProps: {
+        pageContent: {
+          dismissBtnText: success_dismiss_btn,
+          resendEmailBtnText: success_resend_email,
+        },
+      },
+      component: RegistrationSuccessComponent,
+    });
+
+    await modal.present();
+    this.loadingService.closeSpinner();
+    const { data } = await modal.onDidDismiss();
+    console.log('first modal dismissed: ', data);
+    this.modalCtrl.dismiss();
+  }
 
   async submitRegistration(formGroup: FormGroup): Promise<void> {
     if (this.formInvalid) {
-        return;
+      return;
     }
 
     await this.loadingService.showSpinner(this.customLoadingOptions);
-    this.registrationFacade.register(formGroup.value).subscribe(
-      ({ response }) => {
-        const message = 'Registration Success. please sign in.';
-        this.modalCtrl.dismiss();
-        this.loadingService.closeSpinner();
-        this.toastService.showToast({ message, duration: 5000 });
-      },
+    this.registrationFacade.submit(formGroup.value).subscribe(
+      ({ response }) => this.onRegistrationSuccess(response),
       () => {
         const message = 'Registration failed. Please try again later.';
-        this.toastService.showToast({ message });
-        this.loadingService.closeSpinner();
-      },
-      () => {
-        console.log('completed ===>>> ');
+        this.toastService.showToast({ message, duration: 6000 });
         this.loadingService.closeSpinner();
       }
     );

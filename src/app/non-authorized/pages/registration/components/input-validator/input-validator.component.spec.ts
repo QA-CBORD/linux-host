@@ -1,22 +1,22 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { GetInputElement } from './get-input-element.component';
+import { InputValidatorComponent } from './input-validator.component';
 
-describe('GetInputElementComponent', () => {
-  let component: GetInputElement;
-  let fixture: ComponentFixture<GetInputElement>;
+describe('InputValidatorComponent', () => {
+  let component: InputValidatorComponent;
+  let fixture: ComponentFixture<InputValidatorComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ GetInputElement ],
+      declarations: [ InputValidatorComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(GetInputElement);
+    fixture = TestBed.createComponent(InputValidatorComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

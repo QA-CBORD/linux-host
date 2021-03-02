@@ -91,6 +91,7 @@ export class InstitutionsPage implements OnInit {
     const { id: institutionId } = institution;
     await this.loadingService.showSpinner();
     this.settingsFacadeService.cleanCache();
+    const backgroundColor = await this.getNativeHeaderBg(institutionId, this.sessionId);
     await zip(
       this.settingsFacadeService.fetchSettingList(Settings.SettingList.FEATURES, this.sessionId, institutionId),
       this.settingsFacadeService.getSettings(
@@ -105,10 +106,10 @@ export class InstitutionsPage implements OnInit {
         switchMap(() => this.sessionFacadeService.determineInstitutionSelectionLoginState()),
         tap(loginType => {
           if (shouldNavigate2Prelogin) {
-            this.navigateToPreLogin(institution);
+            this.navigateToPreLogin(institution, backgroundColor);
           } else {
             this.loadingService.closeSpinner();
-            this.navigateToLogin(loginType);
+            this.navigateToLogin(loginType, backgroundColor);
           }
         }),
         take(1)
@@ -116,19 +117,31 @@ export class InstitutionsPage implements OnInit {
       .toPromise();
   }
 
-  private async navigateToPreLogin({ acuteCare }): Promise<void> {
-    const data = await this.registrationServiceFacade
-      .preloginContents(acuteCare)
-      .pipe(tap(() => this.loadingService.closeSpinner()))
-      .toPromise();
-
-    this.nav.navigate([ROLES.guest, GUEST_ROUTES.pre_login], { state: { data } });
+  private async navigateToPreLogin({ acuteCare }, backgroundColor): Promise<void> {
+    const contentStrings = await this.registrationServiceFacade.preloginContents(acuteCare).toPromise();
+    this.loadingService.closeSpinner();
+    this.nav.navigate([ROLES.guest, GUEST_ROUTES.pre_login], { state: { backgroundColor, contentStrings } });
   }
 
-  private navigateToLogin(loginState: number) {
+  private async getNativeHeaderBg(id, sessionId): Promise<string> {
+    return this.settingsFacadeService
+      .fetchSetting(Settings.Setting.MOBILE_HEADER_COLOR, sessionId, id)
+      .pipe(
+        map(({ value }) => {
+          if (value === null) return;
+          const siteColors = JSON.parse(value);
+          const nativeHeaderBg = siteColors['native-header-bg'];
+          return nativeHeaderBg ? '#' + nativeHeaderBg : '#166dff';
+        }),
+        take(1)
+      )
+      .toPromise();
+  }
+
+  private navigateToLogin(loginState: number, backgroundColor) {
     switch (loginState) {
       case LoginState.HOSTED:
-        this.nav.navigate([ROLES.guest, GUEST_ROUTES.login]);
+        this.nav.navigate([ROLES.guest, GUEST_ROUTES.login], { state: { backgroundColor } });
         break;
       case LoginState.EXTERNAL:
         this.nav.navigate([ROLES.guest, GUEST_ROUTES.external]);

@@ -94,8 +94,8 @@ export class UserPassForm implements OnInit {
     this.loginInstructions$ = this.getContentStringByName(sessionId, 'instructions');
     this.institutionPhoto$ = this.getInstitutionPhoto(id, sessionId);
     this.institutionName$ = this.getInstitutionName(id, sessionId);
-    this.nativeHeaderBg$ = this.getNativeHeaderBg(id, sessionId);
-
+    const { backgroundColor } = history.state;
+    this.nativeHeaderBg$ = Promise.resolve(backgroundColor);
     this.signupEnabled$ = this.isSignupEnabled$();
     this.cdRef.detectChanges();
   }
@@ -106,7 +106,6 @@ export class UserPassForm implements OnInit {
   }
 
   async doHostedSignup({ asGuest: isGuestRegistration }): Promise<void> {
-    console.log('history.state.data ==> ', history.state);
     this.loadingService.showSpinner();
     await this.registrationFacade.registrationConfig(isGuestRegistration);
     const modal = await this.modalCtrl.create({
@@ -115,8 +114,7 @@ export class UserPassForm implements OnInit {
     });
     await modal.present();
     this.loadingService.closeSpinner();
-    const { data } = await modal.onDidDismiss();
-    console.log('Registration Results: => ', data);
+    await modal.onDidDismiss();
   }
 
   onSignup(): void {

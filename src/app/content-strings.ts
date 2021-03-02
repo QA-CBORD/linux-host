@@ -15,7 +15,8 @@ export enum CONTENT_STRINGS_CATEGORIES {
   termsScreen = 'terms_screen',
   mobileCredential = 'mobile-credential',
   mobileRegistration = 'mobile-registration',
-  pre_login = 'pre_login'
+  pre_login = 'pre_login',
+  passwordValidation = 'password-validation'
 }
 
 export enum CONTENT_STRINGS_LOCALES {

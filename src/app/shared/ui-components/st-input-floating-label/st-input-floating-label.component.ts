@@ -49,7 +49,7 @@ export class StInputFloatingLabelComponent implements OnInit, AfterViewInit, Con
 
   constructor() {}
   ngAfterViewInit(): void {
-    if (this.type == 'password') {
+    if(this.type == 'password') {
       this.control.valueChanges.subscribe(value => {
         this.passwordFieldDirty = (value as string).length > 0;
       });
@@ -67,10 +67,6 @@ export class StInputFloatingLabelComponent implements OnInit, AfterViewInit, Con
     if (this.showOrHide == 'Show') {
       this.inputRef.nativeElement.type = 'text';
       this.showOrHide = 'Hide';
-      setTimeout(() => {
-        this.inputRef.nativeElement.type = 'password';
-        this.showOrHide = 'Show';
-      }, 3000);
     } else {
       this.inputRef.nativeElement.type = 'password';
       this.showOrHide = 'Show';

@@ -1,16 +1,17 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StInputFloatingLabelComponent } from './st-input-floating-label.component';
-import { GetInputElement } from '../get-input-element/get-input-element.component';
 import { FormsModule } from '@angular/forms';
+import { IonicModule } from '@ionic/angular';
 
-const declarations = [StInputFloatingLabelComponent, GetInputElement];
+const declarations = [StInputFloatingLabelComponent];
 
 @NgModule({
   declarations,
   imports: [
     CommonModule,
-    FormsModule
+    FormsModule,
+    IonicModule
   ],
   exports: declarations
 })

@@ -1,0 +1,17 @@
+.validation {
+  background-color: #ffffff;
+  &__item {
+    margin-bottom: 10px;
+    position: relative;
+
+    &__image {
+      margin: auto;
+    }
+    &__label {
+      display: inline;
+      position: absolute;
+      left: 27px;
+      top: -2px;
+    }
+  }
+}
