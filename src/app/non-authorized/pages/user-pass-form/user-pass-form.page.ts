@@ -160,8 +160,8 @@ export class UserPassForm implements OnInit {
 
   private initForm() {
     this.loginForm = this.fb.group({
-      [this.controlsNames.username]: ['getaws1@tpsmail.dev', Validators.required],
-      [this.controlsNames.password]: ['password1', Validators.required],
+      [this.controlsNames.username]: ['', Validators.required],
+      [this.controlsNames.password]: ['', Validators.required],
     });
   }
 
