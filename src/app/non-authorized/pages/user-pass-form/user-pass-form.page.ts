@@ -77,20 +77,20 @@ export class UserPassForm implements OnInit {
     this.initForm();
     await this.setLocalInstitutionInfo();
     // Announcing navigation meanwhile we find a generic way to do so.
-    this.accessibilityService.readAloud(`Login page for ${this.institutionInfo.name}`); 
+    this.accessibilityService.readAloud(`Login page for ${this.institutionInfo.name}`);
     const { id } = this.institutionInfo;
     const sessionId = await this.authFacadeService
       .getAuthSessionToken$()
       .pipe(take(1))
       .toPromise();
-    this.authTypeHosted$ = this.getAuthenticationTypeHosted$(id, sessionId);
+    this.authTypeHosted$ = this.getAuthenticationTypeHosted$(id, sessionId).pipe(tap(res => console.log(res)));
     this.authTypeLDAP$ = this.getAuthenticationTypeLDAP$(id, sessionId);
     this.placeholderOfUsername$ = this.getContentStringByName(sessionId, 'email_username');
     this.loginInstructions$ = this.getContentStringByName(sessionId, 'instructions');
     this.institutionPhoto$ = this.getInstitutionPhoto(id, sessionId);
     this.institutionName$ = this.getInstitutionName(id, sessionId);
     this.nativeHeaderBg$ = this.getNativeHeaderBg(id, sessionId);
-    
+
     this.signupEnabled$ = this.isSignupEnabled$();
     this.cdRef.detectChanges();
   }
@@ -106,14 +106,8 @@ export class UserPassForm implements OnInit {
     this.appBrowser.create(url, '_system');
   }
 
-  async redirectToForgotPassword(isHosted: boolean): Promise<void> {
-    if (isHosted) {
-    const { shortName } = await this.institutionFacadeService.cachedInstitutionInfo$.pipe(take(1)).toPromise();
-    const url = `${this.environmentFacadeService.getSitesURL()}/${shortName}/full/login.php?password=forgot`;
-    this.appBrowser.create(url, '_system');
-    } else {
-      this.router.navigate([ROLES.guest, GUEST_ROUTES.forgotPassword]);
-  }
+  async redirectToForgotPassword(): Promise<void> {
+    this.router.navigate([ROLES.guest, GUEST_ROUTES.forgotPassword]);
   }
 
   isSignupEnabled$(): Observable<boolean> {
@@ -166,8 +160,8 @@ export class UserPassForm implements OnInit {
 
   private initForm() {
     this.loginForm = this.fb.group({
-      [this.controlsNames.username]: ['', Validators.required],
-      [this.controlsNames.password]: ['', Validators.required],
+      [this.controlsNames.username]: ['getaws1@tpsmail.dev', Validators.required],
+      [this.controlsNames.password]: ['password1', Validators.required],
     });
   }
 
@@ -208,20 +202,20 @@ export class UserPassForm implements OnInit {
   }
 
   private async getContentStringByName(sessionId, name): Promise<string> {
-   return this.contentStringsFacadeService
-    .fetchContentString$(
-      CONTENT_STRINGS_DOMAINS.get_web_gui, 
-      CONTENT_STRINGS_CATEGORIES.login_screen, 
-      name,
-      null,
-      sessionId,
-      false,
-    )
-    .pipe(
-      map(({ value }) => value),
-      take(1)
-    )
-    .toPromise();
+    return this.contentStringsFacadeService
+      .fetchContentString$(
+        CONTENT_STRINGS_DOMAINS.get_web_gui,
+        CONTENT_STRINGS_CATEGORIES.login_screen,
+        name,
+        null,
+        sessionId,
+        false
+      )
+      .pipe(
+        map(({ value }) => value),
+        take(1)
+      )
+      .toPromise();
   }
 
   private configureBiometricsConfig(supportedBiometricType: string[]): { type: string; name: string } {
