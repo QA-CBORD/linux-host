@@ -20,7 +20,6 @@
               <td>
                 <st-input-floating-label
                   [label]="firstNameField.label"
-                  [blurHandler]="onBlur(firstNameField)"
                   [formControlName]="firstNameField.name"
                   [control]="firstNameField.control"
                   [isError]="firstNameField.hasError"
@@ -33,7 +32,6 @@
               <td>
                 <st-input-floating-label
                   [label]="lastNameField.label"
-                  [blurHandler]="onBlur(lastNameField)"
                   [formControlName]="lastNameField.name"
                   [control]="lastNameField.control"
                   [isError]="lastNameField.hasError"
@@ -54,7 +52,6 @@
             [label]="field.label"
             [formControlName]="field.name"
             [control]="field.control"
-            [blurHandler]="onBlur(field)"
             [isError]="field.hasError"
             [type]="field.type"
             [idd]="field.idd"
@@ -64,7 +61,7 @@
           </st-input-floating-label>
         </div>
         <div class="password-hints">
-          <st-input-validator [control]="password" [validators]="passwordValidators"></st-input-validator>
+          <st-input-validator [control]="passwordField" [validators]="passwordValidators"></st-input-validator>
         </div>
       </div>
       <div class="guest__body__submitOrcancel">

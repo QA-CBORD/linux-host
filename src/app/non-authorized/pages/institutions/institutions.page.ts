@@ -84,14 +84,20 @@ export class InstitutionsPage implements OnInit {
   async onInstitutionSelected(institution: InstitutionLookupListItem): Promise<void> {
     const canNavigate2Prelogin = this.registrationServiceFacade.guestLoginSupportedInEnv;
     console.log('before routing ==> ', institution);
-    this.navigate(institution, institution.guestRegSupported && canNavigate2Prelogin);
+    const go2prelogin = institution.guestRegSupported && canNavigate2Prelogin;
+    if (go2prelogin) {
+      const backgroundColor = await this.getNativeHeaderBg(institution.id, this.sessionId);
+      this.navigateToPreLogin(institution, backgroundColor);
+    } else {
+      this.navigate(institution);
+    }
   }
 
-  private async navigate(institution, shouldNavigate2Prelogin: boolean) {
+  private async navigate(institution) {
     const { id: institutionId } = institution;
     await this.loadingService.showSpinner();
     this.settingsFacadeService.cleanCache();
-    const backgroundColor = await this.getNativeHeaderBg(institutionId, this.sessionId);
+    
     await zip(
       this.settingsFacadeService.fetchSettingList(Settings.SettingList.FEATURES, this.sessionId, institutionId),
       this.settingsFacadeService.getSettings(
@@ -105,22 +111,25 @@ export class InstitutionsPage implements OnInit {
       .pipe(
         switchMap(() => this.sessionFacadeService.determineInstitutionSelectionLoginState()),
         tap(loginType => {
-          if (shouldNavigate2Prelogin) {
-            this.navigateToPreLogin(institution, backgroundColor);
-          } else {
-            this.loadingService.closeSpinner();
-            this.navigateToLogin(loginType, backgroundColor);
-          }
+          this.loadingService.closeSpinner();
+          this.navigateToLogin(loginType, institution);
         }),
         take(1)
       )
       .toPromise();
   }
 
-  private async navigateToPreLogin({ acuteCare }, backgroundColor): Promise<void> {
-    const contentStrings = await this.registrationServiceFacade.preloginContents(acuteCare).toPromise();
+  private async navigateToPreLogin(institution: InstitutionLookupListItem, backgroundColor): Promise<void> {
+    this.loadingService.showSpinner();
+    const contentStrings = await this.registrationServiceFacade.preloginContents(institution.acuteCare).toPromise();
     this.loadingService.closeSpinner();
-    this.nav.navigate([ROLES.guest, GUEST_ROUTES.pre_login], { state: { backgroundColor, contentStrings } });
+    const institutionInfo = {
+      id: institution.id,
+      name: institution.name,
+    };
+    this.nav.navigate([ROLES.guest, GUEST_ROUTES.pre_login], {
+      state: { backgroundColor, contentStrings, institutionInfo },
+    });
   }
 
   private async getNativeHeaderBg(id, sessionId): Promise<string> {
@@ -138,10 +147,14 @@ export class InstitutionsPage implements OnInit {
       .toPromise();
   }
 
-  private navigateToLogin(loginState: number, backgroundColor) {
+  private async navigateToLogin(loginState: number, institution) {
+    const institutionInfo = {
+      backgroundColor: await this.getNativeHeaderBg(institution.id, this.sessionId),
+      name: institution.name
+    }
     switch (loginState) {
       case LoginState.HOSTED:
-        this.nav.navigate([ROLES.guest, GUEST_ROUTES.login], { state: { backgroundColor } });
+        this.nav.navigate([ROLES.guest, GUEST_ROUTES.login], { state: { institutionInfo } });
         break;
       case LoginState.EXTERNAL:
         this.nav.navigate([ROLES.guest, GUEST_ROUTES.external]);

@@ -1,10 +1,10 @@
 import { Observable, of, zip } from 'rxjs';
 import { take, map, catchError } from 'rxjs/operators';
 import { CONTENT_STRINGS_CATEGORIES } from 'src/app/content-strings';
+import { buildPasswordValidators } from 'src/app/password-validation/models/input-validator.model';
 import { RegistrationService } from '../services/registration.service';
 import { registrationFormStaticFields } from './form-config';
-import { buildPasswordValidators } from './password-validation';
-import { FormFieldList, RegistrationFormData, formField, buildRegistrationFormData, Field } from './registration-utils';
+import { FormFieldList, RegistrationFormData, buildRegistrationFormData, Field } from './registration-utils';
 
 export class UserRegistrationBase {
   constructor(protected backendService: RegistrationService) {}
@@ -57,7 +57,7 @@ export class UserRegistrationBase {
     const formFields: Field[] = [];
     const staticFieldsCopy = {};
     for (const key of Object.keys(registrationFormStaticFields)) {
-      staticFieldsCopy[key] = registrationFormStaticFields[key];
+      staticFieldsCopy[key] = registrationFormStaticFields[key].copy();
       staticFieldsCopy[key].value = data[key];
       formFields.push(staticFieldsCopy[key]);
     }

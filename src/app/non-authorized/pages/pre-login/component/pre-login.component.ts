@@ -5,11 +5,13 @@ import { GUEST_ROUTES } from 'src/app/non-authorized/non-authorized.config';
 import { PreLoginStringModel } from '../../registration/models/registration-utils';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
-import { InstitutionPhotoInfo } from '@core/model/institution';
-import { tap, map, take, skipWhile } from 'rxjs/operators';
+import { InstitutionLookupListItem, InstitutionPhotoInfo } from '@core/model/institution';
+import { tap, map, take, skipWhile, switchMap } from 'rxjs/operators';
+import { zip } from 'rxjs';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { LoadingService } from '@core/service/loading/loading.service';
+import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 
 @Component({
   selector: 'st-pre-login',
@@ -21,6 +23,8 @@ export class PreLoginComponent implements OnInit {
   institutionName$: Promise<string>;
   nativeHeaderBg$: Promise<string>;
   pageContent: PreLoginStringModel = {} as any;
+  selectedInstitution: { id: string; name: string };
+  sessionId: any;
 
   constructor(
     private readonly nav: Router,
@@ -32,20 +36,22 @@ export class PreLoginComponent implements OnInit {
     private readonly settingsFacadeService: SettingsFacadeService
   ) {}
   ngOnInit() {
-    this.getInstitutionInfo();
-    const { contentStrings, backgroundColor } = history.state;
+    const { contentStrings, backgroundColor, institutionInfo } = history.state;
     this.pageContent = contentStrings;
+    this.selectedInstitution = institutionInfo;
+    this.institutionName$ = Promise.resolve(this.selectedInstitution.name);
     this.nativeHeaderBg$ = Promise.resolve(backgroundColor);
+    this.getInstitutionInfo();
   }
 
   private async getInstitutionInfo(): Promise<void> {
-    const { id: institutionId } = await this.institutionFacadeService.cachedInstitutionInfo$.pipe(take(1)).toPromise();
-    const sessionId = await this.authFacadeService
+    const { id: institutionId } = this.selectedInstitution;
+    this.sessionId = await this.authFacadeService
       .getAuthSessionToken$()
       .pipe(take(1))
       .toPromise();
-    this.institutionPhoto$ = this.getInstitutionPhoto(institutionId, sessionId);
-    this.institutionName$ = this.getInstitutionName(institutionId, sessionId);
+    this.institutionPhoto$ = this.getInstitutionPhoto(institutionId, this.sessionId);
+    this.getInstitutionName(institutionId, this.sessionId);
   }
 
   private async getInstitutionName(id, sessionId): Promise<string> {
@@ -58,17 +64,22 @@ export class PreLoginComponent implements OnInit {
       .toPromise();
   }
 
-  private async getNativeHeaderBg(id, sessionId): Promise<string> {
-    return this.settingsFacadeService
-      .fetchSetting(Settings.Setting.MOBILE_HEADER_COLOR, sessionId, id)
+  private async navigate(asGuest) {
+    const { id: institutionId } = this.selectedInstitution;
+    await this.loadingService.showSpinner();
+    this.settingsFacadeService.cleanCache();
+
+    await zip(
+      this.settingsFacadeService.fetchSettingList(Settings.SettingList.FEATURES, this.sessionId, institutionId),
+      this.settingsFacadeService.getSettings([Settings.Setting.FEEDBACK_EMAIL], this.sessionId, institutionId),
+      this.settingsFacadeService.getSetting(Settings.Setting.PIN_ENABLED, this.sessionId, institutionId),
+      this.institutionFacadeService.getInstitutionDataById$(institutionId, this.sessionId, true)
+    )
       .pipe(
-        map(({ value }) => {
-          if (value === null) return;
-          const siteColors = JSON.parse(value);
-          const nativeHeaderBg = siteColors['native-header-bg'];
-          return nativeHeaderBg ? '#' + nativeHeaderBg : '#166dff';
-        }),
-        take(1)
+        map(() => {
+          this.loadingService.closeSpinner();
+          this.navigateToLogin(asGuest);
+        })
       )
       .toPromise();
   }
@@ -93,21 +104,24 @@ export class PreLoginComponent implements OnInit {
       .toPromise();
   }
 
-  private async navigateToLogin(asGuest) {
-    const backgroundColor = await this.nativeHeaderBg$;
-    const navParams = { asGuest }
-    this.nav.navigate([ROLES.guest, GUEST_ROUTES.login], { state: { backgroundColor,  navParams } });
+  private async navigateToLogin(asGuest: boolean) {
+    const institution = this.selectedInstitution;
+    const institutionInfo = {
+      backgroundColor: await this.nativeHeaderBg$,
+      name: institution.name,
+    };
+    const navParams = { asGuest };
+    this.loadingService.closeSpinner();
+    this.nav.navigate([ROLES.guest, GUEST_ROUTES.login], { state: { institutionInfo, navParams } });
   }
 
   async continueAsNonGuest(): Promise<void> {
-    await this.loadingService.showSpinner();
-    this.navigateToLogin(false);
-    this.loadingService.closeSpinner();
+    this.loadingService.showSpinner();
+    this.navigate(false);
   }
 
   async continueAsGuest(): Promise<void> {
-    await this.loadingService.showSpinner();
-    this.navigateToLogin(true);
-    this.loadingService.closeSpinner();
+    this.loadingService.showSpinner();
+    this.navigate(true);
   }
 }

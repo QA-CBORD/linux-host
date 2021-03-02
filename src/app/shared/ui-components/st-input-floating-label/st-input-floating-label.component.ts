@@ -40,8 +40,6 @@ export class StInputFloatingLabelComponent implements OnInit, AfterViewInit, Con
   @Input()
   isDisabled: boolean = false;
 
-  @Input() blurHandler: Handler;
-
   @ViewChild('input') inputRef: ElementRef<HTMLInputElement>;
   innerValue: string | number = '';
   private onChange: (v: any) => void;
@@ -113,7 +111,6 @@ export class StInputFloatingLabelComponent implements OnInit, AfterViewInit, Con
 
   onBlur() {
     this.onTouched();
-    this.blurHandler && this.blurHandler.handle();
   }
 
   onChangeHandler(value: string | number) {

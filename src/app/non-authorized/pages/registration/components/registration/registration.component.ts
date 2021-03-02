@@ -5,8 +5,8 @@ import { ToastService } from '@core/service/toast/toast.service';
 import { ModalController } from '@ionic/angular';
 import { Handler } from '@shared/model/shared-api';
 import { Observable, of } from 'rxjs';
-import { InputValidator } from '../../models/password-validation';
-import { formField, STATICFIELDS } from '../../models/registration-utils';
+import { InputValidator } from 'src/app/password-validation/models/input-validator.model';
+import { Field, formField, STATICFIELDS } from '../../models/registration-utils';
 import { RegistrationServiceFacade } from '../../services/registration-service-facade';
 import { RegistrationSuccessComponent } from '../registration-success/registration-success.component';
 
@@ -17,7 +17,7 @@ import { RegistrationSuccessComponent } from '../registration-success/registrati
 })
 export class RegistrationComponent implements OnInit {
   horizontalFields: formField[] = [];
-  formFields: formField[] = [];
+  formFields: Field[] = [];
   registrationFormGroup: FormGroup;
   title$: Observable<string>;
   btnText$: Observable<string>;
@@ -47,11 +47,13 @@ export class RegistrationComponent implements OnInit {
     this.registrationFormGroup = this.fb.group(formFieldList.controls);
     fields.forEach(field => {
       field.control = this.registrationFormGroup.get(field.name);
-      field.control.valueChanges.subscribe(value => {
-        field.touched = true;
-        field.value = value;
-        field.validate();
-      });
+      if (field.name != STATICFIELDS.password) {
+        field.control.valueChanges.subscribe(value => {
+          field.touched = true;
+          field.value = value;
+          field.validate();
+        });
+      }
     });
     this.horizontalFields = formFieldList.horizontalAlignedFields;
     this.formFields = formFieldList.verticalAlignedFields;
@@ -67,14 +69,8 @@ export class RegistrationComponent implements OnInit {
     return this.horizontalFields.find(({ idd: fieldName }) => fieldName == lastName.idd);
   }
 
-  onBlur(field: formField): Handler {
-    return {
-      handle: data => field.validate(),
-    };
-  }
-
-  get password(): AbstractControl {
-    return this.registrationFormGroup && this.registrationFormGroup.get(STATICFIELDS.password);
+  get passwordField(): Field {
+    return this.formFields.find(({ name: fieldName }) => fieldName == STATICFIELDS.password);
   }
 
   get disabled(): boolean {
@@ -89,7 +85,7 @@ export class RegistrationComponent implements OnInit {
   private get formInvalid(): boolean {
     const allFields = [...this.horizontalFields, ...this.formFields];
     let errorCounter = 0;
-    allFields.forEach(field => field.validate() && errorCounter++);
+    allFields.forEach(field => field.hasError && errorCounter++);
     return errorCounter > 0;
   }
 
