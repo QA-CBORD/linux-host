@@ -38,6 +38,9 @@ export class ForgotPasswordPage implements OnInit {
 
   ngOnInit() {
     this.initForm();
+    setTimeout(() => {
+      document.getElementById('form__description-text').focus();
+    }, TIMEOUTS.A11yFocus);
   }
 
   redirect() {
@@ -62,7 +65,7 @@ export class ForgotPasswordPage implements OnInit {
           this.resetSent = true;
           setTimeout(() => {
             document.getElementById('confirmation-container__info').focus();
-          }, 1000);
+          }, TIMEOUTS.A11yFocus);
         } else {
           return this.toastService.showToast({
             message: errorMessage,
@@ -80,11 +83,15 @@ export class ForgotPasswordPage implements OnInit {
   private initForm() {
     this.tokenForm = this.fb.group({});
     this.forgotPasswordForm = this.fb.group({
-      [this.controlsNames.email]: ['getaws1@tpsmail.dev', [Validators.required, Validators.pattern(EMAIL_REGEXP)]],
+      [this.controlsNames.email]: ['', [Validators.required, Validators.pattern(EMAIL_REGEXP)]],
     });
   }
 }
 
 export enum FORGOT_PWD_CONTROL_NAMES {
   email = 'email',
+}
+
+const TIMEOUTS = {
+  A11yFocus: 1500
 }
