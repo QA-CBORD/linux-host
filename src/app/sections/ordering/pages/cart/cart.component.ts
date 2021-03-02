@@ -25,7 +25,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { handleServerError, isCashlessAccount, isCreditCardAccount, isMealsAccount } from '@core/utils/general-helpers';
 import { UserAccount } from '@core/model/account/account.model';
-import { ModalController, PopoverController } from '@ionic/angular';
+import { PopoverController } from '@ionic/angular';
 import { AccountType, PATRON_NAVIGATION, Settings } from '../../../../app.global';
 import { SuccessModalComponent } from '@sections/ordering/pages/cart/components/success-modal';
 import { StGlobalPopoverComponent } from '@shared/ui-components';
@@ -38,6 +38,7 @@ import { ApplePay } from '@core/model/add-funds/applepay-response.model';
 import { Plugins } from '@capacitor/core';
 import { ToastService } from '@core/service/toast/toast.service';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
+import { ModalsService } from '@core/service/modals/modals.service';
 const { Browser } = Plugins;
 
 @Component({
@@ -69,7 +70,7 @@ export class CartComponent implements OnInit, OnDestroy {
     private readonly popoverController: PopoverController,
     private readonly cdRef: ChangeDetectorRef,
     private readonly router: Router,
-    private readonly modalController: ModalController,
+    private readonly modalController: ModalsService,
     private readonly orderingService: OrderingService,
     private readonly userFacadeService: UserFacadeService,
     private externalPaymentService: ExternalPaymentService,
