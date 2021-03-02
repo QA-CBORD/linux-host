@@ -1,5 +1,5 @@
 import { Validators } from '@angular/forms';
-import { Cvalidators, getDefaultPasswordValidators } from './password-validation';
+import { Cvalidators } from './password-validation';
 import { Field, STATICFIELDS } from './registration-utils';
 
 export const registrationFormStaticFields: { [key: string]: Field } = {
@@ -44,7 +44,6 @@ export const registrationFormStaticFields: { [key: string]: Field } = {
     idd: 'pass_word',
     name: STATICFIELDS.password,
     type: 'password',
-    cValidator: getDefaultPasswordValidators(),
     validators: ['', Validators.minLength(8)],
     separatorUp: true,
   }),

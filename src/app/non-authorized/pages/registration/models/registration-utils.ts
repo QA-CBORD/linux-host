@@ -1,7 +1,8 @@
 import { AbstractControl } from '@angular/forms';
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
 import { Observable } from 'rxjs';
-import { CustomValidator, InputValidator } from './password-validation';
+import { InputValidator } from 'src/app/password-validation/models/input-validator.model';
+import { CustomValidator } from './password-validation';
 
 export enum LookupFieldType {
   UNDEFINED = -1,
@@ -32,8 +33,8 @@ export interface UserRegistrationManager {
 }
 
 export interface FormFieldList {
-  horizontalAlignedFields: formField[];
-  verticalAlignedFields: formField[];
+  horizontalAlignedFields: Field[];
+  verticalAlignedFields: Field[];
   controls: { [key: string]: any };
 }
 
@@ -119,6 +120,7 @@ export interface formField {
   value?: string;
   touched?: boolean;
   validate?: () => boolean;
+  copy?: () => Field;
 }
 
 export class Field implements formField {
@@ -136,13 +138,13 @@ export class Field implements formField {
   guestOnly?: boolean;
   hasError?: boolean;
   touched?: boolean;
-  constructor(private formField: formField) {
+  constructor(private formField?: formField) {
     this.alignHorizontal = formField.alignHorizontal;
     this.label = formField.label;
     this.name = formField.name;
     this.type = formField.type;
     this.idd = formField.idd;
-    this.cValidator = formField.cValidator;
+    this.cValidator = formField.cValidator || [];
     this.validators = formField.validators;
     this.control = formField.control;
     this.lookupFieldId = formField.lookupFieldId;
@@ -151,13 +153,19 @@ export class Field implements formField {
     this.hasError = formField.hasError;
   }
   validate(): boolean {
-    if (!this.touched) return true;
-    let errorCounter = 0;
-    this.formField.cValidator.forEach(validator => {
-      this.hasError = !validator.test(this.value);
-      this.hasError && errorCounter++;
-    });
-    return errorCounter > 0;
+    if (this.touched && this.formField.cValidator.length) {
+      let errorCounter = 0;
+      this.formField.cValidator.forEach(validator => {
+        !validator.test(this.value) && errorCounter++;
+      });
+      this.hasError = errorCounter > 0;
+      return this.hasError;
+    } else {
+      return true;
+    }
+  }
+  copy(): Field {
+    return new Field(this);
   }
 }
 

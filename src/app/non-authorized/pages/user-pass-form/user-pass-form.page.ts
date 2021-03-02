@@ -83,7 +83,6 @@ export class UserPassForm implements OnInit {
     // Announcing navigation meanwhile we find a generic way to do so.
     this.accessibilityService.readAloud(`Login page for ${this.institutionInfo.name}`);
     const { id } = this.institutionInfo;
-    (this.institutionInfo as any).show = false;
     const sessionId = await this.authFacadeService
       .getAuthSessionToken$()
       .pipe(take(1))
@@ -92,12 +91,21 @@ export class UserPassForm implements OnInit {
     this.authTypeLDAP$ = this.getAuthenticationTypeLDAP$(id, sessionId);
     this.placeholderOfUsername$ = this.getContentStringByName(sessionId, 'email_username');
     this.loginInstructions$ = this.getContentStringByName(sessionId, 'instructions');
-    this.institutionPhoto$ = this.getInstitutionPhoto(id, sessionId);
-    this.institutionName$ = this.getInstitutionName(id, sessionId);
-    const { backgroundColor } = history.state;
-    this.nativeHeaderBg$ = Promise.resolve(backgroundColor);
+    this.initializeInstitutionInfo(id, sessionId);
     this.signupEnabled$ = this.isSignupEnabled$();
     this.cdRef.detectChanges();
+  }
+
+  initializeInstitutionInfo(id, sessionId): void {
+    this.institutionPhoto$ = this.getInstitutionPhoto(id, sessionId);
+    const { institutionInfo } = history.state;
+    if (institutionInfo) {
+      this.nativeHeaderBg$ = Promise.resolve(institutionInfo.backgroundColor);
+      this.institutionName$ = Promise.resolve(institutionInfo.name);
+    } else {
+      this.institutionName$ = this.getInstitutionName(id, sessionId);
+      this.nativeHeaderBg$ = this.getNativeHeaderBg(id, sessionId);
+    }
   }
 
   redirectToWebPage(url) {
@@ -119,7 +127,7 @@ export class UserPassForm implements OnInit {
 
   onSignup(): void {
     const { navParams } = history.state;
-    if(navParams && this.registrationFacade.guestLoginSupportedInEnv) {
+    if (navParams && this.registrationFacade.guestLoginSupportedInEnv) {
       this.doHostedSignup(navParams);
     } else {
       this.redirectToSignup();

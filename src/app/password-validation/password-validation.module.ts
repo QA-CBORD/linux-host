@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { InputValidatorComponent } from '../non-authorized/pages/registration/components/input-validator/input-validator.component';
+import { InputValidatorComponent } from './input-validator/input-validator.component';
 
 @NgModule({
   imports: [CommonModule],
