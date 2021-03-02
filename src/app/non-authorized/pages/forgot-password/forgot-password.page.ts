@@ -54,6 +54,7 @@ export class ForgotPasswordPage implements OnInit {
 
   submit() {
     const errorMessage = 'Could not sent the reset email. Please try again in a few minutes.';
+    this.isLoading = true;
     this.notificationFacadeService
       .resetPasswordRequest(this.email.value)
       .then(result => {
@@ -68,7 +69,8 @@ export class ForgotPasswordPage implements OnInit {
           });
         }
       })
-      .catch(() => this.toastService.showToast({ message: errorMessage }));
+      .catch(() => this.toastService.showToast({ message: errorMessage }))
+      .finally(() => (this.isLoading = false));
   }
 
   setSendEmailState() {
@@ -78,7 +80,7 @@ export class ForgotPasswordPage implements OnInit {
   private initForm() {
     this.tokenForm = this.fb.group({});
     this.forgotPasswordForm = this.fb.group({
-      [this.controlsNames.email]: ['', [Validators.required, Validators.pattern(EMAIL_REGEXP)]],
+      [this.controlsNames.email]: ['getaws1@tpsmail.dev', [Validators.required, Validators.pattern(EMAIL_REGEXP)]],
     });
   }
 }
