@@ -36,6 +36,7 @@ export const registrationFormStaticFields: { [key: string]: Field } = {
     idd: 'phone_number',
     name: STATICFIELDS.phone,
     type: 'text',
+    touched: true,
     cValidator: [Cvalidators.nullablePhone()],
     validators: ['', Validators.nullValidator],
   }),

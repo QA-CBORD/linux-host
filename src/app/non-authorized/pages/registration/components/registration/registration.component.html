@@ -45,9 +45,6 @@
           </table>
         </div>
         <div *ngFor="let field of formFields" class="formItem" [ngClass]="{ 'separator-up': field.separatorUp }">
-          <!-- <div *ngIf="field.separatorUp && passwordsNotMatching" class="password-errors">
-            <small>Passwords not matching</small>
-          </div> -->
           <st-input-floating-label
             [label]="field.label"
             [formControlName]="field.name"

@@ -67,6 +67,8 @@ export interface RegistrationFormData {
   confirm_password?: string;
   success_dismiss_btn?: string;
   success_resend_email?: string;
+  success_screen_title?:string;
+  success_screen_message?:string;
   passwordValidators: InputValidator[];
 }
 
@@ -151,6 +153,7 @@ export class Field implements formField {
     this.separatorUp = formField.separatorUp;
     this.guestOnly = formField.guestOnly;
     this.hasError = formField.hasError;
+    this.touched = formField.touched;
   }
   validate(): boolean {
     if (this.touched && this.formField.cValidator.length) {
