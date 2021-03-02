@@ -30,7 +30,5 @@ export class AssetTypeDetailsComponent implements OnInit {
 
   markItemAsSelected(assetType: number): void {
     this._nonAssignmentStateService.setSelectedAsset(assetType);
-
-    console.log('item selected', assetType);
   }
 }

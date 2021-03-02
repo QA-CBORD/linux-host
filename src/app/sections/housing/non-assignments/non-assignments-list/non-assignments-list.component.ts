@@ -61,10 +61,6 @@ export class NonAssignmentsListComponent implements OnInit {
   private _getFormStatus(state: NonAssignmentStatus): string {
     let formStatus;
     switch (state) {
-      case NonAssignmentStatus.Active:
-      case NonAssignmentStatus.Preliminary:
-        formStatus = NonAssignmentStatus.Active | NonAssignmentStatus.Preliminary;
-        break;
       case NonAssignmentStatus.Completed:
         formStatus = NonAssignmentStatus.Completed;
         break;
@@ -78,6 +74,8 @@ export class NonAssignmentsListComponent implements OnInit {
       case NonAssignmentStatus.Expired:
         formStatus = NonAssignmentStatus.Expired
         break;
+      case NonAssignmentStatus.Active:
+      case NonAssignmentStatus.Preliminary:
       default:
         formStatus = NonAssignmentStatus.Active | NonAssignmentStatus.Preliminary;
     }

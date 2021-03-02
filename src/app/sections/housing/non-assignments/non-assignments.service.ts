@@ -117,55 +117,77 @@ export class NonAssignmentsService {
 
     var selectedValues = question.values.filter(p => p.selected);
     
-    const nameLabel = isDefined(question.customName) && selectedValues.some(p => p.value === '0') 
-      ? question.customName
-      : selectedValues.find(v => v.value === '0').label;
-    const mealsLabel = isDefined(question.customMeals) && selectedValues.some(p => p.value === '1')
-      ? question.customMeals
-      : selectedValues.find(v => v.value === '1').label;
-    const diningDollarsLabel = isDefined(question.customDining) && selectedValues.some(p => p.value === '2')
-      ? question.customDining
-      : selectedValues.find(v => v.value === '2').label;
-    const costLabel = isDefined(question.customCost) && selectedValues.some(p => p.value === '3')
-      ? question.customCost
-      : selectedValues.find(v => v.value === '3').label;
+    let nameLabel: string = '';
+    let mealsLabel: string = '';
+    let diningDollarsLabel: string = '';
+    let costLabel: string = '';
+
+    selectedValues.forEach(p => {
+      switch (p.value) {
+        case '0':
+          nameLabel = isDefined(question.customName)
+            ? question.customName
+            : p.label;  
+          break;
+        case '1':
+          mealsLabel = isDefined(question.customMeals)
+            ? question.customMeals
+            : p.label;
+          break;
+        case '2':
+          diningDollarsLabel = isDefined(question.customDining)
+            ? question.customDining
+            : p.label;
+          break;
+        case '3':
+          costLabel = isDefined(question.customCost)
+            ? question.customCost
+            : p.label;
+          break;
+      }
+    });
 
     const availableAssetTypes = assetTypes.map((assetType: AssetType) => 
       selectedValues.map(e => {
         let assetTypeValue: AssetTypeDetailValue;
-        // Name
-        if (e.value === '0') {
-          assetTypeValue = new AssetTypeDetailValue({
-            assetTypeKey: assetType.assetTypeKey,
-            label: nameLabel,
-            value: assetType.name,
-            selected: false,
-          });
-          // Number of Meals
-        } else if (e.value === '1') {
-          assetTypeValue = new AssetTypeDetailValue({
-            assetTypeKey: assetType.assetTypeKey,
-            label: mealsLabel,
-            value: `${assetType.numberOfUnits}`,
-            selected: true
-          });
-          // Dining Dollars
-        } else if (e.value === '2') {
-          assetTypeValue = new AssetTypeDetailValue({
-            assetTypeKey: assetType.assetTypeKey,
-            label: diningDollarsLabel,
-            value: `${assetType.diningDollars}`,
-            selected: true
-          });
-          // Cost
-        } else {
-          assetTypeValue = new AssetTypeDetailValue({
-            assetTypeKey: assetType.assetTypeKey,
-            label: costLabel,
-            value: `${assetType.cost}`,
-            selected: true
-          });
+        let label: string;
+        let value: string;
+        let selected: boolean;
+
+        switch (e.value) {
+          case '0':
+            // Name
+            label = nameLabel;
+            value = assetType.name;
+            selected = false;
+            break;
+          case '1':
+            // Number of Meals
+            label = mealsLabel;
+            value = `${assetType.numberOfUnits}`;
+            selected = true;
+            break;
+          case '2':
+            // Dining Dollars
+            label = diningDollarsLabel;
+            value = `${assetType.diningDollars}`;
+            selected = true;
+            break;
+          case '3':
+            // Cost
+            label = costLabel;
+            value = `${assetType.cost}`;
+            selected = true;
+            break;
+          default:
+            break;
         }
+        assetTypeValue = new AssetTypeDetailValue({
+          assetTypeKey: assetType.assetTypeKey,
+          label,
+          value,
+          selected
+        });
 
         return assetTypeValue;
 

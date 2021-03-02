@@ -63,45 +63,6 @@ export class QuestionAssetTypeDetailsBase extends QuestionBase implements Questi
   }
 }
 
-export interface QuestionNonAssignmentAssetTypeDetailsOptions extends QuestionFormControlOptions {
-  assetTypeKey: number;
-  name: string;
-  numberOfUnits: number;
-  cost: number;
-  diningDollars: number;
-  customName?: string;
-  customMeals?: string;
-  customDining?: string;
-  customCost?: string;
-}
-
-export class QuestionNonAssignmentAssetTypeDetails extends QuestionFormControl implements QuestionNonAssignmentAssetTypeDetailsOptions {
-  assetTypeKey: number;
-  name: string;
-  numberOfUnits: number;
-  cost: number;
-  diningDollars: number;
-  customName?: string;
-  customMeals?: string;
-  customDining?: string;
-  customCost?: string;
-
-  constructor(options: QuestionNonAssignmentAssetTypeDetailsOptions) {
-    if (!isDefined(options) || typeof options !== 'object') {
-      options = {} as QuestionNonAssignmentAssetTypeDetailsOptions;
-    }
-
-    super(options);
-
-    this.type = options.type || 'text';
-    this.assetTypeKey = Number(options.assetTypeKey);
-    this.name = options.name || `text-${counter++}`;
-    this.numberOfUnits = Number(options.numberOfUnits);
-    this.cost = Number(options.cost);
-    this.diningDollars = Number(options.diningDollars);
-  }
-}
-
 export interface QuestionAssetTypeDetailsOptions extends QuestionFormControlOptions {
   assetTypes?: AssetTypeDetailValue[][];
 }
