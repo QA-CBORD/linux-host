@@ -76,7 +76,7 @@ export class ChangePasswordComponent implements OnInit {
     return PASSWORD_FORM_CONTROL_NAMES;
   }
   
-  get controller() {
+  get passwordControls() {
     return this.passwordControl;
   }
  
