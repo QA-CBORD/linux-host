@@ -12,6 +12,7 @@ import { RadioGroupModule } from '@shared/ui-components/radio-group/radio-group.
 import { FacilityPickerModule } from './facility-picker/facility-picker.module';
 import { ChargeSchedulesModule } from '../charge-schedules/charge-schedules.module';
 import { SignContractModule } from '@sections/housing/sign-contract/sign-contract.module';
+import { AssetTypeDetailsModule } from '../asset-type-details/asset-type-details.module';
 
 import { QuestionComponent } from './question.component';
 import { EmptyFormControlDirective } from '../empty-form-control/empty-form-control.directive';
@@ -29,6 +30,7 @@ const imports = [
   FacilityPickerModule,
   ChargeSchedulesModule,
   SignContractModule,
+  AssetTypeDetailsModule
 ];
 const exports = [QuestionComponent];
 const declarations = [QuestionComponent, EmptyFormControlDirective];

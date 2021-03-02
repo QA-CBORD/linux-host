@@ -141,9 +141,7 @@ export class UserPassForm implements OnInit {
   }
 
   async redirectToForgotPassword(): Promise<void> {
-    const { shortName } = await this.institutionFacadeService.cachedInstitutionInfo$.pipe(take(1)).toPromise();
-    const url = `${this.environmentFacadeService.getSitesURL()}/${shortName}/full/login.php?password=forgot`;
-    this.appBrowser.create(url, '_system');
+    this.router.navigate([ROLES.guest, GUEST_ROUTES.forgotPassword]);
   }
 
   isSignupEnabled$(): Observable<boolean> {
