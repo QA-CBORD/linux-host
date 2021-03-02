@@ -2,8 +2,8 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { ToastService } from '@core/service/toast/toast.service';
-import { formControlErrorDecorator, validatePasswordDecorator } from '@core/utils/general-helpers';
-import { PASS_CHANGE_REGEXP } from '@core/utils/regexp-patterns';
+import { validatePasswordDecorator } from '@core/utils/general-helpers';
+import { ONE_LETTER_REGEXP, ONE_NUMBER_REGEXP, PASS_CHANGE_REGEXP } from '@core/utils/regexp-patterns';
 import { ModalController } from '@ionic/angular';
 import { of } from 'rxjs';
 import { catchError, take } from 'rxjs/operators';
@@ -35,10 +35,11 @@ export class ChangePasswordComponent implements OnInit {
   private initForm() {
     const passwordValidations = [
       validatePasswordDecorator(Validators.required, { required: true }),
-      validatePasswordDecorator(Validators.pattern(PASS_CHANGE_REGEXP), { pattern: true }),
+      validatePasswordDecorator(Validators.pattern(ONE_NUMBER_REGEXP), { number: true }),
+      validatePasswordDecorator(Validators.pattern(ONE_LETTER_REGEXP), { letter: true }),
       validatePasswordDecorator(Validators.minLength(8), { min: true }),
     ];
-
+    
     this.changePasswordForm = this.fb.group({
       [PASSWORD_FORM_CONTROL_NAMES.currentPassword]: ['', Validators.required],
       [PASSWORD_FORM_CONTROL_NAMES.newPassword]: ['', passwordValidations],

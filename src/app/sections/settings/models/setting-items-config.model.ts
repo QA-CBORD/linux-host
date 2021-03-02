@@ -66,7 +66,8 @@ export enum SETTINGS_VALIDATIONS {
   SettingEnable = 'setting-enable',
   Biometric = 'biometric',
   StatusSettingEnable = 'status-enable',
-  MobileCredentialEnabled = 'mobile-credential'
+  MobileCredentialEnabled = 'mobile-credential',
+  ChangePasswordEnabled = 'change-password'
 }
 
 export interface UserInfoSet extends UserInfo {

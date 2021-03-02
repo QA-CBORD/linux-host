@@ -98,6 +98,9 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         label: 'Change password',
         type: 'button',
         setCallback: openModal,
+        validations: [
+          { type: SETTINGS_VALIDATIONS.ChangePasswordEnabled, value: 'change-password' },
+        ],
         modalContent: {
           component: ChangePasswordComponent,
         },

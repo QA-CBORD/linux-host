@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { merge, Observable, of, zip } from 'rxjs';
+import { from, merge, Observable, of, zip } from 'rxjs';
 import {
   SettingItemConfig,
   SETTINGS_VALIDATIONS,
@@ -11,7 +11,7 @@ import { SETTINGS_CONFIG } from '../settings.config';
 import { catchError, map, reduce, take, tap, mergeMap, switchMap } from 'rxjs/operators';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { Settings } from 'src/app/app.global';
-import { IdentityFacadeService } from '@core/facades/identity/identity.facade.service';
+import { IdentityFacadeService, LoginState } from '@core/facades/identity/identity.facade.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
@@ -24,6 +24,7 @@ import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { configureBiometricsConfig } from '@core/utils/general-helpers';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { MobileCredentialFacade } from '@shared/ui-components/mobile-credentials/service/mobile-credential-facade.service';
+import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 
 @Injectable()
 export class SettingsFactoryService {
@@ -53,7 +54,8 @@ export class SettingsFactoryService {
     private readonly globalNav: GlobalNavService,
     private readonly appBrowser: InAppBrowser,
     private readonly modalController: ModalController,
-    private readonly mobileCredentialFacade: MobileCredentialFacade
+    private readonly mobileCredentialFacade: MobileCredentialFacade,
+    private readonly sessionFacadeService: SessionFacadeService
   ) {}
 
   async getSettings(): Promise<SettingsSectionConfig[]> {
@@ -124,6 +126,20 @@ export class SettingsFactoryService {
           );
         } else if (validation.type === SETTINGS_VALIDATIONS.MobileCredentialEnabled) {
           validations$.push(this.mobileCredentialFacade.showCredentialMetadata().pipe(take(1)));
+        } else if (validation.type === SETTINGS_VALIDATIONS.ChangePasswordEnabled) {
+          validations$.push(from(this.sessionFacadeService.determineInstitutionSelectionLoginState()).pipe(switchMap((login) => {
+            if (login === LoginState.HOSTED) {
+              return of(true);
+            }
+            return of(false);
+          })));
+          // if (loginType === LoginState.HOSTED) {
+          //   validations$.push(of(true));
+          // }
+          // const loginType = await this.sessionFacadeService.determineInstitutionSelectionLoginState();
+          // if (loginType === LoginState.HOSTED) {
+          //   validations$.push(of(true));
+          // }
         }
       }
       return merge(...validations$)
