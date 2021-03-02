@@ -136,5 +136,13 @@
 
       <st-radio-group [formControlName]="question['name']" [options]="question['values']"></st-radio-group>
     </div>
+
+    <st-asset-type-details
+      *ngSwitchCase="'asset-types-group'"
+      [parentGroup]="parentGroup"
+      [question]="question"
+      [isSubmitted]="isSubmitted"
+      class="question__section">
+    </st-asset-type-details>
   </ng-container>
 </div>

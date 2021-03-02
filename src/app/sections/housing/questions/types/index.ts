@@ -12,3 +12,4 @@ export * from './question-textbox';
 export * from './question-charge-schedule';
 export * from './question-contract-details';
 export * from './question-date-signed';
+export * from './question-non-assignment-details';
