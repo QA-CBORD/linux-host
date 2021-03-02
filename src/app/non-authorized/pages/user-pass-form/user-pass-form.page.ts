@@ -83,7 +83,7 @@ export class UserPassForm implements OnInit {
       .getAuthSessionToken$()
       .pipe(take(1))
       .toPromise();
-    this.authTypeHosted$ = this.getAuthenticationTypeHosted$(id, sessionId).pipe(tap(res => console.log(res)));
+    this.authTypeHosted$ = this.getAuthenticationTypeHosted$(id, sessionId);
     this.authTypeLDAP$ = this.getAuthenticationTypeLDAP$(id, sessionId);
     this.placeholderOfUsername$ = this.getContentStringByName(sessionId, 'email_username');
     this.loginInstructions$ = this.getContentStringByName(sessionId, 'instructions');
