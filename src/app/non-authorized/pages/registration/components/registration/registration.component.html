@@ -64,7 +64,7 @@
           </st-input-floating-label>
         </div>
         <div class="password-hints">
-          <st-input-validator [control]="password" ></st-input-validator>
+          <st-input-validator [control]="password" [validators]="passwordValidators"></st-input-validator>
         </div>
       </div>
       <div class="guest__body__submitOrcancel">

@@ -7,15 +7,16 @@ import { StButtonModule } from '@shared/ui-components/st-button';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
 import { StInputFloatingLabelModule } from '@shared/ui-components/st-input-floating-label/st-input-floating-label.module';
 import { RegistrationSuccessComponent } from './components/registration-success/registration-success.component';
-import { InputValidatorComponent } from './components/input-validator/input-validator.component';
+import { PasswordValidationModule } from 'src/app/password-validation/password-validation.module';
 
 @NgModule({
-  declarations: [RegistrationComponent, RegistrationSuccessComponent, InputValidatorComponent],
+  declarations: [RegistrationComponent, RegistrationSuccessComponent],
   entryComponents: [RegistrationComponent, RegistrationSuccessComponent],
   imports: [
     CommonModule,
     StHeaderModule,
     ReactiveFormsModule,
+    PasswordValidationModule,
     StButtonModule,
     FormsModule,
     IonicModule,
