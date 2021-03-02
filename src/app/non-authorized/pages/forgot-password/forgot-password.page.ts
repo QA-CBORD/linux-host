@@ -6,6 +6,7 @@ import { FORGOT_PASSWORD_ROUTING } from './forgot-password.config';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { EMAIL_REGEXP } from '@core/utils/regexp-patterns';
 import { NotificationFacadeService } from '@core/facades/notification/notification-facade.service';
+import { NavController } from '@ionic/angular';
 
 @Component({
   selector: 'st-forgot-password',
@@ -16,6 +17,7 @@ export class ForgotPasswordPage implements OnInit {
   tokenForm: FormGroup;
   forgotPasswordForm: FormGroup;
   isLoading: boolean;
+  resetSent: boolean;
 
   get controlsNames() {
     return FORGOT_PWD_CONTROL_NAMES;
@@ -28,7 +30,8 @@ export class ForgotPasswordPage implements OnInit {
   constructor(
     private readonly router: Router,
     private readonly fb: FormBuilder,
-    private readonly notificationFacadeService: NotificationFacadeService
+    private readonly notificationFacadeService: NotificationFacadeService,
+    private readonly navController: NavController
   ) {}
 
   ngOnInit() {
@@ -43,8 +46,16 @@ export class ForgotPasswordPage implements OnInit {
     this.router.navigate([ROLES.guest, GUEST_ROUTES.forgotPassword, FORGOT_PASSWORD_ROUTING.enterCode]);
   }
 
+  back() {
+    this.navController.back();
+  }
+
   async submit() {
     await this.notificationFacadeService.resetPasswordRequest(this.email.value);
+  }
+
+  setSendEmailState() {
+    this.resetSent = false;
   }
 
   private initForm() {
