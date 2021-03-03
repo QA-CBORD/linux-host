@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { EnvironmentFacadeService, EnvironmentType } from '@core/facades/environment/environment.facade.service';
-import { Observable } from 'rxjs';
-import { map, take } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { catchError, map, take } from 'rxjs/operators';
 import { CONTENT_STRINGS_CATEGORIES } from 'src/app/content-strings';
 import { GuestRegistration } from '../models/guest-registration';
 import { PatronRegistration } from '../models/patron-registration';
 import {
+  defaultPreloginModel,
   FormFieldList,
   PreLoginStringKeys,
   PreLoginStringModel,
@@ -57,6 +58,14 @@ export class RegistrationServiceFacade {
           preLoginContentString[ContentStringKey] = value;
         });
         return preLoginContentString;
+      }),
+      catchError(() => {
+        const [first, second] = defaultPreloginModel.continue_as_nonguest.split('|');
+        defaultPreloginModel.continue_as_nonguest = first.trim();
+        if (acuteCare) {
+          defaultPreloginModel.continue_as_nonguest = second.trim();
+        }
+        return of(defaultPreloginModel);
       })
     );
   }

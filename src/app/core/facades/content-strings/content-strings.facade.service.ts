@@ -4,7 +4,7 @@ import { ContentStringsStateService } from '@core/states/content-strings/content
 import { ContentStringsApiService } from '@core/service/content-service/content-strings-api.service';
 import { Observable, of } from 'rxjs';
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
-import { map, skipWhile, switchMap, tap } from 'rxjs/operators';
+import { map, skipWhile, switchMap, take, tap } from 'rxjs/operators';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_LOCALES } from '../../../content-strings';
 
 @Injectable({
@@ -58,7 +58,6 @@ export class ContentStringsFacadeService extends ServiceStateFacade {
     locale: CONTENT_STRINGS_LOCALES | null = null
   ): Observable<ContentStringInfo[]> {
     const call = this.apiService.retrieveContentStringListByRequest({ domain, category, locale });
-
     return this.makeRequestWithUpdatingStateHandler<ContentStringInfo[]>(call, this.stateService).pipe(
       tap((data: ContentStringInfo[]) => this.addContentStringsToState(data))
     );

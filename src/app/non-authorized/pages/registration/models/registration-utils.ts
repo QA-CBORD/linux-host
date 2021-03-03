@@ -101,6 +101,13 @@ export interface PreLoginStringModel {
   pre_login_instruction: string;
 }
 
+
+export const defaultPreloginModel = {
+  continue_as_guest: 'Continue as guest',
+  continue_as_nonguest: 'Continue as Student | Continue as Employee',
+  pre_login_instruction: '<p>Here goes further instructions on how to login or register as a guest vs login or register as a student</p>'
+}
+
 /**
  * when doing a guest registration
  *
