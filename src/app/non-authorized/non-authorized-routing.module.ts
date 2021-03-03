@@ -25,6 +25,10 @@ const routes: Routes = [
     loadChildren: './pages/user-pass-form/user-pass-form.module#UserPassFormPageModule',
   },
   {
+    path: GUEST_ROUTES.pre_login,
+    loadChildren: './pages/pre-login/pre-login.module#PreLoginModule',
+  },
+  {
     path: GUEST_ROUTES.forgotPassword,
     loadChildren: './pages/forgot-password/forgot-password.module#ForgotPasswordPageModule',
   },

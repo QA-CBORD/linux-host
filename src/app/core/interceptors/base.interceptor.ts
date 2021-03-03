@@ -16,13 +16,13 @@ export class BaseInterceptor implements HttpInterceptor {
   constructor(
     private readonly authFacadeService: AuthFacadeService,
     private readonly institutionFacadeService: InstitutionFacadeService,
-    private readonly environmentFacadeService: EnvironmentFacadeService,
+    private readonly environmentFacadeService: EnvironmentFacadeService
   ) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return this.resolveRequest(req, next).pipe(
       subscribeOn(async),
-      observeOn(queue),
+      observeOn(queue)
     );
   }
 
@@ -62,12 +62,12 @@ export class BaseInterceptor implements HttpInterceptor {
   private updatedRequest(
     next: HttpHandler,
     { useInstitutionId, useSessionId }: RPCQueryConfig,
-    req: HttpRequest<any>,
+    req: HttpRequest<any>
   ): Observable<any> {
     let { params } = req.body;
     return this.getRequiredData(req).pipe(
       switchMap(([institutionId, sessionId]) => {
-         if ((useInstitutionId && institutionId === null) || (useSessionId && sessionId === null)) {
+        if ((useInstitutionId && institutionId === null) || (useSessionId && sessionId === null)) {
           this.redirectToLogin();
         } else {
           if (useInstitutionId) params = { ...params, institutionId };
@@ -94,10 +94,18 @@ export class BaseInterceptor implements HttpInterceptor {
           map(institution => (institution ? institution.id : institution)),
           take(1)
         );
-    const sessionId$ = hasSessionId
-      ? of(params['sessionId'])
-      : this.authFacadeService.cachedAuthSessionToken$.pipe(take(1));
 
+    let sessionId$: Observable<string>;
+    if (!hasSessionId) {
+      sessionId$ = this.authFacadeService.cachedAuthSessionToken$.pipe(
+        take(1),
+        switchMap(sessionId =>
+          sessionId ? of(sessionId) : this.authFacadeService.getAuthSessionToken$().pipe(take(1))
+        )
+      );
+    } else {
+      sessionId$ = of(params['sessionId']);
+    }
     return zip(institutionId$, sessionId$);
   }
 }

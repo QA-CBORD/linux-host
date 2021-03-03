@@ -14,8 +14,9 @@ import { ServerError } from '@core/interceptors/server-error.interceptor';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { AccessCardService } from '@sections/dashboard/containers/access-card/services/access-card.service';
 import { MobileCredentialModule } from '@shared/ui-components/mobile-credentials/mobile.credential.module';
+import { RegistrationModule } from '../non-authorized/pages/registration/registration.module';
 
-const imports = [CommonModule, BrowserModule, HttpClientModule, MobileCredentialModule];
+const imports = [CommonModule, BrowserModule, HttpClientModule, MobileCredentialModule, RegistrationModule];
 
 const providers = [
   SelectivePreloadingStrategy,

@@ -63,18 +63,17 @@
       >
       </st-input-floating-label>
       <ng-container
-        *ngVar="{ isHosted: authTypeHosted$ | async, isSignupEnabled: signupEnabled$ | async } as authValues"
+        *ngVar="{ isHosted: authTypeHosted$ | async, isSignupEnabled: signupEnabled$ | async, navedAsGuest: navedAsGuest$ | async } as authValues"
       >
-        <!--using visibility instead of ngIf to maintain UI formatting-->
-        <div [style.visibility]="authValues.isHosted ? 'visible' : 'hidden'" class="login__form-password">
+        <div class="login__form-password">
           <a class="login__form-password-forgot" (click)="redirectToForgotPassword()" tabindex="2">Forgot password?</a>
         </div>
         <div class="login__form-btns">
           <st-button
-            *ngIf="authValues.isHosted && authValues.isSignupEnabled"
+            *ngIf="authValues.isHosted && authValues.isSignupEnabled || authValues.navedAsGuest"
             buttonModifier="border-only-rectangle"
             class="login__form-btns--odd"
-            (click)="redirectToSignup()"
+            (click)="onSignup()"
             tabindex="4"
           >
             Sign up

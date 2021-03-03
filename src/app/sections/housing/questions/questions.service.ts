@@ -4,6 +4,8 @@ import { FormArray, FormControl, FormGroup, ValidatorFn } from '@angular/forms';
 import { integerValidator, numericValidator, parseJsonToArray } from '../utils';
 
 import {
+  QuestionAssetTypeDetails,
+  QuestionAssetTypeDetailsBase,
   QuestionBase,
   QuestionChargeScheduleBase,
   QuestionCheckboxGroup,
@@ -26,6 +28,7 @@ import { QuestionBlockquote } from '@sections/housing/questions/types/question-b
 import { Attribute } from '@sections/housing/attributes/attributes.model';
 import { QuestionsEntries } from '@sections/housing/questions/questions-storage.service';
 import { CONTRACT_DETAIL_KEYS } from '@sections/housing/contracts/contracts.model';
+import { AssetTypeDetailValue } from '../non-assignments/non-assignments.model';
 
 export const QuestionConstructorsMap = {
   header: QuestionHeader,
@@ -98,6 +101,18 @@ export class QuestionsService {
     return new FormArray(controls);
   }
 
+  toQuestionAssetTypeDetailsGroup(storedValue: any, question: QuestionAssetTypeDetails): FormGroup {
+    const assetTypeGroup: AssetTypeDetailValue[][] = storedValue || question.assetTypes;
+    let groups: any = {};
+
+    assetTypeGroup.forEach((at: AssetTypeDetailValue[], index: number) => {
+      const controls: FormControl[] = at.map((detail: AssetTypeDetailValue) => new FormControl(detail.value));
+      groups[`aaa-${index}`] = new FormArray(controls);
+    });
+
+    return new FormGroup(groups);
+  }
+
   getAttributeValue(attributes: Attribute[], question: QuestionFormControl): string {
     const foundAttribute: Attribute = attributes.find(
       (attribute: Attribute) => attribute.attributeConsumerKey === question.consumerKey
@@ -145,6 +160,10 @@ export class QuestionsService {
           } else if (this._isSourceFacility(question as QuestionFacilityAttributes)) {
             return new QuestionFacilityAttributes(question);
           }
+        } else if (
+          (question as QuestionAssetTypeDetailsBase).type === 'checkbox-group' &&
+          (question as QuestionAssetTypeDetailsBase).label.toLowerCase() === 'asset type details') {
+            return new QuestionAssetTypeDetailsBase(question);
         }
 
         return new QuestionConstructorsMap[question.type](question);

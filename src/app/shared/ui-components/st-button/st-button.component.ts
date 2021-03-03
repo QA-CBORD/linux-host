@@ -14,6 +14,7 @@ export class StButtonComponent {
   @Input() disabled: boolean = false;
   @Input() expand: string = 'block';
   @Input() fill: string = 'solid';
+  @Input() color: string;
   @Output() onClick: EventEmitter<Event> = new EventEmitter<Event>();
 
   onClickButton(event: Event) {

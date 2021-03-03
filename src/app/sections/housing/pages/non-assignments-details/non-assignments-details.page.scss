@@ -1,0 +1,65 @@
+@import 'tools';
+
+.non-assignment-details__content {
+    --background: #{$porcelain};
+    --padding-top: 8px;
+    --padding-start: 8px;
+    --padding-end: 8px;
+}
+
+.non-assignment-details__actions {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.non-assignment-details__title {
+    @include font-family($font-nunito-heavy);
+
+    font-size: 20px;
+    color: $color-night-rider;
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.non-assignment-details__btn-cancel {
+    @include font-family($font-nunito-regular);
+
+    --color: #{rgba($color-black, 0.9)};
+}
+
+.non-assignment-details__card {
+    background-color: $color-white;
+    border-radius: 16px;
+    box-shadow: 0 0 4px 0 rgba($color-black, 0.04), 0 2px 14px 0 rgba($color-black, 0.12);
+    padding: 16px;
+}
+
+.non-assignment-details__btn-back {
+    @include font-family($font-nunito-heavy);
+
+    --color: #{$color-dodger-blue};
+    min-width: 80px;
+}
+
+.non-assignment-details__btn-next,
+.non-assignment-details__submit {
+    @include font-family($font-nunito-heavy);
+
+    --border-radius: 8px;
+    width: 150px;
+    font-size: 14px;
+    text-transform: uppercase;
+}
+
+.non-assignment-details__btn-next {
+    --background-activated: #{$color-dodger-blue};
+    --border-color: #{$color-dodger-blue};
+    --border-width: 2px;
+    --color: #{$color-dodger-blue};
+}
+
+.non-assignment-details__submit {
+    --background: #{$color-dodger-blue};
+}

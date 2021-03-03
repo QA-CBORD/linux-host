@@ -9,6 +9,9 @@ import { ForgotPasswordPage } from './forgot-password.page';
 import { StButtonModule } from '@shared/ui-components/st-button';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
 import { FORGOT_PASSWORD_ROUTING } from './forgot-password.config';
+import { StInputFloatingLabelModule } from '@shared/ui-components/st-input-floating-label/st-input-floating-label.module';
+import { NotificationService } from '@core/service/notification/notification.service';
+import { NotificationFacadeService } from '@core/facades/notification/notification-facade.service';
 
 const routes: Routes = [
   {
@@ -17,11 +20,11 @@ const routes: Routes = [
   },
   {
     path: FORGOT_PASSWORD_ROUTING.confirm,
-    loadChildren: './pages/confirm-account/confirm-account.module#ConfirmAccountPageModule'
+    loadChildren: './pages/confirm-account/confirm-account.module#ConfirmAccountPageModule',
   },
   {
     path: FORGOT_PASSWORD_ROUTING.enterCode,
-    loadChildren: './pages/enter-code/enter-code.module#EnterCodePageModule'
+    loadChildren: './pages/enter-code/enter-code.module#EnterCodePageModule',
   },
 ];
 
@@ -31,11 +34,12 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     RouterModule.forChild(routes),
+    StInputFloatingLabelModule,
     StButtonModule,
     StHeaderModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
   declarations: [ForgotPasswordPage],
+  providers: [NotificationService, NotificationFacadeService]
 })
-export class ForgotPasswordPageModule {
-}
+export class ForgotPasswordPageModule {}
