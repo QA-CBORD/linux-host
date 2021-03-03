@@ -1,0 +1,51 @@
+<!-- <ion-header class="login-header" no-border>
+  <ion-toolbar mode="ios" class="ion-color" class="mobile-credential-header__nav-toolbar">
+    <ion-buttons slot="start">
+      <ion-button mode="ios" class="edit-home__header-done-btn" color="dark" (click)="onDecline()">
+        <ion-icon icon="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="mc-header__title">
+      {{ title$ | async }}
+    </ion-title>
+  </ion-toolbar>
+</ion-header> -->
+
+<ion-content [scrollY]="false">
+  <div class="main">
+    <div class="main__container">
+      <div class="main__container__title">
+        {{ title$ | async }}
+      </div>
+      <div class="main__container__content">
+        <div class="main__container__content__image">
+          <img src="/assets/icon/email-verify.svg" />
+        </div>
+        <div class="main__container__content__message">
+          <p>
+            {{ message$ | async }}
+          </p>
+        </div>
+        <div class="main__container__content__buttons">
+          <st-button
+            buttonModifier="rectangle"
+            [isDisabled]="true"
+            tabindex="3"
+            class="login__form-btns--odd"
+            tabindex="4"
+            (click)="dismiss()"
+          >
+            <span class="ion-text-capitalize">
+              {{ pageContent.dismissBtnText }}
+            </span>
+          </st-button>
+          <!-- <st-button buttonModifier="rectangle" fill="clear" tabindex="3" (click)="resend()">
+            <span class="ion-text-capitalize">
+              {{ pageContent.resendEmailBtnText }}
+            </span>
+          </st-button> -->
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>

@@ -73,6 +73,12 @@
     top: 25%;
     right: 5%;
   }
+
+  &__transparent_btn{
+    position: absolute;
+    top: 8%;
+    right: 1%;
+  }
 }
 
 :host-context(.ng-valid.ng-dirty) .input__control {

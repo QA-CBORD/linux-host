@@ -1,7 +1,8 @@
-import { Component, OnInit, Input, forwardRef, ViewChild, ElementRef, HostBinding } from '@angular/core';
+import { Component, OnInit, Input, forwardRef, ViewChild, ElementRef, HostBinding, AfterViewInit } from '@angular/core';
 import { FormControl, NG_VALUE_ACCESSOR, ControlValueAccessor, AbstractControl } from '@angular/forms';
 import { FocusableElement } from '@core/interfaces/focusable-element.interface';
 import { hasRequiredField } from '@core/utils/general-helpers';
+import { Handler } from '@shared/model/shared-api';
 
 export const CUSTOM_INPUT_CONTROL_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
@@ -15,7 +16,7 @@ export const CUSTOM_INPUT_CONTROL_VALUE_ACCESSOR: any = {
   styleUrls: ['./st-input-floating-label.component.scss'],
   providers: [CUSTOM_INPUT_CONTROL_VALUE_ACCESSOR],
 })
-export class StInputFloatingLabelComponent implements OnInit, ControlValueAccessor, FocusableElement {
+export class StInputFloatingLabelComponent implements OnInit, AfterViewInit, ControlValueAccessor, FocusableElement {
   @Input() control: AbstractControl = new FormControl();
   @Input() label: string;
   @Input() type: string;
@@ -25,26 +26,48 @@ export class StInputFloatingLabelComponent implements OnInit, ControlValueAccess
   @Input() inputmode: string;
   @Input() enterkeyhint: string;
   @Input() tabindex: string;
+  showOrHide: string = 'Show';
   @Input('stFocusNext')
   set focusNextDr(value: FocusableElement) {
     if (!this.enterkeyhint) this.enterkeyhint = 'next';
   }
 
+  @Input() icon: string;
+  private errorIcon: string = '/assets/icon/input-error.svg';
+  imageSrc: string = this.errorIcon;
+  passwordFieldDirty: boolean;
   @HostBinding('class.disabled')
   @Input()
   isDisabled: boolean = false;
 
-  @ViewChild('input') inputRef: ElementRef;
+  @ViewChild('input') inputRef: ElementRef<HTMLInputElement>;
   innerValue: string | number = '';
   private onChange: (v: any) => void;
   private onTouched: () => void;
 
   constructor() {}
+  ngAfterViewInit(): void {
+    if(this.type == 'password') {
+      this.control.valueChanges.subscribe(value => {
+        this.passwordFieldDirty = (value as string).length > 0;
+      });
+    }
+  }
 
   ngOnChanges() {
     if (this.control.value !== '') {
       this.control.markAsDirty();
       this.value = this.control.value;
+    }
+  }
+
+  toggleText(): void {
+    if (this.showOrHide == 'Show') {
+      this.inputRef.nativeElement.type = 'text';
+      this.showOrHide = 'Hide';
+    } else {
+      this.inputRef.nativeElement.type = 'password';
+      this.showOrHide = 'Show';
     }
   }
 

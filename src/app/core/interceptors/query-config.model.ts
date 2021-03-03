@@ -1,6 +1,7 @@
 interface RPCBodyRequest {
   method: string;
   params: { [key: string]: any };
+  version?: number;
 }
 
 export class RPCQueryConfig {
@@ -19,6 +20,6 @@ export class RPCQueryConfig {
   }
 
   public get requestBody(): RPCBodyRequest {
-    return { method: this.method, params: this.params  };
+    return { method: this.method, params: this.params };
   }
 }

@@ -19,12 +19,12 @@ export class ContentStringsApiService {
   retrieveContentStringByConfig(
     config: ContentStringRequest,
     sessionId?: string,
-    useSessionId?: boolean
+    useSessionId?: boolean,
   ): Observable<ContentStringInfo> {
-    let useSession = useSessionId === false ? useSessionId: true;
+    let useSession = useSessionId === false ? useSessionId : true;
     let params;
     config = config.locale ? config : { ...config, locale: null };
-    params = {...config}
+    params = { ...config };
     if (sessionId) {
       params = { ...params, sessionId };
     }
@@ -34,6 +34,21 @@ export class ContentStringsApiService {
       .post<MessageResponse<ContentStringInfo>>(this.serviceUrl, queryConfig)
       .pipe(map(({ response }) => response));
   }
+
+
+  ContentStringByInstitution$(
+    config: ContentStringRequest,
+    institutionId: string
+  ): Observable<ContentStringInfo>{
+    const params = {...config, institutionId };
+    const queryConfig = new RPCQueryConfig('retrieveString', params, true, true);
+    return this.http
+      .post<MessageResponse<ContentStringInfo>>(this.serviceUrl, queryConfig)
+      .pipe(map(({ response }) => response));
+  }
+
+
+
 
   retrieveContentStringListByRequest(config: ContentStringRequest): Observable<ContentStringInfo[] | []> {
     config = config.locale ? config : { ...config, locale: null };

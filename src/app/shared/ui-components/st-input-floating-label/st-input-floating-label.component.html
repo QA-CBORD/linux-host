@@ -17,7 +17,12 @@
   />
   <label class="input__placeholder" [attr.for]="idd">{{ label }}</label>
   <ng-content *ngIf="isError"></ng-content>
-  <div class="input__accesibility_error" *ngIf="isError">
+  <div class="input__accesibility_error" *ngIf="isError && !passwordFieldDirty">
     <img src="/assets/icon/input-error.svg" alt="input-accessibility-error" *ngIf="isError" />
+  </div>
+  <div class="input__transparent_btn" *ngIf="passwordFieldDirty">
+    <ion-button (click)="toggleText()" fill="clear">
+      <span class="ion-text-capitalize"> {{ showOrHide }} </span>
+    </ion-button>
   </div>
 </div>
