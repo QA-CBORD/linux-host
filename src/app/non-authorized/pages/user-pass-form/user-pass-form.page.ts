@@ -96,13 +96,13 @@ export class UserPassForm implements OnInit {
     this.cdRef.detectChanges();
   }
 
-  initializeInstitutionInfo(id, sessionId): void {
-    this.institutionPhoto$ = this.getInstitutionPhoto(id, sessionId);
-    const { institutionInfo } = history.state;
-    if (institutionInfo) {
-      this.nativeHeaderBg$ = Promise.resolve(institutionInfo.backgroundColor);
-      this.institutionName$ = Promise.resolve(institutionInfo.name);
-    } else {
+  async initializeInstitutionInfo(id, sessionId): Promise<void> {
+    const institutionInfo = history.state.institutionInfo || {};
+    this.nativeHeaderBg$ = Promise.resolve(institutionInfo.backgroundColor);
+    const data = await this.getInstitutionPhoto(id, sessionId);
+    this.institutionPhoto$ = Promise.resolve(data);
+    this.institutionName$ = Promise.resolve(institutionInfo.name);
+    if (!institutionInfo.name) {
       this.institutionName$ = this.getInstitutionName(id, sessionId);
       this.nativeHeaderBg$ = this.getNativeHeaderBg(id, sessionId);
     }

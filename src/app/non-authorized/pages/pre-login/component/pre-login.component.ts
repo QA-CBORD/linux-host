@@ -39,7 +39,6 @@ export class PreLoginComponent implements OnInit {
     const { contentStrings, backgroundColor, institutionInfo } = history.state;
     this.pageContent = contentStrings;
     this.selectedInstitution = institutionInfo;
-    this.institutionName$ = Promise.resolve(this.selectedInstitution.name);
     this.nativeHeaderBg$ = Promise.resolve(backgroundColor);
     this.getInstitutionInfo();
   }
@@ -50,7 +49,9 @@ export class PreLoginComponent implements OnInit {
       .getAuthSessionToken$()
       .pipe(take(1))
       .toPromise();
-    this.institutionPhoto$ = this.getInstitutionPhoto(institutionId, this.sessionId);
+    const data = await this.getInstitutionPhoto(institutionId, this.sessionId);
+    this.institutionPhoto$ = Promise.resolve(data);
+    this.institutionName$ = Promise.resolve(this.selectedInstitution.name);
     this.getInstitutionName(institutionId, this.sessionId);
   }
 
