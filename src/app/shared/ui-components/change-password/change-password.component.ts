@@ -22,7 +22,6 @@ export class ChangePasswordComponent implements OnInit {
   changePasswordForm: FormGroup;
   isLoading = false;
   validators: InputValidator[] = [];
-  hasError: boolean;
   passwordControl: any = {};
   
   constructor(
