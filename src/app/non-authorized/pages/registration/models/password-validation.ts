@@ -6,7 +6,7 @@ export class Cvalidators {
   static nullablePhone(): CustomValidator {
     return {
       test: value => {
-        return !value || (/^[0-9]*$/.test(value) && (value.length >= 9 && value.length <=10));
+        return !value || (/^[0-9]*$/.test(value) && (value.length >= 9 && value.length <= 10));
       },
     };
   }
@@ -39,6 +39,12 @@ export class Cvalidators {
     };
   }
 
+  static requiredRange(min: number, max: number): CustomValidator {
+    return {
+      test: value =>  value.length >= min && value.length <= max
+    };
+  }
+
   static minOneLowerCase: CustomValidator = {
     test: value => {
       return /[a-z]/.test(value);
@@ -65,7 +71,7 @@ export class Cvalidators {
 
   static minOneSpecialChar: CustomValidator = {
     test: value => {
-      const testResult =  /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(value);
+      const testResult = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(value);
       return testResult;
     },
   };
@@ -75,5 +81,3 @@ export interface IViewableValidator {
   label: string;
   validator: CustomValidator;
 }
-
-

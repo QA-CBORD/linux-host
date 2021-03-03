@@ -37,9 +37,15 @@ export class InputValidator implements IViewableValidator {
     },
   
     at_least_one_special_char: {
-      label: 'At least one special character [!@#$%^&*()_+-=]',
+      label: 'At least one special character',
       validator: Cvalidators.minOneSpecialChar,
     },
+
+    required_password_length: {
+      label: 'Must be between 7-12 characters',
+      validator: Cvalidators.requiredRange(7, 12)
+    }
+
   };
 
   export const buildPasswordValidators = (contentStrings?: ContentStringInfo[]): InputValidator[] => {

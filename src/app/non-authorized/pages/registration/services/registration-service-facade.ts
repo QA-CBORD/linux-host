@@ -6,9 +6,8 @@ import { CONTENT_STRINGS_CATEGORIES } from 'src/app/content-strings';
 import { GuestRegistration } from '../models/guest-registration';
 import { PatronRegistration } from '../models/patron-registration';
 import {
-  defaultPreloginModel,
+  buildPreloginScreenData,
   FormFieldList,
-  PreLoginStringKeys,
   PreLoginStringModel,
   RegistrationFormData,
   UserRegistrationManager,
@@ -45,28 +44,8 @@ export class RegistrationServiceFacade {
 
   private getPreloginContents(acuteCare): Observable<PreLoginStringModel> {
     return this.registrationService.getString$(CONTENT_STRINGS_CATEGORIES.pre_login).pipe(
-      map(contents => {
-        const preLoginContentString: any = {};
-        contents.forEach(({ name: ContentStringKey, value }) => {
-          if (ContentStringKey == PreLoginStringKeys.continueAsNonGuest) {
-            const [first, second] = value.split('|');
-            value = first.trim();
-            if (acuteCare) {
-              value = second.trim();
-            }
-          }
-          preLoginContentString[ContentStringKey] = value;
-        });
-        return preLoginContentString;
-      }),
-      catchError(() => {
-        const [first, second] = defaultPreloginModel.continue_as_nonguest.split('|');
-        defaultPreloginModel.continue_as_nonguest = first.trim();
-        if (acuteCare) {
-          defaultPreloginModel.continue_as_nonguest = second.trim();
-        }
-        return of(defaultPreloginModel);
-      })
+      map(contents => buildPreloginScreenData(acuteCare, contents)),
+      catchError(() => of(buildPreloginScreenData(acuteCare)))
     );
   }
 
