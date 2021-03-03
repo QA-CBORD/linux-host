@@ -137,4 +137,10 @@ export class UserApiService {
     const queryConfig = new RPCQueryConfig(isReportAsLost ? 'reportCardLost' : 'reportCardFound', {}, true, false);
     return this.http.post<any>(this.serviceUrl, queryConfig);
   }
+
+  changePassword$(oldPassword: string, newPassword: string): Observable<boolean> {
+    const params = { oldPassword, newPassword };
+    const queryConfig = new RPCQueryConfig('changePassword', params, true, false);
+    return this.http.post<any>(this.serviceUrl, queryConfig);
+  }
 }

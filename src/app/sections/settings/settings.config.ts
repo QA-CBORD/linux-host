@@ -20,6 +20,7 @@ import { LOCAL_ROUTING as ORDERING_ROUTING } from '@sections/ordering/ordering.c
 import { ReportCardStatusSetting } from './models/report-card-status.config';
 import { ReportCardComponent } from './pages/report-card/report-card.component';
 import { MobileCredentialMetadata } from './pages/credential-metadata/mobile-cred-metadata';
+import { ChangePasswordComponent } from '@shared/ui-components/change-password/change-password.component';
 
 export enum LOCAL_ROUTING {
   photoUpload = 'photo-upload',
@@ -91,14 +92,19 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
           component: PhoneEmailComponent,
         },
       },
-      // {
-      //   id: SETTINGS_ID.password,
-      //   icon: 'key',
-      //   label: 'Change password',
-      //   type: 'button',
-      //   setCallback: openSiteURL,
-      //   navigateExternal: { type: 'link', value: 'login.php?password=forgot' },
-      // },
+      {
+        id: SETTINGS_ID.password,
+        icon: 'key',
+        label: 'Change password',
+        type: 'button',
+        setCallback: openModal,
+        validations: [
+          { type: SETTINGS_VALIDATIONS.ChangePasswordEnabled, value: 'change-password' },
+        ],
+        modalContent: {
+          component: ChangePasswordComponent,
+        },
+      },
       {
         id: SETTINGS_ID.biometrics,
         icon: '',
