@@ -149,14 +149,14 @@ export class InstitutionsPage implements OnInit {
   }
 
   private async navigateToLogin(loginState: number, institution) {
-    const institutionInfo = {
-      backgroundColor: await this.getNativeHeaderBg(institution.id, this.sessionId),
-      name: institution.name,
-    };
-
+    const bgColor = await this.getNativeHeaderBg(institution.id, this.sessionId);
     this.loadingService.closeSpinner();
     switch (loginState) {
       case LoginState.HOSTED:
+        const institutionInfo = {
+          backgroundColor: bgColor,
+          name: institution.name,
+        };
         this.nav.navigate([ROLES.guest, GUEST_ROUTES.login], { state: { institutionInfo } });
         break;
       case LoginState.EXTERNAL:

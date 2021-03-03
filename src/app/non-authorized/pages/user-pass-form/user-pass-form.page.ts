@@ -18,7 +18,7 @@ import { SessionFacadeService } from '@core/facades/session/session.facade.servi
 import { AUTHENTICATION_SYSTEM_TYPE, GUEST_ROUTES } from '../../non-authorized.config';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { configureBiometricsConfig } from '@core/utils/general-helpers';
 import { ToastService } from '@core/service/toast/toast.service';
 import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
@@ -43,6 +43,7 @@ export class UserPassForm implements OnInit {
   private institutionInfo: Institution;
   loginForm: FormGroup;
   signupEnabled$: Observable<boolean>;
+  navedAsGuest$: Observable<boolean>;
 
   constructor(
     private readonly institutionFacadeService: InstitutionFacadeService,
@@ -93,6 +94,7 @@ export class UserPassForm implements OnInit {
     this.loginInstructions$ = this.getContentStringByName(sessionId, 'instructions');
     this.initializeInstitutionInfo(id, sessionId);
     this.signupEnabled$ = this.isSignupEnabled$();
+    this.navedAsGuest$ = history.state.navParams && of(history.state.navParams.asGuest);
     this.cdRef.detectChanges();
   }
 
