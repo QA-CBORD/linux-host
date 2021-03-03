@@ -16,8 +16,8 @@ const routes: Routes = [
     path: ROLES.guest,
     loadChildren: './non-authorized/non-authorized.module#NonAuthorizedModule',
   },
-  { path: '**', redirectTo: ROLES.guest },
 
+  { path: '**', redirectTo: ROLES.guest },
 ];
 
 @NgModule({
