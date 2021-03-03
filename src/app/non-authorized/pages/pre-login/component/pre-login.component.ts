@@ -12,6 +12,7 @@ import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
+import { LoginState } from '@core/facades/identity/identity.facade.service';
 
 @Component({
   selector: 'st-pre-login',
@@ -33,7 +34,8 @@ export class PreLoginComponent implements OnInit {
     private readonly authFacadeService: AuthFacadeService,
     private readonly cdRef: ChangeDetectorRef,
     private readonly loadingService: LoadingService,
-    private readonly settingsFacadeService: SettingsFacadeService
+    private readonly settingsFacadeService: SettingsFacadeService,
+    private readonly sessionFacadeService: SessionFacadeService
   ) {}
   ngOnInit() {
     const { contentStrings, backgroundColor, institutionInfo } = history.state;
@@ -77,9 +79,10 @@ export class PreLoginComponent implements OnInit {
       this.institutionFacadeService.getInstitutionDataById$(institutionId, this.sessionId, true)
     )
       .pipe(
-        map(() => {
+        switchMap(() => this.sessionFacadeService.determineInstitutionSelectionLoginState()),
+        tap(loginState => {
           this.loadingService.closeSpinner();
-          this.navigateToLogin(asGuest);
+          this.navigateToLogin(asGuest, loginState);
         })
       )
       .toPromise();
@@ -105,15 +108,24 @@ export class PreLoginComponent implements OnInit {
       .toPromise();
   }
 
-  private async navigateToLogin(asGuest: boolean) {
-    const institution = this.selectedInstitution;
-    const institutionInfo = {
-      backgroundColor: await this.nativeHeaderBg$,
-      name: institution.name,
-    };
-    const navParams = { asGuest };
+  private async navigateToLogin(asGuest: boolean, loginState: LoginState) {
     this.loadingService.closeSpinner();
-    this.nav.navigate([ROLES.guest, GUEST_ROUTES.login], { state: { institutionInfo, navParams } });
+    const loginType: LoginState = asGuest && LoginState.HOSTED || loginState;
+    
+    switch (loginType) {
+      case LoginState.HOSTED:
+        const institution = this.selectedInstitution;
+        const institutionInfo = {
+          backgroundColor: await this.nativeHeaderBg$,
+          name: institution.name,
+        };
+        const navParams = { asGuest };
+        this.nav.navigate([ROLES.guest, GUEST_ROUTES.login], { state: { institutionInfo, navParams } });
+        break;
+      case LoginState.EXTERNAL:
+        this.nav.navigate([ROLES.guest, GUEST_ROUTES.external]);
+        break;
+    }
   }
 
   async continueAsNonGuest(): Promise<void> {
