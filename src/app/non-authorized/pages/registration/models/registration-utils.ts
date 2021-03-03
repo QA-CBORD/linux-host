@@ -67,8 +67,8 @@ export interface RegistrationFormData {
   confirm_password?: string;
   success_dismiss_btn?: string;
   success_resend_email?: string;
-  success_screen_title?:string;
-  success_screen_message?:string;
+  success_screen_title?: string;
+  success_screen_message?: string;
   passwordValidators: InputValidator[];
 }
 
@@ -81,7 +81,9 @@ const defaultRegistrationFormData: RegistrationFormData = {
   user_name: 'Email',
   password: 'Password',
   success_dismiss_btn: 'Dismiss',
+  success_screen_title: 'Verify Email',
   success_resend_email: 'Resend Email',
+  success_screen_message: 'We have sent you a verification email. Tap the link inside that to verify your email and login',
   passwordValidators: [],
 };
 
@@ -89,10 +91,31 @@ export const buildRegistrationFormData = (contentStrings?: ContentStringInfo[]):
   if (contentStrings && contentStrings.length) {
     const registrationFormData: any = {};
     contentStrings.forEach(({ name, value }) => (registrationFormData[name] = value));
-    return registrationFormData;
+    return {...defaultRegistrationFormData, ...registrationFormData};
   }
-
   return defaultRegistrationFormData;
+};
+
+export const buildPreloginScreenData = (acuteCare: boolean, contentStrings?: ContentStringInfo[]): PreLoginStringModel => {
+  const preLoginContentString: any = {};
+  if (contentStrings && contentStrings.length) {
+    contentStrings.forEach(({ name: strKey, value }) => {
+      if (strKey == PreLoginStringKeys.continueAsNonGuest) {
+        const [first, second] = value.split('|');
+        value = first.trim();
+        if (acuteCare) value = second.trim();
+      }
+      preLoginContentString[strKey] = value;
+    });
+    return preLoginContentString;
+  } else {
+    const [first, second] = defaultPreloginModel.continue_as_nonguest.split('|');
+    defaultPreloginModel.continue_as_nonguest = first.trim();
+    if (acuteCare) {
+      defaultPreloginModel.continue_as_nonguest = second.trim();
+    }
+    return defaultPreloginModel;
+  }
 };
 
 export interface PreLoginStringModel {
@@ -100,6 +123,13 @@ export interface PreLoginStringModel {
   continue_as_nonguest: string;
   pre_login_instruction: string;
 }
+
+export const defaultPreloginModel = {
+  continue_as_guest: 'Continue as guest',
+  continue_as_nonguest: 'Continue as Student | Continue as Employee',
+  pre_login_instruction:
+    '<p>Here goes further instructions on how to login or register as a guest vs login or register as a student</p>',
+};
 
 /**
  * when doing a guest registration

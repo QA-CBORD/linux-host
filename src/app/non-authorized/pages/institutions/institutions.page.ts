@@ -4,7 +4,7 @@ import { take, switchMap, tap, map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { GUEST_ROUTES } from '../../non-authorized.config';
 import { ROLES, Settings } from 'src/app/app.global';
-import { Observable, of, zip } from 'rxjs';
+import { Observable, of, pipe, zip } from 'rxjs';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { Plugins, Capacitor } from '@capacitor/core';
@@ -82,6 +82,7 @@ export class InstitutionsPage implements OnInit {
   }
 
   async onInstitutionSelected(institution: InstitutionLookupListItem): Promise<void> {
+    this.loadingService.showSpinner({ duration: 5000 });
     const canNavigate2Prelogin = this.registrationServiceFacade.guestLoginSupportedInEnv;
     const go2prelogin = institution.guestRegSupported && canNavigate2Prelogin;
     if (go2prelogin) {
@@ -94,9 +95,8 @@ export class InstitutionsPage implements OnInit {
 
   private async navigate(institution) {
     const { id: institutionId } = institution;
-    await this.loadingService.showSpinner();
     this.settingsFacadeService.cleanCache();
-    
+
     await zip(
       this.settingsFacadeService.fetchSettingList(Settings.SettingList.FEATURES, this.sessionId, institutionId),
       this.settingsFacadeService.getSettings(
@@ -110,7 +110,6 @@ export class InstitutionsPage implements OnInit {
       .pipe(
         switchMap(() => this.sessionFacadeService.determineInstitutionSelectionLoginState()),
         tap(loginType => {
-          this.loadingService.closeSpinner();
           this.navigateToLogin(loginType, institution);
         }),
         take(1)
@@ -119,13 +118,16 @@ export class InstitutionsPage implements OnInit {
   }
 
   private async navigateToPreLogin(institution: InstitutionLookupListItem, backgroundColor): Promise<void> {
-    this.loadingService.showSpinner();
+    await this.institutionFacadeService
+      .getInstitutionDataById$(institution.id, this.sessionId, true)
+      .pipe(take(1))
+      .toPromise();
     const contentStrings = await this.registrationServiceFacade.preloginContents(institution.acuteCare).toPromise();
-    this.loadingService.closeSpinner();
     const institutionInfo = {
       id: institution.id,
       name: institution.name,
     };
+    this.loadingService.closeSpinner();
     this.nav.navigate([ROLES.guest, GUEST_ROUTES.pre_login], {
       state: { backgroundColor, contentStrings, institutionInfo },
     });
@@ -149,8 +151,10 @@ export class InstitutionsPage implements OnInit {
   private async navigateToLogin(loginState: number, institution) {
     const institutionInfo = {
       backgroundColor: await this.getNativeHeaderBg(institution.id, this.sessionId),
-      name: institution.name
-    }
+      name: institution.name,
+    };
+
+    this.loadingService.closeSpinner();
     switch (loginState) {
       case LoginState.HOSTED:
         this.nav.navigate([ROLES.guest, GUEST_ROUTES.login], { state: { institutionInfo } });

@@ -11,7 +11,7 @@ export const registrationFormStaticFields: { [key: string]: Field } = {
     type: 'text',
     cValidator: [Cvalidators.min(1)],
     guestOnly: true,
-    validators: ['', Validators.minLength(1)],
+    validators: ['', Validators.required],
   }),
   last_name: new Field({
     alignHorizontal: true,
@@ -21,7 +21,7 @@ export const registrationFormStaticFields: { [key: string]: Field } = {
     type: 'text',
     cValidator: [Cvalidators.min(1)],
     guestOnly: true,
-    validators: ['', Validators.minLength(1)],
+    validators: ['', Validators.required],
   }),
   user_name: new Field({
     label: 'Email',
@@ -29,7 +29,7 @@ export const registrationFormStaticFields: { [key: string]: Field } = {
     name: STATICFIELDS.userName,
     type: 'email',
     cValidator: [Cvalidators.email()],
-    validators: ['', Validators.email],
+    validators: ['', Validators.required],
   }),
   phone: new Field({
     label: 'Phone Number',
@@ -45,7 +45,7 @@ export const registrationFormStaticFields: { [key: string]: Field } = {
     idd: 'pass_word',
     name: STATICFIELDS.password,
     type: 'password',
-    validators: ['', Validators.minLength(8)],
+    validators: ['', Validators.required],
     separatorUp: true,
   }),
 };

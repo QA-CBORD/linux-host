@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { EnvironmentFacadeService, EnvironmentType } from '@core/facades/environment/environment.facade.service';
-import { Observable } from 'rxjs';
-import { map, take } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { catchError, map, take } from 'rxjs/operators';
 import { CONTENT_STRINGS_CATEGORIES } from 'src/app/content-strings';
 import { GuestRegistration } from '../models/guest-registration';
 import { PatronRegistration } from '../models/patron-registration';
 import {
+  buildPreloginScreenData,
   FormFieldList,
-  PreLoginStringKeys,
   PreLoginStringModel,
   RegistrationFormData,
   UserRegistrationManager,
@@ -44,20 +44,8 @@ export class RegistrationServiceFacade {
 
   private getPreloginContents(acuteCare): Observable<PreLoginStringModel> {
     return this.registrationService.getString$(CONTENT_STRINGS_CATEGORIES.pre_login).pipe(
-      map(contents => {
-        const preLoginContentString: any = {};
-        contents.forEach(({ name: ContentStringKey, value }) => {
-          if (ContentStringKey == PreLoginStringKeys.continueAsNonGuest) {
-            const [first, second] = value.split('|');
-            value = first.trim();
-            if (acuteCare) {
-              value = second.trim();
-            }
-          }
-          preLoginContentString[ContentStringKey] = value;
-        });
-        return preLoginContentString;
-      })
+      map(contents => buildPreloginScreenData(acuteCare, contents)),
+      catchError(() => of(buildPreloginScreenData(acuteCare)))
     );
   }
 
