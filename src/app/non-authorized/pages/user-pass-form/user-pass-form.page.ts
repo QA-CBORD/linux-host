@@ -77,7 +77,7 @@ export class UserPassForm implements OnInit {
     this.initForm();
     await this.setLocalInstitutionInfo();
     // Announcing navigation meanwhile we find a generic way to do so.
-    this.accessibilityService.readAloud(`Login page for ${this.institutionInfo.name}`); 
+    this.accessibilityService.readAloud(`Login page for ${this.institutionInfo.name}`);
     const { id } = this.institutionInfo;
     const sessionId = await this.authFacadeService
       .getAuthSessionToken$()
@@ -90,7 +90,7 @@ export class UserPassForm implements OnInit {
     this.institutionPhoto$ = this.getInstitutionPhoto(id, sessionId);
     this.institutionName$ = this.getInstitutionName(id, sessionId);
     this.nativeHeaderBg$ = this.getNativeHeaderBg(id, sessionId);
-    
+
     this.signupEnabled$ = this.isSignupEnabled$();
     this.cdRef.detectChanges();
   }
@@ -107,9 +107,7 @@ export class UserPassForm implements OnInit {
   }
 
   async redirectToForgotPassword(): Promise<void> {
-    const { shortName } = await this.institutionFacadeService.cachedInstitutionInfo$.pipe(take(1)).toPromise();
-    const url = `${this.environmentFacadeService.getSitesURL()}/${shortName}/full/login.php?password=forgot`;
-    this.appBrowser.create(url, '_system');
+    this.router.navigate([ROLES.guest, GUEST_ROUTES.forgotPassword]);
   }
 
   isSignupEnabled$(): Observable<boolean> {
@@ -204,20 +202,20 @@ export class UserPassForm implements OnInit {
   }
 
   private async getContentStringByName(sessionId, name): Promise<string> {
-   return this.contentStringsFacadeService
-    .fetchContentString$(
-      CONTENT_STRINGS_DOMAINS.get_web_gui, 
-      CONTENT_STRINGS_CATEGORIES.login_screen, 
-      name,
-      null,
-      sessionId,
-      false,
-    )
-    .pipe(
-      map(({ value }) => value),
-      take(1)
-    )
-    .toPromise();
+    return this.contentStringsFacadeService
+      .fetchContentString$(
+        CONTENT_STRINGS_DOMAINS.get_web_gui,
+        CONTENT_STRINGS_CATEGORIES.login_screen,
+        name,
+        null,
+        sessionId,
+        false
+      )
+      .pipe(
+        map(({ value }) => value),
+        take(1)
+      )
+      .toPromise();
   }
 
   private configureBiometricsConfig(supportedBiometricType: string[]): { type: string; name: string } {

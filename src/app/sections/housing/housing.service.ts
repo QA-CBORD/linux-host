@@ -7,7 +7,6 @@ import { ROLES } from '../../app.global';
 import { forkJoin, Observable, of, pipe, Subject, throwError } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 
-
 import { HousingProxyService } from './housing-proxy.service';
 import { ApplicationsStateService } from './applications/applications-state.service';
 import { ContractsStateService } from './contracts/contracts-state.service';
@@ -29,6 +28,11 @@ import { ApplicationDetails } from './applications/applications.model';
 import { Facility, FacilityDetailsToFacilityMapper } from './facilities/facilities.model';
 import { ContractDetails, ContractListDetails } from './contracts/contracts.model';
 import { FacilityOccupantDetails } from '@sections/housing/roommate/roomate.model';
+import {
+  NonAssignmentDetails,
+  NonAssignmentListDetails
+} from './non-assignments/non-assignments.model';
+import { NonAssignmentsStateService } from './non-assignments/non-assignments-state.service';
 
 @Injectable({
   providedIn: 'root',
@@ -50,6 +54,7 @@ export class HousingService {
     private _housingProxyService: HousingProxyService,
     private _applicationsStateService: ApplicationsStateService,
     private _contractsStateService: ContractsStateService,
+    private _nonAssignmentsStateService: NonAssignmentsStateService,
     private _termsService: TermsService,
     private _applicationsService: ApplicationsService,
     private _loadingService: LoadingService,
@@ -67,7 +72,10 @@ export class HousingService {
     return this._housingProxyService.get<DefinitionsResponse>(apiUrl).pipe(
       map((response: any) => new DefinitionsResponse(response)),
       switchMap((response: DefinitionsResponse) => this._patchDefinitionsByStore(response)),
-      tap((response: DefinitionsResponse) => this._setState(response.applicationDefinitions, response.contractDetails)),
+      tap((response: DefinitionsResponse) =>
+        this._setState(response.applicationDefinitions, 
+                       response.contractDetails,
+                       response.nonAssignmentDetails)),
       catchError(() => this._handleGetDefinitionsError())
     );
   }
@@ -90,6 +98,10 @@ export class HousingService {
         if (details.contractDetails) {
           this._contractsStateService.setContractDetails(details.contractDetails);
         }
+
+        if (details.nonAssignmentDetails) {
+          this._nonAssignmentsStateService.setNonAssignmentDetails(details.nonAssignmentDetails);
+        }
       })
     );
   }
@@ -110,6 +122,12 @@ export class HousingService {
       );
   }
 
+  getNonAssignmentDetails(key: number, queryParams: string[] = []): Observable<NonAssignmentDetails> {
+    return this.getDetails(key, queryParams).pipe(
+      map((response: DetailsResponse) => response.nonAssignmentDetails)
+    );
+  }
+
   getRoomSelects(termId: number) {
     const apiUrl: string = `${this._baseUrl}/roomselectproxy/v.1.0/room-selects-proxy/patron/${termId}`;
     return this._housingProxyService.get<RoomSelectResponse>(apiUrl).pipe(
@@ -118,6 +136,7 @@ export class HousingService {
       catchError(() => this._handleGetRoomSelectsError())
     );
   }
+
   getFacilities(roomSelectKey: number): Observable<Facility[]> {
     const apiUrl = `${
       this._baseUrl
@@ -217,27 +236,32 @@ export class HousingService {
   }
 
   private _patchDefinitionsByStore(response: DefinitionsResponse): Observable<DefinitionsResponse> {
-    const { applicationDefinitions, contractDetails } = response;
+    const { applicationDefinitions, contractDetails, nonAssignmentDetails } = response;
 
     const patchedApplications: Observable<ApplicationDetails[]> =
       applicationDefinitions.length > 0
         ? this._applicationsService.patchApplicationsByStoredStatus(applicationDefinitions)
         : of([]);
 
-    return forkJoin(patchedApplications, of(contractDetails)).pipe(
+    return forkJoin(patchedApplications, of(contractDetails), of(nonAssignmentDetails)).pipe(
       map(
-        ([applicationDefinitions, contractDetails]: [ApplicationDetails[], ContractListDetails[]]) =>
-          new DefinitionsResponse({
-            applicationDefinitions,
-            contractDetails,
-          })
+        ([applicationDefinitions, contractDetails, nonAssignmentDetails]:
+          [ApplicationDetails[], ContractListDetails[], NonAssignmentListDetails[]]) =>
+            new DefinitionsResponse({
+              applicationDefinitions,
+              contractDetails,
+              nonAssignmentDetails
+            })
       )
     );
   }
 
-  private _setState(applications: ApplicationDetails[], contracts: ContractListDetails[]): void {
+  private _setState(applications: ApplicationDetails[],
+                    contracts: ContractListDetails[],
+                    nonAssignments: NonAssignmentListDetails[]): void {
     this._applicationsStateService.setApplications(applications);
     this._contractsStateService.setContracts(contracts);
+    this._nonAssignmentsStateService.setNonAssignments(nonAssignments);
   }
 
 
@@ -245,13 +269,15 @@ export class HousingService {
   private _handleGetDefinitionsError(): Observable<DefinitionsResponse> {
     const applicationDefinitions: ApplicationDetails[] = [];
     const contractDetails: ContractListDetails[] = [];
+    const nonAssignmentDetails: NonAssignmentListDetails[] = [];
 
-    this._setState(applicationDefinitions, contractDetails);
+    this._setState(applicationDefinitions, contractDetails, nonAssignmentDetails);
 
     return of(
       new DefinitionsResponse({
         applicationDefinitions,
         contractDetails,
+        nonAssignmentDetails,
       })
     );
   }

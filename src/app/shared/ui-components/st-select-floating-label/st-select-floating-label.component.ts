@@ -7,8 +7,11 @@ import {
   EventEmitter,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  ViewChild,
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor, FormControl, AbstractControl } from '@angular/forms';
+import { IonSelect } from '@ionic/angular';
+import { AccessibilityService } from '@shared/accessibility/services/accessibility.service';
 
 export const CUSTOM_SELECT_CONTROL_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
@@ -35,10 +38,12 @@ export class StSelectFloatingLabelComponent implements OnInit, ControlValueAcces
   @Output() focus: EventEmitter<any> = new EventEmitter<any>();
   @Output() change: EventEmitter<any> = new EventEmitter<any>();
   innerValue: any = '';
+
+  @ViewChild('selector') selectRef: IonSelect;
   private onChange: (v: any) => void;
   private onTouched: () => void;
 
-  constructor(private readonly cdRef: ChangeDetectorRef) {}
+  constructor(private readonly cdRef: ChangeDetectorRef, private readonly a11yService: AccessibilityService) {}
 
   ngOnInit() {
     this.value = this.control.value;
@@ -91,5 +96,13 @@ export class StSelectFloatingLabelComponent implements OnInit, ControlValueAcces
 
   onFocus() {
     this.focus.emit();
+  }
+
+  onDoubleTap() {
+    this.a11yService.isVoiceOverClick$.then(value => {
+      if (value) {
+        this.selectRef.open();
+      }
+    });
   }
 }
