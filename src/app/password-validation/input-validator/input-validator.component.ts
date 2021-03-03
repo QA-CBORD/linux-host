@@ -35,6 +35,7 @@ export class InputValidatorComponent implements OnInit {
       formField.control.valueChanges.subscribe(value => {
         let errorCounter = 0;
         this.validators.forEach(validator => {
+          formField.touched = true;
           validator.test(value) == false && errorCounter++;
         });
         formField.hasError = errorCounter > 0;

@@ -30,7 +30,7 @@ export class PatronRegistration extends UserRegistrationBase implements UserRegi
         })
       )
       .toPromise();
-    const staticFields = ((await super.formFieldsConfig(data)) || []).map(field => !field.guestOnly && field);
+    const staticFields = ((await super.formFieldsConfig(data)) || []).filter(field => !field.guestOnly);
     return this.combineFields(dynamicFormFields, staticFields);
   }
 

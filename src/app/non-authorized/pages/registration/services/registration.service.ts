@@ -56,7 +56,6 @@ export class RegistrationService {
         const queryConfig = new RPCQueryConfig(method, { sessionId, ...params }, useSessionId, useInstitutionId);
         return this.http.post(this.endpoints.user, queryConfig).pipe(
           catchError(err => {
-            console.log('error ==>> ', err);
             return throwError(err);
           })
         );

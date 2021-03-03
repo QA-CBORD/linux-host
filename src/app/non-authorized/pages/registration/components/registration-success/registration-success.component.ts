@@ -10,15 +10,13 @@ import { Observable, of } from 'rxjs';
 export class RegistrationSuccessComponent implements OnInit {
   title$: Observable<string>;
   message$: Observable<string>;
-  @Input() pageContent: { dismissBtnText?: string; resendEmailBtnText?: string } = {};
+  @Input() pageContent: { dismissBtnText?: string; resendEmailBtnText?: string; title?; message? } = {};
 
-  constructor(private readonly modalCtrl: ModalController,) {}
+  constructor(private readonly modalCtrl: ModalController) {}
 
   ngOnInit() {
-    this.title$ = of('Verify Email');
-    this.message$ = of(
-      'We have sent you a verification email. Tap the link inside that to verify your email and login.'
-    );
+    this.title$ = of(this.pageContent.title);
+    this.message$ = of(this.pageContent.message);
   }
 
   async dismiss(): Promise<void> {

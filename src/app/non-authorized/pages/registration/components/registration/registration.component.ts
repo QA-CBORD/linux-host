@@ -22,6 +22,7 @@ export class RegistrationComponent implements OnInit {
   title$: Observable<string>;
   btnText$: Observable<string>;
   passwordValidators: InputValidator[] = [];
+  allFields: Field[] = [];
 
   protected customLoadingOptions = { message: 'Processing... Please wait', duration: 150000 };
 
@@ -44,6 +45,7 @@ export class RegistrationComponent implements OnInit {
   private async formFieldsetup(): Promise<void> {
     const { fieldList: formFieldList } = await this.registrationFacade.getData();
     const fields = [...formFieldList.horizontalAlignedFields, ...formFieldList.verticalAlignedFields];
+    this.allFields = fields;
     this.registrationFormGroup = this.fb.group(formFieldList.controls);
     fields.forEach(field => {
       field.control = this.registrationFormGroup.get(field.name);
@@ -74,8 +76,11 @@ export class RegistrationComponent implements OnInit {
   }
 
   get disabled(): boolean {
-    if (!this.registrationFormGroup) return true;
-    return this.formInvalid;
+    if (this.registrationFormGroup.touched == false) return true;
+    for (let i = 0; i < this.allFields.length; i++) {
+      if (this.allFields[i].hasError || !this.allFields[i].touched) return true;
+    }
+    return false;
   }
 
   onDecline() {
@@ -83,31 +88,32 @@ export class RegistrationComponent implements OnInit {
   }
 
   private get formInvalid(): boolean {
-    const allFields = [...this.horizontalFields, ...this.formFields];
     let errorCounter = 0;
-    allFields.forEach(field => field.hasError && errorCounter++);
+    this.allFields.forEach(field => {
+      field.hasError = field.hasError || !field.touched;
+      field.hasError && errorCounter++;
+    });
     return errorCounter > 0;
   }
 
   private async onRegistrationSuccess(response): Promise<void> {
-    const { success_dismiss_btn, success_resend_email } = await (await this.registrationFacade.getData()).formData;
-
+    this.modalCtrl.dismiss();
+    const data = await (await this.registrationFacade.getData()).formData;
     const modal = await this.modalCtrl.create({
       backdropDismiss: false,
       componentProps: {
         pageContent: {
-          dismissBtnText: success_dismiss_btn,
-          resendEmailBtnText: success_resend_email,
+          dismissBtnText: data.success_dismiss_btn,
+          resendEmailBtnText: data.success_resend_email,
+          title: data.success_screen_title,
+          message: data.success_screen_message,
         },
       },
       component: RegistrationSuccessComponent,
     });
-
     await modal.present();
     this.loadingService.closeSpinner();
-    const { data } = await modal.onDidDismiss();
-    console.log('first modal dismissed: ', data);
-    this.modalCtrl.dismiss();
+    await modal.onDidDismiss();
   }
 
   async submitRegistration(formGroup: FormGroup): Promise<void> {

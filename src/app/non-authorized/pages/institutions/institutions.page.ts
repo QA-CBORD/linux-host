@@ -83,7 +83,6 @@ export class InstitutionsPage implements OnInit {
 
   async onInstitutionSelected(institution: InstitutionLookupListItem): Promise<void> {
     const canNavigate2Prelogin = this.registrationServiceFacade.guestLoginSupportedInEnv;
-    console.log('before routing ==> ', institution);
     const go2prelogin = institution.guestRegSupported && canNavigate2Prelogin;
     if (go2prelogin) {
       const backgroundColor = await this.getNativeHeaderBg(institution.id, this.sessionId);
