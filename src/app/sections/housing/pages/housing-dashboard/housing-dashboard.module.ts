@@ -11,6 +11,7 @@ import { RoomsModule } from '../../rooms/rooms.module';
 
 import { HousingDashboardPage } from './housing-dashboard.page';
 import { WorkOrdersComponent } from '../../work-orders/work-orders.component';
+import { NonAssginmentsModule } from '@sections/housing/non-assignments/non-assignments.module';
 
 const imports = [
   CommonModule,
@@ -20,7 +21,8 @@ const imports = [
   ApplicationsModule,
   ContractsModule,
   HousingDashboardRoutingModule,
-  RoomsModule
+  RoomsModule,
+  NonAssginmentsModule
 ];
 const declarations = [HousingDashboardPage, WorkOrdersComponent];
 

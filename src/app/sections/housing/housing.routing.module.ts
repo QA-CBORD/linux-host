@@ -27,6 +27,10 @@ const routes: Routes = [
         loadChildren: './pages/contract-details/contract-details.module#ContractDetailsPageModule',
       },
       {
+        path: `${LOCAL_ROUTING.nonAssignments}/:nonAssignmentKey`,
+        loadChildren: './pages/non-assignments-details/non-assignments-details.module#NonAssignmentsDetailsModule',
+      },
+      {
         path: `${LOCAL_ROUTING.workOrders}/:workOrderId`,
         loadChildren: './pages/work-order-details/work-order-details.module#WorkOrderDetailsPageModule',
       },

@@ -3,6 +3,20 @@ import { ContractDetails, ContractListDetails } from './contracts/contracts.mode
 import { RoomSelect } from './rooms/rooms.model';
 import { FacilityDetails } from './facilities/facilities.model';
 import { FacilityOccupantDetails } from '@sections/housing/roommate/roomate.model';
+import { NonAssignmentDetails, NonAssignmentListDetails } from './non-assignments/non-assignments.model';
+
+export enum FormTypes {
+  APPLICATIONS = 1,
+  CONTRACTS = 2,
+  WORK_ORDERS = 3,
+  INSPECTIONS = 4,
+  FAMILIY_MEMBERS = 5,
+  ROOM_SWAPS = 6,
+  STUDENT_REQUESTS = 7,
+  ATTACHMENTS = 8,
+  WAITING_LISTS = 9,
+  NON_ASSIGNMENTS = 10
+}
 
 export interface ResponseStatusDetails {
   code: string;
@@ -27,11 +41,13 @@ export interface Response {
 export interface DefinitionsResponseOptions {
   applicationDefinitions: ApplicationDetails[];
   contractDetails: ContractListDetails[];
+  nonAssignmentDetails: NonAssignmentListDetails[];
 }
 
 export class DefinitionsResponse {
   applicationDefinitions: ApplicationDetails[];
   contractDetails: ContractListDetails[];
+  nonAssignmentDetails: NonAssignmentListDetails[];
 
   constructor(options: DefinitionsResponseOptions) {
     if (options == null || typeof options !== 'object') {
@@ -45,17 +61,23 @@ export class DefinitionsResponse {
     this.contractDetails = Array.isArray(options.contractDetails)
       ? options.contractDetails.map((detail: any) => new ContractListDetails(detail))
       : [];
+
+    this.nonAssignmentDetails = Array.isArray(options.nonAssignmentDetails)
+      ? options.nonAssignmentDetails.map((detail: any) => new NonAssignmentListDetails(detail))
+      : [];
   }
 }
 
 export interface DetailsResponseOptions {
   applicationDetails: ApplicationDetails;
   contractDetails: ContractDetails;
+  nonAssignmentDetails: NonAssignmentDetails;
 }
 
 export class DetailsResponse implements DetailsResponseOptions {
   applicationDetails: ApplicationDetails;
   contractDetails: ContractDetails;
+  nonAssignmentDetails: NonAssignmentDetails;
 
   constructor(options: DetailsResponseOptions) {
     if (options == null || typeof options !== 'object') {
@@ -64,6 +86,7 @@ export class DetailsResponse implements DetailsResponseOptions {
 
     this.applicationDetails = new ApplicationDetails(options.applicationDetails);
     this.contractDetails = new ContractDetails(options.contractDetails);
+    this.nonAssignmentDetails = new NonAssignmentDetails(options.nonAssignmentDetails)
   }
 }
 
