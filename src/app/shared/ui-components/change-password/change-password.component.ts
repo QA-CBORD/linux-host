@@ -1,3 +1,4 @@
+import { error } from '@angular/compiler/src/util';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
@@ -53,8 +54,9 @@ export class ChangePasswordComponent implements OnInit {
       .changePassword$(this.currentPassword.value, this.newPassword.value)
       .pipe(
         take(1),
-        catchError(() => {
-          resultMessage = 'Your current password is incorrect, please try again.';
+        catchError(error => {
+          const NO_ERROR_CODE = 1;
+          resultMessage = `${error.toString().split('|')[NO_ERROR_CODE]}. Please try again.`;
           return of(false);
         })
       )
@@ -96,7 +98,7 @@ export class ChangePasswordComponent implements OnInit {
   }
 
   private getValidators() {
-     this.validators = buildPasswordValidators(this.contentStrings);
+    this.validators = buildPasswordValidators(this.contentStrings);
   }
 
   private initControl() {
