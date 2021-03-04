@@ -103,6 +103,11 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         ],
         modalContent: {
           component: ChangePasswordComponent,
+          contentStrings: {
+            domain: CONTENT_STRINGS_DOMAINS.patronUi,
+            category: CONTENT_STRINGS_CATEGORIES.passwordValidation,
+            name: null,
+          }
         },
       },
       {
