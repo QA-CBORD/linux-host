@@ -1,16 +1,13 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
+import { ContentStringInfo } from '@core/model/content/content-string-info.model';
+import { LoadingService } from '@core/service/loading/loading.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { ModalController } from '@ionic/angular';
 import { of } from 'rxjs';
-import { catchError, map, take } from 'rxjs/operators';
-import { CONTENT_STRINGS_CATEGORIES } from 'src/app/content-strings';
-import { RegistrationService } from 'src/app/non-authorized/pages/registration/services/registration.service';
-import {
-  buildPasswordValidators,
-  InputValidator,
-} from 'src/app/password-validation/models/input-validator.model';
+import { catchError, take } from 'rxjs/operators';
+import { buildPasswordValidators, InputValidator } from 'src/app/password-validation/models/input-validator.model';
 
 @Component({
   selector: 'st-change-password',
@@ -19,24 +16,30 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ChangePasswordComponent implements OnInit {
+  @Input() contentStrings: ContentStringInfo[];
   changePasswordForm: FormGroup;
   isLoading = false;
   validators: InputValidator[] = [];
   passwordControl: any = {};
-  
+
   constructor(
     private readonly modalController: ModalController,
     private readonly fb: FormBuilder,
     private readonly userFacadeService: UserFacadeService,
     private readonly cdRef: ChangeDetectorRef,
     private readonly toast: ToastService,
-    protected backendService: RegistrationService
+    private readonly loadingService: LoadingService
   ) {}
 
   ngOnInit() {
-    this.getValidators();
     this.initForm();
     this.initControl();
+    this.getValidators();
+    this.loadingService.showSpinner();
+  }
+
+  ionViewDidEnter() {
+    this.loadingService.closeSpinner();
   }
 
   close() {
@@ -56,10 +59,10 @@ export class ChangePasswordComponent implements OnInit {
         })
       )
       .subscribe(async response => {
-        await this.toast.showToast({ message:  resultMessage });
+        await this.toast.showToast({ message: resultMessage });
         this.isLoading = false;
         this.cdRef.detectChanges();
-        if(response) {
+        if (response) {
           this.close();
         }
       });
@@ -76,11 +79,11 @@ export class ChangePasswordComponent implements OnInit {
   get controlsNames() {
     return PASSWORD_FORM_CONTROL_NAMES;
   }
-  
+
   get passwordControls() {
     return this.passwordControl;
   }
- 
+
   get disabled() {
     return this.changePasswordForm.invalid || this.passwordControl.hasError;
   }
@@ -93,17 +96,7 @@ export class ChangePasswordComponent implements OnInit {
   }
 
   private getValidators() {
-    this.backendService
-      .getString$(CONTENT_STRINGS_CATEGORIES.passwordValidation)
-      .pipe(
-        take(1),
-        map(data => buildPasswordValidators(data)),
-        catchError(() => of(buildPasswordValidators()))
-      )
-      .subscribe(data => {
-        this.validators = data;
-        this.cdRef.detectChanges();
-      });
+     this.validators = buildPasswordValidators(this.contentStrings);
   }
 
   private initControl() {
