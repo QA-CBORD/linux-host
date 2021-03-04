@@ -55,8 +55,12 @@ export class ChangePasswordComponent implements OnInit {
       .pipe(
         take(1),
         catchError(error => {
+          if(error) {
           const NO_ERROR_CODE = 1;
           resultMessage = `${error.toString().split('|')[NO_ERROR_CODE]}. Please try again.`;
+          } else {
+            resultMessage = 'Something went wrong. Please try again.';
+          }
           return of(false);
         })
       )
