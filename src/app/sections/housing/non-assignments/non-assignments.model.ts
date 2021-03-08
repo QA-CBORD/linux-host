@@ -183,6 +183,7 @@ export interface AssetTypeDetailValueOptions {
     label: string;
     value: string;
     selected?: boolean;
+    isCurrency?: boolean;
 }
 
 export class AssetTypeDetailValue implements AssetTypeDetailValueOptions {
@@ -190,6 +191,7 @@ export class AssetTypeDetailValue implements AssetTypeDetailValueOptions {
     label: string;
     value: string;
     selected?: boolean;
+    isCurrency?: boolean;
 
     constructor(options: AssetTypeDetailValueOptions) {
         if (!isDefined(options) || typeof options !== 'object') {
@@ -200,6 +202,7 @@ export class AssetTypeDetailValue implements AssetTypeDetailValueOptions {
         this.label = String(options.label);
         this.value = isDefined(options.value) ? String(options.value) : null;
         this.selected = Boolean(options.selected);
+        this.isCurrency = Boolean(options.isCurrency);
     }
 }
 

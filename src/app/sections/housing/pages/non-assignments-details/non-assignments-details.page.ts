@@ -48,7 +48,7 @@ export class NonAssignmentsDetailsPage implements OnInit, OnDestroy {
   
   nonAssignmentKey: number;
   termKey: number = 0;
-  selectedAssetType: number = 0;
+  selectedAssetType$: Observable<number>;
 
   isSubmitted: boolean = false;
   canSubmit: boolean = true;
@@ -99,10 +99,7 @@ export class NonAssignmentsDetailsPage implements OnInit, OnDestroy {
   }
 
   private _initSelectedAssetSubscription(): void {
-    const subscription = this._nonAssignmentsService.getSelectedAssetType()
-      .subscribe(assetType => this.selectedAssetType = assetType);
-    
-      this._subscription.add(subscription);
+    this.selectedAssetType$ = this._nonAssignmentsService.getSelectedAssetType();
   }
 
   private _initTermSubscription() {
@@ -144,11 +141,14 @@ export class NonAssignmentsDetailsPage implements OnInit, OnDestroy {
     this._loadingService.showSpinner();
     
     const subscription: Subscription = 
-      this._nonAssignmentsService.submitContract(this.selectedAssetType, this.termKey)
-        .subscribe({
-          next: () => this._handleSuccess(),
-          error: (error: any) => this._handleErrors(error),
-        });
+      this.selectedAssetType$.subscribe(assetTypeKey => {
+        console.log('selected:', assetTypeKey);
+        this._nonAssignmentsService.submitContract(assetTypeKey, this.termKey)
+          .subscribe({
+            next: () => this._handleSuccess(),
+            error: (error: any) => this._handleErrors(error),
+          });
+      });
 
     this._subscription.add(subscription);
   }

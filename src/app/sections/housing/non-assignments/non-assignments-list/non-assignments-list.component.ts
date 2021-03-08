@@ -41,7 +41,7 @@ export class NonAssignmentsListComponent implements OnInit {
       NonAssignmentStatus.Preliminary
     ];
     return !isDefined(nonAssignment.acceptedDate)
-      && allowedStates.includes(NonAssignmentStatus[nonAssignment.status]);
+      && !allowedStates.includes(NonAssignmentStatus[nonAssignment.status]);
   }
 
   getStatus(nonAssignment: NonAssignmentListDetails): string {
