@@ -12,6 +12,7 @@ import { from, concat, zip, Observable } from 'rxjs';
 import { SETTINGS_ID } from '../models/settings-id.enum';
 import { PinAction } from '@shared/ui-components/pin/pin.page';
 import { ReportCardStatus } from '../models/report-card-status.config';
+import { ContentStringInfo } from '@core/model/content/content-string-info.model';
 
 export function getCardStatusValidation(services: SettingsServices): Observable<string> {
   const statusValidation = this as StatusSettingValidation;
@@ -101,16 +102,35 @@ export function handleOpenHTMLModal(services: SettingsServices) {
 }
 
 export async function openModal(services: SettingsServices) {
+  let contentStrings = null;
   const setting: SettingItemConfig = this;
+  if (setting.modalContent.contentStrings) {
+    const contentString = setting.modalContent.contentStrings as DomainContentString;
+    if (contentString.name === null) {
+      contentStrings = await contentStringsFromDomain(services, contentString);
+    }
+  }
+
   setting.callback = async function() {
     const settingModal = await services.modalController.create({
       backdropDismiss: false,
       component: setting.modalContent.component,
+      componentProps: { contentStrings: contentStrings },
     });
     services.globalNav.hideNavBar();
     settingModal.onDidDismiss().then(() => services.globalNav.showNavBar());
     return settingModal.present();
   };
+}
+
+async function contentStringsFromDomain(
+  services: SettingsServices,
+  contentString: DomainContentString
+): Promise<ContentStringInfo[]> {
+  return await services.contentString
+    .fetchContentStrings$(contentString.domain, contentString.category)
+    .pipe(take(1))
+    .toPromise();
 }
 
 export async function openSiteURL(services: SettingsServices): Promise<void> {
