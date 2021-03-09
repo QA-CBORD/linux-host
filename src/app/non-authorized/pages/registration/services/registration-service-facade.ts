@@ -1,24 +1,21 @@
 import { Injectable } from '@angular/core';
 import { EnvironmentFacadeService, EnvironmentType } from '@core/facades/environment/environment.facade.service';
+import { ContentStringApi } from '@shared/model/content-strings/content-strings-api';
 import { Observable, of } from 'rxjs';
 import { catchError, map, take } from 'rxjs/operators';
 import { CONTENT_STRINGS_CATEGORIES } from 'src/app/content-strings';
+import { PreloginCsModel } from '../../pre-login/models/prelogin-content-strings.model';
 import { GuestRegistration } from '../models/guest-registration';
 import { PatronRegistration } from '../models/patron-registration';
-import {
-  buildPreloginScreenData,
-  FormFieldList,
-  PreLoginStringModel,
-  RegistrationFormData,
-  UserRegistrationManager,
-} from '../models/registration-utils';
+import { RegistrationCsModel } from '../models/registration-content-strings.model';
+import { FormFieldList, UserRegistrationManager } from '../models/registration-utils';
 import { RegistrationService } from './registration.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RegistrationServiceFacade {
-  private data: { fieldList?: FormFieldList; formData?: RegistrationFormData } = {};
+  private data: { fieldList?: FormFieldList; formData?: RegistrationCsModel } = {};
 
   private _registration: UserRegistrationManager;
   constructor(
@@ -34,18 +31,18 @@ export class RegistrationServiceFacade {
     this._registration = registration;
   }
 
-  preloginContents(acuteCare): Observable<PreLoginStringModel> {
+  preloginContents(acuteCare): Observable<PreloginCsModel> {
     return this.getPreloginContents(acuteCare).pipe(take(1));
   }
 
-  getData(): Promise<{ fieldList?: FormFieldList; formData?: RegistrationFormData }> {
+  getData(): Promise<{ fieldList?: FormFieldList; formData?: RegistrationCsModel }> {
     return Promise.resolve(this.data);
   }
 
-  private getPreloginContents(acuteCare): Observable<PreLoginStringModel> {
+  private getPreloginContents(acuteCare): Observable<PreloginCsModel> {
     return this.registrationService.getString$(CONTENT_STRINGS_CATEGORIES.pre_login).pipe(
-      map(contents => buildPreloginScreenData(acuteCare, contents)),
-      catchError(() => of(buildPreloginScreenData(acuteCare)))
+      map(data => ContentStringApi.preLogin(data, { acuteCare })),
+      catchError(() => of(ContentStringApi.preLogin(null, { acuteCare })))
     );
   }
 

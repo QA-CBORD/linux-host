@@ -2,10 +2,9 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ROLES, Settings } from 'src/app/app.global';
 import { GUEST_ROUTES } from 'src/app/non-authorized/non-authorized.config';
-import { PreLoginStringModel } from '../../registration/models/registration-utils';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
-import { InstitutionLookupListItem, InstitutionPhotoInfo } from '@core/model/institution';
+import { InstitutionPhotoInfo } from '@core/model/institution';
 import { tap, map, take, skipWhile, switchMap } from 'rxjs/operators';
 import { zip } from 'rxjs';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
@@ -13,6 +12,8 @@ import { SettingsFacadeService } from '@core/facades/settings/settings-facade.se
 import { LoadingService } from '@core/service/loading/loading.service';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 import { LoginState } from '@core/facades/identity/identity.facade.service';
+import { PreloginCsModel } from '../models/prelogin-content-strings.model';
+import { MessageChannel } from '@shared/model/shared-api';
 
 @Component({
   selector: 'st-pre-login',
@@ -23,7 +24,7 @@ export class PreLoginComponent implements OnInit {
   institutionPhoto$: Promise<SafeResourceUrl>;
   institutionName$: Promise<string>;
   nativeHeaderBg$: Promise<string>;
-  pageContent: PreLoginStringModel = {} as any;
+  pageContent: PreloginCsModel = {} as any;
   selectedInstitution: { id: string; name: string };
   sessionId: any;
 
@@ -38,8 +39,8 @@ export class PreLoginComponent implements OnInit {
     private readonly sessionFacadeService: SessionFacadeService
   ) {}
   ngOnInit() {
-    const { contentStrings, backgroundColor, institutionInfo } = history.state;
-    this.pageContent = contentStrings;
+    const { preLoginCs, backgroundColor, institutionInfo } = MessageChannel.get();
+    this.pageContent = preLoginCs;
     this.selectedInstitution = institutionInfo;
     this.nativeHeaderBg$ = Promise.resolve(backgroundColor);
     this.getInstitutionInfo();
@@ -51,8 +52,8 @@ export class PreLoginComponent implements OnInit {
       .getAuthSessionToken$()
       .pipe(take(1))
       .toPromise();
-    const data = await this.getInstitutionPhoto(institutionId, this.sessionId);
-    this.institutionPhoto$ = Promise.resolve(data);
+    const photoData = await this.getInstitutionPhoto(institutionId, this.sessionId);
+    this.institutionPhoto$ = Promise.resolve(photoData);
     this.institutionName$ = Promise.resolve(this.selectedInstitution.name);
     this.getInstitutionName(institutionId, this.sessionId);
   }
@@ -120,8 +121,8 @@ export class PreLoginComponent implements OnInit {
           name: institution.name,
         };
         this.authFacadeService.cachedLoginType = asGuest;
-        const navParams = { asGuest };
-        this.nav.navigate([ROLES.guest, GUEST_ROUTES.login], { state: { institutionInfo, navParams } });
+        MessageChannel.put({ institutionInfo, navParams: { asGuest } });
+        this.nav.navigate([ROLES.guest, GUEST_ROUTES.login]);
         break;
       case LoginState.EXTERNAL:
         this.nav.navigate([ROLES.guest, GUEST_ROUTES.external]);
