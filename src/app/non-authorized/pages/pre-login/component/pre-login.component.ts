@@ -120,6 +120,7 @@ export class PreLoginComponent implements OnInit {
           backgroundColor: await this.nativeHeaderBg$,
           name: institution.name,
         };
+        this.authFacadeService.cachedLoginType = asGuest;
         MessageChannel.put({ institutionInfo, navParams: { asGuest } });
         this.nav.navigate([ROLES.guest, GUEST_ROUTES.login]);
         break;
