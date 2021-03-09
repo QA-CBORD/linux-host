@@ -51,6 +51,12 @@ export class Cvalidators {
     },
   };
 
+  static minOneLetter: CustomValidator = {
+    test: value => {
+      return /[a-z]|[A-Z]/.test(value);
+    },
+  };
+
   static minOneUpperCase: CustomValidator = {
     test: value => {
       return /[A-Z]/.test(value);
@@ -80,4 +86,5 @@ export class Cvalidators {
 export interface IViewableValidator {
   label: string;
   validator: CustomValidator;
+  supported?: boolean
 }

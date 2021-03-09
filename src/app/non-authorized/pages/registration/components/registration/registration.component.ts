@@ -136,4 +136,5 @@ export class RegistrationComponent implements OnInit {
 
 const ValidErrorCodes = {
   6101: 'Cannot find a match for given user information',
+  9505: 'Your password contains some weird combination, try another.'
 };

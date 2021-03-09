@@ -124,6 +124,7 @@ export class UserPassForm implements OnInit {
     this.loadingService.showSpinner();
     await this.registrationFacade.registrationConfig(isGuestRegistration);
     const modal = await this.modalCtrl.create({
+      mode: 'ios',
       backdropDismiss: false,
       component: RegistrationComponent,
     });
