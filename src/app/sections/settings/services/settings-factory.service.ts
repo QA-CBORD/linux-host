@@ -68,6 +68,7 @@ export class SettingsFactoryService {
       const section = parsedSettings[sectionIndex];
       const promises = [];
       const hiddenSettings: { [key: string]: Boolean } = {};
+
       for (let settingIndex = 0; settingIndex < section.items.length; settingIndex++) {
         const setting = section.items[settingIndex];
         promises.push(
@@ -88,18 +89,28 @@ export class SettingsFactoryService {
   }
 
   private checkDisplayOption(setting: SettingItemConfig): Promise<boolean> {
+    const checks$: Observable<boolean>[] = [];
+
+    if (setting.studentsOnly) {
+      checks$.push(
+        this.authFacadeService.cachedLoginType$.pipe(
+          map(isGuest => !isGuest),
+          take(1)
+        )
+      );
+    }
+  
     if (setting.validations) {
-      const validations$ = [];
       for (const validation of setting.validations) {
         if (validation.type === SETTINGS_VALIDATIONS.SettingEnable) {
-          validations$.push(
+          checks$.push(
             this.settingsFacade.getSetting(validation.value as Settings.Setting).pipe(
               map(({ value }): boolean => parseInt(value) === 1),
               take(1)
             )
           );
         } else if (validation.type === SETTINGS_VALIDATIONS.Biometric) {
-          validations$.push(
+          checks$.push(
             this.identityService.areBiometricsAvailable().pipe(
               tap(async biometricsEnabled => {
                 if (biometricsEnabled) {
@@ -114,7 +125,7 @@ export class SettingsFactoryService {
           );
         } else if (validation.type === SETTINGS_VALIDATIONS.StatusSettingEnable) {
           const statusValidation = validation.value as StatusSettingValidation;
-          validations$.push(
+          checks$.push(
             statusValidation.getStatusValidation(this.services).pipe(
               switchMap(setting =>
                 this.settingsFacade
@@ -125,9 +136,9 @@ export class SettingsFactoryService {
             )
           );
         } else if (validation.type === SETTINGS_VALIDATIONS.MobileCredentialEnabled) {
-          validations$.push(this.mobileCredentialFacade.showCredentialMetadata().pipe(take(1)));
+          checks$.push(this.mobileCredentialFacade.showCredentialMetadata().pipe(take(1)));
         } else if (validation.type === SETTINGS_VALIDATIONS.ChangePasswordEnabled) {
-          validations$.push(
+          checks$.push(
             from(this.sessionFacadeService.determineInstitutionSelectionLoginState()).pipe(
               switchMap(login => {
                 if (login === LoginState.HOSTED) {
@@ -139,14 +150,18 @@ export class SettingsFactoryService {
           );
         }
       }
-      return merge(...validations$)
-        .pipe(
-          reduce((acc: boolean, val: boolean): boolean => acc && val),
-          take(1)
-        )
-        .toPromise();
     }
-    return of(true).toPromise();
+
+    if (!checks$.length) {
+      checks$.push(of(true));
+    }
+
+    return zip(...checks$)
+      .pipe(
+        map(checks => checks.every((checkTrue) => checkTrue)),
+        take(1)
+      )
+      .toPromise();
   }
 
   get photoUploadEnabled$(): Observable<boolean> {
