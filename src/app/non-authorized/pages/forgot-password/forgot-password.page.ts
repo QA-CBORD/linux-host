@@ -8,6 +8,8 @@ import { EMAIL_REGEXP } from '@core/utils/regexp-patterns';
 import { NotificationFacadeService } from '@core/facades/notification/notification-facade.service';
 import { NavController } from '@ionic/angular';
 import { ToastService } from '@core/service/toast/toast.service';
+import { MessageChannel } from '@shared/model/shared-api';
+import { ForgotPasswordCsModel } from './models/forgot-password-content-strings.model';
 
 @Component({
   selector: 'st-forgot-password',
@@ -19,6 +21,7 @@ export class ForgotPasswordPage implements OnInit {
   forgotPasswordForm: FormGroup;
   isLoading: boolean;
   resetSent: boolean;
+  pageContents: ForgotPasswordCsModel;
 
   get controlsNames() {
     return FORGOT_PWD_CONTROL_NAMES;
@@ -37,6 +40,8 @@ export class ForgotPasswordPage implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.pageContents = MessageChannel.get<ForgotPasswordCsModel>();
+    console.log('pageContents ==> ', this.pageContents);
     this.initForm();
     setTimeout(() => {
       document.getElementById('form__description-text').focus();
@@ -93,5 +98,5 @@ export enum FORGOT_PWD_CONTROL_NAMES {
 }
 
 const TIMEOUTS = {
-  A11yFocus: 1500
-}
+  A11yFocus: 1500,
+};

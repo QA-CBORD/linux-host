@@ -6,12 +6,12 @@ import {
   LookupFieldInfo,
   LOOKUPFIELDS,
   RegistrationApiMethods,
-  RegistrationFormData,
   UserRegistrationManager,
 } from './registration-utils';
 import { RegistrationService } from '../services/registration.service';
 import { UserRegistrationBase } from './registration';
 import { Cvalidators } from './password-validation';
+import { RegistrationCsModel } from './registration-content-strings.model';
 
 export class PatronRegistration extends UserRegistrationBase implements UserRegistrationManager {
   private dynamicFields: LookupFieldInfo[];
@@ -19,7 +19,7 @@ export class PatronRegistration extends UserRegistrationBase implements UserRegi
     super(backendService);
   }
 
-  protected async formFieldsConfig(data: RegistrationFormData): Promise<Field[]> {
+  protected async formFieldsConfig(data: RegistrationCsModel): Promise<Field[]> {
     const dynamicFormFields = await this.backendService
       .retrieveRegistrationFields()
       .pipe(
