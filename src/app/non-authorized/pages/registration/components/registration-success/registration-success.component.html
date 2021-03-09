@@ -1,22 +1,22 @@
-<!-- <ion-header class="login-header" no-border>
-  <ion-toolbar mode="ios" class="ion-color" class="mobile-credential-header__nav-toolbar">
+<ion-header no-border>
+  <ion-toolbar mode="ios" class="ion-color">
     <ion-buttons slot="start">
-      <ion-button mode="ios" class="edit-home__header-done-btn" color="dark" (click)="onDecline()">
+      <ion-button mode="ios" (click)="onDecline()">
         <ion-icon icon="close"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title class="mc-header__title">
+    <ion-title>
       {{ title$ | async }}
     </ion-title>
   </ion-toolbar>
-</ion-header> -->
+</ion-header>
 
 <ion-content [scrollY]="false">
   <div class="main">
     <div class="main__container">
-      <div class="main__container__title">
+      <!-- <div class="main__container__title">
         {{ title$ | async }}
-      </div>
+      </div> -->
       <div class="main__container__content">
         <div class="main__container__content__image">
           <img src="/assets/icon/email-verify.svg" />
