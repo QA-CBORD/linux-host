@@ -4,7 +4,7 @@ import { take, switchMap, tap, map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { GUEST_ROUTES } from '../../non-authorized.config';
 import { ROLES, Settings } from 'src/app/app.global';
-import { Observable, of, pipe, zip } from 'rxjs';
+import { Observable, zip } from 'rxjs';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { Plugins, Capacitor } from '@capacitor/core';
@@ -15,6 +15,7 @@ import { EnvironmentFacadeService, EnvironmentType } from '@core/facades/environ
 import { ToastService } from '@core/service/toast/toast.service';
 import { RegistrationServiceFacade } from '../registration/services/registration-service-facade';
 import { InstitutionLookupListItem } from '@core/model/institution';
+import { MessageChannel } from '@shared/model/shared-api';
 const { Keyboard, IOSDevice } = Plugins;
 
 @Component({
@@ -122,15 +123,16 @@ export class InstitutionsPage implements OnInit {
       .getInstitutionDataById$(institution.id, this.sessionId, true)
       .pipe(take(1))
       .toPromise();
-    const contentStrings = await this.registrationServiceFacade.preloginContents(institution.acuteCare).toPromise();
+    const preLoginCs = await this.registrationServiceFacade.preloginContents(institution.acuteCare).toPromise();
     const institutionInfo = {
       id: institution.id,
       name: institution.name,
     };
     this.loadingService.closeSpinner();
-    this.nav.navigate([ROLES.guest, GUEST_ROUTES.pre_login], {
-      state: { backgroundColor, contentStrings, institutionInfo },
-    });
+
+   MessageChannel.put({ backgroundColor, preLoginCs, institutionInfo })
+
+    this.nav.navigate([ROLES.guest, GUEST_ROUTES.pre_login]);
   }
 
   private async getNativeHeaderBg(id, sessionId): Promise<string> {
@@ -149,15 +151,16 @@ export class InstitutionsPage implements OnInit {
   }
 
   private async navigateToLogin(loginState: number, institution) {
-    const bgColor = await this.getNativeHeaderBg(institution.id, this.sessionId);
+    const backgroundColor = await this.getNativeHeaderBg(institution.id, this.sessionId);
     this.loadingService.closeSpinner();
     switch (loginState) {
       case LoginState.HOSTED:
         const institutionInfo = {
-          backgroundColor: bgColor,
+          backgroundColor,
           name: institution.name,
         };
-        this.nav.navigate([ROLES.guest, GUEST_ROUTES.login], { state: { institutionInfo } });
+        MessageChannel.put({ institutionInfo });
+        this.nav.navigate([ROLES.guest, GUEST_ROUTES.login]);
         break;
       case LoginState.EXTERNAL:
         this.nav.navigate([ROLES.guest, GUEST_ROUTES.external]);

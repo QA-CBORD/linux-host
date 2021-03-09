@@ -2,7 +2,6 @@ import { Component, OnInit, Input, forwardRef, ViewChild, ElementRef, HostBindin
 import { FormControl, NG_VALUE_ACCESSOR, ControlValueAccessor, AbstractControl } from '@angular/forms';
 import { FocusableElement } from '@core/interfaces/focusable-element.interface';
 import { hasRequiredField } from '@core/utils/general-helpers';
-import { Handler } from '@shared/model/shared-api';
 
 export const CUSTOM_INPUT_CONTROL_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,

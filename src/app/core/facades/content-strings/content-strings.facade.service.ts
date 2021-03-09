@@ -63,6 +63,15 @@ export class ContentStringsFacadeService extends ServiceStateFacade {
     );
   }
 
+  fetchContentStringAfresh(
+    domain: CONTENT_STRINGS_DOMAINS,
+    category: CONTENT_STRINGS_CATEGORIES,
+    locale: CONTENT_STRINGS_LOCALES | null = null
+  ): Observable<ContentStringInfo[]> {
+    const call = this.apiService.retrieveContentStringListByRequest({ domain, category, locale });
+    return this.makeRequestWithUpdatingStateHandler<ContentStringInfo[]>(call, this.stateService).pipe(take(1));
+  }
+
   clearState(): void {
     this.stateService.clearState();
   }
