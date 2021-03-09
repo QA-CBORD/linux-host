@@ -29,6 +29,6 @@ export class RegistrationSuccessComponent implements OnInit {
   }
 
   onDecline(): void{
-    
+    this.dismiss();
   }
 }
