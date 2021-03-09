@@ -31,6 +31,7 @@ export interface SettingItemConfig {
   toggleLabel?: ToggleLabel;
   validations?: SettingItemValidation[];
   modalContent?: ModalContent | HTMLContentString;
+  studentsOnly?: boolean;
   setToggleStatus?: (services: SettingsServices) => void;
   setCallback?: (services: SettingsServices | undefined) => void;
   callback?: () => Promise<any>;

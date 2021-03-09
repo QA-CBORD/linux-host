@@ -7,6 +7,14 @@
 >
 </st-header>
 <ion-content class="container ion-padding-top">
+  <ion-list class="ion-margin-bottom ion-padding-end" *ngIf="isGuest">
+    <ion-item lines='none'>
+      <ion-label class="item__label">
+        <h3 *ngIf="(userName$ | async) as userName">{{ userName }}</h3>
+        <p *ngIf="(institutionName$ | async) as institutionName">{{ institutionName }}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
   <ion-list
     class="ion-margin-bottom ion-padding-end"
     *ngFor="let section of settingSections | async; let first = first"
@@ -14,7 +22,7 @@
     <ion-list-header lines="inset">
       <ion-label class="settings__section-header">{{section.label}}</ion-label>
     </ion-list-header>
-    <ng-container *ngIf="first">
+    <ng-container *ngIf="first && !isGuest">
       <ion-item (click)="navigateToPhotoUpload()">
         <ion-avatar slot="start" class="patron-img">
           <img *ngIf="userPhoto$ | async as photo; else tempPhoto" [src]="photo" alt="patron photo" />
