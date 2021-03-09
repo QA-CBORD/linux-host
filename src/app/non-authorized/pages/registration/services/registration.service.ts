@@ -64,9 +64,7 @@ export class RegistrationService {
   }
 
   getString$(category: CONTENT_STRINGS_CATEGORIES): Observable<ContentStringInfo[]> {
-    return this.contentStringFacade.fetchContentStrings$(CONTENT_STRINGS_DOMAINS.patronUi, category).pipe(
-      take(1)
-    );
+    return this.contentStringFacade.fetchContentStringAfresh(CONTENT_STRINGS_DOMAINS.patronUi, category);
   }
 
   institition$(): Observable<Institution> {

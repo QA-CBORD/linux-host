@@ -20,6 +20,7 @@ import { LOCAL_ROUTING as ORDERING_ROUTING } from '@sections/ordering/ordering.c
 import { ReportCardStatusSetting } from './models/report-card-status.config';
 import { ReportCardComponent } from './pages/report-card/report-card.component';
 import { MobileCredentialMetadata } from './pages/credential-metadata/mobile-cred-metadata';
+import { ChangePasswordComponent } from '@shared/ui-components/change-password/change-password.component';
 
 export enum LOCAL_ROUTING {
   photoUpload = 'photo-upload',
@@ -55,6 +56,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         icon: 'update-photo',
         label: 'Update photo',
         type: 'button',
+        studentsOnly: true,
         navigate: [SETTINGS_NAVIGATE.updatePhoto],
         validations: [{ type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.PHOTO_UPLOAD_ENABLED }],
       },
@@ -64,6 +66,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         icon: 'card-lost',
         toggleLabel: { checked: 'Report card as found', unchecked: 'Report card as lost' },
         type: 'button',
+        studentsOnly: true,
         setToggleStatus: setReportCardLabel,
         setCallback: openModal,
         modalContent: {
@@ -91,14 +94,24 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
           component: PhoneEmailComponent,
         },
       },
-      // {
-      //   id: SETTINGS_ID.password,
-      //   icon: 'key',
-      //   label: 'Change password',
-      //   type: 'button',
-      //   setCallback: openSiteURL,
-      //   navigateExternal: { type: 'link', value: 'login.php?password=forgot' },
-      // },
+      {
+        id: SETTINGS_ID.password,
+        icon: 'key',
+        label: 'Change password',
+        type: 'button',
+        setCallback: openModal,
+        validations: [
+          { type: SETTINGS_VALIDATIONS.ChangePasswordEnabled, value: 'change-password' },
+        ],
+        modalContent: {
+          component: ChangePasswordComponent,
+          contentStrings: {
+            domain: CONTENT_STRINGS_DOMAINS.patronUi,
+            category: CONTENT_STRINGS_CATEGORIES.passwordValidation,
+            name: null,
+          }
+        },
+      },
       {
         id: SETTINGS_ID.biometrics,
         icon: '',
@@ -167,6 +180,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         icon: 'meal-change',
         label: 'Change meal plan',
         type: 'button',
+        studentsOnly: true,
         setCallback: openSiteURL,
         navigateExternal: { type: 'link', value: 'change_meal_plan.php' },
         validations: [{ type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.MEAL_CHANGE_PLAN_ENABLED }],
@@ -176,6 +190,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         icon: 'meal-purchase',
         label: 'Purchase meal plan',
         type: 'button',
+        studentsOnly: true,
         setCallback: openSiteURL,
         navigateExternal: { type: 'link', value: 'purchase_meal_plan.php' },
         validations: [{ type: SETTINGS_VALIDATIONS.SettingEnable, value: Settings.Setting.MEAL_PURCHASE_PLAN_ENABLED }],
@@ -197,6 +212,7 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
         icon: 'home-edit',
         label: 'Edit Home',
         type: 'button',
+        studentsOnly: true,
         setCallback: openModal,
         modalContent: {
           component: EditHomePageModalComponent,

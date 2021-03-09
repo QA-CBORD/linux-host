@@ -2,7 +2,7 @@ import { Validators } from '@angular/forms';
 import { Cvalidators } from './password-validation';
 import { Field, STATICFIELDS } from './registration-utils';
 
-export const registrationFormStaticFields: { [key: string]: Field } = {
+export const rfStaticFields: { [key: string]: Field } = {
   first_name: new Field({
     alignHorizontal: true,
     label: 'First Name',

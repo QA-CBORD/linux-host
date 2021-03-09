@@ -251,3 +251,11 @@ export function checkIsYesterday(currentDate: Date) {
   yesterday.setDate(yesterday.getDate() - 1);
   return currentDate.toDateString() === yesterday.toDateString();
 }
+
+export const validatePasswordDecorator = (
+  fn: ValidatorFn, error: ValidationErrors
+): ((control: AbstractControl) => ValidationErrors | null) => {
+  return control => {
+    return fn(control) === null ? null : error;
+  };
+};
