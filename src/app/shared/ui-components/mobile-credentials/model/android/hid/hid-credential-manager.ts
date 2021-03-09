@@ -55,7 +55,10 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
 
   onUiIconClicked(): void {
     this.showLoading();
-    const showCredentialUsageContentString = async () => {
+    const showUsageDialog = async () => {
+      const cs = await this.credentialService.getContents();
+      console.log(cs);
+
       const btnText =
         this.mCredential.isProvisioned() || this.mCredential.isProcessing() || this.mCredential.revoked()
           ? 'Uninstall'
@@ -79,7 +82,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
         this.showConfirmUninstallDialog();
       }
     };
-    showCredentialUsageContentString();
+    showUsageDialog();
   }
 
   private async showTermsAndConditions(forceInstall?: boolean): Promise<void> {

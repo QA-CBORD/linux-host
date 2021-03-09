@@ -9,6 +9,7 @@ import { MobileCredential } from '../model/shared/mobile-credential';
 import { HIDCredential, GoogleCredential } from '../model/android/android-credential.model';
 import { GooglePayCredentialManager } from '../model/android/google-pay/google-pay-credential-manager';
 import { IOSCredentialManager } from './ios-credential-manager';
+import { AndroidCredentialDataService } from '../model/shared/android-credential-data.service';
 
 export enum CredentialManagerType {
   IosCredential = 'IOS_CREDENTIAL',
@@ -31,20 +32,20 @@ export class MobileCredentialManagerFactory {
 
   private androidCredentialManager(): Observable<MobileCredentialManager> {
     let credentialManager = null;
-    return this.injector
-      .get(MobileCredentialDataService)
-      .activePasses$()
-      .pipe(
-        map((mobileCredential: MobileCredential) => {
-          if (mobileCredential.providedBy(CredentialProviders.HID)) {
-            credentialManager = this.createHidCredentialManagerFor(<HIDCredential>mobileCredential);
-          } else if (mobileCredential.providedBy(CredentialProviders.GOOGLE)) {
-            credentialManager = this.createGoogleCredentialManagerFor(<GoogleCredential>mobileCredential); // google/nxp credential manager not implemented yet
-          }
-          return credentialManager;
-        }),
-        catchError(() => of(null))
-      );
+    const srvc = this.injector.get(AndroidCredentialDataService);
+
+    return srvc.activePasses$(true).pipe(
+      map((mobileCredential: MobileCredential) => {
+        if (mobileCredential.providedBy(CredentialProviders.HID)) {
+          credentialManager = this.createHidCredentialManagerFor(<HIDCredential>mobileCredential);
+        } else if (mobileCredential.providedBy(CredentialProviders.GOOGLE)) {
+          credentialManager = this.createGoogleCredentialManagerFor(<GoogleCredential>mobileCredential); // google/nxp credential manager not implemented yet
+        }
+        srvc.getContents();
+        return credentialManager;
+      }),
+      catchError(() => of(null))
+    );
   }
 
   private createHidCredentialManagerFor(mCredential: HIDCredential): HIDCredentialManager {
@@ -54,7 +55,7 @@ export class MobileCredentialManagerFactory {
   }
 
   private createGoogleCredentialManagerFor(mCredential: GoogleCredential): GooglePayCredentialManager {
-    console.log('createGoogleCredentialManagerFor ==> ', mCredential)
+    console.log('createGoogleCredentialManagerFor ==> ', mCredential);
     let credentialManager = this.injector.get(GooglePayCredentialManager);
     credentialManager.setCredential(mCredential);
     return credentialManager;
