@@ -5,18 +5,15 @@ export interface DefaultCs {
 }
 
 export abstract class ContentStringModel {
-  protected content: any;
+  content: any;
   constructor(nullable: NullableContent, defaultObject: DefaultCs) {
-    if (!Object.keys(defaultObject).length) {
-      throw new Error('Null defaultObject not permitted');
-    }
-    this.content = (nullable.isNull() && nullable.getContent()) || defaultObject;
+    this.content = (nullable.isNull() && defaultObject) || nullable.getContent();
   }
 }
 
-export interface ApiContract {
-  [key: string]: (data?: ContentStringInfo[], args?: any) => ContentStringModel | any;
-}
+// export interface ApiContract {
+//   [key: string]: (data?: ContentStringInfo[], args?: any) => ContentStringModel | any;
+// }
 
 export class NullableContent {
   private constructor(private readonly content: unknown) {}

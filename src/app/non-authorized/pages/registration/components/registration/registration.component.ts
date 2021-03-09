@@ -123,12 +123,17 @@ export class RegistrationComponent implements OnInit {
     await this.loadingService.showSpinner(this.customLoadingOptions);
     this.registrationFacade.submit(formGroup.value).subscribe(
       ({ response }) => this.onRegistrationSuccess(response),
-      async () => {
+      async error => {
+        const [errorCode] = error.message.split('|');
         const { formData } = await this.registrationFacade.getData();
-        const message = formData.registrationFailedMessage;
+        const message = ValidErrorCodes[errorCode] || formData.registrationFailedMessage;
         this.toastService.showToast({ message, duration: 6000 });
         this.loadingService.closeSpinner();
       }
     );
   }
 }
+
+const ValidErrorCodes = {
+  6101: 'Cannot find a match for given user information',
+};

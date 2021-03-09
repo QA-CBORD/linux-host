@@ -4,7 +4,7 @@ import { take, map, catchError } from 'rxjs/operators';
 import { CONTENT_STRINGS_CATEGORIES } from 'src/app/content-strings';
 import { buildPasswordValidators } from 'src/app/password-validation/models/input-validator.model';
 import { RegistrationService } from '../services/registration.service';
-import { registrationFormStaticFields } from './form-config';
+import { rfStaticFields } from './form-config';
 import { RegistrationCsModel } from './registration-content-strings.model';
 import { FormFieldList, Field } from './registration-utils';
 
@@ -25,7 +25,10 @@ export class UserRegistrationBase {
     );
 
     return zip(registrationString$, validationString$).pipe(
-      map(([data, passwordValidators]) => ({ ...data, passwordValidators }))
+      map(([data, passwordValidators]) => {
+        data.passwordValidators = passwordValidators;
+        return data;
+      })
     );
   }
 
@@ -55,14 +58,13 @@ export class UserRegistrationBase {
     };
   }
 
-  protected formFieldsConfig(data: RegistrationCsModel): Promise<Field[]> {
+  protected formFieldsConfig({ content }: RegistrationCsModel): Promise<Field[]> {
     const formFields: Field[] = [];
-    const staticFieldsCopy = {};
-    for (const key of Object.keys(registrationFormStaticFields)) {
-      staticFieldsCopy[key] = registrationFormStaticFields[key].copy();
-      staticFieldsCopy[key].value = data[key];
-      formFields.push(staticFieldsCopy[key]);
-    }
+    Object.keys(rfStaticFields).forEach(key => {
+      const field = rfStaticFields[key].copy();
+      field.label = content[key];
+      formFields.push(field);
+    });
     return Promise.resolve(formFields);
   }
 }
