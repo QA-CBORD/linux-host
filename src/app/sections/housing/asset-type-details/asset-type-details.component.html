@@ -6,11 +6,15 @@
     <ion-card-content class="assset_type_details_item__content" *ngIf="field.selected === true">
       <ion-item class="ion-no-padding">
         <ion-label class="ion-text-wrap" position="floating">{{ field.label }}</ion-label>
-        <ion-input value="{{ field.value }}" readonly></ion-input>
+        <ion-input *ngIf="!field.isCurrency" value="{{ field.value }}" readonly></ion-input>
+        <ion-input *ngIf="field.isCurrency" value="{{ field.value | currency }}" readonly></ion-input>
       </ion-item>
     </ion-card-content>
   </div>
   <div>
-    <ion-button (click)="markItemAsSelected(assetType[i].assetTypeKey)">Select this item</ion-button>
+    <ion-button
+      expand="block"
+      color="primary"
+      (click)="markItemAsSelected(assetType[i].assetTypeKey)">Select this item</ion-button>
   </div>
 </ion-card>
