@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import {
@@ -92,6 +92,15 @@ export class NonAssignmentsStateService {
       ...this.nonAssignmentsState,
       selectedAssetType: assetTypeKey
     };
+  }
+
+  setSelectedAssetType(assetTypeKey: number): Observable<number> {
+    this.nonAssignmentsState = {
+      ...this.nonAssignmentsState,
+      selectedAssetType: assetTypeKey
+    };
+
+    return of(this.nonAssignmentsState.selectedAssetType);
   }
 
   private _getEntities(state: NonAssignmentsState): NonAssignmentEntities {

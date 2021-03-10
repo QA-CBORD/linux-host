@@ -61,7 +61,7 @@
               class="btn non-assignment-details__submit stepper-footer__button-right"
               mode="ios"
               type="submit"
-              [disabled]="selectedAssetType == 0">
+              [disabled]="(selectedAssetType$ | async) == 0">
               Submit
             </ion-button>
           </st-stepper-footer>

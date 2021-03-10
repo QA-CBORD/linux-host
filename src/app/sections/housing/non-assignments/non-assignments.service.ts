@@ -125,22 +125,22 @@ export class NonAssignmentsService {
     selectedValues.forEach(p => {
       switch (p.value) {
         case '0':
-          nameLabel = isDefined(question.customName)
+          nameLabel = isDefined(question.customName) && question.customName !== 'undefined'
             ? question.customName
             : p.label;  
           break;
         case '1':
-          mealsLabel = isDefined(question.customMeals)
+          mealsLabel = isDefined(question.customMeals) && question.customMeals !== 'undefined'
             ? question.customMeals
             : p.label;
           break;
         case '2':
-          diningDollarsLabel = isDefined(question.customDining)
+          diningDollarsLabel = isDefined(question.customDining) && question.customDining !== 'undefined'
             ? question.customDining
             : p.label;
           break;
         case '3':
-          costLabel = isDefined(question.customCost)
+          costLabel = isDefined(question.customCost) && question.customDining !== 'undefined'
             ? question.customCost
             : p.label;
           break;
@@ -153,6 +153,7 @@ export class NonAssignmentsService {
         let label: string;
         let value: string;
         let selected: boolean;
+        let isCurrency: boolean;
 
         switch (e.value) {
           case '0':
@@ -160,24 +161,28 @@ export class NonAssignmentsService {
             label = nameLabel;
             value = assetType.name;
             selected = false;
+            isCurrency = false;
             break;
           case '1':
             // Number of Meals
             label = mealsLabel;
             value = `${assetType.numberOfUnits}`;
             selected = true;
+            isCurrency = false;
             break;
           case '2':
             // Dining Dollars
             label = diningDollarsLabel;
             value = `${assetType.diningDollars}`;
             selected = true;
+            isCurrency = true;
             break;
           case '3':
             // Cost
             label = costLabel;
             value = `${assetType.cost}`;
             selected = true;
+            isCurrency = true;
             break;
           default:
             break;
@@ -186,7 +191,8 @@ export class NonAssignmentsService {
           assetTypeKey: assetType.assetTypeKey,
           label,
           value,
-          selected
+          selected,
+          isCurrency
         });
 
         return assetTypeValue;
