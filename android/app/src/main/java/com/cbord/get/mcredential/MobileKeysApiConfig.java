@@ -45,8 +45,6 @@ public class MobileKeysApiConfig extends Application implements OrigoReaderConne
                     .setApplicationDescription(BuildConfig.AAMK_APP_ID_DESCRIPTION)
                     .setNfcParameters(new OrigoNfcConfiguration.Builder()
                             .unsafe_setAttemptNfcWithScreenOff(true)
-                            .setNumberOfNfcTransactionsNeeded(TRANSACTIONS)
-                            .setTransactionBackOff(TRANSACTIONS_BACKOFF)
                             .build())
                     .build();
 
