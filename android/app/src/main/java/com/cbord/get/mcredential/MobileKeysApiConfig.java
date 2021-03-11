@@ -26,18 +26,17 @@ import com.hid.origo.api.hce.OrigoNfcConfiguration;
 /**
  * Application class handling the initialization of the Mobile Keys API
  */
+
 public class MobileKeysApiConfig extends Application implements OrigoReaderConnectionListener, OrigoHceConnectionListener {
 
     private OrigoMobileKeysApi mobileKeysApi;
     private static final String TAG = MobileKeysApiConfig.class.getName();
     private static final int LOCK_SERVICE_CODE = 2;
-    private static final int TRANSACTIONS_BACKOFF = 2000;
     private static final String APPLICATION_ID = "com.cbord.get";
-    private static final byte TRANSACTIONS = 2;
     private static final String INITIALIZATION_SUCCESS = "success";
     private boolean mobileKeysApiInitialized = false;
 
-    private void configureOrigoMobileKeysApi(TransactionCompleteCallback callback){
+    private void configureOrigoMobileKeysApi(TransactionCompleteCallback callback) {
         try {
 
             OrigoApiConfiguration origoApiConfiguration = new OrigoApiConfiguration.Builder()
@@ -56,16 +55,16 @@ public class MobileKeysApiConfig extends Application implements OrigoReaderConne
 
             mobileKeysApi = OrigoMobileKeysApi.getInstance();
 
-            if(Boolean.FALSE.equals(mobileKeysApi.isInitialized()))
+            if (Boolean.FALSE.equals(mobileKeysApi.isInitialized()))
                 mobileKeysApi.initialize(this, origoApiConfiguration, origoScanConfiguration, APPLICATION_ID);
             mobileKeysApiInitialized = true;
             callback.onCompleted(INITIALIZATION_SUCCESS);
-          } catch (Exception ex){
+        } catch (Exception ex) {
             callback.onCompleted(ex.getMessage());
         }
     }
 
-    private void registerEventListeners(){
+    private void registerEventListeners() {
         OrigoReaderConnectionCallback readerConnectionCallback = new OrigoReaderConnectionCallback(getApplicationContext());
         readerConnectionCallback.registerReceiver(this);
         OrigoHceConnectionCallback hceConnectionCallback = new OrigoHceConnectionCallback(getApplicationContext());
@@ -92,11 +91,11 @@ public class MobileKeysApiConfig extends Application implements OrigoReaderConne
                     callback.onCompleted(transactionResult);
                 }
             });
-         }
+        }
     }
 
 
-    public OrigoMobileKeysApi getMobileKeysApi(){
+    public OrigoMobileKeysApi getMobileKeysApi() {
         return mobileKeysApi;
     }
 
@@ -104,24 +103,31 @@ public class MobileKeysApiConfig extends Application implements OrigoReaderConne
     @Override
     public void onCreate() {
         super.onCreate();
-        initializeMobileKeysApi(transactionResult -> {});
+        initializeMobileKeysApi(transactionResult -> {
+        });
     }
 
     @Override
-    public void onReaderConnectionOpened(OrigoReader origoReader, OrigoOpeningType origoOpeningType) { }
+    public void onReaderConnectionOpened(OrigoReader origoReader, OrigoOpeningType origoOpeningType) {
+    }
 
     @Override
-    public void onReaderConnectionClosed(OrigoReader origoReader, OrigoOpeningResult origoOpeningResult) { }
+    public void onReaderConnectionClosed(OrigoReader origoReader, OrigoOpeningResult origoOpeningResult) {
+    }
 
     @Override
-    public void onReaderConnectionFailed(OrigoReader origoReader, OrigoOpeningType origoOpeningType, OrigoOpeningStatus origoOpeningStatus) { }
+    public void onReaderConnectionFailed(OrigoReader origoReader, OrigoOpeningType origoOpeningType, OrigoOpeningStatus origoOpeningStatus) {
+    }
 
     @Override
-    public void onHceSessionOpened() { }
+    public void onHceSessionOpened() {
+    }
 
     @Override
-    public void onHceSessionClosed(int i) { }
+    public void onHceSessionClosed(int i) {
+    }
 
     @Override
-    public void onHceSessionInfo(OrigoReaderConnectionInfoType origoReaderConnectionInfoType) { }
+    public void onHceSessionInfo(OrigoReaderConnectionInfoType origoReaderConnectionInfoType) {
+    }
 }
