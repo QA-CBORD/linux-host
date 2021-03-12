@@ -1,4 +1,3 @@
-import { error } from '@angular/compiler/src/util';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
@@ -9,20 +8,24 @@ import { ModalController } from '@ionic/angular';
 import { of } from 'rxjs';
 import { catchError, take } from 'rxjs/operators';
 import { buildPasswordValidators, InputValidator } from 'src/app/password-validation/models/input-validator.model';
+import { ContentStringApi } from '@shared/model/content-strings/content-strings-api';
+import { PasswordChangeCsModel } from './password-change-content-strings.model';
 
 @Component({
-  selector: 'st-change-password',
-  templateUrl: './change-password.component.html',
-  styleUrls: ['./change-password.component.scss'],
+  selector: 'st-password-change',
+  templateUrl: './password-change.component.html',
+  styleUrls: ['./password-change.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ChangePasswordComponent implements OnInit {
-  @Input() contentStrings: ContentStringInfo[];
+
+export class PasswordChangeComponent implements OnInit {
+  @Input() contentStrings: [ContentStringInfo[]];
   changePasswordForm: FormGroup;
   isLoading = false;
   validators: InputValidator[] = [];
   passwordControl: any = {};
-
+  inputLabel: PasswordChangeCsModel;
+  
   constructor(
     private readonly modalController: ModalController,
     private readonly fb: FormBuilder,
@@ -35,8 +38,11 @@ export class ChangePasswordComponent implements OnInit {
   ngOnInit() {
     this.initForm();
     this.initControl();
-    this.getValidators();
+  }
+
+  ionViewWillEnter() { 
     this.loadingService.showSpinner();
+    this.setContentStrings();
   }
 
   ionViewDidEnter() {
@@ -101,8 +107,9 @@ export class ChangePasswordComponent implements OnInit {
     });
   }
 
-  private getValidators() {
-    this.validators = buildPasswordValidators(this.contentStrings);
+  private setContentStrings() {
+    this.inputLabel = ContentStringApi.changePassword(this.contentStrings.pop());
+    this.validators = buildPasswordValidators(this.contentStrings.pop());
   }
 
   private initControl() {

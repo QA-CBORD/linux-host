@@ -13,14 +13,12 @@ import {
 import { CONTENT_STRINGS_DOMAINS, CONTENT_STRINGS_CATEGORIES } from 'src/app/content-strings';
 import { HTMLRendererComponent } from '@shared/ui-components/html-renderer/html-renderer.component';
 import { PhoneEmailComponent } from '@shared/ui-components/phone-email/phone-email.component';
-import { AuthTypes } from '@core/utils/auth-types.enum';
 import { EditHomePageModalComponent } from '@shared/ui-components/edit-home-page-modal/edit-home-page-modal.component';
 import { SETTINGS_ID } from './models/settings-id.enum';
-import { LOCAL_ROUTING as ORDERING_ROUTING } from '@sections/ordering/ordering.config';
 import { ReportCardStatusSetting } from './models/report-card-status.config';
 import { ReportCardComponent } from './pages/report-card/report-card.component';
 import { MobileCredentialMetadata } from './pages/credential-metadata/mobile-cred-metadata';
-import { ChangePasswordComponent } from '@shared/ui-components/change-password/change-password.component';
+import { PasswordChangeComponent } from '@shared/ui-components/change-password/password-change.component';
 
 export enum LOCAL_ROUTING {
   photoUpload = 'photo-upload',
@@ -104,12 +102,17 @@ export const SETTINGS_CONFIG: SettingsSectionConfig[] = [
           { type: SETTINGS_VALIDATIONS.ChangePasswordEnabled, value: 'change-password' },
         ],
         modalContent: {
-          component: ChangePasswordComponent,
-          contentStrings: {
+          component: PasswordChangeComponent,
+          contentStrings: [{
             domain: CONTENT_STRINGS_DOMAINS.patronUi,
             category: CONTENT_STRINGS_CATEGORIES.passwordValidation,
             name: null,
-          }
+          },
+          {
+            domain: CONTENT_STRINGS_DOMAINS.patronUi,
+            category: CONTENT_STRINGS_CATEGORIES.passwordChange,
+            name: null,
+          }]
         },
       },
       {

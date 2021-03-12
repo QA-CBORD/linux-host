@@ -45,3 +45,8 @@ export const defaultMobileCredentialCs = {
   'usage-instructions':
     '<p>Instructions for your mobile credential. Once you provision your mobile credential, it will be registered with your phones NFC chip and can be used in all of the same places that your plastic ID card could be used. Places such as opening doors, or paying for food on campus.</p>',
 };
+
+export const defaultPasswordChangeCs = {
+    current_password: 'Current password',
+    new_password: 'New password',
+};

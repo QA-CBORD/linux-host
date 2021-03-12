@@ -1,4 +1,5 @@
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
+import { PasswordChangeCsModel } from '@shared/ui-components/change-password/password-change-content-strings.model';
 import { ForgotPasswordCsModel } from 'src/app/non-authorized/pages/forgot-password/models/forgot-password-content-strings.model';
 import { PreloginCsModel } from 'src/app/non-authorized/pages/pre-login/models/prelogin-content-strings.model';
 import { RegistrationCsModel } from 'src/app/non-authorized/pages/registration/models/registration-content-strings.model';
@@ -15,5 +16,9 @@ export const ContentStringApi = {
 
   registration: (content: ContentStringInfo[] = []): RegistrationCsModel => {
     return new RegistrationCsModel(NullableContent.build(content));
+  },
+
+  changePassword: (content: ContentStringInfo[] = []): PasswordChangeCsModel => {
+    return new PasswordChangeCsModel(NullableContent.build(content));
   }
 };
