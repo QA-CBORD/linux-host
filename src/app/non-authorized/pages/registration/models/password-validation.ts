@@ -11,6 +11,14 @@ export class Cvalidators {
     };
   }
 
+  static phoneNumber(): CustomValidator {
+    return {
+      test: value => {
+        return /^[0-9]*$/.test(value) && (value.length >= 10 && value.length <= 11);
+      },
+    };
+  }
+
   static min(min: number): CustomValidator {
     return {
       test: value => {
@@ -41,7 +49,7 @@ export class Cvalidators {
 
   static requiredRange(min: number, max: number): CustomValidator {
     return {
-      test: value =>  value.length >= min && value.length <= max
+      test: value => value.length >= min && value.length <= max,
     };
   }
 
@@ -86,5 +94,5 @@ export class Cvalidators {
 export interface IViewableValidator {
   label: string;
   validator: CustomValidator;
-  supported?: boolean
+  supported?: boolean;
 }

@@ -54,30 +54,24 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
   }
 
   onUiIconClicked(): void {
-    this.showLoading();
     const showUsageDialog = async () => {
-      const cs = await this.credentialService.getContents();
-      console.log(cs);
-
-      const btnText =
-        this.mCredential.isProvisioned() || this.mCredential.isProcessing() || this.mCredential.revoked()
-          ? 'Uninstall'
-          : 'OK';
-      const componentProps = {
-        usageInstructions: await this.credentialService.credentialUsageContentString$(),
-        title: 'Usage Instructions',
-        btnText: btnText,
-      };
+      const _mc = this.mCredential;
+      const usageString = (await this.contentStringAsync()).usageDialogString$;
+      const isProvisioned = _mc.isProvisioned() || _mc.isProcessing() || _mc.revoked();
+      const buttonText = isProvisioned ? usageString.uninstall : usageString.ok;
       const popover = await this.popoverCtrl.create({
         backdropDismiss: false,
         cssClass: 'credential-usage-popover',
         component: MobileCredentialsComponent,
-        componentProps,
+        componentProps: {
+          buttonText,
+          usageText: usageString.mContent,
+          title: usageString.title,
+        },
       });
-      this.loadingService.closeSpinner();
       await popover.present();
       const { data } = await popover.onDidDismiss();
-      const shouldUninstall = data.action == 'Uninstall';
+      const shouldUninstall = data.action == usageString.uninstall;
       if (shouldUninstall) {
         this.showConfirmUninstallDialog();
       }
@@ -86,13 +80,11 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
   }
 
   private async showTermsAndConditions(forceInstall?: boolean): Promise<void> {
-    let componentProps = {
-      termsAndConditions: await this.credentialService.termsContentString$(),
-    };
+    const terms = (await this.contentStringAsync()).termString$;
     const modal = await this.modalCtrl.create({
       backdropDismiss: false,
       component: MobileCredentialsComponent,
-      componentProps,
+      componentProps: { terms },
     });
     this.showLoading();
     await modal.present();
@@ -165,8 +157,8 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
           this.validateAndInstall();
         } else {
           this.showLoading();
-          const contentStrings = await this.credentialService.nfcOffContentStrings$();
-          this.nfcOffAlert(contentStrings, async () => {
+          const contents = await this.contentStringAsync();
+          this.nfcOffAlert(contents.nfcDialogString$, async () => {
             this.validateAndInstall();
           });
         }
@@ -186,9 +178,9 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
 
   private async showCredentialAlreadyProvisionedAlert(callerOnAcceptHandler?: () => Promise<void>): Promise<void> {
     // notify user he needs to uninstall from previous device first.
-    let header = 'Notification';
-    let message =
-      'We have detected that you already provisioned a mobile ID, but it is not on this device. You may have uninstalled GET Mobile, deleted the app cache data, or your mobile ID is still installed on another device. If you proceed with this new installation, any previously installed mobile ID will be revoked. Would you like to proceed ?';
+    const string$ = (await this.contentStringAsync()).alreadyProvisionedDialogString$;
+    let header = string$.title;
+    let message = string$.mContent;
 
     const defaultOnAcceptHandler = async () => {
       const deleteSuccessfull = await this.handleRetriableOperation({
@@ -215,9 +207,9 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     };
 
     const buttons = [
-      { text: 'cancel', role: 'cancel' },
+      { text: string$.cancel, role: 'cancel' },
       {
-        text: 'Accept and Install',
+        text: string$.acceptInstall,
         handler: actualOnAcceptHandler,
       },
     ];
@@ -233,9 +225,9 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
 
   private async showCredentialAlreadyInstalledAlert(callerOnAcceptHandler?: () => Promise<any>): Promise<void> {
     // notify user he needs to uninstall from previous device first.
-    const header = 'Notification';
-    const message =
-      'We have detected there is an active mobile ID installed on this device. if you proceed with this new installation, any previously installed ID will be revoked.';
+    const string$ = (await this.contentStringAsync()).alreadyInstalledDialogString$;
+    const header = string$.title;
+    const message = string$.mContent;
     const defaultOnAcceptHandler = async () => {
       this.showLoading();
       await this.handleRetriableOperation({
@@ -261,9 +253,9 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     };
 
     const buttons = [
-      { text: 'cancel', role: 'cancel' },
+      { text: string$.cancel, role: 'cancel' },
       {
-        text: 'Accept and Install',
+        text: string$.acceptInstall,
         handler: actualOnAcceptHandler,
       },
     ];
@@ -335,12 +327,14 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
   }
 
   private async showConfirmUninstallDialog(): Promise<void> {
-    const header = 'Please confirm';
-    const message = 'Are you sure you want to uninstall your mobile ID ?';
+    const string$ = (await this.contentStringAsync()).confirmDialogString$;
+
+    const header = string$.title;
+    const message = string$.mContent;
     let buttons = [
-      { text: 'Cancel', role: 'cancel' },
+      { text: string$.cancel, role: 'cancel' },
       {
-        text: 'Confirm',
+        text: string$.confirm,
         handler: () => {
           this.alertCtrl.dismiss();
           this.onDeleteConfirmed();
@@ -555,13 +549,14 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
   }
 
   private async showRetryToast(): Promise<boolean> {
+    const string$ = await this.contentStringAsync();
     let myToast = await this.toastService.create({
-      message: 'Mobile credential installation error',
+      message: string$.installError,
       duration: 15000,
       position: 'bottom',
       buttons: [
         {
-          text: 'retry',
+          text: string$.retry,
           handler: () => {
             myToast.dismiss(true);
           },
@@ -634,7 +629,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
       });
     }
     if (!credentialDeleteOnDeviceSuccess) {
-      this.showInstallationErrorAlert('uninstall');
+      this.showInstallationErrorAlert();
     }
     this.loadingService.closeSpinner();
   }

@@ -22,7 +22,7 @@ const resourceUrls = {
 };
 
 export class AndroidCredentialDataService extends MobileCredentialDataService {
-  private mobileCredentialCsModel: AndroidCredentialCsModel;
+  private contentStrings: AndroidCredentialCsModel;
 
   constructor(
     private resources: { credentialUrl: string },
@@ -44,13 +44,10 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
     );
   }
 
-  activePasses$(ignoreBundle?: boolean): Observable<AndroidCredential<any>> {
+  activePasses$(): Observable<AndroidCredential<any>> {
     return super.activePasses$().pipe(
       switchMap(mobileCredential => {
         const androidCredentials = mobileCredential as AndroidCredential<any>;
-        if (ignoreBundle) {
-          return of(androidCredentials);
-        }
         return this.getLocalStoredUserData<Persistable>(this.credential_key).pipe(
           map(data => {
             androidCredentials.setCredentialBundle(data);
@@ -59,6 +56,10 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
         );
       })
     );
+  }
+
+  getUserCredentials(): Observable<AndroidCredential<any>> {
+    return super.activePasses$().pipe(map(data => data as AndroidCredential<any>));
   }
 
   protected getUserId(): Observable<string> {
@@ -90,63 +91,22 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
     );
   }
 
-  private async loadMobileCredentialStrings(): Promise<AndroidCredentialCsModel> {
+  private async retrieveAllContentStrings(): Promise<AndroidCredentialCsModel> {
     return await this.contentStringFacade
       .fetchContentStringAfresh(CONTENT_STRINGS_DOMAINS.patronUi, CONTENT_STRINGS_CATEGORIES.mobileCredential)
       .pipe(
         map(data => ContentStringApi.mobileCredential(data)),
         catchError(() => of(ContentStringApi.mobileCredential())),
-        tap(data => (this.mobileCredentialCsModel = data))
+        tap(data => (this.contentStrings = data))
       )
       .toPromise();
   }
 
   async getContents(): Promise<AndroidCredentialCsModel> {
     return (
-      (this.mobileCredentialCsModel && of(this.mobileCredentialCsModel).toPromise()) ||
-      this.loadMobileCredentialStrings()
+      (this.contentStrings && of(this.contentStrings).toPromise()) ||
+      this.retrieveAllContentStrings()
     );
-  }
-
-  termsContentString$(termsContentString?: {
-    domain: CONTENT_STRINGS_DOMAINS;
-    category: CONTENT_STRINGS_CATEGORIES;
-    name: string;
-  }): Promise<string> {
-    const contentStringSetting = termsContentString || {
-      domain: CONTENT_STRINGS_DOMAINS.patronUi,
-      category: CONTENT_STRINGS_CATEGORIES.mobileCredential,
-      name: 'terms',
-    };
-
-    return super
-      .contentString$(contentStringSetting)
-      .pipe(catchError(() => 'No content'))
-      .toPromise();
-  }
-
-  credentialUsageContentString$(usagecontentStringConfig?: {
-    domain: CONTENT_STRINGS_DOMAINS;
-    category: CONTENT_STRINGS_CATEGORIES;
-    name: string;
-  }): Promise<string> {
-    const contentStringSettings = usagecontentStringConfig || {
-      domain: CONTENT_STRINGS_DOMAINS.patronUi,
-      category: CONTENT_STRINGS_CATEGORIES.mobileCredential,
-      name: 'usage-instructions',
-    };
-    return super
-      .contentString$(contentStringSettings)
-      .pipe(
-        switchMap(contentString => {
-          if (contentString) {
-            return of(contentString);
-          }
-          return from('No content');
-        }),
-        catchError(() => 'No content')
-      )
-      .toPromise();
   }
 
   protected getDefaultHeaders(): Observable<HttpHeaders> {
@@ -256,35 +216,5 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
         return { credStatus, passes, referenceIdentifier };
       })
     );
-  }
-
-  async nfcOffContentStrings$(): Promise<NFCDialogContentString> {
-    const contentString = {
-      text: await this.nfcOffContentString$(NFCDialogContentStringName.TEXT),
-      title: await this.nfcOffContentString$(NFCDialogContentStringName.TITLE),
-      acceptButton: await this.nfcOffContentString$(NFCDialogContentStringName.ACCEPT_BUTTON),
-      cancelButton: await this.nfcOffContentString$(NFCDialogContentStringName.CANCEL_BUTTON),
-    };
-    return contentString;
-  }
-
-  private nfcOffContentString$(contentStringName: string): Promise<string> {
-    const contentStringSettings = {
-      domain: CONTENT_STRINGS_DOMAINS.patronUi,
-      category: CONTENT_STRINGS_CATEGORIES.mobileCredential,
-      name: contentStringName,
-    };
-    return super
-      .contentString$(contentStringSettings)
-      .pipe(
-        switchMap(contentString => {
-          if (contentString) {
-            return of(contentString);
-          }
-          return from('No content');
-        }),
-        catchError(() => 'No content')
-      )
-      .toPromise();
   }
 }

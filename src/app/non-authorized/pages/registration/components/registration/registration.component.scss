@@ -15,8 +15,6 @@
       padding-bottom: 25px;
       background-color: #ffffff;
       padding-top: 12px;
-      margin-left: 10px;
-      margin-right: 10px;
       border-top-right-radius: 10px;
       border-top-left-radius: 10px;
       table.tableClass td {
@@ -26,8 +24,6 @@
     }
 
     &__controls {
-      margin-left: 10px;
-      margin-right: 10px;
       &__item {
         padding: 10px;
         background-color: #ffffff;
@@ -44,7 +40,6 @@
       padding: 10px;
       position: relative;
       background-color: #ffffff;
-      margin: 0px 10px 0px 10px;
       border-bottom-right-radius: 10px;
       border-bottom-left-radius: 10px;
     }
@@ -53,4 +48,5 @@
 
 .reg_footer {
   padding: 35px 0px 10px 0px;
+  background-color: #86888f21;
 }

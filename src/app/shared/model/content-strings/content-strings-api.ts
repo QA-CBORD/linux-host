@@ -20,5 +20,5 @@ export const ContentStringApi = {
 
   mobileCredential: (content: ContentStringInfo[] = []): AndroidCredentialCsModel => {
     return new AndroidCredentialCsModel(NullableContent.build(content));
-  },
+  }
 };

@@ -36,9 +36,8 @@ export const rfStaticFields: { [key: string]: Field } = {
     idd: 'phone_number',
     name: STATICFIELDS.phone,
     type: 'text',
-    touched: true,
-    cValidator: [Cvalidators.nullablePhone()],
-    validators: ['', Validators.nullValidator],
+    cValidator: [Cvalidators.phoneNumber()],
+    validators: ['', Validators.required],
   }),
   password: new Field({
     label: 'Create Password',

@@ -25,14 +25,12 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
 
   onUiImageClicked(event?: any): void {
     const showTermsAndConditions = async () => {
-      let componentProps = {
-        termsAndConditions: await this.termsAndConditionsSource$(),
-      };
+      const terms = (await this.contentStringAsync()).termString$;
       const modal = await this.modalCtrl.create({
         backdropDismiss: false,
         mode: 'ios',
         component: MobileCredentialsComponent,
-        componentProps,
+        componentProps: { terms },
       });
       await modal.present();
       const { data } = await modal.onDidDismiss();
@@ -40,14 +38,13 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
         this.onTermsAndConditionsAccepted();
       }
     };
-    
+
     (async () => {
       if (await this.nfcIsOn()) {
         showTermsAndConditions();
       } else {
-        this.showLoading();
-        const contentStrings = await this.credentialServ.nfcOffContentStrings$();
-        this.nfcOffAlert(contentStrings, async () => {
+        const string$ = (await this.contentStringAsync()).nfcDialogString$;
+        this.nfcOffAlert(string$, async () => {
           showTermsAndConditions();
         });
       }
@@ -133,7 +130,7 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
     const newCredential = await this.getAndroidCredential(googlePayNonce, referenceIdentifier);
     this.loadingService.closeSpinner();
     if (!newCredential) {
-      this.showInstallationErrorAlert('installation');
+      this.showInstallationErrorAlert();
       return;
     }
     this.mCredential = newCredential;
@@ -143,12 +140,5 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
       this.showInstallationErrorAlert();
     });
     setTimeout(() => this.watchOnResume(), 2000);
-  }
-
-  async termsAndConditionsSource$(): Promise<string> {
-    this.showLoading();
-    const terms = await this.credentialServ.termsContentString$();
-    this.loadingService.closeSpinner();
-    return terms;
   }
 }

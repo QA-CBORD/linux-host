@@ -1,20 +1,15 @@
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
 
-export interface DefaultCs {
+export interface IDefaultContentString {
   [key: string]: any;
 }
 
 export abstract class ContentStringModel {
   content: any;
-  constructor(nullable: NullableContent, defaultObject: DefaultCs) {
-    this.content = (nullable.isNull() && defaultObject) || nullable.getContent();
+  constructor(contentWrapper: NullableContent, defaultContentStrings: IDefaultContentString) {
+    this.content = (contentWrapper.isNull() && defaultContentStrings) || contentWrapper.getContent();
   }
 }
-
-// export interface ApiContract {
-//   [key: string]: (data?: ContentStringInfo[], args?: any) => ContentStringModel | any;
-// }
-
 export class NullableContent {
   private constructor(private readonly content: unknown) {}
 
