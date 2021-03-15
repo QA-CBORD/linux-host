@@ -89,76 +89,70 @@ export class SettingsFactoryService {
   }
 
   private checkDisplayOption(setting: SettingItemConfig): Promise<boolean> {
-    const checks$: Observable<boolean>[] = [];
-
-    if (setting.studentsOnly) {
-      checks$.push(
-        this.authFacadeService.cachedLoginType$.pipe(
-          map(isGuest => !isGuest),
-          take(1)
-        )
-      );
-    }
-  
-    if (setting.validations) {
-      for (const validation of setting.validations) {
-        if (validation.type === SETTINGS_VALIDATIONS.SettingEnable) {
-          checks$.push(
-            this.settingsFacade.getSetting(validation.value as Settings.Setting).pipe(
-              map(({ value }): boolean => parseInt(value) === 1),
-              take(1)
-            )
-          );
-        } else if (validation.type === SETTINGS_VALIDATIONS.Biometric) {
-          checks$.push(
-            this.identityService.areBiometricsAvailable().pipe(
-              tap(async biometricsEnabled => {
-                if (biometricsEnabled) {
-                  const biometrics = await this.identityFacadeService.getAvailableBiometricHardware();
-                  const biometric = configureBiometricsConfig(biometrics);
-                  setting.label = biometric.name;
-                  setting.icon = biometric.icon;
-                }
-              }),
-              take(1)
-            )
-          );
-        } else if (validation.type === SETTINGS_VALIDATIONS.StatusSettingEnable) {
-          const statusValidation = validation.value as StatusSettingValidation;
-          checks$.push(
-            statusValidation.getStatusValidation(this.services).pipe(
-              switchMap(setting =>
-                this.settingsFacade
-                  .getSetting(setting as Settings.Setting)
-                  .pipe(map(({ value }): boolean => parseInt(value) === 1))
-              ),
-              take(1)
-            )
-          );
-        } else if (validation.type === SETTINGS_VALIDATIONS.MobileCredentialEnabled) {
-          checks$.push(this.mobileCredentialFacade.showCredentialMetadata().pipe(take(1)));
-        } else if (validation.type === SETTINGS_VALIDATIONS.ChangePasswordEnabled) {
-          checks$.push(
-            from(this.sessionFacadeService.determineInstitutionSelectionLoginState()).pipe(
-              switchMap(login => {
-                if (login === LoginState.HOSTED) {
-                  return of(true);
-                }
-                return of(false);
-              })
-            )
-          );
-        }
-      }
-    }
-
-    if (!checks$.length) {
-      checks$.push(of(true));
-    }
-
-    return zip(...checks$)
+    return this.authFacadeService.cachedLoginType$
       .pipe(
-        map(checks => checks.every((checkTrue) => checkTrue)),
+        switchMap(isGuest => {
+          if (isGuest && setting.studentsOnly) {
+            return of(false);
+          }
+
+          const checks$: Observable<boolean>[] = [of(true)];
+          if (setting.validations) {
+            for (const validation of setting.validations) {
+              if (validation.type === SETTINGS_VALIDATIONS.SettingEnable) {
+                checks$.push(
+                  this.settingsFacade.getSetting(validation.value as Settings.Setting).pipe(
+                    map(({ value }): boolean => parseInt(value) === 1),
+                    take(1)
+                  )
+                );
+              } else if (validation.type === SETTINGS_VALIDATIONS.Biometric) {
+                checks$.push(
+                  this.identityService.areBiometricsAvailable().pipe(
+                    tap(async biometricsEnabled => {
+                      if (biometricsEnabled) {
+                        const biometrics = await this.identityFacadeService.getAvailableBiometricHardware();
+                        const biometric = configureBiometricsConfig(biometrics);
+                        setting.label = biometric.name;
+                        setting.icon = biometric.icon;
+                      }
+                    }),
+                    take(1)
+                  )
+                );
+              } else if (validation.type === SETTINGS_VALIDATIONS.StatusSettingEnable) {
+                const statusValidation = validation.value as StatusSettingValidation;
+                checks$.push(
+                  statusValidation.getStatusValidation(this.services).pipe(
+                    switchMap(setting =>
+                      this.settingsFacade
+                        .getSetting(setting as Settings.Setting)
+                        .pipe(map(({ value }): boolean => parseInt(value) === 1))
+                    ),
+                    take(1)
+                  )
+                );
+              } else if (validation.type === SETTINGS_VALIDATIONS.MobileCredentialEnabled) {
+                checks$.push(this.mobileCredentialFacade.showCredentialMetadata().pipe(take(1)));
+              } else if (validation.type === SETTINGS_VALIDATIONS.ChangePasswordEnabled) {
+                checks$.push(
+                  from(this.sessionFacadeService.determineInstitutionSelectionLoginState()).pipe(
+                    switchMap(login => {
+                      if (login === LoginState.HOSTED) {
+                        return of(true);
+                      }
+                      return of(false);
+                    })
+                  )
+                );
+              }
+            }
+          }
+          return zip(...checks$).pipe(
+            map(checks => checks.every(checkTrue => checkTrue)),
+            take(1)
+          );
+        }),
         take(1)
       )
       .toPromise();
