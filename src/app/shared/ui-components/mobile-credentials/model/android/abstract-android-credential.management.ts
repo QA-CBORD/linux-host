@@ -15,7 +15,11 @@ import { CredentialProviders } from '../shared/credential-utils';
 const { MobileCredentialStatusPlugin } = Plugins;
 
 export abstract class AbstractAndroidCredentialManager implements MobileCredentialManager {
-  protected customLoadingOptions = { message: 'Processing ... Please wait', duration: 150000 };
+  protected defaultIsLoadingMessage = 'Processing ... Please wait';
+  protected customLoadingOptions = {
+    message: this.defaultIsLoadingMessage,
+    duration: 150000,
+  };
   protected mCredential: AndroidCredential<any>;
   protected credentialStateChangeListener: CredentialStateChangeListener;
 
@@ -28,6 +32,7 @@ export abstract class AbstractAndroidCredentialManager implements MobileCredenti
   async contentStringAsync(updateUi?: boolean): Promise<AndroidCredentialCsModel> {
     const contentStrings = await this.credentialSrvc.getContents();
     if (updateUi) {
+      this.customLoadingOptions.message = contentStrings.isLogingMessage || this.defaultIsLoadingMessage;
       this.mCredential.setUicString$(contentStrings.credStatuString$);
       this.credentialStateChangeListener && this.credentialStateChangeListener.onCredentialStateChanged();
     }

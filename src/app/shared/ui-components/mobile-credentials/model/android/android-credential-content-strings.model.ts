@@ -129,8 +129,6 @@ export class TermsContent {
 }
 
 export class CredentialStatusCs {
-  private statusTxt: string;
-
   constructor(protected content: any) {}
 
   private textWhenAvailable(isHid: boolean): string {
@@ -151,19 +149,15 @@ export class CredentialStatusCs {
   statusText(isHid: boolean, statusCode: MobileCredentialStatuses): string {
     switch (statusCode) {
       case MobileCredentialStatuses.AVAILABLE:
-        this.statusTxt = this.textWhenAvailable(isHid);
-        break;
+        return this.textWhenAvailable(isHid);
       case MobileCredentialStatuses.PROVISIONED:
-        this.statusTxt = this.textWhenEnabled(isHid);
-        break;
+        return this.textWhenEnabled(isHid);
       case MobileCredentialStatuses.PROCESSING:
-        this.statusTxt = this.textWhenNotReady(isHid);
-        break;
+        return this.textWhenNotReady(isHid);
       case MobileCredentialStatuses.REVOKED:
-        this.statusTxt = this.textWhenRevoked();
-        break;
+        return this.textWhenRevoked();
     }
-    return this.statusTxt;
+    return null;
   }
 }
 
@@ -235,5 +229,9 @@ export class AndroidCredentialCsModel extends ContentStringModel {
 
   get installError(): string {
     return this.content.mc_install_err;
+  }
+
+  get isLogingMessage(): string {
+    return this.content.is_loading_text;
   }
 }
