@@ -1,16 +1,9 @@
 @import 'tools';
 
 .main {
-    background-color: #86888f21;
   &__container {
     background-color: #ffffff;
-
-    &__title {
-      font-weight: bold;
-      font-size: 20px;
-      margin: 15px;
-    }
-
+    
     &__content{
         font-size: 16px;  
         margin: 15px;
@@ -18,7 +11,14 @@
           position: relative;
           display: flex;
           flex-direction: column;
+          .positioner{
+            margin: 10px;
+          }
       }
     }
   }
+}
+
+.buttons-section{
+  margin: 15px;
 }
