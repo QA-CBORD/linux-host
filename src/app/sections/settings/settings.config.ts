@@ -19,7 +19,7 @@ import { SETTINGS_ID } from './models/settings-id.enum';
 import { LOCAL_ROUTING as ORDERING_ROUTING } from '@sections/ordering/ordering.config';
 import { ReportCardStatusSetting } from './models/report-card-status.config';
 import { ReportCardComponent } from './pages/report-card/report-card.component';
-import { MobileCredentialMetadata } from './pages/credential-metadata/mobile-cred-metadata';
+import { MobileCredentialMetadata } from './pages/credential-metadata/mobile-credential-metadata.page';
 import { ChangePasswordComponent } from '@shared/ui-components/change-password/change-password.component';
 
 export enum LOCAL_ROUTING {
