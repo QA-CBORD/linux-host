@@ -62,8 +62,8 @@ export class PasswordChangeComponent implements OnInit {
         take(1),
         catchError(error => {
           if(error) {
-          const NO_ERROR_CODE = 1;
-          resultMessage = `${error.toString().split('|')[NO_ERROR_CODE]}. Please try again.`;
+          const NO_ERROR_CODE_SIDE = 1;
+          resultMessage = `${error.toString().split('|')[NO_ERROR_CODE_SIDE]}. Please try again.`;
           } else {
             resultMessage = 'Something went wrong. Please try again.';
           }
