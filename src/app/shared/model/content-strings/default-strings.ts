@@ -70,4 +70,5 @@ export const defaultMobileCredentialCs = {
   cred_not_ready: 'Mobile ID installed [not ready]',
   cred_not_ready_gpay: 'ID added to Gpay [not ready]',
   cred_revoked: 'Mobile ID revoked',
+  is_loading_text: 'Processing ... please wait',
 };

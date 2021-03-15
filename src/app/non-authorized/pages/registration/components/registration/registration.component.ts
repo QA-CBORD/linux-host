@@ -36,7 +36,6 @@ export class RegistrationComponent implements OnInit {
   async ngOnInit() {
     await this.formFieldsetup();
     const { regCsModel } = await this.registrationFacade.getData();
-    console.log('regCsModel ==> ', regCsModel)
     this.title$ = of(regCsModel.title);
     this.btnText$ = of(regCsModel.submitBtnTxt);
     this.passwordValidators = regCsModel.passwordValidators;
