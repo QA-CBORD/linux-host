@@ -26,6 +26,9 @@ export class ServerError implements HttpInterceptor {
             'exception' in res.body &&
             res.body.exception !== null
           ) {
+            if (shouldDelegateErrorToCaller(req.body.method)) {
+              throw new Error(res.body.exception);
+            }
             this.handleServerException(res.body.exception, req.body.method);
           }
         },
@@ -48,8 +51,12 @@ export class ServerError implements HttpInterceptor {
     await this.toastService.showToast({ message });
   }
 
+  private isKnownError(errorString): boolean {
+    return errorString.search(NUM_DSCRPTN_REGEXP) !== -1;
+  }
+
   private handleServerException(exceptionString: string = '', method: string): never {
-    if (exceptionString.search(NUM_DSCRPTN_REGEXP) !== -1) {
+    if (this.isKnownError(exceptionString)) {
       const errorMessageParts = exceptionString.split('|');
       throw this.determineErrorByCodeAndThrow(errorMessageParts as [string, string], method);
     } else {
@@ -66,9 +73,17 @@ export class ServerError implements HttpInterceptor {
   }
 }
 
+const shouldDelegateErrorToCaller = (method): boolean => {
+  return registeredMethods[method];
+};
+
+const registeredMethods = {
+  register: true,
+};
+
 const GENERAL_ERRORS = {
   9004: {
-   default: 'There was an issue with the transaction, user phone number missing and required'
+    default: 'There was an issue with the transaction, user phone number missing and required',
   },
   9999: {
     default: 'Unable to parse response',

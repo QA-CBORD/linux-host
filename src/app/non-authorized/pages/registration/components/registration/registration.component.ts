@@ -35,10 +35,10 @@ export class RegistrationComponent implements OnInit {
 
   async ngOnInit() {
     await this.formFieldsetup();
-    const { formData } = await this.registrationFacade.getData();
-    this.title$ = of(formData.title);
-    this.btnText$ = of(formData.submitBtnTxt);
-    this.passwordValidators = formData.passwordValidators;
+    const { regCsModel } = await this.registrationFacade.getData();
+    this.title$ = of(regCsModel.title);
+    this.btnText$ = of(regCsModel.submitBtnTxt);
+    this.passwordValidators = regCsModel.passwordValidators;
   }
 
   private async formFieldsetup(): Promise<void> {
@@ -97,15 +97,15 @@ export class RegistrationComponent implements OnInit {
 
   private async onRegistrationSuccess(response): Promise<void> {
     this.modalCtrl.dismiss();
-    const data = await (await this.registrationFacade.getData()).formData;
+    const { regCsModel } = await await this.registrationFacade.getData();
     const modal = await this.modalCtrl.create({
       backdropDismiss: false,
       componentProps: {
         pageContent: {
-          dismissBtnText: data.dismissBtnText,
-          resendEmailBtnText: data.resendEmail,
-          title: data.successTitle,
-          message: data.successMessage,
+          dismissBtnText: regCsModel.dismissBtnText,
+          resendEmailBtnText: regCsModel.resendEmail,
+          title: regCsModel.successTitle,
+          message: regCsModel.successMessage,
         },
       },
       component: RegistrationSuccessComponent,
@@ -125,16 +125,11 @@ export class RegistrationComponent implements OnInit {
       ({ response }) => this.onRegistrationSuccess(response),
       async error => {
         const [errorCode] = error.message.split('|');
-        const { formData } = await this.registrationFacade.getData();
-        const message = ValidErrorCodes[errorCode] || formData.registrationFailedMessage;
+        const { regCsModel } = await this.registrationFacade.getData();
+        const message = regCsModel.fromCodeOrDefaultErrortext(errorCode);
         this.toastService.showToast({ message, duration: 6000 });
         this.loadingService.closeSpinner();
       }
     );
   }
 }
-
-const ValidErrorCodes = {
-  6101: 'Cannot find a match for given user information',
-  9505: 'Your password contains some weird combination, try another.'
-};

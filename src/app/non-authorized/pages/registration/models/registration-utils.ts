@@ -28,7 +28,7 @@ export enum RegistrationApiMethods {
 
 export interface UserRegistrationManager {
   register(formData): Observable<any>;
-  getData(): Promise<{ fieldList: FormFieldList; formData: RegistrationCsModel }>;
+  getData(): Promise<{ fieldList: FormFieldList; regCsModel: RegistrationCsModel }>;
 }
 
 export interface FormFieldList {

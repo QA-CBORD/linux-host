@@ -4,7 +4,7 @@ import { take, map, catchError } from 'rxjs/operators';
 import { CONTENT_STRINGS_CATEGORIES } from 'src/app/content-strings';
 import { buildPasswordValidators } from 'src/app/password-validation/models/input-validator.model';
 import { RegistrationService } from '../services/registration.service';
-import { rfStaticFields } from './form-config';
+import { rfStaticFields } from './form-controls.config';
 import { RegistrationCsModel } from './registration-content-strings.model';
 import { FormFieldList, Field } from './registration-utils';
 
@@ -32,10 +32,10 @@ export class UserRegistrationBase {
     );
   }
 
-  async getData(): Promise<{ fieldList: FormFieldList; formData: RegistrationCsModel }> {
-    const formData = await this.getFormStrings().toPromise();
-    const fieldList = await this.toFormFieldList(await this.formFieldsConfig(formData));
-    return { fieldList, formData };
+  async getData(): Promise<{ fieldList: FormFieldList; regCsModel: RegistrationCsModel }> {
+    const regCsModel = await this.getFormStrings().toPromise();
+    const fieldList = await this.toFormFieldList(await this.formFieldsConfig(regCsModel));
+    return { fieldList, regCsModel };
   }
 
   protected async toFormFieldList(formFields: Field[]): Promise<FormFieldList> {

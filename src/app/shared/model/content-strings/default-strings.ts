@@ -30,20 +30,47 @@ export const defaultRegistrationCs = {
   success_screen_message:
     'We have sent you a verification email. Tap the link inside that to verify your email and login',
   passwordValidators: [],
+  error_code_7001: 'A confirmed cashless user already exists and can not be added again',
+  error_code_9505: 'Your password contains some weird combination, try another.',
+  error_code_6101: 'Cannot find a match for given user information',
 };
 
 export const defaultMobileCredentialCs = {
-  nfc_dialog_defaults: {
-    nfc_off_dialog_accept: 'Proceed',
-    nfc_off_dialog_cancel: 'Cancel',
-    nfc_off_dialog_title: 'NFC is turned off',
-    nfc_off_dialog_text:
-      'The NFC setting is turned off for your phone. You can proceed and provision your credential, but it will not work when presented to an NFC reader to open a door or pay for a purchase until you turn on your NFC setting.',
-  },
-
+  nfc_off_dialog_accept: 'Proceed',
+  nfc_off_dialog_cancel: 'Cancel',
+  nfc_off_dialog_title: 'NFC is turned off',
+  nfc_off_dialog_text:
+    'The NFC setting is turned off for your phone. You can proceed and provision your credential, but it will not work when presented to an NFC reader to open a door or pay for a purchase until you turn on your NFC setting.',
   terms: '<p>content string describing terms and conditions for cbord HID mobile credentials.</p>',
   'usage-instructions':
     '<p>Instructions for your mobile credential. Once you provision your mobile credential, it will be registered with your phones NFC chip and can be used in all of the same places that your plastic ID card could be used. Places such as opening doors, or paying for food on campus.</p>',
+  usage_dialog_btn_uninstall: 'Uninstall',
+  usage_dialog_btn_ok: 'OK',
+  usage_dialog_title: 'Usage instructions',
+  mc_exist_title: 'Credential already provisioned',
+  mc_provisioned_text:
+    'We have detected that you already provisioned a mobile ID, but it is not on this device. You may have uninstalled GET Mobile, deleted the app cache data, or your mobile ID is still installed on another device. If you proceed with this new installation, any previously installed mobile ID will be revoked. Would you like to proceed ?',
+  accept_install: 'Accept and Install',
+  mc_installed_text:
+    'We have detected there is an active mobile ID installed on this device. if you proceed with this new installation, any previously installed ID will be revoked.',
+  confirm_title: 'Please confirm',
+  confirm_text: 'Are you sure you want to uninstall your mobile ID ?',
+  confirm_btn: 'Confirm',
+  install_err_title: 'Unexpected error',
+  install_err_text: 'An unexpected error occurred, please try again later',
+  mc_install_err: 'Mobile credential installation error',
+  mc_install_retry: 'retry',
+  terms_btn_accept: 'Agree',
+  terms_btn_decline: 'Decline',
+  terms_title: 'Terms and Conditions',
+  cred_available: 'ID not added to Phone',
+  cred_available_gpay: 'ID not added to Phone',
+  cred_enabled: 'Mobile ID enabled',
+  cred_enabled_gpay: 'ID added to Gpay',
+  cred_not_ready: 'Mobile ID installed [not ready]',
+  cred_not_ready_gpay: 'ID added to Gpay [not ready]',
+  cred_revoked: 'Mobile ID revoked',
+  is_loading_text: 'Processing ... please wait',
 };
 
 export const defaultPasswordChangeCs = {

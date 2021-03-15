@@ -17,7 +17,7 @@ import { EditHomePageModalComponent } from '@shared/ui-components/edit-home-page
 import { SETTINGS_ID } from './models/settings-id.enum';
 import { ReportCardStatusSetting } from './models/report-card-status.config';
 import { ReportCardComponent } from './pages/report-card/report-card.component';
-import { MobileCredentialMetadata } from './pages/credential-metadata/mobile-cred-metadata';
+import { MobileCredentialMetadata } from './pages/credential-metadata/mobile-credential-metadata.page';
 import { PasswordChangeComponent } from '@shared/ui-components/change-password/password-change.component';
 
 export enum LOCAL_ROUTING {
