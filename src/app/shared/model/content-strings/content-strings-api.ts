@@ -5,6 +5,7 @@ import { PreloginCsModel } from 'src/app/non-authorized/pages/pre-login/models/p
 import { RegistrationCsModel } from 'src/app/non-authorized/pages/registration/models/registration-content-strings.model';
 import { NullableContent } from './content-string-models';
 
+
 export const ContentStringApi = {
   forgotPassword: (content: ContentStringInfo[] = []): ForgotPasswordCsModel => {
     return new ForgotPasswordCsModel(NullableContent.build(content));
