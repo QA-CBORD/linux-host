@@ -67,7 +67,6 @@ export class RegistrationCsModel extends ContentStringModel {
 
   // may return null;
   public textFromErrorCode(errorCode: string): string {
-    console.log(`searching for ==>>> error_code_${errorCode} from`, this.content)
     return this.content[`error_code_${errorCode}`];
   }
 }
