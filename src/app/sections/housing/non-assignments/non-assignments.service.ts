@@ -13,9 +13,11 @@ import {
   QuestionsStorageService
 } from '@sections/housing/questions/questions-storage.service';
 import {
+  QuestionAddressTypeGroup,
   QuestionAssetTypeDetails,
   QuestionAssetTypeDetailsBase,
   QuestionBase,
+  QuestionCheckboxGroup,
   QuestionFormControl
 } from '@sections/housing/questions/types';
 import { isDefined } from '@sections/housing/utils';
@@ -213,6 +215,8 @@ export class NonAssignmentsService {
       (group, question: QuestionFormControl, questionName: string, storedValue: string) => {
         if (question instanceof QuestionAssetTypeDetails) {
           group[questionName] = this._questionsService.toQuestionAssetTypeDetailsGroup(storedValue, question);
+        } else if (question instanceof QuestionAddressTypeGroup) {
+          group[questionName] = this._questionsService.toQuestionAddressTypeControls(storedValue, question);
         } else {
           group[questionName] = this._toFormControl(storedValue, question, nonAssignmentDetails);
         }
@@ -231,6 +235,6 @@ export class NonAssignmentsService {
         value = this._questionsService.getAttributeValue(nonAssignmentDetails.patronAttributes, question) || '';
     }
 
-    return new FormControl({ value, disabled: true });
+    return new FormControl({ value, disabled: question.readonly});
   }
 }
