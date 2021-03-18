@@ -139,17 +139,6 @@ export class NonAssignmentsDetailsPage implements OnInit, OnDestroy {
 
   private _update(): void {
     this._loadingService.showSpinner();
-    
-    const subscription: Subscription = 
-      this.selectedAssetType$.subscribe(assetTypeKey => {
-        console.log('selected:', assetTypeKey);
-        this._nonAssignmentsService.submitContract(assetTypeKey, this.termKey)
-          .subscribe({
-            next: () => this._handleSuccess(),
-            error: (error: any) => this._handleErrors(error),
-          });
-      });
 
-    this._subscription.add(subscription);
   }
 }
