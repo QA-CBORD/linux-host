@@ -4,8 +4,8 @@ import {
   FormGroup
 } from '@angular/forms';
 
-import { Observable } from 'rxjs';
-import { map, withLatestFrom } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { catchError, map, withLatestFrom } from 'rxjs/operators';
 
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import {
@@ -20,7 +20,6 @@ import {
   QuestionFormControl
 } from '@sections/housing/questions/types';
 import { flat, isDefined } from '@sections/housing/utils';
-import { ChargeSchedulesService } from '@sections/housing/charge-schedules/charge-schedules.service';
 import { QuestionsPage } from '@sections/housing/questions/questions.model';
 import { QuestionsService } from '@sections/housing/questions/questions.service';
 import { HousingProxyService } from '../housing-proxy.service';
@@ -32,7 +31,8 @@ import {
   ContractRequest,
   NonAssignmentDetails
 } from './non-assignments.model';
-import { ResponseStatus } from '../housing.model';
+import { Response } from '@sections/housing/housing.model';
+import { isSuccessful } from '../utils/is-successful';
 
 @Injectable({
   providedIn: 'root'
@@ -47,8 +47,7 @@ export class NonAssignmentsService {
     private _housingProxyService: HousingProxyService,
     private _questionsStorageService: QuestionsStorageService,
     private _questionsService: QuestionsService,
-    private _nonAssignmentsStateService: NonAssignmentsStateService,
-    private _chargeSchedulesService: ChargeSchedulesService
+    private _nonAssignmentsStateService: NonAssignmentsStateService
   ) { }
 
   getQuestions(key: number): Observable<QuestionsPage[]> {
@@ -66,7 +65,7 @@ export class NonAssignmentsService {
     return this._nonAssignmentsStateService.selectedAssetType$;
   }
 
-  submitContract(assetTypeKey: number, termKey: number): Observable<ResponseStatus> {
+  submitContract(assetTypeKey: number, termKey: number): Observable<boolean> {
     const body: ContractRequest = new ContractRequest({
       assetKey: assetTypeKey,
       isAsset: true,
@@ -74,7 +73,19 @@ export class NonAssignmentsService {
       termKey
     });
 
-    return this._housingProxyService.post(this._patronNonAssignmentsUrl, body);
+    console.log('creating non assignment contract');
+
+    return this._housingProxyService.post<Response>(this._patronNonAssignmentsUrl, body).pipe(
+      map(response => {
+        if (isSuccessful(response.status)) {
+          return true;
+        } else {
+          console.log(response);
+          throw new Error(response.status.message);
+        }
+      }),
+      catchError(err => of(false))
+    );
   }
 
   private _getQuestionsPages(nonAssignmentDetails: NonAssignmentDetails): QuestionBase[][] {

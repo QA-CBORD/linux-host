@@ -14,6 +14,10 @@ import { isMobile } from '@core/utils/platform-helper';
 import { NonAssignmentsStateService } from '../non-assignments/non-assignments-state.service';
 import { AssetTypeDetailValue } from '../non-assignments/non-assignments.model';
 import { QuestionAssetTypeDetails } from '../questions/types';
+import { NonAssignmentsService } from '../non-assignments/non-assignments.service';
+import { TermsService } from '../terms/terms.service';
+import { HousingService } from '../housing.service';
+import { ToastService } from '@core/service/toast/toast.service';
 
 @Component({
   selector: 'st-asset-type-details',
@@ -29,11 +33,16 @@ export class AssetTypeDetailsComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription;
   private activeAlerts: HTMLIonAlertElement[] = [];
 
+  termKey: number = 0;
+
   constructor(
     private _alertController: AlertController,
     private _platform: Platform,
     private _loadingService: LoadingService,
-    private _nonAssignmentStateService: NonAssignmentsStateService) { }
+    private _housingService: HousingService,
+    private _nonAssignmentService: NonAssignmentsService,
+    private _termsService: TermsService,
+    private _toastService: ToastService) { }
 
   ngOnInit() {
     console.log(isMobile(this._platform));
@@ -45,6 +54,8 @@ export class AssetTypeDetailsComponent implements OnInit, OnDestroy {
         this.activeAlerts = [];
       });
     }
+
+    this._initTermSubscription();
   }
 
   ngOnDestroy(): void {
@@ -55,10 +66,13 @@ export class AssetTypeDetailsComponent implements OnInit, OnDestroy {
     return assetTypeDetail.label;
   }
 
-  async markItemAsSelected(assetType: number) {
+  async selectAsset(selectedAsset: AssetTypeDetailValue[]) {
+    const assetTypeKey = selectedAsset[0].assetTypeKey;
+    const assetTypeName = selectedAsset.find(x => x.label === 'Name').value;
+
     const alert = await this._alertController.create({
       header: 'Confirm',
-      message: 'Are you sure you want to select this asset?',
+      message: `Are you sure you want to select ${assetTypeName}?`,
       buttons: [
         {
           text: 'NO',
@@ -76,16 +90,37 @@ export class AssetTypeDetailsComponent implements OnInit, OnDestroy {
           handler: () => {
             this._loadingService.showSpinner();
             this.activeAlerts = [];
-            const sub = this._nonAssignmentStateService.setSelectedAssetType(assetType)
-              .subscribe(d => {
-                this._loadingService.closeSpinner();
-              });
-            this.subscriptions.add(sub);
+            
+            console.log('selected asset:', assetTypeKey);
+
+            const createContractSubscription =
+              this._nonAssignmentService.submitContract(assetTypeKey, this.termKey)
+                  .subscribe(status => {
+                    if (status) {
+                      // redirect to housing dashboard (terms page)
+                      alert.dismiss().then(() => this._housingService.handleSuccess());
+                    } else {
+                      alert.dismiss().then(() => {
+                        this._loadingService.closeSpinner();
+                        console.log('Unable to create contract for selected asset type');
+                        this._toastService.showToast({
+                          message: 'The form could not be processed at this time. Try again later',
+                        });
+                      });
+                    }
+                  });
+
+            this.subscriptions.add(createContractSubscription);
           },
         },
       ],
     });
     this.activeAlerts.push(alert);
     await alert.present();
+  }
+
+  private _initTermSubscription() {
+    const termSubs = this._termsService.termId$.subscribe(termId => this.termKey = termId);
+    this.subscriptions.add(termSubs);
   }
 }
