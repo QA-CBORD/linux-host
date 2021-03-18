@@ -152,7 +152,13 @@ export class QuestionsService {
       return [].concat(question);
     }
 
-    const questions: QuestionTextbox[] = [];
+    const questions: QuestionBase[] = [];
+    questions.push(new QuestionHeader({
+      type: 'header',
+      label: question.label,
+      subtype: 'h3',
+    }));
+    
     question.values.forEach((field, index) => {
       questions.push(new QuestionTextbox({
         name: `text-${index}`,
