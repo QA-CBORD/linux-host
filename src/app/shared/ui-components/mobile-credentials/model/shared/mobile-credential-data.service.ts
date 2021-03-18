@@ -106,7 +106,7 @@ export class MobileCredentialDataService {
     );
   }
 
-  activePasses$(): Observable<MobileCredential> {
+  activePasses$(args?: any): Observable<MobileCredential> {
     return this.getActivePasses().pipe(map(activePasses => MobileCredentialFactory.fromActivePasses(activePasses)));
   }
 

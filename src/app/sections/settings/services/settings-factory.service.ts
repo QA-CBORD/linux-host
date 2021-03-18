@@ -68,6 +68,7 @@ export class SettingsFactoryService {
       const section = parsedSettings[sectionIndex];
       const promises = [];
       const hiddenSettings: { [key: string]: Boolean } = {};
+
       for (let settingIndex = 0; settingIndex < section.items.length; settingIndex++) {
         const setting = section.items[settingIndex];
         promises.push(
@@ -88,65 +89,73 @@ export class SettingsFactoryService {
   }
 
   private checkDisplayOption(setting: SettingItemConfig): Promise<boolean> {
-    if (setting.validations) {
-      const validations$ = [];
-      for (const validation of setting.validations) {
-        if (validation.type === SETTINGS_VALIDATIONS.SettingEnable) {
-          validations$.push(
-            this.settingsFacade.getSetting(validation.value as Settings.Setting).pipe(
-              map(({ value }): boolean => parseInt(value) === 1),
-              take(1)
-            )
+    return this.authFacadeService.cachedLoginType$
+      .pipe(
+        switchMap(isGuest => {
+          if (isGuest && setting.studentsOnly) {
+            return of(false);
+          }
+
+          const checks$: Observable<boolean>[] = [of(true)];
+          if (setting.validations) {
+            for (const validation of setting.validations) {
+              if (validation.type === SETTINGS_VALIDATIONS.SettingEnable) {
+                checks$.push(
+                  this.settingsFacade.getSetting(validation.value as Settings.Setting).pipe(
+                    map(({ value }): boolean => parseInt(value) === 1),
+                    take(1)
+                  )
+                );
+              } else if (validation.type === SETTINGS_VALIDATIONS.Biometric) {
+                checks$.push(
+                  this.identityService.areBiometricsAvailable().pipe(
+                    tap(async biometricsEnabled => {
+                      if (biometricsEnabled) {
+                        const biometrics = await this.identityFacadeService.getAvailableBiometricHardware();
+                        const biometric = configureBiometricsConfig(biometrics);
+                        setting.label = biometric.name;
+                        setting.icon = biometric.icon;
+                      }
+                    }),
+                    take(1)
+                  )
+                );
+              } else if (validation.type === SETTINGS_VALIDATIONS.StatusSettingEnable) {
+                const statusValidation = validation.value as StatusSettingValidation;
+                checks$.push(
+                  statusValidation.getStatusValidation(this.services).pipe(
+                    switchMap(setting =>
+                      this.settingsFacade
+                        .getSetting(setting as Settings.Setting)
+                        .pipe(map(({ value }): boolean => parseInt(value) === 1))
+                    ),
+                    take(1)
+                  )
+                );
+              } else if (validation.type === SETTINGS_VALIDATIONS.MobileCredentialEnabled) {
+                checks$.push(this.mobileCredentialFacade.showCredentialMetadata().pipe(take(1)));
+              } else if (validation.type === SETTINGS_VALIDATIONS.ChangePasswordEnabled) {
+                checks$.push(
+                  from(this.sessionFacadeService.determineInstitutionSelectionLoginState()).pipe(
+                    switchMap(login => {
+                      if (login === LoginState.HOSTED) {
+                        return of(true);
+                      }
+                      return of(false);
+                    })
+                  )
+                );
+              }
+            }
+          }
+          return zip(...checks$).pipe(
+            map(checks => checks.every(checkTrue => checkTrue)),
+            take(1)
           );
-        } else if (validation.type === SETTINGS_VALIDATIONS.Biometric) {
-          validations$.push(
-            this.identityService.areBiometricsAvailable().pipe(
-              tap(async biometricsEnabled => {
-                if (biometricsEnabled) {
-                  const biometrics = await this.identityFacadeService.getAvailableBiometricHardware();
-                  const biometric = configureBiometricsConfig(biometrics);
-                  setting.label = biometric.name;
-                  setting.icon = biometric.icon;
-                }
-              }),
-              take(1)
-            )
-          );
-        } else if (validation.type === SETTINGS_VALIDATIONS.StatusSettingEnable) {
-          const statusValidation = validation.value as StatusSettingValidation;
-          validations$.push(
-            statusValidation.getStatusValidation(this.services).pipe(
-              switchMap(setting =>
-                this.settingsFacade
-                  .getSetting(setting as Settings.Setting)
-                  .pipe(map(({ value }): boolean => parseInt(value) === 1))
-              ),
-              take(1)
-            )
-          );
-        } else if (validation.type === SETTINGS_VALIDATIONS.MobileCredentialEnabled) {
-          validations$.push(this.mobileCredentialFacade.showCredentialMetadata().pipe(take(1)));
-        } else if (validation.type === SETTINGS_VALIDATIONS.ChangePasswordEnabled) {
-          validations$.push(
-            from(this.sessionFacadeService.determineInstitutionSelectionLoginState()).pipe(
-              switchMap(login => {
-                if (login === LoginState.HOSTED) {
-                  return of(true);
-                }
-                return of(false);
-              })
-            )
-          );
-        }
-      }
-      return merge(...validations$)
-        .pipe(
-          reduce((acc: boolean, val: boolean): boolean => acc && val),
-          take(1)
-        )
-        .toPromise();
-    }
-    return of(true).toPromise();
+        }),
+        take(1)
+      )
+      .toPromise();
   }
 
   get photoUploadEnabled$(): Observable<boolean> {

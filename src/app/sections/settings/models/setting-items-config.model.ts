@@ -31,6 +31,7 @@ export interface SettingItemConfig {
   toggleLabel?: ToggleLabel;
   validations?: SettingItemValidation[];
   modalContent?: ModalContent | HTMLContentString;
+  studentsOnly?: boolean;
   setToggleStatus?: (services: SettingsServices) => void;
   setCallback?: (services: SettingsServices | undefined) => void;
   callback?: () => Promise<any>;
@@ -51,6 +52,7 @@ export interface ToggleLabel {
 export interface ModalContent {
   component?: any;
   biometric?: string;
+  contentStrings?: DomainContentString[];
 }
 export interface HTMLContentString {
   contentStrings: DomainContentString[];
@@ -60,7 +62,7 @@ export interface HTMLContentString {
 export interface DomainContentString {
   domain: CONTENT_STRINGS_DOMAINS;
   category: CONTENT_STRINGS_CATEGORIES;
-  name: string;
+  name: string | null;
 }
 export enum SETTINGS_VALIDATIONS {
   SettingEnable = 'setting-enable',

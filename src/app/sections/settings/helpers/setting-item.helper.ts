@@ -12,6 +12,7 @@ import { from, concat, zip, Observable } from 'rxjs';
 import { SETTINGS_ID } from '../models/settings-id.enum';
 import { PinAction } from '@shared/ui-components/pin/pin.page';
 import { ReportCardStatus } from '../models/report-card-status.config';
+import { ContentStringInfo } from '@core/model/content/content-string-info.model';
 
 export function getCardStatusValidation(services: SettingsServices): Observable<string> {
   const statusValidation = this as StatusSettingValidation;
@@ -101,16 +102,40 @@ export function handleOpenHTMLModal(services: SettingsServices) {
 }
 
 export async function openModal(services: SettingsServices) {
+  let contentStringList = null;
   const setting: SettingItemConfig = this;
+  const contentCategories = setting.modalContent.contentStrings;
+  if (contentCategories) {
+    contentStringList = await contentStringsByCategory(services, contentCategories);
+  }
+
   setting.callback = async function() {
     const settingModal = await services.modalController.create({
       backdropDismiss: false,
       component: setting.modalContent.component,
+      componentProps: { contentStrings: contentStringList },
     });
     services.globalNav.hideNavBar();
     settingModal.onDidDismiss().then(() => services.globalNav.showNavBar());
     return settingModal.present();
   };
+}
+
+async function contentStringsByCategory(
+  services: SettingsServices,
+  contentStrings: DomainContentString[]
+): Promise<[ContentStringInfo[]]> {
+  const contentStringList: [ContentStringInfo[]] = [[]];
+  for (let content of contentStrings) {
+    if (content.name === null) {
+      const item = await services.contentString
+        .fetchContentStrings$(content.domain, content.category)
+        .pipe(take(1))
+        .toPromise();
+      contentStringList.push(item);
+    }
+  }
+  return contentStringList;
 }
 
 export async function openSiteURL(services: SettingsServices): Promise<void> {

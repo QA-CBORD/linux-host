@@ -14,6 +14,7 @@ import { ContentStringsFacadeService } from '@core/facades/content-strings/conte
 import { from, Observable, of } from 'rxjs';
 import { getUserFullName } from '@core/utils/general-helpers';
 import { UserInfo } from '@core/model/user';
+import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 const { Device } = Plugins;
 
 @Component({
@@ -27,11 +28,13 @@ export class SettingsPage implements OnInit {
   userName$: Observable<string>;
   institutionName$: Observable<string>;
   userPhoto$: Observable<string>;
+  isGuest: boolean;
 
   constructor(
     private router: Router,
     private readonly sessionFacadeService: SessionFacadeService,
     private readonly userFacadeService: UserFacadeService,
+    private readonly authFacadeService: AuthFacadeService,
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly settingsFactory: SettingsFactoryService,
     private readonly route: ActivatedRoute
@@ -43,6 +46,7 @@ export class SettingsPage implements OnInit {
     this.institutionName$ = this.getInstitutionName$();
     this.userPhoto$ = this.getUserPhoto$();
     this.appVersion$ = this.getAppVersion$();
+    this.authFacadeService.cachedLoginType$.toPromise().then(isGuest => (this.isGuest = isGuest));
   }
 
   //couldnt get photo upload route to work correctly, still trying to fix

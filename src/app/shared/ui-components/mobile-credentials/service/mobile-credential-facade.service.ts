@@ -174,8 +174,8 @@ export class MobileCredentialFacade {
     this.mobileCredentialManager = null;
   }
 
-  get credentialService$(): MobileCredentialDataService {
-    return this.mobileCredentialManager && this.mobileCredentialManager.getService();
+  get credentialController(): MobileCredentialManager {
+    return this.mobileCredentialManager;
   }
 }
 

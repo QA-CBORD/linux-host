@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { GlobalNavService } from '../st-global-navigation/services/global-nav.service';
 import { ModalController, PopoverController } from '@ionic/angular';
+import { TermsContent } from './model/android/android-credential-content-strings.model';
 
 @Component({
   selector: 'st-mobile-credentials',
@@ -8,10 +9,10 @@ import { ModalController, PopoverController } from '@ionic/angular';
   styleUrls: ['./mobile-credentials.component.scss'],
 })
 export class MobileCredentialsComponent implements OnInit {
-  @Input() title: string = 'Terms and Conditions';
-  @Input() termsAndConditions: Promise<string>;
-  @Input() usageInstructions: Promise<string>;
-  @Input() btnText: string;
+  @Input() title: string;
+  @Input() terms: TermsContent;
+  @Input() usageText: Promise<string>;
+  @Input() buttonText: string;
   @Input() showFooter: boolean = true;
   @Input() closeNavbar: boolean = true;
 
@@ -23,7 +24,8 @@ export class MobileCredentialsComponent implements OnInit {
 
   ngOnInit() {
     setTimeout(() => {
-      if (this.termsAndConditions) {
+      if (this.terms) {
+        this.title = this.terms.title;
         this.globalNav.hideNavBar();
       }
     });
@@ -34,9 +36,7 @@ export class MobileCredentialsComponent implements OnInit {
   }
 
   onDecline(): void {
-    this.termsAndConditions
-      ? this.modalCtrl.dismiss({ termsAccepted: false })
-      : this.popoverCtrl.dismiss({ action: null });
+    this.modalCtrl.dismiss({ termsAccepted: false }).catch(() => this.popoverCtrl.dismiss({ action: null }));
   }
 
   ngOnDestroy(): void {
@@ -46,6 +46,6 @@ export class MobileCredentialsComponent implements OnInit {
   }
 
   onButtonClicked(): void {
-    this.popoverCtrl.dismiss({ action: this.btnText });
+    this.popoverCtrl.dismiss({ action: this.buttonText });
   }
 }

@@ -152,7 +152,6 @@ export class HIDPlugginProxy {
 
   private async startScanning(controller: TaskExecutionController): Promise<void> {
     controller.incrementExecCount();
-    let locationPermissionRequired: boolean = false;
     let executeCall = async (pluginCall: (param?) => Promise<HIDSdkTransactionResponse>, args?: any): Promise<any> => {
       let transactionResponse: HIDSdkTransactionResponse = await pluginCall(args);
       return transactionResponse.transactionStatus;
@@ -167,16 +166,13 @@ export class HIDPlugginProxy {
     };
     let startScanningSuccess = async (): Promise<boolean> => {
       let startScanTransactionResult = await executeCall(HIDPlugin.startScanning);
-      locationPermissionRequired = startScanTransactionResult == HID_SDK_ERR.LOCATION_PERMISSION_REQUIRED;
       return startScanTransactionResult == HID_SDK_ERR.TRANSACTION_SUCCESS;
     };
     if ((await endpointRefreshSuccess()) && !controller.maxExecutionReached()) {
       if (await isEndpointActiveNow()) {
         if (await startScanningSuccess()) {
           controller.stopTaskExecution(EndpointStatuses.PROVISIONED_ACTIVE); // mobile credential is in a "fine state", whoohoo!!!
-        } else if (locationPermissionRequired && controller.remainingExecCount == 1) {
-          controller.stopTaskExecution(EndpointStatuses.LOCATION_PERMISSION_REQUIRED);
-        }
+        } 
       }
     } else if (controller.maxExecutionReached()) {
       controller.stopTaskExecution(EndpointStatuses.PROVISIONED_INACTIVE);

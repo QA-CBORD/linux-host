@@ -2,7 +2,7 @@ import { Validators } from '@angular/forms';
 import { Cvalidators } from './password-validation';
 import { Field, STATICFIELDS } from './registration-utils';
 
-export const registrationFormStaticFields: { [key: string]: Field } = {
+export const rfStaticFields: { [key: string]: Field } = {
   first_name: new Field({
     alignHorizontal: true,
     label: 'First Name',
@@ -36,9 +36,8 @@ export const registrationFormStaticFields: { [key: string]: Field } = {
     idd: 'phone_number',
     name: STATICFIELDS.phone,
     type: 'text',
-    touched: true,
-    cValidator: [Cvalidators.nullablePhone()],
-    validators: ['', Validators.nullValidator],
+    cValidator: [Cvalidators.phoneNumber()],
+    validators: ['', Validators.required],
   }),
   password: new Field({
     label: 'Create Password',

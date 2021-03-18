@@ -9,6 +9,7 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { AppleWalletCredentialState } from '../model/ios/applet-wallet-credential.state';
 import { Injectable } from '@angular/core';
 import { MobileCredentialDataService } from '../model/shared/mobile-credential-data.service';
+import { AndroidCredentialCsModel } from '../model/android/android-credential-content-strings.model';
 const { IOSDevice } = Plugins;
 
 @Injectable({providedIn: 'root'})
@@ -20,6 +21,11 @@ export class IOSCredentialManager implements MobileCredentialManager {
     private readonly userFacadeService: UserFacadeService,
     private readonly authFacadeService: AuthFacadeService
   ) {}
+
+  
+  contentStringAsync(): Promise<AndroidCredentialCsModel> {
+    throw new Error('Method not implemented.');
+  }
 
 
   getService(): MobileCredentialDataService {

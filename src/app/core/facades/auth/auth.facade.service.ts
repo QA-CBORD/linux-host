@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { map, switchMap, take, tap } from 'rxjs/operators';
 import { ServiceStateFacade } from '@core/classes/service-state-facade';
 import { AuthApiService } from '@core/service/auth-api/auth-api.service';
 import { UserLogin } from '@core/model/user';
@@ -13,11 +13,13 @@ const { Device } = Plugins;
 })
 export class AuthFacadeService extends ServiceStateFacade {
   private sessionIdKey = 'get_sessionId';
+  private loginTypeKey = 'get_logintype';
+
   private systemSessionId = null;
 
   constructor(
     private readonly authApiService: AuthApiService,
-    private readonly storageStateService: StorageStateService,
+    private readonly storageStateService: StorageStateService
   ) {
     super();
   }
@@ -29,29 +31,34 @@ export class AuthFacadeService extends ServiceStateFacade {
   get cachedAuthSessionToken$(): Observable<string | null> {
     return this.storageStateService
       .getStateEntityByKey$<string>(this.sessionIdKey)
-      .pipe(map(data => data ? data.value : null));
+      .pipe(map(data => (data ? data.value : null)));
   }
 
-  set cachedAuthSessionToken(sessionId: string){
+  get cachedLoginType$(): Observable<boolean | null> {
+    return this.storageStateService.getStateEntityByKey$<string>(this.loginTypeKey).pipe(
+      map(data => (data ? !!data.value : null)),
+      take(1)
+    );
+  }
+
+  set cachedAuthSessionToken(sessionId: string) {
     this.storageStateService.updateStateEntity(this.sessionIdKey, sessionId, { highPriorityKey: true });
+  }
+
+  set cachedLoginType(isGuest: boolean) {
+    this.storageStateService.updateStateEntity(this.loginTypeKey, isGuest, { highPriorityKey: true });
   }
 
   authenticateUser$(userCredentials: UserLogin): Observable<string> {
     return this.authApiService
       .authenticateUser(userCredentials)
-      .pipe(
-        tap(res =>
-          this.storageStateService.updateStateEntity(this.sessionIdKey, res, { highPriorityKey: true })
-        )
-      );
+      .pipe(tap(res => this.storageStateService.updateStateEntity(this.sessionIdKey, res, { highPriorityKey: true })));
   }
 
   authenticatePin$(pin: string): Observable<boolean> {
     return from(Device.getInfo()).pipe(
       switchMap(({ uuid }) => this.authApiService.authenticatePin(pin, uuid)),
-      tap(res =>
-        this.storageStateService.updateStateEntity(this.sessionIdKey, res, { highPriorityKey: true })
-      ),
+      tap(res => this.storageStateService.updateStateEntity(this.sessionIdKey, res, { highPriorityKey: true })),
         map(res => !!res)
       );
   }

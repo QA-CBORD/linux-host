@@ -2,15 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ModalController } from '@ionic/angular';
 import { MobileCredentialsComponent } from '@shared/ui-components/mobile-credentials/mobile-credentials.component';
-import { AndroidCredentialDataService } from '@shared/ui-components/mobile-credentials/model/shared/android-credential-data.service';
-import { HidCredentialDataService } from '@shared/ui-components/mobile-credentials/service/hid-credential.data.service';
+import { TermsContent } from '@shared/ui-components/mobile-credentials/model/android/android-credential-content-strings.model';
+import { HIDCredentialManager } from '@shared/ui-components/mobile-credentials/model/android/hid/hid-credential-manager';
 import { MobileCredentialFacade } from '@shared/ui-components/mobile-credentials/service/mobile-credential-facade.service';
 import { GlobalNavService } from '@shared/ui-components/st-global-navigation/services/global-nav.service';
 
 @Component({
-  selector: 'st-mobile-credential',
-  templateUrl: './mobile-credential.component.html',
-  styleUrls: ['./mobile-credential.component.scss'],
+  selector: 'st-mc-metadata',
+  templateUrl: './mobile-credential-metadata.page.html',
+  styleUrls: ['./mobile-credential-metadata.page.scss'],
 })
 export class MobileCredentialMetadata implements OnInit {
   deviceState: any = {};
@@ -27,7 +27,7 @@ export class MobileCredentialMetadata implements OnInit {
     (async () => {
       this.deviceState = await this.mobileCredentialFacade.deviceState$;
       this.globalNav.hideNavBar();
-      this.isHid = this.mobileCredentialFacade.credentialService$ instanceof HidCredentialDataService;
+      this.isHid = this.mobileCredentialFacade.credentialController instanceof HIDCredentialManager;
     })();
   }
 
@@ -35,20 +35,22 @@ export class MobileCredentialMetadata implements OnInit {
     this.modalCtrl.dismiss();
   }
 
-  async loadTerms(): Promise<void> {
+  async viewTerms(): Promise<void> {
+    const terms = (await this.mobileCredentialFacade.credentialController.contentStringAsync()).termString$;
     this.createModal({
       showFooter: false,
       closeNavbar: false,
-      termsAndConditions: await this.termsAndConditionsSource$(),
+      terms,
     });
   }
 
-  async loadUsageInstructions() {
+  async viewUsageInstructions() {
+    const _str = (await this.mobileCredentialFacade.credentialController.contentStringAsync()).usageDialogString$;
     this.createModal({
-      title: 'Usage instructions',
       showFooter: false,
       closeNavbar: false,
-      termsAndConditions: await this.usageInstructions$(),
+      title: _str.title,
+      usageText: _str.mContent,
     });
   }
 
@@ -58,24 +60,7 @@ export class MobileCredentialMetadata implements OnInit {
       component: MobileCredentialsComponent,
       componentProps,
     });
+
     await modal.present();
-  }
-
-  async usageInstructions$(): Promise<string> {
-    this.loadingService.showSpinner();
-    const usageText$ = await (<AndroidCredentialDataService>(
-      this.mobileCredentialFacade.credentialService$
-    )).credentialUsageContentString$();
-    this.loadingService.closeSpinner();
-    return usageText$;
-  }
-
-  async termsAndConditionsSource$(): Promise<string> {
-    this.loadingService.showSpinner();
-    const terms = await (<AndroidCredentialDataService>(
-      this.mobileCredentialFacade.credentialService$
-    )).termsContentString$();
-    this.loadingService.closeSpinner();
-    return terms;
   }
 }

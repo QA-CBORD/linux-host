@@ -27,4 +27,8 @@ export class RegistrationSuccessComponent implements OnInit {
     // resend email here.
     //this.modalCtrl.dismiss();
   }
+
+  onDecline(): void{
+    this.dismiss();
+  }
 }

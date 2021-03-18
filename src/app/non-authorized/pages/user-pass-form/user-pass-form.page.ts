@@ -1,5 +1,5 @@
 import { Settings, PATRON_NAVIGATION, ROLES } from './../../../app.global';
-import { map, skipWhile, tap, take } from 'rxjs/operators';
+import { map, skipWhile, tap, take, catchError } from 'rxjs/operators';
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { Router } from '@angular/router';
@@ -25,6 +25,8 @@ import { AccessibilityService } from '@shared/accessibility/services/accessibili
 import { RegistrationServiceFacade } from '../registration/services/registration-service-facade';
 import { RegistrationComponent } from '../registration/components/registration/registration.component';
 import { ModalController } from '@ionic/angular';
+import { MessageChannel } from '@shared/model/shared-api';
+import { ContentStringApi } from '@shared/model/content-strings/content-strings-api';
 
 @Component({
   selector: 'user-pass-form',
@@ -92,22 +94,25 @@ export class UserPassForm implements OnInit {
     this.authTypeLDAP$ = this.getAuthenticationTypeLDAP$(id, sessionId);
     this.placeholderOfUsername$ = this.getContentStringByName(sessionId, 'email_username');
     this.loginInstructions$ = this.getContentStringByName(sessionId, 'instructions');
-    this.initializeInstitutionInfo(id, sessionId);
     this.signupEnabled$ = this.isSignupEnabled$();
-    this.navedAsGuest$ = history.state.navParams && of(history.state.navParams.asGuest);
+    const data = MessageChannel.get() as any;
+    this.navedAsGuest$ = data.navParams && of(data.navParams.asGuest);
     this.cdRef.detectChanges();
+    this.initializeInstitutionInfo(id, sessionId);
   }
 
   async initializeInstitutionInfo(id, sessionId): Promise<void> {
-    const institutionInfo = history.state.institutionInfo || {};
+    const data = MessageChannel.get() as any;
+    const institutionInfo = data.institutionInfo || {};
     this.nativeHeaderBg$ = Promise.resolve(institutionInfo.backgroundColor);
-    const data = await this.getInstitutionPhoto(id, sessionId);
-    this.institutionPhoto$ = Promise.resolve(data);
+    const photoData = await this.getInstitutionPhoto(id, sessionId);
+    this.institutionPhoto$ = Promise.resolve(photoData);
     this.institutionName$ = Promise.resolve(institutionInfo.name);
     if (!institutionInfo.name) {
       this.institutionName$ = this.getInstitutionName(id, sessionId);
       this.nativeHeaderBg$ = this.getNativeHeaderBg(id, sessionId);
     }
+    this.cdRef.detectChanges();
   }
 
   redirectToWebPage(url) {
@@ -119,6 +124,7 @@ export class UserPassForm implements OnInit {
     this.loadingService.showSpinner();
     await this.registrationFacade.registrationConfig(isGuestRegistration);
     const modal = await this.modalCtrl.create({
+      mode: 'ios',
       backdropDismiss: false,
       component: RegistrationComponent,
     });
@@ -128,7 +134,7 @@ export class UserPassForm implements OnInit {
   }
 
   onSignup(): void {
-    const { navParams } = history.state;
+    const { navParams } = MessageChannel.get();
     if (navParams && this.registrationFacade.guestLoginSupportedInEnv) {
       this.doHostedSignup(navParams);
     } else {
@@ -143,6 +149,16 @@ export class UserPassForm implements OnInit {
   }
 
   async redirectToForgotPassword(): Promise<void> {
+    this.loadingService.showSpinner();
+    const forgotPasswordCs = await this.contentStringsFacadeService
+      .fetchContentStringAfresh(CONTENT_STRINGS_DOMAINS.patronUi, CONTENT_STRINGS_CATEGORIES.forgotPassword)
+      .pipe(
+        map(data => ContentStringApi.forgotPassword(data)),
+        catchError(() => of(ContentStringApi.forgotPassword()))
+      )
+      .toPromise();
+    MessageChannel.put(forgotPasswordCs);
+    this.loadingService.closeSpinner();
     this.router.navigate([ROLES.guest, GUEST_ROUTES.forgotPassword]);
   }
 

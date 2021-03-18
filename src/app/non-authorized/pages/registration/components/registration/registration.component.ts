@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { ModalController } from '@ionic/angular';
-import { Handler } from '@shared/model/shared-api';
 import { Observable, of } from 'rxjs';
 import { InputValidator } from 'src/app/password-validation/models/input-validator.model';
 import { Field, formField, STATICFIELDS } from '../../models/registration-utils';
@@ -36,10 +35,10 @@ export class RegistrationComponent implements OnInit {
 
   async ngOnInit() {
     await this.formFieldsetup();
-    const { formData } = await this.registrationFacade.getData();
-    this.title$ = of(formData.screen_title);
-    this.btnText$ = of(formData.submit_btn_text);
-    this.passwordValidators = formData.passwordValidators;
+    const { regCsModel } = await this.registrationFacade.getData();
+    this.title$ = of(regCsModel.title);
+    this.btnText$ = of(regCsModel.submitBtnTxt);
+    this.passwordValidators = regCsModel.passwordValidators;
   }
 
   private async formFieldsetup(): Promise<void> {
@@ -98,15 +97,15 @@ export class RegistrationComponent implements OnInit {
 
   private async onRegistrationSuccess(response): Promise<void> {
     this.modalCtrl.dismiss();
-    const data = await (await this.registrationFacade.getData()).formData;
+    const { regCsModel } = await await this.registrationFacade.getData();
     const modal = await this.modalCtrl.create({
       backdropDismiss: false,
       componentProps: {
         pageContent: {
-          dismissBtnText: data.success_dismiss_btn,
-          resendEmailBtnText: data.success_resend_email,
-          title: data.success_screen_title,
-          message: data.success_screen_message,
+          dismissBtnText: regCsModel.dismissBtnText,
+          resendEmailBtnText: regCsModel.resendEmail,
+          title: regCsModel.successTitle,
+          message: regCsModel.successMessage,
         },
       },
       component: RegistrationSuccessComponent,
@@ -124,8 +123,10 @@ export class RegistrationComponent implements OnInit {
     await this.loadingService.showSpinner(this.customLoadingOptions);
     this.registrationFacade.submit(formGroup.value).subscribe(
       ({ response }) => this.onRegistrationSuccess(response),
-      () => {
-        const message = 'Registration failed. Please try again later.';
+      async error => {
+        const [errorCode] = error.message.split('|');
+        const { regCsModel } = await this.registrationFacade.getData();
+        const message = regCsModel.fromCodeOrDefaultErrortext(errorCode);
         this.toastService.showToast({ message, duration: 6000 });
         this.loadingService.closeSpinner();
       }
