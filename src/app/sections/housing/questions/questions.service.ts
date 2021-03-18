@@ -4,6 +4,7 @@ import { FormArray, FormControl, FormGroup, ValidatorFn } from '@angular/forms';
 import { integerValidator, numericValidator, parseJsonToArray } from '../utils';
 
 import {
+  QuestionAddressTypeGroup,
   QuestionAssetTypeDetails,
   QuestionAssetTypeDetailsBase,
   QuestionBase,
@@ -101,6 +102,13 @@ export class QuestionsService {
     return new FormArray(controls);
   }
 
+  toQuestionAddressTypeControls(storedValue: any, question: QuestionAddressTypeGroup): FormArray {
+    const values: [] = storedValue || question.values;
+    const controls: FormControl[] = values.map((value: any) => new FormControl({ value, disabled: question.readonly }));
+
+    return new FormArray(controls);
+  }
+
   toQuestionAssetTypeDetailsGroup(storedValue: any, question: QuestionAssetTypeDetails): FormGroup {
     const assetTypeGroup: AssetTypeDetailValue[][] = storedValue || question.assetTypes;
     let groups: any = {};
@@ -121,6 +129,15 @@ export class QuestionsService {
     return foundAttribute ? foundAttribute.value : '';
   }
 
+  // TODOOO
+  getAddressValue(addresses: any[], question: QuestionAddressTypeGroup): string {
+    const foundAddress: any = addresses.find(
+      (address: any) => address.addressTypeKey === question.addressTypeId
+    );
+
+    return foundAddress ? foundAddress.value : '';
+  }
+
   addDataTypeValidator(question: QuestionTextbox, validators: ValidatorFn[]): void {
     const dataType: string = question.dataType ? question.dataType.toLowerCase() : null;
     const dataTypeValidator: ValidatorFn = this._dataTypesValidators[dataType];
@@ -128,6 +145,32 @@ export class QuestionsService {
     if (dataTypeValidator) {
       validators.push(dataTypeValidator);
     }
+  }
+
+  mapToAddressTypeGroup(question: QuestionBase): QuestionBase[] {
+    if (!(question instanceof QuestionAddressTypeGroup)) {
+      return [].concat(question);
+    }
+
+    const questions: QuestionTextbox[] = [];
+    question.values.forEach((field, index) => {
+      questions.push(new QuestionTextbox({
+        name: `text-${index}`,
+        required: question.required,
+        type: 'text',
+        attribute: field.label,
+        consumerKey: question.addressTypeId,
+        facilityKey: null,
+        label: field.label,
+        preferenceKey: null,
+        subtype: 'text',
+        readonly: question.readonly,
+        dataType: 'String',
+        source: question.source
+      }));
+    });
+
+    return questions;
   }
 
   private _mapToQuestions(questions: any[]): QuestionBase[] {
@@ -157,6 +200,8 @@ export class QuestionsService {
             } else {
               return new QuestionContractDetails(question);
             }
+          } else if ((question as QuestionAddressTypeGroup).source === QUESTIONS_SOURCES.ADDRESS_TYPES) {
+            return new QuestionAddressTypeGroup(question);
           } else if (this._isSourceFacility(question as QuestionFacilityAttributes)) {
             return new QuestionFacilityAttributes(question);
           }
