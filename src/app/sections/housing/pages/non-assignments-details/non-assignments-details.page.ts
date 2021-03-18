@@ -47,16 +47,13 @@ export class NonAssignmentsDetailsPage implements OnInit, OnDestroy {
   pages$: Observable<QuestionsPage[]>;
   
   nonAssignmentKey: number;
-  termKey: number = 0;
   selectedAssetType$: Observable<number>;
 
   isSubmitted: boolean = false;
   canSubmit: boolean = true;
   
   constructor(
-    private _termsService: TermsService,
     private _route: ActivatedRoute,
-    private _questionsService: QuestionsService,
     private _nonAssignmentsService: NonAssignmentsService,
     private _router: Router,
     private _toasController: ToastController,
@@ -69,7 +66,6 @@ export class NonAssignmentsDetailsPage implements OnInit, OnDestroy {
     this.nonAssignmentKey = parseInt(this._route.snapshot.paramMap.get('nonAssignmentKey'), 10);
     this._initNonAssignmentDetailsObservable();
     this._initPagesObservable();
-    this._initTermSubscription();
     this._initSelectedAssetSubscription();
   }
 
@@ -102,11 +98,6 @@ export class NonAssignmentsDetailsPage implements OnInit, OnDestroy {
     this.selectedAssetType$ = this._nonAssignmentsService.getSelectedAssetType();
   }
 
-  private _initTermSubscription() {
-    const termSubs = this._termsService.termId$.subscribe(termId => this.termKey = termId);
-    this._subscription.add(termSubs);
-  }
-
   private _initNonAssignmentDetailsObservable(): void {
     this._loadingService.showSpinner();
     
@@ -127,14 +118,6 @@ export class NonAssignmentsDetailsPage implements OnInit, OnDestroy {
 
   private _next(): void {
     this.stepper.next();
-  }
-
-  private _handleSuccess(): void {
-    this._housingService.handleSuccess();
-  }
-
-  private _handleErrors(error: any): void {
-    this._housingService.handleErrors(error);
   }
 
   private _update(): void {
