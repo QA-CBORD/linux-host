@@ -4,7 +4,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, withLatestFrom } from 'rxjs/operators';
 
-import { isDefined } from '@sections/housing/utils';
+import { flat, isDefined } from '@sections/housing/utils';
 
 import { HousingProxyService } from '../housing-proxy.service';
 import { QuestionsService } from '@sections/housing/questions/questions.service';
@@ -73,11 +73,14 @@ export class ContractsService {
   }
 
   private _getQuestionsPages(contractDetails: ContractDetails): QuestionBase[][] {
-    const questions: QuestionBase[] = this._questionsService
+    const questions: QuestionBase[][] = this._questionsService
       .getQuestions(contractDetails.formJson)
-      .map((question: QuestionBase) => this._toChargeSchedulesGroup(question, contractDetails));
+      .map((question: QuestionBase) => {
+        const mappedQuestion = this._toChargeSchedulesGroup(question, contractDetails)
+        return this._questionsService.mapToAddressTypeGroup(mappedQuestion);
+      });
 
-    return this._questionsService.splitByPages(questions);
+    return this._questionsService.splitByPages(flat(questions));
   }
 
   private _getPages(
