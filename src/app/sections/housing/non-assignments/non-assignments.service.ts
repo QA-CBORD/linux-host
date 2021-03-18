@@ -17,10 +17,9 @@ import {
   QuestionAssetTypeDetails,
   QuestionAssetTypeDetailsBase,
   QuestionBase,
-  QuestionCheckboxGroup,
   QuestionFormControl
 } from '@sections/housing/questions/types';
-import { isDefined } from '@sections/housing/utils';
+import { flat, isDefined } from '@sections/housing/utils';
 import { ChargeSchedulesService } from '@sections/housing/charge-schedules/charge-schedules.service';
 import { QuestionsPage } from '@sections/housing/questions/questions.model';
 import { QuestionsService } from '@sections/housing/questions/questions.service';
@@ -79,12 +78,14 @@ export class NonAssignmentsService {
   }
 
   private _getQuestionsPages(nonAssignmentDetails: NonAssignmentDetails): QuestionBase[][] {
-    const questions: QuestionBase[] = this._questionsService
+    const questions: QuestionBase[][] = this._questionsService
       .getQuestions(nonAssignmentDetails.formJson)
-      .map((question: QuestionBase) =>
-        this._mapToAssetTypeDetailsGroup(question, nonAssignmentDetails));
+      .map((question: QuestionBase) => {
+        const mappedQuestion = this._mapToAssetTypeDetailsGroup(question, nonAssignmentDetails);
+        return this._questionsService.mapToAddressTypeGroup(mappedQuestion);
+      });
 
-    return this._questionsService.splitByPages(questions);
+    return this._questionsService.splitByPages(flat(questions));
   }
 
   private _getPages(
