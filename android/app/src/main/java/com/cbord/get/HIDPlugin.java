@@ -24,7 +24,6 @@ public class HIDPlugin extends Plugin {
 
             if(this.HID_SDK_INITIALIZED)
             {
-                System.out.println("*********** already inistitalzed");
                 call.resolve(toJson("success"));
                 return;
             }

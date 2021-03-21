@@ -28,7 +28,7 @@ export abstract class AbstractAndroidCredentialManager implements MobileCredenti
 
 
   async onCredentialStateChanged(): Promise<void> {
-    this.credentialStateChangeListener.onCredentialStateChanged();
+    this.credentialStateChangeListener && this.credentialStateChangeListener.onCredentialStateChanged();
   }
 
   async contentStringAsync(updateUi?: boolean): Promise<AndroidCredentialCsModel> {
@@ -36,7 +36,6 @@ export abstract class AbstractAndroidCredentialManager implements MobileCredenti
     if (updateUi) {
       this.customLoadingOptions.message = contentStrings.isLogingMessage || this.defaultIsLoadingMessage;
       this.mCredential.setUicString$(contentStrings.credStatuString$);
-      this.credentialStateChangeListener && this.credentialStateChangeListener.onCredentialStateChanged();
     }
     return contentStrings;
   }

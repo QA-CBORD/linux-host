@@ -72,6 +72,7 @@ public class MobileKeysApiConfig extends Application implements OrigoReaderConne
     }
 
     public void initializeMobileKeysApi(TransactionCompleteCallback callback) {
+        System.out.println("**** initializeMobileKeysApi ==> " + mobileKeysApiInitialized);
         if (mobileKeysApiInitialized) {
             callback.onCompleted(INITIALIZATION_SUCCESS);
         } else {

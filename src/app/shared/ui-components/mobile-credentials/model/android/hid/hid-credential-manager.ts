@@ -40,7 +40,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     this.hidSdkManager().taskExecutionObs$.subscribe(endpointStatus => {
       if (endpointStatus == EndpointStatuses.PROVISIONED_ACTIVE) {
         this.mCredential.setStatus(MobileCredentialStatuses.PROVISIONED);
-        this.credentialStateChangeListener.onCredentialStateChanged();
+        this.onCredentialStateChanged();
         this.credentialService.updateCachedCredential$(EndpointStatuses.PROVISIONED_ACTIVE);
       } else if (endpointStatus == EndpointStatuses.PROVISIONED_INACTIVE) {
         const time2Update = 300000;
@@ -296,12 +296,12 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
       if (updateSuccess) {
         this.mCredential = newCredential;
         this.hidSdkManager().deleteEndpoint();
-        this.credentialStateChangeListener.onCredentialStateChanged();
+        this.onCredentialStateChanged();
       }
       if (isLastTry && !updateSuccess) {
         this.mCredential.setStatus(MobileCredentialStatuses.AVAILABLE);
         this.hidSdkManager().deleteEndpoint();
-        this.credentialStateChangeListener.onCredentialStateChanged();
+        this.onCredentialStateChanged();
       }
       return updateSuccess;
     };
@@ -320,7 +320,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
       if (this.mCredential.isProvisioned()) {
         if (await this.isEndpointRevoked()) {
           await this.onEndpointRevoked();
-          this.credentialStateChangeListener.onCredentialStateChanged();
+          this.onCredentialStateChanged();
         }
       }
     };
@@ -359,7 +359,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     return endpointState || new EndpointState(EndpointStatuses.NOT_SETUP);
   }
 
-  private async checkDeviceEndpointState$(): Promise<void> {
+  private async checkDeviceEndpointState$(): Promise<boolean> {
     const deviceEndpointState = await this.getDeviceEndpointState();
     const cachedEndpointState = await this.getLocalCachedEndpointState();
     if (deviceEndpointState.isProvisioned()) {
@@ -373,7 +373,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
       }
     } else if (deviceEndpointState.isInactive()) {
       if (await this.isEndpointRevoked()) {
-        this.onEndpointRevoked();
+        await this.onEndpointRevoked();
       } else if (cachedEndpointState.isProcessing()) {
         this.mCredential.setStatus(MobileCredentialStatuses.PROCESSING);
         this.hidSdkManager().doPostInitWork();
@@ -383,25 +383,29 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     } else {
       this.mCredential.setStatus(MobileCredentialStatuses.AVAILABLE);
     }
-    this.credentialStateChangeListener.onCredentialStateChanged();
+    return true;
   }
 
   credentialEnabled$(): Observable<boolean> {
     const credentialEnabled$ = of(this.mCredential.isEnabled()).pipe(
-      tap(async enabled => {
+      switchMap(async enabled => {
         if (enabled) {
-          await this.hidSdkManager().initializeSdk();
-          await this.hidSdkManager().refreshEndpoint();
+          return await this.hidSdkManager().initializeSdk();
+        } else {
+          return false;
         }
       })
     );
     return credentialEnabled$.pipe(
       switchMap(enabled => {
         if (this.mCredential.isProvisioned()) {
-          this.checkDeviceEndpointState$();
-          return of(true);
+          return from(this.checkDeviceEndpointState$()).pipe(map(() => true));
+        } else {
+          if (enabled) {
+            this.hidSdkManager().refreshEndpoint();
+          }
+          return of(enabled);
         }
-        return of(enabled);
       })
     );
   }
@@ -468,7 +472,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
       });
       if (credentialServerUpdateSuccess) {
         delete (<HidCredentialBundle>this.mCredential.credentialBundle).invitationCode;
-        this.credentialStateChangeListener.onCredentialStateChanged();
+        this.onCredentialStateChanged();
         setTimeout(() => this.hidSdkManager().doPostInstallWork(), 1000);
       } else {
         this.showInstallationErrorAlert();
@@ -610,7 +614,7 @@ export class HIDCredentialManager extends AbstractAndroidCredentialManager {
     let transactionResultCode = await this.hidSdkManager().deleteEndpoint();
     if (transactionResultCode == HID_SDK_ERR.TRANSACTION_SUCCESS) {
       this.mCredential.setStatus(MobileCredentialStatuses.AVAILABLE);
-      this.credentialStateChangeListener.onCredentialStateChanged();
+      this.onCredentialStateChanged();
       return true;
     }
     throw new Error(transactionResultCode);

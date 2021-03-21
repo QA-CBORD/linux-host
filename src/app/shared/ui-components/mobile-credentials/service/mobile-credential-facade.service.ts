@@ -114,10 +114,10 @@ export class MobileCredentialFacade {
     }
 
     return this.iifCredentialSettingsEnabled().pipe(
-      switchMap(mobileCredentialSettingsEnabled => {
-        this.mCredentialEnabled = mobileCredentialSettingsEnabled;
+      switchMap(settingEnabled => {
+        this.mCredentialEnabled = settingEnabled;
         this.mobileCredentialSettingsAlreadyChecked = true;
-        if (mobileCredentialSettingsEnabled) {
+        if (settingEnabled) {
           return this.mobileCredentialManager.credentialEnabled$();
         } else {
           return of(false);
