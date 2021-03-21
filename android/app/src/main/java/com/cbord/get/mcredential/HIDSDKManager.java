@@ -53,7 +53,10 @@ public class HIDSDKManager  {
 
     synchronized public static HIDSDKManager getInstance(Application application, TransactionCompleteCallback cb) throws IllegalStateException{
         if(instance == null)
+        {
+            System.out.println("resolving initializeSdk***************:: getInstance");
             instance = new HIDSDKManager(application, cb);
+        }
         return instance;
     }
 

@@ -21,10 +21,13 @@ export class IOSCredentialManager implements MobileCredentialManager {
     private readonly userFacadeService: UserFacadeService,
     private readonly authFacadeService: AuthFacadeService
   ) {}
+  
+  
+  async onCredentialStateChanged(): Promise<void> {}
 
   
-  contentStringAsync(): Promise<AndroidCredentialCsModel> {
-    throw new Error('Method not implemented.');
+  async contentStringAsync(): Promise<AndroidCredentialCsModel> {
+    return null;
   }
 
 

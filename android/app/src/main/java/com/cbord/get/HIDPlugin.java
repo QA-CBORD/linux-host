@@ -1,5 +1,7 @@
 package com.cbord.get;
 
+import android.app.Application;
+
 import com.cbord.get.mcredential.HIDSDKManager;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.NativePlugin;
@@ -14,12 +16,25 @@ public class HIDPlugin extends Plugin {
     private static final String HID_SDK_TRANSACTION_RESULT = "transactionStatus";
     private static  final String invitationCodeKey = "invitationCode";
     private static  final String FORCE_INSTALL = "forceInstall";
+    private static boolean HID_SDK_INITIALIZED = false;
  
     @PluginMethod()
     public void initializeSdk(PluginCall call) {
         try{
-            hidsdkManager = HIDSDKManager.getInstance(getActivity().getApplication(), transactionResult -> call.resolve(toJson(transactionResult)));
-        } catch (IllegalStateException ex) {
+
+            if(this.HID_SDK_INITIALIZED)
+            {
+                System.out.println("*********** already inistitalzed");
+                call.resolve(toJson("success"));
+                return;
+            }
+
+            Application application = getActivity().getApplication();
+            hidsdkManager = HIDSDKManager.getInstance(application, transactionResult -> {
+                this.HID_SDK_INITIALIZED = true;
+                call.resolve(toJson(transactionResult));
+            });
+        } catch (Exception  ex) {
             call.reject(ex.getMessage());
         }
     }

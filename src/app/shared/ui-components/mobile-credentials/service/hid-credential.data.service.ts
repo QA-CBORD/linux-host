@@ -8,7 +8,13 @@ import { StorageStateService } from '@core/states/storage/storage-state.service'
 import { from, Observable, of } from 'rxjs';
 import { catchError, first, map, switchMap, tap } from 'rxjs/operators';
 import { User } from 'src/app/app.global';
-import { AndroidCredential, EndpointState, HID, Persistable } from '../model/android/android-credential.model';
+import {
+  AndroidCredential,
+  EndpointState,
+  HID,
+  HidCredentialBundle,
+  Persistable,
+} from '../model/android/android-credential.model';
 import { AndroidCredentialDataService } from '../model/shared/android-credential-data.service';
 import { APIService } from '@core/service/api-service/api.service';
 import { EndpointStatuses, MobileCredentialStatuses } from '../model/shared/credential-state';
@@ -84,16 +90,8 @@ export class HidCredentialDataService extends AndroidCredentialDataService {
     return true;
   }
 
-  androidCredential$(androidCredential: AndroidCredential<any>): Observable<AndroidCredential<HID>> {
-    let body = {
-      referenceIdentifier: androidCredential.getReferenceIdentifier(),
-    };
-    return super.androidCredential$(body).pipe(
-      map(credentialBundle => {
-        androidCredential.setCredentialBundle(credentialBundle);
-        return androidCredential;
-      })
-    );
+  androidCredentialBundle$(referenceIdentifier: string): Observable<HidCredentialBundle> {
+    return super.androidCredentialBundle$({ referenceIdentifier }).pipe(map(bundle => bundle as HidCredentialBundle));
   }
 
   updateCredential$(credential: AndroidCredential<any>): Observable<boolean> {

@@ -14,7 +14,6 @@ import {
 import { CredentialManagerType, MobileCredentialManagerFactory } from './mobile-credential-manager.factory';
 import { HIDCredentialManager } from '../model/android/hid/hid-credential-manager';
 import { GooglePayCredentialManager } from '../model/android/google-pay/google-pay-credential-manager';
-import { MobileCredentialDataService } from '../model/shared/mobile-credential-data.service';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 const { MobileCredentialStatusPlugin } = Plugins;
 

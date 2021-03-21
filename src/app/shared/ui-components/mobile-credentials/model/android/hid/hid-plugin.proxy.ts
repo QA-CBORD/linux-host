@@ -102,6 +102,7 @@ export class HIDPlugginProxy {
 
   async initializeSdk(): Promise<boolean> {
     const initializationStatus = await this.executeCall<string>(HIDPlugin.initializeSdk);
+    console.log('initializationStatus: ==>> ', initializationStatus)
     return initializationStatus == HID_SDK_ERR.TRANSACTION_SUCCESS || Promise.reject(initializationStatus);
   }
 

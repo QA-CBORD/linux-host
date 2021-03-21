@@ -1,7 +1,7 @@
 import { Observable, of } from 'rxjs';
 import { Plugins } from '@capacitor/core';
 import { map, catchError, switchMap } from 'rxjs/operators';
-import { AndroidCredential } from '../android-credential.model';
+import { AndroidCredential, GooglePayCredentialBundle } from '../android-credential.model';
 import { GooglePayCredentialDataService } from '@shared/ui-components/mobile-credentials/service/google-pay-credential.data.service';
 import { Injectable } from '@angular/core';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -89,13 +89,20 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
   }
 
   refresh(): void {
-    this.fetchFromServer$(true).then(newCredential => {
-      this.mCredential = newCredential;
-      this.credentialStateChangeListener.onCredentialStateChanged();
-    });
+    const asyncRefresh = async () => {
+      if (this.mCredential.isProvisioned()) {
+        this.fetchFromServer$(true).then(newCredential => {
+          this.mCredential = newCredential;
+          this.credentialStateChangeListener.onCredentialStateChanged();
+        });
+      } else {
+        this.credentialStateChangeListener.onCredentialStateChanged();
+      }
+    };
+    asyncRefresh();
   }
 
-  private async getAndroidCredential(
+  private async getGoogleCredentialBundle(
     googlePayNonce: string,
     referenceIdentifier: string
   ): Promise<AndroidCredential<any>> {
@@ -106,7 +113,7 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
             return of(credential);
           } else {
             return this.credentialServ
-              .androidCredential$({
+              .androidCredentialBundle$({
                 referenceIdentifier,
                 googlePayNonce,
               })
@@ -127,14 +134,14 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
     this.showLoading();
     const { googlePayNonce } = await GooglePayPlugin.getGooglePayNonce();
     const { referenceIdentifier } = this.mCredential.getCredentialState();
-    const newCredential = await this.getAndroidCredential(googlePayNonce, referenceIdentifier);
+    const newCredential = await this.getGoogleCredentialBundle(googlePayNonce, referenceIdentifier);
     this.loadingService.closeSpinner();
     if (!newCredential) {
       this.showInstallationErrorAlert();
       return;
     }
     this.mCredential = newCredential;
-    let { digitizationReference } = this.mCredential.getCredentialBundle();
+    let { digitizationReference } = <GooglePayCredentialBundle>this.mCredential.getCredentialBundle();
     this.sessionFacadeService.navigatedFromGpay = true;
     GooglePayPlugin.openGooglePay({ uri: digitizationReference }).catch(() => {
       this.showInstallationErrorAlert();

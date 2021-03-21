@@ -6,6 +6,24 @@ import { MobileCredential } from '../shared/mobile-credential';
 import { MobileCredentialConfig, MOBILE_CREDENTIAL_CONFIGS } from '../shared/mobile-credential-configs';
 import { CredentialStatusCs } from './android-credential-content-strings.model';
 
+
+export interface CredentialBundle{
+ id?: string;
+}
+
+export interface HidCredentialBundle extends CredentialBundle{
+  invitationCode: string;
+  invitationId: string;
+  issuer: string;
+  issuerToken: string
+}
+
+
+export interface GooglePayCredentialBundle extends CredentialBundle{
+  digitizationReference: string;
+  virtualCardUid: string;
+}
+
 export interface AndroidCredentialAttrs {
   credentialBundle: any;
   credentialState: AndroidCredentialState;
@@ -158,13 +176,13 @@ export class AndroidCredentialStateEntity implements AndroidCredentialState {
 // android credentials implementations.
 
 export abstract class AndroidCredential<T> extends MobileCredential implements AndroidCredentialAttrs {
-  public credentialBundle: T;
+  public credentialBundle: CredentialBundle;
 
   constructor(public credentialState: AndroidCredentialState) {
     super(credentialState);
   }
 
-  getCredentialBundle(): any {
+  getCredentialBundle(): CredentialBundle {
     return this.credentialBundle;
   }
 
@@ -172,8 +190,8 @@ export abstract class AndroidCredential<T> extends MobileCredential implements A
     this.credentialState.setUiString$(cs);
   }
 
-  setCredentialBundle(data: T): void {
-    this.credentialBundle = data as any;
+  setCredentialBundle(bundle: CredentialBundle): void {
+    this.credentialBundle = bundle;
   }
 
   setCredentialState(credentialState: AndroidCredentialState) {
@@ -256,7 +274,7 @@ export class HIDCredential extends AndroidCredential<HID> {
   }
 
   getInvitationCode(): string {
-    return this.credentialBundle ? this.credentialBundle.invitationCode : null;
+    return this.credentialBundle ? (this.credentialBundle as HidCredentialBundle).invitationCode : null;
   }
 }
 
