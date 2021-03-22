@@ -31,7 +31,7 @@ export class DashboardPageResolver implements Resolve<Observable<SettingInfoList
   ) {}
 
   resolve(): Observable<SettingInfoList> {
-    this.loadingService.showSpinner();
+   
 
     /// get fresh data on dashboard load
     const strings = this.loadContentStrings();
@@ -41,7 +41,7 @@ export class DashboardPageResolver implements Resolve<Observable<SettingInfoList
     const accountContentStrings = this.accountsService.initContentStringsList();
     const mCredential$ = this.mobileCredentialFacade.mobileCredentialEnabled$().pipe(take(1));
     const tilesConfig = this.tileConfigFacadeService.updateTilesConfigBySystemSettings().pipe(first());
-
+    this.loadingService.showSpinner();
     return zip(
       user,
       inst,
