@@ -14,7 +14,6 @@ import {
 import { CredentialManagerType, MobileCredentialManagerFactory } from './mobile-credential-manager.factory';
 import { HIDCredentialManager } from '../model/android/hid/hid-credential-manager';
 import { GooglePayCredentialManager } from '../model/android/google-pay/google-pay-credential-manager';
-import { MobileCredentialDataService } from '../model/shared/mobile-credential-data.service';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
 const { MobileCredentialStatusPlugin } = Plugins;
 
@@ -115,10 +114,10 @@ export class MobileCredentialFacade {
     }
 
     return this.iifCredentialSettingsEnabled().pipe(
-      switchMap(mobileCredentialSettingsEnabled => {
-        this.mCredentialEnabled = mobileCredentialSettingsEnabled;
+      switchMap(settingEnabled => {
+        this.mCredentialEnabled = settingEnabled;
         this.mobileCredentialSettingsAlreadyChecked = true;
-        if (mobileCredentialSettingsEnabled) {
+        if (settingEnabled) {
           return this.mobileCredentialManager.credentialEnabled$();
         } else {
           return of(false);

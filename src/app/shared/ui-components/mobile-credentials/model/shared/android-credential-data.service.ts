@@ -8,7 +8,7 @@ import { StorageStateService } from '@core/states/storage/storage-state.service'
 import { forkJoin, from, Observable, of } from 'rxjs';
 import { catchError, first, map, switchMap, take, tap } from 'rxjs/operators';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
-import { AndroidCredential, Persistable } from '../android/android-credential.model';
+import { AndroidCredential, CredentialBundle, Persistable } from '../android/android-credential.model';
 import { MobileCredentialDataService } from './mobile-credential-data.service';
 import { NFCDialogContentString, NFCDialogContentStringName } from './credential-content-string';
 import { AndroidCredentialCsModel } from '../android/android-credential-content-strings.model';
@@ -49,8 +49,8 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
       switchMap(mobileCredential => {
         const androidCredentials = mobileCredential as AndroidCredential<any>;
         return this.getLocalStoredUserData<Persistable>(this.credential_key).pipe(
-          map(data => {
-            androidCredentials.setCredentialBundle(data);
+          map(credentialBundle => {
+            androidCredentials.setCredentialBundle(credentialBundle);
             return androidCredentials;
           })
         );
@@ -81,7 +81,7 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
     );
   }
 
-  protected androidCredential$(requestBody: any, extraHeaders?: object): Observable<any> {
+  protected androidCredentialBundle$(requestBody: any, extraHeaders?: object): Observable<CredentialBundle> {
     return this.getCredentialFor(requestBody, extraHeaders).pipe(
       take(1),
       map((credentialData: any[]) => {
@@ -107,6 +107,10 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
       (this.contentStrings && of(this.contentStrings).toPromise()) ||
       this.retrieveAllContentStrings()
     );
+  }
+
+  async unloadContentStrings(): Promise<void>{
+    this.contentStrings = null;
   }
 
   protected getDefaultHeaders(): Observable<HttpHeaders> {

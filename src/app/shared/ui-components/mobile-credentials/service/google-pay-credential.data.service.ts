@@ -5,10 +5,15 @@ import { InstitutionFacadeService } from '@core/facades/institution/institution.
 import { APIService } from '@core/service/api-service/api.service';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { Observable, of } from 'rxjs';
-import { EndpointState, GOOGLE, GoogleCredential } from '../model/android/android-credential.model';
+import {
+  EndpointState,
+  GOOGLE,
+  GoogleCredential,
+  GooglePayCredentialBundle,
+} from '../model/android/android-credential.model';
 import { AndroidCredentialDataService } from '../model/shared/android-credential-data.service';
 import { HttpClient } from '@angular/common/http';
-import { switchMap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 
 const major_version = 1,
@@ -18,7 +23,7 @@ const resourceUrls = {
   ping: `/mf2go/testing/${major_version}/${minor_version}/ping`,
 };
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class GooglePayCredentialDataService extends AndroidCredentialDataService {
   private mCredential_key = 'nxp_credential';
   constructor(
@@ -28,7 +33,7 @@ export class GooglePayCredentialDataService extends AndroidCredentialDataService
     protected readonly institutionFacadeService: InstitutionFacadeService,
     protected readonly apiService: APIService,
     protected readonly http: HttpClient,
-    protected userFacade: UserFacadeService,
+    protected userFacade: UserFacadeService
   ) {
     super(
       resourceUrls,
@@ -42,12 +47,8 @@ export class GooglePayCredentialDataService extends AndroidCredentialDataService
     );
   }
 
-  androidCredential$(reqBody: {
-    referenceIdentifier: string;
-    googlePayNonce: string;
-    otherOptions?: object;
-  }): Observable<GOOGLE> {
-    return super.androidCredential$(reqBody);
+  androidCredentialBundle$(reqBody): Observable<GooglePayCredentialBundle> {
+    return super.androidCredentialBundle$(reqBody).pipe(map(bundle => bundle as GooglePayCredentialBundle));
   }
 
   updateCredential$(mCredential: GoogleCredential): Observable<any> {

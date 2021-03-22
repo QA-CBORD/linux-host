@@ -53,7 +53,9 @@ public class HIDSDKManager  {
 
     synchronized public static HIDSDKManager getInstance(Application application, TransactionCompleteCallback cb) throws IllegalStateException{
         if(instance == null)
+        {
             instance = new HIDSDKManager(application, cb);
+        }
         return instance;
     }
 
@@ -100,7 +102,9 @@ public class HIDSDKManager  {
         try {
             OrigoMobileKey mobileKey = getMobileKey();
             return mobileKey == null ? false : mobileKey.isActivated();
-        } catch (Exception ex){}
+        } catch (Exception ex){
+
+        }
 
         return false;
     }

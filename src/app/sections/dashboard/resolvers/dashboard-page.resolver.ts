@@ -6,7 +6,6 @@ import { AccountsService } from '@sections/accounts/services/accounts.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { SettingInfoList } from '@core/model/configuration/setting-info-list.model';
 import { TileConfigFacadeService } from '@sections/dashboard/tile-config-facade.service';
-import { MEAL_CONTENT_STRINGS } from '@sections/accounts/pages/meal-donations/meal-donation.config.ts';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from '../../../content-strings';
 import { ORDERING_CONTENT_STRINGS } from '@sections/ordering/ordering.config';
@@ -16,6 +15,7 @@ import { InstitutionFacadeService } from '@core/facades/institution/institution.
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { MobileCredentialFacade } from '@shared/ui-components/mobile-credentials/service/mobile-credential-facade.service';
+import { MEAL_CONTENT_STRINGS } from '@sections/accounts/pages/meal-donations/meal-donation.config';
 
 @Injectable()
 export class DashboardPageResolver implements Resolve<Observable<SettingInfoList>> {
@@ -31,34 +31,31 @@ export class DashboardPageResolver implements Resolve<Observable<SettingInfoList
   ) {}
 
   resolve(): Observable<SettingInfoList> {
-    this.loadingService.showSpinner();
+   
 
     /// get fresh data on dashboard load
     const strings = this.loadContentStrings();
     const user = this.userFacadeService.getUser$();
     const inst = this.institutionService.fetchInstitutionData();
-    const call = this.settingsFacadeService.fetchSettingList(Settings.SettingList.FEATURES);
+    const settingList = this.settingsFacadeService.fetchSettingList(Settings.SettingList.FEATURES);
     const accountContentStrings = this.accountsService.initContentStringsList();
-    const mCredential$ = this.mobileCredentialFacade.mobileCredentialEnabled$();
-
+    const mCredential$ = this.mobileCredentialFacade.mobileCredentialEnabled$().pipe(take(1));
+    const tilesConfig = this.tileConfigFacadeService.updateTilesConfigBySystemSettings().pipe(first());
+    this.loadingService.showSpinner();
     return zip(
       user,
       inst,
-      call,
-      this.tileConfigFacadeService.updateTilesConfigBySystemSettings().pipe(first()),
+      settingList,
       mCredential$,
+      tilesConfig,
       accountContentStrings,
       ...strings
     ).pipe(
       map(
         ([
           userInfo,
-          institutionInfo,
+          institutionInfo, 
           featureSettingsList,
-          tilesConfig,
-          credentialEnabled,
-          accountsContentStrings,
-          otherContentStrings,
         ]) => featureSettingsList
       ),
       take(1),
