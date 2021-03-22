@@ -68,7 +68,7 @@ export class InstitutionLookupListItem {
   }
 
   get guestRegSupported(): boolean {
-    return this._guestLogin || this._guestDeposit || this._guestLoginNotRequired;
+    return this._guestLogin; //|| this._guestDeposit || this._guestLoginNotRequired;
   }
 }
 

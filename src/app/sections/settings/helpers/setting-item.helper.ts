@@ -102,20 +102,18 @@ export function handleOpenHTMLModal(services: SettingsServices) {
 }
 
 export async function openModal(services: SettingsServices) {
-  let contentStrings = null;
+  let contentStringList = null;
   const setting: SettingItemConfig = this;
-  if (setting.modalContent.contentStrings) {
-    const contentString = setting.modalContent.contentStrings as DomainContentString;
-    if (contentString.name === null) {
-      contentStrings = await contentStringsFromDomain(services, contentString);
-    }
+  const contentCategories = setting.modalContent.contentStrings;
+  if (contentCategories) {
+    contentStringList = await contentStringsByCategory(services, contentCategories);
   }
 
   setting.callback = async function() {
     const settingModal = await services.modalController.create({
       backdropDismiss: false,
       component: setting.modalContent.component,
-      componentProps: { contentStrings: contentStrings },
+      componentProps: { contentStrings: contentStringList },
     });
     services.globalNav.hideNavBar();
     settingModal.onDidDismiss().then(() => services.globalNav.showNavBar());
@@ -123,14 +121,21 @@ export async function openModal(services: SettingsServices) {
   };
 }
 
-async function contentStringsFromDomain(
+async function contentStringsByCategory(
   services: SettingsServices,
-  contentString: DomainContentString
-): Promise<ContentStringInfo[]> {
-  return await services.contentString
-    .fetchContentStrings$(contentString.domain, contentString.category)
-    .pipe(take(1))
-    .toPromise();
+  contentStrings: DomainContentString[]
+): Promise<[ContentStringInfo[]]> {
+  const contentStringList: [ContentStringInfo[]] = [[]];
+  for (let content of contentStrings) {
+    if (content.name === null) {
+      const item = await services.contentString
+        .fetchContentStrings$(content.domain, content.category)
+        .pipe(take(1))
+        .toPromise();
+      contentStringList.push(item);
+    }
+  }
+  return contentStringList;
 }
 
 export async function openSiteURL(services: SettingsServices): Promise<void> {

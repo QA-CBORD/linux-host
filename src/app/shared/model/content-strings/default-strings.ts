@@ -72,3 +72,8 @@ export const defaultMobileCredentialCs = {
   cred_revoked: 'Mobile ID revoked',
   is_loading_text: 'Processing ... please wait',
 };
+
+export const defaultPasswordChangeCs = {
+    current_password: 'Current password',
+    new_password: 'New password',
+};
