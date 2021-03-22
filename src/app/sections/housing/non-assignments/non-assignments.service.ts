@@ -13,14 +13,13 @@ import {
   QuestionsStorageService
 } from '@sections/housing/questions/questions-storage.service';
 import {
-  QuestionAddressTypeGroup,
   QuestionAssetTypeDetails,
   QuestionAssetTypeDetailsBase,
   QuestionBase,
   QuestionFormControl
 } from '@sections/housing/questions/types';
 import { flat, isDefined } from '@sections/housing/utils';
-import { QuestionsPage } from '@sections/housing/questions/questions.model';
+import { QuestionsPage, QUESTIONS_SOURCES } from '@sections/housing/questions/questions.model';
 import { QuestionsService } from '@sections/housing/questions/questions.service';
 import { HousingProxyService } from '../housing-proxy.service';
 
@@ -227,8 +226,6 @@ export class NonAssignmentsService {
       (group, question: QuestionFormControl, questionName: string, storedValue: string) => {
         if (question instanceof QuestionAssetTypeDetails) {
           group[questionName] = this._questionsService.toQuestionAssetTypeDetailsGroup(storedValue, question);
-        } else if (question instanceof QuestionAddressTypeGroup) {
-          group[questionName] = this._questionsService.toQuestionAddressTypeControls(storedValue, question);
         } else {
           group[questionName] = this._toFormControl(storedValue, question, nonAssignmentDetails);
         }
@@ -244,7 +241,11 @@ export class NonAssignmentsService {
     let value: any = storedValue;
 
     if (!isDefined(value)) {
+      if (question.source === QUESTIONS_SOURCES.ADDRESS_TYPES) {
+        value = this._questionsService.getAddressValue(nonAssignmentDetails.patronAddresses, question) || '';
+      } else {
         value = this._questionsService.getAttributeValue(nonAssignmentDetails.patronAttributes, question) || '';
+      }
     }
 
     return new FormControl({ value, disabled: question.readonly});

@@ -28,6 +28,7 @@ import {
   QuestionReorder,
   QuestionReorderValue,
   QuestionsPage,
+  QUESTIONS_SOURCES,
   QuestionTextbox,
 } from '@sections/housing/questions/questions.model';
 import { QuestionBase } from '@sections/housing/questions/types';
@@ -191,7 +192,7 @@ export class ApplicationsService {
           group[questionName] = this._toFormControl(
             storedValue,
             question,
-            applicationDetails.patronAttributes,
+            applicationDetails,
             isSubmitted
           );
         }
@@ -218,13 +219,17 @@ export class ApplicationsService {
   private _toFormControl(
     storedValue: any,
     question: QuestionFormControl,
-    attributes: PatronAttribute[],
+    applicationDetails: ApplicationDetails,
     isSubmitted: boolean
   ): FormControl {
     let value: any = storedValue;
 
     if (!isDefined(value)) {
-      value = this._questionsService.getAttributeValue(attributes, question);
+      if (question.source === QUESTIONS_SOURCES.ADDRESS_TYPES) {
+        value = this._questionsService.getAddressValue(applicationDetails.patronAddresses, question) || '';
+      } else {
+        value = this._questionsService.getAttributeValue(applicationDetails.patronAttributes, question);
+      }
     }
 
     const validators: ValidatorFn[] = [];

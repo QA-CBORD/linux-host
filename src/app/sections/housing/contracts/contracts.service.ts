@@ -21,7 +21,7 @@ import {
   QuestionContractDetails,
   QuestionFormControl,
 } from '@sections/housing/questions/types';
-import { QuestionsPage } from '@sections/housing/questions/questions.model';
+import { QuestionsPage, QUESTIONS_SOURCES } from '@sections/housing/questions/questions.model';
 import { QuestionFacilityAttributes } from '@sections/housing/questions/types/question-facility-attributes';
 import { ChargeScheduleValue } from '@sections/housing/charge-schedules/charge-schedules.model';
 import { ChargeSchedulesService } from '@sections/housing/charge-schedules/charge-schedules.service';
@@ -138,6 +138,8 @@ export class ContractsService {
         value = this._getContractDetailValue(question, contractDetails.contractInfo);
       } else if (question instanceof QuestionFacilityAttributes) {
         value = this._questionsService.getAttributeValue(contractDetails.facilityAttributes, question);
+      } else if (question.source === QUESTIONS_SOURCES.ADDRESS_TYPES) {
+        value = this._questionsService.getAddressValue(contractDetails.patronAddresses, question);
       } else {
         value = this._questionsService.getAttributeValue(contractDetails.patronAttributes, question) || '';
       }
