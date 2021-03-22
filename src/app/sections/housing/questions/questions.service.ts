@@ -30,7 +30,7 @@ import { Attribute } from '@sections/housing/attributes/attributes.model';
 import { QuestionsEntries } from '@sections/housing/questions/questions-storage.service';
 import { CONTRACT_DETAIL_KEYS } from '@sections/housing/contracts/contracts.model';
 import { AssetTypeDetailValue } from '@sections/housing/non-assignments/non-assignments.model';
-import { AddressTypes, PatronAddress } from '@sections/housing/addresses/address.model';
+import { AddressFields, PatronAddress } from '@sections/housing/addresses/address.model';
 
 export const QuestionConstructorsMap = {
   header: QuestionHeader,
@@ -130,23 +130,23 @@ export class QuestionsService {
 
     if (address) {
       switch (question.attribute) {
-        case AddressTypes.ADDRESS_NAME:
+        case AddressFields.ADDRESS_NAME:
           return address.addrName;
-        case AddressTypes.ADDRESS_LINE_1:
+        case AddressFields.ADDRESS_LINE_1:
           return address.addrLn1;
-        case AddressTypes.ADDRESS_LINE_2:
+        case AddressFields.ADDRESS_LINE_2:
           return address.addrLn2;
-        case AddressTypes.CITY:
+        case AddressFields.CITY:
           return address.city;
-        case AddressTypes.COUNTRY:
+        case AddressFields.COUNTRY:
           return address.country;
-        case AddressTypes.STATE:
+        case AddressFields.STATE:
           return address.state;
-        case AddressTypes.ZIP_CODE:
+        case AddressFields.ZIP_CODE:
           return address.zip;
-        case AddressTypes.PHONE_NUMBER:
+        case AddressFields.PHONE_NUMBER:
           return address.addrPhone;
-        case AddressTypes.EMAIL:
+        case AddressFields.EMAIL:
           return address.email;
         default:
           break;

@@ -33,6 +33,8 @@ import {
 } from '@sections/housing/questions/questions.model';
 import { QuestionBase } from '@sections/housing/questions/types';
 import { FormArray, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { PatronAddress } from '../addresses/address.model';
+import { PatronAddressService } from '../addresses/address.service';
 
 @Injectable({
   providedIn: 'root',
@@ -47,6 +49,7 @@ export class ApplicationsService {
     private _housingProxyService: HousingProxyService,
     private _patronAttributesService: PatronAttributesService,
     private _preferencesService: PreferencesService,
+    private _patronAddressService: PatronAddressService,
     private _applicationsStateService: ApplicationsStateService,
     private _questionsStorageService: QuestionsStorageService,
     private _questionsService: QuestionsService
@@ -274,10 +277,17 @@ export class ApplicationsService {
           parsedJson,
           questions
         ): null;
+        const patronAddresses: PatronAddress[] = this._patronAddressService.getAddresses(
+          applicationDetails.patronAddresses,
+          parsedJson,
+          questions
+        );
+
         const body: ApplicationRequest = new ApplicationRequest({
           patronApplication: applicationDetails.patronApplication,
           patronAttributes,
           patronPreferences,
+          patronAddresses
         });
 
         return this._housingProxyService.put(this._patronApplicationsUrl, body);
