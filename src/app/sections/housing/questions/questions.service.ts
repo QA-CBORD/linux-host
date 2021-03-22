@@ -30,7 +30,7 @@ import { Attribute } from '@sections/housing/attributes/attributes.model';
 import { QuestionsEntries } from '@sections/housing/questions/questions-storage.service';
 import { CONTRACT_DETAIL_KEYS } from '@sections/housing/contracts/contracts.model';
 import { AssetTypeDetailValue } from '@sections/housing/non-assignments/non-assignments.model';
-import { AddressTypes, PatronAddress } from '@sections/housing/housing.model';
+import { AddressTypes, PatronAddress } from '@sections/housing/addresses/address.model';
 
 export const QuestionConstructorsMap = {
   header: QuestionHeader,
@@ -179,7 +179,7 @@ export class QuestionsService {
     
     question.values.forEach((field, index) => {
       questions.push(new QuestionTextbox({
-        name: `text-${index}`,
+        name: `text-${question.addressTypeId}-${index}`,
         required: question.required,
         type: 'text',
         attribute: field.label,

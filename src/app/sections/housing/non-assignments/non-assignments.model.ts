@@ -1,6 +1,6 @@
 import { PatronAttribute } from "@sections/housing/applications/applications.model";
 import { ChargeSchedule } from "@sections/housing/charge-schedules/charge-schedules.model";
-import { PatronAddress } from "../housing.model";
+import { PatronAddress } from "@sections/housing/addresses/address.model";
 
 import { isDefined } from "../utils";
 

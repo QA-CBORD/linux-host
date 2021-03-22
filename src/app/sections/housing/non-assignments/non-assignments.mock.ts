@@ -2,7 +2,7 @@ import { generatePatronAttributes } from "../applications/applications.mock";
 import { PatronAttribute } from "../applications/applications.model";
 import { generateChargeSchedules } from "../charge-schedules/charge-schedules.mock";
 import { ChargeSchedule } from "../charge-schedules/charge-schedules.model";
-import { PatronAddress } from "../housing.model";
+import { PatronAddress } from "@sections/housing/addresses/address.model";
 import { generateQuestions } from "../questions/questions.mock";
 import { AssetType, NonAssignmentDetails, NonAssignmentInfo, NonAssignmentListDetails } from "./non-assignments.model";
 

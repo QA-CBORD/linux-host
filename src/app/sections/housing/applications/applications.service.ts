@@ -224,7 +224,7 @@ export class ApplicationsService {
   ): FormControl {
     let value: any = storedValue;
 
-    if (!isDefined(value)) {
+    if (!isDefined(value) || value == '') {
       if (question.source === QUESTIONS_SOURCES.ADDRESS_TYPES) {
         value = this._questionsService.getAddressValue(applicationDetails.patronAddresses, question) || '';
       } else {

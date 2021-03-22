@@ -1,6 +1,6 @@
 import { isDefined } from '../utils';
 import { Attribute, AttributeOptions } from '@sections/housing/attributes/attributes.model';
-import { PatronAddress } from '../housing.model';
+import { PatronAddress } from '@sections/housing/addresses/address.model';
 
 export enum ApplicationStatus {
   New = 1,

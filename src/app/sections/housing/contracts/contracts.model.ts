@@ -3,7 +3,7 @@ import { isDefined } from '../utils';
 import { PatronAttribute } from '../applications/applications.model';
 import { ChargeSchedule } from '@sections/housing/charge-schedules/charge-schedules.model';
 import { FacilityAttribute } from '@sections/housing/facility-attributes/facility-attributes.model';
-import { PatronAddress } from '../housing.model';
+import { PatronAddress } from '@sections/housing/addresses/address.model';
 
 export enum ContractStatus {
   Preliminary = 1,
