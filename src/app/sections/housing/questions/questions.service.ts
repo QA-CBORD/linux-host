@@ -4,6 +4,7 @@ import { FormArray, FormControl, FormGroup, ValidatorFn } from '@angular/forms';
 import { integerValidator, numericValidator, parseJsonToArray } from '../utils';
 
 import {
+  QuestionAddressTypeGroup,
   QuestionAssetTypeDetails,
   QuestionAssetTypeDetailsBase,
   QuestionBase,
@@ -28,7 +29,8 @@ import { QuestionBlockquote } from '@sections/housing/questions/types/question-b
 import { Attribute } from '@sections/housing/attributes/attributes.model';
 import { QuestionsEntries } from '@sections/housing/questions/questions-storage.service';
 import { CONTRACT_DETAIL_KEYS } from '@sections/housing/contracts/contracts.model';
-import { AssetTypeDetailValue } from '../non-assignments/non-assignments.model';
+import { AssetTypeDetailValue } from '@sections/housing/non-assignments/non-assignments.model';
+import { AddressTypes, PatronAddress } from '@sections/housing/addresses/address.model';
 
 export const QuestionConstructorsMap = {
   header: QuestionHeader,
@@ -121,6 +123,39 @@ export class QuestionsService {
     return foundAttribute ? foundAttribute.value : '';
   }
 
+  getAddressValue(addresses: PatronAddress[], question: QuestionFormControl): string {
+    const address: PatronAddress = addresses.find(
+      (addr: PatronAddress) => addr.addrTypeKey === question.consumerKey
+    );
+
+    if (address) {
+      switch (question.attribute) {
+        case AddressTypes.ADDRESS_NAME:
+          return address.addrName;
+        case AddressTypes.ADDRESS_LINE_1:
+          return address.addrLn1;
+        case AddressTypes.ADDRESS_LINE_2:
+          return address.addrLn2;
+        case AddressTypes.CITY:
+          return address.city;
+        case AddressTypes.COUNTRY:
+          return address.country;
+        case AddressTypes.STATE:
+          return address.state;
+        case AddressTypes.ZIP_CODE:
+          return address.zip;
+        case AddressTypes.PHONE_NUMBER:
+          return address.addrPhone;
+        case AddressTypes.EMAIL:
+          return address.email;
+        default:
+          break;
+      } 
+    } else {
+      return '';
+    }
+  }
+
   addDataTypeValidator(question: QuestionTextbox, validators: ValidatorFn[]): void {
     const dataType: string = question.dataType ? question.dataType.toLowerCase() : null;
     const dataTypeValidator: ValidatorFn = this._dataTypesValidators[dataType];
@@ -128,6 +163,38 @@ export class QuestionsService {
     if (dataTypeValidator) {
       validators.push(dataTypeValidator);
     }
+  }
+
+  mapToAddressTypeGroup(question: QuestionBase): QuestionBase[] {
+    if (!(question instanceof QuestionAddressTypeGroup)) {
+      return [].concat(question);
+    }
+
+    const questions: QuestionBase[] = [];
+    questions.push(new QuestionHeader({
+      type: 'header',
+      label: question.label,
+      subtype: 'h3',
+    }));
+    
+    question.values.forEach((field, index) => {
+      questions.push(new QuestionTextbox({
+        name: `text-${question.addressTypeId}-${index}`,
+        required: question.required,
+        type: 'text',
+        attribute: field.label,
+        consumerKey: question.addressTypeId,
+        facilityKey: null,
+        label: field.label,
+        preferenceKey: null,
+        subtype: 'text',
+        readonly: question.readonly,
+        dataType: 'String',
+        source: question.source
+      }));
+    });
+
+    return questions;
   }
 
   private _mapToQuestions(questions: any[]): QuestionBase[] {
@@ -157,6 +224,8 @@ export class QuestionsService {
             } else {
               return new QuestionContractDetails(question);
             }
+          } else if ((question as QuestionAddressTypeGroup).source === QUESTIONS_SOURCES.ADDRESS_TYPES) {
+            return new QuestionAddressTypeGroup(question);
           } else if (this._isSourceFacility(question as QuestionFacilityAttributes)) {
             return new QuestionFacilityAttributes(question);
           }

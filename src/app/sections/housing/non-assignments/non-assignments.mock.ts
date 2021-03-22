@@ -2,6 +2,7 @@ import { generatePatronAttributes } from "../applications/applications.mock";
 import { PatronAttribute } from "../applications/applications.model";
 import { generateChargeSchedules } from "../charge-schedules/charge-schedules.mock";
 import { ChargeSchedule } from "../charge-schedules/charge-schedules.model";
+import { PatronAddress } from "@sections/housing/addresses/address.model";
 import { generateQuestions } from "../questions/questions.mock";
 import { AssetType, NonAssignmentDetails, NonAssignmentInfo, NonAssignmentListDetails } from "./non-assignments.model";
 
@@ -12,13 +13,15 @@ export function generateNonAssignmentDetails(index: number): NonAssignmentDetail
     const chargeSchedules: ChargeSchedule[] = generateChargeSchedules();
     const patronAttributes: PatronAttribute[] = generatePatronAttributes();
     const assetTypes: AssetType[] = [];//generateFacilityAttributes();
+    const patronAddresses: PatronAddress[] = [];
 
     return new NonAssignmentDetails({
         nonAssignmentInfo,
         formJson,
         chargeSchedules,
         patronAttributes,
-        assetTypes  
+        assetTypes,
+        patronAddresses
     });
 }
 

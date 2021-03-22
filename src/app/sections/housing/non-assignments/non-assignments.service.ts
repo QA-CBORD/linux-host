@@ -18,8 +18,8 @@ import {
   QuestionBase,
   QuestionFormControl
 } from '@sections/housing/questions/types';
-import { isDefined } from '@sections/housing/utils';
-import { QuestionsPage } from '@sections/housing/questions/questions.model';
+import { flat, isDefined } from '@sections/housing/utils';
+import { QuestionsPage, QUESTIONS_SOURCES } from '@sections/housing/questions/questions.model';
 import { QuestionsService } from '@sections/housing/questions/questions.service';
 import { HousingProxyService } from '../housing-proxy.service';
 
@@ -88,12 +88,14 @@ export class NonAssignmentsService {
   }
 
   private _getQuestionsPages(nonAssignmentDetails: NonAssignmentDetails): QuestionBase[][] {
-    const questions: QuestionBase[] = this._questionsService
+    const questions: QuestionBase[][] = this._questionsService
       .getQuestions(nonAssignmentDetails.formJson)
-      .map((question: QuestionBase) =>
-        this._mapToAssetTypeDetailsGroup(question, nonAssignmentDetails));
+      .map((question: QuestionBase) => {
+        const mappedQuestion = this._mapToAssetTypeDetailsGroup(question, nonAssignmentDetails);
+        return this._questionsService.mapToAddressTypeGroup(mappedQuestion);
+      });
 
-    return this._questionsService.splitByPages(questions);
+    return this._questionsService.splitByPages(flat(questions));
   }
 
   private _getPages(
@@ -239,9 +241,13 @@ export class NonAssignmentsService {
     let value: any = storedValue;
 
     if (!isDefined(value)) {
+      if (question.source === QUESTIONS_SOURCES.ADDRESS_TYPES) {
+        value = this._questionsService.getAddressValue(nonAssignmentDetails.patronAddresses, question) || '';
+      } else {
         value = this._questionsService.getAttributeValue(nonAssignmentDetails.patronAttributes, question) || '';
+      }
     }
 
-    return new FormControl({ value, disabled: true });
+    return new FormControl({ value, disabled: question.readonly});
   }
 }
