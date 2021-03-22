@@ -144,3 +144,52 @@ export class OccupantDetailsResponse implements OccupantDetailsResponseOptions {
     }): options as FacilityOccupantDetails[];
   }
 }
+
+export interface PatronAddressOptions {
+  addressKey: number;
+  patronKey: number;
+  addressTypeKey: number;
+  addressName: string;
+  addressLine1: string;
+  addressLine2: string;
+  city: string;
+  state: string;
+  zip: string;
+  country: string;
+  phone: string;
+  email: string;
+}
+
+export class PatronAddress implements PatronAddressOptions {
+  addressKey: number;
+  patronKey: number;
+  addressTypeKey: number;
+  addressName: string;
+  addressLine1: string;
+  addressLine2: string;
+  city: string;
+  state: string;
+  zip: string;
+  country: string;
+  phone: string;
+  email: string;
+
+  constructor(options: PatronAddressOptions) {
+    if (options == null || typeof options !== 'object') {
+      options = {} as PatronAddressOptions;
+    }
+
+    this.addressKey = Number(options.addressKey);
+    this.patronKey = Number(options.patronKey);
+    this.addressTypeKey = Number(options.addressTypeKey);
+    this.addressName = String(options.addressName);
+    this.addressLine1 = String(options.addressLine1);
+    this.addressLine2 = String(options.addressLine2);
+    this.city = String(options.city);
+    this.state = String(options.state);
+    this.zip = String(options.zip);
+    this.country = String(options.country);
+    this.phone = String(options.phone);
+    this.email = String(options.email);
+  }
+}

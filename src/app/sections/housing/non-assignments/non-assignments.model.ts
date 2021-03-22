@@ -1,5 +1,6 @@
 import { PatronAttribute } from "@sections/housing/applications/applications.model";
 import { ChargeSchedule } from "@sections/housing/charge-schedules/charge-schedules.model";
+import { PatronAddress } from "../housing.model";
 
 import { isDefined } from "../utils";
 
@@ -146,6 +147,7 @@ export interface NonAssignmentDetailsOptions {
     chargeSchedules: ChargeSchedule[];
     patronAttributes: PatronAttribute[];
     assetTypes: AssetType[];
+    patronAddresses: PatronAddress[];
 }
 
 export class NonAssignmentDetails implements NonAssignmentDetailsOptions {
@@ -154,6 +156,7 @@ export class NonAssignmentDetails implements NonAssignmentDetailsOptions {
     chargeSchedules: ChargeSchedule[];
     patronAttributes: PatronAttribute[];
     assetTypes: AssetType[];
+    patronAddresses: PatronAddress[];
 
     constructor(options: NonAssignmentDetailsOptions) {
         if (!isDefined(options) || typeof options !== 'object') {
@@ -174,7 +177,10 @@ export class NonAssignmentDetails implements NonAssignmentDetailsOptions {
         this.assetTypes = Array.isArray(options.assetTypes)
             ? options.assetTypes.map((asset: any) => new AssetType(asset))
             : [];
-        
+
+        this.patronAddresses = Array.isArray(options.patronAddresses)
+            ? options.patronAddresses.map((address: any) => new PatronAddress(address))
+            : [];
     }
 }
 
