@@ -89,17 +89,10 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
   }
 
   refresh(): void {
-    const asyncRefresh = async () => {
-      if (this.mCredential.isProvisioned()) {
-        this.fetchFromServer$(true).then(newCredential => {
-          this.mCredential = newCredential;
-          this.credentialStateChangeListener.onCredentialStateChanged();
-        });
-      } else {
-        this.credentialStateChangeListener.onCredentialStateChanged();
-      }
-    };
-    asyncRefresh();
+    this.fetchFromServer$(true).then(newCredential => {
+      this.mCredential = newCredential;
+      this.credentialStateChangeListener.onCredentialStateChanged();
+    });
   }
 
   private async getGoogleCredentialBundle(
