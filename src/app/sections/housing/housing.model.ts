@@ -18,6 +18,18 @@ export enum FormTypes {
   NON_ASSIGNMENTS = 10
 }
 
+export enum AddressTypes {
+  ADDRESS_NAME = "Address Name",
+  ADDRESS_LINE_1 = "Address Line 1",
+  ADDRESS_LINE_2 = "Address Line 2",
+  CITY = "City",
+  STATE = "State/Province",
+  COUNTRY = "Country",
+  ZIP_CODE = "Zip Code",
+  PHONE_NUMBER = "Phone Number",
+  EMAIL = "Email"
+}
+
 export interface ResponseStatusDetails {
   code: string;
   member: string;
@@ -147,31 +159,31 @@ export class OccupantDetailsResponse implements OccupantDetailsResponseOptions {
 
 export interface PatronAddressOptions {
   addressKey: number;
-  patronKey: number;
-  addressTypeKey: number;
-  addressName: string;
-  addressLine1: string;
-  addressLine2: string;
+  patronId: number;
+  addrTypeKey: number;
+  addrName: string;
+  addrLn1: string;
+  addrLn2: string;
   city: string;
   state: string;
   zip: string;
   country: string;
-  phone: string;
+  addrPhone: string;
   email: string;
 }
 
 export class PatronAddress implements PatronAddressOptions {
   addressKey: number;
-  patronKey: number;
-  addressTypeKey: number;
-  addressName: string;
-  addressLine1: string;
-  addressLine2: string;
+  patronId: number;
+  addrTypeKey: number;
+  addrName: string;
+  addrLn1: string;
+  addrLn2: string;
   city: string;
   state: string;
   zip: string;
   country: string;
-  phone: string;
+  addrPhone: string;
   email: string;
 
   constructor(options: PatronAddressOptions) {
@@ -180,16 +192,16 @@ export class PatronAddress implements PatronAddressOptions {
     }
 
     this.addressKey = Number(options.addressKey);
-    this.patronKey = Number(options.patronKey);
-    this.addressTypeKey = Number(options.addressTypeKey);
-    this.addressName = String(options.addressName);
-    this.addressLine1 = String(options.addressLine1);
-    this.addressLine2 = String(options.addressLine2);
+    this.patronId = Number(options.patronId);
+    this.addrTypeKey = Number(options.addrTypeKey);
+    this.addrName = String(options.addrName);
+    this.addrLn1 = String(options.addrLn1);
+    this.addrLn2 = String(options.addrLn2);
     this.city = String(options.city);
     this.state = String(options.state);
     this.zip = String(options.zip);
     this.country = String(options.country);
-    this.phone = String(options.phone);
+    this.addrPhone = String(options.addrPhone);
     this.email = String(options.email);
   }
 }
