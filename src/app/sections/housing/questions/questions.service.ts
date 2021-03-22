@@ -29,7 +29,8 @@ import { QuestionBlockquote } from '@sections/housing/questions/types/question-b
 import { Attribute } from '@sections/housing/attributes/attributes.model';
 import { QuestionsEntries } from '@sections/housing/questions/questions-storage.service';
 import { CONTRACT_DETAIL_KEYS } from '@sections/housing/contracts/contracts.model';
-import { AssetTypeDetailValue } from '../non-assignments/non-assignments.model';
+import { AssetTypeDetailValue } from '@sections/housing/non-assignments/non-assignments.model';
+import { AddressTypes, PatronAddress } from '@sections/housing/housing.model';
 
 export const QuestionConstructorsMap = {
   header: QuestionHeader,
@@ -102,13 +103,6 @@ export class QuestionsService {
     return new FormArray(controls);
   }
 
-  toQuestionAddressTypeControls(storedValue: any, question: QuestionAddressTypeGroup): FormArray {
-    const values: [] = storedValue || question.values;
-    const controls: FormControl[] = values.map((value: any) => new FormControl({ value, disabled: question.readonly }));
-
-    return new FormArray(controls);
-  }
-
   toQuestionAssetTypeDetailsGroup(storedValue: any, question: QuestionAssetTypeDetails): FormGroup {
     const assetTypeGroup: AssetTypeDetailValue[][] = storedValue || question.assetTypes;
     let groups: any = {};
@@ -129,13 +123,37 @@ export class QuestionsService {
     return foundAttribute ? foundAttribute.value : '';
   }
 
-  // TODOOO
-  getAddressValue(addresses: any[], question: QuestionAddressTypeGroup): string {
-    const foundAddress: any = addresses.find(
-      (address: any) => address.addressTypeKey === question.addressTypeId
+  getAddressValue(addresses: PatronAddress[], question: QuestionFormControl): string {
+    const address: PatronAddress = addresses.find(
+      (addr: PatronAddress) => addr.addrTypeKey === question.consumerKey
     );
 
-    return foundAddress ? foundAddress.value : '';
+    if (address) {
+      switch (question.attribute) {
+        case AddressTypes.ADDRESS_NAME:
+          return address.addrName;
+        case AddressTypes.ADDRESS_LINE_1:
+          return address.addrLn1;
+        case AddressTypes.ADDRESS_LINE_2:
+          return address.addrLn2;
+        case AddressTypes.CITY:
+          return address.city;
+        case AddressTypes.COUNTRY:
+          return address.country;
+        case AddressTypes.STATE:
+          return address.state;
+        case AddressTypes.ZIP_CODE:
+          return address.zip;
+        case AddressTypes.PHONE_NUMBER:
+          return address.addrPhone;
+        case AddressTypes.EMAIL:
+          return address.email;
+        default:
+          break;
+      } 
+    } else {
+      return '';
+    }
   }
 
   addDataTypeValidator(question: QuestionTextbox, validators: ValidatorFn[]): void {
