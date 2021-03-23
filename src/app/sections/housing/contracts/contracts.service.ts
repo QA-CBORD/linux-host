@@ -4,7 +4,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, withLatestFrom } from 'rxjs/operators';
 
-import { isDefined } from '@sections/housing/utils';
+import { flat, isDefined } from '@sections/housing/utils';
 
 import { HousingProxyService } from '../housing-proxy.service';
 import { QuestionsService } from '@sections/housing/questions/questions.service';
@@ -21,7 +21,7 @@ import {
   QuestionContractDetails,
   QuestionFormControl,
 } from '@sections/housing/questions/types';
-import { QuestionsPage } from '@sections/housing/questions/questions.model';
+import { QuestionsPage, QUESTIONS_SOURCES } from '@sections/housing/questions/questions.model';
 import { QuestionFacilityAttributes } from '@sections/housing/questions/types/question-facility-attributes';
 import { ChargeScheduleValue } from '@sections/housing/charge-schedules/charge-schedules.model';
 import { ChargeSchedulesService } from '@sections/housing/charge-schedules/charge-schedules.service';
@@ -73,11 +73,14 @@ export class ContractsService {
   }
 
   private _getQuestionsPages(contractDetails: ContractDetails): QuestionBase[][] {
-    const questions: QuestionBase[] = this._questionsService
+    const questions: QuestionBase[][] = this._questionsService
       .getQuestions(contractDetails.formJson)
-      .map((question: QuestionBase) => this._toChargeSchedulesGroup(question, contractDetails));
+      .map((question: QuestionBase) => {
+        const mappedQuestion = this._toChargeSchedulesGroup(question, contractDetails)
+        return this._questionsService.mapToAddressTypeGroup(mappedQuestion);
+      });
 
-    return this._questionsService.splitByPages(questions);
+    return this._questionsService.splitByPages(flat(questions));
   }
 
   private _getPages(
@@ -135,6 +138,8 @@ export class ContractsService {
         value = this._getContractDetailValue(question, contractDetails.contractInfo);
       } else if (question instanceof QuestionFacilityAttributes) {
         value = this._questionsService.getAttributeValue(contractDetails.facilityAttributes, question);
+      } else if (question.source === QUESTIONS_SOURCES.ADDRESS_TYPES) {
+        value = this._questionsService.getAddressValue(contractDetails.patronAddresses, question);
       } else {
         value = this._questionsService.getAttributeValue(contractDetails.patronAttributes, question) || '';
       }
