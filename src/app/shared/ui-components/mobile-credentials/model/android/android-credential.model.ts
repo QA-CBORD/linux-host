@@ -4,6 +4,25 @@ import { EndpointStatuses, MobileCredentialState, MobileCredentialStatuses } fro
 import { ActivePasses, CredentialProviders } from '../shared/credential-utils';
 import { MobileCredential } from '../shared/mobile-credential';
 import { MobileCredentialConfig, MOBILE_CREDENTIAL_CONFIGS } from '../shared/mobile-credential-configs';
+import { CredentialStatusCs } from './android-credential-content-strings.model';
+
+
+export interface CredentialBundle{
+ id?: string;
+}
+
+export interface HidCredentialBundle extends CredentialBundle{
+  invitationCode: string;
+  invitationId: string;
+  issuer: string;
+  issuerToken: string
+}
+
+
+export interface GooglePayCredentialBundle extends CredentialBundle{
+  digitizationReference: string;
+  virtualCardUid: string;
+}
 
 export interface AndroidCredentialAttrs {
   credentialBundle: any;
@@ -17,6 +36,7 @@ export interface AndroidCredentialState extends MobileCredentialState {
   passes: number;
   issuer: string;
   endpointState: EndpointState;
+  setUiString$?: (cs: CredentialStatusCs) => void;
   revoked(): boolean;
   isProcessing(): boolean;
   updateUiMsg(msg: string);
@@ -64,6 +84,7 @@ export class CredentialStateResolver {
 export class AndroidCredentialStateEntity implements AndroidCredentialState {
   statusMsg: string;
   endpointState: EndpointState;
+  private contentString$: CredentialStatusCs;
   constructor(
     public credStatus: MobileCredentialStatuses,
     public passes: MobileCredentialStatuses,
@@ -119,7 +140,6 @@ export class AndroidCredentialStateEntity implements AndroidCredentialState {
   }
 
   isEnabled(): boolean {
-    console.log('Credential status: ' + this.credStatus);
     return this.credStatus !== MobileCredentialStatuses.DISABLED;
   }
 
@@ -127,12 +147,19 @@ export class AndroidCredentialStateEntity implements AndroidCredentialState {
     return this.credStatus == MobileCredentialStatuses.AVAILABLE;
   }
 
+  setUiString$(cs: CredentialStatusCs): void {
+    this.contentString$ = cs;
+    this.updateStatusMsg();
+  }
+
   getIssuer(): string {
     return this.issuer;
   }
 
   updateStatusMsg(): void {
-    if (this.isProvisioned()) {
+    if (this.contentString$) {
+      this.statusMsg = this.contentString$.statusText(this.isHID(), this.credStatus);
+    } else if (this.isProvisioned()) {
       this.statusMsg = this.getConfig().UI_MSG.WHEN_PROVISIONED;
     } else if (this.isAvailable()) {
       this.statusMsg = this.getConfig().UI_MSG.WHEN_AVAILABLE;
@@ -149,18 +176,22 @@ export class AndroidCredentialStateEntity implements AndroidCredentialState {
 // android credentials implementations.
 
 export abstract class AndroidCredential<T> extends MobileCredential implements AndroidCredentialAttrs {
-  public credentialBundle: T;
+  public credentialBundle: CredentialBundle;
 
   constructor(public credentialState: AndroidCredentialState) {
     super(credentialState);
   }
 
-  getCredentialBundle(): any {
+  getCredentialBundle(): CredentialBundle {
     return this.credentialBundle;
   }
 
-  setCredentialBundle(data: T): void {
-    this.credentialBundle = data as any;
+  setUicString$(cs: CredentialStatusCs): void {
+    this.credentialState.setUiString$(cs);
+  }
+
+  setCredentialBundle(bundle: CredentialBundle): void {
+    this.credentialBundle = bundle;
   }
 
   setCredentialState(credentialState: AndroidCredentialState) {
@@ -243,7 +274,7 @@ export class HIDCredential extends AndroidCredential<HID> {
   }
 
   getInvitationCode(): string {
-    return this.credentialBundle ? this.credentialBundle.invitationCode : null;
+    return this.credentialBundle ? (this.credentialBundle as HidCredentialBundle).invitationCode : null;
   }
 }
 
@@ -297,7 +328,7 @@ export class EndpointState {
     return this.status == other.status;
   }
 
-  deletionPermissionGranted(): boolean{
+  deletionPermissionGranted(): boolean {
     return this.status == EndpointStatuses.DELETE_CONFIRMED;
   }
 

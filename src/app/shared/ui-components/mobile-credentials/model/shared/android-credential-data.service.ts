@@ -6,11 +6,13 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { APIService, HttpResponseType, RestCallType } from '@core/service/api-service/api.service';
 import { StorageStateService } from '@core/states/storage/storage-state.service';
 import { forkJoin, from, Observable, of } from 'rxjs';
-import { catchError, first, map, switchMap, take } from 'rxjs/operators';
+import { catchError, first, map, switchMap, take, tap } from 'rxjs/operators';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
-import { AndroidCredential, Persistable } from '../android/android-credential.model';
+import { AndroidCredential, CredentialBundle, Persistable } from '../android/android-credential.model';
 import { MobileCredentialDataService } from './mobile-credential-data.service';
 import { NFCDialogContentString, NFCDialogContentStringName } from './credential-content-string';
+import { AndroidCredentialCsModel } from '../android/android-credential-content-strings.model';
+import { ContentStringApi } from '@shared/model/content-strings/content-strings-api';
 
 const api_version = 'v1';
 const resourceUrls = {
@@ -20,6 +22,8 @@ const resourceUrls = {
 };
 
 export class AndroidCredentialDataService extends MobileCredentialDataService {
+  private contentStrings: AndroidCredentialCsModel;
+
   constructor(
     private resources: { credentialUrl: string },
     protected storageStateService: StorageStateService,
@@ -45,13 +49,17 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
       switchMap(mobileCredential => {
         const androidCredentials = mobileCredential as AndroidCredential<any>;
         return this.getLocalStoredUserData<Persistable>(this.credential_key).pipe(
-          map(data => {
-            androidCredentials.setCredentialBundle(data);
+          map(credentialBundle => {
+            androidCredentials.setCredentialBundle(credentialBundle);
             return androidCredentials;
           })
         );
       })
     );
+  }
+
+  getUserCredentials(): Observable<AndroidCredential<any>> {
+    return super.activePasses$().pipe(map(data => data as AndroidCredential<any>));
   }
 
   protected getUserId(): Observable<string> {
@@ -73,7 +81,7 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
     );
   }
 
-  protected androidCredential$(requestBody: any, extraHeaders?: object): Observable<any> {
+  protected androidCredentialBundle$(requestBody: any, extraHeaders?: object): Observable<CredentialBundle> {
     return this.getCredentialFor(requestBody, extraHeaders).pipe(
       take(1),
       map((credentialData: any[]) => {
@@ -83,45 +91,26 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
     );
   }
 
-  termsContentString$(termsContentString?: {
-    domain: CONTENT_STRINGS_DOMAINS;
-    category: CONTENT_STRINGS_CATEGORIES;
-    name: string;
-  }): Promise<string> {
-    const contentStringSetting = termsContentString || {
-      domain: CONTENT_STRINGS_DOMAINS.patronUi,
-      category: CONTENT_STRINGS_CATEGORIES.mobileCredential,
-      name: 'terms',
-    };
-
-    return super
-      .contentString$(contentStringSetting)
-      .pipe(catchError(() => 'No content'))
+  private async retrieveAllContentStrings(): Promise<AndroidCredentialCsModel> {
+    return await this.contentStringFacade
+      .fetchContentStringAfresh(CONTENT_STRINGS_DOMAINS.patronUi, CONTENT_STRINGS_CATEGORIES.mobileCredential)
+      .pipe(
+        map(data => ContentStringApi.mobileCredential(data)),
+        catchError(() => of(ContentStringApi.mobileCredential())),
+        tap(data => (this.contentStrings = data))
+      )
       .toPromise();
   }
 
-  credentialUsageContentString$(usagecontentStringConfig?: {
-    domain: CONTENT_STRINGS_DOMAINS;
-    category: CONTENT_STRINGS_CATEGORIES;
-    name: string;
-  }): Promise<string> {
-    const contentStringSettings = usagecontentStringConfig || {
-      domain: CONTENT_STRINGS_DOMAINS.patronUi,
-      category: CONTENT_STRINGS_CATEGORIES.mobileCredential,
-      name: 'usage-instructions',
-    };
-    return super
-      .contentString$(contentStringSettings)
-      .pipe(
-        switchMap(contentString => {
-          if (contentString) {
-            return of(contentString);
-          }
-          return from('No content');
-        }),
-        catchError(() => 'No content')
-      )
-      .toPromise();
+  async getContents(): Promise<AndroidCredentialCsModel> {
+    return (
+      (this.contentStrings && of(this.contentStrings).toPromise()) ||
+      this.retrieveAllContentStrings()
+    );
+  }
+
+  async unloadContentStrings(): Promise<void>{
+    this.contentStrings = null;
   }
 
   protected getDefaultHeaders(): Observable<HttpHeaders> {
@@ -231,35 +220,5 @@ export class AndroidCredentialDataService extends MobileCredentialDataService {
         return { credStatus, passes, referenceIdentifier };
       })
     );
-  }
-  
-  async nfcOffContentStrings$(): Promise<NFCDialogContentString> {
-    const contentString = {
-      text: await this.nfcOffContentString$(NFCDialogContentStringName.TEXT),
-      title: await this.nfcOffContentString$(NFCDialogContentStringName.TITLE),
-      acceptButton: await this.nfcOffContentString$(NFCDialogContentStringName.ACCEPT_BUTTON),
-      cancelButton: await this.nfcOffContentString$(NFCDialogContentStringName.CANCEL_BUTTON),
-    }
-     return contentString;
-  }
-
-  private nfcOffContentString$(contentStringName: string): Promise<string> {
-    const contentStringSettings = {
-      domain: CONTENT_STRINGS_DOMAINS.patronUi,
-      category: CONTENT_STRINGS_CATEGORIES.mobileCredential,
-      name: contentStringName,
-    };
-    return super
-      .contentString$(contentStringSettings)
-      .pipe(
-        switchMap(contentString => {
-          if (contentString) {
-            return of(contentString);
-          }
-          return from('No content');
-        }),
-        catchError(() => 'No content')
-      )
-      .toPromise();
   }
 }

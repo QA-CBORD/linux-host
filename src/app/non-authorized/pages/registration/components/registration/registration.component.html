@@ -68,7 +68,7 @@
     </form>
   </div>
 </ion-content>
-<ion-footer class="ion-padding footer">
+<ion-footer class="footer">
   <div class="reg_footer" *ngIf="registrationFormGroup">
     <st-button
       [type]="submit"
@@ -76,7 +76,7 @@
       buttonModifier="rectangular"
       (click)="submitRegistration(registrationFormGroup)"
     >
-      <span class="ion-text-capitalize">
+      <span>
         {{ btnText$ | async }}
       </span>
     </st-button>

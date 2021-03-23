@@ -1,4 +1,5 @@
 import { Observable } from 'rxjs';
+import { AndroidCredentialCsModel } from '../android/android-credential-content-strings.model';
 import { MobileCredential } from './mobile-credential';
 import { MobileCredentialDataService } from './mobile-credential-data.service';
 
@@ -19,6 +20,8 @@ export interface MobileCredentialManager extends MobileCredentialManagerAdapter 
   refresh(): void;
   onWillLogout(): Promise<void>;
   getService(): MobileCredentialDataService;
+  contentStringAsync(udpateUi?: boolean): Promise<AndroidCredentialCsModel>
+  onCredentialStateChanged(): Promise<void>
 }
 
 export interface IDeviceState {

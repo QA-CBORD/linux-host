@@ -13,3 +13,4 @@ export * from './question-charge-schedule';
 export * from './question-contract-details';
 export * from './question-date-signed';
 export * from './question-non-assignment-details';
+export * from './question-address-type-group';

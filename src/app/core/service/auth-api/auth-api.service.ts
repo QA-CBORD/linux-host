@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, ReplaySubject } from 'rxjs';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 
 import { DataCache } from '../../utils/data-cache';
 

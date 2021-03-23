@@ -52,7 +52,7 @@ export interface ToggleLabel {
 export interface ModalContent {
   component?: any;
   biometric?: string;
-  contentStrings?: DomainContentString;
+  contentStrings?: DomainContentString[];
 }
 export interface HTMLContentString {
   contentStrings: DomainContentString[];

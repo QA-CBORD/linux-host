@@ -56,7 +56,17 @@ export class RegistrationCsModel extends ContentStringModel {
     return this.content.success_screen_message;
   }
 
-  get registrationFailedMessage(): string {
+  get defaultFailureMessage(): string {
     return this.content.reg_failed_message;
+  }
+
+  // if null then return default generic message;
+  fromCodeOrDefaultErrortext(errorCode: string): string {
+    return this.textFromErrorCode(errorCode) || this.defaultFailureMessage;
+  }
+
+  // may return null;
+  public textFromErrorCode(errorCode: string): string {
+    return this.content[`error_code_${errorCode}`];
   }
 }

@@ -12,7 +12,7 @@ import { EditHomePageModalModule } from '@shared/ui-components/edit-home-page-mo
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module'
 import { ReportCardModule } from '@sections/settings/pages/report-card/report-card.module';
 import { MobileCredentialModule } from '@shared/ui-components/mobile-credentials/mobile.credential.module';
-import { ChangePasswordModule } from '@shared/ui-components/change-password/change-password.module';
+import { PasswordChangeModule } from '@shared/ui-components/change-password/password-change.module';
 
 const imports = [
   CommonModule,
@@ -25,7 +25,7 @@ const imports = [
   EditHomePageModalModule,
   ReportCardModule,
   MobileCredentialModule,
-  ChangePasswordModule
+  PasswordChangeModule
 ];
 const declarations = [SettingsPage, SettingsItemComponent];
 const entryComponents = [];

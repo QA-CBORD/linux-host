@@ -1,18 +1,22 @@
 import { LoadingService } from '@core/service/loading/loading.service';
 import { AlertController } from '@ionic/angular';
 import { Observable, of } from 'rxjs';
-import { catchError, finalize, first } from 'rxjs/operators';
+import { catchError, finalize, first, map } from 'rxjs/operators';
 import { AndroidCredentialDataService } from '../shared/android-credential-data.service';
-import { NFCDialogContentString } from "../shared/credential-content-string";
 import { MobileCredential } from '../shared/mobile-credential';
 import { MobileCredentialDataService } from '../shared/mobile-credential-data.service';
 import { CredentialStateChangeListener, MobileCredentialManager } from '../shared/mobile-credential-manager';
 import { AndroidCredential } from './android-credential.model';
 import { Plugins } from '@capacitor/core';
+import { AndroidCredentialCsModel, NfcDialogCs } from './android-credential-content-strings.model';
 const { MobileCredentialStatusPlugin } = Plugins;
 
 export abstract class AbstractAndroidCredentialManager implements MobileCredentialManager {
-  protected customLoadingOptions = { message: 'Processing ... Please wait', duration: 150000 };
+  protected defaultIsLoadingMessage = 'Processing ... Please wait';
+  protected customLoadingOptions = {
+    message: this.defaultIsLoadingMessage,
+    duration: 150000,
+  };
   protected mCredential: AndroidCredential<any>;
   protected credentialStateChangeListener: CredentialStateChangeListener;
 
@@ -22,11 +26,27 @@ export abstract class AbstractAndroidCredentialManager implements MobileCredenti
     protected readonly alertCtrl: AlertController
   ) {}
 
+
+  async onCredentialStateChanged(): Promise<void> {
+    this.credentialStateChangeListener && this.credentialStateChangeListener.onCredentialStateChanged();
+  }
+
+  async contentStringAsync(updateUi?: boolean): Promise<AndroidCredentialCsModel> {
+    const contentStrings = await this.credentialSrvc.getContents();
+    if (updateUi) {
+      this.customLoadingOptions.message = contentStrings.isLogingMessage || this.defaultIsLoadingMessage;
+      this.mCredential.setUicString$(contentStrings.credStatuString$);
+    }
+    return contentStrings;
+  }
+
   getService(): MobileCredentialDataService {
     return this.credentialSrvc;
   }
 
-  async onWillLogout(): Promise<void> {}
+  async onWillLogout(): Promise<void> {
+    this.credentialSrvc.unloadContentStrings();
+  }
 
   refresh(): void {
     // do nothing
@@ -47,29 +67,24 @@ export abstract class AbstractAndroidCredentialManager implements MobileCredenti
     });
   }
 
-  protected async showInstallationErrorAlert(operation = 'installation'): Promise<void> {
-    const header = 'Unexpected error';
-    const message = `An unexpected error occurred during mobile ID ${operation}, please try again later.`;
-    const buttons = [{ text: 'OK', role: 'cancel' }];
+  protected async showInstallationErrorAlert(): Promise<void> {
+    const string$ = (await this.contentStringAsync()).installErorDialogString$;
+
+    const header = string$.title;
+    const message = string$.mContent;
+    const buttons = [{ text: string$.ok, role: 'cancel' }];
     const alertDialog = await this.createAlertDialog(header, message, buttons);
     this.loadingService.closeSpinner();
     await alertDialog.present();
   }
 
-  protected async nfcOffAlert(
-    contentString: NFCDialogContentString,
-    callerOnPreceedHandler?: () => Promise<any>
-  ): Promise<void> {
-    const noContent = 'No content';
-    const header = contentString.title != noContent ? contentString.title : 'NFC is turned off';
-    const message =
-      contentString.text != noContent
-        ? contentString.text
-        : 'The NFC setting is turned off for your phone. You can proceed and provision your credential, but it will not work when presented to an NFC reader to open a door or pay for a purchase until you turn on your NFC setting.';
+  protected async nfcOffAlert(string$: NfcDialogCs, callerOnPreceedHandler?: () => Promise<any>): Promise<void> {
+    const header = string$.title;
+    const message = string$.mContent;
     const buttons = [
-      { text: contentString.cancelButton != noContent ? contentString.cancelButton : 'Cancel', role: 'cancel' },
+      { text: string$.cancelTxt, role: 'cancel' },
       {
-        text: contentString.acceptButton != noContent ? contentString.acceptButton : 'Proceed',
+        text: string$.acceptTxt,
         handler: callerOnPreceedHandler,
       },
     ];
@@ -102,6 +117,10 @@ export abstract class AbstractAndroidCredentialManager implements MobileCredenti
       .activePasses$()
       .pipe(
         first(),
+        map(async newCredential => {
+          newCredential.setUicString$((await this.contentStringAsync()).credStatuString$);
+          return newCredential;
+        }),
         catchError(() => (nullOnErr ? of(null) : of(this.mCredential))),
         finalize(() => {
           if (shouldShowLoadingIndicator) {

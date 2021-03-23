@@ -6,7 +6,7 @@ import { StButtonModule } from '../st-button';
 import { StInputFloatingLabelModule } from '@shared/ui-components/st-input-floating-label/st-input-floating-label.module';
 import { FocusNextModule } from '@shared/directives/focus-next/focus-next.module';
 import { StHeaderModule } from '../st-header/st-header.module';
-import { ChangePasswordComponent } from './change-password.component';
+import { PasswordChangeComponent } from './password-change.component';
 import { PasswordValidationModule } from 'src/app/password-validation/password-validation.module';
 
 const imports = [
@@ -20,9 +20,9 @@ const imports = [
   FocusNextModule,
   PasswordValidationModule
 ];
-const declarations = [ChangePasswordComponent];
-const entryComponents = [ChangePasswordComponent];
-const exports = [ChangePasswordComponent];
+const declarations = [PasswordChangeComponent];
+const entryComponents = [PasswordChangeComponent];
+const exports = [PasswordChangeComponent];
 
 @NgModule({
   declarations,
@@ -30,4 +30,4 @@ const exports = [ChangePasswordComponent];
   entryComponents,
   exports,
 })
-export class ChangePasswordModule {}
+export class PasswordChangeModule {}

@@ -1,7 +1,7 @@
 import { Observable, of } from 'rxjs';
 import { Plugins } from '@capacitor/core';
 import { map, catchError, switchMap } from 'rxjs/operators';
-import { AndroidCredential } from '../android-credential.model';
+import { AndroidCredential, GooglePayCredentialBundle } from '../android-credential.model';
 import { GooglePayCredentialDataService } from '@shared/ui-components/mobile-credentials/service/google-pay-credential.data.service';
 import { Injectable } from '@angular/core';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -25,14 +25,12 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
 
   onUiImageClicked(event?: any): void {
     const showTermsAndConditions = async () => {
-      let componentProps = {
-        termsAndConditions: await this.termsAndConditionsSource$(),
-      };
+      const terms = (await this.contentStringAsync()).termString$;
       const modal = await this.modalCtrl.create({
         backdropDismiss: false,
         mode: 'ios',
         component: MobileCredentialsComponent,
-        componentProps,
+        componentProps: { terms },
       });
       await modal.present();
       const { data } = await modal.onDidDismiss();
@@ -40,14 +38,13 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
         this.onTermsAndConditionsAccepted();
       }
     };
-    
+
     (async () => {
       if (await this.nfcIsOn()) {
         showTermsAndConditions();
       } else {
-        this.showLoading();
-        const contentStrings = await this.credentialServ.nfcOffContentStrings$();
-        this.nfcOffAlert(contentStrings, async () => {
+        const string$ = (await this.contentStringAsync()).nfcDialogString$;
+        this.nfcOffAlert(string$, async () => {
           showTermsAndConditions();
         });
       }
@@ -98,7 +95,7 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
     });
   }
 
-  private async getAndroidCredential(
+  private async getGoogleCredentialBundle(
     googlePayNonce: string,
     referenceIdentifier: string
   ): Promise<AndroidCredential<any>> {
@@ -109,7 +106,7 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
             return of(credential);
           } else {
             return this.credentialServ
-              .androidCredential$({
+              .androidCredentialBundle$({
                 referenceIdentifier,
                 googlePayNonce,
               })
@@ -130,25 +127,18 @@ export class GooglePayCredentialManager extends AbstractAndroidCredentialManager
     this.showLoading();
     const { googlePayNonce } = await GooglePayPlugin.getGooglePayNonce();
     const { referenceIdentifier } = this.mCredential.getCredentialState();
-    const newCredential = await this.getAndroidCredential(googlePayNonce, referenceIdentifier);
+    const newCredential = await this.getGoogleCredentialBundle(googlePayNonce, referenceIdentifier);
     this.loadingService.closeSpinner();
     if (!newCredential) {
-      this.showInstallationErrorAlert('installation');
+      this.showInstallationErrorAlert();
       return;
     }
     this.mCredential = newCredential;
-    let { digitizationReference } = this.mCredential.getCredentialBundle();
+    let { digitizationReference } = <GooglePayCredentialBundle>this.mCredential.getCredentialBundle();
     this.sessionFacadeService.navigatedFromGpay = true;
     GooglePayPlugin.openGooglePay({ uri: digitizationReference }).catch(() => {
       this.showInstallationErrorAlert();
     });
     setTimeout(() => this.watchOnResume(), 2000);
-  }
-
-  async termsAndConditionsSource$(): Promise<string> {
-    this.showLoading();
-    const terms = await this.credentialServ.termsContentString$();
-    this.loadingService.closeSpinner();
-    return terms;
   }
 }

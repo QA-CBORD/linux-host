@@ -15,7 +15,7 @@ import { RegistrationService } from './registration.service';
   providedIn: 'root',
 })
 export class RegistrationServiceFacade {
-  private data: { fieldList?: FormFieldList; formData?: RegistrationCsModel } = {};
+  private data: { fieldList?: FormFieldList; regCsModel?: RegistrationCsModel } = {};
 
   private _registration: UserRegistrationManager;
   constructor(
@@ -35,7 +35,7 @@ export class RegistrationServiceFacade {
     return this.getPreloginContents(acuteCare).pipe(take(1));
   }
 
-  getData(): Promise<{ fieldList?: FormFieldList; formData?: RegistrationCsModel }> {
+  getData(): Promise<{ fieldList?: FormFieldList; regCsModel?: RegistrationCsModel }> {
     return Promise.resolve(this.data);
   }
 
