@@ -1,4 +1,4 @@
-export enum AddressTypes {
+export enum AddressFields {
     ADDRESS_NAME = "Address Name",
     ADDRESS_LINE_1 = "Address Line 1",
     ADDRESS_LINE_2 = "Address Line 2",

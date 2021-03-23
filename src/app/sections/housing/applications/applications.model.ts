@@ -178,12 +178,14 @@ export interface ApplicationRequestOptions {
   patronApplication: PatronApplication;
   patronAttributes?: PatronAttribute[];
   patronPreferences?: PatronPreference[];
+  patronAddresses?: PatronAddress[];
 }
 
 export class ApplicationRequest {
   patronApplication: PatronApplication;
   patronAttributes?: PatronAttribute[];
   patronPreferences?: PatronPreference[];
+  patronAddresses?: PatronAddress[];
 
   constructor(options: ApplicationRequestOptions) {
     if (options == null || typeof options !== 'object') {
@@ -198,6 +200,10 @@ export class ApplicationRequest {
 
     if (Array.isArray(options.patronPreferences)) {
       this.patronPreferences = options.patronPreferences.map((preference: any) => new PatronPreference(preference));
+    }
+
+    if (Array.isArray(options.patronAddresses)) {
+      this.patronAddresses = options.patronAddresses.map((address: any) => new PatronAddress(address));
     }
   }
 }
