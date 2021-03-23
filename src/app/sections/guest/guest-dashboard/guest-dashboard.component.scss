@@ -1,0 +1,27 @@
+.content {
+  background-color: #86888f21;
+  height: 100%;
+  width: 100%;
+
+  .head {
+    .blue-bg {
+      background-color: #166dff;
+    }
+    .univ-name {
+      font-size: 18px;
+    }
+    .univ-image {
+        width: 100%;
+    }
+    .guest-name {
+      font-size: 16px;
+    }
+  }
+
+  .sections {
+    background-color: #ffffff;
+    .item {
+      background-color: #86888f21;
+    }
+  }
+}

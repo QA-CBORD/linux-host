@@ -2,6 +2,9 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Route, RouterModule } from '@angular/router';
 import { PATRON_ROUTES } from '@sections/section.config';
+import { GuestDashboardModule } from './guest/guest-dashboard.module';
+import { GUEST_NAVIGATION } from '../app.global';
+
 
 const routes: Route[] = [
   {
@@ -11,6 +14,10 @@ const routes: Route[] = [
   {
     path: PATRON_ROUTES.dashboard,
     loadChildren: './dashboard/dashboard.module#DashboardPageModule',
+  },
+  {
+    path: GUEST_NAVIGATION.dashboard,
+    loadChildren: './guest/guest-dashboard.module#GuestDashboardModule',
   },
   {
     path: PATRON_ROUTES.mobileAccess,

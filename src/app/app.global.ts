@@ -207,6 +207,10 @@ export enum PATRON_NAVIGATION {
   settings = 'patron/settings',
 }
 
+export enum GUEST_NAVIGATION {
+  dashboard = "guest/dashboard"
+}
+
 export enum LoginType {
   FACEID = 'FACEID',
   FINGERPRINT = 'FINGERPRINT',

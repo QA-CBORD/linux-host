@@ -1,10 +1,10 @@
 import { Settings, PATRON_NAVIGATION, ROLES } from './../../../app.global';
-import { map, skipWhile, tap, take, catchError } from 'rxjs/operators';
+import { map, tap, take, catchError } from 'rxjs/operators';
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { Router } from '@angular/router';
-import { InstitutionPhotoInfo, Institution } from '@core/model/institution';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { Institution } from '@core/model/institution';
+import { SafeResourceUrl } from '@angular/platform-browser';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { FormGroup, FormBuilder, AbstractControl, Validators } from '@angular/forms';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -27,6 +27,7 @@ import { RegistrationComponent } from '../registration/components/registration/r
 import { ModalController } from '@ionic/angular';
 import { MessageChannel } from '@shared/model/shared-api';
 import { ContentStringApi } from '@shared/model/content-strings/content-strings-api';
+import { CommonService } from '@shared/services/common.service';
 
 @Component({
   selector: 'user-pass-form',
@@ -54,7 +55,6 @@ export class UserPassForm implements OnInit {
     private readonly authFacadeService: AuthFacadeService,
     private readonly loadingService: LoadingService,
     private readonly router: Router,
-    private readonly sanitizer: DomSanitizer,
     private readonly toastService: ToastService,
     private readonly sessionFacadeService: SessionFacadeService,
     private readonly identityFacadeService: IdentityFacadeService,
@@ -65,7 +65,8 @@ export class UserPassForm implements OnInit {
     private readonly registrationFacade: RegistrationServiceFacade,
     private readonly appBrowser: InAppBrowser,
     private readonly environmentFacadeService: EnvironmentFacadeService,
-    private readonly accessibilityService: AccessibilityService
+    private readonly accessibilityService: AccessibilityService,
+    private readonly commonService: CommonService
   ) {}
 
   get username(): AbstractControl {
@@ -105,12 +106,11 @@ export class UserPassForm implements OnInit {
     const data = MessageChannel.get() as any;
     const institutionInfo = data.institutionInfo || {};
     this.nativeHeaderBg$ = Promise.resolve(institutionInfo.backgroundColor);
-    const photoData = await this.getInstitutionPhoto(id, sessionId);
-    this.institutionPhoto$ = Promise.resolve(photoData);
+    this.institutionPhoto$ = this.commonService.getInstitutionPhoto(id, sessionId);
     this.institutionName$ = Promise.resolve(institutionInfo.name);
     if (!institutionInfo.name) {
-      this.institutionName$ = this.getInstitutionName(id, sessionId);
-      this.nativeHeaderBg$ = this.getNativeHeaderBg(id, sessionId);
+      this.institutionName$ = this.commonService.getInstitutionName(id, sessionId);
+      this.nativeHeaderBg$ = this.commonService.getNativeHeaderBg(id, sessionId);
     }
     this.cdRef.detectChanges();
   }
@@ -279,21 +279,6 @@ export class UserPassForm implements OnInit {
     }
   }
 
-  private async getNativeHeaderBg(id, sessionId): Promise<string> {
-    return this.settingsFacadeService
-      .fetchSetting(Settings.Setting.MOBILE_HEADER_COLOR, sessionId, id)
-      .pipe(
-        map(({ value }) => {
-          if (value === null) return;
-          const siteColors = JSON.parse(value);
-          const nativeHeaderBg = siteColors['native-header-bg'];
-          return nativeHeaderBg ? '#' + nativeHeaderBg : '#166dff';
-        }),
-        take(1)
-      )
-      .toPromise();
-  }
-
   private async setLocalInstitutionInfo(): Promise<any> {
     return this.institutionFacadeService.cachedInstitutionInfo$
       .pipe(
@@ -302,34 +287,7 @@ export class UserPassForm implements OnInit {
       )
       .toPromise();
   }
-
-  private async getInstitutionName(id, sessionId): Promise<string> {
-    return this.institutionFacadeService
-      .getInstitutionDataById$(id, sessionId, false)
-      .pipe(
-        tap(institutionInfo => (this.institutionInfo = institutionInfo)),
-        map(({ name }) => `${name}`),
-        take(1)
-      )
-      .toPromise();
-  }
-
-  private async getInstitutionPhoto(id, sessionId): Promise<SafeResourceUrl> {
-    return this.institutionFacadeService
-      .getInstitutionPhotoById$(id, sessionId, false)
-      .pipe(
-        skipWhile(d => !d || d === null),
-        map((res: InstitutionPhotoInfo) => {
-          const { data, mimeType } = res;
-          return `data:${mimeType};base64,${data}`;
-        }),
-        map(response => this.sanitizer.bypassSecurityTrustResourceUrl(response)),
-        tap(() => this.cdRef.markForCheck()),
-        take(1)
-      )
-      .toPromise();
-  }
-
+  
   private async presentToast(message: string): Promise<void> {
     await this.toastService.showToast({ message });
   }

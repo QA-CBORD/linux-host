@@ -4,6 +4,7 @@
 export enum PATRON_ROUTES {
   housing = 'housing',
   dashboard = 'dashboard',
+  guestDashboard = 'guestdashboard',
   rewards = 'rewards',
   mobileAccess = 'openmydoor',
   secureMessage = 'securemessaging',

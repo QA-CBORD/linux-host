@@ -1,0 +1,34 @@
+<ion-header no-border>
+  <ion-toolbar mode="ios"></ion-toolbar>
+</ion-header>
+<ion-content>
+  <div class="content">
+    <div
+      class="head"
+      *ngIf="{ photo: institutionPhoto$ | async, instName: institutionName$ | async, userName: userName$ | async } as data"
+    >
+      <ion-text autofocus tabindex="0" class="blue-bg no-focus-outline">
+        {{ data.instName }}
+      </ion-text>
+      <div class="univ-image">
+        <img *ngIf="data.photo" class="inst-image" [src]="data.photo" alt="" />
+      </div>
+      <ion-text autofocus tabindex="0" class="blue-bg no-focus-outline">
+        {{ data.userName }}
+      </ion-text>
+    </div>
+    <div class="sections">
+      <div *ngFor="let section of sections" class="item">
+        <st-button buttonModifier="rectangular" (click)="onclick(section)">
+          <span class="section-image">
+            <img [src]="section.imageUrl" alt="" />
+          </span>
+          <span class="section-title">
+            {{ section.title }}
+          </span>
+        </st-button>
+      </div>
+    </div>
+  </div>
+</ion-content>
+<ion-footer class="footer"></ion-footer>

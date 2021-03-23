@@ -1,11 +1,10 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ROLES, Settings } from 'src/app/app.global';
 import { GUEST_ROUTES } from 'src/app/non-authorized/non-authorized.config';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { SafeResourceUrl } from '@angular/platform-browser';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
-import { InstitutionPhotoInfo } from '@core/model/institution';
-import { tap, map, take, skipWhile, switchMap } from 'rxjs/operators';
+import { tap, take, switchMap } from 'rxjs/operators';
 import { zip } from 'rxjs';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
@@ -14,6 +13,7 @@ import { SessionFacadeService } from '@core/facades/session/session.facade.servi
 import { LoginState } from '@core/facades/identity/identity.facade.service';
 import { PreloginCsModel } from '../models/prelogin-content-strings.model';
 import { MessageChannel } from '@shared/model/shared-api';
+import { CommonService } from '@shared/services/common.service';
 
 @Component({
   selector: 'st-pre-login',
@@ -26,17 +26,16 @@ export class PreLoginComponent implements OnInit {
   nativeHeaderBg$: Promise<string>;
   pageContent: PreloginCsModel = {} as any;
   selectedInstitution: { id: string; name: string };
-  sessionId: any;
+  sessionId: string;
 
   constructor(
     private readonly nav: Router,
-    private readonly sanitizer: DomSanitizer,
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly authFacadeService: AuthFacadeService,
-    private readonly cdRef: ChangeDetectorRef,
     private readonly loadingService: LoadingService,
     private readonly settingsFacadeService: SettingsFacadeService,
-    private readonly sessionFacadeService: SessionFacadeService
+    private readonly sessionFacadeService: SessionFacadeService,
+    private readonly commonService: CommonService
   ) {}
   ngOnInit() {
     const { preLoginCs, backgroundColor, institutionInfo } = MessageChannel.get();
@@ -52,21 +51,11 @@ export class PreLoginComponent implements OnInit {
       .getAuthSessionToken$()
       .pipe(take(1))
       .toPromise();
-    const photoData = await this.getInstitutionPhoto(institutionId, this.sessionId);
-    this.institutionPhoto$ = Promise.resolve(photoData);
+    this.institutionPhoto$ = this.commonService.getInstitutionPhoto(institutionId, this.sessionId);
     this.institutionName$ = Promise.resolve(this.selectedInstitution.name);
-    this.getInstitutionName(institutionId, this.sessionId);
+    this.commonService.getInstitutionName(institutionId, this.sessionId);
   }
 
-  private async getInstitutionName(id, sessionId): Promise<string> {
-    return this.institutionFacadeService
-      .getInstitutionDataById$(id, sessionId, false)
-      .pipe(
-        map(({ name }) => `${name}`),
-        take(1)
-      )
-      .toPromise();
-  }
 
   private async navigate(asGuest) {
     const { id: institutionId } = this.selectedInstitution;
@@ -91,22 +80,6 @@ export class PreLoginComponent implements OnInit {
 
   public get defaultBackUrl() {
     return [ROLES.guest, GUEST_ROUTES.entry];
-  }
-
-  private async getInstitutionPhoto(id, sessionId): Promise<SafeResourceUrl> {
-    return this.institutionFacadeService
-      .getInstitutionPhotoById$(id, sessionId, false)
-      .pipe(
-        skipWhile(d => !d || d === null),
-        map((res: InstitutionPhotoInfo) => {
-          const { data, mimeType } = res;
-          return `data:${mimeType};base64,${data}`;
-        }),
-        map(response => this.sanitizer.bypassSecurityTrustResourceUrl(response)),
-        tap(() => this.cdRef.markForCheck()),
-        take(1)
-      )
-      .toPromise();
   }
 
   private async navigateToLogin(asGuest: boolean, loginState: LoginState) {

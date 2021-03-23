@@ -18,7 +18,8 @@ export enum CONTENT_STRINGS_CATEGORIES {
   pre_login = 'pre_login',
   passwordValidation = 'password-validation',
   forgotPassword = 'forgot-password',
-  passwordChange = 'password-change'
+  passwordChange = 'password-change',
+  guestDashboard = 'guest-dashboard'
 }
 
 export enum CONTENT_STRINGS_LOCALES {

@@ -20,7 +20,7 @@ import { BrowserAuthPlugin } from '../browser-auth/browser-auth.plugin';
 import { PinAction, PinCloseStatus, PinPage } from '@shared/ui-components/pin/pin.page';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { finalize, switchMap, take } from 'rxjs/operators';
-import { PATRON_NAVIGATION, ROLES } from '../../../app.global';
+import { GUEST_NAVIGATION, PATRON_NAVIGATION, ROLES } from '../../../app.global';
 import { GUEST_ROUTES } from '../../../non-authorized/non-authorized.config';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
@@ -204,7 +204,7 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
   private navigateToDashboard() {
     this.ngZone.run(() => {
       this.nativeStartupFacadeService.checkForStartupMessage = true;
-      this.router.navigate([PATRON_NAVIGATION.dashboard], { replaceUrl: true });
+      this.router.navigate([GUEST_NAVIGATION.dashboard], { replaceUrl: true });
     });
   }
 
