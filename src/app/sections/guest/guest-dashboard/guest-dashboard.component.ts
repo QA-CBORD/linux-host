@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { GuestFacadeService } from '../services/guest.facade.service';
 import { MessageChannel } from '@shared/model/shared-api';
 import { GuestDashboardSection } from '../model/dashboard.item.model';
-import { SafeResourceUrl } from '@angular/platform-browser';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { CommonService } from '@shared/services/common.service';
 
 @Component({
@@ -18,7 +18,7 @@ export class GuestDashboard implements OnInit {
   userName$: Promise<string>
 
   constructor(private readonly guestFacadeService: GuestFacadeService, 
-    private readonly commonService: CommonService) {}
+    private readonly commonService: CommonService, private readonly sanitizer: DomSanitizer) {}
 
   ngOnInit() {
     this.sections = MessageChannel.get<GuestDashboardSection[]>();
@@ -26,7 +26,7 @@ export class GuestDashboard implements OnInit {
   }
 
   private async loadInfo(): Promise<void>{
-    this.institutionPhoto$ = this.commonService.getInstitutionPhoto();
+    this.institutionPhoto$ = this.commonService.getInstitutionPhoto(null, null, this.sanitizer);
     this.userName$ = this.commonService.getUserName();
     this.institutionName$ = this.commonService.getInstitutionName();
   }

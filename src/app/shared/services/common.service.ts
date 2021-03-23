@@ -14,7 +14,6 @@ import { Settings } from 'src/app/app.global';
   providedIn: 'root',
 })
 export class CommonService {
-  sanitizer: DomSanitizer
   constructor(
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly settingsFacadeService: SettingsFacadeService,
@@ -22,9 +21,7 @@ export class CommonService {
     private readonly userFacadeService: UserFacadeService
   ) {}
 
-
-
-  async getInstitutionPhoto(institutionId = null, sessionId = null): Promise<SafeResourceUrl> {
+  async getInstitutionPhoto(institutionId = null, sessionId = null, sanitizer: DomSanitizer): Promise<SafeResourceUrl> {
     return this.institutionFacadeService
       .getInstitutionPhotoById$(
         institutionId || (await this.institionId()),
@@ -37,7 +34,7 @@ export class CommonService {
           const { data, mimeType } = res;
           return `data:${mimeType};base64,${data}`;
         }),
-        //map(response => this.sanitizer.bypassSecurityTrustResourceUrl(response)),
+        map(response => sanitizer.bypassSecurityTrustResourceUrl(response)),
         take(1)
       )
       .toPromise();

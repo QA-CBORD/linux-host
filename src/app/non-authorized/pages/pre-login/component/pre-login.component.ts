@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ROLES, Settings } from 'src/app/app.global';
 import { GUEST_ROUTES } from 'src/app/non-authorized/non-authorized.config';
-import { SafeResourceUrl } from '@angular/platform-browser';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { tap, take, switchMap } from 'rxjs/operators';
 import { zip } from 'rxjs';
@@ -35,7 +35,8 @@ export class PreLoginComponent implements OnInit {
     private readonly loadingService: LoadingService,
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly sessionFacadeService: SessionFacadeService,
-    private readonly commonService: CommonService
+    private readonly commonService: CommonService,
+    private readonly sanitizer: DomSanitizer
   ) {}
   ngOnInit() {
     const { preLoginCs, backgroundColor, institutionInfo } = MessageChannel.get();
@@ -51,7 +52,7 @@ export class PreLoginComponent implements OnInit {
       .getAuthSessionToken$()
       .pipe(take(1))
       .toPromise();
-    this.institutionPhoto$ = this.commonService.getInstitutionPhoto(institutionId, this.sessionId);
+    this.institutionPhoto$ = this.commonService.getInstitutionPhoto(institutionId, this.sessionId, this.sanitizer);
     this.institutionName$ = Promise.resolve(this.selectedInstitution.name);
     this.commonService.getInstitutionName(institutionId, this.sessionId);
   }

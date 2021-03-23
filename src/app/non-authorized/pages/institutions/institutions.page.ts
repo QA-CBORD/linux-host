@@ -46,9 +46,7 @@ export class InstitutionsPage implements OnInit {
     private readonly route: Router,
     private readonly registrationServiceFacade: RegistrationServiceFacade,
     private readonly commonService: CommonService
-  ) {
-    //this.commonService.sanitizer = this.sanitizer;
-  }
+  ) {}
 
   async ngOnInit() {
     this.getInstitutions();

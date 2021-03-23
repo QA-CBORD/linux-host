@@ -4,7 +4,7 @@ import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { Router } from '@angular/router';
 import { Institution } from '@core/model/institution';
-import { SafeResourceUrl } from '@angular/platform-browser';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { FormGroup, FormBuilder, AbstractControl, Validators } from '@angular/forms';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -66,7 +66,8 @@ export class UserPassForm implements OnInit {
     private readonly appBrowser: InAppBrowser,
     private readonly environmentFacadeService: EnvironmentFacadeService,
     private readonly accessibilityService: AccessibilityService,
-    private readonly commonService: CommonService
+    private readonly commonService: CommonService,
+    private readonly sanitizer: DomSanitizer
   ) {}
 
   get username(): AbstractControl {
@@ -106,7 +107,8 @@ export class UserPassForm implements OnInit {
     const data = MessageChannel.get() as any;
     const institutionInfo = data.institutionInfo || {};
     this.nativeHeaderBg$ = Promise.resolve(institutionInfo.backgroundColor);
-    this.institutionPhoto$ = this.commonService.getInstitutionPhoto(id, sessionId);
+    this.institutionPhoto$ = this.commonService
+      .getInstitutionPhoto(id, sessionId, this.sanitizer);
     this.institutionName$ = Promise.resolve(institutionInfo.name);
     if (!institutionInfo.name) {
       this.institutionName$ = this.commonService.getInstitutionName(id, sessionId);
@@ -287,7 +289,7 @@ export class UserPassForm implements OnInit {
       )
       .toPromise();
   }
-  
+
   private async presentToast(message: string): Promise<void> {
     await this.toastService.showToast({ message });
   }
