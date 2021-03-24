@@ -1,5 +1,6 @@
 import { isDefined } from '../utils';
 import { Attribute, AttributeOptions } from '@sections/housing/attributes/attributes.model';
+import { PatronAddress } from '@sections/housing/addresses/address.model';
 
 export enum ApplicationStatus {
   New = 1,
@@ -177,12 +178,14 @@ export interface ApplicationRequestOptions {
   patronApplication: PatronApplication;
   patronAttributes?: PatronAttribute[];
   patronPreferences?: PatronPreference[];
+  patronAddresses?: PatronAddress[];
 }
 
 export class ApplicationRequest {
   patronApplication: PatronApplication;
   patronAttributes?: PatronAttribute[];
   patronPreferences?: PatronPreference[];
+  patronAddresses?: PatronAddress[];
 
   constructor(options: ApplicationRequestOptions) {
     if (options == null || typeof options !== 'object') {
@@ -198,6 +201,10 @@ export class ApplicationRequest {
     if (Array.isArray(options.patronPreferences)) {
       this.patronPreferences = options.patronPreferences.map((preference: any) => new PatronPreference(preference));
     }
+
+    if (Array.isArray(options.patronAddresses)) {
+      this.patronAddresses = options.patronAddresses.map((address: any) => new PatronAddress(address));
+    }
   }
 }
 
@@ -206,6 +213,7 @@ export interface ApplicationDetailsOptions {
   patronApplication: PatronApplication;
   patronAttributes?: PatronAttribute[];
   patronPreferences?: PatronPreference[];
+  patronAddresses?: PatronAddress[];
 }
 
 export class ApplicationDetails implements ApplicationDetailsOptions {
@@ -213,6 +221,7 @@ export class ApplicationDetails implements ApplicationDetailsOptions {
   patronApplication: PatronApplication;
   patronAttributes?: PatronAttribute[];
   patronPreferences?: PatronPreference[];
+  patronAddresses?: PatronAddress[];
 
   constructor(options: ApplicationDetailsOptions) {
     if (options == null || typeof options !== 'object') {
@@ -232,5 +241,9 @@ export class ApplicationDetails implements ApplicationDetailsOptions {
     if (Array.isArray(options.patronPreferences)) {
       this.patronPreferences = options.patronPreferences.map((preference: any) => new PatronPreference(preference));
     }
+
+    this.patronAddresses = Array.isArray(options.patronAddresses)
+        ? options.patronAddresses.map((address: any) => new PatronAddress(address))
+        : [];
   }
 }

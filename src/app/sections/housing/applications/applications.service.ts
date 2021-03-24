@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, forkJoin, of } from 'rxjs';
 import { map, tap, switchMap, mapTo, withLatestFrom } from 'rxjs/operators';
 
-import { isDefined, parseJsonToArray } from '../utils';
+import { flat, isDefined, parseJsonToArray } from '../utils';
 
 import { HousingProxyService } from '../housing-proxy.service';
 import { PatronAttributesService } from '../patron-attributes/patron-attributes.service';
@@ -28,10 +28,13 @@ import {
   QuestionReorder,
   QuestionReorderValue,
   QuestionsPage,
+  QUESTIONS_SOURCES,
   QuestionTextbox,
 } from '@sections/housing/questions/questions.model';
 import { QuestionBase } from '@sections/housing/questions/types';
 import { FormArray, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { PatronAddress } from '../addresses/address.model';
+import { PatronAddressService } from '../addresses/address.service';
 
 @Injectable({
   providedIn: 'root',
@@ -46,6 +49,7 @@ export class ApplicationsService {
     private _housingProxyService: HousingProxyService,
     private _patronAttributesService: PatronAttributesService,
     private _preferencesService: PreferencesService,
+    private _patronAddressService: PatronAddressService,
     private _applicationsStateService: ApplicationsStateService,
     private _questionsStorageService: QuestionsStorageService,
     private _questionsService: QuestionsService
@@ -55,9 +59,8 @@ export class ApplicationsService {
     return this._questionsStorageService.getQuestions(key).pipe(
       withLatestFrom(this._applicationsStateService.applicationDetails$),
       map(([storedQuestions, applicationDetails]: [QuestionsEntries, ApplicationDetails]) => {
-        const pages: QuestionBase[][] = this._questionsService.getQuestionsPages(
-          applicationDetails.applicationDefinition.applicationFormJson
-        );
+        const pages: QuestionBase[][] = this._getQuestionsPages(applicationDetails);
+
         const patronApplication: PatronApplication = applicationDetails.patronApplication;
         const status: ApplicationStatus = patronApplication && patronApplication.status;
         const isSubmitted = status === ApplicationStatus.Submitted;
@@ -150,6 +153,14 @@ export class ApplicationsService {
     );
   }
 
+  private _getQuestionsPages(applicationDetails: ApplicationDetails): QuestionBase[][] {
+    const questions: QuestionBase[][] = this._questionsService
+      .getQuestions(applicationDetails.applicationDefinition.applicationFormJson)
+      .map((question: QuestionBase) => this._questionsService.mapToAddressTypeGroup(question));
+
+    return this._questionsService.splitByPages(flat(questions));
+  }
+
   private _getPages(
     pages: QuestionBase[][],
     storedQuestions: QuestionsEntries,
@@ -184,7 +195,7 @@ export class ApplicationsService {
           group[questionName] = this._toFormControl(
             storedValue,
             question,
-            applicationDetails.patronAttributes,
+            applicationDetails,
             isSubmitted
           );
         }
@@ -211,13 +222,17 @@ export class ApplicationsService {
   private _toFormControl(
     storedValue: any,
     question: QuestionFormControl,
-    attributes: PatronAttribute[],
+    applicationDetails: ApplicationDetails,
     isSubmitted: boolean
   ): FormControl {
     let value: any = storedValue;
 
-    if (!isDefined(value)) {
-      value = this._questionsService.getAttributeValue(attributes, question);
+    if (!isDefined(value) || value == '') {
+      if (question.source === QUESTIONS_SOURCES.ADDRESS_TYPES) {
+        value = this._questionsService.getAddressValue(applicationDetails.patronAddresses, question) || '';
+      } else {
+        value = this._questionsService.getAttributeValue(applicationDetails.patronAttributes, question);
+      }
     }
 
     const validators: ValidatorFn[] = [];
@@ -262,10 +277,17 @@ export class ApplicationsService {
           parsedJson,
           questions
         ): null;
+        const patronAddresses: PatronAddress[] = this._patronAddressService.getAddresses(
+          applicationDetails.patronAddresses,
+          parsedJson,
+          questions
+        );
+
         const body: ApplicationRequest = new ApplicationRequest({
           patronApplication: applicationDetails.patronApplication,
           patronAttributes,
           patronPreferences,
+          patronAddresses
         });
 
         return this._housingProxyService.put(this._patronApplicationsUrl, body);

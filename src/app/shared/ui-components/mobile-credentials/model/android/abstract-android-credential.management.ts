@@ -1,17 +1,14 @@
 import { LoadingService } from '@core/service/loading/loading.service';
 import { AlertController } from '@ionic/angular';
 import { Observable, of } from 'rxjs';
-import { catchError, finalize, first } from 'rxjs/operators';
+import { catchError, finalize, first, map } from 'rxjs/operators';
 import { AndroidCredentialDataService } from '../shared/android-credential-data.service';
-import { NFCDialogContentString } from '../shared/credential-content-string';
 import { MobileCredential } from '../shared/mobile-credential';
 import { MobileCredentialDataService } from '../shared/mobile-credential-data.service';
 import { CredentialStateChangeListener, MobileCredentialManager } from '../shared/mobile-credential-manager';
 import { AndroidCredential } from './android-credential.model';
 import { Plugins } from '@capacitor/core';
 import { AndroidCredentialCsModel, NfcDialogCs } from './android-credential-content-strings.model';
-import { MobileCredentialStatuses } from '../shared/credential-state';
-import { CredentialProviders } from '../shared/credential-utils';
 const { MobileCredentialStatusPlugin } = Plugins;
 
 export abstract class AbstractAndroidCredentialManager implements MobileCredentialManager {
@@ -29,12 +26,16 @@ export abstract class AbstractAndroidCredentialManager implements MobileCredenti
     protected readonly alertCtrl: AlertController
   ) {}
 
+
+  async onCredentialStateChanged(): Promise<void> {
+    this.credentialStateChangeListener && this.credentialStateChangeListener.onCredentialStateChanged();
+  }
+
   async contentStringAsync(updateUi?: boolean): Promise<AndroidCredentialCsModel> {
     const contentStrings = await this.credentialSrvc.getContents();
     if (updateUi) {
       this.customLoadingOptions.message = contentStrings.isLogingMessage || this.defaultIsLoadingMessage;
       this.mCredential.setUicString$(contentStrings.credStatuString$);
-      this.credentialStateChangeListener && this.credentialStateChangeListener.onCredentialStateChanged();
     }
     return contentStrings;
   }
@@ -43,7 +44,9 @@ export abstract class AbstractAndroidCredentialManager implements MobileCredenti
     return this.credentialSrvc;
   }
 
-  async onWillLogout(): Promise<void> {}
+  async onWillLogout(): Promise<void> {
+    this.credentialSrvc.unloadContentStrings();
+  }
 
   refresh(): void {
     // do nothing
@@ -114,6 +117,10 @@ export abstract class AbstractAndroidCredentialManager implements MobileCredenti
       .activePasses$()
       .pipe(
         first(),
+        map(async newCredential => {
+          newCredential.setUicString$((await this.contentStringAsync()).credStatuString$);
+          return newCredential;
+        }),
         catchError(() => (nullOnErr ? of(null) : of(this.mCredential))),
         finalize(() => {
           if (shouldShowLoadingIndicator) {

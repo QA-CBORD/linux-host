@@ -21,6 +21,7 @@ export interface MobileCredentialManager extends MobileCredentialManagerAdapter 
   onWillLogout(): Promise<void>;
   getService(): MobileCredentialDataService;
   contentStringAsync(udpateUi?: boolean): Promise<AndroidCredentialCsModel>
+  onCredentialStateChanged(): Promise<void>
 }
 
 export interface IDeviceState {

@@ -3,6 +3,7 @@ import { isDefined } from '../utils';
 import { PatronAttribute } from '../applications/applications.model';
 import { ChargeSchedule } from '@sections/housing/charge-schedules/charge-schedules.model';
 import { FacilityAttribute } from '@sections/housing/facility-attributes/facility-attributes.model';
+import { PatronAddress } from '@sections/housing/addresses/address.model';
 
 export enum ContractStatus {
   Preliminary = 1,
@@ -227,6 +228,7 @@ export interface ContractDetailsOptions {
   chargeSchedules: ChargeSchedule[];
   patronAttributes: PatronAttribute[];
   facilityAttributes: FacilityAttribute[];
+  patronAddresses?: PatronAddress[];
 }
 
 export class ContractDetails implements ContractDetailsOptions {
@@ -235,6 +237,7 @@ export class ContractDetails implements ContractDetailsOptions {
   chargeSchedules: ChargeSchedule[];
   patronAttributes: PatronAttribute[];
   facilityAttributes: FacilityAttribute[];
+  patronAddresses?: PatronAddress[];
 
   constructor(options: ContractDetailsOptions) {
     if (!isDefined(options) || typeof options !== 'object') {
@@ -254,6 +257,10 @@ export class ContractDetails implements ContractDetailsOptions {
 
     this.facilityAttributes = Array.isArray(options.facilityAttributes)
       ? options.facilityAttributes.map((attribute: any) => new FacilityAttribute(attribute))
+      : [];
+
+    this.patronAddresses = Array.isArray(options.patronAddresses)
+      ? options.patronAddresses.map((address: any) => new PatronAddress(address))
       : [];
   }
 }
