@@ -1,4 +1,4 @@
-export enum GUEST_ROUTES {
+export enum ANONYMOUS_ROUTES {
   startup = 'startup',
   entry = 'entry',
   institutions = 'institutions',
@@ -6,8 +6,6 @@ export enum GUEST_ROUTES {
   pre_login = 'pre-login',
   external = 'external-login',
   forgotPassword = 'forgot-password',
-  patronRegistration = 'patron-registration',
-  guestRegistration = 'guest-registration',
 }
 
 export enum AUTHENTICATION_SYSTEM_TYPE {

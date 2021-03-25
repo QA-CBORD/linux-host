@@ -9,6 +9,8 @@ import { map, take } from 'rxjs/operators';
 import { Settings } from 'src/app/app.global';
 import { GuestFacadeService } from './guest.facade.service';
 import { MessageChannel } from '@shared/model/shared-api';
+import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
+import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 
 @Injectable({
   providedIn: 'root',
@@ -17,8 +19,9 @@ export class GuestDashboardResolver implements Resolve<Observable<SettingInfoLis
   constructor(
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly loadingService: LoadingService,
+    private readonly institutionService: InstitutionFacadeService,
     private readonly userFacadeService: UserFacadeService,
-    private readonly guestFacadeService: GuestFacadeService
+    private readonly guestFacadeService: GuestFacadeService,
   ) {}
   resolve(
     route: ActivatedRouteSnapshot,
@@ -26,8 +29,16 @@ export class GuestDashboardResolver implements Resolve<Observable<SettingInfoLis
   ): Observable<SettingInfoList> | Observable<Observable<SettingInfoList>> | Promise<Observable<SettingInfoList>> {
     const dashboardSectionsObs = this.guestFacadeService.configureGuestDashboard().pipe(take(1));
     const settingListObs = this.settingsFacadeService.fetchSettingList(Settings.SettingList.FEATURES).pipe(take(1));
-    return zip(settingListObs, dashboardSectionsObs).pipe(map(([settings, dashboardSections]) => {
-      MessageChannel.put(dashboardSections);
+    const userObs = this.userFacadeService.getUser$();
+    const instObs = this.institutionService.fetchInstitutionData();
+    
+    return zip(
+      userObs,
+      instObs,
+      settingListObs, 
+      dashboardSectionsObs,
+      ).pipe(map(([, , settings, dashboardSections]) => {
+       MessageChannel.put(dashboardSections);
       return settings;
     }));
   }

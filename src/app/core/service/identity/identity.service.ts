@@ -21,7 +21,7 @@ import { PinAction, PinCloseStatus, PinPage } from '@shared/ui-components/pin/pi
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { finalize, switchMap, take } from 'rxjs/operators';
 import { GUEST_NAVIGATION, PATRON_NAVIGATION, ROLES } from '../../../app.global';
-import { GUEST_ROUTES } from '../../../non-authorized/non-authorized.config';
+import { ANONYMOUS_ROUTES } from '../../../non-authorized/non-authorized.config';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
 
@@ -160,7 +160,7 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
             message: 'User has canceled pin login',
           };
         case PinCloseStatus.MAX_FAILURE:
-          this.router.navigate([ROLES.guest, GUEST_ROUTES.entry], { state: { logoutUser: true } });
+          this.router.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.entry], { state: { logoutUser: true } });
           throw {
             code: VaultErrorCodes.TooManyFailedAttempts,
             message: 'User has exceeded max pin attempts',
@@ -202,9 +202,11 @@ export class IdentityService extends IonicIdentityVaultUser<VaultSessionData> {
   }
 
   private navigateToDashboard() {
-    this.ngZone.run(() => {
+    this.ngZone.run(async () => {
       this.nativeStartupFacadeService.checkForStartupMessage = true;
-      this.router.navigate([GUEST_NAVIGATION.dashboard], { replaceUrl: true });
+      const isGuest = await this.authFacadeService.isGuestUser().toPromise();
+      (isGuest && this.router.navigate([GUEST_NAVIGATION.dashboard], { replaceUrl: true })) ||
+        this.router.navigate([PATRON_NAVIGATION.dashboard], { replaceUrl: true });
     });
   }
 

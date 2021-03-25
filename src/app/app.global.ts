@@ -191,7 +191,8 @@ export namespace User {
 
 export enum ROLES {
   guest = 'guest',
-  patron = 'patron'
+  patron = 'patron',
+  anonymous = 'anonymous'
 }
 
 export enum PATRON_NAVIGATION {
@@ -208,8 +209,15 @@ export enum PATRON_NAVIGATION {
 }
 
 export enum GUEST_NAVIGATION {
-  dashboard = "guest/dashboard"
+  dashboard = 'guest/dashboard',
+  explore = 'guest/explore',
+  ordering = 'guest/ordering',
+  deposit = 'guest/deposit',
+  settings = 'guest/settings',
+  registration = 'guest/registration'
 }
+
+
 
 export enum LoginType {
   FACEID = 'FACEID',

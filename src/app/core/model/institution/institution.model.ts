@@ -1,4 +1,4 @@
-import { BooleanValueAccessor } from '@ionic/angular';
+import { GuestSetting } from '@sections/guest/model/guest-settings';
 import { AuthenticationInfo } from '../authentication/authentication-info.model';
 
 export interface Institution {
@@ -54,22 +54,14 @@ export class InstitutionLookupListItem {
   get type(): number {
     return this._type;
   }
-
-  get guestLogin(): boolean {
-    return this._guestLogin;
+  get guestSettings(): GuestSetting{
+    return {
+      guestLogin: this._guestLogin,
+      guestDeposit: this._guestDeposit,
+      guestLoginNotRequired: this._guestLoginNotRequired
+    }
   }
 
-  get guestDeposit(): boolean {
-    return this._guestDeposit;
-  }
-
-  get guestLoginNotRequired(): boolean {
-    return this._guestLoginNotRequired;
-  }
-
-  get guestRegSupported(): boolean {
-    return this._guestLogin; //|| this._guestDeposit || this._guestLoginNotRequired;
-  }
 }
 
 export class InstitutionBuilder {

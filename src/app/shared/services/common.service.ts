@@ -7,6 +7,7 @@ import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { InstitutionPhotoInfo } from '@core/model/institution';
 import { UserInfo } from '@core/model/user';
 import { getUserFullName } from '@core/utils/general-helpers';
+import { of } from 'rxjs';
 import { skipWhile, map, take } from 'rxjs/operators';
 import { Settings } from 'src/app/app.global';
 
@@ -60,6 +61,10 @@ export class CommonService {
         take(1)
       )
       .toPromise();
+  }
+
+  async getInstitutionBackgroundImage(): Promise<string> {
+    return Promise.resolve('/assets/images/card_background_illustration.svg');
   }
 
   private async institionId(): Promise<string> {

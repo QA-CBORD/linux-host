@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ROLES, Settings } from 'src/app/app.global';
-import { GUEST_ROUTES } from 'src/app/non-authorized/non-authorized.config';
+import { ANONYMOUS_ROUTES } from 'src/app/non-authorized/non-authorized.config';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { tap, take, switchMap } from 'rxjs/operators';
@@ -80,7 +80,7 @@ export class PreLoginComponent implements OnInit {
   }
 
   public get defaultBackUrl() {
-    return [ROLES.guest, GUEST_ROUTES.entry];
+    return [ROLES.anonymous, ANONYMOUS_ROUTES.entry];
   }
 
   private async navigateToLogin(asGuest: boolean, loginState: LoginState) {
@@ -94,12 +94,12 @@ export class PreLoginComponent implements OnInit {
           backgroundColor: await this.nativeHeaderBg$,
           name: institution.name,
         };
-        this.authFacadeService.cachedLoginType = asGuest;
+        this.authFacadeService.setIsGuestUser(asGuest);
         MessageChannel.put({ institutionInfo, navParams: { asGuest } });
-        this.nav.navigate([ROLES.guest, GUEST_ROUTES.login]);
+        this.nav.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.login]);
         break;
       case LoginState.EXTERNAL:
-        this.nav.navigate([ROLES.guest, GUEST_ROUTES.external]);
+        this.nav.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.external]);
         break;
     }
   }

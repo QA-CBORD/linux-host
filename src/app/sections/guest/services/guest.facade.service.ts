@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
+import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { ContentStringsFacadeService } from '@core/facades/content-strings/content-strings.facade.service';
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
 import { ContentStringApi } from '@shared/model/content-strings/content-strings-api';
-import { Observable, of } from 'rxjs';
+import { Observable, of, zip } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { CONTENT_STRINGS_CATEGORIES, CONTENT_STRINGS_DOMAINS } from 'src/app/content-strings';
 import { GuestDashboardSections } from '../model/dashboard.config';
@@ -14,7 +15,8 @@ import { GuestDashboardCsModel } from '../model/guest-dashboard.content.strings'
 })
 export class GuestFacadeService {
 
-  constructor(private readonly contentStringFacade: ContentStringsFacadeService) {}
+  constructor(private readonly contentStringFacade: ContentStringsFacadeService,
+    private readonly authService: AuthFacadeService) {}
 
   private loadAllContentStrings(): Observable<GuestDashboardCsModel> {
     return this.contentStringFacade
@@ -26,12 +28,14 @@ export class GuestFacadeService {
   }
 
   configureGuestDashboard(): Observable<GuestDashboardSection[]> {
-    return this.loadAllContentStrings().pipe(
-      map(model => {
+    const guestLoginSettingsObs = this.authService.getGuestSettings();
+    const contentStringObs = this.loadAllContentStrings();
+    return zip(contentStringObs, guestLoginSettingsObs).pipe(
+      map(([csModel, guestSetting]) => {
         return Object.keys(GuestDashboardSections).map(itemkey => {
-          GuestDashboardSections[itemkey].title = model.content[itemkey];
+          GuestDashboardSections[itemkey].title = csModel.content[itemkey];
           return GuestDashboardSections[itemkey];
-        });
+        }).filter(item => item.visibilityOn(guestSetting));
       })
     );
   }

@@ -7,7 +7,6 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, switchMap, take, tap } from 'rxjs/operators';
 import { InstitutionPhotoInfo } from '@core/model/institution/institution-photo-info.model';
 import { SettingsFacadeService } from '../settings/settings-facade.service';
-import { Settings } from 'src/app/app.global';
 import { AuthFacadeService } from '../auth/auth.facade.service';
 
 @Injectable({

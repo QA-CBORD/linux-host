@@ -16,3 +16,14 @@ export enum PATRON_ROUTES {
 }
 
 
+export enum GUEST_ROUTES {
+  dashboard = 'dashboard',
+  explore = 'explore',
+  ordering = 'ordering',
+  deposit = 'deposit',
+  settings = 'settings',
+  registration = 'registration',
+  biometric = 'biometric'
+}
+
+

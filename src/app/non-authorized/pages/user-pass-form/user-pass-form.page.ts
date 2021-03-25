@@ -1,4 +1,4 @@
-import { Settings, PATRON_NAVIGATION, ROLES } from './../../../app.global';
+import { Settings, PATRON_NAVIGATION, ROLES, GUEST_NAVIGATION } from './../../../app.global';
 import { map, tap, take, catchError } from 'rxjs/operators';
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
@@ -15,7 +15,7 @@ import { SettingsFacadeService } from '@core/facades/settings/settings-facade.se
 import { Device } from '@capacitor/core';
 import { IdentityFacadeService, LoginState } from '@core/facades/identity/identity.facade.service';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
-import { AUTHENTICATION_SYSTEM_TYPE, GUEST_ROUTES } from '../../non-authorized.config';
+import { AUTHENTICATION_SYSTEM_TYPE, ANONYMOUS_ROUTES } from '../../non-authorized.config';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
 import { Observable, of } from 'rxjs';
@@ -161,7 +161,7 @@ export class UserPassForm implements OnInit {
       .toPromise();
     MessageChannel.put(forgotPasswordCs);
     this.loadingService.closeSpinner();
-    this.router.navigate([ROLES.guest, GUEST_ROUTES.forgotPassword]);
+    this.router.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.forgotPassword]);
   }
 
   isSignupEnabled$(): Observable<boolean> {
@@ -184,13 +184,12 @@ export class UserPassForm implements OnInit {
       sessionId = await this.authenticateUsernamePassword(username, password, id);
     } catch (e) {
       this.presentToast('Login failed, invalid user name and/or password');
-      this.loadingService.closeSpinner();
+      await this.loadingService.closeSpinner();
       return;
     }
     const loginState: LoginState = await this.sessionFacadeService.determinePostLoginState(sessionId, id);
 
-    this.loadingService.closeSpinner();
-
+    await this.loadingService.closeSpinner();
     switch (loginState) {
       case LoginState.PIN_SET:
         try {
@@ -206,9 +205,15 @@ export class UserPassForm implements OnInit {
         break;
       case LoginState.DONE:
         this.nativeStartupFacadeService.checkForStartupMessage = true;
-        this.router.navigate([PATRON_NAVIGATION.dashboard], { replaceUrl: true });
+        this.navigate2Dashboard();
         break;
     }
+  }
+
+  private async navigate2Dashboard(): Promise<void> {
+    const isGuest = await this.authFacadeService.isGuestUser().toPromise();
+    (isGuest && this.router.navigate([GUEST_NAVIGATION.dashboard], { replaceUrl: true })) ||
+      this.router.navigate([PATRON_NAVIGATION.dashboard], { replaceUrl: true });
   }
 
   private initForm() {
@@ -300,7 +305,7 @@ export class UserPassForm implements OnInit {
   }
 
   public get defaultBackUrl() {
-    return [ROLES.guest, GUEST_ROUTES.entry];
+    return [ROLES.anonymous, ANONYMOUS_ROUTES.entry];
   }
 }
 

@@ -18,7 +18,7 @@ import { PopupTypes } from '@sections/rewards/rewards.config';
 import { PopupButton } from '@core/model/button';
 import { PopoverController } from '@ionic/angular';
 import { BUTTON_TYPE, buttons } from '@core/utils/buttons.config';
-import { GUEST_ROUTES } from '../../non-authorized.config';
+import { ANONYMOUS_ROUTES } from '../../non-authorized.config';
 import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
 
 @Component({
@@ -112,7 +112,7 @@ export class ExternalLoginPage {
 
     const browserEventBack = this.browser.on('exit').subscribe(event => {
       if (event) {
-        this.navigate([ROLES.guest, GUEST_ROUTES.entry]);
+        this.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.entry]);
       }
     });
 
@@ -218,13 +218,13 @@ export class ExternalLoginPage {
 
     modal.onDidDismiss().then(async data => {
       if (!data || !data.role) {
-        this.navigate([ROLES.guest, GUEST_ROUTES.entry]);
+        this.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.entry]);
         return;
       }
 
       switch (data.role) {
         case BUTTON_TYPE.CLOSE:
-          this.navigate([ROLES.guest, GUEST_ROUTES.entry]);
+          this.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.entry]);
           break;
         case BUTTON_TYPE.RETRY:
           this.loadLoginContent();

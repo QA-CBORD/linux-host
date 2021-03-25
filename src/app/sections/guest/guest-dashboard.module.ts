@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { StButtonModule } from '@shared/ui-components/st-button';
 import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module';
+import { GuestDashboardResolver } from './services/guest-dashboard.resolver';
 
 @NgModule({
   declarations: [GuestDashboard],
@@ -17,6 +18,9 @@ import { StHeaderModule } from '@shared/ui-components/st-header/st-header.module
       {
         path: '',
         component: GuestDashboard,
+        resolve: {
+          data: GuestDashboardResolver,
+        }
       },
     ]),
   ],

@@ -2,7 +2,7 @@ import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { take, switchMap, tap, map } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import { GUEST_ROUTES } from '../../non-authorized.config';
+import { ANONYMOUS_ROUTES } from '../../non-authorized.config';
 import { ROLES, Settings } from 'src/app/app.global';
 import { zip } from 'rxjs';
 import { LoadingService } from '@core/service/loading/loading.service';
@@ -11,7 +11,7 @@ import { Plugins, Capacitor } from '@capacitor/core';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { LoginState } from '@core/facades/identity/identity.facade.service';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
-import { EnvironmentFacadeService, EnvironmentType } from '@core/facades/environment/environment.facade.service';
+import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { RegistrationServiceFacade } from '../registration/services/registration-service-facade';
 import { InstitutionLookupListItem } from '@core/model/institution';
@@ -40,7 +40,6 @@ export class InstitutionsPage implements OnInit {
     private readonly loadingService: LoadingService,
     private readonly sessionFacadeService: SessionFacadeService,
     private readonly nav: Router,
-    private readonly sanitizer: DomSanitizer,
     private readonly cdRef: ChangeDetectorRef,
     private readonly toastService: ToastService,
     private readonly route: Router,
@@ -85,11 +84,14 @@ export class InstitutionsPage implements OnInit {
   async onInstitutionSelected(institution: InstitutionLookupListItem): Promise<void> {
     this.loadingService.showSpinner({ duration: 5000 });
     const canNavigate2Prelogin = this.registrationServiceFacade.guestLoginSupportedInEnv;
-    const go2prelogin = institution.guestRegSupported && canNavigate2Prelogin;
+    const go2prelogin = institution.guestSettings.guestLogin && canNavigate2Prelogin;
     if (go2prelogin) {
       const backgroundColor = await this.commonService.getNativeHeaderBg(institution.id, this.sessionId);
+      this.authFacadeService.saveGuestSetting(institution.guestSettings);
       this.navigateToPreLogin(institution, backgroundColor);
     } else {
+      this.authFacadeService.removeGuestSetting();
+      this.authFacadeService.setIsGuestUser(false);
       this.navigate(institution);
     }
   }
@@ -132,7 +134,7 @@ export class InstitutionsPage implements OnInit {
 
     MessageChannel.put({ backgroundColor, preLoginCs, institutionInfo });
 
-    this.nav.navigate([ROLES.guest, GUEST_ROUTES.pre_login]);
+    this.nav.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.pre_login]);
   }
 
   private async navigateToLogin(loginState: number, institution) {
@@ -145,10 +147,10 @@ export class InstitutionsPage implements OnInit {
           name: institution.name,
         };
         MessageChannel.put({ institutionInfo });
-        this.nav.navigate([ROLES.guest, GUEST_ROUTES.login]);
+        this.nav.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.login]);
         break;
       case LoginState.EXTERNAL:
-        this.nav.navigate([ROLES.guest, GUEST_ROUTES.external]);
+        this.nav.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.external]);
         break;
     }
   }
@@ -166,7 +168,7 @@ export class InstitutionsPage implements OnInit {
         {
           text: 'Back',
           handler: () => {
-            this.route.navigate([ROLES.guest, GUEST_ROUTES.entry]);
+            this.route.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.entry]);
           },
         },
       ],
