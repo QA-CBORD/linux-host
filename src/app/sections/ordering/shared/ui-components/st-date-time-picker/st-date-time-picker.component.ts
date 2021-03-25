@@ -24,7 +24,7 @@ export class StDateTimePickerComponent implements OnInit {
   @Input() merchantInfo: MerchantInfo;
   @Input() dateTimePicker: Date | string;
   @Input() userData: UserInfo;
-  @Output() onTimeSelected: EventEmitter<Date | string> = new EventEmitter<Date | string>();
+  @Output() onTimeSelected: EventEmitter<any> = new EventEmitter<any>();
 
   private prevSelectedTimeInfo: TimeInfo = { prevIdx: 0, currentIdx: 0, maxValue: false };
   private selectedDayIdx: number = 0;
@@ -34,11 +34,11 @@ export class StDateTimePickerComponent implements OnInit {
   private monthArray: ContentStringInfo[];
   private tomorrowString: string = 'Tomorrow';
 
-  constructor(private readonly pickerController: PickerController,
-              private readonly orderingService: OrderingService,
-              private readonly contentStringsFacadeService: ContentStringsFacadeService,
-              ) {
-  }
+  constructor(
+    private readonly pickerController: PickerController,
+    private readonly orderingService: OrderingService,
+    private readonly contentStringsFacadeService: ContentStringsFacadeService
+  ) {}
 
   async ngOnInit(): Promise<void> {
     this.initContentStrings();
@@ -52,10 +52,14 @@ export class StDateTimePickerComponent implements OnInit {
     const confirm = await this.contentStrings.buttonConfirm.pipe(take(1)).toPromise();
     const cancel = await this.contentStrings.buttonCancel.pipe(take(1)).toPromise();
     const title = await this.contentStrings.labelSelectTime.pipe(take(1)).toPromise();
-    this.monthArray = await this.contentStringsFacadeService.getContentStrings$(CONTENT_STRINGS_DOMAINS.patronUi,
-      CONTENT_STRINGS_CATEGORIES.monthAbbreviated).pipe(take(1)).toPromise();
-    this.weekArray = await this.contentStringsFacadeService.getContentStrings$(CONTENT_STRINGS_DOMAINS.patronUi,
-      CONTENT_STRINGS_CATEGORIES.dayOfWeekAbbreviated).pipe(take(1)).toPromise();
+    this.monthArray = await this.contentStringsFacadeService
+      .getContentStrings$(CONTENT_STRINGS_DOMAINS.patronUi, CONTENT_STRINGS_CATEGORIES.monthAbbreviated)
+      .pipe(take(1))
+      .toPromise();
+    this.weekArray = await this.contentStringsFacadeService
+      .getContentStrings$(CONTENT_STRINGS_DOMAINS.patronUi, CONTENT_STRINGS_CATEGORIES.dayOfWeekAbbreviated)
+      .pipe(take(1))
+      .toPromise();
 
     const picker: HTMLIonPickerElement = await this.pickerController.create({
       columns: this.createColumns(),
@@ -91,19 +95,49 @@ export class StDateTimePickerComponent implements OnInit {
   private pickerClickHandler(dateInfo: any) {
     const [date, { value }] = Object.values(dateInfo);
     const [year, month, day] = date.value.split('-');
-    let dateValue;
+    let dateValue, timeStamp;
     if (value === 'asap') {
       dateValue = 'ASAP';
+      timeStamp = this.getCurrentLocaleTime();
     } else {
       let [hours, mins] = value.split(':');
-      let [minutes, period] = mins.split(" ");
-      if(period.trim() == 'PM' && hours != 12)
-          hours = +hours + 12;
+      let [minutes, period] = mins.split(' ');
+      timeStamp = this.getTimeStamp(date.value, hours, minutes);
+      if (period.trim() == 'PM' && hours != 12) hours = +hours + 12;
       dateValue = new Date(year, month - 1, day, hours, minutes);
     }
-
     this.dateTimePicker = dateValue;
-    this.onTimeSelected.emit(this.dateTimePicker);
+    this.onTimeSelected.emit({ dateTimePicker: this.dateTimePicker, timeStamp });
+  }
+
+  private hasTimeStamp(): boolean {
+    const timeStamps = this.schedule.days[0].hourBlocks[0].timestamps;
+    return timeStamps && timeStamps.length > 0;
+  }
+
+  getCurrentLocaleTime() {
+    if (!this.hasTimeStamp()) return null;
+    const appendZero = (value: number) => (value < 10 && `0${value}`) || value;
+    const curDate = new Date();
+    const [date] = curDate.toJSON().split('T');
+    const hours = appendZero(curDate.getHours());
+    const minutes = appendZero(curDate.getMinutes());
+    const sampleTimeStamp = this.schedule.days[0].hourBlocks[0].timestamps[0];
+    const [, , offset] = sampleTimeStamp.split(':');
+    const dateString = `${date}T${hours}:${minutes}:${offset}`;
+    return dateString;
+  }
+
+  private getTimeStamp(date, hours, minutes): string {
+    if (!this.hasTimeStamp()) return null;
+    try {
+      const day = this.schedule.days.find(day => day.date == date);
+      const hour = day.hourBlocks.find(h => h.hour == hours);
+      const index = hour.minuteBlocks.findIndex(min => min == minutes);
+      return hour.timestamps.find((ts, idx) => idx == index);
+    } catch (e) {
+      return null;
+    }
   }
 
   private preparePickerArr(i: number = 0): any[] {
@@ -115,7 +149,7 @@ export class StDateTimePickerComponent implements OnInit {
           return `${block.hour}:${minuteBlock === 0 ? '00' : minuteBlock} ${block['period']}`;
         }),
       ],
-      [],
+      []
     );
     return [arr1, arr2];
   }
@@ -135,7 +169,7 @@ export class StDateTimePickerComponent implements OnInit {
     }
     for (let i = 0; i < numberOfColumns; i++) {
       if (i === 1 && columns[0].selectedIndex === 0) {
-        const splittedDate = (columns[columns[0].selectedIndex].options[0].value).split('-');
+        const splittedDate = columns[columns[0].selectedIndex].options[0].value.split('-');
         const selectedTime = `${splittedDate[1]}/${splittedDate[2]}/${splittedDate[0]}`;
         isToday = this.isTodayOrTomorrow(selectedTime, true);
       }
@@ -156,7 +190,7 @@ export class StDateTimePickerComponent implements OnInit {
       if (columnIndex === 1) {
         return columnOptions[columnIndex][i % total];
       }
-      const splittedDate = (columnOptions[columnIndex][i % total]).split('-');
+      const splittedDate = columnOptions[columnIndex][i % total].split('-');
       const selectedTime = `${splittedDate[1]}/${splittedDate[2]}/${splittedDate[0]}`;
 
       if (this.isTodayOrTomorrow(selectedTime, true)) {
@@ -184,7 +218,7 @@ export class StDateTimePickerComponent implements OnInit {
   }
 
   private isTodayOrTomorrow(date, isToday) {
-    const { locale, timeZone } = this.userData
+    const { locale, timeZone } = this.userData;
     const today = new Date().toLocaleString(locale, { timeZone });
     const idxForSlice = today.indexOf(',');
 
@@ -192,27 +226,31 @@ export class StDateTimePickerComponent implements OnInit {
   }
 
   private async initContentStrings() {
-    this.contentStrings.buttonConfirm =
-      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonConfirm);
-    this.contentStrings.buttonCancel =
-      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.buttonCancel);
-    this.contentStrings.labelAsap =
-      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelAsap);
-    this.contentStrings.labelSelectTime =
-      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelSelectTime);
-    this.tomorrowString = await
-      this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelTomorrow)
-        .pipe(take(1)).toPromise();
+    this.contentStrings.buttonConfirm = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.buttonConfirm
+    );
+    this.contentStrings.buttonCancel = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.buttonCancel
+    );
+    this.contentStrings.labelAsap = this.orderingService.getContentStringByName(ORDERING_CONTENT_STRINGS.labelAsap);
+    this.contentStrings.labelSelectTime = this.orderingService.getContentStringByName(
+      ORDERING_CONTENT_STRINGS.labelSelectTime
+    );
+    this.tomorrowString = await this.orderingService
+      .getContentStringByName(ORDERING_CONTENT_STRINGS.labelTomorrow)
+      .pipe(take(1))
+      .toPromise();
   }
 
   async updateAsapOption(): Promise<void> {
     const asapLabel = await this.contentStrings.labelAsap.pipe(take(1)).toPromise();
-    this.picker && this.picker.columns.forEach(({ options }) => {
-      const index = options.findIndex(({ value }) => value === 'asap');
-      if (index !== -1) {
-        options[index] = { ...options[index], text: asapLabel };
-      }
-    });
+    this.picker &&
+      this.picker.columns.forEach(({ options }) => {
+        const index = options.findIndex(({ value }) => value === 'asap');
+        if (index !== -1) {
+          options[index] = { ...options[index], text: asapLabel };
+        }
+      });
   }
 }
 

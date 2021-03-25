@@ -146,7 +146,7 @@ export class CartService {
     if (addr) {
       address = type === ORDER_TYPE.DELIVERY ? { deliveryAddressId: addr.id } : { pickupAddressId: addr.id };
     }
-  
+
     return this.userFacadeService.getUserData$().pipe(
       first(),
       switchMap(({ timeZone, locale }) => {
@@ -154,7 +154,7 @@ export class CartService {
           ...this.cart.order,
           ...address,
           type,
-          dueTime: getDateTimeInGMT(dueTime, locale, timeZone),
+          dueTime: dueTime instanceof Date ? getDateTimeInGMT(dueTime, locale, timeZone): dueTime,
         };
         return this.merchantService.validateOrder(this.cart.order);
       }),
@@ -191,7 +191,7 @@ export class CartService {
   addPaymentInfoToOrder(peymentInfo: Partial<OrderPayment>) {
     this.cart.order.orderPayment = [peymentInfo];
   }
-  
+
   updateOrderPhone(phone: string) {
     this.cart.order.userPhone = phone;
   }
@@ -205,8 +205,7 @@ export class CartService {
       .getUserData$()
       .pipe(first())
       .toPromise();
-    const timeInGMT = await getDateTimeInGMT(dueTime, locale, timeZone);
-
+    const timeInGMT = dueTime instanceof Date ? await getDateTimeInGMT(dueTime, locale, timeZone) : dueTime;
     return this.merchantService
       .getDisplayMenu(id, timeInGMT, type)
       .pipe(first())
