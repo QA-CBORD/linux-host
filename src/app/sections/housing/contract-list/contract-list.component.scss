@@ -1,0 +1,37 @@
+@import 'tools';
+
+:host {
+  background-color: #f7f7f7;
+  display: block;
+  padding: 15px 0px;
+}
+
+
+
+.contract-list__item {
+  margin-bottom: 10px;
+  --border-width: 1px;
+  --border-radius: 7px;
+  --border-color: #{$color-link-water};
+  --padding-top: 10px;
+  --padding-bottom: 10px;
+  --padding-start: 16px;
+  --padding-end: 5px;
+  --min-height: auto;
+
+  &::before {
+    background-color: $color-strong-blue;
+    border-radius: 0 0 2px 2px;
+    width: 32px;
+    height: 4px;
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 16px;
+    z-index: 1;
+  }
+
+}
+.contract-list__item-name {
+  font-weight: bolder;
+}

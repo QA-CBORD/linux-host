@@ -6,7 +6,7 @@ import { LoadingService } from '@core/service/loading/loading.service';
 import { TermsService } from '../../terms/terms.service';
 import { HousingService } from '../../housing.service';
 
-import { DefinitionsResponse, RoomSelectResponse } from '../../housing.model';
+import { ContractListResponse, DefinitionsResponse, RoomSelectResponse } from '../../housing.model';
 
 @Component({
   selector: 'st-housing-dashboard',
@@ -19,6 +19,7 @@ export class HousingDashboardPage implements OnInit, OnDestroy {
 
   isHeaderVisible: boolean = false;
   hasRoomSelections: boolean = false;
+  hasContracts: boolean = false;
 
   constructor(
     private _termsService: TermsService,
@@ -44,7 +45,9 @@ export class HousingDashboardPage implements OnInit, OnDestroy {
           this._loadingService.showSpinner();
           return merge(
             this._housingService.getDefinitions(termId),
-            this._housingService.getRoomSelects(termId)
+            this._housingService.getRoomSelects(termId),
+            this._housingService.getPatronContracts(termId)
+            
           )
         })
       )
@@ -52,7 +55,7 @@ export class HousingDashboardPage implements OnInit, OnDestroy {
         next: (response: DefinitionsResponse) => this._handleSuccess(response),
         error: () => this._loadingService.closeSpinner(),
       });
-
+      
     this._subscription.add(dashboardSubscription);
   }
 
@@ -63,6 +66,10 @@ export class HousingDashboardPage implements OnInit, OnDestroy {
     if(response instanceof RoomSelectResponse){
       this.isHeaderVisible = this.isHeaderVisible || response.roomSelects.length > 0;
       this.hasRoomSelections = response.roomSelects.length > 0 ? true:false;
+    }
+    if(response instanceof ContractListResponse){
+      this.isHeaderVisible = this.isHeaderVisible || response.contractSummaries.length > 0;
+      this.hasContracts = response.contractSummaries.length > 0 ? true:false;
     }
     this._loadingService.closeSpinner();
   }
