@@ -2,10 +2,16 @@
 
 .title-home {
   font-weight: bold;
-  padding: 0px 0px 5px 15px;
+  padding: 0px 0px 0px 15px;
 }
 
 .content {
+
+    background-color: #f1f1f1;
+    height: 99.5%;
+    width: 100%;
+    padding-top: 5px;
+
   .card {
     margin: 5px 10px 5px;
     border-radius: 15px;
@@ -82,10 +88,6 @@
     }
   }
 
-  /* separation here...**/
-  background-color: #f1f1f1;
-  height: 99.5%;
-  width: 100%;
   @include font-nunito-regular(20px);
   .body {
     margin: 10px;
