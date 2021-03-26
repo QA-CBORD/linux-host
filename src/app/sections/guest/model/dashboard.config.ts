@@ -10,20 +10,20 @@ export const GuestDashboardSections: { [key: string]: GuestDashboardSection } = 
     imageUrl: `${imageBaseUrl}/get_deposit.svg`,
     willNavigate: true,
     url: GUEST_NAVIGATION.deposit,
-    visibilityOn: (settings: GuestSetting) => settings.guestDeposit
+    visibilityOn: (setting: GuestSetting) => setting.canDeposit
   },
   order: {
     title: 'Start an order',
     imageUrl: `${imageBaseUrl}/get_order.svg`,
     willNavigate: true,
     url: GUEST_NAVIGATION.ordering,
-    visibilityOn: (settings: GuestSetting) => settings.guestLoginNotRequired
+    visibilityOn: (setting: GuestSetting) => setting.canOrder
   },
   explore: {
     title: 'Explore',
     imageUrl: `${imageBaseUrl}/get_explore.svg`,
     willNavigate: true,
     url: GUEST_NAVIGATION.explore,
-    visibilityOn: (settings: GuestSetting) => true
+    visibilityOn: (setting: GuestSetting) => setting.canExplore
   },
 };

@@ -54,14 +54,14 @@ export class InstitutionLookupListItem {
   get type(): number {
     return this._type;
   }
-  get guestSettings(): GuestSetting{
+  get guestSettings(): GuestSetting {
     return {
-      guestLogin: this._guestLogin,
-      guestDeposit: this._guestDeposit,
-      guestLoginNotRequired: this._guestLoginNotRequired
-    }
+      canLogin: this._guestLogin,
+      canDeposit: this._guestDeposit,
+      canOrder: this._guestLoginNotRequired,
+      canExplore: false,
+    };
   }
-
 }
 
 export class InstitutionBuilder {

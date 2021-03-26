@@ -1,5 +1,6 @@
 export interface GuestSetting {
-    guestLogin: boolean,
-    guestDeposit: boolean,
-    guestLoginNotRequired: boolean
+    canLogin: boolean,
+    canDeposit: boolean,
+    canOrder: boolean, // guestLoginNotRequired
+    canExplore: boolean
   }

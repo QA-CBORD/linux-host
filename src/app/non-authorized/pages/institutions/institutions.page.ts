@@ -83,9 +83,9 @@ export class InstitutionsPage implements OnInit {
 
   async onInstitutionSelected(institution: InstitutionLookupListItem): Promise<void> {
     this.loadingService.showSpinner({ duration: 5000 });
-    const canNavigate2Prelogin = this.registrationServiceFacade.guestLoginSupportedInEnv;
-    const go2prelogin = institution.guestSettings.guestLogin && canNavigate2Prelogin;
-    if (go2prelogin) {
+    const preloginSupported = this.registrationServiceFacade.guestLoginSupportedInEnv;
+    const canGo2Prelogin = institution.guestSettings.canLogin && preloginSupported;
+    if (canGo2Prelogin) {
       const backgroundColor = await this.commonService.getNativeHeaderBg(institution.id, this.sessionId);
       this.authFacadeService.saveGuestSetting(institution.guestSettings);
       this.navigateToPreLogin(institution, backgroundColor);

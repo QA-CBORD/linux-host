@@ -13,12 +13,20 @@ export const GUEST_NAVIGATION_BASE_CONFIG: ReadonlyArray<NavigationBottomBarElem
     visibilityOn: () => true,
   },
   {
+    id: TILES_ID.order, // enable_food
+    iconCssPostfix: 'order',
+    isEnable: false,
+    name: TILES_TITLE.order,
+    url: GUEST_NAVIGATION.ordering,
+    visibilityOn: (setting: GuestSetting) => setting.canOrder,
+  },
+  {
     id: TILES_ID.explore,
     iconCssPostfix: 'explore',
     isEnable: true,
     name: TILES_TITLE.explore,
     url: GUEST_NAVIGATION.explore,
-    visibilityOn: () => true,
+    visibilityOn: (setting: GuestSetting) => setting.canExplore,
   },
 
   {
@@ -28,15 +36,6 @@ export const GUEST_NAVIGATION_BASE_CONFIG: ReadonlyArray<NavigationBottomBarElem
     name: TILES_TITLE.settings,
     url: GUEST_NAVIGATION.settings,
     visibilityOn: () => true,
-  },
-
-  {
-    id: TILES_ID.order, // enable_food
-    iconCssPostfix: 'order',
-    isEnable: false,
-    name: TILES_TITLE.order,
-    url: GUEST_NAVIGATION.ordering,
-    visibilityOn: (setting: GuestSetting) => setting.guestLoginNotRequired,
   },
 ];
 

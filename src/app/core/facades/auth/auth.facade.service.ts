@@ -38,17 +38,18 @@ export class AuthFacadeService extends ServiceStateFacade {
 
   private get nonNullGuestSetting(): GuestSetting {
     return {
-      guestLogin: false,
-      guestDeposit: false,
-      guestLoginNotRequired: false,
+      canLogin: false,
+      canDeposit: false,
+      canOrder: false,
+      canExplore: false,
     };
   }
 
-  setIsGuestUser(asGuest: boolean)  {
+  setIsGuestUser(asGuest: boolean) {
     this.storageStateService.updateStateEntity(this.isGuestUserKey, asGuest, { highPriorityKey: true });
   }
 
-  isGuestUser(): Observable<boolean>{
+  isGuestUser(): Observable<boolean> {
     return this.storageStateService.getStateEntityByKey$<string>(this.isGuestUserKey).pipe(
       map(data => (data && !!data.value) || false),
       catchError(() => of(false)),

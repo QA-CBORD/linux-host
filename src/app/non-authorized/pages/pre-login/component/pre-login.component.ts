@@ -4,7 +4,7 @@ import { ROLES, Settings } from 'src/app/app.global';
 import { ANONYMOUS_ROUTES } from 'src/app/non-authorized/non-authorized.config';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
-import { tap, take, switchMap } from 'rxjs/operators';
+import { tap, take, switchMap, map } from 'rxjs/operators';
 import { zip } from 'rxjs';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
@@ -57,7 +57,6 @@ export class PreLoginComponent implements OnInit {
     this.commonService.getInstitutionName(institutionId, this.sessionId);
   }
 
-
   private async navigate(asGuest) {
     const { id: institutionId } = this.selectedInstitution;
     await this.loadingService.showSpinner();
@@ -83,10 +82,28 @@ export class PreLoginComponent implements OnInit {
     return [ROLES.anonymous, ANONYMOUS_ROUTES.entry];
   }
 
-  private async navigateToLogin(asGuest: boolean, loginState: LoginState) {
+  private async updateGuestSettings(institutionId): Promise<void> {
+    const getGuestSettingObs = this.authFacadeService.getGuestSettings();
+    const merchantEnabledObs = this.settingsFacadeService.getSetting(
+      Settings.Setting.PLACES_ENABLED,
+      this.sessionId,
+      institutionId
+    );
+    const newGuestSetting = await zip(getGuestSettingObs, merchantEnabledObs)
+      .pipe(
+        map(([guestSettings, { value }]) => {
+          guestSettings.canExplore = Boolean(Number(value));
+          return guestSettings;
+        })
+      )
+      .toPromise();
+    this.authFacadeService.saveGuestSetting(newGuestSetting);
+  }
+
+  private async navigateToLogin(isGuestUser: boolean, loginState: LoginState) {
     this.loadingService.closeSpinner();
-    const loginType: LoginState = asGuest && LoginState.HOSTED || loginState;
-    
+    const loginType: LoginState = (isGuestUser && LoginState.HOSTED) || loginState;
+
     switch (loginType) {
       case LoginState.HOSTED:
         const institution = this.selectedInstitution;
@@ -94,9 +111,10 @@ export class PreLoginComponent implements OnInit {
           backgroundColor: await this.nativeHeaderBg$,
           name: institution.name,
         };
-        this.authFacadeService.setIsGuestUser(asGuest);
-        MessageChannel.put({ institutionInfo, navParams: { asGuest } });
+        this.authFacadeService.setIsGuestUser(isGuestUser);
+        MessageChannel.put({ institutionInfo, navParams: { isGuestUser } });
         this.nav.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.login]);
+        isGuestUser && this.updateGuestSettings(institution.id);
         break;
       case LoginState.EXTERNAL:
         this.nav.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.external]);
