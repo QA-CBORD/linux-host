@@ -1,0 +1,6 @@
+<ion-list *ngIf="(contractListStateService.contractSummaries  | async) as contracts" class="ion-no-margin bg-transparent">
+    <ion-list-header *ngIf="contracts.length > 0" class="ion-no-padding">
+      <h2 class="secondary-header secondary-header--m">Your Contracts</h2>
+    </ion-list-header>
+    <st-contract-list-items [contractSummaries]="contracts"></st-contract-list-items>
+  </ion-list>

@@ -4,6 +4,7 @@ import { RoomSelect } from './rooms/rooms.model';
 import { FacilityDetails } from './facilities/facilities.model';
 import { FacilityOccupantDetails } from '@sections/housing/roommate/roomate.model';
 import { NonAssignmentDetails, NonAssignmentListDetails } from './non-assignments/non-assignments.model';
+import {ContractSummary} from './contract-list/contractSummary.model'
 
 export enum FormTypes {
   APPLICATIONS = 1,
@@ -106,6 +107,23 @@ export class RoomSelectResponse implements RoomSelectResponseOptions {
       : [];
   }
 }
+export interface ContractListResponseOptions{
+  contractSummaries: ContractSummary[];
+}
+
+export class ContractListResponse implements ContractListResponseOptions{
+  contractSummaries: ContractSummary[];
+
+  constructor(options: ContractListResponseOptions) {
+    if (options == null || typeof options !== 'object') {
+      options = {} as ContractListResponseOptions;
+    }
+    this.contractSummaries = Array.isArray(options)
+      ? options.map((detail: any) => new ContractSummary(detail))
+      : [];
+  }
+}
+
 
 export class Label {
   constructor(public name: string) {
