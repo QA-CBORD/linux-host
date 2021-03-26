@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { FormArray, FormControl, FormGroup, ValidatorFn } from '@angular/forms';
 
-import { integerValidator, numericValidator, parseJsonToArray } from '../utils';
+import { integerValidator, isEmptyOrNullString, numericValidator, parseJsonToArray } from '../utils';
 
 import {
   QuestionAddressTypeGroup,
@@ -131,23 +131,23 @@ export class QuestionsService {
     if (address) {
       switch (question.attribute) {
         case AddressFields.ADDRESS_NAME:
-          return address.addrName;
+          return !isEmptyOrNullString(address.addrName) ? address.addrName : '';
         case AddressFields.ADDRESS_LINE_1:
-          return address.addrLn1;
+          return !isEmptyOrNullString(address.addrLn1) ? address.addrLn1 : '';
         case AddressFields.ADDRESS_LINE_2:
-          return address.addrLn2;
+          return !isEmptyOrNullString(address.addrLn2) ? address.addrLn2 : '';
         case AddressFields.CITY:
-          return address.city;
+          return !isEmptyOrNullString(address.city) ? address.city : '';
         case AddressFields.COUNTRY:
-          return address.country;
+          return !isEmptyOrNullString(address.country) ? address.country : '';
         case AddressFields.STATE:
-          return address.state;
+          return !isEmptyOrNullString(address.state) ? address.state : '';
         case AddressFields.ZIP_CODE:
-          return address.zip;
+          return !isEmptyOrNullString(address.zip) ? address.zip : '';
         case AddressFields.PHONE_NUMBER:
-          return address.addrPhone;
+          return !isEmptyOrNullString(address.addrPhone) ? address.addrPhone : '';
         case AddressFields.EMAIL:
-          return address.email;
+          return !isEmptyOrNullString(address.email) ? address.email : '';
         default:
           break;
       } 

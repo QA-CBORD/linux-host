@@ -5,3 +5,4 @@ export * from './is-defined';
 export * from './validators';
 export * from './trim-empty-keys';
 export * from './flat';
+export * from './is-null-string';
