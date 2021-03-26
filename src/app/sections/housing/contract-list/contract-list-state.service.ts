@@ -8,8 +8,6 @@ import { BehaviorSubject, Observable } from 'rxjs';
 export class ContractListStateService  {
 
   private contractSummaries: BehaviorSubject<ContractSummary[]> = new BehaviorSubject<ContractSummary[]>([]);
-  private thing = false;
-  private test = true;
 
   constructor() {
    

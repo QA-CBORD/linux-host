@@ -27,8 +27,4 @@ export class ContractListItemsComponent implements OnInit, AfterViewInit {
               private _activeRoute: ActivatedRoute,
               private _toastService: ToastService) {
   }
-  doNothing()
-  {
-    
-  }
 }
