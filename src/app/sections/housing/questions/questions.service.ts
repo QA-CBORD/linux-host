@@ -178,20 +178,22 @@ export class QuestionsService {
     }));
     
     question.values.forEach((field, index) => {
-      questions.push(new QuestionTextbox({
-        name: `text-${question.addressTypeId}-${index}`,
-        required: question.required,
-        type: 'text',
-        attribute: field.label,
-        consumerKey: question.addressTypeId,
-        facilityKey: null,
-        label: field.label,
-        preferenceKey: null,
-        subtype: 'text',
-        readonly: question.readonly,
-        dataType: 'String',
-        source: question.source
-      }));
+      if (field.selected) {
+        questions.push(new QuestionTextbox({
+          name: `text-${question.addressTypeId}-${index}`,
+          required: question.required,
+          type: 'text',
+          attribute: field.label,
+          consumerKey: question.addressTypeId,
+          facilityKey: null,
+          label: field.label,
+          preferenceKey: null,
+          subtype: 'text',
+          readonly: question.readonly,
+          dataType: 'String',
+          source: question.source
+        }));
+      }
     });
 
     return questions;
