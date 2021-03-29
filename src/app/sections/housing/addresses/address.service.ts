@@ -35,8 +35,8 @@ import { PatronAddress, AddressFields } from "./address.model";
                 questionName.startsWith(`text-${control.addressTypeId}-`)));
         
         addressTypeControls.forEach((addressType: QuestionAddressTypeGroup) => {
-            let addrName, addrLn1, addrLn2, city = '';
-            let state, country, zip, addrPhone, email = '';
+            let addrName = '', addrLn1 = '', addrLn2 = '', city = '';
+            let state = '', country = '', zip = '', addrPhone = '', email = '';
             let addressKey = 0;
             let patronId = 0;
             let addrTypeKey = addressType.addressTypeId;
