@@ -6,4 +6,5 @@ export interface NavigationBottomBarElement {
   iconCssPostfix: string;
   name: string;
   id: string;
+  visibilityOn?: (settings: any) => boolean
 }

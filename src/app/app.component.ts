@@ -64,7 +64,8 @@ export class AppComponent implements OnInit {
       map(routerEvent => {
         if (routerEvent instanceof NavigationEnd) {
           const route = routerEvent.toString();
-          return route.includes(ROLES.patron) && !route.includes(PATRON_ROUTES.biometric);
+          return route.includes(ROLES.patron) || route.includes(ROLES.guest)
+          && !route.includes(PATRON_ROUTES.biometric);
         }
       }),
       filter(val => val !== undefined),

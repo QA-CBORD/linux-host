@@ -35,6 +35,12 @@ export const defaultRegistrationCs = {
   error_code_6101: 'Cannot find a match for given user information',
 };
 
+export const guestDashboardDefaultStrings = {
+  deposit: 'Guest deposit',
+  order: 'Start an order',
+  explore: 'Explore'
+}
+
 export const defaultMobileCredentialCs = {
   nfc_off_dialog_accept: 'Proceed',
   nfc_off_dialog_cancel: 'Cancel',

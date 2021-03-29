@@ -1,0 +1,110 @@
+@import 'tools';
+
+.title-home {
+  font-weight: bold;
+  padding: 0px 0px 0px 15px;
+}
+
+.content {
+
+    background-color: #f1f1f1;
+    height: 99.5%;
+    width: 100%;
+    padding-top: 5px;
+
+  .card {
+    margin: 5px 10px 5px;
+    border-radius: 15px;
+    background: $color-dodger-blue;
+
+    &__header {
+      height: 70px;
+      align-items: center;
+
+      &-logo-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0;
+      }
+
+      &-logo {
+        height: 35px;
+        width: 35px;
+      }
+
+      &-title-wrapper {
+        padding: 0;
+      }
+
+      &-title {
+        color: $color-white;
+
+        @include font-nunito-regular(20px);
+        @include ellipsis;
+        max-width: 90vw;
+
+        &-left {
+          margin-left: 10px;
+          max-width: 80vw;
+        }
+      }
+    }
+
+    // &__campus-container {
+    //   height: 0px;
+    // }
+
+    &__campus-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0;
+    }
+
+    &__campus-background {
+      width: 100%;
+      max-height: 110px;
+    }
+
+    &__user-container {
+      height: 70px;
+      align-items: center;
+      padding: 0 10px;
+    }
+
+    &__user-name-wrapper {
+      padding: 0;
+    }
+
+    &__user-name {
+      display: flex;
+      align-items: center;
+      color: $color-white;
+      line-height: 20px;
+      height: 40px;
+
+      @include font-nunito-semibold(5.2vw);
+    }
+  }
+
+  @include font-nunito-regular(20px);
+  .body {
+    margin: 10px;
+    &__card {
+      background-color: #ffffff;
+      border-radius: 10px;
+      padding: 10px;
+      .item {
+        background-color: #f1f1f1;
+        border-radius: 5px;
+        .icon {
+          margin-right: 6px;
+        }
+        .section-text {
+          color: #000000;
+        }
+      }
+    }
+  }
+}

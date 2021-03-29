@@ -5,7 +5,7 @@ import { map, take } from 'rxjs/operators';
 import { from, Observable, of, zip } from 'rxjs';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { ROLES } from '../../app.global';
-import { GUEST_ROUTES } from '../../non-authorized/non-authorized.config';
+import { ANONYMOUS_ROUTES } from '../../non-authorized/non-authorized.config';
 import { IdentityFacadeService, LoginState } from '@core/facades/identity/identity.facade.service';
 import { PATRON_ROUTES } from '@sections/section.config';
 
@@ -28,7 +28,7 @@ export class AuthGuard implements CanActivate {
     //     switch (loginState) {
     //       case LoginState.SELECT_INSTITUTION:
     //         this.identityFacadeService.logoutUser();
-    //         this.router.navigate([ROLES.guest, GUEST_ROUTES.entry]);
+    //         this.router.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.entry]);
     //         break;
     //       case LoginState.BIOMETRIC_LOGIN:
     //         this.loginUser(true);
@@ -43,10 +43,10 @@ export class AuthGuard implements CanActivate {
     //         this.identityFacadeService.pinOnlyLoginSetup();
     //         return false;
     //       case LoginState.HOSTED:
-    //         this.router.navigate([ROLES.guest, GUEST_ROUTES.login]);
+    //         this.router.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.login]);
     //         return false;
     //       case LoginState.EXTERNAL:
-    //         this.router.navigate([ROLES.guest, GUEST_ROUTES.external]);
+    //         this.router.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.external]);
     //         return false;
     //       case LoginState.DONE:
     //         this.router.navigate([ROLES.patron, PATRON_ROUTES.dashboard]);
@@ -58,7 +58,7 @@ export class AuthGuard implements CanActivate {
         // }
 
       //   console.log('AuthGuard - nav to entry and return false');
-      //   this.router.navigate([ROLES.guest, GUEST_ROUTES.entry]);
+      //   this.router.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.entry]);
       //   return false;
       // }),
     // );

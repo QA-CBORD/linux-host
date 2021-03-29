@@ -1,4 +1,5 @@
 import { ContentStringInfo } from '@core/model/content/content-string-info.model';
+import { GuestDashboardCsModel } from '@sections/guest/model/guest-dashboard.content.strings';
 import { PasswordChangeCsModel } from '@shared/ui-components/change-password/password-change-content-strings.model';
 import { AndroidCredentialCsModel } from '@shared/ui-components/mobile-credentials/model/android/android-credential-content-strings.model';
 import { ForgotPasswordCsModel } from 'src/app/non-authorized/pages/forgot-password/models/forgot-password-content-strings.model';
@@ -26,5 +27,9 @@ export const ContentStringApi = {
 
   mobileCredential: (content: ContentStringInfo[] = []): AndroidCredentialCsModel => {
     return new AndroidCredentialCsModel(NullableContent.build(content));
+  },
+
+  guestDashboard: (content: ContentStringInfo[] = []): GuestDashboardCsModel => {
+    return new GuestDashboardCsModel(NullableContent.build(content));
   }
 };

@@ -1,11 +1,10 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ROLES, Settings } from 'src/app/app.global';
-import { GUEST_ROUTES } from 'src/app/non-authorized/non-authorized.config';
+import { ANONYMOUS_ROUTES } from 'src/app/non-authorized/non-authorized.config';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
-import { InstitutionPhotoInfo } from '@core/model/institution';
-import { tap, map, take, skipWhile, switchMap } from 'rxjs/operators';
+import { tap, take, switchMap, map } from 'rxjs/operators';
 import { zip } from 'rxjs';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
@@ -14,6 +13,8 @@ import { SessionFacadeService } from '@core/facades/session/session.facade.servi
 import { LoginState } from '@core/facades/identity/identity.facade.service';
 import { PreloginCsModel } from '../models/prelogin-content-strings.model';
 import { MessageChannel } from '@shared/model/shared-api';
+import { CommonService } from '@shared/services/common.service';
+import { Institution } from '@core/model/institution';
 
 @Component({
   selector: 'st-pre-login',
@@ -25,59 +26,40 @@ export class PreLoginComponent implements OnInit {
   institutionName$: Promise<string>;
   nativeHeaderBg$: Promise<string>;
   pageContent: PreloginCsModel = {} as any;
-  selectedInstitution: { id: string; name: string };
-  sessionId: any;
+  selectedInstitution: Institution;
+  sessionId: string;
 
   constructor(
     private readonly nav: Router,
-    private readonly sanitizer: DomSanitizer,
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly authFacadeService: AuthFacadeService,
-    private readonly cdRef: ChangeDetectorRef,
     private readonly loadingService: LoadingService,
     private readonly settingsFacadeService: SettingsFacadeService,
-    private readonly sessionFacadeService: SessionFacadeService
+    private readonly sessionFacadeService: SessionFacadeService,
+    private readonly commonService: CommonService,
+    private readonly sanitizer: DomSanitizer
   ) {}
-  ngOnInit() {
-    const { preLoginCs, backgroundColor, institutionInfo } = MessageChannel.get();
+  async ngOnInit() {
+    const preLoginCs = MessageChannel.get<PreloginCsModel>();
     this.pageContent = preLoginCs;
-    this.selectedInstitution = institutionInfo;
-    this.nativeHeaderBg$ = Promise.resolve(backgroundColor);
     this.getInstitutionInfo();
   }
 
   private async getInstitutionInfo(): Promise<void> {
-    const { id: institutionId } = this.selectedInstitution;
-    this.sessionId = await this.authFacadeService
-      .getAuthSessionToken$()
-      .pipe(take(1))
-      .toPromise();
-    const photoData = await this.getInstitutionPhoto(institutionId, this.sessionId);
-    this.institutionPhoto$ = Promise.resolve(photoData);
-    this.institutionName$ = Promise.resolve(this.selectedInstitution.name);
-    this.getInstitutionName(institutionId, this.sessionId);
-  }
-
-  private async getInstitutionName(id, sessionId): Promise<string> {
-    return this.institutionFacadeService
-      .getInstitutionDataById$(id, sessionId, false)
-      .pipe(
-        map(({ name }) => `${name}`),
-        take(1)
-      )
-      .toPromise();
+    this.selectedInstitution = await this.commonService.getInstitution();
+    this.nativeHeaderBg$ = this.commonService.getInstitutionBgColor();
+    this.sessionId = await this.commonService.sessionId();
+    this.institutionName$ = this.commonService.getInstitutionName();
+    this.institutionPhoto$ = this.commonService.getInstitutionPhoto(true, this.sanitizer);
   }
 
   private async navigate(asGuest) {
     const { id: institutionId } = this.selectedInstitution;
     await this.loadingService.showSpinner();
-    this.settingsFacadeService.cleanCache();
-
     await zip(
       this.settingsFacadeService.fetchSettingList(Settings.SettingList.FEATURES, this.sessionId, institutionId),
       this.settingsFacadeService.getSettings([Settings.Setting.FEEDBACK_EMAIL], this.sessionId, institutionId),
-      this.settingsFacadeService.getSetting(Settings.Setting.PIN_ENABLED, this.sessionId, institutionId),
-      this.institutionFacadeService.getInstitutionDataById$(institutionId, this.sessionId, true)
+      this.settingsFacadeService.getSetting(Settings.Setting.PIN_ENABLED, this.sessionId, institutionId)
     )
       .pipe(
         switchMap(() => this.sessionFacadeService.determineInstitutionSelectionLoginState()),
@@ -90,42 +72,41 @@ export class PreLoginComponent implements OnInit {
   }
 
   public get defaultBackUrl() {
-    return [ROLES.guest, GUEST_ROUTES.entry];
+    return [ROLES.anonymous, ANONYMOUS_ROUTES.entry];
   }
 
-  private async getInstitutionPhoto(id, sessionId): Promise<SafeResourceUrl> {
-    return this.institutionFacadeService
-      .getInstitutionPhotoById$(id, sessionId, false)
+  private async updateGuestSettings(): Promise<void> {
+    const institutionId = this.selectedInstitution.id;
+    const getGuestSettingObs = this.authFacadeService.getGuestSettings();
+    const merchantEnabledObs = this.settingsFacadeService.getSetting(
+      Settings.Setting.PLACES_ENABLED,
+      this.sessionId,
+      institutionId
+    );
+    const newGuestSetting = await zip(getGuestSettingObs, merchantEnabledObs)
       .pipe(
-        skipWhile(d => !d || d === null),
-        map((res: InstitutionPhotoInfo) => {
-          const { data, mimeType } = res;
-          return `data:${mimeType};base64,${data}`;
-        }),
-        map(response => this.sanitizer.bypassSecurityTrustResourceUrl(response)),
-        tap(() => this.cdRef.markForCheck()),
-        take(1)
+        map(([guestSettings, { value }]) => {
+          guestSettings.canExplore = Boolean(Number(value));
+          return guestSettings;
+        })
       )
       .toPromise();
+    this.authFacadeService.saveGuestSetting(newGuestSetting);
   }
 
-  private async navigateToLogin(asGuest: boolean, loginState: LoginState) {
+  private async navigateToLogin(isGuestUser: boolean, loginState: LoginState) {
     this.loadingService.closeSpinner();
-    const loginType: LoginState = asGuest && LoginState.HOSTED || loginState;
-    
+    const loginType: LoginState = (isGuestUser && LoginState.HOSTED) || loginState;
+
     switch (loginType) {
       case LoginState.HOSTED:
-        const institution = this.selectedInstitution;
-        const institutionInfo = {
-          backgroundColor: await this.nativeHeaderBg$,
-          name: institution.name,
-        };
-        this.authFacadeService.cachedLoginType = asGuest;
-        MessageChannel.put({ institutionInfo, navParams: { asGuest } });
-        this.nav.navigate([ROLES.guest, GUEST_ROUTES.login]);
+        this.authFacadeService.setIsGuestUser(isGuestUser);
+        MessageChannel.put({ navParams: { isGuestUser } });
+        this.nav.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.login]);
+        isGuestUser && this.updateGuestSettings();
         break;
       case LoginState.EXTERNAL:
-        this.nav.navigate([ROLES.guest, GUEST_ROUTES.external]);
+        this.nav.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.external]);
         break;
     }
   }

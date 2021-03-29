@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ROLES } from '../../../app.global';
-import { GUEST_ROUTES } from '../../non-authorized.config';
+import { ANONYMOUS_ROUTES } from '../../non-authorized.config';
 import { FORGOT_PASSWORD_ROUTING } from './forgot-password.config';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { EMAIL_REGEXP } from '@core/utils/regexp-patterns';
@@ -49,11 +49,11 @@ export class ForgotPasswordPage implements OnInit {
   }
 
   redirect() {
-    this.router.navigate([ROLES.guest, GUEST_ROUTES.forgotPassword, FORGOT_PASSWORD_ROUTING.confirm]);
+    this.router.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.forgotPassword, FORGOT_PASSWORD_ROUTING.confirm]);
   }
 
   redirect2() {
-    this.router.navigate([ROLES.guest, GUEST_ROUTES.forgotPassword, FORGOT_PASSWORD_ROUTING.enterCode]);
+    this.router.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.forgotPassword, FORGOT_PASSWORD_ROUTING.enterCode]);
   }
 
   back() {

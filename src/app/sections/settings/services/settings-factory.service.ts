@@ -89,7 +89,7 @@ export class SettingsFactoryService {
   }
 
   private checkDisplayOption(setting: SettingItemConfig): Promise<boolean> {
-    return this.authFacadeService.cachedLoginType$
+    return this.authFacadeService.isGuestUser()
       .pipe(
         switchMap(isGuest => {
           if (isGuest && setting.studentsOnly) {
