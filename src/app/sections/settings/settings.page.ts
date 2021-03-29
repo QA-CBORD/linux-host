@@ -46,7 +46,7 @@ export class SettingsPage implements OnInit {
     this.institutionName$ = this.getInstitutionName$();
     this.userPhoto$ = this.getUserPhoto$();
     this.appVersion$ = this.getAppVersion$();
-    this.authFacadeService.cachedLoginType$.toPromise().then(isGuest => (this.isGuest = isGuest));
+    this.authFacadeService.isGuestUser().toPromise().then(isGuest => (this.isGuest = isGuest));
   }
 
   //couldnt get photo upload route to work correctly, still trying to fix

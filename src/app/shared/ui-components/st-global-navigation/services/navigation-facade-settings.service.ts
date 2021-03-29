@@ -3,10 +3,15 @@ import { StorageStateService } from '@core/states/storage/storage-state.service'
 import { ServiceStateFacade } from '@core/classes/service-state-facade';
 import { BehaviorSubject, Observable, zip } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
-import { NAVIGATION_BASE_CONFIG } from '@shared/ui-components/st-global-navigation/config';
+import {
+  GUEST_NAVIGATION_BASE_CONFIG,
+  NAVIGATION_BASE_CONFIG,
+} from '@shared/ui-components/st-global-navigation/config';
 import { NavigationBottomBarElement } from '@core/model/navigation/navigation-bottom-bar-element';
 import { SettingInfo } from '@core/model/configuration/setting-info.model';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
+import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
+import { GuestSetting } from '@sections/guest/model/guest-settings';
 
 @Injectable()
 export class NavigationFacadeSettingsService extends ServiceStateFacade {
@@ -14,7 +19,8 @@ export class NavigationFacadeSettingsService extends ServiceStateFacade {
 
   constructor(
     private readonly storage: StorageStateService,
-    private readonly settingsFacadeService: SettingsFacadeService
+    private readonly settingsFacadeService: SettingsFacadeService,
+    private readonly authService: AuthFacadeService
   ) {
     super();
   }
@@ -42,9 +48,14 @@ export class NavigationFacadeSettingsService extends ServiceStateFacade {
   }
 
   private getAllowedSettings(): Observable<NavigationBottomBarElement[]> {
-    return this.settingsFacadeService
-      .getCachedSettings()
-      .pipe(map(list => this.getUpdatedConfig(list).filter(({ isEnable }) => isEnable)));
+    const GuestSettingObs = this.authService.getGuestSettings();
+    const isGuestUserObs = this.authService.isGuestUser();
+    const cachedSettingsObs = this.settingsFacadeService.getCachedSettings();
+    return zip(cachedSettingsObs, isGuestUserObs, GuestSettingObs).pipe(
+      map(([settingInfo, guestUser, setting]) =>
+        this.getUpdatedConfig(settingInfo, { guestUser, setting }).filter(({ isEnable }) => isEnable)
+      )
+    );
   }
 
   private initSettings(): Observable<NavigationBottomBarElement[]> {
@@ -58,7 +69,19 @@ export class NavigationFacadeSettingsService extends ServiceStateFacade {
     );
   }
 
-  private getUpdatedConfig(settings: SettingInfo[]): NavigationBottomBarElement[] {
+  private getUpdatedConfig(
+    settings: SettingInfo[],
+    args: {
+      guestUser: boolean;
+      setting: GuestSetting;
+    }
+  ): NavigationBottomBarElement[] {
+    if (args.guestUser) {
+      return GUEST_NAVIGATION_BASE_CONFIG.filter(setting => {
+        setting.isEnable = setting.visibilityOn(args.setting);
+        return setting.isEnable;
+      });
+    }
     return NAVIGATION_BASE_CONFIG.map(setting => {
       let s = settings.find(({ name }) => name === setting.id);
       return s ? { ...setting, isEnable: !!Number(s.value) } : setting;

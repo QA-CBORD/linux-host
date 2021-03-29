@@ -2,20 +2,22 @@ import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { take, switchMap, tap, map } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import { GUEST_ROUTES } from '../../non-authorized.config';
+import { ANONYMOUS_ROUTES } from '../../non-authorized.config';
 import { ROLES, Settings } from 'src/app/app.global';
-import { Observable, zip } from 'rxjs';
+import { zip } from 'rxjs';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { Plugins, Capacitor } from '@capacitor/core';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { LoginState } from '@core/facades/identity/identity.facade.service';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
-import { EnvironmentFacadeService, EnvironmentType } from '@core/facades/environment/environment.facade.service';
+import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { ToastService } from '@core/service/toast/toast.service';
 import { RegistrationServiceFacade } from '../registration/services/registration-service-facade';
 import { InstitutionLookupListItem } from '@core/model/institution';
 import { MessageChannel } from '@shared/model/shared-api';
+import { CommonService } from '@shared/services/common.service';
+import { DomSanitizer } from '@angular/platform-browser';
 const { Keyboard, IOSDevice } = Plugins;
 
 @Component({
@@ -29,10 +31,6 @@ export class InstitutionsPage implements OnInit {
   searchString: string = '';
   isLoading: boolean = true;
   institutions: InstitutionLookupListItem[];
-  guestRegistrationEnabled: boolean = false;
-  expandedItem: any;
-  asGuestBtnText$: Observable<string>;
-  asPatronBtnText$: Observable<string>;
 
   constructor(
     private readonly institutionFacadeService: InstitutionFacadeService,
@@ -45,7 +43,8 @@ export class InstitutionsPage implements OnInit {
     private readonly cdRef: ChangeDetectorRef,
     private readonly toastService: ToastService,
     private readonly route: Router,
-    private readonly registrationServiceFacade: RegistrationServiceFacade
+    private readonly registrationServiceFacade: RegistrationServiceFacade,
+    private readonly commonService: CommonService
   ) {}
 
   async ngOnInit() {
@@ -84,86 +83,49 @@ export class InstitutionsPage implements OnInit {
 
   async onInstitutionSelected(institution: InstitutionLookupListItem): Promise<void> {
     this.loadingService.showSpinner({ duration: 5000 });
-    const canNavigate2Prelogin = this.registrationServiceFacade.guestLoginSupportedInEnv;
-    const go2prelogin = institution.guestRegSupported && canNavigate2Prelogin;
-    if (go2prelogin) {
-      const backgroundColor = await this.getNativeHeaderBg(institution.id, this.sessionId);
-      this.navigateToPreLogin(institution, backgroundColor);
-    } else {
-      this.navigate(institution);
-    }
+    this.settingsFacadeService.cleanCache();
+    await this.commonService.getInstitution(institution.id, false);
+    this.commonService.getInstitutionPhoto(false, null);
+    await this.commonService.getInstitutionBgColor(false);
+    const preloginSupported = this.commonService.guestLoginSupportedInEnv;
+    const shouldGo2Prelogin = institution.guestSettings.canLogin && preloginSupported;
+    (shouldGo2Prelogin && this.navigate2PreLogin(institution)) || this.navigate2Login(institution);
   }
 
-  private async navigate(institution) {
-    const { id: institutionId } = institution;
-    this.settingsFacadeService.cleanCache();
-
+  private async navigate2Login({ id: institutionId }) {
+    this.authFacadeService.removeGuestSetting();
+    this.authFacadeService.setIsGuestUser(false);
     await zip(
       this.settingsFacadeService.fetchSettingList(Settings.SettingList.FEATURES, this.sessionId, institutionId),
-      this.settingsFacadeService.getSettings(
-        [Settings.Setting.MOBILE_HEADER_COLOR, Settings.Setting.FEEDBACK_EMAIL],
-        this.sessionId,
-        institutionId
-      ),
-      this.settingsFacadeService.getSetting(Settings.Setting.PIN_ENABLED, this.sessionId, institutionId),
-      this.institutionFacadeService.getInstitutionDataById$(institutionId, this.sessionId, true)
+      this.settingsFacadeService.getSettings([Settings.Setting.FEEDBACK_EMAIL], this.sessionId, institutionId),
+      this.settingsFacadeService.getSetting(Settings.Setting.PIN_ENABLED, this.sessionId, institutionId)
     )
       .pipe(
         switchMap(() => this.sessionFacadeService.determineInstitutionSelectionLoginState()),
         tap(loginType => {
-          this.navigateToLogin(loginType, institution);
+          this.navigate(loginType);
         }),
         take(1)
       )
       .toPromise();
   }
 
-  private async navigateToPreLogin(institution: InstitutionLookupListItem, backgroundColor): Promise<void> {
-    await this.institutionFacadeService
-      .getInstitutionDataById$(institution.id, this.sessionId, true)
-      .pipe(take(1))
-      .toPromise();
+  private async navigate2PreLogin(institution: InstitutionLookupListItem): Promise<void> {
+    this.authFacadeService.saveGuestSetting(institution.guestSettings);
     const preLoginCs = await this.registrationServiceFacade.preloginContents(institution.acuteCare).toPromise();
-    const institutionInfo = {
-      id: institution.id,
-      name: institution.name,
-    };
     this.loadingService.closeSpinner();
-
-   MessageChannel.put({ backgroundColor, preLoginCs, institutionInfo })
-
-    this.nav.navigate([ROLES.guest, GUEST_ROUTES.pre_login]);
+    MessageChannel.put(preLoginCs);
+    this.nav.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.pre_login]);
   }
 
-  private async getNativeHeaderBg(id, sessionId): Promise<string> {
-    return this.settingsFacadeService
-      .fetchSetting(Settings.Setting.MOBILE_HEADER_COLOR, sessionId, id)
-      .pipe(
-        map(({ value }) => {
-          if (value === null) return;
-          const siteColors = JSON.parse(value);
-          const nativeHeaderBg = siteColors['native-header-bg'];
-          return nativeHeaderBg ? '#' + nativeHeaderBg : '#166dff';
-        }),
-        take(1)
-      )
-      .toPromise();
-  }
-
-  private async navigateToLogin(loginState: number, institution) {
-    const backgroundColor = await this.getNativeHeaderBg(institution.id, this.sessionId);
+  private async navigate(loginState: number) {
     this.loadingService.closeSpinner();
     switch (loginState) {
       case LoginState.HOSTED:
-        const institutionInfo = {
-          backgroundColor,
-          name: institution.name,
-        };
-        MessageChannel.put({ institutionInfo });
-        this.nav.navigate([ROLES.guest, GUEST_ROUTES.login]);
+        this.nav.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.login]);
         break;
       case LoginState.EXTERNAL:
-        this.nav.navigate([ROLES.guest, GUEST_ROUTES.external]);
+        this.nav.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.external]);
         break;
     }
   }
@@ -181,7 +143,7 @@ export class InstitutionsPage implements OnInit {
         {
           text: 'Back',
           handler: () => {
-            this.route.navigate([ROLES.guest, GUEST_ROUTES.entry]);
+            this.route.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.entry]);
           },
         },
       ],

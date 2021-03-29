@@ -15,9 +15,12 @@ import { ApplicationsService } from './applications/applications.service';
 import { LoadingService } from '@core/service/loading/loading.service';
 import { ContractsService } from '@sections/housing/contracts/contracts.service';
 import { RoomsStateService } from '@sections/housing/rooms/rooms-state.service';
+import { ContractListStateService} from '@sections/housing/contract-list/contract-list-state.service'
+import { ContractSummary } from '@sections/housing/contract-list/contractSummary.model'
 import { RoomSelect } from '@sections/housing/rooms/rooms.model';
 
 import {
+  ContractListResponse,
   DefinitionsResponse,
   DetailsResponse,
   FacilityDetailsResponse, OccupantDetailsResponse, OccupantDetailsResponseOptions,
@@ -62,6 +65,7 @@ export class HousingService {
     private _router: Router,
     private _contractsService: ContractsService,
     private _roomsStateService: RoomsStateService,
+    private _contractListStateService: ContractListStateService
   ) {
     this._facilityMapper = new FacilityDetailsToFacilityMapper();
   }
@@ -136,6 +140,15 @@ export class HousingService {
       catchError(() => this._handleGetRoomSelectsError())
     );
   }
+  getPatronContracts(termId: number)
+  {
+    const apiUrl: string = `${this._baseUrl}/roomselectproxy/v.1.0/room-selects-proxy/contracts/self?termKey=${termId}`;
+    return this._housingProxyService.get<ContractListResponse>(apiUrl).pipe(
+      map((response: any) => new ContractListResponse(response)),
+      tap((response: ContractListResponse) => this._setContractSummariesState(response.contractSummaries)),
+      catchError(() => this._handleGetContractSummariesError())
+    );
+  }
 
   getFacilities(roomSelectKey: number): Observable<Facility[]> {
     const apiUrl = `${
@@ -188,8 +201,19 @@ export class HousingService {
     return of(new RoomSelectResponse({ roomSelects }));
   }
 
+  _handleGetContractSummariesError(): Observable<ContractListResponse> {
+    const contractSummaries: ContractSummary[] = [];
+    this._setContractSummariesState(contractSummaries);
+
+    return of(new ContractListResponse({ contractSummaries }));
+  }
+
   _setRoomsState(roomSelects: RoomSelect[]): void {
     this._roomsStateService.setRoomSelects(roomSelects);
+  }
+  _setContractSummariesState(contractSummaries: ContractSummary[]): void {
+  
+    this._contractListStateService.setContractSummaries(contractSummaries);
   }
 
   /**

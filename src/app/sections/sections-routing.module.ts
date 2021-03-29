@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Route, RouterModule } from '@angular/router';
 import { PATRON_ROUTES } from '@sections/section.config';
 
+
 const routes: Route[] = [
   {
     path: '',

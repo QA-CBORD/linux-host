@@ -1,0 +1,68 @@
+<ion-header no-border>
+  <ion-toolbar mode="ios">
+    <div class="title-home">HOME</div>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <div class="content">
+    <div class="card" [ngStyle]="{ 'background-color': institutionColor$ | async }">
+      <ion-grid class="ion-no-padding">
+        <ion-row
+          class="card__header"
+          *ngIf="{ photo: institutionPhoto$ | async, name: institutionName$ | async } as instutionValues"
+        >
+          <ion-col class="card__header-logo-wrapper" size="2" *ngIf="instutionValues.photo">
+            <img
+              *ngIf="instutionValues.photo"
+              class="card__header-logo"
+              [src]="instutionValues.photo"
+              alt="institution logo"
+            />
+          </ion-col>
+          <ion-col
+            class="card__header-title-wrapper"
+            [class.card__header-title-left]="!instutionValues.photo"
+            size="(instutionValues.photo)? 9 : 12"
+          >
+            <div *ngIf="instutionValues.name" class="card__header-title left">{{ instutionValues.name }}</div>
+          </ion-col>
+        </ion-row>
+        <ion-row class="card__campus-container">
+          <ion-col class="card__campus-wrapper">
+            <ng-container *ngIf="(institutionBackgroundImage$ | async); then campusBackground; else defaultBackground">
+            </ng-container>
+            <ng-template #defaultBackground>
+              <img
+                class="card__campus-background"
+                src="/assets/images/card_background_illustration.svg"
+                alt="background photo"
+              />
+            </ng-template>
+            <ng-template #campusBackground>
+              <img class="card__campus-background" [src]="institutionBackgroundImage$ | async" alt="campus photo" />
+            </ng-template>
+          </ion-col>
+        </ion-row>
+        <ion-row class="card__user-container">
+          <ion-col class="card__user-name-wrapper">
+            <div *ngIf="(userName$ | async)" class="card__user-name">{{ userName$ | async }}</div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
+    <div class="body">
+      <div class="body__card">
+        <div *ngFor="let section of sections" class="item">
+          <st-button fill="clear" color="#000000" buttonModifier="rectangular" (click)="onclick(section)">
+            <span class="icon">
+              <img [src]="section.imageUrl" alt="" />
+            </span>
+            <span class="ion-text-capitalize section-text">
+              {{ section.title }}
+            </span>
+          </st-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>

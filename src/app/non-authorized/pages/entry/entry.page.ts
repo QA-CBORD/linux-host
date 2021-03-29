@@ -1,6 +1,6 @@
 import { map, take } from 'rxjs/operators';
 import { ROLES } from './../../../app.global';
-import { GUEST_ROUTES } from './../../non-authorized.config';
+import { ANONYMOUS_ROUTES } from './../../non-authorized.config';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
@@ -58,7 +58,7 @@ export class EntryPage implements OnInit {
   }
 
   async redirectTo() {
-    this.route.navigate([ROLES.guest, GUEST_ROUTES.institutions]);
+    this.route.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.institutions]);
   }
 
   checkLocation() {

@@ -1,9 +1,9 @@
-import { Settings, PATRON_NAVIGATION, ROLES } from './../../../app.global';
-import { map, skipWhile, tap, take, catchError } from 'rxjs/operators';
+import { Settings, PATRON_NAVIGATION, ROLES, GUEST_NAVIGATION } from './../../../app.global';
+import { map, tap, take, catchError } from 'rxjs/operators';
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { Router } from '@angular/router';
-import { InstitutionPhotoInfo, Institution } from '@core/model/institution';
+import { Institution } from '@core/model/institution';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
 import { FormGroup, FormBuilder, AbstractControl, Validators } from '@angular/forms';
@@ -15,7 +15,7 @@ import { SettingsFacadeService } from '@core/facades/settings/settings-facade.se
 import { Device } from '@capacitor/core';
 import { IdentityFacadeService, LoginState } from '@core/facades/identity/identity.facade.service';
 import { SessionFacadeService } from '@core/facades/session/session.facade.service';
-import { AUTHENTICATION_SYSTEM_TYPE, GUEST_ROUTES } from '../../non-authorized.config';
+import { AUTHENTICATION_SYSTEM_TYPE, ANONYMOUS_ROUTES } from '../../non-authorized.config';
 import { EnvironmentFacadeService } from '@core/facades/environment/environment.facade.service';
 import { NativeStartupFacadeService } from '@core/facades/native-startup/native-startup.facade.service';
 import { Observable, of } from 'rxjs';
@@ -27,6 +27,7 @@ import { RegistrationComponent } from '../registration/components/registration/r
 import { ModalController } from '@ionic/angular';
 import { MessageChannel } from '@shared/model/shared-api';
 import { ContentStringApi } from '@shared/model/content-strings/content-strings-api';
+import { CommonService } from '@shared/services/common.service';
 
 @Component({
   selector: 'user-pass-form',
@@ -54,7 +55,6 @@ export class UserPassForm implements OnInit {
     private readonly authFacadeService: AuthFacadeService,
     private readonly loadingService: LoadingService,
     private readonly router: Router,
-    private readonly sanitizer: DomSanitizer,
     private readonly toastService: ToastService,
     private readonly sessionFacadeService: SessionFacadeService,
     private readonly identityFacadeService: IdentityFacadeService,
@@ -65,7 +65,9 @@ export class UserPassForm implements OnInit {
     private readonly registrationFacade: RegistrationServiceFacade,
     private readonly appBrowser: InAppBrowser,
     private readonly environmentFacadeService: EnvironmentFacadeService,
-    private readonly accessibilityService: AccessibilityService
+    private readonly accessibilityService: AccessibilityService,
+    private readonly commonService: CommonService,
+    private readonly sanitizer: DomSanitizer
   ) {}
 
   get username(): AbstractControl {
@@ -80,38 +82,33 @@ export class UserPassForm implements OnInit {
     return USERFORM_CONTROL_NAMES;
   }
 
-  async ngOnInit() {
+  ngOnInit() {
     this.initForm();
+    this.asyncOnInit();
+  }
+
+  async asyncOnInit():Promise<void>{
     await this.setLocalInstitutionInfo();
     // Announcing navigation meanwhile we find a generic way to do so.
     this.accessibilityService.readAloud(`Login page for ${this.institutionInfo.name}`);
     const { id } = this.institutionInfo;
-    const sessionId = await this.authFacadeService
-      .getAuthSessionToken$()
-      .pipe(take(1))
-      .toPromise();
+    const sessionId = await this.commonService.sessionId();
     this.authTypeHosted$ = this.getAuthenticationTypeHosted$(id, sessionId);
     this.authTypeLDAP$ = this.getAuthenticationTypeLDAP$(id, sessionId);
     this.placeholderOfUsername$ = this.getContentStringByName(sessionId, 'email_username');
     this.loginInstructions$ = this.getContentStringByName(sessionId, 'instructions');
     this.signupEnabled$ = this.isSignupEnabled$();
-    const data = MessageChannel.get() as any;
-    this.navedAsGuest$ = data.navParams && of(data.navParams.asGuest);
+    const data = MessageChannel.get<any>();
+    this.navedAsGuest$ = of(data.navParams && data.navParams.asGuest);
     this.cdRef.detectChanges();
-    this.initializeInstitutionInfo(id, sessionId);
+    this.initializeInstitutionInfo();
   }
 
-  async initializeInstitutionInfo(id, sessionId): Promise<void> {
-    const data = MessageChannel.get() as any;
-    const institutionInfo = data.institutionInfo || {};
-    this.nativeHeaderBg$ = Promise.resolve(institutionInfo.backgroundColor);
-    const photoData = await this.getInstitutionPhoto(id, sessionId);
-    this.institutionPhoto$ = Promise.resolve(photoData);
-    this.institutionName$ = Promise.resolve(institutionInfo.name);
-    if (!institutionInfo.name) {
-      this.institutionName$ = this.getInstitutionName(id, sessionId);
-      this.nativeHeaderBg$ = this.getNativeHeaderBg(id, sessionId);
-    }
+  async initializeInstitutionInfo(): Promise<void> {
+    console.log('initializeInstitutionInfo')
+    this.institutionPhoto$ = this.commonService.getInstitutionPhoto(true, this.sanitizer);
+    this.nativeHeaderBg$ = this.commonService.getInstitutionBgColor();
+    this.institutionName$ = this.commonService.getInstitutionName();
     this.cdRef.detectChanges();
   }
 
@@ -135,7 +132,7 @@ export class UserPassForm implements OnInit {
 
   onSignup(): void {
     const { navParams } = MessageChannel.get();
-    if (navParams && this.registrationFacade.guestLoginSupportedInEnv) {
+    if (navParams && this.commonService.guestLoginSupportedInEnv) {
       this.doHostedSignup(navParams);
     } else {
       this.redirectToSignup();
@@ -159,7 +156,7 @@ export class UserPassForm implements OnInit {
       .toPromise();
     MessageChannel.put(forgotPasswordCs);
     this.loadingService.closeSpinner();
-    this.router.navigate([ROLES.guest, GUEST_ROUTES.forgotPassword]);
+    this.router.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.forgotPassword]);
   }
 
   isSignupEnabled$(): Observable<boolean> {
@@ -182,13 +179,12 @@ export class UserPassForm implements OnInit {
       sessionId = await this.authenticateUsernamePassword(username, password, id);
     } catch (e) {
       this.presentToast('Login failed, invalid user name and/or password');
-      this.loadingService.closeSpinner();
+      await this.loadingService.closeSpinner();
       return;
     }
     const loginState: LoginState = await this.sessionFacadeService.determinePostLoginState(sessionId, id);
 
-    this.loadingService.closeSpinner();
-
+    await this.loadingService.closeSpinner();
     switch (loginState) {
       case LoginState.PIN_SET:
         try {
@@ -204,9 +200,15 @@ export class UserPassForm implements OnInit {
         break;
       case LoginState.DONE:
         this.nativeStartupFacadeService.checkForStartupMessage = true;
-        this.router.navigate([PATRON_NAVIGATION.dashboard], { replaceUrl: true });
+        this.navigate2Dashboard();
         break;
     }
+  }
+
+  private async navigate2Dashboard(): Promise<void> {
+    const isGuest = await this.authFacadeService.isGuestUser().toPromise();
+    (isGuest && this.router.navigate([GUEST_NAVIGATION.dashboard], { replaceUrl: true })) ||
+      this.router.navigate([PATRON_NAVIGATION.dashboard], { replaceUrl: true });
   }
 
   private initForm() {
@@ -279,55 +281,8 @@ export class UserPassForm implements OnInit {
     }
   }
 
-  private async getNativeHeaderBg(id, sessionId): Promise<string> {
-    return this.settingsFacadeService
-      .fetchSetting(Settings.Setting.MOBILE_HEADER_COLOR, sessionId, id)
-      .pipe(
-        map(({ value }) => {
-          if (value === null) return;
-          const siteColors = JSON.parse(value);
-          const nativeHeaderBg = siteColors['native-header-bg'];
-          return nativeHeaderBg ? '#' + nativeHeaderBg : '#166dff';
-        }),
-        take(1)
-      )
-      .toPromise();
-  }
-
   private async setLocalInstitutionInfo(): Promise<any> {
-    return this.institutionFacadeService.cachedInstitutionInfo$
-      .pipe(
-        tap(institutionInfo => (this.institutionInfo = institutionInfo)),
-        take(1)
-      )
-      .toPromise();
-  }
-
-  private async getInstitutionName(id, sessionId): Promise<string> {
-    return this.institutionFacadeService
-      .getInstitutionDataById$(id, sessionId, false)
-      .pipe(
-        tap(institutionInfo => (this.institutionInfo = institutionInfo)),
-        map(({ name }) => `${name}`),
-        take(1)
-      )
-      .toPromise();
-  }
-
-  private async getInstitutionPhoto(id, sessionId): Promise<SafeResourceUrl> {
-    return this.institutionFacadeService
-      .getInstitutionPhotoById$(id, sessionId, false)
-      .pipe(
-        skipWhile(d => !d || d === null),
-        map((res: InstitutionPhotoInfo) => {
-          const { data, mimeType } = res;
-          return `data:${mimeType};base64,${data}`;
-        }),
-        map(response => this.sanitizer.bypassSecurityTrustResourceUrl(response)),
-        tap(() => this.cdRef.markForCheck()),
-        take(1)
-      )
-      .toPromise();
+    this.institutionInfo = await this.commonService.getInstitution();
   }
 
   private async presentToast(message: string): Promise<void> {
@@ -340,7 +295,7 @@ export class UserPassForm implements OnInit {
   }
 
   public get defaultBackUrl() {
-    return [ROLES.guest, GUEST_ROUTES.entry];
+    return [ROLES.anonymous, ANONYMOUS_ROUTES.entry];
   }
 }
 

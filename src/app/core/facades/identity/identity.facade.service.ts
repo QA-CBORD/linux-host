@@ -33,7 +33,6 @@ export class IdentityFacadeService extends ServiceStateFacade {
     private readonly storageStateService: StorageStateService,
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly identityService: IdentityService,
-    private readonly loader: LoadingService
   ) {
     super();
   }

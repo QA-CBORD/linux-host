@@ -5,11 +5,10 @@ import { map, skipWhile, switchMap, take } from 'rxjs/operators';
 
 import { Settings } from 'src/app/app.global';
 import { NativeData, NativeProvider } from '@core/provider/native-provider/native.provider';
-import { UserInfo } from '@core/model/user';
-import { getUserFullName } from '@core/utils/general-helpers';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
+import { CommonService } from '@shared/services/common.service';
 
 @Injectable()
 export class AccessCardService {
@@ -17,23 +16,16 @@ export class AccessCardService {
     private readonly userFacadeService: UserFacadeService,
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly nativeProvider: NativeProvider,
-    private readonly settingsFacadeService: SettingsFacadeService
+    private readonly settingsFacadeService: SettingsFacadeService,
+    private readonly commonService: CommonService
   ) {}
 
   getUserName(): Observable<string> {
-    return this.userFacadeService.getUserData$().pipe(map((userInfo: UserInfo) => getUserFullName(userInfo)));
+    return from(this.commonService.getUserName());
   }
 
   getUserPhoto(): Observable<string> {
-    return this.userFacadeService.getAcceptedPhoto$().pipe(
-      map((photoInfo) => {
-        if(photoInfo){
-          return `data:${photoInfo.mimeType};base64,${photoInfo.data}`;
-        }
-        return null;
-      }),
-      take(1)
-    );
+    return from(this.commonService.getUserPhoto());
   }
 
   getInstitutionName(): Observable<string> {
