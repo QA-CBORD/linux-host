@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { EnvironmentFacadeService, EnvironmentType } from '@core/facades/environment/environment.facade.service';
 import { ContentStringApi } from '@shared/model/content-strings/content-strings-api';
 import { Observable, of } from 'rxjs';
 import { catchError, map, take } from 'rxjs/operators';
@@ -20,7 +19,6 @@ export class RegistrationServiceFacade {
   private _registration: UserRegistrationManager;
   constructor(
     private readonly registrationService: RegistrationService,
-    private readonly environmentFacadeService: EnvironmentFacadeService
   ) {}
 
   async registrationConfig(isGuestSignup: boolean): Promise<void> {
@@ -48,10 +46,5 @@ export class RegistrationServiceFacade {
 
   submit(data): Observable<any> {
     return this._registration.register(data);
-  }
-
-  get guestLoginSupportedInEnv(): boolean {
-    const currentEnv = this.environmentFacadeService.getEnvironmentObject().environment;
-    return currentEnv == EnvironmentType.develop || currentEnv == EnvironmentType.feature1;
   }
 }

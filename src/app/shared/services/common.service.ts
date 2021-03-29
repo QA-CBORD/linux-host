@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
+import { EnvironmentFacadeService, EnvironmentType } from '@core/facades/environment/environment.facade.service';
 import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
 import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
-import { InstitutionPhotoInfo } from '@core/model/institution';
+import { Institution, InstitutionPhotoInfo } from '@core/model/institution';
 import { UserInfo } from '@core/model/user';
 import { getUserFullName } from '@core/utils/general-helpers';
-import { of } from 'rxjs';
+import { iif, of } from 'rxjs';
 import { skipWhile, map, take } from 'rxjs/operators';
 import { Settings } from 'src/app/app.global';
 
@@ -19,23 +20,24 @@ export class CommonService {
     private readonly institutionFacadeService: InstitutionFacadeService,
     private readonly settingsFacadeService: SettingsFacadeService,
     private readonly authFacadeService: AuthFacadeService,
-    private readonly userFacadeService: UserFacadeService
+    private readonly userFacadeService: UserFacadeService,
+    private readonly environmentFacadeService: EnvironmentFacadeService
   ) {}
 
-  async getInstitutionPhoto(institutionId = null, sessionId = null, sanitizer: DomSanitizer): Promise<SafeResourceUrl> {
-    return this.institutionFacadeService
-      .getInstitutionPhotoById$(
-        institutionId || (await this.institionId()),
-        sessionId || (await this.sessionId()),
-        false
-      )
+  async getInstitutionPhoto(useCache: boolean = true, sanitizer: DomSanitizer = null): Promise<SafeResourceUrl> {
+    const sessId = await this.sessionId();
+    const instId = await this.institionId();
+    const cachedPhoto$ = this.institutionFacadeService.getInstitutionPhoto$(instId, sessId, true);
+    const fetchPhoto$ = this.institutionFacadeService.getInstitutionPhotoById$(instId, sessId, true);
+
+    return iif(() => useCache, cachedPhoto$, fetchPhoto$)
       .pipe(
         skipWhile(d => !d || d === null),
         map((res: InstitutionPhotoInfo) => {
           const { data, mimeType } = res;
           return `data:${mimeType};base64,${data}`;
         }),
-        map(response => sanitizer.bypassSecurityTrustResourceUrl(response)),
+        map(response => (sanitizer && sanitizer.bypassSecurityTrustResourceUrl(response)) || response),
         take(1)
       )
       .toPromise();
@@ -76,34 +78,33 @@ export class CommonService {
       .toPromise();
   }
 
-  private async sessionId(): Promise<string> {
+  async sessionId(): Promise<string> {
     return await this.authFacadeService
       .getAuthSessionToken$()
       .pipe(take(1))
       .toPromise();
   }
 
-  async getInstitutionName(institutionId = null, sessionId = null): Promise<string> {
-    return this.institutionFacadeService
-      .getInstitutionDataById$(
-        institutionId || (await this.institionId()),
-        sessionId || (await this.sessionId()),
-        false
-      )
-      .pipe(
-        map(({ name }) => `${name}`),
-        take(1)
-      )
+  async getInstitutionName(): Promise<string> {
+    return this.getInstitution(null, true).then(({ name }) => name);
+  }
+
+  async getInstitution(instId = null, useCache: boolean = true): Promise<Institution> {
+    const sessId = await this.sessionId();
+    const id = instId || (await this.institionId());
+    const cachedInstitution$ = this.institutionFacadeService.getInstitutionInfo$(id, sessId, true);
+    const fetchInstitution$ = this.institutionFacadeService.getInstitutionDataById$(id, sessId, true);
+    return iif(() => useCache, cachedInstitution$, fetchInstitution$)
+      .pipe(take(1))
       .toPromise();
   }
 
-  async getNativeHeaderBg(institutionId = null, sessionId = null): Promise<string> {
-    return this.settingsFacadeService
-      .fetchSetting(
-        Settings.Setting.MOBILE_HEADER_COLOR,
-        sessionId || (await this.sessionId()),
-        institutionId || (await this.institionId())
-      )
+  async getInstitutionBgColor(useCache: boolean = true): Promise<string> {
+    const sessId = await this.sessionId();
+    const instId = await this.institionId();
+    const cachedBgColor$ = this.settingsFacadeService.getSetting(Settings.Setting.MOBILE_HEADER_COLOR, sessId, instId);
+    const fetchBgColor$ = this.settingsFacadeService.fetchSetting(Settings.Setting.MOBILE_HEADER_COLOR, sessId, instId);
+    return iif(() => useCache, cachedBgColor$, fetchBgColor$)
       .pipe(
         map(({ value }) => {
           if (value === null) return;
@@ -114,5 +115,10 @@ export class CommonService {
         take(1)
       )
       .toPromise();
+  }
+
+  get guestLoginSupportedInEnv(): boolean {
+    const currentEnv = this.environmentFacadeService.getEnvironmentObject().environment;
+    return currentEnv == EnvironmentType.develop || currentEnv == EnvironmentType.feature1;
   }
 }

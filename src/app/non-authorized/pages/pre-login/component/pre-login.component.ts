@@ -14,6 +14,7 @@ import { LoginState } from '@core/facades/identity/identity.facade.service';
 import { PreloginCsModel } from '../models/prelogin-content-strings.model';
 import { MessageChannel } from '@shared/model/shared-api';
 import { CommonService } from '@shared/services/common.service';
+import { Institution } from '@core/model/institution';
 
 @Component({
   selector: 'st-pre-login',
@@ -25,7 +26,7 @@ export class PreLoginComponent implements OnInit {
   institutionName$: Promise<string>;
   nativeHeaderBg$: Promise<string>;
   pageContent: PreloginCsModel = {} as any;
-  selectedInstitution: { id: string; name: string };
+  selectedInstitution: Institution;
   sessionId: string;
 
   constructor(
@@ -38,35 +39,27 @@ export class PreLoginComponent implements OnInit {
     private readonly commonService: CommonService,
     private readonly sanitizer: DomSanitizer
   ) {}
-  ngOnInit() {
-    const { preLoginCs, backgroundColor, institutionInfo } = MessageChannel.get();
+  async ngOnInit() {
+    const preLoginCs = MessageChannel.get<PreloginCsModel>();
     this.pageContent = preLoginCs;
-    this.selectedInstitution = institutionInfo;
-    this.nativeHeaderBg$ = Promise.resolve(backgroundColor);
     this.getInstitutionInfo();
   }
 
   private async getInstitutionInfo(): Promise<void> {
-    const { id: institutionId } = this.selectedInstitution;
-    this.sessionId = await this.authFacadeService
-      .getAuthSessionToken$()
-      .pipe(take(1))
-      .toPromise();
-    this.institutionPhoto$ = this.commonService.getInstitutionPhoto(institutionId, this.sessionId, this.sanitizer);
-    this.institutionName$ = Promise.resolve(this.selectedInstitution.name);
-    this.commonService.getInstitutionName(institutionId, this.sessionId);
+    this.selectedInstitution = await this.commonService.getInstitution();
+    this.nativeHeaderBg$ = this.commonService.getInstitutionBgColor();
+    this.sessionId = await this.commonService.sessionId();
+    this.institutionName$ = this.commonService.getInstitutionName();
+    this.institutionPhoto$ = this.commonService.getInstitutionPhoto(true, this.sanitizer);
   }
 
   private async navigate(asGuest) {
     const { id: institutionId } = this.selectedInstitution;
     await this.loadingService.showSpinner();
-    this.settingsFacadeService.cleanCache();
-
     await zip(
       this.settingsFacadeService.fetchSettingList(Settings.SettingList.FEATURES, this.sessionId, institutionId),
       this.settingsFacadeService.getSettings([Settings.Setting.FEEDBACK_EMAIL], this.sessionId, institutionId),
-      this.settingsFacadeService.getSetting(Settings.Setting.PIN_ENABLED, this.sessionId, institutionId),
-      this.institutionFacadeService.getInstitutionDataById$(institutionId, this.sessionId, true)
+      this.settingsFacadeService.getSetting(Settings.Setting.PIN_ENABLED, this.sessionId, institutionId)
     )
       .pipe(
         switchMap(() => this.sessionFacadeService.determineInstitutionSelectionLoginState()),
@@ -82,7 +75,8 @@ export class PreLoginComponent implements OnInit {
     return [ROLES.anonymous, ANONYMOUS_ROUTES.entry];
   }
 
-  private async updateGuestSettings(institutionId): Promise<void> {
+  private async updateGuestSettings(): Promise<void> {
+    const institutionId = this.selectedInstitution.id;
     const getGuestSettingObs = this.authFacadeService.getGuestSettings();
     const merchantEnabledObs = this.settingsFacadeService.getSetting(
       Settings.Setting.PLACES_ENABLED,
@@ -106,15 +100,10 @@ export class PreLoginComponent implements OnInit {
 
     switch (loginType) {
       case LoginState.HOSTED:
-        const institution = this.selectedInstitution;
-        const institutionInfo = {
-          backgroundColor: await this.nativeHeaderBg$,
-          name: institution.name,
-        };
         this.authFacadeService.setIsGuestUser(isGuestUser);
-        MessageChannel.put({ institutionInfo, navParams: { isGuestUser } });
+        MessageChannel.put({ navParams: { isGuestUser } });
         this.nav.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.login]);
-        isGuestUser && this.updateGuestSettings(institution.id);
+        isGuestUser && this.updateGuestSettings();
         break;
       case LoginState.EXTERNAL:
         this.nav.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.external]);

@@ -1,45 +1,35 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router';
-import { SettingsFacadeService } from '@core/facades/settings/settings-facade.service';
 import { UserFacadeService } from '@core/facades/user/user.facade.service';
-import { SettingInfoList } from '@core/model/configuration/setting-info-list.model';
-import { LoadingService } from '@core/service/loading/loading.service';
 import { Observable, zip } from 'rxjs';
-import { map, take } from 'rxjs/operators';
-import { Settings } from 'src/app/app.global';
+import { finalize, map, take } from 'rxjs/operators';
 import { GuestFacadeService } from './guest.facade.service';
 import { MessageChannel } from '@shared/model/shared-api';
-import { InstitutionFacadeService } from '@core/facades/institution/institution.facade.service';
-import { AuthFacadeService } from '@core/facades/auth/auth.facade.service';
+import { UserInfo } from '@core/model/user';
+import { LoadingService } from '@core/service/loading/loading.service';
+import { GuestDashboardSection } from '../model/dashboard.item.model';
 
 @Injectable({
   providedIn: 'root',
 })
-export class GuestDashboardResolver implements Resolve<Observable<SettingInfoList>> {
+export class GuestDashboardResolver implements Resolve<Observable<UserInfo>> {
   constructor(
-    private readonly settingsFacadeService: SettingsFacadeService,
-    private readonly loadingService: LoadingService,
-    private readonly institutionService: InstitutionFacadeService,
-    private readonly userFacadeService: UserFacadeService,
     private readonly guestFacadeService: GuestFacadeService,
+    private readonly loadingService: LoadingService,
+    private readonly userFacade: UserFacadeService
   ) {}
-  resolve(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-  ): Observable<SettingInfoList> | Observable<Observable<SettingInfoList>> | Promise<Observable<SettingInfoList>> {
+
+  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<UserInfo> {
+    this.loadingService.showSpinner();
+    const user$ = this.userFacade.getUserData$();
     const dashboardSectionsObs = this.guestFacadeService.configureGuestDashboard().pipe(take(1));
-    const settingListObs = this.settingsFacadeService.fetchSettingList(Settings.SettingList.FEATURES).pipe(take(1));
-    const userObs = this.userFacadeService.getUser$();
-    const instObs = this.institutionService.fetchInstitutionData();
-    
-    return zip(
-      userObs,
-      instObs,
-      settingListObs, 
-      dashboardSectionsObs,
-      ).pipe(map(([, , settings, dashboardSections]) => {
-       MessageChannel.put(dashboardSections);
-      return settings;
-    }));
+    return zip(user$, dashboardSectionsObs).pipe(
+      map(([user, dashboardSections]) => {
+        MessageChannel.put(dashboardSections);
+        return user;
+      }),
+      take(1),
+      finalize(() => this.loadingService.closeSpinner())
+    );
   }
 }

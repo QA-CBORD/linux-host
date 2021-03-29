@@ -83,70 +83,45 @@ export class InstitutionsPage implements OnInit {
 
   async onInstitutionSelected(institution: InstitutionLookupListItem): Promise<void> {
     this.loadingService.showSpinner({ duration: 5000 });
-    const preloginSupported = this.registrationServiceFacade.guestLoginSupportedInEnv;
-    const canGo2Prelogin = institution.guestSettings.canLogin && preloginSupported;
-    if (canGo2Prelogin) {
-      const backgroundColor = await this.commonService.getNativeHeaderBg(institution.id, this.sessionId);
-      this.authFacadeService.saveGuestSetting(institution.guestSettings);
-      this.navigateToPreLogin(institution, backgroundColor);
-    } else {
-      this.authFacadeService.removeGuestSetting();
-      this.authFacadeService.setIsGuestUser(false);
-      this.navigate(institution);
-    }
+    this.settingsFacadeService.cleanCache();
+    await this.commonService.getInstitution(institution.id, false);
+    this.commonService.getInstitutionPhoto(false, null);
+    await this.commonService.getInstitutionBgColor(false);
+    const preloginSupported = this.commonService.guestLoginSupportedInEnv;
+    const shouldGo2Prelogin = institution.guestSettings.canLogin && preloginSupported;
+    (shouldGo2Prelogin && this.navigate2PreLogin(institution)) || this.navigate2Login(institution);
   }
 
-  private async navigate(institution) {
-    const { id: institutionId } = institution;
-    this.settingsFacadeService.cleanCache();
-
+  private async navigate2Login({ id: institutionId }) {
+    this.authFacadeService.removeGuestSetting();
+    this.authFacadeService.setIsGuestUser(false);
     await zip(
       this.settingsFacadeService.fetchSettingList(Settings.SettingList.FEATURES, this.sessionId, institutionId),
-      this.settingsFacadeService.getSettings(
-        [Settings.Setting.MOBILE_HEADER_COLOR, Settings.Setting.FEEDBACK_EMAIL],
-        this.sessionId,
-        institutionId
-      ),
-      this.settingsFacadeService.getSetting(Settings.Setting.PIN_ENABLED, this.sessionId, institutionId),
-      this.institutionFacadeService.getInstitutionDataById$(institutionId, this.sessionId, true)
+      this.settingsFacadeService.getSettings([Settings.Setting.FEEDBACK_EMAIL], this.sessionId, institutionId),
+      this.settingsFacadeService.getSetting(Settings.Setting.PIN_ENABLED, this.sessionId, institutionId)
     )
       .pipe(
         switchMap(() => this.sessionFacadeService.determineInstitutionSelectionLoginState()),
         tap(loginType => {
-          this.navigateToLogin(loginType, institution);
+          this.navigate(loginType);
         }),
         take(1)
       )
       .toPromise();
   }
 
-  private async navigateToPreLogin(institution: InstitutionLookupListItem, backgroundColor): Promise<void> {
-    await this.institutionFacadeService
-      .getInstitutionDataById$(institution.id, this.sessionId, true)
-      .pipe(take(1))
-      .toPromise();
+  private async navigate2PreLogin(institution: InstitutionLookupListItem): Promise<void> {
+    this.authFacadeService.saveGuestSetting(institution.guestSettings);
     const preLoginCs = await this.registrationServiceFacade.preloginContents(institution.acuteCare).toPromise();
-    const institutionInfo = {
-      id: institution.id,
-      name: institution.name,
-    };
     this.loadingService.closeSpinner();
-
-    MessageChannel.put({ backgroundColor, preLoginCs, institutionInfo });
-
+    MessageChannel.put(preLoginCs);
     this.nav.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.pre_login]);
   }
 
-  private async navigateToLogin(loginState: number, institution) {
-    const backgroundColor = await this.commonService.getNativeHeaderBg(institution.id, this.sessionId);
+  private async navigate(loginState: number) {
     this.loadingService.closeSpinner();
     switch (loginState) {
       case LoginState.HOSTED:
-        const institutionInfo = {
-          backgroundColor,
-          name: institution.name,
-        };
-        MessageChannel.put({ institutionInfo });
         this.nav.navigate([ROLES.anonymous, ANONYMOUS_ROUTES.login]);
         break;
       case LoginState.EXTERNAL:

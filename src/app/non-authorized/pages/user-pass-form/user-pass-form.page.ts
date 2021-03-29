@@ -82,38 +82,33 @@ export class UserPassForm implements OnInit {
     return USERFORM_CONTROL_NAMES;
   }
 
-  async ngOnInit() {
+  ngOnInit() {
     this.initForm();
+    this.asyncOnInit();
+  }
+
+  async asyncOnInit():Promise<void>{
     await this.setLocalInstitutionInfo();
     // Announcing navigation meanwhile we find a generic way to do so.
     this.accessibilityService.readAloud(`Login page for ${this.institutionInfo.name}`);
     const { id } = this.institutionInfo;
-    const sessionId = await this.authFacadeService
-      .getAuthSessionToken$()
-      .pipe(take(1))
-      .toPromise();
+    const sessionId = await this.commonService.sessionId();
     this.authTypeHosted$ = this.getAuthenticationTypeHosted$(id, sessionId);
     this.authTypeLDAP$ = this.getAuthenticationTypeLDAP$(id, sessionId);
     this.placeholderOfUsername$ = this.getContentStringByName(sessionId, 'email_username');
     this.loginInstructions$ = this.getContentStringByName(sessionId, 'instructions');
     this.signupEnabled$ = this.isSignupEnabled$();
-    const data = MessageChannel.get() as any;
-    this.navedAsGuest$ = data.navParams && of(data.navParams.asGuest);
+    const data = MessageChannel.get<any>();
+    this.navedAsGuest$ = of(data.navParams && data.navParams.asGuest);
     this.cdRef.detectChanges();
-    this.initializeInstitutionInfo(id, sessionId);
+    this.initializeInstitutionInfo();
   }
 
-  async initializeInstitutionInfo(id, sessionId): Promise<void> {
-    const data = MessageChannel.get() as any;
-    const institutionInfo = data.institutionInfo || {};
-    this.nativeHeaderBg$ = Promise.resolve(institutionInfo.backgroundColor);
-    this.institutionPhoto$ = this.commonService
-      .getInstitutionPhoto(id, sessionId, this.sanitizer);
-    this.institutionName$ = Promise.resolve(institutionInfo.name);
-    if (!institutionInfo.name) {
-      this.institutionName$ = this.commonService.getInstitutionName(id, sessionId);
-      this.nativeHeaderBg$ = this.commonService.getNativeHeaderBg(id, sessionId);
-    }
+  async initializeInstitutionInfo(): Promise<void> {
+    console.log('initializeInstitutionInfo')
+    this.institutionPhoto$ = this.commonService.getInstitutionPhoto(true, this.sanitizer);
+    this.nativeHeaderBg$ = this.commonService.getInstitutionBgColor();
+    this.institutionName$ = this.commonService.getInstitutionName();
     this.cdRef.detectChanges();
   }
 
@@ -137,7 +132,7 @@ export class UserPassForm implements OnInit {
 
   onSignup(): void {
     const { navParams } = MessageChannel.get();
-    if (navParams && this.registrationFacade.guestLoginSupportedInEnv) {
+    if (navParams && this.commonService.guestLoginSupportedInEnv) {
       this.doHostedSignup(navParams);
     } else {
       this.redirectToSignup();
@@ -287,12 +282,7 @@ export class UserPassForm implements OnInit {
   }
 
   private async setLocalInstitutionInfo(): Promise<any> {
-    return this.institutionFacadeService.cachedInstitutionInfo$
-      .pipe(
-        tap(institutionInfo => (this.institutionInfo = institutionInfo)),
-        take(1)
-      )
-      .toPromise();
+    this.institutionInfo = await this.commonService.getInstitution();
   }
 
   private async presentToast(message: string): Promise<void> {
