@@ -2,7 +2,10 @@
 
 .deposit {
   &__header {
+    margin-top: 32px;
+    padding-bottom: 8px;
     border-bottom: 1px solid $color-whisper;
+    @include font-nunito-regular(16px);
   }
 
   &__manual-amount {

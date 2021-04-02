@@ -8,10 +8,14 @@
   class="deposit__header"
 ></st-header>
 <ion-content>
-  <section class="deposit__selection-block"> 
+  <section class="deposit__selection-block ion-padding">
+    <ion-label
+      >You are deposting to the account of James Demo. If this is incorrect, go back to to Step 1 to identify the
+      recipient.</ion-label
+    >
     <form novalidate [formGroup]="detailsForm">
-      <div class="deposit__select-wrapper ion-padding">
-        <br />
+      <br />
+      <div class="deposit__select-wrapper">
         <st-select-floating-label
           class="form__control"
           [control]="paymentMethod"
@@ -35,7 +39,60 @@
             </ion-select-option>
           </ng-container>
         </st-select-floating-label>
+        <br />
+        <st-select-floating-label
+          class="form__control"
+          [control]="paymentMethod"
+          label="To Account"
+          idd="guestPayment"
+          [interfaceOptions]="customActionSheetOptions"
+          interface="action-sheet"
+          [formControlName]="controlsNames.paymentMethod"
+          [isError]="paymentMethod.dirty || paymentMethod.touched"
+          #paymentMethod
+        >
+          <ng-container role="options">
+            <ion-select-option *ngIf="applePayEnabled && accInfoList?.creditAccepted" [value]="applePayAccountType">
+              {{ applePayAccountType }}
+            </ion-select-option>
+            <ion-select-option [value]="account" *ngFor="let account of accounts; trackBy: trackByAccountId">
+              {{ account }}
+            </ion-select-option>
+            <ion-select-option *ngIf="accInfoList?.creditAccepted" [value]="'addCC'">
+              Add a Credit Card
+            </ion-select-option>
+          </ng-container>
+        </st-select-floating-label>
+        <br />
+        <st-select-floating-label
+          class="form__control"
+          [control]="paymentMethod"
+          label="Amount to Deposit"
+          idd="guestPayment"
+          [interfaceOptions]="customActionSheetOptions"
+          interface="action-sheet"
+          [formControlName]="controlsNames.paymentMethod"
+          [isError]="paymentMethod.dirty || paymentMethod.touched"
+          #paymentMethod
+        >
+          <ng-container role="options">
+            <ion-select-option *ngIf="applePayEnabled && accInfoList?.creditAccepted" [value]="applePayAccountType">
+              {{ applePayAccountType }}
+            </ion-select-option>
+            <ion-select-option [value]="account" *ngFor="let account of accounts; trackBy: trackByAccountId">
+              {{ account }}
+            </ion-select-option>
+            <ion-select-option *ngIf="accInfoList?.creditAccepted" [value]="'addCC'">
+              Add a Credit Card
+            </ion-select-option>
+          </ng-container>
+        </st-select-floating-label>
       </div>
     </form>
-  </section> 
+  </section>
 </ion-content>
+<ion-footer class="deposit__footer" mode="ios">
+  <st-button (onClick)="onFormSubmit()">
+    <div id="depositBtnText">Deposit</div>
+  </st-button>
+</ion-footer>
