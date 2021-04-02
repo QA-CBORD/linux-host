@@ -18,7 +18,7 @@ import { DepositModalComponent } from '../../shared/ui-components/deposit-modal/
 import { BUTTON_TYPE } from 'src/app/core/utils/buttons.config';
 import { amountRangeValidator } from './amount-range.validator';
 import { Router } from '@angular/router';
-import { PATRON_NAVIGATION, AccountType, Settings } from 'src/app/app.global';
+import { PATRON_NAVIGATION, AccountType, Settings, DisplayName } from 'src/app/app.global';
 import { LoadingService } from 'src/app/core/service/loading/loading.service';
 import { DepositService } from '@sections/accounts/services/deposit.service';
 import { handleServerError, parseArrayFromString } from '@core/utils/general-helpers';
@@ -54,7 +54,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
   isDepositing: boolean = false;
   applePayAccountType: Partial<UserAccount> = {
     accountType: AccountType.APPLEPAY,
-    accountDisplayName: 'Apple Pay',
+    accountDisplayName: DisplayName.APPLEPAY,
     isActive: true,
   };
 
@@ -304,7 +304,7 @@ export class DepositPageComponent implements OnInit, OnDestroy {
           take(1)
         )
         .subscribe(
-          info => this.confirmationDepositPopover({ ...info, depositReviewBillMe, depositReviewCredit }),
+          info => this.confirmationDepositPopover({ ...info as {}, depositReviewBillMe, depositReviewCredit }),
           () => {
             this.loadingService.closeSpinner();
             this.onErrorRetrieve('Something went wrong, please try again...');

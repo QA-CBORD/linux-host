@@ -1,0 +1,41 @@
+<st-header
+  title="Add Funds"
+  [isTitleShow]="true"
+  [backButtonIcon]="'ios-arrow-back'"
+  [backButtonTitle]="Back"
+  [isToolbarShow]="true"
+  tabindex="0"
+  class="deposit__header"
+></st-header>
+<ion-content>
+  <section class="deposit__selection-block"> 
+    <form novalidate [formGroup]="detailsForm">
+      <div class="deposit__select-wrapper ion-padding">
+        <br />
+        <st-select-floating-label
+          class="form__control"
+          [control]="paymentMethod"
+          label="Payment Method"
+          idd="guestPayment"
+          [interfaceOptions]="customActionSheetOptions"
+          interface="action-sheet"
+          [formControlName]="controlsNames.paymentMethod"
+          [isError]="paymentMethod.dirty || paymentMethod.touched"
+          #paymentMethod
+        >
+          <ng-container role="options">
+            <ion-select-option *ngIf="applePayEnabled && accInfoList?.creditAccepted" [value]="applePayAccountType">
+              {{ applePayAccountType }}
+            </ion-select-option>
+            <ion-select-option [value]="account" *ngFor="let account of accounts; trackBy: trackByAccountId">
+              {{ account }}
+            </ion-select-option>
+            <ion-select-option *ngIf="accInfoList?.creditAccepted" [value]="'addCC'">
+              Add a Credit Card
+            </ion-select-option>
+          </ng-container>
+        </st-select-floating-label>
+      </div>
+    </form>
+  </section> 
+</ion-content>

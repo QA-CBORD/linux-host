@@ -32,7 +32,7 @@ import {
   validateGreaterOrEqualToZero,
   validateLessThanOther,
 } from '@core/utils/general-helpers';
-import { AccountType } from 'src/app/app.global';
+import { AccountType, DisplayName } from 'src/app/app.global';
 import { OrderingComponentContentStrings, OrderingService } from '@sections/ordering/services/ordering.service';
 import { take } from 'rxjs/operators';
 import { Plugins } from '@capacitor/core';
@@ -86,7 +86,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy, OnChanges {
   showCVVControl = false;
   applePayAccountType: Partial<UserAccount> = {
     accountType: AccountType.APPLEPAY,
-    accountDisplayName: 'Apple Pay',
+    accountDisplayName: DisplayName.APPLEPAY,
     isActive: true,
   };
   user: UserInfoSet;

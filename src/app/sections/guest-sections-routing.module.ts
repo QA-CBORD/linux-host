@@ -23,7 +23,7 @@ const routes: Route[] = [
   },
   {
     path: GUEST_ROUTES.deposit,
-    loadChildren: './ordering/ordering.module#OrderingPageModule',
+    loadChildren: './guest/guest-dashboard/options/guest-deposit/guest-deposit.module#GuestDepositModule',
   },
   {
     path: GUEST_ROUTES.settings,
