@@ -2,13 +2,13 @@
   title="Add Funds"
   [isTitleShow]="true"
   [backButtonIcon]="'ios-arrow-back'"
-  [backButtonTitle]="Back"
+  [isBackButtonShow]="true"
   [isToolbarShow]="true"
-  tabindex="0"
   class="deposit__header"
 ></st-header>
 <ion-content>
   <section class="deposit__selection-block ion-padding">
+    <br>
     <ion-label
       >You are deposting to the account of James Demo. If this is incorrect, go back to to Step 1 to identify the
       recipient.</ion-label
@@ -26,7 +26,7 @@
           [formControlName]="controlsNames.paymentMethod"
           [isError]="paymentMethod.dirty || paymentMethod.touched"
           #paymentMethod
-        >
+          >
           <ng-container role="options">
             <ion-select-option *ngIf="applePayEnabled && accInfoList?.creditAccepted" [value]="applePayAccountType">
               {{ applePayAccountType }}
@@ -49,7 +49,6 @@
           interface="action-sheet"
           [formControlName]="controlsNames.paymentMethod"
           [isError]="paymentMethod.dirty || paymentMethod.touched"
-          #paymentMethod
         >
           <ng-container role="options">
             <ion-select-option *ngIf="applePayEnabled && accInfoList?.creditAccepted" [value]="applePayAccountType">
@@ -73,7 +72,6 @@
           interface="action-sheet"
           [formControlName]="controlsNames.paymentMethod"
           [isError]="paymentMethod.dirty || paymentMethod.touched"
-          #paymentMethod
         >
           <ng-container role="options">
             <ion-select-option *ngIf="applePayEnabled && accInfoList?.creditAccepted" [value]="applePayAccountType">

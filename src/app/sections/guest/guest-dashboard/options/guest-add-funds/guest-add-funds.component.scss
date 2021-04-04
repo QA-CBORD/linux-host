@@ -5,7 +5,6 @@
     margin-top: 32px;
     padding-bottom: 8px;
     border-bottom: 1px solid $color-whisper;
-    @include font-nunito-regular(16px);
   }
 
   &__manual-amount {
@@ -76,10 +75,7 @@
   }
 
   &__select {
-    // background: url('/assets/icon/img/angle-down.svg') no-repeat 92% center !important;
     padding: 30px 15px;
-
-    @include font-nunito-heavy(16px);
   }
 
   &__label-select {
@@ -118,4 +114,8 @@
     padding: 10px 10px 50px;
     background-color: $color-white;
   }
+}
+
+ion-label {
+  @include font-nunito-regular(16px);
 }

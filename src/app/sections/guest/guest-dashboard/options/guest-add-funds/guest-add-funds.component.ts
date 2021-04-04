@@ -33,6 +33,7 @@ export class GuestAddFundsComponent implements OnInit {
 
   ngOnInit() {
     this.initForm();
+    this.initContentStrings();
     this.globalNav.hideNavBar();
   }
 
@@ -55,4 +56,10 @@ export class GuestAddFundsComponent implements OnInit {
   }
 
   onPaymentChanged({ detail: { value } }) {}
+
+  private initContentStrings() {
+    // this.contentStrings.buttonCancel = this.orderingService.getContentStringByName(
+    //   ORDERING_CONTENT_STRINGS.buttonCancel
+    // );
+  }
 }
