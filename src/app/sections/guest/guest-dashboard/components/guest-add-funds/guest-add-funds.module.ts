@@ -42,7 +42,7 @@ const imports = [
   StSelectFloatingLabelModule
 ];
 const declarations = [GuestAddFundsComponent];
-const providers = [DepositService, OrderingResolver, MerchantService, OrderingApiService, CartService, CartResolver, OrderingService, ModalsService];
+const providers = [DepositService, MerchantService, OrderingApiService, CartService];
 
 @NgModule({
   declarations,
