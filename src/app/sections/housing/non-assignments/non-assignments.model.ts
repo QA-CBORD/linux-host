@@ -240,3 +240,35 @@ export class ContractRequest {
         this.termKey = Number(options.termKey);
     }
 }
+
+export interface NonAssignmentContractRequestOptions {
+    nonAssignmentKey: number;
+    patronContract: ContractRequest;
+    patronAttributes?: PatronAttribute[];
+    patronAddresses?: PatronAddress[];
+}
+
+export class NonAssignmentContractRequest implements NonAssignmentContractRequestOptions {
+    nonAssignmentKey: number;
+    patronContract: ContractRequest;
+    patronAttributes?: PatronAttribute[];
+    patronAddresses?: PatronAddress[];
+
+    constructor(options: NonAssignmentContractRequestOptions) {
+        if (options == null || typeof options !== 'object') {
+            options = {} as NonAssignmentContractRequestOptions;
+        }
+
+        this.nonAssignmentKey = Number(options.nonAssignmentKey);
+
+        this.patronContract = new ContractRequest(options.patronContract);
+
+        if (Array.isArray(options.patronAttributes)) {
+        this.patronAttributes = options.patronAttributes.map((attribute: any) => new PatronAttribute(attribute));
+        }
+
+        if (Array.isArray(options.patronAddresses)) {
+        this.patronAddresses = options.patronAddresses.map((address: any) => new PatronAddress(address));
+        }
+    }
+}
